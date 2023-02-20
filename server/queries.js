@@ -29,5 +29,17 @@ const updateAccount = (request, response) => {
     );
 }
 
+// Delete account
+const deleteAccount = (request, response) => {
+    const id = parseInt(request.params.id);
+
+    pool.query('DELETE FROM account WHERE id = $1', [id], (error, results) => {
+        if (error) {
+            throw error;
+        }
+        response.status(200).send(`Account deleted with ID: ${id}`);
+    });
+}
+
 // Export all functions
-module.exports = { createAccount, updateAccount };
+module.exports = { createAccount, updateAccount, deleteAccount };
