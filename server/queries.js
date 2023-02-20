@@ -41,5 +41,87 @@ const deleteAccount = (request, response) => {
     });
 }
 
+// Create deposit
+const createDeposit = (request, response) => {
+    const { account_id, amount, description } = request.body;
+
+    pool.query('INSERT INTO deposit (account_id, amount, description) VALUES ($1, $2)', [account_id, amount, description], (error, results) => {
+        if (error) {
+            throw error;
+        }
+        response.status(201).send(`Deposit added with ID: ${results.insertId}`);
+    });
+}
+
+// Update deposit
+const updateDeposit = (request, response) => {
+    const id = parseInt(request.params.id);
+    const { account_id, amount, description } = request.body;
+
+    pool.query(
+        'UPDATE deposit SET account_id = $1, amount = $2, description = $3 WHERE deposit_id = $4',
+        [account_id, amount, description, id],
+        (error, results) => {
+            if (error) {
+                throw error;
+            }
+            response.status(200).send(`Deposit modified with ID: ${id}`);
+        }
+    );
+}
+
+// Delete deposit
+const deleteDeposit = (request, response) => {
+    const id = parseInt(request.params.id);
+
+    pool.query('DELETE FROM deposit WHERE deposit_id = $1', [id], (error, results) => {
+        if (error) {
+            throw error;
+        }
+        response.status(200).send(`Deposit deleted with ID: ${id}`);
+    });
+}
+
+// Create withdrawal
+const createWithdrawal = (request, response) => {
+    const { account_id, amount, description } = request.body;
+
+    pool.query('INSERT INTO withdrawal (account_id, amount, description) VALUES ($1, $2)', [account_id, amount, description], (error, results) => {
+        if (error) {
+            throw error;
+        }
+        response.status(201).send(`Withdrawal added with ID: ${results.insertId}`);
+    });
+}
+
+// Update withdrawal
+const updateWithdrawal = (request, response) => {
+    const id = parseInt(request.params.id);
+    const { account_id, amount, description } = request.body;
+
+    pool.query(
+        'UPDATE withdrawal SET account_id = $1, amount = $2, description = $3 WHERE withdrawal_id = $4',
+        [account_id, amount, description, id],
+        (error, results) => {
+            if (error) {
+                throw error;
+            }
+            response.status(200).send(`Withdrawal modified with ID: ${id}`);
+        }
+    );
+}
+
+// Delete withdrawal
+const deleteWithdrawal = (request, response) => {
+    const id = parseInt(request.params.id);
+
+    pool.query('DELETE FROM withdrawal WHERE withdrawal_id = $1', [id], (error, results) => {
+        if (error) {
+            throw error;
+        }
+        response.status(200).send(`Withdrawal deleted with ID: ${id}`);
+    });
+}
+
 // Export all functions
-module.exports = { createAccount, updateAccount, deleteAccount };
+module.exports = { createAccount, updateAccount, deleteAccount, createDeposit, updateDeposit, deleteDeposit, createWithdrawal, updateWithdrawal, deleteWithdrawal };
