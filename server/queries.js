@@ -12,5 +12,22 @@ const createAccount = (request, response) => {
     });
 }
 
+// Update account
+const updateAccount = (request, response) => {
+    const id = parseInt(request.params.id);
+    const { name, type, balance } = request.body;
+
+    pool.query(
+        'UPDATE account SET name = $1, type = $2, balance = $3 WHERE id = $4',
+        [name, type, balance, id],
+        (error, results) => {
+            if (error) {
+                throw error;
+            }
+            response.status(200).send(`Account modified with ID: ${id}`);
+        }
+    );
+}
+
 // Export all functions
-module.exports = { createAccount };
+module.exports = { createAccount, updateAccount };

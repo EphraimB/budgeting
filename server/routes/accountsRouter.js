@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { createAccount } = require('../queries.js');
+const { createAccount, updateAccount } = require('../queries.js');
 
 router.post('/', createAccount);
 router.put('/:id', updateAccount);
