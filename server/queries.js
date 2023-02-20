@@ -4,7 +4,7 @@ const pool = require('./db');
 const createAccount = (request, response) => {
     const { name, type, balance } = request.body;
 
-    pool.query('INSERT INTO account (name, type, balance) VALUES ($1, $2)', [name, type, balance], (error, results) => {
+    pool.query('INSERT INTO accounts (account_name, account_type, account_balance) VALUES ($1, $2, $3)', [name, type, balance], (error, results) => {
         if (error) {
             throw error;
         }
@@ -18,7 +18,7 @@ const updateAccount = (request, response) => {
     const { name, type, balance } = request.body;
 
     pool.query(
-        'UPDATE account SET name = $1, type = $2, balance = $3 WHERE id = $4',
+        'UPDATE accounts SET name = $1, type = $2, balance = $3 WHERE id = $4',
         [name, type, balance, id],
         (error, results) => {
             if (error) {
@@ -33,7 +33,7 @@ const updateAccount = (request, response) => {
 const deleteAccount = (request, response) => {
     const id = parseInt(request.params.id);
 
-    pool.query('DELETE FROM account WHERE id = $1', [id], (error, results) => {
+    pool.query('DELETE FROM accounts WHERE id = $1', [id], (error, results) => {
         if (error) {
             throw error;
         }
@@ -45,7 +45,7 @@ const deleteAccount = (request, response) => {
 const createDeposit = (request, response) => {
     const { account_id, amount, description } = request.body;
 
-    pool.query('INSERT INTO deposit (account_id, amount, description) VALUES ($1, $2)', [account_id, amount, description], (error, results) => {
+    pool.query('INSERT INTO deposits (account_id, amount, description) VALUES ($1, $2, $3)', [account_id, amount, description], (error, results) => {
         if (error) {
             throw error;
         }
@@ -59,7 +59,7 @@ const updateDeposit = (request, response) => {
     const { account_id, amount, description } = request.body;
 
     pool.query(
-        'UPDATE deposit SET account_id = $1, amount = $2, description = $3 WHERE deposit_id = $4',
+        'UPDATE deposits SET account_id = $1, amount = $2, description = $3 WHERE deposit_id = $4',
         [account_id, amount, description, id],
         (error, results) => {
             if (error) {
@@ -74,7 +74,7 @@ const updateDeposit = (request, response) => {
 const deleteDeposit = (request, response) => {
     const id = parseInt(request.params.id);
 
-    pool.query('DELETE FROM deposit WHERE deposit_id = $1', [id], (error, results) => {
+    pool.query('DELETE FROM deposits WHERE deposit_id = $1', [id], (error, results) => {
         if (error) {
             throw error;
         }
@@ -86,7 +86,7 @@ const deleteDeposit = (request, response) => {
 const createWithdrawal = (request, response) => {
     const { account_id, amount, description } = request.body;
 
-    pool.query('INSERT INTO withdrawal (account_id, amount, description) VALUES ($1, $2)', [account_id, amount, description], (error, results) => {
+    pool.query('INSERT INTO withdrawals (account_id, amount, description) VALUES ($1, $2, $3)', [account_id, amount, description], (error, results) => {
         if (error) {
             throw error;
         }
@@ -100,7 +100,7 @@ const updateWithdrawal = (request, response) => {
     const { account_id, amount, description } = request.body;
 
     pool.query(
-        'UPDATE withdrawal SET account_id = $1, amount = $2, description = $3 WHERE withdrawal_id = $4',
+        'UPDATE withdrawals SET account_id = $1, amount = $2, description = $3 WHERE withdrawal_id = $4',
         [account_id, amount, description, id],
         (error, results) => {
             if (error) {
@@ -115,7 +115,7 @@ const updateWithdrawal = (request, response) => {
 const deleteWithdrawal = (request, response) => {
     const id = parseInt(request.params.id);
 
-    pool.query('DELETE FROM withdrawal WHERE withdrawal_id = $1', [id], (error, results) => {
+    pool.query('DELETE FROM withdrawals WHERE withdrawal_id = $1', [id], (error, results) => {
         if (error) {
             throw error;
         }
