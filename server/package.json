@@ -1,0 +1,14 @@
+{
+  "name": "budgeting",
+  "version": "1.0.0",
+  "description": "A budgeting app that calculates the projected budget at a certain date",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Ephraim Becker",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.18.2"
+  }
+}
