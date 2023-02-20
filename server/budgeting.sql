@@ -5,7 +5,7 @@ CREATE DATABASE budgeting;
 CREATE TABLE IF NOT EXISTS accounts (
   account_id SERIAL PRIMARY KEY,
   account_name VARCHAR(255) NOT NULL,
-  account_type VARCHAR(255) NOT NULL,
+  account_type INT NOT NULL,
   account_balance MONEY NOT NULL,
   date_created DATE NOT NULL,
   date_modified DATE NOT NULL
