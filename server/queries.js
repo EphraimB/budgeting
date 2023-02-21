@@ -1,5 +1,27 @@
 const pool = require('./db');
 
+// Get all accounts
+const getAccounts = (request, response) => {
+    pool.query('SELECT * FROM accounts ORDER BY account_id ASC', (error, results) => {
+        if (error) {
+            throw error;
+        }
+        response.status(200).json(results.rows);
+    });
+}
+
+// Get account by id
+const getAccount = (request, response) => {
+    const id = parseInt(request.params.id);
+    
+    pool.query('SELECT * FROM accounts WHERE account_id = $1', [id], (error, results) => {
+        if (error) {
+            throw error;
+        }
+        response.status(200).json(results.rows);
+    });
+}
+
 // Create account
 const createAccount = (request, response) => {
     const { name, type, balance } = request.body;
@@ -20,7 +42,7 @@ const updateAccount = (request, response) => {
     const { name, type, balance } = request.body;
 
     pool.query(
-        'UPDATE accounts SET account_name = $1, account_type = $2, account_balance = $3 WHERE id = $4',
+        'UPDATE accounts SET account_name = $1, account_type = $2, account_balance = $3 WHERE account_id = $4',
         [name, type, balance, id],
         (error, results) => {
             if (error) {
@@ -126,4 +148,4 @@ const deleteWithdrawal = (request, response) => {
 }
 
 // Export all functions
-module.exports = { createAccount, updateAccount, deleteAccount, createDeposit, updateDeposit, deleteDeposit, createWithdrawal, updateWithdrawal, deleteWithdrawal };
+module.exports = { getAccounts, getAccount, createAccount, updateAccount, deleteAccount, createDeposit, updateDeposit, deleteDeposit, createWithdrawal, updateWithdrawal, deleteWithdrawal };
