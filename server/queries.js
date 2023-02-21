@@ -2,7 +2,7 @@ const pool = require('./db');
 
 // Get all accounts
 const getAccounts = (request, response) => {
-    pool.query('SELECT * FROM accounts ORDER BY account_id ASC', (error, results) => {
+    pool.query('SELECT accounts.account_id, accounts.account_name, accounts.account_type, accounts.account_balance + deposit_amount - withdrawal_amount AS account_balance, accounts.date_created, accounts.date_modified FROM accounts JOIN deposits ON accounts.account_id=deposits.account_id JOIN withdrawals ON accounts.account_id=withdrawals.account_id ORDER BY accounts.account_id ASC', (error, results) => {
         if (error) {
             throw error;
         }
@@ -14,7 +14,7 @@ const getAccounts = (request, response) => {
 const getAccount = (request, response) => {
     const id = parseInt(request.params.id);
     
-    pool.query('SELECT * FROM accounts WHERE account_id = $1', [id], (error, results) => {
+    pool.query('SELECT accounts.account_id, accounts.account_name, accounts.account_type, accounts.account_balance + deposit_amount - withdrawal_amount AS account_balance, accounts.date_created, accounts.date_modified FROM accounts JOIN deposits ON accounts.account_id=deposits.account_id JOIN withdrawals ON accounts.account_id=withdrawals.account_id WHERE accounts.account_id = $1', [id], (error, results) => {
         if (error) {
             throw error;
         }
