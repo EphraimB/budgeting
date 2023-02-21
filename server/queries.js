@@ -4,12 +4,14 @@ const pool = require('./db');
 const createAccount = (request, response) => {
     const { name, type, balance } = request.body;
 
-    pool.query('INSERT INTO accounts (account_name, account_type, account_balance) VALUES ($1, $2, $3)', [name, type, balance], (error, results) => {
-        if (error) {
-            throw error;
-        }
-        response.status(201).send(`Account added with ID: ${results.insertId}`);
-    });
+    pool.query('INSERT INTO accounts (account_name, account_type, account_balance) VALUES ($1, $2, $3)',
+        [name, type, balance],
+        (error, results) => {
+            if (error) {
+                throw error;
+            }
+            response.status(201).send(`Account added with ID: ${results.insertId}`);
+        });
 }
 
 // Update account
@@ -18,7 +20,7 @@ const updateAccount = (request, response) => {
     const { name, type, balance } = request.body;
 
     pool.query(
-        'UPDATE accounts SET name = $1, type = $2, balance = $3 WHERE id = $4',
+        'UPDATE accounts SET account_name = $1, account_type = $2, account_balance = $3 WHERE id = $4',
         [name, type, balance, id],
         (error, results) => {
             if (error) {
@@ -45,7 +47,7 @@ const deleteAccount = (request, response) => {
 const createDeposit = (request, response) => {
     const { account_id, amount, description } = request.body;
 
-    pool.query('INSERT INTO deposits (account_id, amount, description) VALUES ($1, $2, $3)', [account_id, amount, description], (error, results) => {
+    pool.query('INSERT INTO deposits (account_id, deposit_amount, deposit_description) VALUES ($1, $2, $3)', [account_id, amount, description], (error, results) => {
         if (error) {
             throw error;
         }
@@ -59,7 +61,7 @@ const updateDeposit = (request, response) => {
     const { account_id, amount, description } = request.body;
 
     pool.query(
-        'UPDATE deposits SET account_id = $1, amount = $2, description = $3 WHERE deposit_id = $4',
+        'UPDATE deposits SET account_id = $1, deposit_amount = $2, deposit_description = $3 WHERE deposit_id = $4',
         [account_id, amount, description, id],
         (error, results) => {
             if (error) {
@@ -86,7 +88,7 @@ const deleteDeposit = (request, response) => {
 const createWithdrawal = (request, response) => {
     const { account_id, amount, description } = request.body;
 
-    pool.query('INSERT INTO withdrawals (account_id, amount, description) VALUES ($1, $2, $3)', [account_id, amount, description], (error, results) => {
+    pool.query('INSERT INTO withdrawals (account_id, withdrawal_amount, withdrawal_description) VALUES ($1, $2, $3)', [account_id, amount, description], (error, results) => {
         if (error) {
             throw error;
         }
@@ -100,7 +102,7 @@ const updateWithdrawal = (request, response) => {
     const { account_id, amount, description } = request.body;
 
     pool.query(
-        'UPDATE withdrawals SET account_id = $1, amount = $2, description = $3 WHERE withdrawal_id = $4',
+        'UPDATE withdrawals SET account_id = $1, withdrawal_amount = $2, withdrawal_description = $3 WHERE withdrawal_id = $4',
         [account_id, amount, description, id],
         (error, results) => {
             if (error) {
