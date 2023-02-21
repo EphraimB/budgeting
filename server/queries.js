@@ -26,13 +26,13 @@ const getAccount = (request, response) => {
 const createAccount = (request, response) => {
     const { name, type, balance } = request.body;
 
-    pool.query('INSERT INTO accounts (account_name, account_type, account_balance) VALUES ($1, $2, $3)',
+    pool.query('INSERT INTO accounts (account_name, account_type, account_balance) VALUES ($1, $2, $3) RETURNING *',
         [name, type, balance],
         (error, results) => {
             if (error) {
                 throw error;
             }
-            response.status(201).send(`Account added with ID: ${results.insertId}`);
+            response.status(201).json(results.rows);
         });
 }
 
