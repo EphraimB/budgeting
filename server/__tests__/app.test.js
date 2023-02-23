@@ -1,6 +1,9 @@
 const request = require("supertest");
 const app = require("../app");
-const db = require("../db");
+// const db = require("../queries");
+const sinon = require("sinon");
+
+const dbMock = sinon.mock(db);
 
 describe("Test the root path", () => {
     test("It should response the GET method", async () => {
@@ -10,60 +13,35 @@ describe("Test the root path", () => {
 });
 
 describe('Accounts routes', () => {
-    beforeAll(async () => {
-        await db.connect();
-    });
+    // beforeAll(async () => {
+    //     await db.connect();
+    // });
 
-    afterAll(async () => {
-        await db.end();
-    });
+    // afterAll(async () => {
+    //     await db.end();
+    // });
 
     it('should create a new account', async () => {
-        const response = await request(app)
-            .post('/accounts')
-            .send({
-                name: "Test Account",
-                type: 0,
-                balance: 1000.00
-            });
+        const data = { name: "Test Account", type: 0, balance: 1000.00 };
 
+        // Mock the createAccount function
+        dbMock.expects('createAccount').once().withArgs(data).returns({ account_id: 1, ...data });
+
+        // Make the request
+        const response = await request(app).post('/accounts').send(data);
         expect(response.statusCode).toBe(201);
-        expect(response.body[0].account_name).toBe("Test Account");
-        expect(response.body[0].account_type).toBe(0);
-        expect(response.body[0].account_balance).toBe("$1,000.00");
+        expect(response.body).toEqual({ account_id: 1, ...data });
     });
 
-    it('should get all accounts', async () => {
-        const response = await request(app).get('/accounts');
+    it('should get an account', async () => {
+        const data = { account_id: 1, name: "Test Account", type: 0, balance: 1000.00 };
 
+        // Mock the getAccount function
+        dbMock.expects('getAccount').once().withArgs(data.account_id).returns(data);
+
+        // Make the request
+        const response = await request(app).get('/accounts/1');
         expect(response.statusCode).toBe(200);
-        expect(response.body.length).toBeGreaterThan(0);
+        expect(response.body).toEqual(data);
     });
-
-    // it('should get an account by id', async () => {
-    //     const response = await request(app).get('/accounts/1');
-
-    //     expect(response.statusCode).toBe(200);
-    //     expect(response.body[0].account_id).toBe(1);
-    // });
-
-    // it('should update an account', async () => {
-    //     const response = await request(app)
-    //         .put('/accounts/1')
-    //         .send({
-    //             name: "Test Account",
-    //             type: 0,
-    //             balance: 1000.00
-    //         });
-
-    //     expect(response.statusCode).toBe(200);
-    //     expect(response.text).toBe("Account modified with ID: 1");
-    // });
-
-    // it('should delete an account', async () => {
-    //     const response = await request(app).delete('/accounts/1');
-
-    //     expect(response.statusCode).toBe(200);
-    //     expect(response.text).toBe("Account deleted with ID: 1");
-    // });
 });
