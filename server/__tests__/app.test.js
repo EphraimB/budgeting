@@ -59,6 +59,17 @@ const mockLoans = {
     date_modified: '2020-01-01'
 };
 
+const mockWishlist = {
+    wishlist_id: 1,
+    account_id: 1,
+    wishlist_amount: 1000,
+    wishlist_title: 'Test Wishlist',
+    wishlist_description: 'Test Wishlist to test the wishlist route',
+    wishlist_priority: 0,
+    date_created: '2020-01-01',
+    date_modified: '2020-01-01'
+};
+
 // Add the mock accounts object to the mock pool
 mockClient.add('SELECT * FROM accounts WHERE account_id = $1', [1], {
     rowCount: 1,
