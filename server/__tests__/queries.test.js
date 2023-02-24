@@ -25,13 +25,15 @@ afterAll(async () => {
 describe('GET /accounts/:id', () => {
     test('GET /accounts/:id returns the correct account', () => {
         const id = accounts[0].account_id;
-        
+
         client.query(accountQueries.getAccount, [id], (err, res) => {
             if (err) {
                 console.log(err.stack);
             } else {
-                console.log(res.rows[0]);
-            }
+                expect(res.rows[0]).toEqual(expectedAccount);
+                expect(response.status).toHaveBeenCalledWith(200);
+                done();
+            };
         });
     });
 });
