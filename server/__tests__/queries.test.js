@@ -10,7 +10,7 @@ beforeAll(async () => {
 
     const id = accounts[0].account_id;
 
-    client.add(accountQueries.getAccount, [id], {
+    client.add('SELECT * FROM accounts', [id], {
         rowCount: accounts.length,
         rows: accounts.map((account) => account)
     });
