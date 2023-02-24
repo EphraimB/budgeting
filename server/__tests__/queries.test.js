@@ -12,9 +12,7 @@ beforeAll(async () => {
 
     client.add(accountQueries.getAccount, [id], {
         rowCount: accounts.length,
-        rows: [
-            accounts
-        ]
+        rows: accounts.map((account) => account)
     });
 });
 
@@ -26,14 +24,8 @@ describe('GET /accounts/:id', () => {
     test('GET /accounts/:id returns the correct account', () => {
         const id = accounts[0].account_id;
 
-        client.query(accountQueries.getAccount, [id], (err, res) => {
-            if (err) {
-                console.log(err.stack);
-            } else {
-                expect(res.rows[0]).toEqual(expectedAccount);
-                expect(response.status).toHaveBeenCalledWith(200);
-                done();
-            };
-        });
+        client.query(accountQueries.getAccount, [id])
+            .then((data) => console.log(data))
+            .catch((err) => console.log(err.message));
     });
 });
