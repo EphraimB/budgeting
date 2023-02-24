@@ -1,8 +1,9 @@
 const pool = require('./db');
+const { accountQueries } = require('./queryData');
 
 // Get all accounts
 const getAccounts = (request, response) => {
-    pool.query('SELECT accounts.account_id, accounts.account_name, accounts.account_type, accounts.account_balance + deposit_amount - withdrawal_amount AS account_balance, accounts.date_created, accounts.date_modified FROM accounts JOIN deposits ON accounts.account_id=deposits.account_id JOIN withdrawals ON accounts.account_id=withdrawals.account_id ORDER BY accounts.account_id ASC', (error, results) => {
+    pool.query(accountQueries.getAccounts, (error, results) => {
         if (error) {
             throw error;
         }
@@ -13,19 +14,13 @@ const getAccounts = (request, response) => {
 // Get account by id
 const getAccount = (request, response) => {
     const id = parseInt(request.params.id);
-    const sql = 'SELECT accounts.account_id, accounts.account_name, accounts.account_type, accounts.account_balance + deposit_amount - withdrawal_amount AS account_balance, accounts.date_created, accounts.date_modified FROM accounts JOIN deposits ON accounts.account_id=deposits.account_id JOIN withdrawals ON accounts.account_id=withdrawals.account_id WHERE accounts.account_id = $1';
     
-    pool.query(sql, [id], (error, results) => {
+    pool.query(accountQueries.getAccount, [id], (error, results) => {
         if (error) {
             throw error;
         }
         response.status(200).json(results.rows);
     });
-
-    return {
-        text: sql,
-        values: [id]
-    }
 }
 
 // Create account
