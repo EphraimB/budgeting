@@ -1,7 +1,7 @@
 const app = require("../app");
 const pgmock2 = require('pgmock2').default;
 const { accounts, deposits, withdrawals, expenses, loans, wishlist } = require('./testData/mockData');
-const queries = require('../queries');
+const { accountQueries } = require('../queryData');
 
 const client = new pgmock2();
 
@@ -19,7 +19,7 @@ describe('GET /accounts/:id', () => {
 
         const request = { params: { id } };
         
-        client.query(queries.getAccount.toString(), [id], (err, res) => {
+        client.query(accountQueries.getAccount, [id], (err, res) => {
             if (err) {
                 console.log(err.stack);
             } else {
