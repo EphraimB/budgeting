@@ -7,6 +7,15 @@ const client = new pgmock2();
 
 beforeAll(async () => {
     client.connect();
+
+    const id = accounts[0].account_id;
+
+    client.add(accountQueries.getAccount, [id], {
+        rowCount: accounts.length,
+        rows: [
+            accounts
+        ]
+    });
 });
 
 afterAll(async () => {
@@ -16,8 +25,6 @@ afterAll(async () => {
 describe('GET /accounts/:id', () => {
     test('GET /accounts/:id returns the correct account', () => {
         const id = accounts[0].account_id;
-
-        const request = { params: { id } };
         
         client.query(accountQueries.getAccount, [id], (err, res) => {
             if (err) {
