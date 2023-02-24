@@ -56,7 +56,6 @@ CREATE TABLE IF NOT EXISTS loans (
   loan_description VARCHAR(255) NOT NULL,
   frequency INT NOT NULL,
   loan_begin_date TIMESTAMP NOT NULL,
-  loan_end_date TIMESTAMP,
   date_created TIMESTAMP NOT NULL,
   date_modified TIMESTAMP NOT NULL
 );
