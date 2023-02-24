@@ -22,7 +22,10 @@ const getAccount = (request, response) => {
         response.status(200).json(results.rows);
     });
 
-    return sql;
+    return {
+        text: sql,
+        values: [id]
+    }
 }
 
 // Create account
