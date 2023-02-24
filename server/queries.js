@@ -27,7 +27,7 @@ const getAccount = (request, response) => {
 const createAccount = (request, response) => {
     const { name, type, balance } = request.body;
 
-    pool.query('INSERT INTO accounts (account_name, account_type, account_balance) VALUES ($1, $2, $3) RETURNING *',
+    pool.query(accountQueries.createAccount,
         [name, type, balance],
         (error, results) => {
             if (error) {
@@ -43,7 +43,7 @@ const updateAccount = (request, response) => {
     const { name, type, balance } = request.body;
 
     pool.query(
-        'UPDATE accounts SET account_name = $1, account_type = $2, account_balance = $3 WHERE account_id = $4',
+        accountQueries.updateAccount,
         [name, type, balance, id],
         (error, results) => {
             if (error) {
@@ -58,7 +58,7 @@ const updateAccount = (request, response) => {
 const deleteAccount = (request, response) => {
     const id = parseInt(request.params.id);
 
-    pool.query('DELETE FROM accounts WHERE account_id = $1', [id], (error, results) => {
+    pool.query(accountQueries.deleteAccount, [id], (error, results) => {
         if (error) {
             throw error;
         }
