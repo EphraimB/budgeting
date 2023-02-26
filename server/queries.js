@@ -1,5 +1,5 @@
 const pool = require('./db');
-const { accountQueries, depositQueries } = require('./queryData');
+const { accountQueries, depositQueries, withdrawalQueries } = require('./queryData');
 
 // Get all accounts
 const getAccounts = (request, response) => {
@@ -93,11 +93,11 @@ const createDeposit = (request, response) => {
     const { account_id, amount, description } = request.body;
 
     pool.query(depositQueries.createDeposit, [account_id, amount, description], (error, results) => {
-            if (error) {
-                throw error;
-            }
-            response.status(201).send(`Deposit added with ID: ${results.insertId}`);
-        });
+        if (error) {
+            throw error;
+        }
+        response.status(201).send(`Deposit added with ID: ${results.insertId}`);
+    });
 }
 
 // Update deposit
@@ -106,11 +106,11 @@ const updateDeposit = (request, response) => {
     const { account_id, amount, description } = request.body;
 
     pool.query(depositQueries.updateDeposit, [account_id, amount, description, id], (error, results) => {
-            if (error) {
-                throw error;
-            }
-            response.status(200).send(`Deposit modified with ID: ${id}`);
+        if (error) {
+            throw error;
         }
+        response.status(200).send(`Deposit modified with ID: ${id}`);
+    }
     );
 }
 
@@ -126,11 +126,33 @@ const deleteDeposit = (request, response) => {
     });
 }
 
+// Get all withdrawals
+const getWithdrawals = (request, response) => {
+    pool.query(withdrawalQueries.getWithdrawals, (error, results) => {
+        if (error) {
+            throw error;
+        }
+        response.status(200).json(results.rows);
+    });
+}
+
+// Get withdrawal by id
+const getWithdrawal = (request, response) => {
+    const id = parseInt(request.params.id);
+
+    pool.query(withdrawalQueries.getWithdrawal, [id], (error, results) => {
+        if (error) {
+            throw error;
+        }
+        response.status(200).json(results.rows);
+    });
+}
+
 // Create withdrawal
 const createWithdrawal = (request, response) => {
     const { account_id, amount, description } = request.body;
 
-    pool.query('INSERT INTO withdrawals (account_id, withdrawal_amount, withdrawal_description) VALUES ($1, $2, $3)', [account_id, amount, description], (error, results) => {
+    pool.query(withdrawalQueries.createWithdrawal, [account_id, amount, description], (error, results) => {
         if (error) {
             throw error;
         }
@@ -143,23 +165,19 @@ const updateWithdrawal = (request, response) => {
     const id = parseInt(request.params.id);
     const { account_id, amount, description } = request.body;
 
-    pool.query(
-        'UPDATE withdrawals SET account_id = $1, withdrawal_amount = $2, withdrawal_description = $3 WHERE withdrawal_id = $4',
-        [account_id, amount, description, id],
-        (error, results) => {
-            if (error) {
-                throw error;
-            }
-            response.status(200).send(`Withdrawal modified with ID: ${id}`);
+    pool.query(withdrawalQueries.updateWithdrawal, [account_id, amount, description, id], (error, results) => {
+        if (error) {
+            throw error;
         }
-    );
+        response.status(200).send(`Withdrawal modified with ID: ${id}`);
+    });
 }
 
 // Delete withdrawal
 const deleteWithdrawal = (request, response) => {
     const id = parseInt(request.params.id);
 
-    pool.query('DELETE FROM withdrawals WHERE withdrawal_id = $1', [id], (error, results) => {
+    pool.query(withdrawalQueries.deleteWithdrawal, [id], (error, results) => {
         if (error) {
             throw error;
         }
@@ -168,4 +186,4 @@ const deleteWithdrawal = (request, response) => {
 }
 
 // Export all functions
-module.exports = { getAccounts, getAccount, createAccount, updateAccount, deleteAccount, getDeposits, getDeposit, createDeposit, updateDeposit, deleteDeposit, createWithdrawal, updateWithdrawal, deleteWithdrawal };
+module.exports = { getAccounts, getAccount, createAccount, updateAccount, deleteAccount, getDeposits, getDeposit, createDeposit, updateDeposit, deleteDeposit, getWithdrawals, getWithdrawal, createWithdrawal, updateWithdrawal, deleteWithdrawal };

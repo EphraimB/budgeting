@@ -14,7 +14,16 @@ const accountQueries = {
     deleteDeposit: 'DELETE FROM deposits WHERE deposit_id = $1',
   };
 
+  const withdrawalQueries = {
+    getWithdrawals: 'SELECT * FROM withdrawals ORDER BY withdrawal_id ASC',
+    getWithdrawal: 'SELECT * FROM withdrawals WHERE withdrawal_id = $1',
+    createWithdrawal: 'INSERT INTO withdrawals (account_id, withdrawal_amount, withdrawal_description) VALUES ($1, $2, $3) RETURNING *',
+    updateWithdrawal: 'UPDATE withdrawals SET account_id = $1, withdrawal_amount = $2, withdrawal_description = $3 WHERE withdrawal_id = $4',
+    deleteWithdrawal: 'DELETE FROM withdrawals WHERE withdrawal_id = $1',
+  };
+
   module.exports = {
     accountQueries,
     depositQueries,
+    withdrawalQueries,
   }
