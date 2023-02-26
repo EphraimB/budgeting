@@ -185,5 +185,64 @@ const deleteWithdrawal = (request, response) => {
     });
 }
 
+// Get all expenses
+const getExpenses = (request, response) => {
+    pool.query(expenseQueries.getExpenses, (error, results) => {
+        if (error) {
+            throw error;
+        }
+        response.status(200).json(results.rows);
+    });
+}
+
+// Get expense by id
+const getExpense = (request, response) => {
+    const id = parseInt(request.params.id);
+
+    pool.query(expenseQueries.getExpense, [id], (error, results) => {
+        if (error) {
+            throw error;
+        }
+        response.status(200).json(results.rows);
+    });
+}
+
+// Create expense
+const createExpense = (request, response) => {
+    const { account_id, amount, description } = request.body;
+
+    pool.query(expenseQueries.createExpense, [account_id, amount, description], (error, results) => {
+        if (error) {
+            throw error;
+        }
+        response.status(201).send(`Expense added with ID: ${results.insertId}`);
+    });
+}
+
+// Update expense
+const updateExpense = (request, response) => {
+    const id = parseInt(request.params.id);
+    const { account_id, amount, description } = request.body;
+
+    pool.query(expenseQueries.updateExpense, [account_id, amount, description, id], (error, results) => {
+        if (error) {
+            throw error;
+        }
+        response.status(200).send(`Expense modified with ID: ${id}`);
+    });
+}
+
+// Delete expense
+const deleteExpense = (request, response) => {
+    const id = parseInt(request.params.id);
+
+    pool.query(expenseQueries.deleteExpense, [id], (error, results) => {
+        if (error) {
+            throw error;
+        }
+        response.status(200).send(`Expense deleted with ID: ${id}`);
+    });
+}
+
 // Export all functions
-module.exports = { getAccounts, getAccount, createAccount, updateAccount, deleteAccount, getDeposits, getDeposit, createDeposit, updateDeposit, deleteDeposit, getWithdrawals, getWithdrawal, createWithdrawal, updateWithdrawal, deleteWithdrawal };
+module.exports = { getAccounts, getAccount, createAccount, updateAccount, deleteAccount, getDeposits, getDeposit, createDeposit, updateDeposit, deleteDeposit, getWithdrawals, getWithdrawal, createWithdrawal, updateWithdrawal, deleteWithdrawal, getExpenses, getExpense, createExpense, updateExpense, deleteExpense };
