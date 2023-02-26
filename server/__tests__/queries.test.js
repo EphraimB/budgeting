@@ -1,7 +1,7 @@
 const pgmock2 = require('pgmock2').default;
 const { types } = require('pg');
 const { accounts, deposits, withdrawals, expenses, loans, wishlist } = require('./testData/mockData');
-const { accountQueries, depositQueries } = require('../queryData');
+const { accountQueries, depositQueries, withdrawalQueries } = require('../queryData');
 
 // define a custom handler function for the SELECT query on the accounts table
 const handleSelectAccounts = () => {
@@ -64,6 +64,16 @@ beforeAll(async () => {
         rowCount: 1,
         rows: deposits.filter(d => d.deposit_id === 1)
     });
+
+    client.add(withdrawalQueries.getWithdrawals, [], {
+        rowCount: withdrawals.length,
+        rows: withdrawals
+    });
+
+    client.add(withdrawalQueries.getWithdrawal, [1], {
+        rowCount: 1,
+        rows: withdrawals.filter(w => w.withdrawal_id === 1)
+    });
 });
 
 afterAll(async () => {
@@ -106,6 +116,26 @@ describe('query tests', () => {
             .then((data) => {
                 expect(data.rowCount).toBe(1);
                 expect(data.rows).toEqual(deposits.filter(d => d.deposit_id === 1));
+                console.log(data);
+            })
+            .catch((err) => console.log(err.message));
+    });
+
+    test('GET /withdrawals returns all withdrawals', async () => {
+        await client.query(withdrawalQueries.getWithdrawals)
+            .then((data) => {
+                expect(data.rowCount).toBe(withdrawals.length);
+                expect(data.rows).toEqual(withdrawals);
+                console.log(data);
+            })
+            .catch((err) => console.log(err.message));
+    });
+
+    test('GET /withdrawals/:id returns a single withdrawal', async () => {
+        await client.query(withdrawalQueries.getWithdrawal, [1])
+            .then((data) => {
+                expect(data.rowCount).toBe(1);
+                expect(data.rows).toEqual(withdrawals.filter(w => w.withdrawal_id === 1));
                 console.log(data);
             })
             .catch((err) => console.log(err.message));
