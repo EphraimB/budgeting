@@ -1,5 +1,5 @@
 const pool = require('./db');
-const { accountQueries, depositQueries, withdrawalQueries } = require('./queryData');
+const { accountQueries, depositQueries, withdrawalQueries, expenseQueries, loanQueries, wishlistQueries } = require('./queryData');
 
 // Get all accounts
 const getAccounts = (request, response) => {
@@ -303,5 +303,64 @@ const deleteLoan = (request, response) => {
     });
 }
 
+// Get all wishlists
+const getWishlists = (request, response) => {
+    pool.query(wishlistQueries.getWishlists, (error, results) => {
+        if (error) {
+            throw error;
+        }
+        response.status(200).json(results.rows);
+    });
+}
+
+// Get wishlist by id
+const getWishlist = (request, response) => {
+    const id = parseInt(request.params.id);
+
+    pool.query(wishlistQueries.getWishlist, [id], (error, results) => {
+        if (error) {
+            throw error;
+        }
+        response.status(200).json(results.rows);
+    });
+}
+
+// Create wishlist
+const createWishlist = (request, response) => {
+    const { name, description } = request.body;
+
+    pool.query(wishlistQueries.createWishlist, [name, description], (error, results) => {
+        if (error) {
+            throw error;
+        }
+        response.status(201).send(`Wishlist added with ID: ${results.insertId}`);
+    });
+}
+
+// Update wishlist
+const updateWishlist = (request, response) => {
+    const id = parseInt(request.params.id);
+    const { name, description } = request.body;
+
+    pool.query(wishlistQueries.updateWishlist, [name, description, id], (error, results) => {
+        if (error) {
+            throw error;
+        }
+        response.status(200).send(`Wishlist modified with ID: ${id}`);
+    });
+}
+
+// Delete wishlist
+const deleteWishlist = (request, response) => {
+    const id = parseInt(request.params.id);
+
+    pool.query(wishlistQueries.deleteWishlist, [id], (error, results) => {
+        if (error) {
+            throw error;
+        }
+        response.status(200).send(`Wishlist deleted with ID: ${id}`);
+    });
+}
+
 // Export all functions
-module.exports = { getAccounts, getAccount, createAccount, updateAccount, deleteAccount, getDeposits, getDeposit, createDeposit, updateDeposit, deleteDeposit, getWithdrawals, getWithdrawal, createWithdrawal, updateWithdrawal, deleteWithdrawal, getExpenses, getExpense, createExpense, updateExpense, deleteExpense, getLoans, getLoan, createLoan, updateLoan, deleteLoan };
+module.exports = { getAccounts, getAccount, createAccount, updateAccount, deleteAccount, getDeposits, getDeposit, createDeposit, updateDeposit, deleteDeposit, getWithdrawals, getWithdrawal, createWithdrawal, updateWithdrawal, deleteWithdrawal, getExpenses, getExpense, createExpense, updateExpense, deleteExpense, getLoans, getLoan, createLoan, updateLoan, deleteLoan, getWishlists, getWishlist, createWishlist, updateWishlist, deleteWishlist };

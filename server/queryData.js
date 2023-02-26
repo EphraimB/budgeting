@@ -22,7 +22,7 @@ const accountQueries = {
     deleteWithdrawal: 'DELETE FROM withdrawals WHERE withdrawal_id = $1',
   };
 
-  const expensesQueries = {
+  const expenseQueries = {
     getExpenses: 'SELECT * FROM expenses ORDER BY expense_id ASC',
     getExpense: 'SELECT * FROM expenses WHERE expense_id = $1',
     createExpense: 'INSERT INTO expenses (account_id, expense_amount, expense_description) VALUES ($1, $2, $3) RETURNING *',
@@ -38,10 +38,19 @@ const accountQueries = {
     deleteLoan: 'DELETE FROM loans WHERE loan_id = $1',
   };
 
+  const wishlistQueries = {
+    getWishlists: 'SELECT * FROM wishlist ORDER BY wishlist_id ASC',
+    getWishlist: 'SELECT * FROM wishlist WHERE wishlist_id = $1',
+    createWishlist: 'INSERT INTO wishlist (account_id, wishlist_amount, wishlist_description) VALUES ($1, $2, $3) RETURNING *',
+    updateWishlist: 'UPDATE wishlist SET account_id = $1, wishlist_amount = $2, wishlist_description = $3 WHERE wishlist_id = $4',
+    deleteWishlist: 'DELETE FROM wishlist WHERE wishlist_id = $1',
+  };
+
   module.exports = {
     accountQueries,
     depositQueries,
     withdrawalQueries,
-    expensesQueries,
+    expenseQueries,
     loanQueries,
+    wishlistQueries,
   }

@@ -18,6 +18,6 @@ app.use('/deposits', depositsRouter);
 app.use('/withdrawals', withdrawalsRouter);
 app.use('/expenses', expensesRouter);
 app.use('/loans', loansRouter);
-app.use('/wishlist', wishlistRouter);
+app.use('/wishlists', wishlistRouter);
 
 module.exports = app;
