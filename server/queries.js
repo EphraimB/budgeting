@@ -1,5 +1,5 @@
 const pool = require('./db');
-const { accountQueries } = require('./queryData');
+const { accountQueries, depositQueries } = require('./queryData');
 
 // Get all accounts
 const getAccounts = (request, response) => {
@@ -14,7 +14,7 @@ const getAccounts = (request, response) => {
 // Get account by id
 const getAccount = (request, response) => {
     const id = parseInt(request.params.id);
-    
+
     pool.query(accountQueries.getAccount, [id], (error, results) => {
         if (error) {
             throw error;
@@ -66,16 +66,38 @@ const deleteAccount = (request, response) => {
     });
 }
 
+// Get all deposits
+const getDeposits = (request, response) => {
+    pool.query(depositQueries.getDeposits, (error, results) => {
+        if (error) {
+            throw error;
+        }
+        response.status(200).json(results.rows);
+    });
+}
+
+// Get deposit by id
+const getDeposit = (request, response) => {
+    const id = parseInt(request.params.id);
+
+    pool.query(depositQueries.getDeposit, [id], (error, results) => {
+        if (error) {
+            throw error;
+        }
+        response.status(200).json(results.rows);
+    });
+}
+
 // Create deposit
 const createDeposit = (request, response) => {
     const { account_id, amount, description } = request.body;
 
-    pool.query('INSERT INTO deposits (account_id, deposit_amount, deposit_description) VALUES ($1, $2, $3)', [account_id, amount, description], (error, results) => {
-        if (error) {
-            throw error;
-        }
-        response.status(201).send(`Deposit added with ID: ${results.insertId}`);
-    });
+    pool.query(depositQueries.createDeposit, [account_id, amount, description], (error, results) => {
+            if (error) {
+                throw error;
+            }
+            response.status(201).send(`Deposit added with ID: ${results.insertId}`);
+        });
 }
 
 // Update deposit
@@ -83,10 +105,7 @@ const updateDeposit = (request, response) => {
     const id = parseInt(request.params.id);
     const { account_id, amount, description } = request.body;
 
-    pool.query(
-        'UPDATE deposits SET account_id = $1, deposit_amount = $2, deposit_description = $3 WHERE deposit_id = $4',
-        [account_id, amount, description, id],
-        (error, results) => {
+    pool.query(depositQueries.updateDeposit, [account_id, amount, description, id], (error, results) => {
             if (error) {
                 throw error;
             }
@@ -99,7 +118,7 @@ const updateDeposit = (request, response) => {
 const deleteDeposit = (request, response) => {
     const id = parseInt(request.params.id);
 
-    pool.query('DELETE FROM deposits WHERE deposit_id = $1', [id], (error, results) => {
+    pool.query(depositQueries.deleteDeposit, [id], (error, results) => {
         if (error) {
             throw error;
         }
@@ -149,4 +168,4 @@ const deleteWithdrawal = (request, response) => {
 }
 
 // Export all functions
-module.exports = { getAccounts, getAccount, createAccount, updateAccount, deleteAccount, createDeposit, updateDeposit, deleteDeposit, createWithdrawal, updateWithdrawal, deleteWithdrawal };
+module.exports = { getAccounts, getAccount, createAccount, updateAccount, deleteAccount, getDeposits, getDeposit, createDeposit, updateDeposit, deleteDeposit, createWithdrawal, updateWithdrawal, deleteWithdrawal };
