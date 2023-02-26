@@ -244,5 +244,64 @@ const deleteExpense = (request, response) => {
     });
 }
 
+// Get all loans
+const getLoans = (request, response) => {
+    pool.query(loanQueries.getLoans, (error, results) => {
+        if (error) {
+            throw error;
+        }
+        response.status(200).json(results.rows);
+    });
+}
+
+// Get loan by id
+const getLoan = (request, response) => {
+    const id = parseInt(request.params.id);
+
+    pool.query(loanQueries.getLoan, [id], (error, results) => {
+        if (error) {
+            throw error;
+        }
+        response.status(200).json(results.rows);
+    });
+}
+
+// Create loan
+const createLoan = (request, response) => {
+    const { account_id, amount, description } = request.body;
+
+    pool.query(loanQueries.createLoan, [account_id, amount, description], (error, results) => {
+        if (error) {
+            throw error;
+        }
+        response.status(201).send(`Loan added with ID: ${results.insertId}`);
+    });
+}
+
+// Update loan
+const updateLoan = (request, response) => {
+    const id = parseInt(request.params.id);
+    const { account_id, amount, description } = request.body;
+
+    pool.query(loanQueries.updateLoan, [account_id, amount, description, id], (error, results) => {
+        if (error) {
+            throw error;
+        }
+        response.status(200).send(`Loan modified with ID: ${id}`);
+    });
+}
+
+// Delete loan
+const deleteLoan = (request, response) => {
+    const id = parseInt(request.params.id);
+
+    pool.query(loanQueries.deleteLoan, [id], (error, results) => {
+        if (error) {
+            throw error;
+        }
+        response.status(200).send(`Loan deleted with ID: ${id}`);
+    });
+}
+
 // Export all functions
-module.exports = { getAccounts, getAccount, createAccount, updateAccount, deleteAccount, getDeposits, getDeposit, createDeposit, updateDeposit, deleteDeposit, getWithdrawals, getWithdrawal, createWithdrawal, updateWithdrawal, deleteWithdrawal, getExpenses, getExpense, createExpense, updateExpense, deleteExpense };
+module.exports = { getAccounts, getAccount, createAccount, updateAccount, deleteAccount, getDeposits, getDeposit, createDeposit, updateDeposit, deleteDeposit, getWithdrawals, getWithdrawal, createWithdrawal, updateWithdrawal, deleteWithdrawal, getExpenses, getExpense, createExpense, updateExpense, deleteExpense, getLoans, getLoan, createLoan, updateLoan, deleteLoan };

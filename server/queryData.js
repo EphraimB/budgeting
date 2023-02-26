@@ -22,8 +22,26 @@ const accountQueries = {
     deleteWithdrawal: 'DELETE FROM withdrawals WHERE withdrawal_id = $1',
   };
 
+  const expensesQueries = {
+    getExpenses: 'SELECT * FROM expenses ORDER BY expense_id ASC',
+    getExpense: 'SELECT * FROM expenses WHERE expense_id = $1',
+    createExpense: 'INSERT INTO expenses (account_id, expense_amount, expense_description) VALUES ($1, $2, $3) RETURNING *',
+    updateExpense: 'UPDATE expenses SET account_id = $1, expense_amount = $2, expense_description = $3 WHERE expense_id = $4',
+    deleteExpense: 'DELETE FROM expenses WHERE expense_id = $1',
+  };
+
+  const loanQueries = {
+    getLoans: 'SELECT * FROM loans ORDER BY loan_id ASC',
+    getLoan: 'SELECT * FROM loans WHERE loan_id = $1',
+    createLoan: 'INSERT INTO loans (account_id, loan_amount, loan_description) VALUES ($1, $2, $3) RETURNING *',
+    updateLoan: 'UPDATE loans SET account_id = $1, loan_amount = $2, loan_description = $3 WHERE loan_id = $4',
+    deleteLoan: 'DELETE FROM loans WHERE loan_id = $1',
+  };
+
   module.exports = {
     accountQueries,
     depositQueries,
     withdrawalQueries,
+    expensesQueries,
+    loanQueries,
   }
