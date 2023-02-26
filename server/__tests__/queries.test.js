@@ -1,7 +1,7 @@
 const pgmock2 = require('pgmock2').default;
 const { types } = require('pg');
 const { accounts, deposits, withdrawals, expenses, loans, wishlist } = require('./testData/mockData');
-const { accountQueries, depositQueries, withdrawalQueries } = require('../queryData');
+const { accountQueries, depositQueries, withdrawalQueries, expenseQueries, loanQueries, wishlistQueries } = require('../queryData');
 
 // define a custom handler function for the SELECT query on the accounts table
 const handleSelectAccounts = () => {
@@ -74,6 +74,36 @@ beforeAll(async () => {
         rowCount: 1,
         rows: withdrawals.filter(w => w.withdrawal_id === 1)
     });
+
+    client.add(expenseQueries.getExpenses, [], {
+        rowCount: expenses.length,
+        rows: expenses
+    });
+
+    client.add(expenseQueries.getExpense, [1], {
+        rowCount: 1,
+        rows: expenses.filter(e => e.expense_id === 1)
+    });
+
+    client.add(loanQueries.getLoans, [], {
+        rowCount: loans.length,
+        rows: loans
+    });
+
+    client.add(loanQueries.getLoan, [1], {
+        rowCount: 1,
+        rows: loans.filter(l => l.loan_id === 1)
+    });
+
+    client.add(wishlistQueries.getWishlists, [], {
+        rowCount: wishlist.length,
+        rows: wishlist
+    });
+
+    client.add(wishlistQueries.getWishlist, [1], {
+        rowCount: 1,
+        rows: wishlist.filter(w => w.wishlist_id === 1)
+    });
 });
 
 afterAll(async () => {
@@ -136,6 +166,66 @@ describe('query tests', () => {
             .then((data) => {
                 expect(data.rowCount).toBe(1);
                 expect(data.rows).toEqual(withdrawals.filter(w => w.withdrawal_id === 1));
+                console.log(data);
+            })
+            .catch((err) => console.log(err.message));
+    });
+
+    test('GET /expenses returns all expenses', async () => {
+        await client.query(expenseQueries.getExpenses)
+            .then((data) => {
+                expect(data.rowCount).toBe(expenses.length);
+                expect(data.rows).toEqual(expenses);
+                console.log(data);
+            })
+            .catch((err) => console.log(err.message));
+    });
+
+    test('GET /expenses/:id returns a single expense', async () => {
+        await client.query(expenseQueries.getExpense, [1])
+            .then((data) => {
+                expect(data.rowCount).toBe(1);
+                expect(data.rows).toEqual(expenses.filter(e => e.expense_id === 1));
+                console.log(data);
+            })
+            .catch((err) => console.log(err.message));
+    });
+
+    test('GET /loans returns all loans', async () => {
+        await client.query(loanQueries.getLoans)
+            .then((data) => {
+                expect(data.rowCount).toBe(loans.length);
+                expect(data.rows).toEqual(loans);
+                console.log(data);
+            })
+            .catch((err) => console.log(err.message));
+    });
+
+    test('GET /loans/:id returns a single loan', async () => {
+        await client.query(loanQueries.getLoan, [1])
+            .then((data) => {
+                expect(data.rowCount).toBe(1);
+                expect(data.rows).toEqual(loans.filter(l => l.loan_id === 1));
+                console.log(data);
+            })
+            .catch((err) => console.log(err.message));
+    });
+
+    test('GET /wishlists returns all wishlists', async () => {
+        await client.query(wishlistQueries.getWishlists)
+            .then((data) => {
+                expect(data.rowCount).toBe(wishlist.length);
+                expect(data.rows).toEqual(wishlist);
+                console.log(data);
+            })
+            .catch((err) => console.log(err.message));
+    });
+
+    test('GET /wishlists/:id returns a single wishlist', async () => {
+        await client.query(wishlistQueries.getWishlist, [1])
+            .then((data) => {
+                expect(data.rowCount).toBe(1);
+                expect(data.rows).toEqual(wishlist.filter(w => w.wishlist_id === 1));
                 console.log(data);
             })
             .catch((err) => console.log(err.message));
