@@ -1,7 +1,7 @@
 const pgmock2 = require('pgmock2').default;
 const { types } = require('pg');
 const { accounts, deposits, withdrawals, expenses, loans, wishlist } = require('./testData/mockData');
-const { accountQueries } = require('../queryData');
+const { accountQueries, depositQueries } = require('../queryData');
 
 // define a custom handler function for the SELECT query on the accounts table
 const handleSelectAccounts = () => {
@@ -54,6 +54,16 @@ beforeAll(async () => {
         rowCount: 1,
         rows: handleSelectAccounts().filter(a => a.account_id === 1)
     });
+
+    client.add(depositQueries.getDeposits, [], {
+        rowCount: deposits.length,
+        rows: deposits
+    });
+
+    client.add(depositQueries.getDeposit, [1], {
+        rowCount: 1,
+        rows: deposits.filter(d => d.deposit_id === 1)
+    });
 });
 
 afterAll(async () => {
@@ -76,6 +86,26 @@ describe('query tests', () => {
             .then((data) => {
                 expect(data.rowCount).toBe(1);
                 expect(data.rows).toEqual(handleSelectAccounts().filter(a => a.account_id === 1));
+                console.log(data);
+            })
+            .catch((err) => console.log(err.message));
+    });
+
+    test('GET /deposits returns all deposits', async () => {
+        await client.query(depositQueries.getDeposits)
+            .then((data) => {
+                expect(data.rowCount).toBe(deposits.length);
+                expect(data.rows).toEqual(deposits);
+                console.log(data);
+            })
+            .catch((err) => console.log(err.message));
+    });
+
+    test('GET /deposits/:id returns a single deposit', async () => {
+        await client.query(depositQueries.getDeposit, [1])
+            .then((data) => {
+                expect(data.rowCount).toBe(1);
+                expect(data.rows).toEqual(deposits.filter(d => d.deposit_id === 1));
                 console.log(data);
             })
             .catch((err) => console.log(err.message));
