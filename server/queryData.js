@@ -47,7 +47,7 @@ const accountQueries = {
   };
 
   const currentBalanceQueries = {
-    getCurrentBalance: "SELECT COALESCE(accounts.account_balance::money, '0') + COALESCE(SUM(deposits.deposit_amount::money), '0') - COALESCE(SUM(withdrawals.withdrawal_amount::money), '0') AS account_balance FROM accounts LEFT JOIN deposits ON accounts.account_id = deposits.account_id LEFT JOIN withdrawals ON accounts.account_id = withdrawals.account_id WHERE accounts.account_id = $1 GROUP BY accounts.account_id",
+    getCurrentBalance: "SELECT accounts.account_name, COALESCE(accounts.account_balance::money, '0') + COALESCE(SUM(deposits.deposit_amount::money), '0') - COALESCE(SUM(withdrawals.withdrawal_amount::money), '0') AS account_balance FROM accounts LEFT JOIN deposits ON accounts.account_id = deposits.account_id LEFT JOIN withdrawals ON accounts.account_id = withdrawals.account_id WHERE accounts.account_id = $1 GROUP BY accounts.account_id",
   };
 
   module.exports = {
