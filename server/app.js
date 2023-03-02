@@ -7,6 +7,7 @@ const withdrawalsRouter = require('./routes/withdrawalsRouter');
 const expensesRouter = require('./routes/expensesRouter');
 const loansRouter = require('./routes/loansRouter');
 const wishlistRouter = require('./routes/wishlistRouter');
+const currentBalanceRouter = require('./routes/currentBalanceRouter');
 
 const app = express();
 
@@ -19,5 +20,6 @@ app.use('/withdrawals', withdrawalsRouter);
 app.use('/expenses', expensesRouter);
 app.use('/loans', loansRouter);
 app.use('/wishlists', wishlistRouter);
+app.use('/currentBalance', currentBalanceRouter);
 
 module.exports = app;

@@ -1,5 +1,5 @@
 const pool = require('./db');
-const { accountQueries, depositQueries, withdrawalQueries, expenseQueries, loanQueries, wishlistQueries } = require('./queryData');
+const { accountQueries, depositQueries, withdrawalQueries, expenseQueries, loanQueries, wishlistQueries, currentBalanceQueries } = require('./queryData');
 
 // Get all accounts
 const getAccounts = (request, response) => {
@@ -362,5 +362,17 @@ const deleteWishlist = (request, response) => {
     });
 }
 
+// Get current balance of account based on deposits and withdrawals
+const getCurrentBalance = (request, response) => {
+    const id = parseInt(request.body.account_id);
+    
+    pool.query(currentBalanceQueries.getCurrentBalance, [id], (error, results) => {
+        if (error) {
+            throw error;
+        }
+        response.status(200).json(results.rows);
+    });
+}
+
 // Export all functions
-module.exports = { getAccounts, getAccount, createAccount, updateAccount, deleteAccount, getDeposits, getDeposit, createDeposit, updateDeposit, deleteDeposit, getWithdrawals, getWithdrawal, createWithdrawal, updateWithdrawal, deleteWithdrawal, getExpenses, getExpense, createExpense, updateExpense, deleteExpense, getLoans, getLoan, createLoan, updateLoan, deleteLoan, getWishlists, getWishlist, createWishlist, updateWishlist, deleteWishlist };
+module.exports = { getAccounts, getAccount, createAccount, updateAccount, deleteAccount, getDeposits, getDeposit, createDeposit, updateDeposit, deleteDeposit, getWithdrawals, getWithdrawal, createWithdrawal, updateWithdrawal, deleteWithdrawal, getExpenses, getExpense, createExpense, updateExpense, deleteExpense, getLoans, getLoan, createLoan, updateLoan, deleteLoan, getWishlists, getWishlist, createWishlist, updateWishlist, deleteWishlist, getCurrentBalance };
