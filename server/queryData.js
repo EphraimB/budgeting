@@ -7,6 +7,7 @@ const accountQueries = {
   };
 
   const depositQueries = {
+    getDepositsByAccount: 'SELECT * FROM deposits WHERE account_id = $1 ORDER BY date_created DESC',
     getDeposits: 'SELECT * FROM deposits ORDER BY deposit_id ASC',
     getDeposit: 'SELECT * FROM deposits WHERE deposit_id = $1',
     createDeposit: 'INSERT INTO deposits (account_id, deposit_amount, deposit_description) VALUES ($1, $2, $3) RETURNING *',

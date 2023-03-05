@@ -66,6 +66,25 @@ const deleteAccount = (request, response) => {
     });
 }
 
+// Get deposits by account
+const getDepositsByAccount = (request, response, next) => {
+    const accountId = parseInt(request.params.accountId);
+    const months = parseInt(request.params.months);
+
+    pool.query(depositQueries.getDepositsByAccount, [accountId], (error, results) => {
+        if (error) {
+            throw error;
+        }
+        
+        const deposits = {
+            deposits: results.rows,
+        }
+        request.deposits = deposits;
+
+        next();
+    });
+}
+
 // Get all deposits
 const getDeposits = (request, response) => {
     pool.query(depositQueries.getDeposits, (error, results) => {
@@ -364,9 +383,9 @@ const deleteWishlist = (request, response) => {
 
 // Get current balance of account based on deposits and withdrawals
 const getCurrentBalance = (request, response, next) => {
-    const id = parseInt(request.params.id);
-    
-    pool.query(currentBalanceQueries.getCurrentBalance, [id], (error, results) => {
+    const accountId = parseInt(request.params.accountId);
+
+    pool.query(currentBalanceQueries.getCurrentBalance, [accountId], (error, results) => {
         if (error) {
             throw error;
         }
@@ -379,4 +398,4 @@ const getCurrentBalance = (request, response, next) => {
 }
 
 // Export all functions
-module.exports = { getAccounts, getAccount, createAccount, updateAccount, deleteAccount, getDeposits, getDeposit, createDeposit, updateDeposit, deleteDeposit, getWithdrawals, getWithdrawal, createWithdrawal, updateWithdrawal, deleteWithdrawal, getExpenses, getExpense, createExpense, updateExpense, deleteExpense, getLoans, getLoan, createLoan, updateLoan, deleteLoan, getWishlists, getWishlist, createWishlist, updateWishlist, deleteWishlist, getCurrentBalance };
+module.exports = { getAccounts, getAccount, createAccount, updateAccount, deleteAccount, getDepositsByAccount, getDeposits, getDeposit, createDeposit, updateDeposit, deleteDeposit, getWithdrawals, getWithdrawal, createWithdrawal, updateWithdrawal, deleteWithdrawal, getExpenses, getExpense, createExpense, updateExpense, deleteExpense, getLoans, getLoan, createLoan, updateLoan, deleteLoan, getWishlists, getWishlist, createWishlist, updateWishlist, deleteWishlist, getCurrentBalance };
