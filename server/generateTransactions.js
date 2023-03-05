@@ -1,4 +1,5 @@
 const generateTransactions = (request, response, next) => {
+    const generateExpenses = require('./generateExpenses.js');
     const accountId = parseInt(request.params.accountId);
     const type = parseInt(request.params.type);
     const months = parseInt(request.params.months);
@@ -38,16 +39,17 @@ const generateTransactions = (request, response, next) => {
     } else if (type === 1) {
         transactions.push(request.expenses
             .map(expense => ({
-                expense_id: expense.expense_id,
-                date_created: expense.date_created,
-                date_modified: expense.date_modified,
-                expense_begin_date: expense.expense_begin_date,
+                title: expense.expense_title,
+                description: expense.expense_description,
                 date: expense.expense_begin_date <= new Date() ? new Date().setDate(expense.expense_begin_date) : expense.expense_begin_date,
-                type: 1,
+                type: 0,
                 amount: parseFloat(expense.expense_amount.substring(1)),
-                balance: balance -= parseFloat(expense.expense_amount.substring(1))
+                balance: balance -= parseFloat(expense.expense_amount.substring(1)),
             }))
         );
+
+        transactions.push(generateExpenses(request.expenses[0], balance, months));
+
         transactions.sort((a, b) => new Date(a.date) - new Date(b.date));
     }
 
