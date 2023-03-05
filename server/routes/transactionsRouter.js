@@ -7,7 +7,7 @@ router.get('/:accountId/:type/:months', getCurrentBalance, getDepositsByAccount,
     const accountId = parseInt(request.params.accountId);
     const type = parseInt(request.params.type);
     const months = parseInt(request.params.months);
-    const currentBalance = request.currentBalance;
+    const currentBalance = parseFloat(request.currentBalance.substring(1));
     const transactions = [];
 
     if (accountId < 1) {
@@ -25,7 +25,8 @@ router.get('/:accountId/:type/:months', getCurrentBalance, getDepositsByAccount,
                 date_created: deposit.date_created,
                 date_modified: deposit.date_modified,
                 type: 1,
-                amount: deposit.deposit_amount
+                amount: parseFloat(deposit.deposit_amount.substring(1)),
+                balance: parseFloat(deposit.deposit_amount.substring(1)) + currentBalance
             }))
             .concat(request.withdrawals
                 .map(withdrawal => ({
@@ -33,7 +34,8 @@ router.get('/:accountId/:type/:months', getCurrentBalance, getDepositsByAccount,
                     date_created: withdrawal.date_created,
                     date_modified: withdrawal.date_modified,
                     type: 0,
-                    amount: withdrawal.withdrawal_amount
+                    amount: parseFloat(withdrawal.withdrawal_amount.substring(1)),
+                    balance: currentBalance - parseFloat(withdrawal.withdrawal_amount.substring(1))
                 }))
             ));
         transactions.sort((a, b) => new Date(b.date_created) - new Date(a.date_created));
