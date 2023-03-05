@@ -19,10 +19,24 @@ router.get('/:accountId/:type/:months', getCurrentBalance, getDepositsByAccount,
     }
 
     if (type === 0) {
-        transactions.push({
-            deposits: request.deposits,
-            withdrawals: request.withdrawals,
-        });
+        transactions.push(request.deposits
+            .map(deposit => ({
+                deposit_id: deposit.deposit_id,
+                date_created: deposit.date_created,
+                date_modified: deposit.date_modified,
+                type: 1,
+                amount: deposit.deposit_amount
+            }))
+            .concat(request.withdrawals
+                .map(withdrawal => ({
+                    withdrawal_id: withdrawal.withdrawal_id,
+                    date_created: withdrawal.date_created,
+                    date_modified: withdrawal.date_modified,
+                    type: 0,
+                    amount: withdrawal.withdrawal_amount
+                }))
+            ));
+        transactions.sort((a, b) => new Date(b.date_created) - new Date(a.date_created));
     }
 
     response.json({ account_id: accountId, currentBalance: currentBalance, transactions });
