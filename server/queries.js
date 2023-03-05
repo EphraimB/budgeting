@@ -222,7 +222,9 @@ const getExpensesByAccount = (request, response, next) => {
     const accountId = parseInt(request.params.accountId);
     const months = parseInt(request.params.months);
 
-    pool.query(expenseQueries.getExpensesByAccount, [accountId], (error, results) => {
+    console.log(expenseQueries.getExpensesByAccount);
+
+    pool.query(expenseQueries.getExpensesByAccount, [accountId, months], (error, results) => {
         if (error) {
             throw error;
         }
