@@ -1,14 +1,14 @@
 const express = require('express');
 const router = express.Router();
-const { getCurrentBalance, getDepositsByAccount } = require('../queries.js');
+const { getCurrentBalance, getDepositsByAccount, getWithdrawalsByAccount } = require('../queries.js');
 
 // Generate the transactions based on current balance, expenses, and loans
-router.get('/:accountId/:type/:months', getCurrentBalance, getDepositsByAccount, (request, response) => {
+router.get('/:accountId/:type/:months', getCurrentBalance, getDepositsByAccount, getWithdrawalsByAccount, (request, response) => {
     const accountId = parseInt(request.params.accountId);
     const type = parseInt(request.params.type);
     const months = parseInt(request.params.months);
     const currentBalance = request.currentBalance;
-    let transactions = {};
+    const transactions = [];
 
     if (accountId < 1) {
         response.status(400).send('Invalid account id');
@@ -19,9 +19,10 @@ router.get('/:accountId/:type/:months', getCurrentBalance, getDepositsByAccount,
     }
 
     if (type === 0) {
-        transactions = {
+        transactions.push({
             deposits: request.deposits,
-        };
+            withdrawals: request.withdrawals,
+        });
     }
 
     response.json({ account_id: accountId, currentBalance: currentBalance, transactions });

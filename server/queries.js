@@ -76,10 +76,7 @@ const getDepositsByAccount = (request, response, next) => {
             throw error;
         }
         
-        const deposits = {
-            deposits: results.rows,
-        }
-        request.deposits = deposits;
+        request.deposits = results.rows;
 
         next();
     });
@@ -142,6 +139,22 @@ const deleteDeposit = (request, response) => {
             throw error;
         }
         response.status(200).send(`Deposit deleted with ID: ${id}`);
+    });
+}
+
+// Get withdrawals by account
+const getWithdrawalsByAccount = (request, response, next) => {
+    const accountId = parseInt(request.params.accountId);
+    const months = parseInt(request.params.months);
+
+    pool.query(withdrawalQueries.getWithdrawalsByAccount, [accountId], (error, results) => {
+        if (error) {
+            throw error;
+        }
+
+        request.withdrawals = results.rows;
+
+        next();
     });
 }
 
@@ -398,4 +411,4 @@ const getCurrentBalance = (request, response, next) => {
 }
 
 // Export all functions
-module.exports = { getAccounts, getAccount, createAccount, updateAccount, deleteAccount, getDepositsByAccount, getDeposits, getDeposit, createDeposit, updateDeposit, deleteDeposit, getWithdrawals, getWithdrawal, createWithdrawal, updateWithdrawal, deleteWithdrawal, getExpenses, getExpense, createExpense, updateExpense, deleteExpense, getLoans, getLoan, createLoan, updateLoan, deleteLoan, getWishlists, getWishlist, createWishlist, updateWishlist, deleteWishlist, getCurrentBalance };
+module.exports = { getAccounts, getAccount, createAccount, updateAccount, deleteAccount, getDepositsByAccount, getDeposits, getDeposit, createDeposit, updateDeposit, deleteDeposit, getWithdrawalsByAccount, getWithdrawals, getWithdrawal, createWithdrawal, updateWithdrawal, deleteWithdrawal, getExpenses, getExpense, createExpense, updateExpense, deleteExpense, getLoans, getLoan, createLoan, updateLoan, deleteLoan, getWishlists, getWishlist, createWishlist, updateWishlist, deleteWishlist, getCurrentBalance };

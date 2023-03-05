@@ -16,6 +16,7 @@ const accountQueries = {
   };
 
   const withdrawalQueries = {
+    getWithdrawalsByAccount: 'SELECT * FROM withdrawals WHERE account_id = $1 ORDER BY date_created DESC',
     getWithdrawals: 'SELECT * FROM withdrawals ORDER BY withdrawal_id ASC',
     getWithdrawal: 'SELECT * FROM withdrawals WHERE withdrawal_id = $1',
     createWithdrawal: 'INSERT INTO withdrawals (account_id, withdrawal_amount, withdrawal_description) VALUES ($1, $2, $3) RETURNING *',
