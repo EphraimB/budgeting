@@ -364,7 +364,7 @@ const deleteWishlist = (request, response) => {
 
 // Get current balance of account based on deposits and withdrawals
 const getCurrentBalance = (request, response, next) => {
-    const id = parseInt(request.body.account_id);
+    const id = parseInt(request.params.id);
     
     pool.query(currentBalanceQueries.getCurrentBalance, [id], (error, results) => {
         if (error) {

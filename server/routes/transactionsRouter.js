@@ -9,7 +9,13 @@ router.get('/:id/:type/:months', getCurrentBalance, (request, response) => {
     const months = parseInt(request.params.months);
     const currentBalance = request.currentBalance;
 
-
+    if (id < 1) {
+        response.status(400).send('Invalid account id');
+    } else if (type < 1 || type > 2) {
+        response.status(400).send('Invalid transaction type');
+    } else if (months < 1) {
+        response.status(400).send('Invalid number of months');
+    }
 
     response.json({ account_id: id, currentBalance: currentBalance, transactions: { type: type, months: months } });
 });
