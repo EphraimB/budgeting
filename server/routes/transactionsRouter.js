@@ -47,7 +47,7 @@ router.get('/:accountId/:type/:months', getCurrentBalance, getDepositsByAccount,
                 date_created: expense.date_created,
                 date_modified: expense.date_modified,
                 expense_begin_date: expense.expense_begin_date,
-                date: new Date(new Date().getFullYear(), new Date().getMonth(), expense.expense_begin_date.getDate(), expense.expense_begin_date.getHours(), expense.expense_begin_date.getMinutes(), expense.expense_begin_date.getSeconds()),
+                date: expense.expense_begin_date <= new Date() ? new Date(new Date().getFullYear(), new Date().getMonth(), expense.expense_begin_date.getDate(), expense.expense_begin_date.getHours(), expense.expense_begin_date.getMinutes(), expense.expense_begin_date.getSeconds()) : expense.expense_begin_date,
                 type: 1,
                 amount: parseFloat(expense.expense_amount.substring(1)),
                 balance: currentBalance - parseFloat(expense.expense_amount.substring(1))
