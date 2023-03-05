@@ -25,14 +25,16 @@ const accountQueries = {
   };
 
   const expenseQueries = {
+    getExpensesByAccount: 'SELECT * FROM expenses WHERE account_id = $1 ORDER BY date_created DESC',
     getExpenses: 'SELECT * FROM expenses ORDER BY expense_id ASC',
     getExpense: 'SELECT * FROM expenses WHERE expense_id = $1',
-    createExpense: 'INSERT INTO expenses (account_id, expense_amount, expense_description) VALUES ($1, $2, $3) RETURNING *',
+    createExpense: 'INSERT INTO expenses (account_id, expense_amount, expense_title, expense_description, frequency, expense_begin_date) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *',
     updateExpense: 'UPDATE expenses SET account_id = $1, expense_amount = $2, expense_description = $3 WHERE expense_id = $4',
     deleteExpense: 'DELETE FROM expenses WHERE expense_id = $1',
   };
 
   const loanQueries = {
+    getLoansByAccount: 'SELECT * FROM loans WHERE account_id = $1 ORDER BY date_created DESC',
     getLoans: 'SELECT * FROM loans ORDER BY loan_id ASC',
     getLoan: 'SELECT * FROM loans WHERE loan_id = $1',
     createLoan: 'INSERT INTO loans (account_id, loan_amount, loan_description) VALUES ($1, $2, $3) RETURNING *',
@@ -41,6 +43,7 @@ const accountQueries = {
   };
 
   const wishlistQueries = {
+    getWishlistsByAccount: 'SELECT * FROM wishlist WHERE account_id = $1 ORDER BY date_created DESC',
     getWishlists: 'SELECT * FROM wishlist ORDER BY wishlist_id ASC',
     getWishlist: 'SELECT * FROM wishlist WHERE wishlist_id = $1',
     createWishlist: 'INSERT INTO wishlist (account_id, wishlist_amount, wishlist_description) VALUES ($1, $2, $3) RETURNING *',

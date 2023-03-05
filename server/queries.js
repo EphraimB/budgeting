@@ -217,6 +217,22 @@ const deleteWithdrawal = (request, response) => {
     });
 }
 
+// Get expenses by account
+const getExpensesByAccount = (request, response, next) => {
+    const accountId = parseInt(request.params.accountId);
+    const months = parseInt(request.params.months);
+
+    pool.query(expenseQueries.getExpensesByAccount, [accountId], (error, results) => {
+        if (error) {
+            throw error;
+        }
+
+        request.expenses = results.rows;
+
+        next();
+    });
+}
+
 // Get all expenses
 const getExpenses = (request, response) => {
     pool.query(expenseQueries.getExpenses, (error, results) => {
@@ -241,9 +257,9 @@ const getExpense = (request, response) => {
 
 // Create expense
 const createExpense = (request, response) => {
-    const { account_id, amount, description } = request.body;
+    const { account_id, amount, title, description, frequency, begin_date } = request.body;
 
-    pool.query(expenseQueries.createExpense, [account_id, amount, description], (error, results) => {
+    pool.query(expenseQueries.createExpense, [account_id, amount, title, description, frequency, begin_date], (error, results) => {
         if (error) {
             throw error;
         }
@@ -273,6 +289,22 @@ const deleteExpense = (request, response) => {
             throw error;
         }
         response.status(200).send(`Expense deleted with ID: ${id}`);
+    });
+}
+
+// Get loans by account
+const getLoansByAccount = (request, response, next) => {
+    const accountId = parseInt(request.params.accountId);
+    const months = parseInt(request.params.months);
+
+    pool.query(loanQueries.getLoansByAccount, [accountId], (error, results) => {
+        if (error) {
+            throw error;
+        }
+
+        request.loans = results.rows;
+
+        next();
     });
 }
 
@@ -332,6 +364,22 @@ const deleteLoan = (request, response) => {
             throw error;
         }
         response.status(200).send(`Loan deleted with ID: ${id}`);
+    });
+}
+
+// Get wishlists by account
+const getWishlistsByAccount = (request, response, next) => {
+    const accountId = parseInt(request.params.accountId);
+    const months = parseInt(request.params.months);
+
+    pool.query(wishlistQueries.getWishlistsByAccount, [accountId], (error, results) => {
+        if (error) {
+            throw error;
+        }
+
+        request.wishlists = results.rows;
+
+        next();
     });
 }
 
@@ -411,4 +459,4 @@ const getCurrentBalance = (request, response, next) => {
 }
 
 // Export all functions
-module.exports = { getAccounts, getAccount, createAccount, updateAccount, deleteAccount, getDepositsByAccount, getDeposits, getDeposit, createDeposit, updateDeposit, deleteDeposit, getWithdrawalsByAccount, getWithdrawals, getWithdrawal, createWithdrawal, updateWithdrawal, deleteWithdrawal, getExpenses, getExpense, createExpense, updateExpense, deleteExpense, getLoans, getLoan, createLoan, updateLoan, deleteLoan, getWishlists, getWishlist, createWishlist, updateWishlist, deleteWishlist, getCurrentBalance };
+module.exports = { getAccounts, getAccount, createAccount, updateAccount, deleteAccount, getDepositsByAccount, getDeposits, getDeposit, createDeposit, updateDeposit, deleteDeposit, getWithdrawalsByAccount, getWithdrawals, getWithdrawal, createWithdrawal, updateWithdrawal, deleteWithdrawal, getExpensesByAccount, getExpenses, getExpense, createExpense, updateExpense, deleteExpense, getLoansByAccount, getLoans, getLoan, createLoan, updateLoan, deleteLoan, getWishlistsByAccount, getWishlists, getWishlist, createWishlist, updateWishlist, deleteWishlist, getCurrentBalance };
