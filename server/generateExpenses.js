@@ -4,8 +4,7 @@ const generateExpenses = (transactions, expense, balance, months) => {
     const amount = parseFloat(expense.expense_amount.substring(1));
 
     for (let i = 0; i < months; i++) {
-        const expenseDate = new Date(expense.expense_begin_date);
-        expenseDate.setMonth(startMonth + i);
+        const expenseDate = new Date(expense.expense_begin_date.getFullYear(), expense.expense_begin_date.getMonth() + i, expense.expense_begin_date.getDate());
 
         // If the expense date is in the future, skip this month
         if (expenseDate.getMonth() >= currentDate.getMonth()) {
