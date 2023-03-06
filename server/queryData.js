@@ -25,7 +25,7 @@ const accountQueries = {
   };
 
   const expenseQueries = {
-    getExpensesByAccount: "SELECT * FROM expenses WHERE account_id = $1 AND expense_begin_date <= expense_begin_date + '1 month'::interval * $2 ORDER BY expense_begin_date ASC",
+    getExpensesByAccount: "SELECT * FROM expenses WHERE account_id = $1 AND expense_begin_date <= $2 ORDER BY expense_begin_date ASC",
     getExpenses: 'SELECT * FROM expenses ORDER BY expense_id ASC',
     getExpense: 'SELECT * FROM expenses WHERE expense_id = $1',
     createExpense: 'INSERT INTO expenses (account_id, expense_amount, expense_title, expense_description, frequency, expense_begin_date) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *',
