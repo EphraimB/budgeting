@@ -16,7 +16,7 @@ const generateExpenses = (transactions, expense, toDate) => {
             title: expense.expense_title,
             description: expense.expense_description,
             date: expenseDate,
-            amount,
+            amount: -amount,
         });
     }
 };

@@ -1,11 +1,11 @@
 const generateTransactions = (request, response, next) => {
     const generateExpenses = require('./generateExpenses.js');
+    const calculateBalances = require('./calculateBalances.js');
     const accountId = parseInt(request.body.account_id);
     const fromDate = new Date(request.body.from_date);
     const toDate = new Date(request.body.to_date);
     const currentBalance = parseFloat(request.currentBalance.substring(1));
     const transactions = [];
-    let balance = currentBalance;
 
     if (accountId < 1) {
         return response.status(400).send('Invalid account id');
@@ -38,17 +38,7 @@ const generateTransactions = (request, response, next) => {
 
     transactions.sort((a, b) => new Date(a.date) - new Date(b.date));
 
-    transactions.forEach(transaction => {
-        if (transaction.date <= toDate) {
-            transaction.balance = balance;
-            balance += transaction.amount;
-        } else {
-            balance -= transaction.amount;
-            transaction.balance = balance;
-        }
-    });
-
-    transactions.reverse();
+    calculateBalances(transactions, currentBalance);
 
     request.transactions = transactions;
     request.accountId = accountId;
