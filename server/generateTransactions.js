@@ -17,7 +17,7 @@ const generateTransactions = (request, response, next) => {
         response.status(400).send('No expenses found');
     }
 
-    if (fromDate < new Date()) {
+    if (fromDate <= new Date()) {
         previousTransactions.push(
             ...request.deposits.map(deposit => ({
                 deposit_id: deposit.deposit_id,
