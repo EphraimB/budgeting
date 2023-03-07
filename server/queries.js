@@ -69,9 +69,9 @@ const deleteAccount = (request, response) => {
 // Get deposits by account
 const getDepositsByAccount = (request, response, next) => {
     const accountId = parseInt(request.body.account_id);
-    const months = parseInt(request.params.months);
+    const fromDate = request.body.from_date;
 
-    pool.query(depositQueries.getDepositsByAccount, [accountId], (error, results) => {
+    pool.query(depositQueries.getDepositsByAccount, [accountId, fromDate], (error, results) => {
         if (error) {
             throw error;
         }
@@ -145,9 +145,9 @@ const deleteDeposit = (request, response) => {
 // Get withdrawals by account
 const getWithdrawalsByAccount = (request, response, next) => {
     const accountId = parseInt(request.body.account_id);
-    const months = parseInt(request.params.months);
+    const fromDate = request.body.from_date;
 
-    pool.query(withdrawalQueries.getWithdrawalsByAccount, [accountId], (error, results) => {
+    pool.query(withdrawalQueries.getWithdrawalsByAccount, [accountId, fromDate], (error, results) => {
         if (error) {
             throw error;
         }

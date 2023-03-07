@@ -19,46 +19,42 @@ const generateTransactions = (request, response, next) => {
         return response.status(400).send('No expenses found');
     }
 
-    if (fromDate <= new Date()) {
-        previousTransactions.push(
-            ...request.deposits.map(deposit => ({
-                deposit_id: deposit.deposit_id,
-                date_created: deposit.date_created,
-                date_modified: deposit.date_modified,
-                title: deposit.deposit_title,
-                description: deposit.deposit_description,
-                amount: parseFloat(deposit.deposit_amount.substring(1))
-            })),
-            ...request.withdrawals.map(withdrawal => ({
-                withdrawal_id: withdrawal.withdrawal_id,
-                date_created: withdrawal.date_created,
-                date_modified: withdrawal.date_modified,
-                title: withdrawal.withdrawal_title,
-                description: withdrawal.withdrawal_description,
-                amount: parseFloat(-withdrawal.withdrawal_amount.substring(1))
-            }))
-        );
-        previousTransactions.sort((a, b) => new Date(b.date_created) - new Date(a.date_created));
+    previousTransactions.push(
+        ...request.deposits.map(deposit => ({
+            deposit_id: deposit.deposit_id,
+            date_created: deposit.date_created,
+            date_modified: deposit.date_modified,
+            title: deposit.deposit_title,
+            description: deposit.deposit_description,
+            amount: parseFloat(deposit.deposit_amount.substring(1))
+        })),
+        ...request.withdrawals.map(withdrawal => ({
+            withdrawal_id: withdrawal.withdrawal_id,
+            date_created: withdrawal.date_created,
+            date_modified: withdrawal.date_modified,
+            title: withdrawal.withdrawal_title,
+            description: withdrawal.withdrawal_description,
+            amount: parseFloat(-withdrawal.withdrawal_amount.substring(1))
+        }))
+    );
+    previousTransactions.sort((a, b) => new Date(b.date_created) - new Date(a.date_created));
 
-        previousTransactions.forEach(transaction => {
-            backBalance += transaction.amount;
+    previousTransactions.forEach(transaction => {
+        backBalance += transaction.amount;
 
-            transaction.balance = backBalance;
-        });
-    }
+        transaction.balance = backBalance;
+    });
 
-    if (toDate >= new Date()) {
-        request.expenses.forEach(expense => {
-            generateExpenses(futureTransactions, expense, futureBalance, toDate);
-        });
-        futureTransactions.sort((a, b) => new Date(a.date) - new Date(b.date));
+    request.expenses.forEach(expense => {
+        generateExpenses(futureTransactions, expense, futureBalance, toDate);
+    });
+    futureTransactions.sort((a, b) => new Date(a.date) - new Date(b.date));
 
-        futureTransactions.forEach(transaction => {
-            futureBalance -= transaction.amount;
+    futureTransactions.forEach(transaction => {
+        futureBalance -= transaction.amount;
 
-            transaction.balance = futureBalance;
-        });
-    }
+        transaction.balance = futureBalance;
+    });
 
     request.previousTransactions = previousTransactions;
     request.futureTransactions = futureTransactions;;
