@@ -36,6 +36,8 @@ const generateTransactions = (request, response, next) => {
         generateExpenses(transactions, expense, toDate);
     });
 
+    transactions.sort((a, b) => new Date(a.date) - new Date(b.date));
+
     calculateBalances(transactions, currentBalance);
 
     request.transactions = transactions;
