@@ -4,7 +4,8 @@ const generateTransactions = (request, response, next) => {
     const fromDate = new Date(request.body.from_date);
     const toDate = new Date(request.body.to_date);
     const currentBalance = parseFloat(request.currentBalance.substring(1));
-    const transactions = [];
+    const futureTransactions = [];
+    const previousTransactions = [];
     let backBalance = currentBalance;
     let futureBalance = currentBalance;
 
@@ -17,7 +18,7 @@ const generateTransactions = (request, response, next) => {
     }
 
     if (fromDate < new Date()) {
-        transactions.push(request.deposits
+        previousTransactions.push(request.deposits
             .map(deposit => ({
                 deposit_id: deposit.deposit_id,
                 date_created: deposit.date_created,
@@ -36,18 +37,23 @@ const generateTransactions = (request, response, next) => {
                     balance: backBalance -= parseFloat(withdrawal.withdrawal_amount.substring(1))
                 }))
             ));
-        // transactions.sort((a, b) => new Date(b.date_created) - new Date(a.date_created));
+        previousTransactions.sort((a, b) => new Date(b.date_created) - new Date(a.date_created));
     }
 
     if (toDate >= new Date()) {
-        request.expenses.map(expense => {
-            generateExpenses(transactions, expense, futureBalance, toDate.getMonth() - new Date().getMonth());
+        request.expenses.forEach(expense => {
+            generateExpenses(futureTransactions, expense, futureBalance, toDate);
         });
+        futureTransactions.sort((a, b) => new Date(a.date) - new Date(b.date));
     }
 
-    // transactions.sort((a, b) => new Date(a.date) - new Date(b.date));
+    futureTransactions.forEach(transaction => {
+        futureBalance -= transaction.amount;
 
-    request.transactions = transactions;
+        transaction.balance = futureBalance;
+    });
+
+    request.transactions = futureTransactions;;
     request.accountId = accountId;
     request.currentBalance = currentBalance;
 
