@@ -10,11 +10,13 @@ const generateTransactions = (request, response, next) => {
     let futureBalance = currentBalance;
 
     if (accountId < 1) {
-        response.status(400).send('Invalid account id');
+        return response.status(400).send('Invalid account id');
     } else if (fromDate > toDate) {
-        response.status(400).send('Invalid date range');
+        return response.status(400).send('Invalid date range');
+
+        return;
     } else if (request.expenses.length < 1) {
-        response.status(400).send('No expenses found');
+        return response.status(400).send('No expenses found');
     }
 
     if (fromDate <= new Date()) {
