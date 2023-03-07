@@ -1,4 +1,4 @@
-const generateExpenses = (transactions, expense, balance, toDate) => {
+const generateExpenses = (transactions, expense, toDate) => {
     const startMonth = expense.expense_begin_date.getMonth();
     const currentDate = new Date();
     const amount = parseFloat(expense.expense_amount.substring(1));
