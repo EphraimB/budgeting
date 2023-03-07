@@ -18,25 +18,24 @@ const generateTransactions = (request, response, next) => {
     }
 
     if (fromDate < new Date()) {
-        previousTransactions.push(request.deposits
-            .map(deposit => ({
+        previousTransactions.push(
+            ...request.deposits.map(deposit => ({
                 deposit_id: deposit.deposit_id,
                 date_created: deposit.date_created,
                 date_modified: deposit.date_modified,
                 title: deposit.deposit_title,
                 description: deposit.deposit_description,
                 amount: parseFloat(deposit.deposit_amount.substring(1))
+            })),
+            ...request.withdrawals.map(withdrawal => ({
+                withdrawal_id: withdrawal.withdrawal_id,
+                date_created: withdrawal.date_created,
+                date_modified: withdrawal.date_modified,
+                title: withdrawal.withdrawal_title,
+                description: withdrawal.withdrawal_description,
+                amount: parseFloat(-withdrawal.withdrawal_amount.substring(1))
             }))
-            .concat(request.withdrawals
-                .map(withdrawal => ({
-                    withdrawal_id: withdrawal.withdrawal_id,
-                    date_created: withdrawal.date_created,
-                    date_modified: withdrawal.date_modified,
-                    title: withdrawal.withdrawal_title,
-                    description: withdrawal.withdrawal_description,
-                    amount: parseFloat(-withdrawal.withdrawal_amount.substring(1))
-                }))
-            ));
+        );
         previousTransactions.sort((a, b) => new Date(b.date_created) - new Date(a.date_created));
 
         previousTransactions.forEach(transaction => {
