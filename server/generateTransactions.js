@@ -25,8 +25,7 @@ const generateTransactions = (request, response, next) => {
                 date_modified: deposit.date_modified,
                 title: deposit.deposit_title,
                 description: deposit.deposit_description,
-                amount: parseFloat(deposit.deposit_amount.substring(1)),
-                balance: backBalance += parseFloat(deposit.deposit_amount.substring(1))
+                amount: parseFloat(deposit.deposit_amount.substring(1))
             }))
             .concat(request.withdrawals
                 .map(withdrawal => ({
@@ -35,11 +34,16 @@ const generateTransactions = (request, response, next) => {
                     date_modified: withdrawal.date_modified,
                     title: withdrawal.withdrawal_title,
                     description: withdrawal.withdrawal_description,
-                    amount: parseFloat(-withdrawal.withdrawal_amount.substring(1)),
-                    balance: backBalance += parseFloat(withdrawal.withdrawal_amount.substring(1))
+                    amount: parseFloat(-withdrawal.withdrawal_amount.substring(1))
                 }))
             ));
         previousTransactions.sort((a, b) => new Date(b.date_created) - new Date(a.date_created));
+
+        previousTransactions.forEach(transaction => {
+            backBalance += transaction.amount;
+
+            transaction.balance = backBalance;
+        });
     }
 
     if (toDate >= new Date()) {
@@ -47,13 +51,13 @@ const generateTransactions = (request, response, next) => {
             generateExpenses(futureTransactions, expense, futureBalance, toDate);
         });
         futureTransactions.sort((a, b) => new Date(a.date) - new Date(b.date));
+
+        futureTransactions.forEach(transaction => {
+            futureBalance -= transaction.amount;
+
+            transaction.balance = futureBalance;
+        });
     }
-
-    futureTransactions.forEach(transaction => {
-        futureBalance -= transaction.amount;
-
-        transaction.balance = futureBalance;
-    });
 
     request.previousTransactions = previousTransactions;
     request.futureTransactions = futureTransactions;;
