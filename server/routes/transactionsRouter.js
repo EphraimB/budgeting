@@ -5,7 +5,7 @@ const { getCurrentBalance, getDepositsByAccount, getWithdrawalsByAccount, getExp
 
 // Generate the transactions based on current balance, expenses, and loans
 router.get('/', getCurrentBalance, getDepositsByAccount, getWithdrawalsByAccount, getExpensesByAccount, generateTransactions, (request, response) => {
-    response.json({ account_id: request.accountId, currentBalance: request.currentBalance, transactions: request.transactions });
+    response.json({ account_id: request.accountId, currentBalance: request.currentBalance, previousTransactions: request.previousTransactions, futureTransactions: request.futureTransactions });
 });
 
 module.exports = router;

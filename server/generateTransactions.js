@@ -23,7 +23,8 @@ const generateTransactions = (request, response, next) => {
                 deposit_id: deposit.deposit_id,
                 date_created: deposit.date_created,
                 date_modified: deposit.date_modified,
-                type: 1,
+                title: deposit.deposit_title,
+                description: deposit.deposit_description,
                 amount: parseFloat(deposit.deposit_amount.substring(1)),
                 balance: backBalance += parseFloat(deposit.deposit_amount.substring(1))
             }))
@@ -32,9 +33,10 @@ const generateTransactions = (request, response, next) => {
                     withdrawal_id: withdrawal.withdrawal_id,
                     date_created: withdrawal.date_created,
                     date_modified: withdrawal.date_modified,
-                    type: 0,
-                    amount: parseFloat(withdrawal.withdrawal_amount.substring(1)),
-                    balance: backBalance -= parseFloat(withdrawal.withdrawal_amount.substring(1))
+                    title: withdrawal.withdrawal_title,
+                    description: withdrawal.withdrawal_description,
+                    amount: parseFloat(-withdrawal.withdrawal_amount.substring(1)),
+                    balance: backBalance += parseFloat(withdrawal.withdrawal_amount.substring(1))
                 }))
             ));
         previousTransactions.sort((a, b) => new Date(b.date_created) - new Date(a.date_created));
@@ -53,7 +55,8 @@ const generateTransactions = (request, response, next) => {
         transaction.balance = futureBalance;
     });
 
-    request.transactions = futureTransactions;;
+    request.previousTransactions = previousTransactions;
+    request.futureTransactions = futureTransactions;;
     request.accountId = accountId;
     request.currentBalance = currentBalance;
 
