@@ -330,6 +330,7 @@ const getLoan = (request, response) => {
     });
 }
 
+// TODO: Complete this function
 // Create loan
 const createLoan = (request, response) => {
     const { account_id, amount, description } = request.body;
