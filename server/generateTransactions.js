@@ -40,8 +40,8 @@ const generateTransactions = (request, response, next) => {
     }
 
     if (toDate >= new Date()) {
-        request.expenses.forEach(expense => {
-            generateExpenses(transactions, expense, futureBalance, 12);
+        request.expenses.map(expense => {
+            generateExpenses(transactions, expense, futureBalance, toDate.getMonth() - new Date().getMonth());
         });
     }
 
