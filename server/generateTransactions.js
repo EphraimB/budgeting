@@ -1,5 +1,5 @@
 const generateTransactions = (request, response, next) => {
-    const generateExpenses = require('./generateExpenses.js');
+    const generateMonthlyExpenses = require('./generateMonthlyExpenses.js');
     const calculateBalances = require('./calculateBalances.js');
     const accountId = parseInt(request.body.account_id);
     const fromDate = new Date(request.body.from_date);
@@ -33,7 +33,9 @@ const generateTransactions = (request, response, next) => {
     );
 
     request.expenses.forEach(expense => {
-        generateExpenses(transactions, expense, toDate);
+        if (expense.frequency === 0) {
+            generateMonthlyExpenses(transactions, expense, toDate);
+        }
     });
 
     transactions.sort((a, b) => new Date(a.date) - new Date(b.date));
