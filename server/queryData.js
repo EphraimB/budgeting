@@ -37,8 +37,8 @@ const accountQueries = {
     getLoansByAccount: 'SELECT * FROM loans WHERE account_id = $1 ORDER BY date_created DESC',
     getLoans: 'SELECT * FROM loans ORDER BY loan_id ASC',
     getLoan: 'SELECT * FROM loans WHERE loan_id = $1',
-    createLoan: 'INSERT INTO loans (account_id, loan_amount, loan_description) VALUES ($1, $2, $3) RETURNING *',
-    updateLoan: 'UPDATE loans SET account_id = $1, loan_amount = $2, loan_description = $3 WHERE loan_id = $4',
+    createLoan: 'INSERT INTO loans (account_id, loan_amount, loan_plan_amount, loan_recipient, loan_title, loan_description, frequency, loan_begin_date) VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING *',
+    updateLoan: 'UPDATE loans SET account_id = $1, loan_amount = $2, loan_plan_amount = $3, loan_recipient = $4, loan_title = $5, loan_description = $6, frequency = $7, loan_begin_date = $8 WHERE loan_id = $9',
     deleteLoan: 'DELETE FROM loans WHERE loan_id = $1',
   };
 

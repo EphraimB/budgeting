@@ -333,9 +333,17 @@ const getLoan = (request, response) => {
 // TODO: Complete this function
 // Create loan
 const createLoan = (request, response) => {
-    const { account_id, amount, description } = request.body;
+    const { account_id, amount, plan_amount, recipient, title, description, frequency, begin_date } = request.body;
 
-    pool.query(loanQueries.createLoan, [account_id, amount, description], (error, results) => {
+    if (plan_amount > amount) {
+        response.status(400).send(`Loan amount cannot be less than the planned amount`);
+    }
+
+    if (begin_date < new Date()) {
+        response.status(400).send(`Loan begin date cannot be in the past`);
+    }
+
+    pool.query(loanQueries.createLoan, [account_id, amount, plan_amount, recipient, title, description, frequency, begin_date], (error, results) => {
         if (error) {
             throw error;
         }
@@ -346,9 +354,9 @@ const createLoan = (request, response) => {
 // Update loan
 const updateLoan = (request, response) => {
     const id = parseInt(request.params.id);
-    const { account_id, amount, description } = request.body;
+    const { account_id, amount, plan_amount, recipient, title, description, frequency, begin_date } = request.body;
 
-    pool.query(loanQueries.updateLoan, [account_id, amount, description, id], (error, results) => {
+    pool.query(loanQueries.updateLoan, [account_id, amount, plan_amount, recipient, title, description, frequency, begin_date, id], (error, results) => {
         if (error) {
             throw error;
         }
