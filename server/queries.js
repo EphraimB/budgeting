@@ -621,6 +621,67 @@ const updateExpense = (request, response) => {
     const id = parseInt(request.params.id);
     const { account_id, amount, description } = request.body;
 
+    if (!account_id) {
+        response.status(400).send("Account ID must be provided");
+        return;
+    }
+
+    if (account_id < 1) {
+        response.status(400).send("Account ID must be greater than 0");
+        return;
+    }
+
+    if (!amount) {
+        response.status(400).send("Amount must be provided");
+        return;
+    }
+
+    if (amount < 0) {
+        response.status(400).send("Amount must be greater than 0");
+        return;
+    }
+
+    if (!title) {
+        response.status(400).send("Title must be provided");
+        return;
+    }
+
+    if (title.length < 1) {
+        response.status(400).send("Title must be at least 1 character");
+        return;
+    }
+
+    if (!description) {
+        response.status(400).send("Description must be provided");
+        return;
+    }
+
+    if (description.length < 1) {
+        response.status(400).send("Description must be at least 1 character");
+        return;
+    }
+
+    if (isNaN(frequency)) {
+        response.status(400).send("Frequency must be provided");
+        return;
+    }
+
+    if (frequency.length < 1) {
+        response.status(400).send("Frequency must be at least 1 character");
+        return;
+    }
+
+    if (!begin_date) {
+        response.status(400).send("Begin date must be provided");
+        return;
+    }
+
+    // If begin date isn't in the format YYYY-MM-DD, it will be rejected
+    if (!begin_date.match(/^\d{4}-\d{2}-\d{2}$/)) {
+        response.status(400).send("Begin date must be in the format YYYY-MM-DD");
+        return;
+    }
+
     pool.query(expenseQueries.updateExpense, [account_id, amount, description, id], (error, results) => {
         if (error) {
             throw error;
