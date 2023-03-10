@@ -700,8 +700,18 @@ const deleteExpense = (request, response) => {
 
 // Get loans by account
 const getLoansByAccount = (request, response, next) => {
-    const accountId = parseInt(request.params.accountId);
+    const accountId = parseInt(request.body.account_id);
     const to_date = request.body.to_date;
+
+    if (!accountId) {
+        response.status(400).send("Account ID must be provided");
+        return;
+    }
+
+    if (accountId < 1) {
+        response.status(400).send("Account ID must be greater than 0");
+        return;
+    }
 
     if (!to_date) {
         response.status(400).send("To date must be provided");

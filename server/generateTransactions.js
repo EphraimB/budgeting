@@ -43,13 +43,13 @@ const generateTransactions = (request, response, next) => {
         }
     });
 
-    // request.loans.forEach(loan => {
-    //     if (loan.frequency === 0) {
-    //         generateMonthlyLoans(transactions, loan, toDate);
-    //     } else if (loan.frequency === 1) {
-    //         generateYearlyLoans(transactions, loan, toDate);
-    //     }
-    // });
+    request.loans.forEach(loan => {
+        if (loan.frequency === 0) {
+            generateMonthlyLoans(transactions, loan, toDate);
+        } else if (loan.frequency === 1) {
+            generateYearlyLoans(transactions, loan, toDate);
+        }
+    });
 
     transactions.sort((a, b) => new Date(a.date) - new Date(b.date));
 
