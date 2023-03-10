@@ -39,10 +39,6 @@ const generateTransactions = (request, response, next) => {
         } else if (expense.frequency === 1) {
             // TODO: Generate yearly expenses
             generateYearlyExpenses(transactions, expense, toDate);
-        } else if (expense.frequency === 2) {
-            // TODO: Generate weekly expenses
-        } else if (expense.frequency === 3) {
-            // TODO: Generate daily expenses
         }
     });
 
