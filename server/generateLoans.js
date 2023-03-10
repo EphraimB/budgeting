@@ -1,10 +1,10 @@
-const generateMonthlyLoans = (transactions, loan, toDate) => {
-    const startMonth = loan.loan_begin_date.getMonth();
+const generateLoans = (transactions, loan, toDate) => {
+    const startDay = loan.loan_begin_date.getDay();
     const planAmount = loan.loan_plan_amount;
 
-    for (let i = 0; ; i++) {
+    for (let i = 0; ; i += loan.frequency) {
         const loanDate = new Date(loan.loan_begin_date);
-        loanDate.setMonth(startMonth + i);
+        loanDate.setDate(startDay + i);
 
         // If the loan date is after toDate, stop generating loans
         if (loanDate > toDate) {
@@ -20,4 +20,4 @@ const generateMonthlyLoans = (transactions, loan, toDate) => {
     }
 };
 
-module.exports = generateMonthlyLoans;
+module.exports = generateLoans;

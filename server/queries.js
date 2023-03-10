@@ -588,8 +588,8 @@ const createExpense = (request, response) => {
         return;
     }
 
-    if (frequency < 0) {
-        response.status(400).send("Frequency must be at least 1 character");
+    if (frequency < 1) {
+        response.status(400).send("Frequency must be greater than 0");
         return;
     }
 
@@ -662,8 +662,8 @@ const updateExpense = (request, response) => {
         return;
     }
 
-    if (frequency < 0) {
-        response.status(400).send("Frequency must be at least 1 character");
+    if (frequency < 1) {
+        response.status(400).send("Frequency must be greater than 0");
         return;
     }
 
@@ -757,7 +757,6 @@ const getLoan = (request, response) => {
     });
 }
 
-// TODO: Complete this function
 // Create loan
 const createLoan = (request, response) => {
     const { account_id, amount, plan_amount, recipient, title, description, frequency, begin_date } = request.body;
@@ -814,7 +813,7 @@ const createLoan = (request, response) => {
         return response.status(400).send(`Frequency must be a number`);
     }
 
-    if (frequency < 0) {
+    if (frequency < 1) {
         return response.status(400).send(`Frequency must be greater than 0`);
     }
 
@@ -900,8 +899,8 @@ const updateLoan = (request, response) => {
         response.status(400).send(`Frequency must be a number`);
     }
 
-    if (frequency < 0) {
-        response.status(400).send(`Frequency must be greater than 0`);
+    if (frequency < 1) {
+        return response.status(400).send(`Frequency must be greater than 0`);
     }
 
     if (!begin_date) {
