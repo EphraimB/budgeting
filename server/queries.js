@@ -218,7 +218,7 @@ const createDeposit = (request, response) => {
         if (error) {
             throw error;
         }
-        response.status(201).send(results.rows);
+        response.status(201).json(results.rows);
     });
 }
 
@@ -298,6 +298,27 @@ const getWithdrawalsByAccount = (request, response, next) => {
     const accountId = parseInt(request.body.account_id);
     const fromDate = request.body.from_date;
 
+    if (!accountId) {
+        response.status(400).send("Account ID must be provided");
+        return;
+    }
+
+    if (isNaN(accountId)) {
+        response.status(400).send("Account ID must be a number");
+        return;
+    }
+
+    if (!fromDate) {
+        response.status(400).send("From date must be provided");
+        return;
+    }
+
+    // Validate date format in yyyy-mm-dd format
+    if (!fromDate.match(/^\d{4}-\d{2}-\d{2}$/)) {
+        response.status(400).send("From date must be in yyyy-mm-dd format");
+        return;
+    }
+
     pool.query(withdrawalQueries.getWithdrawalsByAccount, [accountId, fromDate], (error, results) => {
         if (error) {
             throw error;
@@ -335,6 +356,51 @@ const getWithdrawal = (request, response) => {
 const createWithdrawal = (request, response) => {
     const { account_id, amount, description } = request.body;
 
+    if(!amount) {
+        response.status(400).send("Amount must be provided");
+        return;
+    }
+
+    if (isNaN(amount)) {
+        response.status(400).send("Amount must be a number");
+        return;
+    }
+    
+    if (amount <= 0) {
+        response.status(400).send("Amount must be greater than 0");
+        return;
+    }
+    
+    if(!description) {
+        response.status(400).send("Description must be provided");
+        return;
+    }
+    
+    if(!account_id) {
+        response.status(400).send("Account ID must be provided");
+        return;
+    }
+
+    if (isNaN(account_id)) {
+        response.status(400).send("Account ID must be a number");
+        return;
+    }
+
+    if (account_id <= 0) {
+        response.status(400).send("Account ID must be greater than 0");
+        return;
+    }
+
+    if (description.length > 255) {
+        response.status(400).send("Description must be less than 255 characters");
+        return;
+    }
+
+    if (description.length < 1) {
+        response.status(400).send("Description must be at least 1 character");
+        return;
+    }
+
     pool.query(withdrawalQueries.createWithdrawal, [account_id, amount, description], (error, results) => {
         if (error) {
             throw error;
@@ -347,6 +413,51 @@ const createWithdrawal = (request, response) => {
 const updateWithdrawal = (request, response) => {
     const id = parseInt(request.params.id);
     const { account_id, amount, description } = request.body;
+
+    if(!amount) {
+        response.status(400).send("Amount must be provided");
+        return;
+    }
+
+    if (isNaN(amount)) {
+        response.status(400).send("Amount must be a number");
+        return;
+    }
+    
+    if (amount <= 0) {
+        response.status(400).send("Amount must be greater than 0");
+        return;
+    }
+    
+    if(!description) {
+        response.status(400).send("Description must be provided");
+        return;
+    }
+    
+    if(!account_id) {
+        response.status(400).send("Account ID must be provided");
+        return;
+    }
+
+    if (isNaN(account_id)) {
+        response.status(400).send("Account ID must be a number");
+        return;
+    }
+
+    if (account_id <= 0) {
+        response.status(400).send("Account ID must be greater than 0");
+        return;
+    }
+
+    if (description.length > 255) {
+        response.status(400).send("Description must be less than 255 characters");
+        return;
+    }
+
+    if (description.length < 1) {
+        response.status(400).send("Description must be at least 1 character");
+        return;
+    }
 
     pool.query(withdrawalQueries.updateWithdrawal, [account_id, amount, description, id], (error, results) => {
         if (error) {
