@@ -615,7 +615,7 @@ const createExpense = (request, response) => {
 // Update expense
 const updateExpense = (request, response) => {
     const id = parseInt(request.params.id);
-    const { account_id, amount, description } = request.body;
+    const { account_id, amount, title, description, frequency, begin_date } = request.body;
 
     if (!account_id) {
         response.status(400).send("Account ID must be provided");
@@ -678,7 +678,7 @@ const updateExpense = (request, response) => {
         return;
     }
 
-    pool.query(expenseQueries.updateExpense, [account_id, amount, description, id], (error, results) => {
+    pool.query(expenseQueries.updateExpense, [account_id, amount, title, description, frequency, begin_date, id], (error, results) => {
         if (error) {
             throw error;
         }

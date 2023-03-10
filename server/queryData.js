@@ -29,7 +29,7 @@ const accountQueries = {
     getExpenses: 'SELECT * FROM expenses ORDER BY expense_id ASC',
     getExpense: 'SELECT * FROM expenses WHERE expense_id = $1',
     createExpense: 'INSERT INTO expenses (account_id, expense_amount, expense_title, expense_description, frequency, expense_begin_date) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *',
-    updateExpense: 'UPDATE expenses SET account_id = $1, expense_amount = $2, expense_description = $3 WHERE expense_id = $4',
+    updateExpense: 'UPDATE expenses SET account_id = $1, expense_amount = $2, expense_title = $3, expense_description = $4, frequency = $5, expense_begin_date = $6 WHERE expense_id = $7',
     deleteExpense: 'DELETE FROM expenses WHERE expense_id = $1',
   };
 
