@@ -299,11 +299,72 @@ const getExpense = (request, response) => {
 const createExpense = (request, response) => {
     const { account_id, amount, title, description, frequency, begin_date } = request.body;
 
+    if (!account_id) {
+        response.status(400).send("Account ID must be provided");
+        return;
+    }
+
+    if (account_id < 1) {
+        response.status(400).send("Account ID must be greater than 0");
+        return;
+    }
+
+    if (!amount) {
+        response.status(400).send("Amount must be provided");
+        return;
+    }
+
+    if (amount < 0) {
+        response.status(400).send("Amount must be greater than 0");
+        return;
+    }
+
+    if (!title) {
+        response.status(400).send("Title must be provided");
+        return;
+    }
+
+    if (title.length < 1) {
+        response.status(400).send("Title must be at least 1 character");
+        return;
+    }
+
+    if (!description) {
+        response.status(400).send("Description must be provided");
+        return;
+    }
+
+    if (description.length < 1) {
+        response.status(400).send("Description must be at least 1 character");
+        return;
+    }
+
+    if (isNaN(frequency)) {
+        response.status(400).send("Frequency must be provided");
+        return;
+    }
+
+    if (frequency.length < 1) {
+        response.status(400).send("Frequency must be at least 1 character");
+        return;
+    }
+
+    if (!begin_date) {
+        response.status(400).send("Begin date must be provided");
+        return;
+    }
+
+    // If begin date isn't in the format YYYY-MM-DD, it will be rejected
+    if (!begin_date.match(/^\d{4}-\d{2}-\d{2}$/)) {
+        response.status(400).send("Begin date must be in the format YYYY-MM-DD");
+        return;
+    }
+
     pool.query(expenseQueries.createExpense, [account_id, amount, title, description, frequency, begin_date], (error, results) => {
         if (error) {
             throw error;
         }
-        response.status(201).send(`Expense added with ID: ${results.insertId}`);
+        response.status(201).json(results.rows[0]);
     });
 }
 
