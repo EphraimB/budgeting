@@ -31,10 +31,6 @@ const createAccount = (request, response) => {
         return response.status(400).send('Account name is required');
     }
 
-    if (!type) {
-        return response.status(400).send('Account type is required');
-    }
-
     if (isNaN(type)) {
         return response.status(400).send('Account type must be a number');
     }
@@ -169,6 +165,16 @@ const getDeposit = (request, response) => {
 const createDeposit = (request, response) => {
     const { account_id, amount, description } = request.body;
 
+    if(!account_id) {
+        response.status(400).send("Account ID must be provided");
+        return;
+    }
+
+    if (isNaN(account_id)) {
+        response.status(400).send("Account ID must be a number");
+        return;
+    }
+
     if(!amount) {
         response.status(400).send("Amount must be provided");
         return;
@@ -186,16 +192,6 @@ const createDeposit = (request, response) => {
     
     if(!description) {
         response.status(400).send("Description must be provided");
-        return;
-    }
-    
-    if(!account_id) {
-        response.status(400).send("Account ID must be provided");
-        return;
-    }
-
-    if (isNaN(account_id)) {
-        response.status(400).send("Account ID must be a number");
         return;
     }
 
@@ -506,7 +502,7 @@ const getExpensesByAccount = (request, response, next) => {
 
     // Validate date format in yyyy-mm-dd format
     if (!to_date.match(/^\d{4}-\d{2}-\d{2}$/)) {
-        response.status(400).send("From date must be in yyyy-mm-dd format");
+        response.status(400).send("To date must be in yyyy-mm-dd format");
         return;
     }
 
@@ -1027,9 +1023,9 @@ const getCurrentBalance = (request, response, next) => {
             throw error;
         }
         
-        const currentBalance = results.rows[0].account_balance;
+        const currentBalance = parseFloat(results.rows[0].account_balance);
 
-        request.currentBalance = parseFloat(currentBalance.substring(1).replaceAll(',', ''));
+        request.currentBalance = currentBalance;
 
         next();
     });

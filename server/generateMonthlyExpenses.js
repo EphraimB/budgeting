@@ -1,6 +1,6 @@
 const generateMonthlyExpenses = (transactions, expense, toDate) => {
     const startMonth = expense.expense_begin_date.getMonth();
-    const amount = parseFloat(expense.expense_amount.substring(1).replaceAll(',', ''));
+    const amount = expense.expense_amount;
 
     for (let i = 0; ; i++) {
         const expenseDate = new Date(expense.expense_begin_date);

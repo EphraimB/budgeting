@@ -6,7 +6,7 @@ CREATE TABLE IF NOT EXISTS accounts (
   account_id SERIAL PRIMARY KEY,
   account_name VARCHAR(255) NOT NULL,
   account_type INT NOT NULL,
-  account_balance MONEY NOT NULL,
+  account_balance numeric(20, 2) NOT NULL,
   date_created TIMESTAMP NOT NULL,
   date_modified TIMESTAMP NOT NULL
 );
@@ -15,7 +15,7 @@ CREATE TABLE IF NOT EXISTS accounts (
 CREATE TABLE IF NOT EXISTS deposits (
   deposit_id SERIAL PRIMARY KEY,
   account_id INT NOT NULL REFERENCES accounts(account_id),
-  deposit_amount MONEY NOT NULL,
+  deposit_amount numeric(20, 2) NOT NULL,
   deposit_description VARCHAR(255) NOT NULL,
   date_created TIMESTAMP NOT NULL,
   date_modified TIMESTAMP NOT NULL
@@ -25,7 +25,7 @@ CREATE TABLE IF NOT EXISTS deposits (
 CREATE TABLE IF NOT EXISTS withdrawals (
   withdrawal_id SERIAL PRIMARY KEY,
   account_id INT NOT NULL REFERENCES accounts(account_id),
-  withdrawal_amount MONEY NOT NULL,
+  withdrawal_amount numeric(20, 2) NOT NULL,
   withdrawal_description VARCHAR(255) NOT NULL,
   date_created TIMESTAMP NOT NULL,
   date_modified TIMESTAMP NOT NULL
@@ -35,7 +35,7 @@ CREATE TABLE IF NOT EXISTS withdrawals (
 CREATE TABLE IF NOT EXISTS expenses (
   expense_id SERIAL PRIMARY KEY,
   account_id INT NOT NULL REFERENCES accounts(account_id),
-  expense_amount MONEY NOT NULL,
+  expense_amount numeric(20, 2) NOT NULL,
   expense_title VARCHAR(255) NOT NULL,
   expense_description VARCHAR(255) NOT NULL,
   frequency INT NOT NULL,
@@ -49,8 +49,8 @@ CREATE TABLE IF NOT EXISTS expenses (
 CREATE TABLE IF NOT EXISTS loans (
   loan_id SERIAL PRIMARY KEY,
   account_id INT NOT NULL REFERENCES accounts(account_id),
-  loan_amount MONEY NOT NULL,
-  loan_plan_amount MONEY NOT NULL,
+  loan_amount numeric(20, 2) NOT NULL,
+  loan_plan_amount numeric(20, 2) NOT NULL,
   loan_recipient VARCHAR(255) NOT NULL,
   loan_title VARCHAR(255) NOT NULL,
   loan_description VARCHAR(255) NOT NULL,
@@ -64,7 +64,7 @@ CREATE TABLE IF NOT EXISTS loans (
 CREATE TABLE IF NOT EXISTS wishlist (
   wishlist_id SERIAL PRIMARY KEY,
   account_id INT NOT NULL REFERENCES accounts(account_id),
-  wishlist_amount MONEY NOT NULL,
+  wishlist_amount numeric(20, 2) NOT NULL,
   wishlist_title VARCHAR(255) NOT NULL,
   wishlist_description VARCHAR(255) NOT NULL,
   wishlist_priority INT NOT NULL,

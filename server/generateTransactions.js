@@ -21,7 +21,7 @@ const generateTransactions = (request, response, next) => {
             date_modified: deposit.date_modified,
             title: deposit.deposit_title,
             description: deposit.deposit_description,
-            amount: parseFloat(deposit.deposit_amount.substring(1).replaceAll(',', ''))
+            amount: deposit.deposit_amount
         })),
         ...request.withdrawals.map(withdrawal => ({
             withdrawal_id: withdrawal.withdrawal_id,
@@ -29,7 +29,7 @@ const generateTransactions = (request, response, next) => {
             date_modified: withdrawal.date_modified,
             title: withdrawal.withdrawal_title,
             description: withdrawal.withdrawal_description,
-            amount: parseFloat(-withdrawal.withdrawal_amount.substring(1).replaceAll(',', ''))
+            amount: -withdrawal.withdrawal_amount
         }))
     );
 
@@ -37,7 +37,6 @@ const generateTransactions = (request, response, next) => {
         if (expense.frequency === 0) {
             generateMonthlyExpenses(transactions, expense, toDate);
         } else if (expense.frequency === 1) {
-            // TODO: Generate yearly expenses
             generateYearlyExpenses(transactions, expense, toDate);
         }
     });
