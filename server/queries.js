@@ -27,6 +27,26 @@ const getAccount = (request, response) => {
 const createAccount = (request, response) => {
     const { name, type, balance } = request.body;
 
+    if (!name) {
+        return response.status(400).send('Account name is required');
+    }
+
+    if (!type) {
+        return response.status(400).send('Account type is required');
+    }
+
+    if (isNaN(type)) {
+        return response.status(400).send('Account type must be a number');
+    }
+
+    if (!balance) {
+        return response.status(400).send('Account balance is required');
+    }
+
+    if (isNaN(balance)) {
+        return response.status(400).send('Account balance must be a number');
+    }
+
     pool.query(accountQueries.createAccount,
         [name, type, balance],
         (error, results) => {
@@ -41,6 +61,26 @@ const createAccount = (request, response) => {
 const updateAccount = (request, response) => {
     const id = parseInt(request.params.id);
     const { name, type, balance } = request.body;
+
+    if (!name) {
+        return response.status(400).send('Account name is required');
+    }
+
+    if (!type) {
+        return response.status(400).send('Account type is required');
+    }
+
+    if (isNaN(type)) {
+        return response.status(400).send('Account type must be a number');
+    }
+
+    if (!balance) {
+        return response.status(400).send('Account balance is required');
+    }
+
+    if (isNaN(balance)) {
+        return response.status(400).send('Account balance must be a number');
+    }
 
     pool.query(
         accountQueries.updateAccount,
@@ -70,6 +110,27 @@ const deleteAccount = (request, response) => {
 const getDepositsByAccount = (request, response, next) => {
     const accountId = parseInt(request.body.account_id);
     const fromDate = request.body.from_date;
+
+    if (!accountId) {
+        response.status(400).send("Account ID must be provided");
+        return;
+    }
+
+    if (isNaN(accountId)) {
+        response.status(400).send("Account ID must be a number");
+        return;
+    }
+
+    if (!fromDate) {
+        response.status(400).send("From date must be provided");
+        return;
+    }
+
+    // Validate date format in yyyy-mm-dd format
+    if (!fromDate.match(/^\d{4}-\d{2}-\d{2}$/)) {
+        response.status(400).send("From date must be in yyyy-mm-dd format");
+        return;
+    }
 
     pool.query(depositQueries.getDepositsByAccount, [accountId, fromDate], (error, results) => {
         if (error) {
