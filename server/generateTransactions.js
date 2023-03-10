@@ -1,5 +1,6 @@
 const generateTransactions = (request, response, next) => {
-    const generateExpenses = require('./generateExpenses.js');
+    const generateDailyExpenses = require('./generateExpenses/generateDailyExpenses.js');
+    const generateWeeklyExpenses = require('./generateExpenses/generateWeeklyExpenses.js');
     const generateLoans = require('./generateLoans.js');
     const calculateBalances = require('./calculateBalances.js');
     const accountId = parseInt(request.body.account_id);
@@ -34,7 +35,11 @@ const generateTransactions = (request, response, next) => {
     );
 
     request.expenses.forEach(expense => {
-        generateExpenses(transactions, expense, toDate);
+        if (expense.frequency_type === 0) {
+            generateDailyExpenses(transactions, expense, toDate);
+        } else if (expense.frequency_type === 1) {
+            generateWeeklyExpenses(transactions, expense, toDate);
+        }
     });
 
     request.loans.forEach(loan => {

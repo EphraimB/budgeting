@@ -1,8 +1,7 @@
-const generateExpenses = (transactions, expense, toDate) => {
+const generateDailyExpenses = (transactions, expense, toDate) => {
     const startDay = expense.expense_begin_date.getDay();
-    const amount = expense.expense_amount;
 
-    for (let i = 0; ; i += expense.frequency) {
+    for (let i = 0; ; i++) {
         const expenseDate = new Date(expense.expense_begin_date);
         expenseDate.setDate(startDay + i);
 
@@ -15,9 +14,9 @@ const generateExpenses = (transactions, expense, toDate) => {
             title: expense.expense_title,
             description: expense.expense_description,
             date: expenseDate,
-            amount: -amount,
+            amount: -expense.expense_amount,
         });
     }
 };
 
-module.exports = generateExpenses;
+module.exports = generateDailyExpenses;

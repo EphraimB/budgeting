@@ -100,6 +100,7 @@ BEGIN
     NEW.frequency_week_of_month = NULL;
   ELSIF NEW.frequency_type = 1 THEN
     NEW.frequency_week_of_month = NULL;
+    NEW.frequency_day_of_month = NULL;
   END IF;
   RETURN NEW;
 END;
