@@ -1,6 +1,8 @@
 const generateTransactions = (request, response, next) => {
-    const generateMonthlyExpenses = require('./generateMonthlyExpenses.js');
-    const generateYearlyExpenses = require('./generateYearlyExpenses.js');
+    const generateMonthlyExpenses = require('./generateExpenses/generateMonthlyExpenses.js');
+    const generateYearlyExpenses = require('./generateExpenses/generateYearlyExpenses.js');
+    const generateMonthlyLoans = require('./generateLoans/generateMonthlyLoans.js');
+    const generateYearlyLoans = require('./generateLoans/generateYearlyLoans.js');
     const calculateBalances = require('./calculateBalances.js');
     const accountId = parseInt(request.body.account_id);
     const fromDate = new Date(request.body.from_date);
@@ -40,6 +42,14 @@ const generateTransactions = (request, response, next) => {
             generateYearlyExpenses(transactions, expense, toDate);
         }
     });
+
+    // request.loans.forEach(loan => {
+    //     if (loan.frequency === 0) {
+    //         generateMonthlyLoans(transactions, loan, toDate);
+    //     } else if (loan.frequency === 1) {
+    //         generateYearlyLoans(transactions, loan, toDate);
+    //     }
+    // });
 
     transactions.sort((a, b) => new Date(a.date) - new Date(b.date));
 
