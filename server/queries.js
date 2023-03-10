@@ -541,7 +541,7 @@ const getExpense = (request, response) => {
 
 // Create expense
 const createExpense = (request, response) => {
-    const { account_id, amount, title, description, frequency, begin_date } = request.body;
+    const { account_id, amount, title, description, frequency_type, frequency_day_of_month, frequency_day_of_week, frequency_week_of_month, begin_date } = request.body;
 
     if (!account_id) {
         response.status(400).send("Account ID must be provided");
@@ -583,13 +583,28 @@ const createExpense = (request, response) => {
         return;
     }
 
-    if (isNaN(frequency)) {
-        response.status(400).send("Frequency must be provided");
+    if (!frequency_type) {
+        response.status(400).send("Frequency type must be provided");
         return;
     }
 
-    if (frequency < 1) {
-        response.status(400).send("Frequency must be greater than 0");
+    if (frequency_type < 0 && frequency_type > 3) {
+        response.status(400).send("Frequency type must be 0, 1, 2, or 3");
+        return;
+    }
+
+    if (frequency_day_of_month < 1 && frequency_day_of_month > 31) {
+        response.status(400).send("Frequency day of month must be between 1 and 31");
+        return;
+    }
+
+    if (frequency_day_of_week < 1 && frequency_day_of_week > 7) {
+        response.status(400).send("Frequency day of week must be between 1 and 7");
+        return;
+    }
+
+    if (frequency_week_of_month < 1 && frequency_week_of_month > 5) {
+        response.status(400).send("Frequency week of month must be between 1 and 5");
         return;
     }
 
@@ -604,7 +619,7 @@ const createExpense = (request, response) => {
         return;
     }
 
-    pool.query(expenseQueries.createExpense, [account_id, amount, title, description, frequency, begin_date], (error, results) => {
+    pool.query(expenseQueries.createExpense, [account_id, amount, title, description, frequency_type, frequency_day_of_month, frequency_day_of_week, frequency_week_of_month, begin_date], (error, results) => {
         if (error) {
             throw error;
         }
@@ -615,7 +630,7 @@ const createExpense = (request, response) => {
 // Update expense
 const updateExpense = (request, response) => {
     const id = parseInt(request.params.id);
-    const { account_id, amount, title, description, frequency, begin_date } = request.body;
+    const { account_id, amount, title, description, frequency_type, frequency_day_of_month, frequency_day_of_week, frequency_week_of_month, begin_date } = request.body;
 
     if (!account_id) {
         response.status(400).send("Account ID must be provided");
@@ -657,13 +672,28 @@ const updateExpense = (request, response) => {
         return;
     }
 
-    if (isNaN(frequency)) {
-        response.status(400).send("Frequency must be provided");
+    if (!frequency_type) {
+        response.status(400).send("Frequency type must be provided");
         return;
     }
 
-    if (frequency < 1) {
-        response.status(400).send("Frequency must be greater than 0");
+    if (frequency_type < 0 && frequency_type > 3) {
+        response.status(400).send("Frequency type must be 0, 1, 2, or 3");
+        return;
+    }
+
+    if (frequency_day_of_month < 1 && frequency_day_of_month > 31) {
+        response.status(400).send("Frequency day of month must be between 1 and 31");
+        return;
+    }
+
+    if (frequency_day_of_week < 1 && frequency_day_of_week > 7) {
+        response.status(400).send("Frequency day of week must be between 1 and 7");
+        return;
+    }
+
+    if (frequency_week_of_month < 1 && frequency_week_of_month > 5) {
+        response.status(400).send("Frequency week of month must be between 1 and 5");
         return;
     }
 
@@ -678,7 +708,7 @@ const updateExpense = (request, response) => {
         return;
     }
 
-    pool.query(expenseQueries.updateExpense, [account_id, amount, title, description, frequency, begin_date, id], (error, results) => {
+    pool.query(expenseQueries.updateExpense, [account_id, amount, title, description, frequency_type, frequency_day_of_month, frequency_day_of_week, frequency_week_of_month, begin_date, id], (error, results) => {
         if (error) {
             throw error;
         }
@@ -759,7 +789,7 @@ const getLoan = (request, response) => {
 
 // Create loan
 const createLoan = (request, response) => {
-    const { account_id, amount, plan_amount, recipient, title, description, frequency, begin_date } = request.body;
+    const { account_id, amount, plan_amount, recipient, title, description, frequency_type, frequency_day_of_month, frequency_day_of_week, frequency_week_of_month, begin_date } = request.body;
 
     if (!account_id) {
         return response.status(400).send(`Account ID must be provided`);
@@ -808,13 +838,29 @@ const createLoan = (request, response) => {
     if (description.length < 1) {
         return response.status(400).send(`Description must be at least 1 character`);
     }
-
-    if (isNaN(frequency)) {
-        return response.status(400).send(`Frequency must be a number`);
+    if (!frequency_type) {
+        response.status(400).send("Frequency type must be provided");
+        return;
     }
 
-    if (frequency < 1) {
-        return response.status(400).send(`Frequency must be greater than 0`);
+    if (frequency_type < 0 && frequency_type > 3) {
+        response.status(400).send("Frequency type must be 0, 1, 2, or 3");
+        return;
+    }
+
+    if (frequency_day_of_month < 1 && frequency_day_of_month > 31) {
+        response.status(400).send("Frequency day of month must be between 1 and 31");
+        return;
+    }
+
+    if (frequency_day_of_week < 1 && frequency_day_of_week > 7) {
+        response.status(400).send("Frequency day of week must be between 1 and 7");
+        return;
+    }
+
+    if (frequency_week_of_month < 1 && frequency_week_of_month > 5) {
+        response.status(400).send("Frequency week of month must be between 1 and 5");
+        return;
     }
 
     if (!begin_date) {
@@ -834,7 +880,7 @@ const createLoan = (request, response) => {
         return response.status(400).send(`Loan begin date cannot be in the past`);
     }
 
-    pool.query(loanQueries.createLoan, [account_id, amount, plan_amount, recipient, title, description, frequency, begin_date], (error, results) => {
+    pool.query(loanQueries.createLoan, [account_id, amount, plan_amount, recipient, title, description, frequency_type, frequency_day_of_month, frequency_day_of_week, frequency_week_of_month, begin_date], (error, results) => {
         if (error) {
             throw error;
         }
