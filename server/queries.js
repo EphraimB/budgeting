@@ -169,6 +169,11 @@ const getDeposit = (request, response) => {
 const createDeposit = (request, response) => {
     const { account_id, amount, description } = request.body;
 
+    if(!amount) {
+        response.status(400).send("Amount must be provided");
+        return;
+    }
+
     if (isNaN(amount)) {
         response.status(400).send("Amount must be a number");
         return;
