@@ -108,11 +108,51 @@ const getDeposit = (request, response) => {
 const createDeposit = (request, response) => {
     const { account_id, amount, description } = request.body;
 
+    if (isNaN(amount)) {
+        response.status(400).send("Amount must be a number");
+        return;
+    }
+    
+    if (amount <= 0) {
+        response.status(400).send("Amount must be greater than 0");
+        return;
+    }
+    
+    if(!description) {
+        response.status(400).send("Description must be provided");
+        return;
+    }
+    
+    if(!account_id) {
+        response.status(400).send("Account ID must be provided");
+        return;
+    }
+
+    if (isNaN(account_id)) {
+        response.status(400).send("Account ID must be a number");
+        return;
+    }
+
+    if (account_id <= 0) {
+        response.status(400).send("Account ID must be greater than 0");
+        return;
+    }
+
+    if (description.length > 255) {
+        response.status(400).send("Description must be less than 255 characters");
+        return;
+    }
+
+    if (description.length < 1) {
+        response.status(400).send("Description must be at least 1 character");
+        return;
+    }
+
     pool.query(depositQueries.createDeposit, [account_id, amount, description], (error, results) => {
         if (error) {
             throw error;
         }
-        response.status(201).send(`Deposit added with ID: ${results.insertId}`);
+        response.status(201).send(results.rows);
     });
 }
 
@@ -461,7 +501,8 @@ const getCurrentBalance = (request, response, next) => {
         }
         
         const currentBalance = results.rows[0].account_balance;
-        request.currentBalance = currentBalance;
+
+        request.currentBalance = parseFloat(currentBalance.substring(1).replaceAll(',', ''));
 
         next();
     });

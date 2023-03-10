@@ -1,4 +1,4 @@
-const generateMonthlyExpenses = (transactions, expense, toDate) => {
+const generateYearlyExpenses = (transactions, expense, toDate) => {
     const startMonth = expense.expense_begin_date.getMonth();
     const amount = parseFloat(expense.expense_amount.substring(1).replaceAll(',', ''));
 
@@ -20,4 +20,4 @@ const generateMonthlyExpenses = (transactions, expense, toDate) => {
     }
 };
 
-module.exports = generateMonthlyExpenses;
+module.exports = generateYearlyExpenses;
