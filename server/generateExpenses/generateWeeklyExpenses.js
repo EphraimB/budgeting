@@ -7,7 +7,6 @@ const generateWeeklyExpenses = (transactions, expense, toDate) => {
         const startDay = expense.expense_begin_date.getDay();
         const frequency_day_of_week = expense.frequency_day_of_week;
 
-        expenseDate = new Date(expense.expense_begin_date);
         expenseDate.setDate(expenseDate.getDate() + (frequency_day_of_week + 7 - startDay) % 7);
     }
 
