@@ -405,7 +405,7 @@ const createWithdrawal = (request, response) => {
         if (error) {
             throw error;
         }
-        response.status(201).send(`Withdrawal added with ID: ${results.insertId}`);
+        response.status(201).json(results.rows);
     });
 }
 
@@ -483,6 +483,32 @@ const deleteWithdrawal = (request, response) => {
 const getExpensesByAccount = (request, response, next) => {
     const account_id = parseInt(request.body.account_id);
     const to_date = request.body.to_date;
+
+    if(!account_id) {
+        response.status(400).send("Account ID must be provided");
+        return;
+    }
+
+    if (isNaN(account_id)) {
+        response.status(400).send("Account ID must be a number");
+        return;
+    }
+
+    if (account_id <= 0) {
+        response.status(400).send("Account ID must be greater than 0");
+        return;
+    }
+
+    if (!to_date) {
+        response.status(400).send("To date must be provided");
+        return;
+    }
+
+    // Validate date format in yyyy-mm-dd format
+    if (!to_date.match(/^\d{4}-\d{2}-\d{2}$/)) {
+        response.status(400).send("From date must be in yyyy-mm-dd format");
+        return;
+    }
 
     pool.query(expenseQueries.getExpensesByAccount, [account_id, to_date], (error, results) => {
         if (error) {
@@ -586,7 +612,7 @@ const createExpense = (request, response) => {
         if (error) {
             throw error;
         }
-        response.status(201).json(results.rows[0]);
+        response.status(201).json(results.rows);
     });
 }
 
