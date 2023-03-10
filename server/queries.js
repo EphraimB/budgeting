@@ -592,7 +592,7 @@ const createExpense = (request, response) => {
         return;
     }
 
-    if (frequency.length < 1) {
+    if (frequency < 0) {
         response.status(400).send("Frequency must be at least 1 character");
         return;
     }
@@ -666,7 +666,7 @@ const updateExpense = (request, response) => {
         return;
     }
 
-    if (frequency.length < 1) {
+    if (frequency < 0) {
         response.status(400).send("Frequency must be at least 1 character");
         return;
     }
@@ -705,9 +705,20 @@ const deleteExpense = (request, response) => {
 // Get loans by account
 const getLoansByAccount = (request, response, next) => {
     const accountId = parseInt(request.params.accountId);
-    const months = parseInt(request.params.months);
+    const to_date = request.body.to_date;
 
-    pool.query(loanQueries.getLoansByAccount, [accountId], (error, results) => {
+    if (!to_date) {
+        response.status(400).send("To date must be provided");
+        return;
+    }
+
+    // If to date isn't in the format YYYY-MM-DD, it will be rejected
+    if (!to_date.match(/^\d{4}-\d{2}-\d{2}$/)) {
+        response.status(400).send("To date must be in the format YYYY-MM-DD");
+        return;
+    }
+
+    pool.query(loanQueries.getLoansByAccount, [accountId, to_date], (error, results) => {
         if (error) {
             throw error;
         }
@@ -745,19 +756,84 @@ const getLoan = (request, response) => {
 const createLoan = (request, response) => {
     const { account_id, amount, plan_amount, recipient, title, description, frequency, begin_date } = request.body;
 
+    if (!account_id) {
+        return response.status(400).send(`Account ID must be provided`);
+    }
+
+    if (account_id < 1) {
+        return response.status(400).send(`Account ID must be greater than 0`);
+    }
+
+    if (!amount) {
+        return response.status(400).send(`Amount must be provided`);
+    }
+
+    if (amount < 0) {
+        return response.status(400).send(`Amount must be greater than 0`);
+    }
+
+    if (!plan_amount) {
+        return response.status(400).send(`Planned amount must be provided`);
+    }
+
+    if (plan_amount < 0) {
+        return response.status(400).send(`Planned amount must be greater than 0`);
+    }
+
+    if (!recipient) {
+        return response.status(400).send(`Recipient must be provided`);
+    }
+
+    if (recipient.length < 1) {
+        return response.status(400).send(`Recipient must be at least 1 character`);
+    }
+
+    if (!title) {
+        return response.status(400).send(`Title must be provided`);
+    }
+
+    if (title.length < 1) {
+        return response.status(400).send(`Title must be at least 1 character`);
+    }
+
+    if (!description) {
+        return response.status(400).send(`Description must be provided`);
+    }
+
+    if (description.length < 1) {
+        return response.status(400).send(`Description must be at least 1 character`);
+    }
+
+    if (isNaN(frequency)) {
+        return response.status(400).send(`Frequency must be a number`);
+    }
+
+    if (frequency < 0) {
+        return response.status(400).send(`Frequency must be greater than 0`);
+    }
+
+    if (!begin_date) {
+        return response.status(400).send(`Begin date must be provided`);
+    }
+
+    // If begin date isn't in the format YYYY-MM-DD, it will be rejected
+    if (!begin_date.match(/^\d{4}-\d{2}-\d{2}$/)) {
+        return response.status(400).send(`Begin date must be in the format YYYY-MM-DD`);
+    }
+
     if (plan_amount > amount) {
-        response.status(400).send(`Loan amount cannot be less than the planned amount`);
+        return response.status(400).send(`Loan amount cannot be less than the planned amount`);
     }
 
     if (begin_date < new Date()) {
-        response.status(400).send(`Loan begin date cannot be in the past`);
+        return response.status(400).send(`Loan begin date cannot be in the past`);
     }
 
     pool.query(loanQueries.createLoan, [account_id, amount, plan_amount, recipient, title, description, frequency, begin_date], (error, results) => {
         if (error) {
             throw error;
         }
-        response.status(201).send(`Loan added with ID: ${results.insertId}`);
+        response.status(201).json(results.rows);
     });
 }
 
@@ -765,6 +841,79 @@ const createLoan = (request, response) => {
 const updateLoan = (request, response) => {
     const id = parseInt(request.params.id);
     const { account_id, amount, plan_amount, recipient, title, description, frequency, begin_date } = request.body;
+
+    if (!account_id) {
+        response.status(400).send(`Account ID must be provided`);
+    }
+
+    if (account_id < 1) {
+        response.status(400).send(`Account ID must be greater than 0`);
+    }
+
+    if (!amount) {
+        response.status(400).send(`Amount must be provided`);
+    }
+
+    if (amount < 0) {
+        response.status(400).send(`Amount must be greater than 0`);
+    }
+
+    if (!plan_amount) {
+        response.status(400).send(`Planned amount must be provided`);
+    }
+
+    if (plan_amount < 0) {
+        response.status(400).send(`Planned amount must be greater than 0`);
+    }
+
+    if (!recipient) {
+        response.status(400).send(`Recipient must be provided`);
+    }
+
+    if (recipient.length < 1) {
+        response.status(400).send(`Recipient must be at least 1 character`);
+    }
+
+    if (!title) {
+        response.status(400).send(`Title must be provided`);
+    }
+
+    if (title.length < 1) {
+        response.status(400).send(`Title must be at least 1 character`);
+    }
+
+    if (!description) {
+        response.status(400).send(`Description must be provided`);
+    }
+
+    if (description.length < 1) {
+        response.status(400).send(`Description must be at least 1 character`);
+    }
+
+    if (isNaN(frequency)) {
+        response.status(400).send(`Frequency must be a number`);
+    }
+
+    if (frequency < 0) {
+        response.status(400).send(`Frequency must be greater than 0`);
+    }
+
+    if (!begin_date) {
+        response.status(400).send(`Begin date must be provided`);
+    }
+
+    // If begin date isn't in the format YYYY-MM-DD, it will be rejected
+    if (!begin_date.match(/^\d{4}-\d{2}-\d{2}$/)) {
+        response.status(400).send(`Begin date must be in the format YYYY-MM-DD`);
+    }
+
+    if (plan_amount > amount) {
+        response.status(400).send(`Loan amount cannot be less than the planned amount`);
+    }
+
+    if (begin_date < new Date()) {
+        response.status(400).send(`Loan begin date cannot be in the past`);
+    }
 
     pool.query(loanQueries.updateLoan, [account_id, amount, plan_amount, recipient, title, description, frequency, begin_date, id], (error, results) => {
         if (error) {
@@ -864,6 +1013,14 @@ const deleteWishlist = (request, response) => {
 // Get current balance of account based on deposits and withdrawals
 const getCurrentBalance = (request, response, next) => {
     const accountId = parseInt(request.body.account_id);
+
+    if (isNaN(accountId)) {
+        return response.status(400).send(`Account ID must be a number`);
+    }
+
+    if (accountId < 0) {
+        return response.status(400).send(`Account ID must be greater than 0`);
+    }
 
     pool.query(currentBalanceQueries.getCurrentBalance, [accountId], (error, results) => {
         if (error) {

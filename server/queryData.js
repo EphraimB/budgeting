@@ -34,7 +34,7 @@ const accountQueries = {
   };
 
   const loanQueries = {
-    getLoansByAccount: 'SELECT * FROM loans WHERE account_id = $1 ORDER BY date_created DESC',
+    getLoansByAccount: 'SELECT * FROM loans WHERE account_id = $1 AND loan_begin_date <= $2 ORDER BY date_created DESC',
     getLoans: 'SELECT * FROM loans ORDER BY loan_id ASC',
     getLoan: 'SELECT * FROM loans WHERE loan_id = $1',
     createLoan: 'INSERT INTO loans (account_id, loan_amount, loan_plan_amount, loan_recipient, loan_title, loan_description, frequency, loan_begin_date) VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING *',
