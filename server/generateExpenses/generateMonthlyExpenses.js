@@ -1,12 +1,15 @@
 const generateMonthlyExpenses = (transactions, expense, toDate) => {
     let expenseDate = new Date(expense.expense_begin_date);
 
+    // If the frequency day of week is set, generate expenses every month on specified day of week (0 = Sunday, 6 = Saturday). If the week of month is set, generate expenses every month on specified week of month (0 = first week, 1 = second week, 2 = third week, 3 = fourth week, 4 = last week)
     if (expense.frequency_day_of_week) {
-        // If the expense day of week is set, generate expenses every week on specified day of week (0 = Sunday, 6 = Saturday)
-        const startDay = expense.expense_begin_date.getDay();
-        const frequency_day_of_week = expense.frequency_day_of_week;
+        let firstDate = new Date(expenseDate.getFullYear(), expenseDate.getMonth(), expense.frequency_week_of_month !== null ? 1 + (7 * (expense.frequency_week_of_month)) : expense.expense_begin_date.getDate());
 
-        expenseDate.setDate(expenseDate.getDate() + (frequency_day_of_week + 28 - startDay) % 7);
+        while (firstDate.getDay() !== expense.frequency_day_of_week) {
+            firstDate.setDate(firstDate.getDate() + 1)
+        }
+
+        expenseDate = firstDate;
     }
 
     while (expenseDate <= toDate) {
@@ -16,8 +19,6 @@ const generateMonthlyExpenses = (transactions, expense, toDate) => {
             date: new Date(expenseDate),
             amount: -expense.expense_amount,
         });
-
-        // Move to the next month
         expenseDate.setMonth(expenseDate.getMonth() + 1);
     }
 };
