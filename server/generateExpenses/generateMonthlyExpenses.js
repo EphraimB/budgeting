@@ -19,7 +19,18 @@ const generateMonthlyExpenses = (transactions, expense, toDate) => {
             date: new Date(expenseDate),
             amount: -expense.expense_amount,
         });
-        expenseDate.setMonth(expenseDate.getMonth() + 1);
+
+        if (expense.frequency_day_of_week) {
+            let firstDate = new Date(expenseDate.getFullYear(), expenseDate.getMonth() + 1, expense.frequency_week_of_month !== null ? 1 + (7 * (expense.frequency_week_of_month)) : expense.expense_begin_date.getDate());
+
+            while (firstDate.getDay() !== expense.frequency_day_of_week) {
+                firstDate.setDate(firstDate.getDate() + 1)
+            }
+
+            expenseDate = firstDate;
+        } else {
+            expenseDate.setMonth(expenseDate.getMonth() + 1);
+        }
     }
 };
 
