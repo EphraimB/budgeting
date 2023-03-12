@@ -2,7 +2,7 @@ const generateDailyLoans = (transactions, loan, toDate) => {
     const startDate = loan.loan_begin_date.getDate();
     const planAmount = loan.loan_plan_amount;
 
-    for (let i = 0; ; i++) {
+    for (let i = 0; ; i += (loan.frequency_type_variable || 1)) {
         const loanDate = new Date(loan.loan_begin_date);
         loanDate.setDate(startDate + i);
 

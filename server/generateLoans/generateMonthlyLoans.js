@@ -21,7 +21,7 @@ const generateMonthlyLoans = (transactions, loan, toDate) => {
         });
 
         if (loan.frequency_day_of_week) {
-            let firstDate = new Date(loanDate.getFullYear(), loanDate.getMonth() + 1, loan.frequency_week_of_month !== null ? 1 + (7 * (loan.frequency_week_of_month)) : loan.loan_begin_date.getDate());
+            let firstDate = new Date(loanDate.getFullYear(), loanDate.getMonth() + (loan.frequency_type_variable || 1), loan.frequency_week_of_month !== null ? 1 + (7 * (loan.frequency_week_of_month)) : loan.loan_begin_date.getDate());
 
             while (firstDate.getDay() !== loan.frequency_day_of_week) {
                 firstDate.setDate(firstDate.getDate() + 1)
@@ -29,7 +29,7 @@ const generateMonthlyLoans = (transactions, loan, toDate) => {
 
             loanDate = firstDate;
         } else {
-            loanDate.setMonth(loanDate.getMonth() + 1);
+            loanDate.setMonth(loanDate.getMonth() + (loan.frequency_type_variable || 1));
         }
     }
 };
