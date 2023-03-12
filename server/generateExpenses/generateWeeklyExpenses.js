@@ -1,5 +1,4 @@
 const generateWeeklyExpenses = (transactions, expense, toDate) => {
-    const startDay = expense.expense_begin_date.getDay();
     let expenseDate = new Date(expense.expense_begin_date);
 
     if (expense.frequency_day_of_week) {
