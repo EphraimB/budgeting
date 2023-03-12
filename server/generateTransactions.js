@@ -2,6 +2,7 @@ const generateTransactions = (request, response, next) => {
     const generateDailyExpenses = require('./generateExpenses/generateDailyExpenses.js');
     const generateWeeklyExpenses = require('./generateExpenses/generateWeeklyExpenses.js');
     const generateMonthlyExpenses = require('./generateExpenses/generateMonthlyExpenses.js');
+    const generateYearlyExpenses = require('./generateExpenses/generateYearlyExpenses.js');
     const generateDailyLoans = require('./generateLoans/generateDailyLoans.js');
     const generateWeeklyLoans = require('./generateLoans/generateWeeklyLoans.js');
     const generateMonthlyLoans = require('./generateLoans/generateMonthlyLoans.js');
@@ -44,6 +45,8 @@ const generateTransactions = (request, response, next) => {
             generateWeeklyExpenses(transactions, expense, toDate);
         } else if (expense.frequency_type === 2) {
             generateMonthlyExpenses(transactions, expense, toDate);
+        } else if (expense.frequency_type === 3) {
+            generateYearlyExpenses(transactions, expense, toDate);
         }
     });
 
