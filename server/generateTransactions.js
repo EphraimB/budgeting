@@ -4,6 +4,7 @@ const generateTransactions = (request, response, next) => {
     const generateMonthlyExpenses = require('./generateExpenses/generateMonthlyExpenses.js');
     const generateDailyLoans = require('./generateLoans/generateDailyLoans.js');
     const generateWeeklyLoans = require('./generateLoans/generateWeeklyLoans.js');
+    const generateMonthlyLoans = require('./generateLoans/generateMonthlyLoans.js');
     const calculateBalances = require('./calculateBalances.js');
     const accountId = parseInt(request.body.account_id);
     const fromDate = new Date(request.body.from_date);
@@ -51,6 +52,8 @@ const generateTransactions = (request, response, next) => {
             generateDailyLoans(transactions, loan, toDate)
         } else if (loan.frequency_type === 1) {
             generateWeeklyLoans(transactions, loan, toDate)
+        } else if (loan.frequency_type === 2) {
+            generateMonthlyLoans(transactions, loan, toDate)
         }
     });
 

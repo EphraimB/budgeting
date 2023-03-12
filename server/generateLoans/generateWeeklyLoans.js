@@ -14,7 +14,7 @@ const generateWeeklyLoans = (transactions, loan, toDate) => {
             title: loan.loan_title,
             description: loan.loan_description,
             date: new Date(loanDate), // create a new Date object to avoid modifying the same object in each iteration
-            amount: -loan.loan_amount,
+            amount: -loan.loan_plan_amount,
         });
         loanDate.setDate(loanDate.getDate() + 7);
     }
