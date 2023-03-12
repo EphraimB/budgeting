@@ -23,7 +23,7 @@ const generateTransactions = (request, response, next) => {
             date_modified: deposit.date_modified,
             title: deposit.deposit_title,
             description: deposit.deposit_description,
-            amount: deposit.deposit_amount
+            amount: parseFloat(deposit.deposit_amount)
         })),
         ...request.withdrawals.map(withdrawal => ({
             withdrawal_id: withdrawal.withdrawal_id,
@@ -31,7 +31,7 @@ const generateTransactions = (request, response, next) => {
             date_modified: withdrawal.date_modified,
             title: withdrawal.withdrawal_title,
             description: withdrawal.withdrawal_description,
-            amount: -withdrawal.withdrawal_amount
+            amount: parseFloat(-withdrawal.withdrawal_amount)
         }))
     );
 
