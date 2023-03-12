@@ -1,7 +1,7 @@
 const generateDailyExpenses = (transactions, expense, toDate) => {
     const startDate = expense.expense_begin_date.getDate();
 
-    for (let i = 0; ; i++) {
+    for (let i = 0; ; i += (expense.frequency_type_variable || 1)) {
         const expenseDate = new Date(expense.expense_begin_date);
         expenseDate.setDate(startDate + i);
 

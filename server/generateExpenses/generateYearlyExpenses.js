@@ -21,7 +21,7 @@ const generateYearlyExpenses = (transactions, expense, toDate) => {
         });
 
         if (expense.frequency_day_of_week) {
-            let firstDate = new Date(expenseDate.getFullYear() + 1, expenseDate.getMonth(), expense.frequency_week_of_month !== null ? 1 + (7 * (expense.frequency_week_of_month)) : expense.expense_begin_date.getDate());
+            let firstDate = new Date(expenseDate.getFullYear() + (expense.frequency_type_variable || 1), expenseDate.getMonth(), expense.frequency_week_of_month !== null ? 1 + (7 * (expense.frequency_week_of_month)) : expense.expense_begin_date.getDate());
 
             while (firstDate.getDay() !== expense.frequency_day_of_week) {
                 firstDate.setDate(firstDate.getDate() + 1)
@@ -29,7 +29,7 @@ const generateYearlyExpenses = (transactions, expense, toDate) => {
 
             expenseDate = firstDate;
         } else {
-            expenseDate.setFullYear(expenseDate.getFullYear() + 1);
+            expenseDate.setFullYear(expenseDate.getFullYear() + (expense.frequency_type_variable || 1));
         }
     }
 };

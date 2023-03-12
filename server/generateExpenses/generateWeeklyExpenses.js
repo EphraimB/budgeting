@@ -16,7 +16,7 @@ const generateWeeklyExpenses = (transactions, expense, toDate) => {
             date: new Date(expenseDate), // create a new Date object to avoid modifying the same object in each iteration
             amount: -expense.expense_amount,
         });
-        expenseDate.setDate(expenseDate.getDate() + 7);
+        expenseDate.setDate((expenseDate.getDate() + 7) * (expense.frequency_type_variable || 1));
     }
 };
 
