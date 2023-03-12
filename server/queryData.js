@@ -28,8 +28,8 @@ const accountQueries = {
     getExpensesByAccount: "SELECT * FROM expenses WHERE account_id = $1 AND expense_begin_date <= $2 ORDER BY expense_begin_date ASC",
     getExpenses: 'SELECT * FROM expenses ORDER BY expense_id ASC',
     getExpense: 'SELECT * FROM expenses WHERE expense_id = $1',
-    createExpense: 'INSERT INTO expenses (account_id, expense_amount, expense_title, expense_description, frequency_type, frequency_day_of_week, frequency_week_of_month, expense_begin_date) VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING *',
-    updateExpense: 'UPDATE expenses SET account_id = $1, expense_amount = $2, expense_title = $3, expense_description = $4, frequency_type = $5, frequency_day_of_week = $6, frequency_week_of_month = $7, expense_begin_date = $8 WHERE expense_id = $9',
+    createExpense: 'INSERT INTO expenses (account_id, expense_amount, expense_title, expense_description, frequency_type, frequency_type_variable, frequency_day_of_month, frequency_day_of_week, frequency_week_of_month, frequency_month_of_year, expense_begin_date) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11) RETURNING *',
+    updateExpense: 'UPDATE expenses SET account_id = $1, expense_amount = $2, expense_title = $3, expense_description = $4, frequency_type = $5, frequency_type_variable = $6, frequency_day_of_month = $7, frequency_day_of_week = $8, frequency_week_of_month = $9, frequency_month_of_year = $10, expense_begin_date = $11 WHERE expense_id = $12',
     deleteExpense: 'DELETE FROM expenses WHERE expense_id = $1',
   };
 
@@ -37,8 +37,8 @@ const accountQueries = {
     getLoansByAccount: 'SELECT * FROM loans WHERE account_id = $1 AND loan_begin_date <= $2 ORDER BY date_created DESC',
     getLoans: 'SELECT * FROM loans ORDER BY loan_id ASC',
     getLoan: 'SELECT * FROM loans WHERE loan_id = $1',
-    createLoan: 'INSERT INTO loans (account_id, loan_amount, loan_plan_amount, loan_recipient, loan_title, loan_description, frequency_type, frequency_day_of_week, frequency_week_of_month, loan_begin_date) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10) RETURNING *',
-    updateLoan: 'UPDATE loans SET account_id = $1, loan_amount = $2, loan_plan_amount = $3, loan_recipient = $4, loan_title = $5, loan_description = $6, frequency_type = $7, frequency_day_of_week = $8, loan_begin_date = $9 WHERE loan_id = $10',
+    createLoan: 'INSERT INTO loans (account_id, loan_amount, loan_plan_amount, loan_recipient, loan_title, loan_description, frequency_type, frequency_type_variable, frequency_day_of_month, frequency_day_of_week, frequency_week_of_month, frequency_month_of_year, loan_begin_date) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13) RETURNING *',
+    updateLoan: 'UPDATE loans SET account_id = $1, loan_amount = $2, loan_plan_amount = $3, loan_recipient = $4, loan_title = $5, loan_description = $6, frequency_type = $7, frequency_type = $8, frequency_type_variable = $9, frequency_day_of_month = $10, frequency_day_of_week = $11, frequency_week_of_month = $12, loan_begin_date = $13 WHERE loan_id = $14',
     deleteLoan: 'DELETE FROM loans WHERE loan_id = $1',
   };
 

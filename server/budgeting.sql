@@ -39,8 +39,11 @@ CREATE TABLE IF NOT EXISTS expenses (
   expense_title VARCHAR(255) NOT NULL,
   expense_description VARCHAR(255) NOT NULL,
   frequency_type INT NOT NULL,
+  frequency_type_variable INT,
+  frequency_day_of_month INT,
   frequency_day_of_week INT,
   frequency_week_of_month INT,
+  frequency_month_of_year INT,
   expense_begin_date TIMESTAMP NOT NULL,
   expense_end_date TIMESTAMP,
   date_created TIMESTAMP NOT NULL,
@@ -57,8 +60,11 @@ CREATE TABLE IF NOT EXISTS loans (
   loan_title VARCHAR(255) NOT NULL,
   loan_description VARCHAR(255) NOT NULL,
   frequency_type INT NOT NULL,
+  frequency_type_variable INT,
+  frequency_day_of_month INT,
   frequency_day_of_week INT,
   frequency_week_of_month INT,
+  frequency_month_of_year INT,
   loan_begin_date TIMESTAMP NOT NULL,
   date_created TIMESTAMP NOT NULL,
   date_modified TIMESTAMP NOT NULL
@@ -95,8 +101,10 @@ BEGIN
   IF NEW.frequency_type = 0 THEN
     NEW.frequency_day_of_week = NULL;
     NEW.frequency_week_of_month = NULL;
+    NEW.frequency_month_of_year = NULL;
   ELSIF NEW.frequency_type = 1 THEN
     NEW.frequency_week_of_month = NULL;
+    NEW.frequency_month_of_year = NULL;
   END IF;
   RETURN NEW;
 END;
