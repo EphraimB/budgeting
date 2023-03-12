@@ -2,7 +2,7 @@ const generateTransactions = (request, response, next) => {
     const generateDailyExpenses = require('./generateExpenses/generateDailyExpenses.js');
     const generateWeeklyExpenses = require('./generateExpenses/generateWeeklyExpenses.js');
     const generateMonthlyExpenses = require('./generateExpenses/generateMonthlyExpenses.js');
-    const generateLoans = require('./generateLoans.js');
+    const generateDailyLoans = require('./generateLoans/generateDailyLoans.js');
     const calculateBalances = require('./calculateBalances.js');
     const accountId = parseInt(request.body.account_id);
     const fromDate = new Date(request.body.from_date);
@@ -46,7 +46,9 @@ const generateTransactions = (request, response, next) => {
     });
 
     request.loans.forEach(loan => {
-        generateLoans(transactions, loan, toDate)
+        if (loan.frequency_type === 0) {
+            generateDailyLoans(transactions, loan, toDate)
+        }
     });
 
     transactions.sort((a, b) => new Date(a.date) - new Date(b.date));

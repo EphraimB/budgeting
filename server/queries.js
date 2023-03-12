@@ -132,7 +132,7 @@ const getDepositsByAccount = (request, response, next) => {
         if (error) {
             throw error;
         }
-        
+
         request.deposits = results.rows;
 
         next();
@@ -165,7 +165,7 @@ const getDeposit = (request, response) => {
 const createDeposit = (request, response) => {
     const { account_id, amount, description } = request.body;
 
-    if(!account_id) {
+    if (!account_id) {
         response.status(400).send("Account ID must be provided");
         return;
     }
@@ -175,7 +175,7 @@ const createDeposit = (request, response) => {
         return;
     }
 
-    if(!amount) {
+    if (!amount) {
         response.status(400).send("Amount must be provided");
         return;
     }
@@ -184,13 +184,13 @@ const createDeposit = (request, response) => {
         response.status(400).send("Amount must be a number");
         return;
     }
-    
+
     if (amount <= 0) {
         response.status(400).send("Amount must be greater than 0");
         return;
     }
-    
-    if(!description) {
+
+    if (!description) {
         response.status(400).send("Description must be provided");
         return;
     }
@@ -223,7 +223,7 @@ const updateDeposit = (request, response) => {
     const id = parseInt(request.params.id);
     const { account_id, amount, description } = request.body;
 
-    if(!amount) {
+    if (!amount) {
         response.status(400).send("Amount must be provided");
         return;
     }
@@ -232,18 +232,18 @@ const updateDeposit = (request, response) => {
         response.status(400).send("Amount must be a number");
         return;
     }
-    
+
     if (amount <= 0) {
         response.status(400).send("Amount must be greater than 0");
         return;
     }
-    
-    if(!description) {
+
+    if (!description) {
         response.status(400).send("Description must be provided");
         return;
     }
-    
-    if(!account_id) {
+
+    if (!account_id) {
         response.status(400).send("Account ID must be provided");
         return;
     }
@@ -352,7 +352,7 @@ const getWithdrawal = (request, response) => {
 const createWithdrawal = (request, response) => {
     const { account_id, amount, description } = request.body;
 
-    if(!amount) {
+    if (!amount) {
         response.status(400).send("Amount must be provided");
         return;
     }
@@ -361,18 +361,18 @@ const createWithdrawal = (request, response) => {
         response.status(400).send("Amount must be a number");
         return;
     }
-    
+
     if (amount <= 0) {
         response.status(400).send("Amount must be greater than 0");
         return;
     }
-    
-    if(!description) {
+
+    if (!description) {
         response.status(400).send("Description must be provided");
         return;
     }
-    
-    if(!account_id) {
+
+    if (!account_id) {
         response.status(400).send("Account ID must be provided");
         return;
     }
@@ -410,7 +410,7 @@ const updateWithdrawal = (request, response) => {
     const id = parseInt(request.params.id);
     const { account_id, amount, description } = request.body;
 
-    if(!amount) {
+    if (!amount) {
         response.status(400).send("Amount must be provided");
         return;
     }
@@ -419,18 +419,18 @@ const updateWithdrawal = (request, response) => {
         response.status(400).send("Amount must be a number");
         return;
     }
-    
+
     if (amount <= 0) {
         response.status(400).send("Amount must be greater than 0");
         return;
     }
-    
-    if(!description) {
+
+    if (!description) {
         response.status(400).send("Description must be provided");
         return;
     }
-    
-    if(!account_id) {
+
+    if (!account_id) {
         response.status(400).send("Account ID must be provided");
         return;
     }
@@ -480,7 +480,7 @@ const getExpensesByAccount = (request, response, next) => {
     const account_id = parseInt(request.body.account_id);
     const to_date = request.body.to_date;
 
-    if(!account_id) {
+    if (!account_id) {
         response.status(400).send("Account ID must be provided");
         return;
     }
@@ -541,7 +541,7 @@ const getExpense = (request, response) => {
 
 // Create expense
 const createExpense = (request, response) => {
-    const { account_id, amount, title, description, frequency_type, frequency_day_of_month, frequency_day_of_week, frequency_week_of_month, begin_date } = request.body;
+    const { account_id, amount, title, description, frequency_type, frequency_day_of_week, frequency_week_of_month, begin_date } = request.body;
 
     if (!account_id) {
         response.status(400).send("Account ID must be provided");
@@ -593,11 +593,6 @@ const createExpense = (request, response) => {
         return;
     }
 
-    if (frequency_day_of_month < 1 && frequency_day_of_month > 31) {
-        response.status(400).send("Frequency day of month must be between 1 and 31");
-        return;
-    }
-
     if (frequency_day_of_week < 1 && frequency_day_of_week > 7) {
         response.status(400).send("Frequency day of week must be between 1 and 7");
         return;
@@ -619,7 +614,7 @@ const createExpense = (request, response) => {
         return;
     }
 
-    pool.query(expenseQueries.createExpense, [account_id, amount, title, description, frequency_type, frequency_day_of_month, frequency_day_of_week, frequency_week_of_month, begin_date], (error, results) => {
+    pool.query(expenseQueries.createExpense, [account_id, amount, title, description, frequency_type, frequency_day_of_week, frequency_week_of_month, begin_date], (error, results) => {
         if (error) {
             throw error;
         }
@@ -630,7 +625,7 @@ const createExpense = (request, response) => {
 // Update expense
 const updateExpense = (request, response) => {
     const id = parseInt(request.params.id);
-    const { account_id, amount, title, description, frequency_type, frequency_day_of_month, frequency_day_of_week, frequency_week_of_month, begin_date } = request.body;
+    const { account_id, amount, title, description, frequency_type, frequency_day_of_week, frequency_week_of_month, begin_date } = request.body;
 
     if (!account_id) {
         response.status(400).send("Account ID must be provided");
@@ -682,11 +677,6 @@ const updateExpense = (request, response) => {
         return;
     }
 
-    if (frequency_day_of_month < 1 && frequency_day_of_month > 31) {
-        response.status(400).send("Frequency day of month must be between 1 and 31");
-        return;
-    }
-
     if (frequency_day_of_week < 1 && frequency_day_of_week > 7) {
         response.status(400).send("Frequency day of week must be between 1 and 7");
         return;
@@ -708,7 +698,7 @@ const updateExpense = (request, response) => {
         return;
     }
 
-    pool.query(expenseQueries.updateExpense, [account_id, amount, title, description, frequency_type, frequency_day_of_month, frequency_day_of_week, frequency_week_of_month, begin_date, id], (error, results) => {
+    pool.query(expenseQueries.updateExpense, [account_id, amount, title, description, frequency_type, frequency_day_of_week, frequency_week_of_month, begin_date, id], (error, results) => {
         if (error) {
             throw error;
         }
@@ -789,7 +779,7 @@ const getLoan = (request, response) => {
 
 // Create loan
 const createLoan = (request, response) => {
-    const { account_id, amount, plan_amount, recipient, title, description, frequency_type, frequency_day_of_month, frequency_day_of_week, frequency_week_of_month, begin_date } = request.body;
+    const { account_id, amount, plan_amount, recipient, title, description, frequency_type, frequency_day_of_week, frequency_week_of_month, begin_date } = request.body;
 
     if (!account_id) {
         return response.status(400).send(`Account ID must be provided`);
@@ -838,18 +828,14 @@ const createLoan = (request, response) => {
     if (description.length < 1) {
         return response.status(400).send(`Description must be at least 1 character`);
     }
-    if (!frequency_type) {
+
+    if (isNaN(frequency_type)) {
         response.status(400).send("Frequency type must be provided");
         return;
     }
 
     if (frequency_type < 0 && frequency_type > 3) {
         response.status(400).send("Frequency type must be 0, 1, 2, or 3");
-        return;
-    }
-
-    if (frequency_day_of_month < 1 && frequency_day_of_month > 31) {
-        response.status(400).send("Frequency day of month must be between 1 and 31");
         return;
     }
 
@@ -880,7 +866,7 @@ const createLoan = (request, response) => {
         return response.status(400).send(`Loan begin date cannot be in the past`);
     }
 
-    pool.query(loanQueries.createLoan, [account_id, amount, plan_amount, recipient, title, description, frequency_type, frequency_day_of_month, frequency_day_of_week, frequency_week_of_month, begin_date], (error, results) => {
+    pool.query(loanQueries.createLoan, [account_id, amount, plan_amount, recipient, title, description, frequency_type, frequency_day_of_week, frequency_week_of_month, begin_date], (error, results) => {
         if (error) {
             throw error;
         }
@@ -891,71 +877,83 @@ const createLoan = (request, response) => {
 // Update loan
 const updateLoan = (request, response) => {
     const id = parseInt(request.params.id);
-    const { account_id, amount, plan_amount, recipient, title, description, frequency, begin_date } = request.body;
+    const { account_id, amount, plan_amount, recipient, title, description, frequency_type, frequency_day_of_week, frequency_week_of_month, begin_date } = request.body;
 
     if (!account_id) {
-        response.status(400).send(`Account ID must be provided`);
+        return response.status(400).send(`Account ID must be provided`);
     }
 
     if (account_id < 1) {
-        response.status(400).send(`Account ID must be greater than 0`);
+        return response.status(400).send(`Account ID must be greater than 0`);
     }
 
     if (!amount) {
-        response.status(400).send(`Amount must be provided`);
+        return response.status(400).send(`Amount must be provided`);
     }
 
     if (amount < 0) {
-        response.status(400).send(`Amount must be greater than 0`);
+        return response.status(400).send(`Amount must be greater than 0`);
     }
 
     if (!plan_amount) {
-        response.status(400).send(`Planned amount must be provided`);
+        return response.status(400).send(`Planned amount must be provided`);
     }
 
     if (plan_amount < 0) {
-        response.status(400).send(`Planned amount must be greater than 0`);
+        return response.status(400).send(`Planned amount must be greater than 0`);
     }
 
     if (!recipient) {
-        response.status(400).send(`Recipient must be provided`);
+        return response.status(400).send(`Recipient must be provided`);
     }
 
     if (recipient.length < 1) {
-        response.status(400).send(`Recipient must be at least 1 character`);
+        return response.status(400).send(`Recipient must be at least 1 character`);
     }
 
     if (!title) {
-        response.status(400).send(`Title must be provided`);
+        return response.status(400).send(`Title must be provided`);
     }
 
     if (title.length < 1) {
-        response.status(400).send(`Title must be at least 1 character`);
+        return response.status(400).send(`Title must be at least 1 character`);
     }
 
     if (!description) {
-        response.status(400).send(`Description must be provided`);
+        return response.status(400).send(`Description must be provided`);
     }
 
     if (description.length < 1) {
-        response.status(400).send(`Description must be at least 1 character`);
+        return response.status(400).send(`Description must be at least 1 character`);
     }
 
-    if (isNaN(frequency)) {
-        response.status(400).send(`Frequency must be a number`);
+    if (isNaN(frequency_type)) {
+        response.status(400).send("Frequency type must be provided");
+        return;
     }
 
-    if (frequency < 1) {
-        return response.status(400).send(`Frequency must be greater than 0`);
+    if (frequency_type < 0 && frequency_type > 3) {
+        response.status(400).send("Frequency type must be 0, 1, 2, or 3");
+        return;
+    }
+
+    if (frequency_day_of_week < 1 && frequency_day_of_week > 7) {
+        response.status(400).send("Frequency day of week must be between 1 and 7");
+        return;
+    }
+
+    if (frequency_week_of_month < 1 && frequency_week_of_month > 5) {
+        response.status(400).send("Frequency week of month must be between 1 and 5");
+        return;
     }
 
     if (!begin_date) {
-        response.status(400).send(`Begin date must be provided`);
+        return response.status(400).send(`Begin date must be provided`);
     }
 
     // If begin date isn't in the format YYYY-MM-DD, it will be rejected
     if (!begin_date.match(/^\d{4}-\d{2}-\d{2}$/)) {
-        response.status(400).send(`Begin date must be in the format YYYY-MM-DD`);
+        return response.status(400).send(`Begin date must be in the format YYYY-MM-DD`);
     }
 
     if (plan_amount > amount) {
@@ -966,7 +964,7 @@ const updateLoan = (request, response) => {
         response.status(400).send(`Loan begin date cannot be in the past`);
     }
 
-    pool.query(loanQueries.updateLoan, [account_id, amount, plan_amount, recipient, title, description, frequency, begin_date, id], (error, results) => {
+    pool.query(loanQueries.updateLoan, [account_id, amount, plan_amount, recipient, title, description, frequency_type, frequency_day_of_week, frequency_week_of_month, begin_date], (error, results) => {
         if (error) {
             throw error;
         }
@@ -1077,7 +1075,7 @@ const getCurrentBalance = (request, response, next) => {
         if (error) {
             throw error;
         }
-        
+
         const currentBalance = parseFloat(results.rows[0].account_balance);
 
         request.currentBalance = currentBalance;

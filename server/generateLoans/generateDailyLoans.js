@@ -1,4 +1,4 @@
-const generateLoans = (transactions, loan, toDate) => {
+const generateDailyLoans = (transactions, loan, toDate) => {
     const startDay = loan.loan_begin_date.getDay();
     const planAmount = loan.loan_plan_amount;
 
@@ -20,4 +20,4 @@ const generateLoans = (transactions, loan, toDate) => {
     }
 };
 
-module.exports = generateLoans;
+module.exports = generateDailyLoans;
