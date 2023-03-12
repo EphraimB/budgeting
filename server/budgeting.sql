@@ -39,7 +39,6 @@ CREATE TABLE IF NOT EXISTS expenses (
   expense_title VARCHAR(255) NOT NULL,
   expense_description VARCHAR(255) NOT NULL,
   frequency_type INT NOT NULL,
-  frequency_day_of_month INT,
   frequency_day_of_week INT,
   frequency_week_of_month INT,
   expense_begin_date TIMESTAMP NOT NULL,
@@ -58,7 +57,6 @@ CREATE TABLE IF NOT EXISTS loans (
   loan_title VARCHAR(255) NOT NULL,
   loan_description VARCHAR(255) NOT NULL,
   frequency_type INT NOT NULL,
-  frequency_day_of_month INT,
   frequency_day_of_week INT,
   frequency_week_of_month INT,
   loan_begin_date TIMESTAMP NOT NULL,
@@ -96,11 +94,9 @@ CREATE OR REPLACE FUNCTION set_null_columns() RETURNS TRIGGER AS $$
 BEGIN
   IF NEW.frequency_type = 0 THEN
     NEW.frequency_day_of_week = NULL;
-    NEW.frequency_day_of_month = NULL;
     NEW.frequency_week_of_month = NULL;
   ELSIF NEW.frequency_type = 1 THEN
     NEW.frequency_week_of_month = NULL;
-    NEW.frequency_day_of_month = NULL;
   END IF;
   RETURN NEW;
 END;
