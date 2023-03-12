@@ -1,12 +1,10 @@
 const generateDailyLoans = (transactions, loan, toDate) => {
-    const startDay = loan.loan_begin_date.getDay();
+    const startDate = loan.loan_begin_date.getDate();
     const planAmount = loan.loan_plan_amount;
 
     for (let i = 0; ; i++) {
         const loanDate = new Date(loan.loan_begin_date);
-        console.log(loanDate);
-        loanDate.setDate(startDay + i);
-        console.log(loanDate);
+        loanDate.setDate(startDate + i);
 
         // If the loan date is after toDate, stop generating loans
         if (loanDate > toDate) {

@@ -1,9 +1,9 @@
 const generateDailyExpenses = (transactions, expense, toDate) => {
-    const startDay = expense.expense_begin_date.getDay();
+    const startDate = expense.expense_begin_date.getDate();
 
     for (let i = 0; ; i++) {
         const expenseDate = new Date(expense.expense_begin_date);
-        expenseDate.setDate(startDay + i);
+        expenseDate.setDate(startDate + i);
 
         // If the expense date is after toDate, stop generating expenses
         if (expenseDate > toDate) {
