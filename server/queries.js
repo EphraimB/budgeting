@@ -23,8 +23,7 @@ const getAccount = (request, response) => {
     });
 }
 
-// Create account
-const createAccount = (request, response) => {
+const accountValidation = (request, response, next) => {
     const { name, type, balance } = request.body;
 
     if (!name) {
@@ -35,13 +34,18 @@ const createAccount = (request, response) => {
         return response.status(400).send('Account type must be a number');
     }
 
-    if (!balance) {
-        return response.status(400).send('Account balance is required');
-    }
-
     if (isNaN(balance)) {
         return response.status(400).send('Account balance must be a number');
     }
+
+    next();
+}
+
+// Create account
+const createAccount = (request, response) => {
+    const { name, type, balance } = request.body;
+
+    accountValidation(request, response, () => { });
 
     pool.query(accountQueries.createAccount,
         [name, type, balance],
@@ -58,25 +62,7 @@ const updateAccount = (request, response) => {
     const id = parseInt(request.params.id);
     const { name, type, balance } = request.body;
 
-    if (!name) {
-        return response.status(400).send('Account name is required');
-    }
-
-    if (!type) {
-        return response.status(400).send('Account type is required');
-    }
-
-    if (isNaN(type)) {
-        return response.status(400).send('Account type must be a number');
-    }
-
-    if (!balance) {
-        return response.status(400).send('Account balance is required');
-    }
-
-    if (isNaN(balance)) {
-        return response.status(400).send('Account balance must be a number');
-    }
+    accountValidation(request, response, () => { });
 
     pool.query(
         accountQueries.updateAccount,
