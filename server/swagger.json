@@ -116,6 +116,34 @@
             }
           }
         }
+      },
+      "delete": {
+        "summary": "Delete an account",
+        "description": "Delete an account",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "description": "Delete by account id",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A message that the account was deleted",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string",
+                  "example": "Account deleted with ID: 1"
+                }
+              }
+            }
+          }
+        }
       }
     },
     "/accounts": {
