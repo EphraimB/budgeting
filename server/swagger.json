@@ -1,0 +1,27 @@
+{
+    "swagger": "2.0",
+    "info": {
+      "version": "0.1.0",
+      "title": "Budgeting",
+      "description": "Budgeting API",
+      "license": {
+        "name": "MIT",
+        "url": "https://opensource.org/licenses/MIT"
+      }
+    },
+    "host": "localhost:5000/",
+    "basePath": "/api/",
+    "tags": [
+      {
+        "name": "budget",
+        "description": "Everything about your Budget",
+        "externalDocs": {
+          "description": "Find out more",
+          "url": "http://swagger.io"
+        }
+      }
+    ],
+    "schemes": ["http"],
+    "consumes": ["application/json"],
+    "produces": ["application/json"]
+  }

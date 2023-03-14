@@ -8,10 +8,18 @@ const expensesRouter = require('./routes/expensesRouter');
 const loansRouter = require('./routes/loansRouter');
 const wishlistRouter = require('./routes/wishlistRouter');
 const transactionsRouter = require('./routes/transactionsRouter');
+const swaggerUi = require('swagger-ui-express'),
+    swaggerDocument = require('./swagger.json');
 
 const app = express();
 
 app.use(bodyParser.json());
+
+app.use(
+    '/api-docs',
+    swaggerUi.serve,
+    swaggerUi.setup(swaggerDocument)
+);
 
 app.use('/api/', routes);
 app.use('/api/accounts', accountsRouter);
