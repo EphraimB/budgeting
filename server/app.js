@@ -13,13 +13,13 @@ const app = express();
 
 app.use(bodyParser.json());
 
-app.use('/', routes);
-app.use('/accounts', accountsRouter);
-app.use('/deposits', depositsRouter);
-app.use('/withdrawals', withdrawalsRouter);
-app.use('/expenses', expensesRouter);
-app.use('/loans', loansRouter);
-app.use('/wishlists', wishlistRouter);
-app.use('/transactions', transactionsRouter);
+app.use('/api/', routes);
+app.use('/api/accounts', accountsRouter);
+app.use('/api/deposits', depositsRouter);
+app.use('/api/withdrawals', withdrawalsRouter);
+app.use('/api/expenses', expensesRouter);
+app.use('/api/loans', loansRouter);
+app.use('/api/wishlists', wishlistRouter);
+app.use('/api/transactions', transactionsRouter);
 
 module.exports = app;
