@@ -1,8 +1,12 @@
 import React from 'react';
+import { Routes, Route } from "react-router-dom"
+import HomePage from "./pages/HomePage/HomePage";
 
-function App() {
+const App = () => {
     return (
-        <div>Welcome to budgeting</div>
+        <Routes>
+            <Route path="/" element={<HomePage />} />
+        </Routes>
     );
 }
 
