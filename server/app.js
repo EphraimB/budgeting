@@ -16,7 +16,7 @@ const app = express();
 app.use(bodyParser.json());
 
 app.use(
-    '/api-docs',
+    '/api/docs',
     swaggerUi.serve,
     swaggerUi.setup(swaggerDocument)
 );
