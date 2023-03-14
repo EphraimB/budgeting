@@ -1,27 +1,62 @@
 {
-    "swagger": "2.0",
-    "info": {
-      "version": "0.1.0",
-      "title": "Budgeting",
-      "description": "Budgeting API",
-      "license": {
-        "name": "MIT",
-        "url": "https://opensource.org/licenses/MIT"
-      }
-    },
-    "host": "localhost:5000",
-    "basePath": "/api/",
-    "tags": [
-      {
-        "name": "budget",
-        "description": "Everything about your Budget",
-        "externalDocs": {
-          "description": "Find out more",
-          "url": "http://swagger.io"
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Budgeting",
+    "description": "A budgeting app that generates future transactions based on expenses, loans, current balance, and income",
+    "version": "0.1.0"
+  },
+  "servers": [
+    {
+      "url": "http://localhost:5000/api/",
+      "description": "Development server"
+    }
+  ],
+  "paths": {
+    "/accounts": {
+      "get": {
+        "summary": "Get all accounts",
+        "description": "Get all accounts",
+        "responses": {
+          "200": {
+            "description": "A JSON array of accounts",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "account_id": {
+                        "type": "integer",
+                        "format": "int64",
+                        "minimum": 1
+                      },
+                      "account_name": {
+                        "type": "string"
+                      },
+                      "account_type": {
+                        "type": "integer"
+                      },
+                      "account_balance": {
+                        "type": "number",
+                        "format": "double"
+                      },
+                      "date_created": {
+                        "type": "string",
+                        "format": "date-time"
+                      },
+                      "date_modified": {
+                        "type": "string",
+                        "format": "date-time"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
         }
       }
-    ],
-    "schemes": ["http"],
-    "consumes": ["application/json"],
-    "produces": ["application/json"]
+    }
   }
+}
