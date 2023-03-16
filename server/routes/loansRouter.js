@@ -6,7 +6,7 @@ const validateRequest = require('../validateRequest.js');
 
 router.get('/:account_id',
     [
-        param('id').isInt({ min: 1 }).withMessage('ID must be a number'),
+        param('account_id').isInt({ min: 1 }).withMessage('Account ID must be a number'),
         query('id').optional().isInt({ min: 1 }).withMessage('ID must be a number'),
         validateRequest,
     ],
