@@ -321,122 +321,9 @@ const getExpenses = (request, response) => {
     }
 }
 
-const expensesValidations = (request, response, next) => {
-    const { account_id, amount, title, description, frequency_type, frequency_type_variable, frequency_day_of_month, frequency_day_of_week, frequency_week_of_month, frequency_month_of_year, begin_date } = request.body;
-
-    if (!account_id) {
-        response.status(400).send("Account ID must be provided");
-
-        return true;
-    }
-
-    if (account_id < 1) {
-        response.status(400).send("Account ID must be greater than 0");
-
-        return true;
-    }
-
-    if (!amount) {
-        response.status(400).send("Amount must be provided");
-
-        return true;
-    }
-
-    if (amount < 0) {
-        response.status(400).send("Amount must be greater than 0");
-
-        return true;
-    }
-
-    if (!title) {
-        response.status(400).send("Title must be provided");
-
-        return true;
-    }
-
-    if (title.length < 1) {
-        response.status(400).send("Title must be at least 1 character");
-
-        return true;
-    }
-
-    if (!description) {
-        response.status(400).send("Description must be provided");
-
-        return true;
-    }
-
-    if (description.length < 1) {
-        response.status(400).send("Description must be at least 1 character");
-
-        shouldBreak = true;
-    }
-
-    if (!frequency_type) {
-        response.status(400).send("Frequency type must be provided");
-
-        return true;
-    }
-
-    if (frequency_type < 1) {
-        response.status(400).send("Frequency type must be greater than 0");
-
-        return true;
-    }
-
-    if (frequency_type_variable < 0) {
-        response.status(400).send("Frequency type variable must be greater than 0");
-
-        return true;
-    }
-
-    if (frequency_day_of_week < 0 && frequency_day_of_week > 6) {
-        response.status(400).send("Frequency day of week must be between 0 and 6");
-
-        return true;
-    }
-
-    if (frequency_week_of_month < 0 && frequency_week_of_month > 4) {
-        response.status(400).send("Frequency week of month must be between 1 and 5");
-
-        return true;
-    }
-
-    if (frequency_day_of_month < 0 && frequency_day_of_month > 30) {
-        response.status(400).send("Frequency day of month must be between 1 and 31");
-
-        return true;
-    }
-
-    if (frequency_month_of_year < 0 && frequency_month_of_year > 11) {
-        response.status(400).send("Frequency month of year must be between 1 and 12");
-
-        return true;
-    }
-
-    if (!begin_date) {
-        response.status(400).send("Begin date must be provided");
-
-        return true;
-    }
-
-    // If begin date isn't in the format YYYY-MM-DD, it will be rejected
-    if (!begin_date.match(/^\d{4}-\d{2}-\d{2}$/)) {
-        response.status(400).send("Begin date must be in the format YYYY-MM-DD");
-
-        return true;
-    }
-
-    next();
-};
-
 // Create expense
 const createExpense = (request, response) => {
     const { account_id, amount, title, description, frequency_type, frequency_type_variable, frequency_day_of_month, frequency_day_of_week, frequency_week_of_month, frequency_month_of_year, begin_date } = request.body;
-
-    const returnBreak = expensesValidations(request, response, () => { });
-
-    if (returnBreak) return;
 
     pool.query(expenseQueries.createExpense, [account_id, amount, title, description, frequency_type, frequency_type_variable, frequency_day_of_month, frequency_day_of_week, frequency_week_of_month, frequency_month_of_year, begin_date], (error, results) => {
         if (error) {
@@ -450,10 +337,6 @@ const createExpense = (request, response) => {
 const updateExpense = (request, response) => {
     const id = parseInt(request.params.id);
     const { account_id, amount, title, description, frequency_type, frequency_type_variable, frequency_day_of_month, frequency_day_of_week, frequency_week_of_month, frequency_month_of_year, begin_date } = request.body;
-
-    const returnBreak = expensesValidations(request, response, () => { });
-
-    if (returnBreak) return;
 
     pool.query(expenseQueries.updateExpense, [account_id, amount, title, description, frequency_type, frequency_type_variable, frequency_day_of_month, frequency_day_of_week, frequency_week_of_month, frequency_month_of_year, begin_date, id], (error, results) => {
         if (error) {
@@ -471,7 +354,7 @@ const deleteExpense = (request, response) => {
         if (error) {
             throw error;
         }
-        response.status(200).send(`Expense deleted with ID: ${id}`);
+        response.status(204).send();
     });
 }
 
