@@ -127,24 +127,17 @@ const getDepositsByAccount = (request, response, next) => {
 
 // Get all deposits
 const getDeposits = (request, response) => {
-    const accountId = parseInt(request.params.account_id);
     const id = parseInt(request.params.id);
 
-    // Validate the account ID parameter
-    const errors = validationResult(request);
-    if (!errors.isEmpty()) {
-        return response.status(400).json({ errors: errors.array() });
-    }
-
     if (!id) {
-        pool.query(depositQueries.getDeposits, [accountId], (error, results) => {
+        pool.query(depositQueries.getDeposits, (error, results) => {
             if (error) {
                 throw error;
             }
             response.status(200).json(results.rows);
         });
     } else {
-        pool.query(depositQueries.getDeposit, [accountId, id], (error, results) => {
+        pool.query(depositQueries.getDeposit, [id], (error, results) => {
             if (error) {
                 throw error;
             }

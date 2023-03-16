@@ -1,9 +1,8 @@
 const express = require('express');
 const router = express.Router();
-const { getWithdrawals, getWithdrawal, createWithdrawal, updateWithdrawal, deleteWithdrawal } = require('../queries.js');
+const { getWithdrawals, createWithdrawal, updateWithdrawal, deleteWithdrawal } = require('../queries.js');
 
-router.get('/', getWithdrawals);
-router.get('/:id', getWithdrawal);
+router.get('/:account_id/:id?', getWithdrawals);
 router.post('/', createWithdrawal);
 router.put('/:id', updateWithdrawal);
 router.delete('/:id', deleteWithdrawal);
