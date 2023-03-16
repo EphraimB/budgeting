@@ -6,8 +6,8 @@ const validateRequest = require('../validateRequest.js');
 
 router.get('/:account_id',
     [
-        param('account_id').isNumeric().withMessage('Account ID must be a number'),
-        query('id').optional().isNumeric().withMessage('ID must be a number'),
+        param('account_id').isInt({ min: 1 }).withMessage('Account ID must be a number'),
+        query('id').optional().isInt({ min: 1 }).withMessage('ID must be a number'),
         validateRequest,
     ],
     getDeposits);
@@ -21,7 +21,7 @@ router.post('/',
     createDeposit);
 router.put('/:id',
     [
-        param("id").isNumeric().withMessage("ID must be a number"),
+        param("id").isInt({ min: 1 }).withMessage("ID must be a number"),
         body("amount").isNumeric().withMessage("Amount must be a number"),
         body("account_id").isNumeric().withMessage("Account ID must be a number"),
         body("description").isString().withMessage("Description must be a string"),
@@ -30,7 +30,7 @@ router.put('/:id',
     updateDeposit);
 router.delete('/:id',
     [
-        param("id").isNumeric().withMessage("ID must be a number"),
+        param("id").isInt({ min: 1 }).withMessage("ID must be a number"),
         validateRequest,
     ],
     deleteDeposit);
