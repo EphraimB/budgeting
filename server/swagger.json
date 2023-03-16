@@ -1341,6 +1341,70 @@
           }
         }
       }
+    },
+    "/wishlists/{account_id}": {
+      "get": {
+        "summary": "Get a list of wishlists",
+        "description": "Get a list of wishlists",
+        "tags": [
+          "wishlists"
+        ],
+        "parameters": [
+          {
+            "name": "account_id",
+            "in": "path",
+            "description": "Account id",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A JSON array of wishlists",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "wishlist_id": {
+                        "type": "integer",
+                        "format": "int64",
+                        "minimum": 1
+                      },
+                      "account_id": {
+                        "type": "integer",
+                        "format": "int64",
+                        "minimum": 1
+                      },
+                      "title": {
+                        "type": "string",
+                        "example": "Wishlist test"
+                      },
+                      "description": {
+                        "type": "string",
+                        "example": "This is a wishlist test"
+                      },
+                      "date_created": {
+                        "type": "string",
+                        "format": "date-time"
+                      },
+                      "date_modified": {
+                        "type": "string",
+                        "format": "date-time"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
     }
   }
 }

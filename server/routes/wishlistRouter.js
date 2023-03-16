@@ -1,7 +1,7 @@
 const express = require('express');
 const { query, param, body } = require('express-validator');
 const router = express.Router();
-const { getWishlists, getWishlist, createWishlist, updateWishlist, deleteWishlist } = require('../queries.js');
+const { getWishlists, createWishlist, updateWishlist, deleteWishlist } = require('../queries.js');
 const validateRequest = require('../validateRequest.js');
 
 router.get('/:account_id',
@@ -11,7 +11,6 @@ router.get('/:account_id',
         validateRequest,
     ],
     getWishlists);
-router.get('/:id', getWishlist);
 router.post('/', createWishlist);
 router.put('/:id', updateWishlist);
 router.delete('/:id', deleteWishlist);
