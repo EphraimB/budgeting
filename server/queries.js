@@ -267,49 +267,9 @@ const getWithdrawals = (request, response) => {
 const createWithdrawal = (request, response) => {
     const { account_id, amount, description } = request.body;
 
-    if (!amount) {
-        response.status(400).send("Amount must be provided");
-        return;
-    }
-
-    if (isNaN(amount)) {
-        response.status(400).send("Amount must be a number");
-        return;
-    }
-
-    if (amount <= 0) {
-        response.status(400).send("Amount must be greater than 0");
-        return;
-    }
-
-    if (!description) {
-        response.status(400).send("Description must be provided");
-        return;
-    }
-
-    if (!account_id) {
-        response.status(400).send("Account ID must be provided");
-        return;
-    }
-
-    if (isNaN(account_id)) {
-        response.status(400).send("Account ID must be a number");
-        return;
-    }
-
-    if (account_id <= 0) {
-        response.status(400).send("Account ID must be greater than 0");
-        return;
-    }
-
-    if (description.length > 255) {
-        response.status(400).send("Description must be less than 255 characters");
-        return;
-    }
-
-    if (description.length < 1) {
-        response.status(400).send("Description must be at least 1 character");
-        return;
+    const errors = validationResult(request);
+    if (!errors.isEmpty()) {
+        return response.status(400).json({ errors: errors.array() });
     }
 
     pool.query(withdrawalQueries.createWithdrawal, [account_id, amount, description], (error, results) => {
@@ -325,49 +285,9 @@ const updateWithdrawal = (request, response) => {
     const id = parseInt(request.params.id);
     const { account_id, amount, description } = request.body;
 
-    if (!amount) {
-        response.status(400).send("Amount must be provided");
-        return;
-    }
-
-    if (isNaN(amount)) {
-        response.status(400).send("Amount must be a number");
-        return;
-    }
-
-    if (amount <= 0) {
-        response.status(400).send("Amount must be greater than 0");
-        return;
-    }
-
-    if (!description) {
-        response.status(400).send("Description must be provided");
-        return;
-    }
-
-    if (!account_id) {
-        response.status(400).send("Account ID must be provided");
-        return;
-    }
-
-    if (isNaN(account_id)) {
-        response.status(400).send("Account ID must be a number");
-        return;
-    }
-
-    if (account_id <= 0) {
-        response.status(400).send("Account ID must be greater than 0");
-        return;
-    }
-
-    if (description.length > 255) {
-        response.status(400).send("Description must be less than 255 characters");
-        return;
-    }
-
-    if (description.length < 1) {
-        response.status(400).send("Description must be at least 1 character");
-        return;
+    const errors = validationResult(request);
+    if (!errors.isEmpty()) {
+        return response.status(400).json({ errors: errors.array() });
     }
 
     pool.query(withdrawalQueries.updateWithdrawal, [account_id, amount, description, id], (error, results) => {
