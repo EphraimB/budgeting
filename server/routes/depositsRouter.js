@@ -3,7 +3,7 @@ const { param, body } = require('express-validator');
 const router = express.Router();
 const { getDeposits, createDeposit, updateDeposit, deleteDeposit } = require('../queries.js');
 
-router.get('/:account_id/:id?',
+router.get('/:account_id',
     [
         param('account_id').isNumeric().withMessage('Account ID must be a number')
     ],

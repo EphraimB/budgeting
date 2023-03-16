@@ -222,7 +222,7 @@
         }
       }
     },
-    "/deposits/{account_id}/{id}": {
+    "/deposits/{account_id}": {
       "get": {
         "summary": "Get all deposits by account",
         "description": "Get all deposits by account",
@@ -242,7 +242,7 @@
           },
           {
             "name": "id",
-            "in": "path",
+            "in": "query",
             "description": "Filter by deposit id",
             "required": false,
             "schema": {
@@ -462,6 +462,76 @@
         "responses": {
           "204": {
             "description": "No content"
+          }
+        }
+      }
+    },
+    "/withdrawals/{account_id}": {
+      "get": {
+        "summary": "Get all withdrawals by account",
+        "description": "Get all withdrawals by account",
+        "tags": [
+          "withdrawals"
+        ],
+        "parameters": [
+          {
+            "name": "account_id",
+            "in": "path",
+            "description": "Filter by account id",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1
+            }
+          },
+          {
+            "name": "id",
+            "in": "query",
+            "description": "Filter by withdrawal id",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 1
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A JSON array of withdrawals",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "withdrawal_id": {
+                        "type": "integer",
+                        "format": "int64",
+                        "minimum": 1
+                      },
+                      "account_id": {
+                        "type": "integer",
+                        "format": "int64",
+                        "minimum": 1
+                      },
+                      "withdrawal_amount": {
+                        "type": "number",
+                        "format": "double"
+                      },
+                      "date_created": {
+                        "type": "string",
+                        "format": "date-time"
+                      },
+                      "date_modified": {
+                        "type": "string",
+                        "format": "date-time"
+                      }
+                    }
+                  }
+                }
+              }
+            }
           }
         }
       }
