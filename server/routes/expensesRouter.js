@@ -46,6 +46,7 @@ router.put('/:id',
 router.delete('/:id',
     [
         param("id").isNumeric().withMessage("ID must be a number"),
+        validateRequest,
     ],
     deleteExpense);
 

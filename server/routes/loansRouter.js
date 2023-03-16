@@ -62,6 +62,7 @@ router.put('/:id',
 router.delete('/:id',
     [
         param('id').isInt({ min: 1 }).withMessage('ID must be a number'),
+        validateRequest,
     ],
     deleteLoan);
 
