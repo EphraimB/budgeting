@@ -1,4 +1,5 @@
 const pool = require('./db');
+const { validationResult } = require('express-validator');
 const { accountQueries, depositQueries, withdrawalQueries, expenseQueries, loanQueries, wishlistQueries, currentBalanceQueries } = require('./queryData');
 
 // Get all accounts
@@ -126,17 +127,13 @@ const getDepositsByAccount = (request, response, next) => {
 
 // Get all deposits
 const getDeposits = (request, response) => {
-    const accountId = parseInt(request.body.account_id);
+    const accountId = parseInt(request.params.account_id);
     const id = parseInt(request.params.id);
 
-    if (!accountId) {
-        response.status(400).send("Account ID must be provided");
-        return;
-    }
-
-    if (isNaN(accountId)) {
-        response.status(400).send("Account ID must be a number");
-        return;
+    // Validate the account ID parameter
+    const errors = validationResult(request);
+    if (!errors.isEmpty()) {
+        return response.status(400).json({ errors: errors.array() });
     }
 
     if (!id) {
