@@ -71,6 +71,73 @@
           }
         }
       },
+      "post": {
+        "summary": "Create a new account",
+        "description": "Create a new account",
+        "tags": [
+          "accounts"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string"
+                  },
+                  "type": {
+                    "type": "integer"
+                  },
+                  "balance": {
+                    "type": "number",
+                    "format": "double"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "A JSON object of the created account",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "account_id": {
+                      "type": "integer",
+                      "format": "int64",
+                      "minimum": 1
+                    },
+                    "account_name": {
+                      "type": "string"
+                    },
+                    "account_type": {
+                      "type": "integer"
+                    },
+                    "account_balance": {
+                      "type": "number",
+                      "format": "double"
+                    },
+                    "date_created": {
+                      "type": "string",
+                      "format": "date-time"
+                    },
+                    "date_modified": {
+                      "type": "string",
+                      "format": "date-time"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/accounts/{id}": {
       "put": {
         "summary": "Update an account",
         "description": "Update an account",
@@ -148,71 +215,6 @@
                 "schema": {
                   "type": "string",
                   "example": "Account deleted with ID: 1"
-                }
-              }
-            }
-          }
-        }
-      },
-      "post": {
-        "summary": "Create a new account",
-        "description": "Create a new account",
-        "tags": [
-          "accounts"
-        ],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "name": {
-                    "type": "string"
-                  },
-                  "type": {
-                    "type": "integer"
-                  },
-                  "balance": {
-                    "type": "number",
-                    "format": "double"
-                  }
-                }
-              }
-            }
-          }
-        },
-        "responses": {
-          "201": {
-            "description": "A JSON object of the created account",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "account_id": {
-                      "type": "integer",
-                      "format": "int64",
-                      "minimum": 1
-                    },
-                    "account_name": {
-                      "type": "string"
-                    },
-                    "account_type": {
-                      "type": "integer"
-                    },
-                    "account_balance": {
-                      "type": "number",
-                      "format": "double"
-                    },
-                    "date_created": {
-                      "type": "string",
-                      "format": "date-time"
-                    },
-                    "date_modified": {
-                      "type": "string",
-                      "format": "date-time"
-                    }
-                  }
                 }
               }
             }
