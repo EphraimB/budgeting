@@ -241,7 +241,7 @@ const updateWithdrawal = (request, response) => {
         if (error) {
             throw error;
         }
-        response.status(200).send(`Withdrawal modified with ID: ${id}`);
+        response.status(200).send(results.rows);
     });
 }
 

@@ -20,7 +20,7 @@ const accountQueries = {
     getWithdrawals: 'SELECT * FROM withdrawals WHERE account_id = $1 ORDER BY withdrawal_id ASC',
     getWithdrawal: 'SELECT * FROM withdrawals WHERE account_id = $1 AND withdrawal_id = $2',
     createWithdrawal: 'INSERT INTO withdrawals (account_id, withdrawal_amount, withdrawal_description) VALUES ($1, $2, $3) RETURNING *',
-    updateWithdrawal: 'UPDATE withdrawals SET account_id = $1, withdrawal_amount = $2, withdrawal_description = $3 WHERE withdrawal_id = $4',
+    updateWithdrawal: 'UPDATE withdrawals SET account_id = $1, withdrawal_amount = $2, withdrawal_description = $3 WHERE withdrawal_id = $4 RETURNING *',
     deleteWithdrawal: 'DELETE FROM withdrawals WHERE withdrawal_id = $1',
   };
 
