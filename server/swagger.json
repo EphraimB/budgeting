@@ -440,6 +440,30 @@
             }
           }
         }
+      },
+      "delete": {
+        "summary": "Delete a deposit",
+        "description": "Delete a deposit",
+        "tags": [
+          "deposits"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Deposit id",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No content"
+          }
+        }
       }
     }
   }
