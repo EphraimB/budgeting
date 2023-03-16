@@ -438,7 +438,7 @@ const updateLoan = (request, response) => {
         if (error) {
             throw error;
         }
-        response.status(200).send(`Loan modified with ID: ${id}`);
+        response.status(200).send(results.rows);
     });
 }
 

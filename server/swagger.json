@@ -1196,6 +1196,127 @@
           }
         }
       }
+    },
+    "/loans/{id}": {
+      "put": {
+        "summary": "Update a loan",
+        "description": "Update a loan",
+        "tags": [
+          "loans"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Loan id",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "account_id": {
+                    "type": "integer",
+                    "format": "int64",
+                    "minimum": 1
+                  },
+                  "amount": {
+                    "type": "number",
+                    "format": "double"
+                  },
+                  "plan_amount": {
+                    "type": "number",
+                    "format": "double"
+                  },
+                  "recipient": {
+                    "type": "string",
+                    "example": "John Doe"
+                  },
+                  "title": {
+                    "type": "string",
+                    "example": "Loan test"
+                  },
+                  "description": {
+                    "type": "string",
+                    "example": "This is a loan test"
+                  },
+                  "frequency_type": {
+                    "type": "integer",
+                    "example": 2
+                  },
+                  "frequency_type_variable": {
+                    "type": "integer",
+                    "example": 1
+                  },
+                  "frequency_day_of_month": {
+                    "type": "integer",
+                    "example": 16
+                  },
+                  "frequency_day_of_week": {
+                    "type": "integer",
+                    "example": 2
+                  },
+                  "frequency_week_of_month": {
+                    "type": "integer",
+                    "example": 0
+                  },
+                  "frequency_month_of_year": {
+                    "type": "integer",
+                    "example": 0
+                  },
+                  "begin_date": {
+                    "type": "string",
+                    "format": "date"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "A JSON object of the updated loan",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "loan_id": {
+                      "type": "integer",
+                      "format": "int64",
+                      "minimum": 1
+                    },
+                    "account_id": {
+                      "type": "integer",
+                      "format": "int64",
+                      "minimum": 1
+                    },
+                    "loan_amount": {
+                      "type": "number",
+                      "format": "double"
+                    },
+                    "date_created": {
+                      "type": "string",
+                      "format": "date-time"
+                    },
+                    "date_modified": {
+                      "type": "string",
+                      "format": "date-time"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
     }
   }
 }
