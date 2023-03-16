@@ -6,7 +6,7 @@ const validateRequest = require('../validateRequest.js');
 
 router.get('/',
     [
-        query("id").isNumeric().withMessage("ID must be a number"),
+        query("id").optional().isNumeric().withMessage("ID must be a number"),
         validateRequest,
     ],
     getAccounts);

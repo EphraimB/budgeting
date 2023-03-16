@@ -1,5 +1,5 @@
 const express = require('express');
-const { param, body } = require('express-validator');
+const { query, param, body } = require('express-validator');
 const router = express.Router();
 const { getWithdrawals, createWithdrawal, updateWithdrawal, deleteWithdrawal } = require('../queries.js');
 const validateRequest = require('../validateRequest.js');
@@ -7,6 +7,7 @@ const validateRequest = require('../validateRequest.js');
 router.get('/:account_id',
     [
         param('account_id').isNumeric().withMessage('Account ID must be a number'),
+        query('id').optional().isNumeric().withMessage('ID must be a number'),
         validateRequest,
     ],
     getWithdrawals);
