@@ -268,6 +268,134 @@
           }
         }
       }
+    },
+    "/deposits/{accountId}": {
+      "get": {
+        "summary": "Get all deposits by account",
+        "description": "Get all deposits by account",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "description": "Get deposits by account id",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "tags": [
+          "deposits"
+        ],
+        "responses": {
+          "200": {
+            "description": "A JSON array of deposits",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "deposit_id": {
+                        "type": "integer",
+                        "format": "int64",
+                        "minimum": 1
+                      },
+                      "account_id": {
+                        "type": "integer",
+                        "format": "int64",
+                        "minimum": 1
+                      },
+                      "deposit_amount": {
+                        "type": "number",
+                        "format": "double"
+                      },
+                      "date_created": {
+                        "type": "string",
+                        "format": "date-time"
+                      },
+                      "date_modified": {
+                        "type": "string",
+                        "format": "date-time"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/deposits": {
+      "post": {
+        "summary": "Create a new deposit",
+        "description": "Create a new deposit",
+        "tags": [
+          "deposits"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "account_id": {
+                    "type": "integer",
+                    "format": "int64",
+                    "minimum": 1
+                  },
+                  "amount": {
+                    "type": "number",
+                    "format": "double"
+                  },
+                  "description": {
+                    "type": "string",
+                    "example": "Deposit test"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "A JSON object of the created deposit",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "deposit_id": {
+                      "type": "integer",
+                      "format": "int64",
+                      "minimum": 1
+                    },
+                    "account_id": {
+                      "type": "integer",
+                      "format": "int64",
+                      "minimum": 1
+                    },
+                    "deposit_amount": {
+                      "type": "number",
+                      "format": "double"
+                    },
+                    "date_created": {
+                      "type": "string",
+                      "format": "date-time"
+                    },
+                    "date_modified": {
+                      "type": "string",
+                      "format": "date-time"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
     }
   }
 }
