@@ -7,9 +7,9 @@ const accountQueries = {
   };
 
   const depositQueries = {
-    getDepositsByAccount: 'SELECT * FROM deposits WHERE account_id = $1 AND date_created >= $2 ORDER BY date_created DESC',
-    getDeposits: 'SELECT * FROM deposits ORDER BY deposit_id ASC',
-    getDeposit: 'SELECT * FROM deposits WHERE deposit_id = $1',
+    getDepositsDateFiltered: 'SELECT * FROM deposits WHERE account_id = $1 AND date_created >= $2 ORDER BY date_created DESC',
+    getDeposits: 'SELECT * FROM deposits WHERE account_id = $1 ORDER BY deposit_id ASC',
+    getDeposit: 'SELECT * FROM deposits WHERE account_id = $1 AND deposit_id = $2',
     createDeposit: 'INSERT INTO deposits (account_id, deposit_amount, deposit_description) VALUES ($1, $2, $3) RETURNING *',
     updateDeposit: 'UPDATE deposits SET account_id = $1, deposit_amount = $2, deposit_description = $3 WHERE deposit_id = $4',
     deleteDeposit: 'DELETE FROM deposits WHERE deposit_id = $1',

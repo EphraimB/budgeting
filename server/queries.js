@@ -114,7 +114,7 @@ const getDepositsByAccount = (request, response, next) => {
         return;
     }
 
-    pool.query(depositQueries.getDepositsByAccount, [accountId, fromDate], (error, results) => {
+    pool.query(depositQueries.getDepositsDateFiltered, [accountId, fromDate], (error, results) => {
         if (error) {
             throw error;
         }
@@ -127,21 +127,21 @@ const getDepositsByAccount = (request, response, next) => {
 
 // Get all deposits
 const getDeposits = (request, response) => {
-    const id = parseInt(request.params.id);
+    const { account_id, id } = request.params;
 
     if (!id) {
-        pool.query(depositQueries.getDeposits, (error, results) => {
+        pool.query(depositQueries.getDeposits, [account_id], (error, results) => {
             if (error) {
                 throw error;
             }
-            response.status(200).json(results.rows);
+            return response.status(200).json(results.rows);
         });
     } else {
-        pool.query(depositQueries.getDeposit, [id], (error, results) => {
+        pool.query(depositQueries.getDeposit, [account_id, id], (error, results) => {
             if (error) {
                 throw error;
             }
-            response.status(200).json(results.rows);
+            return response.status(200).json(results.rows);
         });
     }
 }
