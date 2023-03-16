@@ -222,28 +222,35 @@
         }
       }
     },
-    "/deposits": {
+    "/deposits/{account_id}/{id}": {
       "get": {
         "summary": "Get all deposits by account",
         "description": "Get all deposits by account",
         "tags": [
           "deposits"
         ],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "account_id": {
-                    "type": "integer",
-                    "minimum": 1
-                  }
-                }
-              }
+        "parameters": [
+          {
+            "name": "account_id",
+            "in": "path",
+            "description": "Filter by account id",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1
+            }
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Filter by deposit id",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 1
             }
           }
-        },
+        ],
         "responses": {
           "200": {
             "description": "A JSON array of deposits",
@@ -283,7 +290,9 @@
             }
           }
         }
-      },
+      }
+    },
+    "/deposits": {
       "post": {
         "summary": "Create a new deposit",
         "description": "Create a new deposit",
