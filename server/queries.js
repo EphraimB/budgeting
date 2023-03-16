@@ -183,8 +183,7 @@ const updateDeposit = (request, response) => {
             throw error;
         }
         response.status(200).send(results.rows);
-    }
-    );
+    });
 }
 
 // Delete deposit
