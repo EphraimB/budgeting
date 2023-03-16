@@ -604,6 +604,87 @@
           }
         }
       }
+    },
+    "/withdrawals/{id}": {
+      "put": {
+        "summary": "Update a withdrawal",
+        "description": "Update a withdrawal",
+        "tags": [
+          "withdrawals"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Withdrawal id",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "account_id": {
+                    "type": "integer",
+                    "format": "int64",
+                    "minimum": 1
+                  },
+                  "amount": {
+                    "type": "number",
+                    "format": "double"
+                  },
+                  "description": {
+                    "type": "string",
+                    "example": "Withdrawal test"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "A JSON object of the updated withdrawal",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "withdrawal_id": {
+                      "type": "integer",
+                      "format": "int64",
+                      "minimum": 1
+                    },
+                    "account_id": {
+                      "type": "integer",
+                      "format": "int64",
+                      "minimum": 1
+                    },
+                    "withdrawal_amount": {
+                      "type": "number",
+                      "format": "double"
+                    },
+                    "date_created": {
+                      "type": "string",
+                      "format": "date-time"
+                    },
+                    "date_modified": {
+                      "type": "string",
+                      "format": "date-time"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
     }
   }
 }
