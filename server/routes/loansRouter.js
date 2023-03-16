@@ -37,6 +37,7 @@ router.post('/',
     createLoan);
 router.put('/:id',
     [
+        param("id").isInt({ min: 1 }).withMessage("ID must be a number"),
         body("account_id").isInt({ min: 1 }).withMessage("Account ID must be a number"),
         body("amount").isNumeric().withMessage("Amount must be a number"),
         body("plan_amount").isNumeric().withMessage("Planned amount must be a number"),

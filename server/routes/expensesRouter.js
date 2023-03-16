@@ -29,6 +29,7 @@ router.post('/',
     createExpense);
 router.put('/:id',
     [
+        param("id").isInt({ min: 1 }).withMessage("ID must be a number"),
         body("account_id").isInt({ min: 1 }).withMessage("Account ID must be a number"),
         body("amount").isNumeric().withMessage("Amount must be a number"),
         body("title").isString().withMessage("Title must be a string"),

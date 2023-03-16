@@ -11,8 +11,28 @@ router.get('/:account_id',
         validateRequest,
     ],
     getWishlists);
-router.post('/', createWishlist);
-router.put('/:id', updateWishlist);
-router.delete('/:id', deleteWishlist);
+router.post('/',
+    [
+        body("name").isString().withMessage("Name must be a string"),
+        body("amount").isNumeric().withMessage("Amount must be a number"),
+        body("description").isString().withMessage("Description must be a string"),
+        validateRequest,
+    ],
+    createWishlist);
+router.put('/:id',
+    [
+        param("id").isInt({ min: 1 }).withMessage("ID must be a number"),
+        body("name").isString().withMessage("Name must be a string"),
+        body("amount").isNumeric().withMessage("Amount must be a number"),
+        body("description").isString().withMessage("Description must be a string"),
+        validateRequest,
+    ],
+    updateWishlist);
+router.delete('/:id',
+    [
+        param("id").isInt({ min: 1 }).withMessage("ID must be a number"),
+        validateRequest,
+    ],
+    deleteWishlist);
 
 module.exports = router;

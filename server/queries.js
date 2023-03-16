@@ -494,26 +494,26 @@ const getWishlists = (request, response) => {
 
 // Create wishlist
 const createWishlist = (request, response) => {
-    const { name, description } = request.body;
+    const { name, amount, description } = request.body;
 
-    pool.query(wishlistQueries.createWishlist, [name, description], (error, results) => {
+    pool.query(wishlistQueries.createWishlist, [name, amount, description], (error, results) => {
         if (error) {
             throw error;
         }
-        response.status(201).send(`Wishlist added with ID: ${results.insertId}`);
+        response.status(201).send(results.rows);
     });
 }
 
 // Update wishlist
 const updateWishlist = (request, response) => {
     const id = parseInt(request.params.id);
-    const { name, description } = request.body;
+    const { name, amount, description } = request.body;
 
-    pool.query(wishlistQueries.updateWishlist, [name, description, id], (error, results) => {
+    pool.query(wishlistQueries.updateWishlist, [name, amount, description, id], (error, results) => {
         if (error) {
             throw error;
         }
-        response.status(200).send(`Wishlist modified with ID: ${id}`);
+        response.status(200).send(results.rows);
     });
 }
 
