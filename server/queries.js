@@ -61,7 +61,7 @@ const deleteAccount = (request, response) => {
         if (error) {
             throw error;
         }
-        response.status(200).send(`Account deleted with ID: ${id}`);
+        response.status(204).send();
     });
 }
 
@@ -253,7 +253,7 @@ const deleteWithdrawal = (request, response) => {
         if (error) {
             throw error;
         }
-        response.status(200).send(`Withdrawal deleted with ID: ${id}`);
+        response.status(204).send();
     });
 }
 
