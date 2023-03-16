@@ -17,11 +17,16 @@ router.post('/',
     createAccount);
 router.put('/:id',
     [
+        path("id").isNumeric().withMessage("ID must be a number"),
         body("name").isString().withMessage("Name must be a string"),
         body("balance").isNumeric().withMessage("Balance must be a number"),
         body("type").isString().withMessage("Type must be a string")
     ],
     updateAccount);
-router.delete('/:id', deleteAccount);
+router.delete('/:id',
+    [
+        path("id").isNumeric().withMessage("ID must be a number"),
+    ],
+    deleteAccount);
 
 module.exports = router;
