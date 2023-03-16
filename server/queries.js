@@ -127,7 +127,14 @@ const getDepositsByAccount = (request, response, next) => {
 
 // Get all deposits
 const getDeposits = (request, response) => {
-    pool.query(depositQueries.getDeposits, (error, results) => {
+    const accountId = parseInt(request.body.account_id);
+
+    if (!accountId) {
+        response.status(400).send("Account ID must be provided");
+        return;
+    }
+
+    pool.query(depositQueries.getDeposits, [accountId], (error, results) => {
         if (error) {
             throw error;
         }
@@ -137,9 +144,30 @@ const getDeposits = (request, response) => {
 
 // Get deposit by id
 const getDeposit = (request, response) => {
+    const accountId = parseInt(request.body.account_id);
     const id = parseInt(request.params.id);
 
-    pool.query(depositQueries.getDeposit, [id], (error, results) => {
+    if (!accountId) {
+        response.status(400).send("Account ID must be provided");
+        return;
+    }
+
+    if (isNaN(accountId)) {
+        response.status(400).send("Account ID must be a number");
+        return;
+    }
+
+    if (!id) {
+        response.status(400).send("Deposit ID must be provided");
+        return;
+    }
+
+    if (isNaN(id)) {
+        response.status(400).send("Deposit ID must be a number");
+        return;
+    }
+
+    pool.query(depositQueries.getDeposit, [accountId, id], (error, results) => {
         if (error) {
             throw error;
         }
