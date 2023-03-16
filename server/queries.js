@@ -472,24 +472,24 @@ const getWishlistsByAccount = (request, response, next) => {
 
 // Get all wishlists
 const getWishlists = (request, response) => {
-    pool.query(wishlistQueries.getWishlists, (error, results) => {
-        if (error) {
-            throw error;
-        }
-        response.status(200).json(results.rows);
-    });
-}
+    const { account_id } = request.params;
+    const { id } = request.query;
 
-// Get wishlist by id
-const getWishlist = (request, response) => {
-    const id = parseInt(request.params.id);
-
-    pool.query(wishlistQueries.getWishlist, [id], (error, results) => {
-        if (error) {
-            throw error;
-        }
-        response.status(200).json(results.rows);
-    });
+    if (!id) {
+        pool.query(wishlistQueries.getWishlists, [account_id], (error, results) => {
+            if (error) {
+                throw error;
+            }
+            response.status(200).json(results.rows);
+        });
+    } else {
+        pool.query(wishlistQueries.getWishlist, [account_id, id], (error, results) => {
+            if (error) {
+                throw error;
+            }
+            response.status(200).json(results.rows);
+        });
+    }
 }
 
 // Create wishlist
