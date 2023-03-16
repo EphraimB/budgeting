@@ -450,7 +450,7 @@ const deleteLoan = (request, response) => {
         if (error) {
             throw error;
         }
-        response.status(200).send(`Loan deleted with ID: ${id}`);
+        response.status(204).send();
     });
 }
 
