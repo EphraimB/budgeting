@@ -4,7 +4,7 @@ const { accountQueries, depositQueries, withdrawalQueries, expenseQueries, loanQ
 
 // Get all accounts
 const getAccounts = (request, response) => {
-    const id = parseInt(request.params.id);
+    const id = parseInt(request.query.id);
 
     if (!id) {
         pool.query(accountQueries.getAccounts, (error, results) => {
@@ -45,7 +45,10 @@ const accountValidation = (request, response, next) => {
 const createAccount = (request, response) => {
     const { name, type, balance } = request.body;
 
-    accountValidation(request, response, () => { });
+    const errors = validationResult(request);
+    if (!errors.isEmpty()) {
+        return response.status(400).json({ errors: errors.array() });
+    }
 
     pool.query(accountQueries.createAccount,
         [name, type, balance],
@@ -62,7 +65,10 @@ const updateAccount = (request, response) => {
     const id = parseInt(request.params.id);
     const { name, type, balance } = request.body;
 
-    accountValidation(request, response, () => { });
+    const errors = validationResult(request);
+    if (!errors.isEmpty()) {
+        return response.status(400).json({ errors: errors.array() });
+    }
 
     pool.query(
         accountQueries.updateAccount,

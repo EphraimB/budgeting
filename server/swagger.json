@@ -12,7 +12,7 @@
     }
   ],
   "paths": {
-    "/accounts/{id}": {
+    "/accounts": {
       "get": {
         "summary": "Get one account",
         "description": "Get one account",
@@ -22,7 +22,7 @@
         "parameters": [
           {
             "name": "id",
-            "in": "path",
+            "in": "query",
             "description": "Filter by account id",
             "required": false,
             "schema": {
@@ -153,9 +153,7 @@
             }
           }
         }
-      }
-    },
-    "/accounts": {
+      },
       "post": {
         "summary": "Create a new account",
         "description": "Create a new account",
