@@ -342,7 +342,7 @@ const updateExpense = (request, response) => {
         if (error) {
             throw error;
         }
-        response.status(200).send(`Expense modified with ID: ${id}`);
+        response.status(200).send(results.rows);
     });
 }
 

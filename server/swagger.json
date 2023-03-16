@@ -880,6 +880,119 @@
           }
         }
       }
+    },
+    "/expenses/{id}": {
+      "put": {
+        "summary": "Update an expense",
+        "description": "Update an expense",
+        "tags": [
+          "expenses"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Expense id",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "account_id": {
+                    "type": "integer",
+                    "format": "int64",
+                    "minimum": 1
+                  },
+                  "amount": {
+                    "type": "number",
+                    "format": "double"
+                  },
+                  "title": {
+                    "type": "string",
+                    "example": "Expense test"
+                  },
+                  "description": {
+                    "type": "string",
+                    "example": "This is a expense test"
+                  },
+                  "frequency_type": {
+                    "type": "integer",
+                    "example": 2
+                  },
+                  "frequency_type_variable": {
+                    "type": "integer",
+                    "example": 1
+                  },
+                  "frequency_day_of_month": {
+                    "type": "integer",
+                    "example": 16
+                  },
+                  "frequency_day_of_week": {
+                    "type": "integer",
+                    "example": 2
+                  },
+                  "frequency_week_of_month": {
+                    "type": "integer",
+                    "example": 0
+                  },
+                  "frequency_month_of_year": {
+                    "type": "integer",
+                    "example": 0
+                  },
+                  "begin_date": {
+                    "type": "string",
+                    "format": "date"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "A JSON object of the updated expense",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "expense_id": {
+                      "type": "integer",
+                      "format": "int64",
+                      "minimum": 1
+                    },
+                    "account_id": {
+                      "type": "integer",
+                      "format": "int64",
+                      "minimum": 1
+                    },
+                    "expense_amount": {
+                      "type": "number",
+                      "format": "double"
+                    },
+                    "date_created": {
+                      "type": "string",
+                      "format": "date-time"
+                    },
+                    "date_modified": {
+                      "type": "string",
+                      "format": "date-time"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
     }
   }
 }
