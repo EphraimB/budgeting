@@ -417,158 +417,9 @@ const getLoans = (request, response) => {
     }
 }
 
-const loansValidations = (request, response, next) => {
-    const { account_id, amount, plan_amount, recipient, title, description, frequency_type, frequency_type_variable, frequency_day_of_month, frequency_day_of_week, frequency_week_of_month, frequency_month_of_year, begin_date } = request.body;
-
-    if (!account_id) {
-        response.status(400).send(`Account ID must be provided`);
-
-        return true;
-    }
-
-    if (account_id < 1) {
-        response.status(400).send(`Account ID must be greater than 0`);
-
-        return true;
-    }
-
-    if (!amount) {
-        response.status(400).send(`Amount must be provided`);
-
-        return true;
-    }
-
-    if (amount < 0) {
-        response.status(400).send(`Amount must be greater than 0`);
-
-        return true;
-    }
-
-    if (!plan_amount) {
-        response.status(400).send(`Planned amount must be provided`);
-
-        return true;
-    }
-
-    if (plan_amount < 0) {
-        response.status(400).send(`Planned amount must be greater than 0`);
-
-        return true;
-    }
-
-    if (!recipient) {
-        response.status(400).send(`Recipient must be provided`);
-
-        return true;
-    }
-
-    if (recipient.length < 1) {
-        response.status(400).send(`Recipient must be at least 1 character`);
-
-        return true;
-    }
-
-    if (!title) {
-        response.status(400).send(`Title must be provided`);
-
-        return true;
-    }
-
-    if (title.length < 1) {
-        response.status(400).send(`Title must be at least 1 character`);
-
-        return true;
-    }
-
-    if (!description) {
-        response.status(400).send(`Description must be provided`);
-
-        return true;
-    }
-
-    if (description.length < 1) {
-        response.status(400).send(`Description must be at least 1 character`);
-
-        return true;
-    }
-
-    if (isNaN(frequency_type)) {
-        response.status(400).send("Frequency type must be provided");
-
-        return true;
-    }
-
-    if (frequency_type < 0 && frequency_type > 3) {
-        response.status(400).send("Frequency type must be 0, 1, 2, or 3");
-
-        return true;
-    }
-
-    if (frequency_type_variable < 0) {
-        response.status(400).send("Frequency type variable must be greater than 0");
-
-        return true;
-    }
-
-    if (frequency_day_of_month < 0 && frequency_day_of_month > 30) {
-        response.status(400).send("Frequency day of month must be between 1 and 31");
-
-        return true;
-    }
-
-    if (frequency_day_of_week < 0 && frequency_day_of_week > 6) {
-        response.status(400).send("Frequency day of week must be between 1 and 7");
-
-        return true;
-    }
-
-    if (frequency_week_of_month < 0 && frequency_week_of_month > 6) {
-        response.status(400).send("Frequency week of month must be between 1 and 5");
-
-        return true;
-    }
-
-    if (frequency_month_of_year < 0 && frequency_month_of_year > 11) {
-        response.status(400).send("Frequency month of year must be between 1 and 12");
-
-        return true;
-    }
-
-    if (!begin_date) {
-        response.status(400).send(`Begin date must be provided`);
-
-        return true;
-    }
-
-    // If begin date isn't in the format YYYY-MM-DD, it will be rejected
-    if (!begin_date.match(/^\d{4}-\d{2}-\d{2}$/)) {
-        response.status(400).send(`Begin date must be in the format YYYY-MM-DD`);
-
-        return true;
-    }
-
-    if (plan_amount > amount) {
-        response.status(400).send(`Loan amount cannot be less than the planned amount`);
-
-        return true;
-    }
-
-    if (begin_date < new Date()) {
-        response.status(400).send(`Loan begin date cannot be in the past`);
-
-        return true;
-    }
-
-    next();
-}
-
 // Create loan
 const createLoan = (request, response) => {
     const { account_id, amount, plan_amount, recipient, title, description, frequency_type, frequency_type_variable, frequency_day_of_month, frequency_day_of_week, frequency_week_of_month, frequency_month_of_year, begin_date } = request.body;
-
-    const returnBreak = loansValidations(request, response, () => { });
-
-    if (returnBreak) return;
 
     pool.query(loanQueries.createLoan, [account_id, amount, plan_amount, recipient, title, description, frequency_type, frequency_type_variable, frequency_day_of_month, frequency_day_of_week, frequency_week_of_month, frequency_month_of_year, begin_date], (error, results) => {
         if (error) {
@@ -582,10 +433,6 @@ const createLoan = (request, response) => {
 const updateLoan = (request, response) => {
     const id = parseInt(request.params.id);
     const { account_id, amount, plan_amount, recipient, title, description, frequency_type, frequency_type_variable, frequency_day_of_month, frequency_day_of_week, frequency_week_of_month, frequency_month_of_year, begin_date } = request.body;
-
-    const returnBreak = loansValidations(request, response, () => { });
-
-    if (returnBreak) return;
 
     pool.query(loanQueries.updateLoan, [account_id, amount, plan_amount, recipient, title, description, frequency_type, frequency_type_variable, frequency_day_of_month, frequency_day_of_week, frequency_week_of_month, frequency_month_of_year, begin_date, id], (error, results) => {
         if (error) {

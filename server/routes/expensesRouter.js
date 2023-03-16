@@ -40,6 +40,7 @@ router.put('/:id',
         body("frequency_day_of_month").optional().isInt({ min: 0, max: 30 }).withMessage("Frequency day of month must be a number between 0 and 30"),
         body("frequency_month_of_year").optional().isInt({ min: 0, max: 11 }).withMessage("Frequency month of year must be a number between 0 and 11"),
         body("begin_date").isDate().withMessage("Begin date must be a date"),
+        body("end_date").optional().isDate().withMessage("End date must be a date"),
         validateRequest,
     ], updateExpense);
 router.delete('/:id',
