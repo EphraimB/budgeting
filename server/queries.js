@@ -129,6 +129,11 @@ const getDepositsByAccount = (request, response, next) => {
 const getDeposits = (request, response) => {
     const { account_id, id } = request.params;
 
+    const errors = validationResult(request);
+    if (!errors.isEmpty()) {
+        return response.status(400).json({ errors: errors.array() });
+    }
+
     if (!id) {
         pool.query(depositQueries.getDeposits, [account_id], (error, results) => {
             if (error) {
