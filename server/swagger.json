@@ -1316,6 +1316,30 @@
             }
           }
         }
+      },
+      "delete": {
+        "summary": "Delete a loan",
+        "description": "Delete a loan",
+        "tags": [
+          "loans"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Loan id",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No content"
+          }
+        }
       }
     }
   }
