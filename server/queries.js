@@ -1,5 +1,4 @@
 const pool = require('./db');
-const { validationResult } = require('express-validator');
 const { accountQueries, depositQueries, withdrawalQueries, expenseQueries, loanQueries, wishlistQueries, currentBalanceQueries } = require('./queryData');
 
 // Get all accounts
@@ -23,32 +22,9 @@ const getAccounts = (request, response) => {
     }
 }
 
-const accountValidation = (request, response, next) => {
-    const { name, type, balance } = request.body;
-
-    if (!name) {
-        return response.status(400).send('Account name is required');
-    }
-
-    if (isNaN(type)) {
-        return response.status(400).send('Account type must be a number');
-    }
-
-    if (isNaN(balance)) {
-        return response.status(400).send('Account balance must be a number');
-    }
-
-    next();
-}
-
 // Create account
 const createAccount = (request, response) => {
     const { name, type, balance } = request.body;
-
-    const errors = validationResult(request);
-    if (!errors.isEmpty()) {
-        return response.status(400).json({ errors: errors.array() });
-    }
 
     pool.query(accountQueries.createAccount,
         [name, type, balance],
@@ -64,11 +40,6 @@ const createAccount = (request, response) => {
 const updateAccount = (request, response) => {
     const id = parseInt(request.params.id);
     const { name, type, balance } = request.body;
-
-    const errors = validationResult(request);
-    if (!errors.isEmpty()) {
-        return response.status(400).json({ errors: errors.array() });
-    }
 
     pool.query(
         accountQueries.updateAccount,
@@ -136,11 +107,6 @@ const getDeposits = (request, response) => {
     const { account_id } = request.params;
     const { id } = request.query;
 
-    const errors = validationResult(request);
-    if (!errors.isEmpty()) {
-        return response.status(400).json({ errors: errors.array() });
-    }
-
     if (!id) {
         pool.query(depositQueries.getDeposits, [account_id], (error, results) => {
             if (error) {
@@ -162,11 +128,6 @@ const getDeposits = (request, response) => {
 const createDeposit = (request, response) => {
     const { account_id, amount, description } = request.body;
 
-    const errors = validationResult(request);
-    if (!errors.isEmpty()) {
-        return response.status(400).json({ errors: errors.array() });
-    }
-
     pool.query(depositQueries.createDeposit, [account_id, amount, description], (error, results) => {
         if (error) {
             throw error;
@@ -179,11 +140,6 @@ const createDeposit = (request, response) => {
 const updateDeposit = (request, response) => {
     const id = parseInt(request.params.id);
     const { account_id, amount, description } = request.body;
-
-    const errors = validationResult(request);
-    if (!errors.isEmpty()) {
-        return response.status(400).json({ errors: errors.array() });
-    }
 
     pool.query(depositQueries.updateDeposit, [account_id, amount, description, id], (error, results) => {
         if (error) {
@@ -247,11 +203,6 @@ const getWithdrawals = (request, response) => {
     const { account_id } = request.params;
     const { id } = request.query;
 
-    const errors = validationResult(request);
-    if (!errors.isEmpty()) {
-        return response.status(400).json({ errors: errors.array() });
-    }
-
     if (!id) {
         pool.query(withdrawalQueries.getWithdrawals, [account_id], (error, results) => {
             if (error) {
@@ -273,11 +224,6 @@ const getWithdrawals = (request, response) => {
 const createWithdrawal = (request, response) => {
     const { account_id, amount, description } = request.body;
 
-    const errors = validationResult(request);
-    if (!errors.isEmpty()) {
-        return response.status(400).json({ errors: errors.array() });
-    }
-
     pool.query(withdrawalQueries.createWithdrawal, [account_id, amount, description], (error, results) => {
         if (error) {
             throw error;
@@ -290,11 +236,6 @@ const createWithdrawal = (request, response) => {
 const updateWithdrawal = (request, response) => {
     const id = parseInt(request.params.id);
     const { account_id, amount, description } = request.body;
-
-    const errors = validationResult(request);
-    if (!errors.isEmpty()) {
-        return response.status(400).json({ errors: errors.array() });
-    }
 
     pool.query(withdrawalQueries.updateWithdrawal, [account_id, amount, description, id], (error, results) => {
         if (error) {
