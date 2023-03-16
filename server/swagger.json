@@ -684,6 +684,30 @@
             }
           }
         }
+      },
+      "delete": {
+        "summary": "Delete a withdrawal",
+        "description": "Delete a withdrawal",
+        "tags": [
+          "withdrawals"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Withdrawal id",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No content"
+          }
+        }
       }
     }
   }
