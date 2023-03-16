@@ -992,6 +992,30 @@
             }
           }
         }
+      },
+      "delete": {
+        "summary": "Delete an expense",
+        "description": "Delete an expense",
+        "tags": [
+          "expenses"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Expense id",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No content"
+          }
+        }
       }
     }
   }

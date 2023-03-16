@@ -42,6 +42,10 @@ router.put('/:id',
         body("begin_date").isDate().withMessage("Begin date must be a date"),
         validateRequest,
     ], updateExpense);
-router.delete('/:id', deleteExpense);
+router.delete('/:id',
+    [
+        param("id").isNumeric().withMessage("ID must be a number"),
+    ],
+    deleteExpense);
 
 module.exports = router;
