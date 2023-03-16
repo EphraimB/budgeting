@@ -16,6 +16,9 @@
       "get": {
         "summary": "Get one account",
         "description": "Get one account",
+        "tags": [
+          "accounts"
+        ],
         "parameters": [
           {
             "name": "id",
@@ -71,6 +74,9 @@
       "put": {
         "summary": "Update an account",
         "description": "Update an account",
+        "tags": [
+          "accounts"
+        ],
         "parameters": [
           {
             "in": "path",
@@ -120,6 +126,9 @@
       "delete": {
         "summary": "Delete an account",
         "description": "Delete an account",
+        "tags": [
+          "accounts"
+        ],
         "parameters": [
           {
             "in": "path",
@@ -150,6 +159,9 @@
       "get": {
         "summary": "Get all accounts",
         "description": "Get all accounts",
+        "tags": [
+          "accounts"
+        ],
         "responses": {
           "200": {
             "description": "A JSON array of accounts",
@@ -194,6 +206,9 @@
       "post": {
         "summary": "Create a new account",
         "description": "Create a new account",
+        "tags": [
+          "accounts"
+        ],
         "requestBody": {
           "content": {
             "application/json": {
