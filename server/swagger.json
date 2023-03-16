@@ -709,6 +709,76 @@
           }
         }
       }
+    },
+    "/expenses/{account_id}": {
+      "get": {
+        "summary": "Get all expenses by account",
+        "description": "Get all expenses by account",
+        "tags": [
+          "expenses"
+        ],
+        "parameters": [
+          {
+            "name": "account_id",
+            "in": "path",
+            "description": "Filter by account id",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1
+            }
+          },
+          {
+            "name": "id",
+            "in": "query",
+            "description": "Filter by expense id",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 1
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A JSON array of expenses",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "expense_id": {
+                        "type": "integer",
+                        "format": "int64",
+                        "minimum": 1
+                      },
+                      "account_id": {
+                        "type": "integer",
+                        "format": "int64",
+                        "minimum": 1
+                      },
+                      "expense_amount": {
+                        "type": "number",
+                        "format": "double"
+                      },
+                      "date_created": {
+                        "type": "string",
+                        "format": "date-time"
+                      },
+                      "date_modified": {
+                        "type": "string",
+                        "format": "date-time"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
     }
   }
 }
