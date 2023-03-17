@@ -12,6 +12,7 @@ services:
       - PGDATABASE=${DB}
       - PGUSER=${USER}
       - PGPASSWORD=${PASSWORD}
+      - PGPORT=${PORT}
     ports:
       - "5000:5000"
     depends_on:
