@@ -1,0 +1,43 @@
+version: '3'
+
+services:
+  server:
+    build:
+      context: ./server
+      dockerfile: Dockerfile
+    volumes:
+      - ./server:/app
+    environment:
+      - PGHOST=db
+      - PGDATABASE=my_budgeting_app
+      - PGUSER=postgres
+      - PGPASSWORD=mysecretpassword
+    ports:
+      - "5000:5000"
+    depends_on:
+      - db
+
+  client:
+    build:
+      context: ./client
+      dockerfile: Dockerfile
+    volumes:
+      - ./client:/app
+    environment:
+      - REACT_APP_API_URL=http://server:5000
+    ports:
+      - "3000:3000"
+    depends_on:
+      - server
+
+  db:
+    image: postgres
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=mysecretpassword
+      - POSTGRES_DB=my_budgeting_app
+    volumes:
+      - db-data:/var/lib/postgresql/data
+
+volumes:
+  db-data:
