@@ -35,8 +35,6 @@ services:
 
   db:
     image: postgres:15.2-alpine3.17
-    env_file:
-      - .env
     environment:
       - POSTGRES_USER=${USER}
       - POSTGRES_HOST=${HOST}
@@ -51,8 +49,6 @@ services:
 
   dbeaver:
     image: dbeaver/cloudbeaver:23.0.0
-    env_file:
-      - .env
     environment:
       - DBEAVER_WS_PORT=8080
       - DBEAVER_DATABASE_DRIVER=org.postgresql.Driver
