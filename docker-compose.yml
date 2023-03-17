@@ -8,11 +8,11 @@ services:
     volumes:
       - ./server:/app
     environment:
-      - PGHOST=${HOST}
-      - PGDATABASE=${DB}
-      - PGUSER=${USER}
-      - PGPASSWORD=${PASSWORD}
-      - PGPORT=${PORT}
+      - PGHOST=${PGHOST}
+      - PGDATABASE=${PGDB}
+      - PGUSER=${PGUSER}
+      - PGPASSWORD=${PGPASSWORD}
+      - PGPORT=${PGPORT}
     ports:
       - "5000:5000"
     depends_on:
@@ -34,12 +34,12 @@ services:
   db:
     image: postgres:15.2-alpine3.17
     environment:
-      - POSTGRES_USER=${USER}
-      - POSTGRES_HOST=${HOST}
-      - POSTGRES_PASSWORD=${PASSWORD}
-      - POSTGRES_DB=${DB}
+      - POSTGRES_USER=${PGUSER}
+      - POSTGRES_HOST=${PGHOST}
+      - POSTGRES_PASSWORD=${PGPASSWORD}
+      - POSTGRES_DB=${PGDB}
     ports:
-      - "${PORT}:5432"
+      - "${PGPORT}:5432"
     volumes:
       - db-data:/var/lib/postgresql/data
     networks:
@@ -50,9 +50,9 @@ services:
     environment:
       - DBEAVER_WS_PORT=8080
       - DBEAVER_DATABASE_DRIVER=org.postgresql.Driver
-      - DBEAVER_DATABASE_URL=jdbc:postgresql://db:${PORT}/${DB}
-      - DBEAVER_DATABASE_USER=${USER}
-      - DBEAVER_DATABASE_PASSWORD=${PASSWORD}
+      - DBEAVER_DATABASE_URL=jdbc:postgresql://db:${PGPORT}/${PGDB}
+      - DBEAVER_DATABASE_USER=${PGUSER}
+      - DBEAVER_DATABASE_PASSWORD=${PGPASSWORD}
     ports:
       - "8080:8080"
     networks:
