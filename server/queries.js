@@ -509,7 +509,7 @@ const updateWishlist = (request, response) => {
     const id = parseInt(request.params.id);
     const { account_id, amount, title, description, priority } = request.body;
 
-    pool.query(wishlistQueries.updateWishlist, [account_id, amount, title, description, priority], (error, results) => {
+    pool.query(wishlistQueries.updateWishlist, [account_id, amount, title, description, priority, id], (error, results) => {
         if (error) {
             throw error;
         }
