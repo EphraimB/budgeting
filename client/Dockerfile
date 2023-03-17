@@ -12,7 +12,7 @@ RUN npm install
 COPY . .
 
 # Build the client
-RUN npm run build
+RUN npm run start
 
 # Expose the necessary port
 EXPOSE 3000
