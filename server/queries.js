@@ -494,9 +494,9 @@ const getWishlists = (request, response) => {
 
 // Create wishlist
 const createWishlist = (request, response) => {
-    const { name, amount, description } = request.body;
+    const { account_id, amount, title, description, priority } = request.body;
 
-    pool.query(wishlistQueries.createWishlist, [name, amount, description], (error, results) => {
+    pool.query(wishlistQueries.createWishlist, [account_id, amount, title, description, priority], (error, results) => {
         if (error) {
             throw error;
         }
@@ -507,9 +507,9 @@ const createWishlist = (request, response) => {
 // Update wishlist
 const updateWishlist = (request, response) => {
     const id = parseInt(request.params.id);
-    const { name, amount, description } = request.body;
+    const { account_id, amount, title, description, priority } = request.body;
 
-    pool.query(wishlistQueries.updateWishlist, [name, amount, description, id], (error, results) => {
+    pool.query(wishlistQueries.updateWishlist, [account_id, amount, title, description, priority], (error, results) => {
         if (error) {
             throw error;
         }

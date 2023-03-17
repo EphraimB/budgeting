@@ -1381,9 +1381,13 @@
                         "format": "int64",
                         "minimum": 1
                       },
-                      "title": {
+                      "name": {
                         "type": "string",
                         "example": "Wishlist test"
+                      },
+                      "amount": {
+                        "type": "number",
+                        "format": "double"
                       },
                       "description": {
                         "type": "string",
@@ -1397,6 +1401,95 @@
                         "type": "string",
                         "format": "date-time"
                       }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/wishlists": {
+      "post": {
+        "summary": "Create a wishlist",
+        "description": "Create a wishlist",
+        "tags": [
+          "wishlists"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "account_id": {
+                    "type": "integer",
+                    "format": "int64",
+                    "minimum": 1
+                  },
+                  "amount": {
+                    "type": "number",
+                    "format": "double"
+                  },
+                  "title": {
+                    "type": "string",
+                    "example": "Wishlist test"
+                  },
+                  "description": {
+                    "type": "string",
+                    "example": "This is a wishlist test"
+                  },
+                  "priority": {
+                    "type": "integer",
+                    "example": 1
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "A JSON object of the created wishlist",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "wishlist_id": {
+                      "type": "integer",
+                      "format": "int64",
+                      "minimum": 1
+                    },
+                    "account_id": {
+                      "type": "integer",
+                      "format": "int64",
+                      "minimum": 1
+                    },
+                    "amount": {
+                      "type": "number",
+                      "format": "double"
+                    },
+                    "title": {
+                      "type": "string",
+                      "example": "Wishlist test"
+                    },
+                    "description": {
+                      "type": "string",
+                      "example": "This is a wishlist test"
+                    },
+                    "priority": {
+                      "type": "integer",
+                      "example": 0
+                    },
+                    "date_created": {
+                      "type": "string",
+                      "format": "date-time"
+                    },
+                    "date_modified": {
+                      "type": "string",
+                      "format": "date-time"
                     }
                   }
                 }

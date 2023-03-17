@@ -46,8 +46,8 @@ const accountQueries = {
     getWishlistsByAccount: 'SELECT * FROM wishlist WHERE account_id = $1 ORDER BY date_created DESC',
     getWishlists: 'SELECT * FROM wishlist WHERE account_id = $1 ORDER BY wishlist_id ASC',
     getWishlist: 'SELECT * FROM wishlist WHERE account_id = $1 AND wishlist_id = $2',
-    createWishlist: 'INSERT INTO wishlist (account_id, wishlist_amount, wishlist_description) VALUES ($1, $2, $3) RETURNING *',
-    updateWishlist: 'UPDATE wishlist SET account_id = $1, wishlist_amount = $2, wishlist_description = $3 WHERE wishlist_id = $4 RETURNING *',
+    createWishlist: 'INSERT INTO wishlist (account_id, wishlist_amount, wishlist_title, wishlist_description, wishlist_priority) VALUES ($1, $2, $3, $4, $5) RETURNING *',
+    updateWishlist: 'UPDATE wishlist SET account_id = $1, wishlist_amount = $2, wishlist_title = $3, wishlist_description = $4, wishlist_priority = $5 WHERE wishlist_id = $6 RETURNING *',
     deleteWishlist: 'DELETE FROM wishlist WHERE wishlist_id = $1',
   };
 
