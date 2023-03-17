@@ -525,7 +525,7 @@ const deleteWishlist = (request, response) => {
         if (error) {
             throw error;
         }
-        response.status(200).send(`Wishlist deleted with ID: ${id}`);
+        response.status(204).send();
     });
 }
 

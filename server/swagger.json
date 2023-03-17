@@ -1598,6 +1598,30 @@
             }
           }
         }
+      },
+      "delete": {
+        "summary": "Delete a wishlist",
+        "description": "Delete a wishlist",
+        "tags": [
+          "wishlists"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Wishlist id",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No content"
+          }
+        }
       }
     }
   }
