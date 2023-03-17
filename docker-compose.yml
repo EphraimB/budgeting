@@ -31,14 +31,35 @@ services:
       - server
 
   db:
-    image: postgres
+    image: postgres:15.2-alpine3.17
     environment:
       - POSTGRES_USER=${USER}
       - POSTGRES_HOST=${HOST}
       - POSTGRES_PASSWORD=${PASSWORD}
       - POSTGRES_DB=${DB}
+    ports:
+      - "${PORT}:5433"
     volumes:
       - db-data:/var/lib/postgresql/data
+    networks:
+      - app-network
+
+  dbeaver:
+    image: dbeaver/cloudbeaver:23.0.0
+    environment:
+      - DBEAVER_WS_PORT=8080
+      - DBEAVER_DATABASE_DRIVER=org.postgresql.Driver
+      - DBEAVER_DATABASE_URL=jdbc:postgresql://db:${PORT}/${DB}
+      - DBEAVER_DATABASE_USER=${USER}
+      - DBEAVER_DATABASE_PASSWORD=${PASSWORD}
+    ports:
+      - "8080:8080"
+    networks:
+      - app-network
 
 volumes:
   db-data:
+
+networks:
+  app-network:
+    driver: bridge
