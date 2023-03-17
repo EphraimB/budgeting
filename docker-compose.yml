@@ -8,10 +8,10 @@ services:
     volumes:
       - ./server:/app
     environment:
-      - PGHOST=db
-      - PGDATABASE=my_budgeting_app
-      - PGUSER=postgres
-      - PGPASSWORD=mysecretpassword
+      - PGHOST=${HOST}
+      - PGDATABASE=${DB}
+      - PGUSER=${USER}
+      - PGPASSWORD=${PASSWORD}
     ports:
       - "5000:5000"
     depends_on:
@@ -33,9 +33,10 @@ services:
   db:
     image: postgres
     environment:
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=mysecretpassword
-      - POSTGRES_DB=my_budgeting_app
+      - POSTGRES_USER=${USER}
+      - POSTGRES_HOST=${HOST}
+      - POSTGRES_PASSWORD=${PASSWORD}
+      - POSTGRES_DB=${DB}
     volumes:
       - db-data:/var/lib/postgresql/data
 
