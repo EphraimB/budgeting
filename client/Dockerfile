@@ -11,9 +11,6 @@ RUN npm install
 # Copy over the application code
 COPY . .
 
-# Build the client
-RUN npm run start
-
 # Expose the necessary port
 EXPOSE 3000
 
