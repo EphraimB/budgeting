@@ -46,14 +46,17 @@
                         "minimum": 1
                       },
                       "account_name": {
-                        "type": "string"
+                        "type": "string",
+                        "example": "Checking"
                       },
                       "account_type": {
-                        "type": "integer"
+                        "type": "integer",
+                        "example": 0
                       },
                       "account_balance": {
                         "type": "number",
-                        "format": "double"
+                        "format": "double",
+                        "example": 1000.00
                       },
                       "date_created": {
                         "type": "string",
@@ -84,14 +87,17 @@
                 "type": "object",
                 "properties": {
                   "name": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "Checking"
                   },
                   "type": {
-                    "type": "integer"
+                    "type": "integer",
+                    "example": 0
                   },
                   "balance": {
                     "type": "number",
-                    "format": "double"
+                    "format": "double",
+                    "example": 1000.00
                   }
                 }
               }
@@ -112,14 +118,17 @@
                       "minimum": 1
                     },
                     "account_name": {
-                      "type": "string"
+                      "type": "string",
+                      "example": "Checking"
                     },
                     "account_type": {
-                      "type": "integer"
+                      "type": "integer",
+                      "example": 0
                     },
                     "account_balance": {
                       "type": "number",
-                      "format": "double"
+                      "format": "double",
+                      "example": 1000.00
                     },
                     "date_created": {
                       "type": "string",
@@ -162,14 +171,17 @@
                 "type": "object",
                 "properties": {
                   "name": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "Checking"
                   },
                   "type": {
-                    "type": "integer"
+                    "type": "integer",
+                    "example": 0
                   },
                   "balance": {
                     "type": "number",
-                    "format": "double"
+                    "format": "double",
+                    "example": 1000.00
                   }
                 }
               }
@@ -182,8 +194,35 @@
             "content": {
               "text/plain": {
                 "schema": {
-                  "type": "string",
-                  "example": "Account modified with ID: 1"
+                  "type": "object",
+                  "properties": {
+                    "account_id": {
+                      "type": "integer",
+                      "format": "int64",
+                      "minimum": 1
+                    },
+                    "account_name": {
+                      "type": "string",
+                      "example": "Checking"
+                    },
+                    "account_type": {
+                      "type": "integer",
+                      "example": 0
+                    },
+                    "account_balance": {
+                      "type": "number",
+                      "format": "double",
+                      "example": 1000.00
+                    },
+                    "date_created": {
+                      "type": "string",
+                      "format": "date-time"
+                    },
+                    "date_modified": {
+                      "type": "string",
+                      "format": "date-time"
+                    }
+                  }
                 }
               }
             }
@@ -208,16 +247,8 @@
           }
         ],
         "responses": {
-          "200": {
-            "description": "A message that the account was deleted",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "type": "string",
-                  "example": "Account deleted with ID: 1"
-                }
-              }
-            }
+          "204": {
+            "description": "No content"
           }
         }
       }
@@ -273,7 +304,8 @@
                       },
                       "deposit_amount": {
                         "type": "number",
-                        "format": "double"
+                        "format": "double",
+                        "example": 1000.00
                       },
                       "date_created": {
                         "type": "string",
@@ -312,7 +344,8 @@
                   },
                   "amount": {
                     "type": "number",
-                    "format": "double"
+                    "format": "double",
+                    "example": 1000.00
                   },
                   "description": {
                     "type": "string",
@@ -343,7 +376,8 @@
                     },
                     "deposit_amount": {
                       "type": "number",
-                      "format": "double"
+                      "format": "double",
+                      "example": 1000.00
                     },
                     "date_created": {
                       "type": "string",
@@ -393,7 +427,8 @@
                   },
                   "amount": {
                     "type": "number",
-                    "format": "double"
+                    "format": "double",
+                    "example": 1000.00
                   },
                   "description": {
                     "type": "string",
@@ -424,7 +459,8 @@
                     },
                     "deposit_amount": {
                       "type": "number",
-                      "format": "double"
+                      "format": "double",
+                      "example": 1000.00
                     },
                     "date_created": {
                       "type": "string",
@@ -517,7 +553,8 @@
                       },
                       "withdrawal_amount": {
                         "type": "number",
-                        "format": "double"
+                        "format": "double",
+                        "example": 100.00
                       },
                       "date_created": {
                         "type": "string",
@@ -556,7 +593,8 @@
                   },
                   "amount": {
                     "type": "number",
-                    "format": "double"
+                    "format": "double",
+                    "example": 100.00
                   },
                   "description": {
                     "type": "string",
@@ -587,7 +625,8 @@
                     },
                     "withdrawal_amount": {
                       "type": "number",
-                      "format": "double"
+                      "format": "double",
+                      "example": 100.00
                     },
                     "date_created": {
                       "type": "string",
@@ -637,7 +676,8 @@
                   },
                   "amount": {
                     "type": "number",
-                    "format": "double"
+                    "format": "double",
+                    "example": 100.00
                   },
                   "description": {
                     "type": "string",
@@ -668,7 +708,8 @@
                     },
                     "withdrawal_amount": {
                       "type": "number",
-                      "format": "double"
+                      "format": "double",
+                      "example": 100.00
                     },
                     "date_created": {
                       "type": "string",
@@ -761,7 +802,49 @@
                       },
                       "expense_amount": {
                         "type": "number",
-                        "format": "double"
+                        "format": "double",
+                        "example": 250.00
+                      },
+                      "expense_title": {
+                        "type": "string",
+                        "example": "Expense test"
+                      },
+                      "expense_description": {
+                        "type": "string",
+                        "example": "This is a expense test"
+                      },
+                      "frequency_type": {
+                        "type": "integer",
+                        "example": 2
+                      },
+                      "frequency_type_variable": {
+                        "type": "integer",
+                        "example": 1
+                      },
+                      "frequency_day_of_month": {
+                        "type": "integer",
+                        "default": null
+                      },
+                      "frequency_day_of_week": {
+                        "type": "integer",
+                        "default": null
+                      },
+                      "frequency_week_of_month": {
+                        "type": "integer",
+                        "default": null
+                      },
+                      "frequency_month_of_year": {
+                        "type": "integer",
+                        "default": null
+                      },
+                      "expense_begin_date": {
+                        "type": "string",
+                        "format": "date-time"
+                      },
+                      "expense_end_date": {
+                        "type": "string",
+                        "format": "date-time",
+                        "default": null
                       },
                       "date_created": {
                         "type": "string",
@@ -800,7 +883,8 @@
                   },
                   "amount": {
                     "type": "number",
-                    "format": "double"
+                    "format": "double",
+                    "example": 250.00
                   },
                   "title": {
                     "type": "string",
@@ -818,25 +902,9 @@
                     "type": "integer",
                     "example": 1
                   },
-                  "frequency_day_of_month": {
-                    "type": "integer",
-                    "example": 16
-                  },
-                  "frequency_day_of_week": {
-                    "type": "integer",
-                    "example": 2
-                  },
-                  "frequency_week_of_month": {
-                    "type": "integer",
-                    "example": 0
-                  },
-                  "frequency_month_of_year": {
-                    "type": "integer",
-                    "example": 0
-                  },
                   "begin_date": {
                     "type": "string",
-                    "format": "date"
+                    "format": "date-time"
                   }
                 }
               }
@@ -863,7 +931,49 @@
                     },
                     "expense_amount": {
                       "type": "number",
-                      "format": "double"
+                      "format": "double",
+                      "example": 250.00
+                    },
+                    "expense_title": {
+                      "type": "string",
+                      "example": "Expense test"
+                    },
+                    "expense_description": {
+                      "type": "string",
+                      "example": "This is a expense test"
+                    },
+                    "frequency_type": {
+                      "type": "integer",
+                      "example": 2
+                    },
+                    "frequency_type_variable": {
+                      "type": "integer",
+                      "example": 1
+                    },
+                    "frequency_day_of_month": {
+                      "type": "integer",
+                      "default": null
+                    },
+                    "frequency_day_of_week": {
+                      "type": "integer",
+                      "default": null
+                    },
+                    "frequency_week_of_month": {
+                      "type": "integer",
+                      "default": null
+                    },
+                    "frequency_month_of_year": {
+                      "type": "integer",
+                      "default": null
+                    },
+                    "expense_begin_date": {
+                      "type": "string",
+                      "format": "date-time"
+                    },
+                    "expense_end_date": {
+                      "type": "string",
+                      "format": "date-time",
+                      "default": null
                     },
                     "date_created": {
                       "type": "string",
@@ -913,7 +1023,8 @@
                   },
                   "amount": {
                     "type": "number",
-                    "format": "double"
+                    "format": "double",
+                    "example": 250.00
                   },
                   "title": {
                     "type": "string",
@@ -931,25 +1042,9 @@
                     "type": "integer",
                     "example": 1
                   },
-                  "frequency_day_of_month": {
-                    "type": "integer",
-                    "example": 16
-                  },
-                  "frequency_day_of_week": {
-                    "type": "integer",
-                    "example": 2
-                  },
-                  "frequency_week_of_month": {
-                    "type": "integer",
-                    "example": 0
-                  },
-                  "frequency_month_of_year": {
-                    "type": "integer",
-                    "example": 0
-                  },
                   "begin_date": {
                     "type": "string",
-                    "format": "date"
+                    "format": "date-time"
                   }
                 }
               }
@@ -976,7 +1071,49 @@
                     },
                     "expense_amount": {
                       "type": "number",
-                      "format": "double"
+                      "format": "double",
+                      "example": 250.00
+                    },
+                    "expense_title": {
+                      "type": "string",
+                      "example": "Expense test"
+                    },
+                    "expense_description": {
+                      "type": "string",
+                      "example": "This is a expense test"
+                    },
+                    "frequency_type": {
+                      "type": "integer",
+                      "example": 2
+                    },
+                    "frequency_type_variable": {
+                      "type": "integer",
+                      "example": 1
+                    },
+                    "frequency_day_of_month": {
+                      "type": "integer",
+                      "default": null
+                    },
+                    "frequency_day_of_week": {
+                      "type": "integer",
+                      "default": null
+                    },
+                    "frequency_week_of_month": {
+                      "type": "integer",
+                      "default": null
+                    },
+                    "frequency_month_of_year": {
+                      "type": "integer",
+                      "default": null
+                    },
+                    "expense_begin_date": {
+                      "type": "string",
+                      "format": "date-time"
+                    },
+                    "expense_end_date": {
+                      "type": "string",
+                      "format": "date-time",
+                      "default": null
                     },
                     "date_created": {
                       "type": "string",
@@ -1069,7 +1206,49 @@
                       },
                       "loan_amount": {
                         "type": "number",
-                        "format": "double"
+                        "format": "double",
+                        "example": 250.00
+                      },
+                      "loan_title": {
+                        "type": "string",
+                        "example": "Expense test"
+                      },
+                      "loan_description": {
+                        "type": "string",
+                        "example": "This is a expense test"
+                      },
+                      "frequency_type": {
+                        "type": "integer",
+                        "example": 2
+                      },
+                      "frequency_type_variable": {
+                        "type": "integer",
+                        "example": 1
+                      },
+                      "frequency_day_of_month": {
+                        "type": "integer",
+                        "default": null
+                      },
+                      "frequency_day_of_week": {
+                        "type": "integer",
+                        "default": null
+                      },
+                      "frequency_week_of_month": {
+                        "type": "integer",
+                        "default": null
+                      },
+                      "frequency_month_of_year": {
+                        "type": "integer",
+                        "default": null
+                      },
+                      "loan_begin_date": {
+                        "type": "string",
+                        "format": "date-time"
+                      },
+                      "loan_end_date": {
+                        "type": "string",
+                        "format": "date-time",
+                        "default": null
                       },
                       "date_created": {
                         "type": "string",
@@ -1108,11 +1287,13 @@
                   },
                   "amount": {
                     "type": "number",
-                    "format": "double"
+                    "format": "double",
+                    "example": 2000.00
                   },
                   "plan_amount": {
                     "type": "number",
-                    "format": "double"
+                    "format": "double",
+                    "example": 300.00
                   },
                   "recipient": {
                     "type": "string",
@@ -1134,25 +1315,9 @@
                     "type": "integer",
                     "example": 1
                   },
-                  "frequency_day_of_month": {
-                    "type": "integer",
-                    "example": 16
-                  },
-                  "frequency_day_of_week": {
-                    "type": "integer",
-                    "example": 2
-                  },
-                  "frequency_week_of_month": {
-                    "type": "integer",
-                    "example": 0
-                  },
-                  "frequency_month_of_year": {
-                    "type": "integer",
-                    "example": 0
-                  },
                   "begin_date": {
                     "type": "string",
-                    "format": "date"
+                    "format": "date-time"
                   }
                 }
               }
@@ -1179,7 +1344,58 @@
                     },
                     "loan_amount": {
                       "type": "number",
-                      "format": "double"
+                      "format": "double",
+                      "example": 2000.00
+                    },
+                    "loan_plan_amount": {
+                      "type": "number",
+                      "format": "double",
+                      "example": 250.00
+                    },
+                    "loan_recipient": {
+                      "type": "string",
+                      "example": "John Doe"
+                    },
+                    "loan_title": {
+                      "type": "string",
+                      "example": "Expense test"
+                    },
+                    "loan_description": {
+                      "type": "string",
+                      "example": "This is a expense test"
+                    },
+                    "frequency_type": {
+                      "type": "integer",
+                      "example": 2
+                    },
+                    "frequency_type_variable": {
+                      "type": "integer",
+                      "example": 1
+                    },
+                    "frequency_day_of_month": {
+                      "type": "integer",
+                      "default": null
+                    },
+                    "frequency_day_of_week": {
+                      "type": "integer",
+                      "default": null
+                    },
+                    "frequency_week_of_month": {
+                      "type": "integer",
+                      "default": null
+                    },
+                    "frequency_month_of_year": {
+                      "type": "integer",
+                      "default": null
+                    },
+                    "loan_begin_date": {
+                      "type": "string",
+                      "format": "date-time"
+                    },
+                    "loan_end_date": {
+                      "type": "string",
+                      "format": "date-time",
+                      "default": null
                     },
                     "date_created": {
                       "type": "string",
@@ -1229,11 +1445,13 @@
                   },
                   "amount": {
                     "type": "number",
-                    "format": "double"
+                    "format": "double",
+                    "example": 2000.00
                   },
                   "plan_amount": {
                     "type": "number",
-                    "format": "double"
+                    "format": "double",
+                    "example": 300.00
                   },
                   "recipient": {
                     "type": "string",
@@ -1255,25 +1473,9 @@
                     "type": "integer",
                     "example": 1
                   },
-                  "frequency_day_of_month": {
-                    "type": "integer",
-                    "example": 16
-                  },
-                  "frequency_day_of_week": {
-                    "type": "integer",
-                    "example": 2
-                  },
-                  "frequency_week_of_month": {
-                    "type": "integer",
-                    "example": 0
-                  },
-                  "frequency_month_of_year": {
-                    "type": "integer",
-                    "example": 0
-                  },
                   "begin_date": {
                     "type": "string",
-                    "format": "date"
+                    "format": "date-time"
                   }
                 }
               }
@@ -1300,7 +1502,54 @@
                     },
                     "loan_amount": {
                       "type": "number",
-                      "format": "double"
+                      "format": "double",
+                      "example": 2000.00
+                    },
+                    "loan_plan_amount": {
+                      "type": "number",
+                      "format": "double",
+                      "example": 300.00
+                    },
+                    "loan_title": {
+                      "type": "string",
+                      "example": "Expense test"
+                    },
+                    "loan_description": {
+                      "type": "string",
+                      "example": "This is a expense test"
+                    },
+                    "frequency_type": {
+                      "type": "integer",
+                      "example": 2
+                    },
+                    "frequency_type_variable": {
+                      "type": "integer",
+                      "example": 1
+                    },
+                    "frequency_day_of_month": {
+                      "type": "integer",
+                      "default": null
+                    },
+                    "frequency_day_of_week": {
+                      "type": "integer",
+                      "default": null
+                    },
+                    "frequency_week_of_month": {
+                      "type": "integer",
+                      "default": null
+                    },
+                    "frequency_month_of_year": {
+                      "type": "integer",
+                      "default": null
+                    },
+                    "loan_begin_date": {
+                      "type": "string",
+                      "format": "date-time"
+                    },
+                    "loan_end_date": {
+                      "type": "string",
+                      "format": "date-time",
+                      "default": null
                     },
                     "date_created": {
                       "type": "string",
@@ -1381,17 +1630,21 @@
                         "format": "int64",
                         "minimum": 1
                       },
-                      "name": {
+                      "wishlist_amount": {
+                        "type": "number",
+                        "format": "double",
+                        "example": 250.00
+                      },
+                      "wishlist_title": {
                         "type": "string",
                         "example": "Wishlist test"
                       },
-                      "amount": {
-                        "type": "number",
-                        "format": "double"
-                      },
-                      "description": {
+                      "wishlist_description": {
                         "type": "string",
                         "example": "This is a wishlist test"
+                      },
+                      "wishlist_priority": {
+                        "type": "integer"
                       },
                       "date_created": {
                         "type": "string",
@@ -1430,7 +1683,8 @@
                   },
                   "amount": {
                     "type": "number",
-                    "format": "double"
+                    "format": "double",
+                    "example": 250.00
                   },
                   "title": {
                     "type": "string",
@@ -1467,21 +1721,21 @@
                       "format": "int64",
                       "minimum": 1
                     },
-                    "amount": {
+                    "wishlist_amount": {
                       "type": "number",
-                      "format": "double"
+                      "format": "double",
+                      "example": 250.00
                     },
-                    "title": {
+                    "wishlist_title": {
                       "type": "string",
                       "example": "Wishlist test"
                     },
-                    "description": {
+                    "wishlist_description": {
                       "type": "string",
                       "example": "This is a wishlist test"
                     },
-                    "priority": {
-                      "type": "integer",
-                      "example": 0
+                    "wishlist_priority": {
+                      "type": "integer"
                     },
                     "date_created": {
                       "type": "string",
@@ -1531,7 +1785,8 @@
                   },
                   "amount": {
                     "type": "number",
-                    "format": "double"
+                    "format": "double",
+                    "example": 250.00
                   },
                   "title": {
                     "type": "string",
@@ -1568,21 +1823,21 @@
                       "format": "int64",
                       "minimum": 1
                     },
-                    "amount": {
+                    "wishlist_amount": {
                       "type": "number",
-                      "format": "double"
+                      "format": "double",
+                      "example": 250.00
                     },
-                    "title": {
+                    "wishlist_title": {
                       "type": "string",
                       "example": "Wishlist test"
                     },
-                    "description": {
+                    "wishlist_description": {
                       "type": "string",
                       "example": "This is a wishlist test"
                     },
-                    "priority": {
-                      "type": "integer",
-                      "example": 0
+                    "wishlist_priority": {
+                      "type": "integer"
                     },
                     "date_created": {
                       "type": "string",

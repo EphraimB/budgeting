@@ -2,7 +2,7 @@ const accountQueries = {
     getAccounts: "SELECT accounts.account_id, accounts.account_name, accounts.account_type, COALESCE(accounts.account_balance, 0) + COALESCE(d.deposit_amount, 0) - COALESCE(w.withdrawal_amount, 0) AS account_balance, accounts.date_created, accounts.date_modified FROM accounts LEFT JOIN (SELECT account_id, SUM(deposit_amount) AS deposit_amount FROM deposits GROUP BY account_id) AS d ON accounts.account_id = d.account_id LEFT JOIN (SELECT account_id, SUM(withdrawal_amount) AS withdrawal_amount FROM withdrawals GROUP BY account_id) AS w ON accounts.account_id = w.account_id ORDER BY accounts.account_id ASC",
     getAccount: "SELECT accounts.account_id, accounts.account_name, accounts.account_type, COALESCE(accounts.account_balance, 0) + COALESCE(d.deposit_amount, 0) - COALESCE(w.withdrawal_amount, 0) AS account_balance, accounts.date_created, accounts.date_modified FROM accounts LEFT JOIN (SELECT account_id, SUM(deposit_amount) AS deposit_amount FROM deposits GROUP BY account_id) AS d ON accounts.account_id = d.account_id LEFT JOIN (SELECT account_id, SUM(withdrawal_amount) AS withdrawal_amount FROM withdrawals GROUP BY account_id) AS w ON accounts.account_id = w.account_id WHERE accounts.account_id = $1",
     createAccount: 'INSERT INTO accounts (account_name, account_type, account_balance) VALUES ($1, $2, $3) RETURNING *',
-    updateAccount: 'UPDATE accounts SET account_name = $1, account_type = $2, account_balance = $3 WHERE account_id = $4',
+    updateAccount: 'UPDATE accounts SET account_name = $1, account_type = $2, account_balance = $3 WHERE account_id = $4 RETURNING *',
     deleteAccount: 'DELETE FROM accounts WHERE account_id = $1',
   };
 

@@ -48,7 +48,7 @@ const updateAccount = (request, response) => {
             if (error) {
                 throw error;
             }
-            response.status(200).send(`Account modified with ID: ${id}`);
+            response.status(200).send(results.rows);
         }
     );
 }
