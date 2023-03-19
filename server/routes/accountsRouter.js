@@ -14,7 +14,7 @@ router.post('/',
     [
         body("name").isString().withMessage("Name must be a string"),
         body("balance").isNumeric().withMessage("Balance must be a number"),
-        body("type").isString().withMessage("Type must be a string"),
+        body("type").isInt().withMessage("Type must be a number"),
         validateRequest,
     ],
     createAccount);

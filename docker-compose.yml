@@ -8,7 +8,7 @@ services:
     volumes:
       - ./server:/app
     environment:
-      - PGHOST=${PGHOST}
+      - PGHOST=host.docker.internal
       - PGDATABASE=${PGDB}
       - PGUSER=${PGUSER}
       - PGPASSWORD=${PGPASSWORD}
