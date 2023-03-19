@@ -67,29 +67,8 @@ const deleteAccount = (request, response) => {
 
 // Get deposits by account
 const getDepositsByAccount = (request, response, next) => {
-    const accountId = parseInt(request.body.account_id);
-    const fromDate = request.body.from_date;
-
-    if (!accountId) {
-        response.status(400).send("Account ID must be provided");
-        return;
-    }
-
-    if (isNaN(accountId)) {
-        response.status(400).send("Account ID must be a number");
-        return;
-    }
-
-    if (!fromDate) {
-        response.status(400).send("From date must be provided");
-        return;
-    }
-
-    // Validate date format in yyyy-mm-dd format
-    if (!fromDate.match(/^\d{4}-\d{2}-\d{2}$/)) {
-        response.status(400).send("From date must be in yyyy-mm-dd format");
-        return;
-    }
+    const accountId = parseInt(request.query.account_id);
+    const fromDate = request.query.from_date;
 
     pool.query(depositQueries.getDepositsDateFiltered, [accountId, fromDate], (error, results) => {
         if (error) {
