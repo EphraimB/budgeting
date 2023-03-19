@@ -34,7 +34,7 @@ const accountQueries = {
   };
 
   const loanQueries = {
-    getLoansByAccount: 'SELECT * FROM loans WHERE account_id = $1 AND loan_begin_date <= $2 ORDER BY date_created DESC',
+    getLoansByAccount: 'SELECT * FROM loans WHERE account_id = $1 AND loan_begin_date <= $2 ORDER BY date_created ASC',
     getLoans: 'SELECT * FROM loans WHERE account_id = $1 ORDER BY loan_id ASC',
     getLoan: 'SELECT * FROM loans WHERE account_id = $1 AND loan_id = $2',
     createLoan: 'INSERT INTO loans (account_id, loan_amount, loan_plan_amount, loan_recipient, loan_title, loan_description, frequency_type, frequency_type_variable, frequency_day_of_month, frequency_day_of_week, frequency_week_of_month, frequency_month_of_year, loan_begin_date) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13) RETURNING *',
@@ -43,7 +43,7 @@ const accountQueries = {
   };
 
   const wishlistQueries = {
-    getWishlistsByAccount: 'SELECT * FROM wishlist WHERE account_id = $1 ORDER BY date_created DESC',
+    getWishlistsByAccount: 'SELECT * FROM wishlist WHERE account_id = $1 AND date_created <= $2 ORDER BY date_created ASC',
     getWishlists: 'SELECT * FROM wishlist WHERE account_id = $1 ORDER BY wishlist_id ASC',
     getWishlist: 'SELECT * FROM wishlist WHERE account_id = $1 AND wishlist_id = $2',
     createWishlist: 'INSERT INTO wishlist (account_id, wishlist_amount, wishlist_title, wishlist_description, wishlist_priority) VALUES ($1, $2, $3, $4, $5) RETURNING *',
