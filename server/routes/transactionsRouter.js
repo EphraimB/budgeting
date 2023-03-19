@@ -12,7 +12,7 @@ router.get('/', [
     query('to_date').exists().withMessage('To date is required').isDate().withMessage('To date must be a date in YYYY-MM-DD format'),
     validateRequest,
 ], getCurrentBalance, getDepositsByAccount, getWithdrawalsByAccount, getExpensesByAccount, getLoansByAccount, generateTransactions, (request, response) => {
-    response.json({ account_id: request.accountId, currentBalance: request.currentBalance, transactions: request.transactions });
+    response.json({ account_id: parseInt(request.query.account_id), currentBalance: request.currentBalance, transactions: request.transactions });
 });
 
 module.exports = router;

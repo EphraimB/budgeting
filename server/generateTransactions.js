@@ -8,17 +8,10 @@ const generateTransactions = (request, response, next) => {
     const generateMonthlyLoans = require('./generateLoans/generateMonthlyLoans.js');
     const generateYearlyLoans = require('./generateLoans/generateYearlyLoans.js');
     const calculateBalances = require('./calculateBalances.js');
-    const accountId = parseInt(request.body.account_id);
-    const fromDate = new Date(request.body.from_date);
-    const toDate = new Date(request.body.to_date);
+    const fromDate = new Date(request.query.from_date);
+    const toDate = new Date(request.query.to_date);
     const currentBalance = request.currentBalance;
     const transactions = [];
-
-    if (accountId < 1) {
-        return response.status(400).send('Invalid account id');
-    } else if (fromDate > toDate) {
-        return response.status(400).send('Invalid date range');
-    }
 
     transactions.push(
         ...request.deposits.map(deposit => ({
@@ -68,7 +61,6 @@ const generateTransactions = (request, response, next) => {
     calculateBalances(transactions, currentBalance);
 
     request.transactions = transactions;
-    request.accountId = accountId;
     request.currentBalance = currentBalance;
 
     if (request.transactions.length < 1) {

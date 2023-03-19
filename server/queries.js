@@ -67,9 +67,9 @@ const deleteAccount = (request, response) => {
 
 // Get deposits by account
 const getDepositsByAccount = (request, response, next) => {
-    const { account_id, from_date } = parseInt(request.query);
+    const { account_id, from_date } = request.query;
 
-    pool.query(depositQueries.getDepositsDateFiltered, [account_id, from_date], (error, results) => {
+    pool.query(depositQueries.getDepositsDateFiltered, [parseInt(account_id), from_date], (error, results) => {
         if (error) {
             throw error;
         }
@@ -141,9 +141,9 @@ const deleteDeposit = (request, response) => {
 
 // Get withdrawals by account
 const getWithdrawalsByAccount = (request, response, next) => {
-    const { account_id, from_date } = parseInt(request.query);
+    const { account_id, from_date } = request.query;
 
-    pool.query(withdrawalQueries.getWithdrawalsByAccount, [account_id, from_date], (error, results) => {
+    pool.query(withdrawalQueries.getWithdrawalsByAccount, [parseInt(account_id), from_date], (error, results) => {
         if (error) {
             throw error;
         }
@@ -215,9 +215,9 @@ const deleteWithdrawal = (request, response) => {
 
 // Get expenses by account
 const getExpensesByAccount = (request, response, next) => {
-    const { account_id, to_date } = parseInt(request.query);
+    const { account_id, to_date } = request.query;
 
-    pool.query(expenseQueries.getExpensesByAccount, [account_id, to_date], (error, results) => {
+    pool.query(expenseQueries.getExpensesByAccount, [parseInt(account_id), to_date], (error, results) => {
         if (error) {
             throw error;
         }
@@ -289,9 +289,9 @@ const deleteExpense = (request, response) => {
 
 // Get loans by account
 const getLoansByAccount = (request, response, next) => {
-    const { account_id, to_date } = parseInt(request.query);
+    const { account_id, to_date } = request.query;
 
-    pool.query(loanQueries.getLoansByAccount, [account_id, to_date], (error, results) => {
+    pool.query(loanQueries.getLoansByAccount, [parseInt(account_id), to_date], (error, results) => {
         if (error) {
             throw error;
         }
@@ -363,9 +363,9 @@ const deleteLoan = (request, response) => {
 
 // Get wishlists by account
 const getWishlistsByAccount = (request, response, next) => {
-    const { account_id, from_date } = parseInt(request.params);
+    const { account_id, from_date } = request.query;
 
-    pool.query(wishlistQueries.getWishlistsByAccount, [account_id, from_date], (error, results) => {
+    pool.query(wishlistQueries.getWishlistsByAccount, [parseInt(account_id), from_date], (error, results) => {
         if (error) {
             throw error;
         }
@@ -437,7 +437,7 @@ const deleteWishlist = (request, response) => {
 
 // Get current balance of account based on deposits and withdrawals
 const getCurrentBalance = (request, response, next) => {
-    const { account_id } = parseInt(request.body);
+    const account_id = parseInt(request.query.account_id);
 
     pool.query(currentBalanceQueries.getCurrentBalance, [account_id], (error, results) => {
         if (error) {
