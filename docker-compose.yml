@@ -1,0 +1,54 @@
+version: '3'
+
+services:
+  server:
+    build:
+      context: ./server
+      dockerfile: Dockerfile
+    volumes:
+      - ./server:/app
+    environment:
+      - PGHOST=host.docker.internal
+      - PGDATABASE=${PGDB}
+      - PGUSER=${PGUSER}
+      - PGPASSWORD=${PGPASSWORD}
+      - PGPORT=${PGPORT}
+    ports:
+      - "5000:5000"
+    depends_on:
+      - db
+
+  client:
+    build:
+      context: ./client
+      dockerfile: Dockerfile
+    volumes:
+      - ./client:/app
+    environment:
+      - REACT_APP_API_URL=http://server:5000
+    ports:
+      - "3000:3000"
+    depends_on:
+      - server
+
+  db:
+    image: postgres:15.2-alpine3.17
+    environment:
+      - POSTGRES_USER=${PGUSER}
+      - POSTGRES_HOST=${PGHOST}
+      - POSTGRES_PASSWORD=${PGPASSWORD}
+      - POSTGRES_DB=${PGDB}
+    ports:
+      - "${PGPORT}:5432"
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    networks:
+      - app-network
+
+volumes:
+  db-data:
+
+
+networks:
+  app-network:
+    driver: bridge
