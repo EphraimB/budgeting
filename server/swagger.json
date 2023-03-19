@@ -1878,6 +1878,208 @@
           }
         }
       }
+    },
+    "/transactions": {
+      "get": {
+        "summary": "Get all transactions",
+        "description": "Get all transactions",
+        "tags": [
+          "transactions"
+        ],
+        "parameters": [
+          {
+            "name": "account_id",
+            "in": "query",
+            "description": "Account id",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1
+            }
+          },
+          {
+            "name": "from_date",
+            "in": "query",
+            "description": "Start date",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "date"
+            }
+          },
+          {
+            "name": "to_date",
+            "in": "query",
+            "description": "End date",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "date"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A JSON array of all transactions",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "account_id": {
+                      "type": "integer",
+                      "format": "int64",
+                      "minimum": 1
+                    },
+                    "current_balance": {
+                      "type": "number",
+                      "format": "double",
+                      "example": 1850.00
+                    },
+                    "transactions": {
+                      "type": "array",
+                      "items": {
+                        "oneOf": [
+                          {
+                            "$ref": "#/components/schemas/DepositTransaction"
+                          },
+                          {
+                            "$ref": "#/components/schemas/WithdrawalTransaction"
+                          },
+                          {
+                            "$ref": "#/components/schemas/ExpenseTransaction"
+                          },
+                          {
+                            "$ref": "#/components/schemas/LoanTransaction"
+                          }
+                        ]
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "DepositTransaction": {
+        "type": "object",
+        "properties": {
+          "deposit_id": {
+            "type": "integer",
+            "description": "ID of the deposit transaction"
+          },
+          "date": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Date the transaction occurred"
+          },
+          "date_modified": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Date the transaction was last modified"
+          },
+          "description": {
+            "type": "string",
+            "description": "Description of the deposit transaction"
+          },
+          "amount": {
+            "type": "number",
+            "description": "Amount of the deposit transaction"
+          },
+          "balance": {
+            "type": "number",
+            "description": "Balance after the deposit transaction"
+          }
+        }
+      },
+      "WithdrawalTransaction": {
+        "type": "object",
+        "properties": {
+          "withdrawal_id": {
+            "type": "integer",
+            "description": "ID of the withdrawal transaction"
+          },
+          "date": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Date the transaction occurred"
+          },
+          "date_modified": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Date the transaction was last modified"
+          },
+          "description": {
+            "type": "string",
+            "description": "Description of the withdrawal transaction"
+          },
+          "amount": {
+            "type": "number",
+            "description": "Amount of the withdrawal transaction"
+          },
+          "balance": {
+            "type": "number",
+            "description": "Balance after the withdrawal transaction"
+          }
+        }
+      },
+      "ExpenseTransaction": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string",
+            "description": "Title of the expense"
+          },
+          "description": {
+            "type": "string",
+            "description": "Description of the expense"
+          },
+          "date": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Date the expense occurred"
+          },
+          "amount": {
+            "type": "number",
+            "description": "Amount of the expense"
+          },
+          "balance": {
+            "type": "number",
+            "description": "Balance after the expense"
+          }
+        }
+      },
+      "LoanTransaction": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string",
+            "description": "Title of the loan"
+          },
+          "description": {
+            "type": "string",
+            "description": "Description of the loan"
+          },
+          "date": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Date the loan occurred"
+          },
+          "amount": {
+            "type": "number",
+            "description": "Amount of the loan"
+          },
+          "balance": {
+            "type": "number",
+            "description": "Balance after the loan"
+          }
+        }
+      }
     }
   }
 }
