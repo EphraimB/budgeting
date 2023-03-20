@@ -321,26 +321,12 @@
           "deposits"
         ],
         "requestBody": {
+          "description": "Deposit object to be created",
+          "required": true,
           "content": {
             "application/json": {
               "schema": {
-                "type": "object",
-                "properties": {
-                  "account_id": {
-                    "type": "integer",
-                    "format": "int64",
-                    "minimum": 1
-                  },
-                  "amount": {
-                    "type": "number",
-                    "format": "double",
-                    "example": 1000.00
-                  },
-                  "description": {
-                    "type": "string",
-                    "example": "Deposit test"
-                  }
-                }
+                "$ref": "#/components/schemas/DepositManipulation"
               }
             }
           }
@@ -407,26 +393,12 @@
           }
         ],
         "requestBody": {
+          "description": "Deposit object to be updated",
+          "required": true,
           "content": {
             "application/json": {
               "schema": {
-                "type": "object",
-                "properties": {
-                  "account_id": {
-                    "type": "integer",
-                    "format": "int64",
-                    "minimum": 1
-                  },
-                  "amount": {
-                    "type": "number",
-                    "format": "double",
-                    "example": 1000.00
-                  },
-                  "description": {
-                    "type": "string",
-                    "example": "Deposit test"
-                  }
-                }
+                "$ref": "#/components/schemas/DepositManipulation"
               }
             }
           }
@@ -582,26 +554,12 @@
           "withdrawals"
         ],
         "requestBody": {
+          "description": "Withdrawal object to be created",
+          "required": true,
           "content": {
             "application/json": {
               "schema": {
-                "type": "object",
-                "properties": {
-                  "account_id": {
-                    "type": "integer",
-                    "format": "int64",
-                    "minimum": 1
-                  },
-                  "amount": {
-                    "type": "number",
-                    "format": "double",
-                    "example": 100.00
-                  },
-                  "description": {
-                    "type": "string",
-                    "example": "Withdrawal test"
-                  }
-                }
+                "$ref": "#/components/schemas/WithdrawalManipulation"
               }
             }
           }
@@ -668,26 +626,12 @@
           }
         ],
         "requestBody": {
+          "description": "Withdrawal object to be updated",
+          "required": true,
           "content": {
             "application/json": {
               "schema": {
-                "type": "object",
-                "properties": {
-                  "account_id": {
-                    "type": "integer",
-                    "format": "int64",
-                    "minimum": 1
-                  },
-                  "amount": {
-                    "type": "number",
-                    "format": "double",
-                    "example": 100.00
-                  },
-                  "description": {
-                    "type": "string",
-                    "example": "Withdrawal test"
-                  }
-                }
+                "$ref": "#/components/schemas/WithdrawalManipulation"
               }
             }
           }
@@ -884,42 +828,12 @@
           "expenses"
         ],
         "requestBody": {
+          "description": "Expenses object to be created",
+          "required": true,
           "content": {
             "application/json": {
               "schema": {
-                "type": "object",
-                "properties": {
-                  "account_id": {
-                    "type": "integer",
-                    "format": "int64",
-                    "minimum": 1
-                  },
-                  "amount": {
-                    "type": "number",
-                    "format": "double",
-                    "example": 250.00
-                  },
-                  "title": {
-                    "type": "string",
-                    "example": "Expense test"
-                  },
-                  "description": {
-                    "type": "string",
-                    "example": "This is a expense test"
-                  },
-                  "frequency_type": {
-                    "type": "integer",
-                    "example": 2
-                  },
-                  "frequency_type_variable": {
-                    "type": "integer",
-                    "example": 1
-                  },
-                  "begin_date": {
-                    "type": "string",
-                    "format": "date-time"
-                  }
-                }
+                "$ref": "#/components/schemas/ExpenseManipulation"
               }
             }
           }
@@ -1027,42 +941,12 @@
           }
         ],
         "requestBody": {
+          "description": "Expenses object to be created",
+          "required": true,
           "content": {
             "application/json": {
               "schema": {
-                "type": "object",
-                "properties": {
-                  "account_id": {
-                    "type": "integer",
-                    "format": "int64",
-                    "minimum": 1
-                  },
-                  "amount": {
-                    "type": "number",
-                    "format": "double",
-                    "example": 250.00
-                  },
-                  "title": {
-                    "type": "string",
-                    "example": "Expense test"
-                  },
-                  "description": {
-                    "type": "string",
-                    "example": "This is a expense test"
-                  },
-                  "frequency_type": {
-                    "type": "integer",
-                    "example": 2
-                  },
-                  "frequency_type_variable": {
-                    "type": "integer",
-                    "example": 1
-                  },
-                  "begin_date": {
-                    "type": "string",
-                    "format": "date-time"
-                  }
-                }
+                "$ref": "#/components/schemas/ExpenseManipulation"
               }
             }
           }
@@ -2144,6 +2028,79 @@
             "type": "number",
             "format": "double",
             "example": 1000.00
+          }
+        }
+      },
+      "DepositManipulation": {
+        "type": "object",
+        "properties": {
+          "account_id": {
+            "type": "integer",
+            "format": "int64",
+            "minimum": 1
+          },
+          "amount": {
+            "type": "number",
+            "format": "double",
+            "example": 1000.00
+          },
+          "description": {
+            "type": "string",
+            "example": "Deposit test"
+          }
+        }
+      },
+      "WithdrawalManipulation": {
+        "type": "object",
+        "properties": {
+          "account_id": {
+            "type": "integer",
+            "format": "int64",
+            "minimum": 1
+          },
+          "amount": {
+            "type": "number",
+            "format": "double",
+            "example": 100.00
+          },
+          "description": {
+            "type": "string",
+            "example": "Withdrawal test"
+          }
+        }
+      },
+      "ExpenseManipulation": {
+        "type": "object",
+        "properties": {
+          "account_id": {
+            "type": "integer",
+            "format": "int64",
+            "minimum": 1
+          },
+          "amount": {
+            "type": "number",
+            "format": "double",
+            "example": 250.00
+          },
+          "title": {
+            "type": "string",
+            "example": "Expense test"
+          },
+          "description": {
+            "type": "string",
+            "example": "This is a expense test"
+          },
+          "frequency_type": {
+            "type": "integer",
+            "example": 2
+          },
+          "frequency_type_variable": {
+            "type": "integer",
+            "example": 1
+          },
+          "begin_date": {
+            "type": "string",
+            "format": "date-time"
           }
         }
       }
