@@ -941,7 +941,7 @@
           }
         ],
         "requestBody": {
-          "description": "Expenses object to be created",
+          "description": "Expenses object to be updated",
           "required": true,
           "content": {
             "application/json": {
@@ -1184,51 +1184,12 @@
           "loans"
         ],
         "requestBody": {
+          "description": "Loans object to be created",
+          "required": true,
           "content": {
             "application/json": {
               "schema": {
-                "type": "object",
-                "properties": {
-                  "account_id": {
-                    "type": "integer",
-                    "format": "int64",
-                    "minimum": 1
-                  },
-                  "amount": {
-                    "type": "number",
-                    "format": "double",
-                    "example": 2000.00
-                  },
-                  "plan_amount": {
-                    "type": "number",
-                    "format": "double",
-                    "example": 300.00
-                  },
-                  "recipient": {
-                    "type": "string",
-                    "example": "John Doe"
-                  },
-                  "title": {
-                    "type": "string",
-                    "example": "Loan test"
-                  },
-                  "description": {
-                    "type": "string",
-                    "example": "This is a loan test"
-                  },
-                  "frequency_type": {
-                    "type": "integer",
-                    "example": 2
-                  },
-                  "frequency_type_variable": {
-                    "type": "integer",
-                    "example": 1
-                  },
-                  "begin_date": {
-                    "type": "string",
-                    "format": "date-time"
-                  }
-                }
+                "$ref": "#/components/schemas/LoanManipulation"
               }
             }
           }
@@ -1345,51 +1306,12 @@
           }
         ],
         "requestBody": {
+          "description": "Loans object to be updated",
+          "required": true,
           "content": {
             "application/json": {
               "schema": {
-                "type": "object",
-                "properties": {
-                  "account_id": {
-                    "type": "integer",
-                    "format": "int64",
-                    "minimum": 1
-                  },
-                  "amount": {
-                    "type": "number",
-                    "format": "double",
-                    "example": 2000.00
-                  },
-                  "plan_amount": {
-                    "type": "number",
-                    "format": "double",
-                    "example": 300.00
-                  },
-                  "recipient": {
-                    "type": "string",
-                    "example": "John Doe"
-                  },
-                  "title": {
-                    "type": "string",
-                    "example": "Loan test"
-                  },
-                  "description": {
-                    "type": "string",
-                    "example": "This is a loan test"
-                  },
-                  "frequency_type": {
-                    "type": "integer",
-                    "example": 2
-                  },
-                  "frequency_type_variable": {
-                    "type": "integer",
-                    "example": 1
-                  },
-                  "begin_date": {
-                    "type": "string",
-                    "format": "date-time"
-                  }
-                }
+                "$ref": "#/components/schemas/LoanManipulation"
               }
             }
           }
@@ -2089,6 +2011,50 @@
           "description": {
             "type": "string",
             "example": "This is a expense test"
+          },
+          "frequency_type": {
+            "type": "integer",
+            "example": 2
+          },
+          "frequency_type_variable": {
+            "type": "integer",
+            "example": 1
+          },
+          "begin_date": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "LoanManipulation": {
+        "type": "object",
+        "properties": {
+          "account_id": {
+            "type": "integer",
+            "format": "int64",
+            "minimum": 1
+          },
+          "amount": {
+            "type": "number",
+            "format": "double",
+            "example": 2000.00
+          },
+          "plan_amount": {
+            "type": "number",
+            "format": "double",
+            "example": 300.00
+          },
+          "recipient": {
+            "type": "string",
+            "example": "John Doe"
+          },
+          "title": {
+            "type": "string",
+            "example": "Loan test"
+          },
+          "description": {
+            "type": "string",
+            "example": "This is a loan test"
           },
           "frequency_type": {
             "type": "integer",
