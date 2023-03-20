@@ -296,42 +296,7 @@
         ],
         "responses": {
           "200": {
-            "description": "A JSON array of withdrawals",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "withdrawal_id": {
-                        "type": "integer",
-                        "format": "int64",
-                        "minimum": 1
-                      },
-                      "account_id": {
-                        "type": "integer",
-                        "format": "int64",
-                        "minimum": 1
-                      },
-                      "withdrawal_amount": {
-                        "type": "number",
-                        "format": "double",
-                        "example": 100.00
-                      },
-                      "date_created": {
-                        "type": "string",
-                        "format": "date-time"
-                      },
-                      "date_modified": {
-                        "type": "string",
-                        "format": "date-time"
-                      }
-                    }
-                  }
-                }
-              }
-            }
+            "$ref": "#/components/responses/SuccessResponseWithdrawals"
           },
           "400": {
             "$ref": "#/components/responses/BadRequest"
@@ -359,39 +324,7 @@
         },
         "responses": {
           "201": {
-            "description": "A JSON object of the created withdrawal",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "withdrawal_id": {
-                      "type": "integer",
-                      "format": "int64",
-                      "minimum": 1
-                    },
-                    "account_id": {
-                      "type": "integer",
-                      "format": "int64",
-                      "minimum": 1
-                    },
-                    "withdrawal_amount": {
-                      "type": "number",
-                      "format": "double",
-                      "example": 100.00
-                    },
-                    "date_created": {
-                      "type": "string",
-                      "format": "date-time"
-                    },
-                    "date_modified": {
-                      "type": "string",
-                      "format": "date-time"
-                    }
-                  }
-                }
-              }
-            }
+            "$ref": "#/components/responses/SuccessResponseWithdrawals"
           },
           "400": {
             "$ref": "#/components/responses/BadRequest"
@@ -431,39 +364,7 @@
         },
         "responses": {
           "200": {
-            "description": "A JSON object of the updated withdrawal",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "withdrawal_id": {
-                      "type": "integer",
-                      "format": "int64",
-                      "minimum": 1
-                    },
-                    "account_id": {
-                      "type": "integer",
-                      "format": "int64",
-                      "minimum": 1
-                    },
-                    "withdrawal_amount": {
-                      "type": "number",
-                      "format": "double",
-                      "example": 100.00
-                    },
-                    "date_created": {
-                      "type": "string",
-                      "format": "date-time"
-                    },
-                    "date_modified": {
-                      "type": "string",
-                      "format": "date-time"
-                    }
-                  }
-                }
-              }
-            }
+            "$ref": "#/components/responses/SuccessResponseWithdrawals"
           },
           "400": {
             "$ref": "#/components/responses/BadRequest"
@@ -1912,6 +1813,44 @@
                     "type": "number",
                     "format": "double",
                     "example": 1000.00
+                  },
+                  "date_created": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "date_modified": {
+                    "type": "string",
+                    "format": "date-time"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "SuccessResponseWithdrawals": {
+        "description": "A JSON array of withdrawals",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "withdrawal_id": {
+                    "type": "integer",
+                    "format": "int64",
+                    "minimum": 1
+                  },
+                  "account_id": {
+                    "type": "integer",
+                    "format": "int64",
+                    "minimum": 1
+                  },
+                  "withdrawal_amount": {
+                    "type": "number",
+                    "format": "double",
+                    "example": 100.00
                   },
                   "date_created": {
                     "type": "string",
