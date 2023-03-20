@@ -1514,34 +1514,12 @@
           "wishlists"
         ],
         "requestBody": {
+          "description": "Wishlists object to be created",
+          "required": true,
           "content": {
             "application/json": {
               "schema": {
-                "type": "object",
-                "properties": {
-                  "account_id": {
-                    "type": "integer",
-                    "format": "int64",
-                    "minimum": 1
-                  },
-                  "amount": {
-                    "type": "number",
-                    "format": "double",
-                    "example": 250.00
-                  },
-                  "title": {
-                    "type": "string",
-                    "example": "Wishlist test"
-                  },
-                  "description": {
-                    "type": "string",
-                    "example": "This is a wishlist test"
-                  },
-                  "priority": {
-                    "type": "integer",
-                    "example": 1
-                  }
-                }
+                "$ref": "#/components/schemas/WishlistManipulation"
               }
             }
           }
@@ -1619,34 +1597,12 @@
           }
         ],
         "requestBody": {
+          "description": "Wishlists object to be updated",
+          "required": true,
           "content": {
             "application/json": {
               "schema": {
-                "type": "object",
-                "properties": {
-                  "account_id": {
-                    "type": "integer",
-                    "format": "int64",
-                    "minimum": 1
-                  },
-                  "amount": {
-                    "type": "number",
-                    "format": "double",
-                    "example": 250.00
-                  },
-                  "title": {
-                    "type": "string",
-                    "example": "Wishlist test"
-                  },
-                  "description": {
-                    "type": "string",
-                    "example": "This is a wishlist test"
-                  },
-                  "priority": {
-                    "type": "integer",
-                    "example": 1
-                  }
-                }
+                "$ref": "#/components/schemas/WishlistManipulation"
               }
             }
           }
@@ -2067,6 +2023,33 @@
           "begin_date": {
             "type": "string",
             "format": "date-time"
+          }
+        }
+      },
+      "WishlistManipulation": {
+        "type": "object",
+        "properties": {
+          "account_id": {
+            "type": "integer",
+            "format": "int64",
+            "minimum": 1
+          },
+          "amount": {
+            "type": "number",
+            "format": "double",
+            "example": 250.00
+          },
+          "title": {
+            "type": "string",
+            "example": "Wishlist test"
+          },
+          "description": {
+            "type": "string",
+            "example": "This is a wishlist test"
+          },
+          "priority": {
+            "type": "integer",
+            "example": 1
           }
         }
       }
