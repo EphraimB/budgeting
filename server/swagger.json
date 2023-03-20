@@ -688,53 +688,7 @@
         ],
         "responses": {
           "200": {
-            "description": "A JSON array of wishlists",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "wishlist_id": {
-                        "type": "integer",
-                        "format": "int64",
-                        "minimum": 1
-                      },
-                      "account_id": {
-                        "type": "integer",
-                        "format": "int64",
-                        "minimum": 1
-                      },
-                      "wishlist_amount": {
-                        "type": "number",
-                        "format": "double",
-                        "example": 250.00
-                      },
-                      "wishlist_title": {
-                        "type": "string",
-                        "example": "Wishlist test"
-                      },
-                      "wishlist_description": {
-                        "type": "string",
-                        "example": "This is a wishlist test"
-                      },
-                      "wishlist_priority": {
-                        "type": "integer"
-                      },
-                      "date_created": {
-                        "type": "string",
-                        "format": "date-time"
-                      },
-                      "date_modified": {
-                        "type": "string",
-                        "format": "date-time"
-                      }
-                    }
-                  }
-                }
-              }
-            }
+            "$ref": "#/components/responses/SuccessResponseWishlists"
           },
           "400": {
             "$ref": "#/components/responses/BadRequest"
@@ -762,50 +716,7 @@
         },
         "responses": {
           "201": {
-            "description": "A JSON object of the created wishlist",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "wishlist_id": {
-                      "type": "integer",
-                      "format": "int64",
-                      "minimum": 1
-                    },
-                    "account_id": {
-                      "type": "integer",
-                      "format": "int64",
-                      "minimum": 1
-                    },
-                    "wishlist_amount": {
-                      "type": "number",
-                      "format": "double",
-                      "example": 250.00
-                    },
-                    "wishlist_title": {
-                      "type": "string",
-                      "example": "Wishlist test"
-                    },
-                    "wishlist_description": {
-                      "type": "string",
-                      "example": "This is a wishlist test"
-                    },
-                    "wishlist_priority": {
-                      "type": "integer"
-                    },
-                    "date_created": {
-                      "type": "string",
-                      "format": "date-time"
-                    },
-                    "date_modified": {
-                      "type": "string",
-                      "format": "date-time"
-                    }
-                  }
-                }
-              }
-            }
+            "$ref": "#/components/responses/SuccessResponseWishlists"
           },
           "400": {
             "$ref": "#/components/responses/BadRequest"
@@ -845,50 +756,7 @@
         },
         "responses": {
           "200": {
-            "description": "A JSON object of the updated wishlist",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "wishlist_id": {
-                      "type": "integer",
-                      "format": "int64",
-                      "minimum": 1
-                    },
-                    "account_id": {
-                      "type": "integer",
-                      "format": "int64",
-                      "minimum": 1
-                    },
-                    "wishlist_amount": {
-                      "type": "number",
-                      "format": "double",
-                      "example": 250.00
-                    },
-                    "wishlist_title": {
-                      "type": "string",
-                      "example": "Wishlist test"
-                    },
-                    "wishlist_description": {
-                      "type": "string",
-                      "example": "This is a wishlist test"
-                    },
-                    "wishlist_priority": {
-                      "type": "integer"
-                    },
-                    "date_created": {
-                      "type": "string",
-                      "format": "date-time"
-                    },
-                    "date_modified": {
-                      "type": "string",
-                      "format": "date-time"
-                    }
-                  }
-                }
-              }
-            }
+            "$ref": "#/components/responses/SuccessResponseWishlists"
           },
           "400": {
             "$ref": "#/components/responses/BadRequest"
@@ -1551,6 +1419,55 @@
                     "type": "string",
                     "format": "date-time",
                     "default": null
+                  },
+                  "date_created": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "date_modified": {
+                    "type": "string",
+                    "format": "date-time"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "SuccessResponseWishlists": {
+        "description": "A JSON array of wishlists",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "wishlist_id": {
+                    "type": "integer",
+                    "format": "int64",
+                    "minimum": 1
+                  },
+                  "account_id": {
+                    "type": "integer",
+                    "format": "int64",
+                    "minimum": 1
+                  },
+                  "wishlist_amount": {
+                    "type": "number",
+                    "format": "double",
+                    "example": 250.00
+                  },
+                  "wishlist_title": {
+                    "type": "string",
+                    "example": "Wishlist test"
+                  },
+                  "wishlist_description": {
+                    "type": "string",
+                    "example": "This is a wishlist test"
+                  },
+                  "wishlist_priority": {
+                    "type": "integer"
                   },
                   "date_created": {
                     "type": "string",
