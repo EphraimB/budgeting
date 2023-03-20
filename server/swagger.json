@@ -84,28 +84,7 @@
           "accounts"
         ],
         "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "name": {
-                    "type": "string",
-                    "example": "Checking"
-                  },
-                  "type": {
-                    "type": "integer",
-                    "example": 0
-                  },
-                  "balance": {
-                    "type": "number",
-                    "format": "double",
-                    "example": 1000.00
-                  }
-                }
-              }
-            }
-          }
+          "$ref": "#/components/schemas/AccountManipulation"
         },
         "responses": {
           "201": {
@@ -171,28 +150,7 @@
           }
         ],
         "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "name": {
-                    "type": "string",
-                    "example": "Checking"
-                  },
-                  "type": {
-                    "type": "integer",
-                    "example": 0
-                  },
-                  "balance": {
-                    "type": "number",
-                    "format": "double",
-                    "example": 1000.00
-                  }
-                }
-              }
-            }
-          }
+          "$ref": "#/components/schemas/AccountManipulation"
         },
         "responses": {
           "200": {
@@ -2152,6 +2110,24 @@
           "balance": {
             "type": "number",
             "description": "Balance after the loan"
+          }
+        }
+      },
+      "AccountManipulation": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "example": "Checking"
+          },
+          "type": {
+            "type": "integer",
+            "example": 0
+          },
+          "balance": {
+            "type": "number",
+            "format": "double",
+            "example": 1000.00
           }
         }
       }
