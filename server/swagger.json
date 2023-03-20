@@ -84,7 +84,15 @@
           "accounts"
         ],
         "requestBody": {
-          "$ref": "#/components/schemas/AccountManipulation"
+          "description": "Account object to be created",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AccountManipulation"
+              }
+            }
+          }
         },
         "responses": {
           "201": {
@@ -150,7 +158,15 @@
           }
         ],
         "requestBody": {
-          "$ref": "#/components/schemas/AccountManipulation"
+          "description": "Account object to be updated",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AccountManipulation"
+              }
+            }
+          }
         },
         "responses": {
           "200": {
