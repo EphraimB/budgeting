@@ -32,45 +32,7 @@
         ],
         "responses": {
           "200": {
-            "description": "A JSON array of accounts",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "account_id": {
-                        "type": "integer",
-                        "format": "int64",
-                        "minimum": 1
-                      },
-                      "account_name": {
-                        "type": "string",
-                        "example": "Checking"
-                      },
-                      "account_type": {
-                        "type": "integer",
-                        "example": 0
-                      },
-                      "account_balance": {
-                        "type": "number",
-                        "format": "double",
-                        "example": 1000.00
-                      },
-                      "date_created": {
-                        "type": "string",
-                        "format": "date-time"
-                      },
-                      "date_modified": {
-                        "type": "string",
-                        "format": "date-time"
-                      }
-                    }
-                  }
-                }
-              }
-            }
+            "$ref": "#/components/responses/SuccessResponseAccounts"
           },
           "400": {
             "$ref": "#/components/responses/BadRequest"
@@ -96,42 +58,7 @@
         },
         "responses": {
           "201": {
-            "description": "A JSON object of the created account",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "account_id": {
-                      "type": "integer",
-                      "format": "int64",
-                      "minimum": 1
-                    },
-                    "account_name": {
-                      "type": "string",
-                      "example": "Checking"
-                    },
-                    "account_type": {
-                      "type": "integer",
-                      "example": 0
-                    },
-                    "account_balance": {
-                      "type": "number",
-                      "format": "double",
-                      "example": 1000.00
-                    },
-                    "date_created": {
-                      "type": "string",
-                      "format": "date-time"
-                    },
-                    "date_modified": {
-                      "type": "string",
-                      "format": "date-time"
-                    }
-                  }
-                }
-              }
-            }
+            "$ref": "#/components/responses/SuccessResponseAccounts"
           },
           "400": {
             "$ref": "#/components/responses/BadRequest"
@@ -170,42 +97,7 @@
         },
         "responses": {
           "200": {
-            "description": "A message that the account was updated",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "account_id": {
-                      "type": "integer",
-                      "format": "int64",
-                      "minimum": 1
-                    },
-                    "account_name": {
-                      "type": "string",
-                      "example": "Checking"
-                    },
-                    "account_type": {
-                      "type": "integer",
-                      "example": 0
-                    },
-                    "account_balance": {
-                      "type": "number",
-                      "format": "double",
-                      "example": 1000.00
-                    },
-                    "date_created": {
-                      "type": "string",
-                      "format": "date-time"
-                    },
-                    "date_modified": {
-                      "type": "string",
-                      "format": "date-time"
-                    }
-                  }
-                }
-              }
-            }
+            "$ref": "#/components/responses/SuccessResponseAccounts"
           },
           "400": {
             "$ref": "#/components/responses/BadRequest"
@@ -2055,6 +1947,47 @@
       }
     },
     "responses": {
+      "SuccessResponseAccounts": {
+        "description": "A JSON array of accounts",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "account_id": {
+                    "type": "integer",
+                    "format": "int64",
+                    "minimum": 1
+                  },
+                  "account_name": {
+                    "type": "string",
+                    "example": "Checking"
+                  },
+                  "account_type": {
+                    "type": "integer",
+                    "example": 0
+                  },
+                  "account_balance": {
+                    "type": "number",
+                    "format": "double",
+                    "example": 1000.00
+                  },
+                  "date_created": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "date_modified": {
+                    "type": "string",
+                    "format": "date-time"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
       "BadRequest": {
         "description": "Bad request",
         "content": {
