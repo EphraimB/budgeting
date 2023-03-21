@@ -791,6 +791,35 @@
         }
       }
     },
+    "/transfers/{account_id}": {
+      "get": {
+        "summary": "Get a list of transfers",
+        "description": "Get a list of transfers",
+        "tags": [
+          "transfers"
+        ],
+        "parameters": [
+          {
+            "name": "account_id",
+            "in": "path",
+            "description": "Account id",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/SuccessResponseTransfers"
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          }
+        }
+      }
+    },
     "/transactions": {
       "get": {
         "summary": "Get all transactions",
