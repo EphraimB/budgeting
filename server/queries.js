@@ -363,9 +363,9 @@ const deleteLoan = (request, response) => {
 
 // Get wishlists by account
 const getWishlistsByAccount = (request, response, next) => {
-    const { account_id, from_date } = request.query;
+    const { account_id, to_date } = request.query;
 
-    pool.query(wishlistQueries.getWishlistsByAccount, [parseInt(account_id), from_date], (error, results) => {
+    pool.query(wishlistQueries.getWishlistsByAccount, [parseInt(account_id), to_date], (error, results) => {
         if (error) {
             throw error;
         }
