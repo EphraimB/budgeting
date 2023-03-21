@@ -97,6 +97,7 @@ CREATE TABLE IF NOT EXISTS transfers (
   frequency_week_of_month INT,
   frequency_month_of_year INT,
   transfer_begin_date TIMESTAMP NOT NULL,
+  transfer_end_date TIMESTAMP,
   date_created TIMESTAMP NOT NULL,
   date_modified TIMESTAMP NOT NULL
 );

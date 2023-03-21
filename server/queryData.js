@@ -55,8 +55,8 @@ const accountQueries = {
     getTransfersByAccount: 'SELECT * FROM transfers WHERE (source_account_id = $1 OR destination_account_id = $1) AND date_created <= $2 ORDER BY date_created ASC',
     getTransfers: 'SELECT * FROM transfers WHERE (source_account_id = $1 OR destination_account_id = $1) ORDER BY transfer_id ASC',
     getTransfer: 'SELECT * FROM transfers WHERE (source_account_id = $1 OR destination_account_id = $1) AND transfer_id = $2',
-    createTransfer: 'INSERT INTO transfers (source_account_id, destination_account_id, transfer_title, transfer_description, frequency_type, frequency_type_variable, frequency_day_of_month, frequency_day_of_week, frequency_week_of_month, frequency_month_of_year, transfer_begin_date) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11) RETURNING *',
-    updateTransfer: 'UPDATE transfers SET source_account_id = $1, destination_account_id = $2, transfer_title = $3, transfer_description = $4, frequency_type = $5, frequency_type_variable = $6, frequency_day_of_month = $7, frequency_day_of_week = $8, frequency_week_of_month = $9, frequency_month_of_year = $10, transfer_begin_date = $11 WHERE transfer_id = $12 RETURNING *',
+    createTransfer: 'INSERT INTO transfers (source_account_id, destination_account_id, transfer_title, transfer_description, frequency_type, frequency_type_variable, frequency_day_of_month, frequency_day_of_week, frequency_week_of_month, frequency_month_of_year, transfer_begin_date, transfer_end_date) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12) RETURNING *',
+    updateTransfer: 'UPDATE transfers SET source_account_id = $1, destination_account_id = $2, transfer_title = $3, transfer_description = $4, frequency_type = $5, frequency_type_variable = $6, frequency_day_of_month = $7, frequency_day_of_week = $8, frequency_week_of_month = $9, frequency_month_of_year = $10, transfer_begin_date = $11, transfer_end_date = $12 WHERE transfer_id = $13 RETURNING *',
     deleteTransfer: 'DELETE FROM transfers WHERE transfer_id = $1',
   };
 
