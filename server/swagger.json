@@ -858,6 +858,46 @@
         }
       }
     },
+    "/transfers/{id}": {
+      "put": {
+        "summary": "Update a transfer",
+        "description": "Update a transfer",
+        "tags": [
+          "transfers"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Transfer id",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1
+            }
+          }
+        ],
+        "requestBody": {
+          "description": "Transfers object to be updated",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TransferManipulation"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/SuccessResponseTransfers"
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          }
+        }
+      }
+    },
     "/transactions": {
       "get": {
         "summary": "Get all transactions",
