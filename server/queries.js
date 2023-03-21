@@ -435,6 +435,28 @@ const deleteWishlist = (request, response) => {
     });
 }
 
+// Get transfers
+const getTransfers = (request, response) => {
+    const { account_id } = request.params;
+    const { id } = request.query;
+
+    if (!id) {
+        pool.query(transferQueries.getTransfers, [account_id], (error, results) => {
+            if (error) {
+                throw error;
+            }
+            response.status(200).json(results.rows);
+        });
+    } else {
+        pool.query(transferQueries.getTransfer, [account_id, id], (error, results) => {
+            if (error) {
+                throw error;
+            }
+            response.status(200).json(results.rows);
+        });
+    }
+}
+
 // Get current balance of account based on deposits and withdrawals
 const getCurrentBalance = (request, response, next) => {
     const account_id = parseInt(request.query.account_id);
@@ -453,4 +475,36 @@ const getCurrentBalance = (request, response, next) => {
 }
 
 // Export all functions
-module.exports = { getAccounts, createAccount, updateAccount, deleteAccount, getDepositsByAccount, getDeposits, createDeposit, updateDeposit, deleteDeposit, getWithdrawalsByAccount, getWithdrawals, createWithdrawal, updateWithdrawal, deleteWithdrawal, getExpensesByAccount, getExpenses, createExpense, updateExpense, deleteExpense, getLoansByAccount, getLoans, createLoan, updateLoan, deleteLoan, getWishlistsByAccount, getWishlists, createWishlist, updateWishlist, deleteWishlist, getCurrentBalance };
+module.exports = {
+    getAccounts,
+    createAccount,
+    updateAccount,
+    deleteAccount,
+    getDepositsByAccount,
+    getDeposits,
+    createDeposit,
+    updateDeposit,
+    deleteDeposit,
+    getWithdrawalsByAccount,
+    getWithdrawals,
+    createWithdrawal,
+    updateWithdrawal,
+    deleteWithdrawal,
+    getExpensesByAccount,
+    getExpenses,
+    createExpense,
+    updateExpense,
+    deleteExpense,
+    getLoansByAccount,
+    getLoans,
+    createLoan,
+    updateLoan,
+    deleteLoan,
+    getWishlistsByAccount,
+    getWishlists,
+    createWishlist,
+    updateWishlist,
+    deleteWishlist,
+    getTransfers,
+    getCurrentBalance
+};

@@ -82,6 +82,24 @@ CREATE TABLE IF NOT EXISTS wishlist (
   date_modified TIMESTAMP NOT NULL
 );
 
+-- Create a transfers table in postgres that will transfer money from one account to another
+CREATE TABLE IF NOT EXISTS transfers (
+  transfer_id SERIAL PRIMARY KEY,
+  source_account_id INT NOT NULL REFERENCES accounts(account_id),
+  destination_account_id INT NOT NULL REFERENCES accounts(account_id),
+  transfer_amount numeric(20, 2) NOT NULL,
+  transfer_title VARCHAR(255) NOT NULL,
+  transfer_description VARCHAR(255) NOT NULL,
+  frequency_type INT NOT NULL,
+  frequency_type_variable INT,
+  frequency_day_of_month INT,
+  frequency_day_of_week INT,
+  frequency_week_of_month INT,
+  frequency_month_of_year INT,
+  date_created TIMESTAMP NOT NULL,
+  date_modified TIMESTAMP NOT NULL
+);
+
 -- Trigger to update the date_modified column when a row is updated
 CREATE OR REPLACE FUNCTION update_dates()
 RETURNS TRIGGER AS $$
@@ -137,6 +155,11 @@ EXECUTE PROCEDURE update_dates();
 
 CREATE TRIGGER update_wishlist_dates
 BEFORE INSERT OR UPDATE ON wishlist
+FOR EACH ROW
+EXECUTE PROCEDURE update_dates();
+
+CREATE TRIGGER update_transfers_dates
+BEFORE INSERT OR UPDATE ON transfers
 FOR EACH ROW
 EXECUTE PROCEDURE update_dates();
 
