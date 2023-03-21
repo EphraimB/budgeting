@@ -12,9 +12,8 @@ router.get('/:account_id',
     ],
     getTransfers);
 
-router.post('/:id',
+router.post('/',
     [
-        param("id").isInt({ min: 1 }).withMessage("ID must be a number"),
         body("source_account_id").isInt({ min: 1 }).withMessage("Account ID must be a number"),
         body("destination_account_id").isInt({ min: 1 }).withMessage("Account ID must be a number"),
         body("amount").isNumeric().withMessage("Amount must be a number"),
