@@ -830,6 +830,34 @@
         }
       }
     },
+    "/transfers": {
+      "post": {
+        "summary": "Create a new transfer",
+        "description": "Create a new transfer",
+        "tags": [
+          "transfers"
+        ],
+        "requestBody": {
+          "description": "Transfers object to be created",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TransferManipulation"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "$ref": "#/components/responses/SuccessResponseTransfers"
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          }
+        }
+      }
+    },
     "/transactions": {
       "get": {
         "summary": "Get all transactions",
@@ -1193,6 +1221,47 @@
           "priority": {
             "type": "integer",
             "example": 1
+          }
+        }
+      },
+      "TransferManipulation": {
+        "type": "object",
+        "properties": {
+          "source_account_id": {
+            "type": "integer",
+            "format": "int64",
+            "minimum": 1
+          },
+          "destination_account_id": {
+            "type": "integer",
+            "format": "int64",
+            "minimum": 1,
+            "example": 2
+          },
+          "amount": {
+            "type": "number",
+            "format": "double",
+            "example": 100.00
+          },
+          "title": {
+            "type": "string",
+            "example": "Transfer test"
+          },
+          "description": {
+            "type": "string",
+            "example": "This is a transfer test"
+          },
+          "frequency_type": {
+            "type": "integer",
+            "example": 2
+          },
+          "frequency_type_variable": {
+            "type": "integer",
+            "example": 1
+          },
+          "begin_date": {
+            "type": "string",
+            "format": "date-time"
           }
         }
       }
