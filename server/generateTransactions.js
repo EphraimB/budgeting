@@ -14,6 +14,7 @@ const generateTransactions = (request, response, next) => {
     const calculateBalances = require('./calculateBalances.js');
     const toDate = new Date(request.query.to_date);
     const currentBalance = request.currentBalance;
+    const account_id = parseInt(request.query.account_id);
     const transactions = [];
 
     transactions.push(
@@ -61,13 +62,13 @@ const generateTransactions = (request, response, next) => {
 
     request.transfers.forEach(transfer => {
         if (transfer.frequency_type === 0) {
-            generateDailyTransfers(transactions, transfer, toDate)
+            generateDailyTransfers(transactions, transfer, toDate, account_id)
         } else if (transfer.frequency_type === 1) {
-            generateWeeklyTransfers(transactions, transfer, toDate)
+            generateWeeklyTransfers(transactions, transfer, toDate, account_id)
         } else if (transfer.frequency_type === 2) {
-            generateMonthlyTransfers(transactions, transfer, toDate)
+            generateMonthlyTransfers(transactions, transfer, toDate, account_id)
         } else if (transfer.frequency_type === 3) {
-            generateYearlyTransfers(transactions, transfer, toDate)
+            generateYearlyTransfers(transactions, transfer, toDate, account_id)
         }
     });
 

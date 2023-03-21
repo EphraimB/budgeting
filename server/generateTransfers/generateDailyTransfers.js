@@ -1,4 +1,4 @@
-const generateDailyTransfers = (transactions, transfer, toDate) => {
+const generateDailyTransfers = (transactions, transfer, toDate, account_id) => {
     const startDate = transfer.transfer_begin_date.getDate();
 
     for (let i = 0; ; i += (transfer.frequency_type_variable || 1)) {
@@ -14,7 +14,7 @@ const generateDailyTransfers = (transactions, transfer, toDate) => {
             title: transfer.transfer_title,
             description: transferDate.transferDate_description,
             date: transferDate,
-            amount: -transfer.transfer_amount,
+            amount: transfer.destination_account_id === account_id ? +transfer.transfer_amount : -transfer.transfer_amount,
         });
     }
 };
