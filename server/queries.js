@@ -497,6 +497,18 @@ const updateTransfer = (request, response) => {
     });
 }
 
+// Delete transfer
+const deleteTransfer = (request, response) => {
+    const id = parseInt(request.params.id);
+
+    pool.query(transferQueries.deleteTransfer, [id], (error, results) => {
+        if (error) {
+            throw error;
+        }
+        response.status(204).send();
+    });
+}
+
 // Get current balance of account based on deposits and withdrawals
 const getCurrentBalance = (request, response, next) => {
     const account_id = parseInt(request.query.account_id);
@@ -549,5 +561,6 @@ module.exports = {
     getTransfers,
     createTransfer,
     updateTransfer,
+    deleteTransfer,
     getCurrentBalance
 };

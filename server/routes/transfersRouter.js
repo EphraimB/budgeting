@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { getTransfers, createTransfer, updateTransfer } = require('../queries.js');
+const { getTransfers, createTransfer, updateTransfer, deleteTransfer } = require('../queries.js');
 const { param, query, body } = require('express-validator');
 const validateRequest = require('../validateRequest.js');
 
@@ -60,5 +60,12 @@ router.put('/:id',
         validateRequest,
     ],
     updateTransfer);
+
+router.delete('/:id',
+    [
+        param("id").isInt({ min: 1 }).withMessage("ID must be a number"),
+        validateRequest,
+    ],
+    deleteTransfer);
 
 module.exports = router;
