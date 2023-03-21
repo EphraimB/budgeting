@@ -484,6 +484,19 @@ const createTransfer = (request, response) => {
     });
 }
 
+// Update transfer
+const updateTransfer = (request, response) => {
+    const id = parseInt(request.params.id);
+    const { source_account_id, destination_account_id, amount, title, description, frequency_type, frequency_type_variable, frequency_day_of_month, frequency_day_of_week, frequency_week_of_month, frequency_month_of_year, begin_date, end_date } = request.body;
+
+    pool.query(transferQueries.updateTransfer, [source_account_id, destination_account_id, amount, title, description, frequency_type, frequency_type_variable, frequency_day_of_month, frequency_day_of_week, frequency_week_of_month, frequency_month_of_year, begin_date, end_date, id], (error, results) => {
+        if (error) {
+            throw error;
+        }
+        response.status(200).send(results.rows);
+    });
+}
+
 // Get current balance of account based on deposits and withdrawals
 const getCurrentBalance = (request, response, next) => {
     const account_id = parseInt(request.query.account_id);
@@ -535,5 +548,6 @@ module.exports = {
     getTransfersByAccount,
     getTransfers,
     createTransfer,
+    updateTransfer,
     getCurrentBalance
 };
