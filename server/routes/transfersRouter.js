@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { getTransfers } = require('../queries.js');
+const { getTransfers, createTransfer } = require('../queries.js');
 const { param, query, body } = require('express-validator');
 const validateRequest = require('../validateRequest.js');
 
@@ -12,7 +12,7 @@ router.get('/:account_id',
     ],
     getTransfers);
 
-    router.put('/:id',
+router.post('/:id',
     [
         param("id").isInt({ min: 1 }).withMessage("ID must be a number"),
         body("source_account_id").isInt({ min: 1 }).withMessage("Account ID must be a number"),
@@ -35,6 +35,6 @@ router.get('/:account_id',
         body("end_date").optional().isDate().withMessage("End date must be a date"),
         validateRequest,
     ],
-    updateTransfer);
+    createTransfer);
 
 module.exports = router;
