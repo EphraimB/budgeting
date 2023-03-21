@@ -1,5 +1,5 @@
 const pool = require('./db');
-const { accountQueries, depositQueries, withdrawalQueries, expenseQueries, loanQueries, wishlistQueries, currentBalanceQueries } = require('./queryData');
+const { accountQueries, depositQueries, withdrawalQueries, expenseQueries, loanQueries, wishlistQueries, transferQueries, currentBalanceQueries } = require('./queryData');
 
 // Get all accounts
 const getAccounts = (request, response) => {
@@ -435,6 +435,21 @@ const deleteWishlist = (request, response) => {
     });
 }
 
+// Get transfers by account
+const getTransfersByAccount = (request, response, next) => {
+    const { account_id, to_date } = request.query;
+
+    pool.query(transferQueries.getTransfersByAccount, [parseInt(account_id), to_date], (error, results) => {
+        if (error) {
+            throw error;
+        }
+
+        request.transfers = results.rows;
+
+        next();
+    });
+}
+
 // Get transfers
 const getTransfers = (request, response) => {
     const { account_id } = request.params;
@@ -505,6 +520,7 @@ module.exports = {
     createWishlist,
     updateWishlist,
     deleteWishlist,
+    getTransfersByAccount,
     getTransfers,
     getCurrentBalance
 };

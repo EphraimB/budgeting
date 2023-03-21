@@ -7,6 +7,7 @@ const withdrawalsRouter = require('./routes/withdrawalsRouter');
 const expensesRouter = require('./routes/expensesRouter');
 const loansRouter = require('./routes/loansRouter');
 const wishlistRouter = require('./routes/wishlistRouter');
+const transferRouter = require('./routes/transfersRouter');
 const transactionsRouter = require('./routes/transactionsRouter');
 const swaggerUi = require('swagger-ui-express'),
     swaggerDocument = require('./swagger.json');
@@ -28,6 +29,7 @@ app.use('/api/withdrawals', withdrawalsRouter);
 app.use('/api/expenses', expensesRouter);
 app.use('/api/loans', loansRouter);
 app.use('/api/wishlists', wishlistRouter);
+app.use('/api/transfers', transferRouter);
 app.use('/api/transactions', transactionsRouter);
 
 module.exports = app;
