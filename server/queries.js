@@ -1,5 +1,5 @@
 const pool = require('./db');
-const { accountQueries, depositQueries, withdrawalQueries, expenseQueries, loanQueries, wishlistQueries, currentBalanceQueries } = require('./queryData');
+const { accountQueries, depositQueries, withdrawalQueries, expenseQueries, loanQueries, wishlistQueries, transferQueries, currentBalanceQueries } = require('./queryData');
 
 // Get all accounts
 const getAccounts = (request, response) => {
@@ -363,9 +363,9 @@ const deleteLoan = (request, response) => {
 
 // Get wishlists by account
 const getWishlistsByAccount = (request, response, next) => {
-    const { account_id, from_date } = request.query;
+    const { account_id, to_date } = request.query;
 
-    pool.query(wishlistQueries.getWishlistsByAccount, [parseInt(account_id), from_date], (error, results) => {
+    pool.query(wishlistQueries.getWishlistsByAccount, [parseInt(account_id), to_date], (error, results) => {
         if (error) {
             throw error;
         }
@@ -435,6 +435,80 @@ const deleteWishlist = (request, response) => {
     });
 }
 
+// Get transfers by account
+const getTransfersByAccount = (request, response, next) => {
+    const { account_id, to_date } = request.query;
+
+    pool.query(transferQueries.getTransfersByAccount, [parseInt(account_id), to_date], (error, results) => {
+        if (error) {
+            throw error;
+        }
+
+        request.transfers = results.rows;
+
+        next();
+    });
+}
+
+// Get transfers
+const getTransfers = (request, response) => {
+    const { account_id } = request.params;
+    const { id } = request.query;
+
+    if (!id) {
+        pool.query(transferQueries.getTransfers, [account_id], (error, results) => {
+            if (error) {
+                throw error;
+            }
+            response.status(200).json(results.rows);
+        });
+    } else {
+        pool.query(transferQueries.getTransfer, [account_id, id], (error, results) => {
+            if (error) {
+                throw error;
+            }
+            response.status(200).json(results.rows);
+        });
+    }
+}
+
+// Create transfer
+const createTransfer = (request, response) => {
+    const { source_account_id, destination_account_id, amount, title, description, frequency_type, frequency_type_variable, frequency_day_of_month, frequency_day_of_week, frequency_week_of_month, frequency_month_of_year, begin_date, end_date } = request.body;
+
+    pool.query(transferQueries.createTransfer, [source_account_id, destination_account_id, amount, title, description, frequency_type, frequency_type_variable, frequency_day_of_month, frequency_day_of_week, frequency_week_of_month, frequency_month_of_year, begin_date, end_date], (error, results) => {
+        if (error) {
+            throw error;
+        }
+        response.status(201).send(results.rows);
+    });
+}
+
+// Update transfer
+const updateTransfer = (request, response) => {
+    const id = parseInt(request.params.id);
+    const { source_account_id, destination_account_id, amount, title, description, frequency_type, frequency_type_variable, frequency_day_of_month, frequency_day_of_week, frequency_week_of_month, frequency_month_of_year, begin_date, end_date } = request.body;
+
+    pool.query(transferQueries.updateTransfer, [source_account_id, destination_account_id, amount, title, description, frequency_type, frequency_type_variable, frequency_day_of_month, frequency_day_of_week, frequency_week_of_month, frequency_month_of_year, begin_date, end_date, id], (error, results) => {
+        if (error) {
+            throw error;
+        }
+        response.status(200).send(results.rows);
+    });
+}
+
+// Delete transfer
+const deleteTransfer = (request, response) => {
+    const id = parseInt(request.params.id);
+
+    pool.query(transferQueries.deleteTransfer, [id], (error, results) => {
+        if (error) {
+            throw error;
+        }
+        response.status(204).send();
+    });
+}
+
 // Get current balance of account based on deposits and withdrawals
 const getCurrentBalance = (request, response, next) => {
     const account_id = parseInt(request.query.account_id);
@@ -453,4 +527,40 @@ const getCurrentBalance = (request, response, next) => {
 }
 
 // Export all functions
-module.exports = { getAccounts, createAccount, updateAccount, deleteAccount, getDepositsByAccount, getDeposits, createDeposit, updateDeposit, deleteDeposit, getWithdrawalsByAccount, getWithdrawals, createWithdrawal, updateWithdrawal, deleteWithdrawal, getExpensesByAccount, getExpenses, createExpense, updateExpense, deleteExpense, getLoansByAccount, getLoans, createLoan, updateLoan, deleteLoan, getWishlistsByAccount, getWishlists, createWishlist, updateWishlist, deleteWishlist, getCurrentBalance };
+module.exports = {
+    getAccounts,
+    createAccount,
+    updateAccount,
+    deleteAccount,
+    getDepositsByAccount,
+    getDeposits,
+    createDeposit,
+    updateDeposit,
+    deleteDeposit,
+    getWithdrawalsByAccount,
+    getWithdrawals,
+    createWithdrawal,
+    updateWithdrawal,
+    deleteWithdrawal,
+    getExpensesByAccount,
+    getExpenses,
+    createExpense,
+    updateExpense,
+    deleteExpense,
+    getLoansByAccount,
+    getLoans,
+    createLoan,
+    updateLoan,
+    deleteLoan,
+    getWishlistsByAccount,
+    getWishlists,
+    createWishlist,
+    updateWishlist,
+    deleteWishlist,
+    getTransfersByAccount,
+    getTransfers,
+    createTransfer,
+    updateTransfer,
+    deleteTransfer,
+    getCurrentBalance
+};

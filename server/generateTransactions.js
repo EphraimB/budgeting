@@ -7,10 +7,14 @@ const generateTransactions = (request, response, next) => {
     const generateWeeklyLoans = require('./generateLoans/generateWeeklyLoans.js');
     const generateMonthlyLoans = require('./generateLoans/generateMonthlyLoans.js');
     const generateYearlyLoans = require('./generateLoans/generateYearlyLoans.js');
+    const generateDailyTransfers = require('./generateTransfers/generateDailyTransfers.js');
+    const generateWeeklyTransfers = require('./generateTransfers/generateWeeklyTransfers.js');
+    const generateMonthlyTransfers = require('./generateTransfers/generateMonthlyTransfers.js');
+    const generateYearlyTransfers = require('./generateTransfers/generateYearlyTransfers.js');
     const calculateBalances = require('./calculateBalances.js');
-    const fromDate = new Date(request.query.from_date);
     const toDate = new Date(request.query.to_date);
     const currentBalance = request.currentBalance;
+    const account_id = parseInt(request.query.account_id);
     const transactions = [];
 
     transactions.push(
@@ -53,6 +57,18 @@ const generateTransactions = (request, response, next) => {
             generateMonthlyLoans(transactions, loan, toDate)
         } else if (loan.frequency_type === 3) {
             generateYearlyLoans(transactions, loan, toDate)
+        }
+    });
+
+    request.transfers.forEach(transfer => {
+        if (transfer.frequency_type === 0) {
+            generateDailyTransfers(transactions, transfer, toDate, account_id)
+        } else if (transfer.frequency_type === 1) {
+            generateWeeklyTransfers(transactions, transfer, toDate, account_id)
+        } else if (transfer.frequency_type === 2) {
+            generateMonthlyTransfers(transactions, transfer, toDate, account_id)
+        } else if (transfer.frequency_type === 3) {
+            generateYearlyTransfers(transactions, transfer, toDate, account_id)
         }
     });
 
