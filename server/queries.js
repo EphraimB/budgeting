@@ -8,14 +8,14 @@ const getAccounts = (request, response) => {
     if (!id) {
         pool.query(accountQueries.getAccounts, (error, results) => {
             if (error) {
-                throw error;
+                return response.status(400).send({ errors: { "msg": "Error getting accounts", "param": null, "location": "query" } });
             }
             return response.status(200).json(results.rows);
         });
     } else {
         pool.query(accountQueries.getAccount, [id], (error, results) => {
             if (error) {
-                throw error;
+                return response.status(400).send({ errors: { "msg": "Error getting account", "param": null, "location": "query" } });
             }
             return response.status(200).json(results.rows);
         });
@@ -30,7 +30,7 @@ const createAccount = (request, response) => {
         [name, type, balance],
         (error, results) => {
             if (error) {
-                throw error;
+                return response.status(400).send({ errors: { "msg": "Error creating account", "param": null, "location": "query" } });
             }
             response.status(201).json(results.rows);
         });
@@ -46,7 +46,7 @@ const updateAccount = (request, response) => {
         [name, type, balance, id],
         (error, results) => {
             if (error) {
-                throw error;
+                return response.status(400).send({ errors: { "msg": "Error updating account", "param": null, "location": "query" } });
             }
             response.status(200).send(results.rows);
         }
@@ -59,7 +59,7 @@ const deleteAccount = (request, response) => {
 
     pool.query(accountQueries.deleteAccount, [id], (error, results) => {
         if (error) {
-            throw error;
+            return response.status(400).send({ errors: { "msg": "Error deleting account", "param": null, "location": "query" } });
         }
         response.status(204).send();
     });
@@ -71,7 +71,7 @@ const getDepositsByAccount = (request, response, next) => {
 
     pool.query(depositQueries.getDepositsDateFiltered, [parseInt(account_id), from_date], (error, results) => {
         if (error) {
-            throw error;
+            return response.status(400).send({ errors: { "msg": "Error getting deposits", "param": null, "location": "query" } });
         }
 
         request.deposits = results.rows;
@@ -88,14 +88,14 @@ const getDeposits = (request, response) => {
     if (!id) {
         pool.query(depositQueries.getDeposits, [account_id], (error, results) => {
             if (error) {
-                throw error;
+                return response.status(400).send({ errors: { "msg": "Error getting deposits", "param": null, "location": "query" } });
             }
             return response.status(200).json(results.rows);
         });
     } else {
         pool.query(depositQueries.getDeposit, [account_id, id], (error, results) => {
             if (error) {
-                throw error;
+                return response.status(400).send({ errors: { "msg": "Error getting deposit", "param": null, "location": "query" } });
             }
             return response.status(200).json(results.rows);
         });
@@ -108,7 +108,7 @@ const createDeposit = (request, response) => {
 
     pool.query(depositQueries.createDeposit, [account_id, amount, description], (error, results) => {
         if (error) {
-            throw error;
+            return response.status(400).send({ errors: { "msg": "Error creating deposit", "param": null, "location": "query" } });
         }
         response.status(201).json(results.rows);
     });
@@ -121,7 +121,7 @@ const updateDeposit = (request, response) => {
 
     pool.query(depositQueries.updateDeposit, [account_id, amount, description, id], (error, results) => {
         if (error) {
-            throw error;
+            return response.status(400).send({ errors: { "msg": "Error updating deposit", "param": null, "location": "query" } });
         }
         response.status(200).send(results.rows);
     });
@@ -133,7 +133,7 @@ const deleteDeposit = (request, response) => {
 
     pool.query(depositQueries.deleteDeposit, [id], (error, results) => {
         if (error) {
-            throw error;
+            return response.status(400).send({ errors: { "msg": "Error deleting deposits", "param": null, "location": "query" } });
         }
         response.status(204).send();
     });
@@ -145,7 +145,7 @@ const getWithdrawalsByAccount = (request, response, next) => {
 
     pool.query(withdrawalQueries.getWithdrawalsByAccount, [parseInt(account_id), from_date], (error, results) => {
         if (error) {
-            throw error;
+            return response.status(400).send({ errors: { "msg": "Error getting withdrawals", "param": null, "location": "query" } });
         }
 
         request.withdrawals = results.rows;
@@ -162,14 +162,14 @@ const getWithdrawals = (request, response) => {
     if (!id) {
         pool.query(withdrawalQueries.getWithdrawals, [account_id], (error, results) => {
             if (error) {
-                throw error;
+                return response.status(400).send({ errors: { "msg": "Error getting withdrawals", "param": null, "location": "query" } });
             }
             response.status(200).json(results.rows);
         });
     } else {
         pool.query(withdrawalQueries.getWithdrawal, [account_id, id], (error, results) => {
             if (error) {
-                throw error;
+                return response.status(400).send({ errors: { "msg": "Error getting withdrawal", "param": null, "location": "query" } });
             }
             response.status(200).json(results.rows);
         });
@@ -182,7 +182,7 @@ const createWithdrawal = (request, response) => {
 
     pool.query(withdrawalQueries.createWithdrawal, [account_id, amount, description], (error, results) => {
         if (error) {
-            throw error;
+            return response.status(400).send({ errors: { "msg": "Error creating withdrawal", "param": null, "location": "query" } });
         }
         response.status(201).json(results.rows);
     });
@@ -195,7 +195,7 @@ const updateWithdrawal = (request, response) => {
 
     pool.query(withdrawalQueries.updateWithdrawal, [account_id, amount, description, id], (error, results) => {
         if (error) {
-            throw error;
+            return response.status(400).send({ errors: { "msg": "Error updating withdrawal", "param": null, "location": "query" } });
         }
         response.status(200).send(results.rows);
     });
@@ -207,7 +207,7 @@ const deleteWithdrawal = (request, response) => {
 
     pool.query(withdrawalQueries.deleteWithdrawal, [id], (error, results) => {
         if (error) {
-            throw error;
+            return response.status(400).send({ errors: { "msg": "Error deleting withdrawal", "param": null, "location": "query" } });
         }
         response.status(204).send();
     });
@@ -219,7 +219,7 @@ const getExpensesByAccount = (request, response, next) => {
 
     pool.query(expenseQueries.getExpensesByAccount, [parseInt(account_id), to_date], (error, results) => {
         if (error) {
-            throw error;
+            return response.status(400).send({ errors: { "msg": "Error getting expenses", "param": null, "location": "query" } });
         }
 
         request.expenses = results.rows;
@@ -236,14 +236,14 @@ const getExpenses = (request, response) => {
     if (!id) {
         pool.query(expenseQueries.getExpenses, [account_id], (error, results) => {
             if (error) {
-                throw error;
+                return response.status(400).send({ errors: { "msg": "Error getting expenses", "param": null, "location": "query" } });
             }
             response.status(200).json(results.rows);
         });
     } else {
         pool.query(expenseQueries.getExpense, [account_id, id], (error, results) => {
             if (error) {
-                throw error;
+                return response.status(400).send({ errors: { "msg": "Error getting expense", "param": null, "location": "query" } });
             }
             response.status(200).json(results.rows);
         });
@@ -256,7 +256,7 @@ const createExpense = (request, response) => {
 
     pool.query(expenseQueries.createExpense, [account_id, amount, title, description, frequency_type, frequency_type_variable, frequency_day_of_month, frequency_day_of_week, frequency_week_of_month, frequency_month_of_year, begin_date], (error, results) => {
         if (error) {
-            throw error;
+            return response.status(400).send({ errors: { "msg": "Error creating expense", "param": null, "location": "query" } });
         }
         response.status(201).json(results.rows);
     });
@@ -269,7 +269,7 @@ const updateExpense = (request, response) => {
 
     pool.query(expenseQueries.updateExpense, [account_id, amount, title, description, frequency_type, frequency_type_variable, frequency_day_of_month, frequency_day_of_week, frequency_week_of_month, frequency_month_of_year, begin_date, id], (error, results) => {
         if (error) {
-            throw error;
+            return response.status(400).send({ errors: { "msg": "Error updating expense", "param": null, "location": "query" } });
         }
         response.status(200).send(results.rows);
     });
@@ -281,7 +281,7 @@ const deleteExpense = (request, response) => {
 
     pool.query(expenseQueries.deleteExpense, [id], (error, results) => {
         if (error) {
-            throw error;
+            return response.status(400).send({ errors: { "msg": "Error deleting expense", "param": null, "location": "query" } });
         }
         response.status(204).send();
     });
@@ -293,7 +293,7 @@ const getLoansByAccount = (request, response, next) => {
 
     pool.query(loanQueries.getLoansByAccount, [parseInt(account_id), to_date], (error, results) => {
         if (error) {
-            throw error;
+            return response.status(400).send({ errors: { "msg": "Error getting loans", "param": null, "location": "query" } });
         }
 
         request.loans = results.rows;
@@ -310,14 +310,14 @@ const getLoans = (request, response) => {
     if (!id) {
         pool.query(loanQueries.getLoans, [account_id], (error, results) => {
             if (error) {
-                throw error;
+                return response.status(400).send({ errors: { "msg": "Error getting loans", "param": null, "location": "query" } });
             }
             response.status(200).json(results.rows);
         });
     } else {
         pool.query(loanQueries.getLoan, [account_id, id], (error, results) => {
             if (error) {
-                throw error;
+                return response.status(400).send({ errors: { "msg": "Error getting loan", "param": null, "location": "query" } });
             }
             response.status(200).json(results.rows);
         });
@@ -330,7 +330,7 @@ const createLoan = (request, response) => {
 
     pool.query(loanQueries.createLoan, [account_id, amount, plan_amount, recipient, title, description, frequency_type, frequency_type_variable, frequency_day_of_month, frequency_day_of_week, frequency_week_of_month, frequency_month_of_year, begin_date], (error, results) => {
         if (error) {
-            throw error;
+            return response.status(400).send({ errors: { "msg": "Error creating loan", "param": null, "location": "query" } });
         }
         response.status(201).json(results.rows);
     });
@@ -343,7 +343,7 @@ const updateLoan = (request, response) => {
 
     pool.query(loanQueries.updateLoan, [account_id, amount, plan_amount, recipient, title, description, frequency_type, frequency_type_variable, frequency_day_of_month, frequency_day_of_week, frequency_week_of_month, frequency_month_of_year, begin_date, id], (error, results) => {
         if (error) {
-            throw error;
+            return response.status(400).send({ errors: { "msg": "Error updating loan", "param": null, "location": "query" } });
         }
         response.status(200).send(results.rows);
     });
@@ -355,7 +355,7 @@ const deleteLoan = (request, response) => {
 
     pool.query(loanQueries.deleteLoan, [id], (error, results) => {
         if (error) {
-            throw error;
+            return response.status(400).send({ errors: { "msg": "Error deleting loan", "param": null, "location": "query" } });
         }
         response.status(204).send();
     });
@@ -367,7 +367,7 @@ const getWishlistsByAccount = (request, response, next) => {
 
     pool.query(wishlistQueries.getWishlistsByAccount, [parseInt(account_id), to_date], (error, results) => {
         if (error) {
-            throw error;
+            return response.status(400).send({ errors: { "msg": "Error getting wishlists", "param": null, "location": "query" } });
         }
 
         request.wishlists = results.rows;
@@ -384,14 +384,14 @@ const getWishlists = (request, response) => {
     if (!id) {
         pool.query(wishlistQueries.getWishlists, [account_id], (error, results) => {
             if (error) {
-                throw error;
+                return response.status(400).send({ errors: { "msg": "Error getting wishlists", "param": null, "location": "query" } });
             }
             response.status(200).json(results.rows);
         });
     } else {
         pool.query(wishlistQueries.getWishlist, [account_id, id], (error, results) => {
             if (error) {
-                throw error;
+                return response.status(400).send({ errors: { "msg": "Error getting wishlist", "param": null, "location": "query" } });
             }
             response.status(200).json(results.rows);
         });
@@ -404,7 +404,7 @@ const createWishlist = (request, response) => {
 
     pool.query(wishlistQueries.createWishlist, [account_id, amount, title, description, priority], (error, results) => {
         if (error) {
-            throw error;
+            return response.status(400).send({ errors: { "msg": "Error creating wishlist", "param": null, "location": "query" } });
         }
         response.status(201).send(results.rows);
     });
@@ -417,7 +417,7 @@ const updateWishlist = (request, response) => {
 
     pool.query(wishlistQueries.updateWishlist, [account_id, amount, title, description, priority, id], (error, results) => {
         if (error) {
-            throw error;
+            return response.status(400).send({ errors: { "msg": "Error updating wishlist", "param": null, "location": "query" } });
         }
         response.status(200).send(results.rows);
     });
@@ -429,7 +429,7 @@ const deleteWishlist = (request, response) => {
 
     pool.query(wishlistQueries.deleteWishlist, [id], (error, results) => {
         if (error) {
-            throw error;
+            return response.status(400).send({ errors: { "msg": "Error deleting wishlist", "param": null, "location": "query" } });
         }
         response.status(204).send();
     });
@@ -441,7 +441,7 @@ const getTransfersByAccount = (request, response, next) => {
 
     pool.query(transferQueries.getTransfersByAccount, [parseInt(account_id), to_date], (error, results) => {
         if (error) {
-            throw error;
+            return response.status(400).send({ errors: { "msg": "Error getting transfers", "param": null, "location": "query" } });
         }
 
         request.transfers = results.rows;
@@ -458,14 +458,14 @@ const getTransfers = (request, response) => {
     if (!id) {
         pool.query(transferQueries.getTransfers, [account_id], (error, results) => {
             if (error) {
-                throw error;
+                return response.status(400).send({ errors: { "msg": "Error getting transfers", "param": null, "location": "query" } });
             }
             response.status(200).json(results.rows);
         });
     } else {
         pool.query(transferQueries.getTransfer, [account_id, id], (error, results) => {
             if (error) {
-                throw error;
+                return response.status(400).send({ errors: { "msg": "Error getting transfer", "param": null, "location": "query" } });
             }
             response.status(200).json(results.rows);
         });
@@ -478,7 +478,7 @@ const createTransfer = (request, response) => {
 
     pool.query(transferQueries.createTransfer, [source_account_id, destination_account_id, amount, title, description, frequency_type, frequency_type_variable, frequency_day_of_month, frequency_day_of_week, frequency_week_of_month, frequency_month_of_year, begin_date, end_date], (error, results) => {
         if (error) {
-            return response.status(400).send({ errors: { "msg": "Error creating transfer.", "param": null, "location": "query" } });
+            return response.status(400).send({ errors: { "msg": "Error creating transfer", "param": null, "location": "query" } });
         }
         response.status(201).send(results.rows);
     });
@@ -491,7 +491,7 @@ const updateTransfer = (request, response) => {
 
     pool.query(transferQueries.updateTransfer, [source_account_id, destination_account_id, amount, title, description, frequency_type, frequency_type_variable, frequency_day_of_month, frequency_day_of_week, frequency_week_of_month, frequency_month_of_year, begin_date, end_date, id], (error, results) => {
         if (error) {
-            throw error;
+            return response.status(400).send({ errors: { "msg": "Error updating transfer", "param": null, "location": "query" } });
         }
         response.status(200).send(results.rows);
     });
@@ -503,7 +503,7 @@ const deleteTransfer = (request, response) => {
 
     pool.query(transferQueries.deleteTransfer, [id], (error, results) => {
         if (error) {
-            throw error;
+            return response.status(400).send({ errors: { "msg": "Error deleting transfer", "param": null, "location": "query" } });
         }
         response.status(204).send();
     });
@@ -515,7 +515,7 @@ const getCurrentBalance = (request, response, next) => {
 
     pool.query(currentBalanceQueries.getCurrentBalance, [account_id], (error, results) => {
         if (error) {
-            throw error;
+            return response.status(400).send({ errors: { "msg": "Error getting current balance", "param": null, "location": "query" } });
         }
 
         const currentBalance = parseFloat(results.rows[0].account_balance);
