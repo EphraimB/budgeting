@@ -41,13 +41,9 @@ services:
     ports:
       - "${PGPORT}:5432"
     volumes:
-      - db-data:/var/lib/postgresql/data
+      - ./server/sql:/docker-entrypoint-initdb.d
     networks:
       - app-network
-
-volumes:
-  db-data:
-
 
 networks:
   app-network:
