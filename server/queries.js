@@ -71,7 +71,7 @@ const getDepositsByAccount = (request, response, next) => {
 
     pool.query(depositQueries.getDepositsDateFiltered, [parseInt(account_id), from_date], (error, results) => {
         if (error) {
-            throw error;
+            return response.status(400).send({ errors: { "msg": "Error getting deposits", "param": null, "location": "query" } });
         }
 
         request.deposits = results.rows;
@@ -88,14 +88,14 @@ const getDeposits = (request, response) => {
     if (!id) {
         pool.query(depositQueries.getDeposits, [account_id], (error, results) => {
             if (error) {
-                throw error;
+                return response.status(400).send({ errors: { "msg": "Error getting deposits", "param": null, "location": "query" } });
             }
             return response.status(200).json(results.rows);
         });
     } else {
         pool.query(depositQueries.getDeposit, [account_id, id], (error, results) => {
             if (error) {
-                throw error;
+                return response.status(400).send({ errors: { "msg": "Error getting deposit", "param": null, "location": "query" } });
             }
             return response.status(200).json(results.rows);
         });
@@ -108,7 +108,7 @@ const createDeposit = (request, response) => {
 
     pool.query(depositQueries.createDeposit, [account_id, amount, description], (error, results) => {
         if (error) {
-            throw error;
+            return response.status(400).send({ errors: { "msg": "Error creating deposit", "param": null, "location": "query" } });
         }
         response.status(201).json(results.rows);
     });
@@ -121,7 +121,7 @@ const updateDeposit = (request, response) => {
 
     pool.query(depositQueries.updateDeposit, [account_id, amount, description, id], (error, results) => {
         if (error) {
-            throw error;
+            return response.status(400).send({ errors: { "msg": "Error updating deposit", "param": null, "location": "query" } });
         }
         response.status(200).send(results.rows);
     });
@@ -133,7 +133,7 @@ const deleteDeposit = (request, response) => {
 
     pool.query(depositQueries.deleteDeposit, [id], (error, results) => {
         if (error) {
-            throw error;
+            return response.status(400).send({ errors: { "msg": "Error deleting deposits", "param": null, "location": "query" } });
         }
         response.status(204).send();
     });
