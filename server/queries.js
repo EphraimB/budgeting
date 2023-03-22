@@ -293,7 +293,7 @@ const getLoansByAccount = (request, response, next) => {
 
     pool.query(loanQueries.getLoansByAccount, [parseInt(account_id), to_date], (error, results) => {
         if (error) {
-            throw error;
+            return response.status(400).send({ errors: { "msg": "Error getting loans", "param": null, "location": "query" } });
         }
 
         request.loans = results.rows;
@@ -310,14 +310,14 @@ const getLoans = (request, response) => {
     if (!id) {
         pool.query(loanQueries.getLoans, [account_id], (error, results) => {
             if (error) {
-                throw error;
+                return response.status(400).send({ errors: { "msg": "Error getting loans", "param": null, "location": "query" } });
             }
             response.status(200).json(results.rows);
         });
     } else {
         pool.query(loanQueries.getLoan, [account_id, id], (error, results) => {
             if (error) {
-                throw error;
+                return response.status(400).send({ errors: { "msg": "Error getting loan", "param": null, "location": "query" } });
             }
             response.status(200).json(results.rows);
         });
@@ -330,7 +330,7 @@ const createLoan = (request, response) => {
 
     pool.query(loanQueries.createLoan, [account_id, amount, plan_amount, recipient, title, description, frequency_type, frequency_type_variable, frequency_day_of_month, frequency_day_of_week, frequency_week_of_month, frequency_month_of_year, begin_date], (error, results) => {
         if (error) {
-            throw error;
+            return response.status(400).send({ errors: { "msg": "Error creating loan", "param": null, "location": "query" } });
         }
         response.status(201).json(results.rows);
     });
@@ -343,7 +343,7 @@ const updateLoan = (request, response) => {
 
     pool.query(loanQueries.updateLoan, [account_id, amount, plan_amount, recipient, title, description, frequency_type, frequency_type_variable, frequency_day_of_month, frequency_day_of_week, frequency_week_of_month, frequency_month_of_year, begin_date, id], (error, results) => {
         if (error) {
-            throw error;
+            return response.status(400).send({ errors: { "msg": "Error updating loan", "param": null, "location": "query" } });
         }
         response.status(200).send(results.rows);
     });
@@ -355,7 +355,7 @@ const deleteLoan = (request, response) => {
 
     pool.query(loanQueries.deleteLoan, [id], (error, results) => {
         if (error) {
-            throw error;
+            return response.status(400).send({ errors: { "msg": "Error deleting loan", "param": null, "location": "query" } });
         }
         response.status(204).send();
     });
