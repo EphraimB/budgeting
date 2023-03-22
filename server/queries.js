@@ -367,7 +367,7 @@ const getWishlistsByAccount = (request, response, next) => {
 
     pool.query(wishlistQueries.getWishlistsByAccount, [parseInt(account_id), to_date], (error, results) => {
         if (error) {
-            throw error;
+            return response.status(400).send({ errors: { "msg": "Error getting wishlists", "param": null, "location": "query" } });
         }
 
         request.wishlists = results.rows;
@@ -384,14 +384,14 @@ const getWishlists = (request, response) => {
     if (!id) {
         pool.query(wishlistQueries.getWishlists, [account_id], (error, results) => {
             if (error) {
-                throw error;
+                return response.status(400).send({ errors: { "msg": "Error getting wishlists", "param": null, "location": "query" } });
             }
             response.status(200).json(results.rows);
         });
     } else {
         pool.query(wishlistQueries.getWishlist, [account_id, id], (error, results) => {
             if (error) {
-                throw error;
+                return response.status(400).send({ errors: { "msg": "Error getting wishlist", "param": null, "location": "query" } });
             }
             response.status(200).json(results.rows);
         });
@@ -404,7 +404,7 @@ const createWishlist = (request, response) => {
 
     pool.query(wishlistQueries.createWishlist, [account_id, amount, title, description, priority], (error, results) => {
         if (error) {
-            throw error;
+            return response.status(400).send({ errors: { "msg": "Error creating wishlist", "param": null, "location": "query" } });
         }
         response.status(201).send(results.rows);
     });
@@ -417,7 +417,7 @@ const updateWishlist = (request, response) => {
 
     pool.query(wishlistQueries.updateWishlist, [account_id, amount, title, description, priority, id], (error, results) => {
         if (error) {
-            throw error;
+            return response.status(400).send({ errors: { "msg": "Error updating wishlist", "param": null, "location": "query" } });
         }
         response.status(200).send(results.rows);
     });
@@ -429,7 +429,7 @@ const deleteWishlist = (request, response) => {
 
     pool.query(wishlistQueries.deleteWishlist, [id], (error, results) => {
         if (error) {
-            throw error;
+            return response.status(400).send({ errors: { "msg": "Error deleting wishlist", "param": null, "location": "query" } });
         }
         response.status(204).send();
     });
