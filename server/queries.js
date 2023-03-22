@@ -8,14 +8,14 @@ const getAccounts = (request, response) => {
     if (!id) {
         pool.query(accountQueries.getAccounts, (error, results) => {
             if (error) {
-                throw error;
+                return response.status(400).send({ errors: { "msg": "Error getting accounts", "param": null, "location": "query" } });
             }
             return response.status(200).json(results.rows);
         });
     } else {
         pool.query(accountQueries.getAccount, [id], (error, results) => {
             if (error) {
-                throw error;
+                return response.status(400).send({ errors: { "msg": "Error getting account", "param": null, "location": "query" } });
             }
             return response.status(200).json(results.rows);
         });
@@ -30,7 +30,7 @@ const createAccount = (request, response) => {
         [name, type, balance],
         (error, results) => {
             if (error) {
-                throw error;
+                return response.status(400).send({ errors: { "msg": "Error creating account", "param": null, "location": "query" } });
             }
             response.status(201).json(results.rows);
         });
@@ -46,7 +46,7 @@ const updateAccount = (request, response) => {
         [name, type, balance, id],
         (error, results) => {
             if (error) {
-                throw error;
+                return response.status(400).send({ errors: { "msg": "Error updating account", "param": null, "location": "query" } });
             }
             response.status(200).send(results.rows);
         }
@@ -59,7 +59,7 @@ const deleteAccount = (request, response) => {
 
     pool.query(accountQueries.deleteAccount, [id], (error, results) => {
         if (error) {
-            throw error;
+            return response.status(400).send({ errors: { "msg": "Error deleting account", "param": null, "location": "query" } });
         }
         response.status(204).send();
     });
