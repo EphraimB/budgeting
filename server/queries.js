@@ -145,7 +145,7 @@ const getWithdrawalsByAccount = (request, response, next) => {
 
     pool.query(withdrawalQueries.getWithdrawalsByAccount, [parseInt(account_id), from_date], (error, results) => {
         if (error) {
-            throw error;
+            return response.status(400).send({ errors: { "msg": "Error getting withdrawals", "param": null, "location": "query" } });
         }
 
         request.withdrawals = results.rows;
@@ -162,14 +162,14 @@ const getWithdrawals = (request, response) => {
     if (!id) {
         pool.query(withdrawalQueries.getWithdrawals, [account_id], (error, results) => {
             if (error) {
-                throw error;
+                return response.status(400).send({ errors: { "msg": "Error getting withdrawals", "param": null, "location": "query" } });
             }
             response.status(200).json(results.rows);
         });
     } else {
         pool.query(withdrawalQueries.getWithdrawal, [account_id, id], (error, results) => {
             if (error) {
-                throw error;
+                return response.status(400).send({ errors: { "msg": "Error getting withdrawal", "param": null, "location": "query" } });
             }
             response.status(200).json(results.rows);
         });
@@ -182,7 +182,7 @@ const createWithdrawal = (request, response) => {
 
     pool.query(withdrawalQueries.createWithdrawal, [account_id, amount, description], (error, results) => {
         if (error) {
-            throw error;
+            return response.status(400).send({ errors: { "msg": "Error creating withdrawal", "param": null, "location": "query" } });
         }
         response.status(201).json(results.rows);
     });
@@ -195,7 +195,7 @@ const updateWithdrawal = (request, response) => {
 
     pool.query(withdrawalQueries.updateWithdrawal, [account_id, amount, description, id], (error, results) => {
         if (error) {
-            throw error;
+            return response.status(400).send({ errors: { "msg": "Error updating withdrawal", "param": null, "location": "query" } });
         }
         response.status(200).send(results.rows);
     });
@@ -207,7 +207,7 @@ const deleteWithdrawal = (request, response) => {
 
     pool.query(withdrawalQueries.deleteWithdrawal, [id], (error, results) => {
         if (error) {
-            throw error;
+            return response.status(400).send({ errors: { "msg": "Error deleting withdrawal", "param": null, "location": "query" } });
         }
         response.status(204).send();
     });
