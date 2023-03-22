@@ -45,10 +45,6 @@ services:
     networks:
       - app-network
 
-volumes:
-  server:
-
-
 networks:
   app-network:
     driver: bridge
