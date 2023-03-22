@@ -441,7 +441,7 @@ const getTransfersByAccount = (request, response, next) => {
 
     pool.query(transferQueries.getTransfersByAccount, [parseInt(account_id), to_date], (error, results) => {
         if (error) {
-            throw error;
+            return response.status(400).send({ errors: { "msg": "Error getting transfers", "param": null, "location": "query" } });
         }
 
         request.transfers = results.rows;
@@ -458,14 +458,14 @@ const getTransfers = (request, response) => {
     if (!id) {
         pool.query(transferQueries.getTransfers, [account_id], (error, results) => {
             if (error) {
-                throw error;
+                return response.status(400).send({ errors: { "msg": "Error getting transfers", "param": null, "location": "query" } });
             }
             response.status(200).json(results.rows);
         });
     } else {
         pool.query(transferQueries.getTransfer, [account_id, id], (error, results) => {
             if (error) {
-                throw error;
+                return response.status(400).send({ errors: { "msg": "Error getting transfer", "param": null, "location": "query" } });
             }
             response.status(200).json(results.rows);
         });
@@ -478,7 +478,7 @@ const createTransfer = (request, response) => {
 
     pool.query(transferQueries.createTransfer, [source_account_id, destination_account_id, amount, title, description, frequency_type, frequency_type_variable, frequency_day_of_month, frequency_day_of_week, frequency_week_of_month, frequency_month_of_year, begin_date, end_date], (error, results) => {
         if (error) {
-            return response.status(400).send({ errors: { "msg": "Error creating transfer.", "param": null, "location": "query" } });
+            return response.status(400).send({ errors: { "msg": "Error creating transfer", "param": null, "location": "query" } });
         }
         response.status(201).send(results.rows);
     });
@@ -491,7 +491,7 @@ const updateTransfer = (request, response) => {
 
     pool.query(transferQueries.updateTransfer, [source_account_id, destination_account_id, amount, title, description, frequency_type, frequency_type_variable, frequency_day_of_month, frequency_day_of_week, frequency_week_of_month, frequency_month_of_year, begin_date, end_date, id], (error, results) => {
         if (error) {
-            throw error;
+            return response.status(400).send({ errors: { "msg": "Error updating transfer", "param": null, "location": "query" } });
         }
         response.status(200).send(results.rows);
     });
@@ -503,7 +503,7 @@ const deleteTransfer = (request, response) => {
 
     pool.query(transferQueries.deleteTransfer, [id], (error, results) => {
         if (error) {
-            throw error;
+            return response.status(400).send({ errors: { "msg": "Error deleting transfer", "param": null, "location": "query" } });
         }
         response.status(204).send();
     });
