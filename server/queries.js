@@ -515,7 +515,7 @@ const getCurrentBalance = (request, response, next) => {
 
     pool.query(currentBalanceQueries.getCurrentBalance, [account_id], (error, results) => {
         if (error) {
-            throw error;
+            return response.status(400).send({ errors: { "msg": "Error getting current balance", "param": null, "location": "query" } });
         }
 
         const currentBalance = parseFloat(results.rows[0].account_balance);
