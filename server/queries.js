@@ -219,7 +219,7 @@ const getExpensesByAccount = (request, response, next) => {
 
     pool.query(expenseQueries.getExpensesByAccount, [parseInt(account_id), to_date], (error, results) => {
         if (error) {
-            throw error;
+            return response.status(400).send({ errors: { "msg": "Error getting expenses", "param": null, "location": "query" } });
         }
 
         request.expenses = results.rows;
@@ -236,14 +236,14 @@ const getExpenses = (request, response) => {
     if (!id) {
         pool.query(expenseQueries.getExpenses, [account_id], (error, results) => {
             if (error) {
-                throw error;
+                return response.status(400).send({ errors: { "msg": "Error getting expenses", "param": null, "location": "query" } });
             }
             response.status(200).json(results.rows);
         });
     } else {
         pool.query(expenseQueries.getExpense, [account_id, id], (error, results) => {
             if (error) {
-                throw error;
+                return response.status(400).send({ errors: { "msg": "Error getting expense", "param": null, "location": "query" } });
             }
             response.status(200).json(results.rows);
         });
@@ -256,7 +256,7 @@ const createExpense = (request, response) => {
 
     pool.query(expenseQueries.createExpense, [account_id, amount, title, description, frequency_type, frequency_type_variable, frequency_day_of_month, frequency_day_of_week, frequency_week_of_month, frequency_month_of_year, begin_date], (error, results) => {
         if (error) {
-            throw error;
+            return response.status(400).send({ errors: { "msg": "Error creating expense", "param": null, "location": "query" } });
         }
         response.status(201).json(results.rows);
     });
@@ -269,7 +269,7 @@ const updateExpense = (request, response) => {
 
     pool.query(expenseQueries.updateExpense, [account_id, amount, title, description, frequency_type, frequency_type_variable, frequency_day_of_month, frequency_day_of_week, frequency_week_of_month, frequency_month_of_year, begin_date, id], (error, results) => {
         if (error) {
-            throw error;
+            return response.status(400).send({ errors: { "msg": "Error updating expense", "param": null, "location": "query" } });
         }
         response.status(200).send(results.rows);
     });
@@ -281,7 +281,7 @@ const deleteExpense = (request, response) => {
 
     pool.query(expenseQueries.deleteExpense, [id], (error, results) => {
         if (error) {
-            throw error;
+            return response.status(400).send({ errors: { "msg": "Error deleting expense", "param": null, "location": "query" } });
         }
         response.status(204).send();
     });
