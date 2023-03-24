@@ -1,22 +1,17 @@
-const fs = require('fs');
+const express = require('express');
 
-const pluginMiddleware = (app) => {
-    const pluginsDir = './plugins';
+function loadPluginRoutes(pluginName) {
+    // Import the routes from the plugin module
+    const pluginRoutes = require(`${pluginsDir}/${pluginName}/routes`);
 
-    // Loop through all the plugins in the plugins directory
-    fs.readdirSync(pluginsDir).forEach((plugin) => {
-        // Load the plugin's routes
-        const pluginRoutes = require(`${pluginsDir}/${plugin}/routes`);
+    // Create a new router for the plugin routes
+    const router = express.Router();
 
-        // Connect to the plugin's database
-        const pluginDb = require(`${pluginsDir}/${plugin}/db`);
+    // Add the plugin routes to the router
+    pluginRoutes(router);
 
-        // Add the plugin routes to the main app
-        app.use(pluginRoutes);
+    // Return the router as middleware
+    return router;
+}
 
-        // Expose the plugin database to the main app
-        app.set(plugin, pluginDb);
-    });
-};
-
-module.exports = pluginMiddleware;
+module.exports = loadPluginRoutes;
