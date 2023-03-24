@@ -1,7 +1,13 @@
-
+import Head from 'next/head'
 
 export default function Home() {
   return (
-    <h1>Welcome to my budgeting app</h1>
+    <>
+      <Head>
+        <title>Budgeting</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+      </Head>
+      <h1>Welcome to my budgeting app</h1>
+    </>
   )
 }
