@@ -79,10 +79,6 @@ const generateTransactions = (request, response, next) => {
     request.transactions = transactions;
     request.currentBalance = currentBalance;
 
-    if (request.transactions.length < 1) {
-        return response.status(200).send('No transactions found');
-    }
-
     next();
 }
 
