@@ -1,0 +1,3 @@
+[submodule "payroll-plugin"]
+	path = payroll-plugin
+	url = https://github.com/EphraimB/payroll-plugin.git
