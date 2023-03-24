@@ -213,6 +213,21 @@ const deleteWithdrawal = (request, response) => {
     });
 }
 
+// Get loans by account
+const getLoansByAccount = (request, response, next) => {
+    const { account_id, to_date } = request.query;
+
+    pool.query(loanQueries.getLoansByAccount, [parseInt(account_id), to_date], (error, results) => {
+        if (error) {
+            return response.status(400).send({ errors: { "msg": "Error getting loans", "param": null, "location": "query" } });
+        }
+
+        request.loans = results.rows;
+
+        next();
+    });
+}
+
 // Get all loans
 const getLoans = (request, response) => {
     const { account_id } = request.params;
@@ -453,6 +468,7 @@ module.exports = {
     createWithdrawal,
     updateWithdrawal,
     deleteWithdrawal,
+    getLoansByAccount,
     getLoans,
     createLoan,
     updateLoan,
