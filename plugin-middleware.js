@@ -1,18 +1,21 @@
+const fs = require('fs');
 const path = require('path');
 
 const pluginsDir = './plugins';
 
-function pluginMiddleware(pluginName) {
-    // Load the plugin module dynamically based on the plugin name parameter
-    const pluginModulePath = path.join(pluginsDir, `${pluginName}-plugin`, 'middleware.js');
-    const pluginModule = require(pluginModulePath);
-
-    return (request, response, next) => {
-        request[pluginName] = {};
-        pluginModule(request, response, () => {
+const pluginMiddleware = (pluginName) => {
+    // Check if the plugin middleware exists
+    const pluginMiddlewarePath = path.join(pluginsDir, pluginName, 'middleware.js');
+    if (fs.existsSync(pluginMiddlewarePath)) {
+        const pluginMiddleware = require(pluginMiddlewarePath);
+        return pluginMiddleware;
+    } else {
+        // If the plugin middleware doesn't exist, return a no-op middleware function
+        return (request, response, next) => {
+            request[pluginName] = {};
             next();
-        });
-    };
-}
+        };
+    }
+};
 
 module.exports = pluginMiddleware;
