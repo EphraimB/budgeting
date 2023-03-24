@@ -31,6 +31,10 @@ services:
       - ./sql:/docker-entrypoint-initdb.d
     networks:
       - app-network
+  expenses-plugin:
+    build: ./plugins/expenses-plugin
+    depends_on:
+      - db
 
 networks:
   app-network:

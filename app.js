@@ -4,7 +4,6 @@ const routes = require('./routes/routes');
 const accountsRouter = require('./routes/accountsRouter');
 const depositsRouter = require('./routes/depositsRouter');
 const withdrawalsRouter = require('./routes/withdrawalsRouter');
-const expensesRouter = require('./routes/expensesRouter');
 const loansRouter = require('./routes/loansRouter');
 const wishlistRouter = require('./routes/wishlistRouter');
 const transferRouter = require('./routes/transfersRouter');
