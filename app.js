@@ -9,10 +9,14 @@ const loansRouter = require('./routes/loansRouter');
 const wishlistRouter = require('./routes/wishlistRouter');
 const transferRouter = require('./routes/transfersRouter');
 const transactionsRouter = require('./routes/transactionsRouter');
+const pluginMiddleware = require('./plugin-middleware');
 const swaggerUi = require('swagger-ui-express'),
     swaggerDocument = require('./swagger.json');
 
 const app = express();
+
+// Add the plugin middleware to the app
+pluginMiddleware(app);
 
 app.use(bodyParser.json());
 
@@ -22,7 +26,7 @@ app.use(
     swaggerUi.setup(swaggerDocument)
 );
 
-app.use('/api/', routes);
+app.use('/', routes);
 app.use('/api/accounts', accountsRouter);
 app.use('/api/deposits', depositsRouter);
 app.use('/api/withdrawals', withdrawalsRouter);
