@@ -1,17 +1,18 @@
-const express = require('express');
+const path = require('path');
 
-function loadPluginRoutes(pluginName) {
-    // Import the routes from the plugin module
-    const pluginRoutes = require(`${pluginsDir}/${pluginName}/routes`);
+const pluginsDir = './plugins';
 
-    // Create a new router for the plugin routes
-    const router = express.Router();
+function pluginMiddleware(pluginName) {
+    // Load the plugin module dynamically based on the plugin name parameter
+    const pluginModulePath = path.join(pluginsDir, `${pluginName}-plugin`, 'middleware.js');
+    const pluginModule = require(pluginModulePath);
 
-    // Add the plugin routes to the router
-    pluginRoutes(router);
-
-    // Return the router as middleware
-    return router;
+    return (request, response, next) => {
+        request[pluginName] = {};
+        pluginModule(request, response, () => {
+            next();
+        });
+    };
 }
 
-module.exports = loadPluginRoutes;
+module.exports = pluginMiddleware;
