@@ -37,14 +37,12 @@ function generateTransactions(request, response, next) {
 
     const pluginsDir = './plugins';
 
-    console.log(pluginsDir);
-
     // Read the plugin directories and mount the routes for each plugin
     fs.readdirSync(pluginsDir).forEach(plugin => {
         const pluginDir = path.join(__dirname, pluginsDir, plugin);
 
         if (fs.existsSync(pluginDir)) {
-            const generateDir = `${pluginDir}/generate`;
+            const generateDir = `${pluginDir}/generate/`;
 
             fs.readdir(generateDir, (err, files) => {
                 if (err) {
@@ -53,26 +51,33 @@ function generateTransactions(request, response, next) {
                 }
             });
 
-            if (fs.existsSync(`${generateDir}/generate`)) {
+            if (fs.existsSync(`${generateDir}`)) {
                 const generateDaily = require(`${generateDir}/generateDaily.js`);
                 const generateWeekly = require(`${generateDir}/generateWeekly.js`);
                 const generateMonthly = require(`${generateDir}/generateMonthly.js`);
                 const generateYearly = require(`${generateDir}/generateYearly.js`);
 
-                request.plugin.replace('-plugin', '').forEach(pluginItem => {
-                    if (pluginItem.frequency_type === 0) {
-                        generateDaily(transactions, pluginItem, toDate);
-                    } else if (pluginItem.frequency_type === 1) {
-                        generateWeekly(transactions, pluginItem, toDate);
-                    } else if (pluginItem.frequency_type === 2) {
-                        generateMonthly(transactions, pluginItem, toDate);
-                    } else if (pluginItem.frequency_type === 3) {
-                        generateYearly(transactions, pluginItem, toDate);
+                const pluginName = plugin.replace('-plugin', '');
+
+                console.log(pluginName);
+
+                request.pluginName.forEach(pluginItem => {
+                    if (pluginItem.plugin_name === pluginName) {
+                        if (pluginItem.frequency_type === 0) {
+                            generateDaily(transactions, pluginItem, toDate);
+                        } else if (pluginItem.frequency_type === 1) {
+                            generateWeekly(transactions, pluginItem, toDate);
+                        } else if (pluginItem.frequency_type === 2) {
+                            generateMonthly(transactions, pluginItem, toDate);
+                        } else if (pluginItem.frequency_type === 3) {
+                            generateYearly(transactions, pluginItem, toDate);
+                        }
                     }
                 });
             };
         };
     });
+
 
     request.loans.forEach(loan => {
         if (loan.frequency_type === 0) {
