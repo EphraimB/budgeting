@@ -1,4 +1,14 @@
 FROM postgres:15.2-alpine3.17
 
 COPY ./sql /docker-entrypoint-initdb.d/
-COPY ./plugins/expenses-plugin/sql /docker-entrypoint-initdb.d/
+COPY plugins /plugins
+
+RUN i=1; \
+    for file in $(find /plugins -type f -name "*.sql" | sort); do \
+    if [ "${file##*/}" = "init.sql" ] || [ "${file##*/}" = "populate-data.sql" ]; then \
+    mv "$file" "/docker-entrypoint-initdb.d/$(printf '%02d' $i)_${file##*/}"; \
+    i=$((i+1)); \
+    else \
+    mv "$file" "${file%.*}_plugin${file##*.}"; \
+    fi \
+    done
