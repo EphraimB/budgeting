@@ -1,14 +1,7 @@
-// Accept a plugin name as an argument
-function generateTransactions(pluginName) {
+const fs = require('fs');
+
+function generateTransactions() {
     return (request, response, next) => {
-        const plugins = request.plugins;
-        const pluginNames = Object.keys(plugins);
-
-        for (const pluginName of pluginNames) {
-            const plugin = plugins[pluginName];
-            // Do something with the plugin object
-        }
-
         const generateDailyLoans = require('./generateLoans/generateDailyLoans.js');
         const generateWeeklyLoans = require('./generateLoans/generateWeeklyLoans.js');
         const generateMonthlyLoans = require('./generateLoans/generateMonthlyLoans.js');

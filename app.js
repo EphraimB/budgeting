@@ -10,7 +10,6 @@ const loansRouter = require('./routes/loansRouter');
 const wishlistRouter = require('./routes/wishlistRouter');
 const transferRouter = require('./routes/transfersRouter');
 const transactionsRouter = require('./routes/transactionsRouter');
-const pluginMiddleware = require('./plugin-middleware');
 const swaggerUi = require('swagger-ui-express'),
     swaggerDocument = require('./swagger.json');
 
