@@ -32,7 +32,9 @@ services:
     restart: on-failure
 
   db:
-    image: postgres:15.2-alpine3.17
+    build:
+      context: .
+      dockerfile: Dockerfile.db
     environment:
       - POSTGRES_USER=${PGUSER}
       - POSTGRES_HOST=docker.internal.host
@@ -40,9 +42,6 @@ services:
       - POSTGRES_DB=${PGDB}
     ports:
       - "${PGPORT}:5432"
-    volumes:
-      - ./sql:/docker-entrypoint-initdb.d
-      - ./plugins/expenses-plugin/sql:/docker-entrypoint-initdb.d
 
     networks:
       - app-network
