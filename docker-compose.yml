@@ -42,7 +42,7 @@ services:
       - "${PGPORT}:5432"
     volumes:
       - ./sql:/docker-entrypoint-initdb.d
-      - ./plugins/expenses-plugin/sql:/docker-entrypoint-initdb.d/expenses-plugin/sql
+      - ./plugins/expenses-plugin/sql:/docker-entrypoint-initdb.d
 
     networks:
       - app-network
