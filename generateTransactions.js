@@ -37,8 +37,12 @@ function generateTransactions() {
 
         const pluginsDir = './plugins';
 
+        console.log(pluginsDir);
+
         // Read the plugin directories and mount the routes for each plugin
         fs.readdirSync(pluginsDir).forEach(plugin => {
+            console.log(`Plugin: ${plugin}`);
+
             const pluginDir = path.join(__dirname, pluginsDir, plugin).replace('-plugin', '');
             if (fs.existsSync(pluginDir)) {
                 const generateDir = `${pluginDir}/generate`;
