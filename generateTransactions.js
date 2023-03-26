@@ -35,6 +35,42 @@ function generateTransactions() {
             }))
         );
 
+        const pluginsDir = './plugins';
+
+        // Read the plugin directories and mount the routes for each plugin
+        fs.readdirSync(pluginsDir).forEach(plugin => {
+            const pluginDir = path.join(__dirname, pluginsDir, plugin).replace('-plugin', '');
+            if (fs.existsSync(pluginDir)) {
+                const generateDir = `${pluginDir}/generate`;
+
+                fs.readdir(generateDir, (err, files) => {
+                    if (err) {
+                        console.error(err);
+                        return;
+                    }
+                });
+
+                if (fs.existsSync(`${generateDir}/generate`)) {
+                    const generateDaily = require(`${generateDir}/generateDaily.js`);
+                    const generateWeekly = require(`${generateDir}/generateWeekly.js`);
+                    const generateMonthly = require(`${generateDir}/generateMonthly.js`);
+                    const generateYearly = require(`${generateDir}/generateYearly.js`);
+
+                    request.plugin.forEach(pluginItem => {
+                        if (pluginItem.frequency_type === 0) {
+                            generateDaily(transactions, pluginItem, toDate);
+                        } else if (pluginItem.frequency_type === 1) {
+                            generateWeekly(transactions, pluginItem, toDate);
+                        } else if (pluginItem.frequency_type === 2) {
+                            generateMonthly(transactions, pluginItem, toDate);
+                        } else if (pluginItem.frequency_type === 3) {
+                            generateYearly(transactions, pluginItem, toDate);
+                        }
+                    });
+                };
+            };
+        });
+
         request.expenses.forEach(expense => {
             if (expense.frequency_type === 0) {
                 generateDailyExpenses(transactions, expense, toDate);
@@ -79,7 +115,7 @@ function generateTransactions() {
         request.currentBalance = currentBalance;
 
         next();
-    }
+    };
 }
 
 module.exports = generateTransactions;

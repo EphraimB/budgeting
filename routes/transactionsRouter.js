@@ -14,15 +14,13 @@ router.get('/', [
     query('from_date').exists().withMessage('From date is required').isDate().withMessage('From date must be a date in YYYY-MM-DD format'),
     query('to_date').exists().withMessage('To date is required').isDate().withMessage('To date must be a date in YYYY-MM-DD format'),
     validateRequest,
-    // Add the expenses plugin middleware to the middleware chain dynamically
-    pluginMiddleware(),
     getCurrentBalance,
     getDepositsByAccount,
     getWithdrawalsByAccount,
+    pluginMiddleware,
     getLoansByAccount,
     getTransfersByAccount,
-    // Modify generateTransactions to call the generateTransactions function with the 'expenses' plugin name
-    generateTransactions(),
+    generateTransactions,
     (request, response) => {
         response.json({ account_id: parseInt(request.query.account_id), currentBalance: request.currentBalance, transactions: request.transactions });
     }
