@@ -123,11 +123,6 @@ BEFORE INSERT OR UPDATE ON withdrawals
 FOR EACH ROW
 EXECUTE PROCEDURE update_dates();
 
-CREATE TRIGGER update_expenses_dates
-BEFORE INSERT OR UPDATE ON expenses
-FOR EACH ROW
-EXECUTE PROCEDURE update_dates();
-
 CREATE TRIGGER update_loans_dates
 BEFORE INSERT OR UPDATE ON loans
 FOR EACH ROW
@@ -142,10 +137,6 @@ CREATE TRIGGER update_transfers_dates
 BEFORE INSERT OR UPDATE ON transfers
 FOR EACH ROW
 EXECUTE PROCEDURE update_dates();
-
-CREATE TRIGGER set_null_columns_expenses BEFORE INSERT OR UPDATE ON expenses
-FOR EACH ROW
-EXECUTE FUNCTION set_null_columns();
 
 CREATE TRIGGER set_null_columns_loans BEFORE INSERT OR UPDATE ON loans
 FOR EACH ROW
