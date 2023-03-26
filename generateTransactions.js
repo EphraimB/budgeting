@@ -42,7 +42,7 @@ function generateTransactions(request, response, next) {
         const pluginDir = path.join(__dirname, pluginsDir, plugin);
 
         if (fs.existsSync(pluginDir)) {
-            const generateDir = `${pluginDir}/generate/`;
+            const generateDir = `${pluginDir}/generate`;
 
             fs.readdir(generateDir, (err, files) => {
                 if (err) {
@@ -60,6 +60,7 @@ function generateTransactions(request, response, next) {
                 const pluginName = plugin.replace('-plugin', '');
 
                 console.log(pluginName);
+                console.log(request);
 
                 request.pluginName.forEach(pluginItem => {
                     if (pluginItem.plugin_name === pluginName) {
