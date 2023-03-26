@@ -1,4 +1,6 @@
 const express = require('express');
+const fs = require('fs');
+const path = require('path');
 const generateTransactions = require('../generateTransactions.js');
 const router = express.Router();
 const { getCurrentBalance, getDepositsByAccount, getWithdrawalsByAccount, getLoansByAccount, getTransfersByAccount } = require('../queries.js');
@@ -13,14 +15,14 @@ router.get('/', [
     query('to_date').exists().withMessage('To date is required').isDate().withMessage('To date must be a date in YYYY-MM-DD format'),
     validateRequest,
     // Add the expenses plugin middleware to the middleware chain dynamically
-    pluginMiddleware('expenses'),
+    pluginMiddleware(),
     getCurrentBalance,
     getDepositsByAccount,
     getWithdrawalsByAccount,
     getLoansByAccount,
     getTransfersByAccount,
     // Modify generateTransactions to call the generateTransactions function with the 'expenses' plugin name
-    generateTransactions('expenses'),
+    generateTransactions(),
     (request, response) => {
         response.json({ account_id: parseInt(request.query.account_id), currentBalance: request.currentBalance, transactions: request.transactions });
     }

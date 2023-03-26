@@ -3,7 +3,11 @@ const path = require('path');
 
 const pluginsDir = './plugins';
 
-const pluginMiddleware = (pluginName) => {
+const pluginMiddleware = () => {
+    const plugins = fs.readdirSync(pluginsDir);
+    let pluginName = plugins.find(plugin => plugin.endsWith('-plugin'));
+    const pluginParameter = pluginName.replace('-plugin', '');
+    pluginName = pluginParameter;
     // Check if the plugin middleware exists
     const pluginMiddlewarePath = path.join(pluginsDir, pluginName, 'middleware.js');
     if (fs.existsSync(pluginMiddlewarePath)) {
