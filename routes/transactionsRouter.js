@@ -6,23 +6,28 @@ const router = express.Router();
 const { getCurrentBalance, getDepositsByAccount, getWithdrawalsByAccount, getLoansByAccount, getTransfersByAccount } = require('../queries.js');
 const { query } = require('express-validator');
 const validateRequest = require('../validateRequest.js');
+const middlewareFiles = [];
 
 // Require the plugin middleware
 const pluginsDir = './plugins';
-const pluginMiddleware = {};
 
 // Read the plugin directories and get the middleware for each plugin
 fs.readdirSync(pluginsDir).forEach(plugin => {
-    const pluginDir = path.join(__dirname, pluginsDir, plugin);
+    const pluginDir = path.join(__dirname, '..', pluginsDir, plugin);
+    console.log(`pluginDir ${pluginDir}`);
+    console.log(`plugin ${plugin}`);
 
     if (fs.existsSync(pluginDir)) {
         const middlewareFile = `${pluginDir}/middleware.js`;
 
         if (fs.existsSync(`${middlewareFile}`)) {
-            pluginMiddleware[plugin] = require(`${middlewareFile}`);
+            const middleware = require(middlewareFile);
+            middlewareFiles.push(middleware);
         };
     };
 });
+
+console.log(middlewareFiles);
 
 // Generate the transactions based on current balance, expenses, and loans
 router.get('/', [
@@ -31,30 +36,15 @@ router.get('/', [
     query('to_date').exists().withMessage('To date is required').isDate().withMessage('To date must be a date in YYYY-MM-DD format'),
     validateRequest
 ],
-    (request, response, next) => {
-        // Add pluginMiddleware object to the request body
-        request.plugins = {};
-        const promises = [];
-        Object.keys(pluginMiddleware).forEach(plugin => {
-            promises.push(new Promise((resolve, reject) => {
-                pluginMiddleware[plugin](request, response, (err, result) => {
-                    if (err) {
-                        reject(err);
-                    } else {
-                        request.plugins[plugin] = result;
-                        resolve(result);
-                    }
-                });
-            }));
-        });
-        Promise.all(promises).then(() => {
-            next();
-        }).catch(err => {
-            next(err);
-        });
-    },
-    getCurrentBalance, getDepositsByAccount, getWithdrawalsByAccount, getLoansByAccount, getTransfersByAccount, generateTransactions, (request, response) => {
-        response.json({ account_id: parseInt(request.query.account_id), currentBalance: request.currentBalance, transactions: request.transactions, plugins: request.plugins });
+    getCurrentBalance,
+    getDepositsByAccount,
+    getWithdrawalsByAccount,
+    ...middlewareFiles.map(middleware => middleware.middleware),
+    getLoansByAccount,
+    getTransfersByAccount,
+    generateTransactions,
+    (request, response) => {
+        response.json({ account_id: parseInt(request.query.account_id), currentBalance: request.currentBalance, transactions: request.transactions });
     });
 
 module.exports = router;
