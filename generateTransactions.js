@@ -60,16 +60,14 @@ function generateTransactions(request, response, next) {
                 const pluginName = plugin.replace('-plugin', '');
 
                 request[pluginName].forEach(pluginItem => {
-                    if (pluginItem.plugin_name === pluginName) {
-                        if (pluginItem.frequency_type === 0) {
-                            generateDaily(transactions, pluginItem, toDate);
-                        } else if (pluginItem.frequency_type === 1) {
-                            generateWeekly(transactions, pluginItem, toDate);
-                        } else if (pluginItem.frequency_type === 2) {
-                            generateMonthly(transactions, pluginItem, toDate);
-                        } else if (pluginItem.frequency_type === 3) {
-                            generateYearly(transactions, pluginItem, toDate);
-                        }
+                    if (pluginItem.frequency_type === 0) {
+                        generateDaily(transactions, pluginItem, toDate);
+                    } else if (pluginItem.frequency_type === 1) {
+                        generateWeekly(transactions, pluginItem, toDate);
+                    } else if (pluginItem.frequency_type === 2) {
+                        generateMonthly(transactions, pluginItem, toDate);
+                    } else if (pluginItem.frequency_type === 3) {
+                        generateYearly(transactions, pluginItem, toDate);
                     }
                 });
             };
