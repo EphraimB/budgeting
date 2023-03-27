@@ -59,10 +59,7 @@ function generateTransactions(request, response, next) {
 
                 const pluginName = plugin.replace('-plugin', '');
 
-                console.log(pluginName);
-                console.log(request);
-
-                request.pluginName.forEach(pluginItem => {
+                request[pluginName].forEach(pluginItem => {
                     if (pluginItem.plugin_name === pluginName) {
                         if (pluginItem.frequency_type === 0) {
                             generateDaily(transactions, pluginItem, toDate);
