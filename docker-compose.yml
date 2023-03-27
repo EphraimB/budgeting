@@ -17,18 +17,32 @@ services:
       - "5000:5000"
     depends_on:
       - db
+      - expenses-plugin
+
+  expenses-plugin:
+    build: ./plugins/expenses-plugin
+    depends_on:
+      - db
+    environment:
+      - PGHOST=db
+      - PGDATABASE=${PGDB}
+      - PGUSER=${PGUSER}
+      - PGPASSWORD=${PGPASSWORD}
+      - PGPORT=${PGPORT}
+    restart: on-failure
 
   db:
-    image: postgres:15.2-alpine3.17
+    build:
+      context: .
+      dockerfile: Dockerfile.db
     environment:
       - POSTGRES_USER=${PGUSER}
-      - POSTGRES_HOST=${PGHOST}
+      - POSTGRES_HOST=docker.internal.host
       - POSTGRES_PASSWORD=${PGPASSWORD}
       - POSTGRES_DB=${PGDB}
     ports:
       - "${PGPORT}:5432"
-    volumes:
-      - ./sql:/docker-entrypoint-initdb.d
+
     networks:
       - app-network
 

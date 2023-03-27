@@ -28,25 +28,6 @@ CREATE TABLE IF NOT EXISTS withdrawals (
   date_modified TIMESTAMP NOT NULL
 );
 
--- Create a expenses table in postgres
-CREATE TABLE IF NOT EXISTS expenses (
-  expense_id SERIAL PRIMARY KEY,
-  account_id INT NOT NULL REFERENCES accounts(account_id),
-  expense_amount numeric(20, 2) NOT NULL,
-  expense_title VARCHAR(255) NOT NULL,
-  expense_description VARCHAR(255) NOT NULL,
-  frequency_type INT NOT NULL,
-  frequency_type_variable INT,
-  frequency_day_of_month INT,
-  frequency_day_of_week INT,
-  frequency_week_of_month INT,
-  frequency_month_of_year INT,
-  expense_begin_date TIMESTAMP NOT NULL,
-  expense_end_date TIMESTAMP,
-  date_created TIMESTAMP NOT NULL,
-  date_modified TIMESTAMP NOT NULL
-);
-
 -- Create a loans table in postgres
 CREATE TABLE IF NOT EXISTS loans (
   loan_id SERIAL PRIMARY KEY,
@@ -142,11 +123,6 @@ BEFORE INSERT OR UPDATE ON withdrawals
 FOR EACH ROW
 EXECUTE PROCEDURE update_dates();
 
-CREATE TRIGGER update_expenses_dates
-BEFORE INSERT OR UPDATE ON expenses
-FOR EACH ROW
-EXECUTE PROCEDURE update_dates();
-
 CREATE TRIGGER update_loans_dates
 BEFORE INSERT OR UPDATE ON loans
 FOR EACH ROW
@@ -161,10 +137,6 @@ CREATE TRIGGER update_transfers_dates
 BEFORE INSERT OR UPDATE ON transfers
 FOR EACH ROW
 EXECUTE PROCEDURE update_dates();
-
-CREATE TRIGGER set_null_columns_expenses BEFORE INSERT OR UPDATE ON expenses
-FOR EACH ROW
-EXECUTE FUNCTION set_null_columns();
 
 CREATE TRIGGER set_null_columns_loans BEFORE INSERT OR UPDATE ON loans
 FOR EACH ROW

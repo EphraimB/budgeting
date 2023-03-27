@@ -1,5 +1,5 @@
 const pool = require('./db');
-const { accountQueries, depositQueries, withdrawalQueries, expenseQueries, loanQueries, wishlistQueries, transferQueries, currentBalanceQueries } = require('./queryData');
+const { accountQueries, depositQueries, withdrawalQueries, loanQueries, wishlistQueries, transferQueries, currentBalanceQueries } = require('./queryData');
 
 // Get all accounts
 const getAccounts = (request, response) => {
@@ -208,80 +208,6 @@ const deleteWithdrawal = (request, response) => {
     pool.query(withdrawalQueries.deleteWithdrawal, [id], (error, results) => {
         if (error) {
             return response.status(400).send({ errors: { "msg": "Error deleting withdrawal", "param": null, "location": "query" } });
-        }
-        response.status(204).send();
-    });
-}
-
-// Get expenses by account
-const getExpensesByAccount = (request, response, next) => {
-    const { account_id, to_date } = request.query;
-
-    pool.query(expenseQueries.getExpensesByAccount, [parseInt(account_id), to_date], (error, results) => {
-        if (error) {
-            return response.status(400).send({ errors: { "msg": "Error getting expenses", "param": null, "location": "query" } });
-        }
-
-        request.expenses = results.rows;
-
-        next();
-    });
-}
-
-// Get all expenses
-const getExpenses = (request, response) => {
-    const { account_id } = request.params;
-    const { id } = request.query;
-
-    if (!id) {
-        pool.query(expenseQueries.getExpenses, [account_id], (error, results) => {
-            if (error) {
-                return response.status(400).send({ errors: { "msg": "Error getting expenses", "param": null, "location": "query" } });
-            }
-            response.status(200).json(results.rows);
-        });
-    } else {
-        pool.query(expenseQueries.getExpense, [account_id, id], (error, results) => {
-            if (error) {
-                return response.status(400).send({ errors: { "msg": "Error getting expense", "param": null, "location": "query" } });
-            }
-            response.status(200).json(results.rows);
-        });
-    }
-}
-
-// Create expense
-const createExpense = (request, response) => {
-    const { account_id, amount, title, description, frequency_type, frequency_type_variable, frequency_day_of_month, frequency_day_of_week, frequency_week_of_month, frequency_month_of_year, begin_date } = request.body;
-
-    pool.query(expenseQueries.createExpense, [account_id, amount, title, description, frequency_type, frequency_type_variable, frequency_day_of_month, frequency_day_of_week, frequency_week_of_month, frequency_month_of_year, begin_date], (error, results) => {
-        if (error) {
-            return response.status(400).send({ errors: { "msg": "Error creating expense", "param": null, "location": "query" } });
-        }
-        response.status(201).json(results.rows);
-    });
-}
-
-// Update expense
-const updateExpense = (request, response) => {
-    const id = parseInt(request.params.id);
-    const { account_id, amount, title, description, frequency_type, frequency_type_variable, frequency_day_of_month, frequency_day_of_week, frequency_week_of_month, frequency_month_of_year, begin_date } = request.body;
-
-    pool.query(expenseQueries.updateExpense, [account_id, amount, title, description, frequency_type, frequency_type_variable, frequency_day_of_month, frequency_day_of_week, frequency_week_of_month, frequency_month_of_year, begin_date, id], (error, results) => {
-        if (error) {
-            return response.status(400).send({ errors: { "msg": "Error updating expense", "param": null, "location": "query" } });
-        }
-        response.status(200).send(results.rows);
-    });
-}
-
-// Delete expense
-const deleteExpense = (request, response) => {
-    const id = parseInt(request.params.id);
-
-    pool.query(expenseQueries.deleteExpense, [id], (error, results) => {
-        if (error) {
-            return response.status(400).send({ errors: { "msg": "Error deleting expense", "param": null, "location": "query" } });
         }
         response.status(204).send();
     });
@@ -542,11 +468,6 @@ module.exports = {
     createWithdrawal,
     updateWithdrawal,
     deleteWithdrawal,
-    getExpensesByAccount,
-    getExpenses,
-    createExpense,
-    updateExpense,
-    deleteExpense,
     getLoansByAccount,
     getLoans,
     createLoan,

@@ -1,8 +1,7 @@
-const generateTransactions = (request, response, next) => {
-    const generateDailyExpenses = require('./generateExpenses/generateDailyExpenses.js');
-    const generateWeeklyExpenses = require('./generateExpenses/generateWeeklyExpenses.js');
-    const generateMonthlyExpenses = require('./generateExpenses/generateMonthlyExpenses.js');
-    const generateYearlyExpenses = require('./generateExpenses/generateYearlyExpenses.js');
+const fs = require('fs');
+const path = require('path');
+
+function generateTransactions(request, response, next) {
     const generateDailyLoans = require('./generateLoans/generateDailyLoans.js');
     const generateWeeklyLoans = require('./generateLoans/generateWeeklyLoans.js');
     const generateMonthlyLoans = require('./generateLoans/generateMonthlyLoans.js');
@@ -36,17 +35,45 @@ const generateTransactions = (request, response, next) => {
         }))
     );
 
-    request.expenses.forEach(expense => {
-        if (expense.frequency_type === 0) {
-            generateDailyExpenses(transactions, expense, toDate);
-        } else if (expense.frequency_type === 1) {
-            generateWeeklyExpenses(transactions, expense, toDate);
-        } else if (expense.frequency_type === 2) {
-            generateMonthlyExpenses(transactions, expense, toDate);
-        } else if (expense.frequency_type === 3) {
-            generateYearlyExpenses(transactions, expense, toDate);
-        }
+    const pluginsDir = './plugins';
+
+    // Read the plugin directories and mount the routes for each plugin
+    fs.readdirSync(pluginsDir).forEach(plugin => {
+        const pluginDir = path.join(__dirname, pluginsDir, plugin);
+
+        if (fs.existsSync(pluginDir)) {
+            const generateDir = `${pluginDir}/generate`;
+
+            fs.readdir(generateDir, (err, files) => {
+                if (err) {
+                    console.error(err);
+                    return;
+                }
+            });
+
+            if (fs.existsSync(`${generateDir}`)) {
+                const generateDaily = require(`${generateDir}/generateDaily.js`);
+                const generateWeekly = require(`${generateDir}/generateWeekly.js`);
+                const generateMonthly = require(`${generateDir}/generateMonthly.js`);
+                const generateYearly = require(`${generateDir}/generateYearly.js`);
+
+                const pluginName = plugin.replace('-plugin', '');
+
+                request[pluginName].forEach(pluginItem => {
+                    if (pluginItem.frequency_type === 0) {
+                        generateDaily(transactions, pluginItem, toDate);
+                    } else if (pluginItem.frequency_type === 1) {
+                        generateWeekly(transactions, pluginItem, toDate);
+                    } else if (pluginItem.frequency_type === 2) {
+                        generateMonthly(transactions, pluginItem, toDate);
+                    } else if (pluginItem.frequency_type === 3) {
+                        generateYearly(transactions, pluginItem, toDate);
+                    }
+                });
+            };
+        };
     });
+
 
     request.loans.forEach(loan => {
         if (loan.frequency_type === 0) {
@@ -80,6 +107,6 @@ const generateTransactions = (request, response, next) => {
     request.currentBalance = currentBalance;
 
     next();
-}
+};
 
 module.exports = generateTransactions;

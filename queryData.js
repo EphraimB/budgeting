@@ -24,15 +24,6 @@ const accountQueries = {
     deleteWithdrawal: 'DELETE FROM withdrawals WHERE withdrawal_id = $1',
   };
 
-  const expenseQueries = {
-    getExpensesByAccount: "SELECT * FROM expenses WHERE account_id = $1 AND expense_begin_date <= $2 ORDER BY expense_begin_date ASC",
-    getExpenses: 'SELECT * FROM expenses WHERE account_id = $1 ORDER BY expense_id ASC',
-    getExpense: 'SELECT * FROM expenses WHERE account_id = $1 AND expense_id = $2',
-    createExpense: 'INSERT INTO expenses (account_id, expense_amount, expense_title, expense_description, frequency_type, frequency_type_variable, frequency_day_of_month, frequency_day_of_week, frequency_week_of_month, frequency_month_of_year, expense_begin_date) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11) RETURNING *',
-    updateExpense: 'UPDATE expenses SET account_id = $1, expense_amount = $2, expense_title = $3, expense_description = $4, frequency_type = $5, frequency_type_variable = $6, frequency_day_of_month = $7, frequency_day_of_week = $8, frequency_week_of_month = $9, frequency_month_of_year = $10, expense_begin_date = $11 WHERE expense_id = $12 RETURNING *',
-    deleteExpense: 'DELETE FROM expenses WHERE expense_id = $1',
-  };
-
   const loanQueries = {
     getLoansByAccount: 'SELECT * FROM loans WHERE account_id = $1 AND loan_begin_date <= $2 ORDER BY date_created ASC',
     getLoans: 'SELECT * FROM loans WHERE account_id = $1 ORDER BY loan_id ASC',
@@ -68,7 +59,6 @@ const accountQueries = {
     accountQueries,
     depositQueries,
     withdrawalQueries,
-    expenseQueries,
     loanQueries,
     wishlistQueries,
     currentBalanceQueries,
