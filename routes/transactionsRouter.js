@@ -14,8 +14,6 @@ const pluginsDir = './plugins';
 // Read the plugin directories and get the middleware for each plugin
 fs.readdirSync(pluginsDir).forEach(plugin => {
     const pluginDir = path.join(__dirname, '..', pluginsDir, plugin);
-    console.log(`pluginDir ${pluginDir}`);
-    console.log(`plugin ${plugin}`);
 
     if (fs.existsSync(pluginDir)) {
         const middlewareFile = `${pluginDir}/middleware.js`;
