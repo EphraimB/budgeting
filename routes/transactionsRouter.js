@@ -27,8 +27,6 @@ fs.readdirSync(pluginsDir).forEach(plugin => {
     };
 });
 
-console.log(middlewareFiles);
-
 // Generate the transactions based on current balance, expenses, and loans
 router.get('/', [
     query('account_id').exists().withMessage('Account ID is required').isInt({ min: 0 }).withMessage('Account ID must be an integer'),
