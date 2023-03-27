@@ -1,6 +1,3 @@
-[submodule "plugins/payroll-plugin"]
-	path = plugins/payroll-plugin
-	url = https://github.com/EphraimB/payroll-plugin.git
 [submodule "plugins/expenses-plugin"]
 	path = plugins/expenses-plugin
 	url = https://github.com/EphraimB/expenses-plugin.git
