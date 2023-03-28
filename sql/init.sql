@@ -78,7 +78,7 @@ CREATE TABLE employee (
   account_id INTEGER NOT NULL REFERENCES accounts(account_id),
   name TEXT NOT NULL,
   hourly_rate NUMERIC(6,2) NOT NULL,
-  regualar_hours NUMERIC(4,2) NOT NULL,
+  regular_hours NUMERIC(4,2) NOT NULL,
   vacation_days INTEGER NOT NULL DEFAULT 0,
   sick_days INTEGER NOT NULL DEFAULT 0,
   work_schedule BIT(7) NOT NULL

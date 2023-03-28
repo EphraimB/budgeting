@@ -48,12 +48,12 @@ const payrollQueries = {
         e.account_id,
         SUM(CASE
               WHEN (work_schedule::integer & CAST(power(2, EXTRACT(day FROM (current_date - date_trunc('month', current_date) + INTERVAL '1 day')) - 1) AS INTEGER)) > 0
-              THEN t.hours_worked * e.hourly_rate
+              THEN (t.hours_worked + e.regular_hours) * e.hourly_rate
               ELSE 0
             END) AS gross_pay,
         SUM(CASE
               WHEN (work_schedule::integer & CAST(power(2, EXTRACT(day FROM (current_date - date_trunc('month', current_date) + INTERVAL '1 day')) - 1) AS INTEGER)) > 0
-              THEN (t.hours_worked * e.hourly_rate) * (1 - COALESCE(pt.rate, 0))
+              THEN ((t.hours_worked + e.regular_hours) * e.hourly_rate) * (1 - COALESCE(pt.rate, 0))
               ELSE 0
             END) AS net_pay
       FROM employee e
