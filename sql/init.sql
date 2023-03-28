@@ -67,6 +67,8 @@ CREATE TABLE IF NOT EXISTS loans (
   date_modified TIMESTAMP NOT NULL
 );
 
+-- TODO: Create tables for payroll in postgres
+
 -- Create a wishlist table in postgres
 CREATE TABLE IF NOT EXISTS wishlist (
   wishlist_id SERIAL PRIMARY KEY,
