@@ -12,3 +12,15 @@ INSERT INTO expenses (account_id, expense_amount, expense_title, expense_descrip
 INSERT INTO loans (account_id, loan_amount, loan_plan_amount, loan_recipient, loan_title, loan_description, frequency_type, frequency_type_variable, loan_begin_date) VALUES (1, 1000.00, 100.00, 'John Doe', 'Test Loan', 'Test Loan Description', 2, 1,  NOW() + INTERVAL '1 month');
 
 INSERT INTO transfers (source_account_id, destination_account_id, transfer_amount, transfer_title, transfer_description, frequency_type, frequency_type_variable, transfer_begin_date) VALUES (1, 2, 100.00, 'Test Transfer', 'Test Transfer Description', 2, 1,  NOW() + INTERVAL '1 month');
+
+INSERT INTO payroll_dates (day_of_month) VALUES (15), (31);
+
+INSERT INTO employee (name, hourly_rate, vacation_days, sick_days) 
+VALUES ('John Doe', 16.00, 10, 5);
+
+-- Insert mock data for payroll_taxes table
+INSERT INTO payroll_taxes (name, rate, applies_to) VALUES 
+    ('Federal Income Tax', 0.15, 'gross_salary'),
+    ('State Income Tax', 0.05, 'gross_salary'),
+    ('Social Security Tax', 0.062, 'gross_salary'),
+    ('Medicare Tax', 0.0145, 'gross_salary');
