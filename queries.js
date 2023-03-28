@@ -1,5 +1,5 @@
 const pool = require('./db');
-const { accountQueries, depositQueries, withdrawalQueries, expenseQueries, loanQueries, wishlistQueries, transferQueries, currentBalanceQueries } = require('./queryData');
+const { accountQueries, depositQueries, withdrawalQueries, expenseQueries, loanQueries, payrollQueries, wishlistQueries, transferQueries, currentBalanceQueries } = require('./queryData');
 
 // Get all accounts
 const getAccounts = (request, response) => {
@@ -379,26 +379,14 @@ const getPayrollsByAccount = (request, response, next) => {
 // Get all payrolls
 const getPayrolls = (request, response) => {
     const { account_id } = request.params;
-    const { id } = request.query;
 
-    if (!id) {
-        pool.query(payrollQueries.getPayrolls, [account_id], (error, results) => {
-            if (error) {
-                return response.status(400).send({ errors: { "msg": "Error getting payrolls", "param": null, "location": "query" } });
-            }
-            response.status(200).json(results.rows);
-        });
-    } else {
-        pool.query(payrollQueries.getPayroll, [account_id, id], (error, results) => {
-            if (error) {
-                return response.status(400).send({ errors: { "msg": "Error getting payroll", "param": null, "location": "query" } });
-            }
-            response.status(200).json(results.rows);
-        });
-    }
+    pool.query(payrollQueries.getPayrolls, [account_id], (error, results) => {
+        if (error) {
+            return response.status(400).send({ errors: { "msg": "Error getting payrolls", "param": null, "location": "query" } });
+        }
+        response.status(200).json(results.rows);
+    });
 }
-
-// Create payroll
 
 // Get wishlists by account
 const getWishlistsByAccount = (request, response, next) => {

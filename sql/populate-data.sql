@@ -15,8 +15,8 @@ INSERT INTO transfers (source_account_id, destination_account_id, transfer_amoun
 
 INSERT INTO payroll_dates (day_of_month) VALUES (15), (31);
 
-INSERT INTO employee (account_id, name, hourly_rate, vacation_days, sick_days) 
-VALUES (1, 'John Doe', 16.00, 10, 5);
+INSERT INTO employee (account_id, name, hourly_rate, regualar_hours, vacation_days, sick_days, work_schedule) 
+VALUES (1, 'John Doe', 16.00, 8, 10, 5, B'1111100');
 
 -- Insert mock data for payroll_taxes table
 INSERT INTO payroll_taxes (employee_id, name, rate, applies_to) VALUES 
