@@ -361,6 +361,45 @@ const deleteLoan = (request, response) => {
     });
 }
 
+// Get payrolls by account
+const getPayrollsByAccount = (request, response, next) => {
+    const { account_id, to_date } = request.query;
+
+    pool.query(payrollQueries.getPayrollsByAccount, [parseInt(account_id), to_date], (error, results) => {
+        if (error) {
+            return response.status(400).send({ errors: { "msg": "Error getting payrolls", "param": null, "location": "query" } });
+        }
+
+        request.payrolls = results.rows;
+
+        next();
+    });
+}
+
+// Get all payrolls
+const getPayrolls = (request, response) => {
+    const { account_id } = request.params;
+    const { id } = request.query;
+
+    if (!id) {
+        pool.query(payrollQueries.getPayrolls, [account_id], (error, results) => {
+            if (error) {
+                return response.status(400).send({ errors: { "msg": "Error getting payrolls", "param": null, "location": "query" } });
+            }
+            response.status(200).json(results.rows);
+        });
+    } else {
+        pool.query(payrollQueries.getPayroll, [account_id, id], (error, results) => {
+            if (error) {
+                return response.status(400).send({ errors: { "msg": "Error getting payroll", "param": null, "location": "query" } });
+            }
+            response.status(200).json(results.rows);
+        });
+    }
+}
+
+// Create payroll
+
 // Get wishlists by account
 const getWishlistsByAccount = (request, response, next) => {
     const { account_id, to_date } = request.query;
@@ -552,6 +591,8 @@ module.exports = {
     createLoan,
     updateLoan,
     deleteLoan,
+    getPayrollsByAccount,
+    getPayrolls,
     getWishlistsByAccount,
     getWishlists,
     createWishlist,

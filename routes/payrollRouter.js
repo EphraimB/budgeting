@@ -1,7 +1,7 @@
 const express = require('express');
 const { query, param, body } = require('express-validator');
 const router = express.Router();
-const { getPayroll } = require('../queries.js');
+const { getPayrolls } = require('../queries.js');
 const validateRequest = require('../validateRequest.js');
 
 router.get('/:account_id',
@@ -10,4 +10,6 @@ router.get('/:account_id',
         query('id').optional().isInt({ min: 1 }).withMessage('ID must be a number'),
         validateRequest,
     ],
-    getPayroll);
+    getPayrolls);
+
+module.exports = router;
