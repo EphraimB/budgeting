@@ -75,6 +75,7 @@ CREATE TABLE payroll_dates (
 
 CREATE TABLE employee (
   employee_id SERIAL PRIMARY KEY,
+  account_id INTEGER NOT NULL REFERENCES accounts(account_id),
   name TEXT NOT NULL,
   hourly_rate NUMERIC(6,2) NOT NULL,
   vacation_days INTEGER NOT NULL DEFAULT 0,
@@ -92,6 +93,7 @@ CREATE TABLE timecards (
 
 CREATE TABLE payroll_taxes (
     payroll_taxes_id SERIAL PRIMARY KEY,
+    employee_id INTEGER NOT NULL REFERENCES employee(employee_id),
     name TEXT NOT NULL,
     rate NUMERIC(5,2) NOT NULL,
     applies_to TEXT
