@@ -52,7 +52,7 @@ const payrollQueries = {
                 ELSE NULL
             END,
             e.regular_hours * e.hourly_rate * (SELECT COUNT(*) FROM regexp_split_to_table(lpad(work_schedule::text, 7, '0'), '') s WHERE s = '1')
-        )) AS gross_pay,
+        ))::numeric(20, 2) AS gross_pay,
         SUM(COALESCE(
             CASE
                 WHEN (work_schedule::integer & CAST(power(2, EXTRACT(DOW FROM t.work_date) - 1) AS INTEGER)) > 0
@@ -60,7 +60,7 @@ const payrollQueries = {
                 ELSE NULL
             END,
             e.regular_hours * e.hourly_rate * (1 - COALESCE(pt.rate, 0)) * (SELECT COUNT(*) FROM regexp_split_to_table(lpad(work_schedule::text, 7, '0'), '') s WHERE s = '1')
-        )) AS net_pay
+        ))::numeric(20, 2) AS net_pay
       FROM employee e
       LEFT JOIN (
       SELECT *
