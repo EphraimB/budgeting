@@ -68,11 +68,6 @@ CREATE TABLE IF NOT EXISTS loans (
 );
 
 -- Create tables for payroll in postgres.
-CREATE TABLE payroll_dates (
-  payroll_date_id SERIAL PRIMARY KEY,
-  day_of_month INTEGER NOT NULL
-);
-
 CREATE TABLE employee (
   employee_id SERIAL PRIMARY KEY,
   account_id INTEGER NOT NULL REFERENCES accounts(account_id),
@@ -82,6 +77,12 @@ CREATE TABLE employee (
   vacation_days INTEGER NOT NULL DEFAULT 0,
   sick_days INTEGER NOT NULL DEFAULT 0,
   work_schedule BIT(7) NOT NULL
+);
+
+CREATE TABLE payroll_dates (
+  payroll_date_id SERIAL PRIMARY KEY,
+  employee_id INTEGER NOT NULL REFERENCES employee(employee_id),
+  day_of_month INTEGER NOT NULL
 );
 
 CREATE TABLE timecards (

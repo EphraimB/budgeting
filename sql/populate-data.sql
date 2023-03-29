@@ -13,10 +13,10 @@ INSERT INTO loans (account_id, loan_amount, loan_plan_amount, loan_recipient, lo
 
 INSERT INTO transfers (source_account_id, destination_account_id, transfer_amount, transfer_title, transfer_description, frequency_type, frequency_type_variable, transfer_begin_date) VALUES (1, 2, 100.00, 'Test Transfer', 'Test Transfer Description', 2, 1,  NOW() + INTERVAL '1 month');
 
-INSERT INTO payroll_dates (day_of_month) VALUES (15), (31);
-
 INSERT INTO employee (account_id, name, hourly_rate, regular_hours, vacation_days, sick_days, work_schedule) 
 VALUES (1, 'John Doe', 16.00, 8, 10, 5, B'1111100');
+
+INSERT INTO payroll_dates (employee_id, day_of_month) VALUES (1, 15), (1, 31);
 
 -- Insert mock data for payroll_taxes table
 INSERT INTO payroll_taxes (employee_id, name, rate, applies_to) VALUES 
