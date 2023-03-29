@@ -71,7 +71,7 @@ const payrollQueries = {
       FROM timecards
       WHERE date_trunc('month', work_date) = date_trunc('month', current_date)
       ) t ON e.employee_id = t.employee_id 
-      LEFT JOIN payroll_taxes pt ON e.employee_id = pt.employee_id
+      INNER JOIN payroll_taxes pt ON e.employee_id = pt.employee_id
       WHERE e.account_id = $1
       GROUP BY e.employee_id, e.account_id
    `,
