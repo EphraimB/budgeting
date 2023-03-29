@@ -46,30 +46,30 @@ const payrollQueries = {
   getPayrolls: `
         SELECT e.account_id,
         SUM(COALESCE(
-              CASE
+            CASE
                 WHEN (work_schedule::integer & CAST(power(2, EXTRACT(day FROM (current_date - date_trunc('month', current_date) + INTERVAL '1 day')) - 1) AS INTEGER)) > 0
-                THEN (t.hours_worked * e.hourly_rate)
-                ELSE null
-              END,
-              e.regular_hours * e.hourly_rate
-            )) AS gross_pay,
+                    THEN (t.hours_worked * e.hourly_rate)
+                ELSE NULL
+            END,
+            e.regular_hours * e.hourly_rate
+        )) AS gross_pay,
         SUM(COALESCE(
-              CASE
+            CASE
                 WHEN (work_schedule::integer & CAST(power(2, EXTRACT(day FROM (current_date - date_trunc('month', current_date) + INTERVAL '1 day')) - 1) AS INTEGER)) > 0
-                THEN ((t.hours_worked * e.hourly_rate) * (1 - COALESCE(pt.rate, 0)))
-                ELSE null
-              END,
-              (e.regular_hours * e.hourly_rate) * (1 - COALESCE(pt.rate, 0))
-            )) AS net_pay
+                    THEN ((t.hours_worked * e.hourly_rate) * (1 - COALESCE(pt.rate, 0)))
+                ELSE NULL
+            END,
+            (e.regular_hours * e.hourly_rate) * (1 - COALESCE(pt.rate, 0))
+        )) AS net_pay
       FROM employee e
       LEFT JOIN (
-          SELECT *
-          FROM timecards
-          WHERE date_trunc('month', work_date) = date_trunc('month', current_date)
+      SELECT *
+      FROM timecards
+      WHERE date_trunc('month', work_date) = date_trunc('month', current_date)
       ) t ON e.employee_id = t.employee_id 
       LEFT JOIN payroll_taxes pt ON e.employee_id = pt.employee_id
       CROSS JOIN payroll_dates pd
-      WHERE account_id = $1
+      WHERE e.account_id = $1
       GROUP BY e.employee_id, e.account_id;
    `,
 }
