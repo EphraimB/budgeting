@@ -67,19 +67,13 @@ const payrollQueries = {
       FROM timecards
       WHERE date_trunc('month', work_date) = date_trunc('month', current_date)
       ) t ON e.employee_id = t.employee_id 
-      LEFT JOIN payroll_taxes pt ON e.employee_id = pt.employee_id
-      WHERE e.account_id = $1
+      LEFT JOIN (
+      SELECT DISTINCT ON (employee_id) employee_id, rate
+      FROM payroll_taxes
+      ) pt ON e.employee_id = pt.employee_id
+      WHERE e.account_id = 1
       GROUP BY e.employee_id, e.account_id
    `,
-  narrowedErrorDownTo: `
-            SELECT SUM(COALESCE(
-              e.regular_hours * e.hourly_rate * (SELECT COUNT(*) FROM regexp_split_to_table(lpad(work_schedule::text, 7, '0'), '') s WHERE s = '1')
-          ))::numeric(20, 2) AS gross_pay
-        FROM employee e
-        LEFT JOIN payroll_taxes pt ON e.employee_id = pt.employee_id
-        WHERE e.account_id = 1
-        GROUP BY e.employee_id, e.account_id
-      `,
 }
 
 const wishlistQueries = {
