@@ -71,7 +71,7 @@ const payrollQueries = {
       SELECT DISTINCT ON (employee_id) employee_id, rate
       FROM payroll_taxes
       ) pt ON e.employee_id = pt.employee_id
-      WHERE e.account_id = 1
+      WHERE e.account_id = $1
       GROUP BY e.employee_id, e.account_id
    `,
 }
