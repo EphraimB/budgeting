@@ -82,7 +82,8 @@ CREATE TABLE employee (
 CREATE TABLE payroll_dates (
   payroll_date_id SERIAL PRIMARY KEY,
   employee_id INTEGER NOT NULL REFERENCES employee(employee_id),
-  day_of_month INTEGER NOT NULL
+  payroll_start_day INTEGER NOT NULL,
+  payroll_end_day INTEGER NOT NULL
 );
 
 CREATE TABLE timecards (
