@@ -60,13 +60,22 @@ const payrollQueries = {
                 ELSE NULL
             END,
             e.regular_hours * e.hourly_rate * (1 - COALESCE(pt.rate, 0)) * (SELECT COUNT(*) FROM regexp_split_to_table(lpad(work_schedule::text, 7, '0'), '') s WHERE s = '1')
-        ))::numeric(20, 2) AS net_pay
+        ))::numeric(20, 2) AS net_pay,
+        SUM(COALESCE(
+        CASE
+            WHEN (work_schedule::integer & CAST(power(2, EXTRACT(DOW FROM t.work_date) - 1) AS INTEGER)) > 0
+                THEN e.regular_hours
+            ELSE NULL
+        END,
+        e.regular_hours * (SELECT COUNT(*) FROM regexp_split_to_table(lpad(work_schedule::text, 7, '0'), '') s WHERE s = '1')
+      ))::numeric(20, 2) AS hours_worked
       FROM employee e
+      JOIN payroll_dates pd ON e.employee_id = pd.employee_id
       LEFT JOIN (
       SELECT *
       FROM timecards
       WHERE date_trunc('month', work_date) = date_trunc('month', current_date)
-      ) t ON e.employee_id = t.employee_id 
+      ) t ON e.employee_id = t.employee_id
       LEFT JOIN (
       SELECT DISTINCT ON (employee_id) employee_id, rate
       FROM payroll_taxes
