@@ -84,7 +84,7 @@ const payrollQueries = {
         payroll_dates.payroll_start_day,
         payroll_dates.payroll_end_day,
         (SELECT COUNT(*) FROM generate_series(pd.payroll_start_day, pd.payroll_end_day, 1) AS gs(day) WHERE SUBSTRING(B'0000000' || e.work_schedule::bit(7)::text, gs.day, 1) = '1') AS work_days
-        FROM
+    		FROM
         payroll_dates
       ) s
       LEFT JOIN (
