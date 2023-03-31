@@ -46,13 +46,14 @@ const payrollQueries = {
   getPayrolls: `
         SELECT pd.payroll_start_day,
         pd.payroll_end_day,
+        work_days,
         SUM(COALESCE(
             CASE
                 WHEN (e.work_schedule::integer & CAST(power(2, EXTRACT(DOW FROM t.work_date) - 1) AS INTEGER)) > 0
                     THEN (t.hours_worked * e.hourly_rate)
                 ELSE NULL
             END,
-            e.regular_hours * e.hourly_rate
+            e.regular_hours * e.hourly_rate * work_days
         ))::numeric(20, 2) AS gross_pay,
         SUM(COALESCE(
             CASE
@@ -60,7 +61,7 @@ const payrollQueries = {
                     THEN ((t.hours_worked * e.hourly_rate) * (1 - COALESCE(pt.rate, 0)))
                 ELSE NULL
             END,
-            e.regular_hours * e.hourly_rate * (1 - COALESCE(pt.rate, 0))
+            e.regular_hours * e.hourly_rate * (1 - COALESCE(pt.rate, 0)) * work_days
         ))::numeric(20, 2) AS net_pay,
         SUM(COALESCE(
             CASE
@@ -68,7 +69,7 @@ const payrollQueries = {
                     THEN e.regular_hours
                 ELSE NULL
             END,
-            e.regular_hours
+            e.regular_hours * work_days
         ))::numeric(20, 2) AS hours_worked
       FROM (
       SELECT employee_id,
@@ -79,8 +80,11 @@ const payrollQueries = {
       ) pd
       JOIN employee e ON e.employee_id = pd.employee_id
       CROSS JOIN LATERAL (
-        SELECT (SELECT COUNT(*) FROM regexp_split_to_table(lpad(work_schedule::text, 7, '0'), '') s WHERE s = '1') AS work_days
-        FROM generate_series(pd.payroll_start_day, pd.payroll_end_day, 1) AS d(dates)
+      SELECT
+        SUM(CASE WHEN SUBSTRING(B'0000000' || work_schedule::bit(7)::text, d.dates + 1, 1) = '1' THEN 1 ELSE 0 END) AS work_days
+        FROM
+          payroll_dates pd
+          CROSS JOIN generate_series(0, (pd.payroll_end_day) - pd.payroll_start_day) AS d(dates)
       ) s
       LEFT JOIN (
       SELECT *
@@ -91,8 +95,8 @@ const payrollQueries = {
       SELECT DISTINCT ON (employee_id) employee_id, rate
       FROM payroll_taxes
       ) pt ON e.employee_id = pt.employee_id
-      WHERE e.account_id = $1
-      GROUP BY pd.payroll_start_day, pd.payroll_end_day, e.employee_id, e.account_id
+      WHERE e.account_id = 1
+      GROUP BY pd.payroll_start_day, pd.payroll_end_day, e.employee_id, e.account_id, work_days
    `,
 }
 
