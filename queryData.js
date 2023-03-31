@@ -81,10 +81,13 @@ const payrollQueries = {
       JOIN employee e ON e.employee_id = pd.employee_id
       CROSS JOIN LATERAL (
         WITH dates AS (
-          SELECT generate_series(payroll_start_day, payroll_end_day + 1) AS bit_pos
+          SELECT generate_series(make_date(extract(year from current_date)::integer, extract(month from current_date)::integer, payroll_start_day), make_date(extract(year from current_date)::integer, extract(month from current_date)::integer, payroll_end_day), '1 day')::date AS date
         )
         SELECT 
-            SUM(CASE WHEN (work_schedule::integer & (1 << (7 - ((dates.bit_pos - 1) % 7 + 1)))) <> 0 THEN 1 ELSE 0 END) AS work_days
+            SUM(CASE WHEN (work_schedule::integer & (1 << (7 - extract(dow from dates.date))::integer)) <> 0 
+                    THEN 1 
+                    ELSE 0 
+                END) AS work_days
         FROM dates
       ) s
       LEFT JOIN (
