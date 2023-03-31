@@ -94,6 +94,55 @@ const payrollQueries = {
       WHERE e.account_id = $1
       GROUP BY pd.payroll_start_day, pd.payroll_end_day, e.employee_id, e.account_id
    `,
+   getPayrollNarrowedDown: `
+    SELECT pd.payroll_start_day,
+          pd.payroll_end_day,
+          s.work_days,
+          SUM(COALESCE(
+              CASE
+                  WHEN (e.work_schedule::integer & CAST(power(2, EXTRACT(DOW FROM t.work_date) - 1) AS INTEGER)) > 0
+                      THEN (t.hours_worked * e.hourly_rate)
+                  ELSE NULL
+              END,
+              e.regular_hours * e.hourly_rate
+          ))::numeric(20, 2) AS gross_pay,
+          SUM(COALESCE(
+              CASE
+                  WHEN (e.work_schedule::integer & CAST(power(2, EXTRACT(DOW FROM t.work_date) - 1) AS INTEGER)) > 0
+                      THEN ((t.hours_worked * e.hourly_rate) * (1 - COALESCE(pt.rate, 0)))
+                  ELSE NULL
+              END,
+              e.regular_hours * e.hourly_rate * (1 - COALESCE(pt.rate, 0))
+          ))::numeric(20, 2) AS net_pay,
+          SUM(COALESCE(
+              CASE
+                  WHEN (e.work_schedule::integer & CAST(power(2, EXTRACT(DOW FROM t.work_date) - 1) AS INTEGER)) > 0
+                      THEN e.regular_hours
+                  ELSE NULL
+              END,
+              e.regular_hours
+          ))::numeric(20, 2) AS hours_worked
+          FROM employee e
+        LEFT JOIN (
+          SELECT employee_id, MIN(payroll_start_day) AS payroll_start_day, MAX(payroll_end_day) AS payroll_end_day
+          FROM payroll_dates
+          GROUP BY employee_id
+        ) pd ON e.employee_id = pd.employee_id
+        LEFT JOIN (
+        SELECT *
+        FROM timecards
+        WHERE date_trunc('month', work_date) = date_trunc('month', current_date)
+        ) t ON e.employee_id = t.employee_id
+        LEFT JOIN (
+        SELECT DISTINCT ON (employee_id) employee_id, rate
+        FROM payroll_taxes
+              ) pt ON e.employee_id = pt.employee_id
+              CROSS JOIN LATERAL (
+          SELECT (SELECT COUNT(*) FROM regexp_split_to_table(lpad(e.work_schedule::text, 7, '0'), '') s WHERE s = '1') AS work_days
+        ) s
+        WHERE e.account_id = 1
+        GROUP BY pd.payroll_start_day, pd.payroll_end_day, e.employee_id, e.account_id, s.work_days
+      `,
 }
 
 const wishlistQueries = {
