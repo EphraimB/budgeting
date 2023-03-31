@@ -80,11 +80,10 @@ const payrollQueries = {
       ) pd
       JOIN employee e ON e.employee_id = pd.employee_id
       CROSS JOIN LATERAL (
-      SELECT
-        SUM(CASE WHEN SUBSTRING(work_schedule::bit(7)::text, d.dates + 1, 1) = '1' THEN 1 ELSE 0 END * d.dates) AS work_days
-        FROM
-          payroll_dates pd
-          CROSS JOIN generate_series(0, pd.payroll_end_day, pd.payroll_start_day) AS d(dates)
+        SELECT 
+            SUM(CASE WHEN (work_schedule::integer & (1 << (7 - ((bit_pos - 1) % 7 + 1)))) <> 0 THEN 1 ELSE 0 END) AS work_days
+        FROM payroll_dates
+        CROSS JOIN generate_series(payroll_start_day, payroll_end_day) AS bit_pos
       ) s
       LEFT JOIN (
       SELECT *
