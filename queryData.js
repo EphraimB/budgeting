@@ -74,14 +74,18 @@ const payrollQueries = {
       FROM (
       SELECT employee_id,
             MIN(payroll_start_day) AS payroll_start_day,
-            MAX(payroll_end_day) AS payroll_end_day
+            LEAST(payroll_end_day, EXTRACT(DAY FROM (DATE_TRUNC('MONTH', current_date) + INTERVAL '1 MONTH - 1 day')::date)) AS payroll_end_day
       FROM payroll_dates
       GROUP BY employee_id, payroll_start_day, payroll_end_day
       ) pd
       JOIN employee e ON e.employee_id = pd.employee_id
       CROSS JOIN LATERAL (
         WITH dates AS (
-          SELECT generate_series(make_date(extract(year from current_date)::integer, extract(month from current_date)::integer, payroll_start_day), make_date(extract(year from current_date)::integer, extract(month from current_date)::integer, payroll_end_day), '1 day')::date AS date
+          SELECT generate_series(
+            date_trunc('month', current_date) + (payroll_start_day - 1) * interval '1 day', 
+            date_trunc('month', current_date) + least(payroll_end_day - 1, date_part('days', date_trunc('month', current_date) + interval '1 month - 1 day')) * interval '1 day', 
+            '1 day'
+          )::timestamp with time zone AS date
         )
         SELECT 
             SUM(CASE WHEN (work_schedule::integer & (1 << (7 - extract(dow from dates.date))::integer)) <> 0 
