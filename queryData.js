@@ -44,9 +44,9 @@ const loanQueries = {
 
 const payrollQueries = {
   getPayrolls: `
-        SELECT pd.payroll_start_day,
-        pd.payroll_end_day,
-        work_days,
+        SELECT pd.payroll_start_day::integer,
+        pd.payroll_end_day::integer,
+        work_days::integer,
         SUM(COALESCE(
             CASE
                 WHEN (e.work_schedule::integer & CAST(power(2, EXTRACT(DOW FROM t.work_date) - 1) AS INTEGER)) > 0
