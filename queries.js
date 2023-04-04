@@ -364,19 +364,24 @@ const deleteLoan = (request, response) => {
 // Get payrolls by account
 const getPayrollsMiddleware = (request, response, next) => {
     const { account_id, to_date } = request.query;
+    const payrolls = [];
 
-    // Calculate the difference the to_date and today in native JS in number of months in integer
-    const diff = Math.floor((new Date(to_date) - new Date()) / 1000 / 60 / 60 / 24 / 30);
+    // Calculate the difference of to_date and today in native JS in number of months in integer
+    const diff = Math.floor((new Date(to_date).getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24 * 30));
 
-    pool.query(payrollQueries.getPayrollsMiddleware, [account_id, diff], (error, results) => {
-        if (error) {
-            return response.status(400).send({ errors: { "msg": "Error getting payrolls", "param": null, "location": "query" } });
-        }
+    for (let i = 0; i < diff; i++) {
+        pool.query(payrollQueries.getPayrollsMiddleware, [account_id, i], (error, results) => {
+            if (error) {
+                return response.status(400).send({ errors: { "msg": "Error getting payrolls", "param": null, "location": "query" } });
+            }
+            payrolls.push(results.rows);
 
-        request.payrolls = results.rows;
-
-        next();
-    });
+            if (i === diff - 1) {
+                // Send the response when the last payroll period is fetched
+                response.status(200).json(payrolls);
+            }
+        });
+    }
 }
 // Get all payrolls
 const getPayrolls = (request, response) => {
