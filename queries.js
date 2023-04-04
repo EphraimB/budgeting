@@ -374,7 +374,13 @@ const getPayrollsMiddleware = (request, response, next) => {
             if (error) {
                 return response.status(400).send({ errors: { "msg": "Error getting payrolls", "param": null, "location": "query" } });
             }
-            payrolls.push(results.rows);
+
+            // Push all payrolls into the same array
+            results.rows.forEach(payroll => {
+                payrolls.push({
+                    ...payroll
+                });
+            });
 
             if (i === diff - 1) {
                 // Send the response when the last payroll period is fetched
