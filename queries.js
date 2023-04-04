@@ -362,10 +362,13 @@ const deleteLoan = (request, response) => {
 }
 
 // Get payrolls by account
-const getPayrollsByAccount = (request, response, next) => {
+const getPayrollsMiddleware = (request, response, next) => {
     const { account_id, to_date } = request.query;
 
-    pool.query(payrollQueries.getPayrollsByAccount, [parseInt(account_id), to_date], (error, results) => {
+    // Calculate the difference the to_date and today in native JS in number of months in integer
+    const diff = Math.floor((new Date(to_date) - new Date()) / 1000 / 60 / 60 / 24 / 30);
+
+    pool.query(payrollQueries.getPayrollsMiddleware, [account_id, diff], (error, results) => {
         if (error) {
             return response.status(400).send({ errors: { "msg": "Error getting payrolls", "param": null, "location": "query" } });
         }
@@ -375,7 +378,6 @@ const getPayrollsByAccount = (request, response, next) => {
         next();
     });
 }
-
 // Get all payrolls
 const getPayrolls = (request, response) => {
     const { account_id } = request.params;
@@ -579,7 +581,7 @@ module.exports = {
     createLoan,
     updateLoan,
     deleteLoan,
-    getPayrollsByAccount,
+    getPayrollsMiddleware,
     getPayrolls,
     getWishlistsByAccount,
     getWishlists,
