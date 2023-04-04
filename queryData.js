@@ -99,7 +99,11 @@ const payrollQueries = {
       WITH dates AS (
       SELECT generate_series(
               make_date(extract(year from current_date)::integer, extract(month from current_date)::integer, pd.payroll_start_day), 
-              make_date(extract(year from current_date)::integer, extract(month from current_date)::integer, pd.payroll_end_day), 
+              make_date(extract(year from current_date)::integer, extract(month from current_date)::integer, CASE 
+                WHEN payroll_end_day > EXTRACT(DAY FROM DATE_TRUNC('MONTH', current_date) + INTERVAL '1 MONTH - 1 DAY') 
+                THEN EXTRACT(DAY FROM DATE_TRUNC('MONTH', current_date) + INTERVAL '1 MONTH - 1 DAY')::integer
+                ELSE payroll_end_day 
+            END),
               '1 day'
             )::date AS date
       FROM payroll_dates pd
@@ -125,8 +129,8 @@ const payrollQueries = {
       GROUP BY pd.payroll_start_day, pd.payroll_end_day, e.employee_id, e.account_id, work_days
    `,
    getPayrollsMiddleware: `
-        SELECT (make_date(extract(year from current_date)::integer, extract(month from current_date)::integer, pd.payroll_start_day::integer) + ($2 * INTERVAL '1 MONTH'))::date AS start_date,
-        (make_date(extract(year from current_date)::integer, extract(month from current_date)::integer, pd.payroll_end_day::integer) + ($2 * INTERVAL '1 MONTH'))::date AS end_date,
+        SELECT make_date(extract(year from d)::integer, extract(month from d)::integer, pd.payroll_start_day::integer) AS start_date,
+        make_date(extract(year from d)::integer, extract(month from d)::integer, pd.payroll_end_day::integer) AS end_date,
         work_days::integer,
         SUM(COALESCE(
             CASE
@@ -157,9 +161,9 @@ const payrollQueries = {
       pd.employee_id,
       pd.payroll_start_day,
       CASE 
-        WHEN EXTRACT(DOW FROM MAKE_DATE(EXTRACT(YEAR FROM current_date)::integer, EXTRACT(MONTH FROM current_date)::integer, pd.payroll_end_day_corrected::integer) + ($2 * INTERVAL '1 MONTH')) = 0 
+        WHEN EXTRACT(DOW FROM MAKE_DATE(EXTRACT(YEAR FROM current_date)::integer, EXTRACT(MONTH FROM current_date)::integer, pd.payroll_end_day_corrected::integer)) = 0 
             THEN pd.payroll_end_day_corrected - 2 -- If it's a Sunday, subtract 2 days to get to Friday
-        WHEN EXTRACT(DOW FROM MAKE_DATE(EXTRACT(YEAR FROM current_date)::integer, EXTRACT(MONTH FROM current_date)::integer, pd.payroll_end_day_corrected::integer) + ($2 * INTERVAL '1 MONTH')) = 6
+        WHEN EXTRACT(DOW FROM MAKE_DATE(EXTRACT(YEAR FROM current_date)::integer, EXTRACT(MONTH FROM current_date)::integer, pd.payroll_end_day_corrected::integer)) = 6
             THEN pd.payroll_end_day_corrected - 1 -- If it's a Saturday, subtract 1 day to get to Friday
         ELSE pd.payroll_end_day_corrected
       END AS payroll_end_day
@@ -176,15 +180,30 @@ const payrollQueries = {
       ) pd
       ) pd
       JOIN employee e ON e.employee_id = pd.employee_id
+      JOIN generate_series(
+        current_date, 
+        make_date(extract(year from $2::date)::integer, extract(month from $2::date)::integer, pd.payroll_end_day::integer), 
+        '1 month'
+      ) AS d ON d >= make_date(extract(year from current_date)::integer, extract(month from current_date)::integer, pd.payroll_start_day)
+      AND d <= make_date(extract(year from $2::date)::integer, extract(month from $2::date)::integer, pd.payroll_end_day::integer)
       CROSS JOIN LATERAL (
       WITH dates AS (
       SELECT generate_series(
-              make_date(extract(year from current_date)::integer, extract(month from current_date)::integer, pd.payroll_start_day) + ($2 * INTERVAL '1 MONTH'), 
-              make_date(extract(year from current_date)::integer, extract(month from current_date)::integer, pd.payroll_end_day) + ($2 * INTERVAL '1 MONTH'), 
+              make_date(extract(year from current_date)::integer, extract(month from current_date)::integer, pd.payroll_start_day), 
+              make_date(extract(year from current_date)::integer, extract(month from current_date)::integer, CASE 
+                WHEN payroll_end_day > EXTRACT(DAY FROM DATE_TRUNC('MONTH', current_date) + INTERVAL '1 MONTH - 1 DAY') 
+                THEN EXTRACT(DAY FROM DATE_TRUNC('MONTH', current_date) + INTERVAL '1 MONTH - 1 DAY')::integer
+                ELSE payroll_end_day 
+            END),
               '1 day'
             )::date AS date
       FROM payroll_dates pd
-      WHERE pd.employee_id = e.employee_id AND pd.payroll_start_day <= EXTRACT(DAY FROM current_date) AND pd.payroll_end_day >= EXTRACT(DAY FROM current_date)
+      WHERE pd.employee_id = e.employee_id AND pd.payroll_start_day <= EXTRACT(DAY FROM d) AND 30 >= EXTRACT(DAY FROM d)
+      AND make_date(extract(year from d)::integer, extract(month from d)::integer, CASE 
+                WHEN payroll_end_day > EXTRACT(DAY FROM DATE_TRUNC('MONTH', current_date) + INTERVAL '1 MONTH - 1 DAY') 
+                THEN EXTRACT(DAY FROM DATE_TRUNC('MONTH', current_date) + INTERVAL '1 MONTH - 1 DAY')::integer
+                ELSE payroll_end_day 
+            END) >= d
       )
       SELECT SUM(CASE 
                 WHEN (work_schedule::integer & (1 << (7 - extract(dow from dates.date))::integer)) <> 0 
@@ -203,7 +222,7 @@ const payrollQueries = {
       FROM payroll_taxes
       ) pt ON e.employee_id = pt.employee_id
       WHERE e.account_id = $1
-      GROUP BY pd.payroll_start_day, pd.payroll_end_day, e.employee_id, e.account_id, work_days
+      GROUP BY d.d, pd.payroll_start_day, pd.payroll_end_day, e.employee_id, e.account_id, work_days
    `,
 }
 
