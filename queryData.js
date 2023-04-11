@@ -184,15 +184,15 @@ const payrollQueries = {
         current_date, 
         make_date(extract(year from $2::date)::integer, extract(month from $2::date)::integer, pd.payroll_end_day::integer), 
         '1 month'
-      ) AS d ON d >= make_date(extract(year from current_date)::integer, extract(month from current_date)::integer, pd.payroll_start_day)
+      ) AS d ON d >= make_date(extract(year from d)::integer, extract(month from d)::integer, pd.payroll_start_day)
       AND d <= make_date(extract(year from $2::date)::integer, extract(month from $2::date)::integer, pd.payroll_end_day::integer)
       CROSS JOIN LATERAL (
       WITH dates AS (
       SELECT generate_series(
-              make_date(extract(year from current_date)::integer, extract(month from current_date)::integer, pd.payroll_start_day), 
-              make_date(extract(year from current_date)::integer, extract(month from current_date)::integer, CASE 
-                WHEN payroll_end_day > EXTRACT(DAY FROM DATE_TRUNC('MONTH', current_date) + INTERVAL '1 MONTH - 1 DAY') 
-                THEN EXTRACT(DAY FROM DATE_TRUNC('MONTH', current_date) + INTERVAL '1 MONTH - 1 DAY')::integer
+              make_date(extract(year from d)::integer, extract(month from d)::integer, pd.payroll_start_day), 
+              make_date(extract(year from d)::integer, extract(month from d)::integer, CASE 
+                WHEN payroll_end_day > EXTRACT(DAY FROM DATE_TRUNC('MONTH', d) + INTERVAL '1 MONTH - 1 DAY') 
+                THEN EXTRACT(DAY FROM DATE_TRUNC('MONTH', d) + INTERVAL '1 MONTH - 1 DAY')::integer
                 ELSE payroll_end_day 
             END),
               '1 day'
