@@ -226,97 +226,114 @@ const payrollQueries = {
    `,
 
    getPayrollMiddlewareNarrowedDown: `
-      SELECT make_date(extract(year from generate_dates.d)::integer, extract(month from generate_dates.d)::integer, pd.payroll_start_day::integer) AS start_date,
-            make_date(extract(year from generate_dates.d)::integer, extract(month from pd.generate_dates.d)::integer, pd.payroll_end_day::integer) AS end_date,
-            work_days::integer,
-            SUM(COALESCE(
-                CASE
-                    WHEN (e.work_schedule::integer & CAST(power(2, EXTRACT(DOW FROM t.work_date) - 1) AS INTEGER)) > 0
-                        THEN (t.hours_worked * e.hourly_rate)
-                    ELSE NULL
-                END,
-                e.regular_hours * e.hourly_rate * work_days
-            ))::numeric(20, 2) AS gross_pay,
-            SUM(COALESCE(
-                CASE
-                    WHEN (e.work_schedule::integer & CAST(power(2, EXTRACT(DOW FROM t.work_date) - 1) AS INTEGER)) > 0
-                        THEN ((t.hours_worked * e.hourly_rate) * (1 - COALESCE(pt.rate, 0)))
-                    ELSE NULL
-                END,
-                e.regular_hours * e.hourly_rate * (1 - COALESCE(pt.rate, 0)) * work_days
-            ))::numeric(20, 2) AS net_pay,
-            SUM(COALESCE(
-                CASE
-                    WHEN (e.work_schedule::integer & CAST(power(2, EXTRACT(DOW FROM t.work_date) - 1) AS INTEGER)) > 0
-                        THEN e.regular_hours
-                    ELSE NULL
-                END,
-                e.regular_hours * work_days
-            ))::numeric(20, 2) AS hours_worked
-            FROM (
-              WITH generate_dates AS (
-                SELECT d
-                FROM generate_series(
-                  current_date, 
-                  make_date(extract(year from '2023-07-19'::date)::integer, extract(month from '2023-07-19'::date)::integer, 1), 
-                  '1 month'
-                ) d
-            ), pd AS (
-                SELECT 
+      WITH date_range AS (
+        SELECT d
+        FROM generate_series(
+          current_date, 
+          make_date(extract(year from '2023-07-19'::date)::integer, extract(month from '2023-07-19'::date)::integer, 30),
+          '1 month'
+        ) d
+      ),
+      pd AS (
+        SELECT 
+          pd.employee_id, 
+          pd.payroll_start_day,
+          payroll_end_day_calc.payroll_end_day,
+          SUM(CASE 
+            WHEN (work_schedule::integer & (1 << (7 - extract(dow from date))::integer)) <> 0 
+            THEN 1 
+            ELSE 0 
+          END) AS work_days
+        FROM employee e
+        JOIN payroll_dates pd ON e.employee_id = pd.employee_id
+        CROSS JOIN date_range
+        CROSS JOIN LATERAL (
+          SELECT CASE 
+            WHEN payroll_end_day > EXTRACT(DAY FROM DATE_TRUNC('MONTH', date_range.d) + INTERVAL '1 MONTH - 1 DAY') 
+            THEN EXTRACT(DAY FROM DATE_TRUNC('MONTH', date_range.d) + INTERVAL '1 MONTH - 1 DAY')::integer
+            ELSE payroll_end_day 
+          END AS payroll_end_day
+          FROM payroll_dates
+          WHERE payroll_dates.employee_id = pd.employee_id
+        ) payroll_end_day_calc
+        CROSS JOIN LATERAL (
+          SELECT generate_series(
+            make_date(
+              extract(year from date_range.d)::integer, 
+              extract(month from date_range.d)::integer, 
+              pd.payroll_start_day
+            ), 
+            make_date(
+              extract(year from date_range.d)::integer, 
+              extract(month from date_range.d)::integer, 
+              payroll_end_day_calc.payroll_end_day
+            ),
+            '1 day'
+          )::date AS date
+        ) s
+        GROUP BY 
+          pd.employee_id, 
+          pd.payroll_start_day,
+          payroll_end_day_calc.payroll_end_day, 
+          date_range.d
+      )
+                  
+                  SELECT make_date(extract(year from date_range.d)::integer, extract(month from date_range.d)::integer, pd.payroll_start_day::integer) AS start_date,
+                  make_date(extract(year from date_range.d)::integer, extract(month from date_range.d)::integer, payroll_end_day_calc.payroll_end_day::integer) AS end_date,
+                  work_days::integer,
+                  SUM(COALESCE(
+                      CASE
+                          WHEN (e.work_schedule::integer & CAST(power(2, EXTRACT(DOW FROM t.work_date) - 1) AS INTEGER)) > 0
+                              THEN (t.hours_worked * e.hourly_rate)
+                          ELSE NULL
+                      END,
+                      e.regular_hours * e.hourly_rate * work_days
+                  ))::numeric(20, 2) AS gross_pay,
+                  SUM(COALESCE(
+                      CASE
+                          WHEN (e.work_schedule::integer & CAST(power(2, EXTRACT(DOW FROM t.work_date) - 1) AS INTEGER)) > 0
+                              THEN ((t.hours_worked * e.hourly_rate) * (1 - COALESCE(pt.rate, 0)))
+                          ELSE NULL
+                      END,
+                      e.regular_hours * e.hourly_rate * (1 - COALESCE(pt.rate, 0)) * work_days
+                  ))::numeric(20, 2) AS net_pay,
+                  SUM(COALESCE(
+                      CASE
+                          WHEN (e.work_schedule::integer & CAST(power(2, EXTRACT(DOW FROM t.work_date) - 1) AS INTEGER)) > 0
+                              THEN e.regular_hours
+                          ELSE NULL
+                      END,
+                      e.regular_hours * work_days
+                  ))::numeric(20, 2) AS hours_worked
+                  FROM employee e
+                  JOIN pd ON e.employee_id = pd.employee_id
+                  JOIN date_range ON pd.payroll_start_day <= extract(day from date_range.d)
+                    AND pd.payroll_end_day >= extract(day from date_range.d)
+                  LEFT JOIN LATERAL (
+                    SELECT CASE 
+                      WHEN payroll_end_day > EXTRACT(DAY FROM DATE_TRUNC('MONTH', date_range.d) + INTERVAL '1 MONTH - 1 DAY') 
+                      THEN EXTRACT(DAY FROM DATE_TRUNC('MONTH', date_range.d) + INTERVAL '1 MONTH - 1 DAY')::integer
+                      ELSE payroll_end_day 
+                    END AS payroll_end_day
+                    FROM payroll_dates 
+                    WHERE payroll_dates.employee_id = pd.employee_id 
+                      AND payroll_dates.payroll_start_day = pd.payroll_start_day
+                ) payroll_end_day_calc ON true
+                  LEFT JOIN (
+                    SELECT *
+                    FROM timecards
+                    WHERE date_trunc('month', work_date) = date_trunc('month', current_date)
+                ) t ON e.employee_id = t.employee_id
+                LEFT JOIN (
+                  SELECT DISTINCT ON (employee_id) employee_id, rate
+                  FROM payroll_taxes
+                ) pt ON e.employee_id = pt.employee_id
+                
+                WHERE e.account_id = 1
+                  GROUP BY date_range.d, pd.payroll_start_day, payroll_end_day_calc.payroll_end_day, pd.employee_id, e.account_id, work_days
+                  ORDER BY 
                     pd.employee_id, 
-                    pd.payroll_start_day,
-                    CASE 
-                        WHEN payroll_end_day > EXTRACT(DAY FROM DATE_TRUNC('MONTH', generate_dates.d) + INTERVAL '1 MONTH - 1 DAY') 
-                        THEN EXTRACT(DAY FROM DATE_TRUNC('MONTH', generate_dates.d) + INTERVAL '1 MONTH - 1 DAY')
-                        ELSE payroll_end_day 
-                    END AS payroll_end_day_corrected,
-                    SUM(CASE 
-                        WHEN (work_schedule::integer & (1 << (7 - extract(dow from date))::integer)) <> 0 
-                        THEN 1 
-                        ELSE 0 
-                    END) AS work_days
-                FROM payroll_dates pd
-                CROSS JOIN generate_dates
-                JOIN employee e ON e.employee_id = pd.employee_id
-                CROSS JOIN LATERAL (
-                    SELECT generate_series(
-                        make_date(
-                            extract(year from generate_dates.d)::integer, 
-                            extract(month from generate_dates.d)::integer, 
-                            pd.payroll_start_day
-                        ), 
-                        make_date(
-                            extract(year from generate_dates.d)::integer, 
-                            extract(month from generate_dates.d)::integer, 
-                            CASE 
-                                WHEN payroll_end_day > EXTRACT(DAY FROM DATE_TRUNC('MONTH', generate_dates.d) + INTERVAL '1 MONTH - 1 DAY') 
-                                THEN EXTRACT(DAY FROM DATE_TRUNC('MONTH', generate_dates.d) + INTERVAL '1 MONTH - 1 DAY')::integer
-                                ELSE payroll_end_day 
-                            END
-                        ),
-                        '1 day'
-                    )::date AS date
-                    FROM generate_dates
-                ) s
-                WHERE s.date >= make_date(extract(year from generate_dates.d)::integer, extract(month from generate_dates.d)::integer, pd.payroll_start_day)
-                  AND s.date <= make_date(extract(year from generate_dates.d)::integer, extract(month from generate_dates.d)::integer, payroll_end_day::integer)
-                GROUP BY pd.employee_id, pd.payroll_start_day, payroll_end_day_corrected
-            )
-            SELECT *
-            FROM pd
-          ) pd
-          JOIN employee e ON e.employee_id = pd.employee_id
-          LEFT JOIN (
-          SELECT *
-          FROM timecards
-          WHERE date_trunc('month', work_date) = date_trunc('month', current_date)
-          ) t ON e.employee_id = t.employee_id
-          LEFT JOIN (
-          SELECT DISTINCT ON (employee_id) employee_id, rate
-          FROM payroll_taxes
-          ) pt ON e.employee_id = pt.employee_id
-          WHERE e.account_id = 1
-          GROUP BY generate_dates.d, pd.payroll_start_day, pd.payroll_end_day, e.employee_id, e.account_id, work_days
+                    date_range.d
       `
 }
 
