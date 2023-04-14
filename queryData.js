@@ -230,7 +230,7 @@ const payrollQueries = {
       SELECT d
       FROM generate_series(
         current_date, 
-        make_date(extract(year from '2023-07-19'::date)::integer, extract(month from '2023-07-19'::date)::integer, 30),
+        '2023-07-19'::date,
         '1 month'
       ) d
     ),
