@@ -48,6 +48,10 @@ const generateTransactions = (request, response, next) => {
         }
     });
 
+    request.payrolls.forEach(payroll => {
+        generatePayrollTransactions(transactions, payroll, toDate);
+    });
+
     request.loans.forEach(loan => {
         if (loan.frequency_type === 0) {
             generateDailyLoans(transactions, loan, toDate)
