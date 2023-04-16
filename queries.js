@@ -365,7 +365,7 @@ const deleteLoan = (request, response) => {
 const getPayrollsMiddleware = (request, response, next) => {
     const { account_id, to_date } = request.query;
 
-    pool.query(payrollQueries.getPayrolls, [account_id, to_date], (error, results) => {
+    pool.query(payrollQueries.getPayrollsMiddleware, [account_id, to_date], (error, results) => {
         if (error) {
             return response.status(400).send({ errors: { "msg": "Error getting payrolls", "param": null, "location": "query" } });
         }
