@@ -5,7 +5,7 @@ const generatePayrolls = (transactions, payrolls, toDate) => {
         title: "Payroll",
         description: "payroll",
         date: new Date(payroll_end_date),
-        amount: parseInt(payrolls.net_pay),
+        amount: parseFloat(payrolls.net_pay),
     });
 }
 

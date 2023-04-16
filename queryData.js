@@ -203,7 +203,7 @@ const payrollQueries = {
                       '1 day'
                     )::date AS date
               FROM payroll_dates pd
-              WHERE pd.employee_id = e.employee_id AND pd.payroll_start_day <= EXTRACT(DAY FROM d) AND 30 >= EXTRACT(DAY FROM d)
+              WHERE pd.employee_id = e.employee_id AND pd.payroll_start_day <= EXTRACT(DAY FROM d)
               AND make_date(extract(year from d)::integer, extract(month from d)::integer, CASE 
                         WHEN payroll_end_day > EXTRACT(DAY FROM DATE_TRUNC('MONTH', current_date) + INTERVAL '1 MONTH - 1 DAY') 
                         THEN EXTRACT(DAY FROM DATE_TRUNC('MONTH', current_date) + INTERVAL '1 MONTH - 1 DAY')::integer
