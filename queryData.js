@@ -256,17 +256,18 @@ const payrollQueries = {
         FROM employee e
       CROSS JOIN LATERAL (
         SELECT 
-          pd.employee_id,
-          pd.payroll_start_day,
-          CASE 
-            WHEN pd.payroll_end_day > EXTRACT(DAY FROM DATE_TRUNC('MONTH', d1.date) + INTERVAL '1 MONTH' - INTERVAL '1 DAY')
-              THEN EXTRACT(DAY FROM DATE_TRUNC('MONTH', d1.date) + INTERVAL '1 MONTH' - INTERVAL '1 DAY')
-            WHEN EXTRACT(DOW FROM MAKE_DATE(EXTRACT(YEAR FROM d1)::integer, EXTRACT(MONTH FROM d1)::integer, pd.payroll_end_day::integer)) = 0 
-              THEN pd.payroll_end_day - 2 -- If it's a Sunday, subtract 2 days to get to Friday
-            WHEN EXTRACT(DOW FROM MAKE_DATE(EXTRACT(YEAR FROM d1)::integer, EXTRACT(MONTH FROM d1)::integer, pd.payroll_end_day::integer)) = 6
-              THEN pd.payroll_end_day - 1 -- If it's a Saturday, subtract 1 day to get to Friday
-            ELSE pd.payroll_end_day
-          END AS payroll_end_day,
+        d1.date,
+        pd.payroll_start_day,
+        pd.payroll_end_day,
+        CASE 
+          WHEN pd.payroll_end_day > EXTRACT(DAY FROM DATE_TRUNC('MONTH', d1.date) + INTERVAL '1 MONTH' - INTERVAL '1 DAY')
+            THEN EXTRACT(DAY FROM DATE_TRUNC('MONTH', d1.date) + INTERVAL '1 MONTH' - INTERVAL '1 DAY')
+          WHEN EXTRACT(DOW FROM MAKE_DATE(EXTRACT(YEAR FROM d1)::integer, EXTRACT(MONTH FROM d1)::integer, pd.payroll_end_day::integer)) = 0 
+            THEN pd.payroll_end_day - 2 -- If it's a Sunday, subtract 2 days to get to Friday
+          WHEN EXTRACT(DOW FROM MAKE_DATE(EXTRACT(YEAR FROM d1)::integer, EXTRACT(MONTH FROM d1)::integer, pd.payroll_end_day::integer)) = 6
+            THEN pd.payroll_end_day - 1 -- If it's a Saturday, subtract 1 day to get to Friday
+          ELSE pd.payroll_end_day
+        END AS corrected_payroll_end_day,
           dates.date,
           d1.date AS d1,
           SUM(CASE 
