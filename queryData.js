@@ -226,81 +226,84 @@ const payrollQueries = {
    `,
 
    getPayrollsMiddlewareNarowedDown: `
-      SELECT make_date(extract(year from d1)::integer, extract(month from d1)::integer, pd.payroll_start_day::integer) AS start_date,
-      make_date(extract(year from d1)::integer, extract(month from d1)::integer, pd.payroll_end_day::integer) AS end_date,
-      work_days::integer,
-      SUM(COALESCE(
-          CASE
-              WHEN (e.work_schedule::integer & CAST(power(2, EXTRACT(DOW FROM t.work_date) - 1) AS INTEGER)) > 0
-                  THEN (t.hours_worked * e.hourly_rate)
-              ELSE NULL
-          END,
-          e.regular_hours * e.hourly_rate * work_days
-      ))::numeric(20, 2) AS gross_pay,
-      SUM(COALESCE(
-          CASE
-              WHEN (e.work_schedule::integer & CAST(power(2, EXTRACT(DOW FROM t.work_date) - 1) AS INTEGER)) > 0
-                  THEN ((t.hours_worked * e.hourly_rate) * (1 - COALESCE(pt.rate, 0)))
-              ELSE NULL
-          END,
-          e.regular_hours * e.hourly_rate * (1 - COALESCE(pt.rate, 0)) * work_days
-      ))::numeric(20, 2) AS net_pay,
-      SUM(COALESCE(
-          CASE
-              WHEN (e.work_schedule::integer & CAST(power(2, EXTRACT(DOW FROM t.work_date) - 1) AS INTEGER)) > 0
-                  THEN e.regular_hours
-              ELSE NULL
-          END,
-          e.regular_hours * work_days
-      ))::numeric(20, 2) AS hours_worked
-      FROM employee e
-      LEFT JOIN payroll_dates pd ON e.employee_id = pd.employee_id
-    CROSS JOIN LATERAL (
-      SELECT 
-        pd.employee_id,
-        pd.payroll_start_day,
-        CASE 
-          WHEN pd.payroll_end_day > EXTRACT(DAY FROM DATE_TRUNC('MONTH', d1.date) + INTERVAL '1 MONTH' - INTERVAL '1 DAY')
-            THEN EXTRACT(DAY FROM DATE_TRUNC('MONTH', d1.date) + INTERVAL '1 MONTH' - INTERVAL '1 DAY')
-          WHEN EXTRACT(DOW FROM MAKE_DATE(EXTRACT(YEAR FROM d1)::integer, EXTRACT(MONTH FROM d1)::integer, pd.payroll_end_day::integer)) = 0 
-            THEN pd.payroll_end_day - 2 -- If it's a Sunday, subtract 2 days to get to Friday
-          WHEN EXTRACT(DOW FROM MAKE_DATE(EXTRACT(YEAR FROM d1)::integer, EXTRACT(MONTH FROM d1)::integer, pd.payroll_end_day::integer)) = 6
-            THEN pd.payroll_end_day - 1 -- If it's a Saturday, subtract 1 day to get to Friday
-          ELSE pd.payroll_end_day
-        END AS payroll_end_day,
-        dates.date,
-        d1.date AS d1,
-        SUM(CASE 
-          WHEN (work_schedule::integer & (1 << (7 - extract(dow from dates.date))::integer)) <> 0 
-          THEN 1 
-          ELSE 0 
-        END) AS work_days
-      FROM payroll_dates pd
-      CROSS JOIN LATERAL generate_series(
-        DATE_TRUNC('MONTH', current_date) + INTERVAL '1 MONTH' + pd.payroll_start_day::text::interval - INTERVAL '1 DAY',
-        DATE_TRUNC('MONTH', '2023-07-19'::date) + pd.payroll_end_day::text::interval - INTERVAL '1 DAY',
-        '1 month'
-      ) AS d1(date)
-      CROSS JOIN LATERAL generate_series(
-        DATE_TRUNC('MONTH', d1.date) + (pd.payroll_start_day - 1) * INTERVAL '1 DAY',
-        DATE_TRUNC('MONTH', d1.date) + (pd.payroll_end_day - 1) * INTERVAL '1 DAY',
-        '1 day'
-      ) AS dates(date)
-      LEFT JOIN employee e ON pd.employee_id = e.employee_id
-      GROUP BY pd.employee_id, pd.payroll_start_day, pd.payroll_end_day, dates.date, d1
-      ORDER BY pd.employee_id, pd.payroll_start_day, dates.date
-    ) s
-    LEFT JOIN (
-    SELECT *
-    FROM timecards
-    WHERE date_trunc('month', work_date) = date_trunc('month', current_date)
-    ) t ON e.employee_id = t.employee_id
-    LEFT JOIN (
-    SELECT DISTINCT ON (employee_id) employee_id, rate
-    FROM payroll_taxes
-    ) pt ON e.employee_id = pt.employee_id
-    WHERE e.account_id = 1
-    GROUP BY d1, pd.payroll_start_day, pd.payroll_end_day, e.employee_id, e.account_id, work_days
+        SELECT make_date(extract(year from d1)::integer, extract(month from d1)::integer, s.payroll_start_day::integer) AS start_date,
+        make_date(extract(year from d1)::integer, extract(month from d1)::integer, s.payroll_end_day::integer) AS end_date,
+        SUM(s.work_days::integer) AS work_days,
+        SUM(COALESCE(
+            CASE
+                WHEN (e.work_schedule::integer & CAST(power(2, EXTRACT(DOW FROM t.work_date) - 1) AS INTEGER)) > 0
+                    THEN (t.hours_worked * e.hourly_rate)
+                ELSE NULL
+            END,
+            e.regular_hours * e.hourly_rate * work_days
+        ))::numeric(20, 2) AS gross_pay,
+        SUM(COALESCE(
+            CASE
+                WHEN (e.work_schedule::integer & CAST(power(2, EXTRACT(DOW FROM t.work_date) - 1) AS INTEGER)) > 0
+                    THEN ((t.hours_worked * e.hourly_rate) * (1 - COALESCE(pt.rate, 0)))
+                ELSE NULL
+            END,
+            e.regular_hours * e.hourly_rate * (1 - COALESCE(pt.rate, 0)) * work_days
+        ))::numeric(20, 2) AS net_pay,
+        SUM(COALESCE(
+            CASE
+                WHEN (e.work_schedule::integer & CAST(power(2, EXTRACT(DOW FROM t.work_date) - 1) AS INTEGER)) > 0
+                    THEN e.regular_hours
+                ELSE NULL
+            END,
+            e.regular_hours * work_days
+        ))::numeric(20, 2) AS hours_worked
+        FROM employee e
+      CROSS JOIN LATERAL (
+        SELECT 
+          pd.employee_id,
+          pd.payroll_start_day,
+          CASE 
+            WHEN pd.payroll_end_day > EXTRACT(DAY FROM DATE_TRUNC('MONTH', d1.date) + INTERVAL '1 MONTH' - INTERVAL '1 DAY')
+              THEN EXTRACT(DAY FROM DATE_TRUNC('MONTH', d1.date) + INTERVAL '1 MONTH' - INTERVAL '1 DAY')
+            WHEN EXTRACT(DOW FROM MAKE_DATE(EXTRACT(YEAR FROM d1)::integer, EXTRACT(MONTH FROM d1)::integer, pd.payroll_end_day::integer)) = 0 
+              THEN pd.payroll_end_day - 2 -- If it's a Sunday, subtract 2 days to get to Friday
+            WHEN EXTRACT(DOW FROM MAKE_DATE(EXTRACT(YEAR FROM d1)::integer, EXTRACT(MONTH FROM d1)::integer, pd.payroll_end_day::integer)) = 6
+              THEN pd.payroll_end_day - 1 -- If it's a Saturday, subtract 1 day to get to Friday
+            ELSE pd.payroll_end_day
+          END AS payroll_end_day,
+          dates.date,
+          d1.date AS d1,
+          SUM(CASE 
+            WHEN (work_schedule::integer & (1 << (7 - extract(dow from dates.date))::integer)) <> 0 
+            THEN 1 
+            ELSE 0 
+          END) AS work_days
+        FROM payroll_dates pd
+        CROSS JOIN LATERAL generate_series(
+          current_date, 
+          make_date(extract(year from '2023-07-19'::date)::integer, extract(month from '2023-07-19'::date)::integer, pd.payroll_end_day::integer), 
+          '1 month'
+        ) AS d1(date)
+        CROSS JOIN LATERAL generate_series(
+          make_date(extract(year from d1)::integer, extract(month from d1)::integer, pd.payroll_start_day), 
+          make_date(extract(year from d1)::integer, extract(month from d1)::integer, CASE 
+                        WHEN payroll_end_day > EXTRACT(DAY FROM DATE_TRUNC('MONTH', d1) + INTERVAL '1 MONTH - 1 DAY') 
+                        THEN EXTRACT(DAY FROM DATE_TRUNC('MONTH', d1) + INTERVAL '1 MONTH - 1 DAY')::integer
+                        ELSE payroll_end_day 
+                    END),
+          '1 day'
+        ) AS dates(date)
+        LEFT JOIN employee e ON pd.employee_id = e.employee_id
+        GROUP BY pd.employee_id, pd.payroll_start_day, pd.payroll_end_day, dates.date, d1
+        ORDER BY pd.employee_id, pd.payroll_start_day, dates.date
+      ) s
+      LEFT JOIN (
+      SELECT *
+      FROM timecards
+      WHERE date_trunc('month', work_date) = date_trunc('month', current_date)
+      ) t ON e.employee_id = t.employee_id
+      LEFT JOIN (
+      SELECT DISTINCT ON (employee_id) employee_id, rate
+      FROM payroll_taxes
+      ) pt ON e.employee_id = pt.employee_id
+      WHERE e.account_id = 1 AND work_days <> 0
+      GROUP BY d1, s.payroll_start_day, s.payroll_end_day, e.employee_id, e.account_id, s.work_days
   `,
 }
 
