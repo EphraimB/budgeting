@@ -169,7 +169,7 @@ const payrollQueries = {
         pd.payroll_start_day,
         CASE 
               WHEN payroll_end_day > EXTRACT(DAY FROM DATE_TRUNC('MONTH', d1.date) + INTERVAL '1 MONTH - 1 DAY') 
-              THEN EXTRACT(DAY FROM DATE_TRUNC('MONTH', d1.date) + INTERVAL '1 MONTH - 1 DAY')
+              THEN EXTRACT(DAY FROM DATE_TRUNC('MONTH', dates.date) + INTERVAL '1 MONTH - 1 DAY')
               ELSE payroll_end_day 
             END AS unadjusted_payroll_end_day,
           dates.date,
@@ -182,7 +182,7 @@ const payrollQueries = {
         FROM payroll_dates pd
         CROSS JOIN LATERAL generate_series(
           current_date, 
-          make_date(extract(year from $2::date)::integer, extract(month from $2::date)::integer, pd.payroll_end_day::integer), 
+          $2, 
           '1 month'
         ) AS d1(date)
         CROSS JOIN LATERAL generate_series(
