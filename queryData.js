@@ -167,8 +167,8 @@ const payrollQueries = {
         SELECT
         pd.payroll_start_day,
         CASE 
-              WHEN payroll_end_day > EXTRACT(DAY FROM DATE_TRUNC('MONTH', d1.date) + INTERVAL '1 MONTH - 1 DAY') 
-              THEN EXTRACT(DAY FROM DATE_TRUNC('MONTH', dates.date) + INTERVAL '1 MONTH - 1 DAY')
+              WHEN payroll_end_day > EXTRACT(DAY FROM DATE_TRUNC('MONTH', d1) + INTERVAL '1 MONTH - 1 DAY') 
+              THEN EXTRACT(DAY FROM DATE_TRUNC('MONTH', d1) + INTERVAL '1 MONTH - 1 DAY')
               ELSE payroll_end_day 
             END AS unadjusted_payroll_end_day,
           d1.date AS d1,
