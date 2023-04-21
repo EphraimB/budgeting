@@ -110,7 +110,7 @@ const payrollQueries = {
       WHERE pd.employee_id = e.employee_id AND pd.payroll_start_day <= EXTRACT(DAY FROM current_date) AND pd.payroll_end_day >= EXTRACT(DAY FROM current_date)
       )
       SELECT SUM(CASE 
-                WHEN (work_schedule::integer & (1 << (7 - extract(dow from dates.date))::integer)) <> 0 
+              WHEN (work_schedule::integer & (1 << (6 - extract(dow from dates.date)::integer))) <> 0
                 THEN 1 
                 ELSE 0 
               END) AS work_days
@@ -194,7 +194,7 @@ const payrollQueries = {
       CROSS JOIN LATERAL (
         SELECT
           SUM(CASE 
-            WHEN (work_schedule::integer & (1 << (7 - extract(dow from dates.date))::integer)) <> 0 
+            WHEN (work_schedule::integer & (1 << (6 - extract(dow from dates.date)::integer))) <> 0
             THEN 1 
             ELSE 0 
           END) AS work_days
