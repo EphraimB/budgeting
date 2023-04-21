@@ -159,7 +159,7 @@ const payrollQueries = {
         FROM employee e
       CROSS JOIN LATERAL generate_series(
           current_date, 
-          $2, 
+          $2,
           '1 month'
       ) AS d1(date)
       CROSS JOIN LATERAL (
@@ -174,7 +174,7 @@ const payrollQueries = {
       ) s2
       CROSS JOIN LATERAL (
         SELECT
-        payroll_start_day,
+        s2.payroll_start_day,
         CASE
               WHEN EXTRACT(DOW FROM MAKE_DATE(EXTRACT(YEAR FROM d1)::integer, EXTRACT(MONTH FROM d1)::integer, s2.unadjusted_payroll_end_day::integer)) = 0 
                   THEN s2.unadjusted_payroll_end_day - 2 -- If it's a Sunday, subtract 2 days to get to Friday
@@ -210,7 +210,7 @@ const payrollQueries = {
       FROM payroll_taxes
       ) pt ON e.employee_id = pt.employee_id
       WHERE e.account_id = $1 AND work_days <> 0
-      GROUP BY d1, s2.payroll_start_day, s2.unadjusted_payroll_end_day, e.employee_id, e.account_id, s.work_days, s1.adjusted_payroll_end_day
+      GROUP BY d1, s2.payroll_start_day, e.employee_id, e.account_id, s.work_days, s1.adjusted_payroll_end_day
       ORDER BY start_date, end_date
    `,
 }
