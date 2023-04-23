@@ -1,7 +1,7 @@
 INSERT INTO employee (name, hourly_rate, regular_hours, vacation_days, sick_days, work_schedule) VALUES ('John Doe', 16.00, 8, 10, 5, B'0111100');;
 
 INSERT INTO accounts (employee_id, account_name, account_type, account_balance) VALUES (1, 'Personal', 0, 1000.00);
-INSERT INTO accounts (employee_id, account_name, account_type, account_balance) VALUES (1, 'Savings', 1, 5000.00);
+INSERT INTO accounts (employee_id, account_name, account_type, account_balance) VALUES (null, 'Savings', 1, 5000.00);
 
 INSERT INTO deposits (account_id, deposit_amount, deposit_description) VALUES (1, 1000.00, 'Test Deposit');
 INSERT INTO deposits (account_id, deposit_amount, deposit_description) VALUES (2, 5000.00, 'Test Deposit');
