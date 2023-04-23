@@ -54,7 +54,7 @@ const payrollQueries = {
                 ELSE NULL
             END,
             e.regular_hours * e.hourly_rate * work_days
-        ))::numeric(20, 2) AS gross_pay,
+        ))::numeric(12, 2) AS gross_pay,
         SUM(COALESCE(
             CASE
                 WHEN (e.work_schedule::integer & CAST(power(2, EXTRACT(DOW FROM t.work_date) - 1) AS INTEGER)) > 0
@@ -62,7 +62,7 @@ const payrollQueries = {
                 ELSE NULL
             END,
             e.regular_hours * e.hourly_rate * (1 - COALESCE(pt.rate, 0)) * work_days
-        ))::numeric(20, 2) AS net_pay,
+        ))::numeric(12, 2) AS net_pay,
         SUM(COALESCE(
             CASE
                 WHEN (e.work_schedule::integer & CAST(power(2, EXTRACT(DOW FROM t.work_date) - 1) AS INTEGER)) > 0
@@ -70,7 +70,7 @@ const payrollQueries = {
                 ELSE NULL
             END,
             e.regular_hours * work_days
-        ))::numeric(20, 2) AS hours_worked
+        ))::numeric(12, 2) AS hours_worked
       FROM (
         SELECT 
       pd.employee_id,
