@@ -1,6 +1,17 @@
+CREATE TABLE employee (
+  employee_id SERIAL PRIMARY KEY,
+  name TEXT NOT NULL,
+  hourly_rate NUMERIC(6,2) NOT NULL,
+  regular_hours NUMERIC(4,2) NOT NULL,
+  vacation_days INTEGER NOT NULL DEFAULT 0,
+  sick_days INTEGER NOT NULL DEFAULT 0,
+  work_schedule BIT(7) NOT NULL
+);
+
 -- Create a accounts table in postgres
 CREATE TABLE IF NOT EXISTS accounts (
   account_id SERIAL PRIMARY KEY,
+  employee_id INTEGER NOT NULL REFERENCES accounts(account_id),
   account_name VARCHAR(255) NOT NULL,
   account_type INT NOT NULL,
   account_balance numeric(20, 2) NOT NULL,
@@ -68,17 +79,6 @@ CREATE TABLE IF NOT EXISTS loans (
 );
 
 -- Create tables for payroll in postgres.
-CREATE TABLE employee (
-  employee_id SERIAL PRIMARY KEY,
-  account_id INTEGER NOT NULL REFERENCES accounts(account_id),
-  name TEXT NOT NULL,
-  hourly_rate NUMERIC(6,2) NOT NULL,
-  regular_hours NUMERIC(4,2) NOT NULL,
-  vacation_days INTEGER NOT NULL DEFAULT 0,
-  sick_days INTEGER NOT NULL DEFAULT 0,
-  work_schedule BIT(7) NOT NULL
-);
-
 CREATE TABLE payroll_dates (
   payroll_date_id SERIAL PRIMARY KEY,
   employee_id INTEGER NOT NULL REFERENCES employee(employee_id),
