@@ -159,7 +159,7 @@ const payrollQueries = {
         FROM employee e
       CROSS JOIN LATERAL generate_series(
           current_date, 
-          $2,
+          $2::date + INTERVAL '1 month',
           '1 month'
       ) AS d1(date)
       CROSS JOIN LATERAL (
@@ -209,7 +209,7 @@ const payrollQueries = {
       SELECT DISTINCT ON (employee_id) employee_id, rate
       FROM payroll_taxes
       ) pt ON e.employee_id = pt.employee_id
-      WHERE e.account_id = $1 AND work_days <> 0 AND make_date(extract(year from d1)::integer, extract(month from d1)::integer, s1.adjusted_payroll_end_day) > CURRENT_DATE
+      WHERE e.account_id = $1 AND work_days <> 0 AND make_date(extract(year from d1)::integer, extract(month from d1)::integer, s1.adjusted_payroll_end_day) > CURRENT_DATE AND make_date(extract(year from d1)::integer, extract(month from d1)::integer, s1.adjusted_payroll_end_day) <= $2::date
       GROUP BY d1, s2.payroll_start_day, e.employee_id, e.account_id, s.work_days, s1.adjusted_payroll_end_day
       ORDER BY start_date, end_date
    `,
