@@ -133,27 +133,12 @@ const payrollQueries = {
         make_date(extract(year from d1)::integer, extract(month from d1)::integer, s1.adjusted_payroll_end_day) AS end_date,
         SUM(s.work_days::integer) AS work_days,
         SUM(COALESCE(
-            CASE
-                WHEN (e.work_schedule::integer & CAST(power(2, EXTRACT(DOW FROM t.work_date) - 1) AS INTEGER)) > 0
-                    THEN (t.hours_worked * e.hourly_rate)
-                ELSE NULL
-            END,
             e.regular_hours * e.hourly_rate * work_days
         ))::numeric(20, 2) AS gross_pay,
         SUM(COALESCE(
-            CASE
-                WHEN (e.work_schedule::integer & CAST(power(2, EXTRACT(DOW FROM t.work_date) - 1) AS INTEGER)) > 0
-                    THEN ((t.hours_worked * e.hourly_rate) * (1 - COALESCE(pt.rate, 0)))
-                ELSE NULL
-            END,
             e.regular_hours * e.hourly_rate * (1 - COALESCE(pt.rate, 0)) * work_days
         ))::numeric(20, 2) AS net_pay,
-        SUM(COALESCE(
-            CASE
-                WHEN (e.work_schedule::integer & CAST(power(2, EXTRACT(DOW FROM t.work_date) - 1) AS INTEGER)) > 0
-                    THEN e.regular_hours
-                ELSE NULL
-            END,
+      SUM(COALESCE(
             e.regular_hours * work_days
         ))::numeric(20, 2) AS hours_worked
         FROM employee e
@@ -201,13 +186,8 @@ const payrollQueries = {
         FROM employee e
       ) s
       LEFT JOIN (
-      SELECT *
-      FROM timecards
-      WHERE date_trunc('month', work_date) = date_trunc('month', current_date)
-      ) t ON e.employee_id = t.employee_id
-      LEFT JOIN (
-      SELECT DISTINCT ON (employee_id) employee_id, rate
-      FROM payroll_taxes
+        SELECT DISTINCT ON (employee_id) employee_id, rate
+        FROM payroll_taxes
       ) pt ON e.employee_id = pt.employee_id
       WHERE e.employee_id = $1 AND work_days <> 0 AND make_date(extract(year from d1)::integer, extract(month from d1)::integer, s1.adjusted_payroll_end_day) > CURRENT_DATE AND make_date(extract(year from d1)::integer, extract(month from d1)::integer, s1.adjusted_payroll_end_day) <= $2::date
       GROUP BY d1, s2.payroll_start_day, e.employee_id, e.employee_id, s.work_days, s1.adjusted_payroll_end_day

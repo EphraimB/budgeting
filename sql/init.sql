@@ -86,15 +86,6 @@ CREATE TABLE payroll_dates (
   payroll_end_day INTEGER NOT NULL
 );
 
-CREATE TABLE timecards (
-  timecards_id SERIAL PRIMARY KEY,
-  work_date DATE NOT NULL,
-  hours_worked NUMERIC(4,2) NOT NULL,
-  is_vacation_day BOOLEAN NOT NULL DEFAULT false,
-  is_sick_day BOOLEAN NOT NULL DEFAULT false,
-  employee_id INTEGER NOT NULL REFERENCES employee(employee_id)
-);
-
 CREATE TABLE payroll_taxes (
     payroll_taxes_id SERIAL PRIMARY KEY,
     employee_id INTEGER NOT NULL REFERENCES employee(employee_id),
@@ -163,24 +154,6 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
-CREATE OR REPLACE FUNCTION add_timecard_if_needed()
-RETURNS TRIGGER AS $$
-BEGIN
-  IF EXISTS (
-    SELECT 1 FROM timecards
-    WHERE employee_id = NEW.employee_id
-      AND work_date = NEW.work_date
-      AND hours_worked = NEW.hours_worked
-      AND is_vacation_day = NEW.is_vacation_day
-      AND is_sick_day = NEW.is_sick_day
-  ) THEN
-    RETURN NULL;
-  ELSE
-    RETURN NEW;
-  END IF;
-END;
-$$ LANGUAGE plpgsql;
-
 
 CREATE TRIGGER update_accounts_dates
 BEFORE INSERT OR UPDATE ON accounts
@@ -224,8 +197,3 @@ EXECUTE FUNCTION set_null_columns();
 CREATE TRIGGER set_null_columns_loans BEFORE INSERT OR UPDATE ON loans
 FOR EACH ROW
 EXECUTE FUNCTION set_null_columns();
-
-CREATE TRIGGER timecards_insert_trigger
-BEFORE INSERT ON timecards
-FOR EACH ROW
-EXECUTE FUNCTION add_timecard_if_needed();
