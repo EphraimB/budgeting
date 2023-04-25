@@ -377,15 +377,15 @@ const getPayrollsMiddleware = (request, response, next) => {
 }
 // Get all payrolls
 const getPayrolls = (request, response) => {
-    const account_id = parseInt(request.params.account_id);
+    const employee_id = parseInt(request.params.employee_id);
 
-    pool.query(payrollQueries.getPayrolls, [account_id], (error, results) => {
+    pool.query(payrollQueries.getPayrolls, [employee_id], (error, results) => {
         if (error) {
             return response.status(400).send({ errors: { "msg": "Error getting payrolls", "param": null, "location": "query" } });
         }
 
         const returnObj = {
-            account_id,
+            employee_id,
             payrolls: results.rows,
         }
         response.status(200).json(returnObj);
