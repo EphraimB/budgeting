@@ -530,7 +530,7 @@ const deletePayrollDate = (request, response) => {
     });
 }
 
-// Get employee info
+// Get employee
 const getEmployee = (request, response) => {
     const employee_id = parseInt(request.params.employee_id);
 
@@ -540,6 +540,18 @@ const getEmployee = (request, response) => {
         }
 
         response.status(200).json(results.rows);
+    });
+}
+
+// Create employee
+const createEmployee = (request, response) => {
+    const { name, hourly_rate, regular_hours, vacation_days, sick_days, work_schedule } = request.body;
+
+    pool.query(payrollQueries.createEmployee, [name, hourly_rate, regular_hours, vacation_days, sick_days, work_schedule], (error, results) => {
+        if (error) {
+            return response.status(400).send({ errors: { "msg": "Error creating employee", "param": null, "location": "query" } });
+        }
+        response.status(201).json(results.rows);
     });
 }
 
@@ -745,6 +757,7 @@ module.exports = {
     updatePayrollDate,
     deletePayrollDate,
     getEmployee,
+    createEmployee,
     getWishlistsByAccount,
     getWishlists,
     createWishlist,
