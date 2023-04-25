@@ -696,6 +696,45 @@
         }
       }
     },
+    "/payroll/taxes/{employee_id}": {
+      "get": {
+        "summary": "Get all payroll taxes",
+        "description": "Get all payroll taxes",
+        "tags": [
+          "payroll taxes"
+        ],
+        "parameters": [
+          {
+            "name": "employee_id",
+            "in": "path",
+            "description": "Employee id",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1
+            }
+          },
+          {
+            "name": "id",
+            "in": "query",
+            "description": "Tax id",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 1
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/SuccessResponsePayrollTaxes"
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          }
+        }
+      }
+    },
     "/wishlists/{account_id}": {
       "get": {
         "summary": "Get a list of wishlists",
@@ -1643,36 +1682,94 @@
         "content": {
           "application/json": {
             "schema": {
-              "type": "array",
-              "items": {
-                "type": "object",
-                "properties": {
-                  "start_date": {
-                    "type": "string",
-                    "format": "date-time"
-                  },
-                  "end_date": {
-                    "type": "string",
-                    "format": "date-time"
-                  },
-                  "work_days": {
-                    "type": "integer",
-                    "example": 5
-                  },
-                  "gross_pay": {
-                    "type": "number",
-                    "format": "double",
-                    "example": 250.00
-                  },
-                  "net_pay": {
-                    "type": "number",
-                    "format": "double",
-                    "example": 200.00
-                  },
-                  "hours_worked": {
-                    "type": "number",
-                    "format": "double",
-                    "example": 40.00
+              "type": "object",
+              "properties": {
+                "employee_id": {
+                  "type": "integer",
+                  "format": "int64",
+                  "minimum": 1
+                },
+                "payrolls": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "start_date": {
+                        "type": "string",
+                        "format": "date-time"
+                      },
+                      "end_date": {
+                        "type": "string",
+                        "format": "date-time"
+                      },
+                      "work_days": {
+                        "type": "integer",
+                        "example": 5
+                      },
+                      "gross_pay": {
+                        "type": "number",
+                        "format": "double",
+                        "example": 250.00
+                      },
+                      "net_pay": {
+                        "type": "number",
+                        "format": "double",
+                        "example": 200.49
+                      },
+                      "hours_worked": {
+                        "type": "number",
+                        "format": "double",
+                        "example": 40.00
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "SuccessResponsePayrollTaxes": {
+        "description": "A JSON array of payroll taxes",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "employee_id": {
+                  "type": "integer",
+                  "format": "int64",
+                  "minimum": 1
+                },
+                "payroll_taxes": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "payroll_taxes_id": {
+                        "type": "integer",
+                        "format": "int64",
+                        "minimum": 1
+                      },
+                      "employee_id": {
+                        "type": "integer",
+                        "format": "int64",
+                        "minimum": 1
+                      },
+                      "name": {
+                        "type": "string",
+                        "example": "Payroll tax test"
+                      },
+                      "rate": {
+                        "type": "number",
+                        "format": "double",
+                        "example": 250.00
+                      },
+                      "applies_to": {
+                        "type": "string",
+                        "example": "gross_salary"
+                      }
+                    }
                   }
                 }
               }
