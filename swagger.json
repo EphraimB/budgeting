@@ -1057,6 +1057,33 @@
             "$ref": "#/components/responses/BadRequest"
           }
         }
+      },
+      "delete": {
+        "summary": "Delete a payroll employee",
+        "description": "Delete a payroll employee",
+        "tags": [
+          "payroll employees"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Employee id",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No content"
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          }
+        }
       }
     },
     "/wishlists/{account_id}": {
