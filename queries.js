@@ -530,6 +530,19 @@ const deletePayrollDate = (request, response) => {
     });
 }
 
+// Get employee info
+const getEmployee = (request, response) => {
+    const employee_id = parseInt(request.params.employee_id);
+
+    pool.query(payrollQueries.getEmployee, [employee_id], (error, results) => {
+        if (error) {
+            return response.status(400).send({ errors: { "msg": "Error getting employee", "param": null, "location": "query" } });
+        }
+
+        response.status(200).json(results.rows);
+    });
+}
+
 // Get wishlists by account
 const getWishlistsByAccount = (request, response, next) => {
     const { account_id, to_date } = request.query;
@@ -731,6 +744,7 @@ module.exports = {
     createPayrollDate,
     updatePayrollDate,
     deletePayrollDate,
+    getEmployee,
     getWishlistsByAccount,
     getWishlists,
     createWishlist,

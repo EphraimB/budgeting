@@ -178,6 +178,7 @@ const payrollQueries = {
   createPayrollDate: 'INSERT INTO payroll_dates (employee_id, payroll_start_day, payroll_end_day) VALUES ($1, $2, $3) RETURNING *',
   updatePayrollDate: 'UPDATE payroll_dates SET payroll_start_day = $1, payroll_end_day = $2 WHERE payroll_date_id = $3 RETURNING *',
   deletePayrollDate: 'DELETE FROM payroll_dates WHERE payroll_date_id = $1',
+  getEmployee: 'SELECT * FROM employee WHERE employee_id = $1',
 }
 
 const wishlistQueries = {
