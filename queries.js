@@ -437,6 +437,19 @@ const createPayrollTax = (request, response) => {
     });
 }
 
+// Update payroll tax
+const updatePayrollTax = (request, response) => {
+    const id = parseInt(request.params.id);
+    const { name, rate, applies_to } = request.body;
+
+    pool.query(payrollQueries.updatePayrollTax, [name, rate, applies_to, id], (error, results) => {
+        if (error) {
+            return response.status(400).send({ errors: { "msg": "Error updating payroll tax", "param": null, "location": "query" } });
+        }
+        response.status(200).send(results.rows);
+    });
+}
+
 // Get wishlists by account
 const getWishlistsByAccount = (request, response, next) => {
     const { account_id, to_date } = request.query;
@@ -632,6 +645,7 @@ module.exports = {
     getPayrolls,
     getPayrollTaxes,
     createPayrollTax,
+    updatePayrollTax,
     getWishlistsByAccount,
     getWishlists,
     createWishlist,

@@ -1,7 +1,7 @@
 const express = require('express');
 const { query, param, body } = require('express-validator');
 const router = express.Router();
-const { getPayrolls, getPayrollTaxes, createPayrollTax } = require('../queries.js');
+const { getPayrolls, getPayrollTaxes, createPayrollTax, updatePayrollTax } = require('../queries.js');
 const validateRequest = require('../validateRequest.js');
 
 router.get('/:employee_id',
@@ -28,5 +28,15 @@ router.post('/taxes/:employee_id',
         validateRequest,
     ],
     createPayrollTax);
+
+router.put('/taxes/:id',
+    [
+        param('id').isInt({ min: 1 }).withMessage('ID must be a number'),
+        body('name').isString().withMessage('Name must be a string'),
+        body('rate').isFloat({ min: 0 }).withMessage('Rate must be a number'),
+        body('applies_to').isString().withMessage('Applies_to must be a string'),
+        validateRequest,
+    ],
+    updatePayrollTax);
 
 module.exports = router;
