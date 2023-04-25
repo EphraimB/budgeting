@@ -1,7 +1,7 @@
 const express = require('express');
 const { query, param, body } = require('express-validator');
 const router = express.Router();
-const { getPayrolls, getPayrollTaxes, createPayrollTax, updatePayrollTax, deletePayrollTax, getPayrollDates, createPayrollDate, updatePayrollDate, deletePayrollDate, getEmployee, createEmployee, updateEmployee } = require('../queries.js');
+const { getPayrolls, getPayrollTaxes, createPayrollTax, updatePayrollTax, deletePayrollTax, getPayrollDates, createPayrollDate, updatePayrollDate, deletePayrollDate, getEmployee, createEmployee, updateEmployee, deleteEmployee } = require('../queries.js');
 const validateRequest = require('../validateRequest.js');
 
 router.get('/:employee_id',
@@ -110,5 +110,12 @@ router.put('/employee/:employee_id',
         validateRequest,
     ],
     updateEmployee);
+
+router.delete('/employee/:employee_id',
+    [
+        param('employee_id').isInt({ min: 1 }).withMessage('Employee ID must be a number'),
+        validateRequest,
+    ],
+    deleteEmployee);
 
 module.exports = router;
