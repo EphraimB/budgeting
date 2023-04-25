@@ -869,6 +869,34 @@
         }
       }
     },
+    "/payroll/dates/": {
+      "post": {
+        "summary": "Create a payroll date",
+        "description": "Create a payroll date",
+        "tags": [
+          "payroll dates"
+        ],
+        "requestBody": {
+          "description": "Payroll date object to be created",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PayrollDateManipulation"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "$ref": "#/components/responses/SuccessResponsePayrollDates"
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          }
+        }
+      }
+    },
     "/wishlists/{account_id}": {
       "get": {
         "summary": "Get a list of wishlists",
@@ -1486,6 +1514,28 @@
           "applies_to": {
             "type": "string",
             "example": "gross_salary"
+          }
+        }
+      },
+      "PayrollDateManipulation": {
+        "type": "object",
+        "properties": {
+          "employee_id": {
+            "type": "integer",
+            "format": "int64",
+            "minimum": 1
+          },
+          "start_day": {
+            "type": "integer",
+            "example": 1,
+            "minimum": 1,
+            "maximum": 31
+          },
+          "end_day": {
+            "type": "integer",
+            "example": 31,
+            "minimum": 1,
+            "maximum": 31
           }
         }
       },
