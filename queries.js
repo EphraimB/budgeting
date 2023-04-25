@@ -1,5 +1,5 @@
 const pool = require('./db');
-const { accountQueries, depositQueries, withdrawalQueries, expenseQueries, loanQueries, wishlistQueries, transferQueries, currentBalanceQueries } = require('./queryData');
+const { accountQueries, depositQueries, withdrawalQueries, expenseQueries, loanQueries, payrollQueries, wishlistQueries, transferQueries, currentBalanceQueries } = require('./queryData');
 
 // Get all accounts
 const getAccounts = (request, response) => {
@@ -361,6 +361,235 @@ const deleteLoan = (request, response) => {
     });
 }
 
+// Get payrolls by account
+const getPayrollsMiddleware = (request, response, next) => {
+    const { account_id, to_date } = request.query;
+
+    pool.query(payrollQueries.getPayrollsMiddleware, [account_id, to_date], (error, results) => {
+        if (error) {
+            return response.status(400).send({ errors: { "msg": "Error getting payrolls", "param": null, "location": "query" } });
+        }
+
+        request.payrolls = results.rows;
+
+        next();
+    });
+}
+// Get all payrolls
+const getPayrolls = (request, response) => {
+    const employee_id = parseInt(request.query.employee_id);
+
+    pool.query(payrollQueries.getPayrolls, [employee_id], (error, results) => {
+        if (error) {
+            return response.status(400).send({ errors: { "msg": "Error getting payrolls", "param": null, "location": "query" } });
+        }
+
+        const returnObj = {
+            employee_id,
+            payrolls: results.rows,
+        }
+        response.status(200).json(returnObj);
+    });
+}
+
+// Get payroll taxes
+const getPayrollTaxes = (request, response) => {
+    const employee_id = parseInt(request.params.employee_id);
+    const { id } = request.query;
+
+    if (!id) {
+        pool.query(payrollQueries.getPayrollTaxes, [employee_id], (error, results) => {
+            if (error) {
+                return response.status(400).send({ errors: { "msg": "Error getting payroll taxes", "param": null, "location": "query" } });
+            }
+
+            const returnObj = {
+                employee_id,
+                payroll_taxes: results.rows,
+            }
+            response.status(200).json(returnObj);
+        });
+    } else {
+        pool.query(payrollQueries.getPayrollTax, [employee_id, id], (error, results) => {
+            if (error) {
+                return response.status(400).send({ errors: { "msg": "Error getting payroll tax", "param": null, "location": "query" } });
+            }
+
+            const returnObj = {
+                employee_id,
+                payroll_tax: results.rows,
+            }
+            response.status(200).json(returnObj);
+        });
+    }
+}
+
+// Create payroll tax
+const createPayrollTax = (request, response) => {
+    const { employee_id, name, rate, applies_to } = request.body;
+
+    pool.query(payrollQueries.createPayrollTax, [employee_id, name, rate, applies_to], (error, results) => {
+        if (error) {
+            return response.status(400).send({ errors: { "msg": "Error creating payroll tax", "param": null, "location": "query" } });
+        }
+        response.status(201).json(results.rows);
+    });
+}
+
+// Update payroll tax
+const updatePayrollTax = (request, response) => {
+    const id = parseInt(request.params.id);
+    const { name, rate, applies_to } = request.body;
+
+    pool.query(payrollQueries.updatePayrollTax, [name, rate, applies_to, id], (error, results) => {
+        if (error) {
+            return response.status(400).send({ errors: { "msg": "Error updating payroll tax", "param": null, "location": "query" } });
+        }
+        response.status(200).send(results.rows);
+    });
+}
+
+// Delete payroll tax
+const deletePayrollTax = (request, response) => {
+    const id = parseInt(request.params.id);
+
+    pool.query(payrollQueries.deletePayrollTax, [id], (error, results) => {
+        if (error) {
+            return response.status(400).send({ errors: { "msg": "Error deleting payroll tax", "param": null, "location": "query" } });
+        }
+        response.status(204).send();
+    });
+}
+
+// Get payroll dates
+const getPayrollDates = (request, response) => {
+    const employee_id = parseInt(request.params.employee_id);
+    const { id } = request.query;
+
+    if (!id) {
+        pool.query(payrollQueries.getPayrollDates, [employee_id], (error, results) => {
+            if (error) {
+                return response.status(400).send({ errors: { "msg": "Error getting payroll dates", "param": null, "location": "query" } });
+            }
+
+            const returnObj = {
+                employee_id,
+                payroll_dates: results.rows,
+            }
+            response.status(200).json(returnObj);
+        });
+    } else {
+        pool.query(payrollQueries.getPayrollDate, [employee_id, id], (error, results) => {
+            if (error) {
+                return response.status(400).send({ errors: { "msg": "Error getting payroll date", "param": null, "location": "query" } });
+            }
+
+            const returnObj = {
+                employee_id,
+                payroll_date: results.rows,
+            }
+            response.status(200).json(returnObj);
+        });
+    }
+}
+
+// Create payroll date
+const createPayrollDate = (request, response) => {
+    const { employee_id, start_day, end_day } = request.body;
+
+    pool.query(payrollQueries.createPayrollDate, [employee_id, start_day, end_day], (error, results) => {
+        if (error) {
+            return response.status(400).send({ errors: { "msg": "Error creating payroll date", "param": null, "location": "query" } });
+        }
+        response.status(201).json(results.rows);
+    });
+}
+
+// Update payroll date
+const updatePayrollDate = (request, response) => {
+    const id = parseInt(request.params.id);
+    const { start_day, end_day } = request.body;
+
+    pool.query(payrollQueries.updatePayrollDate, [start_day, end_day, id], (error, results) => {
+        if (error) {
+            return response.status(400).send({ errors: { "msg": "Error updating payroll date", "param": null, "location": "query" } });
+        }
+        response.status(200).send(results.rows);
+    });
+}
+
+// Delete payroll date
+const deletePayrollDate = (request, response) => {
+    const id = parseInt(request.params.id);
+
+    pool.query(payrollQueries.deletePayrollDate, [id], (error, results) => {
+        if (error) {
+            return response.status(400).send({ errors: { "msg": "Error deleting payroll date", "param": null, "location": "query" } });
+        }
+        response.status(204).send();
+    });
+}
+
+// Get employee
+const getEmployee = (request, response) => {
+    const { id } = request.query;
+
+    if (!id) {
+        pool.query(payrollQueries.getEmployees, (error, results) => {
+            if (error) {
+                return response.status(400).send({ errors: { "msg": "Error getting employee", "param": null, "location": "query" } });
+            }
+
+            response.status(200).json(results.rows);
+        });
+    } else {
+        pool.query(payrollQueries.getEmployee, [id], (error, results) => {
+            if (error) {
+                return response.status(400).send({ errors: { "msg": "Error getting employee", "param": null, "location": "query" } });
+            }
+
+            response.status(200).json(results.rows);
+        });
+    }
+}
+
+// Create employee
+const createEmployee = (request, response) => {
+    const { name, hourly_rate, regular_hours, vacation_days, sick_days, work_schedule } = request.body;
+
+    pool.query(payrollQueries.createEmployee, [name, hourly_rate, regular_hours, vacation_days, sick_days, work_schedule], (error, results) => {
+        if (error) {
+            return response.status(400).send({ errors: { "msg": "Error creating employee", "param": null, "location": "query" } });
+        }
+        response.status(201).json(results.rows);
+    });
+}
+
+// Update employee
+const updateEmployee = (request, response) => {
+    const employee_id = parseInt(request.params.employee_id);
+    const { name, hourly_rate, regular_hours, vacation_days, sick_days, work_schedule } = request.body;
+
+    pool.query(payrollQueries.updateEmployee, [name, hourly_rate, regular_hours, vacation_days, sick_days, work_schedule, employee_id], (error, results) => {
+        if (error) {
+            return response.status(400).send({ errors: { "msg": "Error updating employee", "param": null, "location": "query" } });
+        }
+        response.status(200).send(results.rows);
+    });
+}
+
+// Delete employee
+const deleteEmployee = (request, response) => {
+    const employee_id = parseInt(request.params.employee_id);
+
+    pool.query(payrollQueries.deleteEmployee, [employee_id], (error, results) => {
+        if (error) {
+            return response.status(400).send({ errors: { "msg": "Error deleting employee", "param": null, "location": "query" } });
+        }
+        response.status(204).send();
+    });
+}
+
 // Get wishlists by account
 const getWishlistsByAccount = (request, response, next) => {
     const { account_id, to_date } = request.query;
@@ -552,6 +781,20 @@ module.exports = {
     createLoan,
     updateLoan,
     deleteLoan,
+    getPayrollsMiddleware,
+    getPayrolls,
+    getPayrollTaxes,
+    createPayrollTax,
+    updatePayrollTax,
+    deletePayrollTax,
+    getPayrollDates,
+    createPayrollDate,
+    updatePayrollDate,
+    deletePayrollDate,
+    getEmployee,
+    createEmployee,
+    updateEmployee,
+    deleteEmployee,
     getWishlistsByAccount,
     getWishlists,
     createWishlist,
