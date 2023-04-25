@@ -377,7 +377,7 @@ const getPayrollsMiddleware = (request, response, next) => {
 }
 // Get all payrolls
 const getPayrolls = (request, response) => {
-    const employee_id = parseInt(request.params.employee_id);
+    const employee_id = parseInt(request.query.employee_id);
 
     pool.query(payrollQueries.getPayrolls, [employee_id], (error, results) => {
         if (error) {
@@ -532,15 +532,25 @@ const deletePayrollDate = (request, response) => {
 
 // Get employee
 const getEmployee = (request, response) => {
-    const employee_id = parseInt(request.params.employee_id);
+    const { id } = request.query;
 
-    pool.query(payrollQueries.getEmployee, [employee_id], (error, results) => {
-        if (error) {
-            return response.status(400).send({ errors: { "msg": "Error getting employee", "param": null, "location": "query" } });
-        }
+    if (!id) {
+        pool.query(payrollQueries.getEmployees, (error, results) => {
+            if (error) {
+                return response.status(400).send({ errors: { "msg": "Error getting employee", "param": null, "location": "query" } });
+            }
 
-        response.status(200).json(results.rows);
-    });
+            response.status(200).json(results.rows);
+        });
+    } else {
+        pool.query(payrollQueries.getEmployee, [id], (error, results) => {
+            if (error) {
+                return response.status(400).send({ errors: { "msg": "Error getting employee", "param": null, "location": "query" } });
+            }
+
+            response.status(200).json(results.rows);
+        });
+    }
 }
 
 // Create employee

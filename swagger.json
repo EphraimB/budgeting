@@ -964,6 +964,45 @@
         }
       }
     },
+    "/payroll/employee{employee_id}": {
+      "get": {
+        "summary": "Get all payroll employees",
+        "description": "Get all payroll employees",
+        "tags": [
+          "payroll employees"
+        ],
+        "parameters": [
+          {
+            "name": "employee_id",
+            "in": "path",
+            "description": "Employee id",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1
+            }
+          },
+          {
+            "name": "id",
+            "in": "query",
+            "description": "Payroll employee id",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 1
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/SuccessResponsePayrollEmployees"
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          }
+        }
+      }
+    },
     "/wishlists/{account_id}": {
       "get": {
         "summary": "Get a list of wishlists",
