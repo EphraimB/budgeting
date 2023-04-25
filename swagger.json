@@ -667,7 +667,7 @@
         }
       }
     },
-    "/payroll/{employee_id}": {
+    "/payroll": {
       "get": {
         "summary": "Get all payrolls",
         "description": "Get all payrolls",
@@ -677,7 +677,7 @@
         "parameters": [
           {
             "name": "employee_id",
-            "in": "path",
+            "in": "query",
             "description": "Employee id",
             "required": true,
             "schema": {
@@ -964,7 +964,7 @@
         }
       }
     },
-    "/payroll/employee{employee_id}": {
+    "/payroll/employee/": {
       "get": {
         "summary": "Get all payroll employees",
         "description": "Get all payroll employees",
@@ -973,19 +973,9 @@
         ],
         "parameters": [
           {
-            "name": "employee_id",
-            "in": "path",
-            "description": "Employee id",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "minimum": 1
-            }
-          },
-          {
             "name": "id",
             "in": "query",
-            "description": "Payroll employee id",
+            "description": "Employee id",
             "required": false,
             "schema": {
               "type": "integer",
