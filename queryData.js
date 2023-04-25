@@ -175,6 +175,7 @@ const payrollQueries = {
   deletePayrollTax: 'DELETE FROM payroll_taxes WHERE payroll_taxes_id = $1',
   getPayrollDates: 'SELECT * FROM payroll_dates WHERE employee_id = $1',
   getPayrollDate: 'SELECT * FROM payroll_dates WHERE employee_id = $1 AND payroll_date_id = $2',
+  createPayrollDate: 'INSERT INTO payroll_dates (employee_id, payroll_start_day, payroll_end_day) VALUES ($1, $2, $3) RETURNING *',
 }
 
 const wishlistQueries = {

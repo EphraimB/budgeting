@@ -493,6 +493,18 @@ const getPayrollDates = (request, response) => {
     }
 }
 
+// Create payroll date
+const createPayrollDate = (request, response) => {
+    const { employee_id, start_day, end_day } = request.body;
+
+    pool.query(payrollQueries.createPayrollDate, [employee_id, start_day, end_day], (error, results) => {
+        if (error) {
+            return response.status(400).send({ errors: { "msg": "Error creating payroll date", "param": null, "location": "query" } });
+        }
+        response.status(201).json(results.rows);
+    });
+}
+
 // Get wishlists by account
 const getWishlistsByAccount = (request, response, next) => {
     const { account_id, to_date } = request.query;
@@ -691,6 +703,7 @@ module.exports = {
     updatePayrollTax,
     deletePayrollTax,
     getPayrollDates,
+    createPayrollDate,
     getWishlistsByAccount,
     getWishlists,
     createWishlist,

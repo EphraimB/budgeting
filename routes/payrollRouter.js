@@ -1,7 +1,7 @@
 const express = require('express');
 const { query, param, body } = require('express-validator');
 const router = express.Router();
-const { getPayrolls, getPayrollTaxes, createPayrollTax, updatePayrollTax, deletePayrollTax, getPayrollDates } = require('../queries.js');
+const { getPayrolls, getPayrollTaxes, createPayrollTax, updatePayrollTax, deletePayrollTax, getPayrollDates, createPayrollDate } = require('../queries.js');
 const validateRequest = require('../validateRequest.js');
 
 router.get('/:employee_id',
@@ -53,5 +53,15 @@ router.get('/dates/:employee_id',
         validateRequest,
     ],
     getPayrollDates);
+
+router.post('/dates/',
+    [
+        body('employee_id').isInt({ min: 1 }).withMessage('Employee ID must be a number'),
+        body("start_day").isInt({ min: 1, max: 31 }).withMessage("Start day must be a number between 1 and 31"),
+        body("end_day").isInt({ min: 1, max: 31 }).withMessage("End day must be a number between 1 and 31"),
+        validateRequest,
+    ],
+    createPayrollDate);
+
 
 module.exports = router;
