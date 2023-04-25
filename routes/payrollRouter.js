@@ -19,9 +19,9 @@ router.get('/taxes/:employee_id',
     ],
     getPayrollTaxes);
 
-router.post('/taxes/:employee_id',
+router.post('/taxes/',
     [
-        param('employee_id').isInt({ min: 1 }).withMessage('Employee ID must be a number'),
+        body('employee_id').isInt({ min: 1 }).withMessage('Employee ID must be a number'),
         body('name').isString().withMessage('Name must be a string'),
         body('rate').isFloat({ min: 0 }).withMessage('Rate must be a number'),
         body('applies_to').isString().withMessage('Applies_to must be a string'),

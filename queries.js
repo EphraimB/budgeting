@@ -426,8 +426,7 @@ const getPayrollTaxes = (request, response) => {
 
 // Create payroll tax
 const createPayrollTax = (request, response) => {
-    const employee_id = parseInt(request.params.employee_id);
-    const { name, rate, applies_to } = request.body;
+    const { employee_id, name, rate, applies_to } = request.body;
 
     pool.query(payrollQueries.createPayrollTax, [employee_id, name, rate, applies_to], (error, results) => {
         if (error) {

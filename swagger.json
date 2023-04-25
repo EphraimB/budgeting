@@ -735,6 +735,34 @@
         }
       }
     },
+    "/payroll/taxes": {
+      "post": {
+        "summary": "Create a payroll tax",
+        "description": "Create a payroll tax",
+        "tags": [
+          "payroll taxes"
+        ],
+        "requestBody": {
+          "description": "Payroll tax object to be created",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PayrollTaxManipulation"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "$ref": "#/components/responses/SuccessResponsePayrollTaxes"
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          }
+        }
+      }
+    },
     "/wishlists/{account_id}": {
       "get": {
         "summary": "Get a list of wishlists",
@@ -1329,6 +1357,29 @@
           "begin_date": {
             "type": "string",
             "format": "date-time"
+          }
+        }
+      },
+      "PayrollTaxManipulation": {
+        "type": "object",
+        "properties": {
+          "employee_id": {
+            "type": "integer",
+            "format": "int64",
+            "minimum": 1
+          },
+          "name": {
+            "type": "string",
+            "example": "Federal Income Tax"
+          },
+          "rate": {
+            "type": "number",
+            "format": "double",
+            "example": 0.15
+          },
+          "applies_to": {
+            "type": "string",
+            "example": "gross_salary"
           }
         }
       },
