@@ -897,6 +897,46 @@
         }
       }
     },
+    "/payroll/dates/{id}": {
+      "put": {
+        "summary": "Update a payroll date",
+        "description": "Update a payroll date",
+        "tags": [
+          "payroll dates"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Payroll date id",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1
+            }
+          }
+        ],
+        "requestBody": {
+          "description": "Payroll date object to be updated",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PayrollDateManipulation"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/SuccessResponsePayrollDates"
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          }
+        }
+      }
+    },
     "/wishlists/{account_id}": {
       "get": {
         "summary": "Get a list of wishlists",
