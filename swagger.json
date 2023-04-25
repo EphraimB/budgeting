@@ -931,7 +931,7 @@
           "200": {
             "$ref": "#/components/responses/SuccessResponsePayrollDates"
           },
-          "400": { 
+          "400": {
             "$ref": "#/components/responses/BadRequest"
           }
         }
@@ -985,6 +985,32 @@
         ],
         "responses": {
           "200": {
+            "$ref": "#/components/responses/SuccessResponsePayrollEmployees"
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          }
+        }
+      },
+      "post": {
+        "summary": "Create a payroll employee",
+        "description": "Create a payroll employee",
+        "tags": [
+          "payroll employees"
+        ],
+        "requestBody": {
+          "description": "Payroll employee object to be created",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PayrollEmployeeManipulation"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
             "$ref": "#/components/responses/SuccessResponsePayrollEmployees"
           },
           "400": {
@@ -1635,6 +1661,37 @@
           }
         }
       },
+      "PayrollEmployeeManipulation": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "example": "John Doe"
+          },
+          "hourly_rate": {
+            "type": "number",
+            "format": "double",
+            "example": 15.00
+          },
+          "regular_hours": {
+            "type": "number",
+            "format": "double",
+            "example": 8.00
+          },
+          "vacation_days": {
+            "type": "integer",
+            "example": 10
+          },
+          "sick_days": {
+            "type": "integer",
+            "example": 10
+          },
+          "work_schedule": {
+            "type": "string",
+            "example": "0111110"
+          }
+        }
+      },
       "WishlistManipulation": {
         "type": "object",
         "properties": {
@@ -2117,6 +2174,49 @@
                       }
                     }
                   }
+                }
+              }
+            }
+          }
+        }
+      },
+      "SuccessResponsePayrollEmployees": {
+        "description": "A JSON array of payroll employees",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "employee_id": {
+                  "type": "integer",
+                  "format": "int64",
+                  "minimum": 1
+                },
+                "name": {
+                  "type": "string",
+                  "example": "Employee test"
+                },
+                "hourly_rate": {
+                  "type": "number",
+                  "format": "double",
+                  "example": 16.00
+                },
+                "regular_hours": {
+                  "type": "number",
+                  "format": "double",
+                  "example": 8.00
+                },
+                "vacation_days": {
+                  "type": "integer",
+                  "example": 5
+                },
+                "sick_days": {
+                  "type": "integer",
+                  "example": 5
+                },
+                "work_schedule": {
+                  "type": "string",
+                  "example": "0111110"
                 }
               }
             }
