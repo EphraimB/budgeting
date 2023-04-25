@@ -170,6 +170,7 @@ const payrollQueries = {
    `,
   getPayrollTaxes: 'SELECT * FROM payroll_taxes WHERE employee_id = $1',
   getPayrollTax: 'SELECT * FROM payroll_taxes WHERE employee_id = $1 AND payroll_taxes_id = $2',
+  createPayrollTax: 'INSERT INTO payroll_taxes (employee_id, name, rate, applies_to) VALUES ($1, $2, $3, $4) RETURNING *',
 }
 
 const wishlistQueries = {

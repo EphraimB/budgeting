@@ -424,6 +424,19 @@ const getPayrollTaxes = (request, response) => {
     }
 }
 
+// Create payroll tax
+const createPayrollTax = (request, response) => {
+    const employee_id = parseInt(request.params.employee_id);
+    const { name, rate, applies_to } = request.body;
+
+    pool.query(payrollQueries.createPayrollTax, [employee_id, name, rate, applies_to], (error, results) => {
+        if (error) {
+            return response.status(400).send({ errors: { "msg": "Error creating payroll tax", "param": null, "location": "query" } });
+        }
+        response.status(201).json(results.rows);
+    });
+}
+
 // Get wishlists by account
 const getWishlistsByAccount = (request, response, next) => {
     const { account_id, to_date } = request.query;
@@ -618,6 +631,7 @@ module.exports = {
     getPayrollsMiddleware,
     getPayrolls,
     getPayrollTaxes,
+    createPayrollTax,
     getWishlistsByAccount,
     getWishlists,
     createWishlist,
