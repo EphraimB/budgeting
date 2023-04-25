@@ -763,6 +763,46 @@
         }
       }
     },
+    "/payroll/taxes/{id}": {
+      "put": {
+        "summary": "Update a payroll tax",
+        "description": "Update a payroll tax",
+        "tags": [
+          "payroll taxes"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Payroll tax id",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1
+            }
+          }
+        ],
+        "requestBody": {
+          "description": "Payroll tax object to be updated",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PayrollTaxManipulation"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/SuccessResponsePayrollTaxes"
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          }
+        }
+      }
+    },
     "/wishlists/{account_id}": {
       "get": {
         "summary": "Get a list of wishlists",
