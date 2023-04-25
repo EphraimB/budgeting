@@ -172,6 +172,7 @@ const payrollQueries = {
   getPayrollTax: 'SELECT * FROM payroll_taxes WHERE employee_id = $1 AND payroll_taxes_id = $2',
   createPayrollTax: 'INSERT INTO payroll_taxes (employee_id, name, rate, applies_to) VALUES ($1, $2, $3, $4) RETURNING *',
   updatePayrollTax: 'UPDATE payroll_taxes SET name = $1, rate = $2, applies_to = $3 WHERE payroll_taxes_id = $4 RETURNING *',
+  deletePayrollTax: 'DELETE FROM payroll_taxes WHERE payroll_taxes_id = $1',
 }
 
 const wishlistQueries = {

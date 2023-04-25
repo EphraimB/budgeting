@@ -450,6 +450,18 @@ const updatePayrollTax = (request, response) => {
     });
 }
 
+// Delete payroll tax
+const deletePayrollTax = (request, response) => {
+    const id = parseInt(request.params.id);
+
+    pool.query(payrollQueries.deletePayrollTax, [id], (error, results) => {
+        if (error) {
+            return response.status(400).send({ errors: { "msg": "Error deleting payroll tax", "param": null, "location": "query" } });
+        }
+        response.status(204).send();
+    });
+}
+
 // Get wishlists by account
 const getWishlistsByAccount = (request, response, next) => {
     const { account_id, to_date } = request.query;
@@ -646,6 +658,7 @@ module.exports = {
     getPayrollTaxes,
     createPayrollTax,
     updatePayrollTax,
+    deletePayrollTax,
     getWishlistsByAccount,
     getWishlists,
     createWishlist,
