@@ -392,6 +392,23 @@ const getPayrolls = (request, response) => {
     });
 }
 
+// Get payroll taxes
+const getPayrollTaxes = (request, response) => {
+    const employee_id = parseInt(request.params.employee_id);
+    
+    pool.query(payrollQueries.getPayrollTaxes, [employee_id], (error, results) => {
+        if (error) {
+            return response.status(400).send({ errors: { "msg": "Error getting payroll taxes", "param": null, "location": "query" } });
+        }
+
+        const returnObj = {
+            employee_id,
+            payroll_taxes: results.rows,
+        }
+        response.status(200).json(returnObj);
+    });
+}
+
 // Get wishlists by account
 const getWishlistsByAccount = (request, response, next) => {
     const { account_id, to_date } = request.query;
@@ -585,6 +602,7 @@ module.exports = {
     deleteLoan,
     getPayrollsMiddleware,
     getPayrolls,
+    getPayrollTaxes,
     getWishlistsByAccount,
     getWishlists,
     createWishlist,
