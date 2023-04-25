@@ -168,7 +168,8 @@ const payrollQueries = {
       GROUP BY d1, s2.payroll_start_day, e.employee_id, e.employee_id, s.work_days, s1.adjusted_payroll_end_day
       ORDER BY start_date, end_date
    `,
-  getPayrollTaxes: 'SELECT * FROM payroll_taxes WHERE employee_id = $1'
+  getPayrollTaxes: 'SELECT * FROM payroll_taxes WHERE employee_id = $1',
+  getPayrollTax: 'SELECT * FROM payroll_taxes WHERE employee_id = $1 AND payroll_taxes_id = $2',
 }
 
 const wishlistQueries = {

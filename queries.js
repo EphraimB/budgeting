@@ -395,18 +395,33 @@ const getPayrolls = (request, response) => {
 // Get payroll taxes
 const getPayrollTaxes = (request, response) => {
     const employee_id = parseInt(request.params.employee_id);
-    
-    pool.query(payrollQueries.getPayrollTaxes, [employee_id], (error, results) => {
-        if (error) {
-            return response.status(400).send({ errors: { "msg": "Error getting payroll taxes", "param": null, "location": "query" } });
-        }
+    const { id } = request.query;
 
-        const returnObj = {
-            employee_id,
-            payroll_taxes: results.rows,
-        }
-        response.status(200).json(returnObj);
-    });
+    if (!id) {
+        pool.query(payrollQueries.getPayrollTaxes, [employee_id], (error, results) => {
+            if (error) {
+                return response.status(400).send({ errors: { "msg": "Error getting payroll taxes", "param": null, "location": "query" } });
+            }
+
+            const returnObj = {
+                employee_id,
+                payroll_taxes: results.rows,
+            }
+            response.status(200).json(returnObj);
+        });
+    } else {
+        pool.query(payrollQueries.getPayrollTax, [employee_id, id], (error, results) => {
+            if (error) {
+                return response.status(400).send({ errors: { "msg": "Error getting payroll tax", "param": null, "location": "query" } });
+            }
+
+            const returnObj = {
+                employee_id,
+                payroll_tax: results.rows,
+            }
+            response.status(200).json(returnObj);
+        });
+    }
 }
 
 // Get wishlists by account
