@@ -1,6 +1,17 @@
+CREATE TABLE employee (
+  employee_id SERIAL PRIMARY KEY,
+  name TEXT NOT NULL,
+  hourly_rate NUMERIC(6,2) NOT NULL,
+  regular_hours NUMERIC(4,2) NOT NULL,
+  vacation_days INTEGER NOT NULL DEFAULT 0,
+  sick_days INTEGER NOT NULL DEFAULT 0,
+  work_schedule BIT(7) NOT NULL
+);
+
 -- Create a accounts table in postgres
 CREATE TABLE IF NOT EXISTS accounts (
   account_id SERIAL PRIMARY KEY,
+  employee_id INTEGER REFERENCES accounts(account_id),
   account_name VARCHAR(255) NOT NULL,
   account_type INT NOT NULL,
   account_balance numeric(20, 2) NOT NULL,
@@ -12,7 +23,7 @@ CREATE TABLE IF NOT EXISTS accounts (
 CREATE TABLE IF NOT EXISTS deposits (
   deposit_id SERIAL PRIMARY KEY,
   account_id INT NOT NULL REFERENCES accounts(account_id),
-  deposit_amount numeric(20, 2) NOT NULL,
+  deposit_amount numeric(12, 2) NOT NULL,
   deposit_description VARCHAR(255) NOT NULL,
   date_created TIMESTAMP NOT NULL,
   date_modified TIMESTAMP NOT NULL
@@ -22,7 +33,7 @@ CREATE TABLE IF NOT EXISTS deposits (
 CREATE TABLE IF NOT EXISTS withdrawals (
   withdrawal_id SERIAL PRIMARY KEY,
   account_id INT NOT NULL REFERENCES accounts(account_id),
-  withdrawal_amount numeric(20, 2) NOT NULL,
+  withdrawal_amount numeric(12, 2) NOT NULL,
   withdrawal_description VARCHAR(255) NOT NULL,
   date_created TIMESTAMP NOT NULL,
   date_modified TIMESTAMP NOT NULL
@@ -32,7 +43,7 @@ CREATE TABLE IF NOT EXISTS withdrawals (
 CREATE TABLE IF NOT EXISTS expenses (
   expense_id SERIAL PRIMARY KEY,
   account_id INT NOT NULL REFERENCES accounts(account_id),
-  expense_amount numeric(20, 2) NOT NULL,
+  expense_amount numeric(12, 2) NOT NULL,
   expense_title VARCHAR(255) NOT NULL,
   expense_description VARCHAR(255) NOT NULL,
   frequency_type INT NOT NULL,
@@ -51,8 +62,8 @@ CREATE TABLE IF NOT EXISTS expenses (
 CREATE TABLE IF NOT EXISTS loans (
   loan_id SERIAL PRIMARY KEY,
   account_id INT NOT NULL REFERENCES accounts(account_id),
-  loan_amount numeric(20, 2) NOT NULL,
-  loan_plan_amount numeric(20, 2) NOT NULL,
+  loan_amount numeric(12, 2) NOT NULL,
+  loan_plan_amount numeric(12, 2) NOT NULL,
   loan_recipient VARCHAR(255) NOT NULL,
   loan_title VARCHAR(255) NOT NULL,
   loan_description VARCHAR(255) NOT NULL,
@@ -67,11 +78,27 @@ CREATE TABLE IF NOT EXISTS loans (
   date_modified TIMESTAMP NOT NULL
 );
 
+-- Create tables for payroll in postgres.
+CREATE TABLE payroll_dates (
+  payroll_date_id SERIAL PRIMARY KEY,
+  employee_id INTEGER NOT NULL REFERENCES employee(employee_id),
+  payroll_start_day INTEGER NOT NULL,
+  payroll_end_day INTEGER NOT NULL
+);
+
+CREATE TABLE payroll_taxes (
+    payroll_taxes_id SERIAL PRIMARY KEY,
+    employee_id INTEGER NOT NULL REFERENCES employee(employee_id),
+    name TEXT NOT NULL,
+    rate NUMERIC(5,2) NOT NULL,
+    applies_to TEXT
+);
+
 -- Create a wishlist table in postgres
 CREATE TABLE IF NOT EXISTS wishlist (
   wishlist_id SERIAL PRIMARY KEY,
   account_id INT NOT NULL REFERENCES accounts(account_id),
-  wishlist_amount numeric(20, 2) NOT NULL,
+  wishlist_amount numeric(12, 2) NOT NULL,
   wishlist_title VARCHAR(255) NOT NULL,
   wishlist_description VARCHAR(255) NOT NULL,
   wishlist_priority INT NOT NULL,
@@ -84,7 +111,7 @@ CREATE TABLE IF NOT EXISTS transfers (
   transfer_id SERIAL PRIMARY KEY,
   source_account_id INT NOT NULL REFERENCES accounts(account_id),
   destination_account_id INT NOT NULL REFERENCES accounts(account_id),
-  transfer_amount numeric(20, 2) NOT NULL,
+  transfer_amount numeric(12, 2) NOT NULL,
   transfer_title VARCHAR(255) NOT NULL,
   transfer_description VARCHAR(255) NOT NULL,
   frequency_type INT NOT NULL,
@@ -126,6 +153,7 @@ BEGIN
   RETURN NEW;
 END;
 $$ LANGUAGE plpgsql;
+
 
 CREATE TRIGGER update_accounts_dates
 BEFORE INSERT OR UPDATE ON accounts

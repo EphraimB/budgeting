@@ -7,7 +7,7 @@
   },
   "servers": [
     {
-      "url": "http://localhost:5000/api/",
+      "url": "http://localhost:5001/api/",
       "description": "Development server"
     }
   ],
@@ -667,6 +667,425 @@
         }
       }
     },
+    "/payroll": {
+      "get": {
+        "summary": "Get all payrolls",
+        "description": "Get all payrolls",
+        "tags": [
+          "payroll"
+        ],
+        "parameters": [
+          {
+            "name": "employee_id",
+            "in": "query",
+            "description": "Employee id",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/SuccessResponsePayroll"
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          }
+        }
+      }
+    },
+    "/payroll/taxes/{employee_id}": {
+      "get": {
+        "summary": "Get all payroll taxes",
+        "description": "Get all payroll taxes",
+        "tags": [
+          "payroll taxes"
+        ],
+        "parameters": [
+          {
+            "name": "employee_id",
+            "in": "path",
+            "description": "Employee id",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1
+            }
+          },
+          {
+            "name": "id",
+            "in": "query",
+            "description": "Tax id",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 1
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/SuccessResponsePayrollTaxes"
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          }
+        }
+      }
+    },
+    "/payroll/taxes": {
+      "post": {
+        "summary": "Create a payroll tax",
+        "description": "Create a payroll tax",
+        "tags": [
+          "payroll taxes"
+        ],
+        "requestBody": {
+          "description": "Payroll tax object to be created",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PayrollTaxManipulation"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "$ref": "#/components/responses/SuccessResponsePayrollTaxes"
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          }
+        }
+      }
+    },
+    "/payroll/taxes/{id}": {
+      "put": {
+        "summary": "Update a payroll tax",
+        "description": "Update a payroll tax",
+        "tags": [
+          "payroll taxes"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Payroll tax id",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1
+            }
+          }
+        ],
+        "requestBody": {
+          "description": "Payroll tax object to be updated",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PayrollTaxManipulation"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/SuccessResponsePayrollTaxes"
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          }
+        }
+      },
+      "delete": {
+        "summary": "Delete a payroll tax",
+        "description": "Delete a payroll tax",
+        "tags": [
+          "payroll taxes"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Payroll tax id",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No content"
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          }
+        }
+      }
+    },
+    "/payroll/dates/{employee_id}": {
+      "get": {
+        "summary": "Get all payroll dates",
+        "description": "Get all payroll dates",
+        "tags": [
+          "payroll dates"
+        ],
+        "parameters": [
+          {
+            "name": "employee_id",
+            "in": "path",
+            "description": "Employee id",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1
+            }
+          },
+          {
+            "name": "id",
+            "in": "query",
+            "description": "Payroll date id",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 1
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/SuccessResponsePayrollDates"
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          }
+        }
+      }
+    },
+    "/payroll/dates/": {
+      "post": {
+        "summary": "Create a payroll date",
+        "description": "Create a payroll date",
+        "tags": [
+          "payroll dates"
+        ],
+        "requestBody": {
+          "description": "Payroll date object to be created",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PayrollDateManipulation"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "$ref": "#/components/responses/SuccessResponsePayrollDates"
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          }
+        }
+      }
+    },
+    "/payroll/dates/{id}": {
+      "put": {
+        "summary": "Update a payroll date",
+        "description": "Update a payroll date",
+        "tags": [
+          "payroll dates"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Payroll date id",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1
+            }
+          }
+        ],
+        "requestBody": {
+          "description": "Payroll date object to be updated",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PayrollDateManipulation"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/SuccessResponsePayrollDates"
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          }
+        }
+      },
+      "delete": {
+        "summary": "Delete a payroll date",
+        "description": "Delete a payroll date",
+        "tags": [
+          "payroll dates"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Payroll date id",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No content"
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          }
+        }
+      }
+    },
+    "/payroll/employee/": {
+      "get": {
+        "summary": "Get all payroll employees",
+        "description": "Get all payroll employees",
+        "tags": [
+          "payroll employees"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "query",
+            "description": "Employee id",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 1
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/SuccessResponsePayrollEmployees"
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          }
+        }
+      },
+      "post": {
+        "summary": "Create a payroll employee",
+        "description": "Create a payroll employee",
+        "tags": [
+          "payroll employees"
+        ],
+        "requestBody": {
+          "description": "Payroll employee object to be created",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PayrollEmployeeManipulation"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "$ref": "#/components/responses/SuccessResponsePayrollEmployees"
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          }
+        }
+      }
+    },
+    "/payroll/employee/{id}": {
+      "put": {
+        "summary": "Update a payroll employee",
+        "description": "Update a payroll employee",
+        "tags": [
+          "payroll employees"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Employee id",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1
+            }
+          }
+        ],
+        "requestBody": {
+          "description": "Payroll employee object to be updated",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PayrollEmployeeManipulation"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/SuccessResponsePayrollEmployees"
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          }
+        }
+      },
+      "delete": {
+        "summary": "Delete a payroll employee",
+        "description": "Delete a payroll employee",
+        "tags": [
+          "payroll employees"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Employee id",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No content"
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          }
+        }
+      }
+    },
     "/wishlists/{account_id}": {
       "get": {
         "summary": "Get a list of wishlists",
@@ -1264,6 +1683,82 @@
           }
         }
       },
+      "PayrollTaxManipulation": {
+        "type": "object",
+        "properties": {
+          "employee_id": {
+            "type": "integer",
+            "format": "int64",
+            "minimum": 1
+          },
+          "name": {
+            "type": "string",
+            "example": "Federal Income Tax"
+          },
+          "rate": {
+            "type": "number",
+            "format": "double",
+            "example": 0.15
+          },
+          "applies_to": {
+            "type": "string",
+            "example": "gross_salary"
+          }
+        }
+      },
+      "PayrollDateManipulation": {
+        "type": "object",
+        "properties": {
+          "employee_id": {
+            "type": "integer",
+            "format": "int64",
+            "minimum": 1
+          },
+          "start_day": {
+            "type": "integer",
+            "example": 1,
+            "minimum": 1,
+            "maximum": 31
+          },
+          "end_day": {
+            "type": "integer",
+            "example": 31,
+            "minimum": 1,
+            "maximum": 31
+          }
+        }
+      },
+      "PayrollEmployeeManipulation": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "example": "John Doe"
+          },
+          "hourly_rate": {
+            "type": "number",
+            "format": "double",
+            "example": 15.00
+          },
+          "regular_hours": {
+            "type": "number",
+            "format": "double",
+            "example": 8.00
+          },
+          "vacation_days": {
+            "type": "integer",
+            "example": 10
+          },
+          "sick_days": {
+            "type": "integer",
+            "example": 10
+          },
+          "work_schedule": {
+            "type": "string",
+            "example": "0111110"
+          }
+        }
+      },
       "WishlistManipulation": {
         "type": "object",
         "properties": {
@@ -1603,6 +2098,192 @@
                     "type": "string",
                     "format": "date-time"
                   }
+                }
+              }
+            }
+          }
+        }
+      },
+      "SuccessResponsePayroll": {
+        "description": "A JSON array of payrolls",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "employee_id": {
+                  "type": "integer",
+                  "format": "int64",
+                  "minimum": 1
+                },
+                "payrolls": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "start_date": {
+                        "type": "string",
+                        "format": "date-time"
+                      },
+                      "end_date": {
+                        "type": "string",
+                        "format": "date-time"
+                      },
+                      "work_days": {
+                        "type": "integer",
+                        "example": 5
+                      },
+                      "gross_pay": {
+                        "type": "number",
+                        "format": "double",
+                        "example": 250.00
+                      },
+                      "net_pay": {
+                        "type": "number",
+                        "format": "double",
+                        "example": 200.49
+                      },
+                      "hours_worked": {
+                        "type": "number",
+                        "format": "double",
+                        "example": 40.00
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "SuccessResponsePayrollTaxes": {
+        "description": "A JSON array of payroll taxes",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "employee_id": {
+                  "type": "integer",
+                  "format": "int64",
+                  "minimum": 1
+                },
+                "payroll_taxes": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "payroll_taxes_id": {
+                        "type": "integer",
+                        "format": "int64",
+                        "minimum": 1
+                      },
+                      "employee_id": {
+                        "type": "integer",
+                        "format": "int64",
+                        "minimum": 1
+                      },
+                      "name": {
+                        "type": "string",
+                        "example": "Payroll tax test"
+                      },
+                      "rate": {
+                        "type": "number",
+                        "format": "double",
+                        "example": 250.00
+                      },
+                      "applies_to": {
+                        "type": "string",
+                        "example": "gross_salary"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "SuccessResponsePayrollDates": {
+        "description": "A JSON array of payroll dates",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "employee_id": {
+                  "type": "integer",
+                  "format": "int64",
+                  "minimum": 1
+                },
+                "payroll_dates": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "payroll_dates_id": {
+                        "type": "integer",
+                        "format": "int64",
+                        "minimum": 1
+                      },
+                      "employee_id": {
+                        "type": "integer",
+                        "format": "int64",
+                        "minimum": 1
+                      },
+                      "payroll_start_day": {
+                        "type": "integer",
+                        "example": 1
+                      },
+                      "payroll_end_day": {
+                        "type": "integer",
+                        "example": 15
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "SuccessResponsePayrollEmployees": {
+        "description": "A JSON array of payroll employees",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "employee_id": {
+                  "type": "integer",
+                  "format": "int64",
+                  "minimum": 1
+                },
+                "name": {
+                  "type": "string",
+                  "example": "Employee test"
+                },
+                "hourly_rate": {
+                  "type": "number",
+                  "format": "double",
+                  "example": 16.00
+                },
+                "regular_hours": {
+                  "type": "number",
+                  "format": "double",
+                  "example": 8.00
+                },
+                "vacation_days": {
+                  "type": "integer",
+                  "example": 5
+                },
+                "sick_days": {
+                  "type": "integer",
+                  "example": 5
+                },
+                "work_schedule": {
+                  "type": "string",
+                  "example": "0111110"
                 }
               }
             }
