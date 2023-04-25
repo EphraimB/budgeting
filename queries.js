@@ -518,6 +518,18 @@ const updatePayrollDate = (request, response) => {
     });
 }
 
+// Delete payroll date
+const deletePayrollDate = (request, response) => {
+    const id = parseInt(request.params.id);
+
+    pool.query(payrollQueries.deletePayrollDate, [id], (error, results) => {
+        if (error) {
+            return response.status(400).send({ errors: { "msg": "Error deleting payroll date", "param": null, "location": "query" } });
+        }
+        response.status(204).send();
+    });
+}
+
 // Get wishlists by account
 const getWishlistsByAccount = (request, response, next) => {
     const { account_id, to_date } = request.query;
@@ -718,6 +730,7 @@ module.exports = {
     getPayrollDates,
     createPayrollDate,
     updatePayrollDate,
+    deletePayrollDate,
     getWishlistsByAccount,
     getWishlists,
     createWishlist,
