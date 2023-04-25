@@ -1,7 +1,7 @@
 const express = require('express');
 const { query, param, body } = require('express-validator');
 const router = express.Router();
-const { getPayrolls, getPayrollTaxes, createPayrollTax, updatePayrollTax, deletePayrollTax, getPayrollDates, createPayrollDate, updatePayrollDate, deletePayrollDate, getEmployee, createEmployee } = require('../queries.js');
+const { getPayrolls, getPayrollTaxes, createPayrollTax, updatePayrollTax, deletePayrollTax, getPayrollDates, createPayrollDate, updatePayrollDate, deletePayrollDate, getEmployee, createEmployee, updateEmployee } = require('../queries.js');
 const validateRequest = require('../validateRequest.js');
 
 router.get('/:employee_id',
@@ -97,5 +97,18 @@ router.post('/employee/',
         validateRequest,
     ],
     createEmployee);
+
+router.put('/employee/:employee_id',
+    [
+        param('employee_id').isInt({ min: 1 }).withMessage('Employee ID must be a number'),
+        body('name').isString().withMessage('Name must be a string'),
+        body('hourly_rate').isFloat({ min: 0 }).withMessage('Hourly rate must be a number'),
+        body('regular_hours').isInt({ min: 0 }).withMessage('Regular hours must be a number'),
+        body('vacation_days').isInt({ min: 0 }).withMessage('Vacation days must be a number'),
+        body('sick_days').isFloat({ min: 0 }).withMessage('Sick days must be a number'),
+        body('work_schedule').isString().withMessage('Work schedule must be a string'),
+        validateRequest,
+    ],
+    updateEmployee);
 
 module.exports = router;
