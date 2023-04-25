@@ -667,6 +667,35 @@
         }
       }
     },
+    "/payroll/{employee_id}": {
+      "get": {
+        "summary": "Get all payrolls",
+        "description": "Get all payrolls",
+        "tags": [
+          "payroll"
+        ],
+        "parameters": [
+          {
+            "name": "employee_id",
+            "in": "path",
+            "description": "Employee id",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/SuccessResponsePayroll"
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          }
+        }
+      }
+    },
     "/wishlists/{account_id}": {
       "get": {
         "summary": "Get a list of wishlists",
@@ -1602,6 +1631,48 @@
                   "date_modified": {
                     "type": "string",
                     "format": "date-time"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "SuccessResponsePayroll": {
+        "description": "A JSON array of payrolls",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "start_date": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "end_date": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "work_days": {
+                    "type": "integer",
+                    "example": 5
+                  },
+                  "gross_pay": {
+                    "type": "number",
+                    "format": "double",
+                    "example": 250.00
+                  },
+                  "net_pay": {
+                    "type": "number",
+                    "format": "double",
+                    "example": 200.00
+                  },
+                  "hours_worked": {
+                    "type": "number",
+                    "format": "double",
+                    "example": 40.00
                   }
                 }
               }
