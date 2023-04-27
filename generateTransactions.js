@@ -83,7 +83,7 @@ const generateTransactions = (request, response, next) => {
     calculateBalances(transactions, currentBalance);
 
     request.wishlists.forEach(wishlist => {
-        generateWishlists(transactions, wishlist);
+        generateWishlists(transactions, wishlist, currentBalance);
     });
 
     transactions.sort((a, b) => new Date(a.date) - new Date(b.date));

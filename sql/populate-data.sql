@@ -26,4 +26,4 @@ INSERT INTO payroll_taxes (employee_id, name, rate, applies_to) VALUES
 
 
 INSERT INTO wishlist (account_id, wishlist_amount, wishlist_title, wishlist_description, wishlist_priority, wishlist_date_available) VALUES (1, 100.00, 'Test Wishlist', 'Test Wishlist Description', 1, NOW() + INTERVAL '1 month');
-INSERT INTO wishlist (account_id, wishlist_amount, wishlist_title, wishlist_description, wishlist_priority, wishlist_date_available) VALUES (1, 1000.00, 'Test Wishlist 2', 'Test Wishlist Description 2', 2, null);
+INSERT INTO wishlist (account_id, wishlist_amount, wishlist_title, wishlist_description, wishlist_priority, wishlist_date_available) VALUES (1, 5000.00, 'Test Wishlist 2', 'Test Wishlist Description 2', 2, null);
