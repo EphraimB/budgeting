@@ -1,4 +1,4 @@
-const generatePayrolls = (transactions, payrolls, toDate) => {
+const generatePayrolls = (transactions, payrolls) => {
     let payroll_end_date = new Date(payrolls.end_date);
 
     transactions.push({
