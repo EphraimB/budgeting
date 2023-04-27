@@ -102,6 +102,7 @@ CREATE TABLE IF NOT EXISTS wishlist (
   wishlist_title VARCHAR(255) NOT NULL,
   wishlist_description VARCHAR(255) NOT NULL,
   wishlist_priority INT NOT NULL,
+  wishlist_date_available TIMESTAMP,
   date_created TIMESTAMP NOT NULL,
   date_modified TIMESTAMP NOT NULL
 );
