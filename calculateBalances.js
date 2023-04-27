@@ -13,7 +13,7 @@ const calculateBalances = (transactions, currentBalance) => {
 
     futureTransactions.forEach(transaction => {
         balance += transaction.amount;
-        transaction.balance = balance;
+        transaction.balance = parseFloat(balance.toFixed(2));
     });
 }
 
