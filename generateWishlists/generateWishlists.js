@@ -14,7 +14,7 @@ const generateWishlists = (transactions, wishlist) => {
         title: wishlist.wishlist_title,
         description: wishlist.wishlist_description,
         date: new Date(wishlist_date),
-        amount: parseFloat(wishlist.wishlist_amount),
+        amount: parseFloat(-wishlist.wishlist_amount),
     });
 }
 
