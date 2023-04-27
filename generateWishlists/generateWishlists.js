@@ -3,8 +3,8 @@ const generateWishlists = (transactions, wishlist) => {
     let wishlist_date = new Date();
 
     for (let i = 0; i < transactions.length; i++) {
-        if (transactions[i].amount > 0 && transactions[i].amount > wishlist.wishlist_amount) {
-            wishlist_date = transactions[i].date;
+        if (transactions[i].date > new Date() && transactions[i].amount > 0 && transactions[i].balance > wishlist.wishlist_amount) {
+            wishlist_date = transactions[i - 1].date;
             
             break;
         }
