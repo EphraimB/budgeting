@@ -12,6 +12,7 @@ const generateTransactions = (request, response, next) => {
     const generateWeeklyTransfers = require('./generateTransfers/generateWeeklyTransfers.js');
     const generateMonthlyTransfers = require('./generateTransfers/generateMonthlyTransfers.js');
     const generateYearlyTransfers = require('./generateTransfers/generateYearlyTransfers.js');
+    const generateWishlists = require('./generateWishlists/generateWishlists.js');
     const calculateBalances = require('./calculateBalances.js');
     const toDate = new Date(request.query.to_date);
     const currentBalance = request.currentBalance;
@@ -50,7 +51,7 @@ const generateTransactions = (request, response, next) => {
     });
 
     request.payrolls.forEach(payroll => {
-        generatePayrollTransactions(transactions, payroll, toDate);
+        generatePayrollTransactions(transactions, payroll);
     });
 
     request.loans.forEach(loan => {
@@ -75,6 +76,14 @@ const generateTransactions = (request, response, next) => {
         } else if (transfer.frequency_type === 3) {
             generateYearlyTransfers(transactions, transfer, toDate, account_id)
         }
+    });
+
+    transactions.sort((a, b) => new Date(a.date) - new Date(b.date));
+
+    calculateBalances(transactions, currentBalance);
+
+    request.wishlists.forEach(wishlist => {
+        generateWishlists(transactions, wishlist, currentBalance);
     });
 
     transactions.sort((a, b) => new Date(a.date) - new Date(b.date));

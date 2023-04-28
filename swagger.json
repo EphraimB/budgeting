@@ -1783,6 +1783,10 @@
           "priority": {
             "type": "integer",
             "example": 1
+          },
+          "url_link": {
+            "type": "string",
+            "example": "https://www.amazon.com/PlayStation-4-Pro-1TB-Console/dp/B01LOP8EZC/ref=sr_1_1?keywords=ps4&qid=1562678603&s=gateway&sr=8-1"
           }
         }
       },
@@ -2324,6 +2328,10 @@
                   },
                   "wishlist_priority": {
                     "type": "integer"
+                  },
+                  "wishlist_url_link": {
+                    "type": "string",
+                    "example": "https://www.amazon.com"
                   },
                   "date_created": {
                     "type": "string",
