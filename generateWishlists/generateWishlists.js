@@ -1,21 +1,35 @@
 const generateWishlists = (transactions, wishlist, currentBalance) => {
-    // Search for the next positive amount in the transactions array of a balance that's greater than the wishlist.wishlist_amount and make the wishlist_date the date of the positive transaction before that. The wishlist_date will need to be generated.
-    let wishlist_date = new Date();
+    const calculateBalances = require('../calculateBalances');
 
-    for (let i = 0; i < transactions.length; i++) {
-        if (transactions[i].date > new Date() && transactions[i].amount > 0 && transactions[i - 1].balance > wishlist.wishlist_amount) {
-            wishlist_date = transactions[i].date;
+    let wishlist_date = null;
 
-            break;
-        }
+    // Find the next transaction with a positive amount and a balance greater than the wishlist amount
+    const nextTransaction = transactions.find(transaction => {
+        return transaction.amount > 0 && transaction.balance > wishlist.wishlist_amount + currentBalance;
+    });
+
+    if (nextTransaction) {
+        wishlist_date = nextTransaction.date;
     }
 
-    transactions.push({
+    // If no suitable transaction was found, return the original transactions array
+    if (!wishlist_date) {
+        return transactions;
+    }
+
+    const newTransaction = {
         title: wishlist.wishlist_title,
         description: wishlist.wishlist_description,
-        date: new Date(wishlist_date),
-        amount: parseFloat(-wishlist.wishlist_amount),
-    });
-}
+        date: wishlist_date,
+        amount: -parseFloat(wishlist.wishlist_amount),
+    };
+
+    transactions.push(newTransaction);
+
+    // Recalculate balances after adding the new transaction
+    calculateBalances(transactions, currentBalance);
+
+    return transactions;
+};
 
 module.exports = generateWishlists;
