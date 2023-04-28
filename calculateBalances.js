@@ -1,6 +1,6 @@
 const calculateBalances = (transactions, currentBalance) => {
-    const pastTransactions = transactions.filter(transaction => transaction.date <= new Date());
-    const futureTransactions = transactions.filter(transaction => transaction.date > new Date());
+    const pastTransactions = transactions.filter(transaction => transaction.date < new Date());
+    const futureTransactions = transactions.filter(transaction => transaction.date >= new Date());
     const reversedPastTransactions = pastTransactions.slice().reverse();
     let balance = currentBalance;
 

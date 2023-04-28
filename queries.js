@@ -629,9 +629,9 @@ const getWishlists = (request, response) => {
 
 // Create wishlist
 const createWishlist = (request, response) => {
-    const { account_id, amount, title, description, priority } = request.body;
+    const { account_id, amount, title, description, priority, url_link } = request.body;
 
-    pool.query(wishlistQueries.createWishlist, [account_id, amount, title, description, priority], (error, results) => {
+    pool.query(wishlistQueries.createWishlist, [account_id, amount, title, description, priority, url_link], (error, results) => {
         if (error) {
             return response.status(400).send({ errors: { "msg": "Error creating wishlist", "param": null, "location": "query" } });
         }
@@ -642,9 +642,9 @@ const createWishlist = (request, response) => {
 // Update wishlist
 const updateWishlist = (request, response) => {
     const id = parseInt(request.params.id);
-    const { account_id, amount, title, description, priority } = request.body;
+    const { account_id, amount, title, description, priority, url_link } = request.body;
 
-    pool.query(wishlistQueries.updateWishlist, [account_id, amount, title, description, priority, id], (error, results) => {
+    pool.query(wishlistQueries.updateWishlist, [account_id, amount, title, description, priority, url_link, id], (error, results) => {
         if (error) {
             return response.status(400).send({ errors: { "msg": "Error updating wishlist", "param": null, "location": "query" } });
         }

@@ -101,7 +101,9 @@ CREATE TABLE IF NOT EXISTS wishlist (
   wishlist_amount numeric(12, 2) NOT NULL,
   wishlist_title VARCHAR(255) NOT NULL,
   wishlist_description VARCHAR(255) NOT NULL,
+  wishlist_url_link VARCHAR(255),
   wishlist_priority INT NOT NULL,
+  wishlist_date_available TIMESTAMP,
   date_created TIMESTAMP NOT NULL,
   date_modified TIMESTAMP NOT NULL
 );
@@ -140,7 +142,8 @@ BEGIN
 END;
 $$ language 'plpgsql';
 
-CREATE OR REPLACE FUNCTION set_null_columns() RETURNS TRIGGER AS $$
+CREATE OR REPLACE FUNCTION set_null_columns()
+RETURNS TRIGGER AS $$
 BEGIN
   IF NEW.frequency_type = 0 THEN
     NEW.frequency_day_of_week = NULL;
@@ -154,6 +157,13 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
+CREATE OR REPLACE FUNCTION update_wishlist_priority()
+RETURNS TRIGGER AS $$
+BEGIN
+  NEW.wishlist_priority = (SELECT COALESCE(MAX(wishlist_priority), 0) + 1 FROM wishlist);
+  RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
 
 CREATE TRIGGER update_accounts_dates
 BEFORE INSERT OR UPDATE ON accounts
@@ -190,10 +200,17 @@ BEFORE INSERT OR UPDATE ON transfers
 FOR EACH ROW
 EXECUTE PROCEDURE update_dates();
 
-CREATE TRIGGER set_null_columns_expenses BEFORE INSERT OR UPDATE ON expenses
+CREATE TRIGGER set_null_columns_expenses
+BEFORE INSERT OR UPDATE ON expenses
 FOR EACH ROW
 EXECUTE FUNCTION set_null_columns();
 
-CREATE TRIGGER set_null_columns_loans BEFORE INSERT OR UPDATE ON loans
+CREATE TRIGGER set_null_columns_loans
+BEFORE INSERT OR UPDATE ON loans
 FOR EACH ROW
 EXECUTE FUNCTION set_null_columns();
+
+CREATE TRIGGER update_wishlist_priority_trigger
+BEFORE INSERT ON wishlist
+FOR EACH ROW
+EXECUTE FUNCTION update_wishlist_priority();
