@@ -5,7 +5,8 @@ const generateWishlists = (transactions, wishlist, currentBalance) => {
 
     // Find the next transaction with a positive amount and a balance greater than the wishlist amount
     const nextTransaction = transactions.find(transaction => {
-        return transaction.date >= new Date() && transaction.amount > 0 && transaction.balance > wishlist.wishlist_amount + currentBalance;
+        const isAfterWishlistDate = wishlist.wishlist_date_available === null || transaction.date >= new Date(wishlist.wishlist_date_available);
+        return isAfterWishlistDate && transaction.amount > 0 && transaction.balance > wishlist.wishlist_amount + currentBalance;
     });
 
     if (nextTransaction) {
