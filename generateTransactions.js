@@ -42,13 +42,13 @@ const generateTransactions = (request, response, next) => {
 
     request.expenses.forEach(expense => {
         if (expense.frequency_type === 0) {
-            generateDailyExpenses(transactions, expense, toDate);
+            generateDailyExpenses(transactions, skippedTransactions, expense, toDate, fromDate);
         } else if (expense.frequency_type === 1) {
-            generateWeeklyExpenses(transactions, expense, toDate);
+            generateWeeklyExpenses(transactions, skippedTransactions, expense, toDate, fromDate);
         } else if (expense.frequency_type === 2) {
-            generateMonthlyExpenses(transactions, expense, toDate);
+            generateMonthlyExpenses(transactions, skippedTransactions, expense, toDate, fromDate);
         } else if (expense.frequency_type === 3) {
-            generateYearlyExpenses(transactions, expense, toDate);
+            generateYearlyExpenses(transactions, skippedTransactions, expense, toDate, fromDate);
         }
     });
 
