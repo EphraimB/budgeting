@@ -14,10 +14,12 @@ const generateTransactions = (request, response, next) => {
     const generateYearlyTransfers = require('./generateTransfers/generateYearlyTransfers.js');
     const generateWishlists = require('./generateWishlists/generateWishlists.js');
     const calculateBalances = require('./calculateBalances.js');
+    const fromDate = new Date(request.query.from_date);
     const toDate = new Date(request.query.to_date);
     const currentBalance = request.currentBalance;
     const account_id = parseInt(request.query.account_id);
     const transactions = [];
+    const skippedTransactions = [];
 
     transactions.push(
         ...request.deposits.map(deposit => ({
@@ -51,7 +53,7 @@ const generateTransactions = (request, response, next) => {
     });
 
     request.payrolls.forEach(payroll => {
-        generatePayrollTransactions(transactions, payroll);
+        generatePayrollTransactions(transactions, skippedTransactions, payroll, fromDate);
     });
 
     request.loans.forEach(loan => {
@@ -80,7 +82,7 @@ const generateTransactions = (request, response, next) => {
 
     transactions.sort((a, b) => new Date(a.date) - new Date(b.date));
 
-    calculateBalances(transactions, currentBalance);
+    calculateBalances(transactions.concat(skippedTransactions), currentBalance);
 
     request.wishlists.forEach(wishlist => {
         generateWishlists(transactions, wishlist, currentBalance);
@@ -88,7 +90,7 @@ const generateTransactions = (request, response, next) => {
 
     transactions.sort((a, b) => new Date(a.date) - new Date(b.date));
 
-    calculateBalances(transactions, currentBalance);
+    calculateBalances(transactions.concat(skippedTransactions), currentBalance);
 
     request.transactions = transactions;
     request.currentBalance = currentBalance;
