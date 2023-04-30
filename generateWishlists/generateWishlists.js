@@ -1,6 +1,4 @@
 const generateWishlists = (transactions, wishlist, currentBalance) => {
-    const calculateBalances = require('../calculateBalances');
-
     let wishlist_date = null;
 
     // Find the next transaction with a positive amount and a balance greater than the wishlist amount
@@ -26,9 +24,6 @@ const generateWishlists = (transactions, wishlist, currentBalance) => {
     };
 
     transactions.push(newTransaction);
-
-    // Recalculate balances after adding the new transaction
-    calculateBalances(transactions, currentBalance);
 
     return transactions;
 };
