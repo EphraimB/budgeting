@@ -74,7 +74,7 @@ const generateTransactions = (request, response, next) => {
         } else if (transfer.frequency_type === 1) {
             generateWeeklyTransfers(transactions, transfer, toDate, account_id)
         } else if (transfer.frequency_type === 2) {
-            generateMonthlyTransfers(transactions, transfer, toDate, account_id)
+            generateMonthlyTransfers(transactions, skippedTransactions, transfer, toDate, fromDate, account_id)
         } else if (transfer.frequency_type === 3) {
             generateYearlyTransfers(transactions, transfer, toDate, account_id)
         }
