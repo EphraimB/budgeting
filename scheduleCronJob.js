@@ -1,12 +1,41 @@
-const scheduleCronJob = (account_id, date, amount, description) => {
+const scheduleCronJob = (account_id, date, amount, description, frequency_type, frequency_type_variable, frequency_day_of_month, frequency_day_of_week, frequency_week_of_month, frequency_month_of_year) => {
     const cron = require('node-cron');
     const pool = require('./db');
     const { depositQueries, withdrawalQueries } = require('./queriesData');
     // Create a new Date object from the provided date string
     const transactionDate = new Date(date);
+    let cronDay = '*';
+    let cronMonth = '*';
+    let cronDayOfWeek = '*';
+
+    if (frequency_type === 0) {
+        cronDay = '*/' + (frequency_type_variable || 1);
+    } else if (frequency_type === 1) {
+        if (frequency_day_of_week) {
+            cronMonth = '*';
+            cronDayOfWeek = frequency_day_of_week;
+            cronDay = '*';
+        } else if (frequency_day_of_month) {
+            cronMonth = '*';
+            cronDay = frequency_day_of_month;
+        } else if (frequency_week_of_month) {
+            cronDay = '?';
+            cronMonth = '*';
+            cronDayOfWeek = '? * ' + frequency_day_of_month + '#' + frequency_week_of_month;
+        } else {
+            cronMonth = '*';
+            cronDay = '*/' + 7 + (frequency_type_variable || 1);
+        }
+    } else if (frequency_type === 2) {
+        cronMonth = '*/' + (frequency_type_variable || 1);
+        cronDay = transactionDate.getDate();
+    } else if (frequency_type === 3) {
+        cronMonth = '*/' + 12 + (frequency_type_variable || 1);
+        cronDay = transactionDate.getDate();
+    }
 
     // Format the date and time for the cron job
-    const cronDate = `${transactionDate.getMinutes()} ${transactionDate.getHours()} ${transactionDate.getDate()} * *`;
+    const cronDate = `${transactionDate.getMinutes()} ${transactionDate.getHours()} ${cronDay} ${cronMonth} ${cronDayOfWeek}`;
 
     // Schedule the cron job to run on the specified date and time
     cron.schedule(cronDate, () => {
