@@ -1,7 +1,7 @@
 const scheduleCronJob = (account_id, date, amount, description, frequency_type, frequency_type_variable, frequency_day_of_month, frequency_day_of_week, frequency_week_of_month, frequency_month_of_year) => {
     const cron = require('node-cron');
     const pool = require('./db');
-    const { depositQueries, withdrawalQueries } = require('./queriesData');
+    const { depositQueries, withdrawalQueries } = require('./queryData');
     // Create a new Date object from the provided date string
     const transactionDate = new Date(date);
     let cronDay = '*';
