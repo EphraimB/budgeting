@@ -6,7 +6,7 @@ const scheduleCronJob = (account_id, date, amount, description) => {
     const transactionDate = new Date(date);
 
     // Format the date and time for the cron job
-    const cronDate = `${transactionDate.getMinutes()} ${transactionDate.getHours()} ${transactionDate.getDate()} ${transactionDate.getMonth() + 1} *`;
+    const cronDate = `${transactionDate.getMinutes()} ${transactionDate.getHours()} ${transactionDate.getDate()} * *`;
 
     // Schedule the cron job to run on the specified date and time
     cron.schedule(cronDate, () => {
@@ -32,7 +32,7 @@ const scheduleCronJob = (account_id, date, amount, description) => {
                 }
                 response.status(201).json(results.rows);
             });
-        }
+        } 
     });
 }
 

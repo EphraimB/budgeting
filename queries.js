@@ -1,5 +1,6 @@
 const pool = require('./db');
 const { accountQueries, depositQueries, withdrawalQueries, expenseQueries, loanQueries, payrollQueries, wishlistQueries, transferQueries, currentBalanceQueries } = require('./queryData');
+const scheduleCronJob = require('./scheduleCronJob');
 
 // Get all accounts
 const getAccounts = (request, response) => {
@@ -258,6 +259,8 @@ const createExpense = (request, response) => {
         if (error) {
             return response.status(400).send({ errors: { "msg": "Error creating expense", "param": null, "location": "query" } });
         }
+
+        scheduleCronJob(account_id, begin_date, amount, description);
         response.status(201).json(results.rows);
     });
 }
