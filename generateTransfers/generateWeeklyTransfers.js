@@ -1,4 +1,4 @@
-const generateWeeklyTransfers = (transactions, transfer, toDate, account_id) => {
+const generateWeeklyTransfers = (transactions, skippedTransactions, transfer, toDate, fromDate, account_id) => {
     let transferDate = new Date(transfer.transfer_begin_date);
 
     if (transfer.frequency_day_of_week) {
@@ -10,12 +10,19 @@ const generateWeeklyTransfers = (transactions, transfer, toDate, account_id) => 
     }
 
     while (transferDate <= toDate) {
-        transactions.push({
+        const newTransaction = {
             title: transfer.transfer_title,
             description: transfer.transfer_description,
             date: new Date(transferDate), // create a new Date object to avoid modifying the same object in each iteration
             amount: transfer.destination_account_id === account_id ? +transfer.transfer_amount : -transfer.transfer_amount,
-        });
+        };
+
+        if (fromDate > transferDate) {
+            skippedTransactions.push(newTransaction);
+        } else {
+            transactions.push(newTransaction);
+        }
+        
         transferDate.setDate(transferDate.getDate() + 7 * (transfer.frequency_type_variable || 1));
     }
 };

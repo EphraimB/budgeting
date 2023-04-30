@@ -70,13 +70,13 @@ const generateTransactions = (request, response, next) => {
 
     request.transfers.forEach(transfer => {
         if (transfer.frequency_type === 0) {
-            generateDailyTransfers(transactions, transfer, toDate, account_id)
+            generateDailyTransfers(transactions, skippedTransactions, transfer, toDate, fromDate, account_id)
         } else if (transfer.frequency_type === 1) {
-            generateWeeklyTransfers(transactions, transfer, toDate, account_id)
+            generateWeeklyTransfers(transactions, skippedTransactions, transfer, toDate, fromDate, account_id)
         } else if (transfer.frequency_type === 2) {
             generateMonthlyTransfers(transactions, skippedTransactions, transfer, toDate, fromDate, account_id)
         } else if (transfer.frequency_type === 3) {
-            generateYearlyTransfers(transactions, transfer, toDate, account_id)
+            generateYearlyTransfers(transactions, skippedTransactions, transfer, toDate, fromDate, account_id)
         }
     });
 
