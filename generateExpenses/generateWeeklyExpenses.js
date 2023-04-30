@@ -1,4 +1,4 @@
-const generateWeeklyExpenses = (transactions, expense, toDate) => {
+const generateWeeklyExpenses = (transactions, skippedTransactions, expense, toDate, fromDate) => {
     let expenseDate = new Date(expense.expense_begin_date);
 
     if (expense.frequency_day_of_week) {
@@ -10,12 +10,19 @@ const generateWeeklyExpenses = (transactions, expense, toDate) => {
     }
 
     while (expenseDate <= toDate) {
-        transactions.push({
+        const newTransaction = {
             title: expense.expense_title,
             description: expense.expense_description,
             date: new Date(expenseDate), // create a new Date object to avoid modifying the same object in each iteration
             amount: -expense.expense_amount,
-        });
+        };
+
+        if (fromDate > expenseDate) {
+            skippedTransactions.push(newTransaction);
+        } else {
+            transactions.push(newTransaction);
+        }
+        
         expenseDate.setDate((expenseDate.getDate() + 7) * (expense.frequency_type_variable || 1));
     }
 };

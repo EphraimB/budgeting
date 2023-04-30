@@ -1,4 +1,4 @@
-const generateWeeklyLoans = (transactions, loan, toDate) => {
+const generateWeeklyLoans = (transactions, skippedTransactions, loan, toDate, fromDate) => {
     let loanDate = new Date(loan.loan_begin_date);
 
     if (loan.frequency_day_of_week) {
@@ -10,12 +10,19 @@ const generateWeeklyLoans = (transactions, loan, toDate) => {
     }
 
     while (loanDate <= toDate) {
-        transactions.push({
+        const newTransaction = {
             title: loan.loan_title,
             description: loan.loan_description,
             date: new Date(loanDate), // create a new Date object to avoid modifying the same object in each iteration
             amount: -loan.loan_plan_amount,
-        });
+        };
+
+        if (fromDate > loanDate) {
+            skippedTransactions.push(newTransaction);
+        } else {
+            transactions.push(newTransaction);
+        }
+        
         loanDate.setDate(loanDate.getDate() + 7 * (loan.frequency_type_variable || 1));
     }
 };
