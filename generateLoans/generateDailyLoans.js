@@ -1,4 +1,4 @@
-const generateDailyLoans = (transactions, loan, toDate) => {
+const generateDailyLoans = (transactions, skippedTransactions, loan, toDate, fromDate) => {
     const startDate = loan.loan_begin_date.getDate();
     const planAmount = loan.loan_plan_amount;
 
@@ -11,12 +11,18 @@ const generateDailyLoans = (transactions, loan, toDate) => {
             break;
         }
 
-        transactions.push({
+        const newTransaction = {
             title: loan.loan_title + ' loan to ' + loan.loan_recipient,
             description: loan.loan_description,
             date: loanDate,
             amount: -planAmount,
-        });
+        };
+
+        if (fromDate > loanDate) {
+            skippedTransactions.push(newTransaction);
+        } else {
+            transactions.push(newTransaction);
+        }
     }
 };
 
