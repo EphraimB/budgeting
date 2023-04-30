@@ -14,10 +14,12 @@ const generateTransactions = (request, response, next) => {
     const generateYearlyTransfers = require('./generateTransfers/generateYearlyTransfers.js');
     const generateWishlists = require('./generateWishlists/generateWishlists.js');
     const calculateBalances = require('./calculateBalances.js');
+    const fromDate = new Date(request.query.from_date);
     const toDate = new Date(request.query.to_date);
     const currentBalance = request.currentBalance;
     const account_id = parseInt(request.query.account_id);
     const transactions = [];
+    const skippedTransactions = [];
 
     transactions.push(
         ...request.deposits.map(deposit => ({
@@ -40,18 +42,18 @@ const generateTransactions = (request, response, next) => {
 
     request.expenses.forEach(expense => {
         if (expense.frequency_type === 0) {
-            generateDailyExpenses(transactions, expense, toDate);
+            generateDailyExpenses(transactions, skippedTransactions, expense, toDate, fromDate);
         } else if (expense.frequency_type === 1) {
-            generateWeeklyExpenses(transactions, expense, toDate);
+            generateWeeklyExpenses(transactions, skippedTransactions, expense, toDate, fromDate);
         } else if (expense.frequency_type === 2) {
-            generateMonthlyExpenses(transactions, expense, toDate);
+            generateMonthlyExpenses(transactions, skippedTransactions, expense, toDate, fromDate);
         } else if (expense.frequency_type === 3) {
-            generateYearlyExpenses(transactions, expense, toDate);
+            generateYearlyExpenses(transactions, skippedTransactions, expense, toDate, fromDate);
         }
     });
 
     request.payrolls.forEach(payroll => {
-        generatePayrollTransactions(transactions, payroll);
+        generatePayrollTransactions(transactions, skippedTransactions, payroll, fromDate);
     });
 
     request.loans.forEach(loan => {
@@ -68,27 +70,27 @@ const generateTransactions = (request, response, next) => {
 
     request.transfers.forEach(transfer => {
         if (transfer.frequency_type === 0) {
-            generateDailyTransfers(transactions, transfer, toDate, account_id)
+            generateDailyTransfers(transactions, skippedTransactions, transfer, toDate, fromDate, account_id)
         } else if (transfer.frequency_type === 1) {
-            generateWeeklyTransfers(transactions, transfer, toDate, account_id)
+            generateWeeklyTransfers(transactions, skippedTransactions, transfer, toDate, fromDate, account_id)
         } else if (transfer.frequency_type === 2) {
-            generateMonthlyTransfers(transactions, transfer, toDate, account_id)
+            generateMonthlyTransfers(transactions, skippedTransactions, transfer, toDate, fromDate, account_id)
         } else if (transfer.frequency_type === 3) {
-            generateYearlyTransfers(transactions, transfer, toDate, account_id)
+            generateYearlyTransfers(transactions, skippedTransactions, transfer, toDate, fromDate, account_id)
         }
     });
 
     transactions.sort((a, b) => new Date(a.date) - new Date(b.date));
 
-    calculateBalances(transactions, currentBalance);
+    calculateBalances(transactions.concat(skippedTransactions), currentBalance);
 
     request.wishlists.forEach(wishlist => {
-        generateWishlists(transactions, wishlist, currentBalance);
+        generateWishlists(transactions, skippedTransactions, wishlist, currentBalance, fromDate);
+
+        transactions.sort((a, b) => new Date(a.date) - new Date(b.date));
+
+        calculateBalances(transactions.concat(skippedTransactions), currentBalance);
     });
-
-    transactions.sort((a, b) => new Date(a.date) - new Date(b.date));
-
-    calculateBalances(transactions, currentBalance);
 
     request.transactions = transactions;
     request.currentBalance = currentBalance;

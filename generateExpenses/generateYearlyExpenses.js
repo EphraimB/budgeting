@@ -1,4 +1,4 @@
-const generateYearlyExpenses = (transactions, expense, toDate) => {
+const generateYearlyExpenses = (transactions, skippedTransactions, expense, toDate, fromDate) => {
     let expenseDate = new Date(expense.expense_begin_date);
 
     // If the frequency day of week is set, generate expenses every month on specified day of week (0 = Sunday, 6 = Saturday). If the week of month is set, generate expenses every month on specified week of month (0 = first week, 1 = second week, 2 = third week, 3 = fourth week, 4 = last week)
@@ -13,12 +13,18 @@ const generateYearlyExpenses = (transactions, expense, toDate) => {
     }
 
     while (expenseDate <= toDate) {
-        transactions.push({
+        const newTransaction = {
             title: expense.expense_title,
             description: expense.expense_description,
             date: new Date(expenseDate),
             amount: -expense.expense_amount,
-        });
+        };
+
+        if (fromDate > expenseDate) {
+            skippedTransactions.push(newTransaction);
+        } else {
+            transactions.push(newTransaction);
+        }
 
         if (expense.frequency_day_of_week) {
             let firstDate = new Date(expenseDate.getFullYear() + (expense.frequency_type_variable || 1), expenseDate.getMonth(), expense.frequency_week_of_month !== null ? 1 + (7 * (expense.frequency_week_of_month)) : expense.expense_begin_date.getDate());

@@ -1,4 +1,4 @@
-const generateDailyExpenses = (transactions, expense, toDate) => {
+const generateDailyExpenses = (transactions, skippedTransactions, expense, toDate, fromDate) => {
     const startDate = expense.expense_begin_date.getDate();
 
     for (let i = 0; ; i += (expense.frequency_type_variable || 1)) {
@@ -10,12 +10,18 @@ const generateDailyExpenses = (transactions, expense, toDate) => {
             break;
         }
 
-        transactions.push({
+        const newTransaction = {
             title: expense.expense_title,
             description: expense.expense_description,
             date: expenseDate,
             amount: -expense.expense_amount,
-        });
+        };
+
+        if (fromDate > expenseDate) {
+            skippedTransactions.push(newTransaction);
+        } else {
+            transactions.push(newTransaction);
+        }
     }
 };
 

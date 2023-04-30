@@ -1,6 +1,4 @@
-const generateWishlists = (transactions, wishlist, currentBalance) => {
-    const calculateBalances = require('../calculateBalances');
-
+const generateWishlists = (transactions, skippedTransactions, wishlist, currentBalance, fromDate) => {
     let wishlist_date = null;
 
     // Find the next transaction with a positive amount and a balance greater than the wishlist amount
@@ -25,12 +23,11 @@ const generateWishlists = (transactions, wishlist, currentBalance) => {
         amount: -parseFloat(wishlist.wishlist_amount),
     };
 
-    transactions.push(newTransaction);
-
-    // Recalculate balances after adding the new transaction
-    calculateBalances(transactions, currentBalance);
-
-    return transactions;
+    if(fromDate > wishlist_date) {
+        skippedTransactions.push(newTransaction);
+    } else {
+        transactions.push(newTransaction);
+    }
 };
 
 module.exports = generateWishlists;
