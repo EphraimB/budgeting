@@ -1,7 +1,7 @@
 const scheduleCronJob = (account_id, date, amount, description) => {
     const cron = require('node-cron');
     const pool = require('./db');
-    const { depositQueries, withdrawalQueries } = require('./queries');
+    const { depositQueries, withdrawalQueries } = require('./queriesData');
     // Create a new Date object from the provided date string
     const transactionDate = new Date(date);
 
