@@ -14,24 +14,29 @@ const scheduleCronJob = (account_id, date, amount, description, frequency_type, 
         if (frequency_day_of_week) {
             cronMonth = '*';
             cronDayOfWeek = frequency_day_of_week;
-            cronDay = '*';
-        } else if (frequency_day_of_month) {
-            cronMonth = '*';
-            cronDay = frequency_day_of_month;
-        } else if (frequency_week_of_month) {
-            cronDay = '?';
-            cronMonth = '*';
-            cronDayOfWeek = '? * ' + frequency_day_of_month + '#' + frequency_week_of_month;
+            cronDay = frequency_day_of_month ? frequency_day_of_month : '*';
         } else {
             cronMonth = '*';
             cronDay = '*/' + 7 + (frequency_type_variable || 1);
         }
     } else if (frequency_type === 2) {
-        cronMonth = '*/' + (frequency_type_variable || 1);
-        cronDay = transactionDate.getDate();
+        if (frequency_day_of_week) {
+            cronMonth = '*';
+            cronDayOfWeek = frequency_week_of_month ? '*/' + 7 + (frequency_type_variable || 1) : frequency_day_of_week;
+            cronDay = frequency_week_of_month ? '?' : frequency_day_of_month ? frequency_day_of_month : '*';
+        } else {
+            cronMonth = '*/' + (frequency_type_variable || 1);
+            cronDay = transactionDate.getDate();
+        }
     } else if (frequency_type === 3) {
-        cronMonth = '*/' + 12 + (frequency_type_variable || 1);
-        cronDay = transactionDate.getDate();
+        if (frequency_day_of_week) {
+            cronMonth = frequency_month_of_year ? frequency_month_of_year : '*';
+            cronDayOfWeek = frequency_week_of_month ? '*/' + 7 + (frequency_type_variable || 1) : frequency_day_of_week;
+            cronDay = frequency_week_of_month ? '?' : frequency_day_of_month ? frequency_day_of_month : '*';
+        } else {
+            cronMonth = '*/' + 12 + (frequency_type_variable || 1);
+            cronDay = transactionDate.getDate();
+        }
     }
 
     // Format the date and time for the cron job
