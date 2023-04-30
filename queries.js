@@ -260,7 +260,7 @@ const createExpense = (request, response) => {
             return response.status(400).send({ errors: { "msg": "Error creating expense", "param": null, "location": "query" } });
         }
 
-        scheduleCronJob(account_id, begin_date, amount, description);
+        scheduleCronJob(account_id, begin_date, amount, description, frequency_type, frequency_type_variable, frequency_day_of_month, frequency_day_of_week, frequency_week_of_month, frequency_month_of_year,);
         response.status(201).json(results.rows);
     });
 }

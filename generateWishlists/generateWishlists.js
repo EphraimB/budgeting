@@ -23,7 +23,9 @@ const generateWishlists = (transactions, skippedTransactions, wishlist, currentB
         amount: -parseFloat(wishlist.wishlist_amount),
     };
 
-    if(fromDate > wishlist_date) {
+    if (wishlist_date <= new Date()) {
+        return transactions;
+    } else if(fromDate > wishlist_date) {
         skippedTransactions.push(newTransaction);
     } else {
         transactions.push(newTransaction);

@@ -52,20 +52,10 @@ const scheduleCronJob = (account_id, date, amount, description, frequency_type, 
         // Add amount to deposits or withdrawals table based on if the amount is positive or negative
         if (amount >= 0) {
             // Add amount to deposits table
-            pool.query(depositQueries.createDeposit, [account_id, amount, description], (error, results) => {
-                if (error) {
-                    return response.status(400).send({ errors: { "msg": "Error creating deposit", "param": null, "location": "query" } });
-                }
-                response.status(201).json(results.rows);
-            });
+            pool.query(depositQueries.createDeposit, [account_id, amount, description], (error, results));
         } else {
             // Add amount to withdrawals table
-            pool.query(withdrawalQueries.createWithdrawal, [account_id, amount, description], (error, results) => {
-                if (error) {
-                    return response.status(400).send({ errors: { "msg": "Error creating withdrawal", "param": null, "location": "query" } });
-                }
-                response.status(201).json(results.rows);
-            });
+            pool.query(withdrawalQueries.createWithdrawal, [account_id, amount, description], (error, results));
         } 
     });
 }

@@ -20,7 +20,9 @@ const generateMonthlyLoans = (transactions, skippedTransactions, loan, toDate, f
             amount: -loan.loan_plan_amount,
         };
 
-        if (fromDate > loanDate) {
+        if (loanDate <= new Date()) {
+            return transactions;
+        } else if (fromDate > loanDate) {
             skippedTransactions.push(newTransaction);
         } else {
             transactions.push(newTransaction);
