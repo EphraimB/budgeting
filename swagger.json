@@ -131,12 +131,12 @@
         }
       }
     },
-    "/deposits/{account_id}": {
+    "/transaction/{account_id}": {
       "get": {
-        "summary": "Get all deposits by account",
-        "description": "Get all deposits by account",
+        "summary": "Get all transactions by account",
+        "description": "Get all transactions by account",
         "tags": [
-          "deposits"
+          "transaction"
         ],
         "parameters": [
           {
@@ -152,7 +152,7 @@
           {
             "name": "id",
             "in": "query",
-            "description": "Filter by deposit id",
+            "description": "Filter by transaction id",
             "required": false,
             "schema": {
               "type": "integer",
@@ -162,7 +162,7 @@
         ],
         "responses": {
           "200": {
-            "$ref": "#/components/responses/SuccessResponseDeposits"
+            "$ref": "#/components/responses/SuccessResponseTransactions"
           },
           "400": {
             "$ref": "#/components/responses/BadRequest"
@@ -170,27 +170,27 @@
         }
       }
     },
-    "/deposits": {
+    "/transaction": {
       "post": {
-        "summary": "Create a new deposit",
-        "description": "Create a new deposit",
+        "summary": "Create a new transaction",
+        "description": "Create a new transaction",
         "tags": [
-          "deposits"
+          "transaction"
         ],
         "requestBody": {
-          "description": "Deposit object to be created",
+          "description": "transaction object to be created",
           "required": true,
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/DepositManipulation"
+                "$ref": "#/components/schemas/TransactionManipulation"
               }
             }
           }
         },
         "responses": {
           "201": {
-            "$ref": "#/components/responses/SuccessResponseDeposits"
+            "$ref": "#/components/responses/SuccessResponseTransactions"
           },
           "400": {
             "$ref": "#/components/responses/BadRequest"
@@ -198,18 +198,18 @@
         }
       }
     },
-    "/deposits/{id}": {
+    "/transaction/{id}": {
       "put": {
-        "summary": "Update a deposit",
-        "description": "Update a deposit",
+        "summary": "Update a transaction",
+        "description": "Update a transaction",
         "tags": [
-          "deposits"
+          "transaction"
         ],
         "parameters": [
           {
             "name": "id",
             "in": "path",
-            "description": "Deposit id",
+            "description": "transaction id",
             "required": true,
             "schema": {
               "type": "integer",
@@ -218,19 +218,19 @@
           }
         ],
         "requestBody": {
-          "description": "Deposit object to be updated",
+          "description": "transaction object to be updated",
           "required": true,
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/DepositManipulation"
+                "$ref": "#/components/schemas/TransactionManipulation"
               }
             }
           }
         },
         "responses": {
           "200": {
-            "$ref": "#/components/responses/SuccessResponseDeposits"
+            "$ref": "#/components/responses/SuccessResponseTransactions"
           },
           "400": {
             "$ref": "#/components/responses/BadRequest"
@@ -238,150 +238,16 @@
         }
       },
       "delete": {
-        "summary": "Delete a deposit",
-        "description": "Delete a deposit",
+        "summary": "Delete a transaction",
+        "description": "Delete a transaction",
         "tags": [
-          "deposits"
+          "transaction"
         ],
         "parameters": [
           {
             "name": "id",
             "in": "path",
-            "description": "Deposit id",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "minimum": 1
-            }
-          }
-        ],
-        "responses": {
-          "204": {
-            "description": "No content"
-          },
-          "400": {
-            "$ref": "#/components/responses/BadRequest"
-          }
-        }
-      }
-    },
-    "/withdrawals/{account_id}": {
-      "get": {
-        "summary": "Get all withdrawals by account",
-        "description": "Get all withdrawals by account",
-        "tags": [
-          "withdrawals"
-        ],
-        "parameters": [
-          {
-            "name": "account_id",
-            "in": "path",
-            "description": "Filter by account id",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "minimum": 1
-            }
-          },
-          {
-            "name": "id",
-            "in": "query",
-            "description": "Filter by withdrawal id",
-            "required": false,
-            "schema": {
-              "type": "integer",
-              "minimum": 1
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "$ref": "#/components/responses/SuccessResponseWithdrawals"
-          },
-          "400": {
-            "$ref": "#/components/responses/BadRequest"
-          }
-        }
-      }
-    },
-    "/withdrawals": {
-      "post": {
-        "summary": "Create a new withdrawal",
-        "description": "Create a new withdrawal",
-        "tags": [
-          "withdrawals"
-        ],
-        "requestBody": {
-          "description": "Withdrawal object to be created",
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/WithdrawalManipulation"
-              }
-            }
-          }
-        },
-        "responses": {
-          "201": {
-            "$ref": "#/components/responses/SuccessResponseWithdrawals"
-          },
-          "400": {
-            "$ref": "#/components/responses/BadRequest"
-          }
-        }
-      }
-    },
-    "/withdrawals/{id}": {
-      "put": {
-        "summary": "Update a withdrawal",
-        "description": "Update a withdrawal",
-        "tags": [
-          "withdrawals"
-        ],
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "description": "Withdrawal id",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "minimum": 1
-            }
-          }
-        ],
-        "requestBody": {
-          "description": "Withdrawal object to be updated",
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/WithdrawalManipulation"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "$ref": "#/components/responses/SuccessResponseWithdrawals"
-          },
-          "400": {
-            "$ref": "#/components/responses/BadRequest"
-          }
-        }
-      },
-      "delete": {
-        "summary": "Delete a withdrawal",
-        "description": "Delete a withdrawal",
-        "tags": [
-          "withdrawals"
-        ],
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "description": "Withdrawal id",
+            "description": "transaction id",
             "required": true,
             "schema": {
               "type": "integer",
@@ -1406,10 +1272,7 @@
                       "items": {
                         "oneOf": [
                           {
-                            "$ref": "#/components/schemas/DepositTransaction"
-                          },
-                          {
-                            "$ref": "#/components/schemas/WithdrawalTransaction"
+                            "$ref": "#/components/schemas/transaction"
                           },
                           {
                             "$ref": "#/components/schemas/ExpenseTransaction"
@@ -1434,12 +1297,12 @@
   },
   "components": {
     "schemas": {
-      "DepositTransaction": {
+      "transaction": {
         "type": "object",
         "properties": {
-          "deposit_id": {
+          "transaction_id": {
             "type": "integer",
-            "description": "ID of the deposit transaction"
+            "description": "ID of the transaction transaction"
           },
           "date": {
             "type": "string",
@@ -1453,46 +1316,15 @@
           },
           "description": {
             "type": "string",
-            "description": "Description of the deposit transaction"
+            "description": "Description of the transaction"
           },
           "amount": {
             "type": "number",
-            "description": "Amount of the deposit transaction"
+            "description": "Amount of the transaction"
           },
           "balance": {
             "type": "number",
-            "description": "Balance after the deposit transaction"
-          }
-        }
-      },
-      "WithdrawalTransaction": {
-        "type": "object",
-        "properties": {
-          "withdrawal_id": {
-            "type": "integer",
-            "description": "ID of the withdrawal transaction"
-          },
-          "date": {
-            "type": "string",
-            "format": "date-time",
-            "description": "Date the transaction occurred"
-          },
-          "date_modified": {
-            "type": "string",
-            "format": "date-time",
-            "description": "Date the transaction was last modified"
-          },
-          "description": {
-            "type": "string",
-            "description": "Description of the withdrawal transaction"
-          },
-          "amount": {
-            "type": "number",
-            "description": "Amount of the withdrawal transaction"
-          },
-          "balance": {
-            "type": "number",
-            "description": "Balance after the withdrawal transaction"
+            "description": "Balance after the transaction"
           }
         }
       },
@@ -1566,7 +1398,7 @@
           }
         }
       },
-      "DepositManipulation": {
+      "TransactionManipulation": {
         "type": "object",
         "properties": {
           "account_id": {
@@ -1581,7 +1413,7 @@
           },
           "description": {
             "type": "string",
-            "example": "Deposit test"
+            "example": "transaction test"
           }
         }
       },
@@ -1874,8 +1706,8 @@
           }
         }
       },
-      "SuccessResponseDeposits": {
-        "description": "A JSON array of deposits",
+      "SuccessResponseTransactions": {
+        "description": "A JSON array of transactions",
         "content": {
           "application/json": {
             "schema": {
@@ -1883,7 +1715,7 @@
               "items": {
                 "type": "object",
                 "properties": {
-                  "deposit_id": {
+                  "transaction_id": {
                     "type": "integer",
                     "format": "int64",
                     "minimum": 1
@@ -1893,48 +1725,10 @@
                     "format": "int64",
                     "minimum": 1
                   },
-                  "deposit_amount": {
+                  "transaction_amount": {
                     "type": "number",
                     "format": "double",
                     "example": 1000.00
-                  },
-                  "date_created": {
-                    "type": "string",
-                    "format": "date-time"
-                  },
-                  "date_modified": {
-                    "type": "string",
-                    "format": "date-time"
-                  }
-                }
-              }
-            }
-          }
-        }
-      },
-      "SuccessResponseWithdrawals": {
-        "description": "A JSON array of withdrawals",
-        "content": {
-          "application/json": {
-            "schema": {
-              "type": "array",
-              "items": {
-                "type": "object",
-                "properties": {
-                  "withdrawal_id": {
-                    "type": "integer",
-                    "format": "int64",
-                    "minimum": 1
-                  },
-                  "account_id": {
-                    "type": "integer",
-                    "format": "int64",
-                    "minimum": 1
-                  },
-                  "withdrawal_amount": {
-                    "type": "number",
-                    "format": "double",
-                    "example": 100.00
                   },
                   "date_created": {
                     "type": "string",
