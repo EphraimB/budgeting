@@ -1,5 +1,5 @@
 const scheduleCronJob = (account_id, date, amount, description, frequency_type, frequency_type_variable, frequency_day_of_month, frequency_day_of_week, frequency_week_of_month, frequency_month_of_year) => {
-    const cron = require('node-cron');
+    const schedule = require('node-schedule');
     const { v4: uuidv4 } = require('uuid');
     const pool = require('../db');
     const { transactionQueries, cronJobQueries } = require('../queryData');
@@ -56,7 +56,7 @@ const scheduleCronJob = (account_id, date, amount, description, frequency_type, 
             console.log('Cron job created ' + cronId)
 
             // Schedule the cron job to run on the specified date and time
-            const task = cron.schedule(cronDate, async () => {
+            const task = schedule.scheduleJob(cronDate, () => {
                 // Code to run when the cron job is triggered
                 console.log('Cron job triggered ' + task.id);
 
