@@ -1,23 +1,25 @@
 const deleteCronJob = (cronId) => {
-    const cron = require('node-schedule');
+    const schedule = require('node-schedule');
     const pool = require('../db');
     const { cronJobQueries } = require('../queryData');
 
     return new Promise((resolve, reject) => {
-        pool.query(cronJobQueries.deleteCronJob, [cronId], (error, results) => {
+        pool.query(cronJobQueries.getCronJob, [cronId], (error, results) => {
             if (error) {
                 return reject(error);
             }
-            console.log('Cron job deleted ' + cronId);
+            const uniqueId = results.rows[0].unique_id;
 
             // Stop the running cron job if it exists
-            const tasks = cron.getTasks();
-            tasks.forEach((task) => {
-                if (task.id === cronId) {
-                    task.stop();
-                    console.log('Cron job stopped ' + cronId);
-                }
-            });
+            const myJob = schedule.scheduledJobs[uniqueId];
+
+            if(myJob) {
+                myJob.cancel();
+                console.log('Cron job stopped ' + cronId);
+            } else {
+                console.log('Cron job not found ' + cronId);
+            }
+
             return resolve(results.rows[0]);
         });
     });
