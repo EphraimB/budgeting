@@ -183,14 +183,15 @@ const createExpense = (request, response) => {
     const { account_id, amount, title, description, frequency_type, frequency_type_variable, frequency_day_of_month, frequency_day_of_week, frequency_week_of_month, frequency_month_of_year, begin_date } = request.body;
     const negativeAmount = -amount;
 
-    pool.query(expenseQueries.createExpense, [account_id, amount, title, description, frequency_type, frequency_type_variable, frequency_day_of_month, frequency_day_of_week, frequency_week_of_month, frequency_month_of_year, begin_date], (error, results) => {
-        if (error) {
-            return response.status(400).send({ errors: { "msg": "Error creating expense", "param": null, "location": "query" } });
-        }
-
-        scheduleCronJob(account_id, begin_date, negativeAmount, description, frequency_type, frequency_type_variable, frequency_day_of_month, frequency_day_of_week, frequency_week_of_month, frequency_month_of_year);
-
-        response.status(201).json(results.rows);
+    scheduleCronJob(account_id, begin_date, negativeAmount, description, frequency_type, frequency_type_variable, frequency_day_of_month, frequency_day_of_week, frequency_week_of_month, frequency_month_of_year).then((cronId) => {
+        pool.query(expenseQueries.createExpense, [account_id, cronId, amount, title, description, frequency_type, frequency_type_variable, frequency_day_of_month, frequency_day_of_week, frequency_week_of_month, frequency_month_of_year, begin_date], (error, results) => {
+            if (error) {
+                return response.status(400).send({ errors: { "msg": "Error creating expense", "param": null, "location": "query" } });
+            }
+            response.status(201).json(results.rows);
+        });
+    }).catch((error) => {
+        return response.status(400).send({ errors: { "msg": error, "param": null, "location": "query" } });
     });
 }
 

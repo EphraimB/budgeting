@@ -1,4 +1,4 @@
-const scheduleCronJob = (account_id, date, amount, description, frequency_type, frequency_type_variable, frequency_day_of_month, frequency_day_of_week, frequency_week_of_month, frequency_month_of_year) => {
+const scheduleCronJob = async (account_id, date, amount, description, frequency_type, frequency_type_variable, frequency_day_of_month, frequency_day_of_week, frequency_week_of_month, frequency_month_of_year) => {
     const cron = require('node-cron');
     const { v4: uuidv4 } = require('uuid');
     const pool = require('../db');
@@ -46,26 +46,32 @@ const scheduleCronJob = (account_id, date, amount, description, frequency_type, 
     // Format the date and time for the cron job
     const cronDate = `${transactionDate.getMinutes()} ${transactionDate.getHours()} ${cronDay} ${cronMonth} ${cronDayOfWeek}`;
 
-    pool.query(cronJobQueries.createCronJob, [uniqueId, cronDate], (error, results) => {
-        if (error) {
-            return response.status(400).send({ errors: { "msg": "Error creating cron job", "param": null, "location": "query" } });
-        }
-    });
-
-    // Schedule the cron job to run on the specified date and time
-    const task = cron.schedule(cronDate, () => {
-        // Code to run when the cron job is triggered
-        console.log('Cron job triggered ' + task.id);
-
-        // Add amount to transactions table
-        pool.query(transactionQueries.createTransaction, [account_id, amount, description], (error, results) => {
+    return new Promise((resolve, reject) => {
+        pool.query(cronJobQueries.createCronJob, [uniqueId, cronDate], (error, results) => {
             if (error) {
-                return response.status(400).send({ errors: { "msg": "Error creating transaction", "param": null, "location": "query" } });
+                return response.status(400).send({ errors: { "msg": "Error creating cron job", "param": null, "location": "query" } });
             }
+            const cronId = results.rows[0].cron_job_id;
+
+            console.log('Cron job created ' + cronId)
+
+            // Schedule the cron job to run on the specified date and time
+            const task = cron.schedule(cronDate, () => {
+                // Code to run when the cron job is triggered
+                console.log('Cron job triggered ' + task.id);
+
+                // Add amount to transactions table
+                pool.query(transactionQueries.createTransaction, [account_id, amount, description], (error, results) => {
+                    if (error) {
+                        reject({ errors: { "msg": "Error creating transaction", "param": null, "location": "query" } });
+                    } else {
+                        resolve(cronId);
+                    }
+                });
+            });
+            task.id = uniqueId;
         });
     });
-
-    task.id = uniqueId;
 }
 
 module.exports = scheduleCronJob;

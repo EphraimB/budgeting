@@ -29,10 +29,20 @@ CREATE TABLE IF NOT EXISTS transactions (
   date_modified TIMESTAMP NOT NULL
 );
 
+-- Create a cron_jobs table in postgres
+CREATE TABLE IF NOT EXISTS cron_jobs (
+  cron_job_id SERIAL PRIMARY KEY,
+  unique_id VARCHAR(255) NOT NULL,
+  cron_expression VARCHAR(255) NOT NULL,
+  date_created TIMESTAMP NOT NULL,
+  date_modified TIMESTAMP NOT NULL
+);
+
 -- Create a expenses table in postgres
 CREATE TABLE IF NOT EXISTS expenses (
   expense_id SERIAL PRIMARY KEY,
   account_id INT NOT NULL REFERENCES accounts(account_id),
+  cron_job_id INT NOT NULL REFERENCES cron_jobs(cron_job_id),
   expense_amount numeric(12, 2) NOT NULL,
   expense_title VARCHAR(255) NOT NULL,
   expense_description VARCHAR(255) NOT NULL,
@@ -94,15 +104,6 @@ CREATE TABLE IF NOT EXISTS wishlist (
   wishlist_url_link VARCHAR(255),
   wishlist_priority INT NOT NULL,
   wishlist_date_available TIMESTAMP,
-  date_created TIMESTAMP NOT NULL,
-  date_modified TIMESTAMP NOT NULL
-);
-
--- Create a cron_jobs table in postgres
-CREATE TABLE IF NOT EXISTS cron_jobs (
-  cron_job_id SERIAL PRIMARY KEY,
-  unique_id VARCHAR(255) NOT NULL,
-  cron_expression VARCHAR(255) NOT NULL,
   date_created TIMESTAMP NOT NULL,
   date_modified TIMESTAMP NOT NULL
 );
