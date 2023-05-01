@@ -22,7 +22,7 @@ const generateTransactions = (request, response, next) => {
     const skippedTransactions = [];
 
     transactions.push(
-        ...request.transaction.map(transaction => ({
+        request.transaction.map(transaction => ({
             transaction_id: transaction.transaction_id,
             date: transaction.date_created,
             date_modified: transaction.date_modified,
