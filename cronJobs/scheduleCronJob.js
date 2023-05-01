@@ -2,7 +2,7 @@ const scheduleCronJob = (account_id, date, amount, description, frequency_type, 
     const cron = require('node-cron');
     const { v4: uuidv4 } = require('uuid');
     const pool = require('../db');
-    const { transactionQueries } = require('../queryData');
+    const { transactionQueries, cronJobQueries } = require('../queryData');
     // Create a new Date object from the provided date string
     const transactionDate = new Date(date);
     let cronDay = '*';
@@ -46,7 +46,7 @@ const scheduleCronJob = (account_id, date, amount, description, frequency_type, 
     // Format the date and time for the cron job
     const cronDate = `${transactionDate.getMinutes()} ${transactionDate.getHours()} ${cronDay} ${cronMonth} ${cronDayOfWeek}`;
 
-    pool.query('INSERT INTO cron_jobs (unique_id, cron_expression) VALUES ($1, $2)', [uniqueId, cronDate], (error, results) => {
+    pool.query(cronJobQueries.createCronJob, [uniqueId, cronDate], (error, results) => {
         if (error) {
             return response.status(400).send({ errors: { "msg": "Error creating cron job", "param": null, "location": "query" } });
         }

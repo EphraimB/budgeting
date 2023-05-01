@@ -210,6 +210,10 @@ const currentBalanceQueries = {
   getCurrentBalance: "SELECT accounts.account_id, COALESCE(accounts.account_balance, 0) + COALESCE(SUM(transactions.transaction_amount), 0) AS account_balance FROM accounts LEFT JOIN transactions ON accounts.account_id = transactions.account_id WHERE accounts.account_id = $1 GROUP BY accounts.account_id",
 };
 
+const cronJobQueries = {
+  createCronJob: 'INSERT INTO cron_jobs (unique_id, cron_expression) VALUES ($1, $2)'
+};
+
 module.exports = {
   accountQueries,
   transactionQueries,
@@ -219,4 +223,5 @@ module.exports = {
   wishlistQueries,
   currentBalanceQueries,
   transferQueries,
+  cronJobQueries
 }
