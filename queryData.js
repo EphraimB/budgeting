@@ -6,22 +6,13 @@ const accountQueries = {
   deleteAccount: 'DELETE FROM accounts WHERE account_id = $1',
 };
 
-const depositQueries = {
-  getDepositsDateFiltered: 'SELECT * FROM deposits WHERE account_id = $1 AND date_created >= $2 ORDER BY date_created DESC',
-  getDeposits: 'SELECT * FROM deposits WHERE account_id = $1 ORDER BY deposit_id ASC',
-  getDeposit: 'SELECT * FROM deposits WHERE account_id = $1 AND deposit_id = $2',
-  createDeposit: 'INSERT INTO deposits (account_id, deposit_amount, deposit_description) VALUES ($1, $2, $3) RETURNING *',
-  updateDeposit: 'UPDATE deposits SET account_id = $1, deposit_amount = $2, deposit_description = $3 WHERE deposit_id = $4 RETURNING *',
-  deleteDeposit: 'DELETE FROM deposits WHERE deposit_id = $1',
-};
-
-const withdrawalQueries = {
-  getWithdrawalsByAccount: 'SELECT * FROM withdrawals WHERE account_id = $1 AND date_created >= $2 ORDER BY date_created DESC',
-  getWithdrawals: 'SELECT * FROM withdrawals WHERE account_id = $1 ORDER BY withdrawal_id ASC',
-  getWithdrawal: 'SELECT * FROM withdrawals WHERE account_id = $1 AND withdrawal_id = $2',
-  createWithdrawal: 'INSERT INTO withdrawals (account_id, withdrawal_amount, withdrawal_description) VALUES ($1, $2, $3) RETURNING *',
-  updateWithdrawal: 'UPDATE withdrawals SET account_id = $1, withdrawal_amount = $2, withdrawal_description = $3 WHERE withdrawal_id = $4 RETURNING *',
-  deleteWithdrawal: 'DELETE FROM withdrawals WHERE withdrawal_id = $1',
+const transactionQueries = {
+  getTransactionsDateFiltered: 'SELECT * FROM transactions WHERE account_id = $1 AND date_created >= $2 ORDER BY date_created DESC',
+  getTransactions: 'SELECT * FROM transactions WHERE account_id = $1 ORDER BY transaction_id ASC',
+  getTransaction: 'SELECT * FROM transactions WHERE account_id = $1 AND transaction_id = $2',
+  createTransaction: 'INSERT INTO transactions (account_id, transaction_amount, transaction_description) VALUES ($1, $2, $3) RETURNING *',
+  updateTransaction: 'UPDATE transactions SET account_id = $1, transaction_amount = $2, transaction_description = $3 WHERE transaction_id = $4 RETURNING *',
+  deleteTransaction: 'DELETE FROM transactions WHERE transaction_id = $1',
 };
 
 const expenseQueries = {
@@ -204,13 +195,12 @@ const transferQueries = {
 };
 
 const currentBalanceQueries = {
-  getCurrentBalance: "SELECT accounts.account_id, COALESCE(accounts.account_balance, 0) + COALESCE(SUM(deposits.deposit_amount), 0) - COALESCE(SUM(withdrawals.withdrawal_amount), 0) AS account_balance FROM accounts LEFT JOIN deposits ON accounts.account_id = deposits.account_id LEFT JOIN withdrawals ON accounts.account_id = withdrawals.account_id WHERE accounts.account_id = $1 GROUP BY accounts.account_id",
+  getCurrentBalance: "SELECT accounts.account_id, COALESCE(accounts.account_balance, 0) + COALESCE(SUM(transactions.transaction_amount), 0) AS account_balance FROM accounts LEFT JOIN transactions ON accounts.account_id = transactions.account_id WHERE accounts.account_id = $1 GROUP BY accounts.account_id",
 };
 
 module.exports = {
   accountQueries,
-  depositQueries,
-  withdrawalQueries,
+  transactionQueries,
   expenseQueries,
   loanQueries,
   payrollQueries,

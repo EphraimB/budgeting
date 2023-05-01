@@ -3,11 +3,11 @@ INSERT INTO employee (name, hourly_rate, regular_hours, vacation_days, sick_days
 INSERT INTO accounts (employee_id, account_name, account_type, account_balance) VALUES (1, 'Personal', 0, 1000.00);
 INSERT INTO accounts (employee_id, account_name, account_type, account_balance) VALUES (null, 'Savings', 1, 5000.00);
 
-INSERT INTO deposits (account_id, deposit_amount, deposit_description, date_created, date_modified) VALUES (1, 1000.00, 'Test Deposit', NOW() - INTERVAL '2 day', NOW() - INTERVAL '2 day');
-INSERT INTO deposits (account_id, deposit_amount, deposit_description, date_created, date_modified) VALUES (2, 5000.00, 'Test Deposit', NOW() - INTERVAL '3 day', NOW() - INTERVAL '3 day');
+INSERT INTO transactions (account_id, transaction_amount, transaction_description, date_created, date_modified) VALUES (1, 1000.00, 'Test Deposit', NOW() - INTERVAL '2 day', NOW() - INTERVAL '2 day');
+INSERT INTO transactions (account_id, transaction_amount, transaction_description, date_created, date_modified) VALUES (2, 5000.00, 'Test Deposit', NOW() - INTERVAL '3 day', NOW() - INTERVAL '3 day');
 
-INSERT INTO withdrawals (account_id, withdrawal_amount, withdrawal_description, date_created, date_modified) VALUES (1, 100.00, 'Test Withdrawal', NOW() - INTERVAL '2 day', NOW() - INTERVAL '2 day');
-INSERT INTO withdrawals (account_id, withdrawal_amount, withdrawal_description, date_created, date_modified) VALUES (2, 500.00, 'Test Withdrawal', NOW() - INTERVAL '3 day', NOW() - INTERVAL '3 day');
+INSERT INTO transactions (account_id, transaction_amount, transaction_description, date_created, date_modified) VALUES (1, -100.00, 'Test Withdrawal', NOW() - INTERVAL '2 day', NOW() - INTERVAL '2 day');
+INSERT INTO transactions (account_id, transaction_amount, transaction_description, date_created, date_modified) VALUES (2, -500.00, 'Test Withdrawal', NOW() - INTERVAL '3 day', NOW() - INTERVAL '3 day');
 
 INSERT INTO expenses (account_id, expense_amount, expense_title, expense_description, frequency_type, frequency_type_variable, expense_begin_date) VALUES (1, 100.00, 'Test Expense', 'Test Expense Description', 2, 1, NOW() + INTERVAL '3 days');
 

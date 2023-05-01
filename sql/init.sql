@@ -19,22 +19,12 @@ CREATE TABLE IF NOT EXISTS accounts (
   date_modified TIMESTAMP NOT NULL
 );
 
--- Create a deposits table in postgres
-CREATE TABLE IF NOT EXISTS deposits (
-  deposit_id SERIAL PRIMARY KEY,
+-- Create a transactions table in postgres
+CREATE TABLE IF NOT EXISTS transactions (
+  transaction_id SERIAL PRIMARY KEY,
   account_id INT NOT NULL REFERENCES accounts(account_id),
-  deposit_amount numeric(12, 2) NOT NULL,
-  deposit_description VARCHAR(255) NOT NULL,
-  date_created TIMESTAMP NOT NULL,
-  date_modified TIMESTAMP NOT NULL
-);
-
--- Create a withdrawals table in postgres
-CREATE TABLE IF NOT EXISTS withdrawals (
-  withdrawal_id SERIAL PRIMARY KEY,
-  account_id INT NOT NULL REFERENCES accounts(account_id),
-  withdrawal_amount numeric(12, 2) NOT NULL,
-  withdrawal_description VARCHAR(255) NOT NULL,
+  transaction_amount numeric(12, 2) NOT NULL,
+  transaction_description VARCHAR(255) NOT NULL,
   date_created TIMESTAMP NOT NULL,
   date_modified TIMESTAMP NOT NULL
 );
@@ -170,13 +160,8 @@ BEFORE INSERT OR UPDATE ON accounts
 FOR EACH ROW
 EXECUTE PROCEDURE update_dates();
 
-CREATE TRIGGER update_deposits_dates
-BEFORE INSERT OR UPDATE ON deposits
-FOR EACH ROW
-EXECUTE PROCEDURE update_dates();
-
-CREATE TRIGGER update_withdrawals_dates
-BEFORE INSERT OR UPDATE ON withdrawals
+CREATE TRIGGER update_transactions_dates
+BEFORE INSERT OR UPDATE ON transactions
 FOR EACH ROW
 EXECUTE PROCEDURE update_dates();
 

@@ -22,21 +22,13 @@ const generateTransactions = (request, response, next) => {
     const skippedTransactions = [];
 
     transactions.push(
-        ...request.deposits.map(deposit => ({
-            deposit_id: deposit.deposit_id,
-            date: deposit.date_created,
-            date_modified: deposit.date_modified,
-            title: deposit.deposit_title,
-            description: deposit.deposit_description,
-            amount: parseFloat(deposit.deposit_amount)
-        })),
-        ...request.withdrawals.map(withdrawal => ({
-            withdrawal_id: withdrawal.withdrawal_id,
-            date: withdrawal.date_created,
-            date_modified: withdrawal.date_modified,
-            title: withdrawal.withdrawal_title,
-            description: withdrawal.withdrawal_description,
-            amount: parseFloat(-withdrawal.withdrawal_amount)
+        ...request.transaction.map(transaction => ({
+            transaction_id: transaction.transaction_id,
+            date: transaction.date_created,
+            date_modified: transaction.date_modified,
+            title: transaction.transaction_title,
+            description: transaction.transaction_description,
+            amount: parseFloat(transaction.transaction_amount)
         }))
     );
 

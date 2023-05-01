@@ -1,7 +1,7 @@
 const scheduleCronJob = (account_id, date, amount, description, frequency_type, frequency_type_variable, frequency_day_of_month, frequency_day_of_week, frequency_week_of_month, frequency_month_of_year) => {
     const cron = require('node-cron');
     const pool = require('./db');
-    const { depositQueries, withdrawalQueries } = require('./queryData');
+    const { transactionQueries } = require('./queryData');
     // Create a new Date object from the provided date string
     const transactionDate = new Date(date);
     let cronDay = '*';
@@ -48,15 +48,8 @@ const scheduleCronJob = (account_id, date, amount, description, frequency_type, 
         if (process.env.NODE_ENV === 'development') {
             console.log('Cron job triggered');
         }
-
-        // Add amount to deposits or withdrawals table based on if the amount is positive or negative
-        if (amount >= 0) {
-            // Add amount to deposits table
-            pool.query(depositQueries.createDeposit, [account_id, amount, description]);
-        } else {
-            // Add amount to withdrawals table
-            pool.query(withdrawalQueries.createWithdrawal, [account_id, amount, description]);
-        } 
+        // Add amount to deposits table
+        pool.query(transactionQueries.createTransaction, [account_id, amount, description]);
     });
 }
 

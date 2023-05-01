@@ -1,5 +1,5 @@
 const pool = require('./db');
-const { accountQueries, depositQueries, withdrawalQueries, expenseQueries, loanQueries, payrollQueries, wishlistQueries, transferQueries, currentBalanceQueries } = require('./queryData');
+const { accountQueries, transactionQueries, expenseQueries, loanQueries, payrollQueries, wishlistQueries, transferQueries, currentBalanceQueries } = require('./queryData');
 const scheduleCronJob = require('./scheduleCronJob');
 
 // Get all accounts
@@ -67,36 +67,36 @@ const deleteAccount = (request, response) => {
 }
 
 // Get deposits by account
-const getDepositsByAccount = (request, response, next) => {
+const getTransactionsByAccount = (request, response, next) => {
     const { account_id, from_date } = request.query;
 
-    pool.query(depositQueries.getDepositsDateFiltered, [parseInt(account_id), from_date], (error, results) => {
+    pool.query(transactionQueries.getTransactionsDateFiltered, [parseInt(account_id), from_date], (error, results) => {
         if (error) {
-            return response.status(400).send({ errors: { "msg": "Error getting deposits", "param": null, "location": "query" } });
+            return response.status(400).send({ errors: { "msg": "Error getting transactions", "param": null, "location": "query" } });
         }
 
-        request.deposits = results.rows;
+        request.transaction = results.rows;
 
         next();
     });
 }
 
 // Get all deposits
-const getDeposits = (request, response) => {
+const getTransactions = (request, response) => {
     const { account_id } = request.params;
     const { id } = request.query;
 
     if (!id) {
-        pool.query(depositQueries.getDeposits, [account_id], (error, results) => {
+        pool.query(transactionQueries.getTransactions, [account_id], (error, results) => {
             if (error) {
-                return response.status(400).send({ errors: { "msg": "Error getting deposits", "param": null, "location": "query" } });
+                return response.status(400).send({ errors: { "msg": "Error getting transactions", "param": null, "location": "query" } });
             }
             return response.status(200).json(results.rows);
         });
     } else {
-        pool.query(depositQueries.getDeposit, [account_id, id], (error, results) => {
+        pool.query(transactionQueries.getTransaction, [account_id, id], (error, results) => {
             if (error) {
-                return response.status(400).send({ errors: { "msg": "Error getting deposit", "param": null, "location": "query" } });
+                return response.status(400).send({ errors: { "msg": "Error getting transaction", "param": null, "location": "query" } });
             }
             return response.status(200).json(results.rows);
         });
@@ -104,111 +104,37 @@ const getDeposits = (request, response) => {
 }
 
 // Create deposit
-const createDeposit = (request, response) => {
+const createTransaction = (request, response) => {
     const { account_id, amount, description } = request.body;
 
-    pool.query(depositQueries.createDeposit, [account_id, amount, description], (error, results) => {
+    pool.query(transactionQueries.createTransaction, [account_id, amount, description], (error, results) => {
         if (error) {
-            return response.status(400).send({ errors: { "msg": "Error creating deposit", "param": null, "location": "query" } });
+            return response.status(400).send({ errors: { "msg": "Error creating transaction", "param": null, "location": "query" } });
         }
         response.status(201).json(results.rows);
     });
 }
 
 // Update deposit
-const updateDeposit = (request, response) => {
+const updateTransaction = (request, response) => {
     const id = parseInt(request.params.id);
     const { account_id, amount, description } = request.body;
 
-    pool.query(depositQueries.updateDeposit, [account_id, amount, description, id], (error, results) => {
+    pool.query(transactionQueries.updateTransaction, [account_id, amount, description, id], (error, results) => {
         if (error) {
-            return response.status(400).send({ errors: { "msg": "Error updating deposit", "param": null, "location": "query" } });
+            return response.status(400).send({ errors: { "msg": "Error updating transaction", "param": null, "location": "query" } });
         }
         response.status(200).send(results.rows);
     });
 }
 
 // Delete deposit
-const deleteDeposit = (request, response) => {
+const deleteTransaction = (request, response) => {
     const id = parseInt(request.params.id);
 
-    pool.query(depositQueries.deleteDeposit, [id], (error, results) => {
+    pool.query(transactionQueries.deleteTransaction, [id], (error, results) => {
         if (error) {
-            return response.status(400).send({ errors: { "msg": "Error deleting deposits", "param": null, "location": "query" } });
-        }
-        response.status(204).send();
-    });
-}
-
-// Get withdrawals by account
-const getWithdrawalsByAccount = (request, response, next) => {
-    const { account_id, from_date } = request.query;
-
-    pool.query(withdrawalQueries.getWithdrawalsByAccount, [parseInt(account_id), from_date], (error, results) => {
-        if (error) {
-            return response.status(400).send({ errors: { "msg": "Error getting withdrawals", "param": null, "location": "query" } });
-        }
-
-        request.withdrawals = results.rows;
-
-        next();
-    });
-}
-
-// Get all withdrawals
-const getWithdrawals = (request, response) => {
-    const { account_id } = request.params;
-    const { id } = request.query;
-
-    if (!id) {
-        pool.query(withdrawalQueries.getWithdrawals, [account_id], (error, results) => {
-            if (error) {
-                return response.status(400).send({ errors: { "msg": "Error getting withdrawals", "param": null, "location": "query" } });
-            }
-            response.status(200).json(results.rows);
-        });
-    } else {
-        pool.query(withdrawalQueries.getWithdrawal, [account_id, id], (error, results) => {
-            if (error) {
-                return response.status(400).send({ errors: { "msg": "Error getting withdrawal", "param": null, "location": "query" } });
-            }
-            response.status(200).json(results.rows);
-        });
-    }
-}
-
-// Create withdrawal
-const createWithdrawal = (request, response) => {
-    const { account_id, amount, description } = request.body;
-
-    pool.query(withdrawalQueries.createWithdrawal, [account_id, amount, description], (error, results) => {
-        if (error) {
-            return response.status(400).send({ errors: { "msg": "Error creating withdrawal", "param": null, "location": "query" } });
-        }
-        response.status(201).json(results.rows);
-    });
-}
-
-// Update withdrawal
-const updateWithdrawal = (request, response) => {
-    const id = parseInt(request.params.id);
-    const { account_id, amount, description } = request.body;
-
-    pool.query(withdrawalQueries.updateWithdrawal, [account_id, amount, description, id], (error, results) => {
-        if (error) {
-            return response.status(400).send({ errors: { "msg": "Error updating withdrawal", "param": null, "location": "query" } });
-        }
-        response.status(200).send(results.rows);
-    });
-}
-
-// Delete withdrawal
-const deleteWithdrawal = (request, response) => {
-    const id = parseInt(request.params.id);
-
-    pool.query(withdrawalQueries.deleteWithdrawal, [id], (error, results) => {
-        if (error) {
-            return response.status(400).send({ errors: { "msg": "Error deleting withdrawal", "param": null, "location": "query" } });
+            return response.status(400).send({ errors: { "msg": "Error deleting transaction", "param": null, "location": "query" } });
         }
         response.status(204).send();
     });
@@ -764,16 +690,11 @@ module.exports = {
     createAccount,
     updateAccount,
     deleteAccount,
-    getDepositsByAccount,
-    getDeposits,
-    createDeposit,
-    updateDeposit,
-    deleteDeposit,
-    getWithdrawalsByAccount,
-    getWithdrawals,
-    createWithdrawal,
-    updateWithdrawal,
-    deleteWithdrawal,
+    getTransactionsByAccount,
+    getTransactions,
+    createTransaction,
+    updateTransaction,
+    deleteTransaction,
     getExpensesByAccount,
     getExpenses,
     createExpense,
