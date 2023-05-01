@@ -58,7 +58,7 @@ const scheduleCronJob = (account_id, date, amount, description, frequency_type, 
             // Schedule the cron job to run on the specified date and time
             const task = schedule.scheduleJob(uniqueId, cronDate, () => {
                 // Code to run when the cron job is triggered
-                console.log('Cron job triggered ' + task.id);
+                console.log('Cron job triggered');
 
                 // Add amount to transactions table
                 pool.query(transactionQueries.createTransaction, [account_id, amount, description], (error, results) => {
