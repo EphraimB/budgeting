@@ -1,5 +1,5 @@
 const deleteCronJob = (cronId) => {
-    const cron = require('node-cron');
+    const cron = require('node-schedule');
     const pool = require('../db');
     const { cronJobQueries } = require('../queryData');
 

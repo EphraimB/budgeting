@@ -56,7 +56,7 @@ const scheduleCronJob = (account_id, date, amount, description, frequency_type, 
             console.log('Cron job created ' + cronId)
 
             // Schedule the cron job to run on the specified date and time
-            const task = schedule.scheduleJob(cronDate, () => {
+            const task = schedule.scheduleJob(uniqueId, cronDate, () => {
                 // Code to run when the cron job is triggered
                 console.log('Cron job triggered ' + task.id);
 
@@ -67,7 +67,6 @@ const scheduleCronJob = (account_id, date, amount, description, frequency_type, 
                     }
                 });
             });
-            task.id = uniqueId;
 
             resolve(cronId);
         });
