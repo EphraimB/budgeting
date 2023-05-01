@@ -27,8 +27,6 @@ const deleteCronJob = (cronId) => {
             } else {
                 console.log('Cron job not found ' + cronId);
             }
-
-            return resolve(results.rows[0]);
         });
     });
 }
