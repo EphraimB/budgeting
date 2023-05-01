@@ -1,4 +1,4 @@
-const scheduleCronJob = async (account_id, date, amount, description, frequency_type, frequency_type_variable, frequency_day_of_month, frequency_day_of_week, frequency_week_of_month, frequency_month_of_year) => {
+const scheduleCronJob = (account_id, date, amount, description, frequency_type, frequency_type_variable, frequency_day_of_month, frequency_day_of_week, frequency_week_of_month, frequency_month_of_year) => {
     const cron = require('node-cron');
     const { v4: uuidv4 } = require('uuid');
     const pool = require('../db');
@@ -56,7 +56,7 @@ const scheduleCronJob = async (account_id, date, amount, description, frequency_
             console.log('Cron job created ' + cronId)
 
             // Schedule the cron job to run on the specified date and time
-            const task = cron.schedule(cronDate, () => {
+            const task = cron.schedule(cronDate, async () => {
                 // Code to run when the cron job is triggered
                 console.log('Cron job triggered ' + task.id);
 
@@ -64,12 +64,12 @@ const scheduleCronJob = async (account_id, date, amount, description, frequency_
                 pool.query(transactionQueries.createTransaction, [account_id, amount, description], (error, results) => {
                     if (error) {
                         reject({ errors: { "msg": "Error creating transaction", "param": null, "location": "query" } });
-                    } else {
-                        resolve(cronId);
                     }
                 });
             });
             task.id = uniqueId;
+
+            resolve(cronId);
         });
     });
 }
