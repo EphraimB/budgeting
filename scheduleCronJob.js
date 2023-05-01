@@ -1,5 +1,6 @@
 const scheduleCronJob = (account_id, date, amount, description, frequency_type, frequency_type_variable, frequency_day_of_month, frequency_day_of_week, frequency_week_of_month, frequency_month_of_year) => {
     const cron = require('node-cron');
+    const { v4: uuidv4 } = require('uuid');
     const pool = require('./db');
     const { transactionQueries } = require('./queryData');
     // Create a new Date object from the provided date string
@@ -39,13 +40,22 @@ const scheduleCronJob = (account_id, date, amount, description, frequency_type, 
         }
     }
 
+    // Generate a unique id for the cron job
+    const uniqueId = uuidv4();
+
     // Format the date and time for the cron job
     const cronDate = `${transactionDate.getMinutes()} ${transactionDate.getHours()} ${cronDay} ${cronMonth} ${cronDayOfWeek}`;
 
+    pool.query('INSERT INTO cron_jobs (unique_id, cron_expression) VALUES ($1, $2)', [uniqueId, cronDate], (error, results) => {
+        if (error) {
+            return response.status(400).send({ errors: { "msg": "Error creating cron job", "param": null, "location": "query" } });
+        }
+    });
+
     // Schedule the cron job to run on the specified date and time
-    cron.schedule(cronDate, () => {
+    const task = cron.schedule(cronDate, () => {
         // Code to run when the cron job is triggered
-        console.log('Cron job triggered');
+        console.log('Cron job triggered ' + task.id);
 
         // Add amount to transactions table
         pool.query(transactionQueries.createTransaction, [account_id, amount, description], (error, results) => {
@@ -54,6 +64,8 @@ const scheduleCronJob = (account_id, date, amount, description, frequency_type, 
             }
         });
     });
+
+    task.id = uniqueId;
 }
 
 module.exports = scheduleCronJob;

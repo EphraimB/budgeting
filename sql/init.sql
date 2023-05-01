@@ -98,6 +98,15 @@ CREATE TABLE IF NOT EXISTS wishlist (
   date_modified TIMESTAMP NOT NULL
 );
 
+-- Create a cron_jobs table in postgres
+CREATE TABLE IF NOT EXISTS cron_jobs (
+  cron_job_id SERIAL PRIMARY KEY,
+  unique_id VARCHAR(255) NOT NULL,
+  cron_expression VARCHAR(255) NOT NULL,
+  date_created TIMESTAMP NOT NULL,
+  date_modified TIMESTAMP NOT NULL
+);
+
 -- Create a transfers table in postgres that will transfer money from one account to another
 CREATE TABLE IF NOT EXISTS transfers (
   transfer_id SERIAL PRIMARY KEY,
@@ -182,6 +191,11 @@ EXECUTE PROCEDURE update_dates();
 
 CREATE TRIGGER update_transfers_dates
 BEFORE INSERT OR UPDATE ON transfers
+FOR EACH ROW
+EXECUTE PROCEDURE update_dates();
+
+CREATE TRIGGER update_cron_jobs_dates
+BEFORE INSERT OR UPDATE ON cron_jobs
 FOR EACH ROW
 EXECUTE PROCEDURE update_dates();
 
