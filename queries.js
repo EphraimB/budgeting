@@ -1,6 +1,6 @@
 const pool = require('./db');
 const { accountQueries, transactionQueries, expenseQueries, loanQueries, payrollQueries, wishlistQueries, transferQueries, currentBalanceQueries } = require('./queryData');
-const scheduleCronJob = require('./scheduleCronJob');
+const scheduleCronJob = require('./cronJobs/scheduleCronJob');
 
 // Get all accounts
 const getAccounts = (request, response) => {
