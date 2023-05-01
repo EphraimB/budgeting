@@ -45,11 +45,14 @@ const scheduleCronJob = (account_id, date, amount, description, frequency_type, 
     // Schedule the cron job to run on the specified date and time
     cron.schedule(cronDate, () => {
         // Code to run when the cron job is triggered
-        if (process.env.NODE_ENV === 'development') {
-            console.log('Cron job triggered');
-        }
-        // Add amount to deposits table
-        pool.query(transactionQueries.createTransaction, [account_id, amount, description]);
+        console.log('Cron job triggered');
+
+        // Add amount to transactions table
+        pool.query(transactionQueries.createTransaction, [account_id, amount, description], (error, results) => {
+            if (error) {
+                return response.status(400).send({ errors: { "msg": "Error creating transaction", "param": null, "location": "query" } });
+            }
+        });
     });
 }
 
