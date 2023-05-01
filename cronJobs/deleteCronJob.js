@@ -16,6 +16,14 @@ const deleteCronJob = (cronId) => {
             if(myJob) {
                 myJob.cancel();
                 console.log('Cron job stopped ' + cronId);
+
+                // Delete the cron job from the database
+                pool.query(cronJobQueries.deleteCronJob, [cronId], (error, results) => {
+                    if (error) {
+                        return reject(error);
+                    }
+                    console.log('Cron job deleted ' + cronId);
+                });
             } else {
                 console.log('Cron job not found ' + cronId);
             }
