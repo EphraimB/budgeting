@@ -1,6 +1,7 @@
 const pool = require('./db');
 const { accountQueries, transactionQueries, expenseQueries, loanQueries, payrollQueries, wishlistQueries, transferQueries, currentBalanceQueries } = require('./queryData');
 const scheduleCronJob = require('./cronJobs/scheduleCronJob');
+const deleteCronJob = require('./cronJobs/deleteCronJob');
 
 // Get all accounts
 const getAccounts = (request, response) => {
@@ -216,6 +217,8 @@ const deleteExpense = (request, response) => {
         if (error) {
             return response.status(400).send({ errors: { "msg": "Error deleting expense", "param": null, "location": "query" } });
         }
+
+        deleteCronJob(results.rows[0].cron_job_id);
         response.status(204).send();
     });
 }
