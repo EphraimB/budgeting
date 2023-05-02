@@ -32,7 +32,7 @@ const expenseQueries = {
   getExpenses: 'SELECT * FROM expenses WHERE account_id = $1 ORDER BY expense_id ASC',
   getExpense: 'SELECT * FROM expenses WHERE account_id = $1 AND expense_id = $2',
   createExpense: 'INSERT INTO expenses (account_id, cron_job_id, expense_amount, expense_title, expense_description, frequency_type, frequency_type_variable, frequency_day_of_month, frequency_day_of_week, frequency_week_of_month, frequency_month_of_year, expense_begin_date) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12) RETURNING *',
-  updateExpense: 'UPDATE expenses SET account_id = $1, cron_job_id = $2, expense_amount = $3, expense_title = $4, expense_description = $5, frequency_type = $6, frequency_type_variable = $7, frequency_day_of_month = $8, frequency_day_of_week = $9, frequency_week_of_month = $10, frequency_month_of_year = $11, expense_begin_date = $12 WHERE expense_id = $13 RETURNING *',
+  updateExpense: 'UPDATE expenses SET account_id = $1, expense_amount = $2, expense_title = $3, expense_description = $4, frequency_type = $5, frequency_type_variable = $6, frequency_day_of_month = $7, frequency_day_of_week = $8, frequency_week_of_month = $9, frequency_month_of_year = $10, expense_begin_date = $11 WHERE expense_id = $12 RETURNING *',
   deleteExpense: 'DELETE FROM expenses WHERE expense_id = $1 RETURNING *',
 };
 
