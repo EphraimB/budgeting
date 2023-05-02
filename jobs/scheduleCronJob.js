@@ -67,9 +67,8 @@ const scheduleCronJob = (date, account_id, amount, description, frequency_type, 
         jobs: [{
             name: uniqueId,
             cron: cronDate,
+            path: path.join(__dirname, 'cronScript.js'), // path to the worker file
             worker: {
-                module: path.join(__dirname, './queries.js'),
-                function: 'createTransactionForCronJob',
                 workerData: {
                     account_id,
                     amount,
@@ -79,7 +78,9 @@ const scheduleCronJob = (date, account_id, amount, description, frequency_type, 
         }],
     });
 
-    bree.start();
+    (async () => {
+        await bree.start();
+    })();
 
     return {
         cronDate,
