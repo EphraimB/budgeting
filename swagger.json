@@ -339,6 +339,16 @@
         ],
         "parameters": [
           {
+            "name": "account_id",
+            "in": "query",
+            "description": "Account id",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1
+            }
+          },
+          {
             "name": "id",
             "in": "path",
             "description": "Expense id",
@@ -1447,11 +1457,6 @@
       "ExpenseManipulation": {
         "type": "object",
         "properties": {
-          "account_id": {
-            "type": "integer",
-            "format": "int64",
-            "minimum": 1
-          },
           "amount": {
             "type": "number",
             "format": "double",
