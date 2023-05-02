@@ -187,10 +187,6 @@ const createExpense = (request, response) => {
 
     const { cronDate, uniqueId } = scheduleCronJob(begin_date, account_id, negativeAmount, description, frequency_type, frequency_type_variable, frequency_day_of_month, frequency_day_of_week, frequency_week_of_month, frequency_month_of_year);
 
-    if (!uniqueId) {
-        return response.status(400).send({ errors: { "msg": "Error creating cron job", "param": null, "location": "query" } });
-    }
-
     pool.query(cronJobQueries.createCronJob, [uniqueId, cronDate], (error, results) => {
         if (error) {
             return response.status(400).send({ errors: { "msg": "Error creating cron job", "param": null, "location": "query" } });

@@ -30,8 +30,6 @@ app.use(
 );
 
 if (fs.existsSync(jobsFilePath)) {
-    const jobsFilePath = path.join(__dirname, '..', 'jobs.json');
-
     // Read the job definitions from the JSON file
     const jobs = JSON.parse(fs.readFileSync(jobsFilePath, 'utf8'));
 

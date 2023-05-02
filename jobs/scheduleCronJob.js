@@ -4,6 +4,8 @@ const scheduleCronJob = (date, account_id, amount, description, frequency_type, 
     const fs = require('fs');
     const path = require('path');
     const Cabin = require('cabin');
+    let jobs = [];
+    const jobsFilePath = path.join(__dirname, '../jobs.json');
 
     // Generate a unique id for the cron job
     const uniqueId = uuidv4();
@@ -61,25 +63,40 @@ const scheduleCronJob = (date, account_id, amount, description, frequency_type, 
     // Format the date and time for the cron job
     const cronDate = `${transactionDate.getMinutes()} ${transactionDate.getHours()} ${cronDay} ${cronMonth} ${cronDayOfWeek}`;
 
-    const jobs = new Bree({
+    // Check if jobs.json exists, if not create it with an empty array
+    if (!fs.existsSync(jobsFilePath)) {
+        fs.writeFileSync(jobsFilePath, JSON.stringify([]));
+    }
+
+    // Read the existing jobs from the file
+    jobs = JSON.parse(fs.readFileSync(jobsFilePath));
+
+    // Create a new job and add it to the array
+    const newJob = {
+        name: uniqueId,
+        cron: cronDate,
+        path: path.join(__dirname, 'cronScript.js'), // path to the worker file
+        worker: {
+            workerData: {
+                account_id,
+                amount,
+                description
+            }
+        }
+    };
+    jobs.push(newJob);
+
+    // Write the updated jobs array to the file
+    fs.writeFileSync(jobsFilePath, JSON.stringify(jobs, null, 2));
+
+    const bree = new Bree({
         logger: new Cabin(),
         root: path.join(__dirname, 'cron-jobs'),
-        jobs: [{
-            name: uniqueId,
-            cron: cronDate,
-            path: path.join(__dirname, 'cronScript.js'), // path to the worker file
-            worker: {
-                workerData: {
-                    account_id,
-                    amount,
-                    description
-                }
-            }
-        }],
+        jobs
     });
 
     (async () => {
-        await jobs.start();
+        await bree.start();
     })();
 
     return {
