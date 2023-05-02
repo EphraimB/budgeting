@@ -58,7 +58,7 @@ const updateCronJob = (cronId, date, amount, description, frequency_type, freque
                 console.log('Cron job stopped ' + cronId);
 
                 // Update the cron job in the database
-                pool.query(cronJobQueries.updateCronJob, [date, cronId], (error, results) => {
+                pool.query(cronJobQueries.updateCronJob, [cronDate, cronId], (error, results) => {
                     if (error) {
                         return reject(error);
                     }
