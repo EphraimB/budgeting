@@ -2,6 +2,7 @@ const express = require('express');
 const fs = require('fs');
 const path = require('path');
 const { Bree } = require('bree');
+const jobsFilePath = '/jobs.json';
 const bodyParser = require('body-parser');
 const routes = require('./routes/routes');
 const accountsRouter = require('./routes/accountsRouter');
@@ -28,13 +29,15 @@ app.use(
     swaggerUi.setup(swaggerDocument)
 );
 
-const jobsFilePath = path.join(__dirname, '..', 'jobs.json');
+if (fs.existsSync(jobsFilePath)) {
+    const jobsFilePath = path.join(__dirname, '..', 'jobs.json');
 
-// Read the job definitions from the JSON file
-const jobs = JSON.parse(fs.readFileSync(jobsFilePath, 'utf8'));
+    // Read the job definitions from the JSON file
+    const jobs = JSON.parse(fs.readFileSync(jobsFilePath, 'utf8'));
 
-// Create a new Bree instance with the job definitions
-const bree = new Bree({ jobs });
+    // Create a new Bree instance with the job definitions
+    const bree = new Bree({ jobs });
+}
 
 app.use('/api/', routes);
 app.use('/api/accounts', accountsRouter);
