@@ -12,15 +12,15 @@ const cronJobsStartup = (cronId) => {
 
         // Loop through the results and schedule each job
         for (const row of results.rows) {
-            const { name, cron_expression } = row;
+            const { unique_id, cron_expression } = row;
 
             // Recreate the job using the name and cron expression from the database
-            schedule.scheduleJob(name, cron_expression, () => {
-                console.log(`Cron job ${name} triggered`);
+            schedule.scheduleJob(unique_id, cron_expression, () => {
+                console.log(`Cron job ${unique_id} triggered`);
                 // Add your code to run when the cron job is triggered here
             });
 
-            console.log(`Scheduled cron job ${name} with expression ${cron_expression}`);
+            console.log(`Scheduled cron job ${unique_id} with expression ${cron_expression}`);
         }
     });
 }
