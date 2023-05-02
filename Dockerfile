@@ -11,8 +11,6 @@ RUN npm install
 # Copy over the application code
 COPY . .
 
-COPY cronJobs/cronJobsStartup.js /app/cron-jobs.js
-
 # Expose the necessary port
 EXPOSE 5000
 
