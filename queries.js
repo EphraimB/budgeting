@@ -238,25 +238,30 @@ const updateExpense = (request, response) => {
 
 // Delete expense
 const deleteExpense = (request, response) => {
-    const id = parseInt(request.params.id);
-    pool.query(expenseQueries.getExpenses, [id], (error, results) => {
+    const { account_id, id } = request.query;
+
+    pool.query(expenseQueries.getExpense, [account_id, id], (error, results) => {
         if (error) {
             return response.status(400).send({ errors: { "msg": "Error selecting expense", "param": null, "location": "query" } });
         }
 
-        const cronId = results.rows[0].cron_job_id;
+        if (results.rows.length > 0) {
+            const cronId = results.rows[0].cron_job_id;
 
-        pool.query(expenseQueries.deleteExpense, [id], (error, results) => {
-            if (error) {
-                return response.status(400).send({ errors: { "msg": "Error deleting expense", "param": null, "location": "query" } });
-            }
+            pool.query(expenseQueries.deleteExpense, [id], (error, results) => {
+                if (error) {
+                    return response.status(400).send({ errors: { "msg": "Error deleting expense", "param": null, "location": "query" } });
+                }
 
-            if (cronId) {
-                deleteCronJob(cronId);
-            }
+                if (cronId) {
+                    deleteCronJob(cronId);
+                }
 
-            response.status(204).send();
-        });
+                response.status(200).send("Expense deleted successfully");
+            });
+        } else {
+            response.status(200).send("expense doesn't exist");
+        }
     });
 }
 

@@ -45,9 +45,10 @@ router.put('/:id',
         body("end_date").optional().isISO8601().withMessage("End date must be a datetime"),
         validateRequest,
     ], updateExpense);
-router.delete('/:id',
+router.delete('/',
     [
-        param("id").isNumeric().withMessage("ID must be a number"),
+        query("account_id").isInt({ min: 1 }).withMessage("Account ID must be a number"),
+        query("id").isInt({ min: 1 }).withMessage("ID must be a number"),
         validateRequest,
     ],
     deleteExpense);
