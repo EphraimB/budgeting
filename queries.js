@@ -239,14 +239,24 @@ const updateExpense = (request, response) => {
 // Delete expense
 const deleteExpense = (request, response) => {
     const id = parseInt(request.params.id);
-
-    pool.query(expenseQueries.deleteExpense, [id], (error, results) => {
+    pool.query(expenseQueries.getExpenses, [id], (error, results) => {
         if (error) {
-            return response.status(400).send({ errors: { "msg": "Error deleting expense", "param": null, "location": "query" } });
+            return response.status(400).send({ errors: { "msg": "Error selecting expense", "param": null, "location": "query" } });
         }
 
-        deleteCronJob(results.rows[0].cron_job_id);
-        response.status(204).send();
+        const cronId = results.rows[0].cron_job_id;
+
+        pool.query(expenseQueries.deleteExpense, [id], (error, results) => {
+            if (error) {
+                return response.status(400).send({ errors: { "msg": "Error deleting expense", "param": null, "location": "query" } });
+            }
+
+            if (cronId) {
+                deleteCronJob(cronId);
+            }
+
+            response.status(204).send();
+        });
     });
 }
 

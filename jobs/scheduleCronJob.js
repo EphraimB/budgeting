@@ -61,7 +61,7 @@ const scheduleCronJob = (date, account_id, amount, description, frequency_type, 
     // Format the date and time for the cron job
     const cronDate = `${transactionDate.getMinutes()} ${transactionDate.getHours()} ${cronDay} ${cronMonth} ${cronDayOfWeek}`;
 
-    const bree = new Bree({
+    const jobs = new Bree({
         logger: new Cabin(),
         root: path.join(__dirname, 'cron-jobs'),
         jobs: [{
@@ -79,7 +79,7 @@ const scheduleCronJob = (date, account_id, amount, description, frequency_type, 
     });
 
     (async () => {
-        await bree.start();
+        await jobs.start();
     })();
 
     return {
