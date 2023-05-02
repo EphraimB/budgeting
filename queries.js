@@ -201,28 +201,39 @@ const updateExpense = (request, response) => {
     const id = parseInt(request.params.id);
     const { account_id, amount, title, description, frequency_type, frequency_type_variable, frequency_day_of_month, frequency_day_of_week, frequency_week_of_month, frequency_month_of_year, begin_date } = request.body;
 
-    // Get cron id
-    pool.query(cronJobQueries.getCronJob, [id], (error, results) => {
+    // Get expense id to see if it exists
+    pool.query(expenseQueries.getExpense, [account_id, id], (error, results) => {
         if (error) {
-            return response.status(400).send({ errors: { "msg": "Error getting cron id", "param": null, "location": "query" } });
+            return response.status(400).send({ errors: { "msg": "Error getting expense", "param": null, "location": "query" } });
         }
 
-        // Delete cron job
-        deleteCronJob(results.rows[0].cron_job_id).then(() => {
-            // Create new cron job
-            scheduleCronJob(account_id, begin_date, amount, description, frequency_type, frequency_type_variable, frequency_day_of_month, frequency_day_of_week, frequency_week_of_month, frequency_month_of_year).then((cronId) => {
-                pool.query(expenseQueries.updateExpense, [account_id, cronId, amount, title, description, frequency_type, frequency_type_variable, frequency_day_of_month, frequency_day_of_week, frequency_week_of_month, frequency_month_of_year, begin_date, id], (error, results) => {
-                    if (error) {
-                        return response.status(400).send({ errors: { "msg": "Error updating expense", "param": null, "location": "query" } });
-                    }
-                    response.status(200).send(results.rows);
+        if (results.rows.length === 0) {
+            return response.status(200).send([]);
+        } else {
+            // Get cron id
+            pool.query(cronJobQueries.getCronJob, [id], (error, results) => {
+                if (error) {
+                    return response.status(400).send({ errors: { "msg": "Error getting cron id", "param": null, "location": "query" } });
+                }
+
+                // Delete cron job
+                deleteCronJob(results.rows[0].cron_job_id).then(() => {
+                    // Create new cron job
+                    scheduleCronJob(account_id, begin_date, amount, description, frequency_type, frequency_type_variable, frequency_day_of_month, frequency_day_of_week, frequency_week_of_month, frequency_month_of_year).then((cronId) => {
+                        pool.query(expenseQueries.updateExpense, [account_id, cronId, amount, title, description, frequency_type, frequency_type_variable, frequency_day_of_month, frequency_day_of_week, frequency_week_of_month, frequency_month_of_year, begin_date, id], (error, results) => {
+                            if (error) {
+                                return response.status(400).send({ errors: { "msg": "Error updating expense", "param": null, "location": "query" } });
+                            }
+                            response.status(200).send(results.rows);
+                        });
+                    }).catch((error) => {
+                        return response.status(400).send({ errors: { "msg": error, "param": null, "location": "query" } });
+                    });
+                }).catch((error) => {
+                    return response.status(400).send({ errors: { "msg": error, "param": null, "location": "query" } });
                 });
-            }).catch((error) => {
-                return response.status(400).send({ errors: { "msg": error, "param": null, "location": "query" } });
             });
-        }).catch((error) => {
-            return response.status(400).send({ errors: { "msg": error, "param": null, "location": "query" } });
-        });
+        }
     });
 }
 
