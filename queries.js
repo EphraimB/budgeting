@@ -1,8 +1,8 @@
 const pool = require('./db');
 const { accountQueries, transactionQueries, expenseQueries, loanQueries, payrollQueries, wishlistQueries, transferQueries, currentBalanceQueries, cronJobQueries } = require('./queryData');
-const scheduleCronJob = require('./cronJobs/scheduleCronJob');
-const deleteCronJob = require('./cronJobs/deleteCronJob');
-const updateCronJob = require('./cronJobs/updateCronJob');
+const scheduleCronJob = require('./jobs/scheduleCronJob');
+const deleteCronJob = require('./jobs/deleteCronJob');
+const updateCronJob = require('./jobs/updateCronJob');
 
 // Get all accounts
 const getAccounts = (request, response) => {
@@ -83,7 +83,7 @@ const getTransactionsByAccount = (request, response, next) => {
     });
 }
 
-// Get all deposits
+// Get all transactions
 const getTransactions = (request, response) => {
     const { account_id } = request.params;
     const { id } = request.query;
@@ -105,7 +105,7 @@ const getTransactions = (request, response) => {
     }
 }
 
-// Create deposit
+// Create transaction
 const createTransaction = (request, response) => {
     const { account_id, amount, description } = request.body;
 
@@ -118,7 +118,23 @@ const createTransaction = (request, response) => {
     });
 }
 
-// Update deposit
+// Create transaction for cron job
+const createTransactionForCronJob = (workerData) => {
+    console.log("workerData", workerData);
+    const { account_id, amount, description } = workerData;
+
+    return new Promise((resolve, reject) => {
+        pool.query(transactionQueries.createTransaction, [account_id, amount, description], (error, results) => {
+            if (error) {
+                reject(error);
+            } else {
+                resolve(results.rows);
+            }
+        });
+    });
+}
+
+// Update transaction
 const updateTransaction = (request, response) => {
     const id = parseInt(request.params.id);
     const { account_id, amount, description } = request.body;
@@ -131,7 +147,7 @@ const updateTransaction = (request, response) => {
     });
 }
 
-// Delete deposit
+// Delete transaction
 const deleteTransaction = (request, response) => {
     const id = parseInt(request.params.id);
 
@@ -185,15 +201,26 @@ const createExpense = (request, response) => {
     const { account_id, amount, title, description, frequency_type, frequency_type_variable, frequency_day_of_month, frequency_day_of_week, frequency_week_of_month, frequency_month_of_year, begin_date } = request.body;
     const negativeAmount = -amount;
 
-    scheduleCronJob(account_id, begin_date, negativeAmount, description, frequency_type, frequency_type_variable, frequency_day_of_month, frequency_day_of_week, frequency_week_of_month, frequency_month_of_year).then((cronId) => {
+    const { cronDate, uniqueId } = scheduleCronJob(begin_date, account_id, negativeAmount, description, frequency_type, frequency_type_variable, frequency_day_of_month, frequency_day_of_week, frequency_week_of_month, frequency_month_of_year);
+
+    if (!uniqueId) {
+        return response.status(400).send({ errors: { "msg": "Error creating cron job", "param": null, "location": "query" } });
+    }
+
+    pool.query(cronJobQueries.createCronJob, [uniqueId, cronDate], (error, results) => {
+        if (error) {
+            return response.status(400).send({ errors: { "msg": "Error creating cron job", "param": null, "location": "query" } });
+        }
+        const cronId = results.rows[0].cron_job_id;
+
+        console.log('Cron job created ' + cronId)
+
         pool.query(expenseQueries.createExpense, [account_id, cronId, amount, title, description, frequency_type, frequency_type_variable, frequency_day_of_month, frequency_day_of_week, frequency_week_of_month, frequency_month_of_year, begin_date], (error, results) => {
             if (error) {
                 return response.status(400).send({ errors: { "msg": "Error creating expense", "param": null, "location": "query" } });
             }
             response.status(201).json(results.rows);
         });
-    }).catch((error) => {
-        return response.status(400).send({ errors: { "msg": error, "param": null, "location": "query" } });
     });
 }
 
@@ -716,6 +743,7 @@ module.exports = {
     getTransactionsByAccount,
     getTransactions,
     createTransaction,
+    createTransactionForCronJob,
     updateTransaction,
     deleteTransaction,
     getExpensesByAccount,
