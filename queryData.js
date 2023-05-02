@@ -211,6 +211,7 @@ const currentBalanceQueries = {
 };
 
 const cronJobQueries = {
+  cronJobsStartup: 'SELECT * FROM cron_jobs',
   getCronJob: 'SELECT * FROM cron_jobs WHERE cron_job_id = $1',
   createCronJob: 'INSERT INTO cron_jobs (unique_id, cron_expression) VALUES ($1, $2) RETURNING *',
   updateCronJob: 'UPDATE cron_jobs SET cron_expression = $1 WHERE cron_job_id = $2 RETURNING *',

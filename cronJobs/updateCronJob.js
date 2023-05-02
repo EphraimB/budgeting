@@ -80,6 +80,7 @@ const updateCronJob = (cronId, date, amount, description, frequency_type, freque
                 });
             } else {
                 console.log('Cron job not found ' + cronId);
+                reject({ errors: { "msg": "Cron job not found", "param": null, "location": "query" } });
             }
         });
     });
