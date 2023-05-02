@@ -331,45 +331,6 @@
           }
         }
       },
-      "delete": {
-        "summary": "Delete an expense",
-        "description": "Delete an expense",
-        "tags": [
-          "expenses"
-        ],
-        "parameters": [
-          {
-            "name": "account_id",
-            "in": "query",
-            "description": "Account id",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "minimum": 1
-            }
-          },
-          {
-            "name": "id",
-            "in": "query",
-            "description": "Expense id",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "minimum": 1
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Expense deleted successfully"
-          },
-          "400": {
-            "$ref": "#/components/responses/BadRequest"
-          }
-        }
-      }
-    },
-    "/expenses/{id}": {
       "put": {
         "summary": "Update an expense",
         "description": "Update an expense",
@@ -402,6 +363,43 @@
         "responses": {
           "200": {
             "$ref": "#/components/responses/SuccessResponseExpenses"
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          }
+        }
+      },
+      "delete": {
+        "summary": "Delete an expense",
+        "description": "Delete an expense",
+        "tags": [
+          "expenses"
+        ],
+        "parameters": [
+          {
+            "name": "account_id",
+            "in": "query",
+            "description": "Account id",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1
+            }
+          },
+          {
+            "name": "id",
+            "in": "query",
+            "description": "Expense id",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Expense deleted successfully"
           },
           "400": {
             "$ref": "#/components/responses/BadRequest"

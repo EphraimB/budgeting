@@ -210,7 +210,7 @@ const createExpense = (request, response) => {
 
 // Update expense
 const updateExpense = (request, response) => {
-    const id = parseInt(request.params.id);
+    const id = parseInt(request.query.id);
     const { account_id, amount, title, description, frequency_type, frequency_type_variable, frequency_day_of_month, frequency_day_of_week, frequency_week_of_month, frequency_month_of_year, begin_date } = request.body;
 
     // Get expense id to see if it exists
