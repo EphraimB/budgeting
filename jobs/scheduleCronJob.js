@@ -67,15 +67,15 @@ const scheduleCronJob = (date, account_id, amount, description, frequency_type, 
         jobs: [{
             name: uniqueId,
             cron: cronDate,
-            workerData: {
-                module: path.join(__dirname, 'queries.js'),
+            worker: {
+                module: path.join(__dirname, './queries.js'),
                 function: 'createTransactionForCronJob',
                 workerData: {
                     account_id,
                     amount,
-                    description,
-                },
-            },
+                    description
+                }
+            }
         }],
     });
 
