@@ -3,6 +3,7 @@ const scheduleCronJob = (date, account_id, amount, description, frequency_type, 
     const { v4: uuidv4 } = require('uuid');
     const fs = require('fs');
     const path = require('path');
+    const Cabin = require('cabin');
 
     // Generate a unique id for the cron job
     const uniqueId = uuidv4();
@@ -61,12 +62,13 @@ const scheduleCronJob = (date, account_id, amount, description, frequency_type, 
     const cronDate = `${transactionDate.getMinutes()} ${transactionDate.getHours()} ${cronDay} ${cronMonth} ${cronDayOfWeek}`;
 
     const bree = new Bree({
+        logger: new Cabin(),
         root: path.join(__dirname, 'cron-jobs'),
         jobs: [{
             name: uniqueId,
             cron: cronDate,
-            worker: {
-                module: path.join(__dirname, '../queries.js'),
+            workerData: {
+                module: path.join(__dirname, 'queries.js'),
                 function: 'createTransactionForCronJob',
                 workerData: {
                     account_id,

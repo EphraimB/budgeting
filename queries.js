@@ -118,22 +118,6 @@ const createTransaction = (request, response) => {
     });
 }
 
-// Create transaction for cron job
-const createTransactionForCronJob = (workerData) => {
-    console.log("workerData", workerData);
-    const { account_id, amount, description } = workerData;
-
-    return new Promise((resolve, reject) => {
-        pool.query(transactionQueries.createTransaction, [account_id, amount, description], (error, results) => {
-            if (error) {
-                reject(error);
-            } else {
-                resolve(results.rows);
-            }
-        });
-    });
-}
-
 // Update transaction
 const updateTransaction = (request, response) => {
     const id = parseInt(request.params.id);
@@ -743,7 +727,6 @@ module.exports = {
     getTransactionsByAccount,
     getTransactions,
     createTransaction,
-    createTransactionForCronJob,
     updateTransaction,
     deleteTransaction,
     getExpensesByAccount,

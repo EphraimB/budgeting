@@ -11,6 +11,7 @@
   "dependencies": {
     "body-parser": "^1.20.1",
     "bree": "^9.1.3",
+    "cabin": "^13.1.0",
     "express": "^4.18.2",
     "express-validator": "^6.15.0",
     "pg": "^8.9.0",
