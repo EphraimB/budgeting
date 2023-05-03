@@ -17,7 +17,7 @@ const deleteCronJob = (cronId) => {
             // Find the job with the given unique_id and delete it
             const jobToDelete = bree.config.jobs.find(job => job.name === uniqueId);
             if (jobToDelete) {
-                bree.delete(jobToDelete.name);
+                bree.remove(jobToDelete.name);
                 console.log(`Deleted cron job with unique_id ${uniqueId}`);
                 resolve(`Deleted cron job with unique_id ${uniqueId}`);
             } else {
