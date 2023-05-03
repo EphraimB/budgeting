@@ -29,9 +29,11 @@ app.use(
     swaggerUi.setup(swaggerDocument)
 );
 
-(async () => {
-    await breeInstance.start();
-})();
+if (fs.existsSync(jobsFilePath)) {
+    (async () => {
+        await breeInstance.start();
+    })();
+}
 
 app.use('/api/', routes);
 app.use('/api/accounts', accountsRouter);
