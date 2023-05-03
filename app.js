@@ -1,7 +1,6 @@
 const express = require('express');
 const fs = require('fs');
 const path = require('path');
-const { Bree } = require('bree');
 const jobsFilePath = '/jobs.json';
 const bodyParser = require('body-parser');
 const routes = require('./routes/routes');
@@ -16,6 +15,7 @@ const payrollEmployeeRouter = require('./routes/payrollEmployeeRouter');
 const wishlistRouter = require('./routes/wishlistRouter');
 const transferRouter = require('./routes/transfersRouter');
 const transactionsRouter = require('./routes/transactionsRouter');
+const breeInstance = require('./breeInstance');
 const swaggerUi = require('swagger-ui-express'),
     swaggerDocument = require('./swagger.json');
 
@@ -30,19 +30,9 @@ app.use(
 );
 
 if (fs.existsSync(jobsFilePath)) {
-    // Read the job definitions from the JSON file
-    const jobs = JSON.parse(fs.readFileSync(jobsFilePath, 'utf8'));
-
-    // Create a new Bree instance with the job definitions
-    const bree = new Bree({
-        logger: new Cabin(),
-        root: path.join(__dirname, 'cron-jobs'),
-        jobs
-    });
-
     // Start the jobs
     (async () => {
-        await bree.start();
+        await breeInstance.start();
     })();
 }
 
