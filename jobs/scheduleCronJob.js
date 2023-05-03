@@ -93,10 +93,6 @@ const scheduleCronJob = (date, account_id, amount, description, frequency_type, 
         await bree.start(newJob.name);
     })();
 
-    // (async () => {
-    //     await bree.start(newJob.name);
-    // })();
-
     return {
         cronDate,
         uniqueId
