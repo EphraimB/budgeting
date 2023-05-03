@@ -2,7 +2,6 @@ const pool = require('./db');
 const { accountQueries, transactionQueries, expenseQueries, loanQueries, payrollQueries, wishlistQueries, transferQueries, currentBalanceQueries, cronJobQueries } = require('./queryData');
 const scheduleCronJob = require('./jobs/scheduleCronJob');
 const deleteCronJob = require('./jobs/deleteCronJob');
-const updateCronJob = require('./jobs/updateCronJob');
 
 // Get all accounts
 const getAccounts = (request, response) => {
@@ -222,8 +221,6 @@ const updateExpense = (request, response) => {
 
             deleteCronJob(cronId).then(() => {
                 const { uniqueId, cronDate } = scheduleCronJob(begin_date, account_id, amount, description, frequency_type, frequency_type_variable, frequency_day_of_month, frequency_day_of_week, frequency_week_of_month, frequency_month_of_year);
-
-                console.log("cronDate: " + cronDate);
 
                 pool.query(cronJobQueries.updateCronJob, [uniqueId, cronDate, cronId], (error, results) => {
                     if (error) {
