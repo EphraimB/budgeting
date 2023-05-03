@@ -84,11 +84,8 @@ const scheduleCronJob = (date, account_id, amount, description, frequency_type, 
     // Write the updated jobs array to the file
     fs.writeFileSync(jobsFilePath, JSON.stringify(jobs, null, 2));
 
-    console.log(uniqueId);
-
     (async () => {
         await bree.add(newJob);
-        console.log(bree.config.jobs);
         await bree.start(newJob.name);
     })();
 

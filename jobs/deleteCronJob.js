@@ -22,9 +22,6 @@ const deleteCronJob = (cronId) => {
                 console.log(`Could not find cron job with unique_id ${uniqueId}`);
                 reject(`Could not find cron job with unique_id ${uniqueId}`);
             }
-
-            // Don't forget to release the database connection
-            pool.end();
         });
     });
 }
