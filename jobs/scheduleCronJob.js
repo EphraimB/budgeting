@@ -1,4 +1,4 @@
-const scheduleCronJob = (date, account_id, amount, description, frequency_type, frequency_type_variable, frequency_day_of_month, frequency_day_of_week, frequency_week_of_month, frequency_month_of_year) => {
+const scheduleCronJob = (date, account_id, amount, description, frequency_type, frequency_type_variable, frequency_day_of_month, frequency_day_of_week, frequency_week_of_month, frequency_month_of_year, customUniqueId) => {
     const { v4: uuidv4 } = require('uuid');
     const { bree } = require('../app.js');
     const fs = require('fs');
@@ -6,16 +6,21 @@ const scheduleCronJob = (date, account_id, amount, description, frequency_type, 
     const Cabin = require('cabin');
     let jobs = [];
     const jobsFilePath = path.join(__dirname, '../jobs.json');
+    let uniqueId;
 
-    // Generate a unique id for the cron job
-    const uniqueId = uuidv4();
+    if (!customUniqueId) {
+        // Generate a unique id for the cron job
+        uniqueId = uuidv4();
 
-    // write cron job unique id to file
-    try {
-        const filePath = path.join(__dirname, 'cron-jobs', `${uniqueId}.js`);
-        fs.closeSync(fs.openSync(filePath, 'w'));
-    } catch (err) {
-        console.error(err);
+        // write cron job unique id to file
+        try {
+            const filePath = path.join(__dirname, 'cron-jobs', `${uniqueId}.js`);
+            fs.closeSync(fs.openSync(filePath, 'w'));
+        } catch (err) {
+            console.error(err);
+        }
+    } else {
+        uniqueId = customUniqueId;
     }
 
     // Create a new Date object from the provided date string

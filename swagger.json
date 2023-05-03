@@ -350,7 +350,7 @@
           },
           {
             "name": "id",
-            "in": "path",
+            "in": "query",
             "description": "Expense id",
             "required": true,
             "schema": {

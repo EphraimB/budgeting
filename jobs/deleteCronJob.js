@@ -4,6 +4,7 @@ const deleteCronJob = (cronId) => {
     const path = require('path');
     const pool = require('../db');
     const { cronJobQueries } = require('../queryData');
+    let uniqueId;
 
     return new Promise((resolve, reject) => {
         // Fetch the unique_id from the database
@@ -11,7 +12,7 @@ const deleteCronJob = (cronId) => {
             if (error) {
                 return reject(error);
             }
-            const uniqueId = results.rows[0].unique_id;
+            uniqueId = results.rows[0].unique_id;
 
             // Find the job with the given unique_id and delete it
             const jobToDelete = bree.config.jobs.find(job => job.name === uniqueId);
@@ -49,7 +50,7 @@ const deleteCronJob = (cronId) => {
                     });
                 });
 
-                resolve(`Deleted cron job with unique_id ${uniqueId}`);
+                resolve(uniqueId);
             } else {
                 console.log(`Could not find cron job with unique_id ${uniqueId}`);
                 reject(`Could not find cron job with unique_id ${uniqueId}`);

@@ -218,17 +218,29 @@ const updateExpense = (request, response) => {
         if (results.rows.length === 0) {
             return response.status(200).send([]);
         } else {
-            updateCronJob(results.rows[0].cron_job_id, account_id, begin_date, amount, description, frequency_type, frequency_type_variable, frequency_day_of_month, frequency_day_of_week, frequency_week_of_month, frequency_month_of_year).then(() => {
-                pool.query(expenseQueries.updateExpense, [account_id, amount, title, description, frequency_type, frequency_type_variable, frequency_day_of_month, frequency_day_of_week, frequency_week_of_month, frequency_month_of_year, begin_date, id], (error, results) => {
+            const cronId = results.rows[0].cron_job_id;
+
+            deleteCronJob(cronId).then((uniqueId) => {
+                console.log(uniqueId);
+
+                const { cronDate } = scheduleCronJob(begin_date, account_id, amount, description, frequency_type, frequency_type_variable, frequency_day_of_month, frequency_day_of_week, frequency_week_of_month, frequency_month_of_year, uniqueId);
+
+                pool.query(cronJobQueries.updateCronJob, [uniqueId, cronDate, cronId], (error, results) => {
                     if (error) {
-                        return response.status(400).send({ errors: { "msg": "Error updating expense", "param": null, "location": "query" } });
+                        return response.status(400).send({ errors: { "msg": "Error updating cron job", "param": null, "location": "query" } });
                     }
-                    response.status(200).send(results.rows);
+
+                    pool.query(expenseQueries.updateExpense, [id, account_id, amount, title, description, frequency_type, frequency_type_variable, frequency_day_of_month, frequency_day_of_week, frequency_week_of_month, frequency_month_of_year, begin_date], (error, results) => {
+                        if (error) {
+                            return response.status(400).send({ errors: { "msg": "Error updating expense", "param": null, "location": "query" } });
+                        }
+                        response.status(200).json(results.rows);
+                    });
                 });
             }).catch((error) => {
-                return response.status(400).send({ errors: { "msg": error, "param": null, "location": "query" } });
+                console.log(error);
             });
-        }
+        };
     });
 }
 
