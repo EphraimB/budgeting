@@ -29,16 +29,18 @@ const deleteCronJob = (cronId) => {
                     }
                     console.log(`Deleted cron job file ${uniqueId}.js`);
                 });
-                
+
                 fs.readFile(jobsFilePath, 'utf8', (err, data) => {
                     if (err) {
                         console.error(err);
                         return reject(err);
                     }
                     const jobs = JSON.parse(data);
-                    const updatedJobs = jobs.filter(job => job !== uniqueId);
+                    const updatedJobs = jobs.filter(job => job.name !== uniqueId);
 
-                    fs.writeFile(jobsFilePath, JSON.stringify(updatedJobs), (err) => {
+                    console.log(`Updated jobs array: ${updatedJobs}`);
+
+                    fs.writeFile(jobsFilePath, JSON.stringify(updatedJobs, null, 2), (err) => {
                         if (err) {
                             console.error(err);
                             return reject(err);
@@ -46,7 +48,7 @@ const deleteCronJob = (cronId) => {
                         console.log(`Updated jobs.json file`);
                     });
                 });
-                
+
                 resolve(`Deleted cron job with unique_id ${uniqueId}`);
             } else {
                 console.log(`Could not find cron job with unique_id ${uniqueId}`);
