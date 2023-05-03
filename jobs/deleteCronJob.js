@@ -1,5 +1,6 @@
 const deleteCronJob = (cronId) => {
     const { bree } = require('../app.js');
+    const fs = require('fs');
     const path = require('path');
     const pool = require('../db');
     const { cronJobQueries } = require('../queryData');
@@ -17,6 +18,35 @@ const deleteCronJob = (cronId) => {
             if (jobToDelete) {
                 bree.remove(jobToDelete.name);
                 console.log(`Deleted cron job with unique_id ${uniqueId}`);
+
+                // Delete the cron job file from the cron-jobs directory and the jobs.json file
+                const cronJobFilePath = path.join(__dirname, 'cron-jobs', `${uniqueId}.js`);
+                const jobsFilePath = path.join(__dirname, '../jobs.json');
+                fs.unlink(cronJobFilePath, (err) => {
+                    if (err) {
+                        console.error(err);
+                        return reject(err);
+                    }
+                    console.log(`Deleted cron job file ${uniqueId}.js`);
+                });
+                
+                fs.readFile(jobsFilePath, 'utf8', (err, data) => {
+                    if (err) {
+                        console.error(err);
+                        return reject(err);
+                    }
+                    const jobs = JSON.parse(data);
+                    const updatedJobs = jobs.filter(job => job !== uniqueId);
+
+                    fs.writeFile(jobsFilePath, JSON.stringify(updatedJobs), (err) => {
+                        if (err) {
+                            console.error(err);
+                            return reject(err);
+                        }
+                        console.log(`Updated jobs.json file`);
+                    });
+                });
+                
                 resolve(`Deleted cron job with unique_id ${uniqueId}`);
             } else {
                 console.log(`Could not find cron job with unique_id ${uniqueId}`);
