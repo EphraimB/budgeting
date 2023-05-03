@@ -251,6 +251,12 @@ const deleteExpense = (request, response) => {
 
                 if (cronId) {
                     deleteCronJob(cronId);
+
+                    pool.query(cronJobQueries.deleteCronJob, [cronId], (error, results) => {
+                        if (error) {
+                            return response.status(400).send({ errors: { "msg": "Error deleting cron job", "param": null, "location": "query" } });
+                        }
+                    });
                 }
 
                 response.status(200).send("Expense deleted successfully");
