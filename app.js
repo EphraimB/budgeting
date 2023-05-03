@@ -1,5 +1,6 @@
 const express = require('express');
 const fs = require('fs');
+const breeInstance = require('./breeInstance.js');
 const path = require('path');
 const jobsFilePath = '/jobs.json';
 const bodyParser = require('body-parser');
@@ -15,7 +16,6 @@ const payrollEmployeeRouter = require('./routes/payrollEmployeeRouter');
 const wishlistRouter = require('./routes/wishlistRouter');
 const transferRouter = require('./routes/transfersRouter');
 const transactionsRouter = require('./routes/transactionsRouter');
-const breeInstance = require('./breeInstance');
 const swaggerUi = require('swagger-ui-express'),
     swaggerDocument = require('./swagger.json');
 
@@ -29,12 +29,9 @@ app.use(
     swaggerUi.setup(swaggerDocument)
 );
 
-if (fs.existsSync(jobsFilePath)) {
-    // Start the jobs
-    (async () => {
-        await breeInstance.start();
-    })();
-}
+(async () => {
+    await breeInstance.start();
+})();
 
 app.use('/api/', routes);
 app.use('/api/accounts', accountsRouter);
