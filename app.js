@@ -34,7 +34,16 @@ if (fs.existsSync(jobsFilePath)) {
     const jobs = JSON.parse(fs.readFileSync(jobsFilePath, 'utf8'));
 
     // Create a new Bree instance with the job definitions
-    const bree = new Bree({ jobs });
+    const bree = new Bree({
+        logger: new Cabin(),
+        root: path.join(__dirname, 'cron-jobs'),
+        jobs
+    });
+
+    // Start the jobs
+    (async () => {
+        await bree.start();
+    })();
 }
 
 app.use('/api/', routes);

@@ -92,12 +92,10 @@ const scheduleCronJob = (date, account_id, amount, description, frequency_type, 
     const bree = new Bree({
         logger: new Cabin(),
         root: path.join(__dirname, 'cron-jobs'),
-        jobs
+        newJob
     });
 
-    (async () => {
-        await bree.start();
-    })();
+    bree.add(newJob.name, { removeOnInit: true }); // pass the job name and options to bree.add()
 
     return {
         cronDate,

@@ -16,6 +16,8 @@ const deleteCronJob = (cronId) => {
             }
             const uniqueId = results.rows[0].unique_id;
 
+            console.log(bree.config.jobs);
+
             // Find the job with the given unique_id and delete it
             const jobToDelete = bree.config.jobs.find(job => job.name === uniqueId);
             if (jobToDelete) {
