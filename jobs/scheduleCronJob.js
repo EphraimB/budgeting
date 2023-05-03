@@ -1,5 +1,4 @@
 const scheduleCronJob = (date, account_id, amount, description, frequency_type, frequency_type_variable, frequency_day_of_month, frequency_day_of_week, frequency_week_of_month, frequency_month_of_year) => {
-    const app = require('../app');
     const { v4: uuidv4 } = require('uuid');
     const { bree } = require('../app.js');
     const fs = require('fs');
