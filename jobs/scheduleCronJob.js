@@ -1,7 +1,7 @@
 const scheduleCronJob = (date, account_id, amount, description, frequency_type, frequency_type_variable, frequency_day_of_month, frequency_day_of_week, frequency_week_of_month, frequency_month_of_year) => {
     const app = require('../app');
     const { v4: uuidv4 } = require('uuid');
-    const breeInstance = require('../breeInstance.js');
+    const { bree } = require('../app.js');
     const fs = require('fs');
     const path = require('path');
     const Cabin = require('cabin');
@@ -10,11 +10,6 @@ const scheduleCronJob = (date, account_id, amount, description, frequency_type, 
 
     // Generate a unique id for the cron job
     const uniqueId = uuidv4();
-
-    const cronjobsDir = path.join(__dirname, 'cron-jobs');
-    if (!fs.existsSync(cronjobsDir)) {
-        fs.mkdirSync(cronjobsDir);
-    }
 
     // write cron job unique id to file
     try {
@@ -90,7 +85,11 @@ const scheduleCronJob = (date, account_id, amount, description, frequency_type, 
     // Write the updated jobs array to the file
     fs.writeFileSync(jobsFilePath, JSON.stringify(jobs, null, 2));
 
-    breeInstance.add(newJob);
+    console.log(uniqueId);
+
+    (async () => {
+        await bree.add(newJob.name);
+    })();
 
     return {
         cronDate,
