@@ -316,12 +316,24 @@ const getLoans = (request, response) => {
 // Create loan
 const createLoan = (request, response) => {
     const { account_id, amount, plan_amount, recipient, title, description, frequency_type, frequency_type_variable, frequency_day_of_month, frequency_day_of_week, frequency_week_of_month, frequency_month_of_year, begin_date } = request.body;
+    const negativeAmount = -plan_amount;
 
-    pool.query(loanQueries.createLoan, [account_id, amount, plan_amount, recipient, title, description, frequency_type, frequency_type_variable, frequency_day_of_month, frequency_day_of_week, frequency_week_of_month, frequency_month_of_year, begin_date], (error, results) => {
+    const { cronDate, uniqueId } = scheduleCronJob(begin_date, account_id, negativeAmount, description, frequency_type, frequency_type_variable, frequency_day_of_month, frequency_day_of_week, frequency_week_of_month, frequency_month_of_year);
+
+    pool.query(cronJobQueries.createCronJob, [uniqueId, cronDate], (error, results) => {
         if (error) {
-            return response.status(400).send({ errors: { "msg": "Error creating loan", "param": null, "location": "query" } });
+            return response.status(400).send({ errors: { "msg": "Error creating cron job", "param": null, "location": "query" } });
         }
-        response.status(201).json(results.rows);
+        const cronId = results.rows[0].cron_job_id;
+
+        console.log('Cron job created ' + cronId)
+
+        pool.query(loanQueries.createLoan, [account_id, cronId, amount, plan_amount, recipient, title, description, frequency_type, frequency_type_variable, frequency_day_of_month, frequency_day_of_week, frequency_week_of_month, frequency_month_of_year, begin_date], (error, results) => {
+            if (error) {
+                return response.status(400).send({ errors: { "msg": "Error creating loan", "param": null, "location": "query" } });
+            }
+            response.status(201).json(results.rows);
+        });
     });
 }
 

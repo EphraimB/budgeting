@@ -9,10 +9,6 @@ INSERT INTO transactions (account_id, transaction_amount, transaction_descriptio
 INSERT INTO transactions (account_id, transaction_amount, transaction_description, date_created, date_modified) VALUES (1, -100.00, 'Test Withdrawal', NOW() - INTERVAL '2 day', NOW() - INTERVAL '2 day');
 INSERT INTO transactions (account_id, transaction_amount, transaction_description, date_created, date_modified) VALUES (2, -500.00, 'Test Withdrawal', NOW() - INTERVAL '3 day', NOW() - INTERVAL '3 day');
 
--- INSERT INTO expenses (account_id, expense_amount, expense_title, expense_description, frequency_type, frequency_type_variable, expense_begin_date) VALUES (1, 100.00, 'Test Expense', 'Test Expense Description', 2, 1, NOW() + INTERVAL '3 days');
-
-INSERT INTO loans (account_id, loan_amount, loan_plan_amount, loan_recipient, loan_title, loan_description, frequency_type, frequency_type_variable, loan_begin_date) VALUES (1, 5000.00, 1000.00, 'John Doe', 'Test Loan', 'Test Loan Description', 2, 1,  NOW() + INTERVAL '7 days');
-
 INSERT INTO transfers (source_account_id, destination_account_id, transfer_amount, transfer_title, transfer_description, frequency_type, frequency_type_variable, transfer_begin_date) VALUES (1, 2, 100.00, 'Test Transfer', 'Test Transfer Description', 2, 1,  NOW() + INTERVAL '1 month');
 
 INSERT INTO payroll_dates (employee_id, payroll_start_day, payroll_end_day) VALUES (1, 1, 15), (1, 16, 31);

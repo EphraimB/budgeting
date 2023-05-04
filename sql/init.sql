@@ -62,6 +62,7 @@ CREATE TABLE IF NOT EXISTS expenses (
 CREATE TABLE IF NOT EXISTS loans (
   loan_id SERIAL PRIMARY KEY,
   account_id INT NOT NULL REFERENCES accounts(account_id),
+  cron_job_id INT NOT NULL REFERENCES cron_jobs(cron_job_id),
   loan_amount numeric(12, 2) NOT NULL,
   loan_plan_amount numeric(12, 2) NOT NULL,
   loan_recipient VARCHAR(255) NOT NULL,
