@@ -352,13 +352,36 @@ const updateLoan = (request, response) => {
 
 // Delete loan
 const deleteLoan = (request, response) => {
-    const id = parseInt(request.params.id);
+    const { account_id, id } = request.query;
 
-    pool.query(loanQueries.deleteLoan, [id], (error, results) => {
+    pool.query(loanQueries.getLoan, [account_id, id], (error, results) => {
         if (error) {
-            return response.status(400).send({ errors: { "msg": "Error deleting loan", "param": null, "location": "query" } });
+            return response.status(400).send({ errors: { "msg": "Error selecting loan", "param": null, "location": "query" } });
         }
-        response.status(204).send();
+
+        if (results.rows.length > 0) {
+            const cronId = results.rows[0].cron_job_id;
+
+            pool.query(loanQueries.deleteLoan, [id], (error, results) => {
+                if (error) {
+                    return response.status(400).send({ errors: { "msg": "Error deleting loan", "param": null, "location": "query" } });
+                }
+
+                if (cronId) {
+                    deleteCronJob(cronId);
+
+                    pool.query(cronJobQueries.deleteCronJob, [cronId], (error, results) => {
+                        if (error) {
+                            return response.status(400).send({ errors: { "msg": "Error deleting cron job", "param": null, "location": "query" } });
+                        }
+                    });
+                }
+
+                response.status(200).send("Loan deleted successfully");
+            });
+        } else {
+            response.status(200).send("Loan doesn't exist");
+        }
     });
 }
 

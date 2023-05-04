@@ -60,9 +60,10 @@ router.put('/:id',
         validateRequest,
     ],
     updateLoan);
-router.delete('/:id',
+router.delete('/',
     [
-        param('id').isInt({ min: 1 }).withMessage('ID must be a number'),
+        query("account_id").isInt({ min: 1 }).withMessage("Account ID must be a number"),
+        query("id").isInt({ min: 1 }).withMessage('ID must be a number'),
         validateRequest,
     ],
     deleteLoan);

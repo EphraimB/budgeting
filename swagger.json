@@ -482,6 +482,43 @@
             "$ref": "#/components/responses/BadRequest"
           }
         }
+      },
+      "delete": {
+        "summary": "Delete a loan",
+        "description": "Delete a loan",
+        "tags": [
+          "loans"
+        ],
+        "parameters": [
+          {
+            "name": "account_id",
+            "in": "query",
+            "description": "Account id",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1
+            }
+          },
+          {
+            "name": "id",
+            "in": "query",
+            "description": "Loan id",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Loan deleted successfully"
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          }
+        }
       }
     },
     "/loans/{id}": {
@@ -517,33 +554,6 @@
         "responses": {
           "200": {
             "$ref": "#/components/responses/SuccessResponseLoans"
-          },
-          "400": {
-            "$ref": "#/components/responses/BadRequest"
-          }
-        }
-      },
-      "delete": {
-        "summary": "Delete a loan",
-        "description": "Delete a loan",
-        "tags": [
-          "loans"
-        ],
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "description": "Loan id",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "minimum": 1
-            }
-          }
-        ],
-        "responses": {
-          "204": {
-            "description": "No content"
           },
           "400": {
             "$ref": "#/components/responses/BadRequest"
