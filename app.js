@@ -20,6 +20,7 @@ const transactionsRouter = require('./routes/transactionsRouter');
 const cronjobsDir = path.join(__dirname, 'jobs/cron-jobs');
 const swaggerUi = require('swagger-ui-express'),
     swaggerDocument = require('./swagger.json');
+const { getEmployees } = require('./queries');
 
 const app = express();
 
@@ -36,17 +37,42 @@ if (!fs.existsSync(cronjobsDir)) {
 }
 
 let jobs = [];
+const payrollCheckerjobs = [];
 
-const payrollCheckerjob = {
-    "name": "payroll-checker",
-    "cron": "0 0 1 * *",
-    "path": "/app/jobs/cronScriptCheckPayrolls.js",
-    "worker": {
-        "workerData": {
-            "employee_id": 1
-        }
+// Create the payroll checker job for each employee, query the database for the employee ids
+// Define an async function to create payroll checker jobs
+const createPayrollCheckerJobs = async () => {
+    try {
+        // Get all employees
+        const employees = await getEmployees();
+
+        console.log(`Employees: ${employees}`);
+
+        employees.forEach((employee) => {
+            console.log(`Creating payroll checker job for employee ${employee.employee_id}`);
+
+            payrollCheckerjobs.push({
+                name: `payroll-checker-employee-${employee.employee_id}`,
+                cron: "0 0 1 * *",
+                path: "/app/jobs/cronScriptCheckPayrolls.js",
+                worker: {
+                    workerData: {
+                        employee_id: employee.employee_id,
+                    },
+                },
+            });
+        });
+    } catch (error) {
+        console.error(error);
     }
 };
+
+// Call the function to create payroll checker jobs
+(async () => {
+    await createPayrollCheckerJobs();
+    console.log(`Payroll checker jobs: ${payrollCheckerjobs}`);
+})();
+
 
 if (fs.existsSync(jobsFilePath)) {
     // Read the job definitions from the JSON file
@@ -54,7 +80,7 @@ if (fs.existsSync(jobsFilePath)) {
 }
 
 // Add the payroll checker job to the jobs array
-jobs.push(payrollCheckerjob);
+jobs.push(payrollCheckerjobs);
 
 const bree = new Bree({
     logger: new Cabin(),
@@ -65,6 +91,8 @@ const bree = new Bree({
 (async () => {
     await bree.start();
 })();
+
+console.log(`Bree started with ${bree.config.jobs}`);
 
 app.use('/api/', routes);
 app.use('/api/accounts', accountsRouter);
