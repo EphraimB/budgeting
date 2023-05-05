@@ -36,10 +36,10 @@ router.post('/',
     ],
     createTransfer);
 
-router.put('/:id',
+router.put('/',
     [
-        param("id").isInt({ min: 1 }).withMessage("ID must be a number"),
-        body("source_account_id").isInt({ min: 1 }).withMessage("Account ID must be a number"),
+        query("id").isInt({ min: 1 }).withMessage("ID must be a number"),
+        query("source_account_id").isInt({ min: 1 }).withMessage("Account ID must be a number"),
         body("destination_account_id").isInt({ min: 1 }).withMessage("Account ID must be a number"),
         body("amount").isNumeric().withMessage("Amount must be a number"),
         body("title").isString().withMessage("Title must be a string"),

@@ -1186,9 +1186,9 @@
         ],
         "parameters": [
           {
-            "name": "account_id",
+            "name": "source_account_id",
             "in": "query",
-            "description": "Account id",
+            "description": "Source account id",
             "required": true,
             "schema": {
               "type": "integer",

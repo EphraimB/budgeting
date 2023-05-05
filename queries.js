@@ -778,14 +778,41 @@ const createTransfer = (request, response) => {
 
 // Update transfer
 const updateTransfer = (request, response) => {
-    const id = parseInt(request.params.id);
-    const { source_account_id, destination_account_id, amount, title, description, frequency_type, frequency_type_variable, frequency_day_of_month, frequency_day_of_week, frequency_week_of_month, frequency_month_of_year, begin_date, end_date } = request.body;
+    const { source_account_id, id } = request.query;
+    const { destination_account_id, amount, title, description, frequency_type, frequency_type_variable, frequency_day_of_month, frequency_day_of_week, frequency_week_of_month, frequency_month_of_year, begin_date, end_date } = request.body;
 
-    pool.query(transferQueries.updateTransfer, [source_account_id, destination_account_id, amount, title, description, frequency_type, frequency_type_variable, frequency_day_of_month, frequency_day_of_week, frequency_week_of_month, frequency_month_of_year, begin_date, end_date, id], (error, results) => {
+    const negativeAmount = -amount;
+
+    // Get expense id to see if it exists
+    pool.query(transferQueries.getTransfer, [source_account_id, id], (error, results) => {
         if (error) {
-            return response.status(400).send({ errors: { "msg": "Error updating transfer", "param": null, "location": "query" } });
+            return response.status(400).send({ errors: { "msg": "Error getting transfer", "param": null, "location": "query" } });
         }
-        response.status(200).send(results.rows);
+
+        if (results.rows.length === 0) {
+            return response.status(200).send([]);
+        } else {
+            const cronId = results.rows[0].cron_job_id;
+
+            deleteCronJob(cronId).then(() => {
+                const { uniqueId, cronDate } = scheduleCronJob(begin_date, source_account_id, negativeAmount, description, frequency_type, frequency_type_variable, frequency_day_of_month, frequency_day_of_week, frequency_week_of_month, frequency_month_of_year, destination_account_id);
+
+                pool.query(cronJobQueries.updateCronJob, [uniqueId, cronDate, cronId], (error, results) => {
+                    if (error) {
+                        return response.status(400).send({ errors: { "msg": "Error updating cron job", "param": null, "location": "query" } });
+                    }
+
+                    pool.query(transferQueries.updateTransfer, [source_account_id, destination_account_id, amount, title, description, frequency_type, frequency_type_variable, frequency_day_of_month, frequency_day_of_week, frequency_week_of_month, frequency_month_of_year, begin_date, end_date, id], (error, results) => {
+                        if (error) {
+                            return response.status(400).send({ errors: { "msg": "Error updating transfer", "param": null, "location": "query" } });
+                        }
+                        response.status(200).send(results.rows);
+                    });
+                });
+            }).catch((error) => {
+                console.log(error);
+            });
+        };
     });
 }
 
