@@ -1,4 +1,4 @@
-const scheduleCronJob = (date, account_id, amount, description, frequency_type, frequency_type_variable, frequency_day_of_month, frequency_day_of_week, frequency_week_of_month, frequency_month_of_year) => {
+const scheduleCronJob = (date, account_id, amount, description, frequency_type, frequency_type_variable, frequency_day_of_month, frequency_day_of_week, frequency_week_of_month, frequency_month_of_year, destination_account_id) => {
     const { v4: uuidv4 } = require('uuid');
     const { bree } = require('../app.js');
     const fs = require('fs');
@@ -6,6 +6,8 @@ const scheduleCronJob = (date, account_id, amount, description, frequency_type, 
     const Cabin = require('cabin');
     let jobs = [];
     const jobsFilePath = path.join(__dirname, '../jobs.json');
+
+    destination_account_id = destination_account_id || null;
 
     // Generate a unique id for the cron job
     const uniqueId = uuidv4();
@@ -70,12 +72,13 @@ const scheduleCronJob = (date, account_id, amount, description, frequency_type, 
     const newJob = {
         name: uniqueId,
         cron: cronDate,
-        path: path.join(__dirname, 'cronScriptCreate.js'), // path to the worker file
+        path: path.join(__dirname, destination_account_id === null ? 'cronScriptCreate.js' : 'cronScriptTransferCreate.js'), // path to the worker file
         worker: {
             workerData: {
                 account_id,
                 amount,
-                description
+                description,
+                destination_account_id
             }
         }
     };

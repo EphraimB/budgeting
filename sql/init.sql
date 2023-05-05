@@ -112,6 +112,7 @@ CREATE TABLE IF NOT EXISTS wishlist (
 -- Create a transfers table in postgres that will transfer money from one account to another
 CREATE TABLE IF NOT EXISTS transfers (
   transfer_id SERIAL PRIMARY KEY,
+  cron_job_id INT NOT NULL REFERENCES cron_jobs(cron_job_id),
   source_account_id INT NOT NULL REFERENCES accounts(account_id),
   destination_account_id INT NOT NULL REFERENCES accounts(account_id),
   transfer_amount numeric(12, 2) NOT NULL,

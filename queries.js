@@ -755,11 +755,24 @@ const getTransfers = (request, response) => {
 const createTransfer = (request, response) => {
     const { source_account_id, destination_account_id, amount, title, description, frequency_type, frequency_type_variable, frequency_day_of_month, frequency_day_of_week, frequency_week_of_month, frequency_month_of_year, begin_date, end_date } = request.body;
 
-    pool.query(transferQueries.createTransfer, [source_account_id, destination_account_id, amount, title, description, frequency_type, frequency_type_variable, frequency_day_of_month, frequency_day_of_week, frequency_week_of_month, frequency_month_of_year, begin_date, end_date], (error, results) => {
+    const negativeAmount = -amount;
+
+    const { cronDate, uniqueId } = scheduleCronJob(begin_date, source_account_id, negativeAmount, description, frequency_type, frequency_type_variable, frequency_day_of_month, frequency_day_of_week, frequency_week_of_month, frequency_month_of_year, destination_account_id);
+
+    pool.query(cronJobQueries.createCronJob, [uniqueId, cronDate], (error, results) => {
         if (error) {
-            return response.status(400).send({ errors: { "msg": "Error creating transfer", "param": null, "location": "query" } });
+            return response.status(400).send({ errors: { "msg": "Error creating cron job", "param": null, "location": "query" } });
         }
-        response.status(201).send(results.rows);
+        const cronId = results.rows[0].cron_job_id;
+
+        console.log('Cron job created ' + cronId)
+
+        pool.query(transferQueries.createTransfer, [cronId, source_account_id, destination_account_id, amount, title, description, frequency_type, frequency_type_variable, frequency_day_of_month, frequency_day_of_week, frequency_week_of_month, frequency_month_of_year, begin_date, end_date], (error, results) => {
+            if (error) {
+                return response.status(400).send({ errors: { "msg": "Error creating transfer", "param": null, "location": "query" } });
+            }
+            response.status(201).send(results.rows);
+        });
     });
 }
 
