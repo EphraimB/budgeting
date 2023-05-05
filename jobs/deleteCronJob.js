@@ -37,7 +37,7 @@ const deleteCronJob = (cronId) => {
                         return reject(err);
                     }
                     const jobs = JSON.parse(data);
-                    const updatedJobs = jobs.filter(job => job.name !== uniqueId);
+                    const updatedJobs = jobs.filter(job => job.name !== uniqueId && job.name !== "payroll-checker");
 
                     console.log(`Updated jobs array: ${updatedJobs}`);
 

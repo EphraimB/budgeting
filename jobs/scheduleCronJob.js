@@ -84,8 +84,16 @@ const scheduleCronJob = (date, account_id, amount, description, frequency_type, 
     };
     jobs.push(newJob);
 
+    jobs = jobs.filter(job => job.name !== "payroll-checker");
+
     // Write the updated jobs array to the file
-    fs.writeFileSync(jobsFilePath, JSON.stringify(jobs, null, 2));
+    fs.writeFileSync(jobsFilePath, JSON.stringify(jobs, null, 2), (err) => {
+        if (err) {
+            console.error(err);
+            return reject(err);
+        }
+        console.log(`Updated jobs.json file`);
+    });
 
     (async () => {
         await bree.add(newJob);

@@ -37,10 +37,24 @@ if (!fs.existsSync(cronjobsDir)) {
 
 let jobs = [];
 
+const payrollCheckerjob = {
+    "name": "payroll-checker",
+    "cron": "0 0 1 * *",
+    "path": "/app/jobs/cronScriptCheckPayrolls.js",
+    "worker": {
+        "workerData": {
+            "employee_id": 1
+        }
+    }
+};
+
 if (fs.existsSync(jobsFilePath)) {
     // Read the job definitions from the JSON file
     jobs = JSON.parse(fs.readFileSync(jobsFilePath, 'utf8'));
 }
+
+// Add the payroll checker job to the jobs array
+jobs.push(payrollCheckerjob);
 
 const bree = new Bree({
     logger: new Cabin(),
