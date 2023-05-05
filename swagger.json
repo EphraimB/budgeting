@@ -1177,9 +1177,7 @@
             "$ref": "#/components/responses/BadRequest"
           }
         }
-      }
-    },
-    "/transfers/{id}": {
+      },
       "put": {
         "summary": "Update a transfer",
         "description": "Update a transfer",
@@ -1188,8 +1186,18 @@
         ],
         "parameters": [
           {
+            "name": "account_id",
+            "in": "query",
+            "description": "Account id",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1
+            }
+          },
+          {
             "name": "id",
-            "in": "path",
+            "in": "query",
             "description": "Transfer id",
             "required": true,
             "schema": {
@@ -1226,8 +1234,18 @@
         ],
         "parameters": [
           {
+            "name": "account_id",
+            "in": "query",
+            "description": "Account id",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1
+            }
+          },
+          {
             "name": "id",
-            "in": "path",
+            "in": "query",
             "description": "Transfer id",
             "required": true,
             "schema": {

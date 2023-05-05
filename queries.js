@@ -343,8 +343,8 @@ const updateLoan = (request, response) => {
     const { amount, plan_amount, recipient, title, description, frequency_type, frequency_type_variable, frequency_day_of_month, frequency_day_of_week, frequency_week_of_month, frequency_month_of_year, begin_date } = request.body;
     const negativeAmount = -plan_amount;
 
-     // Get expense id to see if it exists
-     pool.query(loanQueries.getLoan, [account_id, id], (error, results) => {
+    // Get expense id to see if it exists
+    pool.query(loanQueries.getLoan, [account_id, id], (error, results) => {
         if (error) {
             return response.status(400).send({ errors: { "msg": "Error getting loan", "param": null, "location": "query" } });
         }
@@ -791,13 +791,36 @@ const updateTransfer = (request, response) => {
 
 // Delete transfer
 const deleteTransfer = (request, response) => {
-    const id = parseInt(request.params.id);
+    const { account_id, id } = request.query;
 
-    pool.query(transferQueries.deleteTransfer, [id], (error, results) => {
+    pool.query(transferQueries.getTransfer, [account_id, id], (error, results) => {
         if (error) {
-            return response.status(400).send({ errors: { "msg": "Error deleting transfer", "param": null, "location": "query" } });
+            return response.status(400).send({ errors: { "msg": "Error selecting transfer", "param": null, "location": "query" } });
         }
-        response.status(204).send();
+
+        if (results.rows.length > 0) {
+            const cronId = results.rows[0].cron_job_id;
+
+            pool.query(transferQueries.deleteTransfer, [id], (error, results) => {
+                if (error) {
+                    return response.status(400).send({ errors: { "msg": "Error deleting transfer", "param": null, "location": "query" } });
+                }
+
+                if (cronId) {
+                    deleteCronJob(cronId);
+
+                    pool.query(cronJobQueries.deleteCronJob, [cronId], (error, results) => {
+                        if (error) {
+                            return response.status(400).send({ errors: { "msg": "Error deleting cron job", "param": null, "location": "query" } });
+                        }
+                    });
+                }
+
+                response.status(200).send("Transfer deleted successfully");
+            });
+        } else {
+            response.status(200).send("Transfer doesn't exist");
+        }
     });
 }
 
