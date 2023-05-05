@@ -339,14 +339,40 @@ const createLoan = (request, response) => {
 
 // Update loan
 const updateLoan = (request, response) => {
-    const id = parseInt(request.params.id);
-    const { account_id, amount, plan_amount, recipient, title, description, frequency_type, frequency_type_variable, frequency_day_of_month, frequency_day_of_week, frequency_week_of_month, frequency_month_of_year, begin_date } = request.body;
+    const { account_id, id } = request.query;
+    const { amount, plan_amount, recipient, title, description, frequency_type, frequency_type_variable, frequency_day_of_month, frequency_day_of_week, frequency_week_of_month, frequency_month_of_year, begin_date } = request.body;
+    const negativeAmount = -plan_amount;
 
-    pool.query(loanQueries.updateLoan, [account_id, amount, plan_amount, recipient, title, description, frequency_type, frequency_type_variable, frequency_day_of_month, frequency_day_of_week, frequency_week_of_month, frequency_month_of_year, begin_date, id], (error, results) => {
+     // Get expense id to see if it exists
+     pool.query(loanQueries.getLoan, [account_id, id], (error, results) => {
         if (error) {
-            return response.status(400).send({ errors: { "msg": "Error updating loan", "param": null, "location": "query" } });
+            return response.status(400).send({ errors: { "msg": "Error getting loan", "param": null, "location": "query" } });
         }
-        response.status(200).send(results.rows);
+
+        if (results.rows.length === 0) {
+            return response.status(200).send([]);
+        } else {
+            const cronId = results.rows[0].cron_job_id;
+
+            deleteCronJob(cronId).then(() => {
+                const { uniqueId, cronDate } = scheduleCronJob(begin_date, account_id, negativeAmount, description, frequency_type, frequency_type_variable, frequency_day_of_month, frequency_day_of_week, frequency_week_of_month, frequency_month_of_year);
+
+                pool.query(cronJobQueries.updateCronJob, [uniqueId, cronDate, cronId], (error, results) => {
+                    if (error) {
+                        return response.status(400).send({ errors: { "msg": "Error updating cron job", "param": null, "location": "query" } });
+                    }
+
+                    pool.query(loanQueries.updateLoan, [account_id, amount, plan_amount, recipient, title, description, frequency_type, frequency_type_variable, frequency_day_of_month, frequency_day_of_week, frequency_week_of_month, frequency_month_of_year, begin_date, id], (error, results) => {
+                        if (error) {
+                            return response.status(400).send({ errors: { "msg": "Error updating loan", "param": null, "location": "query" } });
+                        }
+                        response.status(200).json(results.rows);
+                    });
+                });
+            }).catch((error) => {
+                console.log(error);
+            });
+        };
     });
 }
 

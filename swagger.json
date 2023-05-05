@@ -483,6 +483,54 @@
           }
         }
       },
+      "put": {
+        "summary": "Update a loan",
+        "description": "Update a loan",
+        "tags": [
+          "loans"
+        ],
+        "parameters": [
+          {
+            "name": "account_id",
+            "in": "query",
+            "description": "Account id",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1
+            }
+          },
+          {
+            "name": "id",
+            "in": "query",
+            "description": "Loan id",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1
+            }
+          }
+        ],
+        "requestBody": {
+          "description": "Loans object to be updated",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LoanManipulation"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/SuccessResponseLoans"
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          }
+        }
+      },
       "delete": {
         "summary": "Delete a loan",
         "description": "Delete a loan",
@@ -514,46 +562,6 @@
         "responses": {
           "200": {
             "description": "Loan deleted successfully"
-          },
-          "400": {
-            "$ref": "#/components/responses/BadRequest"
-          }
-        }
-      }
-    },
-    "/loans/{id}": {
-      "put": {
-        "summary": "Update a loan",
-        "description": "Update a loan",
-        "tags": [
-          "loans"
-        ],
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "description": "Loan id",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "minimum": 1
-            }
-          }
-        ],
-        "requestBody": {
-          "description": "Loans object to be updated",
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/LoanManipulation"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "$ref": "#/components/responses/SuccessResponseLoans"
           },
           "400": {
             "$ref": "#/components/responses/BadRequest"

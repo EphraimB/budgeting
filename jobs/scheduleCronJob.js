@@ -70,7 +70,7 @@ const scheduleCronJob = (date, account_id, amount, description, frequency_type, 
     const newJob = {
         name: uniqueId,
         cron: cronDate,
-        path: path.join(__dirname, 'cronScript.js'), // path to the worker file
+        path: path.join(__dirname, 'cronScriptCreate.js'), // path to the worker file
         worker: {
             workerData: {
                 account_id,
