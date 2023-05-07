@@ -12,11 +12,9 @@ pool.query(payrollQueries.getEmployees, (error, results) => {
         console.log(error);
     }
 
-    results.rows[0].forEach((employee) => {
-        console.log(`Creating payroll checker job for employee ${employee}`);
-
+    results.rows.forEach((employee) => {
         payrollCheckerjobs.push({
-            name: `payroll-checker-employee-${employee[0].employee_id}`,
+            name: `payroll-checker-employee-${employee.employee_id}`,
             cron: "0 0 1 * *",
             path: "/app/jobs/cronScriptCheckPayrolls.js",
             worker: {
@@ -35,6 +33,6 @@ if (fs.existsSync(jobsFilePath)) {
 }
 
 // Add the payroll checker job to the jobs array
-jobs.push(payrollCheckerjobs);
+jobs = jobs.concat(payrollCheckerjobs);
 
 module.exports = { jobs };
