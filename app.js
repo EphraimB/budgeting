@@ -3,7 +3,6 @@ const fs = require('fs');
 const Bree = require('bree');
 const Cabin = require('cabin');
 const path = require('path');
-const jobsFilePath = 'jobs.json';
 const bodyParser = require('body-parser');
 const routes = require('./routes/routes');
 const accountsRouter = require('./routes/accountsRouter');
@@ -20,7 +19,8 @@ const transactionsRouter = require('./routes/transactionsRouter');
 const cronjobsDir = path.join(__dirname, 'jobs/cron-jobs');
 const swaggerUi = require('swagger-ui-express'),
     swaggerDocument = require('./swagger.json');
-const { getEmployees } = require('./queries');
+const pool = require('./db');
+const { jobs } = require('./getJobs');
 
 const app = express();
 
@@ -35,46 +35,6 @@ app.use(
 if (!fs.existsSync(cronjobsDir)) {
     fs.mkdirSync(cronjobsDir);
 }
-
-let jobs = [];
-const payrollCheckerjobs = [];
-
-// Create the payroll checker job for each employee, query the database for the employee ids
-// Define an async function to create payroll checker jobs
-(async () => {
-    try {
-        // Get all employees
-        const employees = await getEmployees();
-
-        console.log(`Employees: ${employees}`);
-
-        employees.forEach((employee) => {
-            console.log(`Creating payroll checker job for employee ${employee}`);
-
-            payrollCheckerjobs.push({
-                name: `payroll-checker-employee-${employee[0].employee_id}`,
-                cron: "0 0 1 * *",
-                path: "/app/jobs/cronScriptCheckPayrolls.js",
-                worker: {
-                    workerData: {
-                        employee_id: employee.employee_id,
-                    },
-                },
-            });
-        });
-    } catch (error) {
-        console.error(error);
-    }
-})();
-
-
-if (fs.existsSync(jobsFilePath)) {
-    // Read the job definitions from the JSON file
-    jobs = JSON.parse(fs.readFileSync(jobsFilePath, 'utf8'));
-}
-
-// Add the payroll checker job to the jobs array
-jobs.push(payrollCheckerjobs);
 
 const bree = new Bree({
     logger: new Cabin(),

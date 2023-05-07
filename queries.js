@@ -580,19 +580,6 @@ const deletePayrollDate = (request, response) => {
     });
 }
 
-// Get all employees
-const getEmployees = () => {
-    return new Promise((resolve, reject) => {
-        pool.query(payrollQueries.getEmployees, (error, results) => {
-            if (error) {
-                reject(error);
-            } else {
-                resolve(results.rows);
-            }
-        });
-    });
-}
-
 // Get employee
 const getEmployee = (request, response) => {
     const { id } = request.query;
@@ -912,7 +899,6 @@ module.exports = {
     createPayrollDate,
     updatePayrollDate,
     deletePayrollDate,
-    getEmployees,
     getEmployee,
     createEmployee,
     updateEmployee,
