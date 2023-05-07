@@ -25,6 +25,8 @@ const app = express();
 
 app.use(bodyParser.json());
 
+console.log(jobs);
+
 app.use(
     '/api/docs',
     swaggerUi.serve,
