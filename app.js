@@ -19,7 +19,6 @@ const transactionsRouter = require('./routes/transactionsRouter');
 const cronjobsDir = path.join(__dirname, 'jobs/cron-jobs');
 const swaggerUi = require('swagger-ui-express'),
     swaggerDocument = require('./swagger.json');
-const pool = require('./db');
 const { jobs } = require('./getJobs');
 
 const app = express();
