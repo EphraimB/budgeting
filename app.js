@@ -67,11 +67,7 @@ const createPayrollCheckerJobs = async () => {
     }
 };
 
-// Call the function to create payroll checker jobs
-(async () => {
-    await createPayrollCheckerJobs();
-    console.log(`Payroll checker jobs: ${payrollCheckerjobs}`);
-})();
+createPayrollCheckerJobs();
 
 
 if (fs.existsSync(jobsFilePath)) {

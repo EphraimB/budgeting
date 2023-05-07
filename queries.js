@@ -584,7 +584,7 @@ const deletePayrollDate = (request, response) => {
 const getEmployees = () => {
     return new Promise((resolve, reject) => {
       pool.query(payrollQueries.getEmployees, (error, results) => {
-        console.log(testing);
+        console.log('testing');
         if (error) {
           reject(error);
         } else {
