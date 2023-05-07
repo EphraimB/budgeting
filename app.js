@@ -41,7 +41,7 @@ const payrollCheckerjobs = [];
 
 // Create the payroll checker job for each employee, query the database for the employee ids
 // Define an async function to create payroll checker jobs
-const createPayrollCheckerJobs = async () => {
+(async () => {
     try {
         // Get all employees
         const employees = await getEmployees();
@@ -49,10 +49,10 @@ const createPayrollCheckerJobs = async () => {
         console.log(`Employees: ${employees}`);
 
         employees.forEach((employee) => {
-            console.log(`Creating payroll checker job for employee ${employee.employee_id}`);
+            console.log(`Creating payroll checker job for employee ${employee}`);
 
             payrollCheckerjobs.push({
-                name: `payroll-checker-employee-${employee.employee_id}`,
+                name: `payroll-checker-employee-${employee[0].employee_id}`,
                 cron: "0 0 1 * *",
                 path: "/app/jobs/cronScriptCheckPayrolls.js",
                 worker: {
@@ -65,9 +65,7 @@ const createPayrollCheckerJobs = async () => {
     } catch (error) {
         console.error(error);
     }
-};
-
-createPayrollCheckerJobs();
+})();
 
 
 if (fs.existsSync(jobsFilePath)) {
