@@ -18,7 +18,7 @@ const transferRouter = require('./routes/transfersRouter');
 const transactionsRouter = require('./routes/transactionsRouter');
 const cronjobsDir = path.join(__dirname, 'jobs/cron-jobs');
 const swaggerUi = require('swagger-ui-express'),
-    swaggerDocument = require('./swagger.json');
+  swaggerDocument = require('./swagger.json');
 const getJobs = require('./getJobs');
 
 const app = express();
@@ -26,29 +26,32 @@ const app = express();
 app.use(bodyParser.json());
 
 app.use(
-    '/api/docs',
-    swaggerUi.serve,
-    swaggerUi.setup(swaggerDocument)
+  '/api/docs',
+  swaggerUi.serve,
+  swaggerUi.setup(swaggerDocument)
 );
 
 if (!fs.existsSync(cronjobsDir)) {
-    fs.mkdirSync(cronjobsDir);
+  fs.mkdirSync(cronjobsDir);
 }
 
 const bree = new Bree({
-    logger: new Cabin(),
-    root: cronjobsDir
+  logger: new Cabin(),
+  root: cronjobsDir
 });
 
-getJobs()
-  .then((jobs) => {
+(async () => {
+  try {
+    const jobs = await getJobs();
     bree.config.jobs = jobs;
     console.log(`Bree configured with ${bree.config.jobs}`);
     bree.start();
-  })
-  .catch((error) => {
-    console.error(error);
-  });
+  } catch (error) {
+    console.log(error);
+  }
+})();
+
+console.log(`Bree started with ${bree.config.jobs}`);
 
 app.use('/api/', routes);
 app.use('/api/accounts', accountsRouter);
@@ -64,6 +67,6 @@ app.use('/api/transfers', transferRouter);
 app.use('/api/transactions', transactionsRouter);
 
 module.exports = {
-    app,
-    bree
+  app,
+  bree
 };
