@@ -19,13 +19,11 @@ const transactionsRouter = require('./routes/transactionsRouter');
 const cronjobsDir = path.join(__dirname, 'jobs/cron-jobs');
 const swaggerUi = require('swagger-ui-express'),
     swaggerDocument = require('./swagger.json');
-const { jobs } = require('./getJobs');
+const { getJobs } = require('./getJobs');
 
 const app = express();
 
 app.use(bodyParser.json());
-
-console.log(jobs);
 
 app.use(
     '/api/docs',
@@ -40,7 +38,7 @@ if (!fs.existsSync(cronjobsDir)) {
 const bree = new Bree({
     logger: new Cabin(),
     root: cronjobsDir,
-    jobs
+    jobs: getJobs(),
 });
 
 (async () => {

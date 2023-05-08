@@ -4,16 +4,16 @@ const fs = require("fs");
 const jobsFilePath = 'jobs.json';
 let jobs = [];
 
-// Function to merge the payrollCheckerjobs array with the existing jobs array
-if (fs.existsSync(jobsFilePath)) {
-    // Read the job definitions from the JSON file
-    jobs = JSON.parse(fs.readFileSync(jobsFilePath, 'utf8'));
-}
-
 // Create the payroll checker job for each employee, query the database for the employee ids
 pool.query(payrollQueries.getEmployees, (error, results) => {
     if (error) {
         console.log(error);
+    }
+
+    // Function to merge the payrollCheckerjobs array with the existing jobs array
+    if (fs.existsSync(jobsFilePath)) {
+        // Read the job definitions from the JSON file
+        jobs = JSON.parse(fs.readFileSync(jobsFilePath, 'utf8'));
     }
 
     const payrollCheckerjobs = results.rows.map((employee) => ({
@@ -27,11 +27,14 @@ pool.query(payrollQueries.getEmployees, (error, results) => {
         },
     }));
 
-    fs.writeFileSync(jobsFilePath, JSON.stringify(jobs), 'utf8');
-    
-    jobs = jobs.concat(payrollCheckerjobs);
+    fs.writeFileSync(jobsFilePath, JSON.stringify(jobs, null, 2), 'utf8');
 
-    console.log(jobs);
+    jobs.push(...payrollCheckerjobs);
 });
 
-module.exports = { jobs };
+// Export a function to retrieve the jobs
+const getJobs = () => {
+    return jobs;
+};
+
+module.exports = { getJobs };
