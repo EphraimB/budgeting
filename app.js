@@ -45,7 +45,7 @@ const bree = new Bree({
     const jobs = await getJobs();
     bree.config.jobs = jobs;
     console.log(`Bree configured with ${bree.config.jobs}`);
-    bree.start();
+    await bree.start();
   } catch (error) {
     console.log(error);
   }
