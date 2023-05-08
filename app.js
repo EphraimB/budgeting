@@ -43,16 +43,12 @@ const bree = new Bree({
 getJobs()
   .then((jobs) => {
     bree.config.jobs = jobs;
+    console.log(`Bree configured with ${bree.config.jobs}`);
+    bree.start();
   })
   .catch((error) => {
     console.error(error);
   });
-
-(async () => {
-    await bree.start();
-})();
-
-console.log(`Bree started with ${bree.config.jobs}`);
 
 app.use('/api/', routes);
 app.use('/api/accounts', accountsRouter);
