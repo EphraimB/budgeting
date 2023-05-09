@@ -22,7 +22,7 @@ const getJobs = () => {
 
             const payrollCheckerjobs = results.rows.map((employee) => ({
                 name: `payroll-checker-employee-${employee.employee_id}`,
-                cron: "36 17 * * *",
+                cron: "* * 1 * *",
                 path: "/app/jobs/cronScriptGetPayrolls.js",
                 worker: {
                     workerData: {
