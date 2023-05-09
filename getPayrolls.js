@@ -18,7 +18,7 @@ const getPayrolls = async employee_id => {
         if (job.name.startsWith('payroll-')) {
             try {
                 // Delete the cron job file
-                const cronJobFilePath = path.join(__dirname, 'cron-jobs', `${job.name}.js`);
+                const cronJobFilePath = path.join(__dirname, 'jobs', 'cron-jobs', `${job.name}.js`);
                 fs.unlink(cronJobFilePath, (err) => {
                     if (err) {
                         console.error(err);

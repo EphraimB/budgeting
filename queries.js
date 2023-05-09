@@ -2,6 +2,7 @@ const pool = require('./db');
 const { accountQueries, transactionQueries, expenseQueries, loanQueries, payrollQueries, wishlistQueries, transferQueries, currentBalanceQueries, cronJobQueries } = require('./queryData');
 const scheduleCronJob = require('./jobs/scheduleCronJob');
 const deleteCronJob = require('./jobs/deleteCronJob');
+const getPayrollsForMonth = require('./getPayrolls');
 
 // Get all accounts
 const getAccounts = (request, response) => {
@@ -482,6 +483,9 @@ const createPayrollTax = (request, response) => {
         if (error) {
             return response.status(400).send({ errors: { "msg": "Error creating payroll tax", "param": null, "location": "query" } });
         }
+        
+        getPayrollsForMonth(employee_id);
+
         response.status(201).json(results.rows);
     });
 }
