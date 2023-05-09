@@ -2,6 +2,7 @@ const pool = require("./db");
 const { payrollQueries } = require("./queryData");
 const fs = require("fs");
 const jobsFilePath = 'jobs.json';
+const getPayrolls = require("./getPayrolls");
 
 const getJobs = () => {
     return new Promise((resolve, reject) => {
@@ -18,6 +19,15 @@ const getJobs = () => {
             if (fs.existsSync(jobsFilePath)) {
                 // Read the job definitions from the JSON file
                 jobs = JSON.parse(fs.readFileSync(jobsFilePath, 'utf8'));
+            }
+
+            // Execute the cronScriptGetPayrolls.js script if there are no jobs that start with payroll- in the jobs array
+            if (!jobs.some(job => job.name.startsWith("payroll-"))) {
+                results.rows.forEach((employee) => {
+                    (async () => {
+                        await getPayrolls(employee.employee_id);
+                    })();
+                });
             }
 
             const payrollCheckerjobs = results.rows.map((employee) => ({
