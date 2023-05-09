@@ -3,7 +3,6 @@ const schedulePayrollCronJob = (payrollData, account_id) => {
     const { bree } = require('../app.js');
     const fs = require('fs');
     const path = require('path');
-    const Cabin = require('cabin');
     let jobs = [];
     const jobsFilePath = path.join(__dirname, '../jobs.json');
     const { end_date, net_pay } = payrollData;
@@ -21,7 +20,7 @@ const schedulePayrollCronJob = (payrollData, account_id) => {
 
     // Create a new Date object from the provided date string
     const transactionDate = new Date(end_date);
-    
+
     // Format the date and time for the cron job
     const cronDate = `${transactionDate.getMinutes()} ${transactionDate.getHours()} ${transactionDate.getDate()} ${transactionDate.getMonth() + 1} *`;
 
