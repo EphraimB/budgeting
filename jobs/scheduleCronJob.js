@@ -9,6 +9,8 @@ const scheduleCronJob = (date, account_id, amount, description, frequency_type, 
 
     destination_account_id = destination_account_id || null;
 
+    console.log(bree.config.jobs);
+
     // Generate a unique id for the cron job
     const uniqueId = uuidv4();
 
