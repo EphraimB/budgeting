@@ -1,5 +1,6 @@
 const pool = require('../db');
 const fs = require('fs');
+const path = require('path');
 const jobsFilePath = 'jobs.json';
 const { workerData } = require('worker_threads');
 const { payrollQueries } = require('../queryData');
@@ -12,6 +13,26 @@ const schedulePayrollCronJob = require('./schedulePayrollCronJob');
     let jobs = [];
     if (fs.existsSync(jobsFilePath)) {
         jobs = JSON.parse(fs.readFileSync(jobsFilePath));
+    }
+
+    // Get the unique IDs of the cron job to be deleted that start with 'payroll-'
+    for (const job of jobs) {
+        if (job.name.startsWith('payroll-')) {
+            try {
+                // Delete the cron job file
+                const cronJobFilePath = path.join(__dirname, 'cron-jobs', `${job.name}.js`);
+                fs.unlink(cronJobFilePath, (err) => {
+                    if (err) {
+                        console.error(err);
+                        return reject(err);
+                    }
+                    console.log(`Deleted cron job file ${job.name}.js`);
+                });
+
+            } catch (error) {
+                console.error('Error deleting cron job:', error);
+            }
+        }
     }
 
     // Remove existing payroll- jobs from the array
