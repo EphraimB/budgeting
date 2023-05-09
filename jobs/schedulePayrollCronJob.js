@@ -40,7 +40,7 @@ const schedulePayrollCronJob = (payrollData, account_id) => {
         worker: {
             workerData: {
                 account_id,
-                amount: net_pay,
+                amount: parseFloat(net_pay),
                 description: 'Payroll'
             }
         }
