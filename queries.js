@@ -492,7 +492,7 @@ const createPayrollTax = (request, response) => {
 
 // Update payroll tax
 const updatePayrollTax = (request, response) => {
-    const id = parseInt(request.params.id);
+    const { employee_id, id } = request.query;
     const { name, rate, applies_to } = request.body;
 
     pool.query(payrollQueries.updatePayrollTax, [name, rate, applies_to, id], (error, results) => {
