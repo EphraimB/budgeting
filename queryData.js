@@ -183,6 +183,7 @@ const payrollQueries = {
   deletePayrollDate: 'DELETE FROM payroll_dates WHERE payroll_date_id = $1',
   getEmployees: 'SELECT * FROM employee',
   getEmployee: 'SELECT * FROM employee WHERE employee_id = $1',
+  getAccountIdFromEmployee: 'SELECT account_id FROM accounts WHERE employee_id = $1',
   createEmployee: 'INSERT INTO employee (name, hourly_rate, regular_hours, vacation_days, sick_days, work_schedule) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *',
   updateEmployee: 'UPDATE employee SET name = $1, hourly_rate = $2, regular_hours = $3, vacation_days = $4, sick_days = $5, work_schedule = $6 WHERE employee_id = $7 RETURNING *',
   deleteEmployee: 'DELETE FROM employee WHERE employee_id = $1',
