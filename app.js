@@ -37,11 +37,10 @@ if (!fs.existsSync(cronjobsDir)) {
 
 const bree = new Bree({
   logger: new Cabin(),
-  root: cronjobsDir,
-  jobs: []
+  root: cronjobsDir
 });
 
-(async () => {
+async function startBree() {
   try {
     const jobs = await getJobs();
     bree.config.jobs = jobs;
@@ -50,9 +49,15 @@ const bree = new Bree({
   } catch (error) {
     console.log(error);
   }
-})();
+}
 
-console.log(`Bree started with ${bree.config.jobs}`);
+startBree()
+  .then(() => {
+    console.log(`Bree started with ${bree.config.jobs}`);
+  })
+  .catch((error) => {
+    console.error('Failed to start Bree:', error);
+  });
 
 app.use('/api/', routes);
 app.use('/api/accounts', accountsRouter);
