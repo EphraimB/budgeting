@@ -483,7 +483,7 @@ const createPayrollTax = (request, response) => {
         if (error) {
             return response.status(400).send({ errors: { "msg": "Error creating payroll tax", "param": null, "location": "query" } });
         }
-        
+
         getPayrollsForMonth(employee_id);
 
         response.status(201).json(results.rows);
@@ -499,6 +499,9 @@ const updatePayrollTax = (request, response) => {
         if (error) {
             return response.status(400).send({ errors: { "msg": "Error updating payroll tax", "param": null, "location": "query" } });
         }
+
+        getPayrollsForMonth(employee_id);
+
         response.status(200).send(results.rows);
     });
 }
@@ -511,6 +514,7 @@ const deletePayrollTax = (request, response) => {
         if (error) {
             return response.status(400).send({ errors: { "msg": "Error deleting payroll tax", "param": null, "location": "query" } });
         }
+        
         response.status(204).send();
     });
 }
@@ -555,6 +559,8 @@ const createPayrollDate = (request, response) => {
         if (error) {
             return response.status(400).send({ errors: { "msg": "Error creating payroll date", "param": null, "location": "query" } });
         }
+
+        getPayrollsForMonth(employee_id);
         response.status(201).json(results.rows);
     });
 }
