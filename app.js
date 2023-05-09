@@ -37,7 +37,8 @@ if (!fs.existsSync(cronjobsDir)) {
 
 const bree = new Bree({
   logger: new Cabin(),
-  root: cronjobsDir
+  root: cronjobsDir,
+  jobs: []
 });
 
 (async () => {
