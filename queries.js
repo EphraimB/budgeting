@@ -516,7 +516,7 @@ const deletePayrollTax = (request, response) => {
         }
 
         getPayrollsForMonth(employee_id);
-        
+
         response.status(204).send();
     });
 }
@@ -654,14 +654,35 @@ const updateEmployee = (request, response) => {
 const deleteEmployee = (request, response) => {
     const employee_id = parseInt(request.params.employee_id);
 
-    pool.query(payrollQueries.deleteEmployee, [employee_id], (error, results) => {
+    // Only delete if there are no payroll dates associated with the employee
+    pool.query(payrollQueries.getPayrollDates, [employee_id], (error, results) => {
         if (error) {
-            return response.status(400).send({ errors: { "msg": "Error deleting employee", "param": null, "location": "query" } });
+            return response.status(400).send({ errors: { "msg": "Error getting payroll dates", "param": null, "location": "query" } });
         }
 
-        getPayrollsForMonth(employee_id);
-        
-        response.status(204).send();
+        if (results.rows.length > 0) {
+            return response.status(400).send({ errors: { "msg": "You need to delete employee related data before deleting the employee", "param": null, "location": "query" } });
+        } else {
+            pool.query(payrollQueries.getPayrollTaxes, [employee_id], (error, results) => {
+                if (error) {
+                    return response.status(400).send({ errors: { "msg": "Error getting payroll taxes", "param": null, "location": "query" } });
+                }
+
+                if (results.rows.length > 0) {
+                    return response.status(400).send({ errors: { "msg": "You need to delete employee related data before deleting the employee", "param": null, "location": "query" } });
+                } else {
+                    pool.query(payrollQueries.deleteEmployee, [employee_id], (error, results) => {
+                        if (error) {
+                            return response.status(400).send({ errors: { "msg": "Error deleting employee", "param": null, "location": "query" } });
+                        }
+
+                        getPayrollsForMonth(employee_id);
+
+                        response.status(204).send();
+                    });
+                }
+            });
+        }
     });
 }
 
