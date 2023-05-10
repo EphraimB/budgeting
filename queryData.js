@@ -243,7 +243,7 @@ const generatedTransactionsQueries = {
             expense_title AS title,
             expense_description AS description,
             expense_begin_date AS date,
-            expense_amount AS amount
+            -expense_amount AS amount
         FROM expenses
         WHERE account_id = $1 AND date_created >= $2
       ) AS combined_data
