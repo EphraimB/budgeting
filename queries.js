@@ -594,7 +594,7 @@ const deletePayrollDate = (request, response) => {
         }
 
         getPayrollsForMonth(employee_id);
-        
+
         response.status(204).send();
     });
 }
@@ -643,6 +643,9 @@ const updateEmployee = (request, response) => {
         if (error) {
             return response.status(400).send({ errors: { "msg": "Error updating employee", "param": null, "location": "query" } });
         }
+
+        getPayrollsForMonth(employee_id);
+        
         response.status(200).send(results.rows);
     });
 }
