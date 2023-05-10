@@ -6,7 +6,7 @@ const path = require('path');
 const bodyParser = require('body-parser');
 const routes = require('./routes/routes');
 const accountsRouter = require('./routes/accountsRouter');
-const transactionRouter = require('./routes/transactionRouter');
+const transactionHistoryRouter = require('./routes/transactionHistoryRouter');
 const expensesRouter = require('./routes/expensesRouter');
 const loansRouter = require('./routes/loansRouter');
 const payrollRouter = require('./routes/payrollRouter');
@@ -60,7 +60,7 @@ startBree()
 
 app.use('/api/', routes);
 app.use('/api/accounts', accountsRouter);
-app.use('/api/transaction', transactionRouter);
+app.use('/api/transactionHistory', transactionHistoryRouter);
 app.use('/api/expenses', expensesRouter);
 app.use('/api/loans', loansRouter);
 app.use('/api/payroll', payrollRouter);
