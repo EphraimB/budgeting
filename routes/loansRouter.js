@@ -35,10 +35,10 @@ router.post('/',
         validateRequest,
     ],
     createLoan);
-router.put('/:id',
+router.put('/',
     [
-        param("id").isInt({ min: 1 }).withMessage("ID must be a number"),
-        body("account_id").isInt({ min: 1 }).withMessage("Account ID must be a number"),
+        query("id").isInt({ min: 1 }).withMessage("ID must be a number"),
+        query("account_id").isInt({ min: 1 }).withMessage("Account ID must be a number"),
         body("amount").isNumeric().withMessage("Amount must be a number"),
         body("plan_amount").isNumeric().withMessage("Planned amount must be a number"),
         body("recipient").isString().withMessage("Recipient must be a string"),
@@ -60,9 +60,10 @@ router.put('/:id',
         validateRequest,
     ],
     updateLoan);
-router.delete('/:id',
+router.delete('/',
     [
-        param('id').isInt({ min: 1 }).withMessage('ID must be a number'),
+        query("account_id").isInt({ min: 1 }).withMessage("Account ID must be a number"),
+        query("id").isInt({ min: 1 }).withMessage('ID must be a number'),
         validateRequest,
     ],
     deleteLoan);

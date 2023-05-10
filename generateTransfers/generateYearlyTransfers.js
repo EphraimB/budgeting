@@ -20,7 +20,9 @@ const generateYearlyTransfers = (transactions, skippedTransactions, transfer, to
             amount: transfer.destination_account_id === account_id ? +transfer.transfer_amount : -transfer.transfer_amount,
         };
 
-        if (fromDate > transferDate) {
+        if (transferDate <= new Date()) {
+            return transactions;
+        } else if (fromDate > transferDate) {
             skippedTransactions.push(newTransaction);
         } else {
             transactions.push(newTransaction);

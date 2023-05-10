@@ -1,16 +1,16 @@
 const express = require('express');
 const { query, param, body } = require('express-validator');
 const router = express.Router();
-const { getWithdrawals, createWithdrawal, updateWithdrawal, deleteWithdrawal } = require('../queries.js');
+const { getTransactions, createTransaction, updateTransaction, deleteTransaction } = require('../queries.js');
 const validateRequest = require('../validateRequest.js');
 
 router.get('/:account_id',
     [
-        param('account_id').isNumeric().withMessage('Account ID must be a number'),
-        query('id').optional().isNumeric().withMessage('ID must be a number'),
+        param('account_id').isInt({ min: 1 }).withMessage('Account ID must be a number'),
+        query('id').optional().isInt({ min: 1 }).withMessage('ID must be a number'),
         validateRequest,
     ],
-    getWithdrawals);
+    getTransactions);
 router.post('/',
     [
         body("amount").isNumeric().withMessage("Amount must be a number"),
@@ -18,20 +18,21 @@ router.post('/',
         body("description").isString().withMessage("Description must be a string"),
         validateRequest,
     ],
-    createWithdrawal);
+    createTransaction);
 router.put('/:id',
     [
+        param("id").isInt({ min: 1 }).withMessage("ID must be a number"),
         body("amount").isNumeric().withMessage("Amount must be a number"),
         body("account_id").isNumeric().withMessage("Account ID must be a number"),
         body("description").isString().withMessage("Description must be a string"),
         validateRequest,
     ],
-    updateWithdrawal);
+    updateTransaction);
 router.delete('/:id',
     [
-        param("id").isNumeric().withMessage("ID must be a number"),
+        param("id").isInt({ min: 1 }).withMessage("ID must be a number"),
         validateRequest,
     ],
-    deleteWithdrawal);
+    deleteTransaction);
 
 module.exports = router;

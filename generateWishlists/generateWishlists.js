@@ -1,32 +1,30 @@
-const generateWishlists = (transactions, skippedTransactions, wishlist, currentBalance, fromDate) => {
-    let wishlist_date = null;
+const generateWishlists = (transactions, skippedTransactions, wishlist, fromDate) => {
+    const allTransactions = transactions.concat(skippedTransactions);
+    const wishlist_amount = parseFloat(wishlist.wishlist_amount);
 
-    // Find the next transaction with a positive amount and a balance greater than the wishlist amount
-    const nextTransaction = transactions.find(transaction => {
+    allTransactions.sort((a, b) => new Date(a.date) - new Date(b.date));
+
+    // Find the next transaction with a positive amount, a balance greater than the wishlist amount,
+    // and a date after the current date
+    const nextTransaction = allTransactions.find(transaction => {
+        const isAfterCurrentDate = transaction.date > new Date(); // Check if the transaction date is after the current date
         const isAfterWishlistDate = wishlist.wishlist_date_available === null || transaction.date >= new Date(wishlist.wishlist_date_available);
-        return isAfterWishlistDate && transaction.amount > 0 && transaction.balance > wishlist.wishlist_amount + currentBalance;
+        return isAfterCurrentDate && isAfterWishlistDate && transaction.amount > 0 && transaction.balance > wishlist_amount;
     });
 
     if (nextTransaction) {
-        wishlist_date = nextTransaction.date;
-    }
+        const newTransaction = {
+            title: wishlist.wishlist_title,
+            description: wishlist.wishlist_description,
+            date: nextTransaction.date,
+            amount: -wishlist_amount,
+        };
 
-    // If no suitable transaction was found, return the original transactions array
-    if (!wishlist_date) {
-        return transactions;
-    }
-
-    const newTransaction = {
-        title: wishlist.wishlist_title,
-        description: wishlist.wishlist_description,
-        date: wishlist_date,
-        amount: -parseFloat(wishlist.wishlist_amount),
-    };
-
-    if(fromDate > wishlist_date) {
-        skippedTransactions.push(newTransaction);
-    } else {
-        transactions.push(newTransaction);
+        if (fromDate > nextTransaction.date) {
+            skippedTransactions.push(newTransaction);
+        } else {
+            transactions.push(newTransaction);
+        }
     }
 };
 
