@@ -31,9 +31,10 @@ router.put('/',
     ],
     updatePayrollDate);
 
-router.delete('/:id',
+router.delete('/',
     [
-        param('id').isInt({ min: 1 }).withMessage('ID must be a number'),
+        query('employee_id').isInt({ min: 1 }).withMessage('Employee ID must be a number'),
+        query('id').isInt({ min: 1 }).withMessage('ID must be a number'),
         validateRequest,
     ],
     deletePayrollDate);

@@ -579,19 +579,22 @@ const updatePayrollDate = (request, response) => {
         }
 
         getPayrollsForMonth(employee_id);
-        
+
         response.status(200).send(results.rows);
     });
 }
 
 // Delete payroll date
 const deletePayrollDate = (request, response) => {
-    const id = parseInt(request.params.id);
+    const { employee_id, id } = request.query;
 
     pool.query(payrollQueries.deletePayrollDate, [id], (error, results) => {
         if (error) {
             return response.status(400).send({ errors: { "msg": "Error deleting payroll date", "param": null, "location": "query" } });
         }
+
+        getPayrollsForMonth(employee_id);
+        
         response.status(204).send();
     });
 }
