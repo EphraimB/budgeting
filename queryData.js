@@ -224,11 +224,12 @@ const cronJobQueries = {
 const generatedTransactionsQueries = {
   getGeneratedTransactions: `
       SELECT
+      transaction_title AS title,
       transaction_amount AS amount,
       transaction_description AS description,
       date_created AS date
-    FROM transactions
-    WHERE account_id = 1 AND date_created >= '2023-05-01'
+    FROM transaction_history
+    WHERE account_id = $1 AND date_created >= $2
   `,
 }
 
