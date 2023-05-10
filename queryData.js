@@ -223,31 +223,30 @@ const cronJobQueries = {
 
 const generatedTransactionsQueries = {
   getGeneratedTransactions: `
-      SELECT
-        title,
-        description,
-        date,
-        amount
-      FROM (
         SELECT
-            transaction_title AS title,
-            transaction_description AS description,
-            date_created AS date,
-            transaction_amount AS amount
+          transaction_title AS title,
+          transaction_description AS description,
+          date_created AS date,
+          transaction_amount AS amount
         FROM transaction_history
         WHERE account_id = $1 AND date_created >= $2
-        
         UNION ALL
-        
         SELECT
-            expense_title AS title,
-            expense_description AS description,
-            expense_begin_date AS date,
-            -expense_amount AS amount
+          expense_title AS title,
+          expense_description AS description,
+          expense_begin_date AS date,
+          -expense_amount AS amount
         FROM expenses
         WHERE account_id = $1 AND date_created >= $2
-      ) AS combined_data
-      ORDER BY date
+        UNION ALL
+        SELECT
+        loan_title AS title,
+        loan_description AS description,
+        loan_begin_date AS date,
+        -loan_plan_amount AS amount
+        FROM loans
+        WHERE account_id = $1 AND date_created >= $2
+        ORDER BY date
   `,
 }
 
