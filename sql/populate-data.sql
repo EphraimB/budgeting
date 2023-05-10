@@ -12,11 +12,11 @@ INSERT INTO transactions (account_id, transaction_amount, transaction_descriptio
 INSERT INTO payroll_dates (employee_id, payroll_start_day, payroll_end_day) VALUES (1, 1, 15), (1, 16, 31);
 
 -- Insert mock data for payroll_taxes table
-INSERT INTO payroll_taxes (employee_id, name, rate, applies_to) VALUES 
-    (1, 'Federal Income Tax', 0.15, 'gross_salary'),
-    (1, 'State Income Tax', 0.05, 'gross_salary'),
-    (1, 'Social Security Tax', 0.062, 'gross_salary'),
-    (1, 'Medicare Tax', 0.0145, 'gross_salary');
+INSERT INTO payroll_taxes (employee_id, name, rate) VALUES 
+    (1, 'Federal Income Tax', 0.15),
+    (1, 'State Income Tax', 0.05),
+    (1, 'Social Security Tax', 0.062),
+    (1, 'Medicare Tax', 0.0145);
 
 
 INSERT INTO wishlist (account_id, wishlist_amount, wishlist_title, wishlist_description, wishlist_priority, wishlist_date_available) VALUES (1, 100.00, 'Test Wishlist', 'Test Wishlist Description', 1, NOW() + INTERVAL '1 month');

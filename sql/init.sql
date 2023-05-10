@@ -91,8 +91,7 @@ CREATE TABLE payroll_taxes (
     payroll_taxes_id SERIAL PRIMARY KEY,
     employee_id INTEGER NOT NULL REFERENCES employee(employee_id),
     name TEXT NOT NULL,
-    rate NUMERIC(5,2) NOT NULL,
-    applies_to TEXT
+    rate NUMERIC(5,2) NOT NULL
 );
 
 -- Create a wishlist table in postgres

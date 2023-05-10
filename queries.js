@@ -477,9 +477,9 @@ const getPayrollTaxes = (request, response) => {
 
 // Create payroll tax
 const createPayrollTax = (request, response) => {
-    const { employee_id, name, rate, applies_to } = request.body;
+    const { employee_id, name, rate } = request.body;
 
-    pool.query(payrollQueries.createPayrollTax, [employee_id, name, rate, applies_to], (error, results) => {
+    pool.query(payrollQueries.createPayrollTax, [employee_id, name, rate], (error, results) => {
         if (error) {
             return response.status(400).send({ errors: { "msg": "Error creating payroll tax", "param": null, "location": "query" } });
         }
@@ -493,9 +493,9 @@ const createPayrollTax = (request, response) => {
 // Update payroll tax
 const updatePayrollTax = (request, response) => {
     const { employee_id, id } = request.query;
-    const { name, rate, applies_to } = request.body;
+    const { name, rate } = request.body;
 
-    pool.query(payrollQueries.updatePayrollTax, [name, rate, applies_to, id], (error, results) => {
+    pool.query(payrollQueries.updatePayrollTax, [name, rate, id], (error, results) => {
         if (error) {
             return response.status(400).send({ errors: { "msg": "Error updating payroll tax", "param": null, "location": "query" } });
         }
