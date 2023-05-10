@@ -99,8 +99,9 @@ const payrollQueries = {
         FROM employee e
       ) s
       LEFT JOIN (
-        SELECT DISTINCT ON (employee_id) employee_id, rate
+        SELECT employee_id, SUM(rate) AS rate
         FROM payroll_taxes
+        GROUP BY employee_id
       ) pt ON e.employee_id = pt.employee_id
       WHERE e.employee_id = $1 AND work_days <> 0
       GROUP BY s2.payroll_start_day, e.employee_id, e.employee_id, s.work_days, s1.adjusted_payroll_end_day
@@ -164,8 +165,9 @@ const payrollQueries = {
         FROM employee e
       ) s
       LEFT JOIN (
-        SELECT DISTINCT ON (employee_id) employee_id, rate
+        SELECT employee_id, SUM(rate) AS rate
         FROM payroll_taxes
+        GROUP BY employee_id
       ) pt ON e.employee_id = pt.employee_id
       WHERE e.employee_id = $1 AND work_days <> 0 AND make_date(extract(year from d1)::integer, extract(month from d1)::integer, s1.adjusted_payroll_end_day) >= CURRENT_DATE AND make_date(extract(year from d1)::integer, extract(month from d1)::integer, s1.adjusted_payroll_end_day) <= $2::date
       GROUP BY d1, s2.payroll_start_day, e.employee_id, e.employee_id, s.work_days, s1.adjusted_payroll_end_day
