@@ -711,9 +711,7 @@
             "$ref": "#/components/responses/BadRequest"
           }
         }
-      }
-    },
-    "/payroll/taxes/{id}": {
+      },
       "delete": {
         "summary": "Delete a payroll tax",
         "description": "Delete a payroll tax",
@@ -722,8 +720,18 @@
         ],
         "parameters": [
           {
+            "name": "employee_id",
+            "in": "query",
+            "description": "Employee id",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1
+            }
+          },
+          {
             "name": "id",
-            "in": "path",
+            "in": "query",
             "description": "Payroll tax id",
             "required": true,
             "schema": {
