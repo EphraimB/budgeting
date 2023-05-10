@@ -815,9 +815,7 @@
             "$ref": "#/components/responses/BadRequest"
           }
         }
-      }
-    },
-    "/payroll/dates/{id}": {
+      },
       "put": {
         "summary": "Update a payroll date",
         "description": "Update a payroll date",
@@ -826,8 +824,18 @@
         ],
         "parameters": [
           {
+            "name": "employee_id",
+            "in": "query",
+            "description": "Employee id",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1
+            }
+          },
+          {
             "name": "id",
-            "in": "path",
+            "in": "query",
             "description": "Payroll date id",
             "required": true,
             "schema": {
@@ -855,7 +863,9 @@
             "$ref": "#/components/responses/BadRequest"
           }
         }
-      },
+      }
+    },
+    "/payroll/dates/{id}": {
       "delete": {
         "summary": "Delete a payroll date",
         "description": "Delete a payroll date",

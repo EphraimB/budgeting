@@ -563,19 +563,23 @@ const createPayrollDate = (request, response) => {
         }
 
         getPayrollsForMonth(employee_id);
+
         response.status(201).json(results.rows);
     });
 }
 
 // Update payroll date
 const updatePayrollDate = (request, response) => {
-    const id = parseInt(request.params.id);
+    const { employee_id, id } = request.query;
     const { start_day, end_day } = request.body;
 
     pool.query(payrollQueries.updatePayrollDate, [start_day, end_day, id], (error, results) => {
         if (error) {
             return response.status(400).send({ errors: { "msg": "Error updating payroll date", "param": null, "location": "query" } });
         }
+
+        getPayrollsForMonth(employee_id);
+        
         response.status(200).send(results.rows);
     });
 }
