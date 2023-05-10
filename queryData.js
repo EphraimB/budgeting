@@ -18,13 +18,13 @@ const accountQueries = {
   deleteAccount: 'DELETE FROM accounts WHERE account_id = $1',
 };
 
-const transactionQueries = {
-  getTransactionsDateFiltered: 'SELECT * FROM transactions WHERE account_id = $1 AND date_created >= $2 ORDER BY date_created DESC',
-  getTransactions: 'SELECT * FROM transactions WHERE account_id = $1 ORDER BY transaction_id ASC',
-  getTransaction: 'SELECT * FROM transactions WHERE account_id = $1 AND transaction_id = $2',
-  createTransaction: 'INSERT INTO transactions (account_id, transaction_amount, transaction_description) VALUES ($1, $2, $3) RETURNING *',
-  updateTransaction: 'UPDATE transactions SET account_id = $1, transaction_amount = $2, transaction_description = $3 WHERE transaction_id = $4 RETURNING *',
-  deleteTransaction: 'DELETE FROM transactions WHERE transaction_id = $1',
+const transactionHistoryQueries = {
+  getTransactionsDateFiltered: 'SELECT * FROM transaction_history WHERE account_id = $1 AND date_created >= $2 ORDER BY date_created DESC',
+  getTransactions: 'SELECT * FROM transaction_history WHERE account_id = $1 ORDER BY transaction_id ASC',
+  getTransaction: 'SELECT * FROM transaction_history WHERE account_id = $1 AND transaction_id = $2',
+  createTransaction: 'INSERT INTO transaction_history (account_id, transaction_amount, transaction_title, transaction_description) VALUES ($1, $2, $3, $4) RETURNING *',
+  updateTransaction: 'UPDATE transaction_history SET account_id = $1, transaction_amount = $2, transaction_title = $3, transaction_description = $4 WHERE transaction_id = $5 RETURNING *',
+  deleteTransaction: 'DELETE FROM transaction_history WHERE transaction_id = $1',
 };
 
 const expenseQueries = {
@@ -234,7 +234,7 @@ const generatedTransactionsQueries = {
 
 module.exports = {
   accountQueries,
-  transactionQueries,
+  transactionHistoryQueries,
   expenseQueries,
   loanQueries,
   payrollQueries,

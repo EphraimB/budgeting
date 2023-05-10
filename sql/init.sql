@@ -20,7 +20,7 @@ CREATE TABLE IF NOT EXISTS accounts (
 );
 
 -- Create a transactions table in postgres
-CREATE TABLE IF NOT EXISTS transactions (
+CREATE TABLE IF NOT EXISTS transaction_history (
   transaction_id SERIAL PRIMARY KEY,
   account_id INT NOT NULL REFERENCES accounts(account_id),
   transaction_amount numeric(12, 2) NOT NULL,
@@ -173,7 +173,7 @@ FOR EACH ROW
 EXECUTE PROCEDURE update_dates();
 
 CREATE TRIGGER update_transactions_dates
-BEFORE INSERT OR UPDATE ON transactions
+BEFORE INSERT OR UPDATE ON transaction_history
 FOR EACH ROW
 EXECUTE PROCEDURE update_dates();
 
