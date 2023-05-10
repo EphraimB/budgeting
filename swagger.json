@@ -1621,10 +1621,6 @@
             "type": "number",
             "format": "double",
             "example": 0.15
-          },
-          "applies_to": {
-            "type": "string",
-            "example": "gross_salary"
           }
         }
       },
@@ -2079,10 +2075,6 @@
                         "type": "number",
                         "format": "double",
                         "example": 250.00
-                      },
-                      "applies_to": {
-                        "type": "string",
-                        "example": "gross_salary"
                       }
                     }
                   }
