@@ -237,7 +237,7 @@ const generatedTransactionsQueries = {
         FROM transaction_history
         WHERE account_id = $1 AND date_created >= $2
         
-        UNION
+        UNION ALL
         
         SELECT
             expense_title AS title,
