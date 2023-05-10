@@ -221,6 +221,17 @@ const cronJobQueries = {
   deleteCronJob: 'DELETE FROM cron_jobs WHERE cron_job_id = $1',
 };
 
+const generatedTransactionsQueries = {
+  getGeneratedTransactions: `
+      SELECT
+      transaction_amount AS amount,
+      transaction_description AS description,
+      date_created AS date
+    FROM transactions
+    WHERE account_id = 1 AND date_created >= '2023-05-01'
+  `,
+}
+
 module.exports = {
   accountQueries,
   transactionQueries,
@@ -230,5 +241,6 @@ module.exports = {
   wishlistQueries,
   currentBalanceQueries,
   transferQueries,
-  cronJobQueries
+  cronJobQueries,
+  generatedTransactionsQueries
 }
