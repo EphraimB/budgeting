@@ -18,7 +18,9 @@ const generateDailyLoans = (transactions, skippedTransactions, loan, toDate, fro
             amount: -planAmount,
         };
 
-        if (fromDate > loanDate) {
+        if (loanDate <= new Date()) {
+            return transactions;
+        } else if (fromDate > loanDate) {
             skippedTransactions.push(newTransaction);
         } else {
             transactions.push(newTransaction);

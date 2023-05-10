@@ -19,22 +19,21 @@ CREATE TABLE IF NOT EXISTS accounts (
   date_modified TIMESTAMP NOT NULL
 );
 
--- Create a deposits table in postgres
-CREATE TABLE IF NOT EXISTS deposits (
-  deposit_id SERIAL PRIMARY KEY,
+-- Create a transactions table in postgres
+CREATE TABLE IF NOT EXISTS transactions (
+  transaction_id SERIAL PRIMARY KEY,
   account_id INT NOT NULL REFERENCES accounts(account_id),
-  deposit_amount numeric(12, 2) NOT NULL,
-  deposit_description VARCHAR(255) NOT NULL,
+  transaction_amount numeric(12, 2) NOT NULL,
+  transaction_description VARCHAR(255) NOT NULL,
   date_created TIMESTAMP NOT NULL,
   date_modified TIMESTAMP NOT NULL
 );
 
--- Create a withdrawals table in postgres
-CREATE TABLE IF NOT EXISTS withdrawals (
-  withdrawal_id SERIAL PRIMARY KEY,
-  account_id INT NOT NULL REFERENCES accounts(account_id),
-  withdrawal_amount numeric(12, 2) NOT NULL,
-  withdrawal_description VARCHAR(255) NOT NULL,
+-- Create a cron_jobs table in postgres
+CREATE TABLE IF NOT EXISTS cron_jobs (
+  cron_job_id SERIAL PRIMARY KEY,
+  unique_id VARCHAR(255) NOT NULL,
+  cron_expression VARCHAR(255) NOT NULL,
   date_created TIMESTAMP NOT NULL,
   date_modified TIMESTAMP NOT NULL
 );
@@ -43,6 +42,7 @@ CREATE TABLE IF NOT EXISTS withdrawals (
 CREATE TABLE IF NOT EXISTS expenses (
   expense_id SERIAL PRIMARY KEY,
   account_id INT NOT NULL REFERENCES accounts(account_id),
+  cron_job_id INT NOT NULL REFERENCES cron_jobs(cron_job_id),
   expense_amount numeric(12, 2) NOT NULL,
   expense_title VARCHAR(255) NOT NULL,
   expense_description VARCHAR(255) NOT NULL,
@@ -62,6 +62,7 @@ CREATE TABLE IF NOT EXISTS expenses (
 CREATE TABLE IF NOT EXISTS loans (
   loan_id SERIAL PRIMARY KEY,
   account_id INT NOT NULL REFERENCES accounts(account_id),
+  cron_job_id INT NOT NULL REFERENCES cron_jobs(cron_job_id),
   loan_amount numeric(12, 2) NOT NULL,
   loan_plan_amount numeric(12, 2) NOT NULL,
   loan_recipient VARCHAR(255) NOT NULL,
@@ -90,8 +91,7 @@ CREATE TABLE payroll_taxes (
     payroll_taxes_id SERIAL PRIMARY KEY,
     employee_id INTEGER NOT NULL REFERENCES employee(employee_id),
     name TEXT NOT NULL,
-    rate NUMERIC(5,2) NOT NULL,
-    applies_to TEXT
+    rate NUMERIC(5,2) NOT NULL
 );
 
 -- Create a wishlist table in postgres
@@ -111,6 +111,7 @@ CREATE TABLE IF NOT EXISTS wishlist (
 -- Create a transfers table in postgres that will transfer money from one account to another
 CREATE TABLE IF NOT EXISTS transfers (
   transfer_id SERIAL PRIMARY KEY,
+  cron_job_id INT NOT NULL REFERENCES cron_jobs(cron_job_id),
   source_account_id INT NOT NULL REFERENCES accounts(account_id),
   destination_account_id INT NOT NULL REFERENCES accounts(account_id),
   transfer_amount numeric(12, 2) NOT NULL,
@@ -170,13 +171,8 @@ BEFORE INSERT OR UPDATE ON accounts
 FOR EACH ROW
 EXECUTE PROCEDURE update_dates();
 
-CREATE TRIGGER update_deposits_dates
-BEFORE INSERT OR UPDATE ON deposits
-FOR EACH ROW
-EXECUTE PROCEDURE update_dates();
-
-CREATE TRIGGER update_withdrawals_dates
-BEFORE INSERT OR UPDATE ON withdrawals
+CREATE TRIGGER update_transactions_dates
+BEFORE INSERT OR UPDATE ON transactions
 FOR EACH ROW
 EXECUTE PROCEDURE update_dates();
 
@@ -197,6 +193,11 @@ EXECUTE PROCEDURE update_dates();
 
 CREATE TRIGGER update_transfers_dates
 BEFORE INSERT OR UPDATE ON transfers
+FOR EACH ROW
+EXECUTE PROCEDURE update_dates();
+
+CREATE TRIGGER update_cron_jobs_dates
+BEFORE INSERT OR UPDATE ON cron_jobs
 FOR EACH ROW
 EXECUTE PROCEDURE update_dates();
 

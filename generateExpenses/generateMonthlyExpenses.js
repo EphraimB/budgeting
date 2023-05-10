@@ -20,7 +20,9 @@ const generateMonthlyExpenses = (transactions, skippedTransactions, expense, toD
             amount: -expense.expense_amount,
         };
 
-        if (fromDate > expenseDate) {
+        if (expenseDate <= new Date()) {
+            return transactions;
+        } else if (fromDate > expenseDate) {
             skippedTransactions.push(newTransaction);
         } else {
             transactions.push(newTransaction);

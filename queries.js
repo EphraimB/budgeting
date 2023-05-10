@@ -1,5 +1,8 @@
 const pool = require('./db');
-const { accountQueries, depositQueries, withdrawalQueries, expenseQueries, loanQueries, payrollQueries, wishlistQueries, transferQueries, currentBalanceQueries } = require('./queryData');
+const { accountQueries, transactionQueries, expenseQueries, loanQueries, payrollQueries, wishlistQueries, transferQueries, currentBalanceQueries, cronJobQueries } = require('./queryData');
+const scheduleCronJob = require('./jobs/scheduleCronJob');
+const deleteCronJob = require('./jobs/deleteCronJob');
+const getPayrollsForMonth = require('./getPayrolls');
 
 // Get all accounts
 const getAccounts = (request, response) => {
@@ -66,148 +69,75 @@ const deleteAccount = (request, response) => {
 }
 
 // Get deposits by account
-const getDepositsByAccount = (request, response, next) => {
+const getTransactionsByAccount = (request, response, next) => {
     const { account_id, from_date } = request.query;
 
-    pool.query(depositQueries.getDepositsDateFiltered, [parseInt(account_id), from_date], (error, results) => {
+    pool.query(transactionQueries.getTransactionsDateFiltered, [parseInt(account_id), from_date], (error, results) => {
         if (error) {
-            return response.status(400).send({ errors: { "msg": "Error getting deposits", "param": null, "location": "query" } });
+            return response.status(400).send({ errors: { "msg": "Error getting transactions", "param": null, "location": "query" } });
         }
 
-        request.deposits = results.rows;
+        request.transaction = results.rows;
 
         next();
     });
 }
 
-// Get all deposits
-const getDeposits = (request, response) => {
+// Get all transactions
+const getTransactions = (request, response) => {
     const { account_id } = request.params;
     const { id } = request.query;
 
     if (!id) {
-        pool.query(depositQueries.getDeposits, [account_id], (error, results) => {
+        pool.query(transactionQueries.getTransactions, [account_id], (error, results) => {
             if (error) {
-                return response.status(400).send({ errors: { "msg": "Error getting deposits", "param": null, "location": "query" } });
+                return response.status(400).send({ errors: { "msg": "Error getting transactions", "param": null, "location": "query" } });
             }
             return response.status(200).json(results.rows);
         });
     } else {
-        pool.query(depositQueries.getDeposit, [account_id, id], (error, results) => {
+        pool.query(transactionQueries.getTransaction, [account_id, id], (error, results) => {
             if (error) {
-                return response.status(400).send({ errors: { "msg": "Error getting deposit", "param": null, "location": "query" } });
+                return response.status(400).send({ errors: { "msg": "Error getting transaction", "param": null, "location": "query" } });
             }
             return response.status(200).json(results.rows);
         });
     }
 }
 
-// Create deposit
-const createDeposit = (request, response) => {
+// Create transaction
+const createTransaction = (request, response) => {
     const { account_id, amount, description } = request.body;
 
-    pool.query(depositQueries.createDeposit, [account_id, amount, description], (error, results) => {
+    pool.query(transactionQueries.createTransaction, [account_id, amount, description], (error, results) => {
         if (error) {
-            return response.status(400).send({ errors: { "msg": "Error creating deposit", "param": null, "location": "query" } });
+            return response.status(400).send({ errors: { "msg": "Error creating transaction", "param": null, "location": "query" } });
         }
-        response.status(201).json(results.rows);
+
+        return response.status(201).json(results.rows);
     });
 }
 
-// Update deposit
-const updateDeposit = (request, response) => {
+// Update transaction
+const updateTransaction = (request, response) => {
     const id = parseInt(request.params.id);
     const { account_id, amount, description } = request.body;
 
-    pool.query(depositQueries.updateDeposit, [account_id, amount, description, id], (error, results) => {
+    pool.query(transactionQueries.updateTransaction, [account_id, amount, description, id], (error, results) => {
         if (error) {
-            return response.status(400).send({ errors: { "msg": "Error updating deposit", "param": null, "location": "query" } });
+            return response.status(400).send({ errors: { "msg": "Error updating transaction", "param": null, "location": "query" } });
         }
         response.status(200).send(results.rows);
     });
 }
 
-// Delete deposit
-const deleteDeposit = (request, response) => {
+// Delete transaction
+const deleteTransaction = (request, response) => {
     const id = parseInt(request.params.id);
 
-    pool.query(depositQueries.deleteDeposit, [id], (error, results) => {
+    pool.query(transactionQueries.deleteTransaction, [id], (error, results) => {
         if (error) {
-            return response.status(400).send({ errors: { "msg": "Error deleting deposits", "param": null, "location": "query" } });
-        }
-        response.status(204).send();
-    });
-}
-
-// Get withdrawals by account
-const getWithdrawalsByAccount = (request, response, next) => {
-    const { account_id, from_date } = request.query;
-
-    pool.query(withdrawalQueries.getWithdrawalsByAccount, [parseInt(account_id), from_date], (error, results) => {
-        if (error) {
-            return response.status(400).send({ errors: { "msg": "Error getting withdrawals", "param": null, "location": "query" } });
-        }
-
-        request.withdrawals = results.rows;
-
-        next();
-    });
-}
-
-// Get all withdrawals
-const getWithdrawals = (request, response) => {
-    const { account_id } = request.params;
-    const { id } = request.query;
-
-    if (!id) {
-        pool.query(withdrawalQueries.getWithdrawals, [account_id], (error, results) => {
-            if (error) {
-                return response.status(400).send({ errors: { "msg": "Error getting withdrawals", "param": null, "location": "query" } });
-            }
-            response.status(200).json(results.rows);
-        });
-    } else {
-        pool.query(withdrawalQueries.getWithdrawal, [account_id, id], (error, results) => {
-            if (error) {
-                return response.status(400).send({ errors: { "msg": "Error getting withdrawal", "param": null, "location": "query" } });
-            }
-            response.status(200).json(results.rows);
-        });
-    }
-}
-
-// Create withdrawal
-const createWithdrawal = (request, response) => {
-    const { account_id, amount, description } = request.body;
-
-    pool.query(withdrawalQueries.createWithdrawal, [account_id, amount, description], (error, results) => {
-        if (error) {
-            return response.status(400).send({ errors: { "msg": "Error creating withdrawal", "param": null, "location": "query" } });
-        }
-        response.status(201).json(results.rows);
-    });
-}
-
-// Update withdrawal
-const updateWithdrawal = (request, response) => {
-    const id = parseInt(request.params.id);
-    const { account_id, amount, description } = request.body;
-
-    pool.query(withdrawalQueries.updateWithdrawal, [account_id, amount, description, id], (error, results) => {
-        if (error) {
-            return response.status(400).send({ errors: { "msg": "Error updating withdrawal", "param": null, "location": "query" } });
-        }
-        response.status(200).send(results.rows);
-    });
-}
-
-// Delete withdrawal
-const deleteWithdrawal = (request, response) => {
-    const id = parseInt(request.params.id);
-
-    pool.query(withdrawalQueries.deleteWithdrawal, [id], (error, results) => {
-        if (error) {
-            return response.status(400).send({ errors: { "msg": "Error deleting withdrawal", "param": null, "location": "query" } });
+            return response.status(400).send({ errors: { "msg": "Error deleting transaction", "param": null, "location": "query" } });
         }
         response.status(204).send();
     });
@@ -253,37 +183,97 @@ const getExpenses = (request, response) => {
 // Create expense
 const createExpense = (request, response) => {
     const { account_id, amount, title, description, frequency_type, frequency_type_variable, frequency_day_of_month, frequency_day_of_week, frequency_week_of_month, frequency_month_of_year, begin_date } = request.body;
+    const negativeAmount = -amount;
 
-    pool.query(expenseQueries.createExpense, [account_id, amount, title, description, frequency_type, frequency_type_variable, frequency_day_of_month, frequency_day_of_week, frequency_week_of_month, frequency_month_of_year, begin_date], (error, results) => {
+    const { cronDate, uniqueId } = scheduleCronJob(begin_date, account_id, negativeAmount, description, frequency_type, frequency_type_variable, frequency_day_of_month, frequency_day_of_week, frequency_week_of_month, frequency_month_of_year);
+
+    pool.query(cronJobQueries.createCronJob, [uniqueId, cronDate], (error, results) => {
         if (error) {
-            return response.status(400).send({ errors: { "msg": "Error creating expense", "param": null, "location": "query" } });
+            return response.status(400).send({ errors: { "msg": "Error creating cron job", "param": null, "location": "query" } });
         }
-        response.status(201).json(results.rows);
+        const cronId = results.rows[0].cron_job_id;
+
+        console.log('Cron job created ' + cronId)
+
+        pool.query(expenseQueries.createExpense, [account_id, cronId, amount, title, description, frequency_type, frequency_type_variable, frequency_day_of_month, frequency_day_of_week, frequency_week_of_month, frequency_month_of_year, begin_date], (error, results) => {
+            if (error) {
+                return response.status(400).send({ errors: { "msg": "Error creating expense", "param": null, "location": "query" } });
+            }
+            response.status(201).json(results.rows);
+        });
     });
 }
 
 // Update expense
 const updateExpense = (request, response) => {
-    const id = parseInt(request.params.id);
+    const id = parseInt(request.query.id);
     const { account_id, amount, title, description, frequency_type, frequency_type_variable, frequency_day_of_month, frequency_day_of_week, frequency_week_of_month, frequency_month_of_year, begin_date } = request.body;
 
-    pool.query(expenseQueries.updateExpense, [account_id, amount, title, description, frequency_type, frequency_type_variable, frequency_day_of_month, frequency_day_of_week, frequency_week_of_month, frequency_month_of_year, begin_date, id], (error, results) => {
+    // Get expense id to see if it exists
+    pool.query(expenseQueries.getExpense, [account_id, id], (error, results) => {
         if (error) {
-            return response.status(400).send({ errors: { "msg": "Error updating expense", "param": null, "location": "query" } });
+            return response.status(400).send({ errors: { "msg": "Error getting expense", "param": null, "location": "query" } });
         }
-        response.status(200).send(results.rows);
+
+        if (results.rows.length === 0) {
+            return response.status(200).send([]);
+        } else {
+            const cronId = results.rows[0].cron_job_id;
+
+            deleteCronJob(cronId).then(() => {
+                const { uniqueId, cronDate } = scheduleCronJob(begin_date, account_id, amount, description, frequency_type, frequency_type_variable, frequency_day_of_month, frequency_day_of_week, frequency_week_of_month, frequency_month_of_year);
+
+                pool.query(cronJobQueries.updateCronJob, [uniqueId, cronDate, cronId], (error, results) => {
+                    if (error) {
+                        return response.status(400).send({ errors: { "msg": "Error updating cron job", "param": null, "location": "query" } });
+                    }
+
+                    pool.query(expenseQueries.updateExpense, [account_id, amount, title, description, frequency_type, frequency_type_variable, frequency_day_of_month, frequency_day_of_week, frequency_week_of_month, frequency_month_of_year, begin_date, id], (error, results) => {
+                        if (error) {
+                            return response.status(400).send({ errors: { "msg": "Error updating expense", "param": null, "location": "query" } });
+                        }
+                        response.status(200).json(results.rows);
+                    });
+                });
+            }).catch((error) => {
+                console.log(error);
+            });
+        };
     });
 }
 
 // Delete expense
 const deleteExpense = (request, response) => {
-    const id = parseInt(request.params.id);
+    const { account_id, id } = request.query;
 
-    pool.query(expenseQueries.deleteExpense, [id], (error, results) => {
+    pool.query(expenseQueries.getExpense, [account_id, id], (error, results) => {
         if (error) {
-            return response.status(400).send({ errors: { "msg": "Error deleting expense", "param": null, "location": "query" } });
+            return response.status(400).send({ errors: { "msg": "Error selecting expense", "param": null, "location": "query" } });
         }
-        response.status(204).send();
+
+        if (results.rows.length > 0) {
+            const cronId = results.rows[0].cron_job_id;
+
+            pool.query(expenseQueries.deleteExpense, [id], (error, results) => {
+                if (error) {
+                    return response.status(400).send({ errors: { "msg": "Error deleting expense", "param": null, "location": "query" } });
+                }
+
+                if (cronId) {
+                    deleteCronJob(cronId);
+
+                    pool.query(cronJobQueries.deleteCronJob, [cronId], (error, results) => {
+                        if (error) {
+                            return response.status(400).send({ errors: { "msg": "Error deleting cron job", "param": null, "location": "query" } });
+                        }
+                    });
+                }
+
+                response.status(200).send("Expense deleted successfully");
+            });
+        } else {
+            response.status(200).send("expense doesn't exist");
+        }
     });
 }
 
@@ -327,37 +317,98 @@ const getLoans = (request, response) => {
 // Create loan
 const createLoan = (request, response) => {
     const { account_id, amount, plan_amount, recipient, title, description, frequency_type, frequency_type_variable, frequency_day_of_month, frequency_day_of_week, frequency_week_of_month, frequency_month_of_year, begin_date } = request.body;
+    const negativeAmount = -plan_amount;
 
-    pool.query(loanQueries.createLoan, [account_id, amount, plan_amount, recipient, title, description, frequency_type, frequency_type_variable, frequency_day_of_month, frequency_day_of_week, frequency_week_of_month, frequency_month_of_year, begin_date], (error, results) => {
+    const { cronDate, uniqueId } = scheduleCronJob(begin_date, account_id, negativeAmount, description, frequency_type, frequency_type_variable, frequency_day_of_month, frequency_day_of_week, frequency_week_of_month, frequency_month_of_year);
+
+    pool.query(cronJobQueries.createCronJob, [uniqueId, cronDate], (error, results) => {
         if (error) {
-            return response.status(400).send({ errors: { "msg": "Error creating loan", "param": null, "location": "query" } });
+            return response.status(400).send({ errors: { "msg": "Error creating cron job", "param": null, "location": "query" } });
         }
-        response.status(201).json(results.rows);
+        const cronId = results.rows[0].cron_job_id;
+
+        console.log('Cron job created ' + cronId)
+
+        pool.query(loanQueries.createLoan, [account_id, cronId, amount, plan_amount, recipient, title, description, frequency_type, frequency_type_variable, frequency_day_of_month, frequency_day_of_week, frequency_week_of_month, frequency_month_of_year, begin_date], (error, results) => {
+            if (error) {
+                return response.status(400).send({ errors: { "msg": "Error creating loan", "param": null, "location": "query" } });
+            }
+            response.status(201).json(results.rows);
+        });
     });
 }
 
 // Update loan
 const updateLoan = (request, response) => {
-    const id = parseInt(request.params.id);
-    const { account_id, amount, plan_amount, recipient, title, description, frequency_type, frequency_type_variable, frequency_day_of_month, frequency_day_of_week, frequency_week_of_month, frequency_month_of_year, begin_date } = request.body;
+    const { account_id, id } = request.query;
+    const { amount, plan_amount, recipient, title, description, frequency_type, frequency_type_variable, frequency_day_of_month, frequency_day_of_week, frequency_week_of_month, frequency_month_of_year, begin_date } = request.body;
+    const negativeAmount = -plan_amount;
 
-    pool.query(loanQueries.updateLoan, [account_id, amount, plan_amount, recipient, title, description, frequency_type, frequency_type_variable, frequency_day_of_month, frequency_day_of_week, frequency_week_of_month, frequency_month_of_year, begin_date, id], (error, results) => {
+    // Get expense id to see if it exists
+    pool.query(loanQueries.getLoan, [account_id, id], (error, results) => {
         if (error) {
-            return response.status(400).send({ errors: { "msg": "Error updating loan", "param": null, "location": "query" } });
+            return response.status(400).send({ errors: { "msg": "Error getting loan", "param": null, "location": "query" } });
         }
-        response.status(200).send(results.rows);
+
+        if (results.rows.length === 0) {
+            return response.status(200).send([]);
+        } else {
+            const cronId = results.rows[0].cron_job_id;
+
+            deleteCronJob(cronId).then(() => {
+                const { uniqueId, cronDate } = scheduleCronJob(begin_date, account_id, negativeAmount, description, frequency_type, frequency_type_variable, frequency_day_of_month, frequency_day_of_week, frequency_week_of_month, frequency_month_of_year);
+
+                pool.query(cronJobQueries.updateCronJob, [uniqueId, cronDate, cronId], (error, results) => {
+                    if (error) {
+                        return response.status(400).send({ errors: { "msg": "Error updating cron job", "param": null, "location": "query" } });
+                    }
+
+                    pool.query(loanQueries.updateLoan, [account_id, amount, plan_amount, recipient, title, description, frequency_type, frequency_type_variable, frequency_day_of_month, frequency_day_of_week, frequency_week_of_month, frequency_month_of_year, begin_date, id], (error, results) => {
+                        if (error) {
+                            return response.status(400).send({ errors: { "msg": "Error updating loan", "param": null, "location": "query" } });
+                        }
+                        response.status(200).json(results.rows);
+                    });
+                });
+            }).catch((error) => {
+                console.log(error);
+            });
+        };
     });
 }
 
 // Delete loan
 const deleteLoan = (request, response) => {
-    const id = parseInt(request.params.id);
+    const { account_id, id } = request.query;
 
-    pool.query(loanQueries.deleteLoan, [id], (error, results) => {
+    pool.query(loanQueries.getLoan, [account_id, id], (error, results) => {
         if (error) {
-            return response.status(400).send({ errors: { "msg": "Error deleting loan", "param": null, "location": "query" } });
+            return response.status(400).send({ errors: { "msg": "Error selecting loan", "param": null, "location": "query" } });
         }
-        response.status(204).send();
+
+        if (results.rows.length > 0) {
+            const cronId = results.rows[0].cron_job_id;
+
+            pool.query(loanQueries.deleteLoan, [id], (error, results) => {
+                if (error) {
+                    return response.status(400).send({ errors: { "msg": "Error deleting loan", "param": null, "location": "query" } });
+                }
+
+                if (cronId) {
+                    deleteCronJob(cronId);
+
+                    pool.query(cronJobQueries.deleteCronJob, [cronId], (error, results) => {
+                        if (error) {
+                            return response.status(400).send({ errors: { "msg": "Error deleting cron job", "param": null, "location": "query" } });
+                        }
+                    });
+                }
+
+                response.status(200).send("Loan deleted successfully");
+            });
+        } else {
+            response.status(200).send("Loan doesn't exist");
+        }
     });
 }
 
@@ -426,37 +477,46 @@ const getPayrollTaxes = (request, response) => {
 
 // Create payroll tax
 const createPayrollTax = (request, response) => {
-    const { employee_id, name, rate, applies_to } = request.body;
+    const { employee_id, name, rate } = request.body;
 
-    pool.query(payrollQueries.createPayrollTax, [employee_id, name, rate, applies_to], (error, results) => {
+    pool.query(payrollQueries.createPayrollTax, [employee_id, name, rate], (error, results) => {
         if (error) {
             return response.status(400).send({ errors: { "msg": "Error creating payroll tax", "param": null, "location": "query" } });
         }
+
+        getPayrollsForMonth(employee_id);
+
         response.status(201).json(results.rows);
     });
 }
 
 // Update payroll tax
 const updatePayrollTax = (request, response) => {
-    const id = parseInt(request.params.id);
-    const { name, rate, applies_to } = request.body;
+    const { employee_id, id } = request.query;
+    const { name, rate } = request.body;
 
-    pool.query(payrollQueries.updatePayrollTax, [name, rate, applies_to, id], (error, results) => {
+    pool.query(payrollQueries.updatePayrollTax, [name, rate, id], (error, results) => {
         if (error) {
             return response.status(400).send({ errors: { "msg": "Error updating payroll tax", "param": null, "location": "query" } });
         }
+
+        getPayrollsForMonth(employee_id);
+
         response.status(200).send(results.rows);
     });
 }
 
 // Delete payroll tax
 const deletePayrollTax = (request, response) => {
-    const id = parseInt(request.params.id);
+    const { employee_id, id } = request.query;
 
     pool.query(payrollQueries.deletePayrollTax, [id], (error, results) => {
         if (error) {
             return response.status(400).send({ errors: { "msg": "Error deleting payroll tax", "param": null, "location": "query" } });
         }
+
+        getPayrollsForMonth(employee_id);
+
         response.status(204).send();
     });
 }
@@ -501,31 +561,40 @@ const createPayrollDate = (request, response) => {
         if (error) {
             return response.status(400).send({ errors: { "msg": "Error creating payroll date", "param": null, "location": "query" } });
         }
+
+        getPayrollsForMonth(employee_id);
+
         response.status(201).json(results.rows);
     });
 }
 
 // Update payroll date
 const updatePayrollDate = (request, response) => {
-    const id = parseInt(request.params.id);
+    const { employee_id, id } = request.query;
     const { start_day, end_day } = request.body;
 
     pool.query(payrollQueries.updatePayrollDate, [start_day, end_day, id], (error, results) => {
         if (error) {
             return response.status(400).send({ errors: { "msg": "Error updating payroll date", "param": null, "location": "query" } });
         }
+
+        getPayrollsForMonth(employee_id);
+
         response.status(200).send(results.rows);
     });
 }
 
 // Delete payroll date
 const deletePayrollDate = (request, response) => {
-    const id = parseInt(request.params.id);
+    const { employee_id, id } = request.query;
 
     pool.query(payrollQueries.deletePayrollDate, [id], (error, results) => {
         if (error) {
             return response.status(400).send({ errors: { "msg": "Error deleting payroll date", "param": null, "location": "query" } });
         }
+
+        getPayrollsForMonth(employee_id);
+
         response.status(204).send();
     });
 }
@@ -574,6 +643,9 @@ const updateEmployee = (request, response) => {
         if (error) {
             return response.status(400).send({ errors: { "msg": "Error updating employee", "param": null, "location": "query" } });
         }
+
+        getPayrollsForMonth(employee_id);
+
         response.status(200).send(results.rows);
     });
 }
@@ -582,11 +654,35 @@ const updateEmployee = (request, response) => {
 const deleteEmployee = (request, response) => {
     const employee_id = parseInt(request.params.employee_id);
 
-    pool.query(payrollQueries.deleteEmployee, [employee_id], (error, results) => {
+    // Only delete if there are no payroll dates associated with the employee
+    pool.query(payrollQueries.getPayrollDates, [employee_id], (error, results) => {
         if (error) {
-            return response.status(400).send({ errors: { "msg": "Error deleting employee", "param": null, "location": "query" } });
+            return response.status(400).send({ errors: { "msg": "Error getting payroll dates", "param": null, "location": "query" } });
         }
-        response.status(204).send();
+
+        if (results.rows.length > 0) {
+            return response.status(400).send({ errors: { "msg": "You need to delete employee related data before deleting the employee", "param": null, "location": "query" } });
+        } else {
+            pool.query(payrollQueries.getPayrollTaxes, [employee_id], (error, results) => {
+                if (error) {
+                    return response.status(400).send({ errors: { "msg": "Error getting payroll taxes", "param": null, "location": "query" } });
+                }
+
+                if (results.rows.length > 0) {
+                    return response.status(400).send({ errors: { "msg": "You need to delete employee related data before deleting the employee", "param": null, "location": "query" } });
+                } else {
+                    pool.query(payrollQueries.deleteEmployee, [employee_id], (error, results) => {
+                        if (error) {
+                            return response.status(400).send({ errors: { "msg": "Error deleting employee", "param": null, "location": "query" } });
+                        }
+
+                        getPayrollsForMonth(employee_id);
+
+                        response.status(204).send();
+                    });
+                }
+            });
+        }
     });
 }
 
@@ -705,36 +801,99 @@ const getTransfers = (request, response) => {
 const createTransfer = (request, response) => {
     const { source_account_id, destination_account_id, amount, title, description, frequency_type, frequency_type_variable, frequency_day_of_month, frequency_day_of_week, frequency_week_of_month, frequency_month_of_year, begin_date, end_date } = request.body;
 
-    pool.query(transferQueries.createTransfer, [source_account_id, destination_account_id, amount, title, description, frequency_type, frequency_type_variable, frequency_day_of_month, frequency_day_of_week, frequency_week_of_month, frequency_month_of_year, begin_date, end_date], (error, results) => {
+    const negativeAmount = -amount;
+
+    const { cronDate, uniqueId } = scheduleCronJob(begin_date, source_account_id, negativeAmount, description, frequency_type, frequency_type_variable, frequency_day_of_month, frequency_day_of_week, frequency_week_of_month, frequency_month_of_year, destination_account_id);
+
+    pool.query(cronJobQueries.createCronJob, [uniqueId, cronDate], (error, results) => {
         if (error) {
-            return response.status(400).send({ errors: { "msg": "Error creating transfer", "param": null, "location": "query" } });
+            return response.status(400).send({ errors: { "msg": "Error creating cron job", "param": null, "location": "query" } });
         }
-        response.status(201).send(results.rows);
+        const cronId = results.rows[0].cron_job_id;
+
+        console.log('Cron job created ' + cronId)
+
+        pool.query(transferQueries.createTransfer, [cronId, source_account_id, destination_account_id, amount, title, description, frequency_type, frequency_type_variable, frequency_day_of_month, frequency_day_of_week, frequency_week_of_month, frequency_month_of_year, begin_date, end_date], (error, results) => {
+            if (error) {
+                return response.status(400).send({ errors: { "msg": "Error creating transfer", "param": null, "location": "query" } });
+            }
+            response.status(201).send(results.rows);
+        });
     });
 }
 
 // Update transfer
 const updateTransfer = (request, response) => {
-    const id = parseInt(request.params.id);
-    const { source_account_id, destination_account_id, amount, title, description, frequency_type, frequency_type_variable, frequency_day_of_month, frequency_day_of_week, frequency_week_of_month, frequency_month_of_year, begin_date, end_date } = request.body;
+    const { source_account_id, id } = request.query;
+    const { destination_account_id, amount, title, description, frequency_type, frequency_type_variable, frequency_day_of_month, frequency_day_of_week, frequency_week_of_month, frequency_month_of_year, begin_date, end_date } = request.body;
 
-    pool.query(transferQueries.updateTransfer, [source_account_id, destination_account_id, amount, title, description, frequency_type, frequency_type_variable, frequency_day_of_month, frequency_day_of_week, frequency_week_of_month, frequency_month_of_year, begin_date, end_date, id], (error, results) => {
+    const negativeAmount = -amount;
+
+    // Get expense id to see if it exists
+    pool.query(transferQueries.getTransfer, [source_account_id, id], (error, results) => {
         if (error) {
-            return response.status(400).send({ errors: { "msg": "Error updating transfer", "param": null, "location": "query" } });
+            return response.status(400).send({ errors: { "msg": "Error getting transfer", "param": null, "location": "query" } });
         }
-        response.status(200).send(results.rows);
+
+        if (results.rows.length === 0) {
+            return response.status(200).send([]);
+        } else {
+            const cronId = results.rows[0].cron_job_id;
+
+            deleteCronJob(cronId).then(() => {
+                const { uniqueId, cronDate } = scheduleCronJob(begin_date, source_account_id, negativeAmount, description, frequency_type, frequency_type_variable, frequency_day_of_month, frequency_day_of_week, frequency_week_of_month, frequency_month_of_year, destination_account_id);
+
+                pool.query(cronJobQueries.updateCronJob, [uniqueId, cronDate, cronId], (error, results) => {
+                    if (error) {
+                        return response.status(400).send({ errors: { "msg": "Error updating cron job", "param": null, "location": "query" } });
+                    }
+
+                    pool.query(transferQueries.updateTransfer, [source_account_id, destination_account_id, amount, title, description, frequency_type, frequency_type_variable, frequency_day_of_month, frequency_day_of_week, frequency_week_of_month, frequency_month_of_year, begin_date, end_date, id], (error, results) => {
+                        if (error) {
+                            return response.status(400).send({ errors: { "msg": "Error updating transfer", "param": null, "location": "query" } });
+                        }
+                        response.status(200).send(results.rows);
+                    });
+                });
+            }).catch((error) => {
+                console.log(error);
+            });
+        };
     });
 }
 
 // Delete transfer
 const deleteTransfer = (request, response) => {
-    const id = parseInt(request.params.id);
+    const { account_id, id } = request.query;
 
-    pool.query(transferQueries.deleteTransfer, [id], (error, results) => {
+    pool.query(transferQueries.getTransfer, [account_id, id], (error, results) => {
         if (error) {
-            return response.status(400).send({ errors: { "msg": "Error deleting transfer", "param": null, "location": "query" } });
+            return response.status(400).send({ errors: { "msg": "Error selecting transfer", "param": null, "location": "query" } });
         }
-        response.status(204).send();
+
+        if (results.rows.length > 0) {
+            const cronId = results.rows[0].cron_job_id;
+
+            pool.query(transferQueries.deleteTransfer, [id], (error, results) => {
+                if (error) {
+                    return response.status(400).send({ errors: { "msg": "Error deleting transfer", "param": null, "location": "query" } });
+                }
+
+                if (cronId) {
+                    deleteCronJob(cronId);
+
+                    pool.query(cronJobQueries.deleteCronJob, [cronId], (error, results) => {
+                        if (error) {
+                            return response.status(400).send({ errors: { "msg": "Error deleting cron job", "param": null, "location": "query" } });
+                        }
+                    });
+                }
+
+                response.status(200).send("Transfer deleted successfully");
+            });
+        } else {
+            response.status(200).send("Transfer doesn't exist");
+        }
     });
 }
 
@@ -761,16 +920,11 @@ module.exports = {
     createAccount,
     updateAccount,
     deleteAccount,
-    getDepositsByAccount,
-    getDeposits,
-    createDeposit,
-    updateDeposit,
-    deleteDeposit,
-    getWithdrawalsByAccount,
-    getWithdrawals,
-    createWithdrawal,
-    updateWithdrawal,
-    deleteWithdrawal,
+    getTransactionsByAccount,
+    getTransactions,
+    createTransaction,
+    updateTransaction,
+    deleteTransaction,
     getExpensesByAccount,
     getExpenses,
     createExpense,

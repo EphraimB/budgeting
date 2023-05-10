@@ -1,2 +1,4 @@
 .env
 node_modules/
+jobs/cron-jobs
+jobs.json
