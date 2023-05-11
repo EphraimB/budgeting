@@ -4,27 +4,27 @@ const accountQueries = {
     accounts.account_name,
     accounts.account_type,
     COALESCE(accounts.account_balance, 0) + COALESCE(t.transaction_amount, 0) AS account_balance, accounts.date_created, accounts.date_modified FROM accounts
-    LEFT JOIN (SELECT account_id, SUM(transaction_amount) AS transaction_amount FROM transactions GROUP BY account_id) AS t ON accounts.account_id = t.account_id ORDER BY accounts.account_id ASC  
+    LEFT JOIN (SELECT account_id, SUM(transaction_amount) AS transaction_amount FROM transaction_history GROUP BY account_id) AS t ON accounts.account_id = t.account_id ORDER BY accounts.account_id ASC  
   `,
   getAccount: `
     SELECT accounts.account_id,
     accounts.account_name,
     accounts.account_type,
     COALESCE(accounts.account_balance, 0) + COALESCE(t.transaction_amount, 0) AS account_balance, accounts.date_created, accounts.date_modified FROM accounts
-    LEFT JOIN (SELECT account_id, SUM(transaction_amount) AS transaction_amount FROM transactions GROUP BY account_id) AS t ON accounts.account_id = t.account_id WHERE accounts.account_id = $1
+    LEFT JOIN (SELECT account_id, SUM(transaction_amount) AS transaction_amount FROM transaction_history GROUP BY account_id) AS t ON accounts.account_id = t.account_id WHERE accounts.account_id = $1
   `,
   createAccount: 'INSERT INTO accounts (account_name, account_type, account_balance) VALUES ($1, $2, $3) RETURNING *',
   updateAccount: 'UPDATE accounts SET account_name = $1, account_type = $2, account_balance = $3 WHERE account_id = $4 RETURNING *',
   deleteAccount: 'DELETE FROM accounts WHERE account_id = $1',
 };
 
-const transactionQueries = {
-  getTransactionsDateFiltered: 'SELECT * FROM transactions WHERE account_id = $1 AND date_created >= $2 ORDER BY date_created DESC',
-  getTransactions: 'SELECT * FROM transactions WHERE account_id = $1 ORDER BY transaction_id ASC',
-  getTransaction: 'SELECT * FROM transactions WHERE account_id = $1 AND transaction_id = $2',
-  createTransaction: 'INSERT INTO transactions (account_id, transaction_amount, transaction_description) VALUES ($1, $2, $3) RETURNING *',
-  updateTransaction: 'UPDATE transactions SET account_id = $1, transaction_amount = $2, transaction_description = $3 WHERE transaction_id = $4 RETURNING *',
-  deleteTransaction: 'DELETE FROM transactions WHERE transaction_id = $1',
+const transactionHistoryQueries = {
+  getTransactionsDateFiltered: 'SELECT * FROM transaction_history WHERE account_id = $1 AND date_created >= $2 ORDER BY date_created DESC',
+  getTransactions: 'SELECT * FROM transaction_history WHERE account_id = $1 ORDER BY transaction_id ASC',
+  getTransaction: 'SELECT * FROM transaction_history WHERE account_id = $1 AND transaction_id = $2',
+  createTransaction: 'INSERT INTO transaction_history (account_id, transaction_amount, transaction_title, transaction_description) VALUES ($1, $2, $3, $4) RETURNING *',
+  updateTransaction: 'UPDATE transaction_history SET account_id = $1, transaction_amount = $2, transaction_title = $3, transaction_description = $4 WHERE transaction_id = $5 RETURNING *',
+  deleteTransaction: 'DELETE FROM transaction_history WHERE transaction_id = $1',
 };
 
 const expenseQueries = {
@@ -210,7 +210,7 @@ const transferQueries = {
 };
 
 const currentBalanceQueries = {
-  getCurrentBalance: "SELECT accounts.account_id, COALESCE(accounts.account_balance, 0) + COALESCE(SUM(transactions.transaction_amount), 0) AS account_balance FROM accounts LEFT JOIN transactions ON accounts.account_id = transactions.account_id WHERE accounts.account_id = $1 GROUP BY accounts.account_id",
+  getCurrentBalance: "SELECT accounts.account_id, COALESCE(accounts.account_balance, 0) + COALESCE(SUM(transaction_history.transaction_amount), 0) AS account_balance FROM accounts LEFT JOIN transaction_history ON accounts.account_id = transaction_history.account_id WHERE accounts.account_id = $1 GROUP BY accounts.account_id",
 };
 
 const cronJobQueries = {
@@ -223,7 +223,7 @@ const cronJobQueries = {
 
 module.exports = {
   accountQueries,
-  transactionQueries,
+  transactionHistoryQueries,
   expenseQueries,
   loanQueries,
   payrollQueries,
