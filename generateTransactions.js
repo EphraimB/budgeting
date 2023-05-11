@@ -24,10 +24,10 @@ const generateTransactions = (request, response, next) => {
     transactions.push(
         ...request.transaction.map(transaction => ({
             transaction_id: transaction.transaction_id,
-            date: transaction.date_created,
-            date_modified: transaction.date_modified,
             title: transaction.transaction_title,
             description: transaction.transaction_description,
+            date: transaction.date_created,
+            date_modified: transaction.date_modified,
             amount: parseFloat(transaction.transaction_amount)
         }))
     );
