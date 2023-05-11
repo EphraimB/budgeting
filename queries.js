@@ -1,5 +1,5 @@
 const pool = require('./db');
-const { accountQueries, transactionQueries, expenseQueries, loanQueries, payrollQueries, wishlistQueries, transferQueries, currentBalanceQueries, cronJobQueries } = require('./queryData');
+const { accountQueries, transactionHistoryQueries, expenseQueries, loanQueries, payrollQueries, wishlistQueries, transferQueries, currentBalanceQueries, cronJobQueries } = require('./queryData');
 const scheduleCronJob = require('./jobs/scheduleCronJob');
 const deleteCronJob = require('./jobs/deleteCronJob');
 const getPayrollsForMonth = require('./getPayrolls');
@@ -72,7 +72,7 @@ const deleteAccount = (request, response) => {
 const getTransactionsByAccount = (request, response, next) => {
     const { account_id, from_date } = request.query;
 
-    pool.query(transactionQueries.getTransactionsDateFiltered, [parseInt(account_id), from_date], (error, results) => {
+    pool.query(transactionHistoryQueries.getTransactionsDateFiltered, [parseInt(account_id), from_date], (error, results) => {
         if (error) {
             return response.status(400).send({ errors: { "msg": "Error getting transactions", "param": null, "location": "query" } });
         }
@@ -89,14 +89,14 @@ const getTransactions = (request, response) => {
     const { id } = request.query;
 
     if (!id) {
-        pool.query(transactionQueries.getTransactions, [account_id], (error, results) => {
+        pool.query(transactionHistoryQueries.getTransactions, [account_id], (error, results) => {
             if (error) {
                 return response.status(400).send({ errors: { "msg": "Error getting transactions", "param": null, "location": "query" } });
             }
             return response.status(200).json(results.rows);
         });
     } else {
-        pool.query(transactionQueries.getTransaction, [account_id, id], (error, results) => {
+        pool.query(transactionHistoryQueries.getTransaction, [account_id, id], (error, results) => {
             if (error) {
                 return response.status(400).send({ errors: { "msg": "Error getting transaction", "param": null, "location": "query" } });
             }
@@ -107,9 +107,9 @@ const getTransactions = (request, response) => {
 
 // Create transaction
 const createTransaction = (request, response) => {
-    const { account_id, amount, description } = request.body;
+    const { account_id, title, amount, description } = request.body;
 
-    pool.query(transactionQueries.createTransaction, [account_id, amount, description], (error, results) => {
+    pool.query(transactionHistoryQueries.createTransaction, [account_id, amount, title, description], (error, results) => {
         if (error) {
             return response.status(400).send({ errors: { "msg": "Error creating transaction", "param": null, "location": "query" } });
         }
@@ -121,9 +121,9 @@ const createTransaction = (request, response) => {
 // Update transaction
 const updateTransaction = (request, response) => {
     const id = parseInt(request.params.id);
-    const { account_id, amount, description } = request.body;
+    const { account_id, amount, title, description } = request.body;
 
-    pool.query(transactionQueries.updateTransaction, [account_id, amount, description, id], (error, results) => {
+    pool.query(transactionHistoryQueries.updateTransaction, [account_id, amount, title, description, id], (error, results) => {
         if (error) {
             return response.status(400).send({ errors: { "msg": "Error updating transaction", "param": null, "location": "query" } });
         }
@@ -135,7 +135,7 @@ const updateTransaction = (request, response) => {
 const deleteTransaction = (request, response) => {
     const id = parseInt(request.params.id);
 
-    pool.query(transactionQueries.deleteTransaction, [id], (error, results) => {
+    pool.query(transactionHistoryQueries.deleteTransaction, [id], (error, results) => {
         if (error) {
             return response.status(400).send({ errors: { "msg": "Error deleting transaction", "param": null, "location": "query" } });
         }
