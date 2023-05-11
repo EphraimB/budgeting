@@ -221,39 +221,6 @@ const cronJobQueries = {
   deleteCronJob: 'DELETE FROM cron_jobs WHERE cron_job_id = $1',
 };
 
-const generatedTransactionsQueries = {
-  getGeneratedTransactions: `
-      SELECT
-        transaction_title AS title,
-        transaction_description AS description,
-        date_created AS date,
-        transaction_amount AS amount,
-        (SELECT
-          COALESCE(accounts.account_balance, 0) + COALESCE(t.transaction_amount, 0) AS account_balance FROM accounts
-          LEFT JOIN (SELECT account_id, SUM(transaction_amount) AS transaction_amount FROM transaction_history GROUP BY account_id) AS t ON accounts.account_id = t.account_id WHERE accounts.account_id = 1
-        ) - transaction_amount AS balance
-      FROM transaction_history
-      WHERE account_id = $1
-      UNION ALL
-      SELECT
-        expense_title AS title,
-        expense_description AS description,
-        expense_begin_date AS date,
-        -expense_amount AS amount
-      FROM expenses
-      WHERE account_id = $1
-      UNION ALL
-      SELECT
-      loan_title AS title,
-      loan_description AS description,
-      loan_begin_date AS date,
-      -loan_plan_amount AS amount
-      FROM loans
-      WHERE account_id = $1
-      ORDER BY date
-  `,
-}
-
 module.exports = {
   accountQueries,
   transactionHistoryQueries,
@@ -263,6 +230,5 @@ module.exports = {
   wishlistQueries,
   currentBalanceQueries,
   transferQueries,
-  cronJobQueries,
-  generatedTransactionsQueries
+  cronJobQueries
 }
