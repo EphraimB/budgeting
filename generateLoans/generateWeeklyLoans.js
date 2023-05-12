@@ -30,4 +30,4 @@ const generateWeeklyLoans = (transactions, skippedTransactions, loan, toDate, fr
 };
 
 
-module.exports = generateWeeklyLoans;
+export default generateWeeklyLoans;
