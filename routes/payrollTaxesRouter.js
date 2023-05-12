@@ -1,8 +1,8 @@
-const express = require('express');
-const { query, param, body } = require('express-validator');
+import express from 'express';
+import { query, param, body } from 'express-validator';
 const router = express.Router();
-const { getPayrollTaxes, createPayrollTax, updatePayrollTax, deletePayrollTax } = require('../queries.js');
-const validateRequest = require('../validateRequest.js');
+import { getPayrollTaxes, createPayrollTax, updatePayrollTax, deletePayrollTax } from '../queries.js';
+import validateRequest from '../validateRequest.js';
 
 router.get('/:employee_id',
     [
@@ -41,4 +41,4 @@ router.delete('/',
     ],
     deletePayrollTax);
 
-module.exports = router;
+export default router;

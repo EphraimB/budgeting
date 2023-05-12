@@ -221,7 +221,7 @@ const cronJobQueries = {
   deleteCronJob: 'DELETE FROM cron_jobs WHERE cron_job_id = $1',
 };
 
-module.exports = {
+export {
   accountQueries,
   transactionHistoryQueries,
   expenseQueries,

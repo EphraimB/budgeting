@@ -1,9 +1,9 @@
+import { v4 as uuidv4 } from 'uuid';
+import { bree } from '../breeManager.js';
+import fs from 'fs';
+import path from 'path';
+
 const scheduleCronJob = (date, account_id, amount, description, frequency_type, frequency_type_variable, frequency_day_of_month, frequency_day_of_week, frequency_week_of_month, frequency_month_of_year, destination_account_id) => {
-    const { v4: uuidv4 } = require('uuid');
-    const { bree } = require('../app.js');
-    const fs = require('fs');
-    const path = require('path');
-    const Cabin = require('cabin');
     let jobs = [];
     const jobsFilePath = path.join(__dirname, '../jobs.json');
 
@@ -108,4 +108,4 @@ const scheduleCronJob = (date, account_id, amount, description, frequency_type, 
     };
 }
 
-module.exports = scheduleCronJob;
+export default scheduleCronJob;

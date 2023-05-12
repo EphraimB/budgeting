@@ -1,9 +1,9 @@
-const pool = require('./db');
-const fs = require('fs');
-const path = require('path');
+import pool from './db.js';
+import fs from 'fs';
+import path from 'path';
 const jobsFilePath = 'jobs.json';
-const { payrollQueries } = require('./queryData');
-const schedulePayrollCronJob = require('./jobs/schedulePayrollCronJob');
+import { payrollQueries } from './queryData.js';
+import schedulePayrollCronJob from './jobs/schedulePayrollCronJob.js';
 
 const getPayrolls = async employee_id => {
     console.log('Running thread:', employee_id);
@@ -57,4 +57,4 @@ const getPayrolls = async employee_id => {
     }
 };
 
-module.exports = getPayrolls;
+export default getPayrolls;

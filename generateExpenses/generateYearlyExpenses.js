@@ -42,4 +42,4 @@ const generateYearlyExpenses = (transactions, skippedTransactions, expense, toDa
     }
 };
 
-module.exports = generateYearlyExpenses;
+export default generateYearlyExpenses;

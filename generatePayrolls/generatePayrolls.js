@@ -17,4 +17,4 @@ const generatePayrolls = (transactions, skippedTransactions, payrolls, fromDate)
     }
 }
 
-module.exports = generatePayrolls;
+export default generatePayrolls;

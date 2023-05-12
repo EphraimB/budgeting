@@ -27,4 +27,4 @@ const generateDailyTransfers = (transactions, skippedTransactions, transfer, toD
     }
 };
 
-module.exports = generateDailyTransfers;
+export default generateDailyTransfers;

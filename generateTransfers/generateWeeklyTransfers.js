@@ -30,4 +30,4 @@ const generateWeeklyTransfers = (transactions, skippedTransactions, transfer, to
 };
 
 
-module.exports = generateWeeklyTransfers;
+export default generateWeeklyTransfers;

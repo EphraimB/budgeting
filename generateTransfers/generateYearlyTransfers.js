@@ -42,4 +42,4 @@ const generateYearlyTransfers = (transactions, skippedTransactions, transfer, to
     }
 };
 
-module.exports = generateYearlyTransfers;
+export default generateYearlyTransfers;

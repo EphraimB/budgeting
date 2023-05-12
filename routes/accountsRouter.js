@@ -1,8 +1,8 @@
-const express = require('express');
-const { param, query, body } = require('express-validator');
+import express from 'express';
+import { param, query, body } from 'express-validator';
 const router = express.Router();
-const { getAccounts, createAccount, updateAccount, deleteAccount } = require('../queries.js');
-const validateRequest = require('../validateRequest.js');
+import { getAccounts, createAccount, updateAccount, deleteAccount } from '../queries.js';
+import validateRequest from '../validateRequest.js';
 
 router.get('/',
     [
@@ -34,4 +34,4 @@ router.delete('/:id',
     ],
     deleteAccount);
 
-module.exports = router;
+export default router;

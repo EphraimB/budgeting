@@ -1,8 +1,8 @@
-const express = require('express');
-const { query } = require('express-validator');
+import express from 'express';
+import { query } from 'express-validator';
 const router = express.Router();
-const { getPayrolls } = require('../queries.js');
-const validateRequest = require('../validateRequest.js');
+import { getPayrolls } from '../queries.js';
+import validateRequest from '../validateRequest.js';
 
 router.get('/',
     [
@@ -11,4 +11,4 @@ router.get('/',
     ],
     getPayrolls);
 
-module.exports = router;
+export default router;
