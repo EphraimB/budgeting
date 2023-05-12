@@ -1,8 +1,9 @@
+import { v4 as uuidv4 } from 'uuid';
+import { bree } from '../breeManager.js';
+import fs from 'fs';
+import path from 'path';
+
 const schedulePayrollCronJob = (payrollData, account_id) => {
-    const { v4: uuidv4 } = require('uuid');
-    const { bree } = require('../app.js');
-    const fs = require('fs');
-    const path = require('path');
     let jobs = [];
     const jobsFilePath = path.join(__dirname, '../jobs.json');
     const { end_date, net_pay } = payrollData;
@@ -65,4 +66,4 @@ const schedulePayrollCronJob = (payrollData, account_id) => {
 
 };
 
-module.exports = schedulePayrollCronJob;
+export default schedulePayrollCronJob;

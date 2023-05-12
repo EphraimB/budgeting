@@ -1,8 +1,8 @@
-const pool = require('./db');
-const { accountQueries, transactionHistoryQueries, expenseQueries, loanQueries, payrollQueries, wishlistQueries, transferQueries, currentBalanceQueries, cronJobQueries } = require('./queryData');
-const scheduleCronJob = require('./jobs/scheduleCronJob');
-const deleteCronJob = require('./jobs/deleteCronJob');
-const getPayrollsForMonth = require('./getPayrolls');
+import pool from './db.js';
+import { accountQueries, transactionHistoryQueries, expenseQueries, loanQueries, payrollQueries, wishlistQueries, transferQueries, currentBalanceQueries, cronJobQueries } from './queryData.js';
+import scheduleCronJob from './jobs/scheduleCronJob.js';
+import deleteCronJob from './jobs/deleteCronJob.js';
+import getPayrollsForMonth from './getPayrolls.js';
 
 // Get all accounts
 const getAccounts = (request, response) => {
@@ -915,7 +915,7 @@ const getCurrentBalance = (request, response, next) => {
 }
 
 // Export all functions
-module.exports = {
+export {
     getAccounts,
     createAccount,
     updateAccount,

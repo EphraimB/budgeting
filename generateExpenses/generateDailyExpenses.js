@@ -27,4 +27,4 @@ const generateDailyExpenses = (transactions, skippedTransactions, expense, toDat
     }
 };
 
-module.exports = generateDailyExpenses;
+export default generateDailyExpenses;

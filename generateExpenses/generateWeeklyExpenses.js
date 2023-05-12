@@ -30,4 +30,4 @@ const generateWeeklyExpenses = (transactions, skippedTransactions, expense, toDa
 };
 
 
-module.exports = generateWeeklyExpenses;
+export default generateWeeklyExpenses;

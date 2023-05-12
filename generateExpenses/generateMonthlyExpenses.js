@@ -42,4 +42,4 @@ const generateMonthlyExpenses = (transactions, skippedTransactions, expense, toD
     }
 };
 
-module.exports = generateMonthlyExpenses;
+export default generateMonthlyExpenses;

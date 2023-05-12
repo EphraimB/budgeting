@@ -1,8 +1,8 @@
-const express = require('express');
-const { query, param, body } = require('express-validator');
+import express from 'express';
+import { query, param, body } from 'express-validator';
 const router = express.Router();
-const { getWishlists, createWishlist, updateWishlist, deleteWishlist } = require('../queries.js');
-const validateRequest = require('../validateRequest.js');
+import { getWishlists, createWishlist, updateWishlist, deleteWishlist } from '../queries.js';
+import validateRequest from '../validateRequest.js';
 
 router.get('/:account_id',
     [
@@ -37,4 +37,4 @@ router.delete('/:id',
     ],
     deleteWishlist);
 
-module.exports = router;
+export default router;

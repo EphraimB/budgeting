@@ -42,4 +42,4 @@ const generateYearlyLoans = (transactions, skippedTransactions, loan, toDate, fr
     }
 };
 
-module.exports = generateYearlyLoans;
+export default generateYearlyLoans;

@@ -1,12 +1,12 @@
-const deleteCronJob = (cronId) => {
-    const { bree } = require('../app.js');
-    const fs = require('fs');
-    const path = require('path');
-    const pool = require('../db');
-    const { cronJobQueries } = require('../queryData');
-    let uniqueId;
+import { bree } from '../breeManager.js';
+import fs from 'fs';
+import path from 'path';
+import pool from '../db.js';
+import { cronJobQueries } from '../queryData.js';
+let uniqueId;
 
-    return new Promise((resolve, reject) => {
+const deleteCronJob = (cronId) => {
+    new Promise((resolve, reject) => {
         // Fetch the unique_id from the database
         pool.query(cronJobQueries.getCronJob, [cronId], (error, results) => {
             if (error) {
@@ -59,4 +59,4 @@ const deleteCronJob = (cronId) => {
     });
 }
 
-module.exports = deleteCronJob
+export default deleteCronJob
