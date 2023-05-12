@@ -1,8 +1,8 @@
-const pool = require("./db");
-const { payrollQueries } = require("./queryData");
-const fs = require("fs");
+import pool from "./db.js";
+import { payrollQueries } from "./queryData.js";
+import fs from "fs";
 const jobsFilePath = 'jobs.json';
-const getPayrolls = require("./getPayrolls");
+import getPayrolls from "./getPayrolls.js";
 
 const getJobs = () => {
     return new Promise((resolve, reject) => {
@@ -50,4 +50,4 @@ const getJobs = () => {
     });
 };
 
-module.exports = getJobs;
+export default getJobs;

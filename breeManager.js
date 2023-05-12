@@ -1,8 +1,8 @@
-const Bree = require('bree');
-const Cabin = require('cabin');
-const path = require('path');
+import Bree from 'bree';
+import Cabin from 'cabin';
+import path from 'path';
 const cronjobsDir = path.join(__dirname, 'jobs/cron-jobs');
-const getJobs = require('./getJobs');
+import getJobs from './getJobs.js';
 
 const bree = new Bree({
   logger: new Cabin(),
@@ -19,4 +19,4 @@ async function startBree() {
   }
 }
 
-module.exports = { bree, startBree };
+export { bree, startBree };
