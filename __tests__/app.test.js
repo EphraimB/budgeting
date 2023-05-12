@@ -1,20 +1,5 @@
 const request = require("supertest");
-const { app, bree } = require("../app");
-const getJobs = require('../getJobs');
-
-jest.mock('../getJobs', () => jest.fn());
-
-describe('Test Bree', () => {
-    test('It should start Bree and log the job count', async () => {
-      bree.mockResolvedValue([/* mock job data */]);
-  
-      const response = await request(app).get('/api/some-route');
-  
-      // Assertions to verify the expected behavior
-      expect(response.statusCode).toBe(200);
-      expect(getJobs).toHaveBeenCalled();
-    });
-  });
+const { app } = require("../app");
   
 
 describe("Test the root path", () => {

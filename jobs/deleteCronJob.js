@@ -1,5 +1,5 @@
 const deleteCronJob = (cronId) => {
-    const { bree } = require('../app.js');
+    const { bree } = require('../breeManager.js');
     const fs = require('fs');
     const path = require('path');
     const pool = require('../db');

@@ -57,7 +57,4 @@ app.use('/api/wishlists', wishlistRouter);
 app.use('/api/transfers', transferRouter);
 app.use('/api/transactions', transactionsRouter);
 
-module.exports = {
-  app,
-  bree
-};
+module.exports = app

@@ -1,6 +1,6 @@
 const schedulePayrollCronJob = (payrollData, account_id) => {
     const { v4: uuidv4 } = require('uuid');
-    const { bree } = require('../app.js');
+    const { bree } = require('../breeManager.js');
     const fs = require('fs');
     const path = require('path');
     let jobs = [];
