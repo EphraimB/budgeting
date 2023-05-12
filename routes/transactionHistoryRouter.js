@@ -1,7 +1,7 @@
-const express = require('express');
-const { query, param, body } = require('express-validator');
+import express from 'express';
+import { query, param, body } from 'express-validator';
 const router = express.Router();
-const { getTransactions, createTransaction, updateTransaction, deleteTransaction } = require('../queries.js');
+import { getTransactions, createTransaction, updateTransaction, deleteTransaction } from '../queries.js';
 const validateRequest = require('../validateRequest.js');
 
 router.get('/:account_id',
@@ -37,4 +37,4 @@ router.delete('/:id',
     ],
     deleteTransaction);
 
-module.exports = router;
+export default router;
