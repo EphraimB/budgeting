@@ -1,9 +1,9 @@
-const express = require('express');
-const generateTransactions = require('../generateTransactions.js');
+import express from 'express';
+import generateTransactions from '../generateTransactions.js';
 const router = express.Router();
-const { getCurrentBalance, getTransactionsByAccount, getExpensesByAccount, getLoansByAccount, getWishlistsByAccount, getPayrollsMiddleware, getTransfersByAccount } = require('../queries.js');
-const { query } = require('express-validator');
-const validateRequest = require('../validateRequest.js');
+import { getCurrentBalance, getTransactionsByAccount, getExpensesByAccount, getLoansByAccount, getWishlistsByAccount, getPayrollsMiddleware, getTransfersByAccount } from '../queries.js';
+import { query } from 'express-validator';
+import validateRequest from '../validateRequest.js';
 
 // Generate the transactions based on current balance, expenses, and loans
 router.get('/', [
@@ -15,4 +15,4 @@ router.get('/', [
     response.json({ account_id: parseInt(request.query.account_id), currentBalance: request.currentBalance, transactions: request.transactions });
 });
 
-module.exports = router;
+export default router;

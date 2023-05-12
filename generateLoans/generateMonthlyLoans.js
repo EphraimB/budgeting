@@ -42,4 +42,4 @@ const generateMonthlyLoans = (transactions, skippedTransactions, loan, toDate, f
     }
 };
 
-module.exports = generateMonthlyLoans;
+export default generateMonthlyLoans;

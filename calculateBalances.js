@@ -19,4 +19,4 @@ const calculateBalances = (transactions, currentBalance) => {
     });
 }
 
-module.exports = calculateBalances;
+export default calculateBalances;

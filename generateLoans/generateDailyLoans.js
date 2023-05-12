@@ -28,4 +28,4 @@ const generateDailyLoans = (transactions, skippedTransactions, loan, toDate, fro
     }
 };
 
-module.exports = generateDailyLoans;
+export default generateDailyLoans;

@@ -42,4 +42,4 @@ const generateMonthlyTransfers = (transactions, skippedTransactions, transfer, t
     }
 };
 
-module.exports = generateMonthlyTransfers;
+export default generateMonthlyTransfers;
