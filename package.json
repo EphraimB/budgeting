@@ -8,6 +8,7 @@
   },
   "author": "Ephraim Becker",
   "license": "ISC",
+  "type": "module",
   "dependencies": {
     "body-parser": "^1.20.1",
     "bree": "^9.1.3",

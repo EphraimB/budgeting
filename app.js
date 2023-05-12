@@ -1,23 +1,23 @@
-const express = require('express');
-const fs = require('fs');
-const path = require('path');
-const bodyParser = require('body-parser');
-const routes = require('./routes/routes');
-const accountsRouter = require('./routes/accountsRouter');
-const transactionHistoryRouter = require('./routes/transactionHistoryRouter');
-const expensesRouter = require('./routes/expensesRouter');
-const loansRouter = require('./routes/loansRouter');
-const payrollRouter = require('./routes/payrollRouter');
-const payrollDatesRouter = require('./routes/payrollDatesRouter');
-const payrollTaxesRouter = require('./routes/payrollTaxesRouter');
-const payrollEmployeeRouter = require('./routes/payrollEmployeeRouter');
-const wishlistRouter = require('./routes/wishlistRouter');
-const transferRouter = require('./routes/transfersRouter');
-const transactionsRouter = require('./routes/transactionsRouter');
-const cronjobsDir = path.join(__dirname, 'jobs/cron-jobs');
-const swaggerUi = require('swagger-ui-express'),
-  swaggerDocument = require('./swagger.json');
-const { bree, startBree } = require('./breeManager'); // Import the bree instance and startBree function
+import express from 'express';
+import fs from 'fs';
+const { join } = require('path');
+import bodyParser from 'body-parser';
+import routes from './routes/routes.js';
+import accountsRouter from './routes/accountsRouter.js';
+import transactionHistoryRouter from './routes/transactionHistoryRouter.js';
+import expensesRouter from './routes/expensesRouter.js';
+import loansRouter from './routes/loansRouter.js';
+import payrollRouter from './routes/payrollRouter.js';
+import payrollDatesRouter from './routes/payrollDatesRouter.js';
+import payrollTaxesRouter from './routes/payrollTaxesRouter.js';
+import payrollEmployeeRouter from './routes/payrollEmployeeRouter.js';
+import wishlistRouter from './routes/wishlistRouter.js';
+import transferRouter from './routes/transfersRouter.js';
+import transactionsRouter from './routes/transactionsRouter.js';
+const cronjobsDir = join(__dirname, 'jobs/cron-jobs');
+import swaggerUi from 'swagger-ui-express';
+const swaggerDocument = require('./swagger.json');
+import { bree, startBree } from './breeManager.js';
 
 const app = express();
 
@@ -32,7 +32,6 @@ app.use(
 if (!fs.existsSync(cronjobsDir)) {
   fs.mkdirSync(cronjobsDir);
 }
-
 
 startBree()
   .then(() => {
@@ -55,4 +54,4 @@ app.use('/api/wishlists', wishlistRouter);
 app.use('/api/transfers', transferRouter);
 app.use('/api/transactions', transactionsRouter);
 
-module.exports = app
+export default app;

@@ -1,14 +1,31 @@
 const request = require("supertest");
 const app = require("../app");
-  
 
-describe("Test the root path", () => {
-    test("It should response the GET method", async () => {
-        const response = await request(app).get("/api");
+describe('Server', () => {
+    let server;
+
+    beforeAll((done) => {
+        server = app.listen(done);
+    });
+
+    afterAll((done) => {
+        server.close(done);
+    });
+
+    it('should respond with "Hello, World!" on GET request to root endpoint', async () => {
+        const response = await request(server).get('/api');
         expect(response.statusCode).toBe(200);
-        expect(response.text).toEqual("Hello World!");
+        expect(response.text).toBe('Hello World!');
     });
 });
+
+// describe("Test the root path", () => {
+//     test("It should response the GET method", async () => {
+//         const response = await request(app).get("/api");
+//         expect(response.statusCode).toBe(200);
+//         expect(response.text).toEqual("Hello World!");
+//     });
+// });
 
 // describe("Test the /api/accounts path", () => {
 //     beforeAll(async () => {
