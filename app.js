@@ -1,6 +1,8 @@
 import express from 'express';
 import fs from 'fs';
-const { join } = require('path');
+import path from 'path';
+import * as url from 'url';
+const __dirname = url.fileURLToPath(new URL('.', import.meta.url));
 import bodyParser from 'body-parser';
 import routes from './routes/routes.js';
 import accountsRouter from './routes/accountsRouter.js';
@@ -14,7 +16,7 @@ import payrollEmployeeRouter from './routes/payrollEmployeeRouter.js';
 import wishlistRouter from './routes/wishlistRouter.js';
 import transferRouter from './routes/transfersRouter.js';
 import transactionsRouter from './routes/transactionsRouter.js';
-const cronjobsDir = join(__dirname, 'jobs/cron-jobs');
+const cronjobsDir = path.join(__dirname, 'jobs/cron-jobs');
 import swaggerUi from 'swagger-ui-express';
 const swaggerDocument = require('./swagger.json');
 import { bree, startBree } from './breeManager.js';
