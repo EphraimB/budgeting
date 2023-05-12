@@ -18,6 +18,8 @@ import transferRouter from './routes/transfersRouter.js';
 import transactionsRouter from './routes/transactionsRouter.js';
 const cronjobsDir = path.join(__dirname, 'jobs/cron-jobs');
 import swaggerUi from 'swagger-ui-express';
+import { createRequire } from "module";
+const require = createRequire(import.meta.url);
 const swaggerDocument = require('./swagger.json');
 import { bree, startBree } from './breeManager.js';
 
