@@ -668,7 +668,7 @@
         }
       }
     },
-    "/payroll/dates/{employee_id}": {
+    "/payroll/dates/": {
       "get": {
         "summary": "Get all payroll dates",
         "description": "Get all payroll dates",
@@ -678,7 +678,7 @@
         "parameters": [
           {
             "name": "employee_id",
-            "in": "path",
+            "in": "query",
             "description": "Employee id",
             "required": true,
             "schema": {
@@ -705,9 +705,7 @@
             "$ref": "#/components/responses/BadRequest"
           }
         }
-      }
-    },
-    "/payroll/dates/": {
+      },
       "post": {
         "summary": "Create a payroll date",
         "description": "Create a payroll date",

@@ -817,8 +817,7 @@ const deletePayrollTax = (request, response) => {
 
 // Get payroll dates
 const getPayrollDates = (request, response) => {
-    const employee_id = parseInt(request.params.employee_id);
-    const { id } = request.query;
+    const { employee_id, id } = request.query;
 
     if (!id) {
         pool.query(payrollQueries.getPayrollDates, [employee_id], (error, results) => {
@@ -826,9 +825,16 @@ const getPayrollDates = (request, response) => {
                 return response.status(400).send({ errors: { "msg": "Error getting payroll dates", "param": null, "location": "query" } });
             }
 
+            // Parse the data to correct format and return an object
+            const payrollDates = results.rows.map((payrollDate) => ({
+                payroll_date_id: parseInt(payrollDate.payroll_date_id),
+                payroll_start_day: parseInt(payrollDate.payroll_start_day),
+                payroll_end_day: parseInt(payrollDate.payroll_end_day),
+            }));
+
             const returnObj = {
-                employee_id,
-                payroll_dates: results.rows,
+                employee_id: parseInt(employee_id),
+                payroll_dates: payrollDates,
             }
             response.status(200).json(returnObj);
         });
@@ -838,9 +844,16 @@ const getPayrollDates = (request, response) => {
                 return response.status(400).send({ errors: { "msg": "Error getting payroll date", "param": null, "location": "query" } });
             }
 
+            // Parse the data to correct format and return an object
+            const payrollDates = results.rows.map((payrollDate) => ({
+                payroll_date_id: parseInt(payrollDate.payroll_date_id),
+                payroll_start_day: parseInt(payrollDate.payroll_start_day),
+                payroll_end_day: parseInt(payrollDate.payroll_end_day),
+            }));
+
             const returnObj = {
-                employee_id,
-                payroll_date: results.rows,
+                employee_id: parseInt(employee_id),
+                payroll_date: payrollDates,
             }
             response.status(200).json(returnObj);
         });

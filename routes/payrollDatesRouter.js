@@ -4,9 +4,9 @@ const router = express.Router();
 import { getPayrollDates, createPayrollDate, updatePayrollDate, deletePayrollDate } from '../queries.js';
 import validateRequest from '../validateRequest.js';
 
-router.get('/:employee_id',
+router.get('/',
     [
-        param('employee_id').isInt({ min: 1 }).withMessage('Employee ID must be a number'),
+        query('employee_id').isInt({ min: 1 }).withMessage('Employee ID must be a number'),
         query('id').optional().isInt({ min: 1 }).withMessage('ID must be a number'),
         validateRequest,
     ],
