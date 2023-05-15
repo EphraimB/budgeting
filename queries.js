@@ -57,7 +57,18 @@ const createAccount = (request, response) => {
             if (error) {
                 return response.status(400).send({ errors: { "msg": "Error creating account", "param": null, "location": "query" } });
             }
-            response.status(201).json(results.rows);
+
+            // Parse the data to correct format and return an object
+            const accounts = results.rows.map((account) => ({
+                account_id: parseInt(account.account_id),
+                account_name: account.account_name,
+                account_type: parseInt(account.account_type),
+                account_balance: parseFloat(account.account_balance),
+                date_created: account.date_created,
+                date_modified: account.date_modified,
+            }));
+
+            response.status(201).json(accounts);
         });
 }
 
@@ -73,7 +84,19 @@ const updateAccount = (request, response) => {
             if (error) {
                 return response.status(400).send({ errors: { "msg": "Error updating account", "param": null, "location": "query" } });
             }
-            response.status(200).send(results.rows);
+
+            // Parse the data to correct format and return an object
+            const accounts = results.rows.map((account) => ({
+                account_id: parseInt(account.account_id),
+                account_name: account.account_name,
+                account_type: parseInt(account.account_type),
+                account_balance: parseFloat(account.account_balance),
+                date_created: account.date_created,
+                date_modified: account.date_modified,
+            }));
+
+
+            response.status(200).send(accounts);
         }
     );
 }
