@@ -871,7 +871,18 @@ const createPayrollDate = (request, response) => {
 
         getPayrollsForMonth(employee_id);
 
-        response.status(201).json(results.rows);
+        // Parse the data to correct format and return an object
+        const payrollDates = results.rows.map((payrollDate) => ({
+            payroll_date_id: parseInt(payrollDate.payroll_date_id),
+            payroll_start_day: parseInt(payrollDate.payroll_start_day),
+            payroll_end_day: parseInt(payrollDate.payroll_end_day),
+        }));
+
+        const returnObj = {
+            employee_id: parseInt(employee_id),
+            payroll_date: payrollDates,
+        }
+        response.status(201).json(returnObj);
     });
 }
 
