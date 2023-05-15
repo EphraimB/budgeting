@@ -801,7 +801,8 @@ const updatePayrollTax = (request, response) => {
 
 // Delete payroll tax
 const deletePayrollTax = (request, response) => {
-    const { employee_id, id } = request.query;
+    const { id } = request.params;
+    const { employee_id } = request.query;
 
     pool.query(payrollQueries.deletePayrollTax, [id], (error, results) => {
         if (error) {
@@ -810,7 +811,7 @@ const deletePayrollTax = (request, response) => {
 
         getPayrollsForMonth(employee_id);
 
-        response.status(204).send();
+        response.status(200).send("Successfully deleted payroll tax");
     });
 }
 

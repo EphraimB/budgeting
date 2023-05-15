@@ -31,10 +31,10 @@ router.put('/:id',
     ],
     updatePayrollTax);
 
-router.delete('/',
+router.delete('/:id',
     [
         query('employee_id').isInt({ min: 1 }).withMessage('Employee ID must be a number'),
-        query('id').isInt({ min: 1 }).withMessage('ID must be a number'),
+        param('id').isInt({ min: 1 }).withMessage('ID must be a number'),
         validateRequest,
     ],
     deletePayrollTax);
