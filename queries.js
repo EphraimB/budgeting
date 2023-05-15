@@ -130,22 +130,45 @@ const getTransactionsByAccount = (request, response, next) => {
 
 // Get all transactions
 const getTransactions = (request, response) => {
-    const { account_id } = request.params;
     const { id } = request.query;
 
     if (!id) {
-        pool.query(transactionHistoryQueries.getTransactions, [account_id], (error, results) => {
+        pool.query(transactionHistoryQueries.getTransactions, (error, results) => {
             if (error) {
                 return response.status(400).send({ errors: { "msg": "Error getting transactions", "param": null, "location": "query" } });
             }
-            return response.status(200).json(results.rows);
+
+            // Parse the data to correct format and return an object
+            const transactionHistory = results.rows.map((transactionHistory) => ({
+                transaction_id: parseInt(transactionHistory.transaction_id),
+                account_id: parseInt(transactionHistory.account_id),
+                transaction_amount: parseFloat(transactionHistory.transaction_amount),
+                transaction_title: transactionHistory.account_type,
+                transaction_description: transactionHistory.transaction_description,
+                date_created: transactionHistory.date_created,
+                date_modified: transactionHistory.date_modified,
+            }));
+
+            return response.status(200).json(transactionHistory);
         });
     } else {
-        pool.query(transactionHistoryQueries.getTransaction, [account_id, id], (error, results) => {
+        pool.query(transactionHistoryQueries.getTransaction, [id], (error, results) => {
             if (error) {
                 return response.status(400).send({ errors: { "msg": "Error getting transaction", "param": null, "location": "query" } });
             }
-            return response.status(200).json(results.rows);
+
+            // Parse the data to correct format and return an object
+            const transactionHistory = results.rows.map((transactionHistory) => ({
+                transaction_id: parseInt(transactionHistory.transaction_id),
+                account_id: parseInt(transactionHistory.account_id),
+                transaction_amount: parseFloat(transactionHistory.transaction_amount),
+                transaction_title: transactionHistory.account_type,
+                transaction_description: transactionHistory.transaction_description,
+                date_created: transactionHistory.date_created,
+                date_modified: transactionHistory.date_modified,
+            }));
+
+            return response.status(200).json(transactionHistory);
         });
     }
 }

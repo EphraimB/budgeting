@@ -131,7 +131,7 @@
         }
       }
     },
-    "/transactionHistory/{account_id}": {
+    "/transactionHistory": {
       "get": {
         "summary": "Get all transactions by account",
         "description": "Get all transactions by account",
@@ -139,16 +139,6 @@
           "transaction history"
         ],
         "parameters": [
-          {
-            "name": "account_id",
-            "in": "path",
-            "description": "Filter by account id",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "minimum": 1
-            }
-          },
           {
             "name": "id",
             "in": "query",
@@ -168,9 +158,7 @@
             "$ref": "#/components/responses/BadRequest"
           }
         }
-      }
-    },
-    "/transactionHistory": {
+      },
       "post": {
         "summary": "Create a new transaction",
         "description": "Create a new transaction",

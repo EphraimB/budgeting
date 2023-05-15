@@ -20,8 +20,8 @@ const accountQueries = {
 
 const transactionHistoryQueries = {
   getTransactionsDateFiltered: 'SELECT * FROM transaction_history WHERE account_id = $1 AND date_created >= $2 ORDER BY date_created DESC',
-  getTransactions: 'SELECT * FROM transaction_history WHERE account_id = $1 ORDER BY transaction_id ASC',
-  getTransaction: 'SELECT * FROM transaction_history WHERE account_id = $1 AND transaction_id = $2',
+  getTransactions: 'SELECT * FROM transaction_history ORDER BY transaction_id ASC',
+  getTransaction: 'SELECT * FROM transaction_history WHERE transaction_id = $1',
   createTransaction: 'INSERT INTO transaction_history (account_id, transaction_amount, transaction_title, transaction_description) VALUES ($1, $2, $3, $4) RETURNING *',
   updateTransaction: 'UPDATE transaction_history SET account_id = $1, transaction_amount = $2, transaction_title = $3, transaction_description = $4 WHERE transaction_id = $5 RETURNING *',
   deleteTransaction: 'DELETE FROM transaction_history WHERE transaction_id = $1',
