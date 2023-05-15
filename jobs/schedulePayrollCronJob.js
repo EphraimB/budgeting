@@ -2,6 +2,8 @@ import { v4 as uuidv4 } from 'uuid';
 import { bree } from '../breeManager.js';
 import fs from 'fs';
 import path from 'path';
+import * as url from 'url';
+const __dirname = url.fileURLToPath(new URL('.', import.meta.url));
 
 const schedulePayrollCronJob = (payrollData, account_id) => {
     let jobs = [];

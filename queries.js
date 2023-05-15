@@ -328,7 +328,27 @@ const createExpense = (request, response) => {
             if (error) {
                 return response.status(400).send({ errors: { "msg": "Error creating expense", "param": null, "location": "query" } });
             }
-            response.status(201).json(results.rows);
+
+            // Parse the data to correct format and return an object
+            const expenses = results.rows.map((expense) => ({
+                expense_id: parseInt(expense.expense_id),
+                account_id: parseInt(expense.account_id),
+                expense_amount: parseFloat(expense.expense_amount),
+                expense_title: expense.expense_title,
+                expense_description: expense.expense_description,
+                frequency_type: expense.frequency_type,
+                frequency_type_variable: expense.frequency_type_variable,
+                frequency_day_of_month: expense.frequency_day_of_month,
+                frequency_day_of_week: expense.frequency_day_of_week,
+                frequency_week_of_month: expense.frequency_week_of_month,
+                frequency_month_of_year: expense.frequency_month_of_year,
+                expense_begin_date: expense.expense_begin_date,
+                expense_end_date: expense.expense_end_date,
+                date_created: expense.date_created,
+                date_modified: expense.date_modified,
+            }));
+
+            response.status(201).json(expenses);
         });
     });
 }

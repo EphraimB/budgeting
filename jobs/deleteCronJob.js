@@ -1,6 +1,8 @@
 import { bree } from '../breeManager.js';
 import fs from 'fs';
 import path from 'path';
+import * as url from 'url';
+const __dirname = url.fileURLToPath(new URL('.', import.meta.url));
 import pool from '../db.js';
 import { cronJobQueries } from '../queryData.js';
 let uniqueId;
