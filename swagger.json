@@ -932,7 +932,7 @@
         }
       }
     },
-    "/wishlists/{account_id}": {
+    "/wishlists": {
       "get": {
         "summary": "Get a list of wishlists",
         "description": "Get a list of wishlists",
@@ -941,10 +941,10 @@
         ],
         "parameters": [
           {
-            "name": "account_id",
-            "in": "path",
-            "description": "Account id",
-            "required": true,
+            "name": "id",
+            "in": "query",
+            "description": "Wishlist id",
+            "required": false,
             "schema": {
               "type": "integer",
               "minimum": 1
@@ -959,9 +959,7 @@
             "$ref": "#/components/responses/BadRequest"
           }
         }
-      }
-    },
-    "/wishlists": {
+      },
       "post": {
         "summary": "Create a wishlist",
         "description": "Create a wishlist",

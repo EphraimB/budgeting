@@ -1079,22 +1079,49 @@ const getWishlistsByAccount = (request, response, next) => {
 
 // Get all wishlists
 const getWishlists = (request, response) => {
-    const { account_id } = request.params;
     const { id } = request.query;
 
     if (!id) {
-        pool.query(wishlistQueries.getWishlists, [account_id], (error, results) => {
+        pool.query(wishlistQueries.getWishlists, (error, results) => {
             if (error) {
                 return response.status(400).send({ errors: { "msg": "Error getting wishlists", "param": null, "location": "query" } });
             }
-            response.status(200).json(results.rows);
+
+            // Parse the data to correct format and return an object
+            const wishlists = results.rows.map((wishlist) => ({
+                wishlist_id: parseInt(wishlist.wishlist_id),
+                wishlist_amount: parseFloat(wishlist.wishlist_amount),
+                wishlist_title: wishlist.wishlist_title,
+                wishlist_description: wishlist.wishlist_description,
+                wishlist_url_link: wishlist.wishlist_url_link,
+                wishlist_priority: parseInt(wishlist.wishlist_priority),
+                wishlist_date_available: wishlist.wishlist_date_available,
+                date_created: wishlist.date_created,
+                date_updated: wishlist.date_updated
+            }));
+
+            response.status(200).send(wishlists);
         });
     } else {
-        pool.query(wishlistQueries.getWishlist, [account_id, id], (error, results) => {
+        pool.query(wishlistQueries.getWishlist, [id], (error, results) => {
             if (error) {
                 return response.status(400).send({ errors: { "msg": "Error getting wishlist", "param": null, "location": "query" } });
             }
-            response.status(200).json(results.rows);
+
+            // Parse the data to correct format and return an object
+            const wishlists = results.rows.map((wishlist) => ({
+                wishlist_id: parseInt(wishlist.wishlist_id),
+                wishlist_amount: parseFloat(wishlist.wishlist_amount),
+                wishlist_title: wishlist.wishlist_title,
+                wishlist_description: wishlist.wishlist_description,
+                wishlist_url_link: wishlist.wishlist_url_link,
+                wishlist_priority: parseInt(wishlist.wishlist_priority),
+                wishlist_date_available: wishlist.wishlist_date_available,
+                date_created: wishlist.date_created,
+                date_updated: wishlist.date_updated
+            }));
+
+            response.status(200).send(wishlists);
         });
     }
 }
