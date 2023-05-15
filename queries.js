@@ -836,7 +836,7 @@ const getPayrollDates = (request, response) => {
                 employee_id: parseInt(employee_id),
                 payroll_dates: payrollDates,
             }
-            response.status(200).json(returnObj);
+            response.status(200).send(returnObj);
         });
     } else {
         pool.query(payrollQueries.getPayrollDate, [employee_id, id], (error, results) => {
@@ -855,7 +855,7 @@ const getPayrollDates = (request, response) => {
                 employee_id: parseInt(employee_id),
                 payroll_date: payrollDates,
             }
-            response.status(200).json(returnObj);
+            response.status(200).send(returnObj);
         });
     }
 }
@@ -882,7 +882,7 @@ const createPayrollDate = (request, response) => {
             employee_id: parseInt(employee_id),
             payroll_date: payrollDates,
         }
-        response.status(201).json(returnObj);
+        response.status(201).send(returnObj);
     });
 }
 
@@ -940,7 +940,18 @@ const getEmployee = (request, response) => {
                 return response.status(400).send({ errors: { "msg": "Error getting employee", "param": null, "location": "query" } });
             }
 
-            response.status(200).json(results.rows);
+            // Parse the data to correct format and return an object
+            const employees = results.rows.map((employee) => ({
+                employee_id: parseInt(employee.employee_id),
+                name: employee.name,
+                hourly_rate: parseFloat(employee.hourly_rate),
+                regular_hours: parseInt(employee.regular_hours),
+                vacation_days: parseInt(employee.vacation_days),
+                sick_days: parseInt(employee.sick_days),
+                work_schedule: employee.work_schedule,
+            }));
+
+            response.status(200).send(employees);
         });
     } else {
         pool.query(payrollQueries.getEmployee, [id], (error, results) => {
@@ -948,7 +959,18 @@ const getEmployee = (request, response) => {
                 return response.status(400).send({ errors: { "msg": "Error getting employee", "param": null, "location": "query" } });
             }
 
-            response.status(200).json(results.rows);
+            // Parse the data to correct format and return an object
+            const employees = results.rows.map((employee) => ({
+                employee_id: parseInt(employee.employee_id),
+                name: employee.name,
+                hourly_rate: parseFloat(employee.hourly_rate),
+                regular_hours: parseInt(employee.regular_hours),
+                vacation_days: parseInt(employee.vacation_days),
+                sick_days: parseInt(employee.sick_days),
+                work_schedule: employee.work_schedule,
+            }));
+
+            response.status(200).send(employees);
         });
     }
 }
