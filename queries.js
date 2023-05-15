@@ -691,9 +691,19 @@ const getPayrolls = (request, response) => {
             return response.status(400).send({ errors: { "msg": "Error getting payrolls", "param": null, "location": "query" } });
         }
 
+        // Parse the data to correct format and return an object
+        const payrolls = results.rows.map((payroll) => ({
+            start_date: payroll.start_date,
+            end_date: payroll.end_date,
+            work_days: parseInt(payroll.work_days),
+            gross_pay: parseFloat(payroll.gross_pay),
+            net_pay: parseFloat(payroll.net_pay),
+            hours_worked: parseFloat(payroll.hours_worked),
+        }));
+
         const returnObj = {
             employee_id,
-            payrolls: results.rows,
+            payrolls: payrolls,
         }
         response.status(200).json(returnObj);
     });
