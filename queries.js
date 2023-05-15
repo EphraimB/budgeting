@@ -277,7 +277,7 @@ const getExpenses = (request, response) => {
                 date_modified: expense.date_modified,
             }));
 
-            response.status(200).json(expenses);
+            response.status(200).send(expenses);
         });
     } else {
         pool.query(expenseQueries.getExpense, [id], (error, results) => {
@@ -304,7 +304,7 @@ const getExpenses = (request, response) => {
                 date_modified: expense.date_modified,
             }));
 
-            response.status(200).json(expenses);
+            response.status(200).send(expenses);
         });
     }
 }
