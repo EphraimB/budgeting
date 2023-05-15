@@ -21,10 +21,10 @@ router.post('/',
     ],
     createPayrollTax);
 
-router.put('/',
+router.put('/:id',
     [
-        query('employee_id').isInt({ min: 1 }).withMessage('Employee ID must be a number'),
-        query('id').isInt({ min: 1 }).withMessage('ID must be a number'),
+        param('id').isInt({ min: 1 }).withMessage('ID must be a number'),
+        body('employee_id').isInt({ min: 1 }).withMessage('Employee ID must be a number'),
         body('name').isString().withMessage('Name must be a string'),
         body('rate').isFloat({ min: 0 }).withMessage('Rate must be a number'),
         validateRequest,

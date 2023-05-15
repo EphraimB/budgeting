@@ -778,8 +778,8 @@ const createPayrollTax = (request, response) => {
 
 // Update payroll tax
 const updatePayrollTax = (request, response) => {
-    const { employee_id, id } = request.query;
-    const { name, rate } = request.body;
+    const { id } = request.params;
+    const { employee_id, name, rate } = request.body;
 
     pool.query(payrollQueries.updatePayrollTax, [name, rate, id], (error, results) => {
         if (error) {
@@ -788,7 +788,14 @@ const updatePayrollTax = (request, response) => {
 
         getPayrollsForMonth(employee_id);
 
-        response.status(200).send(results.rows);
+        // Parse the data to correct format and return an object
+        const payrollTaxes = results.rows.map((payrollTax) => ({
+            payroll_taxes_id: parseInt(payrollTax.payroll_taxes_id),
+            name: payrollTax.name,
+            rate: parseFloat(payrollTax.rate),
+        }));
+
+        response.status(200).send(payrollTaxes);
     });
 }
 
