@@ -375,7 +375,7 @@
         }
       }
     },
-    "/loans/{account_id}": {
+    "/loans": {
       "get": {
         "summary": "Get all loans",
         "description": "Get all loans",
@@ -383,16 +383,6 @@
           "loans"
         ],
         "parameters": [
-          {
-            "name": "account_id",
-            "in": "path",
-            "description": "Account id",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "minimum": 1
-            }
-          },
           {
             "name": "id",
             "in": "query",
@@ -412,9 +402,7 @@
             "$ref": "#/components/responses/BadRequest"
           }
         }
-      }
-    },
-    "/loans": {
+      },
       "post": {
         "summary": "Create a loan",
         "description": "Create a loan",
