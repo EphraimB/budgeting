@@ -253,7 +253,7 @@
         }
       }
     },
-    "/expenses/{account_id}": {
+    "/expenses": {
       "get": {
         "summary": "Get all expenses by account",
         "description": "Get all expenses by account",
@@ -261,16 +261,6 @@
           "expenses"
         ],
         "parameters": [
-          {
-            "name": "account_id",
-            "in": "path",
-            "description": "Filter by account id",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "minimum": 1
-            }
-          },
           {
             "name": "id",
             "in": "query",
@@ -290,9 +280,7 @@
             "$ref": "#/components/responses/BadRequest"
           }
         }
-      }
-    },
-    "/expenses": {
+      },
       "post": {
         "summary": "Create a new expense",
         "description": "Create a new expense",
