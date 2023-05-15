@@ -765,7 +765,14 @@ const createPayrollTax = (request, response) => {
 
         getPayrollsForMonth(employee_id);
 
-        response.status(201).json(results.rows);
+        // Parse the data to correct format and return an object
+        const payrollTaxes = results.rows.map((payrollTax) => ({
+            payroll_taxes_id: parseInt(payrollTax.payroll_taxes_id),
+            name: payrollTax.name,
+            rate: parseFloat(payrollTax.rate),
+        }));
+
+        response.status(201).json(payrollTaxes);
     });
 }
 
