@@ -4,9 +4,9 @@ import { getTransfers, createTransfer, updateTransfer, deleteTransfer } from '..
 import { param, query, body } from 'express-validator';
 import validateRequest from '../validateRequest.js';
 
-router.get('/:account_id',
+router.get('/',
     [
-        param('account_id').isNumeric().withMessage('Account ID must be a number'),
+        query('account_id').isNumeric().withMessage('Account ID must be a number'),
         query('id').optional().isNumeric().withMessage('ID must be a number'),
         validateRequest,
     ],

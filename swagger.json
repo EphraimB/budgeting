@@ -1054,7 +1054,7 @@
         }
       }
     },
-    "/transfers/{account_id}": {
+    "/transfers": {
       "get": {
         "summary": "Get a list of transfers",
         "description": "Get a list of transfers",
@@ -1064,7 +1064,7 @@
         "parameters": [
           {
             "name": "account_id",
-            "in": "path",
+            "in": "query",
             "description": "Account id",
             "required": true,
             "schema": {
@@ -1091,9 +1091,7 @@
             "$ref": "#/components/responses/BadRequest"
           }
         }
-      }
-    },
-    "/transfers": {
+      },
       "post": {
         "summary": "Create a new transfer",
         "description": "Create a new transfer",
