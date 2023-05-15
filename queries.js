@@ -635,9 +635,9 @@ const updateLoan = (request, response) => {
 
 // Delete loan
 const deleteLoan = (request, response) => {
-    const { account_id, id } = request.query;
+    const { id } = request.params;
 
-    pool.query(loanQueries.getLoan, [account_id, id], (error, results) => {
+    pool.query(loanQueries.getLoan, [id], (error, results) => {
         if (error) {
             return response.status(400).send({ errors: { "msg": "Error selecting loan", "param": null, "location": "query" } });
         }
