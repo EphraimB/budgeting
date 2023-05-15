@@ -109,7 +109,7 @@ const deleteAccount = (request, response) => {
         if (error) {
             return response.status(400).send({ errors: { "msg": "Error deleting account", "param": null, "location": "query" } });
         }
-        response.status(204).send();
+        response.status(200).send("Deleted account");
     });
 }
 
