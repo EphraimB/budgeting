@@ -1379,7 +1379,8 @@ const updateTransfer = (request, response) => {
 
 // Delete transfer
 const deleteTransfer = (request, response) => {
-    const { account_id, id } = request.query;
+    const { account_id } = request.query;
+    const { id } = request.params;
 
     pool.query(transferQueries.getTransfer, [account_id, id], (error, results) => {
         if (error) {
