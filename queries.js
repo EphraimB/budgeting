@@ -1134,7 +1134,21 @@ const createWishlist = (request, response) => {
         if (error) {
             return response.status(400).send({ errors: { "msg": "Error creating wishlist", "param": null, "location": "query" } });
         }
-        response.status(201).send(results.rows);
+
+        // Parse the data to correct format and return an object
+        const wishlists = results.rows.map((wishlist) => ({
+            wishlist_id: parseInt(wishlist.wishlist_id),
+            wishlist_amount: parseFloat(wishlist.wishlist_amount),
+            wishlist_title: wishlist.wishlist_title,
+            wishlist_description: wishlist.wishlist_description,
+            wishlist_url_link: wishlist.wishlist_url_link,
+            wishlist_priority: parseInt(wishlist.wishlist_priority),
+            wishlist_date_available: wishlist.wishlist_date_available,
+            date_created: wishlist.date_created,
+            date_updated: wishlist.date_updated
+        }));
+
+        response.status(201).send(wishlists);
     });
 }
 
