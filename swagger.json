@@ -526,7 +526,7 @@
         }
       }
     },
-    "/payroll/taxes/{employee_id}": {
+    "/payroll/taxes": {
       "get": {
         "summary": "Get all payroll taxes",
         "description": "Get all payroll taxes",
@@ -536,7 +536,7 @@
         "parameters": [
           {
             "name": "employee_id",
-            "in": "path",
+            "in": "query",
             "description": "Employee id",
             "required": true,
             "schema": {
@@ -563,9 +563,7 @@
             "$ref": "#/components/responses/BadRequest"
           }
         }
-      }
-    },
-    "/payroll/taxes": {
+      },
       "post": {
         "summary": "Create a payroll tax",
         "description": "Create a payroll tax",

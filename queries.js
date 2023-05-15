@@ -711,8 +711,7 @@ const getPayrolls = (request, response) => {
 
 // Get payroll taxes
 const getPayrollTaxes = (request, response) => {
-    const employee_id = parseInt(request.params.employee_id);
-    const { id } = request.query;
+    const { employee_id, id } = request.query;
 
     if (!id) {
         pool.query(payrollQueries.getPayrollTaxes, [employee_id], (error, results) => {
@@ -720,9 +719,16 @@ const getPayrollTaxes = (request, response) => {
                 return response.status(400).send({ errors: { "msg": "Error getting payroll taxes", "param": null, "location": "query" } });
             }
 
+            // Parse the data to correct format and return an object
+            const payrollTaxes = results.rows.map((payrollTax) => ({
+                payroll_taxes_id: parseInt(payrollTax.payroll_taxes_id),
+                name: payrollTax.name,
+                rate: parseFloat(payrollTax.rate),
+            }));
+
             const returnObj = {
-                employee_id,
-                payroll_taxes: results.rows,
+                employee_id: parseInt(employee_id),
+                payroll_taxes: payrollTaxes,
             }
             response.status(200).json(returnObj);
         });
@@ -732,9 +738,16 @@ const getPayrollTaxes = (request, response) => {
                 return response.status(400).send({ errors: { "msg": "Error getting payroll tax", "param": null, "location": "query" } });
             }
 
+            // Parse the data to correct format and return an object
+            const payrollTaxes = results.rows.map((payrollTax) => ({
+                payroll_taxes_id: parseInt(payrollTax.payroll_taxes_id),
+                name: payrollTax.name,
+                rate: parseFloat(payrollTax.rate),
+            }));
+
             const returnObj = {
-                employee_id,
-                payroll_tax: results.rows,
+                employee_id: parseInt(employee_id),
+                payroll_tax: payrollTaxes,
             }
             response.status(200).json(returnObj);
         });
