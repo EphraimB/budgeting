@@ -4,9 +4,8 @@ const router = express.Router();
 import { getTransactions, createTransaction, updateTransaction, deleteTransaction } from '../queries.js';
 import validateRequest from '../validateRequest.js';
 
-router.get('/:account_id',
+router.get('/',
     [
-        param('account_id').isInt({ min: 1 }).withMessage('Account ID must be a number'),
         query('id').optional().isInt({ min: 1 }).withMessage('ID must be a number'),
         validateRequest,
     ],

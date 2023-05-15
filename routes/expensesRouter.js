@@ -4,9 +4,8 @@ const router = express.Router();
 import { getExpenses, createExpense, updateExpense, deleteExpense } from '../queries.js';
 import validateRequest from '../validateRequest.js';
 
-router.get('/:account_id',
+router.get('/',
     [
-        param('account_id').isInt({ min: 1 }).withMessage('Account ID must be a number'),
         query('id').optional().isInt({ min: 1 }).withMessage('ID must be a number'),
         validateRequest,
     ],
@@ -28,10 +27,10 @@ router.post('/',
         validateRequest,
     ],
     createExpense);
-router.put('/',
+router.put('/:id',
     [
-        query("account_id").isInt({ min: 1 }).withMessage("Account ID must be a number"),
-        query("id").isInt({ min: 1 }).withMessage("ID must be a number"),
+        param("id").isInt({ min: 1 }).withMessage("ID must be a number"),
+        body("account_id").isInt({ min: 1 }).withMessage("Account ID must be a number"),
         body("amount").isNumeric().withMessage("Amount must be a number"),
         body("title").isString().withMessage("Title must be a string"),
         body("description").isString().withMessage("Description must be a string"),
@@ -45,10 +44,9 @@ router.put('/',
         body("end_date").optional().isISO8601().withMessage("End date must be a datetime"),
         validateRequest,
     ], updateExpense);
-router.delete('/',
+router.delete('/:id',
     [
-        query("account_id").isInt({ min: 1 }).withMessage("Account ID must be a number"),
-        query("id").isInt({ min: 1 }).withMessage("ID must be a number"),
+        param("id").isInt({ min: 1 }).withMessage("ID must be a number"),
         validateRequest,
     ],
     deleteExpense);

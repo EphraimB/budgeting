@@ -4,9 +4,9 @@ import { getTransfers, createTransfer, updateTransfer, deleteTransfer } from '..
 import { param, query, body } from 'express-validator';
 import validateRequest from '../validateRequest.js';
 
-router.get('/:account_id',
+router.get('/',
     [
-        param('account_id').isNumeric().withMessage('Account ID must be a number'),
+        query('account_id').isNumeric().withMessage('Account ID must be a number'),
         query('id').optional().isNumeric().withMessage('ID must be a number'),
         validateRequest,
     ],
@@ -36,10 +36,10 @@ router.post('/',
     ],
     createTransfer);
 
-router.put('/',
+router.put('/:id',
     [
-        query("id").isInt({ min: 1 }).withMessage("ID must be a number"),
-        query("source_account_id").isInt({ min: 1 }).withMessage("Account ID must be a number"),
+        param("id").isInt({ min: 1 }).withMessage("ID must be a number"),
+        body("source_account_id").isInt({ min: 1 }).withMessage("Account ID must be a number"),
         body("destination_account_id").isInt({ min: 1 }).withMessage("Account ID must be a number"),
         body("amount").isNumeric().withMessage("Amount must be a number"),
         body("title").isString().withMessage("Title must be a string"),
@@ -61,10 +61,10 @@ router.put('/',
     ],
     updateTransfer);
 
-router.delete('/',
+router.delete('/:id',
     [
         query("account_id").isInt({ min: 1 }).withMessage("Account ID must be a number"),
-        query("id").isInt({ min: 1 }).withMessage("ID must be a number"),
+        param("id").isInt({ min: 1 }).withMessage("ID must be a number"),
         validateRequest,
     ],
     deleteTransfer);

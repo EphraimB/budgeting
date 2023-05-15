@@ -13,14 +13,36 @@ const getAccounts = (request, response) => {
             if (error) {
                 return response.status(400).send({ errors: { "msg": "Error getting accounts", "param": null, "location": "query" } });
             }
-            return response.status(200).json(results.rows);
+
+            // Parse the data to correct format and return an object
+            const accounts = results.rows.map((account) => ({
+                account_id: parseInt(account.account_id),
+                account_name: account.account_name,
+                account_type: parseInt(account.account_type),
+                account_balance: parseFloat(account.account_balance),
+                date_created: account.date_created,
+                date_modified: account.date_modified,
+            }));
+
+            return response.status(200).json(accounts);
         });
     } else {
         pool.query(accountQueries.getAccount, [id], (error, results) => {
             if (error) {
                 return response.status(400).send({ errors: { "msg": "Error getting account", "param": null, "location": "query" } });
             }
-            return response.status(200).json(results.rows);
+
+            // Parse the data to correct format and return an object
+            const accounts = results.rows.map((account) => ({
+                account_id: parseInt(account.account_id),
+                account_name: account.account_name,
+                account_type: parseInt(account.account_type),
+                account_balance: parseFloat(account.account_balance),
+                date_created: account.date_created,
+                date_modified: account.date_modified,
+            }));
+
+            return response.status(200).json(accounts);
         });
     }
 }
@@ -35,7 +57,18 @@ const createAccount = (request, response) => {
             if (error) {
                 return response.status(400).send({ errors: { "msg": "Error creating account", "param": null, "location": "query" } });
             }
-            response.status(201).json(results.rows);
+
+            // Parse the data to correct format and return an object
+            const accounts = results.rows.map((account) => ({
+                account_id: parseInt(account.account_id),
+                account_name: account.account_name,
+                account_type: parseInt(account.account_type),
+                account_balance: parseFloat(account.account_balance),
+                date_created: account.date_created,
+                date_modified: account.date_modified,
+            }));
+
+            response.status(201).json(accounts);
         });
 }
 
@@ -51,7 +84,19 @@ const updateAccount = (request, response) => {
             if (error) {
                 return response.status(400).send({ errors: { "msg": "Error updating account", "param": null, "location": "query" } });
             }
-            response.status(200).send(results.rows);
+
+            // Parse the data to correct format and return an object
+            const accounts = results.rows.map((account) => ({
+                account_id: parseInt(account.account_id),
+                account_name: account.account_name,
+                account_type: parseInt(account.account_type),
+                account_balance: parseFloat(account.account_balance),
+                date_created: account.date_created,
+                date_modified: account.date_modified,
+            }));
+
+
+            response.status(200).send(accounts);
         }
     );
 }
@@ -64,7 +109,7 @@ const deleteAccount = (request, response) => {
         if (error) {
             return response.status(400).send({ errors: { "msg": "Error deleting account", "param": null, "location": "query" } });
         }
-        response.status(204).send();
+        response.status(200).send("Successfully deleted account");
     });
 }
 
@@ -85,22 +130,45 @@ const getTransactionsByAccount = (request, response, next) => {
 
 // Get all transactions
 const getTransactions = (request, response) => {
-    const { account_id } = request.params;
     const { id } = request.query;
 
     if (!id) {
-        pool.query(transactionHistoryQueries.getTransactions, [account_id], (error, results) => {
+        pool.query(transactionHistoryQueries.getTransactions, (error, results) => {
             if (error) {
                 return response.status(400).send({ errors: { "msg": "Error getting transactions", "param": null, "location": "query" } });
             }
-            return response.status(200).json(results.rows);
+
+            // Parse the data to correct format and return an object
+            const transactionHistory = results.rows.map((transactionHistory) => ({
+                transaction_id: parseInt(transactionHistory.transaction_id),
+                account_id: parseInt(transactionHistory.account_id),
+                transaction_amount: parseFloat(transactionHistory.transaction_amount),
+                transaction_title: transactionHistory.account_type,
+                transaction_description: transactionHistory.transaction_description,
+                date_created: transactionHistory.date_created,
+                date_modified: transactionHistory.date_modified,
+            }));
+
+            return response.status(200).json(transactionHistory);
         });
     } else {
-        pool.query(transactionHistoryQueries.getTransaction, [account_id, id], (error, results) => {
+        pool.query(transactionHistoryQueries.getTransaction, [id], (error, results) => {
             if (error) {
                 return response.status(400).send({ errors: { "msg": "Error getting transaction", "param": null, "location": "query" } });
             }
-            return response.status(200).json(results.rows);
+
+            // Parse the data to correct format and return an object
+            const transactionHistory = results.rows.map((transactionHistory) => ({
+                transaction_id: parseInt(transactionHistory.transaction_id),
+                account_id: parseInt(transactionHistory.account_id),
+                transaction_amount: parseFloat(transactionHistory.transaction_amount),
+                transaction_title: transactionHistory.account_type,
+                transaction_description: transactionHistory.transaction_description,
+                date_created: transactionHistory.date_created,
+                date_modified: transactionHistory.date_modified,
+            }));
+
+            return response.status(200).json(transactionHistory);
         });
     }
 }
@@ -114,7 +182,17 @@ const createTransaction = (request, response) => {
             return response.status(400).send({ errors: { "msg": "Error creating transaction", "param": null, "location": "query" } });
         }
 
-        return response.status(201).json(results.rows);
+        const transactionHistory = results.rows.map((transactionHistory) => ({
+            transaction_id: parseInt(transactionHistory.transaction_id),
+            account_id: parseInt(transactionHistory.account_id),
+            transaction_amount: parseFloat(transactionHistory.transaction_amount),
+            transaction_title: transactionHistory.transaction_title,
+            transaction_description: transactionHistory.transaction_description,
+            date_created: transactionHistory.date_created,
+            date_modified: transactionHistory.date_modified,
+        }));
+
+        return response.status(201).json(transactionHistory);
     });
 }
 
@@ -127,7 +205,18 @@ const updateTransaction = (request, response) => {
         if (error) {
             return response.status(400).send({ errors: { "msg": "Error updating transaction", "param": null, "location": "query" } });
         }
-        response.status(200).send(results.rows);
+
+        const transactionHistory = results.rows.map((transactionHistory) => ({
+            transaction_id: parseInt(transactionHistory.transaction_id),
+            account_id: parseInt(transactionHistory.account_id),
+            transaction_amount: parseFloat(transactionHistory.transaction_amount),
+            transaction_title: transactionHistory.transaction_title,
+            transaction_description: transactionHistory.transaction_description,
+            date_created: transactionHistory.date_created,
+            date_modified: transactionHistory.date_modified,
+        }));
+
+        response.status(200).send(transactionHistory);
     });
 }
 
@@ -139,7 +228,8 @@ const deleteTransaction = (request, response) => {
         if (error) {
             return response.status(400).send({ errors: { "msg": "Error deleting transaction", "param": null, "location": "query" } });
         }
-        response.status(204).send();
+
+        response.status(200).send("Successfully deleted transaction");
     });
 }
 
@@ -160,22 +250,61 @@ const getExpensesByAccount = (request, response, next) => {
 
 // Get all expenses
 const getExpenses = (request, response) => {
-    const { account_id } = request.params;
     const { id } = request.query;
 
     if (!id) {
-        pool.query(expenseQueries.getExpenses, [account_id], (error, results) => {
+        pool.query(expenseQueries.getExpenses, (error, results) => {
             if (error) {
                 return response.status(400).send({ errors: { "msg": "Error getting expenses", "param": null, "location": "query" } });
             }
-            response.status(200).json(results.rows);
+
+            // Parse the data to correct format and return an object
+            const expenses = results.rows.map((expense) => ({
+                expense_id: parseInt(expense.expense_id),
+                account_id: parseInt(expense.account_id),
+                expense_amount: parseFloat(expense.expense_amount),
+                expense_title: expense.expense_title,
+                expense_description: expense.expense_description,
+                frequency_type: expense.frequency_type,
+                frequency_type_variable: expense.frequency_type_variable,
+                frequency_day_of_month: expense.frequency_day_of_month,
+                frequency_day_of_week: expense.frequency_day_of_week,
+                frequency_week_of_month: expense.frequency_week_of_month,
+                frequency_month_of_year: expense.frequency_month_of_year,
+                expense_begin_date: expense.expense_begin_date,
+                expense_end_date: expense.expense_end_date,
+                date_created: expense.date_created,
+                date_modified: expense.date_modified,
+            }));
+
+            response.status(200).send(expenses);
         });
     } else {
-        pool.query(expenseQueries.getExpense, [account_id, id], (error, results) => {
+        pool.query(expenseQueries.getExpense, [id], (error, results) => {
             if (error) {
                 return response.status(400).send({ errors: { "msg": "Error getting expense", "param": null, "location": "query" } });
             }
-            response.status(200).json(results.rows);
+
+            // Parse the data to correct format and return an object
+            const expenses = results.rows.map((expense) => ({
+                expense_id: parseInt(expense.expense_id),
+                account_id: parseInt(expense.account_id),
+                expense_amount: parseFloat(expense.expense_amount),
+                expense_title: expense.expense_title,
+                expense_description: expense.expense_description,
+                frequency_type: expense.frequency_type,
+                frequency_type_variable: expense.frequency_type_variable,
+                frequency_day_of_month: expense.frequency_day_of_month,
+                frequency_day_of_week: expense.frequency_day_of_week,
+                frequency_week_of_month: expense.frequency_week_of_month,
+                frequency_month_of_year: expense.frequency_month_of_year,
+                expense_begin_date: expense.expense_begin_date,
+                expense_end_date: expense.expense_end_date,
+                date_created: expense.date_created,
+                date_modified: expense.date_modified,
+            }));
+
+            response.status(200).send(expenses);
         });
     }
 }
@@ -199,18 +328,38 @@ const createExpense = (request, response) => {
             if (error) {
                 return response.status(400).send({ errors: { "msg": "Error creating expense", "param": null, "location": "query" } });
             }
-            response.status(201).json(results.rows);
+
+            // Parse the data to correct format and return an object
+            const expenses = results.rows.map((expense) => ({
+                expense_id: parseInt(expense.expense_id),
+                account_id: parseInt(expense.account_id),
+                expense_amount: parseFloat(expense.expense_amount),
+                expense_title: expense.expense_title,
+                expense_description: expense.expense_description,
+                frequency_type: expense.frequency_type,
+                frequency_type_variable: expense.frequency_type_variable,
+                frequency_day_of_month: expense.frequency_day_of_month,
+                frequency_day_of_week: expense.frequency_day_of_week,
+                frequency_week_of_month: expense.frequency_week_of_month,
+                frequency_month_of_year: expense.frequency_month_of_year,
+                expense_begin_date: expense.expense_begin_date,
+                expense_end_date: expense.expense_end_date,
+                date_created: expense.date_created,
+                date_modified: expense.date_modified,
+            }));
+
+            response.status(201).send(expenses);
         });
     });
 }
 
 // Update expense
 const updateExpense = (request, response) => {
-    const id = parseInt(request.query.id);
+    const id = parseInt(request.params.id);
     const { account_id, amount, title, description, frequency_type, frequency_type_variable, frequency_day_of_month, frequency_day_of_week, frequency_week_of_month, frequency_month_of_year, begin_date } = request.body;
 
     // Get expense id to see if it exists
-    pool.query(expenseQueries.getExpense, [account_id, id], (error, results) => {
+    pool.query(expenseQueries.getExpense, [id], (error, results) => {
         if (error) {
             return response.status(400).send({ errors: { "msg": "Error getting expense", "param": null, "location": "query" } });
         }
@@ -232,7 +381,27 @@ const updateExpense = (request, response) => {
                         if (error) {
                             return response.status(400).send({ errors: { "msg": "Error updating expense", "param": null, "location": "query" } });
                         }
-                        response.status(200).json(results.rows);
+
+                        // Parse the data to correct format and return an object
+                        const expenses = results.rows.map((expense) => ({
+                            expense_id: parseInt(expense.expense_id),
+                            account_id: parseInt(expense.account_id),
+                            expense_amount: parseFloat(expense.expense_amount),
+                            expense_title: expense.expense_title,
+                            expense_description: expense.expense_description,
+                            frequency_type: expense.frequency_type,
+                            frequency_type_variable: expense.frequency_type_variable,
+                            frequency_day_of_month: expense.frequency_day_of_month,
+                            frequency_day_of_week: expense.frequency_day_of_week,
+                            frequency_week_of_month: expense.frequency_week_of_month,
+                            frequency_month_of_year: expense.frequency_month_of_year,
+                            expense_begin_date: expense.expense_begin_date,
+                            expense_end_date: expense.expense_end_date,
+                            date_created: expense.date_created,
+                            date_modified: expense.date_modified,
+                        }));
+
+                        response.status(200).send(expenses);
                     });
                 });
             }).catch((error) => {
@@ -244,9 +413,9 @@ const updateExpense = (request, response) => {
 
 // Delete expense
 const deleteExpense = (request, response) => {
-    const { account_id, id } = request.query;
+    const { id } = request.params;
 
-    pool.query(expenseQueries.getExpense, [account_id, id], (error, results) => {
+    pool.query(expenseQueries.getExpense, [id], (error, results) => {
         if (error) {
             return response.status(400).send({ errors: { "msg": "Error selecting expense", "param": null, "location": "query" } });
         }
@@ -294,22 +463,65 @@ const getLoansByAccount = (request, response, next) => {
 
 // Get all loans
 const getLoans = (request, response) => {
-    const { account_id } = request.params;
     const { id } = request.query;
 
     if (!id) {
-        pool.query(loanQueries.getLoans, [account_id], (error, results) => {
+        pool.query(loanQueries.getLoans, (error, results) => {
             if (error) {
                 return response.status(400).send({ errors: { "msg": "Error getting loans", "param": null, "location": "query" } });
             }
-            response.status(200).json(results.rows);
+
+            // Parse the data to correct format and return an object
+            const loans = results.rows.map((loan) => ({
+                loan_id: parseInt(loan.loan_id),
+                account_id: parseInt(loan.account_id),
+                loan_amount: parseFloat(loan.loan_amount),
+                loan_plan_amount: parseFloat(loan.loan_plan_amount),
+                loan_recipient: loan.loan_recipient,
+                loan_title: loan.loan_title,
+                loan_description: loan.loan_description,
+                frequency_type: loan.frequency_type,
+                frequency_type_variable: loan.frequency_type_variable,
+                frequency_day_of_month: loan.frequency_day_of_month,
+                frequency_day_of_week: loan.frequency_day_of_week,
+                frequency_week_of_month: loan.frequency_week_of_month,
+                frequency_month_of_year: loan.frequency_month_of_year,
+                loan_begin_date: loan.loan_begin_date,
+                loan_end_date: loan.loan_end_date,
+                date_created: loan.date_created,
+                date_modified: loan.date_modified,
+            }));
+
+            response.status(200).json(loans);
         });
     } else {
-        pool.query(loanQueries.getLoan, [account_id, id], (error, results) => {
+        pool.query(loanQueries.getLoan, [id], (error, results) => {
             if (error) {
                 return response.status(400).send({ errors: { "msg": "Error getting loan", "param": null, "location": "query" } });
             }
-            response.status(200).json(results.rows);
+
+            // Parse the data to correct format and return an object
+            const loans = results.rows.map((loan) => ({
+                loan_id: parseInt(loan.loan_id),
+                account_id: parseInt(loan.account_id),
+                loan_amount: parseFloat(loan.loan_amount),
+                loan_plan_amount: parseFloat(loan.loan_plan_amount),
+                loan_recipient: loan.loan_recipient,
+                loan_title: loan.loan_title,
+                loan_description: loan.loan_description,
+                frequency_type: loan.frequency_type,
+                frequency_type_variable: loan.frequency_type_variable,
+                frequency_day_of_month: loan.frequency_day_of_month,
+                frequency_day_of_week: loan.frequency_day_of_week,
+                frequency_week_of_month: loan.frequency_week_of_month,
+                frequency_month_of_year: loan.frequency_month_of_year,
+                loan_begin_date: loan.loan_begin_date,
+                loan_end_date: loan.loan_end_date,
+                date_created: loan.date_created,
+                date_modified: loan.date_modified,
+            }));
+
+            response.status(200).send(loans);
         });
     }
 }
@@ -333,19 +545,41 @@ const createLoan = (request, response) => {
             if (error) {
                 return response.status(400).send({ errors: { "msg": "Error creating loan", "param": null, "location": "query" } });
             }
-            response.status(201).json(results.rows);
+
+            // Parse the data to correct format and return an object
+            const loans = results.rows.map((loan) => ({
+                loan_id: parseInt(loan.loan_id),
+                account_id: parseInt(loan.account_id),
+                loan_amount: parseFloat(loan.loan_amount),
+                loan_plan_amount: parseFloat(loan.loan_plan_amount),
+                loan_recipient: loan.loan_recipient,
+                loan_title: loan.loan_title,
+                loan_description: loan.loan_description,
+                frequency_type: loan.frequency_type,
+                frequency_type_variable: loan.frequency_type_variable,
+                frequency_day_of_month: loan.frequency_day_of_month,
+                frequency_day_of_week: loan.frequency_day_of_week,
+                frequency_week_of_month: loan.frequency_week_of_month,
+                frequency_month_of_year: loan.frequency_month_of_year,
+                loan_begin_date: loan.loan_begin_date,
+                loan_end_date: loan.loan_end_date,
+                date_created: loan.date_created,
+                date_modified: loan.date_modified,
+            }));
+
+            response.status(201).send(loans);
         });
     });
 }
 
 // Update loan
 const updateLoan = (request, response) => {
-    const { account_id, id } = request.query;
-    const { amount, plan_amount, recipient, title, description, frequency_type, frequency_type_variable, frequency_day_of_month, frequency_day_of_week, frequency_week_of_month, frequency_month_of_year, begin_date } = request.body;
+    const { id } = request.params;
+    const { account_id, amount, plan_amount, recipient, title, description, frequency_type, frequency_type_variable, frequency_day_of_month, frequency_day_of_week, frequency_week_of_month, frequency_month_of_year, begin_date } = request.body;
     const negativeAmount = -plan_amount;
 
     // Get expense id to see if it exists
-    pool.query(loanQueries.getLoan, [account_id, id], (error, results) => {
+    pool.query(loanQueries.getLoan, [id], (error, results) => {
         if (error) {
             return response.status(400).send({ errors: { "msg": "Error getting loan", "param": null, "location": "query" } });
         }
@@ -367,7 +601,29 @@ const updateLoan = (request, response) => {
                         if (error) {
                             return response.status(400).send({ errors: { "msg": "Error updating loan", "param": null, "location": "query" } });
                         }
-                        response.status(200).json(results.rows);
+
+                        // Parse the data to correct format and return an object
+                        const loans = results.rows.map((loan) => ({
+                            loan_id: parseInt(loan.loan_id),
+                            account_id: parseInt(loan.account_id),
+                            loan_amount: parseFloat(loan.loan_amount),
+                            loan_plan_amount: parseFloat(loan.loan_plan_amount),
+                            loan_recipient: loan.loan_recipient,
+                            loan_title: loan.loan_title,
+                            loan_description: loan.loan_description,
+                            frequency_type: loan.frequency_type,
+                            frequency_type_variable: loan.frequency_type_variable,
+                            frequency_day_of_month: loan.frequency_day_of_month,
+                            frequency_day_of_week: loan.frequency_day_of_week,
+                            frequency_week_of_month: loan.frequency_week_of_month,
+                            frequency_month_of_year: loan.frequency_month_of_year,
+                            loan_begin_date: loan.loan_begin_date,
+                            loan_end_date: loan.loan_end_date,
+                            date_created: loan.date_created,
+                            date_modified: loan.date_modified,
+                        }));
+
+                        response.status(200).send(loans);
                     });
                 });
             }).catch((error) => {
@@ -379,9 +635,9 @@ const updateLoan = (request, response) => {
 
 // Delete loan
 const deleteLoan = (request, response) => {
-    const { account_id, id } = request.query;
+    const { id } = request.params;
 
-    pool.query(loanQueries.getLoan, [account_id, id], (error, results) => {
+    pool.query(loanQueries.getLoan, [id], (error, results) => {
         if (error) {
             return response.status(400).send({ errors: { "msg": "Error selecting loan", "param": null, "location": "query" } });
         }
@@ -435,9 +691,19 @@ const getPayrolls = (request, response) => {
             return response.status(400).send({ errors: { "msg": "Error getting payrolls", "param": null, "location": "query" } });
         }
 
+        // Parse the data to correct format and return an object
+        const payrolls = results.rows.map((payroll) => ({
+            start_date: payroll.start_date,
+            end_date: payroll.end_date,
+            work_days: parseInt(payroll.work_days),
+            gross_pay: parseFloat(payroll.gross_pay),
+            net_pay: parseFloat(payroll.net_pay),
+            hours_worked: parseFloat(payroll.hours_worked),
+        }));
+
         const returnObj = {
             employee_id,
-            payrolls: results.rows,
+            payrolls: payrolls,
         }
         response.status(200).json(returnObj);
     });
@@ -445,8 +711,7 @@ const getPayrolls = (request, response) => {
 
 // Get payroll taxes
 const getPayrollTaxes = (request, response) => {
-    const employee_id = parseInt(request.params.employee_id);
-    const { id } = request.query;
+    const { employee_id, id } = request.query;
 
     if (!id) {
         pool.query(payrollQueries.getPayrollTaxes, [employee_id], (error, results) => {
@@ -454,9 +719,16 @@ const getPayrollTaxes = (request, response) => {
                 return response.status(400).send({ errors: { "msg": "Error getting payroll taxes", "param": null, "location": "query" } });
             }
 
+            // Parse the data to correct format and return an object
+            const payrollTaxes = results.rows.map((payrollTax) => ({
+                payroll_taxes_id: parseInt(payrollTax.payroll_taxes_id),
+                name: payrollTax.name,
+                rate: parseFloat(payrollTax.rate),
+            }));
+
             const returnObj = {
-                employee_id,
-                payroll_taxes: results.rows,
+                employee_id: parseInt(employee_id),
+                payroll_taxes: payrollTaxes,
             }
             response.status(200).json(returnObj);
         });
@@ -466,9 +738,16 @@ const getPayrollTaxes = (request, response) => {
                 return response.status(400).send({ errors: { "msg": "Error getting payroll tax", "param": null, "location": "query" } });
             }
 
+            // Parse the data to correct format and return an object
+            const payrollTaxes = results.rows.map((payrollTax) => ({
+                payroll_taxes_id: parseInt(payrollTax.payroll_taxes_id),
+                name: payrollTax.name,
+                rate: parseFloat(payrollTax.rate),
+            }));
+
             const returnObj = {
-                employee_id,
-                payroll_tax: results.rows,
+                employee_id: parseInt(employee_id),
+                payroll_tax: payrollTaxes,
             }
             response.status(200).json(returnObj);
         });
@@ -486,14 +765,21 @@ const createPayrollTax = (request, response) => {
 
         getPayrollsForMonth(employee_id);
 
-        response.status(201).json(results.rows);
+        // Parse the data to correct format and return an object
+        const payrollTaxes = results.rows.map((payrollTax) => ({
+            payroll_taxes_id: parseInt(payrollTax.payroll_taxes_id),
+            name: payrollTax.name,
+            rate: parseFloat(payrollTax.rate),
+        }));
+
+        response.status(201).json(payrollTaxes);
     });
 }
 
 // Update payroll tax
 const updatePayrollTax = (request, response) => {
-    const { employee_id, id } = request.query;
-    const { name, rate } = request.body;
+    const { id } = request.params;
+    const { employee_id, name, rate } = request.body;
 
     pool.query(payrollQueries.updatePayrollTax, [name, rate, id], (error, results) => {
         if (error) {
@@ -502,13 +788,21 @@ const updatePayrollTax = (request, response) => {
 
         getPayrollsForMonth(employee_id);
 
-        response.status(200).send(results.rows);
+        // Parse the data to correct format and return an object
+        const payrollTaxes = results.rows.map((payrollTax) => ({
+            payroll_taxes_id: parseInt(payrollTax.payroll_taxes_id),
+            name: payrollTax.name,
+            rate: parseFloat(payrollTax.rate),
+        }));
+
+        response.status(200).send(payrollTaxes);
     });
 }
 
 // Delete payroll tax
 const deletePayrollTax = (request, response) => {
-    const { employee_id, id } = request.query;
+    const { id } = request.params;
+    const { employee_id } = request.query;
 
     pool.query(payrollQueries.deletePayrollTax, [id], (error, results) => {
         if (error) {
@@ -517,14 +811,13 @@ const deletePayrollTax = (request, response) => {
 
         getPayrollsForMonth(employee_id);
 
-        response.status(204).send();
+        response.status(200).send("Successfully deleted payroll tax");
     });
 }
 
 // Get payroll dates
 const getPayrollDates = (request, response) => {
-    const employee_id = parseInt(request.params.employee_id);
-    const { id } = request.query;
+    const { employee_id, id } = request.query;
 
     if (!id) {
         pool.query(payrollQueries.getPayrollDates, [employee_id], (error, results) => {
@@ -532,11 +825,18 @@ const getPayrollDates = (request, response) => {
                 return response.status(400).send({ errors: { "msg": "Error getting payroll dates", "param": null, "location": "query" } });
             }
 
+            // Parse the data to correct format and return an object
+            const payrollDates = results.rows.map((payrollDate) => ({
+                payroll_date_id: parseInt(payrollDate.payroll_date_id),
+                payroll_start_day: parseInt(payrollDate.payroll_start_day),
+                payroll_end_day: parseInt(payrollDate.payroll_end_day),
+            }));
+
             const returnObj = {
-                employee_id,
-                payroll_dates: results.rows,
+                employee_id: parseInt(employee_id),
+                payroll_dates: payrollDates,
             }
-            response.status(200).json(returnObj);
+            response.status(200).send(returnObj);
         });
     } else {
         pool.query(payrollQueries.getPayrollDate, [employee_id, id], (error, results) => {
@@ -544,11 +844,18 @@ const getPayrollDates = (request, response) => {
                 return response.status(400).send({ errors: { "msg": "Error getting payroll date", "param": null, "location": "query" } });
             }
 
+            // Parse the data to correct format and return an object
+            const payrollDates = results.rows.map((payrollDate) => ({
+                payroll_date_id: parseInt(payrollDate.payroll_date_id),
+                payroll_start_day: parseInt(payrollDate.payroll_start_day),
+                payroll_end_day: parseInt(payrollDate.payroll_end_day),
+            }));
+
             const returnObj = {
-                employee_id,
-                payroll_date: results.rows,
+                employee_id: parseInt(employee_id),
+                payroll_date: payrollDates,
             }
-            response.status(200).json(returnObj);
+            response.status(200).send(returnObj);
         });
     }
 }
@@ -564,14 +871,25 @@ const createPayrollDate = (request, response) => {
 
         getPayrollsForMonth(employee_id);
 
-        response.status(201).json(results.rows);
+        // Parse the data to correct format and return an object
+        const payrollDates = results.rows.map((payrollDate) => ({
+            payroll_date_id: parseInt(payrollDate.payroll_date_id),
+            payroll_start_day: parseInt(payrollDate.payroll_start_day),
+            payroll_end_day: parseInt(payrollDate.payroll_end_day),
+        }));
+
+        const returnObj = {
+            employee_id: parseInt(employee_id),
+            payroll_date: payrollDates,
+        }
+        response.status(201).send(returnObj);
     });
 }
 
 // Update payroll date
 const updatePayrollDate = (request, response) => {
-    const { employee_id, id } = request.query;
-    const { start_day, end_day } = request.body;
+    const { id } = request.params;
+    const { employee_id, start_day, end_day } = request.body;
 
     pool.query(payrollQueries.updatePayrollDate, [start_day, end_day, id], (error, results) => {
         if (error) {
@@ -580,13 +898,26 @@ const updatePayrollDate = (request, response) => {
 
         getPayrollsForMonth(employee_id);
 
-        response.status(200).send(results.rows);
+        // Parse the data to correct format and return an object
+        const payrollDates = results.rows.map((payrollDate) => ({
+            payroll_date_id: parseInt(payrollDate.payroll_date_id),
+            payroll_start_day: parseInt(payrollDate.payroll_start_day),
+            payroll_end_day: parseInt(payrollDate.payroll_end_day),
+        }));
+
+        const returnObj = {
+            employee_id: parseInt(employee_id),
+            payroll_date: payrollDates,
+        }
+
+        response.status(200).send(returnObj);
     });
 }
 
 // Delete payroll date
 const deletePayrollDate = (request, response) => {
-    const { employee_id, id } = request.query;
+    const { employee_id } = request.query;
+    const { id } = request.params;
 
     pool.query(payrollQueries.deletePayrollDate, [id], (error, results) => {
         if (error) {
@@ -595,7 +926,7 @@ const deletePayrollDate = (request, response) => {
 
         getPayrollsForMonth(employee_id);
 
-        response.status(204).send();
+        response.status(200).send("Successfully deleted payroll date");
     });
 }
 
@@ -609,7 +940,18 @@ const getEmployee = (request, response) => {
                 return response.status(400).send({ errors: { "msg": "Error getting employee", "param": null, "location": "query" } });
             }
 
-            response.status(200).json(results.rows);
+            // Parse the data to correct format and return an object
+            const employees = results.rows.map((employee) => ({
+                employee_id: parseInt(employee.employee_id),
+                name: employee.name,
+                hourly_rate: parseFloat(employee.hourly_rate),
+                regular_hours: parseInt(employee.regular_hours),
+                vacation_days: parseInt(employee.vacation_days),
+                sick_days: parseInt(employee.sick_days),
+                work_schedule: employee.work_schedule,
+            }));
+
+            response.status(200).send(employees);
         });
     } else {
         pool.query(payrollQueries.getEmployee, [id], (error, results) => {
@@ -617,7 +959,18 @@ const getEmployee = (request, response) => {
                 return response.status(400).send({ errors: { "msg": "Error getting employee", "param": null, "location": "query" } });
             }
 
-            response.status(200).json(results.rows);
+            // Parse the data to correct format and return an object
+            const employees = results.rows.map((employee) => ({
+                employee_id: parseInt(employee.employee_id),
+                name: employee.name,
+                hourly_rate: parseFloat(employee.hourly_rate),
+                regular_hours: parseInt(employee.regular_hours),
+                vacation_days: parseInt(employee.vacation_days),
+                sick_days: parseInt(employee.sick_days),
+                work_schedule: employee.work_schedule,
+            }));
+
+            response.status(200).send(employees);
         });
     }
 }
@@ -630,7 +983,19 @@ const createEmployee = (request, response) => {
         if (error) {
             return response.status(400).send({ errors: { "msg": "Error creating employee", "param": null, "location": "query" } });
         }
-        response.status(201).json(results.rows);
+
+        // Parse the data to correct format and return an object
+        const employees = results.rows.map((employee) => ({
+            employee_id: parseInt(employee.employee_id),
+            name: employee.name,
+            hourly_rate: parseFloat(employee.hourly_rate),
+            regular_hours: parseInt(employee.regular_hours),
+            vacation_days: parseInt(employee.vacation_days),
+            sick_days: parseInt(employee.sick_days),
+            work_schedule: employee.work_schedule,
+        }));
+
+        response.status(201).send(employees);
     });
 }
 
@@ -646,7 +1011,18 @@ const updateEmployee = (request, response) => {
 
         getPayrollsForMonth(employee_id);
 
-        response.status(200).send(results.rows);
+        // Parse the data to correct format and return an object
+        const employees = results.rows.map((employee) => ({
+            employee_id: parseInt(employee.employee_id),
+            name: employee.name,
+            hourly_rate: parseFloat(employee.hourly_rate),
+            regular_hours: parseInt(employee.regular_hours),
+            vacation_days: parseInt(employee.vacation_days),
+            sick_days: parseInt(employee.sick_days),
+            work_schedule: employee.work_schedule,
+        }));
+
+        response.status(200).send(employees);
     });
 }
 
@@ -678,7 +1054,7 @@ const deleteEmployee = (request, response) => {
 
                         getPayrollsForMonth(employee_id);
 
-                        response.status(204).send();
+                        response.status(200).send("Successfully deleted employee");
                     });
                 }
             });
@@ -703,22 +1079,49 @@ const getWishlistsByAccount = (request, response, next) => {
 
 // Get all wishlists
 const getWishlists = (request, response) => {
-    const { account_id } = request.params;
     const { id } = request.query;
 
     if (!id) {
-        pool.query(wishlistQueries.getWishlists, [account_id], (error, results) => {
+        pool.query(wishlistQueries.getWishlists, (error, results) => {
             if (error) {
                 return response.status(400).send({ errors: { "msg": "Error getting wishlists", "param": null, "location": "query" } });
             }
-            response.status(200).json(results.rows);
+
+            // Parse the data to correct format and return an object
+            const wishlists = results.rows.map((wishlist) => ({
+                wishlist_id: parseInt(wishlist.wishlist_id),
+                wishlist_amount: parseFloat(wishlist.wishlist_amount),
+                wishlist_title: wishlist.wishlist_title,
+                wishlist_description: wishlist.wishlist_description,
+                wishlist_url_link: wishlist.wishlist_url_link,
+                wishlist_priority: parseInt(wishlist.wishlist_priority),
+                wishlist_date_available: wishlist.wishlist_date_available,
+                date_created: wishlist.date_created,
+                date_updated: wishlist.date_updated
+            }));
+
+            response.status(200).send(wishlists);
         });
     } else {
-        pool.query(wishlistQueries.getWishlist, [account_id, id], (error, results) => {
+        pool.query(wishlistQueries.getWishlist, [id], (error, results) => {
             if (error) {
                 return response.status(400).send({ errors: { "msg": "Error getting wishlist", "param": null, "location": "query" } });
             }
-            response.status(200).json(results.rows);
+
+            // Parse the data to correct format and return an object
+            const wishlists = results.rows.map((wishlist) => ({
+                wishlist_id: parseInt(wishlist.wishlist_id),
+                wishlist_amount: parseFloat(wishlist.wishlist_amount),
+                wishlist_title: wishlist.wishlist_title,
+                wishlist_description: wishlist.wishlist_description,
+                wishlist_url_link: wishlist.wishlist_url_link,
+                wishlist_priority: parseInt(wishlist.wishlist_priority),
+                wishlist_date_available: wishlist.wishlist_date_available,
+                date_created: wishlist.date_created,
+                date_updated: wishlist.date_updated
+            }));
+
+            response.status(200).send(wishlists);
         });
     }
 }
@@ -731,7 +1134,21 @@ const createWishlist = (request, response) => {
         if (error) {
             return response.status(400).send({ errors: { "msg": "Error creating wishlist", "param": null, "location": "query" } });
         }
-        response.status(201).send(results.rows);
+
+        // Parse the data to correct format and return an object
+        const wishlists = results.rows.map((wishlist) => ({
+            wishlist_id: parseInt(wishlist.wishlist_id),
+            wishlist_amount: parseFloat(wishlist.wishlist_amount),
+            wishlist_title: wishlist.wishlist_title,
+            wishlist_description: wishlist.wishlist_description,
+            wishlist_url_link: wishlist.wishlist_url_link,
+            wishlist_priority: parseInt(wishlist.wishlist_priority),
+            wishlist_date_available: wishlist.wishlist_date_available,
+            date_created: wishlist.date_created,
+            date_updated: wishlist.date_updated
+        }));
+
+        response.status(201).send(wishlists);
     });
 }
 
@@ -744,7 +1161,21 @@ const updateWishlist = (request, response) => {
         if (error) {
             return response.status(400).send({ errors: { "msg": "Error updating wishlist", "param": null, "location": "query" } });
         }
-        response.status(200).send(results.rows);
+
+        // Parse the data to correct format and return an object
+        const wishlists = results.rows.map((wishlist) => ({
+            wishlist_id: parseInt(wishlist.wishlist_id),
+            wishlist_amount: parseFloat(wishlist.wishlist_amount),
+            wishlist_title: wishlist.wishlist_title,
+            wishlist_description: wishlist.wishlist_description,
+            wishlist_url_link: wishlist.wishlist_url_link,
+            wishlist_priority: parseInt(wishlist.wishlist_priority),
+            wishlist_date_available: wishlist.wishlist_date_available,
+            date_created: wishlist.date_created,
+            date_updated: wishlist.date_updated
+        }));
+
+        response.status(200).send(wishlists);
     });
 }
 
@@ -756,7 +1187,8 @@ const deleteWishlist = (request, response) => {
         if (error) {
             return response.status(400).send({ errors: { "msg": "Error deleting wishlist", "param": null, "location": "query" } });
         }
-        response.status(204).send();
+
+        response.status(200).send("Successfully deleted wishlist item");
     });
 }
 
@@ -777,22 +1209,63 @@ const getTransfersByAccount = (request, response, next) => {
 
 // Get transfers
 const getTransfers = (request, response) => {
-    const { account_id } = request.params;
-    const { id } = request.query;
+    const { account_id, id } = request.query;
 
     if (!id) {
         pool.query(transferQueries.getTransfers, [account_id], (error, results) => {
             if (error) {
                 return response.status(400).send({ errors: { "msg": "Error getting transfers", "param": null, "location": "query" } });
             }
-            response.status(200).json(results.rows);
+
+            // Parse the data to correct format and return an object
+            const transfers = results.rows.map((transfer) => ({
+                transfer_id: parseInt(transfer.transfer_id),
+                source_account_id: parseInt(transfer.source_account_id),
+                destination_account_id: parseInt(transfer.destination_account_id),
+                transfer_amount: parseFloat(transfer.transfer_amount),
+                transfer_title: transfer.transfer_title,
+                transfer_description: transfer.transfer_description,
+                frequency_type: parseInt(transfer.frequency_type),
+                frequency_type_variable: parseInt(transfer.frequency_type_variable),
+                frequency_day_of_month: parseInt(transfer.frequency_day_of_month),
+                frequency_day_of_week: parseInt(transfer.frequency_day_of_week),
+                frequency_week_of_month: parseInt(transfer.frequency_week_of_month),
+                frequency_month_of_year: parseInt(transfer.frequency_month_of_year),
+                transfer_begin_date: transfer.transfer_begin_date,
+                transfer_end_date: transfer.transfer_end_date,
+                date_created: transfer.date_created,
+                date_updated: transfer.date_updated
+            }));
+
+            response.status(200).json(transfers);
         });
     } else {
         pool.query(transferQueries.getTransfer, [account_id, id], (error, results) => {
             if (error) {
                 return response.status(400).send({ errors: { "msg": "Error getting transfer", "param": null, "location": "query" } });
             }
-            response.status(200).json(results.rows);
+
+            // Parse the data to correct format and return an object
+            const transfers = results.rows.map((transfer) => ({
+                transfer_id: parseInt(transfer.transfer_id),
+                source_account_id: parseInt(transfer.source_account_id),
+                destination_account_id: parseInt(transfer.destination_account_id),
+                transfer_amount: parseFloat(transfer.transfer_amount),
+                transfer_title: transfer.transfer_title,
+                transfer_description: transfer.transfer_description,
+                frequency_type: parseInt(transfer.frequency_type),
+                frequency_type_variable: parseInt(transfer.frequency_type_variable),
+                frequency_day_of_month: parseInt(transfer.frequency_day_of_month),
+                frequency_day_of_week: parseInt(transfer.frequency_day_of_week),
+                frequency_week_of_month: parseInt(transfer.frequency_week_of_month),
+                frequency_month_of_year: parseInt(transfer.frequency_month_of_year),
+                transfer_begin_date: transfer.transfer_begin_date,
+                transfer_end_date: transfer.transfer_end_date,
+                date_created: transfer.date_created,
+                date_updated: transfer.date_updated
+            }));
+
+            response.status(200).json(transfers);
         });
     }
 }
@@ -817,15 +1290,36 @@ const createTransfer = (request, response) => {
             if (error) {
                 return response.status(400).send({ errors: { "msg": "Error creating transfer", "param": null, "location": "query" } });
             }
-            response.status(201).send(results.rows);
+
+            // Parse the data to correct format and return an object
+            const transfers = results.rows.map((transfer) => ({
+                transfer_id: parseInt(transfer.transfer_id),
+                source_account_id: parseInt(transfer.source_account_id),
+                destination_account_id: parseInt(transfer.destination_account_id),
+                transfer_amount: parseFloat(transfer.transfer_amount),
+                transfer_title: transfer.transfer_title,
+                transfer_description: transfer.transfer_description,
+                frequency_type: parseInt(transfer.frequency_type),
+                frequency_type_variable: parseInt(transfer.frequency_type_variable),
+                frequency_day_of_month: parseInt(transfer.frequency_day_of_month),
+                frequency_day_of_week: parseInt(transfer.frequency_day_of_week),
+                frequency_week_of_month: parseInt(transfer.frequency_week_of_month),
+                frequency_month_of_year: parseInt(transfer.frequency_month_of_year),
+                transfer_begin_date: transfer.transfer_begin_date,
+                transfer_end_date: transfer.transfer_end_date,
+                date_created: transfer.date_created,
+                date_updated: transfer.date_updated
+            }));
+
+            response.status(201).send(transfers);
         });
     });
 }
 
 // Update transfer
 const updateTransfer = (request, response) => {
-    const { source_account_id, id } = request.query;
-    const { destination_account_id, amount, title, description, frequency_type, frequency_type_variable, frequency_day_of_month, frequency_day_of_week, frequency_week_of_month, frequency_month_of_year, begin_date, end_date } = request.body;
+    const { id } = request.params;
+    const { source_account_id, destination_account_id, amount, title, description, frequency_type, frequency_type_variable, frequency_day_of_month, frequency_day_of_week, frequency_week_of_month, frequency_month_of_year, begin_date, end_date } = request.body;
 
     const negativeAmount = -amount;
 
@@ -852,7 +1346,28 @@ const updateTransfer = (request, response) => {
                         if (error) {
                             return response.status(400).send({ errors: { "msg": "Error updating transfer", "param": null, "location": "query" } });
                         }
-                        response.status(200).send(results.rows);
+
+                        // Parse the data to correct format and return an object
+                        const transfers = results.rows.map((transfer) => ({
+                            transfer_id: parseInt(transfer.transfer_id),
+                            source_account_id: parseInt(transfer.source_account_id),
+                            destination_account_id: parseInt(transfer.destination_account_id),
+                            transfer_amount: parseFloat(transfer.transfer_amount),
+                            transfer_title: transfer.transfer_title,
+                            transfer_description: transfer.transfer_description,
+                            frequency_type: parseInt(transfer.frequency_type),
+                            frequency_type_variable: parseInt(transfer.frequency_type_variable),
+                            frequency_day_of_month: parseInt(transfer.frequency_day_of_month),
+                            frequency_day_of_week: parseInt(transfer.frequency_day_of_week),
+                            frequency_week_of_month: parseInt(transfer.frequency_week_of_month),
+                            frequency_month_of_year: parseInt(transfer.frequency_month_of_year),
+                            transfer_begin_date: transfer.transfer_begin_date,
+                            transfer_end_date: transfer.transfer_end_date,
+                            date_created: transfer.date_created,
+                            date_updated: transfer.date_updated
+                        }));
+
+                        response.status(200).send(transfers);
                     });
                 });
             }).catch((error) => {
@@ -864,7 +1379,8 @@ const updateTransfer = (request, response) => {
 
 // Delete transfer
 const deleteTransfer = (request, response) => {
-    const { account_id, id } = request.query;
+    const { account_id } = request.query;
+    const { id } = request.params;
 
     pool.query(transferQueries.getTransfer, [account_id, id], (error, results) => {
         if (error) {
