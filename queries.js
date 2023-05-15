@@ -1054,7 +1054,7 @@ const deleteEmployee = (request, response) => {
 
                         getPayrollsForMonth(employee_id);
 
-                        response.status(204).send();
+                        response.status(200).send("Successfully deleted employee");
                     });
                 }
             });

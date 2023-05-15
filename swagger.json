@@ -923,8 +923,8 @@
           }
         ],
         "responses": {
-          "204": {
-            "description": "No content"
+          "200": {
+            "description": "Successfully deleted employee"
           },
           "400": {
             "$ref": "#/components/responses/BadRequest"
