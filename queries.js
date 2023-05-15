@@ -413,9 +413,9 @@ const updateExpense = (request, response) => {
 
 // Delete expense
 const deleteExpense = (request, response) => {
-    const { account_id, id } = request.query;
+    const { id } = request.params;
 
-    pool.query(expenseQueries.getExpense, [account_id, id], (error, results) => {
+    pool.query(expenseQueries.getExpense, [id], (error, results) => {
         if (error) {
             return response.status(400).send({ errors: { "msg": "Error selecting expense", "param": null, "location": "query" } });
         }
