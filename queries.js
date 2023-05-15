@@ -916,7 +916,8 @@ const updatePayrollDate = (request, response) => {
 
 // Delete payroll date
 const deletePayrollDate = (request, response) => {
-    const { employee_id, id } = request.query;
+    const { employee_id } = request.query;
+    const { id } = request.params;
 
     pool.query(payrollQueries.deletePayrollDate, [id], (error, results) => {
         if (error) {
@@ -925,7 +926,7 @@ const deletePayrollDate = (request, response) => {
 
         getPayrollsForMonth(employee_id);
 
-        response.status(204).send();
+        response.status(200).send("Successfully deleted payroll date");
     });
 }
 

@@ -791,7 +791,7 @@
           },
           {
             "name": "id",
-            "in": "query",
+            "in": "path",
             "description": "Payroll date id",
             "required": true,
             "schema": {
@@ -801,8 +801,8 @@
           }
         ],
         "responses": {
-          "204": {
-            "description": "No content"
+          "200": {
+            "description": "Successfully deleted payroll date"
           },
           "400": {
             "$ref": "#/components/responses/BadRequest"
