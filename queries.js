@@ -521,7 +521,7 @@ const getLoans = (request, response) => {
                 date_modified: loan.date_modified,
             }));
 
-            response.status(200).json(loans);
+            response.status(200).send(loans);
         });
     }
 }
@@ -567,19 +567,19 @@ const createLoan = (request, response) => {
                 date_modified: loan.date_modified,
             }));
 
-            response.status(201).json(loans);
+            response.status(201).send(loans);
         });
     });
 }
 
 // Update loan
 const updateLoan = (request, response) => {
-    const { account_id, id } = request.query;
-    const { amount, plan_amount, recipient, title, description, frequency_type, frequency_type_variable, frequency_day_of_month, frequency_day_of_week, frequency_week_of_month, frequency_month_of_year, begin_date } = request.body;
+    const { id } = request.params;
+    const { account_id, amount, plan_amount, recipient, title, description, frequency_type, frequency_type_variable, frequency_day_of_month, frequency_day_of_week, frequency_week_of_month, frequency_month_of_year, begin_date } = request.body;
     const negativeAmount = -plan_amount;
 
     // Get expense id to see if it exists
-    pool.query(loanQueries.getLoan, [account_id, id], (error, results) => {
+    pool.query(loanQueries.getLoan, [id], (error, results) => {
         if (error) {
             return response.status(400).send({ errors: { "msg": "Error getting loan", "param": null, "location": "query" } });
         }
@@ -601,7 +601,29 @@ const updateLoan = (request, response) => {
                         if (error) {
                             return response.status(400).send({ errors: { "msg": "Error updating loan", "param": null, "location": "query" } });
                         }
-                        response.status(200).json(results.rows);
+
+                        // Parse the data to correct format and return an object
+                        const loans = results.rows.map((loan) => ({
+                            loan_id: parseInt(loan.loan_id),
+                            account_id: parseInt(loan.account_id),
+                            loan_amount: parseFloat(loan.loan_amount),
+                            loan_plan_amount: parseFloat(loan.loan_plan_amount),
+                            loan_recipient: loan.loan_recipient,
+                            loan_title: loan.loan_title,
+                            loan_description: loan.loan_description,
+                            frequency_type: loan.frequency_type,
+                            frequency_type_variable: loan.frequency_type_variable,
+                            frequency_day_of_month: loan.frequency_day_of_month,
+                            frequency_day_of_week: loan.frequency_day_of_week,
+                            frequency_week_of_month: loan.frequency_week_of_month,
+                            frequency_month_of_year: loan.frequency_month_of_year,
+                            loan_begin_date: loan.loan_begin_date,
+                            loan_end_date: loan.loan_end_date,
+                            date_created: loan.date_created,
+                            date_modified: loan.date_modified,
+                        }));
+
+                        response.status(200).send(loans);
                     });
                 });
             }).catch((error) => {

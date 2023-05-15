@@ -428,7 +428,9 @@
             "$ref": "#/components/responses/BadRequest"
           }
         }
-      },
+      }
+    },
+    "/loans/{id}": {
       "put": {
         "summary": "Update a loan",
         "description": "Update a loan",
@@ -437,18 +439,8 @@
         ],
         "parameters": [
           {
-            "name": "account_id",
-            "in": "query",
-            "description": "Account id",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "minimum": 1
-            }
-          },
-          {
             "name": "id",
-            "in": "query",
+            "in": "path",
             "description": "Loan id",
             "required": true,
             "schema": {
@@ -485,18 +477,8 @@
         ],
         "parameters": [
           {
-            "name": "account_id",
-            "in": "query",
-            "description": "Account id",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "minimum": 1
-            }
-          },
-          {
             "name": "id",
-            "in": "query",
+            "in": "path",
             "description": "Loan id",
             "required": true,
             "schema": {
