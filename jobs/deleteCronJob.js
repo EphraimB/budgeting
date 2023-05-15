@@ -7,8 +7,8 @@ import pool from '../db.js';
 import { cronJobQueries } from '../queryData.js';
 let uniqueId;
 
-const deleteCronJob = (cronId) => {
-    new Promise((resolve, reject) => {
+const deleteCronJob = async (cronId) => {
+    // new Promise((resolve, reject) => {
         // Fetch the unique_id from the database
         pool.query(cronJobQueries.getCronJob, [cronId], (error, results) => {
             if (error) {
@@ -28,7 +28,7 @@ const deleteCronJob = (cronId) => {
                 fs.unlink(cronJobFilePath, (err) => {
                     if (err) {
                         console.error(err);
-                        return reject(err);
+                        // return reject(err);
                     }
                     console.log(`Deleted cron job file ${uniqueId}.js`);
                 });
@@ -52,13 +52,13 @@ const deleteCronJob = (cronId) => {
                     });
                 });
 
-                resolve(uniqueId);
+                return uniqueId;
             } else {
                 console.log(`Could not find cron job with unique_id ${uniqueId}`);
-                reject(`Could not find cron job with unique_id ${uniqueId}`);
+                // reject(`Could not find cron job with unique_id ${uniqueId}`);
             }
         });
-    });
+    // });
 }
 
 export default deleteCronJob

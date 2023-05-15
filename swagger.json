@@ -306,7 +306,9 @@
             "$ref": "#/components/responses/BadRequest"
           }
         }
-      },
+      }
+    },
+    "/expenses/{id}": {
       "put": {
         "summary": "Update an expense",
         "description": "Update an expense",
@@ -315,18 +317,8 @@
         ],
         "parameters": [
           {
-            "name": "account_id",
-            "in": "query",
-            "description": "Account id",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "minimum": 1
-            }
-          },
-          {
             "name": "id",
-            "in": "query",
+            "in": "path",
             "description": "Expense id",
             "required": true,
             "schema": {
@@ -363,18 +355,8 @@
         ],
         "parameters": [
           {
-            "name": "account_id",
-            "in": "query",
-            "description": "Account id",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "minimum": 1
-            }
-          },
-          {
             "name": "id",
-            "in": "query",
+            "in": "path",
             "description": "Expense id",
             "required": true,
             "schema": {
