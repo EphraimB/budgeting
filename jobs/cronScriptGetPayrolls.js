@@ -2,6 +2,8 @@ const pool = require('../db');
 const fs = require('fs');
 const path = require('path');
 const jobsFilePath = 'jobs.json';
+import * as url from 'url';
+const __dirname = url.fileURLToPath(new URL('.', import.meta.url));
 const { workerData } = require('worker_threads');
 const { payrollQueries } = require('../queryData');
 const schedulePayrollCronJob = require('./schedulePayrollCronJob');

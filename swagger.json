@@ -122,8 +122,8 @@
           }
         ],
         "responses": {
-          "204": {
-            "description": "No content"
+          "200": {
+            "description": "Successfully deleted account"
           },
           "400": {
             "$ref": "#/components/responses/BadRequest"
@@ -131,7 +131,7 @@
         }
       }
     },
-    "/transactionHistory/{account_id}": {
+    "/transactionHistory": {
       "get": {
         "summary": "Get all transactions by account",
         "description": "Get all transactions by account",
@@ -139,16 +139,6 @@
           "transaction history"
         ],
         "parameters": [
-          {
-            "name": "account_id",
-            "in": "path",
-            "description": "Filter by account id",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "minimum": 1
-            }
-          },
           {
             "name": "id",
             "in": "query",
@@ -168,9 +158,7 @@
             "$ref": "#/components/responses/BadRequest"
           }
         }
-      }
-    },
-    "/transactionHistory": {
+      },
       "post": {
         "summary": "Create a new transaction",
         "description": "Create a new transaction",
@@ -256,8 +244,8 @@
           }
         ],
         "responses": {
-          "204": {
-            "description": "No content"
+          "200": {
+            "description": "Successfully deleted transaction"
           },
           "400": {
             "$ref": "#/components/responses/BadRequest"
@@ -265,7 +253,7 @@
         }
       }
     },
-    "/expenses/{account_id}": {
+    "/expenses": {
       "get": {
         "summary": "Get all expenses by account",
         "description": "Get all expenses by account",
@@ -273,16 +261,6 @@
           "expenses"
         ],
         "parameters": [
-          {
-            "name": "account_id",
-            "in": "path",
-            "description": "Filter by account id",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "minimum": 1
-            }
-          },
           {
             "name": "id",
             "in": "query",
@@ -302,9 +280,7 @@
             "$ref": "#/components/responses/BadRequest"
           }
         }
-      }
-    },
-    "/expenses": {
+      },
       "post": {
         "summary": "Create a new expense",
         "description": "Create a new expense",
@@ -330,7 +306,9 @@
             "$ref": "#/components/responses/BadRequest"
           }
         }
-      },
+      }
+    },
+    "/expenses/{id}": {
       "put": {
         "summary": "Update an expense",
         "description": "Update an expense",
@@ -339,18 +317,8 @@
         ],
         "parameters": [
           {
-            "name": "account_id",
-            "in": "query",
-            "description": "Account id",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "minimum": 1
-            }
-          },
-          {
             "name": "id",
-            "in": "query",
+            "in": "path",
             "description": "Expense id",
             "required": true,
             "schema": {
@@ -387,18 +355,8 @@
         ],
         "parameters": [
           {
-            "name": "account_id",
-            "in": "query",
-            "description": "Account id",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "minimum": 1
-            }
-          },
-          {
             "name": "id",
-            "in": "query",
+            "in": "path",
             "description": "Expense id",
             "required": true,
             "schema": {
@@ -417,7 +375,7 @@
         }
       }
     },
-    "/loans/{account_id}": {
+    "/loans": {
       "get": {
         "summary": "Get all loans",
         "description": "Get all loans",
@@ -425,16 +383,6 @@
           "loans"
         ],
         "parameters": [
-          {
-            "name": "account_id",
-            "in": "path",
-            "description": "Account id",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "minimum": 1
-            }
-          },
           {
             "name": "id",
             "in": "query",
@@ -454,9 +402,7 @@
             "$ref": "#/components/responses/BadRequest"
           }
         }
-      }
-    },
-    "/loans": {
+      },
       "post": {
         "summary": "Create a loan",
         "description": "Create a loan",
@@ -482,7 +428,9 @@
             "$ref": "#/components/responses/BadRequest"
           }
         }
-      },
+      }
+    },
+    "/loans/{id}": {
       "put": {
         "summary": "Update a loan",
         "description": "Update a loan",
@@ -491,18 +439,8 @@
         ],
         "parameters": [
           {
-            "name": "account_id",
-            "in": "query",
-            "description": "Account id",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "minimum": 1
-            }
-          },
-          {
             "name": "id",
-            "in": "query",
+            "in": "path",
             "description": "Loan id",
             "required": true,
             "schema": {
@@ -539,18 +477,8 @@
         ],
         "parameters": [
           {
-            "name": "account_id",
-            "in": "query",
-            "description": "Account id",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "minimum": 1
-            }
-          },
-          {
             "name": "id",
-            "in": "query",
+            "in": "path",
             "description": "Loan id",
             "required": true,
             "schema": {
@@ -598,7 +526,7 @@
         }
       }
     },
-    "/payroll/taxes/{employee_id}": {
+    "/payroll/taxes": {
       "get": {
         "summary": "Get all payroll taxes",
         "description": "Get all payroll taxes",
@@ -608,7 +536,7 @@
         "parameters": [
           {
             "name": "employee_id",
-            "in": "path",
+            "in": "query",
             "description": "Employee id",
             "required": true,
             "schema": {
@@ -635,9 +563,7 @@
             "$ref": "#/components/responses/BadRequest"
           }
         }
-      }
-    },
-    "/payroll/taxes": {
+      },
       "post": {
         "summary": "Create a payroll tax",
         "description": "Create a payroll tax",
@@ -663,7 +589,9 @@
             "$ref": "#/components/responses/BadRequest"
           }
         }
-      },
+      }
+    },
+    "/payroll/taxes/{id}": {
       "put": {
         "summary": "Update a payroll tax",
         "description": "Update a payroll tax",
@@ -672,18 +600,8 @@
         ],
         "parameters": [
           {
-            "name": "employee_id",
-            "in": "query",
-            "description": "Employee id",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "minimum": 1
-            }
-          },
-          {
             "name": "id",
-            "in": "query",
+            "in": "path",
             "description": "Payroll tax id",
             "required": true,
             "schema": {
@@ -720,6 +638,16 @@
         ],
         "parameters": [
           {
+            "name": "id",
+            "in": "path",
+            "description": "Payroll tax id",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1
+            }
+          },
+          {
             "name": "employee_id",
             "in": "query",
             "description": "Employee id",
@@ -728,21 +656,11 @@
               "type": "integer",
               "minimum": 1
             }
-          },
-          {
-            "name": "id",
-            "in": "query",
-            "description": "Payroll tax id",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "minimum": 1
-            }
           }
         ],
         "responses": {
-          "204": {
-            "description": "No content"
+          "200": {
+            "description": "Successfully deleted payroll tax"
           },
           "400": {
             "$ref": "#/components/responses/BadRequest"
@@ -750,7 +668,7 @@
         }
       }
     },
-    "/payroll/dates/{employee_id}": {
+    "/payroll/dates/": {
       "get": {
         "summary": "Get all payroll dates",
         "description": "Get all payroll dates",
@@ -760,7 +678,7 @@
         "parameters": [
           {
             "name": "employee_id",
-            "in": "path",
+            "in": "query",
             "description": "Employee id",
             "required": true,
             "schema": {
@@ -787,9 +705,7 @@
             "$ref": "#/components/responses/BadRequest"
           }
         }
-      }
-    },
-    "/payroll/dates/": {
+      },
       "post": {
         "summary": "Create a payroll date",
         "description": "Create a payroll date",
@@ -815,7 +731,9 @@
             "$ref": "#/components/responses/BadRequest"
           }
         }
-      },
+      }
+    },
+    "/payroll/dates/{id}": {
       "put": {
         "summary": "Update a payroll date",
         "description": "Update a payroll date",
@@ -824,18 +742,8 @@
         ],
         "parameters": [
           {
-            "name": "employee_id",
-            "in": "query",
-            "description": "Employee id",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "minimum": 1
-            }
-          },
-          {
             "name": "id",
-            "in": "query",
+            "in": "path",
             "description": "Payroll date id",
             "required": true,
             "schema": {
@@ -883,7 +791,7 @@
           },
           {
             "name": "id",
-            "in": "query",
+            "in": "path",
             "description": "Payroll date id",
             "required": true,
             "schema": {
@@ -893,8 +801,8 @@
           }
         ],
         "responses": {
-          "204": {
-            "description": "No content"
+          "200": {
+            "description": "Successfully deleted payroll date"
           },
           "400": {
             "$ref": "#/components/responses/BadRequest"
@@ -1015,8 +923,8 @@
           }
         ],
         "responses": {
-          "204": {
-            "description": "No content"
+          "200": {
+            "description": "Successfully deleted employee"
           },
           "400": {
             "$ref": "#/components/responses/BadRequest"
@@ -1024,7 +932,7 @@
         }
       }
     },
-    "/wishlists/{account_id}": {
+    "/wishlists": {
       "get": {
         "summary": "Get a list of wishlists",
         "description": "Get a list of wishlists",
@@ -1033,10 +941,10 @@
         ],
         "parameters": [
           {
-            "name": "account_id",
-            "in": "path",
-            "description": "Account id",
-            "required": true,
+            "name": "id",
+            "in": "query",
+            "description": "Wishlist id",
+            "required": false,
             "schema": {
               "type": "integer",
               "minimum": 1
@@ -1051,9 +959,7 @@
             "$ref": "#/components/responses/BadRequest"
           }
         }
-      }
-    },
-    "/wishlists": {
+      },
       "post": {
         "summary": "Create a wishlist",
         "description": "Create a wishlist",
@@ -1139,8 +1045,8 @@
           }
         ],
         "responses": {
-          "204": {
-            "description": "No content"
+          "200": {
+            "description": "Successfully deleted wishlist item"
           },
           "400": {
             "$ref": "#/components/responses/BadRequest"
@@ -1148,7 +1054,7 @@
         }
       }
     },
-    "/transfers/{account_id}": {
+    "/transfers": {
       "get": {
         "summary": "Get a list of transfers",
         "description": "Get a list of transfers",
@@ -1158,7 +1064,7 @@
         "parameters": [
           {
             "name": "account_id",
-            "in": "path",
+            "in": "query",
             "description": "Account id",
             "required": true,
             "schema": {
@@ -1185,9 +1091,7 @@
             "$ref": "#/components/responses/BadRequest"
           }
         }
-      }
-    },
-    "/transfers": {
+      },
       "post": {
         "summary": "Create a new transfer",
         "description": "Create a new transfer",
@@ -1213,7 +1117,9 @@
             "$ref": "#/components/responses/BadRequest"
           }
         }
-      },
+      }
+    },
+    "/transfers/{id}": {
       "put": {
         "summary": "Update a transfer",
         "description": "Update a transfer",
@@ -1222,18 +1128,8 @@
         ],
         "parameters": [
           {
-            "name": "source_account_id",
-            "in": "query",
-            "description": "Source account id",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "minimum": 1
-            }
-          },
-          {
             "name": "id",
-            "in": "query",
+            "in": "path",
             "description": "Transfer id",
             "required": true,
             "schema": {
@@ -1281,7 +1177,7 @@
           },
           {
             "name": "id",
-            "in": "query",
+            "in": "path",
             "description": "Transfer id",
             "required": true,
             "schema": {
@@ -1291,8 +1187,8 @@
           }
         ],
         "responses": {
-          "204": {
-            "description": "No content"
+          "200": {
+            "description": "Transfer deleted successfully"
           },
           "400": {
             "$ref": "#/components/responses/BadRequest"

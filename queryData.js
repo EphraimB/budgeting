@@ -20,8 +20,8 @@ const accountQueries = {
 
 const transactionHistoryQueries = {
   getTransactionsDateFiltered: 'SELECT * FROM transaction_history WHERE account_id = $1 AND date_created >= $2 ORDER BY date_created DESC',
-  getTransactions: 'SELECT * FROM transaction_history WHERE account_id = $1 ORDER BY transaction_id ASC',
-  getTransaction: 'SELECT * FROM transaction_history WHERE account_id = $1 AND transaction_id = $2',
+  getTransactions: 'SELECT * FROM transaction_history ORDER BY transaction_id ASC',
+  getTransaction: 'SELECT * FROM transaction_history WHERE transaction_id = $1',
   createTransaction: 'INSERT INTO transaction_history (account_id, transaction_amount, transaction_title, transaction_description) VALUES ($1, $2, $3, $4) RETURNING *',
   updateTransaction: 'UPDATE transaction_history SET account_id = $1, transaction_amount = $2, transaction_title = $3, transaction_description = $4 WHERE transaction_id = $5 RETURNING *',
   deleteTransaction: 'DELETE FROM transaction_history WHERE transaction_id = $1',
@@ -29,8 +29,8 @@ const transactionHistoryQueries = {
 
 const expenseQueries = {
   getExpensesByAccount: "SELECT * FROM expenses WHERE account_id = $1 AND expense_begin_date <= $2 ORDER BY expense_begin_date ASC",
-  getExpenses: 'SELECT * FROM expenses WHERE account_id = $1 ORDER BY expense_id ASC',
-  getExpense: 'SELECT * FROM expenses WHERE account_id = $1 AND expense_id = $2',
+  getExpenses: 'SELECT * FROM expenses ORDER BY expense_id ASC',
+  getExpense: 'SELECT * FROM expenses WHERE expense_id = $1',
   createExpense: 'INSERT INTO expenses (account_id, cron_job_id, expense_amount, expense_title, expense_description, frequency_type, frequency_type_variable, frequency_day_of_month, frequency_day_of_week, frequency_week_of_month, frequency_month_of_year, expense_begin_date) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12) RETURNING *',
   updateExpense: 'UPDATE expenses SET account_id = $1, expense_amount = $2, expense_title = $3, expense_description = $4, frequency_type = $5, frequency_type_variable = $6, frequency_day_of_month = $7, frequency_day_of_week = $8, frequency_week_of_month = $9, frequency_month_of_year = $10, expense_begin_date = $11 WHERE expense_id = $12 RETURNING *',
   deleteExpense: 'DELETE FROM expenses WHERE expense_id = $1',
@@ -38,8 +38,8 @@ const expenseQueries = {
 
 const loanQueries = {
   getLoansByAccount: 'SELECT * FROM loans WHERE account_id = $1 AND loan_begin_date <= $2 ORDER BY date_created ASC',
-  getLoans: 'SELECT * FROM loans WHERE account_id = $1 ORDER BY loan_id ASC',
-  getLoan: 'SELECT * FROM loans WHERE account_id = $1 AND loan_id = $2',
+  getLoans: 'SELECT * FROM loans ORDER BY loan_id ASC',
+  getLoan: 'SELECT * FROM loans WHERE loan_id = $1',
   createLoan: 'INSERT INTO loans (account_id, cron_job_id, loan_amount, loan_plan_amount, loan_recipient, loan_title, loan_description, frequency_type, frequency_type_variable, frequency_day_of_month, frequency_day_of_week, frequency_week_of_month, frequency_month_of_year, loan_begin_date) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14) RETURNING *',
   updateLoan: 'UPDATE loans SET account_id = $1, loan_amount = $2, loan_plan_amount = $3, loan_recipient = $4, loan_title = $5, loan_description = $6, frequency_type = $7, frequency_type_variable = $8, frequency_day_of_month = $9, frequency_day_of_week = $10, frequency_week_of_month = $11, frequency_month_of_year = $12, loan_begin_date = $13 WHERE loan_id = $14 RETURNING *',
   deleteLoan: 'DELETE FROM loans WHERE loan_id = $1',
@@ -193,8 +193,8 @@ const payrollQueries = {
 
 const wishlistQueries = {
   getWishlistsByAccount: 'SELECT * FROM wishlist WHERE account_id = $1 AND date_created <= $2 ORDER BY wishlist_priority ASC',
-  getWishlists: 'SELECT * FROM wishlist WHERE account_id = $1 ORDER BY wishlist_priority ASC',
-  getWishlist: 'SELECT * FROM wishlist WHERE account_id = $1 AND wishlist_id = $2',
+  getWishlists: 'SELECT * FROM wishlist ORDER BY wishlist_priority ASC',
+  getWishlist: 'SELECT * FROM wishlist WHERE wishlist_id = $1',
   createWishlist: 'INSERT INTO wishlist (account_id, wishlist_amount, wishlist_title, wishlist_description, wishlist_priority, wishlist_url_link) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *',
   updateWishlist: 'UPDATE wishlist SET account_id = $1, wishlist_amount = $2, wishlist_title = $3, wishlist_description = $4, wishlist_priority = $5, wishlist_url_link = $6 WHERE wishlist_id = $7 RETURNING *',
   deleteWishlist: 'DELETE FROM wishlist WHERE wishlist_id = $1',
