@@ -2,3 +2,4 @@
 node_modules/
 jobs/cron-jobs
 jobs.json
+.DS_Store
