@@ -205,7 +205,18 @@ const updateTransaction = (request, response) => {
         if (error) {
             return response.status(400).send({ errors: { "msg": "Error updating transaction", "param": null, "location": "query" } });
         }
-        response.status(200).send(results.rows);
+
+        const transactionHistory = results.rows.map((transactionHistory) => ({
+            transaction_id: parseInt(transactionHistory.transaction_id),
+            account_id: parseInt(transactionHistory.account_id),
+            transaction_amount: parseFloat(transactionHistory.transaction_amount),
+            transaction_title: transactionHistory.transaction_title,
+            transaction_description: transactionHistory.transaction_description,
+            date_created: transactionHistory.date_created,
+            date_modified: transactionHistory.date_modified,
+        }));
+        
+        response.status(200).send(transactionHistory);
     });
 }
 
