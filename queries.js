@@ -983,7 +983,19 @@ const createEmployee = (request, response) => {
         if (error) {
             return response.status(400).send({ errors: { "msg": "Error creating employee", "param": null, "location": "query" } });
         }
-        response.status(201).json(results.rows);
+
+        // Parse the data to correct format and return an object
+        const employees = results.rows.map((employee) => ({
+            employee_id: parseInt(employee.employee_id),
+            name: employee.name,
+            hourly_rate: parseFloat(employee.hourly_rate),
+            regular_hours: parseInt(employee.regular_hours),
+            vacation_days: parseInt(employee.vacation_days),
+            sick_days: parseInt(employee.sick_days),
+            work_schedule: employee.work_schedule,
+        }));
+
+        response.status(201).send(employees);
     });
 }
 
