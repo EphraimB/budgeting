@@ -1,9 +1,10 @@
 import express from 'express';
 import fs from 'fs';
 import path from 'path';
-import * as url from 'url';
-const __dirname = url.fileURLToPath(new URL('.', import.meta.url));
+import { fileURLToPath } from 'url';
 import bodyParser from 'body-parser';
+import swaggerUi from 'swagger-ui-express';
+import { createRequire } from 'module';
 import routes from './routes/routes.js';
 import accountsRouter from './routes/accountsRouter.js';
 import transactionHistoryRouter from './routes/transactionHistoryRouter.js';
@@ -16,12 +17,15 @@ import payrollEmployeeRouter from './routes/payrollEmployeeRouter.js';
 import wishlistRouter from './routes/wishlistRouter.js';
 import transferRouter from './routes/transfersRouter.js';
 import transactionsRouter from './routes/transactionsRouter.js';
-const cronjobsDir = path.join(__dirname, 'jobs/cron-jobs');
-import swaggerUi from 'swagger-ui-express';
-import { createRequire } from "module";
+import { bree, startBree } from './breeManager.js';
+const __dirname = fileURLToPath(new URL('.', import.meta.url));
 const require = createRequire(import.meta.url);
 const swaggerDocument = require('./swagger.json');
-import { bree, startBree } from './breeManager.js';
+const cronjobsDir = path.join(__dirname, 'jobs/cron-jobs');
+
+if (!fs.existsSync(cronjobsDir)) {
+  fs.mkdirSync(cronjobsDir);
+}
 
 const app = express();
 
