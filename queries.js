@@ -911,7 +911,7 @@ const deleteEmployee = (request, response) => {
     });
 };
 
-const wishlistsParse = (wishlist) => ({
+const wishlistsParse = wishlist => ({
     wishlist_id: parseInt(wishlist.wishlist_id),
     wishlist_amount: parseFloat(wishlist.wishlist_amount),
     wishlist_title: wishlist.wishlist_title,
@@ -936,36 +936,25 @@ const getWishlistsByAccount = (request, response, next) => {
 
         next();
     });
-}
+};
 
 // Get all wishlists
 const getWishlists = (request, response) => {
     const { id } = request.query;
+    const query = id ? wishlistQueries.getWishlist : wishlistQueries.getWishlists;
+    const queryArgs = id ? [id] : [];
 
-    if (!id) {
-        pool.query(wishlistQueries.getWishlists, (error, results) => {
-            if (error) {
-                return response.status(400).send({ errors: { "msg": "Error getting wishlists", "param": null, "location": "query" } });
-            }
+    pool.query(query, queryArgs, (error, results) => {
+        if (error) {
+            return response.status(400).send({ errors: { msg: 'Error getting wishlists', param: null, location: 'query' } });
+        }
 
-            // Parse the data to correct format and return an object
-            const wishlists = results.rows.map(wishlist => wishlistsParse(wishlist));
+        // Parse the data to the correct format
+        const wishlists = results.rows.map(wishlist => wishlistsParse(wishlist));
 
-            response.status(200).send(wishlists);
-        });
-    } else {
-        pool.query(wishlistQueries.getWishlist, [id], (error, results) => {
-            if (error) {
-                return response.status(400).send({ errors: { "msg": "Error getting wishlist", "param": null, "location": "query" } });
-            }
-
-            // Parse the data to correct format and return an object
-            const wishlists = results.rows.map(wishlist => wishlistsParse(wishlist));
-
-            response.status(200).send(wishlists);
-        });
-    }
-}
+        response.status(200).send(wishlists);
+    });
+};
 
 // Create wishlist
 const createWishlist = (request, response) => {
