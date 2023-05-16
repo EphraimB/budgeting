@@ -34,41 +34,32 @@ const getAccounts = (request, response) => {
 const createAccount = (request, response) => {
     const { name, type, balance } = request.body;
 
-    pool.query(accountQueries.createAccount,
-        [name, type, balance],
-        (error, results) => {
-            if (error) {
-                return response.status(400).send({ errors: { "msg": "Error creating account", "param": null, "location": "query" } });
-            }
+    pool.query(accountQueries.createAccount, [name, type, balance], (error, results) => {
+        if (error) {
+            return response.status(400).send({ errors: { "msg": "Error creating account", "param": null, "location": "query" } });
+        }
 
-            // Parse the data to correct format and return an object
-            const accounts = results.rows.map(account => parseAccounts(account));
-
-            response.status(201).json(accounts);
-        });
-}
+        const accounts = results.rows.map(account => parseAccounts(account));
+        response.status(201).json(accounts);
+    });
+};
 
 // Update account
 const updateAccount = (request, response) => {
     const id = parseInt(request.params.id);
     const { name, type, balance } = request.body;
 
-    pool.query(
-        accountQueries.updateAccount,
-        [name, type, balance, id],
-        (error, results) => {
-            if (error) {
-                return response.status(400).send({ errors: { "msg": "Error updating account", "param": null, "location": "query" } });
-            }
-
-            // Parse the data to correct format and return an object
-            const accounts = results.rows.map(account => parseAccounts(account));
-
-
-            response.status(200).send(accounts);
+    pool.query(accountQueries.updateAccount, [name, type, balance, id], (error, results) => {
+        if (error) {
+            return response.status(400).send({ errors: { "msg": "Error updating account", "param": null, "location": "query" } });
         }
-    );
-}
+
+        // Parse the data to correct format and return an object
+        const accounts = results.rows.map(account => parseAccounts(account));
+
+        response.status(200).send(accounts);
+    });
+};
 
 // Delete account
 const deleteAccount = (request, response) => {
@@ -78,9 +69,10 @@ const deleteAccount = (request, response) => {
         if (error) {
             return response.status(400).send({ errors: { "msg": "Error deleting account", "param": null, "location": "query" } });
         }
+
         response.status(200).send("Successfully deleted account");
     });
-}
+};
 
 const parseTransactions = (transaction) => ({
     transaction_id: parseInt(transactionHistory.transaction_id),
