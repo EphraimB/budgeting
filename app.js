@@ -18,6 +18,7 @@ import wishlistRouter from './routes/wishlistRouter.js';
 import transferRouter from './routes/transfersRouter.js';
 import transactionsRouter from './routes/transactionsRouter.js';
 import { bree, startBree } from './breeManager.js';
+
 const __dirname = fileURLToPath(new URL('.', import.meta.url));
 const require = createRequire(import.meta.url);
 const swaggerDocument = require('./swagger.json');
@@ -31,15 +32,7 @@ const app = express();
 
 app.use(bodyParser.json());
 
-app.use(
-  '/api/docs',
-  swaggerUi.serve,
-  swaggerUi.setup(swaggerDocument)
-);
-
-if (!fs.existsSync(cronjobsDir)) {
-  fs.mkdirSync(cronjobsDir);
-}
+app.use('/api/docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 startBree()
   .then(() => {
@@ -49,6 +42,7 @@ startBree()
     console.error('Failed to start Bree:', error);
   });
 
+// Routes
 app.use('/api/', routes);
 app.use('/api/accounts', accountsRouter);
 app.use('/api/transactionHistory', transactionHistoryRouter);
@@ -61,5 +55,11 @@ app.use('/api/payroll/employee', payrollEmployeeRouter);
 app.use('/api/wishlists', wishlistRouter);
 app.use('/api/transfers', transferRouter);
 app.use('/api/transactions', transactionsRouter);
+
+// Global error handling middleware
+app.use((err, req, res, next) => {
+  console.error(err);
+  res.status(500).json({ error: 'Internal server error' });
+});
 
 export default app;
