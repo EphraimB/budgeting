@@ -3,7 +3,6 @@ import { accountQueries, transactionHistoryQueries, expenseQueries, loanQueries,
 import scheduleCronJob from './jobs/scheduleCronJob.js';
 import deleteCronJob from './jobs/deleteCronJob.js';
 import getPayrollsForMonth from './getPayrolls.js';
-import { parse } from 'superagent';
 
 const parseAccounts = (account) => ({
     account_id: parseInt(account.account_id),
