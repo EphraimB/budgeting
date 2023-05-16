@@ -854,7 +854,7 @@ const createEmployee = (request, response) => {
 
         response.status(201).send(employees);
     });
-}
+};
 
 // Update employee
 const updateEmployee = (request, response) => {
@@ -873,43 +873,43 @@ const updateEmployee = (request, response) => {
 
         response.status(200).send(employees);
     });
-}
+};
 
 // Delete employee
 const deleteEmployee = (request, response) => {
     const employee_id = parseInt(request.params.employee_id);
 
-    // Only delete if there are no payroll dates associated with the employee
-    pool.query(payrollQueries.getPayrollDates, [employee_id], (error, results) => {
+    // Check if there are any associated payroll dates or payroll taxes
+    pool.query(payrollQueries.getPayrollDates, [employee_id], (error, payrollDatesResults) => {
         if (error) {
-            return response.status(400).send({ errors: { "msg": "Error getting payroll dates", "param": null, "location": "query" } });
+            return response.status(400).send({ errors: { msg: 'Error getting payroll dates', param: null, location: 'query' } });
         }
 
-        if (results.rows.length > 0) {
-            return response.status(400).send({ errors: { "msg": "You need to delete employee related data before deleting the employee", "param": null, "location": "query" } });
-        } else {
-            pool.query(payrollQueries.getPayrollTaxes, [employee_id], (error, results) => {
-                if (error) {
-                    return response.status(400).send({ errors: { "msg": "Error getting payroll taxes", "param": null, "location": "query" } });
-                }
+        const hasPayrollDates = payrollDatesResults.rows.length > 0;
 
-                if (results.rows.length > 0) {
-                    return response.status(400).send({ errors: { "msg": "You need to delete employee related data before deleting the employee", "param": null, "location": "query" } });
-                } else {
-                    pool.query(payrollQueries.deleteEmployee, [employee_id], (error, results) => {
-                        if (error) {
-                            return response.status(400).send({ errors: { "msg": "Error deleting employee", "param": null, "location": "query" } });
-                        }
+        pool.query(payrollQueries.getPayrollTaxes, [employee_id], (error, payrollTaxesResults) => {
+            if (error) {
+                return response.status(400).send({ errors: { msg: 'Error getting payroll taxes', param: null, location: 'query' } });
+            }
 
-                        getPayrollsForMonth(employee_id);
+            const hasPayrollTaxes = payrollTaxesResults.rows.length > 0;
 
-                        response.status(200).send("Successfully deleted employee");
-                    });
-                }
-            });
-        }
+            if (hasPayrollDates || hasPayrollTaxes) {
+                return response.status(400).send({ errors: { msg: 'You need to delete employee-related data before deleting the employee', param: null, location: 'query' } });
+            } else {
+                pool.query(payrollQueries.deleteEmployee, [employee_id], (error, results) => {
+                    if (error) {
+                        return response.status(400).send({ errors: { msg: 'Error deleting employee', param: null, location: 'query' } });
+                    }
+
+                    getPayrollsForMonth(employee_id);
+
+                    response.status(200).send('Successfully deleted employee');
+                });
+            }
+        });
     });
-}
+};
 
 const wishlistsParse = (wishlist) => ({
     wishlist_id: parseInt(wishlist.wishlist_id),
