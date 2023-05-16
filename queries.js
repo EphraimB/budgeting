@@ -3,6 +3,16 @@ import { accountQueries, transactionHistoryQueries, expenseQueries, loanQueries,
 import scheduleCronJob from './jobs/scheduleCronJob.js';
 import deleteCronJob from './jobs/deleteCronJob.js';
 import getPayrollsForMonth from './getPayrolls.js';
+import { parse } from 'superagent';
+
+const parseAccounts = (account) => ({
+    account_id: parseInt(account.account_id),
+    account_name: account.account_name,
+    account_type: parseInt(account.account_type),
+    account_balance: parseFloat(account.account_balance),
+    date_created: account.date_created,
+    date_modified: account.date_modified,
+});
 
 // Get all accounts
 const getAccounts = (request, response) => {
@@ -15,14 +25,7 @@ const getAccounts = (request, response) => {
             }
 
             // Parse the data to correct format and return an object
-            const accounts = results.rows.map((account) => ({
-                account_id: parseInt(account.account_id),
-                account_name: account.account_name,
-                account_type: parseInt(account.account_type),
-                account_balance: parseFloat(account.account_balance),
-                date_created: account.date_created,
-                date_modified: account.date_modified,
-            }));
+            const accounts = results.rows.map(account => parseAccounts(account));
 
             return response.status(200).json(accounts);
         });
@@ -33,14 +36,7 @@ const getAccounts = (request, response) => {
             }
 
             // Parse the data to correct format and return an object
-            const accounts = results.rows.map((account) => ({
-                account_id: parseInt(account.account_id),
-                account_name: account.account_name,
-                account_type: parseInt(account.account_type),
-                account_balance: parseFloat(account.account_balance),
-                date_created: account.date_created,
-                date_modified: account.date_modified,
-            }));
+            const accounts = results.rows.map(account => parseAccounts(account));
 
             return response.status(200).json(accounts);
         });
@@ -59,14 +55,7 @@ const createAccount = (request, response) => {
             }
 
             // Parse the data to correct format and return an object
-            const accounts = results.rows.map((account) => ({
-                account_id: parseInt(account.account_id),
-                account_name: account.account_name,
-                account_type: parseInt(account.account_type),
-                account_balance: parseFloat(account.account_balance),
-                date_created: account.date_created,
-                date_modified: account.date_modified,
-            }));
+            const accounts = results.rows.map(account => parseAccounts(account));
 
             response.status(201).json(accounts);
         });
@@ -86,14 +75,7 @@ const updateAccount = (request, response) => {
             }
 
             // Parse the data to correct format and return an object
-            const accounts = results.rows.map((account) => ({
-                account_id: parseInt(account.account_id),
-                account_name: account.account_name,
-                account_type: parseInt(account.account_type),
-                account_balance: parseFloat(account.account_balance),
-                date_created: account.date_created,
-                date_modified: account.date_modified,
-            }));
+            const accounts = results.rows.map(account => parseAccounts(account));
 
 
             response.status(200).send(accounts);
