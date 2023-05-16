@@ -95,6 +95,16 @@ const deleteAccount = (request, response) => {
     });
 }
 
+const parseTransactions = (transaction) => ({
+    transaction_id: parseInt(transactionHistory.transaction_id),
+    account_id: parseInt(transactionHistory.account_id),
+    transaction_amount: parseFloat(transactionHistory.transaction_amount),
+    transaction_title: transactionHistory.account_type,
+    transaction_description: transactionHistory.transaction_description,
+    date_created: transactionHistory.date_created,
+    date_modified: transactionHistory.date_modified,
+});
+
 // Get deposits by account
 const getTransactionsByAccount = (request, response, next) => {
     const { account_id, from_date } = request.query;
@@ -121,15 +131,7 @@ const getTransactions = (request, response) => {
             }
 
             // Parse the data to correct format and return an object
-            const transactionHistory = results.rows.map((transactionHistory) => ({
-                transaction_id: parseInt(transactionHistory.transaction_id),
-                account_id: parseInt(transactionHistory.account_id),
-                transaction_amount: parseFloat(transactionHistory.transaction_amount),
-                transaction_title: transactionHistory.account_type,
-                transaction_description: transactionHistory.transaction_description,
-                date_created: transactionHistory.date_created,
-                date_modified: transactionHistory.date_modified,
-            }));
+            const transactionHistory = results.rows.map(transactionHistory => (parseTransactions(transactionHistory)));
 
             return response.status(200).json(transactionHistory);
         });
@@ -140,15 +142,7 @@ const getTransactions = (request, response) => {
             }
 
             // Parse the data to correct format and return an object
-            const transactionHistory = results.rows.map((transactionHistory) => ({
-                transaction_id: parseInt(transactionHistory.transaction_id),
-                account_id: parseInt(transactionHistory.account_id),
-                transaction_amount: parseFloat(transactionHistory.transaction_amount),
-                transaction_title: transactionHistory.account_type,
-                transaction_description: transactionHistory.transaction_description,
-                date_created: transactionHistory.date_created,
-                date_modified: transactionHistory.date_modified,
-            }));
+            const transactionHistory = results.rows.map(transactionHistory => (parseTransactions(transactionHistory)));
 
             return response.status(200).json(transactionHistory);
         });
@@ -164,15 +158,8 @@ const createTransaction = (request, response) => {
             return response.status(400).send({ errors: { "msg": "Error creating transaction", "param": null, "location": "query" } });
         }
 
-        const transactionHistory = results.rows.map((transactionHistory) => ({
-            transaction_id: parseInt(transactionHistory.transaction_id),
-            account_id: parseInt(transactionHistory.account_id),
-            transaction_amount: parseFloat(transactionHistory.transaction_amount),
-            transaction_title: transactionHistory.transaction_title,
-            transaction_description: transactionHistory.transaction_description,
-            date_created: transactionHistory.date_created,
-            date_modified: transactionHistory.date_modified,
-        }));
+        // Parse the data to correct format and return an object
+        const transactionHistory = results.rows.map(transactionHistory => (parseTransactions(transactionHistory)));
 
         return response.status(201).json(transactionHistory);
     });
@@ -188,15 +175,8 @@ const updateTransaction = (request, response) => {
             return response.status(400).send({ errors: { "msg": "Error updating transaction", "param": null, "location": "query" } });
         }
 
-        const transactionHistory = results.rows.map((transactionHistory) => ({
-            transaction_id: parseInt(transactionHistory.transaction_id),
-            account_id: parseInt(transactionHistory.account_id),
-            transaction_amount: parseFloat(transactionHistory.transaction_amount),
-            transaction_title: transactionHistory.transaction_title,
-            transaction_description: transactionHistory.transaction_description,
-            date_created: transactionHistory.date_created,
-            date_modified: transactionHistory.date_modified,
-        }));
+        // Parse the data to correct format and return an object
+        const transactionHistory = results.rows.map(transactionHistory => (parseTransactions(transactionHistory)));
 
         response.status(200).send(transactionHistory);
     });
