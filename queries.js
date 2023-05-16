@@ -14,7 +14,7 @@ const parseAccounts = account => ({
 });
 
 // Get all accounts
-const getAccounts = (request, response) => {
+export const getAccounts = (request, response) => {
     const id = parseInt(request.query.id);
 
     const query = id ? accountQueries.getAccount : accountQueries.getAccounts;
@@ -31,7 +31,7 @@ const getAccounts = (request, response) => {
 };
 
 // Create account
-const createAccount = (request, response) => {
+export const createAccount = (request, response) => {
     const { name, type, balance } = request.body;
 
     pool.query(accountQueries.createAccount, [name, type, balance], (error, results) => {
@@ -45,7 +45,7 @@ const createAccount = (request, response) => {
 };
 
 // Update account
-const updateAccount = (request, response) => {
+export const updateAccount = (request, response) => {
     const id = parseInt(request.params.id);
     const { name, type, balance } = request.body;
 
@@ -62,7 +62,7 @@ const updateAccount = (request, response) => {
 };
 
 // Delete account
-const deleteAccount = (request, response) => {
+export const deleteAccount = (request, response) => {
     const id = parseInt(request.params.id);
 
     pool.query(accountQueries.deleteAccount, [id], (error, results) => {
@@ -85,7 +85,7 @@ const parseTransactions = transactionHistory => ({
 });
 
 // Get deposits by account
-const getTransactionsByAccount = (request, response, next) => {
+export const getTransactionsByAccount = (request, response, next) => {
     const { account_id, from_date } = request.query;
 
     pool.query(transactionHistoryQueries.getTransactionsDateFiltered, [parseInt(account_id), from_date], (error, results) => {
@@ -97,10 +97,10 @@ const getTransactionsByAccount = (request, response, next) => {
 
         next();
     });
-}
+};
 
 // Get all transactions
-const getTransactions = (request, response) => {
+export const getTransactions = (request, response) => {
     const { id } = request.query;
 
     const query = id ? transactionHistoryQueries.getTransaction : transactionHistoryQueries.getTransactions;
@@ -117,7 +117,7 @@ const getTransactions = (request, response) => {
 };
 
 // Create transaction
-const createTransaction = (request, response) => {
+export const createTransaction = (request, response) => {
     const { account_id, title, amount, description } = request.body;
 
     pool.query(transactionHistoryQueries.createTransaction, [account_id, amount, title, description], (error, results) => {
@@ -130,10 +130,10 @@ const createTransaction = (request, response) => {
 
         return response.status(201).json(transactionHistory);
     });
-}
+};
 
 // Update transaction
-const updateTransaction = (request, response) => {
+export const updateTransaction = (request, response) => {
     const id = parseInt(request.params.id);
     const { account_id, amount, title, description } = request.body;
 
@@ -147,10 +147,10 @@ const updateTransaction = (request, response) => {
 
         response.status(200).send(transactionHistory);
     });
-}
+};
 
 // Delete transaction
-const deleteTransaction = (request, response) => {
+export const deleteTransaction = (request, response) => {
     const id = parseInt(request.params.id);
 
     pool.query(transactionHistoryQueries.deleteTransaction, [id], (error, results) => {
@@ -160,7 +160,7 @@ const deleteTransaction = (request, response) => {
 
         response.status(200).send("Successfully deleted transaction");
     });
-}
+};
 
 const parseExpenses = expense => ({
     expense_id: parseInt(expense.expense_id),
@@ -181,7 +181,7 @@ const parseExpenses = expense => ({
 });
 
 // Get expenses by account
-const getExpensesByAccount = (request, response, next) => {
+export const getExpensesByAccount = (request, response, next) => {
     const { account_id, to_date } = request.query;
 
     pool.query(expenseQueries.getExpensesByAccount, [account_id, to_date], (error, results) => {
@@ -193,10 +193,10 @@ const getExpensesByAccount = (request, response, next) => {
 
         next();
     });
-}
+};
 
 // Get all expenses
-const getExpenses = (request, response) => {
+export const getExpenses = (request, response) => {
     const { id } = request.query;
 
     const query = id ? expenseQueries.getExpense : expenseQueries.getExpenses;
@@ -213,7 +213,7 @@ const getExpenses = (request, response) => {
 };
 
 // Create expense
-const createExpense = async (request, response) => {
+export const createExpense = async (request, response) => {
     try {
         const {
             account_id,
@@ -277,7 +277,7 @@ const createExpense = async (request, response) => {
 };
 
 // Update expense
-const updateExpense = async (request, response) => {
+export const updateExpense = async (request, response) => {
     try {
         const id = parseInt(request.params.id);
         const {
@@ -347,7 +347,7 @@ const updateExpense = async (request, response) => {
 };
 
 // Delete expense
-const deleteExpense = async (request, response) => {
+export const deleteExpense = async (request, response) => {
     try {
         const { id } = request.params;
 
@@ -391,7 +391,7 @@ const parseLoan = loan => ({
 });
 
 // Get loans by account
-const getLoansByAccount = (request, response, next) => {
+export const getLoansByAccount = (request, response, next) => {
     const { account_id, to_date } = request.query;
 
     pool.query(loanQueries.getLoansByAccount, [parseInt(account_id), to_date], (error, results) => {
@@ -403,10 +403,10 @@ const getLoansByAccount = (request, response, next) => {
 
         next();
     });
-}
+};
 
 // Get all loans
-const getLoans = (request, response) => {
+export const getLoans = (request, response) => {
     const { id } = request.query;
 
     const query = id ? loanQueries.getLoan : loanQueries.getLoans;
@@ -427,7 +427,7 @@ const getLoans = (request, response) => {
 };
 
 // Create loan
-const createLoan = (request, response) => {
+export const createLoan = (request, response) => {
     const {
         account_id,
         amount,
@@ -501,7 +501,7 @@ const createLoan = (request, response) => {
 };
 
 // Update loan
-const updateLoan = async (request, response) => {
+export const updateLoan = async (request, response) => {
     try {
         const { id } = request.params;
         const {
@@ -572,7 +572,7 @@ const updateLoan = async (request, response) => {
 };
 
 // Delete loan
-const deleteLoan = async (request, response) => {
+export const deleteLoan = async (request, response) => {
     try {
         const { id } = request.params;
 
@@ -607,7 +607,7 @@ const payrollsParse = payroll => ({
 });
 
 // Get payrolls by account
-const getPayrollsMiddleware = (request, response, next) => {
+export const getPayrollsMiddleware = (request, response, next) => {
     const { account_id, to_date } = request.query;
 
     pool.query(payrollQueries.getPayrollsMiddleware, [account_id, to_date], (error, results) => {
@@ -621,7 +621,7 @@ const getPayrollsMiddleware = (request, response, next) => {
     });
 }
 // Get all payrolls
-const getPayrolls = (request, response) => {
+export const getPayrolls = (request, response) => {
     const employee_id = parseInt(request.query.employee_id);
 
     pool.query(payrollQueries.getPayrolls, [employee_id], (error, results) => {
@@ -638,7 +638,7 @@ const getPayrolls = (request, response) => {
         }
         response.status(200).send(returnObj);
     });
-}
+};
 
 const payrollTaxesParse = payrollTax => ({
     payroll_taxes_id: parseInt(payrollTax.payroll_taxes_id),
@@ -647,7 +647,7 @@ const payrollTaxesParse = payrollTax => ({
 });
 
 // Get payroll taxes
-const getPayrollTaxes = (request, response) => {
+export const getPayrollTaxes = (request, response) => {
     const { employee_id, id } = request.query;
 
     const query = id ? payrollQueries.getPayrollTax : payrollQueries.getPayrollTaxes;
@@ -670,7 +670,7 @@ const getPayrollTaxes = (request, response) => {
 };
 
 // Create payroll tax
-const createPayrollTax = (request, response) => {
+export const createPayrollTax = (request, response) => {
     const { employee_id, name, rate } = request.body;
 
     pool.query(payrollQueries.createPayrollTax, [employee_id, name, rate], (error, results) => {
@@ -688,7 +688,7 @@ const createPayrollTax = (request, response) => {
 };
 
 // Update payroll tax
-const updatePayrollTax = (request, response) => {
+export const updatePayrollTax = (request, response) => {
     const { id } = request.params;
     const { employee_id, name, rate } = request.body;
 
@@ -707,7 +707,7 @@ const updatePayrollTax = (request, response) => {
 };
 
 // Delete payroll tax
-const deletePayrollTax = (request, response) => {
+export const deletePayrollTax = (request, response) => {
     const { id } = request.params;
     const { employee_id } = request.query;
 
@@ -720,7 +720,7 @@ const deletePayrollTax = (request, response) => {
 
         response.status(200).send("Successfully deleted payroll tax");
     });
-}
+};
 
 const payrollDatesParse = payrollDate => ({
     payroll_date_id: parseInt(payrollDate.payroll_date_id),
@@ -729,7 +729,7 @@ const payrollDatesParse = payrollDate => ({
 });
 
 // Get payroll dates
-const getPayrollDates = (request, response) => {
+export const getPayrollDates = (request, response) => {
     const { employee_id, id } = request.query;
     const query = id ? payrollQueries.getPayrollDate : payrollQueries.getPayrollDates;
     const params = id ? [employee_id, id] : [employee_id];
@@ -751,7 +751,7 @@ const getPayrollDates = (request, response) => {
 };
 
 // Create payroll date
-const createPayrollDate = (request, response) => {
+export const createPayrollDate = (request, response) => {
     const { employee_id, start_day, end_day } = request.body;
 
     pool.query(payrollQueries.createPayrollDate, [employee_id, start_day, end_day], (error, results) => {
@@ -773,7 +773,7 @@ const createPayrollDate = (request, response) => {
 };
 
 // Update payroll date
-const updatePayrollDate = (request, response) => {
+export const updatePayrollDate = (request, response) => {
     const { id } = request.params;
     const { employee_id, start_day, end_day } = request.body;
 
@@ -797,7 +797,7 @@ const updatePayrollDate = (request, response) => {
 };
 
 // Delete payroll date
-const deletePayrollDate = (request, response) => {
+export const deletePayrollDate = (request, response) => {
     const { employee_id } = request.query;
     const { id } = request.params;
 
@@ -823,7 +823,7 @@ const employeeParse = employee => ({
 });
 
 // Get employee
-const getEmployee = (request, response) => {
+export const getEmployee = (request, response) => {
     const { id } = request.query;
     const query = id ? payrollQueries.getEmployee : payrollQueries.getEmployees;
     const params = id ? [id] : [];
@@ -841,7 +841,7 @@ const getEmployee = (request, response) => {
 };
 
 // Create employee
-const createEmployee = (request, response) => {
+export const createEmployee = (request, response) => {
     const { name, hourly_rate, regular_hours, vacation_days, sick_days, work_schedule } = request.body;
 
     pool.query(payrollQueries.createEmployee, [name, hourly_rate, regular_hours, vacation_days, sick_days, work_schedule], (error, results) => {
@@ -857,7 +857,7 @@ const createEmployee = (request, response) => {
 };
 
 // Update employee
-const updateEmployee = (request, response) => {
+export const updateEmployee = (request, response) => {
     const employee_id = parseInt(request.params.employee_id);
     const { name, hourly_rate, regular_hours, vacation_days, sick_days, work_schedule } = request.body;
 
@@ -876,7 +876,7 @@ const updateEmployee = (request, response) => {
 };
 
 // Delete employee
-const deleteEmployee = (request, response) => {
+export const deleteEmployee = (request, response) => {
     const employee_id = parseInt(request.params.employee_id);
 
     // Check if there are any associated payroll dates or payroll taxes
@@ -924,7 +924,7 @@ const wishlistsParse = wishlist => ({
 });
 
 // Get wishlists by account
-const getWishlistsByAccount = (request, response, next) => {
+export const getWishlistsByAccount = (request, response, next) => {
     const { account_id, to_date } = request.query;
 
     pool.query(wishlistQueries.getWishlistsByAccount, [parseInt(account_id), to_date], (error, results) => {
@@ -939,7 +939,7 @@ const getWishlistsByAccount = (request, response, next) => {
 };
 
 // Get all wishlists
-const getWishlists = (request, response) => {
+export const getWishlists = (request, response) => {
     const { id } = request.query;
     const query = id ? wishlistQueries.getWishlist : wishlistQueries.getWishlists;
     const queryArgs = id ? [id] : [];
@@ -957,7 +957,7 @@ const getWishlists = (request, response) => {
 };
 
 // Create wishlist
-const createWishlist = (request, response) => {
+export const createWishlist = (request, response) => {
     const { account_id, amount, title, description, priority, url_link } = request.body;
 
     pool.query(wishlistQueries.createWishlist, [account_id, amount, title, description, priority, url_link], (error, results) => {
@@ -973,7 +973,7 @@ const createWishlist = (request, response) => {
 };
 
 // Update wishlist
-const updateWishlist = (request, response) => {
+export const updateWishlist = (request, response) => {
     const id = parseInt(request.params.id);
     const { account_id, amount, title, description, priority, url_link } = request.body;
 
@@ -990,7 +990,7 @@ const updateWishlist = (request, response) => {
 };
 
 // Delete wishlist
-const deleteWishlist = (request, response) => {
+export const deleteWishlist = (request, response) => {
     const id = parseInt(request.params.id);
 
     pool.query(wishlistQueries.deleteWishlist, [id], (error, results) => {
@@ -1022,7 +1022,7 @@ const transfersParse = transfer => ({
 });
 
 // Get transfers by account
-const getTransfersByAccount = (request, response, next) => {
+export const getTransfersByAccount = (request, response, next) => {
     const { account_id, to_date } = request.query;
 
     pool.query(transferQueries.getTransfersByAccount, [parseInt(account_id), to_date], (error, results) => {
@@ -1037,7 +1037,7 @@ const getTransfersByAccount = (request, response, next) => {
 };
 
 // Get transfers
-const getTransfers = (request, response) => {
+export const getTransfers = (request, response) => {
     const { account_id, id } = request.query;
     const query = id ? transferQueries.getTransfer : transferQueries.getTransfers;
     const queryArgs = id ? [account_id, id] : [account_id];
@@ -1055,7 +1055,7 @@ const getTransfers = (request, response) => {
 };
 
 // Create transfer
-const createTransfer = (request, response) => {
+export const createTransfer = (request, response) => {
     const { source_account_id, destination_account_id, amount, title, description, frequency_type, frequency_type_variable, frequency_day_of_month, frequency_day_of_week, frequency_week_of_month, frequency_month_of_year, begin_date, end_date } = request.body;
 
     const negativeAmount = -amount;
@@ -1084,7 +1084,7 @@ const createTransfer = (request, response) => {
 };
 
 // Update transfer
-const updateTransfer = async (request, response) => {
+export const updateTransfer = async (request, response) => {
     const { id } = request.params;
     const {
         source_account_id,
@@ -1159,7 +1159,7 @@ const updateTransfer = async (request, response) => {
 };
 
 // Delete transfer
-const deleteTransfer = async (request, response) => {
+export const deleteTransfer = async (request, response) => {
     const { account_id } = request.query;
     const { id } = request.params;
 
@@ -1186,7 +1186,7 @@ const deleteTransfer = async (request, response) => {
 };
 
 // Get current balance of account based on deposits and withdrawals
-const getCurrentBalance = (request, response, next) => {
+export const getCurrentBalance = (request, response, next) => {
     const account_id = parseInt(request.query.account_id);
 
     pool.query(currentBalanceQueries.getCurrentBalance, [account_id], (error, results) => {
@@ -1200,52 +1200,4 @@ const getCurrentBalance = (request, response, next) => {
 
         next();
     });
-}
-
-// Export all functions
-export {
-    getAccounts,
-    createAccount,
-    updateAccount,
-    deleteAccount,
-    getTransactionsByAccount,
-    getTransactions,
-    createTransaction,
-    updateTransaction,
-    deleteTransaction,
-    getExpensesByAccount,
-    getExpenses,
-    createExpense,
-    updateExpense,
-    deleteExpense,
-    getLoansByAccount,
-    getLoans,
-    createLoan,
-    updateLoan,
-    deleteLoan,
-    getPayrollsMiddleware,
-    getPayrolls,
-    getPayrollTaxes,
-    createPayrollTax,
-    updatePayrollTax,
-    deletePayrollTax,
-    getPayrollDates,
-    createPayrollDate,
-    updatePayrollDate,
-    deletePayrollDate,
-    getEmployee,
-    createEmployee,
-    updateEmployee,
-    deleteEmployee,
-    getWishlistsByAccount,
-    getWishlists,
-    createWishlist,
-    updateWishlist,
-    deleteWishlist,
-    getTransfersByAccount,
-    getTransfers,
-    createTransfer,
-    updateTransfer,
-    deleteTransfer,
-    getCurrentBalance
 };
