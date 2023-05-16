@@ -970,7 +970,7 @@ const createWishlist = (request, response) => {
 
         response.status(201).send(wishlists);
     });
-}
+};
 
 // Update wishlist
 const updateWishlist = (request, response) => {
@@ -987,7 +987,7 @@ const updateWishlist = (request, response) => {
 
         response.status(200).send(wishlists);
     });
-}
+};
 
 // Delete wishlist
 const deleteWishlist = (request, response) => {
@@ -1000,9 +1000,9 @@ const deleteWishlist = (request, response) => {
 
         response.status(200).send("Successfully deleted wishlist item");
     });
-}
+};
 
-const transfersParse = (transfer) => ({
+const transfersParse = transfer => ({
     transfer_id: parseInt(transfer.transfer_id),
     source_account_id: parseInt(transfer.source_account_id),
     destination_account_id: parseInt(transfer.destination_account_id),
@@ -1034,36 +1034,25 @@ const getTransfersByAccount = (request, response, next) => {
 
         next();
     });
-}
+};
 
 // Get transfers
 const getTransfers = (request, response) => {
     const { account_id, id } = request.query;
+    const query = id ? transferQueries.getTransfer : transferQueries.getTransfers;
+    const queryArgs = id ? [account_id, id] : [account_id];
 
-    if (!id) {
-        pool.query(transferQueries.getTransfers, [account_id], (error, results) => {
-            if (error) {
-                return response.status(400).send({ errors: { "msg": "Error getting transfers", "param": null, "location": "query" } });
-            }
+    pool.query(query, queryArgs, (error, results) => {
+        if (error) {
+            return response.status(400).send({ errors: { msg: 'Error getting transfers', param: null, location: 'query' } });
+        }
 
-            // Parse the data to correct format and return an object
-            const transfers = results.rows.map(transfer => transfersParse(transfer));
+        // Parse the data to the correct format
+        const transfers = results.rows.map(transfer => transfersParse(transfer));
 
-            response.status(200).json(transfers);
-        });
-    } else {
-        pool.query(transferQueries.getTransfer, [account_id, id], (error, results) => {
-            if (error) {
-                return response.status(400).send({ errors: { "msg": "Error getting transfer", "param": null, "location": "query" } });
-            }
-
-            // Parse the data to correct format and return an object
-            const transfers = results.rows.map(transfer => transfersParse(transfer));
-
-            response.status(200).json(transfers);
-        });
-    }
-}
+        response.status(200).json(transfers);
+    });
+};
 
 // Create transfer
 const createTransfer = (request, response) => {
