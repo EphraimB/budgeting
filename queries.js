@@ -74,7 +74,7 @@ const deleteAccount = (request, response) => {
     });
 };
 
-const parseTransactions = (transactionHistory) => ({
+const parseTransactions = transactionHistory => ({
     transaction_id: parseInt(transactionHistory.transaction_id),
     account_id: parseInt(transactionHistory.account_id),
     transaction_amount: parseFloat(transactionHistory.transaction_amount),
@@ -103,30 +103,18 @@ const getTransactionsByAccount = (request, response, next) => {
 const getTransactions = (request, response) => {
     const { id } = request.query;
 
-    if (!id) {
-        pool.query(transactionHistoryQueries.getTransactions, (error, results) => {
-            if (error) {
-                return response.status(400).send({ errors: { "msg": "Error getting transactions", "param": null, "location": "query" } });
-            }
+    const query = id ? transactionHistoryQueries.getTransaction : transactionHistoryQueries.getTransactions;
+    const params = id ? [id] : [];
 
-            // Parse the data to correct format and return an object
-            const transactionHistory = results.rows.map(transactionHistory => (parseTransactions(transactionHistory)));
+    pool.query(query, params, (error, results) => {
+        if (error) {
+            return response.status(400).send({ errors: { "msg": "Error getting transactions", "param": null, "location": "query" } });
+        }
 
-            return response.status(200).json(transactionHistory);
-        });
-    } else {
-        pool.query(transactionHistoryQueries.getTransaction, [id], (error, results) => {
-            if (error) {
-                return response.status(400).send({ errors: { "msg": "Error getting transaction", "param": null, "location": "query" } });
-            }
-
-            // Parse the data to correct format and return an object
-            const transactionHistory = results.rows.map(transactionHistory => (parseTransactions(transactionHistory)));
-
-            return response.status(200).json(transactionHistory);
-        });
-    }
-}
+        const transactionHistory = results.rows.map(transactionHistory => parseTransactions(transactionHistory));
+        response.status(200).json(transactionHistory);
+    });
+};
 
 // Create transaction
 const createTransaction = (request, response) => {
