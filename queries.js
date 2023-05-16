@@ -776,6 +776,16 @@ const deletePayrollDate = (request, response) => {
     });
 }
 
+const employeeParse = (employee) => ({
+    employee_id: parseInt(employee.employee_id),
+    name: employee.name,
+    hourly_rate: parseFloat(employee.hourly_rate),
+    regular_hours: parseInt(employee.regular_hours),
+    vacation_days: parseInt(employee.vacation_days),
+    sick_days: parseInt(employee.sick_days),
+    work_schedule: employee.work_schedule,
+});
+
 // Get employee
 const getEmployee = (request, response) => {
     const { id } = request.query;
@@ -787,15 +797,7 @@ const getEmployee = (request, response) => {
             }
 
             // Parse the data to correct format and return an object
-            const employees = results.rows.map((employee) => ({
-                employee_id: parseInt(employee.employee_id),
-                name: employee.name,
-                hourly_rate: parseFloat(employee.hourly_rate),
-                regular_hours: parseInt(employee.regular_hours),
-                vacation_days: parseInt(employee.vacation_days),
-                sick_days: parseInt(employee.sick_days),
-                work_schedule: employee.work_schedule,
-            }));
+            const employees = results.rows.map(employee => employeeParse(employee));
 
             response.status(200).send(employees);
         });
@@ -806,15 +808,7 @@ const getEmployee = (request, response) => {
             }
 
             // Parse the data to correct format and return an object
-            const employees = results.rows.map((employee) => ({
-                employee_id: parseInt(employee.employee_id),
-                name: employee.name,
-                hourly_rate: parseFloat(employee.hourly_rate),
-                regular_hours: parseInt(employee.regular_hours),
-                vacation_days: parseInt(employee.vacation_days),
-                sick_days: parseInt(employee.sick_days),
-                work_schedule: employee.work_schedule,
-            }));
+            const employees = results.rows.map(employee => employeeParse(employee));
 
             response.status(200).send(employees);
         });
@@ -831,15 +825,7 @@ const createEmployee = (request, response) => {
         }
 
         // Parse the data to correct format and return an object
-        const employees = results.rows.map((employee) => ({
-            employee_id: parseInt(employee.employee_id),
-            name: employee.name,
-            hourly_rate: parseFloat(employee.hourly_rate),
-            regular_hours: parseInt(employee.regular_hours),
-            vacation_days: parseInt(employee.vacation_days),
-            sick_days: parseInt(employee.sick_days),
-            work_schedule: employee.work_schedule,
-        }));
+        const employees = results.rows.map(employee => employeeParse(employee));
 
         response.status(201).send(employees);
     });
@@ -858,15 +844,7 @@ const updateEmployee = (request, response) => {
         getPayrollsForMonth(employee_id);
 
         // Parse the data to correct format and return an object
-        const employees = results.rows.map((employee) => ({
-            employee_id: parseInt(employee.employee_id),
-            name: employee.name,
-            hourly_rate: parseFloat(employee.hourly_rate),
-            regular_hours: parseInt(employee.regular_hours),
-            vacation_days: parseInt(employee.vacation_days),
-            sick_days: parseInt(employee.sick_days),
-            work_schedule: employee.work_schedule,
-        }));
+        const employees = results.rows.map(employee => employeeParse(employee));
 
         response.status(200).send(employees);
     });
