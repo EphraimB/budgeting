@@ -722,7 +722,7 @@ const deletePayrollTax = (request, response) => {
     });
 }
 
-const payrollDatesParse = (payrollDate) => ({
+const payrollDatesParse = payrollDate => ({
     payroll_date_id: parseInt(payrollDate.payroll_date_id),
     payroll_start_day: parseInt(payrollDate.payroll_start_day),
     payroll_end_day: parseInt(payrollDate.payroll_end_day),
@@ -731,39 +731,24 @@ const payrollDatesParse = (payrollDate) => ({
 // Get payroll dates
 const getPayrollDates = (request, response) => {
     const { employee_id, id } = request.query;
+    const query = id ? payrollQueries.getPayrollDate : payrollQueries.getPayrollDates;
+    const params = id ? [employee_id, id] : [employee_id];
 
-    if (!id) {
-        pool.query(payrollQueries.getPayrollDates, [employee_id], (error, results) => {
-            if (error) {
-                return response.status(400).send({ errors: { "msg": "Error getting payroll dates", "param": null, "location": "query" } });
-            }
+    pool.query(query, params, (error, results) => {
+        if (error) {
+            return response.status(400).send({ errors: { msg: 'Error getting payroll dates', param: null, location: 'query' } });
+        }
 
-            // Parse the data to correct format and return an object
-            const payrollDates = results.rows.map(payrollDate => payrollDatesParse(payrollDate));
+        // Parse the data to the correct format and return an object
+        const payrollDates = results.rows.map(payrollDate => payrollDatesParse(payrollDate));
 
-            const returnObj = {
-                employee_id: parseInt(employee_id),
-                payroll_dates: payrollDates,
-            }
-            response.status(200).send(returnObj);
-        });
-    } else {
-        pool.query(payrollQueries.getPayrollDate, [employee_id, id], (error, results) => {
-            if (error) {
-                return response.status(400).send({ errors: { "msg": "Error getting payroll date", "param": null, "location": "query" } });
-            }
-
-            // Parse the data to correct format and return an object
-            const payrollDates = results.rows.map(payrollDate => payrollDatesParse(payrollDate));
-
-            const returnObj = {
-                employee_id: parseInt(employee_id),
-                payroll_date: payrollDates,
-            }
-            response.status(200).send(returnObj);
-        });
-    }
-}
+        const returnObj = {
+            employee_id: parseInt(employee_id),
+            payroll_dates: payrollDates,
+        };
+        response.status(200).send(returnObj);
+    });
+};
 
 // Create payroll date
 const createPayrollDate = (request, response) => {
