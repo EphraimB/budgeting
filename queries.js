@@ -213,32 +213,68 @@ const getExpenses = (request, response) => {
 };
 
 // Create expense
-const createExpense = (request, response) => {
-    const { account_id, amount, title, description, frequency_type, frequency_type_variable, frequency_day_of_month, frequency_day_of_week, frequency_week_of_month, frequency_month_of_year, begin_date } = request.body;
-    const negativeAmount = -amount;
+const createExpense = async (request, response) => {
+    try {
+        const {
+            account_id,
+            amount,
+            title,
+            description,
+            frequency_type,
+            frequency_type_variable,
+            frequency_day_of_month,
+            frequency_day_of_week,
+            frequency_week_of_month,
+            frequency_month_of_year,
+            begin_date
+        } = request.body;
 
-    const { cronDate, uniqueId } = scheduleCronJob(begin_date, account_id, negativeAmount, description, frequency_type, frequency_type_variable, frequency_day_of_month, frequency_day_of_week, frequency_week_of_month, frequency_month_of_year);
+        const negativeAmount = -amount;
+        const { cronDate, uniqueId } = scheduleCronJob(
+            begin_date,
+            account_id,
+            negativeAmount,
+            description,
+            frequency_type,
+            frequency_type_variable,
+            frequency_day_of_month,
+            frequency_day_of_week,
+            frequency_week_of_month,
+            frequency_month_of_year
+        );
 
-    pool.query(cronJobQueries.createCronJob, [uniqueId, cronDate], (error, results) => {
-        if (error) {
-            return response.status(400).send({ errors: { "msg": "Error creating cron job", "param": null, "location": "query" } });
-        }
-        const cronId = results.rows[0].cron_job_id;
+        const cronJobResult = await pool.query(cronJobQueries.createCronJob, [
+            uniqueId,
+            cronDate
+        ]);
+        const cronId = cronJobResult.rows[0].cron_job_id;
 
-        console.log('Cron job created ' + cronId)
+        console.log('Cron job created ' + cronId);
 
-        pool.query(expenseQueries.createExpense, [account_id, cronId, amount, title, description, frequency_type, frequency_type_variable, frequency_day_of_month, frequency_day_of_week, frequency_week_of_month, frequency_month_of_year, begin_date], (error, results) => {
-            if (error) {
-                return response.status(400).send({ errors: { "msg": "Error creating expense", "param": null, "location": "query" } });
-            }
+        const expenseResult = await pool.query(expenseQueries.createExpense, [
+            account_id,
+            cronId,
+            amount,
+            title,
+            description,
+            frequency_type,
+            frequency_type_variable,
+            frequency_day_of_month,
+            frequency_day_of_week,
+            frequency_week_of_month,
+            frequency_month_of_year,
+            begin_date
+        ]);
 
-            // Parse the data to correct format and return an object
-            const expenses = results.rows.map(expense => parseExpenses(expense));
+        const expenses = expenseResult.rows.map(expense => parseExpenses(expense));
 
-            response.status(201).send(expenses);
+        response.status(201).send(expenses);
+    } catch (error) {
+        response.status(400).send({
+            errors: { msg: 'Error creating expense', param: null, location: 'query' }
         });
-    });
-}
+    }
+};
 
 // Update expense
 const updateExpense = (request, response) => {
