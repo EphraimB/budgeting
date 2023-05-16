@@ -501,47 +501,75 @@ const createLoan = (request, response) => {
 };
 
 // Update loan
-const updateLoan = (request, response) => {
-    const { id } = request.params;
-    const { account_id, amount, plan_amount, recipient, title, description, frequency_type, frequency_type_variable, frequency_day_of_month, frequency_day_of_week, frequency_week_of_month, frequency_month_of_year, begin_date } = request.body;
-    const negativeAmount = -plan_amount;
+const updateLoan = async (request, response) => {
+    try {
+        const { id } = request.params;
+        const {
+            account_id,
+            amount,
+            plan_amount,
+            recipient,
+            title,
+            description,
+            frequency_type,
+            frequency_type_variable,
+            frequency_day_of_month,
+            frequency_day_of_week,
+            frequency_week_of_month,
+            frequency_month_of_year,
+            begin_date,
+        } = request.body;
 
-    // Get expense id to see if it exists
-    pool.query(loanQueries.getLoan, [id], (error, results) => {
-        if (error) {
-            return response.status(400).send({ errors: { "msg": "Error getting loan", "param": null, "location": "query" } });
+        const negativePlanAmount = -plan_amount;
+
+        const getLoanResults = await pool.query(loanQueries.getLoan, [id]);
+
+        if (getLoanResults.rows.length === 0) {
+            return response.status(200).send([]);
         }
 
-        if (results.rows.length === 0) {
-            return response.status(200).send([]);
-        } else {
-            const cronId = results.rows[0].cron_job_id;
+        const cronId = getLoanResults.rows[0].cron_job_id;
+        await deleteCronJob(cronId);
 
-            deleteCronJob(cronId).then(() => {
-                const { uniqueId, cronDate } = scheduleCronJob(begin_date, account_id, negativeAmount, description, frequency_type, frequency_type_variable, frequency_day_of_month, frequency_day_of_week, frequency_week_of_month, frequency_month_of_year);
+        const { uniqueId, cronDate } = scheduleCronJob(
+            begin_date,
+            account_id,
+            negativePlanAmount,
+            description,
+            frequency_type,
+            frequency_type_variable,
+            frequency_day_of_month,
+            frequency_day_of_week,
+            frequency_week_of_month,
+            frequency_month_of_year
+        );
 
-                pool.query(cronJobQueries.updateCronJob, [uniqueId, cronDate, cronId], (error, results) => {
-                    if (error) {
-                        return response.status(400).send({ errors: { "msg": "Error updating cron job", "param": null, "location": "query" } });
-                    }
+        await pool.query(cronJobQueries.updateCronJob, [uniqueId, cronDate, cronId]);
+        const updateLoanResults = await pool.query(loanQueries.updateLoan, [
+            account_id,
+            amount,
+            plan_amount,
+            recipient,
+            title,
+            description,
+            frequency_type,
+            frequency_type_variable,
+            frequency_day_of_month,
+            frequency_day_of_week,
+            frequency_week_of_month,
+            frequency_month_of_year,
+            begin_date,
+            id,
+        ]);
 
-                    pool.query(loanQueries.updateLoan, [account_id, amount, plan_amount, recipient, title, description, frequency_type, frequency_type_variable, frequency_day_of_month, frequency_day_of_week, frequency_week_of_month, frequency_month_of_year, begin_date, id], (error, results) => {
-                        if (error) {
-                            return response.status(400).send({ errors: { "msg": "Error updating loan", "param": null, "location": "query" } });
-                        }
-
-                        // Parse the data to correct format and return an object
-                        const loans = results.rows.map(loan => parseLoan(loan));
-
-                        response.status(200).send(loans);
-                    });
-                });
-            }).catch((error) => {
-                console.log(error);
-            });
-        };
-    });
-}
+        // Parse the data to the correct format and return an object
+        const loans = updateLoanResults.rows.map(loan => parseLoan(loan));
+        response.status(200).send(loans);
+    } catch (error) {
+        console.error(error);
+        response.status(400).send({ errors: { msg: 'Error updating loan', param: null, location: 'query' } });
+    }
+};
 
 // Delete loan
 const deleteLoan = (request, response) => {
