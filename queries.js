@@ -1159,40 +1159,31 @@ const updateTransfer = async (request, response) => {
 };
 
 // Delete transfer
-const deleteTransfer = (request, response) => {
+const deleteTransfer = async (request, response) => {
     const { account_id } = request.query;
     const { id } = request.params;
 
-    pool.query(transferQueries.getTransfer, [account_id, id], (error, results) => {
-        if (error) {
-            return response.status(400).send({ errors: { "msg": "Error selecting transfer", "param": null, "location": "query" } });
-        }
+    try {
+        const transferResults = await pool.query(transferQueries.getTransfer, [account_id, id]);
 
-        if (results.rows.length > 0) {
-            const cronId = results.rows[0].cron_job_id;
+        if (transferResults.rows.length > 0) {
+            const cronId = transferResults.rows[0].cron_job_id;
 
-            pool.query(transferQueries.deleteTransfer, [id], (error, results) => {
-                if (error) {
-                    return response.status(400).send({ errors: { "msg": "Error deleting transfer", "param": null, "location": "query" } });
-                }
+            await pool.query(transferQueries.deleteTransfer, [id]);
 
-                if (cronId) {
-                    deleteCronJob(cronId);
+            if (cronId) {
+                await deleteCronJob(cronId);
+                await pool.query(cronJobQueries.deleteCronJob, [cronId]);
+            }
 
-                    pool.query(cronJobQueries.deleteCronJob, [cronId], (error, results) => {
-                        if (error) {
-                            return response.status(400).send({ errors: { "msg": "Error deleting cron job", "param": null, "location": "query" } });
-                        }
-                    });
-                }
-
-                response.status(200).send("Transfer deleted successfully");
-            });
+            response.status(200).send("Transfer deleted successfully");
         } else {
             response.status(200).send("Transfer doesn't exist");
         }
-    });
-}
+    } catch (error) {
+        response.status(400).send({ errors: { msg: "Error deleting transfer", param: null, location: "query" } });
+    }
+};
 
 // Get current balance of account based on deposits and withdrawals
 const getCurrentBalance = (request, response, next) => {
