@@ -279,107 +279,96 @@ const createExpense = async (request, response) => {
 // Update expense
 const updateExpense = async (request, response) => {
     try {
-      const id = parseInt(request.params.id);
-      const {
-        account_id,
-        amount,
-        title,
-        description,
-        frequency_type,
-        frequency_type_variable,
-        frequency_day_of_month,
-        frequency_day_of_week,
-        frequency_week_of_month,
-        frequency_month_of_year,
-        begin_date
-      } = request.body;
-  
-      const expenseResult = await pool.query(expenseQueries.getExpense, [id]);
-      if (expenseResult.rows.length === 0) {
-        return response.status(200).send([]);
-      }
-  
-      const cronId = expenseResult.rows[0].cron_job_id;
-      await deleteCronJob(cronId);
-  
-      const { uniqueId, cronDate } = scheduleCronJob(
-        begin_date,
-        account_id,
-        amount,
-        description,
-        frequency_type,
-        frequency_type_variable,
-        frequency_day_of_month,
-        frequency_day_of_week,
-        frequency_week_of_month,
-        frequency_month_of_year
-      );
-  
-      await pool.query(cronJobQueries.updateCronJob, [
-        uniqueId,
-        cronDate,
-        cronId
-      ]);
-  
-      const updateResult = await pool.query(expenseQueries.updateExpense, [
-        account_id,
-        amount,
-        title,
-        description,
-        frequency_type,
-        frequency_type_variable,
-        frequency_day_of_month,
-        frequency_day_of_week,
-        frequency_week_of_month,
-        frequency_month_of_year,
-        begin_date,
-        id
-      ]);
-  
-      const expenses = updateResult.rows.map(expense => parseExpenses(expense));
-  
-      response.status(200).send(expenses);
+        const id = parseInt(request.params.id);
+        const {
+            account_id,
+            amount,
+            title,
+            description,
+            frequency_type,
+            frequency_type_variable,
+            frequency_day_of_month,
+            frequency_day_of_week,
+            frequency_week_of_month,
+            frequency_month_of_year,
+            begin_date
+        } = request.body;
+
+        const expenseResult = await pool.query(expenseQueries.getExpense, [id]);
+        if (expenseResult.rows.length === 0) {
+            return response.status(200).send([]);
+        }
+
+        const cronId = expenseResult.rows[0].cron_job_id;
+        await deleteCronJob(cronId);
+
+        const { uniqueId, cronDate } = scheduleCronJob(
+            begin_date,
+            account_id,
+            amount,
+            description,
+            frequency_type,
+            frequency_type_variable,
+            frequency_day_of_month,
+            frequency_day_of_week,
+            frequency_week_of_month,
+            frequency_month_of_year
+        );
+
+        await pool.query(cronJobQueries.updateCronJob, [
+            uniqueId,
+            cronDate,
+            cronId
+        ]);
+
+        const updateResult = await pool.query(expenseQueries.updateExpense, [
+            account_id,
+            amount,
+            title,
+            description,
+            frequency_type,
+            frequency_type_variable,
+            frequency_day_of_month,
+            frequency_day_of_week,
+            frequency_week_of_month,
+            frequency_month_of_year,
+            begin_date,
+            id
+        ]);
+
+        const expenses = updateResult.rows.map(expense => parseExpenses(expense));
+
+        response.status(200).send(expenses);
     } catch (error) {
-      response.status(400).send({
-        errors: { msg: 'Error updating expense', param: null, location: 'query' }
-      });
+        response.status(400).send({
+            errors: { msg: 'Error updating expense', param: null, location: 'query' }
+        });
     }
-  };  
+};
 
 // Delete expense
-const deleteExpense = (request, response) => {
-    const { id } = request.params;
+const deleteExpense = async (request, response) => {
+    try {
+        const { id } = request.params;
 
-    pool.query(expenseQueries.getExpense, [id], (error, results) => {
-        if (error) {
-            return response.status(400).send({ errors: { "msg": "Error selecting expense", "param": null, "location": "query" } });
+        const expenseResult = await pool.query(expenseQueries.getExpense, [id]);
+        if (expenseResult.rows.length === 0) {
+            return response.status(200).send("Expense doesn't exist");
         }
 
-        if (results.rows.length > 0) {
-            const cronId = results.rows[0].cron_job_id;
+        const cronId = expenseResult.rows[0].cron_job_id;
+        const deleteExpenseResult = await pool.query(expenseQueries.deleteExpense, [id]);
 
-            pool.query(expenseQueries.deleteExpense, [id], (error, results) => {
-                if (error) {
-                    return response.status(400).send({ errors: { "msg": "Error deleting expense", "param": null, "location": "query" } });
-                }
-
-                if (cronId) {
-                    deleteCronJob(cronId);
-
-                    pool.query(cronJobQueries.deleteCronJob, [cronId], (error, results) => {
-                        if (error) {
-                            return response.status(400).send({ errors: { "msg": "Error deleting cron job", "param": null, "location": "query" } });
-                        }
-                    });
-                }
-
-                response.status(200).send("Expense deleted successfully");
-            });
-        } else {
-            response.status(200).send("expense doesn't exist");
+        if (cronId) {
+            await deleteCronJob(cronId);
+            await pool.query(cronJobQueries.deleteCronJob, [cronId]);
         }
-    });
-}
+
+        response.status(200).send("Expense deleted successfully");
+    } catch (error) {
+        response.status(400).send({ errors: { msg: 'Error deleting expense', param: null, location: 'query' } });
+    }
+};
 
 const parseLoan = (loan) => ({
     loan_id: parseInt(loan.loan_id),
