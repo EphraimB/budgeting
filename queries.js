@@ -370,7 +370,7 @@ const deleteExpense = async (request, response) => {
     }
 };
 
-const parseLoan = (loan) => ({
+const parseLoan = loan => ({
     loan_id: parseInt(loan.loan_id),
     account_id: parseInt(loan.account_id),
     loan_amount: parseFloat(loan.loan_amount),
@@ -409,30 +409,22 @@ const getLoansByAccount = (request, response, next) => {
 const getLoans = (request, response) => {
     const { id } = request.query;
 
-    if (!id) {
-        pool.query(loanQueries.getLoans, (error, results) => {
-            if (error) {
-                return response.status(400).send({ errors: { "msg": "Error getting loans", "param": null, "location": "query" } });
-            }
+    const query = id ? loanQueries.getLoan : loanQueries.getLoans;
+    const queryParams = id ? [id] : [];
 
-            // Parse the data to correct format and return an object
-            const loans = results.rows.map(loan => parseLoan(loan));
+    pool.query(query, queryParams, (error, results) => {
+        if (error) {
+            return response
+                .status(400)
+                .send({ errors: { msg: `Error getting ${id ? 'loan' : 'loans'}`, param: null, location: 'query' } });
+        }
 
-            response.status(200).json(loans);
-        });
-    } else {
-        pool.query(loanQueries.getLoan, [id], (error, results) => {
-            if (error) {
-                return response.status(400).send({ errors: { "msg": "Error getting loan", "param": null, "location": "query" } });
-            }
+        // Parse the data to correct format and return an object
+        const loans = results.rows.map(loan => parseLoan(loan));
 
-            // Parse the data to correct format and return an object
-            const loans = results.rows.map(loan => parseLoan(loan));
-
-            response.status(200).send(loans);
-        });
-    }
-}
+        response.status(200).json(loans);
+    });
+};
 
 // Create loan
 const createLoan = (request, response) => {
