@@ -4,7 +4,7 @@ import scheduleCronJob from './jobs/scheduleCronJob.js';
 import deleteCronJob from './jobs/deleteCronJob.js';
 import getPayrollsForMonth from './getPayrolls.js';
 
-const parseAccounts = (account) => ({
+const parseAccounts = account => ({
     account_id: parseInt(account.account_id),
     account_name: account.account_name,
     account_type: parseInt(account.account_type),
@@ -17,30 +17,18 @@ const parseAccounts = (account) => ({
 const getAccounts = (request, response) => {
     const id = parseInt(request.query.id);
 
-    if (!id) {
-        pool.query(accountQueries.getAccounts, (error, results) => {
-            if (error) {
-                return response.status(400).send({ errors: { "msg": "Error getting accounts", "param": null, "location": "query" } });
-            }
+    const query = id ? accountQueries.getAccount : accountQueries.getAccounts;
+    const params = id ? [id] : [];
 
-            // Parse the data to correct format and return an object
-            const accounts = results.rows.map(account => parseAccounts(account));
+    pool.query(query, params, (error, results) => {
+        if (error) {
+            return response.status(400).send({ errors: { "msg": "Error getting accounts", "param": null, "location": "query" } });
+        }
 
-            return response.status(200).json(accounts);
-        });
-    } else {
-        pool.query(accountQueries.getAccount, [id], (error, results) => {
-            if (error) {
-                return response.status(400).send({ errors: { "msg": "Error getting account", "param": null, "location": "query" } });
-            }
-
-            // Parse the data to correct format and return an object
-            const accounts = results.rows.map(account => parseAccounts(account));
-
-            return response.status(200).json(accounts);
-        });
-    }
-}
+        const accounts = results.rows.map(account => parseAccounts(account));
+        response.status(200).json(accounts);
+    });
+};
 
 // Create account
 const createAccount = (request, response) => {
