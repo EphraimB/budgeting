@@ -162,7 +162,7 @@ const deleteTransaction = (request, response) => {
     });
 }
 
-const parseExpenses = (expense) => ({
+const parseExpenses = expense => ({
     expense_id: parseInt(expense.expense_id),
     account_id: parseInt(expense.account_id),
     expense_amount: parseFloat(expense.expense_amount),
@@ -184,7 +184,7 @@ const parseExpenses = (expense) => ({
 const getExpensesByAccount = (request, response, next) => {
     const { account_id, to_date } = request.query;
 
-    pool.query(expenseQueries.getExpensesByAccount, [parseInt(account_id), to_date], (error, results) => {
+    pool.query(expenseQueries.getExpensesByAccount, [account_id, to_date], (error, results) => {
         if (error) {
             return response.status(400).send({ errors: { "msg": "Error getting expenses", "param": null, "location": "query" } });
         }
@@ -199,30 +199,18 @@ const getExpensesByAccount = (request, response, next) => {
 const getExpenses = (request, response) => {
     const { id } = request.query;
 
-    if (!id) {
-        pool.query(expenseQueries.getExpenses, (error, results) => {
-            if (error) {
-                return response.status(400).send({ errors: { "msg": "Error getting expenses", "param": null, "location": "query" } });
-            }
+    const query = id ? expenseQueries.getExpense : expenseQueries.getExpenses;
+    const params = id ? [id] : [];
 
-            // Parse the data to correct format and return an object
-            const expenses = results.rows.map(expense => parseExpenses(expense));
+    pool.query(query, params, (error, results) => {
+        if (error) {
+            return response.status(400).send({ errors: { "msg": "Error getting expenses", "param": null, "location": "query" } });
+        }
 
-            response.status(200).send(expenses);
-        });
-    } else {
-        pool.query(expenseQueries.getExpense, [id], (error, results) => {
-            if (error) {
-                return response.status(400).send({ errors: { "msg": "Error getting expense", "param": null, "location": "query" } });
-            }
-
-            // Parse the data to correct format and return an object
-            const expenses = results.rows.map(expense => parseExpenses(expense));
-
-            response.status(200).send(expenses);
-        });
-    }
-}
+        const expenses = results.rows.map(expense => parseExpenses(expense));
+        response.status(200).send(expenses);
+    });
+};
 
 // Create expense
 const createExpense = (request, response) => {
