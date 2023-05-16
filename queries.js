@@ -572,39 +572,30 @@ const updateLoan = async (request, response) => {
 };
 
 // Delete loan
-const deleteLoan = (request, response) => {
-    const { id } = request.params;
+const deleteLoan = async (request, response) => {
+    try {
+        const { id } = request.params;
 
-    pool.query(loanQueries.getLoan, [id], (error, results) => {
-        if (error) {
-            return response.status(400).send({ errors: { "msg": "Error selecting loan", "param": null, "location": "query" } });
+        const getLoanResults = await pool.query(loanQueries.getLoan, [id]);
+
+        if (getLoanResults.rows.length === 0) {
+            return response.status(200).send("Loan doesn't exist");
         }
 
-        if (results.rows.length > 0) {
-            const cronId = results.rows[0].cron_job_id;
+        const cronId = getLoanResults.rows[0].cron_job_id;
+        await pool.query(loanQueries.deleteLoan, [id]);
 
-            pool.query(loanQueries.deleteLoan, [id], (error, results) => {
-                if (error) {
-                    return response.status(400).send({ errors: { "msg": "Error deleting loan", "param": null, "location": "query" } });
-                }
-
-                if (cronId) {
-                    deleteCronJob(cronId);
-
-                    pool.query(cronJobQueries.deleteCronJob, [cronId], (error, results) => {
-                        if (error) {
-                            return response.status(400).send({ errors: { "msg": "Error deleting cron job", "param": null, "location": "query" } });
-                        }
-                    });
-                }
-
-                response.status(200).send("Loan deleted successfully");
-            });
-        } else {
-            response.status(200).send("Loan doesn't exist");
+        if (cronId) {
+            await deleteCronJob(cronId);
+            await pool.query(cronJobQueries.deleteCronJob, [cronId]);
         }
-    });
-}
+
+        response.status(200).send("Loan deleted successfully");
+    } catch (error) {
+        console.error(error);
+        response.status(400).send({ errors: { msg: 'Error deleting loan', param: null, location: 'query' } });
+    }
+};
 
 const payrollsParse = (payroll) => ({
     start_date: payroll.start_date,
