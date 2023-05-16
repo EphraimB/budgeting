@@ -277,46 +277,74 @@ const createExpense = async (request, response) => {
 };
 
 // Update expense
-const updateExpense = (request, response) => {
-    const id = parseInt(request.params.id);
-    const { account_id, amount, title, description, frequency_type, frequency_type_variable, frequency_day_of_month, frequency_day_of_week, frequency_week_of_month, frequency_month_of_year, begin_date } = request.body;
-
-    // Get expense id to see if it exists
-    pool.query(expenseQueries.getExpense, [id], (error, results) => {
-        if (error) {
-            return response.status(400).send({ errors: { "msg": "Error getting expense", "param": null, "location": "query" } });
-        }
-
-        if (results.rows.length === 0) {
-            return response.status(200).send([]);
-        } else {
-            const cronId = results.rows[0].cron_job_id;
-
-            deleteCronJob(cronId).then(() => {
-                const { uniqueId, cronDate } = scheduleCronJob(begin_date, account_id, amount, description, frequency_type, frequency_type_variable, frequency_day_of_month, frequency_day_of_week, frequency_week_of_month, frequency_month_of_year);
-
-                pool.query(cronJobQueries.updateCronJob, [uniqueId, cronDate, cronId], (error, results) => {
-                    if (error) {
-                        return response.status(400).send({ errors: { "msg": "Error updating cron job", "param": null, "location": "query" } });
-                    }
-
-                    pool.query(expenseQueries.updateExpense, [account_id, amount, title, description, frequency_type, frequency_type_variable, frequency_day_of_month, frequency_day_of_week, frequency_week_of_month, frequency_month_of_year, begin_date, id], (error, results) => {
-                        if (error) {
-                            return response.status(400).send({ errors: { "msg": "Error updating expense", "param": null, "location": "query" } });
-                        }
-
-                        // Parse the data to correct format and return an object
-                        const expenses = results.rows.map(expense => parseExpenses(expense));
-
-                        response.status(200).send(expenses);
-                    });
-                });
-            }).catch((error) => {
-                console.log(error);
-            });
-        };
-    });
-}
+const updateExpense = async (request, response) => {
+    try {
+      const id = parseInt(request.params.id);
+      const {
+        account_id,
+        amount,
+        title,
+        description,
+        frequency_type,
+        frequency_type_variable,
+        frequency_day_of_month,
+        frequency_day_of_week,
+        frequency_week_of_month,
+        frequency_month_of_year,
+        begin_date
+      } = request.body;
+  
+      const expenseResult = await pool.query(expenseQueries.getExpense, [id]);
+      if (expenseResult.rows.length === 0) {
+        return response.status(200).send([]);
+      }
+  
+      const cronId = expenseResult.rows[0].cron_job_id;
+      await deleteCronJob(cronId);
+  
+      const { uniqueId, cronDate } = scheduleCronJob(
+        begin_date,
+        account_id,
+        amount,
+        description,
+        frequency_type,
+        frequency_type_variable,
+        frequency_day_of_month,
+        frequency_day_of_week,
+        frequency_week_of_month,
+        frequency_month_of_year
+      );
+  
+      await pool.query(cronJobQueries.updateCronJob, [
+        uniqueId,
+        cronDate,
+        cronId
+      ]);
+  
+      const updateResult = await pool.query(expenseQueries.updateExpense, [
+        account_id,
+        amount,
+        title,
+        description,
+        frequency_type,
+        frequency_type_variable,
+        frequency_day_of_month,
+        frequency_day_of_week,
+        frequency_week_of_month,
+        frequency_month_of_year,
+        begin_date,
+        id
+      ]);
+  
+      const expenses = updateResult.rows.map(expense => parseExpenses(expense));
+  
+      response.status(200).send(expenses);
+    } catch (error) {
+      response.status(400).send({
+        errors: { msg: 'Error updating expense', param: null, location: 'query' }
+      });
+    }
+  };  
 
 // Delete expense
 const deleteExpense = (request, response) => {
