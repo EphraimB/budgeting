@@ -770,7 +770,7 @@ const createPayrollDate = (request, response) => {
         }
         response.status(201).send(returnObj);
     });
-}
+};
 
 // Update payroll date
 const updatePayrollDate = (request, response) => {
@@ -794,7 +794,7 @@ const updatePayrollDate = (request, response) => {
 
         response.status(200).send(returnObj);
     });
-}
+};
 
 // Delete payroll date
 const deletePayrollDate = (request, response) => {
@@ -810,7 +810,7 @@ const deletePayrollDate = (request, response) => {
 
         response.status(200).send("Successfully deleted payroll date");
     });
-}
+};
 
 const employeeParse = (employee) => ({
     employee_id: parseInt(employee.employee_id),
