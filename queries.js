@@ -571,9 +571,15 @@ const getPayrolls = (request, response) => {
             employee_id,
             payrolls: payrolls,
         }
-        response.status(200).json(returnObj);
+        response.status(200).send(returnObj);
     });
 }
+
+const payrollTaxesParse = (payrollTax) => ({
+    payroll_taxes_id: parseInt(payrollTax.payroll_taxes_id),
+    name: payrollTax.name,
+    rate: parseFloat(payrollTax.rate),
+});
 
 // Get payroll taxes
 const getPayrollTaxes = (request, response) => {
@@ -586,17 +592,13 @@ const getPayrollTaxes = (request, response) => {
             }
 
             // Parse the data to correct format and return an object
-            const payrollTaxes = results.rows.map((payrollTax) => ({
-                payroll_taxes_id: parseInt(payrollTax.payroll_taxes_id),
-                name: payrollTax.name,
-                rate: parseFloat(payrollTax.rate),
-            }));
+            const payrollTaxes = results.rows.map(payrollTax => payrollTaxesParse(payrollTax));
 
             const returnObj = {
                 employee_id: parseInt(employee_id),
                 payroll_taxes: payrollTaxes,
             }
-            response.status(200).json(returnObj);
+            response.status(200).send(returnObj);
         });
     } else {
         pool.query(payrollQueries.getPayrollTax, [employee_id, id], (error, results) => {
@@ -605,17 +607,13 @@ const getPayrollTaxes = (request, response) => {
             }
 
             // Parse the data to correct format and return an object
-            const payrollTaxes = results.rows.map((payrollTax) => ({
-                payroll_taxes_id: parseInt(payrollTax.payroll_taxes_id),
-                name: payrollTax.name,
-                rate: parseFloat(payrollTax.rate),
-            }));
+            const payrollTaxes = results.rows.map(payrollTax => payrollTaxesParse(payrollTax));
 
             const returnObj = {
                 employee_id: parseInt(employee_id),
                 payroll_tax: payrollTaxes,
             }
-            response.status(200).json(returnObj);
+            response.status(200).send(returnObj);
         });
     }
 }
@@ -632,13 +630,9 @@ const createPayrollTax = (request, response) => {
         getPayrollsForMonth(employee_id);
 
         // Parse the data to correct format and return an object
-        const payrollTaxes = results.rows.map((payrollTax) => ({
-            payroll_taxes_id: parseInt(payrollTax.payroll_taxes_id),
-            name: payrollTax.name,
-            rate: parseFloat(payrollTax.rate),
-        }));
+        const payrollTaxes = results.rows.map(payrollTax => payrollTaxesParse(payrollTax));
 
-        response.status(201).json(payrollTaxes);
+        response.status(201).send(payrollTaxes);
     });
 }
 
@@ -655,11 +649,7 @@ const updatePayrollTax = (request, response) => {
         getPayrollsForMonth(employee_id);
 
         // Parse the data to correct format and return an object
-        const payrollTaxes = results.rows.map((payrollTax) => ({
-            payroll_taxes_id: parseInt(payrollTax.payroll_taxes_id),
-            name: payrollTax.name,
-            rate: parseFloat(payrollTax.rate),
-        }));
+        const payrollTaxes = results.rows.map(payrollTax => payrollTaxesParse(payrollTax));
 
         response.status(200).send(payrollTaxes);
     });
