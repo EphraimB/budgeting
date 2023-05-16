@@ -597,7 +597,7 @@ const deleteLoan = async (request, response) => {
     }
 };
 
-const payrollsParse = (payroll) => ({
+const payrollsParse = payroll => ({
     start_date: payroll.start_date,
     end_date: payroll.end_date,
     work_days: parseInt(payroll.work_days),
@@ -640,7 +640,7 @@ const getPayrolls = (request, response) => {
     });
 }
 
-const payrollTaxesParse = (payrollTax) => ({
+const payrollTaxesParse = payrollTax => ({
     payroll_taxes_id: parseInt(payrollTax.payroll_taxes_id),
     name: payrollTax.name,
     rate: parseFloat(payrollTax.rate),
@@ -650,38 +650,24 @@ const payrollTaxesParse = (payrollTax) => ({
 const getPayrollTaxes = (request, response) => {
     const { employee_id, id } = request.query;
 
-    if (!id) {
-        pool.query(payrollQueries.getPayrollTaxes, [employee_id], (error, results) => {
-            if (error) {
-                return response.status(400).send({ errors: { "msg": "Error getting payroll taxes", "param": null, "location": "query" } });
-            }
+    const query = id ? payrollQueries.getPayrollTax : payrollQueries.getPayrollTaxes;
+    const queryParameters = id ? [employee_id, id] : [employee_id];
 
-            // Parse the data to correct format and return an object
-            const payrollTaxes = results.rows.map(payrollTax => payrollTaxesParse(payrollTax));
+    pool.query(query, queryParameters, (error, results) => {
+        if (error) {
+            return response.status(400).send({ errors: { msg: 'Error getting payroll taxes', param: null, location: 'query' } });
+        }
 
-            const returnObj = {
-                employee_id: parseInt(employee_id),
-                payroll_taxes: payrollTaxes,
-            }
-            response.status(200).send(returnObj);
-        });
-    } else {
-        pool.query(payrollQueries.getPayrollTax, [employee_id, id], (error, results) => {
-            if (error) {
-                return response.status(400).send({ errors: { "msg": "Error getting payroll tax", "param": null, "location": "query" } });
-            }
+        const payrollTaxes = results.rows.map(payrollTax => payrollTaxesParse(payrollTax));
 
-            // Parse the data to correct format and return an object
-            const payrollTaxes = results.rows.map(payrollTax => payrollTaxesParse(payrollTax));
+        const returnObj = {
+            employee_id: parseInt(employee_id),
+            payroll_taxes: payrollTaxes,
+        };
 
-            const returnObj = {
-                employee_id: parseInt(employee_id),
-                payroll_tax: payrollTaxes,
-            }
-            response.status(200).send(returnObj);
-        });
-    }
-}
+        response.status(200).send(returnObj);
+    });
+};
 
 // Create payroll tax
 const createPayrollTax = (request, response) => {
