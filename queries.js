@@ -988,6 +988,25 @@ const deleteWishlist = (request, response) => {
     });
 }
 
+const transfersParse = (transfer) => ({
+    transfer_id: parseInt(transfer.transfer_id),
+    source_account_id: parseInt(transfer.source_account_id),
+    destination_account_id: parseInt(transfer.destination_account_id),
+    transfer_amount: parseFloat(transfer.transfer_amount),
+    transfer_title: transfer.transfer_title,
+    transfer_description: transfer.transfer_description,
+    frequency_type: parseInt(transfer.frequency_type),
+    frequency_type_variable: parseInt(transfer.frequency_type_variable),
+    frequency_day_of_month: parseInt(transfer.frequency_day_of_month),
+    frequency_day_of_week: parseInt(transfer.frequency_day_of_week),
+    frequency_week_of_month: parseInt(transfer.frequency_week_of_month),
+    frequency_month_of_year: parseInt(transfer.frequency_month_of_year),
+    transfer_begin_date: transfer.transfer_begin_date,
+    transfer_end_date: transfer.transfer_end_date,
+    date_created: transfer.date_created,
+    date_updated: transfer.date_updated,
+});
+
 // Get transfers by account
 const getTransfersByAccount = (request, response, next) => {
     const { account_id, to_date } = request.query;
@@ -1014,24 +1033,7 @@ const getTransfers = (request, response) => {
             }
 
             // Parse the data to correct format and return an object
-            const transfers = results.rows.map((transfer) => ({
-                transfer_id: parseInt(transfer.transfer_id),
-                source_account_id: parseInt(transfer.source_account_id),
-                destination_account_id: parseInt(transfer.destination_account_id),
-                transfer_amount: parseFloat(transfer.transfer_amount),
-                transfer_title: transfer.transfer_title,
-                transfer_description: transfer.transfer_description,
-                frequency_type: parseInt(transfer.frequency_type),
-                frequency_type_variable: parseInt(transfer.frequency_type_variable),
-                frequency_day_of_month: parseInt(transfer.frequency_day_of_month),
-                frequency_day_of_week: parseInt(transfer.frequency_day_of_week),
-                frequency_week_of_month: parseInt(transfer.frequency_week_of_month),
-                frequency_month_of_year: parseInt(transfer.frequency_month_of_year),
-                transfer_begin_date: transfer.transfer_begin_date,
-                transfer_end_date: transfer.transfer_end_date,
-                date_created: transfer.date_created,
-                date_updated: transfer.date_updated
-            }));
+            const transfers = results.rows.map(transfer => transfersParse(transfer));
 
             response.status(200).json(transfers);
         });
@@ -1042,24 +1044,7 @@ const getTransfers = (request, response) => {
             }
 
             // Parse the data to correct format and return an object
-            const transfers = results.rows.map((transfer) => ({
-                transfer_id: parseInt(transfer.transfer_id),
-                source_account_id: parseInt(transfer.source_account_id),
-                destination_account_id: parseInt(transfer.destination_account_id),
-                transfer_amount: parseFloat(transfer.transfer_amount),
-                transfer_title: transfer.transfer_title,
-                transfer_description: transfer.transfer_description,
-                frequency_type: parseInt(transfer.frequency_type),
-                frequency_type_variable: parseInt(transfer.frequency_type_variable),
-                frequency_day_of_month: parseInt(transfer.frequency_day_of_month),
-                frequency_day_of_week: parseInt(transfer.frequency_day_of_week),
-                frequency_week_of_month: parseInt(transfer.frequency_week_of_month),
-                frequency_month_of_year: parseInt(transfer.frequency_month_of_year),
-                transfer_begin_date: transfer.transfer_begin_date,
-                transfer_end_date: transfer.transfer_end_date,
-                date_created: transfer.date_created,
-                date_updated: transfer.date_updated
-            }));
+            const transfers = results.rows.map(transfer => transfersParse(transfer));
 
             response.status(200).json(transfers);
         });
@@ -1088,24 +1073,7 @@ const createTransfer = (request, response) => {
             }
 
             // Parse the data to correct format and return an object
-            const transfers = results.rows.map((transfer) => ({
-                transfer_id: parseInt(transfer.transfer_id),
-                source_account_id: parseInt(transfer.source_account_id),
-                destination_account_id: parseInt(transfer.destination_account_id),
-                transfer_amount: parseFloat(transfer.transfer_amount),
-                transfer_title: transfer.transfer_title,
-                transfer_description: transfer.transfer_description,
-                frequency_type: parseInt(transfer.frequency_type),
-                frequency_type_variable: parseInt(transfer.frequency_type_variable),
-                frequency_day_of_month: parseInt(transfer.frequency_day_of_month),
-                frequency_day_of_week: parseInt(transfer.frequency_day_of_week),
-                frequency_week_of_month: parseInt(transfer.frequency_week_of_month),
-                frequency_month_of_year: parseInt(transfer.frequency_month_of_year),
-                transfer_begin_date: transfer.transfer_begin_date,
-                transfer_end_date: transfer.transfer_end_date,
-                date_created: transfer.date_created,
-                date_updated: transfer.date_updated
-            }));
+            const transfers = results.rows.map(transfer => transfersParse(transfer));
 
             response.status(201).send(transfers);
         });
@@ -1144,24 +1112,7 @@ const updateTransfer = (request, response) => {
                         }
 
                         // Parse the data to correct format and return an object
-                        const transfers = results.rows.map((transfer) => ({
-                            transfer_id: parseInt(transfer.transfer_id),
-                            source_account_id: parseInt(transfer.source_account_id),
-                            destination_account_id: parseInt(transfer.destination_account_id),
-                            transfer_amount: parseFloat(transfer.transfer_amount),
-                            transfer_title: transfer.transfer_title,
-                            transfer_description: transfer.transfer_description,
-                            frequency_type: parseInt(transfer.frequency_type),
-                            frequency_type_variable: parseInt(transfer.frequency_type_variable),
-                            frequency_day_of_month: parseInt(transfer.frequency_day_of_month),
-                            frequency_day_of_week: parseInt(transfer.frequency_day_of_week),
-                            frequency_week_of_month: parseInt(transfer.frequency_week_of_month),
-                            frequency_month_of_year: parseInt(transfer.frequency_month_of_year),
-                            transfer_begin_date: transfer.transfer_begin_date,
-                            transfer_end_date: transfer.transfer_end_date,
-                            date_created: transfer.date_created,
-                            date_updated: transfer.date_updated
-                        }));
+                        const transfers = results.rows.map(transfer => transfersParse(transfer));
 
                         response.status(200).send(transfers);
                     });
