@@ -812,7 +812,7 @@ const deletePayrollDate = (request, response) => {
     });
 };
 
-const employeeParse = (employee) => ({
+const employeeParse = employee => ({
     employee_id: parseInt(employee.employee_id),
     name: employee.name,
     hourly_rate: parseFloat(employee.hourly_rate),
@@ -825,31 +825,20 @@ const employeeParse = (employee) => ({
 // Get employee
 const getEmployee = (request, response) => {
     const { id } = request.query;
+    const query = id ? payrollQueries.getEmployee : payrollQueries.getEmployees;
+    const params = id ? [id] : [];
 
-    if (!id) {
-        pool.query(payrollQueries.getEmployees, (error, results) => {
-            if (error) {
-                return response.status(400).send({ errors: { "msg": "Error getting employee", "param": null, "location": "query" } });
-            }
+    pool.query(query, params, (error, results) => {
+        if (error) {
+            return response.status(400).send({ errors: { msg: 'Error getting employee', param: null, location: 'query' } });
+        }
 
-            // Parse the data to correct format and return an object
-            const employees = results.rows.map(employee => employeeParse(employee));
+        // Parse the data to the correct format and return an object
+        const employees = results.rows.map(employee => employeeParse(employee));
 
-            response.status(200).send(employees);
-        });
-    } else {
-        pool.query(payrollQueries.getEmployee, [id], (error, results) => {
-            if (error) {
-                return response.status(400).send({ errors: { "msg": "Error getting employee", "param": null, "location": "query" } });
-            }
-
-            // Parse the data to correct format and return an object
-            const employees = results.rows.map(employee => employeeParse(employee));
-
-            response.status(200).send(employees);
-        });
-    }
-}
+        response.status(200).send(employees);
+    });
+};
 
 // Create employee
 const createEmployee = (request, response) => {
