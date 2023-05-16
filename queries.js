@@ -532,6 +532,15 @@ const deleteLoan = (request, response) => {
     });
 }
 
+const payrollsParse = (payroll) => ({
+    start_date: payroll.start_date,
+    end_date: payroll.end_date,
+    work_days: parseInt(payroll.work_days),
+    gross_pay: parseFloat(payroll.gross_pay),
+    net_pay: parseFloat(payroll.net_pay),
+    hours_worked: parseFloat(payroll.hours_worked),
+});
+
 // Get payrolls by account
 const getPayrollsMiddleware = (request, response, next) => {
     const { account_id, to_date } = request.query;
@@ -556,14 +565,7 @@ const getPayrolls = (request, response) => {
         }
 
         // Parse the data to correct format and return an object
-        const payrolls = results.rows.map((payroll) => ({
-            start_date: payroll.start_date,
-            end_date: payroll.end_date,
-            work_days: parseInt(payroll.work_days),
-            gross_pay: parseFloat(payroll.gross_pay),
-            net_pay: parseFloat(payroll.net_pay),
-            hours_worked: parseFloat(payroll.hours_worked),
-        }));
+        const payrolls = results.rows.map(payroll => payrollsParse(payroll));
 
         const returnObj = {
             employee_id,
