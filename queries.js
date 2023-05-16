@@ -685,7 +685,7 @@ const createPayrollTax = (request, response) => {
 
         response.status(201).send(payrollTaxes);
     });
-}
+};
 
 // Update payroll tax
 const updatePayrollTax = (request, response) => {
@@ -704,7 +704,7 @@ const updatePayrollTax = (request, response) => {
 
         response.status(200).send(payrollTaxes);
     });
-}
+};
 
 // Delete payroll tax
 const deletePayrollTax = (request, response) => {
