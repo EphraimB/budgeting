@@ -74,7 +74,7 @@ const deleteAccount = (request, response) => {
     });
 };
 
-const parseTransactions = (transaction) => ({
+const parseTransactions = (transactionHistory) => ({
     transaction_id: parseInt(transactionHistory.transaction_id),
     account_id: parseInt(transactionHistory.account_id),
     transaction_amount: parseFloat(transactionHistory.transaction_amount),
