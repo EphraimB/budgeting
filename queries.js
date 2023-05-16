@@ -671,6 +671,12 @@ const deletePayrollTax = (request, response) => {
     });
 }
 
+const payrollDatesParse = (payrollDate) => ({
+    payroll_date_id: parseInt(payrollDate.payroll_date_id),
+    payroll_start_day: parseInt(payrollDate.payroll_start_day),
+    payroll_end_day: parseInt(payrollDate.payroll_end_day),
+});
+
 // Get payroll dates
 const getPayrollDates = (request, response) => {
     const { employee_id, id } = request.query;
@@ -682,11 +688,7 @@ const getPayrollDates = (request, response) => {
             }
 
             // Parse the data to correct format and return an object
-            const payrollDates = results.rows.map((payrollDate) => ({
-                payroll_date_id: parseInt(payrollDate.payroll_date_id),
-                payroll_start_day: parseInt(payrollDate.payroll_start_day),
-                payroll_end_day: parseInt(payrollDate.payroll_end_day),
-            }));
+            const payrollDates = results.rows.map(payrollDate => payrollDatesParse(payrollDate));
 
             const returnObj = {
                 employee_id: parseInt(employee_id),
@@ -701,11 +703,7 @@ const getPayrollDates = (request, response) => {
             }
 
             // Parse the data to correct format and return an object
-            const payrollDates = results.rows.map((payrollDate) => ({
-                payroll_date_id: parseInt(payrollDate.payroll_date_id),
-                payroll_start_day: parseInt(payrollDate.payroll_start_day),
-                payroll_end_day: parseInt(payrollDate.payroll_end_day),
-            }));
+            const payrollDates = results.rows.map(payrollDate => payrollDatesParse(payrollDate));
 
             const returnObj = {
                 employee_id: parseInt(employee_id),
@@ -728,11 +726,7 @@ const createPayrollDate = (request, response) => {
         getPayrollsForMonth(employee_id);
 
         // Parse the data to correct format and return an object
-        const payrollDates = results.rows.map((payrollDate) => ({
-            payroll_date_id: parseInt(payrollDate.payroll_date_id),
-            payroll_start_day: parseInt(payrollDate.payroll_start_day),
-            payroll_end_day: parseInt(payrollDate.payroll_end_day),
-        }));
+        const payrollDates = results.rows.map(payrollDate => payrollDatesParse(payrollDate));
 
         const returnObj = {
             employee_id: parseInt(employee_id),
@@ -755,11 +749,7 @@ const updatePayrollDate = (request, response) => {
         getPayrollsForMonth(employee_id);
 
         // Parse the data to correct format and return an object
-        const payrollDates = results.rows.map((payrollDate) => ({
-            payroll_date_id: parseInt(payrollDate.payroll_date_id),
-            payroll_start_day: parseInt(payrollDate.payroll_start_day),
-            payroll_end_day: parseInt(payrollDate.payroll_end_day),
-        }));
+        const payrollDates = results.rows.map(payrollDate => payrollDatesParse(payrollDate));
 
         const returnObj = {
             employee_id: parseInt(employee_id),
