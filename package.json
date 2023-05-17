@@ -4,7 +4,7 @@
   "description": "A budgeting app that calculates the projected budget at a certain date",
   "main": "server.js",
   "scripts": {
-    "test": "jest"
+    "test": "NODE_OPTIONS=--experimental-vm-modules jest"
   },
   "author": "Ephraim Becker",
   "license": "ISC",
