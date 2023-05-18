@@ -1,7 +1,7 @@
 import express from 'express';
 import { query, param, body } from 'express-validator';
 const router = express.Router();
-import { getExpenses, createExpense, updateExpense, deleteExpense } from '../queries.js';
+import { getExpenses, createExpense, updateExpense, deleteExpense } from '../constrollers/expensesController.js';
 import validateRequest from '../validateRequest.js';
 
 router.get('/',
