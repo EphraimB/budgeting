@@ -21,7 +21,7 @@ import { bree, startBree } from './breeManager.js';
 
 const __dirname = fileURLToPath(new URL('.', import.meta.url));
 const require = createRequire(import.meta.url);
-const swaggerDocument = require('./swagger.json');
+const swaggerDocument = require('./views/swagger.json');
 const cronjobsDir = path.join(__dirname, 'jobs/cron-jobs');
 
 if (!fs.existsSync(cronjobsDir)) {
