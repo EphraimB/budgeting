@@ -1,7 +1,7 @@
-import pool from './db.js';
-import { transferQueries, cronJobQueries } from './queryData.js';
-import scheduleCronJob from './jobs/scheduleCronJob.js';
-import deleteCronJob from './jobs/deleteCronJob.js';
+import pool from '../db.js';
+import { transferQueries, cronJobQueries } from '../queryData.js';
+import scheduleCronJob from '../jobs/scheduleCronJob.js';
+import deleteCronJob from '../jobs/deleteCronJob.js';
 
 const transfersParse = transfer => ({
     transfer_id: parseInt(transfer.transfer_id),

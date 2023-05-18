@@ -1,6 +1,6 @@
 import express from 'express';
 const router = express.Router();
-import { getTransfers, createTransfer, updateTransfer, deleteTransfer } from '../queries.js';
+import { getTransfers, createTransfer, updateTransfer, deleteTransfer } from '../controllers/transfersController.js';
 import { param, query, body } from 'express-validator';
 import validateRequest from '../validateRequest.js';
 
