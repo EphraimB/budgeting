@@ -1,5 +1,5 @@
-import pool from '../db.js';
-import { wishlistQueries } from '../queryData.js';
+import pool from '../models/db.js';
+import { wishlistQueries } from '../models/queryData.js';
 
 const wishlistsParse = wishlist => ({
     wishlist_id: parseInt(wishlist.wishlist_id),

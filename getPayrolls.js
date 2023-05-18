@@ -1,8 +1,8 @@
-import pool from './db.js';
+import pool from './models/db.js';
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
-import { payrollQueries } from './queryData.js';
+import { payrollQueries } from './models/queryData.js';
 import schedulePayrollCronJob from './jobs/schedulePayrollCronJob.js';
 
 const __dirname = fileURLToPath(new URL('.', import.meta.url));

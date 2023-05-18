@@ -1,5 +1,5 @@
-import pool from '../db.js';
-import { payrollQueries } from '../queryData.js';
+import pool from '../models/db.js';
+import { payrollQueries } from '../models/queryData.js';
 
 const payrollsParse = payroll => ({
     start_date: payroll.start_date,

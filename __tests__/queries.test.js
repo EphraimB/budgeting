@@ -1,7 +1,7 @@
 const pgmock2 = require('pgmock2').default;
 const { types } = require('pg');
 const { accounts, deposits, withdrawals, expenses, loans, wishlist } = require('./testData/mockData');
-const { accountQueries, depositQueries, withdrawalQueries, expenseQueries, loanQueries, wishlistQueries } = require('../queryData');
+const { accountQueries, depositQueries, withdrawalQueries, expenseQueries, loanQueries, wishlistQueries } = require('../models/queryData');
 
 // define a custom handler function for the SELECT query on the accounts table
 const handleSelectAccounts = () => {

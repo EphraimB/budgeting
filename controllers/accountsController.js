@@ -1,5 +1,5 @@
-import pool from '../db.js';
-import { accountQueries } from '../queryData.js';
+import pool from '../models/db.js';
+import { accountQueries } from '../models/queryData.js';
 
 const parseAccounts = account => ({
     account_id: parseInt(account.account_id),

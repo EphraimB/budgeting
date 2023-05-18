@@ -1,5 +1,5 @@
-import pool from '../db.js';
-import { transactionHistoryQueries } from '../queryData.js';
+import pool from '../models/db.js';
+import { transactionHistoryQueries } from '../models/queryData.js';
 
 const parseTransactions = transactionHistory => ({
     transaction_id: parseInt(transactionHistory.transaction_id),

@@ -1,5 +1,5 @@
-import pool from '../db.js';
-import { expenseQueries, cronJobQueries } from '../queryData.js';
+import pool from '../models/db.js';
+import { expenseQueries, cronJobQueries } from '../models/queryData.js';
 import scheduleCronJob from '../jobs/scheduleCronJob.js';
 import deleteCronJob from '../jobs/deleteCronJob.js';
 

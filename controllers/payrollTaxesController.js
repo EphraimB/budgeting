@@ -1,5 +1,5 @@
-import pool from '../db.js';
-import { payrollQueries } from '../queryData.js';
+import pool from '../models/db.js';
+import { payrollQueries } from '../models/queryData.js';
 import getPayrollsForMonth from '../getPayrolls.js';
 
 const payrollTaxesParse = payrollTax => ({

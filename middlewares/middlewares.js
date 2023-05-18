@@ -1,5 +1,5 @@
-import pool from '../db.js';
-import { transactionHistoryQueries, expenseQueries, loanQueries, payrollQueries, wishlistQueries, transferQueries, currentBalanceQueries } from '../queryData.js';
+import pool from '../models/db.js';
+import { transactionHistoryQueries, expenseQueries, loanQueries, payrollQueries, wishlistQueries, transferQueries, currentBalanceQueries } from '../models/queryData.js';
 
 // Get deposits by account
 export const getTransactionsByAccount = (request, response, next) => {

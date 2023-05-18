@@ -1,5 +1,5 @@
-import pool from "./db.js";
-import { payrollQueries } from "./queryData.js";
+import pool from "./models/db.js";
+import { payrollQueries } from "./models/queryData.js";
 import fs from "fs";
 const jobsFilePath = 'jobs.json';
 import getPayrolls from "./getPayrolls.js";
