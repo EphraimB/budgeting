@@ -1,96 +1,8 @@
 import pool from './db.js';
-import { transactionHistoryQueries, expenseQueries, loanQueries, payrollQueries, wishlistQueries, transferQueries, currentBalanceQueries, cronJobQueries } from './queryData.js';
+import { expenseQueries, loanQueries, payrollQueries, wishlistQueries, transferQueries, cronJobQueries } from './queryData.js';
 import scheduleCronJob from './jobs/scheduleCronJob.js';
 import deleteCronJob from './jobs/deleteCronJob.js';
 import getPayrollsForMonth from './getPayrolls.js';
-
-const parseTransactions = transactionHistory => ({
-    transaction_id: parseInt(transactionHistory.transaction_id),
-    account_id: parseInt(transactionHistory.account_id),
-    transaction_amount: parseFloat(transactionHistory.transaction_amount),
-    transaction_title: transactionHistory.account_type,
-    transaction_description: transactionHistory.transaction_description,
-    date_created: transactionHistory.date_created,
-    date_modified: transactionHistory.date_modified,
-});
-
-// Get deposits by account
-export const getTransactionsByAccount = (request, response, next) => {
-    const { account_id, from_date } = request.query;
-
-    pool.query(transactionHistoryQueries.getTransactionsDateFiltered, [parseInt(account_id), from_date], (error, results) => {
-        if (error) {
-            return response.status(400).send({ errors: { "msg": "Error getting transactions", "param": null, "location": "query" } });
-        }
-
-        request.transaction = results.rows;
-
-        next();
-    });
-};
-
-// Get all transactions
-export const getTransactions = (request, response) => {
-    const { id } = request.query;
-
-    const query = id ? transactionHistoryQueries.getTransaction : transactionHistoryQueries.getTransactions;
-    const params = id ? [id] : [];
-
-    pool.query(query, params, (error, results) => {
-        if (error) {
-            return response.status(400).send({ errors: { "msg": "Error getting transactions", "param": null, "location": "query" } });
-        }
-
-        const transactionHistory = results.rows.map(transactionHistory => parseTransactions(transactionHistory));
-        response.status(200).json(transactionHistory);
-    });
-};
-
-// Create transaction
-export const createTransaction = (request, response) => {
-    const { account_id, title, amount, description } = request.body;
-
-    pool.query(transactionHistoryQueries.createTransaction, [account_id, amount, title, description], (error, results) => {
-        if (error) {
-            return response.status(400).send({ errors: { "msg": "Error creating transaction", "param": null, "location": "query" } });
-        }
-
-        // Parse the data to correct format and return an object
-        const transactionHistory = results.rows.map(transactionHistory => (parseTransactions(transactionHistory)));
-
-        return response.status(201).json(transactionHistory);
-    });
-};
-
-// Update transaction
-export const updateTransaction = (request, response) => {
-    const id = parseInt(request.params.id);
-    const { account_id, amount, title, description } = request.body;
-
-    pool.query(transactionHistoryQueries.updateTransaction, [account_id, amount, title, description, id], (error, results) => {
-        if (error) {
-            return response.status(400).send({ errors: { "msg": "Error updating transaction", "param": null, "location": "query" } });
-        }
-
-        // Parse the data to correct format and return an object
-        const transactionHistory = results.rows.map(transactionHistory => (parseTransactions(transactionHistory)));
-
-        response.status(200).send(transactionHistory);
-    });
-};
-
-// Delete transaction
-export const deleteTransaction = (request, response) => {
-    const id = parseInt(request.params.id);
-
-    pool.query(transactionHistoryQueries.deleteTransaction, [id], (error, results) => {
-        if (error) {
-            return response.status(400).send({ errors: { "msg": "Error deleting transaction", "param": null, "location": "query" } });
-        }
-
-        response.status(200).send("Successfully deleted transaction");
-    });
-};
 
 const parseExpenses = expense => ({
     expense_id: parseInt(expense.expense_id),
@@ -109,21 +21,6 @@ const parseExpenses = expense => ({
     date_created: expense.date_created,
     date_modified: expense.date_modified,
 });
-
-// Get expenses by account
-export const getExpensesByAccount = (request, response, next) => {
-    const { account_id, to_date } = request.query;
-
-    pool.query(expenseQueries.getExpensesByAccount, [account_id, to_date], (error, results) => {
-        if (error) {
-            return response.status(400).send({ errors: { "msg": "Error getting expenses", "param": null, "location": "query" } });
-        }
-
-        request.expenses = results.rows;
-
-        next();
-    });
-};
 
 // Get all expenses
 export const getExpenses = (request, response) => {
@@ -319,21 +216,6 @@ const parseLoan = loan => ({
     date_created: loan.date_created,
     date_modified: loan.date_modified,
 });
-
-// Get loans by account
-export const getLoansByAccount = (request, response, next) => {
-    const { account_id, to_date } = request.query;
-
-    pool.query(loanQueries.getLoansByAccount, [parseInt(account_id), to_date], (error, results) => {
-        if (error) {
-            return response.status(400).send({ errors: { "msg": "Error getting loans", "param": null, "location": "query" } });
-        }
-
-        request.loans = results.rows;
-
-        next();
-    });
-};
 
 // Get all loans
 export const getLoans = (request, response) => {
@@ -536,20 +418,6 @@ const payrollsParse = payroll => ({
     hours_worked: parseFloat(payroll.hours_worked),
 });
 
-// Get payrolls by account
-export const getPayrollsMiddleware = (request, response, next) => {
-    const { account_id, to_date } = request.query;
-
-    pool.query(payrollQueries.getPayrollsMiddleware, [account_id, to_date], (error, results) => {
-        if (error) {
-            return response.status(400).send({ errors: { "msg": "Error getting payrolls", "param": null, "location": "query" } });
-        }
-
-        request.payrolls = results.rows;
-
-        next();
-    });
-}
 // Get all payrolls
 export const getPayrolls = (request, response) => {
     const employee_id = parseInt(request.query.employee_id);
@@ -853,21 +721,6 @@ const wishlistsParse = wishlist => ({
     date_updated: wishlist.date_updated,
 });
 
-// Get wishlists by account
-export const getWishlistsByAccount = (request, response, next) => {
-    const { account_id, to_date } = request.query;
-
-    pool.query(wishlistQueries.getWishlistsByAccount, [parseInt(account_id), to_date], (error, results) => {
-        if (error) {
-            return response.status(400).send({ errors: { "msg": "Error getting wishlists", "param": null, "location": "query" } });
-        }
-
-        request.wishlists = results.rows;
-
-        next();
-    });
-};
-
 // Get all wishlists
 export const getWishlists = (request, response) => {
     const { id } = request.query;
@@ -950,21 +803,6 @@ const transfersParse = transfer => ({
     date_created: transfer.date_created,
     date_updated: transfer.date_updated,
 });
-
-// Get transfers by account
-export const getTransfersByAccount = (request, response, next) => {
-    const { account_id, to_date } = request.query;
-
-    pool.query(transferQueries.getTransfersByAccount, [parseInt(account_id), to_date], (error, results) => {
-        if (error) {
-            return response.status(400).send({ errors: { "msg": "Error getting transfers", "param": null, "location": "query" } });
-        }
-
-        request.transfers = results.rows;
-
-        next();
-    });
-};
 
 // Get transfers
 export const getTransfers = (request, response) => {
@@ -1113,21 +951,4 @@ export const deleteTransfer = async (request, response) => {
     } catch (error) {
         response.status(400).send({ errors: { msg: "Error deleting transfer", param: null, location: "query" } });
     }
-};
-
-// Get current balance of account based on deposits and withdrawals
-export const getCurrentBalance = (request, response, next) => {
-    const account_id = parseInt(request.query.account_id);
-
-    pool.query(currentBalanceQueries.getCurrentBalance, [account_id], (error, results) => {
-        if (error) {
-            return response.status(400).send({ errors: { "msg": "Error getting current balance", "param": null, "location": "query" } });
-        }
-
-        const currentBalance = parseFloat(results.rows[0].account_balance);
-
-        request.currentBalance = currentBalance;
-
-        next();
-    });
 };

@@ -1,7 +1,7 @@
 import express from 'express';
 import generateTransactions from '../generateTransactions.js';
 const router = express.Router();
-import { getCurrentBalance, getTransactionsByAccount, getExpensesByAccount, getLoansByAccount, getWishlistsByAccount, getPayrollsMiddleware, getTransfersByAccount } from '../queries.js';
+import { getCurrentBalance, getTransactionsByAccount, getExpensesByAccount, getLoansByAccount, getWishlistsByAccount, getPayrollsMiddleware, getTransfersByAccount } from '../middlewares/middlewares.js';
 import { query } from 'express-validator';
 import validateRequest from '../validateRequest.js';
 
