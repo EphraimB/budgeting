@@ -1,7 +1,7 @@
 import express from 'express';
 import { query, param, body } from 'express-validator';
 const router = express.Router();
-import { getEmployee, createEmployee, updateEmployee, deleteEmployee } from '../queries.js';
+import { getEmployee, createEmployee, updateEmployee, deleteEmployee } from '../controllers/employeesController.js';
 import validateRequest from '../validateRequest.js';
 
 router.get('/',
