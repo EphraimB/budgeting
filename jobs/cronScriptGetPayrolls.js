@@ -1,12 +1,12 @@
-const pool = require('../db');
-const fs = require('fs');
-const path = require('path');
+import pool from '../models/db.js';
+import fs from 'fs';
+import path from 'path';
 const jobsFilePath = 'jobs.json';
 import * as url from 'url';
 const __dirname = url.fileURLToPath(new URL('.', import.meta.url));
-const { workerData } = require('worker_threads');
-const { payrollQueries } = require('../queryData');
-const schedulePayrollCronJob = require('./schedulePayrollCronJob');
+import { workerData } from 'worker_threads';
+import { payrollQueries } from '../models/queryData.js';
+import schedulePayrollCronJob from './schedulePayrollCronJob.js';
 
 (async () => {
     const { employee_id } = workerData;

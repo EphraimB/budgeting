@@ -1,6 +1,6 @@
-const pool = require('../db');
-const { workerData } = require('worker_threads');
-const { transactionQueries } = require('../queryData');
+import pool from '../models/db.js';
+import { workerData } from 'worker_threads';
+import { transactionQueries } from '../models/queryData.js';
 
 (async () => {
     const { account_id, amount, description, destination_account_id } = workerData;
