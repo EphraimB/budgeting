@@ -11,7 +11,6 @@ console.log = jest.fn();
 
 import request from 'supertest';
 import app from '../app.js';
-import db from '../models/db.js';
 
 describe("Test application", () => {
     afterAll(() => {
@@ -23,8 +22,4 @@ describe("Test application", () => {
         const response = await request(app).get("/no-such-path");
         expect(response.statusCode).toBe(404);
     });
-});
-
-afterAll(async () => {
-    await db.end();
 });
