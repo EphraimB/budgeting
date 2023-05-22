@@ -1,37 +1,53 @@
 import { jest } from '@jest/globals';
 import request from 'supertest';
-import app from '../app.js';
-import { getAccounts } from '../controllers/accountsController.js';
 import { accounts } from '../models/mockData.js'; // Import the mock data
+import pg from 'pg';
 
-jest.unstable_mockModule('../models/db.js', () => {
+const mockQuery = jest.fn();
+
+jest.doMock('pg', () => {
+    const actualPg = jest.requireActual('pg');
     return {
-        getAccounts: jest.fn().mockResolvedValue(accounts), // Mock the getAccounts function
+        ...actualPg,
+        Pool: function () {
+            return {
+                connect: jest.fn(),
+                query: mockQuery,
+                end: jest.fn(),
+            };
+        },
     };
-}); // Mock the entire db module
-
-let server;
-
-beforeAll(() => {
-    server = app.listen();
-});
-
-afterAll(() => {
-    server.close();
-});
-
-afterEach(() => {
-    // Clear the mock implementation after each test
-    jest.clearAllMocks();
 });
 
 describe('GET /api/accounts', () => {
+    beforeAll(() => {
+        // Mock the breeManager module
+        jest.unstable_mockModule('../breeManager.js', () => ({
+            initializeBree: jest.fn(),
+            getBree: jest.fn(),
+        }));
+
+        // Mock the getJobs module
+        jest.unstable_mockModule('../getJobs.js', () => ({
+            default: jest.fn(),
+        }));
+    });
+
+    afterAll(() => {
+        // Restore the original console.log function
+        jest.restoreAllMocks();
+    });
+
     it('should respond with an array of accounts', async () => {
-        const mockGetAccounts = jest.fn().mockResolvedValue(accounts);
+        // Arrange
+        const mockAccounts = accounts;  // Your mock account data
+        mockQuery.mockResolvedValueOnce({ rows: mockAccounts });
 
-        getAccounts.mockImplementation(mockGetAccounts);
+        // Act
+        const app = await import('../app.js');
+        const response = await request(app.default).get('/api/accounts');
 
-        const response = await request(app).get('/api/accounts');
+        // Assert
         expect(response.statusCode).toBe(200);
         expect(response.body).toEqual(accounts);
     });
