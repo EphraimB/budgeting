@@ -2,16 +2,6 @@ import { jest } from '@jest/globals';
 import request from 'supertest';
 import { accounts } from '../models/mockData.js'; // Import the mock data
 
-const mockQuery = jest.fn();
-
-// Mock the accountsController module
-jest.unstable_mockModule('../controllers/accountsController.js', () => ({
-    getAccounts: jest.fn().mockResolvedValue(accounts),
-    createAccount: jest.fn(),
-    updateAccount: jest.fn(),
-    deleteAccount: jest.fn(),
-}));
-
 
 describe('GET /api/accounts', () => {
     beforeAll(() => {
@@ -24,6 +14,14 @@ describe('GET /api/accounts', () => {
         // Mock the getJobs module
         jest.unstable_mockModule('../getJobs.js', () => ({
             default: jest.fn(),
+        }));
+
+        // Mock the accountsController module
+        jest.unstable_mockModule('../controllers/accountsController.js', () => ({
+            getAccounts: jest.fn().mockResolvedValue(accounts),
+            createAccount: jest.fn(),
+            updateAccount: jest.fn(),
+            deleteAccount: jest.fn(),
         }));
     });
 
