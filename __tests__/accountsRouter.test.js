@@ -31,9 +31,6 @@ describe('GET /api/accounts', () => {
     });
 
     it('should respond with an array of accounts', async () => {
-        // Arrange
-        const mockAccounts = accounts;  // Your mock account data
-
         // Act
         const app = await import('../app.js');
         const response = await request(app.default).get('/api/accounts');
