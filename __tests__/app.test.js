@@ -1,3 +1,14 @@
+import {jest} from '@jest/globals';
+
+// Mock the breeManager module
+jest.unstable_mockModule('../breeManager.js', () => ({
+    startBree: jest.fn(),
+    bree: {}, // Mock the bree object with an empty object or provide any other mock implementation
+}));
+
+// Mock the console.log function
+console.log = jest.fn();
+
 import request from 'supertest';
 import app from '../app.js';
 import db from '../models/db.js';
