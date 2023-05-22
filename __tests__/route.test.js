@@ -1,32 +1,28 @@
 import { jest } from '@jest/globals';
 import request from 'supertest';
-import app from '../app.js';
-import { accounts } from '../models/mockData.js'; // Import the mock data
-
-jest.unstable_mockModule('../models/db.js', () => {
-    return {
-        getAccounts: jest.fn().mockResolvedValue(accounts), // Mock the getAccounts function
-    };
-}); // Mock the entire db module
-
-let server;
-
-beforeAll(() => {
-    server = app.listen();
-});
-
-afterAll(() => {
-    server.close();
-});
-
-afterEach(() => {
-    // Clear the mock implementation after each test
-    jest.clearAllMocks();
-});
 
 describe('GET /api', () => {
+    beforeAll(() => {
+        // Mock the breeManager module
+        jest.unstable_mockModule('../breeManager.js', () => ({
+            initializeBree: jest.fn(),
+            getBree: jest.fn(),
+        }));
+
+        // Mock the getJobs module
+        jest.unstable_mockModule('../getJobs.js', () => ({
+            default: jest.fn(),
+        }));
+    });
+
+    afterAll(() => {
+        // Restore the original console.log function
+        jest.restoreAllMocks();
+    });
+
     it('should respond with "Hello, World!"', async () => {
-        const response = await request(app).get('/api');
+        const app = await import('../app.js');
+        const response = await request(app.default).get('/api');
         expect(response.statusCode).toBe(200);
         expect(response.text).toBe('Hello World!');
     });
