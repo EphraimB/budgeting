@@ -1,4 +1,4 @@
-import {jest} from '@jest/globals';
+import { jest } from '@jest/globals';
 
 // Mock the breeManager module
 jest.unstable_mockModule('../breeManager.js', () => ({
@@ -14,6 +14,11 @@ import app from '../app.js';
 import db from '../models/db.js';
 
 describe("Test application", () => {
+    afterAll(() => {
+        // Restore the original console.log function
+        jest.restoreAllMocks();
+    });
+
     test("Not found for site 404", async () => {
         const response = await request(app).get("/no-such-path");
         expect(response.statusCode).toBe(404);
