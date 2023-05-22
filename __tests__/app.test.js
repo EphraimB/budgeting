@@ -2,16 +2,19 @@ import { jest } from '@jest/globals';
 import request from 'supertest';
 import app from '../app.js';
 
-// Mock the breeManager module
-jest.unstable_mockModule('../breeManager.js', () => ({
-    startBree: jest.fn(),
-    bree: {}, // Mock the bree object with an empty object or provide any other mock implementation
-}));
-
-// Mock the console.log function
-console.log = jest.fn();
-
 describe("Test application", () => {
+    beforeAll(() => {
+        // Mock the breeManager module
+        jest.unstable_mockModule('../breeManager.js', () => ({
+            startBree: jest.fn(),
+            bree: {}, // Mock the bree object with an empty object or provide any other mock implementation
+        }));
+
+        jest.unstable_mockModule('../getJobs.js', () => ({
+            getJobs: jest.fn(),
+        }));
+    });
+
     afterAll(() => {
         // Restore the original console.log function
         jest.restoreAllMocks();

@@ -1,6 +1,7 @@
 import { jest } from '@jest/globals';
 import request from 'supertest';
 import app from '../app.js';
+import { getAccounts } from '../controllers/accountsController.js';
 import { accounts } from '../models/mockData.js'; // Import the mock data
 
 jest.unstable_mockModule('../models/db.js', () => {
@@ -24,10 +25,14 @@ afterEach(() => {
     jest.clearAllMocks();
 });
 
-describe('GET /api', () => {
-    it('should respond with "Hello, World!"', async () => {
-        const response = await request(app).get('/api');
+describe('GET /api/accounts', () => {
+    it('should respond with an array of accounts', async () => {
+        const mockGetAccounts = jest.fn().mockResolvedValue(accounts);
+
+        getAccounts.mockImplementation(mockGetAccounts);
+
+        const response = await request(app).get('/api/accounts');
         expect(response.statusCode).toBe(200);
-        expect(response.text).toBe('Hello World!');
+        expect(response.body).toEqual(accounts);
     });
 });
