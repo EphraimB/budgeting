@@ -1,6 +1,5 @@
 import { jest } from '@jest/globals';
 import request from 'supertest';
-import app from '../app.js';
 
 describe("Test application", () => {
     beforeAll(() => {
@@ -22,7 +21,8 @@ describe("Test application", () => {
     });
 
     test("Not found for site 404", async () => {
-        const response = await request(app).get("/no-such-path");
+        const app = await import('../app.js');
+        const response = await request(app.default).get("/no-such-path");
         expect(response.statusCode).toBe(404);
     });
 });
