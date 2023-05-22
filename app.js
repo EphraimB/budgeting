@@ -17,7 +17,7 @@ import payrollEmployeeRouter from './routes/payrollEmployeeRouter.js';
 import wishlistRouter from './routes/wishlistRouter.js';
 import transferRouter from './routes/transfersRouter.js';
 import transactionsRouter from './routes/transactionsRouter.js';
-import { bree, startBree } from './breeManager.js';
+import { initializeBree } from './breeManager.js';
 
 const __dirname = fileURLToPath(new URL('.', import.meta.url));
 const require = createRequire(import.meta.url);
@@ -34,13 +34,7 @@ app.use(bodyParser.json());
 
 app.use('/api/docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
-startBree()
-  .then(() => {
-    console.log(`Bree started with ${bree.config.jobs}`);
-  })
-  .catch((error) => {
-    console.error('Failed to start Bree:', error);
-  });
+await initializeBree();
 
 // Routes
 app.use('/api/', routes);

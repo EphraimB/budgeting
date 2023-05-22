@@ -6,12 +6,13 @@ describe("Test application", () => {
     beforeAll(() => {
         // Mock the breeManager module
         jest.unstable_mockModule('../breeManager.js', () => ({
-            startBree: jest.fn(),
-            bree: {}, // Mock the bree object with an empty object or provide any other mock implementation
+            initializeBree: jest.fn(),
+            getBree: jest.fn(),
         }));
 
+        // Mock the getJobs module
         jest.unstable_mockModule('../getJobs.js', () => ({
-            getJobs: jest.fn(),
+            default: jest.fn(),
         }));
     });
 

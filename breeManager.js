@@ -2,21 +2,26 @@ import Bree from 'bree';
 import Cabin from 'cabin';
 import path from 'path';
 import * as url from 'url';
-const __dirname = url.fileURLToPath(new URL('.', import.meta.url));
-const cronjobsDir = path.join(__dirname, 'jobs/cron-jobs');
 import getJobs from './getJobs.js';
 
-export const bree = new Bree({
-    logger: new Cabin(),
-    root: cronjobsDir
-});
+const __dirname = url.fileURLToPath(new URL('.', import.meta.url));
+const cronjobsDir = path.join(__dirname, 'jobs/cron-jobs');
 
-export const startBree = async () => {
+let breeInstance = null;
+
+export const initializeBree = async () => {
     try {
+        breeInstance = new Bree({
+            logger: new Cabin(),
+            root: cronjobsDir
+        });
+
         const jobs = await getJobs();
-        bree.config.jobs = jobs;
-        await bree.start();
+        breeInstance.config.jobs = jobs;
+        await breeInstance.start();
     } catch (error) {
         console.log(error);
     }
 };
+
+export const getBree = () => breeInstance;

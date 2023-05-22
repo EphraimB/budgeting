@@ -1,4 +1,4 @@
-import { bree } from '../breeManager.js';
+import { initializeBree } from '../breeManager.js';
 import fs from 'fs';
 import path from 'path';
 import * as url from 'url';
