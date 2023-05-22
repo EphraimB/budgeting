@@ -1,4 +1,6 @@
 import { jest } from '@jest/globals';
+import request from 'supertest';
+import app from '../app.js';
 
 // Mock the breeManager module
 jest.unstable_mockModule('../breeManager.js', () => ({
@@ -8,9 +10,6 @@ jest.unstable_mockModule('../breeManager.js', () => ({
 
 // Mock the console.log function
 console.log = jest.fn();
-
-import request from 'supertest';
-import app from '../app.js';
 
 describe("Test application", () => {
     afterAll(() => {

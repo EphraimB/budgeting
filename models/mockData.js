@@ -1,4 +1,4 @@
-const accounts = [
+export const accounts = [
     {
         account_id: 1,
         account_name: 'Test Account',
@@ -17,7 +17,7 @@ const accounts = [
     }
 ];
 
-const deposits = [
+export const deposits = [
     {
         deposit_id: 1,
         account_id: 1,
@@ -36,7 +36,7 @@ const deposits = [
     }
 ];
 
-const withdrawals = [
+export const withdrawals = [
     {
         withdrawal_id: 1,
         account_id: 1,
@@ -55,7 +55,7 @@ const withdrawals = [
     }
 ];
 
-const expenses = [
+export const expenses = [
     {
         expense_id: 1,
         account_id: 1,
@@ -82,7 +82,7 @@ const expenses = [
     }
 ];
 
-const loans = [
+export const loans = [
     {
         loan_id: 1,
         account_id: 1,
@@ -98,7 +98,7 @@ const loans = [
     }
 ];
 
-const wishlist = [
+export const wishlist = [
     {
         wishlist_id: 1,
         account_id: 1,
@@ -110,46 +110,3 @@ const wishlist = [
         date_modified: '2020-01-01'
     }
 ];
-
-test('mockData should contain accounts with specific account names', () => {
-    expect(accounts).toHaveLength(2);
-    expect(accounts[0].account_name).toBe('Test Account');
-    expect(accounts[1].account_name).toBe('Test Account 2');
-});
-
-test('mockData should contain deposits with specific deposit descriptions', () => {
-    expect(deposits).toHaveLength(2);
-    expect(deposits[0].deposit_description).toBe('Test Deposit');
-    expect(deposits[1].deposit_description).toBe('Test Deposit 2');
-});
-
-test('mockData should contain withdrawals with specific withdrawal descriptions', () => {
-    expect(withdrawals).toHaveLength(2);
-    expect(withdrawals[0].withdrawal_description).toBe('Test Withdrawal');
-    expect(withdrawals[1].withdrawal_description).toBe('Test Withdrawal 2');
-});
-
-test('mockData should contain expenses with specific expense titles', () => {
-    expect(expenses).toHaveLength(2);
-    expect(expenses[0].expense_title).toBe('Test Expense');
-    expect(expenses[1].expense_title).toBe('Test Expense 2');
-});
-
-test('mockData should contain loans with specific loan titles', () => {
-    expect(loans).toHaveLength(1);
-    expect(loans[0].loan_title).toBe('Test Loan');
-});
-
-test('mockData should contain wishlist with specific wishlist titles', () => {
-    expect(wishlist).toHaveLength(1);
-    expect(wishlist[0].wishlist_title).toBe('Test Wishlist');
-});
-
-module.exports = {
-    accounts,
-    deposits,
-    withdrawals,
-    expenses,
-    loans,
-    wishlist
-};
