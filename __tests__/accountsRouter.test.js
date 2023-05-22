@@ -1,7 +1,6 @@
 import { jest } from '@jest/globals';
 import request from 'supertest';
 import { accounts } from '../models/mockData.js'; // Import the mock data
-import pg from 'pg';
 
 const mockQuery = jest.fn();
 
