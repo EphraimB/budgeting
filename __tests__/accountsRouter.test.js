@@ -4,19 +4,14 @@ import { accounts } from '../models/mockData.js'; // Import the mock data
 
 const mockQuery = jest.fn();
 
-jest.doMock('pg', () => {
-    const actualPg = jest.requireActual('pg');
-    return {
-        ...actualPg,
-        Pool: function () {
-            return {
-                connect: jest.fn(),
-                query: mockQuery,
-                end: jest.fn(),
-            };
-        },
-    };
-});
+// Mock the accountsController module
+jest.unstable_mockModule('../controllers/accountsController.js', () => ({
+    getAccounts: jest.fn().mockResolvedValue(accounts),
+    createAccount: jest.fn(),
+    updateAccount: jest.fn(),
+    deleteAccount: jest.fn(),
+}));
+
 
 describe('GET /api/accounts', () => {
     beforeAll(() => {
@@ -40,7 +35,6 @@ describe('GET /api/accounts', () => {
     it('should respond with an array of accounts', async () => {
         // Arrange
         const mockAccounts = accounts;  // Your mock account data
-        mockQuery.mockResolvedValueOnce({ rows: mockAccounts });
 
         // Act
         const app = await import('../app.js');
