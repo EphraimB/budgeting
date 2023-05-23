@@ -52,7 +52,10 @@ beforeAll(() => {
             // Respond with the new account
             response.status(200).json(newAccount);
         }),
-        deleteAccount: jest.fn(),
+        deleteAccount: jest.fn().mockImplementation((request, response) => {
+            // Response with a success message
+            response.status(200).send('Account successfully deleted');
+        }),
     }));
 
 });
@@ -123,5 +126,18 @@ describe('PUT /api/accounts/:id', () => {
         // Assert
         expect(response.statusCode).toBe(200);
         expect(response.body).toEqual(newAccount);
+    });
+});
+
+describe('DELETE /api/accounts/:id', () => {
+    it('should respond with a success message', async () => {
+        // Act
+        const app = await import('../app.js');
+        const response = await request(app.default)
+            .delete('/api/accounts/1');
+
+        // Assert
+        expect(response.statusCode).toBe(200);
+        expect(response.text).toBe('Account successfully deleted');
     });
 });
