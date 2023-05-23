@@ -1,21 +1,21 @@
 import { jest } from '@jest/globals';
 import request from 'supertest';
-import { accounts } from '../models/mockData.js'; // Import the mock data
+import { accounts } from '../../models/mockData.js'; // Import the mock data
 
 beforeAll(() => {
     // Mock the breeManager module
-    jest.unstable_mockModule('../breeManager.js', () => ({
+    jest.unstable_mockModule('../../breeManager.js', () => ({
         initializeBree: jest.fn(),
         getBree: jest.fn(),
     }));
 
     // Mock the getJobs module
-    jest.unstable_mockModule('../getJobs.js', () => ({
+    jest.unstable_mockModule('../../getJobs.js', () => ({
         default: jest.fn(),
     }));
 
     // Mock the getAccounts route function
-    jest.unstable_mockModule('../controllers/accountsController.js', () => ({
+    jest.unstable_mockModule('../../controllers/accountsController.js', () => ({
         getAccounts: jest.fn().mockImplementation((request, response) => {
             // Check if an id query parameter was provided
             if (request.query.id !== undefined) {
@@ -68,7 +68,7 @@ afterAll(() => {
 describe('GET /api/accounts', () => {
     it('should respond with an array of accounts', async () => {
         // Act
-        const app = await import('../app.js');
+        const app = await import('../../app.js');
         const response = await request(app.default).get('/api/accounts');
 
         // Assert
@@ -82,7 +82,7 @@ describe('GET /api/accounts with id query', () => {
         const id = 1;
 
         // Act
-        const app = await import('../app.js');
+        const app = await import('../../app.js');
         const response = await request(app.default).get(`/api/accounts?id=${id}`);
 
         // Assert
@@ -94,7 +94,7 @@ describe('GET /api/accounts with id query', () => {
 describe('POST /api/accounts', () => {
     it('should respond with the new account', async () => {
         // Act
-        const app = await import('../app.js');
+        const app = await import('../../app.js');
         const newAccount = {
             name: 'test',
             balance: 100,
@@ -113,7 +113,7 @@ describe('POST /api/accounts', () => {
 describe('PUT /api/accounts/:id', () => {
     it('should respond with the updated account', async () => {
         // Act
-        const app = await import('../app.js');
+        const app = await import('../../app.js');
         const newAccount = {
             name: 'test',
             balance: 100,
@@ -132,7 +132,7 @@ describe('PUT /api/accounts/:id', () => {
 describe('DELETE /api/accounts/:id', () => {
     it('should respond with a success message', async () => {
         // Act
-        const app = await import('../app.js');
+        const app = await import('../../app.js');
         const response = await request(app.default)
             .delete('/api/accounts/1');
 

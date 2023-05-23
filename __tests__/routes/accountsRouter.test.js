@@ -8,19 +8,19 @@ const createApp = async () => {
     app.use(express.json());
 
     // Import the module that uses the mock
-    const routerModule = await import('../routes/expensesRouter');
-    expensesRouter = routerModule.default;
-    app.use('/', expensesRouter);
+    const routerModule = await import('../../routes/accountsRouter');
+    accountsRouter = routerModule.default;
+    app.use('/', accountsRouter);
 
     return app;
 };
 
 beforeAll(() => {
-    jest.unstable_mockModule('../controllers/expensesController', () => ({
-        getExpenses: (req, res, next) => res.json({ message: 'success' }),
-        createExpense: (req, res, next) => res.json({ message: 'success' }),
-        updateExpense: (req, res, next) => res.json({ message: 'success' }),
-        deleteExpense: (req, res, next) => res.json({ message: 'success' }),
+    jest.unstable_mockModule('../../controllers/accountsController', () => ({
+        getAccounts: (req, res, next) => res.json({ message: 'success' }),
+        createAccount: (req, res, next) => res.json({ message: 'success' }),
+        updateAccount: (req, res, next) => res.json({ message: 'success' }),
+        deleteAccount: (req, res, next) => res.json({ message: 'success' }),
     }));
 });
 
@@ -61,25 +61,17 @@ describe('GET / with id query', () => {
 
 describe('POST /', () => {
     it('responds with json', async () => {
-        const newExpense = {
-            account_id: 1,
-            amount: 100,
-            title: 'test',
-            description: 'test',
-            frequency_type: 1,
-            frequency_type_variable: 1,
-            frequency_day_of_week: 1,
-            frequency_week_of_month: 1,
-            frequency_day_of_month: 1,
-            frequency_month_of_year: 1,
-            begin_date: new Date()
+        const newAccount = {
+            name: 'test',
+            balance: 100,
+            type: 1
         };
 
         const response = await request(app)
             .post('/')
             .set('Accept', 'application/json')
             .expect('Content-Type', /json/)
-            .send(newExpense);
+            .send(newAccount);
 
         expect(response.status).toBe(200);
         expect(response.body).toEqual({ message: 'success' });
@@ -88,25 +80,17 @@ describe('POST /', () => {
 
 describe('PUT /:id', () => {
     it('responds with json', async () => {
-        const newExpense = {
-            account_id: 1,
-            amount: 100,
-            title: 'test',
-            description: 'test',
-            frequency_type: 1,
-            frequency_type_variable: 1,
-            frequency_day_of_week: 1,
-            frequency_week_of_month: 1,
-            frequency_day_of_month: 1,
-            frequency_month_of_year: 1,
-            begin_date: new Date()
+        const newAccount = {
+            name: 'test',
+            balance: 100,
+            type: 1
         };
 
         const response = await request(app)
             .put('/1')
             .set('Accept', 'application/json')
             .expect('Content-Type', /json/)
-            .send(newExpense);
+            .send(newAccount);
 
         expect(response.status).toBe(200);
         expect(response.body).toEqual({ message: 'success' });
