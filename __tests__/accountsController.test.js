@@ -32,7 +32,16 @@ beforeAll(() => {
                 response.status(200).json(accounts);
             }
         }),
-        createAccount: jest.fn(),
+        createAccount: jest.fn().mockImplementation((request, response) => {
+            const newAccount = {
+                name: 'test',
+                balance: 100,
+                type: 1
+            };
+
+            // Respond with the new account
+            response.status(200).json(newAccount);
+        }),
         updateAccount: jest.fn(),
         deleteAccount: jest.fn(),
     }));
@@ -67,5 +76,28 @@ describe('GET /api/accounts with id query', () => {
         // Assert
         expect(response.statusCode).toBe(200);
         expect(response.body).toEqual(accounts.filter(account => account.account_id === id));
+    });
+});
+
+describe('POST /api/accounts', () => {
+    it('should respond with the new account', async () => {
+        // Act
+        const app = await import('../app.js');
+        const newAccount = {
+            name: 'test',
+            balance: 100,
+            type: 1
+        };
+        const response = await request(app.default)
+            .post('/api/accounts')
+            .send({
+                name: 'test',
+                balance: 100,
+                type: 1
+            });
+
+        // Assert
+        expect(response.statusCode).toBe(200);
+        expect(response.body).toEqual(newAccount);
     });
 });
