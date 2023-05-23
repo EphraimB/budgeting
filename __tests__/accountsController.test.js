@@ -17,10 +17,13 @@ describe('GET /api/accounts', () => {
         }));
 
         // Mock the getAccounts route function
-        jest.mock('../controllers/accountsController.js', () => ({
+        jest.unstable_mockModule('../controllers/accountsController.js', () => ({
             getAccounts: jest.fn().mockImplementation((request, response) => {
                 response.status(200).json(accounts);
             }),
+            createAccount: jest.fn(),
+            updateAccount: jest.fn(),
+            deleteAccount: jest.fn(),
         }));
     });
 
