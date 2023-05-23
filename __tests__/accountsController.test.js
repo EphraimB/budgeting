@@ -42,7 +42,16 @@ beforeAll(() => {
             // Respond with the new account
             response.status(200).json(newAccount);
         }),
-        updateAccount: jest.fn(),
+        updateAccount: jest.fn().mockImplementation((request, response) => {
+            const newAccount = {
+                name: 'test',
+                balance: 100,
+                type: 1
+            };
+
+            // Respond with the new account
+            response.status(200).json(newAccount);
+        }),
         deleteAccount: jest.fn(),
     }));
 
@@ -90,11 +99,26 @@ describe('POST /api/accounts', () => {
         };
         const response = await request(app.default)
             .post('/api/accounts')
-            .send({
-                name: 'test',
-                balance: 100,
-                type: 1
-            });
+            .send(newAccount);
+
+        // Assert
+        expect(response.statusCode).toBe(200);
+        expect(response.body).toEqual(newAccount);
+    });
+});
+
+describe('PUT /api/accounts/:id', () => {
+    it('should respond with the updated account', async () => {
+        // Act
+        const app = await import('../app.js');
+        const newAccount = {
+            name: 'test',
+            balance: 100,
+            type: 1
+        };
+        const response = await request(app.default)
+            .put('/api/accounts/1')
+            .send(newAccount);
 
         // Assert
         expect(response.statusCode).toBe(200);
