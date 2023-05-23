@@ -19,7 +19,7 @@ beforeAll(() => {
     jest.unstable_mockModule('../controllers/accountsController', () => ({
         getAccounts: (req, res, next) => res.json({ message: 'success' }),
         createAccount: (req, res, next) => res.json({ message: 'success' }),
-        updateAccount: jest.fn(),
+        updateAccount: (req, res, next) => res.json({ message: 'success' }),
         deleteAccount: jest.fn(),
     }));
 });
@@ -69,6 +69,25 @@ describe('POST /', () => {
 
         const response = await request(app)
             .post('/')
+            .set('Accept', 'application/json')
+            .expect('Content-Type', /json/)
+            .send(newAccount);
+
+        expect(response.status).toBe(200);
+        expect(response.body).toEqual({ message: 'success' });
+    });
+});
+
+describe('PUT /:id', () => {
+    it('responds with json', async () => {
+        const newAccount = {
+            name: 'test',
+            balance: 100,
+            type: 1
+        };
+
+        const response = await request(app)
+            .put('/1')
             .set('Accept', 'application/json')
             .expect('Content-Type', /json/)
             .send(newAccount);
