@@ -16,15 +16,9 @@ const createApp = async () => {
 };
 
 beforeAll(() => {
-    const newAccount = {
-        name: 'test',
-        balance: 100,
-        type: 1
-    };
-
     jest.unstable_mockModule('../controllers/accountsController', () => ({
         getAccounts: (req, res, next) => res.json({ message: 'success' }),
-        createAccount: (req, res, next) => res.json(newAccount),
+        createAccount: (req, res, next) => res.json({ message: 'success' }),
         updateAccount: jest.fn(),
         deleteAccount: jest.fn(),
     }));
@@ -80,6 +74,6 @@ describe('POST /', () => {
             .send(newAccount);
 
         expect(response.status).toBe(200);
-        expect(response.body).toEqual(newAccount);
+        expect(response.body).toEqual({ message: 'success' });
     });
 });
