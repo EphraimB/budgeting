@@ -20,7 +20,7 @@ beforeAll(() => {
         getAccounts: (req, res, next) => res.json({ message: 'success' }),
         createAccount: (req, res, next) => res.json({ message: 'success' }),
         updateAccount: (req, res, next) => res.json({ message: 'success' }),
-        deleteAccount: jest.fn(),
+        deleteAccount: (req, res, next) => res.json({ message: 'success' }),
     }));
 });
 
@@ -91,6 +91,18 @@ describe('PUT /:id', () => {
             .set('Accept', 'application/json')
             .expect('Content-Type', /json/)
             .send(newAccount);
+
+        expect(response.status).toBe(200);
+        expect(response.body).toEqual({ message: 'success' });
+    });
+});
+
+describe('DELETE /:id', () => {
+    it('responds with json', async () => {
+        const response = await request(app)
+            .delete('/1')
+            .set('Accept', 'application/json')
+            .expect('Content-Type', /json/);
 
         expect(response.status).toBe(200);
         expect(response.body).toEqual({ message: 'success' });
