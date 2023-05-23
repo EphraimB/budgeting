@@ -14,7 +14,7 @@ let accountsRouter;
 const app = express();
 app.use(express.json());
 
-describe('GET /', function () {
+describe('GET /', () => {
     beforeAll(async () => {
         // Then, import the module that uses the mock
         const routerModule = await import('../routes/accountsRouter');
