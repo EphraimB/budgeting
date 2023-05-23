@@ -14,14 +14,14 @@ let accountsRouter;
 const app = express();
 app.use(express.json());
 
-describe('GET /', () => {
-    beforeAll(async () => {
-        // Then, import the module that uses the mock
-        const routerModule = await import('../routes/accountsRouter');
-        accountsRouter = routerModule.default;
-        app.use('/', accountsRouter);
-    });
+beforeEach(async () => {
+    // Then, import the module that uses the mock
+    const routerModule = await import('../routes/accountsRouter');
+    accountsRouter = routerModule.default;
+    app.use('/', accountsRouter);
+});
 
+describe('GET /', () => {
     it('responds with json', async () => {
         const response = await request(app)
             .get('/')
@@ -34,13 +34,6 @@ describe('GET /', () => {
 });
 
 describe('GET / with id query', () => {
-    beforeAll(async () => {
-        // Then, import the module that uses the mock
-        const routerModule = await import('../routes/accountsRouter');
-        accountsRouter = routerModule.default;
-        app.use('/', accountsRouter);
-    });
-
     it('responds with json', async () => {
         const response = await request(app)
             .get('/?id=1')
