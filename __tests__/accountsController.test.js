@@ -17,12 +17,26 @@ beforeAll(() => {
     // Mock the getAccounts route function
     jest.unstable_mockModule('../controllers/accountsController.js', () => ({
         getAccounts: jest.fn().mockImplementation((request, response) => {
-            response.status(200).json(accounts);
+            // Check if an id query parameter was provided
+            if (request.query.id !== undefined) {
+                // Convert id to number, because query parameters are strings
+                const id = Number(request.query.id);
+
+                // Filter the accounts array
+                const account = accounts.filter(account => account.account_id === id);
+
+                // Respond with the filtered array
+                response.status(200).json(account);
+            } else {
+                // If no id was provided, respond with the full accounts array
+                response.status(200).json(accounts);
+            }
         }),
         createAccount: jest.fn(),
         updateAccount: jest.fn(),
         deleteAccount: jest.fn(),
     }));
+
 });
 
 afterAll(() => {
@@ -39,5 +53,19 @@ describe('GET /api/accounts', () => {
         // Assert
         expect(response.statusCode).toBe(200);
         expect(response.body).toEqual(accounts);
+    });
+});
+
+describe('GET /api/accounts with id query', () => {
+    it('should respond with an array of accounts', async () => {
+        const id = 1;
+
+        // Act
+        const app = await import('../app.js');
+        const response = await request(app.default).get(`/api/accounts?id=${id}`);
+
+        // Assert
+        expect(response.statusCode).toBe(200);
+        expect(response.body).toEqual(accounts.filter(account => account.account_id === id));
     });
 });
