@@ -32,3 +32,22 @@ describe('GET /', () => {
         expect(response.body).toEqual({ message: 'success' });
     });
 });
+
+describe('GET / with id query', () => {
+    beforeAll(async () => {
+        // Then, import the module that uses the mock
+        const routerModule = await import('../routes/accountsRouter');
+        accountsRouter = routerModule.default;
+        app.use('/', accountsRouter);
+    });
+
+    it('responds with json', async () => {
+        const response = await request(app)
+            .get('/?id=1')
+            .set('Accept', 'application/json')
+            .expect('Content-Type', /json/);
+
+        expect(response.status).toBe(200);
+        expect(response.body).toEqual({ message: 'success' });
+    });
+});
