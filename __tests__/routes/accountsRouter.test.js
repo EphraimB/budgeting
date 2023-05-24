@@ -9,7 +9,7 @@ const createApp = async () => {
 
     // Import the module that uses the mock
     const routerModule = await import('../../routes/accountsRouter');
-    accountsRouter = routerModule.default;
+    const accountsRouter = routerModule.default;
     app.use('/', accountsRouter);
 
     return app;
