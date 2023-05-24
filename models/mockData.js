@@ -114,6 +114,21 @@ export const payrolls = [
     },
 ];
 
+export const payrollDates = [
+    {
+        payroll_date_id: 1,
+        employee_id: 1,
+        payroll_start_day: 1,
+        payroll_end_day: 15,
+    },
+    {
+        payroll_date_id: 2,
+        employee_id: 1,
+        payroll_start_day: 15,
+        payroll_end_day: 31,
+    },
+];
+
 export const wishlist = [
     {
         wishlist_id: 1,
