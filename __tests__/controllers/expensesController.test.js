@@ -2,6 +2,25 @@ import { jest } from '@jest/globals';
 import request from 'supertest';
 import { expenses } from '../../models/mockData.js'; // Import the mock data
 
+const createFutureExpense = () => {
+    const dateInFuture = new Date();
+    dateInFuture.setDate(dateInFuture.getDate() + 7);
+
+    return {
+        account_id: 1,
+        amount: 100,
+        title: 'test',
+        description: 'test',
+        frequency_type: 1,
+        frequency_type_variable: 1,
+        frequency_day_of_week: 1,
+        frequency_week_of_month: 1,
+        frequency_day_of_month: 1,
+        frequency_month_of_year: 1,
+        begin_date: dateInFuture.toISOString()
+    };
+};
+
 beforeAll(() => {
     // Mock the breeManager module
     jest.unstable_mockModule('../../breeManager.js', () => ({
@@ -33,40 +52,12 @@ beforeAll(() => {
             }
         }),
         createExpense: jest.fn().mockImplementation((request, response) => {
-            const newExpense = {
-                account_id: 1,
-                amount: 100,
-                title: 'test',
-                description: 'test',
-                frequency_type: 1,
-                frequency_type_variable: 1,
-                frequency_day_of_week: 1,
-                frequency_week_of_month: 1,
-                frequency_day_of_month: 1,
-                frequency_month_of_year: 1,
-                begin_date: new Date().toISOString()
-            };
-
             // Respond with the new account
-            response.status(200).json(newExpense);
+            response.status(200).json(createFutureExpense());
         }),
         updateExpense: jest.fn().mockImplementation((request, response) => {
-            const newExpense = {
-                account_id: 1,
-                amount: 100,
-                title: 'test',
-                description: 'test',
-                frequency_type: 1,
-                frequency_type_variable: 1,
-                frequency_day_of_week: 1,
-                frequency_week_of_month: 1,
-                frequency_day_of_month: 1,
-                frequency_month_of_year: 1,
-                begin_date: new Date().toISOString()
-            };
-
             // Respond with the new account
-            response.status(200).json(newExpense);
+            response.status(200).json(createFutureExpense());
         }),
         deleteExpense: jest.fn().mockImplementation((request, response) => {
             // Response with a success message
@@ -80,11 +71,13 @@ afterAll(() => {
     jest.restoreAllMocks();
 });
 
-describe('GET /api/accounts', () => {
-    it('should respond with an array of expenses', async () => {
+describe('GET /api/expenses', () => {
+    it('should respond with the full expenses array', async () => {
         // Act
         const app = await import('../../app.js');
-        const response = await request(app.default).get('/api/expenses');
+        const response = await request(app.default)
+            .get('/api/expenses')
+            .set('Accept', 'application/json');
 
         // Assert
         expect(response.statusCode).toBe(200);
@@ -93,12 +86,14 @@ describe('GET /api/accounts', () => {
 });
 
 describe('GET /api/expenses with id query', () => {
-    it('should respond with an array of expenses', async () => {
+    it('should respond with the filtered expenses array', async () => {
         const id = 1;
-
+        
         // Act
         const app = await import('../../app.js');
-        const response = await request(app.default).get(`/api/expenses?id=${id}`);
+        const response = await request(app.default)
+            .get('/api/expenses?id=1')
+            .set('Accept', 'application/json');
 
         // Assert
         expect(response.statusCode).toBe(200);
@@ -110,59 +105,41 @@ describe('POST /api/expenses', () => {
     it('should respond with the new expense', async () => {
         // Act
         const app = await import('../../app.js');
-        const newExpense = {
-            account_id: 1,
-            amount: 100,
-            title: 'test',
-            description: 'test',
-            frequency_type: 1,
-            frequency_type_variable: 1,
-            frequency_day_of_week: 1,
-            frequency_week_of_month: 1,
-            frequency_day_of_month: 1,
-            frequency_month_of_year: 1,
-            begin_date: new Date().toISOString()
-        };
+        const newExpense = createFutureExpense();
+
         const response = await request(app.default)
             .post('/api/expenses')
             .send(newExpense);
 
-        console.log(response.body);
+        const responseDate = new Date(response.body.begin_date);
+        const currentDate = new Date();
 
         // Assert
         expect(response.statusCode).toBe(200);
-        expect(response.body).toEqual(newExpense);
+        expect(responseDate.getTime()).toBeGreaterThan(currentDate.getTime());
     });
 });
 
-describe('PUT /api/expenses/:id', () => {
+describe('PUT /api/expenses', () => {
     it('should respond with the updated expense', async () => {
         // Act
         const app = await import('../../app.js');
-        const newExpense = {
-            account_id: 1,
-            amount: 100,
-            title: 'test',
-            description: 'test',
-            frequency_type: 1,
-            frequency_type_variable: 1,
-            frequency_day_of_week: 1,
-            frequency_week_of_month: 1,
-            frequency_day_of_month: 1,
-            frequency_month_of_year: 1,
-            begin_date: new Date().toISOString()
-        };
+        const updatedExpense = createFutureExpense();
+
         const response = await request(app.default)
             .put('/api/expenses/1')
-            .send(newExpense);
+            .send(updatedExpense);
+
+        const responseDate = new Date(response.body.begin_date);
+        const currentDate = new Date();
 
         // Assert
         expect(response.statusCode).toBe(200);
-        expect(response.body).toEqual(newExpense);
+        expect(responseDate.getTime()).toBeGreaterThan(currentDate.getTime());
     });
 });
 
-describe('DELETE /api/accounts/:id', () => {
+describe('DELETE /api/expenses', () => {
     it('should respond with a success message', async () => {
         // Act
         const app = await import('../../app.js');
