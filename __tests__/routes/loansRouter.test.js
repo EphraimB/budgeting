@@ -8,20 +8,22 @@ const createApp = async () => {
     app.use(express.json());
 
     // Import the module that uses the mock
-    const routerModule = await import('../../routes/expensesRouter');
-    const expensesRouter = routerModule.default;
-    app.use('/', expensesRouter);
+    const routerModule = await import('../../routes/loansRouter');
+    const loansRouter = routerModule.default;
+    app.use('/', loansRouter);
 
     return app;
 };
 
-const createFutureExpense = () => {
+const createFutureLoan = () => {
     const dateInFuture = new Date();
     dateInFuture.setDate(dateInFuture.getDate() + 7);
 
     return {
         account_id: 1,
-        amount: 100,
+        amount: 1000,
+        plan_amount: 100,
+        recipient: 'test',
         title: 'test',
         description: 'test',
         frequency_type: 1,
@@ -35,11 +37,11 @@ const createFutureExpense = () => {
 };
 
 beforeAll(() => {
-    jest.unstable_mockModule('../../controllers/expensesController', () => ({
-        getExpenses: (req, res, next) => res.json({ message: 'success' }),
-        createExpense: (req, res, next) => res.json({ message: 'success' }),
-        updateExpense: (req, res, next) => res.json({ message: 'success' }),
-        deleteExpense: (req, res, next) => res.json({ message: 'success' }),
+    jest.unstable_mockModule('../../controllers/loansController', () => ({
+        getLoans: (req, res, next) => res.json({ message: 'success' }),
+        createLoan: (req, res, next) => res.json({ message: 'success' }),
+        updateLoan: (req, res, next) => res.json({ message: 'success' }),
+        deleteLoan: (req, res, next) => res.json({ message: 'success' }),
     }));
 });
 
@@ -84,7 +86,7 @@ describe('POST /', () => {
             .post('/')
             .set('Accept', 'application/json')
             .expect('Content-Type', /json/)
-            .send(createFutureExpense());
+            .send(createFutureLoan());
 
         expect(response.status).toBe(200);
         expect(response.body).toEqual({ message: 'success' });
@@ -97,7 +99,7 @@ describe('PUT /:id', () => {
             .put('/1')
             .set('Accept', 'application/json')
             .expect('Content-Type', /json/)
-            .send(createFutureExpense());
+            .send(createFutureLoan());
 
         expect(response.status).toBe(200);
         expect(response.body).toEqual({ message: 'success' });
