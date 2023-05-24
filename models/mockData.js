@@ -17,9 +17,9 @@ export const accounts = [
     }
 ];
 
-export const deposits = [
+export const transactions = [
     {
-        deposit_id: 1,
+        transaction_id: 1,
         account_id: 1,
         deposit_amount: 1000,
         deposit_description: 'Test Deposit',
@@ -27,18 +27,15 @@ export const deposits = [
         date_modified: '2020-01-01'
     },
     {
-        deposit_id: 2,
+        transaction_id: 2,
         account_id: 1,
         deposit_amount: 2000,
         deposit_description: 'Test Deposit 2',
         date_created: '2020-01-01',
         date_modified: '2020-01-01'
-    }
-];
-
-export const withdrawals = [
+    },
     {
-        withdrawal_id: 1,
+        transaction_id: 3,
         account_id: 1,
         withdrawal_amount: 1000,
         withdrawal_description: 'Test Withdrawal',
@@ -46,7 +43,7 @@ export const withdrawals = [
         date_modified: '2020-01-01'
     },
     {
-        withdrawal_id: 2,
+        transaction_id: 4,
         account_id: 1,
         withdrawal_amount: 200,
         withdrawal_description: 'Test Withdrawal 2',
