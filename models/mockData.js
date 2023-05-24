@@ -95,6 +95,25 @@ export const loans = [
     }
 ];
 
+export const payrolls = [
+    {
+        start_date: '2020-01-01',
+        end_date: '2020-01-15',
+        work_days: 5,
+        gross_pay: 500,
+        net_pay: 400,
+        hours_worked: 40,
+    },
+    {
+        start_date: '2020-01-15',
+        end_date: '2020-01-31',
+        work_days: 5,
+        gross_pay: 500,
+        net_pay: 400,
+        hours_worked: 40,
+    },
+];
+
 export const wishlist = [
     {
         wishlist_id: 1,
