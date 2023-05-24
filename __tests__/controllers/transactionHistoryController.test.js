@@ -2,6 +2,13 @@ import { jest } from '@jest/globals';
 import request from 'supertest';
 import { transactions } from '../../models/mockData.js'; // Import the mock data
 
+const newTransaction = {
+    amount: 100,
+    account_id: 1,
+    title: 'test',
+    description: 'test',
+};
+
 beforeAll(() => {
     // Mock the breeManager module
     jest.unstable_mockModule('../../breeManager.js', () => ({
@@ -14,47 +21,34 @@ beforeAll(() => {
         default: jest.fn(),
     }));
 
-    // Mock the getAccounts route function
-    jest.unstable_mockModule('../../controllers/accountsController.js', () => ({
-        getAccounts: jest.fn().mockImplementation((request, response) => {
+    jest.unstable_mockModule('../../controllers/transactionHistoryController.js', () => ({
+        getTransactions: jest.fn().mockImplementation((request, response) => {
             // Check if an id query parameter was provided
             if (request.query.id !== undefined) {
                 // Convert id to number, because query parameters are strings
                 const id = Number(request.query.id);
 
-                // Filter the accounts array
-                const account = accounts.filter(account => account.account_id === id);
+                // Filter the transactions array
+                const transaction = transactions.filter(transaction => transaction.transaction_id === id);
 
                 // Respond with the filtered array
-                response.status(200).json(account);
+                response.status(200).json(transaction);
             } else {
                 // If no id was provided, respond with the full accounts array
-                response.status(200).json(accounts);
+                response.status(200).json(transactions);
             }
         }),
-        createAccount: jest.fn().mockImplementation((request, response) => {
-            const newAccount = {
-                name: 'test',
-                balance: 100,
-                type: 1
-            };
-
+        createTransaction: jest.fn().mockImplementation((request, response) => {
             // Respond with the new account
-            response.status(200).json(newAccount);
+            response.status(200).json(newTransaction);
         }),
-        updateAccount: jest.fn().mockImplementation((request, response) => {
-            const newAccount = {
-                name: 'test',
-                balance: 100,
-                type: 1
-            };
-
+        updateTransaction: jest.fn().mockImplementation((request, response) => {
             // Respond with the new account
-            response.status(200).json(newAccount);
+            response.status(200).json(newTransaction);
         }),
-        deleteAccount: jest.fn().mockImplementation((request, response) => {
+        deleteTransaction: jest.fn().mockImplementation((request, response) => {
             // Response with a success message
-            response.status(200).send('Account successfully deleted');
+            response.status(200).send('Transaction successfully deleted');
         }),
     }));
 
@@ -65,79 +59,69 @@ afterAll(() => {
     jest.restoreAllMocks();
 });
 
-describe('GET /api/accounts', () => {
-    it('should respond with an array of accounts', async () => {
+describe('GET /api/transactionHistory', () => {
+    it('should respond with an array of transactions', async () => {
         // Act
         const app = await import('../../app.js');
-        const response = await request(app.default).get('/api/accounts');
+        const response = await request(app.default).get('/api/transactionHistory');
 
         // Assert
         expect(response.statusCode).toBe(200);
-        expect(response.body).toEqual(accounts);
+        expect(response.body).toEqual(transactions);
     });
 });
 
-describe('GET /api/accounts with id query', () => {
-    it('should respond with an array of accounts', async () => {
+describe('GET /api/transactionHistory with id query', () => {
+    it('should respond with an array of transactions', async () => {
         const id = 1;
 
         // Act
         const app = await import('../../app.js');
-        const response = await request(app.default).get(`/api/accounts?id=${id}`);
+        const response = await request(app.default).get(`/api/transactionHistory?id=${id}`);
 
         // Assert
         expect(response.statusCode).toBe(200);
-        expect(response.body).toEqual(accounts.filter(account => account.account_id === id));
+        expect(response.body).toEqual(transactions.filter(transaction => transaction.transaction_id === id));
     });
 });
 
-describe('POST /api/accounts', () => {
-    it('should respond with the new account', async () => {
+describe('POST /api/transactionHistory', () => {
+    it('should respond with the new transactions', async () => {
         // Act
         const app = await import('../../app.js');
-        const newAccount = {
-            name: 'test',
-            balance: 100,
-            type: 1
-        };
         const response = await request(app.default)
-            .post('/api/accounts')
-            .send(newAccount);
+            .post('/api/transactionHistory')
+            .send(newTransaction);
 
         // Assert
         expect(response.statusCode).toBe(200);
-        expect(response.body).toEqual(newAccount);
+        expect(response.body).toEqual(newTransaction);
     });
 });
 
-describe('PUT /api/accounts/:id', () => {
-    it('should respond with the updated account', async () => {
+describe('PUT /api/transactionHistory/:id', () => {
+    it('should respond with the updated transaction', async () => {
         // Act
         const app = await import('../../app.js');
-        const newAccount = {
-            name: 'test',
-            balance: 100,
-            type: 1
-        };
         const response = await request(app.default)
-            .put('/api/accounts/1')
-            .send(newAccount);
+            .put('/api/transactionHistory/1')
+            .send(newTransaction);
 
         // Assert
         expect(response.statusCode).toBe(200);
-        expect(response.body).toEqual(newAccount);
+        expect(response.body).toEqual(newTransaction);
     });
 });
 
-describe('DELETE /api/accounts/:id', () => {
+describe('DELETE /api/transactionHistory/:id', () => {
     it('should respond with a success message', async () => {
         // Act
         const app = await import('../../app.js');
         const response = await request(app.default)
-            .delete('/api/accounts/1');
+            .delete('/api/transactionHistory/1');
 
         // Assert
         expect(response.statusCode).toBe(200);
-        expect(response.text).toBe('Account successfully deleted');
+        expect(response.text).toBe('Transaction successfully deleted');
     });
 });

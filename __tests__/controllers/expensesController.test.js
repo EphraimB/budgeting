@@ -33,7 +33,6 @@ beforeAll(() => {
         default: jest.fn(),
     }));
 
-    // Mock the getAccounts route function
     jest.unstable_mockModule('../../controllers/expensesController.js', () => ({
         getExpenses: jest.fn().mockImplementation((request, response) => {
             // Check if an id query parameter was provided
@@ -41,7 +40,7 @@ beforeAll(() => {
                 // Convert id to number, because query parameters are strings
                 const id = Number(request.query.id);
 
-                // Filter the accounts array
+                // Filter the expenses array
                 const expense = expenses.filter(expense => expense.expense_id === id);
 
                 // Respond with the filtered array

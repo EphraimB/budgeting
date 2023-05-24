@@ -14,7 +14,6 @@ beforeAll(() => {
         default: jest.fn(),
     }));
 
-    // Mock the getAccounts route function
     jest.unstable_mockModule('../../controllers/accountsController.js', () => ({
         getAccounts: jest.fn().mockImplementation((request, response) => {
             // Check if an id query parameter was provided

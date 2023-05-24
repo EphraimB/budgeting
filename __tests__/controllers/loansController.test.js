@@ -35,7 +35,6 @@ beforeAll(() => {
         default: jest.fn(),
     }));
 
-    // Mock the getAccounts route function
     jest.unstable_mockModule('../../controllers/loansController.js', () => ({
         getLoans: jest.fn().mockImplementation((request, response) => {
             // Check if an id query parameter was provided
@@ -43,7 +42,7 @@ beforeAll(() => {
                 // Convert id to number, because query parameters are strings
                 const id = Number(request.query.id);
 
-                // Filter the accounts array
+                // Filter the loans array
                 const loan = loans.filter(loan => loan.loan_id === id);
 
                 // Respond with the filtered array
