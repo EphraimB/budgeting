@@ -72,7 +72,7 @@ describe('GET /api/wishlists', () => {
     });
 });
 
-describe('GET /api/loans with id query', () => {
+describe('GET /api/wishlists with id query', () => {
     it('should respond with the filtered wishlist array', async () => {
         const id = 1;
 
