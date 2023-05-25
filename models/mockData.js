@@ -1,3 +1,15 @@
+export const employees = [
+    {
+        employee_id: 1,
+        name: 'Test Employee',
+        hourly_rate: 10,
+        regular_hours: 40,
+        vacation_days: 10,
+        sick_days: 10,
+        work_schedule: '0111100',
+    }
+];
+
 export const accounts = [
     {
         account_id: 1,
