@@ -141,7 +141,7 @@ export const payrollDates = [
     },
 ];
 
-export const wishlist = [
+export const wishlists = [
     {
         wishlist_id: 1,
         account_id: 1,
