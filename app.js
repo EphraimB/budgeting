@@ -1,7 +1,4 @@
 import express from 'express';
-import fs from 'fs';
-import path from 'path';
-import { fileURLToPath } from 'url';
 import bodyParser from 'body-parser';
 import swaggerUi from 'swagger-ui-express';
 import { createRequire } from 'module';
@@ -19,14 +16,8 @@ import transferRouter from './routes/transfersRouter.js';
 import transactionsRouter from './routes/transactionsRouter.js';
 import { initializeBree } from './breeManager.js';
 
-const __dirname = fileURLToPath(new URL('.', import.meta.url));
 const require = createRequire(import.meta.url);
 const swaggerDocument = require('./views/swagger.json');
-const cronjobsDir = path.join(__dirname, 'jobs/cron-jobs');
-
-if (!fs.existsSync(cronjobsDir)) {
-  fs.mkdirSync(cronjobsDir);
-}
 
 const app = express();
 
