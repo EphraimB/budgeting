@@ -20,7 +20,7 @@ jest.unstable_mockModule('cabin', () => ({
 }));
 
 jest.unstable_mockModule('../../getJobs', () => ({
-    getJobs: jest.fn(),
+    default: jest.fn(),
 }));
 
 describe('breeManager', () => {
