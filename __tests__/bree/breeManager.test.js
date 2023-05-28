@@ -38,6 +38,9 @@ describe('breeManager', () => {
         expect(getBree().config.jobs).toEqual([
             { name: 'mockJob' }, // Expect the initial jobs from the mock config
         ]);
-        expect(getBree().start).toHaveBeenCalled();
+
+        async () => {
+            expect(await getBree().start).toHaveBeenCalled();
+        };
     });
 });
