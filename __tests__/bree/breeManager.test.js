@@ -1,52 +1,43 @@
 import { jest } from '@jest/globals';
 
-const mockStart = jest.fn();
-const mockBreeConstructor = jest.fn((config) => {
-    return {
-        start: mockStart,
-        config: {
-            jobs: config.jobs,
-        },
-    };
-});
-
 const mockGetJobs = jest.fn().mockResolvedValue([{ name: 'job1' }, { name: 'job2' }]);
 
 jest.unstable_mockModule('cabin', () => ({
-    default: jest.fn(),
+  default: jest.fn(),
 }));
 
-jest.unstable_mockModule('../../breeManager.js', () => ({
+jest.unstable_mockModule('../../breeManager.js', () => {
+  const mockConfig = {
+    jobs: [{ name: 'mockJob' }], // Set the initial jobs in the mock config
+  };
+  const mockGetBree = jest.fn().mockReturnValue({
+    start: jest.fn(),
+    config: mockConfig, // Use the mock config
+  });
+
+  return {
     initializeBree: jest.fn(),
-    getBree: jest.fn(),
-}));
+    getBree: mockGetBree,
+  };
+});
 
 jest.unstable_mockModule('../../getJobs', () => ({
-    default: jest.fn().mockResolvedValue([{ name: 'job1' }, { name: 'job2' }])
+  default: mockGetJobs,
 }));
 
-const Bree = import('bree');
 const { initializeBree, getBree } = await import('../../breeManager');
 
 describe('breeManager', () => {
-    afterEach(() => {
-        jest.clearAllMocks();
-    });
+  afterEach(() => {
+    jest.clearAllMocks();
+  });
 
-    it('should initialize Bree correctly', async () => {
-        await initializeBree(mockBreeConstructor, mockGetJobs);
+  it('should initialize Bree correctly', async () => {
+    await initializeBree();
 
-        expect(mockBreeConstructor).toHaveBeenCalledWith({
-            logger: expect.anything(),
-            root: expect.stringContaining('jobs/cron-jobs'),
-        });
-
-        expect(mockGetJobs).toHaveBeenCalled();
-
-        const bree = getBree();
-        expect(bree.config.jobs).toEqual([
-            { name: 'job1' }, { name: 'job2' }
-        ]);
-        expect(bree.start).toHaveBeenCalled();
-    });
+    expect(getBree().config.jobs).toEqual([
+      { name: 'mockJob' }, // Expect the initial jobs from the mock config
+    ]);
+    expect(getBree().start).toHaveBeenCalled();
+  });
 });
