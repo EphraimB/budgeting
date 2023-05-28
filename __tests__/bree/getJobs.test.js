@@ -8,16 +8,14 @@ const __dirname = path.dirname(__filename);
 const jobsFilePath = path.resolve(__dirname, 'jobs.json');
 
 // Mock the getEmployeesData function
-jest.doMock('../../getJobs.js', () => {
-    const actualModule = require('../../getJobs.js');
-    return {
-        getJobs: actualModule,
-        getEmployeesData: jest.fn().mockResolvedValue([
-            { employee_id: 1 },
-            { employee_id: 2 },
-        ]),
-    };
-});
+jest.unstable_mockModule('../../getJobs.js', () => ({
+    getJobs: jest.requireActual('../../getJobs.js'),
+    getEmployeesData: jest.fn().mockResolvedValue([
+        { employee_id: 1 },
+        { employee_id: 2 },
+    ]),
+}));
+
 
 // Mock fs module
 jest.unstable_mockModule('fs', () => ({
@@ -30,8 +28,7 @@ jest.unstable_mockModule('fs', () => ({
 describe('getJobs', () => {
     it('should return an empty jobs object when no jobs.json file exists', async () => {
         const { getJobs } = await import('../../getJobs.js');
-
-        const { jobs } = await getJobs(jobsFilePath);
+        const jobs = await getJobs(jobsFilePath);
 
         expect(jobs).toEqual([
             { name: 'payroll-checker-employee-1', cron: '0 0 1 * *', path: '/app/jobs/cronScriptGetPayrolls.js', worker: { workerData: { employee_id: 1 } } },
