@@ -1,7 +1,5 @@
 import { jest } from '@jest/globals';
 
-const mockGetJobs = jest.fn().mockResolvedValue([{ name: 'job1' }, { name: 'job2' }]);
-
 jest.unstable_mockModule('cabin', () => ({
     default: jest.fn(),
 }));
@@ -22,7 +20,7 @@ jest.unstable_mockModule('../../breeManager.js', () => {
 });
 
 jest.unstable_mockModule('../../getJobs', () => ({
-    default: mockGetJobs,
+    default: jest.fn(),
 }));
 
 const { initializeBree, getBree } = await import('../../breeManager');
