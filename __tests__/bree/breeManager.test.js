@@ -1,4 +1,10 @@
 import { jest } from '@jest/globals';
+import fs from 'fs';
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+const __dirname = fileURLToPath(new URL('.', import.meta.url));
+const cronjobsDir = path.join(__dirname, 'cron-jobs');
 
 jest.unstable_mockModule('cabin', () => ({
     default: jest.fn(),
@@ -40,5 +46,24 @@ describe('breeManager', () => {
         async () => {
             expect(await getBree().start).toHaveBeenCalled();
         };
+    });
+});
+
+describe('cronjobsDir', () => {
+    beforeAll(() => {
+        if (!fs.existsSync(cronjobsDir)) {
+            fs.mkdirSync(cronjobsDir);
+        }
+    });
+
+    afterAll(() => {
+        fs.rmSync(cronjobsDir, { recursive: true });
+    });
+
+    it('should create the directory if it does not exist', () => {
+        const cronjobsDir = path.join(__dirname, 'cron-jobs');
+
+        // Verify that the directory now exists
+        expect(fs.existsSync(cronjobsDir)).toBe(true);
     });
 });
