@@ -1,16 +1,16 @@
 import { jest } from '@jest/globals';
-import Cabin from 'cabin';
-import getJobs from '../../getJobs';
 
 const mockStart = jest.fn();
-jest.unstable_mockModule('bree', () => ({
-    default: jest.fn().mockImplementation((config) => {
-        return {
-            config,
-            start: mockStart,
-        };
-    })
-}));
+const mockBreeConstructor = jest.fn((config) => {
+    return {
+        start: mockStart,
+        config: {
+            jobs: config.jobs,
+        },
+    };
+});
+
+const mockGetJobs = jest.fn().mockResolvedValue([{ name: 'job1' }, { name: 'job2' }]);
 
 jest.unstable_mockModule('cabin', () => ({
     default: jest.fn(),
@@ -34,14 +34,14 @@ describe('breeManager', () => {
     });
 
     it('should initialize Bree correctly', async () => {
-        await initializeBree();
+        await initializeBree(mockBreeConstructor, mockGetJobs);
 
-        expect(Bree).toHaveBeenCalledWith({
-            logger: expect.any(Cabin),
+        expect(mockBreeConstructor).toHaveBeenCalledWith({
+            logger: expect.anything(),
             root: expect.stringContaining('jobs/cron-jobs'),
         });
 
-        expect(getJobs).toHaveBeenCalled();
+        expect(mockGetJobs).toHaveBeenCalled();
 
         const bree = getBree();
         expect(bree.config.jobs).toEqual([
