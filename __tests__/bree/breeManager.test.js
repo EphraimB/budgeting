@@ -1,25 +1,16 @@
 import { jest } from '@jest/globals';
-import { initializeBree, getBree } from '../../breeManager';
+import Cabin from 'cabin';
+import getJobs from '../../getJobs';
 
-let breeArgs;
-let jobsArgs;
-let breeStart;
-
-jest.unstable_mockModule('bree', () => {
-    return {
-        default: jest.fn().mockImplementation((...args) => {
-            console.log('Bree mock called');  // <-- Add this
-            breeArgs = args[0]; // Capture the arguments
-            breeStart = jest.fn();
-            return {
-                config: {
-                    jobs: [],
-                },
-                start: breeStart,
-            };
-        }),
-    };
-});
+const mockStart = jest.fn();
+jest.unstable_mockModule('bree', () => ({
+    default: jest.fn().mockImplementation((config) => {
+        return {
+            config,
+            start: mockStart,
+        };
+    })
+}));
 
 jest.unstable_mockModule('cabin', () => ({
     default: jest.fn(),
@@ -30,14 +21,12 @@ jest.unstable_mockModule('../../breeManager.js', () => ({
     getBree: jest.fn(),
 }));
 
-jest.unstable_mockModule('../../getJobs.js', () => ({
-    default: jest.fn().mockResolvedValue([{ name: 'job1' }, { name: 'job2' }]),
+jest.unstable_mockModule('../../getJobs', () => ({
+    default: jest.fn().mockResolvedValue([{ name: 'job1' }, { name: 'job2' }])
 }));
 
-jest.unstable_mockModule('fs', () => ({
-    existsSync: jest.fn().mockReturnValue(false),
-    mkdirSync: jest.fn(),
-}));
+const Bree = import('bree');
+const { initializeBree, getBree } = await import('../../breeManager');
 
 describe('breeManager', () => {
     afterEach(() => {
@@ -47,17 +36,17 @@ describe('breeManager', () => {
     it('should initialize Bree correctly', async () => {
         await initializeBree();
 
-        expect(breeArgs).toEqual({
-            logger: expect.anything(),
+        expect(Bree).toHaveBeenCalledWith({
+            logger: expect.any(Cabin),
             root: expect.stringContaining('jobs/cron-jobs'),
         });
 
-        expect(jobsArgs).toHaveBeenCalled();
+        expect(getJobs).toHaveBeenCalled();
 
-        const breeInstance = getBree();
-        expect(breeInstance.config.jobs).toEqual([
+        const bree = getBree();
+        expect(bree.config.jobs).toEqual([
             { name: 'job1' }, { name: 'job2' }
         ]);
-        expect(breeStart).toHaveBeenCalled();
+        expect(bree.start).toHaveBeenCalled();
     });
 });
