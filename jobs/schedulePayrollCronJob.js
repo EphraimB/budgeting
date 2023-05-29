@@ -53,13 +53,13 @@ const schedulePayrollCronJob = (payrollData, account_id) => {
     jobs = jobs.filter(job => job.name !== "payroll-checker");
 
     // Write the updated jobs array to the file
-    fs.writeFileSync(jobsFilePath, JSON.stringify(jobs, null, 2), (err) => {
-        if (err) {
-            console.error(err);
-            return reject(err);
-        }
+    try {
+        fs.writeFileSync(jobsFilePath, JSON.stringify(jobs, null, 2));
         console.log(`Updated jobs.json file`);
-    });
+        console.log(jobs);
+    } catch (err) {
+        console.error(err);
+    }
 
     (async () => {
         await getBree().add(newJob);
