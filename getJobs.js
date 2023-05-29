@@ -21,6 +21,7 @@ export const getEmployeesData = () => {
 // Main function to get jobs
 export const getJobs = async (employeeData, getPayrolls = getPayrollsFunction, jobsFilePath = 'jobs.json') => {
     try {
+        employeeData = employeeData || await getEmployeesData();
         let jobs = [];
 
         // Function to merge the payrollCheckerjobs array with the existing jobs array
