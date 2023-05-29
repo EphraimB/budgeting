@@ -3,7 +3,7 @@ import fs from 'fs';
 import path from 'path';
 import Cabin from 'cabin';
 import { fileURLToPath } from 'url';
-import getJobs from './getJobs.js';
+import { getJobs } from './getJobs.js';
 
 const __dirname = fileURLToPath(new URL('.', import.meta.url));
 const cronjobsDir = path.join(__dirname, 'jobs/cron-jobs');

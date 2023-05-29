@@ -1,5 +1,5 @@
 import { v4 as uuidv4 } from 'uuid';
-import { initializeBree } from '../breeManager.js';
+import { getBree } from '../breeManager.js';
 import fs from 'fs';
 import path from 'path';
 import * as url from 'url';
@@ -62,8 +62,9 @@ const schedulePayrollCronJob = (payrollData, account_id) => {
     });
 
     (async () => {
-        await bree.add(newJob);
-        await bree.start(newJob.name);
+        console.log(newJob);
+        await getBree().add(newJob);
+        await getBree().start(newJob.name);
     })();
 
 };
