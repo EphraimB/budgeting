@@ -1,10 +1,10 @@
 import pool from "./models/db.js";
 import { payrollQueries } from "./models/queryData.js";
 import fs from "fs";
-import { getPayrolls } from "./getPayrolls.js";
+import getPayrollsFunction from "./getPayrolls.js";
 
 // Function to fetch employee data from the database
-const getEmployeesData = () => {
+export const getEmployeesData = () => {
     return new Promise((resolve, reject) => {
         pool.query(payrollQueries.getEmployees, (error, results) => {
             if (error) {
@@ -19,10 +19,8 @@ const getEmployeesData = () => {
 };
 
 // Main function to get jobs
-export const getJobs = async (jobsFilePath = 'jobs.json') => {
+export const getJobs = async (employeeData, getPayrolls = getPayrollsFunction, jobsFilePath = 'jobs.json') => {
     try {
-        const employeeData = await getEmployeesData();
-
         let jobs = [];
 
         // Function to merge the payrollCheckerjobs array with the existing jobs array

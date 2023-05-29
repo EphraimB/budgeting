@@ -2,10 +2,19 @@ import fs from 'fs';
 import path from 'path';
 import { jest } from '@jest/globals';
 import { fileURLToPath } from 'url';
+import { getJobs } from '../../getJobs.js'; // Adjust the path as needed
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const jobsFilePath = path.resolve(__dirname, 'jobs.json');
+
+// Mocked employee data
+const employeeData = [
+    { employee_id: 1 },
+    { employee_id: 2 },
+];
+
+const getPayrolls = jest.fn();
 
 describe('getJobs', () => {
     beforeAll(() => {
@@ -19,18 +28,7 @@ describe('getJobs', () => {
     });
 
     it('should return just the payroll objects when no jobs.json file exists', async () => {
-        // Mock getJobs.js
-        jest.unstable_mockModule('../../getJobs.js', () => ({
-            getJobs: jest.fn().mockResolvedValue([
-                { name: 'payroll-checker-employee-1', cron: '0 0 1 * *', path: '/app/jobs/cronScriptGetPayrolls.js', worker: { workerData: { employee_id: 1 } } },
-                { name: 'payroll-checker-employee-2', cron: '0 0 1 * *', path: '/app/jobs/cronScriptGetPayrolls.js', worker: { workerData: { employee_id: 2 } } }
-            ]),
-        }));
-
-        // Import getJobs dynamically after mocking
-        const { getJobs } = await import('../../getJobs.js');
-
-        const jobs = await getJobs(jobsFilePath);
+        const jobs = await getJobs(employeeData, getPayrolls, jobsFilePath);
 
         expect(jobs).toEqual([
             { name: 'payroll-checker-employee-1', cron: '0 0 1 * *', path: '/app/jobs/cronScriptGetPayrolls.js', worker: { workerData: { employee_id: 1 } } },
@@ -56,18 +54,7 @@ describe('getJobs', () => {
             }
         ]), 'utf8');
 
-        // Mock getJobs.js
-        jest.unstable_mockModule('../../getJobs.js', () => ({
-            getJobs: jest.fn().mockResolvedValue([
-                { name: 'payroll-checker-employee-1', cron: '0 0 1 * *', path: '/app/jobs/cronScriptGetPayrolls.js', worker: { workerData: { employee_id: 1 } } },
-                { name: 'payroll-checker-employee-2', cron: '0 0 1 * *', path: '/app/jobs/cronScriptGetPayrolls.js', worker: { workerData: { employee_id: 2 } } }
-            ]),
-        }));
-
-        // Import getJobs dynamically after mocking
-        const { getJobs } = await import('../../getJobs.js');
-
-        const jobs = await getJobs(jobsFilePath);
+        const jobs = await getJobs(employeeData, getPayrolls, jobsFilePath);
 
         console.log(jobs);
 
