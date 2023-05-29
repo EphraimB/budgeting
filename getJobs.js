@@ -1,7 +1,7 @@
 import pool from "./models/db.js";
 import { payrollQueries } from "./models/queryData.js";
 import fs from "fs";
-import getPayrollsFunction from "./getPayrolls.js";
+import { getPayrolls as getPayrollsFunction } from "./getPayrolls.js";
 
 // Function to fetch employee data from the database
 export const getEmployeesData = () => {
