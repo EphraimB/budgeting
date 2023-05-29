@@ -7,17 +7,6 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const jobsFilePath = path.resolve(__dirname, 'jobs.json');
 
-// Mock the getEmployeesData function
-jest.unstable_mockModule('../../getJobs.js', () => ({
-    getJobs: jest.requireActual('../../getJobs.js'),
-    getEmployeesData: jest.fn().mockResolvedValue([
-        { employee_id: 1 },
-        { employee_id: 2 },
-    ]),
-}));
-
-
-// Mock fs module
 jest.unstable_mockModule('fs', () => ({
     default: jest.requireActual('fs'),
     existsSync: jest.fn((path) => path === jobsFilePath),
@@ -27,7 +16,18 @@ jest.unstable_mockModule('fs', () => ({
 
 describe('getJobs', () => {
     it('should return an empty jobs object when no jobs.json file exists', async () => {
+        // Mock getJobs.js
+        jest.doMock('../../getJobs.js', () => ({
+            getEmployeesData: jest.fn().mockResolvedValue([
+                { employee_id: 1 },
+                { employee_id: 2 },
+            ]),
+            getJobs: jest.requireActual('../../getJobs.js'),
+        }));
+
+        // Import getJobs dynamically after mocking
         const { getJobs } = await import('../../getJobs.js');
+
         const jobs = await getJobs(jobsFilePath);
 
         expect(jobs).toEqual([
