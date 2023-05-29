@@ -14,7 +14,7 @@ import payrollEmployeeRouter from './routes/payrollEmployeeRouter.js';
 import wishlistRouter from './routes/wishlistRouter.js';
 import transferRouter from './routes/transfersRouter.js';
 import transactionsRouter from './routes/transactionsRouter.js';
-import { getBree } from './breeManager.js';
+import { initializeBree, getBree } from './breeManager.js';
 
 const require = createRequire(import.meta.url);
 const swaggerDocument = require('./views/swagger.json');
@@ -25,7 +25,7 @@ app.use(bodyParser.json());
 
 app.use('/api/docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
-await getBree();
+await initializeBree();
 
 // Routes
 app.use('/api/', routes);

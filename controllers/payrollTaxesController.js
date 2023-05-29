@@ -1,6 +1,6 @@
 import pool from '../models/db.js';
 import { payrollQueries } from '../models/queryData.js';
-import getPayrollsForMonth from '../getPayrolls.js';
+import { getPayrolls } from '../getPayrolls.js';
 
 const payrollTaxesParse = payrollTax => ({
     payroll_taxes_id: parseInt(payrollTax.payroll_taxes_id),
@@ -40,7 +40,7 @@ export const createPayrollTax = (request, response) => {
             return response.status(400).send({ errors: { "msg": "Error creating payroll tax", "param": null, "location": "query" } });
         }
 
-        getPayrollsForMonth(employee_id);
+        getPayrolls(employee_id);
 
         // Parse the data to correct format and return an object
         const payrollTaxes = results.rows.map(payrollTax => payrollTaxesParse(payrollTax));
@@ -59,7 +59,7 @@ export const updatePayrollTax = (request, response) => {
             return response.status(400).send({ errors: { "msg": "Error updating payroll tax", "param": null, "location": "query" } });
         }
 
-        getPayrollsForMonth(employee_id);
+        getPayrolls(employee_id);
 
         // Parse the data to correct format and return an object
         const payrollTaxes = results.rows.map(payrollTax => payrollTaxesParse(payrollTax));
@@ -78,7 +78,7 @@ export const deletePayrollTax = (request, response) => {
             return response.status(400).send({ errors: { "msg": "Error deleting payroll tax", "param": null, "location": "query" } });
         }
 
-        getPayrollsForMonth(employee_id);
+        getPayrolls(employee_id);
 
         response.status(200).send("Successfully deleted payroll tax");
     });

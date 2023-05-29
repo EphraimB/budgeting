@@ -1,7 +1,7 @@
 import pool from "./models/db.js";
 import { payrollQueries } from "./models/queryData.js";
 import fs from "fs";
-import getPayrolls from "./getPayrolls.js";
+import { getPayrolls } from "./getPayrolls.js";
 
 // Function to fetch employee data from the database
 export const getEmployeesData = () => {
@@ -44,7 +44,7 @@ export const getJobs = async (jobsFilePath = 'jobs.json') => {
             path: "/app/jobs/cronScriptGetPayrolls.js",
             worker: {
                 workerData: {
-                    employee_id: employee.employee_id,
+                    employee_id: 1,
                 },
             },
         }));

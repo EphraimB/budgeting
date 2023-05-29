@@ -1,6 +1,6 @@
 import pool from '../models/db.js';
 import { payrollQueries } from '../models/queryData.js';
-import getPayrollsForMonth from '../getPayrolls.js';
+import { getPayrolls } from '../getPayrolls.js';
 
 const employeeParse = employee => ({
     employee_id: parseInt(employee.employee_id),
@@ -56,7 +56,7 @@ export const updateEmployee = (request, response) => {
             return response.status(400).send({ errors: { "msg": "Error updating employee", "param": null, "location": "query" } });
         }
 
-        getPayrollsForMonth(employee_id);
+        getPayrolls(employee_id);
 
         // Parse the data to correct format and return an object
         const employees = results.rows.map(employee => employeeParse(employee));
@@ -92,7 +92,7 @@ export const deleteEmployee = (request, response) => {
                         return response.status(400).send({ errors: { msg: 'Error deleting employee', param: null, location: 'query' } });
                     }
 
-                    getPayrollsForMonth(employee_id);
+                    getPayrolls(employee_id);
 
                     response.status(200).send('Successfully deleted employee');
                 });

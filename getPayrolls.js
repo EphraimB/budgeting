@@ -19,7 +19,7 @@ const deleteCronJobFile = (jobName) => {
   });
 };
 
-const getPayrolls = async (employee_id) => {
+export const getPayrolls = async (employee_id) => {
   console.log('Running thread:', employee_id);
 
   try {
@@ -58,5 +58,3 @@ const getPayrolls = async (employee_id) => {
     console.error('Error in thread:', error);
   }
 };
-
-export default getPayrolls;

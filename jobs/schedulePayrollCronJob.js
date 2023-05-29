@@ -62,7 +62,6 @@ const schedulePayrollCronJob = (payrollData, account_id) => {
     });
 
     (async () => {
-        console.log(newJob);
         await getBree().add(newJob);
         await getBree().start(newJob.name);
     })();

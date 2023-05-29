@@ -1,6 +1,6 @@
 import pool from '../models/db.js';
 import { payrollQueries } from '../models/queryData.js';
-import getPayrollsForMonth from '../getPayrolls.js';
+import { getPayrolls } from '../getPayrolls.js';
 
 const payrollDatesParse = payrollDate => ({
     payroll_date_id: parseInt(payrollDate.payroll_date_id),
@@ -39,7 +39,7 @@ export const createPayrollDate = (request, response) => {
             return response.status(400).send({ errors: { "msg": "Error creating payroll date", "param": null, "location": "query" } });
         }
 
-        getPayrollsForMonth(employee_id);
+        getPayrolls(employee_id);
 
         // Parse the data to correct format and return an object
         const payrollDates = results.rows.map(payrollDate => payrollDatesParse(payrollDate));
@@ -62,7 +62,7 @@ export const updatePayrollDate = (request, response) => {
             return response.status(400).send({ errors: { "msg": "Error updating payroll date", "param": null, "location": "query" } });
         }
 
-        getPayrollsForMonth(employee_id);
+        getPayrolls(employee_id);
 
         // Parse the data to correct format and return an object
         const payrollDates = results.rows.map(payrollDate => payrollDatesParse(payrollDate));
@@ -86,7 +86,7 @@ export const deletePayrollDate = (request, response) => {
             return response.status(400).send({ errors: { "msg": "Error deleting payroll date", "param": null, "location": "query" } });
         }
 
-        getPayrollsForMonth(employee_id);
+        getPayrolls(employee_id);
 
         response.status(200).send("Successfully deleted payroll date");
     });
