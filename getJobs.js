@@ -4,7 +4,7 @@ import fs from "fs";
 import { getPayrolls } from "./getPayrolls.js";
 
 // Function to fetch employee data from the database
-export const getEmployeesData = () => {
+const getEmployeesData = () => {
     return new Promise((resolve, reject) => {
         pool.query(payrollQueries.getEmployees, (error, results) => {
             if (error) {
