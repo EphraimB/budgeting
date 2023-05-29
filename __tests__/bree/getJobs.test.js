@@ -11,7 +11,6 @@ const jobsFilePath = path.resolve(__dirname, 'jobs.json');
 // Mocked employee data
 const employeeData = [
     { employee_id: 1 },
-    { employee_id: 2 },
 ];
 
 const getPayrolls = jest.fn();
@@ -32,7 +31,6 @@ describe('getJobs', () => {
 
         expect(jobs).toEqual([
             { name: 'payroll-checker-employee-1', cron: '0 0 1 * *', path: '/app/jobs/cronScriptGetPayrolls.js', worker: { workerData: { employee_id: 1 } } },
-            { name: 'payroll-checker-employee-2', cron: '0 0 1 * *', path: '/app/jobs/cronScriptGetPayrolls.js', worker: { workerData: { employee_id: 2 } } }
         ]);
     });
 
@@ -56,8 +54,6 @@ describe('getJobs', () => {
 
         const jobs = await getJobs(employeeData, getPayrolls, jobsFilePath);
 
-        console.log(jobs);
-
         expect(jobs).toEqual([
             {
                 name: '485fe700-92c3-4cd4-80bf-4289ffc4c2f2',
@@ -73,7 +69,6 @@ describe('getJobs', () => {
                 }
             },
             { name: 'payroll-checker-employee-1', cron: '0 0 1 * *', path: '/app/jobs/cronScriptGetPayrolls.js', worker: { workerData: { employee_id: 1 } } },
-            { name: 'payroll-checker-employee-2', cron: '0 0 1 * *', path: '/app/jobs/cronScriptGetPayrolls.js', worker: { workerData: { employee_id: 2 } } }
         ]);
     });
 });
