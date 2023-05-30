@@ -45,7 +45,7 @@ export const getJobs = async (employeeData, getPayrolls, jobsFilePath) => {
             path: "/app/jobs/cronScriptGetPayrolls.js",
             worker: {
                 workerData: {
-                    employee_id: 1,
+                    employee_id: employee.employee_id,
                 },
             },
         }));
