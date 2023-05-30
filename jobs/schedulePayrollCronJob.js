@@ -5,10 +5,10 @@ import path from 'path';
 import * as url from 'url';
 const __dirname = url.fileURLToPath(new URL('.', import.meta.url));
 
-const schedulePayrollCronJob = (getBree, fs, payrollData, account_id) => {
+const schedulePayrollCronJob = async (getBree, fs, payrollData, account_id) => {
     getBree = getBree || getBreeModule;
     fs = fs || fsModule;
-    
+
     let jobs = [];
     const jobsFilePath = path.join(__dirname, '../jobs.json');
     const { end_date, net_pay } = payrollData;
