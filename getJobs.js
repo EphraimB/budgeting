@@ -1,6 +1,9 @@
 import pool from "./models/db.js";
 import { payrollQueries } from "./models/queryData.js";
 import fs from "fs";
+import { default as pathModule } from 'path';
+import * as url from 'url';
+const __dirname = url.fileURLToPath(new URL('.', import.meta.url));
 import { getPayrolls as getPayrollsFunction } from "./getPayrolls.js";
 
 // Function to fetch employee data from the database
@@ -23,7 +26,7 @@ export const getJobs = async (employeeData, getPayrolls, jobsFilePath) => {
     try {
         employeeData = employeeData || await getEmployeesData();
         getPayrolls = getPayrolls || getPayrollsFunction;
-        jobsFilePath = jobsFilePath || 'jobs.json';
+        jobsFilePath = jobsFilePath || pathModule.join(__dirname, './jobs.json');
         let jobs = [];
 
         // Function to merge the payrollCheckerjobs array with the existing jobs array
@@ -35,7 +38,7 @@ export const getJobs = async (employeeData, getPayrolls, jobsFilePath) => {
         // Execute the cronScriptGetPayrolls.js script if there are no jobs that start with payroll- in the jobs array
         if (!jobs.some((job) => job.name.startsWith("payroll-"))) {
             for (const employee of employeeData) {
-                await getPayrolls(employee.employee_id);
+                await getPayrolls(employee.employee_id, pool);
             }
         }
 
@@ -49,6 +52,8 @@ export const getJobs = async (employeeData, getPayrolls, jobsFilePath) => {
                 },
             },
         }));
+
+        console.log("jobs", jobs);
 
         fs.writeFileSync(jobsFilePath, JSON.stringify(jobs, null, 2), 'utf8');
 

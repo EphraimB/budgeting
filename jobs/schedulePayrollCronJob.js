@@ -52,11 +52,12 @@ const schedulePayrollCronJob = (payrollData, account_id) => {
 
     jobs = jobs.filter(job => job.name !== "payroll-checker");
 
+    console.log('jobs', jobs);
+
     // Write the updated jobs array to the file
     try {
         fs.writeFileSync(jobsFilePath, JSON.stringify(jobs, null, 2));
         console.log(`Updated jobs.json file`);
-        console.log(jobs);
     } catch (err) {
         console.error(err);
     }
