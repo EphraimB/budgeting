@@ -1,4 +1,4 @@
-import { initializeBree } from '../breeManager.js';
+import { getBree } from '../breeManager.js';
 import fs from 'fs';
 import path from 'path';
 import * as url from 'url';
@@ -11,9 +11,9 @@ const deleteCronJob = async (cronId) => {
         const results = await pool.query(cronJobQueries.getCronJob, [cronId]);
         const uniqueId = results.rows[0].unique_id;
 
-        const jobToDelete = bree.config.jobs.find((job) => job.name === uniqueId);
+        const jobToDelete = getBree().config.jobs.find((job) => job.name === uniqueId);
         if (jobToDelete) {
-            bree.remove(jobToDelete.name);
+            getBree().remove(jobToDelete.name);
             console.log(`Deleted cron job with unique_id ${uniqueId}`);
 
             const cronJobFilePath = path.join(__dirname, 'cron-jobs', `${uniqueId}.js`);
