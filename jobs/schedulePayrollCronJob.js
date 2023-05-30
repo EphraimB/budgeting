@@ -50,8 +50,6 @@ const schedulePayrollCronJob = (payrollData, account_id) => {
     };
     jobs.push(newJob);
 
-    console.log('jobs', jobs);
-
     jobs = jobs.filter(job => job.name !== "payroll-checker");
 
     // Write the updated jobs array to the file

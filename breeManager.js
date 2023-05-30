@@ -23,6 +23,7 @@ export const initializeBree = async () => {
 
         const jobs = await getJobs();
         breeInstance.config.jobs = jobs;
+        console.log('jobs', jobs);
         await breeInstance.start();
     } catch (error) {
         console.log(error);

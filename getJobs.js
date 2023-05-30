@@ -53,8 +53,6 @@ export const getJobs = async (employeeData, getPayrolls, jobsFilePath) => {
             },
         }));
 
-        console.log("jobs", jobs);
-
         fs.writeFileSync(jobsFilePath, JSON.stringify(jobs, null, 2), 'utf8');
 
         jobs = jobs.concat(payrollCheckerjobs);
