@@ -3,7 +3,10 @@ import { Volume } from 'memfs';
 import schedulePayrollCronJob from '../../jobs/schedulePayrollCronJob.js';
 
 // Define variables in the outer scope
-const vol = Volume.fromJSON({});
+const vol = Volume.fromJSON({
+    './jobs.json': '[]',
+    'cron-jobs': {},
+}, '/app');
 const fs = vol;
 let mockBree, mockGetBree, payrollData, accountId;
 
