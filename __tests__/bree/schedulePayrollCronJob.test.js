@@ -7,7 +7,7 @@ const vol = Volume.fromJSON({
     './jobs.json': '[]',
     'cron-jobs': {},
 }, '/app');
-const fs = vol;
+
 let mockBree, mockGetBree, payrollData, accountId;
 
 describe('schedulePayrollCronJob', () => {
@@ -26,7 +26,10 @@ describe('schedulePayrollCronJob', () => {
 
         accountId = 1;
 
-        await schedulePayrollCronJob(mockGetBree, fs, payrollData, accountId);
+        const jobsFilePath = '/app/jobs.json';
+        const cronJobsPath = '/app/cron-jobs';
+
+        await schedulePayrollCronJob(payrollData, accountId, mockGetBree, vol, jobsFilePath, cronJobsPath);
     });
 
     it('creates and starts a job', async () => {

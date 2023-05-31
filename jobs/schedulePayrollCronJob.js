@@ -5,41 +5,15 @@ import path from 'path';
 import * as url from 'url';
 const __dirname = url.fileURLToPath(new URL('.', import.meta.url));
 
-const schedulePayrollCronJob = async (getBree, fs, payrollData, account_id) => {
-    getBree = getBree || getBreeModule;
-    fs = fs || fsModule;
+const createUniqueId = () => {
+    return `payroll-${uuidv4()}`;
+}
 
-    let jobs = [];
-    const jobsFilePath = path.join(__dirname, '../jobs.json');
-    const { end_date, net_pay } = payrollData;
-
-    // Generate a unique id for the cron job
-    const uniqueId = `payroll-${uuidv4()}`;
-
-    // write cron job unique id to file
-    try {
-        const filePath = path.join(__dirname, 'cron-jobs', `${uniqueId}.js`);
-        fs.closeSync(fs.openSync(filePath, 'w'));
-    } catch (err) {
-        console.error(err);
-    }
-
-    // Create a new Date object from the provided date string
+const createNewJob = (uniqueId, end_date, account_id, net_pay) => {
     const transactionDate = new Date(end_date);
-
-    // Format the date and time for the cron job
     const cronDate = `${transactionDate.getMinutes()} ${transactionDate.getHours()} ${transactionDate.getDate()} ${transactionDate.getMonth() + 1} *`;
 
-    // Check if jobs.json exists, if not create it with an empty array
-    if (!fs.existsSync(jobsFilePath)) {
-        fs.writeFileSync(jobsFilePath, JSON.stringify([]));
-    }
-
-    // Read the existing jobs from the file
-    jobs = JSON.parse(fs.readFileSync(jobsFilePath));
-
-    // Create a new job and add it to the array
-    const newJob = {
+    return {
         name: uniqueId,
         cron: cronDate,
         path: path.join(__dirname, 'cronScriptCreate.js'),
@@ -51,14 +25,40 @@ const schedulePayrollCronJob = async (getBree, fs, payrollData, account_id) => {
             }
         }
     };
+}
+
+const updateJobsFile = (fs, jobsFilePath, jobs) => {
+    if (!fs.existsSync(jobsFilePath)) {
+        fs.writeFileSync(jobsFilePath, JSON.stringify([]));
+    }
+    jobs = JSON.parse(fs.readFileSync(jobsFilePath));
+    jobs = jobs.filter(job => job.name !== "payroll-checker");
+    fs.writeFileSync(jobsFilePath, JSON.stringify(jobs, null, 2));
+    console.log(`Updated jobs.json file`);
+}
+
+const schedulePayrollCronJob = async (payrollData, account_id, getBree, fs, jobsFilePath, cronJobsPath) => {
+    getBree = getBree || getBreeModule;
+    fs = fs || fsModule;
+
+    let jobs = [];
+    jobsFilePath = jobsFilePath || path.join(__dirname, '../jobs.json');
+    const { end_date, net_pay } = payrollData;
+
+    const uniqueId = createUniqueId();
+
+    try {
+        const filePath = cronJobsPath || path.join(__dirname, 'cron-jobs', `${uniqueId}.js`);
+        fs.closeSync(fs.openSync(filePath, 'w'));
+    } catch (err) {
+        console.error(err);
+    }
+
+    const newJob = createNewJob(uniqueId, end_date, account_id, net_pay);
     jobs.push(newJob);
 
-    jobs = jobs.filter(job => job.name !== "payroll-checker");
-
-    // Write the updated jobs array to the file
     try {
-        fs.writeFileSync(jobsFilePath, JSON.stringify(jobs, null, 2));
-        console.log(`Updated jobs.json file`);
+        updateJobsFile(fs, jobsFilePath, jobs);
     } catch (err) {
         console.error(err);
     }
@@ -67,7 +67,6 @@ const schedulePayrollCronJob = async (getBree, fs, payrollData, account_id) => {
         await getBree().add(newJob);
         await getBree().start(newJob.name);
     })();
-
 };
 
 export default schedulePayrollCronJob;
