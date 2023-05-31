@@ -1,27 +1,13 @@
 import { jest } from '@jest/globals';
-import * as memfs from 'memfs';
+import { Volume } from 'memfs';
 import schedulePayrollCronJob from '../../jobs/schedulePayrollCronJob.js';
 
-// Replace the real fs with memfs
-jest.unstable_mockModule('fs', () => {
-    const memfs = import('memfs');
-    return memfs.fs;
-});
+const vol = Volume.fromJSON({
+    './jobs.json': '[]',
+    'cron-jobs': {},
+}, '/app');
 
 describe('schedulePayrollCronJob', () => {
-    beforeEach(() => {
-        // Setup your in-memory file system
-        memfs.vol.fromJSON({
-            './jobs.json': '[]',
-            'cron-jobs': {},
-        }, '/app');
-    });
-
-    afterEach(() => {
-        // Cleanup: clear the in-memory file system
-        memfs.vol.reset();
-    });
-
     it('creates and starts a job', async () => {
         const mockBree = {
             add: jest.fn(),
@@ -44,7 +30,7 @@ describe('schedulePayrollCronJob', () => {
         expect(mockBree.start.mock.calls[0][0]).toContain('payroll-');
 
         // Verify that the jobs.json file was written to correctly
-        const jobs = JSON.parse(memfs.vol.readFileSync('/app/jobs.json', 'utf-8'));
+        const jobs = JSON.parse(vol.readFileSync('/app/jobs.json', 'utf-8'));
         expect(jobs).toHaveLength(1);
         expect(jobs[0].name).toContain('payroll-');
         expect(jobs[0].worker.workerData).toEqual({
