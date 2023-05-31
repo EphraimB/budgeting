@@ -1,13 +1,12 @@
 import { v4 as uuidv4 } from 'uuid';
 import { getBree as getBreeModule } from '../breeManager.js';
-import { default as fsModule } from 'fs';
+import fs from 'fs';
 import path from 'path';
 import * as url from 'url';
 const __dirname = url.fileURLToPath(new URL('.', import.meta.url));
 
-const schedulePayrollCronJob = async (getBree, fs, payrollData, account_id) => {
+const schedulePayrollCronJob = async (getBree, payrollData, account_id) => {
     getBree = getBree || getBreeModule;
-    fs = fs || fsModule;
 
     let jobs = [];
     const jobsFilePath = path.join(__dirname, '../jobs.json');
