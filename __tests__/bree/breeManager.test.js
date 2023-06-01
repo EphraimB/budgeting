@@ -1,10 +1,10 @@
 import { jest } from '@jest/globals';
-import fs from 'fs';
-import path from 'path';
-import { fileURLToPath } from 'url';
+import { Volume } from 'memfs';
 
-const __dirname = fileURLToPath(new URL('.', import.meta.url));
-const cronjobsDir = path.join(__dirname, 'cron-jobs');
+const vol = Volume.fromJSON({
+    './jobs.json': '[]',
+    'cron-jobs/jobs.js': '',
+}, '/app');
 
 jest.unstable_mockModule('cabin', () => ({
     default: jest.fn(),
@@ -51,19 +51,17 @@ describe('breeManager', () => {
 
 describe('cronjobsDir', () => {
     beforeAll(() => {
-        if (!fs.existsSync(cronjobsDir)) {
-            fs.mkdirSync(cronjobsDir);
+        if (!vol.existsSync('/app/cron-jobs')) {
+            vol.mkdirSync('/app/cron-jobs');
         }
     });
 
     afterAll(() => {
-        fs.rmSync(cronjobsDir, { recursive: true });
+        vol.rmSync('/app/cron-jobs', { recursive: true });
     });
 
     it('should create the directory if it does not exist', () => {
-        const cronjobsDir = path.join(__dirname, 'cron-jobs');
-
         // Verify that the directory now exists
-        expect(fs.existsSync(cronjobsDir)).toBe(true);
+        expect(vol.existsSync('/app/cron-jobs')).toBe(true);
     });
 });
