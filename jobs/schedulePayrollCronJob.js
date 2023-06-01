@@ -1,6 +1,6 @@
 import { v4 as uuidv4 } from 'uuid';
 import { getBree as getBreeModule } from '../breeManager.js';
-import fs from 'fs';
+import * as fsModule from 'fs';
 import path from 'path';
 import * as url from 'url';
 const __dirname = url.fileURLToPath(new URL('.', import.meta.url));
@@ -27,27 +27,29 @@ const createNewJob = (uniqueId, end_date, account_id, net_pay) => {
     };
 }
 
-const updateJobsFile = (jobsFilePath, jobs) => {
+const updateJobsFile = (jobsFilePath, jobs, fs) => {
     if (!fs.existsSync(jobsFilePath)) {
         fs.writeFileSync(jobsFilePath, JSON.stringify([]));
     }
     jobs = JSON.parse(fs.readFileSync(jobsFilePath));
     jobs = jobs.filter(job => job.name !== "payroll-checker");
+
     fs.writeFileSync(jobsFilePath, JSON.stringify(jobs, null, 2));
     console.log(`Updated jobs.json file`);
 }
 
-const schedulePayrollCronJob = async (payrollData, account_id, getBree) => {
+const schedulePayrollCronJob = async (payrollData, account_id, getBree, fs, filePath, jobsFilePath) => {
     getBree = getBree || getBreeModule;
+    fs = fs || fsModule;
 
     let jobs = [];
-    const jobsFilePath = path.join(__dirname, '../jobs.json');
+    jobsFilePath = jobsFilePath || path.join(__dirname, '../jobs.json');
     const { end_date, net_pay } = payrollData;
 
     const uniqueId = createUniqueId();
 
     try {
-        const filePath = path.join(__dirname, 'cron-jobs', `${uniqueId}.js`);
+        filePath = filePath || path.join(__dirname, 'cron-jobs', `${uniqueId}.js`);
         fs.closeSync(fs.openSync(filePath, 'w'));
     } catch (err) {
         console.error(err);
@@ -57,7 +59,7 @@ const schedulePayrollCronJob = async (payrollData, account_id, getBree) => {
     jobs.push(newJob);
 
     try {
-        updateJobsFile(jobsFilePath, jobs);
+        updateJobsFile(jobsFilePath, jobs, fs);
     } catch (err) {
         console.error(err);
     }
