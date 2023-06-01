@@ -5,7 +5,7 @@ import schedulePayrollCronJob from '../../jobs/schedulePayrollCronJob.js';
 // Define variables in the outer scope
 const vol = Volume.fromJSON({
     './jobs.json': '[]',
-    'cron-jobs': {},
+    'cron-jobs': null,
 }, '/app');
 
 let mockBree, mockGetBree, payrollData, accountId;
@@ -26,10 +26,7 @@ describe('schedulePayrollCronJob', () => {
 
         accountId = 1;
 
-        const jobsFilePath = '/app/jobs.json';
-        const cronJobsPath = '/app/cron-jobs';
-
-        await schedulePayrollCronJob(payrollData, accountId, mockGetBree, vol, jobsFilePath, cronJobsPath);
+        await schedulePayrollCronJob(payrollData, accountId, mockGetBree);
     });
 
     it('creates and starts a job', async () => {
