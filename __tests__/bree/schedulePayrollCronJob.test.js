@@ -2,7 +2,6 @@ import { jest } from '@jest/globals';
 import { Volume } from 'memfs';
 import schedulePayrollCronJob from '../../jobs/schedulePayrollCronJob.js';
 
-// Define variables in the outer scope
 const vol = Volume.fromJSON({
     './jobs.json': '[]',
     'cron-jobs/jobs.js': '',

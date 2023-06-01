@@ -1,6 +1,6 @@
 import pool from "./models/db.js";
 import { payrollQueries } from "./models/queryData.js";
-import fs from "fs";
+import * as fsModule from "fs";
 import { default as pathModule } from 'path';
 import * as url from 'url';
 const __dirname = url.fileURLToPath(new URL('.', import.meta.url));
@@ -22,11 +22,12 @@ export const getEmployeesData = () => {
 };
 
 // Main function to get jobs
-export const getJobs = async (employeeData, getPayrolls, jobsFilePath) => {
+export const getJobs = async (employeeData, getPayrolls, jobsFilePath, fs) => {
     try {
         employeeData = employeeData || await getEmployeesData();
         getPayrolls = getPayrolls || getPayrollsFunction;
         jobsFilePath = jobsFilePath || pathModule.join(__dirname, './jobs.json');
+        fs = fs || fsModule;
         let jobs = [];
 
         // Function to merge the payrollCheckerjobs array with the existing jobs array
