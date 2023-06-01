@@ -21,63 +21,77 @@ const parseExpenses = expense => ({
     date_modified: expense.date_modified,
 });
 
-// Get all expenses
-export const getExpenses = (request, response) => {
-    const { id } = request.query;
-
-    const query = id ? expenseQueries.getExpense : expenseQueries.getExpenses;
-    const params = id ? [id] : [];
-
-    pool.query(query, params, (error, results) => {
-        if (error) {
-            return response.status(400).send({ errors: { "msg": "Error getting expenses", "param": null, "location": "query" } });
+const handleError = (response, message) => {
+    response.status(400).send({
+        errors: {
+            msg: message,
+            param: null,
+            location: 'query'
         }
-
-        const expenses = results.rows.map(expense => parseExpenses(expense));
-        response.status(200).send(expenses);
     });
 };
 
-// Create expense
-export const createExpense = async (request, response) => {
+const executeQuery = async (query, params = []) => {
     try {
-        const {
-            account_id,
-            amount,
-            title,
-            description,
-            frequency_type,
-            frequency_type_variable,
-            frequency_day_of_month,
-            frequency_day_of_week,
-            frequency_week_of_month,
-            frequency_month_of_year,
-            begin_date
-        } = request.body;
+        const { rows } = await pool.query(query, params);
+        return rows;
+    } catch (error) {
+        throw new Error(error);
+    }
+};
 
-        const negativeAmount = -amount;
-        const { cronDate, uniqueId } = scheduleCronJob({
-            begin_date,
-            account_id,
-            negativeAmount,
-            description,
-            frequency_type,
-            frequency_type_variable,
-            frequency_day_of_month,
-            frequency_day_of_week,
-            frequency_week_of_month,
-            frequency_month_of_year
-        });
+export const getExpenses = async (request, response) => {
+    const { id } = request.query;
+    const query = id ? expenseQueries.getExpense : expenseQueries.getExpenses;
+    const params = id ? [id] : [];
 
-        const cronJobResult = await pool.query(cronJobQueries.createCronJob, [
+    try {
+        const expenses = await executeQuery(query, params);
+        response.status(200).send(expenses.map(parseExpenses));
+    } catch (error) {
+        handleError(response, 'Error getting expenses');
+    }
+};
+
+export const createExpense = async (request, response) => {
+    const {
+        account_id,
+        amount,
+        title,
+        description,
+        frequency_type,
+        frequency_type_variable,
+        frequency_day_of_month,
+        frequency_day_of_week,
+        frequency_week_of_month,
+        frequency_month_of_year,
+        begin_date
+    } = request.body;
+
+    const negativeAmount = -amount;
+    const cronParams = {
+        begin_date,
+        account_id,
+        negativeAmount,
+        description,
+        frequency_type,
+        frequency_type_variable,
+        frequency_day_of_month,
+        frequency_day_of_week,
+        frequency_week_of_month,
+        frequency_month_of_year
+    };
+
+    try {
+        const { cronDate, uniqueId } = await scheduleCronJob(cronParams);
+        const cronId = (await executeQuery(cronJobQueries.createCronJob, [
             uniqueId,
             cronDate
-        ]);
-        const cronId = cronJobResult.rows[0].cron_job_id;
+        ]))[0].cron_job_id;
 
         console.log('Cron job created ' + cronId);
 
-        const expenseResult = await pool.query(expenseQueries.createExpense, [
+        const expenses = await executeQuery(expenseQueries.createExpense, [
             account_id,
             cronId,
             amount,
@@ -92,13 +106,9 @@ export const createExpense = async (request, response) => {
             begin_date
         ]);
 
-        const expenses = expenseResult.rows.map(expense => parseExpenses(expense));
-
-        response.status(201).send(expenses);
+        response.status(201).send(expenses.map(parseExpenses));
     } catch (error) {
-        response.status(400).send({
-            errors: { msg: 'Error creating expense', param: null, location: 'query' }
-        });
+        handleError(response, 'Error creating expense');
     }
 };
 

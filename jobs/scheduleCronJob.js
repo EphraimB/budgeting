@@ -6,14 +6,14 @@ import * as url from 'url';
 const __dirname = url.fileURLToPath(new URL('.', import.meta.url));
 
 const createCronJob = ({
-    account_id, amount, description, date,
+    account_id, amount, description, begin_date,
     frequency_type, frequency_type_variable,
     frequency_day_of_month, frequency_day_of_week,
     frequency_week_of_month, frequency_month_of_year,
     destination_account_id = null
 }) => {
     const uniqueId = uuidv4();
-    const transactionDate = new Date(date);
+    const transactionDate = new Date(begin_date);
     const { cronDay, cronMonth, cronDayOfWeek } = determineCronValues(
         frequency_type, frequency_type_variable,
         frequency_day_of_month, frequency_day_of_week,
@@ -91,8 +91,6 @@ const writeCronJobToFile = (fs, jobsFilePath, jobs, newJob) => {
 const scheduleCronJob = async (jobDetails, getBree, fs) => {
     getBree = getBree || getBreeModule;
     fs = fs || fsModule;
-
-    console.log(jobDetails);
 
     const jobsFilePath = path.join(__dirname, '../jobs.json');
     if (!fs.existsSync(jobsFilePath)) {
