@@ -56,7 +56,7 @@ export const createExpense = async (request, response) => {
         } = request.body;
 
         const negativeAmount = -amount;
-        const { cronDate, uniqueId } = scheduleCronJob(
+        const { cronDate, uniqueId } = scheduleCronJob({
             begin_date,
             account_id,
             negativeAmount,
@@ -67,7 +67,7 @@ export const createExpense = async (request, response) => {
             frequency_day_of_week,
             frequency_week_of_month,
             frequency_month_of_year
-        );
+        });
 
         const cronJobResult = await pool.query(cronJobQueries.createCronJob, [
             uniqueId,

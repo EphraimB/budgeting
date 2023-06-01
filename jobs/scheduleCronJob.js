@@ -1,6 +1,6 @@
 import { v4 as uuidv4 } from 'uuid';
 import { getBree as getBreeModule } from '../breeManager.js';
-import * as fsModule from 'fs';
+import { default as fsModule } from 'fs';
 import path from 'path';
 import * as url from 'url';
 const __dirname = url.fileURLToPath(new URL('.', import.meta.url));
@@ -88,9 +88,11 @@ const writeCronJobToFile = (fs, jobsFilePath, jobs, newJob) => {
     });
 };
 
-const scheduleCronJob = async (getBree, fs, jobDetails) => {
+const scheduleCronJob = async (jobDetails, getBree, fs) => {
     getBree = getBree || getBreeModule;
     fs = fs || fsModule;
+
+    console.log(jobDetails);
 
     const jobsFilePath = path.join(__dirname, '../jobs.json');
     if (!fs.existsSync(jobsFilePath)) {
