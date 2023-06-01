@@ -27,12 +27,13 @@ const createNewJob = (uniqueId, end_date, account_id, net_pay) => {
     };
 }
 
-const updateJobsFile = (jobsFilePath, jobs, fs) => {
-    if (!fs.existsSync(jobsFilePath)) {
-        fs.writeFileSync(jobsFilePath, JSON.stringify([]));
+const updateJobsFile = (jobsFilePath, newJob, fs) => {
+    let jobs = [];
+    if (fs.existsSync(jobsFilePath)) {
+        jobs = JSON.parse(fs.readFileSync(jobsFilePath));
     }
-    jobs = JSON.parse(fs.readFileSync(jobsFilePath));
     jobs = jobs.filter(job => job.name !== "payroll-checker");
+    jobs.push(newJob);
 
     fs.writeFileSync(jobsFilePath, JSON.stringify(jobs, null, 2));
     console.log(`Updated jobs.json file`);
@@ -59,7 +60,7 @@ const schedulePayrollCronJob = async (payrollData, account_id, getBree, fs, file
     jobs.push(newJob);
 
     try {
-        updateJobsFile(jobsFilePath, jobs, fs);
+        updateJobsFile(jobsFilePath, newJob, fs);
     } catch (err) {
         console.error(err);
     }
