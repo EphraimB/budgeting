@@ -114,50 +114,52 @@ export const createExpense = async (request, response) => {
 
 // Update expense
 export const updateExpense = async (request, response) => {
-    try {
-        const id = parseInt(request.params.id);
-        const {
-            account_id,
-            amount,
-            title,
-            description,
-            frequency_type,
-            frequency_type_variable,
-            frequency_day_of_month,
-            frequency_day_of_week,
-            frequency_week_of_month,
-            frequency_month_of_year,
-            begin_date
-        } = request.body;
+    const id = parseInt(request.params.id);
+    const {
+        account_id,
+        amount,
+        title,
+        description,
+        frequency_type,
+        frequency_type_variable,
+        frequency_day_of_month,
+        frequency_day_of_week,
+        frequency_week_of_month,
+        frequency_month_of_year,
+        begin_date
+    } = request.body;
 
-        const expenseResult = await pool.query(expenseQueries.getExpense, [id]);
-        if (expenseResult.rows.length === 0) {
+    const cronParams = {
+        begin_date,
+        account_id,
+        amount,
+        description,
+        frequency_type,
+        frequency_type_variable,
+        frequency_day_of_month,
+        frequency_day_of_week,
+        frequency_week_of_month,
+        frequency_month_of_year
+    };
+
+    try {
+        const expenseResult = await executeQuery(expenseQueries.getExpense, [id]);
+        if (expenseResult.length === 0) {
             return response.status(200).send([]);
         }
 
-        const cronId = expenseResult.rows[0].cron_job_id;
+        const cronId = expenseResult[0].cron_job_id;
         await deleteCronJob(cronId);
 
-        const { uniqueId, cronDate } = scheduleCronJob(
-            begin_date,
-            account_id,
-            amount,
-            description,
-            frequency_type,
-            frequency_type_variable,
-            frequency_day_of_month,
-            frequency_day_of_week,
-            frequency_week_of_month,
-            frequency_month_of_year
-        );
+        const { uniqueId, cronDate } = await scheduleCronJob(cronParams);
 
-        await pool.query(cronJobQueries.updateCronJob, [
+        await executeQuery(cronJobQueries.updateCronJob, [
             uniqueId,
             cronDate,
             cronId
         ]);
 
-        const updateResult = await pool.query(expenseQueries.updateExpense, [
+        const expenses = await executeQuery(expenseQueries.updateExpense, [
             account_id,
             amount,
             title,
@@ -172,13 +174,9 @@ export const updateExpense = async (request, response) => {
             id
         ]);
 
-        const expenses = updateResult.rows.map(expense => parseExpenses(expense));
-
-        response.status(200).send(expenses);
+        response.status(200).send(expenses.map(parseExpenses));
     } catch (error) {
-        response.status(400).send({
-            errors: { msg: 'Error updating expense', param: null, location: 'query' }
-        });
+        handleError(response, 'Error updating expense');
     }
 };
 
