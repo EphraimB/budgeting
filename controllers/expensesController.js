@@ -182,24 +182,25 @@ export const updateExpense = async (request, response) => {
 
 // Delete expense
 export const deleteExpense = async (request, response) => {
-    try {
-        const { id } = request.params;
+    const { id } = request.params;
 
-        const expenseResult = await pool.query(expenseQueries.getExpense, [id]);
-        if (expenseResult.rows.length === 0) {
+    try {
+        const expenseResult = await executeQuery(expenseQueries.getExpense, [id]);
+        if (expenseResult.length === 0) {
             return response.status(200).send("Expense doesn't exist");
         }
 
-        const cronId = expenseResult.rows[0].cron_job_id;
-        const deleteExpenseResult = await pool.query(expenseQueries.deleteExpense, [id]);
+        const cronId = expenseResult[0].cron_job_id;
+
+        await executeQuery(expenseQueries.deleteExpense, [id]);
 
         if (cronId) {
             await deleteCronJob(cronId);
-            await pool.query(cronJobQueries.deleteCronJob, [cronId]);
+            await executeQuery(cronJobQueries.deleteCronJob, [cronId]);
         }
 
         response.status(200).send("Expense deleted successfully");
     } catch (error) {
-        response.status(400).send({ errors: { msg: 'Error deleting expense', param: null, location: 'query' } });
+        handleError(response, 'Error deleting expense');
     }
 };
