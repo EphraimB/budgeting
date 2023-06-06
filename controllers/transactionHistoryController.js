@@ -1,4 +1,3 @@
-import pool from '../config/db.js';
 import { transactionHistoryQueries } from '../models/queryData.js';
 import { handleError, executeQuery } from '../helpers/errorHandler.js';
 
