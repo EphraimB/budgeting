@@ -1,5 +1,6 @@
 import pool from '../config/db.js';
 import { transactionHistoryQueries } from '../models/queryData.js';
+import { handleError, executeQuery } from '../helpers/errorHandler.js';
 
 const parseTransactions = transactionHistory => ({
     transaction_id: parseInt(transactionHistory.transaction_id),
@@ -12,64 +13,66 @@ const parseTransactions = transactionHistory => ({
 });
 
 // Get all transactions
-export const getTransactions = (request, response) => {
-    const { id } = request.query;
+export const getTransactions = async (request, response) => {
+    try {
+        const { id } = request.query;
+        const query = id ? transactionHistoryQueries.getTransaction : transactionHistoryQueries.getTransactions;
+        const params = id ? [id] : [];
 
-    const query = id ? transactionHistoryQueries.getTransaction : transactionHistoryQueries.getTransactions;
-    const params = id ? [id] : [];
-
-    pool.query(query, params, (error, results) => {
-        if (error) {
-            return response.status(400).send({ errors: { "msg": "Error getting transactions", "param": null, "location": "query" } });
-        }
-
-        const transactionHistory = results.rows.map(transactionHistory => parseTransactions(transactionHistory));
+        const transactionResults = await executeQuery(query, params);
+        const transactionHistory = transactionResults.map(transaction => parseTransactions(transaction));
+        
         response.status(200).json(transactionHistory);
-    });
+    } catch (error) {
+        handleError(response, 'Error getting transactions');
+    }
 };
 
 // Create transaction
-export const createTransaction = (request, response) => {
-    const { account_id, title, amount, description } = request.body;
+export const createTransaction = async (request, response) => {
+    try {
+        const { account_id, title, amount, description } = request.body;
+        const transactionResults = await executeQuery(
+            transactionHistoryQueries.createTransaction,
+            [account_id, amount, title, description]
+        );
 
-    pool.query(transactionHistoryQueries.createTransaction, [account_id, amount, title, description], (error, results) => {
-        if (error) {
-            return response.status(400).send({ errors: { "msg": "Error creating transaction", "param": null, "location": "query" } });
-        }
-
-        // Parse the data to correct format and return an object
-        const transactionHistory = results.rows.map(transactionHistory => (parseTransactions(transactionHistory)));
-
-        return response.status(201).json(transactionHistory);
-    });
+        const transactionHistory = transactionResults.map(transaction => parseTransactions(transaction));
+        
+        response.status(201).json(transactionHistory);
+    } catch (error) {
+        handleError(response, 'Error creating transaction');
+    }
 };
 
 // Update transaction
-export const updateTransaction = (request, response) => {
-    const id = parseInt(request.params.id);
-    const { account_id, amount, title, description } = request.body;
+export const updateTransaction = async (request, response) => {
+    try {
+        const id = parseInt(request.params.id);
+        const { account_id, amount, title, description } = request.body;
 
-    pool.query(transactionHistoryQueries.updateTransaction, [account_id, amount, title, description, id], (error, results) => {
-        if (error) {
-            return response.status(400).send({ errors: { "msg": "Error updating transaction", "param": null, "location": "query" } });
-        }
+        const transactionResults = await executeQuery(
+            transactionHistoryQueries.updateTransaction,
+            [account_id, amount, title, description, id]
+        );
 
-        // Parse the data to correct format and return an object
-        const transactionHistory = results.rows.map(transactionHistory => (parseTransactions(transactionHistory)));
+        const transactionHistory = transactionResults.map(transaction => parseTransactions(transaction));
 
         response.status(200).send(transactionHistory);
-    });
+    } catch (error) {
+        handleError(response, 'Error updating transaction');
+    }
 };
 
 // Delete transaction
-export const deleteTransaction = (request, response) => {
-    const id = parseInt(request.params.id);
+export const deleteTransaction = async (request, response) => {
+    try {
+        const id = parseInt(request.params.id);
 
-    pool.query(transactionHistoryQueries.deleteTransaction, [id], (error, results) => {
-        if (error) {
-            return response.status(400).send({ errors: { "msg": "Error deleting transaction", "param": null, "location": "query" } });
-        }
+        await executeQuery(transactionHistoryQueries.deleteTransaction, [id]);
 
         response.status(200).send("Successfully deleted transaction");
-    });
+    } catch (error) {
+        handleError(response, 'Error deleting transaction');
+    }
 };
