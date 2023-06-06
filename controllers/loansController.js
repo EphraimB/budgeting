@@ -60,7 +60,7 @@ export const createLoan = async (request, response) => {
 
     const negativePlanAmount = -plan_amount;
 
-    const { cronDate, uniqueId } = scheduleCronJob(
+    const { cronDate, uniqueId } = scheduleCronJob({
         begin_date,
         account_id,
         negativePlanAmount,
@@ -71,7 +71,7 @@ export const createLoan = async (request, response) => {
         frequency_day_of_week,
         frequency_week_of_month,
         frequency_month_of_year
-    );
+    });
 
     try {
         const cronJobResults = await executeQuery(cronJobQueries.createCronJob, [uniqueId, cronDate]);
@@ -137,7 +137,7 @@ export const updateLoan = async (request, response) => {
         const cronId = getLoanResults[0].cron_job_id;
         await deleteCronJob(cronId);
 
-        const { uniqueId, cronDate } = scheduleCronJob(
+        const { uniqueId, cronDate } = scheduleCronJob({
             begin_date,
             account_id,
             negativePlanAmount,
@@ -148,7 +148,7 @@ export const updateLoan = async (request, response) => {
             frequency_day_of_week,
             frequency_week_of_month,
             frequency_month_of_year
-        );
+        });
 
         await executeQuery(cronJobQueries.updateCronJob, [uniqueId, cronDate, cronId]);
         const updateLoanResults = await executeQuery(loanQueries.updateLoan, [
