@@ -2,6 +2,7 @@ import pool from '../models/db.js';
 import { loanQueries, cronJobQueries } from '../models/queryData.js';
 import scheduleCronJob from '../jobs/scheduleCronJob.js';
 import deleteCronJob from '../jobs/deleteCronJob.js';
+import { handleError, executeQuery } from '../utils/helperFunctions.js';
 
 const parseLoan = loan => ({
     loan_id: parseInt(loan.loan_id),
@@ -24,28 +25,23 @@ const parseLoan = loan => ({
 });
 
 // Get all loans
-export const getLoans = (request, response) => {
+export const getLoans = async (request, response) => {
     const { id } = request.query;
 
     const query = id ? loanQueries.getLoan : loanQueries.getLoans;
     const queryParams = id ? [id] : [];
 
-    pool.query(query, queryParams, (error, results) => {
-        if (error) {
-            return response
-                .status(400)
-                .send({ errors: { msg: `Error getting ${id ? 'loan' : 'loans'}`, param: null, location: 'query' } });
-        }
-
-        // Parse the data to correct format and return an object
-        const loans = results.rows.map(loan => parseLoan(loan));
-
+    try {
+        const rows = await executeQuery(query, queryParams);
+        const loans = rows.map(loan => parseLoan(loan));
         response.status(200).json(loans);
-    });
+    } catch (error) {
+        handleError(response, `Error getting ${id ? 'loan' : 'loans'}`);
+    }
 };
 
 // Create loan
-export const createLoan = (request, response) => {
+export const createLoan = async (request, response) => {
     const {
         account_id,
         amount,
@@ -77,16 +73,13 @@ export const createLoan = (request, response) => {
         frequency_month_of_year
     );
 
-    pool.query(cronJobQueries.createCronJob, [uniqueId, cronDate], (error, cronJobResults) => {
-        if (error) {
-            return response.status(400).send({ errors: { msg: 'Error creating cron job', param: null, location: 'query' } });
-        }
-
-        const cronId = cronJobResults.rows[0].cron_job_id;
+    try {
+        const cronJobResults = await executeQuery(cronJobQueries.createCronJob, [uniqueId, cronDate]);
+        const cronId = cronJobResults[0].cron_job_id;
 
         console.log('Cron job created ' + cronId);
 
-        pool.query(
+        const loanResults = await executeQuery(
             loanQueries.createLoan,
             [
                 account_id,
@@ -103,19 +96,14 @@ export const createLoan = (request, response) => {
                 frequency_week_of_month,
                 frequency_month_of_year,
                 begin_date,
-            ],
-            (error, loanResults) => {
-                if (error) {
-                    return response.status(400).send({ errors: { msg: 'Error creating loan', param: null, location: 'query' } });
-                }
-
-                // Parse the data to the correct format and return an object
-                const loans = loanResults.rows.map(loan => parseLoan(loan));
-
-                response.status(201).send(loans);
-            }
+            ]
         );
-    });
+
+        const loans = loanResults.map(loan => parseLoan(loan));
+        response.status(201).send(loans);
+    } catch (error) {
+        handleError(response, error.message.includes('cron job') ? 'Error creating cron job' : 'Error creating loan');
+    }
 };
 
 // Update loan
@@ -140,13 +128,13 @@ export const updateLoan = async (request, response) => {
 
         const negativePlanAmount = -plan_amount;
 
-        const getLoanResults = await pool.query(loanQueries.getLoan, [id]);
+        const getLoanResults = await executeQuery(loanQueries.getLoan, [id]);
 
-        if (getLoanResults.rows.length === 0) {
+        if (getLoanResults.length === 0) {
             return response.status(200).send([]);
         }
 
-        const cronId = getLoanResults.rows[0].cron_job_id;
+        const cronId = getLoanResults[0].cron_job_id;
         await deleteCronJob(cronId);
 
         const { uniqueId, cronDate } = scheduleCronJob(
@@ -162,8 +150,8 @@ export const updateLoan = async (request, response) => {
             frequency_month_of_year
         );
 
-        await pool.query(cronJobQueries.updateCronJob, [uniqueId, cronDate, cronId]);
-        const updateLoanResults = await pool.query(loanQueries.updateLoan, [
+        await executeQuery(cronJobQueries.updateCronJob, [uniqueId, cronDate, cronId]);
+        const updateLoanResults = await executeQuery(loanQueries.updateLoan, [
             account_id,
             amount,
             plan_amount,
@@ -181,11 +169,10 @@ export const updateLoan = async (request, response) => {
         ]);
 
         // Parse the data to the correct format and return an object
-        const loans = updateLoanResults.rows.map(loan => parseLoan(loan));
+        const loans = updateLoanResults.map(loan => parseLoan(loan));
         response.status(200).send(loans);
     } catch (error) {
-        console.error(error);
-        response.status(400).send({ errors: { msg: 'Error updating loan', param: null, location: 'query' } });
+        handleError(response, 'Error updating loan');
     }
 };
 
@@ -194,23 +181,22 @@ export const deleteLoan = async (request, response) => {
     try {
         const { id } = request.params;
 
-        const getLoanResults = await pool.query(loanQueries.getLoan, [id]);
+        const getLoanResults = await executeQuery(loanQueries.getLoan, [id]);
 
-        if (getLoanResults.rows.length === 0) {
+        if (getLoanResults.length === 0) {
             return response.status(200).send("Loan doesn't exist");
         }
 
-        const cronId = getLoanResults.rows[0].cron_job_id;
-        await pool.query(loanQueries.deleteLoan, [id]);
+        const cronId = getLoanResults[0].cron_job_id;
+        await executeQuery(loanQueries.deleteLoan, [id]);
 
         if (cronId) {
             await deleteCronJob(cronId);
-            await pool.query(cronJobQueries.deleteCronJob, [cronId]);
+            await executeQuery(cronJobQueries.deleteCronJob, [cronId]);
         }
 
         response.status(200).send("Loan deleted successfully");
     } catch (error) {
-        console.error(error);
-        response.status(400).send({ errors: { msg: 'Error deleting loan', param: null, location: 'query' } });
+        handleError(response, 'Error deleting loan');
     }
 };
