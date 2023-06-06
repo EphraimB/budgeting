@@ -1,3 +1,5 @@
+import pool from '../models/db.js';
+
 export const handleError = (response, message) => {
     response.status(400).send({
         errors: {
