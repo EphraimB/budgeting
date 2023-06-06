@@ -1,5 +1,5 @@
 import { transactionHistoryQueries } from '../models/queryData.js';
-import { handleError, executeQuery } from '../helpers/errorHandler.js';
+import { handleError, executeQuery } from '../utils/helperFunctions.js';
 
 const parseTransactions = transactionHistory => ({
     transaction_id: parseInt(transactionHistory.transaction_id),
