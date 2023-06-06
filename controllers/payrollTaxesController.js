@@ -1,6 +1,6 @@
-import pool from '../config/db.js';
 import { payrollQueries } from '../models/queryData.js';
 import { getPayrolls } from '../getPayrolls.js';
+import { handleError, executeQuery } from '../utils/helperFunctions.js';
 
 const payrollTaxesParse = payrollTax => ({
     payroll_taxes_id: parseInt(payrollTax.payroll_taxes_id),
@@ -8,19 +8,15 @@ const payrollTaxesParse = payrollTax => ({
     rate: parseFloat(payrollTax.rate),
 });
 
-// Get payroll taxes
-export const getPayrollTaxes = (request, response) => {
+export const getPayrollTaxes = async (request, response) => {
     const { employee_id, id } = request.query;
 
     const query = id ? payrollQueries.getPayrollTax : payrollQueries.getPayrollTaxes;
     const queryParameters = id ? [employee_id, id] : [employee_id];
 
-    pool.query(query, queryParameters, (error, results) => {
-        if (error) {
-            return response.status(400).send({ errors: { msg: 'Error getting payroll taxes', param: null, location: 'query' } });
-        }
-
-        const payrollTaxes = results.rows.map(payrollTax => payrollTaxesParse(payrollTax));
+    try {
+        const rows = await executeQuery(query, queryParameters);
+        const payrollTaxes = rows.map(payrollTax => payrollTaxesParse(payrollTax));
 
         const returnObj = {
             employee_id: parseInt(employee_id),
@@ -28,58 +24,58 @@ export const getPayrollTaxes = (request, response) => {
         };
 
         response.status(200).send(returnObj);
-    });
+    } catch (error) {
+        handleError(response, 'Error getting payroll taxes');
+    }
 };
 
 // Create payroll tax
-export const createPayrollTax = (request, response) => {
+export const createPayrollTax = async (request, response) => {
     const { employee_id, name, rate } = request.body;
 
-    pool.query(payrollQueries.createPayrollTax, [employee_id, name, rate], (error, results) => {
-        if (error) {
-            return response.status(400).send({ errors: { "msg": "Error creating payroll tax", "param": null, "location": "query" } });
-        }
+    try {
+        const results = await executeQuery(payrollQueries.createPayrollTax, [employee_id, name, rate]);
 
-        getPayrolls(employee_id);
+        await getPayrolls(employee_id);
 
-        // Parse the data to correct format and return an object
-        const payrollTaxes = results.rows.map(payrollTax => payrollTaxesParse(payrollTax));
+        const payrollTaxes = results.map(payrollTax => payrollTaxesParse(payrollTax));
 
         response.status(201).send(payrollTaxes);
-    });
+    } catch (error) {
+        handleError(response, 'Error creating payroll tax');
+    }
 };
 
 // Update payroll tax
-export const updatePayrollTax = (request, response) => {
+export const updatePayrollTax = async (request, response) => {
     const { id } = request.params;
     const { employee_id, name, rate } = request.body;
 
-    pool.query(payrollQueries.updatePayrollTax, [name, rate, id], (error, results) => {
-        if (error) {
-            return response.status(400).send({ errors: { "msg": "Error updating payroll tax", "param": null, "location": "query" } });
-        }
+    try {
+        const results = await executeQuery(payrollQueries.updatePayrollTax, [name, rate, id]);
 
-        getPayrolls(employee_id);
+        await getPayrolls(employee_id);
 
-        // Parse the data to correct format and return an object
-        const payrollTaxes = results.rows.map(payrollTax => payrollTaxesParse(payrollTax));
+        const payrollTaxes = results.map(payrollTax => payrollTaxesParse(payrollTax));
 
         response.status(200).send(payrollTaxes);
-    });
+    } catch (error) {
+        handleError(response, 'Error updating payroll tax');
+    }
 };
 
 // Delete payroll tax
-export const deletePayrollTax = (request, response) => {
+export const deletePayrollTax = async (request, response) => {
     const { id } = request.params;
     const { employee_id } = request.query;
 
-    pool.query(payrollQueries.deletePayrollTax, [id], (error, results) => {
-        if (error) {
-            return response.status(400).send({ errors: { "msg": "Error deleting payroll tax", "param": null, "location": "query" } });
-        }
+    try {
+        await executeQuery(payrollQueries.deletePayrollTax, [id]);
 
-        getPayrolls(employee_id);
+        await getPayrolls(employee_id);
 
         response.status(200).send("Successfully deleted payroll tax");
-    });
+    } catch (error) {
+        handleError(response, 'Error deleting payroll tax');
+    }
 };
