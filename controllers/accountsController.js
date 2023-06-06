@@ -1,4 +1,3 @@
-import pool from '../models/db.js';
 import { accountQueries } from '../models/queryData.js';
 import { handleError, executeQuery } from '../utils/helperFunctions.js';
 

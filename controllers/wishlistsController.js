@@ -1,4 +1,4 @@
-import pool from '../models/db.js';
+import pool from '../config/db.js';
 import { wishlistQueries } from '../models/queryData.js';
 
 const wishlistsParse = wishlist => ({

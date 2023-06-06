@@ -1,4 +1,4 @@
-import pool from "./models/db.js";
+import pool from "./config/db.js";
 import { payrollQueries } from "./models/queryData.js";
 import * as fsModule from "fs";
 import { default as pathModule } from 'path';

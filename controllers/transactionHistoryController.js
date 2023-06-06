@@ -1,4 +1,4 @@
-import pool from '../models/db.js';
+import pool from '../config/db.js';
 import { transactionHistoryQueries } from '../models/queryData.js';
 
 const parseTransactions = transactionHistory => ({

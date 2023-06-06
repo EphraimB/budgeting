@@ -3,7 +3,7 @@ import fs from 'fs';
 import path from 'path';
 import * as url from 'url';
 const __dirname = url.fileURLToPath(new URL('.', import.meta.url));
-import pool from '../models/db.js';
+import pool from '../config/db.js';
 import { cronJobQueries } from '../models/queryData.js';
 
 const deleteCronJob = async (cronId) => {

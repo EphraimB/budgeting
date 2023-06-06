@@ -1,4 +1,4 @@
-import pool from '../models/db.js';
+import pool from '../config/db.js';
 import { transactionHistoryQueries, expenseQueries, loanQueries, payrollQueries, wishlistQueries, transferQueries, currentBalanceQueries } from '../models/queryData.js';
 
 // Get deposits by account

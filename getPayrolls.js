@@ -1,4 +1,4 @@
-import { default as poolModule } from './models/db.js';
+import { default as poolModule } from './config/db.js';
 import { payrollQueries as payrollQueriesFunction } from './models/queryData.js';
 import schedulePayrollCronJob from './jobs/schedulePayrollCronJob.js';
 

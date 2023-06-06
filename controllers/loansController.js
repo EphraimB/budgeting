@@ -1,4 +1,3 @@
-import pool from '../models/db.js';
 import { loanQueries, cronJobQueries } from '../models/queryData.js';
 import scheduleCronJob from '../jobs/scheduleCronJob.js';
 import deleteCronJob from '../jobs/deleteCronJob.js';

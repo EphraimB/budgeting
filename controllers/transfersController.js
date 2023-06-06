@@ -1,4 +1,4 @@
-import pool from '../models/db.js';
+import pool from '../config/db.js';
 import { transferQueries, cronJobQueries } from '../models/queryData.js';
 import scheduleCronJob from '../jobs/scheduleCronJob.js';
 import deleteCronJob from '../jobs/deleteCronJob.js';
