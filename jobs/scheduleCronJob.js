@@ -79,20 +79,20 @@ const determineCronValues = (frequency_type, frequency_type_variable, frequency_
 const writeCronJobToFile = (fs, jobsFilePath, jobs, newJob) => {
     jobs = jobs.filter(job => job.name !== "payroll-checker");
     jobs.push(newJob);
-    fs.writeFileSync(jobsFilePath, JSON.stringify(jobs, null, 2), (err) => {
-        if (err) {
-            console.error(err);
-            throw err;
-        }
+    try {
+        fs.writeFileSync(jobsFilePath, JSON.stringify(jobs, null, 2));
         console.log(`Updated jobs.json file`);
-    });
+    } catch (err) {
+        console.error(err);
+        throw err;
+    }
 };
 
-const scheduleCronJob = async (jobDetails, getBree, fs) => {
+const scheduleCronJob = async (jobDetails, getBree, fs, filePath, jobsFilePath) => {
     getBree = getBree || getBreeModule;
     fs = fs || fsModule;
 
-    const jobsFilePath = path.join(__dirname, '../jobs.json');
+    jobsFilePath = jobsFilePath || path.join(__dirname, '../jobs.json');
     if (!fs.existsSync(jobsFilePath)) {
         fs.writeFileSync(jobsFilePath, JSON.stringify([]));
     }
