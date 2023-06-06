@@ -1,6 +1,6 @@
-import pool from '../config/db.js';
 import { payrollQueries } from '../models/queryData.js';
 import { getPayrolls } from '../getPayrolls.js';
+import { handleError, executeQuery } from '../utils/helperFunctions.js';
 
 const employeeParse = employee => ({
     employee_id: parseInt(employee.employee_id),
@@ -13,90 +13,80 @@ const employeeParse = employee => ({
 });
 
 // Get employee
-export const getEmployee = (request, response) => {
-    const { id } = request.query;
-    const query = id ? payrollQueries.getEmployee : payrollQueries.getEmployees;
-    const params = id ? [id] : [];
+export const getEmployee = async (request, response) => {
+    try {
+        const { id } = request.query;
+        const query = id ? payrollQueries.getEmployee : payrollQueries.getEmployees;
+        const params = id ? [id] : [];
 
-    pool.query(query, params, (error, results) => {
-        if (error) {
-            return response.status(400).send({ errors: { msg: 'Error getting employee', param: null, location: 'query' } });
-        }
+        const results = await executeQuery(query, params);
 
         // Parse the data to the correct format and return an object
-        const employees = results.rows.map(employee => employeeParse(employee));
+        const employees = results.map(employee => employeeParse(employee));
 
         response.status(200).send(employees);
-    });
+    } catch (error) {
+        handleError(response, 'Error getting employee');
+    }
 };
 
 // Create employee
-export const createEmployee = (request, response) => {
-    const { name, hourly_rate, regular_hours, vacation_days, sick_days, work_schedule } = request.body;
+export const createEmployee = async (request, response) => {
+    try {
+        const { name, hourly_rate, regular_hours, vacation_days, sick_days, work_schedule } = request.body;
 
-    pool.query(payrollQueries.createEmployee, [name, hourly_rate, regular_hours, vacation_days, sick_days, work_schedule], (error, results) => {
-        if (error) {
-            return response.status(400).send({ errors: { "msg": "Error creating employee", "param": null, "location": "query" } });
-        }
+        const results = await executeQuery(payrollQueries.createEmployee, [name, hourly_rate, regular_hours, vacation_days, sick_days, work_schedule]);
 
         // Parse the data to correct format and return an object
-        const employees = results.rows.map(employee => employeeParse(employee));
+        const employees = results.map(employee => employeeParse(employee));
 
         response.status(201).send(employees);
-    });
+    } catch (error) {
+        handleError(response, 'Error creating employee');
+    }
 };
 
 // Update employee
-export const updateEmployee = (request, response) => {
-    const employee_id = parseInt(request.params.employee_id);
-    const { name, hourly_rate, regular_hours, vacation_days, sick_days, work_schedule } = request.body;
+export const updateEmployee = async (request, response) => {
+    try {
+        const employee_id = parseInt(request.params.employee_id);
+        const { name, hourly_rate, regular_hours, vacation_days, sick_days, work_schedule } = request.body;
 
-    pool.query(payrollQueries.updateEmployee, [name, hourly_rate, regular_hours, vacation_days, sick_days, work_schedule, employee_id], (error, results) => {
-        if (error) {
-            return response.status(400).send({ errors: { "msg": "Error updating employee", "param": null, "location": "query" } });
-        }
+        const results = await executeQuery(payrollQueries.updateEmployee, [name, hourly_rate, regular_hours, vacation_days, sick_days, work_schedule, employee_id]);
 
         getPayrolls(employee_id);
 
         // Parse the data to correct format and return an object
-        const employees = results.rows.map(employee => employeeParse(employee));
+        const employees = results.map(employee => employeeParse(employee));
 
         response.status(200).send(employees);
-    });
+    } catch (error) {
+        handleError(response, 'Error updating employee');
+    }
 };
 
 // Delete employee
-export const deleteEmployee = (request, response) => {
-    const employee_id = parseInt(request.params.employee_id);
+export const deleteEmployee = async (request, response) => {
+    try {
+        const employee_id = parseInt(request.params.employee_id);
 
-    // Check if there are any associated payroll dates or payroll taxes
-    pool.query(payrollQueries.getPayrollDates, [employee_id], (error, payrollDatesResults) => {
-        if (error) {
-            return response.status(400).send({ errors: { msg: 'Error getting payroll dates', param: null, location: 'query' } });
+        const payrollDatesResults = await executeQuery(payrollQueries.getPayrollDates, [employee_id]);
+        const hasPayrollDates = payrollDatesResults.length > 0;
+
+        const payrollTaxesResults = await executeQuery(payrollQueries.getPayrollTaxes, [employee_id]);
+        const hasPayrollTaxes = payrollTaxesResults.length > 0;
+
+        if (hasPayrollDates || hasPayrollTaxes) {
+            response.status(400).send({ errors: { msg: 'You need to delete employee-related data before deleting the employee', param: null, location: 'query' } });
+            return;
         }
 
-        const hasPayrollDates = payrollDatesResults.rows.length > 0;
+        await executeQuery(payrollQueries.deleteEmployee, [employee_id]);
 
-        pool.query(payrollQueries.getPayrollTaxes, [employee_id], (error, payrollTaxesResults) => {
-            if (error) {
-                return response.status(400).send({ errors: { msg: 'Error getting payroll taxes', param: null, location: 'query' } });
-            }
+        getPayrolls(employee_id);
 
-            const hasPayrollTaxes = payrollTaxesResults.rows.length > 0;
-
-            if (hasPayrollDates || hasPayrollTaxes) {
-                return response.status(400).send({ errors: { msg: 'You need to delete employee-related data before deleting the employee', param: null, location: 'query' } });
-            } else {
-                pool.query(payrollQueries.deleteEmployee, [employee_id], (error, results) => {
-                    if (error) {
-                        return response.status(400).send({ errors: { msg: 'Error deleting employee', param: null, location: 'query' } });
-                    }
-
-                    getPayrolls(employee_id);
-
-                    response.status(200).send('Successfully deleted employee');
-                });
-            }
-        });
-    });
+        response.status(200).send('Successfully deleted employee');
+    } catch (error) {
+        handleError(response, 'Error deleting employee');
+    }
 };
