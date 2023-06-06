@@ -1,109 +1,110 @@
 import pool from '../config/db.js';
 import { transactionHistoryQueries, expenseQueries, loanQueries, payrollQueries, wishlistQueries, transferQueries, currentBalanceQueries } from '../models/queryData.js';
+import { handleError, executeQuery } from '../utils/helperFunctions.js';
 
 // Get deposits by account
-export const getTransactionsByAccount = (request, response, next) => {
+export const getTransactionsByAccount = async (request, response, next) => {
     const { account_id, from_date } = request.query;
 
-    pool.query(transactionHistoryQueries.getTransactionsDateFiltered, [parseInt(account_id), from_date], (error, results) => {
-        if (error) {
-            return response.status(400).send({ errors: { "msg": "Error getting transactions", "param": null, "location": "query" } });
-        }
+    try {
+        const results = await executeQuery(transactionHistoryQueries.getTransactionsDateFiltered, [parseInt(account_id), from_date]);
 
-        request.transaction = results.rows;
+        request.transaction = results;
 
         next();
-    });
+    } catch (error) {
+        handleError(response, 'Error getting transactions');
+    }
 };
 
 // Get expenses by account
-export const getExpensesByAccount = (request, response, next) => {
+export const getExpensesByAccount = async (request, response, next) => {
     const { account_id, to_date } = request.query;
 
-    pool.query(expenseQueries.getExpensesByAccount, [account_id, to_date], (error, results) => {
-        if (error) {
-            return response.status(400).send({ errors: { "msg": "Error getting expenses", "param": null, "location": "query" } });
-        }
+    try {
+        const results = await executeQuery(expenseQueries.getExpensesByAccount, [account_id, to_date]);
 
-        request.expenses = results.rows;
+        request.expenses = results;
 
         next();
-    });
+    } catch (error) {
+        handleError(response, 'Error getting expenses');
+    }
 };
 
 // Get loans by account
-export const getLoansByAccount = (request, response, next) => {
+export const getLoansByAccount = async (request, response, next) => {
     const { account_id, to_date } = request.query;
 
-    pool.query(loanQueries.getLoansByAccount, [parseInt(account_id), to_date], (error, results) => {
-        if (error) {
-            return response.status(400).send({ errors: { "msg": "Error getting loans", "param": null, "location": "query" } });
-        }
+    try {
+        const results = await executeQuery(loanQueries.getLoansByAccount, [parseInt(account_id), to_date]);
 
-        request.loans = results.rows;
+        request.loans = results;
 
         next();
-    });
+    } catch (error) {
+        handleError(response, 'Error getting loans');
+    }
 };
 
 // Get payrolls by account
-export const getPayrollsMiddleware = (request, response, next) => {
+export const getPayrollsMiddleware = async (request, response, next) => {
     const { account_id, to_date } = request.query;
 
-    pool.query(payrollQueries.getPayrollsMiddleware, [account_id, to_date], (error, results) => {
-        if (error) {
-            return response.status(400).send({ errors: { "msg": "Error getting payrolls", "param": null, "location": "query" } });
-        }
+    try {
+        const results = await executeQuery(payrollQueries.getPayrollsMiddleware, [account_id, to_date]);
 
-        request.payrolls = results.rows;
+        request.payrolls = results;
 
         next();
-    });
+    } catch (error) {
+        handleError(response, 'Error getting payrolls');
+    }
 };
 
 // Get wishlists by account
-export const getWishlistsByAccount = (request, response, next) => {
+export const getWishlistsByAccount = async (request, response, next) => {
     const { account_id, to_date } = request.query;
 
-    pool.query(wishlistQueries.getWishlistsByAccount, [parseInt(account_id), to_date], (error, results) => {
-        if (error) {
-            return response.status(400).send({ errors: { "msg": "Error getting wishlists", "param": null, "location": "query" } });
-        }
+    try {
+        const results = await executeQuery(wishlistQueries.getWishlistsByAccount, [parseInt(account_id), to_date]);
 
-        request.wishlists = results.rows;
+        request.wishlists = results;
 
         next();
-    });
+    } catch (error) {
+        handleError(response, 'Error getting wishlists');
+    }
 };
 
 // Get transfers by account
-export const getTransfersByAccount = (request, response, next) => {
+export const getTransfersByAccount = async (request, response, next) => {
     const { account_id, to_date } = request.query;
 
-    pool.query(transferQueries.getTransfersByAccount, [parseInt(account_id), to_date], (error, results) => {
-        if (error) {
-            return response.status(400).send({ errors: { "msg": "Error getting transfers", "param": null, "location": "query" } });
-        }
+    try {
+        const results = await executeQuery(transferQueries.getTransfersByAccount, [parseInt(account_id), to_date]);
 
-        request.transfers = results.rows;
+        request.transfers = results;
 
         next();
-    });
+    } catch (error) {
+        handleError(response, 'Error getting transfers');
+    }
 };
 
 // Get current balance of account based on deposits and withdrawals
-export const getCurrentBalance = (request, response, next) => {
+export const getCurrentBalance = async (request, response, next) => {
     const account_id = parseInt(request.query.account_id);
 
-    pool.query(currentBalanceQueries.getCurrentBalance, [account_id], (error, results) => {
-        if (error) {
-            return response.status(400).send({ errors: { "msg": "Error getting current balance", "param": null, "location": "query" } });
-        }
+    try {
+        const results = await executeQuery(currentBalanceQueries.getCurrentBalance, [account_id]);
 
-        const currentBalance = parseFloat(results.rows[0].account_balance);
+        const currentBalance = parseFloat(results[0].account_balance);
 
         request.currentBalance = currentBalance;
 
         next();
-    });
+    } catch (error) {
+        handleError(response, 'Error getting current balance');
+    }
 };
