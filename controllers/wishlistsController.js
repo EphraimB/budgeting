@@ -14,65 +14,65 @@ const wishlistsParse = wishlist => ({
 });
 
 // Get all wishlists
-export const getWishlists = (request, response) => {
-    const { id } = request.query;
-    const query = id ? wishlistQueries.getWishlist : wishlistQueries.getWishlists;
-    const queryArgs = id ? [id] : [];
+export const getWishlists = async (request, response) => {
+    try {
+        const { id } = request.query;
+        const query = id ? wishlistQueries.getWishlist : wishlistQueries.getWishlists;
+        const params = id ? [id] : [];
 
-    pool.query(query, queryArgs, (error, results) => {
-        if (error) {
-            return response.status(400).send({ errors: { msg: 'Error getting wishlists', param: null, location: 'query' } });
-        }
+        const results = await executeQuery(query, params);
 
         // Parse the data to the correct format
-        const wishlists = results.rows.map(wishlist => wishlistsParse(wishlist));
+        const wishlists = results.map(wishlist => wishlistsParse(wishlist));
 
-        response.status(200).send(wishlists);
-    });
+        response.status(200).json(wishlists);
+    } catch (error) {
+        handleError(response, 'Error getting wishlists');
+    }
 };
 
 // Create wishlist
-export const createWishlist = (request, response) => {
-    const { account_id, amount, title, description, priority, url_link } = request.body;
+export const createWishlist = async (request, response) => {
+    try {
+        const { account_id, amount, title, description, priority, url_link } = request.body;
 
-    pool.query(wishlistQueries.createWishlist, [account_id, amount, title, description, priority, url_link], (error, results) => {
-        if (error) {
-            return response.status(400).send({ errors: { "msg": "Error creating wishlist", "param": null, "location": "query" } });
-        }
+        const results = await executeQuery(wishlistQueries.createWishlist, [account_id, amount, title, description, priority, url_link]);
 
         // Parse the data to correct format and return an object
-        const wishlists = results.rows.map(wishlist => wishlistsParse(wishlist));
+        const wishlists = results.map(wishlist => wishlistsParse(wishlist));
 
-        response.status(201).send(wishlists);
-    });
+        response.status(201).json(wishlists);
+    } catch (error) {
+        handleError(response, 'Error creating wishlist');
+    }
 };
 
 // Update wishlist
-export const updateWishlist = (request, response) => {
-    const id = parseInt(request.params.id);
-    const { account_id, amount, title, description, priority, url_link } = request.body;
+export const updateWishlist = async (request, response) => {
+    try {
+        const id = parseInt(request.params.id);
+        const { account_id, amount, title, description, priority, url_link } = request.body;
 
-    pool.query(wishlistQueries.updateWishlist, [account_id, amount, title, description, priority, url_link, id], (error, results) => {
-        if (error) {
-            return response.status(400).send({ errors: { "msg": "Error updating wishlist", "param": null, "location": "query" } });
-        }
+        const results = await executeQuery(wishlistQueries.updateWishlist, [account_id, amount, title, description, priority, url_link, id]);
 
         // Parse the data to correct format and return an object
-        const wishlists = results.rows.map(wishlist => wishlistsParse(wishlist));
+        const wishlists = results.map(wishlist => wishlistsParse(wishlist));
 
-        response.status(200).send(wishlists);
-    });
+        response.status(200).json(wishlists);
+    } catch (error) {
+        handleError(response, 'Error updating wishlist');
+    }
 };
 
 // Delete wishlist
-export const deleteWishlist = (request, response) => {
-    const id = parseInt(request.params.id);
+export const deleteWishlist = async (request, response) => {
+    try {
+        const id = parseInt(request.params.id);
 
-    pool.query(wishlistQueries.deleteWishlist, [id], (error, results) => {
-        if (error) {
-            return response.status(400).send({ errors: { "msg": "Error deleting wishlist", "param": null, "location": "query" } });
-        }
+        await executeQuery(wishlistQueries.deleteWishlist, [id]);
 
         response.status(200).send("Successfully deleted wishlist item");
-    });
+    } catch (error) {
+        handleError(response, 'Error deleting wishlist');
+    }
 };
