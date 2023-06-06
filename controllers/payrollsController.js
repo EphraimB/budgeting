@@ -1,5 +1,5 @@
-import pool from '../config/db.js';
 import { payrollQueries } from '../models/queryData.js';
+import { handleError, executeQuery } from '../utils/helperFunctions.js';
 
 const payrollsParse = payroll => ({
     start_date: payroll.start_date,
@@ -11,21 +11,22 @@ const payrollsParse = payroll => ({
 });
 
 // Get all payrolls
-export const getPayrolls = (request, response) => {
-    const employee_id = parseInt(request.query.employee_id);
+export const getPayrolls = async (request, response) => {
+    try {
+        const employee_id = parseInt(request.query.employee_id);
 
-    pool.query(payrollQueries.getPayrolls, [employee_id], (error, results) => {
-        if (error) {
-            return response.status(400).send({ errors: { "msg": "Error getting payrolls", "param": null, "location": "query" } });
-        }
+        const results = await executeQuery(payrollQueries.getPayrolls, [employee_id]);
 
         // Parse the data to correct format and return an object
-        const payrolls = results.rows.map(payroll => payrollsParse(payroll));
+        const payrolls = results.map(payroll => payrollsParse(payroll));
 
         const returnObj = {
             employee_id,
             payrolls: payrolls,
         }
+
         response.status(200).send(returnObj);
-    });
+    } catch (error) {
+        handleError(response, "Error getting payrolls");
+    }
 };
