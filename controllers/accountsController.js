@@ -55,14 +55,13 @@ export const updateAccount = async (request, response) => {
 };
 
 // Delete account
-export const deleteAccount = (request, response) => {
+export const deleteAccount = async (request, response) => {
     const id = parseInt(request.params.id);
 
-    pool.query(accountQueries.deleteAccount, [id], (error, results) => {
-        if (error) {
-            return response.status(400).send({ errors: { "msg": "Error deleting account", "param": null, "location": "query" } });
-        }
-
+    try {
+        await executeQuery(accountQueries.deleteAccount, [id]);
         response.status(200).send("Successfully deleted account");
-    });
+    } catch (error) {
+        handleError(response, "Error deleting account");
+    }
 };
