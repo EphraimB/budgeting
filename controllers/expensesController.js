@@ -1,7 +1,7 @@
-import pool from '../models/db.js';
 import { expenseQueries, cronJobQueries } from '../models/queryData.js';
 import scheduleCronJob from '../jobs/scheduleCronJob.js';
 import deleteCronJob from '../jobs/deleteCronJob.js';
+import { handleError, executeQuery } from '../utils/helperFunctions.js';
 
 const parseExpenses = expense => ({
     expense_id: parseInt(expense.expense_id),
@@ -20,25 +20,6 @@ const parseExpenses = expense => ({
     date_created: expense.date_created,
     date_modified: expense.date_modified,
 });
-
-const handleError = (response, message) => {
-    response.status(400).send({
-        errors: {
-            msg: message,
-            param: null,
-            location: 'query'
-        }
-    });
-};
-
-const executeQuery = async (query, params = []) => {
-    try {
-        const { rows } = await pool.query(query, params);
-        return rows;
-    } catch (error) {
-        throw new Error(error);
-    }
-};
 
 export const getExpenses = async (request, response) => {
     const { id } = request.query;

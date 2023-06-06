@@ -1,5 +1,6 @@
 import pool from '../models/db.js';
 import { accountQueries } from '../models/queryData.js';
+import { handleError, executeQuery } from '../utils/helperFunctions.js';
 
 const parseAccounts = account => ({
     account_id: parseInt(account.account_id),
@@ -11,51 +12,46 @@ const parseAccounts = account => ({
 });
 
 // Get all accounts
-export const getAccounts = (request, response) => {
+export const getAccounts = async (request, response) => {
     const id = parseInt(request.query.id);
 
     const query = id ? accountQueries.getAccount : accountQueries.getAccounts;
     const params = id ? [id] : [];
 
-    pool.query(query, params, (error, results) => {
-        if (error) {
-            return response.status(400).send({ errors: { "msg": "Error getting accounts", "param": null, "location": "query" } });
-        }
-
-        const accounts = results.rows.map(account => parseAccounts(account));
+    try {
+        const rows = await executeQuery(query, params);
+        const accounts = rows.map(account => parseAccounts(account));
         response.status(200).json(accounts);
-    });
+    } catch (error) {
+        handleError(response, "Error getting accounts");
+    }
 };
 
 // Create account
-export const createAccount = (request, response) => {
+export const createAccount = async (request, response) => {
     const { name, type, balance } = request.body;
 
-    pool.query(accountQueries.createAccount, [name, type, balance], (error, results) => {
-        if (error) {
-            return response.status(400).send({ errors: { "msg": "Error creating account", "param": null, "location": "query" } });
-        }
-
-        const accounts = results.rows.map(account => parseAccounts(account));
+    try {
+        const rows = await executeQuery(accountQueries.createAccount, [name, type, balance]);
+        const accounts = rows.map(account => parseAccounts(account));
         response.status(201).json(accounts);
-    });
+    } catch (error) {
+        handleError(response, "Error creating account");
+    }
 };
 
 // Update account
-export const updateAccount = (request, response) => {
+export const updateAccount = async (request, response) => {
     const id = parseInt(request.params.id);
     const { name, type, balance } = request.body;
 
-    pool.query(accountQueries.updateAccount, [name, type, balance, id], (error, results) => {
-        if (error) {
-            return response.status(400).send({ errors: { "msg": "Error updating account", "param": null, "location": "query" } });
-        }
-
-        // Parse the data to correct format and return an object
-        const accounts = results.rows.map(account => parseAccounts(account));
-
+    try {
+        const rows = await executeQuery(accountQueries.updateAccount, [name, type, balance, id]);
+        const accounts = rows.map(account => parseAccounts(account));
         response.status(200).send(accounts);
-    });
+    } catch (error) {
+        handleError(response, "Error updating account");
+    }
 };
 
 // Delete account
