@@ -29,10 +29,10 @@ const queryPayrolls = async (pool, payrollQueries, employee_id) => {
   return await pool.query(payrollQueries.getPayrolls, [employee_id]);
 }
 
-const schedulePayroll = (rows, account_id) => {
+const schedulePayroll = async (rows, account_id) => {
   const payrollJobs = [];
   for (const result of rows) {
-    schedulePayrollCronJob(result, account_id);
+    await schedulePayrollCronJob(result, account_id);
   }
   return payrollJobs;
 }

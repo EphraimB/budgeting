@@ -32,7 +32,8 @@ const updateJobsFile = (jobsFilePath, newJob, fs) => {
     if (fs.existsSync(jobsFilePath)) {
         jobs = JSON.parse(fs.readFileSync(jobsFilePath));
     }
-    jobs = jobs.filter(job => job.name !== "payroll-checker");
+
+    // Add the new payroll job
     jobs.push(newJob);
 
     fs.writeFileSync(jobsFilePath, JSON.stringify(jobs, null, 2));
