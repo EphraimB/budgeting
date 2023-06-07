@@ -1,11 +1,18 @@
 import { jest } from '@jest/globals';
+import { Volume } from 'memfs';
 import { getPayrolls } from '../../getPayrolls.js';
 
 describe('getPayrolls', () => {
     let mockPool;
     let mockPayrollQueries;
+    let vol;
 
     beforeEach(() => {
+        vol = Volume.fromJSON({
+            './jobs.json': '[]',
+            'cron-jobs/jobs.js': '',
+        }, '/app');
+
         // Create a mock pool object with a query method
         mockPool = {
             query: jest.fn(),
@@ -29,7 +36,7 @@ describe('getPayrolls', () => {
             return rows.map(row => ({ ...row, account_id }));
         }
 
-        const payrolls = await getPayrolls(1, mockPool, mockPayrollQueries, schedulePayrollFunction);
+        const payrolls = await getPayrolls(1, mockPool, mockPayrollQueries, schedulePayrollFunction, '/app/jobs.json', vol);
 
         // Verify the query method was called with the correct arguments
         expect(mockPool.query).toHaveBeenNthCalledWith(
