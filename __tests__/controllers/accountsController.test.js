@@ -1,63 +1,32 @@
 import { jest } from '@jest/globals';
-import request from 'supertest';
 import { accounts } from '../../models/mockData.js'; // Import the mock data
+import { getAccounts } from '../../controllers/accountsController.js';
 
-beforeAll(() => {
-    // Mock the breeManager module
-    jest.unstable_mockModule('../../breeManager.js', () => ({
-        initializeBree: jest.fn(),
-        getBree: jest.fn(),
-    }));
+let req, res;
 
-    // Mock the getJobs module
-    jest.unstable_mockModule('../../getJobs.js', () => ({
-        default: jest.fn(),
-    }));
+// Mock the executeQuery module
+jest.unstable_mockModule('../../utils/helperFunctions.js', () => ({
+    executeQuery: jest.fn().mockResolvedValue([{
+        account_id: 1,
+        account_name: 'test',
+        account_type: 1,
+        account_balance: 100,
+        date_created: '2021-01-01',
+        date_modified: '2021-01-01',
+    },
+    ]),
+}));
 
-    jest.unstable_mockModule('../../controllers/accountsController.js', () => ({
-        getAccounts: jest.fn().mockImplementation((request, response) => {
-            // Check if an id query parameter was provided
-            if (request.query.id !== undefined) {
-                // Convert id to number, because query parameters are strings
-                const id = Number(request.query.id);
+// Mock the breeManager module
+jest.unstable_mockModule('../../breeManager.js', () => ({
+    initializeBree: jest.fn(),
+    getBree: jest.fn(),
+}));
 
-                // Filter the accounts array
-                const account = accounts.filter(account => account.account_id === id);
-
-                // Respond with the filtered array
-                response.status(200).json(account);
-            } else {
-                // If no id was provided, respond with the full accounts array
-                response.status(200).json(accounts);
-            }
-        }),
-        createAccount: jest.fn().mockImplementation((request, response) => {
-            const newAccount = {
-                name: 'test',
-                balance: 100,
-                type: 1
-            };
-
-            // Respond with the new account
-            response.status(200).json(newAccount);
-        }),
-        updateAccount: jest.fn().mockImplementation((request, response) => {
-            const newAccount = {
-                name: 'test',
-                balance: 100,
-                type: 1
-            };
-
-            // Respond with the new account
-            response.status(200).json(newAccount);
-        }),
-        deleteAccount: jest.fn().mockImplementation((request, response) => {
-            // Response with a success message
-            response.status(200).send('Account successfully deleted');
-        }),
-    }));
-
-});
+// Mock the getJobs module
+jest.unstable_mockModule('../../getJobs.js', () => ({
+    default: jest.fn(),
+}));
 
 afterAll(() => {
     // Restore the original console.log function
@@ -66,13 +35,12 @@ afterAll(() => {
 
 describe('GET /api/accounts', () => {
     it('should respond with an array of accounts', async () => {
-        // Act
-        const app = await import('../../app.js');
-        const response = await request(app.default).get('/api/accounts');
+        // Call the function with the mock request and response
+        await getAccounts(req, res);
 
         // Assert
-        expect(response.statusCode).toBe(200);
-        expect(response.body).toEqual(accounts);
+        expect(res.status).toHaveBeenCalledWith(200);
+        expect(res.json).toHaveBeenCalledWith(accounts);
     });
 });
 
