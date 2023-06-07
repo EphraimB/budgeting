@@ -30,14 +30,14 @@ afterEach(() => {
 });
 
 const createJob = (name, cron, path, workerData) => {
-    return {
+    return[{
         name,
         cron,
         path,
         worker: {
             workerData
         }
-    };
+    }];
 };
 
 describe('getJobs', () => {

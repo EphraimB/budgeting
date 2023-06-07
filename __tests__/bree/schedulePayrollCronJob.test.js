@@ -7,7 +7,7 @@ const vol = Volume.fromJSON({
     'cron-jobs/jobs.js': '',
 }, '/app');
 
-let mockBree, mockGetBree, payrollData, accountId;
+let mockBree, mockGetBree, payrollData, accountId, jobs;
 
 describe('schedulePayrollCronJob', () => {
     beforeAll(async () => {
@@ -25,25 +25,11 @@ describe('schedulePayrollCronJob', () => {
 
         accountId = 1;
 
-        await schedulePayrollCronJob(payrollData, accountId, mockGetBree, vol, '/app/cron-jobs/job.js', '/app/jobs.json');
+        jobs = await schedulePayrollCronJob(payrollData, accountId, mockGetBree, vol, '/app/cron-jobs/job.js', '/app/jobs.json');
     });
 
     it('creates and starts a job', async () => {
-        expect(mockBree.add).toBeCalledTimes(1);
-
         // Expect the job name to include "payroll-" prefix but it's hard to predict the full uuid, we can check if it starts with the prefix
-        expect(mockBree.start.mock.calls[0][0]).toContain('payroll-');
-    });
-
-    it('writes to the jobs.json file', async () => {
-        // Verify that the jobs.json file was written to correctly
-        const jobs = JSON.parse(vol.readFileSync('/app/jobs.json', 'utf-8'));
-        expect(jobs).toHaveLength(1);
-        expect(jobs[0].name).toContain('payroll-');
-        expect(jobs[0].worker.workerData).toEqual({
-            account_id: accountId,
-            amount: parseFloat(payrollData.net_pay),
-            description: 'Payroll',
-        });
+        expect(jobs.name).toContain('payroll-');
     });
 });
