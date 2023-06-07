@@ -18,7 +18,9 @@ beforeEach(() => {
         { employee_id: 2 },
     ];
 
-    getPayrolls = jest.fn();
+    getPayrolls = jest.fn().mockImplementation(() => {
+        return [];
+    });
 
     // Ensure that the jobs.json file is reset before each test
     vol.writeFileSync('/app/jobs.json', '[]');
@@ -30,14 +32,14 @@ afterEach(() => {
 });
 
 const createJob = (name, cron, path, workerData) => {
-    return[{
+    return {
         name,
         cron,
         path,
         worker: {
             workerData
         }
-    }];
+    };
 };
 
 describe('getJobs', () => {
@@ -52,12 +54,12 @@ describe('getJobs', () => {
 
     it('should return the payroll objects and the existing jobs when a jobs.json file exists', async () => {
         // Create the jobs.json file in the test directory
-        const existingJob = createJob('485fe700-92c3-4cd4-80bf-4289ffc4c2f2', '1 16 29 */1 *', '/app/jobs/cronScriptCreate.js', {
+        const existingJob = {
             account_id: 1,
-            amount: -250,
-            description: 'This is an expense test',
-            destination_account_id: null
-        });
+            amount: 500.00,
+            description: 'Payroll',
+        };
+
         vol.writeFileSync('/app/jobs.json', JSON.stringify([existingJob]), 'utf8');
 
         const jobs = await getJobs(employeeData, getPayrolls, '/app/jobs.json', vol);
