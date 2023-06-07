@@ -6,19 +6,12 @@ describe('getPayrolls', () => {
     let mockPool;
     let mockPayrollQueries;
     let vol;
-    let employeeData;
 
     beforeEach(() => {
         vol = Volume.fromJSON({
             './jobs.json': '[]',
             'cron-jobs/jobs.js': '',
         }, '/app');
-
-        // Mocked employee data
-        employeeData = [
-            { employee_id: 1 },
-            { employee_id: 2 },
-        ];
 
         // Create a mock pool object with a query method
         mockPool = {
