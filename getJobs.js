@@ -36,7 +36,7 @@ export const getJobs = async (employeeData, getPayrolls, jobsFilePath, fs) => {
             let allJobs = JSON.parse(fs.readFileSync(jobsFilePath, 'utf8'));
 
             // Filter out jobs starting with 'payroll-'
-            let jobs = allJobs.filter(job => job.name.startsWith('payroll-'));
+            jobs = allJobs.filter(job => job.name.startsWith('payroll-'));
         }
 
         // Execute the cronScriptGetPayrolls.js script if there are no jobs that start with payroll- in the jobs array
