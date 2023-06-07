@@ -66,10 +66,15 @@ const schedulePayrollCronJob = async (payrollData, account_id, getBree, fs, file
         console.error(err);
     }
 
-    (async () => {
-        await getBree().add(newJob);
-        await getBree().start(newJob.name);
-    })();
+    try {
+        // await getBree().add(newJob);
+        // await getBree().start(newJob.name);
+        return newJob;
+    } catch (error) {
+        console.error('Error while scheduling job:', error);
+        throw error;
+    }
 };
+
 
 export default schedulePayrollCronJob;

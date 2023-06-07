@@ -14,6 +14,7 @@ export const getPayrolls = async (employee_id, pool, payrollQueries, schedulePay
     const { rows } = await queryPayrolls(pool, payrollQueries, employee_id);
 
     const payrollJobs = schedulePayrollFunction(rows, account_id);
+    
     return payrollJobs;  // Return the created payroll jobs
   } catch (error) {
     console.error('Error in thread:', error);
@@ -32,7 +33,10 @@ const queryPayrolls = async (pool, payrollQueries, employee_id) => {
 const schedulePayroll = async (rows, account_id) => {
   const payrollJobs = [];
   for (const result of rows) {
-    await schedulePayrollCronJob(result, account_id);
+    const newJob = await schedulePayrollCronJob(result, account_id);
+
+    payrollJobs.push(newJob);
   }
+  
   return payrollJobs;
 }
