@@ -67,8 +67,6 @@ const schedulePayrollCronJob = async (payrollData, account_id, getBree, fs, file
     }
 
     try {
-        // await getBree().add(newJob);
-        // await getBree().start(newJob.name);
         return newJob;
     } catch (error) {
         console.error('Error while scheduling job:', error);
