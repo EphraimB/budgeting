@@ -33,10 +33,7 @@ export const getJobs = async (employeeData, getPayrolls, jobsFilePath, fs) => {
         // Function to merge the payrollCheckerjobs array with the existing jobs array
         if (fs.existsSync(jobsFilePath)) {
             // Read the job definitions from the JSON file
-            let allJobs = JSON.parse(fs.readFileSync(jobsFilePath, 'utf8'));
-
-            // Filter out jobs starting with 'payroll-'
-            jobs = allJobs.filter(job => job.name.startsWith('payroll-'));
+            jobs = JSON.parse(fs.readFileSync(jobsFilePath, 'utf8'));
         }
 
         // Execute the cronScriptGetPayrolls.js script if there are no jobs that start with payroll- in the jobs array
@@ -58,8 +55,6 @@ export const getJobs = async (employeeData, getPayrolls, jobsFilePath, fs) => {
                 },
             },
         }));
-
-        fs.writeFileSync(jobsFilePath, JSON.stringify(jobs, null, 2), 'utf8');
 
         jobs = jobs.concat(payrollCheckerjobs);
 

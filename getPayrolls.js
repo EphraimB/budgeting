@@ -1,11 +1,14 @@
 import { default as poolModule } from './config/db.js';
 import { payrollQueries as payrollQueriesFunction } from './models/queryData.js';
 import schedulePayrollCronJob from './jobs/schedulePayrollCronJob.js';
+import * as fsModule from 'fs';
 
-export const getPayrolls = async (employee_id, pool, payrollQueries, schedulePayrollFunction) => {
+export const getPayrolls = async (employee_id, pool, payrollQueries, schedulePayrollFunction, jobsFilePath, fs) => {
   schedulePayrollFunction = schedulePayrollFunction || schedulePayroll;
   pool = pool || poolModule;
   payrollQueries = payrollQueries || payrollQueriesFunction;
+  jobsFilePath = jobsFilePath || './jobs.json';
+  fs = fs || fsModule;
 
   console.log('Running thread:', employee_id);
 
@@ -13,9 +16,11 @@ export const getPayrolls = async (employee_id, pool, payrollQueries, schedulePay
     const { rows: [{ account_id }] } = await queryAccountFromEmployee(pool, payrollQueries, employee_id);
     const { rows } = await queryPayrolls(pool, payrollQueries, employee_id);
 
-    const payrollJobs = schedulePayrollFunction(rows, account_id);
-    
-    return payrollJobs;  // Return the created payroll jobs
+    const payrollJobs = await schedulePayrollFunction(rows, account_id);
+
+    fs.writeFileSync(jobsFilePath, JSON.stringify(payrollJobs, null, 2), 'utf8');
+
+    return payrollJobs;
   } catch (error) {
     console.error('Error in thread:', error);
     throw error;

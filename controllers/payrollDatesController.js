@@ -48,7 +48,7 @@ export const createPayrollDate = async (request, response) => {
         };
         response.status(201).send(returnObj);
     } catch (error) {
-        handleError(response, 'Error creating payroll date');
+        handleError(response, error.message);
     }
 };
 
