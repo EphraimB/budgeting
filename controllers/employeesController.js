@@ -24,7 +24,7 @@ export const getEmployee = async (request, response) => {
         // Parse the data to the correct format and return an object
         const employees = results.map(employee => employeeParse(employee));
 
-        response.status(200).send(employees);
+        response.status(200).json(employees);
     } catch (error) {
         handleError(response, 'Error getting employee');
     }
@@ -40,7 +40,7 @@ export const createEmployee = async (request, response) => {
         // Parse the data to correct format and return an object
         const employees = results.map(employee => employeeParse(employee));
 
-        response.status(201).send(employees);
+        response.status(201).json(employees);
     } catch (error) {
         handleError(response, 'Error creating employee');
     }
@@ -59,7 +59,7 @@ export const updateEmployee = async (request, response) => {
         // Parse the data to correct format and return an object
         const employees = results.map(employee => employeeParse(employee));
 
-        response.status(200).send(employees);
+        response.status(200).json(employees);
     } catch (error) {
         handleError(response, 'Error updating employee');
     }
