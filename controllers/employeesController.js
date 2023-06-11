@@ -54,7 +54,7 @@ export const updateEmployee = async (request, response) => {
 
         const results = await executeQuery(payrollQueries.updateEmployee, [name, hourly_rate, regular_hours, vacation_days, sick_days, work_schedule, employee_id]);
 
-        getPayrolls(employee_id);
+        await getPayrolls(employee_id);
 
         // Parse the data to correct format and return an object
         const employees = results.map(employee => employeeParse(employee));
@@ -83,7 +83,7 @@ export const deleteEmployee = async (request, response) => {
 
         await executeQuery(payrollQueries.deleteEmployee, [employee_id]);
 
-        getPayrolls(employee_id);
+        await getPayrolls(employee_id);
 
         response.status(200).send('Successfully deleted employee');
     } catch (error) {
