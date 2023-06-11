@@ -99,7 +99,7 @@ export const createLoan = async (request, response) => {
         );
 
         const loans = loanResults.map(loan => parseLoan(loan));
-        response.status(201).send(loans);
+        response.status(201).json(loans);
     } catch (error) {
         handleError(response, error.message.includes('cron job') ? 'Error creating cron job' : 'Error creating loan');
     }
@@ -169,7 +169,7 @@ export const updateLoan = async (request, response) => {
 
         // Parse the data to the correct format and return an object
         const loans = updateLoanResults.map(loan => parseLoan(loan));
-        response.status(200).send(loans);
+        response.status(200).json(loans);
     } catch (error) {
         handleError(response, 'Error updating loan');
     }
