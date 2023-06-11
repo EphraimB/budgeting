@@ -3,14 +3,7 @@ import { accounts } from '../../models/mockData.js';
 
 // Mocking the executeQuery module
 jest.unstable_mockModule('../../utils/helperFunctions.js', () => ({
-    executeQuery: jest.fn().mockResolvedValue([{
-        account_id: 1,
-        account_name: 'Test Account',
-        account_type: 0,
-        account_balance: 1000,
-        date_created: '2020-01-01',
-        date_modified: '2020-01-01'
-    }]),
+    executeQuery: jest.fn().mockResolvedValue(accounts.filter(account => account.account_id === 1)),
     handleError: jest.fn().mockReturnValue({ message: 'Error' }),
 }));
 
