@@ -28,7 +28,7 @@ export const getExpenses = async (request, response) => {
 
     try {
         const expenses = await executeQuery(query, params);
-        response.status(200).send(expenses.map(parseExpenses));
+        response.status(200).json(expenses.map(parseExpenses));
     } catch (error) {
         handleError(response, 'Error getting expenses');
     }
@@ -87,7 +87,7 @@ export const createExpense = async (request, response) => {
             begin_date
         ]);
 
-        response.status(201).send(expenses.map(parseExpenses));
+        response.status(201).json(expenses.map(parseExpenses));
     } catch (error) {
         handleError(response, 'Error creating expense');
     }
@@ -155,7 +155,7 @@ export const updateExpense = async (request, response) => {
             id
         ]);
 
-        response.status(200).send(expenses.map(parseExpenses));
+        response.status(200).json(expenses.map(parseExpenses));
     } catch (error) {
         handleError(response, 'Error updating expense');
     }
