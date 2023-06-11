@@ -10,16 +10,10 @@ const transfersParse = transfer => ({
     transfer_amount: parseFloat(transfer.transfer_amount),
     transfer_title: transfer.transfer_title,
     transfer_description: transfer.transfer_description,
-    frequency_type: parseInt(transfer.frequency_type),
-    frequency_type_variable: parseInt(transfer.frequency_type_variable),
-    frequency_day_of_month: parseInt(transfer.frequency_day_of_month),
-    frequency_day_of_week: parseInt(transfer.frequency_day_of_week),
-    frequency_week_of_month: parseInt(transfer.frequency_week_of_month),
-    frequency_month_of_year: parseInt(transfer.frequency_month_of_year),
     transfer_begin_date: transfer.transfer_begin_date,
     transfer_end_date: transfer.transfer_end_date,
     date_created: transfer.date_created,
-    date_updated: transfer.date_updated,
+    date_modified: transfer.date_modified,
 });
 
 // Get transfers
@@ -44,35 +38,35 @@ export const getTransfers = async (request, response) => {
 // Create transfer
 export const createTransfer = async (request, response) => {
     try {
-        const { 
-            source_account_id, 
-            destination_account_id, 
-            amount, 
-            title, 
-            description, 
-            frequency_type, 
-            frequency_type_variable, 
-            frequency_day_of_month, 
-            frequency_day_of_week, 
-            frequency_week_of_month, 
-            frequency_month_of_year, 
-            begin_date, 
-            end_date 
+        const {
+            source_account_id,
+            destination_account_id,
+            amount,
+            title,
+            description,
+            frequency_type,
+            frequency_type_variable,
+            frequency_day_of_month,
+            frequency_day_of_week,
+            frequency_week_of_month,
+            frequency_month_of_year,
+            begin_date,
+            end_date
         } = request.body;
 
         const negativeAmount = -amount;
 
         const { cronDate, uniqueId } = await scheduleCronJob(
-            begin_date, 
-            source_account_id, 
-            negativeAmount, 
-            description, 
-            frequency_type, 
-            frequency_type_variable, 
-            frequency_day_of_month, 
-            frequency_day_of_week, 
-            frequency_week_of_month, 
-            frequency_month_of_year, 
+            begin_date,
+            source_account_id,
+            negativeAmount,
+            description,
+            frequency_type,
+            frequency_type_variable,
+            frequency_day_of_month,
+            frequency_day_of_week,
+            frequency_week_of_month,
+            frequency_month_of_year,
             destination_account_id
         );
 
@@ -83,26 +77,26 @@ export const createTransfer = async (request, response) => {
         console.log('Cron job created ' + cronId)
 
         const transferResult = await executeQuery(transferQueries.createTransfer, [
-            cronId, 
-            source_account_id, 
-            destination_account_id, 
-            amount, 
-            title, 
-            description, 
-            frequency_type, 
-            frequency_type_variable, 
-            frequency_day_of_month, 
-            frequency_day_of_week, 
-            frequency_week_of_month, 
-            frequency_month_of_year, 
-            begin_date, 
+            cronId,
+            source_account_id,
+            destination_account_id,
+            amount,
+            title,
+            description,
+            frequency_type,
+            frequency_type_variable,
+            frequency_day_of_month,
+            frequency_day_of_week,
+            frequency_week_of_month,
+            frequency_month_of_year,
+            begin_date,
             end_date
         ]);
 
         // Parse the data to correct format and return an object
         const transfers = transferResult.map(transfersParse);
 
-        response.status(201).send(transfers);
+        response.status(201).json(transfers);
     } catch (error) {
         handleError(response, 'Error creating transfer');
     }
@@ -175,7 +169,7 @@ export const updateTransfer = async (request, response) => {
         // Parse the data to correct format and return an object
         const transfers = updateResults.map(transfersParse);
 
-        response.status(200).send(transfers);
+        response.status(200).json(transfers);
     } catch (error) {
         handleError(response, 'Error updating transfer');
     }
@@ -184,25 +178,18 @@ export const updateTransfer = async (request, response) => {
 // Delete transfer
 export const deleteTransfer = async (request, response) => {
     try {
-        const { account_id } = request.query;
         const { id } = request.params;
 
-        const transferResults = await executeQuery(transferQueries.getTransfer, [account_id, id]);
+        const cronId = transferResults[0].cron_job_id;
 
-        if (transferResults.length > 0) {
-            const cronId = transferResults[0].cron_job_id;
+        await executeQuery(transferQueries.deleteTransfer, [id]);
 
-            await executeQuery(transferQueries.deleteTransfer, [id]);
-
-            if (cronId) {
-                await deleteCronJob(cronId);
-                await executeQuery(cronJobQueries.deleteCronJob, [cronId]);
-            }
-
-            response.status(200).send("Transfer deleted successfully");
-        } else {
-            response.status(200).send("Transfer doesn't exist");
+        if (cronId) {
+            await deleteCronJob(cronId);
+            await executeQuery(cronJobQueries.deleteCronJob, [cronId]);
         }
+
+        response.status(200).send("Transfer deleted successfully");
     } catch (error) {
         handleError(response, "Error deleting transfer");
     }

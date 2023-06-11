@@ -167,14 +167,11 @@ export const wishlists = [
 export const transfers = [
     {
         transfer_id: 1,
-        cron_job_id: 1,
         source_account_id: 1,
         destination_account_id: 2,
         transfer_amount: 100,
         transfer_title: 'Test Transfer',
         transfer_description: 'Test Transfer to test the transfer route',
-        frequency_type: 0,
-        frequency_type_variable: 2,
         transfer_begin_date: '2020-01-01',
         transfer_end_date: null,
         date_created: '2020-01-01',
