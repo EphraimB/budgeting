@@ -29,41 +29,37 @@ afterEach(() => {
 
 describe('GET /api/accounts', () => {
     it('should respond with an array of accounts', async () => {
-        mockRequest = { query: {} }; // Set the mockRequest.query
+        mockRequest = {
+            query: {
+                id: 1
+            }
+        }; // Set the mockRequest.query
 
         // Call the function with the mock request and response
         await getAccounts(mockRequest, mockResponse);
 
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(200);
-        expect(mockResponse.json).toHaveBeenCalledWith(accounts);
+        expect(mockResponse.json).toHaveBeenCalledWith(accounts.filter(account => account.account_id === 1));
     });
 });
 
 describe('POST /api/accounts', () => {
     it('should respond with the new account', async () => {
-        const newAccount = {
-            name: 'test',
-            balance: 100,
-            type: 1
-        };
+        const newAccount = accounts.filter(account => account.account_id === 1);
         mockRequest = { body: newAccount };
 
         await createAccount(mockRequest, mockResponse);
 
         // Assert
-        expect(mockResponse.status).toHaveBeenCalledWith(200);
+        expect(mockResponse.status).toHaveBeenCalledWith(201);
         expect(mockResponse.json).toHaveBeenCalledWith(newAccount);
     });
 });
 
 describe('PUT /api/accounts/:id', () => {
     it('should respond with the updated account', async () => {
-        const updatedAccount = {
-            name: 'test',
-            balance: 100,
-            type: 1
-        };
+        const updatedAccount = accounts.filter(account => account.account_id === 1);
         mockRequest = { params: { id: 1 }, body: updatedAccount };
 
         await updateAccount(mockRequest, mockResponse);
@@ -82,6 +78,6 @@ describe('DELETE /api/accounts/:id', () => {
 
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(200);
-        expect(mockResponse.json).toHaveBeenCalledWith({ message: 'Account successfully deleted' });
+        expect(mockResponse.send).toHaveBeenCalledWith('Successfully deleted account');
     });
 });

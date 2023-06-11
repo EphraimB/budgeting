@@ -47,7 +47,7 @@ export const updateAccount = async (request, response) => {
     try {
         const rows = await executeQuery(accountQueries.updateAccount, [name, type, balance, id]);
         const accounts = rows.map(account => parseAccounts(account));
-        response.status(200).send(accounts);
+        response.status(200).json(accounts);
     } catch (error) {
         handleError(response, "Error updating account");
     }
