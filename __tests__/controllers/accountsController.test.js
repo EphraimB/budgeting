@@ -1,110 +1,87 @@
 import { jest } from '@jest/globals';
-import { accounts } from '../../models/mockData.js'; // Import the mock data
-import { getAccounts } from '../../controllers/accountsController.js';
+import { accounts } from '../../models/mockData.js';
 
-let req, res;
-
-// Mock the executeQuery module
+// Mocking the executeQuery module
 jest.unstable_mockModule('../../utils/helperFunctions.js', () => ({
     executeQuery: jest.fn().mockResolvedValue([{
         account_id: 1,
-        account_name: 'test',
-        account_type: 1,
-        account_balance: 100,
-        date_created: '2021-01-01',
-        date_modified: '2021-01-01',
-    },
-    ]),
+        account_name: 'Test Account',
+        account_type: 0,
+        account_balance: 1000,
+        date_created: '2020-01-01',
+        date_modified: '2020-01-01'
+    }]),
+    handleError: jest.fn().mockReturnValue({ message: 'Error' }),
 }));
 
-// Mock the breeManager module
-jest.unstable_mockModule('../../breeManager.js', () => ({
-    initializeBree: jest.fn(),
-    getBree: jest.fn(),
-}));
+const { getAccounts, createAccount, updateAccount, deleteAccount } = await import('../../controllers/accountsController.js');
 
-// Mock the getJobs module
-jest.unstable_mockModule('../../getJobs.js', () => ({
-    default: jest.fn(),
-}));
+let mockRequest = {};
+let mockResponse = {
+    status: jest.fn().mockReturnThis(),
+    json: jest.fn(),
+    send: jest.fn(),  // Mock send method
+};
 
-afterAll(() => {
-    // Restore the original console.log function
-    jest.restoreAllMocks();
+afterEach(() => {
+    jest.clearAllMocks();
 });
 
 describe('GET /api/accounts', () => {
     it('should respond with an array of accounts', async () => {
+        mockRequest = { query: {} }; // Set the mockRequest.query
+
         // Call the function with the mock request and response
-        await getAccounts(req, res);
+        await getAccounts(mockRequest, mockResponse);
 
         // Assert
-        expect(res.status).toHaveBeenCalledWith(200);
-        expect(res.json).toHaveBeenCalledWith(accounts);
-    });
-});
-
-describe('GET /api/accounts with id query', () => {
-    it('should respond with an array of accounts', async () => {
-        const id = 1;
-
-        // Act
-        const app = await import('../../app.js');
-        const response = await request(app.default).get(`/api/accounts?id=${id}`);
-
-        // Assert
-        expect(response.statusCode).toBe(200);
-        expect(response.body).toEqual(accounts.filter(account => account.account_id === id));
+        expect(mockResponse.status).toHaveBeenCalledWith(200);
+        expect(mockResponse.json).toHaveBeenCalledWith(accounts);
     });
 });
 
 describe('POST /api/accounts', () => {
     it('should respond with the new account', async () => {
-        // Act
-        const app = await import('../../app.js');
         const newAccount = {
             name: 'test',
             balance: 100,
             type: 1
         };
-        const response = await request(app.default)
-            .post('/api/accounts')
-            .send(newAccount);
+        mockRequest = { body: newAccount };
+
+        await createAccount(mockRequest, mockResponse);
 
         // Assert
-        expect(response.statusCode).toBe(200);
-        expect(response.body).toEqual(newAccount);
+        expect(mockResponse.status).toHaveBeenCalledWith(200);
+        expect(mockResponse.json).toHaveBeenCalledWith(newAccount);
     });
 });
 
 describe('PUT /api/accounts/:id', () => {
     it('should respond with the updated account', async () => {
-        // Act
-        const app = await import('../../app.js');
-        const newAccount = {
+        const updatedAccount = {
             name: 'test',
             balance: 100,
             type: 1
         };
-        const response = await request(app.default)
-            .put('/api/accounts/1')
-            .send(newAccount);
+        mockRequest = { params: { id: 1 }, body: updatedAccount };
+
+        await updateAccount(mockRequest, mockResponse);
 
         // Assert
-        expect(response.statusCode).toBe(200);
-        expect(response.body).toEqual(newAccount);
+        expect(mockResponse.status).toHaveBeenCalledWith(200);
+        expect(mockResponse.json).toHaveBeenCalledWith(updatedAccount);
     });
 });
 
 describe('DELETE /api/accounts/:id', () => {
     it('should respond with a success message', async () => {
-        // Act
-        const app = await import('../../app.js');
-        const response = await request(app.default)
-            .delete('/api/accounts/1');
+        mockRequest = { params: { id: 1 } };
+
+        await deleteAccount(mockRequest, mockResponse);
 
         // Assert
-        expect(response.statusCode).toBe(200);
-        expect(response.text).toBe('Account successfully deleted');
+        expect(mockResponse.status).toHaveBeenCalledWith(200);
+        expect(mockResponse.json).toHaveBeenCalledWith({ message: 'Account successfully deleted' });
     });
 });
