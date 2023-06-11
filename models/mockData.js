@@ -153,10 +153,11 @@ export const payrollDates = [
 export const wishlists = [
     {
         wishlist_id: 1,
-        account_id: 1,
         wishlist_amount: 1000,
         wishlist_title: 'Test Wishlist',
         wishlist_description: 'Test Wishlist to test the wishlist route',
+        wishlist_date_available: null,
+        wishlist_url_link: 'https://www.google.com/',
         wishlist_priority: 0,
         date_created: '2020-01-01',
         date_modified: '2020-01-01'

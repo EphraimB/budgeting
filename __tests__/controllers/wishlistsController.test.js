@@ -1,130 +1,75 @@
 import { jest } from '@jest/globals';
-import request from 'supertest';
-import { wishlists } from '../../models/mockData.js'; // Import the mock data
+import { wishlists } from '../../models/mockData.js';
 
-const newWishlist = {
-    amount: 100,
-    title: 'test',
-    description: 'test',
-    priority: 1,
+jest.unstable_mockModule('../../utils/helperFunctions.js', () => ({
+    executeQuery: jest.fn().mockResolvedValue(wishlists.filter(wishlist => wishlist.wishlist_id === 1)),
+    handleError: jest.fn().mockReturnValue({ message: 'Error' }),
+}));
+
+const { getWishlists, createWishlist, updateWishlist, deleteWishlist } = await import('../../controllers/wishlistsController.js');
+
+let mockRequest = {};
+let mockResponse = {
+    status: jest.fn().mockReturnThis(),
+    json: jest.fn(),
+    send: jest.fn(),  // Mock send method
 };
 
-beforeAll(() => {
-    // Mock the breeManager module
-    jest.unstable_mockModule('../../breeManager.js', () => ({
-        initializeBree: jest.fn(),
-        getBree: jest.fn(),
-    }));
-
-    // Mock the getJobs module
-    jest.unstable_mockModule('../../getJobs.js', () => ({
-        default: jest.fn(),
-    }));
-
-    jest.unstable_mockModule('../../controllers/wishlistsController.js', () => ({
-        getWishlists: jest.fn().mockImplementation((request, response) => {
-            // Check if an id query parameter was provided
-            if (request.query.id !== undefined) {
-                // Convert id to number, because query parameters are strings
-                const id = Number(request.query.id);
-
-                // Filter the loans array
-                const wishlist = wishlists.filter(wishlist => wishlist.wishlist_id === id);
-
-                // Respond with the filtered array
-                response.status(200).json(wishlist);
-            } else {
-                // If no id was provided, respond with the full accounts array
-                response.status(200).json(wishlists);
-            }
-        }),
-        createWishlist: jest.fn().mockImplementation((request, response) => {
-            // Respond with the new account
-            response.status(200).json(newWishlist);
-        }),
-        updateWishlist: jest.fn().mockImplementation((request, response) => {
-            // Respond with the new account
-            response.status(200).json(newWishlist);
-        }),
-        deleteWishlist: jest.fn().mockImplementation((request, response) => {
-            // Response with a success message
-            response.status(200).send('Wishlist successfully deleted');
-        }),
-    }));
-});
-
-afterAll(() => {
-    // Restore the original console.log function
-    jest.restoreAllMocks();
+afterEach(() => {
+    jest.clearAllMocks();
 });
 
 describe('GET /api/wishlists', () => {
-    it('should respond with the full wishlists array', async () => {
-        // Act
-        const app = await import('../../app.js');
-        const response = await request(app.default)
-            .get('/api/wishlists')
-            .set('Accept', 'application/json');
+    it('should respond with an array of wishlists', async () => {
+        mockRequest = {
+            query: {
+                id: 1
+            }
+        }; // Set the mockRequest.query
+
+        // Call the function with the mock request and response
+        await getWishlists(mockRequest, mockResponse);
 
         // Assert
-        expect(response.statusCode).toBe(200);
-        expect(response.body).toEqual(wishlists);
-    });
-});
-
-describe('GET /api/wishlists with id query', () => {
-    it('should respond with the filtered wishlist array', async () => {
-        const id = 1;
-
-        // Act
-        const app = await import('../../app.js');
-        const response = await request(app.default)
-            .get('/api/wishlists?id=1')
-            .set('Accept', 'application/json');
-
-        // Assert
-        expect(response.statusCode).toBe(200);
-        expect(response.body).toEqual(wishlists.filter(wishlist => wishlist.wishlist_id === id));
+        expect(mockResponse.status).toHaveBeenCalledWith(200);
+        expect(mockResponse.json).toHaveBeenCalledWith(wishlists.filter(wishlist => wishlist.wishlist_id === 1));
     });
 });
 
 describe('POST /api/wishlists', () => {
     it('should respond with the new wishlist', async () => {
-        // Act
-        const app = await import('../../app.js');
-        const response = await request(app.default)
-            .post('/api/wishlists')
-            .send(newWishlist);
+        const newWishlist = wishlists.filter(wishlist => wishlist.wishlist_id === 1);
+        mockRequest = { body: newWishlist };
+
+        await createWishlist(mockRequest, mockResponse);
 
         // Assert
-        expect(response.statusCode).toBe(200);
-        expect(response.body).toEqual(newWishlist);
+        expect(mockResponse.status).toHaveBeenCalledWith(201);
+        expect(mockResponse.json).toHaveBeenCalledWith(newWishlist);
     });
 });
 
-describe('PUT /api/wishlists', () => {
+describe('PUT /api/wishlists/:id', () => {
     it('should respond with the updated wishlist', async () => {
-        // Act
-        const app = await import('../../app.js');
-        const response = await request(app.default)
-            .put('/api/wishlists/1')
-            .send(newWishlist);
+        const updatedWishlist = wishlists.filter(wishlist => wishlist.wishlist_id === 1);
+        mockRequest = { params: { id: 1 }, body: updatedWishlist };
+
+        await updateWishlist(mockRequest, mockResponse);
 
         // Assert
-        expect(response.statusCode).toBe(200);
-        expect(response.body).toEqual(newWishlist);
+        expect(mockResponse.status).toHaveBeenCalledWith(200);
+        expect(mockResponse.json).toHaveBeenCalledWith(updatedWishlist);
     });
 });
 
-describe('DELETE /api/wishlists', () => {
+describe('DELETE /api/wishlists/:id', () => {
     it('should respond with a success message', async () => {
-        // Act
-        const app = await import('../../app.js');
-        const response = await request(app.default)
-            .delete('/api/wishlists/1');
+        mockRequest = { params: { id: 1 } };
+
+        await deleteWishlist(mockRequest, mockResponse);
 
         // Assert
-        expect(response.statusCode).toBe(200);
-        expect(response.text).toBe('Wishlist successfully deleted');
+        expect(mockResponse.status).toHaveBeenCalledWith(200);
+        expect(mockResponse.send).toHaveBeenCalledWith('Successfully deleted wishlist item');
     });
 });

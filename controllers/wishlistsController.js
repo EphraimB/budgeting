@@ -10,7 +10,7 @@ const wishlistsParse = wishlist => ({
     wishlist_priority: parseInt(wishlist.wishlist_priority),
     wishlist_date_available: wishlist.wishlist_date_available,
     date_created: wishlist.date_created,
-    date_updated: wishlist.date_updated,
+    date_modified: wishlist.date_modified,
 });
 
 // Get all wishlists
