@@ -1,127 +1,75 @@
 import { jest } from '@jest/globals';
-import request from 'supertest';
-import { transactions } from '../../models/mockData.js'; // Import the mock data
+import { transactions } from '../../models/mockData.js';
 
-const newTransaction = {
-    amount: 100,
-    account_id: 1,
-    title: 'test',
-    description: 'test',
+jest.unstable_mockModule('../../utils/helperFunctions.js', () => ({
+    executeQuery: jest.fn().mockResolvedValue(transactions.filter(transaction => transaction.transaction_id === 1)),
+    handleError: jest.fn().mockReturnValue({ message: 'Error' }),
+}));
+
+const { getTransactions, createTransaction, updateTransaction, deleteTransaction } = await import('../../controllers/transactionHistoryController.js');
+
+let mockRequest = {};
+let mockResponse = {
+    status: jest.fn().mockReturnThis(),
+    json: jest.fn(),
+    send: jest.fn(),  // Mock send method
 };
 
-beforeAll(() => {
-    // Mock the breeManager module
-    jest.unstable_mockModule('../../breeManager.js', () => ({
-        initializeBree: jest.fn(),
-        getBree: jest.fn(),
-    }));
-
-    // Mock the getJobs module
-    jest.unstable_mockModule('../../getJobs.js', () => ({
-        default: jest.fn(),
-    }));
-
-    jest.unstable_mockModule('../../controllers/transactionHistoryController.js', () => ({
-        getTransactions: jest.fn().mockImplementation((request, response) => {
-            // Check if an id query parameter was provided
-            if (request.query.id !== undefined) {
-                // Convert id to number, because query parameters are strings
-                const id = Number(request.query.id);
-
-                // Filter the transactions array
-                const transaction = transactions.filter(transaction => transaction.transaction_id === id);
-
-                // Respond with the filtered array
-                response.status(200).json(transaction);
-            } else {
-                // If no id was provided, respond with the full accounts array
-                response.status(200).json(transactions);
-            }
-        }),
-        createTransaction: jest.fn().mockImplementation((request, response) => {
-            // Respond with the new account
-            response.status(200).json(newTransaction);
-        }),
-        updateTransaction: jest.fn().mockImplementation((request, response) => {
-            // Respond with the new account
-            response.status(200).json(newTransaction);
-        }),
-        deleteTransaction: jest.fn().mockImplementation((request, response) => {
-            // Response with a success message
-            response.status(200).send('Transaction successfully deleted');
-        }),
-    }));
-
-});
-
-afterAll(() => {
-    // Restore the original console.log function
-    jest.restoreAllMocks();
+afterEach(() => {
+    jest.clearAllMocks();
 });
 
 describe('GET /api/transactionHistory', () => {
     it('should respond with an array of transactions', async () => {
-        // Act
-        const app = await import('../../app.js');
-        const response = await request(app.default).get('/api/transactionHistory');
+        mockRequest = {
+            query: {
+                id: 1
+            }
+        }; // Set the mockRequest.query
+
+        // Call the function with the mock request and response
+        await getTransactions(mockRequest, mockResponse);
 
         // Assert
-        expect(response.statusCode).toBe(200);
-        expect(response.body).toEqual(transactions);
-    });
-});
-
-describe('GET /api/transactionHistory with id query', () => {
-    it('should respond with an array of transactions', async () => {
-        const id = 1;
-
-        // Act
-        const app = await import('../../app.js');
-        const response = await request(app.default).get(`/api/transactionHistory?id=${id}`);
-
-        // Assert
-        expect(response.statusCode).toBe(200);
-        expect(response.body).toEqual(transactions.filter(transaction => transaction.transaction_id === id));
+        expect(mockResponse.status).toHaveBeenCalledWith(200);
+        expect(mockResponse.json).toHaveBeenCalledWith(transactions.filter(transaction => transaction.transaction_id === 1));
     });
 });
 
 describe('POST /api/transactionHistory', () => {
-    it('should respond with the new transactions', async () => {
-        // Act
-        const app = await import('../../app.js');
-        const response = await request(app.default)
-            .post('/api/transactionHistory')
-            .send(newTransaction);
+    it('should respond with the new transaction', async () => {
+        const newTransaction = transactions.filter(transaction => transaction.transaction_id === 1);
+        mockRequest = { body: newTransaction };
+
+        await createTransaction(mockRequest, mockResponse);
 
         // Assert
-        expect(response.statusCode).toBe(200);
-        expect(response.body).toEqual(newTransaction);
+        expect(mockResponse.status).toHaveBeenCalledWith(201);
+        expect(mockResponse.json).toHaveBeenCalledWith(newTransaction);
     });
 });
 
 describe('PUT /api/transactionHistory/:id', () => {
     it('should respond with the updated transaction', async () => {
-        // Act
-        const app = await import('../../app.js');
-        const response = await request(app.default)
-            .put('/api/transactionHistory/1')
-            .send(newTransaction);
+        const updatedTransaction = transactions.filter(transaction => transaction.transaction_id === 1);
+        mockRequest = { params: { id: 1 }, body: updatedTransaction };
+
+        await updateTransaction(mockRequest, mockResponse);
 
         // Assert
-        expect(response.statusCode).toBe(200);
-        expect(response.body).toEqual(newTransaction);
+        expect(mockResponse.status).toHaveBeenCalledWith(200);
+        expect(mockResponse.json).toHaveBeenCalledWith(updatedTransaction);
     });
 });
 
 describe('DELETE /api/transactionHistory/:id', () => {
     it('should respond with a success message', async () => {
-        // Act
-        const app = await import('../../app.js');
-        const response = await request(app.default)
-            .delete('/api/transactionHistory/1');
+        mockRequest = { params: { id: 1 } };
+
+        await deleteTransaction(mockRequest, mockResponse);
 
         // Assert
-        expect(response.statusCode).toBe(200);
-        expect(response.text).toBe('Transaction successfully deleted');
+        expect(mockResponse.status).toHaveBeenCalledWith(200);
+        expect(mockResponse.send).toHaveBeenCalledWith('Successfully deleted transaction');
     });
 });

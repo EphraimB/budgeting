@@ -33,32 +33,32 @@ export const transactions = [
     {
         transaction_id: 1,
         account_id: 1,
-        deposit_amount: 1000,
-        deposit_description: 'Test Deposit',
+        transaction_amount: 1000,
+        transaction_description: 'Test Deposit',
         date_created: '2020-01-01',
         date_modified: '2020-01-01'
     },
     {
         transaction_id: 2,
         account_id: 1,
-        deposit_amount: 2000,
-        deposit_description: 'Test Deposit 2',
+        transaction_amount: 2000,
+        transaction_description: 'Test Deposit 2',
         date_created: '2020-01-01',
         date_modified: '2020-01-01'
     },
     {
         transaction_id: 3,
         account_id: 1,
-        withdrawal_amount: 1000,
-        withdrawal_description: 'Test Withdrawal',
+        transaction_amount: 1000,
+        transaction_description: 'Test Withdrawal',
         date_created: '2020-01-01',
         date_modified: '2020-01-01'
     },
     {
         transaction_id: 4,
         account_id: 1,
-        withdrawal_amount: 200,
-        withdrawal_description: 'Test Withdrawal 2',
+        transaction_amount: 200,
+        transaction_description: 'Test Withdrawal 2',
         date_created: '2020-01-01',
         date_modified: '2020-01-01'
     }

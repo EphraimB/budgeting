@@ -57,7 +57,7 @@ export const updateTransaction = async (request, response) => {
 
         const transactionHistory = transactionResults.map(transaction => parseTransactions(transaction));
 
-        response.status(200).send(transactionHistory);
+        response.status(200).json(transactionHistory);
     } catch (error) {
         handleError(response, 'Error updating transaction');
     }
