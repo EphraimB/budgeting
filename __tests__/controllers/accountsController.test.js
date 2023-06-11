@@ -1,7 +1,6 @@
 import { jest } from '@jest/globals';
 import { accounts } from '../../models/mockData.js';
 
-// Mocking the executeQuery module
 jest.unstable_mockModule('../../utils/helperFunctions.js', () => ({
     executeQuery: jest.fn().mockResolvedValue(accounts.filter(account => account.account_id === 1)),
     handleError: jest.fn().mockReturnValue({ message: 'Error' }),
