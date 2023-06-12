@@ -1,42 +1,42 @@
 import { jest } from '@jest/globals';
-import request from 'supertest';
-import { payrolls } from '../../models/mockData.js'; // Import the mock data
+import { payrolls } from '../../models/mockData.js';
 
-beforeAll(() => {
-    // Mock the breeManager module
-    jest.unstable_mockModule('../../breeManager.js', () => ({
-        initializeBree: jest.fn(),
-        getBree: jest.fn(),
-    }));
+jest.unstable_mockModule('../../utils/helperFunctions.js', () => ({
+    executeQuery: jest.fn().mockResolvedValue(payrolls),
+    handleError: jest.fn().mockReturnValue({ message: 'Error' }),
+}));
 
-    // Mock the getJobs module
-    jest.unstable_mockModule('../../getJobs.js', () => ({
-        default: jest.fn(),
-    }));
+const { getPayrolls } = await import('../../controllers/payrollsController.js');
 
-    jest.unstable_mockModule('../../controllers/payrollsController.js', () => ({
-        getPayrolls: jest.fn().mockImplementation((request, response) => {
-            // If no id was provided, respond with the full accounts array
-            response.status(200).json(payrolls);
-        }),
-    }));
+let mockRequest = {};
+let mockResponse = {
+    status: jest.fn().mockReturnThis(),
+    json: jest.fn(),
+    send: jest.fn(),  // Mock send method
+};
+
+afterEach(() => {
+    jest.clearAllMocks();
 });
 
-afterAll(() => {
-    // Restore the original console.log function
-    jest.restoreAllMocks();
-});
-
-describe('GET /api/payrolls with id query', () => {
+describe('GET /api/payrolls', () => {
     it('should respond with an array of payrolls', async () => {
-        const id = 1;
+        mockRequest = {
+            query: {
+                employee_id: 1
+            }
+        }; // Set the mockRequest.query
 
-        // Act
-        const app = await import('../../app.js');
-        const response = await request(app.default).get(`/api/payroll?employee_id=${id}`);
+        // Call the function with the mock request and response
+        await getPayrolls(mockRequest, mockResponse);
+
+        const expectedPayrolls = {
+            employee_id: 1,
+            payrolls
+        }
 
         // Assert
-        expect(response.statusCode).toBe(200);
-        expect(response.body).toEqual(payrolls);
+        expect(mockResponse.status).toHaveBeenCalledWith(200);
+        expect(mockResponse.json).toHaveBeenCalledWith(expectedPayrolls);
     });
 });
