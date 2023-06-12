@@ -56,7 +56,7 @@ export const createTransfer = async (request, response) => {
 
         const negativeAmount = -amount;
 
-        const { cronDate, uniqueId } = await scheduleCronJob(
+        const { cronDate, uniqueId } = await scheduleCronJob({
             begin_date,
             source_account_id,
             negativeAmount,
@@ -68,7 +68,7 @@ export const createTransfer = async (request, response) => {
             frequency_week_of_month,
             frequency_month_of_year,
             destination_account_id
-        );
+        });
 
         const cronJobResult = await executeQuery(cronJobQueries.createCronJob, [uniqueId, cronDate]);
 
@@ -98,7 +98,7 @@ export const createTransfer = async (request, response) => {
 
         response.status(201).json(transfers);
     } catch (error) {
-        handleError(response, 'Error creating transfer');
+        handleError(response, error.message);
     }
 };
 
@@ -133,7 +133,7 @@ export const updateTransfer = async (request, response) => {
         const cronId = transferResults[0].cron_job_id;
         await deleteCronJob(cronId);
 
-        const { uniqueId, cronDate } = scheduleCronJob(
+        const { uniqueId, cronDate } = scheduleCronJob({
             begin_date,
             source_account_id,
             negativeAmount,
@@ -145,7 +145,7 @@ export const updateTransfer = async (request, response) => {
             frequency_week_of_month,
             frequency_month_of_year,
             destination_account_id
-        );
+        });
 
         await executeQuery(cronJobQueries.updateCronJob, [uniqueId, cronDate, cronId]);
 
@@ -178,7 +178,10 @@ export const updateTransfer = async (request, response) => {
 // Delete transfer
 export const deleteTransfer = async (request, response) => {
     try {
+        const { account_id } = request.query;
         const { id } = request.params;
+
+        const transferResults = await executeQuery(transferQueries.getTransfer, [account_id, id]);
 
         const cronId = transferResults[0].cron_job_id;
 
@@ -191,6 +194,6 @@ export const deleteTransfer = async (request, response) => {
 
         response.status(200).send("Transfer deleted successfully");
     } catch (error) {
-        handleError(response, "Error deleting transfer");
+        handleError(response, error.message);
     }
 };
