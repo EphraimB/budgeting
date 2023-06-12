@@ -40,7 +40,7 @@ export const createPayrollTax = async (request, response) => {
 
         const payrollTaxes = results.map(payrollTax => payrollTaxesParse(payrollTax));
 
-        response.status(201).send(payrollTaxes);
+        response.status(201).json(payrollTaxes);
     } catch (error) {
         handleError(response, 'Error creating payroll tax');
     }
