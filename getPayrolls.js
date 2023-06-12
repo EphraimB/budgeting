@@ -1,22 +1,18 @@
-import { default as poolModule } from './config/db.js';
-import { payrollQueries as payrollQueriesFunction } from './models/queryData.js';
+import pool from './config/db.js';
+import { payrollQueries } from './models/queryData.js';
 import schedulePayrollCronJob from './jobs/schedulePayrollCronJob.js';
-import * as fsModule from 'fs';
+import fs from 'fs';
 
-export const getPayrolls = async (employee_id, pool, payrollQueries, schedulePayrollFunction, jobsFilePath, fs) => {
-  schedulePayrollFunction = schedulePayrollFunction || schedulePayroll;
-  pool = pool || poolModule;
-  payrollQueries = payrollQueries || payrollQueriesFunction;
+export const getPayrolls = async (employee_id, jobsFilePath) => {
   jobsFilePath = jobsFilePath || './jobs.json';
-  fs = fs || fsModule;
 
   console.log('Running thread:', employee_id);
 
   try {
-    const { rows: [{ account_id }] } = await queryAccountFromEmployee(pool, payrollQueries, employee_id);
-    const { rows } = await queryPayrolls(pool, payrollQueries, employee_id);
+    const { rows: [{ account_id }] } = await pool.query(payrollQueries.getAccountIdFromEmployee, [employee_id]);
+    const { rows } = await pool.query(payrollQueries.getPayrolls, [employee_id]);
 
-    const payrollJobs = await schedulePayrollFunction(rows, account_id);
+    const payrollJobs = await schedulePayroll(rows, account_id);
 
     fs.writeFileSync(jobsFilePath, JSON.stringify(payrollJobs, null, 2), 'utf8');
 
@@ -26,14 +22,6 @@ export const getPayrolls = async (employee_id, pool, payrollQueries, schedulePay
     throw error;
   }
 };
-
-const queryAccountFromEmployee = async (pool, payrollQueries, employee_id) => {
-  return await pool.query(payrollQueries.getAccountIdFromEmployee, [employee_id]);
-}
-
-const queryPayrolls = async (pool, payrollQueries, employee_id) => {
-  return await pool.query(payrollQueries.getPayrolls, [employee_id]);
-}
 
 const schedulePayroll = async (rows, account_id) => {
   const payrollJobs = [];
