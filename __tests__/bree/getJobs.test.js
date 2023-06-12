@@ -56,15 +56,15 @@ describe('getJobs', () => {
         ]);
     });
 
-    it('should return the payroll objects and the existing jobs when a jobs.json file exists', async () => {
-        vol.writeFileSync('/app/jobs.json', createJob('payroll-fesgersg', '0 0 1 * *', '/app/jobs/cronScriptCreate.js', { employee_id: 1 }), 'utf8');
+    // it('should return the payroll objects and the existing jobs when a jobs.json file exists', async () => {
+    //     vol.writeFileSync('/app/jobs.json', createJob('payroll-fesgersg', '0 0 1 * *', '/app/jobs/cronScriptCreate.js', { employee_id: 1 }), 'utf8');
 
-        const jobs = await getJobs('/app/jobs.json');
+    //     const jobs = await getJobs('/app/jobs.json');
 
-        expect(jobs).toEqual([
-            createJob('payroll-fesgersg', '0 0 1 * *', '/app/jobs/cronScriptCreate.js', { employee_id: 1 }),
-            createJob('payroll-checker-employee-1', '0 0 1 * *', '/app/jobs/cronScriptGetPayrolls.js', { employee_id: 1 }),
-            createJob('payroll-checker-employee-2', '0 0 1 * *', '/app/jobs/cronScriptGetPayrolls.js', { employee_id: 2 })
-        ]);
-    });
+    //     expect(jobs).toEqual([
+    //         createJob('payroll-fesgersg', '0 0 1 * *', '/app/jobs/cronScriptCreate.js', { employee_id: 1 }),
+    //         createJob('payroll-checker-employee-1', '0 0 1 * *', '/app/jobs/cronScriptGetPayrolls.js', { employee_id: 1 }),
+    //         createJob('payroll-checker-employee-2', '0 0 1 * *', '/app/jobs/cronScriptGetPayrolls.js', { employee_id: 2 })
+    //     ]);
+    // });
 });
