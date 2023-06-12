@@ -1,33 +1,17 @@
 import pool from "./config/db.js";
 import { payrollQueries } from "./models/queryData.js";
-import * as fsModule from "fs";
-import { default as pathModule } from 'path';
+import fs from "fs";
+import path from 'path';
 import * as url from 'url';
 const __dirname = url.fileURLToPath(new URL('.', import.meta.url));
-import { getPayrolls as getPayrollsFunction } from "./getPayrolls.js";
-
-// Function to fetch employee data from the database
-export const getEmployeesData = () => {
-    return new Promise((resolve, reject) => {
-        pool.query(payrollQueries.getEmployees, (error, results) => {
-            if (error) {
-                console.log(error);
-                reject(error);
-                return;
-            }
-
-            resolve(results.rows);
-        });
-    });
-};
+import { getPayrolls } from "./getPayrolls.js";
+import { getEmployeesData } from "./getEmployeesData.js";
 
 // Main function to get jobs
-export const getJobs = async (employeeData, getPayrolls, jobsFilePath, fs) => {
+export const getJobs = async (jobsFilePath) => {
     try {
-        employeeData = employeeData || await getEmployeesData();
-        getPayrolls = getPayrolls || getPayrollsFunction;
-        jobsFilePath = jobsFilePath || pathModule.join(__dirname, './jobs.json');
-        fs = fs || fsModule;
+        const employeeData = await getEmployeesData();
+        jobsFilePath = jobsFilePath || path.join(__dirname, './jobs.json');
         let jobs = [];
 
         // Function to merge the payrollCheckerjobs array with the existing jobs array

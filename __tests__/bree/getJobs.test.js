@@ -1,35 +1,30 @@
 import { Volume } from 'memfs';
 import { jest } from '@jest/globals';
-import { getJobs } from '../../getJobs.js'; // Adjust the path as needed
 
-let vol;
-let getPayrolls;
-let employeeData;
+let vol, getJobs, employeeData, getJobsModule;
 
-beforeEach(() => {
-    vol = Volume.fromJSON({
-        './jobs.json': '[]',
-        'cron-jobs/jobs.js': '',
-    }, '/app');
+vol = Volume.fromJSON({
+    './jobs.json': '[]',
+    'cron-jobs/jobs.js': '',
+}, '/app');
 
-    // Mocked employee data
-    employeeData = [
-        { employee_id: 1 },
-        { employee_id: 2 },
-    ];
+// Mocked employee data
+employeeData = [
+    { employee_id: 1 },
+    { employee_id: 2 },
+];
 
-    getPayrolls = jest.fn().mockImplementation(() => {
+jest.unstable_mockModule('../../getPayrolls.js', () => ({
+    getPayrolls: jest.fn().mockImplementation(() => {
         return [];
-    });
+    })
+}));
 
-    // Ensure that the jobs.json file is reset before each test
-    vol.writeFileSync('/app/jobs.json', '[]');
-});
-
-afterEach(() => {
-    // Clear all instances and calls to constructor and all methods
-    getPayrolls.mockClear();
-});
+jest.unstable_mockModule('../../getEmployeesData.js', () => ({
+    getEmployeesData: jest.fn().mockImplementation(() => {
+        return employeeData;
+    })
+}));
 
 const createJob = (name, cron, path, workerData) => {
     return {
@@ -43,8 +38,17 @@ const createJob = (name, cron, path, workerData) => {
 };
 
 describe('getJobs', () => {
+    beforeEach(async () => {
+        getJobsModule = await import('../../getJobs.js'); // Adjust the path as needed
+        getJobs = getJobsModule.getJobs;
+    });
+
+    afterEach(() => {
+        jest.resetModules();
+    });
+
     it('should return just the payroll objects when no jobs.json file exists', async () => {
-        const jobs = await getJobs(employeeData, getPayrolls, '/app/jobs.json', vol);
+        const jobs = await getJobs('/app/jobs.json');
 
         expect(jobs).toEqual([
             createJob('payroll-checker-employee-1', '0 0 1 * *', '/app/jobs/cronScriptGetPayrolls.js', { employee_id: 1 }),
@@ -53,18 +57,12 @@ describe('getJobs', () => {
     });
 
     it('should return the payroll objects and the existing jobs when a jobs.json file exists', async () => {
-        // Create the jobs.json file in the test directory
-        const existingJobs = [
-            createJob('payroll-fesgersg', '0 0 1 * *', '/app/jobs/cronScriptCreate.js', { employee_id: 1 }),
-            createJob('egrggegwx', '0 0 1 * *', '/app/jobs/cronScriptCreate.js', { employee_id: 2 })
-        ];
+        vol.writeFileSync('/app/jobs.json', createJob('payroll-fesgersg', '0 0 1 * *', '/app/jobs/cronScriptCreate.js', { employee_id: 1 }), 'utf8');
 
-        vol.writeFileSync('/app/jobs.json', JSON.stringify(existingJobs), 'utf8');
-
-        const jobs = await getJobs(employeeData, getPayrolls, '/app/jobs.json', vol);
+        const jobs = await getJobs('/app/jobs.json');
 
         expect(jobs).toEqual([
-            ...existingJobs,
+            createJob('payroll-fesgersg', '0 0 1 * *', '/app/jobs/cronScriptCreate.js', { employee_id: 1 }),
             createJob('payroll-checker-employee-1', '0 0 1 * *', '/app/jobs/cronScriptGetPayrolls.js', { employee_id: 1 }),
             createJob('payroll-checker-employee-2', '0 0 1 * *', '/app/jobs/cronScriptGetPayrolls.js', { employee_id: 2 })
         ]);
