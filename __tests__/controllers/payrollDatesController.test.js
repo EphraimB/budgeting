@@ -172,8 +172,27 @@ describe('PUT /api/payroll/dates/:id', () => {
 });
 
 describe('DELETE /api/payroll/dates/:id', () => {
+    beforeAll(async () => {
+        jest.unstable_mockModule('../../utils/helperFunctions.js', () => ({
+            executeQuery: jest.fn().mockResolvedValue([{
+                payroll_date_id: 3,
+                employee_id: 1,
+                payroll_start_day: 1,
+                payroll_end_day: 15,
+            }]),
+            handleError: jest.fn().mockReturnValue({ message: 'Error' }),
+        }));
+
+        const payrollDatesModule = await import('../../controllers/payrollDatesController.js');
+        deletePayrollDate = payrollDatesModule.deletePayrollDate;
+    });
+
+    afterAll(() => {
+        jest.resetModules();
+    });
+
     it('should respond with a success message', async () => {
-        mockRequest = { params: { id: 1 } };
+        mockRequest = { params: { id: 1 }, query: { employee_id: 1 } };
 
         await deletePayrollDate(mockRequest, mockResponse);
 
