@@ -110,58 +110,52 @@ describe('POST /api/payroll/taxes', () => {
     });
 });
 
-describe('PUT /api/payroll/dates/:id', () => {
+describe('PUT /api/payroll/taxes/:id', () => {
     beforeAll(async () => {
         jest.unstable_mockModule('../../utils/helperFunctions.js', () => ({
             executeQuery: jest.fn().mockResolvedValue([{
-                payroll_date_id: 3,
+                payroll_taxes_id: 3,
                 employee_id: 1,
-                payroll_start_day: 1,
-                payroll_end_day: 15,
+                name: 'Federal Income Tax',
+                rate: 0.15,
             }]),
             handleError: jest.fn().mockReturnValue({ message: 'Error' }),
         }));
 
-        const payrollDatesModule = await import('../../controllers/payrollDatesController.js');
-        updatePayrollDate = payrollDatesModule.updatePayrollDate;
+        const payrollTaxesModule = await import('../../controllers/payrollTaxesController.js');
+        updatePayrollTax = payrollTaxesModule.updatePayrollTax;
     });
 
     afterAll(() => {
         jest.resetModules();
     });
 
-    it('should respond with the updated payroll date', async () => {
+    it('should respond with the updated payroll tax', async () => {
         const id = 1;
 
-        const updatedPayrollDate = {
+        const updatedPayrollTax = {
             employee_id: id,
-            start_day: 1,
-            end_day: 15,
+            name: 'Federal Income Tax',
+            rate: 0.15,
         };
-        mockRequest = { params: { id: 1 }, body: updatedPayrollDate };
+        mockRequest = { params: { id: 1 }, body: updatedPayrollTax };
         mockResponse = {
             status: jest.fn().mockReturnThis(),
             json: jest.fn(),
             send: jest.fn(),  // Mock send method
         };
 
-        await updatePayrollDate(mockRequest, mockResponse);
+        await updatePayrollTax(mockRequest, mockResponse);
 
-        const newPayrollDatesReturnObj = [{
-            payroll_date_id: 3,
-            payroll_start_day: 1,
-            payroll_end_day: 15,
+        const newPayrollTaxesReturnObj = [{
+            payroll_taxes_id: 3,
+            name: 'Federal Income Tax',
+            rate: 0.15,
         }];
-
-        // Include employee_id in the return object
-        const expectedReturnObj = {
-            employee_id: id,
-            payroll_date: newPayrollDatesReturnObj, // Adjust the key name here
-        };
 
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(200);
-        expect(mockResponse.json).toHaveBeenCalledWith(expectedReturnObj);
+        expect(mockResponse.json).toHaveBeenCalledWith(newPayrollTaxesReturnObj);
     });
 });
 

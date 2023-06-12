@@ -58,7 +58,7 @@ export const updatePayrollTax = async (request, response) => {
 
         const payrollTaxes = results.map(payrollTax => payrollTaxesParse(payrollTax));
 
-        response.status(200).send(payrollTaxes);
+        response.status(200).json(payrollTaxes);
     } catch (error) {
         handleError(response, 'Error updating payroll tax');
     }
