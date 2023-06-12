@@ -24,7 +24,7 @@ export const getPayrollDates = async (request, response) => {
             employee_id: parseInt(employee_id),
             payroll_dates: payrollDates,
         };
-        response.status(200).send(returnObj);
+        response.status(200).json(returnObj);
     } catch (error) {
         handleError(response, 'Error getting payroll dates');
     }
@@ -46,7 +46,7 @@ export const createPayrollDate = async (request, response) => {
             employee_id: parseInt(employee_id),
             payroll_date: payrollDates,
         };
-        response.status(201).send(returnObj);
+        response.status(201).json(returnObj);
     } catch (error) {
         handleError(response, error.message);
     }

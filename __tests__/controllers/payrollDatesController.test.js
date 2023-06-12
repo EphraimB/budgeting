@@ -1,128 +1,142 @@
 import { jest } from '@jest/globals';
-import request from 'supertest';
-import { payrollDates } from '../../models/mockData.js'; // Import the mock data
+import { payrollDates } from '../../models/mockData.js';
 
-const newPayrollDate = {
-    employee_id: 1,
-    start_day: 1,
-    end_day: 15,
-};
+let getPayrollDates, createPayrollDate, updatePayrollDate, deletePayrollDate, mockRequest, mockResponse;
 
 beforeAll(() => {
-    // Mock the breeManager module
-    jest.unstable_mockModule('../../breeManager.js', () => ({
-        initializeBree: jest.fn(),
-        getBree: jest.fn(),
+    jest.unstable_mockModule('../../getPayrolls.js', () => ({
+        getPayrolls: jest.fn(),
     }));
-
-    // Mock the getJobs module
-    jest.unstable_mockModule('../../getJobs.js', () => ({
-        default: jest.fn(),
-    }));
-
-    jest.unstable_mockModule('../../controllers/payrollDatesController.js', () => ({
-        getPayrollDates: jest.fn().mockImplementation((request, response) => {
-            // Check if an id query parameter was provided
-            if (request.query.id !== undefined) {
-                // Convert id to number, because query parameters are strings
-                const id = Number(request.query.id);
-
-                // Filter the payroll dates array
-                const payrollDate = payrollDates.filter(payrollDate => payrollDate.payroll_date_id === id);
-
-                // Respond with the filtered array
-                response.status(200).json(payrollDate);
-            } else {
-                // If no id was provided, respond with the full accounts array
-                response.status(200).json(payrollDates);
-            }
-        }),
-        createPayrollDate: jest.fn().mockImplementation((request, response) => {
-            // Respond with the new account
-            response.status(200).json(newPayrollDate);
-        }),
-        updatePayrollDate: jest.fn().mockImplementation((request, response) => {
-            // Respond with the new account
-            response.status(200).json(newPayrollDate);
-        }),
-        deletePayrollDate: jest.fn().mockImplementation((request, response) => {
-            // Response with a success message
-            response.status(200).send('Payroll date successfully deleted');
-        }),
-    }));
-});
-
-afterAll(() => {
-    // Restore the original console.log function
-    jest.restoreAllMocks();
 });
 
 describe('GET /api/payroll/dates', () => {
-    it('should respond with the full loans array', async () => {
-        // Act
-        const app = await import('../../app.js');
-        const response = await request(app.default)
-            .get('/api/payroll/dates?employee_id=1')
-            .set('Accept', 'application/json');
+    beforeAll(async () => {
+        jest.unstable_mockModule('../../utils/helperFunctions.js', () => ({
+            executeQuery: jest.fn().mockResolvedValue(payrollDates.filter(payrollDate => payrollDate.employee_id === 1)),
+            handleError: jest.fn().mockReturnValue({ message: 'Error' }),
+        }));
 
-        // Assert
-        expect(response.statusCode).toBe(200);
-        expect(response.body).toEqual(payrollDates);
+        const payrollDatesModule = await import('../../controllers/payrollDatesController.js');
+        getPayrollDates = payrollDatesModule.getPayrollDates;
     });
-});
 
-describe('GET /api/payroll/dates with id query', () => {
-    it('should respond with the filtered payroll dates array', async () => {
+    afterAll(() => {
+        jest.resetModules();
+    });
+
+    it('should respond with an array of payroll dates', async () => {
         const id = 1;
 
-        // Act
-        const app = await import('../../app.js');
-        const response = await request(app.default)
-            .get('/api/payroll/dates?employee_id=1&id=1')
-            .set('Accept', 'application/json');
+        mockRequest = {
+            query: {
+                employee_id: id
+            }
+        }; // Set the mockRequest.query
+
+        mockResponse = {
+            status: jest.fn().mockReturnThis(),
+            json: jest.fn(),
+            send: jest.fn(),  // Mock send method
+        }; // Set the mockResponse
+
+        // Call the function with the mock request and response
+        await getPayrollDates(mockRequest, mockResponse);
+
+        const payrollDatesReturnObj = payrollDates.filter(payrollDate => payrollDate.employee_id === id).map(payrollDate => ({
+            payroll_date_id: parseInt(payrollDate.payroll_date_id),
+            payroll_start_day: parseInt(payrollDate.payroll_start_day),
+            payroll_end_day: parseInt(payrollDate.payroll_end_day),
+        }));
+
+        // Don't include employee_id in the return object
+        const expentedReturnObj = {
+            employee_id: id,
+            payroll_dates: payrollDatesReturnObj,
+        };
 
         // Assert
-        expect(response.statusCode).toBe(200);
-        expect(response.body).toEqual(payrollDates.filter(payrollDate => payrollDate.payroll_date_id === id));
+        expect(mockResponse.status).toHaveBeenCalledWith(200);
+        expect(mockResponse.json).toHaveBeenCalledWith(expentedReturnObj);
     });
 });
 
 describe('POST /api/payroll/dates', () => {
-    it('should respond with the new payroll dates', async () => {
-        // Act
-        const app = await import('../../app.js');
-        const response = await request(app.default)
-            .post('/api/payroll/dates')
-            .send(newPayrollDate);
+    beforeAll(async () => {
+        jest.unstable_mockModule('../../utils/helperFunctions.js', () => ({
+            executeQuery: jest.fn().mockResolvedValue([{
+                payroll_date_id: 3,
+                employee_id: 1,
+                payroll_start_day: 1,
+                payroll_end_day: 15,
+            }]),
+            handleError: jest.fn().mockReturnValue({ message: 'Error' }),
+        }));
+
+        const payrollDatesModule = await import('../../controllers/payrollDatesController.js');
+        createPayrollDate = payrollDatesModule.createPayrollDate;
+    });
+
+    afterAll(() => {
+        jest.resetModules();
+    });
+
+    it('should respond with the new payroll date', async () => {
+        const id = 1;
+
+        const newPayrollDate = {
+            employee_id: id,
+            start_day: 1,
+            end_day: 15,
+        };
+
+        mockRequest = { body: newPayrollDate };
+        mockResponse = {
+            status: jest.fn().mockReturnThis(),
+            json: jest.fn(),
+            send: jest.fn(),  // Mock send method
+        };
+
+        await createPayrollDate(mockRequest, mockResponse);
+
+        const newPayrollDatesReturnObj = [{
+            payroll_date_id: 3,
+            payroll_start_day: 1,
+            payroll_end_day: 15,
+        }];
+
+        // Include employee_id in the return object
+        const expectedReturnObj = {
+            employee_id: id,
+            payroll_date: newPayrollDatesReturnObj, // Adjust the key name here
+        };
+
         // Assert
-        expect(response.statusCode).toBe(200);
-        expect(response.body).toEqual(newPayrollDate);
+        expect(mockResponse.status).toHaveBeenCalledWith(201);
+        expect(mockResponse.json).toHaveBeenCalledWith(expectedReturnObj);
     });
 });
 
-describe('PUT /api/payroll/dates', () => {
-    it('should respond with the updated payroll dates', async () => {
-        // Act
-        const app = await import('../../app.js');
-        const response = await request(app.default)
-            .put('/api/payroll/dates/1')
-            .send(newPayrollDate);
+describe('PUT /api/payroll/dates/:id', () => {
+    it('should respond with the updated payroll date', async () => {
+        const updatedPayrollDate = payrollDates.filter(payrollDate => payrollDate.payroll_date_id === 1);
+        mockRequest = { params: { id: 1 }, body: updatedPayrollDate };
+
+        await updatePayrollDate(mockRequest, mockResponse);
 
         // Assert
-        expect(response.statusCode).toBe(200);
-        expect(response.body).toEqual(newPayrollDate);
+        expect(mockResponse.status).toHaveBeenCalledWith(200);
+        expect(mockResponse.json).toHaveBeenCalledWith(updatedPayrollDate);
     });
 });
 
-describe('DELETE /api/payroll/dates', () => {
+describe('DELETE /api/payroll/dates/:id', () => {
     it('should respond with a success message', async () => {
-        // Act
-        const app = await import('../../app.js');
-        const response = await request(app.default)
-            .delete('/api/payroll/dates/1?employee_id=1');
+        mockRequest = { params: { id: 1 } };
+
+        await deletePayrollDate(mockRequest, mockResponse);
 
         // Assert
-        expect(response.statusCode).toBe(200);
-        expect(response.text).toBe('Payroll date successfully deleted');
+        expect(mockResponse.status).toHaveBeenCalledWith(200);
+        expect(mockResponse.send).toHaveBeenCalledWith('Successfully deleted payroll date');
     });
 });
