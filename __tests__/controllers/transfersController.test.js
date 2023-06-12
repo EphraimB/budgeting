@@ -72,7 +72,7 @@ describe('PUT /api/transfer/:id', () => {
 
 describe('DELETE /api/transfer/:id', () => {
     it('should respond with a success message', async () => {
-        mockRequest = { params: { id: 1 } };
+        mockRequest = { params: { id: 1 }, query: { account_id: 1 } };
 
         await deleteTransfer(mockRequest, mockResponse);
 
