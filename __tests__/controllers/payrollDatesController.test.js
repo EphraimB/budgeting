@@ -117,15 +117,57 @@ describe('POST /api/payroll/dates', () => {
 });
 
 describe('PUT /api/payroll/dates/:id', () => {
+    beforeAll(async () => {
+        jest.unstable_mockModule('../../utils/helperFunctions.js', () => ({
+            executeQuery: jest.fn().mockResolvedValue([{
+                payroll_date_id: 3,
+                employee_id: 1,
+                payroll_start_day: 1,
+                payroll_end_day: 15,
+            }]),
+            handleError: jest.fn().mockReturnValue({ message: 'Error' }),
+        }));
+
+        const payrollDatesModule = await import('../../controllers/payrollDatesController.js');
+        updatePayrollDate = payrollDatesModule.updatePayrollDate;
+    });
+
+    afterAll(() => {
+        jest.resetModules();
+    });
+
     it('should respond with the updated payroll date', async () => {
-        const updatedPayrollDate = payrollDates.filter(payrollDate => payrollDate.payroll_date_id === 1);
+        const id = 1;
+
+        const updatedPayrollDate = {
+            employee_id: id,
+            start_day: 1,
+            end_day: 15,
+        };
         mockRequest = { params: { id: 1 }, body: updatedPayrollDate };
+        mockResponse = {
+            status: jest.fn().mockReturnThis(),
+            json: jest.fn(),
+            send: jest.fn(),  // Mock send method
+        };
 
         await updatePayrollDate(mockRequest, mockResponse);
 
+        const newPayrollDatesReturnObj = [{
+            payroll_date_id: 3,
+            payroll_start_day: 1,
+            payroll_end_day: 15,
+        }];
+
+        // Include employee_id in the return object
+        const expectedReturnObj = {
+            employee_id: id,
+            payroll_date: newPayrollDatesReturnObj, // Adjust the key name here
+        };
+
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(200);
-        expect(mockResponse.json).toHaveBeenCalledWith(updatedPayrollDate);
+        expect(mockResponse.json).toHaveBeenCalledWith(expectedReturnObj);
     });
 });
 

@@ -70,7 +70,7 @@ export const updatePayrollDate = async (request, response) => {
             payroll_date: payrollDates,
         };
 
-        response.status(200).send(returnObj);
+        response.status(200).json(returnObj);
     } catch (error) {
         handleError(response, 'Error updating payroll date');
     }
