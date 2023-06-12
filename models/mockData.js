@@ -150,6 +150,22 @@ export const payrollDates = [
     },
 ];
 
+export const payrollTaxes = [
+    {
+        payroll_taxes_id: 1,
+        employee_id: 1,
+        name: 'Federal Income Tax',
+        rate: 0.1,
+    },
+    {
+        payroll_taxes_id: 2,
+        employee_id: 1,
+        name: 'State Income Tax',
+        rate: 0.05,
+    },
+];
+
+
 export const wishlists = [
     {
         wishlist_id: 1,

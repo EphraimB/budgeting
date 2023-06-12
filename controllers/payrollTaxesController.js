@@ -23,7 +23,7 @@ export const getPayrollTaxes = async (request, response) => {
             payroll_taxes: payrollTaxes,
         };
 
-        response.status(200).send(returnObj);
+        response.status(200).json(returnObj);
     } catch (error) {
         handleError(response, 'Error getting payroll taxes');
     }
