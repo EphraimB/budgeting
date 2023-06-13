@@ -6,16 +6,17 @@ import { fileURLToPath } from 'url';
 import { getJobs } from './getJobs.js';
 
 const __dirname = fileURLToPath(new URL('.', import.meta.url));
-const cronjobsDir = path.join(__dirname, 'jobs/cron-jobs');
-
-if (!fs.existsSync(cronjobsDir)) {
-    fs.mkdirSync(cronjobsDir);
-}
 
 let breeInstance = null;
 
-export const initializeBree = async () => {
+export const initializeBree = async (cronjobsDir) => {
     try {
+        cronjobsDir = cronjobsDir || path.join(__dirname, 'jobs/cron-jobs');
+
+        if (!fs.existsSync(cronjobsDir)) {
+            fs.mkdirSync(cronjobsDir);
+        }
+
         breeInstance = new Bree({
             logger: new Cabin(),
             root: cronjobsDir

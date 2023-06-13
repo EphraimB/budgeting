@@ -3,9 +3,12 @@ import { Volume } from 'memfs';
 
 
 const vol = Volume.fromJSON({
-    './jobs.json': '[]',
-    'cron-jobs/jobs.js': '',
+    './jobs.json': '[]'
 }, '/app');
+
+jest.unstable_mockModule('fs', () => ({
+    default: vol,
+}));
 
 jest.unstable_mockModule('../../getJobs', () => ({
     getJobs: jest.fn().mockImplementation(() => [{ name: 'mockJob' }]),
@@ -26,7 +29,7 @@ describe('breeManager', () => {
     });
 
     it('should initialize Bree correctly', async () => {
-        await initializeBree();
+        await initializeBree('/app/cron-jobs');
 
         console.log('getBree', await getBree().config.jobs);
 
