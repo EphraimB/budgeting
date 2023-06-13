@@ -1,7 +1,4 @@
-import generateDailyExpenses from './generateExpenses/generateDailyExpenses.js';
-import generateWeeklyExpenses from './generateExpenses/generateWeeklyExpenses.js';
-import generateMonthlyExpenses from './generateExpenses/generateMonthlyExpenses.js';
-import generateYearlyExpenses from './generateExpenses/generateYearlyExpenses.js';
+import { generateDailyExpenses, generateWeeklyExpenses, generateYearlyExpenses, generateMonthlyExpenses } from './generateExpenses.js';
 import generateDailyLoans from './generateLoans/generateDailyLoans.js';
 import generateWeeklyLoans from './generateLoans/generateWeeklyLoans.js';
 import generateMonthlyLoans from './generateLoans/generateMonthlyLoans.js';
