@@ -1,6 +1,6 @@
 import { v4 as uuidv4 } from 'uuid';
-import { getBree as getBreeModule } from '../breeManager.js';
-import { default as fsModule } from 'fs';
+import { getBree } from '../breeManager.js';
+import fs from 'fs';
 import path from 'path';
 import * as url from 'url';
 const __dirname = url.fileURLToPath(new URL('.', import.meta.url));
@@ -76,7 +76,7 @@ const determineCronValues = (frequency_type, frequency_type_variable, frequency_
     return { cronDay, cronMonth, cronDayOfWeek };
 };
 
-const writeCronJobToFile = (fs, jobsFilePath, jobs, newJob) => {
+const writeCronJobToFile = (jobsFilePath, jobs, newJob) => {
     jobs = jobs.filter(job => job.name !== "payroll-checker");
     jobs.push(newJob);
     try {
@@ -88,10 +88,7 @@ const writeCronJobToFile = (fs, jobsFilePath, jobs, newJob) => {
     }
 };
 
-const scheduleCronJob = async (jobDetails, getBree, fs, filePath, jobsFilePath) => {
-    getBree = getBree || getBreeModule;
-    fs = fs || fsModule;
-
+const scheduleCronJob = async (jobDetails, filePath, jobsFilePath) => {
     jobsFilePath = jobsFilePath || path.join(__dirname, '../jobs.json');
     if (!fs.existsSync(jobsFilePath)) {
         fs.writeFileSync(jobsFilePath, JSON.stringify([]));
@@ -99,7 +96,7 @@ const scheduleCronJob = async (jobDetails, getBree, fs, filePath, jobsFilePath) 
 
     const jobs = JSON.parse(fs.readFileSync(jobsFilePath));
     const newJob = createCronJob(jobDetails);
-    writeCronJobToFile(fs, jobsFilePath, jobs, newJob);
+    writeCronJobToFile(jobsFilePath, jobs, newJob);
 
     const bree = getBree();
     await bree.add(newJob);

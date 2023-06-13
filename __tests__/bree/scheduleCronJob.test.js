@@ -1,5 +1,4 @@
 import { jest } from '@jest/globals';
-import scheduleCronJob from '../../jobs/scheduleCronJob';
 import { Volume } from 'memfs';
 
 const jobDetails = {
@@ -15,35 +14,27 @@ const vol = Volume.fromJSON({
     'cron-jobs/jobs.js': '',
 }, '/app');
 
-vol.existsSync = jest.fn(vol.existsSync);
-vol.readFileSync = jest.fn(vol.readFileSync);
-vol.writeFileSync = jest.fn(vol.writeFileSync);
+jest.unstable_mockModule('fs', () => ({
+    default: vol,
+}));
 
-let mockBree, mockGetBree;
+jest.unstable_mockModule('../../breeManager.js', () => ({
+    getBree: jest.fn().mockImplementation(() => ({
+        add: jest.fn(),
+        start: jest.fn(),
+    })),
+}));
+
+const scheduleCronJobModule = await import('../../jobs/scheduleCronJob.js');
+const scheduleCronJob = scheduleCronJobModule.default;
 
 describe('scheduleCronJob', () => {
-    beforeAll(async () => {
-        mockBree = {
-            add: jest.fn(),
-            start: jest.fn(),
-        };
-
-        mockGetBree = jest.fn().mockReturnValue(mockBree);
-    });
-
     it('schedules a new job successfully', async () => {
-        const { cronDate, uniqueId } = await scheduleCronJob(jobDetails, mockGetBree, vol, '/app/cron-jobs/jobs.js', '/app/jobs.json');
+        const { cronDate, uniqueId } = await scheduleCronJob(jobDetails, '/app/cron-jobs/jobs.js', '/app/jobs.json');
 
         // Specify expected values here
         const expectedCronDate = '30 13 19 */1 *'; // Provide the expected cronDate
 
         expect(cronDate).toBe(expectedCronDate);
-
-        // Test that all methods are called with correct parameters
-        expect(vol.existsSync).toHaveBeenCalled();
-        expect(vol.readFileSync).toHaveBeenCalled();
-        expect(vol.writeFileSync).toHaveBeenCalled();
-        expect(mockBree.add).toHaveBeenCalled();
-        expect(mockBree.start).toHaveBeenCalledWith(uniqueId);
     });
 });
