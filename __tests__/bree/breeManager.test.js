@@ -17,14 +17,7 @@ jest.unstable_mockModule('../../getJobs', () => ({
 const { initializeBree, getBree } = await import('../../breeManager');
 
 describe('breeManager', () => {
-    beforeAll(() => {
-        if (!vol.existsSync('/app/cron-jobs')) {
-            vol.mkdirSync('/app/cron-jobs');
-        }
-    });
-
     afterAll(() => {
-        vol.rmSync('/app/cron-jobs', { recursive: true });
         jest.clearAllMocks();
     });
 
