@@ -10,11 +10,11 @@ jest.unstable_mockModule('fs', () => ({
     default: vol,
 }));
 
-jest.unstable_mockModule('../../getJobs', () => ({
+jest.unstable_mockModule('../../bree/getJobs', () => ({
     getJobs: jest.fn().mockImplementation(() => [{ name: 'mockJob' }]),
 }));
 
-const { initializeBree, getBree } = await import('../../breeManager');
+const { initializeBree, getBree } = await import('../../bree/breeManager');
 
 describe('breeManager', () => {
     afterAll(() => {

@@ -1,5 +1,5 @@
 import { payrollQueries } from '../models/queryData.js';
-import { getPayrolls } from '../getPayrolls.js';
+import { getPayrolls } from '../bree/getPayrolls.js';
 import { handleError, executeQuery } from '../utils/helperFunctions.js';
 
 const payrollTaxesParse = payrollTax => ({

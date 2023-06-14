@@ -4,7 +4,7 @@ import { payrollTaxes } from '../../models/mockData.js';
 let getPayrollTaxes, createPayrollTax, updatePayrollTax, deletePayrollTax, mockRequest, mockResponse;
 
 beforeAll(() => {
-    jest.unstable_mockModule('../../getPayrolls.js', () => ({
+    jest.unstable_mockModule('../../bree/getPayrolls.js', () => ({
         getPayrolls: jest.fn(),
     }));
 });

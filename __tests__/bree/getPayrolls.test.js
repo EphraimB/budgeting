@@ -22,7 +22,7 @@ jest.unstable_mockModule('../../config/db.js', () => ({
     },
 }));
 
-jest.unstable_mockModule('../../jobs/schedulePayrollCronJob.js', () => ({
+jest.unstable_mockModule('../../bree/jobs/schedulePayrollCronJob.js', () => ({
     default: jest.fn().mockImplementation(() => Promise.resolve({
         name: 'payroll-checker-employee-1',
         cron: '0 0 1 * *',
@@ -35,7 +35,7 @@ jest.unstable_mockModule('../../jobs/schedulePayrollCronJob.js', () => ({
     })),
 }));
 
-const getPayrollsModule = await import('../../getPayrolls.js');
+const getPayrollsModule = await import('../../bree/getPayrolls.js');
 const getPayrolls = getPayrollsModule.getPayrolls;
 
 describe('getPayrolls', () => {

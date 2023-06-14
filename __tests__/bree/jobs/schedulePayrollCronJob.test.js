@@ -1,6 +1,6 @@
 import { jest } from '@jest/globals';
 import { Volume } from 'memfs';
-import schedulePayrollCronJob from '../../jobs/schedulePayrollCronJob.js';
+import schedulePayrollCronJob from '../../../bree/jobs/schedulePayrollCronJob.js';
 
 const vol = Volume.fromJSON({
     './jobs.json': '[]',

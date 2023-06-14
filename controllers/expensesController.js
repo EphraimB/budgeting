@@ -1,6 +1,6 @@
 import { expenseQueries, cronJobQueries } from '../models/queryData.js';
-import scheduleCronJob from '../jobs/scheduleCronJob.js';
-import deleteCronJob from '../jobs/deleteCronJob.js';
+import scheduleCronJob from '../bree/jobs/scheduleCronJob.js';
+import deleteCronJob from '../bree/jobs/deleteCronJob.js';
 import { handleError, executeQuery } from '../utils/helperFunctions.js';
 
 const parseExpenses = expense => ({

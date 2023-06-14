@@ -4,13 +4,13 @@ import request from 'supertest';
 describe("Test application", () => {
     beforeAll(() => {
         // Mock the breeManager module
-        jest.unstable_mockModule('../breeManager.js', () => ({
+        jest.unstable_mockModule('../bree/breeManager.js', () => ({
             initializeBree: jest.fn(),
             getBree: jest.fn(),
         }));
 
         // Mock the getJobs module
-        jest.unstable_mockModule('../getJobs.js', () => ({
+        jest.unstable_mockModule('../bree/getJobs.js', () => ({
             default: jest.fn(),
         }));
     });

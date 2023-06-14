@@ -10,14 +10,14 @@ jest.unstable_mockModule('fs', () => ({
     default: vol,
 }));
 
-jest.unstable_mockModule('../../breeManager.js', () => ({
+jest.unstable_mockModule('../../../bree/breeManager.js', () => ({
     getBree: jest.fn().mockImplementation(() => ({
         add: jest.fn(),
         start: jest.fn(),
     })),
 }));
 
-const scheduleCronJobModule = await import('../../jobs/scheduleCronJob.js');
+const scheduleCronJobModule = await import('../../../bree/jobs/scheduleCronJob.js');
 const scheduleCronJob = scheduleCronJobModule.default;
 
 describe('scheduleCronJob', () => {

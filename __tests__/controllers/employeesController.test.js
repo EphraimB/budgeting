@@ -6,7 +6,7 @@ jest.unstable_mockModule('../../utils/helperFunctions.js', () => ({
     handleError: jest.fn().mockReturnValue({ message: 'Error' }),
 }));
 
-jest.unstable_mockModule('../../getPayrolls.js', () => ({
+jest.unstable_mockModule('../../bree/getPayrolls.js', () => ({
     getPayrolls: jest.fn(),
 }));
 

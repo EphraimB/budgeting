@@ -1,10 +1,14 @@
-import pool from './config/db.js';
-import { payrollQueries } from './models/queryData.js';
+import pool from '../config/db.js';
+import { payrollQueries } from '../models/queryData.js';
+import { fileURLToPath } from 'url';
+import path from 'path';
 import schedulePayrollCronJob from './jobs/schedulePayrollCronJob.js';
 import fs from 'fs';
 
+const __dirname = fileURLToPath(new URL('.', import.meta.url));
+
 export const getPayrolls = async (employee_id, jobsFilePath) => {
-  jobsFilePath = jobsFilePath || './jobs.json';
+  jobsFilePath = jobsFilePath || path.join(__dirname, './jobs.json');
 
   console.log('Running thread:', employee_id);
 

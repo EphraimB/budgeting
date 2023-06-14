@@ -6,11 +6,11 @@ jest.unstable_mockModule('../../utils/helperFunctions.js', () => ({
     handleError: jest.fn().mockReturnValue({ message: 'Error' }),
 }));
 
-jest.unstable_mockModule('../../jobs/scheduleCronJob.js', () => ({
+jest.unstable_mockModule('../../bree/jobs/scheduleCronJob.js', () => ({
     default: jest.fn().mockReturnValue({ message: 'Cron job scheduled' })
 }));
 
-jest.unstable_mockModule('../../jobs/deleteCronJob.js', () => ({
+jest.unstable_mockModule('../../bree/jobs/deleteCronJob.js', () => ({
     default: jest.fn().mockReturnValue({ message: 'Cron job deleted' })
 }));
 

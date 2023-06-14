@@ -1,11 +1,11 @@
-import pool from "./config/db.js";
-import { payrollQueries } from "./models/queryData.js";
+import pool from "../config/db.js";
+import { payrollQueries } from "../models/queryData.js";
 import fs from "fs";
 import path from 'path';
 import * as url from 'url';
 const __dirname = url.fileURLToPath(new URL('.', import.meta.url));
 import { getPayrolls } from "./getPayrolls.js";
-import { getEmployeesData } from "./getEmployeesData.js";
+import { getEmployeesData } from "../getEmployeesData.js";
 
 // Main function to get jobs
 export const getJobs = async (jobsFilePath) => {
@@ -32,7 +32,7 @@ export const getJobs = async (jobsFilePath) => {
         const payrollCheckerjobs = employeeData.map(employee => ({
             name: `payroll-checker-employee-${employee.employee_id}`,
             cron: "0 0 1 * *",
-            path: "/app/jobs/cronScriptGetPayrolls.js",
+            path: "/app/bree/jobs/cronScriptGetPayrolls.js",
             worker: {
                 workerData: {
                     employee_id: employee.employee_id,
