@@ -18,9 +18,21 @@ export const getPayrolls = async (employee_id, jobsFilePath) => {
 
     const payrollJobs = await schedulePayroll(rows, account_id);
 
-    fs.writeFileSync(jobsFilePath, JSON.stringify(payrollJobs, null, 2), 'utf8');
+    // Read the existing jobs from jobs.json
+    let existingJobs = [];
+    if (fs.existsSync(jobsFilePath)) {
+      existingJobs = JSON.parse(fs.readFileSync(jobsFilePath, 'utf8'));
+    }
 
-    return payrollJobs;
+    // Filter out the jobs that start with payroll-
+    existingJobs = existingJobs.filter(job => !job.name.startsWith('payroll-'));
+
+    // Append the new jobs to the existing ones
+    existingJobs.push(...payrollJobs);
+
+    fs.writeFileSync(jobsFilePath, JSON.stringify(existingJobs, null, 2), 'utf8');
+
+    return existingJobs;
   } catch (error) {
     console.error('Error in thread:', error);
     throw error;
@@ -34,6 +46,6 @@ const schedulePayroll = async (rows, account_id) => {
 
     payrollJobs.push(newJob);
   }
-  
+
   return payrollJobs;
 }
