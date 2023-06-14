@@ -11,8 +11,7 @@ const createCronJob = ({
     frequency_day_of_month, frequency_day_of_week,
     frequency_week_of_month, frequency_month_of_year,
     destination_account_id = null
-}) => {
-    const uniqueId = uuidv4();
+}, uniqueId) => {
     const transactionDate = new Date(begin_date);
     const { cronDay, cronMonth, cronDayOfWeek } = determineCronValues(
         frequency_type, frequency_type_variable,
@@ -89,14 +88,22 @@ const writeCronJobToFile = (jobsFilePath, jobs, newJob) => {
 };
 
 const scheduleCronJob = async (jobDetails, filePath, jobsFilePath) => {
+    const uniqueId = uuidv4();
     jobsFilePath = jobsFilePath || path.join(__dirname, '../jobs.json');
     if (!fs.existsSync(jobsFilePath)) {
         fs.writeFileSync(jobsFilePath, JSON.stringify([]));
     }
 
     const jobs = JSON.parse(fs.readFileSync(jobsFilePath));
-    const newJob = createCronJob(jobDetails);
+    const newJob = createCronJob(jobDetails, uniqueId);
     writeCronJobToFile(jobsFilePath, jobs, newJob);
+
+    try {
+        filePath = filePath || path.join(__dirname, 'cron-jobs', `${uniqueId}.js`);
+        fs.closeSync(fs.openSync(filePath, 'w'));
+    } catch (err) {
+        console.error(err);
+    }
 
     const bree = getBree();
     await bree.add(newJob);
