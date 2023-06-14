@@ -1,28 +1,23 @@
 const generateTransfers = (transactions, skippedTransactions, transfer, toDate, fromDate, account_id, generateDateFn) => {
-    const startDate = transfer.transfer_begin_date.getDate();
+    let transferDate = new Date(transfer.transfer_begin_date);
 
-    for (let i = 0; ; i += transfer.frequency_type_variable || 1) {
-        const transferDate = new Date(transfer.transfer_begin_date);
-        transferDate.setDate(startDate + i);
-
-        if (transferDate > toDate) {
-            break;
-        }
-
+    while (transferDate <= toDate) {
         const newTransaction = {
             title: transfer.transfer_title,
             description: transfer.transfer_description,
-            date: transferDate,
+            date: new Date(transferDate),
             amount: transfer.destination_account_id === account_id ? +transfer.transfer_amount : -transfer.transfer_amount,
         };
 
         if (transferDate <= new Date()) {
-            return transactions;
+
         } else if (fromDate > transferDate) {
             skippedTransactions.push(newTransaction);
         } else {
             transactions.push(newTransaction);
         }
+
+        transferDate = generateDateFn(transferDate, transfer);
     }
 };
 

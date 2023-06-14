@@ -42,25 +42,25 @@ const generateTransactions = (request, response, next) => {
 
     request.loans.forEach(loan => {
         if (loan.frequency_type === 0) {
-            generateDailyLoans(transactions, skippedTransactions, loan, toDate)
+            generateDailyLoans(transactions, skippedTransactions, loan, toDate, fromDate);
         } else if (loan.frequency_type === 1) {
-            generateWeeklyLoans(transactions, skippedTransactions, loan, toDate)
+            generateWeeklyLoans(transactions, skippedTransactions, loan, toDate, fromDate);
         } else if (loan.frequency_type === 2) {
-            generateMonthlyLoans(transactions, skippedTransactions, loan, toDate)
+            generateMonthlyLoans(transactions, skippedTransactions, loan, toDate, fromDate);
         } else if (loan.frequency_type === 3) {
-            generateYearlyLoans(transactions, skippedTransactions, loan, toDate)
+            generateYearlyLoans(transactions, skippedTransactions, loan, toDate, fromDate);
         }
     });
 
     request.transfers.forEach(transfer => {
         if (transfer.frequency_type === 0) {
-            generateDailyTransfers(transactions, skippedTransactions, transfer, toDate, fromDate, account_id)
+            generateDailyTransfers(transactions, skippedTransactions, transfer, toDate, fromDate, account_id);
         } else if (transfer.frequency_type === 1) {
-            generateWeeklyTransfers(transactions, skippedTransactions, transfer, toDate, fromDate, account_id)
+            generateWeeklyTransfers(transactions, skippedTransactions, transfer, toDate, fromDate, account_id);
         } else if (transfer.frequency_type === 2) {
-            generateMonthlyTransfers(transactions, skippedTransactions, transfer, toDate, fromDate, account_id)
+            generateMonthlyTransfers(transactions, skippedTransactions, transfer, toDate, fromDate, account_id);
         } else if (transfer.frequency_type === 3) {
-            generateYearlyTransfers(transactions, skippedTransactions, transfer, toDate, fromDate, account_id)
+            generateYearlyTransfers(transactions, skippedTransactions, transfer, toDate, fromDate, account_id);
         }
     });
 
