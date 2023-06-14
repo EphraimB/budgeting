@@ -34,6 +34,21 @@ describe('GET /api/accounts', () => {
         expect(mockResponse.status).toHaveBeenCalledWith(200);
         expect(mockResponse.json).toHaveBeenCalledWith(accounts.filter(account => account.account_id === 1));
     });
+
+    it('should response with an error message', async () => {
+        mockRequest = {
+            query: {
+                id: 1
+            }
+        }; // Set the mockRequest.query
+
+        // Call the function with the mock request and response
+        await getAccounts(mockRequest, mockResponse);
+
+        // Assert
+        expect(mockResponse.status).toHaveBeenCalledWith(500);
+        expect(mockResponse.json).toHaveBeenCalledWith({ message: 'Error getting accounts' });
+    });
 });
 
 describe('POST /api/accounts', () => {
