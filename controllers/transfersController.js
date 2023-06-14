@@ -12,6 +12,12 @@ const transfersParse = transfer => ({
     transfer_description: transfer.transfer_description,
     transfer_begin_date: transfer.transfer_begin_date,
     transfer_end_date: transfer.transfer_end_date,
+    frequency_type: transfer.frequency_type,
+    frequency_type_variable: transfer.frequency_type_variable,
+    frequency_day_of_month: transfer.frequency_day_of_month,
+    frequency_day_of_week: transfer.frequency_day_of_week,
+    frequency_week_of_month: transfer.frequency_week_of_month,
+    frequency_month_of_year: transfer.frequency_month_of_year,
     date_created: transfer.date_created,
     date_modified: transfer.date_modified,
 });

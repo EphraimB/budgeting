@@ -1,12 +1,9 @@
 import { generateDailyExpenses, generateWeeklyExpenses, generateMonthlyExpenses, generateYearlyExpenses } from './generateExpenses.js';
 import { generateDailyLoans, generateWeeklyLoans, generateMonthlyLoans, generateYearlyLoans } from './generateLoans.js';
-import generatePayrollTransactions from './generatePayrolls/generatePayrolls.js';
-import generateDailyTransfers from './generateTransfers/generateDailyTransfers.js';
-import generateWeeklyTransfers from './generateTransfers/generateWeeklyTransfers.js';
-import generateMonthlyTransfers from './generateTransfers/generateMonthlyTransfers.js';
-import generateYearlyTransfers from './generateTransfers/generateYearlyTransfers.js';
-import generateWishlists from './generateWishlists/generateWishlists.js';
-import calculateBalances from './calculateBalances.js';
+import generatePayrollTransactions from './generatePayrolls.js';
+import { generateDailyTransfers, generateWeeklyTransfers, generateMonthlyTransfers, generateYearlyTransfers } from './generateTransfers.js';
+import generateWishlists from './generateWishlists.js';
+import calculateBalances from '../calculateBalances.js';
 
 const generateTransactions = (request, response, next) => {
     const fromDate = new Date(request.query.from_date);
