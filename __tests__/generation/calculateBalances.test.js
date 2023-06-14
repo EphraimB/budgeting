@@ -1,4 +1,4 @@
-import calculateBalances from '../../calculateBalances.js';
+import calculateBalances from '../../generation/calculateBalances.js';
 
 describe('calculateBalances', () => {
     it('should calculate the balance for each transaction', () => {
