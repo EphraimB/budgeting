@@ -24,7 +24,7 @@ const generateLoans = (transactions, skippedTransactions, loan, toDate, fromDate
         };
 
         if (loanDate <= new Date()) {
-            return transactions;
+            
         } else if (fromDate > loanDate) {
             skippedTransactions.push(newTransaction);
         } else {

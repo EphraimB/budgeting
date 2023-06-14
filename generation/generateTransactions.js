@@ -42,13 +42,13 @@ const generateTransactions = (request, response, next) => {
 
     request.loans.forEach(loan => {
         if (loan.frequency_type === 0) {
-            generateDailyLoans(transactions, loan, toDate)
+            generateDailyLoans(transactions, skippedTransactions, loan, toDate)
         } else if (loan.frequency_type === 1) {
-            generateWeeklyLoans(transactions, loan, toDate)
+            generateWeeklyLoans(transactions, skippedTransactions, loan, toDate)
         } else if (loan.frequency_type === 2) {
-            generateMonthlyLoans(transactions, loan, toDate)
+            generateMonthlyLoans(transactions, skippedTransactions, loan, toDate)
         } else if (loan.frequency_type === 3) {
-            generateYearlyLoans(transactions, loan, toDate)
+            generateYearlyLoans(transactions, skippedTransactions, loan, toDate)
         }
     });
 
