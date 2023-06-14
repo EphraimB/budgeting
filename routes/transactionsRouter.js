@@ -1,5 +1,5 @@
 import express from 'express';
-import generateTransactions from '../generateTransactions.js';
+import generateTransactions from '../generation/generateTransactions.js';
 const router = express.Router();
 import { getCurrentBalance, getTransactionsByAccount, getExpensesByAccount, getLoansByAccount, getWishlistsByAccount, getPayrollsMiddleware, getTransfersByAccount } from '../middleware/middleware.js';
 import { query } from 'express-validator';
