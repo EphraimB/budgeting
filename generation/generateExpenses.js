@@ -26,7 +26,7 @@ const generateExpenses = (transactions, skippedTransactions, expense, toDate, fr
         };
 
         if (expenseDate <= new Date()) {
-            return transactions;
+            
         } else if (fromDate > expenseDate) {
             skippedTransactions.push(newTransaction);
         } else {
