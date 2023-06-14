@@ -3,7 +3,7 @@ import { generateDailyLoans, generateWeeklyLoans, generateMonthlyLoans, generate
 import generatePayrollTransactions from './generatePayrolls.js';
 import { generateDailyTransfers, generateWeeklyTransfers, generateMonthlyTransfers, generateYearlyTransfers } from './generateTransfers.js';
 import generateWishlists from './generateWishlists.js';
-import calculateBalances from '../calculateBalances.js';
+import calculateBalances from './calculateBalances.js';
 
 const generateTransactions = (request, response, next) => {
     const fromDate = new Date(request.query.from_date);
