@@ -10,6 +10,18 @@ const __dirname = fileURLToPath(new URL('.', import.meta.url));
 export const getPayrolls = async (employee_id, jobsFilePath) => {
   jobsFilePath = jobsFilePath || path.join(__dirname, './jobs.json');
 
+  // Delete all [uniqueId].js files in bree/jobs that start with payroll-
+  try {
+    const files = fs.readdirSync(path.join(__dirname, 'jobs/cron-jobs'));
+    files.forEach(file => {
+      if (file.startsWith('payroll-')) {
+        fs.unlinkSync(path.join(__dirname, 'jobs/cron-jobs', file));
+      }
+    });
+  } catch (err) {
+    console.error(err);
+  }
+
   console.log('Running thread:', employee_id);
 
   try {
@@ -24,15 +36,12 @@ export const getPayrolls = async (employee_id, jobsFilePath) => {
       existingJobs = JSON.parse(fs.readFileSync(jobsFilePath, 'utf8'));
     }
 
-    // Filter out the jobs that start with payroll-
-    existingJobs = existingJobs.filter(job => !job.name.startsWith('payroll-'));
-
     // Append the new jobs to the existing ones
     existingJobs.push(...payrollJobs);
 
     fs.writeFileSync(jobsFilePath, JSON.stringify(existingJobs, null, 2), 'utf8');
 
-    return existingJobs;
+    return payrollJobs;
   } catch (error) {
     console.error('Error in thread:', error);
     throw error;
