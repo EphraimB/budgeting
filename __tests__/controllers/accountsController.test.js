@@ -5,6 +5,7 @@ describe('GET /api/accounts', () => {
     afterEach(() => {
         jest.resetModules();
     });
+
     it('should respond with an array of accounts', async () => {
         jest.unstable_mockModule('../../utils/helperFunctions.js', () => ({
             executeQuery: jest.fn().mockResolvedValue(accounts.filter(account => account.account_id === 1)),
@@ -65,19 +66,65 @@ describe('GET /api/accounts', () => {
     });
 });
 
-// ... rest of your tests
-
-
 describe('POST /api/accounts', () => {
+    afterEach(() => {
+        jest.resetModules();
+    });
+
     it('should respond with the new account', async () => {
         const newAccount = accounts.filter(account => account.account_id === 1);
-        mockRequest = { body: newAccount };
+
+        jest.unstable_mockModule('../../utils/helperFunctions.js', () => ({
+            executeQuery: jest.fn().mockResolvedValue(accounts.filter(account => account.account_id === 1)),
+            handleError: (res, message) => {
+                res.status(400).send({ message });
+            },
+        }));
+
+        const { createAccount } = await import('../../controllers/accountsController.js');
+
+        const mockRequest = {
+            body: newAccount
+        };
+        const mockResponse = {
+            status: jest.fn().mockReturnThis(),
+            json: jest.fn(),
+            send: jest.fn(),
+        };
 
         await createAccount(mockRequest, mockResponse);
 
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(201);
         expect(mockResponse.json).toHaveBeenCalledWith(newAccount);
+    });
+
+    it('should handle errors correctly', async () => {
+        // Arrange
+        jest.unstable_mockModule('../../utils/helperFunctions.js', () => ({
+            executeQuery: jest.fn().mockRejectedValue(new Error('Error creating account')),
+            handleError: (res, message) => {
+                res.status(400).json({ message });
+            },
+        }));
+
+        const { createAccount } = await import('../../controllers/accountsController.js');
+
+        const mockRequest = {
+            body: accounts.filter(account => account.account_id === 1)
+        };
+        const mockResponse = {
+            status: jest.fn().mockReturnThis(),
+            json: jest.fn(),
+            send: jest.fn(),
+        };
+
+        // Act
+        await createAccount(mockRequest, mockResponse);
+
+        // Assert
+        expect(mockResponse.status).toHaveBeenCalledWith(400);
+        expect(mockResponse.json).toHaveBeenCalledWith({ message: 'Error creating account' });
     });
 });
 
