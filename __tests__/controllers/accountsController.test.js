@@ -187,13 +187,57 @@ describe('PUT /api/accounts/:id', () => {
 });
 
 describe('DELETE /api/accounts/:id', () => {
+    afterEach(() => {
+        jest.resetModules();
+    });
+
     it('should respond with a success message', async () => {
-        mockRequest = { params: { id: 1 } };
+        jest.unstable_mockModule('../../utils/helperFunctions.js', () => ({
+            executeQuery: jest.fn().mockResolvedValue(accounts.filter(account => account.account_id === 1)),
+            handleError: (res, message) => {
+                res.status(400).send({ message });
+            },
+        }));
+
+        const { deleteAccount } = await import('../../controllers/accountsController.js');
+
+        const mockRequest = { params: { id: 1 } };
+        const mockResponse = {
+            status: jest.fn().mockReturnThis(),
+            json: jest.fn(),
+            send: jest.fn(),
+        };
 
         await deleteAccount(mockRequest, mockResponse);
 
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(200);
         expect(mockResponse.send).toHaveBeenCalledWith('Successfully deleted account');
+    });
+
+    it('should handle errors correctly', async () => {
+        // Arrange
+        jest.unstable_mockModule('../../utils/helperFunctions.js', () => ({
+            executeQuery: jest.fn().mockRejectedValue(new Error('Error deleting account')),
+            handleError: (res, message) => {
+                res.status(400).json({ message });
+            },
+        }));
+
+        const { deleteAccount } = await import('../../controllers/accountsController.js');
+
+        const mockRequest = { params: { id: 1 } };
+        const mockResponse = {
+            status: jest.fn().mockReturnThis(),
+            json: jest.fn(),
+            send: jest.fn(),
+        };
+
+        // Act
+        await deleteAccount(mockRequest, mockResponse);
+
+        // Assert
+        expect(mockResponse.status).toHaveBeenCalledWith(400);
+        expect(mockResponse.json).toHaveBeenCalledWith({ message: 'Error deleting account' });
     });
 });
