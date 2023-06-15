@@ -1,31 +1,35 @@
 import { jest } from '@jest/globals';
 import { accounts } from '../../models/mockData.js';
 
-describe('GET /api/accounts', () => {
-    afterEach(() => {
-        jest.resetModules();
-    });
+// Mock request and response
+let mockRequest;
+let mockResponse;
 
+beforeEach(() => {
+    mockRequest = {};
+    mockResponse = {
+        status: jest.fn().mockReturnThis(),
+        json: jest.fn(),
+        send: jest.fn(),
+    };
+});
+
+afterEach(() => {
+    jest.resetModules();
+});
+
+describe('GET /api/accounts', () => {
     it('should respond with an array of accounts', async () => {
         jest.unstable_mockModule('../../utils/helperFunctions.js', () => ({
             executeQuery: jest.fn().mockResolvedValue(accounts.filter(account => account.account_id === 1)),
             handleError: (res, message) => {
-                res.status(400).send({ message });
+                res.status(400).json({ message });
             },
         }));
 
         const { getAccounts } = await import('../../controllers/accountsController.js');
 
-        const mockRequest = {
-            query: {
-                id: 1
-            }
-        };
-        const mockResponse = {
-            status: jest.fn().mockReturnThis(),
-            json: jest.fn(),
-            send: jest.fn(),
-        };
+        mockRequest.query = { id: 1 };
 
         // Call the function with the mock request and response
         await getAccounts(mockRequest, mockResponse);
@@ -46,16 +50,7 @@ describe('GET /api/accounts', () => {
 
         const { getAccounts } = await import('../../controllers/accountsController.js');
 
-        const mockRequest = {
-            query: {
-                id: 1
-            }
-        };
-        const mockResponse = {
-            status: jest.fn().mockReturnThis(),
-            json: jest.fn(),
-            send: jest.fn()
-        };
+        mockRequest.query = { id: 1 };
 
         // Act
         await getAccounts(mockRequest, mockResponse);
@@ -67,10 +62,6 @@ describe('GET /api/accounts', () => {
 });
 
 describe('POST /api/accounts', () => {
-    afterEach(() => {
-        jest.resetModules();
-    });
-
     it('should respond with the new account', async () => {
         const newAccount = accounts.filter(account => account.account_id === 1);
 
@@ -83,14 +74,7 @@ describe('POST /api/accounts', () => {
 
         const { createAccount } = await import('../../controllers/accountsController.js');
 
-        const mockRequest = {
-            body: newAccount
-        };
-        const mockResponse = {
-            status: jest.fn().mockReturnThis(),
-            json: jest.fn(),
-            send: jest.fn(),
-        };
+        mockRequest.body = newAccount;
 
         await createAccount(mockRequest, mockResponse);
 
@@ -110,14 +94,7 @@ describe('POST /api/accounts', () => {
 
         const { createAccount } = await import('../../controllers/accountsController.js');
 
-        const mockRequest = {
-            body: accounts.filter(account => account.account_id === 1)
-        };
-        const mockResponse = {
-            status: jest.fn().mockReturnThis(),
-            json: jest.fn(),
-            send: jest.fn(),
-        };
+        mockRequest.body = accounts.filter(account => account.account_id === 1);
 
         // Act
         await createAccount(mockRequest, mockResponse);
@@ -129,10 +106,6 @@ describe('POST /api/accounts', () => {
 });
 
 describe('PUT /api/accounts/:id', () => {
-    afterEach(() => {
-        jest.resetModules();
-    });
-
     it('should respond with the updated account', async () => {
         const updatedAccount = accounts.filter(account => account.account_id === 1);
 
@@ -145,12 +118,8 @@ describe('PUT /api/accounts/:id', () => {
 
         const { updateAccount } = await import('../../controllers/accountsController.js');
 
-        const mockRequest = { params: { id: 1 }, body: updatedAccount };
-        const mockResponse = {
-            status: jest.fn().mockReturnThis(),
-            json: jest.fn(),
-            send: jest.fn(),
-        };
+        mockRequest.params = { id: 1 };
+        mockRequest.body = updateAccount;
 
         await updateAccount(mockRequest, mockResponse);
 
@@ -170,12 +139,8 @@ describe('PUT /api/accounts/:id', () => {
 
         const { updateAccount } = await import('../../controllers/accountsController.js');
 
-        const mockRequest = { params: { id: 1 }, body: accounts.filter(account => account.account_id === 1) };
-        const mockResponse = {
-            status: jest.fn().mockReturnThis(),
-            json: jest.fn(),
-            send: jest.fn(),
-        };
+        mockRequest.params = { id: 1 };
+        mockRequest.body = accounts.filter(account => account.account_id === 1);
 
         // Act
         await updateAccount(mockRequest, mockResponse);
@@ -187,10 +152,6 @@ describe('PUT /api/accounts/:id', () => {
 });
 
 describe('DELETE /api/accounts/:id', () => {
-    afterEach(() => {
-        jest.resetModules();
-    });
-
     it('should respond with a success message', async () => {
         jest.unstable_mockModule('../../utils/helperFunctions.js', () => ({
             executeQuery: jest.fn().mockResolvedValue(accounts.filter(account => account.account_id === 1)),
@@ -201,12 +162,7 @@ describe('DELETE /api/accounts/:id', () => {
 
         const { deleteAccount } = await import('../../controllers/accountsController.js');
 
-        const mockRequest = { params: { id: 1 } };
-        const mockResponse = {
-            status: jest.fn().mockReturnThis(),
-            json: jest.fn(),
-            send: jest.fn(),
-        };
+        mockRequest.params = { id: 1 };
 
         await deleteAccount(mockRequest, mockResponse);
 
@@ -226,12 +182,7 @@ describe('DELETE /api/accounts/:id', () => {
 
         const { deleteAccount } = await import('../../controllers/accountsController.js');
 
-        const mockRequest = { params: { id: 1 } };
-        const mockResponse = {
-            status: jest.fn().mockReturnThis(),
-            json: jest.fn(),
-            send: jest.fn(),
-        };
+        mockRequest.params = { id: 1 };
 
         // Act
         await deleteAccount(mockRequest, mockResponse);
