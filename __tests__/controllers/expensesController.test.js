@@ -110,7 +110,13 @@ describe('POST /api/expenses', () => {
 describe('PUT /api/expenses/:id', () => {
     it('should respond with the updated expense', async () => {
         const updatedExpense = expenses.filter(expense => expense.expense_id === 1);
-        mockRequest = { params: { id: 1 }, body: updatedExpense };
+
+        mockModule(expenses.filter(expense => expense.expense_id === 1));
+
+        const { updateExpense } = await import('../../controllers/expensesController.js');
+
+        mockRequest.params = { id: 1 };
+        mockRequest.body = updatedExpense;
 
         await updateExpense(mockRequest, mockResponse);
 
