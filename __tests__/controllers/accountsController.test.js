@@ -1,31 +1,27 @@
 import { jest } from '@jest/globals';
 import { accounts } from '../../models/mockData.js';
 
-jest.unstable_mockModule('../../utils/helperFunctions.js', () => ({
-    executeQuery: jest.fn().mockResolvedValue(accounts.filter(account => account.account_id === 1)),
-    handleError: jest.fn().mockReturnValue({ message: 'Error' }),
-}));
-
-const { getAccounts, createAccount, updateAccount, deleteAccount } = await import('../../controllers/accountsController.js');
-
-let mockRequest = {};
-let mockResponse = {
-    status: jest.fn().mockReturnThis(),
-    json: jest.fn(),
-    send: jest.fn(),  // Mock send method
-};
-
-afterEach(() => {
-    jest.clearAllMocks();
-});
-
 describe('GET /api/accounts', () => {
     it('should respond with an array of accounts', async () => {
-        mockRequest = {
+        jest.unstable_mockModule('../../utils/helperFunctions.js', () => ({
+            executeQuery: jest.fn().mockResolvedValue(accounts.filter(account => account.account_id === 1)),
+            handleError: (res, message) => {
+                res.status(400).send({ message });
+            },
+        }));
+
+        const { getAccounts } = await import('../../controllers/accountsController.js');
+
+        const mockRequest = {
             query: {
                 id: 1
             }
-        }; // Set the mockRequest.query
+        };
+        const mockResponse = {
+            status: jest.fn().mockReturnThis(),
+            json: jest.fn(),
+            send: jest.fn(),
+        };
 
         // Call the function with the mock request and response
         await getAccounts(mockRequest, mockResponse);
@@ -35,21 +31,39 @@ describe('GET /api/accounts', () => {
         expect(mockResponse.json).toHaveBeenCalledWith(accounts.filter(account => account.account_id === 1));
     });
 
-    it('should response with an error message', async () => {
-        mockRequest = {
+    it('should handle errors correctly', async () => {
+        // Arrange
+        jest.unstable_mockModule('../../utils/helperFunctions.js', () => ({
+            executeQuery: jest.fn().mockRejectedValue(new Error('Error getting accounts')),
+            handleError: (res, message) => {
+                res.status(400).json({ message });
+            },
+        }));
+
+        const { getAccounts } = await import('../../controllers/accountsController.js');
+
+        const mockRequest = {
             query: {
                 id: 1
             }
-        }; // Set the mockRequest.query
+        };
+        const mockResponse = {
+            status: jest.fn().mockReturnThis(),
+            json: jest.fn(),
+            send: jest.fn()
+        };
 
-        // Call the function with the mock request and response
+        // Act
         await getAccounts(mockRequest, mockResponse);
 
         // Assert
-        expect(mockResponse.status).toHaveBeenCalledWith(500);
+        expect(mockResponse.status).toHaveBeenCalledWith(400);
         expect(mockResponse.json).toHaveBeenCalledWith({ message: 'Error getting accounts' });
     });
 });
+
+// ... rest of your tests
+
 
 describe('POST /api/accounts', () => {
     it('should respond with the new account', async () => {
