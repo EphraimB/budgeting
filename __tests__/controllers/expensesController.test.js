@@ -145,12 +145,33 @@ describe('PUT /api/expenses/:id', () => {
 
 describe('DELETE /api/expenses/:id', () => {
     it('should respond with a success message', async () => {
-        mockRequest = { params: { id: 1 } };
+        // Arrange
+        mockModule(expenses.filter(expense => expense.expense_id === 1));
+
+        const { deleteExpense } = await import('../../controllers/expensesController.js');
+
+        mockRequest.params = { id: 1 };
 
         await deleteExpense(mockRequest, mockResponse);
 
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(200);
         expect(mockResponse.send).toHaveBeenCalledWith('Expense deleted successfully');
+    });
+
+    it('should handle errors correctly', async () => {
+        // Arrange
+        mockModule(null, 'Error deleting expense');
+
+        const { deleteExpense } = await import('../../controllers/expensesController.js');
+
+        mockRequest.params = { id: 1 };
+
+        // Act
+        await deleteExpense(mockRequest, mockResponse);
+
+        // Assert
+        expect(mockResponse.status).toHaveBeenCalledWith(400);
+        expect(mockResponse.json).toHaveBeenCalledWith({ message: 'Error deleting expense' });
     });
 });
