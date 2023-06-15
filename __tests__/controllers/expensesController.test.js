@@ -124,6 +124,23 @@ describe('PUT /api/expenses/:id', () => {
         expect(mockResponse.status).toHaveBeenCalledWith(200);
         expect(mockResponse.json).toHaveBeenCalledWith(updatedExpense);
     });
+
+    it('should handle errors correctly', async () => {
+        // Arrange
+        mockModule(null, 'Error updating expense');
+
+        const { updateExpense } = await import('../../controllers/expensesController.js');
+
+        mockRequest.params = { id: 1 };
+        mockRequest.body = expenses.filter(expense => expense.expense_id === 1);
+
+        // Act
+        await updateExpense(mockRequest, mockResponse);
+
+        // Assert
+        expect(mockResponse.status).toHaveBeenCalledWith(400);
+        expect(mockResponse.json).toHaveBeenCalledWith({ message: 'Error updating expense' });
+    });
 });
 
 describe('DELETE /api/expenses/:id', () => {
