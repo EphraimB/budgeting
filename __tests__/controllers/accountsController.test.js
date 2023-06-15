@@ -129,15 +129,60 @@ describe('POST /api/accounts', () => {
 });
 
 describe('PUT /api/accounts/:id', () => {
+    afterEach(() => {
+        jest.resetModules();
+    });
+
     it('should respond with the updated account', async () => {
         const updatedAccount = accounts.filter(account => account.account_id === 1);
-        mockRequest = { params: { id: 1 }, body: updatedAccount };
+
+        jest.unstable_mockModule('../../utils/helperFunctions.js', () => ({
+            executeQuery: jest.fn().mockResolvedValue(accounts.filter(account => account.account_id === 1)),
+            handleError: (res, message) => {
+                res.status(400).send({ message });
+            },
+        }));
+
+        const { updateAccount } = await import('../../controllers/accountsController.js');
+
+        const mockRequest = { params: { id: 1 }, body: updatedAccount };
+        const mockResponse = {
+            status: jest.fn().mockReturnThis(),
+            json: jest.fn(),
+            send: jest.fn(),
+        };
 
         await updateAccount(mockRequest, mockResponse);
 
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(200);
         expect(mockResponse.json).toHaveBeenCalledWith(updatedAccount);
+    });
+
+    it('should handle errors correctly', async () => {
+        // Arrange
+        jest.unstable_mockModule('../../utils/helperFunctions.js', () => ({
+            executeQuery: jest.fn().mockRejectedValue(new Error('Error updating account')),
+            handleError: (res, message) => {
+                res.status(400).json({ message });
+            },
+        }));
+
+        const { updateAccount } = await import('../../controllers/accountsController.js');
+
+        const mockRequest = { params: { id: 1 }, body: accounts.filter(account => account.account_id === 1) };
+        const mockResponse = {
+            status: jest.fn().mockReturnThis(),
+            json: jest.fn(),
+            send: jest.fn(),
+        };
+
+        // Act
+        await updateAccount(mockRequest, mockResponse);
+
+        // Assert
+        expect(mockResponse.status).toHaveBeenCalledWith(400);
+        expect(mockResponse.json).toHaveBeenCalledWith({ message: 'Error updating account' });
     });
 });
 
