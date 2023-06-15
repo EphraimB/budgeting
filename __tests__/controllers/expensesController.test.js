@@ -1,10 +1,5 @@
 import { jest } from '@jest/globals';
-import { expenses } from '../../models/mockData.js';
-
-jest.unstable_mockModule('../../utils/helperFunctions.js', () => ({
-    executeQuery: jest.fn().mockResolvedValue(expenses.filter(expense => expense.expense_id === 1)),
-    handleError: jest.fn().mockReturnValue({ message: 'Error' }),
-}));
+import { accounts, expenses } from '../../models/mockData.js';
 
 jest.unstable_mockModule('../../bree/jobs/scheduleCronJob.js', () => ({
     default: jest.fn().mockReturnValue({ message: 'Cron job scheduled' })
@@ -14,26 +9,43 @@ jest.unstable_mockModule('../../bree/jobs/deleteCronJob.js', () => ({
     default: jest.fn().mockReturnValue({ message: 'Cron job deleted' })
 }));
 
-const { getExpenses, createExpense, updateExpense, deleteExpense } = await import('../../controllers/expensesController.js');
+// Mock request and response
+let mockRequest;
+let mockResponse;
 
-let mockRequest = {};
-let mockResponse = {
-    status: jest.fn().mockReturnThis(),
-    json: jest.fn(),
-    send: jest.fn(),  // Mock send method
-};
+beforeEach(() => {
+    mockRequest = {};
+    mockResponse = {
+        status: jest.fn().mockReturnThis(),
+        json: jest.fn(),
+        send: jest.fn(),
+    };
+});
 
 afterEach(() => {
-    jest.clearAllMocks();
+    jest.resetModules();
 });
+
+// Helper function to generate mock module
+const mockModule = (executeQueryValue, errorMessage) => {
+    jest.unstable_mockModule('../../utils/helperFunctions.js', () => ({
+        executeQuery: errorMessage
+            ? jest.fn().mockRejectedValue(new Error(errorMessage))
+            : jest.fn().mockResolvedValue(executeQueryValue),
+        handleError: jest.fn((res, message) => {
+            res.status(400).json({ message });
+        }),
+    }));
+};
 
 describe('GET /api/expenses', () => {
     it('should respond with an array of expenses', async () => {
-        mockRequest = {
-            query: {
-                id: 1
-            }
-        }; // Set the mockRequest.query
+        // Arrange
+        mockModule(expenses.filter(expense => expense.expense_id === 1));
+
+        const { getExpenses } = await import('../../controllers/expensesController.js');
+
+        mockRequest.query = { id: 1 };
 
         // Call the function with the mock request and response
         await getExpenses(mockRequest, mockResponse);
@@ -42,18 +54,56 @@ describe('GET /api/expenses', () => {
         expect(mockResponse.status).toHaveBeenCalledWith(200);
         expect(mockResponse.json).toHaveBeenCalledWith(expenses.filter(expense => expense.expense_id === 1));
     });
+
+    it('should handle errors correctly', async () => {
+        // Arrange
+        mockModule(null, 'Error getting expenses');
+
+        const { getExpenses } = await import('../../controllers/expensesController.js');
+
+        mockRequest.query = { id: null };
+
+        // Act
+        await getExpenses(mockRequest, mockResponse);
+
+        // Assert
+        expect(mockResponse.status).toHaveBeenCalledWith(400);
+        expect(mockResponse.json).toHaveBeenCalledWith({ message: 'Error getting expenses' });
+    });
 });
 
 describe('POST /api/expenses', () => {
     it('should respond with the new expense', async () => {
+        // Arrange
         const newExpense = expenses.filter(expense => expense.expense_id === 1);
-        mockRequest = { body: newExpense };
+
+        mockModule(expenses.filter(expense => expense.expense_id === 1));
+
+        const { createExpense } = await import('../../controllers/expensesController.js');
+
+        mockRequest.body = newExpense;
 
         await createExpense(mockRequest, mockResponse);
 
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(201);
         expect(mockResponse.json).toHaveBeenCalledWith(newExpense);
+    });
+
+    it('should handle errors correctly', async () => {
+        // Arrange
+        mockModule(null, 'Error creating expense');
+
+        const { createExpense } = await import('../../controllers/expensesController.js');
+
+        mockRequest.body = accounts.filter(account => account.account_id === 1);
+
+        // Act
+        await createExpense(mockRequest, mockResponse);
+
+        // Assert
+        expect(mockResponse.status).toHaveBeenCalledWith(400);
+        expect(mockResponse.json).toHaveBeenCalledWith({ message: 'Error creating expense' });
     });
 });
 
