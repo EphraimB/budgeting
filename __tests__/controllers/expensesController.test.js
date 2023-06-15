@@ -41,6 +41,38 @@ const mockModule = (executeQueryValue, errorMessage) => {
 describe('GET /api/expenses', () => {
     it('should respond with an array of expenses', async () => {
         // Arrange
+        mockModule(expenses);
+
+        const { getExpenses } = await import('../../controllers/expensesController.js');
+
+        mockRequest.query = { id: null };
+
+        // Call the function with the mock request and response
+        await getExpenses(mockRequest, mockResponse);
+
+        // Assert
+        expect(mockResponse.status).toHaveBeenCalledWith(200);
+        expect(mockResponse.json).toHaveBeenCalledWith(expenses);
+    });
+
+    it('should handle errors correctly', async () => {
+        // Arrange
+        mockModule(null, 'Error getting expenses');
+
+        const { getExpenses } = await import('../../controllers/expensesController.js');
+
+        mockRequest.query = { id: null };
+
+        // Act
+        await getExpenses(mockRequest, mockResponse);
+
+        // Assert
+        expect(mockResponse.status).toHaveBeenCalledWith(400);
+        expect(mockResponse.json).toHaveBeenCalledWith({ message: 'Error getting expenses' });
+    });
+
+    it('should respond with an array of expenses with id', async () => {
+        // Arrange
         mockModule(expenses.filter(expense => expense.expense_id === 1));
 
         const { getExpenses } = await import('../../controllers/expensesController.js');
@@ -55,7 +87,7 @@ describe('GET /api/expenses', () => {
         expect(mockResponse.json).toHaveBeenCalledWith(expenses.filter(expense => expense.expense_id === 1));
     });
 
-    it('should handle errors correctly', async () => {
+    it('should handle errors correctly with id', async () => {
         // Arrange
         mockModule(null, 'Error getting expenses');
 
