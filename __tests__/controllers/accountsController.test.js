@@ -2,6 +2,9 @@ import { jest } from '@jest/globals';
 import { accounts } from '../../models/mockData.js';
 
 describe('GET /api/accounts', () => {
+    afterEach(() => {
+        jest.resetModules();
+    });
     it('should respond with an array of accounts', async () => {
         jest.unstable_mockModule('../../utils/helperFunctions.js', () => ({
             executeQuery: jest.fn().mockResolvedValue(accounts.filter(account => account.account_id === 1)),
