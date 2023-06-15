@@ -18,14 +18,23 @@ afterEach(() => {
     jest.resetModules();
 });
 
+// Helper function to generate mock module
+const mockModule = (executeQueryValue, errorMessage) => {
+    jest.unstable_mockModule('../../utils/helperFunctions.js', () => ({
+        executeQuery: errorMessage
+            ? jest.fn().mockRejectedValue(new Error(errorMessage))
+            : jest.fn().mockResolvedValue(executeQueryValue),
+        handleError: jest.fn((res, message) => {
+            res.status(400).json({ message });
+        }),
+    }));
+};
+
+
 describe('GET /api/accounts', () => {
     it('should respond with an array of accounts', async () => {
-        jest.unstable_mockModule('../../utils/helperFunctions.js', () => ({
-            executeQuery: jest.fn().mockResolvedValue(accounts.filter(account => account.account_id === 1)),
-            handleError: (res, message) => {
-                res.status(400).json({ message });
-            },
-        }));
+        // Arrange
+        mockModule(accounts.filter(account => account.account_id === 1));
 
         const { getAccounts } = await import('../../controllers/accountsController.js');
 
@@ -41,12 +50,7 @@ describe('GET /api/accounts', () => {
 
     it('should handle errors correctly', async () => {
         // Arrange
-        jest.unstable_mockModule('../../utils/helperFunctions.js', () => ({
-            executeQuery: jest.fn().mockRejectedValue(new Error('Error getting accounts')),
-            handleError: (res, message) => {
-                res.status(400).json({ message });
-            },
-        }));
+        mockModule(null, 'Error getting accounts');
 
         const { getAccounts } = await import('../../controllers/accountsController.js');
 
@@ -65,12 +69,7 @@ describe('POST /api/accounts', () => {
     it('should respond with the new account', async () => {
         const newAccount = accounts.filter(account => account.account_id === 1);
 
-        jest.unstable_mockModule('../../utils/helperFunctions.js', () => ({
-            executeQuery: jest.fn().mockResolvedValue(accounts.filter(account => account.account_id === 1)),
-            handleError: (res, message) => {
-                res.status(400).send({ message });
-            },
-        }));
+        mockModule(accounts.filter(account => account.account_id === 1));
 
         const { createAccount } = await import('../../controllers/accountsController.js');
 
@@ -85,12 +84,7 @@ describe('POST /api/accounts', () => {
 
     it('should handle errors correctly', async () => {
         // Arrange
-        jest.unstable_mockModule('../../utils/helperFunctions.js', () => ({
-            executeQuery: jest.fn().mockRejectedValue(new Error('Error creating account')),
-            handleError: (res, message) => {
-                res.status(400).json({ message });
-            },
-        }));
+        mockModule(null, 'Error creating account');
 
         const { createAccount } = await import('../../controllers/accountsController.js');
 
@@ -109,12 +103,7 @@ describe('PUT /api/accounts/:id', () => {
     it('should respond with the updated account', async () => {
         const updatedAccount = accounts.filter(account => account.account_id === 1);
 
-        jest.unstable_mockModule('../../utils/helperFunctions.js', () => ({
-            executeQuery: jest.fn().mockResolvedValue(accounts.filter(account => account.account_id === 1)),
-            handleError: (res, message) => {
-                res.status(400).send({ message });
-            },
-        }));
+        mockModule(accounts.filter(account => account.account_id === 1));
 
         const { updateAccount } = await import('../../controllers/accountsController.js');
 
@@ -130,12 +119,7 @@ describe('PUT /api/accounts/:id', () => {
 
     it('should handle errors correctly', async () => {
         // Arrange
-        jest.unstable_mockModule('../../utils/helperFunctions.js', () => ({
-            executeQuery: jest.fn().mockRejectedValue(new Error('Error updating account')),
-            handleError: (res, message) => {
-                res.status(400).json({ message });
-            },
-        }));
+        mockModule(null, 'Error updating account');
 
         const { updateAccount } = await import('../../controllers/accountsController.js');
 
@@ -153,12 +137,8 @@ describe('PUT /api/accounts/:id', () => {
 
 describe('DELETE /api/accounts/:id', () => {
     it('should respond with a success message', async () => {
-        jest.unstable_mockModule('../../utils/helperFunctions.js', () => ({
-            executeQuery: jest.fn().mockResolvedValue(accounts.filter(account => account.account_id === 1)),
-            handleError: (res, message) => {
-                res.status(400).send({ message });
-            },
-        }));
+        // Arrange
+        mockModule(accounts.filter(account => account.account_id === 1));
 
         const { deleteAccount } = await import('../../controllers/accountsController.js');
 
@@ -173,12 +153,7 @@ describe('DELETE /api/accounts/:id', () => {
 
     it('should handle errors correctly', async () => {
         // Arrange
-        jest.unstable_mockModule('../../utils/helperFunctions.js', () => ({
-            executeQuery: jest.fn().mockRejectedValue(new Error('Error deleting account')),
-            handleError: (res, message) => {
-                res.status(400).json({ message });
-            },
-        }));
+        mockModule(null, 'Error deleting account');
 
         const { deleteAccount } = await import('../../controllers/accountsController.js');
 
