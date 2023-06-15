@@ -34,6 +34,38 @@ const mockModule = (executeQueryValue, errorMessage) => {
 describe('GET /api/accounts', () => {
     it('should respond with an array of accounts', async () => {
         // Arrange
+        mockModule(accounts);
+
+        const { getAccounts } = await import('../../controllers/accountsController.js');
+
+        mockRequest.query = { id: null };
+
+        // Call the function with the mock request and response
+        await getAccounts(mockRequest, mockResponse);
+
+        // Assert
+        expect(mockResponse.status).toHaveBeenCalledWith(200);
+        expect(mockResponse.json).toHaveBeenCalledWith(accounts);
+    });
+
+    it('should handle errors correctly', async () => {
+        // Arrange
+        mockModule(null, 'Error getting accounts');
+
+        const { getAccounts } = await import('../../controllers/accountsController.js');
+
+        mockRequest.query = { id: null };
+
+        // Act
+        await getAccounts(mockRequest, mockResponse);
+
+        // Assert
+        expect(mockResponse.status).toHaveBeenCalledWith(400);
+        expect(mockResponse.json).toHaveBeenCalledWith({ message: 'Error getting accounts' });
+    });
+
+    it('should respond with an array of accounts with an id', async () => {
+        // Arrange
         mockModule(accounts.filter(account => account.account_id === 1));
 
         const { getAccounts } = await import('../../controllers/accountsController.js');
@@ -48,7 +80,7 @@ describe('GET /api/accounts', () => {
         expect(mockResponse.json).toHaveBeenCalledWith(accounts.filter(account => account.account_id === 1));
     });
 
-    it('should handle errors correctly', async () => {
+    it('should handle errors correctly with an id', async () => {
         // Arrange
         mockModule(null, 'Error getting accounts');
 
