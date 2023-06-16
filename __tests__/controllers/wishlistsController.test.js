@@ -33,6 +33,38 @@ const mockModule = (executeQueryValue, errorMessage) => {
 describe('GET /api/wishlists', () => {
     it('should respond with an array of wishlists', async () => {
         // Arrange
+        mockModule(wishlists);
+
+        mockRequest.query = { id: null };
+
+        const { getWishlists } = await import('../../controllers/wishlistsController.js');
+
+        // Call the function with the mock request and response
+        await getWishlists(mockRequest, mockResponse);
+
+        // Assert
+        expect(mockResponse.status).toHaveBeenCalledWith(200);
+        expect(mockResponse.json).toHaveBeenCalledWith(wishlists);
+    });
+
+    it('should respond with an error message', async () => {
+        // Arrange
+        mockModule(null, 'Error getting wishlists');
+
+        mockRequest.query = { id: null };
+
+        const { getWishlists } = await import('../../controllers/wishlistsController.js');
+
+        // Call the function with the mock request and response
+        await getWishlists(mockRequest, mockResponse);
+
+        // Assert
+        expect(mockResponse.status).toHaveBeenCalledWith(400);
+        expect(mockResponse.json).toHaveBeenCalledWith({ message: 'Error getting wishlists' });
+    });
+
+    it('should respond with an array of wishlists with id', async () => {
+        // Arrange
         mockModule(wishlists.filter(wishlist => wishlist.wishlist_id === 1));
 
         mockRequest.query = { id: 1 };
@@ -47,7 +79,7 @@ describe('GET /api/wishlists', () => {
         expect(mockResponse.json).toHaveBeenCalledWith(wishlists.filter(wishlist => wishlist.wishlist_id === 1));
     });
 
-    it('should respond with an error message', async () => {
+    it('should respond with an error message with id', async () => {
         // Arrange
         mockModule(null, 'Error getting wishlists');
 
