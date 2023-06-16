@@ -2,11 +2,11 @@ import { jest } from '@jest/globals';
 import { accounts, expenses } from '../../models/mockData.js';
 
 jest.unstable_mockModule('../../bree/jobs/scheduleCronJob.js', () => ({
-    default: jest.fn().mockReturnValue({ message: 'Cron job scheduled' })
+    default: jest.fn().mockReturnValue({ cronDate: '0 0 16 * *', uniqueId: '123' })
 }));
 
 jest.unstable_mockModule('../../bree/jobs/deleteCronJob.js', () => ({
-    default: jest.fn().mockReturnValue({ message: 'Cron job deleted' })
+    default: jest.fn().mockReturnValue('123')
 }));
 
 // Mock request and response
