@@ -1,31 +1,51 @@
 import { jest } from '@jest/globals';
 import { transactions } from '../../models/mockData.js';
 
-jest.unstable_mockModule('../../utils/helperFunctions.js', () => ({
-    executeQuery: jest.fn().mockResolvedValue(transactions.filter(transaction => transaction.transaction_id === 1)),
-    handleError: jest.fn().mockReturnValue({ message: 'Error' }),
+jest.unstable_mockModule('../../bree/jobs/scheduleCronJob.js', () => ({
+    default: jest.fn().mockReturnValue({ cronDate: '0 0 16 * *', uniqueId: '123' })
 }));
 
-const { getTransactions, createTransaction, updateTransaction, deleteTransaction } = await import('../../controllers/transactionHistoryController.js');
+jest.unstable_mockModule('../../bree/jobs/deleteCronJob.js', () => ({
+    default: jest.fn().mockReturnValue('123')
+}));
 
-let mockRequest = {};
-let mockResponse = {
-    status: jest.fn().mockReturnThis(),
-    json: jest.fn(),
-    send: jest.fn(),  // Mock send method
-};
+// Mock request and response
+let mockRequest;
+let mockResponse;
+
+beforeEach(() => {
+    mockRequest = {};
+    mockResponse = {
+        status: jest.fn().mockReturnThis(),
+        json: jest.fn(),
+        send: jest.fn(),
+    };
+});
 
 afterEach(() => {
-    jest.clearAllMocks();
+    jest.resetModules();
 });
+
+// Helper function to generate mock module
+const mockModule = (executeQueryValue, errorMessage) => {
+    jest.unstable_mockModule('../../utils/helperFunctions.js', () => ({
+        executeQuery: errorMessage
+            ? jest.fn().mockRejectedValue(new Error(errorMessage))
+            : jest.fn().mockResolvedValue(executeQueryValue),
+        handleError: jest.fn((res, message) => {
+            res.status(400).json({ message });
+        }),
+    }));
+};
 
 describe('GET /api/transactionHistory', () => {
     it('should respond with an array of transactions', async () => {
-        mockRequest = {
-            query: {
-                id: 1
-            }
-        }; // Set the mockRequest.query
+        // Arrange
+        mockModule(transactions.filter(transaction => transaction.transaction_id === 1));
+
+        mockRequest.query = { id: 1 };
+
+        const { getTransactions } = await import('../../controllers/transactionHistoryController.js');
 
         // Call the function with the mock request and response
         await getTransactions(mockRequest, mockResponse);
@@ -33,6 +53,20 @@ describe('GET /api/transactionHistory', () => {
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(200);
         expect(mockResponse.json).toHaveBeenCalledWith(transactions.filter(transaction => transaction.transaction_id === 1));
+    });
+
+    it('should respond with an error message', async () => {
+        // Arrange
+        mockModule(null, 'Error getting transactions');
+
+        const { getTransactions } = await import('../../controllers/transactionHistoryController.js');
+
+        // Call the function with the mock request and response
+        await getTransactions(mockRequest, mockResponse);
+
+        // Assert
+        expect(mockResponse.status).toHaveBeenCalledWith(400);
+        expect(mockResponse.json).toHaveBeenCalledWith({ message: 'Error getting transactions' });
     });
 });
 
