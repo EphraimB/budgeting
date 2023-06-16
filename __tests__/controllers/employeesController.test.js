@@ -23,11 +23,17 @@ afterEach(() => {
 });
 
 // Helper function to generate mock module
-const mockModule = (executeQueryValue, errorMessage) => {
+const mockModule = (executeQueryResponses, errorMessage) => {
+    let callCount = 0;
+
     jest.unstable_mockModule('../../utils/helperFunctions.js', () => ({
-        executeQuery: errorMessage
-            ? jest.fn().mockRejectedValue(new Error(errorMessage))
-            : jest.fn().mockResolvedValue(executeQueryValue),
+        executeQuery: jest.fn().mockImplementation(() => {
+            if (errorMessage) {
+                throw new Error(errorMessage);
+            }
+
+            return Promise.resolve(executeQueryResponses[callCount++]);
+        }),
         handleError: jest.fn((res, message) => {
             res.status(400).json({ message });
         }),
@@ -37,7 +43,7 @@ const mockModule = (executeQueryValue, errorMessage) => {
 describe('GET /api/payroll/employee', () => {
     it('should respond with an array of employees', async () => {
         // Arrange
-        mockModule(employees.filter(employee => employee.employee_id === 1));
+        mockModule([employees.filter(employee => employee.employee_id === 1)]);
 
         mockRequest.query = { id: 1 };
 
@@ -73,7 +79,7 @@ describe('POST /api/payroll/employee', () => {
         // Arrange
         const newEmployee = employees.filter(employee => employee.employee_id === 1);
 
-        mockModule(newEmployee);
+        mockModule([newEmployee]);
 
         const { createEmployee } = await import('../../controllers/employeesController.js');
 
@@ -109,7 +115,7 @@ describe('PUT /api/payroll/employee/:id', () => {
         // Arrange
         const updatedEmployee = employees.filter(employee => employee.employee_id === 1);
 
-        mockModule(updatedEmployee);
+        mockModule([updatedEmployee]);
 
         mockRequest.params = { id: 1 };
         mockRequest.body = updatedEmployee;
@@ -143,18 +149,56 @@ describe('PUT /api/payroll/employee/:id', () => {
 });
 
 describe('DELETE /api/payroll/employee/:id', () => {
-    it('should respond with the deleted employee', async () => {
+    it('should respond with a success message', async () => {
         // Arrange
-        mockModule('Employee deleted successfully');
+        const employee_id = 1;
+        mockRequest.params = { employee_id };
 
-        mockRequest.params = { id: 1 };
+        // Mock the executeQuery function to return different values based on the query
+        mockModule([[], [], 'Successfully deleted employee']);
 
         const { deleteEmployee } = await import('../../controllers/employeesController.js');
 
+        // Act
         await deleteEmployee(mockRequest, mockResponse);
 
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(200);
-        expect(mockResponse.send).toHaveBeenCalledWith('Employee deleted successfully');
+        expect(mockResponse.send).toHaveBeenCalledWith('Successfully deleted employee');
+    });
+
+    it('should handle errors correctly', async () => {
+        // Arrange
+        const employee_id = 1;
+        mockRequest.params = { employee_id };
+
+        // Mock the executeQuery function to throw an error
+        mockModule(null, 'Error deleting employee');
+
+        const { deleteEmployee } = await import('../../controllers/employeesController.js');
+
+        // Act
+        await deleteEmployee(mockRequest, mockResponse);
+
+        // Assert
+        expect(mockResponse.status).toHaveBeenCalledWith(400);
+        expect(mockResponse.json).toHaveBeenCalledWith({ message: 'Error deleting employee' });
+    });
+
+    it('should not delete employee if there are related data', async () => {
+        // Arrange
+        const employee_id = 1;
+        mockRequest.params = { employee_id };
+
+        mockModule([[], [{ employee_id }]]);
+
+        const { deleteEmployee } = await import('../../controllers/employeesController.js');
+
+        // Act
+        await deleteEmployee(mockRequest, mockResponse);
+
+        // Assert
+        expect(mockResponse.status).toHaveBeenCalledWith(400);
+        expect(mockResponse.send).toHaveBeenCalledWith({ errors: { msg: 'You need to delete employee-related data before deleting the employee', param: null, location: 'query' } });
     });
 });
