@@ -70,14 +70,37 @@ describe('GET /api/payroll/employee', () => {
 
 describe('POST /api/payroll/employee', () => {
     it('should respond with the new employee', async () => {
+        // Arrange
         const newEmployee = employees.filter(employee => employee.employee_id === 1);
-        mockRequest = { body: newEmployee };
+
+        mockModule(newEmployee);
+
+        const { createEmployee } = await import('../../controllers/employeesController.js');
+
+        mockRequest.body = newEmployee;
 
         await createEmployee(mockRequest, mockResponse);
 
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(201);
         expect(mockResponse.json).toHaveBeenCalledWith(newEmployee);
+    });
+
+    it('should respond with an error message', async () => {
+        // Arrange
+        const newEmployee = employees.filter(employee => employee.employee_id === 1);
+
+        mockModule(null, 'Error creating employee');
+
+        const { createEmployee } = await import('../../controllers/employeesController.js');
+
+        mockRequest.body = newEmployee;
+
+        await createEmployee(mockRequest, mockResponse);
+
+        // Assert
+        expect(mockResponse.status).toHaveBeenCalledWith(400);
+        expect(mockResponse.json).toHaveBeenCalledWith({ message: 'Error creating employee' });
     });
 });
 
