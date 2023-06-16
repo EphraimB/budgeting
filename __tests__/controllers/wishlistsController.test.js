@@ -131,12 +131,31 @@ describe('PUT /api/wishlists/:id', () => {
 
 describe('DELETE /api/wishlists/:id', () => {
     it('should respond with a success message', async () => {
-        mockRequest = { params: { id: 1 } };
+        // Arrange
+        mockModule('Successfully deleted wishlist item');
+
+        mockRequest.params = { id: 1 };
+
+        const { deleteWishlist } = await import('../../controllers/wishlistsController.js');
 
         await deleteWishlist(mockRequest, mockResponse);
 
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(200);
         expect(mockResponse.send).toHaveBeenCalledWith('Successfully deleted wishlist item');
+    });
+
+    it('should respond with an error message', async () => {
+        // Arrange
+        mockModule(null, 'Error deleting wishlist');
+
+        const { deleteWishlist } = await import('../../controllers/wishlistsController.js');
+
+        // Call the function with the mock request and response
+        await deleteWishlist(mockRequest, mockResponse);
+
+        // Assert
+        expect(mockResponse.status).toHaveBeenCalledWith(400);
+        expect(mockResponse.json).toHaveBeenCalledWith({ message: 'Error deleting wishlist' });
     });
 });
