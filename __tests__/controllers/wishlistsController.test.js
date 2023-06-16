@@ -1,31 +1,43 @@
 import { jest } from '@jest/globals';
 import { wishlists } from '../../models/mockData.js';
 
-jest.unstable_mockModule('../../utils/helperFunctions.js', () => ({
-    executeQuery: jest.fn().mockResolvedValue(wishlists.filter(wishlist => wishlist.wishlist_id === 1)),
-    handleError: jest.fn().mockReturnValue({ message: 'Error' }),
-}));
+// Mock request and response
+let mockRequest;
+let mockResponse;
 
-const { getWishlists, createWishlist, updateWishlist, deleteWishlist } = await import('../../controllers/wishlistsController.js');
-
-let mockRequest = {};
-let mockResponse = {
-    status: jest.fn().mockReturnThis(),
-    json: jest.fn(),
-    send: jest.fn(),  // Mock send method
-};
+beforeEach(() => {
+    mockRequest = {};
+    mockResponse = {
+        status: jest.fn().mockReturnThis(),
+        json: jest.fn(),
+        send: jest.fn(),
+    };
+});
 
 afterEach(() => {
-    jest.clearAllMocks();
+    jest.resetModules();
 });
+
+// Helper function to generate mock module
+const mockModule = (executeQueryValue, errorMessage) => {
+    jest.unstable_mockModule('../../utils/helperFunctions.js', () => ({
+        executeQuery: errorMessage
+            ? jest.fn().mockRejectedValue(new Error(errorMessage))
+            : jest.fn().mockResolvedValue(executeQueryValue),
+        handleError: jest.fn((res, message) => {
+            res.status(400).json({ message });
+        }),
+    }));
+};
 
 describe('GET /api/wishlists', () => {
     it('should respond with an array of wishlists', async () => {
-        mockRequest = {
-            query: {
-                id: 1
-            }
-        }; // Set the mockRequest.query
+        // Arrange
+        mockModule(wishlists.filter(wishlist => wishlist.wishlist_id === 1));
+
+        mockRequest.query = { id: 1 };
+
+        const { getWishlists } = await import('../../controllers/wishlistsController.js');
 
         // Call the function with the mock request and response
         await getWishlists(mockRequest, mockResponse);
@@ -33,6 +45,20 @@ describe('GET /api/wishlists', () => {
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(200);
         expect(mockResponse.json).toHaveBeenCalledWith(wishlists.filter(wishlist => wishlist.wishlist_id === 1));
+    });
+
+    it('should respond with an error message', async () => {
+        // Arrange
+        mockModule(null, 'Error getting wishlists');
+
+        const { getWishlists } = await import('../../controllers/wishlistsController.js');
+
+        // Call the function with the mock request and response
+        await getWishlists(mockRequest, mockResponse);
+
+        // Assert
+        expect(mockResponse.status).toHaveBeenCalledWith(400);
+        expect(mockResponse.json).toHaveBeenCalledWith({ message: 'Error getting wishlists' });
     });
 });
 
