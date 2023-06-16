@@ -72,14 +72,35 @@ describe('GET /api/transactionHistory', () => {
 
 describe('POST /api/transactionHistory', () => {
     it('should respond with the new transaction', async () => {
+        // Arrange
         const newTransaction = transactions.filter(transaction => transaction.transaction_id === 1);
-        mockRequest = { body: newTransaction };
+
+        mockModule(newTransaction);
+
+        const { createTransaction } = await import('../../controllers/transactionHistoryController.js');
+
+        mockRequest.body = newTransaction;
 
         await createTransaction(mockRequest, mockResponse);
 
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(201);
         expect(mockResponse.json).toHaveBeenCalledWith(newTransaction);
+    });
+
+    it('should respond with an error message', async () => {
+        // Arrange
+        mockModule(null, 'Error creating transaction');
+
+        const { createTransaction } = await import('../../controllers/transactionHistoryController.js');
+
+        mockRequest.body = transactions.filter(transaction => transaction.transaction_id === 1);
+
+        await createTransaction(mockRequest, mockResponse);
+
+        // Assert
+        expect(mockResponse.status).toHaveBeenCalledWith(400);
+        expect(mockResponse.json).toHaveBeenCalledWith({ message: 'Error creating transaction' });
     });
 });
 
