@@ -39,8 +39,7 @@ describe('GET /api/payroll/dates', () => {
         // Arrange
         mockModule(payrollDates);
 
-        mockRequest.params = { id: null };
-        mockRequest.query = { employee_id: 1 };
+        mockRequest.query = { id: null, employee_id: 1 };
 
         const { getPayrollDates } = await import('../../controllers/payrollDatesController.js');
 
@@ -67,8 +66,7 @@ describe('GET /api/payroll/dates', () => {
         // Arrange
         mockModule(null, 'Error getting payroll dates');
 
-        mockRequest.params = { id: null };
-        mockRequest.query = { employee_id: 1 };
+        mockRequest.query = { id: null, employee_id: 1 };
 
         const { getPayrollDates } = await import('../../controllers/payrollDatesController.js');
 
@@ -88,7 +86,7 @@ describe('GET /api/payroll/dates', () => {
 
         const { getPayrollDates } = await import('../../controllers/payrollDatesController.js');
 
-        mockRequest.query = { employee_id: id };
+        mockRequest.query = { id: 1, employee_id: id };
 
         // Call the function with the mock request and response
         await getPayrollDates(mockRequest, mockResponse);
@@ -118,7 +116,7 @@ describe('GET /api/payroll/dates', () => {
 
         const { getPayrollDates } = await import('../../controllers/payrollDatesController.js');
 
-        mockRequest.query = { employee_id: id };
+        mockRequest.query = { id: 1, employee_id: id };
 
         // Call the function with the mock request and response
         await getPayrollDates(mockRequest, mockResponse);
