@@ -72,14 +72,36 @@ describe('GET /api/transfers', () => {
 
 describe('POST /api/transfers', () => {
     it('should respond with the new transfer', async () => {
+        // Arrange
         const newTransfer = transfers.filter(transfer => transfer.transfer_id === 1);
-        mockRequest = { body: newTransfer };
+
+        mockModule(newTransfer);
+
+        const { createTransfer } = await import('../../controllers/transfersController.js');
+
+        mockRequest.body = newTransfer;
 
         await createTransfer(mockRequest, mockResponse);
 
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(201);
         expect(mockResponse.json).toHaveBeenCalledWith(newTransfer);
+    });
+
+    it('should respond with an error message', async () => {
+        // Arrange
+        mockModule(null, 'Error creating transfer');
+
+        const { createTransfer } = await import('../../controllers/transfersController.js');
+        
+        mockRequest.body = transfers.filter(transfer => transfer.transfer_id === 1);
+
+        // Call the function with the mock request and response
+        await createTransfer(mockRequest, mockResponse);
+
+        // Assert
+        expect(mockResponse.status).toHaveBeenCalledWith(400);
+        expect(mockResponse.json).toHaveBeenCalledWith({ message: 'Error creating transfer' });
     });
 });
 
