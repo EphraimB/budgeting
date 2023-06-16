@@ -2,7 +2,6 @@ import { expenseQueries, cronJobQueries } from '../models/queryData.js';
 import scheduleCronJob from '../bree/jobs/scheduleCronJob.js';
 import deleteCronJob from '../bree/jobs/deleteCronJob.js';
 import { handleError, executeQuery } from '../utils/helperFunctions.js';
-import { getExpenses as getExpensesService, createExpense as createExpenseService } from '../services/expensesService.js';
 
 const parseExpenses = expense => ({
     expense_id: parseInt(expense.expense_id),
@@ -26,7 +25,10 @@ export const getExpenses = async (request, response) => {
     const { id } = request.query;
 
     try {
-        const expenses = await getExpensesService(id);
+        const query = id ? expenseQueries.getExpense : expenseQueries.getExpenses;
+        const params = id ? [id] : [];
+        const expenses = await executeQuery(query, params);
+
         response.status(200).json(expenses.map(parseExpenses));
     } catch (error) {
         handleError(response, 'Error getting expenses');
@@ -34,7 +36,33 @@ export const getExpenses = async (request, response) => {
 };
 
 export const createExpense = async (request, response) => {
-    const { body } = request;
+    const {
+        account_id,
+        amount,
+        title,
+        description,
+        frequency_type,
+        frequency_type_variable,
+        frequency_day_of_month,
+        frequency_day_of_week,
+        frequency_week_of_month,
+        frequency_month_of_year,
+        begin_date
+    } = request.body;
+
+    const negativeAmount = -amount;
+    const cronParams = {
+        begin_date,
+        account_id,
+        negativeAmount,
+        description,
+        frequency_type,
+        frequency_type_variable,
+        frequency_day_of_month,
+        frequency_day_of_week,
+        frequency_week_of_month,
+        frequency_month_of_year
+    };
 
     try {
         const { cronDate, uniqueId } = await scheduleCronJob(cronParams);
@@ -45,11 +73,24 @@ export const createExpense = async (request, response) => {
 
         console.log('Cron job created ' + cronId);
 
-        const newExpense = await createExpenseService(body);
+        const expenses = await executeQuery(expenseQueries.createExpense, [
+            account_id,
+            cronId,
+            amount,
+            title,
+            description,
+            frequency_type,
+            frequency_type_variable,
+            frequency_day_of_month,
+            frequency_day_of_week,
+            frequency_week_of_month,
+            frequency_month_of_year,
+            begin_date
+        ]);
 
-        response.status(201).json(newExpense.map(parseExpenses));
+        response.status(201).json(expenses.map(parseExpenses));
     } catch (error) {
-        handleError(response, 'Error creating expense');
+        handleError(response, error.message);
     }
 };
 
