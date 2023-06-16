@@ -97,14 +97,35 @@ describe('POST /api/wishlists', () => {
 
 describe('PUT /api/wishlists/:id', () => {
     it('should respond with the updated wishlist', async () => {
+        // Arrange
         const updatedWishlist = wishlists.filter(wishlist => wishlist.wishlist_id === 1);
-        mockRequest = { params: { id: 1 }, body: updatedWishlist };
+
+        mockModule(updatedWishlist);
+
+        mockRequest.params = { id: 1 };
+        mockRequest.body = updatedWishlist;
+
+        const { updateWishlist } = await import('../../controllers/wishlistsController.js');
 
         await updateWishlist(mockRequest, mockResponse);
 
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(200);
         expect(mockResponse.json).toHaveBeenCalledWith(updatedWishlist);
+    });
+
+    it('should respond with an error message', async () => {
+        // Arrange
+        mockModule(null, 'Error updating wishlist');
+
+        const { updateWishlist } = await import('../../controllers/wishlistsController.js');
+
+        // Call the function with the mock request and response
+        await updateWishlist(mockRequest, mockResponse);
+
+        // Assert
+        expect(mockResponse.status).toHaveBeenCalledWith(400);
+        expect(mockResponse.json).toHaveBeenCalledWith({ message: 'Error updating wishlist' });
     });
 });
 
