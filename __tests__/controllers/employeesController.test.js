@@ -1,35 +1,47 @@
 import { jest } from '@jest/globals';
 import { employees } from '../../models/mockData.js';
 
-jest.unstable_mockModule('../../utils/helperFunctions.js', () => ({
-    executeQuery: jest.fn().mockResolvedValue(employees.filter(employee => employee.employee_id === 1)),
-    handleError: jest.fn().mockReturnValue({ message: 'Error' }),
-}));
-
 jest.unstable_mockModule('../../bree/getPayrolls.js', () => ({
     getPayrolls: jest.fn(),
 }));
 
-const { getEmployee, createEmployee, updateEmployee, deleteEmployee } = await import('../../controllers/employeesController.js');
+// Mock request and response
+let mockRequest;
+let mockResponse;
 
-let mockRequest = {};
-let mockResponse = {
-    status: jest.fn().mockReturnThis(),
-    json: jest.fn(),
-    send: jest.fn(),  // Mock send method
-};
+beforeEach(() => {
+    mockRequest = {};
+    mockResponse = {
+        status: jest.fn().mockReturnThis(),
+        json: jest.fn(),
+        send: jest.fn(),
+    };
+});
 
 afterEach(() => {
-    jest.clearAllMocks();
+    jest.resetModules();
 });
+
+// Helper function to generate mock module
+const mockModule = (executeQueryValue, errorMessage) => {
+    jest.unstable_mockModule('../../utils/helperFunctions.js', () => ({
+        executeQuery: errorMessage
+            ? jest.fn().mockRejectedValue(new Error(errorMessage))
+            : jest.fn().mockResolvedValue(executeQueryValue),
+        handleError: jest.fn((res, message) => {
+            res.status(400).json({ message });
+        }),
+    }));
+};
 
 describe('GET /api/payroll/employee', () => {
     it('should respond with an array of employees', async () => {
-        mockRequest = {
-            query: {
-                id: 1
-            }
-        }; // Set the mockRequest.query
+        // Arrange
+        mockModule(employees.filter(employee => employee.employee_id === 1));
+
+        mockRequest.query = { id: 1 };
+
+        const { getEmployee } = await import('../../controllers/employeesController.js');
 
         // Call the function with the mock request and response
         await getEmployee(mockRequest, mockResponse);
@@ -37,6 +49,22 @@ describe('GET /api/payroll/employee', () => {
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(200);
         expect(mockResponse.json).toHaveBeenCalledWith(employees.filter(employee => employee.employee_id === 1));
+    });
+
+    it('should respond with an error message', async () => {
+        // Arrange
+        mockModule(null, 'Error getting employee');
+
+        mockRequest.query = { id: 1 };
+
+        const { getEmployee } = await import('../../controllers/employeesController.js');
+
+        // Call the function with the mock request and response
+        await getEmployee(mockRequest, mockResponse);
+
+        // Assert
+        expect(mockResponse.status).toHaveBeenCalledWith(400);
+        expect(mockResponse.json).toHaveBeenCalledWith({ message: 'Error getting employee' });
     });
 });
 
