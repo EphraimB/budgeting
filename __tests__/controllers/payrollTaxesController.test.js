@@ -173,51 +173,54 @@ describe('POST /api/payroll/taxes', () => {
 });
 
 describe('PUT /api/payroll/taxes/:id', () => {
-    beforeAll(async () => {
-        jest.unstable_mockModule('../../utils/helperFunctions.js', () => ({
-            executeQuery: jest.fn().mockResolvedValue([{
-                payroll_taxes_id: 3,
-                employee_id: 1,
-                name: 'Federal Income Tax',
-                rate: 0.15,
-            }]),
-            handleError: jest.fn().mockReturnValue({ message: 'Error' }),
-        }));
-
-        const payrollTaxesModule = await import('../../controllers/payrollTaxesController.js');
-        updatePayrollTax = payrollTaxesModule.updatePayrollTax;
-    });
-
-    afterAll(() => {
-        jest.resetModules();
-    });
-
     it('should respond with the updated payroll tax', async () => {
         const id = 1;
+
+        mockModule(payrollTaxes.filter(payrollTax => payrollTax.payroll_taxes_id === id));
 
         const updatedPayrollTax = {
             employee_id: id,
             name: 'Federal Income Tax',
-            rate: 0.15,
+            rate: 0.1,
         };
-        mockRequest = { params: { id: 1 }, body: updatedPayrollTax };
-        mockResponse = {
-            status: jest.fn().mockReturnThis(),
-            json: jest.fn(),
-            send: jest.fn(),  // Mock send method
-        };
+
+        mockRequest.params = { id: 1 };
+        mockRequest.body = updatedPayrollTax;
+
+        const { updatePayrollTax } = await import('../../controllers/payrollTaxesController.js');
 
         await updatePayrollTax(mockRequest, mockResponse);
 
         const newPayrollTaxesReturnObj = [{
-            payroll_taxes_id: 3,
+            payroll_taxes_id: id,
             name: 'Federal Income Tax',
-            rate: 0.15,
+            rate: 0.1,
         }];
 
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(200);
         expect(mockResponse.json).toHaveBeenCalledWith(newPayrollTaxesReturnObj);
+    });
+
+    it('should respond with an error message', async () => {
+        mockModule(null, 'Error updating payroll tax');
+
+        const updatedPayrollTax = {
+            employee_id: 1,
+            name: 'Federal Income Tax',
+            rate: 0.1,
+        };
+
+        mockRequest.params = { id: 1 };
+        mockRequest.body = updatedPayrollTax;
+
+        const { updatePayrollTax } = await import('../../controllers/payrollTaxesController.js');
+
+        await updatePayrollTax(mockRequest, mockResponse);
+
+        // Assert
+        expect(mockResponse.status).toHaveBeenCalledWith(400);
+        expect(mockResponse.json).toHaveBeenCalledWith({ message: 'Error updating payroll tax' });
     });
 });
 
