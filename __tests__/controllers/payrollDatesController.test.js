@@ -243,32 +243,35 @@ describe('PUT /api/payroll/dates/:id', () => {
 });
 
 describe('DELETE /api/payroll/dates/:id', () => {
-    beforeAll(async () => {
-        jest.unstable_mockModule('../../utils/helperFunctions.js', () => ({
-            executeQuery: jest.fn().mockResolvedValue([{
-                payroll_date_id: 3,
-                employee_id: 1,
-                payroll_start_day: 1,
-                payroll_end_day: 15,
-            }]),
-            handleError: jest.fn().mockReturnValue({ message: 'Error' }),
-        }));
-
-        const payrollDatesModule = await import('../../controllers/payrollDatesController.js');
-        deletePayrollDate = payrollDatesModule.deletePayrollDate;
-    });
-
-    afterAll(() => {
-        jest.resetModules();
-    });
-
     it('should respond with a success message', async () => {
-        mockRequest = { params: { id: 1 }, query: { employee_id: 1 } };
+        // Arrange
+        mockModule('Successfully deleted payroll date');
+
+        mockRequest.params = { id: 1 };
+        mockRequest.query = { employee_id: 1 };
+
+        const { deletePayrollDate } = await import('../../controllers/payrollDatesController.js');
 
         await deletePayrollDate(mockRequest, mockResponse);
 
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(200);
         expect(mockResponse.send).toHaveBeenCalledWith('Successfully deleted payroll date');
+    });
+
+    it('should respond with an error message', async () => {
+        // Arrange
+        mockModule(null, 'Error deleting payroll date');
+
+        mockRequest.params = { id: 1 };
+        mockRequest.query = { employee_id: 1 };
+
+        const { deletePayrollDate } = await import('../../controllers/payrollDatesController.js');
+
+        await deletePayrollDate(mockRequest, mockResponse);
+
+        // Assert
+        expect(mockResponse.status).toHaveBeenCalledWith(400);
+        expect(mockResponse.json).toHaveBeenCalledWith({ "message": "Error deleting payroll date" });
     });
 });
