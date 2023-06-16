@@ -1,39 +1,51 @@
 import { jest } from '@jest/globals';
 import { transfers } from '../../models/mockData.js';
 
-jest.unstable_mockModule('../../utils/helperFunctions.js', () => ({
-    executeQuery: jest.fn().mockResolvedValue(transfers.filter(transfer => transfer.transfer_id === 1)),
-    handleError: jest.fn().mockReturnValue({ message: 'Error' }),
-}));
-
 jest.unstable_mockModule('../../bree/jobs/scheduleCronJob.js', () => ({
-    default: jest.fn().mockReturnValue({ message: 'Cron job scheduled' })
+    default: jest.fn().mockReturnValue({ cronDate: '0 0 16 * *', uniqueId: '123' })
 }));
 
 jest.unstable_mockModule('../../bree/jobs/deleteCronJob.js', () => ({
-    default: jest.fn().mockReturnValue({ message: 'Cron job deleted' })
+    default: jest.fn().mockReturnValue('123')
 }));
 
-const { getTransfers, createTransfer, updateTransfer, deleteTransfer } = await import('../../controllers/transfersController.js');
+// Mock request and response
+let mockRequest;
+let mockResponse;
 
-let mockRequest = {};
-let mockResponse = {
-    status: jest.fn().mockReturnThis(),
-    json: jest.fn(),
-    send: jest.fn(),  // Mock send method
-};
+beforeEach(() => {
+    mockRequest = {};
+    mockResponse = {
+        status: jest.fn().mockReturnThis(),
+        json: jest.fn(),
+        send: jest.fn(),
+    };
+});
 
 afterEach(() => {
-    jest.clearAllMocks();
+    jest.resetModules();
 });
+
+// Helper function to generate mock module
+const mockModule = (executeQueryValue, errorMessage) => {
+    jest.unstable_mockModule('../../utils/helperFunctions.js', () => ({
+        executeQuery: errorMessage
+            ? jest.fn().mockRejectedValue(new Error(errorMessage))
+            : jest.fn().mockResolvedValue(executeQueryValue),
+        handleError: jest.fn((res, message) => {
+            res.status(400).json({ message });
+        }),
+    }));
+};
 
 describe('GET /api/transfers', () => {
     it('should respond with an array of transfers', async () => {
-        mockRequest = {
-            query: {
-                id: 1
-            }
-        }; // Set the mockRequest.query
+        // Arrange
+        mockModule(transfers);
+
+        mockRequest.query = { id: 1 };
+
+        const { getTransfers } = await import('../../controllers/transfersController.js');
 
         // Call the function with the mock request and response
         await getTransfers(mockRequest, mockResponse);
@@ -41,6 +53,20 @@ describe('GET /api/transfers', () => {
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(200);
         expect(mockResponse.json).toHaveBeenCalledWith(transfers.filter(transfer => transfer.transfer_id === 1));
+    });
+
+    it('should respond with an error message', async () => {
+        // Arrange
+        mockModule(null, 'Error getting transfers');
+
+        const { getTransfers } = await import('../../controllers/transfersController.js');
+
+        // Call the function with the mock request and response
+        await getTransfers(mockRequest, mockResponse);
+
+        // Assert
+        expect(mockResponse.status).toHaveBeenCalledWith(400);
+        expect(mockResponse.json).toHaveBeenCalledWith({ message: 'Error getting transfers' });
     });
 });
 
