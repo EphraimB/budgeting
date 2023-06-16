@@ -1,43 +1,47 @@
 import { jest } from '@jest/globals';
 import { payrollTaxes } from '../../models/mockData.js';
 
-let getPayrollTaxes, createPayrollTax, updatePayrollTax, deletePayrollTax, mockRequest, mockResponse;
+let mockRequest
+let mockResponse;
 
-beforeAll(() => {
-    jest.unstable_mockModule('../../bree/getPayrolls.js', () => ({
-        getPayrolls: jest.fn(),
-    }));
+jest.unstable_mockModule('../../bree/getPayrolls.js', () => ({
+    getPayrolls: jest.fn(),
+}));
+
+beforeEach(() => {
+    mockRequest = {};
+    mockResponse = {
+        status: jest.fn().mockReturnThis(),
+        json: jest.fn(),
+        send: jest.fn(),
+    };
 });
 
+afterEach(() => {
+    jest.resetModules();
+});
+
+// Helper function to generate mock module
+const mockModule = (executeQueryValue, errorMessage) => {
+    jest.unstable_mockModule('../../utils/helperFunctions.js', () => ({
+        executeQuery: errorMessage
+            ? jest.fn().mockRejectedValue(new Error(errorMessage))
+            : jest.fn().mockResolvedValue(executeQueryValue),
+        handleError: jest.fn((res, message) => {
+            res.status(400).json({ message });
+        }),
+    }));
+};
+
 describe('GET /api/payroll/taxes', () => {
-    beforeAll(async () => {
-        jest.unstable_mockModule('../../utils/helperFunctions.js', () => ({
-            executeQuery: jest.fn().mockResolvedValue(payrollTaxes.filter(payrollTax => payrollTax.employee_id === 1)),
-            handleError: jest.fn().mockReturnValue({ message: 'Error' }),
-        }));
-
-        const payrollTaxesModule = await import('../../controllers/payrollTaxesController.js');
-        getPayrollTaxes = payrollTaxesModule.getPayrollTaxes;
-    });
-
-    afterAll(() => {
-        jest.resetModules();
-    });
-
-    it('should respond with an array of payroll taxes', async () => {
+    it('should respond with an array of payroll taxes with id', async () => {
         const id = 1;
 
-        mockRequest = {
-            query: {
-                employee_id: id
-            }
-        }; // Set the mockRequest.query
+        mockModule(payrollTaxes.filter(payrollTax => payrollTax.employee_id === id));
 
-        mockResponse = {
-            status: jest.fn().mockReturnThis(),
-            json: jest.fn(),
-            send: jest.fn(),  // Mock send method
-        }; // Set the mockResponse
+        mockRequest.query = { employee_id: id, id: 1 };
+
+        const { getPayrollTaxes } = await import('../../controllers/payrollTaxesController.js');
 
         // Call the function with the mock request and response
         await getPayrollTaxes(mockRequest, mockResponse);
@@ -57,6 +61,23 @@ describe('GET /api/payroll/taxes', () => {
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(200);
         expect(mockResponse.json).toHaveBeenCalledWith(expentedReturnObj);
+    });
+
+    it('should respond with an error message', async () => {
+        const id = 1;
+
+        mockModule(null, 'Error getting payroll taxes');
+
+        mockRequest.query = { employee_id: id, id: 1 };
+
+        const { getPayrollTaxes } = await import('../../controllers/payrollTaxesController.js');
+
+        // Call the function with the mock request and response
+        await getPayrollTaxes(mockRequest, mockResponse);
+
+        // Assert
+        expect(mockResponse.status).toHaveBeenCalledWith(400);
+        expect(mockResponse.json).toHaveBeenCalledWith({ message: 'Error getting payroll taxes' });
     });
 });
 
