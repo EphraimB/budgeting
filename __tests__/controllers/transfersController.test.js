@@ -107,14 +107,38 @@ describe('POST /api/transfers', () => {
 
 describe('PUT /api/transfer/:id', () => {
     it('should respond with the updated transfer', async () => {
+        // Arrange
         const updatedTransfer = transfers.filter(transfer => transfer.transfer_id === 1);
-        mockRequest = { params: { id: 1 }, body: updatedTransfer };
+
+        mockModule(updatedTransfer);
+
+        mockRequest.params = { id: 1 };
+        mockRequest.body = updatedTransfer;
+
+        const { updateTransfer } = await import('../../controllers/transfersController.js');
 
         await updateTransfer(mockRequest, mockResponse);
 
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(200);
         expect(mockResponse.json).toHaveBeenCalledWith(updatedTransfer);
+    });
+
+    it('should respond with an error message', async () => {
+        // Arrange
+        mockModule(null, 'Error updating transfer');
+
+        mockRequest.params = { id: 1 };
+        mockRequest.body = transfers.filter(transfer => transfer.transfer_id === 1);
+
+        const { updateTransfer } = await import('../../controllers/transfersController.js');
+
+        // Call the function with the mock request and response
+        await updateTransfer(mockRequest, mockResponse);
+
+        // Assert
+        expect(mockResponse.status).toHaveBeenCalledWith(400);
+        expect(mockResponse.json).toHaveBeenCalledWith({ message: 'Error updating transfer' });
     });
 });
 
