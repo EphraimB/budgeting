@@ -1,39 +1,51 @@
 import { jest } from '@jest/globals';
 import { loans } from '../../models/mockData.js';
 
-jest.unstable_mockModule('../../utils/helperFunctions.js', () => ({
-    executeQuery: jest.fn().mockResolvedValue(loans.filter(loan => loan.loan_id === 1)),
-    handleError: jest.fn().mockReturnValue({ message: 'Error' }),
-}));
-
 jest.unstable_mockModule('../../bree/jobs/scheduleCronJob.js', () => ({
-    default: jest.fn().mockReturnValue({ message: 'Cron job scheduled' })
+    default: jest.fn().mockReturnValue({ cronDate: '0 0 16 * *', uniqueId: '123' })
 }));
 
 jest.unstable_mockModule('../../bree/jobs/deleteCronJob.js', () => ({
-    default: jest.fn().mockReturnValue({ message: 'Cron job deleted' })
+    default: jest.fn().mockReturnValue('123')
 }));
 
-const { getLoans, createLoan, updateLoan, deleteLoan } = await import('../../controllers/loansController.js');
+// Mock request and response
+let mockRequest;
+let mockResponse;
 
-let mockRequest = {};
-let mockResponse = {
-    status: jest.fn().mockReturnThis(),
-    json: jest.fn(),
-    send: jest.fn(),  // Mock send method
-};
+beforeEach(() => {
+    mockRequest = {};
+    mockResponse = {
+        status: jest.fn().mockReturnThis(),
+        json: jest.fn(),
+        send: jest.fn(),
+    };
+});
 
 afterEach(() => {
-    jest.clearAllMocks();
+    jest.resetModules();
 });
+
+// Helper function to generate mock module
+const mockModule = (executeQueryValue, errorMessage) => {
+    jest.unstable_mockModule('../../utils/helperFunctions.js', () => ({
+        executeQuery: errorMessage
+            ? jest.fn().mockRejectedValue(new Error(errorMessage))
+            : jest.fn().mockResolvedValue(executeQueryValue),
+        handleError: jest.fn((res, message) => {
+            res.status(400).json({ message });
+        }),
+    }));
+};
 
 describe('GET /api/loans', () => {
     it('should respond with an array of loans', async () => {
-        mockRequest = {
-            query: {
-                id: 1
-            }
-        }; // Set the mockRequest.query
+        // Arrange
+        mockModule(loans);
+
+        mockRequest.query = { id: 1 };
+
+        const { getLoans } = await import('../../controllers/loansController.js');
 
         // Call the function with the mock request and response
         await getLoans(mockRequest, mockResponse);
@@ -41,6 +53,22 @@ describe('GET /api/loans', () => {
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(200);
         expect(mockResponse.json).toHaveBeenCalledWith(loans.filter(loan => loan.loan_id === 1));
+    });
+
+    it('should respond with an error message', async () => {
+        // Arrange
+        mockModule(null, 'Error getting loans');
+
+        mockRequest.query = { id: 1 };
+
+        const { getLoans } = await import('../../controllers/loansController.js');
+
+        // Call the function with the mock request and response
+        await getLoans(mockRequest, mockResponse);
+
+        // Assert
+        expect(mockResponse.status).toHaveBeenCalledWith(400);
+        expect(mockResponse.json).toHaveBeenCalledWith({ message: 'Error getting loan' });
     });
 });
 
