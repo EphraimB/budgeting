@@ -109,7 +109,7 @@ describe('POST /api/expenses', () => {
         // Arrange
         const newExpense = expenses.filter(expense => expense.expense_id === 1);
 
-        mockModule(expenses.filter(expense => expense.expense_id === 1));
+        mockModule(newExpense);
 
         const { createExpense } = await import('../../controllers/expensesController.js');
 
@@ -143,7 +143,7 @@ describe('PUT /api/expenses/:id', () => {
     it('should respond with the updated expense', async () => {
         const updatedExpense = expenses.filter(expense => expense.expense_id === 1);
 
-        mockModule(expenses.filter(expense => expense.expense_id === 1));
+        mockModule(updatedExpense);
 
         const { updateExpense } = await import('../../controllers/expensesController.js');
 
@@ -178,7 +178,7 @@ describe('PUT /api/expenses/:id', () => {
 describe('DELETE /api/expenses/:id', () => {
     it('should respond with a success message', async () => {
         // Arrange
-        mockModule(expenses.filter(expense => expense.expense_id === 1));
+        mockModule('Expense deleted successfully');
 
         const { deleteExpense } = await import('../../controllers/expensesController.js');
 

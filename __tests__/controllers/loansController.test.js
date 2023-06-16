@@ -43,6 +43,38 @@ describe('GET /api/loans', () => {
         // Arrange
         mockModule(loans);
 
+        mockRequest.query = { id: null };
+
+        const { getLoans } = await import('../../controllers/loansController.js');
+
+        // Call the function with the mock request and response
+        await getLoans(mockRequest, mockResponse);
+
+        // Assert
+        expect(mockResponse.status).toHaveBeenCalledWith(200);
+        expect(mockResponse.json).toHaveBeenCalledWith(loans);
+    });
+
+    it('should respond with an error message', async () => {
+        // Arrange
+        mockModule(null, 'Error getting loans');
+
+        mockRequest.query = { id: null };
+
+        const { getLoans } = await import('../../controllers/loansController.js');
+
+        // Call the function with the mock request and response
+        await getLoans(mockRequest, mockResponse);
+
+        // Assert
+        expect(mockResponse.status).toHaveBeenCalledWith(400);
+        expect(mockResponse.json).toHaveBeenCalledWith({ message: 'Error getting loans' });
+    });
+
+    it('should respond with an array of loans with id', async () => {
+        // Arrange
+        mockModule(loans);
+
         mockRequest.query = { id: 1 };
 
         const { getLoans } = await import('../../controllers/loansController.js');
@@ -55,7 +87,7 @@ describe('GET /api/loans', () => {
         expect(mockResponse.json).toHaveBeenCalledWith(loans.filter(loan => loan.loan_id === 1));
     });
 
-    it('should respond with an error message', async () => {
+    it('should respond with an error message with id', async () => {
         // Arrange
         mockModule(null, 'Error getting loans');
 
@@ -76,7 +108,7 @@ describe('POST /api/loans', () => {
     it('should respond with the new loan', async () => {
         const newLoan = loans.filter(loan => loan.loan_id === 1);
 
-        mockModule(newLoan.filter(loan => loan.loan_id === 1));
+        mockModule(newLoan);
 
         const { createLoan } = await import('../../controllers/loansController.js');
 
@@ -107,7 +139,13 @@ describe('POST /api/loans', () => {
 describe('PUT /api/loans/:id', () => {
     it('should respond with the updated loan', async () => {
         const updatedLoan = loans.filter(loan => loan.loan_id === 1);
-        mockRequest = { params: { id: 1 }, body: updatedLoan };
+
+        mockModule(updatedLoan);
+
+        const { updateLoan } = await import('../../controllers/loansController.js');
+
+        mockRequest.params = { id: 1 };
+        mockRequest.body = updatedLoan;
 
         await updateLoan(mockRequest, mockResponse);
 
@@ -115,16 +153,51 @@ describe('PUT /api/loans/:id', () => {
         expect(mockResponse.status).toHaveBeenCalledWith(200);
         expect(mockResponse.json).toHaveBeenCalledWith(updatedLoan);
     });
+
+    it('should respond with an error message', async () => {
+        mockModule(null, 'Error updating loan');
+
+        const { updateLoan } = await import('../../controllers/loansController.js');
+
+        mockRequest.params = { id: 1 };
+        mockRequest.body = loans.filter(loan => loan.loan_id === 1);
+
+        await updateLoan(mockRequest, mockResponse);
+
+        // Assert
+        expect(mockResponse.status).toHaveBeenCalledWith(400);
+        expect(mockResponse.json).toHaveBeenCalledWith({ message: 'Error updating loan' });
+    });
 });
 
 describe('DELETE /api/loans/:id', () => {
     it('should respond with a success message', async () => {
-        mockRequest = { params: { id: 1 } };
+        // Arrange
+        mockModule('Loan deleted successfully');
+
+        const { deleteLoan } = await import('../../controllers/loansController.js');
+
+        mockRequest.params = { id: 1 };
 
         await deleteLoan(mockRequest, mockResponse);
 
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(200);
         expect(mockResponse.send).toHaveBeenCalledWith('Loan deleted successfully');
+    });
+
+    it('should respond with an error message', async () => {
+        // Arrange
+        mockModule(null, 'Error deleting loan');
+
+        const { deleteLoan } = await import('../../controllers/loansController.js');
+
+        mockRequest.params = { id: 1 };
+
+        await deleteLoan(mockRequest, mockResponse);
+
+        // Assert
+        expect(mockResponse.status).toHaveBeenCalledWith(400);
+        expect(mockResponse.json).toHaveBeenCalledWith({ message: 'Error deleting loan' });
     });
 });
