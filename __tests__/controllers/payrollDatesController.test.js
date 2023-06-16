@@ -1,43 +1,94 @@
 import { jest } from '@jest/globals';
 import { payrollDates } from '../../models/mockData.js';
 
-let getPayrollDates, createPayrollDate, updatePayrollDate, deletePayrollDate, mockRequest, mockResponse;
+jest.unstable_mockModule('../../bree/getPayrolls.js', () => ({
+    getPayrolls: jest.fn(),
+}));
 
-beforeAll(() => {
-    jest.unstable_mockModule('../../bree/getPayrolls.js', () => ({
-        getPayrolls: jest.fn(),
-    }));
+// Mock request and response
+let mockRequest;
+let mockResponse;
+
+beforeEach(() => {
+    mockRequest = {};
+    mockResponse = {
+        status: jest.fn().mockReturnThis(),
+        json: jest.fn(),
+        send: jest.fn(),
+    };
 });
 
+afterEach(() => {
+    jest.resetModules();
+});
+
+// Helper function to generate mock module
+const mockModule = (executeQueryValue, errorMessage) => {
+    jest.unstable_mockModule('../../utils/helperFunctions.js', () => ({
+        executeQuery: errorMessage
+            ? jest.fn().mockRejectedValue(new Error(errorMessage))
+            : jest.fn().mockResolvedValue(executeQueryValue),
+        handleError: jest.fn((res, message) => {
+            res.status(400).json({ message });
+        }),
+    }));
+};
+
 describe('GET /api/payroll/dates', () => {
-    beforeAll(async () => {
-        jest.unstable_mockModule('../../utils/helperFunctions.js', () => ({
-            executeQuery: jest.fn().mockResolvedValue(payrollDates.filter(payrollDate => payrollDate.employee_id === 1)),
-            handleError: jest.fn().mockReturnValue({ message: 'Error' }),
+    it('should respond with an array of payroll dates', async () => {
+        // Arrange
+        mockModule(payrollDates);
+
+        mockRequest.params = { id: null };
+        mockRequest.query = { employee_id: 1 };
+
+        const { getPayrollDates } = await import('../../controllers/payrollDatesController.js');
+
+        // Call the function with the mock request and response
+        await getPayrollDates(mockRequest, mockResponse);
+
+        const payrollDatesReturnObj = payrollDates.map(payrollDate => ({
+            payroll_date_id: parseInt(payrollDate.payroll_date_id),
+            payroll_start_day: parseInt(payrollDate.payroll_start_day),
+            payroll_end_day: parseInt(payrollDate.payroll_end_day),
         }));
 
-        const payrollDatesModule = await import('../../controllers/payrollDatesController.js');
-        getPayrollDates = payrollDatesModule.getPayrollDates;
+        const expectedReturnObj = {
+            employee_id: 1,
+            payroll_dates: payrollDatesReturnObj,
+        };
+
+        // Assert
+        expect(mockResponse.status).toHaveBeenCalledWith(200);
+        expect(mockResponse.json).toHaveBeenCalledWith(expectedReturnObj);
     });
 
-    afterAll(() => {
-        jest.resetModules();
+    it('should respond with an error message', async () => {
+        // Arrange
+        mockModule(null, 'Error getting payroll dates');
+
+        mockRequest.params = { id: null };
+        mockRequest.query = { employee_id: 1 };
+
+        const { getPayrollDates } = await import('../../controllers/payrollDatesController.js');
+
+        // Call the function with the mock request and response
+        await getPayrollDates(mockRequest, mockResponse);
+
+        // Assert
+        expect(mockResponse.status).toHaveBeenCalledWith(400);
+        expect(mockResponse.json).toHaveBeenCalledWith({ "message": "Error getting payroll dates" });
     });
 
-    it('should respond with an array of payroll dates', async () => {
+    it('should respond with an array of payroll dates with id', async () => {
+        // Arrange
         const id = 1;
 
-        mockRequest = {
-            query: {
-                employee_id: id
-            }
-        }; // Set the mockRequest.query
+        mockModule(payrollDates.filter(payrollDate => payrollDate.employee_id === id));
 
-        mockResponse = {
-            status: jest.fn().mockReturnThis(),
-            json: jest.fn(),
-            send: jest.fn(),  // Mock send method
-        }; // Set the mockResponse
+        const { getPayrollDates } = await import('../../controllers/payrollDatesController.js');
+
+        mockRequest.query = { employee_id: id };
 
         // Call the function with the mock request and response
         await getPayrollDates(mockRequest, mockResponse);
@@ -57,6 +108,24 @@ describe('GET /api/payroll/dates', () => {
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(200);
         expect(mockResponse.json).toHaveBeenCalledWith(expentedReturnObj);
+    });
+
+    it('should respond with an error message with id', async () => {
+        // Arrange
+        const id = 1;
+
+        mockModule(null, 'Error getting payroll dates');
+
+        const { getPayrollDates } = await import('../../controllers/payrollDatesController.js');
+
+        mockRequest.query = { employee_id: id };
+
+        // Call the function with the mock request and response
+        await getPayrollDates(mockRequest, mockResponse);
+
+        // Assert
+        expect(mockResponse.status).toHaveBeenCalledWith(400);
+        expect(mockResponse.json).toHaveBeenCalledWith({ "message": "Error getting payroll dates" });
     });
 });
 
