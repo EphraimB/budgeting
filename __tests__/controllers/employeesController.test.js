@@ -106,14 +106,39 @@ describe('POST /api/payroll/employee', () => {
 
 describe('PUT /api/payroll/employee/:id', () => {
     it('should respond with the updated employee', async () => {
+        // Arrange
         const updatedEmployee = employees.filter(employee => employee.employee_id === 1);
-        mockRequest = { params: { id: 1 }, body: updatedEmployee };
+
+        mockModule(updatedEmployee);
+
+        mockRequest.params = { id: 1 };
+        mockRequest.body = updatedEmployee;
+
+        const { updateEmployee } = await import('../../controllers/employeesController.js');
 
         await updateEmployee(mockRequest, mockResponse);
 
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(200);
         expect(mockResponse.json).toHaveBeenCalledWith(updatedEmployee);
+    });
+
+    it('should respond with an error message', async () => {
+        // Arrange
+        const updatedEmployee = employees.filter(employee => employee.employee_id === 1);
+
+        mockModule(null, 'Error updating employee');
+
+        mockRequest.params = { id: 1 };
+        mockRequest.body = updatedEmployee;
+
+        const { updateEmployee } = await import('../../controllers/employeesController.js');
+
+        await updateEmployee(mockRequest, mockResponse);
+
+        // Assert
+        expect(mockResponse.status).toHaveBeenCalledWith(400);
+        expect(mockResponse.json).toHaveBeenCalledWith({ message: 'Error updating employee' });
     });
 });
 
