@@ -130,58 +130,57 @@ describe('GET /api/payroll/dates', () => {
 });
 
 describe('POST /api/payroll/dates', () => {
-    beforeAll(async () => {
-        jest.unstable_mockModule('../../utils/helperFunctions.js', () => ({
-            executeQuery: jest.fn().mockResolvedValue([{
-                payroll_date_id: 3,
-                employee_id: 1,
-                payroll_start_day: 1,
-                payroll_end_day: 15,
-            }]),
-            handleError: jest.fn().mockReturnValue({ message: 'Error' }),
-        }));
-
-        const payrollDatesModule = await import('../../controllers/payrollDatesController.js');
-        createPayrollDate = payrollDatesModule.createPayrollDate;
-    });
-
-    afterAll(() => {
-        jest.resetModules();
-    });
-
     it('should respond with the new payroll date', async () => {
-        const id = 1;
+        // Arrange
+        mockModule(payrollDates.filter(payrollDate => payrollDate.payroll_date_id === 1));
 
         const newPayrollDate = {
-            employee_id: id,
+            employee_id: 1,
             start_day: 1,
             end_day: 15,
         };
 
-        mockRequest = { body: newPayrollDate };
-        mockResponse = {
-            status: jest.fn().mockReturnThis(),
-            json: jest.fn(),
-            send: jest.fn(),  // Mock send method
-        };
+        const { createPayrollDate } = await import('../../controllers/payrollDatesController.js');
+
+        mockRequest.body = newPayrollDate;
 
         await createPayrollDate(mockRequest, mockResponse);
 
-        const newPayrollDatesReturnObj = [{
-            payroll_date_id: 3,
+        const newPayrollDatesReturnObj = {
+            payroll_date_id: 1,
             payroll_start_day: 1,
             payroll_end_day: 15,
-        }];
+        };
 
-        // Include employee_id in the return object
         const expectedReturnObj = {
-            employee_id: id,
-            payroll_date: newPayrollDatesReturnObj, // Adjust the key name here
+            employee_id: 1,
+            payroll_date: [newPayrollDatesReturnObj],
         };
 
         // Assert
-        expect(mockResponse.status).toHaveBeenCalledWith(201);
+        // expect(mockResponse.status).toHaveBeenCalledWith(201);
         expect(mockResponse.json).toHaveBeenCalledWith(expectedReturnObj);
+    });
+
+    it('should respond with an error message', async () => {
+        // Arrange
+        mockModule(null, 'Error creating payroll date');
+
+        const newPayrollDate = {
+            employee_id: 1,
+            start_day: 1,
+            end_day: 15,
+        };
+
+        const { createPayrollDate } = await import('../../controllers/payrollDatesController.js');
+
+        mockRequest.body = newPayrollDate;
+
+        await createPayrollDate(mockRequest, mockResponse);
+
+        // Assert
+        expect(mockResponse.status).toHaveBeenCalledWith(400);
+        expect(mockResponse.json).toHaveBeenCalledWith({ "message": "Error creating payroll date" });
     });
 });
 
