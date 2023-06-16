@@ -43,6 +43,40 @@ const mockModule = (executeQueryResponses, errorMessage) => {
 describe('GET /api/payroll/employee', () => {
     it('should respond with an array of employees', async () => {
         // Arrange
+        mockModule([employees]);
+
+        mockRequest.query = { id: null };
+
+        const { getEmployee } = await import('../../controllers/employeesController.js');
+
+        // Call the function with the mock request and response
+        await getEmployee(mockRequest, mockResponse);
+
+        // Assert
+        expect(mockResponse.status).toHaveBeenCalledWith(200);
+
+        // Check that the response is an array of employees
+        expect(mockResponse.json).toHaveBeenCalledWith(employees);
+    });
+
+    it('should respond with an error message', async () => {
+        // Arrange
+        mockModule(null, 'Error getting employees');
+
+        mockRequest.query = { id: null };
+
+        const { getEmployee } = await import('../../controllers/employeesController.js');
+
+        // Call the function with the mock request and response
+        await getEmployee(mockRequest, mockResponse);
+
+        // Assert
+        expect(mockResponse.status).toHaveBeenCalledWith(400);
+        expect(mockResponse.json).toHaveBeenCalledWith({ message: 'Error getting employee' });
+    });
+
+    it('should respond with an array of employees with id', async () => {
+        // Arrange
         mockModule([employees.filter(employee => employee.employee_id === 1)]);
 
         mockRequest.query = { id: 1 };
@@ -57,7 +91,7 @@ describe('GET /api/payroll/employee', () => {
         expect(mockResponse.json).toHaveBeenCalledWith(employees.filter(employee => employee.employee_id === 1));
     });
 
-    it('should respond with an error message', async () => {
+    it('should respond with an error message with id', async () => {
         // Arrange
         mockModule(null, 'Error getting employee');
 
