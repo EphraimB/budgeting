@@ -2,7 +2,7 @@ import express from 'express';
 import { param, query, body } from 'express-validator';
 const router = express.Router();
 import { getAccounts, createAccount, updateAccount, deleteAccount } from '../controllers/accountsController.js';
-import validateRequest from '../validateRequest.js';
+import validateRequest from '../utils/validateRequest.js';
 
 router.get('/',
     [

@@ -2,7 +2,7 @@ import express from 'express';
 import { query } from 'express-validator';
 const router = express.Router();
 import { getPayrolls } from '../controllers/payrollsController.js';
-import validateRequest from '../validateRequest.js';
+import validateRequest from '../utils/validateRequest.js';
 
 router.get('/',
     [

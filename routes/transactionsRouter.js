@@ -3,7 +3,7 @@ import generateTransactions from '../generation/generateTransactions.js';
 const router = express.Router();
 import { getCurrentBalance, getTransactionsByAccount, getExpensesByAccount, getLoansByAccount, getWishlistsByAccount, getPayrollsMiddleware, getTransfersByAccount } from '../middleware/middleware.js';
 import { query } from 'express-validator';
-import validateRequest from '../validateRequest.js';
+import validateRequest from '../utils/validateRequest.js';
 
 // Generate the transactions based on current balance, expenses, and loans
 router.get('/', [

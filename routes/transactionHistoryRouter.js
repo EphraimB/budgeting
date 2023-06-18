@@ -2,7 +2,7 @@ import express from 'express';
 import { query, param, body } from 'express-validator';
 const router = express.Router();
 import { getTransactions, createTransaction, updateTransaction, deleteTransaction } from '../controllers/transactionHistoryController.js';
-import validateRequest from '../validateRequest.js';
+import validateRequest from '../utils/validateRequest.js';
 
 router.get('/',
     [
