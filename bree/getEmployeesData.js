@@ -1,5 +1,5 @@
-import pool from "./config/db.js";
-import { payrollQueries } from "./models/queryData.js";
+import pool from "../config/db.js";
+import { payrollQueries } from "../models/queryData.js";
 
 // Function to fetch employee data from the database
 export const getEmployeesData = () => {

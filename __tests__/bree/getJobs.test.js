@@ -20,7 +20,7 @@ jest.unstable_mockModule('../../bree/getPayrolls.js', () => ({
     })
 }));
 
-jest.unstable_mockModule('../../getEmployeesData.js', () => ({
+jest.unstable_mockModule('../../bree/getEmployeesData.js', () => ({
     getEmployeesData: jest.fn().mockImplementation(() => {
         return employeeData;
     })

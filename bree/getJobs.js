@@ -1,11 +1,9 @@
-import pool from "../config/db.js";
-import { payrollQueries } from "../models/queryData.js";
 import fs from "fs";
 import path from 'path';
 import * as url from 'url';
 const __dirname = url.fileURLToPath(new URL('.', import.meta.url));
 import { getPayrolls } from "./getPayrolls.js";
-import { getEmployeesData } from "../getEmployeesData.js";
+import { getEmployeesData } from "../bree/getEmployeesData.js";
 
 // Main function to get jobs
 export const getJobs = async (jobsFilePath) => {
