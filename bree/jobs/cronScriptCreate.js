@@ -4,13 +4,11 @@ import { transactionQueries } from '../models/queryData.js';
 
 (async () => {
     const { account_id, amount, description } = workerData;
-    return new Promise((resolve, reject) => {
-        pool.query(transactionQueries.createTransaction, [account_id, amount, description], (error, results) => {
-            if (error) {
-                reject(error);
-            } else {
-                resolve(results.rows);
-            }
-        });
-    });
+
+    try {
+        const results = await createTransaction(account_id, amount, description, destination_account_id);
+        // handle results as needed
+    } catch (error) {
+        console.error(error);
+    }
 })();
