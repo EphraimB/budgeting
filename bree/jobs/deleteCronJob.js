@@ -6,8 +6,11 @@ const __dirname = url.fileURLToPath(new URL('.', import.meta.url));
 import pool from '../../config/db.js';
 import { cronJobQueries } from '../../models/queryData.js';
 
-const deleteCronJob = async (cronId) => {
+const deleteCronJob = async (cronId, filePath, jobsFilePath) => {
     try {
+        filePath = filePath || path.join(__dirname, 'cron-jobs', `${uniqueId}.js`);
+        jobsFilePath = jobsFilePath || path.join(__dirname, '../jobs.json');
+
         const results = await pool.query(cronJobQueries.getCronJob, [cronId]);
         const uniqueId = results.rows[0].unique_id;
 
@@ -16,10 +19,7 @@ const deleteCronJob = async (cronId) => {
             getBree().remove(jobToDelete.name);
             console.log(`Deleted cron job with unique_id ${uniqueId}`);
 
-            const cronJobFilePath = path.join(__dirname, 'cron-jobs', `${uniqueId}.js`);
-            const jobsFilePath = path.join(__dirname, '../jobs.json');
-
-            await fs.promises.unlink(cronJobFilePath);
+            await fs.promises.unlink(filePath);
             console.log(`Deleted cron job file ${uniqueId}.js`);
 
             const data = await fs.promises.readFile(jobsFilePath, 'utf8');
