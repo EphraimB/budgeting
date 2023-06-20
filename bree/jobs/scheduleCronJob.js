@@ -24,7 +24,7 @@ const createCronJob = ({
     return {
         name: uniqueId,
         cron: cronDate,
-        path: path.join(__dirname, destination_account_id === null ? 'cronScriptCreate.js' : 'cronScriptTransferCreate.js'),
+        path: path.join(__dirname, destination_account_id === null ? 'scripts/cronScriptCreate.js' : 'scripts/cronScriptTransferCreate.js'),
         worker: {
             workerData: {
                 account_id,

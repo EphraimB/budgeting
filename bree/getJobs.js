@@ -30,7 +30,7 @@ export const getJobs = async (jobsFilePath) => {
         const payrollCheckerjobs = employeeData.map(employee => ({
             name: `payroll-checker-employee-${employee.employee_id}`,
             cron: "0 0 1 * *",
-            path: "/app/bree/jobs/cronScriptGetPayrolls.js",
+            path: "/app/bree/jobs/scripts/cronScriptGetPayrolls.js",
             worker: {
                 workerData: {
                     employee_id: employee.employee_id,

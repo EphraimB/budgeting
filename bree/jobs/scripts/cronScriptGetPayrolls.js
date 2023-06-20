@@ -6,7 +6,7 @@ import * as url from 'url';
 const __dirname = url.fileURLToPath(new URL('.', import.meta.url));
 import { workerData } from 'worker_threads';
 import { payrollQueries } from '../models/queryData.js';
-import schedulePayrollCronJob from './schedulePayrollCronJob.js';
+import schedulePayrollCronJob from '../schedulePayrollCronJob.js';
 
 (async () => {
     const { employee_id } = workerData;

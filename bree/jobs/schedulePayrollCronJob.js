@@ -16,7 +16,7 @@ const createNewJob = (uniqueId, end_date, account_id, net_pay) => {
     return {
         name: uniqueId,
         cron: cronDate,
-        path: path.join(__dirname, 'cronScriptCreate.js'),
+        path: path.join(__dirname, 'scripts/cronScriptCreate.js'),
         worker: {
             workerData: {
                 account_id,

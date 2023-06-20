@@ -1,5 +1,5 @@
 import { workerData } from 'worker_threads';
-import { createTransaction } from './createTransaction.js';
+import { createTransaction } from '../createTransaction.js';
 
 (async () => {
     const { account_id, amount, description, destination_account_id } = workerData;
@@ -7,6 +7,6 @@ import { createTransaction } from './createTransaction.js';
         const results = await createTransaction(account_id, amount, description, destination_account_id);
         // handle results as needed
     } catch (error) {
-        // handle error as needed
+        console.error(error);
     }
 })();
