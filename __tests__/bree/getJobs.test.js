@@ -51,8 +51,8 @@ describe('getJobs', () => {
         const jobs = await getJobs('/app/bree/jobs.json');
 
         expect(jobs).toEqual([
-            createJob('payroll-checker-employee-1', '0 0 1 * *', '/app/bree/jobs/cronScriptGetPayrolls.js', { employee_id: 1 }),
-            createJob('payroll-checker-employee-2', '0 0 1 * *', '/app/bree/jobs/cronScriptGetPayrolls.js', { employee_id: 2 })
+            createJob('payroll-checker-employee-1', '0 0 1 * *', '/app/bree/jobs/scripts/cronScriptGetPayrolls.js', { employee_id: 1 }),
+            createJob('payroll-checker-employee-2', '0 0 1 * *', '/app/bree/jobs/scripts/cronScriptGetPayrolls.js', { employee_id: 2 })
         ]);
     });
 
