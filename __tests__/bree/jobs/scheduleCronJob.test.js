@@ -30,10 +30,27 @@ describe('scheduleCronJob', () => {
             frequency_type: 2
         };
 
-        const { cronDate, uniqueId } = await scheduleCronJob(jobDetails, '/app/cron-jobs/jobs.js', '/app/jobs.json');
+        const { cronDate } = await scheduleCronJob(jobDetails, '/app/cron-jobs/jobs.js', '/app/jobs.json');
 
         // Specify expected values here
         const expectedCronDate = '30 13 19 */1 *'; // Provide the expected cronDate
+
+        expect(cronDate).toBe(expectedCronDate);
+    });
+
+    it('Gets back a cron date with a yearly frequency', async () => {
+        const jobDetailsYearly = {
+            account_id: 1,
+            amount: 500.00,
+            description: 'Testing',
+            begin_date: '2021-07-19T13:30',
+            frequency_type: 3
+        };
+
+        const { cronDate } = await scheduleCronJob(jobDetailsYearly, '/app/cron-jobs/jobs.js', '/app/jobs.json');
+
+        // Specify expected values here
+        const expectedCronDate = '30 13 19 */121 *'; // Provide the expected cronDate
 
         expect(cronDate).toBe(expectedCronDate);
     });
@@ -48,10 +65,28 @@ describe('scheduleCronJob', () => {
             frequency_type_variable: 2
         };
 
-        const { cronDate, uniqueId } = await scheduleCronJob(jobDetailsUnique, '/app/cron-jobs/jobs.js', '/app/jobs.json');
+        const { cronDate } = await scheduleCronJob(jobDetailsUnique, '/app/cron-jobs/jobs.js', '/app/jobs.json');
 
         // Specify expected values here
         const expectedCronDate = '30 13 */72 * *'; // Provide the expected cronDate
+
+        expect(cronDate).toBe(expectedCronDate);
+    });
+
+    it('Gets back a cron date with a day of week', async () => {
+        const jobDetailsUnique = {
+            account_id: 1,
+            amount: 500.00,
+            description: 'Testing',
+            begin_date: '2021-07-19T13:30',
+            frequency_type: 2,
+            frequency_day_of_week: 1
+        };
+
+        const { cronDate } = await scheduleCronJob(jobDetailsUnique, '/app/cron-jobs/jobs.js', '/app/jobs.json');
+
+        // Specify expected values here
+        const expectedCronDate = '30 13 * * 1'; // Provide the expected cronDate
 
         expect(cronDate).toBe(expectedCronDate);
     });
