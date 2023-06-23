@@ -73,8 +73,6 @@ export const generateMonthlyExpenses = (transactions, skippedTransactions, expen
         }
     };
 
-    console.log(generateDateFn);
-
     generateExpenses(transactions, skippedTransactions, expense, toDate, fromDate, generateDateFn);
 };
 
