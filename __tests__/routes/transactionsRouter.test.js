@@ -60,7 +60,9 @@ describe('Testing / route', () => {
         expect(response.body).toHaveProperty('account_id');
         expect(response.body).toHaveProperty('currentBalance');
         expect(response.body).toHaveProperty('transactions');
-        // Further assertions can be added based on your requirements
+        expect(response.body.account_id).toBe(accountId);
+        expect(response.body.currentBalance).toBe(100);
+        expect(response.body.transactions).toEqual([]);
     });
 
     it('should respond with a 400 status for invalid request', async () => {
@@ -69,6 +71,5 @@ describe('Testing / route', () => {
             .query({ account_id: 'invalid', from_date: 'invalid', to_date: 'invalid' });
 
         expect(response.status).toBe(400);
-        // Further assertions can be added based on your requirements
     });
 });
