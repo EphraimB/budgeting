@@ -25,7 +25,7 @@ describe('Test generateDailyExpenses', () => {
         expect(transactions[0].title).toBe(expense.expense_title);
         expect(transactions[0].description).toBe(expense.expense_description);
         expect(transactions[0].amount).toBe(-expense.expense_amount);
-        expect(expectedEndDate.toISOString().slice(0,10)).toBe(new Date(new Date().setDate(new Date().getDate() + 5)).toISOString().slice(0,10));
+        expect(expectedEndDate.toISOString().slice(0, 10)).toBe(new Date(new Date().setDate(new Date().getDate() + 5)).toISOString().slice(0, 10));
     });
 
     it('Should generate daily expenses correctly when the expense begin date is less than the from date', () => {
@@ -52,6 +52,6 @@ describe('Test generateDailyExpenses', () => {
         expect(transactions[0].title).toBe(expense.expense_title);
         expect(transactions[0].description).toBe(expense.expense_description);
         expect(transactions[0].amount).toBe(-expense.expense_amount);
-        expect(expectedEndDate.toISOString().slice(0,10)).toBe(new Date(new Date().setDate(new Date().getDate() + 7)).toISOString().slice(0,10));
+        expect(expectedEndDate.toISOString().slice(0, 10)).toBe(new Date(new Date().setDate(new Date().getDate() + 7)).toISOString().slice(0, 10));
     });
 });
