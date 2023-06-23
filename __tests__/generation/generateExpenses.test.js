@@ -54,6 +54,4 @@ describe('Test generateDailyExpenses', () => {
         expect(transactions[0].amount).toBe(-expense.expense_amount);
         expect(expectedEndDate.toISOString().slice(0,10)).toBe(new Date(new Date().setDate(new Date().getDate() + 7)).toISOString().slice(0,10));
     });
-
-
 });
