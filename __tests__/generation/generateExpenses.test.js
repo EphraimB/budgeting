@@ -44,9 +44,6 @@ describe('Test generateDailyExpenses', () => {
         // Running the function
         generateDailyExpenses(transactions, skippedTransactions, expense, toDate, fromDate);
 
-        console.log(transactions);
-        console.log(skippedTransactions);
-
         const expectedEndDate = new Date(transactions[transactions.length - 1].date);
 
         // Checking the results
