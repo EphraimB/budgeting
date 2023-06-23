@@ -38,8 +38,6 @@ const generateExpenses = (transactions, skippedTransactions, expense, toDate, fr
 };
 
 export const generateDailyExpenses = (transactions, skippedTransactions, expense, toDate, fromDate) => {
-    const startDate = expense.expense_begin_date.getDate();
-
     const generateDateFn = (currentDate, expense) => {
         const newDate = new Date(currentDate);
         newDate.setDate(newDate.getDate() + (expense.frequency_type_variable || 1));
