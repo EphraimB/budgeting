@@ -70,8 +70,8 @@ describe('Test generateMonthlyExpenses', () => {
             expense_amount: 100
         };
         const toDate = new Date();
-        toDate.setMonth(toDate.getMonth() + 5); // one month ahead
-        toDate.setDate(toDate.getDate() + 1); // one day ahead
+        toDate.setMonth(toDate.getMonth() + 5);
+        toDate.setDate(toDate.getDate() + 1);
 
         const fromDate = new Date();
 
@@ -90,5 +90,40 @@ describe('Test generateMonthlyExpenses', () => {
         expect(transactions[0].description).toBe(expense.expense_description);
         expect(transactions[0].amount).toBe(-expense.expense_amount);
         expect(expectedEndDate.toISOString().slice(0, 10)).toBe(toBeEndDate.toISOString().slice(0, 10));
+    });
+
+    it('Should generate monthly expenses correctly when the expense begin date is less than the from date', () => {
+        // Preparing the test data
+        const transactions = [];
+        const skippedTransactions = [];
+        const expense = {
+            expense_begin_date: new Date().setDate(new Date().getDate() + 1),
+            expense_title: "Test expense",
+            expense_description: "Test description",
+            expense_amount: 100
+        };
+        const toDate = new Date();
+        toDate.setMonth(toDate.getMonth() + 7);
+        toDate.setDate(toDate.getDate() + 1);
+        
+        const fromDate = new Date();
+        fromDate.setMonth(fromDate.getMonth() + 5);
+        fromDate.setDate(fromDate.getDate() + 1);
+
+        // Running the function
+        generateMonthlyExpenses(transactions, skippedTransactions, expense, toDate, fromDate);
+
+        const expectedEndDate = new Date(transactions[transactions.length - 1].date);
+        const toBeEndDate = new Date();
+        toBeEndDate.setMonth(toBeEndDate.getMonth() + 7);
+        toBeEndDate.setDate(toBeEndDate.getDate() + 1);
+
+        // Checking the results
+        expect(transactions.length).toBe(3);
+        expect(skippedTransactions.length).toBe(5);
+        expect(transactions[0].title).toBe(expense.expense_title);
+        expect(transactions[0].description).toBe(expense.expense_description);
+        expect(transactions[0].amount).toBe(-expense.expense_amount);
+        expect(expectedEndDate.toISOString().slice(0, 10)).toBe(new Date(toBeEndDate).toISOString().slice(0, 10));
     });
 });
