@@ -51,25 +51,29 @@ export const generateMonthlyExpenses = (transactions, skippedTransactions, expen
     const generateDateFn = (currentDate, expense) => {
         const newDate = new Date(currentDate);
 
-        if (expense.frequency_day_of_week) {
-            let firstDate = new Date(
-                newDate.getFullYear() + (expense.frequency_type_variable || 1),
-                newDate.getMonth(),
-                expense.frequency_week_of_month !== null
-                    ? 1 + 7 * expense.frequency_week_of_month
-                    : expense.expense_begin_date.getDate()
-            );
+        if (expense.frequency_day_of_week !== null) {
+            newDate.setMonth(newDate.getMonth() + (expense.frequency_type_variable || 1));
+            newDate.setDate(1 + 7 * expense.frequency_week_of_month);
+            // let firstDate = new Date(
+            //     newDate.getFullYear(),
+            //     newDate.getMonth() + (expense.frequency_type_variable || 1),
+            //     expense.frequency_week_of_month !== null
+            //         ? 1 + 7 * expense.frequency_week_of_month
+            //         : expense.expense_begin_date.getDate()
+            // );            
 
-            while (firstDate.getDay() !== expense.frequency_day_of_week) {
-                firstDate.setDate(firstDate.getDate() + 1);
+            while (newDate.getDay() !== expense.frequency_day_of_week) {
+                newDate.setDate(newDate.getDate() + 1);
             }
 
-            return firstDate;
+            return newDate;
         } else {
             newDate.setMonth(newDate.getMonth() + (expense.frequency_type_variable || 1));
             return newDate;
         }
     };
+
+    console.log(generateDateFn);
 
     generateExpenses(transactions, skippedTransactions, expense, toDate, fromDate, generateDateFn);
 };

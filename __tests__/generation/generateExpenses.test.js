@@ -135,7 +135,7 @@ describe('Test generateMonthlyExpenses', () => {
             expense_begin_date: new Date().setDate(new Date().getDate() + 1),
             expense_title: "Test expense",
             expense_description: "Test description",
-            expense_amount: 100,
+            expense_amount: 150,
             frequency_day_of_week: 1
         };
         const toDate = new Date();
