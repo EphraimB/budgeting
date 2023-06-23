@@ -28,7 +28,7 @@ describe('Test generateDailyExpenses', () => {
         expect(expectedEndDate.toISOString().slice(0,10)).toBe(new Date(new Date().setDate(new Date().getDate() + 5)).toISOString().slice(0,10));
     });
 
-    it('Should generate daily expenses correctly when the expense begin date is in the past', () => {
+    it('Should generate daily expenses correctly when the expense begin date is less than the from date', () => {
         // Preparing the test data
         const transactions = [];
         const skippedTransactions = [];
@@ -54,4 +54,6 @@ describe('Test generateDailyExpenses', () => {
         expect(transactions[0].amount).toBe(-expense.expense_amount);
         expect(expectedEndDate.toISOString().slice(0,10)).toBe(new Date(new Date().setDate(new Date().getDate() + 7)).toISOString().slice(0,10));
     });
+
+
 });
