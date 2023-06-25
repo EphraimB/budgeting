@@ -2,20 +2,6 @@ const generateExpenses = (transactions, skippedTransactions, expense, toDate, fr
     let expenseDate = new Date(expense.expense_begin_date);
 
     if (expense.frequency_day_of_week !== null && expense.frequency_day_of_week !== undefined) {
-        // let daysUntilNextFrequency = (7 + expense.frequency_day_of_week - expenseDate.getDay()) % 7;
-
-        // if (daysUntilNextFrequency === 0) {
-        //     daysUntilNextFrequency += 7;
-        // }
-
-        // expenseDate.setDate(expenseDate.getDate() + daysUntilNextFrequency);
-
-        // // set to the corresponding week of the month
-        // if (expense.frequency_week_of_month !== null && expense.frequency_week_of_month !== undefined) {
-        //     // add the number of weeks, but check if it overflows into the next month
-        //     expenseDate.setDate(7 * (expense.frequency_week_of_month)); // subtract one because we've already found the first week
-        // }
-
         let newDay;
 
         if (expense.frequency_day_of_week !== null && expense.frequency_day_of_week !== undefined) {
@@ -78,19 +64,25 @@ export const generateMonthlyExpenses = (transactions, skippedTransactions, expen
         expenseDate.setMonth(expenseDate.getMonth() + monthsIncremented + (expense.frequency_type_variable || 1));
 
         if (expense.frequency_day_of_week !== null && expense.frequency_day_of_week !== undefined) {
-            let daysUntilNextFrequency = (7 + expense.frequency_day_of_week - expenseDate.getDay()) % 7;
+            let newDay;
 
-            if (daysUntilNextFrequency === 0) {
-                daysUntilNextFrequency += 7;
+            if (expense.frequency_day_of_week !== null && expense.frequency_day_of_week !== undefined) {
+                let daysUntilNextFrequency = (7 + expense.frequency_day_of_week - expenseDate.getDay()) % 7;
+                daysUntilNextFrequency = daysUntilNextFrequency === 0 ? 7 : daysUntilNextFrequency;
+                newDay = expenseDate.getDate() + daysUntilNextFrequency;
             }
 
-            expenseDate.setDate(expenseDate.getDate() + daysUntilNextFrequency);
-
-            // set to the corresponding week of the month
             if (expense.frequency_week_of_month !== null && expense.frequency_week_of_month !== undefined) {
-                // add the number of weeks, but check if it overflows into the next month
-                expenseDate.setDate(7 * (expense.frequency_week_of_month) - 1); // subtract one because we've already found the first week
+                // first day of the month
+                expenseDate.setDate(1);
+                let daysToAdd = (7 + expense.frequency_day_of_week - expenseDate.getDay()) % 7;
+                // setting to the first occurrence of the desired day of week
+                expenseDate.setDate(expenseDate.getDate() + daysToAdd);
+                // setting to the desired week of the month
+                newDay = expenseDate.getDate() + 7 * (expense.frequency_week_of_month - 1);
             }
+
+            expenseDate.setDate(newDay);
         }
 
         console.log(expenseDate);
