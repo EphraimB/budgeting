@@ -1,7 +1,7 @@
 const generateExpenses = (transactions, skippedTransactions, expense, toDate, fromDate, generateDateFn) => {
     let expenseDate = new Date(expense.expense_begin_date);
 
-    if (expense.frequency_day_of_week !== null) {
+    if (expense.frequency_day_of_week !== null || expense.frequency_day_of_week !== undefined) {
         let daysUntilNextFrequency = (7 + expense.frequency_day_of_week - expenseDate.getDay()) % 7;
 
         if (daysUntilNextFrequency === 0) {
@@ -49,7 +49,7 @@ export const generateMonthlyExpenses = (transactions, skippedTransactions, expen
         // advance by number of months specified in frequency_type_variable or by 1 month if not set
         newDate.setMonth(newDate.getMonth() + monthsIncremented + (expense.frequency_type_variable || 1));
 
-        if (expense.frequency_day_of_week !== null) {
+        if (expense.frequency_day_of_week !== null || expense.frequency_day_of_week !== undefined) {
             let daysToAdd = (7 + expense.frequency_day_of_week - newDate.getDay()) % 7;
 
             if (daysToAdd === 0) {
