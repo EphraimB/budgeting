@@ -149,8 +149,22 @@ describe('Test generateMonthlyExpenses', () => {
 
         const expectedEndDate = new Date(transactions[transactions.length - 1].date);
         const toBeEndDate = new Date();
-        toBeEndDate.setDate(new Date().getDate() + 1);
-        toBeEndDate.setMonth(new Date().getMonth() + 5);
+
+        // advance by 5 months
+        toBeEndDate.setMonth(toBeEndDate.getMonth() + 4);
+
+        // days of the week from 0 (Sunday) to 6 (Saturday)
+        const TUESDAY = 2;
+
+        // calculate the number of days to add to get to the next Tuesday
+        let daysUntilNextTuesday = (7 + TUESDAY - toBeEndDate.getDay()) % 7;
+
+        // if today is already Tuesday, move to next week's Tuesday
+        if (daysUntilNextTuesday === 0) {
+            daysUntilNextTuesday += 7;
+        }
+
+        toBeEndDate.setDate(toBeEndDate.getDate() + daysUntilNextTuesday);
 
         // Checking the results
         expect(transactions.length).toBe(5);
