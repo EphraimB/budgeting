@@ -2,7 +2,7 @@ const generateExpenses = (transactions, skippedTransactions, expense, toDate, fr
     let expenseDate = new Date(expense.expense_begin_date);
 
     if (expense.frequency_day_of_week !== null) {
-        const daysUntilNextFrequency = (7 + expense.frequency_day_of_week - expenseDate.getDay()) % 7;
+        let daysUntilNextFrequency = (7 + expense.frequency_day_of_week - expenseDate.getDay()) % 7;
         
         if (daysUntilNextFrequency === 0) {
             daysUntilNextFrequency += 7;
