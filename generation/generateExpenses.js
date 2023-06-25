@@ -1,21 +1,17 @@
 const generateExpenses = (transactions, skippedTransactions, expense, toDate, fromDate, generateDateFn) => {
     let expenseDate = new Date(expense.expense_begin_date);
 
-    if (expense.frequency_day_of_week) {
-        let firstDate = new Date(
-            expenseDate.getFullYear(),
-            expenseDate.getMonth(),
-            expense.frequency_week_of_month !== null
-                ? 1 + 7 * expense.frequency_week_of_month
-                : expense.expense_begin_date.getDate()
-        );
-
-        while (firstDate.getDay() !== expense.frequency_day_of_week) {
-            firstDate.setDate(firstDate.getDate() + 1);
+    if (expense.frequency_day_of_week !== null) {
+        const daysUntilNextFrequency = (7 + expense.frequency_day_of_week - expenseDate.getDay()) % 7;
+        
+        if (daysUntilNextFrequency === 0) {
+            daysUntilNextFrequency += 7;
         }
 
-        expenseDate = firstDate;
+        expenseDate.setDate(expenseDate.getDate() + daysUntilNextFrequency);
     }
+
+    console.log(expenseDate);
 
     while (expenseDate <= toDate) {
         const newTransaction = {
@@ -51,26 +47,22 @@ export const generateMonthlyExpenses = (transactions, skippedTransactions, expen
     const generateDateFn = (currentDate, expense) => {
         const newDate = new Date(currentDate);
 
-        if (expense.frequency_day_of_week !== null) {
-            newDate.setMonth(newDate.getMonth() + (expense.frequency_type_variable || 1));
-            newDate.setDate(1 + 7 * expense.frequency_week_of_month);
-            // let firstDate = new Date(
-            //     newDate.getFullYear(),
-            //     newDate.getMonth() + (expense.frequency_type_variable || 1),
-            //     expense.frequency_week_of_month !== null
-            //         ? 1 + 7 * expense.frequency_week_of_month
-            //         : expense.expense_begin_date.getDate()
-            // );            
+        // advance by number of months specified in frequency_type_variable or by 1 month if not set
+        newDate.setMonth(newDate.getMonth() + (expense.frequency_type_variable || 1));
 
-            while (newDate.getDay() !== expense.frequency_day_of_week) {
-                newDate.setDate(newDate.getDate() + 1);
+        if (expense.frequency_day_of_week !== null) {
+            let daysToAdd = (7 + expense.frequency_day_of_week - newDate.getDay()) % 7;
+
+            if (daysToAdd === 0) {
+                daysToAdd += 7;
             }
 
-            return newDate;
-        } else {
-            newDate.setMonth(newDate.getMonth() + (expense.frequency_type_variable || 1));
-            return newDate;
+            newDate.setDate(newDate.getDate() + daysToAdd);
         }
+
+        console.log(newDate);
+
+        return newDate;
     };
 
     generateExpenses(transactions, skippedTransactions, expense, toDate, fromDate, generateDateFn);
