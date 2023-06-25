@@ -9,6 +9,20 @@ const generateExpenses = (transactions, skippedTransactions, expense, toDate, fr
         }
 
         expenseDate.setDate(expenseDate.getDate() + daysUntilNextFrequency);
+
+        // set to the corresponding week of the month
+        if (expense.frequency_week_of_month !== null && expense.frequency_week_of_month !== undefined) {
+            // add the number of weeks, but check if it overflows into the next month
+            let proposedDate = new Date(expenseDate.getTime());
+            proposedDate.setDate(proposedDate.getDate() + 7 * (expense.frequency_week_of_month - 1)); // subtract one because we've already found the first week
+
+            if (proposedDate.getMonth() === expenseDate.getMonth()) {
+                // it's in the same month, so it's a valid date
+                expenseDate.setDate(proposedDate.getDate());
+            } else {
+                // it's not in the same month, so don't change newDate
+            }
+        }
     }
 
     console.log(expenseDate);
@@ -52,21 +66,22 @@ export const generateMonthlyExpenses = (transactions, skippedTransactions, expen
         newDate.setMonth(newDate.getMonth() + monthsIncremented + (expense.frequency_type_variable || 1));
 
         if (expense.frequency_day_of_week !== null && expense.frequency_day_of_week !== undefined) {
-            let daysToAdd = (7 + expense.frequency_day_of_week - newDate.getDay()) % 7;
-
-            if (daysToAdd === 0) {
-                daysToAdd += 7;
-            }
-
-            newDate.setDate(newDate.getDate() + daysToAdd);
+            let daysToAdd = (7 - newDate.getDay() + expense.frequency_day_of_week) % 7;
+            newDate.setDate(newDate.getDate() + daysToAdd); // this is the first occurrence of the day_of_week
 
             // set to the corresponding week of the month
             if (expense.frequency_week_of_month !== null && expense.frequency_week_of_month !== undefined) {
-                newDate.setDate(newDate.getDate() + 7 * (expense.frequency_week_of_month - 1));
+                let proposedDate = new Date(newDate.getTime());
+                proposedDate.setDate(proposedDate.getDate() + 7 * (expense.frequency_week_of_month - 1)); // subtract one because we've already found the first week
+
+                if (proposedDate.getMonth() === newDate.getMonth()) {
+                    // it's in the same month, so it's a valid date
+                    newDate.setDate(proposedDate.getDate());
+                } else {
+                    // it's not in the same month, so don't change newDate
+                }
             }
         }
-
-        console.log(newDate);
 
         monthsIncremented += (expense.frequency_type_variable || 1);
 
@@ -97,26 +112,30 @@ export const generateWeeklyExpenses = (transactions, skippedTransactions, expens
 
 export const generateYearlyExpenses = (transactions, skippedTransactions, expense, toDate, fromDate) => {
     const generateDateFn = (currentDate, expense) => {
-        const newDate = new Date(currentDate);
+        const newDate = new Date(expense.expense_begin_date);
+        newDate.setMonth(newDate.getMonth() + monthsIncremented + (expense.frequency_type_variable || 1));
 
-        if (expense.frequency_day_of_week) {
-            let firstDate = new Date(
-                newDate.getFullYear() + (expense.frequency_type_variable || 1),
-                newDate.getMonth(),
-                expense.frequency_week_of_month !== null
-                    ? 1 + 7 * expense.frequency_week_of_month
-                    : expense.expense_begin_date.getDate()
-            );
+        if (expense.frequency_day_of_week !== null && expense.frequency_day_of_week !== undefined) {
+            let daysToAdd = (7 - newDate.getDay() + expense.frequency_day_of_week) % 7;
+            newDate.setDate(newDate.getDate() + daysToAdd); // this is the first occurrence of the day_of_week
 
-            while (firstDate.getDay() !== expense.frequency_day_of_week) {
-                firstDate.setDate(firstDate.getDate() + 1);
+            if (expense.frequency_week_of_month !== null && expense.frequency_week_of_month !== undefined) {
+                // add the number of weeks, but check if it overflows into the next month
+                let proposedDate = new Date(newDate.getTime());
+                proposedDate.setDate(proposedDate.getDate() + 7 * (expense.frequency_week_of_month - 1)); // subtract one because we've already found the first week
+
+                if (proposedDate.getMonth() === newDate.getMonth()) {
+                    // it's in the same month, so it's a valid date
+                    newDate.setDate(proposedDate.getDate());
+                } else {
+                    // it's not in the same month, so don't change newDate
+                }
             }
-
-            return firstDate;
-        } else {
-            newDate.setFullYear(newDate.getFullYear() + (expense.frequency_type_variable || 1));
-            return newDate;
         }
+
+        monthsIncremented += (expense.frequency_type_variable || 1);
+
+        return newDate;
     };
 
     generateExpenses(transactions, skippedTransactions, expense, toDate, fromDate, generateDateFn);
