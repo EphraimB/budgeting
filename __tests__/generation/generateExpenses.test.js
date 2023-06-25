@@ -180,7 +180,7 @@ describe('Test generateMonthlyExpenses', () => {
         const transactions = [];
         const skippedTransactions = [];
         const expense = {
-            expense_begin_date: new Date().setDate(new Date().getDate() + 1),
+            expense_begin_date: new Date(new Date().getFullYear(), new Date().getMonth() + 1, 1),
             expense_title: "Test expense",
             expense_description: "Test description",
             expense_amount: 150,
@@ -206,11 +206,11 @@ describe('Test generateMonthlyExpenses', () => {
             const transactionDate = new Date(transaction.date);
             expect(transactionDate.getDay()).toBe(expense.frequency_day_of_week);
 
-            const secondWeekOfMonth = Math.floor(transactionDate.getDate() / 7) === 1;
+            const secondWeekOfMonth = Math.floor((transactionDate.getDate() - 1) / 7) === 1;
             expect(secondWeekOfMonth).toBeTruthy();
 
             // Since we start from the current month and increment each month
-            const expectedMonth = (fromDate.getMonth() + i) % 12;
+            const expectedMonth = (fromDate.getMonth() + i + 1) % 12;
             expect(transactionDate.getMonth()).toBe(expectedMonth);
         });
     });
