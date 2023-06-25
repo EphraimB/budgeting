@@ -113,8 +113,6 @@ describe('Test generateMonthlyExpenses', () => {
         // Running the function
         generateMonthlyExpenses(transactions, skippedTransactions, expense, toDate, fromDate);
 
-        console.log(transactions);
-
         const expectedEndDate = new Date(transactions[transactions.length - 1].date);
         const toBeEndDate = new Date();
         toBeEndDate.setMonth(toBeEndDate.getMonth() + 7);
