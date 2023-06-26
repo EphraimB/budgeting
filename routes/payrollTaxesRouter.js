@@ -1,8 +1,8 @@
 import express from 'express';
 import { query, param, body } from 'express-validator';
 const router = express.Router();
-import { getPayrollTaxes, createPayrollTax, updatePayrollTax, deletePayrollTax } from '../queries.js';
-import validateRequest from '../validateRequest.js';
+import { getPayrollTaxes, createPayrollTax, updatePayrollTax, deletePayrollTax } from '../controllers/payrollTaxesController.js';
+import validateRequest from '../utils/validateRequest.js';
 
 router.get('/',
     [

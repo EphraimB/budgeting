@@ -1,43 +1,28 @@
-import request from "supertest";
-import app from "../app";
+import { jest } from '@jest/globals';
+import request from 'supertest';
 
-describe('Server', () => {
-    let server;
+describe("Test application", () => {
+    beforeAll(() => {
+        // Mock the breeManager module
+        jest.unstable_mockModule('../bree/breeManager.js', () => ({
+            initializeBree: jest.fn(),
+            getBree: jest.fn(),
+        }));
 
-    beforeAll((done) => {
-        server = app.listen(done);
+        // Mock the getJobs module
+        jest.unstable_mockModule('../bree/getJobs.js', () => ({
+            default: jest.fn(),
+        }));
     });
 
-    afterAll((done) => {
-        server.close(done);
+    afterAll(() => {
+        // Restore the original console.log function
+        jest.restoreAllMocks();
     });
 
-    it('should respond with "Hello, World!" on GET request to root endpoint', async () => {
-        const response = await request(server).get('/api');
-        expect(response.statusCode).toBe(200);
-        expect(response.text).toBe('Hello World!');
+    test("Not found for site 404", async () => {
+        const app = await import('../app.js');
+        const response = await request(app.default).get("/no-such-path");
+        expect(response.statusCode).toBe(404);
     });
 });
-
-// describe("Test the root path", () => {
-//     test("It should response the GET method", async () => {
-//         const response = await request(app).get("/api");
-//         expect(response.statusCode).toBe(200);
-//         expect(response.text).toEqual("Hello World!");
-//     });
-// });
-
-// describe("Test the /api/accounts path", () => {
-//     beforeAll(async () => {
-//         // set up the todo
-//         await request(baseURL).post("/todo").send(newTodo);
-//     })
-//     afterAll(async () => {
-//         await request(baseURL).delete(`/todo/${newTodo.id}`)
-//     })
-//     test("It should response the GET method", async () => {
-//         const response = await request(app).get("/api/accounts");
-//         expect(response.statusCode).toBe(200);
-//         expect(response.body).toEqual([]);
-//     });
-// });

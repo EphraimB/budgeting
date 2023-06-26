@@ -1,5 +1,6 @@
 .env
 node_modules/
-jobs/cron-jobs
+bree/jobs/cron-jobs
 jobs.json
 .DS_Store
+coverage/

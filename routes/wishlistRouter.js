@@ -1,8 +1,8 @@
 import express from 'express';
 import { query, param, body } from 'express-validator';
 const router = express.Router();
-import { getWishlists, createWishlist, updateWishlist, deleteWishlist } from '../queries.js';
-import validateRequest from '../validateRequest.js';
+import { getWishlists, createWishlist, updateWishlist, deleteWishlist } from '../controllers/wishlistsController.js';
+import validateRequest from '../utils/validateRequest.js';
 
 router.get('/',
     [
