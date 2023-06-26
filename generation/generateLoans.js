@@ -36,8 +36,6 @@ const generateLoans = (transactions, skippedTransactions, loan, toDate, fromDate
 };
 
 export const generateDailyLoans = (transactions, skippedTransactions, loan, toDate, fromDate) => {
-    const startDate = loan.loan_begin_date.getDate();
-
     const generateDateFn = (currentDate, loan) => {
         const newDate = new Date(currentDate);
         newDate.setDate(newDate.getDate() + (loan.frequency_type_variable || 1));
