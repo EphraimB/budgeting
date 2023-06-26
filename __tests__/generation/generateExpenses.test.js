@@ -131,17 +131,14 @@ describe('Test generateMonthlyExpenses', () => {
             expense_amount: 150,
             frequency_day_of_week: 2,
         };
-        const toDate = new Date();
-        toDate.setMonth(toDate.getMonth() + 5);
-        toDate.setDate(toDate.getDate() + 1);
-
-        const fromDate = new Date();
+        const toDate = new Date('2020-06-02');
+        const fromDate = new Date('2020-01-01');
 
         // Running the function
         generateMonthlyExpenses(transactions, skippedTransactions, expense, toDate, fromDate);
 
         const expectedEndDate = new Date(transactions[transactions.length - 1].date);
-        const toBeEndDate = new Date();
+        const toBeEndDate = new Date('2020-01-01');
 
         // advance by 5 months
         toBeEndDate.setMonth(toBeEndDate.getMonth() + 4);
@@ -180,9 +177,8 @@ describe('Test generateMonthlyExpenses', () => {
             frequency_day_of_week: 2,
             frequency_week_of_month: 2,
         };
-        const toDate = new Date();
-        toDate.setMonth(toDate.getMonth() + 5);
-        const fromDate = new Date();
+        const toDate = new Date('2020-06-01');
+        const fromDate = new Date('2020-01-01');
 
         // Running the function
         generateMonthlyExpenses(transactions, skippedTransactions, expense, toDate, fromDate);
