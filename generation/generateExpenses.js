@@ -111,9 +111,10 @@ export const generateWeeklyExpenses = (transactions, skippedTransactions, expens
 };
 
 export const generateYearlyExpenses = (transactions, skippedTransactions, expense, toDate, fromDate) => {
+    let yearsIncremented = 0;
     const generateDateFn = (currentDate, expense) => {
         const newDate = new Date(expense.expense_begin_date);
-        newDate.setMonth(newDate.getMonth() + monthsIncremented + (expense.frequency_type_variable || 1));
+        newDate.setFullYear(newDate.getFullYear() + yearsIncremented + (expense.frequency_type_variable || 1));
 
         if (expense.frequency_day_of_week !== null && expense.frequency_day_of_week !== undefined) {
             let daysToAdd = (7 - newDate.getDay() + expense.frequency_day_of_week) % 7;
@@ -133,7 +134,7 @@ export const generateYearlyExpenses = (transactions, skippedTransactions, expens
             }
         }
 
-        monthsIncremented += (expense.frequency_type_variable || 1);
+        yearsIncremented += (expense.frequency_type_variable || 1);
 
         return newDate;
     };
