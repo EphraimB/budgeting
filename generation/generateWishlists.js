@@ -7,20 +7,23 @@ const generateWishlists = (transactions, skippedTransactions, wishlist, fromDate
     // Find the next transaction with a positive amount, a balance greater than the wishlist amount,
     // and a date after the current date
     const nextTransaction = allTransactions.find(transaction => {
-        const isAfterCurrentDate = transaction.date > new Date(); // Check if the transaction date is after the current date
-        const isAfterWishlistDate = wishlist.wishlist_date_available === null || transaction.date >= new Date(wishlist.wishlist_date_available);
-        return isAfterCurrentDate && isAfterWishlistDate && transaction.amount > 0 && transaction.balance > wishlist_amount;
+        const isAfterCurrentDate = transaction.date > new Date();
+        return isAfterCurrentDate && transaction.amount > 0 && transaction.balance > wishlist_amount;
     });
 
     if (nextTransaction) {
+        const newTransactionDate = wishlist.wishlist_date_available
+            ? new Date(Math.max(nextTransaction.date, new Date(wishlist.wishlist_date_available)))
+            : nextTransaction.date;
+
         const newTransaction = {
             title: wishlist.wishlist_title,
             description: wishlist.wishlist_description,
-            date: nextTransaction.date,
+            date: newTransactionDate,
             amount: -wishlist_amount,
         };
 
-        if (fromDate > nextTransaction.date) {
+        if (fromDate > newTransactionDate) {
             skippedTransactions.push(newTransaction);
         } else {
             transactions.push(newTransaction);
