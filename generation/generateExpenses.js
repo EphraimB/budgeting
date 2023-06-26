@@ -131,7 +131,7 @@ export const generateYearlyExpenses = (transactions, skippedTransactions, expens
             if (expense.frequency_week_of_month !== null && expense.frequency_week_of_month !== undefined) {
                 // add the number of weeks, but check if it overflows into the next month
                 let proposedDate = new Date(newDate.getTime());
-                proposedDate.setDate(proposedDate.getDate() + 7 * (expense.frequency_week_of_month)); // subtract one because we've already found the first week
+                proposedDate.setDate(proposedDate.getDate() + 7 * (expense.frequency_week_of_month));
 
                 if (proposedDate.getMonth() === newDate.getMonth()) {
                     // it's in the same month, so it's a valid date
