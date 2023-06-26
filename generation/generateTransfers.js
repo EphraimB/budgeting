@@ -96,9 +96,18 @@ export const generateMonthlyTransfers = (transactions, skippedTransactions, tran
 };
 
 export const generateWeeklyTransfers = (transactions, skippedTransactions, transfer, toDate, fromDate, account_id) => {
+    const transferDate = new Date(transfer.transfer_begin_date);
+
+    if (transfer.frequency_day_of_week !== null && transfer.frequency_day_of_week !== undefined) {
+        const startDay = new Date(transfer.transfer_begin_date).getDay();
+        const frequency_day_of_week = transfer.frequency_day_of_week;
+
+        transferDate.setDate(transferDate.getDate() + (frequency_day_of_week + 7 - startDay) % 7);
+    }
+
     const generateDateFn = (currentDate, transfer) => {
         const newDate = new Date(currentDate);
-        newDate.setDate((newDate.getDate() + 7) * (transfer.frequency_type_variable || 1));
+        newDate.setDate(newDate.getDate() + 7 * (transfer.frequency_type_variable || 1));
         return newDate;
     };
 
