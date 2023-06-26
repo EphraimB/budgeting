@@ -70,7 +70,7 @@ describe('Test generateDailyExpenses', () => {
         const transactions = [];
         const skippedTransactions = [];
         const expense = {
-            expense_begin_date: new Date().setDate(new Date().getDate() + 1),
+            expense_begin_date: new Date('2020-01-02'),
             expense_title: "Test expense",
             expense_description: "Test description",
             expense_amount: 100
@@ -99,7 +99,7 @@ describe('Test generateMonthlyExpenses', () => {
         const transactions = [];
         const skippedTransactions = [];
         const expense = {
-            expense_begin_date: new Date().setDate(new Date().getDate() + 1),
+            expense_begin_date: new Date('2020-01-02'),
             expense_title: "Test expense",
             expense_description: "Test description",
             expense_amount: 100
@@ -121,12 +121,40 @@ describe('Test generateMonthlyExpenses', () => {
         expect(expectedEndDate.toISOString().slice(0, 10)).toBe(new Date('2020-06-01').toISOString().slice(0, 10));
     });
 
+    it('Should generate monthly expenses correctly every 2 months', () => {
+        // Preparing the test data
+        const transactions = [];
+        const skippedTransactions = [];
+        const expense = {
+            expense_begin_date: new Date('2020-01-02'),
+            expense_title: "Test expense",
+            expense_description: "Test description",
+            expense_amount: 100,
+            frequency_type_variable: 2
+        };
+        const toDate = new Date('2020-08-02');
+        const fromDate = new Date('2020-01-01');
+
+        // Running the function
+        generateMonthlyExpenses(transactions, skippedTransactions, expense, toDate, fromDate);
+
+        const expectedEndDate = new Date(transactions[transactions.length - 1].date);
+
+        // Checking the results
+        expect(transactions.length).toBe(4);
+        expect(skippedTransactions.length).toBe(0);
+        expect(transactions[0].title).toBe(expense.expense_title);
+        expect(transactions[0].description).toBe(expense.expense_description);
+        expect(transactions[0].amount).toBe(-expense.expense_amount);
+        expect(expectedEndDate.toISOString().slice(0, 10)).toBe(new Date('2020-07-01').toISOString().slice(0, 10));
+    });
+
     it('Should generate monthly expenses correctly when the expense begin date is less than the from date', () => {
         // Preparing the test data
         const transactions = [];
         const skippedTransactions = [];
         const expense = {
-            expense_begin_date: new Date().setDate(new Date().getDate() + 1),
+            expense_begin_date: new Date('2020-01-02'),
             expense_title: "Test expense",
             expense_description: "Test description",
             expense_amount: 100
@@ -153,7 +181,7 @@ describe('Test generateMonthlyExpenses', () => {
         const transactions = [];
         const skippedTransactions = [];
         const expense = {
-            expense_begin_date: new Date().setDate(new Date().getDate() + 1),
+            expense_begin_date: new Date('2020-01-02'),
             expense_title: "Test expense",
             expense_description: "Test description",
             expense_amount: 150,
@@ -193,7 +221,7 @@ describe('Test generateMonthlyExpenses', () => {
         const transactions = [];
         const skippedTransactions = [];
         const expense = {
-            expense_begin_date: new Date(new Date().getFullYear(), new Date().getMonth() + 1, 1),
+            expense_begin_date: new Date('2020-01-02'),
             expense_title: "Test expense",
             expense_description: "Test description",
             expense_amount: 150,
@@ -234,7 +262,7 @@ describe('generateWeeklyExpenses', () => {
         const transactions = [];
         const skippedTransactions = [];
         const expense = {
-            expense_begin_date: new Date().setDate(new Date().getDate() + 1),
+            expense_begin_date: new Date('2020-01-02'),
             expense_title: "Test expense",
             expense_description: "Test description",
             expense_amount: 100
@@ -264,7 +292,7 @@ describe('generateWeeklyExpenses', () => {
         const transactions = [];
         const skippedTransactions = [];
         const expense = {
-            expense_begin_date: new Date().setDate(new Date().getDate() + 1),
+            expense_begin_date: new Date('2020-01-02'),
             expense_title: "Test expense",
             expense_description: "Test description",
             expense_amount: 100
@@ -291,7 +319,7 @@ describe('generateWeeklyExpenses', () => {
         const transactions = [];
         const skippedTransactions = [];
         const expense = {
-            expense_begin_date: new Date().setDate(new Date().getDate() + 1),
+            expense_begin_date: new Date('2020-01-02'),
             expense_title: "Test expense",
             expense_description: "Test description",
             expense_amount: 150,
