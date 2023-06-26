@@ -76,19 +76,13 @@ describe('Test generateMonthlyExpenses', () => {
             expense_description: "Test description",
             expense_amount: 100
         };
-        const toDate = new Date();
-        toDate.setMonth(toDate.getMonth() + 5);
-        toDate.setDate(toDate.getDate() + 1);
-
-        const fromDate = new Date();
+        const toDate = new Date('2020-06-02');
+        const fromDate = new Date('2020-01-01');
 
         // Running the function
         generateMonthlyExpenses(transactions, skippedTransactions, expense, toDate, fromDate);
 
         const expectedEndDate = new Date(transactions[transactions.length - 1].date);
-        const toBeEndDate = new Date();
-        toBeEndDate.setDate(new Date().getDate() + 1);
-        toBeEndDate.setMonth(new Date().getMonth() + 5);
 
         // Checking the results
         expect(transactions.length).toBe(6);
@@ -96,7 +90,7 @@ describe('Test generateMonthlyExpenses', () => {
         expect(transactions[0].title).toBe(expense.expense_title);
         expect(transactions[0].description).toBe(expense.expense_description);
         expect(transactions[0].amount).toBe(-expense.expense_amount);
-        expect(expectedEndDate.toISOString().slice(0, 10)).toBe(toBeEndDate.toISOString().slice(0, 10));
+        expect(expectedEndDate.toISOString().slice(0, 10)).toBe(new Date('2020-06-01').toISOString().slice(0, 10));
     });
 
     it('Should generate monthly expenses correctly when the expense begin date is less than the from date', () => {
