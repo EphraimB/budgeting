@@ -343,8 +343,6 @@ describe('generateWeeklyTransfers', () => {
 
         const expectedEndDate = new Date(transactions[transactions.length - 1].date);
 
-        console.log(transactions[1].date);
-
         // Checking the results
         expect(transactions.length).toBe(3);
         expect(skippedTransactions.length).toBe(0);
