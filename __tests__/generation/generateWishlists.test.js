@@ -127,4 +127,30 @@ describe('generateWishlists', () => {
 
         expect(wishlistTransaction).toBeUndefined();
     });
+
+    it('Should not generate wishlists when it can\'t be afforded', () => {
+        const transactions = [
+            { date: new Date('2023-07-01'), amount: 200, balance: 500 },
+            { date: new Date('2023-08-01'), amount: 200, balance: 700 },
+            { date: new Date('2023-09-01'), amount: -200, balance: 500 },
+        ];
+        const skippedTransactions = [];
+        const wishlist = {
+            wishlist_amount: '1150',
+            wishlist_title: 'New TV',
+            wishlist_description: 'For watching movies',
+        };
+        const fromDate = new Date('2023-07-15');
+
+        generateWishlists(transactions, skippedTransactions, wishlist, fromDate);
+
+        expect(transactions).toHaveLength(3);
+        expect(skippedTransactions).toHaveLength(0);
+
+        const wishlistTransaction = transactions.find(
+            (t) => t.title === wishlist.wishlist_title
+        );
+
+        expect(wishlistTransaction).toBeUndefined();
+    });
 });
