@@ -3,6 +3,13 @@ import generateTransactions from '../../generation/generateTransactions';
 import { transactions, expenses, payrolls, loans, transfers, wishlists } from '../../models/mockData';
 import MockDate from 'mockdate';
 
+jest.unstable_mockModule('../../generation/generateExpenses', () => ({
+    generateDailyExpenses: jest.fn(),
+    generateWeeklyExpenses: jest.fn(),
+    generateMonthlyExpenses: jest.fn(),
+    generateYearlyExpenses: jest.fn(),
+}));
+
 beforeAll(() => {
     MockDate.set('2023-07-01');
 });
@@ -38,7 +45,8 @@ describe('generateTransactions', () => {
         // assert that next was called
         expect(next).toBeCalled();
 
-        // assert that the current balance was updated correctly
+        expect(mockRequest.transaction).toHaveLength(4);
+
         expect(mockRequest.currentBalance).toBe(500);
     });
 });
