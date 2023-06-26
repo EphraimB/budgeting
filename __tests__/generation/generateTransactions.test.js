@@ -17,7 +17,7 @@ describe('generateTransactions', () => {
             query: {
                 from_date: '2023-07-01',
                 to_date: '2023-08-01',
-                account_id: '1',
+                account_id: 1,
             },
             currentBalance: 500,
             transaction: [
