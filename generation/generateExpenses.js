@@ -94,7 +94,7 @@ export const generateMonthlyExpenses = (transactions, skippedTransactions, expen
 export const generateWeeklyExpenses = (transactions, skippedTransactions, expense, toDate, fromDate) => {
     let expenseDate = new Date(expense.expense_begin_date);
 
-    if (expense.frequency_day_of_week) {
+    if (expense.frequency_day_of_week !== null && expense.frequency_day_of_week !== undefined) {
         const startDay = new Date(expense.expense_begin_date).getDay();
         const frequency_day_of_week = expense.frequency_day_of_week;
 
@@ -103,7 +103,7 @@ export const generateWeeklyExpenses = (transactions, skippedTransactions, expens
 
     const generateDateFn = (currentDate, expense) => {
         const newDate = new Date(currentDate);
-        newDate.setDate((newDate.getDate() + 7) * (expense.frequency_type_variable || 1));
+        newDate.setDate(newDate.getDate() + 7 * (expense.frequency_type_variable || 1));
         return newDate;
     };
 
