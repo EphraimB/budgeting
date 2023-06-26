@@ -101,4 +101,30 @@ describe('generateWishlists', () => {
         expect(wishlistTransaction.amount).toBe(-2000);
         expect(wishlistTransaction.date).toEqual(new Date('2024-02-01'));
     });
+
+    it('Should generate wishlists correctly when the from date is greater than the wishlist date', () => {
+        const transactions = [
+            { date: new Date('2023-07-01'), amount: 200, balance: 500 },
+            { date: new Date('2023-08-01'), amount: 200, balance: 700 },
+            { date: new Date('2023-09-01'), amount: 200, balance: 900 },
+        ];
+        const skippedTransactions = [];
+        const wishlist = {
+            wishlist_amount: '150',
+            wishlist_title: 'New TV',
+            wishlist_description: 'For watching movies',
+        };
+        const fromDate = new Date('2023-07-15');
+
+        generateWishlists(transactions, skippedTransactions, wishlist, fromDate);
+
+        expect(transactions).toHaveLength(3);
+        expect(skippedTransactions).toHaveLength(1);
+
+        const wishlistTransaction = transactions.find(
+            (t) => t.title === wishlist.wishlist_title
+        );
+
+        expect(wishlistTransaction).toBeUndefined();
+    });
 });
