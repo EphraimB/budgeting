@@ -1,6 +1,10 @@
 const generateExpenses = (transactions, skippedTransactions, expense, toDate, fromDate, generateDateFn) => {
     let expenseDate = new Date(expense.expense_begin_date);
 
+    if (expense.frequency_month_of_year !== null && expense.frequency_month_of_year !== undefined) {
+        expenseDate.setMonth(expense.frequency_month_of_year);
+    }
+
     if (expense.frequency_day_of_week !== null && expense.frequency_day_of_week !== undefined) {
         let newDay;
 
@@ -17,7 +21,7 @@ const generateExpenses = (transactions, skippedTransactions, expense, toDate, fr
             // setting to the first occurrence of the desired day of week
             expenseDate.setDate(expenseDate.getDate() + daysToAdd);
             // setting to the desired week of the month
-            newDay = expenseDate.getDate() + 7 * (expense.frequency_week_of_month - 1);
+            newDay = expenseDate.getDate() + 7 * (expense.frequency_week_of_month);
         }
 
         expenseDate.setDate(newDay);
@@ -77,7 +81,7 @@ export const generateMonthlyExpenses = (transactions, skippedTransactions, expen
                 // setting to the first occurrence of the desired day of week
                 expenseDate.setDate(expenseDate.getDate() + daysToAdd);
                 // setting to the desired week of the month
-                newDay = expenseDate.getDate() + 7 * (expense.frequency_week_of_month - 1);
+                newDay = expenseDate.getDate() + 7 * (expense.frequency_week_of_month);
             }
 
             expenseDate.setDate(newDay);
@@ -116,6 +120,10 @@ export const generateYearlyExpenses = (transactions, skippedTransactions, expens
         const newDate = new Date(expense.expense_begin_date);
         newDate.setFullYear(newDate.getFullYear() + yearsIncremented + (expense.frequency_type_variable || 1));
 
+        if (expense.frequency_month_of_year !== null && expense.frequency_month_of_year !== undefined) {
+            newDate.setMonth(expense.frequency_month_of_year);
+        }
+
         if (expense.frequency_day_of_week !== null && expense.frequency_day_of_week !== undefined) {
             let daysToAdd = (7 - newDate.getDay() + expense.frequency_day_of_week) % 7;
             newDate.setDate(newDate.getDate() + daysToAdd); // this is the first occurrence of the day_of_week
@@ -123,7 +131,7 @@ export const generateYearlyExpenses = (transactions, skippedTransactions, expens
             if (expense.frequency_week_of_month !== null && expense.frequency_week_of_month !== undefined) {
                 // add the number of weeks, but check if it overflows into the next month
                 let proposedDate = new Date(newDate.getTime());
-                proposedDate.setDate(proposedDate.getDate() + 7 * (expense.frequency_week_of_month - 1)); // subtract one because we've already found the first week
+                proposedDate.setDate(proposedDate.getDate() + 7 * (expense.frequency_week_of_month)); // subtract one because we've already found the first week
 
                 if (proposedDate.getMonth() === newDate.getMonth()) {
                     // it's in the same month, so it's a valid date
