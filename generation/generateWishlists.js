@@ -4,17 +4,25 @@ const generateWishlists = (transactions, skippedTransactions, wishlist, fromDate
 
     allTransactions.sort((a, b) => new Date(a.date) - new Date(b.date));
 
-    // Find the next transaction with a positive amount, a balance greater than the wishlist amount,
-    // and a date after the current date
-    const nextTransaction = allTransactions.find(transaction => {
-        const isAfterCurrentDate = transaction.date > new Date();
-        return isAfterCurrentDate && transaction.amount > 0 && transaction.balance > wishlist_amount;
-    });
+    let affordableDate;
+    for (let i = 0; i < allTransactions.length; i++) {
+        if (allTransactions[i].balance >= wishlist_amount) {
+            affordableDate = allTransactions[i].date;
+            for (let j = i + 1; j < allTransactions.length; j++) {
+                if (allTransactions[j].balance < wishlist_amount) {
+                    affordableDate = undefined;
+                    break;
+                }
+            }
 
-    if (nextTransaction) {
+            if (affordableDate) break;
+        }
+    }
+
+    if (affordableDate) {
         const newTransactionDate = wishlist.wishlist_date_available
-            ? new Date(Math.max(nextTransaction.date, new Date(wishlist.wishlist_date_available)))
-            : nextTransaction.date;
+            ? new Date(Math.max(affordableDate, new Date(wishlist.wishlist_date_available)))
+            : affordableDate;
 
         const newTransaction = {
             title: wishlist.wishlist_title,
@@ -30,5 +38,6 @@ const generateWishlists = (transactions, skippedTransactions, wishlist, fromDate
         }
     }
 };
+
 
 export default generateWishlists;
