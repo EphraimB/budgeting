@@ -149,11 +149,6 @@ describe('Test generateMonthlyExpenses', () => {
         // calculate the number of days to add to get to the next Tuesday
         let daysUntilNextTuesday = (7 + TUESDAY - toBeEndDate.getDay()) % 7;
 
-        // if today is already Tuesday, move to next week's Tuesday
-        if (daysUntilNextTuesday === 0) {
-            daysUntilNextTuesday += 7;
-        }
-
         toBeEndDate.setDate(toBeEndDate.getDate() + daysUntilNextTuesday);
 
         // Checking the results
@@ -261,5 +256,45 @@ describe('generateWeeklyExpenses', () => {
         expect(transactions[0].description).toBe(expense.expense_description);
         expect(transactions[0].amount).toBe(-expense.expense_amount);
         expect(expectedEndDate.toISOString().slice(0, 10)).toBe(new Date('2020-02-13').toISOString().slice(0, 10));
+    });
+
+    it('Should generate weekly expenses correctly when the frequency day of week is set', () => {
+        // Preparing the test data
+        const transactions = [];
+        const skippedTransactions = [];
+        const expense = {
+            expense_begin_date: new Date().setDate(new Date().getDate() + 1),
+            expense_title: "Test expense",
+            expense_description: "Test description",
+            expense_amount: 150,
+            frequency_day_of_week: 2,
+        };
+        const toDate = new Date('2020-02-02');
+        const fromDate = new Date('2020-01-01');
+
+        // Running the function
+        generateWeeklyExpenses(transactions, skippedTransactions, expense, toDate, fromDate);
+
+        const expectedEndDate = new Date(transactions[transactions.length - 1].date);
+        const toBeEndDate = new Date('2020-01-01');
+
+        // advance by 4 weeks
+        toBeEndDate.setDate(toBeEndDate.getDate() + 28);
+
+        // days of the week from 0 (Sunday) to 6 (Saturday)
+        const TUESDAY = 2;
+
+        // calculate the number of days to add to get to the next Tuesday
+        let daysUntilNextTuesday = (7 + TUESDAY - toBeEndDate.getDay()) % 7;
+
+        toBeEndDate.setDate(toBeEndDate.getDate() + daysUntilNextTuesday);
+
+        // Checking the results
+        expect(transactions.length).toBe(4);
+        expect(skippedTransactions.length).toBe(0);
+        expect(transactions[0].title).toBe(expense.expense_title);
+        expect(transactions[0].description).toBe(expense.expense_description);
+        expect(transactions[0].amount).toBe(-expense.expense_amount);
+        expect(expectedEndDate.toISOString().slice(0, 10)).toBe(toBeEndDate.toISOString().slice(0, 10));
     });
 });

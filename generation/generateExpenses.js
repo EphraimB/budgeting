@@ -95,7 +95,7 @@ export const generateWeeklyExpenses = (transactions, skippedTransactions, expens
     let expenseDate = new Date(expense.expense_begin_date);
 
     if (expense.frequency_day_of_week) {
-        const startDay = expense.expense_begin_date.getDay();
+        const startDay = new Date(expense.expense_begin_date).getDay();
         const frequency_day_of_week = expense.frequency_day_of_week;
 
         expenseDate.setDate(expenseDate.getDate() + (frequency_day_of_week + 7 - startDay) % 7);
