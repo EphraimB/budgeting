@@ -115,25 +115,37 @@ export const generateWeeklyTransfers = (transactions, skippedTransactions, trans
 };
 
 export const generateYearlyTransfers = (transactions, skippedTransactions, transfer, toDate, fromDate, account_id) => {
+    let yearsIncremented = 0;
     const generateDateFn = (currentDate, transfer) => {
-        const newDate = new Date(currentDate);
+        const transferDate = new Date(transfer.transfer_begin_date);
 
-        if (transfer.frequency_day_of_week) {
-            let firstDate = new Date(
-                newDate.getFullYear() + (transfer.frequency_type_variable || 1),
-                newDate.getMonth(),
-                transfer.frequency_week_of_month !== null ? 1 + 7 * transfer.frequency_week_of_month : transfer.transfer_begin_date.getDate()
-            );
+        transferDate.setFullYear(transferDate.getFullYear() + yearsIncremented + (transfer.frequency_type_variable || 1));
 
-            while (firstDate.getDay() !== transfer.frequency_day_of_week) {
-                firstDate.setDate(firstDate.getDate() + 1);
-            }
-
-            return firstDate;
-        } else {
-            newDate.setFullYear(newDate.getFullYear() + (transfer.frequency_type_variable || 1));
-            return newDate;
+        if (transfer.frequency_month_of_year !== null && transfer.frequency_month_of_year !== undefined) {
+            transferDate.setMonth(transfer.frequency_month_of_year);
         }
+
+        if (transfer.frequency_day_of_week !== null && transfer.frequency_day_of_week !== undefined) {
+            let daysToAdd = (7 - transferDate.getDay() + transfer.frequency_day_of_week) % 7;
+            transferDate.setDate(transferDate.getDate() + daysToAdd); // this is the first occurrence of the day_of_week
+
+            if (transfer.frequency_week_of_month !== null && transfer.frequency_week_of_month !== undefined) {
+                // add the number of weeks, but check if it overflows into the next month
+                let proposedDate = new Date(transferDate.getTime());
+                proposedDate.setDate(proposedDate.getDate() + 7 * (transfer.frequency_week_of_month));
+
+                if (proposedDate.getMonth() === transferDate.getMonth()) {
+                    // it's in the same month, so it's a valid date
+                    transferDate.setDate(proposedDate.getDate());
+                } else {
+                    // it's not in the same month, so don't change newDate
+                }
+            }
+        }
+
+        yearsIncremented += (transfer.frequency_type_variable || 1);
+
+        return transferDate;
     };
 
     generateTransfers(transactions, skippedTransactions, transfer, toDate, fromDate, account_id, generateDateFn);
