@@ -15,7 +15,7 @@ describe('Test generateDailyExpenses', () => {
         const transactions = [];
         const skippedTransactions = [];
         const expense = {
-            expense_begin_date: new Date().setDate(new Date().getDate() + 1),
+            expense_begin_date: new Date('2020-01-02'),
             expense_title: "Test expense",
             expense_description: "Test description",
             expense_amount: 100
@@ -30,6 +30,34 @@ describe('Test generateDailyExpenses', () => {
 
         // Checking the results
         expect(transactions.length).toBe(5);
+        expect(skippedTransactions.length).toBe(0);
+        expect(transactions[0].title).toBe(expense.expense_title);
+        expect(transactions[0].description).toBe(expense.expense_description);
+        expect(transactions[0].amount).toBe(-expense.expense_amount);
+        expect(expectedEndDate.toISOString().slice(0, 10)).toBe(new Date('2020-01-06').toISOString().slice(0, 10));
+    });
+
+    it('Should generate daily expenses correctly every 2 days', () => {
+        // Preparing the test data'
+        const transactions = [];
+        const skippedTransactions = [];
+        const expense = {
+            expense_begin_date: new Date('2020-01-02'),
+            expense_title: "Test expense",
+            expense_description: "Test description",
+            expense_amount: 100,
+            frequency_type_variable: 2
+        };
+        const toDate = new Date('2020-01-06');
+        const fromDate = new Date('2020-01-01');
+
+        // Running the function
+        generateDailyExpenses(transactions, skippedTransactions, expense, toDate, fromDate);
+
+        const expectedEndDate = new Date(transactions[transactions.length - 1].date);
+
+        // Checking the results
+        expect(transactions.length).toBe(3);
         expect(skippedTransactions.length).toBe(0);
         expect(transactions[0].title).toBe(expense.expense_title);
         expect(transactions[0].description).toBe(expense.expense_description);
