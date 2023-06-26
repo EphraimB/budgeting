@@ -115,25 +115,35 @@ export const generateWeeklyLoans = (transactions, skippedTransactions, loan, toD
 };
 
 export const generateYearlyLoans = (transactions, skippedTransactions, loan, toDate, fromDate) => {
+    let yearsIncremented = 0;
     const generateDateFn = (currentDate, loan) => {
-        const newDate = new Date(currentDate);
+        const loanDate = new Date(loan.loan_begin_date);
+        loanDate.setFullYear(loanDate.getFullYear() + yearsIncremented + (loan.frequency_type_variable || 1));
 
-        if (loan.frequency_day_of_week) {
-            let firstDate = new Date(
-                newDate.getFullYear() + (loan.frequency_type_variable || 1),
-                newDate.getMonth(),
-                loan.frequency_week_of_month !== null ? 1 + 7 * loan.frequency_week_of_month : loan.loan_begin_date.getDate()
-            );
-
-            while (firstDate.getDay() !== loan.frequency_day_of_week) {
-                firstDate.setDate(firstDate.getDate() + 1);
-            }
-
-            return firstDate;
-        } else {
-            newDate.setFullYear(newDate.getFullYear() + (loan.frequency_type_variable || 1));
-            return newDate;
+        if (loan.frequency_month_of_year !== null && loan.frequency_month_of_year !== undefined) {
+            loanDate.setMonth(loan.frequency_month_of_year);
         }
+
+        if (loan.frequency_day_of_week !== null && loan.frequency_day_of_week !== undefined) {
+            let daysToAdd = (7 - loanDate.getDay() + loan.frequency_day_of_week) % 7;
+            loanDate.setDate(loanDate.getDate() + daysToAdd); // this is the first occurrence of the day_of_week
+
+            if (loan.frequency_week_of_month !== null && loan.frequency_week_of_month !== undefined) {
+                // add the number of weeks, but check if it overflows into the next month
+                let proposedDate = new Date(loanDate.getTime());
+                proposedDate.setDate(proposedDate.getDate() + 7 * (loan.frequency_week_of_month));
+
+                if (proposedDate.getMonth() === loanDate.getMonth()) {
+                    // it's in the same month, so it's a valid date
+                    loanDate.setDate(proposedDate.getDate());
+                } else {
+                    // it's not in the same month, so don't change newDate
+                }
+            }
+        }
+        yearsIncremented += (loan.frequency_type_variable || 1);
+
+        return loanDate;
     };
 
     generateLoans(transactions, skippedTransactions, loan, toDate, fromDate, generateDateFn);
