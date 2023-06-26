@@ -350,7 +350,7 @@ describe('generateWeeklyLoans', () => {
         expect(expectedEndDate.toISOString().slice(0, 10)).toBe(new Date('2020-02-13').toISOString().slice(0, 10));
     });
 
-    it('Should generate weekly expenses correctly when the frequency day of week is set', () => {
+    it('Should generate weekly loans correctly when the frequency day of week is set', () => {
         // Preparing the test data
         const transactions = [];
         const skippedTransactions = [];
@@ -392,206 +392,207 @@ describe('generateWeeklyLoans', () => {
     });
 });
 
-// describe('generateYearlyExpenses', () => {
-//     it('Should generate yearly expenses correctly', () => {
-//         // Preparing the test data
-//         const transactions = [];
-//         const skippedTransactions = [];
-//         const expense = {
-//             expense_begin_date: new Date('2020-01-02'),
-//             expense_title: "Test expense",
-//             expense_description: "Test description",
-//             expense_amount: 100
-//         };
-//         const toDate = new Date('2022-02-02');
-//         const fromDate = new Date('2020-01-01');
+describe('generateYearlyLoans', () => {
+    it('Should generate yearly loans correctly', () => {
+        // Preparing the test data
+        const transactions = [];
+        const skippedTransactions = [];
+        const loan = {
+            loan_begin_date: new Date('2020-01-02'),
+            loan_title: "Test",
+            loan_recipient: "Test recepient",
+            loan_description: "Test description",
+            loan_plan_amount: 100
+        };
+        const toDate = new Date('2022-02-02');
+        const fromDate = new Date('2020-01-01');
 
-//         // Running the function
-//         generateYearlyExpenses(transactions, skippedTransactions, expense, toDate, fromDate);
+        // Running the function
+        generateYearlyLoans(transactions, skippedTransactions, loan, toDate, fromDate);
 
-//         const expectedEndDate = new Date(transactions[transactions.length - 1].date);
+        const expectedEndDate = new Date(transactions[transactions.length - 1].date);
 
-//         // Checking the results
-//         expect(transactions.length).toBe(3);
-//         expect(skippedTransactions.length).toBe(0);
-//         expect(transactions[0].title).toBe(expense.expense_title);
-//         expect(transactions[0].description).toBe(expense.expense_description);
-//         expect(transactions[0].amount).toBe(-expense.expense_amount);
-//         expect(expectedEndDate.toISOString().slice(0, 10)).toBe(new Date('2022-01-02').toISOString().slice(0, 10));
-//     });
+        // Checking the results
+        expect(transactions.length).toBe(3);
+        expect(skippedTransactions.length).toBe(0);
+        expect(transactions[0].title).toBe("Test loan to Test recepient");
+        expect(transactions[0].description).toBe(loan.loan_description);
+        expect(transactions[0].amount).toBe(-loan.loan_plan_amount);
+        expect(expectedEndDate.toISOString().slice(0, 10)).toBe(new Date('2022-01-02').toISOString().slice(0, 10));
+    });
 
-//     it('Should generate yearly expenses correctly every 2 years', () => {
-//         // Preparing the test data
-//         const transactions = [];
-//         const skippedTransactions = [];
-//         const expense = {
-//             expense_begin_date: new Date('2020-01-02'),
-//             expense_title: "Test expense",
-//             expense_description: "Test description",
-//             expense_amount: 100,
-//             frequency_type_variable: 2
-//         };
-//         const toDate = new Date('2024-02-02');
-//         const fromDate = new Date('2020-01-01');
+    //     it('Should generate yearly expenses correctly every 2 years', () => {
+    //         // Preparing the test data
+    //         const transactions = [];
+    //         const skippedTransactions = [];
+    //         const expense = {
+    //             expense_begin_date: new Date('2020-01-02'),
+    //             expense_title: "Test expense",
+    //             expense_description: "Test description",
+    //             expense_amount: 100,
+    //             frequency_type_variable: 2
+    //         };
+    //         const toDate = new Date('2024-02-02');
+    //         const fromDate = new Date('2020-01-01');
 
-//         // Running the function
-//         generateYearlyExpenses(transactions, skippedTransactions, expense, toDate, fromDate);
+    //         // Running the function
+    //         generateYearlyExpenses(transactions, skippedTransactions, expense, toDate, fromDate);
 
-//         const expectedEndDate = new Date(transactions[transactions.length - 1].date);
+    //         const expectedEndDate = new Date(transactions[transactions.length - 1].date);
 
-//         // Checking the results
-//         expect(transactions.length).toBe(3);
-//         expect(skippedTransactions.length).toBe(0);
-//         expect(transactions[0].title).toBe(expense.expense_title);
-//         expect(transactions[0].description).toBe(expense.expense_description);
-//         expect(transactions[0].amount).toBe(-expense.expense_amount);
-//         expect(expectedEndDate.toISOString().slice(0, 10)).toBe(new Date('2024-01-02').toISOString().slice(0, 10));
-//     });
+    //         // Checking the results
+    //         expect(transactions.length).toBe(3);
+    //         expect(skippedTransactions.length).toBe(0);
+    //         expect(transactions[0].title).toBe(expense.expense_title);
+    //         expect(transactions[0].description).toBe(expense.expense_description);
+    //         expect(transactions[0].amount).toBe(-expense.expense_amount);
+    //         expect(expectedEndDate.toISOString().slice(0, 10)).toBe(new Date('2024-01-02').toISOString().slice(0, 10));
+    //     });
 
-//     it('Should generate yearly expenses correctly when the expense begin date is less than the from date', () => {
-//         // Preparing the test data
-//         const transactions = [];
-//         const skippedTransactions = [];
-//         const expense = {
-//             expense_begin_date: new Date('2020-01-02'),
-//             expense_title: "Test expense",
-//             expense_description: "Test description",
-//             expense_amount: 100
-//         };
-//         const toDate = new Date('2025-02-02');
-//         const fromDate = new Date('2022-01-01');
+    //     it('Should generate yearly expenses correctly when the expense begin date is less than the from date', () => {
+    //         // Preparing the test data
+    //         const transactions = [];
+    //         const skippedTransactions = [];
+    //         const expense = {
+    //             expense_begin_date: new Date('2020-01-02'),
+    //             expense_title: "Test expense",
+    //             expense_description: "Test description",
+    //             expense_amount: 100
+    //         };
+    //         const toDate = new Date('2025-02-02');
+    //         const fromDate = new Date('2022-01-01');
 
-//         // Running the function
-//         generateYearlyExpenses(transactions, skippedTransactions, expense, toDate, fromDate);
+    //         // Running the function
+    //         generateYearlyExpenses(transactions, skippedTransactions, expense, toDate, fromDate);
 
-//         const expectedEndDate = new Date(transactions[transactions.length - 1].date);
+    //         const expectedEndDate = new Date(transactions[transactions.length - 1].date);
 
-//         // Checking the results
-//         expect(transactions.length).toBe(4);
-//         expect(skippedTransactions.length).toBe(2);
-//         expect(transactions[0].title).toBe(expense.expense_title);
-//         expect(transactions[0].description).toBe(expense.expense_description);
-//         expect(transactions[0].amount).toBe(-expense.expense_amount);
-//         expect(expectedEndDate.toISOString().slice(0, 10)).toBe(new Date('2025-01-02').toISOString().slice(0, 10));
-//     });
+    //         // Checking the results
+    //         expect(transactions.length).toBe(4);
+    //         expect(skippedTransactions.length).toBe(2);
+    //         expect(transactions[0].title).toBe(expense.expense_title);
+    //         expect(transactions[0].description).toBe(expense.expense_description);
+    //         expect(transactions[0].amount).toBe(-expense.expense_amount);
+    //         expect(expectedEndDate.toISOString().slice(0, 10)).toBe(new Date('2025-01-02').toISOString().slice(0, 10));
+    //     });
 
-//     it('Should generate yearly expenses correctly when the frequency day of week is set', () => {
-//         // Preparing the test data
-//         const transactions = [];
-//         const skippedTransactions = [];
-//         const expense = {
-//             expense_begin_date: new Date('2020-01-02'),
-//             expense_title: "Test expense",
-//             expense_description: "Test description",
-//             expense_amount: 150,
-//             frequency_day_of_week: 2,
-//         };
-//         const toDate = new Date('2023-01-10');
-//         const fromDate = new Date('2020-01-01');
+    //     it('Should generate yearly expenses correctly when the frequency day of week is set', () => {
+    //         // Preparing the test data
+    //         const transactions = [];
+    //         const skippedTransactions = [];
+    //         const expense = {
+    //             expense_begin_date: new Date('2020-01-02'),
+    //             expense_title: "Test expense",
+    //             expense_description: "Test description",
+    //             expense_amount: 150,
+    //             frequency_day_of_week: 2,
+    //         };
+    //         const toDate = new Date('2023-01-10');
+    //         const fromDate = new Date('2020-01-01');
 
-//         // Running the function
-//         generateYearlyExpenses(transactions, skippedTransactions, expense, toDate, fromDate);
+    //         // Running the function
+    //         generateYearlyExpenses(transactions, skippedTransactions, expense, toDate, fromDate);
 
-//         const expectedEndDate = new Date(transactions[transactions.length - 1].date);
-//         const toBeEndDate = new Date('2023-01-02');
+    //         const expectedEndDate = new Date(transactions[transactions.length - 1].date);
+    //         const toBeEndDate = new Date('2023-01-02');
 
-//         // days of the week from 0 (Sunday) to 6 (Saturday)
-//         const TUESDAY = 2;
+    //         // days of the week from 0 (Sunday) to 6 (Saturday)
+    //         const TUESDAY = 2;
 
-//         // calculate the number of days to add to get to the next Tuesday
-//         let daysUntilNextTuesday = (7 + TUESDAY - toBeEndDate.getDay()) % 7;
+    //         // calculate the number of days to add to get to the next Tuesday
+    //         let daysUntilNextTuesday = (7 + TUESDAY - toBeEndDate.getDay()) % 7;
 
-//         toBeEndDate.setDate(toBeEndDate.getDate() + daysUntilNextTuesday);
+    //         toBeEndDate.setDate(toBeEndDate.getDate() + daysUntilNextTuesday);
 
-//         // Checking the results
-//         expect(transactions.length).toBe(4);
-//         expect(skippedTransactions.length).toBe(0);
-//         expect(transactions[0].title).toBe(expense.expense_title);
-//         expect(transactions[0].description).toBe(expense.expense_description);
-//         expect(transactions[0].amount).toBe(-expense.expense_amount);
-//         expect(expectedEndDate.toISOString().slice(0, 10)).toBe(toBeEndDate.toISOString().slice(0, 10));
-//     });
+    //         // Checking the results
+    //         expect(transactions.length).toBe(4);
+    //         expect(skippedTransactions.length).toBe(0);
+    //         expect(transactions[0].title).toBe(expense.expense_title);
+    //         expect(transactions[0].description).toBe(expense.expense_description);
+    //         expect(transactions[0].amount).toBe(-expense.expense_amount);
+    //         expect(expectedEndDate.toISOString().slice(0, 10)).toBe(toBeEndDate.toISOString().slice(0, 10));
+    //     });
 
-//     it('Should generate yearly expenses correctly when the frequency week of month is set', () => {
-//         // Preparing the test data
-//         const transactions = [];
-//         const skippedTransactions = [];
-//         const expense = {
-//             expense_begin_date: new Date('2020-01-02'),
-//             expense_title: "Test expense",
-//             expense_description: "Test description",
-//             expense_amount: 150,
-//             frequency_day_of_week: 2,
-//             frequency_week_of_month: 1,
-//         };
-//         const toDate = new Date('2023-01-01');
-//         const fromDate = new Date('2020-01-01');
+    //     it('Should generate yearly expenses correctly when the frequency week of month is set', () => {
+    //         // Preparing the test data
+    //         const transactions = [];
+    //         const skippedTransactions = [];
+    //         const expense = {
+    //             expense_begin_date: new Date('2020-01-02'),
+    //             expense_title: "Test expense",
+    //             expense_description: "Test description",
+    //             expense_amount: 150,
+    //             frequency_day_of_week: 2,
+    //             frequency_week_of_month: 1,
+    //         };
+    //         const toDate = new Date('2023-01-01');
+    //         const fromDate = new Date('2020-01-01');
 
-//         // Running the function
-//         generateYearlyExpenses(transactions, skippedTransactions, expense, toDate, fromDate);
+    //         // Running the function
+    //         generateYearlyExpenses(transactions, skippedTransactions, expense, toDate, fromDate);
 
-//         // Checking the results
-//         expect(transactions.length).toBe(3);
-//         expect(skippedTransactions.length).toBe(0);
-//         expect(transactions[0].title).toBe(expense.expense_title);
-//         expect(transactions[0].description).toBe(expense.expense_description);
-//         expect(transactions[0].amount).toBe(-expense.expense_amount);
+    //         // Checking the results
+    //         expect(transactions.length).toBe(3);
+    //         expect(skippedTransactions.length).toBe(0);
+    //         expect(transactions[0].title).toBe(expense.expense_title);
+    //         expect(transactions[0].description).toBe(expense.expense_description);
+    //         expect(transactions[0].amount).toBe(-expense.expense_amount);
 
-//         // Check if the transactions are on the correct dates (second Tuesday of each year)
-//         transactions.forEach((transaction, i) => {
-//             const transactionDate = new Date(transaction.date);
-//             expect(transactionDate.getDay()).toBe(expense.frequency_day_of_week);
+    //         // Check if the transactions are on the correct dates (second Tuesday of each year)
+    //         transactions.forEach((transaction, i) => {
+    //             const transactionDate = new Date(transaction.date);
+    //             expect(transactionDate.getDay()).toBe(expense.frequency_day_of_week);
 
-//             const secondWeekOfMonth = Math.floor((transactionDate.getDate() - 1) / 7) === 1;
-//             expect(secondWeekOfMonth).toBeTruthy();
+    //             const secondWeekOfMonth = Math.floor((transactionDate.getDate() - 1) / 7) === 1;
+    //             expect(secondWeekOfMonth).toBeTruthy();
 
-//             // Check if the year is correctly incrementing on each transaction
-//             const expectedYear = expense.expense_begin_date.getFullYear() + i;
-//             expect(transactionDate.getFullYear()).toBe(expectedYear);
-//         });
-//     });
+    //             // Check if the year is correctly incrementing on each transaction
+    //             const expectedYear = expense.expense_begin_date.getFullYear() + i;
+    //             expect(transactionDate.getFullYear()).toBe(expectedYear);
+    //         });
+    //     });
 
-//     it('Should generate yearly expenses correctly when the frequency month of year is set', () => {
-//         // Preparing the test data
-//         const transactions = [];
-//         const skippedTransactions = [];
-//         const expense = {
-//             expense_begin_date: new Date('2020-01-02'),
-//             expense_title: "Test expense",
-//             expense_description: "Test description",
-//             expense_amount: 150,
-//             frequency_day_of_week: 2,  // Tuesday
-//             frequency_week_of_month: 1,  // Second week
-//             frequency_month_of_year: 5,  // June
-//         };
-//         const toDate = new Date('2023-01-01');
-//         const fromDate = new Date('2020-01-01');
+    //     it('Should generate yearly expenses correctly when the frequency month of year is set', () => {
+    //         // Preparing the test data
+    //         const transactions = [];
+    //         const skippedTransactions = [];
+    //         const expense = {
+    //             expense_begin_date: new Date('2020-01-02'),
+    //             expense_title: "Test expense",
+    //             expense_description: "Test description",
+    //             expense_amount: 150,
+    //             frequency_day_of_week: 2,  // Tuesday
+    //             frequency_week_of_month: 1,  // Second week
+    //             frequency_month_of_year: 5,  // June
+    //         };
+    //         const toDate = new Date('2023-01-01');
+    //         const fromDate = new Date('2020-01-01');
 
-//         // Running the function
-//         generateYearlyExpenses(transactions, skippedTransactions, expense, toDate, fromDate);
+    //         // Running the function
+    //         generateYearlyExpenses(transactions, skippedTransactions, expense, toDate, fromDate);
 
-//         console.log(transactions[0].date);
+    //         console.log(transactions[0].date);
 
-//         // Checking the results
-//         expect(transactions.length).toBe(3);  // 2020, 2021, 2022
-//         expect(skippedTransactions.length).toBe(0);
-//         expect(transactions[0].title).toBe(expense.expense_title);
-//         expect(transactions[0].description).toBe(expense.expense_description);
-//         expect(transactions[0].amount).toBe(-expense.expense_amount);
+    //         // Checking the results
+    //         expect(transactions.length).toBe(3);  // 2020, 2021, 2022
+    //         expect(skippedTransactions.length).toBe(0);
+    //         expect(transactions[0].title).toBe(expense.expense_title);
+    //         expect(transactions[0].description).toBe(expense.expense_description);
+    //         expect(transactions[0].amount).toBe(-expense.expense_amount);
 
-//         // Check if the transactions are on the correct dates (second Tuesday of June each year)
-//         transactions.forEach((transaction, i) => {
-//             const transactionDate = new Date(transaction.date);
-//             expect(transactionDate.getMonth()).toBe(expense.frequency_month_of_year);  // June
+    //         // Check if the transactions are on the correct dates (second Tuesday of June each year)
+    //         transactions.forEach((transaction, i) => {
+    //             const transactionDate = new Date(transaction.date);
+    //             expect(transactionDate.getMonth()).toBe(expense.frequency_month_of_year);  // June
 
-//             expect(transactionDate.getDay()).toBe(expense.frequency_day_of_week);  // Tuesday
+    //             expect(transactionDate.getDay()).toBe(expense.frequency_day_of_week);  // Tuesday
 
-//             const secondWeekOfMonth = Math.floor((transactionDate.getDate() - 1) / 7) === 1;
-//             expect(secondWeekOfMonth).toBeTruthy();
+    //             const secondWeekOfMonth = Math.floor((transactionDate.getDate() - 1) / 7) === 1;
+    //             expect(secondWeekOfMonth).toBeTruthy();
 
-//             // Check if the year is correctly incrementing on each transaction
-//             const expectedYear = expense.expense_begin_date.getFullYear() + i;
-//             expect(transactionDate.getFullYear()).toBe(expectedYear);
-//         });
-//     });
-// });
+    //             // Check if the year is correctly incrementing on each transaction
+    //             const expectedYear = expense.expense_begin_date.getFullYear() + i;
+    //             expect(transactionDate.getFullYear()).toBe(expectedYear);
+    //         });
+    //     });
+});
