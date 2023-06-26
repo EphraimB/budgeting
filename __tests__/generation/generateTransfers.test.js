@@ -74,6 +74,8 @@ describe('Test generateDailyTransfers', () => {
     });
 
     it('Should generate daily transfers correctly when the transfer begin date is less than the from date', () => {
+        const account_id = 1;
+
         // Preparing the test data
         const transactions = [];
         const skippedTransactions = [];
@@ -89,7 +91,7 @@ describe('Test generateDailyTransfers', () => {
         const fromDate = new Date('2020-01-06');
 
         // Running the function
-        generateDailyTransfers(transactions, skippedTransactions, transfer, toDate, fromDate);
+        generateDailyTransfers(transactions, skippedTransactions, transfer, toDate, fromDate, account_id);
 
         const expectedEndDate = new Date(transactions[transactions.length - 1].date);
 
@@ -103,168 +105,172 @@ describe('Test generateDailyTransfers', () => {
     });
 });
 
-// describe('Test generateMonthlyExpenses', () => {
-//     it('Should generate monthly expenses correctly', () => {
-//         // Preparing the test data
-//         const transactions = [];
-//         const skippedTransactions = [];
-//         const expense = {
-//             expense_begin_date: new Date('2020-01-02'),
-//             expense_title: "Test expense",
-//             expense_description: "Test description",
-//             expense_amount: 100
-//         };
-//         const toDate = new Date('2020-06-02');
-//         const fromDate = new Date('2020-01-01');
+describe('Test generateMonthlyTransfers', () => {
+    it('Should generate monthly transfers correctly', () => {
+        const account_id = 1;
 
-//         // Running the function
-//         generateMonthlyExpenses(transactions, skippedTransactions, expense, toDate, fromDate);
+        // Preparing the test data
+        const transactions = [];
+        const skippedTransactions = [];
+        const transfer = {
+            source_account_id: 1,
+            destination_account_id: 2,
+            transfer_begin_date: new Date('2020-01-02'),
+            transfer_title: "Test transfer",
+            transfer_description: "Test description",
+            transfer_amount: 100
+        };
+        const toDate = new Date('2020-06-02');
+        const fromDate = new Date('2020-01-01');
 
-//         const expectedEndDate = new Date(transactions[transactions.length - 1].date);
+        // Running the function
+        generateMonthlyTransfers(transactions, skippedTransactions, transfer, toDate, fromDate, account_id);
 
-//         // Checking the results
-//         expect(transactions.length).toBe(6);
-//         expect(skippedTransactions.length).toBe(0);
-//         expect(transactions[0].title).toBe(expense.expense_title);
-//         expect(transactions[0].description).toBe(expense.expense_description);
-//         expect(transactions[0].amount).toBe(-expense.expense_amount);
-//         expect(expectedEndDate.toISOString().slice(0, 10)).toBe(new Date('2020-06-01').toISOString().slice(0, 10));
-//     });
+        const expectedEndDate = new Date(transactions[transactions.length - 1].date);
 
-//     it('Should generate monthly expenses correctly every 2 months', () => {
-//         // Preparing the test data
-//         const transactions = [];
-//         const skippedTransactions = [];
-//         const expense = {
-//             expense_begin_date: new Date('2020-01-02'),
-//             expense_title: "Test expense",
-//             expense_description: "Test description",
-//             expense_amount: 100,
-//             frequency_type_variable: 2
-//         };
-//         const toDate = new Date('2020-08-02');
-//         const fromDate = new Date('2020-01-01');
+        // Checking the results
+        expect(transactions.length).toBe(6);
+        expect(skippedTransactions.length).toBe(0);
+        expect(transactions[0].title).toBe(transfer.transfer_title);
+        expect(transactions[0].description).toBe(transfer.transfer_description);
+        expect(transactions[0].amount).toBe(-transfer.transfer_amount);
+        expect(expectedEndDate.toISOString().slice(0, 10)).toBe(new Date('2020-06-01').toISOString().slice(0, 10));
+    });
 
-//         // Running the function
-//         generateMonthlyExpenses(transactions, skippedTransactions, expense, toDate, fromDate);
+    //     it('Should generate monthly expenses correctly every 2 months', () => {
+    //         // Preparing the test data
+    //         const transactions = [];
+    //         const skippedTransactions = [];
+    //         const expense = {
+    //             expense_begin_date: new Date('2020-01-02'),
+    //             expense_title: "Test expense",
+    //             expense_description: "Test description",
+    //             expense_amount: 100,
+    //             frequency_type_variable: 2
+    //         };
+    //         const toDate = new Date('2020-08-02');
+    //         const fromDate = new Date('2020-01-01');
 
-//         const expectedEndDate = new Date(transactions[transactions.length - 1].date);
+    //         // Running the function
+    //         generateMonthlyExpenses(transactions, skippedTransactions, expense, toDate, fromDate);
 
-//         // Checking the results
-//         expect(transactions.length).toBe(4);
-//         expect(skippedTransactions.length).toBe(0);
-//         expect(transactions[0].title).toBe(expense.expense_title);
-//         expect(transactions[0].description).toBe(expense.expense_description);
-//         expect(transactions[0].amount).toBe(-expense.expense_amount);
-//         expect(expectedEndDate.toISOString().slice(0, 10)).toBe(new Date('2020-07-01').toISOString().slice(0, 10));
-//     });
+    //         const expectedEndDate = new Date(transactions[transactions.length - 1].date);
 
-//     it('Should generate monthly expenses correctly when the expense begin date is less than the from date', () => {
-//         // Preparing the test data
-//         const transactions = [];
-//         const skippedTransactions = [];
-//         const expense = {
-//             expense_begin_date: new Date('2020-01-02'),
-//             expense_title: "Test expense",
-//             expense_description: "Test description",
-//             expense_amount: 100
-//         };
-//         const toDate = new Date('2020-08-02');
-//         const fromDate = new Date('2020-06-02');
+    //         // Checking the results
+    //         expect(transactions.length).toBe(4);
+    //         expect(skippedTransactions.length).toBe(0);
+    //         expect(transactions[0].title).toBe(expense.expense_title);
+    //         expect(transactions[0].description).toBe(expense.expense_description);
+    //         expect(transactions[0].amount).toBe(-expense.expense_amount);
+    //         expect(expectedEndDate.toISOString().slice(0, 10)).toBe(new Date('2020-07-01').toISOString().slice(0, 10));
+    //     });
 
-//         // Running the function
-//         generateMonthlyExpenses(transactions, skippedTransactions, expense, toDate, fromDate);
+    //     it('Should generate monthly expenses correctly when the expense begin date is less than the from date', () => {
+    //         // Preparing the test data
+    //         const transactions = [];
+    //         const skippedTransactions = [];
+    //         const expense = {
+    //             expense_begin_date: new Date('2020-01-02'),
+    //             expense_title: "Test expense",
+    //             expense_description: "Test description",
+    //             expense_amount: 100
+    //         };
+    //         const toDate = new Date('2020-08-02');
+    //         const fromDate = new Date('2020-06-02');
 
-//         const expectedEndDate = new Date(transactions[transactions.length - 1].date);
+    //         // Running the function
+    //         generateMonthlyExpenses(transactions, skippedTransactions, expense, toDate, fromDate);
 
-//         // Checking the results
-//         expect(transactions.length).toBe(2);
-//         expect(skippedTransactions.length).toBe(6);
-//         expect(transactions[0].title).toBe(expense.expense_title);
-//         expect(transactions[0].description).toBe(expense.expense_description);
-//         expect(transactions[0].amount).toBe(-expense.expense_amount);
-//         expect(expectedEndDate.toISOString().slice(0, 10)).toBe(new Date('2020-08-01').toISOString().slice(0, 10));
-//     });
+    //         const expectedEndDate = new Date(transactions[transactions.length - 1].date);
 
-//     it('Should generate monthly expenses correctly when the frequency day of week is set', () => {
-//         // Preparing the test data
-//         const transactions = [];
-//         const skippedTransactions = [];
-//         const expense = {
-//             expense_begin_date: new Date('2020-01-02'),
-//             expense_title: "Test expense",
-//             expense_description: "Test description",
-//             expense_amount: 150,
-//             frequency_day_of_week: 2,
-//         };
-//         const toDate = new Date('2020-06-02');
-//         const fromDate = new Date('2020-01-01');
+    //         // Checking the results
+    //         expect(transactions.length).toBe(2);
+    //         expect(skippedTransactions.length).toBe(6);
+    //         expect(transactions[0].title).toBe(expense.expense_title);
+    //         expect(transactions[0].description).toBe(expense.expense_description);
+    //         expect(transactions[0].amount).toBe(-expense.expense_amount);
+    //         expect(expectedEndDate.toISOString().slice(0, 10)).toBe(new Date('2020-08-01').toISOString().slice(0, 10));
+    //     });
 
-//         // Running the function
-//         generateMonthlyExpenses(transactions, skippedTransactions, expense, toDate, fromDate);
+    //     it('Should generate monthly expenses correctly when the frequency day of week is set', () => {
+    //         // Preparing the test data
+    //         const transactions = [];
+    //         const skippedTransactions = [];
+    //         const expense = {
+    //             expense_begin_date: new Date('2020-01-02'),
+    //             expense_title: "Test expense",
+    //             expense_description: "Test description",
+    //             expense_amount: 150,
+    //             frequency_day_of_week: 2,
+    //         };
+    //         const toDate = new Date('2020-06-02');
+    //         const fromDate = new Date('2020-01-01');
 
-//         const expectedEndDate = new Date(transactions[transactions.length - 1].date);
-//         const toBeEndDate = new Date('2020-01-01');
+    //         // Running the function
+    //         generateMonthlyExpenses(transactions, skippedTransactions, expense, toDate, fromDate);
 
-//         // advance by 5 months
-//         toBeEndDate.setMonth(toBeEndDate.getMonth() + 4);
+    //         const expectedEndDate = new Date(transactions[transactions.length - 1].date);
+    //         const toBeEndDate = new Date('2020-01-01');
 
-//         // days of the week from 0 (Sunday) to 6 (Saturday)
-//         const TUESDAY = 2;
+    //         // advance by 5 months
+    //         toBeEndDate.setMonth(toBeEndDate.getMonth() + 4);
 
-//         // calculate the number of days to add to get to the next Tuesday
-//         let daysUntilNextTuesday = (7 + TUESDAY - toBeEndDate.getDay()) % 7;
+    //         // days of the week from 0 (Sunday) to 6 (Saturday)
+    //         const TUESDAY = 2;
 
-//         toBeEndDate.setDate(toBeEndDate.getDate() + daysUntilNextTuesday);
+    //         // calculate the number of days to add to get to the next Tuesday
+    //         let daysUntilNextTuesday = (7 + TUESDAY - toBeEndDate.getDay()) % 7;
 
-//         // Checking the results
-//         expect(transactions.length).toBe(5);
-//         expect(skippedTransactions.length).toBe(0);
-//         expect(transactions[0].title).toBe(expense.expense_title);
-//         expect(transactions[0].description).toBe(expense.expense_description);
-//         expect(transactions[0].amount).toBe(-expense.expense_amount);
-//         expect(expectedEndDate.toISOString().slice(0, 10)).toBe(toBeEndDate.toISOString().slice(0, 10));
-//     });
+    //         toBeEndDate.setDate(toBeEndDate.getDate() + daysUntilNextTuesday);
 
-//     it('Should generate monthly expenses correctly when the frequency week of month is set', () => {
-//         // Preparing the test data
-//         const transactions = [];
-//         const skippedTransactions = [];
-//         const expense = {
-//             expense_begin_date: new Date('2020-01-02'),
-//             expense_title: "Test expense",
-//             expense_description: "Test description",
-//             expense_amount: 150,
-//             frequency_day_of_week: 2,
-//             frequency_week_of_month: 1,
-//         };
-//         const toDate = new Date('2020-06-01');
-//         const fromDate = new Date('2020-01-01');
+    //         // Checking the results
+    //         expect(transactions.length).toBe(5);
+    //         expect(skippedTransactions.length).toBe(0);
+    //         expect(transactions[0].title).toBe(expense.expense_title);
+    //         expect(transactions[0].description).toBe(expense.expense_description);
+    //         expect(transactions[0].amount).toBe(-expense.expense_amount);
+    //         expect(expectedEndDate.toISOString().slice(0, 10)).toBe(toBeEndDate.toISOString().slice(0, 10));
+    //     });
 
-//         // Running the function
-//         generateMonthlyExpenses(transactions, skippedTransactions, expense, toDate, fromDate);
+    //     it('Should generate monthly expenses correctly when the frequency week of month is set', () => {
+    //         // Preparing the test data
+    //         const transactions = [];
+    //         const skippedTransactions = [];
+    //         const expense = {
+    //             expense_begin_date: new Date('2020-01-02'),
+    //             expense_title: "Test expense",
+    //             expense_description: "Test description",
+    //             expense_amount: 150,
+    //             frequency_day_of_week: 2,
+    //             frequency_week_of_month: 1,
+    //         };
+    //         const toDate = new Date('2020-06-01');
+    //         const fromDate = new Date('2020-01-01');
 
-//         // Checking the results
-//         expect(transactions.length).toBe(5);
-//         expect(skippedTransactions.length).toBe(0);
-//         expect(transactions[0].title).toBe(expense.expense_title);
-//         expect(transactions[0].description).toBe(expense.expense_description);
-//         expect(transactions[0].amount).toBe(-expense.expense_amount);
+    //         // Running the function
+    //         generateMonthlyExpenses(transactions, skippedTransactions, expense, toDate, fromDate);
 
-//         // Check if the transactions are on the correct dates (second Tuesday of each month)
-//         transactions.forEach((transaction, i) => {
-//             const transactionDate = new Date(transaction.date);
-//             expect(transactionDate.getDay()).toBe(expense.frequency_day_of_week);
+    //         // Checking the results
+    //         expect(transactions.length).toBe(5);
+    //         expect(skippedTransactions.length).toBe(0);
+    //         expect(transactions[0].title).toBe(expense.expense_title);
+    //         expect(transactions[0].description).toBe(expense.expense_description);
+    //         expect(transactions[0].amount).toBe(-expense.expense_amount);
 
-//             const secondWeekOfMonth = Math.floor((transactionDate.getDate() - 1) / 7) === 1;
-//             expect(secondWeekOfMonth).toBeTruthy();
+    //         // Check if the transactions are on the correct dates (second Tuesday of each month)
+    //         transactions.forEach((transaction, i) => {
+    //             const transactionDate = new Date(transaction.date);
+    //             expect(transactionDate.getDay()).toBe(expense.frequency_day_of_week);
 
-//             // Since we start from the current month and increment each month
-//             const expectedMonth = (fromDate.getMonth() + i + 1) % 12;
-//             expect(transactionDate.getMonth()).toBe(expectedMonth);
-//         });
-//     });
-// });
+    //             const secondWeekOfMonth = Math.floor((transactionDate.getDate() - 1) / 7) === 1;
+    //             expect(secondWeekOfMonth).toBeTruthy();
+
+    //             // Since we start from the current month and increment each month
+    //             const expectedMonth = (fromDate.getMonth() + i + 1) % 12;
+    //             expect(transactionDate.getMonth()).toBe(expectedMonth);
+    //         });
+    //     });
+});
 
 // describe('generateWeeklyExpenses', () => {
 //     it('Should generate weekly expenses correctly', () => {
