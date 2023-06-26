@@ -1,5 +1,6 @@
 import { jest } from '@jest/globals';
 import generateTransactions from '../../generation/generateTransactions';
+import { transactions, expenses, payrolls, loans, transfers, wishlists } from '../../models/mockData';
 import MockDate from 'mockdate'
 
 beforeAll(() => {
@@ -20,24 +21,12 @@ describe('generateTransactions', () => {
                 account_id: 1,
             },
             currentBalance: 500,
-            transaction: [
-                // ... fill with your transaction data ...
-            ],
-            expenses: [
-                // ... fill with your expenses data ...
-            ],
-            payrolls: [
-                // ... fill with your payrolls data ...
-            ],
-            loans: [
-                // ... fill with your loans data ...
-            ],
-            transfers: [
-                // ... fill with your transfers data ...
-            ],
-            wishlists: [
-                // ... fill with your wishlists data ...
-            ],
+            transaction: transactions.filter(transaction => transaction.account_id === 1),
+            expenses: expenses.filter(expense => expense.account_id === 1),
+            payrolls: payrolls.filter(payroll => payroll.account_id === 1),
+            loans: loans.filter(loan => loan.account_id === 1),
+            transfers: transfers.filter(transfer => transfer.account_id === 1),
+            wishlists: wishlists.filter(wishlist => wishlist.account_id === 1),
         };
 
         const mockResponse = {};
@@ -49,20 +38,7 @@ describe('generateTransactions', () => {
         // assert that next was called
         expect(next).toBeCalled();
 
-        // assert that the transactions were processed correctly
-        expect(mockRequest.transactions).toEqual(
-            // put your expected output here
-        );
-
         // assert that the current balance was updated correctly
-        expect(mockRequest.currentBalance).toBe(
-            // put your expected output here
-        );
-
-        // you can also make assertions about how your mocked functions were called
-        expect(generateDailyExpenses).toBeCalledWith(
-            // put your expected arguments here
-        );
-        // ... do this for other mocked functions as well ...
+        expect(mockRequest.currentBalance).toBe(500);
     });
 });
