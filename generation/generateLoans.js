@@ -107,7 +107,7 @@ export const generateWeeklyLoans = (transactions, skippedTransactions, loan, toD
 
     const generateDateFn = (currentDate, loan) => {
         const newDate = new Date(currentDate);
-        newDate.setDate((newDate.getDate() + 7) * (loan.frequency_type_variable || 1));
+        newDate.setDate(newDate.getDate() + 7 * (loan.frequency_type_variable || 1));
         return newDate;
     };
 
