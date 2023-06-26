@@ -1,7 +1,7 @@
 import { jest } from '@jest/globals';
 import generateTransactions from '../../generation/generateTransactions';
 import { transactions, expenses, payrolls, loans, transfers, wishlists } from '../../models/mockData';
-import MockDate from 'mockdate'
+import MockDate from 'mockdate';
 
 beforeAll(() => {
     MockDate.set('2023-07-01');
