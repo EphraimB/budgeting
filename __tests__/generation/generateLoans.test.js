@@ -182,45 +182,46 @@ describe('Test generateMonthlyLoans', () => {
         expect(expectedEndDate.toISOString().slice(0, 10)).toBe(new Date('2020-08-01').toISOString().slice(0, 10));
     });
 
-    //     it('Should generate monthly expenses correctly when the frequency day of week is set', () => {
-    //         // Preparing the test data
-    //         const transactions = [];
-    //         const skippedTransactions = [];
-    //         const expense = {
-    //             expense_begin_date: new Date('2020-01-02'),
-    //             expense_title: "Test expense",
-    //             expense_description: "Test description",
-    //             expense_amount: 150,
-    //             frequency_day_of_week: 2,
-    //         };
-    //         const toDate = new Date('2020-06-02');
-    //         const fromDate = new Date('2020-01-01');
+    it('Should generate monthly loans correctly when the frequency day of week is set', () => {
+        // Preparing the test data
+        const transactions = [];
+        const skippedTransactions = [];
+        const loan = {
+            loan_begin_date: new Date('2020-01-02'),
+            loan_title: "Test",
+            loan_recipient: "Test recepient",
+            loan_description: "Test description",
+            loan_plan_amount: 150,
+            frequency_day_of_week: 2,
+        };
+        const toDate = new Date('2020-06-02');
+        const fromDate = new Date('2020-01-01');
 
-    //         // Running the function
-    //         generateMonthlyExpenses(transactions, skippedTransactions, expense, toDate, fromDate);
+        // Running the function
+        generateMonthlyLoans(transactions, skippedTransactions, loan, toDate, fromDate);
 
-    //         const expectedEndDate = new Date(transactions[transactions.length - 1].date);
-    //         const toBeEndDate = new Date('2020-01-01');
+        const expectedEndDate = new Date(transactions[transactions.length - 1].date);
+        const toBeEndDate = new Date('2020-01-01');
 
-    //         // advance by 5 months
-    //         toBeEndDate.setMonth(toBeEndDate.getMonth() + 4);
+        // advance by 5 months
+        toBeEndDate.setMonth(toBeEndDate.getMonth() + 4);
 
-    //         // days of the week from 0 (Sunday) to 6 (Saturday)
-    //         const TUESDAY = 2;
+        // days of the week from 0 (Sunday) to 6 (Saturday)
+        const TUESDAY = 2;
 
-    //         // calculate the number of days to add to get to the next Tuesday
-    //         let daysUntilNextTuesday = (7 + TUESDAY - toBeEndDate.getDay()) % 7;
+        // calculate the number of days to add to get to the next Tuesday
+        let daysUntilNextTuesday = (7 + TUESDAY - toBeEndDate.getDay()) % 7;
 
-    //         toBeEndDate.setDate(toBeEndDate.getDate() + daysUntilNextTuesday);
+        toBeEndDate.setDate(toBeEndDate.getDate() + daysUntilNextTuesday);
 
-    //         // Checking the results
-    //         expect(transactions.length).toBe(5);
-    //         expect(skippedTransactions.length).toBe(0);
-    //         expect(transactions[0].title).toBe(expense.expense_title);
-    //         expect(transactions[0].description).toBe(expense.expense_description);
-    //         expect(transactions[0].amount).toBe(-expense.expense_amount);
-    //         expect(expectedEndDate.toISOString().slice(0, 10)).toBe(toBeEndDate.toISOString().slice(0, 10));
-    //     });
+        // Checking the results
+        expect(transactions.length).toBe(5);
+        expect(skippedTransactions.length).toBe(0);
+        expect(transactions[0].title).toBe("Test loan to Test recepient");
+        expect(transactions[0].description).toBe(loan.loan_description);
+        expect(transactions[0].amount).toBe(-loan.loan_plan_amount);
+        expect(expectedEndDate.toISOString().slice(0, 10)).toBe(toBeEndDate.toISOString().slice(0, 10));
+    });
 
     //     it('Should generate monthly expenses correctly when the frequency week of month is set', () => {
     //         // Preparing the test data
