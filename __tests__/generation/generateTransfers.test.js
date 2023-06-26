@@ -11,6 +11,8 @@ afterAll(() => {
 
 describe('Test generateDailyTransfers', () => {
     it('Should generate daily transfers correctly', () => {
+        const account_id = 1;
+
         // Preparing the test data
         const transactions = [];
         const skippedTransactions = [];
@@ -26,7 +28,7 @@ describe('Test generateDailyTransfers', () => {
         const fromDate = new Date('2020-01-01');
 
         // Running the function
-        generateDailyTransfers(transactions, skippedTransactions, transfer, toDate, fromDate);
+        generateDailyTransfers(transactions, skippedTransactions, transfer, toDate, fromDate, account_id);
 
         const expectedEndDate = new Date(transactions[transactions.length - 1].date);
 
@@ -39,33 +41,37 @@ describe('Test generateDailyTransfers', () => {
         expect(expectedEndDate.toISOString().slice(0, 10)).toBe(new Date('2020-01-06').toISOString().slice(0, 10));
     });
 
-    //     it('Should generate daily expenses correctly every 2 days', () => {
-    //         // Preparing the test data'
-    //         const transactions = [];
-    //         const skippedTransactions = [];
-    //         const expense = {
-    //             expense_begin_date: new Date('2020-01-02'),
-    //             expense_title: "Test expense",
-    //             expense_description: "Test description",
-    //             expense_amount: 100,
-    //             frequency_type_variable: 2
-    //         };
-    //         const toDate = new Date('2020-01-06');
-    //         const fromDate = new Date('2020-01-01');
+    it('Should generate daily transfers correctly every 2 days', () => {
+        const account_id = 1;
 
-    //         // Running the function
-    //         generateDailyExpenses(transactions, skippedTransactions, expense, toDate, fromDate);
+        // Preparing the test data'
+        const transactions = [];
+        const skippedTransactions = [];
+        const transfer = {
+            source_account_id: 1,
+            destination_account_id: 2,
+            transfer_begin_date: new Date('2020-01-02'),
+            transfer_title: "Test transfer",
+            transfer_description: "Test description",
+            transfer_amount: 100,
+            frequency_type_variable: 2
+        };
+        const toDate = new Date('2020-01-06');
+        const fromDate = new Date('2020-01-01');
 
-    //         const expectedEndDate = new Date(transactions[transactions.length - 1].date);
+        // Running the function
+        generateDailyTransfers(transactions, skippedTransactions, transfer, toDate, fromDate, account_id);
 
-    //         // Checking the results
-    //         expect(transactions.length).toBe(3);
-    //         expect(skippedTransactions.length).toBe(0);
-    //         expect(transactions[0].title).toBe(expense.expense_title);
-    //         expect(transactions[0].description).toBe(expense.expense_description);
-    //         expect(transactions[0].amount).toBe(-expense.expense_amount);
-    //         expect(expectedEndDate.toISOString().slice(0, 10)).toBe(new Date('2020-01-06').toISOString().slice(0, 10));
-    //     });
+        const expectedEndDate = new Date(transactions[transactions.length - 1].date);
+
+        // Checking the results
+        expect(transactions.length).toBe(3);
+        expect(skippedTransactions.length).toBe(0);
+        expect(transactions[0].title).toBe(transfer.transfer_title);
+        expect(transactions[0].description).toBe(transfer.transfer_description);
+        expect(transactions[0].amount).toBe(-transfer.transfer_amount);
+        expect(expectedEndDate.toISOString().slice(0, 10)).toBe(new Date('2020-01-06').toISOString().slice(0, 10));
+    });
 
     //     it('Should generate daily expenses correctly when the expense begin date is less than the from date', () => {
     //         // Preparing the test data
