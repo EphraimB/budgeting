@@ -9,8 +9,8 @@ const generatePayrolls = (transactions, skippedTransactions, payrolls, fromDate)
     };
 
     if (payroll_end_date <= new Date()) {
-        return transactions;
-    } else if(fromDate > payroll_end_date) {
+
+    } else if (fromDate > payroll_end_date) {
         skippedTransactions.push(newTransaction);
     } else {
         transactions.push(newTransaction);

@@ -71,4 +71,19 @@ describe('generatePayrolls', () => {
         expect(payrollTransaction.date).toEqual(new Date(payroll.end_date));
         expect(payrollTransaction.amount).toBe(parseFloat(payroll.net_pay));
     });
+
+    it('should do nothing if payroll date is in the past', () => {
+        const transactions = [];
+        const skippedTransactions = [];
+        const payroll = {
+            end_date: '2019-08-01',
+            net_pay: '2000',
+        };
+        const fromDate = new Date('2020-10-01');
+
+        generatePayrolls(transactions, skippedTransactions, payroll, fromDate);
+
+        // check if transactions array has no elements
+        expect(transactions).toHaveLength(0);
+    });
 });
