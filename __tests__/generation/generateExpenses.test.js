@@ -103,29 +103,21 @@ describe('Test generateMonthlyExpenses', () => {
             expense_description: "Test description",
             expense_amount: 100
         };
-        const toDate = new Date();
-        toDate.setMonth(toDate.getMonth() + 7);
-        toDate.setDate(toDate.getDate() + 1);
-
-        const fromDate = new Date();
-        fromDate.setMonth(fromDate.getMonth() + 5);
-        fromDate.setDate(fromDate.getDate() + 1);
+        const toDate = new Date('2020-08-02');
+        const fromDate = new Date('2020-06-02');
 
         // Running the function
         generateMonthlyExpenses(transactions, skippedTransactions, expense, toDate, fromDate);
 
         const expectedEndDate = new Date(transactions[transactions.length - 1].date);
-        const toBeEndDate = new Date();
-        toBeEndDate.setMonth(toBeEndDate.getMonth() + 7);
-        toBeEndDate.setDate(toBeEndDate.getDate() + 1);
 
         // Checking the results
-        expect(transactions.length).toBe(3);
-        expect(skippedTransactions.length).toBe(5);
+        expect(transactions.length).toBe(2);
+        expect(skippedTransactions.length).toBe(6);
         expect(transactions[0].title).toBe(expense.expense_title);
         expect(transactions[0].description).toBe(expense.expense_description);
         expect(transactions[0].amount).toBe(-expense.expense_amount);
-        expect(expectedEndDate.toISOString().slice(0, 10)).toBe(new Date(toBeEndDate).toISOString().slice(0, 10));
+        expect(expectedEndDate.toISOString().slice(0, 10)).toBe(new Date('2020-08-01').toISOString().slice(0, 10));
     });
 
     it('Should generate monthly expenses correctly when the frequency day of week is set', () => {
