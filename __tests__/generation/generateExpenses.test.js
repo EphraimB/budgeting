@@ -558,8 +558,6 @@ describe('generateYearlyExpenses', () => {
         // Running the function
         generateYearlyExpenses(transactions, skippedTransactions, expense, toDate, fromDate);
 
-        console.log(transactions[0].date);
-
         // Checking the results
         expect(transactions.length).toBe(3);  // 2020, 2021, 2022
         expect(skippedTransactions.length).toBe(0);

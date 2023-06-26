@@ -578,7 +578,7 @@ describe('generateYearlyTransfers', () => {
             transfer_description: "Test description",
             transfer_amount: 150,
             frequency_day_of_week: 2,
-            frequency_week_of_month: 1,
+            frequency_week_of_month: 1
         };
         const toDate = new Date('2023-01-01');
         const fromDate = new Date('2020-01-01');
@@ -607,47 +607,49 @@ describe('generateYearlyTransfers', () => {
         });
     });
 
-    //     it('Should generate yearly expenses correctly when the frequency month of year is set', () => {
-    //         // Preparing the test data
-    //         const transactions = [];
-    //         const skippedTransactions = [];
-    //         const expense = {
-    //             expense_begin_date: new Date('2020-01-02'),
-    //             expense_title: "Test expense",
-    //             expense_description: "Test description",
-    //             expense_amount: 150,
-    //             frequency_day_of_week: 2,  // Tuesday
-    //             frequency_week_of_month: 1,  // Second week
-    //             frequency_month_of_year: 5,  // June
-    //         };
-    //         const toDate = new Date('2023-01-01');
-    //         const fromDate = new Date('2020-01-01');
+    it('Should generate yearly transfers correctly when the frequency month of year is set', () => {
+        const account_id = 1;
 
-    //         // Running the function
-    //         generateYearlyExpenses(transactions, skippedTransactions, expense, toDate, fromDate);
+        // Preparing the test data
+        const transactions = [];
+        const skippedTransactions = [];
+        const transfer = {
+            source_account_id: 1,
+            destination_account_id: 2,
+            transfer_begin_date: new Date('2020-01-02'),
+            transfer_title: "Test transfer",
+            transfer_description: "Test description",
+            transfer_amount: 150,
+            frequency_day_of_week: 2,
+            frequency_week_of_month: 1,
+            frequency_month_of_year: 5,  // June
+        };
+        const toDate = new Date('2023-01-01');
+        const fromDate = new Date('2020-01-01');
 
-    //         console.log(transactions[0].date);
+        // Running the function
+        generateYearlyTransfers(transactions, skippedTransactions, transfer, toDate, fromDate, account_id);
 
-    //         // Checking the results
-    //         expect(transactions.length).toBe(3);  // 2020, 2021, 2022
-    //         expect(skippedTransactions.length).toBe(0);
-    //         expect(transactions[0].title).toBe(expense.expense_title);
-    //         expect(transactions[0].description).toBe(expense.expense_description);
-    //         expect(transactions[0].amount).toBe(-expense.expense_amount);
+        // Checking the results
+        expect(transactions.length).toBe(3);  // 2020, 2021, 2022
+        expect(skippedTransactions.length).toBe(0);
+        expect(transactions[0].title).toBe(transfer.transfer_title);
+        expect(transactions[0].description).toBe(transfer.transfer_description);
+        expect(transactions[0].amount).toBe(-transfer.transfer_amount);
 
-    //         // Check if the transactions are on the correct dates (second Tuesday of June each year)
-    //         transactions.forEach((transaction, i) => {
-    //             const transactionDate = new Date(transaction.date);
-    //             expect(transactionDate.getMonth()).toBe(expense.frequency_month_of_year);  // June
+        // Check if the transactions are on the correct dates (second Tuesday of June each year)
+        transactions.forEach((transaction, i) => {
+            const transactionDate = new Date(transaction.date);
+            expect(transactionDate.getMonth()).toBe(transfer.frequency_month_of_year);  // June
 
-    //             expect(transactionDate.getDay()).toBe(expense.frequency_day_of_week);  // Tuesday
+            expect(transactionDate.getDay()).toBe(transfer.frequency_day_of_week);  // Tuesday
 
-    //             const secondWeekOfMonth = Math.floor((transactionDate.getDate() - 1) / 7) === 1;
-    //             expect(secondWeekOfMonth).toBeTruthy();
+            const secondWeekOfMonth = Math.floor((transactionDate.getDate() - 1) / 7) === 1;
+            expect(secondWeekOfMonth).toBeTruthy();
 
-    //             // Check if the year is correctly incrementing on each transaction
-    //             const expectedYear = expense.expense_begin_date.getFullYear() + i;
-    //             expect(transactionDate.getFullYear()).toBe(expectedYear);
-    //         });
-    //     });
+            // Check if the year is correctly incrementing on each transaction
+            const expectedYear = transfer.transfer_begin_date.getFullYear() + i;
+            expect(transactionDate.getFullYear()).toBe(expectedYear);
+        });
+    });
 });
