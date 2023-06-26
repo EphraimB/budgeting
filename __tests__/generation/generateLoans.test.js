@@ -192,7 +192,7 @@ describe('Test generateMonthlyLoans', () => {
             loan_recipient: "Test recepient",
             loan_description: "Test description",
             loan_plan_amount: 150,
-            frequency_day_of_week: 2,
+            frequency_day_of_week: 2
         };
         const toDate = new Date('2020-06-02');
         const fromDate = new Date('2020-01-01');
@@ -223,44 +223,45 @@ describe('Test generateMonthlyLoans', () => {
         expect(expectedEndDate.toISOString().slice(0, 10)).toBe(toBeEndDate.toISOString().slice(0, 10));
     });
 
-    //     it('Should generate monthly expenses correctly when the frequency week of month is set', () => {
-    //         // Preparing the test data
-    //         const transactions = [];
-    //         const skippedTransactions = [];
-    //         const expense = {
-    //             expense_begin_date: new Date('2020-01-02'),
-    //             expense_title: "Test expense",
-    //             expense_description: "Test description",
-    //             expense_amount: 150,
-    //             frequency_day_of_week: 2,
-    //             frequency_week_of_month: 1,
-    //         };
-    //         const toDate = new Date('2020-06-01');
-    //         const fromDate = new Date('2020-01-01');
+    it('Should generate monthly expenses correctly when the frequency week of month is set', () => {
+        // Preparing the test data
+        const transactions = [];
+        const skippedTransactions = [];
+        const loan = {
+            loan_begin_date: new Date('2020-01-02'),
+            loan_title: "Test",
+            loan_recipient: "Test recepient",
+            loan_description: "Test description",
+            loan_plan_amount: 150,
+            frequency_day_of_week: 2,
+            frequency_week_of_month: 1,
+        };
+        const toDate = new Date('2020-06-01');
+        const fromDate = new Date('2020-01-01');
 
-    //         // Running the function
-    //         generateMonthlyExpenses(transactions, skippedTransactions, expense, toDate, fromDate);
+        // Running the function
+        generateMonthlyLoans(transactions, skippedTransactions, loan, toDate, fromDate);
 
-    //         // Checking the results
-    //         expect(transactions.length).toBe(5);
-    //         expect(skippedTransactions.length).toBe(0);
-    //         expect(transactions[0].title).toBe(expense.expense_title);
-    //         expect(transactions[0].description).toBe(expense.expense_description);
-    //         expect(transactions[0].amount).toBe(-expense.expense_amount);
+        // Checking the results
+        expect(transactions.length).toBe(5);
+        expect(skippedTransactions.length).toBe(0);
+        expect(transactions[0].title).toBe("Test loan to Test recepient");
+        expect(transactions[0].description).toBe(loan.loan_description);
+        expect(transactions[0].amount).toBe(-loan.loan_plan_amount);
 
-    //         // Check if the transactions are on the correct dates (second Tuesday of each month)
-    //         transactions.forEach((transaction, i) => {
-    //             const transactionDate = new Date(transaction.date);
-    //             expect(transactionDate.getDay()).toBe(expense.frequency_day_of_week);
+        // Check if the transactions are on the correct dates (second Tuesday of each month)
+        transactions.forEach((transaction, i) => {
+            const transactionDate = new Date(transaction.date);
+            expect(transactionDate.getDay()).toBe(loan.frequency_day_of_week);
 
-    //             const secondWeekOfMonth = Math.floor((transactionDate.getDate() - 1) / 7) === 1;
-    //             expect(secondWeekOfMonth).toBeTruthy();
+            const secondWeekOfMonth = Math.floor((transactionDate.getDate() - 1) / 7) === 1;
+            expect(secondWeekOfMonth).toBeTruthy();
 
-    //             // Since we start from the current month and increment each month
-    //             const expectedMonth = (fromDate.getMonth() + i + 1) % 12;
-    //             expect(transactionDate.getMonth()).toBe(expectedMonth);
-    //         });
-    //     });
+            // Since we start from the current month and increment each month
+            const expectedMonth = (fromDate.getMonth() + i + 1) % 12;
+            expect(transactionDate.getMonth()).toBe(expectedMonth);
+        });
+    });
 });
 
 // describe('generateWeeklyExpenses', () => {
