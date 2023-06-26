@@ -125,7 +125,7 @@ describe('Test generateMonthlyLoans', () => {
         expect(expectedEndDate.toISOString().slice(0, 10)).toBe(new Date('2020-06-01').toISOString().slice(0, 10));
     });
 
-    it('Should generate monthly expenses correctly every 2 months', () => {
+    it('Should generate monthly loans correctly every 2 months', () => {
         // Preparing the test data
         const transactions = [];
         const skippedTransactions = [];
@@ -223,7 +223,7 @@ describe('Test generateMonthlyLoans', () => {
         expect(expectedEndDate.toISOString().slice(0, 10)).toBe(toBeEndDate.toISOString().slice(0, 10));
     });
 
-    it('Should generate monthly expenses correctly when the frequency week of month is set', () => {
+    it('Should generate monthly loans correctly when the frequency week of month is set', () => {
         // Preparing the test data
         const transactions = [];
         const skippedTransactions = [];
