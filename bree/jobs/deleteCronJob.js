@@ -1,0 +1,42 @@
+import { getBree } from '../breeManager.js';
+import fs from 'fs';
+import path from 'path';
+import * as url from 'url';
+const __dirname = url.fileURLToPath(new URL('.', import.meta.url));
+import pool from '../../config/db.js';
+import { cronJobQueries } from '../../models/queryData.js';
+
+const deleteCronJob = async (cronId, filePath, jobsFilePath) => {
+    try {
+        filePath = filePath || path.join(__dirname, 'cron-jobs', `${uniqueId}.js`);
+        jobsFilePath = jobsFilePath || path.join(__dirname, '../jobs.json');
+
+        const results = await pool.query(cronJobQueries.getCronJob, [cronId]);
+        const uniqueId = results.rows[0].unique_id;
+
+        const jobToDelete = getBree().config.jobs.find((job) => job.name === uniqueId);
+        if (jobToDelete) {
+            getBree().remove(jobToDelete.name);
+            console.log(`Deleted cron job with unique_id ${uniqueId}`);
+
+            await fs.promises.unlink(filePath);
+            console.log(`Deleted cron job file ${uniqueId}.js`);
+
+            const data = await fs.promises.readFile(jobsFilePath, 'utf8');
+            const jobs = JSON.parse(data);
+            const updatedJobs = jobs.filter((job) => job.name !== uniqueId && job.name !== 'payroll-checker');
+            await fs.promises.writeFile(jobsFilePath, JSON.stringify(updatedJobs, null, 2));
+            console.log(`Updated jobs.json file`);
+
+            return uniqueId;
+        } else {
+            console.log(`Could not find cron job with unique_id ${uniqueId}`);
+            return null;
+        }
+    } catch (error) {
+        console.error(error);
+        return null;
+    }
+};
+
+export default deleteCronJob;
