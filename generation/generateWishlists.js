@@ -39,5 +39,4 @@ const generateWishlists = (transactions, skippedTransactions, wishlist, fromDate
     }
 };
 
-
 export default generateWishlists;
