@@ -460,33 +460,37 @@ describe('generateYearlyTransfers', () => {
         expect(expectedEndDate.toISOString().slice(0, 10)).toBe(new Date('2022-01-02').toISOString().slice(0, 10));
     });
 
-    //     it('Should generate yearly expenses correctly every 2 years', () => {
-    //         // Preparing the test data
-    //         const transactions = [];
-    //         const skippedTransactions = [];
-    //         const expense = {
-    //             expense_begin_date: new Date('2020-01-02'),
-    //             expense_title: "Test expense",
-    //             expense_description: "Test description",
-    //             expense_amount: 100,
-    //             frequency_type_variable: 2
-    //         };
-    //         const toDate = new Date('2024-02-02');
-    //         const fromDate = new Date('2020-01-01');
+    it('Should generate yearly transfers correctly every 2 years', () => {
+        const account_id = 1;
 
-    //         // Running the function
-    //         generateYearlyExpenses(transactions, skippedTransactions, expense, toDate, fromDate);
+        // Preparing the test data
+        const transactions = [];
+        const skippedTransactions = [];
+        const transfer = {
+            source_account_id: 1,
+            destination_account_id: 2,
+            transfer_begin_date: new Date('2020-01-02'),
+            transfer_title: "Test transfer",
+            transfer_description: "Test description",
+            transfer_amount: 100,
+            frequency_type_variable: 2
+        };
+        const toDate = new Date('2024-02-02');
+        const fromDate = new Date('2020-01-01');
 
-    //         const expectedEndDate = new Date(transactions[transactions.length - 1].date);
+        // Running the function
+        generateYearlyTransfers(transactions, skippedTransactions, transfer, toDate, fromDate, account_id);
 
-    //         // Checking the results
-    //         expect(transactions.length).toBe(3);
-    //         expect(skippedTransactions.length).toBe(0);
-    //         expect(transactions[0].title).toBe(expense.expense_title);
-    //         expect(transactions[0].description).toBe(expense.expense_description);
-    //         expect(transactions[0].amount).toBe(-expense.expense_amount);
-    //         expect(expectedEndDate.toISOString().slice(0, 10)).toBe(new Date('2024-01-02').toISOString().slice(0, 10));
-    //     });
+        const expectedEndDate = new Date(transactions[transactions.length - 1].date);
+
+        // Checking the results
+        expect(transactions.length).toBe(3);
+        expect(skippedTransactions.length).toBe(0);
+        expect(transactions[0].title).toBe(transfer.transfer_title);
+        expect(transactions[0].description).toBe(transfer.transfer_description);
+        expect(transactions[0].amount).toBe(-transfer.transfer_amount);
+        expect(expectedEndDate.toISOString().slice(0, 10)).toBe(new Date('2024-01-02').toISOString().slice(0, 10));
+    });
 
     //     it('Should generate yearly expenses correctly when the expense begin date is less than the from date', () => {
     //         // Preparing the test data
