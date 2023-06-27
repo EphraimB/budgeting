@@ -25,12 +25,7 @@ router.post('/',
         body("frequency_week_of_month").optional().isInt({ min: 0, max: 4 }).withMessage("Frequency week of month must be a number between 0 and 4"),
         body("frequency_day_of_month").optional().isInt({ min: 0, max: 30 }).withMessage("Frequency day of month must be a number between 0 and 30"),
         body("frequency_month_of_year").optional().isInt({ min: 0, max: 11 }).withMessage("Frequency month of year must be a number between 0 and 11"),
-        body("begin_date").isISO8601().withMessage("Begin date must be a datetime").custom((value, { req }) => {
-            if (new Date(value) < new Date()) {
-                throw new Error('Begin date must be in the future');
-            }
-            return true;
-        }),
+        body("begin_date").isISO8601().withMessage("Begin date must be a datetime"),
         body("end_date").optional().isDate().withMessage("End date must be a date"),
         validateRequest,
     ],
@@ -50,12 +45,7 @@ router.put('/:id',
         body("frequency_week_of_month").optional().isInt({ min: 0, max: 4 }).withMessage("Frequency week of month must be a number between 0 and 4"),
         body("frequency_day_of_month").optional().isInt({ min: 0, max: 30 }).withMessage("Frequency day of month must be a number between 0 and 30"),
         body("frequency_month_of_year").optional().isInt({ min: 0, max: 11 }).withMessage("Frequency month of year must be a number between 0 and 11"),
-        body("begin_date").isISO8601().withMessage("Begin date must be a datetime").custom((value, { req }) => {
-            if (new Date(value) < new Date()) {
-                throw new Error('Begin date must be in the future');
-            }
-            return true;
-        }),
+        body("begin_date").isISO8601().withMessage("Begin date must be a datetime"),
         body("end_date").optional().isDate().withMessage("End date must be a date"),
         validateRequest,
     ],
