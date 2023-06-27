@@ -27,11 +27,15 @@ const parseLoan = loan => ({
 export const getLoans = async (request, response) => {
     const { id } = request.query;
 
-    const query = id ? loanQueries.getLoan : loanQueries.getLoans;
-    const queryParams = id ? [id] : [];
-
     try {
+        const query = id ? loanQueries.getLoan : loanQueries.getLoans;
+        const queryParams = id ? [id] : [];
         const rows = await executeQuery(query, queryParams);
+
+        if (id && rows.length === 0) {
+            return response.status(404).send('Loan not found');
+        }
+
         const loans = rows.map(loan => parseLoan(loan));
         response.status(200).json(loans);
     } catch (error) {
