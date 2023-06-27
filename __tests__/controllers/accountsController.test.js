@@ -24,6 +24,11 @@ afterEach(() => {
     jest.resetModules();
 });
 
+afterAll(() => {
+    // Restore console.error
+    consoleSpy.mockRestore();
+});
+
 // Helper function to generate mock module
 const mockModule = (executeQueryValue, errorMessage) => {
     jest.unstable_mockModule('../../utils/helperFunctions.js', () => ({
