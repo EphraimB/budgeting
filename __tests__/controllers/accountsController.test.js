@@ -111,7 +111,7 @@ describe('GET /api/accounts', () => {
 
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(400);
-        expect(mockResponse.json).toHaveBeenCalledWith({ message: 'Error getting accounts' });
+        expect(mockResponse.json).toHaveBeenCalledWith({ message: 'Error getting account' });
 
         // Check that console.error was called with the expected error
         expect(consoleSpy).toHaveBeenCalledWith(error);

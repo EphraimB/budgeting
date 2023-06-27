@@ -111,14 +111,14 @@ describe('GET /api/expenses', () => {
 
         const { getExpenses } = await import('../../controllers/expensesController.js');
 
-        mockRequest.query = { id: null };
+        mockRequest.query = { id: 1 };
 
         // Act
         await getExpenses(mockRequest, mockResponse);
 
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(400);
-        expect(mockResponse.json).toHaveBeenCalledWith({ message: 'Error getting expenses' });
+        expect(mockResponse.json).toHaveBeenCalledWith({ message: 'Error getting expense' });
 
         // Assert that console.error was called with the error message
         expect(consoleSpy).toHaveBeenCalledWith(error);

@@ -23,7 +23,7 @@ export const getAccounts = async (request, response) => {
         response.status(200).json(accounts);
     } catch (error) {
         console.error(error); // Log the error on the server side
-        handleError(response, "Error getting accounts");
+        handleError(response, `Error getting ${id ? 'account' : 'accounts'}`);
     }
 };
 

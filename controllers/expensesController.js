@@ -32,7 +32,7 @@ export const getExpenses = async (request, response) => {
         response.status(200).json(expenses.map(parseExpenses));
     } catch (error) {
         console.error(error); // Log the error on the server side
-        handleError(response, 'Error getting expenses');
+        handleError(response, `Error getting ${id ? 'expense' : 'expenses'}`);
     }
 };
 
