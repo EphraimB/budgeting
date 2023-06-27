@@ -12,6 +12,12 @@ jest.unstable_mockModule('../../bree/jobs/deleteCronJob.js', () => ({
 // Mock request and response
 let mockRequest;
 let mockResponse;
+let consoleSpy;
+
+beforeAll(() => {
+    // Create a spy on console.error before all tests
+    consoleSpy = jest.spyOn(console, 'error').mockImplementation(() => { });
+});
 
 beforeEach(() => {
     mockRequest = {};
@@ -24,6 +30,11 @@ beforeEach(() => {
 
 afterEach(() => {
     jest.resetModules();
+});
+
+afterAll(() => {
+    // Restore console.error
+    consoleSpy.mockRestore();
 });
 
 // Helper function to generate mock module
@@ -57,7 +68,9 @@ describe('GET /api/transfers', () => {
 
     it('should respond with an error message', async () => {
         // Arrange
-        mockModule(null, 'Error getting transfers');
+        const errorMessage = 'Error getting transfers';
+        const error = new Error(errorMessage);
+        mockModule(null, errorMessage);
 
         mockRequest.query = { id: null };
 
@@ -69,6 +82,9 @@ describe('GET /api/transfers', () => {
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(400);
         expect(mockResponse.json).toHaveBeenCalledWith({ message: 'Error getting transfers' });
+
+        // Assert that the error was logged
+        expect(consoleSpy).toHaveBeenCalledWith(error);
     });
 
     it('should respond with an array of transfers with id', async () => {
@@ -89,7 +105,11 @@ describe('GET /api/transfers', () => {
 
     it('should respond with an error message with id', async () => {
         // Arrange
-        mockModule(null, 'Error getting transfers');
+        const errorMessage = 'Error getting transfer';
+        const error = new Error(errorMessage);
+        mockModule(null, errorMessage);
+
+        mockRequest.query = { id: 1 };
 
         const { getTransfers } = await import('../../controllers/transfersController.js');
 
@@ -98,7 +118,10 @@ describe('GET /api/transfers', () => {
 
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(400);
-        expect(mockResponse.json).toHaveBeenCalledWith({ message: 'Error getting transfers' });
+        expect(mockResponse.json).toHaveBeenCalledWith({ message: 'Error getting transfer' });
+
+        // Assert that the error was logged
+        expect(consoleSpy).toHaveBeenCalledWith(error);
     });
 });
 
@@ -122,7 +145,9 @@ describe('POST /api/transfers', () => {
 
     it('should respond with an error message', async () => {
         // Arrange
-        mockModule(null, 'Error creating transfer');
+        const errorMessage = 'Error creating transfer';
+        const error = new Error(errorMessage);
+        mockModule(null, errorMessage);
 
         const { createTransfer } = await import('../../controllers/transfersController.js');
 
@@ -134,6 +159,9 @@ describe('POST /api/transfers', () => {
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(400);
         expect(mockResponse.json).toHaveBeenCalledWith({ message: 'Error creating transfer' });
+
+        // Assert that the error was logged
+        expect(consoleSpy).toHaveBeenCalledWith(error);
     });
 });
 
@@ -158,7 +186,9 @@ describe('PUT /api/transfer/:id', () => {
 
     it('should respond with an error message', async () => {
         // Arrange
-        mockModule(null, 'Error updating transfer');
+        const errorMessage = 'Error updating transfer';
+        const error = new Error(errorMessage);
+        mockModule(null, errorMessage);
 
         mockRequest.params = { id: 1 };
         mockRequest.body = transfers.filter(transfer => transfer.transfer_id === 1);
@@ -171,6 +201,9 @@ describe('PUT /api/transfer/:id', () => {
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(400);
         expect(mockResponse.json).toHaveBeenCalledWith({ message: 'Error updating transfer' });
+
+        // Assert that the error was logged
+        expect(consoleSpy).toHaveBeenCalledWith(error);
     });
 });
 
@@ -193,7 +226,9 @@ describe('DELETE /api/transfer/:id', () => {
 
     it('should respond with an error message', async () => {
         // Arrange
-        mockModule(null, 'Error deleting transfer');
+        const errorMessage = 'Error deleting transfer';
+        const error = new Error(errorMessage);
+        mockModule(null, errorMessage);
 
         const { deleteTransfer } = await import('../../controllers/transfersController.js');
 
@@ -206,5 +241,8 @@ describe('DELETE /api/transfer/:id', () => {
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(400);
         expect(mockResponse.json).toHaveBeenCalledWith({ message: 'Error deleting transfer' });
+
+        // Assert that the error was logged
+        expect(consoleSpy).toHaveBeenCalledWith(error);
     });
 });

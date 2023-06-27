@@ -15,8 +15,9 @@ const wishlistsParse = wishlist => ({
 
 // Get all wishlists
 export const getWishlists = async (request, response) => {
+    const { id } = request.query;
+
     try {
-        const { id } = request.query;
         const query = id ? wishlistQueries.getWishlist : wishlistQueries.getWishlists;
         const params = id ? [id] : [];
 
@@ -27,7 +28,8 @@ export const getWishlists = async (request, response) => {
 
         response.status(200).json(wishlists);
     } catch (error) {
-        handleError(response, 'Error getting wishlists');
+        console.error(error); // Log the error on the server side
+        handleError(response, `Error getting ${id ? 'wishlist' : 'wishlists'}`);
     }
 };
 
@@ -43,6 +45,7 @@ export const createWishlist = async (request, response) => {
 
         response.status(201).json(wishlists);
     } catch (error) {
+        console.error(error); // Log the error on the server side
         handleError(response, 'Error creating wishlist');
     }
 };
@@ -60,6 +63,7 @@ export const updateWishlist = async (request, response) => {
 
         response.status(200).json(wishlists);
     } catch (error) {
+        console.error(error); // Log the error on the server side
         handleError(response, 'Error updating wishlist');
     }
 };
@@ -73,6 +77,7 @@ export const deleteWishlist = async (request, response) => {
 
         response.status(200).send("Successfully deleted wishlist item");
     } catch (error) {
+        console.error(error); // Log the error on the server side
         handleError(response, 'Error deleting wishlist');
     }
 };

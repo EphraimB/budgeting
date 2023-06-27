@@ -35,6 +35,7 @@ export const getLoans = async (request, response) => {
         const loans = rows.map(loan => parseLoan(loan));
         response.status(200).json(loans);
     } catch (error) {
+        console.error(error); // Log the error on the server side
         handleError(response, `Error getting ${id ? 'loan' : 'loans'}`);
     }
 };
@@ -101,6 +102,7 @@ export const createLoan = async (request, response) => {
         const loans = loanResults.map(loan => parseLoan(loan));
         response.status(201).json(loans);
     } catch (error) {
+        console.error(error); // Log the error on the server side
         handleError(response, error.message.includes('cron job') ? 'Error creating cron job' : 'Error creating loan');
     }
 };
@@ -171,6 +173,7 @@ export const updateLoan = async (request, response) => {
         const loans = updateLoanResults.map(loan => parseLoan(loan));
         response.status(200).json(loans);
     } catch (error) {
+        console.error(error); // Log the error on the server side
         handleError(response, 'Error updating loan');
     }
 };
@@ -196,6 +199,7 @@ export const deleteLoan = async (request, response) => {
 
         response.status(200).send("Loan deleted successfully");
     } catch (error) {
+        console.error(error); // Log the error on the server side
         handleError(response, 'Error deleting loan');
     }
 };

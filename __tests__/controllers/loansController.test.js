@@ -12,6 +12,12 @@ jest.unstable_mockModule('../../bree/jobs/deleteCronJob.js', () => ({
 // Mock request and response
 let mockRequest;
 let mockResponse;
+let consoleSpy;
+
+beforeAll(() => {
+    // Create a spy on console.error before all tests
+    consoleSpy = jest.spyOn(console, 'error').mockImplementation(() => { });
+});
 
 beforeEach(() => {
     mockRequest = {};
@@ -24,6 +30,11 @@ beforeEach(() => {
 
 afterEach(() => {
     jest.resetModules();
+});
+
+afterAll(() => {
+    // Restore console.error
+    consoleSpy.mockRestore();
 });
 
 // Helper function to generate mock module
@@ -57,7 +68,9 @@ describe('GET /api/loans', () => {
 
     it('should respond with an error message', async () => {
         // Arrange
-        mockModule(null, 'Error getting loans');
+        const errorMessage = 'Error getting loans';
+        const error = new Error(errorMessage);
+        mockModule(null, errorMessage);
 
         mockRequest.query = { id: null };
 
@@ -69,6 +82,9 @@ describe('GET /api/loans', () => {
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(400);
         expect(mockResponse.json).toHaveBeenCalledWith({ message: 'Error getting loans' });
+
+        // Assert that console.error was called with the error message
+        expect(consoleSpy).toHaveBeenCalledWith(error);
     });
 
     it('should respond with an array of loans with id', async () => {
@@ -89,7 +105,9 @@ describe('GET /api/loans', () => {
 
     it('should respond with an error message with id', async () => {
         // Arrange
-        mockModule(null, 'Error getting loans');
+        const errorMessage = 'Error getting loan';
+        const error = new Error(errorMessage);
+        mockModule(null, errorMessage);
 
         mockRequest.query = { id: 1 };
 
@@ -101,6 +119,9 @@ describe('GET /api/loans', () => {
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(400);
         expect(mockResponse.json).toHaveBeenCalledWith({ message: 'Error getting loan' });
+
+        // Assert that console.error was called with the error message
+        expect(consoleSpy).toHaveBeenCalledWith(error);
     });
 });
 
@@ -122,7 +143,9 @@ describe('POST /api/loans', () => {
     });
 
     it('should respond with an error message', async () => {
-        mockModule(null, 'Error creating loan');
+        const errorMessage = 'Error creating loan';
+        const error = new Error(errorMessage);
+        mockModule(null, errorMessage);
 
         const { createLoan } = await import('../../controllers/loansController.js');
 
@@ -133,6 +156,9 @@ describe('POST /api/loans', () => {
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(400);
         expect(mockResponse.json).toHaveBeenCalledWith({ message: 'Error creating loan' });
+
+        // Assert that console.error was called with the error message
+        expect(consoleSpy).toHaveBeenCalledWith(error);
     });
 });
 
@@ -155,7 +181,9 @@ describe('PUT /api/loans/:id', () => {
     });
 
     it('should respond with an error message', async () => {
-        mockModule(null, 'Error updating loan');
+        const errorMessage = 'Error updating loan';
+        const error = new Error(errorMessage);
+        mockModule(null, errorMessage);
 
         const { updateLoan } = await import('../../controllers/loansController.js');
 
@@ -167,6 +195,9 @@ describe('PUT /api/loans/:id', () => {
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(400);
         expect(mockResponse.json).toHaveBeenCalledWith({ message: 'Error updating loan' });
+
+        // Assert that console.error was called with the error message
+        expect(consoleSpy).toHaveBeenCalledWith(error);
     });
 });
 
@@ -188,7 +219,9 @@ describe('DELETE /api/loans/:id', () => {
 
     it('should respond with an error message', async () => {
         // Arrange
-        mockModule(null, 'Error deleting loan');
+        const errorMessage = 'Error deleting loan';
+        const error = new Error(errorMessage);
+        mockModule(null, errorMessage);
 
         const { deleteLoan } = await import('../../controllers/loansController.js');
 
@@ -199,5 +232,8 @@ describe('DELETE /api/loans/:id', () => {
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(400);
         expect(mockResponse.json).toHaveBeenCalledWith({ message: 'Error deleting loan' });
+
+        // Assert that console.error was called with the error message
+        expect(consoleSpy).toHaveBeenCalledWith(error);
     });
 });

@@ -22,7 +22,8 @@ export const getAccounts = async (request, response) => {
         const accounts = rows.map(account => parseAccounts(account));
         response.status(200).json(accounts);
     } catch (error) {
-        handleError(response, "Error getting accounts");
+        console.error(error); // Log the error on the server side
+        handleError(response, `Error getting ${id ? 'account' : 'accounts'}`);
     }
 };
 
@@ -35,6 +36,7 @@ export const createAccount = async (request, response) => {
         const accounts = rows.map(account => parseAccounts(account));
         response.status(201).json(accounts);
     } catch (error) {
+        console.error(error); // Log the error on the server side
         handleError(response, "Error creating account");
     }
 };
@@ -49,6 +51,7 @@ export const updateAccount = async (request, response) => {
         const accounts = rows.map(account => parseAccounts(account));
         response.status(200).json(accounts);
     } catch (error) {
+        console.error(error); // Log the error on the server side
         handleError(response, "Error updating account");
     }
 };
@@ -61,6 +64,7 @@ export const deleteAccount = async (request, response) => {
         await executeQuery(accountQueries.deleteAccount, [id]);
         response.status(200).send("Successfully deleted account");
     } catch (error) {
+        console.error(error); // Log the error on the server side
         handleError(response, "Error deleting account");
     }
 };
