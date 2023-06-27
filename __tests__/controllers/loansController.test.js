@@ -124,7 +124,7 @@ describe('GET /api/loans', () => {
         expect(consoleSpy).toHaveBeenCalledWith(error);
     });
 
-    it('should respond with a 404 error message when the expense does not exist', async () => {
+    it('should respond with a 404 error message when the loan does not exist', async () => {
         // Arrange
         mockModule([]);
 
@@ -270,7 +270,7 @@ describe('DELETE /api/loans/:id', () => {
         expect(consoleSpy).toHaveBeenCalledWith(error);
     });
 
-    it('should respond with a 404 error message when the expense does not exist', async () => {
+    it('should respond with a 404 error message when the loan does not exist', async () => {
         // Arrange
         mockModule([]);
 
