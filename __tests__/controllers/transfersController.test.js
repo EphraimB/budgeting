@@ -221,6 +221,23 @@ describe('PUT /api/transfer/:id', () => {
         // Assert that the error was logged
         expect(consoleSpy).toHaveBeenCalledWith(error);
     });
+
+    it('should respond with a 404 error message when the transfer does not exist', async () => {
+        // Arrange
+        mockModule([]);
+
+        const { updateTransfer } = await import('../../controllers/transfersController.js');
+
+        mockRequest.params = { id: 3 };
+        mockRequest.body = transfers.filter(transfer => transfer.transfer_id === 1);
+
+        // Act
+        await updateTransfer(mockRequest, mockResponse);
+
+        // Assert
+        expect(mockResponse.status).toHaveBeenCalledWith(404);
+        expect(mockResponse.send).toHaveBeenCalledWith('Transfer not found');
+    });
 });
 
 describe('DELETE /api/transfer/:id', () => {
@@ -231,7 +248,6 @@ describe('DELETE /api/transfer/:id', () => {
         const { deleteTransfer } = await import('../../controllers/transfersController.js');
 
         mockRequest.params = { id: 1 };
-        mockRequest.query = { account_id: 1 };
 
         await deleteTransfer(mockRequest, mockResponse);
 
@@ -260,5 +276,22 @@ describe('DELETE /api/transfer/:id', () => {
 
         // Assert that the error was logged
         expect(consoleSpy).toHaveBeenCalledWith(error);
+    });
+
+    it('should respond with a 404 error message when the transfer does not exist', async () => {
+        // Arrange
+        mockModule([]);
+
+        const { deleteTransfer } = await import('../../controllers/transfersController.js');
+
+        mockRequest.params = { id: 3 };
+        mockRequest.query = { account_id: 1 };
+
+        // Act
+        await deleteTransfer(mockRequest, mockResponse);
+
+        // Assert
+        expect(mockResponse.status).toHaveBeenCalledWith(404);
+        expect(mockResponse.send).toHaveBeenCalledWith('Transfer not found');
     });
 });

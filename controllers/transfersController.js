@@ -24,11 +24,11 @@ const transfersParse = transfer => ({
 
 // Get transfers
 export const getTransfers = async (request, response) => {
-    const { account_id, id } = request.query;
+    const { id } = request.query;
 
     try {
         const query = id ? transferQueries.getTransfer : transferQueries.getTransfers;
-        const queryArgs = id ? [account_id, id] : [account_id];
+        const queryArgs = id ? [id] : [];
 
         const results = await executeQuery(query, queryArgs);
 
@@ -178,6 +178,10 @@ export const updateTransfer = async (request, response) => {
             id
         ]);
 
+        if (updateResults.length === 0) {
+            return response.status(404).send('Transfer not found');
+        }
+
         // Parse the data to correct format and return an object
         const transfers = updateResults.map(transfersParse);
 
@@ -191,10 +195,9 @@ export const updateTransfer = async (request, response) => {
 // Delete transfer
 export const deleteTransfer = async (request, response) => {
     try {
-        const { account_id } = request.query;
         const { id } = request.params;
 
-        const transferResults = await executeQuery(transferQueries.getTransfer, [account_id, id]);
+        const transferResults = await executeQuery(transferQueries.getTransfer, [id]);
 
         const cronId = transferResults[0].cron_job_id;
 
