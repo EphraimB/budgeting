@@ -4,6 +4,12 @@ import { payrolls } from '../../models/mockData.js';
 // Mock request and response
 let mockRequest;
 let mockResponse;
+let consoleSpy;
+
+beforeAll(() => {
+    // Create a spy on console.error before all tests
+    consoleSpy = jest.spyOn(console, 'error').mockImplementation(() => { });
+});
 
 beforeEach(() => {
     mockRequest = {};
@@ -16,6 +22,11 @@ beforeEach(() => {
 
 afterEach(() => {
     jest.resetModules();
+});
+
+afterAll(() => {
+    // Restore console.error
+    consoleSpy.mockRestore();
 });
 
 // Helper function to generate mock module
@@ -54,7 +65,9 @@ describe('GET /api/payrolls', () => {
 
     it('should respond with an error message', async () => {
         // Arrange
-        mockModule(null, 'Error getting payrolls');
+        const errorMessage = 'Error getting payrolls';
+        const error = new Error(errorMessage);
+        mockModule(null, errorMessage);
 
         mockRequest.query = { employee_id: 1 };
 
@@ -66,5 +79,8 @@ describe('GET /api/payrolls', () => {
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(400);
         expect(mockResponse.json).toHaveBeenCalledWith({ message: 'Error getting payrolls' });
+
+        // Check if console.error was called with the error message
+        expect(consoleSpy).toHaveBeenCalledWith(error);
     });
 });
