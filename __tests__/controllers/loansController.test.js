@@ -123,6 +123,22 @@ describe('GET /api/loans', () => {
         // Assert that console.error was called with the error message
         expect(consoleSpy).toHaveBeenCalledWith(error);
     });
+
+    it('should respond with a 404 error message when the expense does not exist', async () => {
+        // Arrange
+        mockModule([]);
+
+        const { getLoans } = await import('../../controllers/loansController.js');
+
+        mockRequest.query = { id: 3 };
+
+        // Act
+        await getLoans(mockRequest, mockResponse);
+
+        // Assert
+        expect(mockResponse.status).toHaveBeenCalledWith(404);
+        expect(mockResponse.send).toHaveBeenCalledWith('Loan not found');
+    });
 });
 
 describe('POST /api/loans', () => {
