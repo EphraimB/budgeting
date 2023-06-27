@@ -15,7 +15,8 @@ export const getAccounts = async (request, response) => {
     const { id } = request.query;
 
     try {
-        const query = id ? accountQueries.getAccount : accountQueries.getAccount;
+        // Change the query based on the presence of id
+        const query = id ? accountQueries.getAccount : accountQueries.getAccounts;
         const params = id ? [id] : [];
         const accounts = await executeQuery(query, params);
 
@@ -23,13 +24,12 @@ export const getAccounts = async (request, response) => {
             return response.status(404).send('Account not found');
         }
 
-        response.status(200).json(expenses.map(parseAccounts));
+        response.status(200).json(accounts.map(parseAccounts));
     } catch (error) {
         console.error(error); // Log the error on the server side
         handleError(response, `Error getting ${id ? 'account' : 'accounts'}`);
     }
 };
-
 
 // Create account
 export const createAccount = async (request, response) => {
