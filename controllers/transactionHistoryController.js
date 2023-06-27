@@ -19,6 +19,11 @@ export const getTransactions = async (request, response) => {
         const params = id ? [id] : [];
 
         const transactionResults = await executeQuery(query, params);
+
+        if (id && transactionResults.length === 0) {
+            return response.status(404).send('Transaction not found');
+        }
+
         const transactionHistory = transactionResults.map(transaction => parseTransactions(transaction));
 
         response.status(200).json(transactionHistory);

@@ -121,6 +121,22 @@ describe('GET /api/transactionHistory', () => {
         // Assert that the error was logged in the console
         expect(consoleSpy).toHaveBeenCalledWith(error);
     });
+
+    it('should respond with a 404 error message when the wishlist does not exist', async () => {
+        // Arrange
+        mockModule([]);
+
+        const { getTransactions } = await import('../../controllers/transactionHistoryController.js');
+
+        mockRequest.query = { id: 3 };
+
+        // Act
+        await getTransactions(mockRequest, mockResponse);
+
+        // Assert
+        expect(mockResponse.status).toHaveBeenCalledWith(404);
+        expect(mockResponse.send).toHaveBeenCalledWith('Transaction not found');
+    });
 });
 
 describe('POST /api/transactionHistory', () => {
