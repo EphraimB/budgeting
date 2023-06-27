@@ -25,7 +25,8 @@ export const getPayrollTaxes = async (request, response) => {
 
         response.status(200).json(returnObj);
     } catch (error) {
-        handleError(response, 'Error getting payroll taxes');
+        console.error(error); // Log the error on the server side
+        handleError(response, `Error getting ${id ? 'payroll tax' : 'payroll taxes'}`);
     }
 };
 
@@ -42,6 +43,7 @@ export const createPayrollTax = async (request, response) => {
 
         response.status(201).json(payrollTaxes);
     } catch (error) {
+        console.error(error); // Log the error on the server side
         handleError(response, 'Error creating payroll tax');
     }
 };
@@ -60,6 +62,7 @@ export const updatePayrollTax = async (request, response) => {
 
         response.status(200).json(payrollTaxes);
     } catch (error) {
+        console.error(error); // Log the error on the server side
         handleError(response, 'Error updating payroll tax');
     }
 };
@@ -76,6 +79,7 @@ export const deletePayrollTax = async (request, response) => {
 
         response.status(200).send("Successfully deleted payroll tax");
     } catch (error) {
+        console.error(error); // Log the error on the server side
         handleError(response, 'Error deleting payroll tax');
     }
 };
