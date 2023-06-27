@@ -113,8 +113,9 @@ export const createLoan = async (request, response) => {
 
 // Update loan
 export const updateLoan = async (request, response) => {
+    const { id } = request.params;
+
     try {
-        const { id } = request.params;
         const {
             account_id,
             amount,
@@ -136,7 +137,7 @@ export const updateLoan = async (request, response) => {
         const getLoanResults = await executeQuery(loanQueries.getLoan, [id]);
 
         if (getLoanResults.length === 0) {
-            return response.status(200).send([]);
+            return response.status(404).send('Loan not found');
         }
 
         const cronId = getLoanResults[0].cron_job_id;
