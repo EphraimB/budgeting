@@ -20,10 +20,11 @@ export const getTransactions = async (request, response) => {
 
         const transactionResults = await executeQuery(query, params);
         const transactionHistory = transactionResults.map(transaction => parseTransactions(transaction));
-        
+
         response.status(200).json(transactionHistory);
     } catch (error) {
-        handleError(response, 'Error getting transactions');
+        console.error(error); // Log the error on the server side
+        handleError(response, 'Error getting transaction history');
     }
 };
 
@@ -37,10 +38,11 @@ export const createTransaction = async (request, response) => {
         );
 
         const transactionHistory = transactionResults.map(transaction => parseTransactions(transaction));
-        
+
         response.status(201).json(transactionHistory);
     } catch (error) {
-        handleError(response, 'Error creating transaction');
+        console.error(error); // Log the error on the server side
+        handleError(response, 'Error creating transaction history');
     }
 };
 
@@ -59,7 +61,8 @@ export const updateTransaction = async (request, response) => {
 
         response.status(200).json(transactionHistory);
     } catch (error) {
-        handleError(response, 'Error updating transaction');
+        console.error(error); // Log the error on the server side
+        handleError(response, 'Error updating transaction history');
     }
 };
 
@@ -70,8 +73,9 @@ export const deleteTransaction = async (request, response) => {
 
         await executeQuery(transactionHistoryQueries.deleteTransaction, [id]);
 
-        response.status(200).send("Successfully deleted transaction");
+        response.status(200).send("Successfully deleted transaction history");
     } catch (error) {
-        handleError(response, 'Error deleting transaction');
+        console.error(error); // Log the error on the server side
+        handleError(response, 'Error deleting transaction history');
     }
 };

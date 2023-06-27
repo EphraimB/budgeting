@@ -8,6 +8,12 @@ jest.unstable_mockModule('../../bree/getPayrolls.js', () => ({
 // Mock request and response
 let mockRequest;
 let mockResponse;
+let consoleSpy;
+
+beforeAll(() => {
+    // Create a spy on console.error before all tests
+    consoleSpy = jest.spyOn(console, 'error').mockImplementation(() => { });
+});
 
 beforeEach(() => {
     mockRequest = {};
@@ -20,6 +26,11 @@ beforeEach(() => {
 
 afterEach(() => {
     jest.resetModules();
+});
+
+afterAll(() => {
+    // Restore console.error
+    consoleSpy.mockRestore();
 });
 
 // Helper function to generate mock module
@@ -64,7 +75,9 @@ describe('GET /api/payroll/dates', () => {
 
     it('should respond with an error message', async () => {
         // Arrange
-        mockModule(null, 'Error getting payroll dates');
+        const errorMessage = 'Error getting payroll dates';
+        const error = new Error(errorMessage);
+        mockModule(null, errorMessage);
 
         mockRequest.query = { id: null, employee_id: 1 };
 
@@ -76,6 +89,9 @@ describe('GET /api/payroll/dates', () => {
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(400);
         expect(mockResponse.json).toHaveBeenCalledWith({ "message": "Error getting payroll dates" });
+
+        // Assert that the error was logged
+        expect(consoleSpy).toHaveBeenCalledWith(error);
     });
 
     it('should respond with an array of payroll dates with id', async () => {
@@ -112,7 +128,9 @@ describe('GET /api/payroll/dates', () => {
         // Arrange
         const id = 1;
 
-        mockModule(null, 'Error getting payroll dates');
+        const errorMessage = 'Error getting payroll date';
+        const error = new Error(errorMessage);
+        mockModule(null, errorMessage);
 
         const { getPayrollDates } = await import('../../controllers/payrollDatesController.js');
 
@@ -123,7 +141,10 @@ describe('GET /api/payroll/dates', () => {
 
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(400);
-        expect(mockResponse.json).toHaveBeenCalledWith({ "message": "Error getting payroll dates" });
+        expect(mockResponse.json).toHaveBeenCalledWith({ "message": "Error getting payroll date" });
+
+        // Assert that the error was logged
+        expect(consoleSpy).toHaveBeenCalledWith(error);
     });
 });
 
@@ -162,7 +183,9 @@ describe('POST /api/payroll/dates', () => {
 
     it('should respond with an error message', async () => {
         // Arrange
-        mockModule(null, 'Error creating payroll date');
+        const errorMessage = 'Error creating payroll date';
+        const error = new Error(errorMessage);
+        mockModule(null, errorMessage);
 
         const newPayrollDate = {
             employee_id: 1,
@@ -179,6 +202,9 @@ describe('POST /api/payroll/dates', () => {
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(400);
         expect(mockResponse.json).toHaveBeenCalledWith({ "message": "Error creating payroll date" });
+
+        // Assert that the error was logged
+        expect(consoleSpy).toHaveBeenCalledWith(error);
     });
 });
 
@@ -219,7 +245,9 @@ describe('PUT /api/payroll/dates/:id', () => {
 
     it('should respond with an error message', async () => {
         // Arrange
-        mockModule(null, 'Error updating payroll date');
+        const errorMessage = 'Error updating payroll date';
+        const error = new Error(errorMessage);
+        mockModule(null, errorMessage);
 
         const updatedPayrollDate = {
             employee_id: 1,
@@ -237,6 +265,9 @@ describe('PUT /api/payroll/dates/:id', () => {
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(400);
         expect(mockResponse.json).toHaveBeenCalledWith({ "message": "Error updating payroll date" });
+
+        // Assert that the error was logged
+        expect(consoleSpy).toHaveBeenCalledWith(error);
     });
 });
 
@@ -259,7 +290,9 @@ describe('DELETE /api/payroll/dates/:id', () => {
 
     it('should respond with an error message', async () => {
         // Arrange
-        mockModule(null, 'Error deleting payroll date');
+        const errorMessage = 'Error deleting payroll date';
+        const error = new Error(errorMessage);
+        mockModule(null, errorMessage);
 
         mockRequest.params = { id: 1 };
         mockRequest.query = { employee_id: 1 };
@@ -271,5 +304,8 @@ describe('DELETE /api/payroll/dates/:id', () => {
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(400);
         expect(mockResponse.json).toHaveBeenCalledWith({ "message": "Error deleting payroll date" });
+
+        // Assert that the error was logged
+        expect(consoleSpy).toHaveBeenCalledWith(error);
     });
 });

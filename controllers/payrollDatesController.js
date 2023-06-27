@@ -10,8 +10,9 @@ const payrollDatesParse = payrollDate => ({
 
 // Get payroll dates
 export const getPayrollDates = async (request, response) => {
+    const { employee_id, id } = request.query;
+
     try {
-        const { employee_id, id } = request.query;
         const query = id ? payrollQueries.getPayrollDate : payrollQueries.getPayrollDates;
         const params = id ? [employee_id, id] : [employee_id];
 
@@ -26,7 +27,8 @@ export const getPayrollDates = async (request, response) => {
         };
         response.status(200).json(returnObj);
     } catch (error) {
-        handleError(response, 'Error getting payroll dates');
+        console.error(error); // Log the error on the server side
+        handleError(response, `Error getting ${id ? 'payroll date' : 'payroll dates'}`);
     }
 };
 
@@ -48,7 +50,8 @@ export const createPayrollDate = async (request, response) => {
         };
         response.status(201).json(returnObj);
     } catch (error) {
-        handleError(response, error.message);
+        console.error(error); // Log the error on the server side
+        handleError(response, 'Error creating payroll date');
     }
 };
 
@@ -72,6 +75,7 @@ export const updatePayrollDate = async (request, response) => {
 
         response.status(200).json(returnObj);
     } catch (error) {
+        console.error(error); // Log the error on the server side
         handleError(response, 'Error updating payroll date');
     }
 };
@@ -88,6 +92,7 @@ export const deletePayrollDate = async (request, response) => {
 
         response.status(200).send("Successfully deleted payroll date");
     } catch (error) {
+        console.error(error); // Log the error on the server side
         handleError(response, 'Error deleting payroll date');
     }
 };

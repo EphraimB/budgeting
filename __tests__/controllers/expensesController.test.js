@@ -12,6 +12,12 @@ jest.unstable_mockModule('../../bree/jobs/deleteCronJob.js', () => ({
 // Mock request and response
 let mockRequest;
 let mockResponse;
+let consoleSpy;
+
+beforeAll(() => {
+    // Create a spy on console.error before all tests
+    consoleSpy = jest.spyOn(console, 'error').mockImplementation(() => { });
+});
 
 beforeEach(() => {
     mockRequest = {};
@@ -24,6 +30,11 @@ beforeEach(() => {
 
 afterEach(() => {
     jest.resetModules();
+});
+
+afterAll(() => {
+    // Restore console.error
+    consoleSpy.mockRestore();
 });
 
 // Helper function to generate mock module
@@ -57,7 +68,9 @@ describe('GET /api/expenses', () => {
 
     it('should handle errors correctly', async () => {
         // Arrange
-        mockModule(null, 'Error getting expenses');
+        const errorMessage = 'Error getting expenses';
+        const error = new Error(errorMessage);
+        mockModule(null, errorMessage);
 
         const { getExpenses } = await import('../../controllers/expensesController.js');
 
@@ -69,6 +82,9 @@ describe('GET /api/expenses', () => {
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(400);
         expect(mockResponse.json).toHaveBeenCalledWith({ message: 'Error getting expenses' });
+
+        // Assert that console.error was called with the error message
+        expect(consoleSpy).toHaveBeenCalledWith(error);
     });
 
     it('should respond with an array of expenses with id', async () => {
@@ -89,18 +105,23 @@ describe('GET /api/expenses', () => {
 
     it('should handle errors correctly with id', async () => {
         // Arrange
-        mockModule(null, 'Error getting expenses');
+        const errorMessage = 'Error getting expense';
+        const error = new Error(errorMessage);
+        mockModule(null, errorMessage);
 
         const { getExpenses } = await import('../../controllers/expensesController.js');
 
-        mockRequest.query = { id: null };
+        mockRequest.query = { id: 1 };
 
         // Act
         await getExpenses(mockRequest, mockResponse);
 
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(400);
-        expect(mockResponse.json).toHaveBeenCalledWith({ message: 'Error getting expenses' });
+        expect(mockResponse.json).toHaveBeenCalledWith({ message: 'Error getting expense' });
+
+        // Assert that console.error was called with the error message
+        expect(consoleSpy).toHaveBeenCalledWith(error);
     });
 });
 
@@ -124,7 +145,9 @@ describe('POST /api/expenses', () => {
 
     it('should handle errors correctly', async () => {
         // Arrange
-        mockModule(null, 'Error creating expense');
+        const errorMessage = 'Error creating expense';
+        const error = new Error(errorMessage);
+        mockModule(null, errorMessage);
 
         const { createExpense } = await import('../../controllers/expensesController.js');
 
@@ -136,6 +159,9 @@ describe('POST /api/expenses', () => {
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(400);
         expect(mockResponse.json).toHaveBeenCalledWith({ message: 'Error creating expense' });
+
+        // Assert that console.error was called with the error message
+        expect(consoleSpy).toHaveBeenCalledWith(error);
     });
 });
 
@@ -159,7 +185,9 @@ describe('PUT /api/expenses/:id', () => {
 
     it('should handle errors correctly', async () => {
         // Arrange
-        mockModule(null, 'Error updating expense');
+        const errorMessage = 'Error updating expense';
+        const error = new Error(errorMessage);
+        mockModule(null, errorMessage);
 
         const { updateExpense } = await import('../../controllers/expensesController.js');
 
@@ -172,6 +200,9 @@ describe('PUT /api/expenses/:id', () => {
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(400);
         expect(mockResponse.json).toHaveBeenCalledWith({ message: 'Error updating expense' });
+
+        // Assert that console.error was called with the error message
+        expect(consoleSpy).toHaveBeenCalledWith(error);
     });
 });
 
@@ -193,7 +224,9 @@ describe('DELETE /api/expenses/:id', () => {
 
     it('should handle errors correctly', async () => {
         // Arrange
-        mockModule(null, 'Error deleting expense');
+        const errorMessage = 'Error deleting expense';
+        const error = new Error(errorMessage);
+        mockModule(null, errorMessage);
 
         const { deleteExpense } = await import('../../controllers/expensesController.js');
 
@@ -205,5 +238,8 @@ describe('DELETE /api/expenses/:id', () => {
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(400);
         expect(mockResponse.json).toHaveBeenCalledWith({ message: 'Error deleting expense' });
+
+        // Assert that console.error was called with the error message
+        expect(consoleSpy).toHaveBeenCalledWith(error);
     });
 });

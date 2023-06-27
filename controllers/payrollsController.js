@@ -27,6 +27,7 @@ export const getPayrolls = async (request, response) => {
 
         response.status(200).json(returnObj);
     } catch (error) {
+        console.error(error); // Log the error on the server side
         handleError(response, "Error getting payrolls");
     }
 };
