@@ -59,12 +59,17 @@ export const updateAccount = async (request, response) => {
 // Delete account
 export const deleteAccount = async (request, response) => {
     const id = parseInt(request.params.id);
-
     try {
+        const account = await executeQuery(accountQueries.getAccount, [id]);
+
+        if (account.length === 0) {
+            return response.status(404).send('Account not found');
+        }
+
         await executeQuery(accountQueries.deleteAccount, [id]);
-        response.status(200).send("Successfully deleted account");
+        response.status(200).send('Successfully deleted account');
     } catch (error) {
         console.error(error); // Log the error on the server side
-        handleError(response, "Error deleting account");
+        handleError(response, 'Error deleting account');
     }
 };
