@@ -12,20 +12,24 @@ const parseAccounts = account => ({
 
 // Get all accounts
 export const getAccounts = async (request, response) => {
-    const id = parseInt(request.query.id);
-
-    const query = id ? accountQueries.getAccount : accountQueries.getAccounts;
-    const params = id ? [id] : [];
+    const { id } = request.query;
 
     try {
-        const rows = await executeQuery(query, params);
-        const accounts = rows.map(account => parseAccounts(account));
-        response.status(200).json(accounts);
+        const query = id ? accountQueries.getAccount : accountQueries.getAccount;
+        const params = id ? [id] : [];
+        const expenses = await executeQuery(query, params);
+
+        if (id && expenses.length === 0) {
+            return response.status(404).send('Account not found');
+        }
+
+        response.status(200).json(expenses.map(parseAccounts));
     } catch (error) {
         console.error(error); // Log the error on the server side
         handleError(response, `Error getting ${id ? 'account' : 'accounts'}`);
     }
 };
+
 
 // Create account
 export const createAccount = async (request, response) => {

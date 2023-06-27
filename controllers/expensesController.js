@@ -29,6 +29,10 @@ export const getExpenses = async (request, response) => {
         const params = id ? [id] : [];
         const expenses = await executeQuery(query, params);
 
+        if (id && expenses.length === 0) {
+            return response.status(404).send('Expense not found');
+        }
+
         response.status(200).json(expenses.map(parseExpenses));
     } catch (error) {
         console.error(error); // Log the error on the server side
