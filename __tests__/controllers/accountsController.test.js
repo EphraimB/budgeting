@@ -8,7 +8,7 @@ let consoleSpy;
 
 beforeAll(() => {
     // Create a spy on console.error before all tests
-    consoleSpy = jest.spyOn(console, 'error');
+    consoleSpy = jest.spyOn(console, 'error').mockImplementation(() => { });
 });
 
 beforeEach(() => {
