@@ -123,6 +123,22 @@ describe('GET /api/expenses', () => {
         // Assert that console.error was called with the error message
         expect(consoleSpy).toHaveBeenCalledWith(error);
     });
+
+    it('should respond with a 404 error message when the expense does not exist', async () => {
+        // Arrange
+        mockModule([]);
+
+        const { getExpenses } = await import('../../controllers/expensesController.js');
+
+        mockRequest.query = { id: 3 };
+
+        // Act
+        await getExpenses(mockRequest, mockResponse);
+
+        // Assert
+        expect(mockResponse.status).toHaveBeenCalledWith(404);
+        expect(mockResponse.send).toHaveBeenCalledWith('Expense not found');
+    });
 });
 
 describe('POST /api/expenses', () => {
@@ -204,6 +220,23 @@ describe('PUT /api/expenses/:id', () => {
         // Assert that console.error was called with the error message
         expect(consoleSpy).toHaveBeenCalledWith(error);
     });
+
+    it('should respond with a 404 error message when the account does not exist', async () => {
+        // Arrange
+        mockModule([]);
+
+        const { updateExpense } = await import('../../controllers/expensesController.js');
+
+        mockRequest.params = { id: 1 };
+        mockRequest.body = accounts.filter(account => account.account_id === 1);
+
+        // Act
+        await updateExpense(mockRequest, mockResponse);
+
+        // Assert
+        expect(mockResponse.status).toHaveBeenCalledWith(404);
+        expect(mockResponse.send).toHaveBeenCalledWith('Expense not found');
+    });
 });
 
 describe('DELETE /api/expenses/:id', () => {
@@ -241,5 +274,21 @@ describe('DELETE /api/expenses/:id', () => {
 
         // Assert that console.error was called with the error message
         expect(consoleSpy).toHaveBeenCalledWith(error);
+    });
+
+    it('should respond with a 404 error message when the account does not exist', async () => {
+        // Arrange
+        mockModule([]);
+
+        const { deleteExpense } = await import('../../controllers/expensesController.js');
+
+        mockRequest.params = { id: 1 };
+
+        // Act
+        await deleteExpense(mockRequest, mockResponse);
+
+        // Assert
+        expect(mockResponse.status).toHaveBeenCalledWith(404);
+        expect(mockResponse.send).toHaveBeenCalledWith('Expense not found');
     });
 });

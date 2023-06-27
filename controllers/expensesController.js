@@ -133,7 +133,7 @@ export const updateExpense = async (request, response) => {
     try {
         const expenseResult = await executeQuery(expenseQueries.getExpense, [id]);
         if (expenseResult.length === 0) {
-            return response.status(200).send([]);
+            return response.status(404).send("Expense not found");
         }
 
         const cronId = expenseResult[0].cron_job_id;
@@ -176,7 +176,7 @@ export const deleteExpense = async (request, response) => {
     try {
         const expenseResult = await executeQuery(expenseQueries.getExpense, [id]);
         if (expenseResult.length === 0) {
-            return response.status(200).send("Expense doesn't exist");
+            return response.status(404).send("Expense not found");
         }
 
         const cronId = expenseResult[0].cron_job_id;
