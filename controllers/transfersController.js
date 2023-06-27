@@ -24,9 +24,9 @@ const transfersParse = transfer => ({
 
 // Get transfers
 export const getTransfers = async (request, response) => {
+    const { account_id, id } = request.query;
+    
     try {
-        const { account_id, id } = request.query;
-
         const query = id ? transferQueries.getTransfer : transferQueries.getTransfers;
         const queryArgs = id ? [account_id, id] : [account_id];
 
@@ -37,7 +37,8 @@ export const getTransfers = async (request, response) => {
 
         response.status(200).json(transfers);
     } catch (error) {
-        handleError(response, 'Error getting transfers');
+        console.error(error); // Log the error on the server side
+        handleError(response, `Error getting ${id ? 'transfer' : 'transfers'}`);
     }
 };
 
@@ -104,6 +105,7 @@ export const createTransfer = async (request, response) => {
 
         response.status(201).json(transfers);
     } catch (error) {
+        console.error(error); // Log the error on the server side
         handleError(response, error.message);
     }
 };
@@ -177,6 +179,7 @@ export const updateTransfer = async (request, response) => {
 
         response.status(200).json(transfers);
     } catch (error) {
+        console.error(error); // Log the error on the server side
         handleError(response, 'Error updating transfer');
     }
 };
@@ -200,6 +203,7 @@ export const deleteTransfer = async (request, response) => {
 
         response.status(200).send("Transfer deleted successfully");
     } catch (error) {
+        console.error(error); // Log the error on the server side
         handleError(response, error.message);
     }
 };
