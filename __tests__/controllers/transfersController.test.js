@@ -55,7 +55,7 @@ describe('GET /api/transfers', () => {
         mockModule(transfers);
 
         mockRequest.query = { id: null };
-        
+
         const { getTransfers } = await import('../../controllers/transfersController.js');
 
         // Call the function with the mock request and response
@@ -122,6 +122,22 @@ describe('GET /api/transfers', () => {
 
         // Assert that the error was logged
         expect(consoleSpy).toHaveBeenCalledWith(error);
+    });
+
+    it('should respond with a 404 error message when the transfer does not exist', async () => {
+        // Arrange
+        mockModule([]);
+
+        const { getTransfers } = await import('../../controllers/transfersController.js');
+
+        mockRequest.query = { id: 3 };
+
+        // Act
+        await getTransfers(mockRequest, mockResponse);
+
+        // Assert
+        expect(mockResponse.status).toHaveBeenCalledWith(404);
+        expect(mockResponse.send).toHaveBeenCalledWith('Transfer not found');
     });
 });
 
