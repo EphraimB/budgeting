@@ -165,6 +165,9 @@
           },
           "400": {
             "$ref": "#/components/responses/BadRequest"
+          },
+          "404": {
+            "description": "Transaction not found"
           }
         }
       },
@@ -231,6 +234,9 @@
           },
           "400": {
             "$ref": "#/components/responses/BadRequest"
+          },
+          "404": {
+            "description": "Transaction not found"
           }
         }
       },
@@ -258,6 +264,9 @@
           },
           "400": {
             "$ref": "#/components/responses/BadRequest"
+          },
+          "404": {
+            "description": "Transaction not found"
           }
         }
       }

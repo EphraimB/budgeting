@@ -25,12 +25,16 @@ const transfersParse = transfer => ({
 // Get transfers
 export const getTransfers = async (request, response) => {
     const { account_id, id } = request.query;
-    
+
     try {
         const query = id ? transferQueries.getTransfer : transferQueries.getTransfers;
         const queryArgs = id ? [account_id, id] : [account_id];
 
         const results = await executeQuery(query, queryArgs);
+
+        if (id && results.length === 0) {
+            return response.status(404).send('Transfer not found');
+        }
 
         // Parse the data to the correct format
         const transfers = results.map(transfersParse);
