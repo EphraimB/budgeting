@@ -289,7 +289,7 @@
             "$ref": "#/components/responses/BadRequest"
           },
           "404": {
-            "description": "Account not found"
+            "description": "Expense not found"
           }
         }
       },
@@ -358,7 +358,7 @@
             "$ref": "#/components/responses/BadRequest"
           },
           "404": {
-            "description": "Account not found"
+            "description": "Expense not found"
           }
         }
       },
@@ -388,7 +388,7 @@
             "$ref": "#/components/responses/BadRequest"
           },
           "404": {
-            "description": "Account not found"
+            "description": "Expense not found"
           }
         }
       }
