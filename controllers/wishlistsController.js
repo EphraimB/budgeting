@@ -23,6 +23,10 @@ export const getWishlists = async (request, response) => {
 
         const results = await executeQuery(query, params);
 
+        if (id && results.length === 0) {
+            return response.status(404).send('Wishlist not found');
+        }
+
         // Parse the data to the correct format
         const wishlists = results.map(wishlist => wishlistsParse(wishlist));
 
