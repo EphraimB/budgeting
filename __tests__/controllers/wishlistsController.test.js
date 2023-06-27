@@ -115,6 +115,22 @@ describe('GET /api/wishlists', () => {
         // Assert that the error was logged on the server side
         expect(consoleSpy).toHaveBeenCalledWith(error);
     });
+
+    it('should respond with a 404 error message when the expense does not exist', async () => {
+        // Arrange
+        mockModule([]);
+
+        const { getWishlists } = await import('../../controllers/wishlistsController.js');
+
+        mockRequest.query = { id: 3 };
+
+        // Act
+        await getWishlists(mockRequest, mockResponse);
+
+        // Assert
+        expect(mockResponse.status).toHaveBeenCalledWith(404);
+        expect(mockResponse.send).toHaveBeenCalledWith('Wishlist not found');
+    });
 });
 
 describe('POST /api/wishlists', () => {
