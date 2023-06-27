@@ -4,6 +4,12 @@ import { accounts } from '../../models/mockData.js';
 // Mock request and response
 let mockRequest;
 let mockResponse;
+let consoleSpy;
+
+beforeAll(() => {
+    // Create a spy on console.error before all tests
+    consoleSpy = jest.spyOn(console, 'error');
+});
 
 beforeEach(() => {
     mockRequest = {};
@@ -50,7 +56,9 @@ describe('GET /api/accounts', () => {
 
     it('should handle errors correctly', async () => {
         // Arrange
-        mockModule(null, 'Error getting accounts');
+        const errorMessage = 'Error getting accounts';
+        const error = new Error(errorMessage);
+        mockModule(null, errorMessage);
 
         const { getAccounts } = await import('../../controllers/accountsController.js');
 
@@ -62,6 +70,9 @@ describe('GET /api/accounts', () => {
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(400);
         expect(mockResponse.json).toHaveBeenCalledWith({ message: 'Error getting accounts' });
+
+        // Check that console.error was called with the expected error
+        expect(consoleSpy).toHaveBeenCalledWith(error);
     });
 
     it('should respond with an array of accounts with an id', async () => {
@@ -82,7 +93,9 @@ describe('GET /api/accounts', () => {
 
     it('should handle errors correctly with an id', async () => {
         // Arrange
-        mockModule(null, 'Error getting accounts');
+        const errorMessage = 'Error getting account';
+        const error = new Error(errorMessage);
+        mockModule(null, errorMessage);
 
         const { getAccounts } = await import('../../controllers/accountsController.js');
 
@@ -94,6 +107,9 @@ describe('GET /api/accounts', () => {
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(400);
         expect(mockResponse.json).toHaveBeenCalledWith({ message: 'Error getting accounts' });
+
+        // Check that console.error was called with the expected error
+        expect(consoleSpy).toHaveBeenCalledWith(error);
     });
 });
 
@@ -116,7 +132,9 @@ describe('POST /api/accounts', () => {
 
     it('should handle errors correctly', async () => {
         // Arrange
-        mockModule(null, 'Error creating account');
+        const errorMessage = 'Error creating account';
+        const error = new Error(errorMessage);
+        mockModule(null, errorMessage);
 
         const { createAccount } = await import('../../controllers/accountsController.js');
 
@@ -128,6 +146,9 @@ describe('POST /api/accounts', () => {
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(400);
         expect(mockResponse.json).toHaveBeenCalledWith({ message: 'Error creating account' });
+
+        // Check that console.error was called with the expected error
+        expect(consoleSpy).toHaveBeenCalledWith(error);
     });
 });
 
@@ -151,7 +172,9 @@ describe('PUT /api/accounts/:id', () => {
 
     it('should handle errors correctly', async () => {
         // Arrange
-        mockModule(null, 'Error updating account');
+        const errorMessage = 'Error updating account';
+        const error = new Error(errorMessage);
+        mockModule(null, errorMessage);
 
         const { updateAccount } = await import('../../controllers/accountsController.js');
 
@@ -164,6 +187,9 @@ describe('PUT /api/accounts/:id', () => {
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(400);
         expect(mockResponse.json).toHaveBeenCalledWith({ message: 'Error updating account' });
+
+        // Check that console.error was called with the expected error
+        expect(consoleSpy).toHaveBeenCalledWith(error);
     });
 });
 
@@ -185,7 +211,9 @@ describe('DELETE /api/accounts/:id', () => {
 
     it('should handle errors correctly', async () => {
         // Arrange
-        mockModule(null, 'Error deleting account');
+        const errorMessage = 'Error deleting account';
+        const error = new Error(errorMessage);
+        mockModule(null, errorMessage);
 
         const { deleteAccount } = await import('../../controllers/accountsController.js');
 
@@ -197,5 +225,8 @@ describe('DELETE /api/accounts/:id', () => {
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(400);
         expect(mockResponse.json).toHaveBeenCalledWith({ message: 'Error deleting account' });
+
+        // Check that console.error was called with the expected error
+        expect(consoleSpy).toHaveBeenCalledWith(error);
     });
 });
