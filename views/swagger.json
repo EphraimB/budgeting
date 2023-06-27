@@ -36,6 +36,9 @@
           },
           "400": {
             "$ref": "#/components/responses/BadRequest"
+          },
+          "404": {
+            "description": "Account not found"
           }
         }
       },
