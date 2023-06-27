@@ -14,8 +14,10 @@ const employeeParse = employee => ({
 
 // Get employee
 export const getEmployee = async (request, response) => {
+    const { id } = request.query;
+
     try {
-        const { id } = request.query;
+
         const query = id ? payrollQueries.getEmployee : payrollQueries.getEmployees;
         const params = id ? [id] : [];
 
@@ -26,7 +28,8 @@ export const getEmployee = async (request, response) => {
 
         response.status(200).json(employees);
     } catch (error) {
-        handleError(response, 'Error getting employee');
+        console.error(error); // Log the error on the server side
+        handleError(response, `Error getting ${id ? 'employee' : 'employees'}`);
     }
 };
 
@@ -42,6 +45,7 @@ export const createEmployee = async (request, response) => {
 
         response.status(201).json(employees);
     } catch (error) {
+        console.error(error); // Log the error on the server side
         handleError(response, 'Error creating employee');
     }
 };
@@ -61,6 +65,7 @@ export const updateEmployee = async (request, response) => {
 
         response.status(200).json(employees);
     } catch (error) {
+        console.error(error); // Log the error on the server side
         handleError(response, 'Error updating employee');
     }
 };
@@ -87,6 +92,7 @@ export const deleteEmployee = async (request, response) => {
 
         response.status(200).send('Successfully deleted employee');
     } catch (error) {
+        console.error(error); // Log the error on the server side
         handleError(response, 'Error deleting employee');
     }
 };
