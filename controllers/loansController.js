@@ -191,7 +191,7 @@ export const deleteLoan = async (request, response) => {
         const getLoanResults = await executeQuery(loanQueries.getLoan, [id]);
 
         if (getLoanResults.length === 0) {
-            return response.status(200).send("Loan doesn't exist");
+            return response.status(404).send("Loan not found");
         }
 
         const cronId = getLoanResults[0].cron_job_id;

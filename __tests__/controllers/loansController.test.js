@@ -228,8 +228,6 @@ describe('PUT /api/loans/:id', () => {
         // Act
         await updateLoan(mockRequest, mockResponse);
 
-        console.log(mockResponse.body);
-
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(404);
         expect(mockResponse.send).toHaveBeenCalledWith('Loan not found');
@@ -270,5 +268,22 @@ describe('DELETE /api/loans/:id', () => {
 
         // Assert that console.error was called with the error message
         expect(consoleSpy).toHaveBeenCalledWith(error);
+    });
+
+    it('should respond with a 404 error message when the expense does not exist', async () => {
+        // Arrange
+        mockModule([]);
+
+        const { deleteLoan } = await import('../../controllers/loansController.js');
+
+        mockRequest.params = { id: 3 };
+        mockRequest.body = loans.filter(loan => loan.loan_id === 1);
+
+        // Act
+        await deleteLoan(mockRequest, mockResponse);
+
+        // Assert
+        expect(mockResponse.status).toHaveBeenCalledWith(404);
+        expect(mockResponse.send).toHaveBeenCalledWith('Loan not found');
     });
 });
