@@ -234,4 +234,20 @@ describe('DELETE /api/accounts/:id', () => {
         // Check that console.error was called with the expected error
         expect(consoleSpy).toHaveBeenCalledWith(error);
     });
+
+    it('should respond with a 404 error message when the account does not exist', async () => {
+        // Arrange
+        mockModule([]);
+
+        const { deleteAccount } = await import('../../controllers/accountsController.js');
+
+        mockRequest.params = { id: 1 };
+
+        // Act
+        await deleteAccount(mockRequest, mockResponse);
+
+        // Assert
+        expect(mockResponse.status).toHaveBeenCalledWith(404);
+        expect(mockResponse.send).toHaveBeenCalledWith('Account not found');
+    });
 });
