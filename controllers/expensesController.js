@@ -31,6 +31,7 @@ export const getExpenses = async (request, response) => {
 
         response.status(200).json(expenses.map(parseExpenses));
     } catch (error) {
+        console.error(error); // Log the error on the server side
         handleError(response, 'Error getting expenses');
     }
 };
@@ -90,7 +91,8 @@ export const createExpense = async (request, response) => {
 
         response.status(201).json(expenses.map(parseExpenses));
     } catch (error) {
-        handleError(response, error.message);
+        console.error(error); // Log the error on the server side
+        handleError(response, 'Error creating expense');
     }
 };
 
@@ -158,6 +160,7 @@ export const updateExpense = async (request, response) => {
 
         response.status(200).json(expenses.map(parseExpenses));
     } catch (error) {
+        console.error(error); // Log the error on the server side
         handleError(response, 'Error updating expense');
     }
 };
@@ -183,6 +186,7 @@ export const deleteExpense = async (request, response) => {
 
         response.status(200).send("Expense deleted successfully");
     } catch (error) {
+        console.error(error); // Log the error on the server side
         handleError(response, 'Error deleting expense');
     }
 };
