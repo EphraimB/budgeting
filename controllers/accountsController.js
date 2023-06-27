@@ -17,9 +17,9 @@ export const getAccounts = async (request, response) => {
     try {
         const query = id ? accountQueries.getAccount : accountQueries.getAccount;
         const params = id ? [id] : [];
-        const expenses = await executeQuery(query, params);
+        const accounts = await executeQuery(query, params);
 
-        if (id && expenses.length === 0) {
+        if (id && accounts.length === 0) {
             return response.status(404).send('Account not found');
         }
 
