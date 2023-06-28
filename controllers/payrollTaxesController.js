@@ -16,6 +16,11 @@ export const getPayrollTaxes = async (request, response) => {
 
     try {
         const rows = await executeQuery(query, queryParameters);
+
+        if (employee_id && rows.length === 0) {
+            return response.status(404).send('Payroll tax not found');
+        }
+
         const payrollTaxes = rows.map(payrollTax => payrollTaxesParse(payrollTax));
 
         const returnObj = {
@@ -55,6 +60,10 @@ export const updatePayrollTax = async (request, response) => {
 
     try {
         const results = await executeQuery(payrollQueries.updatePayrollTax, [name, rate, id]);
+
+        if (results.length === 0) {
+            return response.status(404).send('Payroll tax not found');
+        }
 
         await getPayrolls(employee_id);
 

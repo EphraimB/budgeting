@@ -141,6 +141,22 @@ describe('GET /api/payroll/taxes', () => {
         // Assert that the error was logged
         expect(consoleSpy).toHaveBeenCalledWith(error);
     });
+
+    it('should respond with a 404 error message when the payroll tax does not exist', async () => {
+        // Arrange
+        mockModule([]);
+
+        const { getPayrollTaxes } = await import('../../controllers/payrollTaxesController.js');
+
+        mockRequest.query = { employee_id: 3 };
+
+        // Act
+        await getPayrollTaxes(mockRequest, mockResponse);
+
+        // Assert
+        expect(mockResponse.status).toHaveBeenCalledWith(404);
+        expect(mockResponse.send).toHaveBeenCalledWith('Payroll tax not found');
+    });
 });
 
 describe('POST /api/payroll/taxes', () => {
@@ -252,6 +268,23 @@ describe('PUT /api/payroll/taxes/:id', () => {
 
         // Assert that the error was logged
         expect(consoleSpy).toHaveBeenCalledWith(error);
+    });
+
+    it('should respond with a 404 error message when the payroll tax does not exist', async () => {
+        // Arrange
+        mockModule([]);
+
+        const { updatePayrollTax } = await import('../../controllers/payrollTaxesController.js');
+
+        mockRequest.params = { id: 3 };
+        mockRequest.body = payrollTaxes.filter(payrollTax => payrollTax.payroll_taxes_id === 1);
+
+        // Act
+        await updatePayrollTax(mockRequest, mockResponse);
+
+        // Assert
+        expect(mockResponse.status).toHaveBeenCalledWith(404);
+        expect(mockResponse.send).toHaveBeenCalledWith('Payroll tax not found');
     });
 });
 
