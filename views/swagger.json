@@ -871,6 +871,9 @@
           },
           "400": {
             "$ref": "#/components/responses/BadRequest"
+          },
+          "404": {
+            "description": "Employee not found"
           }
         }
       },
@@ -937,6 +940,9 @@
           },
           "400": {
             "$ref": "#/components/responses/BadRequest"
+          },
+          "404": {
+            "description": "Employee not found"
           }
         }
       },
@@ -964,6 +970,9 @@
           },
           "400": {
             "$ref": "#/components/responses/BadRequest"
+          },
+          "404": {
+            "description": "Employee not found"
           }
         }
       }
