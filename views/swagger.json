@@ -597,6 +597,9 @@
           },
           "400": {
             "$ref": "#/components/responses/BadRequest"
+          },
+          "404": {
+            "description": "Payroll tax not found"
           }
         }
       },
@@ -663,6 +666,9 @@
           },
           "400": {
             "$ref": "#/components/responses/BadRequest"
+          },
+          "404": {
+            "description": "Payroll tax not found"
           }
         }
       },
@@ -700,6 +706,9 @@
           },
           "400": {
             "$ref": "#/components/responses/BadRequest"
+          },
+          "404": {
+            "description": "Payroll tax not found"
           }
         }
       }
