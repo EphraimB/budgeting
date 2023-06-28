@@ -17,6 +17,10 @@ export const getPayrolls = async (request, response) => {
 
         const results = await executeQuery(payrollQueries.getPayrolls, [employee_id]);
 
+        if (results.length === 0) {
+            return response.status(404).send('No payrolls for employee or not found');
+        }
+
         // Parse the data to correct format and return an object
         const payrolls = results.map(payroll => payrollsParse(payroll));
 

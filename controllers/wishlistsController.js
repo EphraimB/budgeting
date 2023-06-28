@@ -23,6 +23,10 @@ export const getWishlists = async (request, response) => {
 
         const results = await executeQuery(query, params);
 
+        if (id && results.length === 0) {
+            return response.status(404).send('Wishlist not found');
+        }
+
         // Parse the data to the correct format
         const wishlists = results.map(wishlist => wishlistsParse(wishlist));
 
@@ -58,6 +62,10 @@ export const updateWishlist = async (request, response) => {
 
         const results = await executeQuery(wishlistQueries.updateWishlist, [account_id, amount, title, description, priority, url_link, id]);
 
+        if (results.length === 0) {
+            return response.status(404).send('Wishlist not found');
+        }
+
         // Parse the data to correct format and return an object
         const wishlists = results.map(wishlist => wishlistsParse(wishlist));
 
@@ -72,6 +80,12 @@ export const updateWishlist = async (request, response) => {
 export const deleteWishlist = async (request, response) => {
     try {
         const id = parseInt(request.params.id);
+
+        const getWishlistResults = await executeQuery(wishlistQueries.getWishlist, [id]);
+
+        if (getWishlistResults.length === 0) {
+            return response.status(404).send("Wishlist not found");
+        }
 
         await executeQuery(wishlistQueries.deleteWishlist, [id]);
 

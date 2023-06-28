@@ -18,6 +18,10 @@ export const getPayrollDates = async (request, response) => {
 
         const results = await executeQuery(query, params);
 
+        if (employee_id && results.length === 0) {
+            return response.status(404).send('Payroll date not found');
+        }
+
         // Parse the data to correct format and return an object
         const payrollDates = results.map(payrollDate => payrollDatesParse(payrollDate));
 
@@ -63,6 +67,10 @@ export const updatePayrollDate = async (request, response) => {
 
         const results = await executeQuery(payrollQueries.updatePayrollDate, [start_day, end_day, id]);
 
+        if (results.length === 0) {
+            return response.status(404).send('Payroll date not found');
+        }
+
         await getPayrolls(employee_id);
 
         // Parse the data to correct format and return an object
@@ -86,7 +94,11 @@ export const deletePayrollDate = async (request, response) => {
         const { employee_id } = request.query;
         const { id } = request.params;
 
-        await executeQuery(payrollQueries.deletePayrollDate, [id]);
+        const transferResults = await executeQuery(payrollQueries.deletePayrollDate, [id]);
+
+        if (transferResults.length === 0) {
+            return response.status(404).send('Payroll date not found');
+        }
 
         await getPayrolls(employee_id);
 

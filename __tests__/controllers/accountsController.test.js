@@ -116,6 +116,22 @@ describe('GET /api/accounts', () => {
         // Check that console.error was called with the expected error
         expect(consoleSpy).toHaveBeenCalledWith(error);
     });
+
+    it('should respond with a 404 error message when the account does not exist', async () => {
+        // Arrange
+        mockModule([]);
+
+        const { getAccounts } = await import('../../controllers/accountsController.js');
+
+        mockRequest.query = { id: 3 };
+
+        // Act
+        await getAccounts(mockRequest, mockResponse);
+
+        // Assert
+        expect(mockResponse.status).toHaveBeenCalledWith(404);
+        expect(mockResponse.send).toHaveBeenCalledWith('Account not found');
+    });
 });
 
 describe('POST /api/accounts', () => {
@@ -196,6 +212,23 @@ describe('PUT /api/accounts/:id', () => {
         // Check that console.error was called with the expected error
         expect(consoleSpy).toHaveBeenCalledWith(error);
     });
+
+    it('should respond with a 404 error message when the account does not exist', async () => {
+        // Arrange
+        mockModule([]);
+
+        const { updateAccount } = await import('../../controllers/accountsController.js');
+
+        mockRequest.params = { id: 1 };
+        mockRequest.body = accounts.filter(account => account.account_id === 1);
+
+        // Act
+        await updateAccount(mockRequest, mockResponse);
+
+        // Assert
+        expect(mockResponse.status).toHaveBeenCalledWith(404);
+        expect(mockResponse.send).toHaveBeenCalledWith('Account not found');
+    });
 });
 
 describe('DELETE /api/accounts/:id', () => {
@@ -233,5 +266,21 @@ describe('DELETE /api/accounts/:id', () => {
 
         // Check that console.error was called with the expected error
         expect(consoleSpy).toHaveBeenCalledWith(error);
+    });
+
+    it('should respond with a 404 error message when the account does not exist', async () => {
+        // Arrange
+        mockModule([]);
+
+        const { deleteAccount } = await import('../../controllers/accountsController.js');
+
+        mockRequest.params = { id: 1 };
+
+        // Act
+        await deleteAccount(mockRequest, mockResponse);
+
+        // Assert
+        expect(mockResponse.status).toHaveBeenCalledWith(404);
+        expect(mockResponse.send).toHaveBeenCalledWith('Account not found');
     });
 });

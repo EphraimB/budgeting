@@ -115,6 +115,22 @@ describe('GET /api/wishlists', () => {
         // Assert that the error was logged on the server side
         expect(consoleSpy).toHaveBeenCalledWith(error);
     });
+
+    it('should respond with a 404 error message when the wishlist does not exist', async () => {
+        // Arrange
+        mockModule([]);
+
+        const { getWishlists } = await import('../../controllers/wishlistsController.js');
+
+        mockRequest.query = { id: 3 };
+
+        // Act
+        await getWishlists(mockRequest, mockResponse);
+
+        // Assert
+        expect(mockResponse.status).toHaveBeenCalledWith(404);
+        expect(mockResponse.send).toHaveBeenCalledWith('Wishlist not found');
+    });
 });
 
 describe('POST /api/wishlists', () => {
@@ -194,6 +210,23 @@ describe('PUT /api/wishlists/:id', () => {
         // Assert that the error was logged on the server side
         expect(consoleSpy).toHaveBeenCalledWith(error);
     });
+
+    it('should respond with a 404 error message when the wishlist does not exist', async () => {
+        // Arrange
+        mockModule([]);
+
+        const { updateWishlist } = await import('../../controllers/wishlistsController.js');
+
+        mockRequest.params = { id: 3 };
+        mockRequest.body = wishlists.filter(wishlist => wishlist.wishlist_id === 1);
+
+        // Act
+        await updateWishlist(mockRequest, mockResponse);
+
+        // Assert
+        expect(mockResponse.status).toHaveBeenCalledWith(404);
+        expect(mockResponse.send).toHaveBeenCalledWith('Wishlist not found');
+    });
 });
 
 describe('DELETE /api/wishlists/:id', () => {
@@ -229,5 +262,21 @@ describe('DELETE /api/wishlists/:id', () => {
 
         // Assert that the error was logged on the server side
         expect(consoleSpy).toHaveBeenCalledWith(error);
+    });
+
+    it('should respond with a 404 error message when the wishlist does not exist', async () => {
+        // Arrange
+        mockModule([]);
+
+        const { deleteWishlist } = await import('../../controllers/wishlistsController.js');
+
+        mockRequest.params = { id: 3 };
+
+        // Act
+        await deleteWishlist(mockRequest, mockResponse);
+
+        // Assert
+        expect(mockResponse.status).toHaveBeenCalledWith(404);
+        expect(mockResponse.send).toHaveBeenCalledWith('Wishlist not found');
     });
 });

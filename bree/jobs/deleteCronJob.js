@@ -8,11 +8,11 @@ import { cronJobQueries } from '../../models/queryData.js';
 
 const deleteCronJob = async (cronId, filePath, jobsFilePath) => {
     try {
-        filePath = filePath || path.join(__dirname, 'cron-jobs', `${uniqueId}.js`);
-        jobsFilePath = jobsFilePath || path.join(__dirname, '../jobs.json');
-
         const results = await pool.query(cronJobQueries.getCronJob, [cronId]);
         const uniqueId = results.rows[0].unique_id;
+
+        filePath = filePath || path.join(__dirname, 'cron-jobs', `${uniqueId}.js`);
+        jobsFilePath = jobsFilePath || path.join(__dirname, '../jobs.json');
 
         const jobToDelete = getBree().config.jobs.find((job) => job.name === uniqueId);
         if (jobToDelete) {

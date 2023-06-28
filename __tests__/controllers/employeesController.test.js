@@ -1,5 +1,5 @@
 import { jest } from '@jest/globals';
-import { employees } from '../../models/mockData.js';
+import { employees, payrollDates, payrollTaxes } from '../../models/mockData.js';
 
 jest.unstable_mockModule('../../bree/getPayrolls.js', () => ({
     getPayrolls: jest.fn(),
@@ -34,16 +34,15 @@ afterAll(() => {
 });
 
 // Helper function to generate mock module
-const mockModule = (executeQueryResponses, errorMessage) => {
+const mockModule = (executeQueryValues, errorMessage) => {
     let callCount = 0;
-
     jest.unstable_mockModule('../../utils/helperFunctions.js', () => ({
         executeQuery: jest.fn().mockImplementation(() => {
-            if (errorMessage) {
+            if (errorMessage && callCount === 0) {
                 throw new Error(errorMessage);
             }
-
-            return Promise.resolve(executeQueryResponses[callCount++]);
+            const returnValue = executeQueryValues[callCount++];
+            return Promise.resolve(returnValue);
         }),
         handleError: jest.fn((res, message) => {
             res.status(400).json({ message });
@@ -56,7 +55,7 @@ describe('GET /api/payroll/employee', () => {
         // Arrange
         mockModule([employees]);
 
-        mockRequest.query = { id: null };
+        mockRequest.query = { employee_id: null };
 
         const { getEmployee } = await import('../../controllers/employeesController.js');
 
@@ -74,9 +73,9 @@ describe('GET /api/payroll/employee', () => {
         // Arrange
         const errorMessage = 'Error getting employees';
         const error = new Error(errorMessage);
-        mockModule(null, errorMessage);
+        mockModule([], errorMessage);
 
-        mockRequest.query = { id: null };
+        mockRequest.query = { employee_id: null };
 
         const { getEmployee } = await import('../../controllers/employeesController.js');
 
@@ -95,7 +94,7 @@ describe('GET /api/payroll/employee', () => {
         // Arrange
         mockModule([employees.filter(employee => employee.employee_id === 1)]);
 
-        mockRequest.query = { id: 1 };
+        mockRequest.query = { employee_id: 1 };
 
         const { getEmployee } = await import('../../controllers/employeesController.js');
 
@@ -113,7 +112,7 @@ describe('GET /api/payroll/employee', () => {
         const error = new Error(errorMessage);
         mockModule(null, errorMessage);
 
-        mockRequest.query = { id: 1 };
+        mockRequest.query = { employee_id: 1 };
 
         const { getEmployee } = await import('../../controllers/employeesController.js');
 
@@ -126,6 +125,22 @@ describe('GET /api/payroll/employee', () => {
 
         // Check that the error was logged
         expect(consoleSpy).toHaveBeenCalledWith(error);
+    });
+
+    it('should respond with a 404 error message when the employee does not exist', async () => {
+        // Arrange
+        mockModule([[], null, null]);
+
+        const { getEmployee } = await import('../../controllers/employeesController.js');
+
+        mockRequest.query = { employee_id: 3 };
+
+        // Act
+        await getEmployee(mockRequest, mockResponse);
+
+        // Assert
+        expect(mockResponse.status).toHaveBeenCalledWith(404);
+        expect(mockResponse.send).toHaveBeenCalledWith('Employee not found');
     });
 });
 
@@ -211,18 +226,36 @@ describe('PUT /api/payroll/employee/:id', () => {
         // Check that the error was logged
         expect(consoleSpy).toHaveBeenCalledWith(error);
     });
+
+    it('should respond with a 404 error message when the employee does not exist', async () => {
+        // Arrange
+        mockModule([[], null, null]);
+
+        const { updateEmployee } = await import('../../controllers/employeesController.js');
+
+        mockRequest.params = { employee_id: 3 };
+        mockRequest.body = employees.filter(employee => employee.employee_id === 3);
+
+        // Act
+        await updateEmployee(mockRequest, mockResponse);
+
+        // Assert
+        expect(mockResponse.status).toHaveBeenCalledWith(404);
+        expect(mockResponse.send).toHaveBeenCalledWith('Employee not found');
+    });
 });
 
 describe('DELETE /api/payroll/employee/:id', () => {
     it('should respond with a success message', async () => {
         // Arrange
         const employee_id = 1;
-        mockRequest.params = { employee_id };
 
         // Mock the executeQuery function to return different values based on the query
-        mockModule([[], [], 'Successfully deleted employee']);
+        mockModule([[employee_id], [], [], 'Successfully deleted employee']);
 
         const { deleteEmployee } = await import('../../controllers/employeesController.js');
+
+        mockRequest.params = { employee_id };
 
         // Act
         await deleteEmployee(mockRequest, mockResponse);
@@ -240,7 +273,7 @@ describe('DELETE /api/payroll/employee/:id', () => {
         // Mock the executeQuery function to throw an error
         const errorMessage = 'Error deleting employee';
         const error = new Error(errorMessage);
-        mockModule(null, errorMessage);
+        mockModule([], errorMessage);
 
         const { deleteEmployee } = await import('../../controllers/employeesController.js');
 
@@ -260,7 +293,7 @@ describe('DELETE /api/payroll/employee/:id', () => {
         const employee_id = 1;
         mockRequest.params = { employee_id };
 
-        mockModule([[], [{ employee_id }]]);
+        mockModule([employee_id, payrollDates, payrollTaxes]);
 
         const { deleteEmployee } = await import('../../controllers/employeesController.js');
 
@@ -270,5 +303,21 @@ describe('DELETE /api/payroll/employee/:id', () => {
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(400);
         expect(mockResponse.send).toHaveBeenCalledWith({ errors: { msg: 'You need to delete employee-related data before deleting the employee', param: null, location: 'query' } });
+    });
+
+    it('should respond with a 404 error message when the employee does not exist', async () => {
+        // Arrange
+        mockModule([[], null, null]);
+
+        const { deleteEmployee } = await import('../../controllers/employeesController.js');
+
+        mockRequest.params = { employee_id: 3 };
+
+        // Act
+        await deleteEmployee(mockRequest, mockResponse);
+
+        // Assert
+        expect(mockResponse.status).toHaveBeenCalledWith(404);
+        expect(mockResponse.send).toHaveBeenCalledWith('Employee not found');
     });
 });
