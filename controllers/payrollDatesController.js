@@ -18,6 +18,10 @@ export const getPayrollDates = async (request, response) => {
 
         const results = await executeQuery(query, params);
 
+        if (employee_id && results.length === 0) {
+            return response.status(404).send('Payroll date not found');
+        }
+
         // Parse the data to correct format and return an object
         const payrollDates = results.map(payrollDate => payrollDatesParse(payrollDate));
 
