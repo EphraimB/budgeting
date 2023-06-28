@@ -38,7 +38,7 @@ const mockModule = (executeQueryValues, errorMessage) => {
     let callCount = 0;
     jest.unstable_mockModule('../../utils/helperFunctions.js', () => ({
         executeQuery: jest.fn().mockImplementation(() => {
-            if (errorMessage && callCount === executeQueryValues.length) {
+            if (errorMessage && callCount === 0) {
                 throw new Error(errorMessage);
             }
             const returnValue = executeQueryValues[callCount++];
@@ -73,7 +73,7 @@ describe('GET /api/payroll/employee', () => {
         // Arrange
         const errorMessage = 'Error getting employees';
         const error = new Error(errorMessage);
-        mockModule([null, errorMessage]);
+        mockModule([], errorMessage);
 
         mockRequest.query = { employee_id: null };
 
@@ -256,7 +256,7 @@ describe('DELETE /api/payroll/employee/:id', () => {
         // Mock the executeQuery function to throw an error
         const errorMessage = 'Error deleting employee';
         const error = new Error(errorMessage);
-        mockModule(null, errorMessage);
+        mockModule([], errorMessage);
 
         const { deleteEmployee } = await import('../../controllers/employeesController.js');
 
