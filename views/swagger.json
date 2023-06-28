@@ -855,7 +855,7 @@
         ],
         "parameters": [
           {
-            "name": "id",
+            "name": "employee_id",
             "in": "query",
             "description": "Employee id",
             "required": false,

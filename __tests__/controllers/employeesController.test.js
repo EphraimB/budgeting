@@ -56,7 +56,7 @@ describe('GET /api/payroll/employee', () => {
         // Arrange
         mockModule([employees]);
 
-        mockRequest.query = { id: null };
+        mockRequest.query = { employee_id: null };
 
         const { getEmployee } = await import('../../controllers/employeesController.js');
 
@@ -76,7 +76,7 @@ describe('GET /api/payroll/employee', () => {
         const error = new Error(errorMessage);
         mockModule(null, errorMessage);
 
-        mockRequest.query = { id: null };
+        mockRequest.query = { employee_id: null };
 
         const { getEmployee } = await import('../../controllers/employeesController.js');
 
@@ -95,7 +95,7 @@ describe('GET /api/payroll/employee', () => {
         // Arrange
         mockModule([employees.filter(employee => employee.employee_id === 1)]);
 
-        mockRequest.query = { id: 1 };
+        mockRequest.query = { employee_id: 1 };
 
         const { getEmployee } = await import('../../controllers/employeesController.js');
 
@@ -113,7 +113,7 @@ describe('GET /api/payroll/employee', () => {
         const error = new Error(errorMessage);
         mockModule(null, errorMessage);
 
-        mockRequest.query = { id: 1 };
+        mockRequest.query = { employee_id: 1 };
 
         const { getEmployee } = await import('../../controllers/employeesController.js');
 
@@ -126,6 +126,22 @@ describe('GET /api/payroll/employee', () => {
 
         // Check that the error was logged
         expect(consoleSpy).toHaveBeenCalledWith(error);
+    });
+
+    it('should respond with a 404 error message when the employee does not exist', async () => {
+        // Arrange
+        mockModule([]);
+
+        const { getEmployee } = await import('../../controllers/employeesController.js');
+
+        mockRequest.query = { employee_id: 3 };
+
+        // Act
+        await getEmployee(mockRequest, mockResponse);
+
+        // Assert
+        expect(mockResponse.status).toHaveBeenCalledWith(404);
+        expect(mockResponse.send).toHaveBeenCalledWith('Employee not found');
     });
 });
 

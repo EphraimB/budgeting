@@ -14,14 +14,17 @@ const employeeParse = employee => ({
 
 // Get employee
 export const getEmployee = async (request, response) => {
-    const { id } = request.query;
+    const { employee_id } = request.query;
 
     try {
-
-        const query = id ? payrollQueries.getEmployee : payrollQueries.getEmployees;
-        const params = id ? [id] : [];
+        const query = employee_id ? payrollQueries.getEmployee : payrollQueries.getEmployees;
+        const params = employee_id ? [employee_id] : [];
 
         const results = await executeQuery(query, params);
+
+        if (employee_id && results.length === 0) {
+            return response.status(404).send('Employee not found');
+        }
 
         // Parse the data to the correct format and return an object
         const employees = results.map(employee => employeeParse(employee));
@@ -29,7 +32,7 @@ export const getEmployee = async (request, response) => {
         response.status(200).json(employees);
     } catch (error) {
         console.error(error); // Log the error on the server side
-        handleError(response, `Error getting ${id ? 'employee' : 'employees'}`);
+        handleError(response, `Error getting ${employee_id ? 'employee' : 'employees'}`);
     }
 };
 
