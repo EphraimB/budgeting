@@ -67,6 +67,10 @@ export const updatePayrollDate = async (request, response) => {
 
         const results = await executeQuery(payrollQueries.updatePayrollDate, [start_day, end_day, id]);
 
+        if (results.length === 0) {
+            return response.status(404).send('Payroll date not found');
+        }
+
         await getPayrolls(employee_id);
 
         // Parse the data to correct format and return an object

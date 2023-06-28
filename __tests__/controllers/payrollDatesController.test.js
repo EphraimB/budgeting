@@ -285,6 +285,23 @@ describe('PUT /api/payroll/dates/:id', () => {
         // Assert that the error was logged
         expect(consoleSpy).toHaveBeenCalledWith(error);
     });
+
+    it('should respond with a 404 error message when the expense does not exist', async () => {
+        // Arrange
+        mockModule([]);
+
+        const { updatePayrollDate } = await import('../../controllers/payrollDatesController.js');
+
+        mockRequest.params = { id: 3 };
+        mockRequest.body = payrollDates.filter(payrollDate => payrollDate.payroll_date_id === 1);
+
+        // Act
+        await updatePayrollDate(mockRequest, mockResponse);
+
+        // Assert
+        expect(mockResponse.status).toHaveBeenCalledWith(404);
+        expect(mockResponse.send).toHaveBeenCalledWith('Payroll date not found');
+    });
 });
 
 describe('DELETE /api/payroll/dates/:id', () => {
