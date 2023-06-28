@@ -216,7 +216,7 @@ describe('PUT /api/loans/:id', () => {
         expect(consoleSpy).toHaveBeenCalledWith(error);
     });
 
-    it('should respond with a 404 error message when the expense does not exist', async () => {
+    it('should respond with a 404 error message when the loan does not exist', async () => {
         // Arrange
         mockModule([]);
 
@@ -277,7 +277,6 @@ describe('DELETE /api/loans/:id', () => {
         const { deleteLoan } = await import('../../controllers/loansController.js');
 
         mockRequest.params = { id: 3 };
-        mockRequest.body = loans.filter(loan => loan.loan_id === 1);
 
         // Act
         await deleteLoan(mockRequest, mockResponse);

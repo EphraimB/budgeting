@@ -94,7 +94,11 @@ export const deletePayrollDate = async (request, response) => {
         const { employee_id } = request.query;
         const { id } = request.params;
 
-        await executeQuery(payrollQueries.deletePayrollDate, [id]);
+        const transferResults = await executeQuery(payrollQueries.deletePayrollDate, [id]);
+
+        if (transferResults.length === 0) {
+            return response.status(404).send('Payroll date not found');
+        }
 
         await getPayrolls(employee_id);
 
