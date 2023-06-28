@@ -19,6 +19,11 @@ export const getTransactions = async (request, response) => {
         const params = id ? [id] : [];
 
         const transactionResults = await executeQuery(query, params);
+
+        if (id && transactionResults.length === 0) {
+            return response.status(404).send('Transaction not found');
+        }
+
         const transactionHistory = transactionResults.map(transaction => parseTransactions(transaction));
 
         response.status(200).json(transactionHistory);
@@ -57,6 +62,10 @@ export const updateTransaction = async (request, response) => {
             [account_id, amount, title, description, id]
         );
 
+        if (transactionResults.length === 0) {
+            return response.status(404).send('Transaction not found');
+        }
+
         const transactionHistory = transactionResults.map(transaction => parseTransactions(transaction));
 
         response.status(200).json(transactionHistory);
@@ -70,6 +79,12 @@ export const updateTransaction = async (request, response) => {
 export const deleteTransaction = async (request, response) => {
     try {
         const id = parseInt(request.params.id);
+
+        const getTransactionResults = await executeQuery(transactionHistoryQueries.getTransaction, [id]);
+
+        if (getTransactionResults.length === 0) {
+            return response.status(404).send("Transaction not found");
+        }
 
         await executeQuery(transactionHistoryQueries.deleteTransaction, [id]);
 

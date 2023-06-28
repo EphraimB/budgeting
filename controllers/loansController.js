@@ -27,11 +27,15 @@ const parseLoan = loan => ({
 export const getLoans = async (request, response) => {
     const { id } = request.query;
 
-    const query = id ? loanQueries.getLoan : loanQueries.getLoans;
-    const queryParams = id ? [id] : [];
-
     try {
+        const query = id ? loanQueries.getLoan : loanQueries.getLoans;
+        const queryParams = id ? [id] : [];
         const rows = await executeQuery(query, queryParams);
+
+        if (id && rows.length === 0) {
+            return response.status(404).send('Loan not found');
+        }
+
         const loans = rows.map(loan => parseLoan(loan));
         response.status(200).json(loans);
     } catch (error) {
@@ -109,8 +113,9 @@ export const createLoan = async (request, response) => {
 
 // Update loan
 export const updateLoan = async (request, response) => {
+    const { id } = request.params;
+
     try {
-        const { id } = request.params;
         const {
             account_id,
             amount,
@@ -132,7 +137,7 @@ export const updateLoan = async (request, response) => {
         const getLoanResults = await executeQuery(loanQueries.getLoan, [id]);
 
         if (getLoanResults.length === 0) {
-            return response.status(200).send([]);
+            return response.status(404).send('Loan not found');
         }
 
         const cronId = getLoanResults[0].cron_job_id;
@@ -186,7 +191,7 @@ export const deleteLoan = async (request, response) => {
         const getLoanResults = await executeQuery(loanQueries.getLoan, [id]);
 
         if (getLoanResults.length === 0) {
-            return response.status(200).send("Loan doesn't exist");
+            return response.status(404).send("Loan not found");
         }
 
         const cronId = getLoanResults[0].cron_job_id;

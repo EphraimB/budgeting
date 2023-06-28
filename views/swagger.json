@@ -36,6 +36,9 @@
           },
           "400": {
             "$ref": "#/components/responses/BadRequest"
+          },
+          "404": {
+            "description": "Account not found"
           }
         }
       },
@@ -101,6 +104,9 @@
           },
           "400": {
             "$ref": "#/components/responses/BadRequest"
+          },
+          "404": {
+            "description": "Account not found"
           }
         }
       },
@@ -127,6 +133,9 @@
           },
           "400": {
             "$ref": "#/components/responses/BadRequest"
+          },
+          "404": {
+            "description": "Account not found"
           }
         }
       }
@@ -156,6 +165,9 @@
           },
           "400": {
             "$ref": "#/components/responses/BadRequest"
+          },
+          "404": {
+            "description": "Transaction not found"
           }
         }
       },
@@ -222,6 +234,9 @@
           },
           "400": {
             "$ref": "#/components/responses/BadRequest"
+          },
+          "404": {
+            "description": "Transaction not found"
           }
         }
       },
@@ -249,6 +264,9 @@
           },
           "400": {
             "$ref": "#/components/responses/BadRequest"
+          },
+          "404": {
+            "description": "Transaction not found"
           }
         }
       }
@@ -278,6 +296,9 @@
           },
           "400": {
             "$ref": "#/components/responses/BadRequest"
+          },
+          "404": {
+            "description": "Expense not found"
           }
         }
       },
@@ -344,6 +365,9 @@
           },
           "400": {
             "$ref": "#/components/responses/BadRequest"
+          },
+          "404": {
+            "description": "Expense not found"
           }
         }
       },
@@ -371,6 +395,9 @@
           },
           "400": {
             "$ref": "#/components/responses/BadRequest"
+          },
+          "404": {
+            "description": "Expense not found"
           }
         }
       }
@@ -400,6 +427,9 @@
           },
           "400": {
             "$ref": "#/components/responses/BadRequest"
+          },
+          "404": {
+            "description": "Loan not found"
           }
         }
       },
@@ -466,6 +496,9 @@
           },
           "400": {
             "$ref": "#/components/responses/BadRequest"
+          },
+          "404": {
+            "description": "Loan not found"
           }
         }
       },
@@ -493,6 +526,9 @@
           },
           "400": {
             "$ref": "#/components/responses/BadRequest"
+          },
+          "404": {
+            "description": "Loan not found"
           }
         }
       }
@@ -522,6 +558,9 @@
           },
           "400": {
             "$ref": "#/components/responses/BadRequest"
+          },
+          "404": {
+            "description": "No payrolls for employee or not found"
           }
         }
       }
@@ -561,6 +600,9 @@
           },
           "400": {
             "$ref": "#/components/responses/BadRequest"
+          },
+          "404": {
+            "description": "Payroll tax not found"
           }
         }
       },
@@ -627,6 +669,9 @@
           },
           "400": {
             "$ref": "#/components/responses/BadRequest"
+          },
+          "404": {
+            "description": "Payroll tax not found"
           }
         }
       },
@@ -664,6 +709,9 @@
           },
           "400": {
             "$ref": "#/components/responses/BadRequest"
+          },
+          "404": {
+            "description": "Payroll tax not found"
           }
         }
       }
@@ -703,6 +751,9 @@
           },
           "400": {
             "$ref": "#/components/responses/BadRequest"
+          },
+          "404": {
+            "description": "Payroll date not found"
           }
         }
       },
@@ -769,6 +820,9 @@
           },
           "400": {
             "$ref": "#/components/responses/BadRequest"
+          },
+          "404": {
+            "description": "Payroll date not found"
           }
         }
       },
@@ -806,6 +860,9 @@
           },
           "400": {
             "$ref": "#/components/responses/BadRequest"
+          },
+          "404": {
+            "description": "Payroll date not found"
           }
         }
       }
@@ -819,7 +876,7 @@
         ],
         "parameters": [
           {
-            "name": "id",
+            "name": "employee_id",
             "in": "query",
             "description": "Employee id",
             "required": false,
@@ -835,6 +892,9 @@
           },
           "400": {
             "$ref": "#/components/responses/BadRequest"
+          },
+          "404": {
+            "description": "Employee not found"
           }
         }
       },
@@ -901,6 +961,9 @@
           },
           "400": {
             "$ref": "#/components/responses/BadRequest"
+          },
+          "404": {
+            "description": "Employee not found"
           }
         }
       },
@@ -928,6 +991,9 @@
           },
           "400": {
             "$ref": "#/components/responses/BadRequest"
+          },
+          "404": {
+            "description": "Employee not found"
           }
         }
       }
@@ -957,6 +1023,9 @@
           },
           "400": {
             "$ref": "#/components/responses/BadRequest"
+          },
+          "404": {
+            "description": "Wishlist not found"
           }
         }
       },
@@ -1023,6 +1092,9 @@
           },
           "400": {
             "$ref": "#/components/responses/BadRequest"
+          },
+          "404": {
+            "description": "Wishlist not found"
           }
         }
       },
@@ -1050,6 +1122,9 @@
           },
           "400": {
             "$ref": "#/components/responses/BadRequest"
+          },
+          "404": {
+            "description": "Wishlist not found"
           }
         }
       }
@@ -1062,16 +1137,6 @@
           "transfers"
         ],
         "parameters": [
-          {
-            "name": "account_id",
-            "in": "query",
-            "description": "Account id",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "minimum": 1
-            }
-          },
           {
             "name": "id",
             "in": "query",
@@ -1089,6 +1154,9 @@
           },
           "400": {
             "$ref": "#/components/responses/BadRequest"
+          },
+          "404": {
+            "description": "Transfer not found"
           }
         }
       },
@@ -1155,6 +1223,9 @@
           },
           "400": {
             "$ref": "#/components/responses/BadRequest"
+          },
+          "404": {
+            "description": "Transfer not found"
           }
         }
       },
@@ -1165,16 +1236,6 @@
           "transfers"
         ],
         "parameters": [
-          {
-            "name": "account_id",
-            "in": "query",
-            "description": "Account id",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "minimum": 1
-            }
-          },
           {
             "name": "id",
             "in": "path",
@@ -1192,6 +1253,9 @@
           },
           "400": {
             "$ref": "#/components/responses/BadRequest"
+          },
+          "404": {
+            "description": "Transfer not found"
           }
         }
       }

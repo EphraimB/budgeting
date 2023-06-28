@@ -24,13 +24,17 @@ const transfersParse = transfer => ({
 
 // Get transfers
 export const getTransfers = async (request, response) => {
-    const { account_id, id } = request.query;
-    
+    const { id } = request.query;
+
     try {
         const query = id ? transferQueries.getTransfer : transferQueries.getTransfers;
-        const queryArgs = id ? [account_id, id] : [account_id];
+        const queryArgs = id ? [id] : [];
 
         const results = await executeQuery(query, queryArgs);
+
+        if (id && results.length === 0) {
+            return response.status(404).send('Transfer not found');
+        }
 
         // Parse the data to the correct format
         const transfers = results.map(transfersParse);
@@ -106,7 +110,7 @@ export const createTransfer = async (request, response) => {
         response.status(201).json(transfers);
     } catch (error) {
         console.error(error); // Log the error on the server side
-        handleError(response, error.message);
+        handleError(response, "Error creating transfer");
     }
 };
 
@@ -132,16 +136,16 @@ export const updateTransfer = async (request, response) => {
 
         const negativeAmount = -amount;
 
-        const transferResults = await executeQuery(transferQueries.getTransfer, [source_account_id, id]);
+        const transferResults = await executeQuery(transferQueries.getTransfer, [id]);
 
         if (transferResults.length === 0) {
-            return response.status(200).send([]);
+            return response.status(404).send('Transfer not found');
         }
 
         const cronId = transferResults[0].cron_job_id;
         await deleteCronJob(cronId);
 
-        const { uniqueId, cronDate } = scheduleCronJob({
+        const { cronDate, uniqueId } = await scheduleCronJob({
             begin_date,
             source_account_id,
             negativeAmount,
@@ -187,23 +191,24 @@ export const updateTransfer = async (request, response) => {
 // Delete transfer
 export const deleteTransfer = async (request, response) => {
     try {
-        const { account_id } = request.query;
         const { id } = request.params;
 
-        const transferResults = await executeQuery(transferQueries.getTransfer, [account_id, id]);
+        const transferResults = await executeQuery(transferQueries.getTransfer, [id]);
+
+        if (transferResults.length === 0) {
+            return response.status(404).send('Transfer not found');
+        }
 
         const cronId = transferResults[0].cron_job_id;
 
         await executeQuery(transferQueries.deleteTransfer, [id]);
 
-        if (cronId) {
-            await deleteCronJob(cronId);
-            await executeQuery(cronJobQueries.deleteCronJob, [cronId]);
-        }
+        await deleteCronJob(cronId);
+        await executeQuery(cronJobQueries.deleteCronJob, [cronId]);
 
         response.status(200).send("Transfer deleted successfully");
     } catch (error) {
         console.error(error); // Log the error on the server side
-        handleError(response, error.message);
+        handleError(response, 'Error deleting transfer');
     }
 };

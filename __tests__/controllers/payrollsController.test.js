@@ -83,4 +83,20 @@ describe('GET /api/payrolls', () => {
         // Check if console.error was called with the error message
         expect(consoleSpy).toHaveBeenCalledWith(error);
     });
+
+    it('should respond with a 404 error message when the payroll tax does not exist', async () => {
+        // Arrange
+        mockModule([]);
+
+        const { getPayrolls } = await import('../../controllers/payrollsController.js');
+
+        mockRequest.query = { employee_id: 3 };
+
+        // Act
+        await getPayrolls(mockRequest, mockResponse);
+
+        // Assert
+        expect(mockResponse.status).toHaveBeenCalledWith(404);
+        expect(mockResponse.send).toHaveBeenCalledWith('No payrolls for employee or not found');
+    });
 });

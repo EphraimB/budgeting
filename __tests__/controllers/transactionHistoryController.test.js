@@ -121,6 +121,22 @@ describe('GET /api/transactionHistory', () => {
         // Assert that the error was logged in the console
         expect(consoleSpy).toHaveBeenCalledWith(error);
     });
+
+    it('should respond with a 404 error message when the transaction does not exist', async () => {
+        // Arrange
+        mockModule([]);
+
+        const { getTransactions } = await import('../../controllers/transactionHistoryController.js');
+
+        mockRequest.query = { id: 3 };
+
+        // Act
+        await getTransactions(mockRequest, mockResponse);
+
+        // Assert
+        expect(mockResponse.status).toHaveBeenCalledWith(404);
+        expect(mockResponse.send).toHaveBeenCalledWith('Transaction not found');
+    });
 });
 
 describe('POST /api/transactionHistory', () => {
@@ -201,6 +217,23 @@ describe('PUT /api/transactionHistory/:id', () => {
         // Assert that the error was logged in the console
         expect(consoleSpy).toHaveBeenCalledWith(error);
     });
+
+    it('should respond with a 404 error message when the transaction does not exist', async () => {
+        // Arrange
+        mockModule([]);
+
+        const { updateTransaction } = await import('../../controllers/transactionHistoryController.js');
+
+        mockRequest.params = { id: 3 };
+        mockRequest.body = transactions.filter(transaction => transaction.transaction_id === 1);
+
+        // Act
+        await updateTransaction(mockRequest, mockResponse);
+
+        // Assert
+        expect(mockResponse.status).toHaveBeenCalledWith(404);
+        expect(mockResponse.send).toHaveBeenCalledWith('Transaction not found');
+    });
 });
 
 describe('DELETE /api/transactionHistory/:id', () => {
@@ -237,5 +270,21 @@ describe('DELETE /api/transactionHistory/:id', () => {
 
         // Assert that the error was logged in the console
         expect(consoleSpy).toHaveBeenCalledWith(error);
+    });
+
+    it('should respond with a 404 error message when the transaction does not exist', async () => {
+        // Arrange
+        mockModule([]);
+
+        const { deleteTransaction } = await import('../../controllers/transactionHistoryController.js');
+
+        mockRequest.params = { id: 8 };
+
+        // Act
+        await deleteTransaction(mockRequest, mockResponse);
+
+        // Assert
+        expect(mockResponse.status).toHaveBeenCalledWith(404);
+        expect(mockResponse.send).toHaveBeenCalledWith('Transaction not found');
     });
 });
