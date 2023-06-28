@@ -6,7 +6,6 @@ import validateRequest from '../utils/validateRequest.js';
 
 router.get('/',
     [
-        query('account_id').isNumeric().withMessage('Account ID must be a number'),
         query('id').optional().isNumeric().withMessage('ID must be a number'),
         validateRequest,
     ],
@@ -53,7 +52,6 @@ router.put('/:id',
 
 router.delete('/:id',
     [
-        query("account_id").isInt({ min: 1 }).withMessage("Account ID must be a number"),
         param("id").isInt({ min: 1 }).withMessage("ID must be a number"),
         validateRequest,
     ],
