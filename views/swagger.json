@@ -558,6 +558,9 @@
           },
           "400": {
             "$ref": "#/components/responses/BadRequest"
+          },
+          "404": {
+            "description": "No payrolls for employee or not found"
           }
         }
       }
