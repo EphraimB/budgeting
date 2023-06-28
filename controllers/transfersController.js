@@ -110,7 +110,7 @@ export const createTransfer = async (request, response) => {
         response.status(201).json(transfers);
     } catch (error) {
         console.error(error); // Log the error on the server side
-        handleError(response, error.message);
+        handleError(response, "Error creating transfer");
     }
 };
 
