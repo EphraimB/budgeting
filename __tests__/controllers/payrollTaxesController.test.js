@@ -323,4 +323,21 @@ describe('DELETE /api/payroll/taxes/:id', () => {
         // Assert that the error was logged
         expect(consoleSpy).toHaveBeenCalledWith(error);
     });
+
+    it('should respond with a 404 error message when the payroll tax does not exist', async () => {
+        // Arrange
+        mockModule([]);
+
+        const { deletePayrollTax } = await import('../../controllers/payrollTaxesController.js');
+
+        mockRequest.params = { id: 3 };
+        mockRequest.query = { employee_id: 1 };
+
+        // Act
+        await deletePayrollTax(mockRequest, mockResponse);
+
+        // Assert
+        expect(mockResponse.status).toHaveBeenCalledWith(404);
+        expect(mockResponse.send).toHaveBeenCalledWith('Payroll tax not found');
+    });
 });

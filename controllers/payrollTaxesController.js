@@ -82,7 +82,11 @@ export const deletePayrollTax = async (request, response) => {
     const { employee_id } = request.query;
 
     try {
-        await executeQuery(payrollQueries.deletePayrollTax, [id]);
+        const transferResults = await executeQuery(payrollQueries.deletePayrollTax, [id]);
+
+        if (transferResults.length === 0) {
+            return response.status(404).send('Payroll tax not found');
+        }
 
         await getPayrolls(employee_id);
 
