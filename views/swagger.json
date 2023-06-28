@@ -1108,16 +1108,6 @@
         ],
         "parameters": [
           {
-            "name": "account_id",
-            "in": "query",
-            "description": "Account id",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "minimum": 1
-            }
-          },
-          {
             "name": "id",
             "in": "query",
             "description": "Transfer id",
@@ -1134,6 +1124,9 @@
           },
           "400": {
             "$ref": "#/components/responses/BadRequest"
+          },
+          "404": {
+            "description": "Transfer not found"
           }
         }
       },
@@ -1200,6 +1193,9 @@
           },
           "400": {
             "$ref": "#/components/responses/BadRequest"
+          },
+          "404": {
+            "description": "Transfer not found"
           }
         }
       },
@@ -1210,16 +1206,6 @@
           "transfers"
         ],
         "parameters": [
-          {
-            "name": "account_id",
-            "in": "query",
-            "description": "Account id",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "minimum": 1
-            }
-          },
           {
             "name": "id",
             "in": "path",
@@ -1237,6 +1223,9 @@
           },
           "400": {
             "$ref": "#/components/responses/BadRequest"
+          },
+          "404": {
+            "description": "Transfer not found"
           }
         }
       }
