@@ -1,4 +1,4 @@
-const accountQueries = {
+export const accountQueries = {
   getAccounts: `
     SELECT accounts.account_id,
     accounts.account_name,
@@ -18,7 +18,7 @@ const accountQueries = {
   deleteAccount: 'DELETE FROM accounts WHERE account_id = $1',
 };
 
-const transactionHistoryQueries = {
+export const transactionHistoryQueries = {
   getTransactionsDateFiltered: 'SELECT * FROM transaction_history WHERE account_id = $1 AND date_created >= $2 ORDER BY date_created DESC',
   getTransactions: 'SELECT * FROM transaction_history ORDER BY transaction_id ASC',
   getTransaction: 'SELECT * FROM transaction_history WHERE transaction_id = $1',
@@ -27,7 +27,7 @@ const transactionHistoryQueries = {
   deleteTransaction: 'DELETE FROM transaction_history WHERE transaction_id = $1',
 };
 
-const expenseQueries = {
+export const expenseQueries = {
   getExpensesByAccount: "SELECT * FROM expenses WHERE account_id = $1 AND expense_begin_date <= $2 ORDER BY expense_begin_date ASC",
   getExpenses: 'SELECT * FROM expenses ORDER BY expense_id ASC',
   getExpense: 'SELECT * FROM expenses WHERE expense_id = $1',
@@ -36,7 +36,7 @@ const expenseQueries = {
   deleteExpense: 'DELETE FROM expenses WHERE expense_id = $1',
 };
 
-const loanQueries = {
+export const loanQueries = {
   getLoansByAccount: 'SELECT * FROM loans WHERE account_id = $1 AND loan_begin_date <= $2 ORDER BY date_created ASC',
   getLoans: 'SELECT * FROM loans ORDER BY loan_id ASC',
   getLoan: 'SELECT * FROM loans WHERE loan_id = $1',
@@ -45,7 +45,7 @@ const loanQueries = {
   deleteLoan: 'DELETE FROM loans WHERE loan_id = $1',
 };
 
-const payrollQueries = {
+export const payrollQueries = {
   getPayrolls: `
         SELECT make_date(extract(year from current_date)::integer, extract(month from current_date)::integer, s2.payroll_start_day::integer) AS start_date,
         make_date(extract(year from current_date)::integer, extract(month from current_date)::integer, s1.adjusted_payroll_end_day) AS end_date,
@@ -191,7 +191,7 @@ const payrollQueries = {
   deleteEmployee: 'DELETE FROM employee WHERE employee_id = $1',
 }
 
-const wishlistQueries = {
+export const wishlistQueries = {
   getWishlistsByAccount: 'SELECT * FROM wishlist WHERE account_id = $1 AND date_created <= $2 ORDER BY wishlist_priority ASC',
   getWishlists: 'SELECT * FROM wishlist ORDER BY wishlist_priority ASC',
   getWishlist: 'SELECT * FROM wishlist WHERE wishlist_id = $1',
@@ -200,7 +200,7 @@ const wishlistQueries = {
   deleteWishlist: 'DELETE FROM wishlist WHERE wishlist_id = $1',
 };
 
-const transferQueries = {
+export const transferQueries = {
   getTransfersByAccount: 'SELECT * FROM transfers WHERE (source_account_id = $1 OR destination_account_id = $1) AND date_created <= $2 ORDER BY date_created ASC',
   getTransfers: 'SELECT * FROM transfers ORDER BY transfer_id ASC',
   getTransfer: 'SELECT * FROM transfers WHERE transfer_id = $1',
@@ -209,26 +209,14 @@ const transferQueries = {
   deleteTransfer: 'DELETE FROM transfers WHERE transfer_id = $1',
 };
 
-const currentBalanceQueries = {
+export const currentBalanceQueries = {
   getCurrentBalance: "SELECT accounts.account_id, COALESCE(accounts.account_balance, 0) + COALESCE(SUM(transaction_history.transaction_amount), 0) AS account_balance FROM accounts LEFT JOIN transaction_history ON accounts.account_id = transaction_history.account_id WHERE accounts.account_id = $1 GROUP BY accounts.account_id",
 };
 
-const cronJobQueries = {
+export const cronJobQueries = {
   cronJobsStartup: 'SELECT * FROM cron_jobs',
   getCronJob: 'SELECT * FROM cron_jobs WHERE cron_job_id = $1',
   createCronJob: 'INSERT INTO cron_jobs (unique_id, cron_expression) VALUES ($1, $2) RETURNING *',
   updateCronJob: 'UPDATE cron_jobs SET unique_id = $1, cron_expression = $2 WHERE cron_job_id = $3 RETURNING *',
   deleteCronJob: 'DELETE FROM cron_jobs WHERE cron_job_id = $1',
 };
-
-export {
-  accountQueries,
-  transactionHistoryQueries,
-  expenseQueries,
-  loanQueries,
-  payrollQueries,
-  wishlistQueries,
-  currentBalanceQueries,
-  transferQueries,
-  cronJobQueries
-}
