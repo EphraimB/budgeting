@@ -226,6 +226,23 @@ describe('PUT /api/payroll/employee/:id', () => {
         // Check that the error was logged
         expect(consoleSpy).toHaveBeenCalledWith(error);
     });
+
+    it('should respond with a 404 error message when the employee does not exist', async () => {
+        // Arrange
+        mockModule([[], null, null]);
+
+        const { updateEmployee } = await import('../../controllers/employeesController.js');
+
+        mockRequest.params = { employee_id: 3 };
+        mockRequest.body = employees.filter(employee => employee.employee_id === 3);
+
+        // Act
+        await updateEmployee(mockRequest, mockResponse);
+
+        // Assert
+        expect(mockResponse.status).toHaveBeenCalledWith(404);
+        expect(mockResponse.send).toHaveBeenCalledWith('Employee not found');
+    });
 });
 
 describe('DELETE /api/payroll/employee/:id', () => {

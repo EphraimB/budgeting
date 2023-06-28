@@ -61,6 +61,10 @@ export const updateEmployee = async (request, response) => {
 
         const results = await executeQuery(payrollQueries.updateEmployee, [name, hourly_rate, regular_hours, vacation_days, sick_days, work_schedule, employee_id]);
 
+        if (results.length === 0) {
+            return response.status(404).send('Employee not found');
+        }
+
         await getPayrolls(employee_id);
 
         // Parse the data to correct format and return an object
