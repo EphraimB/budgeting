@@ -136,16 +136,16 @@ export const updateTransfer = async (request, response) => {
 
         const negativeAmount = -amount;
 
-        const transferResults = await executeQuery(transferQueries.getTransfer, [source_account_id, id]);
+        const transferResults = await executeQuery(transferQueries.getTransfer, [id]);
 
         if (transferResults.length === 0) {
-            return response.status(200).send([]);
+            return response.status(404).send('Transfer not found');
         }
 
         const cronId = transferResults[0].cron_job_id;
         await deleteCronJob(cronId);
 
-        const { uniqueId, cronDate } = scheduleCronJob({
+        const { cronDate, uniqueId } = await scheduleCronJob({
             begin_date,
             source_account_id,
             negativeAmount,
@@ -178,10 +178,6 @@ export const updateTransfer = async (request, response) => {
             id
         ]);
 
-        if (updateResults.length === 0) {
-            return response.status(404).send('Transfer not found');
-        }
-
         // Parse the data to correct format and return an object
         const transfers = updateResults.map(transfersParse);
 
@@ -199,18 +195,20 @@ export const deleteTransfer = async (request, response) => {
 
         const transferResults = await executeQuery(transferQueries.getTransfer, [id]);
 
+        if (transferResults.length === 0) {
+            return response.status(404).send('Transfer not found');
+        }
+
         const cronId = transferResults[0].cron_job_id;
 
         await executeQuery(transferQueries.deleteTransfer, [id]);
 
-        if (cronId) {
-            await deleteCronJob(cronId);
-            await executeQuery(cronJobQueries.deleteCronJob, [cronId]);
-        }
+        await deleteCronJob(cronId);
+        await executeQuery(cronJobQueries.deleteCronJob, [cronId]);
 
         response.status(200).send("Transfer deleted successfully");
     } catch (error) {
         console.error(error); // Log the error on the server side
-        handleError(response, error.message);
+        handleError(response, 'Error deleting transfer');
     }
 };
