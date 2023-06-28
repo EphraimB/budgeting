@@ -251,7 +251,7 @@ describe('DELETE /api/payroll/employee/:id', () => {
         const employee_id = 1;
 
         // Mock the executeQuery function to return different values based on the query
-        mockModule([[], [], [], 'Successfully deleted employee']);
+        mockModule([[employee_id], [], [], 'Successfully deleted employee']);
 
         const { deleteEmployee } = await import('../../controllers/employeesController.js');
 
@@ -303,5 +303,21 @@ describe('DELETE /api/payroll/employee/:id', () => {
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(400);
         expect(mockResponse.send).toHaveBeenCalledWith({ errors: { msg: 'You need to delete employee-related data before deleting the employee', param: null, location: 'query' } });
+    });
+
+    it('should respond with a 404 error message when the employee does not exist', async () => {
+        // Arrange
+        mockModule([[], null, null]);
+
+        const { deleteEmployee } = await import('../../controllers/employeesController.js');
+
+        mockRequest.params = { employee_id: 3 };
+
+        // Act
+        await deleteEmployee(mockRequest, mockResponse);
+
+        // Assert
+        expect(mockResponse.status).toHaveBeenCalledWith(404);
+        expect(mockResponse.send).toHaveBeenCalledWith('Employee not found');
     });
 });
