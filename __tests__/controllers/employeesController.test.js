@@ -1,5 +1,5 @@
 import { jest } from '@jest/globals';
-import { employees } from '../../models/mockData.js';
+import { employees, payrollDates, payrollTaxes } from '../../models/mockData.js';
 
 jest.unstable_mockModule('../../bree/getPayrolls.js', () => ({
     getPayrolls: jest.fn(),
@@ -34,11 +34,16 @@ afterAll(() => {
 });
 
 // Helper function to generate mock module
-const mockModule = (executeQueryValue, errorMessage) => {
+const mockModule = (executeQueryValues, errorMessage) => {
+    let callCount = 0;
     jest.unstable_mockModule('../../utils/helperFunctions.js', () => ({
-        executeQuery: errorMessage
-            ? jest.fn().mockRejectedValue(new Error(errorMessage))
-            : jest.fn().mockResolvedValue(executeQueryValue),
+        executeQuery: jest.fn().mockImplementation(() => {
+            if (errorMessage && callCount === executeQueryValues.length) {
+                throw new Error(errorMessage);
+            }
+            const returnValue = executeQueryValues[callCount++];
+            return Promise.resolve(returnValue);
+        }),
         handleError: jest.fn((res, message) => {
             res.status(400).json({ message });
         }),
@@ -48,7 +53,7 @@ const mockModule = (executeQueryValue, errorMessage) => {
 describe('GET /api/payroll/employee', () => {
     it('should respond with an array of employees', async () => {
         // Arrange
-        mockModule(employees);
+        mockModule([employees]);
 
         mockRequest.query = { employee_id: null };
 
@@ -68,7 +73,7 @@ describe('GET /api/payroll/employee', () => {
         // Arrange
         const errorMessage = 'Error getting employees';
         const error = new Error(errorMessage);
-        mockModule(null, errorMessage);
+        mockModule([null, errorMessage]);
 
         mockRequest.query = { employee_id: null };
 
@@ -87,7 +92,7 @@ describe('GET /api/payroll/employee', () => {
 
     it('should respond with an array of employees with id', async () => {
         // Arrange
-        mockModule(employees.filter(employee => employee.employee_id === 1));
+        mockModule([employees.filter(employee => employee.employee_id === 1)]);
 
         mockRequest.query = { employee_id: 1 };
 
@@ -124,7 +129,7 @@ describe('GET /api/payroll/employee', () => {
 
     it('should respond with a 404 error message when the employee does not exist', async () => {
         // Arrange
-        mockModule([]);
+        mockModule([[], null, null]);
 
         const { getEmployee } = await import('../../controllers/employeesController.js');
 
@@ -144,7 +149,7 @@ describe('POST /api/payroll/employee', () => {
         // Arrange
         const newEmployee = employees.filter(employee => employee.employee_id === 1);
 
-        mockModule(newEmployee);
+        mockModule([newEmployee]);
 
         const { createEmployee } = await import('../../controllers/employeesController.js');
 
@@ -185,7 +190,7 @@ describe('PUT /api/payroll/employee/:id', () => {
         // Arrange
         const updatedEmployee = employees.filter(employee => employee.employee_id === 1);
 
-        mockModule(updatedEmployee);
+        mockModule([updatedEmployee]);
 
         mockRequest.params = { id: 1 };
         mockRequest.body = updatedEmployee;
@@ -229,7 +234,7 @@ describe('DELETE /api/payroll/employee/:id', () => {
         const employee_id = 1;
 
         // Mock the executeQuery function to return different values based on the query
-        mockModule('Successfully deleted employee');
+        mockModule([[], [], [], 'Successfully deleted employee']);
 
         const { deleteEmployee } = await import('../../controllers/employeesController.js');
 
@@ -271,7 +276,7 @@ describe('DELETE /api/payroll/employee/:id', () => {
         const employee_id = 1;
         mockRequest.params = { employee_id };
 
-        mockModule([[], [{ employee_id }]]);
+        mockModule([employee_id, payrollDates, payrollTaxes]);
 
         const { deleteEmployee } = await import('../../controllers/employeesController.js');
 
