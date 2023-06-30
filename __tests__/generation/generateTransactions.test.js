@@ -22,7 +22,7 @@ describe('generateTransactions', () => {
             query: {
                 from_date: '2023-07-01',
                 to_date: '2023-08-01',
-                account_id: 1,
+                account_id: 1
             },
             currentBalance: 500,
             transaction: transactions.filter(transaction => transaction.account_id === 1),
@@ -30,7 +30,7 @@ describe('generateTransactions', () => {
             payrolls: payrolls.filter(payroll => payroll.account_id === 1),
             loans: loans.filter(loan => loan.account_id === 1),
             transfers: transfers.filter(transfer => transfer.account_id === 1),
-            wishlists: wishlists.filter(wishlist => wishlist.account_id === 1),
+            wishlists: wishlists.filter(wishlist => wishlist.account_id === 1)
         };
 
         mockResponse = {};
@@ -42,7 +42,7 @@ describe('generateTransactions', () => {
         generateTransactions(mockRequest, mockResponse, next);
 
         // assert that next was called
-        expect(next).toBeCalled();
+        expect(next).toHaveBeenCalled();
 
         expect(mockRequest.transaction).toHaveLength(4);
 
@@ -59,7 +59,7 @@ describe('generateTransactions', () => {
         generateTransactions(mockRequest, mockResponse, next);
 
         // assert that next was called
-        expect(next).toBeCalled();
+        expect(next).toHaveBeenCalled();
 
         // assert that transactions are ordered by date
         const sortedTransactions = [...mockRequest.transaction].sort((a, b) => new Date(a.date) - new Date(b.date));
