@@ -16,7 +16,7 @@ beforeEach(() => {
     mockResponse = {
         status: jest.fn().mockReturnThis(),
         json: jest.fn(),
-        send: jest.fn(),
+        send: jest.fn()
     };
 });
 
@@ -37,7 +37,7 @@ const mockModule = (executeQueryValue, errorMessage) => {
             : jest.fn().mockResolvedValue(executeQueryValue),
         handleError: jest.fn((res, message) => {
             res.status(400).json({ message });
-        }),
+        })
     }));
 };
 
