@@ -4,11 +4,11 @@ import schedulePayrollCronJob from '../../../bree/jobs/schedulePayrollCronJob.js
 
 const vol = Volume.fromJSON({
     './jobs.json': '[]',
-    'cron-jobs/jobs.js': '',
+    'cron-jobs/jobs.js': ''
 }, '/app');
 
 jest.unstable_mockModule('fs', () => ({
-    default: vol,
+    default: vol
 }));
 
 let payrollData, accountId, jobs;
@@ -17,7 +17,7 @@ describe('schedulePayrollCronJob', () => {
     beforeAll(async () => {
         payrollData = {
             end_date: '2023-12-12T12:12:12Z',
-            net_pay: '1200.00',
+            net_pay: '1200.00'
         };
 
         accountId = 1;
