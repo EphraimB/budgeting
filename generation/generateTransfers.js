@@ -29,6 +29,7 @@ const generateTransfers = (transactions, skippedTransactions, transfer, toDate, 
 
     while (transferDate <= toDate) {
         const newTransaction = {
+            transfer_id: transfer.transfer_id,
             title: transfer.transfer_title,
             description: transfer.transfer_description,
             date: new Date(transferDate),
