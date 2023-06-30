@@ -29,7 +29,7 @@ const generateWishlists = (transactions, skippedTransactions, wishlist, fromDate
             title: wishlist.wishlist_title,
             description: wishlist.wishlist_description,
             date: newTransactionDate,
-            amount: -wishlist_amount,
+            amount: -wishlist_amount
         };
 
         if (fromDate > newTransactionDate) {
