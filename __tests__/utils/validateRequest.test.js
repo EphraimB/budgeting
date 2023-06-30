@@ -15,7 +15,7 @@ describe('validateRequest', () => {
 
     const importAndUseValidateRequest = async (validationResultMock) => {
         jest.unstable_mockModule('express-validator', () => ({
-            validationResult: jest.fn().mockReturnValue(validationResultMock),
+            validationResult: jest.fn().mockReturnValue(validationResultMock)
         }));
 
         const { default: importedValidateRequest } = await import('../../utils/validateRequest.js');
@@ -24,12 +24,12 @@ describe('validateRequest', () => {
         app.get('/test', validateRequest, (req, res) => {
             res.status(200).json({ message: 'Test passed!' });
         });
-    }
+    };
 
     it('should return 400 and an error array if validation fails', async () => {
         const validationResultMock = {
             isEmpty: jest.fn().mockReturnValue(false),
-            array: jest.fn().mockReturnValue([{ msg: 'Test error message' }]),
+            array: jest.fn().mockReturnValue([{ msg: 'Test error message' }])
         };
 
         await importAndUseValidateRequest(validationResultMock);
@@ -43,7 +43,7 @@ describe('validateRequest', () => {
     it('should call next if validation succeeds', async () => {
         const validationResultMock = {
             isEmpty: jest.fn().mockReturnValue(true),
-            array: jest.fn().mockReturnValue([]),
+            array: jest.fn().mockReturnValue([])
         };
 
         await importAndUseValidateRequest(validationResultMock);
