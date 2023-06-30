@@ -29,6 +29,7 @@ const generateLoans = (transactions, skippedTransactions, loan, toDate, fromDate
 
     while (loanDate <= toDate) {
         const newTransaction = {
+            loan_id: loan.loan_id,
             title: loan.loan_title + ' loan to ' + loan.loan_recipient,
             description: loan.loan_description,
             date: new Date(loanDate),
