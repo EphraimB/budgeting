@@ -1,17 +1,17 @@
 import { Volume } from 'memfs';
 import { jest } from '@jest/globals';
 
-let vol, getJobs, employeeData, getJobsModule;
+let getJobs, getJobsModule;
 
-vol = Volume.fromJSON({
+const vol = Volume.fromJSON({
     'bree/jobs.json': '[]',
-    'bree/cron-jobs/jobs.js': '',
+    'bree/cron-jobs/jobs.js': ''
 }, '/app');
 
 // Mocked employee data
-employeeData = [
+const employeeData = [
     { employee_id: 1 },
-    { employee_id: 2 },
+    { employee_id: 2 }
 ];
 
 jest.unstable_mockModule('fs', () => ({
