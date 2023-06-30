@@ -44,11 +44,7 @@ export const createPayrollDate = async (request, response) => {
         // Parse the data to correct format and return an object
         const payrollDates = results.map(payrollDate => payrollDatesParse(payrollDate));
 
-        const returnObj = {
-            employee_id: parseInt(employee_id),
-            payroll_date: payrollDates
-        };
-        response.status(201).json(returnObj);
+        response.status(201).json(payrollDates);
     } catch (error) {
         console.error(error); // Log the error on the server side
         handleError(response, 'Error creating payroll date');

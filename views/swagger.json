@@ -2053,25 +2053,23 @@
             "schema": {
               "type": "object",
               "properties": {
-                "properties": {
-                  "payroll_dates_id": {
-                    "type": "integer",
-                    "format": "int64",
-                    "minimum": 1
-                  },
-                  "employee_id": {
-                    "type": "integer",
-                    "format": "int64",
-                    "minimum": 1
-                  },
-                  "payroll_start_day": {
-                    "type": "integer",
-                    "example": 1
-                  },
-                  "payroll_end_day": {
-                    "type": "integer",
-                    "example": 15
-                  }
+                "payroll_dates_id": {
+                  "type": "integer",
+                  "format": "int64",
+                  "minimum": 1
+                },
+                "employee_id": {
+                  "type": "integer",
+                  "format": "int64",
+                  "minimum": 1
+                },
+                "payroll_start_day": {
+                  "type": "integer",
+                  "example": 1
+                },
+                "payroll_end_day": {
+                  "type": "integer",
+                  "example": 15
                 }
               }
             }
