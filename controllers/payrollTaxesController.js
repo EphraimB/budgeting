@@ -5,7 +5,7 @@ import { handleError, executeQuery } from '../utils/helperFunctions.js';
 const payrollTaxesParse = payrollTax => ({
     payroll_taxes_id: parseInt(payrollTax.payroll_taxes_id),
     name: payrollTax.name,
-    rate: parseFloat(payrollTax.rate),
+    rate: parseFloat(payrollTax.rate)
 });
 
 export const getPayrollTaxes = async (request, response) => {
@@ -25,7 +25,7 @@ export const getPayrollTaxes = async (request, response) => {
 
         const returnObj = {
             employee_id: parseInt(employee_id),
-            payroll_taxes: payrollTaxes,
+            payroll_taxes: payrollTaxes
         };
 
         response.status(200).json(returnObj);
@@ -90,7 +90,7 @@ export const deletePayrollTax = async (request, response) => {
 
         await getPayrolls(employee_id);
 
-        response.status(200).send("Successfully deleted payroll tax");
+        response.status(200).send('Successfully deleted payroll tax');
     } catch (error) {
         console.error(error); // Log the error on the server side
         handleError(response, 'Error deleting payroll tax');
