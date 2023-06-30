@@ -7,7 +7,7 @@ const payrollsParse = payroll => ({
     work_days: parseInt(payroll.work_days),
     gross_pay: parseFloat(payroll.gross_pay),
     net_pay: parseFloat(payroll.net_pay),
-    hours_worked: parseFloat(payroll.hours_worked),
+    hours_worked: parseFloat(payroll.hours_worked)
 });
 
 // Get all payrolls
@@ -26,12 +26,12 @@ export const getPayrolls = async (request, response) => {
 
         const returnObj = {
             employee_id,
-            payrolls: payrolls,
-        }
+            payrolls
+        };
 
         response.status(200).json(returnObj);
     } catch (error) {
         console.error(error); // Log the error on the server side
-        handleError(response, "Error getting payrolls");
+        handleError(response, 'Error getting payrolls');
     }
 };

@@ -1,14 +1,15 @@
 import express from 'express';
 import { query, param, body } from 'express-validator';
-const router = express.Router();
 import { getPayrollTaxes, createPayrollTax, updatePayrollTax, deletePayrollTax } from '../controllers/payrollTaxesController.js';
 import validateRequest from '../utils/validateRequest.js';
+
+const router = express.Router();
 
 router.get('/',
     [
         query('employee_id').isInt({ min: 1 }).withMessage('Employee ID must be a number'),
         query('id').optional().isInt({ min: 1 }).withMessage('ID must be a number'),
-        validateRequest,
+        validateRequest
     ],
     getPayrollTaxes);
 
@@ -17,7 +18,7 @@ router.post('/',
         body('employee_id').isInt({ min: 1 }).withMessage('Employee ID must be a number'),
         body('name').isString().withMessage('Name must be a string'),
         body('rate').isFloat({ min: 0 }).withMessage('Rate must be a number'),
-        validateRequest,
+        validateRequest
     ],
     createPayrollTax);
 
@@ -27,7 +28,7 @@ router.put('/:id',
         body('employee_id').isInt({ min: 1 }).withMessage('Employee ID must be a number'),
         body('name').isString().withMessage('Name must be a string'),
         body('rate').isFloat({ min: 0 }).withMessage('Rate must be a number'),
-        validateRequest,
+        validateRequest
     ],
     updatePayrollTax);
 
@@ -35,7 +36,7 @@ router.delete('/:id',
     [
         query('employee_id').isInt({ min: 1 }).withMessage('Employee ID must be a number'),
         param('id').isInt({ min: 1 }).withMessage('ID must be a number'),
-        validateRequest,
+        validateRequest
     ],
     deletePayrollTax);
 

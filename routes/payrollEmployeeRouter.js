@@ -1,13 +1,14 @@
 import express from 'express';
 import { query, param, body } from 'express-validator';
-const router = express.Router();
 import { getEmployee, createEmployee, updateEmployee, deleteEmployee } from '../controllers/employeesController.js';
 import validateRequest from '../utils/validateRequest.js';
+
+const router = express.Router();
 
 router.get('/',
     [
         query('employee_id').optional().isInt({ min: 1 }).withMessage('ID must be a number'),
-        validateRequest,
+        validateRequest
     ],
     getEmployee);
 
@@ -19,7 +20,7 @@ router.post('/',
         body('vacation_days').isInt({ min: 0 }).withMessage('Vacation days must be a number'),
         body('sick_days').isFloat({ min: 0 }).withMessage('Sick days must be a number'),
         body('work_schedule').isString().withMessage('Work schedule must be a string'),
-        validateRequest,
+        validateRequest
     ],
     createEmployee);
 
@@ -32,14 +33,14 @@ router.put('/:employee_id',
         body('vacation_days').isInt({ min: 0 }).withMessage('Vacation days must be a number'),
         body('sick_days').isFloat({ min: 0 }).withMessage('Sick days must be a number'),
         body('work_schedule').isString().withMessage('Work schedule must be a string'),
-        validateRequest,
+        validateRequest
     ],
     updateEmployee);
 
 router.delete('/:employee_id',
     [
         param('employee_id').isInt({ min: 1 }).withMessage('Employee ID must be a number'),
-        validateRequest,
+        validateRequest
     ],
     deleteEmployee);
 

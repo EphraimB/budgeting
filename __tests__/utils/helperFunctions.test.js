@@ -5,19 +5,18 @@ jest.unstable_mockModule('../../config/db.js', () => {
         default: {
             query: jest.fn()
                 .mockResolvedValueOnce({ rows: [{ id: 1, name: 'John Doe' }] }) // Success case
-                .mockRejectedValueOnce(new Error('Table does not exist')), // Failure case
-        },
-    }
+                .mockRejectedValueOnce(new Error('Table does not exist')) // Failure case
+        }
+    };
 });
 
 const { handleError, executeQuery } = await import('../../utils/helperFunctions.js');
-
 
 describe('handleError function', () => {
     it('should send a 400 error with the correct error message', async () => {
         const response = {
             status: jest.fn(() => response),
-            send: jest.fn(),
+            send: jest.fn()
         };
 
         handleError(response, 'Test error message');
@@ -27,8 +26,8 @@ describe('handleError function', () => {
             errors: {
                 msg: 'Test error message',
                 param: null,
-                location: 'query',
-            },
+                location: 'query'
+            }
         });
     });
 });

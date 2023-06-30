@@ -20,7 +20,7 @@ beforeAll(() => {
         getAccounts: (req, res, next) => res.json({ message: 'success' }),
         createAccount: (req, res, next) => res.json({ message: 'success' }),
         updateAccount: (req, res, next) => res.json({ message: 'success' }),
-        deleteAccount: (req, res, next) => res.json({ message: 'success' }),
+        deleteAccount: (req, res, next) => res.json({ message: 'success' })
     }));
 });
 

@@ -30,7 +30,7 @@ jest.unstable_mockModule('../../middleware/middleware', () => ({
     getWishlistsByAccount: (req, res, next) => {
         req.wishlists = [];
         next();
-    },
+    }
 }));
 
 jest.unstable_mockModule('../../generation/generateTransactions', () => ({

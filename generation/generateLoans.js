@@ -17,7 +17,7 @@ const generateLoans = (transactions, skippedTransactions, loan, toDate, fromDate
         if (loan.frequency_week_of_month !== null && loan.frequency_week_of_month !== undefined) {
             // first day of the month
             loanDate.setDate(1);
-            let daysToAdd = (7 + loan.frequency_day_of_week - loanDate.getDay()) % 7;
+            const daysToAdd = (7 + loan.frequency_day_of_week - loanDate.getDay()) % 7;
             // setting to the first occurrence of the desired day of week
             loanDate.setDate(loanDate.getDate() + daysToAdd);
             // setting to the desired week of the month
@@ -33,15 +33,15 @@ const generateLoans = (transactions, skippedTransactions, loan, toDate, fromDate
             title: loan.loan_title + ' loan to ' + loan.loan_recipient,
             description: loan.loan_description,
             date: new Date(loanDate),
-            amount: -loan.loan_plan_amount,
+            amount: -loan.loan_plan_amount
         };
 
-        if (loanDate <= new Date()) {
-
-        } else if (fromDate > loanDate) {
-            skippedTransactions.push(newTransaction);
-        } else {
-            transactions.push(newTransaction);
+        if (loanDate > new Date()) {
+            if (fromDate > loanDate) {
+                skippedTransactions.push(newTransaction);
+            } else {
+                transactions.push(newTransaction);
+            }
         }
 
         loanDate = generateDateFn(loanDate, loan);
@@ -78,7 +78,7 @@ export const generateMonthlyLoans = (transactions, skippedTransactions, loan, to
             if (loan.frequency_week_of_month !== null && loan.frequency_week_of_month !== undefined) {
                 // first day of the month
                 loanDate.setDate(1);
-                let daysToAdd = (7 + loan.frequency_day_of_week - loanDate.getDay()) % 7;
+                const daysToAdd = (7 + loan.frequency_day_of_week - loanDate.getDay()) % 7;
                 // setting to the first occurrence of the desired day of week
                 loanDate.setDate(loanDate.getDate() + daysToAdd);
                 // setting to the desired week of the month
@@ -97,7 +97,7 @@ export const generateMonthlyLoans = (transactions, skippedTransactions, loan, to
 };
 
 export const generateWeeklyLoans = (transactions, skippedTransactions, loan, toDate, fromDate) => {
-    let loanDate = new Date(loan.loan_begin_date);
+    const loanDate = new Date(loan.loan_begin_date);
 
     if (loan.frequency_day_of_week) {
         const startDay = loan.loan_begin_date.getDay();
@@ -126,12 +126,12 @@ export const generateYearlyLoans = (transactions, skippedTransactions, loan, toD
         }
 
         if (loan.frequency_day_of_week !== null && loan.frequency_day_of_week !== undefined) {
-            let daysToAdd = (7 - loanDate.getDay() + loan.frequency_day_of_week) % 7;
+            const daysToAdd = (7 - loanDate.getDay() + loan.frequency_day_of_week) % 7;
             loanDate.setDate(loanDate.getDate() + daysToAdd); // this is the first occurrence of the day_of_week
 
             if (loan.frequency_week_of_month !== null && loan.frequency_week_of_month !== undefined) {
                 // add the number of weeks, but check if it overflows into the next month
-                let proposedDate = new Date(loanDate.getTime());
+                const proposedDate = new Date(loanDate.getTime());
                 proposedDate.setDate(proposedDate.getDate() + 7 * (loan.frequency_week_of_month));
 
                 if (proposedDate.getMonth() === loanDate.getMonth()) {

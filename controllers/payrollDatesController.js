@@ -5,7 +5,7 @@ import { handleError, executeQuery } from '../utils/helperFunctions.js';
 const payrollDatesParse = payrollDate => ({
     payroll_date_id: parseInt(payrollDate.payroll_date_id),
     payroll_start_day: parseInt(payrollDate.payroll_start_day),
-    payroll_end_day: parseInt(payrollDate.payroll_end_day),
+    payroll_end_day: parseInt(payrollDate.payroll_end_day)
 });
 
 // Get payroll dates
@@ -27,7 +27,7 @@ export const getPayrollDates = async (request, response) => {
 
         const returnObj = {
             employee_id: parseInt(employee_id),
-            payroll_dates: payrollDates,
+            payroll_dates: payrollDates
         };
         response.status(200).json(returnObj);
     } catch (error) {
@@ -50,7 +50,7 @@ export const createPayrollDate = async (request, response) => {
 
         const returnObj = {
             employee_id: parseInt(employee_id),
-            payroll_date: payrollDates,
+            payroll_date: payrollDates
         };
         response.status(201).json(returnObj);
     } catch (error) {
@@ -78,7 +78,7 @@ export const updatePayrollDate = async (request, response) => {
 
         const returnObj = {
             employee_id: parseInt(employee_id),
-            payroll_date: payrollDates,
+            payroll_date: payrollDates
         };
 
         response.status(200).json(returnObj);
@@ -102,7 +102,7 @@ export const deletePayrollDate = async (request, response) => {
 
         await getPayrolls(employee_id);
 
-        response.status(200).send("Successfully deleted payroll date");
+        response.status(200).send('Successfully deleted payroll date');
     } catch (error) {
         console.error(error); // Log the error on the server side
         handleError(response, 'Error deleting payroll date');

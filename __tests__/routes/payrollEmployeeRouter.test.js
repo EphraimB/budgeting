@@ -21,7 +21,7 @@ const newPayrollEmployee = {
     regular_hours: 40,
     vacation_days: 10,
     sick_days: 10,
-    work_schedule: '0111100',
+    work_schedule: '0111100'
 };
 
 beforeAll(() => {
@@ -29,7 +29,7 @@ beforeAll(() => {
         getEmployee: (req, res, next) => res.json({ message: 'success' }),
         createEmployee: (req, res, next) => res.json({ message: 'success' }),
         updateEmployee: (req, res, next) => res.json({ message: 'success' }),
-        deleteEmployee: (req, res, next) => res.json({ message: 'success' }),
+        deleteEmployee: (req, res, next) => res.json({ message: 'success' })
     }));
 });
 

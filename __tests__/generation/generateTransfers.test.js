@@ -1,5 +1,5 @@
 import { generateDailyTransfers, generateMonthlyTransfers, generateWeeklyTransfers, generateYearlyTransfers } from '../../generation/generateTransfers';
-import MockDate from 'mockdate'
+import MockDate from 'mockdate';
 
 beforeAll(() => {
     MockDate.set('2020-01-01');
@@ -20,8 +20,8 @@ describe('Test generateDailyTransfers', () => {
             source_account_id: 1,
             destination_account_id: 2,
             transfer_begin_date: new Date('2020-01-02'),
-            transfer_title: "Test transfer",
-            transfer_description: "Test description",
+            transfer_title: 'Test transfer',
+            transfer_description: 'Test description',
             transfer_amount: 100
         };
         const toDate = new Date('2020-01-06');
@@ -51,8 +51,8 @@ describe('Test generateDailyTransfers', () => {
             source_account_id: 1,
             destination_account_id: 2,
             transfer_begin_date: new Date('2020-01-02'),
-            transfer_title: "Test transfer",
-            transfer_description: "Test description",
+            transfer_title: 'Test transfer',
+            transfer_description: 'Test description',
             transfer_amount: 100,
             frequency_type_variable: 2
         };
@@ -83,8 +83,8 @@ describe('Test generateDailyTransfers', () => {
             source_account_id: 1,
             destination_account_id: 2,
             transfer_begin_date: new Date('2020-01-02'),
-            transfer_title: "Test transfer",
-            transfer_description: "Test description",
+            transfer_title: 'Test transfer',
+            transfer_description: 'Test description',
             transfer_amount: 100
         };
         const toDate = new Date('2020-01-08');
@@ -116,8 +116,8 @@ describe('Test generateMonthlyTransfers', () => {
             source_account_id: 1,
             destination_account_id: 2,
             transfer_begin_date: new Date('2020-01-02'),
-            transfer_title: "Test transfer",
-            transfer_description: "Test description",
+            transfer_title: 'Test transfer',
+            transfer_description: 'Test description',
             transfer_amount: 100
         };
         const toDate = new Date('2020-06-02');
@@ -147,8 +147,8 @@ describe('Test generateMonthlyTransfers', () => {
             source_account_id: 1,
             destination_account_id: 2,
             transfer_begin_date: new Date('2020-01-02'),
-            transfer_title: "Test transfer",
-            transfer_description: "Test description",
+            transfer_title: 'Test transfer',
+            transfer_description: 'Test description',
             transfer_amount: 100,
             frequency_type_variable: 2
         };
@@ -179,8 +179,8 @@ describe('Test generateMonthlyTransfers', () => {
             source_account_id: 1,
             destination_account_id: 2,
             transfer_begin_date: new Date('2020-01-02'),
-            transfer_title: "Test transfer",
-            transfer_description: "Test description",
+            transfer_title: 'Test transfer',
+            transfer_description: 'Test description',
             transfer_amount: 100
         };
         const toDate = new Date('2020-08-02');
@@ -210,8 +210,8 @@ describe('Test generateMonthlyTransfers', () => {
             source_account_id: 1,
             destination_account_id: 2,
             transfer_begin_date: new Date('2020-01-02'),
-            transfer_title: "Test transfer",
-            transfer_description: "Test description",
+            transfer_title: 'Test transfer',
+            transfer_description: 'Test description',
             transfer_amount: 150,
             frequency_day_of_week: 2
         };
@@ -231,7 +231,7 @@ describe('Test generateMonthlyTransfers', () => {
         const TUESDAY = 2;
 
         // calculate the number of days to add to get to the next Tuesday
-        let daysUntilNextTuesday = (7 + TUESDAY - toBeEndDate.getDay()) % 7;
+        const daysUntilNextTuesday = (7 + TUESDAY - toBeEndDate.getDay()) % 7;
 
         toBeEndDate.setDate(toBeEndDate.getDate() + daysUntilNextTuesday);
 
@@ -254,8 +254,8 @@ describe('Test generateMonthlyTransfers', () => {
             source_account_id: 1,
             destination_account_id: 2,
             transfer_begin_date: new Date('2020-01-02'),
-            transfer_title: "Test transfer",
-            transfer_description: "Test description",
+            transfer_title: 'Test transfer',
+            transfer_description: 'Test description',
             transfer_amount: 150,
             frequency_day_of_week: 2,
             frequency_week_of_month: 1
@@ -299,8 +299,8 @@ describe('generateWeeklyTransfers', () => {
             source_account_id: 1,
             destination_account_id: 2,
             transfer_begin_date: new Date('2020-01-02'),
-            transfer_title: "Test transfer",
-            transfer_description: "Test description",
+            transfer_title: 'Test transfer',
+            transfer_description: 'Test description',
             transfer_amount: 100
         };
         const toDate = new Date('2020-02-02');
@@ -330,8 +330,8 @@ describe('generateWeeklyTransfers', () => {
             source_account_id: 1,
             destination_account_id: 2,
             transfer_begin_date: new Date('2020-01-02'),
-            transfer_title: "Test transfer",
-            transfer_description: "Test description",
+            transfer_title: 'Test transfer',
+            transfer_description: 'Test description',
             transfer_amount: 100,
             frequency_type_variable: 2
         };
@@ -362,8 +362,8 @@ describe('generateWeeklyTransfers', () => {
             source_account_id: 1,
             destination_account_id: 2,
             transfer_begin_date: new Date('2020-01-02'),
-            transfer_title: "Test transfer",
-            transfer_description: "Test description",
+            transfer_title: 'Test transfer',
+            transfer_description: 'Test description',
             transfer_amount: 100
         };
         const toDate = new Date('2020-02-15');
@@ -393,10 +393,10 @@ describe('generateWeeklyTransfers', () => {
             source_account_id: 1,
             destination_account_id: 2,
             transfer_begin_date: new Date('2020-01-02'),
-            transfer_title: "Test transfer",
-            transfer_description: "Test description",
+            transfer_title: 'Test transfer',
+            transfer_description: 'Test description',
             transfer_amount: 150,
-            frequency_day_of_week: 2,
+            frequency_day_of_week: 2
         };
         const toDate = new Date('2020-02-02');
         const fromDate = new Date('2020-01-01');
@@ -414,7 +414,7 @@ describe('generateWeeklyTransfers', () => {
         const TUESDAY = 2;
 
         // calculate the number of days to add to get to the next Tuesday
-        let daysUntilNextTuesday = (7 + TUESDAY - toBeEndDate.getDay()) % 7;
+        const daysUntilNextTuesday = (7 + TUESDAY - toBeEndDate.getDay()) % 7;
 
         toBeEndDate.setDate(toBeEndDate.getDate() + daysUntilNextTuesday);
 
@@ -439,8 +439,8 @@ describe('generateYearlyTransfers', () => {
             source_account_id: 1,
             destination_account_id: 2,
             transfer_begin_date: new Date('2020-01-02'),
-            transfer_title: "Test transfer",
-            transfer_description: "Test description",
+            transfer_title: 'Test transfer',
+            transfer_description: 'Test description',
             transfer_amount: 100
         };
         const toDate = new Date('2022-02-02');
@@ -470,8 +470,8 @@ describe('generateYearlyTransfers', () => {
             source_account_id: 1,
             destination_account_id: 2,
             transfer_begin_date: new Date('2020-01-02'),
-            transfer_title: "Test transfer",
-            transfer_description: "Test description",
+            transfer_title: 'Test transfer',
+            transfer_description: 'Test description',
             transfer_amount: 100,
             frequency_type_variable: 2
         };
@@ -502,8 +502,8 @@ describe('generateYearlyTransfers', () => {
             source_account_id: 1,
             destination_account_id: 2,
             transfer_begin_date: new Date('2020-01-02'),
-            transfer_title: "Test transfer",
-            transfer_description: "Test description",
+            transfer_title: 'Test transfer',
+            transfer_description: 'Test description',
             transfer_amount: 100
         };
         const toDate = new Date('2025-02-02');
@@ -533,8 +533,8 @@ describe('generateYearlyTransfers', () => {
             source_account_id: 1,
             destination_account_id: 2,
             transfer_begin_date: new Date('2020-01-02'),
-            transfer_title: "Test transfer",
-            transfer_description: "Test description",
+            transfer_title: 'Test transfer',
+            transfer_description: 'Test description',
             transfer_amount: 150,
             frequency_day_of_week: 2
         };
@@ -551,7 +551,7 @@ describe('generateYearlyTransfers', () => {
         const TUESDAY = 2;
 
         // calculate the number of days to add to get to the next Tuesday
-        let daysUntilNextTuesday = (7 + TUESDAY - toBeEndDate.getDay()) % 7;
+        const daysUntilNextTuesday = (7 + TUESDAY - toBeEndDate.getDay()) % 7;
 
         toBeEndDate.setDate(toBeEndDate.getDate() + daysUntilNextTuesday);
 
@@ -574,8 +574,8 @@ describe('generateYearlyTransfers', () => {
             source_account_id: 1,
             destination_account_id: 2,
             transfer_begin_date: new Date('2020-01-02'),
-            transfer_title: "Test transfer",
-            transfer_description: "Test description",
+            transfer_title: 'Test transfer',
+            transfer_description: 'Test description',
             transfer_amount: 150,
             frequency_day_of_week: 2,
             frequency_week_of_month: 1
@@ -617,12 +617,12 @@ describe('generateYearlyTransfers', () => {
             source_account_id: 1,
             destination_account_id: 2,
             transfer_begin_date: new Date('2020-01-02'),
-            transfer_title: "Test transfer",
-            transfer_description: "Test description",
+            transfer_title: 'Test transfer',
+            transfer_description: 'Test description',
             transfer_amount: 150,
             frequency_day_of_week: 2,
             frequency_week_of_month: 1,
-            frequency_month_of_year: 5,  // June
+            frequency_month_of_year: 5 // June
         };
         const toDate = new Date('2023-01-01');
         const fromDate = new Date('2020-01-01');
@@ -631,7 +631,7 @@ describe('generateYearlyTransfers', () => {
         generateYearlyTransfers(transactions, skippedTransactions, transfer, toDate, fromDate, account_id);
 
         // Checking the results
-        expect(transactions.length).toBe(3);  // 2020, 2021, 2022
+        expect(transactions.length).toBe(3); // 2020, 2021, 2022
         expect(skippedTransactions.length).toBe(0);
         expect(transactions[0].title).toBe(transfer.transfer_title);
         expect(transactions[0].description).toBe(transfer.transfer_description);
@@ -640,9 +640,9 @@ describe('generateYearlyTransfers', () => {
         // Check if the transactions are on the correct dates (second Tuesday of June each year)
         transactions.forEach((transaction, i) => {
             const transactionDate = new Date(transaction.date);
-            expect(transactionDate.getMonth()).toBe(transfer.frequency_month_of_year);  // June
+            expect(transactionDate.getMonth()).toBe(transfer.frequency_month_of_year); // June
 
-            expect(transactionDate.getDay()).toBe(transfer.frequency_day_of_week);  // Tuesday
+            expect(transactionDate.getDay()).toBe(transfer.frequency_day_of_week); // Tuesday
 
             const secondWeekOfMonth = Math.floor((transactionDate.getDate() - 1) / 7) === 1;
             expect(secondWeekOfMonth).toBeTruthy();

@@ -1,0 +1,29 @@
+{
+    "env": {
+        "browser": true,
+        "es2021": true,
+        "jest": true
+    },
+    "extends": [
+        "standard",
+        "plugin:jest/recommended"
+    ],
+    "parserOptions": {
+        "ecmaVersion": "latest",
+        "sourceType": "module"
+    },
+    "plugins": [
+        "jest"
+    ],
+    "rules": {
+        "indent": [
+            "error",
+            4
+        ],
+        "semi": [
+            "error",
+            "always"
+        ],
+        "camelcase": "off"
+    }
+}

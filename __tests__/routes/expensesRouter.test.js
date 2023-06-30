@@ -39,7 +39,7 @@ beforeAll(() => {
         getExpenses: (req, res, next) => res.json({ message: 'success' }),
         createExpense: (req, res, next) => res.json({ message: 'success' }),
         updateExpense: (req, res, next) => res.json({ message: 'success' }),
-        deleteExpense: (req, res, next) => res.json({ message: 'success' }),
+        deleteExpense: (req, res, next) => res.json({ message: 'success' })
     }));
 });
 

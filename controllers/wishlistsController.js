@@ -10,7 +10,7 @@ const wishlistsParse = wishlist => ({
     wishlist_priority: parseInt(wishlist.wishlist_priority),
     wishlist_date_available: wishlist.wishlist_date_available,
     date_created: wishlist.date_created,
-    date_modified: wishlist.date_modified,
+    date_modified: wishlist.date_modified
 });
 
 // Get all wishlists
@@ -84,12 +84,12 @@ export const deleteWishlist = async (request, response) => {
         const getWishlistResults = await executeQuery(wishlistQueries.getWishlist, [id]);
 
         if (getWishlistResults.length === 0) {
-            return response.status(404).send("Wishlist not found");
+            return response.status(404).send('Wishlist not found');
         }
 
         await executeQuery(wishlistQueries.deleteWishlist, [id]);
 
-        response.status(200).send("Successfully deleted wishlist item");
+        response.status(200).send('Successfully deleted wishlist item');
     } catch (error) {
         console.error(error); // Log the error on the server side
         handleError(response, 'Error deleting wishlist');
