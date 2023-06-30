@@ -20,7 +20,7 @@ const parseLoan = loan => ({
     loan_begin_date: loan.loan_begin_date,
     loan_end_date: loan.loan_end_date,
     date_created: loan.date_created,
-    date_modified: loan.date_modified,
+    date_modified: loan.date_modified
 });
 
 // Get all loans
@@ -59,7 +59,7 @@ export const createLoan = async (request, response) => {
         frequency_day_of_week,
         frequency_week_of_month,
         frequency_month_of_year,
-        begin_date,
+        begin_date
     } = request.body;
 
     const negativePlanAmount = -plan_amount;
@@ -99,7 +99,7 @@ export const createLoan = async (request, response) => {
                 frequency_day_of_week,
                 frequency_week_of_month,
                 frequency_month_of_year,
-                begin_date,
+                begin_date
             ]
         );
 
@@ -129,7 +129,7 @@ export const updateLoan = async (request, response) => {
             frequency_day_of_week,
             frequency_week_of_month,
             frequency_month_of_year,
-            begin_date,
+            begin_date
         } = request.body;
 
         const negativePlanAmount = -plan_amount;
@@ -171,7 +171,7 @@ export const updateLoan = async (request, response) => {
             frequency_week_of_month,
             frequency_month_of_year,
             begin_date,
-            id,
+            id
         ]);
 
         // Parse the data to the correct format and return an object
@@ -191,7 +191,7 @@ export const deleteLoan = async (request, response) => {
         const getLoanResults = await executeQuery(loanQueries.getLoan, [id]);
 
         if (getLoanResults.length === 0) {
-            return response.status(404).send("Loan not found");
+            return response.status(404).send('Loan not found');
         }
 
         const cronId = getLoanResults[0].cron_job_id;
@@ -202,7 +202,7 @@ export const deleteLoan = async (request, response) => {
             await executeQuery(cronJobQueries.deleteCronJob, [cronId]);
         }
 
-        response.status(200).send("Loan deleted successfully");
+        response.status(200).send('Loan deleted successfully');
     } catch (error) {
         console.error(error); // Log the error on the server side
         handleError(response, 'Error deleting loan');
