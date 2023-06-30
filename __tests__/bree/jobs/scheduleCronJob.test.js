@@ -3,18 +3,18 @@ import { Volume } from 'memfs';
 
 const vol = Volume.fromJSON({
     './jobs.json': '[]',
-    'cron-jobs/jobs.js': '',
+    'cron-jobs/jobs.js': ''
 }, '/app');
 
 jest.unstable_mockModule('fs', () => ({
-    default: vol,
+    default: vol
 }));
 
 jest.unstable_mockModule('../../../bree/breeManager.js', () => ({
     getBree: jest.fn().mockImplementation(() => ({
         add: jest.fn(),
-        start: jest.fn(),
-    })),
+        start: jest.fn()
+    }))
 }));
 
 const scheduleCronJobModule = await import('../../../bree/jobs/scheduleCronJob.js');
