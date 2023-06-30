@@ -3,11 +3,11 @@ import { Volume } from 'memfs';
 
 const vol = Volume.fromJSON({
     './jobs.json': '[]',
-    'cron-jobs/jobs.js': '',
+    'cron-jobs/jobs.js': ''
 }, '/app');
 
 jest.unstable_mockModule('fs', () => ({
-    default: vol,
+    default: vol
 }));
 
 jest.unstable_mockModule('../../config/db.js', () => ({
@@ -16,10 +16,10 @@ jest.unstable_mockModule('../../config/db.js', () => ({
             rows: [{
                 account_id: 1,
                 payroll_id: 1,
-                payroll_amount: 1000,
-            }],
-        })),
-    },
+                payroll_amount: 1000
+            }]
+        }))
+    }
 }));
 
 jest.unstable_mockModule('../../bree/jobs/schedulePayrollCronJob.js', () => ({
@@ -29,10 +29,10 @@ jest.unstable_mockModule('../../bree/jobs/schedulePayrollCronJob.js', () => ({
         path: '/app/jobs/cronScriptGetPayrolls.js',
         worker: {
             workerData: {
-                employee_id: 1,
-            },
-        },
-    })),
+                employee_id: 1
+            }
+        }
+    }))
 }));
 
 const getPayrollsModule = await import('../../bree/getPayrolls.js');
@@ -49,9 +49,9 @@ describe('getPayrolls', () => {
             path: '/app/jobs/cronScriptGetPayrolls.js',
             worker: {
                 workerData: {
-                    employee_id: 1,
-                },
-            },
+                    employee_id: 1
+                }
+            }
         }]);
     });
 });
