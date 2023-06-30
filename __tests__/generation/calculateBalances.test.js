@@ -14,29 +14,29 @@ describe('calculateBalances', () => {
         const transactions = [
             {
                 transaction_id: 1,
-                title: "Test Transaction",
-                description: "Testing the transaction",
+                title: 'Test Transaction',
+                description: 'Testing the transaction',
                 date: yesterday,
                 date_modified: yesterday,
-                amount: 1000,
+                amount: 1000
             },
             {
-                title: "Test Transaction 2",
-                description: "Testing the transaction 2",
+                title: 'Test Transaction 2',
+                description: 'Testing the transaction 2',
                 date: tomorrow,
-                amount: 500,
+                amount: 500
             },
             {
-                title: "Test Transaction 3",
-                description: "Testing the transaction 3",
+                title: 'Test Transaction 3',
+                description: 'Testing the transaction 3',
                 date: dayAfterTomorrow,
-                amount: -500,
+                amount: -500
             },
             {
-                title: "Test Transaction 4",
-                description: "Testing the transaction 4",
+                title: 'Test Transaction 4',
+                description: 'Testing the transaction 4',
                 date: dayAfterTomorrow,
-                amount: 1000,
+                amount: 1000
             }
         ];
 
