@@ -9,37 +9,22 @@ import schedulePayrollCronJob from '../schedulePayrollCronJob.js';
 const jobsFilePath = 'jobs.json';
 const __dirname = url.fileURLToPath(new URL('.', import.meta.url));
 
-(async () => {
-    const { employee_id } = workerData;
-
-    // Read the existing jobs from the file or create an empty array if the file doesn't exist
-    let jobs = [];
-    if (fs.existsSync(jobsFilePath)) {
-        jobs = JSON.parse(fs.readFileSync(jobsFilePath));
-    }
-
-    // Get the unique IDs of the cron job to be deleted that start with 'payroll-'
-    for (const job of jobs) {
+const deleteCronJobFiles = (jobs) => {
+    jobs.forEach(job => {
         if (job.name.startsWith('payroll-')) {
-            try {
-                // Delete the cron job file
-                const cronJobFilePath = path.join(__dirname, 'cron-jobs', `${job.name}.js`);
-                fs.unlink(cronJobFilePath, (err) => {
-                    if (err) {
-                        console.error(err);
-                    }
+            const cronJobFilePath = path.join(__dirname, 'cron-jobs', `${job.name}.js`);
+            fs.unlink(cronJobFilePath, (err) => {
+                if (err) {
+                    console.error(err);
+                } else {
                     console.log(`Deleted cron job file ${job.name}.js`);
-                });
-            } catch (error) {
-                console.error('Error deleting cron job:', error);
-            }
+                }
+            });
         }
-    }
+    });
+};
 
-    // Remove existing payroll- jobs from the array
-    jobs = jobs.filter(job => !job.name.startsWith('payroll-'));
-
-    // Write the updated jobs array to the file
+const updateJobsFile = (jobs) => {
     fs.writeFileSync(jobsFilePath, JSON.stringify(jobs, null, 2), (err) => {
         if (err) {
             console.error(err);
@@ -47,6 +32,21 @@ const __dirname = url.fileURLToPath(new URL('.', import.meta.url));
             console.log('Updated jobs.json file');
         }
     });
+};
+
+(async () => {
+    const { employee_id } = workerData;
+
+    let jobs = [];
+    if (fs.existsSync(jobsFilePath)) {
+        jobs = JSON.parse(fs.readFileSync(jobsFilePath));
+    }
+
+    deleteCronJobFiles(jobs);
+
+    jobs = jobs.filter(job => !job.name.startsWith('payroll-'));
+
+    updateJobsFile(jobs);
 
     try {
         const { rows: [{ account_id }] } = await pool.query(payrollQueries.getAccountIdFromEmployee, [employee_id]);
@@ -56,10 +56,9 @@ const __dirname = url.fileURLToPath(new URL('.', import.meta.url));
             schedulePayrollCronJob(result, account_id);
         }
 
-        // Exit the worker thread
         process.exit(0);
     } catch (error) {
         console.error('Error in worker thread:', error);
-        process.exit(1); // Exit with a non-zero code to indicate an error occurred
+        process.exit(1);
     }
 })();
