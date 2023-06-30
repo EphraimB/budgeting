@@ -4,7 +4,8 @@
   "description": "A budgeting app that calculates the projected budget at a certain date",
   "main": "server.js",
   "scripts": {
-    "test": "cross-env NODE_OPTIONS=--experimental-vm-modules jest"
+    "test": "cross-env NODE_OPTIONS=--experimental-vm-modules jest",
+    "lint": "eslint ."
   },
   "author": "Ephraim Becker",
   "license": "ISC",
@@ -23,6 +24,12 @@
   "devDependencies": {
     "babel-cli": "^6.26.0",
     "babel-preset-env": "^1.7.0",
+    "eslint": "^8.43.0",
+    "eslint-config-standard": "^17.1.0",
+    "eslint-plugin-import": "^2.27.5",
+    "eslint-plugin-n": "^16.0.1",
+    "eslint-plugin-promise": "^6.1.1",
+    "eslint-plugin-react": "^7.32.2",
     "jest": "^29.4.3",
     "memfs": "^3.5.1",
     "mockdate": "^3.0.5",
