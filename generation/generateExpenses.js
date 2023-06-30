@@ -29,6 +29,7 @@ const generateExpenses = (transactions, skippedTransactions, expense, toDate, fr
 
     while (expenseDate <= toDate) {
         const newTransaction = {
+            expense_id: expense.expense_id,
             title: expense.expense_title,
             description: expense.expense_description,
             date: new Date(expenseDate),
