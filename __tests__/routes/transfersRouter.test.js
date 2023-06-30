@@ -35,7 +35,7 @@ beforeAll(() => {
         getTransfers: (req, res, next) => res.json({ message: 'success' }),
         createTransfer: (req, res, next) => res.json({ message: 'success' }),
         updateTransfer: (req, res, next) => res.json({ message: 'success' }),
-        deleteTransfer: (req, res, next) => res.json({ message: 'success' }),
+        deleteTransfer: (req, res, next) => res.json({ message: 'success' })
     }));
 });
 
