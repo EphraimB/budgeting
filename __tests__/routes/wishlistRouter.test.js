@@ -19,7 +19,7 @@ const newWishlist = {
     amount: 100,
     title: 'test',
     description: 'test',
-    priority: 1,
+    priority: 1
 };
 
 beforeAll(() => {
@@ -27,7 +27,7 @@ beforeAll(() => {
         getWishlists: (req, res, next) => res.json({ message: 'success' }),
         createWishlist: (req, res, next) => res.json({ message: 'success' }),
         updateWishlist: (req, res, next) => res.json({ message: 'success' }),
-        deleteWishlist: (req, res, next) => res.json({ message: 'success' }),
+        deleteWishlist: (req, res, next) => res.json({ message: 'success' })
     }));
 });
 
