@@ -50,7 +50,7 @@ describe('scheduleCronJob', () => {
         const { cronDate } = await scheduleCronJob(jobDetailsYearly, '/app/cron-jobs/jobs.js', '/app/jobs.json');
 
         // Specify expected values here
-        const expectedCronDate = '30 13 19 */121 *'; // Provide the expected cronDate
+        const expectedCronDate = '30 13 19 */12 *'; // Provide the expected cronDate
 
         expect(cronDate).toBe(expectedCronDate);
     });
@@ -68,7 +68,7 @@ describe('scheduleCronJob', () => {
         const { cronDate } = await scheduleCronJob(jobDetailsUnique, '/app/cron-jobs/jobs.js', '/app/jobs.json');
 
         // Specify expected values here
-        const expectedCronDate = '30 13 */72 * *'; // Provide the expected cronDate
+        const expectedCronDate = '30 13 */14 * *'; // Provide the expected cronDate
 
         expect(cronDate).toBe(expectedCronDate);
     });
