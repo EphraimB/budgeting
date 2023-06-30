@@ -1,9 +1,10 @@
-import fs from "fs";
+import fs from 'fs';
 import path from 'path';
 import * as url from 'url';
+import { getPayrolls } from './getPayrolls.js';
+import { getEmployeesData } from '../bree/getEmployeesData.js';
+
 const __dirname = url.fileURLToPath(new URL('.', import.meta.url));
-import { getPayrolls } from "./getPayrolls.js";
-import { getEmployeesData } from "../bree/getEmployeesData.js";
 
 // Main function to get jobs
 export const getJobs = async (jobsFilePath) => {
@@ -19,7 +20,7 @@ export const getJobs = async (jobsFilePath) => {
         }
 
         // Execute the cronScriptGetPayrolls.js script if there are no jobs that start with payroll- in the jobs array
-        if (!jobs.some(job => job.name.startsWith("payroll-"))) {
+        if (!jobs.some(job => job.name.startsWith('payroll-'))) {
             for (const employee of employeeData) {
                 const newJob = await getPayrolls(employee.employee_id);
 
@@ -29,13 +30,13 @@ export const getJobs = async (jobsFilePath) => {
 
         const payrollCheckerjobs = employeeData.map(employee => ({
             name: `payroll-checker-employee-${employee.employee_id}`,
-            cron: "0 0 1 * *",
-            path: "/app/bree/jobs/scripts/cronScriptGetPayrolls.js",
+            cron: '0 0 1 * *',
+            path: '/app/bree/jobs/scripts/cronScriptGetPayrolls.js',
             worker: {
                 workerData: {
-                    employee_id: employee.employee_id,
-                },
-            },
+                    employee_id: employee.employee_id
+                }
+            }
         }));
 
         jobs = jobs.concat(payrollCheckerjobs);
