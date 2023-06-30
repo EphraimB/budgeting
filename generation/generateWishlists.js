@@ -25,6 +25,7 @@ const generateWishlists = (transactions, skippedTransactions, wishlist, fromDate
             : affordableDate;
 
         const newTransaction = {
+            wishlist_id: wishlist.wishlist_id,
             title: wishlist.wishlist_title,
             description: wishlist.wishlist_description,
             date: newTransactionDate,
