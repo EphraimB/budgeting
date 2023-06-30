@@ -18,7 +18,7 @@ const parseExpenses = expense => ({
     expense_begin_date: expense.expense_begin_date,
     expense_end_date: expense.expense_end_date,
     date_created: expense.date_created,
-    date_modified: expense.date_modified,
+    date_modified: expense.date_modified
 });
 
 export const getExpenses = async (request, response) => {
@@ -133,7 +133,7 @@ export const updateExpense = async (request, response) => {
     try {
         const expenseResult = await executeQuery(expenseQueries.getExpense, [id]);
         if (expenseResult.length === 0) {
-            return response.status(404).send("Expense not found");
+            return response.status(404).send('Expense not found');
         }
 
         const cronId = expenseResult[0].cron_job_id;
@@ -176,7 +176,7 @@ export const deleteExpense = async (request, response) => {
     try {
         const expenseResult = await executeQuery(expenseQueries.getExpense, [id]);
         if (expenseResult.length === 0) {
-            return response.status(404).send("Expense not found");
+            return response.status(404).send('Expense not found');
         }
 
         const cronId = expenseResult[0].cron_job_id;
@@ -188,7 +188,7 @@ export const deleteExpense = async (request, response) => {
             await executeQuery(cronJobQueries.deleteCronJob, [cronId]);
         }
 
-        response.status(200).send("Expense deleted successfully");
+        response.status(200).send('Expense deleted successfully');
     } catch (error) {
         console.error(error); // Log the error on the server side
         handleError(response, 'Error deleting expense');
