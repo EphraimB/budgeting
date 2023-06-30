@@ -7,7 +7,7 @@ const parseAccounts = account => ({
     account_type: parseInt(account.account_type),
     account_balance: parseFloat(account.account_balance),
     date_created: account.date_created,
-    date_modified: account.date_modified,
+    date_modified: account.date_modified
 });
 
 // Get all accounts
@@ -41,7 +41,7 @@ export const createAccount = async (request, response) => {
         response.status(201).json(accounts);
     } catch (error) {
         console.error(error); // Log the error on the server side
-        handleError(response, "Error creating account");
+        handleError(response, 'Error creating account');
     }
 };
 
