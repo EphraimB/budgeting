@@ -1,12 +1,13 @@
 import pool from '../models/db.js';
 import fs from 'fs';
 import path from 'path';
-const jobsFilePath = 'jobs.json';
 import * as url from 'url';
-const __dirname = url.fileURLToPath(new URL('.', import.meta.url));
 import { workerData } from 'worker_threads';
 import { payrollQueries } from '../models/queryData.js';
 import schedulePayrollCronJob from '../schedulePayrollCronJob.js';
+
+const jobsFilePath = 'jobs.json';
+const __dirname = url.fileURLToPath(new URL('.', import.meta.url));
 
 (async () => {
     const { employee_id } = workerData;
@@ -26,11 +27,9 @@ import schedulePayrollCronJob from '../schedulePayrollCronJob.js';
                 fs.unlink(cronJobFilePath, (err) => {
                     if (err) {
                         console.error(err);
-                        return reject(err);
                     }
                     console.log(`Deleted cron job file ${job.name}.js`);
                 });
-
             } catch (error) {
                 console.error('Error deleting cron job:', error);
             }
@@ -45,7 +44,7 @@ import schedulePayrollCronJob from '../schedulePayrollCronJob.js';
         if (err) {
             console.error(err);
         } else {
-            console.log(`Updated jobs.json file`);
+            console.log('Updated jobs.json file');
         }
     });
 
