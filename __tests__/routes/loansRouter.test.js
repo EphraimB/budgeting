@@ -41,7 +41,7 @@ beforeAll(() => {
         getLoans: (req, res, next) => res.json({ message: 'success' }),
         createLoan: (req, res, next) => res.json({ message: 'success' }),
         updateLoan: (req, res, next) => res.json({ message: 'success' }),
-        deleteLoan: (req, res, next) => res.json({ message: 'success' }),
+        deleteLoan: (req, res, next) => res.json({ message: 'success' })
     }));
 });
 
