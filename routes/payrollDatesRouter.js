@@ -7,7 +7,6 @@ const router = express.Router();
 
 router.get('/',
     [
-        query('employee_id').isInt({ min: 1 }).withMessage('Employee ID must be a number'),
         query('id').optional().isInt({ min: 1 }).withMessage('ID must be a number'),
         validateRequest
     ],

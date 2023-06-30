@@ -725,16 +725,6 @@
         ],
         "parameters": [
           {
-            "name": "employee_id",
-            "in": "query",
-            "description": "Employee id",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "minimum": 1
-            }
-          },
-          {
             "name": "id",
             "in": "query",
             "description": "Payroll date id",
@@ -2063,35 +2053,24 @@
             "schema": {
               "type": "object",
               "properties": {
-                "employee_id": {
-                  "type": "integer",
-                  "format": "int64",
-                  "minimum": 1
-                },
-                "payroll_dates": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "payroll_dates_id": {
-                        "type": "integer",
-                        "format": "int64",
-                        "minimum": 1
-                      },
-                      "employee_id": {
-                        "type": "integer",
-                        "format": "int64",
-                        "minimum": 1
-                      },
-                      "payroll_start_day": {
-                        "type": "integer",
-                        "example": 1
-                      },
-                      "payroll_end_day": {
-                        "type": "integer",
-                        "example": 15
-                      }
-                    }
+                "properties": {
+                  "payroll_dates_id": {
+                    "type": "integer",
+                    "format": "int64",
+                    "minimum": 1
+                  },
+                  "employee_id": {
+                    "type": "integer",
+                    "format": "int64",
+                    "minimum": 1
+                  },
+                  "payroll_start_day": {
+                    "type": "integer",
+                    "example": 1
+                  },
+                  "payroll_end_day": {
+                    "type": "integer",
+                    "example": 15
                   }
                 }
               }
