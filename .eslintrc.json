@@ -23,12 +23,7 @@
             "error",
             "always"
         ],
-        "camelcase": [
-            "error",
-            {
-                "properties": "never"
-            }
-        ]
+        "camelcase": "off"
     },
     "settings": {
         "react": {
