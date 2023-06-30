@@ -1,5 +1,5 @@
 import { generateDailyExpenses, generateMonthlyExpenses, generateWeeklyExpenses, generateYearlyExpenses } from '../../generation/generateExpenses';
-import MockDate from 'mockdate'
+import MockDate from 'mockdate';
 
 beforeAll(() => {
     MockDate.set('2020-01-01');
@@ -16,8 +16,8 @@ describe('Test generateDailyExpenses', () => {
         const skippedTransactions = [];
         const expense = {
             expense_begin_date: new Date('2020-01-02'),
-            expense_title: "Test expense",
-            expense_description: "Test description",
+            expense_title: 'Test expense',
+            expense_description: 'Test description',
             expense_amount: 100
         };
         const toDate = new Date('2020-01-06');
@@ -43,8 +43,8 @@ describe('Test generateDailyExpenses', () => {
         const skippedTransactions = [];
         const expense = {
             expense_begin_date: new Date('2020-01-02'),
-            expense_title: "Test expense",
-            expense_description: "Test description",
+            expense_title: 'Test expense',
+            expense_description: 'Test description',
             expense_amount: 100,
             frequency_type_variable: 2
         };
@@ -71,8 +71,8 @@ describe('Test generateDailyExpenses', () => {
         const skippedTransactions = [];
         const expense = {
             expense_begin_date: new Date('2020-01-02'),
-            expense_title: "Test expense",
-            expense_description: "Test description",
+            expense_title: 'Test expense',
+            expense_description: 'Test description',
             expense_amount: 100
         };
         const toDate = new Date('2020-01-08');
@@ -100,8 +100,8 @@ describe('Test generateMonthlyExpenses', () => {
         const skippedTransactions = [];
         const expense = {
             expense_begin_date: new Date('2020-01-02'),
-            expense_title: "Test expense",
-            expense_description: "Test description",
+            expense_title: 'Test expense',
+            expense_description: 'Test description',
             expense_amount: 100
         };
         const toDate = new Date('2020-06-02');
@@ -127,8 +127,8 @@ describe('Test generateMonthlyExpenses', () => {
         const skippedTransactions = [];
         const expense = {
             expense_begin_date: new Date('2020-01-02'),
-            expense_title: "Test expense",
-            expense_description: "Test description",
+            expense_title: 'Test expense',
+            expense_description: 'Test description',
             expense_amount: 100,
             frequency_type_variable: 2
         };
@@ -155,8 +155,8 @@ describe('Test generateMonthlyExpenses', () => {
         const skippedTransactions = [];
         const expense = {
             expense_begin_date: new Date('2020-01-02'),
-            expense_title: "Test expense",
-            expense_description: "Test description",
+            expense_title: 'Test expense',
+            expense_description: 'Test description',
             expense_amount: 100
         };
         const toDate = new Date('2020-08-02');
@@ -182,10 +182,10 @@ describe('Test generateMonthlyExpenses', () => {
         const skippedTransactions = [];
         const expense = {
             expense_begin_date: new Date('2020-01-02'),
-            expense_title: "Test expense",
-            expense_description: "Test description",
+            expense_title: 'Test expense',
+            expense_description: 'Test description',
             expense_amount: 150,
-            frequency_day_of_week: 2,
+            frequency_day_of_week: 2
         };
         const toDate = new Date('2020-06-02');
         const fromDate = new Date('2020-01-01');
@@ -203,7 +203,7 @@ describe('Test generateMonthlyExpenses', () => {
         const TUESDAY = 2;
 
         // calculate the number of days to add to get to the next Tuesday
-        let daysUntilNextTuesday = (7 + TUESDAY - toBeEndDate.getDay()) % 7;
+        const daysUntilNextTuesday = (7 + TUESDAY - toBeEndDate.getDay()) % 7;
 
         toBeEndDate.setDate(toBeEndDate.getDate() + daysUntilNextTuesday);
 
@@ -222,11 +222,11 @@ describe('Test generateMonthlyExpenses', () => {
         const skippedTransactions = [];
         const expense = {
             expense_begin_date: new Date('2020-01-02'),
-            expense_title: "Test expense",
-            expense_description: "Test description",
+            expense_title: 'Test expense',
+            expense_description: 'Test description',
             expense_amount: 150,
             frequency_day_of_week: 2,
-            frequency_week_of_month: 1,
+            frequency_week_of_month: 1
         };
         const toDate = new Date('2020-06-01');
         const fromDate = new Date('2020-01-01');
@@ -263,8 +263,8 @@ describe('generateWeeklyExpenses', () => {
         const skippedTransactions = [];
         const expense = {
             expense_begin_date: new Date('2020-01-02'),
-            expense_title: "Test expense",
-            expense_description: "Test description",
+            expense_title: 'Test expense',
+            expense_description: 'Test description',
             expense_amount: 100
         };
         const toDate = new Date('2020-02-02');
@@ -290,10 +290,10 @@ describe('generateWeeklyExpenses', () => {
         const skippedTransactions = [];
         const expense = {
             expense_begin_date: new Date('2020-01-02'),
-            expense_title: "Test expense",
-            expense_description: "Test description",
+            expense_title: 'Test expense',
+            expense_description: 'Test description',
             expense_amount: 100,
-            frequency_type_variable: 2,
+            frequency_type_variable: 2
         };
         const toDate = new Date('2020-02-02');
         const fromDate = new Date('2020-01-01');
@@ -318,8 +318,8 @@ describe('generateWeeklyExpenses', () => {
         const skippedTransactions = [];
         const expense = {
             expense_begin_date: new Date('2020-01-02'),
-            expense_title: "Test expense",
-            expense_description: "Test description",
+            expense_title: 'Test expense',
+            expense_description: 'Test description',
             expense_amount: 100
         };
         const toDate = new Date('2020-02-15');
@@ -345,10 +345,10 @@ describe('generateWeeklyExpenses', () => {
         const skippedTransactions = [];
         const expense = {
             expense_begin_date: new Date('2020-01-02'),
-            expense_title: "Test expense",
-            expense_description: "Test description",
+            expense_title: 'Test expense',
+            expense_description: 'Test description',
             expense_amount: 150,
-            frequency_day_of_week: 2,
+            frequency_day_of_week: 2
         };
         const toDate = new Date('2020-02-02');
         const fromDate = new Date('2020-01-01');
@@ -366,7 +366,7 @@ describe('generateWeeklyExpenses', () => {
         const TUESDAY = 2;
 
         // calculate the number of days to add to get to the next Tuesday
-        let daysUntilNextTuesday = (7 + TUESDAY - toBeEndDate.getDay()) % 7;
+        const daysUntilNextTuesday = (7 + TUESDAY - toBeEndDate.getDay()) % 7;
 
         toBeEndDate.setDate(toBeEndDate.getDate() + daysUntilNextTuesday);
 
@@ -387,8 +387,8 @@ describe('generateYearlyExpenses', () => {
         const skippedTransactions = [];
         const expense = {
             expense_begin_date: new Date('2020-01-02'),
-            expense_title: "Test expense",
-            expense_description: "Test description",
+            expense_title: 'Test expense',
+            expense_description: 'Test description',
             expense_amount: 100
         };
         const toDate = new Date('2022-02-02');
@@ -414,8 +414,8 @@ describe('generateYearlyExpenses', () => {
         const skippedTransactions = [];
         const expense = {
             expense_begin_date: new Date('2020-01-02'),
-            expense_title: "Test expense",
-            expense_description: "Test description",
+            expense_title: 'Test expense',
+            expense_description: 'Test description',
             expense_amount: 100,
             frequency_type_variable: 2
         };
@@ -442,8 +442,8 @@ describe('generateYearlyExpenses', () => {
         const skippedTransactions = [];
         const expense = {
             expense_begin_date: new Date('2020-01-02'),
-            expense_title: "Test expense",
-            expense_description: "Test description",
+            expense_title: 'Test expense',
+            expense_description: 'Test description',
             expense_amount: 100
         };
         const toDate = new Date('2025-02-02');
@@ -469,10 +469,10 @@ describe('generateYearlyExpenses', () => {
         const skippedTransactions = [];
         const expense = {
             expense_begin_date: new Date('2020-01-02'),
-            expense_title: "Test expense",
-            expense_description: "Test description",
+            expense_title: 'Test expense',
+            expense_description: 'Test description',
             expense_amount: 150,
-            frequency_day_of_week: 2,
+            frequency_day_of_week: 2
         };
         const toDate = new Date('2023-01-10');
         const fromDate = new Date('2020-01-01');
@@ -487,7 +487,7 @@ describe('generateYearlyExpenses', () => {
         const TUESDAY = 2;
 
         // calculate the number of days to add to get to the next Tuesday
-        let daysUntilNextTuesday = (7 + TUESDAY - toBeEndDate.getDay()) % 7;
+        const daysUntilNextTuesday = (7 + TUESDAY - toBeEndDate.getDay()) % 7;
 
         toBeEndDate.setDate(toBeEndDate.getDate() + daysUntilNextTuesday);
 
@@ -506,11 +506,11 @@ describe('generateYearlyExpenses', () => {
         const skippedTransactions = [];
         const expense = {
             expense_begin_date: new Date('2020-01-02'),
-            expense_title: "Test expense",
-            expense_description: "Test description",
+            expense_title: 'Test expense',
+            expense_description: 'Test description',
             expense_amount: 150,
             frequency_day_of_week: 2,
-            frequency_week_of_month: 1,
+            frequency_week_of_month: 1
         };
         const toDate = new Date('2023-01-01');
         const fromDate = new Date('2020-01-01');
@@ -545,12 +545,12 @@ describe('generateYearlyExpenses', () => {
         const skippedTransactions = [];
         const expense = {
             expense_begin_date: new Date('2020-01-02'),
-            expense_title: "Test expense",
-            expense_description: "Test description",
+            expense_title: 'Test expense',
+            expense_description: 'Test description',
             expense_amount: 150,
-            frequency_day_of_week: 2,  // Tuesday
-            frequency_week_of_month: 1,  // Second week
-            frequency_month_of_year: 5,  // June
+            frequency_day_of_week: 2, // Tuesday
+            frequency_week_of_month: 1, // Second week
+            frequency_month_of_year: 5 // June
         };
         const toDate = new Date('2023-01-01');
         const fromDate = new Date('2020-01-01');
@@ -559,7 +559,7 @@ describe('generateYearlyExpenses', () => {
         generateYearlyExpenses(transactions, skippedTransactions, expense, toDate, fromDate);
 
         // Checking the results
-        expect(transactions.length).toBe(3);  // 2020, 2021, 2022
+        expect(transactions.length).toBe(3); // 2020, 2021, 2022
         expect(skippedTransactions.length).toBe(0);
         expect(transactions[0].title).toBe(expense.expense_title);
         expect(transactions[0].description).toBe(expense.expense_description);
@@ -568,9 +568,9 @@ describe('generateYearlyExpenses', () => {
         // Check if the transactions are on the correct dates (second Tuesday of June each year)
         transactions.forEach((transaction, i) => {
             const transactionDate = new Date(transaction.date);
-            expect(transactionDate.getMonth()).toBe(expense.frequency_month_of_year);  // June
+            expect(transactionDate.getMonth()).toBe(expense.frequency_month_of_year); // June
 
-            expect(transactionDate.getDay()).toBe(expense.frequency_day_of_week);  // Tuesday
+            expect(transactionDate.getDay()).toBe(expense.frequency_day_of_week); // Tuesday
 
             const secondWeekOfMonth = Math.floor((transactionDate.getDate() - 1) / 7) === 1;
             expect(secondWeekOfMonth).toBeTruthy();

@@ -2,7 +2,7 @@ import { jest } from '@jest/globals';
 import { employees, payrollDates, payrollTaxes } from '../../models/mockData.js';
 
 jest.unstable_mockModule('../../bree/getPayrolls.js', () => ({
-    getPayrolls: jest.fn(),
+    getPayrolls: jest.fn()
 }));
 
 // Mock request and response
@@ -20,7 +20,7 @@ beforeEach(() => {
     mockResponse = {
         status: jest.fn().mockReturnThis(),
         json: jest.fn(),
-        send: jest.fn(),
+        send: jest.fn()
     };
 });
 
@@ -46,7 +46,7 @@ const mockModule = (executeQueryValues, errorMessage) => {
         }),
         handleError: jest.fn((res, message) => {
             res.status(400).json({ message });
-        }),
+        })
     }));
 };
 

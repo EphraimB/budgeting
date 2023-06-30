@@ -17,7 +17,7 @@ const generateTransfers = (transactions, skippedTransactions, transfer, toDate, 
         if (transfer.frequency_week_of_month !== null && transfer.frequency_week_of_month !== undefined) {
             // first day of the month
             transferDate.setDate(1);
-            let daysToAdd = (7 + transfer.frequency_day_of_week - transferDate.getDay()) % 7;
+            const daysToAdd = (7 + transfer.frequency_day_of_week - transferDate.getDay()) % 7;
             // setting to the first occurrence of the desired day of week
             transferDate.setDate(transferDate.getDate() + daysToAdd);
             // setting to the desired week of the month
@@ -33,15 +33,15 @@ const generateTransfers = (transactions, skippedTransactions, transfer, toDate, 
             title: transfer.transfer_title,
             description: transfer.transfer_description,
             date: new Date(transferDate),
-            amount: transfer.destination_account_id === account_id ? +transfer.transfer_amount : -transfer.transfer_amount,
+            amount: transfer.destination_account_id === account_id ? +transfer.transfer_amount : -transfer.transfer_amount
         };
 
-        if (transferDate <= new Date()) {
-
-        } else if (fromDate > transferDate) {
-            skippedTransactions.push(newTransaction);
-        } else {
-            transactions.push(newTransaction);
+        if (transferDate > new Date()) {
+            if (fromDate > transferDate) {
+                skippedTransactions.push(newTransaction);
+            } else {
+                transactions.push(newTransaction);
+            }
         }
 
         transferDate = generateDateFn(transferDate, transfer);
@@ -78,7 +78,7 @@ export const generateMonthlyTransfers = (transactions, skippedTransactions, tran
             if (transfer.frequency_week_of_month !== null && transfer.frequency_week_of_month !== undefined) {
                 // first day of the month
                 transferDate.setDate(1);
-                let daysToAdd = (7 + transfer.frequency_day_of_week - transferDate.getDay()) % 7;
+                const daysToAdd = (7 + transfer.frequency_day_of_week - transferDate.getDay()) % 7;
                 // setting to the first occurrence of the desired day of week
                 transferDate.setDate(transferDate.getDate() + daysToAdd);
                 // setting to the desired week of the month
@@ -127,12 +127,12 @@ export const generateYearlyTransfers = (transactions, skippedTransactions, trans
         }
 
         if (transfer.frequency_day_of_week !== null && transfer.frequency_day_of_week !== undefined) {
-            let daysToAdd = (7 - transferDate.getDay() + transfer.frequency_day_of_week) % 7;
+            const daysToAdd = (7 - transferDate.getDay() + transfer.frequency_day_of_week) % 7;
             transferDate.setDate(transferDate.getDate() + daysToAdd); // this is the first occurrence of the day_of_week
 
             if (transfer.frequency_week_of_month !== null && transfer.frequency_week_of_month !== undefined) {
                 // add the number of weeks, but check if it overflows into the next month
-                let proposedDate = new Date(transferDate.getTime());
+                const proposedDate = new Date(transferDate.getTime());
                 proposedDate.setDate(proposedDate.getDate() + 7 * (transfer.frequency_week_of_month));
 
                 if (proposedDate.getMonth() === transferDate.getMonth()) {

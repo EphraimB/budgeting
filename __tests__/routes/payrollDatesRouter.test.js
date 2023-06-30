@@ -18,7 +18,7 @@ const createApp = async () => {
 const payrollDates = {
     employee_id: 1,
     start_day: 1,
-    end_day: 15,
+    end_day: 15
 };
 
 beforeAll(() => {
@@ -26,7 +26,7 @@ beforeAll(() => {
         getPayrollDates: (req, res, next) => res.json({ message: 'success' }),
         createPayrollDate: (req, res, next) => res.json({ message: 'success' }),
         updatePayrollDate: (req, res, next) => res.json({ message: 'success' }),
-        deletePayrollDate: (req, res, next) => res.json({ message: 'success' }),
+        deletePayrollDate: (req, res, next) => res.json({ message: 'success' })
     }));
 });
 

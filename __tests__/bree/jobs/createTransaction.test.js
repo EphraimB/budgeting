@@ -10,19 +10,18 @@ jest.unstable_mockModule('../../../config/db.js', () => ({
                     callback(null, { rows: [{}] });
                 }
             })
-    },
+    }
 }));
 
 jest.unstable_mockModule('../../../models/queryData.js', () => ({
     transactionQueries: {
-        createTransaction: 'INSERT INTO transactions (account_id, amount, description) VALUES ($1, $2, $3) RETURNING *',
-    },
+        createTransaction: jest.fn()
+    }
 }));
 
 const { createTransaction } = await import('../../../bree/jobs/createTransaction.js');
 
 describe('createTransaction', () => {
-
     it('should create a transaction successfully', async () => {
         const result = await createTransaction(1, 1000, 'Test Transaction');
         expect(result).toEqual([{}]); // adjust this expectation as needed

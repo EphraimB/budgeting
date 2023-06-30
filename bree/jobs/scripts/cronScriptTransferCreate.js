@@ -4,8 +4,7 @@ import { createTransaction } from '../createTransaction.js';
 (async () => {
     const { account_id, amount, description, destination_account_id } = workerData;
     try {
-        const results = await createTransaction(account_id, amount, description, destination_account_id);
-        // handle results as needed
+        await createTransaction(account_id, amount, description, destination_account_id);
     } catch (error) {
         console.error(error);
     }

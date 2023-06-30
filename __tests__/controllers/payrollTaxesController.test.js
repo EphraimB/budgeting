@@ -1,7 +1,7 @@
 import { jest } from '@jest/globals';
 import { payrollTaxes } from '../../models/mockData.js';
 
-let mockRequest
+let mockRequest;
 let mockResponse;
 let consoleSpy;
 
@@ -11,7 +11,7 @@ beforeAll(() => {
 });
 
 jest.unstable_mockModule('../../bree/getPayrolls.js', () => ({
-    getPayrolls: jest.fn(),
+    getPayrolls: jest.fn()
 }));
 
 beforeEach(() => {
@@ -19,7 +19,7 @@ beforeEach(() => {
     mockResponse = {
         status: jest.fn().mockReturnThis(),
         json: jest.fn(),
-        send: jest.fn(),
+        send: jest.fn()
     };
 });
 
@@ -40,7 +40,7 @@ const mockModule = (executeQueryValue, errorMessage) => {
             : jest.fn().mockResolvedValue(executeQueryValue),
         handleError: jest.fn((res, message) => {
             res.status(400).json({ message });
-        }),
+        })
     }));
 };
 
@@ -58,12 +58,12 @@ describe('GET /api/payroll/taxes', () => {
         const payrollTaxesReturnObj = payrollTaxes.map(payrollTax => ({
             payroll_taxes_id: parseInt(payrollTax.payroll_taxes_id),
             name: payrollTax.name,
-            rate: parseFloat(payrollTax.rate),
+            rate: parseFloat(payrollTax.rate)
         }));
 
         const expentedReturnObj = {
             employee_id: 1,
-            payroll_taxes: payrollTaxesReturnObj,
+            payroll_taxes: payrollTaxesReturnObj
         };
 
         // Assert
@@ -106,13 +106,13 @@ describe('GET /api/payroll/taxes', () => {
         const payrollTaxesReturnObj = payrollTaxes.filter(payrollTax => payrollTax.employee_id === id).map(payrollTax => ({
             payroll_taxes_id: parseInt(payrollTax.payroll_taxes_id),
             name: payrollTax.name,
-            rate: parseFloat(payrollTax.rate),
+            rate: parseFloat(payrollTax.rate)
         }));
 
         // Don't include employee_id in the return object
         const expentedReturnObj = {
             employee_id: id,
-            payroll_taxes: payrollTaxesReturnObj,
+            payroll_taxes: payrollTaxesReturnObj
         };
 
         // Assert
@@ -168,7 +168,7 @@ describe('POST /api/payroll/taxes', () => {
         const newPayrollTax = {
             employee_id: id,
             name: 'Federal Income Tax',
-            rate: 0.15,
+            rate: 0.15
         };
 
         mockRequest.body = newPayrollTax;
@@ -180,7 +180,7 @@ describe('POST /api/payroll/taxes', () => {
         const newPayrollTaxesReturnObj = [{
             payroll_taxes_id: 1,
             name: 'Federal Income Tax',
-            rate: 0.1,
+            rate: 0.1
         }];
 
         // Assert
@@ -196,7 +196,7 @@ describe('POST /api/payroll/taxes', () => {
         const newPayrollTax = {
             employee_id: 1,
             name: 'Federal Income Tax',
-            rate: 0.15,
+            rate: 0.15
         };
 
         mockRequest.body = newPayrollTax;
@@ -223,7 +223,7 @@ describe('PUT /api/payroll/taxes/:id', () => {
         const updatedPayrollTax = {
             employee_id: id,
             name: 'Federal Income Tax',
-            rate: 0.1,
+            rate: 0.1
         };
 
         mockRequest.params = { id: 1 };
@@ -236,7 +236,7 @@ describe('PUT /api/payroll/taxes/:id', () => {
         const newPayrollTaxesReturnObj = [{
             payroll_taxes_id: id,
             name: 'Federal Income Tax',
-            rate: 0.1,
+            rate: 0.1
         }];
 
         // Assert
@@ -252,7 +252,7 @@ describe('PUT /api/payroll/taxes/:id', () => {
         const updatedPayrollTax = {
             employee_id: 1,
             name: 'Federal Income Tax',
-            rate: 0.1,
+            rate: 0.1
         };
 
         mockRequest.params = { id: 1 };

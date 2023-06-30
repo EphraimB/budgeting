@@ -9,7 +9,7 @@ const employeeParse = employee => ({
     regular_hours: parseInt(employee.regular_hours),
     vacation_days: parseInt(employee.vacation_days),
     sick_days: parseInt(employee.sick_days),
-    work_schedule: employee.work_schedule,
+    work_schedule: employee.work_schedule
 });
 
 // Get employee

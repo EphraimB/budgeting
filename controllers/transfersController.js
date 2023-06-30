@@ -19,7 +19,7 @@ const transfersParse = transfer => ({
     frequency_week_of_month: transfer.frequency_week_of_month,
     frequency_month_of_year: transfer.frequency_month_of_year,
     date_created: transfer.date_created,
-    date_modified: transfer.date_modified,
+    date_modified: transfer.date_modified
 });
 
 // Get transfers
@@ -85,7 +85,7 @@ export const createTransfer = async (request, response) => {
 
         const cronId = cronJobResult[0].cron_job_id;
 
-        console.log('Cron job created ' + cronId)
+        console.log('Cron job created ' + cronId);
 
         const transferResult = await executeQuery(transferQueries.createTransfer, [
             cronId,
@@ -110,7 +110,7 @@ export const createTransfer = async (request, response) => {
         response.status(201).json(transfers);
     } catch (error) {
         console.error(error); // Log the error on the server side
-        handleError(response, "Error creating transfer");
+        handleError(response, 'Error creating transfer');
     }
 };
 
@@ -206,7 +206,7 @@ export const deleteTransfer = async (request, response) => {
         await deleteCronJob(cronId);
         await executeQuery(cronJobQueries.deleteCronJob, [cronId]);
 
-        response.status(200).send("Transfer deleted successfully");
+        response.status(200).send('Transfer deleted successfully');
     } catch (error) {
         console.error(error); // Log the error on the server side
         handleError(response, 'Error deleting transfer');

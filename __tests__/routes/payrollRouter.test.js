@@ -17,7 +17,7 @@ const createApp = async () => {
 
 beforeAll(() => {
     jest.unstable_mockModule('../../controllers/payrollsController', () => ({
-        getPayrolls: (req, res, next) => res.json({ message: 'success' }),
+        getPayrolls: (req, res, next) => res.json({ message: 'success' })
     }));
 });
 

@@ -1,5 +1,5 @@
 import generatePayrolls from '../../generation/generatePayrolls';
-import MockDate from 'mockdate'
+import MockDate from 'mockdate';
 
 beforeAll(() => {
     MockDate.set('2020-01-01');
@@ -15,7 +15,7 @@ describe('generatePayrolls', () => {
         const skippedTransactions = [];
         const payroll = {
             end_date: '2023-08-01',
-            net_pay: '2000',
+            net_pay: '2000'
         };
         const fromDate = new Date('2023-07-01');
 
@@ -37,7 +37,7 @@ describe('generatePayrolls', () => {
         const skippedTransactions = [];
         const payroll = {
             end_date: '2022-08-01',
-            net_pay: '2000',
+            net_pay: '2000'
         };
         const fromDate = new Date('2023-07-01');
 
@@ -52,7 +52,7 @@ describe('generatePayrolls', () => {
         const skippedTransactions = [];
         const payroll = {
             end_date: '2023-06-01',
-            net_pay: '2000',
+            net_pay: '2000'
         };
         const fromDate = new Date('2023-07-01');
 
@@ -77,7 +77,7 @@ describe('generatePayrolls', () => {
         const skippedTransactions = [];
         const payroll = {
             end_date: '2019-08-01',
-            net_pay: '2000',
+            net_pay: '2000'
         };
         const fromDate = new Date('2020-10-01');
 

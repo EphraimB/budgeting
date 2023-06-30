@@ -4,9 +4,9 @@ import { Volume } from 'memfs';
 jest.unstable_mockModule('../../../bree/breeManager.js', () => ({
     getBree: jest.fn().mockImplementation(() => ({
         config: {
-            jobs: [{ name: 'uniqueId' }],
+            jobs: [{ name: 'uniqueId' }]
         },
-        remove: jest.fn(),
+        remove: jest.fn()
     }))
 }));
 
@@ -15,20 +15,20 @@ jest.unstable_mockModule('../../../config/db.js', () => {
         default: {
             query: jest.fn()
                 .mockResolvedValueOnce({ rows: [{ cron_job_id: 1, unique_id: 'uniqueId' }] }) // Success case
-                .mockRejectedValueOnce(new Error('Table does not exist')), // Failure case
-        },
-    }
+                .mockRejectedValueOnce(new Error('Table does not exist')) // Failure case
+        }
+    };
 });
 
 // Mock the file system
 const vol = Volume.fromJSON({
     './cron-jobs/uniqueId.js': '',
-    './jobs.json': '[{"name": "uniqueId"}]',
+    './jobs.json': '[{"name": "uniqueId"}]'
 }, 'app');
 
 jest.unstable_mockModule('fs', () => ({
     default: vol,
-    promises: vol.promises,
+    promises: vol.promises
 }));
 
 const { default: deleteCronJob } = await import('../../../bree/jobs/deleteCronJob.js');
@@ -40,7 +40,7 @@ describe('deleteCronJob', () => {
         expect(result).toBe('uniqueId');
 
         // Check if the file was deleted
-        expect(vol.promises.readFile('./cron-jobs/uniqueId.js')).rejects.toThrow();
+        await expect(vol.promises.readFile('./cron-jobs/uniqueId.js')).rejects.toThrow();
     });
 
     it('should throw an error if the cron job does not exist', async () => {

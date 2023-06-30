@@ -80,6 +80,6 @@ const generateTransactions = (request, response, next) => {
     request.currentBalance = currentBalance;
 
     next();
-}
+};
 
 export default generateTransactions;

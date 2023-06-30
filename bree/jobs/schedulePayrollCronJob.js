@@ -7,7 +7,7 @@ const __dirname = url.fileURLToPath(new URL('.', import.meta.url));
 
 const createUniqueId = () => {
     return `payroll-${uuidv4()}`;
-}
+};
 
 const createNewJob = (uniqueId, end_date, account_id, net_pay) => {
     const transactionDate = new Date(end_date);
@@ -25,10 +25,10 @@ const createNewJob = (uniqueId, end_date, account_id, net_pay) => {
             }
         }
     };
-}
+};
 
 const schedulePayrollCronJob = async (payrollData, account_id, filePath, jobsFilePath) => {
-    let jobs = [];
+    const jobs = [];
     jobsFilePath = jobsFilePath || path.join(__dirname, '../jobs.json');
     const { end_date, net_pay } = payrollData;
 
@@ -53,6 +53,5 @@ const schedulePayrollCronJob = async (payrollData, account_id, filePath, jobsFil
         throw error;
     }
 };
-
 
 export default schedulePayrollCronJob;

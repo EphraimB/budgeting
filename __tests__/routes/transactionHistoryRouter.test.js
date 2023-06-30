@@ -19,7 +19,7 @@ const newTransaction = {
     amount: 100,
     account_id: 1,
     title: 'test',
-    description: 'test',
+    description: 'test'
 };
 
 beforeAll(() => {
@@ -27,7 +27,7 @@ beforeAll(() => {
         getTransactions: (req, res, next) => res.json({ message: 'success' }),
         createTransaction: (req, res, next) => res.json({ message: 'success' }),
         updateTransaction: (req, res, next) => res.json({ message: 'success' }),
-        deleteTransaction: (req, res, next) => res.json({ message: 'success' }),
+        deleteTransaction: (req, res, next) => res.json({ message: 'success' })
     }));
 });
 

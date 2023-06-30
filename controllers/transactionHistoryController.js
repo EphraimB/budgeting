@@ -8,7 +8,7 @@ const parseTransactions = transactionHistory => ({
     transaction_title: transactionHistory.account_type,
     transaction_description: transactionHistory.transaction_description,
     date_created: transactionHistory.date_created,
-    date_modified: transactionHistory.date_modified,
+    date_modified: transactionHistory.date_modified
 });
 
 // Get all transactions
@@ -83,12 +83,12 @@ export const deleteTransaction = async (request, response) => {
         const getTransactionResults = await executeQuery(transactionHistoryQueries.getTransaction, [id]);
 
         if (getTransactionResults.length === 0) {
-            return response.status(404).send("Transaction not found");
+            return response.status(404).send('Transaction not found');
         }
 
         await executeQuery(transactionHistoryQueries.deleteTransaction, [id]);
 
-        response.status(200).send("Successfully deleted transaction history");
+        response.status(200).send('Successfully deleted transaction history');
     } catch (error) {
         console.error(error); // Log the error on the server side
         handleError(response, 'Error deleting transaction history');
