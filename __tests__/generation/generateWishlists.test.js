@@ -1,5 +1,5 @@
 import generateWishlists from '../../generation/generateWishlists';
-import MockDate from 'mockdate'
+import MockDate from 'mockdate';
 
 beforeAll(() => {
     MockDate.set('2023-01-01');
@@ -14,13 +14,13 @@ describe('generateWishlists', () => {
         const transactions = [
             { date: new Date('2023-07-01'), amount: 200, balance: 500 },
             { date: new Date('2023-08-01'), amount: 200, balance: 700 },
-            { date: new Date('2023-09-01'), amount: 200, balance: 900 },
+            { date: new Date('2023-09-01'), amount: 200, balance: 900 }
         ];
         const skippedTransactions = [];
         const wishlist = {
             wishlist_amount: '150',
             wishlist_title: 'New TV',
-            wishlist_description: 'For watching movies',
+            wishlist_description: 'For watching movies'
         };
         const fromDate = new Date('2023-06-01');
 
@@ -42,14 +42,14 @@ describe('generateWishlists', () => {
         const transactions = [
             { date: new Date('2023-07-01'), amount: 200, balance: 500 },
             { date: new Date('2023-08-01'), amount: 200, balance: 700 },
-            { date: new Date('2023-09-01'), amount: 200, balance: 900 },
+            { date: new Date('2023-09-01'), amount: 200, balance: 900 }
         ];
         const skippedTransactions = [];
         const wishlist = {
             wishlist_amount: '150',
             wishlist_title: 'New TV',
             wishlist_description: 'For watching movies',
-            wishlist_date_available: '2023-08-15',
+            wishlist_date_available: '2023-08-15'
         };
         const fromDate = new Date('2023-06-01');
 
@@ -78,13 +78,13 @@ describe('generateWishlists', () => {
             { date: new Date('2023-12-01'), amount: 500, balance: 2100 },
             { date: new Date('2024-01-01'), amount: -500, balance: 1600 },
             { date: new Date('2024-02-01'), amount: 1000, balance: 2600 },
-            { date: new Date('2024-03-01'), amount: -100, balance: 2500 },
+            { date: new Date('2024-03-01'), amount: -100, balance: 2500 }
         ];
         const skippedTransactions = [];
         const wishlist = {
             wishlist_amount: '2000',
             wishlist_title: 'New TV',
-            wishlist_description: 'For watching movies',
+            wishlist_description: 'For watching movies'
         };
         const fromDate = new Date('2023-06-01');
 
@@ -106,13 +106,13 @@ describe('generateWishlists', () => {
         const transactions = [
             { date: new Date('2023-07-01'), amount: 200, balance: 500 },
             { date: new Date('2023-08-01'), amount: 200, balance: 700 },
-            { date: new Date('2023-09-01'), amount: 200, balance: 900 },
+            { date: new Date('2023-09-01'), amount: 200, balance: 900 }
         ];
         const skippedTransactions = [];
         const wishlist = {
             wishlist_amount: '150',
             wishlist_title: 'New TV',
-            wishlist_description: 'For watching movies',
+            wishlist_description: 'For watching movies'
         };
         const fromDate = new Date('2023-07-15');
 
@@ -132,13 +132,13 @@ describe('generateWishlists', () => {
         const transactions = [
             { date: new Date('2023-07-01'), amount: 200, balance: 500 },
             { date: new Date('2023-08-01'), amount: 200, balance: 700 },
-            { date: new Date('2023-09-01'), amount: -200, balance: 500 },
+            { date: new Date('2023-09-01'), amount: -200, balance: 500 }
         ];
         const skippedTransactions = [];
         const wishlist = {
             wishlist_amount: '1150',
             wishlist_title: 'New TV',
-            wishlist_description: 'For watching movies',
+            wishlist_description: 'For watching movies'
         };
         const fromDate = new Date('2023-07-15');
 
