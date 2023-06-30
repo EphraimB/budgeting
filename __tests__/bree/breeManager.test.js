@@ -1,17 +1,17 @@
 import { jest } from '@jest/globals';
 import { Volume } from 'memfs';
 
-
 const vol = Volume.fromJSON({
-    './jobs.json': '[]'
+    './jobs.json': '[]',
+    'cron-jobs/jobs.js': ''
 }, '/app');
 
 jest.unstable_mockModule('fs', () => ({
-    default: vol,
+    default: vol
 }));
 
 jest.unstable_mockModule('../../bree/getJobs', () => ({
-    getJobs: jest.fn().mockImplementation(() => [{ name: 'mockJob' }]),
+    getJobs: jest.fn().mockImplementation(() => [{ name: 'mockJob' }])
 }));
 
 const { initializeBree, getBree } = await import('../../bree/breeManager');
@@ -21,18 +21,21 @@ describe('breeManager', () => {
         jest.clearAllMocks();
     });
 
-    it('should initialize Bree correctly', async () => {
-        await initializeBree('/app/cron-jobs');
+    describe('breeManager', () => {
+        afterAll(() => {
+            jest.clearAllMocks();
+        });
 
-        console.log('getBree', await getBree().config.jobs);
+        it('should initialize Bree correctly', async () => {
+            await initializeBree('/app/cron-jobs');
 
-        async () => {
+            console.log('getBree', await getBree().config.jobs);
+
             expect(await getBree().config.jobs).toEqual([
-                { name: 'mockJob' }, // Expect the initial jobs from the mock config
+                { name: 'mockJob' } // Expect the initial jobs from the mock config
             ]);
-            expect(await getBree().start).toHaveBeenCalled();
-        };
 
-        expect(vol.existsSync('/app/cron-jobs')).toBe(true);
+            expect(vol.existsSync('/app/cron-jobs')).toBe(true);
+        });
     });
 });
