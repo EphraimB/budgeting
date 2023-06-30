@@ -2,7 +2,7 @@ import { jest } from '@jest/globals';
 import { payrollDates } from '../../models/mockData.js';
 
 jest.unstable_mockModule('../../bree/getPayrolls.js', () => ({
-    getPayrolls: jest.fn(),
+    getPayrolls: jest.fn()
 }));
 
 // Mock request and response
@@ -20,7 +20,7 @@ beforeEach(() => {
     mockResponse = {
         status: jest.fn().mockReturnThis(),
         json: jest.fn(),
-        send: jest.fn(),
+        send: jest.fn()
     };
 });
 
@@ -41,7 +41,7 @@ const mockModule = (executeQueryValue, errorMessage) => {
             : jest.fn().mockResolvedValue(executeQueryValue),
         handleError: jest.fn((res, message) => {
             res.status(400).json({ message });
-        }),
+        })
     }));
 };
 
@@ -60,12 +60,12 @@ describe('GET /api/payroll/dates', () => {
         const payrollDatesReturnObj = payrollDates.map(payrollDate => ({
             payroll_date_id: parseInt(payrollDate.payroll_date_id),
             payroll_start_day: parseInt(payrollDate.payroll_start_day),
-            payroll_end_day: parseInt(payrollDate.payroll_end_day),
+            payroll_end_day: parseInt(payrollDate.payroll_end_day)
         }));
 
         const expectedReturnObj = {
             employee_id: 1,
-            payroll_dates: payrollDatesReturnObj,
+            payroll_dates: payrollDatesReturnObj
         };
 
         // Assert
@@ -88,7 +88,7 @@ describe('GET /api/payroll/dates', () => {
 
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(400);
-        expect(mockResponse.json).toHaveBeenCalledWith({ "message": "Error getting payroll dates" });
+        expect(mockResponse.json).toHaveBeenCalledWith({ message: 'Error getting payroll dates' });
 
         // Assert that the error was logged
         expect(consoleSpy).toHaveBeenCalledWith(error);
@@ -110,13 +110,13 @@ describe('GET /api/payroll/dates', () => {
         const payrollDatesReturnObj = payrollDates.filter(payrollDate => payrollDate.employee_id === id).map(payrollDate => ({
             payroll_date_id: parseInt(payrollDate.payroll_date_id),
             payroll_start_day: parseInt(payrollDate.payroll_start_day),
-            payroll_end_day: parseInt(payrollDate.payroll_end_day),
+            payroll_end_day: parseInt(payrollDate.payroll_end_day)
         }));
 
         // Don't include employee_id in the return object
         const expentedReturnObj = {
             employee_id: id,
-            payroll_dates: payrollDatesReturnObj,
+            payroll_dates: payrollDatesReturnObj
         };
 
         // Assert
@@ -141,7 +141,7 @@ describe('GET /api/payroll/dates', () => {
 
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(400);
-        expect(mockResponse.json).toHaveBeenCalledWith({ "message": "Error getting payroll date" });
+        expect(mockResponse.json).toHaveBeenCalledWith({ message: 'Error getting payroll date' });
 
         // Assert that the error was logged
         expect(consoleSpy).toHaveBeenCalledWith(error);
@@ -172,7 +172,7 @@ describe('POST /api/payroll/dates', () => {
         const newPayrollDate = {
             employee_id: 1,
             start_day: 1,
-            end_day: 15,
+            end_day: 15
         };
 
         const { createPayrollDate } = await import('../../controllers/payrollDatesController.js');
@@ -184,12 +184,12 @@ describe('POST /api/payroll/dates', () => {
         const newPayrollDatesReturnObj = {
             payroll_date_id: 1,
             payroll_start_day: 1,
-            payroll_end_day: 15,
+            payroll_end_day: 15
         };
 
         const expectedReturnObj = {
             employee_id: 1,
-            payroll_date: [newPayrollDatesReturnObj],
+            payroll_date: [newPayrollDatesReturnObj]
         };
 
         // Assert
@@ -206,7 +206,7 @@ describe('POST /api/payroll/dates', () => {
         const newPayrollDate = {
             employee_id: 1,
             start_day: 1,
-            end_day: 15,
+            end_day: 15
         };
 
         const { createPayrollDate } = await import('../../controllers/payrollDatesController.js');
@@ -217,7 +217,7 @@ describe('POST /api/payroll/dates', () => {
 
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(400);
-        expect(mockResponse.json).toHaveBeenCalledWith({ "message": "Error creating payroll date" });
+        expect(mockResponse.json).toHaveBeenCalledWith({ message: 'Error creating payroll date' });
 
         // Assert that the error was logged
         expect(consoleSpy).toHaveBeenCalledWith(error);
@@ -232,7 +232,7 @@ describe('PUT /api/payroll/dates/:id', () => {
         const updatedPayrollDate = {
             employee_id: 1,
             start_day: 1,
-            end_day: 15,
+            end_day: 15
         };
 
         const { updatePayrollDate } = await import('../../controllers/payrollDatesController.js');
@@ -245,13 +245,13 @@ describe('PUT /api/payroll/dates/:id', () => {
         const newPayrollDatesReturnObj = [{
             payroll_date_id: 1,
             payroll_start_day: 1,
-            payroll_end_day: 15,
+            payroll_end_day: 15
         }];
 
         // Include employee_id in the return object
         const expectedReturnObj = {
             employee_id: 1,
-            payroll_date: newPayrollDatesReturnObj, // Adjust the key name here
+            payroll_date: newPayrollDatesReturnObj // Adjust the key name here
         };
 
         // Assert
@@ -268,7 +268,7 @@ describe('PUT /api/payroll/dates/:id', () => {
         const updatedPayrollDate = {
             employee_id: 1,
             start_day: 1,
-            end_day: 15,
+            end_day: 15
         };
 
         const { updatePayrollDate } = await import('../../controllers/payrollDatesController.js');
@@ -280,7 +280,7 @@ describe('PUT /api/payroll/dates/:id', () => {
 
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(400);
-        expect(mockResponse.json).toHaveBeenCalledWith({ "message": "Error updating payroll date" });
+        expect(mockResponse.json).toHaveBeenCalledWith({ message: 'Error updating payroll date' });
 
         // Assert that the error was logged
         expect(consoleSpy).toHaveBeenCalledWith(error);
@@ -336,7 +336,7 @@ describe('DELETE /api/payroll/dates/:id', () => {
 
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(400);
-        expect(mockResponse.json).toHaveBeenCalledWith({ "message": "Error deleting payroll date" });
+        expect(mockResponse.json).toHaveBeenCalledWith({ message: 'Error deleting payroll date' });
 
         // Assert that the error was logged
         expect(consoleSpy).toHaveBeenCalledWith(error);
