@@ -14,7 +14,16 @@
     "plugins": [
         "react"
     ],
-    "rules": {},
+    "rules": {
+        "indent": [
+            "error",
+            4
+        ],
+        "semi": [
+            "error",
+            "always"
+        ]
+    },
     "settings": {
         "react": {
             "version": "detect"
