@@ -2,9 +2,10 @@ import { getBree } from '../breeManager.js';
 import fs from 'fs';
 import path from 'path';
 import * as url from 'url';
-const __dirname = url.fileURLToPath(new URL('.', import.meta.url));
 import pool from '../../config/db.js';
 import { cronJobQueries } from '../../models/queryData.js';
+
+const __dirname = url.fileURLToPath(new URL('.', import.meta.url));
 
 const deleteCronJob = async (cronId, filePath, jobsFilePath) => {
     try {
@@ -26,7 +27,7 @@ const deleteCronJob = async (cronId, filePath, jobsFilePath) => {
             const jobs = JSON.parse(data);
             const updatedJobs = jobs.filter((job) => job.name !== uniqueId && job.name !== 'payroll-checker');
             await fs.promises.writeFile(jobsFilePath, JSON.stringify(updatedJobs, null, 2));
-            console.log(`Updated jobs.json file`);
+            console.log('Updated jobs.json file');
 
             return uniqueId;
         } else {
