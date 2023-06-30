@@ -6,7 +6,7 @@ export const employees = [
         regular_hours: 40,
         vacation_days: 10,
         sick_days: 10,
-        work_schedule: '0111100',
+        work_schedule: '0111100'
     }
 ];
 
@@ -123,7 +123,7 @@ export const payrolls = [
         work_days: 5,
         gross_pay: 500,
         net_pay: 400,
-        hours_worked: 40,
+        hours_worked: 40
     },
     {
         start_date: '2020-01-15',
@@ -131,8 +131,8 @@ export const payrolls = [
         work_days: 5,
         gross_pay: 500,
         net_pay: 400,
-        hours_worked: 40,
-    },
+        hours_worked: 40
+    }
 ];
 
 export const payrollDates = [
@@ -140,14 +140,14 @@ export const payrollDates = [
         payroll_date_id: 1,
         employee_id: 1,
         payroll_start_day: 1,
-        payroll_end_day: 15,
+        payroll_end_day: 15
     },
     {
         payroll_date_id: 2,
         employee_id: 1,
         payroll_start_day: 15,
-        payroll_end_day: 31,
-    },
+        payroll_end_day: 31
+    }
 ];
 
 export const payrollTaxes = [
@@ -155,16 +155,15 @@ export const payrollTaxes = [
         payroll_taxes_id: 1,
         employee_id: 1,
         name: 'Federal Income Tax',
-        rate: 0.1,
+        rate: 0.1
     },
     {
         payroll_taxes_id: 2,
         employee_id: 1,
         name: 'State Income Tax',
-        rate: 0.05,
-    },
+        rate: 0.05
+    }
 ];
-
 
 export const wishlists = [
     {
