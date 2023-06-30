@@ -11,6 +11,7 @@ router.get('/',
         validateRequest
     ],
     getWishlists);
+
 router.post('/',
     [
         body('amount').isNumeric().withMessage('Amount must be a number'),
@@ -20,6 +21,7 @@ router.post('/',
         validateRequest
     ],
     createWishlist);
+
 router.put('/:id',
     [
         param('id').isInt({ min: 1 }).withMessage('ID must be a number'),
@@ -30,6 +32,7 @@ router.put('/:id',
         validateRequest
     ],
     updateWishlist);
+
 router.delete('/:id',
     [
         param('id').isInt({ min: 1 }).withMessage('ID must be a number'),
