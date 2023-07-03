@@ -199,8 +199,10 @@ export const payrollQueries = {
 
 export const wishlistQueries = {
   getWishlistsByAccount: 'SELECT * FROM wishlist WHERE account_id = $1 AND date_created <= $2 ORDER BY wishlist_priority ASC',
-  getWishlists: 'SELECT * FROM wishlist ORDER BY wishlist_priority ASC',
-  getWishlist: 'SELECT * FROM wishlist WHERE wishlist_id = $1',
+  getAllWishlists: 'SELECT * FROM wishlist ORDER BY wishlist_priority ASC',
+  getWishlistsById: 'SELECT * FROM wishlist WHERE wishlist_id = $1',
+  getWishlistsByAccountId: 'SELECT * FROM wishlist WHERE account_id = $1',
+  getWishlistsByIdAndAccountId: 'SELECT * FROM wishlist WHERE wishlist_id = $1 AND account_id = $2',
   createWishlist: 'INSERT INTO wishlist (account_id, wishlist_amount, wishlist_title, wishlist_description, wishlist_priority, wishlist_url_link) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *',
   updateWishlist: 'UPDATE wishlist SET account_id = $1, wishlist_amount = $2, wishlist_title = $3, wishlist_description = $4, wishlist_priority = $5, wishlist_url_link = $6 WHERE wishlist_id = $7 RETURNING *',
   deleteWishlist: 'DELETE FROM wishlist WHERE wishlist_id = $1'
