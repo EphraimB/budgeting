@@ -19,7 +19,7 @@ export const accountQueries = {
 };
 
 export const transactionHistoryQueries = {
-  getTransactionsDateFiltered: 'SELECT * FROM transaction_history WHERE account_id = $1 AND date_created >= $2 ORDER BY date_created DESC',
+  getTransactionsDateMiddleware: 'SELECT * FROM transaction_history WHERE account_id = $1 AND date_created >= $2 ORDER BY date_created DESC',
   getAllTransactions: 'SELECT * FROM transaction_history ORDER BY transaction_id ASC',
   getTransactionById: 'SELECT * FROM transaction_history WHERE transaction_id = $1',
   getTransactionsByAccountId: 'SELECT * FROM transaction_history WHERE account_id = $1 ORDER BY transaction_id ASC',
@@ -30,7 +30,7 @@ export const transactionHistoryQueries = {
 };
 
 export const expenseQueries = {
-  getExpensesByAccount: 'SELECT * FROM expenses WHERE account_id = $1 AND expense_begin_date <= $2 ORDER BY expense_begin_date ASC',
+  getExpensesMiddleware: 'SELECT * FROM expenses WHERE account_id = $1 AND expense_begin_date <= $2 ORDER BY expense_begin_date ASC',
   getAllExpenses: 'SELECT * FROM expenses ORDER BY expense_id ASC',
   getExpenseById: 'SELECT * FROM expenses WHERE expense_id = $1',
   getExpensesByAccountId: 'SELECT * FROM expenses WHERE account_id = $1 ORDER BY expense_id ASC',
@@ -41,7 +41,7 @@ export const expenseQueries = {
 };
 
 export const loanQueries = {
-  getLoansByAccount: 'SELECT * FROM loans WHERE account_id = $1 AND loan_begin_date <= $2 ORDER BY date_created ASC',
+  getLoansMiddleware: 'SELECT * FROM loans WHERE account_id = $1 AND loan_begin_date <= $2 ORDER BY date_created ASC',
   getAllLoans: 'SELECT * FROM loans ORDER BY loan_id ASC',
   getLoansById: 'SELECT * FROM loans WHERE loan_id = $1',
   getLoansByAccountId: 'SELECT * FROM loans WHERE account_id = $1 ORDER BY loan_id ASC',
@@ -202,7 +202,7 @@ export const payrollQueries = {
 };
 
 export const wishlistQueries = {
-  getWishlistsByAccount: 'SELECT * FROM wishlist WHERE account_id = $1 AND date_created <= $2 ORDER BY wishlist_priority ASC',
+  getWishlistsMiddleware: 'SELECT * FROM wishlist WHERE account_id = $1 AND date_created <= $2 ORDER BY wishlist_priority ASC',
   getAllWishlists: 'SELECT * FROM wishlist ORDER BY wishlist_priority ASC',
   getWishlistsById: 'SELECT * FROM wishlist WHERE wishlist_id = $1',
   getWishlistsByAccountId: 'SELECT * FROM wishlist WHERE account_id = $1',
@@ -213,7 +213,7 @@ export const wishlistQueries = {
 };
 
 export const transferQueries = {
-  getTransfersByAccount: 'SELECT * FROM transfers WHERE (source_account_id = $1 OR destination_account_id = $1) AND date_created <= $2 ORDER BY date_created ASC',
+  getTransfersMiddleware: 'SELECT * FROM transfers WHERE (source_account_id = $1 OR destination_account_id = $1) AND date_created <= $2 ORDER BY date_created ASC',
   getAllTransfers: 'SELECT * FROM transfers ORDER BY transfer_id ASC',
   getTransfersById: 'SELECT * FROM transfers WHERE transfer_id = $1',
   getTransfersByAccountId: 'SELECT * FROM transfers WHERE source_account_id = $1 OR destination_account_id = $1',
