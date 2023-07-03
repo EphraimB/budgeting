@@ -574,16 +574,6 @@
         ],
         "parameters": [
           {
-            "name": "employee_id",
-            "in": "query",
-            "description": "Employee id",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "minimum": 1
-            }
-          },
-          {
             "name": "id",
             "in": "query",
             "description": "Tax id",
@@ -691,16 +681,6 @@
               "type": "integer",
               "minimum": 1
             }
-          },
-          {
-            "name": "employee_id",
-            "in": "query",
-            "description": "Employee id",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "minimum": 1
-            }
           }
         ],
         "responses": {
@@ -724,16 +704,6 @@
           "payroll dates"
         ],
         "parameters": [
-          {
-            "name": "employee_id",
-            "in": "query",
-            "description": "Employee id",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "minimum": 1
-            }
-          },
           {
             "name": "id",
             "in": "query",
@@ -833,16 +803,6 @@
           "payroll dates"
         ],
         "parameters": [
-          {
-            "name": "employee_id",
-            "in": "query",
-            "description": "Employee id",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "minimum": 1
-            }
-          },
           {
             "name": "id",
             "in": "path",
@@ -2019,37 +1979,24 @@
             "schema": {
               "type": "object",
               "properties": {
+                "payroll_taxes_id": {
+                  "type": "integer",
+                  "format": "int64",
+                  "minimum": 1
+                },
                 "employee_id": {
                   "type": "integer",
                   "format": "int64",
                   "minimum": 1
                 },
-                "payroll_taxes": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "payroll_taxes_id": {
-                        "type": "integer",
-                        "format": "int64",
-                        "minimum": 1
-                      },
-                      "employee_id": {
-                        "type": "integer",
-                        "format": "int64",
-                        "minimum": 1
-                      },
-                      "name": {
-                        "type": "string",
-                        "example": "Payroll tax test"
-                      },
-                      "rate": {
-                        "type": "number",
-                        "format": "double",
-                        "example": 250.00
-                      }
-                    }
-                  }
+                "name": {
+                  "type": "string",
+                  "example": "Payroll tax test"
+                },
+                "rate": {
+                  "type": "number",
+                  "format": "double",
+                  "example": 250.00
                 }
               }
             }
@@ -2063,36 +2010,23 @@
             "schema": {
               "type": "object",
               "properties": {
+                "payroll_dates_id": {
+                  "type": "integer",
+                  "format": "int64",
+                  "minimum": 1
+                },
                 "employee_id": {
                   "type": "integer",
                   "format": "int64",
                   "minimum": 1
                 },
-                "payroll_dates": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "payroll_dates_id": {
-                        "type": "integer",
-                        "format": "int64",
-                        "minimum": 1
-                      },
-                      "employee_id": {
-                        "type": "integer",
-                        "format": "int64",
-                        "minimum": 1
-                      },
-                      "payroll_start_day": {
-                        "type": "integer",
-                        "example": 1
-                      },
-                      "payroll_end_day": {
-                        "type": "integer",
-                        "example": 15
-                      }
-                    }
-                  }
+                "payroll_start_day": {
+                  "type": "integer",
+                  "example": 1
+                },
+                "payroll_end_day": {
+                  "type": "integer",
+                  "example": 15
                 }
               }
             }

@@ -59,18 +59,14 @@ describe('GET /api/payroll/dates', () => {
 
         const payrollDatesReturnObj = payrollDates.map(payrollDate => ({
             payroll_date_id: parseInt(payrollDate.payroll_date_id),
+            employee_id: parseInt(payrollDate.employee_id),
             payroll_start_day: parseInt(payrollDate.payroll_start_day),
             payroll_end_day: parseInt(payrollDate.payroll_end_day)
         }));
 
-        const expectedReturnObj = {
-            employee_id: 1,
-            payroll_dates: payrollDatesReturnObj
-        };
-
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(200);
-        expect(mockResponse.json).toHaveBeenCalledWith(expectedReturnObj);
+        expect(mockResponse.json).toHaveBeenCalledWith(payrollDatesReturnObj);
     });
 
     it('should respond with an error message', async () => {
@@ -109,19 +105,14 @@ describe('GET /api/payroll/dates', () => {
 
         const payrollDatesReturnObj = payrollDates.filter(payrollDate => payrollDate.employee_id === id).map(payrollDate => ({
             payroll_date_id: parseInt(payrollDate.payroll_date_id),
+            employee_id: parseInt(payrollDate.employee_id),
             payroll_start_day: parseInt(payrollDate.payroll_start_day),
             payroll_end_day: parseInt(payrollDate.payroll_end_day)
         }));
 
-        // Don't include employee_id in the return object
-        const expentedReturnObj = {
-            employee_id: id,
-            payroll_dates: payrollDatesReturnObj
-        };
-
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(200);
-        expect(mockResponse.json).toHaveBeenCalledWith(expentedReturnObj);
+        expect(mockResponse.json).toHaveBeenCalledWith(payrollDatesReturnObj);
     });
 
     it('should respond with an error message with id', async () => {
@@ -153,7 +144,7 @@ describe('GET /api/payroll/dates', () => {
 
         const { getPayrollDates } = await import('../../controllers/payrollDatesController.js');
 
-        mockRequest.query = { employee_id: 3 };
+        mockRequest.query = { id: 3 };
 
         // Act
         await getPayrollDates(mockRequest, mockResponse);
@@ -181,20 +172,16 @@ describe('POST /api/payroll/dates', () => {
 
         await createPayrollDate(mockRequest, mockResponse);
 
-        const newPayrollDatesReturnObj = {
+        const newPayrollDatesReturnObj = [{
             payroll_date_id: 1,
+            employee_id: 1,
             payroll_start_day: 1,
             payroll_end_day: 15
-        };
-
-        const expectedReturnObj = {
-            employee_id: 1,
-            payroll_date: [newPayrollDatesReturnObj]
-        };
+        }];
 
         // Assert
-        // expect(mockResponse.status).toHaveBeenCalledWith(201);
-        expect(mockResponse.json).toHaveBeenCalledWith(expectedReturnObj);
+        expect(mockResponse.status).toHaveBeenCalledWith(201);
+        expect(mockResponse.json).toHaveBeenCalledWith(newPayrollDatesReturnObj);
     });
 
     it('should respond with an error message', async () => {
@@ -244,6 +231,7 @@ describe('PUT /api/payroll/dates/:id', () => {
 
         const newPayrollDatesReturnObj = [{
             payroll_date_id: 1,
+            employee_id: 1,
             payroll_start_day: 1,
             payroll_end_day: 15
         }];

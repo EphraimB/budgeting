@@ -1,5 +1,4 @@
 import { v4 as uuidv4 } from 'uuid';
-// import { getBree } from '../breeManager.js';
 import fs from 'fs';
 import path from 'path';
 import * as url from 'url';
@@ -45,8 +44,6 @@ const schedulePayrollCronJob = async (payrollData, account_id, filePath, jobsFil
     jobs.push(newJob);
 
     try {
-        // await getBree().add(newJob);
-        // await getBree().start(newJob.name);
         return newJob;
     } catch (error) {
         console.error('Error while scheduling job:', error);

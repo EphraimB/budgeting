@@ -4,32 +4,29 @@ import { handleError, executeQuery } from '../utils/helperFunctions.js';
 
 const payrollDatesParse = payrollDate => ({
     payroll_date_id: parseInt(payrollDate.payroll_date_id),
+    employee_id: parseInt(payrollDate.employee_id),
     payroll_start_day: parseInt(payrollDate.payroll_start_day),
     payroll_end_day: parseInt(payrollDate.payroll_end_day)
 });
 
 // Get payroll dates
 export const getPayrollDates = async (request, response) => {
-    const { employee_id, id } = request.query;
+    const { id } = request.query;
 
     try {
         const query = id ? payrollQueries.getPayrollDate : payrollQueries.getPayrollDates;
-        const params = id ? [employee_id, id] : [employee_id];
+        const params = id ? [id] : [];
 
         const results = await executeQuery(query, params);
 
-        if (employee_id && results.length === 0) {
+        if (id && results.length === 0) {
             return response.status(404).send('Payroll date not found');
         }
 
         // Parse the data to correct format and return an object
         const payrollDates = results.map(payrollDate => payrollDatesParse(payrollDate));
 
-        const returnObj = {
-            employee_id: parseInt(employee_id),
-            payroll_dates: payrollDates
-        };
-        response.status(200).json(returnObj);
+        response.status(200).json(payrollDates);
     } catch (error) {
         console.error(error); // Log the error on the server side
         handleError(response, `Error getting ${id ? 'payroll date' : 'payroll dates'}`);
@@ -48,11 +45,7 @@ export const createPayrollDate = async (request, response) => {
         // Parse the data to correct format and return an object
         const payrollDates = results.map(payrollDate => payrollDatesParse(payrollDate));
 
-        const returnObj = {
-            employee_id: parseInt(employee_id),
-            payroll_date: payrollDates
-        };
-        response.status(201).json(returnObj);
+        response.status(201).json(payrollDates);
     } catch (error) {
         console.error(error); // Log the error on the server side
         handleError(response, 'Error creating payroll date');
@@ -91,16 +84,17 @@ export const updatePayrollDate = async (request, response) => {
 // Delete payroll date
 export const deletePayrollDate = async (request, response) => {
     try {
-        const { employee_id } = request.query;
         const { id } = request.params;
 
-        const transferResults = await executeQuery(payrollQueries.deletePayrollDate, [id]);
+        const getResults = await executeQuery(payrollQueries.getPayrollDate, [id]);
 
-        if (transferResults.length === 0) {
+        if (getResults.length === 0) {
             return response.status(404).send('Payroll date not found');
         }
 
-        await getPayrolls(employee_id);
+        await executeQuery(payrollQueries.deletePayrollDate, [id]);
+
+        await getPayrolls(getResults[0].employee_id);
 
         response.status(200).send('Successfully deleted payroll date');
     } catch (error) {
