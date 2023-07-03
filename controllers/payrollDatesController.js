@@ -94,8 +94,6 @@ export const deletePayrollDate = async (request, response) => {
 
         await executeQuery(payrollQueries.deletePayrollDate, [id]);
 
-        console.log(getResults);
-
         await getPayrolls(getResults[0].employee_id);
 
         response.status(200).send('Successfully deleted payroll date');

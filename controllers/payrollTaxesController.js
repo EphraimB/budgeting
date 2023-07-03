@@ -75,16 +75,17 @@ export const updatePayrollTax = async (request, response) => {
 // Delete payroll tax
 export const deletePayrollTax = async (request, response) => {
     const { id } = request.params;
-    const { employee_id } = request.query;
 
     try {
-        const transferResults = await executeQuery(payrollQueries.deletePayrollTax, [id]);
+        const getResults = await executeQuery(payrollQueries.getPayrollTax, [id]);
 
-        if (transferResults.length === 0) {
+        if (getResults.length === 0) {
             return response.status(404).send('Payroll tax not found');
         }
 
-        await getPayrolls(employee_id);
+        await executeQuery(payrollQueries.deletePayrollTax, [id]);
+
+        await getPayrolls(getResults[0].employee_id);
 
         response.status(200).send('Successfully deleted payroll tax');
     } catch (error) {
