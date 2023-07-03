@@ -1,4 +1,4 @@
-import express from 'express';
+import express, { Express, Request, Response, NextFunction } from 'express';
 import bodyParser from 'body-parser';
 import swaggerUi from 'swagger-ui-express';
 import { createRequire } from 'module';
@@ -19,7 +19,7 @@ import { initializeBree } from './bree/breeManager.js';
 const require = createRequire(import.meta.url);
 const swaggerDocument = require('./views/swagger.json');
 
-const app = express();
+const app: Express = express();
 
 app.use(bodyParser.json());
 
@@ -42,7 +42,7 @@ app.use('/api/transfers', transferRouter);
 app.use('/api/transactions', transactionsRouter);
 
 // Global error handling middleware
-app.use((err, req, res, next) => {
+app.use((err: any, req: Request, res: Response, next: NextFunction) => {
     console.error(err);
     res.status(500).json({ error: 'Internal server error' });
 });
