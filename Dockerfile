@@ -1,18 +1,38 @@
-# Specify the base image
-FROM node:18-alpine
+# ------ Build stage ------
+FROM node:18-alpine AS builder
 
-# Set the working directory
+# Create app directory
 WORKDIR /app
 
-# Install dependencies
+# Install app dependencies
 COPY package*.json ./
+
 RUN npm install
 
-# Copy over the application code
+# Bundle app source
 COPY . .
 
-# Expose the necessary port
+# Compile TypeScript into JavaScript
+RUN npm run build
+
+# ------ Runtime stage ------
+FROM node:18-alpine
+
+WORKDIR /app
+
+# Copy package.json and package-lock.json
+COPY package*.json ./
+
+# Install production dependencies.
+RUN npm ci --only=production
+
+# Copy compiled JavaScript from the previous stage
+COPY --from=builder /app/dist ./dist
+
+# Expose port
 EXPOSE 5001
 
-# Start the server
-CMD ["npm", "start"]
+ENV PORT 5001
+
+# Run the app
+CMD ["npm", "run", "start"]

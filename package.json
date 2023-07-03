@@ -4,6 +4,8 @@
   "description": "A budgeting app that calculates the projected budget at a certain date",
   "main": "server.js",
   "scripts": {
+    "build": "tsc",
+    "start": "node --experimental-vm-modules dist/server.js",
     "test": "cross-env NODE_OPTIONS=--experimental-vm-modules jest",
     "lint": "eslint ."
   },
@@ -36,6 +38,7 @@
     "node-mocks-http": "^1.12.2",
     "pgmock2": "^2.1.6",
     "superagent": "^8.0.9",
-    "supertest": "^6.3.3"
+    "supertest": "^6.3.3",
+    "typescript": "^5.1.6"
   }
 }
