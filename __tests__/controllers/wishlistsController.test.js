@@ -116,6 +116,81 @@ describe('GET /api/wishlists', () => {
         expect(consoleSpy).toHaveBeenCalledWith(error);
     });
 
+    it('should respond with an array of wishlists with account id', async () => {
+        // Arrange
+        mockModule(wishlists.filter(wishlist => wishlist.account_id === 1));
+
+        mockRequest.query = { account_id: 1 };
+
+        const { getWishlists } = await import('../../controllers/wishlistsController.js');
+
+        // Call the function with the mock request and response
+        await getWishlists(mockRequest, mockResponse);
+
+        // Assert
+        expect(mockResponse.status).toHaveBeenCalledWith(200);
+        expect(mockResponse.json).toHaveBeenCalledWith(wishlists.filter(wishlist => wishlist.account_id === 1));
+    });
+
+    it('should respond with an error message with account id', async () => {
+        // Arrange
+        const errorMessage = 'Error getting wishlist';
+        const error = new Error(errorMessage);
+        mockModule(null, errorMessage);
+
+        mockRequest.query = { account_id: 1 };
+
+        const { getWishlists } = await import('../../controllers/wishlistsController.js');
+
+        // Call the function with the mock request and response
+        await getWishlists(mockRequest, mockResponse);
+
+        // Assert
+        expect(mockResponse.status).toHaveBeenCalledWith(400);
+        expect(mockResponse.json).toHaveBeenCalledWith({ message: 'Error getting wishlists for given account_id' });
+
+        // Assert that the error was logged on the server side
+        expect(consoleSpy).toHaveBeenCalledWith(error);
+    });
+
+    it('should respond with an array of wishlists with account id and wishlist id', async () => {
+        // Arrange
+        mockModule(wishlists.filter(wishlist => wishlist.account_id === 1 && wishlist.wishlist_id === 1));
+
+        mockRequest.query = { account_id: 1, id: 1 };
+
+        const { getWishlists } = await import('../../controllers/wishlistsController.js');
+
+        // Call the function with the mock request and response
+        await getWishlists(mockRequest, mockResponse);
+
+        // Assert
+        expect(mockResponse.status).toHaveBeenCalledWith(200);
+
+        expect(mockResponse.json).toHaveBeenCalledWith(wishlists.filter(wishlist => wishlist.account_id === 1 && wishlist.wishlist_id === 1));
+    });
+
+    it('should respond with an error message with account id and wishlist id', async () => {
+        // Arrange
+        const errorMessage = 'Error getting wishlist';
+        const error = new Error(errorMessage);
+        mockModule(null, errorMessage);
+
+        mockRequest.query = { account_id: 1, id: 1 };
+
+        const { getWishlists } = await import('../../controllers/wishlistsController.js');
+
+        // Call the function with the mock request and response
+        await getWishlists(mockRequest, mockResponse);
+
+        // Assert
+        expect(mockResponse.status).toHaveBeenCalledWith(400);
+        expect(mockResponse.json).toHaveBeenCalledWith({ message: 'Error getting wishlist' });
+
+        // Assert that the error was logged on the server side
+        expect(consoleSpy).toHaveBeenCalledWith(error);
+    });
+
     it('should respond with a 404 error message when the wishlist does not exist', async () => {
         // Arrange
         mockModule([]);

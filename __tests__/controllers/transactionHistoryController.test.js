@@ -121,6 +121,80 @@ describe('GET /api/transactionHistory', () => {
         expect(consoleSpy).toHaveBeenCalledWith(error);
     });
 
+    it('should respond with an array of transactions with account id', async () => {
+        // Arrange
+        mockModule(transactions.filter(transaction => transaction.account_id === 1));
+
+        mockRequest.query = { id: null, accountId: 1 };
+
+        const { getTransactions } = await import('../../controllers/transactionHistoryController.js');
+
+        // Call the function with the mock request and response
+        await getTransactions(mockRequest, mockResponse);
+
+        // Assert
+        expect(mockResponse.status).toHaveBeenCalledWith(200);
+        expect(mockResponse.json).toHaveBeenCalledWith(transactions.filter(transaction => transaction.account_id === 1));
+    });
+
+    it('should respond with an error message with account id', async () => {
+        // Arrange
+        const errorMessage = 'Error getting transaction history';
+        const error = new Error(errorMessage);
+        mockModule(null, errorMessage);
+
+        mockRequest.query = { id: null, accountId: 1 };
+
+        const { getTransactions } = await import('../../controllers/transactionHistoryController.js');
+
+        // Call the function with the mock request and response
+        await getTransactions(mockRequest, mockResponse);
+
+        // Assert
+        expect(mockResponse.status).toHaveBeenCalledWith(400);
+        expect(mockResponse.json).toHaveBeenCalledWith({ message: 'Error getting transaction history' });
+
+        // Assert that the error was logged in the console
+        expect(consoleSpy).toHaveBeenCalledWith(error);
+    });
+
+    it('should respond with an array of transactions with account id and id', async () => {
+        // Arrange
+        mockModule(transactions.filter(transaction => transaction.account_id === 1 && transaction.transaction_id === 1));
+
+        mockRequest.query = { id: 1, accountId: 1 };
+
+        const { getTransactions } = await import('../../controllers/transactionHistoryController.js');
+
+        // Call the function with the mock request and response
+        await getTransactions(mockRequest, mockResponse);
+
+        // Assert
+        expect(mockResponse.status).toHaveBeenCalledWith(200);
+        expect(mockResponse.json).toHaveBeenCalledWith(transactions.filter(transaction => transaction.account_id === 1 && transaction.transaction_id === 1));
+    });
+
+    it('should respond with an error message with account id and id', async () => {
+        // Arrange
+        const errorMessage = 'Error getting transaction history';
+        const error = new Error(errorMessage);
+        mockModule(null, errorMessage);
+
+        mockRequest.query = { id: 1, accountId: 1 };
+
+        const { getTransactions } = await import('../../controllers/transactionHistoryController.js');
+
+        // Call the function with the mock request and response
+        await getTransactions(mockRequest, mockResponse);
+
+        // Assert
+        expect(mockResponse.status).toHaveBeenCalledWith(400);
+        expect(mockResponse.json).toHaveBeenCalledWith({ message: 'Error getting transaction history' });
+
+        // Assert that the error was logged in the console
+        expect(consoleSpy).toHaveBeenCalledWith(error);
+    });
+
     it('should respond with a 404 error message when the transaction does not exist', async () => {
         // Arrange
         mockModule([]);

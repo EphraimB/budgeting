@@ -168,6 +168,7 @@ export const payrollTaxes = [
 export const wishlists = [
     {
         wishlist_id: 1,
+        account_id: 1,
         wishlist_amount: 1000,
         wishlist_title: 'Test Wishlist',
         wishlist_description: 'Test Wishlist to test the wishlist route',

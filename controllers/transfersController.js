@@ -24,15 +24,29 @@ const transfersParse = transfer => ({
 
 // Get transfers
 export const getTransfers = async (request, response) => {
-    const { id } = request.query;
+    const { account_id, id } = request.query;
 
     try {
-        const query = id ? transferQueries.getTransfer : transferQueries.getTransfers;
-        const queryArgs = id ? [id] : [];
+        let query;
+        let params;
 
-        const results = await executeQuery(query, queryArgs);
+        if (id && account_id) {
+            query = transferQueries.getTransfersByIdAndAccountId;
+            params = [id, account_id];
+        } else if (id) {
+            query = transferQueries.getTransfersById;
+            params = [id];
+        } else if (account_id) {
+            query = transferQueries.getTransfersByAccountId;
+            params = [account_id];
+        } else {
+            query = transferQueries.getAllTransfers;
+            params = [];
+        }
 
-        if (id && results.length === 0) {
+        const results = await executeQuery(query, params);
+
+        if ((id || account_id) && results.length === 0) {
             return response.status(404).send('Transfer not found');
         }
 
@@ -42,7 +56,7 @@ export const getTransfers = async (request, response) => {
         response.status(200).json(transfers);
     } catch (error) {
         console.error(error); // Log the error on the server side
-        handleError(response, `Error getting ${id ? 'transfer' : 'transfers'}`);
+        handleError(response, `Error getting ${id ? 'transfer' : (account_id ? 'transfers for given account_id' : 'transfers')}`);
     }
 };
 

@@ -124,6 +124,80 @@ describe('GET /api/loans', () => {
         expect(consoleSpy).toHaveBeenCalledWith(error);
     });
 
+    it('should respond with an array of loans with account id', async () => {
+        // Arrange
+        mockModule(loans);
+
+        mockRequest.query = { account_id: 1 };
+
+        const { getLoans } = await import('../../controllers/loansController.js');
+
+        // Call the function with the mock request and response
+        await getLoans(mockRequest, mockResponse);
+
+        // Assert
+        expect(mockResponse.status).toHaveBeenCalledWith(200);
+        expect(mockResponse.json).toHaveBeenCalledWith(loans.filter(loan => loan.account_id === 1));
+    });
+
+    it('should respond with an error message with account id', async () => {
+        // Arrange
+        const errorMessage = 'Error getting loan';
+        const error = new Error(errorMessage);
+        mockModule(null, errorMessage);
+
+        mockRequest.query = { account_id: 1 };
+
+        const { getLoans } = await import('../../controllers/loansController.js');
+
+        // Call the function with the mock request and response
+        await getLoans(mockRequest, mockResponse);
+
+        // Assert
+        expect(mockResponse.status).toHaveBeenCalledWith(400);
+        expect(mockResponse.json).toHaveBeenCalledWith({ message: 'Error getting loans for given account_id' });
+
+        // Assert that console.error was called with the error message
+        expect(consoleSpy).toHaveBeenCalledWith(error);
+    });
+
+    it('should respond with an array of loans with account id and id', async () => {
+        // Arrange
+        mockModule(loans);
+
+        mockRequest.query = { account_id: 1, id: 1 };
+
+        const { getLoans } = await import('../../controllers/loansController.js');
+
+        // Call the function with the mock request and response
+        await getLoans(mockRequest, mockResponse);
+
+        // Assert
+        expect(mockResponse.status).toHaveBeenCalledWith(200);
+        expect(mockResponse.json).toHaveBeenCalledWith(loans.filter(loan => loan.account_id === 1 && loan.loan_id === 1));
+    });
+
+    it('should respond with an error message with account id and id', async () => {
+        // Arrange
+        const errorMessage = 'Error getting loan';
+        const error = new Error(errorMessage);
+        mockModule(null, errorMessage);
+
+        mockRequest.query = { account_id: 1, id: 1 };
+
+        const { getLoans } = await import('../../controllers/loansController.js');
+
+        // Call the function with the mock request and response
+        await getLoans(mockRequest, mockResponse);
+
+        // Assert
+        expect(mockResponse.status).toHaveBeenCalledWith(400);
+        expect(mockResponse.json).toHaveBeenCalledWith({ message: 'Error getting loan' });
+
+        // Assert that console.error was called with the error message
+        expect(consoleSpy).toHaveBeenCalledWith(error);
+    });
+
     it('should respond with a 404 error message when the loan does not exist', async () => {
         // Arrange
         mockModule([]);

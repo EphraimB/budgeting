@@ -10,15 +10,29 @@ const payrollTaxesParse = payrollTax => ({
 });
 
 export const getPayrollTaxes = async (request, response) => {
-    const { id } = request.query;
-
-    const query = id ? payrollQueries.getPayrollTax : payrollQueries.getPayrollTaxes;
-    const queryParameters = id ? [id] : [];
+    const { employee_id, id } = request.query;
 
     try {
-        const rows = await executeQuery(query, queryParameters);
+        let query;
+        let params;
 
-        if (id && rows.length === 0) {
+        if (id && employee_id) {
+            query = payrollQueries.getPayrollTaxesByIdAndEmployeeId;
+            params = [id, employee_id];
+        } else if (id) {
+            query = payrollQueries.getPayrollTaxesById;
+            params = [id];
+        } else if (employee_id) {
+            query = payrollQueries.getPayrollTaxesByEmployeeId;
+            params = [employee_id];
+        } else {
+            query = payrollQueries.getAllPayrollTaxes;
+            params = [];
+        }
+
+        const rows = await executeQuery(query, params);
+
+        if ((id || employee_id) && rows.length === 0) {
             return response.status(404).send('Payroll tax not found');
         }
 
@@ -27,7 +41,7 @@ export const getPayrollTaxes = async (request, response) => {
         response.status(200).json(payrollTaxes);
     } catch (error) {
         console.error(error); // Log the error on the server side
-        handleError(response, `Error getting ${id ? 'payroll tax' : 'payroll taxes'}`);
+        handleError(response, `Error getting ${id ? 'payroll tax' : (employee_id ? 'payroll taxes for given employee_id' : 'payroll taxes')}`);
     }
 };
 

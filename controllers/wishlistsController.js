@@ -3,6 +3,7 @@ import { executeQuery, handleError } from '../utils/helperFunctions.js';
 
 const wishlistsParse = wishlist => ({
     wishlist_id: parseInt(wishlist.wishlist_id),
+    account_id: parseInt(wishlist.account_id),
     wishlist_amount: parseFloat(wishlist.wishlist_amount),
     wishlist_title: wishlist.wishlist_title,
     wishlist_description: wishlist.wishlist_description,
@@ -15,15 +16,29 @@ const wishlistsParse = wishlist => ({
 
 // Get all wishlists
 export const getWishlists = async (request, response) => {
-    const { id } = request.query;
+    const { account_id, id } = request.query;
 
     try {
-        const query = id ? wishlistQueries.getWishlist : wishlistQueries.getWishlists;
-        const params = id ? [id] : [];
+        let query;
+        let params;
+
+        if (id && account_id) {
+            query = wishlistQueries.getWishlistsByIdAndAccountId;
+            params = [id, account_id];
+        } else if (id) {
+            query = wishlistQueries.getWishlistsById;
+            params = [id];
+        } else if (account_id) {
+            query = wishlistQueries.getWishlistsByAccountId;
+            params = [account_id];
+        } else {
+            query = wishlistQueries.getAllWishlists;
+            params = [];
+        }
 
         const results = await executeQuery(query, params);
 
-        if (id && results.length === 0) {
+        if ((id || account_id) && results.length === 0) {
             return response.status(404).send('Wishlist not found');
         }
 
@@ -33,7 +48,7 @@ export const getWishlists = async (request, response) => {
         response.status(200).json(wishlists);
     } catch (error) {
         console.error(error); // Log the error on the server side
-        handleError(response, `Error getting ${id ? 'wishlist' : 'wishlists'}`);
+        handleError(response, `Error getting ${id ? 'wishlist' : (account_id ? 'wishlists for given account_id' : 'wishlists')}`);
     }
 };
 

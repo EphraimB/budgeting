@@ -72,7 +72,7 @@ describe('GET /api/payroll/taxes', () => {
         const error = new Error(errorMessage);
         mockModule(null, errorMessage);
 
-        mockRequest.query = { employee_id: 1, id: null };
+        mockRequest.query = { employee_id: null, id: null };
 
         const { getPayrollTaxes } = await import('../../controllers/payrollTaxesController.js');
 
@@ -112,13 +112,100 @@ describe('GET /api/payroll/taxes', () => {
     });
 
     it('should respond with an error message with id', async () => {
-        const employee_id = 1;
-
         const errorMessage = 'Error getting payroll tax';
         const error = new Error(errorMessage);
         mockModule(null, errorMessage);
 
-        mockRequest.query = { employee_id, id: 1 };
+        mockRequest.query = { employee_id: null, id: 1 };
+
+        const { getPayrollTaxes } = await import('../../controllers/payrollTaxesController.js');
+
+        // Call the function with the mock request and response
+        await getPayrollTaxes(mockRequest, mockResponse);
+
+        // Assert
+        expect(mockResponse.status).toHaveBeenCalledWith(400);
+        expect(mockResponse.json).toHaveBeenCalledWith({ message: 'Error getting payroll tax' });
+
+        // Assert that the error was logged
+        expect(consoleSpy).toHaveBeenCalledWith(error);
+    });
+
+    it('should response with an array of payroll taxes with employee_id', async () => {
+        const employee_id = 1;
+
+        mockModule(payrollTaxes.filter(payrollTax => payrollTax.employee_id === employee_id));
+
+        mockRequest.query = { employee_id, id: null };
+
+        const { getPayrollTaxes } = await import('../../controllers/payrollTaxesController.js');
+
+        // Call the function with the mock request and response
+        await getPayrollTaxes(mockRequest, mockResponse);
+
+        const payrollTaxesReturnObj = payrollTaxes.filter(payrollTax => payrollTax.employee_id === employee_id).map(payrollTax => ({
+            payroll_taxes_id: parseInt(payrollTax.payroll_taxes_id),
+            employee_id: parseInt(payrollTax.employee_id),
+            name: payrollTax.name,
+            rate: parseFloat(payrollTax.rate)
+        }));
+
+        // Assert
+        expect(mockResponse.status).toHaveBeenCalledWith(200);
+        expect(mockResponse.json).toHaveBeenCalledWith(payrollTaxesReturnObj);
+    });
+
+    it('should respond with an error message with employee_id', async () => {
+        const errorMessage = 'Error getting payroll taxes';
+        const error = new Error(errorMessage);
+        mockModule(null, errorMessage);
+
+        mockRequest.query = { employee_id: 1, id: null };
+
+        const { getPayrollTaxes } = await import('../../controllers/payrollTaxesController.js');
+
+        // Call the function with the mock request and response
+        await getPayrollTaxes(mockRequest, mockResponse);
+
+        // Assert
+        expect(mockResponse.status).toHaveBeenCalledWith(400);
+        expect(mockResponse.json).toHaveBeenCalledWith({ message: 'Error getting payroll taxes for given employee_id' });
+
+        // Assert that the error was logged
+        expect(consoleSpy).toHaveBeenCalledWith(error);
+    });
+
+    it('should respond with an array of payroll taxes with employee_id and id', async () => {
+        const employee_id = 1;
+        const id = 1;
+
+        mockModule(payrollTaxes.filter(payrollTax => payrollTax.employee_id === employee_id && payrollTax.payroll_taxes_id === id));
+
+        mockRequest.query = { employee_id, id };
+
+        const { getPayrollTaxes } = await import('../../controllers/payrollTaxesController.js');
+
+        // Call the function with the mock request and response
+        await getPayrollTaxes(mockRequest, mockResponse);
+
+        const payrollTaxesReturnObj = payrollTaxes.filter(payrollTax => payrollTax.employee_id === employee_id && payrollTax.payroll_taxes_id === id).map(payrollTax => ({
+            payroll_taxes_id: parseInt(payrollTax.payroll_taxes_id),
+            employee_id: parseInt(payrollTax.employee_id),
+            name: payrollTax.name,
+            rate: parseFloat(payrollTax.rate)
+        }));
+
+        // Assert
+        expect(mockResponse.status).toHaveBeenCalledWith(200);
+        expect(mockResponse.json).toHaveBeenCalledWith(payrollTaxesReturnObj);
+    });
+
+    it('should respond with an error message with employee_id and id', async () => {
+        const errorMessage = 'Error getting payroll tax';
+        const error = new Error(errorMessage);
+        mockModule(null, errorMessage);
+
+        mockRequest.query = { employee_id: 1, id: 1 };
 
         const { getPayrollTaxes } = await import('../../controllers/payrollTaxesController.js');
 
