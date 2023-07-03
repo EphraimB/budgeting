@@ -104,11 +104,16 @@ export const updateAccount = async (request: Request, response: Response) => {
     }
 };
 
-// Delete account
-export const deleteAccount = async (request, response) => {
+/**
+ * 
+ * @param request - Request object
+ * @param response - Response object
+ * @returns - Success message
+ */
+export const deleteAccount = async (request: Request, response: Response) => {
     const id = parseInt(request.params.id);
     try {
-        const account = await executeQuery(accountQueries.getAccount, [id]);
+        const account: AccountInput[] = await executeQuery(accountQueries.getAccount, [id]);
 
         if (account.length === 0) {
             return response.status(404).send('Account not found');
