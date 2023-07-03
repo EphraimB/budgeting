@@ -43,7 +43,7 @@ export const getPayrollDates = async (request, response) => {
         response.status(200).json(payrollDates);
     } catch (error) {
         console.error(error); // Log the error on the server side
-        handleError(response, `Error getting ${id ? 'payroll dates' : (account_id ? 'payroll dates for given account_id' : 'payroll dates')}`);
+        handleError(response, `Error getting ${id ? 'payroll date' : (employee_id ? 'payroll dates for given employee_id' : 'payroll dates')}`);
     }
 };
 
