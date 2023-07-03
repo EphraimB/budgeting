@@ -8,6 +8,7 @@ const router = express.Router();
 router.get('/',
     [
         query('id').optional().isInt({ min: 1 }).withMessage('ID must be a number'),
+        query('account_id').optional().isInt({ min: 1 }).withMessage('Account ID must be a number'),
         validateRequest
     ],
     getExpenses);

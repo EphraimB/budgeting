@@ -22,21 +22,36 @@ const parseExpenses = expense => ({
 });
 
 export const getExpenses = async (request, response) => {
-    const { id } = request.query;
+    const { id, account_id } = request.query;
 
     try {
-        const query = id ? expenseQueries.getExpense : expenseQueries.getExpenses;
-        const params = id ? [id] : [];
+        let query;
+        let params;
+
+        if (id && account_id) {
+            query = expenseQueries.getExpenseByIdAndAccountId;
+            params = [id, account_id];
+        } else if (id) {
+            query = expenseQueries.getExpenseById;
+            params = [id];
+        } else if (account_id) {
+            query = expenseQueries.getExpensesByAccountId;
+            params = [account_id];
+        } else {
+            query = expenseQueries.getAllExpenses;
+            params = [];
+        }
+
         const expenses = await executeQuery(query, params);
 
-        if (id && expenses.length === 0) {
+        if ((id || account_id) && expenses.length === 0) {
             return response.status(404).send('Expense not found');
         }
 
         response.status(200).json(expenses.map(parseExpenses));
     } catch (error) {
         console.error(error); // Log the error on the server side
-        handleError(response, `Error getting ${id ? 'expense' : 'expenses'}`);
+        handleError(response, `Error getting ${id ? 'expense' : (account_id ? 'expenses for given account_id' : 'expenses')}`);
     }
 };
 

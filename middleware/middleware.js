@@ -6,7 +6,7 @@ export const getTransactionsByAccount = async (request, response, next) => {
     const { account_id, from_date } = request.query;
 
     try {
-        const results = await executeQuery(transactionHistoryQueries.getTransactionsDateFiltered, [parseInt(account_id), from_date]);
+        const results = await executeQuery(transactionHistoryQueries.getTransactionsDateMiddleware, [parseInt(account_id), from_date]);
 
         request.transaction = results;
 
@@ -21,7 +21,7 @@ export const getExpensesByAccount = async (request, response, next) => {
     const { account_id, to_date } = request.query;
 
     try {
-        const results = await executeQuery(expenseQueries.getExpensesByAccount, [account_id, to_date]);
+        const results = await executeQuery(expenseQueries.getExpensesMiddleware, [account_id, to_date]);
 
         request.expenses = results;
 
@@ -36,7 +36,7 @@ export const getLoansByAccount = async (request, response, next) => {
     const { account_id, to_date } = request.query;
 
     try {
-        const results = await executeQuery(loanQueries.getLoansByAccount, [parseInt(account_id), to_date]);
+        const results = await executeQuery(loanQueries.getLoansMiddleware, [parseInt(account_id), to_date]);
 
         request.loans = results;
 
@@ -66,7 +66,7 @@ export const getWishlistsByAccount = async (request, response, next) => {
     const { account_id, to_date } = request.query;
 
     try {
-        const results = await executeQuery(wishlistQueries.getWishlistsByAccount, [parseInt(account_id), to_date]);
+        const results = await executeQuery(wishlistQueries.getWishlistsMiddleware, [parseInt(account_id), to_date]);
 
         request.wishlists = results;
 
@@ -81,7 +81,7 @@ export const getTransfersByAccount = async (request, response, next) => {
     const { account_id, to_date } = request.query;
 
     try {
-        const results = await executeQuery(transferQueries.getTransfersByAccount, [parseInt(account_id), to_date]);
+        const results = await executeQuery(transferQueries.getTransfersMiddleware, [parseInt(account_id), to_date]);
 
         request.transfers = results;
 

@@ -14,13 +14,27 @@ const parseTransactions = transactionHistory => ({
 // Get all transactions
 export const getTransactions = async (request, response) => {
     try {
-        const { id } = request.query;
-        const query = id ? transactionHistoryQueries.getTransaction : transactionHistoryQueries.getTransactions;
-        const params = id ? [id] : [];
+        const { id, account_id } = request.query;
+        let query;
+        let params;
+
+        if (id && account_id) {
+            query = transactionHistoryQueries.getTransactionByIdAndAccountId;
+            params = [id, account_id];
+        } else if (id) {
+            query = transactionHistoryQueries.getTransactionById;
+            params = [id];
+        } else if (account_id) {
+            query = transactionHistoryQueries.getTransactionsByAccountId;
+            params = [account_id];
+        } else {
+            query = transactionHistoryQueries.getAllTransactions;
+            params = [];
+        }
 
         const transactionResults = await executeQuery(query, params);
 
-        if (id && transactionResults.length === 0) {
+        if ((id || account_id) && transactionResults.length === 0) {
             return response.status(404).send('Transaction not found');
         }
 
