@@ -1146,6 +1146,16 @@
               "type": "integer",
               "minimum": 1
             }
+          },
+          {
+            "name": "account_id",
+            "in": "query",
+            "description": "Account id",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 1
+            }
           }
         ],
         "responses": {

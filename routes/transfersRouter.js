@@ -8,6 +8,7 @@ const router = express.Router();
 router.get('/',
     [
         query('id').optional().isNumeric().withMessage('ID must be a number'),
+        query('account_id').optional().isNumeric().withMessage('Source account ID must be a number'),
         validateRequest
     ],
     getTransfers);
