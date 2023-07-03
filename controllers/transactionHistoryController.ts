@@ -1,22 +1,48 @@
+import { Request, Response } from 'express';
 import { transactionHistoryQueries } from '../models/queryData.js';
 import { handleError, executeQuery } from '../utils/helperFunctions.js';
 
-const parseTransactions = transactionHistory => ({
+interface TransactionHistoryInput {
+    transaction_id: string;
+    account_id: string;
+    transaction_amount: string;
+    transaction_title: string;
+    transaction_description: string;
+    date_created: string;
+    date_modified: string;
+}
+
+interface TransactionHistoryOutput {
+    transaction_id: number;
+    account_id: number;
+    transaction_amount: number;
+    transaction_title: string;
+    transaction_description: string;
+    date_created: string;
+    date_modified: string;
+}
+
+const parseTransactions = (transactionHistory: TransactionHistoryInput) => ({
     transaction_id: parseInt(transactionHistory.transaction_id),
     account_id: parseInt(transactionHistory.account_id),
     transaction_amount: parseFloat(transactionHistory.transaction_amount),
-    transaction_title: transactionHistory.account_type,
+    transaction_title: transactionHistory.transaction_title,
     transaction_description: transactionHistory.transaction_description,
     date_created: transactionHistory.date_created,
     date_modified: transactionHistory.date_modified
 });
 
-// Get all transactions
-export const getTransactions = async (request, response) => {
+/**
+ * 
+ * @param request - Request object
+ * @param response - Response object
+ * Sends a response with all transactions or a single transaction
+ */
+export const getTransactions = async (request: Request, response: Response): Promise<void> => {
     try {
         const { id, account_id } = request.query;
-        let query;
-        let params;
+        let query: string;
+        let params: any[];
 
         if (id && account_id) {
             query = transactionHistoryQueries.getTransactionByIdAndAccountId;
@@ -32,13 +58,13 @@ export const getTransactions = async (request, response) => {
             params = [];
         }
 
-        const transactionResults = await executeQuery(query, params);
+        const transactionResults: TransactionHistoryInput[] = await executeQuery(query, params);
 
         if ((id || account_id) && transactionResults.length === 0) {
             return response.status(404).send('Transaction not found');
         }
 
-        const transactionHistory = transactionResults.map(transaction => parseTransactions(transaction));
+        const transactionHistory: TransactionHistoryOutput[] = transactionResults.map(transaction => parseTransactions(transaction));
 
         response.status(200).json(transactionHistory);
     } catch (error) {
