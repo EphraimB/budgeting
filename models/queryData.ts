@@ -1,4 +1,104 @@
-export const accountQueries = {
+type AccountQueries = {
+    getAccounts: string;
+    getAccount: string;
+    createAccount: string;
+    updateAccount: string;
+    deleteAccount: string;
+};
+
+type TransactionHistoryQueries = {
+    getTransactionsDateMiddleware: string;
+    getAllTransactions: string;
+    getTransactionById: string;
+    getTransactionsByAccountId: string;
+    getTransactionByIdAndAccountId: string;
+    createTransaction: string;
+    updateTransaction: string;
+    deleteTransaction: string;
+};
+
+type ExpenseQueries = {
+    getExpensesMiddleware: string;
+    getAllExpenses: string;
+    getExpenseById: string;
+    getExpensesByAccountId: string;
+    getExpenseByIdAndAccountId: string;
+    createExpense: string;
+    updateExpense: string;
+    deleteExpense: string;
+};
+
+type LoanQueries = {
+    getLoansMiddleware: string;
+    getAllLoans: string;
+    getLoansById: string;
+    getLoansByAccountId: string;
+    getLoansByIdAndAccountId: string;
+    createLoan: string;
+    updateLoan: string;
+    deleteLoan: string;
+};
+
+type PayrollQueries = {
+    getPayrolls: string;
+    getPayrollsMiddleware: string;
+    getAllPayrollTaxes: string;
+    getPayrollTaxesById: string;
+    getPayrollTaxesByEmployeeId: string;
+    getPayrollTaxesByIdAndEmployeeId: string;
+    createPayrollTax: string;
+    updatePayrollTax: string;
+    deletePayrollTax: string;
+    getAllPayrollDates: string;
+    getPayrollDatesById: string;
+    getPayrollDatesByEmployeeId: string;
+    getPayrollDatesByIdAndEmployeeId: string;
+    createPayrollDate: string;
+    updatePayrollDate: string;
+    deletePayrollDate: string;
+    getEmployees: string;
+    getEmployee: string;
+    getAccountIdFromEmployee: string;
+    createEmployee: string;
+    updateEmployee: string;
+    deleteEmployee: string;
+};
+
+type WishlistQueries = {
+    getWishlistsMiddleware: string;
+    getAllWishlists: string;
+    getWishlistsById: string;
+    getWishlistsByAccountId: string;
+    getWishlistsByIdAndAccountId: string;
+    createWishlist: string;
+    updateWishlist: string;
+    deleteWishlist: string;
+};
+
+type TransferQueries = {
+    getTransfersMiddleware: string;
+    getAllTransfers: string;
+    getTransfersById: string;
+    getTransfersByAccountId: string;
+    getTransfersByIdAndAccountId: string;
+    createTransfer: string;
+    updateTransfer: string;
+    deleteTransfer: string;
+};
+
+type CurrentBalanceQueries = {
+    getCurrentBalance: string;
+}
+
+type CronJobQueries = {
+    cronJobsStartup: string;
+    getCronJob: string;
+    createCronJob: string;
+    updateCronJob: string;
+    deleteCronJob: string;
+}
+
+export const accountQueries: AccountQueries = {
     getAccounts: `
     SELECT accounts.account_id,
     accounts.account_name,
@@ -18,7 +118,7 @@ export const accountQueries = {
     deleteAccount: 'DELETE FROM accounts WHERE account_id = $1'
 };
 
-export const transactionHistoryQueries = {
+export const transactionHistoryQueries: TransactionHistoryQueries = {
     getTransactionsDateMiddleware: 'SELECT * FROM transaction_history WHERE account_id = $1 AND date_created >= $2 ORDER BY date_created DESC',
     getAllTransactions: 'SELECT * FROM transaction_history ORDER BY transaction_id ASC',
     getTransactionById: 'SELECT * FROM transaction_history WHERE transaction_id = $1',
@@ -29,7 +129,7 @@ export const transactionHistoryQueries = {
     deleteTransaction: 'DELETE FROM transaction_history WHERE transaction_id = $1'
 };
 
-export const expenseQueries = {
+export const expenseQueries: ExpenseQueries = {
     getExpensesMiddleware: 'SELECT * FROM expenses WHERE account_id = $1 AND expense_begin_date <= $2 ORDER BY expense_begin_date ASC',
     getAllExpenses: 'SELECT * FROM expenses ORDER BY expense_id ASC',
     getExpenseById: 'SELECT * FROM expenses WHERE expense_id = $1',
@@ -40,7 +140,7 @@ export const expenseQueries = {
     deleteExpense: 'DELETE FROM expenses WHERE expense_id = $1'
 };
 
-export const loanQueries = {
+export const loanQueries: LoanQueries = {
     getLoansMiddleware: 'SELECT * FROM loans WHERE account_id = $1 AND loan_begin_date <= $2 ORDER BY date_created ASC',
     getAllLoans: 'SELECT * FROM loans ORDER BY loan_id ASC',
     getLoansById: 'SELECT * FROM loans WHERE loan_id = $1',
@@ -51,7 +151,7 @@ export const loanQueries = {
     deleteLoan: 'DELETE FROM loans WHERE loan_id = $1'
 };
 
-export const payrollQueries = {
+export const payrollQueries: PayrollQueries = {
     getPayrolls: `
         SELECT make_date(extract(year from current_date)::integer, extract(month from current_date)::integer, s2.payroll_start_day::integer) AS start_date,
         make_date(extract(year from current_date)::integer, extract(month from current_date)::integer, s1.adjusted_payroll_end_day) AS end_date,
@@ -201,7 +301,7 @@ export const payrollQueries = {
     deleteEmployee: 'DELETE FROM employee WHERE employee_id = $1'
 };
 
-export const wishlistQueries = {
+export const wishlistQueries: WishlistQueries = {
     getWishlistsMiddleware: 'SELECT * FROM wishlist WHERE account_id = $1 AND date_created <= $2 ORDER BY wishlist_priority ASC',
     getAllWishlists: 'SELECT * FROM wishlist ORDER BY wishlist_priority ASC',
     getWishlistsById: 'SELECT * FROM wishlist WHERE wishlist_id = $1',
@@ -212,7 +312,7 @@ export const wishlistQueries = {
     deleteWishlist: 'DELETE FROM wishlist WHERE wishlist_id = $1'
 };
 
-export const transferQueries = {
+export const transferQueries: TransferQueries = {
     getTransfersMiddleware: 'SELECT * FROM transfers WHERE (source_account_id = $1 OR destination_account_id = $1) AND date_created <= $2 ORDER BY date_created ASC',
     getAllTransfers: 'SELECT * FROM transfers ORDER BY transfer_id ASC',
     getTransfersById: 'SELECT * FROM transfers WHERE transfer_id = $1',
@@ -223,11 +323,11 @@ export const transferQueries = {
     deleteTransfer: 'DELETE FROM transfers WHERE transfer_id = $1'
 };
 
-export const currentBalanceQueries = {
+export const currentBalanceQueries: CurrentBalanceQueries = {
     getCurrentBalance: 'SELECT accounts.account_id, COALESCE(accounts.account_balance, 0) + COALESCE(SUM(transaction_history.transaction_amount), 0) AS account_balance FROM accounts LEFT JOIN transaction_history ON accounts.account_id = transaction_history.account_id WHERE accounts.account_id = $1 GROUP BY accounts.account_id'
 };
 
-export const cronJobQueries = {
+export const cronJobQueries: CronJobQueries = {
     cronJobsStartup: 'SELECT * FROM cron_jobs',
     getCronJob: 'SELECT * FROM cron_jobs WHERE cron_job_id = $1',
     createCronJob: 'INSERT INTO cron_jobs (unique_id, cron_expression) VALUES ($1, $2) RETURNING *',
