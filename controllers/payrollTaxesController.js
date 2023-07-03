@@ -4,6 +4,7 @@ import { handleError, executeQuery } from '../utils/helperFunctions.js';
 
 const payrollTaxesParse = payrollTax => ({
     payroll_taxes_id: parseInt(payrollTax.payroll_taxes_id),
+    employee_id: parseInt(payrollTax.employee_id),
     name: payrollTax.name,
     rate: parseFloat(payrollTax.rate)
 });
