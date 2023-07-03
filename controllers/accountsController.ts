@@ -38,19 +38,20 @@ const parseAccounts = (account: AccountInput): AccountOutput => ({
  * 
  * @param request - Request object
  * @param response - Response object
- * @returns - All accounts or a single account
+ * Sends a response with all accounts or a single account
  */
-export const getAccounts = async (request: Request, response: Response) => {
+export const getAccounts = async (request: Request, response: Response): Promise<void> => {
     const { id } = request.query as { id?: string }; // Destructure id from query string
 
     try {
         // Change the query based on the presence of id
         const query: string = id ? accountQueries.getAccount : accountQueries.getAccounts;
         const params = id ? [id] : [];
-        const accounts: AccountInput[] = await executeQuery(query, params);
+        const accounts = await executeQuery<AccountInput>(query, params);
 
         if (id && accounts.length === 0) {
-            return response.status(404).send('Account not found');
+            response.status(404).send('Account not found');
+            return
         }
 
         response.status(200).json(accounts.map(parseAccounts));
@@ -64,13 +65,13 @@ export const getAccounts = async (request: Request, response: Response) => {
  * 
  * @param request - Request object
  * @param response - Response object
- * @returns - Created account
+ *  Sends a response with the created account or an error message and posts the account to the database
  */
 export const createAccount = async (request: Request, response: Response) => {
     const { name, type, balance } = request.body;
 
     try {
-        const rows: AccountInput[] = await executeQuery(accountQueries.createAccount, [name, type, balance]);
+        const rows = await executeQuery<AccountInput>(accountQueries.createAccount, [name, type, balance]);
         const accounts = rows.map(account => parseAccounts(account));
         response.status(201).json(accounts);
     } catch (error) {
@@ -83,19 +84,20 @@ export const createAccount = async (request: Request, response: Response) => {
  * 
  * @param request - Request object
  * @param response - Response object
- * @returns - Updated account
+ * Sends a response with the updated account or an error message and updates the account in the database
  */
-export const updateAccount = async (request: Request, response: Response) => {
+export const updateAccount = async (request: Request, response: Response): Promise<void> => {
     const id = parseInt(request.params.id);
     const { name, type, balance } = request.body;
     try {
-        const account: AccountInput[] = await executeQuery(accountQueries.getAccount, [id]);
+        const account = await executeQuery<AccountInput>(accountQueries.getAccount, [id]);
 
         if (account.length === 0) {
-            return response.status(404).send('Account not found');
+            response.status(404).send('Account not found');
+            return;
         }
 
-        const rows: AccountInput[] = await executeQuery(accountQueries.updateAccount, [name, type, balance, id]);
+        const rows = await executeQuery<AccountInput>(accountQueries.updateAccount, [name, type, balance, id]);
         const accounts = rows.map(account => parseAccounts(account));
         response.status(200).json(accounts);
     } catch (error) {
@@ -108,15 +110,16 @@ export const updateAccount = async (request: Request, response: Response) => {
  * 
  * @param request - Request object
  * @param response - Response object
- * @returns - Success message
+ * Sends a response with a success message or an error message and deletes the account from the database
  */
-export const deleteAccount = async (request: Request, response: Response) => {
+export const deleteAccount = async (request: Request, response: Response): Promise<void> => {
     const id = parseInt(request.params.id);
     try {
-        const account: AccountInput[] = await executeQuery(accountQueries.getAccount, [id]);
+        const account = await executeQuery<AccountInput>(accountQueries.getAccount, [id]);
 
         if (account.length === 0) {
-            return response.status(404).send('Account not found');
+            response.status(404).send('Account not found');
+            return;
         }
 
         await executeQuery(accountQueries.deleteAccount, [id]);
