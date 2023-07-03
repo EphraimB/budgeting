@@ -79,18 +79,23 @@ export const createAccount = async (request: Request, response: Response) => {
     }
 };
 
-// Update account
-export const updateAccount = async (request, response) => {
+/**
+ * 
+ * @param request - Request object
+ * @param response - Response object
+ * @returns - Updated account
+ */
+export const updateAccount = async (request: Request, response: Response) => {
     const id = parseInt(request.params.id);
     const { name, type, balance } = request.body;
     try {
-        const account = await executeQuery(accountQueries.getAccount, [id]);
+        const account: AccountInput[] = await executeQuery(accountQueries.getAccount, [id]);
 
         if (account.length === 0) {
             return response.status(404).send('Account not found');
         }
 
-        const rows = await executeQuery(accountQueries.updateAccount, [name, type, balance, id]);
+        const rows: AccountInput[] = await executeQuery(accountQueries.updateAccount, [name, type, balance, id]);
         const accounts = rows.map(account => parseAccounts(account));
         response.status(200).json(accounts);
     } catch (error) {
