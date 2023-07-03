@@ -115,8 +115,6 @@ describe('GET /api/payroll/dates', () => {
 
     it('should respond with an error message with id', async () => {
         // Arrange
-        const id = 1;
-
         const errorMessage = 'Error getting payroll date';
         const error = new Error(errorMessage);
         mockModule(null, errorMessage);

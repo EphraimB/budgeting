@@ -52,7 +52,6 @@ export const getExpenses = async (request, response) => {
     } catch (error) {
         console.error(error); // Log the error on the server side
         handleError(response, `Error getting ${id ? 'expense' : (account_id ? 'expenses for given account_id' : 'expenses')}`);
-
     }
 };
 

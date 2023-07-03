@@ -152,7 +152,7 @@ describe('GET /api/expenses', () => {
 
         // Act
         await getExpenses(mockRequest, mockResponse);
-        
+
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(400);
         expect(mockResponse.json).toHaveBeenCalledWith({ message: 'Error getting expenses for given account_id' });

@@ -206,7 +206,7 @@ describe('GET /api/payroll/taxes', () => {
         mockModule(null, errorMessage);
 
         mockRequest.query = { employee_id: 1, id: 1 };
-        
+
         const { getPayrollTaxes } = await import('../../controllers/payrollTaxesController.js');
 
         // Call the function with the mock request and response

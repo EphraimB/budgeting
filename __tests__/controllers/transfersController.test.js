@@ -168,7 +168,7 @@ describe('GET /api/transfers', () => {
         mockRequest.query = { id: 1, account_id: 1 };
 
         const { getTransfers } = await import('../../controllers/transfersController.js');
-        
+
         // Call the function with the mock request and response
         await getTransfers(mockRequest, mockResponse);
 
