@@ -50,7 +50,7 @@ describe('GET /api/payroll/dates', () => {
         // Arrange
         mockModule(payrollDates);
 
-        mockRequest.query = { id: null, employee_id: 1 };
+        mockRequest.query = { id: null, employee_id: null };
 
         const { getPayrollDates } = await import('../../controllers/payrollDatesController.js');
 
@@ -75,7 +75,7 @@ describe('GET /api/payroll/dates', () => {
         const error = new Error(errorMessage);
         mockModule(null, errorMessage);
 
-        mockRequest.query = { id: null, employee_id: 1 };
+        mockRequest.query = { id: null, employee_id: null };
 
         const { getPayrollDates } = await import('../../controllers/payrollDatesController.js');
 
@@ -84,7 +84,7 @@ describe('GET /api/payroll/dates', () => {
 
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(400);
-        expect(mockResponse.json).toHaveBeenCalledWith({ message: 'Error getting payroll dates for given employee_id' });
+        expect(mockResponse.json).toHaveBeenCalledWith({ message: 'Error getting payroll dates' });
 
         // Assert that the error was logged
         expect(consoleSpy).toHaveBeenCalledWith(error);
@@ -92,18 +92,16 @@ describe('GET /api/payroll/dates', () => {
 
     it('should respond with an array of payroll dates with id', async () => {
         // Arrange
-        const id = 1;
-
-        mockModule(payrollDates.filter(payrollDate => payrollDate.employee_id === id));
+        mockModule(payrollDates.filter(payrollDate => payrollDate.employee_id === 1));
 
         const { getPayrollDates } = await import('../../controllers/payrollDatesController.js');
 
-        mockRequest.query = { id: 1, employee_id: id };
+        mockRequest.query = { id: 1, employee_id: null };
 
         // Call the function with the mock request and response
         await getPayrollDates(mockRequest, mockResponse);
 
-        const payrollDatesReturnObj = payrollDates.filter(payrollDate => payrollDate.employee_id === id).map(payrollDate => ({
+        const payrollDatesReturnObj = payrollDates.filter(payrollDate => payrollDate.employee_id === 1).map(payrollDate => ({
             payroll_date_id: parseInt(payrollDate.payroll_date_id),
             employee_id: parseInt(payrollDate.employee_id),
             payroll_start_day: parseInt(payrollDate.payroll_start_day),
@@ -125,7 +123,7 @@ describe('GET /api/payroll/dates', () => {
 
         const { getPayrollDates } = await import('../../controllers/payrollDatesController.js');
 
-        mockRequest.query = { id: 1, employee_id: id };
+        mockRequest.query = { id: 1, employee_id: null };
 
         // Call the function with the mock request and response
         await getPayrollDates(mockRequest, mockResponse);
