@@ -61,7 +61,8 @@ export const getTransactions = async (request: Request, response: Response): Pro
         const transactionResults: TransactionHistoryInput[] = await executeQuery(query, params);
 
         if ((id || account_id) && transactionResults.length === 0) {
-            return response.status(404).send('Transaction not found');
+            response.status(404).send('Transaction not found');
+            return;
         }
 
         const transactionHistory: TransactionHistoryOutput[] = transactionResults.map(transaction => parseTransactions(transaction));
