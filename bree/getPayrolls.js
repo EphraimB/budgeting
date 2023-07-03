@@ -10,6 +10,15 @@ const __dirname = fileURLToPath(new URL('.', import.meta.url));
 export const getPayrolls = async (employee_id, jobsFilePath) => {
     jobsFilePath = jobsFilePath || path.join(__dirname, './jobs.json');
 
+    // Delete all jobs in jobs.json that start with payroll-
+    try {
+        const jobs = JSON.parse(fs.readFileSync(jobsFilePath, 'utf8'));
+        const filteredJobs = jobs.filter(job => !job.name.startsWith('payroll-'));
+        fs.writeFileSync(jobsFilePath, JSON.stringify(filteredJobs));
+    } catch (err) {
+        console.error(err);
+    }
+
     // Delete all [uniqueId].js files in bree/jobs that start with payroll-
     try {
         const files = fs.readdirSync(path.join(__dirname, 'jobs/cron-jobs'));
