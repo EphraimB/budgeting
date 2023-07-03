@@ -42,8 +42,10 @@ export const expenseQueries = {
 
 export const loanQueries = {
   getLoansByAccount: 'SELECT * FROM loans WHERE account_id = $1 AND loan_begin_date <= $2 ORDER BY date_created ASC',
-  getLoans: 'SELECT * FROM loans ORDER BY loan_id ASC',
-  getLoan: 'SELECT * FROM loans WHERE loan_id = $1',
+  getAllLoans: 'SELECT * FROM loans ORDER BY loan_id ASC',
+  getLoansById: 'SELECT * FROM loans WHERE loan_id = $1',
+  getLoansByAccountId: 'SELECT * FROM loans WHERE account_id = $1 ORDER BY loan_id ASC',
+  getLoansByIdAndAccountId: 'SELECT * FROM loans WHERE loan_id = $1 AND account_id = $2',
   createLoan: 'INSERT INTO loans (account_id, cron_job_id, loan_amount, loan_plan_amount, loan_recipient, loan_title, loan_description, frequency_type, frequency_type_variable, frequency_day_of_month, frequency_day_of_week, frequency_week_of_month, frequency_month_of_year, loan_begin_date) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14) RETURNING *',
   updateLoan: 'UPDATE loans SET account_id = $1, loan_amount = $2, loan_plan_amount = $3, loan_recipient = $4, loan_title = $5, loan_description = $6, frequency_type = $7, frequency_type_variable = $8, frequency_day_of_month = $9, frequency_day_of_week = $10, frequency_week_of_month = $11, frequency_month_of_year = $12, loan_begin_date = $13 WHERE loan_id = $14 RETURNING *',
   deleteLoan: 'DELETE FROM loans WHERE loan_id = $1'

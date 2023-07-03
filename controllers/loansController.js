@@ -25,12 +25,27 @@ const parseLoan = loan => ({
 
 // Get all loans
 export const getLoans = async (request, response) => {
-    const { id } = request.query;
+    const { account_id, id } = request.query;
 
     try {
-        const query = id ? loanQueries.getLoan : loanQueries.getLoans;
-        const queryParams = id ? [id] : [];
-        const rows = await executeQuery(query, queryParams);
+        let query;
+        let params;
+
+        if (id && account_id) {
+            query = loanQueries.getLoansByIdAndAccountId;
+            params = [id, account_id];
+        } else if (id) {
+            query = loanQueries.getLoansById;
+            params = [id];
+        } else if (account_id) {
+            query = loanQueries.getLoansByAccountId;
+            params = [account_id];
+        } else {
+            query = loanQueries.getAllLoans;
+            params = [];
+        }
+
+        const rows = await executeQuery(query, params);
 
         if (id && rows.length === 0) {
             return response.status(404).send('Loan not found');
@@ -40,7 +55,7 @@ export const getLoans = async (request, response) => {
         response.status(200).json(loans);
     } catch (error) {
         console.error(error); // Log the error on the server side
-        handleError(response, `Error getting ${id ? 'loan' : 'loans'}`);
+        handleError(response, `Error getting ${id ? 'loan' : (account_id ? 'loans for given account_id' : 'loans')}`);
     }
 };
 
