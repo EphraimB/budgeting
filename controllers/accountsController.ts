@@ -60,12 +60,17 @@ export const getAccounts = async (request: Request, response: Response) => {
     }
 };
 
-// Create account
-export const createAccount = async (request, response) => {
+/**
+ * 
+ * @param request - Request object
+ * @param response - Response object
+ * @returns - Created account
+ */
+export const createAccount = async (request: Request, response: Response) => {
     const { name, type, balance } = request.body;
 
     try {
-        const rows = await executeQuery(accountQueries.createAccount, [name, type, balance]);
+        const rows: AccountInput[] = await executeQuery(accountQueries.createAccount, [name, type, balance]);
         const accounts = rows.map(account => parseAccounts(account));
         response.status(201).json(accounts);
     } catch (error) {
