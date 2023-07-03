@@ -11,15 +11,29 @@ const payrollDatesParse = payrollDate => ({
 
 // Get payroll dates
 export const getPayrollDates = async (request, response) => {
-    const { id } = request.query;
+    const { employee_id, id } = request.query;
 
     try {
-        const query = id ? payrollQueries.getPayrollDate : payrollQueries.getPayrollDates;
-        const params = id ? [id] : [];
+        let query;
+        let params;
+
+        if (id && employee_id) {
+            query = payrollQueries.getPayrollDatesByIdAndEmployeeId;
+            params = [id, employee_id];
+        } else if (id) {
+            query = payrollQueries.getPayrollDatesById;
+            params = [id];
+        } else if (employee_id) {
+            query = payrollQueries.getPayrollDatesByEmployeeId;
+            params = [employee_id];
+        } else {
+            query = payrollQueries.getAllPayrollDates;
+            params = [];
+        }
 
         const results = await executeQuery(query, params);
 
-        if (id && results.length === 0) {
+        if ((id || employee_id) && results.length === 0) {
             return response.status(404).send('Payroll date not found');
         }
 
@@ -29,7 +43,7 @@ export const getPayrollDates = async (request, response) => {
         response.status(200).json(payrollDates);
     } catch (error) {
         console.error(error); // Log the error on the server side
-        handleError(response, `Error getting ${id ? 'payroll date' : 'payroll dates'}`);
+        handleError(response, `Error getting ${id ? 'payroll dates' : (account_id ? 'payroll dates for given account_id' : 'payroll dates')}`);
     }
 };
 
