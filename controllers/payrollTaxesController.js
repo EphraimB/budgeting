@@ -4,31 +4,27 @@ import { handleError, executeQuery } from '../utils/helperFunctions.js';
 
 const payrollTaxesParse = payrollTax => ({
     payroll_taxes_id: parseInt(payrollTax.payroll_taxes_id),
+    employee_id: parseInt(payrollTax.employee_id),
     name: payrollTax.name,
     rate: parseFloat(payrollTax.rate)
 });
 
 export const getPayrollTaxes = async (request, response) => {
-    const { employee_id, id } = request.query;
+    const { id } = request.query;
 
     const query = id ? payrollQueries.getPayrollTax : payrollQueries.getPayrollTaxes;
-    const queryParameters = id ? [employee_id, id] : [employee_id];
+    const queryParameters = id ? [id] : [];
 
     try {
         const rows = await executeQuery(query, queryParameters);
 
-        if (employee_id && rows.length === 0) {
+        if (id && rows.length === 0) {
             return response.status(404).send('Payroll tax not found');
         }
 
         const payrollTaxes = rows.map(payrollTax => payrollTaxesParse(payrollTax));
 
-        const returnObj = {
-            employee_id: parseInt(employee_id),
-            payroll_taxes: payrollTaxes
-        };
-
-        response.status(200).json(returnObj);
+        response.status(200).json(payrollTaxes);
     } catch (error) {
         console.error(error); // Log the error on the server side
         handleError(response, `Error getting ${id ? 'payroll tax' : 'payroll taxes'}`);
@@ -79,16 +75,17 @@ export const updatePayrollTax = async (request, response) => {
 // Delete payroll tax
 export const deletePayrollTax = async (request, response) => {
     const { id } = request.params;
-    const { employee_id } = request.query;
 
     try {
-        const transferResults = await executeQuery(payrollQueries.deletePayrollTax, [id]);
+        const getResults = await executeQuery(payrollQueries.getPayrollTax, [id]);
 
-        if (transferResults.length === 0) {
+        if (getResults.length === 0) {
             return response.status(404).send('Payroll tax not found');
         }
 
-        await getPayrolls(employee_id);
+        await executeQuery(payrollQueries.deletePayrollTax, [id]);
+
+        await getPayrolls(getResults[0].employee_id);
 
         response.status(200).send('Successfully deleted payroll tax');
     } catch (error) {

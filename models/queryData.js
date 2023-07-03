@@ -173,13 +173,13 @@ export const payrollQueries = {
       GROUP BY d1, s2.payroll_start_day, e.employee_id, e.employee_id, s.work_days, s1.adjusted_payroll_end_day
       ORDER BY start_date, end_date
    `,
-    getPayrollTaxes: 'SELECT * FROM payroll_taxes WHERE employee_id = $1',
-    getPayrollTax: 'SELECT * FROM payroll_taxes WHERE employee_id = $1 AND payroll_taxes_id = $2',
+    getPayrollTaxes: 'SELECT * FROM payroll_taxes',
+    getPayrollTax: 'SELECT * FROM payroll_taxes WHERE payroll_taxes_id = $1',
     createPayrollTax: 'INSERT INTO payroll_taxes (employee_id, name, rate) VALUES ($1, $2, $3) RETURNING *',
     updatePayrollTax: 'UPDATE payroll_taxes SET name = $1, rate = $2 WHERE payroll_taxes_id = $3 RETURNING *',
     deletePayrollTax: 'DELETE FROM payroll_taxes WHERE payroll_taxes_id = $1',
-    getPayrollDates: 'SELECT * FROM payroll_dates WHERE employee_id = $1',
-    getPayrollDate: 'SELECT * FROM payroll_dates WHERE employee_id = $1 AND payroll_date_id = $2',
+    getPayrollDates: 'SELECT * FROM payroll_dates',
+    getPayrollDate: 'SELECT * FROM payroll_dates WHERE payroll_date_id = $1',
     createPayrollDate: 'INSERT INTO payroll_dates (employee_id, payroll_start_day, payroll_end_day) VALUES ($1, $2, $3) RETURNING *',
     updatePayrollDate: 'UPDATE payroll_dates SET payroll_start_day = $1, payroll_end_day = $2 WHERE payroll_date_id = $3 RETURNING *',
     deletePayrollDate: 'DELETE FROM payroll_dates WHERE payroll_date_id = $1',

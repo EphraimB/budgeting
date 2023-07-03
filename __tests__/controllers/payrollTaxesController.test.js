@@ -57,18 +57,14 @@ describe('GET /api/payroll/taxes', () => {
 
         const payrollTaxesReturnObj = payrollTaxes.map(payrollTax => ({
             payroll_taxes_id: parseInt(payrollTax.payroll_taxes_id),
+            employee_id: parseInt(payrollTax.employee_id),
             name: payrollTax.name,
             rate: parseFloat(payrollTax.rate)
         }));
 
-        const expentedReturnObj = {
-            employee_id: 1,
-            payroll_taxes: payrollTaxesReturnObj
-        };
-
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(200);
-        expect(mockResponse.json).toHaveBeenCalledWith(expentedReturnObj);
+        expect(mockResponse.json).toHaveBeenCalledWith(payrollTaxesReturnObj);
     });
 
     it('should respond with an error message', async () => {
@@ -105,19 +101,14 @@ describe('GET /api/payroll/taxes', () => {
 
         const payrollTaxesReturnObj = payrollTaxes.filter(payrollTax => payrollTax.employee_id === id).map(payrollTax => ({
             payroll_taxes_id: parseInt(payrollTax.payroll_taxes_id),
+            employee_id: parseInt(payrollTax.employee_id),
             name: payrollTax.name,
             rate: parseFloat(payrollTax.rate)
         }));
 
-        // Don't include employee_id in the return object
-        const expentedReturnObj = {
-            employee_id: id,
-            payroll_taxes: payrollTaxesReturnObj
-        };
-
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(200);
-        expect(mockResponse.json).toHaveBeenCalledWith(expentedReturnObj);
+        expect(mockResponse.json).toHaveBeenCalledWith(payrollTaxesReturnObj);
     });
 
     it('should respond with an error message with id', async () => {
@@ -148,7 +139,7 @@ describe('GET /api/payroll/taxes', () => {
 
         const { getPayrollTaxes } = await import('../../controllers/payrollTaxesController.js');
 
-        mockRequest.query = { employee_id: 3 };
+        mockRequest.query = { id: 3 };
 
         // Act
         await getPayrollTaxes(mockRequest, mockResponse);
@@ -179,6 +170,7 @@ describe('POST /api/payroll/taxes', () => {
 
         const newPayrollTaxesReturnObj = [{
             payroll_taxes_id: 1,
+            employee_id: 1,
             name: 'Federal Income Tax',
             rate: 0.1
         }];
@@ -235,6 +227,7 @@ describe('PUT /api/payroll/taxes/:id', () => {
 
         const newPayrollTaxesReturnObj = [{
             payroll_taxes_id: id,
+            employee_id: 1,
             name: 'Federal Income Tax',
             rate: 0.1
         }];
@@ -309,8 +302,7 @@ describe('DELETE /api/payroll/taxes/:id', () => {
         const error = new Error(errorMessage);
         mockModule(null, errorMessage);
 
-        mockRequest.params = { id: 1 };
-        mockRequest.query = { employee_id: 1 };
+        mockRequest.params = { id: 3 };
 
         const { deletePayrollTax } = await import('../../controllers/payrollTaxesController.js');
 
