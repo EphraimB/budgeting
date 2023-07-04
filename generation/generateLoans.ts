@@ -1,5 +1,9 @@
-const generateLoans = (transactions, skippedTransactions, loan, toDate, fromDate, generateDateFn) => {
-    let loanDate = new Date(loan.loan_begin_date);
+import { Loan } from '../types/types';
+
+type GenerateDateFunction = (currentDate: Date, loan: Loan) => Date;
+
+const generateLoans = (transactions: any[], skippedTransactions: any[], loan: Loan, toDate: Date, fromDate: Date, generateDateFn: GenerateDateFunction) => {
+    let loanDate: Date = new Date(loan.loan_begin_date);
 
     if (loan.frequency_month_of_year !== null && loan.frequency_month_of_year !== undefined) {
         loanDate.setMonth(loan.frequency_month_of_year);
@@ -48,9 +52,9 @@ const generateLoans = (transactions, skippedTransactions, loan, toDate, fromDate
     }
 };
 
-export const generateDailyLoans = (transactions, skippedTransactions, loan, toDate, fromDate) => {
-    const generateDateFn = (currentDate, loan) => {
-        const newDate = new Date(currentDate);
+export const generateDailyLoans = (transactions: any[], skippedTransactions: any[], loan: Loan, toDate: Date, fromDate: Date): void => {
+    const generateDateFn = (currentDate: Date, loan: Loan): Date => {
+        const newDate: Date = currentDate;
         newDate.setDate(newDate.getDate() + (loan.frequency_type_variable || 1));
         return newDate;
     };

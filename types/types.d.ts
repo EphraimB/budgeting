@@ -41,7 +41,7 @@ export interface Loan {
     frequency_day_of_month: number;
     frequency_day_of_week: number;
     frequency_week_of_month: number;
-    frequency_month: number;
+    frequency_month_of_year: number;
     loan_begin_date: string;
     loan_end_date: string;
     date_created: string;

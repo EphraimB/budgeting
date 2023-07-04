@@ -1,6 +1,6 @@
 import { Expense } from "../types/types";
 
-type GenerateDateFunction = (currentDate: string, expense: Expense) => Date;
+type GenerateDateFunction = (currentDate: Date, expense: Expense) => Date;
 
 /**
  * 
@@ -58,7 +58,7 @@ const generateExpenses = (transactions: any[], skippedTransactions: any[], expen
             }
         }
 
-        expenseDate = generateDateFn(expenseDate.toString(), expense);
+        expenseDate = generateDateFn(expenseDate, expense);
     }
 };
 
@@ -72,8 +72,8 @@ const generateExpenses = (transactions: any[], skippedTransactions: any[], expen
  * Generate daily expenses for a given expense
  */
 export const generateDailyExpenses = (transactions: any[], skippedTransactions: any[], expense: Expense, toDate: Date, fromDate: Date): void => {
-    const generateDateFn = (currentDate: string, expense: Expense): Date => {
-        const newDate = new Date(currentDate);
+    const generateDateFn = (currentDate: Date, expense: Expense): Date => {
+        const newDate = currentDate;
         newDate.setDate(newDate.getDate() + (expense.frequency_type_variable || 1));
         return newDate;
     };
@@ -92,7 +92,7 @@ export const generateDailyExpenses = (transactions: any[], skippedTransactions: 
  */
 export const generateMonthlyExpenses = (transactions: any[], skippedTransactions: any[], expense: Expense, toDate: Date, fromDate: Date): void => {
     let monthsIncremented: number = 0;
-    const generateDateFn = (currentDate: string, expense: Expense): Date => {
+    const generateDateFn = (currentDate: Date, expense: Expense): Date => {
         const expenseDate: Date = new Date(expense.expense_begin_date);
 
         // advance by number of months specified in frequency_type_variable or by 1 month if not set
@@ -147,8 +147,8 @@ export const generateWeeklyExpenses = (transactions: any[], skippedTransactions:
         expenseDate.setDate(expenseDate.getDate() + (frequency_day_of_week + 7 - startDay) % 7);
     }
 
-    const generateDateFn = (currentDate: string, expense: Expense): Date => {
-        const newDate: Date = new Date(currentDate);
+    const generateDateFn = (currentDate: Date, expense: Expense): Date => {
+        const newDate: Date = currentDate;
         newDate.setDate(newDate.getDate() + 7 * (expense.frequency_type_variable || 1));
         return newDate;
     };
@@ -167,7 +167,7 @@ export const generateWeeklyExpenses = (transactions: any[], skippedTransactions:
  */
 export const generateYearlyExpenses = (transactions: any[], skippedTransactions: any[], expense: Expense, toDate: Date, fromDate: Date): void => {
     let yearsIncremented: number = 0;
-    const generateDateFn = (currentDate: string, expense: Expense): Date => {
+    const generateDateFn = (currentDate: Date, expense: Expense): Date => {
         const newDate: Date = new Date(expense.expense_begin_date);
         newDate.setFullYear(newDate.getFullYear() + yearsIncremented + (expense.frequency_type_variable || 1));
 
