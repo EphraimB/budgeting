@@ -132,20 +132,26 @@ export const updatePayrollDate = async (request: Request, response: Response): P
     }
 };
 
-// Delete payroll date
-export const deletePayrollDate = async (request, response) => {
+/**
+ * 
+ * @param request - Request object
+ * @param response - Response object
+ * Sends a DELETE request to the database to delete a payroll date
+ */
+export const deletePayrollDate = async (request: Request, response: Response): Promise<void> => {
     try {
         const { id } = request.params;
 
-        const getResults = await executeQuery(payrollQueries.getPayrollDate, [id]);
+        const getResults = await executeQuery<PayrollDateInput>(payrollQueries.getPayrollDatesById, [id]);
 
         if (getResults.length === 0) {
-            return response.status(404).send('Payroll date not found');
+            response.status(404).send('Payroll date not found');
+            return;
         }
 
         await executeQuery(payrollQueries.deletePayrollDate, [id]);
 
-        await getPayrolls(getResults[0].employee_id);
+        await getPayrolls(parseInt(getResults[0].employee_id));
 
         response.status(200).send('Successfully deleted payroll date');
     } catch (error) {
