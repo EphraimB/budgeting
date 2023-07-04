@@ -1,26 +1,26 @@
 import { jest } from '@jest/globals';
 import request from 'supertest';
-import express from 'express';
+import express, { Express, Request, Response, NextFunction } from 'express';
 
 // Factory function for creating an app with the mock router
 const createApp = async () => {
-    const app = express();
+    const app: Express = express();
     app.use(express.json());
 
     // Import the module that uses the mock
     const routerModule = await import('../../routes/accountsRouter');
     const accountsRouter = routerModule.default;
-    app.use('/', accountsRouter);
+    app.use('/', accountsRouter as express.Router);
 
     return app;
 };
 
 beforeAll(() => {
-    jest.unstable_mockModule('../../controllers/accountsController', () => ({
-        getAccounts: (req, res, next) => res.json({ message: 'success' }),
-        createAccount: (req, res, next) => res.json({ message: 'success' }),
-        updateAccount: (req, res, next) => res.json({ message: 'success' }),
-        deleteAccount: (req, res, next) => res.json({ message: 'success' })
+    jest.mock('../../controllers/accountsController', () => ({
+        getAccounts: (req: Request, res: Response, next: NextFunction) => res.json({ message: 'success' }),
+        createAccount: (req: Request, res: Response, next: NextFunction) => res.json({ message: 'success' }),
+        updateAccount: (req: Request, res: Response, next: NextFunction) => res.json({ message: 'success' }),
+        deleteAccount: (req: Request, res: Response, next: NextFunction) => res.json({ message: 'success' })
     }));
 });
 
@@ -28,7 +28,7 @@ afterAll(() => {
     jest.restoreAllMocks();
 });
 
-let app;
+let app: Express;
 
 beforeEach(async () => {
     // Create a new app for each test
@@ -37,7 +37,7 @@ beforeEach(async () => {
 
 describe('GET /', () => {
     it('responds with json', async () => {
-        const response = await request(app)
+        const response: request.Response = await request(app)
             .get('/')
             .set('Accept', 'application/json')
             .expect('Content-Type', /json/);
@@ -49,7 +49,7 @@ describe('GET /', () => {
 
 describe('GET / with id query', () => {
     it('responds with json', async () => {
-        const response = await request(app)
+        const response: request.Response = await request(app)
             .get('/?id=1')
             .set('Accept', 'application/json')
             .expect('Content-Type', /json/);
@@ -67,7 +67,7 @@ describe('POST /', () => {
             type: 1
         };
 
-        const response = await request(app)
+        const response: request.Response = await request(app)
             .post('/')
             .set('Accept', 'application/json')
             .expect('Content-Type', /json/)
@@ -86,7 +86,7 @@ describe('PUT /:id', () => {
             type: 1
         };
 
-        const response = await request(app)
+        const response: request.Response = await request(app)
             .put('/1')
             .set('Accept', 'application/json')
             .expect('Content-Type', /json/)
@@ -99,7 +99,7 @@ describe('PUT /:id', () => {
 
 describe('DELETE /:id', () => {
     it('responds with json', async () => {
-        const response = await request(app)
+        const response: request.Response = await request(app)
             .delete('/1')
             .set('Accept', 'application/json')
             .expect('Content-Type', /json/);
