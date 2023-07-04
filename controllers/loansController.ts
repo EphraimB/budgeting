@@ -7,6 +7,7 @@ import { handleError, executeQuery } from '../utils/helperFunctions.js';
 interface LoanInput {
     account_id: string;
     loan_id: string;
+    cron_job_id?: string;
     loan_amount: string;
     loan_plan_amount: string;
     loan_recipient: string;
@@ -27,6 +28,7 @@ interface LoanInput {
 interface LoanOutput {
     loan_id: number;
     account_id: number;
+    cron_job_id?: number;
     loan_amount: number;
     loan_plan_amount: number;
     loan_recipient: string;
@@ -99,7 +101,8 @@ export const getLoans = async (request: Request, response: Response): Promise<vo
         const rows: LoanInput[] = await executeQuery(query, params);
 
         if ((id || account_id) && rows.length === 0) {
-            return response.status(404).send('Loan not found');
+            response.status(404).send('Loan not found');
+            return;
         }
 
         const loans: LoanOutput[] = rows.map(loan => parseLoan(loan));
@@ -182,8 +185,13 @@ export const createLoan = async (request: Request, response: Response): Promise<
     }
 };
 
-// Update loan
-export const updateLoan = async (request, response) => {
+/**
+ * 
+ * @param request - Request object
+ * @param response - Response object
+ * Sends a PUT request to the database to update a loan
+ */
+export const updateLoan = async (request: Request, response: Response): Promise<void> => {
     const { id } = request.params;
 
     try {
@@ -203,21 +211,22 @@ export const updateLoan = async (request, response) => {
             begin_date
         } = request.body;
 
-        const negativePlanAmount = -plan_amount;
+        const negative_plan_amount: number = -plan_amount;
 
-        const getLoanResults = await executeQuery(loanQueries.getLoan, [id]);
+        const getLoanResults = await executeQuery<LoanInput>(loanQueries.getLoansById, [id]);
 
         if (getLoanResults.length === 0) {
-            return response.status(404).send('Loan not found');
+            response.status(404).send('Loan not found');
+            return;
         }
 
-        const cronId = getLoanResults[0].cron_job_id;
+        const cronId: number = parseInt(getLoanResults[0].cron_job_id);
         await deleteCronJob(cronId);
 
         const { uniqueId, cronDate } = await scheduleCronJob({
             begin_date,
             account_id,
-            negativePlanAmount,
+            negative_plan_amount,
             description,
             frequency_type,
             frequency_type_variable,
@@ -228,7 +237,7 @@ export const updateLoan = async (request, response) => {
         });
 
         await executeQuery(cronJobQueries.updateCronJob, [uniqueId, cronDate, cronId]);
-        const updateLoanResults = await executeQuery(loanQueries.updateLoan, [
+        const updateLoanResults = await executeQuery<LoanInput>(loanQueries.updateLoan, [
             account_id,
             amount,
             plan_amount,
@@ -246,7 +255,7 @@ export const updateLoan = async (request, response) => {
         ]);
 
         // Parse the data to the correct format and return an object
-        const loans = updateLoanResults.map(loan => parseLoan(loan));
+        const loans: LoanOutput[] = updateLoanResults.map(loan => parseLoan(loan));
         response.status(200).json(loans);
     } catch (error) {
         console.error(error); // Log the error on the server side
