@@ -18,6 +18,9 @@ RUN npm run build
 # Copy swagger.json into the dist folder
 COPY ./views/swagger.json ./dist/views/swagger.json
 
+# Copy bree/jobs/scripts into the dist folder
+COPY ./bree/jobs/scripts ./dist/bree/jobs/scripts
+
 # ------ Runtime stage ------
 FROM node:18-alpine
 
