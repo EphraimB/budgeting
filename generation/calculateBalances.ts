@@ -17,7 +17,7 @@ const calculateBalances = (transactions: Transaction[], currentBalance: number):
 
     const calculateBalanceForFutureTransaction = (transaction: Transaction) => {
         balance += transaction.amount;
-        transaction.balance = parseFloat(balance.toFixed(2));
+        transaction.balance = balance;
     };
 
     const pastTransactions: Transaction[] = sortedTransactions.filter(transaction => transaction.date < new Date());
