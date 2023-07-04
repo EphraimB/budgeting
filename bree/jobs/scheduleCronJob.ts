@@ -132,14 +132,21 @@ const writeCronJobToFile = (jobsFilePath: string, jobs: JobOptions[], newJob: Jo
     }
 };
 
-const scheduleCronJob = async (jobDetails, filePath, jobsFilePath) => {
+/**
+ * 
+ * @param jobDetails - Job details
+ * @param [filePath] - File path
+ * @param [jobsFilePath] - Jobs file path
+ * @returns 
+ */
+const scheduleCronJob = async (jobDetails: CronJobData, filePath?: string, jobsFilePath?: string) => {
     const uniqueId = uuidv4();
     jobsFilePath = jobsFilePath || path.join(__dirname, '../jobs.json');
     if (!fs.existsSync(jobsFilePath)) {
         fs.writeFileSync(jobsFilePath, JSON.stringify([]));
     }
 
-    const jobs = JSON.parse(fs.readFileSync(jobsFilePath));
+    const jobs: JobOptions[] = JSON.parse(fs.readFileSync(jobsFilePath, 'utf8'));
     const newJob = createCronJob(jobDetails, uniqueId);
     writeCronJobToFile(jobsFilePath, jobs, newJob);
 
