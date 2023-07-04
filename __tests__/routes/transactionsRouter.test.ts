@@ -76,7 +76,7 @@ describe('Testing / route', () => {
         const toDate: string = '2023-01-31';
 
         const response: request.Response = await request(app)
-            .get('/?')
+            .get('/')
             .query({ account_id: accountId, from_date: fromDate, to_date: toDate });
 
         expect(response.status).toBe(200);
