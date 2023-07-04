@@ -80,16 +80,24 @@ export const generateDailyLoans = (transactions: any[], skippedTransactions: any
     generateLoans(transactions, skippedTransactions, loan, toDate, fromDate, generateDateFn);
 };
 
-export const generateMonthlyLoans = (transactions, skippedTransactions, loan, toDate, fromDate) => {
-    let monthsIncremented = 0;
-    const generateDateFn = (currentDate, loan) => {
-        const loanDate = new Date(loan.loan_begin_date);
+/**
+ * 
+ * @param transactions - The transactions to generate loans for
+ * @param skippedTransactions - The transactions to skip
+ * @param loan - The loan to generate
+ * @param toDate - The date to generate loans to
+ * @param fromDate - The date to generate loans from
+ */
+export const generateMonthlyLoans = (transactions: any[], skippedTransactions: any[], loan: Loan, toDate: Date, fromDate: Date): void => {
+    let monthsIncremented: number = 0;
+    const generateDateFn = (currentDate: Date, loan: Loan) => {
+        const loanDate: Date = new Date(loan.loan_begin_date);
 
         // advance by number of months specified in frequency_type_variable or by 1 month if not set
         loanDate.setMonth(loanDate.getMonth() + monthsIncremented + (loan.frequency_type_variable || 1));
 
         if (loan.frequency_day_of_week !== null && loan.frequency_day_of_week !== undefined) {
-            let newDay;
+            let newDay: number;
 
             if (loan.frequency_day_of_week !== null && loan.frequency_day_of_week !== undefined) {
                 let daysUntilNextFrequency = (7 + loan.frequency_day_of_week - loanDate.getDay()) % 7;
