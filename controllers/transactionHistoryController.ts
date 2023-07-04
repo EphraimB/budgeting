@@ -22,6 +22,12 @@ interface TransactionHistoryOutput {
     date_modified: string;
 }
 
+/**
+ *
+ * @param transactionHistory - Transaction history object
+ * @returns Transaction history object with the correct types
+ * Converts the transaction history object to the correct types
+ */
 const parseTransactions = (transactionHistory: TransactionHistoryInput) => ({
     transaction_id: parseInt(transactionHistory.transaction_id),
     account_id: parseInt(transactionHistory.account_id),

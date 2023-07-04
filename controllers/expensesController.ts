@@ -1,9 +1,52 @@
+import { Request, Response } from 'express';
 import { expenseQueries, cronJobQueries } from '../models/queryData.js';
 import scheduleCronJob from '../bree/jobs/scheduleCronJob.js';
 import deleteCronJob from '../bree/jobs/deleteCronJob.js';
 import { handleError, executeQuery } from '../utils/helperFunctions.js';
 
-const parseExpenses = expense => ({
+interface ExpenseInput {
+    expense_id: string;
+    account_id: string;
+    expense_amount: string;
+    expense_title: string;
+    expense_description: string;
+    frequency_type: string;
+    frequency_type_variable: string;
+    frequency_day_of_month: string;
+    frequency_day_of_week: string;
+    frequency_week_of_month: string;
+    frequency_month_of_year: string;
+    expense_begin_date: string;
+    expense_end_date: string;
+    date_created: string;
+    date_modified: string;
+}
+
+interface ExpenseOutput {
+    expense_id: number;
+    account_id: number;
+    expense_amount: number;
+    expense_title: string;
+    expense_description: string;
+    frequency_type: string;
+    frequency_type_variable: string;
+    frequency_day_of_month: string;
+    frequency_day_of_week: string;
+    frequency_week_of_month: string;
+    frequency_month_of_year: string;
+    expense_begin_date: string;
+    expense_end_date: string;
+    date_created: string;
+    date_modified: string;
+}
+
+/**
+ * 
+ * @param expense - Expense object
+ * @returns Expense object with the correct types
+ * Converts the expense object to the correct types
+ **/
+const parseExpenses = (expense: ExpenseInput): ExpenseOutput => ({
     expense_id: parseInt(expense.expense_id),
     account_id: parseInt(expense.account_id),
     expense_amount: parseFloat(expense.expense_amount),
@@ -21,12 +64,18 @@ const parseExpenses = expense => ({
     date_modified: expense.date_modified
 });
 
-export const getExpenses = async (request, response) => {
+/**
+ * 
+ * @param request - Request object
+ * @param response - Response object
+ * @returns All expenses or a single expense
+ */
+export const getExpenses = async (request: Request, response: Response): Promise<void> => {
     const { id, account_id } = request.query;
 
     try {
-        let query;
-        let params;
+        let query: string;
+        let params: any[];
 
         if (id && account_id) {
             query = expenseQueries.getExpenseByIdAndAccountId;
@@ -42,10 +91,11 @@ export const getExpenses = async (request, response) => {
             params = [];
         }
 
-        const expenses = await executeQuery(query, params);
+        const expenses = await executeQuery<ExpenseInput>(query, params);
 
         if ((id || account_id) && expenses.length === 0) {
-            return response.status(404).send('Expense not found');
+            response.status(404).send('Expense not found');
+            return;
         }
 
         response.status(200).json(expenses.map(parseExpenses));
