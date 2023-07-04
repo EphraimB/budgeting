@@ -1,10 +1,10 @@
 import { Request, Response, NextFunction } from 'express';
-import { generateDailyExpenses, generateWeeklyExpenses, generateMonthlyExpenses, generateYearlyExpenses } from './generateExpenses';
-import { generateDailyLoans, generateWeeklyLoans, generateMonthlyLoans, generateYearlyLoans } from './generateLoans';
+import { generateDailyExpenses, generateWeeklyExpenses, generateMonthlyExpenses, generateYearlyExpenses } from './generateExpenses.js';
+import { generateDailyLoans, generateWeeklyLoans, generateMonthlyLoans, generateYearlyLoans } from './generateLoans.js';
 import generatePayrollTransactions from './generatePayrolls.js';
-import { generateDailyTransfers, generateWeeklyTransfers, generateMonthlyTransfers, generateYearlyTransfers } from './generateTransfers';
-import generateWishlists from './generateWishlists';
-import calculateBalances from './calculateBalances';
+import { generateDailyTransfers, generateWeeklyTransfers, generateMonthlyTransfers, generateYearlyTransfers } from './generateTransfers.js';
+import generateWishlists from './generateWishlists.js';
+import calculateBalances from './calculateBalances.js';
 
 /**
  * 

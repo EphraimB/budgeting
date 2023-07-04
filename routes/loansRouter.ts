@@ -1,7 +1,7 @@
 import express, { Router } from 'express';
 import { query, param, body } from 'express-validator';
-import { getLoans, createLoan, updateLoan, deleteLoan } from '../controllers/loansController';
-import validateRequest from '../utils/validateRequest';
+import { getLoans, createLoan, updateLoan, deleteLoan } from '../controllers/loansController.js';
+import validateRequest from '../utils/validateRequest.js';
 
 const router: Router = express.Router();
 
