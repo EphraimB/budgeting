@@ -1,9 +1,55 @@
+import { Request, Response } from 'express';
 import { transferQueries, cronJobQueries } from '../models/queryData.js';
 import scheduleCronJob from '../bree/jobs/scheduleCronJob.js';
 import deleteCronJob from '../bree/jobs/deleteCronJob.js';
 import { handleError, executeQuery } from '../utils/helperFunctions.js';
 
-const transfersParse = transfer => ({
+interface TransferInput {
+    transfer_id: string;
+    cron_job_id?: string;
+    source_account_id: string;
+    destination_account_id: string;
+    transfer_amount: string;
+    transfer_title: string;
+    transfer_description: string;
+    frequency_type: string;
+    frequency_type_variable: string;
+    frequency_day_of_month: string;
+    frequency_day_of_week: string;
+    frequency_week_of_month: string;
+    frequency_month_of_year: string;
+    transfer_begin_date: string;
+    transfer_end_date: string;
+    date_created: string;
+    date_modified: string;
+}
+
+interface TransferOutput {
+    transfer_id: number;
+    cron_job_id?: number;
+    source_account_id: number;
+    destination_account_id: number;
+    transfer_amount: number;
+    transfer_title: string;
+    transfer_description: string;
+    frequency_type: string;
+    frequency_type_variable: string;
+    frequency_day_of_month: string;
+    frequency_day_of_week: string;
+    frequency_week_of_month: string;
+    frequency_month_of_year: string;
+    transfer_begin_date: string;
+    transfer_end_date: string;
+    date_created: string;
+    date_modified: string;
+}
+
+/**
+ * 
+ * @param transfer - The transfer object to parse
+ * @returns The parsed transfer object
+ */
+const transfersParse = (transfer: TransferInput): TransferOutput => ({
     transfer_id: parseInt(transfer.transfer_id),
     source_account_id: parseInt(transfer.source_account_id),
     destination_account_id: parseInt(transfer.destination_account_id),
