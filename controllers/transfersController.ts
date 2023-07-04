@@ -265,21 +265,26 @@ export const updateTransfer = async (request: Request, response: Response): Prom
     }
 };
 
-// Delete transfer
-export const deleteTransfer = async (request, response) => {
+/**
+ * 
+ * @param request - The request object
+ * @param response - The response object
+ * Sends a response with the deleted transfer
+ */
+export const deleteTransfer = async (request: Request, response: Response): Promise<void> => {
     try {
         const { id } = request.params;
 
-        const transferResults = await executeQuery(transferQueries.getTransfer, [id]);
+        const transferResults = await executeQuery(transferQueries.getTransfersById, [id]);
 
         if (transferResults.length === 0) {
-            return response.status(404).send('Transfer not found');
+            response.status(404).send('Transfer not found');
+            return;
         }
 
-        const cronId = transferResults[0].cron_job_id;
+        const cronId: number = transferResults[0].cron_job_id;
 
         await executeQuery(transferQueries.deleteTransfer, [id]);
-
         await deleteCronJob(cronId);
         await executeQuery(cronJobQueries.deleteCronJob, [cronId]);
 
