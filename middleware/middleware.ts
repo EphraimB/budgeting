@@ -87,6 +87,7 @@ declare module 'express-serve-static-core' {
         payrolls: Payroll[];
         wishlists: Wishlist[];
         transfers: Transfer[];
+        currentBalance: number;
     }
 }
 
@@ -216,14 +217,20 @@ export const getTransfersByAccount = async (request: Request, response: Response
     }
 };
 
-// Get current balance of account based on deposits and withdrawals
-export const getCurrentBalance = async (request, response, next) => {
-    const account_id = parseInt(request.query.account_id);
+/**
+ * 
+ * @param request - The request object
+ * @param response - The response object
+ * @param next - The next function
+ * Sends a response with the current balance of an account
+ */
+export const getCurrentBalance = async (request: Request, response: Response, next: NextFunction): Promise<void> => {
+    const { account_id } = request.query;
 
     try {
         const results = await executeQuery(currentBalanceQueries.getCurrentBalance, [account_id]);
 
-        const currentBalance = parseFloat(results[0].account_balance);
+        const currentBalance: number = parseFloat(results[0].account_balance);
 
         request.currentBalance = currentBalance;
 
