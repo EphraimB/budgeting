@@ -14,7 +14,7 @@ interface Expense {
     date_modified: string;
 }
 
-type GenerateDateFunction = (currentDate: Date, expense: Expense) => Date;
+type GenerateDateFunction = (currentDate: string, expense: Expense) => Date;
 
 /**
  * 
@@ -24,6 +24,7 @@ type GenerateDateFunction = (currentDate: Date, expense: Expense) => Date;
  * @param toDate - The date to generate expenses to
  * @param fromDate - The date to generate expenses from
  * @param generateDateFn - The function to generate the next date
+ * Generate expenses for a given expense
  */
 const generateExpenses = (transactions: any[], skippedTransactions: any[], expense: Expense, toDate: string, fromDate: string, generateDateFn: GenerateDateFunction) => {
     let expenseDate = new Date(expense.expense_begin_date);
@@ -71,12 +72,21 @@ const generateExpenses = (transactions: any[], skippedTransactions: any[], expen
             }
         }
 
-        expenseDate = generateDateFn(expenseDate, expense);
+        expenseDate = generateDateFn(expenseDate.toString(), expense);
     }
 };
 
-export const generateDailyExpenses = (transactions, skippedTransactions, expense, toDate, fromDate) => {
-    const generateDateFn = (currentDate, expense) => {
+/**
+ * 
+ * @param transactions - The transactions to generate expenses for
+ * @param skippedTransactions - The transactions to skip
+ * @param expense - The expense to generate
+ * @param toDate - The date to generate expenses to
+ * @param fromDate - The date to generate expenses from
+ * Generate daily expenses for a given expense
+ */
+export const generateDailyExpenses = (transactions: any[], skippedTransactions: any[], expense: Expense, toDate: string, fromDate: string) => {
+    const generateDateFn = (currentDate: string, expense: Expense) => {
         const newDate = new Date(currentDate);
         newDate.setDate(newDate.getDate() + (expense.frequency_type_variable || 1));
         return newDate;
