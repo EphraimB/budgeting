@@ -7,9 +7,14 @@ import { getJobs } from './getJobs.js';
 
 const __dirname = fileURLToPath(new URL('.', import.meta.url));
 
-let breeInstance = null;
+let breeInstance: Bree | null = null;
 
-export const initializeBree = async (cronjobsDir) => {
+/**
+ * 
+ * @param cronjobsDir - Directory where the cron jobs are located
+ * Initializes the bree instance
+ */
+export const initializeBree = async (cronjobsDir: string) => {
     try {
         cronjobsDir = cronjobsDir || path.join(__dirname, 'jobs/cron-jobs');
 
