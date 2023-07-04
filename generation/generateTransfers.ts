@@ -160,10 +160,20 @@ export const generateWeeklyTransfers = (transactions: any[], skippedTransactions
     generateTransfers(transactions, skippedTransactions, transfer, toDate, fromDate, account_id, generateDateFn);
 };
 
-export const generateYearlyTransfers = (transactions, skippedTransactions, transfer, toDate, fromDate, account_id) => {
-    let yearsIncremented = 0;
-    const generateDateFn = (currentDate, transfer) => {
-        const transferDate = new Date(transfer.transfer_begin_date);
+/**
+ * 
+ * @param transactions - The transactions to generate transfers for
+ * @param skippedTransactions - The transactions to skip
+ * @param transfer - The transfer to generate
+ * @param toDate - The date to generate transfers to
+ * @param fromDate - The date to generate transfers from
+ * @param account_id - The account id to generate transfers for
+ * Generate yearly transfers for a given transfer
+ */
+export const generateYearlyTransfers = (transactions: any[], skippedTransactions: any[], transfer: Transfer, toDate: Date, fromDate: Date, account_id: number): void => {
+    let yearsIncremented: number = 0;
+    const generateDateFn = (currentDate: Date, transfer: Transfer): Date => {
+        const transferDate: Date = new Date(transfer.transfer_begin_date);
 
         transferDate.setFullYear(transferDate.getFullYear() + yearsIncremented + (transfer.frequency_type_variable || 1));
 
@@ -172,12 +182,12 @@ export const generateYearlyTransfers = (transactions, skippedTransactions, trans
         }
 
         if (transfer.frequency_day_of_week !== null && transfer.frequency_day_of_week !== undefined) {
-            const daysToAdd = (7 - transferDate.getDay() + transfer.frequency_day_of_week) % 7;
+            const daysToAdd: number = (7 - transferDate.getDay() + transfer.frequency_day_of_week) % 7;
             transferDate.setDate(transferDate.getDate() + daysToAdd); // this is the first occurrence of the day_of_week
 
             if (transfer.frequency_week_of_month !== null && transfer.frequency_week_of_month !== undefined) {
                 // add the number of weeks, but check if it overflows into the next month
-                const proposedDate = new Date(transferDate.getTime());
+                const proposedDate: Date = new Date(transferDate.getTime());
                 proposedDate.setDate(proposedDate.getDate() + 7 * (transfer.frequency_week_of_month));
 
                 if (proposedDate.getMonth() === transferDate.getMonth()) {
