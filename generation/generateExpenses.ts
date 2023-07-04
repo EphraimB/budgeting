@@ -1,4 +1,31 @@
-const generateExpenses = (transactions, skippedTransactions, expense, toDate, fromDate, generateDateFn) => {
+interface Expense {
+    expense_id: number;
+    account_id: number;
+    expense_amount: number;
+    expense_title: string;
+    expense_description: string;
+    expense_begin_date: string;
+    frequency_type_variable: number;
+    frequency_day_of_month: number;
+    frequency_day_of_week: number;
+    frequency_week_of_month: number;
+    frequency_month_of_year: number;
+    date_created: string;
+    date_modified: string;
+}
+
+type GenerateDateFunction = (currentDate: Date, expense: Expense) => Date;
+
+/**
+ * 
+ * @param transactions - The transactions to generate expenses for
+ * @param skippedTransactions - The transactions to skip
+ * @param expense - The expense to generate
+ * @param toDate - The date to generate expenses to
+ * @param fromDate - The date to generate expenses from
+ * @param generateDateFn - The function to generate the next date
+ */
+const generateExpenses = (transactions: any[], skippedTransactions: any[], expense: Expense, toDate: string, fromDate: string, generateDateFn: GenerateDateFunction) => {
     let expenseDate = new Date(expense.expense_begin_date);
 
     if (expense.frequency_month_of_year !== null && expense.frequency_month_of_year !== undefined) {
@@ -27,7 +54,7 @@ const generateExpenses = (transactions, skippedTransactions, expense, toDate, fr
         expenseDate.setDate(newDay);
     }
 
-    while (expenseDate <= toDate) {
+    while (expenseDate.toString() <= toDate) {
         const newTransaction = {
             expense_id: expense.expense_id,
             title: expense.expense_title,
@@ -37,7 +64,7 @@ const generateExpenses = (transactions, skippedTransactions, expense, toDate, fr
         };
 
         if (expenseDate > new Date()) {
-            if (fromDate > expenseDate) {
+            if (fromDate > expenseDate.toString()) {
                 skippedTransactions.push(newTransaction);
             } else {
                 transactions.push(newTransaction);
