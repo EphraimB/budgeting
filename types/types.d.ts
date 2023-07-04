@@ -66,12 +66,18 @@ export interface Wishlist {
 
 export interface Transfer {
     transfer_id: number;
-    account_id: number;
+    source_account_id: number;
+    destination_account_id: number;
     transfer_amount: number;
     transfer_title: string;
     transfer_description: string;
-    transfer_date: string;
+    transfer_begin_date: string;
     frequency_type: number;
+    frequency_type_variable: number;
+    frequency_day_of_month: number;
+    frequency_day_of_week: number;
+    frequency_week_of_month: number;
+    frequency_month_of_year: number;
     date_created: string;
     date_modified: string;
 }
