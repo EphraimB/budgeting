@@ -178,7 +178,7 @@ export const createExpense = async (request: Request, response: Response): Promi
  * @param response - Response object
  * Sends a response with the updated expense and updates the cron job for the expense and updates it in the database
  */
-export const updateExpense = async (request: Request, response: Response) => {
+export const updateExpense = async (request: Request, response: Response): Promise<void> => {
     const id: number = parseInt(request.params.id);
     const {
         account_id,
@@ -210,7 +210,8 @@ export const updateExpense = async (request: Request, response: Response) => {
     try {
         const expenseResult = await executeQuery<ExpenseInput>(expenseQueries.getExpenseById, [id]);
         if (expenseResult.length === 0) {
-            return response.status(404).send('Expense not found');
+            response.status(404).send('Expense not found');
+            return;
         }
 
         const cronId = expenseResult[0].cron_job_id;
@@ -246,17 +247,23 @@ export const updateExpense = async (request: Request, response: Response) => {
     }
 };
 
-// Delete expense
-export const deleteExpense = async (request, response) => {
+/**
+ * 
+ * @param request - Request object
+ * @param response - Response object
+ * Sends a response with the deleted expense and deletes the cron job for the expense and deletes it from the database
+ */
+export const deleteExpense = async (request: Request, response: Response): Promise<void> => {
     const { id } = request.params;
 
     try {
-        const expenseResult = await executeQuery(expenseQueries.getExpense, [id]);
+        const expenseResult = await executeQuery(expenseQueries.getExpenseById, [id]);
         if (expenseResult.length === 0) {
-            return response.status(404).send('Expense not found');
+            response.status(404).send('Expense not found');
+            return;
         }
 
-        const cronId = expenseResult[0].cron_job_id;
+        const cronId: number = expenseResult[0].cron_job_id;
 
         await executeQuery(expenseQueries.deleteExpense, [id]);
 
