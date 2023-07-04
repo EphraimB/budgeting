@@ -43,7 +43,7 @@ export const getJobs = async (jobsFilePath: string): Promise<PayrollJob[]> => {
             }
         }
 
-        const payrollCheckerjobs = employeeData.map(employee => ({
+        const payrollCheckerjobs = employeeData.map((employee) => ({
             name: `payroll-checker-employee-${employee.employee_id}`,
             cron: '0 0 1 * *',
             path: '/app/bree/jobs/scripts/cronScriptGetPayrolls.js',
