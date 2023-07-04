@@ -1,7 +1,6 @@
 import Bree from 'bree';
 import fs from 'fs';
 import path from 'path';
-import Cabin from 'cabin';
 import { fileURLToPath } from 'url';
 import { getJobs } from './getJobs.js';
 
@@ -23,7 +22,6 @@ export const initializeBree = async (cronjobsDir?: string) => {
         }
 
         breeInstance = new Bree({
-            logger: new Cabin(),
             root: cronjobsDir
         });
 
