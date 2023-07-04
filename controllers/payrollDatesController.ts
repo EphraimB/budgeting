@@ -1,21 +1,46 @@
+import { Request, Response } from 'express';
 import { payrollQueries } from '../models/queryData.js';
 import { getPayrolls } from '../bree/getPayrolls.js';
 import { handleError, executeQuery } from '../utils/helperFunctions.js';
 
-const payrollDatesParse = payrollDate => ({
+interface PayrollDateInput {
+    payroll_date_id: string;
+    employee_id: string;
+    payroll_start_day: string;
+    payroll_end_day: string;
+}
+
+interface PayrollDateOutput {
+    payroll_date_id: number;
+    employee_id: number;
+    payroll_start_day: number;
+    payroll_end_day: number;
+}
+
+/**
+ * 
+ * @param payrollDate - Payroll date object
+ * @returns - Payroll date object with parsed values
+ */
+const payrollDatesParse = (payrollDate: PayrollDateInput): PayrollDateOutput => ({
     payroll_date_id: parseInt(payrollDate.payroll_date_id),
     employee_id: parseInt(payrollDate.employee_id),
     payroll_start_day: parseInt(payrollDate.payroll_start_day),
     payroll_end_day: parseInt(payrollDate.payroll_end_day)
 });
 
-// Get payroll dates
-export const getPayrollDates = async (request, response) => {
+/**
+ * 
+ * @param request - Request object
+ * @param response - Response object
+ * Sends a GET request to the database to retrieve all payroll dates
+ */
+export const getPayrollDates = async (request: Request, response: Response): Promise<void> => {
     const { employee_id, id } = request.query;
 
     try {
-        let query;
-        let params;
+        let query: string;
+        let params: any[];
 
         if (id && employee_id) {
             query = payrollQueries.getPayrollDatesByIdAndEmployeeId;
@@ -31,14 +56,15 @@ export const getPayrollDates = async (request, response) => {
             params = [];
         }
 
-        const results = await executeQuery(query, params);
+        const results = await executeQuery<PayrollDateInput>(query, params);
 
         if ((id || employee_id) && results.length === 0) {
-            return response.status(404).send('Payroll date not found');
+            response.status(404).send('Payroll date not found');
+            return;
         }
 
         // Parse the data to correct format and return an object
-        const payrollDates = results.map(payrollDate => payrollDatesParse(payrollDate));
+        const payrollDates: PayrollDateOutput[] = results.map(payrollDate => payrollDatesParse(payrollDate));
 
         response.status(200).json(payrollDates);
     } catch (error) {
