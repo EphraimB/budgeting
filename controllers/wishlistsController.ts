@@ -112,20 +112,26 @@ export const createWishlist = async (request: Request, response: Response): Prom
     }
 };
 
-// Update wishlist
-export const updateWishlist = async (request, response) => {
+/**
+ * 
+ * @param request - Request object
+ * @param response - Response object
+ * Sends a PUT request to the database to update a wishlist
+ */
+export const updateWishlist = async (request: Request, response: Response): Promise<void> => {
     try {
-        const id = parseInt(request.params.id);
+        const { id } = request.params;
         const { account_id, amount, title, description, priority, url_link } = request.body;
 
-        const results = await executeQuery(wishlistQueries.updateWishlist, [account_id, amount, title, description, priority, url_link, id]);
+        const results = await executeQuery<WishlistInput>(wishlistQueries.updateWishlist, [account_id, amount, title, description, priority, url_link, id]);
 
         if (results.length === 0) {
-            return response.status(404).send('Wishlist not found');
+            response.status(404).send('Wishlist not found');
+            return;
         }
 
         // Parse the data to correct format and return an object
-        const wishlists = results.map(wishlist => wishlistsParse(wishlist));
+        const wishlists: WishlistOutput[] = results.map(wishlist => wishlistsParse(wishlist));
 
         response.status(200).json(wishlists);
     } catch (error) {
