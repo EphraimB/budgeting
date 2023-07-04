@@ -49,14 +49,8 @@ export interface Loan {
 }
 
 export interface Payroll {
-    payroll_id: number;
-    account_id: number;
-    payroll_amount: number;
-    payroll_title: string;
-    payroll_description: string;
-    payroll_date: string;
-    date_created: string;
-    date_modified: string;
+    end_date: string;
+    net_pay: number;
 }
 
 export interface Wishlist {
