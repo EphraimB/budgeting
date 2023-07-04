@@ -5,8 +5,6 @@ services:
     build:
       context: ./
       dockerfile: Dockerfile
-    volumes:
-      - ./:/app
     environment:
       - PGHOST=host.docker.internal
       - PGDATABASE=${PGDB}
