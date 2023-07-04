@@ -7,7 +7,8 @@ import { JobOptions } from 'bree';
 const __dirname = url.fileURLToPath(new URL('.', import.meta.url));
 
 interface CronJobData {
-    account_id: number;
+    account_id?: number;
+    source_account_id?: number;
     amount?: number;
     negative_amount?: number;
     negative_plan_amount?: number;

@@ -68,13 +68,18 @@ const transfersParse = (transfer: TransferInput): TransferOutput => ({
     date_modified: transfer.date_modified
 });
 
-// Get transfers
-export const getTransfers = async (request, response) => {
+/**
+ * 
+ * @param request - The request object
+ * @param response - The response object
+ * Sends a response with all transfers or a single transfer if an id is provided
+ */
+export const getTransfers = async (request: Request, response: Response): Promise<void> => {
     const { account_id, id } = request.query;
 
     try {
-        let query;
-        let params;
+        let query: string;
+        let params: any[];
 
         if (id && account_id) {
             query = transferQueries.getTransfersByIdAndAccountId;
@@ -93,7 +98,8 @@ export const getTransfers = async (request, response) => {
         const results = await executeQuery(query, params);
 
         if ((id || account_id) && results.length === 0) {
-            return response.status(404).send('Transfer not found');
+            response.status(404).send('Transfer not found');
+            return;
         }
 
         // Parse the data to the correct format
@@ -106,8 +112,13 @@ export const getTransfers = async (request, response) => {
     }
 };
 
-// Create transfer
-export const createTransfer = async (request, response) => {
+/**
+ * 
+ * @param request - The request object
+ * @param response - The response object
+ * Sends a response with the newly created transfer
+ */
+export const createTransfer = async (request: Request, response: Response): Promise<void> => {
     try {
         const {
             source_account_id,
@@ -125,12 +136,12 @@ export const createTransfer = async (request, response) => {
             end_date
         } = request.body;
 
-        const negativeAmount = -amount;
+        const negative_amount = -amount;
 
         const { cronDate, uniqueId } = await scheduleCronJob({
             begin_date,
             source_account_id,
-            negativeAmount,
+            negative_amount,
             description,
             frequency_type,
             frequency_type_variable,
@@ -143,11 +154,11 @@ export const createTransfer = async (request, response) => {
 
         const cronJobResult = await executeQuery(cronJobQueries.createCronJob, [uniqueId, cronDate]);
 
-        const cronId = cronJobResult[0].cron_job_id;
+        const cronId: number = cronJobResult[0].cron_job_id;
 
         console.log('Cron job created ' + cronId);
 
-        const transferResult = await executeQuery(transferQueries.createTransfer, [
+        const transferResult = await executeQuery<TransferInput>(transferQueries.createTransfer, [
             cronId,
             source_account_id,
             destination_account_id,
@@ -165,7 +176,7 @@ export const createTransfer = async (request, response) => {
         ]);
 
         // Parse the data to correct format and return an object
-        const transfers = transferResult.map(transfersParse);
+        const transfers: TransferOutput[] = transferResult.map(transfersParse);
 
         response.status(201).json(transfers);
     } catch (error) {
