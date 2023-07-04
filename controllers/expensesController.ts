@@ -68,7 +68,7 @@ const parseExpenses = (expense: ExpenseInput): ExpenseOutput => ({
  * 
  * @param request - Request object
  * @param response - Response object
- * @returns All expenses or a single expense
+ * Sends a response with the expenses
  */
 export const getExpenses = async (request: Request, response: Response): Promise<void> => {
     const { id, account_id } = request.query;
@@ -105,7 +105,13 @@ export const getExpenses = async (request: Request, response: Response): Promise
     }
 };
 
-export const createExpense = async (request, response) => {
+/**
+ * 
+ * @param request - Request object
+ * @param response - Response object
+ * Sends a response with the created expense and creates a cron job for the expense and inserts it into the database
+ */
+export const createExpense = async (request: Request, response: Response): Promise<void> => {
     const {
         account_id,
         amount,
@@ -120,7 +126,7 @@ export const createExpense = async (request, response) => {
         begin_date
     } = request.body;
 
-    const negativeAmount = -amount;
+    const negativeAmount: number = -amount;
     const cronParams = {
         begin_date,
         account_id,
@@ -143,7 +149,7 @@ export const createExpense = async (request, response) => {
 
         console.log('Cron job created ' + cronId);
 
-        const expenses = await executeQuery(expenseQueries.createExpense, [
+        const expenses = await executeQuery<ExpenseInput>(expenseQueries.createExpense, [
             account_id,
             cronId,
             amount,
