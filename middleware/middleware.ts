@@ -14,9 +14,21 @@ interface Transaction {
     date_modified: string;
 }
 
+interface Expense {
+    expense_id: number;
+    account_id: number;
+    expense_amount: number;
+    expense_title: string;
+    expense_description: string;
+    expense_date: string;
+    date_created: string;
+    date_modified: string;
+}
+
 declare module 'express-serve-static-core' {
     interface Request {
         transaction: Transaction[];
+        expenses: Expense[];
     }
 }
 
@@ -27,7 +39,7 @@ declare module 'express-serve-static-core' {
  * @param next - The next function
  * Sends a response with all transfers or a single transfer if an id is provided
  */
-export const getTransactionsByAccount = async (request: Request, response: Response, next: NextFunction) => {
+export const getTransactionsByAccount = async (request: Request, response: Response, next: NextFunction): Promise<void> => {
     const { account_id, from_date } = request.query;
 
     try {
@@ -41,8 +53,14 @@ export const getTransactionsByAccount = async (request: Request, response: Respo
     }
 };
 
-// Get expenses by account
-export const getExpensesByAccount = async (request, response, next) => {
+/**
+ * 
+ * @param request - The request object
+ * @param response - The response object
+ * @param next - The next function
+ * Sends a response with all transfers or a single transfer if an id is provided
+ */
+export const getExpensesByAccount = async (request: Request, response: Response, next: NextFunction): Promise<void> => {
     const { account_id, to_date } = request.query;
 
     try {
