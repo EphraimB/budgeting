@@ -25,10 +25,44 @@ interface Expense {
     date_modified: string;
 }
 
+interface Loan {
+    loan_id: number;
+    account_id: number;
+    cron_job_id?: number;
+    loan_amount: number;
+    loan_plan_amount: number;
+    loan_recipient: string;
+    loan_title: string;
+    loan_description: string;
+    frequency_type: string;
+    frequency_type_variable: number;
+    frequency_day_of_month: number;
+    frequency_day_of_week: number;
+    frequency_week_of_month: number;
+    frequency_month: number;
+    loan_begin_date: string;
+    loan_end_date: string;
+    date_created: string;
+    date_modified: string;
+}
+
+interface Payroll {
+    payroll_id: number;
+    account_id: number;
+    payroll_amount: number;
+    payroll_title: string;
+    payroll_description: string;
+    payroll_date: string;
+    date_created: string;
+    date_modified: string;
+}
+
 declare module 'express-serve-static-core' {
     interface Request {
         transaction: Transaction[];
         expenses: Expense[];
+        loans: Loan[];
+        payrolls: Payroll[];
     }
 }
 
@@ -74,12 +108,18 @@ export const getExpensesByAccount = async (request: Request, response: Response,
     }
 };
 
-// Get loans by account
-export const getLoansByAccount = async (request, response, next) => {
+/**
+ * 
+ * @param request - The request object
+ * @param response - The response object
+ * @param next - The next function
+ * Sends a response with all transfers or a single transfer if an id is provided
+ */
+export const getLoansByAccount = async (request: Request, response: Response, next: NextFunction): Promise<void> => {
     const { account_id, to_date } = request.query;
 
     try {
-        const results = await executeQuery(loanQueries.getLoansMiddleware, [parseInt(account_id), to_date]);
+        const results = await executeQuery(loanQueries.getLoansMiddleware, [account_id, to_date]);
 
         request.loans = results;
 
@@ -89,8 +129,14 @@ export const getLoansByAccount = async (request, response, next) => {
     }
 };
 
-// Get payrolls by account
-export const getPayrollsMiddleware = async (request, response, next) => {
+/**
+ * 
+ * @param request - The request object
+ * @param response - The response object
+ * @param next - The next function
+ * Sends a response with all transfers or a single transfer if an id is provided
+ */
+export const getPayrollsMiddleware = async (request: Request, response: Response, next: NextFunction): Promise<void> => {
     const { account_id, to_date } = request.query;
 
     try {
