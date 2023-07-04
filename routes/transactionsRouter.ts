@@ -1,10 +1,11 @@
+import { Router } from 'express';
 import express from 'express';
 import generateTransactions from '../generation/generateTransactions.js';
 import { getCurrentBalance, getTransactionsByAccount, getExpensesByAccount, getLoansByAccount, getWishlistsByAccount, getPayrollsMiddleware, getTransfersByAccount } from '../middleware/middleware.js';
 import { query } from 'express-validator';
 import validateRequest from '../utils/validateRequest.js';
 
-const router = express.Router();
+const router: Router = express.Router();
 
 // Generate the transactions based on current balance, expenses, and loans
 router.get('/', [
