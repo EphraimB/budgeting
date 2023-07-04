@@ -68,15 +68,20 @@ export const getEmployee = async (request: Request, response: Response): Promise
     }
 };
 
-// Create employee
-export const createEmployee = async (request, response) => {
+/**
+ * 
+ * @param request - Request object
+ * @param response - Response object
+ * Sends a POST request to the database to create a new employee
+ */
+export const createEmployee = async (request: Request, response: Response): Promise<void> => {
     try {
         const { name, hourly_rate, regular_hours, vacation_days, sick_days, work_schedule } = request.body;
 
-        const results = await executeQuery(payrollQueries.createEmployee, [name, hourly_rate, regular_hours, vacation_days, sick_days, work_schedule]);
+        const results = await executeQuery<EmployeeInput>(payrollQueries.createEmployee, [name, hourly_rate, regular_hours, vacation_days, sick_days, work_schedule]);
 
         // Parse the data to correct format and return an object
-        const employees = results.map(employee => employeeParse(employee));
+        const employees: EmployeeOutput[] = results.map(employee => employeeParse(employee));
 
         response.status(201).json(employees);
     } catch (error) {
