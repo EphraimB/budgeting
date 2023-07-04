@@ -37,7 +37,7 @@ export const getJobs = async (jobsFilePath: string): Promise<PayrollJob[]> => {
         // Execute the cronScriptGetPayrolls.js script if there are no jobs that start with payroll- in the jobs array
         if (!jobs.some((job: PayrollJob) => job.name.startsWith('payroll-'))) {
             for (const employee of employeeData) {
-                const newJob = await getPayrolls(employee.employee_id);
+                const newJob = await getPayrolls(parseInt(employee.employee_id), null);
 
                 jobs.push(...newJob);
             }

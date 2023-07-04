@@ -5,14 +5,39 @@ import path from 'path';
 import schedulePayrollCronJob from './jobs/schedulePayrollCronJob.js';
 import fs from 'fs';
 
+interface PayrollJob {
+    name: string;
+    cron: string;
+    path: string;
+    worker: {
+        workerData: {
+            employee_id: string;
+        };
+    };
+}
+
+interface AccountIdResult {
+    account_id: number;
+}
+
+interface Payroll {
+    getPayrolls: string;
+}
+
 const __dirname = fileURLToPath(new URL('.', import.meta.url));
 
-export const getPayrolls = async (employee_id, jobsFilePath) => {
+/**
+ * 
+ * @param employee_id - The employee_id of the employee to get the payrolls for
+ * @param jobsFilePath - Path to the jobs.json file
+ * @returns - Array of jobs
+ */
+export const getPayrolls = async (employee_id: number, jobsFilePath: string) => {
     jobsFilePath = jobsFilePath || path.join(__dirname, './jobs.json');
 
     // Delete all jobs in jobs.json that start with payroll-
     try {
-        const jobs = JSON.parse(fs.readFileSync(jobsFilePath, 'utf8'));
+        const jobs: PayrollJob[] = JSON.parse(fs.readFileSync(jobsFilePath, 'utf8'));
         const filteredJobs = jobs.filter(job => !job.name.startsWith('payroll-'));
         fs.writeFileSync(jobsFilePath, JSON.stringify(filteredJobs));
     } catch (err) {
@@ -34,8 +59,8 @@ export const getPayrolls = async (employee_id, jobsFilePath) => {
     console.log('Running thread:', employee_id);
 
     try {
-        const { rows: [{ account_id }] } = await pool.query(payrollQueries.getAccountIdFromEmployee, [employee_id]);
-        const { rows } = await pool.query(payrollQueries.getPayrolls, [employee_id]);
+        const { rows: [{ account_id }] } = await pool.query<AccountIdResult>(payrollQueries.getAccountIdFromEmployee, [employee_id]);
+        const { rows } = await pool.query<Payroll[]>(payrollQueries.getPayrolls, [employee_id]);
 
         const payrollJobs = await schedulePayroll(rows, account_id);
 
@@ -53,11 +78,16 @@ export const getPayrolls = async (employee_id, jobsFilePath) => {
         return payrollJobs;
     } catch (error) {
         console.error('Error in thread:', error);
-        throw error;
     }
 };
 
-const schedulePayroll = async (rows, account_id) => {
+/**
+ * 
+ * @param rows - The rows returned from the getPayrolls query
+ * @param account_id - The account_id of the employee
+ * @returns - Array of jobs
+ */
+const schedulePayroll = async (rows: Payroll[], account_id: number) => {
     const payrollJobs = [];
     for (const result of rows) {
         const newJob = await schedulePayrollCronJob(result, account_id);
