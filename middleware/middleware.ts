@@ -57,12 +57,24 @@ interface Payroll {
     date_modified: string;
 }
 
+interface Wishlist {
+    wishlist_id: number;
+    account_id: number;
+    wishlist_amount: number;
+    wishlist_title: string;
+    wishlist_description: string;
+    wishlist_date: string;
+    date_created: string;
+    date_modified: string;
+}
+
 declare module 'express-serve-static-core' {
     interface Request {
         transaction: Transaction[];
         expenses: Expense[];
         loans: Loan[];
         payrolls: Payroll[];
+        wishlists: Wishlist[];
     }
 }
 
@@ -150,12 +162,18 @@ export const getPayrollsMiddleware = async (request: Request, response: Response
     }
 };
 
-// Get wishlists by account
-export const getWishlistsByAccount = async (request, response, next) => {
+/**
+ * 
+ * @param request - The request object
+ * @param response - The response object
+ * @param next - The next function
+ * Sends a response with all wishlists or a single wishlist if an id is provided
+ */
+export const getWishlistsByAccount = async (request: Request, response: Response, next: NextFunction): Promise<void> => {
     const { account_id, to_date } = request.query;
 
     try {
-        const results = await executeQuery(wishlistQueries.getWishlistsMiddleware, [parseInt(account_id), to_date]);
+        const results = await executeQuery(wishlistQueries.getWishlistsMiddleware, [account_id, to_date]);
 
         request.wishlists = results;
 
