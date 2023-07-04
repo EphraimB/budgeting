@@ -185,8 +185,13 @@ export const createTransfer = async (request: Request, response: Response): Prom
     }
 };
 
-// Update transfer
-export const updateTransfer = async (request, response) => {
+/**
+ * 
+ * @param request - The request object
+ * @param response - The response object
+ * Sends a response with the updated transfer
+ */
+export const updateTransfer = async (request: Request, response: Response): Promise<void> => {
     try {
         const { id } = request.params;
         const {
@@ -205,21 +210,22 @@ export const updateTransfer = async (request, response) => {
             end_date
         } = request.body;
 
-        const negativeAmount = -amount;
+        const negative_amount = -amount;
 
-        const transferResults = await executeQuery(transferQueries.getTransfer, [id]);
+        const transferResults = await executeQuery(transferQueries.getTransfersById, [id]);
 
         if (transferResults.length === 0) {
-            return response.status(404).send('Transfer not found');
+            response.status(404).send('Transfer not found');
+            return;
         }
 
-        const cronId = transferResults[0].cron_job_id;
+        const cronId: number = transferResults[0].cron_job_id;
         await deleteCronJob(cronId);
 
         const { cronDate, uniqueId } = await scheduleCronJob({
             begin_date,
             source_account_id,
-            negativeAmount,
+            negative_amount,
             description,
             frequency_type,
             frequency_type_variable,
@@ -232,7 +238,7 @@ export const updateTransfer = async (request, response) => {
 
         await executeQuery(cronJobQueries.updateCronJob, [uniqueId, cronDate, cronId]);
 
-        const updateResults = await executeQuery(transferQueries.updateTransfer, [
+        const updateResults = await executeQuery<TransferInput>(transferQueries.updateTransfer, [
             source_account_id,
             destination_account_id,
             amount,
@@ -250,7 +256,7 @@ export const updateTransfer = async (request, response) => {
         ]);
 
         // Parse the data to correct format and return an object
-        const transfers = updateResults.map(transfersParse);
+        const transfers: TransferOutput[] = updateResults.map(transfersParse);
 
         response.status(200).json(transfers);
     } catch (error) {
