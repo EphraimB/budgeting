@@ -142,18 +142,27 @@ export const generateMonthlyExpenses = (transactions: any[], skippedTransactions
     generateExpenses(transactions, skippedTransactions, expense, toDate, fromDate, generateDateFn);
 };
 
-export const generateWeeklyExpenses = (transactions, skippedTransactions, expense, toDate, fromDate) => {
-    const expenseDate = new Date(expense.expense_begin_date);
+/**
+ * 
+ * @param transactions - The transactions to generate expenses for
+ * @param skippedTransactions - The transactions to skip
+ * @param expense - The expense to generate
+ * @param toDate - The date to generate expenses to
+ * @param fromDate - The date to generate expenses from
+ * Generate weekly expenses for a given expense
+ */
+export const generateWeeklyExpenses = (transactions: any[], skippedTransactions: any[], expense: Expense, toDate: string, fromDate: string): void => {
+    const expenseDate: Date = new Date(expense.expense_begin_date);
 
     if (expense.frequency_day_of_week !== null && expense.frequency_day_of_week !== undefined) {
-        const startDay = new Date(expense.expense_begin_date).getDay();
-        const frequency_day_of_week = expense.frequency_day_of_week;
+        const startDay: number = new Date(expense.expense_begin_date).getDay();
+        const frequency_day_of_week: number = expense.frequency_day_of_week;
 
         expenseDate.setDate(expenseDate.getDate() + (frequency_day_of_week + 7 - startDay) % 7);
     }
 
-    const generateDateFn = (currentDate, expense) => {
-        const newDate = new Date(currentDate);
+    const generateDateFn = (currentDate: string, expense: Expense): Date => {
+        const newDate: Date = new Date(currentDate);
         newDate.setDate(newDate.getDate() + 7 * (expense.frequency_type_variable || 1));
         return newDate;
     };
