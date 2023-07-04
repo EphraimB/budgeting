@@ -1,9 +1,9 @@
-import express from 'express';
+import express, { Router } from 'express';
 import { query } from 'express-validator';
 import { getPayrolls } from '../controllers/payrollsController.js';
 import validateRequest from '../utils/validateRequest.js';
 
-const router = express.Router();
+const router: Router = express.Router();
 
 router.get('/',
     [
