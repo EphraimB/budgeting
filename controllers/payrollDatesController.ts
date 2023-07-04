@@ -74,16 +74,16 @@ export const getPayrollDates = async (request: Request, response: Response): Pro
 };
 
 // Create payroll date
-export const createPayrollDate = async (request, response) => {
+export const createPayrollDate = async (request: Request, response: Response): Promise<void> => {
     try {
         const { employee_id, start_day, end_day } = request.body;
 
-        const results = await executeQuery(payrollQueries.createPayrollDate, [employee_id, start_day, end_day]);
+        const results = await executeQuery<PayrollDateInput>(payrollQueries.createPayrollDate, [employee_id, start_day, end_day]);
 
         await getPayrolls(employee_id);
 
         // Parse the data to correct format and return an object
-        const payrollDates = results.map(payrollDate => payrollDatesParse(payrollDate));
+        const payrollDates: PayrollDateOutput[] = results.map(payrollDate => payrollDatesParse(payrollDate));
 
         response.status(201).json(payrollDates);
     } catch (error) {

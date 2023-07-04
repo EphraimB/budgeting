@@ -20,10 +20,10 @@ const __dirname: string = fileURLToPath(new URL('.', import.meta.url));
 /**
  * 
  * @param employee_id - The employee_id of the employee to get the payrolls for
- * @param jobsFilePath - Path to the jobs.json file
+ * @param [jobsFilePath] - Path to the jobs.json file
  * @returns - Array of jobs
  */
-export const getPayrolls = async (employee_id: number, jobsFilePath: string) => {
+export const getPayrolls = async (employee_id: number, jobsFilePath?: string) => {
     jobsFilePath = jobsFilePath || path.join(__dirname, './jobs.json');
 
     // Delete all jobs in jobs.json that start with payroll-
