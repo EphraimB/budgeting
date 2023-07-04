@@ -7,6 +7,7 @@ import { handleError, executeQuery } from '../utils/helperFunctions.js';
 interface ExpenseInput {
     expense_id: string;
     account_id: string;
+    cron_job_id: string;
     expense_amount: string;
     expense_title: string;
     expense_description: string;
@@ -171,9 +172,14 @@ export const createExpense = async (request: Request, response: Response): Promi
     }
 };
 
-// Update expense
-export const updateExpense = async (request, response) => {
-    const id = parseInt(request.params.id);
+/**
+ * 
+ * @param request - Request object
+ * @param response - Response object
+ * Sends a response with the updated expense and updates the cron job for the expense and updates it in the database
+ */
+export const updateExpense = async (request: Request, response: Response) => {
+    const id: number = parseInt(request.params.id);
     const {
         account_id,
         amount,
@@ -202,7 +208,7 @@ export const updateExpense = async (request, response) => {
     };
 
     try {
-        const expenseResult = await executeQuery(expenseQueries.getExpense, [id]);
+        const expenseResult = await executeQuery<ExpenseInput>(expenseQueries.getExpenseById, [id]);
         if (expenseResult.length === 0) {
             return response.status(404).send('Expense not found');
         }
@@ -218,7 +224,7 @@ export const updateExpense = async (request, response) => {
             cronId
         ]);
 
-        const expenses = await executeQuery(expenseQueries.updateExpense, [
+        const expenses = await executeQuery<ExpenseInput>(expenseQueries.updateExpense, [
             account_id,
             amount,
             title,
