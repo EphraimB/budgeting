@@ -1,9 +1,9 @@
-import express from 'express';
+import express, { Router } from 'express';
 import { query, param, body } from 'express-validator';
 import { getWishlists, createWishlist, updateWishlist, deleteWishlist } from '../controllers/wishlistsController.js';
 import validateRequest from '../utils/validateRequest.js';
 
-const router = express.Router();
+const router: Router = express.Router();
 
 router.get('/',
     [
