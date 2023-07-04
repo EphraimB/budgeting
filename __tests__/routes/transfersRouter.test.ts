@@ -1,9 +1,12 @@
 import { jest } from '@jest/globals';
 import request from 'supertest';
-import express from 'express';
+import express, { Express, Request, Response, NextFunction } from 'express';
 
-// Factory function for creating an app with the mock router
-const createApp = async () => {
+/**
+ * 
+ * @returns {Promise<Express>} A promise that resolves to an Express app
+ */
+const createApp = async (): Promise<Express> => {
     const app = express();
     app.use(express.json());
 
@@ -32,10 +35,10 @@ const createFutureTransfer = () => {
 
 beforeAll(() => {
     jest.unstable_mockModule('../../controllers/transfersController', () => ({
-        getTransfers: (req, res, next) => res.json({ message: 'success' }),
-        createTransfer: (req, res, next) => res.json({ message: 'success' }),
-        updateTransfer: (req, res, next) => res.json({ message: 'success' }),
-        deleteTransfer: (req, res, next) => res.json({ message: 'success' })
+        getTransfers: (req: Request, res: Response, next: NextFunction) => res.json({ message: 'success' }),
+        createTransfer: (req: Request, res: Response, next: NextFunction) => res.json({ message: 'success' }),
+        updateTransfer: (req: Request, res: Response, next: NextFunction) => res.json({ message: 'success' }),
+        deleteTransfer: (req: Request, res: Response, next: NextFunction) => res.json({ message: 'success' })
     }));
 });
 
@@ -43,7 +46,7 @@ afterAll(() => {
     jest.restoreAllMocks();
 });
 
-let app;
+let app: Express;
 
 beforeEach(async () => {
     // Create a new app for each test
