@@ -1,18 +1,4 @@
-interface Expense {
-    expense_id: number;
-    account_id: number;
-    expense_amount: number;
-    expense_title: string;
-    expense_description: string;
-    expense_begin_date: string;
-    frequency_type_variable: number;
-    frequency_day_of_month: number;
-    frequency_day_of_week: number;
-    frequency_week_of_month: number;
-    frequency_month_of_year: number;
-    date_created: string;
-    date_modified: string;
-}
+import { Expense } from "../types/types";
 
 type GenerateDateFunction = (currentDate: string, expense: Expense) => Date;
 
