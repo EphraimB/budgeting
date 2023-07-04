@@ -83,19 +83,29 @@ export const generateDailyTransfers = (transactions: any[], skippedTransactions:
     generateTransfers(transactions, skippedTransactions, transfer, toDate, fromDate, account_id, generateDateFn);
 };
 
-export const generateMonthlyTransfers = (transactions, skippedTransactions, transfer, toDate, fromDate, account_id) => {
-    let monthsIncremented = 0;
-    const generateDateFn = (currentDate, transfer) => {
-        const transferDate = new Date(transfer.transfer_begin_date);
+/**
+ * 
+ * @param transactions - The transactions to generate transfers for
+ * @param skippedTransactions - The transactions to skip
+ * @param transfer - The transfer to generate
+ * @param toDate - The date to generate transfers to
+ * @param fromDate - The date to generate transfers from
+ * @param account_id - The account id to generate transfers for
+ * Generate monthly transfers for a given transfer
+ */
+export const generateMonthlyTransfers = (transactions: any[], skippedTransactions: any[], transfer: Transfer, toDate: Date, fromDate: Date, account_id: number): void => {
+    let monthsIncremented: number = 0;
+    const generateDateFn = (currentDate: Date, transfer: Transfer): Date => {
+        const transferDate: Date = new Date(transfer.transfer_begin_date);
 
         // advance by number of months specified in frequency_type_variable or by 1 month if not set
         transferDate.setMonth(transferDate.getMonth() + monthsIncremented + (transfer.frequency_type_variable || 1));
 
         if (transfer.frequency_day_of_week !== null && transfer.frequency_day_of_week !== undefined) {
-            let newDay;
+            let newDay: number;
 
             if (transfer.frequency_day_of_week !== null && transfer.frequency_day_of_week !== undefined) {
-                let daysUntilNextFrequency = (7 + transfer.frequency_day_of_week - transferDate.getDay()) % 7;
+                let daysUntilNextFrequency: number = (7 + transfer.frequency_day_of_week - transferDate.getDay()) % 7;
                 daysUntilNextFrequency = daysUntilNextFrequency === 0 ? 7 : daysUntilNextFrequency;
                 newDay = transferDate.getDate() + daysUntilNextFrequency;
             }
@@ -103,7 +113,7 @@ export const generateMonthlyTransfers = (transactions, skippedTransactions, tran
             if (transfer.frequency_week_of_month !== null && transfer.frequency_week_of_month !== undefined) {
                 // first day of the month
                 transferDate.setDate(1);
-                const daysToAdd = (7 + transfer.frequency_day_of_week - transferDate.getDay()) % 7;
+                const daysToAdd: number = (7 + transfer.frequency_day_of_week - transferDate.getDay()) % 7;
                 // setting to the first occurrence of the desired day of week
                 transferDate.setDate(transferDate.getDate() + daysToAdd);
                 // setting to the desired week of the month
