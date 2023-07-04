@@ -15,6 +15,9 @@ COPY . .
 # Compile TypeScript into JavaScript
 RUN npm run build
 
+# Copy swagger.json into the dist folder
+COPY ./views/swagger.json ./dist/views/swagger.json
+
 # ------ Runtime stage ------
 FROM node:18-alpine
 
