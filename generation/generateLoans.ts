@@ -2,6 +2,16 @@ import { Loan } from '../types/types';
 
 type GenerateDateFunction = (currentDate: Date, loan: Loan) => Date;
 
+/**
+ * 
+ * @param transactions - The transactions to generate loans for
+ * @param skippedTransactions - The transactions to skip
+ * @param loan - The loan to generate
+ * @param toDate - The date to generate loans to
+ * @param fromDate - The date to generate loans from
+ * @param generateDateFn - The function to generate the next date
+ * Generate loans for a given loan
+ */
 const generateLoans = (transactions: any[], skippedTransactions: any[], loan: Loan, toDate: Date, fromDate: Date, generateDateFn: GenerateDateFunction) => {
     let loanDate: Date = new Date(loan.loan_begin_date);
 
@@ -52,6 +62,14 @@ const generateLoans = (transactions: any[], skippedTransactions: any[], loan: Lo
     }
 };
 
+/**
+ * 
+ * @param transactions - The transactions to generate loans for
+ * @param skippedTransactions - The transactions to skip
+ * @param loan - The loan to generate
+ * @param toDate - The date to generate loans to
+ * @param fromDate - The date to generate loans from
+ */
 export const generateDailyLoans = (transactions: any[], skippedTransactions: any[], loan: Loan, toDate: Date, fromDate: Date): void => {
     const generateDateFn = (currentDate: Date, loan: Loan): Date => {
         const newDate: Date = currentDate;
