@@ -2,8 +2,11 @@ import { jest } from '@jest/globals';
 import request from 'supertest';
 import express, { Express, Request, Response, NextFunction, Router } from 'express';
 
-// Factory function for creating an app with the mock router
-const createApp = async () => {
+/**
+ * 
+ * @returns {Promise<Express>} A promise that resolves to an Express app
+ */
+const createApp = async (): Promise<Express> => {
     const app = express();
     app.use(express.json());
 

@@ -1,20 +1,23 @@
 import request from 'supertest';
-import express from 'express';
+import express, { Express, Router } from 'express';
 
-// Factory function for creating an app with the mock router
-const createApp = async () => {
+/**
+ * 
+ * @returns {Promise<Express>} A promise that resolves to an Express app
+ */
+const createApp = async (): Promise<Express> => {
     const app = express();
     app.use(express.json());
 
     // Import the module that uses the mock
     const routerModule = await import('../../routes/routes');
-    const router = routerModule.default;
+    const router: Router = routerModule.default;
     app.use('/', router);
 
     return app;
 };
 
-let app;
+let app: Express;
 
 beforeEach(async () => {
     // Create a new app for each test
