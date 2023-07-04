@@ -24,8 +24,12 @@ interface Expense {
     expense_amount: number;
     expense_title: string;
     expense_description: string;
-    expense_date: string;
-    frequency_type: number;
+    expense_begin_date: string;
+    frequency_type_variable: number;
+    frequency_day_of_month: number;
+    frequency_day_of_week: number;
+    frequency_week_of_month: number;
+    frequency_month_of_year: number;
     date_created: string;
     date_modified: string;
 }
