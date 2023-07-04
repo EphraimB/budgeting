@@ -3,23 +3,50 @@ import { getBree } from '../breeManager.js';
 import fs from 'fs';
 import path from 'path';
 import * as url from 'url';
+import { JobOptions } from 'bree';
 const __dirname = url.fileURLToPath(new URL('.', import.meta.url));
 
+interface CronJobData {
+    account_id: number;
+    amount: number;
+    description: string;
+    begin_date: string;
+    frequency_type: number;
+    frequency_type_variable: number;
+    frequency_day_of_month: number;
+    frequency_day_of_week: number;
+    frequency_week_of_month: number;
+    frequency_month_of_year: number;
+    destination_account_id?: number | null;
+}
+
+interface CronValues {
+    cronDay: string;
+    cronMonth: string;
+    cronDayOfWeek: string;
+}
+
+/**
+ * 
+ * @param cronJobData - Cron job data
+ * @param uniqueId - Unique ID
+ * @returns - New job
+ */
 const createCronJob = ({
     account_id, amount, description, begin_date,
     frequency_type, frequency_type_variable,
     frequency_day_of_month, frequency_day_of_week,
     frequency_week_of_month, frequency_month_of_year,
     destination_account_id = null
-}, uniqueId) => {
-    const transactionDate = new Date(begin_date);
+}: CronJobData, uniqueId: string): JobOptions => {
+    const transactionDate: Date = new Date(begin_date);
     const { cronDay, cronMonth, cronDayOfWeek } = determineCronValues(
         frequency_type, frequency_type_variable,
         frequency_day_of_month, frequency_day_of_week,
         frequency_week_of_month, frequency_month_of_year,
         transactionDate
     );
-    const cronDate = `${transactionDate.getMinutes()} ${transactionDate.getHours()} ${cronDay} ${cronMonth} ${cronDayOfWeek}`;
+    const cronDate: string = `${transactionDate.getMinutes()} ${transactionDate.getHours()} ${cronDay} ${cronMonth} ${cronDayOfWeek}`;
 
     return {
         name: uniqueId,
@@ -36,7 +63,18 @@ const createCronJob = ({
     };
 };
 
-const determineCronValues = (frequency_type, frequency_type_variable, frequency_day_of_month, frequency_day_of_week, frequency_week_of_month, frequency_month_of_year, transactionDate) => {
+/**
+ * 
+ * @param frequency_type - Frequency type (0 = daily, 1 = weekly, 2 = monthly)
+ * @param frequency_type_variable - Frequency type variable (e.g. 1 = every day, 2 = every other day, etc.)
+ * @param frequency_day_of_month - Frequency day of month (e.g. 1 = every 1st of the month, 2 = every 2nd of the month, etc.)
+ * @param frequency_day_of_week - Frequency day of week (e.g. 1 = every Monday, 2 = every Tuesday, etc.)
+ * @param frequency_week_of_month - Frequency week of month (e.g. 0 = every 1st week of the month, 1 = every 2nd week of the month, etc.)
+ * @param frequency_month_of_year - Frequency month of year (e.g. 0 = every January, 1 = every February, etc.)
+ * @param transactionDate - Transaction date
+ * @returns 
+ */
+const determineCronValues = (frequency_type: number, frequency_type_variable: number, frequency_day_of_month: number, frequency_day_of_week: number, frequency_week_of_month: number, frequency_month_of_year: number, transactionDate: Date): CronValues => {
     let cronDay = '*';
     let cronMonth = '*';
     let cronDayOfWeek = '*';
@@ -46,8 +84,8 @@ const determineCronValues = (frequency_type, frequency_type_variable, frequency_
     } else if (frequency_type === 1) {
         if (frequency_day_of_week) {
             cronMonth = '*';
-            cronDayOfWeek = frequency_day_of_week;
-            cronDay = frequency_day_of_month || '*';
+            cronDayOfWeek = frequency_day_of_week.toString();
+            cronDay = frequency_day_of_month.toString() || '*';
         } else {
             cronMonth = '*';
             cronDay = '*/' + 7 * (frequency_type_variable || 1);
@@ -55,20 +93,20 @@ const determineCronValues = (frequency_type, frequency_type_variable, frequency_
     } else if (frequency_type === 2) {
         if (frequency_day_of_week) {
             cronMonth = '*';
-            cronDayOfWeek = frequency_week_of_month ? '*/' + 7 * (frequency_type_variable || 1) : frequency_day_of_week;
-            cronDay = frequency_week_of_month ? '?' : (frequency_day_of_month || '*');
+            cronDayOfWeek = frequency_week_of_month ? '*/' + 7 * (frequency_type_variable || 1) : frequency_day_of_week.toString();
+            cronDay = frequency_week_of_month ? '?' : (frequency_day_of_month.toString() || '*');
         } else {
             cronMonth = '*/' + (frequency_type_variable || 1);
-            cronDay = transactionDate.getDate();
+            cronDay = transactionDate.getDate().toString();
         }
     } else if (frequency_type === 3) {
         if (frequency_day_of_week) {
-            cronMonth = frequency_month_of_year || '*';
-            cronDayOfWeek = frequency_week_of_month ? '*/' + 7 * (frequency_type_variable || 1) : frequency_day_of_week;
-            cronDay = frequency_week_of_month ? '?' : (frequency_day_of_month || '*');
+            cronMonth = frequency_month_of_year.toString() || '*';
+            cronDayOfWeek = frequency_week_of_month ? '*/' + 7 * (frequency_type_variable || 1) : frequency_day_of_week.toString();
+            cronDay = frequency_week_of_month ? '?' : (frequency_day_of_month.toString() || '*');
         } else {
             cronMonth = '*/' + 12 * (frequency_type_variable || 1);
-            cronDay = transactionDate.getDate();
+            cronDay = transactionDate.getDate().toString();
         }
     }
 
