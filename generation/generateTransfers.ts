@@ -63,9 +63,19 @@ const generateTransfers = (transactions: any[], skippedTransactions: any[], tran
     }
 };
 
-export const generateDailyTransfers = (transactions, skippedTransactions, transfer, toDate, fromDate, account_id) => {
-    const generateDateFn = (currentDate, transfer) => {
-        const newDate = new Date(currentDate);
+/**
+ * 
+ * @param transactions - The transactions to generate transfers for
+ * @param skippedTransactions - The transactions to skip
+ * @param transfer - The transfer to generate
+ * @param toDate - The date to generate transfers to
+ * @param fromDate - The date to generate transfers from
+ * @param account_id - The account id to generate transfers for
+ * Generate daily transfers for a given transfer
+ */
+export const generateDailyTransfers = (transactions: any[], skippedTransactions: any[], transfer: Transfer, toDate: Date, fromDate: Date, account_id: number): void => {
+    const generateDateFn = (currentDate: Date, transfer: Transfer): Date => {
+        const newDate: Date = currentDate;
         newDate.setDate(newDate.getDate() + (transfer.frequency_type_variable || 1));
         return newDate;
     };
