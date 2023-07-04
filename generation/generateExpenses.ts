@@ -85,8 +85,8 @@ const generateExpenses = (transactions: any[], skippedTransactions: any[], expen
  * @param fromDate - The date to generate expenses from
  * Generate daily expenses for a given expense
  */
-export const generateDailyExpenses = (transactions: any[], skippedTransactions: any[], expense: Expense, toDate: string, fromDate: string) => {
-    const generateDateFn = (currentDate: string, expense: Expense) => {
+export const generateDailyExpenses = (transactions: any[], skippedTransactions: any[], expense: Expense, toDate: string, fromDate: string): void => {
+    const generateDateFn = (currentDate: string, expense: Expense): Date => {
         const newDate = new Date(currentDate);
         newDate.setDate(newDate.getDate() + (expense.frequency_type_variable || 1));
         return newDate;
