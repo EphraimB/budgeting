@@ -1,5 +1,11 @@
 interface Transaction {
+    transaction_id: number;
+    transaction_title: string;
+    transaction_description: string;
     date: Date;
+    date_created: Date;
+    date_modified: Date;
+    transaction_amount: number;
     amount: number;
     balance?: number;
 }
