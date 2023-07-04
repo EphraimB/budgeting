@@ -80,7 +80,7 @@ export const getTransactions = async (request: Request, response: Response): Pro
  * @param response - Response object
  * Sends a response with the newly created transaction
  */
-export const createTransaction = async (request: Request, response: Response) => {
+export const createTransaction = async (request: Request, response: Response): Promise<void> => {
     try {
         const { account_id, title, amount, description } = request.body;
         const transactionResults: TransactionHistoryInput[] = await executeQuery(
