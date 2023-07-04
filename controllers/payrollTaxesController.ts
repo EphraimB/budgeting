@@ -72,16 +72,21 @@ export const getPayrollTaxes = async (request: Request, response: Response): Pro
     }
 };
 
-// Create payroll tax
-export const createPayrollTax = async (request, response) => {
+/**
+ * 
+ * @param request - Request object
+ * @param response - Response object
+ * Sends a POST request to the database to create a payroll tax
+ */
+export const createPayrollTax = async (request: Request, response: Response): Promise<void> => {
     const { employee_id, name, rate } = request.body;
 
     try {
-        const results = await executeQuery(payrollQueries.createPayrollTax, [employee_id, name, rate]);
+        const results = await executeQuery<PayrollTaxInput>(payrollQueries.createPayrollTax, [employee_id, name, rate]);
 
         await getPayrolls(employee_id);
 
-        const payrollTaxes = results.map(payrollTax => payrollTaxesParse(payrollTax));
+        const payrollTaxes: PayrollTaxOutput[] = results.map(payrollTax => payrollTaxesParse(payrollTax));
 
         response.status(201).json(payrollTaxes);
     } catch (error) {
