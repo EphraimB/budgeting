@@ -1,3 +1,5 @@
+import { Wishlist } from '../types/types';
+
 const generateWishlists = (transactions, skippedTransactions, wishlist, fromDate) => {
     const allTransactions = transactions.concat(skippedTransactions);
     const wishlist_amount = parseFloat(wishlist.wishlist_amount);

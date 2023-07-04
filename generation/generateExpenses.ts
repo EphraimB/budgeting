@@ -1,4 +1,4 @@
-import { Expense } from "../types/types";
+import { Expense } from '../types/types';
 
 type GenerateDateFunction = (currentDate: Date, expense: Expense) => Date;
 

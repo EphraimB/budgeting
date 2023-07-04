@@ -1,4 +1,4 @@
-import { Transfer } from "../types/types";
+import { Transfer } from '../types/types';
 
 type GenerateDateFunction = (currentDate: Date, transfer: Transfer) => Date;
 
