@@ -10,9 +10,7 @@ interface PayrollJob {
     cron: string;
     path: string;
     worker: {
-        workerData: {
-            employee_id: string;
-        };
+        workerData: any;
     };
 }
 
@@ -21,10 +19,11 @@ interface AccountIdResult {
 }
 
 interface Payroll {
-    getPayrolls: string;
+    end_date: string;
+    net_pay: number;
 }
 
-const __dirname = fileURLToPath(new URL('.', import.meta.url));
+const __dirname: string = fileURLToPath(new URL('.', import.meta.url));
 
 /**
  * 
@@ -60,7 +59,7 @@ export const getPayrolls = async (employee_id: number, jobsFilePath: string) => 
 
     try {
         const { rows: [{ account_id }] } = await pool.query<AccountIdResult>(payrollQueries.getAccountIdFromEmployee, [employee_id]);
-        const { rows } = await pool.query<Payroll[]>(payrollQueries.getPayrolls, [employee_id]);
+        const { rows } = await pool.query<Payroll>(payrollQueries.getPayrolls, [employee_id]);
 
         const payrollJobs = await schedulePayroll(rows, account_id);
 
@@ -90,7 +89,7 @@ export const getPayrolls = async (employee_id: number, jobsFilePath: string) => 
 const schedulePayroll = async (rows: Payroll[], account_id: number) => {
     const payrollJobs = [];
     for (const result of rows) {
-        const newJob = await schedulePayrollCronJob(result, account_id);
+        const newJob: PayrollJob = await schedulePayrollCronJob(result, account_id, null, null);
 
         payrollJobs.push(newJob);
     }
