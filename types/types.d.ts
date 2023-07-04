@@ -59,7 +59,7 @@ export interface Wishlist {
     wishlist_amount: number;
     wishlist_title: string;
     wishlist_description: string;
-    wishlist_date: string;
+    wishlist_date_available: string;
     date_created: string;
     date_modified: string;
 }
