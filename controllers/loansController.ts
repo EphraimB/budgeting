@@ -1,9 +1,55 @@
+import { Request, Response } from 'express';
 import { loanQueries, cronJobQueries } from '../models/queryData.js';
 import scheduleCronJob from '../bree/jobs/scheduleCronJob.js';
 import deleteCronJob from '../bree/jobs/deleteCronJob.js';
 import { handleError, executeQuery } from '../utils/helperFunctions.js';
 
-const parseLoan = loan => ({
+interface LoanInput {
+    account_id: string;
+    loan_id: string;
+    loan_amount: string;
+    loan_plan_amount: string;
+    loan_recipient: string;
+    loan_title: string;
+    loan_description: string;
+    frequency_type: string;
+    frequency_type_variable: string;
+    frequency_day_of_month: string;
+    frequency_day_of_week: string;
+    frequency_week_of_month: string;
+    frequency_month_of_year: string;
+    loan_begin_date: string;
+    loan_end_date: string;
+    date_created: string;
+    date_modified: string;
+}
+
+interface LoanOutput {
+    loan_id: number;
+    account_id: number;
+    loan_amount: number;
+    loan_plan_amount: number;
+    loan_recipient: string;
+    loan_title: string;
+    loan_description: string;
+    frequency_type: string;
+    frequency_type_variable: number;
+    frequency_day_of_month: number;
+    frequency_day_of_week: number;
+    frequency_week_of_month: number;
+    frequency_month_of_year: number;
+    loan_begin_date: string;
+    loan_end_date: string;
+    date_created: string;
+    date_modified: string;
+}
+
+/**
+ * 
+ * @param loan - Loan object
+ * @returns - Loan object with parsed values
+ */
+const parseLoan = (loan: LoanInput): LoanOutput => ({
     loan_id: parseInt(loan.loan_id),
     account_id: parseInt(loan.account_id),
     loan_amount: parseFloat(loan.loan_amount),
@@ -12,24 +58,29 @@ const parseLoan = loan => ({
     loan_title: loan.loan_title,
     loan_description: loan.loan_description,
     frequency_type: loan.frequency_type,
-    frequency_type_variable: loan.frequency_type_variable,
-    frequency_day_of_month: loan.frequency_day_of_month,
-    frequency_day_of_week: loan.frequency_day_of_week,
-    frequency_week_of_month: loan.frequency_week_of_month,
-    frequency_month_of_year: loan.frequency_month_of_year,
+    frequency_type_variable: parseInt(loan.frequency_type_variable),
+    frequency_day_of_month: parseInt(loan.frequency_day_of_month),
+    frequency_day_of_week: parseInt(loan.frequency_day_of_week),
+    frequency_week_of_month: parseInt(loan.frequency_week_of_month),
+    frequency_month_of_year: parseInt(loan.frequency_month_of_year),
     loan_begin_date: loan.loan_begin_date,
     loan_end_date: loan.loan_end_date,
     date_created: loan.date_created,
     date_modified: loan.date_modified
 });
 
-// Get all loans
-export const getLoans = async (request, response) => {
+/**
+ * 
+ * @param request - Request object
+ * @param response - Response object
+ * Sends a GET request to the database to retrieve all loans
+ */
+export const getLoans = async (request: Request, response: Response) => {
     const { account_id, id } = request.query;
 
     try {
-        let query;
-        let params;
+        let query: string;
+        let params: any[];
 
         if (id && account_id) {
             query = loanQueries.getLoansByIdAndAccountId;
@@ -45,13 +96,13 @@ export const getLoans = async (request, response) => {
             params = [];
         }
 
-        const rows = await executeQuery(query, params);
+        const rows: LoanInput[] = await executeQuery(query, params);
 
         if ((id || account_id) && rows.length === 0) {
             return response.status(404).send('Loan not found');
         }
 
-        const loans = rows.map(loan => parseLoan(loan));
+        const loans: LoanOutput[] = rows.map(loan => parseLoan(loan));
         response.status(200).json(loans);
     } catch (error) {
         console.error(error); // Log the error on the server side
