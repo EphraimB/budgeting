@@ -140,15 +140,21 @@ export const updateWishlist = async (request: Request, response: Response): Prom
     }
 };
 
-// Delete wishlist
-export const deleteWishlist = async (request, response) => {
+/**
+ * 
+ * @param request - Request object
+ * @param response - Response object
+ * Sends a DELETE request to the database to delete a wishlist
+ */
+export const deleteWishlist = async (request: Request, response: Response): Promise<void> => {
     try {
-        const id = parseInt(request.params.id);
+        const { id } = request.params;
 
-        const getWishlistResults = await executeQuery(wishlistQueries.getWishlist, [id]);
+        const getWishlistResults = await executeQuery<WishlistInput>(wishlistQueries.getWishlistsById, [id]);
 
         if (getWishlistResults.length === 0) {
-            return response.status(404).send('Wishlist not found');
+            response.status(404).send('Wishlist not found');
+            return;
         }
 
         await executeQuery(wishlistQueries.deleteWishlist, [id]);
