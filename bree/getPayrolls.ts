@@ -4,15 +4,7 @@ import { fileURLToPath } from 'url';
 import path from 'path';
 import schedulePayrollCronJob from './jobs/schedulePayrollCronJob.js';
 import fs from 'fs';
-
-interface PayrollJob {
-    name: string;
-    cron: string;
-    path: string;
-    worker: {
-        workerData: any;
-    };
-}
+import { Job } from 'bree';
 
 interface AccountIdResult {
     account_id: number;
@@ -36,7 +28,7 @@ export const getPayrolls = async (employee_id: number, jobsFilePath: string) => 
 
     // Delete all jobs in jobs.json that start with payroll-
     try {
-        const jobs: PayrollJob[] = JSON.parse(fs.readFileSync(jobsFilePath, 'utf8'));
+        const jobs: Job[] = JSON.parse(fs.readFileSync(jobsFilePath, 'utf8'));
         const filteredJobs = jobs.filter(job => !job.name.startsWith('payroll-'));
         fs.writeFileSync(jobsFilePath, JSON.stringify(filteredJobs));
     } catch (err) {
@@ -89,7 +81,7 @@ export const getPayrolls = async (employee_id: number, jobsFilePath: string) => 
 const schedulePayroll = async (rows: Payroll[], account_id: number) => {
     const payrollJobs = [];
     for (const result of rows) {
-        const newJob: PayrollJob = await schedulePayrollCronJob(result, account_id, null, null);
+        const newJob: Job = await schedulePayrollCronJob(result, account_id, null, null);
 
         payrollJobs.push(newJob);
     }

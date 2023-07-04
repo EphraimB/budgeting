@@ -11,10 +11,10 @@ let breeInstance: Bree | null = null;
 
 /**
  * 
- * @param cronjobsDir - Directory where the cron jobs are located
+ * @param [cronjobsDir] - Directory where the cron jobs are located
  * Initializes the bree instance
  */
-export const initializeBree = async (cronjobsDir: string) => {
+export const initializeBree = async (cronjobsDir?: string) => {
     try {
         cronjobsDir = cronjobsDir || path.join(__dirname, 'jobs/cron-jobs');
 

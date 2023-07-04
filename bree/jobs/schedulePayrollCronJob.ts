@@ -3,19 +3,11 @@ import fs from 'fs';
 import path from 'path';
 import * as url from 'url';
 const __dirname = url.fileURLToPath(new URL('.', import.meta.url));
+import { Job } from 'bree';
 
 interface PayrollData {
     end_date: string;
     net_pay: number;
-}
-
-interface PayrollJob {
-    name: string;
-    cron: string;
-    path: string;
-    worker: {
-        workerData: any;
-    };
 }
 
 /**
@@ -34,7 +26,7 @@ const createUniqueId = () => {
  * @param net_pay - The net_pay of the payroll
  * @returns - New job
  */
-const createNewJob = (uniqueId: string, end_date: string, account_id: number, net_pay: number): PayrollJob => {
+const createNewJob = (uniqueId: string, end_date: string, account_id: number, net_pay: number) => {
     const transactionDate: Date = new Date(end_date);
     const cronDate: string = `${transactionDate.getMinutes()} ${transactionDate.getHours()} ${transactionDate.getDate()} ${transactionDate.getMonth() + 1} *`;
 
@@ -60,7 +52,7 @@ const createNewJob = (uniqueId: string, end_date: string, account_id: number, ne
  * @param jobsFilePath - Path to the jobs.json file
  * @returns - New job
  */
-const schedulePayrollCronJob = async (payrollData: PayrollData, account_id: number, filePath: string | null, jobsFilePath: string | null): Promise<PayrollJob> => {
+const schedulePayrollCronJob = async (payrollData: PayrollData, account_id: number, filePath: string | null, jobsFilePath: string | null): Promise<Job> => {
     const jobs = [];
     jobsFilePath = jobsFilePath || path.join(__dirname, '../jobs.json');
     const { end_date, net_pay } = payrollData;
