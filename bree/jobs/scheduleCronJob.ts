@@ -10,6 +10,7 @@ interface CronJobData {
     account_id: number;
     amount?: number;
     negative_amount?: number;
+    negative_plan_amount?: number;
     description: string;
     begin_date: string;
     frequency_type: number;

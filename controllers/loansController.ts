@@ -75,7 +75,7 @@ const parseLoan = (loan: LoanInput): LoanOutput => ({
  * @param response - Response object
  * Sends a GET request to the database to retrieve all loans
  */
-export const getLoans = async (request: Request, response: Response) => {
+export const getLoans = async (request: Request, response: Response): Promise<void> => {
     const { account_id, id } = request.query;
 
     try {
@@ -110,8 +110,13 @@ export const getLoans = async (request: Request, response: Response) => {
     }
 };
 
-// Create loan
-export const createLoan = async (request, response) => {
+/**
+ * 
+ * @param request - Request object
+ * @param response - Response object
+ * Sends a POST request to the database to create a new loan
+ */
+export const createLoan = async (request: Request, response: Response): Promise<void> => {
     const {
         account_id,
         amount,
@@ -128,12 +133,12 @@ export const createLoan = async (request, response) => {
         begin_date
     } = request.body;
 
-    const negativePlanAmount = -plan_amount;
+    const negative_plan_amount = -plan_amount;
 
     const { cronDate, uniqueId } = await scheduleCronJob({
         begin_date,
         account_id,
-        negativePlanAmount,
+        negative_plan_amount,
         description,
         frequency_type,
         frequency_type_variable,
@@ -149,7 +154,7 @@ export const createLoan = async (request, response) => {
 
         console.log('Cron job created ' + cronId);
 
-        const loanResults = await executeQuery(
+        const loanResults = await executeQuery<LoanInput>(
             loanQueries.createLoan,
             [
                 account_id,
@@ -169,7 +174,7 @@ export const createLoan = async (request, response) => {
             ]
         );
 
-        const loans = loanResults.map(loan => parseLoan(loan));
+        const loans: LoanOutput[] = loanResults.map(loan => parseLoan(loan));
         response.status(201).json(loans);
     } catch (error) {
         console.error(error); // Log the error on the server side
