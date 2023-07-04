@@ -263,24 +263,27 @@ export const updateLoan = async (request: Request, response: Response): Promise<
     }
 };
 
-// Delete loan
-export const deleteLoan = async (request, response) => {
+/**
+ * 
+ * @param request - Request object
+ * @param response - Response object
+ * Sends a DELETE request to the database to delete a loan
+ */
+export const deleteLoan = async (request: Request, response: Response): Promise<void> => {
     try {
         const { id } = request.params;
 
-        const getLoanResults = await executeQuery(loanQueries.getLoan, [id]);
+        const getLoanResults = await executeQuery<LoanInput>(loanQueries.getLoansById, [id]);
 
         if (getLoanResults.length === 0) {
-            return response.status(404).send('Loan not found');
+            response.status(404).send('Loan not found');
+            return;
         }
 
-        const cronId = getLoanResults[0].cron_job_id;
+        const cronId: number = parseInt(getLoanResults[0].cron_job_id);
         await executeQuery(loanQueries.deleteLoan, [id]);
-
-        if (cronId) {
-            await deleteCronJob(cronId);
-            await executeQuery(cronJobQueries.deleteCronJob, [cronId]);
-        }
+        await deleteCronJob(cronId);
+        await executeQuery(cronJobQueries.deleteCronJob, [cronId]);
 
         response.status(200).send('Loan deleted successfully');
     } catch (error) {
