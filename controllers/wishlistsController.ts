@@ -90,15 +90,20 @@ export const getWishlists = async (request: Request, response: Response): Promis
     }
 };
 
-// Create wishlist
-export const createWishlist = async (request, response) => {
+/**
+ * 
+ * @param request - Request object
+ * @param response - Response object
+ * Sends a POST request to the database to create a new wishlist
+ */
+export const createWishlist = async (request: Request, response: Response): Promise<void> => {
     try {
         const { account_id, amount, title, description, priority, url_link } = request.body;
 
-        const results = await executeQuery(wishlistQueries.createWishlist, [account_id, amount, title, description, priority, url_link]);
+        const results = await executeQuery<WishlistInput>(wishlistQueries.createWishlist, [account_id, amount, title, description, priority, url_link]);
 
         // Parse the data to correct format and return an object
-        const wishlists = results.map(wishlist => wishlistsParse(wishlist));
+        const wishlists: WishlistOutput[] = results.map(wishlist => wishlistsParse(wishlist));
 
         response.status(201).json(wishlists);
     } catch (error) {
