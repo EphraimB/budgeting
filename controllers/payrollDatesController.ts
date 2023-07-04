@@ -97,22 +97,28 @@ export const createPayrollDate = async (request: Request, response: Response): P
     }
 };
 
-// Update payroll date
-export const updatePayrollDate = async (request, response) => {
+/**
+ * 
+ * @param request - Request object
+ * @param response - Response object
+ * Sends a PUT request to the database to update a payroll date
+ */
+export const updatePayrollDate = async (request: Request, response: Response): Promise<void> => {
     try {
         const { id } = request.params;
         const { employee_id, start_day, end_day } = request.body;
 
-        const results = await executeQuery(payrollQueries.updatePayrollDate, [start_day, end_day, id]);
+        const results = await executeQuery<PayrollDateInput>(payrollQueries.updatePayrollDate, [start_day, end_day, id]);
 
         if (results.length === 0) {
-            return response.status(404).send('Payroll date not found');
+            response.status(404).send('Payroll date not found');
+            return;
         }
 
         await getPayrolls(employee_id);
 
         // Parse the data to correct format and return an object
-        const payrollDates = results.map(payrollDate => payrollDatesParse(payrollDate));
+        const payrollDates: PayrollDateOutput[] = results.map(payrollDate => payrollDatesParse(payrollDate));
 
         const returnObj = {
             employee_id: parseInt(employee_id),
