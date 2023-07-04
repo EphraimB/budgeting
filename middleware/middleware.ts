@@ -1,12 +1,37 @@
+import { Request, Response, NextFunction } from 'express';
 import { transactionHistoryQueries, expenseQueries, loanQueries, payrollQueries, wishlistQueries, transferQueries, currentBalanceQueries } from '../models/queryData.js';
 import { handleError, executeQuery } from '../utils/helperFunctions.js';
 
-// Get deposits by account
-export const getTransactionsByAccount = async (request, response, next) => {
+interface Transaction {
+    transaction_id: number;
+    account_id: number;
+    transaction_amount: number;
+    transaction_type: string;
+    transaction_title: string;
+    transaction_description: string;
+    transaction_date: string;
+    date_created: string;
+    date_modified: string;
+}
+
+declare module 'express-serve-static-core' {
+    interface Request {
+        transaction: Transaction[];
+    }
+}
+
+/**
+ * 
+ * @param request - The request object
+ * @param response - The response object
+ * @param next - The next function
+ * Sends a response with all transfers or a single transfer if an id is provided
+ */
+export const getTransactionsByAccount = async (request: Request, response: Response, next: NextFunction) => {
     const { account_id, from_date } = request.query;
 
     try {
-        const results = await executeQuery(transactionHistoryQueries.getTransactionsDateMiddleware, [parseInt(account_id), from_date]);
+        const results = await executeQuery(transactionHistoryQueries.getTransactionsDateMiddleware, [account_id, from_date]);
 
         request.transaction = results;
 
