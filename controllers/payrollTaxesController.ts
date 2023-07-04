@@ -124,20 +124,26 @@ export const updatePayrollTax = async (request: Request, response: Response): Pr
     }
 };
 
-// Delete payroll tax
-export const deletePayrollTax = async (request, response) => {
+/**
+ * 
+ * @param request - Request object
+ * @param response - Response object
+ * Sends a DELETE request to the database to delete a payroll tax
+ */
+export const deletePayrollTax = async (request: Request, response: Response): Promise<void> => {
     const { id } = request.params;
 
     try {
-        const getResults = await executeQuery(payrollQueries.getPayrollTax, [id]);
+        const getResults = await executeQuery<PayrollTaxInput>(payrollQueries.getPayrollTaxesById, [id]);
 
         if (getResults.length === 0) {
-            return response.status(404).send('Payroll tax not found');
+            response.status(404).send('Payroll tax not found');
+            return;
         }
 
         await executeQuery(payrollQueries.deletePayrollTax, [id]);
 
-        await getPayrolls(getResults[0].employee_id);
+        await getPayrolls(parseInt(getResults[0].employee_id));
 
         response.status(200).send('Successfully deleted payroll tax');
     } catch (error) {
