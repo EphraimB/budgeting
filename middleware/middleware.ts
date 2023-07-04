@@ -68,6 +68,17 @@ interface Wishlist {
     date_modified: string;
 }
 
+interface Transfer {
+    transfer_id: number;
+    account_id: number;
+    transfer_amount: number;
+    transfer_title: string;
+    transfer_description: string;
+    transfer_date: string;
+    date_created: string;
+    date_modified: string;
+}
+
 declare module 'express-serve-static-core' {
     interface Request {
         transaction: Transaction[];
@@ -75,6 +86,7 @@ declare module 'express-serve-static-core' {
         loans: Loan[];
         payrolls: Payroll[];
         wishlists: Wishlist[];
+        transfers: Transfer[];
     }
 }
 
@@ -183,12 +195,18 @@ export const getWishlistsByAccount = async (request: Request, response: Response
     }
 };
 
-// Get transfers by account
-export const getTransfersByAccount = async (request, response, next) => {
+/**
+ * 
+ * @param request - The request object
+ * @param response - The response object
+ * @param next - The next function
+ * Sends a response with all transfers or a single transfer if an id is provided
+ */
+export const getTransfersByAccount = async (request: Request, response: Response, next: NextFunction): Promise<void> => {
     const { account_id, to_date } = request.query;
 
     try {
-        const results = await executeQuery(transferQueries.getTransfersMiddleware, [parseInt(account_id), to_date]);
+        const results = await executeQuery(transferQueries.getTransfersMiddleware, [account_id, to_date]);
 
         request.transfers = results;
 
