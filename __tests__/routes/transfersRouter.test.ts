@@ -34,7 +34,7 @@ const createFutureTransfer = () => {
 };
 
 beforeAll(() => {
-    jest.unstable_mockModule('../../controllers/transfersController', () => ({
+    jest.mock('../../controllers/transfersController', () => ({
         getTransfers: (req: Request, res: Response, next: NextFunction) => res.json({ message: 'success' }),
         createTransfer: (req: Request, res: Response, next: NextFunction) => res.json({ message: 'success' }),
         updateTransfer: (req: Request, res: Response, next: NextFunction) => res.json({ message: 'success' }),

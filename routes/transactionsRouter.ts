@@ -1,9 +1,9 @@
 import { Router, Request, Response } from 'express';
 import express from 'express';
-import generateTransactions from '../generation/generateTransactions.js';
-import { getCurrentBalance, getTransactionsByAccount, getExpensesByAccount, getLoansByAccount, getWishlistsByAccount, getPayrollsMiddleware, getTransfersByAccount } from '../middleware/middleware.js';
+import generateTransactions from '../generation/generateTransactions';
+import { getCurrentBalance, getTransactionsByAccount, getExpensesByAccount, getLoansByAccount, getWishlistsByAccount, getPayrollsMiddleware, getTransfersByAccount } from '../middleware/middleware';
 import { query } from 'express-validator';
-import validateRequest from '../utils/validateRequest.js';
+import validateRequest from '../utils/validateRequest';
 
 declare module 'express-serve-static-core' {
     interface Request {
