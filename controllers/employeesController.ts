@@ -120,22 +120,28 @@ export const updateEmployee = async (request: Request, response: Response): Prom
     }
 };
 
-// Delete employee
-export const deleteEmployee = async (request, response) => {
+/**
+ * 
+ * @param request - Request object
+ * @param response - Response object
+ * Sends a DELETE request to the database to delete an employee
+ */
+export const deleteEmployee = async (request: Request, response: Response): Promise<void> => {
     try {
         const employee_id = parseInt(request.params.employee_id);
 
-        const transferResults = await executeQuery(payrollQueries.getEmployee, [employee_id]);
+        const transferResults = await executeQuery<EmployeeInput>(payrollQueries.getEmployee, [employee_id]);
 
         if (transferResults.length === 0) {
-            return response.status(404).send('Employee not found');
+            response.status(404).send('Employee not found');
+            return;
         }
 
-        const payrollDatesResults = await executeQuery(payrollQueries.getPayrollDates, [employee_id]);
-        const hasPayrollDates = payrollDatesResults.length > 0;
+        const payrollDatesResults = await executeQuery(payrollQueries.getPayrollDatesByEmployeeId, [employee_id]);
+        const hasPayrollDates: boolean = payrollDatesResults.length > 0;
 
-        const payrollTaxesResults = await executeQuery(payrollQueries.getPayrollTaxes, [employee_id]);
-        const hasPayrollTaxes = payrollTaxesResults.length > 0;
+        const payrollTaxesResults = await executeQuery(payrollQueries.getPayrollTaxesByEmployeeId, [employee_id]);
+        const hasPayrollTaxes: boolean = payrollTaxesResults.length > 0;
 
         if (hasPayrollDates || hasPayrollTaxes) {
             response.status(400).send({ errors: { msg: 'You need to delete employee-related data before deleting the employee', param: null, location: 'query' } });
