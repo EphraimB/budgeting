@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
-import { accountQueries } from '../models/queryData.js';
-import { handleError, executeQuery } from '../utils/helperFunctions.js';
+import { accountQueries } from '../models/queryData';
+import { handleError, executeQuery } from '../utils/helperFunctions';
 
 interface AccountInput {
     account_id: string;
