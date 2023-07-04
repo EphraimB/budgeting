@@ -74,16 +74,21 @@ export const getTransactions = async (request: Request, response: Response): Pro
     }
 };
 
-// Create transaction
-export const createTransaction = async (request, response) => {
+/**
+ * 
+ * @param request - Request object
+ * @param response - Response object
+ * Sends a response with the newly created transaction
+ */
+export const createTransaction = async (request: Request, response: Response) => {
     try {
         const { account_id, title, amount, description } = request.body;
-        const transactionResults = await executeQuery(
+        const transactionResults: TransactionHistoryInput[] = await executeQuery(
             transactionHistoryQueries.createTransaction,
             [account_id, amount, title, description]
         );
 
-        const transactionHistory = transactionResults.map(transaction => parseTransactions(transaction));
+        const transactionHistory: TransactionHistoryOutput[] = transactionResults.map(transaction => parseTransactions(transaction));
 
         response.status(201).json(transactionHistory);
     } catch (error) {
