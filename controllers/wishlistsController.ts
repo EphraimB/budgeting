@@ -1,7 +1,39 @@
+import { Request, Response } from 'express';
 import { wishlistQueries } from '../models/queryData.js';
 import { executeQuery, handleError } from '../utils/helperFunctions.js';
 
-const wishlistsParse = wishlist => ({
+interface WishlistInput {
+    wishlist_id: string;
+    account_id: string;
+    wishlist_amount: string;
+    wishlist_title: string;
+    wishlist_description: string;
+    wishlist_url_link: string;
+    wishlist_priority: string;
+    wishlist_date_available: string;
+    date_created: string;
+    date_modified: string;
+}
+
+interface WishlistOutput {
+    wishlist_id: number;
+    account_id: number;
+    wishlist_amount: number;
+    wishlist_title: string;
+    wishlist_description: string;
+    wishlist_url_link: string;
+    wishlist_priority: number;
+    wishlist_date_available: string;
+    date_created: string;
+    date_modified: string;
+}
+
+/**
+ * 
+ * @param wishlist - Wishlist object
+ * @returns - Wishlist object with parsed values
+ */
+const wishlistsParse = (wishlist: WishlistInput): WishlistOutput => ({
     wishlist_id: parseInt(wishlist.wishlist_id),
     account_id: parseInt(wishlist.account_id),
     wishlist_amount: parseFloat(wishlist.wishlist_amount),
