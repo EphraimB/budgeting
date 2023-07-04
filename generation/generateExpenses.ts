@@ -170,10 +170,19 @@ export const generateWeeklyExpenses = (transactions: any[], skippedTransactions:
     generateExpenses(transactions, skippedTransactions, expense, toDate, fromDate, generateDateFn);
 };
 
-export const generateYearlyExpenses = (transactions, skippedTransactions, expense, toDate, fromDate) => {
-    let yearsIncremented = 0;
-    const generateDateFn = (currentDate, expense) => {
-        const newDate = new Date(expense.expense_begin_date);
+/**
+ * 
+ * @param transactions - The transactions to generate expenses for
+ * @param skippedTransactions - The transactions to skip
+ * @param expense - The expense to generate
+ * @param toDate - The date to generate expenses to
+ * @param fromDate - The date to generate expenses from
+ * Generate yearly expenses for a given expense
+ */
+export const generateYearlyExpenses = (transactions: any[], skippedTransactions: any[], expense: Expense, toDate: string, fromDate: string): void => {
+    let yearsIncremented: number = 0;
+    const generateDateFn = (currentDate: string, expense: Expense): Date => {
+        const newDate: Date = new Date(expense.expense_begin_date);
         newDate.setFullYear(newDate.getFullYear() + yearsIncremented + (expense.frequency_type_variable || 1));
 
         if (expense.frequency_month_of_year !== null && expense.frequency_month_of_year !== undefined) {
@@ -181,12 +190,12 @@ export const generateYearlyExpenses = (transactions, skippedTransactions, expens
         }
 
         if (expense.frequency_day_of_week !== null && expense.frequency_day_of_week !== undefined) {
-            const daysToAdd = (7 - newDate.getDay() + expense.frequency_day_of_week) % 7;
+            const daysToAdd: number = (7 - newDate.getDay() + expense.frequency_day_of_week) % 7;
             newDate.setDate(newDate.getDate() + daysToAdd); // this is the first occurrence of the day_of_week
 
             if (expense.frequency_week_of_month !== null && expense.frequency_week_of_month !== undefined) {
                 // add the number of weeks, but check if it overflows into the next month
-                const proposedDate = new Date(newDate.getTime());
+                const proposedDate: Date = new Date(newDate.getTime());
                 proposedDate.setDate(proposedDate.getDate() + 7 * (expense.frequency_week_of_month));
 
                 if (proposedDate.getMonth() === newDate.getMonth()) {
