@@ -58,7 +58,7 @@ export const getTransactions = async (request: Request, response: Response): Pro
             params = [];
         }
 
-        const transactionResults: TransactionHistoryInput[] = await executeQuery(query, params);
+        const transactionResults = await executeQuery<TransactionHistoryInput>(query, params);
 
         if ((id || account_id) && transactionResults.length === 0) {
             response.status(404).send('Transaction not found');
@@ -83,7 +83,7 @@ export const getTransactions = async (request: Request, response: Response): Pro
 export const createTransaction = async (request: Request, response: Response): Promise<void> => {
     try {
         const { account_id, title, amount, description } = request.body;
-        const transactionResults: TransactionHistoryInput[] = await executeQuery(
+        const transactionResults = await executeQuery<TransactionHistoryInput>(
             transactionHistoryQueries.createTransaction,
             [account_id, amount, title, description]
         );
@@ -97,22 +97,28 @@ export const createTransaction = async (request: Request, response: Response): P
     }
 };
 
-// Update transaction
-export const updateTransaction = async (request, response) => {
+/**
+ * 
+ * @param request - Request object
+ * @param response - Response object
+ * Sends a response with the updated transaction
+ */
+export const updateTransaction = async (request: Request, response: Response): Promise<void> => {
     try {
-        const id = parseInt(request.params.id);
+        const id: number = parseInt(request.params.id);
         const { account_id, amount, title, description } = request.body;
 
-        const transactionResults = await executeQuery(
+        const transactionResults = await executeQuery<TransactionHistoryInput>(
             transactionHistoryQueries.updateTransaction,
             [account_id, amount, title, description, id]
         );
 
         if (transactionResults.length === 0) {
-            return response.status(404).send('Transaction not found');
+            response.status(404).send('Transaction not found');
+            return;
         }
 
-        const transactionHistory = transactionResults.map(transaction => parseTransactions(transaction));
+        const transactionHistory: TransactionHistoryOutput[] = transactionResults.map(transaction => parseTransactions(transaction));
 
         response.status(200).json(transactionHistory);
     } catch (error) {
@@ -121,15 +127,21 @@ export const updateTransaction = async (request, response) => {
     }
 };
 
-// Delete transaction
-export const deleteTransaction = async (request, response) => {
+/**
+ * 
+ * @param request - Request object
+ * @param response - Response object
+ * Sends a response with a message indicating the transaction was deleted
+ */
+export const deleteTransaction = async (request: Request, response: Response): Promise<void> => {
     try {
-        const id = parseInt(request.params.id);
+        const id: number = parseInt(request.params.id);
 
-        const getTransactionResults = await executeQuery(transactionHistoryQueries.getTransaction, [id]);
+        const getTransactionResults = await executeQuery<TransactionHistoryInput>(transactionHistoryQueries.getTransactionById, [id]);
 
         if (getTransactionResults.length === 0) {
-            return response.status(404).send('Transaction not found');
+            response.status(404).send('Transaction not found');
+            return;
         }
 
         await executeQuery(transactionHistoryQueries.deleteTransaction, [id]);
