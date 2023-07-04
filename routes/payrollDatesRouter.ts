@@ -1,7 +1,7 @@
 import express, { Router } from 'express';
 import { query, param, body } from 'express-validator';
-import { getPayrollDates, createPayrollDate, updatePayrollDate, deletePayrollDate } from '../controllers/payrollDatesController.js';
-import validateRequest from '../utils/validateRequest.js';
+import { getPayrollDates, createPayrollDate, updatePayrollDate, deletePayrollDate } from '../controllers/payrollDatesController';
+import validateRequest from '../utils/validateRequest';
 
 const router: Router = express.Router();
 
