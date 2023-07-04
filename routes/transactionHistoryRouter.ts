@@ -1,7 +1,7 @@
 import express, { Router } from 'express';
 import { query, param, body } from 'express-validator';
-import { getTransactions, createTransaction, updateTransaction, deleteTransaction } from '../controllers/transactionHistoryController.js';
-import validateRequest from '../utils/validateRequest.js';
+import { getTransactions, createTransaction, updateTransaction, deleteTransaction } from '../controllers/transactionHistoryController';
+import validateRequest from '../utils/validateRequest';
 
 const router: Router = express.Router();
 
