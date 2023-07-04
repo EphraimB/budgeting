@@ -1,7 +1,7 @@
 import express, { Router } from 'express';
 import { query, param, body } from 'express-validator';
-import { getExpenses, createExpense, updateExpense, deleteExpense } from '../controllers/expensesController.js';
-import validateRequest from '../utils/validateRequest.js';
+import { getExpenses, createExpense, updateExpense, deleteExpense } from '../controllers/expensesController';
+import validateRequest from '../utils/validateRequest';
 
 const router: Router = express.Router();
 
