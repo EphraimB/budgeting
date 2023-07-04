@@ -46,13 +46,18 @@ const wishlistsParse = (wishlist: WishlistInput): WishlistOutput => ({
     date_modified: wishlist.date_modified
 });
 
-// Get all wishlists
-export const getWishlists = async (request, response) => {
+/**
+ * 
+ * @param request - Request object
+ * @param response - Response object
+ * Sends a GET request to the database to retrieve all wishlists
+ */
+export const getWishlists = async (request: Request, response: Response): Promise<void> => {
     const { account_id, id } = request.query;
 
     try {
-        let query;
-        let params;
+        let query: string;
+        let params: any[];
 
         if (id && account_id) {
             query = wishlistQueries.getWishlistsByIdAndAccountId;
@@ -68,14 +73,15 @@ export const getWishlists = async (request, response) => {
             params = [];
         }
 
-        const results = await executeQuery(query, params);
+        const results = await executeQuery<WishlistInput>(query, params);
 
         if ((id || account_id) && results.length === 0) {
-            return response.status(404).send('Wishlist not found');
+            response.status(404).send('Wishlist not found');
+            return;
         }
 
         // Parse the data to the correct format
-        const wishlists = results.map(wishlist => wishlistsParse(wishlist));
+        const wishlists: WishlistOutput[] = results.map(wishlist => wishlistsParse(wishlist));
 
         response.status(200).json(wishlists);
     } catch (error) {
