@@ -95,21 +95,27 @@ export const createPayrollTax = async (request: Request, response: Response): Pr
     }
 };
 
-// Update payroll tax
-export const updatePayrollTax = async (request, response) => {
+/**
+ * 
+ * @param request - Request object
+ * @param response - Response object
+ * Sends a PUT request to the database to update a payroll tax
+ */
+export const updatePayrollTax = async (request: Request, response: Response): Promise<void> => {
     const { id } = request.params;
     const { employee_id, name, rate } = request.body;
 
     try {
-        const results = await executeQuery(payrollQueries.updatePayrollTax, [name, rate, id]);
+        const results = await executeQuery<PayrollTaxInput>(payrollQueries.updatePayrollTax, [name, rate, id]);
 
         if (results.length === 0) {
-            return response.status(404).send('Payroll tax not found');
+            response.status(404).send('Payroll tax not found');
+            return;
         }
 
-        await getPayrolls(employee_id);
+        await getPayrolls(parseInt(employee_id));
 
-        const payrollTaxes = results.map(payrollTax => payrollTaxesParse(payrollTax));
+        const payrollTaxes: PayrollTaxOutput[] = results.map(payrollTax => payrollTaxesParse(payrollTax));
 
         response.status(200).json(payrollTaxes);
     } catch (error) {
