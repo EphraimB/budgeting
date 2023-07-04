@@ -73,7 +73,12 @@ export const getPayrollDates = async (request: Request, response: Response): Pro
     }
 };
 
-// Create payroll date
+/**
+ * 
+ * @param request - Request object
+ * @param response - Response object
+ * Sends a POST request to the database to create a new payroll date
+ */
 export const createPayrollDate = async (request: Request, response: Response): Promise<void> => {
     try {
         const { employee_id, start_day, end_day } = request.body;
