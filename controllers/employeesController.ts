@@ -90,22 +90,28 @@ export const createEmployee = async (request: Request, response: Response): Prom
     }
 };
 
-// Update employee
-export const updateEmployee = async (request, response) => {
+/**
+ * 
+ * @param request - Request object
+ * @param response - Response object
+ * Sends a PUT request to the database to update an employee
+ */
+export const updateEmployee = async (request: Request, response: Response): Promise<void> => {
     try {
         const employee_id = parseInt(request.params.employee_id);
         const { name, hourly_rate, regular_hours, vacation_days, sick_days, work_schedule } = request.body;
 
-        const results = await executeQuery(payrollQueries.updateEmployee, [name, hourly_rate, regular_hours, vacation_days, sick_days, work_schedule, employee_id]);
+        const results = await executeQuery<EmployeeInput>(payrollQueries.updateEmployee, [name, hourly_rate, regular_hours, vacation_days, sick_days, work_schedule, employee_id]);
 
         if (results.length === 0) {
-            return response.status(404).send('Employee not found');
+            response.status(404).send('Employee not found');
+            return;
         }
 
         await getPayrolls(employee_id);
 
         // Parse the data to correct format and return an object
-        const employees = results.map(employee => employeeParse(employee));
+        const employees: EmployeeOutput[] = results.map(employee => employeeParse(employee));
 
         response.status(200).json(employees);
     } catch (error) {
