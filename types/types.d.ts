@@ -1,13 +1,7 @@
-export interface Transaction {
-    transaction_id: number;
-    account_id: number;
-    transaction_amount: number;
-    transaction_type: string;
-    transaction_title: string;
-    transaction_description: string;
-    transaction_date: string;
-    date_created: string;
-    date_modified: string;
+interface Transaction {
+    date: Date;
+    amount: number;
+    balance?: number;
 }
 
 export interface Expense {
