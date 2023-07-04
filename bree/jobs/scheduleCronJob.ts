@@ -113,7 +113,14 @@ const determineCronValues = (frequency_type: number, frequency_type_variable: nu
     return { cronDay, cronMonth, cronDayOfWeek };
 };
 
-const writeCronJobToFile = (jobsFilePath, jobs, newJob) => {
+/**
+ * 
+ * @param jobsFilePath - Jobs file path
+ * @param jobs - Jobs
+ * @param newJob - New job
+ * Writes cron job to jobs.json file
+ */
+const writeCronJobToFile = (jobsFilePath: string, jobs: JobOptions[], newJob: JobOptions) => {
     jobs = jobs.filter(job => job.name !== 'payroll-checker');
     jobs.push(newJob);
     try {
