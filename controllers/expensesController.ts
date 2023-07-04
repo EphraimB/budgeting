@@ -214,7 +214,7 @@ export const updateExpense = async (request: Request, response: Response): Promi
             return;
         }
 
-        const cronId = expenseResult[0].cron_job_id;
+        const cronId: number = parseInt(expenseResult[0].cron_job_id);
         await deleteCronJob(cronId);
 
         const { uniqueId, cronDate } = await scheduleCronJob(cronParams);

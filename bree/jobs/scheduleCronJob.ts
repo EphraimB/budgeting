@@ -8,7 +8,8 @@ const __dirname = url.fileURLToPath(new URL('.', import.meta.url));
 
 interface CronJobData {
     account_id: number;
-    amount: number;
+    amount?: number;
+    negative_amount?: number;
     description: string;
     begin_date: string;
     frequency_type: number;
