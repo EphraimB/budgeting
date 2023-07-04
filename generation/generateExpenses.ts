@@ -95,16 +95,25 @@ export const generateDailyExpenses = (transactions: any[], skippedTransactions: 
     generateExpenses(transactions, skippedTransactions, expense, toDate, fromDate, generateDateFn);
 };
 
-export const generateMonthlyExpenses = (transactions, skippedTransactions, expense, toDate, fromDate) => {
-    let monthsIncremented = 0;
-    const generateDateFn = (currentDate, expense) => {
-        const expenseDate = new Date(expense.expense_begin_date);
+/**
+ * 
+ * @param transactions - The transactions to generate expenses for
+ * @param skippedTransactions - The transactions to skip
+ * @param expense - The expense to generate
+ * @param toDate - The date to generate expenses to
+ * @param fromDate - The date to generate expenses from
+ * Generate monthly expenses for a given expense
+ */
+export const generateMonthlyExpenses = (transactions: any[], skippedTransactions: any[], expense: Expense, toDate: string, fromDate: string): void => {
+    let monthsIncremented: number = 0;
+    const generateDateFn = (currentDate: string, expense: Expense): Date => {
+        const expenseDate: Date = new Date(expense.expense_begin_date);
 
         // advance by number of months specified in frequency_type_variable or by 1 month if not set
         expenseDate.setMonth(expenseDate.getMonth() + monthsIncremented + (expense.frequency_type_variable || 1));
 
         if (expense.frequency_day_of_week !== null && expense.frequency_day_of_week !== undefined) {
-            let newDay;
+            let newDay: number;
 
             if (expense.frequency_day_of_week !== null && expense.frequency_day_of_week !== undefined) {
                 let daysUntilNextFrequency = (7 + expense.frequency_day_of_week - expenseDate.getDay()) % 7;
@@ -115,7 +124,7 @@ export const generateMonthlyExpenses = (transactions, skippedTransactions, expen
             if (expense.frequency_week_of_month !== null && expense.frequency_week_of_month !== undefined) {
                 // first day of the month
                 expenseDate.setDate(1);
-                const daysToAdd = (7 + expense.frequency_day_of_week - expenseDate.getDay()) % 7;
+                const daysToAdd: number = (7 + expense.frequency_day_of_week - expenseDate.getDay()) % 7;
                 // setting to the first occurrence of the desired day of week
                 expenseDate.setDate(expenseDate.getDate() + daysToAdd);
                 // setting to the desired week of the month
