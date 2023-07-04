@@ -131,18 +131,28 @@ export const generateMonthlyTransfers = (transactions: any[], skippedTransaction
     generateTransfers(transactions, skippedTransactions, transfer, toDate, fromDate, account_id, generateDateFn);
 };
 
-export const generateWeeklyTransfers = (transactions, skippedTransactions, transfer, toDate, fromDate, account_id) => {
-    const transferDate = new Date(transfer.transfer_begin_date);
+/**
+ * 
+ * @param transactions - The transactions to generate transfers for
+ * @param skippedTransactions - The transactions to skip
+ * @param transfer - The transfer to generate
+ * @param toDate - The date to generate transfers to
+ * @param fromDate - The date to generate transfers from
+ * @param account_id - The account id to generate transfers for
+ * Generate weekly transfers for a given transfer
+ */
+export const generateWeeklyTransfers = (transactions: any[], skippedTransactions: any[], transfer: Transfer, toDate: Date, fromDate: Date, account_id: number): void => {
+    const transferDate: Date = new Date(transfer.transfer_begin_date);
 
     if (transfer.frequency_day_of_week !== null && transfer.frequency_day_of_week !== undefined) {
-        const startDay = new Date(transfer.transfer_begin_date).getDay();
-        const frequency_day_of_week = transfer.frequency_day_of_week;
+        const startDay: number = new Date(transfer.transfer_begin_date).getDay();
+        const frequency_day_of_week: number = transfer.frequency_day_of_week;
 
         transferDate.setDate(transferDate.getDate() + (frequency_day_of_week + 7 - startDay) % 7);
     }
 
-    const generateDateFn = (currentDate, transfer) => {
-        const newDate = new Date(currentDate);
+    const generateDateFn = (currentDate: Date, transfer: Transfer): Date => {
+        const newDate: Date = currentDate;
         newDate.setDate(newDate.getDate() + 7 * (transfer.frequency_type_variable || 1));
         return newDate;
     };
