@@ -1,5 +1,6 @@
 {
     "compilerOptions": {
+        "types": ["node", "jest"],
         "module": "ES2022",
         "esModuleInterop": true,
         "target": "ES2022",
