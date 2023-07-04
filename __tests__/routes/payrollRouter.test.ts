@@ -1,15 +1,15 @@
 import { jest } from '@jest/globals';
 import request from 'supertest';
-import express from 'express';
+import express, { Express, Request, Response, NextFunction, Router } from 'express';
 
 // Factory function for creating an app with the mock router
 const createApp = async () => {
-    const app = express();
+    const app: Express = express();
     app.use(express.json());
 
     // Import the module that uses the mock
     const routerModule = await import('../../routes/payrollRouter');
-    const payrollRouter = routerModule.default;
+    const payrollRouter: Router = routerModule.default;
     app.use('/', payrollRouter);
 
     return app;
@@ -17,7 +17,7 @@ const createApp = async () => {
 
 beforeAll(() => {
     jest.unstable_mockModule('../../controllers/payrollsController', () => ({
-        getPayrolls: (req, res, next) => res.json({ message: 'success' })
+        getPayrolls: (req: Request, res: Response, next: NextFunction) => res.json({ message: 'success' })
     }));
 });
 
@@ -25,7 +25,7 @@ afterAll(() => {
     jest.restoreAllMocks();
 });
 
-let app;
+let app: Express;
 
 beforeEach(async () => {
     // Create a new app for each test
@@ -34,7 +34,7 @@ beforeEach(async () => {
 
 describe('GET /', () => {
     it('responds with json', async () => {
-        const response = await request(app)
+        const response: request.Response = await request(app)
             .get('/?employee_id=1')
             .set('Accept', 'application/json')
             .expect('Content-Type', /json/);
