@@ -1,15 +1,15 @@
 import { jest } from '@jest/globals';
 import request from 'supertest';
-import express, { Express, Request, Response, NextFunction } from 'express';
+import express, { Express, Request, Response, NextFunction, Router } from 'express';
 
 // Factory function for creating an app with the mock router
 const createApp = async () => {
-    const app = express();
+    const app: Express = express();
     app.use(express.json());
 
     // Import the module that uses the mock
     const routerModule = await import('../../routes/expensesRouter');
-    const expensesRouter = routerModule.default;
+    const expensesRouter: Router = routerModule.default;
     app.use('/', expensesRouter);
 
     return app;
