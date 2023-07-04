@@ -1,3 +1,4 @@
+import { Request, Response, NextFunction } from 'express';
 import { generateDailyExpenses, generateWeeklyExpenses, generateMonthlyExpenses, generateYearlyExpenses } from './generateExpenses.js';
 import { generateDailyLoans, generateWeeklyLoans, generateMonthlyLoans, generateYearlyLoans } from './generateLoans.js';
 import generatePayrollTransactions from './generatePayrolls.js';
@@ -5,7 +6,14 @@ import { generateDailyTransfers, generateWeeklyTransfers, generateMonthlyTransfe
 import generateWishlists from './generateWishlists.js';
 import calculateBalances from './calculateBalances.js';
 
-const generateTransactions = (request, response, next) => {
+/**
+ * 
+ * @param request - The request object
+ * @param response - The response object
+ * @param next - The next function
+ * Generates transactions for the given account and date range
+ */
+const generateTransactions = (request: Request, response: Response, next: NextFunction): void => {
     const fromDate = new Date(request.query.from_date);
     const toDate = new Date(request.query.to_date);
     const currentBalance = request.currentBalance;
