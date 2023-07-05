@@ -22,7 +22,7 @@ const generateTransactions = (request: Request, response: Response, next: NextFu
     const skippedTransactions: any[] = [];
 
     transactions.push(
-        ...request.transaction.map(transaction => ({
+        request.transaction.map(transaction => ({
             transaction_id: transaction.transaction_id,
             title: transaction.transaction_title,
             description: transaction.transaction_description,

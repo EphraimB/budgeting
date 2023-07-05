@@ -16,7 +16,11 @@ export const getTransactionsByAccount = async (request: Request, response: Respo
     try {
         const results = await executeQuery(transactionHistoryQueries.getTransactionsDateMiddleware, [account_id, from_date]);
 
-        request.transaction = results;
+        // Map over results array and convert amount to a float for each Transaction object
+        request.transaction = results.map(transaction => ({
+            ...transaction,
+            transaction_amount: parseFloat(transaction.transaction_amount),
+        }));
 
         next();
     } catch (error) {
@@ -37,7 +41,11 @@ export const getExpensesByAccount = async (request: Request, response: Response,
     try {
         const results = await executeQuery(expenseQueries.getExpensesMiddleware, [account_id, to_date]);
 
-        request.expenses = results;
+        // Map over results array and convert amount to a float for each Expense object
+        request.expenses = results.map(expense => ({
+            ...expense,
+            amount: parseFloat(expense.amount),
+        }));
 
         next();
     } catch (error) {
