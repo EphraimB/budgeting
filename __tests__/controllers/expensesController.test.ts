@@ -1,18 +1,20 @@
 import { jest } from '@jest/globals';
+import { Request, Response } from 'express';
 import { accounts, expenses } from '../../models/mockData.js';
+import { QueryResultRow } from 'pg';
 
-jest.unstable_mockModule('../../bree/jobs/scheduleCronJob.js', () => ({
+jest.mock('../../bree/jobs/scheduleCronJob.js', () => ({
     default: jest.fn().mockReturnValue({ cronDate: '0 0 16 * *', uniqueId: '123' })
 }));
 
-jest.unstable_mockModule('../../bree/jobs/deleteCronJob.js', () => ({
+jest.mock('../../bree/jobs/deleteCronJob.js', () => ({
     default: jest.fn().mockReturnValue('123')
 }));
 
 // Mock request and response
-let mockRequest;
-let mockResponse;
-let consoleSpy;
+let mockRequest: any;
+let mockResponse: any;
+let consoleSpy: any;
 
 beforeAll(() => {
     // Create a spy on console.error before all tests
@@ -37,15 +39,22 @@ afterAll(() => {
     consoleSpy.mockRestore();
 });
 
-// Helper function to generate mock module
-const mockModule = (executeQueryValue, errorMessage) => {
-    jest.unstable_mockModule('../../utils/helperFunctions.js', () => ({
-        executeQuery: errorMessage
-            ? jest.fn().mockRejectedValue(new Error(errorMessage))
-            : jest.fn().mockResolvedValue(executeQueryValue),
-        handleError: jest.fn((res, message) => {
+/**
+ * 
+ * @param executeQueryValue - The value to be returned by the executeQuery mock function
+ * @param errorMessage - The error message to be passed to the handleError mock function
+ * @returns - A mock module with the executeQuery and handleError functions
+ */
+const mockModule = (executeQueryValue: QueryResultRow[] | string, errorMessage?: string) => {
+    const executeQuery = errorMessage
+        ? jest.fn(() => Promise.reject(new Error(errorMessage)))
+        : jest.fn(() => Promise.resolve(executeQueryValue));
+
+    jest.mock('../../utils/helperFunctions', () => ({
+        executeQuery,
+        handleError: jest.fn((res: Response, message: string) => {
             res.status(400).json({ message });
-        })
+        }),
     }));
 };
 
@@ -59,7 +68,7 @@ describe('GET /api/expenses', () => {
         mockRequest.query = { id: null };
 
         // Call the function with the mock request and response
-        await getExpenses(mockRequest, mockResponse);
+        await getExpenses(mockRequest as Request, mockResponse);
 
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(200);
@@ -77,7 +86,7 @@ describe('GET /api/expenses', () => {
         mockRequest.query = { id: null };
 
         // Act
-        await getExpenses(mockRequest, mockResponse);
+        await getExpenses(mockRequest as Request, mockResponse);
 
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(400);
@@ -96,7 +105,7 @@ describe('GET /api/expenses', () => {
         mockRequest.query = { id: 1 };
 
         // Call the function with the mock request and response
-        await getExpenses(mockRequest, mockResponse);
+        await getExpenses(mockRequest as Request, mockResponse);
 
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(200);
@@ -114,7 +123,7 @@ describe('GET /api/expenses', () => {
         mockRequest.query = { id: 1 };
 
         // Act
-        await getExpenses(mockRequest, mockResponse);
+        await getExpenses(mockRequest as Request, mockResponse);
 
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(400);
@@ -133,7 +142,7 @@ describe('GET /api/expenses', () => {
         mockRequest.query = { account_id: 1 };
 
         // Call the function with the mock request and response
-        await getExpenses(mockRequest, mockResponse);
+        await getExpenses(mockRequest as Request, mockResponse);
 
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(200);
@@ -151,7 +160,7 @@ describe('GET /api/expenses', () => {
         mockRequest.query = { account_id: 1 };
 
         // Act
-        await getExpenses(mockRequest, mockResponse);
+        await getExpenses(mockRequest as Request, mockResponse);
 
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(400);
@@ -170,7 +179,7 @@ describe('GET /api/expenses', () => {
         mockRequest.query = { account_id: 1, id: 1 };
 
         // Call the function with the mock request and response
-        await getExpenses(mockRequest, mockResponse);
+        await getExpenses(mockRequest as Request, mockResponse);
 
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(200);
@@ -188,7 +197,7 @@ describe('GET /api/expenses', () => {
         mockRequest.query = { account_id: 1, id: 1 };
 
         // Act
-        await getExpenses(mockRequest, mockResponse);
+        await getExpenses(mockRequest as Request, mockResponse);
 
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(400);
@@ -207,7 +216,7 @@ describe('GET /api/expenses', () => {
         mockRequest.query = { id: 3 };
 
         // Act
-        await getExpenses(mockRequest, mockResponse);
+        await getExpenses(mockRequest as Request, mockResponse);
 
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(404);
@@ -226,7 +235,7 @@ describe('POST /api/expenses', () => {
 
         mockRequest.body = newExpense;
 
-        await createExpense(mockRequest, mockResponse);
+        await createExpense(mockRequest as Request, mockResponse);
 
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(201);
@@ -244,7 +253,7 @@ describe('POST /api/expenses', () => {
         mockRequest.body = accounts.filter(account => account.account_id === 1);
 
         // Act
-        await createExpense(mockRequest, mockResponse);
+        await createExpense(mockRequest as Request, mockResponse);
 
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(400);
@@ -266,7 +275,7 @@ describe('PUT /api/expenses/:id', () => {
         mockRequest.params = { id: 1 };
         mockRequest.body = updatedExpense;
 
-        await updateExpense(mockRequest, mockResponse);
+        await updateExpense(mockRequest as Request, mockResponse);
 
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(200);
@@ -285,7 +294,7 @@ describe('PUT /api/expenses/:id', () => {
         mockRequest.body = expenses.filter(expense => expense.expense_id === 1);
 
         // Act
-        await updateExpense(mockRequest, mockResponse);
+        await updateExpense(mockRequest as Request, mockResponse);
 
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(400);
@@ -305,7 +314,7 @@ describe('PUT /api/expenses/:id', () => {
         mockRequest.body = accounts.filter(account => account.account_id === 1);
 
         // Act
-        await updateExpense(mockRequest, mockResponse);
+        await updateExpense(mockRequest as Request, mockResponse);
 
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(404);
@@ -322,7 +331,7 @@ describe('DELETE /api/expenses/:id', () => {
 
         mockRequest.params = { id: 1 };
 
-        await deleteExpense(mockRequest, mockResponse);
+        await deleteExpense(mockRequest as Request, mockResponse);
 
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(200);
@@ -340,7 +349,7 @@ describe('DELETE /api/expenses/:id', () => {
         mockRequest.params = { id: 1 };
 
         // Act
-        await deleteExpense(mockRequest, mockResponse);
+        await deleteExpense(mockRequest as Request, mockResponse);
 
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(400);
@@ -359,7 +368,7 @@ describe('DELETE /api/expenses/:id', () => {
         mockRequest.params = { id: 1 };
 
         // Act
-        await deleteExpense(mockRequest, mockResponse);
+        await deleteExpense(mockRequest as Request, mockResponse);
 
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(404);
