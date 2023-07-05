@@ -62,7 +62,7 @@ describe('GET /api/payroll/employee', () => {
         const { getEmployee } = await import('../../controllers/employeesController.js');
 
         // Call the function with the mock request and response
-        await getEmployee(mockRequest, mockResponse);
+        await getEmployee(mockRequest as Request, mockResponse);
 
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(200);
@@ -82,7 +82,7 @@ describe('GET /api/payroll/employee', () => {
         const { getEmployee } = await import('../../controllers/employeesController.js');
 
         // Call the function with the mock request and response
-        await getEmployee(mockRequest, mockResponse);
+        await getEmployee(mockRequest as Request, mockResponse);
 
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(400);
@@ -101,7 +101,7 @@ describe('GET /api/payroll/employee', () => {
         const { getEmployee } = await import('../../controllers/employeesController.js');
 
         // Call the function with the mock request and response
-        await getEmployee(mockRequest, mockResponse);
+        await getEmployee(mockRequest as Request, mockResponse);
 
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(200);
@@ -119,7 +119,7 @@ describe('GET /api/payroll/employee', () => {
         const { getEmployee } = await import('../../controllers/employeesController.js');
 
         // Call the function with the mock request and response
-        await getEmployee(mockRequest, mockResponse);
+        await getEmployee(mockRequest as Request, mockResponse);
 
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(400);
@@ -138,7 +138,7 @@ describe('GET /api/payroll/employee', () => {
         mockRequest.query = { employee_id: 3 };
 
         // Act
-        await getEmployee(mockRequest, mockResponse);
+        await getEmployee(mockRequest as Request, mockResponse);
 
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(404);
@@ -157,7 +157,7 @@ describe('POST /api/payroll/employee', () => {
 
         mockRequest.body = newEmployee;
 
-        await createEmployee(mockRequest, mockResponse);
+        await createEmployee(mockRequest as Request, mockResponse);
 
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(201);
@@ -176,7 +176,7 @@ describe('POST /api/payroll/employee', () => {
 
         mockRequest.body = newEmployee;
 
-        await createEmployee(mockRequest, mockResponse);
+        await createEmployee(mockRequest as Request, mockResponse);
 
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(400);
@@ -199,7 +199,7 @@ describe('PUT /api/payroll/employee/:id', () => {
 
         const { updateEmployee } = await import('../../controllers/employeesController.js');
 
-        await updateEmployee(mockRequest, mockResponse);
+        await updateEmployee(mockRequest as Request, mockResponse);
 
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(200);
@@ -219,7 +219,7 @@ describe('PUT /api/payroll/employee/:id', () => {
 
         const { updateEmployee } = await import('../../controllers/employeesController.js');
 
-        await updateEmployee(mockRequest, mockResponse);
+        await updateEmployee(mockRequest as Request, mockResponse);
 
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(400);
@@ -239,7 +239,7 @@ describe('PUT /api/payroll/employee/:id', () => {
         mockRequest.body = employees.filter(employee => employee.employee_id === 3);
 
         // Act
-        await updateEmployee(mockRequest, mockResponse);
+        await updateEmployee(mockRequest as Request, mockResponse);
 
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(404);
@@ -260,7 +260,7 @@ describe('DELETE /api/payroll/employee/:id', () => {
         mockRequest.params = { employee_id };
 
         // Act
-        await deleteEmployee(mockRequest, mockResponse);
+        await deleteEmployee(mockRequest as Request, mockResponse);
 
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(200);
@@ -280,7 +280,7 @@ describe('DELETE /api/payroll/employee/:id', () => {
         const { deleteEmployee } = await import('../../controllers/employeesController.js');
 
         // Act
-        await deleteEmployee(mockRequest, mockResponse);
+        await deleteEmployee(mockRequest as Request, mockResponse);
 
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(400);
@@ -300,7 +300,7 @@ describe('DELETE /api/payroll/employee/:id', () => {
         const { deleteEmployee } = await import('../../controllers/employeesController.js');
 
         // Act
-        await deleteEmployee(mockRequest, mockResponse);
+        await deleteEmployee(mockRequest as Request, mockResponse);
 
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(400);
@@ -316,7 +316,7 @@ describe('DELETE /api/payroll/employee/:id', () => {
         mockRequest.params = { employee_id: 3 };
 
         // Act
-        await deleteEmployee(mockRequest, mockResponse);
+        await deleteEmployee(mockRequest as Request, mockResponse);
 
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(404);
