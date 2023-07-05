@@ -34,7 +34,7 @@ interface LoanOutput {
     loan_recipient: string;
     loan_title: string;
     loan_description: string;
-    frequency_type: string;
+    frequency_type: number;
     frequency_type_variable: number;
     frequency_day_of_month: number;
     frequency_day_of_week: number;
@@ -59,12 +59,12 @@ const parseLoan = (loan: LoanInput): LoanOutput => ({
     loan_recipient: loan.loan_recipient,
     loan_title: loan.loan_title,
     loan_description: loan.loan_description,
-    frequency_type: loan.frequency_type,
-    frequency_type_variable: parseInt(loan.frequency_type_variable),
-    frequency_day_of_month: parseInt(loan.frequency_day_of_month),
-    frequency_day_of_week: parseInt(loan.frequency_day_of_week),
-    frequency_week_of_month: parseInt(loan.frequency_week_of_month),
-    frequency_month_of_year: parseInt(loan.frequency_month_of_year),
+    frequency_type: parseInt(loan.frequency_type),
+    frequency_type_variable: parseInt(loan.frequency_type_variable) || null,
+    frequency_day_of_month: parseInt(loan.frequency_day_of_month) || null,
+    frequency_day_of_week: parseInt(loan.frequency_day_of_week) || null,
+    frequency_week_of_month: parseInt(loan.frequency_week_of_month) || null,
+    frequency_month_of_year: parseInt(loan.frequency_month_of_year) || null,
     loan_begin_date: loan.loan_begin_date,
     loan_end_date: loan.loan_end_date,
     date_created: loan.date_created,

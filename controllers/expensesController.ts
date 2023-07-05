@@ -29,12 +29,12 @@ interface ExpenseOutput {
     expense_amount: number;
     expense_title: string;
     expense_description: string;
-    frequency_type: string;
-    frequency_type_variable: string;
-    frequency_day_of_month: string;
-    frequency_day_of_week: string;
-    frequency_week_of_month: string;
-    frequency_month_of_year: string;
+    frequency_type: number;
+    frequency_type_variable: number;
+    frequency_day_of_month: number;
+    frequency_day_of_week: number;
+    frequency_week_of_month: number;
+    frequency_month_of_year: number;
     expense_begin_date: string;
     expense_end_date: string;
     date_created: string;
@@ -53,12 +53,12 @@ const parseExpenses = (expense: ExpenseInput): ExpenseOutput => ({
     expense_amount: parseFloat(expense.expense_amount),
     expense_title: expense.expense_title,
     expense_description: expense.expense_description,
-    frequency_type: expense.frequency_type,
-    frequency_type_variable: expense.frequency_type_variable,
-    frequency_day_of_month: expense.frequency_day_of_month,
-    frequency_day_of_week: expense.frequency_day_of_week,
-    frequency_week_of_month: expense.frequency_week_of_month,
-    frequency_month_of_year: expense.frequency_month_of_year,
+    frequency_type: parseInt(expense.frequency_type),
+    frequency_type_variable: parseInt(expense.frequency_type_variable) || null,
+    frequency_day_of_month: parseInt(expense.frequency_day_of_month) || null,
+    frequency_day_of_week: parseInt(expense.frequency_day_of_week) || null,
+    frequency_week_of_month: parseInt(expense.frequency_week_of_month) || null,
+    frequency_month_of_year: parseInt(expense.frequency_month_of_year) || null,
     expense_begin_date: expense.expense_begin_date,
     expense_end_date: expense.expense_end_date,
     date_created: expense.date_created,
