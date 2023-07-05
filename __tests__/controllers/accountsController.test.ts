@@ -6,6 +6,7 @@ import { Account } from '../../types/types';
 // Mock request and response
 let mockRequest: any;
 let mockResponse: any;
+let consoleSpy: any;
 
 beforeAll(() => {
     // Create a spy on console.error before all tests
