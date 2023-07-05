@@ -3,13 +3,17 @@ import { Request, Response } from 'express';
 import { accounts, expenses } from '../../models/mockData.js';
 import { QueryResultRow } from 'pg';
 
-jest.mock('../../bree/jobs/scheduleCronJob.js', () => ({
-    default: jest.fn().mockReturnValue({ cronDate: '0 0 16 * *', uniqueId: '123' })
-}));
+// Mock the modules
+const mockScheduleCronJob = jest.fn().mockImplementation(() => Promise.resolve({ cronDate: '0 0 16 * *', uniqueId: '123' }));
+const mockDeleteCronJob = jest.fn().mockImplementation(() => Promise.resolve('123'));
 
-jest.mock('../../bree/jobs/deleteCronJob.js', () => ({
-    default: jest.fn().mockReturnValue('123')
-}));
+jest.mock('../../bree/jobs/scheduleCronJob.js', () => {
+    return mockScheduleCronJob;
+});
+
+jest.mock('../../bree/jobs/deleteCronJob.js', () => {
+    return mockDeleteCronJob;
+});
 
 // Mock request and response
 let mockRequest: any;
@@ -266,14 +270,7 @@ describe('POST /api/expenses', () => {
 
 describe('PUT /api/expenses/:id', () => {
     it('should respond with the updated expense', async () => {
-        const updatedExpense = [{
-            account_id: 1,
-            amount: 100,
-            title: 'Test Expense',
-            description: 'Test Description',
-            frequency_type: 2,
-            begin_date: '2021-01-01'
-        }];
+        const updatedExpense = expenses.filter(expense => expense.expense_id === 1);
 
         mockModule(updatedExpense);
 
