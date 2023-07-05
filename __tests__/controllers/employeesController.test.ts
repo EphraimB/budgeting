@@ -35,7 +35,12 @@ afterAll(() => {
     consoleSpy.mockRestore();
 });
 
-// Helper function to generate mock module
+/**
+ * 
+ * @param executeQueryValues - An array of values to return from executeQuery
+ * @param errorMessage - An error message to throw
+ * @returns - A mock module with the executeQuery and handleError functions
+ */
 const mockModule = (executeQueryValues: any[] | null, errorMessage?: string) => {
     let callCount: number = 0;
     jest.mock('../../utils/helperFunctions.js', () => ({
