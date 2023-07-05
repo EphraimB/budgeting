@@ -48,7 +48,7 @@ const mockModule = (executeQueryValues: any[] | null, errorMessage?: string) => 
             if (errorMessage && callCount === 0) {
                 throw new Error(errorMessage);
             }
-            const returnValue = executeQueryValues[callCount++];
+            const returnValue: number[] | undefined = executeQueryValues ? executeQueryValues[callCount++] : undefined;
             return Promise.resolve(returnValue);
         }),
         handleError: jest.fn((res: Response, message) => {
