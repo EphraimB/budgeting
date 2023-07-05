@@ -33,12 +33,12 @@ jest.mock('../../middleware/middleware', () => ({
     }
 }));
 
-jest.mock('../../generation/generateTransactions', () => ({
-    default: jest.fn().mockImplementation((req: Request, res: Response, next: NextFunction) => {
+jest.mock('../../generation/generateTransactions', () => {
+    return jest.fn().mockImplementation((req: Request, res: Response, next: NextFunction) => {
         req.transactions = [];
         next();
-    })
-}));
+    });
+});
 
 /**
  * 
@@ -58,16 +58,12 @@ const createApp = async (): Promise<Express> => {
 
 let app: Express;
 
+beforeAll(async () => {
+    // Create a new app for each test
+    app = await createApp();
+});
+
 describe('Testing / route', () => {
-    beforeEach(async () => {
-        // Create a new app for each test
-        app = await createApp();
-    });
-
-    afterEach(() => {
-        jest.restoreAllMocks();
-    });
-
     it('should respond with a 200 status and the correct data', async () => {
         const accountId: number = 1;
         const fromDate: string = '2023-01-01';
