@@ -19,7 +19,7 @@ const createApp = async (): Promise<Express> => {
 };
 
 beforeAll(() => {
-    jest.unstable_mockModule('../../controllers/payrollsController', () => ({
+    jest.mock('../../controllers/payrollsController', () => ({
         getPayrolls: (req: Request, res: Response, next: NextFunction) => res.json({ message: 'success' })
     }));
 });
@@ -42,6 +42,7 @@ describe('GET /', () => {
             .set('Accept', 'application/json')
             .expect('Content-Type', /json/);
 
+            console.log(response.body);
         expect(response.status).toBe(200);
         expect(response.body).toEqual({ message: 'success' });
     });
