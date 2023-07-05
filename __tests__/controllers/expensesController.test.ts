@@ -42,15 +42,15 @@ afterAll(() => {
 /**
  * 
  * @param executeQueryValue - The value to be returned by the executeQuery mock function
- * @param errorMessage - The error message to be passed to the handleError mock function
+ * @param [errorMessage] - The error message to be passed to the handleError mock function
  * @returns - A mock module with the executeQuery and handleError functions
  */
-const mockModule = (executeQueryValue: QueryResultRow[] | string, errorMessage?: string) => {
+const mockModule = (executeQueryValue: QueryResultRow | string, errorMessage?: string) => {
     const executeQuery = errorMessage
         ? jest.fn(() => Promise.reject(new Error(errorMessage)))
         : jest.fn(() => Promise.resolve(executeQueryValue));
 
-    jest.mock('../../utils/helperFunctions', () => ({
+    jest.mock('../../utils/helperFunctions.js', () => ({
         executeQuery,
         handleError: jest.fn((res: Response, message: string) => {
             res.status(400).json({ message });
@@ -227,7 +227,14 @@ describe('GET /api/expenses', () => {
 describe('POST /api/expenses', () => {
     it('should respond with the new expense', async () => {
         // Arrange
-        const newExpense = expenses.filter(expense => expense.expense_id === 1);
+        const newExpense = {
+            account_id: 1,
+            amount: 100,
+            title: 'Test Expense',
+            description: 'Test Description',
+            frequency_type: 2,
+            begin_date: '2021-01-01'
+        };
 
         mockModule(newExpense);
 
@@ -250,7 +257,7 @@ describe('POST /api/expenses', () => {
 
         const { createExpense } = await import('../../controllers/expensesController.js');
 
-        mockRequest.body = accounts.filter(account => account.account_id === 1);
+        mockRequest.body = expenses.filter(expense => expense.expense_id === 1);
 
         // Act
         await createExpense(mockRequest as Request, mockResponse);
@@ -266,7 +273,14 @@ describe('POST /api/expenses', () => {
 
 describe('PUT /api/expenses/:id', () => {
     it('should respond with the updated expense', async () => {
-        const updatedExpense = expenses.filter(expense => expense.expense_id === 1);
+        const updatedExpense = {
+            account_id: 1,
+            amount: 100,
+            title: 'Test Expense',
+            description: 'Test Description',
+            frequency_type: 2,
+            begin_date: '2021-01-01'
+        };
 
         mockModule(updatedExpense);
 

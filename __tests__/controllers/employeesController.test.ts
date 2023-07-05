@@ -38,7 +38,7 @@ afterAll(() => {
 /**
  * 
  * @param executeQueryValues - An array of values to return from executeQuery
- * @param errorMessage - An error message to throw
+ * @param [errorMessage] - An error message to throw
  * @returns - A mock module with the executeQuery and handleError functions
  */
 const mockModule = (executeQueryValues: any[] | null, errorMessage?: string) => {

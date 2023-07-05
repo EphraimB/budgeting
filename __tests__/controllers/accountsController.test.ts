@@ -34,7 +34,7 @@ afterAll(() => {
 /**
  * 
  * @param executeQueryValue - The value to be returned by the executeQuery mock function
- * @param errorMessage - The error message to be passed to the handleError mock function
+ * @param [errorMessage] - The error message to be passed to the handleError mock function
  * @returns - A mock module with the executeQuery and handleError functions
  */
 const mockModule = (executeQueryValue: QueryResultRow[] | string, errorMessage?: string) => {
