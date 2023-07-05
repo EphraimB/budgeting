@@ -8,5 +8,8 @@ export default async () => {
     transform: {
       '^.+\\.(t|j)s$': ['ts-jest', { tsconfig: './tsconfig.json', useESM: true, }],
     },
+    "moduleNameMapper": {
+      "^(\\.\\.?\\/.+)\\.js$": "$1",
+    },
   };
 };
