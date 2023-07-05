@@ -1,7 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import { transactionHistoryQueries, expenseQueries, loanQueries, payrollQueries, wishlistQueries, transferQueries, currentBalanceQueries } from '../models/queryData.js';
 import { handleError, executeQuery } from '../utils/helperFunctions.js';
-import { Transaction, Expense, Loan, Payroll } from '../types/types.js';
 
 /**
  * 
@@ -66,7 +65,11 @@ export const getLoansByAccount = async (request: Request, response: Response, ne
     try {
         const results = await executeQuery(loanQueries.getLoansMiddleware, [account_id, to_date]);
 
-        request.loans = results;
+        // Map over results array and convert amount to a float for each Loan object
+        request.loans = results.map(loan => ({
+            ...loan,
+            amount: parseFloat(loan.amount),
+        }));
 
         next();
     } catch (error) {
@@ -112,7 +115,11 @@ export const getWishlistsByAccount = async (request: Request, response: Response
     try {
         const results = await executeQuery(wishlistQueries.getWishlistsMiddleware, [account_id, to_date]);
 
-        request.wishlists = results;
+        // Map over results array and convert amount to a float for each Wishlist object
+        request.wishlists = results.map(wishlist => ({
+            ...wishlist,
+            amount: parseFloat(wishlist.amount),
+        }));
 
         next();
     } catch (error) {
@@ -133,7 +140,11 @@ export const getTransfersByAccount = async (request: Request, response: Response
     try {
         const results = await executeQuery(transferQueries.getTransfersMiddleware, [account_id, to_date]);
 
-        request.transfers = results;
+        // Map over results array and convert amount to a float for each Transfer object
+        request.transfers = results.map(transfer => ({
+            ...transfer,
+            amount: parseFloat(transfer.amount),
+        }));
 
         next();
     } catch (error) {
