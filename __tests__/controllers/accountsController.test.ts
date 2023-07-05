@@ -1,10 +1,11 @@
 import { jest } from '@jest/globals';
+import { Request, Response } from 'express';
 import { accounts } from '../../models/mockData';
 
 // Mock request and response
-let mockRequest;
-let mockResponse;
-let consoleSpy;
+let mockRequest: Partial<Request>;
+let mockResponse: Partial<Response> & { [key: string]: jest.Mock };
+let consoleSpy: jest.SpyInstance;
 
 beforeAll(() => {
     // Create a spy on console.error before all tests
@@ -30,7 +31,7 @@ afterAll(() => {
 });
 
 // Helper function to generate mock module
-const mockModule = (executeQueryValue, errorMessage) => {
+const mockModule = (executeQueryValue: string, errorMessage: string) => {
     jest.unstable_mockModule('../../utils/helperFunctions.js', () => ({
         executeQuery: errorMessage
             ? jest.fn().mockRejectedValue(new Error(errorMessage))
