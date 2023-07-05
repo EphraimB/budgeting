@@ -1,14 +1,16 @@
 import { jest } from '@jest/globals';
+import { Request, Response } from 'express';
 import { employees, payrollDates, payrollTaxes } from '../../models/mockData.js';
+import { QueryResultRow } from 'pg';
 
-jest.unstable_mockModule('../../bree/getPayrolls.js', () => ({
+jest.mock('../../bree/getPayrolls.js', () => ({
     getPayrolls: jest.fn()
 }));
 
 // Mock request and response
-let mockRequest;
-let mockResponse;
-let consoleSpy;
+let mockRequest: any;
+let mockResponse: any;
+let consoleSpy: any;
 
 beforeAll(() => {
     // Create a spy on console.error before all tests
@@ -34,9 +36,9 @@ afterAll(() => {
 });
 
 // Helper function to generate mock module
-const mockModule = (executeQueryValues, errorMessage) => {
-    let callCount = 0;
-    jest.unstable_mockModule('../../utils/helperFunctions.js', () => ({
+const mockModule = (executeQueryValues: any[] | null, errorMessage?: string) => {
+    let callCount: number = 0;
+    jest.mock('../../utils/helperFunctions.js', () => ({
         executeQuery: jest.fn().mockImplementation(() => {
             if (errorMessage && callCount === 0) {
                 throw new Error(errorMessage);
@@ -44,7 +46,7 @@ const mockModule = (executeQueryValues, errorMessage) => {
             const returnValue = executeQueryValues[callCount++];
             return Promise.resolve(returnValue);
         }),
-        handleError: jest.fn((res, message) => {
+        handleError: jest.fn((res: Response, message) => {
             res.status(400).json({ message });
         })
     }));
