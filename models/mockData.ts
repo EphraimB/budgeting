@@ -1,6 +1,6 @@
-import { Expense, Loan, Wishlist, Transfer } from "../types/types";
+import { Expense, Loan, Wishlist, Transfer, Account, Employee, Transaction } from "../types/types";
 
-export const employees = [
+export const employees: Employee[] = [
     {
         employee_id: 1,
         name: 'Test Employee',
@@ -12,7 +12,7 @@ export const employees = [
     }
 ];
 
-export const accounts = [
+export const accounts: Account[] = [
     {
         account_id: 1,
         account_name: 'Test Account',
@@ -31,11 +31,12 @@ export const accounts = [
     }
 ];
 
-export const transactions = [
+export const transactions: Transaction[] = [
     {
         transaction_id: 1,
         account_id: 1,
         transaction_amount: 1000,
+        transaction_title: 'Test Deposit',
         transaction_description: 'Test Deposit',
         date_created: '2020-01-01',
         date_modified: '2020-01-01'
@@ -44,6 +45,7 @@ export const transactions = [
         transaction_id: 2,
         account_id: 1,
         transaction_amount: 2000,
+        transaction_title: 'Test Deposit 2',
         transaction_description: 'Test Deposit 2',
         date_created: '2020-01-01',
         date_modified: '2020-01-01'
@@ -52,6 +54,7 @@ export const transactions = [
         transaction_id: 3,
         account_id: 1,
         transaction_amount: 1000,
+        transaction_title: 'Test Withdrawal',
         transaction_description: 'Test Withdrawal',
         date_created: '2020-01-01',
         date_modified: '2020-01-01'
@@ -60,6 +63,7 @@ export const transactions = [
         transaction_id: 4,
         account_id: 1,
         transaction_amount: 200,
+        transaction_title: 'Test Withdrawal 2',
         transaction_description: 'Test Withdrawal 2',
         date_created: '2020-01-01',
         date_modified: '2020-01-01'

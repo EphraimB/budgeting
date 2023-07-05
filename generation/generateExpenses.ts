@@ -1,4 +1,4 @@
-import { Expense } from '../types/types';
+import { Expense, GeneratedTransaction } from '../types/types';
 
 type GenerateDateFunction = (currentDate: Date, expense: Expense) => Date;
 
@@ -12,7 +12,7 @@ type GenerateDateFunction = (currentDate: Date, expense: Expense) => Date;
  * @param generateDateFn - The function to generate the next date
  * Generate expenses for a given expense
  */
-const generateExpenses = (transactions: any[], skippedTransactions: any[], expense: Expense, toDate: Date, fromDate: Date, generateDateFn: GenerateDateFunction) => {
+const generateExpenses = (transactions: GeneratedTransaction[], skippedTransactions: GeneratedTransaction[], expense: Expense, toDate: Date, fromDate: Date, generateDateFn: GenerateDateFunction) => {
     let expenseDate = new Date(expense.expense_begin_date);
 
     if (expense.frequency_month_of_year !== null && expense.frequency_month_of_year !== undefined) {
@@ -42,7 +42,7 @@ const generateExpenses = (transactions: any[], skippedTransactions: any[], expen
     }
 
     while (expenseDate <= toDate) {
-        const newTransaction = {
+        const newTransaction: GeneratedTransaction = {
             expense_id: expense.expense_id,
             title: expense.expense_title,
             description: expense.expense_description,
@@ -71,7 +71,7 @@ const generateExpenses = (transactions: any[], skippedTransactions: any[], expen
  * @param fromDate - The date to generate expenses from
  * Generate daily expenses for a given expense
  */
-export const generateDailyExpenses = (transactions: any[], skippedTransactions: any[], expense: Expense, toDate: Date, fromDate: Date): void => {
+export const generateDailyExpenses = (transactions: GeneratedTransaction[], skippedTransactions: GeneratedTransaction[], expense: Expense, toDate: Date, fromDate: Date): void => {
     const generateDateFn = (currentDate: Date, expense: Expense): Date => {
         const newDate = currentDate;
         newDate.setDate(newDate.getDate() + (expense.frequency_type_variable || 1));
@@ -90,7 +90,7 @@ export const generateDailyExpenses = (transactions: any[], skippedTransactions: 
  * @param fromDate - The date to generate expenses from
  * Generate monthly expenses for a given expense
  */
-export const generateMonthlyExpenses = (transactions: any[], skippedTransactions: any[], expense: Expense, toDate: Date, fromDate: Date): void => {
+export const generateMonthlyExpenses = (transactions: GeneratedTransaction[], skippedTransactions: GeneratedTransaction[], expense: Expense, toDate: Date, fromDate: Date): void => {
     let monthsIncremented: number = 0;
     const generateDateFn = (currentDate: Date, expense: Expense): Date => {
         const expenseDate: Date = new Date(expense.expense_begin_date);
@@ -137,7 +137,7 @@ export const generateMonthlyExpenses = (transactions: any[], skippedTransactions
  * @param fromDate - The date to generate expenses from
  * Generate weekly expenses for a given expense
  */
-export const generateWeeklyExpenses = (transactions: any[], skippedTransactions: any[], expense: Expense, toDate: Date, fromDate: Date): void => {
+export const generateWeeklyExpenses = (transactions: GeneratedTransaction[], skippedTransactions: GeneratedTransaction[], expense: Expense, toDate: Date, fromDate: Date): void => {
     const expenseDate: Date = new Date(expense.expense_begin_date);
 
     if (expense.frequency_day_of_week !== null && expense.frequency_day_of_week !== undefined) {
@@ -165,7 +165,7 @@ export const generateWeeklyExpenses = (transactions: any[], skippedTransactions:
  * @param fromDate - The date to generate expenses from
  * Generate yearly expenses for a given expense
  */
-export const generateYearlyExpenses = (transactions: any[], skippedTransactions: any[], expense: Expense, toDate: Date, fromDate: Date): void => {
+export const generateYearlyExpenses = (transactions: GeneratedTransaction[], skippedTransactions: GeneratedTransaction[], expense: Expense, toDate: Date, fromDate: Date): void => {
     let yearsIncremented: number = 0;
     const generateDateFn = (currentDate: Date, expense: Expense): Date => {
         const newDate: Date = new Date(expense.expense_begin_date);

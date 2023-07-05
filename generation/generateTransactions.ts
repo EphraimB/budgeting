@@ -5,6 +5,7 @@ import generatePayrollTransactions from './generatePayrolls.js';
 import { generateDailyTransfers, generateWeeklyTransfers, generateMonthlyTransfers, generateYearlyTransfers } from './generateTransfers.js';
 import generateWishlists from './generateWishlists.js';
 import calculateBalances from './calculateBalances.js';
+import { GeneratedTransaction, Transaction } from '../types/types.js';
 
 /**
  * 
@@ -18,16 +19,16 @@ const generateTransactions = (request: Request, response: Response, next: NextFu
     const toDate: Date = new Date(request.query.to_date as string);
     const currentBalance: number = request.currentBalance;
     const account_id: number = parseInt(request.query.account_id as string);
-    const transactions: any[] = [];
-    const skippedTransactions: any[] = [];
+    const transactions: GeneratedTransaction[] = [];
+    const skippedTransactions: GeneratedTransaction[] = [];
 
     transactions.push(
-        request.transaction.map(transaction => ({
+        ...request.transaction.map((transaction: Transaction) => ({
             transaction_id: transaction.transaction_id,
             title: transaction.transaction_title,
             description: transaction.transaction_description,
-            date: transaction.date_created,
-            date_modified: transaction.date_modified,
+            date: new Date(transaction.date_created),
+            date_modified: new Date(transaction.date_modified),
             amount: transaction.transaction_amount
         }))
     );

@@ -1,13 +1,44 @@
-interface Transaction {
+export interface GeneratedTransaction {
+    expense_id?: number;
+    loan_id?: number;
+    transfer_id?: number;
+    transaction_id?: number;
+    title: string;
+    description: string;
+    amount: number;
+    date: Date;
+    date_modified?: Date;
+    balance?: number;
+}
+
+export interface Transaction {
+    account_id: number;
     transaction_id: number;
     transaction_title: string;
     transaction_description: string;
-    date: Date;
-    date_created: Date;
-    date_modified: Date;
+    date_created: string;
+    date_modified: string;
     transaction_amount: number;
-    amount: number;
     balance?: number;
+}
+
+export interface Account {
+    account_id: number;
+    account_name: string;
+    account_type: number;
+    account_balance: number;
+    date_created: string;
+    date_modified: string;
+}
+
+export interface Employee {
+    employee_id: number;
+    name: string;
+    hourly_rate: number;
+    regular_hours: number;
+    vacation_days: number;
+    sick_days: number;
+    work_schedule: string;
 }
 
 export interface Expense {
