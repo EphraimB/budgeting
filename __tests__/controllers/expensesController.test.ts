@@ -227,14 +227,7 @@ describe('GET /api/expenses', () => {
 describe('POST /api/expenses', () => {
     it('should respond with the new expense', async () => {
         // Arrange
-        const newExpense = [{
-            account_id: 1,
-            amount: 100,
-            title: 'Test Expense',
-            description: 'Test Description',
-            frequency_type: 2,
-            begin_date: '2021-01-01'
-        }];
+        const newExpense = expenses.filter(expense => expense.expense_id === 1);
 
         mockModule(newExpense);
 

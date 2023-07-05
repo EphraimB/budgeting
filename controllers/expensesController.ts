@@ -143,7 +143,7 @@ export const createExpense = async (request: Request, response: Response): Promi
 
     try {
         const { cronDate, uniqueId } = await scheduleCronJob(cronParams);
-        const cronId = (await executeQuery(cronJobQueries.createCronJob, [
+        const cronId: number = (await executeQuery(cronJobQueries.createCronJob, [
             uniqueId,
             cronDate
         ]))[0].cron_job_id;
