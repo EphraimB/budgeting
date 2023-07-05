@@ -1,7 +1,7 @@
 import { jest } from '@jest/globals';
 import { Request, Response } from 'express';
 import { accounts } from '../../models/mockData';
-import { Account } from '../../types/types';
+import { QueryResultRow } from 'pg';
 
 // Mock request and response
 let mockRequest: any;
@@ -14,6 +14,7 @@ beforeAll(() => {
 });
 
 beforeEach(() => {
+    mockRequest = {};
     mockResponse = {
         status: jest.fn().mockReturnThis(),
         json: jest.fn(),
@@ -30,15 +31,16 @@ afterAll(() => {
     consoleSpy.mockRestore();
 });
 
-// Helper function to generate mock module
-const mockModule = (executeQueryValue: Account[], errorMessage?: string) => {
-    jest.unstable_mockModule('../../utils/helperFunctions.js', () => ({
-        executeQuery: errorMessage
-            ? jest.fn().mockRejectedValue(new Error(errorMessage))
-            : jest.fn().mockResolvedValue(executeQueryValue),
+const mockModule = (executeQueryValue: QueryResultRow[], errorMessage?: string) => {
+    const executeQuery = errorMessage
+        ? jest.fn(() => Promise.reject(new Error(errorMessage)))
+        : jest.fn(() => Promise.resolve(executeQueryValue));
+
+    jest.mock('../../utils/helperFunctions', () => ({
+        executeQuery,
         handleError: jest.fn((res: Response, message: string) => {
             res.status(400).json({ message });
-        })
+        }),
     }));
 };
 
