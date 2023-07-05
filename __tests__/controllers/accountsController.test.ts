@@ -1,11 +1,11 @@
 import { jest } from '@jest/globals';
 import { Request, Response } from 'express';
 import { accounts } from '../../models/mockData';
+import { Account } from '../../types/types';
 
 // Mock request and response
-let mockRequest: Partial<Request>;
-let mockResponse: Partial<Response> & { [key: string]: jest.Mock };
-let consoleSpy: jest.SpyInstance;
+let mockRequest: any;
+let mockResponse: any;
 
 beforeAll(() => {
     // Create a spy on console.error before all tests
@@ -13,7 +13,6 @@ beforeAll(() => {
 });
 
 beforeEach(() => {
-    mockRequest = {};
     mockResponse = {
         status: jest.fn().mockReturnThis(),
         json: jest.fn(),
@@ -31,12 +30,12 @@ afterAll(() => {
 });
 
 // Helper function to generate mock module
-const mockModule = (executeQueryValue: string, errorMessage: string) => {
+const mockModule = (executeQueryValue: Account[], errorMessage?: string) => {
     jest.unstable_mockModule('../../utils/helperFunctions.js', () => ({
         executeQuery: errorMessage
             ? jest.fn().mockRejectedValue(new Error(errorMessage))
             : jest.fn().mockResolvedValue(executeQueryValue),
-        handleError: jest.fn((res, message) => {
+        handleError: jest.fn((res: Response, message: string) => {
             res.status(400).json({ message });
         })
     }));
@@ -52,7 +51,7 @@ describe('GET /api/accounts', () => {
         mockRequest.query = { id: null };
 
         // Call the function with the mock request and response
-        await getAccounts(mockRequest, mockResponse);
+        await getAccounts(mockRequest as Request, mockResponse);
 
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(200);
@@ -70,7 +69,7 @@ describe('GET /api/accounts', () => {
         mockRequest.query = { id: null };
 
         // Act
-        await getAccounts(mockRequest, mockResponse);
+        await getAccounts(mockRequest as Request, mockResponse);
 
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(400);
@@ -89,7 +88,7 @@ describe('GET /api/accounts', () => {
         mockRequest.query = { id: 1 };
 
         // Call the function with the mock request and response
-        await getAccounts(mockRequest, mockResponse);
+        await getAccounts(mockRequest as Request, mockResponse);
 
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(200);
@@ -107,7 +106,7 @@ describe('GET /api/accounts', () => {
         mockRequest.query = { id: 1 };
 
         // Act
-        await getAccounts(mockRequest, mockResponse);
+        await getAccounts(mockRequest as Request, mockResponse);
 
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(400);
@@ -126,7 +125,7 @@ describe('GET /api/accounts', () => {
         mockRequest.query = { id: 3 };
 
         // Act
-        await getAccounts(mockRequest, mockResponse);
+        await getAccounts(mockRequest as Request, mockResponse);
 
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(404);
@@ -144,7 +143,7 @@ describe('POST /api/accounts', () => {
 
         mockRequest.body = newAccount;
 
-        await createAccount(mockRequest, mockResponse);
+        await createAccount(mockRequest as Request, mockResponse);
 
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(201);
@@ -162,7 +161,7 @@ describe('POST /api/accounts', () => {
         mockRequest.body = accounts.filter(account => account.account_id === 1);
 
         // Act
-        await createAccount(mockRequest, mockResponse);
+        await createAccount(mockRequest as Request, mockResponse);
 
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(400);
@@ -184,7 +183,7 @@ describe('PUT /api/accounts/:id', () => {
         mockRequest.params = { id: 1 };
         mockRequest.body = updateAccount;
 
-        await updateAccount(mockRequest, mockResponse);
+        await updateAccount(mockRequest as Request, mockResponse);
 
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(200);
@@ -203,7 +202,7 @@ describe('PUT /api/accounts/:id', () => {
         mockRequest.body = accounts.filter(account => account.account_id === 1);
 
         // Act
-        await updateAccount(mockRequest, mockResponse);
+        await updateAccount(mockRequest as Request, mockResponse);
 
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(400);
@@ -223,7 +222,7 @@ describe('PUT /api/accounts/:id', () => {
         mockRequest.body = accounts.filter(account => account.account_id === 1);
 
         // Act
-        await updateAccount(mockRequest, mockResponse);
+        await updateAccount(mockRequest as Request, mockResponse);
 
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(404);
@@ -240,7 +239,7 @@ describe('DELETE /api/accounts/:id', () => {
 
         mockRequest.params = { id: 1 };
 
-        await deleteAccount(mockRequest, mockResponse);
+        await deleteAccount(mockRequest as Request, mockResponse);
 
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(200);
@@ -258,7 +257,7 @@ describe('DELETE /api/accounts/:id', () => {
         mockRequest.params = { id: 1 };
 
         // Act
-        await deleteAccount(mockRequest, mockResponse);
+        await deleteAccount(mockRequest as Request, mockResponse);
 
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(400);
@@ -277,7 +276,7 @@ describe('DELETE /api/accounts/:id', () => {
         mockRequest.params = { id: 1 };
 
         // Act
-        await deleteAccount(mockRequest, mockResponse);
+        await deleteAccount(mockRequest as Request, mockResponse);
 
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(404);
