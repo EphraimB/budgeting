@@ -2,6 +2,7 @@ export interface GeneratedTransaction {
     expense_id?: number;
     loan_id?: number;
     transfer_id?: number;
+    wishlist_id?: number;
     transaction_id?: number;
     title: string;
     description: string;
