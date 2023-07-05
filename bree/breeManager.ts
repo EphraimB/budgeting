@@ -3,6 +3,7 @@ import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { getJobs } from './getJobs.js';
+import { Job } from 'bree';
 
 const __dirname = fileURLToPath(new URL('.', import.meta.url));
 
@@ -26,7 +27,7 @@ export const initializeBree = async (cronjobsDir?: string) => {
         });
 
         const jobs = await getJobs();
-        breeInstance.config.jobs = jobs;
+        breeInstance.config.jobs = jobs as Job[];
         console.log('jobs', jobs);
         await breeInstance.start();
     } catch (error) {
