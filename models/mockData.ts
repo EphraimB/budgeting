@@ -1,3 +1,5 @@
+import { Expense, Loan, Wishlist, Transfer } from "../types/types";
+
 export const employees = [
     {
         employee_id: 1,
@@ -64,7 +66,7 @@ export const transactions = [
     }
 ];
 
-export const expenses = [
+export const expenses: Expense[] = [
     {
         expense_id: 1,
         account_id: 1,
@@ -97,7 +99,7 @@ export const expenses = [
     }
 ];
 
-export const loans = [
+export const loans: Loan[] = [
     {
         loan_id: 1,
         account_id: 1,
@@ -165,7 +167,7 @@ export const payrollTaxes = [
     }
 ];
 
-export const wishlists = [
+export const wishlists: Wishlist[] = [
     {
         wishlist_id: 1,
         account_id: 1,
@@ -180,7 +182,7 @@ export const wishlists = [
     }
 ];
 
-export const transfers = [
+export const transfers: Transfer[] = [
     {
         transfer_id: 1,
         source_account_id: 1,
@@ -190,6 +192,7 @@ export const transfers = [
         transfer_description: 'Test Transfer to test the transfer route',
         transfer_begin_date: '2020-01-01',
         transfer_end_date: null,
+        frequency_type: 2,
         date_created: '2020-01-01',
         date_modified: '2020-01-01'
     }

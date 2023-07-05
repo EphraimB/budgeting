@@ -1,5 +1,5 @@
 import { jest } from '@jest/globals';
-import { accounts } from '../../models/mockData.js';
+import { accounts } from '../../models/mockData';
 
 // Mock request and response
 let mockRequest;

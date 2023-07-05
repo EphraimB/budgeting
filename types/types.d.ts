@@ -17,12 +17,13 @@ export interface Expense {
     expense_title: string;
     expense_description: string;
     expense_begin_date: string;
+    expense_end_date?: string;
     frequency_type: number;
-    frequency_type_variable: number;
-    frequency_day_of_month: number;
-    frequency_day_of_week: number;
-    frequency_week_of_month: number;
-    frequency_month_of_year: number;
+    frequency_type_variable?: number;
+    frequency_day_of_month?: number;
+    frequency_day_of_week?: number;
+    frequency_week_of_month?: number;
+    frequency_month_of_year?: number;
     date_created: string;
     date_modified: string;
 }
@@ -37,13 +38,13 @@ export interface Loan {
     loan_title: string;
     loan_description: string;
     frequency_type: number;
-    frequency_type_variable: number;
-    frequency_day_of_month: number;
-    frequency_day_of_week: number;
-    frequency_week_of_month: number;
-    frequency_month_of_year: number;
+    frequency_type_variable?: number;
+    frequency_day_of_month?: number;
+    frequency_day_of_week?: number;
+    frequency_week_of_month?: number;
+    frequency_month_of_year?: number;
     loan_begin_date: string;
-    loan_end_date: string;
+    loan_end_date?: string;
     date_created: string;
     date_modified: string;
 }
@@ -59,7 +60,9 @@ export interface Wishlist {
     wishlist_amount: number;
     wishlist_title: string;
     wishlist_description: string;
-    wishlist_date_available: string;
+    wishlist_date_available?: string;
+    wishlist_url_link: string;
+    wishlist_priority: number;
     date_created: string;
     date_modified: string;
 }
@@ -72,12 +75,13 @@ export interface Transfer {
     transfer_title: string;
     transfer_description: string;
     transfer_begin_date: string;
+    transfer_end_date?: string;
     frequency_type: number;
-    frequency_type_variable: number;
-    frequency_day_of_month: number;
-    frequency_day_of_week: number;
-    frequency_week_of_month: number;
-    frequency_month_of_year: number;
+    frequency_type_variable?: number;
+    frequency_day_of_month?: number;
+    frequency_day_of_week?: number;
+    frequency_week_of_month?: number;
+    frequency_month_of_year?: number;
     date_created: string;
     date_modified: string;
 }
