@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 import { transactionHistoryQueries, expenseQueries, loanQueries, payrollQueries, wishlistQueries, transferQueries, currentBalanceQueries } from '../models/queryData.js';
 import { handleError, executeQuery } from '../utils/helperFunctions.js';
+import { Transaction, Expense, Loan, Payroll } from '../types/types.js';
 
 /**
  * 
@@ -78,7 +79,11 @@ export const getPayrollsMiddleware = async (request: Request, response: Response
     try {
         const results = await executeQuery(payrollQueries.getPayrollsMiddleware, [account_id, to_date]);
 
-        request.payrolls = results;
+        // Map over results array and convert net_pay to a float for each Payroll object
+        request.payrolls = results.map(payroll => ({
+            ...payroll,
+            net_pay: parseFloat(payroll.net_pay),
+        }));
 
         next();
     } catch (error) {
