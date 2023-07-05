@@ -2,74 +2,72 @@ import { jest } from '@jest/globals';
 import request from 'supertest';
 import express, { Express, Request, Response, NextFunction, Router } from 'express';
 
+jest.mock('../../middleware/middleware', () => ({
+    getCurrentBalance: (req: Request, res: Response, next: NextFunction) => {
+        req.currentBalance = 100;
+        next();
+    },
+    getTransactionsByAccount: (req: Request, res: Response, next: NextFunction) => {
+        req.transactions = [];
+        next();
+    },
+    getExpensesByAccount: (req: Request, res: Response, next: NextFunction) => {
+        req.expenses = [];
+        next();
+    },
+    getLoansByAccount: (req: Request, res: Response, next: NextFunction) => {
+        req.loans = [];
+        next();
+    },
+    getPayrollsMiddleware: (req: Request, res: Response, next: NextFunction) => {
+        req.payrolls = [];
+        next();
+    },
+    getTransfersByAccount: (req: Request, res: Response, next: NextFunction) => {
+        req.transfers = [];
+        next();
+    },
+    getWishlistsByAccount: (req: Request, res: Response, next: NextFunction) => {
+        req.wishlists = [];
+        next();
+    }
+}));
+
+jest.mock('../../generation/generateTransactions', () => ({
+    default: jest.fn().mockImplementation((req: Request, res: Response, next: NextFunction) => {
+        req.transactions = [];
+        next();
+    })
+}));
+
 /**
  * 
  * @returns {Promise<Express>} A promise that resolves to an Express app
  */
 const createApp = async (): Promise<Express> => {
-    const app = express();
+    const app: Express = express();
     app.use(express.json());
 
     // Import the module that uses the mock
     const routerModule = await import('../../routes/transactionsRouter');
-    const transfersRouter = routerModule.default;
-    app.use('/', transfersRouter);
+    const transactionsRouter: Router = routerModule.default;
+    app.use('/', transactionsRouter);
 
     return app;
 };
 
-beforeAll(() => {
-    jest.mock('../../middleware/middleware', () => ({
-        getCurrentBalance: (req: Request, res: Response, next: NextFunction) => {
-            req.currentBalance = 100;
-            next();
-        },
-        getTransactionsByAccount: (req: Request, res: Response, next: NextFunction) => {
-            req.transactions = [];
-            next();
-        },
-        getExpensesByAccount: (req: Request, res: Response, next: NextFunction) => {
-            req.expenses = [];
-            next();
-        },
-        getLoansByAccount: (req: Request, res: Response, next: NextFunction) => {
-            req.loans = [];
-            next();
-        },
-        getPayrollsMiddleware: (req: Request, res: Response, next: NextFunction) => {
-            req.payrolls = [];
-            next();
-        },
-        getTransfersByAccount: (req: Request, res: Response, next: NextFunction) => {
-            req.transfers = [];
-            next();
-        },
-        getWishlistsByAccount: (req: Request, res: Response, next: NextFunction) => {
-            req.wishlists = [];
-            next();
-        }
-    }));
-
-    jest.mock('../../generation/generateTransactions', () => ({
-        default: jest.fn().mockImplementation((req: Request, res: Response, next: NextFunction) => {
-            req.transactions = [];
-            next();
-        })
-    }));
-});
-
-afterAll(() => {
-    jest.restoreAllMocks();
-});
-
 let app: Express;
 
-beforeEach(async () => {
-    // Create a new app for each test
-    app = await createApp();
-});
-
 describe('Testing / route', () => {
+    beforeEach(async () => {
+        // Create a new app for each test
+        app = await createApp();
+    });
+
+    afterEach(() => {
+        jest.restoreAllMocks();
+    });
+
     it('should respond with a 200 status and the correct data', async () => {
         const accountId: number = 1;
         const fromDate: string = '2023-01-01';

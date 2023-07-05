@@ -1,18 +1,18 @@
 import { jest } from '@jest/globals';
 import request from 'supertest';
-import express, { Express, Request, Response, NextFunction } from 'express';
+import express, { Express, Request, Response, NextFunction, Router } from 'express';
 
 /**
  * 
  * @returns {Promise<Express>} A promise that resolves to an Express app
  */
 const createApp = async (): Promise<Express> => {
-    const app = express();
+    const app: Express = express();
     app.use(express.json());
 
     // Import the module that uses the mock
     const routerModule = await import('../../routes/transfersRouter');
-    const transfersRouter = routerModule.default;
+    const transfersRouter: Router = routerModule.default;
     app.use('/', transfersRouter);
 
     return app;
