@@ -253,56 +253,38 @@ describe('getTransfersByAccount', () => {
     });
 });
 
-// describe('getCurrentBalance', () => {
-//     const mockRequest = () => {
-//         const req = {};
-//         req.query = {
-//             account_id: '1',
-//             from_date: '2023-06-01'
-//         };
-//         req.currentBalance = jest.fn();
-//         return req;
-//     };
+describe('getCurrentBalance', () => {
 
-//     afterEach(() => {
-//         jest.resetModules();
-//     });
+    it('gets current balance for a given account and date', async () => {
+        const mockCurrentBalance: any[] = [
+            { id: 1, account_id: 1, account_balance: 100, date: '2023-06-01' }
+        ];
 
-//     it('gets current balance for a given account and date', async () => {
-//         const mockCurrentBalance = [
-//             { id: 1, account_id: 1, account_balance: 100, date: '2023-06-01' }
-//         ];
+        mockModule(mockCurrentBalance);
 
-//         jest.unstable_mockModule('../../utils/helperFunctions', () => ({
-//             executeQuery: jest.fn().mockResolvedValueOnce(mockCurrentBalance),
-//             handleError: jest.fn()
-//         }));
+        const { getCurrentBalance } = await import('../../middleware/middleware.js');
 
-//         const { getCurrentBalance } = await import('../../middleware/middleware');
+        mockRequest.query = { account_id: '1', from_date: '2023-06-01' };
 
-//         const req = mockRequest();
-//         const res = mockResponse();
+        await getCurrentBalance(mockRequest, mockResponse, mockNext);
 
-//         await getCurrentBalance(req, res, mockNext);
+        expect(mockRequest.currentBalance).toEqual(100);
+        expect(mockNext).toHaveBeenCalled();
+    });
 
-//         expect(req.currentBalance).toEqual(100);
-//         expect(mockNext).toHaveBeenCalled();
-//     });
+    it('handles error if there is one', async () => {
+        // Arrange
+        const errorMessage = 'Fake error';
+        const error = new Error(errorMessage);
+        mockModule(null, errorMessage);
 
-//     it('handles error if there is one', async () => {
-//         jest.unstable_mockModule('../../utils/helperFunctions', () => ({
-//             executeQuery: jest.fn().mockRejectedValueOnce(new Error('fake error')),
-//             handleError: jest.fn().mockImplementation((response, message) => response.status(400).json({ message }))
-//         }));
+        const { getCurrentBalance } = await import('../../middleware/middleware.js');
 
-//         const { getCurrentBalance } = await import('../../middleware/middleware');
+        mockRequest.query = { account_id: '1', from_date: '2023-06-01' };
 
-//         const req = mockRequest();
-//         const res = mockResponse();
+        await getCurrentBalance(mockRequest, mockResponse, mockNext);
 
-//         await getCurrentBalance(req, res, mockNext);
-
-//         expect(res.status).toHaveBeenCalledWith(400);
-//         expect(res.json).toHaveBeenCalledWith({ message: 'Error getting current balance' });
-//     });
-// });
+        expect(mockResponse.status).toHaveBeenCalledWith(400);
+        expect(mockResponse.json).toHaveBeenCalledWith({ message: 'Error getting current balance' });
+    });
+});
