@@ -113,10 +113,13 @@ export const loans: Loan[] = [
         loan_title: 'Test Loan',
         loan_description: 'Test Loan to test the loan route',
         frequency_type: 2,
+        frequency_type_variable: null,
+        frequency_month_of_year: null,
         frequency_day_of_month: null,
         frequency_day_of_week: null,
         frequency_week_of_month: null,
         loan_begin_date: '2020-01-01',
+        loan_end_date: null,
         date_created: '2020-01-01',
         date_modified: '2020-01-01'
     }

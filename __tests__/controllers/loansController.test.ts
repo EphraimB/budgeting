@@ -72,7 +72,7 @@ describe('GET /api/loans', () => {
         const { getLoans } = await import('../../controllers/loansController.js');
 
         // Call the function with the mock request and response
-        await getLoans(mockRequest, mockResponse);
+        await getLoans(mockRequest as Request, mockResponse);
 
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(200);
@@ -90,7 +90,7 @@ describe('GET /api/loans', () => {
         const { getLoans } = await import('../../controllers/loansController.js');
 
         // Call the function with the mock request and response
-        await getLoans(mockRequest, mockResponse);
+        await getLoans(mockRequest as Request, mockResponse);
 
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(400);
@@ -109,7 +109,7 @@ describe('GET /api/loans', () => {
         const { getLoans } = await import('../../controllers/loansController.js');
 
         // Call the function with the mock request and response
-        await getLoans(mockRequest, mockResponse);
+        await getLoans(mockRequest as Request, mockResponse);
 
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(200);
@@ -127,7 +127,7 @@ describe('GET /api/loans', () => {
         const { getLoans } = await import('../../controllers/loansController.js');
 
         // Call the function with the mock request and response
-        await getLoans(mockRequest, mockResponse);
+        await getLoans(mockRequest as Request, mockResponse);
 
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(400);
@@ -146,7 +146,7 @@ describe('GET /api/loans', () => {
         const { getLoans } = await import('../../controllers/loansController.js');
 
         // Call the function with the mock request and response
-        await getLoans(mockRequest, mockResponse);
+        await getLoans(mockRequest as Request, mockResponse);
 
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(200);
@@ -164,7 +164,7 @@ describe('GET /api/loans', () => {
         const { getLoans } = await import('../../controllers/loansController.js');
 
         // Call the function with the mock request and response
-        await getLoans(mockRequest, mockResponse);
+        await getLoans(mockRequest as Request, mockResponse);
 
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(400);
@@ -183,7 +183,7 @@ describe('GET /api/loans', () => {
         const { getLoans } = await import('../../controllers/loansController.js');
 
         // Call the function with the mock request and response
-        await getLoans(mockRequest, mockResponse);
+        await getLoans(mockRequest as Request, mockResponse);
 
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(200);
@@ -201,7 +201,7 @@ describe('GET /api/loans', () => {
         const { getLoans } = await import('../../controllers/loansController.js');
 
         // Call the function with the mock request and response
-        await getLoans(mockRequest, mockResponse);
+        await getLoans(mockRequest as Request, mockResponse);
 
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(400);
@@ -220,7 +220,7 @@ describe('GET /api/loans', () => {
         mockRequest.query = { id: 3 };
 
         // Act
-        await getLoans(mockRequest, mockResponse);
+        await getLoans(mockRequest as Request, mockResponse);
 
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(404);
@@ -238,7 +238,7 @@ describe('POST /api/loans', () => {
 
         mockRequest.body = newLoan;
 
-        await createLoan(mockRequest, mockResponse);
+        await createLoan(mockRequest as Request, mockResponse);
 
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(201);
@@ -254,7 +254,7 @@ describe('POST /api/loans', () => {
 
         mockRequest.body = loans.filter(loan => loan.loan_id === 1);
 
-        await createLoan(mockRequest, mockResponse);
+        await createLoan(mockRequest as Request, mockResponse);
 
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(400);
@@ -276,7 +276,7 @@ describe('PUT /api/loans/:id', () => {
         mockRequest.params = { id: 1 };
         mockRequest.body = updatedLoan;
 
-        await updateLoan(mockRequest, mockResponse);
+        await updateLoan(mockRequest as Request, mockResponse);
 
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(200);
@@ -293,7 +293,7 @@ describe('PUT /api/loans/:id', () => {
         mockRequest.params = { id: 1 };
         mockRequest.body = loans.filter(loan => loan.loan_id === 1);
 
-        await updateLoan(mockRequest, mockResponse);
+        await updateLoan(mockRequest as Request, mockResponse);
 
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(400);
@@ -313,7 +313,7 @@ describe('PUT /api/loans/:id', () => {
         mockRequest.body = loans.filter(loan => loan.loan_id === 1);
 
         // Act
-        await updateLoan(mockRequest, mockResponse);
+        await updateLoan(mockRequest as Request, mockResponse);
 
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(404);
@@ -330,7 +330,7 @@ describe('DELETE /api/loans/:id', () => {
 
         mockRequest.params = { id: 1 };
 
-        await deleteLoan(mockRequest, mockResponse);
+        await deleteLoan(mockRequest as Request, mockResponse);
 
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(200);
@@ -347,7 +347,7 @@ describe('DELETE /api/loans/:id', () => {
 
         mockRequest.params = { id: 1 };
 
-        await deleteLoan(mockRequest, mockResponse);
+        await deleteLoan(mockRequest as Request, mockResponse);
 
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(400);
@@ -366,7 +366,7 @@ describe('DELETE /api/loans/:id', () => {
         mockRequest.params = { id: 3 };
 
         // Act
-        await deleteLoan(mockRequest, mockResponse);
+        await deleteLoan(mockRequest as Request, mockResponse);
 
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(404);
