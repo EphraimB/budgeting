@@ -1,18 +1,24 @@
 import { jest } from '@jest/globals';
+import { Request, Response } from 'express';
 import { transfers } from '../../models/mockData.js';
+import { QueryResultRow } from 'pg';
 
-jest.unstable_mockModule('../../bree/jobs/scheduleCronJob.js', () => ({
-    default: jest.fn().mockReturnValue({ cronDate: '0 0 16 * *', uniqueId: '123' })
-}));
+// Mock the modules
+const mockScheduleCronJob = jest.fn().mockImplementation(() => Promise.resolve({ cronDate: '0 0 16 * *', uniqueId: '123' }));
+const mockDeleteCronJob = jest.fn().mockImplementation(() => Promise.resolve('123'));
 
-jest.unstable_mockModule('../../bree/jobs/deleteCronJob.js', () => ({
-    default: jest.fn().mockReturnValue('123')
-}));
+jest.mock('../../bree/jobs/scheduleCronJob.js', () => {
+    return mockScheduleCronJob;
+});
+
+jest.mock('../../bree/jobs/deleteCronJob.js', () => {
+    return mockDeleteCronJob;
+});
 
 // Mock request and response
-let mockRequest;
-let mockResponse;
-let consoleSpy;
+let mockRequest: any;
+let mockResponse: any;
+let consoleSpy: any;
 
 beforeAll(() => {
     // Create a spy on console.error before all tests
@@ -37,15 +43,22 @@ afterAll(() => {
     consoleSpy.mockRestore();
 });
 
-// Helper function to generate mock module
-const mockModule = (executeQueryValue, errorMessage) => {
-    jest.unstable_mockModule('../../utils/helperFunctions.js', () => ({
-        executeQuery: errorMessage
-            ? jest.fn().mockRejectedValue(new Error(errorMessage))
-            : jest.fn().mockResolvedValue(executeQueryValue),
-        handleError: jest.fn((res, message) => {
+/**
+ * 
+ * @param executeQueryValue - The value to be returned by the executeQuery mock function
+ * @param [errorMessage] - The error message to be passed to the handleError mock function
+ * @returns - A mock module with the executeQuery and handleError functions
+ */
+const mockModule = (executeQueryValue: QueryResultRow[] | string, errorMessage?: string) => {
+    const executeQuery = errorMessage
+        ? jest.fn(() => Promise.reject(new Error(errorMessage)))
+        : jest.fn(() => Promise.resolve(executeQueryValue));
+
+    jest.mock('../../utils/helperFunctions.js', () => ({
+        executeQuery,
+        handleError: jest.fn((res: Response, message: string) => {
             res.status(400).json({ message });
-        })
+        }),
     }));
 };
 
@@ -59,7 +72,7 @@ describe('GET /api/transfers', () => {
         const { getTransfers } = await import('../../controllers/transfersController.js');
 
         // Call the function with the mock request and response
-        await getTransfers(mockRequest, mockResponse);
+        await getTransfers(mockRequest as Request, mockResponse);
 
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(200);
@@ -77,7 +90,7 @@ describe('GET /api/transfers', () => {
         const { getTransfers } = await import('../../controllers/transfersController.js');
 
         // Call the function with the mock request and response
-        await getTransfers(mockRequest, mockResponse);
+        await getTransfers(mockRequest as Request, mockResponse);
 
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(400);
@@ -96,7 +109,7 @@ describe('GET /api/transfers', () => {
         const { getTransfers } = await import('../../controllers/transfersController.js');
 
         // Call the function with the mock request and response
-        await getTransfers(mockRequest, mockResponse);
+        await getTransfers(mockRequest as Request, mockResponse);
 
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(200);
@@ -114,7 +127,7 @@ describe('GET /api/transfers', () => {
         const { getTransfers } = await import('../../controllers/transfersController.js');
 
         // Call the function with the mock request and response
-        await getTransfers(mockRequest, mockResponse);
+        await getTransfers(mockRequest as Request, mockResponse);
 
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(400);
@@ -133,7 +146,7 @@ describe('GET /api/transfers', () => {
         const { getTransfers } = await import('../../controllers/transfersController.js');
 
         // Call the function with the mock request and response
-        await getTransfers(mockRequest, mockResponse);
+        await getTransfers(mockRequest as Request, mockResponse);
 
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(200);
@@ -151,7 +164,7 @@ describe('GET /api/transfers', () => {
         const { getTransfers } = await import('../../controllers/transfersController.js');
 
         // Call the function with the mock request and response
-        await getTransfers(mockRequest, mockResponse);
+        await getTransfers(mockRequest as Request, mockResponse);
 
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(400);
@@ -170,7 +183,7 @@ describe('GET /api/transfers', () => {
         const { getTransfers } = await import('../../controllers/transfersController.js');
 
         // Call the function with the mock request and response
-        await getTransfers(mockRequest, mockResponse);
+        await getTransfers(mockRequest as Request, mockResponse);
 
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(200);
@@ -188,7 +201,7 @@ describe('GET /api/transfers', () => {
         const { getTransfers } = await import('../../controllers/transfersController.js');
 
         // Call the function with the mock request and response
-        await getTransfers(mockRequest, mockResponse);
+        await getTransfers(mockRequest as Request, mockResponse);
 
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(400);
@@ -207,7 +220,7 @@ describe('GET /api/transfers', () => {
         mockRequest.query = { id: 3 };
 
         // Act
-        await getTransfers(mockRequest, mockResponse);
+        await getTransfers(mockRequest as Request, mockResponse);
 
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(404);
@@ -226,7 +239,7 @@ describe('POST /api/transfers', () => {
 
         mockRequest.body = newTransfer;
 
-        await createTransfer(mockRequest, mockResponse);
+        await createTransfer(mockRequest as Request, mockResponse);
 
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(201);
@@ -244,7 +257,7 @@ describe('POST /api/transfers', () => {
         mockRequest.body = transfers.filter(transfer => transfer.transfer_id === 1);
 
         // Call the function with the mock request and response
-        await createTransfer(mockRequest, mockResponse);
+        await createTransfer(mockRequest as Request, mockResponse);
 
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(400);
@@ -267,7 +280,7 @@ describe('PUT /api/transfer/:id', () => {
 
         const { updateTransfer } = await import('../../controllers/transfersController.js');
 
-        await updateTransfer(mockRequest, mockResponse);
+        await updateTransfer(mockRequest as Request, mockResponse);
 
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(200);
@@ -286,7 +299,7 @@ describe('PUT /api/transfer/:id', () => {
         const { updateTransfer } = await import('../../controllers/transfersController.js');
 
         // Call the function with the mock request and response
-        await updateTransfer(mockRequest, mockResponse);
+        await updateTransfer(mockRequest as Request, mockResponse);
 
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(400);
@@ -306,7 +319,7 @@ describe('PUT /api/transfer/:id', () => {
         mockRequest.body = transfers.filter(transfer => transfer.transfer_id === 1);
 
         // Act
-        await updateTransfer(mockRequest, mockResponse);
+        await updateTransfer(mockRequest as Request, mockResponse);
 
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(404);
@@ -323,7 +336,7 @@ describe('DELETE /api/transfer/:id', () => {
 
         mockRequest.params = { id: 1 };
 
-        await deleteTransfer(mockRequest, mockResponse);
+        await deleteTransfer(mockRequest as Request, mockResponse);
 
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(200);
@@ -342,7 +355,7 @@ describe('DELETE /api/transfer/:id', () => {
         mockRequest.query = { account_id: 1 };
 
         // Call the function with the mock request and response
-        await deleteTransfer(mockRequest, mockResponse);
+        await deleteTransfer(mockRequest as Request, mockResponse);
 
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(400);
@@ -362,7 +375,7 @@ describe('DELETE /api/transfer/:id', () => {
         mockRequest.query = { account_id: 1 };
 
         // Act
-        await deleteTransfer(mockRequest, mockResponse);
+        await deleteTransfer(mockRequest as Request, mockResponse);
 
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(404);
