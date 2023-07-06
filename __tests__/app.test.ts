@@ -15,7 +15,7 @@ describe('Test application', () => {
         const appModule = await import('../app.js');
         const app: Express = appModule.default;
 
-        const response = await request(app).get('/no-such-path');
+        const response: request.Response = await request(app).get('/no-such-path');
         expect(response.statusCode).toBe(404);
     });
 });
