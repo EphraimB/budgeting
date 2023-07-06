@@ -24,13 +24,13 @@ describe('generatePayrolls', () => {
             end_date: '2023-08-01',
             net_pay: 2000
         };
-        const fromDate = new Date('2023-07-01');
+        const fromDate: Date = new Date('2023-07-01');
 
         generatePayrolls(transactions, skippedTransactions, payroll, fromDate);
 
         // check if transactions array has one new element
         expect(transactions).toHaveLength(1);
-        const payrollTransaction = transactions[0];
+        const payrollTransaction: GeneratedTransaction = transactions[0];
 
         // check if the new transaction has correct properties
         expect(payrollTransaction.title).toBe('Payroll');
@@ -44,7 +44,7 @@ describe('generatePayrolls', () => {
             end_date: '2022-08-01',
             net_pay: 2000
         };
-        const fromDate = new Date('2023-07-01');
+        const fromDate: Date = new Date('2023-07-01');
 
         generatePayrolls(transactions, skippedTransactions, payroll, fromDate);
 
@@ -57,7 +57,7 @@ describe('generatePayrolls', () => {
             end_date: '2023-06-01',
             net_pay: 2000
         };
-        const fromDate = new Date('2023-07-01');
+        const fromDate: Date = new Date('2023-07-01');
 
         generatePayrolls(transactions, skippedTransactions, payroll, fromDate);
 
@@ -66,7 +66,7 @@ describe('generatePayrolls', () => {
 
         // check if skippedTransactions array has one new element
         expect(skippedTransactions).toHaveLength(1);
-        const payrollTransaction = skippedTransactions[0];
+        const payrollTransaction: GeneratedTransaction = skippedTransactions[0];
 
         // check if the new transaction has correct properties
         expect(payrollTransaction.title).toBe('Payroll');
@@ -80,7 +80,7 @@ describe('generatePayrolls', () => {
             end_date: '2019-08-01',
             net_pay: 2000
         };
-        const fromDate = new Date('2020-10-01');
+        const fromDate: Date = new Date('2020-10-01');
 
         generatePayrolls(transactions, skippedTransactions, payroll, fromDate);
 
