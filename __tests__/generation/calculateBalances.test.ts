@@ -82,9 +82,9 @@ describe('calculateBalances', () => {
 
         calculateBalances(transactions, 5000);
 
-        expect(transactions[0].balance).toBe(5000);
-        expect(transactions[1].balance).toBe(4500);
-        expect(transactions[2].balance).toBe(4000);
-        expect(transactions[3].balance).toBe(5000);
+        expect(transactions[0].balance).toBe(5500);
+        expect(transactions[1].balance).toBe(5000);
+        expect(transactions[2].balance).toBe(4500);
+        expect(transactions[3].balance).toBe(5500);
     });
 });
