@@ -1,7 +1,7 @@
 import { jest } from '@jest/globals';
 import { Response } from 'express';
 import { QueryResultRow } from 'pg';
-import { expenses, transactions } from '../../models/mockData';
+import { expenses, loans, transactions } from '../../models/mockData';
 
 // Mock request and response
 let mockRequest: any;
@@ -114,60 +114,41 @@ describe('getExpensesByAccount', () => {
     });
 });
 
-// describe('getLoansByAccount', () => {
-//     const mockRequest = () => {
-//         const req = {};
-//         req.query = {
-//             account_id: '1',
-//             from_date: '2023-06-01'
-//         };
-//         req.loans = jest.fn();
-//         return req;
-//     };
+describe('getLoansByAccount', () => {
+    it('gets loans for a given account and date', async () => {
+        mockModule(loans);
 
-//     afterEach(() => {
-//         jest.resetModules();
-//     });
+        const { getLoansByAccount } = await import('../../middleware/middleware.js');
 
-//     it('gets loans for a given account and date', async () => {
-//         const mockLoans = [
-//             { id: 1, account_id: '1', amount: 100, date: '2023-06-01' },
-//             { id: 2, account_id: '1', amount: 200, date: '2023-06-02' }
-//         ];
+        mockRequest.query = { account_id: '1', from_date: '2023-06-01' };
 
-//         jest.unstable_mockModule('../../utils/helperFunctions', () => ({
-//             executeQuery: jest.fn().mockResolvedValueOnce(mockLoans),
-//             handleError: jest.fn()
-//         }));
+        await getLoansByAccount(mockRequest, mockResponse, mockNext);
 
-//         const { getLoansByAccount } = await import('../../middleware/middleware');
+        const loansReturn = loans.map(loan => ({
+            ...loan,
+            amount: loan.loan_plan_amount
+        }));
 
-//         const req = mockRequest();
-//         const res = mockResponse();
+        expect(mockRequest.loans).toEqual(loansReturn);
+        expect(mockNext).toHaveBeenCalled();
+    });
 
-//         await getLoansByAccount(req, res, mockNext);
+    it('handles error if there is one', async () => {
+        // Arrange
+        const errorMessage = 'Fake error';
+        const error = new Error(errorMessage);
+        mockModule(null, errorMessage);
 
-//         expect(req.loans).toEqual(mockLoans);
-//         expect(mockNext).toHaveBeenCalled();
-//     });
+        const { getLoansByAccount } = await import('../../middleware/middleware.js');
 
-//     it('handles error if there is one', async () => {
-//         jest.unstable_mockModule('../../utils/helperFunctions', () => ({
-//             executeQuery: jest.fn().mockRejectedValueOnce(new Error('fake error')),
-//             handleError: jest.fn().mockImplementation((response, message) => response.status(400).json({ message }))
-//         }));
+        mockRequest.query = { account_id: '1', from_date: '2023-06-01' };
 
-//         const { getLoansByAccount } = await import('../../middleware/middleware');
+        await getLoansByAccount(mockRequest, mockResponse, mockNext);
 
-//         const req = mockRequest();
-//         const res = mockResponse();
-
-//         await getLoansByAccount(req, res, mockNext);
-
-//         expect(res.status).toHaveBeenCalledWith(400);
-//         expect(res.json).toHaveBeenCalledWith({ message: 'Error getting loans' });
-//     });
-// });
+        expect(mockResponse.status).toHaveBeenCalledWith(400);
+        expect(mockResponse.json).toHaveBeenCalledWith({ message: 'Error getting loans' });
+    });
+});
 
 // describe('getPayrollsMiddleware', () => {
 //     const mockRequest = () => {

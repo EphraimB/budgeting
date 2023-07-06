@@ -68,7 +68,7 @@ export const getLoansByAccount = async (request: Request, response: Response, ne
         // Map over results array and convert amount to a float for each Loan object
         request.loans = results.map(loan => ({
             ...loan,
-            amount: parseFloat(loan.amount),
+            amount: parseFloat(loan.loan_plan_amount),
         }));
 
         next();
