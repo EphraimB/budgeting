@@ -1,18 +1,24 @@
 import { jest } from '@jest/globals';
+import { Request, Response } from 'express';
 import { transactions } from '../../models/mockData.js';
+import { QueryResultRow } from 'pg';
 
-jest.unstable_mockModule('../../bree/jobs/scheduleCronJob.js', () => ({
-    default: jest.fn().mockReturnValue({ cronDate: '0 0 16 * *', uniqueId: '123' })
-}));
+// Mock the modules
+const mockScheduleCronJob = jest.fn().mockImplementation(() => Promise.resolve({ cronDate: '0 0 16 * *', uniqueId: '123' }));
+const mockDeleteCronJob = jest.fn().mockImplementation(() => Promise.resolve('123'));
 
-jest.unstable_mockModule('../../bree/jobs/deleteCronJob.js', () => ({
-    default: jest.fn().mockReturnValue('123')
-}));
+jest.mock('../../bree/jobs/scheduleCronJob.js', () => {
+    return mockScheduleCronJob;
+});
+
+jest.mock('../../bree/jobs/deleteCronJob.js', () => {
+    return mockDeleteCronJob;
+});
 
 // Mock request and response
-let mockRequest;
-let mockResponse;
-let consoleSpy;
+let mockRequest: any;
+let mockResponse: any;
+let consoleSpy: any;
 
 beforeAll(() => {
     // Create a spy on console.error before all tests
@@ -36,15 +42,22 @@ afterEach(() => {
     jest.resetModules();
 });
 
-// Helper function to generate mock module
-const mockModule = (executeQueryValue, errorMessage) => {
-    jest.unstable_mockModule('../../utils/helperFunctions.js', () => ({
-        executeQuery: errorMessage
-            ? jest.fn().mockRejectedValue(new Error(errorMessage))
-            : jest.fn().mockResolvedValue(executeQueryValue),
-        handleError: jest.fn((res, message) => {
+/**
+ * 
+ * @param executeQueryValue - The value to be returned by the executeQuery mock function
+ * @param [errorMessage] - The error message to be passed to the handleError mock function
+ * @returns - A mock module with the executeQuery and handleError functions
+ */
+const mockModule = (executeQueryValue: QueryResultRow[] | string, errorMessage?: string) => {
+    const executeQuery = errorMessage
+        ? jest.fn(() => Promise.reject(new Error(errorMessage)))
+        : jest.fn(() => Promise.resolve(executeQueryValue));
+
+    jest.mock('../../utils/helperFunctions.js', () => ({
+        executeQuery,
+        handleError: jest.fn((res: Response, message: string) => {
             res.status(400).json({ message });
-        })
+        }),
     }));
 };
 
@@ -58,7 +71,7 @@ describe('GET /api/transactionHistory', () => {
         const { getTransactions } = await import('../../controllers/transactionHistoryController.js');
 
         // Call the function with the mock request and response
-        await getTransactions(mockRequest, mockResponse);
+        await getTransactions(mockRequest as Request, mockResponse);
 
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(200);
@@ -76,7 +89,7 @@ describe('GET /api/transactionHistory', () => {
         const { getTransactions } = await import('../../controllers/transactionHistoryController.js');
 
         // Call the function with the mock request and response
-        await getTransactions(mockRequest, mockResponse);
+        await getTransactions(mockRequest as Request, mockResponse);
 
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(400);
@@ -95,7 +108,7 @@ describe('GET /api/transactionHistory', () => {
         const { getTransactions } = await import('../../controllers/transactionHistoryController.js');
 
         // Call the function with the mock request and response
-        await getTransactions(mockRequest, mockResponse);
+        await getTransactions(mockRequest as Request, mockResponse);
 
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(200);
@@ -111,7 +124,7 @@ describe('GET /api/transactionHistory', () => {
         const { getTransactions } = await import('../../controllers/transactionHistoryController.js');
 
         // Call the function with the mock request and response
-        await getTransactions(mockRequest, mockResponse);
+        await getTransactions(mockRequest as Request, mockResponse);
 
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(400);
@@ -130,7 +143,7 @@ describe('GET /api/transactionHistory', () => {
         const { getTransactions } = await import('../../controllers/transactionHistoryController.js');
 
         // Call the function with the mock request and response
-        await getTransactions(mockRequest, mockResponse);
+        await getTransactions(mockRequest as Request, mockResponse);
 
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(200);
@@ -148,7 +161,7 @@ describe('GET /api/transactionHistory', () => {
         const { getTransactions } = await import('../../controllers/transactionHistoryController.js');
 
         // Call the function with the mock request and response
-        await getTransactions(mockRequest, mockResponse);
+        await getTransactions(mockRequest as Request, mockResponse);
 
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(400);
@@ -167,7 +180,7 @@ describe('GET /api/transactionHistory', () => {
         const { getTransactions } = await import('../../controllers/transactionHistoryController.js');
 
         // Call the function with the mock request and response
-        await getTransactions(mockRequest, mockResponse);
+        await getTransactions(mockRequest as Request, mockResponse);
 
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(200);
@@ -185,7 +198,7 @@ describe('GET /api/transactionHistory', () => {
         const { getTransactions } = await import('../../controllers/transactionHistoryController.js');
 
         // Call the function with the mock request and response
-        await getTransactions(mockRequest, mockResponse);
+        await getTransactions(mockRequest as Request, mockResponse);
 
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(400);
@@ -204,7 +217,7 @@ describe('GET /api/transactionHistory', () => {
         mockRequest.query = { id: 3 };
 
         // Act
-        await getTransactions(mockRequest, mockResponse);
+        await getTransactions(mockRequest as Request, mockResponse);
 
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(404);
@@ -223,7 +236,7 @@ describe('POST /api/transactionHistory', () => {
 
         mockRequest.body = newTransaction;
 
-        await createTransaction(mockRequest, mockResponse);
+        await createTransaction(mockRequest as Request, mockResponse);
 
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(201);
@@ -240,7 +253,7 @@ describe('POST /api/transactionHistory', () => {
 
         mockRequest.body = transactions.filter(transaction => transaction.transaction_id === 1);
 
-        await createTransaction(mockRequest, mockResponse);
+        await createTransaction(mockRequest as Request, mockResponse);
 
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(400);
@@ -263,7 +276,7 @@ describe('PUT /api/transactionHistory/:id', () => {
 
         const { updateTransaction } = await import('../../controllers/transactionHistoryController.js');
 
-        await updateTransaction(mockRequest, mockResponse);
+        await updateTransaction(mockRequest as Request, mockResponse);
 
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(200);
@@ -281,7 +294,7 @@ describe('PUT /api/transactionHistory/:id', () => {
 
         const { updateTransaction } = await import('../../controllers/transactionHistoryController.js');
 
-        await updateTransaction(mockRequest, mockResponse);
+        await updateTransaction(mockRequest as Request, mockResponse);
 
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(400);
@@ -301,7 +314,7 @@ describe('PUT /api/transactionHistory/:id', () => {
         mockRequest.body = transactions.filter(transaction => transaction.transaction_id === 1);
 
         // Act
-        await updateTransaction(mockRequest, mockResponse);
+        await updateTransaction(mockRequest as Request, mockResponse);
 
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(404);
@@ -318,7 +331,7 @@ describe('DELETE /api/transactionHistory/:id', () => {
 
         mockRequest.params = { id: 1 };
 
-        await deleteTransaction(mockRequest, mockResponse);
+        await deleteTransaction(mockRequest as Request, mockResponse);
 
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(200);
@@ -335,7 +348,7 @@ describe('DELETE /api/transactionHistory/:id', () => {
 
         mockRequest.params = { id: 1 };
 
-        await deleteTransaction(mockRequest, mockResponse);
+        await deleteTransaction(mockRequest as Request, mockResponse);
 
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(400);
@@ -354,7 +367,7 @@ describe('DELETE /api/transactionHistory/:id', () => {
         mockRequest.params = { id: 8 };
 
         // Act
-        await deleteTransaction(mockRequest, mockResponse);
+        await deleteTransaction(mockRequest as Request, mockResponse);
 
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(404);
