@@ -86,6 +86,13 @@ export interface Payroll {
     net_pay: number;
 }
 
+export interface PayrollDate {
+    payroll_date_id: number;
+    employee_id: number;
+    payroll_start_day: number;
+    payroll_end_day: number;
+}
+
 export interface Wishlist {
     wishlist_id: number;
     account_id: number;

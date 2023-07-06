@@ -1,14 +1,17 @@
 import { jest } from '@jest/globals';
+import { Request, Response } from 'express';
 import { payrollDates } from '../../models/mockData.js';
+import { QueryResultRow } from 'pg';
+import { PayrollDate } from '../../types/types.js';
 
-jest.unstable_mockModule('../../bree/getPayrolls.js', () => ({
+jest.mock('../../bree/getPayrolls.js', () => ({
     getPayrolls: jest.fn()
 }));
 
 // Mock request and response
-let mockRequest;
-let mockResponse;
-let consoleSpy;
+let mockRequest: any;
+let mockResponse: any;
+let consoleSpy: any;
 
 beforeAll(() => {
     // Create a spy on console.error before all tests
@@ -33,17 +36,31 @@ afterAll(() => {
     consoleSpy.mockRestore();
 });
 
-// Helper function to generate mock module
-const mockModule = (executeQueryValue, errorMessage) => {
-    jest.unstable_mockModule('../../utils/helperFunctions.js', () => ({
-        executeQuery: errorMessage
-            ? jest.fn().mockRejectedValue(new Error(errorMessage))
-            : jest.fn().mockResolvedValue(executeQueryValue),
-        handleError: jest.fn((res, message) => {
+/**
+ * 
+ * @param executeQueryValue - The value to be returned by the executeQuery mock function
+ * @param [errorMessage] - The error message to be passed to the handleError mock function
+ * @returns - A mock module with the executeQuery and handleError functions
+ */
+const mockModule = (executeQueryValue: QueryResultRow[] | string, errorMessage?: string) => {
+    const executeQuery = errorMessage
+        ? jest.fn(() => Promise.reject(new Error(errorMessage)))
+        : jest.fn(() => Promise.resolve(executeQueryValue));
+
+    jest.mock('../../utils/helperFunctions.js', () => ({
+        executeQuery,
+        handleError: jest.fn((res: Response, message: string) => {
             res.status(400).json({ message });
-        })
+        }),
     }));
 };
+
+const payrollDatesReturnObj: PayrollDate[] = payrollDates.map((payrollDate: PayrollDate) => ({
+    payroll_date_id: payrollDate.payroll_date_id,
+    employee_id: payrollDate.employee_id,
+    payroll_start_day: payrollDate.payroll_start_day,
+    payroll_end_day: payrollDate.payroll_end_day
+}));
 
 describe('GET /api/payroll/dates', () => {
     it('should respond with an array of payroll dates', async () => {
@@ -55,14 +72,7 @@ describe('GET /api/payroll/dates', () => {
         const { getPayrollDates } = await import('../../controllers/payrollDatesController.js');
 
         // Call the function with the mock request and response
-        await getPayrollDates(mockRequest, mockResponse);
-
-        const payrollDatesReturnObj = payrollDates.map(payrollDate => ({
-            payroll_date_id: parseInt(payrollDate.payroll_date_id),
-            employee_id: parseInt(payrollDate.employee_id),
-            payroll_start_day: parseInt(payrollDate.payroll_start_day),
-            payroll_end_day: parseInt(payrollDate.payroll_end_day)
-        }));
+        await getPayrollDates(mockRequest as Request, mockResponse);
 
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(200);
@@ -80,7 +90,7 @@ describe('GET /api/payroll/dates', () => {
         const { getPayrollDates } = await import('../../controllers/payrollDatesController.js');
 
         // Call the function with the mock request and response
-        await getPayrollDates(mockRequest, mockResponse);
+        await getPayrollDates(mockRequest as Request, mockResponse);
 
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(400);
@@ -99,14 +109,7 @@ describe('GET /api/payroll/dates', () => {
         mockRequest.query = { id: 1, employee_id: null };
 
         // Call the function with the mock request and response
-        await getPayrollDates(mockRequest, mockResponse);
-
-        const payrollDatesReturnObj = payrollDates.filter(payrollDate => payrollDate.employee_id === 1).map(payrollDate => ({
-            payroll_date_id: parseInt(payrollDate.payroll_date_id),
-            employee_id: parseInt(payrollDate.employee_id),
-            payroll_start_day: parseInt(payrollDate.payroll_start_day),
-            payroll_end_day: parseInt(payrollDate.payroll_end_day)
-        }));
+        await getPayrollDates(mockRequest as Request, mockResponse);
 
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(200);
@@ -124,7 +127,7 @@ describe('GET /api/payroll/dates', () => {
         mockRequest.query = { id: 1, employee_id: null };
 
         // Call the function with the mock request and response
-        await getPayrollDates(mockRequest, mockResponse);
+        await getPayrollDates(mockRequest as Request, mockResponse);
 
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(400);
@@ -145,14 +148,7 @@ describe('GET /api/payroll/dates', () => {
         mockRequest.query = { id: null, employee_id };
 
         // Call the function with the mock request and response
-        await getPayrollDates(mockRequest, mockResponse);
-
-        const payrollDatesReturnObj = payrollDates.filter(payrollDate => payrollDate.employee_id === employee_id).map(payrollDate => ({
-            payroll_date_id: parseInt(payrollDate.payroll_date_id),
-            employee_id: parseInt(payrollDate.employee_id),
-            payroll_start_day: parseInt(payrollDate.payroll_start_day),
-            payroll_end_day: parseInt(payrollDate.payroll_end_day)
-        }));
+        await getPayrollDates(mockRequest as Request, mockResponse);
 
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(200);
@@ -172,7 +168,7 @@ describe('GET /api/payroll/dates', () => {
         mockRequest.query = { id: null, employee_id };
 
         // Call the function with the mock request and response
-        await getPayrollDates(mockRequest, mockResponse);
+        await getPayrollDates(mockRequest as Request, mockResponse);
 
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(400);
@@ -194,14 +190,7 @@ describe('GET /api/payroll/dates', () => {
         mockRequest.query = { id, employee_id };
 
         // Call the function with the mock request and response
-        await getPayrollDates(mockRequest, mockResponse);
-
-        const payrollDatesReturnObj = payrollDates.filter(payrollDate => payrollDate.employee_id === employee_id).map(payrollDate => ({
-            payroll_date_id: parseInt(payrollDate.payroll_date_id),
-            employee_id: parseInt(payrollDate.employee_id),
-            payroll_start_day: parseInt(payrollDate.payroll_start_day),
-            payroll_end_day: parseInt(payrollDate.payroll_end_day)
-        }));
+        await getPayrollDates(mockRequest as Request, mockResponse);
 
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(200);
@@ -222,7 +211,7 @@ describe('GET /api/payroll/dates', () => {
         mockRequest.query = { id, employee_id };
 
         // Call the function with the mock request and response
-        await getPayrollDates(mockRequest, mockResponse);
+        await getPayrollDates(mockRequest as Request, mockResponse);
 
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(400);
@@ -241,7 +230,7 @@ describe('GET /api/payroll/dates', () => {
         mockRequest.query = { id: 3 };
 
         // Act
-        await getPayrollDates(mockRequest, mockResponse);
+        await getPayrollDates(mockRequest as Request, mockResponse);
 
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(404);
@@ -264,7 +253,7 @@ describe('POST /api/payroll/dates', () => {
 
         mockRequest.body = newPayrollDate;
 
-        await createPayrollDate(mockRequest, mockResponse);
+        await createPayrollDate(mockRequest as Request, mockResponse);
 
         const newPayrollDatesReturnObj = [{
             payroll_date_id: 1,
@@ -294,7 +283,7 @@ describe('POST /api/payroll/dates', () => {
 
         mockRequest.body = newPayrollDate;
 
-        await createPayrollDate(mockRequest, mockResponse);
+        await createPayrollDate(mockRequest as Request, mockResponse);
 
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(400);
@@ -321,7 +310,7 @@ describe('PUT /api/payroll/dates/:id', () => {
         mockRequest.params = { id: 1 };
         mockRequest.body = updatedPayrollDate;
 
-        await updatePayrollDate(mockRequest, mockResponse);
+        await updatePayrollDate(mockRequest as Request, mockResponse);
 
         const newPayrollDatesReturnObj = [{
             payroll_date_id: 1,
@@ -358,7 +347,7 @@ describe('PUT /api/payroll/dates/:id', () => {
         mockRequest.params = { id: 1 };
         mockRequest.body = updatedPayrollDate;
 
-        await updatePayrollDate(mockRequest, mockResponse);
+        await updatePayrollDate(mockRequest as Request, mockResponse);
 
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(400);
@@ -378,7 +367,7 @@ describe('PUT /api/payroll/dates/:id', () => {
         mockRequest.body = payrollDates.filter(payrollDate => payrollDate.payroll_date_id === 1);
 
         // Act
-        await updatePayrollDate(mockRequest, mockResponse);
+        await updatePayrollDate(mockRequest as Request, mockResponse);
 
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(404);
@@ -396,7 +385,7 @@ describe('DELETE /api/payroll/dates/:id', () => {
 
         const { deletePayrollDate } = await import('../../controllers/payrollDatesController.js');
 
-        await deletePayrollDate(mockRequest, mockResponse);
+        await deletePayrollDate(mockRequest as Request, mockResponse);
 
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(200);
@@ -414,7 +403,7 @@ describe('DELETE /api/payroll/dates/:id', () => {
 
         const { deletePayrollDate } = await import('../../controllers/payrollDatesController.js');
 
-        await deletePayrollDate(mockRequest, mockResponse);
+        await deletePayrollDate(mockRequest as Request, mockResponse);
 
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(400);
@@ -434,7 +423,7 @@ describe('DELETE /api/payroll/dates/:id', () => {
         mockRequest.query = { employee_id: 1 };
 
         // Act
-        await deletePayrollDate(mockRequest, mockResponse);
+        await deletePayrollDate(mockRequest as Request, mockResponse);
 
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(404);
