@@ -191,6 +191,7 @@ export const wishlists: Wishlist[] = [
 
 export const transfers: Transfer[] = [
     {
+        account_id: 1,
         transfer_id: 1,
         source_account_id: 1,
         destination_account_id: 2,

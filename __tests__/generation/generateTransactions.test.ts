@@ -12,9 +12,9 @@ afterAll(() => {
 });
 
 describe('generateTransactions', () => {
-    let mockRequest;
-    let mockResponse;
-    let next;
+    let mockRequest: any;
+    let mockResponse: any;
+    let next: any;
 
     beforeEach(() => {
         // setup your data
@@ -27,7 +27,7 @@ describe('generateTransactions', () => {
             currentBalance: 500,
             transaction: transactions.filter(transaction => transaction.account_id === 1),
             expenses: expenses.filter(expense => expense.account_id === 1),
-            payrolls: payrolls.filter(payroll => payroll.account_id === 1),
+            payrolls: payrolls,
             loans: loans.filter(loan => loan.account_id === 1),
             transfers: transfers.filter(transfer => transfer.account_id === 1),
             wishlists: wishlists.filter(wishlist => wishlist.account_id === 1)
@@ -51,7 +51,7 @@ describe('generateTransactions', () => {
         // assert end state of request object
         // add checks for any additional properties or state you expect mockRequest to have after generateTransactions
         expect(mockRequest.expenses).toEqual(expenses.filter(expense => expense.account_id === 1));
-        expect(mockRequest.payrolls).toEqual(payrolls.filter(payroll => payroll.account_id === 1));
+        expect(mockRequest.payrolls).toEqual(payrolls);
     });
 
     it('should make sure that transactions are sorted by date', () => {
@@ -62,7 +62,7 @@ describe('generateTransactions', () => {
         expect(next).toHaveBeenCalled();
 
         // assert that transactions are ordered by date
-        const sortedTransactions = [...mockRequest.transaction].sort((a, b) => new Date(a.date) - new Date(b.date));
+        const sortedTransactions = [...mockRequest.transaction].sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
         expect(mockRequest.transaction).toEqual(sortedTransactions);
     });
 });
