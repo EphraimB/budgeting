@@ -43,7 +43,7 @@ export const getExpensesByAccount = async (request: Request, response: Response,
         // Map over results array and convert amount to a float for each Expense object
         request.expenses = results.map(expense => ({
             ...expense,
-            amount: parseFloat(expense.amount),
+            amount: parseFloat(expense.expense_amount),
         }));
 
         next();

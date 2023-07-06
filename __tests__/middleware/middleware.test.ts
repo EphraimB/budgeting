@@ -1,7 +1,7 @@
 import { jest } from '@jest/globals';
 import { Response } from 'express';
 import { QueryResultRow } from 'pg';
-import { transactions } from '../../models/mockData';
+import { expenses, transactions } from '../../models/mockData';
 
 // Mock request and response
 let mockRequest: any;
@@ -66,7 +66,7 @@ describe('getTransactionsByAccount', () => {
         const error = new Error(errorMessage);
         mockModule(null, errorMessage);
 
-        const { getTransactionsByAccount } = await import('../../middleware/middleware');
+        const { getTransactionsByAccount } = await import('../../middleware/middleware.js');
 
         mockRequest.query = { account_id: '1', from_date: '2023-06-01' };
 
@@ -77,59 +77,42 @@ describe('getTransactionsByAccount', () => {
     });
 });
 
-// describe('getExpensesByAccount', () => {
-//     const mockRequest = () => {
-//         req.query = {
-//             account_id: '1',
-//             to_date: '2023-06-01'
-//         };
-//         req.expenses = jest.fn();
-//         return req;
-//     };
+describe('getExpensesByAccount', () => {
+    it('gets expenses for a given account and date', async () => {
+        mockModule(expenses);
 
-//     afterEach(() => {
-//         jest.resetModules();
-//     });
+        const { getExpensesByAccount } = await import('../../middleware/middleware.js');
 
-//     it('gets expenses for a given account and date', async () => {
-//         const mockExpenses = [
-//             { id: 1, account_id: '1', amount: 100, date: '2023-06-01' },
-//             { id: 2, account_id: '1', amount: 200, date: '2023-06-02' }
-//         ];
+        mockRequest.query = { account_id: '1', from_date: '2023-06-01' };
 
-//         jest.unstable_mockModule('../../utils/helperFunctions', () => ({
-//             executeQuery: jest.fn().mockResolvedValueOnce(mockExpenses),
-//             handleError: jest.fn()
-//         }));
+        await getExpensesByAccount(mockRequest, mockResponse, mockNext);
 
-//         const { getExpensesByAccount } = await import('../../middleware/middleware');
+        const expensesReturn = expenses.map(expense => ({
+            ...expense,
+            amount: expense.expense_amount
+        }));
 
-//         const req = mockRequest();
-//         const res = mockResponse();
 
-//         await getExpensesByAccount(req, res, mockNext);
+        expect(mockRequest.expenses).toEqual(expensesReturn);
+        expect(mockNext).toHaveBeenCalled();
+    });
 
-//         expect(req.expenses).toEqual(mockExpenses);
-//         expect(mockNext).toHaveBeenCalled();
-//     });
+    it('handles error if there is one', async () => {
+        // Arrange
+        const errorMessage = 'Fake error';
+        const error = new Error(errorMessage);
+        mockModule(null, errorMessage);
 
-//     it('handles error if there is one', async () => {
-//         jest.unstable_mockModule('../../utils/helperFunctions', () => ({
-//             executeQuery: jest.fn().mockRejectedValueOnce(new Error('fake error')),
-//             handleError: jest.fn().mockImplementation((response, message) => response.status(400).json({ message }))
-//         }));
+        const { getExpensesByAccount } = await import('../../middleware/middleware.js');
 
-//         const { getExpensesByAccount } = await import('../../middleware/middleware');
+        mockRequest.query = { account_id: '1', from_date: '2023-06-01' };
 
-//         const req = mockRequest();
-//         const res = mockResponse();
+        await getExpensesByAccount(mockRequest, mockResponse, mockNext);
 
-//         await getExpensesByAccount(req, res, mockNext);
-
-//         expect(res.status).toHaveBeenCalledWith(400);
-//         expect(res.json).toHaveBeenCalledWith({ message: 'Error getting expenses' });
-//     });
-// });
+        expect(mockResponse.status).toHaveBeenCalledWith(400);
+        expect(mockResponse.json).toHaveBeenCalledWith({ message: 'Error getting expenses' });
+    });
+});
 
 // describe('getLoansByAccount', () => {
 //     const mockRequest = () => {
