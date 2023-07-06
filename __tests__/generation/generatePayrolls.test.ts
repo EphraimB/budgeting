@@ -1,3 +1,4 @@
+import { GeneratedTransaction, Payroll } from '../../types/types';
 import generatePayrolls from '../../generation/generatePayrolls';
 import MockDate from 'mockdate';
 
@@ -9,13 +10,19 @@ afterAll(() => {
     MockDate.reset();
 });
 
+let transactions: GeneratedTransaction[];
+let skippedTransactions: GeneratedTransaction[];
+
+beforeEach(() => {
+    transactions = [];
+    skippedTransactions = [];
+});
+
 describe('generatePayrolls', () => {
     it('should generate payroll transaction', () => {
-        const transactions = [];
-        const skippedTransactions = [];
-        const payroll = {
+        const payroll: Payroll = {
             end_date: '2023-08-01',
-            net_pay: '2000'
+            net_pay: 2000
         };
         const fromDate = new Date('2023-07-01');
 
@@ -29,15 +36,13 @@ describe('generatePayrolls', () => {
         expect(payrollTransaction.title).toBe('Payroll');
         expect(payrollTransaction.description).toBe('payroll');
         expect(payrollTransaction.date).toEqual(new Date(payroll.end_date));
-        expect(payrollTransaction.amount).toBe(parseFloat(payroll.net_pay));
+        expect(payrollTransaction.amount).toBe(payroll.net_pay);
     });
 
     it('should not generate payroll transaction for past date', () => {
-        const transactions = [];
-        const skippedTransactions = [];
-        const payroll = {
+        const payroll: Payroll = {
             end_date: '2022-08-01',
-            net_pay: '2000'
+            net_pay: 2000
         };
         const fromDate = new Date('2023-07-01');
 
@@ -48,11 +53,9 @@ describe('generatePayrolls', () => {
     });
 
     it('should add payroll transaction to skippedTransactions for future date before fromDate', () => {
-        const transactions = [];
-        const skippedTransactions = [];
-        const payroll = {
+        const payroll: Payroll = {
             end_date: '2023-06-01',
-            net_pay: '2000'
+            net_pay: 2000
         };
         const fromDate = new Date('2023-07-01');
 
@@ -69,15 +72,13 @@ describe('generatePayrolls', () => {
         expect(payrollTransaction.title).toBe('Payroll');
         expect(payrollTransaction.description).toBe('payroll');
         expect(payrollTransaction.date).toEqual(new Date(payroll.end_date));
-        expect(payrollTransaction.amount).toBe(parseFloat(payroll.net_pay));
+        expect(payrollTransaction.amount).toBe(payroll.net_pay);
     });
 
     it('should do nothing if payroll date is in the past', () => {
-        const transactions = [];
-        const skippedTransactions = [];
-        const payroll = {
+        const payroll: Payroll = {
             end_date: '2019-08-01',
-            net_pay: '2000'
+            net_pay: 2000
         };
         const fromDate = new Date('2020-10-01');
 

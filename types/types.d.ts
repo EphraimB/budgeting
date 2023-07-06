@@ -92,13 +92,13 @@ export interface Loan {
 }
 
 export interface Payroll {
-    start_date: string;
+    start_date?: string;
     end_date: string;
     net_pay: number;
-    work_days: number;
+    work_days?: number;
     regular_hours?: number;
-    gross_pay: number;
-    hours_worked: number;
+    gross_pay?: number;
+    hours_worked?: number;
 }
 
 export interface PayrollDate {
