@@ -23,6 +23,7 @@ export const getTransactionsByAccount = async (request: Request, response: Respo
 
         next();
     } catch (error) {
+        console.error(error); // Log the error on the server side
         handleError(response, 'Error getting transactions');
     }
 };
@@ -48,6 +49,7 @@ export const getExpensesByAccount = async (request: Request, response: Response,
 
         next();
     } catch (error) {
+        console.error(error); // Log the error on the server side
         handleError(response, 'Error getting expenses');
     }
 };
@@ -73,6 +75,7 @@ export const getLoansByAccount = async (request: Request, response: Response, ne
 
         next();
     } catch (error) {
+        console.error(error); // Log the error on the server side
         handleError(response, 'Error getting loans');
     }
 };
@@ -98,6 +101,7 @@ export const getPayrollsMiddleware = async (request: Request, response: Response
 
         next();
     } catch (error) {
+        console.error(error); // Log the error on the server side
         handleError(response, 'Error getting payrolls');
     }
 };
@@ -123,6 +127,7 @@ export const getWishlistsByAccount = async (request: Request, response: Response
 
         next();
     } catch (error) {
+        console.error(error); // Log the error on the server side
         handleError(response, 'Error getting wishlists');
     }
 };
@@ -148,6 +153,7 @@ export const getTransfersByAccount = async (request: Request, response: Response
 
         next();
     } catch (error) {
+        console.error(error); // Log the error on the server side
         handleError(response, 'Error getting transfers');
     }
 };
@@ -171,6 +177,7 @@ export const getCurrentBalance = async (request: Request, response: Response, ne
 
         next();
     } catch (error) {
+        console.error(error); // Log the error on the server side
         handleError(response, 'Error getting current balance');
     }
 };

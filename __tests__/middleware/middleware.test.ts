@@ -7,6 +7,12 @@ import { expenses, loans, payrolls, transactions, transfers, wishlists } from '.
 let mockRequest: any;
 let mockResponse: any;
 let mockNext: any;
+let consoleSpy: any;
+
+beforeAll(() => {
+    // Create a spy on console.error before all tests
+    consoleSpy = jest.spyOn(console, 'error').mockImplementation(() => { });
+});
 
 beforeEach(() => {
     mockRequest = {};
@@ -25,6 +31,11 @@ beforeEach(() => {
 
 afterEach(() => {
     jest.resetModules();
+});
+
+afterAll(() => {
+    // Restore console.error
+    consoleSpy.mockRestore();
 });
 
 /**
@@ -74,6 +85,9 @@ describe('getTransactionsByAccount', () => {
 
         expect(mockResponse.status).toHaveBeenCalledWith(400);
         expect(mockResponse.json).toHaveBeenCalledWith({ message: 'Error getting transactions' });
+
+        // Check that the error was logged
+        expect(consoleSpy).toHaveBeenCalledWith(error);
     });
 });
 
@@ -111,6 +125,9 @@ describe('getExpensesByAccount', () => {
 
         expect(mockResponse.status).toHaveBeenCalledWith(400);
         expect(mockResponse.json).toHaveBeenCalledWith({ message: 'Error getting expenses' });
+
+        // Check that the error was logged
+        expect(consoleSpy).toHaveBeenCalledWith(error);
     });
 });
 
@@ -147,6 +164,9 @@ describe('getLoansByAccount', () => {
 
         expect(mockResponse.status).toHaveBeenCalledWith(400);
         expect(mockResponse.json).toHaveBeenCalledWith({ message: 'Error getting loans' });
+
+        // Check that the error was logged
+        expect(consoleSpy).toHaveBeenCalledWith(error);
     });
 });
 
@@ -178,6 +198,9 @@ describe('getPayrollsMiddleware', () => {
 
         expect(mockResponse.status).toHaveBeenCalledWith(400);
         expect(mockResponse.json).toHaveBeenCalledWith({ message: 'Error getting payrolls' });
+
+        // Check that the error was logged
+        expect(consoleSpy).toHaveBeenCalledWith(error);
     });
 });
 
@@ -214,6 +237,9 @@ describe('getWishlistsByAccount', () => {
 
         expect(mockResponse.status).toHaveBeenCalledWith(400);
         expect(mockResponse.json).toHaveBeenCalledWith({ message: 'Error getting wishlists' });
+
+        // Check that the error was logged
+        expect(consoleSpy).toHaveBeenCalledWith(error);
     });
 });
 
@@ -250,6 +276,9 @@ describe('getTransfersByAccount', () => {
 
         expect(mockResponse.status).toHaveBeenCalledWith(400);
         expect(mockResponse.json).toHaveBeenCalledWith({ message: 'Error getting transfers' });
+
+        // Check that the error was logged
+        expect(consoleSpy).toHaveBeenCalledWith(error);
     });
 });
 
@@ -286,5 +315,8 @@ describe('getCurrentBalance', () => {
 
         expect(mockResponse.status).toHaveBeenCalledWith(400);
         expect(mockResponse.json).toHaveBeenCalledWith({ message: 'Error getting current balance' });
+
+        // Check that the error was logged
+        expect(consoleSpy).toHaveBeenCalledWith(error);
     });
 });
