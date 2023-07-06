@@ -1,3 +1,4 @@
+import { GeneratedTransaction } from '../../types/types';
 import { generateDailyLoans, generateMonthlyLoans, generateWeeklyLoans, generateYearlyLoans } from '../../generation/generateLoans';
 import MockDate from 'mockdate';
 
@@ -9,13 +10,19 @@ afterAll(() => {
     MockDate.reset();
 });
 
+let transactions: GeneratedTransaction[];
+let skippedTransactions: GeneratedTransaction[];
+
+beforeEach(() => {
+    transactions = [];
+    skippedTransactions = [];
+});
+
 describe('Test generateDailyLoans', () => {
     it('Should generate daily loans correctly', () => {
         // Preparing the test data
-        const transactions = [];
-        const skippedTransactions = [];
         const loan = {
-            loan_begin_date: new Date('2020-01-02'),
+            loan_begin_date: '2020-01-02',
             loan_title: 'Test',
             loan_recipient: 'Test recepient',
             loan_description: 'Test description',
@@ -39,11 +46,9 @@ describe('Test generateDailyLoans', () => {
     });
 
     it('Should generate daily loans correctly every 2 days', () => {
-        // Preparing the test data'
-        const transactions = [];
-        const skippedTransactions = [];
+        // Preparing the test data
         const loan = {
-            loan_begin_date: new Date('2020-01-02'),
+            loan_begin_date: '2020-01-02',
             loan_title: 'Test',
             loan_recipient: 'Test recepient',
             loan_description: 'Test description',
@@ -69,10 +74,8 @@ describe('Test generateDailyLoans', () => {
 
     it('Should generate daily loans correctly when the loan begin date is less than the from date', () => {
         // Preparing the test data
-        const transactions = [];
-        const skippedTransactions = [];
         const loan = {
-            loan_begin_date: new Date('2020-01-02'),
+            loan_begin_date: '2020-01-02',
             loan_title: 'Test',
             loan_recipient: 'Test recepient',
             loan_description: 'Test description',
@@ -99,10 +102,8 @@ describe('Test generateDailyLoans', () => {
 describe('Test generateMonthlyLoans', () => {
     it('Should generate monthly loans correctly', () => {
         // Preparing the test data
-        const transactions = [];
-        const skippedTransactions = [];
         const loan = {
-            loan_begin_date: new Date('2020-01-02'),
+            loan_begin_date: '2020-01-02',
             loan_title: 'Test',
             loan_recipient: 'Test recepient',
             loan_description: 'Test description',
@@ -127,10 +128,8 @@ describe('Test generateMonthlyLoans', () => {
 
     it('Should generate monthly loans correctly every 2 months', () => {
         // Preparing the test data
-        const transactions = [];
-        const skippedTransactions = [];
         const loan = {
-            loan_begin_date: new Date('2020-01-02'),
+            loan_begin_date: '2020-01-02',
             loan_title: 'Test',
             loan_recipient: 'Test recepient',
             loan_description: 'Test description',
@@ -156,10 +155,8 @@ describe('Test generateMonthlyLoans', () => {
 
     it('Should generate monthly loans correctly when the loan begin date is less than the from date', () => {
         // Preparing the test data
-        const transactions = [];
-        const skippedTransactions = [];
         const loan = {
-            loan_begin_date: new Date('2020-01-02'),
+            loan_begin_date: '2020-01-02',
             loan_title: 'Test',
             loan_recipient: 'Test recepient',
             loan_description: 'Test description',
@@ -184,10 +181,8 @@ describe('Test generateMonthlyLoans', () => {
 
     it('Should generate monthly loans correctly when the frequency day of week is set', () => {
         // Preparing the test data
-        const transactions = [];
-        const skippedTransactions = [];
         const loan = {
-            loan_begin_date: new Date('2020-01-02'),
+            loan_begin_date: '2020-01-02',
             loan_title: 'Test',
             loan_recipient: 'Test recepient',
             loan_description: 'Test description',
@@ -225,10 +220,8 @@ describe('Test generateMonthlyLoans', () => {
 
     it('Should generate monthly loans correctly when the frequency week of month is set', () => {
         // Preparing the test data
-        const transactions = [];
-        const skippedTransactions = [];
         const loan = {
-            loan_begin_date: new Date('2020-01-02'),
+            loan_begin_date: '2020-01-02',
             loan_title: 'Test',
             loan_recipient: 'Test recepient',
             loan_description: 'Test description',
@@ -267,10 +260,8 @@ describe('Test generateMonthlyLoans', () => {
 describe('generateWeeklyLoans', () => {
     it('Should generate weekly loans correctly', () => {
         // Preparing the test data
-        const transactions = [];
-        const skippedTransactions = [];
         const loan = {
-            loan_begin_date: new Date('2020-01-02'),
+            loan_begin_date: '2020-01-02',
             loan_title: 'Test',
             loan_recipient: 'Test recepient',
             loan_description: 'Test description',
@@ -295,10 +286,8 @@ describe('generateWeeklyLoans', () => {
 
     it('Should generate weekly loans every 2 weeks', () => {
         // Preparing the test data
-        const transactions = [];
-        const skippedTransactions = [];
         const loan = {
-            loan_begin_date: new Date('2020-01-02'),
+            loan_begin_date: '2020-01-02',
             loan_title: 'Test',
             loan_recipient: 'Test recepient',
             loan_description: 'Test description',
@@ -324,10 +313,8 @@ describe('generateWeeklyLoans', () => {
 
     it('Should generate weekly loans correctly when the loan begin date is less than the from date', () => {
         // Preparing the test data
-        const transactions = [];
-        const skippedTransactions = [];
         const loan = {
-            loan_begin_date: new Date('2020-01-02'),
+            loan_begin_date: '2020-01-02',
             loan_title: 'Test',
             loan_recipient: 'Test recepient',
             loan_description: 'Test description',
@@ -352,10 +339,8 @@ describe('generateWeeklyLoans', () => {
 
     it('Should generate weekly loans correctly when the frequency day of week is set', () => {
         // Preparing the test data
-        const transactions = [];
-        const skippedTransactions = [];
         const loan = {
-            loan_begin_date: new Date('2020-01-02'),
+            loan_begin_date: '2020-01-02',
             loan_title: 'Test',
             loan_recipient: 'Test recepient',
             loan_description: 'Test description',
@@ -395,10 +380,8 @@ describe('generateWeeklyLoans', () => {
 describe('generateYearlyLoans', () => {
     it('Should generate yearly loans correctly', () => {
         // Preparing the test data
-        const transactions = [];
-        const skippedTransactions = [];
         const loan = {
-            loan_begin_date: new Date('2020-01-02'),
+            loan_begin_date: '2020-01-02',
             loan_title: 'Test',
             loan_recipient: 'Test recepient',
             loan_description: 'Test description',
@@ -423,10 +406,8 @@ describe('generateYearlyLoans', () => {
 
     it('Should generate yearly loans correctly every 2 years', () => {
         // Preparing the test data
-        const transactions = [];
-        const skippedTransactions = [];
         const loan = {
-            loan_begin_date: new Date('2020-01-02'),
+            loan_begin_date: '2020-01-02',
             loan_title: 'Test',
             loan_recipient: 'Test recepient',
             loan_description: 'Test description',
@@ -452,10 +433,8 @@ describe('generateYearlyLoans', () => {
 
     it('Should generate yearly loans correctly when the loan begin date is less than the from date', () => {
         // Preparing the test data
-        const transactions = [];
-        const skippedTransactions = [];
         const loan = {
-            loan_begin_date: new Date('2020-01-02'),
+            loan_begin_date: '2020-01-02',
             loan_title: 'Test',
             loan_recipient: 'Test recepient',
             loan_description: 'Test description',
@@ -480,10 +459,8 @@ describe('generateYearlyLoans', () => {
 
     it('Should generate yearly loans correctly when the frequency day of week is set', () => {
         // Preparing the test data
-        const transactions = [];
-        const skippedTransactions = [];
         const loan = {
-            loan_begin_date: new Date('2020-01-02'),
+            loan_begin_date: '2020-01-02',
             loan_title: 'Test',
             loan_recipient: 'Test recepient',
             loan_description: 'Test description',
@@ -518,10 +495,8 @@ describe('generateYearlyLoans', () => {
 
     it('Should generate yearly loans correctly when the frequency week of month is set', () => {
         // Preparing the test data
-        const transactions = [];
-        const skippedTransactions = [];
         const loan = {
-            loan_begin_date: new Date('2020-01-02'),
+            loan_begin_date: '2020-01-02',
             loan_title: 'Test',
             loan_recipient: 'Test recepient',
             loan_description: 'Test description',
@@ -551,17 +526,15 @@ describe('generateYearlyLoans', () => {
             expect(secondWeekOfMonth).toBeTruthy();
 
             // Check if the year is correctly incrementing on each transaction
-            const expectedYear = loan.loan_begin_date.getFullYear() + i;
+            const expectedYear = new Date(loan.loan_begin_date).getFullYear() + i;
             expect(transactionDate.getFullYear()).toBe(expectedYear);
         });
     });
 
     it('Should generate yearly loans correctly when the frequency month of year is set', () => {
         // Preparing the test data
-        const transactions = [];
-        const skippedTransactions = [];
         const loan = {
-            loan_begin_date: new Date('2020-01-02'),
+            loan_begin_date: '2020-01-02',
             loan_title: 'Test',
             loan_recipient: 'Test recepient',
             loan_description: 'Test description',
@@ -596,7 +569,7 @@ describe('generateYearlyLoans', () => {
             expect(secondWeekOfMonth).toBeTruthy();
 
             // Check if the year is correctly incrementing on each transaction
-            const expectedYear = loan.loan_begin_date.getFullYear() + i;
+            const expectedYear = new Date(loan.loan_begin_date).getFullYear() + i;
             expect(transactionDate.getFullYear()).toBe(expectedYear);
         });
     });

@@ -71,15 +71,15 @@ export interface Expense {
 }
 
 export interface Loan {
-    loan_id: number;
-    account_id: number;
+    loan_id?: number;
+    account_id?: number;
     cron_job_id?: number;
-    loan_amount: number;
+    loan_amount?: number;
     loan_plan_amount: number;
     loan_recipient: string;
     loan_title: string;
     loan_description: string;
-    frequency_type: number;
+    frequency_type?: number;
     frequency_type_variable?: number;
     frequency_day_of_month?: number;
     frequency_day_of_week?: number;
@@ -87,8 +87,8 @@ export interface Loan {
     frequency_month_of_year?: number;
     loan_begin_date: string;
     loan_end_date?: string;
-    date_created: string;
-    date_modified: string;
+    date_created?: string;
+    date_modified?: string;
 }
 
 export interface Payroll {
