@@ -1,3 +1,4 @@
+import { GeneratedTransaction, Transfer } from '../../types/types';
 import { generateDailyTransfers, generateMonthlyTransfers, generateWeeklyTransfers, generateYearlyTransfers } from '../../generation/generateTransfers';
 import MockDate from 'mockdate';
 
@@ -9,17 +10,23 @@ afterAll(() => {
     MockDate.reset();
 });
 
+let transactions: GeneratedTransaction[];
+let skippedTransactions: GeneratedTransaction[];
+
+beforeEach(() => {
+    transactions = [];
+    skippedTransactions = [];
+});
+
 describe('Test generateDailyTransfers', () => {
     it('Should generate daily transfers correctly', () => {
         const account_id = 1;
 
         // Preparing the test data
-        const transactions = [];
-        const skippedTransactions = [];
-        const transfer = {
+        const transfer: Transfer = {
             source_account_id: 1,
             destination_account_id: 2,
-            transfer_begin_date: new Date('2020-01-02'),
+            transfer_begin_date: '2020-01-02',
             transfer_title: 'Test transfer',
             transfer_description: 'Test description',
             transfer_amount: 100
@@ -44,13 +51,11 @@ describe('Test generateDailyTransfers', () => {
     it('Should generate daily transfers correctly every 2 days', () => {
         const account_id = 1;
 
-        // Preparing the test data'
-        const transactions = [];
-        const skippedTransactions = [];
-        const transfer = {
+        // Preparing the test data
+        const transfer: Transfer = {
             source_account_id: 1,
             destination_account_id: 2,
-            transfer_begin_date: new Date('2020-01-02'),
+            transfer_begin_date: '2020-01-02',
             transfer_title: 'Test transfer',
             transfer_description: 'Test description',
             transfer_amount: 100,
@@ -77,12 +82,10 @@ describe('Test generateDailyTransfers', () => {
         const account_id = 1;
 
         // Preparing the test data
-        const transactions = [];
-        const skippedTransactions = [];
-        const transfer = {
+        const transfer: Transfer = {
             source_account_id: 1,
             destination_account_id: 2,
-            transfer_begin_date: new Date('2020-01-02'),
+            transfer_begin_date: '2020-01-02',
             transfer_title: 'Test transfer',
             transfer_description: 'Test description',
             transfer_amount: 100
@@ -110,12 +113,10 @@ describe('Test generateMonthlyTransfers', () => {
         const account_id = 1;
 
         // Preparing the test data
-        const transactions = [];
-        const skippedTransactions = [];
-        const transfer = {
+        const transfer: Transfer = {
             source_account_id: 1,
             destination_account_id: 2,
-            transfer_begin_date: new Date('2020-01-02'),
+            transfer_begin_date: '2020-01-02',
             transfer_title: 'Test transfer',
             transfer_description: 'Test description',
             transfer_amount: 100
@@ -141,12 +142,10 @@ describe('Test generateMonthlyTransfers', () => {
         const account_id = 1;
 
         // Preparing the test data
-        const transactions = [];
-        const skippedTransactions = [];
-        const transfer = {
+        const transfer: Transfer = {
             source_account_id: 1,
             destination_account_id: 2,
-            transfer_begin_date: new Date('2020-01-02'),
+            transfer_begin_date: '2020-01-02',
             transfer_title: 'Test transfer',
             transfer_description: 'Test description',
             transfer_amount: 100,
@@ -173,12 +172,10 @@ describe('Test generateMonthlyTransfers', () => {
         const account_id = 1;
 
         // Preparing the test data
-        const transactions = [];
-        const skippedTransactions = [];
-        const transfer = {
+        const transfer: Transfer = {
             source_account_id: 1,
             destination_account_id: 2,
-            transfer_begin_date: new Date('2020-01-02'),
+            transfer_begin_date: '2020-01-02',
             transfer_title: 'Test transfer',
             transfer_description: 'Test description',
             transfer_amount: 100
@@ -204,12 +201,10 @@ describe('Test generateMonthlyTransfers', () => {
         const account_id = 1;
 
         // Preparing the test data
-        const transactions = [];
-        const skippedTransactions = [];
-        const transfer = {
+        const transfer: Transfer = {
             source_account_id: 1,
             destination_account_id: 2,
-            transfer_begin_date: new Date('2020-01-02'),
+            transfer_begin_date: '2020-01-02',
             transfer_title: 'Test transfer',
             transfer_description: 'Test description',
             transfer_amount: 150,
@@ -248,12 +243,10 @@ describe('Test generateMonthlyTransfers', () => {
         const account_id = 1;
 
         // Preparing the test data
-        const transactions = [];
-        const skippedTransactions = [];
-        const transfer = {
+        const transfer: Transfer = {
             source_account_id: 1,
             destination_account_id: 2,
-            transfer_begin_date: new Date('2020-01-02'),
+            transfer_begin_date: '2020-01-02',
             transfer_title: 'Test transfer',
             transfer_description: 'Test description',
             transfer_amount: 150,
@@ -293,12 +286,10 @@ describe('generateWeeklyTransfers', () => {
         const account_id = 1;
 
         // Preparing the test data
-        const transactions = [];
-        const skippedTransactions = [];
-        const transfer = {
+        const transfer: Transfer = {
             source_account_id: 1,
             destination_account_id: 2,
-            transfer_begin_date: new Date('2020-01-02'),
+            transfer_begin_date: '2020-01-02',
             transfer_title: 'Test transfer',
             transfer_description: 'Test description',
             transfer_amount: 100
@@ -324,12 +315,10 @@ describe('generateWeeklyTransfers', () => {
         const account_id = 1;
 
         // Preparing the test data
-        const transactions = [];
-        const skippedTransactions = [];
-        const transfer = {
+        const transfer: Transfer = {
             source_account_id: 1,
             destination_account_id: 2,
-            transfer_begin_date: new Date('2020-01-02'),
+            transfer_begin_date: '2020-01-02',
             transfer_title: 'Test transfer',
             transfer_description: 'Test description',
             transfer_amount: 100,
@@ -356,12 +345,10 @@ describe('generateWeeklyTransfers', () => {
         const account_id = 1;
 
         // Preparing the test data
-        const transactions = [];
-        const skippedTransactions = [];
-        const transfer = {
+        const transfer: Transfer = {
             source_account_id: 1,
             destination_account_id: 2,
-            transfer_begin_date: new Date('2020-01-02'),
+            transfer_begin_date: '2020-01-02',
             transfer_title: 'Test transfer',
             transfer_description: 'Test description',
             transfer_amount: 100
@@ -387,12 +374,10 @@ describe('generateWeeklyTransfers', () => {
         const account_id = 1;
 
         // Preparing the test data
-        const transactions = [];
-        const skippedTransactions = [];
-        const transfer = {
+        const transfer: Transfer = {
             source_account_id: 1,
             destination_account_id: 2,
-            transfer_begin_date: new Date('2020-01-02'),
+            transfer_begin_date: '2020-01-02',
             transfer_title: 'Test transfer',
             transfer_description: 'Test description',
             transfer_amount: 150,
@@ -433,12 +418,10 @@ describe('generateYearlyTransfers', () => {
         const account_id = 1;
 
         // Preparing the test data
-        const transactions = [];
-        const skippedTransactions = [];
-        const transfer = {
+        const transfer: Transfer = {
             source_account_id: 1,
             destination_account_id: 2,
-            transfer_begin_date: new Date('2020-01-02'),
+            transfer_begin_date: '2020-01-02',
             transfer_title: 'Test transfer',
             transfer_description: 'Test description',
             transfer_amount: 100
@@ -464,12 +447,10 @@ describe('generateYearlyTransfers', () => {
         const account_id = 1;
 
         // Preparing the test data
-        const transactions = [];
-        const skippedTransactions = [];
-        const transfer = {
+        const transfer: Transfer = {
             source_account_id: 1,
             destination_account_id: 2,
-            transfer_begin_date: new Date('2020-01-02'),
+            transfer_begin_date: '2020-01-02',
             transfer_title: 'Test transfer',
             transfer_description: 'Test description',
             transfer_amount: 100,
@@ -496,12 +477,10 @@ describe('generateYearlyTransfers', () => {
         const account_id = 1;
 
         // Preparing the test data
-        const transactions = [];
-        const skippedTransactions = [];
-        const transfer = {
+        const transfer: Transfer = {
             source_account_id: 1,
             destination_account_id: 2,
-            transfer_begin_date: new Date('2020-01-02'),
+            transfer_begin_date: '2020-01-02',
             transfer_title: 'Test transfer',
             transfer_description: 'Test description',
             transfer_amount: 100
@@ -527,12 +506,10 @@ describe('generateYearlyTransfers', () => {
         const account_id = 1;
 
         // Preparing the test data
-        const transactions = [];
-        const skippedTransactions = [];
-        const transfer = {
+        const transfer: Transfer = {
             source_account_id: 1,
             destination_account_id: 2,
-            transfer_begin_date: new Date('2020-01-02'),
+            transfer_begin_date: '2020-01-02',
             transfer_title: 'Test transfer',
             transfer_description: 'Test description',
             transfer_amount: 150,
@@ -568,12 +545,10 @@ describe('generateYearlyTransfers', () => {
         const account_id = 1;
 
         // Preparing the test data
-        const transactions = [];
-        const skippedTransactions = [];
-        const transfer = {
+        const transfer: Transfer = {
             source_account_id: 1,
             destination_account_id: 2,
-            transfer_begin_date: new Date('2020-01-02'),
+            transfer_begin_date: '2020-01-02',
             transfer_title: 'Test transfer',
             transfer_description: 'Test description',
             transfer_amount: 150,
@@ -602,7 +577,7 @@ describe('generateYearlyTransfers', () => {
             expect(secondWeekOfMonth).toBeTruthy();
 
             // Check if the year is correctly incrementing on each transaction
-            const expectedYear = transfer.transfer_begin_date.getFullYear() + i;
+            const expectedYear = new Date(transfer.transfer_begin_date).getFullYear() + i;
             expect(transactionDate.getFullYear()).toBe(expectedYear);
         });
     });
@@ -611,12 +586,10 @@ describe('generateYearlyTransfers', () => {
         const account_id = 1;
 
         // Preparing the test data
-        const transactions = [];
-        const skippedTransactions = [];
-        const transfer = {
+        const transfer: Transfer = {
             source_account_id: 1,
             destination_account_id: 2,
-            transfer_begin_date: new Date('2020-01-02'),
+            transfer_begin_date: '2020-01-02',
             transfer_title: 'Test transfer',
             transfer_description: 'Test description',
             transfer_amount: 150,
@@ -648,7 +621,7 @@ describe('generateYearlyTransfers', () => {
             expect(secondWeekOfMonth).toBeTruthy();
 
             // Check if the year is correctly incrementing on each transaction
-            const expectedYear = transfer.transfer_begin_date.getFullYear() + i;
+            const expectedYear = new Date(transfer.transfer_begin_date).getFullYear() + i;
             expect(transactionDate.getFullYear()).toBe(expectedYear);
         });
     });
