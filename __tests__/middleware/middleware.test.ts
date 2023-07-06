@@ -1,18 +1,15 @@
 import { jest } from '@jest/globals';
 
-const mockResponse = () => {
-    const res = {};
-    res.send = jest.fn().mockReturnValue(res);
-    res.json = jest.fn().mockReturnValue(res);
-    res.status = jest.fn().mockReturnValue(res);
-    return res;
-};
+const req: any = {};
+const res: any = {};
+res.send = jest.fn().mockReturnValue(res);
+res.json = jest.fn().mockReturnValue(res);
+res.status = jest.fn().mockReturnValue(res);
 
 const mockNext = jest.fn();
 
 describe('getTransactionsByAccount', () => {
     const mockRequest = () => {
-        const req = {};
         req.query = {
             account_id: '1',
             from_date: '2023-06-01'
@@ -31,7 +28,7 @@ describe('getTransactionsByAccount', () => {
             { id: 2, account_id: '1', amount: 200, date: '2023-06-02' }
         ];
 
-        jest.unstable_mockModule('../../utils/helperFunctions', () => ({
+        jest.mock('../../utils/helperFunctions', () => ({
             executeQuery: jest.fn().mockResolvedValueOnce(mockTransactions),
             handleError: jest.fn()
         }));
@@ -48,7 +45,7 @@ describe('getTransactionsByAccount', () => {
     });
 
     it('handles error if there is one', async () => {
-        jest.unstable_mockModule('../../utils/helperFunctions', () => ({
+        jest.mock('../../utils/helperFunctions', () => ({
             executeQuery: jest.fn().mockRejectedValueOnce(new Error('fake error')),
             handleError: jest.fn().mockImplementation((response, message) => response.status(400).json({ message }))
         }));
@@ -67,7 +64,6 @@ describe('getTransactionsByAccount', () => {
 
 describe('getExpensesByAccount', () => {
     const mockRequest = () => {
-        const req = {};
         req.query = {
             account_id: '1',
             to_date: '2023-06-01'
