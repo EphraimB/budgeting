@@ -23,14 +23,14 @@ describe('generateWishlists', () => {
             wishlist_title: 'New TV',
             wishlist_description: 'For watching movies'
         };
-        const fromDate = new Date('2023-06-01');
+        const fromDate: Date = new Date('2023-06-01');
 
         generateWishlists(transactions, skippedTransactions, wishlist, fromDate);
 
         expect(transactions).toHaveLength(4);
         expect(skippedTransactions).toHaveLength(0);
 
-        const wishlistTransaction = transactions.find(
+        const wishlistTransaction: GeneratedTransaction = transactions.find(
             (t) => t.title === wishlist.wishlist_title
         );
 
@@ -52,14 +52,14 @@ describe('generateWishlists', () => {
             wishlist_description: 'For watching movies',
             wishlist_date_available: '2023-08-15'
         };
-        const fromDate = new Date('2023-06-01');
+        const fromDate: Date = new Date('2023-06-01');
 
         generateWishlists(transactions, skippedTransactions, wishlist, fromDate);
 
         expect(transactions).toHaveLength(4);
         expect(skippedTransactions).toHaveLength(0);
 
-        const wishlistTransaction = transactions.find(
+        const wishlistTransaction: GeneratedTransaction = transactions.find(
             (t) => t.title === wishlist.wishlist_title
         );
 
@@ -87,14 +87,14 @@ describe('generateWishlists', () => {
             wishlist_title: 'New TV',
             wishlist_description: 'For watching movies'
         };
-        const fromDate = new Date('2023-06-01');
+        const fromDate: Date = new Date('2023-06-01');
 
         generateWishlists(transactions, skippedTransactions, wishlist, fromDate);
 
         expect(transactions).toHaveLength(11);
         expect(skippedTransactions).toHaveLength(0);
 
-        const wishlistTransaction = transactions.find(
+        const wishlistTransaction: GeneratedTransaction = transactions.find(
             (t) => t.title === wishlist.wishlist_title
         );
 
@@ -115,14 +115,14 @@ describe('generateWishlists', () => {
             wishlist_title: 'New TV',
             wishlist_description: 'For watching movies'
         };
-        const fromDate = new Date('2023-07-15');
+        const fromDate: Date = new Date('2023-07-15');
 
         generateWishlists(transactions, skippedTransactions, wishlist, fromDate);
 
         expect(transactions).toHaveLength(3);
         expect(skippedTransactions).toHaveLength(1);
 
-        const wishlistTransaction = transactions.find(
+        const wishlistTransaction: GeneratedTransaction = transactions.find(
             (t) => t.title === wishlist.wishlist_title
         );
 
@@ -141,14 +141,14 @@ describe('generateWishlists', () => {
             wishlist_title: 'New TV',
             wishlist_description: 'For watching movies'
         };
-        const fromDate = new Date('2023-07-15');
+        const fromDate: Date = new Date('2023-07-15');
 
         generateWishlists(transactions, skippedTransactions, wishlist, fromDate);
 
         expect(transactions).toHaveLength(3);
         expect(skippedTransactions).toHaveLength(0);
 
-        const wishlistTransaction = transactions.find(
+        const wishlistTransaction: GeneratedTransaction = transactions.find(
             (t) => t.title === wishlist.wishlist_title
         );
 
