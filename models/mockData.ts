@@ -1,4 +1,4 @@
-import { Expense, Loan, Wishlist, Transfer, Account, Employee, Transaction, PayrollDate } from "../types/types";
+import { Expense, Loan, Wishlist, Transfer, Account, Employee, Transaction, PayrollDate, PayrollTax } from "../types/types";
 
 export const employees: Employee[] = [
     {
@@ -159,7 +159,7 @@ export const payrollDates: PayrollDate[] = [
     }
 ];
 
-export const payrollTaxes = [
+export const payrollTaxes: PayrollTax[] = [
     {
         payroll_taxes_id: 1,
         employee_id: 1,

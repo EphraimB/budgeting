@@ -93,6 +93,13 @@ export interface PayrollDate {
     payroll_end_day: number;
 }
 
+export interface PayrollTax {
+    payroll_taxes_id: number;
+    employee_id: number;
+    name: string;
+    rate: number;
+}
+
 export interface Wishlist {
     wishlist_id: number;
     account_id: number;
