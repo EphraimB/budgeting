@@ -2,6 +2,7 @@ import { jest } from '@jest/globals';
 import generateTransactions from '../../generation/generateTransactions';
 import { transactions, expenses, payrolls, loans, transfers, wishlists } from '../../models/mockData';
 import MockDate from 'mockdate';
+import { GeneratedTransaction } from '../../types/types';
 
 beforeAll(() => {
     MockDate.set('2023-07-01');
@@ -62,7 +63,7 @@ describe('generateTransactions', () => {
         expect(next).toHaveBeenCalled();
 
         // assert that transactions are ordered by date
-        const sortedTransactions = [...mockRequest.transaction].sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+        const sortedTransactions: GeneratedTransaction[] = [...mockRequest.transaction].sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
         expect(mockRequest.transaction).toEqual(sortedTransactions);
     });
 });
