@@ -1,3 +1,4 @@
+import { GeneratedTransaction } from '../../types/types.js';
 import calculateBalances from '../../generation/calculateBalances.js';
 
 describe('calculateBalances', () => {
@@ -11,7 +12,7 @@ describe('calculateBalances', () => {
         const dayAfterTomorrow = new Date();
         dayAfterTomorrow.setDate(now.getDate() + 2);
 
-        const transactions = [
+        const transactions: GeneratedTransaction[] = [
             {
                 transaction_id: 1,
                 title: 'Test Transaction',
