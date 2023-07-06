@@ -48,7 +48,7 @@ describe('calculateBalances', () => {
                 transaction_id: 1,
                 title: 'Test Transaction',
                 description: 'Testing the transaction',
-                date: yesterday,
+                date: lastWeek,
                 date_modified: lastWeek,
                 amount: 1000
             },
@@ -56,7 +56,7 @@ describe('calculateBalances', () => {
                 transaction_id: 2,
                 title: 'Test Transaction 2',
                 description: 'Testing the transaction 2',
-                date: tomorrow,
+                date: yesterday,
                 date_modified: yesterday,
                 amount: -500
             },
@@ -84,7 +84,8 @@ describe('calculateBalances', () => {
 
         expect(transactions[0].balance).toBe(5500);
         expect(transactions[1].balance).toBe(5000);
-        expect(transactions[2].balance).toBe(4500);
-        expect(transactions[3].balance).toBe(5500);
+        expect(transactions[2].balance).toBe(5500);
+        expect(transactions[3].balance).toBe(5000);
+        expect(transactions[4].balance).toBe(6000);
     });
 });
