@@ -1,4 +1,4 @@
-import { GeneratedTransaction } from '../../types/types';
+import { GeneratedTransaction, Loan } from '../../types/types';
 import { generateDailyLoans, generateMonthlyLoans, generateWeeklyLoans, generateYearlyLoans } from '../../generation/generateLoans';
 import MockDate from 'mockdate';
 
@@ -21,20 +21,20 @@ beforeEach(() => {
 describe('Test generateDailyLoans', () => {
     it('Should generate daily loans correctly', () => {
         // Preparing the test data
-        const loan = {
+        const loan: Loan = {
             loan_begin_date: '2020-01-02',
             loan_title: 'Test',
             loan_recipient: 'Test recepient',
             loan_description: 'Test description',
             loan_plan_amount: 100
         };
-        const toDate = new Date('2020-01-06');
-        const fromDate = new Date('2020-01-01');
+        const toDate: Date = new Date('2020-01-06');
+        const fromDate: Date = new Date('2020-01-01');
 
         // Running the function
         generateDailyLoans(transactions, skippedTransactions, loan, toDate, fromDate);
 
-        const expectedEndDate = new Date(transactions[transactions.length - 1].date);
+        const expectedEndDate: Date = new Date(transactions[transactions.length - 1].date);
 
         // Checking the results
         expect(transactions.length).toBe(5);
@@ -47,7 +47,7 @@ describe('Test generateDailyLoans', () => {
 
     it('Should generate daily loans correctly every 2 days', () => {
         // Preparing the test data
-        const loan = {
+        const loan: Loan = {
             loan_begin_date: '2020-01-02',
             loan_title: 'Test',
             loan_recipient: 'Test recepient',
@@ -55,13 +55,13 @@ describe('Test generateDailyLoans', () => {
             loan_plan_amount: 100,
             frequency_type_variable: 2
         };
-        const toDate = new Date('2020-01-06');
-        const fromDate = new Date('2020-01-01');
+        const toDate: Date = new Date('2020-01-06');
+        const fromDate: Date = new Date('2020-01-01');
 
         // Running the function
         generateDailyLoans(transactions, skippedTransactions, loan, toDate, fromDate);
 
-        const expectedEndDate = new Date(transactions[transactions.length - 1].date);
+        const expectedEndDate: Date = new Date(transactions[transactions.length - 1].date);
 
         // Checking the results
         expect(transactions.length).toBe(3);
@@ -74,20 +74,20 @@ describe('Test generateDailyLoans', () => {
 
     it('Should generate daily loans correctly when the loan begin date is less than the from date', () => {
         // Preparing the test data
-        const loan = {
+        const loan: Loan = {
             loan_begin_date: '2020-01-02',
             loan_title: 'Test',
             loan_recipient: 'Test recepient',
             loan_description: 'Test description',
             loan_plan_amount: 100
         };
-        const toDate = new Date('2020-01-08');
-        const fromDate = new Date('2020-01-06');
+        const toDate: Date = new Date('2020-01-08');
+        const fromDate: Date = new Date('2020-01-06');
 
         // Running the function
         generateDailyLoans(transactions, skippedTransactions, loan, toDate, fromDate);
 
-        const expectedEndDate = new Date(transactions[transactions.length - 1].date);
+        const expectedEndDate: Date = new Date(transactions[transactions.length - 1].date);
 
         // Checking the results
         expect(transactions.length).toBe(3);
@@ -102,20 +102,20 @@ describe('Test generateDailyLoans', () => {
 describe('Test generateMonthlyLoans', () => {
     it('Should generate monthly loans correctly', () => {
         // Preparing the test data
-        const loan = {
+        const loan: Loan = {
             loan_begin_date: '2020-01-02',
             loan_title: 'Test',
             loan_recipient: 'Test recepient',
             loan_description: 'Test description',
             loan_plan_amount: 100
         };
-        const toDate = new Date('2020-06-02');
-        const fromDate = new Date('2020-01-01');
+        const toDate: Date = new Date('2020-06-02');
+        const fromDate: Date = new Date('2020-01-01');
 
         // Running the function
         generateMonthlyLoans(transactions, skippedTransactions, loan, toDate, fromDate);
 
-        const expectedEndDate = new Date(transactions[transactions.length - 1].date);
+        const expectedEndDate: Date = new Date(transactions[transactions.length - 1].date);
 
         // Checking the results
         expect(transactions.length).toBe(6);
@@ -128,7 +128,7 @@ describe('Test generateMonthlyLoans', () => {
 
     it('Should generate monthly loans correctly every 2 months', () => {
         // Preparing the test data
-        const loan = {
+        const loan: Loan = {
             loan_begin_date: '2020-01-02',
             loan_title: 'Test',
             loan_recipient: 'Test recepient',
@@ -136,13 +136,13 @@ describe('Test generateMonthlyLoans', () => {
             loan_plan_amount: 100,
             frequency_type_variable: 2
         };
-        const toDate = new Date('2020-08-02');
-        const fromDate = new Date('2020-01-01');
+        const toDate: Date = new Date('2020-08-02');
+        const fromDate: Date = new Date('2020-01-01');
 
         // Running the function
         generateMonthlyLoans(transactions, skippedTransactions, loan, toDate, fromDate);
 
-        const expectedEndDate = new Date(transactions[transactions.length - 1].date);
+        const expectedEndDate: Date = new Date(transactions[transactions.length - 1].date);
 
         // Checking the results
         expect(transactions.length).toBe(4);
@@ -155,20 +155,20 @@ describe('Test generateMonthlyLoans', () => {
 
     it('Should generate monthly loans correctly when the loan begin date is less than the from date', () => {
         // Preparing the test data
-        const loan = {
+        const loan: Loan = {
             loan_begin_date: '2020-01-02',
             loan_title: 'Test',
             loan_recipient: 'Test recepient',
             loan_description: 'Test description',
             loan_plan_amount: 100
         };
-        const toDate = new Date('2020-08-02');
-        const fromDate = new Date('2020-06-02');
+        const toDate: Date = new Date('2020-08-02');
+        const fromDate: Date = new Date('2020-06-02');
 
         // Running the function
         generateMonthlyLoans(transactions, skippedTransactions, loan, toDate, fromDate);
 
-        const expectedEndDate = new Date(transactions[transactions.length - 1].date);
+        const expectedEndDate: Date = new Date(transactions[transactions.length - 1].date);
 
         // Checking the results
         expect(transactions.length).toBe(2);
@@ -181,7 +181,7 @@ describe('Test generateMonthlyLoans', () => {
 
     it('Should generate monthly loans correctly when the frequency day of week is set', () => {
         // Preparing the test data
-        const loan = {
+        const loan: Loan = {
             loan_begin_date: '2020-01-02',
             loan_title: 'Test',
             loan_recipient: 'Test recepient',
@@ -189,23 +189,23 @@ describe('Test generateMonthlyLoans', () => {
             loan_plan_amount: 150,
             frequency_day_of_week: 2
         };
-        const toDate = new Date('2020-06-02');
-        const fromDate = new Date('2020-01-01');
+        const toDate: Date = new Date('2020-06-02');
+        const fromDate: Date = new Date('2020-01-01');
 
         // Running the function
         generateMonthlyLoans(transactions, skippedTransactions, loan, toDate, fromDate);
 
-        const expectedEndDate = new Date(transactions[transactions.length - 1].date);
-        const toBeEndDate = new Date('2020-01-01');
+        const expectedEndDate: Date = new Date(transactions[transactions.length - 1].date);
+        const toBeEndDate: Date = new Date('2020-01-01');
 
         // advance by 5 months
         toBeEndDate.setMonth(toBeEndDate.getMonth() + 4);
 
         // days of the week from 0 (Sunday) to 6 (Saturday)
-        const TUESDAY = 2;
+        const TUESDAY: number = 2;
 
         // calculate the number of days to add to get to the next Tuesday
-        const daysUntilNextTuesday = (7 + TUESDAY - toBeEndDate.getDay()) % 7;
+        const daysUntilNextTuesday: number = (7 + TUESDAY - toBeEndDate.getDay()) % 7;
 
         toBeEndDate.setDate(toBeEndDate.getDate() + daysUntilNextTuesday);
 
@@ -220,7 +220,7 @@ describe('Test generateMonthlyLoans', () => {
 
     it('Should generate monthly loans correctly when the frequency week of month is set', () => {
         // Preparing the test data
-        const loan = {
+        const loan: Loan = {
             loan_begin_date: '2020-01-02',
             loan_title: 'Test',
             loan_recipient: 'Test recepient',
@@ -229,8 +229,8 @@ describe('Test generateMonthlyLoans', () => {
             frequency_day_of_week: 2,
             frequency_week_of_month: 1
         };
-        const toDate = new Date('2020-06-01');
-        const fromDate = new Date('2020-01-01');
+        const toDate: Date = new Date('2020-06-01');
+        const fromDate: Date = new Date('2020-01-01');
 
         // Running the function
         generateMonthlyLoans(transactions, skippedTransactions, loan, toDate, fromDate);
@@ -244,14 +244,14 @@ describe('Test generateMonthlyLoans', () => {
 
         // Check if the transactions are on the correct dates (second Tuesday of each month)
         transactions.forEach((transaction, i) => {
-            const transactionDate = new Date(transaction.date);
+            const transactionDate: Date = new Date(transaction.date);
             expect(transactionDate.getDay()).toBe(loan.frequency_day_of_week);
 
-            const secondWeekOfMonth = Math.floor((transactionDate.getDate() - 1) / 7) === 1;
+            const secondWeekOfMonth: boolean = Math.floor((transactionDate.getDate() - 1) / 7) === 1;
             expect(secondWeekOfMonth).toBeTruthy();
 
             // Since we start from the current month and increment each month
-            const expectedMonth = (fromDate.getMonth() + i + 1) % 12;
+            const expectedMonth: number = (fromDate.getMonth() + i + 1) % 12;
             expect(transactionDate.getMonth()).toBe(expectedMonth);
         });
     });
@@ -260,20 +260,20 @@ describe('Test generateMonthlyLoans', () => {
 describe('generateWeeklyLoans', () => {
     it('Should generate weekly loans correctly', () => {
         // Preparing the test data
-        const loan = {
+        const loan: Loan = {
             loan_begin_date: '2020-01-02',
             loan_title: 'Test',
             loan_recipient: 'Test recepient',
             loan_description: 'Test description',
             loan_plan_amount: 100
         };
-        const toDate = new Date('2020-02-02');
-        const fromDate = new Date('2020-01-01');
+        const toDate: Date = new Date('2020-02-02');
+        const fromDate: Date = new Date('2020-01-01');
 
         // Running the function
         generateWeeklyLoans(transactions, skippedTransactions, loan, toDate, fromDate);
 
-        const expectedEndDate = new Date(transactions[transactions.length - 1].date);
+        const expectedEndDate: Date = new Date(transactions[transactions.length - 1].date);
 
         // Checking the results
         expect(transactions.length).toBe(5);
@@ -286,7 +286,7 @@ describe('generateWeeklyLoans', () => {
 
     it('Should generate weekly loans every 2 weeks', () => {
         // Preparing the test data
-        const loan = {
+        const loan: Loan = {
             loan_begin_date: '2020-01-02',
             loan_title: 'Test',
             loan_recipient: 'Test recepient',
@@ -294,13 +294,13 @@ describe('generateWeeklyLoans', () => {
             loan_plan_amount: 100,
             frequency_type_variable: 2
         };
-        const toDate = new Date('2020-02-02');
-        const fromDate = new Date('2020-01-01');
+        const toDate: Date = new Date('2020-02-02');
+        const fromDate: Date = new Date('2020-01-01');
 
         // Running the function
         generateWeeklyLoans(transactions, skippedTransactions, loan, toDate, fromDate);
 
-        const expectedEndDate = new Date(transactions[transactions.length - 1].date);
+        const expectedEndDate: Date = new Date(transactions[transactions.length - 1].date);
 
         // Checking the results
         expect(transactions.length).toBe(3);
@@ -313,20 +313,20 @@ describe('generateWeeklyLoans', () => {
 
     it('Should generate weekly loans correctly when the loan begin date is less than the from date', () => {
         // Preparing the test data
-        const loan = {
+        const loan: Loan = {
             loan_begin_date: '2020-01-02',
             loan_title: 'Test',
             loan_recipient: 'Test recepient',
             loan_description: 'Test description',
             loan_plan_amount: 100
         };
-        const toDate = new Date('2020-02-15');
-        const fromDate = new Date('2020-01-28');
+        const toDate: Date = new Date('2020-02-15');
+        const fromDate: Date = new Date('2020-01-28');
 
         // Running the function
         generateWeeklyLoans(transactions, skippedTransactions, loan, toDate, fromDate);
 
-        const expectedEndDate = new Date(transactions[transactions.length - 1].date);
+        const expectedEndDate: Date = new Date(transactions[transactions.length - 1].date);
 
         // Checking the results
         expect(transactions.length).toBe(3);
@@ -339,7 +339,7 @@ describe('generateWeeklyLoans', () => {
 
     it('Should generate weekly loans correctly when the frequency day of week is set', () => {
         // Preparing the test data
-        const loan = {
+        const loan: Loan = {
             loan_begin_date: '2020-01-02',
             loan_title: 'Test',
             loan_recipient: 'Test recepient',
@@ -347,23 +347,23 @@ describe('generateWeeklyLoans', () => {
             loan_plan_amount: 150,
             frequency_day_of_week: 2
         };
-        const toDate = new Date('2020-02-02');
-        const fromDate = new Date('2020-01-01');
+        const toDate: Date = new Date('2020-02-02');
+        const fromDate: Date = new Date('2020-01-01');
 
         // Running the function
         generateWeeklyLoans(transactions, skippedTransactions, loan, toDate, fromDate);
 
-        const expectedEndDate = new Date(transactions[transactions.length - 1].date);
-        const toBeEndDate = new Date('2020-01-01');
+        const expectedEndDate: Date = new Date(transactions[transactions.length - 1].date);
+        const toBeEndDate: Date = new Date('2020-01-01');
 
         // advance by 4 weeks
         toBeEndDate.setDate(toBeEndDate.getDate() + 28);
 
         // days of the week from 0 (Sunday) to 6 (Saturday)
-        const TUESDAY = 2;
+        const TUESDAY: number = 2;
 
         // calculate the number of days to add to get to the next Tuesday
-        const daysUntilNextTuesday = (7 + TUESDAY - toBeEndDate.getDay()) % 7;
+        const daysUntilNextTuesday: number = (7 + TUESDAY - toBeEndDate.getDay()) % 7;
 
         toBeEndDate.setDate(toBeEndDate.getDate() + daysUntilNextTuesday);
 
@@ -380,20 +380,20 @@ describe('generateWeeklyLoans', () => {
 describe('generateYearlyLoans', () => {
     it('Should generate yearly loans correctly', () => {
         // Preparing the test data
-        const loan = {
+        const loan: Loan = {
             loan_begin_date: '2020-01-02',
             loan_title: 'Test',
             loan_recipient: 'Test recepient',
             loan_description: 'Test description',
             loan_plan_amount: 100
         };
-        const toDate = new Date('2022-02-02');
-        const fromDate = new Date('2020-01-01');
+        const toDate: Date = new Date('2022-02-02');
+        const fromDate: Date = new Date('2020-01-01');
 
         // Running the function
         generateYearlyLoans(transactions, skippedTransactions, loan, toDate, fromDate);
 
-        const expectedEndDate = new Date(transactions[transactions.length - 1].date);
+        const expectedEndDate: Date = new Date(transactions[transactions.length - 1].date);
 
         // Checking the results
         expect(transactions.length).toBe(3);
@@ -406,7 +406,7 @@ describe('generateYearlyLoans', () => {
 
     it('Should generate yearly loans correctly every 2 years', () => {
         // Preparing the test data
-        const loan = {
+        const loan: Loan = {
             loan_begin_date: '2020-01-02',
             loan_title: 'Test',
             loan_recipient: 'Test recepient',
@@ -414,13 +414,13 @@ describe('generateYearlyLoans', () => {
             loan_plan_amount: 100,
             frequency_type_variable: 2
         };
-        const toDate = new Date('2024-02-02');
-        const fromDate = new Date('2020-01-01');
+        const toDate: Date = new Date('2024-02-02');
+        const fromDate: Date = new Date('2020-01-01');
 
         // Running the function
         generateYearlyLoans(transactions, skippedTransactions, loan, toDate, fromDate);
 
-        const expectedEndDate = new Date(transactions[transactions.length - 1].date);
+        const expectedEndDate: Date = new Date(transactions[transactions.length - 1].date);
 
         // Checking the results
         expect(transactions.length).toBe(3);
@@ -433,20 +433,20 @@ describe('generateYearlyLoans', () => {
 
     it('Should generate yearly loans correctly when the loan begin date is less than the from date', () => {
         // Preparing the test data
-        const loan = {
+        const loan: Loan = {
             loan_begin_date: '2020-01-02',
             loan_title: 'Test',
             loan_recipient: 'Test recepient',
             loan_description: 'Test description',
             loan_plan_amount: 100
         };
-        const toDate = new Date('2025-02-02');
-        const fromDate = new Date('2022-01-01');
+        const toDate: Date = new Date('2025-02-02');
+        const fromDate: Date = new Date('2022-01-01');
 
         // Running the function
         generateYearlyLoans(transactions, skippedTransactions, loan, toDate, fromDate);
 
-        const expectedEndDate = new Date(transactions[transactions.length - 1].date);
+        const expectedEndDate: Date = new Date(transactions[transactions.length - 1].date);
 
         // Checking the results
         expect(transactions.length).toBe(4);
@@ -459,7 +459,7 @@ describe('generateYearlyLoans', () => {
 
     it('Should generate yearly loans correctly when the frequency day of week is set', () => {
         // Preparing the test data
-        const loan = {
+        const loan: Loan = {
             loan_begin_date: '2020-01-02',
             loan_title: 'Test',
             loan_recipient: 'Test recepient',
@@ -467,20 +467,20 @@ describe('generateYearlyLoans', () => {
             loan_plan_amount: 150,
             frequency_day_of_week: 2
         };
-        const toDate = new Date('2023-01-10');
-        const fromDate = new Date('2020-01-01');
+        const toDate: Date = new Date('2023-01-10');
+        const fromDate: Date = new Date('2020-01-01');
 
         // Running the function
         generateYearlyLoans(transactions, skippedTransactions, loan, toDate, fromDate);
 
-        const expectedEndDate = new Date(transactions[transactions.length - 1].date);
-        const toBeEndDate = new Date('2023-01-02');
+        const expectedEndDate: Date = new Date(transactions[transactions.length - 1].date);
+        const toBeEndDate: Date = new Date('2023-01-02');
 
         // days of the week from 0 (Sunday) to 6 (Saturday)
-        const TUESDAY = 2;
+        const TUESDAY: number = 2;
 
         // calculate the number of days to add to get to the next Tuesday
-        const daysUntilNextTuesday = (7 + TUESDAY - toBeEndDate.getDay()) % 7;
+        const daysUntilNextTuesday: number = (7 + TUESDAY - toBeEndDate.getDay()) % 7;
 
         toBeEndDate.setDate(toBeEndDate.getDate() + daysUntilNextTuesday);
 
@@ -495,7 +495,7 @@ describe('generateYearlyLoans', () => {
 
     it('Should generate yearly loans correctly when the frequency week of month is set', () => {
         // Preparing the test data
-        const loan = {
+        const loan: Loan = {
             loan_begin_date: '2020-01-02',
             loan_title: 'Test',
             loan_recipient: 'Test recepient',
@@ -504,8 +504,8 @@ describe('generateYearlyLoans', () => {
             frequency_day_of_week: 2,
             frequency_week_of_month: 1
         };
-        const toDate = new Date('2023-01-01');
-        const fromDate = new Date('2020-01-01');
+        const toDate: Date = new Date('2023-01-01');
+        const fromDate: Date = new Date('2020-01-01');
 
         // Running the function
         generateYearlyLoans(transactions, skippedTransactions, loan, toDate, fromDate);
@@ -519,21 +519,21 @@ describe('generateYearlyLoans', () => {
 
         // Check if the transactions are on the correct dates (second Tuesday of each year)
         transactions.forEach((transaction, i) => {
-            const transactionDate = new Date(transaction.date);
+            const transactionDate: Date = new Date(transaction.date);
             expect(transactionDate.getDay()).toBe(loan.frequency_day_of_week);
 
-            const secondWeekOfMonth = Math.floor((transactionDate.getDate() - 1) / 7) === 1;
+            const secondWeekOfMonth: boolean = Math.floor((transactionDate.getDate() - 1) / 7) === 1;
             expect(secondWeekOfMonth).toBeTruthy();
 
             // Check if the year is correctly incrementing on each transaction
-            const expectedYear = new Date(loan.loan_begin_date).getFullYear() + i;
+            const expectedYear: number = new Date(loan.loan_begin_date).getFullYear() + i;
             expect(transactionDate.getFullYear()).toBe(expectedYear);
         });
     });
 
     it('Should generate yearly loans correctly when the frequency month of year is set', () => {
         // Preparing the test data
-        const loan = {
+        const loan: Loan = {
             loan_begin_date: '2020-01-02',
             loan_title: 'Test',
             loan_recipient: 'Test recepient',
@@ -543,13 +543,11 @@ describe('generateYearlyLoans', () => {
             frequency_week_of_month: 1,
             frequency_month_of_year: 5 // June
         };
-        const toDate = new Date('2023-01-01');
-        const fromDate = new Date('2020-01-01');
+        const toDate: Date = new Date('2023-01-01');
+        const fromDate: Date = new Date('2020-01-01');
 
         // Running the function
         generateYearlyLoans(transactions, skippedTransactions, loan, toDate, fromDate);
-
-        console.log(transactions[0].date);
 
         // Checking the results
         expect(transactions.length).toBe(3); // 2020, 2021, 2022
@@ -560,16 +558,16 @@ describe('generateYearlyLoans', () => {
 
         // Check if the transactions are on the correct dates (second Tuesday of June each year)
         transactions.forEach((transaction, i) => {
-            const transactionDate = new Date(transaction.date);
+            const transactionDate: Date = new Date(transaction.date);
             expect(transactionDate.getMonth()).toBe(loan.frequency_month_of_year); // June
 
             expect(transactionDate.getDay()).toBe(loan.frequency_day_of_week); // Tuesday
 
-            const secondWeekOfMonth = Math.floor((transactionDate.getDate() - 1) / 7) === 1;
+            const secondWeekOfMonth: boolean = Math.floor((transactionDate.getDate() - 1) / 7) === 1;
             expect(secondWeekOfMonth).toBeTruthy();
 
             // Check if the year is correctly incrementing on each transaction
-            const expectedYear = new Date(loan.loan_begin_date).getFullYear() + i;
+            const expectedYear: number = new Date(loan.loan_begin_date).getFullYear() + i;
             expect(transactionDate.getFullYear()).toBe(expectedYear);
         });
     });
