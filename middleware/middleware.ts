@@ -143,7 +143,7 @@ export const getTransfersByAccount = async (request: Request, response: Response
         // Map over results array and convert amount to a float for each Transfer object
         request.transfers = results.map(transfer => ({
             ...transfer,
-            amount: parseFloat(transfer.amount),
+            amount: parseFloat(transfer.transfer_amount),
         }));
 
         next();

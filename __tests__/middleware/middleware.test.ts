@@ -1,7 +1,7 @@
 import { jest } from '@jest/globals';
 import { Response } from 'express';
 import { QueryResultRow } from 'pg';
-import { expenses, loans, payrolls, transactions, wishlists } from '../../models/mockData';
+import { expenses, loans, payrolls, transactions, transfers, wishlists } from '../../models/mockData';
 
 // Mock request and response
 let mockRequest: any;
@@ -217,60 +217,41 @@ describe('getWishlistsByAccount', () => {
     });
 });
 
-// describe('getTransfersByAccount', () => {
-//     const mockRequest = () => {
-//         const req = {};
-//         req.query = {
-//             account_id: '1',
-//             from_date: '2023-06-01'
-//         };
-//         req.transfers = jest.fn();
-//         return req;
-//     };
+describe('getTransfersByAccount', () => {
+    it('gets transfers for a given account and date', async () => {
+        mockModule(transfers);
 
-//     afterEach(() => {
-//         jest.resetModules();
-//     });
+        const { getTransfersByAccount } = await import('../../middleware/middleware.js');
 
-//     it('gets transfers for a given account and date', async () => {
-//         const mockTransfers = [
-//             { id: 1, account_id: '1', amount: 100, date: '2023-06-01' },
-//             { id: 2, account_id: '1', amount: 200, date: '2023-06-02' }
-//         ];
+        mockRequest.query = { account_id: '1', from_date: '2023-06-01' };
 
-//         jest.unstable_mockModule('../../utils/helperFunctions', () => ({
-//             executeQuery: jest.fn().mockResolvedValueOnce(mockTransfers),
-//             handleError: jest.fn()
-//         }));
+        await getTransfersByAccount(mockRequest, mockResponse, mockNext);
 
-//         const { getTransfersByAccount } = await import('../../middleware/middleware');
+        const transfersReturn = transfers.map(transfer => ({
+            ...transfer,
+            amount: transfer.transfer_amount
+        }));
 
-//         const req = mockRequest();
-//         const res = mockResponse();
+        expect(mockRequest.transfers).toEqual(transfersReturn);
+        expect(mockNext).toHaveBeenCalled();
+    });
 
-//         await getTransfersByAccount(req, res, mockNext);
+    it('handles error if there is one', async () => {
+        // Arrange
+        const errorMessage = 'Fake error';
+        const error = new Error(errorMessage);
+        mockModule(null, errorMessage);
 
-//         expect(req.transfers).toEqual(mockTransfers);
-//         expect(mockNext).toHaveBeenCalled();
-//     });
+        const { getTransfersByAccount } = await import('../../middleware/middleware.js');
 
-//     it('handles error if there is one', async () => {
-//         jest.unstable_mockModule('../../utils/helperFunctions', () => ({
-//             executeQuery: jest.fn().mockRejectedValueOnce(new Error('fake error')),
-//             handleError: jest.fn().mockImplementation((response, message) => response.status(400).json({ message }))
-//         }));
+        mockRequest.query = { account_id: '1', from_date: '2023-06-01' };
 
-//         const { getTransfersByAccount } = await import('../../middleware/middleware');
+        await getTransfersByAccount(mockRequest, mockResponse, mockNext);
 
-//         const req = mockRequest();
-//         const res = mockResponse();
-
-//         await getTransfersByAccount(req, res, mockNext);
-
-//         expect(res.status).toHaveBeenCalledWith(400);
-//         expect(res.json).toHaveBeenCalledWith({ message: 'Error getting transfers' });
-//     });
-// });
+        expect(mockResponse.status).toHaveBeenCalledWith(400);
+        expect(mockResponse.json).toHaveBeenCalledWith({ message: 'Error getting transfers' });
+    });
+});
 
 // describe('getCurrentBalance', () => {
 //     const mockRequest = () => {
