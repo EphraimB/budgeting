@@ -1,7 +1,7 @@
 import { jest } from '@jest/globals';
 import { Response } from 'express';
 import { QueryResultRow } from 'pg';
-import { expenses, loans, transactions } from '../../models/mockData';
+import { expenses, loans, payrolls, transactions } from '../../models/mockData';
 
 // Mock request and response
 let mockRequest: any;
@@ -150,60 +150,36 @@ describe('getLoansByAccount', () => {
     });
 });
 
-// describe('getPayrollsMiddleware', () => {
-//     const mockRequest = () => {
-//         const req = {};
-//         req.query = {
-//             account_id: '1',
-//             from_date: '2023-06-01'
-//         };
-//         req.payrolls = jest.fn();
-//         return req;
-//     };
+describe('getPayrollsMiddleware', () => {
+    it('gets payrolls for a given account and date', async () => {
+        mockModule(payrolls);
 
-//     afterEach(() => {
-//         jest.resetModules();
-//     });
+        const { getPayrollsMiddleware } = await import('../../middleware/middleware.js');
 
-//     it('gets payrolls for a given account and date', async () => {
-//         const mockPayrolls = [
-//             { id: 1, account_id: '1', amount: 100, date: '2023-06-01' },
-//             { id: 2, account_id: '1', amount: 200, date: '2023-06-02' }
-//         ];
+        mockRequest.query = { account_id: '1', from_date: '2023-06-01' };
 
-//         jest.unstable_mockModule('../../utils/helperFunctions', () => ({
-//             executeQuery: jest.fn().mockResolvedValueOnce(mockPayrolls),
-//             handleError: jest.fn()
-//         }));
+        await getPayrollsMiddleware(mockRequest, mockResponse, mockNext);
 
-//         const { getPayrollsMiddleware } = await import('../../middleware/middleware');
+        expect(mockRequest.payrolls).toEqual(payrolls);
+        expect(mockNext).toHaveBeenCalled();
+    });
 
-//         const req = mockRequest();
-//         const res = mockResponse();
+    it('handles error if there is one', async () => {
+        // Arrange
+        const errorMessage = 'Fake error';
+        const error = new Error(errorMessage);
+        mockModule(null, errorMessage);
 
-//         await getPayrollsMiddleware(req, res, mockNext);
+        const { getPayrollsMiddleware } = await import('../../middleware/middleware.js');
 
-//         expect(req.payrolls).toEqual(mockPayrolls);
-//         expect(mockNext).toHaveBeenCalled();
-//     });
+        mockRequest.query = { account_id: '1', from_date: '2023-06-01' };
 
-//     it('handles error if there is one', async () => {
-//         jest.unstable_mockModule('../../utils/helperFunctions', () => ({
-//             executeQuery: jest.fn().mockRejectedValueOnce(new Error('fake error')),
-//             handleError: jest.fn().mockImplementation((response, message) => response.status(400).json({ message }))
-//         }));
+        await getPayrollsMiddleware(mockRequest, mockResponse, mockNext);
 
-//         const { getPayrollsMiddleware } = await import('../../middleware/middleware');
-
-//         const req = mockRequest();
-//         const res = mockResponse();
-
-//         await getPayrollsMiddleware(req, res, mockNext);
-
-//         expect(res.status).toHaveBeenCalledWith(400);
-//         expect(res.json).toHaveBeenCalledWith({ message: 'Error getting payrolls' });
-//     });
-// });
+        expect(mockResponse.status).toHaveBeenCalledWith(400);
+        expect(mockResponse.json).toHaveBeenCalledWith({ message: 'Error getting payrolls' });
+    });
+});
 
 // describe('getWishlistsByAccount', () => {
 //     const mockRequest = () => {
