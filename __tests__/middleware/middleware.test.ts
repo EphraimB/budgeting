@@ -1,7 +1,7 @@
 import { jest } from '@jest/globals';
 import { Response } from 'express';
 import { QueryResultRow } from 'pg';
-import { expenses, loans, payrolls, transactions } from '../../models/mockData';
+import { expenses, loans, payrolls, transactions, wishlists } from '../../models/mockData';
 
 // Mock request and response
 let mockRequest: any;
@@ -181,60 +181,41 @@ describe('getPayrollsMiddleware', () => {
     });
 });
 
-// describe('getWishlistsByAccount', () => {
-//     const mockRequest = () => {
-//         const req = {};
-//         req.query = {
-//             account_id: '1',
-//             from_date: '2023-06-01'
-//         };
-//         req.wishlists = jest.fn();
-//         return req;
-//     };
+describe('getWishlistsByAccount', () => {
+    it('gets wishlists for a given account and date', async () => {
+        mockModule(wishlists);
 
-//     afterEach(() => {
-//         jest.resetModules();
-//     });
+        const { getWishlistsByAccount } = await import('../../middleware/middleware.js');
 
-//     it('gets wishlists for a given account and date', async () => {
-//         const mockWishlists = [
-//             { id: 1, account_id: '1', amount: 100, date: '2023-06-01' },
-//             { id: 2, account_id: '1', amount: 200, date: '2023-06-02' }
-//         ];
+        mockRequest.query = { account_id: '1', from_date: '2023-06-01' };
 
-//         jest.unstable_mockModule('../../utils/helperFunctions', () => ({
-//             executeQuery: jest.fn().mockResolvedValueOnce(mockWishlists),
-//             handleError: jest.fn()
-//         }));
+        await getWishlistsByAccount(mockRequest, mockResponse, mockNext);
 
-//         const { getWishlistsByAccount } = await import('../../middleware/middleware');
+        const wishlistsReturn = wishlists.map(wishlist => ({
+            ...wishlist,
+            amount: wishlist.wishlist_amount
+        }));
 
-//         const req = mockRequest();
-//         const res = mockResponse();
+        expect(mockRequest.wishlists).toEqual(wishlistsReturn);
+        expect(mockNext).toHaveBeenCalled();
+    });
 
-//         await getWishlistsByAccount(req, res, mockNext);
+    it('handles error if there is one', async () => {
+        // Arrange
+        const errorMessage = 'Fake error';
+        const error = new Error(errorMessage);
+        mockModule(null, errorMessage);
 
-//         expect(req.wishlists).toEqual(mockWishlists);
-//         expect(mockNext).toHaveBeenCalled();
-//     });
+        const { getWishlistsByAccount } = await import('../../middleware/middleware.js');
 
-//     it('handles error if there is one', async () => {
-//         jest.unstable_mockModule('../../utils/helperFunctions', () => ({
-//             executeQuery: jest.fn().mockRejectedValueOnce(new Error('fake error')),
-//             handleError: jest.fn().mockImplementation((response, message) => response.status(400).json({ message }))
-//         }));
+        mockRequest.query = { account_id: '1', from_date: '2023-06-01' };
 
-//         const { getWishlistsByAccount } = await import('../../middleware/middleware');
+        await getWishlistsByAccount(mockRequest, mockResponse, mockNext);
 
-//         const req = mockRequest();
-//         const res = mockResponse();
-
-//         await getWishlistsByAccount(req, res, mockNext);
-
-//         expect(res.status).toHaveBeenCalledWith(400);
-//         expect(res.json).toHaveBeenCalledWith({ message: 'Error getting wishlists' });
-//     });
-// });
+        expect(mockResponse.status).toHaveBeenCalledWith(400);
+        expect(mockResponse.json).toHaveBeenCalledWith({ message: 'Error getting wishlists' });
+    });
+});
 
 // describe('getTransfersByAccount', () => {
 //     const mockRequest = () => {

@@ -118,7 +118,7 @@ export const getWishlistsByAccount = async (request: Request, response: Response
         // Map over results array and convert amount to a float for each Wishlist object
         request.wishlists = results.map(wishlist => ({
             ...wishlist,
-            amount: parseFloat(wishlist.amount),
+            amount: parseFloat(wishlist.wishlist_amount),
         }));
 
         next();
