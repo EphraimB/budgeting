@@ -116,16 +116,16 @@ export interface PayrollTax {
 }
 
 export interface Wishlist {
-    wishlist_id: number;
-    account_id: number;
+    wishlist_id?: number;
+    account_id?: number;
     wishlist_amount: number;
     wishlist_title: string;
     wishlist_description: string;
     wishlist_date_available?: string;
-    wishlist_url_link: string;
-    wishlist_priority: number;
-    date_created: string;
-    date_modified: string;
+    wishlist_url_link?: string;
+    wishlist_priority?: number;
+    date_created?: string;
+    date_modified?: string;
 }
 
 export interface Transfer {
