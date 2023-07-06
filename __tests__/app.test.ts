@@ -9,11 +9,6 @@ jest.mock('../bree/breeManager.js', () => ({
     getBree: jest.fn()
 }));
 
-// Mock the getJobs module
-jest.mock('../bree/getJobs.js', () => ({
-    default: jest.fn()
-}));
-
 describe('Test application', () => {
     it('should trigger not found for site 404', async () => {
         // Import the module that uses the mock
