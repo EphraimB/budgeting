@@ -3,6 +3,7 @@ import { transferQueries, cronJobQueries } from '../models/queryData.js';
 import scheduleCronJob from '../bree/jobs/scheduleCronJob.js';
 import deleteCronJob from '../bree/jobs/deleteCronJob.js';
 import { handleError, executeQuery } from '../utils/helperFunctions.js';
+import { Transfer } from '../types/types.js';
 
 interface TransferInput {
     transfer_id: string;
@@ -24,32 +25,12 @@ interface TransferInput {
     date_modified: string;
 }
 
-interface TransferOutput {
-    transfer_id: number;
-    cron_job_id?: number;
-    source_account_id: number;
-    destination_account_id: number;
-    transfer_amount: number;
-    transfer_title: string;
-    transfer_description: string;
-    frequency_type: string;
-    frequency_type_variable: string;
-    frequency_day_of_month: string;
-    frequency_day_of_week: string;
-    frequency_week_of_month: string;
-    frequency_month_of_year: string;
-    transfer_begin_date: string;
-    transfer_end_date: string;
-    date_created: string;
-    date_modified: string;
-}
-
 /**
  * 
  * @param transfer - The transfer object to parse
  * @returns The parsed transfer object
  */
-const transfersParse = (transfer: TransferInput): TransferOutput => ({
+const transfersParse = (transfer: TransferInput): Transfer => ({
     transfer_id: parseInt(transfer.transfer_id),
     source_account_id: parseInt(transfer.source_account_id),
     destination_account_id: parseInt(transfer.destination_account_id),
@@ -58,12 +39,12 @@ const transfersParse = (transfer: TransferInput): TransferOutput => ({
     transfer_description: transfer.transfer_description,
     transfer_begin_date: transfer.transfer_begin_date,
     transfer_end_date: transfer.transfer_end_date,
-    frequency_type: transfer.frequency_type,
-    frequency_type_variable: transfer.frequency_type_variable,
-    frequency_day_of_month: transfer.frequency_day_of_month,
-    frequency_day_of_week: transfer.frequency_day_of_week,
-    frequency_week_of_month: transfer.frequency_week_of_month,
-    frequency_month_of_year: transfer.frequency_month_of_year,
+    frequency_type: parseInt(transfer.frequency_type),
+    frequency_type_variable: parseInt(transfer.frequency_type_variable),
+    frequency_day_of_month: parseInt(transfer.frequency_day_of_month),
+    frequency_day_of_week: parseInt(transfer.frequency_day_of_week),
+    frequency_week_of_month: parseInt(transfer.frequency_week_of_month),
+    frequency_month_of_year: parseInt(transfer.frequency_month_of_year),
     date_created: transfer.date_created,
     date_modified: transfer.date_modified
 });
@@ -176,7 +157,7 @@ export const createTransfer = async (request: Request, response: Response): Prom
         ]);
 
         // Parse the data to correct format and return an object
-        const transfers: TransferOutput[] = transferResult.map(transfersParse);
+        const transfers: Transfer[] = transferResult.map(transfersParse);
 
         response.status(201).json(transfers);
     } catch (error) {
@@ -256,7 +237,7 @@ export const updateTransfer = async (request: Request, response: Response): Prom
         ]);
 
         // Parse the data to correct format and return an object
-        const transfers: TransferOutput[] = updateResults.map(transfersParse);
+        const transfers: Transfer[] = updateResults.map(transfersParse);
 
         response.status(200).json(transfers);
     } catch (error) {

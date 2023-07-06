@@ -1,21 +1,12 @@
 import { Request, Response } from 'express';
 import { transactionHistoryQueries } from '../models/queryData.js';
 import { handleError, executeQuery } from '../utils/helperFunctions.js';
+import { TransactionHistory } from '../types/types.js';
 
 interface TransactionHistoryInput {
     transaction_id: string;
     account_id: string;
     transaction_amount: string;
-    transaction_title: string;
-    transaction_description: string;
-    date_created: string;
-    date_modified: string;
-}
-
-interface TransactionHistoryOutput {
-    transaction_id: number;
-    account_id: number;
-    transaction_amount: number;
     transaction_title: string;
     transaction_description: string;
     date_created: string;
@@ -28,7 +19,7 @@ interface TransactionHistoryOutput {
  * @returns Transaction history object with the correct types
  * Converts the transaction history object to the correct types
  */
-const parseTransactions = (transactionHistory: TransactionHistoryInput) => ({
+const parseTransactions = (transactionHistory: TransactionHistoryInput): TransactionHistory => ({
     transaction_id: parseInt(transactionHistory.transaction_id),
     account_id: parseInt(transactionHistory.account_id),
     transaction_amount: parseFloat(transactionHistory.transaction_amount),
@@ -71,7 +62,7 @@ export const getTransactions = async (request: Request, response: Response): Pro
             return;
         }
 
-        const transactionHistory: TransactionHistoryOutput[] = transactionResults.map(transaction => parseTransactions(transaction));
+        const transactionHistory: TransactionHistory[] = transactionResults.map(transaction => parseTransactions(transaction));
 
         response.status(200).json(transactionHistory);
     } catch (error) {
@@ -94,7 +85,7 @@ export const createTransaction = async (request: Request, response: Response): P
             [account_id, amount, title, description]
         );
 
-        const transactionHistory: TransactionHistoryOutput[] = transactionResults.map(transaction => parseTransactions(transaction));
+        const transactionHistory: TransactionHistory[] = transactionResults.map(transaction => parseTransactions(transaction));
 
         response.status(201).json(transactionHistory);
     } catch (error) {
@@ -124,7 +115,7 @@ export const updateTransaction = async (request: Request, response: Response): P
             return;
         }
 
-        const transactionHistory: TransactionHistoryOutput[] = transactionResults.map(transaction => parseTransactions(transaction));
+        const transactionHistory: TransactionHistory[] = transactionResults.map(transaction => parseTransactions(transaction));
 
         response.status(200).json(transactionHistory);
     } catch (error) {

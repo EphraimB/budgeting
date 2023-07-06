@@ -3,6 +3,7 @@ import { loanQueries, cronJobQueries } from '../models/queryData.js';
 import scheduleCronJob from '../bree/jobs/scheduleCronJob.js';
 import deleteCronJob from '../bree/jobs/deleteCronJob.js';
 import { handleError, executeQuery } from '../utils/helperFunctions.js';
+import { Loan } from '../types/types.js';
 
 interface LoanInput {
     account_id: string;
@@ -25,33 +26,12 @@ interface LoanInput {
     date_modified: string;
 }
 
-interface LoanOutput {
-    loan_id: number;
-    account_id: number;
-    cron_job_id?: number;
-    loan_amount: number;
-    loan_plan_amount: number;
-    loan_recipient: string;
-    loan_title: string;
-    loan_description: string;
-    frequency_type: number;
-    frequency_type_variable: number;
-    frequency_day_of_month: number;
-    frequency_day_of_week: number;
-    frequency_week_of_month: number;
-    frequency_month_of_year: number;
-    loan_begin_date: string;
-    loan_end_date: string;
-    date_created: string;
-    date_modified: string;
-}
-
 /**
  * 
  * @param loan - Loan object
  * @returns - Loan object with parsed values
  */
-const parseLoan = (loan: LoanInput): LoanOutput => ({
+const parseLoan = (loan: LoanInput): Loan => ({
     loan_id: parseInt(loan.loan_id),
     account_id: parseInt(loan.account_id),
     loan_amount: parseFloat(loan.loan_amount),
@@ -105,7 +85,7 @@ export const getLoans = async (request: Request, response: Response): Promise<vo
             return;
         }
 
-        const loans: LoanOutput[] = rows.map(loan => parseLoan(loan));
+        const loans: Loan[] = rows.map(loan => parseLoan(loan));
         response.status(200).json(loans);
     } catch (error) {
         console.error(error); // Log the error on the server side
@@ -177,7 +157,7 @@ export const createLoan = async (request: Request, response: Response): Promise<
             ]
         );
 
-        const loans: LoanOutput[] = loanResults.map(loan => parseLoan(loan));
+        const loans: Loan[] = loanResults.map(loan => parseLoan(loan));
         response.status(201).json(loans);
     } catch (error) {
         console.error(error); // Log the error on the server side
@@ -255,7 +235,7 @@ export const updateLoan = async (request: Request, response: Response): Promise<
         ]);
 
         // Parse the data to the correct format and return an object
-        const loans: LoanOutput[] = updateLoanResults.map(loan => parseLoan(loan));
+        const loans: Loan[] = updateLoanResults.map(loan => parseLoan(loan));
         response.status(200).json(loans);
     } catch (error) {
         console.error(error); // Log the error on the server side

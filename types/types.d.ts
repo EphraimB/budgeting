@@ -23,6 +23,16 @@ export interface Transaction {
     balance?: number;
 }
 
+export interface TransactionHistory {
+    transaction_id: number;
+    account_id: number;
+    transaction_amount: number;
+    transaction_title: string;
+    transaction_description: string;
+    date_created: string;
+    date_modified: string;
+}
+
 export interface Account {
     account_id: number;
     account_name: string;
@@ -82,8 +92,13 @@ export interface Loan {
 }
 
 export interface Payroll {
+    start_date: string;
     end_date: string;
     net_pay: number;
+    work_days: number;
+    regular_hours?: number;
+    gross_pay: number;
+    hours_worked: number;
 }
 
 export interface PayrollDate {

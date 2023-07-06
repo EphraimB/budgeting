@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import { payrollQueries } from '../models/queryData.js';
 import { handleError, executeQuery } from '../utils/helperFunctions.js';
+import { Payroll } from '../types/types.js';
 
 interface PayrollInput {
     start_date: string;
@@ -11,21 +12,12 @@ interface PayrollInput {
     hours_worked: string;
 }
 
-interface PayrollOutput {
-    start_date: string;
-    end_date: string;
-    work_days: number;
-    gross_pay: number;
-    net_pay: number;
-    hours_worked: number;
-}
-
 /**
  * 
  * @param payroll - Payroll object
  * @returns - Payroll object with parsed values
  */
-const payrollsParse = (payroll: PayrollInput): PayrollOutput => ({
+const payrollsParse = (payroll: PayrollInput): Payroll => ({
     start_date: payroll.start_date,
     end_date: payroll.end_date,
     work_days: parseInt(payroll.work_days),
@@ -52,7 +44,7 @@ export const getPayrolls = async (request: Request, response: Response): Promise
         }
 
         // Parse the data to correct format and return an object
-        const payrolls: PayrollOutput[] = results.map(payroll => payrollsParse(payroll));
+        const payrolls: Payroll[] = results.map(payroll => payrollsParse(payroll));
 
         const returnObj = {
             employee_id,

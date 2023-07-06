@@ -3,6 +3,7 @@ import { expenseQueries, cronJobQueries } from '../models/queryData.js';
 import scheduleCronJob from '../bree/jobs/scheduleCronJob.js';
 import deleteCronJob from '../bree/jobs/deleteCronJob.js';
 import { handleError, executeQuery } from '../utils/helperFunctions.js';
+import { Expense } from '../types/types.js';
 
 interface ExpenseInput {
     expense_id: string;
@@ -23,31 +24,13 @@ interface ExpenseInput {
     date_modified: string;
 }
 
-interface ExpenseOutput {
-    expense_id: number;
-    account_id: number;
-    expense_amount: number;
-    expense_title: string;
-    expense_description: string;
-    frequency_type: number;
-    frequency_type_variable: number;
-    frequency_day_of_month: number;
-    frequency_day_of_week: number;
-    frequency_week_of_month: number;
-    frequency_month_of_year: number;
-    expense_begin_date: string;
-    expense_end_date: string;
-    date_created: string;
-    date_modified: string;
-}
-
 /**
  * 
  * @param expense - Expense object
  * @returns Expense object with the correct types
  * Converts the expense object to the correct types
  **/
-const parseExpenses = (expense: ExpenseInput): ExpenseOutput => ({
+const parseExpenses = (expense: ExpenseInput): Expense => ({
     expense_id: parseInt(expense.expense_id),
     account_id: parseInt(expense.account_id),
     expense_amount: parseFloat(expense.expense_amount),
