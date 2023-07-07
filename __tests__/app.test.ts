@@ -8,6 +8,22 @@ jest.mock('../bree/breeManager.js', () => ({
     getBree: jest.fn()
 }));
 
+jest.mock('../bree/getJobs.js', () => ({
+    default: jest.fn()
+}));
+
+jest.mock('../bree/jobs/scheduleCronJob.js', () => ({
+    default: jest.fn()
+}));
+
+jest.mock('../bree/jobs/deleteCronJob.js', () => ({
+    default: jest.fn()
+}));
+
+jest.mock('../bree/getPayrolls.js', () => ({
+    default: jest.fn()
+}));
+
 describe('Test application', () => {
     it('should trigger not found for site 404', async () => {
         // Import the module that uses the mock

@@ -14,8 +14,13 @@ import wishlistRouter from './routes/wishlistRouter.js';
 import transferRouter from './routes/transfersRouter.js';
 import transactionsRouter from './routes/transactionsRouter.js';
 import { initializeBree } from './bree/breeManager.js';
+import { fileURLToPath } from 'url';
+import fs from 'fs';
+import path from 'path';
 
-import swaggerDocument from './views/swagger.json' assert { type: 'json' };
+const __dirname = fileURLToPath(new URL('.', import.meta.url));
+
+const swaggerDocument = JSON.parse(fs.readFileSync(path.resolve(__dirname, './views/swagger.json'), 'utf8'));
 
 const app: Express = express();
 
