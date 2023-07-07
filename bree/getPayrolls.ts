@@ -5,14 +5,10 @@ import path from 'path';
 import schedulePayrollCronJob from './jobs/schedulePayrollCronJob.js';
 import fs from 'fs';
 import { JobOptions } from 'bree';
+import { Payroll } from '../types/types.js';
 
 interface AccountIdResult {
     account_id: number;
-}
-
-interface Payroll {
-    end_date: string;
-    net_pay: number;
 }
 
 const __dirname: string = fileURLToPath(new URL('.', import.meta.url));
@@ -53,10 +49,10 @@ export const getPayrolls = async (employee_id: number, jobsFilePath?: string) =>
         const { rows: [{ account_id }] } = await pool.query<AccountIdResult>(payrollQueries.getAccountIdFromEmployee, [employee_id]);
         const { rows } = await pool.query<Payroll>(payrollQueries.getPayrolls, [employee_id]);
 
-        const payrollJobs = await schedulePayroll(rows, account_id);
+        const payrollJobs: JobOptions[] = await schedulePayroll(rows, account_id);
 
         // Read the existing jobs from jobs.json
-        let existingJobs = [];
+        let existingJobs: JobOptions[] = [];
         if (fs.existsSync(jobsFilePath)) {
             existingJobs = JSON.parse(fs.readFileSync(jobsFilePath, 'utf8'));
         }
@@ -79,7 +75,7 @@ export const getPayrolls = async (employee_id: number, jobsFilePath?: string) =>
  * @returns - Array of jobs
  */
 const schedulePayroll = async (rows: Payroll[], account_id: number) => {
-    const payrollJobs = [];
+    const payrollJobs: JobOptions[] = [];
     for (const result of rows) {
         const newJob: JobOptions = await schedulePayrollCronJob(result, account_id, null, null);
 
