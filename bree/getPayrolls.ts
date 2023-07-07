@@ -29,7 +29,7 @@ export const getPayrolls = async (employee_id: number, jobsFilePath?: string) =>
     // Delete all jobs in jobs.json that start with payroll-
     try {
         const jobs: JobOptions[] = JSON.parse(fs.readFileSync(jobsFilePath, 'utf8'));
-        const filteredJobs = jobs.filter(job => !job.name.startsWith('payroll-'));
+        const filteredJobs: JobOptions[] = jobs.filter(job => !job.name.startsWith('payroll-'));
         fs.writeFileSync(jobsFilePath, JSON.stringify(filteredJobs));
     } catch (err) {
         console.error(err);
