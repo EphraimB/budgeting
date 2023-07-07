@@ -48,11 +48,11 @@ const createNewJob = (uniqueId: string, end_date: string, account_id: number, ne
  * 
  * @param payrollData - Payroll data
  * @param account_id - The account_id of the employee
- * @param filePath - Path to the cron job file
- * @param jobsFilePath - Path to the jobs.json file
+ * @param [filePath] - Path to the cron job file
+ * @param [jobsFilePath] - Path to the jobs.json file
  * @returns - New job
  */
-const schedulePayrollCronJob = async (payrollData: PayrollData, account_id: number, filePath: string | null, jobsFilePath: string | null): Promise<JobOptions> => {
+const schedulePayrollCronJob = async (payrollData: PayrollData, account_id: number, filePath?: string | null, jobsFilePath?: string | null): Promise<JobOptions> => {
     const jobs = [];
     jobsFilePath = jobsFilePath || path.join(__dirname, '../jobs.json');
     const { end_date, net_pay } = payrollData;

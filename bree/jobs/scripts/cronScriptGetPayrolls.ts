@@ -1,18 +1,19 @@
-import pool from '../models/db.js';
+import pool from '../../../config/db.js';
 import fs from 'fs';
 import path from 'path';
 import * as url from 'url';
 import { workerData } from 'worker_threads';
-import { payrollQueries } from '../models/queryData.js';
+import { payrollQueries } from '../../../models/queryData.js';
 import schedulePayrollCronJob from '../schedulePayrollCronJob.js';
+import { JobOptions } from 'bree';
 
-const jobsFilePath = 'jobs.json';
-const __dirname = url.fileURLToPath(new URL('.', import.meta.url));
+const jobsFilePath: string = 'jobs.json';
+const __dirname: string = url.fileURLToPath(new URL('.', import.meta.url));
 
-const deleteCronJobFiles = (jobs) => {
+const deleteCronJobFiles = (jobs: JobOptions[]) => {
     jobs.forEach(job => {
         if (job.name.startsWith('payroll-')) {
-            const cronJobFilePath = path.join(__dirname, 'cron-jobs', `${job.name}.js`);
+            const cronJobFilePath: string = path.join(__dirname, 'cron-jobs', `${job.name}.js`);
             fs.unlink(cronJobFilePath, (err) => {
                 if (err) {
                     console.error(err);
@@ -24,7 +25,7 @@ const deleteCronJobFiles = (jobs) => {
     });
 };
 
-const updateJobsFile = (jobs) => {
+const updateJobsFile = (jobs: JobOptions) => {
     fs.writeFileSync(jobsFilePath, JSON.stringify(jobs, null, 2), (err) => {
         if (err) {
             console.error(err);
@@ -37,14 +38,14 @@ const updateJobsFile = (jobs) => {
 (async () => {
     const { employee_id } = workerData;
 
-    let jobs = [];
+    let jobs: JobOptions[] = [];
     if (fs.existsSync(jobsFilePath)) {
-        jobs = JSON.parse(fs.readFileSync(jobsFilePath));
+        jobs = JSON.parse(fs.readFileSync(jobsFilePath, 'utf8'));
     }
 
     deleteCronJobFiles(jobs);
 
-    jobs = jobs.filter(job => !job.name.startsWith('payroll-'));
+    jobs = jobs.filter((job) => !job.name.startsWith('payroll-'));
 
     updateJobsFile(jobs);
 
