@@ -2,7 +2,6 @@ import { jest } from '@jest/globals';
 import request from 'supertest';
 import { Express } from 'express';
 
-
 // Mock the breeManager module
 jest.mock('../bree/breeManager.js', () => ({
     initializeBree: jest.fn(),
