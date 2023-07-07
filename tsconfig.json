@@ -4,9 +4,9 @@
             "node",
             "jest"
         ],
-        "module": "ESNext",
+        "module": "ES2022",
         "esModuleInterop": true,
-        "target": "ESNext",
+        "target": "ES2022",
         "noImplicitAny": true,
         "moduleResolution": "node",
         "sourceMap": true,
