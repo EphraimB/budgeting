@@ -250,10 +250,8 @@ export const deleteExpense = async (request: Request, response: Response): Promi
 
         await executeQuery(expenseQueries.deleteExpense, [id]);
 
-        if (cronId) {
-            await deleteCronJob(cronId);
-            await executeQuery(cronJobQueries.deleteCronJob, [cronId]);
-        }
+        await deleteCronJob(cronId);
+        await executeQuery(cronJobQueries.deleteCronJob, [cronId]);
 
         response.status(200).send('Expense deleted successfully');
     } catch (error) {

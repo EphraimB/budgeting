@@ -161,7 +161,7 @@ export const createLoan = async (request: Request, response: Response): Promise<
         response.status(201).json(loans);
     } catch (error) {
         console.error(error); // Log the error on the server side
-        handleError(response, error.message.includes('cron job') ? 'Error creating cron job' : 'Error creating loan');
+        handleError(response, 'Error creating loan');
     }
 };
 
