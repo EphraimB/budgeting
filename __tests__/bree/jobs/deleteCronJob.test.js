@@ -1,7 +1,7 @@
 import { jest } from '@jest/globals';
 import { Volume } from 'memfs';
 
-jest.unstable_mockModule('../../../bree/breeManager.js', () => ({
+jest.mock('../../../bree/breeManager.js', () => ({
     getBree: jest.fn().mockImplementation(() => ({
         config: {
             jobs: [{ name: 'uniqueId' }]
@@ -10,7 +10,7 @@ jest.unstable_mockModule('../../../bree/breeManager.js', () => ({
     }))
 }));
 
-jest.unstable_mockModule('../../../config/db.js', () => {
+jest.mock('../../../config/db.js', () => {
     return {
         default: {
             query: jest.fn()
