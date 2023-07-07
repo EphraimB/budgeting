@@ -25,14 +25,13 @@ const deleteCronJobFiles = (jobs: JobOptions[]) => {
     });
 };
 
-const updateJobsFile = (jobs: JobOptions) => {
-    fs.writeFileSync(jobsFilePath, JSON.stringify(jobs, null, 2), (err) => {
-        if (err) {
-            console.error(err);
-        } else {
-            console.log('Updated jobs.json file');
-        }
-    });
+const updateJobsFile = (jobs: JobOptions[]): void => {
+    try {
+        fs.writeFileSync(jobsFilePath, JSON.stringify(jobs, null, 2), 'utf8');
+        console.log('Updated jobs.json file');
+    } catch (err) {
+        console.error(err);
+    }
 };
 
 (async () => {
