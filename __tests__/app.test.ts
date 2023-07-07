@@ -5,7 +5,7 @@ import { Express } from 'express';
 
 // Mock the breeManager module
 jest.mock('../bree/breeManager.js', () => ({
-    initializeBree: jest.fn(),
+    initializeBree: jest.fn().mockImplementation(() => Promise.resolve()),
     getBree: jest.fn()
 }));
 
