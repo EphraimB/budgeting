@@ -1,7 +1,8 @@
 import { Volume } from 'memfs';
 import { jest } from '@jest/globals';
+import { Job, JobOptions } from 'bree';
 
-let getJobs, getJobsModule;
+let getJobs: (jobsFilePath?: string) => Promise<JobOptions[]>, getJobsModule;
 
 const vol = Volume.fromJSON({
     'bree/jobs.json': '[]',
@@ -14,23 +15,23 @@ const employeeData = [
     { employee_id: 2 }
 ];
 
-jest.unstable_mockModule('fs', () => ({
+jest.mock('fs', () => ({
     default: vol
 }));
 
-jest.unstable_mockModule('../../bree/getPayrolls.js', () => ({
+jest.mock('../../bree/getPayrolls.js', () => ({
     getPayrolls: jest.fn().mockImplementation(() => {
         return [];
     })
 }));
 
-jest.unstable_mockModule('../../bree/getEmployeesData.js', () => ({
+jest.mock('../../bree/getEmployeesData.js', () => ({
     getEmployeesData: jest.fn().mockImplementation(() => {
         return employeeData;
     })
 }));
 
-const createJob = (name, cron, path, workerData) => {
+const createJob = (name: string, cron: string, path: string, workerData: any): JobOptions => {
     return {
         name,
         cron,
@@ -52,7 +53,7 @@ describe('getJobs', () => {
     });
 
     it('should return just the payroll objects when no jobs.json file exists', async () => {
-        const jobs = await getJobs('/app/bree/jobs.json');
+        const jobs: JobOptions[] = await getJobs('/app/bree/jobs.json');
 
         expect(jobs).toEqual([
             createJob('payroll-checker-employee-1', '0 0 1 * *', '/app/bree/jobs/scripts/cronScriptGetPayrolls.js', { employee_id: 1 }),
@@ -61,7 +62,7 @@ describe('getJobs', () => {
     });
 
     it('should return the payroll objects and the existing jobs when a jobs.json file exists', async () => {
-        vol.writeFileSync('/app/bree/jobs.json', JSON.stringify([createJob('payroll-fesgersg', '0 0 1 * *', '/app/bree/jobs/scripts/cronScriptCreate.js', { employee_id: 1 })]), 'utf8');
+        vol.writeFileSync('/app/bree/jobs.json', JSON.stringify([createJob('payroll-fesgersg', '0 0 1 * *', '/app/bree/jobs/scripts/cronScriptCreate.js', { employee_id: 1 })]), { encoding: 'utf8' });
 
         const jobs = await getJobs('/app/bree/jobs.json');
 

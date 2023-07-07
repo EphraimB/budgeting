@@ -6,11 +6,11 @@ const vol = Volume.fromJSON({
     'cron-jobs/jobs.js': ''
 }, '/app');
 
-jest.unstable_mockModule('fs', () => ({
+jest.mock('fs', () => ({
     default: vol
 }));
 
-jest.unstable_mockModule('../../config/db.js', () => ({
+jest.mock('../../config/db.js', () => ({
     default: {
         query: jest.fn().mockImplementation(() => Promise.resolve({
             rows: [{
@@ -22,7 +22,7 @@ jest.unstable_mockModule('../../config/db.js', () => ({
     }
 }));
 
-jest.unstable_mockModule('../../bree/jobs/schedulePayrollCronJob.js', () => ({
+jest.mock('../../bree/jobs/schedulePayrollCronJob.js', () => ({
     default: jest.fn().mockImplementation(() => Promise.resolve({
         name: 'payroll-checker-employee-1',
         cron: '0 0 1 * *',
@@ -35,11 +35,11 @@ jest.unstable_mockModule('../../bree/jobs/schedulePayrollCronJob.js', () => ({
     }))
 }));
 
-const getPayrollsModule = await import('../../bree/getPayrolls.js');
-const getPayrolls = getPayrollsModule.getPayrolls;
-
 describe('getPayrolls', () => {
     it('should fetch payrolls correctly', async () => {
+        const getPayrollsModule = await import('../../bree/getPayrolls.js');
+        const getPayrolls = getPayrollsModule.getPayrolls;
+        
         const payrolls = await getPayrolls(1, '/app/jobs.json');
 
         // Verify the payrolls were fetched correctly
