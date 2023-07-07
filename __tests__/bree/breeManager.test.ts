@@ -21,14 +21,13 @@ describe('breeManager', () => {
 
     it('should initialize Bree correctly', async () => {
         const { initializeBree, getBree } = await import('../../bree/breeManager');
-        await initializeBree('/app/cron-jobs');
-
-        console.log('getBree', await getBree().config.jobs);
+        await initializeBree('/app/cron-jobs', '/app/jobs.json');
 
         expect(await getBree().config.jobs).toEqual([
             { name: 'mockJob' } // Expect the initial jobs from the mock config
         ]);
 
         expect(vol.existsSync('/app/cron-jobs')).toBe(true);
+        expect(vol.existsSync('/app/jobs.json')).toBe(true);
     });
 });
