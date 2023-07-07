@@ -12,6 +12,7 @@ let breeInstance: Bree | null = null;
 /**
  * 
  * @param [cronjobsDir] - Directory where the cron jobs are located
+ * @param [jobsFilePath] - Path to the jobs.json file
  * Initializes the bree instance
  */
 export const initializeBree = async (cronjobsDir?: string, jobsFilePath?: string) => {
