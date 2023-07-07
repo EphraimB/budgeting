@@ -5,8 +5,8 @@
   "main": "server.js",
   "scripts": {
     "build": "tsc",
-    "start": "node --experimental-vm-modules dist/server.js",
-    "test": "cross-env NODE_OPTIONS=--experimental-vm-modules jest",
+    "start": "node dist/server.js",
+    "test": "cross-env jest",
     "lint": "eslint ."
   },
   "author": "Ephraim Becker",
