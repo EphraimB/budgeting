@@ -20,7 +20,7 @@ describe('breeManager', () => {
     });
 
     it('should initialize Bree correctly', async () => {
-        const { initializeBree, getBree } = await import('../../bree/breeManager');
+        const { initializeBree, getBree } = await import('../../bree/breeManager.js');
         await initializeBree('/app/cron-jobs', '/app/jobs.json');
 
         expect(await getBree().config.jobs).toEqual([
