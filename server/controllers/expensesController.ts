@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import { expenseQueries, cronJobQueries } from '../models/queryData.js';
-import scheduleCronJob from '../bree/jobs/scheduleCronJob.js';
+import scheduleCronJob from '../crontab/scheduleCronJob.js';
 import deleteCronJob from '../bree/jobs/deleteCronJob.js';
 import { handleError, executeQuery } from '../utils/helperFunctions.js';
 import { Expense } from '../types/types.js';
@@ -112,9 +112,9 @@ export const createExpense = async (request: Request, response: Response): Promi
 
     const negativeAmount: number = -amount;
     const cronParams = {
-        begin_date,
+        date: begin_date,
         account_id,
-        negativeAmount,
+        amount: negativeAmount,
         description,
         frequency_type,
         frequency_type_variable,
