@@ -20,8 +20,8 @@ COPY ./views/swagger.json ./dist/views/swagger.json
 # Copy scripts folder into the dist folder
 COPY ./scripts /app/dist/scripts
 
-# Make the cron script executable
-RUN chmod +x /app/dist/scripts/cronScriptCheckEmployees.sh
+# Make all files in the scripts directory executable
+RUN chmod +x /app/dist/scripts/*
 
 # ------ Runtime stage ------
 FROM node:18-alpine
