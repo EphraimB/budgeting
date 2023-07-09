@@ -121,7 +121,8 @@ export const createExpense = async (request: Request, response: Response): Promi
         frequency_day_of_month,
         frequency_day_of_week,
         frequency_week_of_month,
-        frequency_month_of_year
+        frequency_month_of_year,
+        scriptPath: 'scripts/createTransaction.sh'
     };
 
     try {
@@ -145,7 +146,7 @@ export const createExpense = async (request: Request, response: Response): Promi
             frequency_day_of_week,
             frequency_week_of_month,
             frequency_month_of_year,
-            begin_date
+            begin_date,
         ]);
 
         response.status(201).json(expenses.map(parseExpenses));
