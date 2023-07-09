@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 import { expenseQueries, cronJobQueries } from '../models/queryData.js';
 import scheduleCronJob from '../crontab/scheduleCronJob.js';
-import deleteCronJob from '../bree/jobs/deleteCronJob.js';
+import deleteCronJob from '../crontab/deleteCronJob.js';
 import { handleError, executeQuery } from '../utils/helperFunctions.js';
 import { Expense } from '../types/types.js';
 
@@ -199,7 +199,13 @@ export const updateExpense = async (request: Request, response: Response): Promi
         }
 
         const cronId: number = parseInt(expenseResult[0].cron_job_id);
-        await deleteCronJob(cronId);
+        const results = await executeQuery(cronJobQueries.getCronJob, [cronId]);
+
+        if (results.length > 0) {
+            await deleteCronJob(results[0].unique_id);
+        } else {
+            console.error('Cron job not found');
+        }
 
         const { uniqueId, cronDate } = await scheduleCronJob(cronParams);
 
@@ -251,7 +257,14 @@ export const deleteExpense = async (request: Request, response: Response): Promi
 
         await executeQuery(expenseQueries.deleteExpense, [id]);
 
-        await deleteCronJob(cronId);
+        const results = await executeQuery(cronJobQueries.getCronJob, [cronId]);
+
+        if (results.length > 0) {
+            await deleteCronJob(results[0].unique_id);
+        } else {
+            console.error('Cron job not found');
+        }
+
         await executeQuery(cronJobQueries.deleteCronJob, [cronId]);
 
         response.status(200).send('Expense deleted successfully');
