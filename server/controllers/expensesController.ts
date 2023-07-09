@@ -178,16 +178,17 @@ export const updateExpense = async (request: Request, response: Response): Promi
     } = request.body;
 
     const cronParams = {
-        begin_date,
+        date: begin_date,
         account_id,
-        amount,
+        amount: -amount,
         description,
         frequency_type,
         frequency_type_variable,
         frequency_day_of_month,
         frequency_day_of_week,
         frequency_week_of_month,
-        frequency_month_of_year
+        frequency_month_of_year,
+        scriptPath: 'scripts/createTransaction.sh'
     };
 
     try {
