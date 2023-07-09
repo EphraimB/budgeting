@@ -1,4 +1,4 @@
-import { exec as execMock } from 'child_process';
+import { exec, ChildProcess } from 'child_process';
 import scheduleCronJob from '../../crontab/scheduleCronJob';
 import determineCronValues from '../../crontab/determineCronValues';
 
@@ -7,6 +7,10 @@ jest.mock('child_process', () => ({
 }));
 
 jest.mock('../../crontab/determineCronValues', () => jest.fn());
+
+// Explicitly declare the types of the mocked functions
+const execMock = exec as jest.MockedFunction<typeof exec>;
+const determineCronValuesMock = determineCronValues as jest.MockedFunction<typeof determineCronValues>;
 
 describe('scheduleCronJob', () => {
     it('should schedule a cron job', async () => {
@@ -22,15 +26,21 @@ describe('scheduleCronJob', () => {
         const expectedCronDate = '* * * * *';
         const expectedUniqueId = '1234';
 
-        (determineCronValues as jest.Mock).mockReturnValue(expectedCronDate);
-        (execMock as jest.Mock).mockImplementation((command, callback) => callback(null, '', ''));
+        determineCronValuesMock.mockReturnValue(expectedCronDate);
+        execMock.mockImplementation((...args): ChildProcess => {
+            const callback = args.find(arg => typeof arg === 'function');
+            if (typeof callback === 'function') {
+                callback(null, '', '');
+            }
+            return {} as ChildProcess; // Return a mock ChildProcess object
+        });
 
         // Act
         const result = await scheduleCronJob(jobDetails);
 
         // Assert
-        expect(determineCronValues).toHaveBeenCalledWith(expect.objectContaining({ date: jobDetails.date, frequency_type: jobDetails.frequency_type }));
-        expect(execMock as jest.Mock).toHaveBeenCalledWith(expect.stringContaining(expectedCronDate), expect.any(Function));
+        expect(determineCronValuesMock).toHaveBeenCalledWith(expect.objectContaining({ date: jobDetails.date, frequency_type: jobDetails.frequency_type }));
+        expect(execMock).toHaveBeenCalledWith(expect.stringContaining(expectedCronDate), expect.any(Function));
         expect(result).toEqual({ cronDate: expectedCronDate, uniqueId: expect.any(String) });
     });
 });
