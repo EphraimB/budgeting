@@ -9,7 +9,7 @@
  * @param transactionDate - Transaction date
  * @returns 
  */
-const determineCronValues = (frequency_type: number, frequency_type_variable: number, frequency_day_of_month: number, frequency_day_of_week: number, frequency_week_of_month: number, frequency_month_of_year: number, transactionDate: Date): string[] => {
+const determineCronValues = (frequency_type: number, frequency_type_variable: number, frequency_day_of_month: number, frequency_day_of_week: number, frequency_week_of_month: number, frequency_month_of_year: number, transactionDate: Date): any => {
     let cronDay = '*';
     let cronMonth = '*';
     let cronDayOfWeek = '*';
