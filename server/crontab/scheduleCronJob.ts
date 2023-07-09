@@ -39,7 +39,7 @@ const scheduleCronJob = async (jobDetails: any) => {
     );
 
     return {
-        cronDate: { cronDay, cronMonth, cronDayOfWeek },
+        cronDate,
         uniqueId: uniqueId,
     };
 };
