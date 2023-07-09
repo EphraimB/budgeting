@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 import { loanQueries, cronJobQueries } from '../models/queryData.js';
-import scheduleCronJob from '../bree/jobs/scheduleCronJob.js';
-import deleteCronJob from '../bree/jobs/deleteCronJob.js';
+import scheduleCronJob from '../crontab/scheduleCronJob.js';
+import deleteCronJob from '../crontab/deleteCronJob.js';
 import { handleError, executeQuery } from '../utils/helperFunctions.js';
 import { Loan } from '../types/types.js';
 
@@ -116,24 +116,26 @@ export const createLoan = async (request: Request, response: Response): Promise<
         begin_date
     } = request.body;
 
-    const negative_plan_amount = -plan_amount;
-
-    const { cronDate, uniqueId } = await scheduleCronJob({
-        begin_date,
+    const cronParams = {
+        date: begin_date,
         account_id,
-        negative_plan_amount,
+        amount: -plan_amount,
         description,
         frequency_type,
         frequency_type_variable,
         frequency_day_of_month,
         frequency_day_of_week,
         frequency_week_of_month,
-        frequency_month_of_year
-    });
+        frequency_month_of_year,
+        scriptPath: 'server/scripts/createTransaction.sh'
+    };
 
     try {
-        const cronJobResults = await executeQuery(cronJobQueries.createCronJob, [uniqueId, cronDate]);
-        const cronId = cronJobResults[0].cron_job_id;
+        const { cronDate, uniqueId } = await scheduleCronJob(cronParams);
+        const cronId: number = (await executeQuery(cronJobQueries.createCronJob, [
+            uniqueId,
+            cronDate
+        ]))[0].cron_job_id;
 
         console.log('Cron job created ' + cronId);
 
@@ -173,26 +175,38 @@ export const createLoan = async (request: Request, response: Response): Promise<
  */
 export const updateLoan = async (request: Request, response: Response): Promise<void> => {
     const { id } = request.params;
+    const {
+        account_id,
+        amount,
+        plan_amount,
+        recipient,
+        title,
+        description,
+        frequency_type,
+        frequency_type_variable,
+        frequency_day_of_month,
+        frequency_day_of_week,
+        frequency_week_of_month,
+        frequency_month_of_year,
+        begin_date
+    } = request.body;
+
+
+    const cronParams = {
+        date: begin_date,
+        account_id,
+        amount: -plan_amount,
+        description,
+        frequency_type,
+        frequency_type_variable,
+        frequency_day_of_month,
+        frequency_day_of_week,
+        frequency_week_of_month,
+        frequency_month_of_year,
+        scriptPath: 'server/scripts/createTransaction.sh'
+    };
 
     try {
-        const {
-            account_id,
-            amount,
-            plan_amount,
-            recipient,
-            title,
-            description,
-            frequency_type,
-            frequency_type_variable,
-            frequency_day_of_month,
-            frequency_day_of_week,
-            frequency_week_of_month,
-            frequency_month_of_year,
-            begin_date
-        } = request.body;
-
-        const negative_plan_amount: number = -plan_amount;
-
         const getLoanResults = await executeQuery<LoanInput>(loanQueries.getLoansById, [id]);
 
         if (getLoanResults.length === 0) {
@@ -201,20 +215,15 @@ export const updateLoan = async (request: Request, response: Response): Promise<
         }
 
         const cronId: number = parseInt(getLoanResults[0].cron_job_id);
-        await deleteCronJob(cronId);
+        const results = await executeQuery(cronJobQueries.getCronJob, [cronId]);
 
-        const { uniqueId, cronDate } = await scheduleCronJob({
-            begin_date,
-            account_id,
-            negative_plan_amount,
-            description,
-            frequency_type,
-            frequency_type_variable,
-            frequency_day_of_month,
-            frequency_day_of_week,
-            frequency_week_of_month,
-            frequency_month_of_year
-        });
+        if (results.length > 0) {
+            await deleteCronJob(results[0].unique_id);
+        } else {
+            console.error('Cron job not found');
+        }
+
+        const { uniqueId, cronDate } = await scheduleCronJob(cronParams);
 
         await executeQuery(cronJobQueries.updateCronJob, [uniqueId, cronDate, cronId]);
         const updateLoanResults = await executeQuery<LoanInput>(loanQueries.updateLoan, [
@@ -262,7 +271,15 @@ export const deleteLoan = async (request: Request, response: Response): Promise<
 
         const cronId: number = parseInt(getLoanResults[0].cron_job_id);
         await executeQuery(loanQueries.deleteLoan, [id]);
-        await deleteCronJob(cronId);
+
+        const results = await executeQuery(cronJobQueries.getCronJob, [cronId]);
+
+        if (results.length > 0) {
+            await deleteCronJob(results[0].unique_id);
+        } else {
+            console.error('Cron job not found');
+        }
+
         await executeQuery(cronJobQueries.deleteCronJob, [cronId]);
 
         response.status(200).send('Loan deleted successfully');
