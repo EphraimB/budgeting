@@ -4,7 +4,7 @@ import { v4 as uuidv4 } from 'uuid';
 
 /**
  * @param jobDetails - Job details
- * @returns - Cron job data
+ * @returns Cron job data
  */
 const scheduleCronJob = async (jobDetails: any) => {
     const { date,
