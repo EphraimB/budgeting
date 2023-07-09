@@ -1,7 +1,6 @@
 /**
  * 
  * @param jobDetails - Job details
- * @param transactionDate - Transaction date
  * @returns - Cron date
  */
 const determineCronValues = (jobDetails: any): any => {
