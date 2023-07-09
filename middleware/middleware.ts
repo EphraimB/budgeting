@@ -15,10 +15,15 @@ export const getTransactionsByAccount = async (request: Request, response: Respo
     try {
         const results = await executeQuery(transactionHistoryQueries.getTransactionsDateMiddleware, [account_id, from_date]);
 
-        request.transaction = results;
+        // Map over results array and convert amount to a float for each Transaction object
+        request.transaction = results.map(transaction => ({
+            ...transaction,
+            transaction_amount: parseFloat(transaction.transaction_amount),
+        }));
 
         next();
     } catch (error) {
+        console.error(error); // Log the error on the server side
         handleError(response, 'Error getting transactions');
     }
 };
@@ -36,10 +41,15 @@ export const getExpensesByAccount = async (request: Request, response: Response,
     try {
         const results = await executeQuery(expenseQueries.getExpensesMiddleware, [account_id, to_date]);
 
-        request.expenses = results;
+        // Map over results array and convert amount to a float for each Expense object
+        request.expenses = results.map(expense => ({
+            ...expense,
+            amount: parseFloat(expense.expense_amount),
+        }));
 
         next();
     } catch (error) {
+        console.error(error); // Log the error on the server side
         handleError(response, 'Error getting expenses');
     }
 };
@@ -57,10 +67,15 @@ export const getLoansByAccount = async (request: Request, response: Response, ne
     try {
         const results = await executeQuery(loanQueries.getLoansMiddleware, [account_id, to_date]);
 
-        request.loans = results;
+        // Map over results array and convert amount to a float for each Loan object
+        request.loans = results.map(loan => ({
+            ...loan,
+            amount: parseFloat(loan.loan_plan_amount),
+        }));
 
         next();
     } catch (error) {
+        console.error(error); // Log the error on the server side
         handleError(response, 'Error getting loans');
     }
 };
@@ -78,10 +93,15 @@ export const getPayrollsMiddleware = async (request: Request, response: Response
     try {
         const results = await executeQuery(payrollQueries.getPayrollsMiddleware, [account_id, to_date]);
 
-        request.payrolls = results;
+        // Map over results array and convert net_pay to a float for each Payroll object
+        request.payrolls = results.map(payroll => ({
+            ...payroll,
+            net_pay: parseFloat(payroll.net_pay),
+        }));
 
         next();
     } catch (error) {
+        console.error(error); // Log the error on the server side
         handleError(response, 'Error getting payrolls');
     }
 };
@@ -99,10 +119,15 @@ export const getWishlistsByAccount = async (request: Request, response: Response
     try {
         const results = await executeQuery(wishlistQueries.getWishlistsMiddleware, [account_id, to_date]);
 
-        request.wishlists = results;
+        // Map over results array and convert amount to a float for each Wishlist object
+        request.wishlists = results.map(wishlist => ({
+            ...wishlist,
+            amount: parseFloat(wishlist.wishlist_amount),
+        }));
 
         next();
     } catch (error) {
+        console.error(error); // Log the error on the server side
         handleError(response, 'Error getting wishlists');
     }
 };
@@ -120,10 +145,15 @@ export const getTransfersByAccount = async (request: Request, response: Response
     try {
         const results = await executeQuery(transferQueries.getTransfersMiddleware, [account_id, to_date]);
 
-        request.transfers = results;
+        // Map over results array and convert amount to a float for each Transfer object
+        request.transfers = results.map(transfer => ({
+            ...transfer,
+            amount: parseFloat(transfer.transfer_amount),
+        }));
 
         next();
     } catch (error) {
+        console.error(error); // Log the error on the server side
         handleError(response, 'Error getting transfers');
     }
 };
@@ -147,6 +177,7 @@ export const getCurrentBalance = async (request: Request, response: Response, ne
 
         next();
     } catch (error) {
+        console.error(error); // Log the error on the server side
         handleError(response, 'Error getting current balance');
     }
 };

@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import { accountQueries } from '../models/queryData.js';
 import { handleError, executeQuery } from '../utils/helperFunctions.js';
+import { Account } from '../types/types.js';
 
 interface AccountInput {
     account_id: string;
@@ -11,21 +12,12 @@ interface AccountInput {
     date_modified: string;
 }
 
-interface AccountOutput {
-    account_id: number;
-    account_name: string;
-    account_type: number;
-    account_balance: number;
-    date_created: string;
-    date_modified: string;
-}
-
 /**
  * 
  * @param account - Account object to parse
  * @returns - Parsed account object
  */
-const parseAccounts = (account: AccountInput): AccountOutput => ({
+const parseAccounts = (account: AccountInput): Account => ({
     account_id: parseInt(account.account_id),
     account_name: account.account_name,
     account_type: parseInt(account.account_type),

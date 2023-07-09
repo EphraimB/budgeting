@@ -3,6 +3,7 @@ import { expenseQueries, cronJobQueries } from '../models/queryData.js';
 import scheduleCronJob from '../bree/jobs/scheduleCronJob.js';
 import deleteCronJob from '../bree/jobs/deleteCronJob.js';
 import { handleError, executeQuery } from '../utils/helperFunctions.js';
+import { Expense } from '../types/types.js';
 
 interface ExpenseInput {
     expense_id: string;
@@ -23,42 +24,24 @@ interface ExpenseInput {
     date_modified: string;
 }
 
-interface ExpenseOutput {
-    expense_id: number;
-    account_id: number;
-    expense_amount: number;
-    expense_title: string;
-    expense_description: string;
-    frequency_type: string;
-    frequency_type_variable: string;
-    frequency_day_of_month: string;
-    frequency_day_of_week: string;
-    frequency_week_of_month: string;
-    frequency_month_of_year: string;
-    expense_begin_date: string;
-    expense_end_date: string;
-    date_created: string;
-    date_modified: string;
-}
-
 /**
  * 
  * @param expense - Expense object
  * @returns Expense object with the correct types
  * Converts the expense object to the correct types
  **/
-const parseExpenses = (expense: ExpenseInput): ExpenseOutput => ({
+const parseExpenses = (expense: ExpenseInput): Expense => ({
     expense_id: parseInt(expense.expense_id),
     account_id: parseInt(expense.account_id),
     expense_amount: parseFloat(expense.expense_amount),
     expense_title: expense.expense_title,
     expense_description: expense.expense_description,
-    frequency_type: expense.frequency_type,
-    frequency_type_variable: expense.frequency_type_variable,
-    frequency_day_of_month: expense.frequency_day_of_month,
-    frequency_day_of_week: expense.frequency_day_of_week,
-    frequency_week_of_month: expense.frequency_week_of_month,
-    frequency_month_of_year: expense.frequency_month_of_year,
+    frequency_type: parseInt(expense.frequency_type),
+    frequency_type_variable: parseInt(expense.frequency_type_variable) || null,
+    frequency_day_of_month: parseInt(expense.frequency_day_of_month) || null,
+    frequency_day_of_week: parseInt(expense.frequency_day_of_week) || null,
+    frequency_week_of_month: parseInt(expense.frequency_week_of_month) || null,
+    frequency_month_of_year: parseInt(expense.frequency_month_of_year) || null,
     expense_begin_date: expense.expense_begin_date,
     expense_end_date: expense.expense_end_date,
     date_created: expense.date_created,
@@ -143,7 +126,7 @@ export const createExpense = async (request: Request, response: Response): Promi
 
     try {
         const { cronDate, uniqueId } = await scheduleCronJob(cronParams);
-        const cronId = (await executeQuery(cronJobQueries.createCronJob, [
+        const cronId: number = (await executeQuery(cronJobQueries.createCronJob, [
             uniqueId,
             cronDate
         ]))[0].cron_job_id;
@@ -267,10 +250,8 @@ export const deleteExpense = async (request: Request, response: Response): Promi
 
         await executeQuery(expenseQueries.deleteExpense, [id]);
 
-        if (cronId) {
-            await deleteCronJob(cronId);
-            await executeQuery(cronJobQueries.deleteCronJob, [cronId]);
-        }
+        await deleteCronJob(cronId);
+        await executeQuery(cronJobQueries.deleteCronJob, [cronId]);
 
         response.status(200).send('Expense deleted successfully');
     } catch (error) {

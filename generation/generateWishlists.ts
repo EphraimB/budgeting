@@ -1,4 +1,4 @@
-import { Wishlist } from '../types/types';
+import { Wishlist, GeneratedTransaction } from '../types/types';
 
 /**
  * 
@@ -8,7 +8,7 @@ import { Wishlist } from '../types/types';
  * @param fromDate - The date to generate wishlists from
  * Generate wishlists for a given wishlist
  */
-const generateWishlists = (transactions: any[], skippedTransactions: any[], wishlist: Wishlist, fromDate: Date): void => {
+const generateWishlists = (transactions: GeneratedTransaction[], skippedTransactions: GeneratedTransaction[], wishlist: Wishlist, fromDate: Date): void => {
     const allTransactions: any[] = transactions.concat(skippedTransactions);
     const wishlist_amount: number = wishlist.wishlist_amount;
 
@@ -34,7 +34,7 @@ const generateWishlists = (transactions: any[], skippedTransactions: any[], wish
             ? new Date(Math.max(affordableDate, new Date(wishlist.wishlist_date_available).getTime()))
             : new Date(affordableDate);
 
-        const newTransaction = {
+        const newTransaction: GeneratedTransaction = {
             wishlist_id: wishlist.wishlist_id,
             title: wishlist.wishlist_title,
             description: wishlist.wishlist_description,

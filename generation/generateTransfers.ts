@@ -1,4 +1,4 @@
-import { Transfer } from '../types/types';
+import { Transfer, GeneratedTransaction } from '../types/types';
 
 type GenerateDateFunction = (currentDate: Date, transfer: Transfer) => Date;
 
@@ -13,7 +13,7 @@ type GenerateDateFunction = (currentDate: Date, transfer: Transfer) => Date;
  * @param generateDateFn - The function to generate the next date
  * Generate transfers for a given transfer
  */
-const generateTransfers = (transactions: any[], skippedTransactions: any[], transfer: Transfer, toDate: Date, fromDate: Date, account_id: number, generateDateFn: GenerateDateFunction): void => {
+const generateTransfers = (transactions: GeneratedTransaction[], skippedTransactions: GeneratedTransaction[], transfer: Transfer, toDate: Date, fromDate: Date, account_id: number, generateDateFn: GenerateDateFunction): void => {
     let transferDate: Date = new Date(transfer.transfer_begin_date);
 
     if (transfer.frequency_month_of_year !== null && transfer.frequency_month_of_year !== undefined) {
@@ -43,7 +43,7 @@ const generateTransfers = (transactions: any[], skippedTransactions: any[], tran
     }
 
     while (transferDate <= toDate) {
-        const newTransaction = {
+        const newTransaction: GeneratedTransaction = {
             transfer_id: transfer.transfer_id,
             title: transfer.transfer_title,
             description: transfer.transfer_description,
@@ -73,7 +73,7 @@ const generateTransfers = (transactions: any[], skippedTransactions: any[], tran
  * @param account_id - The account id to generate transfers for
  * Generate daily transfers for a given transfer
  */
-export const generateDailyTransfers = (transactions: any[], skippedTransactions: any[], transfer: Transfer, toDate: Date, fromDate: Date, account_id: number): void => {
+export const generateDailyTransfers = (transactions: GeneratedTransaction[], skippedTransactions: GeneratedTransaction[], transfer: Transfer, toDate: Date, fromDate: Date, account_id: number): void => {
     const generateDateFn = (currentDate: Date, transfer: Transfer): Date => {
         const newDate: Date = currentDate;
         newDate.setDate(newDate.getDate() + (transfer.frequency_type_variable || 1));
@@ -93,7 +93,7 @@ export const generateDailyTransfers = (transactions: any[], skippedTransactions:
  * @param account_id - The account id to generate transfers for
  * Generate monthly transfers for a given transfer
  */
-export const generateMonthlyTransfers = (transactions: any[], skippedTransactions: any[], transfer: Transfer, toDate: Date, fromDate: Date, account_id: number): void => {
+export const generateMonthlyTransfers = (transactions: GeneratedTransaction[], skippedTransactions: GeneratedTransaction[], transfer: Transfer, toDate: Date, fromDate: Date, account_id: number): void => {
     let monthsIncremented: number = 0;
     const generateDateFn = (currentDate: Date, transfer: Transfer): Date => {
         const transferDate: Date = new Date(transfer.transfer_begin_date);
@@ -141,7 +141,7 @@ export const generateMonthlyTransfers = (transactions: any[], skippedTransaction
  * @param account_id - The account id to generate transfers for
  * Generate weekly transfers for a given transfer
  */
-export const generateWeeklyTransfers = (transactions: any[], skippedTransactions: any[], transfer: Transfer, toDate: Date, fromDate: Date, account_id: number): void => {
+export const generateWeeklyTransfers = (transactions: GeneratedTransaction[], skippedTransactions: GeneratedTransaction[], transfer: Transfer, toDate: Date, fromDate: Date, account_id: number): void => {
     const transferDate: Date = new Date(transfer.transfer_begin_date);
 
     if (transfer.frequency_day_of_week !== null && transfer.frequency_day_of_week !== undefined) {
@@ -170,7 +170,7 @@ export const generateWeeklyTransfers = (transactions: any[], skippedTransactions
  * @param account_id - The account id to generate transfers for
  * Generate yearly transfers for a given transfer
  */
-export const generateYearlyTransfers = (transactions: any[], skippedTransactions: any[], transfer: Transfer, toDate: Date, fromDate: Date, account_id: number): void => {
+export const generateYearlyTransfers = (transactions: GeneratedTransaction[], skippedTransactions: GeneratedTransaction[], transfer: Transfer, toDate: Date, fromDate: Date, account_id: number): void => {
     let yearsIncremented: number = 0;
     const generateDateFn = (currentDate: Date, transfer: Transfer): Date => {
         const transferDate: Date = new Date(transfer.transfer_begin_date);

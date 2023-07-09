@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import { wishlistQueries } from '../models/queryData.js';
 import { executeQuery, handleError } from '../utils/helperFunctions.js';
+import { Wishlist } from '../types/types.js';
 
 interface WishlistInput {
     wishlist_id: string;
@@ -15,25 +16,12 @@ interface WishlistInput {
     date_modified: string;
 }
 
-interface WishlistOutput {
-    wishlist_id: number;
-    account_id: number;
-    wishlist_amount: number;
-    wishlist_title: string;
-    wishlist_description: string;
-    wishlist_url_link: string;
-    wishlist_priority: number;
-    wishlist_date_available: string;
-    date_created: string;
-    date_modified: string;
-}
-
 /**
  * 
  * @param wishlist - Wishlist object
  * @returns - Wishlist object with parsed values
  */
-const wishlistsParse = (wishlist: WishlistInput): WishlistOutput => ({
+const wishlistsParse = (wishlist: WishlistInput): Wishlist => ({
     wishlist_id: parseInt(wishlist.wishlist_id),
     account_id: parseInt(wishlist.account_id),
     wishlist_amount: parseFloat(wishlist.wishlist_amount),
@@ -81,7 +69,7 @@ export const getWishlists = async (request: Request, response: Response): Promis
         }
 
         // Parse the data to the correct format
-        const wishlists: WishlistOutput[] = results.map(wishlist => wishlistsParse(wishlist));
+        const wishlists: Wishlist[] = results.map(wishlist => wishlistsParse(wishlist));
 
         response.status(200).json(wishlists);
     } catch (error) {
@@ -103,7 +91,7 @@ export const createWishlist = async (request: Request, response: Response): Prom
         const results = await executeQuery<WishlistInput>(wishlistQueries.createWishlist, [account_id, amount, title, description, priority, url_link]);
 
         // Parse the data to correct format and return an object
-        const wishlists: WishlistOutput[] = results.map(wishlist => wishlistsParse(wishlist));
+        const wishlists: Wishlist[] = results.map(wishlist => wishlistsParse(wishlist));
 
         response.status(201).json(wishlists);
     } catch (error) {
@@ -131,7 +119,7 @@ export const updateWishlist = async (request: Request, response: Response): Prom
         }
 
         // Parse the data to correct format and return an object
-        const wishlists: WishlistOutput[] = results.map(wishlist => wishlistsParse(wishlist));
+        const wishlists: Wishlist[] = results.map(wishlist => wishlistsParse(wishlist));
 
         response.status(200).json(wishlists);
     } catch (error) {

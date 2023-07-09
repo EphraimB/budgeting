@@ -20,7 +20,7 @@ router.get('/', [
     query('to_date').exists().withMessage('To date is required').isDate().withMessage('To date must be a date in YYYY-MM-DD format'),
     validateRequest
 ], getCurrentBalance, getTransactionsByAccount, getExpensesByAccount, getLoansByAccount, getPayrollsMiddleware, getTransfersByAccount, getWishlistsByAccount, generateTransactions, (request: Request, response: Response) => {
-    response.json({ account_id: request.query.account_id, currentBalance: request.currentBalance, transactions: request.transactions });
+    response.json({ account_id: parseInt(request.query.account_id as string), currentBalance: request.currentBalance, transactions: request.transactions });
 });
 
 export default router;
