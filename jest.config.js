@@ -1,15 +1,21 @@
-export default {
-    preset: 'ts-jest/presets/default-esm',
-    testEnvironment: 'node',
-    extensionsToTreatAsEsm: ['.ts'],
-    transform: {
-      '^.+\\.(t|j)s$': ['ts-jest', {
-          tsconfig: './tsconfig.json',
-          useESM: true
-      }]
-  },
-    moduleNameMapper: {
-      '^(\\.\\.?\\/.+)\\.js$': '$1',
-    },
-  };
-  
+import { defaults } from 'jest-config';
+
+export default async () => {
+    return {
+        ...defaults,
+        preset: 'ts-jest/presets/default-esm',
+        testEnvironment: 'node',
+        transform: {
+            '^.+\\.(t|j)s$': ['ts-jest', {
+                tsconfig: './tsconfig.json',
+                useESM: true,
+                diagnostics: {
+                  ignoreCodes: [1343]
+                },
+            }]
+        },
+        moduleNameMapper: {
+            '^(\\.\\.?\\/.+)\\.js$': '$1'
+        }
+    };
+};
