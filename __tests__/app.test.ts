@@ -9,19 +9,7 @@ jest.mock('../bree/breeManager.js', () => ({
 }));
 
 jest.mock('../bree/getJobs.js', () => ({
-    default: jest.fn()
-}));
-
-jest.mock('../bree/jobs/scheduleCronJob.js', () => ({
-    default: jest.fn()
-}));
-
-jest.mock('../bree/jobs/deleteCronJob.js', () => ({
-    default: jest.fn()
-}));
-
-jest.mock('../bree/getPayrolls.js', () => ({
-    default: jest.fn()
+    getJobs: jest.fn()
 }));
 
 describe('Test application', () => {
