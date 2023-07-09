@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 import { transferQueries, cronJobQueries } from '../models/queryData.js';
-import scheduleCronJob from '../bree/jobs/scheduleCronJob.js';
-import deleteCronJob from '../bree/jobs/deleteCronJob.js';
+import scheduleCronJob from '../crontab/scheduleCronJob.js';
+import deleteCronJob from '../crontab/deleteCronJob.js';
 import { handleError, executeQuery } from '../utils/helperFunctions.js';
 import { Transfer } from '../types/types.js';
 
@@ -100,12 +100,27 @@ export const getTransfers = async (request: Request, response: Response): Promis
  * Sends a response with the newly created transfer
  */
 export const createTransfer = async (request: Request, response: Response): Promise<void> => {
+    const {
+        source_account_id,
+        destination_account_id,
+        amount,
+        title,
+        description,
+        frequency_type,
+        frequency_type_variable,
+        frequency_day_of_month,
+        frequency_day_of_week,
+        frequency_week_of_month,
+        frequency_month_of_year,
+        begin_date,
+        end_date
+    } = request.body;
+
     try {
-        const {
-            source_account_id,
-            destination_account_id,
-            amount,
-            title,
+        const cronParams = {
+            date: begin_date,
+            account_id: source_account_id,
+            amount: -amount,
             description,
             frequency_type,
             frequency_type_variable,
@@ -113,26 +128,10 @@ export const createTransfer = async (request: Request, response: Response): Prom
             frequency_day_of_week,
             frequency_week_of_month,
             frequency_month_of_year,
-            begin_date,
-            end_date
-        } = request.body;
+            scriptPath: 'scripts/createTransaction.sh'
+        };
 
-        const negative_amount = -amount;
-
-        const { cronDate, uniqueId } = await scheduleCronJob({
-            begin_date,
-            source_account_id,
-            negative_amount,
-            description,
-            frequency_type,
-            frequency_type_variable,
-            frequency_day_of_month,
-            frequency_day_of_week,
-            frequency_week_of_month,
-            frequency_month_of_year,
-            destination_account_id
-        });
-
+        const { cronDate, uniqueId } = await scheduleCronJob(cronParams);
         const cronJobResult = await executeQuery(cronJobQueries.createCronJob, [uniqueId, cronDate]);
 
         const cronId: number = cronJobResult[0].cron_job_id;
@@ -173,13 +172,28 @@ export const createTransfer = async (request: Request, response: Response): Prom
  * Sends a response with the updated transfer
  */
 export const updateTransfer = async (request: Request, response: Response): Promise<void> => {
+    const { id } = request.params;
+    const {
+        source_account_id,
+        destination_account_id,
+        amount,
+        title,
+        description,
+        frequency_type,
+        frequency_type_variable,
+        frequency_day_of_month,
+        frequency_day_of_week,
+        frequency_week_of_month,
+        frequency_month_of_year,
+        begin_date,
+        end_date
+    } = request.body;
+
     try {
-        const { id } = request.params;
-        const {
-            source_account_id,
-            destination_account_id,
-            amount,
-            title,
+        const cronParams = {
+            date: begin_date,
+            account_id: source_account_id,
+            amount: -amount,
             description,
             frequency_type,
             frequency_type_variable,
@@ -187,11 +201,8 @@ export const updateTransfer = async (request: Request, response: Response): Prom
             frequency_day_of_week,
             frequency_week_of_month,
             frequency_month_of_year,
-            begin_date,
-            end_date
-        } = request.body;
-
-        const negative_amount = -amount;
+            scriptPath: 'scripts/createTransaction.sh'
+        };
 
         const transferResults = await executeQuery(transferQueries.getTransfersById, [id]);
 
@@ -200,22 +211,16 @@ export const updateTransfer = async (request: Request, response: Response): Prom
             return;
         }
 
-        const cronId: number = transferResults[0].cron_job_id;
-        await deleteCronJob(cronId);
+        const cronId: number = parseInt(transferResults[0].cron_job_id);
+        const results = await executeQuery(cronJobQueries.getCronJob, [cronId]);
 
-        const { cronDate, uniqueId } = await scheduleCronJob({
-            begin_date,
-            source_account_id,
-            negative_amount,
-            description,
-            frequency_type,
-            frequency_type_variable,
-            frequency_day_of_month,
-            frequency_day_of_week,
-            frequency_week_of_month,
-            frequency_month_of_year,
-            destination_account_id
-        });
+        if (results.length > 0) {
+            await deleteCronJob(results[0].unique_id);
+        } else {
+            console.error('Cron job not found');
+        }
+
+        const { cronDate, uniqueId } = await scheduleCronJob(cronParams);
 
         await executeQuery(cronJobQueries.updateCronJob, [uniqueId, cronDate, cronId]);
 
@@ -263,10 +268,17 @@ export const deleteTransfer = async (request: Request, response: Response): Prom
             return;
         }
 
-        const cronId: number = transferResults[0].cron_job_id;
-
         await executeQuery(transferQueries.deleteTransfer, [id]);
-        await deleteCronJob(cronId);
+
+        const cronId: number = parseInt(transferResults[0].cron_job_id);
+        const results = await executeQuery(cronJobQueries.getCronJob, [cronId]);
+
+        if (results.length > 0) {
+            await deleteCronJob(results[0].unique_id);
+        } else {
+            console.error('Cron job not found');
+        }
+
         await executeQuery(cronJobQueries.deleteCronJob, [cronId]);
 
         response.status(200).send('Transfer deleted successfully');
