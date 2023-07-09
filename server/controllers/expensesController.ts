@@ -110,11 +110,10 @@ export const createExpense = async (request: Request, response: Response): Promi
         begin_date
     } = request.body;
 
-    const negativeAmount: number = -amount;
     const cronParams = {
         date: begin_date,
         account_id,
-        amount: negativeAmount,
+        amount: -amount,
         description,
         frequency_type,
         frequency_type_variable,
