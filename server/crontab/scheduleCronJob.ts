@@ -1,5 +1,5 @@
 import { exec } from 'child_process';
-import determineCronValues from './determineCronValues';
+import determineCronValues from './determineCronValues.js';
 import { v4 as uuidv4 } from 'uuid';
 
 /**
