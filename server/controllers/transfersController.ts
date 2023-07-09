@@ -120,6 +120,7 @@ export const createTransfer = async (request: Request, response: Response): Prom
         const cronParams = {
             date: begin_date,
             account_id: source_account_id,
+            destination_account_id,
             amount: -amount,
             description,
             frequency_type,
@@ -193,6 +194,7 @@ export const updateTransfer = async (request: Request, response: Response): Prom
         const cronParams = {
             date: begin_date,
             account_id: source_account_id,
+            destination_account_id,
             amount: -amount,
             description,
             frequency_type,
