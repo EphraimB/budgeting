@@ -3,16 +3,12 @@ import { loans } from '../../models/mockData.js';
 import { Request, Response } from 'express';
 import { QueryResultRow } from 'pg';
 
-// Mock the modules
-const mockScheduleCronJob = jest.fn().mockImplementation(() => Promise.resolve({ cronDate: '0 0 16 * *', uniqueId: '123' }));
-const mockDeleteCronJob = jest.fn().mockImplementation(() => Promise.resolve('123'));
-
-jest.mock('../../bree/jobs/scheduleCronJob.js', () => {
-    return mockScheduleCronJob;
+jest.mock('../../crontab/scheduleCronJob.js', () => {
+    return jest.fn().mockImplementation(() => Promise.resolve({ cronDate: '0 0 16 * *', uniqueId: '123' }));
 });
 
-jest.mock('../../bree/jobs/deleteCronJob.js', () => {
-    return mockDeleteCronJob;
+jest.mock('../../crontab/deleteCronJob.js', () => {
+    return jest.fn().mockImplementation(() => Promise.resolve('123'));
 });
 
 // Mock request and response
