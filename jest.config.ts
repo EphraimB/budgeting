@@ -8,18 +8,7 @@ const jestConfig: JestConfigWithTsJest = {
     transform: {
         '^.+\\.(t|j)s$': ['ts-jest', {
             tsconfig: './tsconfig.json',
-            useESM: true,
-            diagnostics: {
-                ignoreCodes: [1343]
-            },
-            astTransformers: {
-                before: [
-                    {
-                        path: 'node_modules/ts-jest-mock-import-meta',  // or, alternatively, 'ts-jest-mock-import-meta' directly, without node_modules.
-                        options: { metaObjectReplacement: { url: './' } }
-                    }
-                ]
-            }
+            useESM: true
         }]
     },
     moduleNameMapper: {
