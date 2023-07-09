@@ -2,7 +2,7 @@
  * 
  * @param jobDetails - Job details
  * @param transactionDate - Transaction date
- * @returns 
+ * @returns - Cron date
  */
 const determineCronValues = (jobDetails: any): any => {
     const {
@@ -50,7 +50,11 @@ const determineCronValues = (jobDetails: any): any => {
         }
     }
 
-    return { cronDay, cronMonth, cronDayOfWeek };
+    // concat the cronDay, cronMonth, and cronDayOfWeek values into a single string
+    const cronDate = `* * ${cronDay} ${cronMonth} ${cronDayOfWeek}`;
+
+
+    return cronDate;
 };
 
 export default determineCronValues;

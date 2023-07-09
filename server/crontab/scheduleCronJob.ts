@@ -7,16 +7,24 @@ import { v4 as uuidv4 } from 'uuid';
  * @returns - Cron job data
  */
 const scheduleCronJob = async (jobDetails: any) => {
+    const { begin_date, account_id, negativeAmount, frequency_type,
+        frequency_type_variable,
+        frequency_day_of_month,
+        frequency_day_of_week,
+        frequency_week_of_month,
+        frequency_month_of_year,
+        transactionDate } = jobDetails;
+
     const uniqueId: string = uuidv4();
 
     // You should replace this with the path to your Bash script that the cron job will run
     const yourScriptPath: string = "/path/to/your/script.sh";
 
     // Determine the cron values based on the job details
-    const { cronDay, cronMonth, cronDayOfWeek } = determineCronValues(jobDetails);
+    const cronDate = determineCronValues(jobDetails);
 
     // Build the cron command that will execute the Bash script
-    const cronCommand = `${yourScriptPath} --arg1 value1 --arg2 value2`;
+    const cronCommand = `${yourScriptPath} --account_id ${jobDetails.account_id} --amount ${jobDetails.amount} --description ${jobDetails.description}`;
 
     // Add a new cron job to the system crontab
     exec(
