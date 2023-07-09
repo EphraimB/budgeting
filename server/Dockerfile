@@ -50,3 +50,5 @@ ENV PORT 5001
 
 # Run the app
 CMD ["npm", "run", "start"]
+# Run the cron script to test it
+# CMD ["./dist/scripts/cronScriptCheckEmployees.sh"]
