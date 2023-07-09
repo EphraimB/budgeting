@@ -40,7 +40,7 @@ const scheduleCronJob = async (jobDetails: any) => {
 
     return {
         cronDate,
-        uniqueId: uniqueId,
+        uniqueId,
     };
 };
 
