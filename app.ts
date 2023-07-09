@@ -1,7 +1,6 @@
 import express, { Express, Request, Response, NextFunction } from 'express';
 import bodyParser from 'body-parser';
 import swaggerUi from 'swagger-ui-express';
-import { createRequire } from 'module';
 import routes from './routes/routes.js';
 import accountsRouter from './routes/accountsRouter.js';
 import transactionHistoryRouter from './routes/transactionHistoryRouter.js';
@@ -15,9 +14,13 @@ import wishlistRouter from './routes/wishlistRouter.js';
 import transferRouter from './routes/transfersRouter.js';
 import transactionsRouter from './routes/transactionsRouter.js';
 import { initializeBree } from './bree/breeManager.js';
+import { fileURLToPath } from 'url';
+import fs from 'fs';
+import path from 'path';
 
-const require = createRequire(import.meta.url);
-const swaggerDocument = require('./views/swagger.json');
+const __dirname = fileURLToPath(new URL('.', import.meta.url));
+
+const swaggerDocument = JSON.parse(fs.readFileSync(path.resolve(__dirname, './views/swagger.json'), 'utf8'));
 
 const app: Express = express();
 

@@ -2,6 +2,7 @@ import { Request, Response } from 'express';
 import { payrollQueries } from '../models/queryData.js';
 import { getPayrolls } from '../bree/getPayrolls.js';
 import { handleError, executeQuery } from '../utils/helperFunctions.js';
+import { Employee } from '../types/types.js';
 
 interface EmployeeInput {
     employee_id: string;
@@ -13,22 +14,12 @@ interface EmployeeInput {
     work_schedule: string;
 }
 
-interface EmployeeOutput {
-    employee_id: number;
-    name: string;
-    hourly_rate: number;
-    regular_hours: number;
-    vacation_days: number;
-    sick_days: number;
-    work_schedule: string;
-}
-
 /**
  * 
  * @param employee - Employee object
  * @returns - Employee object with correct data types
  */
-const employeeParse = (employee: EmployeeInput): EmployeeOutput => ({
+const employeeParse = (employee: EmployeeInput): Employee => ({
     employee_id: parseInt(employee.employee_id),
     name: employee.name,
     hourly_rate: parseFloat(employee.hourly_rate),
@@ -59,7 +50,7 @@ export const getEmployee = async (request: Request, response: Response): Promise
         }
 
         // Parse the data to the correct format and return an object
-        const employees: EmployeeOutput[] = results.map(employee => employeeParse(employee));
+        const employees: Employee[] = results.map(employee => employeeParse(employee));
 
         response.status(200).json(employees);
     } catch (error) {
@@ -81,7 +72,7 @@ export const createEmployee = async (request: Request, response: Response): Prom
         const results = await executeQuery<EmployeeInput>(payrollQueries.createEmployee, [name, hourly_rate, regular_hours, vacation_days, sick_days, work_schedule]);
 
         // Parse the data to correct format and return an object
-        const employees: EmployeeOutput[] = results.map(employee => employeeParse(employee));
+        const employees: Employee[] = results.map(employee => employeeParse(employee));
 
         response.status(201).json(employees);
     } catch (error) {
@@ -111,7 +102,7 @@ export const updateEmployee = async (request: Request, response: Response): Prom
         await getPayrolls(employee_id);
 
         // Parse the data to correct format and return an object
-        const employees: EmployeeOutput[] = results.map(employee => employeeParse(employee));
+        const employees: Employee[] = results.map(employee => employeeParse(employee));
 
         response.status(200).json(employees);
     } catch (error) {

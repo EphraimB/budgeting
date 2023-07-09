@@ -2,6 +2,7 @@ import { Request, Response } from 'express';
 import { payrollQueries } from '../models/queryData.js';
 import { getPayrolls } from '../bree/getPayrolls.js';
 import { handleError, executeQuery } from '../utils/helperFunctions.js';
+import { PayrollTax } from '../types/types.js';
 
 interface PayrollTaxInput {
     payroll_taxes_id: string;
@@ -10,19 +11,12 @@ interface PayrollTaxInput {
     rate: string;
 }
 
-interface PayrollTaxOutput {
-    payroll_taxes_id: number;
-    employee_id: number;
-    name: string;
-    rate: number;
-}
-
 /**
  * 
  * @param payrollTax - Payroll tax object
  * @returns - Payroll tax object with parsed values
  */
-const payrollTaxesParse = (payrollTax: PayrollTaxInput): PayrollTaxOutput => ({
+const payrollTaxesParse = (payrollTax: PayrollTaxInput): PayrollTax => ({
     payroll_taxes_id: parseInt(payrollTax.payroll_taxes_id),
     employee_id: parseInt(payrollTax.employee_id),
     name: payrollTax.name,
@@ -63,7 +57,7 @@ export const getPayrollTaxes = async (request: Request, response: Response): Pro
             return;
         }
 
-        const payrollTaxes: PayrollTaxOutput[] = rows.map(payrollTax => payrollTaxesParse(payrollTax));
+        const payrollTaxes: PayrollTax[] = rows.map(payrollTax => payrollTaxesParse(payrollTax));
 
         response.status(200).json(payrollTaxes);
     } catch (error) {
@@ -86,7 +80,7 @@ export const createPayrollTax = async (request: Request, response: Response): Pr
 
         await getPayrolls(employee_id);
 
-        const payrollTaxes: PayrollTaxOutput[] = results.map(payrollTax => payrollTaxesParse(payrollTax));
+        const payrollTaxes: PayrollTax[] = results.map(payrollTax => payrollTaxesParse(payrollTax));
 
         response.status(201).json(payrollTaxes);
     } catch (error) {
@@ -115,7 +109,7 @@ export const updatePayrollTax = async (request: Request, response: Response): Pr
 
         await getPayrolls(parseInt(employee_id));
 
-        const payrollTaxes: PayrollTaxOutput[] = results.map(payrollTax => payrollTaxesParse(payrollTax));
+        const payrollTaxes: PayrollTax[] = results.map(payrollTax => payrollTaxesParse(payrollTax));
 
         response.status(200).json(payrollTaxes);
     } catch (error) {

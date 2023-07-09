@@ -2,6 +2,7 @@ import { Request, Response } from 'express';
 import { payrollQueries } from '../models/queryData.js';
 import { getPayrolls } from '../bree/getPayrolls.js';
 import { handleError, executeQuery } from '../utils/helperFunctions.js';
+import { PayrollDate } from '../types/types.js';
 
 interface PayrollDateInput {
     payroll_date_id: string;
@@ -10,19 +11,12 @@ interface PayrollDateInput {
     payroll_end_day: string;
 }
 
-interface PayrollDateOutput {
-    payroll_date_id: number;
-    employee_id: number;
-    payroll_start_day: number;
-    payroll_end_day: number;
-}
-
 /**
  * 
  * @param payrollDate - Payroll date object
  * @returns - Payroll date object with parsed values
  */
-const payrollDatesParse = (payrollDate: PayrollDateInput): PayrollDateOutput => ({
+const payrollDatesParse = (payrollDate: PayrollDateInput): PayrollDate => ({
     payroll_date_id: parseInt(payrollDate.payroll_date_id),
     employee_id: parseInt(payrollDate.employee_id),
     payroll_start_day: parseInt(payrollDate.payroll_start_day),
@@ -64,7 +58,7 @@ export const getPayrollDates = async (request: Request, response: Response): Pro
         }
 
         // Parse the data to correct format and return an object
-        const payrollDates: PayrollDateOutput[] = results.map(payrollDate => payrollDatesParse(payrollDate));
+        const payrollDates: PayrollDate[] = results.map(payrollDate => payrollDatesParse(payrollDate));
 
         response.status(200).json(payrollDates);
     } catch (error) {
@@ -88,7 +82,7 @@ export const createPayrollDate = async (request: Request, response: Response): P
         await getPayrolls(employee_id);
 
         // Parse the data to correct format and return an object
-        const payrollDates: PayrollDateOutput[] = results.map(payrollDate => payrollDatesParse(payrollDate));
+        const payrollDates: PayrollDate[] = results.map(payrollDate => payrollDatesParse(payrollDate));
 
         response.status(201).json(payrollDates);
     } catch (error) {
@@ -118,7 +112,7 @@ export const updatePayrollDate = async (request: Request, response: Response): P
         await getPayrolls(employee_id);
 
         // Parse the data to correct format and return an object
-        const payrollDates: PayrollDateOutput[] = results.map(payrollDate => payrollDatesParse(payrollDate));
+        const payrollDates: PayrollDate[] = results.map(payrollDate => payrollDatesParse(payrollDate));
 
         const returnObj = {
             employee_id: parseInt(employee_id),

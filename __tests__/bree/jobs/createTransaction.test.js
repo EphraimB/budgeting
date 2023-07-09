@@ -1,6 +1,6 @@
 import { jest } from '@jest/globals';
 
-jest.unstable_mockModule('../../../config/db.js', () => ({
+jest.mock('../../../config/db.js', () => ({
     default: {
         query: jest.fn()
             .mockImplementation((query, values, callback) => {
@@ -13,7 +13,7 @@ jest.unstable_mockModule('../../../config/db.js', () => ({
     }
 }));
 
-jest.unstable_mockModule('../../../models/queryData.js', () => ({
+jest.mock('../../../models/queryData.js', () => ({
     transactionQueries: {
         createTransaction: jest.fn()
     }

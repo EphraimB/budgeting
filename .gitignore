@@ -5,3 +5,4 @@ jobs.json
 .DS_Store
 coverage/
 dist/
+ts-jest.log

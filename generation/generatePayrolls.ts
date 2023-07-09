@@ -1,4 +1,4 @@
-import { Payroll } from '../types/types';
+import { Payroll, GeneratedTransaction } from '../types/types';
 
 /**
  * 
@@ -8,7 +8,7 @@ import { Payroll } from '../types/types';
  * @param fromDate - The date to generate payrolls from
  * Generate payrolls for a given payroll
  */
-const generatePayrolls = (transactions: any[], skippedTransactions: any[], payrolls: Payroll, fromDate: Date): void => {
+const generatePayrolls = (transactions: GeneratedTransaction[], skippedTransactions: GeneratedTransaction[], payrolls: Payroll, fromDate: Date): void => {
     const payroll_end_date: Date = new Date(payrolls.end_date);
 
     const newTransaction = {

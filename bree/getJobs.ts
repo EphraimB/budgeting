@@ -3,7 +3,7 @@ import path from 'path';
 import * as url from 'url';
 import { getPayrolls } from './getPayrolls.js';
 import { getEmployeesData } from '../bree/getEmployeesData.js';
-import { Job } from 'bree';
+import { JobOptions } from 'bree';
 
 const __dirname = url.fileURLToPath(new URL('.', import.meta.url));
 
@@ -12,11 +12,11 @@ const __dirname = url.fileURLToPath(new URL('.', import.meta.url));
  * @param [jobsFilePath] - Path to the jobs.json file
  * @returns - Array of jobs
  */
-export const getJobs = async (jobsFilePath?: string): Promise<Job[]> => {
+export const getJobs = async (jobsFilePath?: string): Promise<JobOptions[]> => {
     try {
         const employeeData = await getEmployeesData();
         jobsFilePath = jobsFilePath || path.join(__dirname, './jobs.json');
-        let jobs = [];
+        let jobs: JobOptions[] = [];
 
         // Function to merge the payrollCheckerjobs array with the existing jobs array
         if (fs.existsSync(jobsFilePath)) {
@@ -25,7 +25,7 @@ export const getJobs = async (jobsFilePath?: string): Promise<Job[]> => {
         }
 
         // Execute the cronScriptGetPayrolls.js script if there are no jobs that start with payroll- in the jobs array
-        if (!jobs.some((job: Job) => job.name.startsWith('payroll-'))) {
+        if (!jobs.some((job: JobOptions) => job.name.startsWith('payroll-'))) {
             for (const employee of employeeData) {
                 const newJob = await getPayrolls(parseInt(employee.employee_id), null);
 
@@ -36,7 +36,7 @@ export const getJobs = async (jobsFilePath?: string): Promise<Job[]> => {
         const payrollCheckerjobs = employeeData.map((employee) => ({
             name: `payroll-checker-employee-${employee.employee_id}`,
             cron: '0 0 1 * *',
-            path: '/app/bree/jobs/scripts/cronScriptGetPayrolls.js',
+            path: path.join(__dirname, './jobs/scripts/cronScriptGetPayrolls.js'),
             worker: {
                 workerData: {
                     employee_id: employee.employee_id
