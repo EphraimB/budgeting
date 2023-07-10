@@ -69,11 +69,15 @@ for employeeId in $employeeIds; do
   # Execute the query for the current employee and capture the result
   result=$(PGPASSWORD="$PGPASSWORD" psql -h "$PGHOST" -p "$PGPORT" -d "$PGDB" -U "$PGUSER" -c "$query" -t)
 
-  # Create a temporary file to store the result rows
+   # Create a temporary file to store the result rows
   tmpFile=$(mktemp)
 
   # Write the result rows to the temporary file
   echo "$result" > "$tmpFile"
+
+  # Save current crontab to another temp file
+  cronFile=$(mktemp)
+  crontab -l > "$cronFile"
 
   # Loop through the result rows from the temporary file and create a cron job for each row
   while IFS="|" read -r startDate endDate workDays grossPay netPay hoursWorked; do
@@ -84,18 +88,19 @@ for employeeId in $employeeIds; do
     cronJobId="payroll_${employeeId}_${startDay}_${endDay}"
 
     # Generate the cron schedule for the current payroll period
-    cronSchedule="0 0 $endDay *"
+    cronSchedule="0 0 $endDay * *"
 
     # Create the cron command with the payroll details
     cronCommand="/app/dist/crontab/scripts/createTransaction.sh --employee_id $employeeId --net_pay $netPay"
 
-    # Create the cron job by appending the cron schedule and command to the crontab file
-    echo "$cronSchedule $cronCommand" >> /etc/cron.d/$cronJobId
-
-    # Print a message with the details of the created cron job
-    echo "Created cron job for employee $employeeId with ID '$cronJobId' and schedule '$cronSchedule'"
+    # Append new cron entry to temp file
+    echo "$cronSchedule $cronCommand" >> "$cronFile"
   done < "$tmpFile"
 
-  # Remove the temporary file
+  # Install new cron file
+  crontab "$cronFile"
+
+  # Remove the temporary files
   rm "$tmpFile"
+  rm "$cronFile"
 done
