@@ -26,11 +26,8 @@ RUN chmod +x /app/dist/scripts/*
 # ------ Runtime stage ------
 FROM node:18-alpine
 
-# Install PostgreSQL client
-RUN apk add --no-cache postgresql-client
-
-# Install uuidgen
-RUN apk add --no-cache util-linux
+# Install cron and other necessary utilities
+RUN apk add --no-cache postgresql-client util-linux dcron
 
 # Create directory for cron jobs
 RUN mkdir -p /etc/cron.d
@@ -52,10 +49,10 @@ COPY --from=builder /app/dist/scripts ./dist/scripts
 # Add the cron job to the system crontab
 RUN echo "0 0 1 * * /bin/sh /app/dist/scripts/employeeChecker.sh > /app/logfile.log 2>&1" >> /etc/crontabs/root
 
+# Ensure cron daemon starts when container starts
+CMD crond && npm run start
+
 # Expose port
 EXPOSE 5001
 
 ENV PORT 5001
-
-# Run the app
-CMD ["npm", "run", "start"]
