@@ -91,7 +91,7 @@
     cronSchedule="0 0 $endDay $currentMonth *"
 
     # Create the cron command with the payroll details
-    cronCommand="/app/dist/crontab/scripts/createTransaction.sh $cronJobId $1 $netPay Payroll \"Payroll for $startDate to $endDate\""
+    cronCommand="'/app/dist/scripts/createTransaction.sh' $cronJobId $1 $netPay Payroll \"Payroll for $startDate to $endDate\""
 
     # Append new cron entry to temp file
     echo "$cronSchedule $cronCommand" >> "$cronFile"
