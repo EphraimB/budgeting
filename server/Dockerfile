@@ -48,7 +48,7 @@ COPY --from=builder /app/dist ./dist
 COPY --from=builder /app/dist/scripts ./dist/scripts
 
 # Add the cron job to the system crontab
-RUN echo "0 0 1 * * /app/dist/scripts/employeeChecker.sh > /app/logfile.log 2>&1" >> /var/spool/cron/crontabs/root
+RUN echo "0 0 1 * * /app/dist/scripts/employeeChecker.sh > /app/cron.log 2>&1" >> /var/spool/cron/crontabs/root
 
 # Start the cron service and run the app
 CMD crond -l 2 -b && npm run start
