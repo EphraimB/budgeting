@@ -1,11 +1,6 @@
 import { jest } from '@jest/globals';
 import { Request, Response } from 'express';
 import { employees, payrollDates, payrollTaxes } from '../../models/mockData.js';
-import { QueryResultRow } from 'pg';
-
-jest.mock('../../bree/getPayrolls.js', () => ({
-    getPayrolls: jest.fn()
-}));
 
 // Mock request and response
 let mockRequest: any;

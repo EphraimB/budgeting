@@ -13,10 +13,6 @@ beforeAll(() => {
     consoleSpy = jest.spyOn(console, 'error').mockImplementation(() => { });
 });
 
-jest.mock('../../bree/getPayrolls.js', () => ({
-    getPayrolls: jest.fn()
-}));
-
 beforeEach(() => {
     mockRequest = {};
     mockResponse = {

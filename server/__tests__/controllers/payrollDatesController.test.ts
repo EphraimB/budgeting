@@ -4,10 +4,6 @@ import { payrollDates } from '../../models/mockData.js';
 import { QueryResultRow } from 'pg';
 import { PayrollDate } from '../../types/types.js';
 
-jest.mock('../../bree/getPayrolls.js', () => ({
-    getPayrolls: jest.fn()
-}));
-
 // Mock request and response
 let mockRequest: any;
 let mockResponse: any;
