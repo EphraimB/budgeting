@@ -73,8 +73,8 @@
   existingCronFile=$(mktemp)
   crontab -l > "$existingCronFile"
 
-  # Remove existing "payroll_" cron jobs from the existing cron file
-  sed -i '/^.*payroll_[0-9a-f]\{8\}-[0-9a-f]\{4\}-[0-9a-f]\{4\}-[0-9a-f]\{4\}-[0-9a-f]\{12\}.*$/d' "$existingCronFile"
+  # Remove existing "payroll_[employee_id]" cron jobs from the existing cron file
+  sed -i "/^.*payroll_${1}_[0-9a-f]\{8\}-[0-9a-f]\{4\}-[0-9a-f]\{4\}-[0-9a-f]\{4\}-[0-9a-f]\{12\}.*$/d" "$existingCronFile"
 
   # Loop through the result rows from the temporary file and add new cron jobs
   while IFS="|" read -r startDate endDate workDays grossPay netPay hoursWorked; do
@@ -85,7 +85,7 @@
     uniqueId=$(uuidgen)
 
     # Generate a cron job ID based on the unique ID
-    cronJobId="payroll_${uniqueId}"
+    cronJobId="payroll_${1}_${uniqueId}"
 
     # Generate the cron schedule for the current payroll period
     cronSchedule="0 0 $endDay * *"
