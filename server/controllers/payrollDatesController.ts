@@ -80,7 +80,7 @@ export const createPayrollDate = async (request: Request, response: Response): P
         const results = await executeQuery<PayrollDateInput>(payrollQueries.createPayrollDate, [employee_id, start_day, end_day]);
 
         // Define the script command
-        const scriptCommand = `/app/dist/scripts/getPayrollsByEmployee.sh ${employee_id}`;
+        const scriptCommand: string = `/app/dist/scripts/getPayrollsByEmployee.sh ${employee_id}`;
 
         // Execute the script
         exec(scriptCommand, (error, stdout, stderr) => {
@@ -120,7 +120,7 @@ export const updatePayrollDate = async (request: Request, response: Response): P
         }
 
         // Define the script command
-        const scriptCommand = `/app/dist/scripts/getPayrollsByEmployee.sh ${employee_id}`;
+        const scriptCommand: string = `/app/dist/scripts/getPayrollsByEmployee.sh ${employee_id}`;
 
         // Execute the script
         exec(scriptCommand, (error, stdout, stderr) => {
@@ -166,7 +166,7 @@ export const deletePayrollDate = async (request: Request, response: Response): P
         await executeQuery(payrollQueries.deletePayrollDate, [id]);
 
         // Define the script command
-        const scriptCommand = `/app/dist/scripts/getPayrollsByEmployee.sh ${parseInt(getResults[0].employee_id)}`;
+        const scriptCommand: string = `/app/dist/scripts/getPayrollsByEmployee.sh ${parseInt(getResults[0].employee_id)}`;
 
         // Execute the script
         exec(scriptCommand, (error, stdout, stderr) => {

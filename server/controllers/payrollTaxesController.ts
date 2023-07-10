@@ -79,7 +79,7 @@ export const createPayrollTax = async (request: Request, response: Response): Pr
         const results = await executeQuery<PayrollTaxInput>(payrollQueries.createPayrollTax, [employee_id, name, rate]);
 
         // Define the script command
-        const scriptCommand = `/app/dist/scripts/getPayrollsByEmployee.sh ${employee_id}`;
+        const scriptCommand: string = `/app/dist/scripts/getPayrollsByEmployee.sh ${employee_id}`;
 
         // Execute the script
         exec(scriptCommand, (error, stdout, stderr) => {
@@ -118,7 +118,7 @@ export const updatePayrollTax = async (request: Request, response: Response): Pr
         }
 
         // Define the script command
-        const scriptCommand = `/app/dist/scripts/getPayrollsByEmployee.sh ${employee_id}`;
+        const scriptCommand: string = `/app/dist/scripts/getPayrollsByEmployee.sh ${employee_id}`;
 
         // Execute the script
         exec(scriptCommand, (error, stdout, stderr) => {
@@ -158,7 +158,7 @@ export const deletePayrollTax = async (request: Request, response: Response): Pr
         await executeQuery(payrollQueries.deletePayrollTax, [id]);
 
         // Define the script command
-        const scriptCommand = `/app/dist/scripts/getPayrollsByEmployee.sh ${parseInt(getResults[0].employee_id)}`;
+        const scriptCommand: string = `/app/dist/scripts/getPayrollsByEmployee.sh ${parseInt(getResults[0].employee_id)}`;
 
         // Execute the script
         exec(scriptCommand, (error, stdout, stderr) => {
