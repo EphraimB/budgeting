@@ -26,12 +26,15 @@ RUN chmod +x /app/dist/scripts/*
 # ------ Runtime stage ------
 FROM node:18-alpine
 
+# Install PostgreSQL client
+RUN apk add --no-cache postgresql-client
+
 WORKDIR /app
 
 # Copy package.json and package-lock.json
 COPY package*.json ./
 
-# Install production dependencies.
+# Install production dependencies
 RUN npm ci --only=production
 
 # Copy compiled JavaScript from the previous stage
@@ -41,7 +44,7 @@ COPY --from=builder /app/dist ./dist
 COPY --from=builder /app/dist/scripts ./dist/scripts
 
 # Add the cron job to the system crontab
-RUN echo "0 0 1 * * /app/dist/scripts/cronScriptCheckEmployees.sh" >> /etc/crontabs/root
+RUN echo "0 0 1 * * /bin/sh /app/dist/scripts/cronScriptCheckEmployees.sh" >> /etc/crontabs/root
 
 # Expose port
 EXPOSE 5001
@@ -50,5 +53,3 @@ ENV PORT 5001
 
 # Run the app
 CMD ["npm", "run", "start"]
-# Run the cron script to test it
-# CMD ["./dist/scripts/cronScriptCheckEmployees.sh"]
