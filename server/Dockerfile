@@ -29,6 +29,9 @@ FROM node:18-alpine
 # Install PostgreSQL client
 RUN apk add --no-cache postgresql-client
 
+# Create directory for cron jobs
+RUN mkdir -p /etc/cron.d
+
 WORKDIR /app
 
 # Copy package.json and package-lock.json

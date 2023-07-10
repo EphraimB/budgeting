@@ -21,7 +21,7 @@ for employeeId in $employeeIds; do
         FROM employee e
         CROSS JOIN LATERAL generate_series(
             current_date, 
-            $2::date + INTERVAL '1 month',
+            $2 + INTERVAL '1 month',
             '1 month'
         ) AS d1(date)
         CROSS JOIN LATERAL (
@@ -67,14 +67,20 @@ for employeeId in $employeeIds; do
             FROM payroll_taxes
             GROUP BY employee_id
         ) pt ON e.employee_id = pt.employee_id
-        WHERE e.employee_id = $employeeId AND work_days <> 0 AND make_date(extract(year from d1)::integer, extract(month from d1)::integer, s1.adjusted_payroll_end_day) >= CURRENT_DATE AND make_date(extract(year from d1)::integer, extract(month from d1)::integer, s1.adjusted_payroll_end_day) <= $2::date
+        WHERE e.employee_id = $employeeId AND work_days <> 0 AND make_date(extract(year from d1)::integer, extract(month from d1)::integer, s1.adjusted_payroll_end_day) >= CURRENT_DATE AND make_date(extract(year from d1)::integer, extract(month from d1)::integer, s1.adjusted_payroll_end_day) <= $2
         GROUP BY d1, s2.payroll_start_day, e.employee_id, e.employee_id, s.work_days, s1.adjusted_payroll_end_day
         ORDER BY start_date, end_date;"
 
   # Execute the query for the current employee and capture the result
   result=$(PGPASSWORD="$PGPASSWORD" psql -h "$PGHOST" -p "$PGPORT" -d "$PGDB" -U "$PGUSER" -c "$query" -t)
 
-  # Loop through the result rows and create a cron job for each row
+  # Create a temporary file to store the result rows
+  tmpFile=$(mktemp)
+
+  # Write the result rows to the temporary file
+  echo "$result" > "$tmpFile"
+
+  # Loop through the result rows from the temporary file and create a cron job for each row
   while IFS="|" read -r startDate endDate workDays grossPay netPay hoursWorked; do
     # Generate a unique ID for the cron job based on the employee ID and payroll period
     cronJobId="payroll_${employeeId}_${startDate}_${endDate}"
@@ -90,5 +96,8 @@ for employeeId in $employeeIds; do
 
     # Print a message with the details of the created cron job
     echo "Created cron job for employee $employeeId with ID '$cronJobId' and schedule '$cronSchedule'"
-  done <<< "$result"
+  done < "$tmpFile"
+
+  # Remove the temporary file
+  rm "$tmpFile"
 done
