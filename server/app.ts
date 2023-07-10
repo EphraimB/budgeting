@@ -13,7 +13,6 @@ import payrollEmployeeRouter from './routes/payrollEmployeeRouter.js';
 import wishlistRouter from './routes/wishlistRouter.js';
 import transferRouter from './routes/transfersRouter.js';
 import transactionsRouter from './routes/transactionsRouter.js';
-import { initializeBree } from './bree/breeManager.js';
 import { fileURLToPath } from 'url';
 import fs from 'fs';
 import path from 'path';
@@ -27,8 +26,6 @@ const app: Express = express();
 app.use(bodyParser.json());
 
 app.use('/api/docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
-
-await initializeBree();
 
 // Routes
 app.use('/api/', routes);
