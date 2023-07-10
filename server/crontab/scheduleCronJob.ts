@@ -31,7 +31,7 @@ const scheduleCronJob = async (jobDetails: any) => {
 
     // Add a new cron job to the system crontab
     exec(
-        `(crontab -l ; echo '${cronDate} ${cronCommand}') | crontab -`,
+        `(crontab -l ; echo '${cronDate} ${cronCommand} > /app/logfile.log 2>&1') | crontab -`,
         (error: Error | null, stdout: string, stderr: string) => {
             if (error) {
                 console.error(`Error setting up cron job: ${error}`);
