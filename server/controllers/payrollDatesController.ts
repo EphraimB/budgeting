@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import { payrollQueries } from '../models/queryData.js';
-import { getPayrolls } from '../bree/getPayrolls.js';
+import { exec } from 'child_process';
 import { handleError, executeQuery } from '../utils/helperFunctions.js';
 import { PayrollDate } from '../types/types.js';
 
@@ -79,7 +79,17 @@ export const createPayrollDate = async (request: Request, response: Response): P
 
         const results = await executeQuery<PayrollDateInput>(payrollQueries.createPayrollDate, [employee_id, start_day, end_day]);
 
-        await getPayrolls(employee_id);
+        // Define the script command
+        const scriptCommand = `/app/dist/scripts/getPayrollsByEmployee.sh ${employee_id}`;
+
+        // Execute the script
+        exec(scriptCommand, (error, stdout, stderr) => {
+            if (error) {
+                console.error(`Error executing script: ${error}`);
+                return;
+            }
+            console.log(`Script output: ${stdout}`);
+        });
 
         // Parse the data to correct format and return an object
         const payrollDates: PayrollDate[] = results.map(payrollDate => payrollDatesParse(payrollDate));
@@ -109,7 +119,17 @@ export const updatePayrollDate = async (request: Request, response: Response): P
             return;
         }
 
-        await getPayrolls(employee_id);
+        // Define the script command
+        const scriptCommand = `/app/dist/scripts/getPayrollsByEmployee.sh ${employee_id}`;
+
+        // Execute the script
+        exec(scriptCommand, (error, stdout, stderr) => {
+            if (error) {
+                console.error(`Error executing script: ${error}`);
+                return;
+            }
+            console.log(`Script output: ${stdout}`);
+        });
 
         // Parse the data to correct format and return an object
         const payrollDates: PayrollDate[] = results.map(payrollDate => payrollDatesParse(payrollDate));
@@ -145,7 +165,17 @@ export const deletePayrollDate = async (request: Request, response: Response): P
 
         await executeQuery(payrollQueries.deletePayrollDate, [id]);
 
-        await getPayrolls(parseInt(getResults[0].employee_id));
+        // Define the script command
+        const scriptCommand = `/app/dist/scripts/getPayrollsByEmployee.sh ${parseInt(getResults[0].employee_id)}`;
+
+        // Execute the script
+        exec(scriptCommand, (error, stdout, stderr) => {
+            if (error) {
+                console.error(`Error executing script: ${error}`);
+                return;
+            }
+            console.log(`Script output: ${stdout}`);
+        });
 
         response.status(200).send('Successfully deleted payroll date');
     } catch (error) {
