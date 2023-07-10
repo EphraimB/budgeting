@@ -14,7 +14,6 @@ const determineCronValues = (jobDetails: any): any => {
         date,
     } = jobDetails;
 
-    let cronSecond = new Date(date).getSeconds().toString();
     let cronMinute = new Date(date).getMinutes().toString();
     let cronHour = new Date(date).getHours().toString();
     let cronDay = '*';
@@ -53,7 +52,7 @@ const determineCronValues = (jobDetails: any): any => {
     }
 
     // concat the cronDay, cronMonth, and cronDayOfWeek values into a single string
-    const cronDate = `${cronSecond} ${cronMinute} ${cronHour} ${cronDay} ${cronMonth} ${cronDayOfWeek}`;
+    const cronDate = `${cronMinute} ${cronHour} ${cronDay} ${cronMonth} ${cronDayOfWeek}`;
 
 
     return cronDate;
