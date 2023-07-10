@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
   # Perform the task for the current employee and capture the query result
   query="SELECT make_date(extract(year from current_date)::integer, extract(month from current_date)::integer, s2.payroll_start_day::integer) AS start_date,
         make_date(extract(year from current_date)::integer, extract(month from current_date)::integer, s1.adjusted_payroll_end_day) AS end_date,

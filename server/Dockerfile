@@ -27,7 +27,7 @@ RUN chmod +x /app/dist/scripts/*
 FROM node:18-alpine
 
 # Install PostgreSQL client and other necessary utilities
-RUN apk add --no-cache postgresql-client util-linux bash
+RUN apk add --no-cache postgresql-client util-linux
 
 WORKDIR /app
 
