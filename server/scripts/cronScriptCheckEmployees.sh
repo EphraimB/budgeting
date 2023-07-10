@@ -79,16 +79,19 @@ for employeeId in $employeeIds; do
   cronFile=$(mktemp)
   crontab -l > "$cronFile"
 
+  # Get the current month
+  currentMonth=$(date +%m)
+
   # Loop through the result rows from the temporary file and create a cron job for each row
   while IFS="|" read -r startDate endDate workDays grossPay netPay hoursWorked; do
     startDay=$(echo "$startDate" | cut -d '-' -f 3)
     endDay=$(echo "$endDate" | cut -d '-' -f 3)
 
     # Generate a unique ID for the cron job based on the employee ID and payroll period
-    cronJobId="payroll_${employeeId}_${startDay}_${endDay}"
+    cronJobId="payroll_${employeeId}_${startDay}_${endDay}_${currentMonth}"
 
     # Generate the cron schedule for the current payroll period
-    cronSchedule="0 0 $endDay * *"
+    cronSchedule="0 0 $endDay $currentMonth *"
 
     # Create the cron command with the payroll details
     cronCommand="/app/dist/crontab/scripts/createTransaction.sh --employee_id $employeeId --net_pay $netPay"
