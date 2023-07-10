@@ -29,6 +29,10 @@ FROM node:18-alpine
 # Install PostgreSQL client and other necessary utilities
 RUN apk add --no-cache postgresql-client util-linux
 
+# Set global environment variables for cron
+ENV SHELL=/bin/sh
+ENV PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+
 WORKDIR /app
 
 # Copy package.json and package-lock.json
