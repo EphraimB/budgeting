@@ -11,7 +11,7 @@ for employeeId in $employeeIds; do
     # Check if the script exists at the given path
     if [ -f "$scriptName" ]; then
         # If the script exists, execute it with the current employee ID as an argument
-        . "$scriptName" --employee_id "$employeeId"
+        . "$scriptName" "$employeeId"
 
         # Print a message indicating that the script was executed
         echo "Executed script for employee $employeeId"

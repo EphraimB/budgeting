@@ -56,7 +56,7 @@
         FROM payroll_taxes
         GROUP BY employee_id
       ) pt ON e.employee_id = pt.employee_id
-      WHERE e.employee_id = $employee_id AND work_days <> 0
+      WHERE e.employee_id = $1 AND work_days <> 0
       GROUP BY s2.payroll_start_day, e.employee_id, e.employee_id, s.work_days, s1.adjusted_payroll_end_day
       ORDER BY start_date, end_date;"
   
@@ -91,7 +91,7 @@
     cronSchedule="0 0 $endDay $currentMonth *"
 
     # Create the cron command with the payroll details
-    cronCommand="/app/dist/crontab/scripts/createTransaction.sh --employee_id $employee_id --net_pay $net_pay --unique_id $cronJobId"
+    cronCommand="/app/dist/crontab/scripts/createTransaction.sh $cronJobId $1 $netPay"
 
     # Append new cron entry to temp file
     echo "$cronSchedule $cronCommand" >> "$cronFile"
