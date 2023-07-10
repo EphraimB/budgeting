@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import { payrollQueries } from '../models/queryData.js';
-import { getPayrolls } from '../bree/getPayrolls.js';
+import { exec } from 'child_process';
 import { handleError, executeQuery } from '../utils/helperFunctions.js';
 import { PayrollTax } from '../types/types.js';
 
@@ -78,7 +78,17 @@ export const createPayrollTax = async (request: Request, response: Response): Pr
     try {
         const results = await executeQuery<PayrollTaxInput>(payrollQueries.createPayrollTax, [employee_id, name, rate]);
 
-        await getPayrolls(employee_id);
+        // Define the script command
+        const scriptCommand = `/app/dist/scripts/getPayrollsByEmployee.sh ${employee_id}`;
+
+        // Execute the script
+        exec(scriptCommand, (error, stdout, stderr) => {
+            if (error) {
+                console.error(`Error executing script: ${error}`);
+                return;
+            }
+            console.log(`Script output: ${stdout}`);
+        });
 
         const payrollTaxes: PayrollTax[] = results.map(payrollTax => payrollTaxesParse(payrollTax));
 
@@ -107,7 +117,17 @@ export const updatePayrollTax = async (request: Request, response: Response): Pr
             return;
         }
 
-        await getPayrolls(parseInt(employee_id));
+        // Define the script command
+        const scriptCommand = `/app/dist/scripts/getPayrollsByEmployee.sh ${employee_id}`;
+
+        // Execute the script
+        exec(scriptCommand, (error, stdout, stderr) => {
+            if (error) {
+                console.error(`Error executing script: ${error}`);
+                return;
+            }
+            console.log(`Script output: ${stdout}`);
+        });
 
         const payrollTaxes: PayrollTax[] = results.map(payrollTax => payrollTaxesParse(payrollTax));
 
@@ -137,7 +157,17 @@ export const deletePayrollTax = async (request: Request, response: Response): Pr
 
         await executeQuery(payrollQueries.deletePayrollTax, [id]);
 
-        await getPayrolls(parseInt(getResults[0].employee_id));
+        // Define the script command
+        const scriptCommand = `/app/dist/scripts/getPayrollsByEmployee.sh ${parseInt(getResults[0].employee_id)}`;
+
+        // Execute the script
+        exec(scriptCommand, (error, stdout, stderr) => {
+            if (error) {
+                console.error(`Error executing script: ${error}`);
+                return;
+            }
+            console.log(`Script output: ${stdout}`);
+        });
 
         response.status(200).send('Successfully deleted payroll tax');
     } catch (error) {
