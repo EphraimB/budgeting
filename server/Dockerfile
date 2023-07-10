@@ -29,6 +29,9 @@ FROM node:18-alpine
 # Install PostgreSQL client
 RUN apk add --no-cache postgresql-client
 
+# Install uuidgen
+RUN apk add --no-cache util-linux
+
 # Create directory for cron jobs
 RUN mkdir -p /etc/cron.d
 
