@@ -1,10 +1,4 @@
 #!/bin/bash
-
-# Fetch the employee IDs from the database using psql and environment variables
-employeeIds=$(PGPASSWORD="$PGPASSWORD" psql -h "$PGHOST" -p "$PGPORT" -d "$PGDB" -U "$PGUSER" -c "SELECT employee_id FROM employee" -t)
-
-# Loop through the employee IDs and perform the task for each employee
-for employeeId in $employeeIds; do
   # Perform the task for the current employee and capture the query result
   query="SELECT make_date(extract(year from current_date)::integer, extract(month from current_date)::integer, s2.payroll_start_day::integer) AS start_date,
         make_date(extract(year from current_date)::integer, extract(month from current_date)::integer, s1.adjusted_payroll_end_day) AS end_date,
@@ -62,7 +56,7 @@ for employeeId in $employeeIds; do
         FROM payroll_taxes
         GROUP BY employee_id
       ) pt ON e.employee_id = pt.employee_id
-      WHERE e.employee_id = $employeeId AND work_days <> 0
+      WHERE e.employee_id = $employee_id AND work_days <> 0
       GROUP BY s2.payroll_start_day, e.employee_id, e.employee_id, s.work_days, s1.adjusted_payroll_end_day
       ORDER BY start_date, end_date;"
   
@@ -97,7 +91,7 @@ for employeeId in $employeeIds; do
     cronSchedule="0 0 $endDay $currentMonth *"
 
     # Create the cron command with the payroll details
-    cronCommand="/app/dist/crontab/scripts/createTransaction.sh --employee_id $employeeId --net_pay $netPay --uniqueId $cronJobId"
+    cronCommand="/app/dist/crontab/scripts/createTransaction.sh --employee_id $employee_id --net_pay $net_pay --unique_id $cronJobId"
 
     # Append new cron entry to temp file
     echo "$cronSchedule $cronCommand" >> "$cronFile"
@@ -109,4 +103,3 @@ for employeeId in $employeeIds; do
   # Remove the temporary files
   rm "$tmpFile"
   rm "$cronFile"
-done
