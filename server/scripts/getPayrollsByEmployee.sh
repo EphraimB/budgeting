@@ -63,20 +63,20 @@
   # Execute the query for the current employee and capture the result
   result=$(PGPASSWORD="$PGPASSWORD" psql -h "$PGHOST" -p "$PGPORT" -d "$PGDB" -U "$PGUSER" -c "$query" -t)
 
-   # Create a temporary file to store the result rows
+ # Create a temporary file to store the result rows
   tmpFile=$(mktemp)
 
   # Write the result rows to the temporary file
   echo "$result" > "$tmpFile"
 
-  # Save current crontab to another temp file
-  cronFile=$(mktemp)
-  crontab -l > "$cronFile"
+  # Save current crontab to another temporary file
+  existingCronFile=$(mktemp)
+  crontab -l > "$existingCronFile"
 
-  # Get the current month
-  currentMonth=$(date +%m)
+  # Remove existing "payroll_" cron jobs from the existing cron file
+  sed -i '/^.*payroll_[0-9a-f]\{8\}-[0-9a-f]\{4\}-[0-9a-f]\{4\}-[0-9a-f]\{4\}-[0-9a-f]\{12\}.*$/d' "$existingCronFile"
 
-  # Loop through the result rows from the temporary file and create a cron job for each row
+  # Loop through the result rows from the temporary file and add new cron jobs
   while IFS="|" read -r startDate endDate workDays grossPay netPay hoursWorked; do
     startDay=$(echo "$startDate" | cut -d '-' -f 3)
     endDay=$(echo "$endDate" | cut -d '-' -f 3)
@@ -88,18 +88,18 @@
     cronJobId="payroll_${uniqueId}"
 
     # Generate the cron schedule for the current payroll period
-    cronSchedule="0 0 $endDay $currentMonth *"
+    cronSchedule="0 0 $endDay * *"
 
     # Create the cron command with the payroll details
-    cronCommand="'/app/dist/scripts/createTransaction.sh' $cronJobId $1 $netPay Payroll \"Payroll for $startDate to $endDate\" > /app/cron.log 2>&1"
+    cronCommand="/app/dist/scripts/createTransaction.sh $cronJobId $1 $netPay Payroll \"Payroll for $startDate to $endDate\" > /app/cron.log 2>&1"
 
-    # Append new cron entry to temp file
-    echo "$cronSchedule $cronCommand" >> "$cronFile"
+    # Append new cron entry to the existing cron file
+    echo "$cronSchedule $cronCommand" >> "$existingCronFile"
   done < "$tmpFile"
 
-  # Install new cron file
-  crontab "$cronFile"
+  # Install the updated cron file
+  crontab "$existingCronFile"
 
   # Remove the temporary files
   rm "$tmpFile"
-  rm "$cronFile"
+  rm "$existingCronFile"
