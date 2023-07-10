@@ -2,16 +2,6 @@ import { jest } from '@jest/globals';
 import request from 'supertest';
 import { Express } from 'express';
 
-// Mock the breeManager module
-jest.mock('../bree/breeManager.js', () => ({
-    initializeBree: jest.fn(),
-    getBree: jest.fn()
-}));
-
-jest.mock('../bree/getJobs.js', () => ({
-    getJobs: jest.fn()
-}));
-
 describe('Test application', () => {
     it('should trigger not found for site 404', async () => {
         // Import the module that uses the mock

@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import { payrollQueries } from '../models/queryData.js';
-import { getPayrolls } from '../bree/getPayrolls.js';
+import { exec } from 'child_process';
 import { handleError, executeQuery } from '../utils/helperFunctions.js';
 import { Employee } from '../types/types.js';
 
@@ -99,7 +99,17 @@ export const updateEmployee = async (request: Request, response: Response): Prom
             return;
         }
 
-        await getPayrolls(employee_id);
+        // Define the script command
+        const scriptCommand: string = `/app/dist/scripts/employeeChecker.sh`;
+
+        // Execute the script
+        exec(scriptCommand, (error, stdout, stderr) => {
+            if (error) {
+                console.error(`Error executing script: ${error}`);
+                return;
+            }
+            console.log(`Script output: ${stdout}`);
+        });
 
         // Parse the data to correct format and return an object
         const employees: Employee[] = results.map(employee => employeeParse(employee));
@@ -141,7 +151,17 @@ export const deleteEmployee = async (request: Request, response: Response): Prom
 
         await executeQuery(payrollQueries.deleteEmployee, [employee_id]);
 
-        await getPayrolls(employee_id);
+        // Define the script command
+        const scriptCommand: string = `/app/dist/scripts/employeeChecker.sh`;
+
+        // Execute the script
+        exec(scriptCommand, (error, stdout, stderr) => {
+            if (error) {
+                console.error(`Error executing script: ${error}`);
+                return;
+            }
+            console.log(`Script output: ${stdout}`);
+        });
 
         response.status(200).send('Successfully deleted employee');
     } catch (error) {
