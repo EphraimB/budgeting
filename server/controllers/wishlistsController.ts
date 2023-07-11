@@ -1,7 +1,8 @@
-import { Request, Response } from 'express';
+import { NextFunction, Request, Response } from 'express';
 import { wishlistQueries } from '../models/queryData.js';
 import { executeQuery, handleError } from '../utils/helperFunctions.js';
 import { Wishlist } from '../types/types.js';
+import generateTransactionsUntilWishlist from '../generation/generateTransactionsUntilWishlist.js';
 
 interface WishlistInput {
     wishlist_id: string;
@@ -12,6 +13,7 @@ interface WishlistInput {
     wishlist_url_link: string;
     wishlist_priority: string;
     wishlist_date_available: string;
+    wishlist_date_can_purchase: string;
     date_created: string;
     date_modified: string;
 }
@@ -30,6 +32,7 @@ const wishlistsParse = (wishlist: WishlistInput): Wishlist => ({
     wishlist_url_link: wishlist.wishlist_url_link,
     wishlist_priority: parseInt(wishlist.wishlist_priority),
     wishlist_date_available: wishlist.wishlist_date_available,
+    wishlist_date_can_purchase: wishlist.wishlist_date_can_purchase,
     date_created: wishlist.date_created,
     date_modified: wishlist.date_modified
 });
@@ -40,7 +43,7 @@ const wishlistsParse = (wishlist: WishlistInput): Wishlist => ({
  * @param response - Response object
  * Sends a GET request to the database to retrieve all wishlists
  */
-export const getWishlists = async (request: Request, response: Response): Promise<void> => {
+export const getWishlists = async (request: Request, response: Response, next: NextFunction): Promise<void> => {
     const { account_id, id } = request.query;
 
     try {

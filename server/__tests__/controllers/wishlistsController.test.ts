@@ -6,6 +6,7 @@ import { QueryResultRow } from 'pg';
 // Mock request and response
 let mockRequest: any;
 let mockResponse: any;
+let mockNext: any;
 let consoleSpy: any;
 
 beforeAll(() => {
@@ -20,6 +21,7 @@ beforeEach(() => {
         json: jest.fn(),
         send: jest.fn()
     };
+    mockNext = jest.fn();
 });
 
 afterEach(() => {
@@ -60,7 +62,7 @@ describe('GET /api/wishlists', () => {
         const { getWishlists } = await import('../../controllers/wishlistsController.js');
 
         // Call the function with the mock request and response
-        await getWishlists(mockRequest as Request, mockResponse);
+        await getWishlists(mockRequest as Request, mockResponse, mockNext);
 
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(200);
@@ -78,7 +80,7 @@ describe('GET /api/wishlists', () => {
         const { getWishlists } = await import('../../controllers/wishlistsController.js');
 
         // Call the function with the mock request and response
-        await getWishlists(mockRequest as Request, mockResponse);
+        await getWishlists(mockRequest as Request, mockResponse, mockNext);
 
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(400);
@@ -97,7 +99,7 @@ describe('GET /api/wishlists', () => {
         const { getWishlists } = await import('../../controllers/wishlistsController.js');
 
         // Call the function with the mock request and response
-        await getWishlists(mockRequest as Request, mockResponse);
+        await getWishlists(mockRequest as Request, mockResponse, mockNext);
 
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(200);
@@ -115,7 +117,7 @@ describe('GET /api/wishlists', () => {
         const { getWishlists } = await import('../../controllers/wishlistsController.js');
 
         // Call the function with the mock request and response
-        await getWishlists(mockRequest as Request, mockResponse);
+        await getWishlists(mockRequest as Request, mockResponse, mockNext);
 
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(400);
@@ -134,7 +136,7 @@ describe('GET /api/wishlists', () => {
         const { getWishlists } = await import('../../controllers/wishlistsController.js');
 
         // Call the function with the mock request and response
-        await getWishlists(mockRequest as Request, mockResponse);
+        await getWishlists(mockRequest as Request, mockResponse, mockNext);
 
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(200);
@@ -152,7 +154,7 @@ describe('GET /api/wishlists', () => {
         const { getWishlists } = await import('../../controllers/wishlistsController.js');
 
         // Call the function with the mock request and response
-        await getWishlists(mockRequest as Request, mockResponse);
+        await getWishlists(mockRequest as Request, mockResponse, mockNext);
 
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(400);
@@ -171,7 +173,7 @@ describe('GET /api/wishlists', () => {
         const { getWishlists } = await import('../../controllers/wishlistsController.js');
 
         // Call the function with the mock request and response
-        await getWishlists(mockRequest as Request, mockResponse);
+        await getWishlists(mockRequest as Request, mockResponse, mockNext);
 
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(200);
@@ -190,7 +192,7 @@ describe('GET /api/wishlists', () => {
         const { getWishlists } = await import('../../controllers/wishlistsController.js');
 
         // Call the function with the mock request and response
-        await getWishlists(mockRequest as Request, mockResponse);
+        await getWishlists(mockRequest as Request, mockResponse, mockNext);
 
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(400);
@@ -209,7 +211,7 @@ describe('GET /api/wishlists', () => {
         mockRequest.query = { id: 3 };
 
         // Act
-        await getWishlists(mockRequest as Request, mockResponse);
+        await getWishlists(mockRequest as Request, mockResponse, mockNext);
 
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(404);

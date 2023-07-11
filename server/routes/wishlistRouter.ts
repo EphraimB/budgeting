@@ -1,7 +1,9 @@
-import express, { Router } from 'express';
+import express, { Request, Response, Router } from 'express';
 import { query, param, body } from 'express-validator';
 import { getWishlists, createWishlist, updateWishlist, deleteWishlist } from '../controllers/wishlistsController.js';
 import validateRequest from '../utils/validateRequest.js';
+import generateTransactionsUntilWishlist from '../generation/generateTransactionsUntilWishlist.js';
+import { getCurrentBalance, getTransactionsByAccount, getExpensesByAccount, getLoansByAccount, getPayrollsMiddleware, getTransfersByAccount, getWishlistsByAccount } from '../middleware/middleware.js';
 
 const router: Router = express.Router();
 
@@ -11,7 +13,9 @@ router.get('/',
         query('account_id').optional().isInt({ min: 1 }).withMessage('Account ID must be a number'),
         validateRequest
     ],
-    getWishlists);
+    getCurrentBalance, getTransactionsByAccount, getExpensesByAccount, getLoansByAccount, getPayrollsMiddleware, getTransfersByAccount, getWishlistsByAccount, generateTransactionsUntilWishlist, getWishlists, (request: Request, response: Response) => {
+        response.json({ account_id: parseInt(request.query.account_id as string), currentBalance: request.currentBalance, transactions: request.transactions });
+    });
 
 router.post('/',
     [

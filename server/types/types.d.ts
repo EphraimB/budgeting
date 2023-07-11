@@ -122,6 +122,7 @@ export interface Wishlist {
     wishlist_title: string;
     wishlist_description: string;
     wishlist_date_available?: string;
+    wishlist_date_can_purchase?: string;
     wishlist_url_link?: string;
     wishlist_priority?: number;
     date_created?: string;
