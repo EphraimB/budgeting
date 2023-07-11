@@ -2,6 +2,10 @@ import { exec } from 'child_process';
 import determineCronValues from './determineCronValues.js';
 import { v4 as uuidv4 } from 'uuid';
 
+jest.mock('child_process', () => ({
+    exec: jest.fn((command, callback) => callback(null, 'mock stdout', 'mock stderr'))
+}));
+
 /**
  * @param jobDetails - Job details
  * @returns Cron job data

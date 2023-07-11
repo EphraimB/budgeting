@@ -1,5 +1,9 @@
 import { exec } from 'child_process';
 
+jest.mock('child_process', () => ({
+    exec: jest.fn((command, callback) => callback(null, 'mock stdout', 'mock stderr'))
+}));
+
 /**
  * Delete a cron job by its unique ID.
  * 
