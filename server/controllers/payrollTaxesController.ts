@@ -11,10 +11,6 @@ interface PayrollTaxInput {
     rate: string;
 }
 
-jest.mock('child_process', () => ({
-    exec: jest.fn((command, callback) => callback(null, 'mock stdout', 'mock stderr'))
-}));
-
 /**
  * 
  * @param payrollTax - Payroll tax object

@@ -11,10 +11,6 @@ interface PayrollDateInput {
     payroll_end_day: string;
 }
 
-jest.mock('child_process', () => ({
-    exec: jest.fn((command, callback) => callback(null, 'mock stdout', 'mock stderr'))
-}));
-
 /**
  * 
  * @param payrollDate - Payroll date object

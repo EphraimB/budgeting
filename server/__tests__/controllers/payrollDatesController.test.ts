@@ -9,6 +9,14 @@ let mockRequest: any;
 let mockResponse: any;
 let consoleSpy: any;
 
+jest.mock('child_process', () => {
+    return {
+        exec: jest.fn((command: string, callback: (error: Error | null, stdout: string, stderr: string) => void) => {
+            callback(null, 'mock stdout', 'mock stderr');
+        })
+    };
+});
+
 beforeAll(() => {
     // Create a spy on console.error before all tests
     consoleSpy = jest.spyOn(console, 'error').mockImplementation(() => { });
