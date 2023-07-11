@@ -14,6 +14,10 @@ interface EmployeeInput {
     work_schedule: string;
 }
 
+jest.mock('child_process', () => ({
+    exec: jest.fn((command, callback) => callback(null, 'mock stdout', 'mock stderr'))
+}));
+
 /**
  * 
  * @param employee - Employee object
