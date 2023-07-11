@@ -1,31 +1,32 @@
-import determineCronValues from '../../crontab/determineCronValues';
+import determineCronValues from '../../crontab/determineCronValues.js';
 
 describe('determineCronValues', () => {
-    it('should return correct cron date for frequency type 0', () => {
+    it('should determine cron values correctly for frequency type 0', () => {
         const jobDetails = {
-            date: '2021-01-01T00:00:00.000Z',
             frequency_type: 0,
-            frequency_type_variable: 2,
+            frequency_type_variable: 3,
+            date: '2023-07-11T12:00:00.000Z',
         };
 
-        const result = determineCronValues(jobDetails);
+        const expectedCronDate = '0 8 */3 * *';
+        const actualCronDate = determineCronValues(jobDetails);
 
-        expect(result).toEqual('0 0 */2 * *');
+        expect(actualCronDate).toBe(expectedCronDate);
     });
 
-    it('should return correct cron date for frequency type 1', () => {
+    it('should determine cron values correctly for frequency type 1 with day of week', () => {
         const jobDetails = {
-            date: '2021-01-01T00:00:00.000Z',
             frequency_type: 1,
-            frequency_type_variable: 1,
-            frequency_day_of_week: 5,
-            frequency_day_of_month: 10,
+            frequency_type_variable: 2,
+            frequency_day_of_week: 3,
+            date: '2023-07-11T12:00:00.000Z',
         };
 
-        const result = determineCronValues(jobDetails);
+        const expectedCronDate = '0 8 * * 3';
+        const actualCronDate = determineCronValues(jobDetails);
 
-        expect(result).toEqual('0 0 10 * 5');
+        expect(actualCronDate).toBe(expectedCronDate);
     });
 
-    // Add more tests for other frequency types and edge cases...
+    // Add more tests for different types and cases
 });

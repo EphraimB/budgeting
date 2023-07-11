@@ -26,7 +26,7 @@ const determineCronValues = (jobDetails: any): any => {
         if (frequency_day_of_week) {
             cronMonth = '*';
             cronDayOfWeek = frequency_day_of_week.toString();
-            cronDay = frequency_day_of_month.toString() || '*';
+            cronDay = frequency_day_of_month ? frequency_day_of_month.toString() : '*';
         } else {
             cronMonth = '*';
             cronDay = '*/' + 7 * (frequency_type_variable || 1);
@@ -35,7 +35,7 @@ const determineCronValues = (jobDetails: any): any => {
         if (frequency_day_of_week) {
             cronMonth = '*';
             cronDayOfWeek = frequency_week_of_month ? '*/' + 7 * (frequency_type_variable || 1) : frequency_day_of_week.toString();
-            cronDay = frequency_week_of_month ? '?' : (frequency_day_of_month.toString() || '*');
+            cronDay = frequency_week_of_month ? '?' : frequency_day_of_month ? frequency_day_of_month.toString() : '*';
         } else {
             cronMonth = '*/' + (frequency_type_variable || 1);
             cronDay = new Date(date).getDate().toString();
@@ -44,7 +44,7 @@ const determineCronValues = (jobDetails: any): any => {
         if (frequency_day_of_week) {
             cronMonth = frequency_month_of_year.toString() || '*';
             cronDayOfWeek = frequency_week_of_month ? '*/' + 7 * (frequency_type_variable || 1) : frequency_day_of_week.toString();
-            cronDay = frequency_week_of_month ? '?' : (frequency_day_of_month.toString() || '*');
+            cronDay = frequency_week_of_month ? '?' : frequency_day_of_month ? frequency_day_of_month.toString() : '*';
         } else {
             cronMonth = '*/' + 12 * (frequency_type_variable || 1);
             cronDay = new Date(date).getDate().toString();
