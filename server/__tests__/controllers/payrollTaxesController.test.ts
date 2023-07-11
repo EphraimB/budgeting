@@ -2,11 +2,19 @@ import { jest } from '@jest/globals';
 import { Request, Response } from 'express';
 import { payrollTaxes } from '../../models/mockData.js';
 import { QueryResultRow } from 'pg';
-import { Payroll, PayrollTax } from '../../types/types.js';
+import { PayrollTax } from '../../types/types.js';
 
 let mockRequest: any;
 let mockResponse: any;
 let consoleSpy: any;
+
+jest.mock('child_process', () => {
+    return {
+        exec: jest.fn((command: string, callback: (error: Error | null, stdout: string, stderr: string) => void) => {
+            callback(null, 'mock stdout', 'mock stderr');
+        })
+    };
+});
 
 beforeAll(() => {
     // Create a spy on console.error before all tests
