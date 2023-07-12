@@ -15,9 +15,14 @@ export const setQueries = async (request: Request, response: Response, next: Nex
     request.query.to_date = new Date(+new Date() + 365 * 24 * 60 * 60 * 1000).toISOString().slice(0, 10);
 
     if (request.query.account_id === undefined || request.query.account_id === null) {
-        const results = await executeQuery(wishlistQueries.getWishlistsById, [request.query.id]);
-
-        request.query.account_id = results[0].account_id;
+        if (request.query.id === undefined || request.query.id === null) {
+            // Here is where you might fetch a default or list of account_ids.
+            // For this example, I'll use a default account_id when no 'id' or 'account_id' is provided.
+            request.query.account_id = "default_account_id";
+        } else {
+            const results = await executeQuery(wishlistQueries.getWishlistsById, [request.query.id]);
+            request.query.account_id = results[0].account_id;
+        }
     }
 
     console.log(request.query.account_id);
