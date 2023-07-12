@@ -14,6 +14,14 @@ export const setQueries = async (request: Request, response: Response, next: Nex
     request.query.from_date = new Date().toISOString().slice(0, 10);
     request.query.to_date = new Date(+new Date() + 365 * 24 * 60 * 60 * 1000).toISOString().slice(0, 10);
 
+    if (request.query.account_id === undefined || request.query.account_id === null) {
+        const results = await executeQuery(wishlistQueries.getWishlistsById, [request.query.id]);
+
+        request.query.account_id = results[0].account_id;
+    }
+
+    console.log(request.query.account_id);
+
     next();
 };
 
