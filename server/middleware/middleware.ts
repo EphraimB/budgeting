@@ -41,6 +41,14 @@ export const getTransactionsByAccount = async (request: Request, response: Respo
     const { account_id, from_date } = request.query;
 
     try {
+        // Check if account exists and if it doesn't, send a response with an error message
+        const accountExists = await executeQuery(accountQueries.getAccount, [account_id]);
+
+        if (accountExists.length == 0) {
+            response.status(404).send('Account not found');
+            return;
+        }
+
         const results = await executeQuery(transactionHistoryQueries.getTransactionsDateMiddleware, [account_id, from_date]);
 
         // Map over results array and convert amount to a float for each Transaction object
@@ -69,6 +77,14 @@ export const getExpensesByAccount = async (request: Request, response: Response,
     const { account_id, to_date } = request.query;
 
     try {
+        // Check if account exists and if it doesn't, send a response with an error message
+        const accountExists = await executeQuery(accountQueries.getAccount, [account_id]);
+
+        if (accountExists.length == 0) {
+            response.status(404).send('Account not found');
+            return;
+        }
+
         const results = await executeQuery(expenseQueries.getExpensesMiddleware, [account_id, to_date]);
 
         // Map over results array and convert amount to a float for each Expense object
@@ -95,6 +111,14 @@ export const getLoansByAccount = async (request: Request, response: Response, ne
     const { account_id, to_date } = request.query;
 
     try {
+        // Check if account exists and if it doesn't, send a response with an error message
+        const accountExists = await executeQuery(accountQueries.getAccount, [account_id]);
+
+        if (accountExists.length == 0) {
+            response.status(404).send('Account not found');
+            return;
+        }
+
         const results = await executeQuery(loanQueries.getLoansMiddleware, [account_id, to_date]);
 
         // Map over results array and convert amount to a float for each Loan object
@@ -121,6 +145,14 @@ export const getPayrollsMiddleware = async (request: Request, response: Response
     const { account_id, to_date } = request.query;
 
     try {
+        // Check if account exists and if it doesn't, send a response with an error message
+        const accountExists = await executeQuery(accountQueries.getAccount, [account_id]);
+
+        if (accountExists.length == 0) {
+            response.status(404).send('Account not found');
+            return;
+        }
+
         const results = await executeQuery(payrollQueries.getPayrollsMiddleware, [account_id, to_date]);
 
         // Map over results array and convert net_pay to a float for each Payroll object
@@ -147,6 +179,14 @@ export const getWishlistsByAccount = async (request: Request, response: Response
     const { account_id, to_date } = request.query;
 
     try {
+        // Check if account exists and if it doesn't, send a response with an error message
+        const accountExists = await executeQuery(accountQueries.getAccount, [account_id]);
+
+        if (accountExists.length == 0) {
+            response.status(404).send('Account not found');
+            return;
+        }
+
         const results = await executeQuery(wishlistQueries.getWishlistsMiddleware, [account_id, to_date]);
 
         // Map over results array and convert amount to a float for each Wishlist object
@@ -173,6 +213,14 @@ export const getTransfersByAccount = async (request: Request, response: Response
     const { account_id, to_date } = request.query;
 
     try {
+        // Check if account exists and if it doesn't, send a response with an error message
+        const accountExists = await executeQuery(accountQueries.getAccount, [account_id]);
+
+        if (accountExists.length == 0) {
+            response.status(404).send('Account not found');
+            return;
+        }
+
         const results = await executeQuery(transferQueries.getTransfersMiddleware, [account_id, to_date]);
 
         // Map over results array and convert amount to a float for each Transfer object
@@ -199,6 +247,14 @@ export const getCurrentBalance = async (request: Request, response: Response, ne
     const { account_id } = request.query;
 
     try {
+        // Check if account exists and if it doesn't, send a response with an error message
+        const accountExists = await executeQuery(accountQueries.getAccount, [account_id]);
+
+        if (accountExists.length == 0) {
+            response.status(404).send('Account not found');
+            return;
+        }
+
         const results = await executeQuery(currentBalanceQueries.getCurrentBalance, [account_id]);
 
         const currentBalance: number = parseFloat(results[0].account_balance);
