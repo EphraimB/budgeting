@@ -31,12 +31,9 @@ router.get('/', [
         // You'd need to implement getWishlistsForAllAccounts and generateTransactionsForAllAccounts
         await Promise.all([
             getTransactionsForAllAccounts,
-            getWishlistsByAccount, // Retrieve wishlists for all accounts
             generateTransactionsUntilWishlist
         ].map(func => func(request, response, next)));
     }
-
-    next();
 }, getWishlists);
 
 router.post('/',
