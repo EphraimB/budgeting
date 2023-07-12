@@ -71,17 +71,16 @@ export const getWishlists = async (request: Request, response: Response): Promis
             return;
         }
 
-        // Find the transaction that matches the wishlist_id
-        const matchedTransaction = request.transactions.find(
-            (transaction) => transaction.wishlist_id === Number(id)
-        );
+        // Create a map of wishlist_id to transaction date for faster lookup
+        const transactionMap: Record<number, string | null> = {};
+        request.transactions.forEach((transaction) => {
+            transactionMap[transaction.wishlist_id] = transaction.date;
+        });
 
         // Add the wishlist_date_can_purchase to the wishlist object
         const modifiedWishlists = results.map((wishlist: WishlistInput) => ({
             ...wishlist,
-            wishlist_date_can_purchase: matchedTransaction
-                ? matchedTransaction.date
-                : null
+            wishlist_date_can_purchase: transactionMap[Number(wishlist.wishlist_id)] || null
         }));
 
         // Parse the data to the correct format
