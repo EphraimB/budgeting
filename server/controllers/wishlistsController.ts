@@ -2,6 +2,7 @@ import { NextFunction, Request, Response } from 'express';
 import { wishlistQueries } from '../models/queryData.js';
 import { executeQuery, handleError } from '../utils/helperFunctions.js';
 import { Wishlist } from '../types/types.js';
+import { getCurrentBalance, getTransactionsByAccount, getExpensesByAccount, getLoansByAccount, getPayrollsMiddleware, getTransfersByAccount, getWishlistsByAccount } from '../middleware/middleware.js';
 import generateTransactionsUntilWishlist from '../generation/generateTransactionsUntilWishlist.js';
 
 interface WishlistInput {
@@ -43,7 +44,7 @@ const wishlistsParse = (wishlist: WishlistInput): Wishlist => ({
  * @param response - Response object
  * Sends a GET request to the database to retrieve all wishlists
  */
-export const getWishlists = async (request: Request, response: Response, next: NextFunction): Promise<void> => {
+export const getWishlists = async (request: Request, response: Response): Promise<void> => {
     const { account_id, id } = request.query;
 
     try {
@@ -59,6 +60,7 @@ export const getWishlists = async (request: Request, response: Response, next: N
         } else if (account_id) {
             query = wishlistQueries.getWishlistsByAccountId;
             params = [account_id];
+
         } else {
             query = wishlistQueries.getAllWishlists;
             params = [];
@@ -71,8 +73,20 @@ export const getWishlists = async (request: Request, response: Response, next: N
             return;
         }
 
+        console.log('wishlists', request.wishlists);
+        console.log('transactions', request.transactions);
+
+        // Add the wishlist_date_can_purchase to the wishlist object
+        const modifiedWishlists = results.map((wishlist: WishlistInput) => {
+            const matchedWishlist = request.wishlists.find((w) => w.wishlist_id === Number(wishlist.wishlist_id));
+            return {
+                ...wishlist,
+                wishlist_date_can_purchase: matchedWishlist ? matchedWishlist.wishlist_date_can_purchase : null
+            };
+        });
+
         // Parse the data to the correct format
-        const wishlists: Wishlist[] = results.map(wishlist => wishlistsParse(wishlist));
+        const wishlists: Wishlist[] = modifiedWishlists.map(wishlist => wishlistsParse(wishlist));
 
         response.status(200).json(wishlists);
     } catch (error) {

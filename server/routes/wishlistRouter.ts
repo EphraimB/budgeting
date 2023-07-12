@@ -10,13 +10,13 @@ const router: Router = express.Router();
 router.get('/', [
     query('id').optional().isInt({ min: 1 }).withMessage('ID must be an integer'),
     query('account_id').optional().isInt({ min: 1 }).withMessage('Account ID must be an integer'),
-    validateRequest,
-    async (request: Request, response: Response, next: NextFunction) => {
-        const accountId = request.query.account_id as string | undefined;
+    validateRequest
+], async (request: Request, response: Response, next: NextFunction) => {
+    const accountId = request.query.account_id as string | undefined;
 
-        request.query.from_date = new Date().toISOString().slice(0, 10);
-
-        const middlewareFunctions = [
+    if (accountId !== undefined) {
+        // If account_id is provided, process wishlists for that account
+        await Promise.all([
             getCurrentBalance,
             getTransactionsByAccount,
             getExpensesByAccount,
@@ -25,31 +25,19 @@ router.get('/', [
             getTransfersByAccount,
             getWishlistsByAccount,
             generateTransactionsUntilWishlist
-        ];
-
-        if (accountId !== undefined) {
-            // If account_id is provided, process wishlists for that account
-            for (const func of middlewareFunctions) {
-                await func(request, response, () => { });
-            }
-        } else {
-            // If account_id is not provided, process wishlists for all accounts
-            const middlewareFunctionsAllAccounts = [
-                getTransactionsForAllAccounts
-                // ... any other middlewares for all accounts
-            ];
-            for (const func of middlewareFunctionsAllAccounts) {
-                await func(request, response, () => { });
-            }
-        }
-
-        next();
-    },
-    (request: Request, response: Response) => {
-        // Generate the response
-        response.json(request.wishlists);
+        ].map(func => func(request, response, next)));
+    } else {
+        // If account_id is not provided, process wishlists for all accounts
+        // You'd need to implement getWishlistsForAllAccounts and generateTransactionsForAllAccounts
+        await Promise.all([
+            getTransactionsForAllAccounts,
+            getWishlistsByAccount, // Retrieve wishlists for all accounts
+            generateTransactionsUntilWishlist
+        ].map(func => func(request, response, next)));
     }
-]);
+
+    next();
+}, getWishlists);
 
 router.post('/',
     [
