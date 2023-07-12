@@ -158,7 +158,7 @@ declare module 'express-serve-static-core' {
     interface Request {
         transaction: Transaction[];
         expenses: any[];
-        loans: Loan[];
+        loans: any[];
         payrolls: Payroll[];
         wishlists: Wishlist[];
         transfers: Transfer[];

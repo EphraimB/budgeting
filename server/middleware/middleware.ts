@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 import { transactionHistoryQueries, expenseQueries, loanQueries, payrollQueries, wishlistQueries, transferQueries, currentBalanceQueries, accountQueries } from '../models/queryData.js';
 import { handleError, executeQuery } from '../utils/helperFunctions.js';
-import { Expense } from '../types/types.js';
+import { Expense, Loan } from '../types/types.js';
 
 /**
  * 
@@ -157,21 +157,46 @@ export const getLoansByAccount = async (request: Request, response: Response, ne
     const { account_id, to_date } = request.query;
 
     try {
-        // Check if account exists and if it doesn't, send a response with an error message
-        const accountExists = await executeQuery(accountQueries.getAccount, [account_id]);
+        const loansByAccount: { account_id: number, loan: Loan[] }[] = [];
 
-        if (accountExists.length == 0) {
-            response.status(404).send('Account not found');
-            return;
+        let transactions: any[] = []; // Initialize transactions as an empty array
+
+        if (!account_id) {
+            // If account_id is null, fetch all accounts and make request.transactions an array of transactions
+            const accountResults = await executeQuery(accountQueries.getAccounts);
+
+            await Promise.all(accountResults.map(async (account) => {
+                const loanResults = await executeQuery(loanQueries.getLoansMiddleware, [account.account_id, to_date]);
+
+                // Map over results array and convert amount to a float for each Transaction object
+                const loanTransactions = loanResults.map(loan => ({
+                    ...loan,
+                    amount: parseFloat(loan.loan_amount),
+                }));
+
+                loansByAccount.push({ account_id: account.account_id, loan: loanResults });
+            }));
+        } else {
+            // Check if account exists and if it doesn't, send a response with an error message
+            const accountExists = await executeQuery(accountQueries.getAccount, [account_id]);
+
+            if (accountExists.length == 0) {
+                response.status(404).send('Account not found');
+                return;
+            }
+
+            const results = await executeQuery(loanQueries.getLoansMiddleware, [account_id, to_date]);
+
+            // Map over results array and convert amount to a float for each Loan object
+            request.loans = results.map(loan => ({
+                ...loan,
+                amount: parseFloat(loan.loan_plan_amount),
+            }));
         }
 
-        const results = await executeQuery(loanQueries.getLoansMiddleware, [account_id, to_date]);
+        request.loans = loansByAccount;
 
-        // Map over results array and convert amount to a float for each Loan object
-        request.loans = results.map(loan => ({
-            ...loan,
-            amount: parseFloat(loan.loan_plan_amount),
-        }));
+        console.log(request.loans);
 
         next();
     } catch (error) {
