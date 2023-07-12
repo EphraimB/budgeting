@@ -16,16 +16,20 @@ const generate = async (request: Request, response: Response, next: NextFunction
     const toDate: Date = new Date(request.query.to_date as string);
     const currentBalance: any = request.currentBalance;
 
-    transactions.push(
-        ...request.transaction.map((transaction: Transaction) => ({
-            transaction_id: transaction.transaction_id,
-            title: transaction.transaction_title,
-            description: transaction.transaction_description,
-            date: new Date(transaction.date_created),
-            date_modified: new Date(transaction.date_modified),
-            amount: transaction.transaction_amount
-        }))
-    );
+    request.transactions.forEach((account) => {
+        if (account.account_id === account_id) {
+            transactions.push(
+                ...account.transactions.map((transaction: Transaction) => ({
+                    transaction_id: transaction.transaction_id,
+                    title: transaction.transaction_title,
+                    description: transaction.transaction_description,
+                    date: new Date(transaction.date_created),
+                    date_modified: new Date(transaction.date_modified),
+                    amount: transaction.transaction_amount,
+                }))
+            );
+        }
+    });
 
     request.expenses.forEach(expense => {
         if (expense.frequency_type === 0) {
