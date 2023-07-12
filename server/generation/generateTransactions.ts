@@ -5,7 +5,7 @@ import generatePayrollTransactions from './generatePayrolls.js';
 import { generateDailyTransfers, generateWeeklyTransfers, generateMonthlyTransfers, generateYearlyTransfers } from './generateTransfers.js';
 import generateWishlists from './generateWishlists.js';
 import calculateBalances from './calculateBalances.js';
-import { Account, CurrentBalance, Expense, GeneratedTransaction, Payroll, Transaction } from '../types/types.js';
+import { Account, CurrentBalance, Expense, GeneratedTransaction, Loan, Payroll, Transaction } from '../types/types.js';
 import { executeQuery } from '../utils/helperFunctions.js';
 import { accountQueries } from '../models/queryData.js';
 
@@ -52,17 +52,21 @@ const generate = async (request: Request, response: Response, next: NextFunction
             });
         });
 
-    request.loans.forEach(loan => {
-        if (loan.frequency_type === 0) {
-            generateDailyLoans(transactions, skippedTransactions, loan, toDate, fromDate);
-        } else if (loan.frequency_type === 1) {
-            generateWeeklyLoans(transactions, skippedTransactions, loan, toDate, fromDate);
-        } else if (loan.frequency_type === 2) {
-            generateMonthlyLoans(transactions, skippedTransactions, loan, toDate, fromDate);
-        } else if (loan.frequency_type === 3) {
-            generateYearlyLoans(transactions, skippedTransactions, loan, toDate, fromDate);
-        }
-    });
+    request.loans
+        .filter((lns) => lns.account_id === account_id)
+        .forEach((account) => {
+            account.loan.forEach((loan: Loan) => {
+                if (loan.frequency_type === 0) {
+                    generateDailyLoans(transactions, skippedTransactions, loan, toDate, fromDate);
+                } else if (loan.frequency_type === 1) {
+                    generateWeeklyLoans(transactions, skippedTransactions, loan, toDate, fromDate);
+                } else if (loan.frequency_type === 2) {
+                    generateMonthlyLoans(transactions, skippedTransactions, loan, toDate, fromDate);
+                } else if (loan.frequency_type === 3) {
+                    generateYearlyLoans(transactions, skippedTransactions, loan, toDate, fromDate);
+                }
+            });
+        });
 
     request.transfers.forEach(transfer => {
         if (transfer.frequency_type === 0) {
