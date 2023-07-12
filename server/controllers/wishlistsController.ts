@@ -2,8 +2,6 @@ import { NextFunction, Request, Response } from 'express';
 import { wishlistQueries } from '../models/queryData.js';
 import { executeQuery, handleError } from '../utils/helperFunctions.js';
 import { Wishlist } from '../types/types.js';
-import { getCurrentBalance, getTransactionsByAccount, getExpensesByAccount, getLoansByAccount, getPayrollsMiddleware, getTransfersByAccount, getWishlistsByAccount } from '../middleware/middleware.js';
-import generateTransactionsUntilWishlist from '../generation/generateTransactionsUntilWishlist.js';
 
 interface WishlistInput {
     wishlist_id: string;
