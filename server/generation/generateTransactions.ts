@@ -5,7 +5,7 @@ import generatePayrollTransactions from './generatePayrolls.js';
 import { generateDailyTransfers, generateWeeklyTransfers, generateMonthlyTransfers, generateYearlyTransfers } from './generateTransfers.js';
 import generateWishlists from './generateWishlists.js';
 import calculateBalances from './calculateBalances.js';
-import { Account, CurrentBalance, Expense, GeneratedTransaction, Loan, Payroll, Transaction, Transfer } from '../types/types.js';
+import { Account, CurrentBalance, Expense, GeneratedTransaction, Loan, Payroll, Transaction, Transfer, Wishlist } from '../types/types.js';
 import { executeQuery } from '../utils/helperFunctions.js';
 import { accountQueries } from '../models/queryData.js';
 
@@ -88,13 +88,17 @@ const generate = async (request: Request, response: Response, next: NextFunction
 
     calculateBalances(transactions.concat(skippedTransactions), currentBalance);
 
-    request.wishlists.forEach(wishlist => {
-        generateWishlists(transactions, skippedTransactions, wishlist, fromDate);
+    request.wishlists
+        .filter((wslsts) => wslsts.account_id === account_id)
+        .forEach((account) => {
+            account.wishlist.forEach((wishlist: Wishlist) => {
+                generateWishlists(transactions, skippedTransactions, wishlist, fromDate);
 
-        transactions.sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+                transactions.sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
 
-        calculateBalances(transactions.concat(skippedTransactions), currentBalance);
-    });
+                calculateBalances(transactions.concat(skippedTransactions), currentBalance);
+            });
+        });
 }
 
 /**
