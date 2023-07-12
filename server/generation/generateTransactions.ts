@@ -17,7 +17,7 @@ import { GeneratedTransaction, Transaction } from '../types/types.js';
 const generateTransactions = async (request: Request, response: Response, next: NextFunction): Promise<void> => {
     const fromDate: Date = new Date(request.query.from_date as string);
     const toDate: Date = new Date(request.query.to_date as string);
-    const currentBalance: number = request.currentBalance;
+    const currentBalance: number[] = request.currentBalance;
     const account_id: number = parseInt(request.query.account_id as string);
     const transactions: GeneratedTransaction[] = [];
     const skippedTransactions: GeneratedTransaction[] = [];

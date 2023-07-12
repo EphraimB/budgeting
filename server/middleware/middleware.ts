@@ -13,12 +13,8 @@ export const setQueries = async (request: Request, response: Response, next: Nex
     request.query.from_date = new Date().toISOString().slice(0, 10);
     request.query.to_date = new Date(+new Date() + 365 * 24 * 60 * 60 * 1000).toISOString().slice(0, 10);
 
-    if (request.query.account_id === undefined || request.query.account_id === null) {
-        if (request.query.id === undefined || request.query.id === null) {
-            // Here is where you might fetch a default or list of account_ids.
-            // For this example, I'll use a default account_id when no 'id' or 'account_id' is provided.
-            request.query.account_id = null;
-        } else {
+    if (!request.query.account_id) {
+        if (request.query.id) {
             const results = await executeQuery(wishlistQueries.getWishlistsById, [request.query.id]);
             request.query.account_id = results[0].account_id;
         }
@@ -38,21 +34,47 @@ export const getTransactionsByAccount = async (request: Request, response: Respo
     const { account_id, from_date } = request.query;
 
     try {
-        // Check if account exists and if it doesn't, send a response with an error message
-        const accountExists = await executeQuery(accountQueries.getAccount, [account_id]);
+        if (!account_id) {
+            // If account_id is null, fetch all accounts and make request.transactions an array of transactions
+            const accountResults = await executeQuery(accountQueries.getAccounts);
+            const transactionsByAccount: { account_id: string, transactions: any }[] = [];
 
-        if (accountExists.length == 0) {
-            response.status(404).send('Account not found');
-            return;
+            for (const account of accountResults) {
+                const transactionsResults = await executeQuery(transactionHistoryQueries.getTransactionsDateMiddleware, [account.account_id, from_date]);
+
+                // Map over results array and convert amount to a float for each Transaction object
+                const transactions = transactionsResults.map(transaction => ({
+                    ...transaction,
+                    transaction_amount: parseFloat(transaction.transaction_amount),
+                }));
+
+                transactionsByAccount.push({ account_id: account.account_id, transactions });
+            }
+
+            request.transactions = transactionsByAccount;
+
+            console.log(request.transactions);
+        } else {
+            // Check if account exists and if it doesn't, send a response with an error message
+            const accountExists = await executeQuery(accountQueries.getAccount, [account_id]);
+
+            if (accountExists.length === 0) {
+                response.status(404).send(`Account with ID ${account_id} not found`);
+                return;
+            }
+
+            const results = await executeQuery(transactionHistoryQueries.getTransactionsDateMiddleware, [account_id, from_date]);
+
+            // Map over results array and convert amount to a float for each Transaction object
+            const transactions = results.map(transaction => ({
+                ...transaction,
+                transaction_amount: parseFloat(transaction.transaction_amount),
+            }));
+
+            request.transactions = [{ account_id, transactions }];
+
+            console.log(request.transactions);
         }
-
-        const results = await executeQuery(transactionHistoryQueries.getTransactionsDateMiddleware, [account_id, from_date]);
-
-        // Map over results array and convert amount to a float for each Transaction object
-        request.transaction = results.map(transaction => ({
-            ...transaction,
-            transaction_amount: parseFloat(transaction.transaction_amount),
-        }));
 
         next();
     } catch (error) {
@@ -242,19 +264,33 @@ export const getCurrentBalance = async (request: Request, response: Response, ne
     const { account_id } = request.query;
 
     try {
-        // Check if account exists and if it doesn't, send a response with an error message
-        const accountExists = await executeQuery(accountQueries.getAccount, [account_id]);
+        const currentBalance: any = [];
 
-        if (accountExists.length == 0) {
-            response.status(404).send('Account not found');
-            return;
+        if (!account_id) {
+            const accountResults = await executeQuery(accountQueries.getAccounts);
+
+            accountResults.forEach(async (account) => {
+                const currentBalanceResults = await executeQuery(currentBalanceQueries.getCurrentBalance, [account.account_id]);
+
+                currentBalance.push({ account_id, currentBalance: parseFloat(currentBalanceResults[0].account_balance) });
+            });
+        } else {
+            // Check if account exists and if it doesn't, send a response with an error message
+            const accountExists = await executeQuery(accountQueries.getAccount, [account_id]);
+
+            if (accountExists.length == 0) {
+                response.status(404).send('Account not found');
+                return;
+            }
+
+            const results = await executeQuery(currentBalanceQueries.getCurrentBalance, [account_id]);
+
+            currentBalance.push({ account_id, currentBalance: parseFloat(results[0].account_balance) });
         }
 
-        const results = await executeQuery(currentBalanceQueries.getCurrentBalance, [account_id]);
-
-        const currentBalance: number = parseFloat(results[0].account_balance);
-
         request.currentBalance = currentBalance;
+
+        console.log(request.currentBalance);
 
         next();
     } catch (error) {

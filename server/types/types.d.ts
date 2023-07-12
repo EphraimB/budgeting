@@ -149,6 +149,11 @@ export interface Transfer {
     date_modified?: string;
 }
 
+interface CurrentBalance {
+    account_id: number;
+    account_balance: number;
+}
+
 declare module 'express-serve-static-core' {
     interface Request {
         transaction: Transaction[];
@@ -157,6 +162,6 @@ declare module 'express-serve-static-core' {
         payrolls: Payroll[];
         wishlists: Wishlist[];
         transfers: Transfer[];
-        currentBalance: number;
+        currentBalance: CurrentBalance;
     }
 }
