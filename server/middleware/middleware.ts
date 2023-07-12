@@ -110,7 +110,7 @@ export const getExpensesByAccount = async (request: Request, response: Response,
                 // Map over results array and convert amount to a float for each Transaction object
                 const expenseTransactions = expenseResults.map(expense => ({
                     ...expense,
-                    amount: parseFloat(expense.transaction_amount),
+                    amount: parseFloat(expense.expense_amount),
                 }));
 
                 expensesByAccount.push({ account_id: account.account_id, expenses: expenseTransactions });
@@ -171,7 +171,7 @@ export const getLoansByAccount = async (request: Request, response: Response, ne
                 // Map over results array and convert amount to a float for each Transaction object
                 const loanTransactions = loanResults.map(loan => ({
                     ...loan,
-                    amount: parseFloat(loan.loan_amount),
+                    amount: parseFloat(loan.loan_plan_amount),
                 }));
 
                 loansByAccount.push({ account_id: account.account_id, loan: loanTransactions });
@@ -232,7 +232,7 @@ export const getPayrollsMiddleware = async (request: Request, response: Response
                 // Map over results array and convert amount to a float for each Transaction object
                 const payrollTransactions = payrollResults.map(payroll => ({
                     ...payroll,
-                    amount: parseFloat(payroll.payroll_amount),
+                    net_pay: parseFloat(payroll.net_pay),
                 }));
 
                 payrollsByAccount.push({ account_id: account.account_id, payroll: payrollTransactions });
