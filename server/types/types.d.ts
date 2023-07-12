@@ -157,7 +157,7 @@ interface CurrentBalance {
 declare module 'express-serve-static-core' {
     interface Request {
         transaction: Transaction[];
-        expenses: Expense[];
+        expenses: any[];
         loans: Loan[];
         payrolls: Payroll[];
         wishlists: Wishlist[];

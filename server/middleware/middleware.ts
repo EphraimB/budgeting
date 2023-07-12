@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 import { transactionHistoryQueries, expenseQueries, loanQueries, payrollQueries, wishlistQueries, transferQueries, currentBalanceQueries, accountQueries } from '../models/queryData.js';
 import { handleError, executeQuery } from '../utils/helperFunctions.js';
+import { Expense } from '../types/types.js';
 
 /**
  * 
@@ -34,7 +35,7 @@ export const getTransactionsByAccount = async (request: Request, response: Respo
     const { account_id, from_date } = request.query;
 
     try {
-        const transactionsByAccount: { account_id: string, transactions: any }[] = [];
+        const transactionsByAccount: { account_id: number, transactions: any }[] = [];
 
         let transactions: any[] = []; // Initialize transactions as an empty array
 
@@ -69,6 +70,8 @@ export const getTransactionsByAccount = async (request: Request, response: Respo
                 ...transaction,
                 transaction_amount: parseFloat(transaction.transaction_amount),
             }));
+
+            transactionsByAccount.push({ account_id: parseInt(account_id as string), transactions });
         }
 
         request.transactions = transactionsByAccount;
@@ -93,21 +96,48 @@ export const getExpensesByAccount = async (request: Request, response: Response,
     const { account_id, to_date } = request.query;
 
     try {
-        // Check if account exists and if it doesn't, send a response with an error message
-        const accountExists = await executeQuery(accountQueries.getAccount, [account_id]);
+        const expensesByAccount: { account_id: number, expenses: Expense[] }[] = [];
 
-        if (accountExists.length == 0) {
-            response.status(404).send('Account not found');
-            return;
+        let transactions: any[] = []; // Initialize transactions as an empty array
+
+        if (!account_id) {
+            // If account_id is null, fetch all accounts and make request.transactions an array of transactions
+            const accountResults = await executeQuery(accountQueries.getAccounts);
+
+            await Promise.all(accountResults.map(async (account) => {
+                const expenseResults = await executeQuery(expenseQueries.getExpensesMiddleware, [account.account_id, to_date]);
+
+                // Map over results array and convert amount to a float for each Transaction object
+                const expenseTransactions = expenseResults.map(expense => ({
+                    ...expense,
+                    amount: parseFloat(expense.transaction_amount),
+                }));
+
+                expensesByAccount.push({ account_id: account.account_id, expenses: expenseTransactions });
+            }));
+        } else {
+            // Check if account exists and if it doesn't, send a response with an error message
+            const accountExists = await executeQuery(accountQueries.getAccount, [account_id]);
+
+            if (accountExists.length == 0) {
+                response.status(404).send('Account not found');
+                return;
+            }
+
+            const results = await executeQuery(expenseQueries.getExpensesMiddleware, [account_id, to_date]);
+
+            // Map over results array and convert amount to a float for each Expense object
+            const expenseTransactions = results.map(expense => ({
+                ...expense,
+                amount: parseFloat(expense.expense_amount),
+            }));
+
+            expensesByAccount.push({ account_id: parseInt(account_id as string), expenses: expenseTransactions });
         }
 
-        const results = await executeQuery(expenseQueries.getExpensesMiddleware, [account_id, to_date]);
+        request.expenses = expensesByAccount;
 
-        // Map over results array and convert amount to a float for each Expense object
-        request.expenses = results.map(expense => ({
-            ...expense,
-            amount: parseFloat(expense.expense_amount),
-        }));
+        console.log(request.expenses);
 
         next();
     } catch (error) {
