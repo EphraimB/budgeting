@@ -1,21 +1,55 @@
-import express, { Request, Response, Router } from 'express';
+import express, { Request, Response, NextFunction, Router } from 'express';
 import { query, param, body } from 'express-validator';
 import { getWishlists, createWishlist, updateWishlist, deleteWishlist } from '../controllers/wishlistsController.js';
 import validateRequest from '../utils/validateRequest.js';
 import generateTransactionsUntilWishlist from '../generation/generateTransactionsUntilWishlist.js';
-import { getCurrentBalance, getTransactionsByAccount, getExpensesByAccount, getLoansByAccount, getPayrollsMiddleware, getTransfersByAccount, getWishlistsByAccount } from '../middleware/middleware.js';
+import { getCurrentBalance, getTransactionsByAccount, getTransactionsForAllAccounts, getExpensesByAccount, getLoansByAccount, getPayrollsMiddleware, getTransfersByAccount, getWishlistsByAccount } from '../middleware/middleware.js';
 
 const router: Router = express.Router();
 
-router.get('/',
-    [
-        query('id').optional().isInt({ min: 1 }).withMessage('ID must be a number'),
-        query('account_id').optional().isInt({ min: 1 }).withMessage('Account ID must be a number'),
-        validateRequest
-    ],
-    getCurrentBalance, getTransactionsByAccount, getExpensesByAccount, getLoansByAccount, getPayrollsMiddleware, getTransfersByAccount, getWishlistsByAccount, generateTransactionsUntilWishlist, getWishlists, (request: Request, response: Response) => {
-        response.json({ account_id: parseInt(request.query.account_id as string), currentBalance: request.currentBalance, transactions: request.transactions });
-    });
+router.get('/', [
+    query('id').optional().isInt({ min: 1 }).withMessage('ID must be an integer'),
+    query('account_id').optional().isInt({ min: 1 }).withMessage('Account ID must be an integer'),
+    validateRequest,
+    async (request: Request, response: Response, next: NextFunction) => {
+        const accountId = request.query.account_id as string | undefined;
+
+        request.query.from_date = new Date().toISOString().slice(0, 10);
+
+        const middlewareFunctions = [
+            getCurrentBalance,
+            getTransactionsByAccount,
+            getExpensesByAccount,
+            getLoansByAccount,
+            getPayrollsMiddleware,
+            getTransfersByAccount,
+            getWishlistsByAccount,
+            generateTransactionsUntilWishlist
+        ];
+
+        if (accountId !== undefined) {
+            // If account_id is provided, process wishlists for that account
+            for (const func of middlewareFunctions) {
+                await func(request, response, () => { });
+            }
+        } else {
+            // If account_id is not provided, process wishlists for all accounts
+            const middlewareFunctionsAllAccounts = [
+                getTransactionsForAllAccounts
+                // ... any other middlewares for all accounts
+            ];
+            for (const func of middlewareFunctionsAllAccounts) {
+                await func(request, response, () => { });
+            }
+        }
+
+        next();
+    },
+    (request: Request, response: Response) => {
+        // Generate the response
+        response.json(request.wishlists);
+    }
+]);
 
 router.post('/',
     [

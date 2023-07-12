@@ -9,21 +9,27 @@ const generateTransactionsUntilWishlist = async (request: Request, response: Res
     let currentBalance: number = request.currentBalance;
     let currentDate: Date = fromDate;
 
+    if (!request.wishlists) {
+        request.wishlists = [];
+    }
+
     while (currentDate < toDate && currentDate < endDate) {
         // set the from_date and to_date for one day
         request.query.from_date = currentDate.toISOString();
         request.query.to_date = new Date(+currentDate + dayDuration).toISOString();
 
         // call the original generateTransactions function
-        await generateTransactions(request, response, () => { });
-
+        await generateTransactions(request, response, next);
         // update the current balance and current date
         currentBalance = request.currentBalance;
         currentDate = new Date(+currentDate + dayDuration);
 
-        // if the balance is enough to purchase the wishlist, break the loop
-        if (request.wishlists.some(wishlist => currentBalance >= wishlist.wishlist_amount)) {
-            break;
+        // if the balance is enough to purchase the wishlist, set the date and break the loop
+        for (let wishlist of request.wishlists) {
+            if (currentBalance >= wishlist.wishlist_amount && !wishlist.wishlist_date_can_purchase) {
+                wishlist.wishlist_date_can_purchase = currentDate.toISOString();
+                break;
+            }
         }
     }
 

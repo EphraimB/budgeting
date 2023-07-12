@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
-import { transactionHistoryQueries, expenseQueries, loanQueries, payrollQueries, wishlistQueries, transferQueries, currentBalanceQueries } from '../models/queryData.js';
+import { transactionHistoryQueries, expenseQueries, loanQueries, payrollQueries, wishlistQueries, transferQueries, currentBalanceQueries, accountQueries } from '../models/queryData.js';
 import { handleError, executeQuery } from '../utils/helperFunctions.js';
+import { Account } from '../types/types.js';
 
 /**
  * 
@@ -33,6 +34,40 @@ export const getTransactionsByAccount = async (request: Request, response: Respo
  * @param request - The request object
  * @param response - The response object
  * @param next - The next function
+ * Sends a response with all transactions for all accounts
+ */
+export const getTransactionsForAllAccounts = async (request: Request, response: Response, next: NextFunction): Promise<void> => {
+    const { from_date } = request.query;
+
+    try {
+        const accountResults = await executeQuery(accountQueries.getAccounts);
+
+        const allTransactions = await Promise.all(accountResults.map(async (account: Account) => {
+            const transactionResults = await executeQuery(transactionHistoryQueries.getTransactionsDateMiddleware, [account.account_id, from_date]);
+
+            // Map over results array and convert amount to a float for each Transaction object
+            return transactionResults.map(transaction => ({
+                ...transaction,
+                transaction_amount: parseFloat(transaction.transaction_amount),
+            }));
+        }));
+
+        // Flatten allTransactions array and set it to request.transaction
+        request.transaction = [].concat(...allTransactions);
+
+        next();
+
+    } catch (error) {
+        console.error(error); // Log the error on the server side
+        handleError(response, 'Error getting transactions for all accounts');
+    }
+};
+
+/**
+ * 
+ * @param request - The request object
+ * @param response - The response object
+ * @param next - The next function
  * Sends a response with all expenses or a single expense if an id is provided
  */
 export const getExpensesByAccount = async (request: Request, response: Response, next: NextFunction): Promise<void> => {
@@ -51,6 +86,30 @@ export const getExpensesByAccount = async (request: Request, response: Response,
     } catch (error) {
         console.error(error); // Log the error on the server side
         handleError(response, 'Error getting expenses');
+    }
+};
+
+export const getExpensesForAllAccounts = async (request: Request, response: Response, next: NextFunction): Promise<void> => {
+    const { to_date } = request.query;
+
+    try {
+        const accountResults = await executeQuery(accountQueries.getAccounts);
+
+        const allExpenses = await Promise.all(accountResults.map(async (account: Account) => {
+            const expenseResults = await executeQuery(expenseQueries.getExpensesMiddleware, [account.account_id, to_date]);
+
+            // Map over results array and convert amount to a float for each Expense object
+            return expenseResults.map(expense => ({
+                ...expense,
+                amount: parseFloat(expense.expense_amount),
+            }));
+        }));
+
+        next();
+
+    } catch (error) {
+        console.error(error); // Log the error on the server side
+        handleError(response, 'Error getting expenses for all accounts');
     }
 };
 

@@ -14,7 +14,7 @@ import { GeneratedTransaction, Transaction } from '../types/types.js';
  * @param next - The next function
  * Generates transactions for the given account and date range
  */
-const generateTransactions = (request: Request, response: Response, next: NextFunction): void => {
+const generateTransactions = async (request: Request, response: Response, next: NextFunction): Promise<void> => {
     const fromDate: Date = new Date(request.query.from_date as string);
     const toDate: Date = new Date(request.query.to_date as string);
     const currentBalance: number = request.currentBalance;
