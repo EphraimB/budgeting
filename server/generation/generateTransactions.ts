@@ -9,23 +9,24 @@ import { Account, CurrentBalance, GeneratedTransaction, Transaction } from '../t
 import { executeQuery } from '../utils/helperFunctions.js';
 import { accountQueries } from '../models/queryData.js';
 
-const generate = async (request: Request, response: Response, next: NextFunction, account_id: number): Promise<void> => {
-    const transactions: GeneratedTransaction[] = [];
-    const skippedTransactions: GeneratedTransaction[] = [];
+const generate = async (request: Request, response: Response, next: NextFunction, account_id: number, transactions: GeneratedTransaction[], skippedTransactions: GeneratedTransaction[], currentBalance: any): Promise<void> => {
     const fromDate: Date = new Date(request.query.from_date as string);
     const toDate: Date = new Date(request.query.to_date as string);
-    const currentBalance: any = request.currentBalance;
 
-    transactions.push(
-        ...request.transaction.map((transaction: Transaction) => ({
-            transaction_id: transaction.transaction_id,
-            title: transaction.transaction_title,
-            description: transaction.transaction_description,
-            date: new Date(transaction.date_created),
-            date_modified: new Date(transaction.date_modified),
-            amount: transaction.transaction_amount,
-        }))
-    );
+    request.transaction
+        .filter((tran) => tran.account_id === account_id)
+        .forEach((account) =>
+            account.transactions.forEach((transaction: Transaction) =>
+                transactions.push({
+                    transaction_id: transaction.transaction_id,
+                    title: transaction.transaction_title,
+                    description: transaction.transaction_description,
+                    date: new Date(transaction.date_created),
+                    date_modified: new Date(transaction.date_modified),
+                    amount: transaction.transaction_amount,
+                })
+            )
+        );
 
     request.expenses.forEach(expense => {
         if (expense.frequency_type === 0) {
@@ -69,18 +70,15 @@ const generate = async (request: Request, response: Response, next: NextFunction
 
     transactions.sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
 
-    calculateBalances(transactions.concat(skippedTransactions), currentBalance.find((balance: CurrentBalance) => balance.account_id === account_id));
+    calculateBalances(transactions.concat(skippedTransactions), currentBalance);
 
     request.wishlists.forEach(wishlist => {
         generateWishlists(transactions, skippedTransactions, wishlist, fromDate);
 
         transactions.sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
 
-        calculateBalances(transactions.concat(skippedTransactions), currentBalance.find((balance: CurrentBalance) => balance.account_id === account_id));
+        calculateBalances(transactions.concat(skippedTransactions), currentBalance);
     });
-
-    request.transactions = transactions;
-    request.currentBalance = currentBalance;
 }
 
 /**
@@ -92,18 +90,29 @@ const generate = async (request: Request, response: Response, next: NextFunction
  */
 const generateTransactions = async (request: Request, response: Response, next: NextFunction): Promise<void> => {
     const account_id: number = parseInt(request.query.account_id as string);
-    const allTransactions: GeneratedTransaction[][] = [];
+    const currentBalance: any = request.currentBalance;
+    const allTransactions: any[] = [];
+    const transactions: GeneratedTransaction[] = [];
+    const allSkippedTransactions: GeneratedTransaction[][] = [];
+    const skippedTransactions: GeneratedTransaction[] = [];
 
     if (!account_id) {
         const accountResults = await executeQuery(accountQueries.getAccounts, []);
 
         accountResults.forEach((account: Account) => {
-            generate(request, response, next, account.account_id);
+            generate(request, response, next, account.account_id, transactions, skippedTransactions, currentBalance
+                .find((balance: CurrentBalance) => balance.account_id === account.account_id)
+                .account_balance);
+
+            allTransactions.push({ account_id, transactions });
         });
     } else {
-        generate(request, response, next, account_id);
+        generate(request, response, next, account_id, transactions, skippedTransactions, currentBalance
+            .find((balance: CurrentBalance) => balance.account_id === account_id)
+            .account_balance);
     }
 
+    request.transactions = transactions;
 
     next();
 };

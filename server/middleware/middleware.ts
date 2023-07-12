@@ -74,9 +74,9 @@ export const getTransactionsByAccount = async (request: Request, response: Respo
             transactionsByAccount.push({ account_id: parseInt(account_id as string), transactions });
         }
 
-        request.transactions = transactionsByAccount;
+        request.transaction = transactionsByAccount;
 
-        console.log(request.transactions);
+        console.log(request.transaction);
 
         next();
     } catch (error) {
