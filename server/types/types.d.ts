@@ -160,8 +160,8 @@ declare module 'express-serve-static-core' {
         expenses: any[];
         loans: any[];
         payrolls: any[];
-        wishlists: Wishlist[];
-        transfers: Transfer[];
+        wishlists: any[];
+        transfers: any[];
         currentBalance: CurrentBalance[];
     }
 }

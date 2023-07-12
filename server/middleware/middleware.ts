@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 import { transactionHistoryQueries, expenseQueries, loanQueries, payrollQueries, wishlistQueries, transferQueries, currentBalanceQueries, accountQueries } from '../models/queryData.js';
 import { handleError, executeQuery } from '../utils/helperFunctions.js';
-import { Expense, Loan, Payroll } from '../types/types.js';
+import { Expense, Loan, Payroll, Transfer, Wishlist } from '../types/types.js';
 
 /**
  * 
@@ -227,12 +227,12 @@ export const getPayrollsMiddleware = async (request: Request, response: Response
             const accountResults = await executeQuery(accountQueries.getAccounts);
 
             await Promise.all(accountResults.map(async (account) => {
-                const loanResults = await executeQuery(payrollQueries.getPayrollsMiddleware, [account.account_id, to_date]);
+                const payrollResults = await executeQuery(payrollQueries.getPayrollsMiddleware, [account.account_id, to_date]);
 
                 // Map over results array and convert amount to a float for each Transaction object
-                const payrollTransactions = loanResults.map(loan => ({
-                    ...loan,
-                    amount: parseFloat(loan.loan_amount),
+                const payrollTransactions = payrollResults.map(payroll => ({
+                    ...payroll,
+                    amount: parseFloat(payroll.payroll_amount),
                 }));
 
                 payrollsByAccount.push({ account_id: account.account_id, payroll: payrollTransactions });
@@ -249,12 +249,12 @@ export const getPayrollsMiddleware = async (request: Request, response: Response
             const results = await executeQuery(payrollQueries.getPayrollsMiddleware, [account_id, to_date]);
 
             // Map over results array and convert net_pay to a float for each Payroll object
-            const payrollsByAccount = results.map(payroll => ({
+            const payrollsTransactions = results.map(payroll => ({
                 ...payroll,
                 net_pay: parseFloat(payroll.net_pay),
             }));
 
-            payrollsByAccount.push({ account_id: parseInt(account_id as string), payroll: payrollsByAccount });
+            payrollsByAccount.push({ account_id: parseInt(account_id as string), payroll: payrollsTransactions });
         }
 
         request.payrolls = payrollsByAccount;
@@ -279,21 +279,48 @@ export const getWishlistsByAccount = async (request: Request, response: Response
     const { account_id, to_date } = request.query;
 
     try {
-        // Check if account exists and if it doesn't, send a response with an error message
-        const accountExists = await executeQuery(accountQueries.getAccount, [account_id]);
+        const wishlistsByAccount: { account_id: number, wishlist: Wishlist[] }[] = [];
 
-        if (accountExists.length == 0) {
-            response.status(404).send('Account not found');
-            return;
+        let transactions: any[] = []; // Initialize transactions as an empty array
+
+        if (!account_id) {
+            // If account_id is null, fetch all accounts and make request.transactions an array of transactions
+            const accountResults = await executeQuery(accountQueries.getAccounts);
+
+            await Promise.all(accountResults.map(async (account) => {
+                const wishlistResults = await executeQuery(wishlistQueries.getWishlistsMiddleware, [account.account_id, to_date]);
+
+                // Map over results array and convert amount to a float for each Transaction object
+                const wishlistTransactions = wishlistResults.map(wishlist => ({
+                    ...wishlist,
+                    amount: parseFloat(wishlist.wishlist_amount),
+                }));
+
+                wishlistsByAccount.push({ account_id: account.account_id, wishlist: wishlistTransactions });
+            }));
+        } else {
+            // Check if account exists and if it doesn't, send a response with an error message
+            const accountExists = await executeQuery(accountQueries.getAccount, [account_id]);
+
+            if (accountExists.length == 0) {
+                response.status(404).send('Account not found');
+                return;
+            }
+
+            const results = await executeQuery(wishlistQueries.getWishlistsMiddleware, [account_id, to_date]);
+
+            // Map over results array and convert amount to a float for each Wishlist object
+            const wishlistsTransactions = results.map(wishlist => ({
+                ...wishlist,
+                amount: parseFloat(wishlist.wishlist_amount),
+            }));
+
+            wishlistsByAccount.push({ account_id: parseInt(account_id as string), wishlist: wishlistsTransactions });
         }
 
-        const results = await executeQuery(wishlistQueries.getWishlistsMiddleware, [account_id, to_date]);
+        request.wishlists = wishlistsByAccount;
 
-        // Map over results array and convert amount to a float for each Wishlist object
-        request.wishlists = results.map(wishlist => ({
-            ...wishlist,
-            amount: parseFloat(wishlist.wishlist_amount),
-        }));
+        console.log(request.wishlists);
 
         next();
     } catch (error) {
@@ -313,21 +340,48 @@ export const getTransfersByAccount = async (request: Request, response: Response
     const { account_id, to_date } = request.query;
 
     try {
-        // Check if account exists and if it doesn't, send a response with an error message
-        const accountExists = await executeQuery(accountQueries.getAccount, [account_id]);
+        const transferByAccount: { account_id: number, transfer: Transfer[] }[] = [];
 
-        if (accountExists.length == 0) {
-            response.status(404).send('Account not found');
-            return;
+        let transactions: any[] = []; // Initialize transactions as an empty array
+
+        if (!account_id) {
+            // If account_id is null, fetch all accounts and make request.transactions an array of transactions
+            const accountResults = await executeQuery(accountQueries.getAccounts);
+
+            await Promise.all(accountResults.map(async (account) => {
+                const transferResults = await executeQuery(transferQueries.getTransfersMiddleware, [account.account_id, to_date]);
+
+                // Map over results array and convert amount to a float for each Transaction object
+                const transferTransactions = transferResults.map(transfer => ({
+                    ...transfer,
+                    amount: parseFloat(transfer.transfer_amount),
+                }));
+
+                transferByAccount.push({ account_id: account.account_id, transfer: transferTransactions });
+            }));
+        } else {
+            // Check if account exists and if it doesn't, send a response with an error message
+            const accountExists = await executeQuery(accountQueries.getAccount, [account_id]);
+
+            if (accountExists.length == 0) {
+                response.status(404).send('Account not found');
+                return;
+            }
+
+            const results = await executeQuery(transferQueries.getTransfersMiddleware, [account_id, to_date]);
+
+            // Map over results array and convert amount to a float for each Transfer object
+            const transferTransactions = results.map(transfer => ({
+                ...transfer,
+                amount: parseFloat(transfer.transfer_amount),
+            }));
+
+            transferByAccount.push({ account_id: parseInt(account_id as string), transfer: transferTransactions });
         }
 
-        const results = await executeQuery(transferQueries.getTransfersMiddleware, [account_id, to_date]);
+        request.transfers = transferByAccount;
 
-        // Map over results array and convert amount to a float for each Transfer object
-        request.transfers = results.map(transfer => ({
-            ...transfer,
-            amount: parseFloat(transfer.transfer_amount),
-        }));
+        console.log(request.transfers);
 
         next();
     } catch (error) {
