@@ -25,8 +25,6 @@ export const setQueries = async (request: Request, response: Response, next: Nex
         }
     }
 
-    console.log(request.query.account_id);
-
     next();
 };
 
@@ -56,8 +54,6 @@ export const getTransactionsByAccount = async (request: Request, response: Respo
             ...transaction,
             transaction_amount: parseFloat(transaction.transaction_amount),
         }));
-
-        console.log(request.transaction);
 
         next();
     } catch (error) {
