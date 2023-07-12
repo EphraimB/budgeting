@@ -5,7 +5,7 @@ import generatePayrollTransactions from './generatePayrolls.js';
 import { generateDailyTransfers, generateWeeklyTransfers, generateMonthlyTransfers, generateYearlyTransfers } from './generateTransfers.js';
 import generateWishlists from './generateWishlists.js';
 import calculateBalances from './calculateBalances.js';
-import { Account, CurrentBalance, Expense, GeneratedTransaction, Transaction } from '../types/types.js';
+import { Account, CurrentBalance, Expense, GeneratedTransaction, Payroll, Transaction } from '../types/types.js';
 import { executeQuery } from '../utils/helperFunctions.js';
 import { accountQueries } from '../models/queryData.js';
 
@@ -44,9 +44,13 @@ const generate = async (request: Request, response: Response, next: NextFunction
             });
         });
 
-    request.payrolls.forEach(payroll => {
-        generatePayrollTransactions(transactions, skippedTransactions, payroll, fromDate);
-    });
+    request.payrolls
+        .filter((pyrl) => pyrl.account_id === account_id)
+        .forEach((account) => {
+            account.payroll.forEach((payroll: Payroll) => {
+                generatePayrollTransactions(transactions, skippedTransactions, payroll, fromDate);
+            });
+        });
 
     request.loans.forEach(loan => {
         if (loan.frequency_type === 0) {
