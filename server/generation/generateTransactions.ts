@@ -5,22 +5,16 @@ import generatePayrollTransactions from './generatePayrolls.js';
 import { generateDailyTransfers, generateWeeklyTransfers, generateMonthlyTransfers, generateYearlyTransfers } from './generateTransfers.js';
 import generateWishlists from './generateWishlists.js';
 import calculateBalances from './calculateBalances.js';
-import { GeneratedTransaction, Transaction } from '../types/types.js';
+import { Account, CurrentBalance, GeneratedTransaction, Transaction } from '../types/types.js';
+import { executeQuery } from '../utils/helperFunctions.js';
+import { accountQueries } from '../models/queryData.js';
 
-/**
- * 
- * @param request - The request object
- * @param response - The response object
- * @param next - The next function
- * Generates transactions for the given account and date range
- */
-const generateTransactions = async (request: Request, response: Response, next: NextFunction): Promise<void> => {
-    const fromDate: Date = new Date(request.query.from_date as string);
-    const toDate: Date = new Date(request.query.to_date as string);
-    const currentBalance: number[] = request.currentBalance;
-    const account_id: number = parseInt(request.query.account_id as string);
+const generate = async (request: Request, response: Response, next: NextFunction, account_id: number): Promise<void> => {
     const transactions: GeneratedTransaction[] = [];
     const skippedTransactions: GeneratedTransaction[] = [];
+    const fromDate: Date = new Date(request.query.from_date as string);
+    const toDate: Date = new Date(request.query.to_date as string);
+    const currentBalance: any = request.currentBalance;
 
     transactions.push(
         ...request.transaction.map((transaction: Transaction) => ({
@@ -75,18 +69,41 @@ const generateTransactions = async (request: Request, response: Response, next: 
 
     transactions.sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
 
-    calculateBalances(transactions.concat(skippedTransactions), currentBalance);
+    calculateBalances(transactions.concat(skippedTransactions), currentBalance.find((balance: CurrentBalance) => balance.account_id === account_id));
 
     request.wishlists.forEach(wishlist => {
         generateWishlists(transactions, skippedTransactions, wishlist, fromDate);
 
         transactions.sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
 
-        calculateBalances(transactions.concat(skippedTransactions), currentBalance);
+        calculateBalances(transactions.concat(skippedTransactions), currentBalance.find((balance: CurrentBalance) => balance.account_id === account_id));
     });
 
     request.transactions = transactions;
     request.currentBalance = currentBalance;
+}
+
+/**
+ * 
+ * @param request - The request object
+ * @param response - The response object
+ * @param next - The next function
+ * Generates transactions for the given account and date range
+ */
+const generateTransactions = async (request: Request, response: Response, next: NextFunction): Promise<void> => {
+    const account_id: number = parseInt(request.query.account_id as string);
+    const allTransactions: GeneratedTransaction[][] = [];
+
+    if (!account_id) {
+        const accountResults = await executeQuery(accountQueries.getAccounts, []);
+
+        accountResults.forEach((account: Account) => {
+            generate(request, response, next, account.account_id);
+        });
+    } else {
+        generate(request, response, next, account_id);
+    }
+
 
     next();
 };
