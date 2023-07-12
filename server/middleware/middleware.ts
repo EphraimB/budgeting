@@ -34,26 +34,25 @@ export const getTransactionsByAccount = async (request: Request, response: Respo
     const { account_id, from_date } = request.query;
 
     try {
+        const transactionsByAccount: { account_id: string, transactions: any }[] = [];
+
+        let transactions: any[] = []; // Initialize transactions as an empty array
+
         if (!account_id) {
             // If account_id is null, fetch all accounts and make request.transactions an array of transactions
             const accountResults = await executeQuery(accountQueries.getAccounts);
-            const transactionsByAccount: { account_id: string, transactions: any }[] = [];
 
-            for (const account of accountResults) {
+            await Promise.all(accountResults.map(async (account) => {
                 const transactionsResults = await executeQuery(transactionHistoryQueries.getTransactionsDateMiddleware, [account.account_id, from_date]);
 
                 // Map over results array and convert amount to a float for each Transaction object
-                const transactions = transactionsResults.map(transaction => ({
+                const accountTransactions = transactionsResults.map(transaction => ({
                     ...transaction,
                     transaction_amount: parseFloat(transaction.transaction_amount),
                 }));
 
-                transactionsByAccount.push({ account_id: account.account_id, transactions });
-            }
-
-            request.transactions = transactionsByAccount;
-
-            console.log(request.transactions);
+                transactionsByAccount.push({ account_id: account.account_id, transactions: accountTransactions });
+            }));
         } else {
             // Check if account exists and if it doesn't, send a response with an error message
             const accountExists = await executeQuery(accountQueries.getAccount, [account_id]);
@@ -66,15 +65,15 @@ export const getTransactionsByAccount = async (request: Request, response: Respo
             const results = await executeQuery(transactionHistoryQueries.getTransactionsDateMiddleware, [account_id, from_date]);
 
             // Map over results array and convert amount to a float for each Transaction object
-            const transactions = results.map(transaction => ({
+            transactions = results.map(transaction => ({
                 ...transaction,
                 transaction_amount: parseFloat(transaction.transaction_amount),
             }));
-
-            request.transactions = [{ account_id, transactions }];
-
-            console.log(request.transactions);
         }
+
+        request.transactions = transactionsByAccount;
+
+        console.log(request.transactions);
 
         next();
     } catch (error) {
