@@ -105,7 +105,7 @@ const generateTransactions = async (request: Request, response: Response, next: 
 
         accountResults.forEach((account: Account) => {
             const currentBalanceValue: number = currentBalance
-                .find((balance: CurrentBalance) => balance.account_id === account_id)
+                .find((balance: CurrentBalance) => balance.account_id === account.account_id)
                 .account_balance;
 
             generate(request, response, next, account.account_id, transactions, skippedTransactions, currentBalanceValue);
