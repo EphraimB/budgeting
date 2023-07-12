@@ -5,7 +5,7 @@ import generatePayrollTransactions from './generatePayrolls.js';
 import { generateDailyTransfers, generateWeeklyTransfers, generateMonthlyTransfers, generateYearlyTransfers } from './generateTransfers.js';
 import generateWishlists from './generateWishlists.js';
 import calculateBalances from './calculateBalances.js';
-import { Account, CurrentBalance, GeneratedTransaction, Transaction } from '../types/types.js';
+import { Account, CurrentBalance, Expense, GeneratedTransaction, Transaction } from '../types/types.js';
 import { executeQuery } from '../utils/helperFunctions.js';
 import { accountQueries } from '../models/queryData.js';
 
@@ -28,17 +28,21 @@ const generate = async (request: Request, response: Response, next: NextFunction
             )
         );
 
-    request.expenses.forEach(expense => {
-        if (expense.frequency_type === 0) {
-            generateDailyExpenses(transactions, skippedTransactions, expense, toDate, fromDate);
-        } else if (expense.frequency_type === 1) {
-            generateWeeklyExpenses(transactions, skippedTransactions, expense, toDate, fromDate);
-        } else if (expense.frequency_type === 2) {
-            generateMonthlyExpenses(transactions, skippedTransactions, expense, toDate, fromDate);
-        } else if (expense.frequency_type === 3) {
-            generateYearlyExpenses(transactions, skippedTransactions, expense, toDate, fromDate);
-        }
-    });
+    request.expenses
+        .filter((exp) => exp.account_id === account_id)
+        .forEach((account) => {
+            account.expenses.forEach((expense: Expense) => {
+                if (expense.frequency_type === 0) {
+                    generateDailyExpenses(transactions, skippedTransactions, expense, toDate, fromDate);
+                } else if (expense.frequency_type === 1) {
+                    generateWeeklyExpenses(transactions, skippedTransactions, expense, toDate, fromDate);
+                } else if (expense.frequency_type === 2) {
+                    generateMonthlyExpenses(transactions, skippedTransactions, expense, toDate, fromDate);
+                } else if (expense.frequency_type === 3) {
+                    generateYearlyExpenses(transactions, skippedTransactions, expense, toDate, fromDate);
+                }
+            });
+        });
 
     request.payrolls.forEach(payroll => {
         generatePayrollTransactions(transactions, skippedTransactions, payroll, fromDate);
