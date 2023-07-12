@@ -113,7 +113,6 @@ const generateTransactions = async (request: Request, response: Response, next: 
     const currentBalance: any = request.currentBalance;
     const allTransactions: any[] = [];
     const transactions: GeneratedTransaction[] = [];
-    const allSkippedTransactions: GeneratedTransaction[][] = [];
     const skippedTransactions: GeneratedTransaction[] = [];
 
     if (!account_id) {
@@ -137,8 +136,6 @@ const generateTransactions = async (request: Request, response: Response, next: 
 
         allTransactions.push({ account_id, current_balance: currentBalanceValue, transactions });
     }
-
-    console.log(allTransactions);
 
     request.transactions = allTransactions;
 

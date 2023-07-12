@@ -76,8 +76,6 @@ export const getTransactionsByAccount = async (request: Request, response: Respo
 
         request.transaction = transactionsByAccount;
 
-        console.log(request.transaction);
-
         next();
     } catch (error) {
         console.error(error); // Log the error on the server side
@@ -97,8 +95,6 @@ export const getExpensesByAccount = async (request: Request, response: Response,
 
     try {
         const expensesByAccount: { account_id: number, expenses: Expense[] }[] = [];
-
-        let transactions: any[] = []; // Initialize transactions as an empty array
 
         if (!account_id) {
             // If account_id is null, fetch all accounts and make request.transactions an array of transactions
@@ -137,8 +133,6 @@ export const getExpensesByAccount = async (request: Request, response: Response,
 
         request.expenses = expensesByAccount;
 
-        console.log(request.expenses);
-
         next();
     } catch (error) {
         console.error(error); // Log the error on the server side
@@ -158,8 +152,6 @@ export const getLoansByAccount = async (request: Request, response: Response, ne
 
     try {
         const loansByAccount: { account_id: number, loan: Loan[] }[] = [];
-
-        let transactions: any[] = []; // Initialize transactions as an empty array
 
         if (!account_id) {
             // If account_id is null, fetch all accounts and make request.transactions an array of transactions
@@ -198,8 +190,6 @@ export const getLoansByAccount = async (request: Request, response: Response, ne
 
         request.loans = loansByAccount;
 
-        console.log(request.loans);
-
         next();
     } catch (error) {
         console.error(error); // Log the error on the server side
@@ -219,8 +209,6 @@ export const getPayrollsMiddleware = async (request: Request, response: Response
 
     try {
         const payrollsByAccount: { account_id: number, payroll: Payroll[] }[] = [];
-
-        let transactions: any[] = []; // Initialize transactions as an empty array
 
         if (!account_id) {
             // If account_id is null, fetch all accounts and make request.transactions an array of transactions
@@ -259,8 +247,6 @@ export const getPayrollsMiddleware = async (request: Request, response: Response
 
         request.payrolls = payrollsByAccount;
 
-        console.log(request.payrolls);
-
         next();
     } catch (error) {
         console.error(error); // Log the error on the server side
@@ -280,8 +266,6 @@ export const getWishlistsByAccount = async (request: Request, response: Response
 
     try {
         const wishlistsByAccount: { account_id: number, wishlist: Wishlist[] }[] = [];
-
-        let transactions: any[] = []; // Initialize transactions as an empty array
 
         if (!account_id) {
             // If account_id is null, fetch all accounts and make request.transactions an array of transactions
@@ -320,8 +304,6 @@ export const getWishlistsByAccount = async (request: Request, response: Response
 
         request.wishlists = wishlistsByAccount;
 
-        console.log(request.wishlists);
-
         next();
     } catch (error) {
         console.error(error); // Log the error on the server side
@@ -341,8 +323,6 @@ export const getTransfersByAccount = async (request: Request, response: Response
 
     try {
         const transferByAccount: { account_id: number, transfer: Transfer[] }[] = [];
-
-        let transactions: any[] = []; // Initialize transactions as an empty array
 
         if (!account_id) {
             // If account_id is null, fetch all accounts and make request.transactions an array of transactions
@@ -380,8 +360,6 @@ export const getTransfersByAccount = async (request: Request, response: Response
         }
 
         request.transfers = transferByAccount;
-
-        console.log(request.transfers);
 
         next();
     } catch (error) {
@@ -426,8 +404,6 @@ export const getCurrentBalance = async (request: Request, response: Response, ne
         }
 
         request.currentBalance = currentBalance;
-
-        console.log(request.currentBalance);
 
         next();
     } catch (error) {
