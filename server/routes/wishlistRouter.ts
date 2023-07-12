@@ -39,10 +39,9 @@ const handleWishlistsRequest = async (request: Request, response: Response, next
 router.get('/', [
     query('id').optional().isInt({ min: 1 }).withMessage('ID must be an integer'),
     query('account_id').optional().isInt({ min: 1 }).withMessage('Account ID must be an integer'),
-    validateRequest,
+    validateRequest],
     handleWishlistsRequest,
-    getWishlists
-]);
+    getWishlists);
 
 router.post('/',
     [
