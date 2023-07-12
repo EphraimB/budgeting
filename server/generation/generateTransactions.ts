@@ -104,19 +104,25 @@ const generateTransactions = async (request: Request, response: Response, next: 
         const accountResults = await executeQuery(accountQueries.getAccounts, []);
 
         accountResults.forEach((account: Account) => {
-            generate(request, response, next, account.account_id, transactions, skippedTransactions, currentBalance
-                .find((balance: CurrentBalance) => balance.account_id === account.account_id)
-                .account_balance);
+            const currentBalanceValue: number = currentBalance
+                .find((balance: CurrentBalance) => balance.account_id === account_id)
+                .account_balance;
 
-            allTransactions.push({ account_id, transactions });
+            generate(request, response, next, account.account_id, transactions, skippedTransactions, currentBalanceValue);
+
+            allTransactions.push({ account_id, current_balance: currentBalanceValue, transactions });
         });
     } else {
-        generate(request, response, next, account_id, transactions, skippedTransactions, currentBalance
+        const currentBalanceValue: number = currentBalance
             .find((balance: CurrentBalance) => balance.account_id === account_id)
-            .account_balance);
+            .account_balance;
+
+        generate(request, response, next, account_id, transactions, skippedTransactions, currentBalanceValue);
+
+        allTransactions.push({ account_id, current_balance: currentBalanceValue, transactions });
     }
 
-    request.transactions = transactions;
+    request.transactions = allTransactions;
 
     next();
 };
