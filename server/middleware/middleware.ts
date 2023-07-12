@@ -3,6 +3,13 @@ import { transactionHistoryQueries, expenseQueries, loanQueries, payrollQueries,
 import { handleError, executeQuery } from '../utils/helperFunctions.js';
 import { Account } from '../types/types.js';
 
+/**
+ * 
+ * @param request - The request object
+ * @param response - The response object
+ * @param next - The next function
+ * Sets queries
+ */
 export const setQueries = async (request: Request, response: Response, next: NextFunction): Promise<void> => {
     request.query.from_date = new Date().toISOString().slice(0, 10);
     request.query.to_date = new Date(+new Date() + 365 * 24 * 60 * 60 * 1000).toISOString().slice(0, 10);
