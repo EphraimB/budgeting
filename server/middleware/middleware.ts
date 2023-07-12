@@ -1,7 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import { transactionHistoryQueries, expenseQueries, loanQueries, payrollQueries, wishlistQueries, transferQueries, currentBalanceQueries, accountQueries } from '../models/queryData.js';
 import { handleError, executeQuery } from '../utils/helperFunctions.js';
-import { Account } from '../types/types.js';
 
 /**
  * 
@@ -18,7 +17,7 @@ export const setQueries = async (request: Request, response: Response, next: Nex
         if (request.query.id === undefined || request.query.id === null) {
             // Here is where you might fetch a default or list of account_ids.
             // For this example, I'll use a default account_id when no 'id' or 'account_id' is provided.
-            request.query.account_id = "default_account_id";
+            request.query.account_id = null;
         } else {
             const results = await executeQuery(wishlistQueries.getWishlistsById, [request.query.id]);
             request.query.account_id = results[0].account_id;
