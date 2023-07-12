@@ -188,10 +188,12 @@ export const getLoansByAccount = async (request: Request, response: Response, ne
             const results = await executeQuery(loanQueries.getLoansMiddleware, [account_id, to_date]);
 
             // Map over results array and convert amount to a float for each Loan object
-            request.loans = results.map(loan => ({
+            const loansTransactions = results.map(loan => ({
                 ...loan,
                 amount: parseFloat(loan.loan_plan_amount),
             }));
+
+            loansByAccount.push({ account_id: parseInt(account_id as string), loan: loansTransactions });
         }
 
         request.loans = loansByAccount;
