@@ -5,7 +5,7 @@ import generatePayrollTransactions from './generatePayrolls.js';
 import { generateDailyTransfers, generateWeeklyTransfers, generateMonthlyTransfers, generateYearlyTransfers } from './generateTransfers.js';
 import generateWishlists from './generateWishlists.js';
 import calculateBalances from './calculateBalances.js';
-import { Account, CurrentBalance, Expense, GeneratedTransaction, Loan, Payroll, Transaction } from '../types/types.js';
+import { Account, CurrentBalance, Expense, GeneratedTransaction, Loan, Payroll, Transaction, Transfer } from '../types/types.js';
 import { executeQuery } from '../utils/helperFunctions.js';
 import { accountQueries } from '../models/queryData.js';
 
@@ -68,17 +68,21 @@ const generate = async (request: Request, response: Response, next: NextFunction
             });
         });
 
-    request.transfers.forEach(transfer => {
-        if (transfer.frequency_type === 0) {
-            generateDailyTransfers(transactions, skippedTransactions, transfer, toDate, fromDate, account_id);
-        } else if (transfer.frequency_type === 1) {
-            generateWeeklyTransfers(transactions, skippedTransactions, transfer, toDate, fromDate, account_id);
-        } else if (transfer.frequency_type === 2) {
-            generateMonthlyTransfers(transactions, skippedTransactions, transfer, toDate, fromDate, account_id);
-        } else if (transfer.frequency_type === 3) {
-            generateYearlyTransfers(transactions, skippedTransactions, transfer, toDate, fromDate, account_id);
-        }
-    });
+    request.transfers
+        .filter((trnfrs) => trnfrs.account_id === account_id)
+        .forEach((account) => {
+            account.transfer.forEach((transfer: Transfer) => {
+                if (transfer.frequency_type === 0) {
+                    generateDailyTransfers(transactions, skippedTransactions, transfer, toDate, fromDate, account_id);
+                } else if (transfer.frequency_type === 1) {
+                    generateWeeklyTransfers(transactions, skippedTransactions, transfer, toDate, fromDate, account_id);
+                } else if (transfer.frequency_type === 2) {
+                    generateMonthlyTransfers(transactions, skippedTransactions, transfer, toDate, fromDate, account_id);
+                } else if (transfer.frequency_type === 3) {
+                    generateYearlyTransfers(transactions, skippedTransactions, transfer, toDate, fromDate, account_id);
+                }
+            });
+        });
 
     transactions.sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
 
