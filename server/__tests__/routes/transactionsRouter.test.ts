@@ -4,7 +4,7 @@ import express, { Express, Request, Response, NextFunction, Router } from 'expre
 
 jest.mock('../../middleware/middleware', () => ({
     getCurrentBalance: (req: Request, res: Response, next: NextFunction) => {
-        req.currentBalance = { account_id: 1, account_balance: 100 };
+        req.currentBalance = [{ account_id: 1, account_balance: 100 }];
         next();
     },
     getTransactionsByAccount: (req: Request, res: Response, next: NextFunction) => {

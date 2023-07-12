@@ -263,28 +263,28 @@ export const getCurrentBalance = async (request: Request, response: Response, ne
     const { account_id } = request.query;
 
     try {
-        const currentBalance: any = [];
+        let currentBalance: { account_id: number, account_balance: number }[] = [];
 
         if (!account_id) {
             const accountResults = await executeQuery(accountQueries.getAccounts);
 
-            accountResults.forEach(async (account) => {
+            currentBalance = await Promise.all(accountResults.map(async (account) => {
                 const currentBalanceResults = await executeQuery(currentBalanceQueries.getCurrentBalance, [account.account_id]);
 
-                currentBalance.push({ account_id, currentBalance: parseFloat(currentBalanceResults[0].account_balance) });
-            });
+                return { account_id: account.account_id, account_balance: parseFloat(currentBalanceResults[0].account_balance) };
+            }));
         } else {
             // Check if account exists and if it doesn't, send a response with an error message
-            const accountExists = await executeQuery(accountQueries.getAccount, [account_id]);
+            const accountExists = await executeQuery(accountQueries.getAccount, [account_id as string]);
 
             if (accountExists.length == 0) {
                 response.status(404).send('Account not found');
                 return;
             }
 
-            const results = await executeQuery(currentBalanceQueries.getCurrentBalance, [account_id]);
+            const results = await executeQuery(currentBalanceQueries.getCurrentBalance, [account_id as string]);
 
-            currentBalance.push({ account_id, currentBalance: parseFloat(results[0].account_balance) });
+            currentBalance = [{ account_id: parseInt(account_id as string), account_balance: parseFloat(results[0].account_balance) }];
         }
 
         request.currentBalance = currentBalance;

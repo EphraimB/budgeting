@@ -162,6 +162,6 @@ declare module 'express-serve-static-core' {
         payrolls: Payroll[];
         wishlists: Wishlist[];
         transfers: Transfer[];
-        currentBalance: CurrentBalance;
+        currentBalance: CurrentBalance[];
     }
 }
