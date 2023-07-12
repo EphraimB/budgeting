@@ -73,20 +73,23 @@ export const getWishlists = async (request: Request, response: Response): Promis
             return;
         }
 
-        console.log('wishlists', request.wishlists);
-        console.log('transactions', request.transactions);
+        // Find the transaction that matches the wishlist_id
+        const matchedTransaction = request.transactions.find(
+            (transaction) => transaction.wishlist_id === Number(id)
+        );
 
         // Add the wishlist_date_can_purchase to the wishlist object
-        const modifiedWishlists = results.map((wishlist: WishlistInput) => {
-            const matchedWishlist = request.wishlists.find((w) => w.wishlist_id === Number(wishlist.wishlist_id));
-            return {
-                ...wishlist,
-                wishlist_date_can_purchase: matchedWishlist ? matchedWishlist.wishlist_date_can_purchase : null
-            };
-        });
+        const modifiedWishlists = results.map((wishlist: WishlistInput) => ({
+            ...wishlist,
+            wishlist_date_can_purchase: matchedTransaction
+                ? matchedTransaction.date
+                : null
+        }));
 
         // Parse the data to the correct format
-        const wishlists: Wishlist[] = modifiedWishlists.map(wishlist => wishlistsParse(wishlist));
+        const wishlists: Wishlist[] = modifiedWishlists.map((wishlist) =>
+            wishlistsParse(wishlist)
+        );
 
         response.status(200).json(wishlists);
     } catch (error) {
