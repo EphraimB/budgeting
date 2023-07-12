@@ -7,11 +7,7 @@ import { getCurrentBalance, getTransactionsByAccount, getTransactionsForAllAccou
 
 const router: Router = express.Router();
 
-router.get('/', [
-    query('id').optional().isInt({ min: 1 }).withMessage('ID must be an integer'),
-    query('account_id').optional().isInt({ min: 1 }).withMessage('Account ID must be an integer'),
-    validateRequest
-], async (request: Request, response: Response, next: NextFunction) => {
+const handleWishlistsRequest = async (request: Request, response: Response, next: NextFunction) => {
     const accountId = request.query.account_id as string | undefined;
 
     if (accountId !== undefined) {
@@ -28,13 +24,25 @@ router.get('/', [
         ].map(func => func(request, response, next)));
     } else {
         // If account_id is not provided, process wishlists for all accounts
-        // You'd need to implement getWishlistsForAllAccounts and generateTransactionsForAllAccounts
         await Promise.all([
             getTransactionsForAllAccounts,
             generateTransactionsUntilWishlist
         ].map(func => func(request, response, next)));
+
+        // Retrieve wishlists for all accounts
+        await getWishlistsByAccount(request, response, next);
     }
-}, getWishlists);
+
+    next();
+};
+
+router.get('/', [
+    query('id').optional().isInt({ min: 1 }).withMessage('ID must be an integer'),
+    query('account_id').optional().isInt({ min: 1 }).withMessage('Account ID must be an integer'),
+    validateRequest,
+    handleWishlistsRequest,
+    getWishlists
+]);
 
 router.post('/',
     [
