@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from 'express';
 import { wishlistQueries } from '../models/queryData.js';
 import { executeQuery, handleError } from '../utils/helperFunctions.js';
-import { Wishlist } from '../types/types.js';
+import { GeneratedTransaction, Wishlist } from '../types/types.js';
 
 interface WishlistInput {
     wishlist_id: string;
@@ -73,8 +73,10 @@ export const getWishlists = async (request: Request, response: Response): Promis
 
         // Create a map of wishlist_id to transaction date for faster lookup
         const transactionMap: Record<number, string | null> = {};
-        request.transactions.forEach((transaction) => {
-            transactionMap[transaction.wishlist_id] = transaction.date;
+        request.transactions.forEach((account) => {
+            account.transactions.forEach((transaction: any) => {
+                transactionMap[transaction.wishlist_id] = transaction.date;
+            });
         });
 
         // Add the wishlist_date_can_purchase to the wishlist object
