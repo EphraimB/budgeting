@@ -42,7 +42,7 @@ beforeAll(() => {
         getPayrollsMiddleware: jest.fn((req: Request, res: Response, next: NextFunction) => { next(); }),
         getTransfersByAccount: jest.fn((req: Request, res: Response, next: NextFunction) => { next(); }),
         getWishlistsByAccount: jest.fn((req: Request, res: Response, next: NextFunction) => { next(); })
-    }));    
+    }));
 
     jest.mock('../../generation/generateTransactions', () => ({
         default: jest.fn((req: Request, res: Response, next: NextFunction) => next())
