@@ -34,15 +34,15 @@ beforeAll(() => {
     }));
 
     jest.mock('../../middleware/middleware', () => ({
-        setQueries: jest.fn((req: Request, res: Response, next: NextFunction) => next()),
-        getCurrentBalance: jest.fn((req: Request, res: Response, next: NextFunction) => next()),
-        getTransactionsByAccount: jest.fn((req: Request, res: Response, next: NextFunction) => next()),
-        getExpensesByAccount: jest.fn((req: Request, res: Response, next: NextFunction) => next()),
-        getLoansByAccount: jest.fn((req: Request, res: Response, next: NextFunction) => next()),
-        getPayrollsMiddleware: jest.fn((req: Request, res: Response, next: NextFunction) => next()),
-        getTransfersByAccount: jest.fn((req: Request, res: Response, next: NextFunction) => next()),
-        getWishlistsByAccount: jest.fn((req: Request, res: Response, next: NextFunction) => next())
-    }));
+        setQueries: jest.fn((req: Request, res: Response, next: NextFunction) => { next(); }),
+        getCurrentBalance: jest.fn((req: Request, res: Response, next: NextFunction) => { next(); }),
+        getTransactionsByAccount: jest.fn((req: Request, res: Response, next: NextFunction) => { next(); }),
+        getExpensesByAccount: jest.fn((req: Request, res: Response, next: NextFunction) => { next(); }),
+        getLoansByAccount: jest.fn((req: Request, res: Response, next: NextFunction) => { next(); }),
+        getPayrollsMiddleware: jest.fn((req: Request, res: Response, next: NextFunction) => { next(); }),
+        getTransfersByAccount: jest.fn((req: Request, res: Response, next: NextFunction) => { next(); }),
+        getWishlistsByAccount: jest.fn((req: Request, res: Response, next: NextFunction) => { next(); })
+    }));    
 
     jest.mock('../../generation/generateTransactions', () => ({
         default: jest.fn((req: Request, res: Response, next: NextFunction) => next())
