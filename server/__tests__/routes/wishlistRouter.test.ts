@@ -32,6 +32,21 @@ beforeAll(() => {
         updateWishlist: (req: Request, res: Response, next: NextFunction) => res.json({ message: 'success' }),
         deleteWishlist: (req: Request, res: Response, next: NextFunction) => res.json({ message: 'success' })
     }));
+
+    jest.mock('../../middleware/middleware', () => ({
+        setQueries: jest.fn(),
+        getCurrentBalance: jest.fn(),
+        getTransactionsByAccount: jest.fn(),
+        getExpensesByAccount: jest.fn(),
+        getLoansByAccount: jest.fn(),
+        getPayrollsMiddleware: jest.fn(),
+        getTransfersByAccount: jest.fn(),
+        getWishlistsByAccount: jest.fn()
+    }));
+
+    jest.mock('../../generation/generateTransactions', () => ({
+        default: jest.fn()
+    }));
 });
 
 afterAll(() => {
