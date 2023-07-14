@@ -37,16 +37,16 @@ beforeAll(() => {
         getWishlistsByAccount: jest.fn((req: Request, res: Response, next: NextFunction) => next()),
     }));
 
-    jest.mock('../../generation/generateTransactions', () => ({
-        default: jest.fn((req: Request, res: Response, next: NextFunction) => {
+    jest.mock('../../generation/generateTransactions', () => {
+        return jest.fn((req: Request, res: Response, next: NextFunction) => {
             req.transactions = [{
                 account_id: 1,
                 current_balance: 500,
                 transactions: []
             }];
             next();
-        })
-    }));
+        });
+    });
 
     jest.mock('../../controllers/wishlistsController', () => ({
         getWishlists: jest.fn((req: Request, res: Response, next: NextFunction) => res.json({ message: 'success' })),
