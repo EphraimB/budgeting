@@ -42,10 +42,10 @@ beforeAll(() => {
     }));
 
     jest.mock('../../controllers/wishlistsController', () => ({
-        getWishlists: (req: Request, res: Response, next: NextFunction) => res.json({ message: 'success' }),
-        createWishlist: (req: Request, res: Response, next: NextFunction) => res.json({ message: 'success' }),
-        updateWishlist: (req: Request, res: Response, next: NextFunction) => res.json({ message: 'success' }),
-        deleteWishlist: (req: Request, res: Response, next: NextFunction) => res.json({ message: 'success' })
+        getWishlists: jest.fn((req: Request, res: Response, next: NextFunction) => res.json({ message: 'success' })),
+        createWishlist: jest.fn((req: Request, res: Response, next: NextFunction) => res.json({ message: 'success' })),
+        updateWishlist: jest.fn((req: Request, res: Response, next: NextFunction) => res.json({ message: 'success' })),
+        deleteWishlist: jest.fn((req: Request, res: Response, next: NextFunction) => res.json({ message: 'success' })),
     }));
 });
 
