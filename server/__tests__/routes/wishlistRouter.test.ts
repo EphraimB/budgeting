@@ -38,7 +38,14 @@ beforeAll(() => {
     }));
 
     jest.mock('../../generation/generateTransactions', () => ({
-        default: jest.fn((req: Request, res: Response, next: NextFunction) => next())
+        default: jest.fn((req: Request, res: Response, next: NextFunction) => {
+            req.transactions = [{
+                account_id: 1,
+                current_balance: 500,
+                transactions: []
+            }];
+            next();
+        })
     }));
 
     jest.mock('../../controllers/wishlistsController', () => ({
