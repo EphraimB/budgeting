@@ -207,6 +207,11 @@ export const updateExpense = async (request: Request, response: Response): Promi
             await deleteCronJob(results[0].unique_id);
         } else {
             console.error('Cron job not found');
+            response.status(404).json({
+                status: 'error',
+                message: 'Cron job not found'
+            });
+            return;
         }
 
         const { uniqueId, cronDate } = await scheduleCronJob(cronParams);
@@ -265,6 +270,11 @@ export const deleteExpense = async (request: Request, response: Response): Promi
             await deleteCronJob(results[0].unique_id);
         } else {
             console.error('Cron job not found');
+            response.status(404).json({
+                status: 'error',
+                message: 'Cron job not found'
+            });
+            return;
         }
 
         await executeQuery(cronJobQueries.deleteCronJob, [cronId]);
