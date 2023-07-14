@@ -176,7 +176,7 @@ describe('getTransactionsByAccount', () => {
 
 describe('getExpensesByAccount', () => {
     it('gets expenses for a given account and date', async () => {
-        mockModule([], expenses);
+        mockModule([{ account_id: 1 }], expenses);
 
         const { getExpensesByAccount } = await import('../../middleware/middleware.js');
 
@@ -218,7 +218,7 @@ describe('getExpensesByAccount', () => {
 
 describe('getLoansByAccount', () => {
     it('gets loans for a given account and date', async () => {
-        mockModule([], loans);
+        mockModule([{ account_id: 1 }], loans);
 
         const { getLoansByAccount } = await import('../../middleware/middleware.js');
 
@@ -260,7 +260,7 @@ describe('getLoansByAccount', () => {
 
 describe('getPayrollsMiddleware', () => {
     it('gets payrolls for a given account and date', async () => {
-        mockModule([], payrolls);
+        mockModule([{ account_id: 1 }], payrolls);
 
         const { getPayrollsMiddleware } = await import('../../middleware/middleware.js');
 
@@ -303,7 +303,7 @@ describe('getPayrollsMiddleware', () => {
 
 describe('getWishlistsByAccount', () => {
     it('gets wishlists for a given account and date', async () => {
-        mockModule([], wishlists);
+        mockModule([{ account_id: 1 }], wishlists);
 
         const { getWishlistsByAccount } = await import('../../middleware/middleware.js');
 
@@ -347,7 +347,7 @@ describe('getWishlistsByAccount', () => {
 
 describe('getTransfersByAccount', () => {
     it('gets transfers for a given account and date', async () => {
-        mockModule([], transfers);
+        mockModule([{ account_id: 1 }], transfers);
 
         const { getTransfersByAccount } = await import('../../middleware/middleware.js');
 
