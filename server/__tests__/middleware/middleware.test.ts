@@ -44,14 +44,23 @@ afterAll(() => {
 
 /**
  * 
- * @param executeQueryValue - The value to be returned by the executeQuery mock function
+ * @param getAccountsValue - The value to be returned by the executeQuery mock function
+ * @param getTransactionsDateMiddlewareValue - The value to be returned by the executeQuery mock function
  * @param [errorMessage] - The error message to be passed to the handleError mock function
  * @returns - A mock module with the executeQuery and handleError functions
  */
-const mockModule = (executeQueryValue: QueryResultRow[] | string | null, errorMessage?: string) => {
-    const executeQuery = errorMessage
-        ? jest.fn(() => Promise.reject(new Error(errorMessage)))
-        : jest.fn(() => Promise.resolve(executeQueryValue));
+const mockModule = (getAccountsValue: QueryResultRow[], getTransactionsDateMiddlewareValue: QueryResultRow[], errorMessage?: string) => {
+    const executeQuery = jest.fn();
+
+    if (errorMessage) {
+        executeQuery.mockImplementation(() => {
+            throw new Error(errorMessage);
+        });
+    } else {
+        executeQuery
+            .mockImplementationOnce(() => Promise.resolve(getAccountsValue))
+            .mockImplementationOnce(() => Promise.resolve(getTransactionsDateMiddlewareValue));
+    }
 
     jest.mock('../../utils/helperFunctions.js', () => ({
         executeQuery,
@@ -75,7 +84,7 @@ describe('setQueries', () => {
     });
 
     it('should set account_id when query contains id', async () => {
-        mockModule([{ account_id: 1 }]);
+        mockModule([{ account_id: 1 }], []);
 
         const { setQueries } = await import('../../middleware/middleware.js');
 
@@ -101,11 +110,12 @@ describe('setQueries', () => {
 
 describe('getTransactionsByAccount', () => {
     it('gets transactions for a given account and date', async () => {
-        mockModule(transactions);
+        const mockAccount = [{ account_id: 1 }];
+        mockModule(mockAccount, transactions);
 
         const { getTransactionsByAccount } = await import('../../middleware/middleware.js');
 
-        mockRequest.query = { account_id: '1', from_date: '2023-06-01' };
+        mockRequest.query = { account_id: 1, from_date: '2023-06-01' };
 
         await getTransactionsByAccount(mockRequest, mockResponse, mockNext);
 
@@ -125,7 +135,7 @@ describe('getTransactionsByAccount', () => {
         // Arrange
         const errorMessage = 'Fake error';
         const error = new Error(errorMessage);
-        mockModule(null, errorMessage);
+        mockModule([], [], errorMessage);
 
         const { getTransactionsByAccount } = await import('../../middleware/middleware.js');
 
@@ -141,7 +151,7 @@ describe('getTransactionsByAccount', () => {
     });
 
     it('should fetch all accounts if account_id is not provided', async () => {
-        mockModule(transactions);
+        mockModule([], transactions);
 
         const { getTransactionsByAccount } = await import('../../middleware/middleware.js');
 
@@ -159,14 +169,14 @@ describe('getTransactionsByAccount', () => {
 
         console.log(mockRequest.transaction);
 
-        expect(mockRequest.transaction[0]).toEqual(transactionsReturn);
+        expect(mockRequest.transaction).toEqual(transactionsReturn);
         expect(mockNext).toHaveBeenCalled();
     });
 });
 
 describe('getExpensesByAccount', () => {
     it('gets expenses for a given account and date', async () => {
-        mockModule(expenses);
+        mockModule([], expenses);
 
         const { getExpensesByAccount } = await import('../../middleware/middleware.js');
 
@@ -190,7 +200,7 @@ describe('getExpensesByAccount', () => {
         // Arrange
         const errorMessage = 'Fake error';
         const error = new Error(errorMessage);
-        mockModule(null, errorMessage);
+        mockModule([], [], errorMessage);
 
         const { getExpensesByAccount } = await import('../../middleware/middleware.js');
 
@@ -208,7 +218,7 @@ describe('getExpensesByAccount', () => {
 
 describe('getLoansByAccount', () => {
     it('gets loans for a given account and date', async () => {
-        mockModule(loans);
+        mockModule([], loans);
 
         const { getLoansByAccount } = await import('../../middleware/middleware.js');
 
@@ -232,7 +242,7 @@ describe('getLoansByAccount', () => {
         // Arrange
         const errorMessage = 'Fake error';
         const error = new Error(errorMessage);
-        mockModule(null, errorMessage);
+        mockModule([], [], errorMessage);
 
         const { getLoansByAccount } = await import('../../middleware/middleware.js');
 
@@ -250,7 +260,7 @@ describe('getLoansByAccount', () => {
 
 describe('getPayrollsMiddleware', () => {
     it('gets payrolls for a given account and date', async () => {
-        mockModule(payrolls);
+        mockModule([], payrolls);
 
         const { getPayrollsMiddleware } = await import('../../middleware/middleware.js');
 
@@ -275,7 +285,7 @@ describe('getPayrollsMiddleware', () => {
         // Arrange
         const errorMessage = 'Fake error';
         const error = new Error(errorMessage);
-        mockModule(null, errorMessage);
+        mockModule([], [], errorMessage);
 
         const { getPayrollsMiddleware } = await import('../../middleware/middleware.js');
 
@@ -293,7 +303,7 @@ describe('getPayrollsMiddleware', () => {
 
 describe('getWishlistsByAccount', () => {
     it('gets wishlists for a given account and date', async () => {
-        mockModule(wishlists);
+        mockModule([], wishlists);
 
         const { getWishlistsByAccount } = await import('../../middleware/middleware.js');
 
@@ -319,7 +329,7 @@ describe('getWishlistsByAccount', () => {
         // Arrange
         const errorMessage = 'Fake error';
         const error = new Error(errorMessage);
-        mockModule(null, errorMessage);
+        mockModule([], [], errorMessage);
 
         const { getWishlistsByAccount } = await import('../../middleware/middleware.js');
 
@@ -337,7 +347,7 @@ describe('getWishlistsByAccount', () => {
 
 describe('getTransfersByAccount', () => {
     it('gets transfers for a given account and date', async () => {
-        mockModule(transfers);
+        mockModule([], transfers);
 
         const { getTransfersByAccount } = await import('../../middleware/middleware.js');
 
@@ -363,7 +373,7 @@ describe('getTransfersByAccount', () => {
         // Arrange
         const errorMessage = 'Fake error';
         const error = new Error(errorMessage);
-        mockModule(null, errorMessage);
+        mockModule([], [], errorMessage);
 
         const { getTransfersByAccount } = await import('../../middleware/middleware.js');
 
@@ -386,7 +396,7 @@ describe('getCurrentBalance', () => {
             { id: 1, account_id: 1, account_balance: 100, date: '2023-06-01' }
         ];
 
-        mockModule(mockCurrentBalance);
+        mockModule([], mockCurrentBalance);
 
         const { getCurrentBalance } = await import('../../middleware/middleware.js');
 
@@ -402,7 +412,7 @@ describe('getCurrentBalance', () => {
         // Arrange
         const errorMessage = 'Fake error';
         const error = new Error(errorMessage);
-        mockModule(null, errorMessage);
+        mockModule([], [], errorMessage);
 
         const { getCurrentBalance } = await import('../../middleware/middleware.js');
 
