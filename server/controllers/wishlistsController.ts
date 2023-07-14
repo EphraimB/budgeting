@@ -1,7 +1,7 @@
-import { NextFunction, Request, Response } from 'express';
+import { Request, Response } from 'express';
 import { wishlistQueries } from '../models/queryData.js';
 import { executeQuery, handleError } from '../utils/helperFunctions.js';
-import { GeneratedTransaction, Wishlist } from '../types/types.js';
+import { Wishlist } from '../types/types.js';
 
 interface WishlistInput {
     wishlist_id: string;

@@ -1,6 +1,6 @@
 import { jest } from '@jest/globals';
 import { Request, Response } from 'express';
-import { wishlists } from '../../models/mockData.js';
+import { expenses, loans, transfers, wishlists } from '../../models/mockData.js';
 import { QueryResultRow } from 'pg';
 
 // Mock request and response
@@ -37,7 +37,7 @@ afterAll(() => {
  * @param [errorMessage] - The error message to be passed to the handleError mock function
  * @returns - A mock module with the executeQuery and handleError functions
  */
-const mockModule = (executeQueryValue: QueryResultRow[] | string, errorMessage?: string) => {
+const mockModule = (executeQueryValue: QueryResultRow[] | string | null, errorMessage?: string) => {
     const executeQuery = errorMessage
         ? jest.fn(() => Promise.reject(new Error(errorMessage)))
         : jest.fn(() => Promise.resolve(executeQueryValue));
@@ -55,16 +55,27 @@ describe('GET /api/wishlists', () => {
         // Arrange
         mockModule(wishlists);
 
-        mockRequest.query = { id: null };
+        mockRequest.query = { account_id: null, id: null };
+
+        mockRequest.transactions = [
+            {
+                transactions: wishlists.map((wishlist, i) => ({ wishlist_id: wishlist.wishlist_id, date: `2023-08-14T00:0${i}:00.000Z` }))
+            }
+        ];
 
         const { getWishlists } = await import('../../controllers/wishlistsController.js');
 
         // Call the function with the mock request and response
         await getWishlists(mockRequest as Request, mockResponse);
 
+        const modifiedWishlists = wishlists.map((wishlist, i) => ({
+            ...wishlist,
+            wishlist_date_can_purchase: `2023-08-14T00:0${i}:00.000Z`
+        }));
+
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(200);
-        expect(mockResponse.json).toHaveBeenCalledWith(wishlists);
+        expect(mockResponse.json).toHaveBeenCalledWith(modifiedWishlists);
     });
 
     it('should respond with an error message', async () => {
@@ -73,7 +84,7 @@ describe('GET /api/wishlists', () => {
         const error = new Error(errorMessage);
         mockModule(null, errorMessage);
 
-        mockRequest.query = { id: null };
+        mockRequest.query = { account_id: null, id: null };
 
         const { getWishlists } = await import('../../controllers/wishlistsController.js');
 
