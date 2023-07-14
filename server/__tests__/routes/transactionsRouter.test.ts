@@ -35,7 +35,11 @@ jest.mock('../../middleware/middleware', () => ({
 
 jest.mock('../../generation/generateTransactions', () => {
     return jest.fn((req: Request, res: Response, next: NextFunction) => {
-        req.transactions = [];
+        req.transactions = [{
+            account_id: 1,
+            current_balance: 100,
+            transactions: []
+        }];
         next();
     });
 });
@@ -74,12 +78,12 @@ describe('Testing / route', () => {
             .query({ account_id: accountId, from_date: fromDate, to_date: toDate });
 
         expect(response.status).toBe(200);
-        expect(response.body).toHaveProperty('account_id');
-        expect(response.body).toHaveProperty('currentBalance');
-        expect(response.body).toHaveProperty('transactions');
-        expect(response.body.account_id).toBe(accountId);
-        expect(response.body.currentBalance).toBe(100);
-        expect(response.body.transactions).toEqual([]);
+        expect(response.body[0]).toHaveProperty('account_id');
+        expect(response.body[0]).toHaveProperty('current_balance');
+        expect(response.body[0]).toHaveProperty('transactions');
+        expect(response.body[0].account_id).toBe(accountId);
+        expect(response.body[0].current_balance).toBe(100);
+        expect(response.body[0].transactions).toEqual([]);
     });
 
     it('should respond with a 400 status for invalid request', async () => {
