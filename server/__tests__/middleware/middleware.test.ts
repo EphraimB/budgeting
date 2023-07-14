@@ -159,15 +159,22 @@ describe('getTransactionsByAccount', () => {
 
         await getTransactionsByAccount(mockRequest, mockResponse, mockNext);
 
-        const transactionsReturn = {
-            account_id: 1,
-            transactions: transactions.map(transaction => ({
-                ...transaction,
-                transaction_amount: transaction.transaction_amount
-            }))
-        };
-
-        console.log(mockRequest.transaction);
+        const transactionsReturn = [
+            {
+                account_id: 1,
+                transactions: transactions.filter(t => t.account_id === 1).map(transaction => ({
+                    ...transaction,
+                    transaction_amount: transaction.transaction_amount
+                }))
+            },
+            {
+                account_id: 2,
+                transactions: transactions.filter(t => t.account_id === 2).map(transaction => ({
+                    ...transaction,
+                    transaction_amount: transaction.transaction_amount
+                }))
+            }
+        ];
 
         expect(mockRequest.transaction).toEqual(transactionsReturn);
         expect(mockNext).toHaveBeenCalled();
