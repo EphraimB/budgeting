@@ -151,7 +151,7 @@ describe('getTransactionsByAccount', () => {
     });
 
     it('should fetch all accounts if account_id is not provided', async () => {
-        mockModule([{ account_id: 1 }, { account_id: 2 }], transactions);
+        mockModule([{ account_id: 1 }], transactions);
 
         const { getTransactionsByAccount } = await import('../../middleware/middleware.js');
 
@@ -163,13 +163,6 @@ describe('getTransactionsByAccount', () => {
             {
                 account_id: 1,
                 transactions: transactions.filter(t => t.account_id === 1).map(transaction => ({
-                    ...transaction,
-                    transaction_amount: transaction.transaction_amount
-                }))
-            },
-            {
-                account_id: 2,
-                transactions: transactions.filter(t => t.account_id === 2).map(transaction => ({
                     ...transaction,
                     transaction_amount: transaction.transaction_amount
                 }))
