@@ -151,7 +151,7 @@ describe('getTransactionsByAccount', () => {
     });
 
     it('should fetch all accounts if account_id is not provided', async () => {
-        mockModule([], transactions);
+        mockModule([{ account_id: 1 }, { account_id: 2 }], transactions);
 
         const { getTransactionsByAccount } = await import('../../middleware/middleware.js');
 
@@ -396,7 +396,7 @@ describe('getCurrentBalance', () => {
             { id: 1, account_id: 1, account_balance: 100, date: '2023-06-01' }
         ];
 
-        mockModule([], mockCurrentBalance);
+        mockModule([{ account_id: 1 }], mockCurrentBalance);
 
         const { getCurrentBalance } = await import('../../middleware/middleware.js');
 
