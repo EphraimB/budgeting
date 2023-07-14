@@ -39,11 +39,7 @@ beforeAll(() => {
 
     jest.mock('../../generation/generateTransactions', () => {
         return jest.fn((req: Request, res: Response, next: NextFunction) => {
-            req.transactions = [{
-                account_id: 1,
-                current_balance: 500,
-                transactions: []
-            }];
+            req.transactions = [];
             next();
         });
     });

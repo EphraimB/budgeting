@@ -34,7 +34,7 @@ jest.mock('../../middleware/middleware', () => ({
 }));
 
 jest.mock('../../generation/generateTransactions', () => {
-    return jest.fn().mockImplementation((req: Request, res: Response, next: NextFunction) => {
+    return jest.fn((req: Request, res: Response, next: NextFunction) => {
         req.transactions = [];
         next();
     });
