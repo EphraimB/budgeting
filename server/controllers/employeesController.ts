@@ -106,6 +106,10 @@ export const updateEmployee = async (request: Request, response: Response): Prom
         exec(scriptCommand, (error, stdout, stderr) => {
             if (error) {
                 console.error(`Error executing script: ${error}`);
+                response.status(500).json({
+                    status: 'error',
+                    message: 'Failed to execute script'
+                });
                 return;
             }
             console.log(`Script output: ${stdout}`);
@@ -158,6 +162,10 @@ export const deleteEmployee = async (request: Request, response: Response): Prom
         exec(scriptCommand, (error, stdout, stderr) => {
             if (error) {
                 console.error(`Error executing script: ${error}`);
+                response.status(500).json({
+                    status: 'error',
+                    message: 'Failed to execute script'
+                });
                 return;
             }
             console.log(`Script output: ${stdout}`);

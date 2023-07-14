@@ -253,6 +253,42 @@ describe('PUT /api/payroll/employee/:id', () => {
         expect(mockResponse.status).toHaveBeenCalledWith(404);
         expect(mockResponse.send).toHaveBeenCalledWith('Employee not found');
     });
+
+    it('should respond with a 500 error message when the script fails', async () => {
+        // Arrange
+        const updatedEmployee = employees.filter(employee => employee.employee_id === 1);
+
+        mockModule([updatedEmployee]);
+
+        mockRequest.params = { id: 1 };
+        mockRequest.body = updatedEmployee;
+
+        // Mock the exec function to throw an error
+        const errorMessage = 'Error updating employee';
+        const error = new Error(errorMessage);
+        jest.mock('child_process', () => {
+            return {
+                exec: jest.fn((command: string, callback: (error: Error | null, stdout: string, stderr: string) => void) => {
+                    callback(error, 'mock stdout', 'mock stderr');
+                })
+            };
+        });
+
+        const { updateEmployee } = await import('../../controllers/employeesController.js');
+
+        // Act
+        await updateEmployee(mockRequest as Request, mockResponse);
+
+        // Assert
+        expect(mockResponse.status).toHaveBeenCalledWith(500);
+        expect(mockResponse.json).toHaveBeenCalledWith({
+            status: 'error',
+            message: 'Failed to execute script'
+        });
+
+        // Check that the error was logged
+        expect(consoleSpy).toHaveBeenCalledWith(error);
+    });
 });
 
 describe('DELETE /api/payroll/employee/:id', () => {
@@ -329,5 +365,38 @@ describe('DELETE /api/payroll/employee/:id', () => {
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(404);
         expect(mockResponse.send).toHaveBeenCalledWith('Employee not found');
+    });
+
+    it('should respond with a 500 error message when the script fails', async () => {
+        // Arrange
+        const employee_id = 1;
+
+        // Mock the executeQuery function to return different values based on the query
+        mockModule([[employee_id], [], [], 'Successfully deleted employee']);
+
+        const { deleteEmployee } = await import('../../controllers/employeesController.js');
+
+        mockRequest.params = { employee_id };
+
+        // Mock the exec function to throw an error
+        const errorMessage = 'Error deleting employee';
+        const error = new Error(errorMessage);
+        jest.mock('child_process', () => {
+            return {
+                exec: jest.fn((command: string, callback: (error: Error | null, stdout: string, stderr: string) => void) => {
+                    callback(error, 'mock stdout', 'mock stderr');
+                })
+            };
+        });
+
+        // Act
+        await deleteEmployee(mockRequest as Request, mockResponse);
+
+        // Assert
+        expect(mockResponse.status).toHaveBeenCalledWith(500);
+        expect(mockResponse.json).toHaveBeenCalledWith({
+            status: 'error',
+            message: 'Failed to execute script'
+        });
     });
 });
