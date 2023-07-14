@@ -25,13 +25,18 @@ describe('generateTransactions', () => {
                 to_date: '2023-08-01',
                 account_id: 1
             },
-            currentBalance: 500,
-            transaction: transactions.filter(transaction => transaction.account_id === 1),
-            expenses: expenses.filter(expense => expense.account_id === 1),
-            payrolls: payrolls,
-            loans: loans.filter(loan => loan.account_id === 1),
-            transfers: transfers.filter(transfer => transfer.account_id === 1),
-            wishlists: wishlists.filter(wishlist => wishlist.account_id === 1)
+            currentBalance: [
+                {
+                    account_id: 1,
+                    account_balance: 500
+                }
+            ],
+            transaction: [transactions.filter(transaction => transaction.account_id === 1)],
+            expenses: [expenses.filter(expense => expense.account_id === 1)],
+            payrolls: [payrolls],
+            loans: [loans.filter(loan => loan.account_id === 1)],
+            transfers: [transfers.filter(transfer => transfer.account_id === 1)],
+            wishlists: [wishlists.filter(wishlist => wishlist.account_id === 1)]
         };
 
         mockResponse = {};
@@ -45,14 +50,14 @@ describe('generateTransactions', () => {
         // assert that next was called
         expect(next).toHaveBeenCalled();
 
-        expect(mockRequest.transaction).toHaveLength(4);
+        expect(mockRequest.transaction[0]).toHaveLength(4);
 
-        expect(mockRequest.currentBalance).toBe(500);
+        expect(mockRequest.currentBalance).toStrictEqual([{ account_id: 1, account_balance: 500 }]);
 
         // assert end state of request object
         // add checks for any additional properties or state you expect mockRequest to have after generateTransactions
-        expect(mockRequest.expenses).toEqual(expenses.filter(expense => expense.account_id === 1));
-        expect(mockRequest.payrolls).toEqual(payrolls);
+        expect(mockRequest.expenses).toEqual([expenses.filter(expense => expense.account_id === 1)]);
+        expect(mockRequest.payrolls).toEqual([payrolls]);
     });
 
     it('should make sure that transactions are sorted by date', () => {
