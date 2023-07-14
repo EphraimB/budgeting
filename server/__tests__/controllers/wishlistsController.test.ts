@@ -100,19 +100,35 @@ describe('GET /api/wishlists', () => {
     });
 
     it('should respond with an array of wishlists with id', async () => {
+        const id = 1;
         // Arrange
         mockModule(wishlists.filter(wishlist => wishlist.wishlist_id === 1));
 
-        mockRequest.query = { id: 1 };
+        mockRequest.query = { account_id: null, id };
+
+        mockRequest.transactions = [
+            {
+                transactions: wishlists
+                    .filter(wishlist => wishlist.wishlist_id === id)
+                    .map((wishlist, i) => ({ wishlist_id: wishlist.wishlist_id, date: `2023-08-14T00:0${i}:00.000Z` }))
+            }
+        ];
 
         const { getWishlists } = await import('../../controllers/wishlistsController.js');
 
         // Call the function with the mock request and response
         await getWishlists(mockRequest as Request, mockResponse);
 
+        const modifiedWishlists = wishlists
+            .filter(wishlist => wishlist.wishlist_id === id)
+            .map((wishlist, i) => ({
+                ...wishlist,
+                wishlist_date_can_purchase: `2023-08-14T00:0${i}:00.000Z`
+            }));
+
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(200);
-        expect(mockResponse.json).toHaveBeenCalledWith(wishlists.filter(wishlist => wishlist.wishlist_id === 1));
+        expect(mockResponse.json).toHaveBeenCalledWith(modifiedWishlists);
     });
 
     it('should respond with an error message with id', async () => {
