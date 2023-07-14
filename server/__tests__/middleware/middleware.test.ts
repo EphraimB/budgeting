@@ -57,6 +57,44 @@ const mockModule = (executeQueryValue: QueryResultRow[] | string | null, errorMe
     }));
 };
 
+describe('setQueries', () => {
+    it('should set from_date and to_date', async () => {
+        const { setQueries } = await import('../../middleware/middleware.js');
+
+        mockRequest.query = { account_id: 1, id: 1 };
+
+        await setQueries(mockRequest, mockResponse, mockNext);
+
+        expect(mockRequest.query.from_date).toBeTruthy();
+        expect(mockRequest.query.to_date).toBeTruthy();
+        expect(mockNext).toBeCalled();
+    });
+
+    it('should set account_id when query contains id', async () => {
+        mockModule([{ account_id: 1 }]);
+
+        const { setQueries } = await import('../../middleware/middleware.js');
+
+        mockRequest.query = { account_id: null, id: 1 };
+
+        await setQueries(mockRequest, mockResponse, mockNext);
+
+        expect(mockRequest.query.account_id).toEqual(1);
+        expect(mockNext).toBeCalled();
+    });
+
+    it('should not set account_id when query does not contain id', async () => {
+        const { setQueries } = await import('../../middleware/middleware.js');
+
+        mockRequest.query = { account_id: null, id: null };
+
+        await setQueries(mockRequest, mockResponse, mockNext);
+
+        expect(mockRequest.query.account_id).toBeNull();
+        expect(mockNext).toBeCalled();
+    });
+});
+
 describe('getTransactionsByAccount', () => {
     it('gets transactions for a given account and date', async () => {
         mockModule(transactions);
