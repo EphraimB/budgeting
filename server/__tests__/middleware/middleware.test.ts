@@ -44,7 +44,7 @@ afterAll(() => {
  * @param [errorMessage] - The error message to be passed to the handleError mock function
  * @returns - A mock module with the executeQuery and handleError functions
  */
-const mockModule = (executeQueryValue: QueryResultRow[] | string, errorMessage?: string) => {
+const mockModule = (executeQueryValue: QueryResultRow[] | string | null, errorMessage?: string) => {
     const executeQuery = errorMessage
         ? jest.fn(() => Promise.reject(new Error(errorMessage)))
         : jest.fn(() => Promise.resolve(executeQueryValue));
@@ -67,7 +67,15 @@ describe('getTransactionsByAccount', () => {
 
         await getTransactionsByAccount(mockRequest, mockResponse, mockNext);
 
-        expect(mockRequest.transaction).toEqual(transactions);
+        const transactionsReturn = {
+            account_id: 1,
+            transactions: transactions.map(transaction => ({
+                ...transaction,
+                transaction_amount: transaction.transaction_amount
+            }))
+        };
+
+        expect(mockRequest.transaction).toEqual([transactionsReturn]);
         expect(mockNext).toHaveBeenCalled();
     });
 
@@ -101,13 +109,15 @@ describe('getExpensesByAccount', () => {
 
         await getExpensesByAccount(mockRequest, mockResponse, mockNext);
 
-        const expensesReturn = expenses.map(expense => ({
-            ...expense,
-            amount: expense.expense_amount
-        }));
+        const expensesReturn = {
+            account_id: 1,
+            expenses: expenses.map(expense => ({
+                ...expense,
+                amount: expense.expense_amount
+            }))
+        };
 
-
-        expect(mockRequest.expenses).toEqual(expensesReturn);
+        expect(mockRequest.expenses).toEqual([expensesReturn]);
         expect(mockNext).toHaveBeenCalled();
     });
 
@@ -141,12 +151,15 @@ describe('getLoansByAccount', () => {
 
         await getLoansByAccount(mockRequest, mockResponse, mockNext);
 
-        const loansReturn = loans.map(loan => ({
-            ...loan,
-            amount: loan.loan_plan_amount
-        }));
+        const loansReturn = {
+            account_id: 1,
+            loan: loans.map(loan => ({
+                ...loan,
+                amount: loan.loan_plan_amount
+            }))
+        };
 
-        expect(mockRequest.loans).toEqual(loansReturn);
+        expect(mockRequest.loans).toEqual([loansReturn]);
         expect(mockNext).toHaveBeenCalled();
     });
 
@@ -180,7 +193,16 @@ describe('getPayrollsMiddleware', () => {
 
         await getPayrollsMiddleware(mockRequest, mockResponse, mockNext);
 
-        expect(mockRequest.payrolls).toEqual(payrolls);
+        const returnPayrolls = {
+            account_id: 1,
+            payroll: payrolls.map(payroll => ({
+                ...payroll,
+                net_pay: payroll.net_pay
+            }))
+        };
+
+
+        expect(mockRequest.payrolls).toEqual([returnPayrolls]);
         expect(mockNext).toHaveBeenCalled();
     });
 
@@ -215,8 +237,13 @@ describe('getWishlistsByAccount', () => {
         await getWishlistsByAccount(mockRequest, mockResponse, mockNext);
 
         const wishlistsReturn = wishlists.map(wishlist => ({
-            ...wishlist,
-            amount: wishlist.wishlist_amount
+            account_id: wishlist.account_id,
+            wishlist: [
+                {
+                    ...wishlist,
+                    amount: wishlist.wishlist_amount
+                }
+            ]
         }));
 
         expect(mockRequest.wishlists).toEqual(wishlistsReturn);
@@ -254,8 +281,13 @@ describe('getTransfersByAccount', () => {
         await getTransfersByAccount(mockRequest, mockResponse, mockNext);
 
         const transfersReturn = transfers.map(transfer => ({
-            ...transfer,
-            amount: transfer.transfer_amount
+            account_id: transfer.source_account_id,
+            transfer: [
+                {
+                    ...transfer,
+                    amount: transfer.transfer_amount
+                },
+            ]
         }));
 
         expect(mockRequest.transfers).toEqual(transfersReturn);
@@ -297,7 +329,7 @@ describe('getCurrentBalance', () => {
 
         await getCurrentBalance(mockRequest, mockResponse, mockNext);
 
-        expect(mockRequest.currentBalance).toEqual(100);
+        expect(mockRequest.currentBalance).toEqual([{ account_id: 1, account_balance: 100 }]);
         expect(mockNext).toHaveBeenCalled();
     });
 
