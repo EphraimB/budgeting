@@ -2,6 +2,7 @@ import { jest } from '@jest/globals';
 import { Response } from 'express';
 import { QueryResultRow } from 'pg';
 import { expenses, loans, payrolls, transactions, transfers, wishlists } from '../../models/mockData';
+import MockDate from 'mockdate';
 
 // Mock request and response
 let mockRequest: any;
@@ -10,6 +11,8 @@ let mockNext: any;
 let consoleSpy: any;
 
 beforeAll(() => {
+    MockDate.set('2020-01-01');
+
     // Create a spy on console.error before all tests
     consoleSpy = jest.spyOn(console, 'error').mockImplementation(() => { });
 });
@@ -36,6 +39,7 @@ afterEach(() => {
 afterAll(() => {
     // Restore console.error
     consoleSpy.mockRestore();
+    MockDate.reset();
 });
 
 /**
@@ -125,7 +129,7 @@ describe('getTransactionsByAccount', () => {
 
         const { getTransactionsByAccount } = await import('../../middleware/middleware.js');
 
-        mockRequest.query = { account_id: '1', from_date: '2023-06-01' };
+        mockRequest.query = { account_id: '1', from_date: '2020-01-01' };
 
         await getTransactionsByAccount(mockRequest, mockResponse, mockNext);
 
@@ -134,6 +138,29 @@ describe('getTransactionsByAccount', () => {
 
         // Check that the error was logged
         expect(consoleSpy).toHaveBeenCalledWith(error);
+    });
+
+    it('should fetch all accounts if account_id is not provided', async () => {
+        mockModule(transactions);
+
+        const { getTransactionsByAccount } = await import('../../middleware/middleware.js');
+
+        mockRequest.query = { account_id: null, from_date: '2020-01-01' };
+
+        await getTransactionsByAccount(mockRequest, mockResponse, mockNext);
+
+        const transactionsReturn = {
+            account_id: 1,
+            transactions: transactions.map(transaction => ({
+                ...transaction,
+                transaction_amount: transaction.transaction_amount
+            }))
+        };
+
+        console.log(mockRequest.transaction);
+
+        expect(mockRequest.transaction[0]).toEqual(transactionsReturn);
+        expect(mockNext).toHaveBeenCalled();
     });
 });
 
