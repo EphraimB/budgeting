@@ -31,7 +31,7 @@ describe('generateTransactions', () => {
                     account_balance: 500
                 }
             ],
-            transaction: [transactions.filter(transaction => transaction.account_id === 1)],
+            transaction: [{ account_id: 1, transactions: transactions.filter(transaction => transaction.account_id === 1) }],
             expenses: [expenses.filter(expense => expense.account_id === 1)],
             payrolls: [payrolls],
             loans: [loans.filter(loan => loan.account_id === 1)],
@@ -50,7 +50,7 @@ describe('generateTransactions', () => {
         // assert that next was called
         expect(next).toHaveBeenCalled();
 
-        expect(mockRequest.transaction[0]).toHaveLength(4);
+        expect(mockRequest.transaction[0].transactions).toHaveLength(4);
 
         expect(mockRequest.currentBalance).toStrictEqual([{ account_id: 1, account_balance: 500 }]);
 
