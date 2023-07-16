@@ -479,6 +479,29 @@ describe('getTransfersByAccount', () => {
         // Check that the error was logged
         expect(consoleSpy).toHaveBeenCalledWith(error);
     });
+
+    it('should fetch all accounts if account_id is not provided', async () => {
+        mockModule([{ account_id: 1 }], transfers);
+
+        const { getTransfersByAccount } = await import('../../middleware/middleware.js');
+
+        mockRequest.query = { account_id: null, from_date: '2023-06-01' };
+
+        await getTransfersByAccount(mockRequest, mockResponse, mockNext);
+
+        const transfersReturn = transfers.map(transfer => ({
+            account_id: transfer.source_account_id,
+            transfer: [
+                {
+                    ...transfer,
+                    amount: transfer.transfer_amount
+                },
+            ]
+        }));
+
+        expect(mockRequest.transfers).toEqual(transfersReturn);
+        expect(mockNext).toHaveBeenCalled();
+    });
 });
 
 describe('getCurrentBalance', () => {
