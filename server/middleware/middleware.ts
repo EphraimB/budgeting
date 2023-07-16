@@ -173,7 +173,7 @@ export const getLoansByAccount = async (request: Request, response: Response, ne
             const accountExists = await executeQuery(accountQueries.getAccount, [account_id]);
 
             if (accountExists.length == 0) {
-                response.status(404).send('Account not found');
+                response.status(404).send(`Account with ID ${account_id} not found`);
                 return;
             }
 
