@@ -32,7 +32,7 @@ describe('generateTransactions', () => {
                 }
             ],
             transaction: [{ account_id: 1, transactions: transactions.filter(transaction => transaction.account_id === 1) }],
-            expenses: [expenses.filter(expense => expense.account_id === 1)],
+            expenses: [{ account_id: 1, expenses: expenses.filter(expense => expense.account_id === 1) }],
             payrolls: [payrolls],
             loans: [loans.filter(loan => loan.account_id === 1)],
             transfers: [transfers.filter(transfer => transfer.account_id === 1)],
@@ -56,7 +56,7 @@ describe('generateTransactions', () => {
 
         // assert end state of request object
         // add checks for any additional properties or state you expect mockRequest to have after generateTransactions
-        expect(mockRequest.expenses).toEqual([expenses.filter(expense => expense.account_id === 1)]);
+        expect(mockRequest.expenses[0].expenses).toEqual(expenses.filter(expense => expense.account_id === 1));
         expect(mockRequest.payrolls).toEqual([payrolls]);
     });
 
