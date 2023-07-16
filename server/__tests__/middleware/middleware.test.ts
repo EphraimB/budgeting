@@ -1,5 +1,5 @@
 import { jest } from '@jest/globals';
-import { Response } from 'express';
+import e, { Response } from 'express';
 import { QueryResultRow } from 'pg';
 import { expenses, loans, payrolls, transactions, transfers, wishlists } from '../../models/mockData';
 import MockDate from 'mockdate';
@@ -148,6 +148,19 @@ describe('getTransactionsByAccount', () => {
 
         // Check that the error was logged
         expect(consoleSpy).toHaveBeenCalledWith(error);
+    });
+
+    it('should return a 404 when account_id is not found', async () => {
+        mockModule([], []);
+
+        const { getTransactionsByAccount } = await import('../../middleware/middleware.js');
+
+        mockRequest.query = { account_id: '5', from_date: '2020-01-01' };
+
+        await getTransactionsByAccount(mockRequest, mockResponse, mockNext);
+
+        expect(mockResponse.status).toHaveBeenCalledWith(404);
+        expect(mockResponse.send).toHaveBeenCalledWith('Account with ID 5 not found');
     });
 
     it('should fetch all accounts if account_id is not provided', async () => {
