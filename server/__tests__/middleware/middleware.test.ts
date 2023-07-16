@@ -214,6 +214,29 @@ describe('getExpensesByAccount', () => {
         // Check that the error was logged
         expect(consoleSpy).toHaveBeenCalledWith(error);
     });
+
+    it('should fetch all accounts if account_id is not provided', async () => {
+        mockModule([{ account_id: 1 }], expenses);
+
+        const { getExpensesByAccount } = await import('../../middleware/middleware.js');
+
+        mockRequest.query = { account_id: null, from_date: '2023-06-01' };
+
+        await getExpensesByAccount(mockRequest, mockResponse, mockNext);
+
+        const expensesReturn = [
+            {
+                account_id: 1,
+                expenses: expenses.filter(e => e.account_id === 1).map(expense => ({
+                    ...expense,
+                    amount: expense.expense_amount
+                }))
+            }
+        ];
+
+        expect(mockRequest.expenses).toEqual(expensesReturn);
+        expect(mockNext).toHaveBeenCalled();
+    });
 });
 
 describe('getLoansByAccount', () => {
