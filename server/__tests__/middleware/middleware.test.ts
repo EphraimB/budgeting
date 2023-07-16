@@ -620,6 +620,19 @@ describe('getCurrentBalance', () => {
         expect(consoleSpy).toHaveBeenCalledWith(error);
     });
 
+    it('should return a 404 when account_id is not found', async () => {
+        mockModule([], []);
+
+        const { getCurrentBalance } = await import('../../middleware/middleware.js');
+
+        mockRequest.query = { account_id: '5', from_date: '2023-06-01' };
+
+        await getCurrentBalance(mockRequest, mockResponse, mockNext);
+
+        expect(mockResponse.status).toHaveBeenCalledWith(404);
+        expect(mockResponse.send).toHaveBeenCalledWith('Account with ID 5 not found');
+    });
+
     it('should fetch all accounts if account_id is not provided', async () => {
         const mockCurrentBalance: any[] = [
             { id: 1, account_id: 1, account_balance: 100, date: '2023-06-01' }

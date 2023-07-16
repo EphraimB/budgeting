@@ -394,7 +394,7 @@ export const getCurrentBalance = async (request: Request, response: Response, ne
             const accountExists = await executeQuery(accountQueries.getAccount, [account_id as string]);
 
             if (accountExists.length == 0) {
-                response.status(404).send('Account not found');
+                response.status(404).send(`Account with ID ${account_id} not found`);
                 return;
             }
 
