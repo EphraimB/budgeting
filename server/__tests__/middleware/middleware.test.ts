@@ -345,6 +345,29 @@ describe('getPayrollsMiddleware', () => {
         // Check that the error was logged
         expect(consoleSpy).toHaveBeenCalledWith(error);
     });
+
+    it('should fetch all accounts if account_id is not provided', async () => {
+        mockModule([{ account_id: 1 }], payrolls);
+
+        const { getPayrollsMiddleware } = await import('../../middleware/middleware.js');
+
+        mockRequest.query = { account_id: null, from_date: '2023-06-01' };
+
+        await getPayrollsMiddleware(mockRequest, mockResponse, mockNext);
+
+        const returnPayrolls = [
+            {
+                account_id: 1,
+                payroll: payrolls.map(payroll => ({
+                    ...payroll,
+                    net_pay: payroll.net_pay
+                }))
+            }
+        ];
+
+        expect(mockRequest.payrolls).toEqual(returnPayrolls);
+        expect(mockNext).toHaveBeenCalled();
+    });
 });
 
 describe('getWishlistsByAccount', () => {
