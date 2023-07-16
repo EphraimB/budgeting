@@ -412,6 +412,29 @@ describe('getWishlistsByAccount', () => {
         // Check that the error was logged
         expect(consoleSpy).toHaveBeenCalledWith(error);
     });
+
+    it('should fetch all accounts if account_id is not provided', async () => {
+        mockModule([{ account_id: 1 }], wishlists);
+
+        const { getWishlistsByAccount } = await import('../../middleware/middleware.js');
+
+        mockRequest.query = { account_id: null, from_date: '2023-06-01' };
+
+        await getWishlistsByAccount(mockRequest, mockResponse, mockNext);
+
+        const wishlistsReturn = wishlists.map(wishlist => ({
+            account_id: wishlist.account_id,
+            wishlist: [
+                {
+                    ...wishlist,
+                    amount: wishlist.wishlist_amount
+                }
+            ]
+        }));
+
+        expect(mockRequest.wishlists).toEqual(wishlistsReturn);
+        expect(mockNext).toHaveBeenCalled();
+    });
 });
 
 describe('getTransfersByAccount', () => {
