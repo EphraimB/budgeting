@@ -518,15 +518,15 @@ describe('getTransfersByAccount', () => {
 
         await getTransfersByAccount(mockRequest, mockResponse, mockNext);
 
-        const transfersReturn = transfers.map(transfer => ({
-            account_id: transfer.source_account_id,
-            transfer: [
-                {
+        const transfersReturn = [
+            {
+                account_id: 1,
+                transfer: transfers.map(transfer => ({
                     ...transfer,
                     amount: transfer.transfer_amount
-                },
-            ]
-        }));
+                }))
+            }
+        ];
 
         expect(mockRequest.transfers).toEqual(transfersReturn);
         expect(mockNext).toHaveBeenCalled();
@@ -573,15 +573,15 @@ describe('getTransfersByAccount', () => {
 
         await getTransfersByAccount(mockRequest, mockResponse, mockNext);
 
-        const transfersReturn = transfers.map(transfer => ({
-            account_id: transfer.source_account_id,
-            transfer: [
-                {
+        const transfersReturn = [
+            {
+                account_id: 1,
+                transfer: transfers.map(transfer => ({
                     ...transfer,
                     amount: transfer.transfer_amount
-                },
-            ]
-        }));
+                }))
+            }
+        ];
 
         expect(mockRequest.transfers).toEqual(transfersReturn);
         expect(mockNext).toHaveBeenCalled();
