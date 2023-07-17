@@ -9,7 +9,7 @@ import { Account, CurrentBalance, Expense, GeneratedTransaction, Loan, Payroll, 
 import { executeQuery } from '../utils/helperFunctions.js';
 import { accountQueries } from '../models/queryData.js';
 
-const generate = async (request: Request, response: Response, next: NextFunction, account_id: number, transactions: GeneratedTransaction[], skippedTransactions: GeneratedTransaction[], currentBalance: any): Promise<void> => {
+const generate = async (request: Request, response: Response, next: NextFunction, account_id: number, employee_id: number, transactions: GeneratedTransaction[], skippedTransactions: GeneratedTransaction[], currentBalance: any): Promise<void> => {
     const fromDate: Date = new Date(request.query.from_date as string);
     const toDate: Date = new Date(request.query.to_date as string);
 
@@ -43,11 +43,6 @@ const generate = async (request: Request, response: Response, next: NextFunction
                 }
             });
         });
-
-    // Fetch employee_id from account_id
-    const employeeResults = await executeQuery(accountQueries.getAccount, [account_id]);
-
-    const employee_id = employeeResults[0].employee_id;
 
     request.payrolls
         .filter((pyrl) => pyrl.employee_id === employee_id)
@@ -123,12 +118,17 @@ const generateTransactions = async (request: Request, response: Response, next: 
     if (!account_id) {
         const accountResults = await executeQuery(accountQueries.getAccounts, []);
 
-        accountResults.forEach((account: Account) => {
+        accountResults.forEach(async (account: Account) => {
             const currentBalanceValue: number = currentBalance
                 .find((balance: CurrentBalance) => balance.account_id === account.account_id)
                 .account_balance;
 
-            generate(request, response, next, account.account_id, transactions, skippedTransactions, currentBalanceValue);
+            // Fetch employee_id from account_id
+            const employeeResults = await executeQuery(accountQueries.getAccount, [account.account_id]);
+
+            const employee_id = employeeResults[0].employee_id;
+
+            generate(request, response, next, account.account_id, employee_id, transactions, skippedTransactions, currentBalanceValue);
 
             allTransactions.push({ account_id: account.account_id, current_balance: currentBalanceValue, transactions });
         });
@@ -137,7 +137,12 @@ const generateTransactions = async (request: Request, response: Response, next: 
             .find((balance: CurrentBalance) => balance.account_id === account_id)
             .account_balance;
 
-        generate(request, response, next, account_id, transactions, skippedTransactions, currentBalanceValue);
+        // Fetch employee_id from account_id
+        const employeeResults = await executeQuery(accountQueries.getAccount, [account_id]);
+
+        const employee_id = employeeResults[0].employee_id;
+
+        generate(request, response, next, account_id, employee_id, transactions, skippedTransactions, currentBalanceValue);
 
         allTransactions.push({ account_id, current_balance: currentBalanceValue, transactions });
     }
