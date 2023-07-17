@@ -44,8 +44,13 @@ const generate = async (request: Request, response: Response, next: NextFunction
             });
         });
 
+    // Fetch employee_id from account_id
+    const employeeResults = await executeQuery(accountQueries.getAccount, [account_id]);
+
+    const employee_id = employeeResults[0].employee_id;
+
     request.payrolls
-        .filter((pyrl) => pyrl.account_id === account_id)
+        .filter((pyrl) => pyrl.employee_id === employee_id)
         .forEach((account) => {
             account.payroll.forEach((payroll: Payroll) => {
                 generatePayrollTransactions(transactions, skippedTransactions, payroll, fromDate);
