@@ -101,6 +101,7 @@ type CronJobQueries = {
 export const accountQueries: AccountQueries = {
   getAccounts: `
     SELECT accounts.account_id,
+    accounts.employee_id,
     accounts.account_name,
     accounts.account_type,
     COALESCE(accounts.account_balance, 0) + COALESCE(t.transaction_amount, 0) AS account_balance, accounts.date_created, accounts.date_modified FROM accounts
@@ -108,6 +109,7 @@ export const accountQueries: AccountQueries = {
   `,
   getAccount: `
     SELECT accounts.account_id,
+    accounts.employee_id,
     accounts.account_name,
     accounts.account_type,
     COALESCE(accounts.account_balance, 0) + COALESCE(t.transaction_amount, 0) AS account_balance, accounts.date_created, accounts.date_modified FROM accounts

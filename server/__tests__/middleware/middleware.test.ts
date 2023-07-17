@@ -47,15 +47,21 @@ afterAll(() => {
  * @param getAccountsValue - The value to be returned by the executeQuery mock function
  * @param getTransactionsDateMiddlewareValue - The value to be returned by the executeQuery mock function
  * @param [errorMessage] - The error message to be passed to the handleError mock function
+ * @param [getEmployeeValue] - The value to be returned by the executeQuery mock function
  * @returns - A mock module with the executeQuery and handleError functions
  */
-const mockModule = (getAccountsValue: QueryResultRow[], getTransactionsDateMiddlewareValue: QueryResultRow[], errorMessage?: string) => {
+const mockModule = (getAccountsValue: QueryResultRow[], getTransactionsDateMiddlewareValue: QueryResultRow[], errorMessage?: string | null, getEmployeeValue?: QueryResultRow[]) => {
     const executeQuery = jest.fn();
 
     if (errorMessage) {
         executeQuery.mockImplementation(() => {
             throw new Error(errorMessage);
         });
+    } else if (getEmployeeValue) {
+        executeQuery
+            .mockImplementationOnce(() => Promise.resolve(getAccountsValue))
+            .mockImplementationOnce(() => Promise.resolve(getEmployeeValue))
+            .mockImplementationOnce(() => Promise.resolve(getTransactionsDateMiddlewareValue));
     } else {
         executeQuery
             .mockImplementationOnce(() => Promise.resolve(getAccountsValue))
@@ -345,7 +351,7 @@ describe('getLoansByAccount', () => {
 
 describe('getPayrollsMiddleware', () => {
     it('gets payrolls for a given account and date', async () => {
-        mockModule([{ account_id: 1 }], payrolls);
+        mockModule([{ account_id: 1 }], payrolls, null, [{ employee_id: 1 }]);
 
         const { getPayrollsMiddleware } = await import('../../middleware/middleware.js');
 
@@ -354,7 +360,7 @@ describe('getPayrollsMiddleware', () => {
         await getPayrollsMiddleware(mockRequest, mockResponse, mockNext);
 
         const returnPayrolls = {
-            account_id: 1,
+            employee_id: 1,
             payroll: payrolls.map(payroll => ({
                 ...payroll,
                 net_pay: payroll.net_pay
@@ -399,7 +405,7 @@ describe('getPayrollsMiddleware', () => {
     });
 
     it('should fetch all accounts if account_id is not provided', async () => {
-        mockModule([{ account_id: 1 }], payrolls);
+        mockModule([{ account_id: 1, employee_id: 1 }], payrolls);
 
         const { getPayrollsMiddleware } = await import('../../middleware/middleware.js');
 
@@ -409,7 +415,7 @@ describe('getPayrollsMiddleware', () => {
 
         const returnPayrolls = [
             {
-                account_id: 1,
+                employee_id: 1,
                 payroll: payrolls.map(payroll => ({
                     ...payroll,
                     net_pay: payroll.net_pay

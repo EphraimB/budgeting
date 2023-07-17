@@ -208,14 +208,14 @@ export const getPayrollsMiddleware = async (request: Request, response: Response
     const { account_id, to_date } = request.query;
 
     try {
-        const payrollsByAccount: { account_id: number, payroll: Payroll[] }[] = [];
+        const payrollsByAccount: { employee_id: number, payroll: Payroll[] }[] = [];
 
         if (!account_id) {
             // If account_id is null, fetch all accounts and make request.transactions an array of transactions
             const accountResults = await executeQuery(accountQueries.getAccounts);
 
             await Promise.all(accountResults.map(async (account) => {
-                const payrollResults = await executeQuery(payrollQueries.getPayrollsMiddleware, [account.account_id, to_date]);
+                const payrollResults = await executeQuery(payrollQueries.getPayrollsMiddleware, [account.employee_id, to_date]);
 
                 // Map over results array and convert amount to a float for each Transaction object
                 const payrollTransactions = payrollResults.map(payroll => ({
@@ -223,7 +223,7 @@ export const getPayrollsMiddleware = async (request: Request, response: Response
                     net_pay: parseFloat(payroll.net_pay),
                 }));
 
-                payrollsByAccount.push({ account_id: account.account_id, payroll: payrollTransactions });
+                payrollsByAccount.push({ employee_id: account.employee_id, payroll: payrollTransactions });
             }));
         } else {
             // Check if account exists and if it doesn't, send a response with an error message
@@ -234,7 +234,12 @@ export const getPayrollsMiddleware = async (request: Request, response: Response
                 return;
             }
 
-            const results = await executeQuery(payrollQueries.getPayrollsMiddleware, [account_id, to_date]);
+            // Get employee_id from account_id
+            const employeeResults = await executeQuery(accountQueries.getAccount, [account_id]);
+
+            const employee_id = employeeResults[0].employee_id;
+
+            const results = await executeQuery(payrollQueries.getPayrollsMiddleware, [employee_id, to_date]);
 
             // Map over results array and convert net_pay to a float for each Payroll object
             const payrollsTransactions = results.map(payroll => ({
@@ -242,7 +247,7 @@ export const getPayrollsMiddleware = async (request: Request, response: Response
                 net_pay: parseFloat(payroll.net_pay),
             }));
 
-            payrollsByAccount.push({ account_id: parseInt(account_id as string), payroll: payrollsTransactions });
+            payrollsByAccount.push({ employee_id: parseInt(employee_id as string), payroll: payrollsTransactions });
         }
 
         request.payrolls = payrollsByAccount;
