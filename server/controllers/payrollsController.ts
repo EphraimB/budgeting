@@ -47,7 +47,7 @@ export const getPayrolls = async (request: Request, response: Response): Promise
         const payrolls: Payroll[] = results.map(payroll => payrollsParse(payroll));
 
         const returnObj = {
-            employee_id,
+            employee_id: parseInt(employee_id as string),
             payrolls
         };
 
