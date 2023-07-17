@@ -57,7 +57,7 @@ describe('generateTransactions', () => {
         // assert end state of request object
         // add checks for any additional properties or state you expect mockRequest to have after generateTransactions
         expect(mockRequest.expenses[0].expenses).toEqual(expenses.filter(expense => expense.account_id === 1));
-        expect(mockRequest.payrolls).toEqual([payrolls]);
+        expect(mockRequest.payrolls[0].payrolls).toEqual(payrolls);
     });
 
     it('should make sure that transactions are sorted by date', () => {
