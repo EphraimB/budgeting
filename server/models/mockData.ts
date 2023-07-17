@@ -104,6 +104,57 @@ export const expenses: Expense[] = [
         expense_end_date: null,
         date_created: '2020-01-01',
         date_modified: '2020-01-01'
+    },
+    {
+        expense_id: 3,
+        account_id: 1,
+        expense_amount: 50,
+        expense_title: 'Test Expense 3',
+        expense_description: 'Test Expense 3 to test the expense route',
+        frequency_type: 0,
+        frequency_type_variable: null,
+        frequency_day_of_month: null,
+        frequency_day_of_week: null,
+        frequency_week_of_month: null,
+        frequency_month_of_year: null,
+        expense_begin_date: '2020-01-01',
+        expense_end_date: null,
+        date_created: '2020-01-01',
+        date_modified: '2020-01-01'
+    },
+    {
+        expense_id: 3,
+        account_id: 1,
+        expense_amount: 25,
+        expense_title: 'Test Expense 3',
+        expense_description: 'Test Expense 3 to test the expense route',
+        frequency_type: 1,
+        frequency_type_variable: null,
+        frequency_day_of_month: null,
+        frequency_day_of_week: null,
+        frequency_week_of_month: null,
+        frequency_month_of_year: null,
+        expense_begin_date: '2020-01-01',
+        expense_end_date: null,
+        date_created: '2020-01-01',
+        date_modified: '2020-01-01'
+    },
+    {
+        expense_id: 3,
+        account_id: 1,
+        expense_amount: 50,
+        expense_title: 'Test Expense 3',
+        expense_description: 'Test Expense 3 to test the expense route',
+        frequency_type: 3,
+        frequency_type_variable: null,
+        frequency_day_of_month: null,
+        frequency_day_of_week: null,
+        frequency_week_of_month: null,
+        frequency_month_of_year: null,
+        expense_begin_date: '2020-01-01',
+        expense_end_date: null,
+        date_created: '2020-01-01',
+        date_modified: '2020-01-01'
     }
 ];
 
