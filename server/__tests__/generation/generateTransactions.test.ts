@@ -1,15 +1,25 @@
 import { jest } from '@jest/globals';
-import generateTransactions from '../../generation/generateTransactions';
 import { transactions, expenses, payrolls, loans, transfers, wishlists } from '../../models/mockData';
 import MockDate from 'mockdate';
 import { GeneratedTransaction } from '../../types/types';
 
+
 beforeAll(() => {
+    jest.mock('../../utils/helperFunctions', () => ({
+        executeQuery: jest.fn(() => [
+            {
+                account_id: 1,
+                account_balance: 500
+            }
+        ])
+    }));
+
     MockDate.set('2023-07-01');
 });
 
 afterAll(() => {
     MockDate.reset();
+    jest.resetModules();
 });
 
 describe('generateTransactions', () => {
@@ -43,7 +53,9 @@ describe('generateTransactions', () => {
         next = jest.fn();
     });
 
-    it('should process transactions correctly', () => {
+    it('should process transactions correctly', async () => {
+        const { default: generateTransactions } = await import('../../generation/generateTransactions');
+
         // Call your function with the mock data
         generateTransactions(mockRequest, mockResponse, next);
 
@@ -63,7 +75,9 @@ describe('generateTransactions', () => {
         expect(mockRequest.wishlists[0].wishlist).toEqual(wishlists.filter(wishlist => wishlist.account_id === 1));
     });
 
-    it('should make sure that transactions are sorted by date', () => {
+    it('should make sure that transactions are sorted by date', async () => {
+        const { default: generateTransactions } = await import('../../generation/generateTransactions');
+
         // Call your function with the mock data
         generateTransactions(mockRequest, mockResponse, next);
 
@@ -73,5 +87,33 @@ describe('generateTransactions', () => {
         // assert that transactions are ordered by date
         const sortedTransactions: GeneratedTransaction[] = [...mockRequest.transaction].sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
         expect(mockRequest.transaction).toEqual(sortedTransactions);
+    });
+
+    it('should process transactions correctly when an account_id is not provided', async () => {
+        const { default: generateTransactions } = await import('../../generation/generateTransactions');
+
+        mockRequest.query = { account_id: null, from_date: '2023-07-01', to_date: '2023-08-01' };
+
+        // Call your function with the mock data
+        try {
+            await generateTransactions(mockRequest, mockResponse, next);
+
+            // assert that next was called
+            expect(next).toHaveBeenCalled();
+
+            expect(mockRequest.transaction[0].transactions).toHaveLength(4);
+
+            expect(mockRequest.currentBalance).toStrictEqual([{ account_id: 1, account_balance: 500 }]);
+
+            // assert end state of request object
+            // add checks for any additional properties or state you expect mockRequest to have after generateTransactions
+            expect(mockRequest.expenses[0].expenses).toEqual(expenses.filter(expense => expense.account_id === 1));
+            expect(mockRequest.payrolls[0].payrolls).toEqual(payrolls);
+            expect(mockRequest.loans[0].loan).toEqual(loans.filter(loan => loan.account_id === 1));
+            expect(mockRequest.transfers[0].transfer).toEqual(transfers.filter(transfer => transfer.account_id === 1));
+            expect(mockRequest.wishlists[0].wishlist).toEqual(wishlists.filter(wishlist => wishlist.account_id === 1));
+        } catch (error) {
+            console.error(error);
+        }
     });
 });
