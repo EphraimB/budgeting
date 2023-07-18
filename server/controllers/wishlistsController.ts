@@ -129,6 +129,7 @@ export const updateCronTab = async (request: Request, response: Response): Promi
     const { wishlist_id } = request;
 
     try {
+        console.log('request', request.transactions);
         // Create a map of wishlist_id to transaction date for faster lookup
         const transactionMap: Record<number, string | null> = {};
         request.transactions.forEach((account) => {

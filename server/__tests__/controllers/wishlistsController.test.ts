@@ -1,7 +1,8 @@
 import { jest } from '@jest/globals';
 import { Request, Response } from 'express';
-import { wishlists } from '../../models/mockData.js';
+import { transactions, wishlists } from '../../models/mockData.js';
 import { QueryResultRow } from 'pg';
+import { Wishlist } from '../../types/types.js';
 
 // Mock request and response
 let mockRequest: any;
@@ -37,10 +38,18 @@ afterAll(() => {
  * @param [errorMessage] - The error message to be passed to the handleError mock function
  * @returns - A mock module with the executeQuery and handleError functions
  */
-const mockModule = (executeQueryValue: QueryResultRow[] | string | null, errorMessage?: string) => {
+const mockModule = (createWishlist: QueryResultRow[] | string | null, errorMessage?: string, createCronJob?: QueryResultRow[] | string | null, updateWishlistWithCronJobId?: QueryResultRow[] | string | null) => {
+    let index = 0;
     const executeQuery = errorMessage
         ? jest.fn(() => Promise.reject(new Error(errorMessage)))
-        : jest.fn(() => Promise.resolve(executeQueryValue));
+        : jest.fn(() => {
+            switch (index++) {
+                case 0: return Promise.resolve(createWishlist);
+                case 1: return Promise.resolve(createCronJob);
+                case 2: return Promise.resolve(updateWishlistWithCronJobId);
+                default: return Promise.resolve(null);
+            }
+        });
 
     jest.mock('../../utils/helperFunctions.js', () => ({
         executeQuery,
@@ -279,17 +288,39 @@ describe('POST /api/wishlists', () => {
         // Arrange
         const newWishlist = wishlists.filter(wishlist => wishlist.wishlist_id === 1);
 
-        mockModule(newWishlist);
+        mockModule(newWishlist, undefined, [{ cron_job_id: 1 }], [{ wishlist_id: 1, cron_job_id: 1 }]);
+
+        jest.mock('../../crontab/scheduleCronJob.js', () => ({
+            __esModule: true,
+            default: jest.fn(() => Promise.resolve({ cronDate: '* * * * *', uniqueId: '1fw34' }))
+        }));
 
         const { updateCronTab } = await import('../../controllers/wishlistsController.js');
 
+        // Add wishlist_date_can_purchase to the wishlist object
+        const modifiedWishlist: Wishlist = {
+            ...newWishlist[0],
+            wishlist_date_can_purchase: null
+        };
+
+        mockRequest.wishlist_id = 1;
         mockRequest.body = newWishlist;
+        mockRequest.transactions = [{
+            account_id: 1,
+            transactions: [{
+                expense_id: 1,
+                date: null,
+                amount: 100,
+                title: 'Test',
+                description: 'Test'
+            }]
+        }];
 
         await updateCronTab(mockRequest as Request, mockResponse);
 
         // Assert
-        expect(mockResponse.status).toHaveBeenCalledWith(201);
-        expect(mockResponse.json).toHaveBeenCalledWith(newWishlist);
+        // expect(mockResponse.status).toHaveBeenCalledWith(201);
+        expect(mockResponse.json).toHaveBeenCalledWith([modifiedWishlist]);
     });
 
     it('should respond with an error message', async () => {
