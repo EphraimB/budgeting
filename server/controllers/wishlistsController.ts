@@ -3,7 +3,7 @@ import { cronJobQueries, wishlistQueries } from '../models/queryData.js';
 import { executeQuery, handleError } from '../utils/helperFunctions.js';
 import { Wishlist } from '../types/types.js';
 import scheduleCronJob from '../crontab/scheduleCronJob.js';
-import deleteCronJob from 'crontab/deleteCronJob.js';
+import deleteCronJob from '../crontab/deleteCronJob.js';
 
 interface WishlistInput {
     wishlist_id: string;
