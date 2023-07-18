@@ -52,7 +52,7 @@ describe('generateTransactions', () => {
             expenses: [{ account_id: 1, expenses: expenses.filter(expense => expense.account_id === 1) }],
             payrolls: [{ employee_id: 1, payroll: payrolls }],
             loans: [{ account_id: 1, loan: loans.filter(loan => loan.account_id === 1) }],
-            transfers: [{ account_id: 1, transfer: transfers.filter(transfer => transfer.account_id === 1) }],
+            transfers: [{ account_id: 1, transfer: transfers.filter(transfer => transfer.source_account_id === 1) }],
             wishlists: [{ account_id: 1, wishlist: wishlists.filter(wishlist => wishlist.account_id === 1) }]
         };
 

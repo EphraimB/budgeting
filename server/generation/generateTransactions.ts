@@ -142,8 +142,6 @@ const generateTransactions = async (request: Request, response: Response, next: 
 
         const employee_id = employeeResults[0].employee_id;
 
-        console.log('employee_id', employee_id);
-
         generate(request, response, next, account_id, employee_id, transactions, skippedTransactions, currentBalanceValue);
 
         allTransactions.push({ account_id, current_balance: currentBalanceValue, transactions });
