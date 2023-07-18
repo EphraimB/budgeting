@@ -264,17 +264,7 @@ export const updateWishlistCron = async (request: Request, response: Response): 
 
         const { cronDate, uniqueId } = await scheduleCronJob(cronParams);
 
-        const cronId: number = (await executeQuery(cronJobQueries.updateCronJob, [
-            uniqueId,
-            cronDate
-        ]))[0].cron_job_id;
-
-        const updateWishlist = await executeQuery(wishlistQueries.updateWishlistWithCronJobId, [cronId, wishlist_id]);
-
-        if (updateWishlist.length === 0) {
-            response.status(400).send('Wishlist couldn\'t be update the cron_job_id');
-            return;
-        }
+        await executeQuery(cronJobQueries.updateCronJob, [uniqueId, cronDate]);
 
         response.status(201).json(wishlists);
 
