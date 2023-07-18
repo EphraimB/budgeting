@@ -1,7 +1,8 @@
 import { NextFunction, Request, Response } from 'express';
-import { wishlistQueries } from '../models/queryData.js';
+import { cronJobQueries, wishlistQueries } from '../models/queryData.js';
 import { executeQuery, handleError } from '../utils/helperFunctions.js';
 import { Wishlist } from '../types/types.js';
+import scheduleCronJob from '../crontab/scheduleCronJob.js';
 
 interface WishlistInput {
     wishlist_id: string;
@@ -146,6 +147,22 @@ export const updateCronTab = async (request: Request, response: Response): Promi
         const wishlists: Wishlist[] = modifiedWishlists.map((wishlist: WishlistInput) =>
             wishlistsParse(wishlist)
         );
+
+        const cronParams = {
+            date: wishlists[0].wishlist_date_can_purchase,
+            account_id: request.body.account_id,
+            amount: -request.body.amount,
+            title: request.body.title,
+            description: request.body.description,
+            scriptPath: '/app/dist/scripts/createTransaction.sh'
+        };
+
+        const { cronDate, uniqueId } = await scheduleCronJob(cronParams);
+
+        const cronId: number = (await executeQuery(cronJobQueries.createCronJob, [
+            uniqueId,
+            cronDate
+        ]))[0].cron_job_id;
 
         response.status(201).json(wishlists);
 
