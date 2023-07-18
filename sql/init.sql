@@ -99,6 +99,7 @@ CREATE TABLE payroll_taxes (
 CREATE TABLE IF NOT EXISTS wishlist (
   wishlist_id SERIAL PRIMARY KEY,
   account_id INT NOT NULL REFERENCES accounts(account_id),
+  cron_job_id INT REFERENCES cron_jobs(cron_job_id),
   wishlist_amount numeric(12, 2) NOT NULL,
   wishlist_title VARCHAR(255) NOT NULL,
   wishlist_description VARCHAR(255) NOT NULL,

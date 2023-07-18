@@ -105,10 +105,12 @@ export const getWishlists = async (request: Request, response: Response): Promis
  * Sends a POST request to the database to create a new wishlist
  */
 export const createWishlist = async (request: Request, response: Response, next: NextFunction): Promise<void> => {
-    try {
-        const { account_id, amount, title, description, priority, url_link } = request.body;
+    const { account_id, amount, title, description, priority, url_link } = request.body;
 
-        const results = await executeQuery<WishlistInput>(wishlistQueries.createWishlist, [account_id, amount, title, description, priority, url_link]);
+    try {
+        const cron_job_id: number | null = null;
+
+        const results = await executeQuery<WishlistInput>(wishlistQueries.createWishlist, [account_id, cron_job_id, amount, title, description, priority, url_link]);
 
         // Parse the data to correct format and return an object
         const wishlists: Wishlist[] = results.map(wishlist => wishlistsParse(wishlist));
@@ -163,6 +165,13 @@ export const updateCronTab = async (request: Request, response: Response): Promi
             uniqueId,
             cronDate
         ]))[0].cron_job_id;
+
+        const updateWishlist = await executeQuery(wishlistQueries.updateWishlistWithCronJobId, [cronId, wishlist_id]);
+
+        if (updateWishlist.length === 0) {
+            response.status(400).send('Wishlist couldn\'t be update the cron_job_id');
+            return;
+        }
 
         response.status(201).json(wishlists);
 
