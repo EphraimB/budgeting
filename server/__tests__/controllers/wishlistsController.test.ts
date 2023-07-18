@@ -36,9 +36,15 @@ afterAll(() => {
  * 
  * @param executeQueryValue - The value to be returned by the executeQuery mock function
  * @param [errorMessage] - The error message to be passed to the handleError mock function
+ * @param [createCronJobValue] - The value to be returned by the createCronJob mock function
+ * @param [updateWishlistWithCronJobIdValue] - The value to be returned by the updateWishlistWithCronJobId mock function
+ * @param [getWishlistsByIdValue] - The value to be returned by the getWishlistsById mock function
+ * @param [getCronJobValue] - The value to be returned by the getCronJob mock function
+ * @param [deleteWishlistValue] - The value to be returned by the deleteWishlist mock function
+ * @param [deleteCronJobValue] - The value to be returned by the deleteCronJob mock function
  * @returns - A mock module with the executeQuery and handleError functions
  */
-const mockModule = (createWishlist: QueryResultRow[] | string | null, errorMessage?: string, createCronJob?: QueryResultRow[] | string | null, updateWishlistWithCronJobId?: QueryResultRow[] | string | null) => {
+const mockModule = (createWishlist: QueryResultRow[] | string | null, errorMessage?: string, createCronJob?: QueryResultRow[] | string | null, updateWishlistWithCronJobId?: QueryResultRow[] | string | null, getWishlistsById?: QueryResultRow[] | string | null, getCronJob?: QueryResultRow[] | string | null, deleteWishlist?: QueryResultRow[] | string | null, deleteCronJob?: QueryResultRow | string | null) => {
     let index = 0;
     const executeQuery = errorMessage
         ? jest.fn(() => Promise.reject(new Error(errorMessage)))
@@ -47,6 +53,10 @@ const mockModule = (createWishlist: QueryResultRow[] | string | null, errorMessa
                 case 0: return Promise.resolve(createWishlist);
                 case 1: return Promise.resolve(createCronJob);
                 case 2: return Promise.resolve(updateWishlistWithCronJobId);
+                case 3: return Promise.resolve(getWishlistsById);
+                case 4: return Promise.resolve(getCronJob);
+                case 5: return Promise.resolve(deleteWishlist);
+                case 6: return Promise.resolve(deleteCronJob);
                 default: return Promise.resolve(null);
             }
         });
@@ -295,7 +305,7 @@ describe('POST /api/wishlists', () => {
             default: jest.fn(() => Promise.resolve({ cronDate: '* * * * *', uniqueId: '1fw34' }))
         }));
 
-        const { updateCronTab } = await import('../../controllers/wishlistsController.js');
+        const { createWishlistCron } = await import('../../controllers/wishlistsController.js');
 
         // Add wishlist_date_can_purchase to the wishlist object
         const modifiedWishlist: Wishlist = {
@@ -316,7 +326,7 @@ describe('POST /api/wishlists', () => {
             }]
         }];
 
-        await updateCronTab(mockRequest as Request, mockResponse);
+        await createWishlistCron(mockRequest as Request, mockResponse);
 
         // Assert
         // expect(mockResponse.status).toHaveBeenCalledWith(201);
@@ -329,7 +339,7 @@ describe('POST /api/wishlists', () => {
         const error = new Error(errorMessage);
         mockModule(null, errorMessage);
 
-        const { updateCronTab } = await import('../../controllers/wishlistsController.js');
+        const { createWishlistCron } = await import('../../controllers/wishlistsController.js');
 
         jest.mock('../../crontab/scheduleCronJob.js', () => ({
             __esModule: true,
@@ -349,7 +359,7 @@ describe('POST /api/wishlists', () => {
         }];
 
         // Call the function with the mock request and response
-        await updateCronTab(mockRequest as Request, mockResponse);
+        await createWishlistCron(mockRequest as Request, mockResponse);
 
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(400);
@@ -367,12 +377,12 @@ describe('PUT /api/wishlists/:id', () => {
 
         mockModule(updatedWishlist);
 
-        mockRequest.params = { id: 1 };
+        mockRequest.wishlist_id = 1;
         mockRequest.body = updatedWishlist;
 
-        const { updateWishlist } = await import('../../controllers/wishlistsController.js');
+        const { updateWishlistCron } = await import('../../controllers/wishlistsController.js');
 
-        await updateWishlist(mockRequest as Request, mockResponse);
+        await updateWishlistCron(mockRequest as Request, mockResponse);
 
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(200);
@@ -385,14 +395,14 @@ describe('PUT /api/wishlists/:id', () => {
         const error = new Error(errorMessage);
         mockModule(null, errorMessage);
 
-        const { updateWishlist } = await import('../../controllers/wishlistsController.js');
+        const { updateWishlistCron } = await import('../../controllers/wishlistsController.js');
 
         // Call the function with the mock request and response
-        await updateWishlist(mockRequest as Request, mockResponse);
+        await updateWishlistCron(mockRequest as Request, mockResponse);
 
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(400);
-        expect(mockResponse.json).toHaveBeenCalledWith({ message: 'Error updating wishlist' });
+        expect(mockResponse.json).toHaveBeenCalledWith({ message: 'Error updating cron tab' });
 
         // Assert that the error was logged on the server side
         expect(consoleSpy).toHaveBeenCalledWith(error);
@@ -402,13 +412,13 @@ describe('PUT /api/wishlists/:id', () => {
         // Arrange
         mockModule([]);
 
-        const { updateWishlist } = await import('../../controllers/wishlistsController.js');
+        const { updateWishlistCron } = await import('../../controllers/wishlistsController.js');
 
         mockRequest.params = { id: 3 };
         mockRequest.body = wishlists.filter(wishlist => wishlist.wishlist_id === 1);
 
         // Act
-        await updateWishlist(mockRequest as Request, mockResponse);
+        await updateWishlistCron(mockRequest as Request, mockResponse);
 
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(404);
@@ -419,7 +429,21 @@ describe('PUT /api/wishlists/:id', () => {
 describe('DELETE /api/wishlists/:id', () => {
     it('should respond with a success message', async () => {
         // Arrange
-        mockModule('Successfully deleted wishlist item');
+        mockModule(
+            [{ wishlist_id: 1, cron_job_id: 1 }], // createWishlist result
+            undefined, // error message
+            [], // createCronJob result
+            [], // updateWishlistWithCronJobId result
+            [{ wishlist_id: 1, cron_job_id: 1 }], // getWishlistsById result
+            [{ uniqueId: 'ws8fgv89w', cronDate: '* * * * *' }], // getCronJob result
+            [], // deleteWishlist result
+            [] // deleteCronJob result
+        );
+
+        jest.mock('../../crontab/deleteCronJob.js', () => ({
+            __esModule: true,
+            default: jest.fn()
+        }));
 
         mockRequest.params = { id: 1 };
 
@@ -439,6 +463,8 @@ describe('DELETE /api/wishlists/:id', () => {
         mockModule(null, errorMessage);
 
         const { deleteWishlist } = await import('../../controllers/wishlistsController.js');
+
+        mockRequest.params = { id: 1 };
 
         // Call the function with the mock request and response
         await deleteWishlist(mockRequest as Request, mockResponse);

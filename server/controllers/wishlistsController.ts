@@ -296,6 +296,8 @@ export const deleteWishlist = async (request: Request, response: Response): Prom
         // Delete cron job from crontab
         const getWishlistResults = await executeQuery<WishlistInput>(wishlistQueries.getWishlistsById, [id]);
 
+        console.log(getWishlistResults);
+
         if (getWishlistResults.length === 0) {
             response.status(404).send('Wishlist not found');
             return;
