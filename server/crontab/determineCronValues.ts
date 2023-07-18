@@ -20,7 +20,7 @@ const determineCronValues = (jobDetails: any): any => {
     let cronMonth = '*';
     let cronDayOfWeek = '*';
 
-    if (!frequency_type) {
+    if (frequency_type === null || frequency_type === undefined) {
         const month = new Date(date).getMonth() + 1;
 
         cronDay = new Date(date).getDate().toString();
