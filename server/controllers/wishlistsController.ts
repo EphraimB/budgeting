@@ -233,7 +233,8 @@ export const updateWishlistCron = async (request: Request, response: Response): 
 
     try {
         // Get cron job id
-        const wishlistsResults = (await executeQuery(wishlistQueries.getWishlistsById, [wishlist_id]));
+        const wishlistsResults = await executeQuery(wishlistQueries.getWishlistsById, [wishlist_id]);
+        console.log('wishlistsResults', wishlistsResults);
         const cronId = wishlistsResults[0].cron_job_id;
 
         const results = await executeQuery(cronJobQueries.getCronJob, [cronId]);
@@ -275,7 +276,7 @@ export const updateWishlistCron = async (request: Request, response: Response): 
 
         await executeQuery(cronJobQueries.updateCronJob, [uniqueId, cronDate, cronId]);
 
-        response.status(201).json(wishlists);
+        response.status(200).json(wishlists);
 
     } catch (error) {
         console.error(error); // Log the error on the server side
@@ -295,8 +296,6 @@ export const deleteWishlist = async (request: Request, response: Response): Prom
     try {
         // Delete cron job from crontab
         const getWishlistResults = await executeQuery<WishlistInput>(wishlistQueries.getWishlistsById, [id]);
-
-        console.log(getWishlistResults);
 
         if (getWishlistResults.length === 0) {
             response.status(404).send('Wishlist not found');

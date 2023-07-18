@@ -49,16 +49,34 @@ const mockModule = (createWishlist: QueryResultRow[] | string | null, errorMessa
     const executeQuery = errorMessage
         ? jest.fn(() => Promise.reject(new Error(errorMessage)))
         : jest.fn(() => {
+            let result;
             switch (index++) {
-                case 0: return Promise.resolve(createWishlist);
-                case 1: return Promise.resolve(createCronJob);
-                case 2: return Promise.resolve(updateWishlistWithCronJobId);
-                case 3: return Promise.resolve(getWishlistsById);
-                case 4: return Promise.resolve(getCronJob);
-                case 5: return Promise.resolve(deleteWishlist);
-                case 6: return Promise.resolve(deleteCronJob);
-                default: return Promise.resolve(null);
+                case 0:
+                    result = Promise.resolve(createWishlist);
+                    break;
+                case 1:
+                    result = Promise.resolve(createCronJob);
+                    break;
+                case 2:
+                    result = Promise.resolve(updateWishlistWithCronJobId);
+                    break;
+                case 3:
+                    result = Promise.resolve(getWishlistsById);
+                    break;
+                case 4:
+                    result = Promise.resolve(getCronJob);
+                    break;
+                case 5:
+                    result = Promise.resolve(deleteWishlist);
+                    break;
+                case 6:
+                    result = Promise.resolve(deleteCronJob);
+                    break;
+                default:
+                    result = Promise.resolve(null);
+                    break;
             }
+            return result;
         });
 
     jest.mock('../../utils/helperFunctions.js', () => ({
@@ -88,8 +106,17 @@ describe('GET /api/wishlists', () => {
         await getWishlists(mockRequest as Request, mockResponse);
 
         const modifiedWishlists = wishlists.map((wishlist, i) => ({
-            ...wishlist,
-            wishlist_date_can_purchase: `2023-08-14T00:0${i}:00.000Z`
+            account_id: wishlist.account_id,
+            date_created: wishlist.date_created,
+            date_modified: wishlist.date_modified,
+            wishlist_amount: wishlist.wishlist_amount,
+            wishlist_date_available: wishlist.wishlist_date_available,
+            wishlist_date_can_purchase: `2023-08-14T00:0${i}:00.000Z`,
+            wishlist_description: wishlist.wishlist_description,
+            wishlist_id: wishlist.wishlist_id,
+            wishlist_priority: wishlist.wishlist_priority,
+            wishlist_title: wishlist.wishlist_title,
+            wishlist_url_link: wishlist.wishlist_url_link
         }));
 
         // Assert
@@ -141,8 +168,17 @@ describe('GET /api/wishlists', () => {
         const modifiedWishlists = wishlists
             .filter(wishlist => wishlist.wishlist_id === id)
             .map((wishlist, i) => ({
-                ...wishlist,
-                wishlist_date_can_purchase: `2023-08-14T00:0${i}:00.000Z`
+                account_id: wishlist.account_id,
+                date_created: wishlist.date_created,
+                date_modified: wishlist.date_modified,
+                wishlist_amount: wishlist.wishlist_amount,
+                wishlist_date_available: wishlist.wishlist_date_available,
+                wishlist_date_can_purchase: `2023-08-14T00:0${i}:00.000Z`,
+                wishlist_description: wishlist.wishlist_description,
+                wishlist_id: wishlist.wishlist_id,
+                wishlist_priority: wishlist.wishlist_priority,
+                wishlist_title: wishlist.wishlist_title,
+                wishlist_url_link: wishlist.wishlist_url_link
             }));
 
         // Assert
@@ -193,8 +229,17 @@ describe('GET /api/wishlists', () => {
         const modifiedWishlists = wishlists
             .filter(wishlist => wishlist.account_id === 1)
             .map((wishlist, i) => ({
-                ...wishlist,
-                wishlist_date_can_purchase: `2023-08-14T00:0${i}:00.000Z`
+                account_id: wishlist.account_id,
+                date_created: wishlist.date_created,
+                date_modified: wishlist.date_modified,
+                wishlist_amount: wishlist.wishlist_amount,
+                wishlist_date_available: wishlist.wishlist_date_available,
+                wishlist_date_can_purchase: `2023-08-14T00:0${i}:00.000Z`,
+                wishlist_description: wishlist.wishlist_description,
+                wishlist_id: wishlist.wishlist_id,
+                wishlist_priority: wishlist.wishlist_priority,
+                wishlist_title: wishlist.wishlist_title,
+                wishlist_url_link: wishlist.wishlist_url_link
             }));
 
         // Assert
@@ -245,8 +290,17 @@ describe('GET /api/wishlists', () => {
         const modifiedWishlists = wishlists
             .filter(wishlist => wishlist.account_id === 1 && wishlist.wishlist_id === 1)
             .map((wishlist, i) => ({
-                ...wishlist,
-                wishlist_date_can_purchase: `2023-08-14T00:0${i}:00.000Z`
+                account_id: wishlist.account_id,
+                date_created: wishlist.date_created,
+                date_modified: wishlist.date_modified,
+                wishlist_amount: wishlist.wishlist_amount,
+                wishlist_date_available: wishlist.wishlist_date_available,
+                wishlist_date_can_purchase: `2023-08-14T00:0${i}:00.000Z`,
+                wishlist_description: wishlist.wishlist_description,
+                wishlist_id: wishlist.wishlist_id,
+                wishlist_priority: wishlist.wishlist_priority,
+                wishlist_title: wishlist.wishlist_title,
+                wishlist_url_link: wishlist.wishlist_url_link
             }));
 
         // Assert
@@ -309,8 +363,17 @@ describe('POST /api/wishlists', () => {
 
         // Add wishlist_date_can_purchase to the wishlist object
         const modifiedWishlist: Wishlist = {
-            ...newWishlist[0],
-            wishlist_date_can_purchase: null
+            account_id: newWishlist[0].account_id,
+                date_created: newWishlist[0].date_created,
+                date_modified: newWishlist[0].date_modified,
+                wishlist_amount: newWishlist[0].wishlist_amount,
+                wishlist_date_available: newWishlist[0].wishlist_date_available,
+                wishlist_date_can_purchase: null,
+                wishlist_description: newWishlist[0].wishlist_description,
+                wishlist_id: newWishlist[0].wishlist_id,
+                wishlist_priority: newWishlist[0].wishlist_priority,
+                wishlist_title: newWishlist[0].wishlist_title,
+                wishlist_url_link: newWishlist[0].wishlist_url_link
         };
 
         mockRequest.wishlist_id = 1;
@@ -375,10 +438,29 @@ describe('PUT /api/wishlists/:id', () => {
         // Arrange
         const updatedWishlist = wishlists.filter(wishlist => wishlist.wishlist_id === 1);
 
-        mockModule(updatedWishlist);
+        mockModule(updatedWishlist, undefined, [{ cron_job_id: 1 }], [{ wishlist_id: 1, cron_job_id: 1 }], updatedWishlist);
+
+        jest.mock('../../crontab/deleteCronJob.js', () => ({
+            __esModule: true,
+            default: jest.fn()
+        }));
+
+        jest.mock('../../crontab/scheduleCronJob.js', () => ({
+            __esModule: true,
+            default: jest.fn(() => Promise.resolve({ cronDate: '* * * * *', uniqueId: '1fw34' }))
+        }));
 
         mockRequest.wishlist_id = 1;
-        mockRequest.body = updatedWishlist;
+        mockRequest.transactions = [{
+            account_id: 1,
+            transactions: [{
+                expense_id: 1,
+                date: null,
+                amount: 100,
+                title: 'Test',
+                description: 'Test'
+            }]
+        }];
 
         const { updateWishlistCron } = await import('../../controllers/wishlistsController.js');
 

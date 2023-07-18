@@ -289,6 +289,7 @@ export const payrollTaxes: PayrollTax[] = [
 export const wishlists: Wishlist[] = [
     {
         wishlist_id: 1,
+        cron_job_id: 1,
         account_id: 1,
         wishlist_amount: 1000,
         wishlist_title: 'Test Wishlist',

@@ -119,6 +119,7 @@ export interface PayrollTax {
 export interface Wishlist {
     wishlist_id?: number;
     account_id?: number;
+    cron_job_id?: number;
     wishlist_amount: number;
     wishlist_title: string;
     wishlist_description: string;
