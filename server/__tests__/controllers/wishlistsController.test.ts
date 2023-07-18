@@ -1,6 +1,6 @@
 import { jest } from '@jest/globals';
 import { Request, Response } from 'express';
-import { expenses, loans, transfers, wishlists } from '../../models/mockData.js';
+import { wishlists } from '../../models/mockData.js';
 import { QueryResultRow } from 'pg';
 
 // Mock request and response
@@ -281,11 +281,11 @@ describe('POST /api/wishlists', () => {
 
         mockModule(newWishlist);
 
-        const { createWishlist } = await import('../../controllers/wishlistsController.js');
+        const { updateCronTab } = await import('../../controllers/wishlistsController.js');
 
         mockRequest.body = newWishlist;
 
-        await createWishlist(mockRequest as Request, mockResponse);
+        await updateCronTab(mockRequest as Request, mockResponse);
 
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(201);
@@ -298,16 +298,16 @@ describe('POST /api/wishlists', () => {
         const error = new Error(errorMessage);
         mockModule(null, errorMessage);
 
-        const { createWishlist } = await import('../../controllers/wishlistsController.js');
+        const { updateCronTab } = await import('../../controllers/wishlistsController.js');
 
         mockRequest.body = wishlists.filter(wishlist => wishlist.wishlist_id === 1);
 
         // Call the function with the mock request and response
-        await createWishlist(mockRequest as Request, mockResponse);
+        await updateCronTab(mockRequest as Request, mockResponse);
 
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(400);
-        expect(mockResponse.json).toHaveBeenCalledWith({ message: 'Error creating wishlist' });
+        expect(mockResponse.json).toHaveBeenCalledWith({ message: 'Error updating cron tab' });
 
         // Assert that the error was logged on the server side
         expect(consoleSpy).toHaveBeenCalledWith(error);
