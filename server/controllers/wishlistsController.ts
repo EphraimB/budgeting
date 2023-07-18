@@ -181,7 +181,6 @@ export const createWishlistCron = async (request: Request, response: Response): 
         }
 
         response.status(201).json(wishlists);
-
     } catch (error) {
         console.error(error); // Log the error on the server side
         handleError(response, 'Error updating cron tab');
@@ -195,7 +194,7 @@ export const createWishlistCron = async (request: Request, response: Response): 
  * @param response - Response object
  * Sends a PUT request to the database to update a wishlist
  */
-export const updateWishlist = async (request: Request, response: Response): Promise<void> => {
+export const updateWishlist = async (request: Request, response: Response, next: NextFunction): Promise<void> => {
     const { id } = request.params;
     const { account_id, amount, title, description, priority, url_link } = request.body;
 
@@ -212,6 +211,8 @@ export const updateWishlist = async (request: Request, response: Response): Prom
 
         // Store the wishlist_id in the request object so it can be used in the next middleware
         request.wishlist_id = wishlists[0].wishlist_id;
+
+        next();
     } catch (error) {
         console.error(error); // Log the error on the server side
         handleError(response, 'Error updating wishlist');
@@ -223,7 +224,8 @@ export const updateWishlistCron = async (request: Request, response: Response): 
 
     try {
         // Get cron job id
-        const cronId = (await executeQuery(wishlistQueries.getWishlistsById, [wishlist_id]))[0].cron_job_id;
+        const wishlistsResults = (await executeQuery(wishlistQueries.getWishlistsById, [wishlist_id]));
+        const cronId = wishlistsResults[0].cron_job_id;
 
         const results = await executeQuery(cronJobQueries.getCronJob, [cronId]);
         if (results.length > 0) {
@@ -239,8 +241,6 @@ export const updateWishlistCron = async (request: Request, response: Response): 
                 transactionMap[transaction.wishlist_id] = transaction.date;
             });
         });
-
-        const wishlistsResults = await executeQuery<WishlistInput>(wishlistQueries.getWishlistsById, [wishlist_id]);
 
         // Add the wishlist_date_can_purchase to the wishlist object
         const modifiedWishlists = wishlistsResults.map((wishlist: WishlistInput) => ({
@@ -264,7 +264,7 @@ export const updateWishlistCron = async (request: Request, response: Response): 
 
         const { cronDate, uniqueId } = await scheduleCronJob(cronParams);
 
-        await executeQuery(cronJobQueries.updateCronJob, [uniqueId, cronDate]);
+        await executeQuery(cronJobQueries.updateCronJob, [uniqueId, cronDate, cronId]);
 
         response.status(201).json(wishlists);
 
