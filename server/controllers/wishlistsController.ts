@@ -1,4 +1,4 @@
-import { Request, Response } from 'express';
+import { NextFunction, Request, Response } from 'express';
 import { wishlistQueries } from '../models/queryData.js';
 import { executeQuery, handleError } from '../utils/helperFunctions.js';
 import { Wishlist } from '../types/types.js';
@@ -103,7 +103,7 @@ export const getWishlists = async (request: Request, response: Response): Promis
  * @param response - Response object
  * Sends a POST request to the database to create a new wishlist
  */
-export const createWishlist = async (request: Request, response: Response): Promise<void> => {
+export const createWishlist = async (request: Request, response: Response, next: NextFunction): Promise<void> => {
     try {
         const { account_id, amount, title, description, priority, url_link } = request.body;
 
@@ -112,12 +112,49 @@ export const createWishlist = async (request: Request, response: Response): Prom
         // Parse the data to correct format and return an object
         const wishlists: Wishlist[] = results.map(wishlist => wishlistsParse(wishlist));
 
-        response.status(201).json(wishlists);
+        // Store the wishlist_id in the request object so it can be used in the next middleware
+        request.wishlist_id = wishlists[0].wishlist_id;
+
+        next();
     } catch (error) {
         console.error(error); // Log the error on the server side
         handleError(response, 'Error creating wishlist');
     }
 };
+
+export const updateCronTab = async (request: Request, response: Response): Promise<void> => {
+    const { wishlist_id } = request;
+
+    try {
+        // Create a map of wishlist_id to transaction date for faster lookup
+        const transactionMap: Record<number, string | null> = {};
+        request.transactions.forEach((account) => {
+            account.transactions.forEach((transaction: any) => {
+                transactionMap[transaction.wishlist_id] = transaction.date;
+            });
+        });
+
+        const results = await executeQuery<WishlistInput>(wishlistQueries.getWishlistsById, [wishlist_id]);
+
+        // Add the wishlist_date_can_purchase to the wishlist object
+        const modifiedWishlists = results.map((wishlist: WishlistInput) => ({
+            ...wishlist,
+            wishlist_date_can_purchase: transactionMap[Number(wishlist.wishlist_id)] || null
+        }));
+
+        // Parse the data to the correct format
+        const wishlists: Wishlist[] = modifiedWishlists.map((wishlist: WishlistInput) =>
+            wishlistsParse(wishlist)
+        );
+
+        response.status(201).json(wishlists);
+
+    } catch (error) {
+        console.error(error); // Log the error on the server side
+        handleError(response, 'Error updating cron tab');
+    }
+};
+
 
 /**
  * 

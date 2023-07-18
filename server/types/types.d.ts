@@ -165,5 +165,6 @@ declare module 'express-serve-static-core' {
         transfers: any[];
         currentBalance: CurrentBalance[];
         transactions: any[];
+        wishlist_id: number;
     }
 }

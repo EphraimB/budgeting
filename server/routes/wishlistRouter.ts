@@ -1,6 +1,6 @@
 import express, { Router } from 'express';
 import { query, param, body } from 'express-validator';
-import { getWishlists, createWishlist, updateWishlist, deleteWishlist } from '../controllers/wishlistsController.js';
+import { getWishlists, createWishlist, updateWishlist, deleteWishlist, updateCronTab } from '../controllers/wishlistsController.js';
 import validateRequest from '../utils/validateRequest.js';
 import generateTransactions from '../generation/generateTransactions.js';
 import { setQueries, getCurrentBalance, getTransactionsByAccount, getExpensesByAccount, getLoansByAccount, getPayrollsMiddleware, getTransfersByAccount, getWishlistsByAccount } from '../middleware/middleware.js';
@@ -20,8 +20,7 @@ router.post('/',
         body('description').isString().withMessage('Description must be a string'),
         body('priority').isInt().withMessage('Priority must be a number'),
         validateRequest
-    ],
-    createWishlist);
+    ], createWishlist, setQueries, getCurrentBalance, getTransactionsByAccount, getExpensesByAccount, getLoansByAccount, getPayrollsMiddleware, getTransfersByAccount, getWishlistsByAccount, generateTransactions, updateCronTab);
 
 router.put('/:id',
     [
