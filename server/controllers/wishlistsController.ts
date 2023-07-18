@@ -234,7 +234,6 @@ export const updateWishlistCron = async (request: Request, response: Response): 
     try {
         // Get cron job id
         const wishlistsResults = await executeQuery(wishlistQueries.getWishlistsById, [wishlist_id]);
-        console.log('wishlistsResults', wishlistsResults);
         const cronId = wishlistsResults[0].cron_job_id;
 
         const results = await executeQuery(cronJobQueries.getCronJob, [cronId]);
@@ -262,6 +261,8 @@ export const updateWishlistCron = async (request: Request, response: Response): 
         const wishlists: Wishlist[] = modifiedWishlists.map((wishlist: WishlistInput) =>
             wishlistsParse(wishlist)
         );
+
+        console.log(wishlists);
 
         const cronParams = {
             date: wishlists[0].wishlist_date_can_purchase,

@@ -34,7 +34,7 @@ afterAll(() => {
 
 /**
  * 
- * @param executeQueryValue - The value to be returned by the executeQuery mock function
+ * @param createWishlist - The value to be returned by the executeQuery mock function
  * @param [errorMessage] - The error message to be passed to the handleError mock function
  * @param [createCronJobValue] - The value to be returned by the createCronJob mock function
  * @param [updateWishlistWithCronJobIdValue] - The value to be returned by the updateWishlistWithCronJobId mock function
@@ -352,7 +352,7 @@ describe('POST /api/wishlists', () => {
         // Arrange
         const newWishlist = wishlists.filter(wishlist => wishlist.wishlist_id === 1);
 
-        mockModule(newWishlist, undefined, [{ cron_job_id: 1 }], [{ wishlist_id: 1, cron_job_id: 1 }]);
+        mockModule(newWishlist, undefined, [{ cron_job_id: 1 }], [{ wishlist_id: 1, cron_job_id: 1 }], [{ wishlist_id: 1, wishlist_title: "Test Wishlist", cron_job_id: 1 }]);
 
         jest.mock('../../crontab/scheduleCronJob.js', () => ({
             __esModule: true,
