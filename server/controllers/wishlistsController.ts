@@ -8,6 +8,7 @@ import deleteCronJob from '../crontab/deleteCronJob.js';
 interface WishlistInput {
     wishlist_id: string;
     account_id: string;
+    cron_job_id: string;
     wishlist_amount: string;
     wishlist_title: string;
     wishlist_description: string;
@@ -289,9 +290,10 @@ export const updateWishlistCron = async (request: Request, response: Response): 
  * Sends a DELETE request to the database to delete a wishlist
  */
 export const deleteWishlist = async (request: Request, response: Response): Promise<void> => {
-    try {
-        const { id } = request.params;
+    const { id } = request.params;
 
+    try {
+        // Delete cron job from crontab
         const getWishlistResults = await executeQuery<WishlistInput>(wishlistQueries.getWishlistsById, [id]);
 
         if (getWishlistResults.length === 0) {
@@ -299,7 +301,20 @@ export const deleteWishlist = async (request: Request, response: Response): Prom
             return;
         }
 
+        const cronId = getWishlistResults[0].cron_job_id;
+
+        const cronJobResults = await executeQuery(cronJobQueries.getCronJob, [cronId]);
+
+        if (cronJobResults.length > 0) {
+            await deleteCronJob(cronJobResults[0].unique_id);
+        } else {
+            console.error('Cron job not found');
+        }
+
         await executeQuery(wishlistQueries.deleteWishlist, [id]);
+
+        // Delete wishlist from database
+        await executeQuery(cronJobQueries.deleteCronJob, [cronId]);
 
         response.status(200).send('Successfully deleted wishlist item');
     } catch (error) {
