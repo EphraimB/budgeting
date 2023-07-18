@@ -103,6 +103,7 @@ export const getWishlists = async (request: Request, response: Response): Promis
  * 
  * @param request - Request object
  * @param response - Response object
+ * @param next - Next function
  * Sends a POST request to the database to create a new wishlist
  */
 export const createWishlist = async (request: Request, response: Response, next: NextFunction): Promise<void> => {
@@ -192,6 +193,7 @@ export const createWishlistCron = async (request: Request, response: Response): 
  * 
  * @param request - Request object
  * @param response - Response object
+ * @param next - Next function
  * Sends a PUT request to the database to update a wishlist
  */
 export const updateWishlist = async (request: Request, response: Response, next: NextFunction): Promise<void> => {
@@ -219,6 +221,12 @@ export const updateWishlist = async (request: Request, response: Response, next:
     }
 };
 
+/**
+ * 
+ * @param request - Request object
+ * @param response - Response object
+ * Sends a PUT request to the database to update a cron tab
+ */
 export const updateWishlistCron = async (request: Request, response: Response): Promise<void> => {
     const { wishlist_id } = request;
 
