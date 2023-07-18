@@ -5,15 +5,10 @@ import { GeneratedTransaction } from '../../types/types';
 
 
 beforeAll(() => {
+    MockDate.set('2020-01-01');
+
     jest.mock('../../utils/helperFunctions', () => ({
         executeQuery: jest.fn()
-            .mockImplementationOnce(() => Promise.resolve([
-                {
-                    account_id: 1,
-                    employee_id: 1,
-                    account_balance: 500
-                }
-            ]))
             .mockImplementationOnce(() => Promise.resolve([
                 {
                     account_id: 1,
@@ -21,8 +16,6 @@ beforeAll(() => {
                 }
             ]))
     }));
-
-    MockDate.set('2020-01-01');
 });
 
 afterAll(() => {
@@ -59,6 +52,10 @@ describe('generateTransactions', () => {
 
         mockResponse = {};
         next = jest.fn();
+    });
+
+    afterEach(() => {
+        jest.clearAllMocks();
     });
 
     it('should process transactions correctly', async () => {

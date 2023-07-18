@@ -35,6 +35,7 @@ export interface TransactionHistory {
 
 export interface Account {
     account_id: number;
+    employee_id?: number;
     account_name: string;
     account_type: number;
     account_balance: number;

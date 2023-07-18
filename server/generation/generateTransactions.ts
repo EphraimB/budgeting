@@ -123,10 +123,7 @@ const generateTransactions = async (request: Request, response: Response, next: 
                 .find((balance: CurrentBalance) => balance.account_id === account.account_id)
                 .account_balance;
 
-            // Fetch employee_id from account_id
-            const employeeResults = await executeQuery(accountQueries.getAccount, [account.account_id]);
-
-            const employee_id = employeeResults[0].employee_id;
+            const employee_id = account.employee_id;
 
             generate(request, response, next, account.account_id, employee_id, transactions, skippedTransactions, currentBalanceValue);
 
