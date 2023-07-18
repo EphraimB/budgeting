@@ -10,6 +10,7 @@ beforeAll(() => {
             .mockImplementationOnce(() => Promise.resolve([
                 {
                     account_id: 1,
+                    employee_id: 1,
                     account_balance: 500
                 }
             ]))
@@ -63,27 +64,23 @@ describe('generateTransactions', () => {
     it('should process transactions correctly', async () => {
         const { default: generateTransactions } = await import('../../generation/generateTransactions');
 
-        try {
-            // Call your function with the mock data
-            generateTransactions(mockRequest, mockResponse, next);
+        // Call your function with the mock data
+        await generateTransactions(mockRequest, mockResponse, next);
 
-            // assert that next was called
-            expect(next).toHaveBeenCalled();
+        // assert that next was called
+        expect(next).toHaveBeenCalled();
 
-            expect(mockRequest.transaction[0].transactions).toHaveLength(4);
+        expect(mockRequest.transaction[0].transactions).toHaveLength(4);
 
-            expect(mockRequest.currentBalance).toStrictEqual([{ account_id: 1, account_balance: 500 }]);
+        expect(mockRequest.currentBalance).toStrictEqual([{ account_id: 1, account_balance: 500 }]);
 
-            // assert end state of request object
-            // add checks for any additional properties or state you expect mockRequest to have after generateTransactions
-            expect(mockRequest.expenses[0].expenses).toEqual(expenses.filter(expense => expense.account_id === 1));
-            expect(mockRequest.payrolls[0].payroll).toEqual(payrolls);
-            expect(mockRequest.loans[0].loan).toEqual(loans.filter(loan => loan.account_id === 1));
-            expect(mockRequest.transfers[0].transfer).toEqual(transfers.filter(transfer => transfer.account_id === 1));
-            expect(mockRequest.wishlists[0].wishlist).toEqual(wishlists.filter(wishlist => wishlist.account_id === 1));
-        } catch (error) {
-            console.error(error);
-        }
+        // assert end state of request object
+        // add checks for any additional properties or state you expect mockRequest to have after generateTransactions
+        expect(mockRequest.expenses[0].expenses).toEqual(expenses.filter(expense => expense.account_id === 1));
+        expect(mockRequest.payrolls[0].payroll).toEqual(payrolls);
+        expect(mockRequest.loans[0].loan).toEqual(loans.filter(loan => loan.account_id === 1));
+        expect(mockRequest.transfers[0].transfer).toEqual(transfers.filter(transfer => transfer.source_account_id === 1));
+        expect(mockRequest.wishlists[0].wishlist).toEqual(wishlists.filter(wishlist => wishlist.account_id === 1));
     });
 
     it('should make sure that transactions are sorted by date', async () => {
@@ -106,25 +103,21 @@ describe('generateTransactions', () => {
         mockRequest.query = { account_id: null, from_date: '2023-07-01', to_date: '2023-08-01' };
 
         // Call your function with the mock data
-        try {
-            await generateTransactions(mockRequest, mockResponse, next);
+        await generateTransactions(mockRequest, mockResponse, next);
 
-            // assert that next was called
-            expect(next).toHaveBeenCalled();
+        // assert that next was called
+        expect(next).toHaveBeenCalled();
 
-            expect(mockRequest.transaction[0].transactions).toHaveLength(4);
+        expect(mockRequest.transaction[0].transactions).toHaveLength(4);
 
-            expect(mockRequest.currentBalance).toStrictEqual([{ account_id: 1, account_balance: 500 }]);
+        expect(mockRequest.currentBalance).toStrictEqual([{ account_id: 1, account_balance: 500 }]);
 
-            // assert end state of request object
-            // add checks for any additional properties or state you expect mockRequest to have after generateTransactions
-            expect(mockRequest.expenses[0].expenses).toEqual(expenses.filter(expense => expense.account_id === 1));
-            expect(mockRequest.payrolls[0].payroll).toEqual(payrolls);
-            expect(mockRequest.loans[0].loan).toEqual(loans.filter(loan => loan.account_id === 1));
-            expect(mockRequest.transfers[0].transfer).toEqual(transfers.filter(transfer => transfer.account_id === 1));
-            expect(mockRequest.wishlists[0].wishlist).toEqual(wishlists.filter(wishlist => wishlist.account_id === 1));
-        } catch (error) {
-            console.error(error);
-        }
+        // assert end state of request object
+        // add checks for any additional properties or state you expect mockRequest to have after generateTransactions
+        expect(mockRequest.expenses[0].expenses).toEqual(expenses.filter(expense => expense.account_id === 1));
+        expect(mockRequest.payrolls[0].payroll).toEqual(payrolls);
+        expect(mockRequest.loans[0].loan).toEqual(loans.filter(loan => loan.account_id === 1));
+        expect(mockRequest.transfers[0].transfer).toEqual(transfers.filter(transfer => transfer.account_id === 1));
+        expect(mockRequest.wishlists[0].wishlist).toEqual(wishlists.filter(wishlist => wishlist.account_id === 1));
     });
 });
