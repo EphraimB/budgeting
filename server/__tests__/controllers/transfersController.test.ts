@@ -45,7 +45,7 @@ afterAll(() => {
  * @param [errorMessage] - The error message to be passed to the handleError mock function
  * @returns - A mock module with the executeQuery and handleError functions
  */
-const mockModule = (executeQueryValue: QueryResultRow[] | string, errorMessage?: string) => {
+const mockModule = (executeQueryValue: QueryResultRow[] | string | null, errorMessage?: string) => {
     const executeQuery = errorMessage
         ? jest.fn(() => Promise.reject(new Error(errorMessage)))
         : jest.fn(() => Promise.resolve(executeQueryValue));
@@ -98,7 +98,7 @@ describe('GET /api/transfers', () => {
 
     it('should respond with an array of transfers with id', async () => {
         // Arrange
-        mockModule(transfers);
+        mockModule(transfers.filter(transfer => transfer.transfer_id === 1));
 
         mockRequest.query = { id: 1 };
 
@@ -135,7 +135,7 @@ describe('GET /api/transfers', () => {
 
     it('should respond with an array of transfers with account_id', async () => {
         // Arrange
-        mockModule(transfers);
+        mockModule(transfers.filter(transfer => transfer.source_account_id === 1));
 
         mockRequest.query = { account_id: 1 };
 
@@ -172,7 +172,7 @@ describe('GET /api/transfers', () => {
 
     it('should respond with an array of transfers with id and account_id', async () => {
         // Arrange
-        mockModule(transfers);
+        mockModule(transfers.filter(transfer => transfer.transfer_id === 1 && transfer.source_account_id === 1));
 
         mockRequest.query = { id: 1, account_id: 1 };
 

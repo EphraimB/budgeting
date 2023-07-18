@@ -123,7 +123,7 @@ export const expenses: Expense[] = [
         date_modified: '2020-01-01'
     },
     {
-        expense_id: 3,
+        expense_id: 4,
         account_id: 1,
         expense_amount: 25,
         expense_title: 'Test Expense 3',
@@ -140,7 +140,7 @@ export const expenses: Expense[] = [
         date_modified: '2020-01-01'
     },
     {
-        expense_id: 3,
+        expense_id: 5,
         account_id: 1,
         expense_amount: 50,
         expense_title: 'Test Expense 3',
@@ -179,7 +179,7 @@ export const loans: Loan[] = [
         date_modified: '2020-01-01'
     },
     {
-        loan_id: 1,
+        loan_id: 2,
         account_id: 1,
         loan_amount: 1000,
         loan_plan_amount: 100,
@@ -198,7 +198,7 @@ export const loans: Loan[] = [
         date_modified: '2020-01-01'
     },
     {
-        loan_id: 1,
+        loan_id: 3,
         account_id: 1,
         loan_amount: 1000,
         loan_plan_amount: 100,
@@ -217,7 +217,7 @@ export const loans: Loan[] = [
         date_modified: '2020-01-01'
     },
     {
-        loan_id: 1,
+        loan_id: 4,
         account_id: 1,
         loan_amount: 1000,
         loan_plan_amount: 100,
@@ -321,7 +321,7 @@ export const transfers: Transfer[] = [
         date_modified: '2020-01-01'
     },
     {
-        transfer_id: 1,
+        transfer_id: 2,
         source_account_id: 1,
         destination_account_id: 2,
         transfer_amount: 25,
@@ -339,7 +339,7 @@ export const transfers: Transfer[] = [
         date_modified: '2020-01-01'
     },
     {
-        transfer_id: 1,
+        transfer_id: 3,
         source_account_id: 1,
         destination_account_id: 2,
         transfer_amount: 50,
@@ -357,9 +357,27 @@ export const transfers: Transfer[] = [
         date_modified: '2020-01-01'
     },
     {
-        transfer_id: 1,
+        transfer_id: 4,
         source_account_id: 1,
         destination_account_id: 2,
+        transfer_amount: 200,
+        transfer_title: 'Test Transfer',
+        transfer_description: 'Test Transfer to test the transfer route',
+        transfer_begin_date: '2020-01-01',
+        transfer_end_date: null,
+        frequency_type: 3,
+        frequency_type_variable: null,
+        frequency_month_of_year: null,
+        frequency_day_of_month: null,
+        frequency_day_of_week: null,
+        frequency_week_of_month: null,
+        date_created: '2020-01-01',
+        date_modified: '2020-01-01'
+    },
+    {
+        transfer_id: 5,
+        source_account_id: 2,
+        destination_account_id: 1,
         transfer_amount: 200,
         transfer_title: 'Test Transfer',
         transfer_description: 'Test Transfer to test the transfer route',
