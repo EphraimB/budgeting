@@ -364,16 +364,16 @@ describe('POST /api/wishlists', () => {
         // Add wishlist_date_can_purchase to the wishlist object
         const modifiedWishlist: Wishlist = {
             account_id: newWishlist[0].account_id,
-                date_created: newWishlist[0].date_created,
-                date_modified: newWishlist[0].date_modified,
-                wishlist_amount: newWishlist[0].wishlist_amount,
-                wishlist_date_available: newWishlist[0].wishlist_date_available,
-                wishlist_date_can_purchase: null,
-                wishlist_description: newWishlist[0].wishlist_description,
-                wishlist_id: newWishlist[0].wishlist_id,
-                wishlist_priority: newWishlist[0].wishlist_priority,
-                wishlist_title: newWishlist[0].wishlist_title,
-                wishlist_url_link: newWishlist[0].wishlist_url_link
+            date_created: newWishlist[0].date_created,
+            date_modified: newWishlist[0].date_modified,
+            wishlist_amount: newWishlist[0].wishlist_amount,
+            wishlist_date_available: newWishlist[0].wishlist_date_available,
+            wishlist_date_can_purchase: null,
+            wishlist_description: newWishlist[0].wishlist_description,
+            wishlist_id: newWishlist[0].wishlist_id,
+            wishlist_priority: newWishlist[0].wishlist_priority,
+            wishlist_title: newWishlist[0].wishlist_title,
+            wishlist_url_link: newWishlist[0].wishlist_url_link
         };
 
         mockRequest.wishlist_id = 1;
@@ -451,11 +451,12 @@ describe('PUT /api/wishlists/:id', () => {
         }));
 
         mockRequest.wishlist_id = 1;
+        mockRequest.body = updatedWishlist;
         mockRequest.transactions = [{
             account_id: 1,
             transactions: [{
                 expense_id: 1,
-                date: null,
+                date: '2023-08-14T00:00:00.000Z',
                 amount: 100,
                 title: 'Test',
                 description: 'Test'
@@ -466,9 +467,23 @@ describe('PUT /api/wishlists/:id', () => {
 
         await updateWishlistCron(mockRequest as Request, mockResponse);
 
+        const modifiedWishlist: Wishlist = {
+            account_id: updatedWishlist[0].account_id,
+            date_created: updatedWishlist[0].date_created,
+            date_modified: updatedWishlist[0].date_modified,
+            wishlist_amount: updatedWishlist[0].wishlist_amount,
+            wishlist_date_available: updatedWishlist[0].wishlist_date_available,
+            wishlist_date_can_purchase: null,
+            wishlist_description: updatedWishlist[0].wishlist_description,
+            wishlist_id: updatedWishlist[0].wishlist_id,
+            wishlist_priority: updatedWishlist[0].wishlist_priority,
+            wishlist_title: updatedWishlist[0].wishlist_title,
+            wishlist_url_link: updatedWishlist[0].wishlist_url_link
+        };
+
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(200);
-        expect(mockResponse.json).toHaveBeenCalledWith(updatedWishlist);
+        expect(mockResponse.json).toHaveBeenCalledWith([modifiedWishlist]);
     });
 
     it('should respond with an error message', async () => {

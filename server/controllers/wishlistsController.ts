@@ -262,8 +262,6 @@ export const updateWishlistCron = async (request: Request, response: Response): 
             wishlistsParse(wishlist)
         );
 
-        console.log(wishlists);
-
         const cronParams = {
             date: wishlists[0].wishlist_date_can_purchase,
             account_id: request.body.account_id,
