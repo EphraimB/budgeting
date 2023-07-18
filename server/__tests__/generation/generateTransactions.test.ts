@@ -3,19 +3,46 @@ import { transactions, expenses, payrolls, loans, transfers, wishlists } from '.
 import MockDate from 'mockdate';
 import { GeneratedTransaction } from '../../types/types';
 
+let mockRequest: any;
+let mockResponse: any;
+let next: any;
 
 beforeAll(() => {
     MockDate.set('2020-01-01');
 
     jest.mock('../../utils/helperFunctions', () => ({
         executeQuery: jest.fn()
-            .mockImplementationOnce(() => Promise.resolve([
+            .mockImplementation(() => Promise.resolve([
                 {
                     account_id: 1,
                     employee_id: 1
                 }
             ]))
     }));
+
+    // setup your data
+    mockRequest = {
+        query: {
+            from_date: '2023-07-01',
+            to_date: '2023-08-01',
+            account_id: 1
+        },
+        currentBalance: [
+            {
+                account_id: 1,
+                account_balance: 500
+            }
+        ],
+        transaction: [{ account_id: 1, transactions: transactions.filter(transaction => transaction.account_id === 1) }],
+        expenses: [{ account_id: 1, expenses: expenses.filter(expense => expense.account_id === 1) }],
+        payrolls: [{ employee_id: 1, payroll: payrolls }],
+        loans: [{ account_id: 1, loan: loans.filter(loan => loan.account_id === 1) }],
+        transfers: [{ account_id: 1, transfer: transfers.filter(transfer => transfer.source_account_id === 1) }],
+        wishlists: [{ account_id: 1, wishlist: wishlists.filter(wishlist => wishlist.account_id === 1) }]
+    };
+
+    mockResponse = {};
+    next = jest.fn();
 });
 
 afterAll(() => {
@@ -24,40 +51,6 @@ afterAll(() => {
 });
 
 describe('generateTransactions', () => {
-    let mockRequest: any;
-    let mockResponse: any;
-    let next: any;
-
-    beforeEach(() => {
-        // setup your data
-        mockRequest = {
-            query: {
-                from_date: '2023-07-01',
-                to_date: '2023-08-01',
-                account_id: 1
-            },
-            currentBalance: [
-                {
-                    account_id: 1,
-                    account_balance: 500
-                }
-            ],
-            transaction: [{ account_id: 1, transactions: transactions.filter(transaction => transaction.account_id === 1) }],
-            expenses: [{ account_id: 1, expenses: expenses.filter(expense => expense.account_id === 1) }],
-            payrolls: [{ employee_id: 1, payroll: payrolls }],
-            loans: [{ account_id: 1, loan: loans.filter(loan => loan.account_id === 1) }],
-            transfers: [{ account_id: 1, transfer: transfers.filter(transfer => transfer.source_account_id === 1) }],
-            wishlists: [{ account_id: 1, wishlist: wishlists.filter(wishlist => wishlist.account_id === 1) }]
-        };
-
-        mockResponse = {};
-        next = jest.fn();
-    });
-
-    afterEach(() => {
-        jest.clearAllMocks();
-    });
-
     it('should process transactions correctly', async () => {
         const { default: generateTransactions } = await import('../../generation/generateTransactions');
 
@@ -114,7 +107,7 @@ describe('generateTransactions', () => {
         expect(mockRequest.expenses[0].expenses).toEqual(expenses.filter(expense => expense.account_id === 1));
         expect(mockRequest.payrolls[0].payroll).toEqual(payrolls);
         expect(mockRequest.loans[0].loan).toEqual(loans.filter(loan => loan.account_id === 1));
-        expect(mockRequest.transfers[0].transfer).toEqual(transfers.filter(transfer => transfer.account_id === 1));
+        expect(mockRequest.transfers[0].transfer).toEqual(transfers.filter(transfer => transfer.source_account_id === 1));
         expect(mockRequest.wishlists[0].wishlist).toEqual(wishlists.filter(wishlist => wishlist.account_id === 1));
     });
 });

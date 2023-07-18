@@ -137,7 +137,7 @@ const generateTransactions = async (request: Request, response: Response, next: 
         // Fetch employee_id from account_id
         const employeeResults = await executeQuery(accountQueries.getAccount, [account_id]);
 
-        const employee_id = employeeResults[0].employee_id;
+        const employee_id: number = employeeResults[0].employee_id;
 
         generate(request, response, next, account_id, employee_id, transactions, skippedTransactions, currentBalanceValue);
 
