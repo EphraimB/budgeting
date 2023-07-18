@@ -46,8 +46,8 @@ const generate = async (request: Request, response: Response, next: NextFunction
 
     request.payrolls
         .filter((pyrl) => pyrl.employee_id === employee_id)
-        .forEach((account) => {
-            account.payroll.forEach((payroll: Payroll) => {
+        .forEach((employee) => {
+            employee.payroll.forEach((payroll: Payroll) => {
                 generatePayrollTransactions(transactions, skippedTransactions, payroll, fromDate);
             });
         });
@@ -141,6 +141,8 @@ const generateTransactions = async (request: Request, response: Response, next: 
         const employeeResults = await executeQuery(accountQueries.getAccount, [account_id]);
 
         const employee_id = employeeResults[0].employee_id;
+
+        console.log('employee_id', employee_id);
 
         generate(request, response, next, account_id, employee_id, transactions, skippedTransactions, currentBalanceValue);
 
