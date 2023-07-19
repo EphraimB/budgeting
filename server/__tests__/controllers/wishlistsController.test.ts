@@ -7,6 +7,7 @@ import { Wishlist } from '../../types/types.js';
 // Mock request and response
 let mockRequest: any;
 let mockResponse: any;
+let mockNext: any = jest.fn();
 let consoleSpy: any;
 
 beforeAll(() => {
@@ -344,6 +345,26 @@ describe('GET /api/wishlists', () => {
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(404);
         expect(mockResponse.send).toHaveBeenCalledWith('Wishlist not found');
+    });
+});
+
+describe('POST /api/wishlists', () => {
+    it('should respond with the new wishlist', async () => {
+        // Arrange
+        const newWishlist = wishlists.filter(wishlist => wishlist.wishlist_id === 1);
+
+        mockModule(newWishlist);
+
+        const { createWishlist } = await import('../../controllers/wishlistsController.js');
+
+        mockRequest.body = newWishlist;
+
+        // Act
+        await createWishlist(mockRequest as Request, mockResponse, mockNext);
+
+        // Assert
+        expect(mockRequest.wishlist_id).toBe(1);
+        expect(mockNext).toHaveBeenCalled();
     });
 });
 
