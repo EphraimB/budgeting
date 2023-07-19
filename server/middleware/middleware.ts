@@ -501,8 +501,6 @@ export const updateWishlistCron = async (request: Request, response: Response, n
                 type: 'wishlist'
             };
 
-            console.log(cronParams);
-
             if (!cronParams.date !== null) {
                 const { cronDate, uniqueId } = await scheduleCronJob(cronParams);
 
