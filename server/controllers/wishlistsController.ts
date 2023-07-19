@@ -311,6 +311,8 @@ export const deleteWishlist = async (request: Request, response: Response): Prom
             await deleteCronJob(cronJobResults[0].unique_id);
         } else {
             console.error('Cron job not found');
+            response.status(404).send('Cron job not found');
+            return;
         }
 
         await executeQuery(wishlistQueries.deleteWishlist, [id]);
