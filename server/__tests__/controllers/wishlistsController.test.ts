@@ -366,6 +366,27 @@ describe('POST /api/wishlists middleware', () => {
         expect(mockRequest.wishlist_id).toBe(1);
         expect(mockNext).toHaveBeenCalled();
     });
+
+    it('should respond with an error message', async () => {
+        // Arrange
+        const errorMessage = 'Error creating wishlist';
+        const error = new Error(errorMessage);
+        mockModule(null, errorMessage);
+
+        const { createWishlist } = await import('../../controllers/wishlistsController.js');
+
+        mockRequest.body = wishlists.filter(wishlist => wishlist.wishlist_id === 1);
+
+        // Call the function with the mock request and response
+        await createWishlist(mockRequest as Request, mockResponse, mockNext);
+
+        // Assert
+        expect(mockResponse.status).toHaveBeenCalledWith(400);
+        expect(mockResponse.json).toHaveBeenCalledWith({ message: 'Error creating wishlist' });
+
+        // Assert that the error was logged on the server side
+        expect(consoleSpy).toHaveBeenCalledWith(error);
+    });
 });
 
 describe('POST /api/wishlists', () => {
