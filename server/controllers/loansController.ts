@@ -128,7 +128,8 @@ export const createLoan = async (request: Request, response: Response): Promise<
         frequency_day_of_week,
         frequency_week_of_month,
         frequency_month_of_year,
-        scriptPath: '/app/dist/scripts/createTransaction.sh'
+        scriptPath: '/app/dist/scripts/createTransaction.sh',
+        type: 'loan'
     };
 
     try {
@@ -205,7 +206,8 @@ export const updateLoan = async (request: Request, response: Response): Promise<
         frequency_day_of_week,
         frequency_week_of_month,
         frequency_month_of_year,
-        scriptPath: '/app/dist/scripts/createTransaction.sh'
+        scriptPath: '/app/dist/scripts/createTransaction.sh',
+        type: 'loan'
     };
 
     try {

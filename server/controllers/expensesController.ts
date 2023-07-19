@@ -122,7 +122,8 @@ export const createExpense = async (request: Request, response: Response): Promi
         frequency_day_of_week,
         frequency_week_of_month,
         frequency_month_of_year,
-        scriptPath: '/app/dist/scripts/createTransaction.sh'
+        scriptPath: '/app/dist/scripts/createTransaction.sh',
+        type: 'expense'
     };
 
     try {
@@ -190,7 +191,8 @@ export const updateExpense = async (request: Request, response: Response): Promi
         frequency_day_of_week,
         frequency_week_of_month,
         frequency_month_of_year,
-        scriptPath: '/app/dist/scripts/createTransaction.sh'
+        scriptPath: '/app/dist/scripts/createTransaction.sh',
+        type: 'expense'
     };
 
     try {

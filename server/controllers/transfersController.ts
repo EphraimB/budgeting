@@ -130,7 +130,8 @@ export const createTransfer = async (request: Request, response: Response): Prom
             frequency_day_of_week,
             frequency_week_of_month,
             frequency_month_of_year,
-            scriptPath: '/app/dist/scripts/createTransaction.sh'
+            scriptPath: '/app/dist/scripts/createTransaction.sh',
+            type: 'transfer'
         };
 
         const { cronDate, uniqueId } = await scheduleCronJob(cronParams);
@@ -205,7 +206,8 @@ export const updateTransfer = async (request: Request, response: Response): Prom
             frequency_day_of_week,
             frequency_week_of_month,
             frequency_month_of_year,
-            scriptPath: '/app/dist/scripts/createTransaction.sh'
+            scriptPath: '/app/dist/scripts/createTransaction.sh',
+            type: 'transfer'
         };
 
         const transferResults = await executeQuery(transferQueries.getTransfersById, [id]);

@@ -165,7 +165,8 @@ export const createWishlistCron = async (request: Request, response: Response): 
             amount: -request.body.amount,
             title: request.body.title,
             description: request.body.description,
-            scriptPath: '/app/dist/scripts/createTransaction.sh'
+            scriptPath: '/app/dist/scripts/createTransaction.sh',
+            type: 'wishlist'
         };
 
         const { cronDate, uniqueId } = await scheduleCronJob(cronParams);
@@ -270,7 +271,8 @@ export const updateWishlistCron = async (request: Request, response: Response): 
             amount: -request.body.amount,
             title: request.body.title,
             description: request.body.description,
-            scriptPath: '/app/dist/scripts/createTransaction.sh'
+            scriptPath: '/app/dist/scripts/createTransaction.sh',
+            type: 'wishlist'
         };
 
         const { cronDate, uniqueId } = await scheduleCronJob(cronParams);
