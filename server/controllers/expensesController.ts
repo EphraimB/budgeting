@@ -303,9 +303,10 @@ export const updateExpenseReturnObject = async (request: Request, response: Resp
  * 
  * @param request - Request object
  * @param response - Response object
+ * @param next - Next function
  * Sends a response with the deleted expense and deletes the cron job for the expense and deletes it from the database
  */
-export const deleteExpense = async (request: Request, response: Response): Promise<void> => {
+export const deleteExpense = async (request: Request, response: Response, next: NextFunction): Promise<void> => {
     const { id } = request.params;
 
     try {
@@ -334,9 +335,13 @@ export const deleteExpense = async (request: Request, response: Response): Promi
 
         await executeQuery(cronJobQueries.deleteCronJob, [cronId]);
 
-        response.status(200).send('Expense deleted successfully');
+        next();
     } catch (error) {
         console.error(error); // Log the error on the server side
         handleError(response, 'Error deleting expense');
     }
+};
+
+export const deleteExpenseReturnObject = async (request: Request, response: Response): Promise<void> => {
+    response.status(200).send('Expense deleted successfully');
 };
