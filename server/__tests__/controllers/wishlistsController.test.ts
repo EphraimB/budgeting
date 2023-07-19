@@ -346,6 +346,42 @@ describe('GET /api/wishlists', () => {
         expect(mockResponse.status).toHaveBeenCalledWith(404);
         expect(mockResponse.send).toHaveBeenCalledWith('Wishlist not found');
     });
+
+    it('should respond with an array of wishlists when wishlist_date_can_purchase is null', async () => {
+        // Arrange
+        mockModule(wishlists);
+
+        mockRequest.query = { account_id: null, id: null };
+
+        mockRequest.transactions = [
+            {
+                transactions: []
+            }
+        ];
+
+        const { getWishlists } = await import('../../controllers/wishlistsController.js');
+
+        // Call the function with the mock request and response
+        await getWishlists(mockRequest as Request, mockResponse);
+
+        const modifiedWishlists = wishlists.map((wishlist, i) => ({
+            account_id: wishlist.account_id,
+            date_created: wishlist.date_created,
+            date_modified: wishlist.date_modified,
+            wishlist_amount: wishlist.wishlist_amount,
+            wishlist_date_available: wishlist.wishlist_date_available,
+            wishlist_date_can_purchase: null,
+            wishlist_description: wishlist.wishlist_description,
+            wishlist_id: wishlist.wishlist_id,
+            wishlist_priority: wishlist.wishlist_priority,
+            wishlist_title: wishlist.wishlist_title,
+            wishlist_url_link: wishlist.wishlist_url_link
+        }));
+
+        // Assert
+        expect(mockResponse.status).toHaveBeenCalledWith(200);
+        expect(mockResponse.json).toHaveBeenCalledWith(modifiedWishlists);
+    });
 });
 
 describe('POST /api/wishlists middleware', () => {
