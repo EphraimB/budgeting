@@ -241,6 +241,8 @@ export const updateWishlistCron = async (request: Request, response: Response): 
             await deleteCronJob(results[0].unique_id);
         } else {
             console.error('Cron job not found');
+            response.status(404).send('Cron job not found');
+            return;
         }
 
         // Create a map of wishlist_id to transaction date for faster lookup
