@@ -167,5 +167,6 @@ declare module 'express-serve-static-core' {
         currentBalance: CurrentBalance[];
         transactions: any[];
         wishlist_id: number;
+        expense_id: number;
     }
 }

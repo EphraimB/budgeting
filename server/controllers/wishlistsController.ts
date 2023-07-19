@@ -170,18 +170,20 @@ export const createWishlistCron = async (request: Request, response: Response): 
             type: 'wishlist'
         };
 
-        const { cronDate, uniqueId } = await scheduleCronJob(cronParams);
+        if (cronParams.date != null) {
+            const { cronDate, uniqueId } = await scheduleCronJob(cronParams);
 
-        const cronId: number = (await executeQuery(cronJobQueries.createCronJob, [
-            uniqueId,
-            cronDate
-        ]))[0].cron_job_id;
+            const cronId: number = (await executeQuery(cronJobQueries.createCronJob, [
+                uniqueId,
+                cronDate
+            ]))[0].cron_job_id;
 
-        const updateWishlist = await executeQuery(wishlistQueries.updateWishlistWithCronJobId, [cronId, wishlist_id]);
+            const updateWishlist = await executeQuery(wishlistQueries.updateWishlistWithCronJobId, [cronId, wishlist_id]);
 
-        if (updateWishlist.length === 0) {
-            response.status(400).send('Wishlist couldn\'t update the cron_job_id');
-            return;
+            if (updateWishlist.length === 0) {
+                response.status(400).send('Wishlist couldn\'t update the cron_job_id');
+                return;
+            }
         }
 
         response.status(201).json(wishlists);
@@ -277,9 +279,11 @@ export const updateWishlistCron = async (request: Request, response: Response): 
             type: 'wishlist'
         };
 
-        const { cronDate, uniqueId } = await scheduleCronJob(cronParams);
+        if (cronParams.date === null) {
+            const { cronDate, uniqueId } = await scheduleCronJob(cronParams);
 
-        await executeQuery(cronJobQueries.updateCronJob, [uniqueId, cronDate, cronId]);
+            await executeQuery(cronJobQueries.updateCronJob, [uniqueId, cronDate, cronId]);
+        }
 
         response.status(200).json(wishlists);
 
@@ -315,8 +319,6 @@ export const deleteWishlist = async (request: Request, response: Response): Prom
             await deleteCronJob(cronJobResults[0].unique_id);
         } else {
             console.error('Cron job not found');
-            response.status(404).send('Cron job not found');
-            return;
         }
 
         await executeQuery(wishlistQueries.deleteWishlist, [id]);

@@ -1,4 +1,4 @@
-import { Request, Response } from 'express';
+import { NextFunction, Request, Response } from 'express';
 import { expenseQueries, cronJobQueries } from '../models/queryData.js';
 import scheduleCronJob from '../crontab/scheduleCronJob.js';
 import deleteCronJob from '../crontab/deleteCronJob.js';
@@ -93,9 +93,10 @@ export const getExpenses = async (request: Request, response: Response): Promise
  * 
  * @param request - Request object
  * @param response - Response object
+ * @param next - Next function
  * Sends a response with the created expense and creates a cron job for the expense and inserts it into the database
  */
-export const createExpense = async (request: Request, response: Response): Promise<void> => {
+export const createExpense = async (request: Request, response: Response, next: NextFunction): Promise<void> => {
     const {
         account_id,
         amount,
@@ -130,7 +131,7 @@ export const createExpense = async (request: Request, response: Response): Promi
         const cronParams = {
             date: begin_date,
             account_id,
-            id: expenses[0].expense_id,
+            id: modifiedExpenses[0].expense_id,
             amount: -amount,
             title,
             description,
@@ -153,6 +154,23 @@ export const createExpense = async (request: Request, response: Response): Promi
         console.log('Cron job created ' + cronId);
 
         await executeQuery(expenseQueries.updateExpenseWithCronJobId, [cronId, modifiedExpenses[0].expense_id]);
+
+        request.expense_id = modifiedExpenses[0].expense_id;
+
+        next();
+    } catch (error) {
+        console.error(error); // Log the error on the server side
+        handleError(response, 'Error creating expense');
+    }
+};
+
+export const createExpenseReturnObject = async (request: Request, response: Response): Promise<void> => {
+    const { expense_id } = request;
+
+    try {
+        const expenses = await executeQuery<ExpenseInput>(expenseQueries.getExpenseById, [expense_id]);
+
+        const modifiedExpenses = expenses.map(parseExpenses);
 
         response.status(201).json(modifiedExpenses);
     } catch (error) {

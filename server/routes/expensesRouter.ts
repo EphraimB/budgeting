@@ -1,7 +1,9 @@
 import express, { Router } from 'express';
 import { query, param, body } from 'express-validator';
-import { getExpenses, createExpense, updateExpense, deleteExpense } from '../controllers/expensesController.js';
+import { getExpenses, createExpense, createExpenseReturnObject, updateExpense, deleteExpense } from '../controllers/expensesController.js';
 import validateRequest from '../utils/validateRequest.js';
+import generateTransactions from '../generation/generateTransactions.js';
+import { setQueries, getCurrentBalance, getTransactionsByAccount, getExpensesByAccount, getLoansByAccount, getPayrollsMiddleware, getTransfersByAccount, getWishlistsByAccount, updateWishlistCron } from '../middleware/middleware.js';
 
 const router: Router = express.Router();
 
@@ -28,8 +30,7 @@ router.post('/',
         body('begin_date').isISO8601().withMessage('Begin date must be a datetime'),
         body('end_date').optional().isISO8601().withMessage('End date must be a datetime'),
         validateRequest
-    ],
-    createExpense);
+    ], createExpense, setQueries, getCurrentBalance, getTransactionsByAccount, getExpensesByAccount, getLoansByAccount, getPayrollsMiddleware, getTransfersByAccount, getWishlistsByAccount, generateTransactions, updateWishlistCron, createExpenseReturnObject);
 
 router.put('/:id',
     [

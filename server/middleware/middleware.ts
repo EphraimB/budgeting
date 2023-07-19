@@ -2,6 +2,43 @@ import { Request, Response, NextFunction } from 'express';
 import { transactionHistoryQueries, expenseQueries, loanQueries, payrollQueries, wishlistQueries, transferQueries, currentBalanceQueries, accountQueries } from '../models/queryData.js';
 import { handleError, executeQuery } from '../utils/helperFunctions.js';
 import { Expense, Loan, Payroll, Transfer, Wishlist } from '../types/types.js';
+import scheduleCronJob from '../crontab/scheduleCronJob.js';
+import deleteCronJob from '../crontab/deleteCronJob.js';
+import { cronJobQueries } from '../models/queryData.js';
+
+interface WishlistInput {
+    wishlist_id: any;
+    account_id: string;
+    cron_job_id: string;
+    wishlist_amount: string;
+    wishlist_title: string;
+    wishlist_description: string;
+    wishlist_url_link: string;
+    wishlist_priority: string;
+    wishlist_date_available: string;
+    wishlist_date_can_purchase: string;
+    date_created: string;
+    date_modified: string;
+}
+
+/**
+ * 
+ * @param wishlist - Wishlist object
+ * @returns - Wishlist object with parsed values
+ */
+const wishlistsParse = (wishlist: WishlistInput): Wishlist => ({
+    wishlist_id: parseInt(wishlist.wishlist_id),
+    account_id: parseInt(wishlist.account_id),
+    wishlist_amount: parseFloat(wishlist.wishlist_amount),
+    wishlist_title: wishlist.wishlist_title,
+    wishlist_description: wishlist.wishlist_description,
+    wishlist_url_link: wishlist.wishlist_url_link,
+    wishlist_priority: parseInt(wishlist.wishlist_priority),
+    wishlist_date_available: wishlist.wishlist_date_available,
+    wishlist_date_can_purchase: wishlist.wishlist_date_can_purchase,
+    date_created: wishlist.date_created,
+    date_modified: wishlist.date_modified
+});
 
 /**
  * 
@@ -417,5 +454,66 @@ export const getCurrentBalance = async (request: Request, response: Response, ne
     } catch (error) {
         console.error(error); // Log the error on the server side
         handleError(response, 'Error getting current balance');
+    }
+};
+
+/**
+ * 
+ * @param request - The request object
+ * @param response - The response object
+ * @param next - The next function
+ * Updates a cron job for a wishlist middleware
+ */
+export const updateWishlistCron = async (request: Request, response: Response, next: NextFunction): Promise<void> => {
+    try {
+        // Get all wishlists
+        const wishlistsResults = await executeQuery(wishlistQueries.getAllWishlists, []);
+
+        // Create a map of wishlist_id to transaction date for faster lookup
+        const transactionMap: Record<number, string | null> = {};
+        request.transactions.forEach((account) => {
+            account.transactions.forEach((transaction: any) => {
+                transactionMap[transaction.wishlist_id] = transaction.date;
+            });
+        });
+
+        // Process each wishlist
+        for (const wslst of wishlistsResults) {
+            const cronId = wslst.cron_job_id;
+
+            const results = await executeQuery(cronJobQueries.getCronJob, [cronId]);
+            if (results.length > 0) {
+                await deleteCronJob(results[0].unique_id);
+            } else {
+                console.error('Cron job not found');
+                // Avoid sending a response in the middle of the loop
+                continue;
+            }
+
+            const cronParams = {
+                date: transactionMap[wslst.wishlist_id],
+                account_id: wslst.account_id,
+                id: wslst.wishlist_id,
+                amount: -wslst.wishlist_amount,
+                title: wslst.wishlist_title,
+                description: wslst.wishlist_description,
+                scriptPath: '/app/dist/scripts/createTransaction.sh',
+                type: 'wishlist'
+            };
+
+            console.log(cronParams);
+
+            if (!cronParams.date !== null) {
+                const { cronDate, uniqueId } = await scheduleCronJob(cronParams);
+
+                await executeQuery(cronJobQueries.updateCronJob, [uniqueId, cronDate, cronId]);
+            }
+        }
+
+        // Move on to the next middleware or route handler
+        next();
+    } catch (error) {
+        console.error(error); // Log the error on the server side
+        handleError(response, 'Error updating cron tab');
     }
 };
