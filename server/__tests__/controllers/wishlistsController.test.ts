@@ -348,8 +348,8 @@ describe('GET /api/wishlists', () => {
     });
 });
 
-describe('POST /api/wishlists', () => {
-    it('should respond with the new wishlist', async () => {
+describe('POST /api/wishlists middleware', () => {
+    it('should populate the request.wishlist_id', async () => {
         // Arrange
         const newWishlist = wishlists.filter(wishlist => wishlist.wishlist_id === 1);
 
@@ -451,6 +451,27 @@ describe('POST /api/wishlists', () => {
 
         // Assert that the error was logged on the server side
         expect(consoleSpy).toHaveBeenCalledWith(error);
+    });
+});
+
+describe('PUT /api/wishlists middleware', () => {
+    it('should populate the request.wishlist_id', async () => {
+        // Arrange
+        const newWishlist = wishlists.filter(wishlist => wishlist.wishlist_id === 1);
+
+        mockModule(newWishlist);
+
+        const { updateWishlist } = await import('../../controllers/wishlistsController.js');
+
+        mockRequest.params = { id: 1 };
+        mockRequest.body = newWishlist;
+
+        // Act
+        await updateWishlist(mockRequest as Request, mockResponse, mockNext);
+
+        // Assert
+        expect(mockRequest.wishlist_id).toBe(1);
+        expect(mockNext).toHaveBeenCalled();
     });
 });
 
