@@ -25,6 +25,7 @@ type ExpenseQueries = {
   getExpenseByIdAndAccountId: string;
   createExpense: string;
   updateExpense: string;
+  updateExpenseWithCronJobId: string;
   deleteExpense: string;
 };
 
@@ -36,6 +37,7 @@ type LoanQueries = {
   getLoansByIdAndAccountId: string;
   createLoan: string;
   updateLoan: string;
+  updateLoanWithCronJobId: string;
   deleteLoan: string;
 };
 
@@ -84,6 +86,7 @@ type TransferQueries = {
   getTransfersByIdAndAccountId: string;
   createTransfer: string;
   updateTransfer: string;
+  updateTransferWithCronJobId: string;
   deleteTransfer: string;
 };
 
@@ -138,8 +141,9 @@ export const expenseQueries: ExpenseQueries = {
   getExpenseById: 'SELECT * FROM expenses WHERE expense_id = $1',
   getExpensesByAccountId: 'SELECT * FROM expenses WHERE account_id = $1 ORDER BY expense_id ASC',
   getExpenseByIdAndAccountId: 'SELECT * FROM expenses WHERE expense_id = $1 AND account_id = $2',
-  createExpense: 'INSERT INTO expenses (account_id, cron_job_id, expense_amount, expense_title, expense_description, frequency_type, frequency_type_variable, frequency_day_of_month, frequency_day_of_week, frequency_week_of_month, frequency_month_of_year, expense_begin_date) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12) RETURNING *',
+  createExpense: 'INSERT INTO expenses (account_id, expense_amount, expense_title, expense_description, frequency_type, frequency_type_variable, frequency_day_of_month, frequency_day_of_week, frequency_week_of_month, frequency_month_of_year, expense_begin_date) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11) RETURNING *',
   updateExpense: 'UPDATE expenses SET account_id = $1, expense_amount = $2, expense_title = $3, expense_description = $4, frequency_type = $5, frequency_type_variable = $6, frequency_day_of_month = $7, frequency_day_of_week = $8, frequency_week_of_month = $9, frequency_month_of_year = $10, expense_begin_date = $11 WHERE expense_id = $12 RETURNING *',
+  updateExpenseWithCronJobId: 'UPDATE expenses SET cron_job_id = $1 WHERE expense_id = $2 RETURNING *',
   deleteExpense: 'DELETE FROM expenses WHERE expense_id = $1'
 };
 
@@ -149,8 +153,9 @@ export const loanQueries: LoanQueries = {
   getLoansById: 'SELECT * FROM loans WHERE loan_id = $1',
   getLoansByAccountId: 'SELECT * FROM loans WHERE account_id = $1 ORDER BY loan_id ASC',
   getLoansByIdAndAccountId: 'SELECT * FROM loans WHERE loan_id = $1 AND account_id = $2',
-  createLoan: 'INSERT INTO loans (account_id, cron_job_id, loan_amount, loan_plan_amount, loan_recipient, loan_title, loan_description, frequency_type, frequency_type_variable, frequency_day_of_month, frequency_day_of_week, frequency_week_of_month, frequency_month_of_year, loan_begin_date) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14) RETURNING *',
+  createLoan: 'INSERT INTO loans (account_id, loan_amount, loan_plan_amount, loan_recipient, loan_title, loan_description, frequency_type, frequency_type_variable, frequency_day_of_month, frequency_day_of_week, frequency_week_of_month, frequency_month_of_year, loan_begin_date) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13) RETURNING *',
   updateLoan: 'UPDATE loans SET account_id = $1, loan_amount = $2, loan_plan_amount = $3, loan_recipient = $4, loan_title = $5, loan_description = $6, frequency_type = $7, frequency_type_variable = $8, frequency_day_of_month = $9, frequency_day_of_week = $10, frequency_week_of_month = $11, frequency_month_of_year = $12, loan_begin_date = $13 WHERE loan_id = $14 RETURNING *',
+  updateLoanWithCronJobId: 'UPDATE loans SET cron_job_id = $1 WHERE loan_id = $2 RETURNING *',
   deleteLoan: 'DELETE FROM loans WHERE loan_id = $1'
 };
 
@@ -322,8 +327,9 @@ export const transferQueries: TransferQueries = {
   getTransfersById: 'SELECT * FROM transfers WHERE transfer_id = $1',
   getTransfersByAccountId: 'SELECT * FROM transfers WHERE source_account_id = $1 OR destination_account_id = $1',
   getTransfersByIdAndAccountId: 'SELECT * FROM transfers WHERE transfer_id = $1 AND (source_account_id = $2 OR destination_account_id = $2)',
-  createTransfer: 'INSERT INTO transfers (cron_job_id, source_account_id, destination_account_id, transfer_amount, transfer_title, transfer_description, frequency_type, frequency_type_variable, frequency_day_of_month, frequency_day_of_week, frequency_week_of_month, frequency_month_of_year, transfer_begin_date, transfer_end_date) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14) RETURNING *',
+  createTransfer: 'INSERT INTO transfers (source_account_id, destination_account_id, transfer_amount, transfer_title, transfer_description, frequency_type, frequency_type_variable, frequency_day_of_month, frequency_day_of_week, frequency_week_of_month, frequency_month_of_year, transfer_begin_date, transfer_end_date) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13) RETURNING *',
   updateTransfer: 'UPDATE transfers SET source_account_id = $1, destination_account_id = $2, transfer_amount = $3, transfer_title = $4, transfer_description = $5, frequency_type = $6, frequency_type_variable = $7, frequency_day_of_month = $8, frequency_day_of_week = $9, frequency_week_of_month = $10, frequency_month_of_year = $11, transfer_begin_date = $12, transfer_end_date = $13 WHERE transfer_id = $14 RETURNING *',
+  updateTransferWithCronJobId: 'UPDATE transfers SET cron_job_id = $1 WHERE transfer_id = $2 RETURNING *',
   deleteTransfer: 'DELETE FROM transfers WHERE transfer_id = $1'
 };
 

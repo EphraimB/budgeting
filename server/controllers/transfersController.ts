@@ -117,9 +117,29 @@ export const createTransfer = async (request: Request, response: Response): Prom
     } = request.body;
 
     try {
+        const transferResult = await executeQuery<TransferInput>(transferQueries.createTransfer, [
+            source_account_id,
+            destination_account_id,
+            amount,
+            title,
+            description,
+            frequency_type,
+            frequency_type_variable,
+            frequency_day_of_month,
+            frequency_day_of_week,
+            frequency_week_of_month,
+            frequency_month_of_year,
+            begin_date,
+            end_date
+        ]);
+
+        // Parse the data to correct format and return an object
+        const transfers: Transfer[] = transferResult.map(transfersParse);
+
         const cronParams = {
             date: begin_date,
             account_id: source_account_id,
+            id: transfers[0].transfer_id,
             destination_account_id,
             amount: -amount,
             title,
@@ -140,26 +160,6 @@ export const createTransfer = async (request: Request, response: Response): Prom
         const cronId: number = cronJobResult[0].cron_job_id;
 
         console.log('Cron job created ' + cronId);
-
-        const transferResult = await executeQuery<TransferInput>(transferQueries.createTransfer, [
-            cronId,
-            source_account_id,
-            destination_account_id,
-            amount,
-            title,
-            description,
-            frequency_type,
-            frequency_type_variable,
-            frequency_day_of_month,
-            frequency_day_of_week,
-            frequency_week_of_month,
-            frequency_month_of_year,
-            begin_date,
-            end_date
-        ]);
-
-        // Parse the data to correct format and return an object
-        const transfers: Transfer[] = transferResult.map(transfersParse);
 
         response.status(201).json(transfers);
     } catch (error) {
@@ -196,6 +196,7 @@ export const updateTransfer = async (request: Request, response: Response): Prom
         const cronParams = {
             date: begin_date,
             account_id: source_account_id,
+            id,
             destination_account_id,
             amount: -amount,
             title,

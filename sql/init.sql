@@ -43,7 +43,7 @@ CREATE TABLE IF NOT EXISTS cron_jobs (
 CREATE TABLE IF NOT EXISTS expenses (
   expense_id SERIAL PRIMARY KEY,
   account_id INT NOT NULL REFERENCES accounts(account_id),
-  cron_job_id INT NOT NULL REFERENCES cron_jobs(cron_job_id),
+  cron_job_id INT REFERENCES cron_jobs(cron_job_id),
   expense_amount numeric(12, 2) NOT NULL,
   expense_title VARCHAR(255) NOT NULL,
   expense_description VARCHAR(255) NOT NULL,
@@ -63,7 +63,7 @@ CREATE TABLE IF NOT EXISTS expenses (
 CREATE TABLE IF NOT EXISTS loans (
   loan_id SERIAL PRIMARY KEY,
   account_id INT NOT NULL REFERENCES accounts(account_id),
-  cron_job_id INT NOT NULL REFERENCES cron_jobs(cron_job_id),
+  cron_job_id INT REFERENCES cron_jobs(cron_job_id),
   loan_amount numeric(12, 2) NOT NULL,
   loan_plan_amount numeric(12, 2) NOT NULL,
   loan_recipient VARCHAR(255) NOT NULL,
@@ -113,7 +113,7 @@ CREATE TABLE IF NOT EXISTS wishlist (
 -- Create a transfers table in postgres that will transfer money from one account to another
 CREATE TABLE IF NOT EXISTS transfers (
   transfer_id SERIAL PRIMARY KEY,
-  cron_job_id INT NOT NULL REFERENCES cron_jobs(cron_job_id),
+  cron_job_id INT REFERENCES cron_jobs(cron_job_id),
   source_account_id INT NOT NULL REFERENCES accounts(account_id),
   destination_account_id INT NOT NULL REFERENCES accounts(account_id),
   transfer_amount numeric(12, 2) NOT NULL,

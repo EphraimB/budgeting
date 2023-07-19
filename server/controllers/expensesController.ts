@@ -110,34 +110,9 @@ export const createExpense = async (request: Request, response: Response): Promi
         begin_date
     } = request.body;
 
-    const cronParams = {
-        date: begin_date,
-        account_id,
-        amount: -amount,
-        title,
-        description,
-        frequency_type,
-        frequency_type_variable,
-        frequency_day_of_month,
-        frequency_day_of_week,
-        frequency_week_of_month,
-        frequency_month_of_year,
-        scriptPath: '/app/dist/scripts/createTransaction.sh',
-        type: 'expense'
-    };
-
     try {
-        const { cronDate, uniqueId } = await scheduleCronJob(cronParams);
-        const cronId: number = (await executeQuery(cronJobQueries.createCronJob, [
-            uniqueId,
-            cronDate
-        ]))[0].cron_job_id;
-
-        console.log('Cron job created ' + cronId);
-
         const expenses = await executeQuery<ExpenseInput>(expenseQueries.createExpense, [
             account_id,
-            cronId,
             amount,
             title,
             description,
@@ -150,7 +125,36 @@ export const createExpense = async (request: Request, response: Response): Promi
             begin_date,
         ]);
 
-        response.status(201).json(expenses.map(parseExpenses));
+        const cronParams = {
+            date: begin_date,
+            account_id,
+            id: expenses[0].expense_id,
+            amount: -amount,
+            title,
+            description,
+            frequency_type,
+            frequency_type_variable,
+            frequency_day_of_month,
+            frequency_day_of_week,
+            frequency_week_of_month,
+            frequency_month_of_year,
+            scriptPath: '/app/dist/scripts/createTransaction.sh',
+            type: 'expense'
+        };
+
+        const { cronDate, uniqueId } = await scheduleCronJob(cronParams);
+        const cronId: number = (await executeQuery(cronJobQueries.createCronJob, [
+            uniqueId,
+            cronDate
+        ]))[0].cron_job_id;
+
+        console.log('Cron job created ' + cronId);
+
+        const modifiedExpenses = expenses.map(parseExpenses);
+
+        await executeQuery(expenseQueries.updateExpenseWithCronJobId, [cronId, modifiedExpenses[0].expense_id]);
+
+        response.status(201).json(modifiedExpenses);
     } catch (error) {
         console.error(error); // Log the error on the server side
         handleError(response, 'Error creating expense');
@@ -182,6 +186,7 @@ export const updateExpense = async (request: Request, response: Response): Promi
     const cronParams = {
         date: begin_date,
         account_id,
+        id,
         amount: -amount,
         title,
         description,

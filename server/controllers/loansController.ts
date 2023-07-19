@@ -116,36 +116,11 @@ export const createLoan = async (request: Request, response: Response): Promise<
         begin_date
     } = request.body;
 
-    const cronParams = {
-        date: begin_date,
-        account_id,
-        amount: -plan_amount,
-        title,
-        description,
-        frequency_type,
-        frequency_type_variable,
-        frequency_day_of_month,
-        frequency_day_of_week,
-        frequency_week_of_month,
-        frequency_month_of_year,
-        scriptPath: '/app/dist/scripts/createTransaction.sh',
-        type: 'loan'
-    };
-
     try {
-        const { cronDate, uniqueId } = await scheduleCronJob(cronParams);
-        const cronId: number = (await executeQuery(cronJobQueries.createCronJob, [
-            uniqueId,
-            cronDate
-        ]))[0].cron_job_id;
-
-        console.log('Cron job created ' + cronId);
-
         const loanResults = await executeQuery<LoanInput>(
             loanQueries.createLoan,
             [
                 account_id,
-                cronId,
                 amount,
                 plan_amount,
                 recipient,
@@ -162,6 +137,32 @@ export const createLoan = async (request: Request, response: Response): Promise<
         );
 
         const loans: Loan[] = loanResults.map(loan => parseLoan(loan));
+
+        const cronParams = {
+            date: begin_date,
+            account_id,
+            id: loans[0].loan_id,
+            amount: -plan_amount,
+            title,
+            description,
+            frequency_type,
+            frequency_type_variable,
+            frequency_day_of_month,
+            frequency_day_of_week,
+            frequency_week_of_month,
+            frequency_month_of_year,
+            scriptPath: '/app/dist/scripts/createTransaction.sh',
+            type: 'loan'
+        };
+        const { cronDate, uniqueId } = await scheduleCronJob(cronParams);
+
+        const cronId: number = (await executeQuery(cronJobQueries.createCronJob, [
+            uniqueId,
+            cronDate
+        ]))[0].cron_job_id;
+
+        console.log('Cron job created ' + cronId);
+
         response.status(201).json(loans);
     } catch (error) {
         console.error(error); // Log the error on the server side

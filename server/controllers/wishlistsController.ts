@@ -162,6 +162,7 @@ export const createWishlistCron = async (request: Request, response: Response): 
         const cronParams = {
             date: wishlists[0].wishlist_date_can_purchase,
             account_id: request.body.account_id,
+            id: wishlist_id,
             amount: -request.body.amount,
             title: request.body.title,
             description: request.body.description,
@@ -268,6 +269,7 @@ export const updateWishlistCron = async (request: Request, response: Response): 
         const cronParams = {
             date: wishlists[0].wishlist_date_can_purchase,
             account_id: request.body.account_id,
+            id: wishlist_id,
             amount: -request.body.amount,
             title: request.body.title,
             description: request.body.description,
