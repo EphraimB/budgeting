@@ -528,6 +528,25 @@ describe('PUT /api/wishlists middleware', () => {
         expect(mockNext).toHaveBeenCalled();
     });
 
+    it('should respond with a 404 error message when the wishlist does not exist', async () => {
+        // Arrange
+        const newWishlist = wishlists.filter(wishlist => wishlist.wishlist_id === 1);
+
+        mockModule([]);
+
+        const { updateWishlist } = await import('../../controllers/wishlistsController.js');
+
+        mockRequest.params = { id: 3 };
+        mockRequest.body = newWishlist;
+
+        // Act
+        await updateWishlist(mockRequest as Request, mockResponse, mockNext);
+
+        // Assert
+        expect(mockResponse.status).toHaveBeenCalledWith(404);
+        expect(mockResponse.send).toHaveBeenCalledWith('Wishlist not found');
+    });
+
     it('should respond with an error message', async () => {
         // Arrange
         const errorMessage = 'Error updating wishlist';
