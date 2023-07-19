@@ -164,6 +164,12 @@ export const createExpense = async (request: Request, response: Response, next: 
     }
 };
 
+/**
+ * 
+ * @param request - Request object
+ * @param response - Response object
+ * Sends a response with the created expense
+ */
 export const createExpenseReturnObject = async (request: Request, response: Response): Promise<void> => {
     const { expense_id } = request;
 
@@ -183,9 +189,10 @@ export const createExpenseReturnObject = async (request: Request, response: Resp
  * 
  * @param request - Request object
  * @param response - Response object
+ * @param next - Next function
  * Sends a response with the updated expense and updates the cron job for the expense and updates it in the database
  */
-export const updateExpense = async (request: Request, response: Response): Promise<void> => {
+export const updateExpense = async (request: Request, response: Response, next: NextFunction): Promise<void> => {
     const id: number = parseInt(request.params.id);
     const {
         account_id,
@@ -262,10 +269,33 @@ export const updateExpense = async (request: Request, response: Response): Promi
             id
         ]);
 
-        response.status(200).json(expenses.map(parseExpenses));
+        request.expense_id = id;
+
+        next();
     } catch (error) {
         console.error(error); // Log the error on the server side
         handleError(response, 'Error updating expense');
+    }
+};
+
+/**
+ * 
+ * @param request - Request object
+ * @param response - Response object
+ * Sends a response with the updated expense
+ */
+export const updateExpenseReturnObject = async (request: Request, response: Response): Promise<void> => {
+    const { expense_id } = request;
+
+    try {
+        const expenses = await executeQuery<ExpenseInput>(expenseQueries.getExpenseById, [expense_id]);
+
+        const modifiedExpenses = expenses.map(parseExpenses);
+
+        response.status(200).json(modifiedExpenses);
+    } catch (error) {
+        console.error(error); // Log the error on the server side
+        handleError(response, 'Error creating expense');
     }
 };
 
