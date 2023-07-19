@@ -1,5 +1,6 @@
 #!/bin/sh
 
+unique_id=$1
 account_id=$2
 transaction_amount=$3
 transaction_title=$4
@@ -28,4 +29,10 @@ if [ $# -eq 6 ]; then
     else
         echo "Transaction creation failed for destination_account_id $destination_account_id"
     fi
+fi
+
+# Check if the unique_id is prefixed with "wishlist_"
+if echo "${unique_id}" | grep -q "^wishlist_"; then
+    # If so, remove the existing cron job for this unique id
+    (crontab -l | grep -v "/app/dist/scripts/createTransaction.sh ${unique_id}" || true) | crontab -
 fi
