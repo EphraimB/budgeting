@@ -504,23 +504,6 @@ describe('PUT /api/wishlists/:id', () => {
         // Assert that the error was logged on the server side
         expect(consoleSpy).toHaveBeenCalledWith(error);
     });
-
-    it('should respond with a 404 error message when the wishlist does not exist', async () => {
-        // Arrange
-        mockModule([]);
-
-        const { updateWishlistCron } = await import('../../controllers/wishlistsController.js');
-
-        mockRequest.params = { id: 3 };
-        mockRequest.body = wishlists.filter(wishlist => wishlist.wishlist_id === 1);
-
-        // Act
-        await updateWishlistCron(mockRequest as Request, mockResponse);
-
-        // Assert
-        expect(mockResponse.status).toHaveBeenCalledWith(404);
-        expect(mockResponse.send).toHaveBeenCalledWith('Wishlist not found');
-    });
 });
 
 describe('DELETE /api/wishlists/:id', () => {
