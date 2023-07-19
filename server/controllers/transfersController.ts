@@ -161,6 +161,8 @@ export const createTransfer = async (request: Request, response: Response): Prom
 
         console.log('Cron job created ' + cronId);
 
+        await executeQuery(transferQueries.updateTransferWithCronJobId, [cronId, transfers[0].transfer_id]);
+
         response.status(201).json(transfers);
     } catch (error) {
         console.error(error); // Log the error on the server side

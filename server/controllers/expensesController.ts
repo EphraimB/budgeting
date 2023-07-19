@@ -125,6 +125,8 @@ export const createExpense = async (request: Request, response: Response): Promi
             begin_date,
         ]);
 
+        const modifiedExpenses = expenses.map(parseExpenses);
+
         const cronParams = {
             date: begin_date,
             account_id,
@@ -149,8 +151,6 @@ export const createExpense = async (request: Request, response: Response): Promi
         ]))[0].cron_job_id;
 
         console.log('Cron job created ' + cronId);
-
-        const modifiedExpenses = expenses.map(parseExpenses);
 
         await executeQuery(expenseQueries.updateExpenseWithCronJobId, [cronId, modifiedExpenses[0].expense_id]);
 

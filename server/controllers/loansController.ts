@@ -163,6 +163,9 @@ export const createLoan = async (request: Request, response: Response): Promise<
 
         console.log('Cron job created ' + cronId);
 
+        await executeQuery(loanQueries.updateLoanWithCronJobId, [cronId, loans[0].loan_id]);
+
+
         response.status(201).json(loans);
     } catch (error) {
         console.error(error); // Log the error on the server side
