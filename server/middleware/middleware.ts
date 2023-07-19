@@ -12,7 +12,10 @@ import { Expense, Loan, Payroll, Transfer, Wishlist } from '../types/types.js';
  */
 export const setQueries = async (request: Request, response: Response, next: NextFunction): Promise<void> => {
     request.query.from_date = new Date().toISOString().slice(0, 10);
-    request.query.to_date = new Date(+new Date() + 365 * 24 * 60 * 60 * 1000).toISOString().slice(0, 10);
+
+    const date = new Date();
+    date.setFullYear(date.getFullYear() + 1);
+    request.query.to_date = date.toISOString().slice(0, 10);
 
     if (!request.query.account_id) {
         if (request.query.id) {
