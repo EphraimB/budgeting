@@ -170,7 +170,7 @@ export const createWishlistCron = async (request: Request, response: Response): 
             type: 'wishlist'
         };
 
-        if (cronParams.date != null) {
+        if (cronParams.date) {
             const { cronDate, uniqueId } = await scheduleCronJob(cronParams);
 
             const cronId: number = (await executeQuery(cronJobQueries.createCronJob, [

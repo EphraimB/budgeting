@@ -501,10 +501,12 @@ export const updateWishlistCron = async (request: Request, response: Response, n
                 type: 'wishlist'
             };
 
-            if (!cronParams.date !== null) {
+            if (cronParams.date) {
                 const { cronDate, uniqueId } = await scheduleCronJob(cronParams);
 
                 await executeQuery(cronJobQueries.updateCronJob, [uniqueId, cronDate, cronId]);
+            } else {
+                await executeQuery(cronJobQueries.updateCronJob, ['', '', cronId]);
             }
         }
 
