@@ -35,6 +35,25 @@ fi
 # Check if the unique_id is prefixed with "wishlist_"
 if echo "${unique_id}" | grep -q "^wishlist_"; then
     # If so, remove the existing cron job for this unique id and the wishlist from the database
+    getWishlists=$(PGPASSWORD="$PGPASSWORD" psql -h "$PGHOST" -p "$PGPORT" -d "$PGDB" -U "$PGUSER" -c "SELECT cron_job_id FROM wishlist WHERE wishlist_id = '$id'" -t)
 
-    (crontab -l | grep -v "/app/dist/scripts/createTransaction.sh ${unique_id}" || true) | crontab -
+    # Log if the wishlist was successfully fetched
+    if [ $? -eq 0 ]; then
+        echo "Wishlist successfully fetched for id $id"
+        echo "Cron Job ID: $getWishlists"
+
+        deleteWishlist=$(PGPASSWORD="$PGPASSWORD" psql -h "$PGHOST" -p "$PGPORT" -d "$PGDB" -U "$PGUSER" -c "DELETE FROM wishlist WHERE wishlist_id = '$id'" -t)
+        deleteCronJob=$(PGPASSWORD="$PGPASSWORD" psql -h "$PGHOST" -p "$PGPORT" -d "$PGDB" -U "$PGUSER" -c "DELETE FROM cron_jobs WHERE cron_job_id = '$getWishlists'" -t)
+
+        (crontab -l | grep -v "/app/dist/scripts/createTransaction.sh ${unique_id}" || true) | crontab -
+
+        # Log if the wishlist was successfully deleted
+        if [ $? -eq 0 ]; then
+            echo "Wishlist successfully deleted for id $id"
+        else
+            echo "Wishlist deletion failed for id $id"
+        fi
+    else
+        echo "Wishlist fetch failed for id $id"
+    fi
 fi
