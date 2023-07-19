@@ -494,6 +494,28 @@ describe('PUT /api/wishlists middleware', () => {
         expect(mockRequest.wishlist_id).toBe(1);
         expect(mockNext).toHaveBeenCalled();
     });
+
+    it('should respond with an error message', async () => {
+        // Arrange
+        const errorMessage = 'Error updating wishlist';
+        const error = new Error(errorMessage);
+        mockModule(null, errorMessage);
+
+        const { updateWishlist } = await import('../../controllers/wishlistsController.js');
+
+        mockRequest.params = { id: 1 };
+        mockRequest.body = wishlists.filter(wishlist => wishlist.wishlist_id === 1);
+
+        // Call the function with the mock request and response
+        await updateWishlist(mockRequest as Request, mockResponse, mockNext);
+
+        // Assert
+        expect(mockResponse.status).toHaveBeenCalledWith(400);
+        expect(mockResponse.json).toHaveBeenCalledWith({ message: 'Error updating wishlist' });
+
+        // Assert that the error was logged on the server side
+        expect(consoleSpy).toHaveBeenCalledWith(error);
+    });
 });
 
 describe('PUT /api/wishlists/:id', () => {
