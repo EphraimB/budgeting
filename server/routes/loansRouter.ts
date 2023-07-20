@@ -1,6 +1,6 @@
 import express, { Router } from 'express';
 import { query, param, body } from 'express-validator';
-import { getLoans, createLoan, createLoanReturnObject, updateLoan, deleteLoan, updateLoanReturnObject } from '../controllers/loansController.js';
+import { getLoans, createLoan, createLoanReturnObject, updateLoan, updateLoanReturnObject, deleteLoan, deleteLoanReturnObject } from '../controllers/loansController.js';
 import validateRequest from '../utils/validateRequest.js';
 import generateTransactions from '../generation/generateTransactions.js';
 import { setQueries, getCurrentBalance, getTransactionsByAccount, getExpensesByAccount, getLoansByAccount, getPayrollsMiddleware, getTransfersByAccount, getWishlistsByAccount, updateWishlistCron } from '../middleware/middleware.js';
@@ -58,7 +58,6 @@ router.delete('/:id',
     [
         param('id').isInt({ min: 1 }).withMessage('ID must be a number'),
         validateRequest
-    ],
-    deleteLoan);
+    ], deleteLoan, setQueries, getCurrentBalance, getTransactionsByAccount, getExpensesByAccount, getLoansByAccount, getPayrollsMiddleware, getTransfersByAccount, getWishlistsByAccount, generateTransactions, updateWishlistCron, deleteLoanReturnObject);
 
 export default router;

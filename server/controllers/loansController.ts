@@ -314,9 +314,10 @@ export const updateLoanReturnObject = async (request: Request, response: Respons
  * 
  * @param request - Request object
  * @param response - Response object
+ * @param next - Next function
  * Sends a DELETE request to the database to delete a loan
  */
-export const deleteLoan = async (request: Request, response: Response): Promise<void> => {
+export const deleteLoan = async (request: Request, response: Response, next: NextFunction): Promise<void> => {
     try {
         const { id } = request.params;
 
@@ -340,9 +341,19 @@ export const deleteLoan = async (request: Request, response: Response): Promise<
 
         await executeQuery(cronJobQueries.deleteCronJob, [cronId]);
 
-        response.status(200).send('Loan deleted successfully');
+        next();
     } catch (error) {
         console.error(error); // Log the error on the server side
         handleError(response, 'Error deleting loan');
     }
+};
+
+/**
+ * 
+ * @param request - Request object
+ * @param response - Response object
+ * Sends a response with the deleted loan
+ */
+export const deleteLoanReturnObject = async (request: Request, response: Response): Promise<void> => {
+    response.status(200).send('Loan deleted successfully');
 };
