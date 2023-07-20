@@ -11,9 +11,10 @@ const deleteCronJob = async (uniqueId: string): Promise<void> => {
     return new Promise(async (resolve, reject) => {
         // List all cron jobs
 
+        let release;
         try {
             // Add a new cron job to the system crontab
-            const release = await lock('/tmp/cronjob.lock');
+            release = await lock('/app/tmp/cronjob.lock');
 
             exec('crontab -l', (error, stdout, stderr) => {
                 if (error) {
@@ -38,9 +39,16 @@ const deleteCronJob = async (uniqueId: string): Promise<void> => {
                 });
             });
 
-            await release();
         } catch (err) {
-            console.error('Failed to acquire or release lock');
+            console.error('Failed to acquire lock or encountered an error: ', err);
+        } finally {
+            if (release) {
+                try {
+                    await release();
+                } catch (err) {
+                    console.error('Failed to release lock: ', err);
+                }
+            }
         }
     });
 };

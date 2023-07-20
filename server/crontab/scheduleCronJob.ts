@@ -33,9 +33,11 @@ const scheduleCronJob = async (jobDetails: any) => {
     const cronCommand = `${scriptPath} ${uniqueId} ${account_id} ${id} ${amount} "${title}" "${description}" ${destination_account_id ? destination_account_id : ''} `;
 
     // Add a new cron job to the system crontab
+    let release;
+
     try {
         // Add a new cron job to the system crontab
-        const release = await lock('/tmp/cronjob.lock');
+        release = await lock('/app/tmp/cronjob.lock');
 
         exec(
             `(crontab -l ; echo '${cronDate} ${cronCommand} > /app/cron.log 2>&1') | crontab - `,
@@ -48,9 +50,16 @@ const scheduleCronJob = async (jobDetails: any) => {
             }
         );
 
-        await release();
     } catch (err) {
-        console.error('Failed to acquire or release lock');
+        console.error('Failed to acquire lock or encountered an error: ', err);
+    } finally {
+        if (release) {
+            try {
+                await release();
+            } catch (err) {
+                console.error('Failed to release lock: ', err);
+            }
+        }
     }
 
     return {
