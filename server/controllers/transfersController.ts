@@ -1,4 +1,4 @@
-import { Request, Response } from 'express';
+import { NextFunction, Request, Response } from 'express';
 import { transferQueries, cronJobQueries } from '../models/queryData.js';
 import scheduleCronJob from '../crontab/scheduleCronJob.js';
 import deleteCronJob from '../crontab/deleteCronJob.js';
@@ -97,9 +97,10 @@ export const getTransfers = async (request: Request, response: Response): Promis
  * 
  * @param request - The request object
  * @param response - The response object
+ * @param next - The next function
  * Sends a response with the newly created transfer
  */
-export const createTransfer = async (request: Request, response: Response): Promise<void> => {
+export const createTransfer = async (request: Request, response: Response, next: NextFunction): Promise<void> => {
     const {
         source_account_id,
         destination_account_id,
@@ -163,7 +164,32 @@ export const createTransfer = async (request: Request, response: Response): Prom
 
         await executeQuery(transferQueries.updateTransferWithCronJobId, [cronId, transfers[0].transfer_id]);
 
-        response.status(201).json(transfers);
+        request.transfer_id = transfers[0].transfer_id;
+
+        next();
+
+        // response.status(201).json(transfers);
+    } catch (error) {
+        console.error(error); // Log the error on the server side
+        handleError(response, 'Error creating transfer');
+    }
+};
+
+/**
+ * 
+ * @param request - Request object
+ * @param response - Response object
+ * Sends a response with the created transfer
+ */
+export const createExpenseReturnObject = async (request: Request, response: Response): Promise<void> => {
+    const { transfer_id } = request;
+
+    try {
+        const transfer = await executeQuery<TransferInput>(transferQueries.getTransfersById, [transfer_id]);
+
+        const modifiedTransfers = transfer.map(transfersParse);
+
+        response.status(201).json(modifiedTransfers);
     } catch (error) {
         console.error(error); // Log the error on the server side
         handleError(response, 'Error creating transfer');
