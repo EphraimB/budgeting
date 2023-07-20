@@ -1,4 +1,4 @@
-import { Request, Response } from 'express';
+import { NextFunction, Request, Response } from 'express';
 import { payrollQueries } from '../models/queryData.js';
 import { exec } from 'child_process';
 import { handleError, executeQuery } from '../utils/helperFunctions.js';
@@ -85,9 +85,10 @@ export const createEmployee = async (request: Request, response: Response): Prom
  * 
  * @param request - Request object
  * @param response - Response object
+ * @param next - Next function
  * Sends a PUT request to the database to update an employee
  */
-export const updateEmployee = async (request: Request, response: Response): Promise<void> => {
+export const updateEmployee = async (request: Request, response: Response, next: NextFunction): Promise<void> => {
     try {
         const employee_id = parseInt(request.params.employee_id);
         const { name, hourly_rate, regular_hours, vacation_days, sick_days, work_schedule } = request.body;
@@ -114,6 +115,24 @@ export const updateEmployee = async (request: Request, response: Response): Prom
             }
             console.log(`Script output: ${stdout}`);
         });
+
+        // Parse the data to correct format and return an object
+        const employees: Employee[] = results.map(employee => employeeParse(employee));
+
+        request.employee_id = employees[0].employee_id;
+
+        next();
+    } catch (error) {
+        console.error(error); // Log the error on the server side
+        handleError(response, 'Error updating employee');
+    }
+};
+
+export const updateEmployeeReturnObject = async (request: Request, response: Response): Promise<void> => {
+    const { employee_id } = request;
+
+    try {
+        const results = await executeQuery<EmployeeInput>(payrollQueries.getEmployee, [employee_id]);
 
         // Parse the data to correct format and return an object
         const employees: Employee[] = results.map(employee => employeeParse(employee));
