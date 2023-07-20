@@ -1,5 +1,7 @@
-import { exec } from 'child_process';
-import { lock, unlock } from 'proper-lockfile';
+import { execSync } from 'child_process';
+import { lock } from 'proper-lockfile';
+import { v4 as uuidv4 } from 'uuid';
+import { writeFileSync } from 'fs';
 
 /**
  * Delete a cron job by its unique ID.
@@ -8,49 +10,39 @@ import { lock, unlock } from 'proper-lockfile';
  * @returns A promise that resolves when the job has been deleted, or rejects if an error occurred.
  */
 const deleteCronJob = async (uniqueId: string): Promise<void> => {
-    return new Promise(async (resolve, reject) => {
-        // List all cron jobs
+    try {
+        // Acquire the lock
+        const release = await lock('/app/tmp/cronjob.lock');
 
-        let release;
         try {
-            // Add a new cron job to the system crontab
-            release = await lock('/app/tmp/cronjob.lock');
+            // List all cron jobs
+            const stdout = execSync('crontab -l').toString();
 
-            exec('crontab -l', (error, stdout, stderr) => {
-                if (error) {
-                    reject(error);
-                    return;
-                }
+            // Split the output into lines
+            const lines = stdout.split('\n');
 
-                // Split the output into lines
-                const lines = stdout.split('\n');
+            // Filter out the line with the given unique ID
+            const newLines = lines.filter(line => !line.includes(uniqueId));
 
-                // Filter out the line with the given unique ID
-                const newLines = lines.filter(line => !line.includes(uniqueId));
+            // Generate a unique filename for the temporary crontab
+            const tmpCronFile = `/app/tmp/cronjob.${uuidv4()}.tmp`;
 
-                // Write the new lines back to the crontab
-                exec(`echo "${newLines.join('\n')}" | crontab -`, (error, stdout, stderr) => {
-                    if (error) {
-                        reject(error);
-                        return;
-                    }
+            // Write the new lines to the temporary file
+            writeFileSync(tmpCronFile, newLines.join('\n'));
 
-                    resolve();
-                });
-            });
-
-        } catch (err) {
-            console.error('Failed to acquire lock or encountered an error: ', err);
+            // Install the new crontab from the temporary file
+            execSync(`crontab ${tmpCronFile}`);
+        } catch (error) {
+            console.error(`Error deleting cron job: ${error}`);
+            throw error;
         } finally {
-            if (release) {
-                try {
-                    await release();
-                } catch (err) {
-                    console.error('Failed to release lock: ', err);
-                }
-            }
+            // Release the lock
+            await release();
         }
-    });
+    } catch (err) {
+        console.error('Failed to acquire or release lock');
+        throw err;
+    }
 };
 
 export default deleteCronJob;

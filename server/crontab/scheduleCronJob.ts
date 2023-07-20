@@ -1,4 +1,4 @@
-import { exec } from 'child_process';
+import { execSync } from 'child_process';
 import determineCronValues from './determineCronValues.js';
 import { v4 as uuidv4 } from 'uuid';
 import { lock, unlock } from 'proper-lockfile';
@@ -39,17 +39,12 @@ const scheduleCronJob = async (jobDetails: any) => {
         // Add a new cron job to the system crontab
         release = await lock('/app/tmp/cronjob.lock');
 
-        exec(
-            `(crontab -l ; echo '${cronDate} ${cronCommand} > /app/cron.log 2>&1') | crontab - `,
-            (error: Error | null, stdout: string, stderr: string) => {
-                if (error) {
-                    console.error(`Error setting up cron job: ${error} `);
-                    return;
-                }
-                console.log(`Cron job set up successfully!`);
-            }
-        );
-
+        try {
+            execSync(`(crontab -l ; echo '${cronDate} ${cronCommand} > /app/cron.log 2>&1') | crontab - `);
+            console.log(`Cron job set up successfully!`);
+        } catch (error) {
+            console.error(`Error setting up cron job: ${error} `);
+        }
     } catch (err) {
         console.error('Failed to acquire lock or encountered an error: ', err);
     } finally {
