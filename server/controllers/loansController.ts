@@ -200,10 +200,11 @@ export const createLoanReturnObject = async (request: Request, response: Respons
  * 
  * @param request - Request object
  * @param response - Response object
+ * @param next - Next function
  * Sends a PUT request to the database to update a loan
  */
-export const updateLoan = async (request: Request, response: Response): Promise<void> => {
-    const { id } = request.params;
+export const updateLoan = async (request: Request, response: Response, next: NextFunction): Promise<void> => {
+    const id: number = parseInt(request.params.id);
     const {
         account_id,
         amount,
@@ -220,9 +221,9 @@ export const updateLoan = async (request: Request, response: Response): Promise<
         begin_date
     } = request.body;
 
-
     const cronParams = {
         date: begin_date,
+        id,
         account_id,
         amount: -plan_amount,
         title,
@@ -276,10 +277,36 @@ export const updateLoan = async (request: Request, response: Response): Promise<
 
         // Parse the data to the correct format and return an object
         const loans: Loan[] = updateLoanResults.map(loan => parseLoan(loan));
-        response.status(200).json(loans);
+
+        request.loan_id = id;
+
+        next();
+
+        // response.status(200).json(loans);
     } catch (error) {
         console.error(error); // Log the error on the server side
         handleError(response, 'Error updating loan');
+    }
+};
+
+/**
+ * 
+ * @param request - Request object
+ * @param response - Response object
+ * Sends a response with the updated loan
+ */
+export const updateLoanReturnObject = async (request: Request, response: Response): Promise<void> => {
+    const { loan_id } = request;
+
+    try {
+        const loans = await executeQuery<LoanInput>(loanQueries.getLoansById, [loan_id]);
+
+        const modifiedLoans = loans.map(parseLoan);
+
+        response.status(200).json(modifiedLoans);
+    } catch (error) {
+        console.error(error); // Log the error on the server side
+        handleError(response, 'Error creating loan');
     }
 };
 

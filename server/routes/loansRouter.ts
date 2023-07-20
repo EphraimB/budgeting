@@ -1,6 +1,6 @@
 import express, { Router } from 'express';
 import { query, param, body } from 'express-validator';
-import { getLoans, createLoan, createLoanReturnObject, updateLoan, deleteLoan } from '../controllers/loansController.js';
+import { getLoans, createLoan, createLoanReturnObject, updateLoan, deleteLoan, updateLoanReturnObject } from '../controllers/loansController.js';
 import validateRequest from '../utils/validateRequest.js';
 import generateTransactions from '../generation/generateTransactions.js';
 import { setQueries, getCurrentBalance, getTransactionsByAccount, getExpensesByAccount, getLoansByAccount, getPayrollsMiddleware, getTransfersByAccount, getWishlistsByAccount, updateWishlistCron } from '../middleware/middleware.js';
@@ -12,7 +12,8 @@ router.get('/',
         query('id').optional().isInt({ min: 1 }).withMessage('ID must be a number'),
         query('account_id').optional().isInt({ min: 1 }).withMessage('Account ID must be a number'),
         validateRequest
-    ], getLoans, setQueries, getCurrentBalance, getTransactionsByAccount, getExpensesByAccount, getLoansByAccount, getPayrollsMiddleware, getTransfersByAccount, getWishlistsByAccount, generateTransactions, updateWishlistCron, createLoanReturnObject);
+    ],
+    getLoans);
 
 router.post('/',
     [
@@ -31,8 +32,7 @@ router.post('/',
         body('begin_date').isISO8601().withMessage('Begin date must be a datetime'),
         body('end_date').optional().isISO8601().withMessage('End date must be a datetime'),
         validateRequest
-    ],
-    createLoan);
+    ], createLoan, setQueries, getCurrentBalance, getTransactionsByAccount, getExpensesByAccount, getLoansByAccount, getPayrollsMiddleware, getTransfersByAccount, getWishlistsByAccount, generateTransactions, updateWishlistCron, createLoanReturnObject);
 
 router.put('/:id',
     [
@@ -52,8 +52,7 @@ router.put('/:id',
         body('begin_date').isISO8601().withMessage('Begin date must be a datetime'),
         body('end_date').optional().isDate().withMessage('End date must be a date'),
         validateRequest
-    ],
-    updateLoan);
+    ], updateLoan, setQueries, getCurrentBalance, getTransactionsByAccount, getExpensesByAccount, getLoansByAccount, getPayrollsMiddleware, getTransfersByAccount, getWishlistsByAccount, generateTransactions, updateWishlistCron, updateLoanReturnObject);
 
 router.delete('/:id',
     [
