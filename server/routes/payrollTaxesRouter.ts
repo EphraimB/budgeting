@@ -1,7 +1,9 @@
 import express, { Router } from 'express';
 import { query, param, body } from 'express-validator';
-import { getPayrollTaxes, createPayrollTax, updatePayrollTax, deletePayrollTax } from '../controllers/payrollTaxesController.js';
+import { getPayrollTaxes, createPayrollTax, createPayrollTaxReturnObject, updatePayrollTax, deletePayrollTax } from '../controllers/payrollTaxesController.js';
 import validateRequest from '../utils/validateRequest.js';
+import generateTransactions from '../generation/generateTransactions.js';
+import { setQueries, getCurrentBalance, getTransactionsByAccount, getExpensesByAccount, getLoansByAccount, getPayrollsMiddleware, getTransfersByAccount, getWishlistsByAccount, updateWishlistCron } from '../middleware/middleware.js';
 
 const router: Router = express.Router();
 
@@ -19,8 +21,7 @@ router.post('/',
         body('name').isString().withMessage('Name must be a string'),
         body('rate').isFloat({ min: 0 }).withMessage('Rate must be a number'),
         validateRequest
-    ],
-    createPayrollTax);
+    ], createPayrollTax, setQueries, getCurrentBalance, getTransactionsByAccount, getExpensesByAccount, getLoansByAccount, getPayrollsMiddleware, getTransfersByAccount, getWishlistsByAccount, generateTransactions, updateWishlistCron, createPayrollTaxReturnObject);
 
 router.put('/:id',
     [

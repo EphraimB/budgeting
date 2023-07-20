@@ -1,4 +1,4 @@
-import { Request, Response } from 'express';
+import { NextFunction, Request, Response } from 'express';
 import { payrollQueries } from '../models/queryData.js';
 import { exec } from 'child_process';
 import { handleError, executeQuery } from '../utils/helperFunctions.js';
@@ -70,9 +70,10 @@ export const getPayrollTaxes = async (request: Request, response: Response): Pro
  * 
  * @param request - Request object
  * @param response - Response object
+ * @param next - Next function
  * Sends a POST request to the database to create a payroll tax
  */
-export const createPayrollTax = async (request: Request, response: Response): Promise<void> => {
+export const createPayrollTax = async (request: Request, response: Response, next: NextFunction): Promise<void> => {
     const { employee_id, name, rate } = request.body;
 
     try {
@@ -92,10 +93,38 @@ export const createPayrollTax = async (request: Request, response: Response): Pr
 
         const payrollTaxes: PayrollTax[] = results.map(payrollTax => payrollTaxesParse(payrollTax));
 
-        response.status(201).json(payrollTaxes);
+        request.payroll_taxes_id = payrollTaxes[0].payroll_taxes_id;
+
+        next();
     } catch (error) {
         console.error(error); // Log the error on the server side
         handleError(response, 'Error creating payroll tax');
+    }
+};
+
+/**
+ * 
+ * @param request - Request object
+ * @param response - Response object
+ * Sends a GET request to the database to retrieve a payroll tax
+ */
+export const createPayrollTaxReturnObject = async (request: Request, response: Response): Promise<void> => {
+    const { payroll_taxes_id } = request;
+
+    try {
+        const results = await executeQuery<PayrollTaxInput>(payrollQueries.getPayrollTaxesById, [payroll_taxes_id]);
+
+        if (results.length === 0) {
+            response.status(404).send('Payroll tax not found');
+            return;
+        }
+
+        const payrollTaxes: PayrollTax[] = results.map(payrollTax => payrollTaxesParse(payrollTax));
+
+        response.status(201).json(payrollTaxes);
+    } catch (error) {
+        console.error(error); // Log the error on the server side
+        handleError(response, 'Error getting payroll tax');
     }
 };
 
