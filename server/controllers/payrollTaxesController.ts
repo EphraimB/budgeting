@@ -132,9 +132,10 @@ export const createPayrollTaxReturnObject = async (request: Request, response: R
  * 
  * @param request - Request object
  * @param response - Response object
+ * @param next - Next function
  * Sends a PUT request to the database to update a payroll tax
  */
-export const updatePayrollTax = async (request: Request, response: Response): Promise<void> => {
+export const updatePayrollTax = async (request: Request, response: Response, next: NextFunction): Promise<void> => {
     const { id } = request.params;
     const { employee_id, name, rate } = request.body;
 
@@ -158,12 +159,30 @@ export const updatePayrollTax = async (request: Request, response: Response): Pr
             console.log(`Script output: ${stdout}`);
         });
 
+        next();
+    } catch (error) {
+        console.error(error); // Log the error on the server side
+        handleError(response, 'Error updating payroll tax');
+    }
+};
+
+export const updatePayrollTaxReturnObject = async (request: Request, response: Response): Promise<void> => {
+    const { id } = request.params;
+
+    try {
+        const results = await executeQuery<PayrollTaxInput>(payrollQueries.getPayrollTaxesById, [id]);
+
+        if (results.length === 0) {
+            response.status(404).send('Payroll tax not found');
+            return;
+        }
+
         const payrollTaxes: PayrollTax[] = results.map(payrollTax => payrollTaxesParse(payrollTax));
 
         response.status(200).json(payrollTaxes);
     } catch (error) {
         console.error(error); // Log the error on the server side
-        handleError(response, 'Error updating payroll tax');
+        handleError(response, 'Error getting payroll tax');
     }
 };
 
