@@ -1,5 +1,5 @@
 import express, { Router } from 'express';
-import { getTransfers, createTransfer, createTransferReturnObject, updateTransfer, updateTransferReturnObject, deleteTransfer } from '../controllers/transfersController.js';
+import { getTransfers, createTransfer, createTransferReturnObject, updateTransfer, updateTransferReturnObject, deleteTransfer, deleteTransferReturnObject } from '../controllers/transfersController.js';
 import { param, query, body } from 'express-validator';
 import validateRequest from '../utils/validateRequest.js';
 import generateTransactions from '../generation/generateTransactions.js';
@@ -56,7 +56,6 @@ router.delete('/:id',
     [
         param('id').isInt({ min: 1 }).withMessage('ID must be a number'),
         validateRequest
-    ],
-    deleteTransfer);
+    ], deleteTransfer, setQueries, getCurrentBalance, getTransactionsByAccount, getExpensesByAccount, getLoansByAccount, getPayrollsMiddleware, getTransfersByAccount, getWishlistsByAccount, generateTransactions, updateWishlistCron, deleteTransferReturnObject);
 
 export default router;

@@ -316,9 +316,10 @@ export const updateTransferReturnObject = async (request: Request, response: Res
  * 
  * @param request - The request object
  * @param response - The response object
+ * @param next - The next function
  * Sends a response with the deleted transfer
  */
-export const deleteTransfer = async (request: Request, response: Response): Promise<void> => {
+export const deleteTransfer = async (request: Request, response: Response, next: NextFunction): Promise<void> => {
     try {
         const { id } = request.params;
 
@@ -342,9 +343,19 @@ export const deleteTransfer = async (request: Request, response: Response): Prom
 
         await executeQuery(cronJobQueries.deleteCronJob, [cronId]);
 
-        response.status(200).send('Transfer deleted successfully');
+        next();
     } catch (error) {
         console.error(error); // Log the error on the server side
         handleError(response, 'Error deleting transfer');
     }
+};
+
+/**
+ * 
+ * @param request - Request object
+ * @param response - Response object
+ * Sends a response with the deleted transfer
+ */
+export const deleteTransferReturnObject = async (request: Request, response: Response): Promise<void> => {
+    response.status(200).send('Transfer deleted successfully');
 };
