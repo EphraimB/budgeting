@@ -11,7 +11,11 @@ for employeeId in $employeeIds; do
     # Check if the script exists at the given path
     if [ -f /app/dist/scripts/"$scriptName" ]; then
         # If the script exists, execute it with the current employee ID as an argument
-        ./app/dist/scripts/"$scriptName" "$employeeId"
+        cd /app/dist/scripts
+
+        . "$scriptName" "$employeeId"
+
+        cd /app
 
         # Print a message indicating that the script was executed
         echo "Executed script for employee $employeeId"
