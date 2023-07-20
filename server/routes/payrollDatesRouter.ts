@@ -1,6 +1,6 @@
 import express, { Router } from 'express';
 import { query, param, body } from 'express-validator';
-import { getPayrollDates, createPayrollDate, createPayrollDateReturnObject, updatePayrollDate, deletePayrollDate } from '../controllers/payrollDatesController.js';
+import { getPayrollDates, createPayrollDate, createPayrollDateReturnObject, updatePayrollDate, updatePayrollDateReturnObject, deletePayrollDate } from '../controllers/payrollDatesController.js';
 import validateRequest from '../utils/validateRequest.js';
 import generateTransactions from '../generation/generateTransactions.js';
 import { setQueries, getCurrentBalance, getTransactionsByAccount, getExpensesByAccount, getLoansByAccount, getPayrollsMiddleware, getTransfersByAccount, getWishlistsByAccount, updateWishlistCron } from '../middleware/middleware.js';
@@ -21,8 +21,7 @@ router.post('/',
         body('start_day').isInt({ min: 1, max: 31 }).withMessage('Start day must be a number between 1 and 31'),
         body('end_day').isInt({ min: 1, max: 31 }).withMessage('End day must be a number between 1 and 31'),
         validateRequest
-    ],
-    createPayrollDate, setQueries, getCurrentBalance, getTransactionsByAccount, getExpensesByAccount, getLoansByAccount, getPayrollsMiddleware, getTransfersByAccount, getWishlistsByAccount, generateTransactions, updateWishlistCron, createPayrollDateReturnObject);
+    ], createPayrollDate, setQueries, getCurrentBalance, getTransactionsByAccount, getExpensesByAccount, getLoansByAccount, getPayrollsMiddleware, getTransfersByAccount, getWishlistsByAccount, generateTransactions, updateWishlistCron, createPayrollDateReturnObject);
 
 router.put('/:id',
     [
@@ -31,8 +30,7 @@ router.put('/:id',
         body('start_day').isInt({ min: 1, max: 31 }).withMessage('Start day must be a number between 1 and 31'),
         body('end_day').isInt({ min: 1, max: 31 }).withMessage('End day must be a number between 1 and 31'),
         validateRequest
-    ],
-    updatePayrollDate);
+    ], updatePayrollDate, setQueries, getCurrentBalance, getTransactionsByAccount, getExpensesByAccount, getLoansByAccount, getPayrollsMiddleware, getTransfersByAccount, getWishlistsByAccount, generateTransactions, updateWishlistCron, updatePayrollDateReturnObject);
 
 router.delete('/:id',
     [
