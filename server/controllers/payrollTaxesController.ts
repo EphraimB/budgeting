@@ -190,9 +190,10 @@ export const updatePayrollTaxReturnObject = async (request: Request, response: R
  * 
  * @param request - Request object
  * @param response - Response object
+ * @param next - Next function
  * Sends a DELETE request to the database to delete a payroll tax
  */
-export const deletePayrollTax = async (request: Request, response: Response): Promise<void> => {
+export const deletePayrollTax = async (request: Request, response: Response, next: NextFunction): Promise<void> => {
     const { id } = request.params;
 
     try {
@@ -217,9 +218,19 @@ export const deletePayrollTax = async (request: Request, response: Response): Pr
             console.log(`Script output: ${stdout}`);
         });
 
-        response.status(200).send('Successfully deleted payroll tax');
+        next();
     } catch (error) {
         console.error(error); // Log the error on the server side
         handleError(response, 'Error deleting payroll tax');
     }
+};
+
+/**
+ * 
+ * @param request - Request object
+ * @param response - Response object
+ * Sends a DELETE request to the database to delete a payroll tax
+ */
+export const deletePayrollTaxReturnObject = async (request: Request, response: Response): Promise<void> => {
+    response.status(200).send('Successfully deleted payroll tax');
 };

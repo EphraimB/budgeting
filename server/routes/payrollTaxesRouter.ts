@@ -1,6 +1,6 @@
 import express, { Router } from 'express';
 import { query, param, body } from 'express-validator';
-import { getPayrollTaxes, createPayrollTax, createPayrollTaxReturnObject, updatePayrollTax, updatePayrollTaxReturnObject, deletePayrollTax } from '../controllers/payrollTaxesController.js';
+import { getPayrollTaxes, createPayrollTax, createPayrollTaxReturnObject, updatePayrollTax, updatePayrollTaxReturnObject, deletePayrollTax, deletePayrollTaxReturnObject } from '../controllers/payrollTaxesController.js';
 import validateRequest from '../utils/validateRequest.js';
 import generateTransactions from '../generation/generateTransactions.js';
 import { setQueries, getCurrentBalance, getTransactionsByAccount, getExpensesByAccount, getLoansByAccount, getPayrollsMiddleware, getTransfersByAccount, getWishlistsByAccount, updateWishlistCron } from '../middleware/middleware.js';
@@ -36,7 +36,6 @@ router.delete('/:id',
     [
         param('id').isInt({ min: 1 }).withMessage('ID must be a number'),
         validateRequest
-    ],
-    deletePayrollTax);
+    ], deletePayrollTax, setQueries, getCurrentBalance, getTransactionsByAccount, getExpensesByAccount, getLoansByAccount, getPayrollsMiddleware, getTransfersByAccount, getWishlistsByAccount, generateTransactions, updateWishlistCron, deletePayrollTaxReturnObject);
 
 export default router;
