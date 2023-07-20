@@ -181,7 +181,7 @@ export const createTransfer = async (request: Request, response: Response, next:
  * @param response - Response object
  * Sends a response with the created transfer
  */
-export const createExpenseReturnObject = async (request: Request, response: Response): Promise<void> => {
+export const createTransferReturnObject = async (request: Request, response: Response): Promise<void> => {
     const { transfer_id } = request;
 
     try {
@@ -200,10 +200,11 @@ export const createExpenseReturnObject = async (request: Request, response: Resp
  * 
  * @param request - The request object
  * @param response - The response object
+ * @param next - The next function
  * Sends a response with the updated transfer
  */
-export const updateTransfer = async (request: Request, response: Response): Promise<void> => {
-    const { id } = request.params;
+export const updateTransfer = async (request: Request, response: Response, next: NextFunction): Promise<void> => {
+    const id: number = parseInt(request.params.id);
     const {
         source_account_id,
         destination_account_id,
@@ -279,10 +280,35 @@ export const updateTransfer = async (request: Request, response: Response): Prom
         // Parse the data to correct format and return an object
         const transfers: Transfer[] = updateResults.map(transfersParse);
 
-        response.status(200).json(transfers);
+        request.transfer_id = id;
+
+        next();
+
+        // response.status(200).json(transfers);
     } catch (error) {
         console.error(error); // Log the error on the server side
         handleError(response, 'Error updating transfer');
+    }
+};
+
+/**
+ * 
+ * @param request - Request object
+ * @param response - Response object
+ * Sends a response with the updated transfer
+ */
+export const updateTransferReturnObject = async (request: Request, response: Response): Promise<void> => {
+    const { transfer_id } = request;
+
+    try {
+        const expenses = await executeQuery<TransferInput>(transferQueries.getTransfersById, [transfer_id]);
+
+        const modifiedTransfers = expenses.map(transfersParse);
+
+        response.status(200).json(modifiedTransfers);
+    } catch (error) {
+        console.error(error); // Log the error on the server side
+        handleError(response, 'Error creating transfer');
     }
 };
 
