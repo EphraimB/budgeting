@@ -1,7 +1,9 @@
 import express, { Router } from 'express';
 import { query, param, body } from 'express-validator';
-import { getLoans, createLoan, updateLoan, deleteLoan } from '../controllers/loansController.js';
+import { getLoans, createLoan, createLoanReturnObject, updateLoan, deleteLoan } from '../controllers/loansController.js';
 import validateRequest from '../utils/validateRequest.js';
+import generateTransactions from '../generation/generateTransactions.js';
+import { setQueries, getCurrentBalance, getTransactionsByAccount, getExpensesByAccount, getLoansByAccount, getPayrollsMiddleware, getTransfersByAccount, getWishlistsByAccount, updateWishlistCron } from '../middleware/middleware.js';
 
 const router: Router = express.Router();
 
@@ -10,8 +12,7 @@ router.get('/',
         query('id').optional().isInt({ min: 1 }).withMessage('ID must be a number'),
         query('account_id').optional().isInt({ min: 1 }).withMessage('Account ID must be a number'),
         validateRequest
-    ],
-    getLoans);
+    ], getLoans, setQueries, getCurrentBalance, getTransactionsByAccount, getExpensesByAccount, getLoansByAccount, getPayrollsMiddleware, getTransfersByAccount, getWishlistsByAccount, generateTransactions, updateWishlistCron, createLoanReturnObject);
 
 router.post('/',
     [

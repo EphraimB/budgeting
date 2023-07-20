@@ -1,4 +1,4 @@
-import { Request, Response } from 'express';
+import { NextFunction, Request, Response } from 'express';
 import { loanQueries, cronJobQueries } from '../models/queryData.js';
 import scheduleCronJob from '../crontab/scheduleCronJob.js';
 import deleteCronJob from '../crontab/deleteCronJob.js';
@@ -97,9 +97,10 @@ export const getLoans = async (request: Request, response: Response): Promise<vo
  * 
  * @param request - Request object
  * @param response - Response object
+ * @param next - Next function
  * Sends a POST request to the database to create a new loan
  */
-export const createLoan = async (request: Request, response: Response): Promise<void> => {
+export const createLoan = async (request: Request, response: Response, next: NextFunction): Promise<void> => {
     const {
         account_id,
         amount,
@@ -165,8 +166,30 @@ export const createLoan = async (request: Request, response: Response): Promise<
 
         await executeQuery(loanQueries.updateLoanWithCronJobId, [cronId, loans[0].loan_id]);
 
+        request.loan_id = loans[0].loan_id;
 
-        response.status(201).json(loans);
+        next();
+    } catch (error) {
+        console.error(error); // Log the error on the server side
+        handleError(response, 'Error creating loan');
+    }
+};
+
+/**
+ * 
+ * @param request - Request object
+ * @param response - Response object
+ * Sends a response with the created loan
+ */
+export const createLoanReturnObject = async (request: Request, response: Response): Promise<void> => {
+    const { loan_id } = request;
+
+    try {
+        const expenses = await executeQuery<LoanInput>(loanQueries.getLoansById, [loan_id]);
+
+        const modifiedLoans = expenses.map(parseLoan);
+
+        response.status(201).json(modifiedLoans);
     } catch (error) {
         console.error(error); // Log the error on the server side
         handleError(response, 'Error creating loan');

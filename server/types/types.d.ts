@@ -168,5 +168,6 @@ declare module 'express-serve-static-core' {
         transactions: any[];
         wishlist_id: number;
         expense_id: number;
+        loan_id: number;
     }
 }
