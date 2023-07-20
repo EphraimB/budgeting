@@ -1,31 +1,38 @@
-import { exec } from 'child_process';
+import { jest } from '@jest/globals';
+import { execSync } from 'child_process';
+import { lock } from 'proper-lockfile';
+import { writeFileSync } from 'fs';
 import deleteCronJob from '../../crontab/deleteCronJob';
 
-// Create a separate mock module for exec
 jest.mock('child_process', () => ({
-  exec: jest.fn(),
+  execSync: jest.fn().mockReturnValue(Buffer.from('')), // mock execSync to return a Buffer
 }));
 
-// Mock the behavior of the exec function
-const execMock = jest.requireMock('child_process').exec as jest.Mock;
+jest.mock('proper-lockfile', () => ({
+  lock: jest.fn(),
+}));
+
+jest.mock('fs', () => ({
+  writeFileSync: jest.fn(),
+}));
+
+const execSyncMock = execSync as jest.MockedFunction<typeof execSync>;
+const lockMock = lock as jest.MockedFunction<typeof lock>;
+const writeFileSyncMock = writeFileSync as jest.MockedFunction<typeof writeFileSync>;
 
 describe('deleteCronJob', () => {
   it('should delete a cron job', async () => {
     // Arrange
     const uniqueId = '1234';
-    const mockCallback = jest.fn(); // Create a mock callback function
-
-    // Configure the exec mock implementation to call the provided callback
-    execMock.mockImplementation((command: string, callback: any) => {
-      callback(null, '', ''); // Call the callback
-      return null; // Return null to satisfy the return type of the exec function
-    });
+    lockMock.mockResolvedValue(() => Promise.resolve());  // Mock lock to resolve to a function that returns a Promise
 
     // Act
     await deleteCronJob(uniqueId);
 
     // Assert
-    expect(execMock).toHaveBeenCalledWith('crontab -l', expect.any(Function));
-    expect(execMock).toHaveBeenCalledWith(expect.stringContaining('echo "'), expect.any(Function));
+    expect(lockMock).toHaveBeenCalledWith('/app/tmp/cronjob.lock');
+    expect(execSyncMock).toHaveBeenNthCalledWith(1, 'crontab -l');
+    expect(writeFileSyncMock).toHaveBeenCalled();
+    expect(execSyncMock).toHaveBeenNthCalledWith(2, expect.stringContaining('crontab'));
   });
 });
