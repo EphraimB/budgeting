@@ -1,15 +1,24 @@
-import { exec, ChildProcess } from 'child_process';
+import { jest } from '@jest/globals';
+import { execSync } from 'child_process';
+import { lock, unlock } from 'proper-lockfile';
 import scheduleCronJob from '../../crontab/scheduleCronJob';
 import determineCronValues from '../../crontab/determineCronValues';
 
 jest.mock('child_process', () => ({
-    exec: jest.fn(),
+    execSync: jest.fn(),
+}));
+
+jest.mock('proper-lockfile', () => ({
+    lock: jest.fn(),
+    unlock: jest.fn(),
 }));
 
 jest.mock('../../crontab/determineCronValues', () => jest.fn());
 
 // Explicitly declare the types of the mocked functions
-const execMock = exec as jest.MockedFunction<typeof exec>;
+const execSyncMock = execSync as jest.MockedFunction<typeof execSync>;
+const lockMock = lock as jest.MockedFunction<typeof lock>;
+const unlockMock = unlock as jest.MockedFunction<typeof unlock>;
 const determineCronValuesMock = determineCronValues as jest.MockedFunction<typeof determineCronValues>;
 
 describe('scheduleCronJob', () => {
@@ -27,20 +36,15 @@ describe('scheduleCronJob', () => {
         const expectedUniqueId = '1234';
 
         determineCronValuesMock.mockReturnValue(expectedCronDate);
-        execMock.mockImplementation((...args): ChildProcess => {
-            const callback = args.find(arg => typeof arg === 'function');
-            if (typeof callback === 'function') {
-                callback(null, '', '');
-            }
-            return {} as ChildProcess; // Return a mock ChildProcess object
-        });
+        lockMock.mockResolvedValue(() => Promise.resolve());
 
         // Act
         const result = await scheduleCronJob(jobDetails);
 
         // Assert
         expect(determineCronValuesMock).toHaveBeenCalledWith(expect.objectContaining({ date: jobDetails.date, frequency_type: jobDetails.frequency_type }));
-        expect(execMock).toHaveBeenCalledWith(expect.stringContaining(expectedCronDate), expect.any(Function));
+        expect(execSyncMock).toHaveBeenCalledWith(expect.stringContaining(`(crontab -l ; echo '${expectedCronDate}`));
+        expect(lockMock).toHaveBeenCalledWith('/app/tmp/cronjob.lock');
         expect(result).toEqual({ cronDate: expectedCronDate, uniqueId: expect.any(String) });
     });
 });
