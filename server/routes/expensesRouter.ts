@@ -54,7 +54,6 @@ router.delete('/:id',
     [
         param('id').isInt({ min: 1 }).withMessage('ID must be a number'),
         validateRequest
-    ],
-    deleteExpense, setQueries, getCurrentBalance, getTransactionsByAccount, getExpensesByAccount, getLoansByAccount, getPayrollsMiddleware, getTransfersByAccount, getWishlistsByAccount, generateTransactions, updateWishlistCron, deleteExpenseReturnObject);
+    ], deleteExpense, setQueries, getCurrentBalance, getTransactionsByAccount, getExpensesByAccount, getLoansByAccount, getPayrollsMiddleware, getTransfersByAccount, getWishlistsByAccount, generateTransactions, updateWishlistCron, deleteExpenseReturnObject);
 
 export default router;

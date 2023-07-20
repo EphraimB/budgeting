@@ -184,9 +184,10 @@ export const updatePayrollDateReturnObject = async (request: Request, response: 
  * 
  * @param request - Request object
  * @param response - Response object
+ * @param next - Next function
  * Sends a DELETE request to the database to delete a payroll date
  */
-export const deletePayrollDate = async (request: Request, response: Response): Promise<void> => {
+export const deletePayrollDate = async (request: Request, response: Response, next: NextFunction): Promise<void> => {
     try {
         const { id } = request.params;
 
@@ -211,9 +212,19 @@ export const deletePayrollDate = async (request: Request, response: Response): P
             console.log(`Script output: ${stdout}`);
         });
 
-        response.status(200).send('Successfully deleted payroll date');
+        next();
     } catch (error) {
         console.error(error); // Log the error on the server side
         handleError(response, 'Error deleting payroll date');
     }
+};
+
+/**
+ * 
+ * @param request - Request object
+ * @param response - Response object
+ * Sends a DELETE request to the database to delete a payroll date
+ */
+export const deletePayrollDateReturnObject = async (request: Request, response: Response): Promise<void> => {
+    response.status(200).send('Successfully deleted payroll date');
 };
