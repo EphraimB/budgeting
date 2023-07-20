@@ -477,18 +477,20 @@ export const updateWishlistCron = async (request: Request, response: Response, n
             });
         });
 
-        // Process each wishlist
+        // First, delete all necessary cron jobs
         for (const wslst of wishlistsResults) {
             const cronId = wslst.cron_job_id;
-
             const results = await executeQuery(cronJobQueries.getCronJob, [cronId]);
             if (results.length > 0) {
                 await deleteCronJob(results[0].unique_id);
             } else {
                 console.error('Cron job not found');
-                // Avoid sending a response in the middle of the loop
-                continue;
             }
+        }
+
+        // Then, schedule all necessary cron jobs
+        for (const wslst of wishlistsResults) {
+            const cronId = wslst.cron_job_id;
 
             const cronParams = {
                 date: transactionMap[wslst.wishlist_id],
@@ -503,10 +505,7 @@ export const updateWishlistCron = async (request: Request, response: Response, n
 
             if (cronParams.date) {
                 const { cronDate, uniqueId } = await scheduleCronJob(cronParams);
-
                 await executeQuery(cronJobQueries.updateCronJob, [uniqueId, cronDate, cronId]);
-            } else {
-                await executeQuery(cronJobQueries.updateCronJob, ['', '', cronId]);
             }
         }
 
