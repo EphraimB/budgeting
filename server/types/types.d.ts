@@ -170,5 +170,6 @@ declare module 'express-serve-static-core' {
         expense_id: number;
         loan_id: number;
         transfer_id: number;
+        payroll_date_id: number;
     }
 }
