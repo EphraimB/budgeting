@@ -40,11 +40,33 @@ const createFutureLoan = () => {
 };
 
 beforeAll(() => {
+    jest.mock('../../middleware/middleware', () => ({
+        setQueries: jest.fn((req: Request, res: Response, next: NextFunction) => next()),
+        getCurrentBalance: jest.fn((req: Request, res: Response, next: NextFunction) => next()),
+        getTransactionsByAccount: jest.fn((req: Request, res: Response, next: NextFunction) => next()),
+        getExpensesByAccount: jest.fn((req: Request, res: Response, next: NextFunction) => next()),
+        getLoansByAccount: jest.fn((req: Request, res: Response, next: NextFunction) => next()),
+        getPayrollsMiddleware: jest.fn((req: Request, res: Response, next: NextFunction) => next()),
+        getTransfersByAccount: jest.fn((req: Request, res: Response, next: NextFunction) => next()),
+        getWishlistsByAccount: jest.fn((req: Request, res: Response, next: NextFunction) => next()),
+        updateWishlistCron: jest.fn((req: Request, res: Response, next: NextFunction) => next())
+    }));
+
+    jest.mock('../../generation/generateTransactions', () => {
+        return jest.fn((req: Request, res: Response, next: NextFunction) => {
+            req.transactions = [];
+            next();
+        });
+    });
+
     jest.mock('../../controllers/loansController', () => ({
-        getLoans: (req: Request, res: Response, next: NextFunction) => res.json({ message: 'success' }),
-        createLoan: (req: Request, res: Response, next: NextFunction) => res.json({ message: 'success' }),
-        updateLoan: (req: Request, res: Response, next: NextFunction) => res.json({ message: 'success' }),
-        deleteLoan: (req: Request, res: Response, next: NextFunction) => res.json({ message: 'success' })
+        getLoans: jest.fn((req: Request, res: Response, next: NextFunction) => res.json({ message: 'success' })),
+        createLoan: jest.fn((req: Request, res: Response, next: NextFunction) => next()),
+        createLoanReturnObject: jest.fn((req: Request, res: Response, next: NextFunction) => res.json({ message: 'success' })),
+        updateLoan: jest.fn((req: Request, res: Response, next: NextFunction) => next()),
+        updateLoanReturnObject: jest.fn((req: Request, res: Response, next: NextFunction) => res.json({ message: 'success' })),
+        deleteLoan: jest.fn((req: Request, res: Response, next: NextFunction) => next()),
+        deleteLoanReturnObject: jest.fn((req: Request, res: Response, next: NextFunction) => res.json({ message: 'success' }))
     }));
 });
 
