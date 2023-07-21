@@ -402,4 +402,19 @@ describe('DELETE /api/loans/:id', () => {
         expect(mockResponse.status).toHaveBeenCalledWith(404);
         expect(mockResponse.send).toHaveBeenCalledWith('Loan not found');
     });
+
+    it('should respond with a success message', async () => {
+        // Arrange
+        mockModule('Loan deleted successfully');
+
+        const { deleteLoanReturnObject } = await import('../../controllers/loansController.js');
+
+        mockRequest.params = { id: 1 };
+
+        await deleteLoanReturnObject(mockRequest as Request, mockResponse);
+
+        // Assert
+        expect(mockResponse.status).toHaveBeenCalledWith(200);
+        expect(mockResponse.send).toHaveBeenCalledWith('Loan deleted successfully');
+    });
 });
