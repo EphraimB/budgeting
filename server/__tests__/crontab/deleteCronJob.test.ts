@@ -1,28 +1,24 @@
 import { jest } from '@jest/globals';
-import { Volume } from 'memfs';
+import { Volume, createFsFromVolume } from 'memfs';
 
 const vol = Volume.fromJSON({
   '/tmp/cronjob.lock': '',
-  '/scripts/createTransaction.sh': '',
+  '/scripts/createTransaction.sh': ''
 }, '/app');
+
+// Create /app/tmp/ directory in vol
+vol.mkdirSync('/app/tmp', { recursive: true });
 
 jest.mock('child_process', () => ({
   execSync: jest.fn().mockReturnValue(Buffer.from('')), // mock execSync to return a Buffer
 }));
 
-let release = jest.fn();
-
 jest.mock('proper-lockfile', () => ({
-  lock: jest.fn(async () => release),
+  lock: jest.fn(async () => jest.fn(() => Promise.resolve())),
   unlock: jest.fn()
 }));
 
-// in your test, you can control the release function:
-release = jest.fn(() => Promise.resolve());
-
-jest.mock('fs', () => ({
-  default: vol
-}));
+jest.mock('fs', () => createFsFromVolume(vol));
 
 describe('deleteCronJob', () => {
   it('should delete a cron job', async () => {
@@ -33,11 +29,15 @@ describe('deleteCronJob', () => {
     // Act
     await deleteCronJob(uniqueId);
 
+    // Get the keys of the vol.toJSON() object and find the key with the dynamic part
+    const dynamicFilePathRegex = /\/app\/tmp\/cronjob\.[a-f0-9-]+\.tmp/;
+    const dynamicKey = Object.keys(vol.toJSON()).find((key) => dynamicFilePathRegex.test(key));
+
     // Assert
     expect(vol.toJSON()).toEqual({
       '/tmp/cronjob.lock': '',
       '/scripts/createTransaction.sh': '',
-      '/tmp/cronjob.1234.tmp': ''
+      [dynamicKey as string]: expect.stringMatching('')
     });
   });
 });
