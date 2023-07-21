@@ -290,6 +290,25 @@ describe('PUT /api/payroll/employee/:id', () => {
         // Check that the error was logged
         expect(consoleSpy).toHaveBeenCalledWith(error);
     });
+
+    it('should respond with the updated employee', async () => {
+        // Arrange
+        const updatedEmployee = employees.filter(employee => employee.employee_id === 1);
+
+        mockModule([updatedEmployee]);
+
+        mockRequest.params = { id: 1 };
+        mockRequest.body = updatedEmployee;
+
+        const { updateEmployeeReturnObject } = await import('../../controllers/employeesController.js');
+
+        // Act
+        await updateEmployeeReturnObject(mockRequest as Request, mockResponse);
+
+        // Assert
+        expect(mockResponse.status).toHaveBeenCalledWith(200);
+        expect(mockResponse.json).toHaveBeenCalledWith(updatedEmployee);
+    });
 });
 
 describe('DELETE /api/payroll/employee/:id', () => {
