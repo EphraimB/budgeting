@@ -411,4 +411,20 @@ describe('DELETE /api/expenses/:id', () => {
         expect(mockResponse.status).toHaveBeenCalledWith(404);
         expect(mockResponse.send).toHaveBeenCalledWith('Expense not found');
     });
+
+    it('should respond with a success message', async () => {
+        // Arrange
+        mockModule('Expense deleted successfully');
+
+        const { deleteExpenseReturnObject } = await import('../../controllers/expensesController.js');
+
+        mockRequest.params = { id: 1 };
+
+        // Call the function with the mock request and response
+        await deleteExpenseReturnObject(mockRequest as Request, mockResponse);
+
+        // Assert
+        expect(mockResponse.status).toHaveBeenCalledWith(200);
+        expect(mockResponse.send).toHaveBeenCalledWith('Expense deleted successfully');
+    });
 });
