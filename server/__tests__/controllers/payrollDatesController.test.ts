@@ -404,7 +404,7 @@ describe('PUT /api/payroll/dates/:id', () => {
 });
 
 describe('DELETE /api/payroll/dates/:id', () => {
-    it('should respond with a success message', async () => {
+    it('should call next on the middleware', async () => {
         // Arrange
         mockModule('Successfully deleted payroll date');
 
@@ -455,5 +455,22 @@ describe('DELETE /api/payroll/dates/:id', () => {
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(404);
         expect(mockResponse.send).toHaveBeenCalledWith('Payroll date not found');
+    });
+
+    it('should respond with a success message', async () => {
+        // Arrange
+        mockModule('Successfully deleted payroll date');
+
+        const { deletePayrollDateReturnObject } = await import('../../controllers/payrollDatesController.js');
+
+        mockRequest.params = { id: 1 };
+        mockRequest.query = { employee_id: 1 };
+
+        // Act
+        await deletePayrollDateReturnObject(mockRequest as Request, mockResponse);
+
+        // Assert
+        expect(mockResponse.status).toHaveBeenCalledWith(200);
+        expect(mockResponse.send).toHaveBeenCalledWith('Successfully deleted payroll date');
     });
 });
