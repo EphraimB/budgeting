@@ -14,6 +14,7 @@ jest.mock('../../crontab/deleteCronJob.js', () => {
 // Mock request and response
 let mockRequest: any;
 let mockResponse: any;
+let mockNext: any;
 let consoleSpy: any;
 
 beforeAll(() => {
@@ -225,7 +226,7 @@ describe('GET /api/expenses', () => {
 });
 
 describe('POST /api/expenses', () => {
-    it('should respond with the new expense', async () => {
+    it('should populate the request.expense_id', async () => {
         // Arrange
         const newExpense = expenses.filter(expense => expense.expense_id === 1);
 
@@ -235,11 +236,11 @@ describe('POST /api/expenses', () => {
 
         mockRequest.body = newExpense;
 
-        await createExpense(mockRequest as Request, mockResponse);
+        await createExpense(mockRequest as Request, mockResponse, mockNext);
 
         // Assert
-        expect(mockResponse.status).toHaveBeenCalledWith(201);
-        expect(mockResponse.json).toHaveBeenCalledWith(newExpense);
+        expect(mockRequest.expense_id).toBe(1);
+        expect(mockNext).toHaveBeenCalled();
     });
 
     it('should handle errors correctly', async () => {
@@ -253,7 +254,7 @@ describe('POST /api/expenses', () => {
         mockRequest.body = expenses.filter(expense => expense.expense_id === 1);
 
         // Act
-        await createExpense(mockRequest as Request, mockResponse);
+        await createExpense(mockRequest as Request, mockResponse, mockNext);
 
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(400);
