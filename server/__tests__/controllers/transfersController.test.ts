@@ -360,7 +360,7 @@ describe('PUT /api/transfer/:id', () => {
 });
 
 describe('DELETE /api/transfer/:id', () => {
-    it('should respond with a success message', async () => {
+    it('should call next on the middleware', async () => {
         // Arrange
         mockModule('Transfer deleted successfully');
 

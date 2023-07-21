@@ -361,7 +361,7 @@ describe('PUT /api/expenses/:id', () => {
 });
 
 describe('DELETE /api/expenses/:id', () => {
-    it('should respond with a success message', async () => {
+    it('should call next on the middleware', async () => {
         // Arrange
         mockModule('Expense deleted successfully');
 

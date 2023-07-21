@@ -353,7 +353,7 @@ describe('PUT /api/loans/:id', () => {
 });
 
 describe('DELETE /api/loans/:id', () => {
-    it('should respond with a success message', async () => {
+    it('should call next on the middleware', async () => {
         // Arrange
         mockModule('Loan deleted successfully');
 
