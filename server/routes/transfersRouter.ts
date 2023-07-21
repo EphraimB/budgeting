@@ -1,7 +1,9 @@
 import express, { Router } from 'express';
-import { getTransfers, createTransfer, updateTransfer, deleteTransfer } from '../controllers/transfersController.js';
+import { getTransfers, createTransfer, createTransferReturnObject, updateTransfer, updateTransferReturnObject, deleteTransfer, deleteTransferReturnObject } from '../controllers/transfersController.js';
 import { param, query, body } from 'express-validator';
 import validateRequest from '../utils/validateRequest.js';
+import generateTransactions from '../generation/generateTransactions.js';
+import { setQueries, getCurrentBalance, getTransactionsByAccount, getExpensesByAccount, getLoansByAccount, getPayrollsMiddleware, getTransfersByAccount, getWishlistsByAccount, updateWishlistCron } from '../middleware/middleware.js';
 
 const router: Router = express.Router();
 
@@ -29,8 +31,7 @@ router.post('/',
         body('begin_date').isISO8601().withMessage('Begin date must be a datetime'),
         body('end_date').optional().isDate().withMessage('End date must be a date'),
         validateRequest
-    ],
-    createTransfer);
+    ], createTransfer, setQueries, getCurrentBalance, getTransactionsByAccount, getExpensesByAccount, getLoansByAccount, getPayrollsMiddleware, getTransfersByAccount, getWishlistsByAccount, generateTransactions, updateWishlistCron, createTransferReturnObject);
 
 router.put('/:id',
     [
@@ -49,14 +50,12 @@ router.put('/:id',
         body('begin_date').isISO8601().withMessage('Begin date must be a datetime'),
         body('end_date').optional().isDate().withMessage('End date must be a date'),
         validateRequest
-    ],
-    updateTransfer);
+    ], updateTransfer, setQueries, getCurrentBalance, getTransactionsByAccount, getExpensesByAccount, getLoansByAccount, getPayrollsMiddleware, getTransfersByAccount, getWishlistsByAccount, generateTransactions, updateWishlistCron, updateTransferReturnObject);
 
 router.delete('/:id',
     [
         param('id').isInt({ min: 1 }).withMessage('ID must be a number'),
         validateRequest
-    ],
-    deleteTransfer);
+    ], deleteTransfer, setQueries, getCurrentBalance, getTransactionsByAccount, getExpensesByAccount, getLoansByAccount, getPayrollsMiddleware, getTransfersByAccount, getWishlistsByAccount, generateTransactions, updateWishlistCron, deleteTransferReturnObject);
 
 export default router;

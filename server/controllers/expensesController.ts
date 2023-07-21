@@ -1,4 +1,4 @@
-import { Request, Response } from 'express';
+import { NextFunction, Request, Response } from 'express';
 import { expenseQueries, cronJobQueries } from '../models/queryData.js';
 import scheduleCronJob from '../crontab/scheduleCronJob.js';
 import deleteCronJob from '../crontab/deleteCronJob.js';
@@ -93,9 +93,10 @@ export const getExpenses = async (request: Request, response: Response): Promise
  * 
  * @param request - Request object
  * @param response - Response object
+ * @param next - Next function
  * Sends a response with the created expense and creates a cron job for the expense and inserts it into the database
  */
-export const createExpense = async (request: Request, response: Response): Promise<void> => {
+export const createExpense = async (request: Request, response: Response, next: NextFunction): Promise<void> => {
     const {
         account_id,
         amount,
@@ -110,33 +111,9 @@ export const createExpense = async (request: Request, response: Response): Promi
         begin_date
     } = request.body;
 
-    const cronParams = {
-        date: begin_date,
-        account_id,
-        amount: -amount,
-        title,
-        description,
-        frequency_type,
-        frequency_type_variable,
-        frequency_day_of_month,
-        frequency_day_of_week,
-        frequency_week_of_month,
-        frequency_month_of_year,
-        scriptPath: '/app/dist/scripts/createTransaction.sh'
-    };
-
     try {
-        const { cronDate, uniqueId } = await scheduleCronJob(cronParams);
-        const cronId: number = (await executeQuery(cronJobQueries.createCronJob, [
-            uniqueId,
-            cronDate
-        ]))[0].cron_job_id;
-
-        console.log('Cron job created ' + cronId);
-
         const expenses = await executeQuery<ExpenseInput>(expenseQueries.createExpense, [
             account_id,
-            cronId,
             amount,
             title,
             description,
@@ -149,7 +126,38 @@ export const createExpense = async (request: Request, response: Response): Promi
             begin_date,
         ]);
 
-        response.status(201).json(expenses.map(parseExpenses));
+        const modifiedExpenses = expenses.map(parseExpenses);
+
+        const cronParams = {
+            date: begin_date,
+            account_id,
+            id: modifiedExpenses[0].expense_id,
+            amount: -amount,
+            title,
+            description,
+            frequency_type,
+            frequency_type_variable,
+            frequency_day_of_month,
+            frequency_day_of_week,
+            frequency_week_of_month,
+            frequency_month_of_year,
+            scriptPath: '/app/dist/scripts/createTransaction.sh',
+            type: 'expense'
+        };
+
+        const { cronDate, uniqueId } = await scheduleCronJob(cronParams);
+        const cronId: number = (await executeQuery(cronJobQueries.createCronJob, [
+            uniqueId,
+            cronDate
+        ]))[0].cron_job_id;
+
+        console.log('Cron job created ' + cronId);
+
+        await executeQuery(expenseQueries.updateExpenseWithCronJobId, [cronId, modifiedExpenses[0].expense_id]);
+
+        request.expense_id = modifiedExpenses[0].expense_id;
+
+        next();
     } catch (error) {
         console.error(error); // Log the error on the server side
         handleError(response, 'Error creating expense');
@@ -160,9 +168,31 @@ export const createExpense = async (request: Request, response: Response): Promi
  * 
  * @param request - Request object
  * @param response - Response object
+ * Sends a response with the created expense
+ */
+export const createExpenseReturnObject = async (request: Request, response: Response): Promise<void> => {
+    const { expense_id } = request;
+
+    try {
+        const expenses = await executeQuery<ExpenseInput>(expenseQueries.getExpenseById, [expense_id]);
+
+        const modifiedExpenses = expenses.map(parseExpenses);
+
+        response.status(201).json(modifiedExpenses);
+    } catch (error) {
+        console.error(error); // Log the error on the server side
+        handleError(response, 'Error creating expense');
+    }
+};
+
+/**
+ * 
+ * @param request - Request object
+ * @param response - Response object
+ * @param next - Next function
  * Sends a response with the updated expense and updates the cron job for the expense and updates it in the database
  */
-export const updateExpense = async (request: Request, response: Response): Promise<void> => {
+export const updateExpense = async (request: Request, response: Response, next: NextFunction): Promise<void> => {
     const id: number = parseInt(request.params.id);
     const {
         account_id,
@@ -181,6 +211,7 @@ export const updateExpense = async (request: Request, response: Response): Promi
     const cronParams = {
         date: begin_date,
         account_id,
+        id,
         amount: -amount,
         title,
         description,
@@ -190,7 +221,8 @@ export const updateExpense = async (request: Request, response: Response): Promi
         frequency_day_of_week,
         frequency_week_of_month,
         frequency_month_of_year,
-        scriptPath: '/app/dist/scripts/createTransaction.sh'
+        scriptPath: '/app/dist/scripts/createTransaction.sh',
+        type: 'expense'
     };
 
     try {
@@ -207,6 +239,11 @@ export const updateExpense = async (request: Request, response: Response): Promi
             await deleteCronJob(results[0].unique_id);
         } else {
             console.error('Cron job not found');
+            response.status(404).json({
+                status: 'error',
+                message: 'Cron job not found'
+            });
+            return;
         }
 
         const { uniqueId, cronDate } = await scheduleCronJob(cronParams);
@@ -232,7 +269,9 @@ export const updateExpense = async (request: Request, response: Response): Promi
             id
         ]);
 
-        response.status(200).json(expenses.map(parseExpenses));
+        request.expense_id = id;
+
+        next();
     } catch (error) {
         console.error(error); // Log the error on the server side
         handleError(response, 'Error updating expense');
@@ -243,9 +282,31 @@ export const updateExpense = async (request: Request, response: Response): Promi
  * 
  * @param request - Request object
  * @param response - Response object
+ * Sends a response with the updated expense
+ */
+export const updateExpenseReturnObject = async (request: Request, response: Response): Promise<void> => {
+    const { expense_id } = request;
+
+    try {
+        const expenses = await executeQuery<ExpenseInput>(expenseQueries.getExpenseById, [expense_id]);
+
+        const modifiedExpenses = expenses.map(parseExpenses);
+
+        response.status(200).json(modifiedExpenses);
+    } catch (error) {
+        console.error(error); // Log the error on the server side
+        handleError(response, 'Error creating expense');
+    }
+};
+
+/**
+ * 
+ * @param request - Request object
+ * @param response - Response object
+ * @param next - Next function
  * Sends a response with the deleted expense and deletes the cron job for the expense and deletes it from the database
  */
-export const deleteExpense = async (request: Request, response: Response): Promise<void> => {
+export const deleteExpense = async (request: Request, response: Response, next: NextFunction): Promise<void> => {
     const { id } = request.params;
 
     try {
@@ -265,13 +326,22 @@ export const deleteExpense = async (request: Request, response: Response): Promi
             await deleteCronJob(results[0].unique_id);
         } else {
             console.error('Cron job not found');
+            response.status(404).json({
+                status: 'error',
+                message: 'Cron job not found'
+            });
+            return;
         }
 
         await executeQuery(cronJobQueries.deleteCronJob, [cronId]);
 
-        response.status(200).send('Expense deleted successfully');
+        next();
     } catch (error) {
         console.error(error); // Log the error on the server side
         handleError(response, 'Error deleting expense');
     }
+};
+
+export const deleteExpenseReturnObject = async (request: Request, response: Response): Promise<void> => {
+    response.status(200).send('Expense deleted successfully');
 };

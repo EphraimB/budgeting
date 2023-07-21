@@ -58,6 +58,16 @@ describe('executeQuery function', () => {
         expect(result).toEqual(mockRows);
     });
 
+    it('should execute the given query with no params', async () => {
+        const { executeQuery } = await import('../../utils/helperFunctions');
+
+        const mockQuery = 'SELECT * FROM accounts';
+        const mockRows = [{ id: 1, name: 'John Doe' }];
+
+        const result = await executeQuery(mockQuery);
+        expect(result).toEqual(mockRows);
+    });
+
     it('should throw an error if the query fails', async () => {
         const { executeQuery } = await import('../../utils/helperFunctions');
 

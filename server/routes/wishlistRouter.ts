@@ -1,17 +1,17 @@
 import express, { Router } from 'express';
 import { query, param, body } from 'express-validator';
-import { getWishlists, createWishlist, updateWishlist, deleteWishlist } from '../controllers/wishlistsController.js';
+import { getWishlists, createWishlist, updateWishlist, deleteWishlist, createWishlistCron, updateWishlistCron } from '../controllers/wishlistsController.js';
 import validateRequest from '../utils/validateRequest.js';
+import generateTransactions from '../generation/generateTransactions.js';
+import { setQueries, getCurrentBalance, getTransactionsByAccount, getExpensesByAccount, getLoansByAccount, getPayrollsMiddleware, getTransfersByAccount, getWishlistsByAccount } from '../middleware/middleware.js';
 
 const router: Router = express.Router();
 
-router.get('/',
-    [
-        query('id').optional().isInt({ min: 1 }).withMessage('ID must be a number'),
-        query('account_id').optional().isInt({ min: 1 }).withMessage('Account ID must be a number'),
-        validateRequest
-    ],
-    getWishlists);
+router.get('/', [
+    query('id').optional().isInt({ min: 1 }).withMessage('ID must be an integer'),
+    query('account_id').optional().isInt({ min: 1 }).withMessage('Account ID must be an integer'),
+    validateRequest
+], setQueries, getCurrentBalance, getTransactionsByAccount, getExpensesByAccount, getLoansByAccount, getPayrollsMiddleware, getTransfersByAccount, getWishlistsByAccount, generateTransactions, getWishlists);
 
 router.post('/',
     [
@@ -20,8 +20,7 @@ router.post('/',
         body('description').isString().withMessage('Description must be a string'),
         body('priority').isInt().withMessage('Priority must be a number'),
         validateRequest
-    ],
-    createWishlist);
+    ], createWishlist, setQueries, getCurrentBalance, getTransactionsByAccount, getExpensesByAccount, getLoansByAccount, getPayrollsMiddleware, getTransfersByAccount, getWishlistsByAccount, generateTransactions, createWishlistCron);
 
 router.put('/:id',
     [
@@ -32,7 +31,7 @@ router.put('/:id',
         body('priority').isInt().withMessage('Priority must be a number'),
         validateRequest
     ],
-    updateWishlist);
+    updateWishlist, setQueries, getCurrentBalance, getTransactionsByAccount, getExpensesByAccount, getLoansByAccount, getPayrollsMiddleware, getTransfersByAccount, getWishlistsByAccount, generateTransactions, updateWishlistCron);
 
 router.delete('/:id',
     [

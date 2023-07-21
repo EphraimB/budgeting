@@ -1,31 +1,43 @@
-import { exec } from 'child_process';
-import deleteCronJob from '../../crontab/deleteCronJob';
+import { jest } from '@jest/globals';
+import { Volume, createFsFromVolume } from 'memfs';
 
-// Create a separate mock module for exec
+const vol = Volume.fromJSON({
+  '/tmp/cronjob.lock': '',
+  '/scripts/createTransaction.sh': ''
+}, '/app');
+
+// Create /app/tmp/ directory in vol
+vol.mkdirSync('/app/tmp', { recursive: true });
+
 jest.mock('child_process', () => ({
-  exec: jest.fn(),
+  execSync: jest.fn().mockReturnValue(Buffer.from('')), // mock execSync to return a Buffer
 }));
 
-// Mock the behavior of the exec function
-const execMock = jest.requireMock('child_process').exec as jest.Mock;
+jest.mock('proper-lockfile', () => ({
+  lock: jest.fn(async () => jest.fn(() => Promise.resolve())),
+  unlock: jest.fn()
+}));
+
+jest.mock('fs', () => createFsFromVolume(vol));
 
 describe('deleteCronJob', () => {
   it('should delete a cron job', async () => {
+    const { default: deleteCronJob } = await import('../../crontab/deleteCronJob');
     // Arrange
     const uniqueId = '1234';
-    const mockCallback = jest.fn(); // Create a mock callback function
-
-    // Configure the exec mock implementation to call the provided callback
-    execMock.mockImplementation((command: string, callback: any) => {
-      callback(null, '', ''); // Call the callback
-      return null; // Return null to satisfy the return type of the exec function
-    });
 
     // Act
     await deleteCronJob(uniqueId);
 
+    // Get the keys of the vol.toJSON() object and find the key with the dynamic part
+    const dynamicFilePathRegex = /\/app\/tmp\/cronjob\.[a-f0-9-]+\.tmp/;
+    const dynamicKey = Object.keys(vol.toJSON()).find((key) => dynamicFilePathRegex.test(key));
+
     // Assert
-    expect(execMock).toHaveBeenCalledWith('crontab -l', expect.any(Function));
-    expect(execMock).toHaveBeenCalledWith(expect.stringContaining('echo "'), expect.any(Function));
+    expect(vol.toJSON()).toEqual({
+      '/tmp/cronjob.lock': '',
+      '/scripts/createTransaction.sh': '',
+      [dynamicKey as string]: ''
+    });
   });
 });

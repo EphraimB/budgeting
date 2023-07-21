@@ -25,11 +25,31 @@ const newPayrollEmployee = {
 };
 
 beforeAll(() => {
+    jest.mock('../../middleware/middleware', () => ({
+        setQueries: jest.fn((req: Request, res: Response, next: NextFunction) => next()),
+        getCurrentBalance: jest.fn((req: Request, res: Response, next: NextFunction) => next()),
+        getTransactionsByAccount: jest.fn((req: Request, res: Response, next: NextFunction) => next()),
+        getExpensesByAccount: jest.fn((req: Request, res: Response, next: NextFunction) => next()),
+        getLoansByAccount: jest.fn((req: Request, res: Response, next: NextFunction) => next()),
+        getPayrollsMiddleware: jest.fn((req: Request, res: Response, next: NextFunction) => next()),
+        getTransfersByAccount: jest.fn((req: Request, res: Response, next: NextFunction) => next()),
+        getWishlistsByAccount: jest.fn((req: Request, res: Response, next: NextFunction) => next()),
+        updateWishlistCron: jest.fn((req: Request, res: Response, next: NextFunction) => next())
+    }));
+
+    jest.mock('../../generation/generateTransactions', () => {
+        return jest.fn((req: Request, res: Response, next: NextFunction) => {
+            req.transactions = [];
+            next();
+        });
+    });
+
     jest.mock('../../controllers/employeesController', () => ({
-        getEmployee: (req: Request, res: Response, next: NextFunction) => res.json({ message: 'success' }),
-        createEmployee: (req: Request, res: Response, next: NextFunction) => res.json({ message: 'success' }),
-        updateEmployee: (req: Request, res: Response, next: NextFunction) => res.json({ message: 'success' }),
-        deleteEmployee: (req: Request, res: Response, next: NextFunction) => res.json({ message: 'success' })
+        getEmployee: jest.fn((req: Request, res: Response, next: NextFunction) => res.json({ message: 'success' })),
+        createEmployee: jest.fn((req: Request, res: Response, next: NextFunction) => res.json({ message: 'success' })),
+        updateEmployee: jest.fn((req: Request, res: Response, next: NextFunction) => next()),
+        updateEmployeeReturnObject: jest.fn((req: Request, res: Response, next: NextFunction) => res.json({ message: 'success' })),
+        deleteEmployee: jest.fn((req: Request, res: Response, next: NextFunction) => res.json({ message: 'success' }))
     }));
 });
 

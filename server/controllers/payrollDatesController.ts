@@ -1,4 +1,4 @@
-import { Request, Response } from 'express';
+import { NextFunction, Request, Response } from 'express';
 import { payrollQueries } from '../models/queryData.js';
 import { exec } from 'child_process';
 import { handleError, executeQuery } from '../utils/helperFunctions.js';
@@ -71,9 +71,10 @@ export const getPayrollDates = async (request: Request, response: Response): Pro
  * 
  * @param request - Request object
  * @param response - Response object
+ * @param next - Next function
  * Sends a POST request to the database to create a new payroll date
  */
-export const createPayrollDate = async (request: Request, response: Response): Promise<void> => {
+export const createPayrollDate = async (request: Request, response: Response, next: NextFunction): Promise<void> => {
     try {
         const { employee_id, start_day, end_day } = request.body;
 
@@ -94,6 +95,24 @@ export const createPayrollDate = async (request: Request, response: Response): P
         // Parse the data to correct format and return an object
         const payrollDates: PayrollDate[] = results.map(payrollDate => payrollDatesParse(payrollDate));
 
+        request.payroll_date_id = payrollDates[0].payroll_date_id;
+
+        next();
+    } catch (error) {
+        console.error(error); // Log the error on the server side
+        handleError(response, 'Error creating payroll date');
+    }
+};
+
+export const createPayrollDateReturnObject = async (request: Request, response: Response): Promise<void> => {
+    const { payroll_date_id } = request;
+
+    try {
+        const results = await executeQuery<PayrollDateInput>(payrollQueries.getPayrollDatesById, [payroll_date_id]);
+
+        // Parse the data to correct format and return an object
+        const payrollDates: PayrollDate[] = results.map(payrollDate => payrollDatesParse(payrollDate));
+
         response.status(201).json(payrollDates);
     } catch (error) {
         console.error(error); // Log the error on the server side
@@ -105,9 +124,10 @@ export const createPayrollDate = async (request: Request, response: Response): P
  * 
  * @param request - Request object
  * @param response - Response object
+ * @param next - Next function
  * Sends a PUT request to the database to update a payroll date
  */
-export const updatePayrollDate = async (request: Request, response: Response): Promise<void> => {
+export const updatePayrollDate = async (request: Request, response: Response, next: NextFunction): Promise<void> => {
     try {
         const { id } = request.params;
         const { employee_id, start_day, end_day } = request.body;
@@ -131,15 +151,7 @@ export const updatePayrollDate = async (request: Request, response: Response): P
             console.log(`Script output: ${stdout}`);
         });
 
-        // Parse the data to correct format and return an object
-        const payrollDates: PayrollDate[] = results.map(payrollDate => payrollDatesParse(payrollDate));
-
-        const returnObj = {
-            employee_id: parseInt(employee_id),
-            payroll_date: payrollDates
-        };
-
-        response.status(200).json(returnObj);
+        next();
     } catch (error) {
         console.error(error); // Log the error on the server side
         handleError(response, 'Error updating payroll date');
@@ -150,9 +162,32 @@ export const updatePayrollDate = async (request: Request, response: Response): P
  * 
  * @param request - Request object
  * @param response - Response object
+ * Sends a PUT request to the database to update a payroll date
+ */
+export const updatePayrollDateReturnObject = async (request: Request, response: Response): Promise<void> => {
+    const { id } = request.params;
+
+    try {
+        const results = await executeQuery<PayrollDateInput>(payrollQueries.getPayrollDatesById, [id]);
+
+        // Parse the data to correct format and return an object
+        const payrollDates: PayrollDate[] = results.map(payrollDate => payrollDatesParse(payrollDate));
+
+        response.status(200).json(payrollDates);
+    } catch (error) {
+        console.error(error); // Log the error on the server side
+        handleError(response, 'Error updating payroll date');
+    }
+};
+
+/**
+ * 
+ * @param request - Request object
+ * @param response - Response object
+ * @param next - Next function
  * Sends a DELETE request to the database to delete a payroll date
  */
-export const deletePayrollDate = async (request: Request, response: Response): Promise<void> => {
+export const deletePayrollDate = async (request: Request, response: Response, next: NextFunction): Promise<void> => {
     try {
         const { id } = request.params;
 
@@ -177,9 +212,19 @@ export const deletePayrollDate = async (request: Request, response: Response): P
             console.log(`Script output: ${stdout}`);
         });
 
-        response.status(200).send('Successfully deleted payroll date');
+        next();
     } catch (error) {
         console.error(error); // Log the error on the server side
         handleError(response, 'Error deleting payroll date');
     }
+};
+
+/**
+ * 
+ * @param request - Request object
+ * @param response - Response object
+ * Sends a DELETE request to the database to delete a payroll date
+ */
+export const deletePayrollDateReturnObject = async (request: Request, response: Response): Promise<void> => {
+    response.status(200).send('Successfully deleted payroll date');
 };

@@ -14,6 +14,7 @@ jest.mock('../../crontab/deleteCronJob.js', () => {
 // Mock request and response
 let mockRequest: any;
 let mockResponse: any;
+let mockNext: any;
 let consoleSpy: any;
 
 beforeAll(() => {
@@ -28,6 +29,7 @@ beforeEach(() => {
         json: jest.fn(),
         send: jest.fn()
     };
+    mockNext = jest.fn();
 });
 
 afterEach(() => {
@@ -45,7 +47,7 @@ afterAll(() => {
  * @param [errorMessage] - The error message to be passed to the handleError mock function
  * @returns - A mock module with the executeQuery and handleError functions
  */
-const mockModule = (executeQueryValue: QueryResultRow[] | string, errorMessage?: string) => {
+const mockModule = (executeQueryValue: QueryResultRow[] | string | null, errorMessage?: string) => {
     const executeQuery = errorMessage
         ? jest.fn(() => Promise.reject(new Error(errorMessage)))
         : jest.fn(() => Promise.resolve(executeQueryValue));
@@ -98,7 +100,7 @@ describe('GET /api/loans', () => {
 
     it('should respond with an array of loans with id', async () => {
         // Arrange
-        mockModule(loans);
+        mockModule(loans.filter(loan => loan.loan_id === 1));
 
         mockRequest.query = { id: 1 };
 
@@ -135,7 +137,7 @@ describe('GET /api/loans', () => {
 
     it('should respond with an array of loans with account id', async () => {
         // Arrange
-        mockModule(loans);
+        mockModule(loans.filter(loan => loan.account_id === 1));
 
         mockRequest.query = { account_id: 1 };
 
@@ -172,7 +174,7 @@ describe('GET /api/loans', () => {
 
     it('should respond with an array of loans with account id and id', async () => {
         // Arrange
-        mockModule(loans);
+        mockModule(loans.filter(loan => loan.account_id === 1 && loan.loan_id === 1));
 
         mockRequest.query = { account_id: 1, id: 1 };
 
@@ -225,7 +227,7 @@ describe('GET /api/loans', () => {
 });
 
 describe('POST /api/loans', () => {
-    it('should respond with the new loan', async () => {
+    it('should populate request.loan_id', async () => {
         const newLoan = loans.filter(loan => loan.loan_id === 1);
 
         mockModule(newLoan);
@@ -234,11 +236,11 @@ describe('POST /api/loans', () => {
 
         mockRequest.body = newLoan;
 
-        await createLoan(mockRequest as Request, mockResponse);
+        await createLoan(mockRequest as Request, mockResponse, mockNext);
 
         // Assert
-        expect(mockResponse.status).toHaveBeenCalledWith(201);
-        expect(mockResponse.json).toHaveBeenCalledWith(newLoan);
+        expect(mockRequest.loan_id).toBe(1);
+        expect(mockNext).toHaveBeenCalled();
     });
 
     it('should respond with an error message', async () => {
@@ -250,7 +252,7 @@ describe('POST /api/loans', () => {
 
         mockRequest.body = loans.filter(loan => loan.loan_id === 1);
 
-        await createLoan(mockRequest as Request, mockResponse);
+        await createLoan(mockRequest as Request, mockResponse, mockNext);
 
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(400);
@@ -259,10 +261,26 @@ describe('POST /api/loans', () => {
         // Assert that console.error was called with the error message
         expect(consoleSpy).toHaveBeenCalledWith(error);
     });
+
+    it('should respond with the created loan', async () => {
+        const newLoan = loans.filter(loan => loan.loan_id === 1);
+
+        mockModule(newLoan);
+
+        const { createLoanReturnObject } = await import('../../controllers/loansController.js');
+
+        mockRequest.body = newLoan;
+
+        await createLoanReturnObject(mockRequest as Request, mockResponse);
+
+        // Assert
+        expect(mockResponse.status).toHaveBeenCalledWith(201);
+        expect(mockResponse.json).toHaveBeenCalledWith(newLoan);
+    });
 });
 
 describe('PUT /api/loans/:id', () => {
-    it('should respond with the updated loan', async () => {
+    it('should call next in the middleware', async () => {
         const updatedLoan = loans.filter(loan => loan.loan_id === 1);
 
         mockModule(updatedLoan);
@@ -272,11 +290,11 @@ describe('PUT /api/loans/:id', () => {
         mockRequest.params = { id: 1 };
         mockRequest.body = updatedLoan;
 
-        await updateLoan(mockRequest as Request, mockResponse);
+        await updateLoan(mockRequest as Request, mockResponse, mockNext);
 
         // Assert
-        expect(mockResponse.status).toHaveBeenCalledWith(200);
-        expect(mockResponse.json).toHaveBeenCalledWith(updatedLoan);
+        expect(mockRequest.loan_id).toBe(1);
+        expect(mockNext).toHaveBeenCalled();
     });
 
     it('should respond with an error message', async () => {
@@ -289,7 +307,7 @@ describe('PUT /api/loans/:id', () => {
         mockRequest.params = { id: 1 };
         mockRequest.body = loans.filter(loan => loan.loan_id === 1);
 
-        await updateLoan(mockRequest as Request, mockResponse);
+        await updateLoan(mockRequest as Request, mockResponse, mockNext);
 
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(400);
@@ -309,16 +327,33 @@ describe('PUT /api/loans/:id', () => {
         mockRequest.body = loans.filter(loan => loan.loan_id === 1);
 
         // Act
-        await updateLoan(mockRequest as Request, mockResponse);
+        await updateLoan(mockRequest as Request, mockResponse, mockNext);
 
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(404);
         expect(mockResponse.send).toHaveBeenCalledWith('Loan not found');
     });
+
+    it('should respond with the updated loan', async () => {
+        const updatedLoan = loans.filter(loan => loan.loan_id === 1);
+
+        mockModule(updatedLoan);
+
+        const { updateLoanReturnObject } = await import('../../controllers/loansController.js');
+
+        mockRequest.params = { id: 1 };
+        mockRequest.body = updatedLoan;
+
+        await updateLoanReturnObject(mockRequest as Request, mockResponse);
+
+        // Assert
+        expect(mockResponse.status).toHaveBeenCalledWith(200);
+        expect(mockResponse.json).toHaveBeenCalledWith(updatedLoan);
+    });
 });
 
 describe('DELETE /api/loans/:id', () => {
-    it('should respond with a success message', async () => {
+    it('should call next on the middleware', async () => {
         // Arrange
         mockModule('Loan deleted successfully');
 
@@ -326,11 +361,10 @@ describe('DELETE /api/loans/:id', () => {
 
         mockRequest.params = { id: 1 };
 
-        await deleteLoan(mockRequest as Request, mockResponse);
+        await deleteLoan(mockRequest as Request, mockResponse, mockNext);
 
         // Assert
-        expect(mockResponse.status).toHaveBeenCalledWith(200);
-        expect(mockResponse.send).toHaveBeenCalledWith('Loan deleted successfully');
+        expect(mockNext).toHaveBeenCalled();
     });
 
     it('should respond with an error message', async () => {
@@ -343,7 +377,7 @@ describe('DELETE /api/loans/:id', () => {
 
         mockRequest.params = { id: 1 };
 
-        await deleteLoan(mockRequest as Request, mockResponse);
+        await deleteLoan(mockRequest as Request, mockResponse, mockNext);
 
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(400);
@@ -362,10 +396,25 @@ describe('DELETE /api/loans/:id', () => {
         mockRequest.params = { id: 3 };
 
         // Act
-        await deleteLoan(mockRequest as Request, mockResponse);
+        await deleteLoan(mockRequest as Request, mockResponse, mockNext);
 
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(404);
         expect(mockResponse.send).toHaveBeenCalledWith('Loan not found');
+    });
+
+    it('should respond with a success message', async () => {
+        // Arrange
+        mockModule('Loan deleted successfully');
+
+        const { deleteLoanReturnObject } = await import('../../controllers/loansController.js');
+
+        mockRequest.params = { id: 1 };
+
+        await deleteLoanReturnObject(mockRequest as Request, mockResponse);
+
+        // Assert
+        expect(mockResponse.status).toHaveBeenCalledWith(200);
+        expect(mockResponse.send).toHaveBeenCalledWith('Loan deleted successfully');
     });
 });

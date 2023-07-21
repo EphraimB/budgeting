@@ -11,26 +11,17 @@ const createApp = async (): Promise<Express> => {
     app.use(express.json());
 
     // Import the module that uses the mock
-    const routerModule = await import('../../routes/transfersRouter');
-    const transfersRouter: Router = routerModule.default;
-    app.use('/', transfersRouter);
+    const routerModule = await import('../../routes/payrollTaxesRouter');
+    const payrollTaxesRouter: Router = routerModule.default;
+    app.use('/', payrollTaxesRouter);
 
     return app;
 };
 
-const createFutureTransfer = () => {
-    const dateInFuture = new Date();
-    dateInFuture.setDate(dateInFuture.getDate() + 7);
-
-    return {
-        source_account_id: 1,
-        destination_account_id: 2,
-        amount: 100,
-        title: 'test',
-        description: 'test',
-        frequency_type: 2,
-        begin_date: dateInFuture
-    };
+const payrollTaxes = {
+    employee_id: 1,
+    name: 'test',
+    rate: 0.1
 };
 
 beforeAll(() => {
@@ -53,14 +44,14 @@ beforeAll(() => {
         });
     });
 
-    jest.mock('../../controllers/transfersController', () => ({
-        getTransfers: jest.fn((req: Request, res: Response, next: NextFunction) => res.json({ message: 'success' })),
-        createTransfer: jest.fn((req: Request, res: Response, next: NextFunction) => next()),
-        createTransferReturnObject: jest.fn((req: Request, res: Response, next: NextFunction) => res.json({ message: 'success' })),
-        updateTransfer: jest.fn((req: Request, res: Response, next: NextFunction) => next()),
-        updateTransferReturnObject: jest.fn((req: Request, res: Response, next: NextFunction) => res.json({ message: 'success' })),
-        deleteTransfer: jest.fn((req: Request, res: Response, next: NextFunction) => next()),
-        deleteTransferReturnObject: jest.fn((req: Request, res: Response, next: NextFunction) => res.json({ message: 'success' }))
+    jest.mock('../../controllers/PayrollTaxesController', () => ({
+        getPayrollTaxes: jest.fn((req: Request, res: Response, next: NextFunction) => res.json({ message: 'success' })),
+        createPayrollTax: jest.fn((req: Request, res: Response, next: NextFunction) => next()),
+        createPayrollTaxReturnObject: jest.fn((req: Request, res: Response, next: NextFunction) => res.json({ message: 'success' })),
+        updatePayrollTax: jest.fn((req: Request, res: Response, next: NextFunction) => next()),
+        updatePayrollTaxReturnObject: jest.fn((req: Request, res: Response, next: NextFunction) => res.json({ message: 'success' })),
+        deletePayrollTax: jest.fn((req: Request, res: Response, next: NextFunction) => next()),
+        deletePayrollTaxReturnObject: jest.fn((req: Request, res: Response, next: NextFunction) => res.json({ message: 'success' }))
     }));
 });
 
@@ -77,8 +68,8 @@ beforeEach(async () => {
 
 describe('GET /', () => {
     it('responds with json', async () => {
-        const response = await request(app)
-            .get('/?account_id=1')
+        const response: request.Response = await request(app)
+            .get('/?employee_id=1')
             .set('Accept', 'application/json')
             .expect('Content-Type', /json/);
 
@@ -89,8 +80,8 @@ describe('GET /', () => {
 
 describe('GET / with id query', () => {
     it('responds with json', async () => {
-        const response = await request(app)
-            .get('/?account_id=1&id=1')
+        const response: request.Response = await request(app)
+            .get('/?employee_id=1&id=1')
             .set('Accept', 'application/json')
             .expect('Content-Type', /json/);
 
@@ -101,11 +92,11 @@ describe('GET / with id query', () => {
 
 describe('POST /', () => {
     it('responds with json', async () => {
-        const response = await request(app)
+        const response: request.Response = await request(app)
             .post('/')
             .set('Accept', 'application/json')
             .expect('Content-Type', /json/)
-            .send(createFutureTransfer());
+            .send(payrollTaxes);
 
         expect(response.status).toBe(200);
         expect(response.body).toEqual({ message: 'success' });
@@ -114,11 +105,11 @@ describe('POST /', () => {
 
 describe('PUT /:id', () => {
     it('responds with json', async () => {
-        const response = await request(app)
+        const response: request.Response = await request(app)
             .put('/1')
             .set('Accept', 'application/json')
             .expect('Content-Type', /json/)
-            .send(createFutureTransfer());
+            .send(payrollTaxes);
 
         expect(response.status).toBe(200);
         expect(response.body).toEqual({ message: 'success' });
@@ -127,8 +118,8 @@ describe('PUT /:id', () => {
 
 describe('DELETE /:id', () => {
     it('responds with json', async () => {
-        const response = await request(app)
-            .delete('/1?account_id=1')
+        const response: request.Response = await request(app)
+            .delete('/1?employee_id=1')
             .set('Accept', 'application/json')
             .expect('Content-Type', /json/);
 

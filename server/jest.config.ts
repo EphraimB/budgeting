@@ -7,7 +7,7 @@ const jestConfig: JestConfigWithTsJest = {
     testEnvironment: 'node',
     transform: {
         '^.+\\.(t|j)s$': ['ts-jest', {
-            tsconfig: './tsconfig.json',
+            tsconfig: './tsconfig.test.json',
             useESM: true
         }]
     },
