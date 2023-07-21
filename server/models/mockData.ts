@@ -295,11 +295,12 @@ export const wishlists: Wishlist[] = [
         wishlist_title: 'Test Wishlist',
         wishlist_description: 'Test Wishlist to test the wishlist route',
         wishlist_date_available: null,
+        wishlist_date_can_purchase: '2024-01-01',
         wishlist_url_link: 'https://www.google.com/',
         wishlist_priority: 0,
         date_created: '2020-01-01',
         date_modified: '2020-01-01'
-    }
+    },
 ];
 
 export const transfers: Transfer[] = [

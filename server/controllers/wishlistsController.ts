@@ -180,8 +180,6 @@ export const createWishlistCron = async (request: Request, response: Response): 
 
             const updateWishlist = await executeQuery(wishlistQueries.updateWishlistWithCronJobId, [cronId, wishlist_id]);
 
-            console.log(updateWishlist);
-
             if (updateWishlist.length === 0) {
                 response.status(400).send('Wishlist couldn\'t update the cron_job_id');
                 return;
