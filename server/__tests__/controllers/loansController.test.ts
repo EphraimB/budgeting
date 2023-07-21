@@ -227,7 +227,7 @@ describe('GET /api/loans', () => {
 });
 
 describe('POST /api/loans', () => {
-    it('should respond with the new loan', async () => {
+    it('should populate request.loan_id', async () => {
         const newLoan = loans.filter(loan => loan.loan_id === 1);
 
         mockModule(newLoan);
@@ -260,6 +260,22 @@ describe('POST /api/loans', () => {
 
         // Assert that console.error was called with the error message
         expect(consoleSpy).toHaveBeenCalledWith(error);
+    });
+
+    it('should respond with the created loan', async () => {
+        const newLoan = loans.filter(loan => loan.loan_id === 1);
+
+        mockModule(newLoan);
+
+        const { createLoanReturnObject } = await import('../../controllers/loansController.js');
+
+        mockRequest.body = newLoan;
+
+        await createLoanReturnObject(mockRequest as Request, mockResponse);
+
+        // Assert
+        expect(mockResponse.status).toHaveBeenCalledWith(201);
+        expect(mockResponse.json).toHaveBeenCalledWith(newLoan);
     });
 });
 
