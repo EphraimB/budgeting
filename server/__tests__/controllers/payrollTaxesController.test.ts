@@ -279,6 +279,28 @@ describe('POST /api/payroll/taxes', () => {
         // Assert that the error was logged
         expect(consoleSpy).toHaveBeenCalledWith(error);
     });
+
+    it('should respond with the created payroll tax', async () => {
+        const id = 1;
+
+        mockModule(payrollTaxes.filter(payrollTax => payrollTax.payroll_taxes_id === id));
+
+        const newPayrollTax = {
+            employee_id: id,
+            name: 'Federal Income Tax',
+            rate: 0.15
+        };
+
+        mockRequest.body = newPayrollTax;
+
+        const { createPayrollTaxReturnObject } = await import('../../controllers/payrollTaxesController.js');
+
+        await createPayrollTaxReturnObject(mockRequest as Request, mockResponse);
+
+        // Assert
+        expect(mockResponse.status).toHaveBeenCalledWith(201);
+        expect(mockResponse.json).toHaveBeenCalledWith(payrollTaxes.filter(payrollTax => payrollTax.payroll_taxes_id === id));
+    });
 });
 
 describe('PUT /api/payroll/taxes/:id', () => {
