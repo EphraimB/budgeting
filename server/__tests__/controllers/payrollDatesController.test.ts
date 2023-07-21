@@ -379,6 +379,28 @@ describe('PUT /api/payroll/dates/:id', () => {
         expect(mockResponse.status).toHaveBeenCalledWith(404);
         expect(mockResponse.send).toHaveBeenCalledWith('Payroll date not found');
     });
+
+    it('should respond with the updated payroll date', async () => {
+        // Arrange
+        mockModule(payrollDates.filter(payrollDate => payrollDate.payroll_date_id === 1));
+
+        const updatedPayrollDate = {
+            employee_id: 1,
+            start_day: 1,
+            end_day: 15
+        };
+
+        const { updatePayrollDateReturnObject } = await import('../../controllers/payrollDatesController.js');
+
+        mockRequest.params = { id: 1 };
+        mockRequest.body = updatedPayrollDate;
+
+        await updatePayrollDateReturnObject(mockRequest as Request, mockResponse);
+
+        // Assert
+        expect(mockResponse.status).toHaveBeenCalledWith(200);
+        expect(mockResponse.json).toHaveBeenCalledWith([payrollDatesReturnObj[0]]);
+    });
 });
 
 describe('DELETE /api/payroll/dates/:id', () => {
