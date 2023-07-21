@@ -412,4 +412,20 @@ describe('DELETE /api/transfer/:id', () => {
         expect(mockResponse.status).toHaveBeenCalledWith(404);
         expect(mockResponse.send).toHaveBeenCalledWith('Transfer not found');
     });
+
+    it('should respond with a success message with account_id', async () => {
+        // Arrange
+        mockModule('Transfer deleted successfully');
+
+        const { deleteTransferReturnObject } = await import('../../controllers/transfersController.js');
+
+        mockRequest.params = { id: 1 };
+        mockRequest.query = { account_id: 1 };
+
+        await deleteTransferReturnObject(mockRequest as Request, mockResponse);
+
+        // Assert
+        expect(mockResponse.status).toHaveBeenCalledWith(200);
+        expect(mockResponse.send).toHaveBeenCalledWith('Transfer deleted successfully');
+    });
 });
