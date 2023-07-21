@@ -340,6 +340,24 @@ describe('PUT /api/expenses/:id', () => {
         expect(mockResponse.status).toHaveBeenCalledWith(404);
         expect(mockResponse.send).toHaveBeenCalledWith('Expense not found');
     });
+
+    it('should respond with an array of expenses', async () => {
+        // Arrange
+        const newExpense = expenses.filter(expense => expense.expense_id === 1);
+
+        mockModule(newExpense);
+
+        const { updateExpenseReturnObject } = await import('../../controllers/expensesController.js');
+
+        mockRequest.body = newExpense;
+
+        // Call the function with the mock request and response
+        await updateExpenseReturnObject(mockRequest as Request, mockResponse);
+
+        // Assert
+        expect(mockResponse.status).toHaveBeenCalledWith(200);
+        expect(mockResponse.json).toHaveBeenCalledWith(newExpense);
+    });
 });
 
 describe('DELETE /api/expenses/:id', () => {
