@@ -276,11 +276,11 @@ describe('PUT /api/expenses/:id', () => {
         mockRequest.params = { id: 1 };
         mockRequest.body = updatedExpense;
 
-        await updateExpense(mockRequest as Request, mockResponse);
+        await updateExpense(mockRequest as Request, mockResponse, mockNext);
 
         // Assert
-        expect(mockResponse.status).toHaveBeenCalledWith(200);
-        expect(mockResponse.json).toHaveBeenCalledWith(updatedExpense);
+        expect(mockRequest.expense_id).toBe(1);
+        expect(mockNext).toHaveBeenCalled();
     });
 
     it('should handle errors correctly', async () => {
@@ -295,7 +295,7 @@ describe('PUT /api/expenses/:id', () => {
         mockRequest.body = expenses.filter(expense => expense.expense_id === 1);
 
         // Act
-        await updateExpense(mockRequest as Request, mockResponse);
+        await updateExpense(mockRequest as Request, mockResponse, mockNext);
 
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(400);
@@ -315,7 +315,7 @@ describe('PUT /api/expenses/:id', () => {
         mockRequest.body = accounts.filter(account => account.account_id === 1);
 
         // Act
-        await updateExpense(mockRequest as Request, mockResponse);
+        await updateExpense(mockRequest as Request, mockResponse, mockNext);
 
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(404);
@@ -332,7 +332,7 @@ describe('DELETE /api/expenses/:id', () => {
 
         mockRequest.params = { id: 1 };
 
-        await deleteExpense(mockRequest as Request, mockResponse);
+        await deleteExpense(mockRequest as Request, mockResponse, mockNext);
 
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(200);
@@ -350,7 +350,7 @@ describe('DELETE /api/expenses/:id', () => {
         mockRequest.params = { id: 1 };
 
         // Act
-        await deleteExpense(mockRequest as Request, mockResponse);
+        await deleteExpense(mockRequest as Request, mockResponse, mockNext);
 
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(400);
@@ -369,30 +369,10 @@ describe('DELETE /api/expenses/:id', () => {
         mockRequest.params = { id: 1 };
 
         // Act
-        await deleteExpense(mockRequest as Request, mockResponse);
+        await deleteExpense(mockRequest as Request, mockResponse, mockNext);
 
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(404);
         expect(mockResponse.send).toHaveBeenCalledWith('Expense not found');
     });
-
-    // it('should respond with a 404 when the cron job does not exist', async () => {
-    //     // Arrange
-    //     jest.mock('../../crontab/deleteCronJob.js', () => {
-    //         return jest.fn().mockImplementation(() => Promise.resolve([]));
-    //     });
-
-    //     mockModule('Expense deleted successfully');
-
-    //     const { deleteExpense } = await import('../../controllers/expensesController.js');
-
-    //     mockRequest.params = { id: 1 };
-
-    //     // Act
-    //     await deleteExpense(mockRequest as Request, mockResponse);
-
-    //     // Assert
-    //     expect(mockResponse.status).toHaveBeenCalledWith(404);
-    //     expect(mockResponse.send).toHaveBeenCalledWith('Cron job not found');
-    // });
 });
