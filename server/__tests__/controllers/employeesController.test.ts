@@ -5,6 +5,7 @@ import { employees, payrollDates, payrollTaxes } from '../../models/mockData.js'
 // Mock request and response
 let mockRequest: any;
 let mockResponse: any;
+let mockNext: any;
 let consoleSpy: any;
 
 jest.mock('child_process', () => {
@@ -27,6 +28,7 @@ beforeEach(() => {
         json: jest.fn(),
         send: jest.fn()
     };
+    mockNext = jest.fn();
 });
 
 afterEach(() => {
@@ -196,7 +198,7 @@ describe('POST /api/payroll/employee', () => {
 });
 
 describe('PUT /api/payroll/employee/:id', () => {
-    it('should respond with the updated employee', async () => {
+    it('should call next on middleware', async () => {
         // Arrange
         const updatedEmployee = employees.filter(employee => employee.employee_id === 1);
 
@@ -207,11 +209,10 @@ describe('PUT /api/payroll/employee/:id', () => {
 
         const { updateEmployee } = await import('../../controllers/employeesController.js');
 
-        await updateEmployee(mockRequest as Request, mockResponse);
+        await updateEmployee(mockRequest as Request, mockResponse, mockNext);
 
         // Assert
-        expect(mockResponse.status).toHaveBeenCalledWith(200);
-        expect(mockResponse.json).toHaveBeenCalledWith(updatedEmployee);
+        expect(mockNext).toHaveBeenCalled();
     });
 
     it('should respond with an error message', async () => {
@@ -227,7 +228,7 @@ describe('PUT /api/payroll/employee/:id', () => {
 
         const { updateEmployee } = await import('../../controllers/employeesController.js');
 
-        await updateEmployee(mockRequest as Request, mockResponse);
+        await updateEmployee(mockRequest as Request, mockResponse, mockNext);
 
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(400);
@@ -247,7 +248,7 @@ describe('PUT /api/payroll/employee/:id', () => {
         mockRequest.body = employees.filter(employee => employee.employee_id === 3);
 
         // Act
-        await updateEmployee(mockRequest as Request, mockResponse);
+        await updateEmployee(mockRequest as Request, mockResponse, mockNext);
 
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(404);
@@ -277,7 +278,7 @@ describe('PUT /api/payroll/employee/:id', () => {
         const { updateEmployee } = await import('../../controllers/employeesController.js');
 
         // Act
-        await updateEmployee(mockRequest as Request, mockResponse);
+        await updateEmployee(mockRequest as Request, mockResponse, mockNext);
 
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(500);
