@@ -1,4 +1,4 @@
-import { jest } from '@jest/globals';
+import { expect, jest } from '@jest/globals';
 import { Request, Response } from 'express';
 import { transfers } from '../../models/mockData.js';
 import { QueryResultRow } from 'pg';
@@ -263,6 +263,23 @@ describe('POST /api/transfers', () => {
 
         // Assert that the error was logged
         expect(consoleSpy).toHaveBeenCalledWith(error);
+    });
+
+    it('should respond with the created transfer', async () => {
+        // Arrange
+        const newTransfer = transfers.filter(transfer => transfer.transfer_id === 1);
+
+        mockModule(newTransfer);
+
+        const { createTransferReturnObject } = await import('../../controllers/transfersController.js');
+
+        mockRequest.body = newTransfer;
+
+        await createTransferReturnObject(mockRequest as Request, mockResponse);
+
+        // Assert
+        expect(mockResponse.status).toHaveBeenCalledWith(201);
+        expect(mockResponse.json).toHaveBeenCalledWith(newTransfer);
     });
 });
 
