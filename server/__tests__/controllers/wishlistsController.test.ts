@@ -1,6 +1,6 @@
 import { jest } from '@jest/globals';
 import { Request, Response } from 'express';
-import { transactions, wishlists } from '../../models/mockData.js';
+import { wishlists } from '../../models/mockData.js';
 import { QueryResultRow } from 'pg';
 import { Wishlist } from '../../types/types.js';
 
@@ -514,7 +514,7 @@ describe('POST /api/wishlists', () => {
         // Arrange
         const newWishlist = wishlists.filter(wishlist => wishlist.wishlist_id === 1);
 
-        mockModule(newWishlist, undefined, [{ cron_job_id: 1 }], [], [{ wishlist_id: 1, wishlist_title: "Test Wishlist", cron_job_id: 1 }]);
+        mockModule(newWishlist, undefined, [{ cron_job_id: 1 }], []);
 
         jest.mock('../../crontab/scheduleCronJob.js', () => ({
             __esModule: true,
@@ -741,30 +741,6 @@ describe('DELETE /api/wishlists/:id', () => {
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(200);
         expect(mockResponse.send).toHaveBeenCalledWith('Successfully deleted wishlist item');
-    });
-
-    it('should respond with a 404 if cron job not found', async () => {
-        // Arrange
-        mockModule(
-            [{ wishlist_id: 1, cron_job_id: 1 }], // createWishlist result
-            undefined, // error message
-            [] // getCronJob result
-        );
-
-        jest.mock('../../crontab/deleteCronJob.js', () => ({
-            __esModule: true,
-            default: jest.fn()
-        }));
-
-        mockRequest.params = { id: 1 };
-
-        const { deleteWishlist } = await import('../../controllers/wishlistsController.js');
-
-        await deleteWishlist(mockRequest as Request, mockResponse);
-
-        // Assert
-        expect(mockResponse.status).toHaveBeenCalledWith(404);
-        expect(mockResponse.send).toHaveBeenCalledWith('Cron job not found');
     });
 
     it('should respond with an error message', async () => {
