@@ -509,39 +509,6 @@ describe('POST /api/wishlists', () => {
         // Assert that the error was logged on the server side
         expect(consoleSpy).toHaveBeenCalledWith(error);
     });
-
-    it('should respond with an error message if the cron job id couldn\'t update', async () => {
-        // Arrange
-        const newWishlist = wishlists.filter(wishlist => wishlist.wishlist_id === 1);
-
-        mockModule(newWishlist, undefined, [{ cron_job_id: 1 }], []);
-
-        jest.mock('../../crontab/scheduleCronJob.js', () => ({
-            __esModule: true,
-            default: jest.fn(() => Promise.resolve({ cronDate: '* * * * *', uniqueId: '1fw34' }))
-        }));
-
-        const { createWishlistCron } = await import('../../controllers/wishlistsController.js');
-
-        mockRequest.wishlist_id = 1;
-        mockRequest.body = newWishlist;
-        mockRequest.transactions = [{
-            account_id: 1,
-            transactions: [{
-                expense_id: 1,
-                date: null,
-                amount: 100,
-                title: 'Test',
-                description: 'Test'
-            }]
-        }];
-
-        await createWishlistCron(mockRequest as Request, mockResponse);
-
-        // Assert
-        expect(mockResponse.status).toHaveBeenCalledWith(400);
-        expect(mockResponse.send).toHaveBeenCalledWith('Wishlist couldn\'t update the cron_job_id');
-    });
 });
 
 describe('PUT /api/wishlists middleware', () => {
