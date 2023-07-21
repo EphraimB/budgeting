@@ -280,7 +280,7 @@ describe('POST /api/loans', () => {
 });
 
 describe('PUT /api/loans/:id', () => {
-    it('should respond with the updated loan', async () => {
+    it('should call next in the middleware', async () => {
         const updatedLoan = loans.filter(loan => loan.loan_id === 1);
 
         mockModule(updatedLoan);
@@ -332,6 +332,23 @@ describe('PUT /api/loans/:id', () => {
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(404);
         expect(mockResponse.send).toHaveBeenCalledWith('Loan not found');
+    });
+
+    it('should respond with the updated loan', async () => {
+        const updatedLoan = loans.filter(loan => loan.loan_id === 1);
+
+        mockModule(updatedLoan);
+
+        const { updateLoanReturnObject } = await import('../../controllers/loansController.js');
+
+        mockRequest.params = { id: 1 };
+        mockRequest.body = updatedLoan;
+
+        await updateLoanReturnObject(mockRequest as Request, mockResponse);
+
+        // Assert
+        expect(mockResponse.status).toHaveBeenCalledWith(200);
+        expect(mockResponse.json).toHaveBeenCalledWith(updatedLoan);
     });
 });
 

@@ -285,7 +285,7 @@ describe('POST /api/expenses', () => {
 });
 
 describe('PUT /api/expenses/:id', () => {
-    it('should respond with the updated expense', async () => {
+    it('should call next in the middleware', async () => {
         const updatedExpense = expenses.filter(expense => expense.expense_id === 1);
 
         mockModule(updatedExpense);
