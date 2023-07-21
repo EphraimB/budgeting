@@ -34,11 +34,33 @@ const createFutureTransfer = () => {
 };
 
 beforeAll(() => {
+    jest.mock('../../middleware/middleware', () => ({
+        setQueries: jest.fn((req: Request, res: Response, next: NextFunction) => next()),
+        getCurrentBalance: jest.fn((req: Request, res: Response, next: NextFunction) => next()),
+        getTransactionsByAccount: jest.fn((req: Request, res: Response, next: NextFunction) => next()),
+        getExpensesByAccount: jest.fn((req: Request, res: Response, next: NextFunction) => next()),
+        getLoansByAccount: jest.fn((req: Request, res: Response, next: NextFunction) => next()),
+        getPayrollsMiddleware: jest.fn((req: Request, res: Response, next: NextFunction) => next()),
+        getTransfersByAccount: jest.fn((req: Request, res: Response, next: NextFunction) => next()),
+        getWishlistsByAccount: jest.fn((req: Request, res: Response, next: NextFunction) => next()),
+        updateWishlistCron: jest.fn((req: Request, res: Response, next: NextFunction) => next())
+    }));
+
+    jest.mock('../../generation/generateTransactions', () => {
+        return jest.fn((req: Request, res: Response, next: NextFunction) => {
+            req.transactions = [];
+            next();
+        });
+    });
+
     jest.mock('../../controllers/transfersController', () => ({
-        getTransfers: (req: Request, res: Response, next: NextFunction) => res.json({ message: 'success' }),
-        createTransfer: (req: Request, res: Response, next: NextFunction) => res.json({ message: 'success' }),
-        updateTransfer: (req: Request, res: Response, next: NextFunction) => res.json({ message: 'success' }),
-        deleteTransfer: (req: Request, res: Response, next: NextFunction) => res.json({ message: 'success' })
+        getTransfers: jest.fn((req: Request, res: Response, next: NextFunction) => res.json({ message: 'success' })),
+        createTransfer: jest.fn((req: Request, res: Response, next: NextFunction) => next()),
+        createTransferReturnObject: jest.fn((req: Request, res: Response, next: NextFunction) => res.json({ message: 'success' })),
+        updateTransfer: jest.fn((req: Request, res: Response, next: NextFunction) => next()),
+        updateTransferReturnObject: jest.fn((req: Request, res: Response, next: NextFunction) => res.json({ message: 'success' })),
+        deleteTransfer: jest.fn((req: Request, res: Response, next: NextFunction) => next()),
+        deleteTransferReturnObject: jest.fn((req: Request, res: Response, next: NextFunction) => res.json({ message: 'success' }))
     }));
 });
 
