@@ -227,7 +227,7 @@ describe('GET /api/transfers', () => {
 });
 
 describe('POST /api/transfers', () => {
-    it('should respond with the new transfer', async () => {
+    it('should populate request.transfer_id', async () => {
         // Arrange
         const newTransfer = transfers.filter(transfer => transfer.transfer_id === 1);
 
@@ -267,7 +267,7 @@ describe('POST /api/transfers', () => {
 });
 
 describe('PUT /api/transfer/:id', () => {
-    it('should respond with the updated transfer', async () => {
+    it('should call next on the middleware', async () => {
         // Arrange
         const updatedTransfer = transfers.filter(transfer => transfer.transfer_id === 1);
 
