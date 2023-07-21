@@ -26,11 +26,31 @@ const newWishlist = {
 };
 
 beforeAll(() => {
+    jest.mock('../../middleware/middleware', () => ({
+        setQueries: jest.fn((req: Request, res: Response, next: NextFunction) => next()),
+        getCurrentBalance: jest.fn((req: Request, res: Response, next: NextFunction) => next()),
+        getTransactionsByAccount: jest.fn((req: Request, res: Response, next: NextFunction) => next()),
+        getExpensesByAccount: jest.fn((req: Request, res: Response, next: NextFunction) => next()),
+        getLoansByAccount: jest.fn((req: Request, res: Response, next: NextFunction) => next()),
+        getPayrollsMiddleware: jest.fn((req: Request, res: Response, next: NextFunction) => next()),
+        getTransfersByAccount: jest.fn((req: Request, res: Response, next: NextFunction) => next()),
+        getWishlistsByAccount: jest.fn((req: Request, res: Response, next: NextFunction) => next()),
+    }));
+
+    jest.mock('../../generation/generateTransactions', () => {
+        return jest.fn((req: Request, res: Response, next: NextFunction) => {
+            req.transactions = [];
+            next();
+        });
+    });
+
     jest.mock('../../controllers/wishlistsController', () => ({
-        getWishlists: (req: Request, res: Response, next: NextFunction) => res.json({ message: 'success' }),
-        createWishlist: (req: Request, res: Response, next: NextFunction) => res.json({ message: 'success' }),
-        updateWishlist: (req: Request, res: Response, next: NextFunction) => res.json({ message: 'success' }),
-        deleteWishlist: (req: Request, res: Response, next: NextFunction) => res.json({ message: 'success' })
+        getWishlists: jest.fn((req: Request, res: Response, next: NextFunction) => res.json({ message: 'success' })),
+        createWishlist: jest.fn((req: Request, res: Response, next: NextFunction) => next()),
+        createWishlistCron: jest.fn((req: Request, res: Response, next: NextFunction) => res.json({ message: 'success' })),
+        updateWishlist: jest.fn((req: Request, res: Response, next: NextFunction) => next()),
+        updateWishlistCron: jest.fn((req: Request, res: Response, next: NextFunction) => res.json({ message: 'success' })),
+        deleteWishlist: jest.fn((req: Request, res: Response, next: NextFunction) => res.json({ message: 'success' }))
     }));
 });
 

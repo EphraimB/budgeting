@@ -35,6 +35,7 @@ export interface TransactionHistory {
 
 export interface Account {
     account_id: number;
+    employee_id?: number;
     account_name: string;
     account_type: number;
     account_balance: number;
@@ -118,10 +119,12 @@ export interface PayrollTax {
 export interface Wishlist {
     wishlist_id?: number;
     account_id?: number;
+    cron_job_id?: number;
     wishlist_amount: number;
     wishlist_title: string;
     wishlist_description: string;
     wishlist_date_available?: string;
+    wishlist_date_can_purchase?: string | null;
     wishlist_url_link?: string;
     wishlist_priority?: number;
     date_created?: string;
@@ -148,14 +151,27 @@ export interface Transfer {
     date_modified?: string;
 }
 
+interface CurrentBalance {
+    account_id: number;
+    account_balance: number;
+}
+
 declare module 'express-serve-static-core' {
     interface Request {
-        transaction: Transaction[];
-        expenses: Expense[];
-        loans: Loan[];
-        payrolls: Payroll[];
-        wishlists: Wishlist[];
-        transfers: Transfer[];
-        currentBalance: number;
+        transaction: any[];
+        expenses: any[];
+        loans: any[];
+        payrolls: any[];
+        wishlists: any[];
+        transfers: any[];
+        currentBalance: CurrentBalance[];
+        transactions: any[];
+        wishlist_id: number;
+        expense_id: number;
+        loan_id: number;
+        transfer_id: number;
+        payroll_date_id: number;
+        employee_id: number;
+        payroll_taxes_id: number;
     }
 }

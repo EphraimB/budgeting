@@ -1,7 +1,8 @@
 {
     "compilerOptions": {
         "types": [
-            "node"
+            "node",
+            "jest"
         ],
         "module": "ES2022",
         "esModuleInterop": true,
@@ -16,8 +17,5 @@
                 "node_modules/*"
             ]
         }
-    },
-    "exclude": [
-        "__tests__/**/*"
-    ]
+    }
 }

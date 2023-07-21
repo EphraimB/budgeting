@@ -1,7 +1,9 @@
 import express, { Router } from 'express';
 import { query, param, body } from 'express-validator';
-import { getEmployee, createEmployee, updateEmployee, deleteEmployee } from '../controllers/employeesController.js';
+import { getEmployee, createEmployee, updateEmployee, updateEmployeeReturnObject, deleteEmployee } from '../controllers/employeesController.js';
 import validateRequest from '../utils/validateRequest.js';
+import generateTransactions from '../generation/generateTransactions.js';
+import { setQueries, getCurrentBalance, getTransactionsByAccount, getExpensesByAccount, getLoansByAccount, getPayrollsMiddleware, getTransfersByAccount, getWishlistsByAccount, updateWishlistCron } from '../middleware/middleware.js';
 
 const router: Router = express.Router();
 
@@ -34,8 +36,7 @@ router.put('/:employee_id',
         body('sick_days').isFloat({ min: 0 }).withMessage('Sick days must be a number'),
         body('work_schedule').isString().withMessage('Work schedule must be a string'),
         validateRequest
-    ],
-    updateEmployee);
+    ], updateEmployee, setQueries, getCurrentBalance, getTransactionsByAccount, getExpensesByAccount, getLoansByAccount, getPayrollsMiddleware, getTransfersByAccount, getWishlistsByAccount, generateTransactions, updateWishlistCron, updateEmployeeReturnObject);
 
 router.delete('/:employee_id',
     [

@@ -38,11 +38,33 @@ const createFutureExpense = () => {
 };
 
 beforeAll(() => {
+    jest.mock('../../middleware/middleware', () => ({
+        setQueries: jest.fn((req: Request, res: Response, next: NextFunction) => next()),
+        getCurrentBalance: jest.fn((req: Request, res: Response, next: NextFunction) => next()),
+        getTransactionsByAccount: jest.fn((req: Request, res: Response, next: NextFunction) => next()),
+        getExpensesByAccount: jest.fn((req: Request, res: Response, next: NextFunction) => next()),
+        getLoansByAccount: jest.fn((req: Request, res: Response, next: NextFunction) => next()),
+        getPayrollsMiddleware: jest.fn((req: Request, res: Response, next: NextFunction) => next()),
+        getTransfersByAccount: jest.fn((req: Request, res: Response, next: NextFunction) => next()),
+        getWishlistsByAccount: jest.fn((req: Request, res: Response, next: NextFunction) => next()),
+        updateWishlistCron: jest.fn((req: Request, res: Response, next: NextFunction) => next())
+    }));
+
+    jest.mock('../../generation/generateTransactions', () => {
+        return jest.fn((req: Request, res: Response, next: NextFunction) => {
+            req.transactions = [];
+            next();
+        });
+    });
+
     jest.mock('../../controllers/expensesController', () => ({
-        getExpenses: (req: Request, res: Response, next: NextFunction) => res.json({ message: 'success' }),
-        createExpense: (req: Request, res: Response, next: NextFunction) => res.json({ message: 'success' }),
-        updateExpense: (req: Request, res: Response, next: NextFunction) => res.json({ message: 'success' }),
-        deleteExpense: (req: Request, res: Response, next: NextFunction) => res.json({ message: 'success' })
+        getExpenses: jest.fn((req: Request, res: Response, next: NextFunction) => res.json({ message: 'success' })),
+        createExpense: jest.fn((req: Request, res: Response, next: NextFunction) => next()),
+        createExpenseReturnObject: jest.fn((req: Request, res: Response, next: NextFunction) => res.json({ message: 'success' })),
+        updateExpense: jest.fn((req: Request, res: Response, next: NextFunction) => next()),
+        updateExpenseReturnObject: jest.fn((req: Request, res: Response, next: NextFunction) => res.json({ message: 'success' })),
+        deleteExpense: jest.fn((req: Request, res: Response, next: NextFunction) => next()),
+        deleteExpenseReturnObject: jest.fn((req: Request, res: Response, next: NextFunction) => res.json({ message: 'success' }))
     }));
 });
 

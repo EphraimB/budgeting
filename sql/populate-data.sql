@@ -17,7 +17,3 @@ INSERT INTO payroll_taxes (employee_id, name, rate) VALUES
     (1, 'State Income Tax', 0.05),
     (1, 'Social Security Tax', 0.062),
     (1, 'Medicare Tax', 0.0145);
-
-
-INSERT INTO wishlist (account_id, wishlist_amount, wishlist_title, wishlist_description, wishlist_priority, wishlist_date_available) VALUES (1, 100.00, 'Test Wishlist', 'Test Wishlist Description', 1, NOW() + INTERVAL '1 month');
-INSERT INTO wishlist (account_id, wishlist_amount, wishlist_title, wishlist_description, wishlist_priority, wishlist_date_available) VALUES (1, 5000.00, 'Test Wishlist 2', 'Test Wishlist Description 2', 2, null);

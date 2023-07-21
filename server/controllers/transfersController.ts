@@ -1,4 +1,4 @@
-import { Request, Response } from 'express';
+import { NextFunction, Request, Response } from 'express';
 import { transferQueries, cronJobQueries } from '../models/queryData.js';
 import scheduleCronJob from '../crontab/scheduleCronJob.js';
 import deleteCronJob from '../crontab/deleteCronJob.js';
@@ -97,9 +97,10 @@ export const getTransfers = async (request: Request, response: Response): Promis
  * 
  * @param request - The request object
  * @param response - The response object
+ * @param next - The next function
  * Sends a response with the newly created transfer
  */
-export const createTransfer = async (request: Request, response: Response): Promise<void> => {
+export const createTransfer = async (request: Request, response: Response, next: NextFunction): Promise<void> => {
     const {
         source_account_id,
         destination_account_id,
@@ -117,31 +118,7 @@ export const createTransfer = async (request: Request, response: Response): Prom
     } = request.body;
 
     try {
-        const cronParams = {
-            date: begin_date,
-            account_id: source_account_id,
-            destination_account_id,
-            amount: -amount,
-            title,
-            description,
-            frequency_type,
-            frequency_type_variable,
-            frequency_day_of_month,
-            frequency_day_of_week,
-            frequency_week_of_month,
-            frequency_month_of_year,
-            scriptPath: '/app/dist/scripts/createTransaction.sh'
-        };
-
-        const { cronDate, uniqueId } = await scheduleCronJob(cronParams);
-        const cronJobResult = await executeQuery(cronJobQueries.createCronJob, [uniqueId, cronDate]);
-
-        const cronId: number = cronJobResult[0].cron_job_id;
-
-        console.log('Cron job created ' + cronId);
-
         const transferResult = await executeQuery<TransferInput>(transferQueries.createTransfer, [
-            cronId,
             source_account_id,
             destination_account_id,
             amount,
@@ -160,7 +137,59 @@ export const createTransfer = async (request: Request, response: Response): Prom
         // Parse the data to correct format and return an object
         const transfers: Transfer[] = transferResult.map(transfersParse);
 
-        response.status(201).json(transfers);
+        const cronParams = {
+            date: begin_date,
+            account_id: source_account_id,
+            id: transfers[0].transfer_id,
+            destination_account_id,
+            amount: -amount,
+            title,
+            description,
+            frequency_type,
+            frequency_type_variable,
+            frequency_day_of_month,
+            frequency_day_of_week,
+            frequency_week_of_month,
+            frequency_month_of_year,
+            scriptPath: '/app/dist/scripts/createTransaction.sh',
+            type: 'transfer'
+        };
+
+        const { cronDate, uniqueId } = await scheduleCronJob(cronParams);
+        const cronJobResult = await executeQuery(cronJobQueries.createCronJob, [uniqueId, cronDate]);
+
+        const cronId: number = cronJobResult[0].cron_job_id;
+
+        console.log('Cron job created ' + cronId);
+
+        await executeQuery(transferQueries.updateTransferWithCronJobId, [cronId, transfers[0].transfer_id]);
+
+        request.transfer_id = transfers[0].transfer_id;
+
+        next();
+
+        // response.status(201).json(transfers);
+    } catch (error) {
+        console.error(error); // Log the error on the server side
+        handleError(response, 'Error creating transfer');
+    }
+};
+
+/**
+ * 
+ * @param request - Request object
+ * @param response - Response object
+ * Sends a response with the created transfer
+ */
+export const createTransferReturnObject = async (request: Request, response: Response): Promise<void> => {
+    const { transfer_id } = request;
+
+    try {
+        const transfer = await executeQuery<TransferInput>(transferQueries.getTransfersById, [transfer_id]);
+
+        const modifiedTransfers = transfer.map(transfersParse);
+
+        response.status(201).json(modifiedTransfers);
     } catch (error) {
         console.error(error); // Log the error on the server side
         handleError(response, 'Error creating transfer');
@@ -171,10 +200,11 @@ export const createTransfer = async (request: Request, response: Response): Prom
  * 
  * @param request - The request object
  * @param response - The response object
+ * @param next - The next function
  * Sends a response with the updated transfer
  */
-export const updateTransfer = async (request: Request, response: Response): Promise<void> => {
-    const { id } = request.params;
+export const updateTransfer = async (request: Request, response: Response, next: NextFunction): Promise<void> => {
+    const id: number = parseInt(request.params.id);
     const {
         source_account_id,
         destination_account_id,
@@ -195,6 +225,7 @@ export const updateTransfer = async (request: Request, response: Response): Prom
         const cronParams = {
             date: begin_date,
             account_id: source_account_id,
+            id,
             destination_account_id,
             amount: -amount,
             title,
@@ -205,7 +236,8 @@ export const updateTransfer = async (request: Request, response: Response): Prom
             frequency_day_of_week,
             frequency_week_of_month,
             frequency_month_of_year,
-            scriptPath: '/app/dist/scripts/createTransaction.sh'
+            scriptPath: '/app/dist/scripts/createTransaction.sh',
+            type: 'transfer'
         };
 
         const transferResults = await executeQuery(transferQueries.getTransfersById, [id]);
@@ -248,7 +280,11 @@ export const updateTransfer = async (request: Request, response: Response): Prom
         // Parse the data to correct format and return an object
         const transfers: Transfer[] = updateResults.map(transfersParse);
 
-        response.status(200).json(transfers);
+        request.transfer_id = id;
+
+        next();
+
+        // response.status(200).json(transfers);
     } catch (error) {
         console.error(error); // Log the error on the server side
         handleError(response, 'Error updating transfer');
@@ -257,11 +293,33 @@ export const updateTransfer = async (request: Request, response: Response): Prom
 
 /**
  * 
+ * @param request - Request object
+ * @param response - Response object
+ * Sends a response with the updated transfer
+ */
+export const updateTransferReturnObject = async (request: Request, response: Response): Promise<void> => {
+    const { transfer_id } = request;
+
+    try {
+        const expenses = await executeQuery<TransferInput>(transferQueries.getTransfersById, [transfer_id]);
+
+        const modifiedTransfers = expenses.map(transfersParse);
+
+        response.status(200).json(modifiedTransfers);
+    } catch (error) {
+        console.error(error); // Log the error on the server side
+        handleError(response, 'Error creating transfer');
+    }
+};
+
+/**
+ * 
  * @param request - The request object
  * @param response - The response object
+ * @param next - The next function
  * Sends a response with the deleted transfer
  */
-export const deleteTransfer = async (request: Request, response: Response): Promise<void> => {
+export const deleteTransfer = async (request: Request, response: Response, next: NextFunction): Promise<void> => {
     try {
         const { id } = request.params;
 
@@ -285,9 +343,19 @@ export const deleteTransfer = async (request: Request, response: Response): Prom
 
         await executeQuery(cronJobQueries.deleteCronJob, [cronId]);
 
-        response.status(200).send('Transfer deleted successfully');
+        next();
     } catch (error) {
         console.error(error); // Log the error on the server side
         handleError(response, 'Error deleting transfer');
     }
+};
+
+/**
+ * 
+ * @param request - Request object
+ * @param response - Response object
+ * Sends a response with the deleted transfer
+ */
+export const deleteTransferReturnObject = async (request: Request, response: Response): Promise<void> => {
+    response.status(200).send('Transfer deleted successfully');
 };
