@@ -7,7 +7,7 @@ import { writeFileSync } from 'fs';
  * Delete a cron job by its unique ID.
  * 
  * @param uniqueId - The unique ID of the cron job.
- * @returns A promise that resolves when the job has been deleted, or rejects if an error occurred.
+ * Promise that resolves when the cron job has been deleted.
  */
 const deleteCronJob = async (uniqueId: string): Promise<void> => {
     try {

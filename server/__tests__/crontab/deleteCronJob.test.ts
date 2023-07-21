@@ -1,38 +1,43 @@
 import { jest } from '@jest/globals';
-import { execSync } from 'child_process';
-import { lock } from 'proper-lockfile';
-import { writeFileSync } from 'fs';
-import deleteCronJob from '../../crontab/deleteCronJob';
+import { Volume } from 'memfs';
+
+const vol = Volume.fromJSON({
+  '/tmp/cronjob.lock': '',
+  '/scripts/createTransaction.sh': '',
+}, '/app');
 
 jest.mock('child_process', () => ({
   execSync: jest.fn().mockReturnValue(Buffer.from('')), // mock execSync to return a Buffer
 }));
 
+let release = jest.fn();
+
 jest.mock('proper-lockfile', () => ({
-  lock: jest.fn(),
+  lock: jest.fn(async () => release),
+  unlock: jest.fn()
 }));
+
+// in your test, you can control the release function:
+release = jest.fn(() => Promise.resolve());
 
 jest.mock('fs', () => ({
-  writeFileSync: jest.fn(),
+  default: vol
 }));
-
-const execSyncMock = execSync as jest.MockedFunction<typeof execSync>;
-const lockMock = lock as jest.MockedFunction<typeof lock>;
-const writeFileSyncMock = writeFileSync as jest.MockedFunction<typeof writeFileSync>;
 
 describe('deleteCronJob', () => {
   it('should delete a cron job', async () => {
+    const { default: deleteCronJob } = await import('../../crontab/deleteCronJob');
     // Arrange
     const uniqueId = '1234';
-    lockMock.mockResolvedValue(() => Promise.resolve());  // Mock lock to resolve to a function that returns a Promise
 
     // Act
     await deleteCronJob(uniqueId);
 
     // Assert
-    expect(lockMock).toHaveBeenCalledWith('/app/tmp/cronjob.lock');
-    expect(execSyncMock).toHaveBeenNthCalledWith(1, 'crontab -l');
-    expect(writeFileSyncMock).toHaveBeenCalled();
-    expect(execSyncMock).toHaveBeenNthCalledWith(2, expect.stringContaining('crontab'));
+    expect(vol.toJSON()).toEqual({
+      '/tmp/cronjob.lock': '',
+      '/scripts/createTransaction.sh': '',
+      '/tmp/cronjob.1234.tmp': ''
+    });
   });
 });
