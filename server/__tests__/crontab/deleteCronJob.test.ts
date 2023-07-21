@@ -37,7 +37,7 @@ describe('deleteCronJob', () => {
     expect(vol.toJSON()).toEqual({
       '/tmp/cronjob.lock': '',
       '/scripts/createTransaction.sh': '',
-      [dynamicKey as string]: expect.stringMatching('')
+      [dynamicKey as string]: ''
     });
   });
 });
