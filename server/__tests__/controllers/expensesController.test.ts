@@ -264,6 +264,24 @@ describe('POST /api/expenses', () => {
         // Assert that console.error was called with the error message
         expect(consoleSpy).toHaveBeenCalledWith(error);
     });
+
+    it('should respond with an array of expenses', async () => {
+        // Arrange
+        const newExpense = expenses.filter(expense => expense.expense_id === 1);
+
+        mockModule(newExpense);
+
+        const { createExpenseReturnObject } = await import('../../controllers/expensesController.js');
+
+        mockRequest.body = newExpense;
+
+        // Call the function with the mock request and response
+        await createExpenseReturnObject(mockRequest as Request, mockResponse);
+
+        // Assert
+        expect(mockResponse.status).toHaveBeenCalledWith(201);
+        expect(mockResponse.json).toHaveBeenCalledWith(newExpense);
+    });
 });
 
 describe('PUT /api/expenses/:id', () => {
