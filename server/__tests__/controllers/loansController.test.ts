@@ -14,6 +14,7 @@ jest.mock('../../crontab/deleteCronJob.js', () => {
 // Mock request and response
 let mockRequest: any;
 let mockResponse: any;
+let mockNext: any;
 let consoleSpy: any;
 
 beforeAll(() => {
@@ -28,6 +29,7 @@ beforeEach(() => {
         json: jest.fn(),
         send: jest.fn()
     };
+    mockNext = jest.fn();
 });
 
 afterEach(() => {
@@ -234,11 +236,11 @@ describe('POST /api/loans', () => {
 
         mockRequest.body = newLoan;
 
-        await createLoan(mockRequest as Request, mockResponse);
+        await createLoan(mockRequest as Request, mockResponse, mockNext);
 
         // Assert
-        expect(mockResponse.status).toHaveBeenCalledWith(201);
-        expect(mockResponse.json).toHaveBeenCalledWith(newLoan);
+        expect(mockRequest.loan_id).toBe(1);
+        expect(mockNext).toHaveBeenCalled();
     });
 
     it('should respond with an error message', async () => {
@@ -250,7 +252,7 @@ describe('POST /api/loans', () => {
 
         mockRequest.body = loans.filter(loan => loan.loan_id === 1);
 
-        await createLoan(mockRequest as Request, mockResponse);
+        await createLoan(mockRequest as Request, mockResponse, mockNext);
 
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(400);
@@ -272,11 +274,11 @@ describe('PUT /api/loans/:id', () => {
         mockRequest.params = { id: 1 };
         mockRequest.body = updatedLoan;
 
-        await updateLoan(mockRequest as Request, mockResponse);
+        await updateLoan(mockRequest as Request, mockResponse, mockNext);
 
         // Assert
-        expect(mockResponse.status).toHaveBeenCalledWith(200);
-        expect(mockResponse.json).toHaveBeenCalledWith(updatedLoan);
+        expect(mockRequest.loan_id).toBe(1);
+        expect(mockNext).toHaveBeenCalled();
     });
 
     it('should respond with an error message', async () => {
@@ -289,7 +291,7 @@ describe('PUT /api/loans/:id', () => {
         mockRequest.params = { id: 1 };
         mockRequest.body = loans.filter(loan => loan.loan_id === 1);
 
-        await updateLoan(mockRequest as Request, mockResponse);
+        await updateLoan(mockRequest as Request, mockResponse, mockNext);
 
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(400);
@@ -309,7 +311,7 @@ describe('PUT /api/loans/:id', () => {
         mockRequest.body = loans.filter(loan => loan.loan_id === 1);
 
         // Act
-        await updateLoan(mockRequest as Request, mockResponse);
+        await updateLoan(mockRequest as Request, mockResponse, mockNext);
 
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(404);
@@ -326,11 +328,10 @@ describe('DELETE /api/loans/:id', () => {
 
         mockRequest.params = { id: 1 };
 
-        await deleteLoan(mockRequest as Request, mockResponse);
+        await deleteLoan(mockRequest as Request, mockResponse, mockNext);
 
         // Assert
-        expect(mockResponse.status).toHaveBeenCalledWith(200);
-        expect(mockResponse.send).toHaveBeenCalledWith('Loan deleted successfully');
+        expect(mockNext).toHaveBeenCalled();
     });
 
     it('should respond with an error message', async () => {
@@ -343,7 +344,7 @@ describe('DELETE /api/loans/:id', () => {
 
         mockRequest.params = { id: 1 };
 
-        await deleteLoan(mockRequest as Request, mockResponse);
+        await deleteLoan(mockRequest as Request, mockResponse, mockNext);
 
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(400);
@@ -362,7 +363,7 @@ describe('DELETE /api/loans/:id', () => {
         mockRequest.params = { id: 3 };
 
         // Act
-        await deleteLoan(mockRequest as Request, mockResponse);
+        await deleteLoan(mockRequest as Request, mockResponse, mockNext);
 
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(404);
