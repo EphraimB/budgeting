@@ -37,6 +37,48 @@ if [ $? -eq 0 ]; then
         # Log if the loan_amount was successfully decremented
         if [ $? -eq 0 ]; then
             echo "Loan amount successfully decremented for id $id"
+
+            loanAmount=$(PGPASSWORD="$PGPASSWORD" psql -h "$PGHOST" -p "$PGPORT" -d "$PGDB" -U "$PGUSER" -c "SELECT loan_amount FROM loans WHERE loan_id = '$id'" -t)
+
+            # If loan_amount is less than transaction_amount, update loan_plan_amount to loan_amount
+            if ["$loanAmount" -lt "$transaction_amount" ]; then
+                updateLoanPlanAmount=$(PGPASSWORD="$PGPASSWORD" psql -h "$PGHOST" -p "$PGPORT" -d "$PGDB" -U "$PGUSER" -c "UPDATE loans SET loan_plan_amount = loan_amount WHERE loan_id = '$id' AND loan_amount < loan_plan_amount" -t)
+            fi
+            # Check if the loan_amount is 0
+            getLoanAmount=$(PGPASSWORD="$PGPASSWORD" psql -h "$PGHOST" -p "$PGPORT" -d "$PGDB" -U "$PGUSER" -c "SELECT loan_amount FROM loans WHERE loan_id = '$id'" -t)
+
+            # Log if the loan_amount was successfully fetched
+            if [ $? -eq 0 ]; then
+                echo "Loan amount successfully fetched for id $id"
+
+                # Check if the loan_amount is 0
+                if [ "$getLoanAmount" -eq 0 ]; then
+                    # If so, remove the existing cron job for this unique id and the loan from the database
+                    getCronJob=$(PGPASSWORD="$PGPASSWORD" psql -h "$PGHOST" -p "$PGPORT" -d "$PGDB" -U "$PGUSER" -c "SELECT cron_job_id FROM loans WHERE loan_id = '$id'" -t)
+
+                    # Log if the cron job was successfully fetched
+                    if [ $? -eq 0 ]; then
+                        echo "Cron job successfully fetched for id $id"
+                        echo "Cron Job ID: $getCronJob"
+
+                        deleteLoan=$(PGPASSWORD="$PGPASSWORD" psql -h "$PGHOST" -p "$PGPORT" -d "$PGDB" -U "$PGUSER" -c "DELETE FROM loans WHERE loan_id = '$id'" -t)
+                        deleteCronJob=$(PGPASSWORD="$PGPASSWORD" psql -h "$PGHOST" -p "$PGPORT" -d "$PGDB" -U "$PGUSER" -c "DELETE FROM cron_jobs WHERE cron_job_id = '$getCronJob'" -t)
+
+                        (crontab -l | grep -v "/app/dist/scripts/createTransaction.sh ${unique_id}" || true) | crontab -
+
+                        # Log if the loan was successfully deleted
+                        if [ $? -eq 0 ]; then
+                            echo "Loan successfully deleted for id $id"
+                        else
+                            echo "Loan deletion failed for id $id"
+                        fi
+                    else
+                        echo "Cron job fetch failed for id $id"
+                    fi
+                fi
+            else
+                echo "Loan amount fetch failed for id $id"
+            fi
         else
             echo "Loan amount decrement failed for id $id"
         fi
