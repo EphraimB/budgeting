@@ -14,6 +14,7 @@ type GenerateDateFunction = (currentDate: Date, loan: Loan) => Date;
  */
 const generateLoans = (transactions: GeneratedTransaction[], skippedTransactions: GeneratedTransaction[], loan: Loan, toDate: Date, fromDate: Date, generateDateFn: GenerateDateFunction) => {
     let loanDate: Date = new Date(loan.loan_begin_date);
+    let loan_amount: number = loan.loan_amount;
 
     if (loan.frequency_month_of_year !== null && loan.frequency_month_of_year !== undefined) {
         loanDate.setMonth(loan.frequency_month_of_year);
@@ -41,13 +42,13 @@ const generateLoans = (transactions: GeneratedTransaction[], skippedTransactions
         loanDate.setDate(newDay);
     }
 
-    while (loanDate <= toDate) {
+    while (loanDate <= toDate && loan_amount > 0) {
         const newTransaction: GeneratedTransaction = {
             loan_id: loan.loan_id,
             title: loan.loan_title + ' loan to ' + loan.loan_recipient,
             description: loan.loan_description,
             date: new Date(loanDate),
-            amount: -loan.loan_plan_amount
+            amount: loan_amount > loan.loan_plan_amount ? -loan.loan_plan_amount : -loan_amount
         };
 
         if (loanDate > new Date()) {
@@ -56,6 +57,8 @@ const generateLoans = (transactions: GeneratedTransaction[], skippedTransactions
             } else {
                 transactions.push(newTransaction);
             }
+
+            loan_amount -= loan.loan_plan_amount;
         }
 
         loanDate = generateDateFn(loanDate, loan);
