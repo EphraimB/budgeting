@@ -44,6 +44,15 @@ if [ $? -eq 0 ]; then
             # If loan_amount is less than transaction_amount, update loan_plan_amount to loan_amount
             if [ $(echo "$loanAmount < $transaction_amount_abs" | bc -l) -eq 1 ]; then
                 updateLoanPlanAmount=$(PGPASSWORD="$PGPASSWORD" psql -h "$PGHOST" -p "$PGPORT" -d "$PGDB" -U "$PGUSER" -c "UPDATE loans SET loan_plan_amount = loan_amount WHERE loan_id = '$id' AND loan_amount < loan_plan_amount" -t)
+
+                # Update the crontab to reflect the new loan_plan_amount
+                if [ $? -eq 0 ]; then
+                    echo "Loan plan amount successfully updated for id $id"
+                    (crontab -l | grep -v "/app/dist/scripts/createTransaction.sh ${unique_id}" || true) | crontab -
+                    (crontab -l ; echo "0 0 * * * /app/dist/scripts/createTransaction.sh ${unique_id} ${account_id} ${id} ${loanAmount} \"${transaction_title}\" \"${transaction_description}\" > /app/cron.log 2>&1") | crontab -
+                else
+                    echo "Loan plan amount update failed for id $id"
+                fi
             fi
             # Check if the loan_amount is 0
             getLoanAmount=$(PGPASSWORD="$PGPASSWORD" psql -h "$PGHOST" -p "$PGPORT" -d "$PGDB" -U "$PGUSER" -c "SELECT loan_amount FROM loans WHERE loan_id = '$id'" -t)
