@@ -31,8 +31,9 @@ if [ $? -eq 0 ]; then
 
     # Check if the unique_id is prefixed with "loan_"
     if echo "${unique_id}" | grep -q "^loan_"; then
+        transaction_amount_abs=$(( $transaction_amount * -1 ))
         # Decrement the loan_amount in the loans table
-        decrementLoanAmount=$(PGPASSWORD="$PGPASSWORD" psql -h "$PGHOST" -p "$PGPORT" -d "$PGDB" -U "$PGUSER" -c "UPDATE loans SET loan_amount = loan_amount + '$transaction_amount' WHERE loan_id = '$id'" -t)
+        decrementLoanAmount=$(PGPASSWORD="$PGPASSWORD" psql -h "$PGHOST" -p "$PGPORT" -d "$PGDB" -U "$PGUSER" -c "UPDATE loans SET loan_amount = loan_amount - '$transaction_amount_abs' WHERE loan_id = '$id'" -t)
 
         # Log if the loan_amount was successfully decremented
         if [ $? -eq 0 ]; then
@@ -41,7 +42,7 @@ if [ $? -eq 0 ]; then
             loanAmount=$(PGPASSWORD="$PGPASSWORD" psql -h "$PGHOST" -p "$PGPORT" -d "$PGDB" -U "$PGUSER" -c "SELECT loan_amount FROM loans WHERE loan_id = '$id'" -t)
 
             # If loan_amount is less than transaction_amount, update loan_plan_amount to loan_amount
-            if ["$loanAmount" -lt "$transaction_amount" ]; then
+            if ["$loanAmount" -lt "$transaction_amount_abs" ]; then
                 updateLoanPlanAmount=$(PGPASSWORD="$PGPASSWORD" psql -h "$PGHOST" -p "$PGPORT" -d "$PGDB" -U "$PGUSER" -c "UPDATE loans SET loan_plan_amount = loan_amount WHERE loan_id = '$id' AND loan_amount < loan_plan_amount" -t)
             fi
             # Check if the loan_amount is 0
