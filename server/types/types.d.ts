@@ -86,6 +86,8 @@ export interface Loan {
     frequency_day_of_week?: number;
     frequency_week_of_month?: number;
     frequency_month_of_year?: number;
+    loan_interest_rate?: number;
+    loan_interest_frequency_type?: number;
     loan_begin_date: string;
     loan_end_date?: string;
     date_created?: string;

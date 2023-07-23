@@ -20,6 +20,8 @@ interface LoanInput {
     frequency_day_of_week: string;
     frequency_week_of_month: string;
     frequency_month_of_year: string;
+    loan_interest_rate: string;
+    loan_interest_frequency_type: string;
     loan_begin_date: string;
     loan_end_date: string;
     date_created: string;
@@ -45,6 +47,8 @@ const parseLoan = (loan: LoanInput): Loan => ({
     frequency_day_of_week: parseInt(loan.frequency_day_of_week) || null,
     frequency_week_of_month: parseInt(loan.frequency_week_of_month) || null,
     frequency_month_of_year: parseInt(loan.frequency_month_of_year) || null,
+    loan_interest_rate: parseFloat(loan.loan_interest_rate) || null,
+    loan_interest_frequency_type: parseInt(loan.loan_interest_frequency_type) || null,
     loan_begin_date: loan.loan_begin_date,
     loan_end_date: loan.loan_end_date,
     date_created: loan.date_created,
@@ -114,6 +118,8 @@ export const createLoan = async (request: Request, response: Response, next: Nex
         frequency_day_of_week,
         frequency_week_of_month,
         frequency_month_of_year,
+        interest_rate,
+        interest_frequency_type,
         begin_date
     } = request.body;
 
@@ -133,6 +139,8 @@ export const createLoan = async (request: Request, response: Response, next: Nex
                 frequency_day_of_week,
                 frequency_week_of_month,
                 frequency_month_of_year,
+                interest_rate,
+                interest_frequency_type,
                 begin_date
             ]
         );
@@ -218,6 +226,8 @@ export const updateLoan = async (request: Request, response: Response, next: Nex
         frequency_day_of_week,
         frequency_week_of_month,
         frequency_month_of_year,
+        interest_rate,
+        interest_frequency_type,
         begin_date
     } = request.body;
 
@@ -271,6 +281,8 @@ export const updateLoan = async (request: Request, response: Response, next: Nex
             frequency_day_of_week,
             frequency_week_of_month,
             frequency_month_of_year,
+            interest_rate,
+            interest_frequency_type,
             begin_date,
             id
         ]);

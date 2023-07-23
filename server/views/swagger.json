@@ -1593,6 +1593,15 @@
             "type": "integer",
             "example": 1
           },
+          "interest_rate": {
+            "type": "number",
+            "format": "double",
+            "example": 0.15
+          },
+          "interest_frequency_type": {
+            "type": "integer",
+            "example": 2
+          },
           "begin_date": {
             "type": "string",
             "format": "date-time"
@@ -1966,6 +1975,15 @@
                   "frequency_month_of_year": {
                     "type": "integer",
                     "default": null
+                  },
+                  "loan_interest_rate": {
+                    "type": "number",
+                    "format": "double",
+                    "example": 0.15
+                  },
+                  "loan_frequency_type": {
+                    "type": "integer",
+                    "example": 2
                   },
                   "loan_begin_date": {
                     "type": "string",
