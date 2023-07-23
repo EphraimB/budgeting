@@ -43,12 +43,14 @@ const generateLoans = (transactions: GeneratedTransaction[], skippedTransactions
     }
 
     while (loanDate <= toDate && loan_amount > 0) {
+        const amount = Math.min(loan.loan_plan_amount, loan_amount);
+
         const newTransaction: GeneratedTransaction = {
             loan_id: loan.loan_id,
             title: loan.loan_title + ' loan to ' + loan.loan_recipient,
             description: loan.loan_description,
             date: new Date(loanDate),
-            amount: loan_amount > loan.loan_plan_amount ? -loan.loan_plan_amount : -loan_amount
+            amount: -amount
         };
 
         if (loanDate > new Date()) {
@@ -58,7 +60,7 @@ const generateLoans = (transactions: GeneratedTransaction[], skippedTransactions
                 transactions.push(newTransaction);
             }
 
-            loan_amount -= loan.loan_plan_amount;
+            loan_amount -= amount;
         }
 
         loanDate = generateDateFn(loanDate, loan);
