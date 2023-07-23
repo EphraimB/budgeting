@@ -42,7 +42,7 @@ if [ $? -eq 0 ]; then
             loanAmount=$(PGPASSWORD="$PGPASSWORD" psql -h "$PGHOST" -p "$PGPORT" -d "$PGDB" -U "$PGUSER" -c "SELECT loan_amount FROM loans WHERE loan_id = '$id'" -t)
 
             # If loan_amount is less than transaction_amount, update loan_plan_amount to loan_amount
-            if ["$loanAmount" -lt "$transaction_amount_abs" ]; then
+            if [ $(echo "$loanAmount < $transaction_amount_abs" | bc -l) -eq 1 ]; then
                 updateLoanPlanAmount=$(PGPASSWORD="$PGPASSWORD" psql -h "$PGHOST" -p "$PGPORT" -d "$PGDB" -U "$PGUSER" -c "UPDATE loans SET loan_plan_amount = loan_amount WHERE loan_id = '$id' AND loan_amount < loan_plan_amount" -t)
             fi
             # Check if the loan_amount is 0
@@ -53,7 +53,7 @@ if [ $? -eq 0 ]; then
                 echo "Loan amount successfully fetched for id $id"
 
                 # Check if the loan_amount is 0
-                if [ "$getLoanAmount" -eq 0 ]; then
+                if [ $(echo "$getLoanAmount <= 0" | bc -l) -eq 1 ]; then
                     # If so, remove the existing cron job for this unique id and the loan from the database
                     getCronJob=$(PGPASSWORD="$PGPASSWORD" psql -h "$PGHOST" -p "$PGPORT" -d "$PGDB" -U "$PGUSER" -c "SELECT cron_job_id FROM loans WHERE loan_id = '$id'" -t)
 
