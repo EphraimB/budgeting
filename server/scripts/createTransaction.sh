@@ -54,14 +54,14 @@ if [ $? -eq 0 ]; then
                     echo "Loan plan amount update failed for id $id"
                 fi
             fi
-            # Check if the loan_amount is 0
+
             getLoanAmount=$(PGPASSWORD="$PGPASSWORD" psql -h "$PGHOST" -p "$PGPORT" -d "$PGDB" -U "$PGUSER" -c "SELECT loan_amount FROM loans WHERE loan_id = '$id'" -t)
 
             # Log if the loan_amount was successfully fetched
             if [ $? -eq 0 ]; then
                 echo "Loan amount successfully fetched for id $id"
 
-                # Check if the loan_amount is 0
+                # Check if the loan_amount is less than or equal to 0
                 if [ $(echo "$getLoanAmount <= 0" | bc -l) -eq 1 ]; then
                     # If so, remove the existing cron job for this unique id and the loan from the database
                     getCronJob=$(PGPASSWORD="$PGPASSWORD" psql -h "$PGHOST" -p "$PGPORT" -d "$PGDB" -U "$PGUSER" -c "SELECT cron_job_id FROM loans WHERE loan_id = '$id'" -t)
