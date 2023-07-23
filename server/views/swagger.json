@@ -1981,7 +1981,7 @@
                     "format": "double",
                     "example": 0.15
                   },
-                  "loan_frequency_type": {
+                  "loan_interest_frequency_type": {
                     "type": "integer",
                     "example": 2
                   },
