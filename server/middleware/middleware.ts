@@ -21,6 +21,29 @@ interface WishlistInput {
     date_modified: string;
 }
 
+interface LoanInput {
+    account_id: string;
+    loan_id: string;
+    cron_job_id?: string;
+    loan_amount: string;
+    loan_plan_amount: string;
+    loan_recipient: string;
+    loan_title: string;
+    loan_description: string;
+    frequency_type: string;
+    frequency_type_variable: string;
+    frequency_day_of_month: string;
+    frequency_day_of_week: string;
+    frequency_week_of_month: string;
+    frequency_month_of_year: string;
+    loan_interest_rate: string;
+    loan_interest_frequency_type: string;
+    loan_begin_date: string;
+    loan_end_date: string;
+    date_created: string;
+    date_modified: string;
+}
+
 /**
  * 
  * @param wishlist - Wishlist object
@@ -182,6 +205,33 @@ export const getExpensesByAccount = async (request: Request, response: Response,
 
 /**
  * 
+ * @param loan - Loan object
+ * @returns - Loan object with parsed values
+ */
+const parseLoan = (loan: LoanInput): Loan => ({
+    loan_id: parseInt(loan.loan_id),
+    account_id: parseInt(loan.account_id),
+    loan_amount: parseFloat(loan.loan_amount),
+    loan_plan_amount: parseFloat(loan.loan_plan_amount),
+    loan_recipient: loan.loan_recipient,
+    loan_title: loan.loan_title,
+    loan_description: loan.loan_description,
+    frequency_type: parseInt(loan.frequency_type),
+    frequency_type_variable: parseInt(loan.frequency_type_variable) || null,
+    frequency_day_of_month: parseInt(loan.frequency_day_of_month) || null,
+    frequency_day_of_week: parseInt(loan.frequency_day_of_week) || null,
+    frequency_week_of_month: parseInt(loan.frequency_week_of_month) || null,
+    frequency_month_of_year: parseInt(loan.frequency_month_of_year) || null,
+    loan_interest_rate: parseFloat(loan.loan_interest_rate) || null,
+    loan_interest_frequency_type: parseInt(loan.loan_interest_frequency_type) || null,
+    loan_begin_date: loan.loan_begin_date,
+    loan_end_date: loan.loan_end_date,
+    date_created: loan.date_created,
+    date_modified: loan.date_modified
+});
+
+/**
+ * 
  * @param request - The request object
  * @param response - The response object
  * @param next - The next function
@@ -191,7 +241,7 @@ export const getLoansByAccount = async (request: Request, response: Response, ne
     const { account_id, to_date } = request.query;
 
     try {
-        const loansByAccount: { account_id: number, loan: Loan[] }[] = [];
+        const loansByAccount: { account_id: number, loan: any }[] = [];
 
         if (!account_id) {
             // If account_id is null, fetch all accounts and make request.transactions an array of transactions
@@ -200,13 +250,14 @@ export const getLoansByAccount = async (request: Request, response: Response, ne
             await Promise.all(accountResults.map(async (account) => {
                 const loanResults = await executeQuery(loanQueries.getLoansMiddleware, [account.account_id, to_date]);
 
-                // Map over results array and convert amount to a float for each Transaction object
-                const loanTransactions = loanResults.map(loan => ({
-                    ...loan,
-                    amount: parseFloat(loan.loan_plan_amount),
+                // Map over results array and convert amount to a float for each Loan object
+                const loansTransactions = loanResults.map(loan => parseLoan(loan));
+
+                loansTransactions.map(loan => ({
+                    amount: parseFloat(loan.loan_plan_amount as unknown as string)
                 }));
 
-                loansByAccount.push({ account_id: account.account_id, loan: loanTransactions });
+                loansByAccount.push({ account_id: account.account_id, loan: loansTransactions });
             }));
         } else {
             // Check if account exists and if it doesn't, send a response with an error message
@@ -220,9 +271,10 @@ export const getLoansByAccount = async (request: Request, response: Response, ne
             const results = await executeQuery(loanQueries.getLoansMiddleware, [account_id, to_date]);
 
             // Map over results array and convert amount to a float for each Loan object
-            const loansTransactions = results.map(loan => ({
-                ...loan,
-                amount: parseFloat(loan.loan_plan_amount),
+            const loansTransactions = results.map(loan => parseLoan(loan));
+
+            loansTransactions.map(loan => ({
+                amount: parseFloat(loan.loan_plan_amount as unknown as string)
             }));
 
             loansByAccount.push({ account_id: parseInt(account_id as string), loan: loansTransactions });

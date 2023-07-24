@@ -4,6 +4,37 @@ type GenerateDateFunction = (currentDate: Date, loan: Loan) => Date;
 
 /**
  * 
+ * @param principal - The principal amount
+ * @param annualInterestRate - The annual interest rate
+ * @param frequencyType - The frequency type
+ * @returns - The interest amount
+ */
+function calculateInterest(principal: number, annualInterestRate: number, frequencyType: number): number {
+    let periodsPerYear;
+
+    switch (frequencyType) {
+        case 0: // daily
+            periodsPerYear = 365;
+            break;
+        case 1: // weekly
+            periodsPerYear = 52;
+            break;
+        case 2: // monthly
+            periodsPerYear = 12;
+            break;
+        case 3: // yearly
+            periodsPerYear = 1;
+            break;
+        default:
+            throw new Error('Invalid frequency type');
+    }
+
+    const ratePerPeriod = annualInterestRate / periodsPerYear;
+    return principal * ratePerPeriod;
+}
+
+/**
+ * 
  * @param transactions - The transactions to generate loans for
  * @param skippedTransactions - The transactions to skip
  * @param loan - The loan to generate
@@ -43,7 +74,9 @@ const generateLoans = (transactions: GeneratedTransaction[], skippedTransactions
     }
 
     while (loanDate <= toDate && loan_amount > 0) {
-        const amount = Math.min(loan.loan_plan_amount, loan_amount);
+        const interest = calculateInterest(loan_amount, loan.loan_interest_rate, loan.loan_interest_frequency_type);
+        const adjustedLoanAmount = loan_amount + interest;
+        const amount = Math.min(loan.loan_plan_amount, adjustedLoanAmount);
 
         const newTransaction: GeneratedTransaction = {
             loan_id: loan.loan_id,
@@ -60,7 +93,7 @@ const generateLoans = (transactions: GeneratedTransaction[], skippedTransactions
                 transactions.push(newTransaction);
             }
 
-            loan_amount -= amount;
+            loan_amount = adjustedLoanAmount - amount;
         }
 
         loanDate = generateDateFn(loanDate, loan);
