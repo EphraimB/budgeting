@@ -83,7 +83,7 @@ const generateLoans = (transactions: GeneratedTransaction[], skippedTransactions
             title: loan.loan_title + ' loan to ' + loan.loan_recipient,
             description: loan.loan_description,
             date: new Date(loanDate),
-            amount: -amount
+            amount: -amount.toFixed(2)
         };
 
         if (loanDate > new Date()) {
