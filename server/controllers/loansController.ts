@@ -195,12 +195,14 @@ export const createLoan = async (request: Request, response: Response, next: Nex
         };
 
         const { cronDate, uniqueId } = await scheduleCronJob(cronParams);
-        const { cronDate: interestCronDate, uniqueId: interestUniqueId } = await scheduleCronJob(interestCronParams);
 
         const cronId: number = (await executeQuery(cronJobQueries.createCronJob, [
             uniqueId,
             cronDate
         ]))[0].cron_job_id;
+
+
+        const { cronDate: interestCronDate, uniqueId: interestUniqueId } = await scheduleCronJob(interestCronParams);
 
         const interestCronId: number = (await executeQuery(cronJobQueries.createCronJob, [
             interestUniqueId,
@@ -344,10 +346,14 @@ export const updateLoan = async (request: Request, response: Response, next: Nex
         }
 
         const { uniqueId, cronDate } = await scheduleCronJob(cronParams);
-        const { uniqueId: interestUniqueId, cronDate: interestCronDate } = await scheduleCronJob(interestCronParams);
+
+        console.log(uniqueId);
 
         await executeQuery(cronJobQueries.updateCronJob, [uniqueId, cronDate, cronId]);
-        await executeQuery(cronJobQueries.updateCronJob, [interestUniqueId, interestCronDate, cronId]);
+
+        const { uniqueId: interestUniqueId, cronDate: interestCronDate } = await scheduleCronJob(interestCronParams);
+
+        await executeQuery(cronJobQueries.updateCronJob, [interestUniqueId, interestCronDate, interestCronId]);
         const updateLoanResults = await executeQuery<LoanInput>(loanQueries.updateLoan, [
             account_id,
             amount,
@@ -425,13 +431,25 @@ export const deleteLoan = async (request: Request, response: Response, next: Nex
 
         const results = await executeQuery(cronJobQueries.getCronJob, [cronId]);
 
+        console.log(results);
+
         if (results.length > 0) {
             await deleteCronJob(results[0].unique_id);
         } else {
             console.error('Cron job not found');
         }
 
+        const interestCronId: number = parseInt(getLoanResults[0].interest_cron_job_id);
+        const interestResults = await executeQuery(cronJobQueries.getCronJob, [interestCronId]);
+
+        if (interestResults.length > 0) {
+            await deleteCronJob(interestResults[0].unique_id);
+        } else {
+            console.error('Interest cron job not found');
+        }
+
         await executeQuery(cronJobQueries.deleteCronJob, [cronId]);
+        await executeQuery(cronJobQueries.deleteCronJob, [interestCronId]);
 
         next();
     } catch (error) {
