@@ -79,7 +79,7 @@ if [ $? -eq 0 ]; then
                         deleteInterestCronJob=$(PGPASSWORD="$PGPASSWORD" psql -h "$PGHOST" -p "$PGPORT" -d "$PGDB" -U "$PGUSER" -c "DELETE FROM cron_jobs WHERE cron_job_id = '$getInterestCronJobId'" -t)
 
                         (crontab -l | grep -v "/app/dist/scripts/createTransaction.sh ${unique_id}" || true) | crontab -
-                        (crontab -l | grep -v "/app/dist/scripts/applyInterest.sh ${getInterestCronJobUniqueId}" || true) | crontab -
+                        (crontab -l | grep -v "${getInterestCronJobUniqueId}" || true) | crontab -
 
                         # Log if the loan was successfully deleted
                         if [ $? -eq 0 ]; then
