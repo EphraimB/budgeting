@@ -1,6 +1,7 @@
 import { jest } from '@jest/globals';
 import request from 'supertest';
 import express, { Express, Request, Response, NextFunction, Router } from 'express';
+import MockDate from 'mockdate';
 
 /**
  * 
@@ -18,28 +19,9 @@ const createApp = async (): Promise<Express> => {
     return app;
 };
 
-const createFutureLoan = () => {
-    const dateInFuture: Date = new Date();
-    dateInFuture.setDate(dateInFuture.getDate() + 7);
-
-    return {
-        account_id: 1,
-        amount: 1000,
-        plan_amount: 100,
-        recipient: 'test',
-        title: 'test',
-        description: 'test',
-        frequency_type: 1,
-        frequency_type_variable: 1,
-        frequency_day_of_week: 1,
-        frequency_week_of_month: 1,
-        frequency_day_of_month: 1,
-        frequency_month_of_year: 1,
-        begin_date: dateInFuture.toISOString()
-    };
-};
-
 beforeAll(() => {
+    MockDate.set('2020-01-01');
+
     jest.mock('../../middleware/middleware', () => ({
         setQueries: jest.fn((req: Request, res: Response, next: NextFunction) => next()),
         getCurrentBalance: jest.fn((req: Request, res: Response, next: NextFunction) => next()),
@@ -107,11 +89,29 @@ describe('GET / with id query', () => {
 
 describe('POST /', () => {
     it('responds with json', async () => {
+        const newLoan = {
+            account_id: 1,
+            amount: 1000,
+            plan_amount: 100,
+            recipient: 'test',
+            title: 'test',
+            description: 'test',
+            frequency_type: 1,
+            frequency_type_variable: 1,
+            frequency_day_of_week: 1,
+            frequency_week_of_month: 1,
+            frequency_day_of_month: 1,
+            frequency_month_of_year: 1,
+            interest_rate: 0,
+            interest_frequency_type: 2,
+            begin_date: '2020-01-02'
+        }
+
         const response: request.Response = await request(app)
             .post('/')
             .set('Accept', 'application/json')
             .expect('Content-Type', /json/)
-            .send(createFutureLoan());
+            .send(newLoan);
 
         expect(response.status).toBe(200);
         expect(response.body).toEqual({ message: 'success' });
@@ -120,11 +120,29 @@ describe('POST /', () => {
 
 describe('PUT /:id', () => {
     it('responds with json', async () => {
+        const updatedLoan = {
+            account_id: 1,
+            amount: 1000,
+            plan_amount: 100,
+            recipient: 'test',
+            title: 'test',
+            description: 'test',
+            frequency_type: 1,
+            frequency_type_variable: 1,
+            frequency_day_of_week: 1,
+            frequency_week_of_month: 1,
+            frequency_day_of_month: 1,
+            frequency_month_of_year: 1,
+            interest_rate: 0,
+            interest_frequency_type: 2,
+            begin_date: '2020-01-02'
+        }
+
         const response: request.Response = await request(app)
             .put('/1')
             .set('Accept', 'application/json')
             .expect('Content-Type', /json/)
-            .send(createFutureLoan());
+            .send(updatedLoan);
 
         expect(response.status).toBe(200);
         expect(response.body).toEqual({ message: 'success' });
