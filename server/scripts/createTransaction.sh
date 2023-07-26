@@ -71,10 +71,15 @@ if [ $? -eq 0 ]; then
                         echo "Cron job successfully fetched for id $id"
                         echo "Cron Job ID: $getCronJob"
 
+                        getInterestCronJobId=$(PGPASSWORD="$PGPASSWORD" psql -h "$PGHOST" -p "$PGPORT" -d "$PGDB" -U "$PGUSER" -c "SELECT interest_cron_job_id FROM loans WHERE loan_id = '$id'" -t)
+                        getInterestCronJobUniqueId=$(PGPASSWORD="$PGPASSWORD" psql -h "$PGHOST" -p "$PGPORT" -d "$PGDB" -U "$PGUSER" -c "SELECT unique_id FROM cron_jobs WHERE cron_job_id = '$getInterestCronJobId'" -t)
+
                         deleteLoan=$(PGPASSWORD="$PGPASSWORD" psql -h "$PGHOST" -p "$PGPORT" -d "$PGDB" -U "$PGUSER" -c "DELETE FROM loans WHERE loan_id = '$id'" -t)
                         deleteCronJob=$(PGPASSWORD="$PGPASSWORD" psql -h "$PGHOST" -p "$PGPORT" -d "$PGDB" -U "$PGUSER" -c "DELETE FROM cron_jobs WHERE cron_job_id = '$getCronJob'" -t)
+                        deleteInterestCronJob=$(PGPASSWORD="$PGPASSWORD" psql -h "$PGHOST" -p "$PGPORT" -d "$PGDB" -U "$PGUSER" -c "DELETE FROM cron_jobs WHERE cron_job_id = '$getInterestCronJobId'" -t)
 
                         (crontab -l | grep -v "/app/dist/scripts/createTransaction.sh ${unique_id}" || true) | crontab -
+                        (crontab -l | grep -v "/app/dist/scripts/applyInterest.sh ${getInterestCronJobUniqueId}" || true) | crontab -
 
                         # Log if the loan was successfully deleted
                         if [ $? -eq 0 ]; then
