@@ -431,8 +431,6 @@ export const deleteLoan = async (request: Request, response: Response, next: Nex
 
         const results = await executeQuery(cronJobQueries.getCronJob, [cronId]);
 
-        console.log(results);
-
         if (results.length > 0) {
             await deleteCronJob(results[0].unique_id);
         } else {
