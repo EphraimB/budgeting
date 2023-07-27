@@ -77,13 +77,14 @@ const generateLoans = (transactions: GeneratedTransaction[], skippedTransactions
         const interest = calculateInterest(loan_amount, loan.loan_interest_rate, loan.loan_interest_frequency_type);
         const adjustedLoanAmount = loan_amount + interest;
         const amount = Math.min(loan.loan_plan_amount, adjustedLoanAmount);
+        const subsidizedAmount = amount - (amount * loan.loan_subsidized);
 
         const newTransaction: GeneratedTransaction = {
             loan_id: loan.loan_id,
             title: loan.loan_title + ' loan to ' + loan.loan_recipient,
             description: loan.loan_description,
             date: new Date(loanDate),
-            amount: -amount.toFixed(2)
+            amount: -parseFloat(subsidizedAmount.toFixed(2))
         };
 
         if (loanDate > new Date()) {

@@ -1602,6 +1602,11 @@
             "type": "integer",
             "example": 2
           },
+          "subsidized": {
+            "type": "number",
+            "format": "double",
+            "example": 0.15
+          },
           "begin_date": {
             "type": "string",
             "format": "date-time"
@@ -1984,6 +1989,11 @@
                   "loan_interest_frequency_type": {
                     "type": "integer",
                     "example": 2
+                  },
+                  "loan_subsidized": {
+                    "type": "number",
+                    "format": "double",
+                    "example": 0.15
                   },
                   "loan_begin_date": {
                     "type": "string",

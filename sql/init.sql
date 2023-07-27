@@ -76,8 +76,9 @@ CREATE TABLE IF NOT EXISTS loans (
   frequency_day_of_week INT,
   frequency_week_of_month INT,
   frequency_month_of_year INT,
-  loan_interest_rate numeric(12, 2) NOT NULL,
+  loan_interest_rate numeric(2, 2) NOT NULL,
   loan_interest_frequency_type INT NOT NULL,
+  loan_subsidized numeric(2,2) NOT NULL,
   loan_begin_date TIMESTAMP NOT NULL,
   date_created TIMESTAMP NOT NULL,
   date_modified TIMESTAMP NOT NULL

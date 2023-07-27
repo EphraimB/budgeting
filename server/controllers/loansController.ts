@@ -23,6 +23,7 @@ interface LoanInput {
     frequency_month_of_year: string;
     loan_interest_rate: string;
     loan_interest_frequency_type: string;
+    loan_subsidized: string;
     loan_begin_date: string;
     loan_end_date: string;
     date_created: string;
@@ -50,6 +51,7 @@ const parseLoan = (loan: LoanInput): Loan => ({
     frequency_month_of_year: parseInt(loan.frequency_month_of_year) || null,
     loan_interest_rate: parseFloat(loan.loan_interest_rate),
     loan_interest_frequency_type: parseInt(loan.loan_interest_frequency_type),
+    loan_subsidized: parseFloat(loan.loan_subsidized),
     loan_begin_date: loan.loan_begin_date,
     loan_end_date: loan.loan_end_date,
     date_created: loan.date_created,
@@ -121,6 +123,7 @@ export const createLoan = async (request: Request, response: Response, next: Nex
         frequency_month_of_year,
         interest_rate,
         interest_frequency_type,
+        subsidized,
         begin_date
     } = request.body;
 
@@ -142,6 +145,7 @@ export const createLoan = async (request: Request, response: Response, next: Nex
                 frequency_month_of_year,
                 interest_rate,
                 interest_frequency_type,
+                subsidized,
                 begin_date
             ]
         );
@@ -152,7 +156,7 @@ export const createLoan = async (request: Request, response: Response, next: Nex
             date: begin_date,
             account_id,
             id: loans[0].loan_id,
-            amount: -plan_amount,
+            amount: -plan_amount + (plan_amount * subsidized),
             title,
             description,
             frequency_type,
