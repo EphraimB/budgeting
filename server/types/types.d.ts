@@ -178,5 +178,6 @@ declare module 'express-serve-static-core' {
         payroll_date_id: number;
         employee_id: number;
         payroll_taxes_id: number;
+        fullyPaidBackDates: Record<number, string>;
     }
 }

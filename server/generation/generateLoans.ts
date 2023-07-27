@@ -43,7 +43,7 @@ function calculateInterest(principal: number, annualInterestRate: number, freque
  * @param generateDateFn - The function to generate the next date
  * Generate loans for a given loan
  */
-const generateLoans = (transactions: GeneratedTransaction[], skippedTransactions: GeneratedTransaction[], loan: Loan, toDate: Date, fromDate: Date, generateDateFn: GenerateDateFunction) => {
+const generateLoans = (transactions: GeneratedTransaction[], skippedTransactions: GeneratedTransaction[], loan: Loan, toDate: Date, fromDate: Date, generateDateFn: GenerateDateFunction): { fullyPaidBackDate?: string } => {
     let loanDate: Date = new Date(loan.loan_begin_date);
     let loan_amount: number = loan.loan_amount;
 
@@ -101,11 +101,11 @@ const generateLoans = (transactions: GeneratedTransaction[], skippedTransactions
 
         if (loan_amount <= 0) {
             // Return the loan date when the loan amount reaches zero or goes below
-            loan.fully_paid_back = loanDate.toISOString();
-        } else {
-            // Return null if the loan amount is still above zero
-            loan.fully_paid_back = null;
+            return { fullyPaidBackDate: loanDate.toISOString() };
         }
+
+        // If the loop finishes without finding a fully paid back date, return an empty object.
+        return {};
     }
 };
 
@@ -118,14 +118,14 @@ const generateLoans = (transactions: GeneratedTransaction[], skippedTransactions
  * @param fromDate - The date to generate loans from
  * Generates loans for a loan with a daily frequency
  */
-export const generateDailyLoans = (transactions: GeneratedTransaction[], skippedTransactions: GeneratedTransaction[], loan: Loan, toDate: Date, fromDate: Date): void => {
+export const generateDailyLoans = (transactions: GeneratedTransaction[], skippedTransactions: GeneratedTransaction[], loan: Loan, toDate: Date, fromDate: Date): { fullyPaidBackDate?: string } => {
     const generateDateFn = (currentDate: Date, loan: Loan): Date => {
         const newDate: Date = currentDate;
         newDate.setDate(newDate.getDate() + (loan.frequency_type_variable || 1));
         return newDate;
     };
 
-    generateLoans(transactions, skippedTransactions, loan, toDate, fromDate, generateDateFn);
+    return generateLoans(transactions, skippedTransactions, loan, toDate, fromDate, generateDateFn);
 };
 
 /**
@@ -137,7 +137,7 @@ export const generateDailyLoans = (transactions: GeneratedTransaction[], skipped
  * @param fromDate - The date to generate loans from
  * Generates loans for a loan with a monthly frequency
  */
-export const generateMonthlyLoans = (transactions: GeneratedTransaction[], skippedTransactions: GeneratedTransaction[], loan: Loan, toDate: Date, fromDate: Date): void => {
+export const generateMonthlyLoans = (transactions: GeneratedTransaction[], skippedTransactions: GeneratedTransaction[], loan: Loan, toDate: Date, fromDate: Date): { fullyPaidBackDate?: string } => {
     let monthsIncremented: number = 0;
     const generateDateFn = (currentDate: Date, loan: Loan): Date => {
         const loanDate: Date = new Date(loan.loan_begin_date);
@@ -172,7 +172,7 @@ export const generateMonthlyLoans = (transactions: GeneratedTransaction[], skipp
         return loanDate;
     };
 
-    generateLoans(transactions, skippedTransactions, loan, toDate, fromDate, generateDateFn);
+    return generateLoans(transactions, skippedTransactions, loan, toDate, fromDate, generateDateFn);
 };
 
 /**
@@ -184,7 +184,7 @@ export const generateMonthlyLoans = (transactions: GeneratedTransaction[], skipp
  * @param fromDate - The date to generate loans from
  * Generates loans for a loan with a weekly frequency
  */
-export const generateWeeklyLoans = (transactions: GeneratedTransaction[], skippedTransactions: GeneratedTransaction[], loan: Loan, toDate: Date, fromDate: Date): void => {
+export const generateWeeklyLoans = (transactions: GeneratedTransaction[], skippedTransactions: GeneratedTransaction[], loan: Loan, toDate: Date, fromDate: Date): { fullyPaidBackDate?: string } => {
     const loanDate: Date = new Date(loan.loan_begin_date);
 
     if (loan.frequency_day_of_week) {
@@ -200,7 +200,7 @@ export const generateWeeklyLoans = (transactions: GeneratedTransaction[], skippe
         return newDate;
     };
 
-    generateLoans(transactions, skippedTransactions, loan, toDate, fromDate, generateDateFn);
+    return generateLoans(transactions, skippedTransactions, loan, toDate, fromDate, generateDateFn);
 };
 
 /**
@@ -212,7 +212,7 @@ export const generateWeeklyLoans = (transactions: GeneratedTransaction[], skippe
  * @param fromDate - The date to generate loans from
  * Generates loans for a loan with a yearly frequency
  */
-export const generateYearlyLoans = (transactions: GeneratedTransaction[], skippedTransactions: GeneratedTransaction[], loan: Loan, toDate: Date, fromDate: Date): void => {
+export const generateYearlyLoans = (transactions: GeneratedTransaction[], skippedTransactions: GeneratedTransaction[], loan: Loan, toDate: Date, fromDate: Date): { fullyPaidBackDate?: string } => {
     let yearsIncremented: number = 0;
     const generateDateFn = (currentDate: Date, loan: Loan): Date => {
         const loanDate: Date = new Date(loan.loan_begin_date);
@@ -244,5 +244,5 @@ export const generateYearlyLoans = (transactions: GeneratedTransaction[], skippe
         return loanDate;
     };
 
-    generateLoans(transactions, skippedTransactions, loan, toDate, fromDate, generateDateFn);
+    return generateLoans(transactions, skippedTransactions, loan, toDate, fromDate, generateDateFn);
 };

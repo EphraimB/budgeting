@@ -24,7 +24,7 @@ interface LoanInput {
     loan_interest_rate: string;
     loan_interest_frequency_type: string;
     loan_subsidized: string;
-    fully_paid_back: string;
+    loan_fully_paid_back: string;
     loan_begin_date: string;
     loan_end_date: string;
     date_created: string;
@@ -53,7 +53,7 @@ const parseLoan = (loan: LoanInput): Loan => ({
     loan_interest_rate: parseFloat(loan.loan_interest_rate),
     loan_interest_frequency_type: parseInt(loan.loan_interest_frequency_type),
     loan_subsidized: parseFloat(loan.loan_subsidized),
-    loan_fully_paid_back: loan.fully_paid_back,
+    loan_fully_paid_back: loan.loan_fully_paid_back,
     loan_begin_date: loan.loan_begin_date,
     loan_end_date: loan.loan_end_date,
     date_created: loan.date_created,
@@ -94,7 +94,15 @@ export const getLoans = async (request: Request, response: Response): Promise<vo
             return;
         }
 
-        const loans: Loan[] = rows.map(loan => parseLoan(loan));
+        const loans: Loan[] = rows.map(loan => {
+            // parse loan first
+            const parsedLoan = parseLoan(loan);
+            // then add fully_paid_back field in request.fullyPaidBackDates
+            parsedLoan.fully_paid_back = request.fullyPaidBackDates[parseInt(loan.loan_id)] || null;
+            
+            return parsedLoan;
+        });
+
         response.status(200).json(loans);
     } catch (error) {
         console.error(error); // Log the error on the server side
