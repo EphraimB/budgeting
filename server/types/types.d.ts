@@ -89,6 +89,8 @@ export interface Loan {
     loan_interest_rate?: number;
     loan_interest_frequency_type?: number;
     loan_subsidized?: number;
+    fully_paid_back?: string;
+    loan_fully_paid_back?: string;
     loan_begin_date: string;
     loan_end_date?: string;
     date_created?: string;

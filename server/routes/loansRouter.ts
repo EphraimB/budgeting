@@ -12,8 +12,7 @@ router.get('/',
         query('id').optional().isInt({ min: 1 }).withMessage('ID must be a number'),
         query('account_id').optional().isInt({ min: 1 }).withMessage('Account ID must be a number'),
         validateRequest
-    ],
-    getLoans);
+    ], setQueries, getCurrentBalance, getTransactionsByAccount, getExpensesByAccount, getLoansByAccount, getPayrollsMiddleware, getTransfersByAccount, getWishlistsByAccount, generateTransactions, getLoans);
 
 router.post('/',
     [
