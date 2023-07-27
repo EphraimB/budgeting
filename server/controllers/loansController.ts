@@ -272,6 +272,7 @@ export const updateLoan = async (request: Request, response: Response, next: Nex
         frequency_month_of_year,
         interest_rate,
         interest_frequency_type,
+        subsidized,
         begin_date
     } = request.body;
 
@@ -373,18 +374,14 @@ export const updateLoan = async (request: Request, response: Response, next: Nex
             frequency_month_of_year,
             interest_rate,
             interest_frequency_type,
+            subsidized,
             begin_date,
             id
         ]);
 
-        // Parse the data to the correct format and return an object
-        const loans: Loan[] = updateLoanResults.map(loan => parseLoan(loan));
-
         request.loan_id = id;
 
         next();
-
-        // response.status(200).json(loans);
     } catch (error) {
         console.error(error); // Log the error on the server side
         handleError(response, 'Error updating loan');
