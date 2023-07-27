@@ -280,7 +280,7 @@ export const updateLoan = async (request: Request, response: Response, next: Nex
         date: begin_date,
         id,
         account_id,
-        amount: -plan_amount,
+        amount: -plan_amount + (plan_amount * subsidized),
         title,
         description,
         frequency_type,
