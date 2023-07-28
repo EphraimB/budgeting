@@ -1995,6 +1995,10 @@
                     "format": "double",
                     "example": 0.15
                   },
+                  "loan_fully_paid_back": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
                   "loan_begin_date": {
                     "type": "string",
                     "format": "date-time"
