@@ -66,11 +66,18 @@ describe('GET /api/loans', () => {
         mockModule(loans);
 
         mockRequest.query = { id: null };
+        mockRequest.fullyPaidBackDates = { 1: '2024-01-01' }
 
         const { getLoans } = await import('../../controllers/loansController.js');
 
         // Call the function with the mock request and response
         await getLoans(mockRequest as Request, mockResponse);
+
+        // Add loan_fully_paid_back to the loans with id 1
+        loans[0].loan_fully_paid_back = '2024-01-01';
+        loans[1].loan_fully_paid_back = null;
+        loans[2].loan_fully_paid_back = null;
+        loans[3].loan_fully_paid_back = null;
 
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(200);
