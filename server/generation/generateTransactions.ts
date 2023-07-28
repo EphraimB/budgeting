@@ -9,6 +9,8 @@ import { Account, CurrentBalance, Expense, GeneratedTransaction, Loan, Payroll, 
 import { executeQuery } from '../utils/helperFunctions.js';
 import { accountQueries } from '../models/queryData.js';
 
+const fullyPaidBackDates: Record<number, string | undefined> = {}; // map of loan_id to fullyPaidBackDate
+
 const generate = async (request: Request, response: Response, next: NextFunction, account_id: number, employee_id: number, transactions: GeneratedTransaction[], skippedTransactions: GeneratedTransaction[], currentBalance: any): Promise<void> => {
     const fromDate: Date = new Date(request.query.from_date as string);
     const toDate: Date = new Date(request.query.to_date as string);
@@ -55,16 +57,20 @@ const generate = async (request: Request, response: Response, next: NextFunction
     request.loans
         .filter((lns) => lns.account_id === account_id)
         .forEach((account) => {
+            let loanResult: { fullyPaidBackDate?: string };
+
             account.loan.forEach((loan: Loan) => {
                 if (loan.frequency_type === 0) {
-                    generateDailyLoans(transactions, skippedTransactions, loan, toDate, fromDate);
+                    loanResult = generateDailyLoans(transactions, skippedTransactions, loan, toDate, fromDate);
                 } else if (loan.frequency_type === 1) {
-                    generateWeeklyLoans(transactions, skippedTransactions, loan, toDate, fromDate);
+                    loanResult = generateWeeklyLoans(transactions, skippedTransactions, loan, toDate, fromDate);
                 } else if (loan.frequency_type === 2) {
-                    generateMonthlyLoans(transactions, skippedTransactions, loan, toDate, fromDate);
+                    loanResult = generateMonthlyLoans(transactions, skippedTransactions, loan, toDate, fromDate);
                 } else if (loan.frequency_type === 3) {
-                    generateYearlyLoans(transactions, skippedTransactions, loan, toDate, fromDate);
+                    loanResult = generateYearlyLoans(transactions, skippedTransactions, loan, toDate, fromDate);
                 }
+
+                fullyPaidBackDates[loan.loan_id] = loanResult.fullyPaidBackDate || null;
             });
         });
 
@@ -145,6 +151,7 @@ const generateTransactions = async (request: Request, response: Response, next: 
     }
 
     request.transactions = allTransactions;
+    request.fullyPaidBackDates = fullyPaidBackDates;
 
     next();
 };
