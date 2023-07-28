@@ -25,7 +25,8 @@ describe('Test generateDailyExpenses', () => {
             expense_begin_date: '2020-01-02',
             expense_title: 'Test expense',
             expense_description: 'Test description',
-            expense_amount: 100
+            expense_amount: 100,
+            expense_subsidized: 0
         };
         const toDate: Date = new Date('2020-01-06');
         const fromDate: Date = new Date('2020-01-01');
@@ -51,7 +52,8 @@ describe('Test generateDailyExpenses', () => {
             expense_title: 'Test expense',
             expense_description: 'Test description',
             expense_amount: 100,
-            frequency_type_variable: 2
+            frequency_type_variable: 2,
+            expense_subsidized: 0
         };
         const toDate: Date = new Date('2020-01-06');
         const fromDate: Date = new Date('2020-01-01');
@@ -76,7 +78,8 @@ describe('Test generateDailyExpenses', () => {
             expense_begin_date: '2020-01-02',
             expense_title: 'Test expense',
             expense_description: 'Test description',
-            expense_amount: 100
+            expense_amount: 100,
+            expense_subsidized: 0
         };
         const toDate: Date = new Date('2020-01-08');
         const fromDate: Date = new Date('2020-01-06');
@@ -103,7 +106,8 @@ describe('Test generateMonthlyExpenses', () => {
             expense_begin_date: '2020-01-02',
             expense_title: 'Test expense',
             expense_description: 'Test description',
-            expense_amount: 100
+            expense_amount: 100,
+            expense_subsidized: 0
         };
         const toDate: Date = new Date('2020-06-02');
         const fromDate: Date = new Date('2020-01-01');
@@ -129,7 +133,8 @@ describe('Test generateMonthlyExpenses', () => {
             expense_title: 'Test expense',
             expense_description: 'Test description',
             expense_amount: 100,
-            frequency_type_variable: 2
+            frequency_type_variable: 2,
+            expense_subsidized: 0
         };
         const toDate: Date = new Date('2020-08-02');
         const fromDate: Date = new Date('2020-01-01');
@@ -154,7 +159,8 @@ describe('Test generateMonthlyExpenses', () => {
             expense_begin_date: '2020-01-02',
             expense_title: 'Test expense',
             expense_description: 'Test description',
-            expense_amount: 100
+            expense_amount: 100,
+            expense_subsidized: 0
         };
         const toDate: Date = new Date('2020-08-02');
         const fromDate: Date = new Date('2020-06-02');
@@ -180,7 +186,8 @@ describe('Test generateMonthlyExpenses', () => {
             expense_title: 'Test expense',
             expense_description: 'Test description',
             expense_amount: 150,
-            frequency_day_of_week: 2
+            frequency_day_of_week: 2,
+            expense_subsidized: 0
         };
         const toDate: Date = new Date('2020-06-02');
         const fromDate: Date = new Date('2020-01-01');
@@ -219,7 +226,8 @@ describe('Test generateMonthlyExpenses', () => {
             expense_description: 'Test description',
             expense_amount: 150,
             frequency_day_of_week: 2,
-            frequency_week_of_month: 1
+            frequency_week_of_month: 1,
+            expense_subsidized: 0
         };
         const toDate: Date = new Date('2020-06-01');
         const fromDate: Date = new Date('2020-01-01');
@@ -256,7 +264,8 @@ describe('generateWeeklyExpenses', () => {
             expense_begin_date: '2020-01-02',
             expense_title: 'Test expense',
             expense_description: 'Test description',
-            expense_amount: 100
+            expense_amount: 100,
+            expense_subsidized: 0
         };
         const toDate: Date = new Date('2020-02-02');
         const fromDate: Date = new Date('2020-01-01');
@@ -282,7 +291,8 @@ describe('generateWeeklyExpenses', () => {
             expense_title: 'Test expense',
             expense_description: 'Test description',
             expense_amount: 100,
-            frequency_type_variable: 2
+            frequency_type_variable: 2,
+            expense_subsidized: 0
         };
         const toDate: Date = new Date('2020-02-02');
         const fromDate: Date = new Date('2020-01-01');
@@ -307,7 +317,8 @@ describe('generateWeeklyExpenses', () => {
             expense_begin_date: '2020-01-02',
             expense_title: 'Test expense',
             expense_description: 'Test description',
-            expense_amount: 100
+            expense_amount: 100,
+            expense_subsidized: 0
         };
         const toDate: Date = new Date('2020-02-15');
         const fromDate: Date = new Date('2020-01-28');
@@ -333,7 +344,8 @@ describe('generateWeeklyExpenses', () => {
             expense_title: 'Test expense',
             expense_description: 'Test description',
             expense_amount: 150,
-            frequency_day_of_week: 2
+            frequency_day_of_week: 2,
+            expense_subsidized: 0
         };
         const toDate: Date = new Date('2020-02-02');
         const fromDate: Date = new Date('2020-01-01');
@@ -372,7 +384,8 @@ describe('generateYearlyExpenses', () => {
             expense_begin_date: '2020-01-02',
             expense_title: 'Test expense',
             expense_description: 'Test description',
-            expense_amount: 100
+            expense_amount: 100,
+            expense_subsidized: 0
         };
         const toDate: Date = new Date('2022-02-02');
         const fromDate: Date = new Date('2020-01-01');
@@ -398,7 +411,8 @@ describe('generateYearlyExpenses', () => {
             expense_title: 'Test expense',
             expense_description: 'Test description',
             expense_amount: 100,
-            frequency_type_variable: 2
+            frequency_type_variable: 2,
+            expense_subsidized: 0
         };
         const toDate: Date = new Date('2024-02-02');
         const fromDate: Date = new Date('2020-01-01');
@@ -423,7 +437,8 @@ describe('generateYearlyExpenses', () => {
             expense_begin_date: '2020-01-02',
             expense_title: 'Test expense',
             expense_description: 'Test description',
-            expense_amount: 100
+            expense_amount: 100,
+            expense_subsidized: 0
         };
         const toDate: Date = new Date('2025-02-02');
         const fromDate: Date = new Date('2022-01-01');
@@ -449,7 +464,8 @@ describe('generateYearlyExpenses', () => {
             expense_title: 'Test expense',
             expense_description: 'Test description',
             expense_amount: 150,
-            frequency_day_of_week: 2
+            frequency_day_of_week: 2,
+            expense_subsidized: 0
         };
         const toDate: Date = new Date('2023-01-10');
         const fromDate: Date = new Date('2020-01-01');
@@ -485,7 +501,8 @@ describe('generateYearlyExpenses', () => {
             expense_description: 'Test description',
             expense_amount: 150,
             frequency_day_of_week: 2,
-            frequency_week_of_month: 1
+            frequency_week_of_month: 1,
+            expense_subsidized: 0
         };
         const toDate: Date = new Date('2023-01-01');
         const fromDate: Date = new Date('2020-01-01');
@@ -523,7 +540,8 @@ describe('generateYearlyExpenses', () => {
             expense_amount: 150,
             frequency_day_of_week: 2, // Tuesday
             frequency_week_of_month: 1, // Second week
-            frequency_month_of_year: 5 // June
+            frequency_month_of_year: 5, // June
+            expense_subsidized: 0
         };
         const toDate: Date = new Date('2023-01-01');
         const fromDate: Date = new Date('2020-01-01');
