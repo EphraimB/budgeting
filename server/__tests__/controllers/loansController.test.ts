@@ -463,7 +463,7 @@ describe('DELETE /api/loans/:id', () => {
 
     it('should respond with a 404 error message when the loan does not exist', async () => {
         // Arrange
-        mockModule([]);
+        mockModule([[]]);
 
         const { deleteLoan } = await import('../../controllers/loansController.js');
 
