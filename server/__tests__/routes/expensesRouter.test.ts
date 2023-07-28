@@ -33,6 +33,7 @@ const createFutureExpense = () => {
         frequency_week_of_month: 1,
         frequency_day_of_month: 1,
         frequency_month_of_year: 1,
+        subsidized: 0,
         begin_date: dateInFuture.toISOString()
     };
 };
