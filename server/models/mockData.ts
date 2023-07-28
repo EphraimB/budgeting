@@ -176,7 +176,7 @@ export const loans: Loan[] = [
         loan_interest_frequency_type: 2,
         loan_interest_rate: 0,
         loan_subsidized: 0,
-        loan_begin_date: '2020-01-01',
+        loan_begin_date: '2020-01-02',
         loan_end_date: null,
         date_created: '2020-01-01',
         date_modified: '2020-01-01'
