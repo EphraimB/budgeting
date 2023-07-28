@@ -162,7 +162,7 @@ export const loans: Loan[] = [
     {
         loan_id: 1,
         account_id: 1,
-        loan_amount: 1000,
+        loan_amount: 10000,
         loan_plan_amount: 100,
         loan_recipient: 'Test Loan Recipient',
         loan_title: 'Test Loan',
