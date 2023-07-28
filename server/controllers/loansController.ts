@@ -215,7 +215,6 @@ export const createLoan = async (request: Request, response: Response, next: Nex
             cronDate
         ]))[0].cron_job_id;
 
-
         const { cronDate: interestCronDate, uniqueId: interestUniqueId } = await scheduleCronJob(interestCronParams);
 
         const interestCronId: number = (await executeQuery(cronJobQueries.createCronJob, [

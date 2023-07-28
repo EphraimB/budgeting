@@ -250,9 +250,21 @@ describe('GET /api/loans', () => {
 
 describe('POST /api/loans', () => {
     it('should populate request.loan_id', async () => {
-        const newLoan = loans.filter(loan => loan.loan_id === 1);
+        const newLoan = {
+            account_id: 1,
+            loan_id: 1,
+            amount: 1000,
+            plan_amount: 100,
+            recipient: 'John Doe',
+            title: 'Test Loan',
+            description: 'Test Loan Description',
+            frequency_type: 2,
+            interest_rate: 0,
+            interest_frequency_type: 0,
+            begin_date: '2021-01-01'
+        };
 
-        mockModule([newLoan, '1', [{ cronDate: '0 0 16 * *', uniqueId: '123' }], '2']);
+        mockModule([[newLoan], '1', '2', []]);
 
         const { createLoan } = await import('../../controllers/loansController.js');
 
