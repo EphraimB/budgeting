@@ -98,8 +98,8 @@ export const getLoans = async (request: Request, response: Response): Promise<vo
             // parse loan first
             const parsedLoan = parseLoan(loan);
             // then add fully_paid_back field in request.fullyPaidBackDates
-            parsedLoan.fully_paid_back = request.fullyPaidBackDates[parseInt(loan.loan_id)] || null;
-            
+            parsedLoan.loan_fully_paid_back = request.fullyPaidBackDates[parseInt(loan.loan_id)] || null;
+
             return parsedLoan;
         });
 

@@ -70,8 +70,6 @@ const generate = async (request: Request, response: Response, next: NextFunction
                     loanResult = generateYearlyLoans(transactions, skippedTransactions, loan, toDate, fromDate);
                 }
 
-                console.log(loanResult);
-
                 fullyPaidBackDates[loan.loan_id] = loanResult.fullyPaidBackDate || null;
             });
         });

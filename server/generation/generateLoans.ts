@@ -98,14 +98,14 @@ const generateLoans = (transactions: GeneratedTransaction[], skippedTransactions
         }
 
         loanDate = generateDateFn(loanDate, loan);
+    }
 
-        if (loan_amount <= 0) {
-            // Return the loan date when the loan amount reaches zero or goes below
-            return { fullyPaidBackDate: loanDate.toISOString() };
-        }
-
+    if (loan_amount <= 0) {
+        // Return the loan date when the loan amount reaches zero or goes below
+        return { fullyPaidBackDate: loanDate.toISOString() };
+    } else {
         // If the loop finishes without finding a fully paid back date, return an empty object.
-        return {};
+        return { fullyPaidBackDate: null };
     }
 };
 
