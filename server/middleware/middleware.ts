@@ -255,11 +255,12 @@ export const getLoansByAccount = async (request: Request, response: Response, ne
                 // Map over results array and convert amount to a float for each Loan object
                 const loansTransactions = loanResults.map(loan => parseLoan(loan));
 
-                loansTransactions.map(loan => ({
+                const loansTransactionsWithAmount = loansTransactions.map(loan => ({
+                    ...loan,
                     amount: parseFloat(loan.loan_plan_amount as unknown as string)
                 }));
 
-                loansByAccount.push({ account_id: account.account_id, loan: loansTransactions });
+                loansByAccount.push({ account_id: account.account_id, loan: loansTransactionsWithAmount });
             }));
         } else {
             // Check if account exists and if it doesn't, send a response with an error message
@@ -275,11 +276,12 @@ export const getLoansByAccount = async (request: Request, response: Response, ne
             // Map over results array and convert amount to a float for each Loan object
             const loansTransactions = results.map(loan => parseLoan(loan));
 
-            loansTransactions.map(loan => ({
+            const loansTransactionsWithAmount = loansTransactions.map(loan => ({
+                ...loan,
                 amount: parseFloat(loan.loan_plan_amount as unknown as string)
             }));
 
-            loansByAccount.push({ account_id: parseInt(account_id as string), loan: loansTransactions });
+            loansByAccount.push({ account_id: parseInt(account_id as string), loan: loansTransactionsWithAmount });
         }
 
         request.loans = loansByAccount;
