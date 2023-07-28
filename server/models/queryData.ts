@@ -141,8 +141,8 @@ export const expenseQueries: ExpenseQueries = {
   getExpenseById: 'SELECT * FROM expenses WHERE expense_id = $1',
   getExpensesByAccountId: 'SELECT * FROM expenses WHERE account_id = $1 ORDER BY expense_id ASC',
   getExpenseByIdAndAccountId: 'SELECT * FROM expenses WHERE expense_id = $1 AND account_id = $2',
-  createExpense: 'INSERT INTO expenses (account_id, expense_amount, expense_title, expense_description, frequency_type, frequency_type_variable, frequency_day_of_month, frequency_day_of_week, frequency_week_of_month, frequency_month_of_year, expense_begin_date) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11) RETURNING *',
-  updateExpense: 'UPDATE expenses SET account_id = $1, expense_amount = $2, expense_title = $3, expense_description = $4, frequency_type = $5, frequency_type_variable = $6, frequency_day_of_month = $7, frequency_day_of_week = $8, frequency_week_of_month = $9, frequency_month_of_year = $10, expense_begin_date = $11 WHERE expense_id = $12 RETURNING *',
+  createExpense: 'INSERT INTO expenses (account_id, expense_amount, expense_title, expense_description, frequency_type, frequency_type_variable, frequency_day_of_month, frequency_day_of_week, frequency_week_of_month, frequency_month_of_year, expense_subsidized, expense_begin_date) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12) RETURNING *',
+  updateExpense: 'UPDATE expenses SET account_id = $1, expense_amount = $2, expense_title = $3, expense_description = $4, frequency_type = $5, frequency_type_variable = $6, frequency_day_of_month = $7, frequency_day_of_week = $8, frequency_week_of_month = $9, frequency_month_of_year = $10, expense_subsidized = $11, expense_begin_date = $12 WHERE expense_id = $13 RETURNING *',
   updateExpenseWithCronJobId: 'UPDATE expenses SET cron_job_id = $1 WHERE expense_id = $2 RETURNING *',
   deleteExpense: 'DELETE FROM expenses WHERE expense_id = $1'
 };
