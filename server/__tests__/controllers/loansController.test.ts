@@ -304,6 +304,7 @@ describe('POST /api/loans', () => {
         const { createLoanReturnObject } = await import('../../controllers/loansController.js');
 
         mockRequest.body = newLoan;
+        mockRequest.fullyPaidBackDates = { 1: '2024-01-01' }
 
         await createLoanReturnObject(mockRequest as Request, mockResponse);
 
