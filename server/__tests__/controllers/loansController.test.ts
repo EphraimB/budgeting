@@ -47,10 +47,13 @@ afterAll(() => {
  * @param [errorMessage] - The error message to be passed to the handleError mock function
  * @returns - A mock module with the executeQuery and handleError functions
  */
-const mockModule = (executeQueryValue: QueryResultRow[] | string | null, errorMessage?: string) => {
+const mockModule = (executeQueryValues: (QueryResultRow[] | string | null)[], errorMessage: string | null = null) => {
     const executeQuery = errorMessage
         ? jest.fn(() => Promise.reject(new Error(errorMessage)))
-        : jest.fn(() => Promise.resolve(executeQueryValue));
+        : jest.fn(() => {
+            let i = 0;
+            return Promise.resolve(i < executeQueryValues.length ? executeQueryValues[i++] : null);
+        });
 
     jest.mock('../../utils/helperFunctions.js', () => ({
         executeQuery,
@@ -63,7 +66,7 @@ const mockModule = (executeQueryValue: QueryResultRow[] | string | null, errorMe
 describe('GET /api/loans', () => {
     it('should respond with an array of loans', async () => {
         // Arrange
-        mockModule(loans);
+        mockModule([loans]);
 
         mockRequest.query = { id: null };
         mockRequest.fullyPaidBackDates = { 1: '2024-01-01' }
@@ -88,7 +91,7 @@ describe('GET /api/loans', () => {
         // Arrange
         const errorMessage = 'Error getting loans';
         const error = new Error(errorMessage);
-        mockModule(null, errorMessage);
+        mockModule([null], errorMessage);
 
         mockRequest.query = { id: null };
 
@@ -107,7 +110,7 @@ describe('GET /api/loans', () => {
 
     it('should respond with an array of loans with id', async () => {
         // Arrange
-        mockModule(loans.filter(loan => loan.loan_id === 1));
+        mockModule([loans.filter(loan => loan.loan_id === 1)]);
 
         mockRequest.query = { id: 1 };
         mockRequest.fullyPaidBackDates = { 1: '2024-01-01' }
@@ -129,7 +132,7 @@ describe('GET /api/loans', () => {
         // Arrange
         const errorMessage = 'Error getting loan';
         const error = new Error(errorMessage);
-        mockModule(null, errorMessage);
+        mockModule([null], errorMessage);
 
         mockRequest.query = { id: 1 };
 
@@ -148,7 +151,7 @@ describe('GET /api/loans', () => {
 
     it('should respond with an array of loans with account id', async () => {
         // Arrange
-        mockModule(loans.filter(loan => loan.account_id === 1));
+        mockModule([loans.filter(loan => loan.account_id === 1)]);
 
         mockRequest.query = { account_id: 1 };
         mockRequest.fullyPaidBackDates = { 1: '2024-01-01' }
@@ -170,7 +173,7 @@ describe('GET /api/loans', () => {
         // Arrange
         const errorMessage = 'Error getting loan';
         const error = new Error(errorMessage);
-        mockModule(null, errorMessage);
+        mockModule([null], errorMessage);
 
         mockRequest.query = { account_id: 1 };
 
@@ -189,7 +192,7 @@ describe('GET /api/loans', () => {
 
     it('should respond with an array of loans with account id and id', async () => {
         // Arrange
-        mockModule(loans.filter(loan => loan.account_id === 1 && loan.loan_id === 1));
+        mockModule([loans.filter(loan => loan.account_id === 1 && loan.loan_id === 1)]);
 
         mockRequest.query = { account_id: 1, id: 1 };
         mockRequest.fullyPaidBackDates = { 1: '2024-01-01' }
@@ -211,7 +214,7 @@ describe('GET /api/loans', () => {
         // Arrange
         const errorMessage = 'Error getting loan';
         const error = new Error(errorMessage);
-        mockModule(null, errorMessage);
+        mockModule([null], errorMessage);
 
         mockRequest.query = { account_id: 1, id: 1 };
 
@@ -230,7 +233,7 @@ describe('GET /api/loans', () => {
 
     it('should respond with a 404 error message when the loan does not exist', async () => {
         // Arrange
-        mockModule([]);
+        mockModule([[]]);
 
         const { getLoans } = await import('../../controllers/loansController.js');
 
@@ -249,7 +252,7 @@ describe('POST /api/loans', () => {
     it('should populate request.loan_id', async () => {
         const newLoan = loans.filter(loan => loan.loan_id === 1);
 
-        mockModule(newLoan);
+        mockModule([newLoan, '1', [{ cronDate: '0 0 16 * *', uniqueId: '123' }], '2']);
 
         const { createLoan } = await import('../../controllers/loansController.js');
 
@@ -265,7 +268,7 @@ describe('POST /api/loans', () => {
     it('should respond with an error message', async () => {
         const errorMessage = 'Error creating loan';
         const error = new Error(errorMessage);
-        mockModule(null, errorMessage);
+        mockModule([null], errorMessage);
 
         const { createLoan } = await import('../../controllers/loansController.js');
 
@@ -284,7 +287,7 @@ describe('POST /api/loans', () => {
     it('should respond with the created loan', async () => {
         const newLoan = loans.filter(loan => loan.loan_id === 1);
 
-        mockModule(newLoan);
+        mockModule([newLoan]);
 
         const { createLoanReturnObject } = await import('../../controllers/loansController.js');
 
@@ -302,7 +305,7 @@ describe('PUT /api/loans/:id', () => {
     it('should call next in the middleware', async () => {
         const updatedLoan = loans.filter(loan => loan.loan_id === 1);
 
-        mockModule(updatedLoan);
+        mockModule([updatedLoan]);
 
         const { updateLoan } = await import('../../controllers/loansController.js');
 
@@ -319,7 +322,7 @@ describe('PUT /api/loans/:id', () => {
     it('should respond with an error message', async () => {
         const errorMessage = 'Error updating loan';
         const error = new Error(errorMessage);
-        mockModule(null, errorMessage);
+        mockModule([null], errorMessage);
 
         const { updateLoan } = await import('../../controllers/loansController.js');
 
@@ -356,7 +359,7 @@ describe('PUT /api/loans/:id', () => {
     it('should respond with the updated loan', async () => {
         const updatedLoan = loans.filter(loan => loan.loan_id === 1);
 
-        mockModule(updatedLoan);
+        mockModule([updatedLoan]);
 
         const { updateLoanReturnObject } = await import('../../controllers/loansController.js');
 
@@ -374,7 +377,7 @@ describe('PUT /api/loans/:id', () => {
 describe('DELETE /api/loans/:id', () => {
     it('should call next on the middleware', async () => {
         // Arrange
-        mockModule('Loan deleted successfully');
+        mockModule(['Loan deleted successfully']);
 
         const { deleteLoan } = await import('../../controllers/loansController.js');
 
@@ -390,7 +393,7 @@ describe('DELETE /api/loans/:id', () => {
         // Arrange
         const errorMessage = 'Error deleting loan';
         const error = new Error(errorMessage);
-        mockModule(null, errorMessage);
+        mockModule([null], errorMessage);
 
         const { deleteLoan } = await import('../../controllers/loansController.js');
 
@@ -424,7 +427,7 @@ describe('DELETE /api/loans/:id', () => {
 
     it('should respond with a success message', async () => {
         // Arrange
-        mockModule('Loan deleted successfully');
+        mockModule(['Loan deleted successfully']);
 
         const { deleteLoanReturnObject } = await import('../../controllers/loansController.js');
 
