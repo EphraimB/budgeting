@@ -253,14 +253,10 @@ describe('generateWeeklyLoans', () => {
 
     it('Should generate weekly loans every 2 weeks', () => {
         // Preparing the test data
-        const loan: Loan = {
-            loan_begin_date: '2020-01-02',
-            loan_title: 'Test',
-            loan_recipient: 'Test recepient',
-            loan_description: 'Test description',
-            loan_plan_amount: 100,
-            frequency_type_variable: 2
-        };
+        const loan: Loan = loans.filter((loan) => loan.loan_id === 1)[0];
+
+        loan.frequency_type_variable = 2;
+
         const toDate: Date = new Date('2020-02-02');
         const fromDate: Date = new Date('2020-01-01');
 
@@ -272,7 +268,7 @@ describe('generateWeeklyLoans', () => {
         // Checking the results
         expect(transactions.length).toBe(3);
         expect(skippedTransactions.length).toBe(0);
-        expect(transactions[0].title).toBe('Test loan to Test recepient');
+        expect(transactions[0].title).toBe(loans.filter((loan) => loan.loan_id === 1)[0].loan_title + ' loan to ' + loans.filter((loan) => loan.loan_id === 1)[0].loan_recipient);
         expect(transactions[0].description).toBe(loan.loan_description);
         expect(transactions[0].amount).toBe(-loan.loan_plan_amount);
         expect(expectedEndDate.toISOString().slice(0, 10)).toBe(new Date('2020-01-30').toISOString().slice(0, 10));
@@ -280,13 +276,10 @@ describe('generateWeeklyLoans', () => {
 
     it('Should generate weekly loans correctly when the loan begin date is less than the from date', () => {
         // Preparing the test data
-        const loan: Loan = {
-            loan_begin_date: '2020-01-02',
-            loan_title: 'Test',
-            loan_recipient: 'Test recepient',
-            loan_description: 'Test description',
-            loan_plan_amount: 100
-        };
+        const loan: Loan = loans.filter((loan) => loan.loan_id === 1)[0];
+
+        loan.frequency_type_variable = 1;
+
         const toDate: Date = new Date('2020-02-15');
         const fromDate: Date = new Date('2020-01-28');
 
@@ -298,7 +291,7 @@ describe('generateWeeklyLoans', () => {
         // Checking the results
         expect(transactions.length).toBe(3);
         expect(skippedTransactions.length).toBe(4);
-        expect(transactions[0].title).toBe('Test loan to Test recepient');
+        expect(transactions[0].title).toBe(loans.filter((loan) => loan.loan_id === 1)[0].loan_title + ' loan to ' + loans.filter((loan) => loan.loan_id === 1)[0].loan_recipient);
         expect(transactions[0].description).toBe(loan.loan_description);
         expect(transactions[0].amount).toBe(-loan.loan_plan_amount);
         expect(expectedEndDate.toISOString().slice(0, 10)).toBe(new Date('2020-02-13').toISOString().slice(0, 10));
@@ -306,14 +299,10 @@ describe('generateWeeklyLoans', () => {
 
     it('Should generate weekly loans correctly when the frequency day of week is set', () => {
         // Preparing the test data
-        const loan: Loan = {
-            loan_begin_date: '2020-01-02',
-            loan_title: 'Test',
-            loan_recipient: 'Test recepient',
-            loan_description: 'Test description',
-            loan_plan_amount: 150,
-            frequency_day_of_week: 2
-        };
+        const loan: Loan = loans.filter((loan) => loan.loan_id === 1)[0];
+
+        loan.frequency_day_of_week = 2;
+
         const toDate: Date = new Date('2020-02-02');
         const fromDate: Date = new Date('2020-01-01');
 
@@ -335,9 +324,9 @@ describe('generateWeeklyLoans', () => {
         toBeEndDate.setDate(toBeEndDate.getDate() + daysUntilNextTuesday);
 
         // Checking the results
-        expect(transactions.length).toBe(4);
+        expect(transactions.length).toBe(3);
         expect(skippedTransactions.length).toBe(0);
-        expect(transactions[0].title).toBe('Test loan to Test recepient');
+        expect(transactions[0].title).toBe(loans.filter((loan) => loan.loan_id === 1)[0].loan_title + ' loan to ' + loans.filter((loan) => loan.loan_id === 1)[0].loan_recipient);
         expect(transactions[0].description).toBe(loan.loan_description);
         expect(transactions[0].amount).toBe(-loan.loan_plan_amount);
         expect(expectedEndDate.toISOString().slice(0, 10)).toBe(toBeEndDate.toISOString().slice(0, 10));
