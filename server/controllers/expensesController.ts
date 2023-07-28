@@ -18,6 +18,7 @@ interface ExpenseInput {
     frequency_day_of_week: string;
     frequency_week_of_month: string;
     frequency_month_of_year: string;
+    expense_subsidized: string;
     expense_begin_date: string;
     expense_end_date: string;
     date_created: string;
@@ -42,6 +43,7 @@ const parseExpenses = (expense: ExpenseInput): Expense => ({
     frequency_day_of_week: parseInt(expense.frequency_day_of_week) || null,
     frequency_week_of_month: parseInt(expense.frequency_week_of_month) || null,
     frequency_month_of_year: parseInt(expense.frequency_month_of_year) || null,
+    expense_subsidized: parseFloat(expense.expense_subsidized),
     expense_begin_date: expense.expense_begin_date,
     expense_end_date: expense.expense_end_date,
     date_created: expense.date_created,
@@ -108,6 +110,7 @@ export const createExpense = async (request: Request, response: Response, next: 
         frequency_day_of_week,
         frequency_week_of_month,
         frequency_month_of_year,
+        subsidized,
         begin_date
     } = request.body;
 
@@ -123,7 +126,8 @@ export const createExpense = async (request: Request, response: Response, next: 
             frequency_day_of_week,
             frequency_week_of_month,
             frequency_month_of_year,
-            begin_date,
+            subsidized,
+            begin_date
         ]);
 
         const modifiedExpenses = expenses.map(parseExpenses);
@@ -132,7 +136,7 @@ export const createExpense = async (request: Request, response: Response, next: 
             date: begin_date,
             account_id,
             id: modifiedExpenses[0].expense_id,
-            amount: -amount,
+            amount: -amount + (amount * subsidized),
             title,
             description,
             frequency_type,
@@ -205,6 +209,7 @@ export const updateExpense = async (request: Request, response: Response, next: 
         frequency_day_of_week,
         frequency_week_of_month,
         frequency_month_of_year,
+        subsidized,
         begin_date
     } = request.body;
 
@@ -212,7 +217,7 @@ export const updateExpense = async (request: Request, response: Response, next: 
         date: begin_date,
         account_id,
         id,
-        amount: -amount,
+        amount: -amount + (amount * subsidized),
         title,
         description,
         frequency_type,
@@ -254,7 +259,7 @@ export const updateExpense = async (request: Request, response: Response, next: 
             cronId
         ]);
 
-        const expenses = await executeQuery<ExpenseInput>(expenseQueries.updateExpense, [
+        await executeQuery<ExpenseInput>(expenseQueries.updateExpense, [
             account_id,
             amount,
             title,
@@ -265,6 +270,7 @@ export const updateExpense = async (request: Request, response: Response, next: 
             frequency_day_of_week,
             frequency_week_of_month,
             frequency_month_of_year,
+            subsidized,
             begin_date,
             id
         ]);

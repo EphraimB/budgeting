@@ -53,6 +53,7 @@ CREATE TABLE IF NOT EXISTS expenses (
   frequency_day_of_week INT,
   frequency_week_of_month INT,
   frequency_month_of_year INT,
+  expense_subsidized numeric(2,2) NOT NULL,
   expense_begin_date TIMESTAMP NOT NULL,
   expense_end_date TIMESTAMP,
   date_created TIMESTAMP NOT NULL,

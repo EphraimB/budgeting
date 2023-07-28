@@ -67,6 +67,7 @@ export interface Expense {
     frequency_day_of_week?: number;
     frequency_week_of_month?: number;
     frequency_month_of_year?: number;
+    expense_subsidized?: number;
     date_created?: string;
     date_modified?: string;
 }
