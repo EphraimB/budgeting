@@ -81,11 +81,11 @@ export interface Loan {
     loan_title: string;
     loan_description: string;
     frequency_type?: number;
-    frequency_type_variable?: number;
-    frequency_day_of_month?: number;
-    frequency_day_of_week?: number;
-    frequency_week_of_month?: number;
-    frequency_month_of_year?: number;
+    frequency_type_variable?: number | null;
+    frequency_day_of_month?: number | null;
+    frequency_day_of_week?: number | null;
+    frequency_week_of_month?: number | null;
+    frequency_month_of_year?: number | null;
     loan_interest_rate?: number;
     loan_interest_frequency_type?: number;
     loan_subsidized?: number;
