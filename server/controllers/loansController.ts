@@ -417,7 +417,14 @@ export const updateLoanReturnObject = async (request: Request, response: Respons
     try {
         const loans = await executeQuery<LoanInput>(loanQueries.getLoansById, [loan_id]);
 
-        const modifiedLoans = loans.map(parseLoan);
+        const modifiedLoans: Loan[] = loans.map(loan => {
+            // parse loan first
+            const parsedLoan = parseLoan(loan);
+            // then add fully_paid_back field in request.fullyPaidBackDates
+            parsedLoan.loan_fully_paid_back = request.fullyPaidBackDates[parseInt(loan.loan_id)] || null;
+
+            return parsedLoan;
+        });
 
         response.status(200).json(modifiedLoans);
     } catch (error) {
