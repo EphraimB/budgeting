@@ -110,11 +110,15 @@ describe('GET /api/loans', () => {
         mockModule(loans.filter(loan => loan.loan_id === 1));
 
         mockRequest.query = { id: 1 };
+        mockRequest.fullyPaidBackDates = { 1: '2024-01-01' }
 
         const { getLoans } = await import('../../controllers/loansController.js');
 
         // Call the function with the mock request and response
         await getLoans(mockRequest as Request, mockResponse);
+
+        // Add loan_fully_paid_back to the loans with id 1
+        loans[0].loan_fully_paid_back = '2024-01-01';
 
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(200);
@@ -147,11 +151,15 @@ describe('GET /api/loans', () => {
         mockModule(loans.filter(loan => loan.account_id === 1));
 
         mockRequest.query = { account_id: 1 };
+        mockRequest.fullyPaidBackDates = { 1: '2024-01-01' }
 
         const { getLoans } = await import('../../controllers/loansController.js');
 
         // Call the function with the mock request and response
         await getLoans(mockRequest as Request, mockResponse);
+
+        // Add loan_fully_paid_back to the loans with id 1
+        loans[0].loan_fully_paid_back = '2024-01-01';
 
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(200);
@@ -184,11 +192,15 @@ describe('GET /api/loans', () => {
         mockModule(loans.filter(loan => loan.account_id === 1 && loan.loan_id === 1));
 
         mockRequest.query = { account_id: 1, id: 1 };
+        mockRequest.fullyPaidBackDates = { 1: '2024-01-01' }
 
         const { getLoans } = await import('../../controllers/loansController.js');
 
         // Call the function with the mock request and response
         await getLoans(mockRequest as Request, mockResponse);
+
+        // Add loan_fully_paid_back to the loans with id 1
+        loans[0].loan_fully_paid_back = '2024-01-01';
 
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(200);
