@@ -42,7 +42,8 @@ const generateExpenses = (transactions: GeneratedTransaction[], skippedTransacti
     }
 
     while (expenseDate <= toDate) {
-        const subsidizedAmount = expense.expense_amount - (expense.expense_amount * expense.expense_subsidized);
+        const taxedAmount = expense.expense_amount + (expense.expense_amount * expense.tax_amount);
+        const subsidizedAmount = taxedAmount - (taxedAmount * expense.expense_subsidized);
 
         const newTransaction: GeneratedTransaction = {
             expense_id: expense.expense_id,

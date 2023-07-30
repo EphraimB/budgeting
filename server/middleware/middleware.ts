@@ -161,22 +161,26 @@ export const getExpensesByAccount = async (request: Request, response: Response,
         const expensesByAccount: { account_id: number, expenses: Expense[] }[] = [];
 
         if (!account_id) {
-            // If account_id is null, fetch all accounts and make request.transactions an array of transactions
             const accountResults = await executeQuery(accountQueries.getAccounts);
 
             await Promise.all(accountResults.map(async (account) => {
                 const expenseResults = await executeQuery(expenseQueries.getExpensesMiddleware, [account.account_id, to_date]);
 
-                // Map over results array and convert amount to a float for each Transaction object
-                const expenseTransactions = expenseResults.map(expense => ({
-                    ...expense,
-                    amount: parseFloat(expense.expense_amount),
+                const expenseTransactions = await Promise.all(expenseResults.map(async (expense) => {
+                    const taxResults = await executeQuery(taxesQueries.getTax, [expense.tax_id]);
+
+                    return {
+                        ...expense,
+                        tax_amount: taxResults[0] ? parseFloat(taxResults[0].tax_amount) : 0,
+                        amount: parseFloat(expense.expense_amount),
+                        expense_subsidized: parseFloat(expense.expense_subsidized),
+                        expense_amount: parseFloat(expense.expense_amount)
+                    };
                 }));
 
                 expensesByAccount.push({ account_id: account.account_id, expenses: expenseTransactions });
             }));
         } else {
-            // Check if account exists and if it doesn't, send a response with an error message
             const accountExists = await executeQuery(accountQueries.getAccount, [account_id]);
 
             if (accountExists.length == 0) {
@@ -184,12 +188,18 @@ export const getExpensesByAccount = async (request: Request, response: Response,
                 return;
             }
 
-            const results = await executeQuery(expenseQueries.getExpensesMiddleware, [account_id, to_date]);
+            const expenseResults = await executeQuery(expenseQueries.getExpensesMiddleware, [account_id, to_date]);
 
-            // Map over results array and convert amount to a float for each Expense object
-            const expenseTransactions = results.map(expense => ({
-                ...expense,
-                amount: parseFloat(expense.expense_amount),
+            const expenseTransactions = await Promise.all(expenseResults.map(async (expense) => {
+                const taxResults = await executeQuery(taxesQueries.getTax, [expense.tax_id]);
+
+                return {
+                    ...expense,
+                    tax_amount: taxResults[0] ? parseFloat(taxResults[0].tax_amount) : 0,
+                    amount: parseFloat(expense.expense_amount),
+                    expense_subsidized: parseFloat(expense.expense_subsidized),
+                    expense_amount: parseFloat(expense.expense_amount)
+                };
             }));
 
             expensesByAccount.push({ account_id: parseInt(account_id as string), expenses: expenseTransactions });
@@ -199,7 +209,7 @@ export const getExpensesByAccount = async (request: Request, response: Response,
 
         next();
     } catch (error) {
-        console.error(error); // Log the error on the server side
+        console.error(error);
         handleError(response, 'Error getting expenses');
     }
 };
