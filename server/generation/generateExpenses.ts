@@ -42,17 +42,21 @@ const generateExpenses = (transactions: GeneratedTransaction[], skippedTransacti
     }
 
     while (expenseDate <= toDate) {
-        const taxedAmount = expense.expense_amount + (expense.expense_amount * expense.tax_amount);
-        const subsidizedAmount = taxedAmount - (taxedAmount * expense.expense_subsidized);
+        const initialAmount = expense.expense_amount;
+        const taxRate = expense.tax_amount;
+        const subsidyRate = expense.expense_subsidized;
+
+        const amountAfterSubsidy = initialAmount * (1 - subsidyRate);
+        const taxAmount = amountAfterSubsidy * taxRate;
 
         const newTransaction: GeneratedTransaction = {
             expense_id: expense.expense_id,
             title: expense.expense_title,
             description: expense.expense_description,
             date: new Date(expenseDate),
-            amount: -(expense.expense_amount + (expense.expense_amount * expense.expense_subsidized)),
-            tax_amount: taxedAmount,
-            total_amount: -parseFloat(subsidizedAmount.toFixed(2))
+            amount: -amountAfterSubsidy,
+            tax_rate: taxRate,
+            total_amount: -(amountAfterSubsidy + taxAmount)
         };
 
         if (expenseDate > new Date()) {

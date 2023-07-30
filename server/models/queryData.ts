@@ -158,7 +158,7 @@ export const transactionHistoryQueries: TransactionHistoryQueries = {
   getTransactionById: 'SELECT * FROM transaction_history WHERE transaction_id = $1',
   getTransactionsByAccountId: 'SELECT * FROM transaction_history WHERE account_id = $1 ORDER BY transaction_id ASC',
   getTransactionByIdAndAccountId: 'SELECT * FROM transaction_history WHERE transaction_id = $1 AND account_id = $2',
-  createTransaction: 'INSERT INTO transaction_history (account_id, transaction_amount, transaction_tax, transaction_title, transaction_description) VALUES ($1, $2, $3, $4, $5) RETURNING *',
+  createTransaction: 'INSERT INTO transaction_history (account_id, transaction_amount, transaction_tax_rate, transaction_title, transaction_description) VALUES ($1, $2, $3, $4, $5) RETURNING *',
   updateTransaction: 'UPDATE transaction_history SET account_id = $1, transaction_amount = $2, transaction_tax = $3, transaction_title = $4, transaction_description = $5 WHERE transaction_id = $6 RETURNING *',
   deleteTransaction: 'DELETE FROM transaction_history WHERE transaction_id = $1'
 };
@@ -376,7 +376,7 @@ export const cronJobQueries: CronJobQueries = {
 export const taxesQueries = {
   getTaxes: 'SELECT * FROM taxes',
   getTax: 'SELECT * FROM taxes WHERE tax_id = $1',
-  createTax: 'INSERT INTO taxes (tax_amount, tax_title, tax_description) VALUES ($1, $2, $3) RETURNING *',
-  updateTax: 'UPDATE taxes SET tax_amount = $1, tax_title = $2, tax_description = $3 WHERE tax_id = $4 RETURNING *',
+  createTax: 'INSERT INTO taxes (tax_rate, tax_title, tax_description) VALUES ($1, $2, $3) RETURNING *',
+  updateTax: 'UPDATE taxes SET tax_rate = $1, tax_title = $2, tax_description = $3 WHERE tax_id = $4 RETURNING *',
   deleteTax: 'DELETE FROM taxes WHERE tax_id = $1'
 };

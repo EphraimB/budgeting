@@ -7,7 +7,7 @@ export interface GeneratedTransaction {
     title: string;
     description: string;
     amount: number;
-    tax_amount: number;
+    tax_rate: number;
     total_amount: number;
     date: Date;
     date_modified?: Date;

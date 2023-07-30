@@ -40,7 +40,7 @@ const generateWishlists = (transactions: GeneratedTransaction[], skippedTransact
             description: wishlist.wishlist_description,
             date: newTransactionDate,
             amount: wishlist_amount,
-            tax_amount: wishlist.tax_amount,
+            tax_rate: wishlist.tax_amount,
             total_amount: -(wishlist_amount + (wishlist_amount * wishlist.tax_amount)).toFixed(2)
         };
 

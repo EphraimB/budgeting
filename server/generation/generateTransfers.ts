@@ -49,7 +49,7 @@ const generateTransfers = (transactions: GeneratedTransaction[], skippedTransact
             description: transfer.transfer_description,
             date: new Date(transferDate),
             amount: transfer.destination_account_id === account_id ? +transfer.transfer_amount : -transfer.transfer_amount,
-            tax_amount: 0,
+            tax_rate: 0,
             total_amount: transfer.destination_account_id === account_id ? +transfer.transfer_amount : -transfer.transfer_amount
         };
 

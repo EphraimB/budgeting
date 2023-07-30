@@ -26,7 +26,7 @@ const generate = async (request: Request, response: Response, next: NextFunction
                     date: new Date(transaction.date_created),
                     date_modified: new Date(transaction.date_modified),
                     amount: -transaction.transaction_amount,
-                    tax_amount: transaction.transaction_tax,
+                    tax_rate: transaction.transaction_tax,
                     total_amount: -(transaction.transaction_amount + (transaction.transaction_amount * transaction.transaction_tax))
                 })
             )
