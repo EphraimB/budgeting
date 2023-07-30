@@ -43,7 +43,7 @@ const generateExpenses = (transactions: GeneratedTransaction[], skippedTransacti
 
     while (expenseDate <= toDate) {
         const initialAmount = expense.expense_amount;
-        const taxRate = expense.tax_amount;
+        const taxRate = expense.tax_rate;
         const subsidyRate = expense.expense_subsidized;
 
         const amountAfterSubsidy = initialAmount * (1 - subsidyRate);

@@ -173,7 +173,7 @@ export const getExpensesByAccount = async (request: Request, response: Response,
 
                     return {
                         ...expense,
-                        tax_amount: taxResults[0] ? parseFloat(taxResults[0].tax_amount) : 0,
+                        tax_rate: taxResults[0] ? parseFloat(taxResults[0].tax_rate) : 0,
                         amount: parseFloat(expense.expense_amount),
                         expense_subsidized: parseFloat(expense.expense_subsidized),
                         expense_amount: parseFloat(expense.expense_amount)
@@ -197,7 +197,7 @@ export const getExpensesByAccount = async (request: Request, response: Response,
 
                 return {
                     ...expense,
-                    tax_amount: taxResults[0] ? parseFloat(taxResults[0].tax_amount) : 0,
+                    tax_rate: taxResults[0] ? parseFloat(taxResults[0].tax_rate) : 0,
                     amount: parseFloat(expense.expense_amount),
                     expense_subsidized: parseFloat(expense.expense_subsidized),
                     expense_amount: parseFloat(expense.expense_amount)
