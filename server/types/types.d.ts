@@ -157,6 +157,15 @@ export interface Transfer {
     date_modified?: string;
 }
 
+export interface Taxes {
+    tax_id: number;
+    tax_amount: number;
+    tax_title: string;
+    tax_description: string;
+    date_created: string;
+    date_modified: string;
+}
+
 interface CurrentBalance {
     account_id: number;
     account_balance: number;

@@ -13,6 +13,7 @@ import payrollEmployeeRouter from './routes/payrollEmployeeRouter.js';
 import wishlistRouter from './routes/wishlistRouter.js';
 import transferRouter from './routes/transfersRouter.js';
 import transactionsRouter from './routes/transactionsRouter.js';
+import taxesRouter from './routes/taxesRouter.js';
 import { fileURLToPath } from 'url';
 import fs from 'fs';
 import path from 'path';
@@ -40,6 +41,7 @@ app.use('/api/payroll/employee', payrollEmployeeRouter);
 app.use('/api/wishlists', wishlistRouter);
 app.use('/api/transfers', transferRouter);
 app.use('/api/transactions', transactionsRouter);
+app.use('/api/taxes', taxesRouter);
 
 // Global error handling middleware
 app.use((err: any, req: Request, res: Response, next: NextFunction) => {

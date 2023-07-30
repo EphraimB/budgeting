@@ -344,3 +344,11 @@ export const cronJobQueries: CronJobQueries = {
   updateCronJob: 'UPDATE cron_jobs SET unique_id = $1, cron_expression = $2 WHERE cron_job_id = $3 RETURNING *',
   deleteCronJob: 'DELETE FROM cron_jobs WHERE cron_job_id = $1'
 };
+
+export const taxesQueries = {
+  getTaxes: 'SELECT * FROM taxes',
+  getTax: 'SELECT * FROM taxes WHERE tax_id = $1',
+  createTax: 'INSERT INTO taxes (tax_name, tax_rate) VALUES ($1, $2) RETURNING *',
+  updateTax: 'UPDATE taxes SET tax_name = $1, tax_rate = $2 WHERE tax_id = $3 RETURNING *',
+  deleteTax: 'DELETE FROM taxes WHERE tax_id = $1'
+};
