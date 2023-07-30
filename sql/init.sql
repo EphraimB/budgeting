@@ -19,6 +19,17 @@ CREATE TABLE IF NOT EXISTS accounts (
   date_modified TIMESTAMP NOT NULL
 );
 
+-- Create a taxes table in postgres
+CREATE TABLE IF NOT EXISTS taxes (
+  tax_id SERIAL PRIMARY KEY,
+  account_id INT NOT NULL REFERENCES accounts(account_id),
+  tax_amount numeric(12, 2) NOT NULL,
+  tax_title VARCHAR(255) NOT NULL,
+  tax_description VARCHAR(255) NOT NULL,
+  date_created TIMESTAMP NOT NULL,
+  date_modified TIMESTAMP NOT NULL
+);
+
 -- Create a transactions table in postgres
 CREATE TABLE IF NOT EXISTS transaction_history (
   transaction_id SERIAL PRIMARY KEY,
