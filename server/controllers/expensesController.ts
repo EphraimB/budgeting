@@ -137,7 +137,7 @@ export const createExpense = async (request: Request, response: Response, next: 
         const modifiedExpenses = expenses.map(parseExpenses);
 
         // Get tax amount from tax_id in taxes table
-        const taxAmount = (await executeQuery(taxesQueries.getTax, [tax_id]))[0].tax_amount;
+        const taxAmount = tax_id ? (await executeQuery(taxesQueries.getTax, [tax_id]))[0].tax_amount : 0;
 
         const cronParams = {
             date: begin_date,
@@ -224,7 +224,7 @@ export const updateExpense = async (request: Request, response: Response, next: 
 
     try {
         // Get tax amount from tax_id in taxes table
-        const taxAmount = (await executeQuery(taxesQueries.getTax, [tax_id]))[0].tax_amount;
+        const taxAmount = tax_id ? (await executeQuery(taxesQueries.getTax, [tax_id]))[0].tax_amount : 0;
 
         const cronParams = {
             date: begin_date,
