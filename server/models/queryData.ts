@@ -117,7 +117,7 @@ export const accountQueries: AccountQueries = {
     LEFT JOIN 
       (SELECT 
         account_id, 
-        SUM(transaction_amount * (1 + transaction_tax)) AS transaction_amount_after_tax 
+        SUM(transaction_amount * (transaction_tax_rate)) AS transaction_amount_after_tax 
       FROM 
         transaction_history 
       GROUP BY 
@@ -139,7 +139,7 @@ export const accountQueries: AccountQueries = {
     LEFT JOIN 
       (SELECT 
         account_id, 
-        SUM(transaction_amount * (1 + transaction_tax)) AS transaction_amount_after_tax 
+        SUM(transaction_amount * (transaction_tax_rate)) AS transaction_amount_after_tax 
       FROM 
         transaction_history 
       GROUP BY 
