@@ -31,7 +31,7 @@ app.use('/api/docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 // Routes
 app.use('/api/', routes);
 app.use('/api/accounts', accountsRouter);
-app.use('/api/transactionHistory', transactionHistoryRouter);
+app.use('/api/transactions/history', transactionHistoryRouter);
 app.use('/api/expenses', expensesRouter);
 app.use('/api/loans', loansRouter);
 app.use('/api/payroll', payrollRouter);
