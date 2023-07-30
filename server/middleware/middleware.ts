@@ -386,9 +386,15 @@ export const getWishlistsByAccount = async (request: Request, response: Response
                 const wishlistResults = await executeQuery(wishlistQueries.getWishlistsMiddleware, [account.account_id, to_date]);
 
                 // Map over results array and convert amount to a float for each Transaction object
-                const wishlistTransactions = wishlistResults.map(wishlist => ({
-                    ...wishlist,
-                    amount: parseFloat(wishlist.wishlist_amount),
+                const wishlistTransactions = await Promise.all(wishlistResults.map(async (wishlist) => {
+                    const taxResults = await executeQuery(taxesQueries.getTax, [wishlist.tax_id]);
+
+                    return {
+                        ...wishlist,
+                        tax_amount: taxResults[0] ? parseFloat(taxResults[0].tax_amount) : 0,
+                        amount: parseFloat(wishlist.wishlist_amount),
+                        wishlist_amount: parseFloat(wishlist.wishlist_amount)
+                    };
                 }));
 
                 wishlistsByAccount.push({ account_id: account.account_id, wishlist: wishlistTransactions });
@@ -405,9 +411,15 @@ export const getWishlistsByAccount = async (request: Request, response: Response
             const results = await executeQuery(wishlistQueries.getWishlistsMiddleware, [account_id, to_date]);
 
             // Map over results array and convert amount to a float for each Wishlist object
-            const wishlistsTransactions = results.map(wishlist => ({
-                ...wishlist,
-                amount: parseFloat(wishlist.wishlist_amount),
+            const wishlistsTransactions = await Promise.all(results.map(async (wishlist) => {
+                const taxResults = await executeQuery(taxesQueries.getTax, [wishlist.tax_id]);
+
+                return {
+                    ...wishlist,
+                    tax_amount: taxResults[0] ? parseFloat(taxResults[0].tax_amount) : 0,
+                    amount: parseFloat(wishlist.wishlist_amount),
+                    wishlist_amount: parseFloat(wishlist.wishlist_amount),
+                };
             }));
 
             wishlistsByAccount.push({ account_id: parseInt(account_id as string), wishlist: wishlistsTransactions });
