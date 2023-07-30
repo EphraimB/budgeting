@@ -14,7 +14,7 @@ router.get('/',
 
 router.post('/',
     [
-        body('amount').isNumeric().withMessage('Amount must be a number'),
+        body('rate').isNumeric().withMessage('Rate must be a number'),
         body('title').isString().withMessage('Title must be a string'),
         body('description').isString().withMessage('Description must be a string'),
         validateRequest
@@ -24,7 +24,7 @@ router.post('/',
 router.put('/:id',
     [
         param('id').isInt({ min: 1 }).withMessage('ID must be a number'),
-        body('amount').isNumeric().withMessage('Amount must be a number'),
+        body('rate').isNumeric().withMessage('Rate must be a number'),
         body('title').isString().withMessage('Title must be a string'),
         body('description').isString().withMessage('Description must be a string'),
         validateRequest

@@ -5,7 +5,7 @@ import { Taxes } from '../types/types.js';
 
 interface TaxesInput {
     tax_id: string;
-    tax_amount: string;
+    tax_rate: string;
     tax_title: string;
     tax_description: string;
     date_created: string;
@@ -20,7 +20,7 @@ interface TaxesInput {
  */
 const parseTaxes = (tax: TaxesInput): Taxes => ({
     tax_id: parseInt(tax.tax_id),
-    tax_amount: parseFloat(tax.tax_amount),
+    tax_rate: parseFloat(tax.tax_rate),
     tax_title: tax.tax_title,
     tax_description: tax.tax_description,
     date_created: tax.date_created,
@@ -71,12 +71,12 @@ export const getTaxes = async (request: Request, response: Response): Promise<vo
  * Sends a response with the newly created tax
  */
 export const createTax = async (request: Request, response: Response): Promise<void> => {
-    const { amount, title, description } = request.body;
+    const { rate, title, description } = request.body;
 
     try {
         const taxesResults = await executeQuery<TaxesInput>(
             taxesQueries.createTax,
-            [amount, title, description]
+            [rate, title, description]
         );
 
         const taxes: Taxes[] = taxesResults.map(transaction => parseTaxes(transaction));
@@ -95,12 +95,12 @@ export const createTax = async (request: Request, response: Response): Promise<v
  */
 export const updateTax = async (request: Request, response: Response): Promise<void> => {
     const id: number = parseInt(request.params.id);
-    const { amount, title, description } = request.body;
+    const { rate, title, description } = request.body;
 
     try {
         const taxesResults = await executeQuery<TaxesInput>(
             taxesQueries.updateTax,
-            [amount, title, description, id]
+            [rate, title, description, id]
         );
 
         if (taxesResults.length === 0) {

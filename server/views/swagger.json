@@ -1618,7 +1618,7 @@
       "TaxManipulation": {
         "type": "object",
         "properties": {
-          "amount": {
+          "rate": {
             "type": "number",
             "format": "double",
             "example": 0.08875
@@ -1959,7 +1959,7 @@
                     "type": "string",
                     "example": "NY Sales Tax"
                   },
-                  "tax_amount": {
+                  "tax_rate": {
                     "type": "number",
                     "format": "double",
                     "example": 0.08875

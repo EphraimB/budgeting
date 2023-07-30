@@ -167,7 +167,7 @@ export interface Transfer {
 
 export interface Taxes {
     tax_id: number;
-    tax_amount: number;
+    tax_rate: number;
     tax_title: string;
     tax_description: string;
     date_created: string;
