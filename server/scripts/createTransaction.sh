@@ -4,19 +4,20 @@ unique_id=$1
 account_id=$2
 id=$3
 transaction_amount=$4
-transaction_title=$5
-transaction_description=$6
+transaction_tax=$5
+transaction_title=$6
+transaction_description=$7
 
 # Fetch the employee IDs from the database using psql and environment variables
-createTransaction=$(PGPASSWORD="$PGPASSWORD" psql -h "$PGHOST" -p "$PGPORT" -d "$PGDB" -U "$PGUSER" -c "INSERT INTO transaction_history (account_id, transaction_amount, transaction_title, transaction_description) VALUES ('$account_id', '$transaction_amount', '$transaction_title', '$transaction_description')" -t)
+createTransaction=$(PGPASSWORD="$PGPASSWORD" psql -h "$PGHOST" -p "$PGPORT" -d "$PGDB" -U "$PGUSER" -c "INSERT INTO transaction_history (account_id, transaction_amount, transaction_tax, transaction_title, transaction_description) VALUES ('$account_id', '$transaction_amount', '$transaction_tax', '$transaction_title', '$transaction_description')" -t)
 
 # Log if the first transaction was successful
 if [ $? -eq 0 ]; then
     echo "Transaction successfully created for account_id $account_id"
 
     # Check if destination_account_id is provided as the sixth argument
-    if [ $# -eq 7 ]; then
-        destination_account_id=$7
+    if [ $# -eq 8 ]; then
+        destination_account_id=$8
 
         # Execute the second psql query for the destination_account_id
         createDestinationTransaction=$(PGPASSWORD="$PGPASSWORD" psql -h "$PGHOST" -p "$PGPORT" -d "$PGDB" -U "$PGUSER" -c "INSERT INTO transaction_history (account_id, transaction_amount, transaction_title, transaction_description) VALUES ('$destination_account_id', ABS('$transaction_amount'), '$transaction_title', '$transaction_description')" -t)
