@@ -114,7 +114,7 @@ export const getTransactionsByAccount = async (request: Request, response: Respo
                 const accountTransactions = transactionsResults.map(transaction => ({
                     ...transaction,
                     transaction_amount: parseFloat(transaction.transaction_amount),
-                    transaction_tax: parseFloat(transaction.transaction_tax)
+                    transaction_tax_rate: parseFloat(transaction.transaction_tax_rate)
                 }));
 
                 transactionsByAccount.push({ account_id: account.account_id, transactions: accountTransactions });
@@ -134,7 +134,7 @@ export const getTransactionsByAccount = async (request: Request, response: Respo
             transactions = results.map(transaction => ({
                 ...transaction,
                 transaction_amount: parseFloat(transaction.transaction_amount),
-                transaction_tax: parseFloat(transaction.transaction_tax)
+                transaction_tax_rate: parseFloat(transaction.transaction_tax_rate)
             }));
 
             transactionsByAccount.push({ account_id: parseInt(account_id as string), transactions });

@@ -22,7 +22,7 @@ export interface Transaction {
     date_created: string;
     date_modified: string;
     transaction_amount: number;
-    transaction_tax?: number;
+    transaction_tax_rate?: number;
     balance?: number;
 }
 
