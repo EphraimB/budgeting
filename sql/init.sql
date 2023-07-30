@@ -22,7 +22,6 @@ CREATE TABLE IF NOT EXISTS accounts (
 -- Create a taxes table in postgres
 CREATE TABLE IF NOT EXISTS taxes (
   tax_id SERIAL PRIMARY KEY,
-  account_id INT NOT NULL REFERENCES accounts(account_id),
   tax_amount numeric(12, 2) NOT NULL,
   tax_title VARCHAR(255) NOT NULL,
   tax_description VARCHAR(255) NOT NULL,
@@ -54,6 +53,7 @@ CREATE TABLE IF NOT EXISTS cron_jobs (
 CREATE TABLE IF NOT EXISTS expenses (
   expense_id SERIAL PRIMARY KEY,
   account_id INT NOT NULL REFERENCES accounts(account_id),
+  tax_id INT REFERENCES taxes(tax_id),
   cron_job_id INT REFERENCES cron_jobs(cron_job_id),
   expense_amount numeric(12, 2) NOT NULL,
   expense_title VARCHAR(255) NOT NULL,
