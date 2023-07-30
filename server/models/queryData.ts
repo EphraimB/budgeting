@@ -141,8 +141,8 @@ export const expenseQueries: ExpenseQueries = {
   getExpenseById: 'SELECT * FROM expenses WHERE expense_id = $1',
   getExpensesByAccountId: 'SELECT * FROM expenses WHERE account_id = $1 ORDER BY expense_id ASC',
   getExpenseByIdAndAccountId: 'SELECT * FROM expenses WHERE expense_id = $1 AND account_id = $2',
-  createExpense: 'INSERT INTO expenses (account_id, expense_amount, expense_title, expense_description, frequency_type, frequency_type_variable, frequency_day_of_month, frequency_day_of_week, frequency_week_of_month, frequency_month_of_year, expense_subsidized, expense_begin_date) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12) RETURNING *',
-  updateExpense: 'UPDATE expenses SET account_id = $1, expense_amount = $2, expense_title = $3, expense_description = $4, frequency_type = $5, frequency_type_variable = $6, frequency_day_of_month = $7, frequency_day_of_week = $8, frequency_week_of_month = $9, frequency_month_of_year = $10, expense_subsidized = $11, expense_begin_date = $12 WHERE expense_id = $13 RETURNING *',
+  createExpense: 'INSERT INTO expenses (account_id, tax_id, expense_amount, expense_title, expense_description, frequency_type, frequency_type_variable, frequency_day_of_month, frequency_day_of_week, frequency_week_of_month, frequency_month_of_year, expense_subsidized, expense_begin_date) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13) RETURNING *',
+  updateExpense: 'UPDATE expenses SET account_id = $1, tax_id = $2, expense_amount = $3, expense_title = $4, expense_description = $5, frequency_type = $6, frequency_type_variable = $7, frequency_day_of_month = $8, frequency_day_of_week = $9, frequency_week_of_month = $10, frequency_month_of_year = $11, expense_subsidized = $12, expense_begin_date = $13 WHERE expense_id = $14 RETURNING *',
   updateExpenseWithCronJobId: 'UPDATE expenses SET cron_job_id = $1 WHERE expense_id = $2 RETURNING *',
   deleteExpense: 'DELETE FROM expenses WHERE expense_id = $1'
 };
@@ -348,7 +348,7 @@ export const cronJobQueries: CronJobQueries = {
 export const taxesQueries = {
   getTaxes: 'SELECT * FROM taxes',
   getTax: 'SELECT * FROM taxes WHERE tax_id = $1',
-  createTax: 'INSERT INTO taxes (tax_name, tax_rate) VALUES ($1, $2) RETURNING *',
-  updateTax: 'UPDATE taxes SET tax_name = $1, tax_rate = $2 WHERE tax_id = $3 RETURNING *',
+  createTax: 'INSERT INTO taxes (tax_amount, tax_title, tax_description) VALUES ($1, $2, $3) RETURNING *',
+  updateTax: 'UPDATE taxes SET tax_amount = $1, tax_title = $2, tax_description = $3 WHERE tax_id = $4 RETURNING *',
   deleteTax: 'DELETE FROM taxes WHERE tax_id = $1'
 };

@@ -56,6 +56,7 @@ export interface Employee {
 export interface Expense {
     expense_id?: number;
     account_id?: number;
+    tax_id?: number;
     expense_amount: number;
     expense_title: string;
     expense_description: string;

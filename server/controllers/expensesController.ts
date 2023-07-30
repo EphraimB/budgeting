@@ -9,6 +9,7 @@ interface ExpenseInput {
     expense_id: string;
     account_id: string;
     cron_job_id: string;
+    tax_id: string;
     expense_amount: string;
     expense_title: string;
     expense_description: string;
@@ -34,6 +35,7 @@ interface ExpenseInput {
 const parseExpenses = (expense: ExpenseInput): Expense => ({
     expense_id: parseInt(expense.expense_id),
     account_id: parseInt(expense.account_id),
+    tax_id: parseInt(expense.tax_id),
     expense_amount: parseFloat(expense.expense_amount),
     expense_title: expense.expense_title,
     expense_description: expense.expense_description,
@@ -101,6 +103,7 @@ export const getExpenses = async (request: Request, response: Response): Promise
 export const createExpense = async (request: Request, response: Response, next: NextFunction): Promise<void> => {
     const {
         account_id,
+        tax_id,
         amount,
         title,
         description,
@@ -117,6 +120,7 @@ export const createExpense = async (request: Request, response: Response, next: 
     try {
         const expenses = await executeQuery<ExpenseInput>(expenseQueries.createExpense, [
             account_id,
+            tax_id,
             amount,
             title,
             description,
@@ -200,6 +204,7 @@ export const updateExpense = async (request: Request, response: Response, next: 
     const id: number = parseInt(request.params.id);
     const {
         account_id,
+        tax_id,
         amount,
         title,
         description,
@@ -261,6 +266,7 @@ export const updateExpense = async (request: Request, response: Response, next: 
 
         await executeQuery<ExpenseInput>(expenseQueries.updateExpense, [
             account_id,
+            tax_id,
             amount,
             title,
             description,
