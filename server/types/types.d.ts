@@ -7,6 +7,8 @@ export interface GeneratedTransaction {
     title: string;
     description: string;
     amount: number;
+    tax_amount: number;
+    total_amount: number;
     date: Date;
     date_modified?: Date;
     balance?: number;
@@ -20,6 +22,7 @@ export interface Transaction {
     date_created: string;
     date_modified: string;
     transaction_amount: number;
+    transaction_tax?: number;
     balance?: number;
 }
 

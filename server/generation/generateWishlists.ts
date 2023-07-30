@@ -39,7 +39,9 @@ const generateWishlists = (transactions: GeneratedTransaction[], skippedTransact
             title: wishlist.wishlist_title,
             description: wishlist.wishlist_description,
             date: newTransactionDate,
-            amount: -(wishlist_amount + (wishlist_amount * wishlist.tax_amount)).toFixed(2)
+            amount: wishlist_amount,
+            tax_amount: wishlist.tax_amount,
+            total_amount: -(wishlist_amount + (wishlist_amount * wishlist.tax_amount)).toFixed(2)
         };
 
         if (fromDate > newTransactionDate) {

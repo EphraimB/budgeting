@@ -84,7 +84,9 @@ const generateLoans = (transactions: GeneratedTransaction[], skippedTransactions
             title: loan.loan_title + ' loan to ' + loan.loan_recipient,
             description: loan.loan_description,
             date: new Date(loanDate),
-            amount: -parseFloat(subsidizedAmount.toFixed(2))
+            amount: -parseFloat(subsidizedAmount.toFixed(2)),
+            tax_amount: 0,
+            total_amount: -parseFloat(subsidizedAmount.toFixed(2))
         };
 
         if (loanDate > new Date()) {

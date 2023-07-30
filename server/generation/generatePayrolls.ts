@@ -15,7 +15,9 @@ const generatePayrolls = (transactions: GeneratedTransaction[], skippedTransacti
         title: 'Payroll',
         description: 'payroll',
         date: new Date(payroll_end_date),
-        amount: payrolls.net_pay
+        amount: payrolls.gross_pay,
+        tax_amount: (payrolls.gross_pay - payrolls.net_pay) / payrolls.gross_pay,
+        total_amount: payrolls.net_pay
     };
 
     if (payroll_end_date > new Date()) {

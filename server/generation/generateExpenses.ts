@@ -50,7 +50,9 @@ const generateExpenses = (transactions: GeneratedTransaction[], skippedTransacti
             title: expense.expense_title,
             description: expense.expense_description,
             date: new Date(expenseDate),
-            amount: -parseFloat(subsidizedAmount.toFixed(2))
+            amount: -(expense.expense_amount + (expense.expense_amount * expense.expense_subsidized)),
+            tax_amount: taxedAmount,
+            total_amount: -parseFloat(subsidizedAmount.toFixed(2))
         };
 
         if (expenseDate > new Date()) {

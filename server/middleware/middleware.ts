@@ -114,6 +114,7 @@ export const getTransactionsByAccount = async (request: Request, response: Respo
                 const accountTransactions = transactionsResults.map(transaction => ({
                     ...transaction,
                     transaction_amount: parseFloat(transaction.transaction_amount),
+                    transaction_tax: parseFloat(transaction.transaction_tax)
                 }));
 
                 transactionsByAccount.push({ account_id: account.account_id, transactions: accountTransactions });
@@ -133,6 +134,7 @@ export const getTransactionsByAccount = async (request: Request, response: Respo
             transactions = results.map(transaction => ({
                 ...transaction,
                 transaction_amount: parseFloat(transaction.transaction_amount),
+                transaction_tax: parseFloat(transaction.transaction_tax)
             }));
 
             transactionsByAccount.push({ account_id: parseInt(account_id as string), transactions });
@@ -327,6 +329,7 @@ export const getPayrollsMiddleware = async (request: Request, response: Response
                 const payrollTransactions = payrollResults.map(payroll => ({
                     ...payroll,
                     net_pay: parseFloat(payroll.net_pay),
+                    gross_pay: parseFloat(payroll.gross_pay)
                 }));
 
                 payrollsByAccount.push({ employee_id: account.employee_id, payroll: payrollTransactions });
@@ -351,6 +354,7 @@ export const getPayrollsMiddleware = async (request: Request, response: Response
             const payrollsTransactions = results.map(payroll => ({
                 ...payroll,
                 net_pay: parseFloat(payroll.net_pay),
+                gross_pay: parseFloat(payroll.gross_pay)
             }));
 
             payrollsByAccount.push({ employee_id: parseInt(employee_id as string), payroll: payrollsTransactions });
