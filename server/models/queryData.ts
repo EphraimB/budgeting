@@ -104,20 +104,48 @@ type CronJobQueries = {
 
 export const accountQueries: AccountQueries = {
   getAccounts: `
-    SELECT accounts.account_id,
-    accounts.employee_id,
-    accounts.account_name,
-    accounts.account_type,
-    COALESCE(accounts.account_balance, 0) + COALESCE(t.transaction_amount, 0) AS account_balance, accounts.date_created, accounts.date_modified FROM accounts
-    LEFT JOIN (SELECT account_id, SUM(transaction_amount) AS transaction_amount FROM transaction_history GROUP BY account_id) AS t ON accounts.account_id = t.account_id ORDER BY accounts.account_id ASC  
+      SELECT 
+      accounts.account_id,
+      accounts.employee_id,
+      accounts.account_name,
+      accounts.account_type,
+      COALESCE(accounts.account_balance, 0) + COALESCE(t.transaction_amount_after_tax, 0) AS account_balance,
+      accounts.date_created, 
+      accounts.date_modified 
+    FROM 
+      accounts
+    LEFT JOIN 
+      (SELECT 
+        account_id, 
+        SUM(transaction_amount * (1 + transaction_tax)) AS transaction_amount_after_tax 
+      FROM 
+        transaction_history 
+      GROUP BY 
+        account_id) AS t ON accounts.account_id = t.account_id 
+    ORDER BY 
+      accounts.account_id ASC
   `,
   getAccount: `
-    SELECT accounts.account_id,
-    accounts.employee_id,
-    accounts.account_name,
-    accounts.account_type,
-    COALESCE(accounts.account_balance, 0) + COALESCE(t.transaction_amount, 0) AS account_balance, accounts.date_created, accounts.date_modified FROM accounts
-    LEFT JOIN (SELECT account_id, SUM(transaction_amount) AS transaction_amount FROM transaction_history GROUP BY account_id) AS t ON accounts.account_id = t.account_id WHERE accounts.account_id = $1
+      SELECT 
+      accounts.account_id,
+      accounts.employee_id,
+      accounts.account_name,
+      accounts.account_type,
+      COALESCE(accounts.account_balance, 0) + COALESCE(t.transaction_amount_after_tax, 0) AS account_balance_after_tax,
+      accounts.date_created, 
+      accounts.date_modified 
+    FROM 
+      accounts
+    LEFT JOIN 
+      (SELECT 
+        account_id, 
+        SUM(transaction_amount * (1 + transaction_tax)) AS transaction_amount_after_tax 
+      FROM 
+        transaction_history 
+      GROUP BY 
+        account_id) AS t ON accounts.account_id = t.account_id 
+    WHERE 
+      accounts.account_id = $1
   `,
   createAccount: 'INSERT INTO accounts (account_name, account_type, account_balance) VALUES ($1, $2, $3) RETURNING *',
   updateAccount: 'UPDATE accounts SET account_name = $1, account_type = $2, account_balance = $3 WHERE account_id = $4 RETURNING *',
