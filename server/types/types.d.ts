@@ -27,6 +27,7 @@ export interface TransactionHistory {
     transaction_id: number;
     account_id: number;
     transaction_amount: number;
+    transaction_tax: number;
     transaction_title: string;
     transaction_description: string;
     date_created: string;

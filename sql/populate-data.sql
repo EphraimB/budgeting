@@ -3,11 +3,11 @@ INSERT INTO employee (name, hourly_rate, regular_hours, vacation_days, sick_days
 INSERT INTO accounts (employee_id, account_name, account_type, account_balance) VALUES (1, 'Personal', 0, 1000.00);
 INSERT INTO accounts (employee_id, account_name, account_type, account_balance) VALUES (null, 'Savings', 1, 5000.00);
 
-INSERT INTO transaction_history (account_id, transaction_amount, transaction_title, transaction_description) VALUES (1, 1000.00, 'Test Deposit', 'Just a test deposit');
-INSERT INTO transaction_history (account_id, transaction_amount, transaction_title, transaction_description) VALUES (2, 5000.00, 'Test Deposit', 'Just a test deposit');
+INSERT INTO transaction_history (account_id, transaction_amount, transaction_tax, transaction_title, transaction_description) VALUES (1, 1000.00, 0, 'Test Deposit', 'Just a test deposit');
+INSERT INTO transaction_history (account_id, transaction_amount, transaction_tax, transaction_title, transaction_description) VALUES (2, 5000.00, 0, 'Test Deposit', 'Just a test deposit');
 
-INSERT INTO transaction_history (account_id, transaction_amount, transaction_title, transaction_description) VALUES (1, -100.00, 'Test Withdrawal', 'Just a test withdrawal');
-INSERT INTO transaction_history (account_id, transaction_amount, transaction_title, transaction_description) VALUES (2, -500.00, 'Test Withdrawal', 'Just a test withdrawal');
+INSERT INTO transaction_history (account_id, transaction_amount, transaction_tax, transaction_title, transaction_description) VALUES (1, -100.00, 0, 'Test Withdrawal', 'Just a test withdrawal');
+INSERT INTO transaction_history (account_id, transaction_amount, transaction_tax, transaction_title, transaction_description) VALUES (2, -500.00, 0.8875, 'Test Withdrawal', 'Just a test withdrawal');
 
 INSERT INTO payroll_dates (employee_id, payroll_start_day, payroll_end_day) VALUES (1, 1, 15), (1, 16, 31);
 

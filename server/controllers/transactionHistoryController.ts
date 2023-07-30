@@ -7,6 +7,7 @@ interface TransactionHistoryInput {
     transaction_id: string;
     account_id: string;
     transaction_amount: string;
+    transaction_tax: string;
     transaction_title: string;
     transaction_description: string;
     date_created: string;
@@ -23,6 +24,7 @@ const parseTransactions = (transactionHistory: TransactionHistoryInput): Transac
     transaction_id: parseInt(transactionHistory.transaction_id),
     account_id: parseInt(transactionHistory.account_id),
     transaction_amount: parseFloat(transactionHistory.transaction_amount),
+    transaction_tax: parseFloat(transactionHistory.transaction_tax),
     transaction_title: transactionHistory.transaction_title,
     transaction_description: transactionHistory.transaction_description,
     date_created: transactionHistory.date_created,
@@ -79,12 +81,12 @@ export const getTransactions = async (request: Request, response: Response): Pro
  * Sends a response with the newly created transaction
  */
 export const createTransaction = async (request: Request, response: Response): Promise<void> => {
-    const { account_id, title, amount, description } = request.body;
+    const { account_id, title, amount, tax, description } = request.body;
 
     try {
         const transactionResults = await executeQuery<TransactionHistoryInput>(
             transactionHistoryQueries.createTransaction,
-            [account_id, amount, title, description]
+            [account_id, amount, tax, title, description]
         );
 
         const transactionHistory: TransactionHistory[] = transactionResults.map(transaction => parseTransactions(transaction));
@@ -104,12 +106,12 @@ export const createTransaction = async (request: Request, response: Response): P
  */
 export const updateTransaction = async (request: Request, response: Response): Promise<void> => {
     const id: number = parseInt(request.params.id);
-    const { account_id, amount, title, description } = request.body;
+    const { account_id, amount, tax, title, description } = request.body;
 
     try {
         const transactionResults = await executeQuery<TransactionHistoryInput>(
             transactionHistoryQueries.updateTransaction,
-            [account_id, amount, title, description, id]
+            [account_id, amount, tax, title, description, id]
         );
 
         if (transactionResults.length === 0) {

@@ -34,6 +34,7 @@ CREATE TABLE IF NOT EXISTS transaction_history (
   transaction_id SERIAL PRIMARY KEY,
   account_id INT NOT NULL REFERENCES accounts(account_id),
   transaction_amount numeric(12, 2) NOT NULL,
+  transaction_tax numeric(8, 6) NOT NULL,
   transaction_title VARCHAR(255) NOT NULL,
   transaction_description VARCHAR(255) NOT NULL,
   date_created TIMESTAMP NOT NULL,
