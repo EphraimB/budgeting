@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
-import { transactionHistoryQueries, expenseQueries, loanQueries, payrollQueries, wishlistQueries, transferQueries, currentBalanceQueries, accountQueries } from '../models/queryData.js';
+import { transactionHistoryQueries, expenseQueries, loanQueries, payrollQueries, wishlistQueries, transferQueries, currentBalanceQueries, accountQueries, taxesQueries } from '../models/queryData.js';
 import { handleError, executeQuery } from '../utils/helperFunctions.js';
 import { Expense, Loan, Payroll, Transfer, Wishlist } from '../types/types.js';
 import scheduleCronJob from '../crontab/scheduleCronJob.js';
@@ -547,12 +547,17 @@ export const updateWishlistCron = async (request: Request, response: Response, n
         // Then, schedule all necessary cron jobs
         for (const wslst of wishlistsResults) {
             const cronId = wslst.cron_job_id;
+            const taxId = wslst.tax_id;
+
+            // Get tax amount from tax_id in taxes table
+            const taxAmount = taxId ? (await executeQuery(taxesQueries.getTax, [taxId]))[0].tax_amount : 0;
 
             const cronParams = {
                 date: transactionMap[wslst.wishlist_id],
                 account_id: wslst.account_id,
                 id: wslst.wishlist_id,
                 amount: -wslst.wishlist_amount,
+                tax: taxAmount,
                 title: wslst.wishlist_title,
                 description: wslst.wishlist_description,
                 scriptPath: '/app/dist/scripts/createTransaction.sh',
