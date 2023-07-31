@@ -251,7 +251,7 @@ describe('getExpensesByAccount', () => {
     });
 
     it('should fetch all accounts if account_id is not provided', async () => {
-        mockModule([{ account_id: 1 }], expenses);
+        mockModule([{ tax_rate: 0 }], expenses, null, [{ account_id: 1 }]);
 
         const { getExpensesByAccount } = await import('../../middleware/middleware.js');
 
@@ -264,7 +264,8 @@ describe('getExpensesByAccount', () => {
                 account_id: 1,
                 expenses: expenses.filter(e => e.account_id === 1).map(expense => ({
                     ...expense,
-                    amount: expense.expense_amount
+                    amount: expense.expense_amount,
+                    tax_rate: 0
                 }))
             }
         ];
