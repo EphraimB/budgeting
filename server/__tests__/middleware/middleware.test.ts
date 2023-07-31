@@ -667,27 +667,25 @@ describe('getCurrentBalance', () => {
 
 describe('updateWislistCron', () => {
     it('updates wishlist cron job', async () => {
-        mockModule(wishlists, [], null, [{ tax_rate: 1 }], []);
+        mockModule(wishlists, [{ tax_rate: 1 }], null, []);
         const { updateWishlistCron } = await import('../../middleware/middleware.js');
 
-        mockRequest.transactions = {
-            transactions: [
-                {
-                    account_id: 1,
-                    transactions: [
-                        {
-                            wishlist_id: 1,
-                            amount: 100,
-                            tax_rate: 0,
-                            total_amount: 100,
-                            date: '2023-06-01',
-                            title: 'Test',
-                            description: 'Test'
-                        }
-                    ]
-                }
-            ]
-        };
+        mockRequest.transactions = [
+            {
+                account_id: 1,
+                transactions: [
+                    {
+                        wishlist_id: 1,
+                        amount: 100,
+                        tax_rate: 0,
+                        total_amount: 100,
+                        date: '2023-06-01',
+                        title: 'Test',
+                        description: 'Test'
+                    }
+                ]
+            }
+        ];
 
         await updateWishlistCron(mockRequest, mockResponse, mockNext);
 
