@@ -36,6 +36,7 @@ export const transactions: Transaction[] = [
         transaction_id: 1,
         account_id: 1,
         transaction_amount: 1000,
+        transaction_tax_rate: 0,
         transaction_title: 'Test Deposit',
         transaction_description: 'Test Deposit',
         date_created: '2020-01-01',
@@ -45,6 +46,7 @@ export const transactions: Transaction[] = [
         transaction_id: 2,
         account_id: 1,
         transaction_amount: 2000,
+        transaction_tax_rate: 0,
         transaction_title: 'Test Deposit 2',
         transaction_description: 'Test Deposit 2',
         date_created: '2020-01-01',
@@ -54,6 +56,7 @@ export const transactions: Transaction[] = [
         transaction_id: 3,
         account_id: 1,
         transaction_amount: 1000,
+        transaction_tax_rate: 0,
         transaction_title: 'Test Withdrawal',
         transaction_description: 'Test Withdrawal',
         date_created: '2020-01-01',
@@ -63,6 +66,7 @@ export const transactions: Transaction[] = [
         transaction_id: 4,
         account_id: 1,
         transaction_amount: 200,
+        transaction_tax_rate: 0,
         transaction_title: 'Test Withdrawal 2',
         transaction_description: 'Test Withdrawal 2',
         date_created: '2020-01-01',
@@ -74,6 +78,7 @@ export const expenses: Expense[] = [
     {
         expense_id: 1,
         account_id: 1,
+        tax_id: 1,
         expense_amount: 50,
         expense_title: 'Test Expense',
         expense_description: 'Test Expense to test the expense route',
@@ -92,6 +97,7 @@ export const expenses: Expense[] = [
     {
         expense_id: 2,
         account_id: 1,
+        tax_id: 1,
         expense_amount: 100,
         expense_title: 'Test Expense 2',
         expense_description: 'Test Expense 2 to test the expense route',
@@ -110,6 +116,7 @@ export const expenses: Expense[] = [
     {
         expense_id: 3,
         account_id: 1,
+        tax_id: 1,
         expense_amount: 50,
         expense_title: 'Test Expense 3',
         expense_description: 'Test Expense 3 to test the expense route',
@@ -128,6 +135,7 @@ export const expenses: Expense[] = [
     {
         expense_id: 4,
         account_id: 1,
+        tax_id: 1,
         expense_amount: 25,
         expense_title: 'Test Expense 3',
         expense_description: 'Test Expense 3 to test the expense route',
@@ -146,6 +154,7 @@ export const expenses: Expense[] = [
     {
         expense_id: 5,
         account_id: 1,
+        tax_id: null,
         expense_amount: 50,
         expense_title: 'Test Expense 3',
         expense_description: 'Test Expense 3 to test the expense route',
@@ -307,6 +316,7 @@ export const wishlists: Wishlist[] = [
     {
         wishlist_id: 1,
         cron_job_id: 1,
+        tax_id: 1,
         account_id: 1,
         wishlist_amount: 1000,
         wishlist_title: 'Test Wishlist',

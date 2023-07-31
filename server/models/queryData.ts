@@ -104,20 +104,48 @@ type CronJobQueries = {
 
 export const accountQueries: AccountQueries = {
   getAccounts: `
-    SELECT accounts.account_id,
-    accounts.employee_id,
-    accounts.account_name,
-    accounts.account_type,
-    COALESCE(accounts.account_balance, 0) + COALESCE(t.transaction_amount, 0) AS account_balance, accounts.date_created, accounts.date_modified FROM accounts
-    LEFT JOIN (SELECT account_id, SUM(transaction_amount) AS transaction_amount FROM transaction_history GROUP BY account_id) AS t ON accounts.account_id = t.account_id ORDER BY accounts.account_id ASC  
+      SELECT 
+      accounts.account_id,
+      accounts.employee_id,
+      accounts.account_name,
+      accounts.account_type,
+      COALESCE(accounts.account_balance, 0) + COALESCE(t.transaction_amount_after_tax, 0) AS account_balance,
+      accounts.date_created, 
+      accounts.date_modified 
+    FROM 
+      accounts
+    LEFT JOIN 
+      (SELECT 
+        account_id, 
+        SUM(transaction_amount * (transaction_tax_rate)) AS transaction_amount_after_tax 
+      FROM 
+        transaction_history 
+      GROUP BY 
+        account_id) AS t ON accounts.account_id = t.account_id 
+    ORDER BY 
+      accounts.account_id ASC
   `,
   getAccount: `
-    SELECT accounts.account_id,
-    accounts.employee_id,
-    accounts.account_name,
-    accounts.account_type,
-    COALESCE(accounts.account_balance, 0) + COALESCE(t.transaction_amount, 0) AS account_balance, accounts.date_created, accounts.date_modified FROM accounts
-    LEFT JOIN (SELECT account_id, SUM(transaction_amount) AS transaction_amount FROM transaction_history GROUP BY account_id) AS t ON accounts.account_id = t.account_id WHERE accounts.account_id = $1
+      SELECT 
+      accounts.account_id,
+      accounts.employee_id,
+      accounts.account_name,
+      accounts.account_type,
+      COALESCE(accounts.account_balance, 0) + COALESCE(t.transaction_amount_after_tax, 0) AS account_balance_after_tax,
+      accounts.date_created, 
+      accounts.date_modified 
+    FROM 
+      accounts
+    LEFT JOIN 
+      (SELECT 
+        account_id, 
+        SUM(transaction_amount * (transaction_tax_rate)) AS transaction_amount_after_tax 
+      FROM 
+        transaction_history 
+      GROUP BY 
+        account_id) AS t ON accounts.account_id = t.account_id 
+    WHERE 
+      accounts.account_id = $1
   `,
   createAccount: 'INSERT INTO accounts (account_name, account_type, account_balance) VALUES ($1, $2, $3) RETURNING *',
   updateAccount: 'UPDATE accounts SET account_name = $1, account_type = $2, account_balance = $3 WHERE account_id = $4 RETURNING *',
@@ -130,8 +158,8 @@ export const transactionHistoryQueries: TransactionHistoryQueries = {
   getTransactionById: 'SELECT * FROM transaction_history WHERE transaction_id = $1',
   getTransactionsByAccountId: 'SELECT * FROM transaction_history WHERE account_id = $1 ORDER BY transaction_id ASC',
   getTransactionByIdAndAccountId: 'SELECT * FROM transaction_history WHERE transaction_id = $1 AND account_id = $2',
-  createTransaction: 'INSERT INTO transaction_history (account_id, transaction_amount, transaction_title, transaction_description) VALUES ($1, $2, $3, $4) RETURNING *',
-  updateTransaction: 'UPDATE transaction_history SET account_id = $1, transaction_amount = $2, transaction_title = $3, transaction_description = $4 WHERE transaction_id = $5 RETURNING *',
+  createTransaction: 'INSERT INTO transaction_history (account_id, transaction_amount, transaction_tax_rate, transaction_title, transaction_description) VALUES ($1, $2, $3, $4, $5) RETURNING *',
+  updateTransaction: 'UPDATE transaction_history SET account_id = $1, transaction_amount = $2, transaction_tax = $3, transaction_title = $4, transaction_description = $5 WHERE transaction_id = $6 RETURNING *',
   deleteTransaction: 'DELETE FROM transaction_history WHERE transaction_id = $1'
 };
 
@@ -141,8 +169,8 @@ export const expenseQueries: ExpenseQueries = {
   getExpenseById: 'SELECT * FROM expenses WHERE expense_id = $1',
   getExpensesByAccountId: 'SELECT * FROM expenses WHERE account_id = $1 ORDER BY expense_id ASC',
   getExpenseByIdAndAccountId: 'SELECT * FROM expenses WHERE expense_id = $1 AND account_id = $2',
-  createExpense: 'INSERT INTO expenses (account_id, expense_amount, expense_title, expense_description, frequency_type, frequency_type_variable, frequency_day_of_month, frequency_day_of_week, frequency_week_of_month, frequency_month_of_year, expense_subsidized, expense_begin_date) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12) RETURNING *',
-  updateExpense: 'UPDATE expenses SET account_id = $1, expense_amount = $2, expense_title = $3, expense_description = $4, frequency_type = $5, frequency_type_variable = $6, frequency_day_of_month = $7, frequency_day_of_week = $8, frequency_week_of_month = $9, frequency_month_of_year = $10, expense_subsidized = $11, expense_begin_date = $12 WHERE expense_id = $13 RETURNING *',
+  createExpense: 'INSERT INTO expenses (account_id, tax_id, expense_amount, expense_title, expense_description, frequency_type, frequency_type_variable, frequency_day_of_month, frequency_day_of_week, frequency_week_of_month, frequency_month_of_year, expense_subsidized, expense_begin_date) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13) RETURNING *',
+  updateExpense: 'UPDATE expenses SET account_id = $1, tax_id = $2, expense_amount = $3, expense_title = $4, expense_description = $5, frequency_type = $6, frequency_type_variable = $7, frequency_day_of_month = $8, frequency_day_of_week = $9, frequency_week_of_month = $10, frequency_month_of_year = $11, expense_subsidized = $12, expense_begin_date = $13 WHERE expense_id = $14 RETURNING *',
   updateExpenseWithCronJobId: 'UPDATE expenses SET cron_job_id = $1 WHERE expense_id = $2 RETURNING *',
   deleteExpense: 'DELETE FROM expenses WHERE expense_id = $1'
 };
@@ -315,8 +343,8 @@ export const wishlistQueries: WishlistQueries = {
   getWishlistsById: 'SELECT * FROM wishlist WHERE wishlist_id = $1',
   getWishlistsByAccountId: 'SELECT * FROM wishlist WHERE account_id = $1',
   getWishlistsByIdAndAccountId: 'SELECT * FROM wishlist WHERE wishlist_id = $1 AND account_id = $2',
-  createWishlist: 'INSERT INTO wishlist (account_id, cron_job_id, wishlist_amount, wishlist_title, wishlist_description, wishlist_priority, wishlist_url_link) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *',
-  updateWishlist: 'UPDATE wishlist SET account_id = $1, wishlist_amount = $2, wishlist_title = $3, wishlist_description = $4, wishlist_priority = $5, wishlist_url_link = $6 WHERE wishlist_id = $7 RETURNING *',
+  createWishlist: 'INSERT INTO wishlist (account_id, tax_id, cron_job_id, wishlist_amount, wishlist_title, wishlist_description, wishlist_priority, wishlist_url_link) VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING *',
+  updateWishlist: 'UPDATE wishlist SET account_id = $1, tax_id = $2, wishlist_amount = $3, wishlist_title = $4, wishlist_description = $5, wishlist_priority = $6, wishlist_url_link = $7 WHERE wishlist_id = $8 RETURNING *',
   updateWishlistWithCronJobId: 'UPDATE wishlist SET cron_job_id = $1 WHERE wishlist_id = $2 RETURNING *',
   deleteWishlist: 'DELETE FROM wishlist WHERE wishlist_id = $1'
 };
@@ -343,4 +371,12 @@ export const cronJobQueries: CronJobQueries = {
   createCronJob: 'INSERT INTO cron_jobs (unique_id, cron_expression) VALUES ($1, $2) RETURNING *',
   updateCronJob: 'UPDATE cron_jobs SET unique_id = $1, cron_expression = $2 WHERE cron_job_id = $3 RETURNING *',
   deleteCronJob: 'DELETE FROM cron_jobs WHERE cron_job_id = $1'
+};
+
+export const taxesQueries = {
+  getTaxes: 'SELECT * FROM taxes',
+  getTax: 'SELECT * FROM taxes WHERE tax_id = $1',
+  createTax: 'INSERT INTO taxes (tax_rate, tax_title, tax_description) VALUES ($1, $2, $3) RETURNING *',
+  updateTax: 'UPDATE taxes SET tax_rate = $1, tax_title = $2, tax_description = $3 WHERE tax_id = $4 RETURNING *',
+  deleteTax: 'DELETE FROM taxes WHERE tax_id = $1'
 };

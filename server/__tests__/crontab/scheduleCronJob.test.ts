@@ -1,4 +1,4 @@
-import { expect, jest } from '@jest/globals';
+import { jest } from '@jest/globals';
 import { Volume } from 'memfs';
 
 const vol = Volume.fromJSON({

@@ -20,6 +20,7 @@ const createApp = async (): Promise<Express> => {
 
 const newTransaction = {
     amount: 100,
+    tax: 0,
     account_id: 1,
     title: 'test',
     description: 'test'

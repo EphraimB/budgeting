@@ -19,11 +19,22 @@ CREATE TABLE IF NOT EXISTS accounts (
   date_modified TIMESTAMP NOT NULL
 );
 
+-- Create a taxes table in postgres
+CREATE TABLE IF NOT EXISTS taxes (
+  tax_id SERIAL PRIMARY KEY,
+  tax_rate numeric(8, 6) NOT NULL,
+  tax_title VARCHAR(255) NOT NULL,
+  tax_description VARCHAR(255) NOT NULL,
+  date_created TIMESTAMP NOT NULL,
+  date_modified TIMESTAMP NOT NULL
+);
+
 -- Create a transactions table in postgres
 CREATE TABLE IF NOT EXISTS transaction_history (
   transaction_id SERIAL PRIMARY KEY,
   account_id INT NOT NULL REFERENCES accounts(account_id),
   transaction_amount numeric(12, 2) NOT NULL,
+  transaction_tax_rate numeric(8, 6) NOT NULL,
   transaction_title VARCHAR(255) NOT NULL,
   transaction_description VARCHAR(255) NOT NULL,
   date_created TIMESTAMP NOT NULL,
@@ -43,6 +54,7 @@ CREATE TABLE IF NOT EXISTS cron_jobs (
 CREATE TABLE IF NOT EXISTS expenses (
   expense_id SERIAL PRIMARY KEY,
   account_id INT NOT NULL REFERENCES accounts(account_id),
+  tax_id INT REFERENCES taxes(tax_id),
   cron_job_id INT REFERENCES cron_jobs(cron_job_id),
   expense_amount numeric(12, 2) NOT NULL,
   expense_title VARCHAR(255) NOT NULL,
@@ -104,6 +116,7 @@ CREATE TABLE payroll_taxes (
 CREATE TABLE IF NOT EXISTS wishlist (
   wishlist_id SERIAL PRIMARY KEY,
   account_id INT NOT NULL REFERENCES accounts(account_id),
+  tax_id INT REFERENCES taxes(tax_id),
   cron_job_id INT REFERENCES cron_jobs(cron_job_id),
   wishlist_amount numeric(12, 2) NOT NULL,
   wishlist_title VARCHAR(255) NOT NULL,
@@ -205,6 +218,11 @@ EXECUTE PROCEDURE update_dates();
 
 CREATE TRIGGER update_cron_jobs_dates
 BEFORE INSERT OR UPDATE ON cron_jobs
+FOR EACH ROW
+EXECUTE PROCEDURE update_dates();
+
+CREATE TRIGGER update_taxes_dates
+BEFORE INSERT OR UPDATE ON taxes
 FOR EACH ROW
 EXECUTE PROCEDURE update_dates();
 

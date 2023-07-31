@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from 'express';
-import { cronJobQueries, wishlistQueries } from '../models/queryData.js';
+import { cronJobQueries, wishlistQueries, taxesQueries } from '../models/queryData.js';
 import { executeQuery, handleError } from '../utils/helperFunctions.js';
 import { Wishlist } from '../types/types.js';
 import scheduleCronJob from '../crontab/scheduleCronJob.js';
@@ -8,6 +8,7 @@ import deleteCronJob from '../crontab/deleteCronJob.js';
 interface WishlistInput {
     wishlist_id: string;
     account_id: string;
+    tax_id: string;
     cron_job_id: string;
     wishlist_amount: string;
     wishlist_title: string;
@@ -28,6 +29,7 @@ interface WishlistInput {
 const wishlistsParse = (wishlist: WishlistInput): Wishlist => ({
     wishlist_id: parseInt(wishlist.wishlist_id),
     account_id: parseInt(wishlist.account_id),
+    tax_id: parseInt(wishlist.tax_id),
     wishlist_amount: parseFloat(wishlist.wishlist_amount),
     wishlist_title: wishlist.wishlist_title,
     wishlist_description: wishlist.wishlist_description,
@@ -108,12 +110,12 @@ export const getWishlists = async (request: Request, response: Response): Promis
  * Sends a POST request to the database to create a new wishlist
  */
 export const createWishlist = async (request: Request, response: Response, next: NextFunction): Promise<void> => {
-    const { account_id, amount, title, description, priority, url_link } = request.body;
+    const { account_id, tax_id, amount, title, description, priority, url_link } = request.body;
 
     try {
         const cron_job_id: number | null = null;
 
-        const results = await executeQuery<WishlistInput>(wishlistQueries.createWishlist, [account_id, cron_job_id, amount, title, description, priority, url_link]);
+        const results = await executeQuery<WishlistInput>(wishlistQueries.createWishlist, [account_id, tax_id, cron_job_id, amount, title, description, priority, url_link]);
 
         // Parse the data to correct format and return an object
         const wishlists: Wishlist[] = results.map(wishlist => wishlistsParse(wishlist));
@@ -203,10 +205,10 @@ export const createWishlistCron = async (request: Request, response: Response): 
  */
 export const updateWishlist = async (request: Request, response: Response, next: NextFunction): Promise<void> => {
     const { id } = request.params;
-    const { account_id, amount, title, description, priority, url_link } = request.body;
+    const { account_id, tax_id, amount, title, description, priority, url_link } = request.body;
 
     try {
-        const results = await executeQuery<WishlistInput>(wishlistQueries.updateWishlist, [account_id, amount, title, description, priority, url_link, id]);
+        const results = await executeQuery<WishlistInput>(wishlistQueries.updateWishlist, [account_id, tax_id, amount, title, description, priority, url_link, id]);
 
         if (results.length === 0) {
             response.status(404).send('Wishlist not found');
@@ -279,7 +281,7 @@ export const updateWishlistCron = async (request: Request, response: Response): 
             type: 'wishlist'
         };
 
-        if (cronParams.date === null) {
+        if (cronParams.date) {
             const { cronDate, uniqueId } = await scheduleCronJob(cronParams);
 
             await executeQuery(cronJobQueries.updateCronJob, [uniqueId, cronDate, cronId]);

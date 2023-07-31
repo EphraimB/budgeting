@@ -7,6 +7,7 @@ interface TransactionHistoryInput {
     transaction_id: string;
     account_id: string;
     transaction_amount: string;
+    transaction_tax_rate: string;
     transaction_title: string;
     transaction_description: string;
     date_created: string;
@@ -23,6 +24,7 @@ const parseTransactions = (transactionHistory: TransactionHistoryInput): Transac
     transaction_id: parseInt(transactionHistory.transaction_id),
     account_id: parseInt(transactionHistory.account_id),
     transaction_amount: parseFloat(transactionHistory.transaction_amount),
+    transaction_tax_rate: parseFloat(transactionHistory.transaction_tax_rate),
     transaction_title: transactionHistory.transaction_title,
     transaction_description: transactionHistory.transaction_description,
     date_created: transactionHistory.date_created,
@@ -36,8 +38,9 @@ const parseTransactions = (transactionHistory: TransactionHistoryInput): Transac
  * Sends a response with all transactions or a single transaction
  */
 export const getTransactions = async (request: Request, response: Response): Promise<void> => {
+    const { id, account_id } = request.query;
+
     try {
-        const { id, account_id } = request.query;
         let query: string;
         let params: any[];
 
@@ -78,11 +81,12 @@ export const getTransactions = async (request: Request, response: Response): Pro
  * Sends a response with the newly created transaction
  */
 export const createTransaction = async (request: Request, response: Response): Promise<void> => {
+    const { account_id, title, amount, tax, description } = request.body;
+
     try {
-        const { account_id, title, amount, description } = request.body;
         const transactionResults = await executeQuery<TransactionHistoryInput>(
             transactionHistoryQueries.createTransaction,
-            [account_id, amount, title, description]
+            [account_id, amount, tax, title, description]
         );
 
         const transactionHistory: TransactionHistory[] = transactionResults.map(transaction => parseTransactions(transaction));
@@ -101,13 +105,13 @@ export const createTransaction = async (request: Request, response: Response): P
  * Sends a response with the updated transaction
  */
 export const updateTransaction = async (request: Request, response: Response): Promise<void> => {
-    try {
-        const id: number = parseInt(request.params.id);
-        const { account_id, amount, title, description } = request.body;
+    const id: number = parseInt(request.params.id);
+    const { account_id, amount, tax, title, description } = request.body;
 
+    try {
         const transactionResults = await executeQuery<TransactionHistoryInput>(
             transactionHistoryQueries.updateTransaction,
-            [account_id, amount, title, description, id]
+            [account_id, amount, tax, title, description, id]
         );
 
         if (transactionResults.length === 0) {
@@ -131,9 +135,9 @@ export const updateTransaction = async (request: Request, response: Response): P
  * Sends a response with a message indicating the transaction was deleted
  */
 export const deleteTransaction = async (request: Request, response: Response): Promise<void> => {
-    try {
-        const id: number = parseInt(request.params.id);
+    const id: number = parseInt(request.params.id);
 
+    try {
         const getTransactionResults = await executeQuery<TransactionHistoryInput>(transactionHistoryQueries.getTransactionById, [id]);
 
         if (getTransactionResults.length === 0) {

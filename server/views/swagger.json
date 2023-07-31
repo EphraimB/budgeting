@@ -140,7 +140,144 @@
         }
       }
     },
-    "/transactionHistory": {
+    "/taxes": {
+      "get": {
+        "summary": "Get all taxes",
+        "description": "Get all taxes",
+        "tags": [
+          "taxes"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "query",
+            "description": "Filter by tax id",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "account_id",
+            "in": "query",
+            "description": "Filter by account id",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/SuccessResponseTaxes"
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "404": {
+            "description": "Tax not found"
+          }
+        }
+      },
+      "post": {
+        "summary": "Create a new tax",
+        "description": "Create a new tax",
+        "tags": [
+          "taxes"
+        ],
+        "requestBody": {
+          "description": "Tax object to be created",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TaxManipulation"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "$ref": "#/components/responses/SuccessResponseTaxes"
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          }
+        }
+      }
+    },
+    "/taxes/{id}": {
+      "put": {
+        "summary": "Update a tax",
+        "description": "Update a tax",
+        "tags": [
+          "taxes"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "description": "Edit by tax id",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "description": "Tax object to be updated",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TaxManipulation"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/SuccessResponseTaxes"
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "404": {
+            "description": "Tax not found"
+          }
+        }
+      },
+      "delete": {
+        "summary": "Delete a tax",
+        "description": "Delete a tax",
+        "tags": [
+          "taxes"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "description": "Delete by tax id",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully deleted tax"
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "404": {
+            "description": "Tax not found"
+          }
+        }
+      }
+    },
+    "/transactions/history": {
       "get": {
         "summary": "Get all transactions by account",
         "description": "Get all transactions by account",
@@ -208,7 +345,7 @@
         }
       }
     },
-    "/transactionHistory/{id}": {
+    "/transactions/history/{id}": {
       "put": {
         "summary": "Update a transaction",
         "description": "Update a transaction",
@@ -1478,6 +1615,24 @@
           }
         }
       },
+      "TaxManipulation": {
+        "type": "object",
+        "properties": {
+          "rate": {
+            "type": "number",
+            "format": "double",
+            "example": 0.08875
+          },
+          "title": {
+            "type": "string",
+            "example": "NY Sales Tax"
+          },
+          "description": {
+            "type": "string",
+            "example": "New York Sales Tax"
+          }
+        }
+      },
       "TransactionManipulation": {
         "type": "object",
         "properties": {
@@ -1498,25 +1653,6 @@
           "description": {
             "type": "string",
             "example": "This is a transaction test"
-          }
-        }
-      },
-      "WithdrawalManipulation": {
-        "type": "object",
-        "properties": {
-          "account_id": {
-            "type": "integer",
-            "format": "int64",
-            "minimum": 1
-          },
-          "amount": {
-            "type": "number",
-            "format": "double",
-            "example": 100.00
-          },
-          "description": {
-            "type": "string",
-            "example": "Withdrawal test"
           }
         }
       },
@@ -1790,6 +1926,43 @@
                     "type": "number",
                     "format": "double",
                     "example": 1000.00
+                  },
+                  "date_created": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "date_modified": {
+                    "type": "string",
+                    "format": "date-time"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "SuccessResponseTaxes": {
+        "description": "A JSON array of taxes",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "tax_id": {
+                    "type": "integer",
+                    "format": "int64",
+                    "minimum": 1
+                  },
+                  "tax_name": {
+                    "type": "string",
+                    "example": "NY Sales Tax"
+                  },
+                  "tax_rate": {
+                    "type": "number",
+                    "format": "double",
+                    "example": 0.08875
                   },
                   "date_created": {
                     "type": "string",

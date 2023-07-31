@@ -22,7 +22,8 @@ describe('generatePayrolls', () => {
     it('should generate payroll transaction', () => {
         const payroll: Payroll = {
             end_date: '2023-08-01',
-            net_pay: 2000
+            net_pay: 2000,
+            gross_pay: 3000,
         };
         const fromDate: Date = new Date('2023-07-01');
 
@@ -36,13 +37,16 @@ describe('generatePayrolls', () => {
         expect(payrollTransaction.title).toBe('Payroll');
         expect(payrollTransaction.description).toBe('payroll');
         expect(payrollTransaction.date).toEqual(new Date(payroll.end_date));
-        expect(payrollTransaction.amount).toBe(payroll.net_pay);
+        expect(payrollTransaction.amount).toBe(payroll.gross_pay);
+        expect(payrollTransaction.tax_rate).toBe(parseFloat(((payroll.gross_pay - payroll.net_pay) / payroll.gross_pay).toFixed(4)));
+        expect(payrollTransaction.total_amount).toBe(payroll.net_pay);
     });
 
     it('should not generate payroll transaction for past date', () => {
         const payroll: Payroll = {
             end_date: '2022-08-01',
-            net_pay: 2000
+            net_pay: 2000,
+            gross_pay: 3000,
         };
         const fromDate: Date = new Date('2023-07-01');
 
@@ -55,7 +59,8 @@ describe('generatePayrolls', () => {
     it('should add payroll transaction to skippedTransactions for future date before fromDate', () => {
         const payroll: Payroll = {
             end_date: '2023-06-01',
-            net_pay: 2000
+            net_pay: 2000,
+            gross_pay: 3000,
         };
         const fromDate: Date = new Date('2023-07-01');
 
@@ -72,13 +77,16 @@ describe('generatePayrolls', () => {
         expect(payrollTransaction.title).toBe('Payroll');
         expect(payrollTransaction.description).toBe('payroll');
         expect(payrollTransaction.date).toEqual(new Date(payroll.end_date));
-        expect(payrollTransaction.amount).toBe(payroll.net_pay);
+        expect(payrollTransaction.amount).toBe(payroll.gross_pay);
+        expect(payrollTransaction.tax_rate).toBe(parseFloat(((payroll.gross_pay - payroll.net_pay) / payroll.gross_pay).toFixed(4)));
+        expect(payrollTransaction.total_amount).toBe(payroll.net_pay);
     });
 
     it('should do nothing if payroll date is in the past', () => {
         const payroll: Payroll = {
             end_date: '2019-08-01',
-            net_pay: 2000
+            net_pay: 2000,
+            gross_pay: 3000,
         };
         const fromDate: Date = new Date('2020-10-01');
 

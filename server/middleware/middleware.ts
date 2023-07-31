@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
-import { transactionHistoryQueries, expenseQueries, loanQueries, payrollQueries, wishlistQueries, transferQueries, currentBalanceQueries, accountQueries } from '../models/queryData.js';
+import { transactionHistoryQueries, expenseQueries, loanQueries, payrollQueries, wishlistQueries, transferQueries, currentBalanceQueries, accountQueries, taxesQueries } from '../models/queryData.js';
 import { handleError, executeQuery } from '../utils/helperFunctions.js';
 import { Expense, Loan, Payroll, Transfer, Wishlist } from '../types/types.js';
 import scheduleCronJob from '../crontab/scheduleCronJob.js';
@@ -114,6 +114,7 @@ export const getTransactionsByAccount = async (request: Request, response: Respo
                 const accountTransactions = transactionsResults.map(transaction => ({
                     ...transaction,
                     transaction_amount: parseFloat(transaction.transaction_amount),
+                    transaction_tax_rate: parseFloat(transaction.transaction_tax_rate)
                 }));
 
                 transactionsByAccount.push({ account_id: account.account_id, transactions: accountTransactions });
@@ -133,6 +134,7 @@ export const getTransactionsByAccount = async (request: Request, response: Respo
             transactions = results.map(transaction => ({
                 ...transaction,
                 transaction_amount: parseFloat(transaction.transaction_amount),
+                transaction_tax_rate: parseFloat(transaction.transaction_tax_rate)
             }));
 
             transactionsByAccount.push({ account_id: parseInt(account_id as string), transactions });
@@ -158,25 +160,35 @@ export const getExpensesByAccount = async (request: Request, response: Response,
     const { account_id, to_date } = request.query;
 
     try {
+        // Fetch all taxes
+        const allTaxes = await executeQuery(taxesQueries.getTaxes);
+
+        // Create an object where key is the tax id and value is the tax object
+        const taxLookup = allTaxes.reduce((acc, curr) => ({ ...acc, [curr.tax_id]: curr }), {});
+
         const expensesByAccount: { account_id: number, expenses: Expense[] }[] = [];
 
         if (!account_id) {
-            // If account_id is null, fetch all accounts and make request.transactions an array of transactions
             const accountResults = await executeQuery(accountQueries.getAccounts);
 
             await Promise.all(accountResults.map(async (account) => {
                 const expenseResults = await executeQuery(expenseQueries.getExpensesMiddleware, [account.account_id, to_date]);
 
-                // Map over results array and convert amount to a float for each Transaction object
-                const expenseTransactions = expenseResults.map(expense => ({
-                    ...expense,
-                    amount: parseFloat(expense.expense_amount),
-                }));
+                const expenseTransactions = expenseResults.map((expense) => {
+                    const tax = taxLookup[expense.tax_id] || { tax_rate: 0 };
+
+                    return {
+                        ...expense,
+                        tax_rate: parseFloat(tax.tax_rate),
+                        amount: parseFloat(expense.expense_amount),
+                        expense_subsidized: parseFloat(expense.expense_subsidized),
+                        expense_amount: parseFloat(expense.expense_amount)
+                    };
+                });
 
                 expensesByAccount.push({ account_id: account.account_id, expenses: expenseTransactions });
             }));
         } else {
-            // Check if account exists and if it doesn't, send a response with an error message
             const accountExists = await executeQuery(accountQueries.getAccount, [account_id]);
 
             if (accountExists.length == 0) {
@@ -184,13 +196,19 @@ export const getExpensesByAccount = async (request: Request, response: Response,
                 return;
             }
 
-            const results = await executeQuery(expenseQueries.getExpensesMiddleware, [account_id, to_date]);
+            const expenseResults = await executeQuery(expenseQueries.getExpensesMiddleware, [account_id, to_date]);
 
-            // Map over results array and convert amount to a float for each Expense object
-            const expenseTransactions = results.map(expense => ({
-                ...expense,
-                amount: parseFloat(expense.expense_amount),
-            }));
+            const expenseTransactions = expenseResults.map((expense) => {
+                const tax = taxLookup[expense.tax_id] || { tax_rate: 0 };
+
+                return {
+                    ...expense,
+                    tax_rate: parseFloat(tax.tax_rate),
+                    amount: parseFloat(expense.expense_amount),
+                    expense_subsidized: parseFloat(expense.expense_subsidized),
+                    expense_amount: parseFloat(expense.expense_amount)
+                };
+            });
 
             expensesByAccount.push({ account_id: parseInt(account_id as string), expenses: expenseTransactions });
         }
@@ -199,7 +217,7 @@ export const getExpensesByAccount = async (request: Request, response: Response,
 
         next();
     } catch (error) {
-        console.error(error); // Log the error on the server side
+        console.error(error);
         handleError(response, 'Error getting expenses');
     }
 };
@@ -317,6 +335,7 @@ export const getPayrollsMiddleware = async (request: Request, response: Response
                 const payrollTransactions = payrollResults.map(payroll => ({
                     ...payroll,
                     net_pay: parseFloat(payroll.net_pay),
+                    gross_pay: parseFloat(payroll.gross_pay)
                 }));
 
                 payrollsByAccount.push({ employee_id: account.employee_id, payroll: payrollTransactions });
@@ -341,6 +360,7 @@ export const getPayrollsMiddleware = async (request: Request, response: Response
             const payrollsTransactions = results.map(payroll => ({
                 ...payroll,
                 net_pay: parseFloat(payroll.net_pay),
+                gross_pay: parseFloat(payroll.gross_pay)
             }));
 
             payrollsByAccount.push({ employee_id: parseInt(employee_id as string), payroll: payrollsTransactions });
@@ -366,6 +386,12 @@ export const getWishlistsByAccount = async (request: Request, response: Response
     const { account_id, to_date } = request.query;
 
     try {
+        // Fetch all taxes
+        const allTaxes = await executeQuery(taxesQueries.getTaxes);
+
+        // Create an object where key is the tax id and value is the tax object
+        const taxLookup = allTaxes.reduce((acc, curr) => ({ ...acc, [curr.tax_id]: curr }), {});
+
         const wishlistsByAccount: { account_id: number, wishlist: Wishlist[] }[] = [];
 
         if (!account_id) {
@@ -376,10 +402,16 @@ export const getWishlistsByAccount = async (request: Request, response: Response
                 const wishlistResults = await executeQuery(wishlistQueries.getWishlistsMiddleware, [account.account_id, to_date]);
 
                 // Map over results array and convert amount to a float for each Transaction object
-                const wishlistTransactions = wishlistResults.map(wishlist => ({
-                    ...wishlist,
-                    amount: parseFloat(wishlist.wishlist_amount),
-                }));
+                const wishlistTransactions = wishlistResults.map((wishlist) => {
+                    const tax = taxLookup[wishlist.tax_id] || { tax_rate: 0 };
+
+                    return {
+                        ...wishlist,
+                        tax_rate: parseFloat(tax.tax_rate),
+                        amount: parseFloat(wishlist.wishlist_amount),
+                        wishlist_amount: parseFloat(wishlist.wishlist_amount)
+                    };
+                });
 
                 wishlistsByAccount.push({ account_id: account.account_id, wishlist: wishlistTransactions });
             }));
@@ -395,10 +427,16 @@ export const getWishlistsByAccount = async (request: Request, response: Response
             const results = await executeQuery(wishlistQueries.getWishlistsMiddleware, [account_id, to_date]);
 
             // Map over results array and convert amount to a float for each Wishlist object
-            const wishlistsTransactions = results.map(wishlist => ({
-                ...wishlist,
-                amount: parseFloat(wishlist.wishlist_amount),
-            }));
+            const wishlistsTransactions = results.map((wishlist) => {
+                const tax = taxLookup[wishlist.tax_id] || { tax_rate: 0 };
+
+                return {
+                    ...wishlist,
+                    tax_rate: parseFloat(tax.tax_rate),
+                    amount: parseFloat(wishlist.wishlist_amount),
+                    wishlist_amount: parseFloat(wishlist.wishlist_amount),
+                };
+            });
 
             wishlistsByAccount.push({ account_id: parseInt(account_id as string), wishlist: wishlistsTransactions });
         }
@@ -547,12 +585,17 @@ export const updateWishlistCron = async (request: Request, response: Response, n
         // Then, schedule all necessary cron jobs
         for (const wslst of wishlistsResults) {
             const cronId = wslst.cron_job_id;
+            const taxId = wslst.tax_id;
+
+            // Get tax amount from tax_id in taxes table
+            const taxAmount = taxId ? (await executeQuery(taxesQueries.getTax, [taxId]))[0].tax_amount : 0;
 
             const cronParams = {
                 date: transactionMap[wslst.wishlist_id],
                 account_id: wslst.account_id,
                 id: wslst.wishlist_id,
                 amount: -wslst.wishlist_amount,
+                tax: taxAmount,
                 title: wslst.wishlist_title,
                 description: wslst.wishlist_description,
                 scriptPath: '/app/dist/scripts/createTransaction.sh',

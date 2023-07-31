@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from 'express';
-import { expenseQueries, cronJobQueries } from '../models/queryData.js';
+import { expenseQueries, cronJobQueries, taxesQueries } from '../models/queryData.js';
 import scheduleCronJob from '../crontab/scheduleCronJob.js';
 import deleteCronJob from '../crontab/deleteCronJob.js';
 import { handleError, executeQuery } from '../utils/helperFunctions.js';
@@ -9,6 +9,7 @@ interface ExpenseInput {
     expense_id: string;
     account_id: string;
     cron_job_id: string;
+    tax_id: string;
     expense_amount: string;
     expense_title: string;
     expense_description: string;
@@ -34,6 +35,7 @@ interface ExpenseInput {
 const parseExpenses = (expense: ExpenseInput): Expense => ({
     expense_id: parseInt(expense.expense_id),
     account_id: parseInt(expense.account_id),
+    tax_id: parseInt(expense.tax_id) || null,
     expense_amount: parseFloat(expense.expense_amount),
     expense_title: expense.expense_title,
     expense_description: expense.expense_description,
@@ -101,6 +103,7 @@ export const getExpenses = async (request: Request, response: Response): Promise
 export const createExpense = async (request: Request, response: Response, next: NextFunction): Promise<void> => {
     const {
         account_id,
+        tax_id,
         amount,
         title,
         description,
@@ -117,6 +120,7 @@ export const createExpense = async (request: Request, response: Response, next: 
     try {
         const expenses = await executeQuery<ExpenseInput>(expenseQueries.createExpense, [
             account_id,
+            tax_id,
             amount,
             title,
             description,
@@ -200,6 +204,7 @@ export const updateExpense = async (request: Request, response: Response, next: 
     const id: number = parseInt(request.params.id);
     const {
         account_id,
+        tax_id,
         amount,
         title,
         description,
@@ -213,24 +218,24 @@ export const updateExpense = async (request: Request, response: Response, next: 
         begin_date
     } = request.body;
 
-    const cronParams = {
-        date: begin_date,
-        account_id,
-        id,
-        amount: -amount + (amount * subsidized),
-        title,
-        description,
-        frequency_type,
-        frequency_type_variable,
-        frequency_day_of_month,
-        frequency_day_of_week,
-        frequency_week_of_month,
-        frequency_month_of_year,
-        scriptPath: '/app/dist/scripts/createTransaction.sh',
-        type: 'expense'
-    };
-
     try {
+        const cronParams = {
+            date: begin_date,
+            account_id,
+            id,
+            amount: -amount + (amount * subsidized),
+            title,
+            description,
+            frequency_type,
+            frequency_type_variable,
+            frequency_day_of_month,
+            frequency_day_of_week,
+            frequency_week_of_month,
+            frequency_month_of_year,
+            scriptPath: '/app/dist/scripts/createTransaction.sh',
+            type: 'expense'
+        };
+
         const expenseResult = await executeQuery<ExpenseInput>(expenseQueries.getExpenseById, [id]);
         if (expenseResult.length === 0) {
             response.status(404).send('Expense not found');
@@ -261,6 +266,7 @@ export const updateExpense = async (request: Request, response: Response, next: 
 
         await executeQuery<ExpenseInput>(expenseQueries.updateExpense, [
             account_id,
+            tax_id,
             amount,
             title,
             description,
