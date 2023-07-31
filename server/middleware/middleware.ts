@@ -160,6 +160,12 @@ export const getExpensesByAccount = async (request: Request, response: Response,
     const { account_id, to_date } = request.query;
 
     try {
+        // Fetch all taxes
+        const allTaxes = await executeQuery(taxesQueries.getTaxes);
+
+        // Create an object where key is the tax id and value is the tax object
+        const taxLookup = allTaxes.reduce((acc, curr) => ({ ...acc, [curr.tax_id]: curr }), {});
+
         const expensesByAccount: { account_id: number, expenses: Expense[] }[] = [];
 
         if (!account_id) {
@@ -168,17 +174,17 @@ export const getExpensesByAccount = async (request: Request, response: Response,
             await Promise.all(accountResults.map(async (account) => {
                 const expenseResults = await executeQuery(expenseQueries.getExpensesMiddleware, [account.account_id, to_date]);
 
-                const expenseTransactions = await Promise.all(expenseResults.map(async (expense) => {
-                    const taxResults = await executeQuery(taxesQueries.getTax, [expense.tax_id]);
+                const expenseTransactions = expenseResults.map((expense) => {
+                    const tax = taxLookup[expense.tax_id] || { tax_rate: 0 };
 
                     return {
                         ...expense,
-                        tax_rate: taxResults[0] ? parseFloat(taxResults[0].tax_rate) : 0,
+                        tax_rate: parseFloat(tax.tax_rate),
                         amount: parseFloat(expense.expense_amount),
                         expense_subsidized: parseFloat(expense.expense_subsidized),
                         expense_amount: parseFloat(expense.expense_amount)
                     };
-                }));
+                });
 
                 expensesByAccount.push({ account_id: account.account_id, expenses: expenseTransactions });
             }));
@@ -192,17 +198,17 @@ export const getExpensesByAccount = async (request: Request, response: Response,
 
             const expenseResults = await executeQuery(expenseQueries.getExpensesMiddleware, [account_id, to_date]);
 
-            const expenseTransactions = await Promise.all(expenseResults.map(async (expense) => {
-                const taxResults = await executeQuery(taxesQueries.getTax, [expense.tax_id]);
+            const expenseTransactions = expenseResults.map((expense) => {
+                const tax = taxLookup[expense.tax_id] || { tax_rate: 0 };
 
                 return {
                     ...expense,
-                    tax_rate: taxResults[0] ? parseFloat(taxResults[0].tax_rate) : 0,
+                    tax_rate: parseFloat(tax.tax_rate),
                     amount: parseFloat(expense.expense_amount),
                     expense_subsidized: parseFloat(expense.expense_subsidized),
                     expense_amount: parseFloat(expense.expense_amount)
                 };
-            }));
+            });
 
             expensesByAccount.push({ account_id: parseInt(account_id as string), expenses: expenseTransactions });
         }

@@ -50,7 +50,7 @@ afterAll(() => {
  * @param [getEmployeeValue] - The value to be returned by the executeQuery mock function
  * @returns - A mock module with the executeQuery and handleError functions
  */
-const mockModule = (getAccountsValue: QueryResultRow[], getTransactionsDateMiddlewareValue: QueryResultRow[], errorMessage?: string | null, getEmployeeValue?: QueryResultRow[]) => {
+const mockModule = (getAccountsValue: QueryResultRow[], getTransactionsDateMiddlewareValue: QueryResultRow[], errorMessage?: string | null, getEmployeeValue?: QueryResultRow[], getTaxRate?: QueryResultRow[]) => {
     const executeQuery = jest.fn();
 
     if (errorMessage) {
@@ -61,7 +61,8 @@ const mockModule = (getAccountsValue: QueryResultRow[], getTransactionsDateMiddl
         executeQuery
             .mockImplementationOnce(() => Promise.resolve(getAccountsValue))
             .mockImplementationOnce(() => Promise.resolve(getEmployeeValue))
-            .mockImplementationOnce(() => Promise.resolve(getTransactionsDateMiddlewareValue));
+            .mockImplementationOnce(() => Promise.resolve(getTransactionsDateMiddlewareValue))
+            .mockImplementationOnce(() => Promise.resolve(getTaxRate));
     } else {
         executeQuery
             .mockImplementationOnce(() => Promise.resolve(getAccountsValue))
@@ -195,7 +196,7 @@ describe('getTransactionsByAccount', () => {
 
 describe('getExpensesByAccount', () => {
     it('gets expenses for a given account and date', async () => {
-        mockModule([{ account_id: 1 }], expenses);
+        mockModule([{ tax_rate: 0 }], expenses, null, [{ account_id: 1 }]);
 
         const { getExpensesByAccount } = await import('../../middleware/middleware.js');
 
@@ -207,7 +208,9 @@ describe('getExpensesByAccount', () => {
             account_id: 1,
             expenses: expenses.map(expense => ({
                 ...expense,
-                amount: expense.expense_amount
+                amount: expense.expense_amount,
+                tax_rate: 0,
+                expense_amount: expense.expense_amount
             }))
         };
 
