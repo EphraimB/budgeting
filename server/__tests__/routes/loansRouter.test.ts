@@ -105,7 +105,7 @@ describe('POST /', () => {
             interest_rate: 0,
             interest_frequency_type: 2,
             begin_date: '2020-01-02'
-        }
+        };
 
         const response: request.Response = await request(app)
             .post('/')
@@ -136,7 +136,7 @@ describe('PUT /:id', () => {
             interest_rate: 0,
             interest_frequency_type: 2,
             begin_date: '2020-01-02'
-        }
+        };
 
         const response: request.Response = await request(app)
             .put('/1')

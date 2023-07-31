@@ -1,33 +1,37 @@
-import { NextFunction, Request, Response } from 'express';
-import { expenseQueries, cronJobQueries, taxesQueries } from '../models/queryData.js';
-import scheduleCronJob from '../crontab/scheduleCronJob.js';
-import deleteCronJob from '../crontab/deleteCronJob.js';
-import { handleError, executeQuery } from '../utils/helperFunctions.js';
-import { Expense } from '../types/types.js';
+import { type NextFunction, type Request, type Response } from "express";
+import {
+    expenseQueries,
+    cronJobQueries,
+    taxesQueries,
+} from "../models/queryData.js";
+import scheduleCronJob from "../crontab/scheduleCronJob.js";
+import deleteCronJob from "../crontab/deleteCronJob.js";
+import { handleError, executeQuery } from "../utils/helperFunctions.js";
+import { type Expense } from "../types/types.js";
 
 interface ExpenseInput {
-    expense_id: string;
-    account_id: string;
-    cron_job_id: string;
-    tax_id: string;
-    expense_amount: string;
-    expense_title: string;
-    expense_description: string;
-    frequency_type: string;
-    frequency_type_variable: string;
-    frequency_day_of_month: string;
-    frequency_day_of_week: string;
-    frequency_week_of_month: string;
-    frequency_month_of_year: string;
-    expense_subsidized: string;
-    expense_begin_date: string;
-    expense_end_date: string;
-    date_created: string;
-    date_modified: string;
+  expense_id: string;
+  account_id: string;
+  cron_job_id: string;
+  tax_id: string;
+  expense_amount: string;
+  expense_title: string;
+  expense_description: string;
+  frequency_type: string;
+  frequency_type_variable: string;
+  frequency_day_of_month: string;
+  frequency_day_of_week: string;
+  frequency_week_of_month: string;
+  frequency_month_of_year: string;
+  expense_subsidized: string;
+  expense_begin_date: string;
+  expense_end_date: string;
+  date_created: string;
+  date_modified: string;
 }
 
 /**
- * 
+ *
  * @param expense - Expense object
  * @returns Expense object with the correct types
  * Converts the expense object to the correct types
@@ -49,16 +53,19 @@ const parseExpenses = (expense: ExpenseInput): Expense => ({
     expense_begin_date: expense.expense_begin_date,
     expense_end_date: expense.expense_end_date,
     date_created: expense.date_created,
-    date_modified: expense.date_modified
+    date_modified: expense.date_modified,
 });
 
 /**
- * 
+ *
  * @param request - Request object
  * @param response - Response object
  * Sends a response with the expenses
  */
-export const getExpenses = async (request: Request, response: Response): Promise<void> => {
+export const getExpenses = async (
+    request: Request,
+    response: Response,
+): Promise<void> => {
     const { id, account_id } = request.query;
 
     try {
@@ -82,25 +89,38 @@ export const getExpenses = async (request: Request, response: Response): Promise
         const expenses = await executeQuery<ExpenseInput>(query, params);
 
         if ((id || account_id) && expenses.length === 0) {
-            response.status(404).send('Expense not found');
+            response.status(404).send("Expense not found");
             return;
         }
 
         response.status(200).json(expenses.map(parseExpenses));
     } catch (error) {
         console.error(error); // Log the error on the server side
-        handleError(response, `Error getting ${id ? 'expense' : (account_id ? 'expenses for given account_id' : 'expenses')}`);
+        handleError(
+            response,
+            `Error getting ${
+                id
+                    ? "expense"
+                    : account_id
+                        ? "expenses for given account_id"
+                        : "expenses"
+            }`,
+        );
     }
 };
 
 /**
- * 
+ *
  * @param request - Request object
  * @param response - Response object
  * @param next - Next function
  * Sends a response with the created expense and creates a cron job for the expense and inserts it into the database
  */
-export const createExpense = async (request: Request, response: Response, next: NextFunction): Promise<void> => {
+export const createExpense = async (
+    request: Request,
+    response: Response,
+    next: NextFunction,
+): Promise<void> => {
     const {
         account_id,
         tax_id,
@@ -114,25 +134,28 @@ export const createExpense = async (request: Request, response: Response, next: 
         frequency_week_of_month,
         frequency_month_of_year,
         subsidized,
-        begin_date
+        begin_date,
     } = request.body;
 
     try {
-        const expenses = await executeQuery<ExpenseInput>(expenseQueries.createExpense, [
-            account_id,
-            tax_id,
-            amount,
-            title,
-            description,
-            frequency_type,
-            frequency_type_variable,
-            frequency_day_of_month,
-            frequency_day_of_week,
-            frequency_week_of_month,
-            frequency_month_of_year,
-            subsidized,
-            begin_date
-        ]);
+        const expenses = await executeQuery<ExpenseInput>(
+            expenseQueries.createExpense,
+            [
+                account_id,
+                tax_id,
+                amount,
+                title,
+                description,
+                frequency_type,
+                frequency_type_variable,
+                frequency_day_of_month,
+                frequency_day_of_week,
+                frequency_week_of_month,
+                frequency_month_of_year,
+                subsidized,
+                begin_date,
+            ],
+        );
 
         const modifiedExpenses = expenses.map(parseExpenses);
 
@@ -140,7 +163,7 @@ export const createExpense = async (request: Request, response: Response, next: 
             date: begin_date,
             account_id,
             id: modifiedExpenses[0].expense_id,
-            amount: -amount + (amount * subsidized),
+            amount: -amount + amount * subsidized,
             title,
             description,
             frequency_type,
@@ -149,58 +172,70 @@ export const createExpense = async (request: Request, response: Response, next: 
             frequency_day_of_week,
             frequency_week_of_month,
             frequency_month_of_year,
-            scriptPath: '/app/dist/scripts/createTransaction.sh',
-            type: 'expense'
+            scriptPath: "/app/dist/scripts/createTransaction.sh",
+            type: "expense",
         };
 
         const { cronDate, uniqueId } = await scheduleCronJob(cronParams);
-        const cronId: number = (await executeQuery(cronJobQueries.createCronJob, [
-            uniqueId,
-            cronDate
-        ]))[0].cron_job_id;
+        const cronId: number = (
+            await executeQuery(cronJobQueries.createCronJob, [uniqueId, cronDate])
+        )[0].cron_job_id;
 
-        console.log('Cron job created ' + cronId);
+        console.log("Cron job created " + cronId);
 
-        await executeQuery(expenseQueries.updateExpenseWithCronJobId, [cronId, modifiedExpenses[0].expense_id]);
+        await executeQuery(expenseQueries.updateExpenseWithCronJobId, [
+            cronId,
+            modifiedExpenses[0].expense_id,
+        ]);
 
         request.expense_id = modifiedExpenses[0].expense_id;
 
         next();
     } catch (error) {
         console.error(error); // Log the error on the server side
-        handleError(response, 'Error creating expense');
+        handleError(response, "Error creating expense");
     }
 };
 
 /**
- * 
+ *
  * @param request - Request object
  * @param response - Response object
  * Sends a response with the created expense
  */
-export const createExpenseReturnObject = async (request: Request, response: Response): Promise<void> => {
+export const createExpenseReturnObject = async (
+    request: Request,
+    response: Response,
+): Promise<void> => {
     const { expense_id } = request;
 
     try {
-        const expenses = await executeQuery<ExpenseInput>(expenseQueries.getExpenseById, [expense_id]);
+        const expenses = await executeQuery<ExpenseInput>(
+            expenseQueries.getExpenseById,
+            [expense_id],
+        );
 
         const modifiedExpenses = expenses.map(parseExpenses);
 
         response.status(201).json(modifiedExpenses);
     } catch (error) {
         console.error(error); // Log the error on the server side
-        handleError(response, 'Error creating expense');
+        handleError(response, "Error creating expense");
     }
 };
 
 /**
- * 
+ *
  * @param request - Request object
  * @param response - Response object
  * @param next - Next function
  * Sends a response with the updated expense and updates the cron job for the expense and updates it in the database
  */
-export const updateExpense = async (request: Request, response: Response, next: NextFunction): Promise<void> => {
+export const updateExpense = async (
+    request: Request,
+    response: Response,
+    next: NextFunction,
+): Promise<void> => {
     const id: number = parseInt(request.params.id);
     const {
         account_id,
@@ -215,7 +250,7 @@ export const updateExpense = async (request: Request, response: Response, next: 
         frequency_week_of_month,
         frequency_month_of_year,
         subsidized,
-        begin_date
+        begin_date,
     } = request.body;
 
     try {
@@ -223,7 +258,7 @@ export const updateExpense = async (request: Request, response: Response, next: 
             date: begin_date,
             account_id,
             id,
-            amount: -amount + (amount * subsidized),
+            amount: -amount + amount * subsidized,
             title,
             description,
             frequency_type,
@@ -232,13 +267,16 @@ export const updateExpense = async (request: Request, response: Response, next: 
             frequency_day_of_week,
             frequency_week_of_month,
             frequency_month_of_year,
-            scriptPath: '/app/dist/scripts/createTransaction.sh',
-            type: 'expense'
+            scriptPath: "/app/dist/scripts/createTransaction.sh",
+            type: "expense",
         };
 
-        const expenseResult = await executeQuery<ExpenseInput>(expenseQueries.getExpenseById, [id]);
+        const expenseResult = await executeQuery<ExpenseInput>(
+            expenseQueries.getExpenseById,
+            [id],
+        );
         if (expenseResult.length === 0) {
-            response.status(404).send('Expense not found');
+            response.status(404).send("Expense not found");
             return;
         }
 
@@ -248,10 +286,10 @@ export const updateExpense = async (request: Request, response: Response, next: 
         if (results.length > 0) {
             await deleteCronJob(results[0].unique_id);
         } else {
-            console.error('Cron job not found');
+            console.error("Cron job not found");
             response.status(404).json({
-                status: 'error',
-                message: 'Cron job not found'
+                status: "error",
+                message: "Cron job not found",
             });
             return;
         }
@@ -261,7 +299,7 @@ export const updateExpense = async (request: Request, response: Response, next: 
         await executeQuery(cronJobQueries.updateCronJob, [
             uniqueId,
             cronDate,
-            cronId
+            cronId,
         ]);
 
         await executeQuery<ExpenseInput>(expenseQueries.updateExpense, [
@@ -278,7 +316,7 @@ export const updateExpense = async (request: Request, response: Response, next: 
             frequency_month_of_year,
             subsidized,
             begin_date,
-            id
+            id,
         ]);
 
         request.expense_id = id;
@@ -286,45 +324,57 @@ export const updateExpense = async (request: Request, response: Response, next: 
         next();
     } catch (error) {
         console.error(error); // Log the error on the server side
-        handleError(response, 'Error updating expense');
+        handleError(response, "Error updating expense");
     }
 };
 
 /**
- * 
+ *
  * @param request - Request object
  * @param response - Response object
  * Sends a response with the updated expense
  */
-export const updateExpenseReturnObject = async (request: Request, response: Response): Promise<void> => {
+export const updateExpenseReturnObject = async (
+    request: Request,
+    response: Response,
+): Promise<void> => {
     const { expense_id } = request;
 
     try {
-        const expenses = await executeQuery<ExpenseInput>(expenseQueries.getExpenseById, [expense_id]);
+        const expenses = await executeQuery<ExpenseInput>(
+            expenseQueries.getExpenseById,
+            [expense_id],
+        );
 
         const modifiedExpenses = expenses.map(parseExpenses);
 
         response.status(200).json(modifiedExpenses);
     } catch (error) {
         console.error(error); // Log the error on the server side
-        handleError(response, 'Error creating expense');
+        handleError(response, "Error creating expense");
     }
 };
 
 /**
- * 
+ *
  * @param request - Request object
  * @param response - Response object
  * @param next - Next function
  * Sends a response with the deleted expense and deletes the cron job for the expense and deletes it from the database
  */
-export const deleteExpense = async (request: Request, response: Response, next: NextFunction): Promise<void> => {
+export const deleteExpense = async (
+    request: Request,
+    response: Response,
+    next: NextFunction,
+): Promise<void> => {
     const { id } = request.params;
 
     try {
-        const expenseResult = await executeQuery(expenseQueries.getExpenseById, [id]);
+        const expenseResult = await executeQuery(expenseQueries.getExpenseById, [
+            id,
+        ]);
         if (expenseResult.length === 0) {
-            response.status(404).send('Expense not found');
+            response.status(404).send("Expense not found");
             return;
         }
 
@@ -337,10 +387,10 @@ export const deleteExpense = async (request: Request, response: Response, next: 
         if (results.length > 0) {
             await deleteCronJob(results[0].unique_id);
         } else {
-            console.error('Cron job not found');
+            console.error("Cron job not found");
             response.status(404).json({
-                status: 'error',
-                message: 'Cron job not found'
+                status: "error",
+                message: "Cron job not found",
             });
             return;
         }
@@ -350,10 +400,13 @@ export const deleteExpense = async (request: Request, response: Response, next: 
         next();
     } catch (error) {
         console.error(error); // Log the error on the server side
-        handleError(response, 'Error deleting expense');
+        handleError(response, "Error deleting expense");
     }
 };
 
-export const deleteExpenseReturnObject = async (request: Request, response: Response): Promise<void> => {
-    response.status(200).send('Expense deleted successfully');
+export const deleteExpenseReturnObject = async (
+    request: Request,
+    response: Response,
+): Promise<void> => {
+    response.status(200).send("Expense deleted successfully");
 };

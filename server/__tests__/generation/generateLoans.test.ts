@@ -197,7 +197,7 @@ describe('Test generateMonthlyLoans', () => {
 
         loan.frequency_day_of_week = 2;
         loan.frequency_week_of_month = 1;
-        
+
         const toDate: Date = new Date('2020-06-01');
         const fromDate: Date = new Date('2020-01-01');
 

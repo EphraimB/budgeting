@@ -1,38 +1,38 @@
-import { NextFunction, Request, Response } from 'express';
-import { loanQueries, cronJobQueries } from '../models/queryData.js';
-import scheduleCronJob from '../crontab/scheduleCronJob.js';
-import deleteCronJob from '../crontab/deleteCronJob.js';
-import { handleError, executeQuery } from '../utils/helperFunctions.js';
-import { Loan } from '../types/types.js';
+import { type NextFunction, type Request, type Response } from "express";
+import { loanQueries, cronJobQueries } from "../models/queryData.js";
+import scheduleCronJob from "../crontab/scheduleCronJob.js";
+import deleteCronJob from "../crontab/deleteCronJob.js";
+import { handleError, executeQuery } from "../utils/helperFunctions.js";
+import { type Loan } from "../types/types.js";
 
 interface LoanInput {
-    account_id: string;
-    loan_id: string;
-    cron_job_id?: string;
-    interest_cron_job_id?: string;
-    loan_amount: string;
-    loan_plan_amount: string;
-    loan_recipient: string;
-    loan_title: string;
-    loan_description: string;
-    frequency_type: string;
-    frequency_type_variable: string;
-    frequency_day_of_month: string;
-    frequency_day_of_week: string;
-    frequency_week_of_month: string;
-    frequency_month_of_year: string;
-    loan_interest_rate: string;
-    loan_interest_frequency_type: string;
-    loan_subsidized: string;
-    loan_fully_paid_back: string;
-    loan_begin_date: string;
-    loan_end_date: string;
-    date_created: string;
-    date_modified: string;
+  account_id: string;
+  loan_id: string;
+  cron_job_id?: string;
+  interest_cron_job_id?: string;
+  loan_amount: string;
+  loan_plan_amount: string;
+  loan_recipient: string;
+  loan_title: string;
+  loan_description: string;
+  frequency_type: string;
+  frequency_type_variable: string;
+  frequency_day_of_month: string;
+  frequency_day_of_week: string;
+  frequency_week_of_month: string;
+  frequency_month_of_year: string;
+  loan_interest_rate: string;
+  loan_interest_frequency_type: string;
+  loan_subsidized: string;
+  loan_fully_paid_back: string;
+  loan_begin_date: string;
+  loan_end_date: string;
+  date_created: string;
+  date_modified: string;
 }
 
 /**
- * 
+ *
  * @param loan - Loan object
  * @returns - Loan object with parsed values
  */
@@ -57,16 +57,19 @@ const parseLoan = (loan: LoanInput): Loan => ({
     loan_begin_date: loan.loan_begin_date,
     loan_end_date: loan.loan_end_date,
     date_created: loan.date_created,
-    date_modified: loan.date_modified
+    date_modified: loan.date_modified,
 });
 
 /**
- * 
+ *
  * @param request - Request object
  * @param response - Response object
  * Sends a GET request to the database to retrieve all loans
  */
-export const getLoans = async (request: Request, response: Response): Promise<void> => {
+export const getLoans = async (
+    request: Request,
+    response: Response,
+): Promise<void> => {
     const { account_id, id } = request.query;
 
     try {
@@ -90,15 +93,16 @@ export const getLoans = async (request: Request, response: Response): Promise<vo
         const rows: LoanInput[] = await executeQuery(query, params);
 
         if ((id || account_id) && rows.length === 0) {
-            response.status(404).send('Loan not found');
+            response.status(404).send("Loan not found");
             return;
         }
 
-        const loans: Loan[] = rows.map(loan => {
+        const loans: Loan[] = rows.map((loan) => {
             // parse loan first
             const parsedLoan = parseLoan(loan);
             // then add fully_paid_back field in request.fullyPaidBackDates
-            parsedLoan.loan_fully_paid_back = request.fullyPaidBackDates[parseInt(loan.loan_id)] || null;
+            parsedLoan.loan_fully_paid_back =
+        request.fullyPaidBackDates[parseInt(loan.loan_id)] || null;
 
             return parsedLoan;
         });
@@ -106,18 +110,27 @@ export const getLoans = async (request: Request, response: Response): Promise<vo
         response.status(200).json(loans);
     } catch (error) {
         console.error(error); // Log the error on the server side
-        handleError(response, `Error getting ${id ? 'loan' : (account_id ? 'loans for given account_id' : 'loans')}`);
+        handleError(
+            response,
+            `Error getting ${
+                id ? "loan" : account_id ? "loans for given account_id" : "loans"
+            }`,
+        );
     }
 };
 
 /**
- * 
+ *
  * @param request - Request object
  * @param response - Response object
  * @param next - Next function
  * Sends a POST request to the database to create a new loan
  */
-export const createLoan = async (request: Request, response: Response, next: NextFunction): Promise<void> => {
+export const createLoan = async (
+    request: Request,
+    response: Response,
+    next: NextFunction,
+): Promise<void> => {
     const {
         account_id,
         amount,
@@ -134,39 +147,15 @@ export const createLoan = async (request: Request, response: Response, next: Nex
         interest_rate,
         interest_frequency_type,
         subsidized,
-        begin_date
+        begin_date,
     } = request.body;
 
     try {
-        const loanResults = await executeQuery<LoanInput>(
-            loanQueries.createLoan,
-            [
-                account_id,
-                amount,
-                plan_amount,
-                recipient,
-                title,
-                description,
-                frequency_type,
-                frequency_type_variable,
-                frequency_day_of_month,
-                frequency_day_of_week,
-                frequency_week_of_month,
-                frequency_month_of_year,
-                interest_rate,
-                interest_frequency_type,
-                subsidized,
-                begin_date
-            ]
-        );
-
-        const loans: Loan[] = loanResults.map(loan => parseLoan(loan));
-
-        const cronParams: any = {
-            date: begin_date,
+        const loanResults = await executeQuery<LoanInput>(loanQueries.createLoan, [
             account_id,
-            id: loans[0].loan_id,
-            amount: -plan_amount + (plan_amount * subsidized),
+            amount,
+            plan_amount,
+            recipient,
             title,
             description,
             frequency_type,
@@ -175,19 +164,44 @@ export const createLoan = async (request: Request, response: Response, next: Nex
             frequency_day_of_week,
             frequency_week_of_month,
             frequency_month_of_year,
-            scriptPath: '/app/dist/scripts/createTransaction.sh',
-            type: 'loan'
+            interest_rate,
+            interest_frequency_type,
+            subsidized,
+            begin_date,
+        ]);
+
+        const loans: Loan[] = loanResults.map((loan) => parseLoan(loan));
+
+        const cronParams: any = {
+            date: begin_date,
+            account_id,
+            id: loans[0].loan_id,
+            amount: -plan_amount + plan_amount * subsidized,
+            title,
+            description,
+            frequency_type,
+            frequency_type_variable,
+            frequency_day_of_month,
+            frequency_day_of_week,
+            frequency_week_of_month,
+            frequency_month_of_year,
+            scriptPath: "/app/dist/scripts/createTransaction.sh",
+            type: "loan",
         };
 
-        let nextDate: Date = new Date(begin_date);
+        const nextDate: Date = new Date(begin_date);
 
-        if (interest_frequency_type === 0) { // Daily
+        if (interest_frequency_type === 0) {
+            // Daily
             nextDate.setDate(nextDate.getDate() + 1);
-        } else if (interest_frequency_type === 1) { // Weekly
+        } else if (interest_frequency_type === 1) {
+            // Weekly
             nextDate.setDate(nextDate.getDate() + 7);
-        } else if (interest_frequency_type === 2) { // Monthly
+        } else if (interest_frequency_type === 2) {
+            // Monthly
             nextDate.setMonth(nextDate.getMonth() + 1);
-        } else if (interest_frequency_type === 3) { // Yearly
+        } else if (interest_frequency_type === 3) {
+            // Yearly
             nextDate.setFullYear(nextDate.getFullYear() + 1);
         }
 
@@ -196,63 +210,75 @@ export const createLoan = async (request: Request, response: Response, next: Nex
             account_id,
             id: loans[0].loan_id,
             amount: interest_rate,
-            title: title + ' interest',
-            description: description + ' interest',
+            title: title + " interest",
+            description: description + " interest",
             frequency_type: interest_frequency_type,
             frequency_type_variable: null,
             frequency_day_of_month: null,
             frequency_day_of_week: null,
             frequency_week_of_month: null,
             frequency_month_of_year: null,
-            scriptPath: '/app/dist/scripts/applyInterest.sh',
-            type: 'loan_interest'
+            scriptPath: "/app/dist/scripts/applyInterest.sh",
+            type: "loan_interest",
         };
 
         const { cronDate, uniqueId } = await scheduleCronJob(cronParams);
 
-        const cronId: number = (await executeQuery(cronJobQueries.createCronJob, [
-            uniqueId,
-            cronDate
-        ]))[0].cron_job_id;
+        const cronId: number = (
+            await executeQuery(cronJobQueries.createCronJob, [uniqueId, cronDate])
+        )[0].cron_job_id;
 
-        const { cronDate: interestCronDate, uniqueId: interestUniqueId } = await scheduleCronJob(interestCronParams);
+        const { cronDate: interestCronDate, uniqueId: interestUniqueId } =
+      await scheduleCronJob(interestCronParams);
 
-        const interestCronId: number = (await executeQuery(cronJobQueries.createCronJob, [
-            interestUniqueId,
-            interestCronDate
-        ]))[0].cron_job_id;
+        const interestCronId: number = (
+            await executeQuery(cronJobQueries.createCronJob, [
+                interestUniqueId,
+                interestCronDate,
+            ])
+        )[0].cron_job_id;
 
-        console.log('Cron job created ' + cronId);
-        console.log('Interest cron job created ' + interestCronId);
+        console.log("Cron job created " + cronId);
+        console.log("Interest cron job created " + interestCronId);
 
-        await executeQuery(loanQueries.updateLoanWithCronJobId, [cronId, interestCronId, loans[0].loan_id]);
+        await executeQuery(loanQueries.updateLoanWithCronJobId, [
+            cronId,
+            interestCronId,
+            loans[0].loan_id,
+        ]);
 
         request.loan_id = loans[0].loan_id;
 
         next();
     } catch (error) {
         console.error(error); // Log the error on the server side
-        handleError(response, 'Error creating loan');
+        handleError(response, "Error creating loan");
     }
 };
 
 /**
- * 
+ *
  * @param request - Request object
  * @param response - Response object
  * Sends a response with the created loan
  */
-export const createLoanReturnObject = async (request: Request, response: Response): Promise<void> => {
+export const createLoanReturnObject = async (
+    request: Request,
+    response: Response,
+): Promise<void> => {
     const { loan_id } = request;
 
     try {
-        const loans = await executeQuery<LoanInput>(loanQueries.getLoansById, [loan_id]);
+        const loans = await executeQuery<LoanInput>(loanQueries.getLoansById, [
+            loan_id,
+        ]);
 
-        const modifiedLoans: Loan[] = loans.map(loan => {
+        const modifiedLoans: Loan[] = loans.map((loan) => {
             // parse loan first
             const parsedLoan = parseLoan(loan);
             // then add fully_paid_back field in request.fullyPaidBackDates
-            parsedLoan.loan_fully_paid_back = request.fullyPaidBackDates[parseInt(loan.loan_id)] || null;
+            parsedLoan.loan_fully_paid_back =
+        request.fullyPaidBackDates[parseInt(loan.loan_id)] || null;
 
             return parsedLoan;
         });
@@ -260,18 +286,22 @@ export const createLoanReturnObject = async (request: Request, response: Respons
         response.status(201).json(modifiedLoans);
     } catch (error) {
         console.error(error); // Log the error on the server side
-        handleError(response, 'Error creating loan');
+        handleError(response, "Error creating loan");
     }
 };
 
 /**
- * 
+ *
  * @param request - Request object
  * @param response - Response object
  * @param next - Next function
  * Sends a PUT request to the database to update a loan
  */
-export const updateLoan = async (request: Request, response: Response, next: NextFunction): Promise<void> => {
+export const updateLoan = async (
+    request: Request,
+    response: Response,
+    next: NextFunction,
+): Promise<void> => {
     const id: number = parseInt(request.params.id);
     const {
         account_id,
@@ -289,14 +319,14 @@ export const updateLoan = async (request: Request, response: Response, next: Nex
         interest_rate,
         interest_frequency_type,
         subsidized,
-        begin_date
+        begin_date,
     } = request.body;
 
     const cronParams = {
         date: begin_date,
         id,
         account_id,
-        amount: -plan_amount + (plan_amount * subsidized),
+        amount: -plan_amount + plan_amount * subsidized,
         title,
         description,
         frequency_type,
@@ -305,21 +335,23 @@ export const updateLoan = async (request: Request, response: Response, next: Nex
         frequency_day_of_week,
         frequency_week_of_month,
         frequency_month_of_year,
-        scriptPath: '/app/dist/scripts/createTransaction.sh',
-        type: 'loan'
+        scriptPath: "/app/dist/scripts/createTransaction.sh",
+        type: "loan",
     };
 
+    const nextDate: Date = new Date(begin_date);
 
-
-    let nextDate: Date = new Date(begin_date);
-
-    if (interest_frequency_type === 0) { // Daily
+    if (interest_frequency_type === 0) {
+    // Daily
         nextDate.setDate(nextDate.getDate() + 1);
-    } else if (interest_frequency_type === 1) { // Weekly
+    } else if (interest_frequency_type === 1) {
+    // Weekly
         nextDate.setDate(nextDate.getDate() + 7);
-    } else if (interest_frequency_type === 2) { // Monthly
+    } else if (interest_frequency_type === 2) {
+    // Monthly
         nextDate.setMonth(nextDate.getMonth() + 1);
-    } else if (interest_frequency_type === 3) { // Yearly
+    } else if (interest_frequency_type === 3) {
+    // Yearly
         nextDate.setFullYear(nextDate.getFullYear() + 1);
     }
 
@@ -328,23 +360,26 @@ export const updateLoan = async (request: Request, response: Response, next: Nex
         account_id,
         id,
         amount: interest_rate,
-        title: title + ' interest',
-        description: description + ' interest',
+        title: title + " interest",
+        description: description + " interest",
         frequency_type: interest_frequency_type,
         frequency_type_variable: null,
         frequency_day_of_month: null,
         frequency_day_of_week: null,
         frequency_week_of_month: null,
         frequency_month_of_year: null,
-        scriptPath: '/app/dist/scripts/applyInterest.sh',
-        type: 'loan_interest'
+        scriptPath: "/app/dist/scripts/applyInterest.sh",
+        type: "loan_interest",
     };
 
     try {
-        const getLoanResults = await executeQuery<LoanInput>(loanQueries.getLoansById, [id]);
+        const getLoanResults = await executeQuery<LoanInput>(
+            loanQueries.getLoansById,
+            [id],
+        );
 
         if (getLoanResults.length === 0) {
-            response.status(404).send('Loan not found');
+            response.status(404).send("Loan not found");
             return;
         }
 
@@ -354,73 +389,95 @@ export const updateLoan = async (request: Request, response: Response, next: Nex
         if (results.length > 0) {
             await deleteCronJob(results[0].unique_id);
         } else {
-            console.error('Cron job not found');
+            console.error("Cron job not found");
         }
 
-        const interestCronId: number = parseInt(getLoanResults[0].interest_cron_job_id);
-        const interestResults = await executeQuery(cronJobQueries.getCronJob, [interestCronId]);
+        const interestCronId: number = parseInt(
+            getLoanResults[0].interest_cron_job_id,
+        );
+        const interestResults = await executeQuery(cronJobQueries.getCronJob, [
+            interestCronId,
+        ]);
 
         if (interestResults.length > 0) {
             await deleteCronJob(interestResults[0].unique_id);
         } else {
-            console.error('Interest cron job not found');
+            console.error("Interest cron job not found");
         }
 
         const { uniqueId, cronDate } = await scheduleCronJob(cronParams);
 
         console.log(uniqueId);
 
-        await executeQuery(cronJobQueries.updateCronJob, [uniqueId, cronDate, cronId]);
-
-        const { uniqueId: interestUniqueId, cronDate: interestCronDate } = await scheduleCronJob(interestCronParams);
-
-        await executeQuery(cronJobQueries.updateCronJob, [interestUniqueId, interestCronDate, interestCronId]);
-        const updateLoanResults = await executeQuery<LoanInput>(loanQueries.updateLoan, [
-            account_id,
-            amount,
-            plan_amount,
-            recipient,
-            title,
-            description,
-            frequency_type,
-            frequency_type_variable,
-            frequency_day_of_month,
-            frequency_day_of_week,
-            frequency_week_of_month,
-            frequency_month_of_year,
-            interest_rate,
-            interest_frequency_type,
-            subsidized,
-            begin_date,
-            id
+        await executeQuery(cronJobQueries.updateCronJob, [
+            uniqueId,
+            cronDate,
+            cronId,
         ]);
+
+        const { uniqueId: interestUniqueId, cronDate: interestCronDate } =
+      await scheduleCronJob(interestCronParams);
+
+        await executeQuery(cronJobQueries.updateCronJob, [
+            interestUniqueId,
+            interestCronDate,
+            interestCronId,
+        ]);
+        const updateLoanResults = await executeQuery<LoanInput>(
+            loanQueries.updateLoan,
+            [
+                account_id,
+                amount,
+                plan_amount,
+                recipient,
+                title,
+                description,
+                frequency_type,
+                frequency_type_variable,
+                frequency_day_of_month,
+                frequency_day_of_week,
+                frequency_week_of_month,
+                frequency_month_of_year,
+                interest_rate,
+                interest_frequency_type,
+                subsidized,
+                begin_date,
+                id,
+            ],
+        );
 
         request.loan_id = id;
 
         next();
     } catch (error) {
         console.error(error); // Log the error on the server side
-        handleError(response, 'Error updating loan');
+        handleError(response, "Error updating loan");
     }
 };
 
 /**
- * 
+ *
  * @param request - Request object
  * @param response - Response object
  * Sends a response with the updated loan
  */
-export const updateLoanReturnObject = async (request: Request, response: Response): Promise<void> => {
+export const updateLoanReturnObject = async (
+    request: Request,
+    response: Response,
+): Promise<void> => {
     const { loan_id } = request;
 
     try {
-        const loans = await executeQuery<LoanInput>(loanQueries.getLoansById, [loan_id]);
+        const loans = await executeQuery<LoanInput>(loanQueries.getLoansById, [
+            loan_id,
+        ]);
 
-        const modifiedLoans: Loan[] = loans.map(loan => {
+        const modifiedLoans: Loan[] = loans.map((loan) => {
             // parse loan first
             const parsedLoan = parseLoan(loan);
             // then add fully_paid_back field in request.fullyPaidBackDates
-            parsedLoan.loan_fully_paid_back = request.fullyPaidBackDates[parseInt(loan.loan_id)] || null;
+            parsedLoan.loan_fully_paid_back =
+        request.fullyPaidBackDates[parseInt(loan.loan_id)] || null;
 
             return parsedLoan;
         });
@@ -428,25 +485,32 @@ export const updateLoanReturnObject = async (request: Request, response: Respons
         response.status(200).json(modifiedLoans);
     } catch (error) {
         console.error(error); // Log the error on the server side
-        handleError(response, 'Error creating loan');
+        handleError(response, "Error creating loan");
     }
 };
 
 /**
- * 
+ *
  * @param request - Request object
  * @param response - Response object
  * @param next - Next function
  * Sends a DELETE request to the database to delete a loan
  */
-export const deleteLoan = async (request: Request, response: Response, next: NextFunction): Promise<void> => {
+export const deleteLoan = async (
+    request: Request,
+    response: Response,
+    next: NextFunction,
+): Promise<void> => {
     try {
         const { id } = request.params;
 
-        const getLoanResults = await executeQuery<LoanInput>(loanQueries.getLoansById, [id]);
+        const getLoanResults = await executeQuery<LoanInput>(
+            loanQueries.getLoansById,
+            [id],
+        );
 
         if (getLoanResults.length === 0) {
-            response.status(404).send('Loan not found');
+            response.status(404).send("Loan not found");
             return;
         }
 
@@ -458,16 +522,20 @@ export const deleteLoan = async (request: Request, response: Response, next: Nex
         if (results.length > 0) {
             await deleteCronJob(results[0].unique_id);
         } else {
-            console.error('Cron job not found');
+            console.error("Cron job not found");
         }
 
-        const interestCronId: number = parseInt(getLoanResults[0].interest_cron_job_id);
-        const interestResults = await executeQuery(cronJobQueries.getCronJob, [interestCronId]);
+        const interestCronId: number = parseInt(
+            getLoanResults[0].interest_cron_job_id,
+        );
+        const interestResults = await executeQuery(cronJobQueries.getCronJob, [
+            interestCronId,
+        ]);
 
         if (interestResults.length > 0) {
             await deleteCronJob(interestResults[0].unique_id);
         } else {
-            console.error('Interest cron job not found');
+            console.error("Interest cron job not found");
         }
 
         await executeQuery(cronJobQueries.deleteCronJob, [cronId]);
@@ -476,16 +544,19 @@ export const deleteLoan = async (request: Request, response: Response, next: Nex
         next();
     } catch (error) {
         console.error(error); // Log the error on the server side
-        handleError(response, 'Error deleting loan');
+        handleError(response, "Error deleting loan");
     }
 };
 
 /**
- * 
+ *
  * @param request - Request object
  * @param response - Response object
  * Sends a response with the deleted loan
  */
-export const deleteLoanReturnObject = async (request: Request, response: Response): Promise<void> => {
-    response.status(200).send('Loan deleted successfully');
+export const deleteLoanReturnObject = async (
+    request: Request,
+    response: Response,
+): Promise<void> => {
+    response.status(200).send("Loan deleted successfully");
 };

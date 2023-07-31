@@ -69,7 +69,7 @@ describe('GET /api/loans', () => {
         mockModule([loans]);
 
         mockRequest.query = { id: null };
-        mockRequest.fullyPaidBackDates = { 1: '2024-01-01' }
+        mockRequest.fullyPaidBackDates = { 1: '2024-01-01' };
 
         const { getLoans } = await import('../../controllers/loansController.js');
 
@@ -113,7 +113,7 @@ describe('GET /api/loans', () => {
         mockModule([loans.filter(loan => loan.loan_id === 1)]);
 
         mockRequest.query = { id: 1 };
-        mockRequest.fullyPaidBackDates = { 1: '2024-01-01' }
+        mockRequest.fullyPaidBackDates = { 1: '2024-01-01' };
 
         const { getLoans } = await import('../../controllers/loansController.js');
 
@@ -154,7 +154,7 @@ describe('GET /api/loans', () => {
         mockModule([loans.filter(loan => loan.account_id === 1)]);
 
         mockRequest.query = { account_id: 1 };
-        mockRequest.fullyPaidBackDates = { 1: '2024-01-01' }
+        mockRequest.fullyPaidBackDates = { 1: '2024-01-01' };
 
         const { getLoans } = await import('../../controllers/loansController.js');
 
@@ -195,7 +195,7 @@ describe('GET /api/loans', () => {
         mockModule([loans.filter(loan => loan.account_id === 1 && loan.loan_id === 1)]);
 
         mockRequest.query = { account_id: 1, id: 1 };
-        mockRequest.fullyPaidBackDates = { 1: '2024-01-01' }
+        mockRequest.fullyPaidBackDates = { 1: '2024-01-01' };
 
         const { getLoans } = await import('../../controllers/loansController.js');
 
@@ -304,7 +304,7 @@ describe('POST /api/loans', () => {
         const { createLoanReturnObject } = await import('../../controllers/loansController.js');
 
         mockRequest.body = newLoan;
-        mockRequest.fullyPaidBackDates = { 1: '2024-01-01' }
+        mockRequest.fullyPaidBackDates = { 1: '2024-01-01' };
 
         await createLoanReturnObject(mockRequest as Request, mockResponse);
 
@@ -416,7 +416,7 @@ describe('PUT /api/loans/:id', () => {
 
         mockRequest.params = { id: 1 };
         mockRequest.body = updatedLoan;
-        mockRequest.fullyPaidBackDates = { 1: '2024-01-01' }
+        mockRequest.fullyPaidBackDates = { 1: '2024-01-01' };
 
         await updateLoanReturnObject(mockRequest as Request, mockResponse);
 

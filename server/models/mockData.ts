@@ -1,34 +1,44 @@
-import { Expense, Loan, Wishlist, Transfer, Account, Employee, Transaction, PayrollDate, PayrollTax } from "../types/types";
+import {
+    Expense,
+    Loan,
+    Wishlist,
+    Transfer,
+    Account,
+    Employee,
+    Transaction,
+    PayrollDate,
+    PayrollTax,
+} from "../types/types";
 
 export const employees: Employee[] = [
     {
         employee_id: 1,
-        name: 'Test Employee',
+        name: "Test Employee",
         hourly_rate: 10,
         regular_hours: 40,
         vacation_days: 10,
         sick_days: 10,
-        work_schedule: '0111100'
-    }
+        work_schedule: "0111100",
+    },
 ];
 
 export const accounts: Account[] = [
     {
         account_id: 1,
-        account_name: 'Test Account',
+        account_name: "Test Account",
         account_type: 0,
         account_balance: 1000,
-        date_created: '2020-01-01',
-        date_modified: '2020-01-01'
+        date_created: "2020-01-01",
+        date_modified: "2020-01-01",
     },
     {
         account_id: 2,
-        account_name: 'Test Account 2',
+        account_name: "Test Account 2",
         account_type: 1,
         account_balance: 2000,
-        date_created: '2020-01-01',
-        date_modified: '2020-01-01'
-    }
+        date_created: "2020-01-01",
+        date_modified: "2020-01-01",
+    },
 ];
 
 export const transactions: Transaction[] = [
@@ -37,41 +47,41 @@ export const transactions: Transaction[] = [
         account_id: 1,
         transaction_amount: 1000,
         transaction_tax_rate: 0,
-        transaction_title: 'Test Deposit',
-        transaction_description: 'Test Deposit',
-        date_created: '2020-01-01',
-        date_modified: '2020-01-01'
+        transaction_title: "Test Deposit",
+        transaction_description: "Test Deposit",
+        date_created: "2020-01-01",
+        date_modified: "2020-01-01",
     },
     {
         transaction_id: 2,
         account_id: 1,
         transaction_amount: 2000,
         transaction_tax_rate: 0,
-        transaction_title: 'Test Deposit 2',
-        transaction_description: 'Test Deposit 2',
-        date_created: '2020-01-01',
-        date_modified: '2020-01-01'
+        transaction_title: "Test Deposit 2",
+        transaction_description: "Test Deposit 2",
+        date_created: "2020-01-01",
+        date_modified: "2020-01-01",
     },
     {
         transaction_id: 3,
         account_id: 1,
         transaction_amount: 1000,
         transaction_tax_rate: 0,
-        transaction_title: 'Test Withdrawal',
-        transaction_description: 'Test Withdrawal',
-        date_created: '2020-01-01',
-        date_modified: '2020-01-01'
+        transaction_title: "Test Withdrawal",
+        transaction_description: "Test Withdrawal",
+        date_created: "2020-01-01",
+        date_modified: "2020-01-01",
     },
     {
         transaction_id: 4,
         account_id: 1,
         transaction_amount: 200,
         transaction_tax_rate: 0,
-        transaction_title: 'Test Withdrawal 2',
-        transaction_description: 'Test Withdrawal 2',
-        date_created: '2020-01-01',
-        date_modified: '2020-01-01'
-    }
+        transaction_title: "Test Withdrawal 2",
+        transaction_description: "Test Withdrawal 2",
+        date_created: "2020-01-01",
+        date_modified: "2020-01-01",
+    },
 ];
 
 export const expenses: Expense[] = [
@@ -80,8 +90,8 @@ export const expenses: Expense[] = [
         account_id: 1,
         tax_id: 1,
         expense_amount: 50,
-        expense_title: 'Test Expense',
-        expense_description: 'Test Expense to test the expense route',
+        expense_title: "Test Expense",
+        expense_description: "Test Expense to test the expense route",
         frequency_type: 2,
         frequency_type_variable: null,
         frequency_day_of_month: null,
@@ -89,18 +99,18 @@ export const expenses: Expense[] = [
         frequency_week_of_month: null,
         frequency_month_of_year: null,
         expense_subsidized: 0,
-        expense_begin_date: '2020-01-01',
+        expense_begin_date: "2020-01-01",
         expense_end_date: null,
-        date_created: '2020-01-01',
-        date_modified: '2020-01-01'
+        date_created: "2020-01-01",
+        date_modified: "2020-01-01",
     },
     {
         expense_id: 2,
         account_id: 1,
         tax_id: 1,
         expense_amount: 100,
-        expense_title: 'Test Expense 2',
-        expense_description: 'Test Expense 2 to test the expense route',
+        expense_title: "Test Expense 2",
+        expense_description: "Test Expense 2 to test the expense route",
         frequency_type: 2,
         frequency_type_variable: null,
         frequency_day_of_month: null,
@@ -108,18 +118,18 @@ export const expenses: Expense[] = [
         frequency_week_of_month: null,
         frequency_month_of_year: null,
         expense_subsidized: 0.1,
-        expense_begin_date: '2020-01-01',
+        expense_begin_date: "2020-01-01",
         expense_end_date: null,
-        date_created: '2020-01-01',
-        date_modified: '2020-01-01'
+        date_created: "2020-01-01",
+        date_modified: "2020-01-01",
     },
     {
         expense_id: 3,
         account_id: 1,
         tax_id: 1,
         expense_amount: 50,
-        expense_title: 'Test Expense 3',
-        expense_description: 'Test Expense 3 to test the expense route',
+        expense_title: "Test Expense 3",
+        expense_description: "Test Expense 3 to test the expense route",
         frequency_type: 0,
         frequency_type_variable: null,
         frequency_day_of_month: null,
@@ -127,18 +137,18 @@ export const expenses: Expense[] = [
         frequency_week_of_month: null,
         frequency_month_of_year: null,
         expense_subsidized: 0.15,
-        expense_begin_date: '2020-01-01',
+        expense_begin_date: "2020-01-01",
         expense_end_date: null,
-        date_created: '2020-01-01',
-        date_modified: '2020-01-01'
+        date_created: "2020-01-01",
+        date_modified: "2020-01-01",
     },
     {
         expense_id: 4,
         account_id: 1,
         tax_id: 1,
         expense_amount: 25,
-        expense_title: 'Test Expense 3',
-        expense_description: 'Test Expense 3 to test the expense route',
+        expense_title: "Test Expense 3",
+        expense_description: "Test Expense 3 to test the expense route",
         frequency_type: 1,
         frequency_type_variable: null,
         frequency_day_of_month: null,
@@ -146,18 +156,18 @@ export const expenses: Expense[] = [
         frequency_week_of_month: null,
         frequency_month_of_year: null,
         expense_subsidized: 0.05,
-        expense_begin_date: '2020-01-01',
+        expense_begin_date: "2020-01-01",
         expense_end_date: null,
-        date_created: '2020-01-01',
-        date_modified: '2020-01-01'
+        date_created: "2020-01-01",
+        date_modified: "2020-01-01",
     },
     {
         expense_id: 5,
         account_id: 1,
         tax_id: null,
         expense_amount: 50,
-        expense_title: 'Test Expense 3',
-        expense_description: 'Test Expense 3 to test the expense route',
+        expense_title: "Test Expense 3",
+        expense_description: "Test Expense 3 to test the expense route",
         frequency_type: 3,
         frequency_type_variable: null,
         frequency_day_of_month: null,
@@ -165,11 +175,11 @@ export const expenses: Expense[] = [
         frequency_week_of_month: null,
         frequency_month_of_year: null,
         expense_subsidized: 0.05,
-        expense_begin_date: '2020-01-01',
+        expense_begin_date: "2020-01-01",
         expense_end_date: null,
-        date_created: '2020-01-01',
-        date_modified: '2020-01-01'
-    }
+        date_created: "2020-01-01",
+        date_modified: "2020-01-01",
+    },
 ];
 
 export const loans: Loan[] = [
@@ -178,9 +188,9 @@ export const loans: Loan[] = [
         account_id: 1,
         loan_amount: 10000,
         loan_plan_amount: 100,
-        loan_recipient: 'Test Loan Recipient',
-        loan_title: 'Test Loan',
-        loan_description: 'Test Loan to test the loan route',
+        loan_recipient: "Test Loan Recipient",
+        loan_title: "Test Loan",
+        loan_description: "Test Loan to test the loan route",
         frequency_type: 2,
         frequency_type_variable: null,
         frequency_month_of_year: null,
@@ -190,19 +200,19 @@ export const loans: Loan[] = [
         loan_interest_frequency_type: 2,
         loan_interest_rate: 0,
         loan_subsidized: 0,
-        loan_begin_date: '2020-01-02',
+        loan_begin_date: "2020-01-02",
         loan_end_date: null,
-        date_created: '2020-01-01',
-        date_modified: '2020-01-01'
+        date_created: "2020-01-01",
+        date_modified: "2020-01-01",
     },
     {
         loan_id: 2,
         account_id: 1,
         loan_amount: 1000,
         loan_plan_amount: 100,
-        loan_recipient: 'Test Loan Recipient',
-        loan_title: 'Test Loan',
-        loan_description: 'Test Loan to test the loan route',
+        loan_recipient: "Test Loan Recipient",
+        loan_title: "Test Loan",
+        loan_description: "Test Loan to test the loan route",
         frequency_type: 0,
         frequency_type_variable: null,
         frequency_month_of_year: null,
@@ -212,19 +222,19 @@ export const loans: Loan[] = [
         loan_interest_frequency_type: 2,
         loan_interest_rate: 0,
         loan_subsidized: 0.15,
-        loan_begin_date: '2020-01-01',
+        loan_begin_date: "2020-01-01",
         loan_end_date: null,
-        date_created: '2020-01-01',
-        date_modified: '2020-01-01'
+        date_created: "2020-01-01",
+        date_modified: "2020-01-01",
     },
     {
         loan_id: 3,
         account_id: 1,
         loan_amount: 1000,
         loan_plan_amount: 100,
-        loan_recipient: 'Test Loan Recipient',
-        loan_title: 'Test Loan',
-        loan_description: 'Test Loan to test the loan route',
+        loan_recipient: "Test Loan Recipient",
+        loan_title: "Test Loan",
+        loan_description: "Test Loan to test the loan route",
         frequency_type: 1,
         frequency_type_variable: null,
         frequency_month_of_year: null,
@@ -234,19 +244,19 @@ export const loans: Loan[] = [
         loan_interest_frequency_type: 2,
         loan_interest_rate: 0,
         loan_subsidized: 0.1,
-        loan_begin_date: '2020-01-01',
+        loan_begin_date: "2020-01-01",
         loan_end_date: null,
-        date_created: '2020-01-01',
-        date_modified: '2020-01-01'
+        date_created: "2020-01-01",
+        date_modified: "2020-01-01",
     },
     {
         loan_id: 4,
         account_id: 1,
         loan_amount: 1000,
         loan_plan_amount: 100,
-        loan_recipient: 'Test Loan Recipient',
-        loan_title: 'Test Loan',
-        loan_description: 'Test Loan to test the loan route',
+        loan_recipient: "Test Loan Recipient",
+        loan_title: "Test Loan",
+        loan_description: "Test Loan to test the loan route",
         frequency_type: 3,
         frequency_type_variable: null,
         frequency_month_of_year: null,
@@ -256,30 +266,30 @@ export const loans: Loan[] = [
         loan_interest_frequency_type: 2,
         loan_interest_rate: 0,
         loan_subsidized: 0.05,
-        loan_begin_date: '2020-01-01',
+        loan_begin_date: "2020-01-01",
         loan_end_date: null,
-        date_created: '2020-01-01',
-        date_modified: '2020-01-01'
+        date_created: "2020-01-01",
+        date_modified: "2020-01-01",
     },
 ];
 
 export const payrolls = [
     {
-        start_date: '2020-01-01',
-        end_date: '2020-01-15',
+        start_date: "2020-01-01",
+        end_date: "2020-01-15",
         work_days: 5,
         gross_pay: 500,
         net_pay: 400,
-        hours_worked: 40
+        hours_worked: 40,
     },
     {
-        start_date: '2020-01-15',
-        end_date: '2020-01-31',
+        start_date: "2020-01-15",
+        end_date: "2020-01-31",
         work_days: 5,
         gross_pay: 500,
         net_pay: 400,
-        hours_worked: 40
-    }
+        hours_worked: 40,
+    },
 ];
 
 export const payrollDates: PayrollDate[] = [
@@ -287,29 +297,29 @@ export const payrollDates: PayrollDate[] = [
         payroll_date_id: 1,
         employee_id: 1,
         payroll_start_day: 1,
-        payroll_end_day: 15
+        payroll_end_day: 15,
     },
     {
         payroll_date_id: 2,
         employee_id: 1,
         payroll_start_day: 15,
-        payroll_end_day: 31
-    }
+        payroll_end_day: 31,
+    },
 ];
 
 export const payrollTaxes: PayrollTax[] = [
     {
         payroll_taxes_id: 1,
         employee_id: 1,
-        name: 'Federal Income Tax',
-        rate: 0.1
+        name: "Federal Income Tax",
+        rate: 0.1,
     },
     {
         payroll_taxes_id: 2,
         employee_id: 1,
-        name: 'State Income Tax',
-        rate: 0.05
-    }
+        name: "State Income Tax",
+        rate: 0.05,
+    },
 ];
 
 export const wishlists: Wishlist[] = [
@@ -319,14 +329,14 @@ export const wishlists: Wishlist[] = [
         tax_id: 1,
         account_id: 1,
         wishlist_amount: 1000,
-        wishlist_title: 'Test Wishlist',
-        wishlist_description: 'Test Wishlist to test the wishlist route',
+        wishlist_title: "Test Wishlist",
+        wishlist_description: "Test Wishlist to test the wishlist route",
         wishlist_date_available: null,
-        wishlist_url_link: 'https://www.google.com/',
+        wishlist_url_link: "https://www.google.com/",
         wishlist_priority: 0,
-        date_created: '2020-01-01',
-        date_modified: '2020-01-01'
-    }
+        date_created: "2020-01-01",
+        date_modified: "2020-01-01",
+    },
 ];
 
 export const transfers: Transfer[] = [
@@ -335,9 +345,9 @@ export const transfers: Transfer[] = [
         source_account_id: 1,
         destination_account_id: 2,
         transfer_amount: 100,
-        transfer_title: 'Test Transfer',
-        transfer_description: 'Test Transfer to test the transfer route',
-        transfer_begin_date: '2020-01-01',
+        transfer_title: "Test Transfer",
+        transfer_description: "Test Transfer to test the transfer route",
+        transfer_begin_date: "2020-01-01",
         transfer_end_date: null,
         frequency_type: 2,
         frequency_type_variable: null,
@@ -345,17 +355,17 @@ export const transfers: Transfer[] = [
         frequency_day_of_month: null,
         frequency_day_of_week: null,
         frequency_week_of_month: null,
-        date_created: '2020-01-01',
-        date_modified: '2020-01-01'
+        date_created: "2020-01-01",
+        date_modified: "2020-01-01",
     },
     {
         transfer_id: 2,
         source_account_id: 1,
         destination_account_id: 2,
         transfer_amount: 25,
-        transfer_title: 'Test Transfer',
-        transfer_description: 'Test Transfer to test the transfer route',
-        transfer_begin_date: '2020-01-01',
+        transfer_title: "Test Transfer",
+        transfer_description: "Test Transfer to test the transfer route",
+        transfer_begin_date: "2020-01-01",
         transfer_end_date: null,
         frequency_type: 0,
         frequency_type_variable: null,
@@ -363,17 +373,17 @@ export const transfers: Transfer[] = [
         frequency_day_of_month: null,
         frequency_day_of_week: null,
         frequency_week_of_month: null,
-        date_created: '2020-01-01',
-        date_modified: '2020-01-01'
+        date_created: "2020-01-01",
+        date_modified: "2020-01-01",
     },
     {
         transfer_id: 3,
         source_account_id: 1,
         destination_account_id: 2,
         transfer_amount: 50,
-        transfer_title: 'Test Transfer',
-        transfer_description: 'Test Transfer to test the transfer route',
-        transfer_begin_date: '2020-01-01',
+        transfer_title: "Test Transfer",
+        transfer_description: "Test Transfer to test the transfer route",
+        transfer_begin_date: "2020-01-01",
         transfer_end_date: null,
         frequency_type: 1,
         frequency_type_variable: null,
@@ -381,17 +391,17 @@ export const transfers: Transfer[] = [
         frequency_day_of_month: null,
         frequency_day_of_week: null,
         frequency_week_of_month: null,
-        date_created: '2020-01-01',
-        date_modified: '2020-01-01'
+        date_created: "2020-01-01",
+        date_modified: "2020-01-01",
     },
     {
         transfer_id: 4,
         source_account_id: 1,
         destination_account_id: 2,
         transfer_amount: 200,
-        transfer_title: 'Test Transfer',
-        transfer_description: 'Test Transfer to test the transfer route',
-        transfer_begin_date: '2020-01-01',
+        transfer_title: "Test Transfer",
+        transfer_description: "Test Transfer to test the transfer route",
+        transfer_begin_date: "2020-01-01",
         transfer_end_date: null,
         frequency_type: 3,
         frequency_type_variable: null,
@@ -399,17 +409,17 @@ export const transfers: Transfer[] = [
         frequency_day_of_month: null,
         frequency_day_of_week: null,
         frequency_week_of_month: null,
-        date_created: '2020-01-01',
-        date_modified: '2020-01-01'
+        date_created: "2020-01-01",
+        date_modified: "2020-01-01",
     },
     {
         transfer_id: 5,
         source_account_id: 2,
         destination_account_id: 1,
         transfer_amount: 200,
-        transfer_title: 'Test Transfer',
-        transfer_description: 'Test Transfer to test the transfer route',
-        transfer_begin_date: '2020-01-01',
+        transfer_title: "Test Transfer",
+        transfer_description: "Test Transfer to test the transfer route",
+        transfer_begin_date: "2020-01-01",
         transfer_end_date: null,
         frequency_type: 3,
         frequency_type_variable: null,
@@ -417,7 +427,7 @@ export const transfers: Transfer[] = [
         frequency_day_of_month: null,
         frequency_day_of_week: null,
         frequency_week_of_month: null,
-        date_created: '2020-01-01',
-        date_modified: '2020-01-01'
-    }
+        date_created: "2020-01-01",
+        date_modified: "2020-01-01",
+    },
 ];

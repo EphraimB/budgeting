@@ -1,8 +1,8 @@
-import { Request, Response, NextFunction } from 'express';
-import { validationResult } from 'express-validator';
+import { type Request, type Response, type NextFunction } from "express";
+import { validationResult } from "express-validator";
 
 /**
- * 
+ *
  * @param req - Request object
  * @param res - Response object
  * @param next - Next function
