@@ -7,6 +7,8 @@ export interface GeneratedTransaction {
     title: string;
     description: string;
     amount: number;
+    tax_rate: number;
+    total_amount: number;
     date: Date;
     date_modified?: Date;
     balance?: number;
@@ -20,6 +22,7 @@ export interface Transaction {
     date_created: string;
     date_modified: string;
     transaction_amount: number;
+    transaction_tax_rate?: number;
     balance?: number;
 }
 
@@ -27,6 +30,7 @@ export interface TransactionHistory {
     transaction_id: number;
     account_id: number;
     transaction_amount: number;
+    transaction_tax_rate: number;
     transaction_title: string;
     transaction_description: string;
     date_created: string;
@@ -56,6 +60,8 @@ export interface Employee {
 export interface Expense {
     expense_id?: number;
     account_id?: number;
+    tax_id?: number | null;
+    tax_rate?: number;
     expense_amount: number;
     expense_title: string;
     expense_description: string;
@@ -104,7 +110,7 @@ export interface Payroll {
     net_pay: number;
     work_days?: number;
     regular_hours?: number;
-    gross_pay?: number;
+    gross_pay: number;
     hours_worked?: number;
 }
 
@@ -125,8 +131,11 @@ export interface PayrollTax {
 export interface Wishlist {
     wishlist_id?: number;
     account_id?: number;
+    tax_id?: number;
+    tax_rate?: number;
     cron_job_id?: number;
     wishlist_amount: number;
+    wishlist_tax_rate?: number;
     wishlist_title: string;
     wishlist_description: string;
     wishlist_date_available?: string;
@@ -155,6 +164,15 @@ export interface Transfer {
     frequency_month_of_year?: number;
     date_created?: string;
     date_modified?: string;
+}
+
+export interface Taxes {
+    tax_id: number;
+    tax_rate: number;
+    tax_title: string;
+    tax_description: string;
+    date_created: string;
+    date_modified: string;
 }
 
 interface CurrentBalance {

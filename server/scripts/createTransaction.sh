@@ -7,8 +7,30 @@ transaction_amount=$4
 transaction_title=$5
 transaction_description=$6
 
+# Get transaction_type from the prefixed unique_id
+transaction_type=$(echo "${unique_id}" | cut -d '_' -f 1)
+
+if [ "$transaction_type" = "payroll" ]; then
+    transaction_tax_rate=$8
+elif [ "$transaction_type" = "loan" ]; then
+    transaction_tax_rate=0
+else
+    # Get the tax_id for other transaction types
+    tax_id=$(PGPASSWORD="$PGPASSWORD" psql -h "$PGHOST" -p "$PGPORT" -d "$PGDB" -U "$PGUSER" -t -c "SELECT tax_id FROM ${transaction_type}s WHERE ${transaction_type}_id = '$id'")
+    if [ $? -eq 0 ]; then
+        echo "Tax ID successfully fetched for id $id"
+        # Get the tax percentage from the database by tax_id
+        transaction_tax_rate=$(PGPASSWORD="$PGPASSWORD" psql -h "$PGHOST" -p "$PGPORT" -d "$PGDB" -U "$PGUSER" -t -c "SELECT tax_rate FROM taxes WHERE tax_id = '$tax_id'")
+
+        # If transaction_tax_rate is null or empty, set it to 0
+        if [ -z "$transaction_tax_rate" ]; then
+            transaction_tax_rate=0
+        fi
+    fi
+fi
+
 # Fetch the employee IDs from the database using psql and environment variables
-createTransaction=$(PGPASSWORD="$PGPASSWORD" psql -h "$PGHOST" -p "$PGPORT" -d "$PGDB" -U "$PGUSER" -c "INSERT INTO transaction_history (account_id, transaction_amount, transaction_title, transaction_description) VALUES ('$account_id', '$transaction_amount', '$transaction_title', '$transaction_description')" -t)
+createTransaction=$(PGPASSWORD="$PGPASSWORD" psql -h "$PGHOST" -p "$PGPORT" -d "$PGDB" -U "$PGUSER" -c "INSERT INTO transaction_history (account_id, transaction_amount, transaction_tax_rate, transaction_title, transaction_description) VALUES ('$account_id', '$transaction_amount', '$transaction_tax_rate', '$transaction_title', '$transaction_description')" -t)
 
 # Log if the first transaction was successful
 if [ $? -eq 0 ]; then
@@ -31,7 +53,7 @@ if [ $? -eq 0 ]; then
 
     # Check if the unique_id is prefixed with "loan_"
     if echo "${unique_id}" | grep -q "^loan_"; then
-        transaction_amount_abs=$(( $transaction_amount * -1 ))
+        transaction_amount_abs=$(($transaction_amount * -1))
         # Decrement the loan_amount in the loans table
         decrementLoanAmount=$(PGPASSWORD="$PGPASSWORD" psql -h "$PGHOST" -p "$PGPORT" -d "$PGDB" -U "$PGUSER" -c "UPDATE loans SET loan_amount = loan_amount - '$transaction_amount_abs' WHERE loan_id = '$id'" -t)
 
@@ -49,7 +71,10 @@ if [ $? -eq 0 ]; then
                 if [ $? -eq 0 ]; then
                     echo "Loan plan amount successfully updated for id $id"
                     (crontab -l | grep -v "/app/dist/scripts/createTransaction.sh ${unique_id}" || true) | crontab -
-                    (crontab -l ; echo "0 0 * * * /app/dist/scripts/createTransaction.sh ${unique_id} ${account_id} ${id} ${loanAmount} \"${transaction_title}\" \"${transaction_description}\" > /app/cron.log 2>&1") | crontab -
+                    (
+                        crontab -l
+                        echo "0 0 * * * /app/dist/scripts/createTransaction.sh ${unique_id} ${account_id} ${id} ${loanAmount} \"${transaction_title}\" \"${transaction_description}\" > /app/cron.log 2>&1"
+                    ) | crontab -
                 else
                     echo "Loan plan amount update failed for id $id"
                 fi
@@ -124,6 +149,6 @@ if [ $? -eq 0 ]; then
             echo "Wishlist fetch failed for id $id"
         fi
     fi
-    else
-        echo "Transaction creation failed for account_id $account_id"
-    fi
+else
+    echo "Transaction creation failed for account_id $account_id"
+fi

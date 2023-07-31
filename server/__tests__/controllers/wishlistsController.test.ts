@@ -108,6 +108,7 @@ describe('GET /api/wishlists', () => {
 
         const modifiedWishlists = wishlists.map((wishlist, i) => ({
             account_id: wishlist.account_id,
+            tax_id: wishlist.tax_id,
             date_created: wishlist.date_created,
             date_modified: wishlist.date_modified,
             wishlist_amount: wishlist.wishlist_amount,
@@ -170,6 +171,7 @@ describe('GET /api/wishlists', () => {
             .filter(wishlist => wishlist.wishlist_id === id)
             .map((wishlist, i) => ({
                 account_id: wishlist.account_id,
+                tax_id: wishlist.tax_id,
                 date_created: wishlist.date_created,
                 date_modified: wishlist.date_modified,
                 wishlist_amount: wishlist.wishlist_amount,
@@ -231,6 +233,7 @@ describe('GET /api/wishlists', () => {
             .filter(wishlist => wishlist.account_id === 1)
             .map((wishlist, i) => ({
                 account_id: wishlist.account_id,
+                tax_id: wishlist.tax_id,
                 date_created: wishlist.date_created,
                 date_modified: wishlist.date_modified,
                 wishlist_amount: wishlist.wishlist_amount,
@@ -292,6 +295,7 @@ describe('GET /api/wishlists', () => {
             .filter(wishlist => wishlist.account_id === 1 && wishlist.wishlist_id === 1)
             .map((wishlist, i) => ({
                 account_id: wishlist.account_id,
+                tax_id: wishlist.tax_id,
                 date_created: wishlist.date_created,
                 date_modified: wishlist.date_modified,
                 wishlist_amount: wishlist.wishlist_amount,
@@ -366,6 +370,7 @@ describe('GET /api/wishlists', () => {
 
         const modifiedWishlists = wishlists.map((wishlist, i) => ({
             account_id: wishlist.account_id,
+            tax_id: wishlist.tax_id,
             date_created: wishlist.date_created,
             date_modified: wishlist.date_modified,
             wishlist_amount: wishlist.wishlist_amount,
@@ -442,6 +447,7 @@ describe('POST /api/wishlists', () => {
         // Add wishlist_date_can_purchase to the wishlist object
         const modifiedWishlist: Wishlist = {
             account_id: newWishlist[0].account_id,
+            tax_id: newWishlist[0].tax_id,
             date_created: newWishlist[0].date_created,
             date_modified: newWishlist[0].date_modified,
             wishlist_amount: newWishlist[0].wishlist_amount,
@@ -609,6 +615,7 @@ describe('PUT /api/wishlists/:id', () => {
 
         const modifiedWishlist: Wishlist = {
             account_id: updatedWishlist[0].account_id,
+            tax_id: updatedWishlist[0].tax_id,
             date_created: updatedWishlist[0].date_created,
             date_modified: updatedWishlist[0].date_modified,
             wishlist_amount: updatedWishlist[0].wishlist_amount,
