@@ -7,7 +7,7 @@ interface TransactionHistoryInput {
     transaction_id: string;
     account_id: string;
     transaction_amount: string;
-    transaction_tax: string;
+    transaction_tax_rate: string;
     transaction_title: string;
     transaction_description: string;
     date_created: string;
@@ -24,7 +24,7 @@ const parseTransactions = (transactionHistory: TransactionHistoryInput): Transac
     transaction_id: parseInt(transactionHistory.transaction_id),
     account_id: parseInt(transactionHistory.account_id),
     transaction_amount: parseFloat(transactionHistory.transaction_amount),
-    transaction_tax: parseFloat(transactionHistory.transaction_tax),
+    transaction_tax_rate: parseFloat(transactionHistory.transaction_tax_rate),
     transaction_title: transactionHistory.transaction_title,
     transaction_description: transactionHistory.transaction_description,
     date_created: transactionHistory.date_created,

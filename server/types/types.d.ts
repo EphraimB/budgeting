@@ -30,7 +30,7 @@ export interface TransactionHistory {
     transaction_id: number;
     account_id: number;
     transaction_amount: number;
-    transaction_tax: number;
+    transaction_tax_rate: number;
     transaction_title: string;
     transaction_description: string;
     date_created: string;
@@ -60,7 +60,7 @@ export interface Employee {
 export interface Expense {
     expense_id?: number;
     account_id?: number;
-    tax_id?: number;
+    tax_id?: number | null;
     tax_rate?: number;
     expense_amount: number;
     expense_title: string;

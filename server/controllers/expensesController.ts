@@ -35,7 +35,7 @@ interface ExpenseInput {
 const parseExpenses = (expense: ExpenseInput): Expense => ({
     expense_id: parseInt(expense.expense_id),
     account_id: parseInt(expense.account_id),
-    tax_id: parseInt(expense.tax_id),
+    tax_id: parseInt(expense.tax_id) || null,
     expense_amount: parseFloat(expense.expense_amount),
     expense_title: expense.expense_title,
     expense_description: expense.expense_description,
