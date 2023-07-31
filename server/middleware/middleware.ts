@@ -386,6 +386,12 @@ export const getWishlistsByAccount = async (request: Request, response: Response
     const { account_id, to_date } = request.query;
 
     try {
+        // Fetch all taxes
+        const allTaxes = await executeQuery(taxesQueries.getTaxes);
+
+        // Create an object where key is the tax id and value is the tax object
+        const taxLookup = allTaxes.reduce((acc, curr) => ({ ...acc, [curr.tax_id]: curr }), {});
+
         const wishlistsByAccount: { account_id: number, wishlist: Wishlist[] }[] = [];
 
         if (!account_id) {
@@ -396,16 +402,16 @@ export const getWishlistsByAccount = async (request: Request, response: Response
                 const wishlistResults = await executeQuery(wishlistQueries.getWishlistsMiddleware, [account.account_id, to_date]);
 
                 // Map over results array and convert amount to a float for each Transaction object
-                const wishlistTransactions = await Promise.all(wishlistResults.map(async (wishlist) => {
-                    const taxResults = await executeQuery(taxesQueries.getTax, [wishlist.tax_id]);
+                const wishlistTransactions = wishlistResults.map((wishlist) => {
+                    const tax = taxLookup[wishlist.tax_id] || { tax_rate: 0 };
 
                     return {
                         ...wishlist,
-                        tax_amount: taxResults[0] ? parseFloat(taxResults[0].tax_amount) : 0,
+                        tax_rate: parseFloat(tax.tax_rate),
                         amount: parseFloat(wishlist.wishlist_amount),
                         wishlist_amount: parseFloat(wishlist.wishlist_amount)
                     };
-                }));
+                });
 
                 wishlistsByAccount.push({ account_id: account.account_id, wishlist: wishlistTransactions });
             }));
@@ -421,16 +427,16 @@ export const getWishlistsByAccount = async (request: Request, response: Response
             const results = await executeQuery(wishlistQueries.getWishlistsMiddleware, [account_id, to_date]);
 
             // Map over results array and convert amount to a float for each Wishlist object
-            const wishlistsTransactions = await Promise.all(results.map(async (wishlist) => {
-                const taxResults = await executeQuery(taxesQueries.getTax, [wishlist.tax_id]);
+            const wishlistsTransactions = results.map((wishlist) => {
+                const tax = taxLookup[wishlist.tax_id] || { tax_rate: 0 };
 
                 return {
                     ...wishlist,
-                    tax_amount: taxResults[0] ? parseFloat(taxResults[0].tax_amount) : 0,
+                    tax_rate: parseFloat(tax.tax_rate),
                     amount: parseFloat(wishlist.wishlist_amount),
                     wishlist_amount: parseFloat(wishlist.wishlist_amount),
                 };
-            }));
+            });
 
             wishlistsByAccount.push({ account_id: parseInt(account_id as string), wishlist: wishlistsTransactions });
         }
