@@ -38,7 +38,7 @@ describe('generatePayrolls', () => {
         expect(payrollTransaction.description).toBe('payroll');
         expect(payrollTransaction.date).toEqual(new Date(payroll.end_date));
         expect(payrollTransaction.amount).toBe(payroll.gross_pay);
-        expect(payrollTransaction.tax_rate).toBe((payroll.gross_pay - payroll.net_pay) / payroll.gross_pay);
+        expect(payrollTransaction.tax_rate).toBe(parseFloat(((payroll.gross_pay - payroll.net_pay) / payroll.gross_pay).toFixed(4)));
         expect(payrollTransaction.total_amount).toBe(payroll.net_pay);
     });
 
@@ -77,7 +77,9 @@ describe('generatePayrolls', () => {
         expect(payrollTransaction.title).toBe('Payroll');
         expect(payrollTransaction.description).toBe('payroll');
         expect(payrollTransaction.date).toEqual(new Date(payroll.end_date));
-        expect(payrollTransaction.amount).toBe(payroll.net_pay);
+        expect(payrollTransaction.amount).toBe(payroll.gross_pay);
+        expect(payrollTransaction.tax_rate).toBe(parseFloat(((payroll.gross_pay - payroll.net_pay) / payroll.gross_pay).toFixed(4)));
+        expect(payrollTransaction.total_amount).toBe(payroll.net_pay);
     });
 
     it('should do nothing if payroll date is in the past', () => {

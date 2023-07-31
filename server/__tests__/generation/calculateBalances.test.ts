@@ -19,26 +19,32 @@ describe('calculateBalances', () => {
                 title: 'Test Transaction 2',
                 description: 'Testing the transaction 2',
                 date: tomorrow,
-                amount: 500
+                amount: 500,
+                tax_rate: 0.2,
+                total_amount: 400
             },
             {
                 title: 'Test Transaction 3',
                 description: 'Testing the transaction 3',
                 date: dayAfterTomorrow,
-                amount: -500
+                amount: -500,
+                tax_rate: 0.2,
+                total_amount: -600
             },
             {
                 title: 'Test Transaction 4',
                 description: 'Testing the transaction 4',
                 date: dayAfterTomorrow,
-                amount: 1000
+                amount: 1000,
+                tax_rate: 0.2,
+                total_amount: 1200
             }
         ];
 
         calculateBalances(transactions, 5000);
 
-        expect(transactions[0].balance).toBe(5500);
-        expect(transactions[1].balance).toBe(5000);
+        expect(transactions[0].balance).toBe(5400);
+        expect(transactions[1].balance).toBe(4800);
         expect(transactions[2].balance).toBe(6000);
     });
 
@@ -50,7 +56,9 @@ describe('calculateBalances', () => {
                 description: 'Testing the transaction',
                 date: lastWeek,
                 date_modified: lastWeek,
-                amount: 1000
+                amount: 1000,
+                tax_rate: 0.2,
+                total_amount: 1200
             },
             {
                 transaction_id: 2,
@@ -58,34 +66,42 @@ describe('calculateBalances', () => {
                 description: 'Testing the transaction 2',
                 date: yesterday,
                 date_modified: yesterday,
-                amount: -500
+                amount: -500,
+                tax_rate: 0.2,
+                total_amount: -600
             },
             {
                 title: 'Test Transaction 2',
                 description: 'Testing the transaction 2',
                 date: tomorrow,
-                amount: 500
+                amount: 500,
+                tax_rate: 0.2,
+                total_amount: 400
             },
             {
                 title: 'Test Transaction 3',
                 description: 'Testing the transaction 3',
                 date: dayAfterTomorrow,
-                amount: -500
+                amount: -500,
+                tax_rate: 0.2,
+                total_amount: -600
             },
             {
                 title: 'Test Transaction 4',
                 description: 'Testing the transaction 4',
                 date: dayAfterTomorrow,
-                amount: 1000
+                amount: 1000,
+                tax_rate: 0.2,
+                total_amount: 1200
             }
         ];
 
         calculateBalances(transactions, 5000);
 
-        expect(transactions[0].balance).toBe(5500);
+        expect(transactions[0].balance).toBe(5600);
         expect(transactions[1].balance).toBe(5000);
-        expect(transactions[2].balance).toBe(5500);
-        expect(transactions[3].balance).toBe(5000);
+        expect(transactions[2].balance).toBe(5400);
+        expect(transactions[3].balance).toBe(4800);
         expect(transactions[4].balance).toBe(6000);
     });
 });

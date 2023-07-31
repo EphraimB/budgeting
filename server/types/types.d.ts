@@ -132,9 +132,10 @@ export interface Wishlist {
     wishlist_id?: number;
     account_id?: number;
     tax_id?: number;
-    tax_amount?: number;
+    tax_rate?: number;
     cron_job_id?: number;
     wishlist_amount: number;
+    wishlist_tax_rate?: number;
     wishlist_title: string;
     wishlist_description: string;
     wishlist_date_available?: string;
