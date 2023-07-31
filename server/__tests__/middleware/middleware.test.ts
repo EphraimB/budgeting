@@ -1,5 +1,5 @@
 import { jest } from '@jest/globals';
-import e, { Response } from 'express';
+import { Response } from 'express';
 import { QueryResultRow } from 'pg';
 import { expenses, loans, payrolls, transactions, transfers, wishlists } from '../../models/mockData';
 import MockDate from 'mockdate';
