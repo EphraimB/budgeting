@@ -664,3 +664,50 @@ describe('getCurrentBalance', () => {
         expect(mockNext).toHaveBeenCalled();
     });
 });
+
+describe('updateWislistCron', () => {
+    it('updates wishlist cron job', async () => {
+        mockModule(wishlists, [], null, [{ tax_rate: 1 }], []);
+        const { updateWishlistCron } = await import('../../middleware/middleware.js');
+
+        mockRequest.transactions = {
+            transactions: [
+                {
+                    account_id: 1,
+                    transactions: [
+                        {
+                            wishlist_id: 1,
+                            amount: 100,
+                            tax_rate: 0,
+                            total_amount: 100,
+                            date: '2023-06-01',
+                            title: 'Test',
+                            description: 'Test'
+                        }
+                    ]
+                }
+            ]
+        };
+
+        await updateWishlistCron(mockRequest, mockResponse, mockNext);
+
+        expect(mockNext).toHaveBeenCalled();
+    });
+
+    it('handles error if there is one', async () => {
+        // Arrange
+        const errorMessage = 'Fake error';
+        const error = new Error(errorMessage);
+        mockModule([], [], errorMessage);
+
+        const { updateWishlistCron } = await import('../../middleware/middleware.js');
+
+        await updateWishlistCron(mockRequest, mockResponse, mockNext);
+
+        expect(mockResponse.status).toHaveBeenCalledWith(400);
+        expect(mockResponse.json).toHaveBeenCalledWith({ message: 'Error updating cron tab' });
+
+        // Check that the error was logged
+        expect(consoleSpy).toHaveBeenCalledWith(error);
+    });
+});

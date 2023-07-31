@@ -776,6 +776,7 @@ export const updateWishlistCron = async (
         for (const wslst of wishlistsResults) {
             const cronId = wslst.cron_job_id;
             const results = await executeQuery(cronJobQueries.getCronJob, [cronId]);
+
             if (results.length > 0) {
                 await deleteCronJob(results[0].unique_id);
             } else {
@@ -789,8 +790,8 @@ export const updateWishlistCron = async (
             const taxId = wslst.tax_id;
 
             // Get tax amount from tax_id in taxes table
-            const taxAmount = taxId
-                ? (await executeQuery(taxesQueries.getTax, [taxId]))[0].tax_amount
+            const taxRate = taxId
+                ? (await executeQuery(taxesQueries.getTax, [taxId]))[0].tax_rate
                 : 0;
 
             const cronParams = {
@@ -798,7 +799,7 @@ export const updateWishlistCron = async (
                 account_id: wslst.account_id,
                 id: wslst.wishlist_id,
                 amount: -wslst.wishlist_amount,
-                tax: taxAmount,
+                tax: taxRate,
                 title: wslst.wishlist_title,
                 description: wslst.wishlist_description,
                 scriptPath: "/app/dist/scripts/createTransaction.sh",
