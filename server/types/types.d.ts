@@ -110,7 +110,7 @@ export interface Payroll {
     net_pay: number;
     work_days?: number;
     regular_hours?: number;
-    gross_pay?: number;
+    gross_pay: number;
     hours_worked?: number;
 }
 
