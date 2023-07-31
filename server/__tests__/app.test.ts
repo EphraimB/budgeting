@@ -1,9 +1,19 @@
 import { jest } from '@jest/globals';
 import request from 'supertest';
 import { Express } from 'express';
+import { Volume } from 'memfs';
 
 describe('Test application', () => {
     it('should trigger not found for site 404', async () => {
+        const vol = Volume.fromJSON({
+            'dist/views/swagger.json': '[]'
+        }, process.cwd());
+
+        jest.mock('fs', () => ({
+            __esModule: true,
+            default: vol
+        }));
+
         // Import the module that uses the mock
         const appModule = await import('../app.js');
         const app: Express = appModule.default;

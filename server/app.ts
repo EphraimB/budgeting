@@ -14,13 +14,10 @@ import wishlistRouter from './routes/wishlistRouter.js';
 import transferRouter from './routes/transfersRouter.js';
 import transactionsRouter from './routes/transactionsRouter.js';
 import taxesRouter from './routes/taxesRouter.js';
-import { fileURLToPath } from 'url';
 import fs from 'fs';
 import path from 'path';
 
-const __dirname = fileURLToPath(new URL('.', import.meta.url));
-
-const swaggerDocument = JSON.parse(fs.readFileSync(path.resolve(__dirname, './views/swagger.json'), 'utf8'));
+const swaggerDocument = JSON.parse(fs.readFileSync(path.resolve(process.cwd(), './dist/views/swagger.json'), 'utf8'));
 
 const app: Express = express();
 
