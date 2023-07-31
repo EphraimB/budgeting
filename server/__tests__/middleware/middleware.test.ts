@@ -491,7 +491,7 @@ describe('getWishlistsByAccount', () => {
     });
 
     it('should fetch all accounts if account_id is not provided', async () => {
-        mockModule([{ account_id: 1 }], wishlists);
+        mockModule([{ tax_rate: 0 }], wishlists, null, [{ account_id: 1 }]);
 
         const { getWishlistsByAccount } = await import('../../middleware/middleware.js');
 
@@ -504,7 +504,9 @@ describe('getWishlistsByAccount', () => {
             wishlist: [
                 {
                     ...wishlist,
-                    amount: wishlist.wishlist_amount
+                    amount: wishlist.wishlist_amount,
+                    tax_rate: 0,
+                    wishlist_amount: wishlist.wishlist_amount
                 }
             ]
         }));
