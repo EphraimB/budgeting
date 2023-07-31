@@ -26,6 +26,15 @@ export interface Transaction {
   balance?: number;
 }
 
+export interface Taxes {
+  tax_id: number;
+  tax_rate: number;
+  tax_title: string;
+  tax_description: string;
+  date_created: string;
+  date_modified: string;
+}
+
 export interface TransactionHistory {
   transaction_id: number;
   account_id: number;

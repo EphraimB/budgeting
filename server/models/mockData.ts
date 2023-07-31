@@ -8,6 +8,7 @@ import {
     Transaction,
     PayrollDate,
     PayrollTax,
+    Taxes,
 } from "../types/types";
 
 export const employees: Employee[] = [
@@ -82,6 +83,17 @@ export const transactions: Transaction[] = [
         date_created: "2020-01-01",
         date_modified: "2020-01-01",
     },
+];
+
+export const taxes: Taxes[] = [
+    {
+        tax_id: 1,
+        tax_rate: 0,
+        tax_title: "Test Tax",
+        tax_description: "Test Tax",
+        date_created: "2020-01-01",
+        date_modified: "2020-01-01",
+    }
 ];
 
 export const expenses: Expense[] = [
