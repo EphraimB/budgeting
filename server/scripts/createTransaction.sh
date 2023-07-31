@@ -12,6 +12,8 @@ transaction_type=$(echo "${unique_id}" | cut -d '_' -f 1)
 
 if [ "$transaction_type" = "payroll" ]; then
     transaction_tax_rate=$8
+elif [ "$transaction_type" = "loan" ]; then
+    transaction_tax_rate=0
 else
     # Get the tax_id for other transaction types
     tax_id=$(PGPASSWORD="$PGPASSWORD" psql -h "$PGHOST" -p "$PGPORT" -d "$PGDB" -U "$PGUSER" -t -c "SELECT tax_id FROM ${transaction_type}s WHERE ${transaction_type}_id = '$id'")
