@@ -161,15 +161,11 @@ export const createWishlistCron = async (request: Request, response: Response): 
             wishlistsParse(wishlist)
         );
 
-        // Get tax amount from tax_id in taxes table
-        const taxAmount = request.body.tax_id ? (await executeQuery(taxesQueries.getTax, [request.body.tax_id]))[0].tax_amount : 0;
-
         const cronParams = {
             date: wishlists[0].wishlist_date_can_purchase,
             account_id: request.body.account_id,
             id: wishlist_id,
             amount: -request.body.amount,
-            tax: taxAmount,
             title: request.body.title,
             description: request.body.description,
             scriptPath: '/app/dist/scripts/createTransaction.sh',
@@ -274,15 +270,11 @@ export const updateWishlistCron = async (request: Request, response: Response): 
             wishlistsParse(wishlist)
         );
 
-         // Get tax amount from tax_id in taxes table
-         const taxAmount = request.body.tax_id ? (await executeQuery(taxesQueries.getTax, [request.body.tax_id]))[0].tax_amount : 0;
-
         const cronParams = {
             date: wishlists[0].wishlist_date_can_purchase,
             account_id: request.body.account_id,
             id: wishlist_id,
             amount: -request.body.amount,
-            tax: taxAmount,
             title: request.body.title,
             description: request.body.description,
             scriptPath: '/app/dist/scripts/createTransaction.sh',
