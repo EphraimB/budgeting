@@ -5,10 +5,10 @@ import { handleError, executeQuery } from "../utils/helperFunctions.js";
 import { type PayrollTax } from "../types/types.js";
 
 interface PayrollTaxInput {
-  payroll_taxes_id: string;
-  employee_id: string;
-  name: string;
-  rate: string;
+    payroll_taxes_id: string;
+    employee_id: string;
+    name: string;
+    rate: string;
 }
 
 /**
@@ -69,12 +69,11 @@ export const getPayrollTaxes = async (
         console.error(error); // Log the error on the server side
         handleError(
             response,
-            `Error getting ${
-                id
-                    ? "payroll tax"
-                    : employee_id
-                        ? "payroll taxes for given employee_id"
-                        : "payroll taxes"
+            `Error getting ${id
+                ? "payroll tax"
+                : employee_id
+                    ? "payroll taxes for given employee_id"
+                    : "payroll taxes"
             }`,
         );
     }
@@ -107,6 +106,7 @@ export const createPayrollTax = async (
         exec(scriptCommand, (error, stdout, stderr) => {
             if (error) {
                 console.error(`Error executing script: ${error}`);
+                response.status(500).send('Failed to execute script for updating cron job payrolls information');
                 return;
             }
             console.log(`Script output: ${stdout}`);
