@@ -518,4 +518,21 @@ describe('DELETE /api/expenses/:id', () => {
         expect(mockResponse.status).toHaveBeenCalledWith(200);
         expect(mockResponse.send).toHaveBeenCalledWith('Expense deleted successfully');
     });
+
+    it('should return a 404 when the cron job is not found', async () => {
+        // Arrange
+        mockModule(expenses.filter(expense => expense.expense_id === 1), undefined, [], []);
+
+        const { deleteExpense } = await import('../../controllers/expensesController.js');
+
+        mockRequest.params = { id: 1 };
+        mockRequest.body = expenses.filter(expense => expense.expense_id === 1);
+
+        // Act
+        await deleteExpense(mockRequest as Request, mockResponse, mockNext);
+
+        // Assert
+        expect(mockResponse.status).toHaveBeenCalledWith(404);
+        expect(mockResponse.send).toHaveBeenCalledWith('Cron job not found');
+    });
 });

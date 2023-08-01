@@ -385,10 +385,7 @@ export const deleteExpense = async (
             await deleteCronJob(results[0].unique_id);
         } else {
             console.error("Cron job not found");
-            response.status(404).json({
-                status: "error",
-                message: "Cron job not found",
-            });
+            response.status(404).send("Cron job not found");
             return;
         }
 
