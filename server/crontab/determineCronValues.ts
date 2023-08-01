@@ -1,9 +1,11 @@
+import { JobDetails } from "../types/types";
+
 /**
  *
  * @param jobDetails - Job details
  * @returns - Cron date
  */
-const determineCronValues = (jobDetails: any): any => {
+const determineCronValues = (jobDetails: JobDetails): string => {
     const {
         frequency_type,
         frequency_type_variable,
@@ -52,7 +54,7 @@ const determineCronValues = (jobDetails: any): any => {
                         : "*";
             } else {
                 cronMonth = "*/" + (frequency_type_variable || 1);
-                cronDay = new Date(date).getDate().toString();
+                cronDay = frequency_day_of_month ? frequency_day_of_month.toString() : new Date(date).getDate().toString();
             }
         } else if (frequency_type === 3) {
             if (frequency_day_of_week) {
@@ -67,7 +69,7 @@ const determineCronValues = (jobDetails: any): any => {
                         : "*";
             } else {
                 cronMonth = "*/" + 12 * (frequency_type_variable || 1);
-                cronDay = new Date(date).getDate().toString();
+                cronDay = frequency_day_of_month ? frequency_day_of_month.toString() : new Date(date).getDate().toString();
             }
         }
     }
