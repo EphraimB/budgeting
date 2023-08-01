@@ -140,7 +140,7 @@ export const createPayrollTaxReturnObject = async (
     try {
         const results = await executeQuery<PayrollTaxInput>(
             payrollQueries.getPayrollTaxesById,
-            [payroll_taxes_id],
+            [payroll_taxes_id]
         );
 
         if (results.length === 0) {
@@ -192,6 +192,7 @@ export const updatePayrollTax = async (
         exec(scriptCommand, (error, stdout, stderr) => {
             if (error) {
                 console.error(`Error executing script: ${error}`);
+                response.status(500).send('Failed to execute script for updating cron job payrolls information');
                 return;
             }
             console.log(`Script output: ${stdout}`);
@@ -268,9 +269,9 @@ export const deletePayrollTax = async (
         exec(scriptCommand, (error, stdout, stderr) => {
             if (error) {
                 console.error(`Error executing script: ${error}`);
+                response.status(500).send('Failed to execute script for updating cron job payrolls information');
                 return;
             }
-            console.log(`Script output: ${stdout}`);
         });
 
         next();
