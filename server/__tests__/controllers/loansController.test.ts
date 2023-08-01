@@ -296,6 +296,25 @@ describe('POST /api/loans', () => {
         expect(consoleSpy).toHaveBeenCalledWith(error);
     });
 
+    it('should respond with an error message in the return object', async () => {
+        const errorMessage = 'Error creating loan';
+        const error = new Error(errorMessage);
+        mockModule([null], errorMessage);
+
+        const { createLoanReturnObject } = await import('../../controllers/loansController.js');
+
+        mockRequest.body = loans.filter(loan => loan.loan_id === 1);
+
+        await createLoanReturnObject(mockRequest as Request, mockResponse);
+
+        // Assert
+        expect(mockResponse.status).toHaveBeenCalledWith(400);
+        expect(mockResponse.json).toHaveBeenCalledWith({ message: 'Error creating loan' });
+
+        // Assert that console.error was called with the error message
+        expect(consoleSpy).toHaveBeenCalledWith(error);
+    });
+
     it('should respond with the created loan', async () => {
         const newLoan = loans.filter(loan => loan.loan_id === 1);
 
