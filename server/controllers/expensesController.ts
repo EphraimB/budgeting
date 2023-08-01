@@ -348,7 +348,7 @@ export const updateExpenseReturnObject = async (
         response.status(200).json(modifiedExpenses);
     } catch (error) {
         console.error(error); // Log the error on the server side
-        handleError(response, "Error creating expense");
+        handleError(response, "Error updating expense");
     }
 };
 

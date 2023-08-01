@@ -286,7 +286,7 @@ describe('POST /api/expenses', () => {
         expect(consoleSpy).toHaveBeenCalledWith(error);
     });
 
-    it('should handle errors correctly in the return object function', async () => {
+    it('should handle errors correctly in return object', async () => {
         // Arrange
         const errorMessage = 'Error creating expense';
         const error = new Error(errorMessage);
@@ -357,6 +357,27 @@ describe('PUT /api/expenses/:id', () => {
 
         // Act
         await updateExpense(mockRequest as Request, mockResponse, mockNext);
+
+        // Assert
+        expect(mockResponse.status).toHaveBeenCalledWith(400);
+        expect(mockResponse.json).toHaveBeenCalledWith({ message: 'Error updating expense' });
+
+        // Assert that console.error was called with the error message
+        expect(consoleSpy).toHaveBeenCalledWith(error);
+    });
+
+    it('should handle errors correctly in the return object function', async () => {
+        // Arrange
+        const errorMessage = 'Error updating expense';
+        const error = new Error(errorMessage);
+        mockModule(null, errorMessage);
+
+        const { updateExpenseReturnObject } = await import('../../controllers/expensesController.js');
+
+        mockRequest.body = expenses.filter(expense => expense.expense_id === 1);
+
+        // Act
+        await updateExpenseReturnObject(mockRequest as Request, mockResponse);
 
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(400);
