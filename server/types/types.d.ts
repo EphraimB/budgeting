@@ -69,6 +69,7 @@ export interface Employee {
 export interface Expense {
   expense_id?: number;
   account_id?: number;
+  cron_job_id?: number;
   tax_id?: number | null;
   tax_rate?: number;
   expense_amount: number;

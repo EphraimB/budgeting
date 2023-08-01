@@ -10,24 +10,24 @@ import { handleError, executeQuery } from "../utils/helperFunctions.js";
 import { type Expense } from "../types/types.js";
 
 interface ExpenseInput {
-  expense_id: string;
-  account_id: string;
-  cron_job_id: string;
-  tax_id: string;
-  expense_amount: string;
-  expense_title: string;
-  expense_description: string;
-  frequency_type: string;
-  frequency_type_variable: string;
-  frequency_day_of_month: string;
-  frequency_day_of_week: string;
-  frequency_week_of_month: string;
-  frequency_month_of_year: string;
-  expense_subsidized: string;
-  expense_begin_date: string;
-  expense_end_date: string;
-  date_created: string;
-  date_modified: string;
+    expense_id: string;
+    account_id: string;
+    cron_job_id: string;
+    tax_id: string;
+    expense_amount: string;
+    expense_title: string;
+    expense_description: string;
+    frequency_type: string;
+    frequency_type_variable: string;
+    frequency_day_of_month: string;
+    frequency_day_of_week: string;
+    frequency_week_of_month: string;
+    frequency_month_of_year: string;
+    expense_subsidized: string;
+    expense_begin_date: string;
+    expense_end_date: string;
+    date_created: string;
+    date_modified: string;
 }
 
 /**
@@ -98,12 +98,11 @@ export const getExpenses = async (
         console.error(error); // Log the error on the server side
         handleError(
             response,
-            `Error getting ${
-                id
-                    ? "expense"
-                    : account_id
-                        ? "expenses for given account_id"
-                        : "expenses"
+            `Error getting ${id
+                ? "expense"
+                : account_id
+                    ? "expenses for given account_id"
+                    : "expenses"
             }`,
         );
     }
@@ -275,6 +274,7 @@ export const updateExpense = async (
             expenseQueries.getExpenseById,
             [id],
         );
+
         if (expenseResult.length === 0) {
             response.status(404).send("Expense not found");
             return;
@@ -287,10 +287,7 @@ export const updateExpense = async (
             await deleteCronJob(results[0].unique_id);
         } else {
             console.error("Cron job not found");
-            response.status(404).json({
-                status: "error",
-                message: "Cron job not found",
-            });
+            response.status(404).send("Cron job not found");
             return;
         }
 
