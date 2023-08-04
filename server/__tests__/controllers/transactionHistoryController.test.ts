@@ -128,7 +128,7 @@ describe('GET /api/transactionHistory', () => {
         // Arrange
         mockModule(transactions.filter(transaction => transaction.account_id === 1));
 
-        mockRequest.query = { id: null, accountId: 1 };
+        mockRequest.query = { id: null, account_id: 1 };
 
         const { getTransactions } = await import('../../controllers/transactionHistoryController.js');
 
@@ -146,7 +146,7 @@ describe('GET /api/transactionHistory', () => {
         const error = new Error(errorMessage);
         mockModule(null, errorMessage);
 
-        mockRequest.query = { id: null, accountId: 1 };
+        mockRequest.query = { id: null, account_id: 1 };
 
         const { getTransactions } = await import('../../controllers/transactionHistoryController.js');
 
@@ -165,7 +165,7 @@ describe('GET /api/transactionHistory', () => {
         // Arrange
         mockModule(transactions.filter(transaction => transaction.account_id === 1 && transaction.transaction_id === 1));
 
-        mockRequest.query = { id: 1, accountId: 1 };
+        mockRequest.query = { id: 1, account_id: 1 };
 
         const { getTransactions } = await import('../../controllers/transactionHistoryController.js');
 
@@ -183,7 +183,7 @@ describe('GET /api/transactionHistory', () => {
         const error = new Error(errorMessage);
         mockModule(null, errorMessage);
 
-        mockRequest.query = { id: 1, accountId: 1 };
+        mockRequest.query = { id: 1, account_id: 1 };
 
         const { getTransactions } = await import('../../controllers/transactionHistoryController.js');
 
