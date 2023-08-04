@@ -69,7 +69,7 @@ describe('GET /api/loans', () => {
         mockModule([loans]);
 
         mockRequest.query = { id: null };
-        mockRequest.fullyPaidBackDates = { 1: '2024-01-01' }
+        mockRequest.fullyPaidBackDates = { 1: '2024-01-01' };
 
         const { getLoans } = await import('../../controllers/loansController.js');
 
@@ -113,7 +113,7 @@ describe('GET /api/loans', () => {
         mockModule([loans.filter(loan => loan.loan_id === 1)]);
 
         mockRequest.query = { id: 1 };
-        mockRequest.fullyPaidBackDates = { 1: '2024-01-01' }
+        mockRequest.fullyPaidBackDates = { 1: '2024-01-01' };
 
         const { getLoans } = await import('../../controllers/loansController.js');
 
@@ -154,7 +154,7 @@ describe('GET /api/loans', () => {
         mockModule([loans.filter(loan => loan.account_id === 1)]);
 
         mockRequest.query = { account_id: 1 };
-        mockRequest.fullyPaidBackDates = { 1: '2024-01-01' }
+        mockRequest.fullyPaidBackDates = { 1: '2024-01-01' };
 
         const { getLoans } = await import('../../controllers/loansController.js');
 
@@ -195,7 +195,7 @@ describe('GET /api/loans', () => {
         mockModule([loans.filter(loan => loan.account_id === 1 && loan.loan_id === 1)]);
 
         mockRequest.query = { account_id: 1, id: 1 };
-        mockRequest.fullyPaidBackDates = { 1: '2024-01-01' }
+        mockRequest.fullyPaidBackDates = { 1: '2024-01-01' };
 
         const { getLoans } = await import('../../controllers/loansController.js');
 
@@ -296,6 +296,25 @@ describe('POST /api/loans', () => {
         expect(consoleSpy).toHaveBeenCalledWith(error);
     });
 
+    it('should respond with an error message in the return object', async () => {
+        const errorMessage = 'Error creating loan';
+        const error = new Error(errorMessage);
+        mockModule([null], errorMessage);
+
+        const { createLoanReturnObject } = await import('../../controllers/loansController.js');
+
+        mockRequest.body = loans.filter(loan => loan.loan_id === 1);
+
+        await createLoanReturnObject(mockRequest as Request, mockResponse);
+
+        // Assert
+        expect(mockResponse.status).toHaveBeenCalledWith(400);
+        expect(mockResponse.json).toHaveBeenCalledWith({ message: 'Error creating loan' });
+
+        // Assert that console.error was called with the error message
+        expect(consoleSpy).toHaveBeenCalledWith(error);
+    });
+
     it('should respond with the created loan', async () => {
         const newLoan = loans.filter(loan => loan.loan_id === 1);
 
@@ -304,7 +323,7 @@ describe('POST /api/loans', () => {
         const { createLoanReturnObject } = await import('../../controllers/loansController.js');
 
         mockRequest.body = newLoan;
-        mockRequest.fullyPaidBackDates = { 1: '2024-01-01' }
+        mockRequest.fullyPaidBackDates = { 1: '2024-01-01' };
 
         await createLoanReturnObject(mockRequest as Request, mockResponse);
 
@@ -377,6 +396,39 @@ describe('PUT /api/loans/:id', () => {
         expect(consoleSpy).toHaveBeenCalledWith(error);
     });
 
+    it('should respond with an error message on return object', async () => {
+        const updatedLoan = {
+            account_id: 1,
+            loan_id: 1,
+            amount: 1000,
+            plan_amount: 100,
+            recipient: 'John Doe',
+            title: 'Test Loan',
+            description: 'Test Loan Description',
+            frequency_type: 2,
+            interest_rate: 0,
+            interest_frequency_type: 0,
+            begin_date: '2021-01-01'
+        };
+        const errorMessage = 'Error updating loan';
+        const error = new Error(errorMessage);
+        mockModule([[updatedLoan]], errorMessage);
+
+        const { updateLoanReturnObject } = await import('../../controllers/loansController.js');
+
+        mockRequest.params = { id: 1 };
+        mockRequest.body = updatedLoan;
+
+        await updateLoanReturnObject(mockRequest as Request, mockResponse);
+
+        // Assert
+        expect(mockResponse.status).toHaveBeenCalledWith(400);
+        expect(mockResponse.json).toHaveBeenCalledWith({ message: 'Error getting loan' });
+
+        // Assert that console.error was called with the error message
+        expect(consoleSpy).toHaveBeenCalledWith(error);
+    });
+
     it('should respond with a 404 error message when the loan does not exist', async () => {
         // Arrange
         const updatedLoan = {
@@ -416,7 +468,7 @@ describe('PUT /api/loans/:id', () => {
 
         mockRequest.params = { id: 1 };
         mockRequest.body = updatedLoan;
-        mockRequest.fullyPaidBackDates = { 1: '2024-01-01' }
+        mockRequest.fullyPaidBackDates = { 1: '2024-01-01' };
 
         await updateLoanReturnObject(mockRequest as Request, mockResponse);
 

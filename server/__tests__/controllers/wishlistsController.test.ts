@@ -51,6 +51,7 @@ const mockModule = (createWishlist: QueryResultRow[] | string | null, errorMessa
         ? jest.fn(() => Promise.reject(new Error(errorMessage)))
         : jest.fn(() => {
             let result;
+            
             switch (index++) {
                 case 0:
                     result = Promise.resolve(createWishlist);

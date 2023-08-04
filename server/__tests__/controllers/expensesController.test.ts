@@ -47,16 +47,37 @@ afterAll(() => {
  * @param [errorMessage] - The error message to be passed to the handleError mock function
  * @returns - A mock module with the executeQuery and handleError functions
  */
-const mockModule = (executeQueryValue: QueryResultRow[] | string | null, errorMessage?: string) => {
-    const executeQuery = errorMessage
-        ? jest.fn(() => Promise.reject(new Error(errorMessage)))
-        : jest.fn(() => Promise.resolve(executeQueryValue));
+const mockModule = (
+    executeQueryValueFirst: QueryResultRow[] | string | null,
+    errorMessage?: string,
+    executeQueryValueSecond?: QueryResultRow[] | string | null,
+    executeQueryValueThird?: QueryResultRow[] | string | null,
+    executeQueryValueFourth?: QueryResultRow[] | string | null
+) => {
+    const executeQuery = jest.fn();
+
+    if (errorMessage) {
+        executeQuery.mockImplementationOnce(() => Promise.reject(new Error(errorMessage)));
+    } else {
+        executeQuery.mockImplementationOnce(() => Promise.resolve(executeQueryValueFirst));
+        if (executeQueryValueSecond !== undefined) {
+            executeQuery.mockImplementationOnce(() => Promise.resolve(executeQueryValueSecond));
+
+            if (executeQueryValueThird !== undefined) {
+                executeQuery.mockImplementationOnce(() => Promise.resolve(executeQueryValueThird));
+
+                if (executeQueryValueFourth !== undefined) {
+                    executeQuery.mockImplementationOnce(() => Promise.resolve(executeQueryValueFourth));
+                }
+            }
+        }
+    }
 
     jest.mock('../../utils/helperFunctions.js', () => ({
         executeQuery,
         handleError: jest.fn((res: Response, message: string) => {
             res.status(400).json({ message });
-        }),
+        })
     }));
 };
 
@@ -231,7 +252,7 @@ describe('POST /api/expenses', () => {
         // Arrange
         const newExpense = expenses.filter(expense => expense.expense_id === 1);
 
-        mockModule(newExpense);
+        mockModule(newExpense, undefined, '1', []);
 
         const { createExpense } = await import('../../controllers/expensesController.js');
 
@@ -265,6 +286,27 @@ describe('POST /api/expenses', () => {
         expect(consoleSpy).toHaveBeenCalledWith(error);
     });
 
+    it('should handle errors correctly in return object', async () => {
+        // Arrange
+        const errorMessage = 'Error creating expense';
+        const error = new Error(errorMessage);
+        mockModule(null, errorMessage);
+
+        const { createExpenseReturnObject } = await import('../../controllers/expensesController.js');
+
+        mockRequest.body = expenses.filter(expense => expense.expense_id === 1);
+
+        // Act
+        await createExpenseReturnObject(mockRequest as Request, mockResponse);
+
+        // Assert
+        expect(mockResponse.status).toHaveBeenCalledWith(400);
+        expect(mockResponse.json).toHaveBeenCalledWith({ message: 'Error creating expense' });
+
+        // Assert that console.error was called with the error message
+        expect(consoleSpy).toHaveBeenCalledWith(error);
+    });
+
     it('should respond with an array of expenses', async () => {
         // Arrange
         const newExpense = expenses.filter(expense => expense.expense_id === 1);
@@ -288,7 +330,7 @@ describe('PUT /api/expenses/:id', () => {
     it('should call next in the middleware', async () => {
         const updatedExpense = expenses.filter(expense => expense.expense_id === 1);
 
-        mockModule(updatedExpense);
+        mockModule(updatedExpense, undefined, '1', []);
 
         const { updateExpense } = await import('../../controllers/expensesController.js');
 
@@ -324,6 +366,27 @@ describe('PUT /api/expenses/:id', () => {
         expect(consoleSpy).toHaveBeenCalledWith(error);
     });
 
+    it('should handle errors correctly in the return object function', async () => {
+        // Arrange
+        const errorMessage = 'Error updating expense';
+        const error = new Error(errorMessage);
+        mockModule(null, errorMessage);
+
+        const { updateExpenseReturnObject } = await import('../../controllers/expensesController.js');
+
+        mockRequest.body = expenses.filter(expense => expense.expense_id === 1);
+
+        // Act
+        await updateExpenseReturnObject(mockRequest as Request, mockResponse);
+
+        // Assert
+        expect(mockResponse.status).toHaveBeenCalledWith(400);
+        expect(mockResponse.json).toHaveBeenCalledWith({ message: 'Error updating expense' });
+
+        // Assert that console.error was called with the error message
+        expect(consoleSpy).toHaveBeenCalledWith(error);
+    });
+
     it('should respond with a 404 error message when the account does not exist', async () => {
         // Arrange
         mockModule([]);
@@ -339,6 +402,23 @@ describe('PUT /api/expenses/:id', () => {
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(404);
         expect(mockResponse.send).toHaveBeenCalledWith('Expense not found');
+    });
+
+    it('should return a 404 when the cron job is not found', async () => {
+        // Arrange
+        mockModule(expenses.filter(expense => expense.expense_id === 1), undefined, []);
+
+        const { updateExpense } = await import('../../controllers/expensesController.js');
+
+        mockRequest.params = { id: 1 };
+        mockRequest.body = expenses.filter(expense => expense.expense_id === 1);
+
+        // Act
+        await updateExpense(mockRequest as Request, mockResponse, mockNext);
+
+        // Assert
+        expect(mockResponse.status).toHaveBeenCalledWith(404);
+        expect(mockResponse.send).toHaveBeenCalledWith('Cron job not found');
     });
 
     it('should respond with an array of expenses', async () => {
@@ -363,7 +443,18 @@ describe('PUT /api/expenses/:id', () => {
 describe('DELETE /api/expenses/:id', () => {
     it('should call next on the middleware', async () => {
         // Arrange
-        mockModule('Expense deleted successfully');
+        mockModule([{
+            expense_id: 1,
+            account_id: 1,
+            cron_job_id: 1,
+            tax_id: 1,
+            tax_rate: 1,
+            expense_amount: 1,
+            expense_title: 'test',
+            expense_description: 'test',
+            date_created: 'test',
+            date_modified: 'test',
+        }], undefined, '1', [{ unique_id: 'wo4if43' }], []);
 
         const { deleteExpense } = await import('../../controllers/expensesController.js');
 
@@ -426,5 +517,22 @@ describe('DELETE /api/expenses/:id', () => {
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(200);
         expect(mockResponse.send).toHaveBeenCalledWith('Expense deleted successfully');
+    });
+
+    it('should return a 404 when the cron job is not found', async () => {
+        // Arrange
+        mockModule(expenses.filter(expense => expense.expense_id === 1), undefined, [], []);
+
+        const { deleteExpense } = await import('../../controllers/expensesController.js');
+
+        mockRequest.params = { id: 1 };
+        mockRequest.body = expenses.filter(expense => expense.expense_id === 1);
+
+        // Act
+        await deleteExpense(mockRequest as Request, mockResponse, mockNext);
+
+        // Assert
+        expect(mockResponse.status).toHaveBeenCalledWith(404);
+        expect(mockResponse.send).toHaveBeenCalledWith('Cron job not found');
     });
 });

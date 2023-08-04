@@ -1,5 +1,5 @@
 import { GeneratedTransaction, Loan } from '../../types/types';
-import { generateDailyLoans, generateMonthlyLoans, generateWeeklyLoans, generateYearlyLoans } from '../../generation/generateLoans';
+import { generateDailyLoans, generateMonthlyLoans, generateWeeklyLoans, generateYearlyLoans, calculateInterest } from '../../generation/generateLoans';
 import MockDate from 'mockdate';
 import { loans } from '../../models/mockData';
 
@@ -85,6 +85,39 @@ describe('Test generateDailyLoans', () => {
         expect(transactions[0].description).toBe(loan.loan_description);
         expect(transactions[0].amount).toBe(-loan.loan_plan_amount);
         expect(expectedEndDate.toISOString().slice(0, 10)).toBe(new Date('2020-01-08').toISOString().slice(0, 10));
+    });
+
+    it('should generate daily loans with yearly interest', () => {
+        // Preparing the test data
+        const loan: Loan = {
+            loan_id: 1,
+            loan_title: 'Test Loan',
+            loan_description: 'Test Description',
+            loan_recipient: 'Test Recipient',
+            loan_amount: 1000,
+            loan_plan_amount: 100,
+            loan_subsidized: 0,
+            loan_interest_rate: .05,
+            loan_interest_frequency_type: 3,
+            loan_begin_date: '2020-01-01'
+        };
+
+        const toDate: Date = new Date('2020-01-06');
+        const fromDate: Date = new Date('2020-01-01');
+
+        // Running the function
+        generateDailyLoans(transactions, skippedTransactions, loan, toDate, fromDate);
+
+        const expectedEndDate: Date = new Date(transactions[transactions.length - 1].date);
+
+        // Checking the results
+        expect(transactions.length).toBe(5);
+        expect(skippedTransactions.length).toBe(0);
+
+        expect(transactions[0].title).toBe('Test Loan loan to Test Recipient');
+        expect(transactions[0].description).toBe('Test Description');
+        expect(transactions[2].amount).toBe(-loan.loan_plan_amount);
+        expect(expectedEndDate.toISOString().slice(0, 10)).toBe(new Date('2020-01-06').toISOString().slice(0, 10));
     });
 });
 
@@ -197,7 +230,7 @@ describe('Test generateMonthlyLoans', () => {
 
         loan.frequency_day_of_week = 2;
         loan.frequency_week_of_month = 1;
-        
+
         const toDate: Date = new Date('2020-06-01');
         const fromDate: Date = new Date('2020-01-01');
 
@@ -505,5 +538,59 @@ describe('generateYearlyLoans', () => {
             const expectedYear: number = new Date(loan.loan_begin_date).getFullYear() + i;
             expect(transactionDate.getFullYear()).toBe(expectedYear);
         });
+    });
+});
+
+describe('calculateInterest', () => {
+    it('Should calculate the yearly interest correctly', () => {
+        // Preparing the test data
+        const principal: number = 1000;
+        const interestRate: number = 0.1;
+        const frequencyType: number = 3;
+
+        // Running the function
+        const interest: number = calculateInterest(principal, interestRate, frequencyType);
+
+        // Checking the results
+        expect(interest).toBe(100);
+    });
+
+    it('Should calculate the monthly interest correctly', () => {
+        // Preparing the test data
+        const principal: number = 1000;
+        const interestRate: number = 0.1;
+        const frequencyType: number = 2;
+
+        // Running the function
+        const interest: number = calculateInterest(principal, interestRate, frequencyType);
+
+        // Checking the results
+        expect(parseFloat(interest.toFixed(4))).toBe(8.3333);
+    });
+
+    it('Should calculate the weekly interest correctly', () => {
+        // Preparing the test data
+        const principal: number = 1000;
+        const interestRate: number = 0.1;
+        const frequencyType: number = 1;
+
+        // Running the function
+        const interest: number = calculateInterest(principal, interestRate, frequencyType);
+
+        // Checking the results
+        expect(parseFloat(interest.toFixed(4))).toBe(1.9231);
+    });
+
+    it('Should calculate the daily interest correctly', () => {
+        // Preparing the test data
+        const principal: number = 1000;
+        const interestRate: number = 0.1;
+        const frequencyType: number = 0;
+
+        // Running the function
+        const interest: number = calculateInterest(principal, interestRate, frequencyType);
+
+        // Checking the results
+        expect(parseFloat(interest.toFixed(3))).toBe(0.274);
     });
 });

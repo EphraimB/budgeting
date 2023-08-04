@@ -280,6 +280,31 @@ describe('POST /api/payroll/taxes', () => {
         expect(consoleSpy).toHaveBeenCalledWith(error);
     });
 
+    it('should respond with an error message with return object', async () => {
+        const errorMessage = 'Error creating payroll tax';
+        const error = new Error(errorMessage);
+        mockModule(null, errorMessage);
+
+        const newPayrollTax = {
+            employee_id: 1,
+            name: 'Federal Income Tax',
+            rate: 0.15
+        };
+
+        mockRequest.body = newPayrollTax;
+
+        const { createPayrollTaxReturnObject } = await import('../../controllers/payrollTaxesController.js');
+
+        await createPayrollTaxReturnObject(mockRequest as Request, mockResponse);
+
+        // Assert
+        expect(mockResponse.status).toHaveBeenCalledWith(400);
+        expect(mockResponse.json).toHaveBeenCalledWith({ message: 'Error getting payroll tax' });
+
+        // Assert that the error was logged
+        expect(consoleSpy).toHaveBeenCalledWith(error);
+    });
+
     it('should respond with the created payroll tax', async () => {
         const id = 1;
 
@@ -301,6 +326,54 @@ describe('POST /api/payroll/taxes', () => {
         expect(mockResponse.status).toHaveBeenCalledWith(201);
         expect(mockResponse.json).toHaveBeenCalledWith(payrollTaxes.filter(payrollTax => payrollTax.payroll_taxes_id === id));
     });
+
+    it('should return a 500 error when the script fails', async () => {
+        mockModule(payrollTaxes.filter(payrollTax => payrollTax.payroll_taxes_id === 1));
+
+        jest.mock('child_process', () => ({
+            exec: jest.fn((_: string, callback: (error: Error | null, stdout: string | Buffer | null, stderr: string | Buffer | null) => void) => {
+                callback(new Error('Test error'), null, null);
+            }),
+        }));
+
+        const { createPayrollTax } = await import('../../controllers/payrollTaxesController.js');
+
+        mockRequest.body = {
+            employee_id: 1,
+            name: 'Federal Income Tax',
+            rate: 0.15
+        };
+
+        await createPayrollTax(mockRequest as Request, mockResponse as Response, mockNext);
+
+        expect(mockResponse.status).toHaveBeenCalledWith(500);
+        expect(mockResponse.send).toHaveBeenCalledWith('Failed to execute script for updating cron job payrolls information');
+    });
+
+    it('should return a 404 error if the payroll tax does not exist', async () => {
+        mockModule([]);
+
+        jest.mock('child_process', () => {
+            return {
+                exec: jest.fn((command: string, callback: (error: Error | null, stdout: string, stderr: string) => void) => {
+                    callback(null, 'mock stdout', 'mock stderr');
+                })
+            };
+        });
+
+        const { createPayrollTaxReturnObject } = await import('../../controllers/payrollTaxesController.js');
+
+        mockRequest.body = {
+            employee_id: 1,
+            name: 'Federal Income Tax',
+            rate: 0.15
+        };
+
+        await createPayrollTaxReturnObject(mockRequest as Request, mockResponse as Response);
+
+        expect(mockResponse.status).toHaveBeenCalledWith(404);
+        expect(mockResponse.send).toHaveBeenCalledWith('Payroll tax not found');
+    });
 });
 
 describe('PUT /api/payroll/taxes/:id', () => {
@@ -321,13 +394,6 @@ describe('PUT /api/payroll/taxes/:id', () => {
         const { updatePayrollTax } = await import('../../controllers/payrollTaxesController.js');
 
         await updatePayrollTax(mockRequest as Request, mockResponse, mockNext);
-
-        const newPayrollTaxesReturnObj = [{
-            payroll_taxes_id: id,
-            employee_id: 1,
-            name: 'Federal Income Tax',
-            rate: 0.1
-        }];
 
         // Assert
         expect(mockNext).toHaveBeenCalled();
@@ -405,11 +471,89 @@ describe('PUT /api/payroll/taxes/:id', () => {
         expect(mockResponse.status).toHaveBeenCalledWith(200);
         expect(mockResponse.json).toHaveBeenCalledWith(newPayrollTaxesReturnObj);
     });
+
+    it('should return a 404 error if the payroll tax does not exist in the return object', async () => {
+        mockModule([]);
+
+        const updatedPayrollTax = {
+            employee_id: 1,
+            name: 'Federal Income Tax',
+            rate: 0.1
+        };
+
+        mockRequest.params = { id: 1 };
+        mockRequest.body = updatedPayrollTax;
+
+        const { updatePayrollTaxReturnObject } = await import('../../controllers/payrollTaxesController.js');
+
+        await updatePayrollTaxReturnObject(mockRequest as Request, mockResponse);
+
+        expect(mockResponse.status).toHaveBeenCalledWith(404);
+        expect(mockResponse.send).toHaveBeenCalledWith('Payroll tax not found');
+    });
+
+    it('should respond with an error message with return object', async () => {
+        const errorMessage = 'Error updating payroll tax';
+        const error = new Error(errorMessage);
+        mockModule(null, errorMessage);
+
+        const updatedPayrollTax = {
+            employee_id: 1,
+            name: 'Federal Income Tax',
+            rate: 0.1
+        };
+
+        mockRequest.params = { id: 1 };
+        mockRequest.body = updatedPayrollTax;
+
+        const { updatePayrollTaxReturnObject } = await import('../../controllers/payrollTaxesController.js');
+
+        await updatePayrollTaxReturnObject(mockRequest as Request, mockResponse);
+
+        // Assert
+        expect(mockResponse.status).toHaveBeenCalledWith(400);
+        expect(mockResponse.json).toHaveBeenCalledWith({ message: 'Error getting payroll tax' });
+
+        // Assert that the error was logged
+        expect(consoleSpy).toHaveBeenCalledWith(error);
+    });
+
+    it('should return a 500 error when the script fails', async () => {
+        mockModule(payrollTaxes.filter(payrollTax => payrollTax.payroll_taxes_id === 1));
+
+        jest.mock('child_process', () => ({
+            exec: jest.fn((_: string, callback: (error: Error | null, stdout: string | Buffer | null, stderr: string | Buffer | null) => void) => {
+                callback(new Error('Test error'), null, null);
+            }),
+        }));
+
+        const { updatePayrollTax } = await import('../../controllers/payrollTaxesController.js');
+
+        mockRequest.params = { id: 1 };
+        mockRequest.body = {
+            employee_id: 1,
+            name: 'Federal Income Tax',
+            rate: 0.15
+        };
+
+        await updatePayrollTax(mockRequest as Request, mockResponse as Response, mockNext);
+
+        expect(mockResponse.status).toHaveBeenCalledWith(500);
+        expect(mockResponse.send).toHaveBeenCalledWith('Failed to execute script for updating cron job payrolls information');
+    });
 });
 
 describe('DELETE /api/payroll/taxes/:id', () => {
     it('should call next on the middleware', async () => {
         mockModule('Successfully deleted payroll tax');
+
+        jest.mock('child_process', () => {
+            return {
+                exec: jest.fn((command: string, callback: (error: Error | null, stdout: string, stderr: string) => void) => {
+                    callback(null, 'mock stdout', 'mock stderr');
+                })
+            };
+        });
 
         mockRequest.params = { id: 1 };
         mockRequest.query = { employee_id: 1 };
@@ -471,5 +615,25 @@ describe('DELETE /api/payroll/taxes/:id', () => {
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(200);
         expect(mockResponse.send).toHaveBeenCalledWith('Successfully deleted payroll tax');
+    });
+
+    it('should return a 500 error when the script fails', async () => {
+        mockModule('Successfully deleted payroll tax');
+
+        jest.mock('child_process', () => ({
+            exec: jest.fn((_: string, callback: (error: Error | null, stdout: string | Buffer | null, stderr: string | Buffer | null) => void) => {
+                callback(new Error('Test error'), null, null);
+            }),
+        }));
+
+        mockRequest.params = { id: 1 };
+        mockRequest.query = { employee_id: 1 };
+
+        const { deletePayrollTax } = await import('../../controllers/payrollTaxesController.js');
+
+        await deletePayrollTax(mockRequest as Request, mockResponse as Response, mockNext);
+
+        expect(mockResponse.status).toHaveBeenCalledWith(500);
+        expect(mockResponse.send).toHaveBeenCalledWith('Failed to execute script for updating cron job payrolls information');
     });
 });

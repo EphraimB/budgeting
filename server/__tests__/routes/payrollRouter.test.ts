@@ -42,7 +42,7 @@ describe('GET /', () => {
             .set('Accept', 'application/json')
             .expect('Content-Type', /json/);
 
-            console.log(response.body);
+        console.log(response.body);
         expect(response.status).toBe(200);
         expect(response.body).toEqual({ message: 'success' });
     });

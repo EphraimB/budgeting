@@ -1,32 +1,32 @@
-import { NextFunction, Request, Response } from 'express';
-import { transferQueries, cronJobQueries } from '../models/queryData.js';
-import scheduleCronJob from '../crontab/scheduleCronJob.js';
-import deleteCronJob from '../crontab/deleteCronJob.js';
-import { handleError, executeQuery } from '../utils/helperFunctions.js';
-import { Transfer } from '../types/types.js';
+import { type NextFunction, type Request, type Response } from "express";
+import { transferQueries, cronJobQueries } from "../models/queryData.js";
+import scheduleCronJob from "../crontab/scheduleCronJob.js";
+import deleteCronJob from "../crontab/deleteCronJob.js";
+import { handleError, executeQuery } from "../utils/helperFunctions.js";
+import { type Transfer } from "../types/types.js";
 
 interface TransferInput {
-    transfer_id: string;
-    cron_job_id?: string;
-    source_account_id: string;
-    destination_account_id: string;
-    transfer_amount: string;
-    transfer_title: string;
-    transfer_description: string;
-    frequency_type: string;
-    frequency_type_variable: string;
-    frequency_day_of_month: string;
-    frequency_day_of_week: string;
-    frequency_week_of_month: string;
-    frequency_month_of_year: string;
-    transfer_begin_date: string;
-    transfer_end_date: string;
-    date_created: string;
-    date_modified: string;
+  transfer_id: string;
+  cron_job_id?: string;
+  source_account_id: string;
+  destination_account_id: string;
+  transfer_amount: string;
+  transfer_title: string;
+  transfer_description: string;
+  frequency_type: string;
+  frequency_type_variable: string;
+  frequency_day_of_month: string;
+  frequency_day_of_week: string;
+  frequency_week_of_month: string;
+  frequency_month_of_year: string;
+  transfer_begin_date: string;
+  transfer_end_date: string;
+  date_created: string;
+  date_modified: string;
 }
 
 /**
- * 
+ *
  * @param transfer - The transfer object to parse
  * @returns The parsed transfer object
  */
@@ -46,16 +46,19 @@ const transfersParse = (transfer: TransferInput): Transfer => ({
     frequency_week_of_month: parseInt(transfer.frequency_week_of_month) || null,
     frequency_month_of_year: parseInt(transfer.frequency_month_of_year) || null,
     date_created: transfer.date_created,
-    date_modified: transfer.date_modified
+    date_modified: transfer.date_modified,
 });
 
 /**
- * 
+ *
  * @param request - The request object
  * @param response - The response object
  * Sends a response with all transfers or a single transfer if an id is provided
  */
-export const getTransfers = async (request: Request, response: Response): Promise<void> => {
+export const getTransfers = async (
+    request: Request,
+    response: Response,
+): Promise<void> => {
     const { account_id, id } = request.query;
 
     try {
@@ -79,7 +82,7 @@ export const getTransfers = async (request: Request, response: Response): Promis
         const results = await executeQuery(query, params);
 
         if ((id || account_id) && results.length === 0) {
-            response.status(404).send('Transfer not found');
+            response.status(404).send("Transfer not found");
             return;
         }
 
@@ -89,18 +92,31 @@ export const getTransfers = async (request: Request, response: Response): Promis
         response.status(200).json(transfers);
     } catch (error) {
         console.error(error); // Log the error on the server side
-        handleError(response, `Error getting ${id ? 'transfer' : (account_id ? 'transfers for given account_id' : 'transfers')}`);
+        handleError(
+            response,
+            `Error getting ${
+                id
+                    ? "transfer"
+                    : account_id
+                        ? "transfers for given account_id"
+                        : "transfers"
+            }`,
+        );
     }
 };
 
 /**
- * 
+ *
  * @param request - The request object
  * @param response - The response object
  * @param next - The next function
  * Sends a response with the newly created transfer
  */
-export const createTransfer = async (request: Request, response: Response, next: NextFunction): Promise<void> => {
+export const createTransfer = async (
+    request: Request,
+    response: Response,
+    next: NextFunction,
+): Promise<void> => {
     const {
         source_account_id,
         destination_account_id,
@@ -114,25 +130,28 @@ export const createTransfer = async (request: Request, response: Response, next:
         frequency_week_of_month,
         frequency_month_of_year,
         begin_date,
-        end_date
+        end_date,
     } = request.body;
 
     try {
-        const transferResult = await executeQuery<TransferInput>(transferQueries.createTransfer, [
-            source_account_id,
-            destination_account_id,
-            amount,
-            title,
-            description,
-            frequency_type,
-            frequency_type_variable,
-            frequency_day_of_month,
-            frequency_day_of_week,
-            frequency_week_of_month,
-            frequency_month_of_year,
-            begin_date,
-            end_date
-        ]);
+        const transferResult = await executeQuery<TransferInput>(
+            transferQueries.createTransfer,
+            [
+                source_account_id,
+                destination_account_id,
+                amount,
+                title,
+                description,
+                frequency_type,
+                frequency_type_variable,
+                frequency_day_of_month,
+                frequency_day_of_week,
+                frequency_week_of_month,
+                frequency_month_of_year,
+                begin_date,
+                end_date,
+            ],
+        );
 
         // Parse the data to correct format and return an object
         const transfers: Transfer[] = transferResult.map(transfersParse);
@@ -151,59 +170,75 @@ export const createTransfer = async (request: Request, response: Response, next:
             frequency_day_of_week,
             frequency_week_of_month,
             frequency_month_of_year,
-            scriptPath: '/app/dist/scripts/createTransaction.sh',
-            type: 'transfer'
+            scriptPath: "/app/dist/scripts/createTransaction.sh",
+            type: "transfer",
         };
 
         const { cronDate, uniqueId } = await scheduleCronJob(cronParams);
-        const cronJobResult = await executeQuery(cronJobQueries.createCronJob, [uniqueId, cronDate]);
+        const cronJobResult = await executeQuery(cronJobQueries.createCronJob, [
+            uniqueId,
+            cronDate,
+        ]);
 
         const cronId: number = cronJobResult[0].cron_job_id;
 
-        console.log('Cron job created ' + cronId);
+        console.log("Cron job created " + cronId);
 
-        await executeQuery(transferQueries.updateTransferWithCronJobId, [cronId, transfers[0].transfer_id]);
+        await executeQuery(transferQueries.updateTransferWithCronJobId, [
+            cronId,
+            transfers[0].transfer_id,
+        ]);
 
         request.transfer_id = transfers[0].transfer_id;
 
         next();
 
-        // response.status(201).json(transfers);
+    // response.status(201).json(transfers);
     } catch (error) {
         console.error(error); // Log the error on the server side
-        handleError(response, 'Error creating transfer');
+        handleError(response, "Error creating transfer");
     }
 };
 
 /**
- * 
+ *
  * @param request - Request object
  * @param response - Response object
  * Sends a response with the created transfer
  */
-export const createTransferReturnObject = async (request: Request, response: Response): Promise<void> => {
+export const createTransferReturnObject = async (
+    request: Request,
+    response: Response,
+): Promise<void> => {
     const { transfer_id } = request;
 
     try {
-        const transfer = await executeQuery<TransferInput>(transferQueries.getTransfersById, [transfer_id]);
+        const transfer = await executeQuery<TransferInput>(
+            transferQueries.getTransfersById,
+            [transfer_id],
+        );
 
         const modifiedTransfers = transfer.map(transfersParse);
 
         response.status(201).json(modifiedTransfers);
     } catch (error) {
         console.error(error); // Log the error on the server side
-        handleError(response, 'Error creating transfer');
+        handleError(response, "Error creating transfer");
     }
 };
 
 /**
- * 
+ *
  * @param request - The request object
  * @param response - The response object
  * @param next - The next function
  * Sends a response with the updated transfer
  */
-export const updateTransfer = async (request: Request, response: Response, next: NextFunction): Promise<void> => {
+export const updateTransfer = async (
+    request: Request,
+    response: Response,
+    next: NextFunction,
+): Promise<void> => {
     const id: number = parseInt(request.params.id);
     const {
         source_account_id,
@@ -218,7 +253,7 @@ export const updateTransfer = async (request: Request, response: Response, next:
         frequency_week_of_month,
         frequency_month_of_year,
         begin_date,
-        end_date
+        end_date,
     } = request.body;
 
     try {
@@ -236,14 +271,17 @@ export const updateTransfer = async (request: Request, response: Response, next:
             frequency_day_of_week,
             frequency_week_of_month,
             frequency_month_of_year,
-            scriptPath: '/app/dist/scripts/createTransaction.sh',
-            type: 'transfer'
+            scriptPath: "/app/dist/scripts/createTransaction.sh",
+            type: "transfer",
         };
 
-        const transferResults = await executeQuery(transferQueries.getTransfersById, [id]);
+        const transferResults = await executeQuery(
+            transferQueries.getTransfersById,
+            [id],
+        );
 
         if (transferResults.length === 0) {
-            response.status(404).send('Transfer not found');
+            response.status(404).send("Transfer not found");
             return;
         }
 
@@ -253,29 +291,36 @@ export const updateTransfer = async (request: Request, response: Response, next:
         if (results.length > 0) {
             await deleteCronJob(results[0].unique_id);
         } else {
-            console.error('Cron job not found');
+            console.error("Cron job not found");
         }
 
         const { cronDate, uniqueId } = await scheduleCronJob(cronParams);
 
-        await executeQuery(cronJobQueries.updateCronJob, [uniqueId, cronDate, cronId]);
-
-        const updateResults = await executeQuery<TransferInput>(transferQueries.updateTransfer, [
-            source_account_id,
-            destination_account_id,
-            amount,
-            title,
-            description,
-            frequency_type,
-            frequency_type_variable,
-            frequency_day_of_month,
-            frequency_day_of_week,
-            frequency_week_of_month,
-            frequency_month_of_year,
-            begin_date,
-            end_date,
-            id
+        await executeQuery(cronJobQueries.updateCronJob, [
+            uniqueId,
+            cronDate,
+            cronId,
         ]);
+
+        const updateResults = await executeQuery<TransferInput>(
+            transferQueries.updateTransfer,
+            [
+                source_account_id,
+                destination_account_id,
+                amount,
+                title,
+                description,
+                frequency_type,
+                frequency_type_variable,
+                frequency_day_of_month,
+                frequency_day_of_week,
+                frequency_week_of_month,
+                frequency_month_of_year,
+                begin_date,
+                end_date,
+                id,
+            ],
+        );
 
         // Parse the data to correct format and return an object
         const transfers: Transfer[] = updateResults.map(transfersParse);
@@ -284,49 +329,62 @@ export const updateTransfer = async (request: Request, response: Response, next:
 
         next();
 
-        // response.status(200).json(transfers);
+    // response.status(200).json(transfers);
     } catch (error) {
         console.error(error); // Log the error on the server side
-        handleError(response, 'Error updating transfer');
+        handleError(response, "Error updating transfer");
     }
 };
 
 /**
- * 
+ *
  * @param request - Request object
  * @param response - Response object
  * Sends a response with the updated transfer
  */
-export const updateTransferReturnObject = async (request: Request, response: Response): Promise<void> => {
+export const updateTransferReturnObject = async (
+    request: Request,
+    response: Response,
+): Promise<void> => {
     const { transfer_id } = request;
 
     try {
-        const expenses = await executeQuery<TransferInput>(transferQueries.getTransfersById, [transfer_id]);
+        const expenses = await executeQuery<TransferInput>(
+            transferQueries.getTransfersById,
+            [transfer_id],
+        );
 
         const modifiedTransfers = expenses.map(transfersParse);
 
         response.status(200).json(modifiedTransfers);
     } catch (error) {
         console.error(error); // Log the error on the server side
-        handleError(response, 'Error creating transfer');
+        handleError(response, "Error getting transfer");
     }
 };
 
 /**
- * 
+ *
  * @param request - The request object
  * @param response - The response object
  * @param next - The next function
  * Sends a response with the deleted transfer
  */
-export const deleteTransfer = async (request: Request, response: Response, next: NextFunction): Promise<void> => {
+export const deleteTransfer = async (
+    request: Request,
+    response: Response,
+    next: NextFunction,
+): Promise<void> => {
     try {
         const { id } = request.params;
 
-        const transferResults = await executeQuery(transferQueries.getTransfersById, [id]);
+        const transferResults = await executeQuery(
+            transferQueries.getTransfersById,
+            [id],
+        );
 
         if (transferResults.length === 0) {
-            response.status(404).send('Transfer not found');
+            response.status(404).send("Transfer not found");
             return;
         }
 
@@ -338,7 +396,7 @@ export const deleteTransfer = async (request: Request, response: Response, next:
         if (results.length > 0) {
             await deleteCronJob(results[0].unique_id);
         } else {
-            console.error('Cron job not found');
+            console.error("Cron job not found");
         }
 
         await executeQuery(cronJobQueries.deleteCronJob, [cronId]);
@@ -346,16 +404,19 @@ export const deleteTransfer = async (request: Request, response: Response, next:
         next();
     } catch (error) {
         console.error(error); // Log the error on the server side
-        handleError(response, 'Error deleting transfer');
+        handleError(response, "Error deleting transfer");
     }
 };
 
 /**
- * 
+ *
  * @param request - Request object
  * @param response - Response object
  * Sends a response with the deleted transfer
  */
-export const deleteTransferReturnObject = async (request: Request, response: Response): Promise<void> => {
-    response.status(200).send('Transfer deleted successfully');
+export const deleteTransferReturnObject = async (
+    request: Request,
+    response: Response,
+): Promise<void> => {
+    response.status(200).send("Transfer deleted successfully");
 };

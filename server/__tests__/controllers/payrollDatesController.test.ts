@@ -292,6 +292,59 @@ describe('POST /api/payroll/dates', () => {
         expect(consoleSpy).toHaveBeenCalledWith(error);
     });
 
+    it('should return a 500 error if the script cannot execute', async () => {
+        // Arrange
+        mockModule(payrollDates.filter(payrollDate => payrollDate.payroll_date_id === 1));
+
+        jest.mock('child_process', () => ({
+            exec: jest.fn((_: string, callback: (error: Error | null, stdout: string | Buffer | null, stderr: string | Buffer | null) => void) => {
+                callback(new Error('Test error'), null, null);
+            }),
+        }));
+
+        const newPayrollDate = {
+            employee_id: 1,
+            start_day: 1,
+            end_day: 15
+        };
+
+        const { createPayrollDate } = await import('../../controllers/payrollDatesController.js');
+
+        mockRequest.body = newPayrollDate;
+
+        await createPayrollDate(mockRequest as Request, mockResponse, mockNext);
+
+        // Assert
+        expect(mockResponse.status).toHaveBeenCalledWith(500);
+        expect(mockResponse.send).toHaveBeenCalledWith('Error executing script');
+    });
+
+    it('should respond with an error message', async () => {
+        // Arrange
+        const errorMessage = 'Error creating payroll date';
+        const error = new Error(errorMessage);
+        mockModule(null, errorMessage);
+
+        const newPayrollDate = {
+            employee_id: 1,
+            start_day: 1,
+            end_day: 15
+        };
+
+        const { createPayrollDateReturnObject } = await import('../../controllers/payrollDatesController.js');
+
+        mockRequest.body = newPayrollDate;
+
+        await createPayrollDateReturnObject(mockRequest as Request, mockResponse);
+
+        // Assert
+        expect(mockResponse.status).toHaveBeenCalledWith(400);
+        expect(mockResponse.json).toHaveBeenCalledWith({ message: 'Error creating payroll date' });
+
+        // Assert that the error was logged
+        expect(consoleSpy).toHaveBeenCalledWith(error);
+    });
+
     it('should respond with the created payroll date', async () => {
         // Arrange
         mockModule(payrollDates.filter(payrollDate => payrollDate.payroll_date_id === 1));
@@ -363,6 +416,33 @@ describe('PUT /api/payroll/dates/:id', () => {
         expect(consoleSpy).toHaveBeenCalledWith(error);
     });
 
+    it('should respond with an error message', async () => {
+        // Arrange
+        const errorMessage = 'Error updating payroll date';
+        const error = new Error(errorMessage);
+        mockModule(null, errorMessage);
+
+        const updatedPayrollDate = {
+            employee_id: 1,
+            start_day: 1,
+            end_day: 15
+        };
+
+        const { updatePayrollDateReturnObject } = await import('../../controllers/payrollDatesController.js');
+
+        mockRequest.params = { id: 1 };
+        mockRequest.body = updatedPayrollDate;
+
+        await updatePayrollDateReturnObject(mockRequest as Request, mockResponse);
+
+        // Assert
+        expect(mockResponse.status).toHaveBeenCalledWith(400);
+        expect(mockResponse.json).toHaveBeenCalledWith({ message: 'Error updating payroll date' });
+
+        // Assert that the error was logged
+        expect(consoleSpy).toHaveBeenCalledWith(error);
+    });
+
     it('should respond with a 404 error message when the payroll date does not exist', async () => {
         // Arrange
         mockModule([]);
@@ -378,6 +458,33 @@ describe('PUT /api/payroll/dates/:id', () => {
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(404);
         expect(mockResponse.send).toHaveBeenCalledWith('Payroll date not found');
+    });
+
+    it('should return a 500 error if the script cannot execute', async () => {
+        // Arrange
+        mockModule(payrollDates.filter(payrollDate => payrollDate.payroll_date_id === 1));
+
+        jest.mock('child_process', () => ({
+            exec: jest.fn((_: string, callback: (error: Error | null, stdout: string | Buffer | null, stderr: string | Buffer | null) => void) => {
+                callback(new Error('Test error'), null, null);
+            }),
+        }));
+
+        const newPayrollDate = {
+            employee_id: 1,
+            start_day: 1,
+            end_day: 15
+        };
+
+        const { createPayrollDate } = await import('../../controllers/payrollDatesController.js');
+
+        mockRequest.body = newPayrollDate;
+
+        await createPayrollDate(mockRequest as Request, mockResponse, mockNext);
+
+        // Assert
+        expect(mockResponse.status).toHaveBeenCalledWith(500);
+        expect(mockResponse.send).toHaveBeenCalledWith('Error executing script');
     });
 
     it('should respond with the updated payroll date', async () => {
@@ -455,6 +562,28 @@ describe('DELETE /api/payroll/dates/:id', () => {
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(404);
         expect(mockResponse.send).toHaveBeenCalledWith('Payroll date not found');
+    });
+
+    it('should return a 500 error if the script cannot execute', async () => {
+        // Arrange
+        mockModule('Successfully deleted payroll date');
+
+        jest.mock('child_process', () => ({
+            exec: jest.fn((_: string, callback: (error: Error | null, stdout: string | Buffer | null, stderr: string | Buffer | null) => void) => {
+                callback(new Error('Test error'), null, null);
+            }),
+        }));
+
+        const { deletePayrollDate } = await import('../../controllers/payrollDatesController.js');
+
+        mockRequest.params = { id: 1 };
+        mockRequest.query = { employee_id: 1 };
+
+        await deletePayrollDate(mockRequest as Request, mockResponse, mockNext);
+
+        // Assert
+        expect(mockResponse.status).toHaveBeenCalledWith(500);
+        expect(mockResponse.send).toHaveBeenCalledWith('Error executing script');
     });
 
     it('should respond with a success message', async () => {
