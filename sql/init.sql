@@ -25,6 +25,7 @@ CREATE TABLE IF NOT EXISTS taxes (
   tax_rate numeric(8, 6) NOT NULL,
   tax_title VARCHAR(255) NOT NULL,
   tax_description VARCHAR(255) NOT NULL,
+  tax_type INT NOT NULL,
   date_created TIMESTAMP NOT NULL,
   date_modified TIMESTAMP NOT NULL
 );
@@ -145,6 +146,27 @@ CREATE TABLE IF NOT EXISTS transfers (
   frequency_month_of_year INT,
   transfer_begin_date TIMESTAMP NOT NULL,
   transfer_end_date TIMESTAMP,
+  date_created TIMESTAMP NOT NULL,
+  date_modified TIMESTAMP NOT NULL
+);
+
+-- Create a income table in postgres
+CREATE TABLE IF NOT EXISTS income (
+  income_id SERIAL PRIMARY KEY,
+  account_id INT NOT NULL REFERENCES accounts(account_id),
+  tax_id INT REFERENCES taxes(tax_id),
+  cron_job_id INT REFERENCES cron_jobs(cron_job_id),
+  income_amount numeric(12, 2) NOT NULL,
+  income_title VARCHAR(255) NOT NULL,
+  income_description VARCHAR(255) NOT NULL,
+  frequency_type INT NOT NULL,
+  frequency_type_variable INT,
+  frequency_day_of_month INT,
+  frequency_day_of_week INT,
+  frequency_week_of_month INT,
+  frequency_month_of_year INT,
+  income_begin_date TIMESTAMP NOT NULL,
+  income_end_date TIMESTAMP,
   date_created TIMESTAMP NOT NULL,
   date_modified TIMESTAMP NOT NULL
 );

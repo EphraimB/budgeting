@@ -425,8 +425,8 @@ export const taxesQueries = {
     getTaxes: "SELECT * FROM taxes",
     getTax: "SELECT * FROM taxes WHERE tax_id = $1",
     createTax:
-        "INSERT INTO taxes (tax_rate, tax_title, tax_description) VALUES ($1, $2, $3) RETURNING *",
+        "INSERT INTO taxes (tax_rate, tax_title, tax_description, tax_type) VALUES ($1, $2, $3, $4) RETURNING *",
     updateTax:
-        "UPDATE taxes SET tax_rate = $1, tax_title = $2, tax_description = $3 WHERE tax_id = $4 RETURNING *",
+        "UPDATE taxes SET tax_rate = $1, tax_title = $2, tax_description = $3, tax_type = $4 WHERE tax_id = $5 RETURNING *",
     deleteTax: "DELETE FROM taxes WHERE tax_id = $1",
 };

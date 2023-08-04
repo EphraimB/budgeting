@@ -41,6 +41,7 @@ export interface Taxes {
   tax_rate: number;
   tax_title: string;
   tax_description: string;
+  tax_type: number;
   date_created: string;
   date_modified: string;
 }
