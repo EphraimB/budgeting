@@ -7,7 +7,7 @@ describe('determineCronValues', () => {
             date: '2023-07-11T12:00:00.000Z',
         };
 
-        const expectedCronDate = '0 8 */1 * *';
+        const expectedCronDate = '0 8 */1 * * ';
         const actualCronDate = determineCronValues(jobDetails);
 
         expect(actualCronDate).toBe(expectedCronDate);
@@ -19,7 +19,7 @@ describe('determineCronValues', () => {
             date: '2023-07-11T12:00:00.000Z',
         };
 
-        const expectedCronDate = '0 8 */7 * *';
+        const expectedCronDate = '0 8 */7 * * ';
         const actualCronDate = determineCronValues(jobDetails);
 
         expect(actualCronDate).toBe(expectedCronDate);
@@ -33,7 +33,7 @@ describe('determineCronValues', () => {
             date: '2023-07-11T12:00:00.000Z',
         };
 
-        const expectedCronDate = '0 8 * * 3';
+        const expectedCronDate = '0 8 * * 3 ';
         const actualCronDate = determineCronValues(jobDetails);
 
         expect(actualCronDate).toBe(expectedCronDate);
@@ -45,7 +45,7 @@ describe('determineCronValues', () => {
             date: '2023-07-11T12:00:00.000Z',
         };
 
-        const expectedCronDate = '0 8 11 */1 *';
+        const expectedCronDate = '0 8 11 */1 * ';
         const actualCronDate = determineCronValues(jobDetails);
 
         expect(actualCronDate).toBe(expectedCronDate);
@@ -58,7 +58,7 @@ describe('determineCronValues', () => {
             date: '2023-07-11T12:00:00.000Z',
         };
 
-        const expectedCronDate = '0 8 * * 3';
+        const expectedCronDate = '0 8 * * 3 ';
         const actualCronDate = determineCronValues(jobDetails);
 
         expect(actualCronDate).toBe(expectedCronDate);
@@ -72,7 +72,9 @@ describe('determineCronValues', () => {
             date: '2023-07-11T12:00:00.000Z',
         };
 
-        const expectedCronDate = '0 8 * * 2';
+        const cronWeekOfMonthExpression = `[ \"$(date +%m)\" != \"$(date +%m -d '1 week')\" ]`;
+
+        const expectedCronDate = `0 8 * * 3 ${cronWeekOfMonthExpression}`;
         const actualCronDate = determineCronValues(jobDetails);
 
         expect(actualCronDate).toBe(expectedCronDate);
@@ -86,7 +88,7 @@ describe('determineCronValues', () => {
             date: '2023-07-11T12:00:00.000Z',
         };
 
-        const expectedCronDate = '0 8 3 */2 *';
+        const expectedCronDate = '0 8 3 */2 * ';
         const actualCronDate = determineCronValues(jobDetails);
 
         expect(actualCronDate).toBe(expectedCronDate);
@@ -98,7 +100,7 @@ describe('determineCronValues', () => {
             date: '2023-07-11T12:00:00.000Z',
         };
 
-        const expectedCronDate = '0 8 11 */12 *';
+        const expectedCronDate = '0 8 11 */12 * ';
         const actualCronDate = determineCronValues(jobDetails);
 
         expect(actualCronDate).toBe(expectedCronDate);
