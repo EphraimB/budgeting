@@ -54,7 +54,7 @@ const determineCronValues = (jobDetails: JobDetails): string => {
             }
         } else if (frequency_type === 3) {
             if (frequency_day_of_week) {
-                cronMonth = frequency_month_of_year.toString() || "*";
+                cronMonth = frequency_month_of_year ? frequency_month_of_year.toString() : "*";
                 cronDayOfWeek = frequency_day_of_week.toString();
                 cronDay = frequency_day_of_month ? frequency_day_of_month.toString() : "*";
                 cronWeekOfMonthExpression = frequency_week_of_month ? `[ "$(date +\%m)" != "$(date +\%m -d '${frequency_week_of_month} week')" ] &&` : "";

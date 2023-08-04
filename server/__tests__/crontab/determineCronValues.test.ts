@@ -105,4 +105,46 @@ describe('determineCronValues', () => {
 
         expect(actualCronDate).toBe(expectedCronDate);
     });
+
+    it('should determine cron values correctly for frequency type 3 with day of week', () => {
+        const jobDetails = {
+            frequency_type: 3,
+            frequency_day_of_week: 3,
+            date: '2023-07-11T12:00:00.000Z',
+        };
+
+        const expectedCronDate = '0 8 * * 3 ';
+        const actualCronDate = determineCronValues(jobDetails);
+
+        expect(actualCronDate).toBe(expectedCronDate);
+    });
+
+    it('should determine cron values correctly for frequency type 3 with week of month', () => {
+        const jobDetails = {
+            frequency_type: 3,
+            frequency_day_of_week: 3,
+            frequency_week_of_month: 1,
+            date: '2023-07-11T12:00:00.000Z',
+        };
+
+        const cronWeekOfMonthExpression = `[ \"$(date +%m)\" != \"$(date +%m -d '1 week')\" ] &&`;
+
+        const expectedCronDate = `0 8 * * 3 ${cronWeekOfMonthExpression}`;
+        const actualCronDate = determineCronValues(jobDetails);
+
+        expect(actualCronDate).toBe(expectedCronDate);
+    });
+
+    it('should determine cron values correctly for frequency type 3 with day of month', () => {
+        const jobDetails = {
+            frequency_type: 3,
+            frequency_day_of_month: 3,
+            date: '2023-07-11T12:00:00.000Z',
+        };
+
+        const expectedCronDate = '0 8 3 */12 * ';
+        const actualCronDate = determineCronValues(jobDetails);
+
+        expect(actualCronDate).toBe(expectedCronDate);
+    });
 });

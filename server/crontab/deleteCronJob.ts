@@ -11,7 +11,7 @@ import { writeFileSync } from "fs";
  */
 const deleteCronJob = async (uniqueId: string): Promise<void> => {
     try {
-    // Acquire the lock
+        // Acquire the lock
         const release = await lock("/app/tmp/cronjob.lock");
 
         try {
@@ -34,14 +34,12 @@ const deleteCronJob = async (uniqueId: string): Promise<void> => {
             execSync(`crontab ${tmpCronFile}`);
         } catch (error) {
             console.error(`Error deleting cron job: ${error}`);
-            throw error;
         } finally {
             // Release the lock
             await release();
         }
     } catch (err) {
         console.error("Failed to acquire or release lock");
-        throw err;
     }
 };
 
