@@ -280,6 +280,31 @@ describe('POST /api/payroll/taxes', () => {
         expect(consoleSpy).toHaveBeenCalledWith(error);
     });
 
+    it('should respond with an error message with return object', async () => {
+        const errorMessage = 'Error creating payroll tax';
+        const error = new Error(errorMessage);
+        mockModule(null, errorMessage);
+
+        const newPayrollTax = {
+            employee_id: 1,
+            name: 'Federal Income Tax',
+            rate: 0.15
+        };
+
+        mockRequest.body = newPayrollTax;
+
+        const { createPayrollTaxReturnObject } = await import('../../controllers/payrollTaxesController.js');
+
+        await createPayrollTaxReturnObject(mockRequest as Request, mockResponse);
+
+        // Assert
+        expect(mockResponse.status).toHaveBeenCalledWith(400);
+        expect(mockResponse.json).toHaveBeenCalledWith({ message: 'Error getting payroll tax' });
+
+        // Assert that the error was logged
+        expect(consoleSpy).toHaveBeenCalledWith(error);
+    });
+
     it('should respond with the created payroll tax', async () => {
         const id = 1;
 
@@ -370,13 +395,6 @@ describe('PUT /api/payroll/taxes/:id', () => {
 
         await updatePayrollTax(mockRequest as Request, mockResponse, mockNext);
 
-        const newPayrollTaxesReturnObj = [{
-            payroll_taxes_id: id,
-            employee_id: 1,
-            name: 'Federal Income Tax',
-            rate: 0.1
-        }];
-
         // Assert
         expect(mockNext).toHaveBeenCalled();
     });
@@ -452,6 +470,52 @@ describe('PUT /api/payroll/taxes/:id', () => {
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(200);
         expect(mockResponse.json).toHaveBeenCalledWith(newPayrollTaxesReturnObj);
+    });
+
+    it('should return a 404 error if the payroll tax does not exist in the return object', async () => {
+        mockModule([]);
+
+        const updatedPayrollTax = {
+            employee_id: 1,
+            name: 'Federal Income Tax',
+            rate: 0.1
+        };
+
+        mockRequest.params = { id: 1 };
+        mockRequest.body = updatedPayrollTax;
+
+        const { updatePayrollTaxReturnObject } = await import('../../controllers/payrollTaxesController.js');
+
+        await updatePayrollTaxReturnObject(mockRequest as Request, mockResponse);
+
+        expect(mockResponse.status).toHaveBeenCalledWith(404);
+        expect(mockResponse.send).toHaveBeenCalledWith('Payroll tax not found');
+    });
+
+    it('should respond with an error message with return object', async () => {
+        const errorMessage = 'Error updating payroll tax';
+        const error = new Error(errorMessage);
+        mockModule(null, errorMessage);
+
+        const updatedPayrollTax = {
+            employee_id: 1,
+            name: 'Federal Income Tax',
+            rate: 0.1
+        };
+
+        mockRequest.params = { id: 1 };
+        mockRequest.body = updatedPayrollTax;
+
+        const { updatePayrollTaxReturnObject } = await import('../../controllers/payrollTaxesController.js');
+
+        await updatePayrollTaxReturnObject(mockRequest as Request, mockResponse);
+
+        // Assert
+        expect(mockResponse.status).toHaveBeenCalledWith(400);
+        expect(mockResponse.json).toHaveBeenCalledWith({ message: 'Error getting payroll tax' });
+
+        // Assert that the error was logged
+        expect(consoleSpy).toHaveBeenCalledWith(error);
     });
 
     it('should return a 500 error when the script fails', async () => {
