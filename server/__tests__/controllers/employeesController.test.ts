@@ -238,6 +238,29 @@ describe('PUT /api/payroll/employee/:id', () => {
         expect(consoleSpy).toHaveBeenCalledWith(error);
     });
 
+    it('should respond with an error message in return object', async () => {
+        // Arrange
+        const updatedEmployee = employees.filter(employee => employee.employee_id === 1);
+
+        const errorMessage = 'Error updating employee';
+        const error = new Error(errorMessage);
+        mockModule(null, errorMessage);
+
+        mockRequest.params = { id: 1 };
+        mockRequest.body = updatedEmployee;
+
+        const { updateEmployeeReturnObject } = await import('../../controllers/employeesController.js');
+
+        await updateEmployeeReturnObject(mockRequest as Request, mockResponse);
+
+        // Assert
+        expect(mockResponse.status).toHaveBeenCalledWith(400);
+        expect(mockResponse.json).toHaveBeenCalledWith({ message: 'Error updating employee' });
+
+        // Check that the error was logged
+        expect(consoleSpy).toHaveBeenCalledWith(error);
+    });
+
     it('should respond with a 404 error message when the employee does not exist', async () => {
         // Arrange
         mockModule([[], null, null]);

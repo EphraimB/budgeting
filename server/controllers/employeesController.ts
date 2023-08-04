@@ -269,7 +269,6 @@ export const deleteEmployee = async (
                 });
                 return;
             }
-            console.log(`Script output: ${stdout}`);
         });
 
         response.status(200).send("Successfully deleted employee");

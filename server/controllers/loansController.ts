@@ -485,7 +485,7 @@ export const updateLoanReturnObject = async (
         response.status(200).json(modifiedLoans);
     } catch (error) {
         console.error(error); // Log the error on the server side
-        handleError(response, "Error creating loan");
+        handleError(response, "Error getting loan");
     }
 };
 
