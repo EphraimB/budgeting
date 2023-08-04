@@ -265,6 +265,27 @@ describe('POST /api/transfers', () => {
         expect(consoleSpy).toHaveBeenCalledWith(error);
     });
 
+    it('should respond with an error message with return object', async () => {
+        // Arrange
+        const errorMessage = 'Error creating transfer';
+        const error = new Error(errorMessage);
+        mockModule(null, errorMessage);
+
+        const { createTransferReturnObject } = await import('../../controllers/transfersController.js');
+
+        mockRequest.body = transfers.filter(transfer => transfer.transfer_id === 1);
+
+        // Call the function with the mock request and response
+        await createTransferReturnObject(mockRequest as Request, mockResponse);
+
+        // Assert
+        expect(mockResponse.status).toHaveBeenCalledWith(400);
+        expect(mockResponse.json).toHaveBeenCalledWith({ message: 'Error creating transfer' });
+
+        // Assert that the error was logged
+        expect(consoleSpy).toHaveBeenCalledWith(error);
+    });
+
     it('should respond with the created transfer', async () => {
         // Arrange
         const newTransfer = transfers.filter(transfer => transfer.transfer_id === 1);
@@ -318,6 +339,28 @@ describe('PUT /api/transfer/:id', () => {
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(400);
         expect(mockResponse.json).toHaveBeenCalledWith({ message: 'Error updating transfer' });
+
+        // Assert that the error was logged
+        expect(consoleSpy).toHaveBeenCalledWith(error);
+    });
+
+    it('should respond with an error message in the return object', async () => {
+        // Arrange
+        const errorMessage = 'Error updating transfer';
+        const error = new Error(errorMessage);
+        mockModule(null, errorMessage);
+
+        mockRequest.params = { id: 1 };
+        mockRequest.body = transfers.filter(transfer => transfer.transfer_id === 1);
+
+        const { updateTransferReturnObject } = await import('../../controllers/transfersController.js');
+
+        // Call the function with the mock request and response
+        await updateTransferReturnObject(mockRequest as Request, mockResponse);
+
+        // Assert
+        expect(mockResponse.status).toHaveBeenCalledWith(400);
+        expect(mockResponse.json).toHaveBeenCalledWith({ message: 'Error getting transfer' });
 
         // Assert that the error was logged
         expect(consoleSpy).toHaveBeenCalledWith(error);

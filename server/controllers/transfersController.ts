@@ -359,7 +359,7 @@ export const updateTransferReturnObject = async (
         response.status(200).json(modifiedTransfers);
     } catch (error) {
         console.error(error); // Log the error on the server side
-        handleError(response, "Error creating transfer");
+        handleError(response, "Error getting transfer");
     }
 };
 
