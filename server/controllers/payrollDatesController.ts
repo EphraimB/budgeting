@@ -108,6 +108,7 @@ export const createPayrollDate = async (
         exec(scriptCommand, (error, stdout, stderr) => {
             if (error) {
                 console.error(`Error executing script: ${error}`);
+                response.status(500).send("Error executing script");
                 return;
             }
             console.log(`Script output: ${stdout}`);
@@ -184,9 +185,9 @@ export const updatePayrollDate = async (
         exec(scriptCommand, (error, stdout, stderr) => {
             if (error) {
                 console.error(`Error executing script: ${error}`);
+                response.status(500).send("Error executing script");
                 return;
             }
-            console.log(`Script output: ${stdout}`);
         });
 
         next();
@@ -262,9 +263,9 @@ export const deletePayrollDate = async (
         exec(scriptCommand, (error, stdout, stderr) => {
             if (error) {
                 console.error(`Error executing script: ${error}`);
+                response.status(500).send("Error executing script");
                 return;
             }
-            console.log(`Script output: ${stdout}`);
         });
 
         next();
