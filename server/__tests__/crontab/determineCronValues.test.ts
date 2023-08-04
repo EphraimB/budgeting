@@ -72,7 +72,7 @@ describe('determineCronValues', () => {
             date: '2023-07-11T12:00:00.000Z',
         };
 
-        const cronWeekOfMonthExpression = `[ \"$(date +%m)\" != \"$(date +%m -d '1 week')\" ]`;
+        const cronWeekOfMonthExpression = `[ \"$(date +%m)\" != \"$(date +%m -d '1 week')\" ] &&`;
 
         const expectedCronDate = `0 8 * * 3 ${cronWeekOfMonthExpression}`;
         const actualCronDate = determineCronValues(jobDetails);
