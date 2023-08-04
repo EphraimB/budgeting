@@ -1,41 +1,54 @@
-import express, { Router } from 'express';
-import { param, query, body } from 'express-validator';
-import { getAccounts, createAccount, updateAccount, deleteAccount } from '../controllers/accountsController.js';
-import validateRequest from '../utils/validateRequest.js';
+import express, { type Router } from "express";
+import { param, query, body } from "express-validator";
+import {
+    getAccounts,
+    createAccount,
+    updateAccount,
+    deleteAccount,
+} from "../controllers/accountsController.js";
+import validateRequest from "../utils/validateRequest.js";
 
 const router: Router = express.Router();
 
-router.get('/',
+router.get(
+    "/",
     [
-        query('id').optional().isInt({ min: 1 }).withMessage('ID must be a number'),
-        validateRequest
+        query("id").optional().isInt({ min: 1 }).withMessage("ID must be a number"),
+        validateRequest,
     ],
-    getAccounts);
+    getAccounts,
+);
 
-router.post('/',
+router.post(
+    "/",
     [
-        body('name').isString().withMessage('Name must be a string'),
-        body('balance').isNumeric().withMessage('Balance must be a number'),
-        body('type').isInt().withMessage('Type must be a number'),
-        validateRequest
+        body("name").isString().withMessage("Name must be a string"),
+        body("balance").isNumeric().withMessage("Balance must be a number"),
+        body("type").isInt().withMessage("Type must be a number"),
+        validateRequest,
     ],
-    createAccount);
+    createAccount,
+);
 
-router.put('/:id',
+router.put(
+    "/:id",
     [
-        param('id').isInt({ min: 1 }).withMessage('ID must be a number'),
-        body('name').isString().withMessage('Name must be a string'),
-        body('balance').isNumeric().withMessage('Balance must be a number'),
-        body('type').isInt().withMessage('Type must be a number'),
-        validateRequest
+        param("id").isInt({ min: 1 }).withMessage("ID must be a number"),
+        body("name").isString().withMessage("Name must be a string"),
+        body("balance").isNumeric().withMessage("Balance must be a number"),
+        body("type").isInt().withMessage("Type must be a number"),
+        validateRequest,
     ],
-    updateAccount);
+    updateAccount,
+);
 
-router.delete('/:id',
+router.delete(
+    "/:id",
     [
-        param('id').isInt({ min: 1 }).withMessage('ID must be a number'),
-        validateRequest
+        param("id").isInt({ min: 1 }).withMessage("ID must be a number"),
+        validateRequest,
     ],
-    deleteAccount);
+    deleteAccount,
+);
 
 export default router;

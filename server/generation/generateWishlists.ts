@@ -1,18 +1,25 @@
-import { Wishlist, GeneratedTransaction } from '../types/types';
+import { type Wishlist, type GeneratedTransaction } from "../types/types";
 
 /**
- * 
+ *
  * @param transactions - The transactions to generate wishlists for
  * @param skippedTransactions - The transactions to skip
  * @param wishlist - The wishlist to generate
  * @param fromDate - The date to generate wishlists from
  * Generate wishlists for a given wishlist
  */
-const generateWishlists = (transactions: GeneratedTransaction[], skippedTransactions: GeneratedTransaction[], wishlist: Wishlist, fromDate: Date): void => {
+const generateWishlists = (
+    transactions: GeneratedTransaction[],
+    skippedTransactions: GeneratedTransaction[],
+    wishlist: Wishlist,
+    fromDate: Date,
+): void => {
     const allTransactions: any[] = transactions.concat(skippedTransactions);
     const wishlist_amount: number = wishlist.wishlist_amount;
 
-    allTransactions.sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+    allTransactions.sort(
+        (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime(),
+    );
 
     let affordableDate: number | undefined;
     for (let i = 0; i < allTransactions.length; i++) {
@@ -31,7 +38,12 @@ const generateWishlists = (transactions: GeneratedTransaction[], skippedTransact
 
     if (affordableDate !== undefined) {
         const newTransactionDate: Date = wishlist.wishlist_date_available
-            ? new Date(Math.max(affordableDate, new Date(wishlist.wishlist_date_available).getTime()))
+            ? new Date(
+                Math.max(
+                    affordableDate,
+                    new Date(wishlist.wishlist_date_available).getTime(),
+                ),
+            )
             : new Date(affordableDate);
 
         const newTransaction: GeneratedTransaction = {
@@ -41,7 +53,10 @@ const generateWishlists = (transactions: GeneratedTransaction[], skippedTransact
             date: newTransactionDate,
             amount: -wishlist_amount,
             tax_rate: wishlist.wishlist_tax_rate,
-            total_amount: -(wishlist_amount + (wishlist_amount * wishlist.wishlist_tax_rate)).toFixed(2)
+            total_amount: -(
+                wishlist_amount +
+        wishlist_amount * wishlist.wishlist_tax_rate
+            ).toFixed(2),
         };
 
         if (fromDate > newTransactionDate) {

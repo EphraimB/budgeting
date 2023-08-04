@@ -1,5 +1,4 @@
 import { jest } from '@jest/globals';
-import { QueryResultRow } from 'pg';
 
 // Define the type for the function that is being mocked
 type MyQueryFunction = (sql: string, params: any[]) => Promise<{ rows: any[] }>;
@@ -74,7 +73,7 @@ describe('executeQuery function', () => {
         const mockQuery = 'SELECT * FROM nonExistingTable';
         const mockError = 'Error: Table does not exist';
 
-        const result = await executeQuery(mockQuery, []);
+        await executeQuery(mockQuery, []);
         await expect(executeQuery(mockQuery, [])).rejects.toThrow(mockError);
     });
 });

@@ -1,41 +1,54 @@
-import express, { Router } from 'express';
-import { query, param, body } from 'express-validator';
-import { getTaxes, createTax, updateTax, deleteTax } from '../controllers/taxesController.js';
-import validateRequest from '../utils/validateRequest.js';
+import express, { type Router } from "express";
+import { query, param, body } from "express-validator";
+import {
+    getTaxes,
+    createTax,
+    updateTax,
+    deleteTax,
+} from "../controllers/taxesController.js";
+import validateRequest from "../utils/validateRequest.js";
 
 const router: Router = express.Router();
 
-router.get('/',
+router.get(
+    "/",
     [
-        query('id').optional().isInt({ min: 1 }).withMessage('ID must be a number'),
-        validateRequest
+        query("id").optional().isInt({ min: 1 }).withMessage("ID must be a number"),
+        validateRequest,
     ],
-    getTaxes);
+    getTaxes,
+);
 
-router.post('/',
+router.post(
+    "/",
     [
-        body('rate').isNumeric().withMessage('Rate must be a number'),
-        body('title').isString().withMessage('Title must be a string'),
-        body('description').isString().withMessage('Description must be a string'),
-        validateRequest
+        body("rate").isNumeric().withMessage("Rate must be a number"),
+        body("title").isString().withMessage("Title must be a string"),
+        body("description").isString().withMessage("Description must be a string"),
+        validateRequest,
     ],
-    createTax);
+    createTax,
+);
 
-router.put('/:id',
+router.put(
+    "/:id",
     [
-        param('id').isInt({ min: 1 }).withMessage('ID must be a number'),
-        body('rate').isNumeric().withMessage('Rate must be a number'),
-        body('title').isString().withMessage('Title must be a string'),
-        body('description').isString().withMessage('Description must be a string'),
-        validateRequest
+        param("id").isInt({ min: 1 }).withMessage("ID must be a number"),
+        body("rate").isNumeric().withMessage("Rate must be a number"),
+        body("title").isString().withMessage("Title must be a string"),
+        body("description").isString().withMessage("Description must be a string"),
+        validateRequest,
     ],
-    updateTax);
+    updateTax,
+);
 
-router.delete('/:id',
+router.delete(
+    "/:id",
     [
-        param('id').isInt({ min: 1 }).withMessage('ID must be a number'),
-        validateRequest
+        param("id").isInt({ min: 1 }).withMessage("ID must be a number"),
+        validateRequest,
     ],
-    deleteTax);
+    deleteTax,
+);
 
 export default router;
