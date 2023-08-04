@@ -9,7 +9,7 @@ type GenerateDateFunction = (currentDate: Date, loan: Loan) => Date;
  * @param frequencyType - The frequency type
  * @returns - The interest amount
  */
-const calculateInterest = (
+export const calculateInterest = (
     principal: number,
     annualInterestRate: number,
     frequencyType: number,
@@ -30,7 +30,7 @@ const calculateInterest = (
             periodsPerYear = 1;
             break;
         default:
-            throw new Error("Invalid frequency type");
+            console.error("Invalid frequency type");
     }
 
     const ratePerPeriod = annualInterestRate / periodsPerYear;
