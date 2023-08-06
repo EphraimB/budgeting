@@ -46,6 +46,25 @@ export interface Taxes {
   date_modified: string;
 }
 
+export interface Income {
+  income_id: number;
+  account_id: number;
+  tax_id?: number;
+  income_amount: number;
+  income_title: string;
+  income_description: string;
+  income_begin_date: string;
+  income_end_date?: string;
+  frequency_type?: number;
+  frequency_type_variable?: number;
+  frequency_day_of_month?: number;
+  frequency_day_of_week?: number;
+  frequency_week_of_month?: number;
+  frequency_month_of_year?: number;
+  date_created: string;
+  date_modified: string;
+}
+
 export interface TransactionHistory {
   transaction_id: number;
   account_id: number;
@@ -218,6 +237,7 @@ declare module "express-serve-static-core" {
     payroll_date_id: number;
     employee_id: number;
     payroll_taxes_id: number;
+    income_id: number;
     fullyPaidBackDates: Record<number, string>;
   }
 }
