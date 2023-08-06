@@ -68,7 +68,7 @@ const generateExpenses = (
         const taxRate = expense.tax_rate;
         const subsidyRate = expense.expense_subsidized;
 
-        const amountAfterSubsidy = initialAmount * (1 - subsidyRate);
+        const amountAfterSubsidy = initialAmount * subsidyRate;
         const taxAmount = amountAfterSubsidy * taxRate;
 
         const newTransaction: GeneratedTransaction = {
