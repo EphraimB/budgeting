@@ -130,6 +130,7 @@ export const createIncome = async (
         frequency_week_of_month,
         frequency_month_of_year,
         begin_date,
+        end_date
     } = request.body;
 
     try {
@@ -148,6 +149,7 @@ export const createIncome = async (
                 frequency_week_of_month,
                 frequency_month_of_year,
                 begin_date,
+                end_date
             ],
         );
 
@@ -244,6 +246,7 @@ export const updateIncome = async (
         frequency_week_of_month,
         frequency_month_of_year,
         begin_date,
+        end_date
     } = request.body;
 
     try {
@@ -306,7 +309,8 @@ export const updateIncome = async (
             frequency_week_of_month,
             frequency_month_of_year,
             begin_date,
-            id,
+            end_date,
+            id
         ]);
 
         request.income_id = id;

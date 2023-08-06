@@ -436,7 +436,7 @@ export const incomeQueries = {
     getIncomeById: "SELECT * FROM income WHERE income_id = $1",
     getIncomeByAccountId: "SELECT * FROM income WHERE account_id = $1",
     getIncomeByIdAndAccountId: "SELECT * FROM income WHERE income_id = $1 AND account_id = $2",
-    createIncome: "INSERT INTO income (account_id, tax_id, cron_job_id, income_amount, income_title, income_description, frequency_type, frequency_type_variable, frequency_day_of_month, frequency_day_of_week, frequency_week_of_month, frequency_month_of_year, income_begin_date, income_end_date) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13) RETURNING *",
+    createIncome: "INSERT INTO income (account_id, tax_id, income_amount, income_title, income_description, frequency_type, frequency_type_variable, frequency_day_of_month, frequency_day_of_week, frequency_week_of_month, frequency_month_of_year, income_begin_date, income_end_date) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13) RETURNING *",
     updateIncome: "UPDATE income SET account_id = $1, tax_id = $2, income_amount = $3, income_title = $4, income_description = $5, frequency_type = $6, frequency_type_variable = $7, frequency_day_of_month = $8, frequency_day_of_week = $9, frequency_week_of_month = $10, frequency_month_of_year = $11, income_begin_date = $12, income_end_date = $13 WHERE income_id = $14 RETURNING *",
     updateIncomeWithCronJobId: "UPDATE income SET cron_job_id = $1 WHERE income_id = $2 RETURNING *",
     deleteIncome: "DELETE FROM income WHERE income_id = $1",
