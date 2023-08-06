@@ -486,6 +486,79 @@
         }
       }
     },
+    "/income/{id}": {
+      "put": {
+        "summary": "Update an income",
+        "description": "Update an income",
+        "tags": [
+          "income"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "income id",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1
+            }
+          }
+        ],
+        "requestBody": {
+          "description": "income object to be updated",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/IncomeManipulation"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/SuccessResponseIncome"
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "404": {
+            "description": "Income not found"
+          }
+        }
+      },
+      "delete": {
+        "summary": "Delete an income",
+        "description": "Delete an income",
+        "tags": [
+          "income"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "income id",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully deleted income"
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "404": {
+            "description": "Income not found"
+          }
+        }
+      }
+    },
     "/expenses": {
       "get": {
         "summary": "Get all expenses by account",
