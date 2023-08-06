@@ -29,6 +29,7 @@ beforeAll(() => {
         setQueries: jest.fn((req: Request, res: Response, next: NextFunction) => next()),
         getCurrentBalance: jest.fn((req: Request, res: Response, next: NextFunction) => next()),
         getTransactionsByAccount: jest.fn((req: Request, res: Response, next: NextFunction) => next()),
+        getIncomeByAccount: jest.fn((req: Request, res: Response, next: NextFunction) => next()),
         getExpensesByAccount: jest.fn((req: Request, res: Response, next: NextFunction) => next()),
         getLoansByAccount: jest.fn((req: Request, res: Response, next: NextFunction) => next()),
         getPayrollsMiddleware: jest.fn((req: Request, res: Response, next: NextFunction) => next()),

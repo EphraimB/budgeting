@@ -19,28 +19,14 @@ const createApp = async (): Promise<Express> => {
     return app;
 };
 
-const createFutureIncome = () => {
-    return {
-        account_id: 1,
-        amount: 100,
-        title: 'test',
-        description: 'test',
-        frequency_type: 1,
-        frequency_type_variable: 1,
-        frequency_day_of_week: 1,
-        frequency_week_of_month: 1,
-        frequency_day_of_month: 1,
-        frequency_month_of_year: 1,
-        begin_date: '2020-01-01'
-    };
-};
-
 beforeAll(() => {
     MockDate.set('2019-01-01');
+
     jest.mock('../../middleware/middleware', () => ({
         setQueries: jest.fn((req: Request, res: Response, next: NextFunction) => next()),
         getCurrentBalance: jest.fn((req: Request, res: Response, next: NextFunction) => next()),
         getTransactionsByAccount: jest.fn((req: Request, res: Response, next: NextFunction) => next()),
+        getIncomeByAccount: jest.fn((req: Request, res: Response, next: NextFunction) => next()),
         getExpensesByAccount: jest.fn((req: Request, res: Response, next: NextFunction) => next()),
         getLoansByAccount: jest.fn((req: Request, res: Response, next: NextFunction) => next()),
         getPayrollsMiddleware: jest.fn((req: Request, res: Response, next: NextFunction) => next()),
@@ -104,11 +90,25 @@ describe('GET / with id query', () => {
 
 describe('POST /', () => {
     it('responds with json', async () => {
+        const incomeObj = {
+            account_id: 1,
+            amount: 100,
+            title: 'test',
+            description: 'test',
+            frequency_type: 1,
+            frequency_type_variable: 1,
+            frequency_day_of_week: 1,
+            frequency_week_of_month: 1,
+            frequency_day_of_month: 1,
+            frequency_month_of_year: 1,
+            begin_date: '2020-01-01'
+        };
+
         const response = await request(app)
             .post('/')
             .set('Accept', 'application/json')
             .expect('Content-Type', /json/)
-            .send(createFutureExpense());
+            .send(incomeObj);
 
         expect(response.status).toBe(200);
         expect(response.body).toEqual({ message: 'success' });
@@ -117,11 +117,25 @@ describe('POST /', () => {
 
 describe('PUT /:id', () => {
     it('responds with json', async () => {
+        const incomeObj = {
+            account_id: 1,
+            amount: 100,
+            title: 'test',
+            description: 'test',
+            frequency_type: 1,
+            frequency_type_variable: 1,
+            frequency_day_of_week: 1,
+            frequency_week_of_month: 1,
+            frequency_day_of_month: 1,
+            frequency_month_of_year: 1,
+            begin_date: '2020-01-01'
+        };
+
         const response: request.Response = await request(app)
             .put('/1')
             .set('Accept', 'application/json')
             .expect('Content-Type', /json/)
-            .send(createFutureExpense());
+            .send(incomeObj);
 
         expect(response.status).toBe(200);
         expect(response.body).toEqual({ message: 'success' });
