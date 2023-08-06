@@ -50,6 +50,8 @@ export interface Income {
   income_id: number;
   account_id: number;
   tax_id?: number;
+  tax_rate?: number;
+  total_amount?: number;
   income_amount: number;
   income_title: string;
   income_description: string;

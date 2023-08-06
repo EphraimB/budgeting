@@ -278,8 +278,7 @@ export const getIncomeByAccount = async (
                     ...income,
                     tax_rate: parseFloat(tax.tax_rate),
                     amount: parseFloat(income.income_amount),
-                    expense_subsidized: parseFloat(income.expense_subsidized),
-                    expense_amount: parseFloat(income.income_amount),
+                    income_amount: parseFloat(income.income_amount),
                 };
             });
 
