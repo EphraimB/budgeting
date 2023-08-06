@@ -2076,6 +2076,38 @@
       }
     },
     "responses": {
+      "BadRequest": {
+        "description": "Bad request",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "errors": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "msg": {
+                        "type": "string",
+                        "description": "Error message"
+                      },
+                      "param": {
+                        "type": "string",
+                        "description": "Parameter that caused the error"
+                      },
+                      "location": {
+                        "type": "string",
+                        "description": "Location of the error"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
       "SuccessResponseAccounts": {
         "description": "A JSON array of accounts",
         "content": {
@@ -2709,38 +2741,6 @@
                 "date_modified": {
                   "type": "string",
                   "format": "date-time"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "BadRequest": {
-      "description": "Bad request",
-      "content": {
-        "application/json": {
-          "schema": {
-            "type": "object",
-            "properties": {
-              "errors": {
-                "type": "array",
-                "items": {
-                  "type": "object",
-                  "properties": {
-                    "msg": {
-                      "type": "string",
-                      "description": "Error message"
-                    },
-                    "param": {
-                      "type": "string",
-                      "description": "Parameter that caused the error"
-                    },
-                    "location": {
-                      "type": "string",
-                      "description": "Location of the error"
-                    }
-                  }
                 }
               }
             }
