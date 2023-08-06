@@ -432,6 +432,7 @@ export const taxesQueries = {
 };
 
 export const incomeQueries = {
+    getIncomeMiddleware: "SELECT * FROM income WHERE account_id = $1 AND date_created <= $2 ORDER BY income_id ASC",
     getIncome: "SELECT * FROM income",
     getIncomeById: "SELECT * FROM income WHERE income_id = $1",
     getIncomeByAccountId: "SELECT * FROM income WHERE account_id = $1",

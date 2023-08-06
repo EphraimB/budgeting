@@ -228,6 +228,7 @@ declare module "express-serve-static-core" {
     payrolls: any[];
     wishlists: any[];
     transfers: any[];
+    income: any[];
     currentBalance: CurrentBalance[];
     transactions: any[];
     wishlist_id: number;
