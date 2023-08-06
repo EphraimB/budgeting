@@ -19,6 +19,7 @@ import wishlistRouter from "./routes/wishlistRouter.js";
 import transferRouter from "./routes/transfersRouter.js";
 import transactionsRouter from "./routes/transactionsRouter.js";
 import taxesRouter from "./routes/taxesRouter.js";
+import incomeRouter from "./routes/incomeRouter.js";
 import fs from "fs";
 import path from "path";
 
@@ -49,6 +50,7 @@ app.use("/api/wishlists", wishlistRouter);
 app.use("/api/transfers", transferRouter);
 app.use("/api/transactions", transactionsRouter);
 app.use("/api/taxes", taxesRouter);
+app.use("/api/income", incomeRouter);
 
 // Global error handling middleware
 app.use((err: any, req: Request, res: Response, next: NextFunction) => {
