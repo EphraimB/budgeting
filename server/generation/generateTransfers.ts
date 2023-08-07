@@ -118,7 +118,11 @@ export const generateDailyTransfers = (
     const generateDateFn = (currentDate: Date, transfer: Transfer): Date => {
         const newDate: Date = currentDate;
         newDate.setDate(
-            newDate.getDate() + (transfer.frequency_type_variable || 1),
+            newDate.getDate() +
+                (transfer.frequency_type_variable !== null &&
+                transfer.frequency_type_variable !== undefined
+                    ? transfer.frequency_type_variable
+                    : 1),
         );
         return newDate;
     };
@@ -160,7 +164,10 @@ export const generateMonthlyTransfers = (
         transferDate.setMonth(
             transferDate.getMonth() +
                 monthsIncremented +
-                (transfer.frequency_type_variable || 1),
+                (transfer.frequency_type_variable !== null &&
+                transfer.frequency_type_variable !== undefined
+                    ? transfer.frequency_type_variable
+                    : 1),
         );
 
         if (
@@ -205,7 +212,11 @@ export const generateMonthlyTransfers = (
             transferDate.setDate(newDay);
         }
 
-        monthsIncremented += transfer.frequency_type_variable || 1;
+        monthsIncremented +=
+            transfer.frequency_type_variable !== null &&
+            transfer.frequency_type_variable !== undefined
+                ? transfer.frequency_type_variable
+                : 1;
 
         return transferDate;
     };
@@ -259,7 +270,12 @@ export const generateWeeklyTransfers = (
     const generateDateFn = (currentDate: Date, transfer: Transfer): Date => {
         const newDate: Date = currentDate;
         newDate.setDate(
-            newDate.getDate() + 7 * (transfer.frequency_type_variable || 1),
+            newDate.getDate() +
+                7 *
+                    (transfer.frequency_type_variable !== null &&
+                    transfer.frequency_type_variable !== undefined
+                        ? transfer.frequency_type_variable
+                        : 1),
         );
         return newDate;
     };
@@ -300,7 +316,10 @@ export const generateYearlyTransfers = (
         transferDate.setFullYear(
             transferDate.getFullYear() +
                 yearsIncremented +
-                (transfer.frequency_type_variable || 1),
+                (transfer.frequency_type_variable !== null &&
+                transfer.frequency_type_variable !== undefined
+                    ? transfer.frequency_type_variable
+                    : 1),
         );
 
         if (
@@ -339,7 +358,11 @@ export const generateYearlyTransfers = (
             }
         }
 
-        yearsIncremented += transfer.frequency_type_variable || 1;
+        yearsIncremented +=
+            transfer.frequency_type_variable !== null &&
+            transfer.frequency_type_variable !== undefined
+                ? transfer.frequency_type_variable
+                : 1;
 
         return transferDate;
     };
