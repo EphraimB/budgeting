@@ -229,9 +229,10 @@ export const getIncomeByAccount = async (
 
                     const incomeTransactions: Income[] = incomeResults.map(
                         (income) => {
-                            const tax: QueryResultRow = taxLookup[
-                                income.tax_id
-                            ] || { tax_rate: 0 };
+                            const tax: QueryResultRow =
+                                taxLookup[income.tax_id] !== undefined
+                                    ? taxLookup[income.tax_id]
+                                    : { tax_rate: 0 };
 
                             return {
                                 ...income,
@@ -266,10 +267,11 @@ export const getIncomeByAccount = async (
                 [account_id, to_date],
             );
 
-            const incomeTransactions = incomeResults.map((income) => {
-                const tax: QueryResultRow = taxLookup[income.tax_id] || {
-                    tax_rate: 0,
-                };
+            const incomeTransactions: Income[] = incomeResults.map((income) => {
+                const tax: QueryResultRow =
+                    taxLookup[income.tax_id] !== undefined
+                        ? taxLookup[income.tax_id]
+                        : { tax_rate: 0 };
 
                 return {
                     ...income,
@@ -323,7 +325,7 @@ export const getExpensesByAccount = async (
             expenses: Expense[];
         }> = [];
 
-        if (!account_id) {
+        if (account_id === 'null' || account_id === 'undefined') {
             const accountResults = await executeQuery(
                 accountQueries.getAccounts,
             );
