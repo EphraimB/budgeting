@@ -110,7 +110,11 @@ export const generateDailyIncome = (
     const generateDateFn = (currentDate: Date, income: Income): Date => {
         const newDate = currentDate;
         newDate.setDate(
-            newDate.getDate() + (income.frequency_type_variable || 1),
+            newDate.getDate() +
+                (income.frequency_type_variable !== null &&
+                income.frequency_type_variable !== undefined
+                    ? income.frequency_type_variable
+                    : 1),
         );
         return newDate;
     };
@@ -149,7 +153,10 @@ export const generateMonthlyIncome = (
         incomeDate.setMonth(
             incomeDate.getMonth() +
                 monthsIncremented +
-                (income.frequency_type_variable || 1),
+                (income.frequency_type_variable !== null &&
+                income.frequency_type_variable !== undefined
+                    ? income.frequency_type_variable
+                    : 1),
         );
 
         if (
@@ -189,7 +196,11 @@ export const generateMonthlyIncome = (
             incomeDate.setDate(newDay);
         }
 
-        monthsIncremented += income.frequency_type_variable || 1;
+        monthsIncremented +=
+            income.frequency_type_variable !== null &&
+            income.frequency_type_variable !== undefined
+                ? income.frequency_type_variable
+                : 1;
 
         return incomeDate;
     };
@@ -237,7 +248,12 @@ export const generateWeeklyIncome = (
     const generateDateFn = (currentDate: Date, income: Income): Date => {
         const newDate: Date = currentDate;
         newDate.setDate(
-            newDate.getDate() + 7 * (income.frequency_type_variable || 1),
+            newDate.getDate() +
+                7 *
+                    (income.frequency_type_variable !== null &&
+                    income.frequency_type_variable !== undefined
+                        ? income.frequency_type_variable
+                        : 1),
         );
         return newDate;
     };
@@ -274,7 +290,10 @@ export const generateYearlyIncome = (
         newDate.setFullYear(
             newDate.getFullYear() +
                 yearsIncremented +
-                (income.frequency_type_variable || 1),
+                (income.frequency_type_variable !== null &&
+                income.frequency_type_variable !== undefined
+                    ? income.frequency_type_variable
+                    : 1),
         );
 
         if (
@@ -311,7 +330,11 @@ export const generateYearlyIncome = (
             }
         }
 
-        yearsIncremented += income.frequency_type_variable || 1;
+        yearsIncremented +=
+            income.frequency_type_variable !== null &&
+            income.frequency_type_variable !== undefined
+                ? income.frequency_type_variable
+                : 1;
 
         return newDate;
     };
