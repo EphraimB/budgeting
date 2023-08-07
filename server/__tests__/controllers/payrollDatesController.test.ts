@@ -61,9 +61,10 @@ const mockModule = (
     executeQueryValue: QueryResultRow[] | string | null,
     errorMessage?: string,
 ) => {
-    const executeQuery = errorMessage
-        ? jest.fn(async () => await Promise.reject(new Error(errorMessage)))
-        : jest.fn(async () => await Promise.resolve(executeQueryValue));
+    const executeQuery =
+        errorMessage !== null && errorMessage !== undefined
+            ? jest.fn(async () => await Promise.reject(new Error(errorMessage)))
+            : jest.fn(async () => await Promise.resolve(executeQueryValue));
 
     jest.mock('../../utils/helperFunctions.js', () => ({
         executeQuery,

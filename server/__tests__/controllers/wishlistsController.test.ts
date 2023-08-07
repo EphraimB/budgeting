@@ -56,39 +56,40 @@ const mockModule = (
     deleteCronJob?: QueryResultRow | string | null,
 ) => {
     let index = 0;
-    const executeQuery = errorMessage
-        ? jest.fn(async () => await Promise.reject(new Error(errorMessage)))
-        : jest.fn(async () => {
-              let result;
+    const executeQuery =
+        errorMessage !== null && errorMessage !== undefined
+            ? jest.fn(async () => await Promise.reject(new Error(errorMessage)))
+            : jest.fn(async () => {
+                  let result;
 
-              switch (index++) {
-                  case 0:
-                      result = Promise.resolve(createWishlist);
-                      break;
-                  case 1:
-                      result = Promise.resolve(createCronJob);
-                      break;
-                  case 2:
-                      result = Promise.resolve(updateWishlistWithCronJobId);
-                      break;
-                  case 3:
-                      result = Promise.resolve(getWishlistsById);
-                      break;
-                  case 4:
-                      result = Promise.resolve(getCronJob);
-                      break;
-                  case 5:
-                      result = Promise.resolve(deleteWishlist);
-                      break;
-                  case 6:
-                      result = Promise.resolve(deleteCronJob);
-                      break;
-                  default:
-                      result = Promise.resolve(null);
-                      break;
-              }
-              return await result;
-          });
+                  switch (index++) {
+                      case 0:
+                          result = Promise.resolve(createWishlist);
+                          break;
+                      case 1:
+                          result = Promise.resolve(createCronJob);
+                          break;
+                      case 2:
+                          result = Promise.resolve(updateWishlistWithCronJobId);
+                          break;
+                      case 3:
+                          result = Promise.resolve(getWishlistsById);
+                          break;
+                      case 4:
+                          result = Promise.resolve(getCronJob);
+                          break;
+                      case 5:
+                          result = Promise.resolve(deleteWishlist);
+                          break;
+                      case 6:
+                          result = Promise.resolve(deleteCronJob);
+                          break;
+                      default:
+                          result = Promise.resolve(null);
+                          break;
+                  }
+                  return await result;
+              });
 
     jest.mock('../../utils/helperFunctions.js', () => ({
         executeQuery,

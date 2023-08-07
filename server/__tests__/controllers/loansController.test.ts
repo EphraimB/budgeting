@@ -59,16 +59,17 @@ const mockModule = (
     executeQueryValues: Array<QueryResultRow[] | string | null>,
     errorMessage: string | null = null,
 ) => {
-    const executeQuery = errorMessage
-        ? jest.fn(async () => await Promise.reject(new Error(errorMessage)))
-        : jest.fn(async () => {
-              let i = 0;
-              return await Promise.resolve(
-                  i < executeQueryValues.length
-                      ? executeQueryValues[i++]
-                      : null,
-              );
-          });
+    const executeQuery =
+        errorMessage !== null && errorMessage !== undefined
+            ? jest.fn(async () => await Promise.reject(new Error(errorMessage)))
+            : jest.fn(async () => {
+                  let i = 0;
+                  return await Promise.resolve(
+                      i < executeQueryValues.length
+                          ? executeQueryValues[i++]
+                          : null,
+                  );
+              });
 
     jest.mock('../../utils/helperFunctions.js', () => ({
         executeQuery,

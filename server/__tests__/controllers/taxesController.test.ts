@@ -1,12 +1,11 @@
 import { jest } from '@jest/globals';
 import { type Request, type Response } from 'express';
-import { accounts, taxes } from '../../models/mockData.js';
+import { taxes } from '../../models/mockData.js';
 import { type QueryResultRow } from 'pg';
 
 // Mock request and response
 let mockRequest: any;
 let mockResponse: any;
-let mockNext: any;
 let consoleSpy: any;
 
 beforeAll(() => {
@@ -21,7 +20,6 @@ beforeEach(() => {
         json: jest.fn(),
         send: jest.fn(),
     };
-    mockNext = jest.fn();
 });
 
 afterEach(() => {
@@ -43,9 +41,10 @@ const mockModule = (
     executeQueryValue: QueryResultRow[] | string | null,
     errorMessage?: string,
 ) => {
-    const executeQuery = errorMessage
-        ? jest.fn(async () => await Promise.reject(new Error(errorMessage)))
-        : jest.fn(async () => await Promise.resolve(executeQueryValue));
+    const executeQuery =
+        errorMessage !== null && errorMessage !== undefined
+            ? jest.fn(async () => await Promise.reject(new Error(errorMessage)))
+            : jest.fn(async () => await Promise.resolve(executeQueryValue));
 
     jest.mock('../../utils/helperFunctions.js', () => ({
         executeQuery,
