@@ -324,7 +324,7 @@ const generateTransactions = async (
 
             const employee_id = account.employee_id;
 
-            generate(
+            await generate(
                 request,
                 response,
                 next,
@@ -353,7 +353,7 @@ const generateTransactions = async (
 
         const employee_id: number = employeeResults[0].employee_id;
 
-        generate(
+        await generate(
             request,
             response,
             next,

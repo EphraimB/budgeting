@@ -160,7 +160,11 @@ export const generateDailyLoans = (
     const generateDateFn = (currentDate: Date, loan: Loan): Date => {
         const newDate: Date = currentDate;
         newDate.setDate(
-            newDate.getDate() + (loan.frequency_type_variable || 1),
+            newDate.getDate() +
+                (loan.frequency_type_variable !== null &&
+                loan.frequency_type_variable !== undefined
+                    ? loan.frequency_type_variable
+                    : 1),
         );
         return newDate;
     };
@@ -199,7 +203,10 @@ export const generateMonthlyLoans = (
         loanDate.setMonth(
             loanDate.getMonth() +
                 monthsIncremented +
-                (loan.frequency_type_variable || 1),
+                (loan.frequency_type_variable !== null &&
+                loan.frequency_type_variable !== undefined
+                    ? loan.frequency_type_variable
+                    : 1),
         );
 
         if (
@@ -236,7 +243,11 @@ export const generateMonthlyLoans = (
             loanDate.setDate(newDay);
         }
 
-        monthsIncremented += loan.frequency_type_variable || 1;
+        monthsIncremented +=
+            loan.frequency_type_variable !== null &&
+            loan.frequency_type_variable !== undefined
+                ? loan.frequency_type_variable
+                : 1;
 
         return loanDate;
     };
@@ -269,7 +280,10 @@ export const generateWeeklyLoans = (
 ): { fullyPaidBackDate?: string } => {
     const loanDate: Date = new Date(loan.loan_begin_date);
 
-    if (loan.frequency_day_of_week) {
+    if (
+        loan.frequency_day_of_week !== null &&
+        loan.frequency_day_of_week !== undefined
+    ) {
         const startDay: number = loanDate.getDay();
         const frequency_day_of_week: number = loan.frequency_day_of_week;
 
@@ -281,7 +295,12 @@ export const generateWeeklyLoans = (
     const generateDateFn = (currentDate: Date, loan: Loan): Date => {
         const newDate: Date = currentDate;
         newDate.setDate(
-            newDate.getDate() + 7 * (loan.frequency_type_variable || 1),
+            newDate.getDate() +
+                7 *
+                    (loan.frequency_type_variable !== null &&
+                    loan.frequency_type_variable !== undefined
+                        ? loan.frequency_type_variable
+                        : 1),
         );
         return newDate;
     };
@@ -318,7 +337,10 @@ export const generateYearlyLoans = (
         loanDate.setFullYear(
             loanDate.getFullYear() +
                 yearsIncremented +
-                (loan.frequency_type_variable || 1),
+                (loan.frequency_type_variable !== null &&
+                loan.frequency_type_variable !== undefined
+                    ? loan.frequency_type_variable
+                    : 1),
         );
 
         if (
@@ -354,7 +376,11 @@ export const generateYearlyLoans = (
                 }
             }
         }
-        yearsIncremented += loan.frequency_type_variable || 1;
+        yearsIncremented +=
+            loan.frequency_type_variable !== null &&
+            loan.frequency_type_variable !== undefined
+                ? loan.frequency_type_variable
+                : 1;
 
         return loanDate;
     };
