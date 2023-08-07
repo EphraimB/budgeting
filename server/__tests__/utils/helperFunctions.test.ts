@@ -14,11 +14,9 @@ jest.mock('../../config/db.js', () => {
 });
 
 // Mock request and response
-let mockRequest: any;
 let mockResponse: any;
 
 beforeEach(() => {
-    mockRequest = {};
     mockResponse = {
         status: jest.fn(() => mockResponse),
         send: jest.fn(),
