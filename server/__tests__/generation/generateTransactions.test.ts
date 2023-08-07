@@ -140,7 +140,7 @@ describe('generateTransactions', () => {
         );
 
         // Call your function with the mock data
-        generateTransactions(mockRequest, mockResponse, next);
+        await generateTransactions(mockRequest, mockResponse, next);
 
         // assert that next was called
         // expect(next).toHaveBeenCalled();

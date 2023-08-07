@@ -1,4 +1,4 @@
-import { Income, type GeneratedTransaction } from '../../types/types';
+import { type GeneratedTransaction } from '../../types/types';
 import {
     generateDailyIncome,
     generateMonthlyIncome,

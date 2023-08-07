@@ -67,7 +67,7 @@ const mockModule = (
 ) => {
     const executeQuery = jest.fn();
 
-    if (errorMessage) {
+    if (errorMessage !== null && errorMessage !== undefined) {
         executeQuery.mockImplementation(() => {
             throw new Error(errorMessage);
         });
