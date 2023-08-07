@@ -310,7 +310,7 @@ const generateTransactions = async (
     const transactions: GeneratedTransaction[] = [];
     const skippedTransactions: GeneratedTransaction[] = [];
 
-    if (!account_id) {
+    if (account_id !== undefined && account_id !== null) {
         const accountResults = await executeQuery(
             accountQueries.getAccounts,
             [],
