@@ -41,7 +41,7 @@ import {
 import { executeQuery } from '../utils/helperFunctions.js';
 import { accountQueries } from '../models/queryData.js';
 
-const fullyPaidBackDates: Record<number, string | undefined> = {}; // map of loan_id to fullyPaidBackDate
+const fullyPaidBackDates: Record<number, string | null> = {}; // map of loan_id to fullyPaidBackDate
 
 const generate = async (
     request: Request,
@@ -67,11 +67,11 @@ const generate = async (
                     date: new Date(transaction.date_created),
                     date_modified: new Date(transaction.date_modified),
                     amount: -transaction.transaction_amount,
-                    tax_rate: transaction.transaction_tax_rate,
+                    tax_rate: transaction.transaction_tax_rate ?? 0,
                     total_amount: -(
                         transaction.transaction_amount +
                         transaction.transaction_amount *
-                            transaction.transaction_tax_rate
+                            (transaction.transaction_tax_rate ?? 0)
                     ),
                 }),
             ),
@@ -173,7 +173,7 @@ const generate = async (
     request.loans
         .filter((lns) => lns.account_id === account_id)
         .forEach((account) => {
-            let loanResult: { fullyPaidBackDate?: string };
+            let loanResult: { fullyPaidBackDate?: string | null };
 
             account.loan.forEach((loan: Loan) => {
                 if (loan.frequency_type === 0) {
@@ -210,11 +210,12 @@ const generate = async (
                     );
                 }
 
-                fullyPaidBackDates[loan.loan_id] =
-                    loanResult.fullyPaidBackDate !== null &&
-                    loanResult.fullyPaidBackDate !== undefined
-                        ? loanResult.fullyPaidBackDate
-                        : null;
+                if (loan.loan_id !== undefined) {
+                    fullyPaidBackDates[loan.loan_id] =
+                        loanResult.fullyPaidBackDate
+                            ? loanResult.fullyPaidBackDate
+                            : null;
+                }
             });
         });
 
@@ -322,7 +323,7 @@ const generateTransactions = async (
                     balance.account_id === account.account_id,
             ).account_balance;
 
-            const employee_id = account.employee_id;
+            const employee_id = account.employee_id ?? 0;
 
             await generate(
                 request,

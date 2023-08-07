@@ -33,7 +33,7 @@ const generateIncome = (
         income.frequency_day_of_week !== null &&
         income.frequency_day_of_week !== undefined
     ) {
-        let newDay;
+        let newDay: number = incomeDate.getDate();
 
         if (
             income.frequency_day_of_week !== null &&
@@ -65,7 +65,7 @@ const generateIncome = (
 
     while (incomeDate <= toDate) {
         const initialAmount = income.income_amount;
-        const taxRate = income.tax_rate;
+        const taxRate = income.tax_rate ?? 0;
 
         const taxAmount = initialAmount + initialAmount * taxRate;
 
@@ -163,7 +163,7 @@ export const generateMonthlyIncome = (
             income.frequency_day_of_week !== null &&
             income.frequency_day_of_week !== undefined
         ) {
-            let newDay: number;
+            let newDay: number = incomeDate.getDate();
 
             if (
                 income.frequency_day_of_week !== null &&

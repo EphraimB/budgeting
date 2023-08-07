@@ -59,11 +59,11 @@ export interface Income {
     income_begin_date: string;
     income_end_date?: string;
     frequency_type?: number;
-    frequency_type_variable?: number;
-    frequency_day_of_month?: number;
-    frequency_day_of_week?: number;
-    frequency_week_of_month?: number;
-    frequency_month_of_year?: number;
+    frequency_type_variable?: number | null | undefined;
+    frequency_day_of_month?: number | null | undefined;
+    frequency_day_of_week?: number | null | undefined;
+    frequency_week_of_month?: number | null | undefined;
+    frequency_month_of_year?: number | null | undefined;
     date_created: string;
     date_modified: string;
 }
@@ -103,7 +103,7 @@ export interface Expense {
     expense_id?: number;
     account_id?: number;
     cron_job_id?: number;
-    tax_id?: number | null;
+    tax_id?: number | null | undefined;
     tax_rate?: number;
     expense_amount: number;
     expense_title: string;
@@ -111,11 +111,11 @@ export interface Expense {
     expense_begin_date: string;
     expense_end_date?: string;
     frequency_type?: number;
-    frequency_type_variable?: number;
-    frequency_day_of_month?: number;
-    frequency_day_of_week?: number;
-    frequency_week_of_month?: number;
-    frequency_month_of_year?: number;
+    frequency_type_variable?: number | null | undefined;
+    frequency_day_of_month?: number | null | undefined;
+    frequency_day_of_week?: number | null | undefined;
+    frequency_week_of_month?: number | null | undefined;
+    frequency_month_of_year?: number | null | undefined;
     expense_subsidized?: number;
     date_created?: string;
     date_modified?: string;
@@ -181,7 +181,7 @@ export interface Wishlist {
     wishlist_tax_rate?: number;
     wishlist_title: string;
     wishlist_description: string;
-    wishlist_date_available?: string;
+    wishlist_date_available?: string | null;
     wishlist_date_can_purchase?: string | null;
     wishlist_url_link?: string;
     wishlist_priority?: number;
@@ -198,13 +198,13 @@ export interface Transfer {
     transfer_title: string;
     transfer_description: string;
     transfer_begin_date: string;
-    transfer_end_date?: string;
+    transfer_end_date?: string | null;
     frequency_type?: number;
-    frequency_type_variable?: number;
-    frequency_day_of_month?: number;
-    frequency_day_of_week?: number;
-    frequency_week_of_month?: number;
-    frequency_month_of_year?: number;
+    frequency_type_variable?: number | null | undefined;
+    frequency_day_of_month?: number | null | undefined;
+    frequency_day_of_week?: number | null | undefined;
+    frequency_week_of_month?: number | null | undefined;
+    frequency_month_of_year?: number | null | undefined;
     date_created?: string;
     date_modified?: string;
 }
@@ -225,14 +225,14 @@ declare module 'express-serve-static-core' {
         income: any[];
         currentBalance: CurrentBalance[];
         transactions: any[];
-        wishlist_id: number;
-        expense_id: number;
-        loan_id: number;
-        transfer_id: number;
+        wishlist_id: number | null | undefined;
+        expense_id: number | null | undefined;
+        loan_id: number | null | undefined;
+        transfer_id: number | null | undefined;
         payroll_date_id: number;
         employee_id: number;
         payroll_taxes_id: number;
         income_id: number;
-        fullyPaidBackDates: Record<number, string>;
+        fullyPaidBackDates: Record<number, string | null>;
     }
 }

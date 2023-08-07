@@ -199,7 +199,9 @@ export const createLoan = async (
             date: begin_date,
             account_id,
             id: loans[0].loan_id,
-            amount: -plan_amount + plan_amount * subsidized,
+            amount:
+                -parseFloat(plan_amount) +
+                parseFloat(plan_amount) * parseFloat(subsidized),
             title,
             description,
             frequency_type,
@@ -214,16 +216,16 @@ export const createLoan = async (
 
         const nextDate: Date = new Date(begin_date);
 
-        if (interest_frequency_type === 0) {
+        if (parseInt(interest_frequency_type) === 0) {
             // Daily
             nextDate.setDate(nextDate.getDate() + 1);
-        } else if (interest_frequency_type === 1) {
+        } else if (parseInt(interest_frequency_type) === 1) {
             // Weekly
             nextDate.setDate(nextDate.getDate() + 7);
-        } else if (interest_frequency_type === 2) {
+        } else if (parseInt(interest_frequency_type) === 2) {
             // Monthly
             nextDate.setMonth(nextDate.getMonth() + 1);
-        } else if (interest_frequency_type === 3) {
+        } else if (parseInt(interest_frequency_type) === 3) {
             // Yearly
             nextDate.setFullYear(nextDate.getFullYear() + 1);
         }
@@ -355,7 +357,9 @@ export const updateLoan = async (
         date: begin_date,
         id,
         account_id,
-        amount: -plan_amount + plan_amount * subsidized,
+        amount:
+            -parseFloat(plan_amount) +
+            parseFloat(plan_amount) * parseFloat(subsidized),
         title,
         description,
         frequency_type,
@@ -370,16 +374,16 @@ export const updateLoan = async (
 
     const nextDate: Date = new Date(begin_date);
 
-    if (interest_frequency_type === 0) {
+    if (parseInt(interest_frequency_type) === 0) {
         // Daily
         nextDate.setDate(nextDate.getDate() + 1);
-    } else if (interest_frequency_type === 1) {
+    } else if (parseInt(interest_frequency_type) === 1) {
         // Weekly
         nextDate.setDate(nextDate.getDate() + 7);
-    } else if (interest_frequency_type === 2) {
+    } else if (parseInt(interest_frequency_type) === 2) {
         // Monthly
         nextDate.setMonth(nextDate.getMonth() + 1);
-    } else if (interest_frequency_type === 3) {
+    } else if (parseInt(interest_frequency_type) === 3) {
         // Yearly
         nextDate.setFullYear(nextDate.getFullYear() + 1);
     }
@@ -412,7 +416,7 @@ export const updateLoan = async (
             return;
         }
 
-        const cronId: number = parseInt(getLoanResults[0].cron_job_id);
+        const cronId: number = parseInt(getLoanResults[0].cron_job_id ?? '');
         const results = await executeQuery(cronJobQueries.getCronJob, [cronId]);
 
         if (results.length > 0) {
@@ -422,7 +426,7 @@ export const updateLoan = async (
         }
 
         const interestCronId: number = parseInt(
-            getLoanResults[0].interest_cron_job_id,
+            getLoanResults[0].interest_cron_job_id ?? '',
         );
         const interestResults = await executeQuery(cronJobQueries.getCronJob, [
             interestCronId,
@@ -543,7 +547,7 @@ export const deleteLoan = async (
             return;
         }
 
-        const cronId: number = parseInt(getLoanResults[0].cron_job_id);
+        const cronId: number = parseInt(getLoanResults[0].cron_job_id ?? '');
         await executeQuery(loanQueries.deleteLoan, [id]);
 
         const results = await executeQuery(cronJobQueries.getCronJob, [cronId]);
@@ -555,7 +559,7 @@ export const deleteLoan = async (
         }
 
         const interestCronId: number = parseInt(
-            getLoanResults[0].interest_cron_job_id,
+            getLoanResults[0].interest_cron_job_id ?? '',
         );
         const interestResults = await executeQuery(cronJobQueries.getCronJob, [
             interestCronId,

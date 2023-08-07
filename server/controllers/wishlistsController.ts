@@ -110,8 +110,8 @@ export const getWishlists = async (
         }));
 
         // Parse the data to the correct format
-        const wishlists: Wishlist[] = modifiedWishlists.map((wishlist) =>
-            wishlistsParse(wishlist),
+        const wishlists: Wishlist[] = modifiedWishlists.map(
+            (wishlist: WishlistInput) => wishlistsParse(wishlist),
         );
 
         response.status(200).json(wishlists);
@@ -123,8 +123,8 @@ export const getWishlists = async (
                 id !== null && id !== undefined
                     ? 'wishlist'
                     : account_id !== null && account_id !== undefined
-                        ? 'wishlists for given account_id'
-                        : 'wishlists'
+                    ? 'wishlists for given account_id'
+                    : 'wishlists'
             }`,
         );
     }

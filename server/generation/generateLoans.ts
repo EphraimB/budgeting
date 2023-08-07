@@ -30,7 +30,7 @@ export const calculateInterest = (
             periodsPerYear = 1;
             break;
         default:
-            console.error('Invalid frequency type');
+            periodsPerYear = 1;
     }
 
     const ratePerPeriod = annualInterestRate / periodsPerYear;
@@ -54,9 +54,9 @@ const generateLoans = (
     toDate: Date,
     fromDate: Date,
     generateDateFn: GenerateDateFunction,
-): { fullyPaidBackDate?: string } => {
+): { fullyPaidBackDate?: string | null } => {
     let loanDate: Date = new Date(loan.loan_begin_date);
-    let loan_amount: number = loan.loan_amount;
+    let loan_amount: number = loan.loan_amount ?? 0;
 
     if (
         loan.frequency_month_of_year !== null &&
@@ -69,7 +69,7 @@ const generateLoans = (
         loan.frequency_day_of_week !== null &&
         loan.frequency_day_of_week !== undefined
     ) {
-        let newDay;
+        let newDay = loanDate.getDate();
 
         if (
             loan.frequency_day_of_week !== null &&
@@ -102,12 +102,12 @@ const generateLoans = (
     while (loanDate <= toDate && loan_amount > 0) {
         const interest = calculateInterest(
             loan_amount,
-            loan.loan_interest_rate,
-            loan.loan_interest_frequency_type,
+            loan.loan_interest_rate ?? 0,
+            loan.loan_interest_frequency_type ?? 2,
         );
         const adjustedLoanAmount = loan_amount + interest;
         const amount = Math.min(loan.loan_plan_amount, adjustedLoanAmount);
-        const subsidizedAmount = amount - amount * loan.loan_subsidized;
+        const subsidizedAmount = amount - amount * (loan.loan_subsidized ?? 0);
 
         const newTransaction: GeneratedTransaction = {
             loan_id: loan.loan_id,
@@ -156,7 +156,7 @@ export const generateDailyLoans = (
     loan: Loan,
     toDate: Date,
     fromDate: Date,
-): { fullyPaidBackDate?: string } => {
+): { fullyPaidBackDate?: string | null } => {
     const generateDateFn = (currentDate: Date, loan: Loan): Date => {
         const newDate: Date = currentDate;
         newDate.setDate(
@@ -194,7 +194,7 @@ export const generateMonthlyLoans = (
     loan: Loan,
     toDate: Date,
     fromDate: Date,
-): { fullyPaidBackDate?: string } => {
+): { fullyPaidBackDate?: string | null } => {
     let monthsIncremented: number = 0;
     const generateDateFn = (currentDate: Date, loan: Loan): Date => {
         const loanDate: Date = new Date(loan.loan_begin_date);
@@ -213,7 +213,7 @@ export const generateMonthlyLoans = (
             loan.frequency_day_of_week !== null &&
             loan.frequency_day_of_week !== undefined
         ) {
-            let newDay: number;
+            let newDay: number = loanDate.getDate();
 
             if (
                 loan.frequency_day_of_week !== null &&
@@ -277,7 +277,7 @@ export const generateWeeklyLoans = (
     loan: Loan,
     toDate: Date,
     fromDate: Date,
-): { fullyPaidBackDate?: string } => {
+): { fullyPaidBackDate?: string | null } => {
     const loanDate: Date = new Date(loan.loan_begin_date);
 
     if (
@@ -330,7 +330,7 @@ export const generateYearlyLoans = (
     loan: Loan,
     toDate: Date,
     fromDate: Date,
-): { fullyPaidBackDate?: string } => {
+): { fullyPaidBackDate?: string | null } => {
     let yearsIncremented: number = 0;
     const generateDateFn = (currentDate: Date, loan: Loan): Date => {
         const loanDate: Date = new Date(loan.loan_begin_date);

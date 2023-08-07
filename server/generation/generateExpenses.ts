@@ -61,7 +61,7 @@ const generateExpenses = (
                 expenseDate.getDate() + 7 * expense.frequency_week_of_month;
         }
 
-        expenseDate.setDate(newDay);
+        expenseDate.setDate(newDay ?? expenseDate.getDate());
     }
 
     while (expenseDate <= toDate) {
@@ -69,8 +69,10 @@ const generateExpenses = (
         const taxRate = expense.tax_rate;
         const subsidyRate = expense.expense_subsidized;
 
-        const amountAfterSubsidy = initialAmount - initialAmount * subsidyRate;
-        const taxAmount = amountAfterSubsidy + amountAfterSubsidy * taxRate;
+        const amountAfterSubsidy =
+            initialAmount - initialAmount * (subsidyRate ?? 0);
+        const taxAmount =
+            amountAfterSubsidy + amountAfterSubsidy * (taxRate ?? 0);
 
         const newTransaction: GeneratedTransaction = {
             expense_id: expense.expense_id,
@@ -78,7 +80,7 @@ const generateExpenses = (
             description: expense.expense_description,
             date: new Date(expenseDate),
             amount: -amountAfterSubsidy,
-            tax_rate: taxRate,
+            tax_rate: taxRate ?? 0,
             total_amount: -(amountAfterSubsidy + taxAmount),
         };
 
@@ -166,7 +168,7 @@ export const generateMonthlyExpenses = (
             expense.frequency_day_of_week !== null &&
             expense.frequency_day_of_week !== undefined
         ) {
-            let newDay: number;
+            let newDay: number = expenseDate.getDate();
 
             if (
                 expense.frequency_day_of_week !== null &&

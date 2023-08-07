@@ -35,7 +35,7 @@ const generateTransfers = (
         transfer.frequency_day_of_week !== null &&
         transfer.frequency_day_of_week !== undefined
     ) {
-        let newDay: number;
+        let newDay: number = transferDate.getDate();
 
         if (
             transfer.frequency_day_of_week !== null &&
@@ -174,7 +174,7 @@ export const generateMonthlyTransfers = (
             transfer.frequency_day_of_week !== null &&
             transfer.frequency_day_of_week !== undefined
         ) {
-            let newDay: number;
+            let newDay: number = transferDate.getDate();
 
             if (
                 transfer.frequency_day_of_week !== null &&
