@@ -1,8 +1,8 @@
-import { type NextFunction, type Request, type Response } from "express";
-import { payrollQueries } from "../models/queryData.js";
-import { exec } from "child_process";
-import { handleError, executeQuery } from "../utils/helperFunctions.js";
-import { type PayrollTax } from "../types/types.js";
+import { type NextFunction, type Request, type Response } from 'express';
+import { payrollQueries } from '../models/queryData.js';
+import { exec } from 'child_process';
+import { handleError, executeQuery } from '../utils/helperFunctions.js';
+import { type PayrollTax } from '../types/types.js';
 
 interface PayrollTaxInput {
     payroll_taxes_id: string;
@@ -56,7 +56,7 @@ export const getPayrollTaxes = async (
         const rows = await executeQuery<PayrollTaxInput>(query, params);
 
         if ((id || employee_id) && rows.length === 0) {
-            response.status(404).send("Payroll tax not found");
+            response.status(404).send('Payroll tax not found');
             return;
         }
 
@@ -69,11 +69,12 @@ export const getPayrollTaxes = async (
         console.error(error); // Log the error on the server side
         handleError(
             response,
-            `Error getting ${id
-                ? "payroll tax"
-                : employee_id
-                    ? "payroll taxes for given employee_id"
-                    : "payroll taxes"
+            `Error getting ${
+                id
+                    ? 'payroll tax'
+                    : employee_id
+                        ? 'payroll taxes for given employee_id'
+                        : 'payroll taxes'
             }`,
         );
     }
@@ -104,9 +105,13 @@ export const createPayrollTax = async (
 
         // Execute the script
         exec(scriptCommand, (error, stdout, stderr) => {
-            if (error) {
+            if (error != null) {
                 console.error(`Error executing script: ${error}`);
-                response.status(500).send('Failed to execute script for updating cron job payrolls information');
+                response
+                    .status(500)
+                    .send(
+                        'Failed to execute script for updating cron job payrolls information',
+                    );
                 return;
             }
             console.log(`Script output: ${stdout}`);
@@ -121,7 +126,7 @@ export const createPayrollTax = async (
         next();
     } catch (error) {
         console.error(error); // Log the error on the server side
-        handleError(response, "Error creating payroll tax");
+        handleError(response, 'Error creating payroll tax');
     }
 };
 
@@ -140,11 +145,11 @@ export const createPayrollTaxReturnObject = async (
     try {
         const results = await executeQuery<PayrollTaxInput>(
             payrollQueries.getPayrollTaxesById,
-            [payroll_taxes_id]
+            [payroll_taxes_id],
         );
 
         if (results.length === 0) {
-            response.status(404).send("Payroll tax not found");
+            response.status(404).send('Payroll tax not found');
             return;
         }
 
@@ -155,7 +160,7 @@ export const createPayrollTaxReturnObject = async (
         response.status(201).json(payrollTaxes);
     } catch (error) {
         console.error(error); // Log the error on the server side
-        handleError(response, "Error getting payroll tax");
+        handleError(response, 'Error getting payroll tax');
     }
 };
 
@@ -181,7 +186,7 @@ export const updatePayrollTax = async (
         );
 
         if (results.length === 0) {
-            response.status(404).send("Payroll tax not found");
+            response.status(404).send('Payroll tax not found');
             return;
         }
 
@@ -190,9 +195,13 @@ export const updatePayrollTax = async (
 
         // Execute the script
         exec(scriptCommand, (error, stdout, stderr) => {
-            if (error) {
+            if (error != null) {
                 console.error(`Error executing script: ${error}`);
-                response.status(500).send('Failed to execute script for updating cron job payrolls information');
+                response
+                    .status(500)
+                    .send(
+                        'Failed to execute script for updating cron job payrolls information',
+                    );
                 return;
             }
             console.log(`Script output: ${stdout}`);
@@ -201,7 +210,7 @@ export const updatePayrollTax = async (
         next();
     } catch (error) {
         console.error(error); // Log the error on the server side
-        handleError(response, "Error updating payroll tax");
+        handleError(response, 'Error updating payroll tax');
     }
 };
 
@@ -218,7 +227,7 @@ export const updatePayrollTaxReturnObject = async (
         );
 
         if (results.length === 0) {
-            response.status(404).send("Payroll tax not found");
+            response.status(404).send('Payroll tax not found');
             return;
         }
 
@@ -229,7 +238,7 @@ export const updatePayrollTaxReturnObject = async (
         response.status(200).json(payrollTaxes);
     } catch (error) {
         console.error(error); // Log the error on the server side
-        handleError(response, "Error getting payroll tax");
+        handleError(response, 'Error getting payroll tax');
     }
 };
 
@@ -254,7 +263,7 @@ export const deletePayrollTax = async (
         );
 
         if (getResults.length === 0) {
-            response.status(404).send("Payroll tax not found");
+            response.status(404).send('Payroll tax not found');
             return;
         }
 
@@ -267,17 +276,20 @@ export const deletePayrollTax = async (
 
         // Execute the script
         exec(scriptCommand, (error, stdout, stderr) => {
-            if (error) {
+            if (error != null) {
                 console.error(`Error executing script: ${error}`);
-                response.status(500).send('Failed to execute script for updating cron job payrolls information');
-                return;
+                response
+                    .status(500)
+                    .send(
+                        'Failed to execute script for updating cron job payrolls information',
+                    );
             }
         });
 
         next();
     } catch (error) {
         console.error(error); // Log the error on the server side
-        handleError(response, "Error deleting payroll tax");
+        handleError(response, 'Error deleting payroll tax');
     }
 };
 
@@ -291,5 +303,5 @@ export const deletePayrollTaxReturnObject = async (
     request: Request,
     response: Response,
 ): Promise<void> => {
-    response.status(200).send("Successfully deleted payroll tax");
+    response.status(200).send('Successfully deleted payroll tax');
 };

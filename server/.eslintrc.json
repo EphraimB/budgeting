@@ -4,7 +4,11 @@
         "browser": true,
         "es2021": true
     },
-    // "extends": "standard-with-typescript",
+    "extends": [
+        "standard-with-typescript",
+        "plugin:prettier/recommended",
+        "prettier"
+    ],
     "parserOptions": {
         "ecmaVersion": "latest",
         "sourceType": "module",
@@ -14,13 +18,16 @@
         "indent": [
             "error",
             4,
-            { "SwitchCase": 1 }
+            {
+                "SwitchCase": 1
+            }
         ],
         "semi": [
             "error",
             "always"
         ],
         "camelcase": "off",
-        "@typescript-eslint/explicit-function-return-type": "off"
+        "@typescript-eslint/explicit-function-return-type": "off",
+        "prettier/prettier": "error" // Ensure prettier formatting is treated as an error
     }
 }

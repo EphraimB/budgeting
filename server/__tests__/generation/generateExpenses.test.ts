@@ -1,5 +1,10 @@
-import { Expense, GeneratedTransaction } from '../../types/types';
-import { generateDailyExpenses, generateMonthlyExpenses, generateWeeklyExpenses, generateYearlyExpenses } from '../../generation/generateExpenses';
+import { type Expense, type GeneratedTransaction } from '../../types/types';
+import {
+    generateDailyExpenses,
+    generateMonthlyExpenses,
+    generateWeeklyExpenses,
+    generateYearlyExpenses,
+} from '../../generation/generateExpenses';
 import MockDate from 'mockdate';
 
 beforeAll(() => {
@@ -26,15 +31,23 @@ describe('Test generateDailyExpenses', () => {
             expense_title: 'Test expense',
             expense_description: 'Test description',
             expense_amount: 100,
-            expense_subsidized: 0
+            expense_subsidized: 0,
         };
         const toDate: Date = new Date('2020-01-06');
         const fromDate: Date = new Date('2020-01-01');
 
         // Running the function
-        generateDailyExpenses(transactions, skippedTransactions, expense, toDate, fromDate);
+        generateDailyExpenses(
+            transactions,
+            skippedTransactions,
+            expense,
+            toDate,
+            fromDate,
+        );
 
-        const expectedEndDate: Date = new Date(transactions[transactions.length - 1].date);
+        const expectedEndDate: Date = new Date(
+            transactions[transactions.length - 1].date,
+        );
 
         // Checking the results
         expect(transactions.length).toBe(5);
@@ -42,7 +55,9 @@ describe('Test generateDailyExpenses', () => {
         expect(transactions[0].title).toBe(expense.expense_title);
         expect(transactions[0].description).toBe(expense.expense_description);
         expect(transactions[0].amount).toBe(-expense.expense_amount);
-        expect(expectedEndDate.toISOString().slice(0, 10)).toBe(new Date('2020-01-06').toISOString().slice(0, 10));
+        expect(expectedEndDate.toISOString().slice(0, 10)).toBe(
+            new Date('2020-01-06').toISOString().slice(0, 10),
+        );
     });
 
     it('Should generate daily expenses correctly every 2 days', () => {
@@ -53,15 +68,23 @@ describe('Test generateDailyExpenses', () => {
             expense_description: 'Test description',
             expense_amount: 100,
             frequency_type_variable: 2,
-            expense_subsidized: 0
+            expense_subsidized: 0,
         };
         const toDate: Date = new Date('2020-01-06');
         const fromDate: Date = new Date('2020-01-01');
 
         // Running the function
-        generateDailyExpenses(transactions, skippedTransactions, expense, toDate, fromDate);
+        generateDailyExpenses(
+            transactions,
+            skippedTransactions,
+            expense,
+            toDate,
+            fromDate,
+        );
 
-        const expectedEndDate: Date = new Date(transactions[transactions.length - 1].date);
+        const expectedEndDate: Date = new Date(
+            transactions[transactions.length - 1].date,
+        );
 
         // Checking the results
         expect(transactions.length).toBe(3);
@@ -69,7 +92,9 @@ describe('Test generateDailyExpenses', () => {
         expect(transactions[0].title).toBe(expense.expense_title);
         expect(transactions[0].description).toBe(expense.expense_description);
         expect(transactions[0].amount).toBe(-expense.expense_amount);
-        expect(expectedEndDate.toISOString().slice(0, 10)).toBe(new Date('2020-01-06').toISOString().slice(0, 10));
+        expect(expectedEndDate.toISOString().slice(0, 10)).toBe(
+            new Date('2020-01-06').toISOString().slice(0, 10),
+        );
     });
 
     it('Should generate daily expenses correctly when the expense begin date is less than the from date', () => {
@@ -79,15 +104,23 @@ describe('Test generateDailyExpenses', () => {
             expense_title: 'Test expense',
             expense_description: 'Test description',
             expense_amount: 100,
-            expense_subsidized: 0
+            expense_subsidized: 0,
         };
         const toDate: Date = new Date('2020-01-08');
         const fromDate: Date = new Date('2020-01-06');
 
         // Running the function
-        generateDailyExpenses(transactions, skippedTransactions, expense, toDate, fromDate);
+        generateDailyExpenses(
+            transactions,
+            skippedTransactions,
+            expense,
+            toDate,
+            fromDate,
+        );
 
-        const expectedEndDate: Date = new Date(transactions[transactions.length - 1].date);
+        const expectedEndDate: Date = new Date(
+            transactions[transactions.length - 1].date,
+        );
 
         // Checking the results
         expect(transactions.length).toBe(3);
@@ -95,7 +128,9 @@ describe('Test generateDailyExpenses', () => {
         expect(transactions[0].title).toBe(expense.expense_title);
         expect(transactions[0].description).toBe(expense.expense_description);
         expect(transactions[0].amount).toBe(-expense.expense_amount);
-        expect(expectedEndDate.toISOString().slice(0, 10)).toBe(new Date('2020-01-08').toISOString().slice(0, 10));
+        expect(expectedEndDate.toISOString().slice(0, 10)).toBe(
+            new Date('2020-01-08').toISOString().slice(0, 10),
+        );
     });
 });
 
@@ -107,15 +142,23 @@ describe('Test generateMonthlyExpenses', () => {
             expense_title: 'Test expense',
             expense_description: 'Test description',
             expense_amount: 100,
-            expense_subsidized: 0
+            expense_subsidized: 0,
         };
         const toDate: Date = new Date('2020-06-02');
         const fromDate: Date = new Date('2020-01-01');
 
         // Running the function
-        generateMonthlyExpenses(transactions, skippedTransactions, expense, toDate, fromDate);
+        generateMonthlyExpenses(
+            transactions,
+            skippedTransactions,
+            expense,
+            toDate,
+            fromDate,
+        );
 
-        const expectedEndDate: Date = new Date(transactions[transactions.length - 1].date);
+        const expectedEndDate: Date = new Date(
+            transactions[transactions.length - 1].date,
+        );
 
         // Checking the results
         expect(transactions.length).toBe(6);
@@ -123,7 +166,9 @@ describe('Test generateMonthlyExpenses', () => {
         expect(transactions[0].title).toBe(expense.expense_title);
         expect(transactions[0].description).toBe(expense.expense_description);
         expect(transactions[0].amount).toBe(-expense.expense_amount);
-        expect(expectedEndDate.toISOString().slice(0, 10)).toBe(new Date('2020-06-01').toISOString().slice(0, 10));
+        expect(expectedEndDate.toISOString().slice(0, 10)).toBe(
+            new Date('2020-06-01').toISOString().slice(0, 10),
+        );
     });
 
     it('Should generate monthly expenses correctly every 2 months', () => {
@@ -134,15 +179,23 @@ describe('Test generateMonthlyExpenses', () => {
             expense_description: 'Test description',
             expense_amount: 100,
             frequency_type_variable: 2,
-            expense_subsidized: 0
+            expense_subsidized: 0,
         };
         const toDate: Date = new Date('2020-08-02');
         const fromDate: Date = new Date('2020-01-01');
 
         // Running the function
-        generateMonthlyExpenses(transactions, skippedTransactions, expense, toDate, fromDate);
+        generateMonthlyExpenses(
+            transactions,
+            skippedTransactions,
+            expense,
+            toDate,
+            fromDate,
+        );
 
-        const expectedEndDate: Date = new Date(transactions[transactions.length - 1].date);
+        const expectedEndDate: Date = new Date(
+            transactions[transactions.length - 1].date,
+        );
 
         // Checking the results
         expect(transactions.length).toBe(4);
@@ -150,7 +203,9 @@ describe('Test generateMonthlyExpenses', () => {
         expect(transactions[0].title).toBe(expense.expense_title);
         expect(transactions[0].description).toBe(expense.expense_description);
         expect(transactions[0].amount).toBe(-expense.expense_amount);
-        expect(expectedEndDate.toISOString().slice(0, 10)).toBe(new Date('2020-07-01').toISOString().slice(0, 10));
+        expect(expectedEndDate.toISOString().slice(0, 10)).toBe(
+            new Date('2020-07-01').toISOString().slice(0, 10),
+        );
     });
 
     it('Should generate monthly expenses correctly when the expense begin date is less than the from date', () => {
@@ -160,15 +215,23 @@ describe('Test generateMonthlyExpenses', () => {
             expense_title: 'Test expense',
             expense_description: 'Test description',
             expense_amount: 100,
-            expense_subsidized: 0
+            expense_subsidized: 0,
         };
         const toDate: Date = new Date('2020-08-02');
         const fromDate: Date = new Date('2020-06-02');
 
         // Running the function
-        generateMonthlyExpenses(transactions, skippedTransactions, expense, toDate, fromDate);
+        generateMonthlyExpenses(
+            transactions,
+            skippedTransactions,
+            expense,
+            toDate,
+            fromDate,
+        );
 
-        const expectedEndDate: Date = new Date(transactions[transactions.length - 1].date);
+        const expectedEndDate: Date = new Date(
+            transactions[transactions.length - 1].date,
+        );
 
         // Checking the results
         expect(transactions.length).toBe(2);
@@ -176,7 +239,9 @@ describe('Test generateMonthlyExpenses', () => {
         expect(transactions[0].title).toBe(expense.expense_title);
         expect(transactions[0].description).toBe(expense.expense_description);
         expect(transactions[0].amount).toBe(-expense.expense_amount);
-        expect(expectedEndDate.toISOString().slice(0, 10)).toBe(new Date('2020-08-01').toISOString().slice(0, 10));
+        expect(expectedEndDate.toISOString().slice(0, 10)).toBe(
+            new Date('2020-08-01').toISOString().slice(0, 10),
+        );
     });
 
     it('Should generate monthly expenses correctly when the frequency day of week is set', () => {
@@ -187,15 +252,23 @@ describe('Test generateMonthlyExpenses', () => {
             expense_description: 'Test description',
             expense_amount: 150,
             frequency_day_of_week: 2,
-            expense_subsidized: 0
+            expense_subsidized: 0,
         };
         const toDate: Date = new Date('2020-06-02');
         const fromDate: Date = new Date('2020-01-01');
 
         // Running the function
-        generateMonthlyExpenses(transactions, skippedTransactions, expense, toDate, fromDate);
+        generateMonthlyExpenses(
+            transactions,
+            skippedTransactions,
+            expense,
+            toDate,
+            fromDate,
+        );
 
-        const expectedEndDate: Date = new Date(transactions[transactions.length - 1].date);
+        const expectedEndDate: Date = new Date(
+            transactions[transactions.length - 1].date,
+        );
         const toBeEndDate: Date = new Date('2020-01-01');
 
         // advance by 5 months
@@ -205,7 +278,8 @@ describe('Test generateMonthlyExpenses', () => {
         const TUESDAY: number = 2;
 
         // calculate the number of days to add to get to the next Tuesday
-        const daysUntilNextTuesday: number = (7 + TUESDAY - toBeEndDate.getDay()) % 7;
+        const daysUntilNextTuesday: number =
+            (7 + TUESDAY - toBeEndDate.getDay()) % 7;
 
         toBeEndDate.setDate(toBeEndDate.getDate() + daysUntilNextTuesday);
 
@@ -215,7 +289,9 @@ describe('Test generateMonthlyExpenses', () => {
         expect(transactions[0].title).toBe(expense.expense_title);
         expect(transactions[0].description).toBe(expense.expense_description);
         expect(transactions[0].amount).toBe(-expense.expense_amount);
-        expect(expectedEndDate.toISOString().slice(0, 10)).toBe(toBeEndDate.toISOString().slice(0, 10));
+        expect(expectedEndDate.toISOString().slice(0, 10)).toBe(
+            toBeEndDate.toISOString().slice(0, 10),
+        );
     });
 
     it('Should generate monthly expenses correctly when the frequency week of month is set', () => {
@@ -227,13 +303,19 @@ describe('Test generateMonthlyExpenses', () => {
             expense_amount: 150,
             frequency_day_of_week: 2,
             frequency_week_of_month: 1,
-            expense_subsidized: 0
+            expense_subsidized: 0,
         };
         const toDate: Date = new Date('2020-06-01');
         const fromDate: Date = new Date('2020-01-01');
 
         // Running the function
-        generateMonthlyExpenses(transactions, skippedTransactions, expense, toDate, fromDate);
+        generateMonthlyExpenses(
+            transactions,
+            skippedTransactions,
+            expense,
+            toDate,
+            fromDate,
+        );
 
         // Checking the results
         expect(transactions.length).toBe(5);
@@ -245,9 +327,12 @@ describe('Test generateMonthlyExpenses', () => {
         // Check if the transactions are on the correct dates (second Tuesday of each month)
         transactions.forEach((transaction, i) => {
             const transactionDate: Date = new Date(transaction.date);
-            expect(transactionDate.getDay()).toBe(expense.frequency_day_of_week);
+            expect(transactionDate.getDay()).toBe(
+                expense.frequency_day_of_week,
+            );
 
-            const secondWeekOfMonth: boolean = Math.floor((transactionDate.getDate() - 1) / 7) === 1;
+            const secondWeekOfMonth: boolean =
+                Math.floor((transactionDate.getDate() - 1) / 7) === 1;
             expect(secondWeekOfMonth).toBeTruthy();
 
             // Since we start from the current month and increment each month
@@ -265,15 +350,23 @@ describe('generateWeeklyExpenses', () => {
             expense_title: 'Test expense',
             expense_description: 'Test description',
             expense_amount: 100,
-            expense_subsidized: 0
+            expense_subsidized: 0,
         };
         const toDate: Date = new Date('2020-02-02');
         const fromDate: Date = new Date('2020-01-01');
 
         // Running the function
-        generateWeeklyExpenses(transactions, skippedTransactions, expense, toDate, fromDate);
+        generateWeeklyExpenses(
+            transactions,
+            skippedTransactions,
+            expense,
+            toDate,
+            fromDate,
+        );
 
-        const expectedEndDate: Date = new Date(transactions[transactions.length - 1].date);
+        const expectedEndDate: Date = new Date(
+            transactions[transactions.length - 1].date,
+        );
 
         // Checking the results
         expect(transactions.length).toBe(5);
@@ -281,7 +374,9 @@ describe('generateWeeklyExpenses', () => {
         expect(transactions[0].title).toBe(expense.expense_title);
         expect(transactions[0].description).toBe(expense.expense_description);
         expect(transactions[0].amount).toBe(-expense.expense_amount);
-        expect(expectedEndDate.toISOString().slice(0, 10)).toBe(new Date('2020-01-30').toISOString().slice(0, 10));
+        expect(expectedEndDate.toISOString().slice(0, 10)).toBe(
+            new Date('2020-01-30').toISOString().slice(0, 10),
+        );
     });
 
     it('Should generate weekly expenses every 2 weeks', () => {
@@ -292,15 +387,23 @@ describe('generateWeeklyExpenses', () => {
             expense_description: 'Test description',
             expense_amount: 100,
             frequency_type_variable: 2,
-            expense_subsidized: 0
+            expense_subsidized: 0,
         };
         const toDate: Date = new Date('2020-02-02');
         const fromDate: Date = new Date('2020-01-01');
 
         // Running the function
-        generateWeeklyExpenses(transactions, skippedTransactions, expense, toDate, fromDate);
+        generateWeeklyExpenses(
+            transactions,
+            skippedTransactions,
+            expense,
+            toDate,
+            fromDate,
+        );
 
-        const expectedEndDate: Date = new Date(transactions[transactions.length - 1].date);
+        const expectedEndDate: Date = new Date(
+            transactions[transactions.length - 1].date,
+        );
 
         // Checking the results
         expect(transactions.length).toBe(3);
@@ -308,7 +411,9 @@ describe('generateWeeklyExpenses', () => {
         expect(transactions[0].title).toBe(expense.expense_title);
         expect(transactions[0].description).toBe(expense.expense_description);
         expect(transactions[0].amount).toBe(-expense.expense_amount);
-        expect(expectedEndDate.toISOString().slice(0, 10)).toBe(new Date('2020-01-30').toISOString().slice(0, 10));
+        expect(expectedEndDate.toISOString().slice(0, 10)).toBe(
+            new Date('2020-01-30').toISOString().slice(0, 10),
+        );
     });
 
     it('Should generate weekly expenses correctly when the expense begin date is less than the from date', () => {
@@ -318,15 +423,23 @@ describe('generateWeeklyExpenses', () => {
             expense_title: 'Test expense',
             expense_description: 'Test description',
             expense_amount: 100,
-            expense_subsidized: 0
+            expense_subsidized: 0,
         };
         const toDate: Date = new Date('2020-02-15');
         const fromDate: Date = new Date('2020-01-28');
 
         // Running the function
-        generateWeeklyExpenses(transactions, skippedTransactions, expense, toDate, fromDate);
+        generateWeeklyExpenses(
+            transactions,
+            skippedTransactions,
+            expense,
+            toDate,
+            fromDate,
+        );
 
-        const expectedEndDate: Date = new Date(transactions[transactions.length - 1].date);
+        const expectedEndDate: Date = new Date(
+            transactions[transactions.length - 1].date,
+        );
 
         // Checking the results
         expect(transactions.length).toBe(3);
@@ -334,7 +447,9 @@ describe('generateWeeklyExpenses', () => {
         expect(transactions[0].title).toBe(expense.expense_title);
         expect(transactions[0].description).toBe(expense.expense_description);
         expect(transactions[0].amount).toBe(-expense.expense_amount);
-        expect(expectedEndDate.toISOString().slice(0, 10)).toBe(new Date('2020-02-13').toISOString().slice(0, 10));
+        expect(expectedEndDate.toISOString().slice(0, 10)).toBe(
+            new Date('2020-02-13').toISOString().slice(0, 10),
+        );
     });
 
     it('Should generate weekly expenses correctly when the frequency day of week is set', () => {
@@ -345,15 +460,23 @@ describe('generateWeeklyExpenses', () => {
             expense_description: 'Test description',
             expense_amount: 150,
             frequency_day_of_week: 2,
-            expense_subsidized: 0
+            expense_subsidized: 0,
         };
         const toDate: Date = new Date('2020-02-02');
         const fromDate: Date = new Date('2020-01-01');
 
         // Running the function
-        generateWeeklyExpenses(transactions, skippedTransactions, expense, toDate, fromDate);
+        generateWeeklyExpenses(
+            transactions,
+            skippedTransactions,
+            expense,
+            toDate,
+            fromDate,
+        );
 
-        const expectedEndDate: Date = new Date(transactions[transactions.length - 1].date);
+        const expectedEndDate: Date = new Date(
+            transactions[transactions.length - 1].date,
+        );
         const toBeEndDate: Date = new Date('2020-01-01');
 
         // advance by 4 weeks
@@ -363,7 +486,8 @@ describe('generateWeeklyExpenses', () => {
         const TUESDAY: number = 2;
 
         // calculate the number of days to add to get to the next Tuesday
-        const daysUntilNextTuesday: number = (7 + TUESDAY - toBeEndDate.getDay()) % 7;
+        const daysUntilNextTuesday: number =
+            (7 + TUESDAY - toBeEndDate.getDay()) % 7;
 
         toBeEndDate.setDate(toBeEndDate.getDate() + daysUntilNextTuesday);
 
@@ -373,7 +497,9 @@ describe('generateWeeklyExpenses', () => {
         expect(transactions[0].title).toBe(expense.expense_title);
         expect(transactions[0].description).toBe(expense.expense_description);
         expect(transactions[0].amount).toBe(-expense.expense_amount);
-        expect(expectedEndDate.toISOString().slice(0, 10)).toBe(toBeEndDate.toISOString().slice(0, 10));
+        expect(expectedEndDate.toISOString().slice(0, 10)).toBe(
+            toBeEndDate.toISOString().slice(0, 10),
+        );
     });
 });
 
@@ -385,15 +511,23 @@ describe('generateYearlyExpenses', () => {
             expense_title: 'Test expense',
             expense_description: 'Test description',
             expense_amount: 100,
-            expense_subsidized: 0
+            expense_subsidized: 0,
         };
         const toDate: Date = new Date('2022-02-02');
         const fromDate: Date = new Date('2020-01-01');
 
         // Running the function
-        generateYearlyExpenses(transactions, skippedTransactions, expense, toDate, fromDate);
+        generateYearlyExpenses(
+            transactions,
+            skippedTransactions,
+            expense,
+            toDate,
+            fromDate,
+        );
 
-        const expectedEndDate: Date = new Date(transactions[transactions.length - 1].date);
+        const expectedEndDate: Date = new Date(
+            transactions[transactions.length - 1].date,
+        );
 
         // Checking the results
         expect(transactions.length).toBe(3);
@@ -401,7 +535,9 @@ describe('generateYearlyExpenses', () => {
         expect(transactions[0].title).toBe(expense.expense_title);
         expect(transactions[0].description).toBe(expense.expense_description);
         expect(transactions[0].amount).toBe(-expense.expense_amount);
-        expect(expectedEndDate.toISOString().slice(0, 10)).toBe(new Date('2022-01-02').toISOString().slice(0, 10));
+        expect(expectedEndDate.toISOString().slice(0, 10)).toBe(
+            new Date('2022-01-02').toISOString().slice(0, 10),
+        );
     });
 
     it('Should generate yearly expenses correctly every 2 years', () => {
@@ -412,15 +548,23 @@ describe('generateYearlyExpenses', () => {
             expense_description: 'Test description',
             expense_amount: 100,
             frequency_type_variable: 2,
-            expense_subsidized: 0
+            expense_subsidized: 0,
         };
         const toDate: Date = new Date('2024-02-02');
         const fromDate: Date = new Date('2020-01-01');
 
         // Running the function
-        generateYearlyExpenses(transactions, skippedTransactions, expense, toDate, fromDate);
+        generateYearlyExpenses(
+            transactions,
+            skippedTransactions,
+            expense,
+            toDate,
+            fromDate,
+        );
 
-        const expectedEndDate: Date = new Date(transactions[transactions.length - 1].date);
+        const expectedEndDate: Date = new Date(
+            transactions[transactions.length - 1].date,
+        );
 
         // Checking the results
         expect(transactions.length).toBe(3);
@@ -428,7 +572,9 @@ describe('generateYearlyExpenses', () => {
         expect(transactions[0].title).toBe(expense.expense_title);
         expect(transactions[0].description).toBe(expense.expense_description);
         expect(transactions[0].amount).toBe(-expense.expense_amount);
-        expect(expectedEndDate.toISOString().slice(0, 10)).toBe(new Date('2024-01-02').toISOString().slice(0, 10));
+        expect(expectedEndDate.toISOString().slice(0, 10)).toBe(
+            new Date('2024-01-02').toISOString().slice(0, 10),
+        );
     });
 
     it('Should generate yearly expenses correctly when the expense begin date is less than the from date', () => {
@@ -438,15 +584,23 @@ describe('generateYearlyExpenses', () => {
             expense_title: 'Test expense',
             expense_description: 'Test description',
             expense_amount: 100,
-            expense_subsidized: 0
+            expense_subsidized: 0,
         };
         const toDate: Date = new Date('2025-02-02');
         const fromDate: Date = new Date('2022-01-01');
 
         // Running the function
-        generateYearlyExpenses(transactions, skippedTransactions, expense, toDate, fromDate);
+        generateYearlyExpenses(
+            transactions,
+            skippedTransactions,
+            expense,
+            toDate,
+            fromDate,
+        );
 
-        const expectedEndDate: Date = new Date(transactions[transactions.length - 1].date);
+        const expectedEndDate: Date = new Date(
+            transactions[transactions.length - 1].date,
+        );
 
         // Checking the results
         expect(transactions.length).toBe(4);
@@ -454,7 +608,9 @@ describe('generateYearlyExpenses', () => {
         expect(transactions[0].title).toBe(expense.expense_title);
         expect(transactions[0].description).toBe(expense.expense_description);
         expect(transactions[0].amount).toBe(-expense.expense_amount);
-        expect(expectedEndDate.toISOString().slice(0, 10)).toBe(new Date('2025-01-02').toISOString().slice(0, 10));
+        expect(expectedEndDate.toISOString().slice(0, 10)).toBe(
+            new Date('2025-01-02').toISOString().slice(0, 10),
+        );
     });
 
     it('Should generate yearly expenses correctly when the frequency day of week is set', () => {
@@ -465,22 +621,31 @@ describe('generateYearlyExpenses', () => {
             expense_description: 'Test description',
             expense_amount: 150,
             frequency_day_of_week: 2,
-            expense_subsidized: 0
+            expense_subsidized: 0,
         };
         const toDate: Date = new Date('2023-01-10');
         const fromDate: Date = new Date('2020-01-01');
 
         // Running the function
-        generateYearlyExpenses(transactions, skippedTransactions, expense, toDate, fromDate);
+        generateYearlyExpenses(
+            transactions,
+            skippedTransactions,
+            expense,
+            toDate,
+            fromDate,
+        );
 
-        const expectedEndDate: Date = new Date(transactions[transactions.length - 1].date);
+        const expectedEndDate: Date = new Date(
+            transactions[transactions.length - 1].date,
+        );
         const toBeEndDate: Date = new Date('2023-01-02');
 
         // days of the week from 0 (Sunday) to 6 (Saturday)
         const TUESDAY: number = 2;
 
         // calculate the number of days to add to get to the next Tuesday
-        const daysUntilNextTuesday: number = (7 + TUESDAY - toBeEndDate.getDay()) % 7;
+        const daysUntilNextTuesday: number =
+            (7 + TUESDAY - toBeEndDate.getDay()) % 7;
 
         toBeEndDate.setDate(toBeEndDate.getDate() + daysUntilNextTuesday);
 
@@ -490,7 +655,9 @@ describe('generateYearlyExpenses', () => {
         expect(transactions[0].title).toBe(expense.expense_title);
         expect(transactions[0].description).toBe(expense.expense_description);
         expect(transactions[0].amount).toBe(-expense.expense_amount);
-        expect(expectedEndDate.toISOString().slice(0, 10)).toBe(toBeEndDate.toISOString().slice(0, 10));
+        expect(expectedEndDate.toISOString().slice(0, 10)).toBe(
+            toBeEndDate.toISOString().slice(0, 10),
+        );
     });
 
     it('Should generate yearly expenses correctly when the frequency week of month is set', () => {
@@ -502,13 +669,19 @@ describe('generateYearlyExpenses', () => {
             expense_amount: 150,
             frequency_day_of_week: 2,
             frequency_week_of_month: 1,
-            expense_subsidized: 0
+            expense_subsidized: 0,
         };
         const toDate: Date = new Date('2023-01-01');
         const fromDate: Date = new Date('2020-01-01');
 
         // Running the function
-        generateYearlyExpenses(transactions, skippedTransactions, expense, toDate, fromDate);
+        generateYearlyExpenses(
+            transactions,
+            skippedTransactions,
+            expense,
+            toDate,
+            fromDate,
+        );
 
         // Checking the results
         expect(transactions.length).toBe(3);
@@ -520,13 +693,17 @@ describe('generateYearlyExpenses', () => {
         // Check if the transactions are on the correct dates (second Tuesday of each year)
         transactions.forEach((transaction, i) => {
             const transactionDate: Date = new Date(transaction.date);
-            expect(transactionDate.getDay()).toBe(expense.frequency_day_of_week);
+            expect(transactionDate.getDay()).toBe(
+                expense.frequency_day_of_week,
+            );
 
-            const secondWeekOfMonth: boolean = Math.floor((transactionDate.getDate() - 1) / 7) === 1;
+            const secondWeekOfMonth: boolean =
+                Math.floor((transactionDate.getDate() - 1) / 7) === 1;
             expect(secondWeekOfMonth).toBeTruthy();
 
             // Check if the year is correctly incrementing on each transaction
-            const expectedYear: number = new Date(expense.expense_begin_date).getFullYear() + i;
+            const expectedYear: number =
+                new Date(expense.expense_begin_date).getFullYear() + i;
             expect(transactionDate.getFullYear()).toBe(expectedYear);
         });
     });
@@ -541,13 +718,19 @@ describe('generateYearlyExpenses', () => {
             frequency_day_of_week: 2, // Tuesday
             frequency_week_of_month: 1, // Second week
             frequency_month_of_year: 5, // June
-            expense_subsidized: 0
+            expense_subsidized: 0,
         };
         const toDate: Date = new Date('2023-01-01');
         const fromDate: Date = new Date('2020-01-01');
 
         // Running the function
-        generateYearlyExpenses(transactions, skippedTransactions, expense, toDate, fromDate);
+        generateYearlyExpenses(
+            transactions,
+            skippedTransactions,
+            expense,
+            toDate,
+            fromDate,
+        );
 
         // Checking the results
         expect(transactions.length).toBe(3); // 2020, 2021, 2022
@@ -559,15 +742,21 @@ describe('generateYearlyExpenses', () => {
         // Check if the transactions are on the correct dates (second Tuesday of June each year)
         transactions.forEach((transaction, i) => {
             const transactionDate: Date = new Date(transaction.date);
-            expect(transactionDate.getMonth()).toBe(expense.frequency_month_of_year); // June
+            expect(transactionDate.getMonth()).toBe(
+                expense.frequency_month_of_year,
+            ); // June
 
-            expect(transactionDate.getDay()).toBe(expense.frequency_day_of_week); // Tuesday
+            expect(transactionDate.getDay()).toBe(
+                expense.frequency_day_of_week,
+            ); // Tuesday
 
-            const secondWeekOfMonth: boolean = Math.floor((transactionDate.getDate() - 1) / 7) === 1;
+            const secondWeekOfMonth: boolean =
+                Math.floor((transactionDate.getDate() - 1) / 7) === 1;
             expect(secondWeekOfMonth).toBeTruthy();
 
             // Check if the year is correctly incrementing on each transaction
-            const expectedYear: number = new Date(expense.expense_begin_date).getFullYear() + i;
+            const expectedYear: number =
+                new Date(expense.expense_begin_date).getFullYear() + i;
             expect(transactionDate.getFullYear()).toBe(expectedYear);
         });
     });

@@ -1,8 +1,8 @@
-import { type NextFunction, type Request, type Response } from "express";
-import { payrollQueries } from "../models/queryData.js";
-import { exec } from "child_process";
-import { handleError, executeQuery } from "../utils/helperFunctions.js";
-import { type Employee } from "../types/types.js";
+import { type NextFunction, type Request, type Response } from 'express';
+import { payrollQueries } from '../models/queryData.js';
+import { exec } from 'child_process';
+import { handleError, executeQuery } from '../utils/helperFunctions.js';
+import { type Employee } from '../types/types.js';
 
 interface EmployeeInput {
     employee_id: string;
@@ -50,7 +50,7 @@ export const getEmployee = async (
         const results = await executeQuery<EmployeeInput>(query, params);
 
         if (employee_id && results.length === 0) {
-            response.status(404).send("Employee not found");
+            response.status(404).send('Employee not found');
             return;
         }
 
@@ -64,7 +64,7 @@ export const getEmployee = async (
         console.error(error); // Log the error on the server side
         handleError(
             response,
-            `Error getting ${employee_id ? "employee" : "employees"}`,
+            `Error getting ${employee_id ? 'employee' : 'employees'}`,
         );
     }
 };
@@ -109,7 +109,7 @@ export const createEmployee = async (
         response.status(201).json(employees);
     } catch (error) {
         console.error(error); // Log the error on the server side
-        handleError(response, "Error creating employee");
+        handleError(response, 'Error creating employee');
     }
 };
 
@@ -150,7 +150,7 @@ export const updateEmployee = async (
         );
 
         if (results.length === 0) {
-            response.status(404).send("Employee not found");
+            response.status(404).send('Employee not found');
             return;
         }
 
@@ -159,11 +159,11 @@ export const updateEmployee = async (
 
         // Execute the script
         exec(scriptCommand, (error, stdout, stderr) => {
-            if (error) {
+            if (error != null) {
                 console.error(`Error executing script: ${error}`);
                 response.status(500).json({
-                    status: "error",
-                    message: "Failed to execute script",
+                    status: 'error',
+                    message: 'Failed to execute script',
                 });
                 return;
             }
@@ -180,7 +180,7 @@ export const updateEmployee = async (
         next();
     } catch (error) {
         console.error(error); // Log the error on the server side
-        handleError(response, "Error updating employee");
+        handleError(response, 'Error updating employee');
     }
 };
 
@@ -204,7 +204,7 @@ export const updateEmployeeReturnObject = async (
         response.status(200).json(employees);
     } catch (error) {
         console.error(error); // Log the error on the server side
-        handleError(response, "Error updating employee");
+        handleError(response, 'Error updating employee');
     }
 };
 
@@ -227,7 +227,7 @@ export const deleteEmployee = async (
         );
 
         if (transferResults.length === 0) {
-            response.status(404).send("Employee not found");
+            response.status(404).send('Employee not found');
             return;
         }
 
@@ -246,9 +246,9 @@ export const deleteEmployee = async (
         if (hasPayrollDates || hasPayrollTaxes) {
             response.status(400).send({
                 errors: {
-                    msg: "You need to delete employee-related data before deleting the employee",
+                    msg: 'You need to delete employee-related data before deleting the employee',
                     param: null,
-                    location: "query",
+                    location: 'query',
                 },
             });
             return;
@@ -261,19 +261,18 @@ export const deleteEmployee = async (
 
         // Execute the script
         exec(scriptCommand, (error, stdout, stderr) => {
-            if (error) {
+            if (error != null) {
                 console.error(`Error executing script: ${error}`);
                 response.status(500).json({
-                    status: "error",
-                    message: "Failed to execute script",
+                    status: 'error',
+                    message: 'Failed to execute script',
                 });
-                return;
             }
         });
 
-        response.status(200).send("Successfully deleted employee");
+        response.status(200).send('Successfully deleted employee');
     } catch (error) {
         console.error(error); // Log the error on the server side
-        handleError(response, "Error deleting employee");
+        handleError(response, 'Error deleting employee');
     }
 };

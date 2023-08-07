@@ -6,9 +6,10 @@ type MyQueryFunction = (sql: string, params: any[]) => Promise<{ rows: any[] }>;
 // Mocking db.js module
 jest.mock('../../config/db.js', () => {
     return {
-        query: jest.fn<MyQueryFunction>()
+        query: jest
+            .fn<MyQueryFunction>()
             .mockResolvedValueOnce({ rows: [{ id: 1, name: 'John Doe' }] }) // Success case
-            .mockRejectedValueOnce(new Error('Table does not exist')) // Failure case
+            .mockRejectedValueOnce(new Error('Table does not exist')), // Failure case
     };
 });
 
@@ -20,7 +21,7 @@ beforeEach(() => {
     mockRequest = {};
     mockResponse = {
         status: jest.fn(() => mockResponse),
-        send: jest.fn()
+        send: jest.fn(),
     };
 });
 
@@ -39,8 +40,8 @@ describe('handleError function', () => {
             errors: {
                 msg: 'Test error message',
                 param: null,
-                location: 'query'
-            }
+                location: 'query',
+            },
         });
     });
 });

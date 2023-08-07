@@ -1,12 +1,9 @@
-import { type NextFunction, type Request, type Response } from "express";
-import {
-    cronJobQueries,
-    incomeQueries,
-} from "../models/queryData.js";
-import scheduleCronJob from "../crontab/scheduleCronJob.js";
-import deleteCronJob from "../crontab/deleteCronJob.js";
-import { handleError, executeQuery } from "../utils/helperFunctions.js";
-import { type Income } from "../types/types.js";
+import { type NextFunction, type Request, type Response } from 'express';
+import { cronJobQueries, incomeQueries } from '../models/queryData.js';
+import scheduleCronJob from '../crontab/scheduleCronJob.js';
+import deleteCronJob from '../crontab/deleteCronJob.js';
+import { handleError, executeQuery } from '../utils/helperFunctions.js';
+import { type Income } from '../types/types.js';
 
 interface IncomeInput {
     income_id: string;
@@ -86,7 +83,7 @@ export const getIncome = async (
         const income = await executeQuery<IncomeInput>(query, params);
 
         if ((id || account_id) && income.length === 0) {
-            response.status(404).send("Income not found");
+            response.status(404).send('Income not found');
             return;
         }
 
@@ -95,11 +92,12 @@ export const getIncome = async (
         console.error(error); // Log the error on the server side
         handleError(
             response,
-            `Error getting ${id
-                ? "income"
-                : account_id
-                    ? "income for given account_id"
-                    : "income"
+            `Error getting ${
+                id
+                    ? 'income'
+                    : account_id
+                        ? 'income for given account_id'
+                        : 'income'
             }`,
         );
     }
@@ -130,7 +128,7 @@ export const createIncome = async (
         frequency_week_of_month,
         frequency_month_of_year,
         begin_date,
-        end_date
+        end_date,
     } = request.body;
 
     try {
@@ -149,7 +147,7 @@ export const createIncome = async (
                 frequency_week_of_month,
                 frequency_month_of_year,
                 begin_date,
-                end_date
+                end_date,
             ],
         );
 
@@ -159,7 +157,7 @@ export const createIncome = async (
             date: begin_date,
             account_id,
             id: modifiedIncome[0].income_id,
-            amount: amount,
+            amount,
             title,
             description,
             frequency_type,
@@ -168,16 +166,19 @@ export const createIncome = async (
             frequency_day_of_week,
             frequency_week_of_month,
             frequency_month_of_year,
-            scriptPath: "/app/dist/scripts/createTransaction.sh",
-            type: "income",
+            scriptPath: '/app/dist/scripts/createTransaction.sh',
+            type: 'income',
         };
 
         const { cronDate, uniqueId } = await scheduleCronJob(cronParams);
         const cronId: number = (
-            await executeQuery(cronJobQueries.createCronJob, [uniqueId, cronDate])
+            await executeQuery(cronJobQueries.createCronJob, [
+                uniqueId,
+                cronDate,
+            ])
         )[0].cron_job_id;
 
-        console.log("Cron job created " + cronId);
+        console.log('Cron job created ' + cronId);
 
         await executeQuery(incomeQueries.updateIncomeWithCronJobId, [
             cronId,
@@ -189,7 +190,7 @@ export const createIncome = async (
         next();
     } catch (error) {
         console.error(error); // Log the error on the server side
-        handleError(response, "Error creating income");
+        handleError(response, 'Error creating income');
     }
 };
 
@@ -216,7 +217,7 @@ export const createIncomeReturnObject = async (
         response.status(201).json(modifiedIncome);
     } catch (error) {
         console.error(error); // Log the error on the server side
-        handleError(response, "Error creating income");
+        handleError(response, 'Error creating income');
     }
 };
 
@@ -246,7 +247,7 @@ export const updateIncome = async (
         frequency_week_of_month,
         frequency_month_of_year,
         begin_date,
-        end_date
+        end_date,
     } = request.body;
 
     try {
@@ -254,7 +255,7 @@ export const updateIncome = async (
             date: begin_date,
             account_id,
             id,
-            amount: amount,
+            amount,
             title,
             description,
             frequency_type,
@@ -263,8 +264,8 @@ export const updateIncome = async (
             frequency_day_of_week,
             frequency_week_of_month,
             frequency_month_of_year,
-            scriptPath: "/app/dist/scripts/createTransaction.sh",
-            type: "income",
+            scriptPath: '/app/dist/scripts/createTransaction.sh',
+            type: 'income',
         };
 
         const incomeResult = await executeQuery<IncomeInput>(
@@ -273,7 +274,7 @@ export const updateIncome = async (
         );
 
         if (incomeResult.length === 0) {
-            response.status(404).send("Income not found");
+            response.status(404).send('Income not found');
             return;
         }
 
@@ -283,8 +284,8 @@ export const updateIncome = async (
         if (results.length > 0) {
             await deleteCronJob(results[0].unique_id);
         } else {
-            console.error("Cron job not found");
-            response.status(404).send("Cron job not found");
+            console.error('Cron job not found');
+            response.status(404).send('Cron job not found');
             return;
         }
 
@@ -310,7 +311,7 @@ export const updateIncome = async (
             frequency_month_of_year,
             begin_date,
             end_date,
-            id
+            id,
         ]);
 
         request.income_id = id;
@@ -318,7 +319,7 @@ export const updateIncome = async (
         next();
     } catch (error) {
         console.error(error); // Log the error on the server side
-        handleError(response, "Error updating income");
+        handleError(response, 'Error updating income');
     }
 };
 
@@ -337,7 +338,7 @@ export const updateIncomeReturnObject = async (
     try {
         const income = await executeQuery<IncomeInput>(
             incomeQueries.getIncomeById,
-            [income_id]
+            [income_id],
         );
 
         const modifiedIncome = income.map(parseIncome);
@@ -345,7 +346,7 @@ export const updateIncomeReturnObject = async (
         response.status(200).json(modifiedIncome);
     } catch (error) {
         console.error(error); // Log the error on the server side
-        handleError(response, "Error updating income");
+        handleError(response, 'Error updating income');
     }
 };
 
@@ -368,7 +369,7 @@ export const deleteIncome = async (
             id,
         ]);
         if (incomeResult.length === 0) {
-            response.status(404).send("Income not found");
+            response.status(404).send('Income not found');
             return;
         }
 
@@ -381,8 +382,8 @@ export const deleteIncome = async (
         if (results.length > 0) {
             await deleteCronJob(results[0].unique_id);
         } else {
-            console.error("Cron job not found");
-            response.status(404).send("Cron job not found");
+            console.error('Cron job not found');
+            response.status(404).send('Cron job not found');
             return;
         }
 
@@ -391,7 +392,7 @@ export const deleteIncome = async (
         next();
     } catch (error) {
         console.error(error); // Log the error on the server side
-        handleError(response, "Error deleting income");
+        handleError(response, 'Error deleting income');
     }
 };
 
@@ -399,5 +400,5 @@ export const deleteIncomeReturnObject = async (
     request: Request,
     response: Response,
 ): Promise<void> => {
-    response.status(200).send("Income deleted successfully");
+    response.status(200).send('Income deleted successfully');
 };

@@ -1,14 +1,14 @@
-import { type NextFunction, type Request, type Response } from "express";
-import { payrollQueries } from "../models/queryData.js";
-import { exec } from "child_process";
-import { handleError, executeQuery } from "../utils/helperFunctions.js";
-import { type PayrollDate } from "../types/types.js";
+import { type NextFunction, type Request, type Response } from 'express';
+import { payrollQueries } from '../models/queryData.js';
+import { exec } from 'child_process';
+import { handleError, executeQuery } from '../utils/helperFunctions.js';
+import { type PayrollDate } from '../types/types.js';
 
 interface PayrollDateInput {
-  payroll_date_id: string;
-  employee_id: string;
-  payroll_start_day: string;
-  payroll_end_day: string;
+    payroll_date_id: string;
+    employee_id: string;
+    payroll_start_day: string;
+    payroll_end_day: string;
 }
 
 /**
@@ -56,7 +56,7 @@ export const getPayrollDates = async (
         const results = await executeQuery<PayrollDateInput>(query, params);
 
         if ((id || employee_id) && results.length === 0) {
-            response.status(404).send("Payroll date not found");
+            response.status(404).send('Payroll date not found');
             return;
         }
 
@@ -72,10 +72,10 @@ export const getPayrollDates = async (
             response,
             `Error getting ${
                 id
-                    ? "payroll date"
+                    ? 'payroll date'
                     : employee_id
-                        ? "payroll dates for given employee_id"
-                        : "payroll dates"
+                        ? 'payroll dates for given employee_id'
+                        : 'payroll dates'
             }`,
         );
     }
@@ -106,9 +106,9 @@ export const createPayrollDate = async (
 
         // Execute the script
         exec(scriptCommand, (error, stdout, stderr) => {
-            if (error) {
+            if (error != null) {
                 console.error(`Error executing script: ${error}`);
-                response.status(500).send("Error executing script");
+                response.status(500).send('Error executing script');
                 return;
             }
             console.log(`Script output: ${stdout}`);
@@ -124,7 +124,7 @@ export const createPayrollDate = async (
         next();
     } catch (error) {
         console.error(error); // Log the error on the server side
-        handleError(response, "Error creating payroll date");
+        handleError(response, 'Error creating payroll date');
     }
 };
 
@@ -148,7 +148,7 @@ export const createPayrollDateReturnObject = async (
         response.status(201).json(payrollDates);
     } catch (error) {
         console.error(error); // Log the error on the server side
-        handleError(response, "Error creating payroll date");
+        handleError(response, 'Error creating payroll date');
     }
 };
 
@@ -174,7 +174,7 @@ export const updatePayrollDate = async (
         );
 
         if (results.length === 0) {
-            response.status(404).send("Payroll date not found");
+            response.status(404).send('Payroll date not found');
             return;
         }
 
@@ -183,17 +183,16 @@ export const updatePayrollDate = async (
 
         // Execute the script
         exec(scriptCommand, (error, stdout, stderr) => {
-            if (error) {
+            if (error != null) {
                 console.error(`Error executing script: ${error}`);
-                response.status(500).send("Error executing script");
-                return;
+                response.status(500).send('Error executing script');
             }
         });
 
         next();
     } catch (error) {
         console.error(error); // Log the error on the server side
-        handleError(response, "Error updating payroll date");
+        handleError(response, 'Error updating payroll date');
     }
 };
 
@@ -223,7 +222,7 @@ export const updatePayrollDateReturnObject = async (
         response.status(200).json(payrollDates);
     } catch (error) {
         console.error(error); // Log the error on the server side
-        handleError(response, "Error updating payroll date");
+        handleError(response, 'Error updating payroll date');
     }
 };
 
@@ -248,7 +247,7 @@ export const deletePayrollDate = async (
         );
 
         if (getResults.length === 0) {
-            response.status(404).send("Payroll date not found");
+            response.status(404).send('Payroll date not found');
             return;
         }
 
@@ -261,17 +260,16 @@ export const deletePayrollDate = async (
 
         // Execute the script
         exec(scriptCommand, (error, stdout, stderr) => {
-            if (error) {
+            if (error != null) {
                 console.error(`Error executing script: ${error}`);
-                response.status(500).send("Error executing script");
-                return;
+                response.status(500).send('Error executing script');
             }
         });
 
         next();
     } catch (error) {
         console.error(error); // Log the error on the server side
-        handleError(response, "Error deleting payroll date");
+        handleError(response, 'Error deleting payroll date');
     }
 };
 
@@ -285,5 +283,5 @@ export const deletePayrollDateReturnObject = async (
     request: Request,
     response: Response,
 ): Promise<void> => {
-    response.status(200).send("Successfully deleted payroll date");
+    response.status(200).send('Successfully deleted payroll date');
 };

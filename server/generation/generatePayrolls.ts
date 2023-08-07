@@ -1,4 +1,4 @@
-import { type Payroll, type GeneratedTransaction } from "../types/types";
+import { type Payroll, type GeneratedTransaction } from '../types/types';
 
 /**
  *
@@ -17,12 +17,15 @@ const generatePayrolls = (
     const payroll_end_date: Date = new Date(payrolls.end_date);
 
     const newTransaction = {
-        title: "Payroll",
-        description: "payroll",
+        title: 'Payroll',
+        description: 'payroll',
         date: new Date(payroll_end_date),
         amount: payrolls.gross_pay,
         tax_rate: parseFloat(
-            ((payrolls.gross_pay - payrolls.net_pay) / payrolls.gross_pay).toFixed(4),
+            (
+                (payrolls.gross_pay - payrolls.net_pay) /
+                payrolls.gross_pay
+            ).toFixed(4),
         ),
         total_amount: payrolls.net_pay,
     };

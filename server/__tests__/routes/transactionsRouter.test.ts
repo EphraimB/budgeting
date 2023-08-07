@@ -1,13 +1,23 @@
 import { jest } from '@jest/globals';
 import request from 'supertest';
-import express, { Express, Request, Response, NextFunction, Router } from 'express';
+import express, {
+    type Express,
+    type Request,
+    type Response,
+    type NextFunction,
+    type Router,
+} from 'express';
 
 jest.mock('../../middleware/middleware', () => ({
     getCurrentBalance: (req: Request, res: Response, next: NextFunction) => {
         req.currentBalance = [{ account_id: 1, account_balance: 100 }];
         next();
     },
-    getTransactionsByAccount: (req: Request, res: Response, next: NextFunction) => {
+    getTransactionsByAccount: (
+        req: Request,
+        res: Response,
+        next: NextFunction,
+    ) => {
         req.transactions = [];
         next();
     },
@@ -23,33 +33,47 @@ jest.mock('../../middleware/middleware', () => ({
         req.loans = [];
         next();
     },
-    getPayrollsMiddleware: (req: Request, res: Response, next: NextFunction) => {
+    getPayrollsMiddleware: (
+        req: Request,
+        res: Response,
+        next: NextFunction,
+    ) => {
         req.payrolls = [];
         next();
     },
-    getTransfersByAccount: (req: Request, res: Response, next: NextFunction) => {
+    getTransfersByAccount: (
+        req: Request,
+        res: Response,
+        next: NextFunction,
+    ) => {
         req.transfers = [];
         next();
     },
-    getWishlistsByAccount: (req: Request, res: Response, next: NextFunction) => {
+    getWishlistsByAccount: (
+        req: Request,
+        res: Response,
+        next: NextFunction,
+    ) => {
         req.wishlists = [];
         next();
-    }
+    },
 }));
 
 jest.mock('../../generation/generateTransactions', () => {
     return jest.fn((req: Request, res: Response, next: NextFunction) => {
-        req.transactions = [{
-            account_id: 1,
-            current_balance: 100,
-            transactions: []
-        }];
+        req.transactions = [
+            {
+                account_id: 1,
+                current_balance: 100,
+                transactions: [],
+            },
+        ];
         next();
     });
 });
 
 /**
- * 
+ *
  * @returns {Promise<Express>} A promise that resolves to an Express app
  */
 const createApp = async (): Promise<Express> => {
@@ -77,9 +101,11 @@ describe('Testing / route', () => {
         const fromDate: string = '2023-01-01';
         const toDate: string = '2023-01-31';
 
-        const response: request.Response = await request(app)
-            .get('/')
-            .query({ account_id: accountId, from_date: fromDate, to_date: toDate });
+        const response: request.Response = await request(app).get('/').query({
+            account_id: accountId,
+            from_date: fromDate,
+            to_date: toDate,
+        });
 
         expect(response.status).toBe(200);
         expect(response.body[0]).toHaveProperty('account_id');
@@ -91,9 +117,11 @@ describe('Testing / route', () => {
     });
 
     it('should respond with a 400 status for invalid request', async () => {
-        const response: request.Response = await request(app)
-            .get('/')
-            .query({ account_id: 'invalid', from_date: 'invalid', to_date: 'invalid' });
+        const response: request.Response = await request(app).get('/').query({
+            account_id: 'invalid',
+            from_date: 'invalid',
+            to_date: 'invalid',
+        });
 
         expect(response.status).toBe(400);
     });

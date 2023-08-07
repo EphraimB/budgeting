@@ -1,4 +1,4 @@
-import { type Wishlist, type GeneratedTransaction } from "../types/types";
+import { type Wishlist, type GeneratedTransaction } from '../types/types';
 
 /**
  *
@@ -55,7 +55,7 @@ const generateWishlists = (
             tax_rate: wishlist.wishlist_tax_rate,
             total_amount: -(
                 wishlist_amount +
-        wishlist_amount * wishlist.wishlist_tax_rate
+                wishlist_amount * wishlist.wishlist_tax_rate
             ).toFixed(2),
         };
 

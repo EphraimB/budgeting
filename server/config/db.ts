@@ -1,4 +1,4 @@
-import pg from "pg";
+import pg from 'pg';
 
 const pool: pg.Pool = new pg.Pool({
     user: process.env.PGUSER,

@@ -1,28 +1,28 @@
-import { type NextFunction, type Request, type Response } from "express";
-import { transferQueries, cronJobQueries } from "../models/queryData.js";
-import scheduleCronJob from "../crontab/scheduleCronJob.js";
-import deleteCronJob from "../crontab/deleteCronJob.js";
-import { handleError, executeQuery } from "../utils/helperFunctions.js";
-import { type Transfer } from "../types/types.js";
+import { type NextFunction, type Request, type Response } from 'express';
+import { transferQueries, cronJobQueries } from '../models/queryData.js';
+import scheduleCronJob from '../crontab/scheduleCronJob.js';
+import deleteCronJob from '../crontab/deleteCronJob.js';
+import { handleError, executeQuery } from '../utils/helperFunctions.js';
+import { type Transfer } from '../types/types.js';
 
 interface TransferInput {
-  transfer_id: string;
-  cron_job_id?: string;
-  source_account_id: string;
-  destination_account_id: string;
-  transfer_amount: string;
-  transfer_title: string;
-  transfer_description: string;
-  frequency_type: string;
-  frequency_type_variable: string;
-  frequency_day_of_month: string;
-  frequency_day_of_week: string;
-  frequency_week_of_month: string;
-  frequency_month_of_year: string;
-  transfer_begin_date: string;
-  transfer_end_date: string;
-  date_created: string;
-  date_modified: string;
+    transfer_id: string;
+    cron_job_id?: string;
+    source_account_id: string;
+    destination_account_id: string;
+    transfer_amount: string;
+    transfer_title: string;
+    transfer_description: string;
+    frequency_type: string;
+    frequency_type_variable: string;
+    frequency_day_of_month: string;
+    frequency_day_of_week: string;
+    frequency_week_of_month: string;
+    frequency_month_of_year: string;
+    transfer_begin_date: string;
+    transfer_end_date: string;
+    date_created: string;
+    date_modified: string;
 }
 
 /**
@@ -82,7 +82,7 @@ export const getTransfers = async (
         const results = await executeQuery(query, params);
 
         if ((id || account_id) && results.length === 0) {
-            response.status(404).send("Transfer not found");
+            response.status(404).send('Transfer not found');
             return;
         }
 
@@ -96,10 +96,10 @@ export const getTransfers = async (
             response,
             `Error getting ${
                 id
-                    ? "transfer"
+                    ? 'transfer'
                     : account_id
-                        ? "transfers for given account_id"
-                        : "transfers"
+                        ? 'transfers for given account_id'
+                        : 'transfers'
             }`,
         );
     }
@@ -170,8 +170,8 @@ export const createTransfer = async (
             frequency_day_of_week,
             frequency_week_of_month,
             frequency_month_of_year,
-            scriptPath: "/app/dist/scripts/createTransaction.sh",
-            type: "transfer",
+            scriptPath: '/app/dist/scripts/createTransaction.sh',
+            type: 'transfer',
         };
 
         const { cronDate, uniqueId } = await scheduleCronJob(cronParams);
@@ -182,7 +182,7 @@ export const createTransfer = async (
 
         const cronId: number = cronJobResult[0].cron_job_id;
 
-        console.log("Cron job created " + cronId);
+        console.log('Cron job created ' + cronId);
 
         await executeQuery(transferQueries.updateTransferWithCronJobId, [
             cronId,
@@ -193,10 +193,10 @@ export const createTransfer = async (
 
         next();
 
-    // response.status(201).json(transfers);
+        // response.status(201).json(transfers);
     } catch (error) {
         console.error(error); // Log the error on the server side
-        handleError(response, "Error creating transfer");
+        handleError(response, 'Error creating transfer');
     }
 };
 
@@ -223,7 +223,7 @@ export const createTransferReturnObject = async (
         response.status(201).json(modifiedTransfers);
     } catch (error) {
         console.error(error); // Log the error on the server side
-        handleError(response, "Error creating transfer");
+        handleError(response, 'Error creating transfer');
     }
 };
 
@@ -271,8 +271,8 @@ export const updateTransfer = async (
             frequency_day_of_week,
             frequency_week_of_month,
             frequency_month_of_year,
-            scriptPath: "/app/dist/scripts/createTransaction.sh",
-            type: "transfer",
+            scriptPath: '/app/dist/scripts/createTransaction.sh',
+            type: 'transfer',
         };
 
         const transferResults = await executeQuery(
@@ -281,7 +281,7 @@ export const updateTransfer = async (
         );
 
         if (transferResults.length === 0) {
-            response.status(404).send("Transfer not found");
+            response.status(404).send('Transfer not found');
             return;
         }
 
@@ -291,7 +291,7 @@ export const updateTransfer = async (
         if (results.length > 0) {
             await deleteCronJob(results[0].unique_id);
         } else {
-            console.error("Cron job not found");
+            console.error('Cron job not found');
         }
 
         const { cronDate, uniqueId } = await scheduleCronJob(cronParams);
@@ -329,10 +329,10 @@ export const updateTransfer = async (
 
         next();
 
-    // response.status(200).json(transfers);
+        // response.status(200).json(transfers);
     } catch (error) {
         console.error(error); // Log the error on the server side
-        handleError(response, "Error updating transfer");
+        handleError(response, 'Error updating transfer');
     }
 };
 
@@ -359,7 +359,7 @@ export const updateTransferReturnObject = async (
         response.status(200).json(modifiedTransfers);
     } catch (error) {
         console.error(error); // Log the error on the server side
-        handleError(response, "Error getting transfer");
+        handleError(response, 'Error getting transfer');
     }
 };
 
@@ -384,7 +384,7 @@ export const deleteTransfer = async (
         );
 
         if (transferResults.length === 0) {
-            response.status(404).send("Transfer not found");
+            response.status(404).send('Transfer not found');
             return;
         }
 
@@ -396,7 +396,7 @@ export const deleteTransfer = async (
         if (results.length > 0) {
             await deleteCronJob(results[0].unique_id);
         } else {
-            console.error("Cron job not found");
+            console.error('Cron job not found');
         }
 
         await executeQuery(cronJobQueries.deleteCronJob, [cronId]);
@@ -404,7 +404,7 @@ export const deleteTransfer = async (
         next();
     } catch (error) {
         console.error(error); // Log the error on the server side
-        handleError(response, "Error deleting transfer");
+        handleError(response, 'Error deleting transfer');
     }
 };
 
@@ -418,5 +418,5 @@ export const deleteTransferReturnObject = async (
     request: Request,
     response: Response,
 ): Promise<void> => {
-    response.status(200).send("Transfer deleted successfully");
+    response.status(200).send('Transfer deleted successfully');
 };

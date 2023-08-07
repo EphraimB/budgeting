@@ -1,13 +1,13 @@
-import { type NextFunction, type Request, type Response } from "express";
+import { type NextFunction, type Request, type Response } from 'express';
 import {
     expenseQueries,
     cronJobQueries,
     taxesQueries,
-} from "../models/queryData.js";
-import scheduleCronJob from "../crontab/scheduleCronJob.js";
-import deleteCronJob from "../crontab/deleteCronJob.js";
-import { handleError, executeQuery } from "../utils/helperFunctions.js";
-import { type Expense } from "../types/types.js";
+} from '../models/queryData.js';
+import scheduleCronJob from '../crontab/scheduleCronJob.js';
+import deleteCronJob from '../crontab/deleteCronJob.js';
+import { handleError, executeQuery } from '../utils/helperFunctions.js';
+import { type Expense } from '../types/types.js';
 
 interface ExpenseInput {
     expense_id: string;
@@ -89,7 +89,7 @@ export const getExpenses = async (
         const expenses = await executeQuery<ExpenseInput>(query, params);
 
         if ((id || account_id) && expenses.length === 0) {
-            response.status(404).send("Expense not found");
+            response.status(404).send('Expense not found');
             return;
         }
 
@@ -98,11 +98,12 @@ export const getExpenses = async (
         console.error(error); // Log the error on the server side
         handleError(
             response,
-            `Error getting ${id
-                ? "expense"
-                : account_id
-                    ? "expenses for given account_id"
-                    : "expenses"
+            `Error getting ${
+                id
+                    ? 'expense'
+                    : account_id
+                        ? 'expenses for given account_id'
+                        : 'expenses'
             }`,
         );
     }
@@ -171,16 +172,19 @@ export const createExpense = async (
             frequency_day_of_week,
             frequency_week_of_month,
             frequency_month_of_year,
-            scriptPath: "/app/dist/scripts/createTransaction.sh",
-            type: "expense",
+            scriptPath: '/app/dist/scripts/createTransaction.sh',
+            type: 'expense',
         };
 
         const { cronDate, uniqueId } = await scheduleCronJob(cronParams);
         const cronId: number = (
-            await executeQuery(cronJobQueries.createCronJob, [uniqueId, cronDate])
+            await executeQuery(cronJobQueries.createCronJob, [
+                uniqueId,
+                cronDate,
+            ])
         )[0].cron_job_id;
 
-        console.log("Cron job created " + cronId);
+        console.log('Cron job created ' + cronId);
 
         await executeQuery(expenseQueries.updateExpenseWithCronJobId, [
             cronId,
@@ -192,7 +196,7 @@ export const createExpense = async (
         next();
     } catch (error) {
         console.error(error); // Log the error on the server side
-        handleError(response, "Error creating expense");
+        handleError(response, 'Error creating expense');
     }
 };
 
@@ -219,7 +223,7 @@ export const createExpenseReturnObject = async (
         response.status(201).json(modifiedExpenses);
     } catch (error) {
         console.error(error); // Log the error on the server side
-        handleError(response, "Error creating expense");
+        handleError(response, 'Error creating expense');
     }
 };
 
@@ -266,8 +270,8 @@ export const updateExpense = async (
             frequency_day_of_week,
             frequency_week_of_month,
             frequency_month_of_year,
-            scriptPath: "/app/dist/scripts/createTransaction.sh",
-            type: "expense",
+            scriptPath: '/app/dist/scripts/createTransaction.sh',
+            type: 'expense',
         };
 
         const expenseResult = await executeQuery<ExpenseInput>(
@@ -276,7 +280,7 @@ export const updateExpense = async (
         );
 
         if (expenseResult.length === 0) {
-            response.status(404).send("Expense not found");
+            response.status(404).send('Expense not found');
             return;
         }
 
@@ -286,8 +290,8 @@ export const updateExpense = async (
         if (results.length > 0) {
             await deleteCronJob(results[0].unique_id);
         } else {
-            console.error("Cron job not found");
-            response.status(404).send("Cron job not found");
+            console.error('Cron job not found');
+            response.status(404).send('Cron job not found');
             return;
         }
 
@@ -321,7 +325,7 @@ export const updateExpense = async (
         next();
     } catch (error) {
         console.error(error); // Log the error on the server side
-        handleError(response, "Error updating expense");
+        handleError(response, 'Error updating expense');
     }
 };
 
@@ -348,7 +352,7 @@ export const updateExpenseReturnObject = async (
         response.status(200).json(modifiedExpenses);
     } catch (error) {
         console.error(error); // Log the error on the server side
-        handleError(response, "Error updating expense");
+        handleError(response, 'Error updating expense');
     }
 };
 
@@ -367,11 +371,12 @@ export const deleteExpense = async (
     const { id } = request.params;
 
     try {
-        const expenseResult = await executeQuery(expenseQueries.getExpenseById, [
-            id,
-        ]);
+        const expenseResult = await executeQuery(
+            expenseQueries.getExpenseById,
+            [id],
+        );
         if (expenseResult.length === 0) {
-            response.status(404).send("Expense not found");
+            response.status(404).send('Expense not found');
             return;
         }
 
@@ -384,8 +389,8 @@ export const deleteExpense = async (
         if (results.length > 0) {
             await deleteCronJob(results[0].unique_id);
         } else {
-            console.error("Cron job not found");
-            response.status(404).send("Cron job not found");
+            console.error('Cron job not found');
+            response.status(404).send('Cron job not found');
             return;
         }
 
@@ -394,7 +399,7 @@ export const deleteExpense = async (
         next();
     } catch (error) {
         console.error(error); // Log the error on the server side
-        handleError(response, "Error deleting expense");
+        handleError(response, 'Error deleting expense');
     }
 };
 
@@ -402,5 +407,5 @@ export const deleteExpenseReturnObject = async (
     request: Request,
     response: Response,
 ): Promise<void> => {
-    response.status(200).send("Expense deleted successfully");
+    response.status(200).send('Expense deleted successfully');
 };

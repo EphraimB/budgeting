@@ -1,15 +1,15 @@
-import { type Request, type Response } from "express";
-import { accountQueries } from "../models/queryData.js";
-import { handleError, executeQuery } from "../utils/helperFunctions.js";
-import { type Account } from "../types/types.js";
+import { type Request, type Response } from 'express';
+import { accountQueries } from '../models/queryData.js';
+import { handleError, executeQuery } from '../utils/helperFunctions.js';
+import { type Account } from '../types/types.js';
 
 interface AccountInput {
-  account_id: string;
-  account_name: string;
-  account_type: string;
-  account_balance: string;
-  date_created: string;
-  date_modified: string;
+    account_id: string;
+    account_name: string;
+    account_type: string;
+    account_balance: string;
+    date_created: string;
+    date_modified: string;
 }
 
 /**
@@ -39,7 +39,7 @@ export const getAccounts = async (
     const { id } = request.query as { id?: string }; // Destructure id from query string
 
     try {
-    // Change the query based on the presence of id
+        // Change the query based on the presence of id
         const query: string = id
             ? accountQueries.getAccount
             : accountQueries.getAccounts;
@@ -47,14 +47,14 @@ export const getAccounts = async (
         const accounts = await executeQuery<AccountInput>(query, params);
 
         if (id && accounts.length === 0) {
-            response.status(404).send("Account not found");
+            response.status(404).send('Account not found');
             return;
         }
 
         response.status(200).json(accounts.map(parseAccounts));
     } catch (error) {
         console.error(error); // Log the error on the server side
-        handleError(response, `Error getting ${id ? "account" : "accounts"}`);
+        handleError(response, `Error getting ${id ? 'account' : 'accounts'}`);
     }
 };
 
@@ -76,7 +76,7 @@ export const createAccount = async (request: Request, response: Response) => {
         response.status(201).json(accounts);
     } catch (error) {
         console.error(error); // Log the error on the server side
-        handleError(response, "Error creating account");
+        handleError(response, 'Error creating account');
     }
 };
 
@@ -99,7 +99,7 @@ export const updateAccount = async (
         );
 
         if (account.length === 0) {
-            response.status(404).send("Account not found");
+            response.status(404).send('Account not found');
             return;
         }
 
@@ -111,7 +111,7 @@ export const updateAccount = async (
         response.status(200).json(accounts);
     } catch (error) {
         console.error(error); // Log the error on the server side
-        handleError(response, "Error updating account");
+        handleError(response, 'Error updating account');
     }
 };
 
@@ -133,14 +133,14 @@ export const deleteAccount = async (
         );
 
         if (account.length === 0) {
-            response.status(404).send("Account not found");
+            response.status(404).send('Account not found');
             return;
         }
 
         await executeQuery(accountQueries.deleteAccount, [id]);
-        response.status(200).send("Successfully deleted account");
+        response.status(200).send('Successfully deleted account');
     } catch (error) {
         console.error(error); // Log the error on the server side
-        handleError(response, "Error deleting account");
+        handleError(response, 'Error deleting account');
     }
 };

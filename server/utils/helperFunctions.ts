@@ -1,5 +1,5 @@
-import { type Response } from "express";
-import pool from "../config/db.js";
+import { type Response } from 'express';
+import pool from '../config/db.js';
 
 /**
  *
@@ -12,7 +12,7 @@ export const handleError = (response: Response, message: string): void => {
         errors: {
             msg: message,
             param: null,
-            location: "query",
+            location: 'query',
         },
     });
 };

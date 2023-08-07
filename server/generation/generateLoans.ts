@@ -1,4 +1,4 @@
-import { type Loan, type GeneratedTransaction } from "../types/types";
+import { type Loan, type GeneratedTransaction } from '../types/types';
 
 type GenerateDateFunction = (currentDate: Date, loan: Loan) => Date;
 
@@ -30,7 +30,7 @@ export const calculateInterest = (
             periodsPerYear = 1;
             break;
         default:
-            console.error("Invalid frequency type");
+            console.error('Invalid frequency type');
     }
 
     const ratePerPeriod = annualInterestRate / periodsPerYear;
@@ -111,7 +111,7 @@ const generateLoans = (
 
         const newTransaction: GeneratedTransaction = {
             loan_id: loan.loan_id,
-            title: loan.loan_title + " loan to " + loan.loan_recipient,
+            title: loan.loan_title + ' loan to ' + loan.loan_recipient,
             description: loan.loan_description,
             date: new Date(loanDate),
             amount: -parseFloat(subsidizedAmount.toFixed(2)),
@@ -159,7 +159,9 @@ export const generateDailyLoans = (
 ): { fullyPaidBackDate?: string } => {
     const generateDateFn = (currentDate: Date, loan: Loan): Date => {
         const newDate: Date = currentDate;
-        newDate.setDate(newDate.getDate() + (loan.frequency_type_variable || 1));
+        newDate.setDate(
+            newDate.getDate() + (loan.frequency_type_variable || 1),
+        );
         return newDate;
     };
 
@@ -196,8 +198,8 @@ export const generateMonthlyLoans = (
         // advance by number of months specified in frequency_type_variable or by 1 month if not set
         loanDate.setMonth(
             loanDate.getMonth() +
-            monthsIncremented +
-            (loan.frequency_type_variable || 1),
+                monthsIncremented +
+                (loan.frequency_type_variable || 1),
         );
 
         if (
@@ -315,8 +317,8 @@ export const generateYearlyLoans = (
         const loanDate: Date = new Date(loan.loan_begin_date);
         loanDate.setFullYear(
             loanDate.getFullYear() +
-            yearsIncremented +
-            (loan.frequency_type_variable || 1),
+                yearsIncremented +
+                (loan.frequency_type_variable || 1),
         );
 
         if (

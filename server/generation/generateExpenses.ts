@@ -1,4 +1,4 @@
-import { type Expense, type GeneratedTransaction } from "../types/types";
+import { type Expense, type GeneratedTransaction } from '../types/types';
 
 type GenerateDateFunction = (currentDate: Date, expense: Expense) => Date;
 
@@ -57,7 +57,8 @@ const generateExpenses = (
             // setting to the first occurrence of the desired day of week
             expenseDate.setDate(expenseDate.getDate() + daysToAdd);
             // setting to the desired week of the month
-            newDay = expenseDate.getDate() + 7 * expense.frequency_week_of_month;
+            newDay =
+                expenseDate.getDate() + 7 * expense.frequency_week_of_month;
         }
 
         expenseDate.setDate(newDay);
@@ -68,8 +69,8 @@ const generateExpenses = (
         const taxRate = expense.tax_rate;
         const subsidyRate = expense.expense_subsidized;
 
-        const amountAfterSubsidy = initialAmount - (initialAmount * subsidyRate);
-        const taxAmount = amountAfterSubsidy + (amountAfterSubsidy * taxRate);
+        const amountAfterSubsidy = initialAmount - initialAmount * subsidyRate;
+        const taxAmount = amountAfterSubsidy + amountAfterSubsidy * taxRate;
 
         const newTransaction: GeneratedTransaction = {
             expense_id: expense.expense_id,
@@ -111,7 +112,9 @@ export const generateDailyExpenses = (
 ): void => {
     const generateDateFn = (currentDate: Date, expense: Expense): Date => {
         const newDate = currentDate;
-        newDate.setDate(newDate.getDate() + (expense.frequency_type_variable || 1));
+        newDate.setDate(
+            newDate.getDate() + (expense.frequency_type_variable || 1),
+        );
         return newDate;
     };
 
@@ -148,8 +151,8 @@ export const generateMonthlyExpenses = (
         // advance by number of months specified in frequency_type_variable or by 1 month if not set
         expenseDate.setMonth(
             expenseDate.getMonth() +
-            monthsIncremented +
-            (expense.frequency_type_variable || 1),
+                monthsIncremented +
+                (expense.frequency_type_variable || 1),
         );
 
         if (
@@ -163,7 +166,8 @@ export const generateMonthlyExpenses = (
                 expense.frequency_day_of_week !== undefined
             ) {
                 let daysUntilNextFrequency =
-                    (7 + expense.frequency_day_of_week - expenseDate.getDay()) % 7;
+                    (7 + expense.frequency_day_of_week - expenseDate.getDay()) %
+                    7;
                 daysUntilNextFrequency =
                     daysUntilNextFrequency === 0 ? 7 : daysUntilNextFrequency;
                 newDay = expenseDate.getDate() + daysUntilNextFrequency;
@@ -176,11 +180,13 @@ export const generateMonthlyExpenses = (
                 // first day of the month
                 expenseDate.setDate(1);
                 const daysToAdd: number =
-                    (7 + expense.frequency_day_of_week - expenseDate.getDay()) % 7;
+                    (7 + expense.frequency_day_of_week - expenseDate.getDay()) %
+                    7;
                 // setting to the first occurrence of the desired day of week
                 expenseDate.setDate(expenseDate.getDate() + daysToAdd);
                 // setting to the desired week of the month
-                newDay = expenseDate.getDate() + 7 * expense.frequency_week_of_month;
+                newDay =
+                    expenseDate.getDate() + 7 * expense.frequency_week_of_month;
             }
 
             expenseDate.setDate(newDay);
@@ -227,7 +233,8 @@ export const generateWeeklyExpenses = (
         const frequency_day_of_week: number = expense.frequency_day_of_week;
 
         expenseDate.setDate(
-            expenseDate.getDate() + ((frequency_day_of_week + 7 - startDay) % 7),
+            expenseDate.getDate() +
+                ((frequency_day_of_week + 7 - startDay) % 7),
         );
     }
 
@@ -270,8 +277,8 @@ export const generateYearlyExpenses = (
         const newDate: Date = new Date(expense.expense_begin_date);
         newDate.setFullYear(
             newDate.getFullYear() +
-            yearsIncremented +
-            (expense.frequency_type_variable || 1),
+                yearsIncremented +
+                (expense.frequency_type_variable || 1),
         );
 
         if (
@@ -296,7 +303,8 @@ export const generateYearlyExpenses = (
                 // add the number of weeks, but check if it overflows into the next month
                 const proposedDate: Date = new Date(newDate.getTime());
                 proposedDate.setDate(
-                    proposedDate.getDate() + 7 * expense.frequency_week_of_month,
+                    proposedDate.getDate() +
+                        7 * expense.frequency_week_of_month,
                 );
 
                 if (proposedDate.getMonth() === newDate.getMonth()) {

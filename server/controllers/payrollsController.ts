@@ -1,15 +1,15 @@
-import { type Request, type Response } from "express";
-import { payrollQueries } from "../models/queryData.js";
-import { handleError, executeQuery } from "../utils/helperFunctions.js";
-import { type Payroll } from "../types/types.js";
+import { type Request, type Response } from 'express';
+import { payrollQueries } from '../models/queryData.js';
+import { handleError, executeQuery } from '../utils/helperFunctions.js';
+import { type Payroll } from '../types/types.js';
 
 interface PayrollInput {
-  start_date: string;
-  end_date: string;
-  work_days: string;
-  gross_pay: string;
-  net_pay: string;
-  hours_worked: string;
+    start_date: string;
+    end_date: string;
+    work_days: string;
+    gross_pay: string;
+    net_pay: string;
+    hours_worked: string;
 }
 
 /**
@@ -45,7 +45,7 @@ export const getPayrolls = async (
         );
 
         if (results.length === 0) {
-            response.status(404).send("No payrolls for employee or not found");
+            response.status(404).send('No payrolls for employee or not found');
             return;
         }
 
@@ -62,6 +62,6 @@ export const getPayrolls = async (
         response.status(200).json(returnObj);
     } catch (error) {
         console.error(error); // Log the error on the server side
-        handleError(response, "Error getting payrolls");
+        handleError(response, 'Error getting payrolls');
     }
 };

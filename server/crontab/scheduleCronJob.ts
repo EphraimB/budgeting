@@ -1,7 +1,7 @@
-import { execSync } from "child_process";
-import determineCronValues from "./determineCronValues.js";
-import { v4 as uuidv4 } from "uuid";
-import { lock, unlock } from "proper-lockfile";
+import { execSync } from 'child_process';
+import determineCronValues from './determineCronValues.js';
+import { v4 as uuidv4 } from 'uuid';
+import { lock, unlock } from 'proper-lockfile';
 
 /**
  * @param jobDetails - Job details
@@ -41,15 +41,15 @@ const scheduleCronJob = async (jobDetails: any) => {
 
     // Build the cron command that will execute the Bash script
     const cronCommand = `${scriptPath} ${uniqueId} ${account_id} ${id} ${amount} "${title}" "${description}" ${
-        destination_account_id ? destination_account_id : ""
+        destination_account_id || ''
     } `;
 
     // Add a new cron job to the system crontab
     let release;
 
     try {
-    // Add a new cron job to the system crontab
-        release = await lock("/app/tmp/cronjob.lock");
+        // Add a new cron job to the system crontab
+        release = await lock('/app/tmp/cronjob.lock');
 
         try {
             execSync(
@@ -60,13 +60,13 @@ const scheduleCronJob = async (jobDetails: any) => {
             console.error(`Error setting up cron job: ${error} `);
         }
     } catch (err) {
-        console.error("Failed to acquire lock or encountered an error: ", err);
+        console.error('Failed to acquire lock or encountered an error: ', err);
     } finally {
-        if (release) {
+        if (release != null) {
             try {
                 await release();
             } catch (err) {
-                console.error("Failed to release lock: ", err);
+                console.error('Failed to release lock: ', err);
             }
         }
     }

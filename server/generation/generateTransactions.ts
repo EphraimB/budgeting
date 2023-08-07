@@ -1,40 +1,45 @@
-import { type Request, type Response, type NextFunction } from "express";
-import { generateDailyIncome, generateWeeklyIncome, generateMonthlyIncome, generateYearlyIncome, } from "./generateIncome.js";
+import { type Request, type Response, type NextFunction } from 'express';
+import {
+    generateDailyIncome,
+    generateWeeklyIncome,
+    generateMonthlyIncome,
+    generateYearlyIncome,
+} from './generateIncome.js';
 import {
     generateDailyExpenses,
     generateWeeklyExpenses,
     generateMonthlyExpenses,
     generateYearlyExpenses,
-} from "./generateExpenses.js";
+} from './generateExpenses.js';
 import {
     generateDailyLoans,
     generateWeeklyLoans,
     generateMonthlyLoans,
     generateYearlyLoans,
-} from "./generateLoans.js";
-import generatePayrollTransactions from "./generatePayrolls.js";
+} from './generateLoans.js';
+import generatePayrollTransactions from './generatePayrolls.js';
 import {
     generateDailyTransfers,
     generateWeeklyTransfers,
     generateMonthlyTransfers,
     generateYearlyTransfers,
-} from "./generateTransfers.js";
-import generateWishlists from "./generateWishlists.js";
-import calculateBalances from "./calculateBalances.js";
+} from './generateTransfers.js';
+import generateWishlists from './generateWishlists.js';
+import calculateBalances from './calculateBalances.js';
 import {
-    Account,
-    CurrentBalance,
-    Expense,
-    GeneratedTransaction,
-    Income,
-    Loan,
-    Payroll,
-    Transaction,
-    Transfer,
-    Wishlist,
-} from "../types/types.js";
-import { executeQuery } from "../utils/helperFunctions.js";
-import { accountQueries } from "../models/queryData.js";
+    type Account,
+    type CurrentBalance,
+    type Expense,
+    type GeneratedTransaction,
+    type Income,
+    type Loan,
+    type Payroll,
+    type Transaction,
+    type Transfer,
+    type Wishlist,
+} from '../types/types.js';
+import { executeQuery } from '../utils/helperFunctions.js';
+import { accountQueries } from '../models/queryData.js';
 
 const fullyPaidBackDates: Record<number, string | undefined> = {}; // map of loan_id to fullyPaidBackDate
 
@@ -65,7 +70,8 @@ const generate = async (
                     tax_rate: transaction.transaction_tax_rate,
                     total_amount: -(
                         transaction.transaction_amount +
-                        transaction.transaction_amount * transaction.transaction_tax_rate
+                        transaction.transaction_amount *
+                            transaction.transaction_tax_rate
                     ),
                 }),
             ),
@@ -204,7 +210,8 @@ const generate = async (
                     );
                 }
 
-                fullyPaidBackDates[loan.loan_id] = loanResult.fullyPaidBackDate || null;
+                fullyPaidBackDates[loan.loan_id] =
+                    loanResult.fullyPaidBackDate || null;
             });
         });
 
@@ -270,7 +277,8 @@ const generate = async (
                 );
 
                 transactions.sort(
-                    (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime(),
+                    (a, b) =>
+                        new Date(a.date).getTime() - new Date(b.date).getTime(),
                 );
 
                 calculateBalances(
@@ -300,11 +308,15 @@ const generateTransactions = async (
     const skippedTransactions: GeneratedTransaction[] = [];
 
     if (!account_id) {
-        const accountResults = await executeQuery(accountQueries.getAccounts, []);
+        const accountResults = await executeQuery(
+            accountQueries.getAccounts,
+            [],
+        );
 
         accountResults.forEach(async (account: Account) => {
             const currentBalanceValue: number = currentBalance.find(
-                (balance: CurrentBalance) => balance.account_id === account.account_id,
+                (balance: CurrentBalance) =>
+                    balance.account_id === account.account_id,
             ).account_balance;
 
             const employee_id = account.employee_id;

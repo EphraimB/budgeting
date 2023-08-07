@@ -1,28 +1,28 @@
-import { type NextFunction, type Request, type Response } from "express";
+import { type NextFunction, type Request, type Response } from 'express';
 import {
     cronJobQueries,
     wishlistQueries,
     taxesQueries,
-} from "../models/queryData.js";
-import { executeQuery, handleError } from "../utils/helperFunctions.js";
-import { type Wishlist } from "../types/types.js";
-import scheduleCronJob from "../crontab/scheduleCronJob.js";
-import deleteCronJob from "../crontab/deleteCronJob.js";
+} from '../models/queryData.js';
+import { executeQuery, handleError } from '../utils/helperFunctions.js';
+import { type Wishlist } from '../types/types.js';
+import scheduleCronJob from '../crontab/scheduleCronJob.js';
+import deleteCronJob from '../crontab/deleteCronJob.js';
 
 interface WishlistInput {
-  wishlist_id: string;
-  account_id: string;
-  tax_id: string;
-  cron_job_id: string;
-  wishlist_amount: string;
-  wishlist_title: string;
-  wishlist_description: string;
-  wishlist_url_link: string;
-  wishlist_priority: string;
-  wishlist_date_available: string;
-  wishlist_date_can_purchase: string;
-  date_created: string;
-  date_modified: string;
+    wishlist_id: string;
+    account_id: string;
+    tax_id: string;
+    cron_job_id: string;
+    wishlist_amount: string;
+    wishlist_title: string;
+    wishlist_description: string;
+    wishlist_url_link: string;
+    wishlist_priority: string;
+    wishlist_date_available: string;
+    wishlist_date_can_purchase: string;
+    date_created: string;
+    date_modified: string;
 }
 
 /**
@@ -78,7 +78,7 @@ export const getWishlists = async (
         const results = await executeQuery<WishlistInput>(query, params);
 
         if ((id || account_id) && results.length === 0) {
-            response.status(404).send("Wishlist not found");
+            response.status(404).send('Wishlist not found');
             return;
         }
 
@@ -94,7 +94,7 @@ export const getWishlists = async (
         const modifiedWishlists = results.map((wishlist: WishlistInput) => ({
             ...wishlist,
             wishlist_date_can_purchase:
-        transactionMap[Number(wishlist.wishlist_id)] || null,
+                transactionMap[Number(wishlist.wishlist_id)] || null,
         }));
 
         // Parse the data to the correct format
@@ -109,10 +109,10 @@ export const getWishlists = async (
             response,
             `Error getting ${
                 id
-                    ? "wishlist"
+                    ? 'wishlist'
                     : account_id
-                        ? "wishlists for given account_id"
-                        : "wishlists"
+                        ? 'wishlists for given account_id'
+                        : 'wishlists'
             }`,
         );
     }
@@ -130,8 +130,15 @@ export const createWishlist = async (
     response: Response,
     next: NextFunction,
 ): Promise<void> => {
-    const { account_id, tax_id, amount, title, description, priority, url_link } =
-    request.body;
+    const {
+        account_id,
+        tax_id,
+        amount,
+        title,
+        description,
+        priority,
+        url_link,
+    } = request.body;
 
     try {
         const cron_job_id: number | null = null;
@@ -161,7 +168,7 @@ export const createWishlist = async (
         next();
     } catch (error) {
         console.error(error); // Log the error on the server side
-        handleError(response, "Error creating wishlist");
+        handleError(response, 'Error creating wishlist');
     }
 };
 
@@ -178,7 +185,7 @@ export const createWishlistCron = async (
     const { wishlist_id } = request;
 
     try {
-    // Create a map of wishlist_id to transaction date for faster lookup
+        // Create a map of wishlist_id to transaction date for faster lookup
         const transactionMap: Record<number, string | null> = {};
         request.transactions.forEach((account) => {
             account.transactions.forEach((transaction: any) => {
@@ -195,7 +202,7 @@ export const createWishlistCron = async (
         const modifiedWishlists = results.map((wishlist: WishlistInput) => ({
             ...wishlist,
             wishlist_date_can_purchase:
-        transactionMap[Number(wishlist.wishlist_id)] || null,
+                transactionMap[Number(wishlist.wishlist_id)] || null,
         }));
 
         // Parse the data to the correct format
@@ -210,15 +217,18 @@ export const createWishlistCron = async (
             amount: -request.body.amount,
             title: request.body.title,
             description: request.body.description,
-            scriptPath: "/app/dist/scripts/createTransaction.sh",
-            type: "wishlist",
+            scriptPath: '/app/dist/scripts/createTransaction.sh',
+            type: 'wishlist',
         };
 
         if (cronParams.date) {
             const { cronDate, uniqueId } = await scheduleCronJob(cronParams);
 
             const cronId: number = (
-                await executeQuery(cronJobQueries.createCronJob, [uniqueId, cronDate])
+                await executeQuery(cronJobQueries.createCronJob, [
+                    uniqueId,
+                    cronDate,
+                ])
             )[0].cron_job_id;
 
             const updateWishlist = await executeQuery(
@@ -227,7 +237,9 @@ export const createWishlistCron = async (
             );
 
             if (updateWishlist.length === 0) {
-                response.status(400).send("Wishlist couldn't update the cron_job_id");
+                response
+                    .status(400)
+                    .send("Wishlist couldn't update the cron_job_id");
                 return;
             }
         }
@@ -235,7 +247,7 @@ export const createWishlistCron = async (
         response.status(201).json(wishlists);
     } catch (error) {
         console.error(error); // Log the error on the server side
-        handleError(response, "Error updating cron tab");
+        handleError(response, 'Error updating cron tab');
     }
 };
 
@@ -252,17 +264,33 @@ export const updateWishlist = async (
     next: NextFunction,
 ): Promise<void> => {
     const { id } = request.params;
-    const { account_id, tax_id, amount, title, description, priority, url_link } =
-    request.body;
+    const {
+        account_id,
+        tax_id,
+        amount,
+        title,
+        description,
+        priority,
+        url_link,
+    } = request.body;
 
     try {
         const results = await executeQuery<WishlistInput>(
             wishlistQueries.updateWishlist,
-            [account_id, tax_id, amount, title, description, priority, url_link, id],
+            [
+                account_id,
+                tax_id,
+                amount,
+                title,
+                description,
+                priority,
+                url_link,
+                id,
+            ],
         );
 
         if (results.length === 0) {
-            response.status(404).send("Wishlist not found");
+            response.status(404).send('Wishlist not found');
             return;
         }
 
@@ -277,7 +305,7 @@ export const updateWishlist = async (
         next();
     } catch (error) {
         console.error(error); // Log the error on the server side
-        handleError(response, "Error updating wishlist");
+        handleError(response, 'Error updating wishlist');
     }
 };
 
@@ -294,7 +322,7 @@ export const updateWishlistCron = async (
     const { wishlist_id } = request;
 
     try {
-    // Get cron job id
+        // Get cron job id
         const wishlistsResults = await executeQuery(
             wishlistQueries.getWishlistsById,
             [wishlist_id],
@@ -305,8 +333,8 @@ export const updateWishlistCron = async (
         if (results.length > 0) {
             await deleteCronJob(results[0].unique_id);
         } else {
-            console.error("Cron job not found");
-            response.status(404).send("Cron job not found");
+            console.error('Cron job not found');
+            response.status(404).send('Cron job not found');
             return;
         }
 
@@ -323,7 +351,7 @@ export const updateWishlistCron = async (
             (wishlist: WishlistInput) => ({
                 ...wishlist,
                 wishlist_date_can_purchase:
-          transactionMap[Number(wishlist.wishlist_id)] || null,
+                    transactionMap[Number(wishlist.wishlist_id)] || null,
             }),
         );
 
@@ -339,8 +367,8 @@ export const updateWishlistCron = async (
             amount: -request.body.amount,
             title: request.body.title,
             description: request.body.description,
-            scriptPath: "/app/dist/scripts/createTransaction.sh",
-            type: "wishlist",
+            scriptPath: '/app/dist/scripts/createTransaction.sh',
+            type: 'wishlist',
         };
 
         if (cronParams.date) {
@@ -356,7 +384,7 @@ export const updateWishlistCron = async (
         response.status(200).json(wishlists);
     } catch (error) {
         console.error(error); // Log the error on the server side
-        handleError(response, "Error updating cron tab");
+        handleError(response, 'Error updating cron tab');
     }
 };
 
@@ -373,14 +401,14 @@ export const deleteWishlist = async (
     const { id } = request.params;
 
     try {
-    // Delete cron job from crontab
+        // Delete cron job from crontab
         const getWishlistResults = await executeQuery<WishlistInput>(
             wishlistQueries.getWishlistsById,
             [id],
         );
 
         if (getWishlistResults.length === 0) {
-            response.status(404).send("Wishlist not found");
+            response.status(404).send('Wishlist not found');
             return;
         }
 
@@ -393,7 +421,7 @@ export const deleteWishlist = async (
         if (cronJobResults.length > 0) {
             await deleteCronJob(cronJobResults[0].unique_id);
         } else {
-            console.error("Cron job not found");
+            console.error('Cron job not found');
         }
 
         await executeQuery(wishlistQueries.deleteWishlist, [id]);
@@ -401,9 +429,9 @@ export const deleteWishlist = async (
         // Delete wishlist from database
         await executeQuery(cronJobQueries.deleteCronJob, [cronId]);
 
-        response.status(200).send("Successfully deleted wishlist item");
+        response.status(200).send('Successfully deleted wishlist item');
     } catch (error) {
         console.error(error); // Log the error on the server side
-        handleError(response, "Error deleting wishlist");
+        handleError(response, 'Error deleting wishlist');
     }
 };

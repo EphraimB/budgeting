@@ -1,4 +1,4 @@
-import { type Request, type Response, type NextFunction } from "express";
+import { type Request, type Response, type NextFunction } from 'express';
 import {
     transactionHistoryQueries,
     expenseQueries,
@@ -11,18 +11,18 @@ import {
     taxesQueries,
     cronJobQueries,
     incomeQueries,
-} from "../models/queryData.js";
-import { handleError, executeQuery } from "../utils/helperFunctions.js";
+} from '../models/queryData.js';
+import { handleError, executeQuery } from '../utils/helperFunctions.js';
 import {
-    Income,
+    type Income,
     type Expense,
     type Loan,
     type Payroll,
     type Transfer,
     type Wishlist,
-} from "../types/types.js";
-import scheduleCronJob from "../crontab/scheduleCronJob.js";
-import deleteCronJob from "../crontab/deleteCronJob.js";
+} from '../types/types.js';
+import scheduleCronJob from '../crontab/scheduleCronJob.js';
+import deleteCronJob from '../crontab/deleteCronJob.js';
 
 interface WishlistInput {
     wishlist_id: any;
@@ -94,19 +94,26 @@ export const setQueries = async (
     response: Response,
     next: NextFunction,
 ): Promise<void> => {
-    request.query.from_date = new Date().toISOString().slice(0, 10);
+    try {
+        request.query.from_date = new Date().toISOString().slice(0, 10);
 
-    const date = new Date();
-    date.setFullYear(date.getFullYear() + 1);
-    request.query.to_date = date.toISOString().slice(0, 10);
+        const date = new Date();
+        date.setFullYear(date.getFullYear() + 1);
+        request.query.to_date = date.toISOString().slice(0, 10);
 
-    if (!request.query.account_id) {
-        if (request.query.id) {
-            const results = await executeQuery(wishlistQueries.getWishlistsById, [
-                request.query.id,
-            ]);
-            request.query.account_id = results[0].account_id;
+        if (!request.query.account_id) {
+            if (request.query.id) {
+                const results = await executeQuery(
+                    wishlistQueries.getWishlistsById,
+                    [request.query.id],
+                );
+                request.query.account_id = results[0].account_id;
+            }
         }
+    } catch (error) {
+        console.error(error);
+        handleError(response, 'Error setting queries');
+        return;
     }
 
     next();
@@ -136,7 +143,9 @@ export const getTransactionsByAccount = async (
 
         if (!account_id) {
             // If account_id is null, fetch all accounts and make request.transactions an array of transactions
-            const accountResults = await executeQuery(accountQueries.getAccounts);
+            const accountResults = await executeQuery(
+                accountQueries.getAccounts,
+            );
 
             await Promise.all(
                 accountResults.map(async (account) => {
@@ -149,7 +158,9 @@ export const getTransactionsByAccount = async (
                     const accountTransactions = transactionsResults.map(
                         (transaction) => ({
                             ...transaction,
-                            transaction_amount: parseFloat(transaction.transaction_amount),
+                            transaction_amount: parseFloat(
+                                transaction.transaction_amount,
+                            ),
                             transaction_tax_rate: parseFloat(
                                 transaction.transaction_tax_rate,
                             ),
@@ -164,12 +175,15 @@ export const getTransactionsByAccount = async (
             );
         } else {
             // Check if account exists and if it doesn't, send a response with an error message
-            const accountExists = await executeQuery(accountQueries.getAccount, [
-                account_id,
-            ]);
+            const accountExists = await executeQuery(
+                accountQueries.getAccount,
+                [account_id],
+            );
 
             if (accountExists.length === 0) {
-                response.status(404).send(`Account with ID ${account_id} not found`);
+                response
+                    .status(404)
+                    .send(`Account with ID ${account_id} not found`);
                 return;
             }
 
@@ -182,7 +196,9 @@ export const getTransactionsByAccount = async (
             transactions = results.map((transaction) => ({
                 ...transaction,
                 transaction_amount: parseFloat(transaction.transaction_amount),
-                transaction_tax_rate: parseFloat(transaction.transaction_tax_rate),
+                transaction_tax_rate: parseFloat(
+                    transaction.transaction_tax_rate,
+                ),
             }));
 
             transactionsByAccount.push({
@@ -196,7 +212,7 @@ export const getTransactionsByAccount = async (
         next();
     } catch (error) {
         console.error(error); // Log the error on the server side
-        handleError(response, "Error getting transactions");
+        handleError(response, 'Error getting transactions');
     }
 };
 
@@ -230,7 +246,9 @@ export const getIncomeByAccount = async (
         }> = [];
 
         if (!account_id) {
-            const accountResults = await executeQuery(accountQueries.getAccounts);
+            const accountResults = await executeQuery(
+                accountQueries.getAccounts,
+            );
 
             await Promise.all(
                 accountResults.map(async (account) => {
@@ -257,12 +275,15 @@ export const getIncomeByAccount = async (
                 }),
             );
         } else {
-            const accountExists = await executeQuery(accountQueries.getAccount, [
-                account_id,
-            ]);
+            const accountExists = await executeQuery(
+                accountQueries.getAccount,
+                [account_id],
+            );
 
             if (accountExists.length == 0) {
-                response.status(404).send(`Account with ID ${account_id} not found`);
+                response
+                    .status(404)
+                    .send(`Account with ID ${account_id} not found`);
                 return;
             }
 
@@ -293,7 +314,7 @@ export const getIncomeByAccount = async (
         next();
     } catch (error) {
         console.error(error);
-        handleError(response, "Error getting income");
+        handleError(response, 'Error getting income');
     }
 };
 
@@ -327,7 +348,9 @@ export const getExpensesByAccount = async (
         }> = [];
 
         if (!account_id) {
-            const accountResults = await executeQuery(accountQueries.getAccounts);
+            const accountResults = await executeQuery(
+                accountQueries.getAccounts,
+            );
 
             await Promise.all(
                 accountResults.map(async (account) => {
@@ -336,17 +359,25 @@ export const getExpensesByAccount = async (
                         [account.account_id, to_date],
                     );
 
-                    const expenseTransactions = expenseResults.map((expense) => {
-                        const tax = taxLookup[expense.tax_id] || { tax_rate: 0 };
+                    const expenseTransactions = expenseResults.map(
+                        (expense) => {
+                            const tax = taxLookup[expense.tax_id] || {
+                                tax_rate: 0,
+                            };
 
-                        return {
-                            ...expense,
-                            tax_rate: parseFloat(tax.tax_rate),
-                            amount: parseFloat(expense.expense_amount),
-                            expense_subsidized: parseFloat(expense.expense_subsidized),
-                            expense_amount: parseFloat(expense.expense_amount),
-                        };
-                    });
+                            return {
+                                ...expense,
+                                tax_rate: parseFloat(tax.tax_rate),
+                                amount: parseFloat(expense.expense_amount),
+                                expense_subsidized: parseFloat(
+                                    expense.expense_subsidized,
+                                ),
+                                expense_amount: parseFloat(
+                                    expense.expense_amount,
+                                ),
+                            };
+                        },
+                    );
 
                     expensesByAccount.push({
                         account_id: account.account_id,
@@ -355,12 +386,15 @@ export const getExpensesByAccount = async (
                 }),
             );
         } else {
-            const accountExists = await executeQuery(accountQueries.getAccount, [
-                account_id,
-            ]);
+            const accountExists = await executeQuery(
+                accountQueries.getAccount,
+                [account_id],
+            );
 
             if (accountExists.length == 0) {
-                response.status(404).send(`Account with ID ${account_id} not found`);
+                response
+                    .status(404)
+                    .send(`Account with ID ${account_id} not found`);
                 return;
             }
 
@@ -392,7 +426,7 @@ export const getExpensesByAccount = async (
         next();
     } catch (error) {
         console.error(error);
-        handleError(response, "Error getting expenses");
+        handleError(response, 'Error getting expenses');
     }
 };
 
@@ -443,7 +477,9 @@ export const getLoansByAccount = async (
 
         if (!account_id) {
             // If account_id is null, fetch all accounts and make request.transactions an array of transactions
-            const accountResults = await executeQuery(accountQueries.getAccounts);
+            const accountResults = await executeQuery(
+                accountQueries.getAccounts,
+            );
 
             await Promise.all(
                 accountResults.map(async (account) => {
@@ -453,12 +489,18 @@ export const getLoansByAccount = async (
                     );
 
                     // Map over results array and convert amount to a float for each Loan object
-                    const loansTransactions = loanResults.map((loan) => parseLoan(loan));
+                    const loansTransactions = loanResults.map((loan) =>
+                        parseLoan(loan),
+                    );
 
-                    const loansTransactionsWithAmount = loansTransactions.map((loan) => ({
-                        ...loan,
-                        amount: parseFloat(loan.loan_plan_amount as unknown as string),
-                    }));
+                    const loansTransactionsWithAmount = loansTransactions.map(
+                        (loan) => ({
+                            ...loan,
+                            amount: parseFloat(
+                                loan.loan_plan_amount as unknown as string,
+                            ),
+                        }),
+                    );
 
                     loansByAccount.push({
                         account_id: account.account_id,
@@ -468,12 +510,15 @@ export const getLoansByAccount = async (
             );
         } else {
             // Check if account exists and if it doesn't, send a response with an error message
-            const accountExists = await executeQuery(accountQueries.getAccount, [
-                account_id,
-            ]);
+            const accountExists = await executeQuery(
+                accountQueries.getAccount,
+                [account_id],
+            );
 
             if (accountExists.length == 0) {
-                response.status(404).send(`Account with ID ${account_id} not found`);
+                response
+                    .status(404)
+                    .send(`Account with ID ${account_id} not found`);
                 return;
             }
 
@@ -485,10 +530,14 @@ export const getLoansByAccount = async (
             // Map over results array and convert amount to a float for each Loan object
             const loansTransactions = results.map((loan) => parseLoan(loan));
 
-            const loansTransactionsWithAmount = loansTransactions.map((loan) => ({
-                ...loan,
-                amount: parseFloat(loan.loan_plan_amount as unknown as string),
-            }));
+            const loansTransactionsWithAmount = loansTransactions.map(
+                (loan) => ({
+                    ...loan,
+                    amount: parseFloat(
+                        loan.loan_plan_amount as unknown as string,
+                    ),
+                }),
+            );
 
             loansByAccount.push({
                 account_id: parseInt(account_id as string),
@@ -501,7 +550,7 @@ export const getLoansByAccount = async (
         next();
     } catch (error) {
         console.error(error); // Log the error on the server side
-        handleError(response, "Error getting loans");
+        handleError(response, 'Error getting loans');
     }
 };
 
@@ -527,7 +576,9 @@ export const getPayrollsMiddleware = async (
 
         if (!account_id) {
             // If account_id is null, fetch all accounts and make request.transactions an array of transactions
-            const accountResults = await executeQuery(accountQueries.getAccounts);
+            const accountResults = await executeQuery(
+                accountQueries.getAccounts,
+            );
 
             await Promise.all(
                 accountResults.map(async (account) => {
@@ -537,11 +588,13 @@ export const getPayrollsMiddleware = async (
                     );
 
                     // Map over results array and convert amount to a float for each Transaction object
-                    const payrollTransactions = payrollResults.map((payroll) => ({
-                        ...payroll,
-                        net_pay: parseFloat(payroll.net_pay),
-                        gross_pay: parseFloat(payroll.gross_pay),
-                    }));
+                    const payrollTransactions = payrollResults.map(
+                        (payroll) => ({
+                            ...payroll,
+                            net_pay: parseFloat(payroll.net_pay),
+                            gross_pay: parseFloat(payroll.gross_pay),
+                        }),
+                    );
 
                     payrollsByAccount.push({
                         employee_id: account.employee_id,
@@ -551,26 +604,30 @@ export const getPayrollsMiddleware = async (
             );
         } else {
             // Check if account exists and if it doesn't, send a response with an error message
-            const accountExists = await executeQuery(accountQueries.getAccount, [
-                account_id,
-            ]);
+            const accountExists = await executeQuery(
+                accountQueries.getAccount,
+                [account_id],
+            );
 
             if (accountExists.length == 0) {
-                response.status(404).send(`Account with ID ${account_id} not found`);
+                response
+                    .status(404)
+                    .send(`Account with ID ${account_id} not found`);
                 return;
             }
 
             // Get employee_id from account_id
-            const employeeResults = await executeQuery(accountQueries.getAccount, [
-                account_id,
-            ]);
+            const employeeResults = await executeQuery(
+                accountQueries.getAccount,
+                [account_id],
+            );
 
             const employee_id = employeeResults[0].employee_id;
 
-            const results = await executeQuery(payrollQueries.getPayrollsMiddleware, [
-                employee_id,
-                to_date,
-            ]);
+            const results = await executeQuery(
+                payrollQueries.getPayrollsMiddleware,
+                [employee_id, to_date],
+            );
 
             // Map over results array and convert net_pay to a float for each Payroll object
             const payrollsTransactions = results.map((payroll) => ({
@@ -590,7 +647,7 @@ export const getPayrollsMiddleware = async (
         next();
     } catch (error) {
         console.error(error); // Log the error on the server side
-        handleError(response, "Error getting payrolls");
+        handleError(response, 'Error getting payrolls');
     }
 };
 
@@ -625,7 +682,9 @@ export const getWishlistsByAccount = async (
 
         if (!account_id) {
             // If account_id is null, fetch all accounts and make request.transactions an array of transactions
-            const accountResults = await executeQuery(accountQueries.getAccounts);
+            const accountResults = await executeQuery(
+                accountQueries.getAccounts,
+            );
 
             await Promise.all(
                 accountResults.map(async (account) => {
@@ -635,16 +694,22 @@ export const getWishlistsByAccount = async (
                     );
 
                     // Map over results array and convert amount to a float for each Transaction object
-                    const wishlistTransactions = wishlistResults.map((wishlist) => {
-                        const tax = taxLookup[wishlist.tax_id] || { tax_rate: 0 };
+                    const wishlistTransactions = wishlistResults.map(
+                        (wishlist) => {
+                            const tax = taxLookup[wishlist.tax_id] || {
+                                tax_rate: 0,
+                            };
 
-                        return {
-                            ...wishlist,
-                            tax_rate: parseFloat(tax.tax_rate),
-                            amount: parseFloat(wishlist.wishlist_amount),
-                            wishlist_amount: parseFloat(wishlist.wishlist_amount),
-                        };
-                    });
+                            return {
+                                ...wishlist,
+                                tax_rate: parseFloat(tax.tax_rate),
+                                amount: parseFloat(wishlist.wishlist_amount),
+                                wishlist_amount: parseFloat(
+                                    wishlist.wishlist_amount,
+                                ),
+                            };
+                        },
+                    );
 
                     wishlistsByAccount.push({
                         account_id: account.account_id,
@@ -654,12 +719,15 @@ export const getWishlistsByAccount = async (
             );
         } else {
             // Check if account exists and if it doesn't, send a response with an error message
-            const accountExists = await executeQuery(accountQueries.getAccount, [
-                account_id,
-            ]);
+            const accountExists = await executeQuery(
+                accountQueries.getAccount,
+                [account_id],
+            );
 
             if (accountExists.length == 0) {
-                response.status(404).send(`Account with ID ${account_id} not found`);
+                response
+                    .status(404)
+                    .send(`Account with ID ${account_id} not found`);
                 return;
             }
 
@@ -691,7 +759,7 @@ export const getWishlistsByAccount = async (
         next();
     } catch (error) {
         console.error(error); // Log the error on the server side
-        handleError(response, "Error getting wishlists");
+        handleError(response, 'Error getting wishlists');
     }
 };
 
@@ -717,7 +785,9 @@ export const getTransfersByAccount = async (
 
         if (!account_id) {
             // If account_id is null, fetch all accounts and make request.transactions an array of transactions
-            const accountResults = await executeQuery(accountQueries.getAccounts);
+            const accountResults = await executeQuery(
+                accountQueries.getAccounts,
+            );
 
             await Promise.all(
                 accountResults.map(async (account) => {
@@ -727,10 +797,12 @@ export const getTransfersByAccount = async (
                     );
 
                     // Map over results array and convert amount to a float for each Transaction object
-                    const transferTransactions = transferResults.map((transfer) => ({
-                        ...transfer,
-                        amount: parseFloat(transfer.transfer_amount),
-                    }));
+                    const transferTransactions = transferResults.map(
+                        (transfer) => ({
+                            ...transfer,
+                            amount: parseFloat(transfer.transfer_amount),
+                        }),
+                    );
 
                     transferByAccount.push({
                         account_id: account.account_id,
@@ -740,12 +812,15 @@ export const getTransfersByAccount = async (
             );
         } else {
             // Check if account exists and if it doesn't, send a response with an error message
-            const accountExists = await executeQuery(accountQueries.getAccount, [
-                account_id,
-            ]);
+            const accountExists = await executeQuery(
+                accountQueries.getAccount,
+                [account_id],
+            );
 
             if (accountExists.length == 0) {
-                response.status(404).send(`Account with ID ${account_id} not found`);
+                response
+                    .status(404)
+                    .send(`Account with ID ${account_id} not found`);
                 return;
             }
 
@@ -771,7 +846,7 @@ export const getTransfersByAccount = async (
         next();
     } catch (error) {
         console.error(error); // Log the error on the server side
-        handleError(response, "Error getting transfers");
+        handleError(response, 'Error getting transfers');
     }
 };
 
@@ -790,11 +865,15 @@ export const getCurrentBalance = async (
     const { account_id } = request.query;
 
     try {
-        let currentBalance: Array<{ account_id: number; account_balance: number }> =
-            [];
+        let currentBalance: Array<{
+            account_id: number;
+            account_balance: number;
+        }> = [];
 
         if (!account_id) {
-            const accountResults = await executeQuery(accountQueries.getAccounts);
+            const accountResults = await executeQuery(
+                accountQueries.getAccounts,
+            );
 
             currentBalance = await Promise.all(
                 accountResults.map(async (account) => {
@@ -813,12 +892,15 @@ export const getCurrentBalance = async (
             );
         } else {
             // Check if account exists and if it doesn't, send a response with an error message
-            const accountExists = await executeQuery(accountQueries.getAccount, [
-                account_id as string,
-            ]);
+            const accountExists = await executeQuery(
+                accountQueries.getAccount,
+                [account_id as string],
+            );
 
             if (accountExists.length == 0) {
-                response.status(404).send(`Account with ID ${account_id} not found`);
+                response
+                    .status(404)
+                    .send(`Account with ID ${account_id} not found`);
                 return;
             }
 
@@ -840,7 +922,7 @@ export const getCurrentBalance = async (
         next();
     } catch (error) {
         console.error(error); // Log the error on the server side
-        handleError(response, "Error getting current balance");
+        handleError(response, 'Error getting current balance');
     }
 };
 
@@ -874,12 +956,14 @@ export const updateWishlistCron = async (
         // First, delete all necessary cron jobs
         for (const wslst of wishlistsResults) {
             const cronId = wslst.cron_job_id;
-            const results = await executeQuery(cronJobQueries.getCronJob, [cronId]);
+            const results = await executeQuery(cronJobQueries.getCronJob, [
+                cronId,
+            ]);
 
             if (results.length > 0) {
                 await deleteCronJob(results[0].unique_id);
             } else {
-                console.error("Cron job not found");
+                console.error('Cron job not found');
             }
         }
 
@@ -901,12 +985,14 @@ export const updateWishlistCron = async (
                 tax: taxRate,
                 title: wslst.wishlist_title,
                 description: wslst.wishlist_description,
-                scriptPath: "/app/dist/scripts/createTransaction.sh",
-                type: "wishlist",
+                scriptPath: '/app/dist/scripts/createTransaction.sh',
+                type: 'wishlist',
             };
 
             if (cronParams.date) {
-                const { cronDate, uniqueId } = await scheduleCronJob(cronParams);
+                const { cronDate, uniqueId } = await scheduleCronJob(
+                    cronParams,
+                );
                 await executeQuery(cronJobQueries.updateCronJob, [
                     uniqueId,
                     cronDate,
@@ -919,6 +1005,6 @@ export const updateWishlistCron = async (
         next();
     } catch (error) {
         console.error(error); // Log the error on the server side
-        handleError(response, "Error updating cron tab");
+        handleError(response, 'Error updating cron tab');
     }
 };
