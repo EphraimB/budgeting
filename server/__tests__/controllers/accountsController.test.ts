@@ -38,7 +38,7 @@ afterAll(() => {
  * @returns - A mock module with the executeQuery and handleError functions
  */
 const mockModule = (
-    executeQueryValue: QueryResultRow[] | string,
+    executeQueryValue: QueryResultRow[] | string | null,
     errorMessage?: string,
 ) => {
     const executeQuery =

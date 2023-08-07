@@ -32,7 +32,7 @@ const generateWishlists = (
                 }
             }
 
-            if (affordableDate !== null || affordableDate !== undefined) break;
+            if (affordableDate !== null && affordableDate !== undefined) break;
         }
     }
 
@@ -58,13 +58,15 @@ const generateWishlists = (
                 wishlist.wishlist_tax_rate !== undefined
                     ? wishlist.wishlist_tax_rate
                     : 0,
-            total_amount: -(
-                wishlist_amount +
-                wishlist_amount *
-                    (wishlist.wishlist_tax_rate !== undefined
-                        ? wishlist.wishlist_tax_rate
-                        : 0)
-            ).toFixed(2),
+            total_amount: Number(
+                -(
+                    wishlist_amount +
+                    wishlist_amount *
+                        (wishlist.wishlist_tax_rate !== undefined
+                            ? wishlist.wishlist_tax_rate
+                            : 0)
+                ).toFixed(2),
+            ),
         };
 
         if (fromDate > newTransactionDate) {

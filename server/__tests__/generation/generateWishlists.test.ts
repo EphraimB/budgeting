@@ -60,9 +60,12 @@ describe('generateWishlists', () => {
         expect(transactions).toHaveLength(4);
         expect(skippedTransactions).toHaveLength(0);
 
-        const wishlistTransaction: GeneratedTransaction = transactions.find(
-            (t) => t.title === wishlist.wishlist_title,
-        );
+        const wishlistTransaction: GeneratedTransaction | undefined =
+            transactions.find((t) => t.title === wishlist.wishlist_title);
+
+        if (!wishlistTransaction) {
+            throw new Error('Wishlist transaction not found');
+        }
 
         expect(wishlistTransaction).toBeDefined();
         expect(wishlistTransaction.amount).toBe(-150);
@@ -120,9 +123,12 @@ describe('generateWishlists', () => {
         expect(transactions).toHaveLength(4);
         expect(skippedTransactions).toHaveLength(0);
 
-        const wishlistTransaction: GeneratedTransaction = transactions.find(
-            (t) => t.title === wishlist.wishlist_title,
-        );
+        const wishlistTransaction: GeneratedTransaction | undefined =
+            transactions.find((t) => t.title === wishlist.wishlist_title);
+
+        if (wishlistTransaction === undefined) {
+            throw new Error('Wishlist transaction not found');
+        }
 
         expect(wishlistTransaction).toBeDefined();
         expect(wishlistTransaction.amount).toBe(-150);
@@ -132,6 +138,7 @@ describe('generateWishlists', () => {
     it('Should generate wishlist transaction with negative balances in the future', () => {
         const transactions: GeneratedTransaction[] = [
             {
+                wishlist_id: 1,
                 title: 'First wishlist test',
                 description: 'A first wishlist test',
                 date: new Date('2023-07-01'),
@@ -141,6 +148,7 @@ describe('generateWishlists', () => {
                 balance: 500,
             },
             {
+                wishlist_id: 2,
                 title: 'Second wishlist test',
                 description: 'A second wishlist test',
                 date: new Date('2023-07-15'),
@@ -150,6 +158,7 @@ describe('generateWishlists', () => {
                 balance: 300,
             },
             {
+                wishlist_id: 3,
                 title: 'Third wishlist test',
                 description: 'A third wishlist test',
                 date: new Date('2023-08-01'),
@@ -159,6 +168,7 @@ describe('generateWishlists', () => {
                 balance: 500,
             },
             {
+                wishlist_id: 4,
                 title: 'Fourth wishlist test',
                 description: 'A fourth wishlist test',
                 date: new Date('2023-09-01'),
@@ -168,6 +178,7 @@ describe('generateWishlists', () => {
                 balance: 700,
             },
             {
+                wishlist_id: 5,
                 title: 'Fifth wishlist test',
                 description: 'A fifth wishlist test',
                 date: new Date('2023-10-01'),
@@ -177,6 +188,7 @@ describe('generateWishlists', () => {
                 balance: 900,
             },
             {
+                wishlist_id: 6,
                 title: 'Sixth wishlist test',
                 description: 'A sixth wishlist test',
                 date: new Date('2023-11-01'),
@@ -186,6 +198,7 @@ describe('generateWishlists', () => {
                 balance: 1600,
             },
             {
+                wishlist_id: 7,
                 title: 'Seventh wishlist test',
                 description: 'A seventh wishlist test',
                 date: new Date('2023-12-01'),
@@ -195,6 +208,7 @@ describe('generateWishlists', () => {
                 balance: 2100,
             },
             {
+                wishlist_id: 8,
                 title: 'Eighth wishlist test',
                 description: 'The eighth wishlist test',
                 date: new Date('2024-01-01'),
@@ -204,6 +218,7 @@ describe('generateWishlists', () => {
                 balance: 1600,
             },
             {
+                wishlist_id: 9,
                 title: 'Tenth wishlsit test',
                 description: 'The tenth wishlist test',
                 date: new Date('2024-02-01'),
@@ -213,6 +228,7 @@ describe('generateWishlists', () => {
                 balance: 2600,
             },
             {
+                wishlist_id: 10,
                 title: 'Eleventh wishlist test',
                 description: 'The eleventh wishlist test',
                 date: new Date('2024-03-01'),
@@ -240,9 +256,12 @@ describe('generateWishlists', () => {
         expect(transactions).toHaveLength(11);
         expect(skippedTransactions).toHaveLength(0);
 
-        const wishlistTransaction: GeneratedTransaction = transactions.find(
-            (t) => t.title === wishlist.wishlist_title,
-        );
+        const wishlistTransaction: GeneratedTransaction | undefined =
+            transactions.find((t) => t.title === wishlist.wishlist_title);
+
+        if (wishlistTransaction === undefined) {
+            throw new Error('Wishlist transaction not found');
+        }
 
         expect(wishlistTransaction).toBeDefined();
         expect(wishlistTransaction.amount).toBe(-2000);
@@ -297,9 +316,8 @@ describe('generateWishlists', () => {
         expect(transactions).toHaveLength(3);
         expect(skippedTransactions).toHaveLength(1);
 
-        const wishlistTransaction: GeneratedTransaction = transactions.find(
-            (t) => t.title === wishlist.wishlist_title,
-        );
+        const wishlistTransaction: GeneratedTransaction | undefined =
+            transactions.find((t) => t.title === wishlist.wishlist_title);
 
         expect(wishlistTransaction).toBeUndefined();
     });
@@ -352,9 +370,8 @@ describe('generateWishlists', () => {
         expect(transactions).toHaveLength(3);
         expect(skippedTransactions).toHaveLength(0);
 
-        const wishlistTransaction: GeneratedTransaction = transactions.find(
-            (t) => t.title === wishlist.wishlist_title,
-        );
+        const wishlistTransaction: GeneratedTransaction | undefined =
+            transactions.find((t) => t.title === wishlist.wishlist_title);
 
         expect(wishlistTransaction).toBeUndefined();
     });
