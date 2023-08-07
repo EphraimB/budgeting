@@ -66,7 +66,11 @@ const mockModule = (
     let callCount: number = 0;
     jest.mock('../../utils/helperFunctions.js', () => ({
         executeQuery: jest.fn().mockImplementation(async () => {
-            if (errorMessage && callCount === 0) {
+            if (
+                errorMessage !== null &&
+                errorMessage !== undefined &&
+                callCount === 0
+            ) {
                 throw new Error(errorMessage);
             }
             const returnValue: number[] | undefined =

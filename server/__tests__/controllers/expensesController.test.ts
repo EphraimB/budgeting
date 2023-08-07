@@ -64,7 +64,7 @@ const mockModule = (
 ) => {
     const executeQuery = jest.fn();
 
-    if (errorMessage) {
+    if (errorMessage !== null && errorMessage !== undefined) {
         executeQuery.mockImplementationOnce(
             async () => await Promise.reject(new Error(errorMessage)),
         );
