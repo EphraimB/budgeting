@@ -113,7 +113,11 @@ export const generateDailyExpenses = (
     const generateDateFn = (currentDate: Date, expense: Expense): Date => {
         const newDate = currentDate;
         newDate.setDate(
-            newDate.getDate() + (expense.frequency_type_variable || 1),
+            newDate.getDate() +
+                (expense.frequency_type_variable !== null &&
+                expense.frequency_type_variable !== undefined
+                    ? expense.frequency_type_variable
+                    : 1),
         );
         return newDate;
     };
@@ -152,7 +156,10 @@ export const generateMonthlyExpenses = (
         expenseDate.setMonth(
             expenseDate.getMonth() +
                 monthsIncremented +
-                (expense.frequency_type_variable || 1),
+                (expense.frequency_type_variable !== null &&
+                expense.frequency_type_variable !== undefined
+                    ? expense.frequency_type_variable
+                    : 1),
         );
 
         if (
@@ -192,7 +199,11 @@ export const generateMonthlyExpenses = (
             expenseDate.setDate(newDay);
         }
 
-        monthsIncremented += expense.frequency_type_variable || 1;
+        monthsIncremented +=
+            expense.frequency_type_variable !== null &&
+            expense.frequency_type_variable !== undefined
+                ? expense.frequency_type_variable
+                : 1;
 
         return expenseDate;
     };
@@ -241,7 +252,12 @@ export const generateWeeklyExpenses = (
     const generateDateFn = (currentDate: Date, expense: Expense): Date => {
         const newDate: Date = currentDate;
         newDate.setDate(
-            newDate.getDate() + 7 * (expense.frequency_type_variable || 1),
+            newDate.getDate() +
+                7 *
+                    (expense.frequency_type_variable !== null &&
+                    expense.frequency_type_variable !== undefined
+                        ? expense.frequency_type_variable
+                        : 1),
         );
         return newDate;
     };
@@ -278,7 +294,10 @@ export const generateYearlyExpenses = (
         newDate.setFullYear(
             newDate.getFullYear() +
                 yearsIncremented +
-                (expense.frequency_type_variable || 1),
+                (expense.frequency_type_variable !== null &&
+                expense.frequency_type_variable !== undefined
+                    ? expense.frequency_type_variable
+                    : 1),
         );
 
         if (
@@ -316,7 +335,11 @@ export const generateYearlyExpenses = (
             }
         }
 
-        yearsIncremented += expense.frequency_type_variable || 1;
+        yearsIncremented +=
+            expense.frequency_type_variable !== null &&
+            expense.frequency_type_variable !== undefined
+                ? expense.frequency_type_variable
+                : 1;
 
         return newDate;
     };
