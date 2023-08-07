@@ -858,7 +858,7 @@ export const getCurrentBalance = async (
     response: Response,
     next: NextFunction,
 ): Promise<void> => {
-    const { account_id } = request.query;
+    const { account_id } = request.query as { account_id: string };
 
     try {
         let currentBalance: Array<{
@@ -866,7 +866,7 @@ export const getCurrentBalance = async (
             account_balance: number;
         }> = [];
 
-        if (!account_id) {
+        if (account_id === 'null' || account_id === 'undefined') {
             const accountResults = await executeQuery(
                 accountQueries.getAccounts,
             );
@@ -890,10 +890,10 @@ export const getCurrentBalance = async (
             // Check if account exists and if it doesn't, send a response with an error message
             const accountExists = await executeQuery(
                 accountQueries.getAccount,
-                [account_id as string],
+                [account_id],
             );
 
-            if (accountExists.length == 0) {
+            if (accountExists.length === 0) {
                 response
                     .status(404)
                     .send(`Account with ID ${account_id} not found`);
@@ -902,12 +902,12 @@ export const getCurrentBalance = async (
 
             const results = await executeQuery(
                 currentBalanceQueries.getCurrentBalance,
-                [account_id as string],
+                [account_id],
             );
 
             currentBalance = [
                 {
-                    account_id: parseInt(account_id as string),
+                    account_id: parseInt(account_id),
                     account_balance: parseFloat(results[0].account_balance),
                 },
             ];
