@@ -40,13 +40,14 @@ export const getAccounts = async (
 
     try {
         // Change the query based on the presence of id
-        const query: string = id
-            ? accountQueries.getAccount
-            : accountQueries.getAccounts;
-        const params = id ? [id] : [];
+        const query: string =
+            id !== null && id !== undefined
+                ? accountQueries.getAccount
+                : accountQueries.getAccounts;
+        const params = id !== null && id !== undefined ? [id] : [];
         const accounts = await executeQuery<AccountInput>(query, params);
 
-        if (id && accounts.length === 0) {
+        if (id !== null && id !== undefined && accounts.length === 0) {
             response.status(404).send('Account not found');
             return;
         }
@@ -54,7 +55,12 @@ export const getAccounts = async (
         response.status(200).json(accounts.map(parseAccounts));
     } catch (error) {
         console.error(error); // Log the error on the server side
-        handleError(response, `Error getting ${id ? 'account' : 'accounts'}`);
+        handleError(
+            response,
+            `Error getting ${
+                id !== null && id !== undefined ? 'account' : 'accounts'
+            }`,
+        );
     }
 };
 
