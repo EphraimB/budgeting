@@ -8,19 +8,19 @@ import MockDate from 'mockdate';
  * @returns {Promise<Express>} A promise that resolves to an Express app
  */
 const createApp = async (): Promise<Express> => {
-    const app = express();
+    const app: Express = express();
     app.use(express.json());
 
     // Import the module that uses the mock
-    const routerModule = await import('../../routes/loansRouter');
-    const loansRouter: Router = routerModule.default;
-    app.use('/', loansRouter);
+    const routerModule = await import('../../routes/incomeRouter');
+    const incomeRouter: Router = routerModule.default;
+    app.use('/', incomeRouter);
 
     return app;
 };
 
 beforeAll(() => {
-    MockDate.set('2020-01-01');
+    MockDate.set('2019-01-01');
 
     jest.mock('../../middleware/middleware', () => ({
         setQueries: jest.fn((req: Request, res: Response, next: NextFunction) => next()),
@@ -42,14 +42,14 @@ beforeAll(() => {
         });
     });
 
-    jest.mock('../../controllers/loansController', () => ({
-        getLoans: jest.fn((req: Request, res: Response, next: NextFunction) => res.json({ message: 'success' })),
-        createLoan: jest.fn((req: Request, res: Response, next: NextFunction) => next()),
-        createLoanReturnObject: jest.fn((req: Request, res: Response, next: NextFunction) => res.json({ message: 'success' })),
-        updateLoan: jest.fn((req: Request, res: Response, next: NextFunction) => next()),
-        updateLoanReturnObject: jest.fn((req: Request, res: Response, next: NextFunction) => res.json({ message: 'success' })),
-        deleteLoan: jest.fn((req: Request, res: Response, next: NextFunction) => next()),
-        deleteLoanReturnObject: jest.fn((req: Request, res: Response, next: NextFunction) => res.json({ message: 'success' }))
+    jest.mock('../../controllers/incomeController', () => ({
+        getIncome: jest.fn((req: Request, res: Response, next: NextFunction) => res.json({ message: 'success' })),
+        createIncome: jest.fn((req: Request, res: Response, next: NextFunction) => next()),
+        createIncomeReturnObject: jest.fn((req: Request, res: Response, next: NextFunction) => res.json({ message: 'success' })),
+        updateIncome: jest.fn((req: Request, res: Response, next: NextFunction) => next()),
+        updateIncomeReturnObject: jest.fn((req: Request, res: Response, next: NextFunction) => res.json({ message: 'success' })),
+        deleteIncome: jest.fn((req: Request, res: Response, next: NextFunction) => next()),
+        deleteIncomeReturnObject: jest.fn((req: Request, res: Response, next: NextFunction) => res.json({ message: 'success' }))
     }));
 });
 
@@ -90,11 +90,9 @@ describe('GET / with id query', () => {
 
 describe('POST /', () => {
     it('responds with json', async () => {
-        const newLoan = {
+        const incomeObj = {
             account_id: 1,
-            amount: 1000,
-            plan_amount: 100,
-            recipient: 'test',
+            amount: 100,
             title: 'test',
             description: 'test',
             frequency_type: 1,
@@ -103,16 +101,14 @@ describe('POST /', () => {
             frequency_week_of_month: 1,
             frequency_day_of_month: 1,
             frequency_month_of_year: 1,
-            interest_rate: 0,
-            interest_frequency_type: 2,
-            begin_date: '2020-01-02'
+            begin_date: '2020-01-01'
         };
 
-        const response: request.Response = await request(app)
+        const response = await request(app)
             .post('/')
             .set('Accept', 'application/json')
             .expect('Content-Type', /json/)
-            .send(newLoan);
+            .send(incomeObj);
 
         expect(response.status).toBe(200);
         expect(response.body).toEqual({ message: 'success' });
@@ -121,11 +117,9 @@ describe('POST /', () => {
 
 describe('PUT /:id', () => {
     it('responds with json', async () => {
-        const updatedLoan = {
+        const incomeObj = {
             account_id: 1,
-            amount: 1000,
-            plan_amount: 100,
-            recipient: 'test',
+            amount: 100,
             title: 'test',
             description: 'test',
             frequency_type: 1,
@@ -134,16 +128,14 @@ describe('PUT /:id', () => {
             frequency_week_of_month: 1,
             frequency_day_of_month: 1,
             frequency_month_of_year: 1,
-            interest_rate: 0,
-            interest_frequency_type: 2,
-            begin_date: '2020-01-02'
+            begin_date: '2020-01-01'
         };
 
         const response: request.Response = await request(app)
             .put('/1')
             .set('Accept', 'application/json')
             .expect('Content-Type', /json/)
-            .send(updatedLoan);
+            .send(incomeObj);
 
         expect(response.status).toBe(200);
         expect(response.body).toEqual({ message: 'success' });

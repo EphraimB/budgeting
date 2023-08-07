@@ -1,7 +1,7 @@
 import { jest } from '@jest/globals';
 import { Response } from 'express';
 import { QueryResultRow } from 'pg';
-import { expenses, loans, payrolls, transactions, transfers, wishlists } from '../../models/mockData';
+import { expenses, income, loans, payrolls, transactions, transfers, wishlists } from '../../models/mockData';
 import MockDate from 'mockdate';
 
 // Mock request and response
@@ -707,5 +707,68 @@ describe('updateWislistCron', () => {
 
         // Check that the error was logged
         expect(consoleSpy).toHaveBeenCalledWith(error);
+    });
+});
+
+describe('getIncomeByAccount', () => {
+    it('gets income for a given account and date', async () => {
+        mockModule([], income, undefined, [{ account_id: 1 }]);
+
+        const { getIncomeByAccount } = await import('../../middleware/middleware.js');
+
+        mockRequest.query = { account_id: '1', to_date: '2023-06-01' };
+
+        await getIncomeByAccount(mockRequest, mockResponse, mockNext);
+
+        const incomeReturn = [
+            {
+                account_id: 1,
+                income: income.map(income => ({
+                    ...income,
+                    amount: income.income_amount,
+                    tax_rate: 0
+                }))
+            }
+        ];
+
+        expect(mockRequest.income).toEqual(incomeReturn);
+        expect(mockNext).toHaveBeenCalled();
+    });
+
+    it('handles error if there is one', async () => {
+        mockModule([], [], 'Fake error', [{ account_id: 1 }]);
+
+        const { getIncomeByAccount } = await import('../../middleware/middleware.js');
+
+        mockRequest.query = { account_id: '1', to_date: '2023-06-01' };
+
+        await getIncomeByAccount(mockRequest, mockResponse, mockNext);
+
+        expect(mockResponse.status).toHaveBeenCalledWith(400);
+        expect(mockResponse.json).toHaveBeenCalledWith({ message: 'Error getting income' });
+    });
+
+    it('should fetch accounts if account_id is not provided', async () => {
+        mockModule([], income, undefined, [{ account_id: 1 }]);
+
+        const { getIncomeByAccount } = await import('../../middleware/middleware.js');
+
+        mockRequest.query = { account_id: null, to_date: '2023-06-01' };
+
+        await getIncomeByAccount(mockRequest, mockResponse, mockNext);
+
+        const incomeReturn = [
+            {
+                account_id: 1,
+                income: income.map(income => ({
+                    ...income,
+                    amount: income.income_amount,
+                    tax_rate: 0
+                }))
+            }
+        ];
+
+        expect(mockRequest.income).toEqual(incomeReturn);
+        expect(mockNext).toHaveBeenCalled();
     });
 });

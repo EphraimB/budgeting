@@ -1,4 +1,5 @@
 import { type Request, type Response, type NextFunction } from "express";
+import { generateDailyIncome, generateWeeklyIncome, generateMonthlyIncome, generateYearlyIncome, } from "./generateIncome.js";
 import {
     generateDailyExpenses,
     generateWeeklyExpenses,
@@ -25,6 +26,7 @@ import {
     CurrentBalance,
     Expense,
     GeneratedTransaction,
+    Income,
     Loan,
     Payroll,
     Transaction,
@@ -63,11 +65,51 @@ const generate = async (
                     tax_rate: transaction.transaction_tax_rate,
                     total_amount: -(
                         transaction.transaction_amount +
-            transaction.transaction_amount * transaction.transaction_tax_rate
+                        transaction.transaction_amount * transaction.transaction_tax_rate
                     ),
                 }),
             ),
         );
+
+    request.income
+        .filter((inc) => inc.account_id === account_id)
+        .forEach((account) => {
+            account.income.forEach((income: Income) => {
+                if (income.frequency_type === 0) {
+                    generateDailyIncome(
+                        transactions,
+                        skippedTransactions,
+                        income,
+                        toDate,
+                        fromDate,
+                    );
+                } else if (income.frequency_type === 1) {
+                    generateWeeklyIncome(
+                        transactions,
+                        skippedTransactions,
+                        income,
+                        toDate,
+                        fromDate,
+                    );
+                } else if (income.frequency_type === 2) {
+                    generateMonthlyIncome(
+                        transactions,
+                        skippedTransactions,
+                        income,
+                        toDate,
+                        fromDate,
+                    );
+                } else if (income.frequency_type === 3) {
+                    generateYearlyIncome(
+                        transactions,
+                        skippedTransactions,
+                        income,
+                        toDate,
+                        fromDate,
+                    );
+                }
+            });
+        });
 
     request.expenses
         .filter((exp) => exp.account_id === account_id)

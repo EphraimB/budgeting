@@ -1,4 +1,5 @@
 import {
+    Income,
     Expense,
     Loan,
     Wishlist,
@@ -91,9 +92,30 @@ export const taxes: Taxes[] = [
         tax_rate: 0,
         tax_title: "Test Tax",
         tax_description: "Test Tax",
+        tax_type: 0,
         date_created: "2020-01-01",
         date_modified: "2020-01-01",
     }
+];
+
+export const income: Income[] = [
+    {
+        income_id: 1,
+        account_id: 1,
+        tax_id: 1,
+        income_amount: 1000,
+        income_title: "Test Income",
+        income_description: "Test Income to test the income route",
+        frequency_type: 2,
+        frequency_type_variable: null,
+        frequency_day_of_month: null,
+        frequency_day_of_week: null,
+        frequency_week_of_month: null,
+        frequency_month_of_year: null,
+        income_begin_date: "2020-01-01",
+        date_created: "2020-01-01",
+        date_modified: "2020-01-01",
+    },
 ];
 
 export const expenses: Expense[] = [

@@ -10,9 +10,11 @@ import {
     accountQueries,
     taxesQueries,
     cronJobQueries,
+    incomeQueries,
 } from "../models/queryData.js";
 import { handleError, executeQuery } from "../utils/helperFunctions.js";
 import {
+    Income,
     type Expense,
     type Loan,
     type Payroll,
@@ -195,6 +197,103 @@ export const getTransactionsByAccount = async (
     } catch (error) {
         console.error(error); // Log the error on the server side
         handleError(response, "Error getting transactions");
+    }
+};
+
+/**
+ *
+ * @param request - The request object
+ * @param response - The response object
+ * @param next - The next function
+ * Sends a response with all income or a single income if an id is provided
+ */
+export const getIncomeByAccount = async (
+    request: Request,
+    response: Response,
+    next: NextFunction,
+): Promise<void> => {
+    const { account_id, to_date } = request.query;
+
+    try {
+        // Fetch all taxes
+        const allTaxes = await executeQuery(taxesQueries.getTaxes);
+
+        // Create an object where key is the tax id and value is the tax object
+        const taxLookup = allTaxes.reduce(
+            (acc, curr) => ({ ...acc, [curr.tax_id]: curr }),
+            {},
+        );
+
+        const incomeByAccount: Array<{
+            account_id: number;
+            income: Income[];
+        }> = [];
+
+        if (!account_id) {
+            const accountResults = await executeQuery(accountQueries.getAccounts);
+
+            await Promise.all(
+                accountResults.map(async (account) => {
+                    const incomeResults = await executeQuery(
+                        incomeQueries.getIncomeMiddleware,
+                        [account.account_id, to_date],
+                    );
+
+                    const incomeTransactions = incomeResults.map((income) => {
+                        const tax = taxLookup[income.tax_id] || { tax_rate: 0 };
+
+                        return {
+                            ...income,
+                            tax_rate: parseFloat(tax.tax_rate),
+                            amount: parseFloat(income.income_amount),
+                            income_amount: parseFloat(income.income_amount),
+                        };
+                    });
+
+                    incomeByAccount.push({
+                        account_id: account.account_id,
+                        income: incomeTransactions,
+                    });
+                }),
+            );
+        } else {
+            const accountExists = await executeQuery(accountQueries.getAccount, [
+                account_id,
+            ]);
+
+            if (accountExists.length == 0) {
+                response.status(404).send(`Account with ID ${account_id} not found`);
+                return;
+            }
+
+            const incomeResults = await executeQuery(
+                incomeQueries.getIncomeMiddleware,
+                [account_id, to_date],
+            );
+
+            const incomeTransactions = incomeResults.map((income) => {
+                const tax = taxLookup[income.tax_id] || { tax_rate: 0 };
+
+                return {
+                    ...income,
+                    tax_rate: parseFloat(tax.tax_rate),
+                    amount: parseFloat(income.income_amount),
+                    income_amount: parseFloat(income.income_amount),
+                };
+            });
+
+            incomeByAccount.push({
+                account_id: parseInt(account_id as string),
+                income: incomeTransactions,
+            });
+        }
+
+        request.income = incomeByAccount;
+
+        next();
+    } catch (error) {
+        console.error(error);
+        handleError(response, "Error getting income");
     }
 };
 

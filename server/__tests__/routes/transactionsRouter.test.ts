@@ -11,6 +11,10 @@ jest.mock('../../middleware/middleware', () => ({
         req.transactions = [];
         next();
     },
+    getIncomeByAccount: (req: Request, res: Response, next: NextFunction) => {
+        req.income = [];
+        next();
+    },
     getExpensesByAccount: (req: Request, res: Response, next: NextFunction) => {
         req.expenses = [];
         next();
