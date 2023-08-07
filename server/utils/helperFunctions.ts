@@ -34,3 +34,13 @@ export const executeQuery = async <T = any>(
         throw new Error(error);
     }
 };
+
+/**
+ *
+ * @param input - The input to parse
+ * @returns - The parsed input or null if the input is not a number
+ */
+export const parseOrFallback = (input: any): number | null => {
+    const parsed = parseInt(input, 10);
+    return isNaN(parsed) ? null : parsed;
+};

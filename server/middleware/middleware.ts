@@ -1,6 +1,11 @@
 import { type Request, type Response, type NextFunction } from 'express';
 import { type QueryResultRow } from 'pg';
 import {
+    parseOrFallback,
+    handleError,
+    executeQuery,
+} from '../utils/helperFunctions.js';
+import {
     transactionHistoryQueries,
     expenseQueries,
     loanQueries,
@@ -13,7 +18,6 @@ import {
     cronJobQueries,
     incomeQueries,
 } from '../models/queryData.js';
-import { handleError, executeQuery } from '../utils/helperFunctions.js';
 import {
     type Income,
     type Expense,
@@ -48,16 +52,6 @@ interface LoanInput {
     date_created: string;
     date_modified: string;
 }
-
-/**
- *
- * @param input - The input to parse
- * @returns - The parsed input or null if the input is not a number
- */
-const parseOrFallback = (input: any): number | null => {
-    const parsed = parseInt(input, 10);
-    return isNaN(parsed) ? null : parsed;
-};
 
 /**
  *
