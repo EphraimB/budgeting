@@ -211,7 +211,10 @@ const generate = async (
                 }
 
                 fullyPaidBackDates[loan.loan_id] =
-                    loanResult.fullyPaidBackDate || null;
+                    loanResult.fullyPaidBackDate !== null &&
+                    loanResult.fullyPaidBackDate !== undefined
+                        ? loanResult.fullyPaidBackDate
+                        : null;
             });
         });
 
