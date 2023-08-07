@@ -31,7 +31,8 @@ beforeAll(() => {
     jest.mock('../../middleware/middleware', () => ({
         setQueries: jest.fn(
             (req: Request, res: Response, next: NextFunction) => {
-        { next(); },
+                next();
+            },
         ),
         getCurrentBalance: jest.fn(
             (req: Request, res: Response, next: NextFunction) => {
@@ -93,7 +94,8 @@ beforeAll(() => {
         ),
         createLoan: jest.fn(
             (req: Request, res: Response, next: NextFunction) => {
-        { next(); },
+                next();
+            },
         ),
         createLoanReturnObject: jest.fn(
             (req: Request, res: Response, next: NextFunction) =>
@@ -101,7 +103,8 @@ beforeAll(() => {
         ),
         updateLoan: jest.fn(
             (req: Request, res: Response, next: NextFunction) => {
-        { next(); },
+                next();
+            },
         ),
         updateLoanReturnObject: jest.fn(
             (req: Request, res: Response, next: NextFunction) =>
@@ -109,7 +112,8 @@ beforeAll(() => {
         ),
         deleteLoan: jest.fn(
             (req: Request, res: Response, next: NextFunction) => {
-        { next(); },
+                next();
+            },
         ),
         deleteLoanReturnObject: jest.fn(
             (req: Request, res: Response, next: NextFunction) =>

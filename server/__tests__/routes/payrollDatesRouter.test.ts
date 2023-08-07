@@ -34,7 +34,8 @@ beforeAll(() => {
     jest.mock('../../middleware/middleware', () => ({
         setQueries: jest.fn(
             (req: Request, res: Response, next: NextFunction) => {
-        { next(); },
+                next();
+            },
         ),
         getCurrentBalance: jest.fn(
             (req: Request, res: Response, next: NextFunction) => {
