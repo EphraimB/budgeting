@@ -42,14 +42,22 @@ export const getEmployee = async (
     const { employee_id } = request.query;
 
     try {
-        const query: string = employee_id
-            ? payrollQueries.getEmployee
-            : payrollQueries.getEmployees;
-        const params: any[] = employee_id ? [employee_id] : [];
+        const query: string =
+            employee_id !== null && employee_id !== undefined
+                ? payrollQueries.getEmployee
+                : payrollQueries.getEmployees;
+        const params: any[] =
+            employee_id !== null && employee_id !== undefined
+                ? [employee_id]
+                : [];
 
         const results = await executeQuery<EmployeeInput>(query, params);
 
-        if (employee_id && results.length === 0) {
+        if (
+            employee_id !== null &&
+            employee_id !== undefined &&
+            results.length === 0
+        ) {
             response.status(404).send('Employee not found');
             return;
         }
@@ -64,7 +72,11 @@ export const getEmployee = async (
         console.error(error); // Log the error on the server side
         handleError(
             response,
-            `Error getting ${employee_id ? 'employee' : 'employees'}`,
+            `Error getting ${
+                employee_id !== null && employee_id !== undefined
+                    ? 'employee'
+                    : 'employees'
+            }`,
         );
     }
 };
@@ -160,7 +172,7 @@ export const updateEmployee = async (
         // Execute the script
         exec(scriptCommand, (error, stdout, stderr) => {
             if (error != null) {
-                console.error(`Error executing script: ${error}`);
+                console.error(`Error executing script: ${error.message}`);
                 response.status(500).json({
                     status: 'error',
                     message: 'Failed to execute script',
@@ -262,7 +274,7 @@ export const deleteEmployee = async (
         // Execute the script
         exec(scriptCommand, (error, stdout, stderr) => {
             if (error != null) {
-                console.error(`Error executing script: ${error}`);
+                console.error(`Error executing script: ${error.message}`);
                 response.status(500).json({
                     status: 'error',
                     message: 'Failed to execute script',
