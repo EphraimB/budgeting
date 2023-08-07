@@ -44,6 +44,10 @@ describe('deleteCronJob', () => {
             dynamicFilePathRegex.test(key),
         );
 
+        if (!dynamicKey) {
+            throw new Error('Dynamic key not found');
+        }
+
         // Assert
         expect(vol.toJSON()).toEqual({
             '/tmp/cronjob.lock': '',
