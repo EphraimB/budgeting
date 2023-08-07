@@ -39,13 +39,18 @@ export const getPayrollDates = async (
         let query: string;
         let params: any[];
 
-        if (id && employee_id) {
+        if (
+            id !== null &&
+            id !== undefined &&
+            employee_id !== null &&
+            employee_id !== undefined
+        ) {
             query = payrollQueries.getPayrollDatesByIdAndEmployeeId;
             params = [id, employee_id];
-        } else if (id) {
+        } else if (id !== null && id !== undefined) {
             query = payrollQueries.getPayrollDatesById;
             params = [id];
-        } else if (employee_id) {
+        } else if (employee_id !== null && employee_id !== undefined) {
             query = payrollQueries.getPayrollDatesByEmployeeId;
             params = [employee_id];
         } else {
@@ -55,7 +60,11 @@ export const getPayrollDates = async (
 
         const results = await executeQuery<PayrollDateInput>(query, params);
 
-        if ((id || employee_id) && results.length === 0) {
+        if (
+            ((id !== null && id !== undefined) ||
+                (employee_id !== null && employee_id !== undefined)) &&
+            results.length === 0
+        ) {
             response.status(404).send('Payroll date not found');
             return;
         }
@@ -71,9 +80,9 @@ export const getPayrollDates = async (
         handleError(
             response,
             `Error getting ${
-                id
+                id !== null && id !== undefined
                     ? 'payroll date'
-                    : employee_id
+                    : employee_id !== null && employee_id !== undefined
                         ? 'payroll dates for given employee_id'
                         : 'payroll dates'
             }`,
@@ -107,7 +116,7 @@ export const createPayrollDate = async (
         // Execute the script
         exec(scriptCommand, (error, stdout, stderr) => {
             if (error != null) {
-                console.error(`Error executing script: ${error}`);
+                console.error(`Error executing script: ${error.message}`);
                 response.status(500).send('Error executing script');
                 return;
             }
@@ -184,7 +193,7 @@ export const updatePayrollDate = async (
         // Execute the script
         exec(scriptCommand, (error, stdout, stderr) => {
             if (error != null) {
-                console.error(`Error executing script: ${error}`);
+                console.error(`Error executing script: ${error.message}`);
                 response.status(500).send('Error executing script');
             }
         });
@@ -261,7 +270,7 @@ export const deletePayrollDate = async (
         // Execute the script
         exec(scriptCommand, (error, stdout, stderr) => {
             if (error != null) {
-                console.error(`Error executing script: ${error}`);
+                console.error(`Error executing script: ${error.message}`);
                 response.status(500).send('Error executing script');
             }
         });
