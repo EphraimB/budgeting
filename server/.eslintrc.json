@@ -28,6 +28,13 @@
         ],
         "camelcase": "off",
         "@typescript-eslint/explicit-function-return-type": "off",
-        "prettier/prettier": "error" // Ensure prettier formatting is treated as an error
+        "prettier/prettier": "error", // Ensure prettier formatting is treated as an error,
+        "@typescript-eslint/no-misused-promises": [
+            "error",
+            {
+                "checksVoidReturn": false
+            }
+        ],
+        "@typescript-eslint/naming-convention": "off"
     }
 }

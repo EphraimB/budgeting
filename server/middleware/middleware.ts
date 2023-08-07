@@ -1,4 +1,5 @@
 import { type Request, type Response, type NextFunction } from 'express';
+import { type QueryResultRow } from 'pg';
 import {
     transactionHistoryQueries,
     expenseQueries,
@@ -23,21 +24,6 @@ import {
 } from '../types/types.js';
 import scheduleCronJob from '../crontab/scheduleCronJob.js';
 import deleteCronJob from '../crontab/deleteCronJob.js';
-
-interface WishlistInput {
-    wishlist_id: any;
-    account_id: string;
-    cron_job_id: string;
-    wishlist_amount: string;
-    wishlist_title: string;
-    wishlist_description: string;
-    wishlist_url_link: string;
-    wishlist_priority: string;
-    wishlist_date_available: string;
-    wishlist_date_can_purchase: string;
-    date_created: string;
-    date_modified: string;
-}
 
 interface LoanInput {
     account_id: string;
@@ -65,25 +51,6 @@ interface LoanInput {
 
 /**
  *
- * @param wishlist - Wishlist object
- * @returns - Wishlist object with parsed values
- */
-const wishlistsParse = (wishlist: WishlistInput): Wishlist => ({
-    wishlist_id: parseInt(wishlist.wishlist_id),
-    account_id: parseInt(wishlist.account_id),
-    wishlist_amount: parseFloat(wishlist.wishlist_amount),
-    wishlist_title: wishlist.wishlist_title,
-    wishlist_description: wishlist.wishlist_description,
-    wishlist_url_link: wishlist.wishlist_url_link,
-    wishlist_priority: parseInt(wishlist.wishlist_priority),
-    wishlist_date_available: wishlist.wishlist_date_available,
-    wishlist_date_can_purchase: wishlist.wishlist_date_can_purchase,
-    date_created: wishlist.date_created,
-    date_modified: wishlist.date_modified,
-});
-
-/**
- *
  * @param request - The request object
  * @param response - The response object
  * @param next - The next function
@@ -101,8 +68,11 @@ export const setQueries = async (
         date.setFullYear(date.getFullYear() + 1);
         request.query.to_date = date.toISOString().slice(0, 10);
 
-        if (!request.query.account_id) {
-            if (request.query.id) {
+        if (
+            request.query.account_id === undefined ||
+            request.query.account_id === null
+        ) {
+            if (request.query.id !== undefined && request.query.id !== null) {
                 const results = await executeQuery(
                     wishlistQueries.getWishlistsById,
                     [request.query.id],
@@ -141,7 +111,7 @@ export const getTransactionsByAccount = async (
 
         let transactions: any[] = []; // Initialize transactions as an empty array
 
-        if (!account_id) {
+        if (account_id === 'null' || account_id === 'undefined') {
             // If account_id is null, fetch all accounts and make request.transactions an array of transactions
             const accountResults = await executeQuery(
                 accountQueries.getAccounts,
@@ -245,7 +215,7 @@ export const getIncomeByAccount = async (
             income: Income[];
         }> = [];
 
-        if (!account_id) {
+        if (account_id === 'null' || account_id === 'undefined') {
             const accountResults = await executeQuery(
                 accountQueries.getAccounts,
             );
@@ -257,16 +227,20 @@ export const getIncomeByAccount = async (
                         [account.account_id, to_date],
                     );
 
-                    const incomeTransactions = incomeResults.map((income) => {
-                        const tax = taxLookup[income.tax_id] || { tax_rate: 0 };
+                    const incomeTransactions: Income[] = incomeResults.map(
+                        (income) => {
+                            const tax: QueryResultRow = taxLookup[
+                                income.tax_id
+                            ] || { tax_rate: 0 };
 
-                        return {
-                            ...income,
-                            tax_rate: parseFloat(tax.tax_rate),
-                            amount: parseFloat(income.income_amount),
-                            income_amount: parseFloat(income.income_amount),
-                        };
-                    });
+                            return {
+                                ...income,
+                                tax_rate: parseFloat(tax.tax_rate),
+                                amount: parseFloat(income.income_amount),
+                                income_amount: parseFloat(income.income_amount),
+                            };
+                        },
+                    );
 
                     incomeByAccount.push({
                         account_id: account.account_id,
@@ -280,7 +254,7 @@ export const getIncomeByAccount = async (
                 [account_id],
             );
 
-            if (accountExists.length == 0) {
+            if (accountExists.length === 0) {
                 response
                     .status(404)
                     .send(`Account with ID ${account_id} not found`);
@@ -293,7 +267,9 @@ export const getIncomeByAccount = async (
             );
 
             const incomeTransactions = incomeResults.map((income) => {
-                const tax = taxLookup[income.tax_id] || { tax_rate: 0 };
+                const tax: QueryResultRow = taxLookup[income.tax_id] || {
+                    tax_rate: 0,
+                };
 
                 return {
                     ...income,
