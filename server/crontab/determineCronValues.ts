@@ -30,51 +30,104 @@ const determineCronValues = (jobDetails: JobDetails): string => {
         cronMonth = month.toString();
     } else {
         if (frequency_type === 0) {
-            cronDay = '*/' + (frequency_type_variable || 1);
+            cronDay =
+                '*/' +
+                (frequency_type_variable !== null &&
+                frequency_type_variable !== undefined
+                    ? frequency_type_variable
+                    : 1
+                ).toString();
         } else if (frequency_type === 1) {
-            if (frequency_day_of_week) {
+            if (
+                frequency_day_of_week !== null &&
+                frequency_day_of_week !== undefined
+            ) {
                 cronMonth = '*';
                 cronDayOfWeek = frequency_day_of_week.toString();
-                cronDay = frequency_day_of_month
-                    ? frequency_day_of_month.toString()
-                    : '*';
+                cronDay =
+                    frequency_day_of_month !== null &&
+                    frequency_day_of_month !== undefined
+                        ? frequency_day_of_month.toString()
+                        : '*';
             } else {
                 cronMonth = '*';
-                cronDay = '*/' + 7 * (frequency_type_variable || 1);
+                cronDay =
+                    '*/' +
+                    (
+                        7 *
+                        (frequency_type_variable !== null &&
+                        frequency_type_variable !== undefined
+                            ? frequency_type_variable
+                            : 1)
+                    ).toString();
             }
         } else if (frequency_type === 2) {
-            if (frequency_day_of_week) {
+            if (
+                frequency_day_of_week !== null &&
+                frequency_day_of_week !== undefined
+            ) {
                 cronMonth = '*';
                 cronDayOfWeek = frequency_day_of_week.toString();
-                cronDay = frequency_day_of_month
-                    ? frequency_day_of_month.toString()
-                    : '*';
-                cronWeekOfMonthExpression = frequency_week_of_month
-                    ? `[ "$(date +\%m)" != "$(date +\%m -d '${frequency_week_of_month} week')" ] &&`
-                    : '';
+                cronDay =
+                    frequency_day_of_month !== null &&
+                    frequency_day_of_month !== undefined
+                        ? frequency_day_of_month.toString()
+                        : '*';
+                cronWeekOfMonthExpression =
+                    frequency_week_of_month !== null &&
+                    frequency_week_of_month !== undefined
+                        ? `[ "$(date +%m)" != "$(date +%m -d '${frequency_week_of_month} week')" ] &&`
+                        : '';
             } else {
-                cronMonth = '*/' + (frequency_type_variable || 1);
-                cronDay = frequency_day_of_month
-                    ? frequency_day_of_month.toString()
-                    : new Date(date).getDate().toString();
+                cronMonth =
+                    '*/' +
+                    (frequency_type_variable !== null &&
+                    frequency_type_variable !== undefined
+                        ? frequency_type_variable
+                        : 1
+                    ).toString();
+                cronDay =
+                    frequency_day_of_month !== null &&
+                    frequency_day_of_month !== undefined
+                        ? frequency_day_of_month.toString()
+                        : new Date(date).getDate().toString();
             }
         } else if (frequency_type === 3) {
-            if (frequency_day_of_week) {
-                cronMonth = frequency_month_of_year
-                    ? frequency_month_of_year.toString()
-                    : '*';
+            if (
+                frequency_day_of_week !== null &&
+                frequency_day_of_week !== undefined
+            ) {
+                cronMonth =
+                    frequency_month_of_year !== null &&
+                    frequency_month_of_year !== undefined
+                        ? frequency_month_of_year.toString()
+                        : '*';
                 cronDayOfWeek = frequency_day_of_week.toString();
-                cronDay = frequency_day_of_month
-                    ? frequency_day_of_month.toString()
-                    : '*';
-                cronWeekOfMonthExpression = frequency_week_of_month
-                    ? `[ "$(date +\%m)" != "$(date +\%m -d '${frequency_week_of_month} week')" ] &&`
-                    : '';
+                cronDay =
+                    frequency_day_of_month !== null &&
+                    frequency_day_of_month !== undefined
+                        ? frequency_day_of_month.toString()
+                        : '*';
+                cronWeekOfMonthExpression =
+                    frequency_week_of_month !== null &&
+                    frequency_week_of_month !== undefined
+                        ? `[ "$(date +%m)" != "$(date +%m -d '${frequency_week_of_month} week')" ] &&`
+                        : '';
             } else {
-                cronMonth = '*/' + 12 * (frequency_type_variable || 1);
-                cronDay = frequency_day_of_month
-                    ? frequency_day_of_month.toString()
-                    : new Date(date).getDate().toString();
+                cronMonth =
+                    '*/' +
+                    (
+                        12 *
+                        (frequency_type_variable !== null &&
+                        frequency_type_variable !== undefined
+                            ? frequency_type_variable
+                            : 1)
+                    ).toString();
+                cronDay =
+                    frequency_day_of_month !== null &&
+                    frequency_day_of_month !== undefined
+                        ? frequency_day_of_month.toString()
+                        : new Date(date).getDate().toString();
             }
         }
     }
