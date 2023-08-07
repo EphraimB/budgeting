@@ -212,7 +212,8 @@ const generate = async (
 
                 if (loan.loan_id !== undefined) {
                     fullyPaidBackDates[loan.loan_id] =
-                        loanResult.fullyPaidBackDate
+                        loanResult.fullyPaidBackDate !== null &&
+                        loanResult.fullyPaidBackDate !== undefined
                             ? loanResult.fullyPaidBackDate
                             : null;
                 }
