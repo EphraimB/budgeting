@@ -24,36 +24,36 @@ const generateExpenses = (
 
     if (
         expense.frequency_month_of_year !== null &&
-    expense.frequency_month_of_year !== undefined
+        expense.frequency_month_of_year !== undefined
     ) {
         expenseDate.setMonth(expense.frequency_month_of_year);
     }
 
     if (
         expense.frequency_day_of_week !== null &&
-    expense.frequency_day_of_week !== undefined
+        expense.frequency_day_of_week !== undefined
     ) {
         let newDay;
 
         if (
             expense.frequency_day_of_week !== null &&
-      expense.frequency_day_of_week !== undefined
+            expense.frequency_day_of_week !== undefined
         ) {
             let daysUntilNextFrequency =
-        (7 + expense.frequency_day_of_week - expenseDate.getDay()) % 7;
+                (7 + expense.frequency_day_of_week - expenseDate.getDay()) % 7;
             daysUntilNextFrequency =
-        daysUntilNextFrequency === 0 ? 7 : daysUntilNextFrequency;
+                daysUntilNextFrequency === 0 ? 7 : daysUntilNextFrequency;
             newDay = expenseDate.getDate() + daysUntilNextFrequency;
         }
 
         if (
             expense.frequency_week_of_month !== null &&
-      expense.frequency_week_of_month !== undefined
+            expense.frequency_week_of_month !== undefined
         ) {
             // first day of the month
             expenseDate.setDate(1);
             const daysToAdd =
-        (7 + expense.frequency_day_of_week - expenseDate.getDay()) % 7;
+                (7 + expense.frequency_day_of_week - expenseDate.getDay()) % 7;
             // setting to the first occurrence of the desired day of week
             expenseDate.setDate(expenseDate.getDate() + daysToAdd);
             // setting to the desired week of the month
@@ -68,8 +68,8 @@ const generateExpenses = (
         const taxRate = expense.tax_rate;
         const subsidyRate = expense.expense_subsidized;
 
-        const amountAfterSubsidy = initialAmount * subsidyRate;
-        const taxAmount = amountAfterSubsidy * taxRate;
+        const amountAfterSubsidy = initialAmount - (initialAmount * subsidyRate);
+        const taxAmount = amountAfterSubsidy + (amountAfterSubsidy * taxRate);
 
         const newTransaction: GeneratedTransaction = {
             expense_id: expense.expense_id,
@@ -148,35 +148,35 @@ export const generateMonthlyExpenses = (
         // advance by number of months specified in frequency_type_variable or by 1 month if not set
         expenseDate.setMonth(
             expenseDate.getMonth() +
-        monthsIncremented +
-        (expense.frequency_type_variable || 1),
+            monthsIncremented +
+            (expense.frequency_type_variable || 1),
         );
 
         if (
             expense.frequency_day_of_week !== null &&
-      expense.frequency_day_of_week !== undefined
+            expense.frequency_day_of_week !== undefined
         ) {
             let newDay: number;
 
             if (
                 expense.frequency_day_of_week !== null &&
-        expense.frequency_day_of_week !== undefined
+                expense.frequency_day_of_week !== undefined
             ) {
                 let daysUntilNextFrequency =
-          (7 + expense.frequency_day_of_week - expenseDate.getDay()) % 7;
+                    (7 + expense.frequency_day_of_week - expenseDate.getDay()) % 7;
                 daysUntilNextFrequency =
-          daysUntilNextFrequency === 0 ? 7 : daysUntilNextFrequency;
+                    daysUntilNextFrequency === 0 ? 7 : daysUntilNextFrequency;
                 newDay = expenseDate.getDate() + daysUntilNextFrequency;
             }
 
             if (
                 expense.frequency_week_of_month !== null &&
-        expense.frequency_week_of_month !== undefined
+                expense.frequency_week_of_month !== undefined
             ) {
                 // first day of the month
                 expenseDate.setDate(1);
                 const daysToAdd: number =
-          (7 + expense.frequency_day_of_week - expenseDate.getDay()) % 7;
+                    (7 + expense.frequency_day_of_week - expenseDate.getDay()) % 7;
                 // setting to the first occurrence of the desired day of week
                 expenseDate.setDate(expenseDate.getDate() + daysToAdd);
                 // setting to the desired week of the month
@@ -221,7 +221,7 @@ export const generateWeeklyExpenses = (
 
     if (
         expense.frequency_day_of_week !== null &&
-    expense.frequency_day_of_week !== undefined
+        expense.frequency_day_of_week !== undefined
     ) {
         const startDay: number = new Date(expense.expense_begin_date).getDay();
         const frequency_day_of_week: number = expense.frequency_day_of_week;
@@ -270,28 +270,28 @@ export const generateYearlyExpenses = (
         const newDate: Date = new Date(expense.expense_begin_date);
         newDate.setFullYear(
             newDate.getFullYear() +
-        yearsIncremented +
-        (expense.frequency_type_variable || 1),
+            yearsIncremented +
+            (expense.frequency_type_variable || 1),
         );
 
         if (
             expense.frequency_month_of_year !== null &&
-      expense.frequency_month_of_year !== undefined
+            expense.frequency_month_of_year !== undefined
         ) {
             newDate.setMonth(expense.frequency_month_of_year);
         }
 
         if (
             expense.frequency_day_of_week !== null &&
-      expense.frequency_day_of_week !== undefined
+            expense.frequency_day_of_week !== undefined
         ) {
             const daysToAdd: number =
-        (7 - newDate.getDay() + expense.frequency_day_of_week) % 7;
+                (7 - newDate.getDay() + expense.frequency_day_of_week) % 7;
             newDate.setDate(newDate.getDate() + daysToAdd); // this is the first occurrence of the day_of_week
 
             if (
                 expense.frequency_week_of_month !== null &&
-        expense.frequency_week_of_month !== undefined
+                expense.frequency_week_of_month !== undefined
             ) {
                 // add the number of weeks, but check if it overflows into the next month
                 const proposedDate: Date = new Date(newDate.getTime());

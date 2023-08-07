@@ -67,7 +67,7 @@ const generateIncome = (
         const initialAmount = income.income_amount;
         const taxRate = income.tax_rate;
 
-        const taxAmount = initialAmount * taxRate;
+        const taxAmount = initialAmount + (initialAmount * taxRate);
 
         const newTransaction: GeneratedTransaction = {
             income_id: income.income_id,

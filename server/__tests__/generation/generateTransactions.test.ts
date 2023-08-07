@@ -1,5 +1,5 @@
 import { jest } from '@jest/globals';
-import { transactions, expenses, payrolls, loans, transfers, wishlists } from '../../models/mockData';
+import { transactions, expenses, payrolls, loans, transfers, wishlists, income } from '../../models/mockData';
 import MockDate from 'mockdate';
 import { GeneratedTransaction } from '../../types/types';
 
@@ -34,6 +34,7 @@ beforeAll(() => {
             }
         ],
         transaction: [{ account_id: 1, transactions: transactions.filter(transaction => transaction.account_id === 1) }],
+        income: [{ account_id: 1, income: income.filter(income => income.account_id === 1) }],
         expenses: [{ account_id: 1, expenses: expenses.filter(expense => expense.account_id === 1) }],
         payrolls: [{ employee_id: 1, payroll: payrolls }],
         loans: [{ account_id: 1, loan: loans.filter(loan => loan.account_id === 1) }],
