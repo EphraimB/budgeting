@@ -115,7 +115,7 @@ export const getTransactionsByAccount = async (
 
         let transactions: any[] = []; // Initialize transactions as an empty array
 
-        if (account_id === 'null' || account_id === 'undefined') {
+        if (account_id === null && account_id === undefined) {
             // If account_id is null, fetch all accounts and make request.transactions an array of transactions
             const accountResults = await executeQuery(
                 accountQueries.getAccounts,
@@ -219,7 +219,7 @@ export const getIncomeByAccount = async (
             income: Income[];
         }> = [];
 
-        if (account_id === 'null' || account_id === 'undefined') {
+        if (account_id === null && account_id === undefined) {
             const accountResults = await executeQuery(
                 accountQueries.getAccounts,
             );
@@ -329,7 +329,7 @@ export const getExpensesByAccount = async (
             expenses: Expense[];
         }> = [];
 
-        if (account_id === 'null' || account_id === 'undefined') {
+        if (account_id === null && account_id === undefined) {
             const accountResults = await executeQuery(
                 accountQueries.getAccounts,
             );
@@ -461,7 +461,7 @@ export const getLoansByAccount = async (
     try {
         const loansByAccount: Array<{ account_id: number; loan: any }> = [];
 
-        if (account_id === 'null' || account_id === 'undefined') {
+        if (account_id === null && account_id === undefined) {
             // If account_id is null, fetch all accounts and make request.transactions an array of transactions
             const accountResults = await executeQuery(
                 accountQueries.getAccounts,
@@ -560,7 +560,7 @@ export const getPayrollsMiddleware = async (
             payroll: Payroll[];
         }> = [];
 
-        if (account_id === 'null' || account_id === 'undefined') {
+        if (account_id === null && account_id === undefined) {
             // If account_id is null, fetch all accounts and make request.transactions an array of transactions
             const accountResults = await executeQuery(
                 accountQueries.getAccounts,
@@ -666,7 +666,7 @@ export const getWishlistsByAccount = async (
             wishlist: Wishlist[];
         }> = [];
 
-        if (account_id === 'null' || account_id === 'undefined') {
+        if (account_id === null && account_id === undefined) {
             // If account_id is null, fetch all accounts and make request.transactions an array of transactions
             const accountResults = await executeQuery(
                 accountQueries.getAccounts,
@@ -773,7 +773,7 @@ export const getTransfersByAccount = async (
             transfer: Transfer[];
         }> = [];
 
-        if (account_id === 'null' || account_id === 'undefined') {
+        if (account_id === null && account_id === undefined) {
             // If account_id is null, fetch all accounts and make request.transactions an array of transactions
             const accountResults = await executeQuery(
                 accountQueries.getAccounts,
@@ -860,7 +860,7 @@ export const getCurrentBalance = async (
             account_balance: number;
         }> = [];
 
-        if (account_id === 'null' || account_id === 'undefined') {
+        if (account_id === null && account_id === undefined) {
             const accountResults = await executeQuery(
                 accountQueries.getAccounts,
             );
@@ -981,11 +981,7 @@ export const updateWishlistCron = async (
                 type: 'wishlist',
             };
 
-            if (
-                cronParams.date !== null &&
-                cronParams.date !== undefined &&
-                cronParams.date !== ''
-            ) {
+            if (cronParams.date !== null && cronParams.date !== undefined) {
                 const { cronDate, uniqueId } = await scheduleCronJob(
                     cronParams,
                 );

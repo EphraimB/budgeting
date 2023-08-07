@@ -232,7 +232,7 @@ export const createExpenseReturnObject = async (
         response.status(201).json(modifiedExpenses);
     } catch (error) {
         console.error(error); // Log the error on the server side
-        handleError(response, 'Error creating expense');
+        handleError(response, 'Error getting expense');
     }
 };
 
