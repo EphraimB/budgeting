@@ -1771,6 +1771,10 @@
           "description": {
             "type": "string",
             "example": "New York Sales Tax"
+          },
+          "type": {
+            "type": "integer",
+            "example": 0
           }
         }
       },
@@ -2171,6 +2175,10 @@
                     "type": "number",
                     "format": "double",
                     "example": 0.08875
+                  },
+                  "tax_type": {
+                    "type": "integer",
+                    "example": 0
                   },
                   "date_created": {
                     "type": "string",
