@@ -969,9 +969,11 @@ export const updateWishlistCron = async (
             const taxId = wslst.tax_id;
 
             // Get tax amount from tax_id in taxes table
-            const taxRate: number = taxId
-                ? (await executeQuery(taxesQueries.getTax, [taxId]))[0].tax_rate
-                : 0;
+            const taxRate: number =
+                taxId !== null && taxId !== undefined
+                    ? (await executeQuery(taxesQueries.getTax, [taxId]))[0]
+                        .tax_rate
+                    : 0;
 
             const cronParams = {
                 date: transactionMap[wslst.wishlist_id],
@@ -985,7 +987,11 @@ export const updateWishlistCron = async (
                 type: 'wishlist',
             };
 
-            if (cronParams.date) {
+            if (
+                cronParams.date !== null &&
+                cronParams.date !== undefined &&
+                cronParams.date !== ''
+            ) {
                 const { cronDate, uniqueId } = await scheduleCronJob(
                     cronParams,
                 );
