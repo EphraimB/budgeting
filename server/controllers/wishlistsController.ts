@@ -1,6 +1,10 @@
 import { type NextFunction, type Request, type Response } from 'express';
 import { cronJobQueries, wishlistQueries } from '../models/queryData.js';
-import { executeQuery, handleError } from '../utils/helperFunctions.js';
+import {
+    executeQuery,
+    handleError,
+    parseOrFallback,
+} from '../utils/helperFunctions.js';
 import { type Wishlist } from '../types/types.js';
 import scheduleCronJob from '../crontab/scheduleCronJob.js';
 import deleteCronJob from '../crontab/deleteCronJob.js';
@@ -29,7 +33,7 @@ interface WishlistInput {
 const wishlistsParse = (wishlist: WishlistInput): Wishlist => ({
     wishlist_id: parseInt(wishlist.wishlist_id),
     account_id: parseInt(wishlist.account_id),
-    tax_id: parseInt(wishlist.tax_id),
+    tax_id: parseOrFallback(wishlist.tax_id),
     wishlist_amount: parseFloat(wishlist.wishlist_amount),
     wishlist_title: wishlist.wishlist_title,
     wishlist_description: wishlist.wishlist_description,

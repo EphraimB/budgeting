@@ -2,7 +2,11 @@ import { type NextFunction, type Request, type Response } from 'express';
 import { loanQueries, cronJobQueries } from '../models/queryData.js';
 import scheduleCronJob from '../crontab/scheduleCronJob.js';
 import deleteCronJob from '../crontab/deleteCronJob.js';
-import { handleError, executeQuery } from '../utils/helperFunctions.js';
+import {
+    handleError,
+    executeQuery,
+    parseOrFallback,
+} from '../utils/helperFunctions.js';
 import { type Loan } from '../types/types.js';
 
 interface LoanInput {
@@ -45,11 +49,11 @@ const parseLoan = (loan: LoanInput): Loan => ({
     loan_title: loan.loan_title,
     loan_description: loan.loan_description,
     frequency_type: parseInt(loan.frequency_type),
-    frequency_type_variable: parseInt(loan.frequency_type_variable) || null,
-    frequency_day_of_month: parseInt(loan.frequency_day_of_month) || null,
-    frequency_day_of_week: parseInt(loan.frequency_day_of_week) || null,
-    frequency_week_of_month: parseInt(loan.frequency_week_of_month) || null,
-    frequency_month_of_year: parseInt(loan.frequency_month_of_year) || null,
+    frequency_type_variable: parseOrFallback(loan.frequency_type_variable),
+    frequency_day_of_month: parseOrFallback(loan.frequency_day_of_month),
+    frequency_day_of_week: parseOrFallback(loan.frequency_day_of_week),
+    frequency_week_of_month: parseOrFallback(loan.frequency_week_of_month),
+    frequency_month_of_year: parseOrFallback(loan.frequency_month_of_year),
     loan_interest_rate: parseFloat(loan.loan_interest_rate),
     loan_interest_frequency_type: parseInt(loan.loan_interest_frequency_type),
     loan_subsidized: parseFloat(loan.loan_subsidized),
@@ -76,13 +80,18 @@ export const getLoans = async (
         let query: string;
         let params: any[];
 
-        if (id && account_id) {
+        if (
+            id !== null &&
+            id !== undefined &&
+            account_id !== null &&
+            account_id !== undefined
+        ) {
             query = loanQueries.getLoansByIdAndAccountId;
             params = [id, account_id];
-        } else if (id) {
+        } else if (id !== null && id !== undefined) {
             query = loanQueries.getLoansById;
             params = [id];
-        } else if (account_id) {
+        } else if (account_id !== null && account_id !== undefined) {
             query = loanQueries.getLoansByAccountId;
             params = [account_id];
         } else {
@@ -92,7 +101,11 @@ export const getLoans = async (
 
         const rows: LoanInput[] = await executeQuery(query, params);
 
-        if ((id || account_id) && rows.length === 0) {
+        if (
+            ((id !== null && id !== undefined) ||
+                (account_id !== null && account_id !== undefined)) &&
+            rows.length === 0
+        ) {
             response.status(404).send('Loan not found');
             return;
         }
@@ -102,7 +115,10 @@ export const getLoans = async (
             const parsedLoan = parseLoan(loan);
             // then add fully_paid_back field in request.fullyPaidBackDates
             parsedLoan.loan_fully_paid_back =
-                request.fullyPaidBackDates[parseInt(loan.loan_id)] || null;
+                request.fullyPaidBackDates[parseInt(loan.loan_id)] !== null &&
+                request.fullyPaidBackDates[parseInt(loan.loan_id)] !== undefined
+                    ? request.fullyPaidBackDates[parseInt(loan.loan_id)]
+                    : null;
 
             return parsedLoan;
         });
@@ -113,11 +129,11 @@ export const getLoans = async (
         handleError(
             response,
             `Error getting ${
-                id
+                id !== null && id !== undefined
                     ? 'loan'
-                    : account_id
-                        ? 'loans for given account_id'
-                        : 'loans'
+                    : account_id !== null && account_id !== undefined
+                    ? 'loans for given account_id'
+                    : 'loans'
             }`,
         );
     }
@@ -152,7 +168,7 @@ export const createLoan = async (
         interest_frequency_type,
         subsidized,
         begin_date,
-    } = request.body;
+    } = request.body as Record<string, string>;
 
     try {
         const loanResults = await executeQuery<LoanInput>(
@@ -248,8 +264,8 @@ export const createLoan = async (
             ])
         )[0].cron_job_id;
 
-        console.log('Cron job created ' + cronId);
-        console.log('Interest cron job created ' + interestCronId);
+        console.log('Cron job created ' + cronId.toString());
+        console.log('Interest cron job created ' + interestCronId.toString());
 
         await executeQuery(loanQueries.updateLoanWithCronJobId, [
             cronId,
@@ -288,7 +304,10 @@ export const createLoanReturnObject = async (
             const parsedLoan = parseLoan(loan);
             // then add fully_paid_back field in request.fullyPaidBackDates
             parsedLoan.loan_fully_paid_back =
-                request.fullyPaidBackDates[parseInt(loan.loan_id)] || null;
+                request.fullyPaidBackDates[parseInt(loan.loan_id)] !== null &&
+                request.fullyPaidBackDates[parseInt(loan.loan_id)] !== undefined
+                    ? request.fullyPaidBackDates[parseInt(loan.loan_id)]
+                    : null;
 
             return parsedLoan;
         });
@@ -330,7 +349,7 @@ export const updateLoan = async (
         interest_frequency_type,
         subsidized,
         begin_date,
-    } = request.body;
+    } = request.body as Record<string, string>;
 
     const cronParams = {
         date: begin_date,
@@ -433,28 +452,25 @@ export const updateLoan = async (
             interestCronDate,
             interestCronId,
         ]);
-        const updateLoanResults = await executeQuery<LoanInput>(
-            loanQueries.updateLoan,
-            [
-                account_id,
-                amount,
-                plan_amount,
-                recipient,
-                title,
-                description,
-                frequency_type,
-                frequency_type_variable,
-                frequency_day_of_month,
-                frequency_day_of_week,
-                frequency_week_of_month,
-                frequency_month_of_year,
-                interest_rate,
-                interest_frequency_type,
-                subsidized,
-                begin_date,
-                id,
-            ],
-        );
+        await executeQuery<LoanInput>(loanQueries.updateLoan, [
+            account_id,
+            amount,
+            plan_amount,
+            recipient,
+            title,
+            description,
+            frequency_type,
+            frequency_type_variable,
+            frequency_day_of_month,
+            frequency_day_of_week,
+            frequency_week_of_month,
+            frequency_month_of_year,
+            interest_rate,
+            interest_frequency_type,
+            subsidized,
+            begin_date,
+            id,
+        ]);
 
         request.loan_id = id;
 
@@ -487,7 +503,10 @@ export const updateLoanReturnObject = async (
             const parsedLoan = parseLoan(loan);
             // then add fully_paid_back field in request.fullyPaidBackDates
             parsedLoan.loan_fully_paid_back =
-                request.fullyPaidBackDates[parseInt(loan.loan_id)] || null;
+                request.fullyPaidBackDates[parseInt(loan.loan_id)] !== null &&
+                request.fullyPaidBackDates[parseInt(loan.loan_id)] !== undefined
+                    ? request.fullyPaidBackDates[parseInt(loan.loan_id)]
+                    : null;
 
             return parsedLoan;
         });

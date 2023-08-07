@@ -50,7 +50,7 @@ export interface Taxes {
 export interface Income {
     income_id: number;
     account_id: number;
-    tax_id?: number;
+    tax_id?: number | null;
     tax_rate?: number;
     total_amount?: number;
     income_amount: number;
@@ -174,7 +174,7 @@ export interface PayrollTax {
 export interface Wishlist {
     wishlist_id?: number;
     account_id?: number;
-    tax_id?: number;
+    tax_id?: number | null;
     tax_rate?: number;
     cron_job_id?: number;
     wishlist_amount: number;

@@ -2,7 +2,11 @@ import { type NextFunction, type Request, type Response } from 'express';
 import { cronJobQueries, incomeQueries } from '../models/queryData.js';
 import scheduleCronJob from '../crontab/scheduleCronJob.js';
 import deleteCronJob from '../crontab/deleteCronJob.js';
-import { handleError, executeQuery } from '../utils/helperFunctions.js';
+import {
+    handleError,
+    executeQuery,
+    parseOrFallback,
+} from '../utils/helperFunctions.js';
 import { type Income } from '../types/types.js';
 
 interface IncomeInput {
@@ -34,16 +38,16 @@ interface IncomeInput {
 const parseIncome = (income: IncomeInput): Income => ({
     income_id: parseInt(income.income_id),
     account_id: parseInt(income.account_id),
-    tax_id: parseInt(income.tax_id) || null,
+    tax_id: parseOrFallback(income.tax_id),
     income_amount: parseFloat(income.income_amount),
     income_title: income.income_title,
     income_description: income.income_description,
     frequency_type: parseInt(income.frequency_type),
-    frequency_type_variable: parseInt(income.frequency_type_variable) || null,
-    frequency_day_of_month: parseInt(income.frequency_day_of_month) || null,
-    frequency_day_of_week: parseInt(income.frequency_day_of_week) || null,
-    frequency_week_of_month: parseInt(income.frequency_week_of_month) || null,
-    frequency_month_of_year: parseInt(income.frequency_month_of_year) || null,
+    frequency_type_variable: parseOrFallback(income.frequency_type_variable),
+    frequency_day_of_month: parseOrFallback(income.frequency_day_of_month),
+    frequency_day_of_week: parseOrFallback(income.frequency_day_of_week),
+    frequency_week_of_month: parseOrFallback(income.frequency_week_of_month),
+    frequency_month_of_year: parseOrFallback(income.frequency_month_of_year),
     income_begin_date: income.income_begin_date,
     income_end_date: income.income_end_date,
     date_created: income.date_created,
@@ -66,13 +70,18 @@ export const getIncome = async (
         let query: string;
         let params: any[];
 
-        if (id && account_id) {
+        if (
+            id !== null &&
+            id !== undefined &&
+            account_id !== null &&
+            account_id !== undefined
+        ) {
             query = incomeQueries.getIncomeByIdAndAccountId;
             params = [id, account_id];
-        } else if (id) {
+        } else if (id !== null && id !== undefined) {
             query = incomeQueries.getIncomeById;
             params = [id];
-        } else if (account_id) {
+        } else if (account_id !== null && account_id !== undefined) {
             query = incomeQueries.getIncomeByAccountId;
             params = [account_id];
         } else {
@@ -82,7 +91,11 @@ export const getIncome = async (
 
         const income = await executeQuery<IncomeInput>(query, params);
 
-        if ((id || account_id) && income.length === 0) {
+        if (
+            ((id !== null && id !== undefined) ||
+                (account_id !== null && account_id !== undefined)) &&
+            income.length === 0
+        ) {
             response.status(404).send('Income not found');
             return;
         }
@@ -93,11 +106,11 @@ export const getIncome = async (
         handleError(
             response,
             `Error getting ${
-                id
+                id !== null && id !== undefined
                     ? 'income'
-                    : account_id
-                        ? 'income for given account_id'
-                        : 'income'
+                    : account_id !== null && account_id !== undefined
+                    ? 'income for given account_id'
+                    : 'income'
             }`,
         );
     }
@@ -178,7 +191,7 @@ export const createIncome = async (
             ])
         )[0].cron_job_id;
 
-        console.log('Cron job created ' + cronId);
+        console.log('Cron job created ' + cronId.toString());
 
         await executeQuery(incomeQueries.updateIncomeWithCronJobId, [
             cronId,
