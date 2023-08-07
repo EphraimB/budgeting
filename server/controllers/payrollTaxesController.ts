@@ -39,13 +39,18 @@ export const getPayrollTaxes = async (
         let query: string;
         let params: any[];
 
-        if (id && employee_id) {
+        if (
+            id !== null &&
+            id !== undefined &&
+            employee_id !== null &&
+            employee_id !== undefined
+        ) {
             query = payrollQueries.getPayrollTaxesByIdAndEmployeeId;
             params = [id, employee_id];
-        } else if (id) {
+        } else if (id !== null && id !== undefined) {
             query = payrollQueries.getPayrollTaxesById;
             params = [id];
-        } else if (employee_id) {
+        } else if (employee_id !== null && employee_id !== undefined) {
             query = payrollQueries.getPayrollTaxesByEmployeeId;
             params = [employee_id];
         } else {
@@ -55,7 +60,11 @@ export const getPayrollTaxes = async (
 
         const rows = await executeQuery<PayrollTaxInput>(query, params);
 
-        if ((id || employee_id) && rows.length === 0) {
+        if (
+            ((id !== null && id !== undefined) ||
+                (employee_id !== null && employee_id !== undefined)) &&
+            rows.length === 0
+        ) {
             response.status(404).send('Payroll tax not found');
             return;
         }
@@ -70,11 +79,11 @@ export const getPayrollTaxes = async (
         handleError(
             response,
             `Error getting ${
-                id
+                id !== null && id !== undefined
                     ? 'payroll tax'
-                    : employee_id
-                        ? 'payroll taxes for given employee_id'
-                        : 'payroll taxes'
+                    : employee_id !== null && employee_id !== undefined
+                    ? 'payroll taxes for given employee_id'
+                    : 'payroll taxes'
             }`,
         );
     }
@@ -106,7 +115,7 @@ export const createPayrollTax = async (
         // Execute the script
         exec(scriptCommand, (error, stdout, stderr) => {
             if (error != null) {
-                console.error(`Error executing script: ${error}`);
+                console.error(`Error executing script: ${error.message}`);
                 response
                     .status(500)
                     .send(
@@ -196,7 +205,7 @@ export const updatePayrollTax = async (
         // Execute the script
         exec(scriptCommand, (error, stdout, stderr) => {
             if (error != null) {
-                console.error(`Error executing script: ${error}`);
+                console.error(`Error executing script: ${error.message}`);
                 response
                     .status(500)
                     .send(
@@ -277,7 +286,7 @@ export const deletePayrollTax = async (
         // Execute the script
         exec(scriptCommand, (error, stdout, stderr) => {
             if (error != null) {
-                console.error(`Error executing script: ${error}`);
+                console.error(`Error executing script: ${error.message}`);
                 response
                     .status(500)
                     .send(
