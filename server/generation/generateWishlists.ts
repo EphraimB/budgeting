@@ -32,19 +32,21 @@ const generateWishlists = (
                 }
             }
 
-            if (affordableDate) break;
+            if (affordableDate !== null || affordableDate !== undefined) break;
         }
     }
 
     if (affordableDate !== undefined) {
-        const newTransactionDate: Date = wishlist.wishlist_date_available
-            ? new Date(
-                Math.max(
-                    affordableDate,
-                    new Date(wishlist.wishlist_date_available).getTime(),
-                ),
-            )
-            : new Date(affordableDate);
+        const newTransactionDate: Date =
+            wishlist.wishlist_date_available !== null &&
+            wishlist.wishlist_date_available !== undefined
+                ? new Date(
+                    Math.max(
+                        affordableDate,
+                        new Date(wishlist.wishlist_date_available).getTime(),
+                    ),
+                )
+                : new Date(affordableDate);
 
         const newTransaction: GeneratedTransaction = {
             wishlist_id: wishlist.wishlist_id,
@@ -52,10 +54,16 @@ const generateWishlists = (
             description: wishlist.wishlist_description,
             date: newTransactionDate,
             amount: -wishlist_amount,
-            tax_rate: wishlist.wishlist_tax_rate,
+            tax_rate:
+                wishlist.wishlist_tax_rate !== undefined
+                    ? wishlist.wishlist_tax_rate
+                    : 0,
             total_amount: -(
                 wishlist_amount +
-                wishlist_amount * wishlist.wishlist_tax_rate
+                wishlist_amount *
+                    (wishlist.wishlist_tax_rate !== undefined
+                        ? wishlist.wishlist_tax_rate
+                        : 0)
             ).toFixed(2),
         };
 
