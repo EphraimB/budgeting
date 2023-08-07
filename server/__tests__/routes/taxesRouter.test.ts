@@ -11,47 +11,19 @@ const createApp = async (): Promise<Express> => {
     app.use(express.json());
 
     // Import the module that uses the mock
-    const routerModule = await import('../../routes/wishlistRouter');
-    const wishlistRouter: Router = routerModule.default;
-    app.use('/', wishlistRouter);
+    const routerModule = await import('../../routes/taxesRouter');
+    const taxesRouter: Router = routerModule.default;
+    app.use('/', taxesRouter as express.Router);
 
     return app;
 };
 
-const newWishlist = {
-    amount: 100,
-    title: 'test',
-    description: 'test',
-    priority: 1
-};
-
 beforeAll(() => {
-    jest.mock('../../middleware/middleware', () => ({
-        setQueries: jest.fn((req: Request, res: Response, next: NextFunction) => next()),
-        getCurrentBalance: jest.fn((req: Request, res: Response, next: NextFunction) => next()),
-        getTransactionsByAccount: jest.fn((req: Request, res: Response, next: NextFunction) => next()),
-        getIncomeByAccount: jest.fn((req: Request, res: Response, next: NextFunction) => next()),
-        getExpensesByAccount: jest.fn((req: Request, res: Response, next: NextFunction) => next()),
-        getLoansByAccount: jest.fn((req: Request, res: Response, next: NextFunction) => next()),
-        getPayrollsMiddleware: jest.fn((req: Request, res: Response, next: NextFunction) => next()),
-        getTransfersByAccount: jest.fn((req: Request, res: Response, next: NextFunction) => next()),
-        getWishlistsByAccount: jest.fn((req: Request, res: Response, next: NextFunction) => next()),
-    }));
-
-    jest.mock('../../generation/generateTransactions', () => {
-        return jest.fn((req: Request, res: Response, next: NextFunction) => {
-            req.transactions = [];
-            next();
-        });
-    });
-
-    jest.mock('../../controllers/wishlistsController', () => ({
-        getWishlists: jest.fn((req: Request, res: Response, next: NextFunction) => res.json({ message: 'success' })),
-        createWishlist: jest.fn((req: Request, res: Response, next: NextFunction) => next()),
-        createWishlistCron: jest.fn((req: Request, res: Response, next: NextFunction) => res.json({ message: 'success' })),
-        updateWishlist: jest.fn((req: Request, res: Response, next: NextFunction) => next()),
-        updateWishlistCron: jest.fn((req: Request, res: Response, next: NextFunction) => res.json({ message: 'success' })),
-        deleteWishlist: jest.fn((req: Request, res: Response, next: NextFunction) => res.json({ message: 'success' }))
+    jest.mock('../../controllers/taxesController', () => ({
+        getTaxes: (req: Request, res: Response, next: NextFunction) => res.json({ message: 'success' }),
+        createTax: (req: Request, res: Response, next: NextFunction) => res.json({ message: 'success' }),
+        updateTax: (req: Request, res: Response, next: NextFunction) => res.json({ message: 'success' }),
+        deleteTax: (req: Request, res: Response, next: NextFunction) => res.json({ message: 'success' })
     }));
 });
 
@@ -92,11 +64,18 @@ describe('GET / with id query', () => {
 
 describe('POST /', () => {
     it('responds with json', async () => {
+        const newTax = {
+            rate: .08875,
+            title: 'NYC sales tax',
+            description: 'Sales tax for New York City',
+            type: 0
+        };
+
         const response: request.Response = await request(app)
             .post('/')
             .set('Accept', 'application/json')
             .expect('Content-Type', /json/)
-            .send(newWishlist);
+            .send(newTax);
 
         expect(response.status).toBe(200);
         expect(response.body).toEqual({ message: 'success' });
@@ -105,11 +84,18 @@ describe('POST /', () => {
 
 describe('PUT /:id', () => {
     it('responds with json', async () => {
+        const updatedTax = {
+            rate: .08875,
+            title: 'NYC sales tax',
+            description: 'Sales tax for New York City',
+            type: 0
+        };
+
         const response: request.Response = await request(app)
             .put('/1')
             .set('Accept', 'application/json')
             .expect('Content-Type', /json/)
-            .send(newWishlist);
+            .send(updatedTax);
 
         expect(response.status).toBe(200);
         expect(response.body).toEqual({ message: 'success' });

@@ -3,6 +3,7 @@ import generateTransactions from "../generation/generateTransactions.js";
 import {
     getCurrentBalance,
     getTransactionsByAccount,
+    getIncomeByAccount,
     getExpensesByAccount,
     getLoansByAccount,
     getWishlistsByAccount,
@@ -43,6 +44,7 @@ router.get(
     ],
     getCurrentBalance,
     getTransactionsByAccount,
+    getIncomeByAccount,
     getExpensesByAccount,
     getLoansByAccount,
     getPayrollsMiddleware,

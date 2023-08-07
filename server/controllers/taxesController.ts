@@ -4,12 +4,13 @@ import { handleError, executeQuery } from "../utils/helperFunctions.js";
 import { type Taxes } from "../types/types.js";
 
 interface TaxesInput {
-  tax_id: string;
-  tax_rate: string;
-  tax_title: string;
-  tax_description: string;
-  date_created: string;
-  date_modified: string;
+    tax_id: string;
+    tax_rate: string;
+    tax_title: string;
+    tax_description: string;
+    tax_type: string;
+    date_created: string;
+    date_modified: string;
 }
 
 /**
@@ -23,6 +24,7 @@ const parseTaxes = (tax: TaxesInput): Taxes => ({
     tax_rate: parseFloat(tax.tax_rate),
     tax_title: tax.tax_title,
     tax_description: tax.tax_description,
+    tax_type: parseInt(tax.tax_type),
     date_created: tax.date_created,
     date_modified: tax.date_modified,
 });
@@ -77,12 +79,12 @@ export const createTax = async (
     request: Request,
     response: Response,
 ): Promise<void> => {
-    const { rate, title, description } = request.body;
+    const { rate, title, description, type } = request.body;
 
     try {
         const taxesResults = await executeQuery<TaxesInput>(
             taxesQueries.createTax,
-            [rate, title, description],
+            [rate, title, description, type],
         );
 
         const taxes: Taxes[] = taxesResults.map((transaction) =>
@@ -106,12 +108,12 @@ export const updateTax = async (
     response: Response,
 ): Promise<void> => {
     const id: number = parseInt(request.params.id);
-    const { rate, title, description } = request.body;
+    const { rate, title, description, type } = request.body;
 
     try {
         const taxesResults = await executeQuery<TaxesInput>(
             taxesQueries.updateTax,
-            [rate, title, description, id],
+            [rate, title, description, type, id],
         );
 
         if (taxesResults.length === 0) {

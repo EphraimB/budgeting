@@ -1,6 +1,7 @@
 export interface GeneratedTransaction {
   expense_id?: number;
   loan_id?: number;
+  income_id?: number;
   transfer_id?: number;
   wishlist_id?: number;
   transaction_id?: number;
@@ -41,6 +42,28 @@ export interface Taxes {
   tax_rate: number;
   tax_title: string;
   tax_description: string;
+  tax_type: number;
+  date_created: string;
+  date_modified: string;
+}
+
+export interface Income {
+  income_id: number;
+  account_id: number;
+  tax_id?: number;
+  tax_rate?: number;
+  total_amount?: number;
+  income_amount: number;
+  income_title: string;
+  income_description: string;
+  income_begin_date: string;
+  income_end_date?: string;
+  frequency_type?: number;
+  frequency_type_variable?: number;
+  frequency_day_of_month?: number;
+  frequency_day_of_week?: number;
+  frequency_week_of_month?: number;
+  frequency_month_of_year?: number;
   date_created: string;
   date_modified: string;
 }
@@ -208,6 +231,7 @@ declare module "express-serve-static-core" {
     payrolls: any[];
     wishlists: any[];
     transfers: any[];
+    income: any[];
     currentBalance: CurrentBalance[];
     transactions: any[];
     wishlist_id: number;
@@ -217,6 +241,7 @@ declare module "express-serve-static-core" {
     payroll_date_id: number;
     employee_id: number;
     payroll_taxes_id: number;
+    income_id: number;
     fullyPaidBackDates: Record<number, string>;
   }
 }

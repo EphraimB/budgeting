@@ -1,14 +1,14 @@
 import express, { type Router } from "express";
 import { query, param, body } from "express-validator";
 import {
-    getLoans,
-    createLoan,
-    createLoanReturnObject,
-    updateLoan,
-    updateLoanReturnObject,
-    deleteLoan,
-    deleteLoanReturnObject,
-} from "../controllers/loansController.js";
+    getIncome,
+    createIncome,
+    createIncomeReturnObject,
+    updateIncome,
+    updateIncomeReturnObject,
+    deleteIncome,
+    deleteIncomeReturnObject,
+} from "../controllers/incomeController.js";
 import validateRequest from "../utils/validateRequest.js";
 import generateTransactions from "../generation/generateTransactions.js";
 import {
@@ -36,17 +36,7 @@ router.get(
             .withMessage("Account ID must be a number"),
         validateRequest,
     ],
-    setQueries,
-    getCurrentBalance,
-    getTransactionsByAccount,
-    getIncomeByAccount,
-    getExpensesByAccount,
-    getLoansByAccount,
-    getPayrollsMiddleware,
-    getTransfersByAccount,
-    getWishlistsByAccount,
-    generateTransactions,
-    getLoans,
+    getIncome,
 );
 
 router.post(
@@ -55,11 +45,11 @@ router.post(
         body("account_id")
             .isInt({ min: 1 })
             .withMessage("Account ID must be a number"),
+        body("tax_id")
+            .optional()
+            .isInt({ min: 1 })
+            .withMessage("Tax ID must be a number"),
         body("amount").isNumeric().withMessage("Amount must be a number"),
-        body("plan_amount")
-            .isNumeric()
-            .withMessage("Planned amount must be a number"),
-        body("recipient").isString().withMessage("Recipient must be a string"),
         body("title").isString().withMessage("Title must be a string"),
         body("description").isString().withMessage("Description must be a string"),
         body("frequency_type")
@@ -86,12 +76,6 @@ router.post(
             .optional()
             .isInt({ min: 0, max: 11 })
             .withMessage("Frequency month of year must be a number between 0 and 11"),
-        body("interest_rate")
-            .isNumeric()
-            .withMessage("Interest rate must be a number"),
-        body("interest_frequency_type")
-            .isInt({ min: 0, max: 3 })
-            .withMessage("Interest frequency type must be a number between 0 and 3"),
         body("begin_date").isISO8601().withMessage("Begin date must be a datetime"),
         body("end_date")
             .optional()
@@ -99,7 +83,7 @@ router.post(
             .withMessage("End date must be a datetime"),
         validateRequest,
     ],
-    createLoan,
+    createIncome,
     setQueries,
     getCurrentBalance,
     getTransactionsByAccount,
@@ -111,7 +95,7 @@ router.post(
     getWishlistsByAccount,
     generateTransactions,
     updateWishlistCron,
-    createLoanReturnObject,
+    createIncomeReturnObject,
 );
 
 router.put(
@@ -121,11 +105,11 @@ router.put(
         body("account_id")
             .isInt({ min: 1 })
             .withMessage("Account ID must be a number"),
+        body("tax_id")
+            .optional()
+            .isInt({ min: 1 })
+            .withMessage("Tax ID must be a number"),
         body("amount").isNumeric().withMessage("Amount must be a number"),
-        body("plan_amount")
-            .isNumeric()
-            .withMessage("Planned amount must be a number"),
-        body("recipient").isString().withMessage("Recipient must be a string"),
         body("title").isString().withMessage("Title must be a string"),
         body("description").isString().withMessage("Description must be a string"),
         body("frequency_type")
@@ -152,17 +136,14 @@ router.put(
             .optional()
             .isInt({ min: 0, max: 11 })
             .withMessage("Frequency month of year must be a number between 0 and 11"),
-        body("interest_rate")
-            .isNumeric()
-            .withMessage("Interest rate must be a number"),
-        body("interest_frequency_type")
-            .isInt({ min: 0, max: 3 })
-            .withMessage("Interest frequency type must be a number between 0 and 3"),
         body("begin_date").isISO8601().withMessage("Begin date must be a datetime"),
-        body("end_date").optional().isDate().withMessage("End date must be a date"),
+        body("end_date")
+            .optional()
+            .isISO8601()
+            .withMessage("End date must be a datetime"),
         validateRequest,
     ],
-    updateLoan,
+    updateIncome,
     setQueries,
     getCurrentBalance,
     getTransactionsByAccount,
@@ -174,7 +155,7 @@ router.put(
     getWishlistsByAccount,
     generateTransactions,
     updateWishlistCron,
-    updateLoanReturnObject,
+    updateIncomeReturnObject,
 );
 
 router.delete(
@@ -183,7 +164,7 @@ router.delete(
         param("id").isInt({ min: 1 }).withMessage("ID must be a number"),
         validateRequest,
     ],
-    deleteLoan,
+    deleteIncome,
     setQueries,
     getCurrentBalance,
     getTransactionsByAccount,
@@ -195,7 +176,7 @@ router.delete(
     getWishlistsByAccount,
     generateTransactions,
     updateWishlistCron,
-    deleteLoanReturnObject,
+    deleteIncomeReturnObject,
 );
 
 export default router;
