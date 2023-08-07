@@ -966,7 +966,7 @@ export const updateWishlistCron = async (
             const taxRate: number =
                 taxId !== null && taxId !== undefined
                     ? (await executeQuery(taxesQueries.getTax, [taxId]))[0]
-                        .tax_rate
+                          .tax_rate
                     : 0;
 
             const cronParams = {

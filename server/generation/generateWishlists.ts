@@ -41,11 +41,11 @@ const generateWishlists = (
             wishlist.wishlist_date_available !== null &&
             wishlist.wishlist_date_available !== undefined
                 ? new Date(
-                    Math.max(
-                        affordableDate,
-                        new Date(wishlist.wishlist_date_available).getTime(),
-                    ),
-                )
+                      Math.max(
+                          affordableDate,
+                          new Date(wishlist.wishlist_date_available).getTime(),
+                      ),
+                  )
                 : new Date(affordableDate);
 
         const newTransaction: GeneratedTransaction = {

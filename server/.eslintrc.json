@@ -15,18 +15,6 @@
         "project": "./tsconfig.test.json"
     },
     "rules": {
-        "indent": [
-            "error",
-            4,
-            {
-                "SwitchCase": 1
-            }
-        ],
-        "semi": [
-            "error",
-            "always"
-        ],
-        "camelcase": "off",
         "@typescript-eslint/explicit-function-return-type": "off",
         "prettier/prettier": "error", // Ensure prettier formatting is treated as an error,
         "@typescript-eslint/no-misused-promises": [

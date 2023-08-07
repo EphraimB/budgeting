@@ -111,8 +111,8 @@ export const getTransfers = async (
                 id !== null && id !== undefined
                     ? 'transfer'
                     : account_id !== null && account_id !== undefined
-                        ? 'transfers for given account_id'
-                        : 'transfers'
+                    ? 'transfers for given account_id'
+                    : 'transfers'
             }`,
         );
     }

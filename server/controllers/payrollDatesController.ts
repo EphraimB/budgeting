@@ -83,8 +83,8 @@ export const getPayrollDates = async (
                 id !== null && id !== undefined
                     ? 'payroll date'
                     : employee_id !== null && employee_id !== undefined
-                        ? 'payroll dates for given employee_id'
-                        : 'payroll dates'
+                    ? 'payroll dates for given employee_id'
+                    : 'payroll dates'
             }`,
         );
     }
