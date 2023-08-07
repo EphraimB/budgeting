@@ -45,7 +45,7 @@ export const getTaxes = async (
         let query: string;
         let params: any[];
 
-        if (id) {
+        if (id !== null && id !== undefined) {
             query = taxesQueries.getTax;
             params = [id];
         } else {
@@ -55,7 +55,7 @@ export const getTaxes = async (
 
         const taxesResults = await executeQuery<TaxesInput>(query, params);
 
-        if (id && taxesResults.length === 0) {
+        if (id !== null && id !== undefined && taxesResults.length === 0) {
             response.status(404).send('Tax not found');
             return;
         }
@@ -65,7 +65,12 @@ export const getTaxes = async (
         response.status(200).json(taxes);
     } catch (error) {
         console.error(error); // Log the error on the server side
-        handleError(response, `Error getting ${id ? 'tax' : 'taxes'}`);
+        handleError(
+            response,
+            `Error getting ${
+                id !== null && id !== undefined ? 'tax' : 'taxes'
+            }`,
+        );
     }
 };
 
