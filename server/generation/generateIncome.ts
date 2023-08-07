@@ -74,7 +74,7 @@ const generateIncome = (
             title: income.income_title,
             description: income.income_description,
             date: new Date(incomeDate),
-            amount: -initialAmount,
+            amount: initialAmount,
             tax_rate: taxRate,
             total_amount: initialAmount + taxAmount
         };
