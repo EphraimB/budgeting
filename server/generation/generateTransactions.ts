@@ -27,7 +27,6 @@ import {
 import generateWishlists from './generateWishlists.js';
 import calculateBalances from './calculateBalances.js';
 import {
-    type Account,
     type CurrentBalance,
     type Expense,
     type GeneratedTransaction,
