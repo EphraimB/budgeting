@@ -306,13 +306,16 @@ const generateTransactions = async (
     response: Response,
     next: NextFunction,
 ): Promise<void> => {
-    const account_id: number = parseInt(request.query.account_id as string);
+    const account_id: string | null | undefined = request.query.account_id as
+        | string
+        | null
+        | undefined;
     const currentBalance: any = request.currentBalance;
     const allTransactions: any[] = [];
     const transactions: GeneratedTransaction[] = [];
     const skippedTransactions: GeneratedTransaction[] = [];
 
-    if (account_id !== undefined && account_id !== null) {
+    if (account_id === undefined || account_id === null) {
         const accountResults = await executeQuery(
             accountQueries.getAccounts,
             [],
@@ -345,7 +348,8 @@ const generateTransactions = async (
         });
     } else {
         const currentBalanceValue: number = currentBalance.find(
-            (balance: CurrentBalance) => balance.account_id === account_id,
+            (balance: CurrentBalance) =>
+                balance.account_id === parseInt(account_id),
         ).account_balance;
 
         // Fetch employee_id from account_id
@@ -359,7 +363,7 @@ const generateTransactions = async (
             request,
             response,
             next,
-            account_id,
+            parseInt(account_id),
             employee_id,
             transactions,
             skippedTransactions,
