@@ -408,8 +408,24 @@ export const transferQueries: TransferQueries = {
 };
 
 export const currentBalanceQueries: CurrentBalanceQueries = {
-    getCurrentBalance:
-        'SELECT accounts.account_id, COALESCE(accounts.account_balance, 0) + COALESCE(SUM(transaction_history.transaction_amount), 0) AS account_balance FROM accounts LEFT JOIN transaction_history ON accounts.account_id = transaction_history.account_id WHERE accounts.account_id = $1 GROUP BY accounts.account_id',
+    getCurrentBalance: `
+            SELECT 
+        accounts.account_id,
+        COALESCE(accounts.account_balance, 0) + COALESCE(t.transaction_amount_after_tax, 0) AS account_balance
+    FROM 
+        accounts
+    LEFT JOIN 
+        (SELECT 
+            account_id, 
+            SUM(transaction_amount + (transaction_amount * transaction_tax_rate)) AS transaction_amount_after_tax 
+        FROM 
+            transaction_history 
+        GROUP BY 
+            account_id
+        ) AS t ON accounts.account_id = t.account_id 
+    WHERE 
+        accounts.account_id = $1;
+`,
 };
 
 export const cronJobQueries: CronJobQueries = {

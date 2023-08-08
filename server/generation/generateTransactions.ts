@@ -344,10 +344,14 @@ const generateTransactions = async (
             });
         });
     } else {
-        const currentBalanceValue: number = currentBalance.find(
-            (balance: CurrentBalance) =>
-                balance.account_id === parseInt(account_id),
-        ).account_balance;
+        const currentBalanceValue: number = parseFloat(
+            currentBalance
+                .find(
+                    (balance: CurrentBalance) =>
+                        balance.account_id === parseInt(account_id),
+                )
+                .account_balance.toFixed(2),
+        );
 
         // Fetch employee_id from account_id
         const employeeResults = await executeQuery(accountQueries.getAccount, [
