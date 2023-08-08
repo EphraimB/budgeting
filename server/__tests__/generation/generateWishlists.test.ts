@@ -63,7 +63,7 @@ describe('generateWishlists', () => {
         const wishlistTransaction: GeneratedTransaction | undefined =
             transactions.find((t) => t.title === wishlist.wishlist_title);
 
-        if (!wishlistTransaction) {
+        if (wishlistTransaction === null || wishlistTransaction === undefined) {
             throw new Error('Wishlist transaction not found');
         }
 

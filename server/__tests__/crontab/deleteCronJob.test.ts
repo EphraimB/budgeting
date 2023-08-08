@@ -44,7 +44,11 @@ describe('deleteCronJob', () => {
             dynamicFilePathRegex.test(key),
         );
 
-        if (!dynamicKey) {
+        if (
+            dynamicKey === null ||
+            dynamicKey === undefined ||
+            dynamicKey === ''
+        ) {
             throw new Error('Dynamic key not found');
         }
 

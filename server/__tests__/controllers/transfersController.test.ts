@@ -200,7 +200,9 @@ describe('GET /api/transfers', () => {
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(200);
         expect(mockResponse.json).toHaveBeenCalledWith(
-            modifiedTransfers.filter((transfer) => transfer.source_account_id === 1),
+            modifiedTransfers.filter(
+                (transfer) => transfer.source_account_id === 1,
+            ),
         );
     });
 
