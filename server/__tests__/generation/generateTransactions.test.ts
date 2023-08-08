@@ -143,7 +143,7 @@ describe('generateTransactions', () => {
         await generateTransactions(mockRequest, mockResponse, next);
 
         // assert that next was called
-        // expect(next).toHaveBeenCalled();
+        expect(next).toHaveBeenCalled();
 
         // assert that transactions are ordered by date
         const sortedTransactions: GeneratedTransaction[] = [
