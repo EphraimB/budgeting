@@ -21,22 +21,22 @@ const generateWishlists = (
         (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime(),
     );
 
-    let affordableDate: number | undefined;
+    let affordableDate: number | null = null;
     for (let i = 0; i < allTransactions.length; i++) {
         if (allTransactions[i].balance >= wishlist_amount) {
             affordableDate = allTransactions[i].date;
             for (let j = i + 1; j < allTransactions.length; j++) {
                 if (allTransactions[j].balance < wishlist_amount) {
-                    affordableDate = undefined;
+                    affordableDate = null;
                     break;
                 }
             }
 
-            if (affordableDate !== undefined) break;
+            if (affordableDate !== null) break;
         }
     }
 
-    if (affordableDate !== undefined) {
+    if (affordableDate !== null) {
         const newTransactionDate: Date =
             wishlist.wishlist_date_available !== null &&
             wishlist.wishlist_date_available !== undefined

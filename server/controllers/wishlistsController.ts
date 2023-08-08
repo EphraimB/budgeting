@@ -215,11 +215,13 @@ export const createWishlistCron = async (
         const modifiedWishlists = results.map((wishlist: WishlistInput) => ({
             ...wishlist,
             wishlist_date_can_purchase:
-                transactionMap[Number(wishlist.wishlist_id)] !== null ||
+                transactionMap[Number(wishlist.wishlist_id)] !== null &&
                 transactionMap[Number(wishlist.wishlist_id)] !== undefined
                     ? transactionMap[Number(wishlist.wishlist_id)]
                     : null,
         }));
+
+        console.log(transactionMap);
 
         // Parse the data to the correct format
         const wishlists: Wishlist[] = modifiedWishlists.map(
