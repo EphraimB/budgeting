@@ -307,13 +307,27 @@ describe('POST /api/income', () => {
         // Arrange
         const newIncome = income.filter((inc) => inc.income_id === 1);
 
-        mockModule(newIncome, undefined, '1', []);
+        mockModule(newIncome, undefined, [{ cron_job_id: 1 }], []);
 
         const { createIncome } = await import(
             '../../controllers/incomeController.js'
         );
 
-        mockRequest.body = newIncome;
+        mockRequest.body = {
+            account_id: income[0].account_id,
+            tax_id: income[0].tax_id,
+            amount: income[0].income_amount,
+            title: income[0].income_title,
+            description: income[0].income_description,
+            frequency_type: income[0].frequency_type,
+            frequency_type_variable: income[0].frequency_type_variable,
+            frequency_day_of_month: income[0].frequency_day_of_month,
+            frequency_day_of_week: income[0].frequency_day_of_week,
+            frequency_week_of_month: income[0].frequency_week_of_month,
+            frequency_month_of_year: income[0].frequency_month_of_year,
+            begin_date: income[0].income_begin_date,
+            end_date: income[0].income_end_date,
+        };
 
         await createIncome(mockRequest as Request, mockResponse, mockNext);
 
