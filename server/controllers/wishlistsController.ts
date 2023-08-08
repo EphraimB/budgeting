@@ -206,6 +206,8 @@ export const createWishlistCron = async (
             });
         });
 
+        console.log(request.transactions);
+
         const results = await executeQuery<WishlistInput>(
             wishlistQueries.getWishlistsById,
             [wishlist_id],
@@ -220,8 +222,6 @@ export const createWishlistCron = async (
                     ? transactionMap[Number(wishlist.wishlist_id)]
                     : null,
         }));
-
-        console.log(transactionMap);
 
         // Parse the data to the correct format
         const wishlists: Wishlist[] = modifiedWishlists.map(
