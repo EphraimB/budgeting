@@ -306,10 +306,7 @@ const generateTransactions = async (
     response: Response,
     next: NextFunction,
 ): Promise<void> => {
-    const account_id: string | null | undefined = request.query.account_id as
-        | string
-        | null
-        | undefined;
+    const account_id: string = request.query.account_id as string;
     const currentBalance: any = request.currentBalance;
     const allTransactions: any[] = [];
     const transactions: GeneratedTransaction[] = [];
@@ -371,7 +368,7 @@ const generateTransactions = async (
         );
 
         allTransactions.push({
-            account_id,
+            account_id: parseInt(account_id),
             current_balance: currentBalanceValue,
             transactions,
         });
