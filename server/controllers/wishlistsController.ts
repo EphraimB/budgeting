@@ -200,13 +200,12 @@ export const createWishlistCron = async (
     try {
         // Create a map of wishlist_id to transaction date for faster lookup
         const transactionMap: Record<number, string | null> = {};
+
         request.transactions.forEach((account) => {
             account.transactions.forEach((transaction: any) => {
                 transactionMap[transaction.wishlist_id] = transaction.date;
             });
         });
-
-        console.log(request.transactions);
 
         const results = await executeQuery<WishlistInput>(
             wishlistQueries.getWishlistsById,

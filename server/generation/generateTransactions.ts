@@ -318,7 +318,7 @@ const generateTransactions = async (
             [],
         );
 
-        accountResults.forEach(async (account: Account) => {
+        for (const account of accountResults) {
             const currentBalanceValue: number = parseFloat(
                 currentBalance
                     .find(
@@ -346,7 +346,7 @@ const generateTransactions = async (
                 current_balance: currentBalanceValue,
                 transactions,
             });
-        });
+        }
     } else {
         const currentBalanceValue: number = parseFloat(
             currentBalance
@@ -357,7 +357,6 @@ const generateTransactions = async (
                 .account_balance.toFixed(2),
         );
 
-        // Fetch employee_id from account_id
         const employeeResults = await executeQuery(accountQueries.getAccount, [
             account_id,
         ]);
