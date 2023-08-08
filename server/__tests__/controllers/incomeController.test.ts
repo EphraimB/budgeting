@@ -2,6 +2,7 @@ import { jest } from '@jest/globals';
 import { type Request, type Response } from 'express';
 import { accounts, income } from '../../models/mockData.js';
 import { type QueryResultRow } from 'pg';
+import { parseOrFallback } from '../../utils/helperFunctions.js';
 
 jest.mock('../../crontab/scheduleCronJob.js', () => {
     return jest.fn().mockImplementation(
@@ -97,6 +98,7 @@ const mockModule = (
         handleError: jest.fn((res: Response, message: string) => {
             res.status(400).json({ message });
         }),
+        parseOrFallback,
     }));
 };
 

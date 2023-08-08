@@ -2,6 +2,7 @@ import { jest } from '@jest/globals';
 import { type Request, type Response } from 'express';
 import { accounts, expenses } from '../../models/mockData.js';
 import { type QueryResultRow } from 'pg';
+import { parseOrFallback } from '../../utils/helperFunctions.js';
 
 jest.mock('../../crontab/scheduleCronJob.js', () => {
     return jest.fn().mockImplementation(
@@ -97,6 +98,7 @@ const mockModule = (
         handleError: jest.fn((res: Response, message: string) => {
             res.status(400).json({ message });
         }),
+        parseOrFallback,
     }));
 };
 
@@ -375,7 +377,7 @@ describe('POST /api/expenses', () => {
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(400);
         expect(mockResponse.json).toHaveBeenCalledWith({
-            message: 'Error creating expense',
+            message: 'Error getting expense',
         });
 
         // Assert that console.error was called with the error message

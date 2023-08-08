@@ -193,8 +193,6 @@ export const createTransfer = async (
             cronDate,
         ]);
 
-        console.log(cronJobResult);
-
         const cronId: number = cronJobResult[0].cron_job_id;
 
         console.log('Cron job created ' + cronId.toString());

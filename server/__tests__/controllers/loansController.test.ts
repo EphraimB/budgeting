@@ -2,6 +2,36 @@ import { jest } from '@jest/globals';
 import { loans } from '../../models/mockData.js';
 import { type Request, type Response } from 'express';
 import { type QueryResultRow } from 'pg';
+import { parseOrFallback } from '../../utils/helperFunctions.js';
+
+/**
+ *
+ * @param loan - Loan object
+ * @returns - Parsed loan object
+ */
+const parseLoans = (loan: any) => ({
+    loan_id: loan.loan_id,
+    loan_interest_rate: loan.loan_interest_rate,
+    loan_amount: loan.loan_amount,
+    loan_plan_amount: loan.loan_plan_amount,
+    loan_title: loan.loan_title,
+    loan_description: loan.loan_description,
+    loan_subsidized: loan.loan_subsidized,
+    loan_recipient: loan.loan_recipient,
+    frequency_type: loan.frequency_type,
+    frequency_type_variable: loan.frequency_type_variable,
+    frequency_day_of_month: loan.frequency_day_of_month,
+    frequency_day_of_week: loan.frequency_day_of_week,
+    frequency_week_of_month: loan.frequency_week_of_month,
+    frequency_month_of_year: loan.frequency_month_of_year,
+    loan_interest_frequency_type: loan.loan_interest_frequency_type,
+    account_id: loan.account_id,
+    loan_begin_date: loan.loan_begin_date,
+    loan_end_date: loan.loan_end_date,
+    date_created: loan.date_created,
+    date_modified: loan.date_modified,
+    loan_fully_paid_back: loan.loan_fully_paid_back,
+});
 
 jest.mock('../../crontab/scheduleCronJob.js', () => {
     return jest.fn().mockImplementation(
@@ -76,6 +106,7 @@ const mockModule = (
         handleError: jest.fn((res: Response, message: string) => {
             res.status(400).json({ message });
         }),
+        parseOrFallback,
     }));
 };
 
@@ -100,9 +131,11 @@ describe('GET /api/loans', () => {
         loans[2].loan_fully_paid_back = null;
         loans[3].loan_fully_paid_back = null;
 
+        const modifiedLoans = loans.map((loan) => parseLoans(loan));
+
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(200);
-        expect(mockResponse.json).toHaveBeenCalledWith(loans);
+        expect(mockResponse.json).toHaveBeenCalledWith(modifiedLoans);
     });
 
     it('should respond with an error message', async () => {
@@ -147,11 +180,13 @@ describe('GET /api/loans', () => {
         // Add loan_fully_paid_back to the loans with id 1
         loans[0].loan_fully_paid_back = '2024-01-01';
 
+        const modifiedLoans = loans
+            .filter((loan) => loan.loan_id === 1)
+            .map((loan) => parseLoans(loan));
+
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(200);
-        expect(mockResponse.json).toHaveBeenCalledWith(
-            loans.filter((loan) => loan.loan_id === 1),
-        );
+        expect(mockResponse.json).toHaveBeenCalledWith(modifiedLoans);
     });
 
     it('should respond with an error message with id', async () => {
@@ -196,11 +231,13 @@ describe('GET /api/loans', () => {
         // Add loan_fully_paid_back to the loans with id 1
         loans[0].loan_fully_paid_back = '2024-01-01';
 
+        const modifiedLoans = loans
+            .filter((loan) => loan.account_id === 1)
+            .map((loan) => parseLoans(loan));
+
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(200);
-        expect(mockResponse.json).toHaveBeenCalledWith(
-            loans.filter((loan) => loan.account_id === 1),
-        );
+        expect(mockResponse.json).toHaveBeenCalledWith(modifiedLoans);
     });
 
     it('should respond with an error message with account id', async () => {
@@ -247,11 +284,13 @@ describe('GET /api/loans', () => {
         // Add loan_fully_paid_back to the loans with id 1
         loans[0].loan_fully_paid_back = '2024-01-01';
 
+        const modifiedLoans = loans
+            .filter((loan) => loan.loan_id === 1)
+            .map((loan) => parseLoans(loan));
+
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(200);
-        expect(mockResponse.json).toHaveBeenCalledWith(
-            loans.filter((loan) => loan.account_id === 1 && loan.loan_id === 1),
-        );
+        expect(mockResponse.json).toHaveBeenCalledWith(modifiedLoans);
     });
 
     it('should respond with an error message with account id and id', async () => {
@@ -389,9 +428,15 @@ describe('POST /api/loans', () => {
 
         await createLoanReturnObject(mockRequest as Request, mockResponse);
 
+        loans[0].loan_fully_paid_back = '2024-01-01';
+
+        const modifiedLoans = loans
+            .filter((loan) => loan.loan_id === 1)
+            .map((loan) => parseLoans(loan));
+
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(201);
-        expect(mockResponse.json).toHaveBeenCalledWith(newLoan);
+        expect(mockResponse.json).toHaveBeenCalledWith(modifiedLoans);
     });
 });
 
@@ -548,9 +593,15 @@ describe('PUT /api/loans/:id', () => {
 
         await updateLoanReturnObject(mockRequest as Request, mockResponse);
 
+        loans[0].loan_fully_paid_back = '2024-01-01';
+
+        const modifiedLoans = loans
+            .filter((loan) => loan.loan_id === 1)
+            .map((loan) => parseLoans(loan));
+
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(200);
-        expect(mockResponse.json).toHaveBeenCalledWith(updatedLoan);
+        expect(mockResponse.json).toHaveBeenCalledWith(modifiedLoans);
     });
 });
 

@@ -3,6 +3,7 @@ import { type Request, type Response } from 'express';
 import { wishlists } from '../../models/mockData.js';
 import { type QueryResultRow } from 'pg';
 import { type Wishlist } from '../../types/types.js';
+import { parseOrFallback } from '../../utils/helperFunctions.js';
 
 // Mock request and response
 let mockRequest: any;
@@ -96,6 +97,7 @@ const mockModule = (
         handleError: jest.fn((res: Response, message: string) => {
             res.status(400).json({ message });
         }),
+        parseOrFallback,
     }));
 };
 
