@@ -186,6 +186,7 @@ export const createExpense = async (
         };
 
         const { cronDate, uniqueId } = await scheduleCronJob(cronParams);
+
         const cronId: number = (
             await executeQuery(cronJobQueries.createCronJob, [
                 uniqueId,
