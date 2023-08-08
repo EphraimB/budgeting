@@ -104,7 +104,7 @@ export const getWishlists = async (
         const modifiedWishlists = results.map((wishlist: WishlistInput) => ({
             ...wishlist,
             wishlist_date_can_purchase:
-                transactionMap[Number(wishlist.wishlist_id)] !== null ||
+                transactionMap[Number(wishlist.wishlist_id)] !== null &&
                 transactionMap[Number(wishlist.wishlist_id)] !== undefined
                     ? transactionMap[Number(wishlist.wishlist_id)]
                     : null,
@@ -121,9 +121,9 @@ export const getWishlists = async (
         handleError(
             response,
             `Error getting ${
-                id !== null || id !== undefined
+                id !== null && id !== undefined
                     ? 'wishlist'
-                    : account_id !== null || account_id !== undefined
+                    : account_id !== null && account_id !== undefined
                     ? 'wishlists for given account_id'
                     : 'wishlists'
             }`,
@@ -368,7 +368,7 @@ export const updateWishlistCron = async (
             (wishlist: WishlistInput) => ({
                 ...wishlist,
                 wishlist_date_can_purchase:
-                    transactionMap[Number(wishlist.wishlist_id)] !== null ||
+                    transactionMap[Number(wishlist.wishlist_id)] !== null &&
                     transactionMap[Number(wishlist.wishlist_id)] !== undefined
                         ? transactionMap[Number(wishlist.wishlist_id)]
                         : null,
