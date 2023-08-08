@@ -1,5 +1,10 @@
-import { GeneratedTransaction, Transfer } from '../../types/types';
-import { generateDailyTransfers, generateMonthlyTransfers, generateWeeklyTransfers, generateYearlyTransfers } from '../../generation/generateTransfers';
+import { type GeneratedTransaction, type Transfer } from '../../types/types';
+import {
+    generateDailyTransfers,
+    generateMonthlyTransfers,
+    generateWeeklyTransfers,
+    generateYearlyTransfers,
+} from '../../generation/generateTransfers';
 import MockDate from 'mockdate';
 
 beforeAll(() => {
@@ -29,15 +34,24 @@ describe('Test generateDailyTransfers', () => {
             transfer_begin_date: '2020-01-02',
             transfer_title: 'Test transfer',
             transfer_description: 'Test description',
-            transfer_amount: 100
+            transfer_amount: 100,
         };
         const toDate: Date = new Date('2020-01-06');
         const fromDate: Date = new Date('2020-01-01');
 
         // Running the function
-        generateDailyTransfers(transactions, skippedTransactions, transfer, toDate, fromDate, account_id);
+        generateDailyTransfers(
+            transactions,
+            skippedTransactions,
+            transfer,
+            toDate,
+            fromDate,
+            account_id,
+        );
 
-        const expectedEndDate: Date = new Date(transactions[transactions.length - 1].date);
+        const expectedEndDate: Date = new Date(
+            transactions[transactions.length - 1].date,
+        );
 
         // Checking the results
         expect(transactions.length).toBe(5);
@@ -45,7 +59,9 @@ describe('Test generateDailyTransfers', () => {
         expect(transactions[0].title).toBe(transfer.transfer_title);
         expect(transactions[0].description).toBe(transfer.transfer_description);
         expect(transactions[0].amount).toBe(-transfer.transfer_amount);
-        expect(expectedEndDate.toISOString().slice(0, 10)).toBe(new Date('2020-01-06').toISOString().slice(0, 10));
+        expect(expectedEndDate.toISOString().slice(0, 10)).toBe(
+            new Date('2020-01-06').toISOString().slice(0, 10),
+        );
     });
 
     it('Should generate daily transfers correctly every 2 days', () => {
@@ -59,15 +75,24 @@ describe('Test generateDailyTransfers', () => {
             transfer_title: 'Test transfer',
             transfer_description: 'Test description',
             transfer_amount: 100,
-            frequency_type_variable: 2
+            frequency_type_variable: 2,
         };
         const toDate: Date = new Date('2020-01-06');
         const fromDate: Date = new Date('2020-01-01');
 
         // Running the function
-        generateDailyTransfers(transactions, skippedTransactions, transfer, toDate, fromDate, account_id);
+        generateDailyTransfers(
+            transactions,
+            skippedTransactions,
+            transfer,
+            toDate,
+            fromDate,
+            account_id,
+        );
 
-        const expectedEndDate: Date = new Date(transactions[transactions.length - 1].date);
+        const expectedEndDate: Date = new Date(
+            transactions[transactions.length - 1].date,
+        );
 
         // Checking the results
         expect(transactions.length).toBe(3);
@@ -75,7 +100,9 @@ describe('Test generateDailyTransfers', () => {
         expect(transactions[0].title).toBe(transfer.transfer_title);
         expect(transactions[0].description).toBe(transfer.transfer_description);
         expect(transactions[0].amount).toBe(-transfer.transfer_amount);
-        expect(expectedEndDate.toISOString().slice(0, 10)).toBe(new Date('2020-01-06').toISOString().slice(0, 10));
+        expect(expectedEndDate.toISOString().slice(0, 10)).toBe(
+            new Date('2020-01-06').toISOString().slice(0, 10),
+        );
     });
 
     it('Should generate daily transfers correctly when the transfer begin date is less than the from date', () => {
@@ -88,15 +115,24 @@ describe('Test generateDailyTransfers', () => {
             transfer_begin_date: '2020-01-02',
             transfer_title: 'Test transfer',
             transfer_description: 'Test description',
-            transfer_amount: 100
+            transfer_amount: 100,
         };
         const toDate: Date = new Date('2020-01-08');
         const fromDate: Date = new Date('2020-01-06');
 
         // Running the function
-        generateDailyTransfers(transactions, skippedTransactions, transfer, toDate, fromDate, account_id);
+        generateDailyTransfers(
+            transactions,
+            skippedTransactions,
+            transfer,
+            toDate,
+            fromDate,
+            account_id,
+        );
 
-        const expectedEndDate: Date = new Date(transactions[transactions.length - 1].date);
+        const expectedEndDate: Date = new Date(
+            transactions[transactions.length - 1].date,
+        );
 
         // Checking the results
         expect(transactions.length).toBe(3);
@@ -104,7 +140,9 @@ describe('Test generateDailyTransfers', () => {
         expect(transactions[0].title).toBe(transfer.transfer_title);
         expect(transactions[0].description).toBe(transfer.transfer_description);
         expect(transactions[0].amount).toBe(-transfer.transfer_amount);
-        expect(expectedEndDate.toISOString().slice(0, 10)).toBe(new Date('2020-01-08').toISOString().slice(0, 10));
+        expect(expectedEndDate.toISOString().slice(0, 10)).toBe(
+            new Date('2020-01-08').toISOString().slice(0, 10),
+        );
     });
 });
 
@@ -119,15 +157,24 @@ describe('Test generateMonthlyTransfers', () => {
             transfer_begin_date: '2020-01-02',
             transfer_title: 'Test transfer',
             transfer_description: 'Test description',
-            transfer_amount: 100
+            transfer_amount: 100,
         };
         const toDate: Date = new Date('2020-06-02');
         const fromDate: Date = new Date('2020-01-01');
 
         // Running the function
-        generateMonthlyTransfers(transactions, skippedTransactions, transfer, toDate, fromDate, account_id);
+        generateMonthlyTransfers(
+            transactions,
+            skippedTransactions,
+            transfer,
+            toDate,
+            fromDate,
+            account_id,
+        );
 
-        const expectedEndDate: Date = new Date(transactions[transactions.length - 1].date);
+        const expectedEndDate: Date = new Date(
+            transactions[transactions.length - 1].date,
+        );
 
         // Checking the results
         expect(transactions.length).toBe(6);
@@ -135,7 +182,9 @@ describe('Test generateMonthlyTransfers', () => {
         expect(transactions[0].title).toBe(transfer.transfer_title);
         expect(transactions[0].description).toBe(transfer.transfer_description);
         expect(transactions[0].amount).toBe(-transfer.transfer_amount);
-        expect(expectedEndDate.toISOString().slice(0, 10)).toBe(new Date('2020-06-01').toISOString().slice(0, 10));
+        expect(expectedEndDate.toISOString().slice(0, 10)).toBe(
+            new Date('2020-06-01').toISOString().slice(0, 10),
+        );
     });
 
     it('Should generate monthly transfers correctly every 2 months', () => {
@@ -149,15 +198,24 @@ describe('Test generateMonthlyTransfers', () => {
             transfer_title: 'Test transfer',
             transfer_description: 'Test description',
             transfer_amount: 100,
-            frequency_type_variable: 2
+            frequency_type_variable: 2,
         };
         const toDate: Date = new Date('2020-08-02');
         const fromDate: Date = new Date('2020-01-01');
 
         // Running the function
-        generateMonthlyTransfers(transactions, skippedTransactions, transfer, toDate, fromDate, account_id);
+        generateMonthlyTransfers(
+            transactions,
+            skippedTransactions,
+            transfer,
+            toDate,
+            fromDate,
+            account_id,
+        );
 
-        const expectedEndDate: Date = new Date(transactions[transactions.length - 1].date);
+        const expectedEndDate: Date = new Date(
+            transactions[transactions.length - 1].date,
+        );
 
         // Checking the results
         expect(transactions.length).toBe(4);
@@ -165,7 +223,9 @@ describe('Test generateMonthlyTransfers', () => {
         expect(transactions[0].title).toBe(transfer.transfer_title);
         expect(transactions[0].description).toBe(transfer.transfer_description);
         expect(transactions[0].amount).toBe(-transfer.transfer_amount);
-        expect(expectedEndDate.toISOString().slice(0, 10)).toBe(new Date('2020-07-01').toISOString().slice(0, 10));
+        expect(expectedEndDate.toISOString().slice(0, 10)).toBe(
+            new Date('2020-07-01').toISOString().slice(0, 10),
+        );
     });
 
     it('Should generate monthly transfers correctly when the transfer begin date is less than the from date', () => {
@@ -178,15 +238,24 @@ describe('Test generateMonthlyTransfers', () => {
             transfer_begin_date: '2020-01-02',
             transfer_title: 'Test transfer',
             transfer_description: 'Test description',
-            transfer_amount: 100
+            transfer_amount: 100,
         };
         const toDate: Date = new Date('2020-08-02');
         const fromDate: Date = new Date('2020-06-02');
 
         // Running the function
-        generateMonthlyTransfers(transactions, skippedTransactions, transfer, toDate, fromDate, account_id);
+        generateMonthlyTransfers(
+            transactions,
+            skippedTransactions,
+            transfer,
+            toDate,
+            fromDate,
+            account_id,
+        );
 
-        const expectedEndDate: Date = new Date(transactions[transactions.length - 1].date);
+        const expectedEndDate: Date = new Date(
+            transactions[transactions.length - 1].date,
+        );
 
         // Checking the results
         expect(transactions.length).toBe(2);
@@ -194,7 +263,9 @@ describe('Test generateMonthlyTransfers', () => {
         expect(transactions[0].title).toBe(transfer.transfer_title);
         expect(transactions[0].description).toBe(transfer.transfer_description);
         expect(transactions[0].amount).toBe(-transfer.transfer_amount);
-        expect(expectedEndDate.toISOString().slice(0, 10)).toBe(new Date('2020-08-01').toISOString().slice(0, 10));
+        expect(expectedEndDate.toISOString().slice(0, 10)).toBe(
+            new Date('2020-08-01').toISOString().slice(0, 10),
+        );
     });
 
     it('Should generate monthly transfers correctly when the frequency day of week is set', () => {
@@ -208,15 +279,24 @@ describe('Test generateMonthlyTransfers', () => {
             transfer_title: 'Test transfer',
             transfer_description: 'Test description',
             transfer_amount: 150,
-            frequency_day_of_week: 2
+            frequency_day_of_week: 2,
         };
         const toDate: Date = new Date('2020-06-02');
         const fromDate: Date = new Date('2020-01-01');
 
         // Running the function
-        generateMonthlyTransfers(transactions, skippedTransactions, transfer, toDate, fromDate, account_id);
+        generateMonthlyTransfers(
+            transactions,
+            skippedTransactions,
+            transfer,
+            toDate,
+            fromDate,
+            account_id,
+        );
 
-        const expectedEndDate: Date = new Date(transactions[transactions.length - 1].date);
+        const expectedEndDate: Date = new Date(
+            transactions[transactions.length - 1].date,
+        );
         const toBeEndDate: Date = new Date('2020-01-01');
 
         // advance by 5 months
@@ -226,7 +306,8 @@ describe('Test generateMonthlyTransfers', () => {
         const TUESDAY: number = 2;
 
         // calculate the number of days to add to get to the next Tuesday
-        const daysUntilNextTuesday: number = (7 + TUESDAY - toBeEndDate.getDay()) % 7;
+        const daysUntilNextTuesday: number =
+            (7 + TUESDAY - toBeEndDate.getDay()) % 7;
 
         toBeEndDate.setDate(toBeEndDate.getDate() + daysUntilNextTuesday);
 
@@ -236,7 +317,9 @@ describe('Test generateMonthlyTransfers', () => {
         expect(transactions[0].title).toBe(transfer.transfer_title);
         expect(transactions[0].description).toBe(transfer.transfer_description);
         expect(transactions[0].amount).toBe(-transfer.transfer_amount);
-        expect(expectedEndDate.toISOString().slice(0, 10)).toBe(toBeEndDate.toISOString().slice(0, 10));
+        expect(expectedEndDate.toISOString().slice(0, 10)).toBe(
+            toBeEndDate.toISOString().slice(0, 10),
+        );
     });
 
     it('Should generate monthly transfers correctly when the frequency week of month is set', () => {
@@ -251,13 +334,20 @@ describe('Test generateMonthlyTransfers', () => {
             transfer_description: 'Test description',
             transfer_amount: 150,
             frequency_day_of_week: 2,
-            frequency_week_of_month: 1
+            frequency_week_of_month: 1,
         };
         const toDate: Date = new Date('2020-06-01');
         const fromDate: Date = new Date('2020-01-01');
 
         // Running the function
-        generateMonthlyTransfers(transactions, skippedTransactions, transfer, toDate, fromDate, account_id);
+        generateMonthlyTransfers(
+            transactions,
+            skippedTransactions,
+            transfer,
+            toDate,
+            fromDate,
+            account_id,
+        );
 
         // Checking the results
         expect(transactions.length).toBe(5);
@@ -269,9 +359,12 @@ describe('Test generateMonthlyTransfers', () => {
         // Check if the transactions are on the correct dates (second Tuesday of each month)
         transactions.forEach((transaction, i) => {
             const transactionDate: Date = new Date(transaction.date);
-            expect(transactionDate.getDay()).toBe(transfer.frequency_day_of_week);
+            expect(transactionDate.getDay()).toBe(
+                transfer.frequency_day_of_week,
+            );
 
-            const secondWeekOfMonth: boolean = Math.floor((transactionDate.getDate() - 1) / 7) === 1;
+            const secondWeekOfMonth: boolean =
+                Math.floor((transactionDate.getDate() - 1) / 7) === 1;
             expect(secondWeekOfMonth).toBeTruthy();
 
             // Since we start from the current month and increment each month
@@ -292,15 +385,24 @@ describe('generateWeeklyTransfers', () => {
             transfer_begin_date: '2020-01-02',
             transfer_title: 'Test transfer',
             transfer_description: 'Test description',
-            transfer_amount: 100
+            transfer_amount: 100,
         };
         const toDate: Date = new Date('2020-02-02');
         const fromDate: Date = new Date('2020-01-01');
 
         // Running the function
-        generateWeeklyTransfers(transactions, skippedTransactions, transfer, toDate, fromDate, account_id);
+        generateWeeklyTransfers(
+            transactions,
+            skippedTransactions,
+            transfer,
+            toDate,
+            fromDate,
+            account_id,
+        );
 
-        const expectedEndDate: Date = new Date(transactions[transactions.length - 1].date);
+        const expectedEndDate: Date = new Date(
+            transactions[transactions.length - 1].date,
+        );
 
         // Checking the results
         expect(transactions.length).toBe(5);
@@ -308,7 +410,9 @@ describe('generateWeeklyTransfers', () => {
         expect(transactions[0].title).toBe(transfer.transfer_title);
         expect(transactions[0].description).toBe(transfer.transfer_description);
         expect(transactions[0].amount).toBe(-transfer.transfer_amount);
-        expect(expectedEndDate.toISOString().slice(0, 10)).toBe(new Date('2020-01-30').toISOString().slice(0, 10));
+        expect(expectedEndDate.toISOString().slice(0, 10)).toBe(
+            new Date('2020-01-30').toISOString().slice(0, 10),
+        );
     });
 
     it('Should generate weekly transfer every 2 weeks', () => {
@@ -322,15 +426,24 @@ describe('generateWeeklyTransfers', () => {
             transfer_title: 'Test transfer',
             transfer_description: 'Test description',
             transfer_amount: 100,
-            frequency_type_variable: 2
+            frequency_type_variable: 2,
         };
         const toDate: Date = new Date('2020-02-02');
         const fromDate: Date = new Date('2020-01-01');
 
         // Running the function
-        generateWeeklyTransfers(transactions, skippedTransactions, transfer, toDate, fromDate, account_id);
+        generateWeeklyTransfers(
+            transactions,
+            skippedTransactions,
+            transfer,
+            toDate,
+            fromDate,
+            account_id,
+        );
 
-        const expectedEndDate: Date = new Date(transactions[transactions.length - 1].date);
+        const expectedEndDate: Date = new Date(
+            transactions[transactions.length - 1].date,
+        );
 
         // Checking the results
         expect(transactions.length).toBe(3);
@@ -338,7 +451,9 @@ describe('generateWeeklyTransfers', () => {
         expect(transactions[0].title).toBe(transfer.transfer_title);
         expect(transactions[0].description).toBe(transfer.transfer_description);
         expect(transactions[0].amount).toBe(-transfer.transfer_amount);
-        expect(expectedEndDate.toISOString().slice(0, 10)).toBe(new Date('2020-01-30').toISOString().slice(0, 10));
+        expect(expectedEndDate.toISOString().slice(0, 10)).toBe(
+            new Date('2020-01-30').toISOString().slice(0, 10),
+        );
     });
 
     it('Should generate weekly transfers correctly when the expense begin date is less than the from date', () => {
@@ -351,15 +466,24 @@ describe('generateWeeklyTransfers', () => {
             transfer_begin_date: '2020-01-02',
             transfer_title: 'Test transfer',
             transfer_description: 'Test description',
-            transfer_amount: 100
+            transfer_amount: 100,
         };
         const toDate: Date = new Date('2020-02-15');
         const fromDate: Date = new Date('2020-01-28');
 
         // Running the function
-        generateWeeklyTransfers(transactions, skippedTransactions, transfer, toDate, fromDate, account_id);
+        generateWeeklyTransfers(
+            transactions,
+            skippedTransactions,
+            transfer,
+            toDate,
+            fromDate,
+            account_id,
+        );
 
-        const expectedEndDate: Date = new Date(transactions[transactions.length - 1].date);
+        const expectedEndDate: Date = new Date(
+            transactions[transactions.length - 1].date,
+        );
 
         // Checking the results
         expect(transactions.length).toBe(3);
@@ -367,7 +491,9 @@ describe('generateWeeklyTransfers', () => {
         expect(transactions[0].title).toBe(transfer.transfer_title);
         expect(transactions[0].description).toBe(transfer.transfer_description);
         expect(transactions[0].amount).toBe(-transfer.transfer_amount);
-        expect(expectedEndDate.toISOString().slice(0, 10)).toBe(new Date('2020-02-13').toISOString().slice(0, 10));
+        expect(expectedEndDate.toISOString().slice(0, 10)).toBe(
+            new Date('2020-02-13').toISOString().slice(0, 10),
+        );
     });
 
     it('Should generate weekly transfers correctly when the frequency day of week is set', () => {
@@ -381,15 +507,24 @@ describe('generateWeeklyTransfers', () => {
             transfer_title: 'Test transfer',
             transfer_description: 'Test description',
             transfer_amount: 150,
-            frequency_day_of_week: 2
+            frequency_day_of_week: 2,
         };
         const toDate: Date = new Date('2020-02-02');
         const fromDate: Date = new Date('2020-01-01');
 
         // Running the function
-        generateWeeklyTransfers(transactions, skippedTransactions, transfer, toDate, fromDate, account_id);
+        generateWeeklyTransfers(
+            transactions,
+            skippedTransactions,
+            transfer,
+            toDate,
+            fromDate,
+            account_id,
+        );
 
-        const expectedEndDate: Date = new Date(transactions[transactions.length - 1].date);
+        const expectedEndDate: Date = new Date(
+            transactions[transactions.length - 1].date,
+        );
         const toBeEndDate: Date = new Date('2020-01-01');
 
         // advance by 4 weeks
@@ -399,7 +534,8 @@ describe('generateWeeklyTransfers', () => {
         const TUESDAY: number = 2;
 
         // calculate the number of days to add to get to the next Tuesday
-        const daysUntilNextTuesday: number = (7 + TUESDAY - toBeEndDate.getDay()) % 7;
+        const daysUntilNextTuesday: number =
+            (7 + TUESDAY - toBeEndDate.getDay()) % 7;
 
         toBeEndDate.setDate(toBeEndDate.getDate() + daysUntilNextTuesday);
 
@@ -409,7 +545,9 @@ describe('generateWeeklyTransfers', () => {
         expect(transactions[0].title).toBe(transfer.transfer_title);
         expect(transactions[0].description).toBe(transfer.transfer_description);
         expect(transactions[0].amount).toBe(-transfer.transfer_amount);
-        expect(expectedEndDate.toISOString().slice(0, 10)).toBe(toBeEndDate.toISOString().slice(0, 10));
+        expect(expectedEndDate.toISOString().slice(0, 10)).toBe(
+            toBeEndDate.toISOString().slice(0, 10),
+        );
     });
 });
 
@@ -424,15 +562,24 @@ describe('generateYearlyTransfers', () => {
             transfer_begin_date: '2020-01-02',
             transfer_title: 'Test transfer',
             transfer_description: 'Test description',
-            transfer_amount: 100
+            transfer_amount: 100,
         };
         const toDate: Date = new Date('2022-02-02');
         const fromDate: Date = new Date('2020-01-01');
 
         // Running the function
-        generateYearlyTransfers(transactions, skippedTransactions, transfer, toDate, fromDate, account_id);
+        generateYearlyTransfers(
+            transactions,
+            skippedTransactions,
+            transfer,
+            toDate,
+            fromDate,
+            account_id,
+        );
 
-        const expectedEndDate: Date = new Date(transactions[transactions.length - 1].date);
+        const expectedEndDate: Date = new Date(
+            transactions[transactions.length - 1].date,
+        );
 
         // Checking the results
         expect(transactions.length).toBe(3);
@@ -440,7 +587,9 @@ describe('generateYearlyTransfers', () => {
         expect(transactions[0].title).toBe(transfer.transfer_title);
         expect(transactions[0].description).toBe(transfer.transfer_description);
         expect(transactions[0].amount).toBe(-transfer.transfer_amount);
-        expect(expectedEndDate.toISOString().slice(0, 10)).toBe(new Date('2022-01-02').toISOString().slice(0, 10));
+        expect(expectedEndDate.toISOString().slice(0, 10)).toBe(
+            new Date('2022-01-02').toISOString().slice(0, 10),
+        );
     });
 
     it('Should generate yearly transfers correctly every 2 years', () => {
@@ -454,15 +603,24 @@ describe('generateYearlyTransfers', () => {
             transfer_title: 'Test transfer',
             transfer_description: 'Test description',
             transfer_amount: 100,
-            frequency_type_variable: 2
+            frequency_type_variable: 2,
         };
         const toDate: Date = new Date('2024-02-02');
         const fromDate: Date = new Date('2020-01-01');
 
         // Running the function
-        generateYearlyTransfers(transactions, skippedTransactions, transfer, toDate, fromDate, account_id);
+        generateYearlyTransfers(
+            transactions,
+            skippedTransactions,
+            transfer,
+            toDate,
+            fromDate,
+            account_id,
+        );
 
-        const expectedEndDate: Date = new Date(transactions[transactions.length - 1].date);
+        const expectedEndDate: Date = new Date(
+            transactions[transactions.length - 1].date,
+        );
 
         // Checking the results
         expect(transactions.length).toBe(3);
@@ -470,7 +628,9 @@ describe('generateYearlyTransfers', () => {
         expect(transactions[0].title).toBe(transfer.transfer_title);
         expect(transactions[0].description).toBe(transfer.transfer_description);
         expect(transactions[0].amount).toBe(-transfer.transfer_amount);
-        expect(expectedEndDate.toISOString().slice(0, 10)).toBe(new Date('2024-01-02').toISOString().slice(0, 10));
+        expect(expectedEndDate.toISOString().slice(0, 10)).toBe(
+            new Date('2024-01-02').toISOString().slice(0, 10),
+        );
     });
 
     it('Should generate yearly transfers correctly when the expense begin date is less than the from date', () => {
@@ -483,15 +643,24 @@ describe('generateYearlyTransfers', () => {
             transfer_begin_date: '2020-01-02',
             transfer_title: 'Test transfer',
             transfer_description: 'Test description',
-            transfer_amount: 100
+            transfer_amount: 100,
         };
         const toDate: Date = new Date('2025-02-02');
         const fromDate: Date = new Date('2022-01-01');
 
         // Running the function
-        generateYearlyTransfers(transactions, skippedTransactions, transfer, toDate, fromDate, account_id);
+        generateYearlyTransfers(
+            transactions,
+            skippedTransactions,
+            transfer,
+            toDate,
+            fromDate,
+            account_id,
+        );
 
-        const expectedEndDate: Date = new Date(transactions[transactions.length - 1].date);
+        const expectedEndDate: Date = new Date(
+            transactions[transactions.length - 1].date,
+        );
 
         // Checking the results
         expect(transactions.length).toBe(4);
@@ -499,7 +668,9 @@ describe('generateYearlyTransfers', () => {
         expect(transactions[0].title).toBe(transfer.transfer_title);
         expect(transactions[0].description).toBe(transfer.transfer_description);
         expect(transactions[0].amount).toBe(-transfer.transfer_amount);
-        expect(expectedEndDate.toISOString().slice(0, 10)).toBe(new Date('2025-01-02').toISOString().slice(0, 10));
+        expect(expectedEndDate.toISOString().slice(0, 10)).toBe(
+            new Date('2025-01-02').toISOString().slice(0, 10),
+        );
     });
 
     it('Should generate yearly transfers correctly when the frequency day of week is set', () => {
@@ -513,22 +684,32 @@ describe('generateYearlyTransfers', () => {
             transfer_title: 'Test transfer',
             transfer_description: 'Test description',
             transfer_amount: 150,
-            frequency_day_of_week: 2
+            frequency_day_of_week: 2,
         };
         const toDate: Date = new Date('2023-01-10');
         const fromDate: Date = new Date('2020-01-01');
 
         // Running the function
-        generateYearlyTransfers(transactions, skippedTransactions, transfer, toDate, fromDate, account_id);
+        generateYearlyTransfers(
+            transactions,
+            skippedTransactions,
+            transfer,
+            toDate,
+            fromDate,
+            account_id,
+        );
 
-        const expectedEndDate: Date = new Date(transactions[transactions.length - 1].date);
+        const expectedEndDate: Date = new Date(
+            transactions[transactions.length - 1].date,
+        );
         const toBeEndDate: Date = new Date('2023-01-02');
 
         // days of the week from 0 (Sunday) to 6 (Saturday)
         const TUESDAY: number = 2;
 
         // calculate the number of days to add to get to the next Tuesday
-        const daysUntilNextTuesday: number = (7 + TUESDAY - toBeEndDate.getDay()) % 7;
+        const daysUntilNextTuesday: number =
+            (7 + TUESDAY - toBeEndDate.getDay()) % 7;
 
         toBeEndDate.setDate(toBeEndDate.getDate() + daysUntilNextTuesday);
 
@@ -538,7 +719,9 @@ describe('generateYearlyTransfers', () => {
         expect(transactions[0].title).toBe(transfer.transfer_title);
         expect(transactions[0].description).toBe(transfer.transfer_description);
         expect(transactions[0].amount).toBe(-transfer.transfer_amount);
-        expect(expectedEndDate.toISOString().slice(0, 10)).toBe(toBeEndDate.toISOString().slice(0, 10));
+        expect(expectedEndDate.toISOString().slice(0, 10)).toBe(
+            toBeEndDate.toISOString().slice(0, 10),
+        );
     });
 
     it('Should generate yearly transfers correctly when the frequency week of month is set', () => {
@@ -553,13 +736,20 @@ describe('generateYearlyTransfers', () => {
             transfer_description: 'Test description',
             transfer_amount: 150,
             frequency_day_of_week: 2,
-            frequency_week_of_month: 1
+            frequency_week_of_month: 1,
         };
         const toDate: Date = new Date('2023-01-01');
         const fromDate: Date = new Date('2020-01-01');
 
         // Running the function
-        generateYearlyTransfers(transactions, skippedTransactions, transfer, toDate, fromDate, account_id);
+        generateYearlyTransfers(
+            transactions,
+            skippedTransactions,
+            transfer,
+            toDate,
+            fromDate,
+            account_id,
+        );
 
         // Checking the results
         expect(transactions.length).toBe(3);
@@ -571,13 +761,17 @@ describe('generateYearlyTransfers', () => {
         // Check if the transactions are on the correct dates (second Tuesday of each year)
         transactions.forEach((transaction, i) => {
             const transactionDate: Date = new Date(transaction.date);
-            expect(transactionDate.getDay()).toBe(transfer.frequency_day_of_week);
+            expect(transactionDate.getDay()).toBe(
+                transfer.frequency_day_of_week,
+            );
 
-            const secondWeekOfMonth: boolean = Math.floor((transactionDate.getDate() - 1) / 7) === 1;
+            const secondWeekOfMonth: boolean =
+                Math.floor((transactionDate.getDate() - 1) / 7) === 1;
             expect(secondWeekOfMonth).toBeTruthy();
 
             // Check if the year is correctly incrementing on each transaction
-            const expectedYear: number = new Date(transfer.transfer_begin_date).getFullYear() + i;
+            const expectedYear: number =
+                new Date(transfer.transfer_begin_date).getFullYear() + i;
             expect(transactionDate.getFullYear()).toBe(expectedYear);
         });
     });
@@ -595,13 +789,20 @@ describe('generateYearlyTransfers', () => {
             transfer_amount: 150,
             frequency_day_of_week: 2,
             frequency_week_of_month: 1,
-            frequency_month_of_year: 5 // June
+            frequency_month_of_year: 5, // June
         };
         const toDate: Date = new Date('2023-01-01');
         const fromDate: Date = new Date('2020-01-01');
 
         // Running the function
-        generateYearlyTransfers(transactions, skippedTransactions, transfer, toDate, fromDate, account_id);
+        generateYearlyTransfers(
+            transactions,
+            skippedTransactions,
+            transfer,
+            toDate,
+            fromDate,
+            account_id,
+        );
 
         // Checking the results
         expect(transactions.length).toBe(3); // 2020, 2021, 2022
@@ -613,15 +814,21 @@ describe('generateYearlyTransfers', () => {
         // Check if the transactions are on the correct dates (second Tuesday of June each year)
         transactions.forEach((transaction, i) => {
             const transactionDate: Date = new Date(transaction.date);
-            expect(transactionDate.getMonth()).toBe(transfer.frequency_month_of_year); // June
+            expect(transactionDate.getMonth()).toBe(
+                transfer.frequency_month_of_year,
+            ); // June
 
-            expect(transactionDate.getDay()).toBe(transfer.frequency_day_of_week); // Tuesday
+            expect(transactionDate.getDay()).toBe(
+                transfer.frequency_day_of_week,
+            ); // Tuesday
 
-            const secondWeekOfMonth: boolean = Math.floor((transactionDate.getDate() - 1) / 7) === 1;
+            const secondWeekOfMonth: boolean =
+                Math.floor((transactionDate.getDate() - 1) / 7) === 1;
             expect(secondWeekOfMonth).toBeTruthy();
 
             // Check if the year is correctly incrementing on each transaction
-            const expectedYear: number = new Date(transfer.transfer_begin_date).getFullYear() + i;
+            const expectedYear: number =
+                new Date(transfer.transfer_begin_date).getFullYear() + i;
             expect(transactionDate.getFullYear()).toBe(expectedYear);
         });
     });

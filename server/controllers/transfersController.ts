@@ -1,28 +1,32 @@
-import { type NextFunction, type Request, type Response } from "express";
-import { transferQueries, cronJobQueries } from "../models/queryData.js";
-import scheduleCronJob from "../crontab/scheduleCronJob.js";
-import deleteCronJob from "../crontab/deleteCronJob.js";
-import { handleError, executeQuery } from "../utils/helperFunctions.js";
-import { type Transfer } from "../types/types.js";
+import { type NextFunction, type Request, type Response } from 'express';
+import { transferQueries, cronJobQueries } from '../models/queryData.js';
+import scheduleCronJob from '../crontab/scheduleCronJob.js';
+import deleteCronJob from '../crontab/deleteCronJob.js';
+import {
+    handleError,
+    executeQuery,
+    parseOrFallback,
+} from '../utils/helperFunctions.js';
+import { type Transfer } from '../types/types.js';
 
 interface TransferInput {
-  transfer_id: string;
-  cron_job_id?: string;
-  source_account_id: string;
-  destination_account_id: string;
-  transfer_amount: string;
-  transfer_title: string;
-  transfer_description: string;
-  frequency_type: string;
-  frequency_type_variable: string;
-  frequency_day_of_month: string;
-  frequency_day_of_week: string;
-  frequency_week_of_month: string;
-  frequency_month_of_year: string;
-  transfer_begin_date: string;
-  transfer_end_date: string;
-  date_created: string;
-  date_modified: string;
+    transfer_id: string;
+    cron_job_id?: string;
+    source_account_id: string;
+    destination_account_id: string;
+    transfer_amount: string;
+    transfer_title: string;
+    transfer_description: string;
+    frequency_type: string;
+    frequency_type_variable: string | null | undefined;
+    frequency_day_of_month: string | null | undefined;
+    frequency_day_of_week: string | null | undefined;
+    frequency_week_of_month: string | null | undefined;
+    frequency_month_of_year: string | null | undefined;
+    transfer_begin_date: string;
+    transfer_end_date: string | null | undefined;
+    date_created: string;
+    date_modified: string;
 }
 
 /**
@@ -38,13 +42,13 @@ const transfersParse = (transfer: TransferInput): Transfer => ({
     transfer_title: transfer.transfer_title,
     transfer_description: transfer.transfer_description,
     transfer_begin_date: transfer.transfer_begin_date,
-    transfer_end_date: transfer.transfer_end_date,
+    transfer_end_date: transfer.transfer_end_date ?? null,
     frequency_type: parseInt(transfer.frequency_type),
-    frequency_type_variable: parseInt(transfer.frequency_type_variable) || null,
-    frequency_day_of_month: parseInt(transfer.frequency_day_of_month) || null,
-    frequency_day_of_week: parseInt(transfer.frequency_day_of_week) || null,
-    frequency_week_of_month: parseInt(transfer.frequency_week_of_month) || null,
-    frequency_month_of_year: parseInt(transfer.frequency_month_of_year) || null,
+    frequency_type_variable: parseOrFallback(transfer.frequency_type_variable),
+    frequency_day_of_month: parseOrFallback(transfer.frequency_day_of_month),
+    frequency_day_of_week: parseOrFallback(transfer.frequency_day_of_week),
+    frequency_week_of_month: parseOrFallback(transfer.frequency_week_of_month),
+    frequency_month_of_year: parseOrFallback(transfer.frequency_month_of_year),
     date_created: transfer.date_created,
     date_modified: transfer.date_modified,
 });
@@ -65,13 +69,18 @@ export const getTransfers = async (
         let query: string;
         let params: any[];
 
-        if (id && account_id) {
+        if (
+            id !== null &&
+            id !== undefined &&
+            account_id !== null &&
+            account_id !== undefined
+        ) {
             query = transferQueries.getTransfersByIdAndAccountId;
             params = [id, account_id];
-        } else if (id) {
+        } else if (id !== null && id !== undefined) {
             query = transferQueries.getTransfersById;
             params = [id];
-        } else if (account_id) {
+        } else if (account_id !== null && account_id !== undefined) {
             query = transferQueries.getTransfersByAccountId;
             params = [account_id];
         } else {
@@ -81,8 +90,12 @@ export const getTransfers = async (
 
         const results = await executeQuery(query, params);
 
-        if ((id || account_id) && results.length === 0) {
-            response.status(404).send("Transfer not found");
+        if (
+            ((id !== null && id !== undefined) ||
+                (account_id !== null && account_id !== undefined)) &&
+            results.length === 0
+        ) {
+            response.status(404).send('Transfer not found');
             return;
         }
 
@@ -95,11 +108,11 @@ export const getTransfers = async (
         handleError(
             response,
             `Error getting ${
-                id
-                    ? "transfer"
-                    : account_id
-                        ? "transfers for given account_id"
-                        : "transfers"
+                id !== null && id !== undefined
+                    ? 'transfer'
+                    : account_id !== null && account_id !== undefined
+                    ? 'transfers for given account_id'
+                    : 'transfers'
             }`,
         );
     }
@@ -170,8 +183,8 @@ export const createTransfer = async (
             frequency_day_of_week,
             frequency_week_of_month,
             frequency_month_of_year,
-            scriptPath: "/app/dist/scripts/createTransaction.sh",
-            type: "transfer",
+            scriptPath: '/app/dist/scripts/createTransaction.sh',
+            type: 'transfer',
         };
 
         const { cronDate, uniqueId } = await scheduleCronJob(cronParams);
@@ -182,7 +195,7 @@ export const createTransfer = async (
 
         const cronId: number = cronJobResult[0].cron_job_id;
 
-        console.log("Cron job created " + cronId);
+        console.log('Cron job created ' + cronId.toString());
 
         await executeQuery(transferQueries.updateTransferWithCronJobId, [
             cronId,
@@ -193,10 +206,10 @@ export const createTransfer = async (
 
         next();
 
-    // response.status(201).json(transfers);
+        // response.status(201).json(transfers);
     } catch (error) {
         console.error(error); // Log the error on the server side
-        handleError(response, "Error creating transfer");
+        handleError(response, 'Error creating transfer');
     }
 };
 
@@ -223,7 +236,7 @@ export const createTransferReturnObject = async (
         response.status(201).json(modifiedTransfers);
     } catch (error) {
         console.error(error); // Log the error on the server side
-        handleError(response, "Error creating transfer");
+        handleError(response, 'Error creating transfer');
     }
 };
 
@@ -271,8 +284,8 @@ export const updateTransfer = async (
             frequency_day_of_week,
             frequency_week_of_month,
             frequency_month_of_year,
-            scriptPath: "/app/dist/scripts/createTransaction.sh",
-            type: "transfer",
+            scriptPath: '/app/dist/scripts/createTransaction.sh',
+            type: 'transfer',
         };
 
         const transferResults = await executeQuery(
@@ -281,7 +294,7 @@ export const updateTransfer = async (
         );
 
         if (transferResults.length === 0) {
-            response.status(404).send("Transfer not found");
+            response.status(404).send('Transfer not found');
             return;
         }
 
@@ -291,7 +304,7 @@ export const updateTransfer = async (
         if (results.length > 0) {
             await deleteCronJob(results[0].unique_id);
         } else {
-            console.error("Cron job not found");
+            console.error('Cron job not found');
         }
 
         const { cronDate, uniqueId } = await scheduleCronJob(cronParams);
@@ -302,37 +315,31 @@ export const updateTransfer = async (
             cronId,
         ]);
 
-        const updateResults = await executeQuery<TransferInput>(
-            transferQueries.updateTransfer,
-            [
-                source_account_id,
-                destination_account_id,
-                amount,
-                title,
-                description,
-                frequency_type,
-                frequency_type_variable,
-                frequency_day_of_month,
-                frequency_day_of_week,
-                frequency_week_of_month,
-                frequency_month_of_year,
-                begin_date,
-                end_date,
-                id,
-            ],
-        );
-
-        // Parse the data to correct format and return an object
-        const transfers: Transfer[] = updateResults.map(transfersParse);
+        await executeQuery<TransferInput>(transferQueries.updateTransfer, [
+            source_account_id,
+            destination_account_id,
+            amount,
+            title,
+            description,
+            frequency_type,
+            frequency_type_variable,
+            frequency_day_of_month,
+            frequency_day_of_week,
+            frequency_week_of_month,
+            frequency_month_of_year,
+            begin_date,
+            end_date,
+            id,
+        ]);
 
         request.transfer_id = id;
 
         next();
 
-    // response.status(200).json(transfers);
+        // response.status(200).json(transfers);
     } catch (error) {
         console.error(error); // Log the error on the server side
-        handleError(response, "Error updating transfer");
+        handleError(response, 'Error updating transfer');
     }
 };
 
@@ -349,17 +356,17 @@ export const updateTransferReturnObject = async (
     const { transfer_id } = request;
 
     try {
-        const expenses = await executeQuery<TransferInput>(
+        const transfers = await executeQuery<TransferInput>(
             transferQueries.getTransfersById,
             [transfer_id],
         );
 
-        const modifiedTransfers = expenses.map(transfersParse);
+        const modifiedTransfers = transfers.map(transfersParse);
 
         response.status(200).json(modifiedTransfers);
     } catch (error) {
         console.error(error); // Log the error on the server side
-        handleError(response, "Error getting transfer");
+        handleError(response, 'Error getting transfer');
     }
 };
 
@@ -384,7 +391,7 @@ export const deleteTransfer = async (
         );
 
         if (transferResults.length === 0) {
-            response.status(404).send("Transfer not found");
+            response.status(404).send('Transfer not found');
             return;
         }
 
@@ -396,7 +403,7 @@ export const deleteTransfer = async (
         if (results.length > 0) {
             await deleteCronJob(results[0].unique_id);
         } else {
-            console.error("Cron job not found");
+            console.error('Cron job not found');
         }
 
         await executeQuery(cronJobQueries.deleteCronJob, [cronId]);
@@ -404,7 +411,7 @@ export const deleteTransfer = async (
         next();
     } catch (error) {
         console.error(error); // Log the error on the server side
-        handleError(response, "Error deleting transfer");
+        handleError(response, 'Error deleting transfer');
     }
 };
 
@@ -418,5 +425,5 @@ export const deleteTransferReturnObject = async (
     request: Request,
     response: Response,
 ): Promise<void> => {
-    response.status(200).send("Transfer deleted successfully");
+    response.status(200).send('Transfer deleted successfully');
 };

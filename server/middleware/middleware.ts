@@ -1,4 +1,10 @@
-import { type Request, type Response, type NextFunction } from "express";
+import { type Request, type Response, type NextFunction } from 'express';
+import { type QueryResultRow } from 'pg';
+import {
+    parseOrFallback,
+    handleError,
+    executeQuery,
+} from '../utils/helperFunctions.js';
 import {
     transactionHistoryQueries,
     expenseQueries,
@@ -11,38 +17,23 @@ import {
     taxesQueries,
     cronJobQueries,
     incomeQueries,
-} from "../models/queryData.js";
-import { handleError, executeQuery } from "../utils/helperFunctions.js";
+} from '../models/queryData.js';
 import {
-    Income,
+    type Income,
     type Expense,
     type Loan,
     type Payroll,
     type Transfer,
     type Wishlist,
-} from "../types/types.js";
-import scheduleCronJob from "../crontab/scheduleCronJob.js";
-import deleteCronJob from "../crontab/deleteCronJob.js";
-
-interface WishlistInput {
-    wishlist_id: any;
-    account_id: string;
-    cron_job_id: string;
-    wishlist_amount: string;
-    wishlist_title: string;
-    wishlist_description: string;
-    wishlist_url_link: string;
-    wishlist_priority: string;
-    wishlist_date_available: string;
-    wishlist_date_can_purchase: string;
-    date_created: string;
-    date_modified: string;
-}
+} from '../types/types.js';
+import scheduleCronJob from '../crontab/scheduleCronJob.js';
+import deleteCronJob from '../crontab/deleteCronJob.js';
 
 interface LoanInput {
     account_id: string;
     loan_id: string;
     cron_job_id?: string;
+    tax_id?: string | null | undefined;
     loan_amount: string;
     loan_plan_amount: string;
     loan_recipient: string;
@@ -65,25 +56,6 @@ interface LoanInput {
 
 /**
  *
- * @param wishlist - Wishlist object
- * @returns - Wishlist object with parsed values
- */
-const wishlistsParse = (wishlist: WishlistInput): Wishlist => ({
-    wishlist_id: parseInt(wishlist.wishlist_id),
-    account_id: parseInt(wishlist.account_id),
-    wishlist_amount: parseFloat(wishlist.wishlist_amount),
-    wishlist_title: wishlist.wishlist_title,
-    wishlist_description: wishlist.wishlist_description,
-    wishlist_url_link: wishlist.wishlist_url_link,
-    wishlist_priority: parseInt(wishlist.wishlist_priority),
-    wishlist_date_available: wishlist.wishlist_date_available,
-    wishlist_date_can_purchase: wishlist.wishlist_date_can_purchase,
-    date_created: wishlist.date_created,
-    date_modified: wishlist.date_modified,
-});
-
-/**
- *
  * @param request - The request object
  * @param response - The response object
  * @param next - The next function
@@ -94,19 +66,29 @@ export const setQueries = async (
     response: Response,
     next: NextFunction,
 ): Promise<void> => {
-    request.query.from_date = new Date().toISOString().slice(0, 10);
+    try {
+        request.query.from_date = new Date().toISOString().slice(0, 10);
 
-    const date = new Date();
-    date.setFullYear(date.getFullYear() + 1);
-    request.query.to_date = date.toISOString().slice(0, 10);
+        const date = new Date();
+        date.setFullYear(date.getFullYear() + 1);
+        request.query.to_date = date.toISOString().slice(0, 10);
 
-    if (!request.query.account_id) {
-        if (request.query.id) {
-            const results = await executeQuery(wishlistQueries.getWishlistsById, [
-                request.query.id,
-            ]);
-            request.query.account_id = results[0].account_id;
+        if (
+            request.query.account_id === undefined ||
+            request.query.account_id === null
+        ) {
+            if (request.query.id !== undefined && request.query.id !== null) {
+                const results = await executeQuery(
+                    wishlistQueries.getWishlistsById,
+                    [request.query.id],
+                );
+                request.query.account_id = results[0].account_id;
+            }
         }
+    } catch (error) {
+        console.error(error);
+        handleError(response, 'Error setting queries');
+        return;
     }
 
     next();
@@ -134,9 +116,11 @@ export const getTransactionsByAccount = async (
 
         let transactions: any[] = []; // Initialize transactions as an empty array
 
-        if (!account_id) {
+        if (account_id === null || account_id === undefined) {
             // If account_id is null, fetch all accounts and make request.transactions an array of transactions
-            const accountResults = await executeQuery(accountQueries.getAccounts);
+            const accountResults = await executeQuery(
+                accountQueries.getAccounts,
+            );
 
             await Promise.all(
                 accountResults.map(async (account) => {
@@ -149,7 +133,9 @@ export const getTransactionsByAccount = async (
                     const accountTransactions = transactionsResults.map(
                         (transaction) => ({
                             ...transaction,
-                            transaction_amount: parseFloat(transaction.transaction_amount),
+                            transaction_amount: parseFloat(
+                                transaction.transaction_amount,
+                            ),
                             transaction_tax_rate: parseFloat(
                                 transaction.transaction_tax_rate,
                             ),
@@ -164,12 +150,15 @@ export const getTransactionsByAccount = async (
             );
         } else {
             // Check if account exists and if it doesn't, send a response with an error message
-            const accountExists = await executeQuery(accountQueries.getAccount, [
-                account_id,
-            ]);
+            const accountExists = await executeQuery(
+                accountQueries.getAccount,
+                [account_id],
+            );
 
             if (accountExists.length === 0) {
-                response.status(404).send(`Account with ID ${account_id} not found`);
+                response
+                    .status(404)
+                    .send(`Account with ID ${account_id} not found`);
                 return;
             }
 
@@ -182,7 +171,9 @@ export const getTransactionsByAccount = async (
             transactions = results.map((transaction) => ({
                 ...transaction,
                 transaction_amount: parseFloat(transaction.transaction_amount),
-                transaction_tax_rate: parseFloat(transaction.transaction_tax_rate),
+                transaction_tax_rate: parseFloat(
+                    transaction.transaction_tax_rate,
+                ),
             }));
 
             transactionsByAccount.push({
@@ -196,7 +187,7 @@ export const getTransactionsByAccount = async (
         next();
     } catch (error) {
         console.error(error); // Log the error on the server side
-        handleError(response, "Error getting transactions");
+        handleError(response, 'Error getting transactions');
     }
 };
 
@@ -229,8 +220,10 @@ export const getIncomeByAccount = async (
             income: Income[];
         }> = [];
 
-        if (!account_id) {
-            const accountResults = await executeQuery(accountQueries.getAccounts);
+        if (account_id === null || account_id === undefined) {
+            const accountResults = await executeQuery(
+                accountQueries.getAccounts,
+            );
 
             await Promise.all(
                 accountResults.map(async (account) => {
@@ -239,16 +232,21 @@ export const getIncomeByAccount = async (
                         [account.account_id, to_date],
                     );
 
-                    const incomeTransactions = incomeResults.map((income) => {
-                        const tax = taxLookup[income.tax_id] || { tax_rate: 0 };
+                    const incomeTransactions: Income[] = incomeResults.map(
+                        (income) => {
+                            const tax: QueryResultRow =
+                                taxLookup[income.tax_id] !== undefined
+                                    ? taxLookup[income.tax_id]
+                                    : { tax_rate: 0 };
 
-                        return {
-                            ...income,
-                            tax_rate: parseFloat(tax.tax_rate),
-                            amount: parseFloat(income.income_amount),
-                            income_amount: parseFloat(income.income_amount),
-                        };
-                    });
+                            return {
+                                ...income,
+                                tax_rate: parseFloat(tax.tax_rate),
+                                amount: parseFloat(income.income_amount),
+                                income_amount: parseFloat(income.income_amount),
+                            };
+                        },
+                    );
 
                     incomeByAccount.push({
                         account_id: account.account_id,
@@ -257,12 +255,15 @@ export const getIncomeByAccount = async (
                 }),
             );
         } else {
-            const accountExists = await executeQuery(accountQueries.getAccount, [
-                account_id,
-            ]);
+            const accountExists = await executeQuery(
+                accountQueries.getAccount,
+                [account_id],
+            );
 
-            if (accountExists.length == 0) {
-                response.status(404).send(`Account with ID ${account_id} not found`);
+            if (accountExists.length === 0) {
+                response
+                    .status(404)
+                    .send(`Account with ID ${account_id} not found`);
                 return;
             }
 
@@ -271,8 +272,11 @@ export const getIncomeByAccount = async (
                 [account_id, to_date],
             );
 
-            const incomeTransactions = incomeResults.map((income) => {
-                const tax = taxLookup[income.tax_id] || { tax_rate: 0 };
+            const incomeTransactions: Income[] = incomeResults.map((income) => {
+                const tax: QueryResultRow =
+                    taxLookup[income.tax_id] !== undefined
+                        ? taxLookup[income.tax_id]
+                        : { tax_rate: 0 };
 
                 return {
                     ...income,
@@ -293,7 +297,7 @@ export const getIncomeByAccount = async (
         next();
     } catch (error) {
         console.error(error);
-        handleError(response, "Error getting income");
+        handleError(response, 'Error getting income');
     }
 };
 
@@ -326,8 +330,10 @@ export const getExpensesByAccount = async (
             expenses: Expense[];
         }> = [];
 
-        if (!account_id) {
-            const accountResults = await executeQuery(accountQueries.getAccounts);
+        if (account_id === null || account_id === undefined) {
+            const accountResults = await executeQuery(
+                accountQueries.getAccounts,
+            );
 
             await Promise.all(
                 accountResults.map(async (account) => {
@@ -336,17 +342,26 @@ export const getExpensesByAccount = async (
                         [account.account_id, to_date],
                     );
 
-                    const expenseTransactions = expenseResults.map((expense) => {
-                        const tax = taxLookup[expense.tax_id] || { tax_rate: 0 };
+                    const expenseTransactions = expenseResults.map(
+                        (expense: any) => {
+                            const tax: QueryResultRow =
+                                taxLookup[expense.tax_id] !== undefined
+                                    ? taxLookup[expense.tax_id]
+                                    : { tax_rate: 0 };
 
-                        return {
-                            ...expense,
-                            tax_rate: parseFloat(tax.tax_rate),
-                            amount: parseFloat(expense.expense_amount),
-                            expense_subsidized: parseFloat(expense.expense_subsidized),
-                            expense_amount: parseFloat(expense.expense_amount),
-                        };
-                    });
+                            return {
+                                ...expense,
+                                tax_rate: parseFloat(tax.tax_rate),
+                                amount: parseFloat(expense.expense_amount),
+                                expense_subsidized: parseFloat(
+                                    expense.expense_subsidized,
+                                ),
+                                expense_amount: parseFloat(
+                                    expense.expense_amount,
+                                ),
+                            };
+                        },
+                    );
 
                     expensesByAccount.push({
                         account_id: account.account_id,
@@ -355,12 +370,15 @@ export const getExpensesByAccount = async (
                 }),
             );
         } else {
-            const accountExists = await executeQuery(accountQueries.getAccount, [
-                account_id,
-            ]);
+            const accountExists = await executeQuery(
+                accountQueries.getAccount,
+                [account_id],
+            );
 
-            if (accountExists.length == 0) {
-                response.status(404).send(`Account with ID ${account_id} not found`);
+            if (accountExists.length === 0) {
+                response
+                    .status(404)
+                    .send(`Account with ID ${account_id} not found`);
                 return;
             }
 
@@ -370,7 +388,10 @@ export const getExpensesByAccount = async (
             );
 
             const expenseTransactions = expenseResults.map((expense) => {
-                const tax = taxLookup[expense.tax_id] || { tax_rate: 0 };
+                const tax: QueryResultRow =
+                    taxLookup[expense.tax_id] !== undefined
+                        ? taxLookup[expense.tax_id]
+                        : { tax_rate: 0 };
 
                 return {
                     ...expense,
@@ -392,7 +413,7 @@ export const getExpensesByAccount = async (
         next();
     } catch (error) {
         console.error(error);
-        handleError(response, "Error getting expenses");
+        handleError(response, 'Error getting expenses');
     }
 };
 
@@ -404,22 +425,23 @@ export const getExpensesByAccount = async (
 const parseLoan = (loan: LoanInput): Loan => ({
     loan_id: parseInt(loan.loan_id),
     account_id: parseInt(loan.account_id),
+    tax_id: parseOrFallback(loan.tax_id),
     loan_amount: parseFloat(loan.loan_amount),
     loan_plan_amount: parseFloat(loan.loan_plan_amount),
     loan_recipient: loan.loan_recipient,
     loan_title: loan.loan_title,
     loan_description: loan.loan_description,
     frequency_type: parseInt(loan.frequency_type),
-    frequency_type_variable: parseInt(loan.frequency_type_variable) || null,
-    frequency_day_of_month: parseInt(loan.frequency_day_of_month) || null,
-    frequency_day_of_week: parseInt(loan.frequency_day_of_week) || null,
-    frequency_week_of_month: parseInt(loan.frequency_week_of_month) || null,
-    frequency_month_of_year: parseInt(loan.frequency_month_of_year) || null,
+    frequency_type_variable: parseOrFallback(loan.frequency_type_variable),
+    frequency_day_of_month: parseOrFallback(loan.frequency_day_of_month),
+    frequency_day_of_week: parseOrFallback(loan.frequency_day_of_week),
+    frequency_week_of_month: parseOrFallback(loan.frequency_week_of_month),
+    frequency_month_of_year: parseOrFallback(loan.frequency_month_of_year),
     loan_interest_rate: parseFloat(loan.loan_interest_rate),
     loan_interest_frequency_type: parseInt(loan.loan_interest_frequency_type),
     loan_subsidized: parseFloat(loan.loan_subsidized),
     loan_begin_date: loan.loan_begin_date,
-    loan_end_date: loan.loan_end_date,
+    loan_end_date: loan.loan_end_date ?? null,
     date_created: loan.date_created,
     date_modified: loan.date_modified,
 });
@@ -441,9 +463,11 @@ export const getLoansByAccount = async (
     try {
         const loansByAccount: Array<{ account_id: number; loan: any }> = [];
 
-        if (!account_id) {
+        if (account_id === null || account_id === undefined) {
             // If account_id is null, fetch all accounts and make request.transactions an array of transactions
-            const accountResults = await executeQuery(accountQueries.getAccounts);
+            const accountResults = await executeQuery(
+                accountQueries.getAccounts,
+            );
 
             await Promise.all(
                 accountResults.map(async (account) => {
@@ -453,12 +477,18 @@ export const getLoansByAccount = async (
                     );
 
                     // Map over results array and convert amount to a float for each Loan object
-                    const loansTransactions = loanResults.map((loan) => parseLoan(loan));
+                    const loansTransactions = loanResults.map((loan) =>
+                        parseLoan(loan),
+                    );
 
-                    const loansTransactionsWithAmount = loansTransactions.map((loan) => ({
-                        ...loan,
-                        amount: parseFloat(loan.loan_plan_amount as unknown as string),
-                    }));
+                    const loansTransactionsWithAmount = loansTransactions.map(
+                        (loan) => ({
+                            ...loan,
+                            amount: parseFloat(
+                                loan.loan_plan_amount as unknown as string,
+                            ),
+                        }),
+                    );
 
                     loansByAccount.push({
                         account_id: account.account_id,
@@ -468,12 +498,15 @@ export const getLoansByAccount = async (
             );
         } else {
             // Check if account exists and if it doesn't, send a response with an error message
-            const accountExists = await executeQuery(accountQueries.getAccount, [
-                account_id,
-            ]);
+            const accountExists = await executeQuery(
+                accountQueries.getAccount,
+                [account_id],
+            );
 
-            if (accountExists.length == 0) {
-                response.status(404).send(`Account with ID ${account_id} not found`);
+            if (accountExists.length === 0) {
+                response
+                    .status(404)
+                    .send(`Account with ID ${account_id} not found`);
                 return;
             }
 
@@ -485,10 +518,14 @@ export const getLoansByAccount = async (
             // Map over results array and convert amount to a float for each Loan object
             const loansTransactions = results.map((loan) => parseLoan(loan));
 
-            const loansTransactionsWithAmount = loansTransactions.map((loan) => ({
-                ...loan,
-                amount: parseFloat(loan.loan_plan_amount as unknown as string),
-            }));
+            const loansTransactionsWithAmount = loansTransactions.map(
+                (loan) => ({
+                    ...loan,
+                    amount: parseFloat(
+                        loan.loan_plan_amount as unknown as string,
+                    ),
+                }),
+            );
 
             loansByAccount.push({
                 account_id: parseInt(account_id as string),
@@ -501,7 +538,7 @@ export const getLoansByAccount = async (
         next();
     } catch (error) {
         console.error(error); // Log the error on the server side
-        handleError(response, "Error getting loans");
+        handleError(response, 'Error getting loans');
     }
 };
 
@@ -517,7 +554,7 @@ export const getPayrollsMiddleware = async (
     response: Response,
     next: NextFunction,
 ): Promise<void> => {
-    const { account_id, to_date } = request.query;
+    const { account_id, to_date } = request.query as Record<string, string>;
 
     try {
         const payrollsByAccount: Array<{
@@ -525,9 +562,11 @@ export const getPayrollsMiddleware = async (
             payroll: Payroll[];
         }> = [];
 
-        if (!account_id) {
+        if (account_id === null || account_id === undefined) {
             // If account_id is null, fetch all accounts and make request.transactions an array of transactions
-            const accountResults = await executeQuery(accountQueries.getAccounts);
+            const accountResults = await executeQuery(
+                accountQueries.getAccounts,
+            );
 
             await Promise.all(
                 accountResults.map(async (account) => {
@@ -537,11 +576,13 @@ export const getPayrollsMiddleware = async (
                     );
 
                     // Map over results array and convert amount to a float for each Transaction object
-                    const payrollTransactions = payrollResults.map((payroll) => ({
-                        ...payroll,
-                        net_pay: parseFloat(payroll.net_pay),
-                        gross_pay: parseFloat(payroll.gross_pay),
-                    }));
+                    const payrollTransactions = payrollResults.map(
+                        (payroll) => ({
+                            ...payroll,
+                            net_pay: parseFloat(payroll.net_pay),
+                            gross_pay: parseFloat(payroll.gross_pay),
+                        }),
+                    );
 
                     payrollsByAccount.push({
                         employee_id: account.employee_id,
@@ -551,26 +592,30 @@ export const getPayrollsMiddleware = async (
             );
         } else {
             // Check if account exists and if it doesn't, send a response with an error message
-            const accountExists = await executeQuery(accountQueries.getAccount, [
-                account_id,
-            ]);
+            const accountExists = await executeQuery(
+                accountQueries.getAccount,
+                [account_id],
+            );
 
-            if (accountExists.length == 0) {
-                response.status(404).send(`Account with ID ${account_id} not found`);
+            if (accountExists.length === 0) {
+                response
+                    .status(404)
+                    .send(`Account with ID ${account_id} not found`);
                 return;
             }
 
             // Get employee_id from account_id
-            const employeeResults = await executeQuery(accountQueries.getAccount, [
-                account_id,
-            ]);
+            const employeeResults = await executeQuery(
+                accountQueries.getAccount,
+                [account_id],
+            );
 
             const employee_id = employeeResults[0].employee_id;
 
-            const results = await executeQuery(payrollQueries.getPayrollsMiddleware, [
-                employee_id,
-                to_date,
-            ]);
+            const results = await executeQuery(
+                payrollQueries.getPayrollsMiddleware,
+                [employee_id, to_date],
+            );
 
             // Map over results array and convert net_pay to a float for each Payroll object
             const payrollsTransactions = results.map((payroll) => ({
@@ -590,7 +635,7 @@ export const getPayrollsMiddleware = async (
         next();
     } catch (error) {
         console.error(error); // Log the error on the server side
-        handleError(response, "Error getting payrolls");
+        handleError(response, 'Error getting payrolls');
     }
 };
 
@@ -623,9 +668,11 @@ export const getWishlistsByAccount = async (
             wishlist: Wishlist[];
         }> = [];
 
-        if (!account_id) {
+        if (account_id === null || account_id === undefined) {
             // If account_id is null, fetch all accounts and make request.transactions an array of transactions
-            const accountResults = await executeQuery(accountQueries.getAccounts);
+            const accountResults = await executeQuery(
+                accountQueries.getAccounts,
+            );
 
             await Promise.all(
                 accountResults.map(async (account) => {
@@ -635,16 +682,23 @@ export const getWishlistsByAccount = async (
                     );
 
                     // Map over results array and convert amount to a float for each Transaction object
-                    const wishlistTransactions = wishlistResults.map((wishlist) => {
-                        const tax = taxLookup[wishlist.tax_id] || { tax_rate: 0 };
+                    const wishlistTransactions = wishlistResults.map(
+                        (wishlist) => {
+                            const tax: QueryResultRow =
+                                taxLookup[wishlist.tax_id] !== undefined
+                                    ? taxLookup[wishlist.tax_id]
+                                    : { tax_rate: 0 };
 
-                        return {
-                            ...wishlist,
-                            tax_rate: parseFloat(tax.tax_rate),
-                            amount: parseFloat(wishlist.wishlist_amount),
-                            wishlist_amount: parseFloat(wishlist.wishlist_amount),
-                        };
-                    });
+                            return {
+                                ...wishlist,
+                                tax_rate: parseFloat(tax.tax_rate),
+                                amount: parseFloat(wishlist.wishlist_amount),
+                                wishlist_amount: parseFloat(
+                                    wishlist.wishlist_amount,
+                                ),
+                            };
+                        },
+                    );
 
                     wishlistsByAccount.push({
                         account_id: account.account_id,
@@ -654,12 +708,15 @@ export const getWishlistsByAccount = async (
             );
         } else {
             // Check if account exists and if it doesn't, send a response with an error message
-            const accountExists = await executeQuery(accountQueries.getAccount, [
-                account_id,
-            ]);
+            const accountExists = await executeQuery(
+                accountQueries.getAccount,
+                [account_id],
+            );
 
-            if (accountExists.length == 0) {
-                response.status(404).send(`Account with ID ${account_id} not found`);
+            if (accountExists.length === 0) {
+                response
+                    .status(404)
+                    .send(`Account with ID ${account_id} not found`);
                 return;
             }
 
@@ -670,7 +727,10 @@ export const getWishlistsByAccount = async (
 
             // Map over results array and convert amount to a float for each Wishlist object
             const wishlistsTransactions = results.map((wishlist) => {
-                const tax = taxLookup[wishlist.tax_id] || { tax_rate: 0 };
+                const tax: QueryResultRow =
+                    taxLookup[wishlist.tax_id] !== undefined
+                        ? taxLookup[wishlist.tax_id]
+                        : { tax_rate: 0 };
 
                 return {
                     ...wishlist,
@@ -691,7 +751,7 @@ export const getWishlistsByAccount = async (
         next();
     } catch (error) {
         console.error(error); // Log the error on the server side
-        handleError(response, "Error getting wishlists");
+        handleError(response, 'Error getting wishlists');
     }
 };
 
@@ -707,7 +767,7 @@ export const getTransfersByAccount = async (
     response: Response,
     next: NextFunction,
 ): Promise<void> => {
-    const { account_id, to_date } = request.query;
+    const { account_id, to_date } = request.query as Record<string, string>;
 
     try {
         const transferByAccount: Array<{
@@ -715,9 +775,11 @@ export const getTransfersByAccount = async (
             transfer: Transfer[];
         }> = [];
 
-        if (!account_id) {
+        if (account_id === null || account_id === undefined) {
             // If account_id is null, fetch all accounts and make request.transactions an array of transactions
-            const accountResults = await executeQuery(accountQueries.getAccounts);
+            const accountResults = await executeQuery(
+                accountQueries.getAccounts,
+            );
 
             await Promise.all(
                 accountResults.map(async (account) => {
@@ -727,10 +789,12 @@ export const getTransfersByAccount = async (
                     );
 
                     // Map over results array and convert amount to a float for each Transaction object
-                    const transferTransactions = transferResults.map((transfer) => ({
-                        ...transfer,
-                        amount: parseFloat(transfer.transfer_amount),
-                    }));
+                    const transferTransactions = transferResults.map(
+                        (transfer) => ({
+                            ...transfer,
+                            amount: parseFloat(transfer.transfer_amount),
+                        }),
+                    );
 
                     transferByAccount.push({
                         account_id: account.account_id,
@@ -740,12 +804,15 @@ export const getTransfersByAccount = async (
             );
         } else {
             // Check if account exists and if it doesn't, send a response with an error message
-            const accountExists = await executeQuery(accountQueries.getAccount, [
-                account_id,
-            ]);
+            const accountExists = await executeQuery(
+                accountQueries.getAccount,
+                [account_id],
+            );
 
-            if (accountExists.length == 0) {
-                response.status(404).send(`Account with ID ${account_id} not found`);
+            if (accountExists.length === 0) {
+                response
+                    .status(404)
+                    .send(`Account with ID ${account_id} not found`);
                 return;
             }
 
@@ -761,7 +828,7 @@ export const getTransfersByAccount = async (
             }));
 
             transferByAccount.push({
-                account_id: parseInt(account_id as string),
+                account_id: parseInt(account_id),
                 transfer: transferTransactions,
             });
         }
@@ -771,7 +838,7 @@ export const getTransfersByAccount = async (
         next();
     } catch (error) {
         console.error(error); // Log the error on the server side
-        handleError(response, "Error getting transfers");
+        handleError(response, 'Error getting transfers');
     }
 };
 
@@ -787,14 +854,18 @@ export const getCurrentBalance = async (
     response: Response,
     next: NextFunction,
 ): Promise<void> => {
-    const { account_id } = request.query;
+    const { account_id } = request.query as { account_id: string };
 
     try {
-        let currentBalance: Array<{ account_id: number; account_balance: number }> =
-            [];
+        let currentBalance: Array<{
+            account_id: number;
+            account_balance: number;
+        }> = [];
 
-        if (!account_id) {
-            const accountResults = await executeQuery(accountQueries.getAccounts);
+        if (account_id === null || account_id === undefined) {
+            const accountResults = await executeQuery(
+                accountQueries.getAccounts,
+            );
 
             currentBalance = await Promise.all(
                 accountResults.map(async (account) => {
@@ -813,23 +884,26 @@ export const getCurrentBalance = async (
             );
         } else {
             // Check if account exists and if it doesn't, send a response with an error message
-            const accountExists = await executeQuery(accountQueries.getAccount, [
-                account_id as string,
-            ]);
+            const accountExists = await executeQuery(
+                accountQueries.getAccount,
+                [account_id],
+            );
 
-            if (accountExists.length == 0) {
-                response.status(404).send(`Account with ID ${account_id} not found`);
+            if (accountExists.length === 0) {
+                response
+                    .status(404)
+                    .send(`Account with ID ${account_id} not found`);
                 return;
             }
 
             const results = await executeQuery(
                 currentBalanceQueries.getCurrentBalance,
-                [account_id as string],
+                [account_id],
             );
 
             currentBalance = [
                 {
-                    account_id: parseInt(account_id as string),
+                    account_id: parseInt(account_id),
                     account_balance: parseFloat(results[0].account_balance),
                 },
             ];
@@ -840,7 +914,7 @@ export const getCurrentBalance = async (
         next();
     } catch (error) {
         console.error(error); // Log the error on the server side
-        handleError(response, "Error getting current balance");
+        handleError(response, 'Error getting current balance');
     }
 };
 
@@ -874,12 +948,14 @@ export const updateWishlistCron = async (
         // First, delete all necessary cron jobs
         for (const wslst of wishlistsResults) {
             const cronId = wslst.cron_job_id;
-            const results = await executeQuery(cronJobQueries.getCronJob, [cronId]);
+            const results = await executeQuery(cronJobQueries.getCronJob, [
+                cronId,
+            ]);
 
             if (results.length > 0) {
                 await deleteCronJob(results[0].unique_id);
             } else {
-                console.error("Cron job not found");
+                console.error('Cron job not found');
             }
         }
 
@@ -889,9 +965,11 @@ export const updateWishlistCron = async (
             const taxId = wslst.tax_id;
 
             // Get tax amount from tax_id in taxes table
-            const taxRate = taxId
-                ? (await executeQuery(taxesQueries.getTax, [taxId]))[0].tax_rate
-                : 0;
+            const taxRate: number =
+                taxId !== null && taxId !== undefined
+                    ? (await executeQuery(taxesQueries.getTax, [taxId]))[0]
+                          .tax_rate
+                    : 0;
 
             const cronParams = {
                 date: transactionMap[wslst.wishlist_id],
@@ -901,12 +979,14 @@ export const updateWishlistCron = async (
                 tax: taxRate,
                 title: wslst.wishlist_title,
                 description: wslst.wishlist_description,
-                scriptPath: "/app/dist/scripts/createTransaction.sh",
-                type: "wishlist",
+                scriptPath: '/app/dist/scripts/createTransaction.sh',
+                type: 'wishlist',
             };
 
-            if (cronParams.date) {
-                const { cronDate, uniqueId } = await scheduleCronJob(cronParams);
+            if (cronParams.date !== null && cronParams.date !== undefined) {
+                const { cronDate, uniqueId } = await scheduleCronJob(
+                    cronParams,
+                );
                 await executeQuery(cronJobQueries.updateCronJob, [
                     uniqueId,
                     cronDate,
@@ -919,6 +999,6 @@ export const updateWishlistCron = async (
         next();
     } catch (error) {
         console.error(error); // Log the error on the server side
-        handleError(response, "Error updating cron tab");
+        handleError(response, 'Error updating cron tab');
     }
 };

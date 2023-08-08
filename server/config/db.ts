@@ -1,11 +1,11 @@
-import pg from "pg";
+import pg, { type Pool } from 'pg';
 
-const pool: pg.Pool = new pg.Pool({
+const pool: Pool = new pg.Pool({
     user: process.env.PGUSER,
     host: process.env.PGHOST,
     database: process.env.PGDATABASE,
     password: process.env.PGPASSWORD,
-    port: parseInt(process.env.PGPORT),
+    port: parseFloat(process.env.PGPORT ?? '5432'),
 });
 
 export default pool;

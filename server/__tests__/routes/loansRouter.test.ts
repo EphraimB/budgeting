@@ -1,10 +1,16 @@
 import { jest } from '@jest/globals';
 import request from 'supertest';
-import express, { Express, Request, Response, NextFunction, Router } from 'express';
+import express, {
+    type Express,
+    type Request,
+    type Response,
+    type NextFunction,
+    type Router,
+} from 'express';
 import MockDate from 'mockdate';
 
 /**
- * 
+ *
  * @returns {Promise<Express>} A promise that resolves to an Express app
  */
 const createApp = async (): Promise<Express> => {
@@ -23,16 +29,56 @@ beforeAll(() => {
     MockDate.set('2020-01-01');
 
     jest.mock('../../middleware/middleware', () => ({
-        setQueries: jest.fn((req: Request, res: Response, next: NextFunction) => next()),
-        getCurrentBalance: jest.fn((req: Request, res: Response, next: NextFunction) => next()),
-        getTransactionsByAccount: jest.fn((req: Request, res: Response, next: NextFunction) => next()),
-        getIncomeByAccount: jest.fn((req: Request, res: Response, next: NextFunction) => next()),
-        getExpensesByAccount: jest.fn((req: Request, res: Response, next: NextFunction) => next()),
-        getLoansByAccount: jest.fn((req: Request, res: Response, next: NextFunction) => next()),
-        getPayrollsMiddleware: jest.fn((req: Request, res: Response, next: NextFunction) => next()),
-        getTransfersByAccount: jest.fn((req: Request, res: Response, next: NextFunction) => next()),
-        getWishlistsByAccount: jest.fn((req: Request, res: Response, next: NextFunction) => next()),
-        updateWishlistCron: jest.fn((req: Request, res: Response, next: NextFunction) => next())
+        setQueries: jest.fn(
+            (req: Request, res: Response, next: NextFunction) => {
+                next();
+            },
+        ),
+        getCurrentBalance: jest.fn(
+            (req: Request, res: Response, next: NextFunction) => {
+                next();
+            },
+        ),
+        getTransactionsByAccount: jest.fn(
+            (req: Request, res: Response, next: NextFunction) => {
+                next();
+            },
+        ),
+        getIncomeByAccount: jest.fn(
+            (req: Request, res: Response, next: NextFunction) => {
+                next();
+            },
+        ),
+        getExpensesByAccount: jest.fn(
+            (req: Request, res: Response, next: NextFunction) => {
+                next();
+            },
+        ),
+        getLoansByAccount: jest.fn(
+            (req: Request, res: Response, next: NextFunction) => {
+                next();
+            },
+        ),
+        getPayrollsMiddleware: jest.fn(
+            (req: Request, res: Response, next: NextFunction) => {
+                next();
+            },
+        ),
+        getTransfersByAccount: jest.fn(
+            (req: Request, res: Response, next: NextFunction) => {
+                next();
+            },
+        ),
+        getWishlistsByAccount: jest.fn(
+            (req: Request, res: Response, next: NextFunction) => {
+                next();
+            },
+        ),
+        updateWishlistCron: jest.fn(
+            (req: Request, res: Response, next: NextFunction) => {
+                next();
+            },
+        ),
     }));
 
     jest.mock('../../generation/generateTransactions', () => {
@@ -43,13 +89,36 @@ beforeAll(() => {
     });
 
     jest.mock('../../controllers/loansController', () => ({
-        getLoans: jest.fn((req: Request, res: Response, next: NextFunction) => res.json({ message: 'success' })),
-        createLoan: jest.fn((req: Request, res: Response, next: NextFunction) => next()),
-        createLoanReturnObject: jest.fn((req: Request, res: Response, next: NextFunction) => res.json({ message: 'success' })),
-        updateLoan: jest.fn((req: Request, res: Response, next: NextFunction) => next()),
-        updateLoanReturnObject: jest.fn((req: Request, res: Response, next: NextFunction) => res.json({ message: 'success' })),
-        deleteLoan: jest.fn((req: Request, res: Response, next: NextFunction) => next()),
-        deleteLoanReturnObject: jest.fn((req: Request, res: Response, next: NextFunction) => res.json({ message: 'success' }))
+        getLoans: jest.fn((req: Request, res: Response, next: NextFunction) =>
+            res.json({ message: 'success' }),
+        ),
+        createLoan: jest.fn(
+            (req: Request, res: Response, next: NextFunction) => {
+                next();
+            },
+        ),
+        createLoanReturnObject: jest.fn(
+            (req: Request, res: Response, next: NextFunction) =>
+                res.json({ message: 'success' }),
+        ),
+        updateLoan: jest.fn(
+            (req: Request, res: Response, next: NextFunction) => {
+                next();
+            },
+        ),
+        updateLoanReturnObject: jest.fn(
+            (req: Request, res: Response, next: NextFunction) =>
+                res.json({ message: 'success' }),
+        ),
+        deleteLoan: jest.fn(
+            (req: Request, res: Response, next: NextFunction) => {
+                next();
+            },
+        ),
+        deleteLoanReturnObject: jest.fn(
+            (req: Request, res: Response, next: NextFunction) =>
+                res.json({ message: 'success' }),
+        ),
     }));
 });
 
@@ -105,7 +174,7 @@ describe('POST /', () => {
             frequency_month_of_year: 1,
             interest_rate: 0,
             interest_frequency_type: 2,
-            begin_date: '2020-01-02'
+            begin_date: '2020-01-02',
         };
 
         const response: request.Response = await request(app)
@@ -136,7 +205,7 @@ describe('PUT /:id', () => {
             frequency_month_of_year: 1,
             interest_rate: 0,
             interest_frequency_type: 2,
-            begin_date: '2020-01-02'
+            begin_date: '2020-01-02',
         };
 
         const response: request.Response = await request(app)

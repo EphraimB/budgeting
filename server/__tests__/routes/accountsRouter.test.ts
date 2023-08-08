@@ -1,9 +1,15 @@
 import { jest } from '@jest/globals';
 import request from 'supertest';
-import express, { Express, Request, Response, NextFunction, Router } from 'express';
+import express, {
+    type Express,
+    type Request,
+    type Response,
+    type NextFunction,
+    type Router,
+} from 'express';
 
 /**
- * 
+ *
  * @returns {Promise<Express>} A promise that resolves to an Express app
  */
 const createApp = async (): Promise<Express> => {
@@ -13,17 +19,21 @@ const createApp = async (): Promise<Express> => {
     // Import the module that uses the mock
     const routerModule = await import('../../routes/accountsRouter');
     const accountsRouter: Router = routerModule.default;
-    app.use('/', accountsRouter as express.Router);
+    app.use('/', accountsRouter);
 
     return app;
 };
 
 beforeAll(() => {
     jest.mock('../../controllers/accountsController', () => ({
-        getAccounts: (req: Request, res: Response, next: NextFunction) => res.json({ message: 'success' }),
-        createAccount: (req: Request, res: Response, next: NextFunction) => res.json({ message: 'success' }),
-        updateAccount: (req: Request, res: Response, next: NextFunction) => res.json({ message: 'success' }),
-        deleteAccount: (req: Request, res: Response, next: NextFunction) => res.json({ message: 'success' })
+        getAccounts: (req: Request, res: Response, next: NextFunction) =>
+            res.json({ message: 'success' }),
+        createAccount: (req: Request, res: Response, next: NextFunction) =>
+            res.json({ message: 'success' }),
+        updateAccount: (req: Request, res: Response, next: NextFunction) =>
+            res.json({ message: 'success' }),
+        deleteAccount: (req: Request, res: Response, next: NextFunction) =>
+            res.json({ message: 'success' }),
     }));
 });
 
@@ -67,7 +77,7 @@ describe('POST /', () => {
         const newAccount = {
             name: 'test',
             balance: 100,
-            type: 1
+            type: 1,
         };
 
         const response: request.Response = await request(app)
@@ -86,7 +96,7 @@ describe('PUT /:id', () => {
         const newAccount = {
             name: 'test',
             balance: 100,
-            type: 1
+            type: 1,
         };
 
         const response: request.Response = await request(app)

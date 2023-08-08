@@ -1,4 +1,4 @@
-import { GeneratedTransaction, Payroll } from '../../types/types';
+import { type GeneratedTransaction, type Payroll } from '../../types/types';
 import generatePayrolls from '../../generation/generatePayrolls';
 import MockDate from 'mockdate';
 
@@ -38,7 +38,14 @@ describe('generatePayrolls', () => {
         expect(payrollTransaction.description).toBe('payroll');
         expect(payrollTransaction.date).toEqual(new Date(payroll.end_date));
         expect(payrollTransaction.amount).toBe(payroll.gross_pay);
-        expect(payrollTransaction.tax_rate).toBe(parseFloat(((payroll.gross_pay - payroll.net_pay) / payroll.gross_pay).toFixed(4)));
+        expect(payrollTransaction.tax_rate).toBe(
+            parseFloat(
+                (
+                    (payroll.gross_pay - payroll.net_pay) /
+                    payroll.gross_pay
+                ).toFixed(4),
+            ),
+        );
         expect(payrollTransaction.total_amount).toBe(payroll.net_pay);
     });
 
@@ -78,7 +85,14 @@ describe('generatePayrolls', () => {
         expect(payrollTransaction.description).toBe('payroll');
         expect(payrollTransaction.date).toEqual(new Date(payroll.end_date));
         expect(payrollTransaction.amount).toBe(payroll.gross_pay);
-        expect(payrollTransaction.tax_rate).toBe(parseFloat(((payroll.gross_pay - payroll.net_pay) / payroll.gross_pay).toFixed(4)));
+        expect(payrollTransaction.tax_rate).toBe(
+            parseFloat(
+                (
+                    (payroll.gross_pay - payroll.net_pay) /
+                    payroll.gross_pay
+                ).toFixed(4),
+            ),
+        );
         expect(payrollTransaction.total_amount).toBe(payroll.net_pay);
     });
 

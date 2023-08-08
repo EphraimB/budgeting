@@ -1,13 +1,13 @@
-import { type NextFunction, type Request, type Response } from "express";
+import { type NextFunction, type Request, type Response } from 'express';
+import { expenseQueries, cronJobQueries } from '../models/queryData.js';
+import scheduleCronJob from '../crontab/scheduleCronJob.js';
+import deleteCronJob from '../crontab/deleteCronJob.js';
 import {
-    expenseQueries,
-    cronJobQueries,
-    taxesQueries,
-} from "../models/queryData.js";
-import scheduleCronJob from "../crontab/scheduleCronJob.js";
-import deleteCronJob from "../crontab/deleteCronJob.js";
-import { handleError, executeQuery } from "../utils/helperFunctions.js";
-import { type Expense } from "../types/types.js";
+    handleError,
+    executeQuery,
+    parseOrFallback,
+} from '../utils/helperFunctions.js';
+import { type Expense } from '../types/types.js';
 
 interface ExpenseInput {
     expense_id: string;
@@ -39,16 +39,16 @@ interface ExpenseInput {
 const parseExpenses = (expense: ExpenseInput): Expense => ({
     expense_id: parseInt(expense.expense_id),
     account_id: parseInt(expense.account_id),
-    tax_id: parseInt(expense.tax_id) || null,
+    tax_id: parseOrFallback(expense.tax_id),
     expense_amount: parseFloat(expense.expense_amount),
     expense_title: expense.expense_title,
     expense_description: expense.expense_description,
     frequency_type: parseInt(expense.frequency_type),
-    frequency_type_variable: parseInt(expense.frequency_type_variable) || null,
-    frequency_day_of_month: parseInt(expense.frequency_day_of_month) || null,
-    frequency_day_of_week: parseInt(expense.frequency_day_of_week) || null,
-    frequency_week_of_month: parseInt(expense.frequency_week_of_month) || null,
-    frequency_month_of_year: parseInt(expense.frequency_month_of_year) || null,
+    frequency_type_variable: parseOrFallback(expense.frequency_type_variable),
+    frequency_day_of_month: parseOrFallback(expense.frequency_day_of_month),
+    frequency_day_of_week: parseOrFallback(expense.frequency_day_of_week),
+    frequency_week_of_month: parseOrFallback(expense.frequency_week_of_month),
+    frequency_month_of_year: parseOrFallback(expense.frequency_month_of_year),
     expense_subsidized: parseFloat(expense.expense_subsidized),
     expense_begin_date: expense.expense_begin_date,
     expense_end_date: expense.expense_end_date,
@@ -72,13 +72,18 @@ export const getExpenses = async (
         let query: string;
         let params: any[];
 
-        if (id && account_id) {
+        if (
+            id !== null &&
+            id !== undefined &&
+            account_id !== null &&
+            account_id !== undefined
+        ) {
             query = expenseQueries.getExpenseByIdAndAccountId;
             params = [id, account_id];
-        } else if (id) {
+        } else if (id !== null && id !== undefined) {
             query = expenseQueries.getExpenseById;
             params = [id];
-        } else if (account_id) {
+        } else if (account_id !== null && account_id !== undefined) {
             query = expenseQueries.getExpensesByAccountId;
             params = [account_id];
         } else {
@@ -88,8 +93,12 @@ export const getExpenses = async (
 
         const expenses = await executeQuery<ExpenseInput>(query, params);
 
-        if ((id || account_id) && expenses.length === 0) {
-            response.status(404).send("Expense not found");
+        if (
+            ((id !== null && id !== undefined) ||
+                (account_id !== null && account_id !== undefined)) &&
+            expenses.length === 0
+        ) {
+            response.status(404).send('Expense not found');
             return;
         }
 
@@ -98,11 +107,12 @@ export const getExpenses = async (
         console.error(error); // Log the error on the server side
         handleError(
             response,
-            `Error getting ${id
-                ? "expense"
-                : account_id
-                    ? "expenses for given account_id"
-                    : "expenses"
+            `Error getting ${
+                id !== null && id !== undefined
+                    ? 'expense'
+                    : account_id !== null && account_id !== undefined
+                    ? 'expenses for given account_id'
+                    : 'expenses'
             }`,
         );
     }
@@ -171,16 +181,20 @@ export const createExpense = async (
             frequency_day_of_week,
             frequency_week_of_month,
             frequency_month_of_year,
-            scriptPath: "/app/dist/scripts/createTransaction.sh",
-            type: "expense",
+            scriptPath: '/app/dist/scripts/createTransaction.sh',
+            type: 'expense',
         };
 
         const { cronDate, uniqueId } = await scheduleCronJob(cronParams);
+
         const cronId: number = (
-            await executeQuery(cronJobQueries.createCronJob, [uniqueId, cronDate])
+            await executeQuery(cronJobQueries.createCronJob, [
+                uniqueId,
+                cronDate,
+            ])
         )[0].cron_job_id;
 
-        console.log("Cron job created " + cronId);
+        console.log('Cron job created ' + cronId.toString());
 
         await executeQuery(expenseQueries.updateExpenseWithCronJobId, [
             cronId,
@@ -192,7 +206,7 @@ export const createExpense = async (
         next();
     } catch (error) {
         console.error(error); // Log the error on the server side
-        handleError(response, "Error creating expense");
+        handleError(response, 'Error creating expense');
     }
 };
 
@@ -219,7 +233,7 @@ export const createExpenseReturnObject = async (
         response.status(201).json(modifiedExpenses);
     } catch (error) {
         console.error(error); // Log the error on the server side
-        handleError(response, "Error creating expense");
+        handleError(response, 'Error getting expense');
     }
 };
 
@@ -266,8 +280,8 @@ export const updateExpense = async (
             frequency_day_of_week,
             frequency_week_of_month,
             frequency_month_of_year,
-            scriptPath: "/app/dist/scripts/createTransaction.sh",
-            type: "expense",
+            scriptPath: '/app/dist/scripts/createTransaction.sh',
+            type: 'expense',
         };
 
         const expenseResult = await executeQuery<ExpenseInput>(
@@ -276,7 +290,7 @@ export const updateExpense = async (
         );
 
         if (expenseResult.length === 0) {
-            response.status(404).send("Expense not found");
+            response.status(404).send('Expense not found');
             return;
         }
 
@@ -286,8 +300,8 @@ export const updateExpense = async (
         if (results.length > 0) {
             await deleteCronJob(results[0].unique_id);
         } else {
-            console.error("Cron job not found");
-            response.status(404).send("Cron job not found");
+            console.error('Cron job not found');
+            response.status(404).send('Cron job not found');
             return;
         }
 
@@ -321,7 +335,7 @@ export const updateExpense = async (
         next();
     } catch (error) {
         console.error(error); // Log the error on the server side
-        handleError(response, "Error updating expense");
+        handleError(response, 'Error updating expense');
     }
 };
 
@@ -348,7 +362,7 @@ export const updateExpenseReturnObject = async (
         response.status(200).json(modifiedExpenses);
     } catch (error) {
         console.error(error); // Log the error on the server side
-        handleError(response, "Error updating expense");
+        handleError(response, 'Error updating expense');
     }
 };
 
@@ -367,11 +381,12 @@ export const deleteExpense = async (
     const { id } = request.params;
 
     try {
-        const expenseResult = await executeQuery(expenseQueries.getExpenseById, [
-            id,
-        ]);
+        const expenseResult = await executeQuery(
+            expenseQueries.getExpenseById,
+            [id],
+        );
         if (expenseResult.length === 0) {
-            response.status(404).send("Expense not found");
+            response.status(404).send('Expense not found');
             return;
         }
 
@@ -384,8 +399,8 @@ export const deleteExpense = async (
         if (results.length > 0) {
             await deleteCronJob(results[0].unique_id);
         } else {
-            console.error("Cron job not found");
-            response.status(404).send("Cron job not found");
+            console.error('Cron job not found');
+            response.status(404).send('Cron job not found');
             return;
         }
 
@@ -394,7 +409,7 @@ export const deleteExpense = async (
         next();
     } catch (error) {
         console.error(error); // Log the error on the server side
-        handleError(response, "Error deleting expense");
+        handleError(response, 'Error deleting expense');
     }
 };
 
@@ -402,5 +417,5 @@ export const deleteExpenseReturnObject = async (
     request: Request,
     response: Response,
 ): Promise<void> => {
-    response.status(200).send("Expense deleted successfully");
+    response.status(200).send('Expense deleted successfully');
 };

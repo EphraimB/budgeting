@@ -1,5 +1,5 @@
-import express, { type Router, type Request, type Response } from "express";
-import generateTransactions from "../generation/generateTransactions.js";
+import express, { type Router, type Request, type Response } from 'express';
+import generateTransactions from '../generation/generateTransactions.js';
 import {
     getCurrentBalance,
     getTransactionsByAccount,
@@ -9,37 +9,37 @@ import {
     getWishlistsByAccount,
     getPayrollsMiddleware,
     getTransfersByAccount,
-} from "../middleware/middleware.js";
-import { query } from "express-validator";
-import validateRequest from "../utils/validateRequest.js";
+} from '../middleware/middleware.js';
+import { query } from 'express-validator';
+import validateRequest from '../utils/validateRequest.js';
 
-declare module "express-serve-static-core" {
-  interface Request {
-    transactions: any[];
-  }
+declare module 'express-serve-static-core' {
+    interface Request {
+        transactions: any[];
+    }
 }
 
 const router: Router = express.Router();
 
 // Generate the transactions based on current balance, expenses, and loans
 router.get(
-    "/",
+    '/',
     [
-        query("account_id")
+        query('account_id')
             .exists()
-            .withMessage("Account ID is required")
+            .withMessage('Account ID is required')
             .isInt({ min: 0 })
-            .withMessage("Account ID must be an integer"),
-        query("from_date")
+            .withMessage('Account ID must be an integer'),
+        query('from_date')
             .exists()
-            .withMessage("From date is required")
+            .withMessage('From date is required')
             .isDate()
-            .withMessage("From date must be a date in YYYY-MM-DD format"),
-        query("to_date")
+            .withMessage('From date must be a date in YYYY-MM-DD format'),
+        query('to_date')
             .exists()
-            .withMessage("To date is required")
+            .withMessage('To date is required')
             .isDate()
-            .withMessage("To date must be a date in YYYY-MM-DD format"),
+            .withMessage('To date must be a date in YYYY-MM-DD format'),
         validateRequest,
     ],
     getCurrentBalance,

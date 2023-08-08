@@ -12,7 +12,7 @@ transaction_type=$(echo "${unique_id}" | cut -d '_' -f 1)
 
 if [ "$transaction_type" = "payroll" ]; then
     transaction_tax_rate=$8
-elif [ "$transaction_type" = "loan" ]; then
+elif [ "$transaction_type" = "loan" ] || [ "$transaction_type" = "income" ]; then
     transaction_tax_rate=0
 else
     # Get the tax_id for other transaction types

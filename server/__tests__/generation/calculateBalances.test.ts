@@ -1,4 +1,4 @@
-import { GeneratedTransaction } from '../../types/types.js';
+import { type GeneratedTransaction } from '../../types/types.js';
 import calculateBalances from '../../generation/calculateBalances.js';
 
 // Create dates properly
@@ -21,7 +21,7 @@ describe('calculateBalances', () => {
                 date: tomorrow,
                 amount: 500,
                 tax_rate: 0.2,
-                total_amount: 400
+                total_amount: 400,
             },
             {
                 title: 'Test Transaction 3',
@@ -29,7 +29,7 @@ describe('calculateBalances', () => {
                 date: dayAfterTomorrow,
                 amount: -500,
                 tax_rate: 0.2,
-                total_amount: -600
+                total_amount: -600,
             },
             {
                 title: 'Test Transaction 4',
@@ -37,8 +37,8 @@ describe('calculateBalances', () => {
                 date: dayAfterTomorrow,
                 amount: 1000,
                 tax_rate: 0.2,
-                total_amount: 1200
-            }
+                total_amount: 1200,
+            },
         ];
 
         calculateBalances(transactions, 5000);
@@ -58,7 +58,7 @@ describe('calculateBalances', () => {
                 date_modified: lastWeek,
                 amount: 1000,
                 tax_rate: 0.2,
-                total_amount: 1200
+                total_amount: 1200,
             },
             {
                 transaction_id: 2,
@@ -68,7 +68,7 @@ describe('calculateBalances', () => {
                 date_modified: yesterday,
                 amount: -500,
                 tax_rate: 0.2,
-                total_amount: -600
+                total_amount: -600,
             },
             {
                 title: 'Test Transaction 2',
@@ -76,7 +76,7 @@ describe('calculateBalances', () => {
                 date: tomorrow,
                 amount: 500,
                 tax_rate: 0.2,
-                total_amount: 400
+                total_amount: 400,
             },
             {
                 title: 'Test Transaction 3',
@@ -84,7 +84,7 @@ describe('calculateBalances', () => {
                 date: dayAfterTomorrow,
                 amount: -500,
                 tax_rate: 0.2,
-                total_amount: -600
+                total_amount: -600,
             },
             {
                 title: 'Test Transaction 4',
@@ -92,8 +92,8 @@ describe('calculateBalances', () => {
                 date: dayAfterTomorrow,
                 amount: 1000,
                 tax_rate: 0.2,
-                total_amount: 1200
-            }
+                total_amount: 1200,
+            },
         ];
 
         calculateBalances(transactions, 5000);

@@ -1,9 +1,15 @@
 import { jest } from '@jest/globals';
 import request from 'supertest';
-import express, { Express, Request, Response, NextFunction, Router } from 'express';
+import express, {
+    type Express,
+    type Request,
+    type Response,
+    type NextFunction,
+    type Router,
+} from 'express';
 
 /**
- * 
+ *
  * @returns {Promise<Express>} A promise that resolves to an Express app
  */
 const createApp = async (): Promise<Express> => {
@@ -23,15 +29,19 @@ const newTransaction = {
     tax: 0,
     account_id: 1,
     title: 'test',
-    description: 'test'
+    description: 'test',
 };
 
 beforeAll(() => {
     jest.mock('../../controllers/transactionHistoryController', () => ({
-        getTransactions: (req: Request, res: Response, next: NextFunction) => res.json({ message: 'success' }),
-        createTransaction: (req: Request, res: Response, next: NextFunction) => res.json({ message: 'success' }),
-        updateTransaction: (req: Request, res: Response, next: NextFunction) => res.json({ message: 'success' }),
-        deleteTransaction: (req: Request, res: Response, next: NextFunction) => res.json({ message: 'success' })
+        getTransactions: (req: Request, res: Response, next: NextFunction) =>
+            res.json({ message: 'success' }),
+        createTransaction: (req: Request, res: Response, next: NextFunction) =>
+            res.json({ message: 'success' }),
+        updateTransaction: (req: Request, res: Response, next: NextFunction) =>
+            res.json({ message: 'success' }),
+        deleteTransaction: (req: Request, res: Response, next: NextFunction) =>
+            res.json({ message: 'success' }),
     }));
 });
 

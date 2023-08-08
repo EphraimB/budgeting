@@ -1,10 +1,13 @@
 import { jest } from '@jest/globals';
 import { Volume } from 'memfs';
 
-const vol = Volume.fromJSON({
-    '/tmp/cronjob.lock': '',
-    '/scripts/createTransaction.sh': '',
-}, '/app');
+const vol = Volume.fromJSON(
+    {
+        '/tmp/cronjob.lock': '',
+        '/scripts/createTransaction.sh': '',
+    },
+    '/app',
+);
 
 jest.mock('child_process', () => ({
     execSync: jest.fn(),
@@ -12,7 +15,7 @@ jest.mock('child_process', () => ({
 
 jest.mock('proper-lockfile', () => ({
     lock: jest.fn(),
-    unlock: jest.fn()
+    unlock: jest.fn(),
 }));
 
 jest.mock('../../crontab/determineCronValues.js', () => {
@@ -20,12 +23,14 @@ jest.mock('../../crontab/determineCronValues.js', () => {
 });
 
 jest.mock('fs', () => ({
-    default: vol
+    default: vol,
 }));
 
 describe('scheduleCronJob', () => {
     it('should schedule a cron job', async () => {
-        const { default: scheduleCronJob } = await import('../../crontab/scheduleCronJob.js');
+        const { default: scheduleCronJob } = await import(
+            '../../crontab/scheduleCronJob.js'
+        );
 
         // Arrange
         const jobDetails = {
@@ -36,13 +41,16 @@ describe('scheduleCronJob', () => {
             description: 'Test',
             frequency_type: '1',
             scriptPath: '/app/scripts/createTransaction.sh',
-            type: 'test'
+            type: 'test',
         };
 
         // Act
         const result = await scheduleCronJob(jobDetails);
 
         // Assert
-        expect(result).toEqual({ cronDate: '0 0 9 * *', uniqueId: expect.stringMatching(/^test_.*/) });
+        expect(result).toEqual({
+            cronDate: '0 0 9 * *',
+            uniqueId: expect.stringMatching(/^test_.*/),
+        });
     });
 });
