@@ -319,10 +319,14 @@ const generateTransactions = async (
         );
 
         accountResults.forEach(async (account: Account) => {
-            const currentBalanceValue: number = currentBalance.find(
-                (balance: CurrentBalance) =>
-                    balance.account_id === account.account_id,
-            ).account_balance;
+            const currentBalanceValue: number = parseFloat(
+                currentBalance
+                    .find(
+                        (balance: CurrentBalance) =>
+                            balance.account_id === account.account_id,
+                    )
+                    .account_balance.toFixed(2),
+            );
 
             const employee_id = account.employee_id ?? 0;
 
