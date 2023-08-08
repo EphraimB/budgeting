@@ -1,5 +1,5 @@
-import { type Response } from "express";
-import pool from "../config/db.js";
+import { type Response } from 'express';
+import pool from '../config/db.js';
 
 /**
  *
@@ -12,7 +12,7 @@ export const handleError = (response: Response, message: string): void => {
         errors: {
             msg: message,
             param: null,
-            location: "query",
+            location: 'query',
         },
     });
 };
@@ -33,4 +33,18 @@ export const executeQuery = async <T = any>(
     } catch (error) {
         throw new Error(error);
     }
+};
+
+/**
+ *
+ * @param input - The input to parse
+ * @returns The parsed input or null if the input is not a number
+ */
+export const parseOrFallback = (
+    input: string | null | undefined,
+): number | null => {
+    if (input === null || input === undefined) return null;
+
+    const parsed = parseInt(input, 10);
+    return isNaN(parsed) ? null : parsed;
 };

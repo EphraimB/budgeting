@@ -1,4 +1,4 @@
-import { type GeneratedTransaction } from "../types/types";
+import { type GeneratedTransaction } from '../types/types';
 
 /**
  *
@@ -33,9 +33,10 @@ const calculateBalances = (
     const pastTransactions: GeneratedTransaction[] = sortedTransactions.filter(
         (transaction) => new Date(transaction.date) < new Date(),
     );
-    const futureTransactions: GeneratedTransaction[] = sortedTransactions.filter(
-        (transaction) => new Date(transaction.date) >= new Date(),
-    );
+    const futureTransactions: GeneratedTransaction[] =
+        sortedTransactions.filter(
+            (transaction) => new Date(transaction.date) >= new Date(),
+        );
 
     pastTransactions.reverse().forEach(calculateBalanceForPastTransaction);
     futureTransactions.forEach(calculateBalanceForFutureTransaction);

@@ -1,8 +1,8 @@
 import request from 'supertest';
-import express, { Express, Router } from 'express';
+import express, { type Express, type Router } from 'express';
 
 /**
- * 
+ *
  * @returns {Promise<Express>} A promise that resolves to an Express app
  */
 const createApp = async (): Promise<Express> => {

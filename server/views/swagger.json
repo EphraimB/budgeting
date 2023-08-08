@@ -1655,89 +1655,6 @@
   },
   "components": {
     "schemas": {
-      "transaction": {
-        "type": "object",
-        "properties": {
-          "transaction_id": {
-            "type": "integer",
-            "description": "ID of the transaction transaction"
-          },
-          "date": {
-            "type": "string",
-            "format": "date-time",
-            "description": "Date the transaction occurred"
-          },
-          "date_modified": {
-            "type": "string",
-            "format": "date-time",
-            "description": "Date the transaction was last modified"
-          },
-          "description": {
-            "type": "string",
-            "description": "Description of the transaction"
-          },
-          "amount": {
-            "type": "number",
-            "description": "Amount of the transaction"
-          },
-          "balance": {
-            "type": "number",
-            "description": "Balance after the transaction"
-          }
-        }
-      },
-      "ExpenseTransaction": {
-        "type": "object",
-        "properties": {
-          "title": {
-            "type": "string",
-            "description": "Title of the expense"
-          },
-          "description": {
-            "type": "string",
-            "description": "Description of the expense"
-          },
-          "date": {
-            "type": "string",
-            "format": "date-time",
-            "description": "Date the expense occurred"
-          },
-          "amount": {
-            "type": "number",
-            "description": "Amount of the expense"
-          },
-          "balance": {
-            "type": "number",
-            "description": "Balance after the expense"
-          }
-        }
-      },
-      "LoanTransaction": {
-        "type": "object",
-        "properties": {
-          "title": {
-            "type": "string",
-            "description": "Title of the loan"
-          },
-          "description": {
-            "type": "string",
-            "description": "Description of the loan"
-          },
-          "date": {
-            "type": "string",
-            "format": "date-time",
-            "description": "Date the loan occurred"
-          },
-          "amount": {
-            "type": "number",
-            "description": "Amount of the loan"
-          },
-          "balance": {
-            "type": "number",
-            "description": "Balance after the loan"
-          }
-        }
-      },
       "AccountManipulation": {
         "type": "object",
         "properties": {
@@ -1771,6 +1688,10 @@
           "description": {
             "type": "string",
             "example": "New York Sales Tax"
+          },
+          "type": {
+            "type": "integer",
+            "example": 0
           }
         }
       },
@@ -2073,6 +1994,89 @@
             "format": "date-time"
           }
         }
+      },
+      "transaction": {
+        "type": "object",
+        "properties": {
+          "transaction_id": {
+            "type": "integer",
+            "description": "ID of the transaction transaction"
+          },
+          "date": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Date the transaction occurred"
+          },
+          "date_modified": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Date the transaction was last modified"
+          },
+          "description": {
+            "type": "string",
+            "description": "Description of the transaction"
+          },
+          "amount": {
+            "type": "number",
+            "description": "Amount of the transaction"
+          },
+          "balance": {
+            "type": "number",
+            "description": "Balance after the transaction"
+          }
+        }
+      },
+      "ExpenseTransaction": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string",
+            "description": "Title of the expense"
+          },
+          "description": {
+            "type": "string",
+            "description": "Description of the expense"
+          },
+          "date": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Date the expense occurred"
+          },
+          "amount": {
+            "type": "number",
+            "description": "Amount of the expense"
+          },
+          "balance": {
+            "type": "number",
+            "description": "Balance after the expense"
+          }
+        }
+      },
+      "LoanTransaction": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string",
+            "description": "Title of the loan"
+          },
+          "description": {
+            "type": "string",
+            "description": "Description of the loan"
+          },
+          "date": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Date the loan occurred"
+          },
+          "amount": {
+            "type": "number",
+            "description": "Amount of the loan"
+          },
+          "balance": {
+            "type": "number",
+            "description": "Balance after the loan"
+          }
+        }
       }
     },
     "responses": {
@@ -2171,6 +2175,10 @@
                     "type": "number",
                     "format": "double",
                     "example": 0.08875
+                  },
+                  "tax_type": {
+                    "type": "integer",
+                    "example": 0
                   },
                   "date_created": {
                     "type": "string",
@@ -2277,232 +2285,232 @@
             }
           }
         }
-      }
-    },
-    "SuccessResponseExpenses": {
-      "description": "A JSON array of expenses",
-      "content": {
-        "application/json": {
-          "schema": {
-            "type": "array",
-            "items": {
-              "type": "object",
-              "properties": {
-                "expense_id": {
-                  "type": "integer",
-                  "format": "int64",
-                  "minimum": 1
-                },
-                "account_id": {
-                  "type": "integer",
-                  "format": "int64",
-                  "minimum": 1
-                },
-                "expense_amount": {
-                  "type": "number",
-                  "format": "double",
-                  "example": 250.00
-                },
-                "expense_title": {
-                  "type": "string",
-                  "example": "Expense test"
-                },
-                "expense_description": {
-                  "type": "string",
-                  "example": "This is a expense test"
-                },
-                "frequency_type": {
-                  "type": "integer",
-                  "example": 2
-                },
-                "frequency_type_variable": {
-                  "type": "integer",
-                  "example": 1
-                },
-                "frequency_day_of_month": {
-                  "type": "integer",
-                  "default": null
-                },
-                "frequency_day_of_week": {
-                  "type": "integer",
-                  "default": null
-                },
-                "frequency_week_of_month": {
-                  "type": "integer",
-                  "default": null
-                },
-                "frequency_month_of_year": {
-                  "type": "integer",
-                  "default": null
-                },
-                "expense_subsidized": {
-                  "type": "number",
-                  "format": "double",
-                  "example": 0.15
-                },
-                "expense_begin_date": {
-                  "type": "string",
-                  "format": "date-time"
-                },
-                "expense_end_date": {
-                  "type": "string",
-                  "format": "date-time",
-                  "default": null
-                },
-                "date_created": {
-                  "type": "string",
-                  "format": "date-time"
-                },
-                "date_modified": {
-                  "type": "string",
-                  "format": "date-time"
+      },
+      "SuccessResponseExpenses": {
+        "description": "A JSON array of expenses",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "expense_id": {
+                    "type": "integer",
+                    "format": "int64",
+                    "minimum": 1
+                  },
+                  "account_id": {
+                    "type": "integer",
+                    "format": "int64",
+                    "minimum": 1
+                  },
+                  "expense_amount": {
+                    "type": "number",
+                    "format": "double",
+                    "example": 250.00
+                  },
+                  "expense_title": {
+                    "type": "string",
+                    "example": "Expense test"
+                  },
+                  "expense_description": {
+                    "type": "string",
+                    "example": "This is a expense test"
+                  },
+                  "frequency_type": {
+                    "type": "integer",
+                    "example": 2
+                  },
+                  "frequency_type_variable": {
+                    "type": "integer",
+                    "example": 1
+                  },
+                  "frequency_day_of_month": {
+                    "type": "integer",
+                    "default": null
+                  },
+                  "frequency_day_of_week": {
+                    "type": "integer",
+                    "default": null
+                  },
+                  "frequency_week_of_month": {
+                    "type": "integer",
+                    "default": null
+                  },
+                  "frequency_month_of_year": {
+                    "type": "integer",
+                    "default": null
+                  },
+                  "expense_subsidized": {
+                    "type": "number",
+                    "format": "double",
+                    "example": 0.15
+                  },
+                  "expense_begin_date": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "expense_end_date": {
+                    "type": "string",
+                    "format": "date-time",
+                    "default": null
+                  },
+                  "date_created": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "date_modified": {
+                    "type": "string",
+                    "format": "date-time"
+                  }
                 }
               }
             }
           }
         }
-      }
-    },
-    "SuccessResponseLoans": {
-      "description": "A JSON array of loans",
-      "content": {
-        "application/json": {
-          "schema": {
-            "type": "array",
-            "items": {
-              "type": "object",
-              "properties": {
-                "loan_id": {
-                  "type": "integer",
-                  "format": "int64",
-                  "minimum": 1
-                },
-                "account_id": {
-                  "type": "integer",
-                  "format": "int64",
-                  "minimum": 1
-                },
-                "loan_amount": {
-                  "type": "number",
-                  "format": "double",
-                  "example": 250.00
-                },
-                "loan_title": {
-                  "type": "string",
-                  "example": "Loan test"
-                },
-                "loan_description": {
-                  "type": "string",
-                  "example": "This is a loan test"
-                },
-                "frequency_type": {
-                  "type": "integer",
-                  "example": 2
-                },
-                "frequency_type_variable": {
-                  "type": "integer",
-                  "example": 1
-                },
-                "frequency_day_of_month": {
-                  "type": "integer",
-                  "default": null
-                },
-                "frequency_day_of_week": {
-                  "type": "integer",
-                  "default": null
-                },
-                "frequency_week_of_month": {
-                  "type": "integer",
-                  "default": null
-                },
-                "frequency_month_of_year": {
-                  "type": "integer",
-                  "default": null
-                },
-                "loan_interest_rate": {
-                  "type": "number",
-                  "format": "double",
-                  "example": 0.15
-                },
-                "loan_interest_frequency_type": {
-                  "type": "integer",
-                  "example": 2
-                },
-                "loan_subsidized": {
-                  "type": "number",
-                  "format": "double",
-                  "example": 0.15
-                },
-                "loan_fully_paid_back": {
-                  "type": "string",
-                  "format": "date-time"
-                },
-                "loan_begin_date": {
-                  "type": "string",
-                  "format": "date-time"
-                },
-                "loan_end_date": {
-                  "type": "string",
-                  "format": "date-time",
-                  "default": null
-                },
-                "date_created": {
-                  "type": "string",
-                  "format": "date-time"
-                },
-                "date_modified": {
-                  "type": "string",
-                  "format": "date-time"
+      },
+      "SuccessResponseLoans": {
+        "description": "A JSON array of loans",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "loan_id": {
+                    "type": "integer",
+                    "format": "int64",
+                    "minimum": 1
+                  },
+                  "account_id": {
+                    "type": "integer",
+                    "format": "int64",
+                    "minimum": 1
+                  },
+                  "loan_amount": {
+                    "type": "number",
+                    "format": "double",
+                    "example": 250.00
+                  },
+                  "loan_title": {
+                    "type": "string",
+                    "example": "Loan test"
+                  },
+                  "loan_description": {
+                    "type": "string",
+                    "example": "This is a loan test"
+                  },
+                  "frequency_type": {
+                    "type": "integer",
+                    "example": 2
+                  },
+                  "frequency_type_variable": {
+                    "type": "integer",
+                    "example": 1
+                  },
+                  "frequency_day_of_month": {
+                    "type": "integer",
+                    "default": null
+                  },
+                  "frequency_day_of_week": {
+                    "type": "integer",
+                    "default": null
+                  },
+                  "frequency_week_of_month": {
+                    "type": "integer",
+                    "default": null
+                  },
+                  "frequency_month_of_year": {
+                    "type": "integer",
+                    "default": null
+                  },
+                  "loan_interest_rate": {
+                    "type": "number",
+                    "format": "double",
+                    "example": 0.15
+                  },
+                  "loan_interest_frequency_type": {
+                    "type": "integer",
+                    "example": 2
+                  },
+                  "loan_subsidized": {
+                    "type": "number",
+                    "format": "double",
+                    "example": 0.15
+                  },
+                  "loan_fully_paid_back": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "loan_begin_date": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "loan_end_date": {
+                    "type": "string",
+                    "format": "date-time",
+                    "default": null
+                  },
+                  "date_created": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "date_modified": {
+                    "type": "string",
+                    "format": "date-time"
+                  }
                 }
               }
             }
           }
         }
-      }
-    },
-    "SuccessResponsePayroll": {
-      "description": "A JSON array of payrolls",
-      "content": {
-        "application/json": {
-          "schema": {
-            "type": "object",
-            "properties": {
-              "employee_id": {
-                "type": "integer",
-                "format": "int64",
-                "minimum": 1
-              },
-              "payrolls": {
-                "type": "array",
-                "items": {
-                  "type": "object",
-                  "properties": {
-                    "start_date": {
-                      "type": "string",
-                      "format": "date-time"
-                    },
-                    "end_date": {
-                      "type": "string",
-                      "format": "date-time"
-                    },
-                    "work_days": {
-                      "type": "integer",
-                      "example": 5
-                    },
-                    "gross_pay": {
-                      "type": "number",
-                      "format": "double",
-                      "example": 250.00
-                    },
-                    "net_pay": {
-                      "type": "number",
-                      "format": "double",
-                      "example": 200.49
-                    },
-                    "hours_worked": {
-                      "type": "number",
-                      "format": "double",
-                      "example": 40.00
+      },
+      "SuccessResponsePayroll": {
+        "description": "A JSON array of payrolls",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "employee_id": {
+                  "type": "integer",
+                  "format": "int64",
+                  "minimum": 1
+                },
+                "payrolls": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "start_date": {
+                        "type": "string",
+                        "format": "date-time"
+                      },
+                      "end_date": {
+                        "type": "string",
+                        "format": "date-time"
+                      },
+                      "work_days": {
+                        "type": "integer",
+                        "example": 5
+                      },
+                      "gross_pay": {
+                        "type": "number",
+                        "format": "double",
+                        "example": 250.00
+                      },
+                      "net_pay": {
+                        "type": "number",
+                        "format": "double",
+                        "example": 200.49
+                      },
+                      "hours_worked": {
+                        "type": "number",
+                        "format": "double",
+                        "example": 40.00
+                      }
                     }
                   }
                 }
@@ -2510,237 +2518,237 @@
             }
           }
         }
-      }
-    },
-    "SuccessResponsePayrollTaxes": {
-      "description": "A JSON array of payroll taxes",
-      "content": {
-        "application/json": {
-          "schema": {
-            "type": "object",
-            "properties": {
-              "payroll_taxes_id": {
-                "type": "integer",
-                "format": "int64",
-                "minimum": 1
-              },
-              "employee_id": {
-                "type": "integer",
-                "format": "int64",
-                "minimum": 1
-              },
-              "name": {
-                "type": "string",
-                "example": "Payroll tax test"
-              },
-              "rate": {
-                "type": "number",
-                "format": "double",
-                "example": 250.00
-              }
-            }
-          }
-        }
-      }
-    },
-    "SuccessResponsePayrollDates": {
-      "description": "A JSON array of payroll dates",
-      "content": {
-        "application/json": {
-          "schema": {
-            "type": "object",
-            "properties": {
-              "payroll_dates_id": {
-                "type": "integer",
-                "format": "int64",
-                "minimum": 1
-              },
-              "employee_id": {
-                "type": "integer",
-                "format": "int64",
-                "minimum": 1
-              },
-              "payroll_start_day": {
-                "type": "integer",
-                "example": 1
-              },
-              "payroll_end_day": {
-                "type": "integer",
-                "example": 15
-              }
-            }
-          }
-        }
-      }
-    },
-    "SuccessResponsePayrollEmployees": {
-      "description": "A JSON array of payroll employees",
-      "content": {
-        "application/json": {
-          "schema": {
-            "type": "object",
-            "properties": {
-              "employee_id": {
-                "type": "integer",
-                "format": "int64",
-                "minimum": 1
-              },
-              "name": {
-                "type": "string",
-                "example": "Employee test"
-              },
-              "hourly_rate": {
-                "type": "number",
-                "format": "double",
-                "example": 16.00
-              },
-              "regular_hours": {
-                "type": "number",
-                "format": "double",
-                "example": 8.00
-              },
-              "vacation_days": {
-                "type": "integer",
-                "example": 5
-              },
-              "sick_days": {
-                "type": "integer",
-                "example": 5
-              },
-              "work_schedule": {
-                "type": "string",
-                "example": "0111110"
-              }
-            }
-          }
-        }
-      }
-    },
-    "SuccessResponseWishlists": {
-      "description": "A JSON array of wishlists",
-      "content": {
-        "application/json": {
-          "schema": {
-            "type": "array",
-            "items": {
+      },
+      "SuccessResponsePayrollTaxes": {
+        "description": "A JSON array of payroll taxes",
+        "content": {
+          "application/json": {
+            "schema": {
               "type": "object",
               "properties": {
-                "wishlist_id": {
+                "payroll_taxes_id": {
                   "type": "integer",
                   "format": "int64",
                   "minimum": 1
                 },
-                "account_id": {
+                "employee_id": {
                   "type": "integer",
                   "format": "int64",
                   "minimum": 1
                 },
-                "wishlist_amount": {
+                "name": {
+                  "type": "string",
+                  "example": "Payroll tax test"
+                },
+                "rate": {
                   "type": "number",
                   "format": "double",
                   "example": 250.00
-                },
-                "wishlist_title": {
-                  "type": "string",
-                  "example": "Wishlist test"
-                },
-                "wishlist_description": {
-                  "type": "string",
-                  "example": "This is a wishlist test"
-                },
-                "wishlist_priority": {
-                  "type": "integer"
-                },
-                "wishlist_url_link": {
-                  "type": "string",
-                  "example": "https://www.amazon.com"
-                },
-                "date_created": {
-                  "type": "string",
-                  "format": "date-time"
-                },
-                "date_modified": {
-                  "type": "string",
-                  "format": "date-time"
                 }
               }
             }
           }
         }
-      }
-    },
-    "SuccessResponseTransfers": {
-      "description": "A JSON array of transfers",
-      "content": {
-        "application/json": {
-          "schema": {
-            "type": "array",
-            "items": {
+      },
+      "SuccessResponsePayrollDates": {
+        "description": "A JSON array of payroll dates",
+        "content": {
+          "application/json": {
+            "schema": {
               "type": "object",
               "properties": {
-                "transfer_id": {
+                "payroll_dates_id": {
                   "type": "integer",
                   "format": "int64",
                   "minimum": 1
                 },
-                "account_id": {
+                "employee_id": {
                   "type": "integer",
                   "format": "int64",
                   "minimum": 1
                 },
-                "transfer_amount": {
-                  "type": "number",
-                  "format": "double",
-                  "example": 250.00
-                },
-                "transfer_title": {
-                  "type": "string",
-                  "example": "Transfer test"
-                },
-                "transfer_description": {
-                  "type": "string",
-                  "example": "This is a transfer test"
-                },
-                "frequency_type": {
-                  "type": "integer",
-                  "example": 2
-                },
-                "frequency_type_variable": {
+                "payroll_start_day": {
                   "type": "integer",
                   "example": 1
                 },
-                "frequency_day_of_month": {
+                "payroll_end_day": {
                   "type": "integer",
-                  "default": null
-                },
-                "frequency_day_of_week": {
+                  "example": 15
+                }
+              }
+            }
+          }
+        }
+      },
+      "SuccessResponsePayrollEmployees": {
+        "description": "A JSON array of payroll employees",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "employee_id": {
                   "type": "integer",
-                  "default": null
+                  "format": "int64",
+                  "minimum": 1
                 },
-                "frequency_week_of_month": {
+                "name": {
+                  "type": "string",
+                  "example": "Employee test"
+                },
+                "hourly_rate": {
+                  "type": "number",
+                  "format": "double",
+                  "example": 16.00
+                },
+                "regular_hours": {
+                  "type": "number",
+                  "format": "double",
+                  "example": 8.00
+                },
+                "vacation_days": {
                   "type": "integer",
-                  "default": null
+                  "example": 5
                 },
-                "frequency_month_of_year": {
+                "sick_days": {
                   "type": "integer",
-                  "default": null
+                  "example": 5
                 },
-                "transfer_begin_date": {
+                "work_schedule": {
                   "type": "string",
-                  "format": "date-time"
-                },
-                "transfer_end_date": {
-                  "type": "string",
-                  "format": "date-time",
-                  "default": null
-                },
-                "date_created": {
-                  "type": "string",
-                  "format": "date-time"
-                },
-                "date_modified": {
-                  "type": "string",
-                  "format": "date-time"
+                  "example": "0111110"
+                }
+              }
+            }
+          }
+        }
+      },
+      "SuccessResponseWishlists": {
+        "description": "A JSON array of wishlists",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "wishlist_id": {
+                    "type": "integer",
+                    "format": "int64",
+                    "minimum": 1
+                  },
+                  "account_id": {
+                    "type": "integer",
+                    "format": "int64",
+                    "minimum": 1
+                  },
+                  "wishlist_amount": {
+                    "type": "number",
+                    "format": "double",
+                    "example": 250.00
+                  },
+                  "wishlist_title": {
+                    "type": "string",
+                    "example": "Wishlist test"
+                  },
+                  "wishlist_description": {
+                    "type": "string",
+                    "example": "This is a wishlist test"
+                  },
+                  "wishlist_priority": {
+                    "type": "integer"
+                  },
+                  "wishlist_url_link": {
+                    "type": "string",
+                    "example": "https://www.amazon.com"
+                  },
+                  "date_created": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "date_modified": {
+                    "type": "string",
+                    "format": "date-time"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "SuccessResponseTransfers": {
+        "description": "A JSON array of transfers",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "transfer_id": {
+                    "type": "integer",
+                    "format": "int64",
+                    "minimum": 1
+                  },
+                  "account_id": {
+                    "type": "integer",
+                    "format": "int64",
+                    "minimum": 1
+                  },
+                  "transfer_amount": {
+                    "type": "number",
+                    "format": "double",
+                    "example": 250.00
+                  },
+                  "transfer_title": {
+                    "type": "string",
+                    "example": "Transfer test"
+                  },
+                  "transfer_description": {
+                    "type": "string",
+                    "example": "This is a transfer test"
+                  },
+                  "frequency_type": {
+                    "type": "integer",
+                    "example": 2
+                  },
+                  "frequency_type_variable": {
+                    "type": "integer",
+                    "example": 1
+                  },
+                  "frequency_day_of_month": {
+                    "type": "integer",
+                    "default": null
+                  },
+                  "frequency_day_of_week": {
+                    "type": "integer",
+                    "default": null
+                  },
+                  "frequency_week_of_month": {
+                    "type": "integer",
+                    "default": null
+                  },
+                  "frequency_month_of_year": {
+                    "type": "integer",
+                    "default": null
+                  },
+                  "transfer_begin_date": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "transfer_end_date": {
+                    "type": "string",
+                    "format": "date-time",
+                    "default": null
+                  },
+                  "date_created": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "date_modified": {
+                    "type": "string",
+                    "format": "date-time"
+                  }
                 }
               }
             }

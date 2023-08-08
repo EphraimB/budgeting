@@ -1,7 +1,7 @@
-import { type Request, type Response } from "express";
-import { taxesQueries } from "../models/queryData.js";
-import { handleError, executeQuery } from "../utils/helperFunctions.js";
-import { type Taxes } from "../types/types.js";
+import { type Request, type Response } from 'express';
+import { taxesQueries } from '../models/queryData.js';
+import { handleError, executeQuery } from '../utils/helperFunctions.js';
+import { type Taxes } from '../types/types.js';
 
 interface TaxesInput {
     tax_id: string;
@@ -45,7 +45,7 @@ export const getTaxes = async (
         let query: string;
         let params: any[];
 
-        if (id) {
+        if (id !== null && id !== undefined) {
             query = taxesQueries.getTax;
             params = [id];
         } else {
@@ -55,8 +55,8 @@ export const getTaxes = async (
 
         const taxesResults = await executeQuery<TaxesInput>(query, params);
 
-        if (id && taxesResults.length === 0) {
-            response.status(404).send("Tax not found");
+        if (id !== null && id !== undefined && taxesResults.length === 0) {
+            response.status(404).send('Tax not found');
             return;
         }
 
@@ -65,7 +65,12 @@ export const getTaxes = async (
         response.status(200).json(taxes);
     } catch (error) {
         console.error(error); // Log the error on the server side
-        handleError(response, `Error getting ${id ? "tax" : "taxes"}`);
+        handleError(
+            response,
+            `Error getting ${
+                id !== null && id !== undefined ? 'tax' : 'taxes'
+            }`,
+        );
     }
 };
 
@@ -93,7 +98,7 @@ export const createTax = async (
         response.status(201).json(taxes);
     } catch (error) {
         console.error(error); // Log the error on the server side
-        handleError(response, "Error creating tax");
+        handleError(response, 'Error creating tax');
     }
 };
 
@@ -117,7 +122,7 @@ export const updateTax = async (
         );
 
         if (taxesResults.length === 0) {
-            response.status(404).send("Tax not found");
+            response.status(404).send('Tax not found');
             return;
         }
 
@@ -126,7 +131,7 @@ export const updateTax = async (
         response.status(200).json(taxes);
     } catch (error) {
         console.error(error); // Log the error on the server side
-        handleError(response, "Error updating tax");
+        handleError(response, 'Error updating tax');
     }
 };
 
@@ -149,15 +154,15 @@ export const deleteTax = async (
         );
 
         if (getTaxesResults.length === 0) {
-            response.status(404).send("Tax not found");
+            response.status(404).send('Tax not found');
             return;
         }
 
         await executeQuery(taxesQueries.deleteTax, [id]);
 
-        response.status(200).send("Successfully deleted tax");
+        response.status(200).send('Successfully deleted tax');
     } catch (error) {
         console.error(error); // Log the error on the server side
-        handleError(response, "Error deleting tax");
+        handleError(response, 'Error deleting tax');
     }
 };

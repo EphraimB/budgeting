@@ -1,42 +1,46 @@
-import { type Request, type Response, type NextFunction } from "express";
-import { generateDailyIncome, generateWeeklyIncome, generateMonthlyIncome, generateYearlyIncome, } from "./generateIncome.js";
+import { type Request, type Response, type NextFunction } from 'express';
+import {
+    generateDailyIncome,
+    generateWeeklyIncome,
+    generateMonthlyIncome,
+    generateYearlyIncome,
+} from './generateIncome.js';
 import {
     generateDailyExpenses,
     generateWeeklyExpenses,
     generateMonthlyExpenses,
     generateYearlyExpenses,
-} from "./generateExpenses.js";
+} from './generateExpenses.js';
 import {
     generateDailyLoans,
     generateWeeklyLoans,
     generateMonthlyLoans,
     generateYearlyLoans,
-} from "./generateLoans.js";
-import generatePayrollTransactions from "./generatePayrolls.js";
+} from './generateLoans.js';
+import generatePayrollTransactions from './generatePayrolls.js';
 import {
     generateDailyTransfers,
     generateWeeklyTransfers,
     generateMonthlyTransfers,
     generateYearlyTransfers,
-} from "./generateTransfers.js";
-import generateWishlists from "./generateWishlists.js";
-import calculateBalances from "./calculateBalances.js";
+} from './generateTransfers.js';
+import generateWishlists from './generateWishlists.js';
+import calculateBalances from './calculateBalances.js';
 import {
-    Account,
-    CurrentBalance,
-    Expense,
-    GeneratedTransaction,
-    Income,
-    Loan,
-    Payroll,
-    Transaction,
-    Transfer,
-    Wishlist,
-} from "../types/types.js";
-import { executeQuery } from "../utils/helperFunctions.js";
-import { accountQueries } from "../models/queryData.js";
+    type CurrentBalance,
+    type Expense,
+    type GeneratedTransaction,
+    type Income,
+    type Loan,
+    type Payroll,
+    type Transaction,
+    type Transfer,
+    type Wishlist,
+} from '../types/types.js';
+import { executeQuery } from '../utils/helperFunctions.js';
+import { accountQueries } from '../models/queryData.js';
 
-const fullyPaidBackDates: Record<number, string | undefined> = {}; // map of loan_id to fullyPaidBackDate
+const fullyPaidBackDates: Record<number, string | null> = {}; // map of loan_id to fullyPaidBackDate
 
 const generate = async (
     request: Request,
@@ -62,10 +66,11 @@ const generate = async (
                     date: new Date(transaction.date_created),
                     date_modified: new Date(transaction.date_modified),
                     amount: -transaction.transaction_amount,
-                    tax_rate: transaction.transaction_tax_rate,
+                    tax_rate: transaction.transaction_tax_rate ?? 0,
                     total_amount: -(
                         transaction.transaction_amount +
-                        transaction.transaction_amount * transaction.transaction_tax_rate
+                        transaction.transaction_amount *
+                            (transaction.transaction_tax_rate ?? 0)
                     ),
                 }),
             ),
@@ -167,7 +172,7 @@ const generate = async (
     request.loans
         .filter((lns) => lns.account_id === account_id)
         .forEach((account) => {
-            let loanResult: { fullyPaidBackDate?: string };
+            let loanResult: { fullyPaidBackDate?: string | null };
 
             account.loan.forEach((loan: Loan) => {
                 if (loan.frequency_type === 0) {
@@ -204,7 +209,13 @@ const generate = async (
                     );
                 }
 
-                fullyPaidBackDates[loan.loan_id] = loanResult.fullyPaidBackDate || null;
+                if (loan.loan_id !== undefined) {
+                    fullyPaidBackDates[loan.loan_id] =
+                        loanResult.fullyPaidBackDate !== null &&
+                        loanResult.fullyPaidBackDate !== undefined
+                            ? loanResult.fullyPaidBackDate
+                            : null;
+                }
             });
         });
 
@@ -270,7 +281,8 @@ const generate = async (
                 );
 
                 transactions.sort(
-                    (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime(),
+                    (a, b) =>
+                        new Date(a.date).getTime() - new Date(b.date).getTime(),
                 );
 
                 calculateBalances(
@@ -293,23 +305,31 @@ const generateTransactions = async (
     response: Response,
     next: NextFunction,
 ): Promise<void> => {
-    const account_id: number = parseInt(request.query.account_id as string);
+    const account_id: string = request.query.account_id as string;
     const currentBalance: any = request.currentBalance;
     const allTransactions: any[] = [];
     const transactions: GeneratedTransaction[] = [];
     const skippedTransactions: GeneratedTransaction[] = [];
 
-    if (!account_id) {
-        const accountResults = await executeQuery(accountQueries.getAccounts, []);
+    if (account_id === undefined || account_id === null) {
+        const accountResults = await executeQuery(
+            accountQueries.getAccounts,
+            [],
+        );
 
-        accountResults.forEach(async (account: Account) => {
-            const currentBalanceValue: number = currentBalance.find(
-                (balance: CurrentBalance) => balance.account_id === account.account_id,
-            ).account_balance;
+        for (const account of accountResults) {
+            const currentBalanceValue: number = parseFloat(
+                currentBalance
+                    .find(
+                        (balance: CurrentBalance) =>
+                            balance.account_id === account.account_id,
+                    )
+                    .account_balance.toFixed(2),
+            );
 
-            const employee_id = account.employee_id;
+            const employee_id = account.employee_id ?? 0;
 
-            generate(
+            await generate(
                 request,
                 response,
                 next,
@@ -325,24 +345,28 @@ const generateTransactions = async (
                 current_balance: currentBalanceValue,
                 transactions,
             });
-        });
+        }
     } else {
-        const currentBalanceValue: number = currentBalance.find(
-            (balance: CurrentBalance) => balance.account_id === account_id,
-        ).account_balance;
+        const currentBalanceValue: number = parseFloat(
+            currentBalance
+                .find(
+                    (balance: CurrentBalance) =>
+                        balance.account_id === parseInt(account_id),
+                )
+                .account_balance.toFixed(2),
+        );
 
-        // Fetch employee_id from account_id
         const employeeResults = await executeQuery(accountQueries.getAccount, [
             account_id,
         ]);
 
         const employee_id: number = employeeResults[0].employee_id;
 
-        generate(
+        await generate(
             request,
             response,
             next,
-            account_id,
+            parseInt(account_id),
             employee_id,
             transactions,
             skippedTransactions,
@@ -350,7 +374,7 @@ const generateTransactions = async (
         );
 
         allTransactions.push({
-            account_id,
+            account_id: parseInt(account_id),
             current_balance: currentBalanceValue,
             transactions,
         });

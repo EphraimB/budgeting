@@ -6,21 +6,20 @@ type MyQueryFunction = (sql: string, params: any[]) => Promise<{ rows: any[] }>;
 // Mocking db.js module
 jest.mock('../../config/db.js', () => {
     return {
-        query: jest.fn<MyQueryFunction>()
+        query: jest
+            .fn<MyQueryFunction>()
             .mockResolvedValueOnce({ rows: [{ id: 1, name: 'John Doe' }] }) // Success case
-            .mockRejectedValueOnce(new Error('Table does not exist')) // Failure case
+            .mockRejectedValueOnce(new Error('Table does not exist')), // Failure case
     };
 });
 
 // Mock request and response
-let mockRequest: any;
 let mockResponse: any;
 
 beforeEach(() => {
-    mockRequest = {};
     mockResponse = {
         status: jest.fn(() => mockResponse),
-        send: jest.fn()
+        send: jest.fn(),
     };
 });
 
@@ -39,8 +38,8 @@ describe('handleError function', () => {
             errors: {
                 msg: 'Test error message',
                 param: null,
-                location: 'query'
-            }
+                location: 'query',
+            },
         });
     });
 });
@@ -75,5 +74,39 @@ describe('executeQuery function', () => {
 
         await executeQuery(mockQuery, []);
         await expect(executeQuery(mockQuery, [])).rejects.toThrow(mockError);
+    });
+});
+
+describe('parseOrFallback function', () => {
+    it('should return the parsed input', async () => {
+        const { parseOrFallback } = await import('../../utils/helperFunctions');
+
+        const mockInput = '1';
+        const result = parseOrFallback(mockInput);
+        expect(result).toEqual(1);
+    });
+
+    it('should return null if the input is null', async () => {
+        const { parseOrFallback } = await import('../../utils/helperFunctions');
+
+        const mockInput = null;
+        const result = parseOrFallback(mockInput);
+        expect(result).toBeNull();
+    });
+
+    it('should return null if the input is undefined', async () => {
+        const { parseOrFallback } = await import('../../utils/helperFunctions');
+
+        const mockInput = undefined;
+        const result = parseOrFallback(mockInput);
+        expect(result).toBeNull();
+    });
+
+    it('should return null if the input is not a number', async () => {
+        const { parseOrFallback } = await import('../../utils/helperFunctions');
+
+        const mockInput = 'not a number';
+        const result = parseOrFallback(mockInput);
+        expect(result).toBeNull();
     });
 });

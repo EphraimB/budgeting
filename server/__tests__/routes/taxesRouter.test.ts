@@ -1,9 +1,15 @@
 import { jest } from '@jest/globals';
 import request from 'supertest';
-import express, { Express, Request, Response, NextFunction, Router } from 'express';
+import express, {
+    type Express,
+    type Request,
+    type Response,
+    type NextFunction,
+    type Router,
+} from 'express';
 
 /**
- * 
+ *
  * @returns {Promise<Express>} A promise that resolves to an Express app
  */
 const createApp = async (): Promise<Express> => {
@@ -13,17 +19,21 @@ const createApp = async (): Promise<Express> => {
     // Import the module that uses the mock
     const routerModule = await import('../../routes/taxesRouter');
     const taxesRouter: Router = routerModule.default;
-    app.use('/', taxesRouter as express.Router);
+    app.use('/', taxesRouter);
 
     return app;
 };
 
 beforeAll(() => {
     jest.mock('../../controllers/taxesController', () => ({
-        getTaxes: (req: Request, res: Response, next: NextFunction) => res.json({ message: 'success' }),
-        createTax: (req: Request, res: Response, next: NextFunction) => res.json({ message: 'success' }),
-        updateTax: (req: Request, res: Response, next: NextFunction) => res.json({ message: 'success' }),
-        deleteTax: (req: Request, res: Response, next: NextFunction) => res.json({ message: 'success' })
+        getTaxes: (req: Request, res: Response, next: NextFunction) =>
+            res.json({ message: 'success' }),
+        createTax: (req: Request, res: Response, next: NextFunction) =>
+            res.json({ message: 'success' }),
+        updateTax: (req: Request, res: Response, next: NextFunction) =>
+            res.json({ message: 'success' }),
+        deleteTax: (req: Request, res: Response, next: NextFunction) =>
+            res.json({ message: 'success' }),
     }));
 });
 
@@ -65,10 +75,10 @@ describe('GET / with id query', () => {
 describe('POST /', () => {
     it('responds with json', async () => {
         const newTax = {
-            rate: .08875,
+            rate: 0.08875,
             title: 'NYC sales tax',
             description: 'Sales tax for New York City',
-            type: 0
+            type: 0,
         };
 
         const response: request.Response = await request(app)
@@ -85,10 +95,10 @@ describe('POST /', () => {
 describe('PUT /:id', () => {
     it('responds with json', async () => {
         const updatedTax = {
-            rate: .08875,
+            rate: 0.08875,
             title: 'NYC sales tax',
             description: 'Sales tax for New York City',
-            type: 0
+            type: 0,
         };
 
         const response: request.Response = await request(app)

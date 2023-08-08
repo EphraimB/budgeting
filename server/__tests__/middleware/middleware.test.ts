@@ -1,7 +1,16 @@
 import { jest } from '@jest/globals';
-import { Response } from 'express';
-import { QueryResultRow } from 'pg';
-import { expenses, income, loans, payrolls, transactions, transfers, wishlists } from '../../models/mockData';
+import { parseOrFallback } from '../../utils/helperFunctions';
+import { type Response } from 'express';
+import { type QueryResultRow } from 'pg';
+import {
+    expenses,
+    income,
+    loans,
+    payrolls,
+    transactions,
+    transfers,
+    wishlists,
+} from '../../models/mockData';
 import MockDate from 'mockdate';
 
 // Mock request and response
@@ -14,7 +23,7 @@ beforeAll(() => {
     MockDate.set('2020-01-01');
 
     // Create a spy on console.error before all tests
-    consoleSpy = jest.spyOn(console, 'error').mockImplementation(() => { });
+    consoleSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
 });
 
 beforeEach(() => {
@@ -22,12 +31,12 @@ beforeEach(() => {
     mockResponse = {
         status: jest.fn().mockReturnThis(),
         json: jest.fn(),
-        send: jest.fn()
+        send: jest.fn(),
     };
     mockResponse = {
         status: jest.fn().mockReturnThis(),
         json: jest.fn(),
-        send: jest.fn()
+        send: jest.fn(),
     };
     mockNext = jest.fn();
 });
@@ -43,30 +52,50 @@ afterAll(() => {
 });
 
 /**
- * 
+ *
  * @param getAccountsValue - The value to be returned by the executeQuery mock function
  * @param getTransactionsDateMiddlewareValue - The value to be returned by the executeQuery mock function
  * @param [errorMessage] - The error message to be passed to the handleError mock function
  * @param [getEmployeeValue] - The value to be returned by the executeQuery mock function
  * @returns - A mock module with the executeQuery and handleError functions
  */
-const mockModule = (getAccountsValue: QueryResultRow[], getTransactionsDateMiddlewareValue: QueryResultRow[], errorMessage?: string | null, getEmployeeValue?: QueryResultRow[], getTaxRate?: QueryResultRow[]) => {
+const mockModule = (
+    getAccountsValue: QueryResultRow[],
+    getTransactionsDateMiddlewareValue: QueryResultRow[],
+    errorMessage?: string | null,
+    getEmployeeValue?: QueryResultRow[],
+    getTaxRate?: QueryResultRow[],
+) => {
     const executeQuery = jest.fn();
 
-    if (errorMessage) {
+    if (errorMessage !== null && errorMessage !== undefined) {
         executeQuery.mockImplementation(() => {
             throw new Error(errorMessage);
         });
-    } else if (getEmployeeValue) {
+    } else if (getEmployeeValue != null) {
         executeQuery
-            .mockImplementationOnce(() => Promise.resolve(getAccountsValue))
-            .mockImplementationOnce(() => Promise.resolve(getEmployeeValue))
-            .mockImplementationOnce(() => Promise.resolve(getTransactionsDateMiddlewareValue))
-            .mockImplementationOnce(() => Promise.resolve(getTaxRate));
+            .mockImplementationOnce(
+                async () => await Promise.resolve(getAccountsValue),
+            )
+            .mockImplementationOnce(
+                async () => await Promise.resolve(getEmployeeValue),
+            )
+            .mockImplementationOnce(
+                async () =>
+                    await Promise.resolve(getTransactionsDateMiddlewareValue),
+            )
+            .mockImplementationOnce(
+                async () => await Promise.resolve(getTaxRate),
+            );
     } else {
         executeQuery
-            .mockImplementationOnce(() => Promise.resolve(getAccountsValue))
-            .mockImplementationOnce(() => Promise.resolve(getTransactionsDateMiddlewareValue));
+            .mockImplementationOnce(
+                async () => await Promise.resolve(getAccountsValue),
+            )
+            .mockImplementationOnce(
+                async () =>
+                    await Promise.resolve(getTransactionsDateMiddlewareValue),
+            );
     }
 
     jest.mock('../../utils/helperFunctions.js', () => ({
@@ -74,6 +103,7 @@ const mockModule = (getAccountsValue: QueryResultRow[], getTransactionsDateMiddl
         handleError: jest.fn((res: Response, message: string) => {
             res.status(400).json({ message });
         }),
+        parseOrFallback,
     }));
 };
 
@@ -120,7 +150,9 @@ describe('getTransactionsByAccount', () => {
         const mockAccount = [{ account_id: 1 }];
         mockModule(mockAccount, transactions);
 
-        const { getTransactionsByAccount } = await import('../../middleware/middleware.js');
+        const { getTransactionsByAccount } = await import(
+            '../../middleware/middleware.js'
+        );
 
         mockRequest.query = { account_id: 1, from_date: '2023-06-01' };
 
@@ -128,10 +160,10 @@ describe('getTransactionsByAccount', () => {
 
         const transactionsReturn = {
             account_id: 1,
-            transactions: transactions.map(transaction => ({
+            transactions: transactions.map((transaction) => ({
                 ...transaction,
-                transaction_amount: transaction.transaction_amount
-            }))
+                transaction_amount: transaction.transaction_amount,
+            })),
         };
 
         expect(mockRequest.transaction).toEqual([transactionsReturn]);
@@ -144,14 +176,18 @@ describe('getTransactionsByAccount', () => {
         const error = new Error(errorMessage);
         mockModule([], [], errorMessage);
 
-        const { getTransactionsByAccount } = await import('../../middleware/middleware.js');
+        const { getTransactionsByAccount } = await import(
+            '../../middleware/middleware.js'
+        );
 
         mockRequest.query = { account_id: '1', from_date: '2020-01-01' };
 
         await getTransactionsByAccount(mockRequest, mockResponse, mockNext);
 
         expect(mockResponse.status).toHaveBeenCalledWith(400);
-        expect(mockResponse.json).toHaveBeenCalledWith({ message: 'Error getting transactions' });
+        expect(mockResponse.json).toHaveBeenCalledWith({
+            message: 'Error getting transactions',
+        });
 
         // Check that the error was logged
         expect(consoleSpy).toHaveBeenCalledWith(error);
@@ -160,20 +196,26 @@ describe('getTransactionsByAccount', () => {
     it('should return a 404 when account_id is not found', async () => {
         mockModule([], []);
 
-        const { getTransactionsByAccount } = await import('../../middleware/middleware.js');
+        const { getTransactionsByAccount } = await import(
+            '../../middleware/middleware.js'
+        );
 
         mockRequest.query = { account_id: '5', from_date: '2020-01-01' };
 
         await getTransactionsByAccount(mockRequest, mockResponse, mockNext);
 
         expect(mockResponse.status).toHaveBeenCalledWith(404);
-        expect(mockResponse.send).toHaveBeenCalledWith('Account with ID 5 not found');
+        expect(mockResponse.send).toHaveBeenCalledWith(
+            'Account with ID 5 not found',
+        );
     });
 
     it('should fetch all accounts if account_id is not provided', async () => {
         mockModule([{ account_id: 1 }], transactions);
 
-        const { getTransactionsByAccount } = await import('../../middleware/middleware.js');
+        const { getTransactionsByAccount } = await import(
+            '../../middleware/middleware.js'
+        );
 
         mockRequest.query = { account_id: null, from_date: '2020-01-01' };
 
@@ -182,11 +224,13 @@ describe('getTransactionsByAccount', () => {
         const transactionsReturn = [
             {
                 account_id: 1,
-                transactions: transactions.filter(t => t.account_id === 1).map(transaction => ({
-                    ...transaction,
-                    transaction_amount: transaction.transaction_amount
-                }))
-            }
+                transactions: transactions
+                    .filter((t) => t.account_id === 1)
+                    .map((transaction) => ({
+                        ...transaction,
+                        transaction_amount: transaction.transaction_amount,
+                    })),
+            },
         ];
 
         expect(mockRequest.transaction).toEqual(transactionsReturn);
@@ -198,7 +242,9 @@ describe('getExpensesByAccount', () => {
     it('gets expenses for a given account and date', async () => {
         mockModule([{ tax_rate: 0 }], expenses, null, [{ account_id: 1 }]);
 
-        const { getExpensesByAccount } = await import('../../middleware/middleware.js');
+        const { getExpensesByAccount } = await import(
+            '../../middleware/middleware.js'
+        );
 
         mockRequest.query = { account_id: '1', from_date: '2023-06-01' };
 
@@ -206,12 +252,12 @@ describe('getExpensesByAccount', () => {
 
         const expensesReturn = {
             account_id: 1,
-            expenses: expenses.map(expense => ({
+            expenses: expenses.map((expense) => ({
                 ...expense,
                 amount: expense.expense_amount,
                 tax_rate: 0,
-                expense_amount: expense.expense_amount
-            }))
+                expense_amount: expense.expense_amount,
+            })),
         };
 
         expect(mockRequest.expenses).toEqual([expensesReturn]);
@@ -224,14 +270,18 @@ describe('getExpensesByAccount', () => {
         const error = new Error(errorMessage);
         mockModule([], [], errorMessage);
 
-        const { getExpensesByAccount } = await import('../../middleware/middleware.js');
+        const { getExpensesByAccount } = await import(
+            '../../middleware/middleware.js'
+        );
 
         mockRequest.query = { account_id: '1', from_date: '2023-06-01' };
 
         await getExpensesByAccount(mockRequest, mockResponse, mockNext);
 
         expect(mockResponse.status).toHaveBeenCalledWith(400);
-        expect(mockResponse.json).toHaveBeenCalledWith({ message: 'Error getting expenses' });
+        expect(mockResponse.json).toHaveBeenCalledWith({
+            message: 'Error getting expenses',
+        });
 
         // Check that the error was logged
         expect(consoleSpy).toHaveBeenCalledWith(error);
@@ -240,20 +290,26 @@ describe('getExpensesByAccount', () => {
     it('should return a 404 when account_id is not found', async () => {
         mockModule([], []);
 
-        const { getExpensesByAccount } = await import('../../middleware/middleware.js');
+        const { getExpensesByAccount } = await import(
+            '../../middleware/middleware.js'
+        );
 
         mockRequest.query = { account_id: '5', from_date: '2023-06-01' };
 
         await getExpensesByAccount(mockRequest, mockResponse, mockNext);
 
         expect(mockResponse.status).toHaveBeenCalledWith(404);
-        expect(mockResponse.send).toHaveBeenCalledWith('Account with ID 5 not found');
+        expect(mockResponse.send).toHaveBeenCalledWith(
+            'Account with ID 5 not found',
+        );
     });
 
     it('should fetch all accounts if account_id is not provided', async () => {
         mockModule([{ tax_rate: 0 }], expenses, null, [{ account_id: 1 }]);
 
-        const { getExpensesByAccount } = await import('../../middleware/middleware.js');
+        const { getExpensesByAccount } = await import(
+            '../../middleware/middleware.js'
+        );
 
         mockRequest.query = { account_id: null, from_date: '2023-06-01' };
 
@@ -262,12 +318,14 @@ describe('getExpensesByAccount', () => {
         const expensesReturn = [
             {
                 account_id: 1,
-                expenses: expenses.filter(e => e.account_id === 1).map(expense => ({
-                    ...expense,
-                    amount: expense.expense_amount,
-                    tax_rate: 0
-                }))
-            }
+                expenses: expenses
+                    .filter((e) => e.account_id === 1)
+                    .map((expense) => ({
+                        ...expense,
+                        amount: expense.expense_amount,
+                        tax_rate: 0,
+                    })),
+            },
         ];
 
         expect(mockRequest.expenses).toEqual(expensesReturn);
@@ -279,7 +337,9 @@ describe('getLoansByAccount', () => {
     it('gets loans for a given account and date', async () => {
         mockModule([{ account_id: 1 }], loans);
 
-        const { getLoansByAccount } = await import('../../middleware/middleware.js');
+        const { getLoansByAccount } = await import(
+            '../../middleware/middleware.js'
+        );
 
         mockRequest.query = { account_id: '1', from_date: '2023-06-01' };
 
@@ -287,10 +347,30 @@ describe('getLoansByAccount', () => {
 
         const loansReturn = {
             account_id: 1,
-            loan: loans.map(loan => ({
-                ...loan,
-                amount: loan.loan_plan_amount
-            }))
+            loan: loans.map((loan) => ({
+                loan_id: loan.loan_id,
+                account_id: loan.account_id,
+                tax_id: loan.tax_id,
+                loan_amount: loan.loan_amount,
+                loan_plan_amount: loan.loan_plan_amount,
+                loan_recipient: loan.loan_recipient,
+                loan_title: loan.loan_title,
+                loan_description: loan.loan_description,
+                frequency_type: loan.frequency_type,
+                frequency_type_variable: loan.frequency_type_variable,
+                frequency_month_of_year: loan.frequency_month_of_year,
+                frequency_day_of_month: loan.frequency_day_of_month,
+                frequency_day_of_week: loan.frequency_day_of_week,
+                frequency_week_of_month: loan.frequency_week_of_month,
+                loan_interest_frequency_type: loan.loan_interest_frequency_type,
+                loan_interest_rate: loan.loan_interest_rate,
+                loan_subsidized: loan.loan_subsidized,
+                loan_begin_date: loan.loan_begin_date,
+                loan_end_date: loan.loan_end_date,
+                date_created: loan.date_created,
+                date_modified: loan.date_modified,
+                amount: loan.loan_plan_amount,
+            })),
         };
 
         expect(mockRequest.loans).toEqual([loansReturn]);
@@ -303,14 +383,18 @@ describe('getLoansByAccount', () => {
         const error = new Error(errorMessage);
         mockModule([], [], errorMessage);
 
-        const { getLoansByAccount } = await import('../../middleware/middleware.js');
+        const { getLoansByAccount } = await import(
+            '../../middleware/middleware.js'
+        );
 
         mockRequest.query = { account_id: '1', from_date: '2023-06-01' };
 
         await getLoansByAccount(mockRequest, mockResponse, mockNext);
 
         expect(mockResponse.status).toHaveBeenCalledWith(400);
-        expect(mockResponse.json).toHaveBeenCalledWith({ message: 'Error getting loans' });
+        expect(mockResponse.json).toHaveBeenCalledWith({
+            message: 'Error getting loans',
+        });
 
         // Check that the error was logged
         expect(consoleSpy).toHaveBeenCalledWith(error);
@@ -319,20 +403,26 @@ describe('getLoansByAccount', () => {
     it('should return a 404 when account_id is not found', async () => {
         mockModule([], []);
 
-        const { getLoansByAccount } = await import('../../middleware/middleware.js');
+        const { getLoansByAccount } = await import(
+            '../../middleware/middleware.js'
+        );
 
         mockRequest.query = { account_id: '5', from_date: '2023-06-01' };
 
         await getLoansByAccount(mockRequest, mockResponse, mockNext);
 
         expect(mockResponse.status).toHaveBeenCalledWith(404);
-        expect(mockResponse.send).toHaveBeenCalledWith('Account with ID 5 not found');
+        expect(mockResponse.send).toHaveBeenCalledWith(
+            'Account with ID 5 not found',
+        );
     });
 
     it('should fetch all accounts if account_id is not provided', async () => {
         mockModule([{ account_id: 1 }], loans);
 
-        const { getLoansByAccount } = await import('../../middleware/middleware.js');
+        const { getLoansByAccount } = await import(
+            '../../middleware/middleware.js'
+        );
 
         mockRequest.query = { account_id: null, from_date: '2023-06-01' };
 
@@ -341,11 +431,34 @@ describe('getLoansByAccount', () => {
         const loansReturn = [
             {
                 account_id: 1,
-                loan: loans.filter(l => l.account_id === 1).map(loan => ({
-                    ...loan,
-                    amount: loan.loan_plan_amount
-                }))
-            }
+                loan: loans
+                    .filter((l) => l.account_id === 1)
+                    .map((loan) => ({
+                        loan_id: loan.loan_id,
+                        account_id: loan.account_id,
+                        tax_id: loan.tax_id,
+                        loan_amount: loan.loan_amount,
+                        loan_plan_amount: loan.loan_plan_amount,
+                        loan_recipient: loan.loan_recipient,
+                        loan_title: loan.loan_title,
+                        loan_description: loan.loan_description,
+                        frequency_type: loan.frequency_type,
+                        frequency_type_variable: loan.frequency_type_variable,
+                        frequency_month_of_year: loan.frequency_month_of_year,
+                        frequency_day_of_month: loan.frequency_day_of_month,
+                        frequency_day_of_week: loan.frequency_day_of_week,
+                        frequency_week_of_month: loan.frequency_week_of_month,
+                        loan_interest_frequency_type:
+                            loan.loan_interest_frequency_type,
+                        loan_interest_rate: loan.loan_interest_rate,
+                        loan_subsidized: loan.loan_subsidized,
+                        loan_begin_date: loan.loan_begin_date,
+                        loan_end_date: loan.loan_end_date,
+                        date_created: loan.date_created,
+                        date_modified: loan.date_modified,
+                        amount: loan.loan_plan_amount,
+                    })),
+            },
         ];
 
         expect(mockRequest.loans).toEqual(loansReturn);
@@ -357,7 +470,9 @@ describe('getPayrollsMiddleware', () => {
     it('gets payrolls for a given account and date', async () => {
         mockModule([{ account_id: 1 }], payrolls, null, [{ employee_id: 1 }]);
 
-        const { getPayrollsMiddleware } = await import('../../middleware/middleware.js');
+        const { getPayrollsMiddleware } = await import(
+            '../../middleware/middleware.js'
+        );
 
         mockRequest.query = { account_id: '1', from_date: '2023-06-01' };
 
@@ -365,12 +480,11 @@ describe('getPayrollsMiddleware', () => {
 
         const returnPayrolls = {
             employee_id: 1,
-            payroll: payrolls.map(payroll => ({
+            payroll: payrolls.map((payroll) => ({
                 ...payroll,
-                net_pay: payroll.net_pay
-            }))
+                net_pay: payroll.net_pay,
+            })),
         };
-
 
         expect(mockRequest.payrolls).toEqual([returnPayrolls]);
         expect(mockNext).toHaveBeenCalled();
@@ -382,14 +496,18 @@ describe('getPayrollsMiddleware', () => {
         const error = new Error(errorMessage);
         mockModule([], [], errorMessage);
 
-        const { getPayrollsMiddleware } = await import('../../middleware/middleware.js');
+        const { getPayrollsMiddleware } = await import(
+            '../../middleware/middleware.js'
+        );
 
         mockRequest.query = { account_id: '1', from_date: '2023-06-01' };
 
         await getPayrollsMiddleware(mockRequest, mockResponse, mockNext);
 
         expect(mockResponse.status).toHaveBeenCalledWith(400);
-        expect(mockResponse.json).toHaveBeenCalledWith({ message: 'Error getting payrolls' });
+        expect(mockResponse.json).toHaveBeenCalledWith({
+            message: 'Error getting payrolls',
+        });
 
         // Check that the error was logged
         expect(consoleSpy).toHaveBeenCalledWith(error);
@@ -398,20 +516,26 @@ describe('getPayrollsMiddleware', () => {
     it('should return a 404 when account_id is not found', async () => {
         mockModule([], []);
 
-        const { getPayrollsMiddleware } = await import('../../middleware/middleware.js');
+        const { getPayrollsMiddleware } = await import(
+            '../../middleware/middleware.js'
+        );
 
         mockRequest.query = { account_id: '5', from_date: '2023-06-01' };
 
         await getPayrollsMiddleware(mockRequest, mockResponse, mockNext);
 
         expect(mockResponse.status).toHaveBeenCalledWith(404);
-        expect(mockResponse.send).toHaveBeenCalledWith('Account with ID 5 not found');
+        expect(mockResponse.send).toHaveBeenCalledWith(
+            'Account with ID 5 not found',
+        );
     });
 
     it('should fetch all accounts if account_id is not provided', async () => {
         mockModule([{ account_id: 1, employee_id: 1 }], payrolls);
 
-        const { getPayrollsMiddleware } = await import('../../middleware/middleware.js');
+        const { getPayrollsMiddleware } = await import(
+            '../../middleware/middleware.js'
+        );
 
         mockRequest.query = { account_id: null, from_date: '2023-06-01' };
 
@@ -420,11 +544,11 @@ describe('getPayrollsMiddleware', () => {
         const returnPayrolls = [
             {
                 employee_id: 1,
-                payroll: payrolls.map(payroll => ({
+                payroll: payrolls.map((payroll) => ({
                     ...payroll,
-                    net_pay: payroll.net_pay
-                }))
-            }
+                    net_pay: payroll.net_pay,
+                })),
+            },
         ];
 
         expect(mockRequest.payrolls).toEqual(returnPayrolls);
@@ -436,22 +560,24 @@ describe('getWishlistsByAccount', () => {
     it('gets wishlists for a given account and date', async () => {
         mockModule([{ tax_rate: 0 }], wishlists, null, [{ account_id: 1 }]);
 
-        const { getWishlistsByAccount } = await import('../../middleware/middleware.js');
+        const { getWishlistsByAccount } = await import(
+            '../../middleware/middleware.js'
+        );
 
         mockRequest.query = { account_id: '1', from_date: '2023-06-01' };
 
         await getWishlistsByAccount(mockRequest, mockResponse, mockNext);
 
-        const wishlistsReturn = wishlists.map(wishlist => ({
+        const wishlistsReturn = wishlists.map((wishlist) => ({
             account_id: wishlist.account_id,
             wishlist: [
                 {
                     ...wishlist,
                     amount: wishlist.wishlist_amount,
                     tax_rate: 0,
-                    wishlist_amount: wishlist.wishlist_amount
-                }
-            ]
+                    wishlist_amount: wishlist.wishlist_amount,
+                },
+            ],
         }));
 
         expect(mockRequest.wishlists).toEqual(wishlistsReturn);
@@ -464,14 +590,18 @@ describe('getWishlistsByAccount', () => {
         const error = new Error(errorMessage);
         mockModule([], [], errorMessage);
 
-        const { getWishlistsByAccount } = await import('../../middleware/middleware.js');
+        const { getWishlistsByAccount } = await import(
+            '../../middleware/middleware.js'
+        );
 
         mockRequest.query = { account_id: '1', from_date: '2023-06-01' };
 
         await getWishlistsByAccount(mockRequest, mockResponse, mockNext);
 
         expect(mockResponse.status).toHaveBeenCalledWith(400);
-        expect(mockResponse.json).toHaveBeenCalledWith({ message: 'Error getting wishlists' });
+        expect(mockResponse.json).toHaveBeenCalledWith({
+            message: 'Error getting wishlists',
+        });
 
         // Check that the error was logged
         expect(consoleSpy).toHaveBeenCalledWith(error);
@@ -480,35 +610,41 @@ describe('getWishlistsByAccount', () => {
     it('should return a 404 when account_id is not found', async () => {
         mockModule([], []);
 
-        const { getWishlistsByAccount } = await import('../../middleware/middleware.js');
+        const { getWishlistsByAccount } = await import(
+            '../../middleware/middleware.js'
+        );
 
         mockRequest.query = { account_id: '5', from_date: '2023-06-01' };
 
         await getWishlistsByAccount(mockRequest, mockResponse, mockNext);
 
         expect(mockResponse.status).toHaveBeenCalledWith(404);
-        expect(mockResponse.send).toHaveBeenCalledWith('Account with ID 5 not found');
+        expect(mockResponse.send).toHaveBeenCalledWith(
+            'Account with ID 5 not found',
+        );
     });
 
     it('should fetch all accounts if account_id is not provided', async () => {
         mockModule([{ tax_rate: 0 }], wishlists, null, [{ account_id: 1 }]);
 
-        const { getWishlistsByAccount } = await import('../../middleware/middleware.js');
+        const { getWishlistsByAccount } = await import(
+            '../../middleware/middleware.js'
+        );
 
         mockRequest.query = { account_id: null, from_date: '2023-06-01' };
 
         await getWishlistsByAccount(mockRequest, mockResponse, mockNext);
 
-        const wishlistsReturn = wishlists.map(wishlist => ({
+        const wishlistsReturn = wishlists.map((wishlist) => ({
             account_id: wishlist.account_id,
             wishlist: [
                 {
                     ...wishlist,
                     amount: wishlist.wishlist_amount,
                     tax_rate: 0,
-                    wishlist_amount: wishlist.wishlist_amount
-                }
-            ]
+                    wishlist_amount: wishlist.wishlist_amount,
+                },
+            ],
         }));
 
         expect(mockRequest.wishlists).toEqual(wishlistsReturn);
@@ -520,7 +656,9 @@ describe('getTransfersByAccount', () => {
     it('gets transfers for a given account and date', async () => {
         mockModule([{ account_id: 1 }], transfers);
 
-        const { getTransfersByAccount } = await import('../../middleware/middleware.js');
+        const { getTransfersByAccount } = await import(
+            '../../middleware/middleware.js'
+        );
 
         mockRequest.query = { account_id: '1', from_date: '2023-06-01' };
 
@@ -529,11 +667,11 @@ describe('getTransfersByAccount', () => {
         const transfersReturn = [
             {
                 account_id: 1,
-                transfer: transfers.map(transfer => ({
+                transfer: transfers.map((transfer) => ({
                     ...transfer,
-                    amount: transfer.transfer_amount
-                }))
-            }
+                    amount: transfer.transfer_amount,
+                })),
+            },
         ];
 
         expect(mockRequest.transfers).toEqual(transfersReturn);
@@ -546,14 +684,18 @@ describe('getTransfersByAccount', () => {
         const error = new Error(errorMessage);
         mockModule([], [], errorMessage);
 
-        const { getTransfersByAccount } = await import('../../middleware/middleware.js');
+        const { getTransfersByAccount } = await import(
+            '../../middleware/middleware.js'
+        );
 
         mockRequest.query = { account_id: '1', from_date: '2023-06-01' };
 
         await getTransfersByAccount(mockRequest, mockResponse, mockNext);
 
         expect(mockResponse.status).toHaveBeenCalledWith(400);
-        expect(mockResponse.json).toHaveBeenCalledWith({ message: 'Error getting transfers' });
+        expect(mockResponse.json).toHaveBeenCalledWith({
+            message: 'Error getting transfers',
+        });
 
         // Check that the error was logged
         expect(consoleSpy).toHaveBeenCalledWith(error);
@@ -562,20 +704,26 @@ describe('getTransfersByAccount', () => {
     it('should return a 404 when account_id is not found', async () => {
         mockModule([], []);
 
-        const { getTransfersByAccount } = await import('../../middleware/middleware.js');
+        const { getTransfersByAccount } = await import(
+            '../../middleware/middleware.js'
+        );
 
         mockRequest.query = { account_id: '5', from_date: '2023-06-01' };
 
         await getTransfersByAccount(mockRequest, mockResponse, mockNext);
 
         expect(mockResponse.status).toHaveBeenCalledWith(404);
-        expect(mockResponse.send).toHaveBeenCalledWith('Account with ID 5 not found');
+        expect(mockResponse.send).toHaveBeenCalledWith(
+            'Account with ID 5 not found',
+        );
     });
 
     it('should fetch all accounts if account_id is not provided', async () => {
         mockModule([{ account_id: 1 }], transfers);
 
-        const { getTransfersByAccount } = await import('../../middleware/middleware.js');
+        const { getTransfersByAccount } = await import(
+            '../../middleware/middleware.js'
+        );
 
         mockRequest.query = { account_id: null, from_date: '2023-06-01' };
 
@@ -584,11 +732,11 @@ describe('getTransfersByAccount', () => {
         const transfersReturn = [
             {
                 account_id: 1,
-                transfer: transfers.map(transfer => ({
+                transfer: transfers.map((transfer) => ({
                     ...transfer,
-                    amount: transfer.transfer_amount
-                }))
-            }
+                    amount: transfer.transfer_amount,
+                })),
+            },
         ];
 
         expect(mockRequest.transfers).toEqual(transfersReturn);
@@ -597,21 +745,24 @@ describe('getTransfersByAccount', () => {
 });
 
 describe('getCurrentBalance', () => {
-
     it('gets current balance for a given account and date', async () => {
         const mockCurrentBalance: any[] = [
-            { id: 1, account_id: 1, account_balance: 100, date: '2023-06-01' }
+            { id: 1, account_id: 1, account_balance: 100, date: '2023-06-01' },
         ];
 
         mockModule([{ account_id: 1 }], mockCurrentBalance);
 
-        const { getCurrentBalance } = await import('../../middleware/middleware.js');
+        const { getCurrentBalance } = await import(
+            '../../middleware/middleware.js'
+        );
 
         mockRequest.query = { account_id: '1', from_date: '2023-06-01' };
 
         await getCurrentBalance(mockRequest, mockResponse, mockNext);
 
-        expect(mockRequest.currentBalance).toEqual([{ account_id: 1, account_balance: 100 }]);
+        expect(mockRequest.currentBalance).toEqual([
+            { account_id: 1, account_balance: 100 },
+        ]);
         expect(mockNext).toHaveBeenCalled();
     });
 
@@ -621,14 +772,18 @@ describe('getCurrentBalance', () => {
         const error = new Error(errorMessage);
         mockModule([], [], errorMessage);
 
-        const { getCurrentBalance } = await import('../../middleware/middleware.js');
+        const { getCurrentBalance } = await import(
+            '../../middleware/middleware.js'
+        );
 
         mockRequest.query = { account_id: '1', from_date: '2023-06-01' };
 
         await getCurrentBalance(mockRequest, mockResponse, mockNext);
 
         expect(mockResponse.status).toHaveBeenCalledWith(400);
-        expect(mockResponse.json).toHaveBeenCalledWith({ message: 'Error getting current balance' });
+        expect(mockResponse.json).toHaveBeenCalledWith({
+            message: 'Error getting current balance',
+        });
 
         // Check that the error was logged
         expect(consoleSpy).toHaveBeenCalledWith(error);
@@ -637,30 +792,38 @@ describe('getCurrentBalance', () => {
     it('should return a 404 when account_id is not found', async () => {
         mockModule([], []);
 
-        const { getCurrentBalance } = await import('../../middleware/middleware.js');
+        const { getCurrentBalance } = await import(
+            '../../middleware/middleware.js'
+        );
 
         mockRequest.query = { account_id: '5', from_date: '2023-06-01' };
 
         await getCurrentBalance(mockRequest, mockResponse, mockNext);
 
         expect(mockResponse.status).toHaveBeenCalledWith(404);
-        expect(mockResponse.send).toHaveBeenCalledWith('Account with ID 5 not found');
+        expect(mockResponse.send).toHaveBeenCalledWith(
+            'Account with ID 5 not found',
+        );
     });
 
     it('should fetch all accounts if account_id is not provided', async () => {
         const mockCurrentBalance: any[] = [
-            { id: 1, account_id: 1, account_balance: 100, date: '2023-06-01' }
+            { id: 1, account_id: 1, account_balance: 100, date: '2023-06-01' },
         ];
 
         mockModule([{ account_id: 1 }], mockCurrentBalance);
 
-        const { getCurrentBalance } = await import('../../middleware/middleware.js');
+        const { getCurrentBalance } = await import(
+            '../../middleware/middleware.js'
+        );
 
         mockRequest.query = { account_id: null, from_date: '2023-06-01' };
 
         await getCurrentBalance(mockRequest, mockResponse, mockNext);
 
-        expect(mockRequest.currentBalance).toEqual([{ account_id: 1, account_balance: 100 }]);
+        expect(mockRequest.currentBalance).toEqual([
+            { account_id: 1, account_balance: 100 },
+        ]);
         expect(mockNext).toHaveBeenCalled();
     });
 });
@@ -668,7 +831,9 @@ describe('getCurrentBalance', () => {
 describe('updateWislistCron', () => {
     it('updates wishlist cron job', async () => {
         mockModule(wishlists, [{ tax_rate: 1 }], null, []);
-        const { updateWishlistCron } = await import('../../middleware/middleware.js');
+        const { updateWishlistCron } = await import(
+            '../../middleware/middleware.js'
+        );
 
         mockRequest.transactions = [
             {
@@ -681,10 +846,10 @@ describe('updateWislistCron', () => {
                         total_amount: 100,
                         date: '2023-06-01',
                         title: 'Test',
-                        description: 'Test'
-                    }
-                ]
-            }
+                        description: 'Test',
+                    },
+                ],
+            },
         ];
 
         await updateWishlistCron(mockRequest, mockResponse, mockNext);
@@ -698,12 +863,16 @@ describe('updateWislistCron', () => {
         const error = new Error(errorMessage);
         mockModule([], [], errorMessage);
 
-        const { updateWishlistCron } = await import('../../middleware/middleware.js');
+        const { updateWishlistCron } = await import(
+            '../../middleware/middleware.js'
+        );
 
         await updateWishlistCron(mockRequest, mockResponse, mockNext);
 
         expect(mockResponse.status).toHaveBeenCalledWith(400);
-        expect(mockResponse.json).toHaveBeenCalledWith({ message: 'Error updating cron tab' });
+        expect(mockResponse.json).toHaveBeenCalledWith({
+            message: 'Error updating cron tab',
+        });
 
         // Check that the error was logged
         expect(consoleSpy).toHaveBeenCalledWith(error);
@@ -714,7 +883,9 @@ describe('getIncomeByAccount', () => {
     it('gets income for a given account and date', async () => {
         mockModule([], income, undefined, [{ account_id: 1 }]);
 
-        const { getIncomeByAccount } = await import('../../middleware/middleware.js');
+        const { getIncomeByAccount } = await import(
+            '../../middleware/middleware.js'
+        );
 
         mockRequest.query = { account_id: '1', to_date: '2023-06-01' };
 
@@ -723,12 +894,12 @@ describe('getIncomeByAccount', () => {
         const incomeReturn = [
             {
                 account_id: 1,
-                income: income.map(income => ({
+                income: income.map((income) => ({
                     ...income,
                     amount: income.income_amount,
-                    tax_rate: 0
-                }))
-            }
+                    tax_rate: 0,
+                })),
+            },
         ];
 
         expect(mockRequest.income).toEqual(incomeReturn);
@@ -738,20 +909,26 @@ describe('getIncomeByAccount', () => {
     it('handles error if there is one', async () => {
         mockModule([], [], 'Fake error', [{ account_id: 1 }]);
 
-        const { getIncomeByAccount } = await import('../../middleware/middleware.js');
+        const { getIncomeByAccount } = await import(
+            '../../middleware/middleware.js'
+        );
 
         mockRequest.query = { account_id: '1', to_date: '2023-06-01' };
 
         await getIncomeByAccount(mockRequest, mockResponse, mockNext);
 
         expect(mockResponse.status).toHaveBeenCalledWith(400);
-        expect(mockResponse.json).toHaveBeenCalledWith({ message: 'Error getting income' });
+        expect(mockResponse.json).toHaveBeenCalledWith({
+            message: 'Error getting income',
+        });
     });
 
     it('should fetch accounts if account_id is not provided', async () => {
         mockModule([], income, undefined, [{ account_id: 1 }]);
 
-        const { getIncomeByAccount } = await import('../../middleware/middleware.js');
+        const { getIncomeByAccount } = await import(
+            '../../middleware/middleware.js'
+        );
 
         mockRequest.query = { account_id: null, to_date: '2023-06-01' };
 
@@ -760,12 +937,12 @@ describe('getIncomeByAccount', () => {
         const incomeReturn = [
             {
                 account_id: 1,
-                income: income.map(income => ({
+                income: income.map((income) => ({
                     ...income,
                     amount: income.income_amount,
-                    tax_rate: 0
-                }))
-            }
+                    tax_rate: 0,
+                })),
+            },
         ];
 
         expect(mockRequest.income).toEqual(incomeReturn);

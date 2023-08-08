@@ -1,4 +1,4 @@
-import { type Income, type GeneratedTransaction } from "../types/types";
+import { type Income, type GeneratedTransaction } from '../types/types';
 
 type GenerateDateFunction = (currentDate: Date, income: Income) => Date;
 
@@ -33,7 +33,7 @@ const generateIncome = (
         income.frequency_day_of_week !== null &&
         income.frequency_day_of_week !== undefined
     ) {
-        let newDay;
+        let newDay: number = incomeDate.getDate();
 
         if (
             income.frequency_day_of_week !== null &&
@@ -65,9 +65,9 @@ const generateIncome = (
 
     while (incomeDate <= toDate) {
         const initialAmount = income.income_amount;
-        const taxRate = income.tax_rate;
+        const taxRate = income.tax_rate ?? 0;
 
-        const taxAmount = initialAmount + (initialAmount * taxRate);
+        const taxAmount = initialAmount + initialAmount * taxRate;
 
         const newTransaction: GeneratedTransaction = {
             income_id: income.income_id,
@@ -76,7 +76,7 @@ const generateIncome = (
             date: new Date(incomeDate),
             amount: initialAmount,
             tax_rate: taxRate,
-            total_amount: initialAmount + taxAmount
+            total_amount: initialAmount + taxAmount,
         };
 
         if (incomeDate > new Date()) {
@@ -109,7 +109,13 @@ export const generateDailyIncome = (
 ): void => {
     const generateDateFn = (currentDate: Date, income: Income): Date => {
         const newDate = currentDate;
-        newDate.setDate(newDate.getDate() + (income.frequency_type_variable || 1));
+        newDate.setDate(
+            newDate.getDate() +
+                (income.frequency_type_variable !== null &&
+                income.frequency_type_variable !== undefined
+                    ? income.frequency_type_variable
+                    : 1),
+        );
         return newDate;
     };
 
@@ -146,22 +152,26 @@ export const generateMonthlyIncome = (
         // advance by number of months specified in frequency_type_variable or by 1 month if not set
         incomeDate.setMonth(
             incomeDate.getMonth() +
-            monthsIncremented +
-            (income.frequency_type_variable || 1),
+                monthsIncremented +
+                (income.frequency_type_variable !== null &&
+                income.frequency_type_variable !== undefined
+                    ? income.frequency_type_variable
+                    : 1),
         );
 
         if (
             income.frequency_day_of_week !== null &&
             income.frequency_day_of_week !== undefined
         ) {
-            let newDay: number;
+            let newDay: number = incomeDate.getDate();
 
             if (
                 income.frequency_day_of_week !== null &&
                 income.frequency_day_of_week !== undefined
             ) {
                 let daysUntilNextFrequency =
-                    (7 + income.frequency_day_of_week - incomeDate.getDay()) % 7;
+                    (7 + income.frequency_day_of_week - incomeDate.getDay()) %
+                    7;
                 daysUntilNextFrequency =
                     daysUntilNextFrequency === 0 ? 7 : daysUntilNextFrequency;
                 newDay = incomeDate.getDate() + daysUntilNextFrequency;
@@ -174,17 +184,23 @@ export const generateMonthlyIncome = (
                 // first day of the month
                 incomeDate.setDate(1);
                 const daysToAdd: number =
-                    (7 + income.frequency_day_of_week - incomeDate.getDay()) % 7;
+                    (7 + income.frequency_day_of_week - incomeDate.getDay()) %
+                    7;
                 // setting to the first occurrence of the desired day of week
                 incomeDate.setDate(incomeDate.getDate() + daysToAdd);
                 // setting to the desired week of the month
-                newDay = incomeDate.getDate() + 7 * income.frequency_week_of_month;
+                newDay =
+                    incomeDate.getDate() + 7 * income.frequency_week_of_month;
             }
 
             incomeDate.setDate(newDay);
         }
 
-        monthsIncremented += income.frequency_type_variable || 1;
+        monthsIncremented +=
+            income.frequency_type_variable !== null &&
+            income.frequency_type_variable !== undefined
+                ? income.frequency_type_variable
+                : 1;
 
         return incomeDate;
     };
@@ -232,7 +248,12 @@ export const generateWeeklyIncome = (
     const generateDateFn = (currentDate: Date, income: Income): Date => {
         const newDate: Date = currentDate;
         newDate.setDate(
-            newDate.getDate() + 7 * (income.frequency_type_variable || 1),
+            newDate.getDate() +
+                7 *
+                    (income.frequency_type_variable !== null &&
+                    income.frequency_type_variable !== undefined
+                        ? income.frequency_type_variable
+                        : 1),
         );
         return newDate;
     };
@@ -268,8 +289,11 @@ export const generateYearlyIncome = (
         const newDate: Date = new Date(income.income_begin_date);
         newDate.setFullYear(
             newDate.getFullYear() +
-            yearsIncremented +
-            (income.frequency_type_variable || 1),
+                yearsIncremented +
+                (income.frequency_type_variable !== null &&
+                income.frequency_type_variable !== undefined
+                    ? income.frequency_type_variable
+                    : 1),
         );
 
         if (
@@ -306,7 +330,11 @@ export const generateYearlyIncome = (
             }
         }
 
-        yearsIncremented += income.frequency_type_variable || 1;
+        yearsIncremented +=
+            income.frequency_type_variable !== null &&
+            income.frequency_type_variable !== undefined
+                ? income.frequency_type_variable
+                : 1;
 
         return newDate;
     };

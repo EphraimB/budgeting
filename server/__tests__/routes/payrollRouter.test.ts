@@ -1,9 +1,15 @@
 import { jest } from '@jest/globals';
 import request from 'supertest';
-import express, { Express, Request, Response, NextFunction, Router } from 'express';
+import express, {
+    type Express,
+    type Request,
+    type Response,
+    type NextFunction,
+    type Router,
+} from 'express';
 
 /**
- * 
+ *
  * @returns {Promise<Express>} A promise that resolves to an Express app
  */
 const createApp = async (): Promise<Express> => {
@@ -20,7 +26,8 @@ const createApp = async (): Promise<Express> => {
 
 beforeAll(() => {
     jest.mock('../../controllers/payrollsController', () => ({
-        getPayrolls: (req: Request, res: Response, next: NextFunction) => res.json({ message: 'success' })
+        getPayrolls: (req: Request, res: Response, next: NextFunction) =>
+            res.json({ message: 'success' }),
     }));
 });
 

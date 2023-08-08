@@ -1,17 +1,17 @@
-import { type Request, type Response } from "express";
-import { transactionHistoryQueries } from "../models/queryData.js";
-import { handleError, executeQuery } from "../utils/helperFunctions.js";
-import { type TransactionHistory } from "../types/types.js";
+import { type Request, type Response } from 'express';
+import { transactionHistoryQueries } from '../models/queryData.js';
+import { handleError, executeQuery } from '../utils/helperFunctions.js';
+import { type TransactionHistory } from '../types/types.js';
 
 interface TransactionHistoryInput {
-  transaction_id: string;
-  account_id: string;
-  transaction_amount: string;
-  transaction_tax_rate: string;
-  transaction_title: string;
-  transaction_description: string;
-  date_created: string;
-  date_modified: string;
+    transaction_id: string;
+    account_id: string;
+    transaction_amount: string;
+    transaction_tax_rate: string;
+    transaction_title: string;
+    transaction_description: string;
+    date_created: string;
+    date_modified: string;
 }
 
 /**
@@ -49,13 +49,18 @@ export const getTransactions = async (
         let query: string;
         let params: any[];
 
-        if (id && account_id) {
+        if (
+            id !== null &&
+            id !== undefined &&
+            account_id !== null &&
+            account_id !== undefined
+        ) {
             query = transactionHistoryQueries.getTransactionByIdAndAccountId;
             params = [id, account_id];
-        } else if (id) {
+        } else if (id !== null && id !== undefined) {
             query = transactionHistoryQueries.getTransactionById;
             params = [id];
-        } else if (account_id) {
+        } else if (account_id !== null && account_id !== undefined) {
             query = transactionHistoryQueries.getTransactionsByAccountId;
             params = [account_id];
         } else {
@@ -68,8 +73,12 @@ export const getTransactions = async (
             params,
         );
 
-        if ((id || account_id) && transactionResults.length === 0) {
-            response.status(404).send("Transaction not found");
+        if (
+            ((id !== null && id !== undefined) ||
+                (account_id !== null && account_id !== undefined)) &&
+            transactionResults.length === 0
+        ) {
+            response.status(404).send('Transaction not found');
             return;
         }
 
@@ -80,7 +89,7 @@ export const getTransactions = async (
         response.status(200).json(transactionHistory);
     } catch (error) {
         console.error(error); // Log the error on the server side
-        handleError(response, "Error getting transaction history");
+        handleError(response, 'Error getting transaction history');
     }
 };
 
@@ -109,7 +118,7 @@ export const createTransaction = async (
         response.status(201).json(transactionHistory);
     } catch (error) {
         console.error(error); // Log the error on the server side
-        handleError(response, "Error creating transaction history");
+        handleError(response, 'Error creating transaction history');
     }
 };
 
@@ -133,7 +142,7 @@ export const updateTransaction = async (
         );
 
         if (transactionResults.length === 0) {
-            response.status(404).send("Transaction not found");
+            response.status(404).send('Transaction not found');
             return;
         }
 
@@ -144,7 +153,7 @@ export const updateTransaction = async (
         response.status(200).json(transactionHistory);
     } catch (error) {
         console.error(error); // Log the error on the server side
-        handleError(response, "Error updating transaction history");
+        handleError(response, 'Error updating transaction history');
     }
 };
 
@@ -161,21 +170,22 @@ export const deleteTransaction = async (
     const id: number = parseInt(request.params.id);
 
     try {
-        const getTransactionResults = await executeQuery<TransactionHistoryInput>(
-            transactionHistoryQueries.getTransactionById,
-            [id],
-        );
+        const getTransactionResults =
+            await executeQuery<TransactionHistoryInput>(
+                transactionHistoryQueries.getTransactionById,
+                [id],
+            );
 
         if (getTransactionResults.length === 0) {
-            response.status(404).send("Transaction not found");
+            response.status(404).send('Transaction not found');
             return;
         }
 
         await executeQuery(transactionHistoryQueries.deleteTransaction, [id]);
 
-        response.status(200).send("Successfully deleted transaction history");
+        response.status(200).send('Successfully deleted transaction history');
     } catch (error) {
         console.error(error); // Log the error on the server side
-        handleError(response, "Error deleting transaction history");
+        handleError(response, 'Error deleting transaction history');
     }
 };
