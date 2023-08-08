@@ -215,6 +215,7 @@ export const loans: Loan[] = [
     {
         loan_id: 1,
         account_id: 1,
+        tax_id: null,
         loan_amount: 10000,
         loan_plan_amount: 100,
         loan_recipient: 'Test Loan Recipient',
@@ -236,6 +237,7 @@ export const loans: Loan[] = [
     {
         loan_id: 2,
         account_id: 1,
+        tax_id: null,
         loan_amount: 1000,
         loan_plan_amount: 100,
         loan_recipient: 'Test Loan Recipient',
@@ -257,6 +259,7 @@ export const loans: Loan[] = [
     {
         loan_id: 3,
         account_id: 1,
+        tax_id: null,
         loan_amount: 1000,
         loan_plan_amount: 100,
         loan_recipient: 'Test Loan Recipient',
@@ -278,6 +281,7 @@ export const loans: Loan[] = [
     {
         loan_id: 4,
         account_id: 1,
+        tax_id: null,
         loan_amount: 1000,
         loan_plan_amount: 100,
         loan_recipient: 'Test Loan Recipient',

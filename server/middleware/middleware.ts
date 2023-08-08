@@ -33,6 +33,7 @@ interface LoanInput {
     account_id: string;
     loan_id: string;
     cron_job_id?: string;
+    tax_id?: string | null | undefined;
     loan_amount: string;
     loan_plan_amount: string;
     loan_recipient: string;
@@ -115,7 +116,7 @@ export const getTransactionsByAccount = async (
 
         let transactions: any[] = []; // Initialize transactions as an empty array
 
-        if (account_id === null && account_id === undefined) {
+        if (account_id === null || account_id === undefined) {
             // If account_id is null, fetch all accounts and make request.transactions an array of transactions
             const accountResults = await executeQuery(
                 accountQueries.getAccounts,
@@ -219,7 +220,7 @@ export const getIncomeByAccount = async (
             income: Income[];
         }> = [];
 
-        if (account_id === null && account_id === undefined) {
+        if (account_id === null || account_id === undefined) {
             const accountResults = await executeQuery(
                 accountQueries.getAccounts,
             );
@@ -329,7 +330,7 @@ export const getExpensesByAccount = async (
             expenses: Expense[];
         }> = [];
 
-        if (account_id === null && account_id === undefined) {
+        if (account_id === null || account_id === undefined) {
             const accountResults = await executeQuery(
                 accountQueries.getAccounts,
             );
@@ -424,6 +425,7 @@ export const getExpensesByAccount = async (
 const parseLoan = (loan: LoanInput): Loan => ({
     loan_id: parseInt(loan.loan_id),
     account_id: parseInt(loan.account_id),
+    tax_id: parseOrFallback(loan.tax_id),
     loan_amount: parseFloat(loan.loan_amount),
     loan_plan_amount: parseFloat(loan.loan_plan_amount),
     loan_recipient: loan.loan_recipient,
@@ -461,7 +463,7 @@ export const getLoansByAccount = async (
     try {
         const loansByAccount: Array<{ account_id: number; loan: any }> = [];
 
-        if (account_id === null && account_id === undefined) {
+        if (account_id === null || account_id === undefined) {
             // If account_id is null, fetch all accounts and make request.transactions an array of transactions
             const accountResults = await executeQuery(
                 accountQueries.getAccounts,
@@ -560,7 +562,7 @@ export const getPayrollsMiddleware = async (
             payroll: Payroll[];
         }> = [];
 
-        if (account_id === null && account_id === undefined) {
+        if (account_id === null || account_id === undefined) {
             // If account_id is null, fetch all accounts and make request.transactions an array of transactions
             const accountResults = await executeQuery(
                 accountQueries.getAccounts,
@@ -666,7 +668,7 @@ export const getWishlistsByAccount = async (
             wishlist: Wishlist[];
         }> = [];
 
-        if (account_id === null && account_id === undefined) {
+        if (account_id === null || account_id === undefined) {
             // If account_id is null, fetch all accounts and make request.transactions an array of transactions
             const accountResults = await executeQuery(
                 accountQueries.getAccounts,
@@ -773,7 +775,7 @@ export const getTransfersByAccount = async (
             transfer: Transfer[];
         }> = [];
 
-        if (account_id === null && account_id === undefined) {
+        if (account_id === null || account_id === undefined) {
             // If account_id is null, fetch all accounts and make request.transactions an array of transactions
             const accountResults = await executeQuery(
                 accountQueries.getAccounts,
@@ -860,7 +862,7 @@ export const getCurrentBalance = async (
             account_balance: number;
         }> = [];
 
-        if (account_id === null && account_id === undefined) {
+        if (account_id === null || account_id === undefined) {
             const accountResults = await executeQuery(
                 accountQueries.getAccounts,
             );
@@ -964,7 +966,7 @@ export const updateWishlistCron = async (
 
             // Get tax amount from tax_id in taxes table
             const taxRate: number =
-                taxId !== null && taxId !== undefined
+                taxId !== null || taxId !== undefined
                     ? (await executeQuery(taxesQueries.getTax, [taxId]))[0]
                           .tax_rate
                     : 0;

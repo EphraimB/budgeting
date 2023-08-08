@@ -125,6 +125,7 @@ export interface Loan {
     loan_id?: number;
     account_id?: number;
     cron_job_id?: number;
+    tax_id?: number | null | undefined;
     loan_amount?: number;
     loan_plan_amount: number;
     loan_recipient: string;
