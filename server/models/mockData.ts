@@ -214,6 +214,7 @@ export const expenses: Expense[] = [
 export const loans: Loan[] = [
     {
         loan_id: 1,
+        cron_job_id: 1,
         account_id: 1,
         tax_id: null,
         loan_amount: 10000,
@@ -237,6 +238,7 @@ export const loans: Loan[] = [
     },
     {
         loan_id: 2,
+        cron_job_id: 2,
         account_id: 1,
         tax_id: null,
         loan_amount: 1000,
@@ -260,6 +262,7 @@ export const loans: Loan[] = [
     },
     {
         loan_id: 3,
+        cron_job_id: 3,
         account_id: 1,
         tax_id: null,
         loan_amount: 1000,
@@ -283,6 +286,7 @@ export const loans: Loan[] = [
     },
     {
         loan_id: 4,
+        cron_job_id: 4,
         account_id: 1,
         tax_id: null,
         loan_amount: 1000,

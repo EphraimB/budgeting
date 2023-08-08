@@ -339,19 +339,7 @@ describe('GET /api/loans', () => {
 
 describe('POST /api/loans', () => {
     it('should populate request.loan_id', async () => {
-        const newLoan = {
-            account_id: 1,
-            loan_id: 1,
-            amount: 1000,
-            plan_amount: 100,
-            recipient: 'John Doe',
-            title: 'Test Loan',
-            description: 'Test Loan Description',
-            frequency_type: 2,
-            interest_rate: 0,
-            interest_frequency_type: 0,
-            begin_date: '2021-01-01',
-        };
+        const newLoan = loans.filter((loan) => loan.loan_id === 1)[0];
 
         mockModule([[newLoan], '1', '2', []]);
 
@@ -359,7 +347,24 @@ describe('POST /api/loans', () => {
             '../../controllers/loansController.js'
         );
 
-        mockRequest.body = newLoan;
+        mockRequest.body = {
+            account_id: 1,
+            amount: 1000,
+            plan_amount: 1000,
+            recipient: 'John Doe',
+            title: 'Test Loan',
+            description: 'Test Description',
+            frequency_type: 2,
+            frequency_type_variable: null,
+            frequency_day_of_month: null,
+            frequency_day_of_week: null,
+            frequency_week_of_month: null,
+            frequency_month_of_year: null,
+            interest_rate: 0,
+            interest_frequency_type: 2,
+            subsidized: 0,
+            begin_date: '2021-01-01',
+        };
 
         await createLoan(mockRequest as Request, mockResponse, mockNext);
 
