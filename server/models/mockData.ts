@@ -371,6 +371,7 @@ export const wishlists: Wishlist[] = [
 export const transfers: Transfer[] = [
     {
         transfer_id: 1,
+        cron_job_id: 1,
         source_account_id: 1,
         destination_account_id: 2,
         transfer_amount: 100,
@@ -389,6 +390,7 @@ export const transfers: Transfer[] = [
     },
     {
         transfer_id: 2,
+        cron_job_id: 2,
         source_account_id: 1,
         destination_account_id: 2,
         transfer_amount: 25,
@@ -407,6 +409,7 @@ export const transfers: Transfer[] = [
     },
     {
         transfer_id: 3,
+        cron_job_id: 3,
         source_account_id: 1,
         destination_account_id: 2,
         transfer_amount: 50,
@@ -425,6 +428,7 @@ export const transfers: Transfer[] = [
     },
     {
         transfer_id: 4,
+        cron_job_id: 4,
         source_account_id: 1,
         destination_account_id: 2,
         transfer_amount: 200,
@@ -443,6 +447,7 @@ export const transfers: Transfer[] = [
     },
     {
         transfer_id: 5,
+        cron_job_id: 5,
         source_account_id: 2,
         destination_account_id: 1,
         transfer_amount: 200,

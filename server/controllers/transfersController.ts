@@ -18,13 +18,13 @@ interface TransferInput {
     transfer_title: string;
     transfer_description: string;
     frequency_type: string;
-    frequency_type_variable: string;
-    frequency_day_of_month: string;
-    frequency_day_of_week: string;
-    frequency_week_of_month: string;
-    frequency_month_of_year: string;
+    frequency_type_variable: string | null | undefined;
+    frequency_day_of_month: string | null | undefined;
+    frequency_day_of_week: string | null | undefined;
+    frequency_week_of_month: string | null | undefined;
+    frequency_month_of_year: string | null | undefined;
     transfer_begin_date: string;
-    transfer_end_date: string;
+    transfer_end_date: string | null | undefined;
     date_created: string;
     date_modified: string;
 }
@@ -42,7 +42,7 @@ const transfersParse = (transfer: TransferInput): Transfer => ({
     transfer_title: transfer.transfer_title,
     transfer_description: transfer.transfer_description,
     transfer_begin_date: transfer.transfer_begin_date,
-    transfer_end_date: transfer.transfer_end_date,
+    transfer_end_date: transfer.transfer_end_date ?? null,
     frequency_type: parseInt(transfer.frequency_type),
     frequency_type_variable: parseOrFallback(transfer.frequency_type_variable),
     frequency_day_of_month: parseOrFallback(transfer.frequency_day_of_month),
@@ -192,6 +192,8 @@ export const createTransfer = async (
             uniqueId,
             cronDate,
         ]);
+
+        console.log(cronJobResult);
 
         const cronId: number = cronJobResult[0].cron_job_id;
 
@@ -356,12 +358,12 @@ export const updateTransferReturnObject = async (
     const { transfer_id } = request;
 
     try {
-        const expenses = await executeQuery<TransferInput>(
+        const transfers = await executeQuery<TransferInput>(
             transferQueries.getTransfersById,
             [transfer_id],
         );
 
-        const modifiedTransfers = expenses.map(transfersParse);
+        const modifiedTransfers = transfers.map(transfersParse);
 
         response.status(200).json(modifiedTransfers);
     } catch (error) {

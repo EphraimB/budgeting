@@ -38,7 +38,7 @@ export const executeQuery = async <T = any>(
 /**
  *
  * @param input - The input to parse
- * @returns - The parsed input or null if the input is not a number
+ * @returns The parsed input or null if the input is not a number
  */
 export const parseOrFallback = (
     input: string | null | undefined,

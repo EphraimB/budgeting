@@ -76,3 +76,37 @@ describe('executeQuery function', () => {
         await expect(executeQuery(mockQuery, [])).rejects.toThrow(mockError);
     });
 });
+
+describe('parseOrFallback function', () => {
+    it('should return the parsed input', async () => {
+        const { parseOrFallback } = await import('../../utils/helperFunctions');
+
+        const mockInput = '1';
+        const result = parseOrFallback(mockInput);
+        expect(result).toEqual(1);
+    });
+
+    it('should return null if the input is null', async () => {
+        const { parseOrFallback } = await import('../../utils/helperFunctions');
+
+        const mockInput = null;
+        const result = parseOrFallback(mockInput);
+        expect(result).toBeNull();
+    });
+
+    it('should return null if the input is undefined', async () => {
+        const { parseOrFallback } = await import('../../utils/helperFunctions');
+
+        const mockInput = undefined;
+        const result = parseOrFallback(mockInput);
+        expect(result).toBeNull();
+    });
+
+    it('should return null if the input is not a number', async () => {
+        const { parseOrFallback } = await import('../../utils/helperFunctions');
+
+        const mockInput = 'not a number';
+        const result = parseOrFallback(mockInput);
+        expect(result).toBeNull();
+    });
+});

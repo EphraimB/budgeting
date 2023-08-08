@@ -193,13 +193,14 @@ export interface Wishlist {
 export interface Transfer {
     account_id?: number;
     transfer_id?: number;
+    cron_job_id?: number;
     source_account_id: number;
     destination_account_id: number;
     transfer_amount: number;
     transfer_title: string;
     transfer_description: string;
     transfer_begin_date: string;
-    transfer_end_date?: string | null;
+    transfer_end_date?: string | null | undefined;
     frequency_type?: number;
     frequency_type_variable?: number | null | undefined;
     frequency_day_of_month?: number | null | undefined;

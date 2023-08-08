@@ -441,7 +441,7 @@ const parseLoan = (loan: LoanInput): Loan => ({
     loan_interest_frequency_type: parseInt(loan.loan_interest_frequency_type),
     loan_subsidized: parseFloat(loan.loan_subsidized),
     loan_begin_date: loan.loan_begin_date,
-    loan_end_date: loan.loan_end_date,
+    loan_end_date: loan.loan_end_date ?? null,
     date_created: loan.date_created,
     date_modified: loan.date_modified,
 });

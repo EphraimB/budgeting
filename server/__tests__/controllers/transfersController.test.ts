@@ -2,6 +2,26 @@ import { expect, jest } from '@jest/globals';
 import { type Request, type Response } from 'express';
 import { transfers } from '../../models/mockData.js';
 import { type QueryResultRow } from 'pg';
+import { parseOrFallback } from '../../utils/helperFunctions.js';
+
+const modifiedTransfers = transfers.map((transfer) => ({
+    transfer_id: transfer.transfer_id,
+    source_account_id: transfer.source_account_id,
+    destination_account_id: transfer.destination_account_id,
+    transfer_amount: transfer.transfer_amount,
+    transfer_title: transfer.transfer_title,
+    transfer_description: transfer.transfer_description,
+    transfer_begin_date: transfer.transfer_begin_date,
+    transfer_end_date: transfer.transfer_end_date,
+    frequency_type: transfer.frequency_type,
+    frequency_type_variable: transfer.frequency_type_variable,
+    frequency_month_of_year: transfer.frequency_month_of_year,
+    frequency_day_of_month: transfer.frequency_day_of_month,
+    frequency_day_of_week: transfer.frequency_day_of_week,
+    frequency_week_of_month: transfer.frequency_week_of_month,
+    date_created: transfer.date_created,
+    date_modified: transfer.date_modified,
+}));
 
 jest.mock('../../crontab/scheduleCronJob.js', () => {
     return jest.fn().mockImplementation(
@@ -69,6 +89,7 @@ const mockModule = (
         handleError: jest.fn((res: Response, message: string) => {
             res.status(400).json({ message });
         }),
+        parseOrFallback,
     }));
 };
 
@@ -88,7 +109,7 @@ describe('GET /api/transfers', () => {
 
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(200);
-        expect(mockResponse.json).toHaveBeenCalledWith(transfers);
+        expect(mockResponse.json).toHaveBeenCalledWith(modifiedTransfers);
     });
 
     it('should respond with an error message', async () => {
@@ -132,7 +153,7 @@ describe('GET /api/transfers', () => {
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(200);
         expect(mockResponse.json).toHaveBeenCalledWith(
-            transfers.filter((transfer) => transfer.transfer_id === 1),
+            modifiedTransfers.filter((transfer) => transfer.transfer_id === 1),
         );
     });
 
@@ -179,7 +200,7 @@ describe('GET /api/transfers', () => {
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(200);
         expect(mockResponse.json).toHaveBeenCalledWith(
-            transfers.filter((transfer) => transfer.source_account_id === 1),
+            modifiedTransfers.filter((transfer) => transfer.source_account_id === 1),
         );
     });
 
@@ -230,7 +251,7 @@ describe('GET /api/transfers', () => {
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(200);
         expect(mockResponse.json).toHaveBeenCalledWith(
-            transfers.filter(
+            modifiedTransfers.filter(
                 (transfer) =>
                     transfer.transfer_id === 1 &&
                     transfer.source_account_id === 1,
@@ -360,7 +381,7 @@ describe('POST /api/transfers', () => {
 
     it('should respond with the created transfer', async () => {
         // Arrange
-        const newTransfer = transfers.filter(
+        const newTransfer = modifiedTransfers.filter(
             (transfer) => transfer.transfer_id === 1,
         );
 
@@ -481,7 +502,7 @@ describe('PUT /api/transfer/:id', () => {
 
     it('should respond with the updated transfer', async () => {
         // Arrange
-        const updatedTransfer = transfers.filter(
+        const updatedTransfer = modifiedTransfers.filter(
             (transfer) => transfer.transfer_id === 1,
         );
 
@@ -491,8 +512,7 @@ describe('PUT /api/transfer/:id', () => {
             '../../controllers/transfersController.js'
         );
 
-        mockRequest.params = { id: 1 };
-        mockRequest.body = updatedTransfer;
+        mockRequest = { transfer_id: 1 };
 
         await updateTransferReturnObject(mockRequest as Request, mockResponse);
 
