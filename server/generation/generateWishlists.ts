@@ -32,7 +32,7 @@ const generateWishlists = (
                 }
             }
 
-            if (affordableDate !== null && affordableDate !== undefined) break;
+            if (affordableDate !== undefined) break;
         }
     }
 
