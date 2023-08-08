@@ -966,7 +966,7 @@ export const updateWishlistCron = async (
 
             // Get tax amount from tax_id in taxes table
             const taxRate: number =
-                taxId !== null || taxId !== undefined
+                taxId !== null && taxId !== undefined
                     ? (await executeQuery(taxesQueries.getTax, [taxId]))[0]
                           .tax_rate
                     : 0;
