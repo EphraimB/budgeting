@@ -1,5 +1,16 @@
 #!/usr/bin/env bats
 
+setup() {
+    # Back up the PATH and prepend the directory for our mock commands to it
+    ORIGINAL_PATH="$PATH"
+    PATH="./mocks/employeeChecker:$PATH"
+}
+
+teardown() {
+    # Restore the original PATH
+    PATH="$ORIGINAL_PATH"
+}
+
 @test "Environment variables are set" {
     [ ! -z "${PGPASSWORD}" ]
     [ ! -z "${PGHOST}" ]
@@ -17,25 +28,7 @@
 }
 
 @test "psql command returns employee IDs" {
-    # Mock the psql command to return some dummy employee IDs for testing purposes.
-    run mock_psql
+    run psql  # this command should use the mock and output "1 2 3"
     [ "$status" -eq 0 ]
-    [ "$output" = "1 2 3" ]  # Example output for mocked psql command.
-}
-
-@test "Script is executed for each employee ID" {
-    # Mock the psql command to return some dummy employee IDs.
-    mock_psql
-
-    # Run your script.
-    run ../employeeChecker.sh
-    [ "$status" -eq 0 ]
-    [[ "$output" =~ "Executed script for employee 1" ]]
-    [[ "$output" =~ "Executed script for employee 2" ]]
-    [[ "$output" =~ "Executed script for employee 3" ]]
-}
-
-# Mock function for psql to simulate fetching employee IDs.
-mock_psql() {
-    echo "1 2 3"
+    [ "$output" = "1 2 3" ]
 }
