@@ -19,8 +19,12 @@ services:
     build:
       context: ./server/scripts
       dockerfile: Dockerfile.bats
-    volumes:
-      - ./server/scripts:/opt/script-tests
+    environment:
+      - PGPASSWORD=mockpassword
+      - PGHOST=db
+      - PGDB=mockdb
+      - PGUSER=mockuser
+      - PGPORT=5432
   db:
     image: postgres:15.2-alpine3.17
     environment:

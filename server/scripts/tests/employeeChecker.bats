@@ -9,11 +9,11 @@
 }
 
 @test "getPayrollsByEmployee.sh script exists" {
-    [ -f "/app/dist/scripts/getPayrollsByEmployee.sh" ]
+    [ -f "../getPayrollsByEmployee.sh" ]
 }
 
 @test "getPayrollsByEmployee.sh script is executable" {
-    [ -x "/app/dist/scripts/getPayrollsByEmployee.sh" ]
+    [ -x "../getPayrollsByEmployee.sh" ]
 }
 
 @test "psql command returns employee IDs" {
@@ -27,8 +27,8 @@
     # Mock the psql command to return some dummy employee IDs.
     mock_psql
 
-    # Run your script (assuming it's named 'your_script.sh').
-    run /path/to/your_script.sh
+    # Run your script.
+    run ../employeeChecker.sh
     [ "$status" -eq 0 ]
     [[ "$output" =~ "Executed script for employee 1" ]]
     [[ "$output" =~ "Executed script for employee 2" ]]
