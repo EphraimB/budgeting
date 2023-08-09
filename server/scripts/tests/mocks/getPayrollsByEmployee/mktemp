@@ -1,0 +1,4 @@
+#!/bin/sh
+
+touch "/tmp/tmp.PNefaH"
+echo "/tmp/tmp.PNefaH"
