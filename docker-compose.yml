@@ -15,7 +15,12 @@ services:
       - "5001:5001"
     depends_on:
       - db
-
+  bats-test:
+    build:
+      context: ./server/scripts
+      dockerfile: Dockerfile.bats
+    volumes:
+      - ./server/scripts:/opt/script-tests
   db:
     image: postgres:15.2-alpine3.17
     environment:
