@@ -3,17 +3,11 @@
 DIR="$(cd "$(dirname "$0")" && pwd)"
 MOCKED_CRONTAB_ENTRIES="$DIR/mocked_crontab_entries.txt"
 
-case "$1" in
--l)
+# Handle 'crontab -l' to list current entries
+if [ "$1" = "-l" ]; then
     cat "$MOCKED_CRONTAB_ENTRIES"
-    ;;
-*)
-    if [ -f "$1" ]; then
-        # If an argument is provided and it's a file, read from that file
-        cat "$1" >"$MOCKED_CRONTAB_ENTRIES"
-    else
-        # Otherwise, capture the input being piped into the script
-        cat >"$MOCKED_CRONTAB_ENTRIES"
-    fi
-    ;;
-esac
+    exit 0
+fi
+
+# Handle 'crontab <file>' or piped input to update entries
+cat >"$MOCKED_CRONTAB_ENTRIES"
