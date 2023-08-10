@@ -55,3 +55,12 @@ teardown() {
     [[ "$output" =~ "Transaction successfully created for account_id 5678" ]]
     [[ "$output" =~ "Transaction successfully created for destination_account_id 1235" ]]
 }
+
+@test "Successful wishlist transaction creation" {
+    run ../createTransaction.sh wishlist_1234 5678 91011 -1000 "Wishlist Transaction" "Wishlist for August"
+    [ "$status" -eq 0 ]
+    [[ "$output" =~ "Transaction successfully created for account_id 5678" ]]
+    [[ "$output" =~ "Wishlist successfully fetched for id 91011" ]]
+    [[ "$output" =~ "Cron Job ID: 1" ]]
+    [[ "$output" =~ "Wishlist successfully deleted for id 91011" ]]
+}
