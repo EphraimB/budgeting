@@ -9,6 +9,13 @@ const vol = Volume.fromJSON(
     '/app',
 );
 
+jest.mock('../../config/winston', () => ({
+    logger: {
+        error: jest.fn(),
+        info: jest.fn(),
+    },
+}));
+
 jest.mock('child_process', () => ({
     execSync: jest.fn(),
 }));
