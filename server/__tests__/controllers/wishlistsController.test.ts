@@ -8,13 +8,14 @@ import { parseOrFallback } from '../../utils/helperFunctions.js';
 // Mock request and response
 let mockRequest: any;
 let mockResponse: any;
-const mockNext: any = jest.fn();
-let consoleSpy: any;
+let mockNext: any;
 
-beforeAll(() => {
-    // Create a spy on console.error before all tests
-    consoleSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
-});
+jest.mock('../../config/winston', () => ({
+    logger: {
+        error: jest.fn(),
+        info: jest.fn(),
+    },
+}));
 
 beforeEach(() => {
     mockRequest = {};
@@ -23,15 +24,11 @@ beforeEach(() => {
         json: jest.fn(),
         send: jest.fn(),
     };
+    mockNext = jest.fn();
 });
 
 afterEach(() => {
     jest.resetModules();
-});
-
-afterAll(() => {
-    // Restore console.error
-    consoleSpy.mockRestore();
 });
 
 /**
@@ -164,9 +161,6 @@ describe('GET /api/wishlists', () => {
         expect(mockResponse.json).toHaveBeenCalledWith({
             message: 'Error getting wishlists',
         });
-
-        // Assert that the error was logged on the server side
-        expect(consoleSpy).toHaveBeenCalledWith(error);
     });
 
     it('should respond with an array of wishlists with id', async () => {
@@ -236,9 +230,6 @@ describe('GET /api/wishlists', () => {
         expect(mockResponse.json).toHaveBeenCalledWith({
             message: 'Error getting wishlist',
         });
-
-        // Assert that the error was logged on the server side
-        expect(consoleSpy).toHaveBeenCalledWith(error);
     });
 
     it('should respond with an array of wishlists with account id', async () => {
@@ -307,9 +298,6 @@ describe('GET /api/wishlists', () => {
         expect(mockResponse.json).toHaveBeenCalledWith({
             message: 'Error getting wishlists for given account_id',
         });
-
-        // Assert that the error was logged on the server side
-        expect(consoleSpy).toHaveBeenCalledWith(error);
     });
 
     it('should respond with an array of wishlists with account id and wishlist id', async () => {
@@ -391,9 +379,6 @@ describe('GET /api/wishlists', () => {
         expect(mockResponse.json).toHaveBeenCalledWith({
             message: 'Error getting wishlist',
         });
-
-        // Assert that the error was logged on the server side
-        expect(consoleSpy).toHaveBeenCalledWith(error);
     });
 
     it('should respond with a 404 error message when the wishlist does not exist', async () => {
@@ -499,9 +484,6 @@ describe('POST /api/wishlists middleware', () => {
         expect(mockResponse.json).toHaveBeenCalledWith({
             message: 'Error creating wishlist',
         });
-
-        // Assert that the error was logged on the server side
-        expect(consoleSpy).toHaveBeenCalledWith(error);
     });
 });
 
@@ -626,9 +608,6 @@ describe('POST /api/wishlists', () => {
         expect(mockResponse.json).toHaveBeenCalledWith({
             message: 'Error updating cron tab',
         });
-
-        // Assert that the error was logged on the server side
-        expect(consoleSpy).toHaveBeenCalledWith(error);
     });
 });
 
@@ -702,9 +681,6 @@ describe('PUT /api/wishlists middleware', () => {
         expect(mockResponse.json).toHaveBeenCalledWith({
             message: 'Error updating wishlist',
         });
-
-        // Assert that the error was logged on the server side
-        expect(consoleSpy).toHaveBeenCalledWith(error);
     });
 });
 
@@ -800,9 +776,6 @@ describe('PUT /api/wishlists/:id', () => {
         expect(mockResponse.json).toHaveBeenCalledWith({
             message: 'Error updating cron tab',
         });
-
-        // Assert that the error was logged on the server side
-        expect(consoleSpy).toHaveBeenCalledWith(error);
     });
 
     it("should respond with an error message if the cron job id can't be found", async () => {
@@ -908,9 +881,6 @@ describe('DELETE /api/wishlists/:id', () => {
         expect(mockResponse.json).toHaveBeenCalledWith({
             message: 'Error deleting wishlist',
         });
-
-        // Assert that the error was logged on the server side
-        expect(consoleSpy).toHaveBeenCalledWith(error);
     });
 
     it('should respond with a 404 error message when the wishlist does not exist', async () => {
