@@ -57,6 +57,8 @@ app.use('/api/income', incomeRouter);
 app.use((err: any, req: Request, res: Response, next: NextFunction) => {
     logger.error(err);
     res.status(500).json({ error: 'Internal server error' });
+
+    next();
 });
 
 export default app;
