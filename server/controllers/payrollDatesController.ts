@@ -3,6 +3,7 @@ import { payrollQueries } from '../models/queryData.js';
 import { exec } from 'child_process';
 import { handleError, executeQuery } from '../utils/helperFunctions.js';
 import { type PayrollDate } from '../types/types.js';
+import { logger } from '../config/winston.js';
 
 interface PayrollDateInput {
     payroll_date_id: string;
@@ -76,7 +77,7 @@ export const getPayrollDates = async (
 
         response.status(200).json(payrollDates);
     } catch (error) {
-        console.error(error); // Log the error on the server side
+        logger.error(error); // Log the error on the server side
         handleError(
             response,
             `Error getting ${
@@ -116,11 +117,11 @@ export const createPayrollDate = async (
         // Execute the script
         exec(scriptCommand, (error, stdout, stderr) => {
             if (error != null) {
-                console.error(`Error executing script: ${error.message}`);
+                logger.error(`Error executing script: ${error.message}`);
                 response.status(500).send('Error executing script');
                 return;
             }
-            console.log(`Script output: ${stdout}`);
+            logger.info(`Script output: ${stdout}`);
         });
 
         // Parse the data to correct format and return an object
@@ -132,7 +133,7 @@ export const createPayrollDate = async (
 
         next();
     } catch (error) {
-        console.error(error); // Log the error on the server side
+        logger.error(error); // Log the error on the server side
         handleError(response, 'Error creating payroll date');
     }
 };
@@ -156,7 +157,7 @@ export const createPayrollDateReturnObject = async (
 
         response.status(201).json(payrollDates);
     } catch (error) {
-        console.error(error); // Log the error on the server side
+        logger.error(error); // Log the error on the server side
         handleError(response, 'Error creating payroll date');
     }
 };
@@ -193,14 +194,14 @@ export const updatePayrollDate = async (
         // Execute the script
         exec(scriptCommand, (error, stdout, stderr) => {
             if (error != null) {
-                console.error(`Error executing script: ${error.message}`);
+                logger.error(`Error executing script: ${error.message}`);
                 response.status(500).send('Error executing script');
             }
         });
 
         next();
     } catch (error) {
-        console.error(error); // Log the error on the server side
+        logger.error(error); // Log the error on the server side
         handleError(response, 'Error updating payroll date');
     }
 };
@@ -230,7 +231,7 @@ export const updatePayrollDateReturnObject = async (
 
         response.status(200).json(payrollDates);
     } catch (error) {
-        console.error(error); // Log the error on the server side
+        logger.error(error); // Log the error on the server side
         handleError(response, 'Error updating payroll date');
     }
 };
@@ -270,14 +271,14 @@ export const deletePayrollDate = async (
         // Execute the script
         exec(scriptCommand, (error, stdout, stderr) => {
             if (error != null) {
-                console.error(`Error executing script: ${error.message}`);
+                logger.error(`Error executing script: ${error.message}`);
                 response.status(500).send('Error executing script');
             }
         });
 
         next();
     } catch (error) {
-        console.error(error); // Log the error on the server side
+        logger.error(error); // Log the error on the server side
         handleError(response, 'Error deleting payroll date');
     }
 };
