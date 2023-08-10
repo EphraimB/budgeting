@@ -6,7 +6,6 @@ setup() {
     PATH="./mocks/getPayrollsByEmployee:$PATH"
 
     touch "$BATS_TEST_DIRNAME/mocks/getPayrollsByEmployee/mocked_crontab_entries.txt"
-
     chmod +w "$BATS_TEST_DIRNAME/mocks/getPayrollsByEmployee/mocked_crontab_entries.txt"
 }
 

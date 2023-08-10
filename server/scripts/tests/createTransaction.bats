@@ -3,10 +3,17 @@
 setup() {
     ORIGINAL_PATH="$PATH"
     PATH="./mocks/createTransaction:$PATH"
+
+    touch "$BATS_TEST_DIRNAME/mocks/createTransaction/query_call_count.txt"
+    touch "$BATS_TEST_DIRNAME/mocks/getPayrollsByEmployee/mocked_crontab_entries.txt"
+    chmod +w "$BATS_TEST_DIRNAME/mocks/getPayrollsByEmployee/mocked_crontab_entries.txt"
 }
 
 teardown() {
     PATH="$ORIGINAL_PATH"
+
+    rm "$BATS_TEST_DIRNAME/mocks/createTransaction/query_call_count.txt"
+    rm "$BATS_TEST_DIRNAME/mocks/getPayrollsByEmployee/mocked_crontab_entries.txt"
 }
 
 @test "Successful payroll transaction creation" {
@@ -15,11 +22,22 @@ teardown() {
     [[ "$output" =~ "Transaction successfully created for account_id 5678" ]]
 }
 
-@test "Successful loan transaction creation and loan decrement" {
+@test "Successful loan transaction creation and loan decrement and loan amount greater than 0" {
+    run ../createTransaction.sh loan_1234 5678 91011 100 "Loan Transaction" "Loan for August"
+    [ "$status" -eq 0 ]
+    [[ "$output" =~ "Transaction successfully created for account_id 5678" ]]
+    [[ "$output" =~ "Loan amount successfully decremented for id 91011" ]]
+    [[ "$output" =~ "Loan amount successfully fetched for id 91011" ]]
+}
+
+@test "Successful loan transaction creation and loan decrement and loan amount less than or equal to 0" {
     run ../createTransaction.sh loan_1234 5678 91011 1000 "Loan Transaction" "Loan for August"
     [ "$status" -eq 0 ]
     [[ "$output" =~ "Transaction successfully created for account_id 5678" ]]
     [[ "$output" =~ "Loan amount successfully decremented for id 91011" ]]
+    [[ "$output" =~ "Loan amount successfully fetched for id 91011" ]]
+    [[ "$output" =~ "Cron job successfully fetched for id 91011" ]]
+    [[ "$output" =~ "Cron Job ID: 1" ]]
 }
 
 @test "Successful income transaction creation" {
