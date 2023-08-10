@@ -5,6 +5,7 @@ import express, {
     type NextFunction,
 } from 'express';
 import bodyParser from 'body-parser';
+import { logger } from './config/winston.js';
 import swaggerUi from 'swagger-ui-express';
 import routes from './routes/routes.js';
 import accountsRouter from './routes/accountsRouter.js';
@@ -23,9 +24,11 @@ import incomeRouter from './routes/incomeRouter.js';
 import fs from 'fs';
 import path from 'path';
 
+logger.info('Starting server...');
+
 const swaggerDocument = JSON.parse(
     fs.readFileSync(
-        path.resolve(process.cwd(), './dist/views/swagger.json'),
+        path.resolve(process.cwd(), './views/swagger.json'),
         'utf8',
     ),
 );

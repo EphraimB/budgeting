@@ -5,7 +5,7 @@
   "main": "server.js",
   "scripts": {
     "build": "tsc",
-    "start": "node dist/server.js",
+    "start": "node server.js",
     "lint": "npx eslint '**/*.{js,ts}'",
     "test": "cross-env NODE_OPTIONS=--experimental-vm-modules TS_JEST_LOG=ts-jest.log jest"
   },
