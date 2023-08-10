@@ -2,25 +2,18 @@
 
 DIR="$(cd "$(dirname "$0")" && pwd)"
 MOCKED_CRONTAB_ENTRIES="$DIR/mocked_crontab_entries.txt"
-LOG_FILE="$DIR/mock_crontab_debug_log.txt"
-
-echo "Mock crontab invoked at $(date) with arguments: $@" >>"$LOG_FILE"
 
 case "$1" in
 -l)
     cat "$MOCKED_CRONTAB_ENTRIES"
     ;;
 *)
-    echo "Attempt to overwrite mocked crontab entries:" >>"$LOG_FILE"
     if [ -f "$1" ]; then
         # If an argument is provided and it's a file, read from that file
-        echo "Reading from file: $1" >>"$LOG_FILE"
         cat "$1" >"$MOCKED_CRONTAB_ENTRIES"
     else
         # Otherwise, capture the input being piped into the script
-        echo "Capturing piped input:" >>"$LOG_FILE"
         cat >"$MOCKED_CRONTAB_ENTRIES"
     fi
-    echo "Completed overwriting mocked crontab entries." >>"$LOG_FILE"
     ;;
 esac
