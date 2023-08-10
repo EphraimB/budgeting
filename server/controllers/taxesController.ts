@@ -2,6 +2,7 @@ import { type Request, type Response } from 'express';
 import { taxesQueries } from '../models/queryData.js';
 import { handleError, executeQuery } from '../utils/helperFunctions.js';
 import { type Taxes } from '../types/types.js';
+import { logger } from '../config/winston.js';
 
 interface TaxesInput {
     tax_id: string;
@@ -64,7 +65,7 @@ export const getTaxes = async (
 
         response.status(200).json(taxes);
     } catch (error) {
-        console.error(error); // Log the error on the server side
+        logger.error(error); // Log the error on the server side
         handleError(
             response,
             `Error getting ${
@@ -97,7 +98,7 @@ export const createTax = async (
         );
         response.status(201).json(taxes);
     } catch (error) {
-        console.error(error); // Log the error on the server side
+        logger.error(error); // Log the error on the server side
         handleError(response, 'Error creating tax');
     }
 };
@@ -130,7 +131,7 @@ export const updateTax = async (
 
         response.status(200).json(taxes);
     } catch (error) {
-        console.error(error); // Log the error on the server side
+        logger.error(error); // Log the error on the server side
         handleError(response, 'Error updating tax');
     }
 };
@@ -162,7 +163,7 @@ export const deleteTax = async (
 
         response.status(200).send('Successfully deleted tax');
     } catch (error) {
-        console.error(error); // Log the error on the server side
+        logger.error(error); // Log the error on the server side
         handleError(response, 'Error deleting tax');
     }
 };
