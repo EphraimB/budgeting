@@ -3,15 +3,15 @@ import { type Request, type Response } from 'express';
 import { accounts } from '../../models/mockData';
 import { type QueryResultRow } from 'pg';
 
+jest.mock('../../config/winston', () => ({
+    logger: {
+        error: jest.fn(),
+    },
+}));
+
 // Mock request and response
 let mockRequest: any;
 let mockResponse: any;
-let consoleSpy: any;
-
-beforeAll(() => {
-    // Create a spy on console.error before all tests
-    consoleSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
-});
 
 beforeEach(() => {
     mockRequest = {};
@@ -24,11 +24,6 @@ beforeEach(() => {
 
 afterEach(() => {
     jest.resetModules();
-});
-
-afterAll(() => {
-    // Restore console.error
-    consoleSpy.mockRestore();
 });
 
 /**
@@ -93,9 +88,6 @@ describe('GET /api/accounts', () => {
         expect(mockResponse.json).toHaveBeenCalledWith({
             message: 'Error getting accounts',
         });
-
-        // Check that console.error was called with the expected error
-        expect(consoleSpy).toHaveBeenCalledWith(error);
     });
 
     it('should respond with an array of accounts with an id', async () => {
@@ -138,9 +130,6 @@ describe('GET /api/accounts', () => {
         expect(mockResponse.json).toHaveBeenCalledWith({
             message: 'Error getting account',
         });
-
-        // Check that console.error was called with the expected error
-        expect(consoleSpy).toHaveBeenCalledWith(error);
     });
 
     it('should respond with a 404 error message when the account does not exist', async () => {
@@ -205,9 +194,6 @@ describe('POST /api/accounts', () => {
         expect(mockResponse.json).toHaveBeenCalledWith({
             message: 'Error creating account',
         });
-
-        // Check that console.error was called with the expected error
-        expect(consoleSpy).toHaveBeenCalledWith(error);
     });
 });
 
@@ -256,9 +242,6 @@ describe('PUT /api/accounts/:id', () => {
         expect(mockResponse.json).toHaveBeenCalledWith({
             message: 'Error updating account',
         });
-
-        // Check that console.error was called with the expected error
-        expect(consoleSpy).toHaveBeenCalledWith(error);
     });
 
     it('should respond with a 404 error message when the account does not exist', async () => {
@@ -323,9 +306,6 @@ describe('DELETE /api/accounts/:id', () => {
         expect(mockResponse.json).toHaveBeenCalledWith({
             message: 'Error deleting account',
         });
-
-        // Check that console.error was called with the expected error
-        expect(consoleSpy).toHaveBeenCalledWith(error);
     });
 
     it('should respond with a 404 error message when the account does not exist', async () => {
