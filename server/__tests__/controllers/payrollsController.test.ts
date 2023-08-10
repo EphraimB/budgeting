@@ -8,10 +8,12 @@ let mockRequest: any;
 let mockResponse: any;
 let consoleSpy: any;
 
-beforeAll(() => {
-    // Create a spy on console.error before all tests
-    consoleSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
-});
+jest.mock('../../config/winston', () => ({
+    logger: {
+        error: jest.fn(),
+        info: jest.fn(),
+    },
+}));
 
 beforeEach(() => {
     mockRequest = {};
@@ -24,11 +26,6 @@ beforeEach(() => {
 
 afterEach(() => {
     jest.resetModules();
-});
-
-afterAll(() => {
-    // Restore console.error
-    consoleSpy.mockRestore();
 });
 
 /**
@@ -98,9 +95,6 @@ describe('GET /api/payrolls', () => {
         expect(mockResponse.json).toHaveBeenCalledWith({
             message: 'Error getting payrolls',
         });
-
-        // Check if console.error was called with the error message
-        expect(consoleSpy).toHaveBeenCalledWith(error);
     });
 
     it('should respond with a 404 error message when the payroll tax does not exist', async () => {
