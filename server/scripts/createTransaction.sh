@@ -30,7 +30,7 @@ else
 fi
 
 # Fetch the employee IDs from the database using psql and environment variables
-createTransaction=$(PGPASSWORD="$PGPASSWORD" psql -h "$PGHOST" -p "$PGPORT" -d "$PGDB" -U "$PGUSER" -c "INSERT INTO transaction_history (account_id, transaction_amount, transaction_tax_rate, transaction_title, transaction_description) VALUES ('$account_id', '$transaction_amount', '$transaction_tax_rate', '$transaction_title', '$transaction_description')" -t)
+PGPASSWORD="$PGPASSWORD" psql -h "$PGHOST" -p "$PGPORT" -d "$PGDB" -U "$PGUSER" -c "INSERT INTO transaction_history (account_id, transaction_amount, transaction_tax_rate, transaction_title, transaction_description) VALUES ('$account_id', '$transaction_amount', '$transaction_tax_rate', '$transaction_title', '$transaction_description')" -t
 
 # Log if the first transaction was successful
 if [ $? -eq 0 ]; then
@@ -41,7 +41,7 @@ if [ $? -eq 0 ]; then
         destination_account_id=$7
 
         # Execute the second psql query for the destination_account_id
-        createDestinationTransaction=$(PGPASSWORD="$PGPASSWORD" psql -h "$PGHOST" -p "$PGPORT" -d "$PGDB" -U "$PGUSER" -c "INSERT INTO transaction_history (account_id, transaction_amount, transaction_title, transaction_description) VALUES ('$destination_account_id', ABS('$transaction_amount'), '$transaction_title', '$transaction_description')" -t)
+        PGPASSWORD="$PGPASSWORD" psql -h "$PGHOST" -p "$PGPORT" -d "$PGDB" -U "$PGUSER" -c "INSERT INTO transaction_history (account_id, transaction_amount, transaction_title, transaction_description) VALUES ('$destination_account_id', ABS('$transaction_amount'), '$transaction_title', '$transaction_description')" -t
 
         # Log if the second transaction was successful
         if [ $? -eq 0 ]; then
@@ -53,9 +53,9 @@ if [ $? -eq 0 ]; then
 
     # Check if the unique_id is prefixed with "loan_"
     if echo "${unique_id}" | grep -q "^loan_"; then
-        transaction_amount_abs=$(($transaction_amount * -1))
+        transaction_amount_abs=$((transaction_amount * -1))
         # Decrement the loan_amount in the loans table
-        decrementLoanAmount=$(PGPASSWORD="$PGPASSWORD" psql -h "$PGHOST" -p "$PGPORT" -d "$PGDB" -U "$PGUSER" -c "UPDATE loans SET loan_amount = loan_amount - '$transaction_amount_abs' WHERE loan_id = '$id'" -t)
+        PGPASSWORD="$PGPASSWORD" psql -h "$PGHOST" -p "$PGPORT" -d "$PGDB" -U "$PGUSER" -c "UPDATE loans SET loan_amount = loan_amount - '$transaction_amount_abs' WHERE loan_id = '$id'" -t
 
         # Log if the loan_amount was successfully decremented
         if [ $? -eq 0 ]; then
