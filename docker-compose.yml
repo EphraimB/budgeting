@@ -15,7 +15,16 @@ services:
       - "5001:5001"
     depends_on:
       - db
-
+  bats-test:
+    build:
+      context: ./server/scripts
+      dockerfile: Dockerfile.bats
+    environment:
+      - PGPASSWORD=mockpassword
+      - PGHOST=db
+      - PGDB=mockdb
+      - PGUSER=mockuser
+      - PGPORT=5432
   db:
     image: postgres:15.2-alpine3.17
     environment:
