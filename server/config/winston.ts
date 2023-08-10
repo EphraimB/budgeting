@@ -9,7 +9,8 @@ export const logger: Logger = createLogger({
     format: format.combine(
         format.timestamp({ format: 'YYYY-MM-DD HH:mm:ss' }),
         format.errors({ stack: true }), // Log errors with stack trace
-        format.splat(),
+        format.splat(), // Interpolate values in log messages
+        format.prettyPrint(), // Pretty print format
         format.json(), // Produces structured logs in JSON format
     ),
     transports: [
@@ -19,8 +20,11 @@ export const logger: Logger = createLogger({
                 format.colorize(),
                 format.printf(
                     (info) =>
-                        `${info.timestamp} [${info.level}]: ${info.message}` +
-                        (info.stack ? '\n' + info.stack : ''),
+                        `${info.timestamp} [${info.level}]: ${JSON.stringify(
+                            info,
+                            null,
+                            4,
+                        )}` + (info.stack ? '\n' + info.stack : ''),
                 ),
             ),
             level: process.env.NODE_ENV === 'development' ? 'debug' : 'info', // Only log debug in development

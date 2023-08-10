@@ -11,6 +11,7 @@ jest.mock('winston', () => {
         errors: jest.fn(),
         json: jest.fn(),
         splat: jest.fn(),
+        prettyPrint: jest.fn(),
     };
     const mTransports = {
         Console: jest.fn().mockReturnThis(),
