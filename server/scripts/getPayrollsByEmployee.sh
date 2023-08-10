@@ -79,7 +79,7 @@ sed -i "/^.*payroll_${1}_[0-9a-f]\{8\}-[0-9a-f]\{4\}-[0-9a-f]\{4\}-[0-9a-f]\{4\}
 
 # Loop through the result rows from the temporary file and add new cron jobs
 while IFS="|" read -r startDate endDate workDays grossPay netPay hoursWorked; do
-  startDay=$(echo "$startDate" | cut -d '-' -f 3)
+  echo "$startDate" | cut -d '-' -f 3
   endDay=$(echo "$endDate" | cut -d '-' -f 3)
 
   # Generate a unique ID for the cron job using uuidgen
