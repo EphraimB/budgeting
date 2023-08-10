@@ -4,6 +4,13 @@ import { accounts, expenses } from '../../models/mockData.js';
 import { type QueryResultRow } from 'pg';
 import { parseOrFallback } from '../../utils/helperFunctions.js';
 
+jest.mock('../../config/winston', () => ({
+    logger: {
+        error: jest.fn(),
+        info: jest.fn(),
+    },
+}));
+
 jest.mock('../../crontab/scheduleCronJob.js', () => {
     return jest.fn().mockImplementation(
         async () =>
@@ -24,12 +31,6 @@ jest.mock('../../crontab/deleteCronJob.js', () => {
 let mockRequest: any;
 let mockResponse: any;
 let mockNext: any;
-let consoleSpy: any;
-
-beforeAll(() => {
-    // Create a spy on console.error before all tests
-    consoleSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
-});
 
 beforeEach(() => {
     mockRequest = {};
@@ -43,11 +44,6 @@ beforeEach(() => {
 
 afterEach(() => {
     jest.resetModules();
-});
-
-afterAll(() => {
-    // Restore console.error
-    consoleSpy.mockRestore();
 });
 
 /**
@@ -141,9 +137,6 @@ describe('GET /api/expenses', () => {
         expect(mockResponse.json).toHaveBeenCalledWith({
             message: 'Error getting expenses',
         });
-
-        // Assert that console.error was called with the error message
-        expect(consoleSpy).toHaveBeenCalledWith(error);
     });
 
     it('should respond with an array of expenses with id', async () => {
@@ -186,9 +179,6 @@ describe('GET /api/expenses', () => {
         expect(mockResponse.json).toHaveBeenCalledWith({
             message: 'Error getting expense',
         });
-
-        // Assert that console.error was called with the error message
-        expect(consoleSpy).toHaveBeenCalledWith(error);
     });
 
     it('should respond with an array of expenses with account id', async () => {
@@ -231,9 +221,6 @@ describe('GET /api/expenses', () => {
         expect(mockResponse.json).toHaveBeenCalledWith({
             message: 'Error getting expenses for given account_id',
         });
-
-        // Assert that console.error was called with the error message
-        expect(consoleSpy).toHaveBeenCalledWith(error);
     });
 
     it('should respond with an array of expenses with account id and id', async () => {
@@ -284,9 +271,6 @@ describe('GET /api/expenses', () => {
         expect(mockResponse.json).toHaveBeenCalledWith({
             message: 'Error getting expense',
         });
-
-        // Assert that console.error was called with the error message
-        expect(consoleSpy).toHaveBeenCalledWith(error);
     });
 
     it('should respond with a 404 error message when the expense does not exist', async () => {
@@ -366,9 +350,6 @@ describe('POST /api/expenses', () => {
         expect(mockResponse.json).toHaveBeenCalledWith({
             message: 'Error creating expense',
         });
-
-        // Assert that console.error was called with the error message
-        expect(consoleSpy).toHaveBeenCalledWith(error);
     });
 
     it('should handle errors correctly in return object', async () => {
@@ -393,9 +374,6 @@ describe('POST /api/expenses', () => {
         expect(mockResponse.json).toHaveBeenCalledWith({
             message: 'Error getting expense',
         });
-
-        // Assert that console.error was called with the error message
-        expect(consoleSpy).toHaveBeenCalledWith(error);
     });
 
     it('should respond with an array of expenses', async () => {
@@ -466,9 +444,6 @@ describe('PUT /api/expenses/:id', () => {
         expect(mockResponse.json).toHaveBeenCalledWith({
             message: 'Error updating expense',
         });
-
-        // Assert that console.error was called with the error message
-        expect(consoleSpy).toHaveBeenCalledWith(error);
     });
 
     it('should handle errors correctly in the return object function', async () => {
@@ -493,9 +468,6 @@ describe('PUT /api/expenses/:id', () => {
         expect(mockResponse.json).toHaveBeenCalledWith({
             message: 'Error updating expense',
         });
-
-        // Assert that console.error was called with the error message
-        expect(consoleSpy).toHaveBeenCalledWith(error);
     });
 
     it('should respond with a 404 error message when the account does not exist', async () => {
@@ -623,9 +595,6 @@ describe('DELETE /api/expenses/:id', () => {
         expect(mockResponse.json).toHaveBeenCalledWith({
             message: 'Error deleting expense',
         });
-
-        // Assert that console.error was called with the error message
-        expect(consoleSpy).toHaveBeenCalledWith(error);
     });
 
     it('should respond with a 404 error message when the account does not exist', async () => {

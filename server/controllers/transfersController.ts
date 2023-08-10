@@ -8,6 +8,7 @@ import {
     parseOrFallback,
 } from '../utils/helperFunctions.js';
 import { type Transfer } from '../types/types.js';
+import { logger } from '../config/winston.js';
 
 interface TransferInput {
     transfer_id: string;
@@ -104,7 +105,7 @@ export const getTransfers = async (
 
         response.status(200).json(transfers);
     } catch (error) {
-        console.error(error); // Log the error on the server side
+        logger.error(error); // Log the error on the server side
         handleError(
             response,
             `Error getting ${
@@ -195,7 +196,7 @@ export const createTransfer = async (
 
         const cronId: number = cronJobResult[0].cron_job_id;
 
-        console.log('Cron job created ' + cronId.toString());
+        logger.info('Cron job created ' + cronId.toString());
 
         await executeQuery(transferQueries.updateTransferWithCronJobId, [
             cronId,
@@ -208,7 +209,7 @@ export const createTransfer = async (
 
         // response.status(201).json(transfers);
     } catch (error) {
-        console.error(error); // Log the error on the server side
+        logger.error(error); // Log the error on the server side
         handleError(response, 'Error creating transfer');
     }
 };
@@ -235,7 +236,7 @@ export const createTransferReturnObject = async (
 
         response.status(201).json(modifiedTransfers);
     } catch (error) {
-        console.error(error); // Log the error on the server side
+        logger.error(error); // Log the error on the server side
         handleError(response, 'Error creating transfer');
     }
 };
@@ -304,7 +305,7 @@ export const updateTransfer = async (
         if (results.length > 0) {
             await deleteCronJob(results[0].unique_id);
         } else {
-            console.error('Cron job not found');
+            logger.error('Cron job not found');
         }
 
         const { cronDate, uniqueId } = await scheduleCronJob(cronParams);
@@ -338,7 +339,7 @@ export const updateTransfer = async (
 
         // response.status(200).json(transfers);
     } catch (error) {
-        console.error(error); // Log the error on the server side
+        logger.error(error); // Log the error on the server side
         handleError(response, 'Error updating transfer');
     }
 };
@@ -365,7 +366,7 @@ export const updateTransferReturnObject = async (
 
         response.status(200).json(modifiedTransfers);
     } catch (error) {
-        console.error(error); // Log the error on the server side
+        logger.error(error); // Log the error on the server side
         handleError(response, 'Error getting transfer');
     }
 };
@@ -403,14 +404,14 @@ export const deleteTransfer = async (
         if (results.length > 0) {
             await deleteCronJob(results[0].unique_id);
         } else {
-            console.error('Cron job not found');
+            logger.error('Cron job not found');
         }
 
         await executeQuery(cronJobQueries.deleteCronJob, [cronId]);
 
         next();
     } catch (error) {
-        console.error(error); // Log the error on the server side
+        logger.error(error); // Log the error on the server side
         handleError(response, 'Error deleting transfer');
     }
 };

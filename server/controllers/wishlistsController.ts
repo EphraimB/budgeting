@@ -8,6 +8,7 @@ import {
 import { type Wishlist } from '../types/types.js';
 import scheduleCronJob from '../crontab/scheduleCronJob.js';
 import deleteCronJob from '../crontab/deleteCronJob.js';
+import { logger } from '../config/winston.js';
 
 interface WishlistInput {
     wishlist_id: string;
@@ -117,7 +118,7 @@ export const getWishlists = async (
 
         response.status(200).json(wishlists);
     } catch (error) {
-        console.error(error); // Log the error on the server side
+        logger.error(error); // Log the error on the server side
         handleError(
             response,
             `Error getting ${
@@ -180,7 +181,7 @@ export const createWishlist = async (
 
         next();
     } catch (error) {
-        console.error(error); // Log the error on the server side
+        logger.error(error); // Log the error on the server side
         handleError(response, 'Error creating wishlist');
     }
 };
@@ -263,7 +264,7 @@ export const createWishlistCron = async (
 
         response.status(201).json(wishlists);
     } catch (error) {
-        console.error(error); // Log the error on the server side
+        logger.error(error); // Log the error on the server side
         handleError(response, 'Error updating cron tab');
     }
 };
@@ -321,7 +322,7 @@ export const updateWishlist = async (
 
         next();
     } catch (error) {
-        console.error(error); // Log the error on the server side
+        logger.error(error); // Log the error on the server side
         handleError(response, 'Error updating wishlist');
     }
 };
@@ -350,7 +351,7 @@ export const updateWishlistCron = async (
         if (results.length > 0) {
             await deleteCronJob(results[0].unique_id);
         } else {
-            console.error('Cron job not found');
+            logger.error('Cron job not found');
             response.status(404).send('Cron job not found');
             return;
         }
@@ -403,7 +404,7 @@ export const updateWishlistCron = async (
 
         response.status(200).json(wishlists);
     } catch (error) {
-        console.error(error); // Log the error on the server side
+        logger.error(error); // Log the error on the server side
         handleError(response, 'Error updating cron tab');
     }
 };
@@ -441,7 +442,7 @@ export const deleteWishlist = async (
         if (cronJobResults.length > 0) {
             await deleteCronJob(cronJobResults[0].unique_id);
         } else {
-            console.error('Cron job not found');
+            logger.error('Cron job not found');
         }
 
         await executeQuery(wishlistQueries.deleteWishlist, [id]);
@@ -451,7 +452,7 @@ export const deleteWishlist = async (
 
         response.status(200).send('Successfully deleted wishlist item');
     } catch (error) {
-        console.error(error); // Log the error on the server side
+        logger.error(error); // Log the error on the server side
         handleError(response, 'Error deleting wishlist');
     }
 };

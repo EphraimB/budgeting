@@ -2,6 +2,7 @@ import { execSync } from 'child_process';
 import determineCronValues from './determineCronValues.js';
 import { v4 as uuidv4 } from 'uuid';
 import { lock } from 'proper-lockfile';
+import { logger } from '../config/winston.js';
 
 /**
  * @param jobDetails - Job details
@@ -57,18 +58,18 @@ const scheduleCronJob = async (jobDetails: any) => {
             execSync(
                 `(crontab -l ; echo '${cronDate} ${cronCommand} > /app/cron.log 2>&1') | crontab - `,
             );
-            console.log(`Cron job set up successfully!`);
+            logger.info(`Cron job set up successfully!`);
         } catch (error) {
-            console.error(`Error setting up cron job: ${error} `);
+            logger.error(`Error setting up cron job: ${error} `);
         }
     } catch (err) {
-        console.error('Failed to acquire lock or encountered an error: ', err);
+        logger.error('Failed to acquire lock or encountered an error: ', err);
     } finally {
         if (release != null) {
             try {
                 await release();
             } catch (err) {
-                console.error('Failed to release lock: ', err);
+                logger.error('Failed to release lock: ', err);
             }
         }
     }

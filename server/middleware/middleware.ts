@@ -5,6 +5,7 @@ import {
     handleError,
     executeQuery,
 } from '../utils/helperFunctions.js';
+import { logger } from '../config/winston.js';
 import {
     transactionHistoryQueries,
     expenseQueries,
@@ -86,7 +87,7 @@ export const setQueries = async (
             }
         }
     } catch (error) {
-        console.error(error);
+        logger.error(error);
         handleError(response, 'Error setting queries');
         return;
     }
@@ -186,7 +187,7 @@ export const getTransactionsByAccount = async (
 
         next();
     } catch (error) {
-        console.error(error); // Log the error on the server side
+        logger.error(error); // Log the error on the server side
         handleError(response, 'Error getting transactions');
     }
 };
@@ -296,7 +297,7 @@ export const getIncomeByAccount = async (
 
         next();
     } catch (error) {
-        console.error(error);
+        logger.error(error);
         handleError(response, 'Error getting income');
     }
 };
@@ -412,7 +413,7 @@ export const getExpensesByAccount = async (
 
         next();
     } catch (error) {
-        console.error(error);
+        logger.error(error);
         handleError(response, 'Error getting expenses');
     }
 };
@@ -537,7 +538,7 @@ export const getLoansByAccount = async (
 
         next();
     } catch (error) {
-        console.error(error); // Log the error on the server side
+        logger.error(error); // Log the error on the server side
         handleError(response, 'Error getting loans');
     }
 };
@@ -634,7 +635,7 @@ export const getPayrollsMiddleware = async (
 
         next();
     } catch (error) {
-        console.error(error); // Log the error on the server side
+        logger.error(error); // Log the error on the server side
         handleError(response, 'Error getting payrolls');
     }
 };
@@ -750,7 +751,7 @@ export const getWishlistsByAccount = async (
 
         next();
     } catch (error) {
-        console.error(error); // Log the error on the server side
+        logger.error(error); // Log the error on the server side
         handleError(response, 'Error getting wishlists');
     }
 };
@@ -837,7 +838,7 @@ export const getTransfersByAccount = async (
 
         next();
     } catch (error) {
-        console.error(error); // Log the error on the server side
+        logger.error(error); // Log the error on the server side
         handleError(response, 'Error getting transfers');
     }
 };
@@ -913,7 +914,7 @@ export const getCurrentBalance = async (
 
         next();
     } catch (error) {
-        console.error(error); // Log the error on the server side
+        logger.error(error); // Log the error on the server side
         handleError(response, 'Error getting current balance');
     }
 };
@@ -998,7 +999,7 @@ export const updateWishlistCron = async (
         // Move on to the next middleware or route handler
         next();
     } catch (error) {
-        console.error(error); // Log the error on the server side
+        logger.error(error); // Log the error on the server side
         handleError(response, 'Error updating cron tab');
     }
 };

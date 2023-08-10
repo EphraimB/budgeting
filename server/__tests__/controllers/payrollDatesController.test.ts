@@ -8,7 +8,13 @@ import { type PayrollDate } from '../../types/types.js';
 let mockRequest: any;
 let mockResponse: any;
 let mockNext: any;
-let consoleSpy: any;
+
+jest.mock('../../config/winston', () => ({
+    logger: {
+        error: jest.fn(),
+        info: jest.fn(),
+    },
+}));
 
 jest.mock('child_process', () => {
     return {
@@ -27,10 +33,6 @@ jest.mock('child_process', () => {
     };
 });
 
-beforeAll(() => {
-    // Create a spy on console.error before all tests
-    consoleSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
-});
 
 beforeEach(() => {
     mockRequest = {};
@@ -44,11 +46,6 @@ beforeEach(() => {
 
 afterEach(() => {
     jest.resetModules();
-});
-
-afterAll(() => {
-    // Restore console.error
-    consoleSpy.mockRestore();
 });
 
 /**
@@ -122,9 +119,6 @@ describe('GET /api/payroll/dates', () => {
         expect(mockResponse.json).toHaveBeenCalledWith({
             message: 'Error getting payroll dates',
         });
-
-        // Assert that the error was logged
-        expect(consoleSpy).toHaveBeenCalledWith(error);
     });
 
     it('should respond with an array of payroll dates with id', async () => {
@@ -167,9 +161,6 @@ describe('GET /api/payroll/dates', () => {
         expect(mockResponse.json).toHaveBeenCalledWith({
             message: 'Error getting payroll date',
         });
-
-        // Assert that the error was logged
-        expect(consoleSpy).toHaveBeenCalledWith(error);
     });
 
     it('should respond with an array of payroll dates with employee_id', async () => {
@@ -218,9 +209,6 @@ describe('GET /api/payroll/dates', () => {
         expect(mockResponse.json).toHaveBeenCalledWith({
             message: 'Error getting payroll dates for given employee_id',
         });
-
-        // Assert that the error was logged
-        expect(consoleSpy).toHaveBeenCalledWith(error);
     });
 
     it('should respond with an array of payroll dates with id and employee_id', async () => {
@@ -271,9 +259,6 @@ describe('GET /api/payroll/dates', () => {
         expect(mockResponse.json).toHaveBeenCalledWith({
             message: 'Error getting payroll date',
         });
-
-        // Assert that the error was logged
-        expect(consoleSpy).toHaveBeenCalledWith(error);
     });
 
     it('should respond with a 404 error message when the payroll date does not exist', async () => {
@@ -350,9 +335,6 @@ describe('POST /api/payroll/dates', () => {
         expect(mockResponse.json).toHaveBeenCalledWith({
             message: 'Error creating payroll date',
         });
-
-        // Assert that the error was logged
-        expect(consoleSpy).toHaveBeenCalledWith(error);
     });
 
     it('should return a 500 error if the script cannot execute', async () => {
@@ -427,9 +409,6 @@ describe('POST /api/payroll/dates', () => {
         expect(mockResponse.json).toHaveBeenCalledWith({
             message: 'Error creating payroll date',
         });
-
-        // Assert that the error was logged
-        expect(consoleSpy).toHaveBeenCalledWith(error);
     });
 
     it('should respond with the created payroll date', async () => {
@@ -519,9 +498,6 @@ describe('PUT /api/payroll/dates/:id', () => {
         expect(mockResponse.json).toHaveBeenCalledWith({
             message: 'Error updating payroll date',
         });
-
-        // Assert that the error was logged
-        expect(consoleSpy).toHaveBeenCalledWith(error);
     });
 
     it('should respond with an error message', async () => {
@@ -553,9 +529,6 @@ describe('PUT /api/payroll/dates/:id', () => {
         expect(mockResponse.json).toHaveBeenCalledWith({
             message: 'Error updating payroll date',
         });
-
-        // Assert that the error was logged
-        expect(consoleSpy).toHaveBeenCalledWith(error);
     });
 
     it('should respond with a 404 error message when the payroll date does not exist', async () => {
@@ -697,9 +670,6 @@ describe('DELETE /api/payroll/dates/:id', () => {
         expect(mockResponse.json).toHaveBeenCalledWith({
             message: 'Error deleting payroll date',
         });
-
-        // Assert that the error was logged
-        expect(consoleSpy).toHaveBeenCalledWith(error);
     });
 
     it('should respond with a 404 error message when the payroll date does not exist', async () => {

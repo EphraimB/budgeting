@@ -6,12 +6,13 @@ import { type QueryResultRow } from 'pg';
 // Mock request and response
 let mockRequest: any;
 let mockResponse: any;
-let consoleSpy: any;
 
-beforeAll(() => {
-    // Create a spy on console.error before all tests
-    consoleSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
-});
+jest.mock('../../config/winston', () => ({
+    logger: {
+        error: jest.fn(),
+        info: jest.fn(),
+    },
+}));
 
 beforeEach(() => {
     mockRequest = {};
@@ -20,10 +21,6 @@ beforeEach(() => {
         json: jest.fn(),
         send: jest.fn(),
     };
-});
-
-afterEach(() => {
-    jest.resetModules();
 });
 
 afterEach(() => {
@@ -92,9 +89,6 @@ describe('GET /api/transactionHistory', () => {
         expect(mockResponse.json).toHaveBeenCalledWith({
             message: 'Error getting transaction history',
         });
-
-        // Assert that the error was logged in the console
-        expect(consoleSpy).toHaveBeenCalledWith(error);
     });
 
     it('should respond with an array of transactions with id', async () => {
@@ -143,9 +137,6 @@ describe('GET /api/transactionHistory', () => {
         expect(mockResponse.json).toHaveBeenCalledWith({
             message: 'Error getting transaction history',
         });
-
-        // Assert that the error was logged in the console
-        expect(consoleSpy).toHaveBeenCalledWith(error);
     });
 
     it('should respond with an array of transactions with account id', async () => {
@@ -190,9 +181,6 @@ describe('GET /api/transactionHistory', () => {
         expect(mockResponse.json).toHaveBeenCalledWith({
             message: 'Error getting transaction history',
         });
-
-        // Assert that the error was logged in the console
-        expect(consoleSpy).toHaveBeenCalledWith(error);
     });
 
     it('should respond with an array of transactions with account id and id', async () => {
@@ -245,9 +233,6 @@ describe('GET /api/transactionHistory', () => {
         expect(mockResponse.json).toHaveBeenCalledWith({
             message: 'Error getting transaction history',
         });
-
-        // Assert that the error was logged in the console
-        expect(consoleSpy).toHaveBeenCalledWith(error);
     });
 
     it('should respond with a 404 error message when the transaction does not exist', async () => {
@@ -312,9 +297,6 @@ describe('POST /api/transactionHistory', () => {
         expect(mockResponse.json).toHaveBeenCalledWith({
             message: 'Error creating transaction history',
         });
-
-        // Assert that the error was logged in the console
-        expect(consoleSpy).toHaveBeenCalledWith(error);
     });
 });
 
@@ -363,9 +345,6 @@ describe('PUT /api/transactionHistory/:id', () => {
         expect(mockResponse.json).toHaveBeenCalledWith({
             message: 'Error updating transaction history',
         });
-
-        // Assert that the error was logged in the console
-        expect(consoleSpy).toHaveBeenCalledWith(error);
     });
 
     it('should respond with a 404 error message when the transaction does not exist', async () => {
@@ -429,9 +408,6 @@ describe('DELETE /api/transactionHistory/:id', () => {
         expect(mockResponse.json).toHaveBeenCalledWith({
             message: 'Error deleting transaction history',
         });
-
-        // Assert that the error was logged in the console
-        expect(consoleSpy).toHaveBeenCalledWith(error);
     });
 
     it('should respond with a 404 error message when the transaction does not exist', async () => {

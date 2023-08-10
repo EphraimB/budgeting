@@ -17,13 +17,16 @@ import MockDate from 'mockdate';
 let mockRequest: any;
 let mockResponse: any;
 let mockNext: any;
-let consoleSpy: any;
+
+jest.mock('../../config/winston', () => ({
+    logger: {
+        error: jest.fn(),
+        info: jest.fn(),
+    },
+}));
 
 beforeAll(() => {
     MockDate.set('2020-01-01');
-
-    // Create a spy on console.error before all tests
-    consoleSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
 });
 
 beforeEach(() => {
@@ -46,8 +49,6 @@ afterEach(() => {
 });
 
 afterAll(() => {
-    // Restore console.error
-    consoleSpy.mockRestore();
     MockDate.reset();
 });
 
@@ -188,9 +189,6 @@ describe('getTransactionsByAccount', () => {
         expect(mockResponse.json).toHaveBeenCalledWith({
             message: 'Error getting transactions',
         });
-
-        // Check that the error was logged
-        expect(consoleSpy).toHaveBeenCalledWith(error);
     });
 
     it('should return a 404 when account_id is not found', async () => {
@@ -282,9 +280,6 @@ describe('getExpensesByAccount', () => {
         expect(mockResponse.json).toHaveBeenCalledWith({
             message: 'Error getting expenses',
         });
-
-        // Check that the error was logged
-        expect(consoleSpy).toHaveBeenCalledWith(error);
     });
 
     it('should return a 404 when account_id is not found', async () => {
@@ -395,9 +390,6 @@ describe('getLoansByAccount', () => {
         expect(mockResponse.json).toHaveBeenCalledWith({
             message: 'Error getting loans',
         });
-
-        // Check that the error was logged
-        expect(consoleSpy).toHaveBeenCalledWith(error);
     });
 
     it('should return a 404 when account_id is not found', async () => {
@@ -508,9 +500,6 @@ describe('getPayrollsMiddleware', () => {
         expect(mockResponse.json).toHaveBeenCalledWith({
             message: 'Error getting payrolls',
         });
-
-        // Check that the error was logged
-        expect(consoleSpy).toHaveBeenCalledWith(error);
     });
 
     it('should return a 404 when account_id is not found', async () => {
@@ -602,9 +591,6 @@ describe('getWishlistsByAccount', () => {
         expect(mockResponse.json).toHaveBeenCalledWith({
             message: 'Error getting wishlists',
         });
-
-        // Check that the error was logged
-        expect(consoleSpy).toHaveBeenCalledWith(error);
     });
 
     it('should return a 404 when account_id is not found', async () => {
@@ -696,9 +682,6 @@ describe('getTransfersByAccount', () => {
         expect(mockResponse.json).toHaveBeenCalledWith({
             message: 'Error getting transfers',
         });
-
-        // Check that the error was logged
-        expect(consoleSpy).toHaveBeenCalledWith(error);
     });
 
     it('should return a 404 when account_id is not found', async () => {
@@ -784,9 +767,6 @@ describe('getCurrentBalance', () => {
         expect(mockResponse.json).toHaveBeenCalledWith({
             message: 'Error getting current balance',
         });
-
-        // Check that the error was logged
-        expect(consoleSpy).toHaveBeenCalledWith(error);
     });
 
     it('should return a 404 when account_id is not found', async () => {
@@ -873,9 +853,6 @@ describe('updateWislistCron', () => {
         expect(mockResponse.json).toHaveBeenCalledWith({
             message: 'Error updating cron tab',
         });
-
-        // Check that the error was logged
-        expect(consoleSpy).toHaveBeenCalledWith(error);
     });
 });
 

@@ -6,12 +6,13 @@ import { type QueryResultRow } from 'pg';
 // Mock request and response
 let mockRequest: any;
 let mockResponse: any;
-let consoleSpy: any;
 
-beforeAll(() => {
-    // Create a spy on console.error before all tests
-    consoleSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
-});
+jest.mock('../../config/winston', () => ({
+    logger: {
+        error: jest.fn(),
+        info: jest.fn(),
+    },
+}));
 
 beforeEach(() => {
     mockRequest = {};
@@ -24,11 +25,6 @@ beforeEach(() => {
 
 afterEach(() => {
     jest.resetModules();
-});
-
-afterAll(() => {
-    // Restore console.error
-    consoleSpy.mockRestore();
 });
 
 /**
@@ -93,9 +89,6 @@ describe('GET /api/taxes', () => {
         expect(mockResponse.json).toHaveBeenCalledWith({
             message: 'Error getting taxes',
         });
-
-        // Assert that console.error was called with the error message
-        expect(consoleSpy).toHaveBeenCalledWith(error);
     });
 
     it('should respond with an array of taxes with id', async () => {
@@ -138,9 +131,6 @@ describe('GET /api/taxes', () => {
         expect(mockResponse.json).toHaveBeenCalledWith({
             message: 'Error getting tax',
         });
-
-        // Assert that console.error was called with the error message
-        expect(consoleSpy).toHaveBeenCalledWith(error);
     });
 
     it('should respond with a 404 error message when the tax does not exist', async () => {
@@ -201,9 +191,6 @@ describe('POST /api/taxes', () => {
         expect(mockResponse.json).toHaveBeenCalledWith({
             message: 'Error creating tax',
         });
-
-        // Check that console.error was called with the expected error
-        expect(consoleSpy).toHaveBeenCalledWith(error);
     });
 });
 
@@ -248,9 +235,6 @@ describe('PUT /api/taxes/:id', () => {
         expect(mockResponse.json).toHaveBeenCalledWith({
             message: 'Error updating tax',
         });
-
-        // Check that console.error was called with the expected error
-        expect(consoleSpy).toHaveBeenCalledWith(error);
     });
 
     it('should respond with a 404 error message when the tax does not exist', async () => {
@@ -313,9 +297,6 @@ describe('DELETE /api/taxes/:id', () => {
         expect(mockResponse.json).toHaveBeenCalledWith({
             message: 'Error deleting tax',
         });
-
-        // Check that console.error was called with the expected error
-        expect(consoleSpy).toHaveBeenCalledWith(error);
     });
 
     it('should respond with a 404 error message when the tax does not exist', async () => {

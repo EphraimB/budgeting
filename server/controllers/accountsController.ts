@@ -2,6 +2,7 @@ import { type Request, type Response } from 'express';
 import { accountQueries } from '../models/queryData.js';
 import { handleError, executeQuery } from '../utils/helperFunctions.js';
 import { type Account } from '../types/types.js';
+import { logger } from '../config/winston.js';
 
 interface AccountInput {
     account_id: string;
@@ -54,7 +55,7 @@ export const getAccounts = async (
 
         response.status(200).json(accounts.map(parseAccounts));
     } catch (error) {
-        console.error(error); // Log the error on the server side
+        logger.error(error); // Log the error on the server side
         handleError(
             response,
             `Error getting ${
@@ -81,7 +82,7 @@ export const createAccount = async (request: Request, response: Response) => {
         const accounts = rows.map((account) => parseAccounts(account));
         response.status(201).json(accounts);
     } catch (error) {
-        console.error(error); // Log the error on the server side
+        logger.error(error); // Log the error on the server side
         handleError(response, 'Error creating account');
     }
 };
@@ -116,7 +117,7 @@ export const updateAccount = async (
         const accounts = rows.map((account) => parseAccounts(account));
         response.status(200).json(accounts);
     } catch (error) {
-        console.error(error); // Log the error on the server side
+        logger.error(error); // Log the error on the server side
         handleError(response, 'Error updating account');
     }
 };
@@ -146,7 +147,7 @@ export const deleteAccount = async (
         await executeQuery(accountQueries.deleteAccount, [id]);
         response.status(200).send('Successfully deleted account');
     } catch (error) {
-        console.error(error); // Log the error on the server side
+        logger.error(error); // Log the error on the server side
         handleError(response, 'Error deleting account');
     }
 };
