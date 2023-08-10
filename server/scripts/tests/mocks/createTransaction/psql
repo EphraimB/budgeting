@@ -1,0 +1,29 @@
+#!/bin/sh
+
+# Identify the position of the -c flag
+query=""
+for idx in $(seq 1 $#); do
+    arg=$(eval echo \${$idx})
+    if [ "$arg" = "-c" ]; then
+        idx=$((idx + 1))
+        query=$(eval echo \${$idx})
+        break
+    fi
+done
+
+# Handle the identified query
+case "$query" in
+"INSERT INTO transaction_history (account_id, transaction_amount, transaction_tax_rate, transaction_title, transaction_description) VALUES ('5678', '1000', '0', 'Payroll Transaction', 'Transaction for August')")
+    echo "INSERT 0 1"
+    ;;
+"UPDATE loans ...")
+    echo "UPDATE 1"
+    ;;
+"SELECT ...")
+    echo "1"
+    ;;
+*)
+    echo "Unhandled query in mock: $query" >&2
+    exit 1
+    ;;
+esac
