@@ -13,7 +13,7 @@ for employeeId in $employeeIds; do
         # If the script exists, execute it with the current employee ID as an argument
         cd /app/dist/scripts || exit
 
-        . "$scriptName" "$employeeId"
+        "$scriptName" "$employeeId"
 
         cd /app || exit
 
