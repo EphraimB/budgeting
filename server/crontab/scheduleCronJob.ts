@@ -69,7 +69,7 @@ const scheduleCronJob = async (jobDetails: any) => {
             try {
                 await release();
             } catch (err) {
-                console.error('Failed to release lock: ', err);
+                logger.error('Failed to release lock: ', err);
             }
         }
     }
