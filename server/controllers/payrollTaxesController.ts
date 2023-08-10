@@ -3,6 +3,7 @@ import { payrollQueries } from '../models/queryData.js';
 import { exec } from 'child_process';
 import { handleError, executeQuery } from '../utils/helperFunctions.js';
 import { type PayrollTax } from '../types/types.js';
+import { logger } from '../config/winston.js';
 
 interface PayrollTaxInput {
     payroll_taxes_id: string;
@@ -75,7 +76,7 @@ export const getPayrollTaxes = async (
 
         response.status(200).json(payrollTaxes);
     } catch (error) {
-        console.error(error); // Log the error on the server side
+        logger.error(error); // Log the error on the server side
         handleError(
             response,
             `Error getting ${
@@ -115,7 +116,7 @@ export const createPayrollTax = async (
         // Execute the script
         exec(scriptCommand, (error, stdout, stderr) => {
             if (error != null) {
-                console.error(`Error executing script: ${error.message}`);
+                logger.error(`Error executing script: ${error.message}`);
                 response
                     .status(500)
                     .send(
@@ -123,7 +124,7 @@ export const createPayrollTax = async (
                     );
                 return;
             }
-            console.log(`Script output: ${stdout}`);
+            logger.info(`Script output: ${stdout}`);
         });
 
         const payrollTaxes: PayrollTax[] = results.map((payrollTax) =>
@@ -134,7 +135,7 @@ export const createPayrollTax = async (
 
         next();
     } catch (error) {
-        console.error(error); // Log the error on the server side
+        logger.error(error); // Log the error on the server side
         handleError(response, 'Error creating payroll tax');
     }
 };
@@ -168,7 +169,7 @@ export const createPayrollTaxReturnObject = async (
 
         response.status(201).json(payrollTaxes);
     } catch (error) {
-        console.error(error); // Log the error on the server side
+        logger.error(error); // Log the error on the server side
         handleError(response, 'Error getting payroll tax');
     }
 };
@@ -205,7 +206,7 @@ export const updatePayrollTax = async (
         // Execute the script
         exec(scriptCommand, (error, stdout, stderr) => {
             if (error != null) {
-                console.error(`Error executing script: ${error.message}`);
+                logger.error(`Error executing script: ${error.message}`);
                 response
                     .status(500)
                     .send(
@@ -213,12 +214,12 @@ export const updatePayrollTax = async (
                     );
                 return;
             }
-            console.log(`Script output: ${stdout}`);
+            logger.info(`Script output: ${stdout}`);
         });
 
         next();
     } catch (error) {
-        console.error(error); // Log the error on the server side
+        logger.error(error); // Log the error on the server side
         handleError(response, 'Error updating payroll tax');
     }
 };
@@ -246,7 +247,7 @@ export const updatePayrollTaxReturnObject = async (
 
         response.status(200).json(payrollTaxes);
     } catch (error) {
-        console.error(error); // Log the error on the server side
+        logger.error(error); // Log the error on the server side
         handleError(response, 'Error getting payroll tax');
     }
 };
@@ -286,7 +287,7 @@ export const deletePayrollTax = async (
         // Execute the script
         exec(scriptCommand, (error, stdout, stderr) => {
             if (error != null) {
-                console.error(`Error executing script: ${error.message}`);
+                logger.error(`Error executing script: ${error.message}`);
                 response
                     .status(500)
                     .send(
@@ -297,7 +298,7 @@ export const deletePayrollTax = async (
 
         next();
     } catch (error) {
-        console.error(error); // Log the error on the server side
+        logger.error(error); // Log the error on the server side
         handleError(response, 'Error deleting payroll tax');
     }
 };
