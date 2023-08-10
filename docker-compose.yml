@@ -15,6 +15,12 @@ services:
       - "5001:5001"
     depends_on:
       - db
+  shellcheck:
+    build:
+      context: ./server/scripts
+      dockerfile: Dockerfile.shellcheck
+    volumes:
+      - ./server/scripts:/scripts
   bats-test:
     build:
       context: ./server/scripts
