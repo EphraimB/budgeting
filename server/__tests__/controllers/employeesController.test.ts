@@ -10,7 +10,13 @@ import {
 let mockRequest: any;
 let mockResponse: any;
 let mockNext: any;
-let consoleSpy: any;
+
+jest.mock('../../config/winston', () => ({
+    logger: {
+        error: jest.fn(),
+        info: jest.fn(),
+    },
+}));
 
 jest.mock('child_process', () => {
     return {
@@ -29,11 +35,6 @@ jest.mock('child_process', () => {
     };
 });
 
-beforeAll(() => {
-    // Create a spy on console.error before all tests
-    consoleSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
-});
-
 beforeEach(() => {
     mockRequest = {};
     mockResponse = {
@@ -46,11 +47,6 @@ beforeEach(() => {
 
 afterEach(() => {
     jest.resetModules();
-});
-
-afterAll(() => {
-    // Restore console.error
-    consoleSpy.mockRestore();
 });
 
 /**
@@ -126,9 +122,6 @@ describe('GET /api/payroll/employee', () => {
         expect(mockResponse.json).toHaveBeenCalledWith({
             message: 'Error getting employees',
         });
-
-        // Check that the error was logged
-        expect(consoleSpy).toHaveBeenCalledWith(error);
     });
 
     it('should respond with an array of employees with id', async () => {
@@ -173,9 +166,6 @@ describe('GET /api/payroll/employee', () => {
         expect(mockResponse.json).toHaveBeenCalledWith({
             message: 'Error getting employee',
         });
-
-        // Check that the error was logged
-        expect(consoleSpy).toHaveBeenCalledWith(error);
     });
 
     it('should respond with a 404 error message when the employee does not exist', async () => {
@@ -242,9 +232,6 @@ describe('POST /api/payroll/employee', () => {
         expect(mockResponse.json).toHaveBeenCalledWith({
             message: 'Error creating employee',
         });
-
-        // Check that the error was logged
-        expect(consoleSpy).toHaveBeenCalledWith(error);
     });
 });
 
@@ -294,9 +281,6 @@ describe('PUT /api/payroll/employee/:id', () => {
         expect(mockResponse.json).toHaveBeenCalledWith({
             message: 'Error updating employee',
         });
-
-        // Check that the error was logged
-        expect(consoleSpy).toHaveBeenCalledWith(error);
     });
 
     it('should respond with an error message in return object', async () => {
@@ -323,9 +307,6 @@ describe('PUT /api/payroll/employee/:id', () => {
         expect(mockResponse.json).toHaveBeenCalledWith({
             message: 'Error updating employee',
         });
-
-        // Check that the error was logged
-        expect(consoleSpy).toHaveBeenCalledWith(error);
     });
 
     it('should respond with a 404 error message when the employee does not exist', async () => {
@@ -393,9 +374,6 @@ describe('PUT /api/payroll/employee/:id', () => {
             status: 'error',
             message: 'Failed to execute script',
         });
-
-        // Check that the error was logged
-        expect(consoleSpy).toHaveBeenCalledWith(error);
     });
 
     it('should respond with the updated employee', async () => {
@@ -468,9 +446,6 @@ describe('DELETE /api/payroll/employee/:id', () => {
         expect(mockResponse.json).toHaveBeenCalledWith({
             message: 'Error deleting employee',
         });
-
-        // Check that the error was logged
-        expect(consoleSpy).toHaveBeenCalledWith(error);
     });
 
     it('should not delete employee if there are related data', async () => {

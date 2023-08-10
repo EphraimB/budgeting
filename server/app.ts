@@ -5,6 +5,7 @@ import express, {
     type NextFunction,
 } from 'express';
 import bodyParser from 'body-parser';
+import { logger } from './config/winston.js';
 import swaggerUi from 'swagger-ui-express';
 import routes from './routes/routes.js';
 import accountsRouter from './routes/accountsRouter.js';
@@ -25,7 +26,7 @@ import path from 'path';
 
 const swaggerDocument = JSON.parse(
     fs.readFileSync(
-        path.resolve(process.cwd(), './dist/views/swagger.json'),
+        path.resolve(process.cwd(), './views/swagger.json'),
         'utf8',
     ),
 );
@@ -54,8 +55,10 @@ app.use('/api/income', incomeRouter);
 
 // Global error handling middleware
 app.use((err: any, req: Request, res: Response, next: NextFunction) => {
-    console.error(err);
+    logger.error(err);
     res.status(500).json({ error: 'Internal server error' });
+
+    next();
 });
 
 export default app;

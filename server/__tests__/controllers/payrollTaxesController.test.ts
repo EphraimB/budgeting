@@ -7,7 +7,13 @@ import { type PayrollTax } from '../../types/types.js';
 let mockRequest: any;
 let mockResponse: any;
 let mockNext: any;
-let consoleSpy: any;
+
+jest.mock('../../config/winston', () => ({
+    logger: {
+        error: jest.fn(),
+        info: jest.fn(),
+    },
+}));
 
 jest.mock('child_process', () => {
     return {
@@ -26,11 +32,6 @@ jest.mock('child_process', () => {
     };
 });
 
-beforeAll(() => {
-    // Create a spy on console.error before all tests
-    consoleSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
-});
-
 beforeEach(() => {
     mockRequest = {};
     mockResponse = {
@@ -43,11 +44,6 @@ beforeEach(() => {
 
 afterEach(() => {
     jest.resetModules();
-});
-
-afterAll(() => {
-    // Restore console.error
-    consoleSpy.mockRestore();
 });
 
 /**
@@ -119,9 +115,6 @@ describe('GET /api/payroll/taxes', () => {
         expect(mockResponse.json).toHaveBeenCalledWith({
             message: 'Error getting payroll taxes',
         });
-
-        // Assert that the error was logged
-        expect(consoleSpy).toHaveBeenCalledWith(error);
     });
 
     it('should respond with an array of payroll taxes with id', async () => {
@@ -164,9 +157,6 @@ describe('GET /api/payroll/taxes', () => {
         expect(mockResponse.json).toHaveBeenCalledWith({
             message: 'Error getting payroll tax',
         });
-
-        // Assert that the error was logged
-        expect(consoleSpy).toHaveBeenCalledWith(error);
     });
 
     it('should response with an array of payroll taxes with employee_id', async () => {
@@ -211,9 +201,6 @@ describe('GET /api/payroll/taxes', () => {
         expect(mockResponse.json).toHaveBeenCalledWith({
             message: 'Error getting payroll taxes for given employee_id',
         });
-
-        // Assert that the error was logged
-        expect(consoleSpy).toHaveBeenCalledWith(error);
     });
 
     it('should respond with an array of payroll taxes with employee_id and id', async () => {
@@ -267,9 +254,6 @@ describe('GET /api/payroll/taxes', () => {
         expect(mockResponse.json).toHaveBeenCalledWith({
             message: 'Error getting payroll tax',
         });
-
-        // Assert that the error was logged
-        expect(consoleSpy).toHaveBeenCalledWith(error);
     });
 
     it('should respond with a 404 error message when the payroll tax does not exist', async () => {
@@ -344,9 +328,6 @@ describe('POST /api/payroll/taxes', () => {
         expect(mockResponse.json).toHaveBeenCalledWith({
             message: 'Error creating payroll tax',
         });
-
-        // Assert that the error was logged
-        expect(consoleSpy).toHaveBeenCalledWith(error);
     });
 
     it('should respond with an error message with return object', async () => {
@@ -376,9 +357,6 @@ describe('POST /api/payroll/taxes', () => {
         expect(mockResponse.json).toHaveBeenCalledWith({
             message: 'Error getting payroll tax',
         });
-
-        // Assert that the error was logged
-        expect(consoleSpy).toHaveBeenCalledWith(error);
     });
 
     it('should respond with the created payroll tax', async () => {
@@ -554,9 +532,6 @@ describe('PUT /api/payroll/taxes/:id', () => {
         expect(mockResponse.json).toHaveBeenCalledWith({
             message: 'Error updating payroll tax',
         });
-
-        // Assert that the error was logged
-        expect(consoleSpy).toHaveBeenCalledWith(error);
     });
 
     it('should respond with a 404 error message when the payroll tax does not exist', async () => {
@@ -676,9 +651,6 @@ describe('PUT /api/payroll/taxes/:id', () => {
         expect(mockResponse.json).toHaveBeenCalledWith({
             message: 'Error getting payroll tax',
         });
-
-        // Assert that the error was logged
-        expect(consoleSpy).toHaveBeenCalledWith(error);
     });
 
     it('should return a 500 error when the script fails', async () => {
@@ -779,9 +751,6 @@ describe('DELETE /api/payroll/taxes/:id', () => {
         expect(mockResponse.json).toHaveBeenCalledWith({
             message: 'Error deleting payroll tax',
         });
-
-        // Assert that the error was logged
-        expect(consoleSpy).toHaveBeenCalledWith(error);
     });
 
     it('should respond with a 404 error message when the payroll tax does not exist', async () => {

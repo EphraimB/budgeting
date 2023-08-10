@@ -16,6 +16,13 @@ jest.mock('child_process', () => ({
     execSync: jest.fn().mockReturnValue(Buffer.from('')), // mock execSync to return a Buffer
 }));
 
+jest.mock('../../config/winston', () => ({
+    logger: {
+        error: jest.fn(),
+        info: jest.fn(),
+    },
+}));
+
 jest.mock('proper-lockfile', () => ({
     lock: jest.fn(async () =>
         jest.fn(async () => {

@@ -86,10 +86,10 @@ if [ $cmd_status -eq 0 ]; then
                 # Update the crontab to reflect the new loan_plan_amount
                 if [ $cmd_status -eq 0 ]; then
                     echo "Loan plan amount successfully updated for id $id"
-                    (crontab -l | grep -v "/app/dist/scripts/createTransaction.sh ${unique_id}" || true) | crontab -
+                    (crontab -l | grep -v "/app/scripts/createTransaction.sh ${unique_id}" || true) | crontab -
                     (
                         crontab -l
-                        echo "0 0 * * * /app/dist/scripts/createTransaction.sh ${unique_id} ${account_id} ${id} ${loanAmount} \"${transaction_title}\" \"${transaction_description}\" > /app/cron.log 2>&1"
+                        echo "0 0 * * * /app/scripts/createTransaction.sh ${unique_id} ${account_id} ${id} ${loanAmount} \"${transaction_title}\" \"${transaction_description}\" > /app/cron.log 2>&1"
                     ) | crontab -
                 else
                     echo "Loan plan amount update failed for id $id"
@@ -125,7 +125,7 @@ if [ $cmd_status -eq 0 ]; then
                         PGPASSWORD="$PGPASSWORD" psql -h "$PGHOST" -p "$PGPORT" -d "$PGDB" -U "$PGUSER" -c "DELETE FROM cron_jobs WHERE cron_job_id = '$getCronJob'" -t
                         PGPASSWORD="$PGPASSWORD" psql -h "$PGHOST" -p "$PGPORT" -d "$PGDB" -U "$PGUSER" -c "DELETE FROM cron_jobs WHERE cron_job_id = '$getInterestCronJobId'" -t
 
-                        (crontab -l | grep -v "/app/dist/scripts/createTransaction.sh ${unique_id}" || true) | crontab -
+                        (crontab -l | grep -v "/app/scripts/createTransaction.sh ${unique_id}" || true) | crontab -
                         (crontab -l | grep -v "${getInterestCronJobUniqueId}" || true) | crontab -
 
                         # Capture the exit status immediately after executing the command
@@ -165,7 +165,7 @@ if [ $cmd_status -eq 0 ]; then
             PGPASSWORD="$PGPASSWORD" psql -h "$PGHOST" -p "$PGPORT" -d "$PGDB" -U "$PGUSER" -c "DELETE FROM wishlist WHERE wishlist_id = '$id'" -t
             PGPASSWORD="$PGPASSWORD" psql -h "$PGHOST" -p "$PGPORT" -d "$PGDB" -U "$PGUSER" -c "DELETE FROM cron_jobs WHERE cron_job_id = '$getWishlists'" -t
 
-            (crontab -l | grep -v "/app/dist/scripts/createTransaction.sh ${unique_id}" || true) | crontab -
+            (crontab -l | grep -v "/app/scripts/createTransaction.sh ${unique_id}" || true) | crontab -
 
             # Capture the exit status immediately after executing the command
             cmd_status=$?

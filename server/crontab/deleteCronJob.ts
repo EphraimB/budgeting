@@ -2,6 +2,7 @@ import { execSync } from 'child_process';
 import { lock } from 'proper-lockfile';
 import { v4 as uuidv4 } from 'uuid';
 import { writeFileSync } from 'fs';
+import { logger } from '../config/winston.js';
 
 /**
  * Delete a cron job by its unique ID.
@@ -33,13 +34,13 @@ const deleteCronJob = async (uniqueId: string): Promise<void> => {
             // Install the new crontab from the temporary file
             execSync(`crontab ${tmpCronFile}`);
         } catch (error) {
-            console.error(`Error deleting cron job: ${error}`);
+            logger.error(`Error deleting cron job: ${error}`);
         } finally {
             // Release the lock
             await release();
         }
     } catch (err) {
-        console.error('Failed to acquire or release lock');
+        logger.error('Failed to acquire or release lock');
     }
 };
 

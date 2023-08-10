@@ -3,6 +3,7 @@ import { payrollQueries } from '../models/queryData.js';
 import { exec } from 'child_process';
 import { handleError, executeQuery } from '../utils/helperFunctions.js';
 import { type Employee } from '../types/types.js';
+import { logger } from '../config/winston.js';
 
 interface EmployeeInput {
     employee_id: string;
@@ -69,7 +70,7 @@ export const getEmployee = async (
 
         response.status(200).json(employees);
     } catch (error) {
-        console.error(error); // Log the error on the server side
+        logger.error(error); // Log the error on the server side
         handleError(
             response,
             `Error getting ${
@@ -120,7 +121,7 @@ export const createEmployee = async (
 
         response.status(201).json(employees);
     } catch (error) {
-        console.error(error); // Log the error on the server side
+        logger.error(error); // Log the error on the server side
         handleError(response, 'Error creating employee');
     }
 };
@@ -172,14 +173,14 @@ export const updateEmployee = async (
         // Execute the script
         exec(scriptCommand, (error, stdout, stderr) => {
             if (error != null) {
-                console.error(`Error executing script: ${error.message}`);
+                logger.error(`Error executing script: ${error.message}`);
                 response.status(500).json({
                     status: 'error',
                     message: 'Failed to execute script',
                 });
                 return;
             }
-            console.log(`Script output: ${stdout}`);
+            logger.info(`Script output: ${stdout}`);
         });
 
         // Parse the data to correct format and return an object
@@ -191,7 +192,7 @@ export const updateEmployee = async (
 
         next();
     } catch (error) {
-        console.error(error); // Log the error on the server side
+        logger.error(error); // Log the error on the server side
         handleError(response, 'Error updating employee');
     }
 };
@@ -215,7 +216,7 @@ export const updateEmployeeReturnObject = async (
 
         response.status(200).json(employees);
     } catch (error) {
-        console.error(error); // Log the error on the server side
+        logger.error(error); // Log the error on the server side
         handleError(response, 'Error updating employee');
     }
 };
@@ -274,7 +275,7 @@ export const deleteEmployee = async (
         // Execute the script
         exec(scriptCommand, (error, stdout, stderr) => {
             if (error != null) {
-                console.error(`Error executing script: ${error.message}`);
+                logger.error(`Error executing script: ${error.message}`);
                 response.status(500).json({
                     status: 'error',
                     message: 'Failed to execute script',
@@ -284,7 +285,7 @@ export const deleteEmployee = async (
 
         response.status(200).send('Successfully deleted employee');
     } catch (error) {
-        console.error(error); // Log the error on the server side
+        logger.error(error); // Log the error on the server side
         handleError(response, 'Error deleting employee');
     }
 };

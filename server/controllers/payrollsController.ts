@@ -2,6 +2,7 @@ import { type Request, type Response } from 'express';
 import { payrollQueries } from '../models/queryData.js';
 import { handleError, executeQuery } from '../utils/helperFunctions.js';
 import { type Payroll } from '../types/types.js';
+import { logger } from '../config/winston.js';
 
 interface PayrollInput {
     start_date: string;
@@ -61,7 +62,7 @@ export const getPayrolls = async (
 
         response.status(200).json(returnObj);
     } catch (error) {
-        console.error(error); // Log the error on the server side
+        logger.error(error); // Log the error on the server side
         handleError(response, 'Error getting payrolls');
     }
 };
