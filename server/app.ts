@@ -24,8 +24,6 @@ import incomeRouter from './routes/incomeRouter.js';
 import fs from 'fs';
 import path from 'path';
 
-logger.info('Starting server...');
-
 const swaggerDocument = JSON.parse(
     fs.readFileSync(
         path.resolve(process.cwd(), './views/swagger.json'),
@@ -57,7 +55,7 @@ app.use('/api/income', incomeRouter);
 
 // Global error handling middleware
 app.use((err: any, req: Request, res: Response, next: NextFunction) => {
-    console.error(err);
+    logger.error(err);
     res.status(500).json({ error: 'Internal server error' });
 });
 
