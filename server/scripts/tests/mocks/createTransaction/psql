@@ -1,0 +1,55 @@
+#!/bin/sh
+
+# Temporary file to track the calls
+CALL_COUNT_FILE="/tmp/query_call_count.txt"
+
+# If the file doesn't exist, create it
+if [ ! -f "$CALL_COUNT_FILE" ]; then
+    echo "0" >"$CALL_COUNT_FILE"
+fi
+
+# Identify the position of the -c flag
+query=""
+for idx in $(seq 1 $#); do
+    arg=$(eval echo \${$idx})
+    if [ "$arg" = "-c" ]; then
+        idx=$((idx + 1))
+        query=$(eval echo \${$idx})
+        break
+    fi
+done
+
+# Handle the identified query
+case "$query" in
+"INSERT INTO transaction_history"*)
+    echo "INSERT 0 1"
+    ;;
+"UPDATE loans"*)
+    echo "UPDATE 0"
+    ;;
+"SELECT loan_amount"*)
+    # Increment the call count and get the current count
+    call_count=$(expr $(cat "$CALL_COUNT_FILE") + 1)
+    echo $call_count >"$CALL_COUNT_FILE"
+
+    # Based on the call count, return the result
+    if [ $call_count -eq 0 ]; then
+        echo "-1000" # The first return value
+    else
+        echo "0" # The second return value
+    fi
+    ;;
+"SELECT tax_id"*)
+    echo "1"
+    ;;
+"SELECT tax_rate"*)
+    echo "0.25"
+    ;;
+"SELECT cron_job_id"*)
+    echo "1"
+    ;;
+*)
+    echo "Unhandled query in mock: $query" >&2
+    exit 1
+    ;;
+esac

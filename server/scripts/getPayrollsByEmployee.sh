@@ -1,6 +1,7 @@
 #!/bin/sh
-  # Perform the task for the current employee and capture the query result
-  query="SELECT make_date(extract(year from current_date)::integer, extract(month from current_date)::integer, s2.payroll_start_day::integer) AS start_date,
+
+# Perform the task for the current employee and capture the query result
+query="SELECT make_date(extract(year from current_date)::integer, extract(month from current_date)::integer, s2.payroll_start_day::integer) AS start_date,
         make_date(extract(year from current_date)::integer, extract(month from current_date)::integer, s1.adjusted_payroll_end_day) AS end_date,
         SUM(s.work_days::integer) AS work_days,
         SUM(COALESCE(
@@ -59,48 +60,48 @@
       WHERE e.employee_id = $1 AND work_days <> 0
       GROUP BY s2.payroll_start_day, e.employee_id, e.employee_id, s.work_days, s1.adjusted_payroll_end_day
       ORDER BY start_date, end_date;"
-  
-  # Execute the query for the current employee and capture the result
-  result=$(PGPASSWORD="$PGPASSWORD" psql -h "$PGHOST" -p "$PGPORT" -d "$PGDB" -U "$PGUSER" -c "$query" -t)
 
- # Create a temporary file to store the result rows
-  tmpFile=$(mktemp)
+# Execute the query for the current employee and capture the result
+result=$(PGPASSWORD="$PGPASSWORD" psql -h "$PGHOST" -p "$PGPORT" -d "$PGDB" -U "$PGUSER" -c "$query" -t)
 
-  # Write the result rows to the temporary file
-  echo "$result" > "$tmpFile"
+# Create a temporary file to store the result rows
+tmpFile=$(mktemp)
 
-  # Save current crontab to another temporary file
-  existingCronFile=$(mktemp)
-  crontab -l > "$existingCronFile"
+# Write the result rows to the temporary file
+echo "$result" >"$tmpFile"
 
-  # Remove existing "payroll_[employee_id]" cron jobs from the existing cron file
-  sed -i "/^.*payroll_${1}_[0-9a-f]\{8\}-[0-9a-f]\{4\}-[0-9a-f]\{4\}-[0-9a-f]\{4\}-[0-9a-f]\{12\}.*$/d" "$existingCronFile"
+# Save current crontab to another temporary file
+existingCronFile=$(mktemp)
+crontab -l >"$existingCronFile"
 
-  # Loop through the result rows from the temporary file and add new cron jobs
-  while IFS="|" read -r startDate endDate workDays grossPay netPay hoursWorked; do
-    startDay=$(echo "$startDate" | cut -d '-' -f 3)
-    endDay=$(echo "$endDate" | cut -d '-' -f 3)
+# Remove existing "payroll_[employee_id]" cron jobs from the existing cron file
+sed -i "/^.*payroll_${1}_[0-9a-f]\{8\}-[0-9a-f]\{4\}-[0-9a-f]\{4\}-[0-9a-f]\{4\}-[0-9a-f]\{12\}.*$/d" "$existingCronFile"
 
-    # Generate a unique ID for the cron job using uuidgen
-    uniqueId=$(uuidgen)
+# Loop through the result rows from the temporary file and add new cron jobs
+while IFS="|" read -r startDate endDate workDays grossPay netPay hoursWorked; do
+  startDay=$(echo "$startDate" | cut -d '-' -f 3)
+  endDay=$(echo "$endDate" | cut -d '-' -f 3)
 
-    # Generate a cron job ID based on the unique ID
-    cronJobId="payroll_${1}_${uniqueId}"
+  # Generate a unique ID for the cron job using uuidgen
+  uniqueId=$(uuidgen)
 
-    # Generate the cron schedule for the current payroll period
-    cronSchedule="0 0 $endDay * *"
+  # Generate a cron job ID based on the unique ID
+  cronJobId="payroll_${1}_${uniqueId}"
 
-    # Create the cron command with the payroll details
-    taxPercentage=$(echo "scale=4; (($grossPay - $netPay) / $grossPay)" | bc)
-    cronCommand="/app/dist/scripts/createTransaction.sh $cronJobId $1 null $grossPay Payroll \"Payroll for $startDate to $endDate\" null $taxPercentage > /app/cron.log 2>&1"
+  # Generate the cron schedule for the current payroll period
+  cronSchedule="0 0 $endDay * *"
 
-    # Append new cron entry to the existing cron file
-    echo "$cronSchedule $cronCommand" >> "$existingCronFile"
-  done < "$tmpFile"
+  # Create the cron command with the payroll details
+  taxPercentage=$(echo "scale=4; (($grossPay - $netPay) / $grossPay)" | bc)
+  cronCommand="/app/dist/scripts/createTransaction.sh $cronJobId $1 null $grossPay Payroll \"Payroll for $startDate to $endDate\" null $taxPercentage > /app/cron.log 2>&1"
 
-  # Install the updated cron file
-  crontab "$existingCronFile"
+  # Append new cron entry to the existing cron file
+  echo "$cronSchedule $cronCommand" >>"$existingCronFile"
+done <"$tmpFile"
 
-  # Remove the temporary files
-  rm "$tmpFile"
-  rm "$existingCronFile"
+# Install the updated cron file
+crontab "$existingCronFile"
+
+# Remove the temporary files
+rm "$tmpFile"
+rm "$existingCronFile"

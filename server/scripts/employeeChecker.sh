@@ -5,7 +5,7 @@ employeeIds=$(PGPASSWORD="$PGPASSWORD" psql -h "$PGHOST" -p "$PGPORT" -d "$PGDB"
 
 # Loop through the employee IDs and call the script for each employee
 for employeeId in $employeeIds; do
-     # The name of the getPayrollsByEmployee.sh script
+    # The name of the getPayrollsByEmployee.sh script
     scriptName="getPayrollsByEmployee.sh"
 
     # Check if the script exists at the given path
