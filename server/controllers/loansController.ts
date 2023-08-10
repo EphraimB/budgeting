@@ -8,6 +8,7 @@ import {
     parseOrFallback,
 } from '../utils/helperFunctions.js';
 import { type Loan } from '../types/types.js';
+import { logger } from '../config/winston.js';
 
 interface LoanInput {
     account_id: string;
@@ -125,7 +126,7 @@ export const getLoans = async (
 
         response.status(200).json(loans);
     } catch (error) {
-        console.error(error); // Log the error on the server side
+        logger.error(error); // Log the error on the server side
         handleError(
             response,
             `Error getting ${
@@ -266,8 +267,8 @@ export const createLoan = async (
             ])
         )[0].cron_job_id;
 
-        console.log('Cron job created ' + cronId.toString());
-        console.log('Interest cron job created ' + interestCronId.toString());
+        logger.info('Cron job created ' + cronId.toString());
+        logger.info('Interest cron job created ' + interestCronId.toString());
 
         await executeQuery(loanQueries.updateLoanWithCronJobId, [
             cronId,
@@ -279,7 +280,7 @@ export const createLoan = async (
 
         next();
     } catch (error) {
-        console.error(error); // Log the error on the server side
+        logger.error(error); // Log the error on the server side
         handleError(response, 'Error creating loan');
     }
 };
@@ -316,7 +317,7 @@ export const createLoanReturnObject = async (
 
         response.status(201).json(modifiedLoans);
     } catch (error) {
-        console.error(error); // Log the error on the server side
+        logger.error(error); // Log the error on the server side
         handleError(response, 'Error creating loan');
     }
 };
@@ -422,7 +423,7 @@ export const updateLoan = async (
         if (results.length > 0) {
             await deleteCronJob(results[0].unique_id);
         } else {
-            console.error('Cron job not found');
+            logger.error('Cron job not found');
         }
 
         const interestCronId: number = parseInt(
@@ -435,12 +436,12 @@ export const updateLoan = async (
         if (interestResults.length > 0) {
             await deleteCronJob(interestResults[0].unique_id);
         } else {
-            console.error('Interest cron job not found');
+            logger.error('Interest cron job not found');
         }
 
         const { uniqueId, cronDate } = await scheduleCronJob(cronParams);
 
-        console.log(uniqueId);
+        logger.info(uniqueId);
 
         await executeQuery(cronJobQueries.updateCronJob, [
             uniqueId,
@@ -480,7 +481,7 @@ export const updateLoan = async (
 
         next();
     } catch (error) {
-        console.error(error); // Log the error on the server side
+        logger.error(error); // Log the error on the server side
         handleError(response, 'Error updating loan');
     }
 };
@@ -517,7 +518,7 @@ export const updateLoanReturnObject = async (
 
         response.status(200).json(modifiedLoans);
     } catch (error) {
-        console.error(error); // Log the error on the server side
+        logger.error(error); // Log the error on the server side
         handleError(response, 'Error getting loan');
     }
 };
@@ -555,7 +556,7 @@ export const deleteLoan = async (
         if (results.length > 0) {
             await deleteCronJob(results[0].unique_id);
         } else {
-            console.error('Cron job not found');
+            logger.error('Cron job not found');
         }
 
         const interestCronId: number = parseInt(
@@ -568,7 +569,7 @@ export const deleteLoan = async (
         if (interestResults.length > 0) {
             await deleteCronJob(interestResults[0].unique_id);
         } else {
-            console.error('Interest cron job not found');
+            logger.error('Interest cron job not found');
         }
 
         await executeQuery(cronJobQueries.deleteCronJob, [cronId]);
@@ -576,7 +577,7 @@ export const deleteLoan = async (
 
         next();
     } catch (error) {
-        console.error(error); // Log the error on the server side
+        logger.error(error); // Log the error on the server side
         handleError(response, 'Error deleting loan');
     }
 };
