@@ -1,18 +1,41 @@
-import { createLogger, format, transports } from 'winston';
+import { createLogger, format, transports, Logger } from 'winston';
 
-export const logger = createLogger({
+// Determine the log level based on the environment.
+const logLevel: string =
+    process.env.NODE_ENV === 'development' ? 'debug' : 'warn';
+
+export const logger: Logger = createLogger({
+    level: logLevel,
     format: format.combine(
         format.timestamp({ format: 'YYYY-MM-DD HH:mm:ss' }),
-        format.printf(
-            (info) => `${info.timestamp} [${info.level}]: ${info.message}`,
-        ),
+        format.errors({ stack: true }), // Log errors with stack trace
+        format.splat(),
+        format.json(), // Produces structured logs in JSON format
     ),
     transports: [
-        // Log all logs error level and below to `error.log`
-        new transports.File({ filename: 'logs/error.log', level: 'error' }),
-
-        // Log all logs warning level and below to `combined.log`
-        // This includes: { error, warn, info, http, verbose, debug, silly }
-        new transports.File({ filename: 'logs/combined.log', level: 'warn' }),
+        // Console transport
+        new transports.Console({
+            format: format.combine(
+                format.colorize(),
+                format.printf(
+                    (info) =>
+                        `${info.timestamp} [${info.level}]: ${info.message}` +
+                        (info.stack ? '\n' + info.stack : ''),
+                ),
+            ),
+            level: process.env.NODE_ENV === 'development' ? 'debug' : 'info', // Only log debug in development
+        }),
+        // File transports
+        new transports.File({
+            filename: 'logs/errors.log',
+            level: 'error',
+            handleExceptions: true,
+        }),
+        new transports.File({
+            filename: 'logs/combined.log',
+            level: logLevel,
+            handleExceptions: true,
+        }),
     ],
+    exitOnError: false,
 });
