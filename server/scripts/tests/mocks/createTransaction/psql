@@ -13,10 +13,10 @@ done
 
 # Handle the identified query
 case "$query" in
-"INSERT INTO transaction_history (account_id, transaction_amount, transaction_tax_rate, transaction_title, transaction_description) VALUES ('5678', '1000', '0', 'Payroll Transaction', 'Transaction for August')")
+"INSERT INTO transaction_history"*)
     echo "INSERT 0 1"
     ;;
-"UPDATE loans ...")
+"UPDATE loans"*)
     echo "UPDATE 1"
     ;;
 "SELECT ...")
