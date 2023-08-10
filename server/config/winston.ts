@@ -17,7 +17,6 @@ export const logger: Logger = createLogger({
         // Console transport
         new transports.Console({
             format: format.combine(
-                format.colorize(),
                 format.printf(
                     (info) =>
                         `${info.timestamp} [${info.level}]: ${JSON.stringify(
