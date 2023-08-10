@@ -20,7 +20,8 @@
     "pg": "^8.11.1",
     "proper-lockfile": "^4.1.2",
     "swagger-ui-express": "^4.6.2",
-    "uuid": "^9.0.0"
+    "uuid": "^9.0.0",
+    "winston": "^3.10.0"
   },
   "devDependencies": {
     "@jest/globals": "^29.6.1",
