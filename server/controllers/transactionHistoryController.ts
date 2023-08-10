@@ -2,6 +2,7 @@ import { type Request, type Response } from 'express';
 import { transactionHistoryQueries } from '../models/queryData.js';
 import { handleError, executeQuery } from '../utils/helperFunctions.js';
 import { type TransactionHistory } from '../types/types.js';
+import { logger } from '../config/winston.js';
 
 interface TransactionHistoryInput {
     transaction_id: string;
@@ -88,7 +89,7 @@ export const getTransactions = async (
 
         response.status(200).json(transactionHistory);
     } catch (error) {
-        console.error(error); // Log the error on the server side
+        logger.error(error); // Log the error on the server side
         handleError(response, 'Error getting transaction history');
     }
 };
@@ -117,7 +118,7 @@ export const createTransaction = async (
 
         response.status(201).json(transactionHistory);
     } catch (error) {
-        console.error(error); // Log the error on the server side
+        logger.error(error); // Log the error on the server side
         handleError(response, 'Error creating transaction history');
     }
 };
@@ -152,7 +153,7 @@ export const updateTransaction = async (
 
         response.status(200).json(transactionHistory);
     } catch (error) {
-        console.error(error); // Log the error on the server side
+        logger.error(error); // Log the error on the server side
         handleError(response, 'Error updating transaction history');
     }
 };
@@ -185,7 +186,7 @@ export const deleteTransaction = async (
 
         response.status(200).send('Successfully deleted transaction history');
     } catch (error) {
-        console.error(error); // Log the error on the server side
+        logger.error(error); // Log the error on the server side
         handleError(response, 'Error deleting transaction history');
     }
 };
