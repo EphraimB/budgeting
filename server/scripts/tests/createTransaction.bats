@@ -33,3 +33,10 @@ teardown() {
     [ "$status" -eq 0 ]
     [[ "$output" =~ "Transaction successfully created for account_id 5678" ]]
 }
+
+@test "Successful transfer transaction creation" {
+    run ../createTransaction.sh transfer_1234 5678 91011 1000 "Transfer Transaction" "Transfer for August" 1235
+    [ "$status" -eq 0 ]
+    [[ "$output" =~ "Transaction successfully created for account_id 5678" ]]
+    [[ "$output" =~ "Transaction successfully created for destination_account_id 1235" ]]
+}
