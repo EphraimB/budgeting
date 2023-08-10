@@ -33,7 +33,7 @@ fi
 createTransaction=$(PGPASSWORD="$PGPASSWORD" psql -h "$PGHOST" -p "$PGPORT" -d "$PGDB" -U "$PGUSER" -c "INSERT INTO transaction_history (account_id, transaction_amount, transaction_tax_rate, transaction_title, transaction_description) VALUES ('$account_id', '$transaction_amount', '$transaction_tax_rate', '$transaction_title', '$transaction_description')" -t)
 
 # Log if the first transaction was successful
-if [ $? -eq 0 ]; then
+if mycmd; then
     echo "Transaction successfully created for account_id $account_id"
 
     # Check if destination_account_id is provided as the sixth argument
@@ -44,7 +44,7 @@ if [ $? -eq 0 ]; then
         createDestinationTransaction=$(PGPASSWORD="$PGPASSWORD" psql -h "$PGHOST" -p "$PGPORT" -d "$PGDB" -U "$PGUSER" -c "INSERT INTO transaction_history (account_id, transaction_amount, transaction_title, transaction_description) VALUES ('$destination_account_id', ABS('$transaction_amount'), '$transaction_title', '$transaction_description')" -t)
 
         # Log if the second transaction was successful
-        if [ $? -eq 0 ]; then
+        if mycmd; then
             echo "Transaction successfully created for destination_account_id $destination_account_id"
         else
             echo "Transaction creation failed for destination_account_id $destination_account_id"
