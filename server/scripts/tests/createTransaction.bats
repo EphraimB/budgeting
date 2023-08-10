@@ -25,8 +25,11 @@ teardown() {
 @test "Successful income transaction creation" {
     run ../createTransaction.sh income_1234 5678 91011 1000 "Income Transaction" "Income for August"
     [ "$status" -eq 0 ]
-    echo "$output"
     [[ "$output" =~ "Transaction successfully created for account_id 5678" ]]
 }
 
-# Add more tests as needed, for example, tests for error paths, different transaction types, etc.
+@test "Successful expense transaction creation" {
+    run ../createTransaction.sh expense_1234 5678 91011 1000 "Expense Transaction" "Expense for August"
+    [ "$status" -eq 0 ]
+    [[ "$output" =~ "Transaction successfully created for account_id 5678" ]]
+}
