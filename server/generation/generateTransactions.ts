@@ -67,11 +67,10 @@ const generate = async (
                     date_modified: new Date(transaction.date_modified),
                     amount: transaction.transaction_amount,
                     tax_rate: transaction.transaction_tax_rate ?? 0,
-                    total_amount: (
+                    total_amount:
                         transaction.transaction_amount +
                         transaction.transaction_amount *
-                            (transaction.transaction_tax_rate ?? 0)
-                    ),
+                            (transaction.transaction_tax_rate ?? 0),
                 }),
             ),
         );
@@ -319,12 +318,10 @@ const generateTransactions = async (
 
         for (const account of accountResults) {
             const currentBalanceValue: number = parseFloat(
-                currentBalance
-                    .find(
-                        (balance: CurrentBalance) =>
-                            balance.account_id === account.account_id,
-                    )
-                    .account_balance.toFixed(2),
+                currentBalance.find(
+                    (balance: CurrentBalance) =>
+                        balance.account_id === account.account_id,
+                ).account_balance,
             );
 
             const employee_id = account.employee_id ?? 0;
@@ -348,12 +345,10 @@ const generateTransactions = async (
         }
     } else {
         const currentBalanceValue: number = parseFloat(
-            currentBalance
-                .find(
-                    (balance: CurrentBalance) =>
-                        balance.account_id === parseInt(account_id),
-                )
-                .account_balance.toFixed(2),
+            currentBalance.find(
+                (balance: CurrentBalance) =>
+                    balance.account_id === parseInt(account_id),
+            ).account_balance,
         );
 
         const employeeResults = await executeQuery(accountQueries.getAccount, [

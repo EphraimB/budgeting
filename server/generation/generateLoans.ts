@@ -114,9 +114,9 @@ const generateLoans = (
             title: loan.loan_title + ' loan to ' + loan.loan_recipient,
             description: loan.loan_description,
             date: new Date(loanDate),
-            amount: -parseFloat(subsidizedAmount.toFixed(2)),
+            amount: -subsidizedAmount,
             tax_rate: 0,
-            total_amount: -parseFloat(subsidizedAmount.toFixed(2)),
+            total_amount: -subsidizedAmount,
         };
 
         if (loanDate > new Date()) {

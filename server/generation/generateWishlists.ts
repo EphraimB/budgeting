@@ -65,7 +65,7 @@ const generateWishlists = (
                         (wishlist.wishlist_tax_rate !== undefined
                             ? wishlist.wishlist_tax_rate
                             : 0)
-                ).toFixed(2),
+                ),
             ),
         };
 
