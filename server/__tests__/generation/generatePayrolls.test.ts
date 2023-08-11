@@ -39,12 +39,7 @@ describe('generatePayrolls', () => {
         expect(payrollTransaction.date).toEqual(new Date(payroll.end_date));
         expect(payrollTransaction.amount).toBe(payroll.gross_pay);
         expect(payrollTransaction.tax_rate).toBe(
-            parseFloat(
-                (
-                    (payroll.gross_pay - payroll.net_pay) /
-                    payroll.gross_pay
-                ).toFixed(4),
-            ),
+            (payroll.gross_pay - payroll.net_pay) / payroll.gross_pay,
         );
         expect(payrollTransaction.total_amount).toBe(payroll.net_pay);
     });
@@ -86,12 +81,7 @@ describe('generatePayrolls', () => {
         expect(payrollTransaction.date).toEqual(new Date(payroll.end_date));
         expect(payrollTransaction.amount).toBe(payroll.gross_pay);
         expect(payrollTransaction.tax_rate).toBe(
-            parseFloat(
-                (
-                    (payroll.gross_pay - payroll.net_pay) /
-                    payroll.gross_pay
-                ).toFixed(4),
-            ),
+            (payroll.gross_pay - payroll.net_pay) / payroll.gross_pay,
         );
         expect(payrollTransaction.total_amount).toBe(payroll.net_pay);
     });
