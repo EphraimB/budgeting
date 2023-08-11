@@ -21,12 +21,7 @@ const generatePayrolls = (
         description: 'payroll',
         date: new Date(payroll_end_date),
         amount: payrolls.gross_pay,
-        tax_rate: parseFloat(
-            (
-                (payrolls.gross_pay - payrolls.net_pay) /
-                payrolls.gross_pay
-            ).toFixed(4),
-        ),
+        tax_rate: (payrolls.gross_pay - payrolls.net_pay) / payrolls.gross_pay,
         total_amount: payrolls.net_pay,
     };
 
