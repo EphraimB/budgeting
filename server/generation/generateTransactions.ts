@@ -65,9 +65,9 @@ const generate = async (
                     description: transaction.transaction_description,
                     date: new Date(transaction.date_created),
                     date_modified: new Date(transaction.date_modified),
-                    amount: -transaction.transaction_amount,
+                    amount: transaction.transaction_amount,
                     tax_rate: transaction.transaction_tax_rate ?? 0,
-                    total_amount: -(
+                    total_amount: (
                         transaction.transaction_amount +
                         transaction.transaction_amount *
                             (transaction.transaction_tax_rate ?? 0)
