@@ -131,7 +131,7 @@ export const accountQueries: AccountQueries = {
       accounts.employee_id,
       accounts.account_name,
       accounts.account_type,
-      COALESCE(accounts.account_balance, 0) + COALESCE(t.transaction_amount_after_tax, 0) AS account_balance_after_tax,
+      COALESCE(accounts.account_balance, 0) + COALESCE(t.transaction_amount_after_tax, 0) AS account_balance,
       accounts.date_created, 
       accounts.date_modified 
     FROM 
