@@ -30,8 +30,12 @@ router.post(
     '/',
     [
         body('name').isString().withMessage('Name must be a string'),
-        body('fare_cap').isNumeric().withMessage('Fare cap must be a number'),
+        body('fare_cap')
+            .optional()
+            .isNumeric()
+            .withMessage('Fare cap must be a number'),
         body('fare_cap_duration')
+            .optional()
             .isInt({ min: 0 })
             .withMessage('Fare cap duration must be a number'),
         validateRequest,
@@ -44,8 +48,12 @@ router.put(
     [
         param('id').isInt({ min: 1 }).withMessage('ID must be a number'),
         body('name').isString().withMessage('Name must be a string'),
-        body('fare_cap').isNumeric().withMessage('Fare cap must be a number'),
+        body('fare_cap')
+            .optional()
+            .isNumeric()
+            .withMessage('Fare cap must be a number'),
         body('fare_cap_duration')
+            .optional()
             .isInt({ min: 0 })
             .withMessage('Fare cap duration must be a number'),
         validateRequest,
