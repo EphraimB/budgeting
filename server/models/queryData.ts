@@ -464,3 +464,19 @@ export const incomeQueries = {
         'UPDATE income SET cron_job_id = $1 WHERE income_id = $2 RETURNING *',
     deleteIncome: 'DELETE FROM income WHERE income_id = $1',
 };
+
+export const commuteSystemQueries = {
+    getCommuteSystems: 'SELECT * FROM commute_systems',
+    getCommuteSystemByAccountId:
+        'SELECT * FROM commute_systems WHERE account_id = $1',
+    getCommuteSystemByIdAndAccountId:
+        'SELECT * FROM commute_systems WHERE commute_system_id = $1 AND account_id = $2',
+    getCommuteSystemById:
+        'SELECT * FROM commute_systems WHERE commute_system_id = $1',
+    createCommuteSystem:
+        'INSERT INTO commute_systems (account_id, name, fare_cap, fare_cap_duration) VALUES ($1, $2, $3, $4) RETURNING *',
+    updateCommuteSystem:
+        'UPDATE commute_systems SET account_id = $1, name = $2, fare_cap = $3, fare_cap_duration = $4 WHERE commute_system_id = $5 RETURNING *',
+    deleteCommuteSystem:
+        'DELETE FROM commute_systems WHERE commute_system_id = $1',
+};

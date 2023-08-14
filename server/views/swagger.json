@@ -700,6 +700,144 @@
         }
       }
     },
+    "/expenses/commute/systems": {
+      "get": {
+        "summary": "Get all commute systems",
+        "description": "Get all commute systems",
+        "tags": [
+          "commute systems"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "query",
+            "description": "Commute system id",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 1
+            }
+          },
+          {
+            "name": "account_id",
+            "in": "query",
+            "description": "Filter by account id",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/SuccessResponseCommuteSystems"
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "404": {
+            "description": "Commute system not found"
+          }
+        }
+      },
+      "post": {
+        "summary": "Create a new commute system",
+        "description": "Create a new commute system",
+        "tags": [
+          "commute systems"
+        ],
+        "requestBody": {
+          "description": "Commute system object to be created",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CommuteSystemManipulation"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "$ref": "#/components/responses/SuccessResponseCommuteSystems"
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          }
+        }
+      }
+    },
+    "/expenses/commute/systems/{id}": {
+      "put": {
+        "summary": "Update a commute system",
+        "description": "Update a commute system",
+        "tags": [
+          "commute systems"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Commute system id",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "description": "Commute system object to be updated",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CommuteSystemManipulation"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/SuccessResponseCommuteSystems"
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "404": {
+            "description": "Commute system not found"
+          }
+        }
+      },
+      "delete": {
+        "summary": "Delete a commute system",
+        "description": "Delete a commute system",
+        "tags": [
+          "commute systems"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Commute system id",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Commute system deleted successfully"
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "404": {
+            "description": "Commute system not found"
+          }
+        }
+      }
+    },
     "/loans": {
       "get": {
         "summary": "Get all loans",
@@ -2026,6 +2164,32 @@
           }
         }
       },
+      "CommuteSystemManipulation": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "example": "Metro North"
+          },
+          "fare_cap": {
+            "type": "number",
+            "format": "double",
+            "example": null
+          },
+          "fare_cap_duration": {
+            "type": "integer",
+            "example": null
+          },
+          "date_created": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "date_modified": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
       "ExpenseTransaction": {
         "type": "object",
         "properties": {
@@ -2271,6 +2435,47 @@
                   "income_description": {
                     "type": "string",
                     "example": "This is a income test"
+                  },
+                  "date_created": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "date_modified": {
+                    "type": "string",
+                    "format": "date-time"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "SuccessResponseCommuteSystems": {
+        "description": "A JSON array of commute systems",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "commute_system_id": {
+                    "type": "integer",
+                    "format": "int64",
+                    "minimum": 1
+                  },
+                  "name": {
+                    "type": "string",
+                    "example": "Subway"
+                  },
+                  "fare_cap": {
+                    "type": "number",
+                    "format": "double",
+                    "example": 33.00
+                  },
+                  "fare_cap_duration": {
+                    "type": "integer",
+                    "example": 1
                   },
                   "date_created": {
                     "type": "string",

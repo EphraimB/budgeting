@@ -211,6 +211,16 @@ export interface Transfer {
     date_modified?: string;
 }
 
+export interface CommuteSystem {
+    commute_system_id: number;
+    name: string;
+    fare_cap: number;
+    fare_cap_duration: number;
+    date_created: string;
+    date_modified: string;
+}
+
+
 interface CurrentBalance {
     account_id: number;
     account_balance: number;

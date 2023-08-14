@@ -173,6 +173,7 @@ CREATE TABLE IF NOT EXISTS income (
 
 CREATE TABLE IF NOT EXISTS commute_systems (
   commute_system_id SERIAL PRIMARY KEY,
+  account_id INT NOT NULL REFERENCES accounts(account_id),
   name VARCHAR(255) NOT NULL,
   fare_cap NUMERIC(5,2),
   fare_cap_duration INT,
