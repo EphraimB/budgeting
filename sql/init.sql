@@ -171,6 +171,56 @@ CREATE TABLE IF NOT EXISTS income (
   date_modified TIMESTAMP NOT NULL
 );
 
+CREATE TABLE IF NOT EXISTS commute_systems (
+  commute_system_id SERIAL PRIMARY KEY,
+  name VARCHAR(255) NOT NULL,
+  fare_cap NUMERIC(5,2),
+  fare_cap_duration INT,
+  date_created TIMESTAMP NOT NULL,
+  date_modified TIMESTAMP NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS fare_details (
+  fare_detail_id SERIAL PRIMARY KEY,
+  commute_system_id INT NOT NULL REFERENCES commute_systems(commute_system_id),
+  name VARCHAR(255) NOT NULL,
+  fare_amount NUMERIC(5,2) NOT NULL,
+  begin_in_effect_day_of_week INT NOT NULL,
+  begin_in_effect_time TIME NOT NULL,
+  end_in_effect_day_of_week INT NOT NULL,
+  end_in_effect_time TIME NOT NULL,
+  date_created TIMESTAMP NOT NULL,
+  date_modified TIMESTAMP NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS commute_tickets (
+  commute_ticket_id SERIAL PRIMARY KEY,
+  fare_detail_id INT NOT NULL REFERENCES fare_details(fare_detail_id),
+  alternate_ticket_id INT REFERENCES fare_details(fare_detail_id),
+  date_created TIMESTAMP NOT NULL,
+  date_modified TIMESTAMP NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS commute_schedule (
+  commute_schedule_id SERIAL PRIMARY KEY,
+  commute_ticket_id INT NOT NULL REFERENCES commute_tickets(commute_ticket_id),
+  day INT NOT NULL,
+  time TIME NOT NULL,
+  duration INT NOT NULL,
+  date_created TIMESTAMP NOT NULL,
+  date_modified TIMESTAMP NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS commute_history (
+  commute_history_id SERIAL PRIMARY KEY,
+  fare_amount NUMERIC(5,2) NOT NULL,
+  commute_system VARCHAR(255) NOT NULL,
+  fare_type VARCHAR(255) NOT NULL,
+  timestamp TIMESTAMP NOT NULL,
+  date_created TIMESTAMP NOT NULL,
+  date_modified TIMESTAMP NOT NULL
+);
+
 -- Trigger to update the date_modified column when a row is updated
 CREATE OR REPLACE FUNCTION update_dates()
 RETURNS TRIGGER AS $$
@@ -250,6 +300,31 @@ EXECUTE PROCEDURE update_dates();
 
 CREATE TRIGGER update_income_dates
 BEFORE INSERT OR UPDATE ON income
+FOR EACH ROW
+EXECUTE PROCEDURE update_dates();
+
+CREATE TRIGGER update_comute_systems_dates
+BEFORE INSERT OR UPDATE ON commute_systems
+FOR EACH ROW
+EXECUTE PROCEDURE update_dates();
+
+CREATE TRIGGER update_fare_details_dates
+BEFORE INSERT OR UPDATE ON fare_details
+FOR EACH ROW
+EXECUTE PROCEDURE update_dates();
+
+CREATE TRIGGER update_commute_tickets_dates
+BEFORE INSERT OR UPDATE ON commute_tickets
+FOR EACH ROW
+EXECUTE PROCEDURE update_dates();
+
+CREATE TRIGGER update_commute_schedule_dates
+BEFORE INSERT OR UPDATE ON commute_schedule
+FOR EACH ROW
+EXECUTE PROCEDURE update_dates();
+
+CREATE TRIGGER update_commute_history_dates
+BEFORE INSERT OR UPDATE ON commute_history
 FOR EACH ROW
 EXECUTE PROCEDURE update_dates();
 
