@@ -195,6 +195,7 @@ CREATE TABLE IF NOT EXISTS fare_details (
 
 CREATE TABLE IF NOT EXISTS commute_tickets (
   commute_ticket_id SERIAL PRIMARY KEY,
+  account_id INT NOT NULL REFERENCES accounts(account_id),
   fare_detail_id INT NOT NULL REFERENCES fare_details(fare_detail_id),
   alternate_ticket_id INT REFERENCES fare_details(fare_detail_id),
   date_created TIMESTAMP NOT NULL,
@@ -203,6 +204,7 @@ CREATE TABLE IF NOT EXISTS commute_tickets (
 
 CREATE TABLE IF NOT EXISTS commute_schedule (
   commute_schedule_id SERIAL PRIMARY KEY,
+  account_id INT NOT NULL REFERENCES accounts(account_id),
   commute_ticket_id INT NOT NULL REFERENCES commute_tickets(commute_ticket_id),
   day INT NOT NULL,
   time TIME NOT NULL,
@@ -213,6 +215,7 @@ CREATE TABLE IF NOT EXISTS commute_schedule (
 
 CREATE TABLE IF NOT EXISTS commute_history (
   commute_history_id SERIAL PRIMARY KEY,
+  account_id INT NOT NULL REFERENCES accounts(account_id),
   fare_amount NUMERIC(5,2) NOT NULL,
   commute_system VARCHAR(255) NOT NULL,
   fare_type VARCHAR(255) NOT NULL,
