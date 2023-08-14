@@ -106,12 +106,12 @@ export const createCommuteSystem = async (
     request: Request,
     response: Response,
 ) => {
-    const { name, fare_cap, fare_cap_duration } = request.body;
+    const { account_id, name, fare_cap, fare_cap_duration } = request.body;
 
     try {
         const rows = await executeQuery<CommuteSystemInput>(
             commuteSystemQueries.createCommuteSystem,
-            [name, fare_cap, fare_cap_duration],
+            [account_id, name, fare_cap, fare_cap_duration],
         );
         const commuteSystem = rows.map((cs) => parseCommuteSystem(cs));
         response.status(201).json(commuteSystem);
@@ -132,7 +132,7 @@ export const updateSystem = async (
     response: Response,
 ): Promise<void> => {
     const id = parseInt(request.params.id);
-    const { name, fare_cap, fare_cap_duration } = request.body;
+    const { account_id, name, fare_cap, fare_cap_duration } = request.body;
     try {
         const commuteSystem = await executeQuery<CommuteSystemInput>(
             commuteSystemQueries.getCommuteSystemById,
@@ -146,7 +146,7 @@ export const updateSystem = async (
 
         const rows = await executeQuery<CommuteSystemInput>(
             commuteSystemQueries.updateCommuteSystem,
-            [name, fare_cap, fare_cap_duration, id],
+            [account_id, name, fare_cap, fare_cap_duration, id],
         );
         const system = rows.map((s) => parseCommuteSystem(s));
         response.status(200).json(system);

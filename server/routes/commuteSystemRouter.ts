@@ -32,12 +32,12 @@ router.post(
         body('name').isString().withMessage('Name must be a string'),
         body('fare_cap')
             .optional()
-            .isNumeric()
-            .withMessage('Fare cap must be a number'),
+            .custom((value) => typeof value === 'number' || value === null)
+            .withMessage('Fare cap must be a number or null'),
         body('fare_cap_duration')
             .optional()
-            .isInt({ min: 0 })
-            .withMessage('Fare cap duration must be a number'),
+            .custom((value) => value === null || Number.isInteger(value))
+            .withMessage('Fare cap duration must be an integer or null'),
         validateRequest,
     ],
     createCommuteSystem,
@@ -50,12 +50,12 @@ router.put(
         body('name').isString().withMessage('Name must be a string'),
         body('fare_cap')
             .optional()
-            .isNumeric()
-            .withMessage('Fare cap must be a number'),
+            .custom((value) => typeof value === 'number' || value === null)
+            .withMessage('Fare cap must be a number or null'),
         body('fare_cap_duration')
             .optional()
-            .isInt({ min: 0 })
-            .withMessage('Fare cap duration must be a number'),
+            .custom((value) => value === null || Number.isInteger(value))
+            .withMessage('Fare cap duration must be an integer or null'),
         validateRequest,
     ],
     updateSystem,
