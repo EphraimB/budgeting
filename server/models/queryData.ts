@@ -480,3 +480,19 @@ export const commuteSystemQueries = {
     deleteCommuteSystem:
         'DELETE FROM commute_systems WHERE commute_system_id = $1',
 };
+
+export const commuteHistoryQueries = {
+    getCommuteHistory: 'SELECT * FROM commute_history',
+    getCommuteHistoryByAccountId:
+        'SELECT * FROM commute_history WHERE account_id = $1',
+    getCommuteHistoryByIdAndAccountId:
+        'SELECT * FROM commute_history WHERE commute_history_id = $1 AND account_id = $2',
+    getCommuteHistoryById:
+        'SELECT * FROM commute_history WHERE commute_history_id = $1',
+    createCommuteHistory:
+        'INSERT INTO commute_history (account_id, fare_amount, commute_system, fare_type, timestamp) VALUES ($1, $2, $3, $4, $5) RETURNING *',
+    updateCommuteHistory:
+        'UPDATE commute_history SET account_id = $1, fare_amount = $2, commute_system = $3, fare_type = $4, timestamp = $5 WHERE commute_history_id = $6 RETURNING *',
+    deleteCommuteHistory:
+        'DELETE FROM commute_history WHERE commute_history_id = $1',
+};

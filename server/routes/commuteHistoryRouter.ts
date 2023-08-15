@@ -1,11 +1,11 @@
 import express, { type Router } from 'express';
 import { query, param, body } from 'express-validator';
 import {
-    getCommuteSystem,
-    createCommuteSystem,
-    deleteCommuteSystem,
-    updateCommuteSystem,
-} from '../controllers/commuteSystemController.js';
+    getCommuteHistory,
+    createCommuteHistory,
+    deleteCommuteHistory,
+    updateCommuteHistory,
+} from '../controllers/commuteHistoryController.js';
 import validateRequest from '../utils/validateRequest.js';
 
 const router: Router = express.Router();
@@ -23,7 +23,7 @@ router.get(
             .isInt({ min: 1 })
             .withMessage('Account ID must be a number'),
     ],
-    getCommuteSystem,
+    getCommuteHistory,
 );
 
 router.post(
@@ -38,7 +38,7 @@ router.post(
         body('timestamp').isString().withMessage('Timestamp must be a string'),
         validateRequest,
     ],
-    createCommuteSystem,
+    createCommuteHistory,
 );
 
 router.put(
@@ -54,7 +54,7 @@ router.put(
         body('timestamp').isString().withMessage('Timestamp must be a string'),
         validateRequest,
     ],
-    updateCommuteSystem,
+    updateCommuteHistory,
 );
 
 router.delete(
@@ -63,7 +63,7 @@ router.delete(
         param('id').isInt({ min: 1 }).withMessage('ID must be a number'),
         validateRequest,
     ],
-    deleteCommuteSystem,
+    deleteCommuteHistory,
 );
 
 export default router;

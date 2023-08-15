@@ -29,7 +29,7 @@ const parseCommuteSystem = (
     commute_system_id: parseInt(commuteSystem.commute_system_id),
     account_id: parseInt(commuteSystem.account_id),
     name: commuteSystem.name,
-    fare_cap: parseFloatOrFallback(commuteSystem.fare_cap) ?? null,
+    fare_cap: parseFloatOrFallback(commuteSystem.fare_cap),
     fare_cap_duration: parseIntOrFallback(commuteSystem.fare_cap_duration),
     date_created: commuteSystem.date_created,
     date_modified: commuteSystem.date_modified,

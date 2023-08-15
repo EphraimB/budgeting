@@ -221,6 +221,14 @@ export interface CommuteSystem {
     date_modified: string;
 }
 
+export interface CommuteHistory {
+    commute_history_id: number;
+    account_id: number;
+    fare_amount: number;
+    timestamp: string;
+    date_created: string;
+    date_modified: string;
+}
 
 interface CurrentBalance {
     account_id: number;
