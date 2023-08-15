@@ -201,178 +201,178 @@ describe('GET /api/expenses/commute/systems', () => {
     });
 });
 
-// describe('POST /api/accounts', () => {
-//     it('should respond with the new account', async () => {
-//         const newAccount = accounts.filter(
-//             (account) => account.account_id === 1,
-//         );
+describe('POST /api/expenses/commute/systems', () => {
+    it('should respond with the new system', async () => {
+        const newSystem = commuteSystems.filter(
+            (system) => system.commute_system_id === 1,
+        );
 
-//         mockModule(accounts.filter((account) => account.account_id === 1));
+        mockModule(newSystem);
 
-//         const { createAccount } = await import(
-//             '../../controllers/accountsController.js'
-//         );
+        const { createCommuteSystem } = await import(
+            '../../controllers/commuteSystemController.js'
+        );
 
-//         mockRequest.body = newAccount;
+        mockRequest.body = newSystem;
 
-//         await createAccount(mockRequest as Request, mockResponse);
+        await createCommuteSystem(mockRequest as Request, mockResponse);
 
-//         // Assert
-//         expect(mockResponse.status).toHaveBeenCalledWith(201);
-//         expect(mockResponse.json).toHaveBeenCalledWith(newAccount);
-//     });
+        // Assert
+        expect(mockResponse.status).toHaveBeenCalledWith(201);
+        expect(mockResponse.json).toHaveBeenCalledWith(newSystem);
+    });
 
-//     it('should handle errors correctly', async () => {
-//         // Arrange
-//         const errorMessage = 'Error creating account';
-//         const error = new Error(errorMessage);
-//         mockModule(null, errorMessage);
+    it('should handle errors correctly', async () => {
+        // Arrange
+        const errorMessage = 'Error creating system';
+        const error = new Error(errorMessage);
+        mockModule(null, errorMessage);
 
-//         const { createAccount } = await import(
-//             '../../controllers/accountsController.js'
-//         );
+        const { createCommuteSystem } = await import(
+            '../../controllers/commuteSystemController.js'
+        );
 
-//         mockRequest.body = accounts.filter(
-//             (account) => account.account_id === 1,
-//         );
+        mockRequest.body = commuteSystems.filter(
+            (system) => system.commute_system_id === 1,
+        );
 
-//         // Act
-//         await createAccount(mockRequest as Request, mockResponse);
+        // Act
+        await createCommuteSystem(mockRequest as Request, mockResponse);
 
-//         // Assert
-//         expect(mockResponse.status).toHaveBeenCalledWith(400);
-//         expect(mockResponse.json).toHaveBeenCalledWith({
-//             message: 'Error creating account',
-//         });
-//     });
-// });
+        // Assert
+        expect(mockResponse.status).toHaveBeenCalledWith(400);
+        expect(mockResponse.json).toHaveBeenCalledWith({
+            message: 'Error creating system',
+        });
+    });
+});
 
-// describe('PUT /api/accounts/:id', () => {
-//     it('should respond with the updated account', async () => {
-//         const updatedAccount = accounts.filter(
-//             (account) => account.account_id === 1,
-//         );
+describe('PUT /api/expenses/commute/systems/:id', () => {
+    it('should respond with the updated system', async () => {
+        const updatedSystem = commuteSystems.filter(
+            (system) => system.commute_system_id === 1,
+        );
 
-//         mockModule(accounts.filter((account) => account.account_id === 1));
+        mockModule(updatedSystem);
 
-//         const { updateAccount } = await import(
-//             '../../controllers/accountsController.js'
-//         );
+        const { updateSystem } = await import(
+            '../../controllers/commuteSystemController.js'
+        );
 
-//         mockRequest.params = { id: 1 };
-//         mockRequest.body = updateAccount;
+        mockRequest.params = { id: 1 };
+        mockRequest.body = updatedSystem;
 
-//         await updateAccount(mockRequest as Request, mockResponse);
+        await updateSystem(mockRequest as Request, mockResponse);
 
-//         // Assert
-//         expect(mockResponse.status).toHaveBeenCalledWith(200);
-//         expect(mockResponse.json).toHaveBeenCalledWith(updatedAccount);
-//     });
+        // Assert
+        expect(mockResponse.status).toHaveBeenCalledWith(200);
+        expect(mockResponse.json).toHaveBeenCalledWith(updatedSystem);
+    });
 
-//     it('should handle errors correctly', async () => {
-//         // Arrange
-//         const errorMessage = 'Error updating account';
-//         const error = new Error(errorMessage);
-//         mockModule(null, errorMessage);
+    it('should handle errors correctly', async () => {
+        // Arrange
+        const errorMessage = 'Error updating system';
+        const error = new Error(errorMessage);
+        mockModule(null, errorMessage);
 
-//         const { updateAccount } = await import(
-//             '../../controllers/accountsController.js'
-//         );
+        const { updateSystem } = await import(
+            '../../controllers/commuteSystemController.js'
+        );
 
-//         mockRequest.params = { id: 1 };
-//         mockRequest.body = accounts.filter(
-//             (account) => account.account_id === 1,
-//         );
+        mockRequest.params = { id: 1 };
+        mockRequest.body = commuteSystems.filter(
+            (system) => system.commute_system_id === 1,
+        );
 
-//         // Act
-//         await updateAccount(mockRequest as Request, mockResponse);
+        // Act
+        await updateSystem(mockRequest as Request, mockResponse);
 
-//         // Assert
-//         expect(mockResponse.status).toHaveBeenCalledWith(400);
-//         expect(mockResponse.json).toHaveBeenCalledWith({
-//             message: 'Error updating account',
-//         });
-//     });
+        // Assert
+        expect(mockResponse.status).toHaveBeenCalledWith(400);
+        expect(mockResponse.json).toHaveBeenCalledWith({
+            message: 'Error updating system',
+        });
+    });
 
-//     it('should respond with a 404 error message when the account does not exist', async () => {
-//         // Arrange
-//         mockModule([]);
+    it('should respond with a 404 error message when the system does not exist', async () => {
+        // Arrange
+        mockModule([]);
 
-//         const { updateAccount } = await import(
-//             '../../controllers/accountsController.js'
-//         );
+        const { updateSystem } = await import(
+            '../../controllers/commuteSystemController.js'
+        );
 
-//         mockRequest.params = { id: 1 };
-//         mockRequest.body = accounts.filter(
-//             (account) => account.account_id === 1,
-//         );
+        mockRequest.params = { id: 1 };
+        mockRequest.body = commuteSystems.filter(
+            (system) => system.commute_system_id === 1,
+        );
 
-//         // Act
-//         await updateAccount(mockRequest as Request, mockResponse);
+        // Act
+        await updateSystem(mockRequest as Request, mockResponse);
 
-//         // Assert
-//         expect(mockResponse.status).toHaveBeenCalledWith(404);
-//         expect(mockResponse.send).toHaveBeenCalledWith('Account not found');
-//     });
-// });
+        // Assert
+        expect(mockResponse.status).toHaveBeenCalledWith(404);
+        expect(mockResponse.send).toHaveBeenCalledWith('System not found');
+    });
+});
 
-// describe('DELETE /api/accounts/:id', () => {
-//     it('should respond with a success message', async () => {
-//         // Arrange
-//         mockModule('Successfully deleted account');
+describe('DELETE /api/expenses/commute/systems/:id', () => {
+    it('should respond with a success message', async () => {
+        // Arrange
+        mockModule('Successfully deleted system');
 
-//         const { deleteAccount } = await import(
-//             '../../controllers/accountsController.js'
-//         );
+        const { deleteCommuteSystem } = await import(
+            '../../controllers/commuteSystemController.js'
+        );
 
-//         mockRequest.params = { id: 1 };
+        mockRequest.params = { id: 1 };
 
-//         await deleteAccount(mockRequest as Request, mockResponse);
+        await deleteCommuteSystem(mockRequest as Request, mockResponse);
 
-//         // Assert
-//         expect(mockResponse.status).toHaveBeenCalledWith(200);
-//         expect(mockResponse.send).toHaveBeenCalledWith(
-//             'Successfully deleted account',
-//         );
-//     });
+        // Assert
+        expect(mockResponse.status).toHaveBeenCalledWith(200);
+        expect(mockResponse.send).toHaveBeenCalledWith(
+            'Successfully deleted system',
+        );
+    });
 
-//     it('should handle errors correctly', async () => {
-//         // Arrange
-//         const errorMessage = 'Error deleting account';
-//         const error = new Error(errorMessage);
-//         mockModule(null, errorMessage);
+    it('should handle errors correctly', async () => {
+        // Arrange
+        const errorMessage = 'Error deleting system';
+        const error = new Error(errorMessage);
+        mockModule(null, errorMessage);
 
-//         const { deleteAccount } = await import(
-//             '../../controllers/accountsController.js'
-//         );
+        const { deleteCommuteSystem } = await import(
+            '../../controllers/commuteSystemController.js'
+        );
 
-//         mockRequest.params = { id: 1 };
+        mockRequest.params = { id: 1 };
 
-//         // Act
-//         await deleteAccount(mockRequest as Request, mockResponse);
+        // Act
+        await deleteCommuteSystem(mockRequest as Request, mockResponse);
 
-//         // Assert
-//         expect(mockResponse.status).toHaveBeenCalledWith(400);
-//         expect(mockResponse.json).toHaveBeenCalledWith({
-//             message: 'Error deleting account',
-//         });
-//     });
+        // Assert
+        expect(mockResponse.status).toHaveBeenCalledWith(400);
+        expect(mockResponse.json).toHaveBeenCalledWith({
+            message: 'Error deleting system',
+        });
+    });
 
-//     it('should respond with a 404 error message when the account does not exist', async () => {
-//         // Arrange
-//         mockModule([]);
+    it('should respond with a 404 error message when the system does not exist', async () => {
+        // Arrange
+        mockModule([]);
 
-//         const { deleteAccount } = await import(
-//             '../../controllers/accountsController.js'
-//         );
+        const { deleteCommuteSystem } = await import(
+            '../../controllers/commuteSystemController.js'
+        );
 
-//         mockRequest.params = { id: 1 };
+        mockRequest.params = { id: 1 };
 
-//         // Act
-//         await deleteAccount(mockRequest as Request, mockResponse);
+        // Act
+        await deleteCommuteSystem(mockRequest as Request, mockResponse);
 
-//         // Assert
-//         expect(mockResponse.status).toHaveBeenCalledWith(404);
-//         expect(mockResponse.send).toHaveBeenCalledWith('Account not found');
-//     });
-// });
+        // Assert
+        expect(mockResponse.status).toHaveBeenCalledWith(404);
+        expect(mockResponse.send).toHaveBeenCalledWith('System not found');
+    });
+});

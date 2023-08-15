@@ -135,7 +135,7 @@ export const createCommuteSystem = async (
  * @param response - Response object
  * Sends a response with the updated system or an error message and updates the system in the database
  */
-export const updateSystem = async (
+export const updateCommuteSystem = async (
     request: Request,
     response: Response,
 ): Promise<void> => {
