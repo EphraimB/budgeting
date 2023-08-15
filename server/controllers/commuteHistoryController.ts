@@ -8,6 +8,8 @@ interface CommuteHistoryInput {
     commute_history_id: string;
     account_id: string;
     fare_amount: string;
+    commute_system: string;
+    fare_type: string;
     timestamp: string;
     date_created: string;
     date_modified: string;
@@ -24,6 +26,8 @@ const parseCommuteHistory = (
     commute_history_id: parseInt(commuteHistory.commute_history_id),
     account_id: parseInt(commuteHistory.account_id),
     fare_amount: parseFloat(commuteHistory.fare_amount),
+    commute_system: commuteHistory.commute_system,
+    fare_type: commuteHistory.fare_type,
     timestamp: commuteHistory.timestamp,
     date_created: commuteHistory.date_created,
     date_modified: commuteHistory.date_modified,
@@ -108,12 +112,13 @@ export const createCommuteHistory = async (
     request: Request,
     response: Response,
 ) => {
-    const { account_id, fare_amount, timestamp } = request.body;
+    const { account_id, fare_amount, commute_system, fare_type, timestamp } =
+        request.body;
 
     try {
         const rows = await executeQuery<CommuteHistoryInput>(
             commuteHistoryQueries.createCommuteHistory,
-            [account_id, fare_amount, timestamp],
+            [account_id, fare_amount, commute_system, fare_type, timestamp],
         );
         const commuteHistories = rows.map((commuteHistory) =>
             parseCommuteHistory(commuteHistory),
@@ -121,7 +126,7 @@ export const createCommuteHistory = async (
         response.status(201).json(commuteHistories);
     } catch (error) {
         logger.error(error); // Log the error on the server side
-        handleError(response, 'Error creating system');
+        handleError(response, 'Error creating commute history');
     }
 };
 
@@ -136,7 +141,8 @@ export const updateCommuteHistory = async (
     response: Response,
 ): Promise<void> => {
     const id = parseInt(request.params.id);
-    const { account_id, name, fare_cap, fare_cap_duration } = request.body;
+    const { account_id, fare_amount, commute_system, fare_type, timestamp } =
+        request.body;
     try {
         const commuteHistory = await executeQuery<CommuteHistoryInput>(
             commuteHistoryQueries.getCommuteHistoryById,
@@ -150,7 +156,7 @@ export const updateCommuteHistory = async (
 
         const rows = await executeQuery<CommuteHistoryInput>(
             commuteHistoryQueries.updateCommuteHistory,
-            [account_id, name, fare_cap, fare_cap_duration, id],
+            [account_id, fare_amount, commute_system, fare_type, timestamp, id],
         );
         const histories = rows.map((history) => parseCommuteHistory(history));
         response.status(200).json(histories);

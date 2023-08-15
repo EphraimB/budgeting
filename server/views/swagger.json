@@ -838,6 +838,143 @@
         }
       }
     },
+    "/expenses/commute/history": {
+      "get": {
+        "summary": "Get all commute history",
+        "description": "Get all commute history",
+        "tags": [
+          "commute history"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "query",
+            "description": "Commute history id",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "account_id",
+            "in": "query",
+            "description": "Filter by account id",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/SuccessResponseCommuteHistory"
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "404": {
+            "description": "Commute history not found"
+          }
+        }
+      },
+      "post": {
+        "summary": "Create a new commute history",
+        "description": "Create a new commute history",
+        "tags": [
+          "commute history"
+        ],
+        "requestBody": {
+          "description": "Commute history object to be created",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CommuteHistoryManipulation"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "$ref": "#/components/responses/SuccessResponseCommuteHistory"
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          }
+        }
+      }
+    },
+    "/expenses/commute/history/{id}": {
+      "put": {
+        "summary": "Update a commute history",
+        "description": "Update a commute history",
+        "tags": [
+          "commute history"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Commute history id",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "description": "Commute history object to be updated",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CommuteHistoryManipulation"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/SuccessResponseCommuteHistory"
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "404": {
+            "description": "Commute history not found"
+          }
+        }
+      },
+      "delete": {
+        "summary": "Delete a commute history",
+        "description": "Delete a commute history",
+        "tags": [
+          "commute history"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Commute history id",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Commute history deleted successfully"
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "404": {
+            "description": "Commute history not found"
+          }
+        }
+      }
+    },
     "/loans": {
       "get": {
         "summary": "Get all loans",
@@ -2184,6 +2321,41 @@
           "fare_cap_duration": {
             "type": "integer",
             "example": null
+          },
+          "date_created": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "date_modified": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "CommuteHistoryManipulation": {
+        "type": "object",
+        "properties": {
+          "account_id": {
+            "type": "integer",
+            "format": "int64",
+            "minimum": 1
+          },
+          "fare_amount": {
+            "type": "number",
+            "format": "double",
+            "example": 10.00
+          },
+          "commute_system": {
+            "type": "string",
+            "example": "OMNY"
+          },
+          "fare_type": {
+            "type": "string",
+            "example": "Standard"
+          },
+          "timestamp": {
+            "type": "string",
+            "format": "date-time"
           },
           "date_created": {
             "type": "string",
