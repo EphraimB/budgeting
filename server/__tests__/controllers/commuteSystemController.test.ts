@@ -255,14 +255,14 @@ describe('PUT /api/expenses/commute/systems/:id', () => {
 
         mockModule(updatedSystem);
 
-        const { updateSystem } = await import(
+        const { updateCommuteSystem } = await import(
             '../../controllers/commuteSystemController.js'
         );
 
         mockRequest.params = { id: 1 };
         mockRequest.body = updatedSystem;
 
-        await updateSystem(mockRequest as Request, mockResponse);
+        await updateCommuteSystem(mockRequest as Request, mockResponse);
 
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(200);
@@ -275,7 +275,7 @@ describe('PUT /api/expenses/commute/systems/:id', () => {
         const error = new Error(errorMessage);
         mockModule(null, errorMessage);
 
-        const { updateSystem } = await import(
+        const { updateCommuteSystem } = await import(
             '../../controllers/commuteSystemController.js'
         );
 
@@ -285,7 +285,7 @@ describe('PUT /api/expenses/commute/systems/:id', () => {
         );
 
         // Act
-        await updateSystem(mockRequest as Request, mockResponse);
+        await updateCommuteSystem(mockRequest as Request, mockResponse);
 
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(400);
@@ -298,7 +298,7 @@ describe('PUT /api/expenses/commute/systems/:id', () => {
         // Arrange
         mockModule([]);
 
-        const { updateSystem } = await import(
+        const { updateCommuteSystem } = await import(
             '../../controllers/commuteSystemController.js'
         );
 
@@ -308,7 +308,7 @@ describe('PUT /api/expenses/commute/systems/:id', () => {
         );
 
         // Act
-        await updateSystem(mockRequest as Request, mockResponse);
+        await updateCommuteSystem(mockRequest as Request, mockResponse);
 
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(404);
