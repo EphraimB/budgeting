@@ -79,34 +79,42 @@ describe('executeQuery function', () => {
 
 describe('parseOrFallback function', () => {
     it('should return the parsed input', async () => {
-        const { parseOrFallback } = await import('../../utils/helperFunctions');
+        const { parseIntOrFallback } = await import(
+            '../../utils/helperFunctions'
+        );
 
         const mockInput = '1';
-        const result = parseOrFallback(mockInput);
+        const result = parseIntOrFallback(mockInput);
         expect(result).toEqual(1);
     });
 
     it('should return null if the input is null', async () => {
-        const { parseOrFallback } = await import('../../utils/helperFunctions');
+        const { parseIntOrFallback } = await import(
+            '../../utils/helperFunctions'
+        );
 
         const mockInput = null;
-        const result = parseOrFallback(mockInput);
+        const result = parseIntOrFallback(mockInput);
         expect(result).toBeNull();
     });
 
     it('should return null if the input is undefined', async () => {
-        const { parseOrFallback } = await import('../../utils/helperFunctions');
+        const { parseIntOrFallback } = await import(
+            '../../utils/helperFunctions'
+        );
 
         const mockInput = undefined;
-        const result = parseOrFallback(mockInput);
+        const result = parseIntOrFallback(mockInput);
         expect(result).toBeNull();
     });
 
     it('should return null if the input is not a number', async () => {
-        const { parseOrFallback } = await import('../../utils/helperFunctions');
+        const { parseIntOrFallback } = await import(
+            '../../utils/helperFunctions'
+        );
 
         const mockInput = 'not a number';
-        const result = parseOrFallback(mockInput);
+        const result = parseIntOrFallback(mockInput);
         expect(result).toBeNull();
     });
 });

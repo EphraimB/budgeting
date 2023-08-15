@@ -5,7 +5,7 @@ import deleteCronJob from '../crontab/deleteCronJob.js';
 import {
     handleError,
     executeQuery,
-    parseOrFallback,
+    parseIntOrFallback,
 } from '../utils/helperFunctions.js';
 import { type Transfer } from '../types/types.js';
 import { logger } from '../config/winston.js';
@@ -45,11 +45,11 @@ const transfersParse = (transfer: TransferInput): Transfer => ({
     transfer_begin_date: transfer.transfer_begin_date,
     transfer_end_date: transfer.transfer_end_date ?? null,
     frequency_type: parseInt(transfer.frequency_type),
-    frequency_type_variable: parseOrFallback(transfer.frequency_type_variable),
-    frequency_day_of_month: parseOrFallback(transfer.frequency_day_of_month),
-    frequency_day_of_week: parseOrFallback(transfer.frequency_day_of_week),
-    frequency_week_of_month: parseOrFallback(transfer.frequency_week_of_month),
-    frequency_month_of_year: parseOrFallback(transfer.frequency_month_of_year),
+    frequency_type_variable: parseIntOrFallback(transfer.frequency_type_variable),
+    frequency_day_of_month: parseIntOrFallback(transfer.frequency_day_of_month),
+    frequency_day_of_week: parseIntOrFallback(transfer.frequency_day_of_week),
+    frequency_week_of_month: parseIntOrFallback(transfer.frequency_week_of_month),
+    frequency_month_of_year: parseIntOrFallback(transfer.frequency_month_of_year),
     date_created: transfer.date_created,
     date_modified: transfer.date_modified,
 });

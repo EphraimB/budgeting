@@ -3,9 +3,14 @@ import { commuteSystemQueries } from '../models/queryData.js';
 import { handleError, executeQuery } from '../utils/helperFunctions.js';
 import { type CommuteSystem } from '../types/types.js';
 import { logger } from '../config/winston.js';
+import {
+    parseIntOrFallback,
+    parseFloatOrFallback,
+} from '../utils/helperFunctions.js';
 
 interface CommuteSystemInput {
     commute_system_id: string;
+    account_id: string;
     name: string;
     fare_cap: string;
     fare_cap_duration: string;
@@ -22,9 +27,10 @@ const parseCommuteSystem = (
     commuteSystem: CommuteSystemInput,
 ): CommuteSystem => ({
     commute_system_id: parseInt(commuteSystem.commute_system_id),
+    account_id: parseInt(commuteSystem.account_id),
     name: commuteSystem.name,
-    fare_cap: parseFloat(commuteSystem.fare_cap),
-    fare_cap_duration: parseInt(commuteSystem.fare_cap_duration),
+    fare_cap: parseFloatOrFallback(commuteSystem.fare_cap) ?? null,
+    fare_cap_duration: parseIntOrFallback(commuteSystem.fare_cap_duration),
     date_created: commuteSystem.date_created,
     date_modified: commuteSystem.date_modified,
 });
@@ -74,10 +80,8 @@ export const getCommuteSystem = async (
         );
 
         if (
-            id !== null &&
-            id !== undefined &&
-            account_id !== null &&
-            account_id !== undefined &&
+            ((id !== null && id !== undefined) ||
+                (account_id !== null && account_id !== undefined)) &&
             commuteSystem.length === 0
         ) {
             response.status(404).send('System not found');
@@ -90,7 +94,11 @@ export const getCommuteSystem = async (
         handleError(
             response,
             `Error getting ${
-                id !== null && id !== undefined ? 'system' : 'systems'
+                id !== null && id !== undefined
+                    ? 'system'
+                    : account_id !== null && account_id !== undefined
+                    ? 'system for given account_id'
+                    : 'systems'
             }`,
         );
     }

@@ -1,7 +1,7 @@
 import { type Request, type Response, type NextFunction } from 'express';
 import { type QueryResultRow } from 'pg';
 import {
-    parseOrFallback,
+    parseIntOrFallback,
     handleError,
     executeQuery,
 } from '../utils/helperFunctions.js';
@@ -426,18 +426,18 @@ export const getExpensesByAccount = async (
 const parseLoan = (loan: LoanInput): Loan => ({
     loan_id: parseInt(loan.loan_id),
     account_id: parseInt(loan.account_id),
-    tax_id: parseOrFallback(loan.tax_id),
+    tax_id: parseIntOrFallback(loan.tax_id),
     loan_amount: parseFloat(loan.loan_amount),
     loan_plan_amount: parseFloat(loan.loan_plan_amount),
     loan_recipient: loan.loan_recipient,
     loan_title: loan.loan_title,
     loan_description: loan.loan_description,
     frequency_type: parseInt(loan.frequency_type),
-    frequency_type_variable: parseOrFallback(loan.frequency_type_variable),
-    frequency_day_of_month: parseOrFallback(loan.frequency_day_of_month),
-    frequency_day_of_week: parseOrFallback(loan.frequency_day_of_week),
-    frequency_week_of_month: parseOrFallback(loan.frequency_week_of_month),
-    frequency_month_of_year: parseOrFallback(loan.frequency_month_of_year),
+    frequency_type_variable: parseIntOrFallback(loan.frequency_type_variable),
+    frequency_day_of_month: parseIntOrFallback(loan.frequency_day_of_month),
+    frequency_day_of_week: parseIntOrFallback(loan.frequency_day_of_week),
+    frequency_week_of_month: parseIntOrFallback(loan.frequency_week_of_month),
+    frequency_month_of_year: parseIntOrFallback(loan.frequency_month_of_year),
     loan_interest_rate: parseFloat(loan.loan_interest_rate),
     loan_interest_frequency_type: parseInt(loan.loan_interest_frequency_type),
     loan_subsidized: parseFloat(loan.loan_subsidized),

@@ -2,7 +2,7 @@ import { jest } from '@jest/globals';
 import { loans } from '../../models/mockData.js';
 import { type Request, type Response } from 'express';
 import { type QueryResultRow } from 'pg';
-import { parseOrFallback } from '../../utils/helperFunctions.js';
+import { parseIntOrFallback } from '../../utils/helperFunctions.js';
 
 /**
  *
@@ -102,7 +102,7 @@ const mockModule = (
         handleError: jest.fn((res: Response, message: string) => {
             res.status(400).json({ message });
         }),
-        parseOrFallback,
+        parseIntOrFallback,
     }));
 };
 

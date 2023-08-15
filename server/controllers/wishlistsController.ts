@@ -3,7 +3,7 @@ import { cronJobQueries, wishlistQueries } from '../models/queryData.js';
 import {
     executeQuery,
     handleError,
-    parseOrFallback,
+    parseIntOrFallback,
 } from '../utils/helperFunctions.js';
 import { type Wishlist } from '../types/types.js';
 import scheduleCronJob from '../crontab/scheduleCronJob.js';
@@ -34,7 +34,7 @@ interface WishlistInput {
 const wishlistsParse = (wishlist: WishlistInput): Wishlist => ({
     wishlist_id: parseInt(wishlist.wishlist_id),
     account_id: parseInt(wishlist.account_id),
-    tax_id: parseOrFallback(wishlist.tax_id),
+    tax_id: parseIntOrFallback(wishlist.tax_id),
     wishlist_amount: parseFloat(wishlist.wishlist_amount),
     wishlist_title: wishlist.wishlist_title,
     wishlist_description: wishlist.wishlist_description,
