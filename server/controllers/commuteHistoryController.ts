@@ -72,7 +72,7 @@ export const getCommuteHistory = async (
             params = [];
         }
 
-        const commuteSystem = await executeQuery<CommuteHistoryInput>(
+        const commuteHistory = await executeQuery<CommuteHistoryInput>(
             query,
             params,
         );
@@ -80,18 +80,18 @@ export const getCommuteHistory = async (
         if (
             ((id !== null && id !== undefined) ||
                 (account_id !== null && account_id !== undefined)) &&
-            commuteSystem.length === 0
+            commuteHistory.length === 0
         ) {
-            response.status(404).send('System not found');
+            response.status(404).send('Commute history not found');
             return;
         }
 
-        response.status(200).json(commuteSystem.map(parseCommuteHistory));
+        response.status(200).json(commuteHistory.map(parseCommuteHistory));
     } catch (error) {
         logger.error(error); // Log the error on the server side
         handleError(
             response,
-            `Error getting ${
+            `Error getting commute ${
                 id !== null && id !== undefined
                     ? 'history'
                     : account_id !== null && account_id !== undefined
@@ -150,7 +150,7 @@ export const updateCommuteHistory = async (
         );
 
         if (commuteHistory.length === 0) {
-            response.status(404).send('History not found');
+            response.status(404).send('Commute history not found');
             return;
         }
 
@@ -192,6 +192,6 @@ export const deleteCommuteHistory = async (
         response.status(200).send('Successfully deleted commute history');
     } catch (error) {
         logger.error(error); // Log the error on the server side
-        handleError(response, 'Error deleting system');
+        handleError(response, 'Error deleting commute history');
     }
 };
