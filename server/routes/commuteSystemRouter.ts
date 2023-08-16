@@ -32,10 +32,12 @@ router.post(
         body('account_id')
             .isInt({ min: 1 })
             .withMessage('Account ID must be a number'),
-        body('fare_amount')
+        body('fare_cap')
             .isFloat({ min: 0 })
             .withMessage('Fare amount must be a number'),
-        body('timestamp').isString().withMessage('Timestamp must be a string'),
+        body('fare_cap_duration')
+            .isInt({ min: 0, max: 3 })
+            .withMessage('Duration must be a number'),
         validateRequest,
     ],
     createCommuteSystem,
@@ -48,10 +50,12 @@ router.put(
         body('account_id')
             .isInt({ min: 1 })
             .withMessage('Account ID must be a number'),
-        body('fare_amount')
+        body('fare_cap')
             .isFloat({ min: 0 })
             .withMessage('Fare amount must be a number'),
-        body('timestamp').isString().withMessage('Timestamp must be a string'),
+        body('fare_cap_duration')
+            .isInt({ min: 0, max: 3 })
+            .withMessage('Duration must be a number'),
         validateRequest,
     ],
     updateCommuteSystem,
