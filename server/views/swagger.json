@@ -1983,6 +1983,11 @@
             "format": "double",
             "example": 1000.00
           },
+          "tax": {
+            "type": "number",
+            "format": "double",
+            "example": 0.08875
+          },
           "title": {
             "type": "string",
             "example": "Transaction test"
@@ -2559,6 +2564,11 @@
                     "format": "double",
                     "example": 1000.00
                   },
+                  "transaction_tax": {
+                    "type": "number",
+                    "format": "double",
+                    "example": 0.08875
+                  },
                   "transaction_title": {
                     "type": "string",
                     "example": "Transaction test"
@@ -2658,6 +2668,56 @@
                   "fare_cap_duration": {
                     "type": "integer",
                     "example": 1
+                  },
+                  "date_created": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "date_modified": {
+                    "type": "string",
+                    "format": "date-time"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "SuccessResponseCommuteHistory": {
+        "description": "A JSON array of commute history",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "commute_history_id": {
+                    "type": "integer",
+                    "format": "int64",
+                    "minimum": 1
+                  },
+                  "account_id": {
+                    "type": "integer",
+                    "format": "int64",
+                    "minimum": 1
+                  },
+                  "commute_system": {
+                    "type": "string",
+                    "example": "Subway"
+                  },
+                  "fare_amount": {
+                    "type": "number",
+                    "format": "double",
+                    "example": 2.75
+                  },
+                  "fare_type": {
+                    "type": "string",
+                    "example": "Standard"
+                  },
+                  "timestamp": {
+                    "type": "string",
+                    "format": "date-time"
                   },
                   "date_created": {
                     "type": "string",
