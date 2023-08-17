@@ -75,7 +75,7 @@ describe('GET /api/expenses/commute/fares', () => {
                     account_id: fareDetail.account_id,
                     fares: [
                         {
-                            fare_detail_id: 1,
+                            fare_detail_id: fareDetail.fare_detail_id,
                             commute_system: {
                                 commute_system_id: fareDetail.commute_system_id,
                                 name: fareDetail.system_name,
@@ -142,11 +142,36 @@ describe('GET /api/expenses/commute/fares', () => {
         // Call the function with the mock request and response
         await getFareDetails(mockRequest as Request, mockResponse);
 
+        const responseObj = {
+            fares: [
+                fareDetails
+                    .filter((fd) => fd.account_id === 1)
+                    .map((fareDetail) => ({
+                        account_id: fareDetail.account_id,
+                        fare_detail_id: fareDetail.fare_detail_id,
+                        commute_system: {
+                            commute_system_id: fareDetail.commute_system_id,
+                            name: fareDetail.system_name,
+                        },
+                        name: fareDetail.fare_type,
+                        fare_amount: fareDetail.fare_amount,
+                        begin_in_effect: {
+                            day_of_week: fareDetail.begin_in_effect_day_of_week,
+                            time: fareDetail.begin_in_effect_time,
+                        },
+                        end_in_effect: {
+                            day_of_week: fareDetail.end_in_effect_day_of_week,
+                            time: fareDetail.end_in_effect_time,
+                        },
+                        date_created: fareDetail.date_created,
+                        date_modified: fareDetail.date_modified,
+                    })),
+            ],
+        };
+
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(200);
-        expect(mockResponse.json).toHaveBeenCalledWith(
-            fareDetails.filter((fareDetail) => fareDetail.account_id === 1),
-        );
+        expect(mockResponse.json).toHaveBeenCalledWith(responseObj);
     });
 
     it('should handle errors correctly with an account_id', async () => {
@@ -173,9 +198,22 @@ describe('GET /api/expenses/commute/fares', () => {
 
     it('should respond with an array of fare details with an id', async () => {
         // Arrange
-        mockModule(
-            fareDetails.filter((fareDetail) => fareDetail.fare_detail_id === 1),
-        );
+        mockModule([
+            {
+                fare_detail_id: 1,
+                account_id: 1,
+                commute_system_id: 1,
+                system_name: 'BART',
+                fare_type: 'Adult',
+                fare_amount: 5.65,
+                begin_in_effect_day_of_week: 1,
+                begin_in_effect_time: '00:00:00',
+                end_in_effect_day_of_week: 7,
+                end_in_effect_time: '23:59:59',
+                date_created: '2021-01-01T00:00:00.000Z',
+                date_modified: '2021-01-01T00:00:00.000Z',
+            },
+        ]);
 
         const { getFareDetails } = await import(
             '../../controllers/fareDetailsController.js'
@@ -186,11 +224,32 @@ describe('GET /api/expenses/commute/fares', () => {
         // Call the function with the mock request and response
         await getFareDetails(mockRequest as Request, mockResponse);
 
+        const responseObj = {
+            fare: {
+                fare_detail_id: 1,
+                account_id: 1,
+                commute_system: {
+                    commute_system_id: 1,
+                    name: 'BART',
+                },
+                name: 'Adult',
+                fare_amount: 5.65,
+                begin_in_effect: {
+                    day_of_week: 1,
+                    time: '00:00:00',
+                },
+                end_in_effect: {
+                    day_of_week: 7,
+                    time: '23:59:59',
+                },
+                date_created: '2021-01-01T00:00:00.000Z',
+                date_modified: '2021-01-01T00:00:00.000Z',
+            },
+        };
+
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(200);
-        expect(mockResponse.json).toHaveBeenCalledWith(
-            fareDetails.filter((fareDetail) => fareDetail.fare_detail_id === 1),
-        );
+        expect(mockResponse.json).toHaveBeenCalledWith(responseObj);
     });
 
     it('should handle errors correctly with an id', async () => {
