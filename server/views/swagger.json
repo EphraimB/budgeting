@@ -975,6 +975,143 @@
         }
       }
     },
+    "/expenses/commute/fares": {
+      "get": {
+        "summary": "Get all commute fares",
+        "description": "Get all commute fares",
+        "tags": [
+          "commute fares"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "query",
+            "description": "Commute fare id",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "account_id",
+            "in": "query",
+            "description": "Filter by account id",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/SuccessResponseCommuteFares"
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "404": {
+            "description": "Commute fare not found"
+          }
+        }
+      },
+      "post": {
+        "summary": "Create a new commute fare",
+        "description": "Create a new commute fare",
+        "tags": [
+          "commute fares"
+        ],
+        "requestBody": {
+          "description": "Commute fare object to be created",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CommuteFareManipulation"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "$ref": "#/components/responses/SuccessResponseCommuteFares"
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          }
+        }
+      }
+    },
+    "/expenses/commute/fares/{id}": {
+      "put": {
+        "summary": "Update a commute fare",
+        "description": "Update a commute fare",
+        "tags": [
+          "commute fares"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Commute fare id",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "description": "Commute fare object to be updated",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CommuteFareManipulation"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/SuccessResponseCommuteFares"
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "404": {
+            "description": "Commute fare not found"
+          }
+        }
+      },
+      "delete": {
+        "summary": "Delete a commute fare",
+        "description": "Delete a commute fare",
+        "tags": [
+          "commute fares"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Commute fare id",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Commute fare deleted successfully"
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "404": {
+            "description": "Commute fare not found"
+          }
+        }
+      }
+    },
     "/loans": {
       "get": {
         "summary": "Get all loans",
@@ -2372,6 +2509,58 @@
           }
         }
       },
+      "CommuteFareManipulation": {
+        "type": "object",
+        "properties": {
+          "account_id": {
+            "type": "integer",
+            "format": "int64",
+            "minimum": 1
+          },
+          "commute_system_id": {
+            "type": "integer",
+            "format": "int64",
+            "minimum": 1
+          },
+          "name": {
+            "type": "string",
+            "example": "Off-Peak"
+          },
+          "fare_amount": {
+            "type": "number",
+            "format": "double",
+            "example": 10.00
+          },
+          "fare_type": {
+            "type": "string",
+            "example": "Standard"
+          },
+          "begin_in_effect_day_of_week": {
+            "type": "integer",
+            "example": 1
+          },
+          "begin_in_effect_time": {
+            "type": "string",
+            "pattern": "05:00:00"
+          },
+          "end_in_effect_day_of_week": {
+            "type": "integer",
+            "example": 1
+          },
+          "end_in_effect_time": {
+            "type": "string",
+            "pattern": "10:00:00"
+          },
+          "date_created": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "date_modified": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
       "ExpenseTransaction": {
         "type": "object",
         "properties": {
@@ -2718,6 +2907,68 @@
                   "timestamp": {
                     "type": "string",
                     "format": "date-time"
+                  },
+                  "date_created": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "date_modified": {
+                    "type": "string",
+                    "format": "date-time"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "SuccessResponseCommuteFares": {
+        "description": "A JSON array of commute fares",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "commute_fare_id": {
+                    "type": "integer",
+                    "format": "int64",
+                    "minimum": 1
+                  },
+                  "commute_system_id": {
+                    "type": "integer",
+                    "format": "int64",
+                    "minimum": 1
+                  },
+                  "name": {
+                    "type": "string",
+                    "example": "Off-Peak"
+                  },
+                  "fare_amount": {
+                    "type": "number",
+                    "format": "double",
+                    "example": 2.75
+                  },
+                  "fare_type": {
+                    "type": "string",
+                    "example": "Standard"
+                  },
+                  "begin_in_effect_day_of_week": {
+                    "type": "integer",
+                    "example": 1
+                  },
+                  "begin_in_effect_time": {
+                    "type": "string",
+                    "pattern": "05:00:00"
+                  },
+                  "end_in_effect_day_of_week": {
+                    "type": "integer",
+                    "example": 1
+                  },
+                  "end_in_effect_time": {
+                    "type": "string",
+                    "pattern": "10:00:00"
                   },
                   "date_created": {
                     "type": "string",

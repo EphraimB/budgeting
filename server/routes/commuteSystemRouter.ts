@@ -32,10 +32,13 @@ router.post(
         body('account_id')
             .isInt({ min: 1 })
             .withMessage('Account ID must be a number'),
+        body('name').isString().withMessage('Name must be a string'),
         body('fare_cap')
+            .optional({ nullable: true })
             .isFloat({ min: 0 })
-            .withMessage('Fare amount must be a number'),
+            .withMessage('Fare cap amount must be a number'),
         body('fare_cap_duration')
+            .optional({ nullable: true })
             .isInt({ min: 0, max: 3 })
             .withMessage('Duration must be a number'),
         validateRequest,
@@ -50,10 +53,13 @@ router.put(
         body('account_id')
             .isInt({ min: 1 })
             .withMessage('Account ID must be a number'),
+        body('name').isString().withMessage('Name must be a string'),
         body('fare_cap')
+            .optional({ nullable: true })
             .isFloat({ min: 0 })
-            .withMessage('Fare amount must be a number'),
+            .withMessage('Fare cap amount must be a number'),
         body('fare_cap_duration')
+            .optional({ nullable: true })
             .isInt({ min: 0, max: 3 })
             .withMessage('Duration must be a number'),
         validateRequest,

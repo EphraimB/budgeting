@@ -45,14 +45,17 @@ router.post(
                 'Begin in effect day of week must be a number between 0 and 6',
             ),
         body('begin_in_effect_time')
-            .isTime({ hourFormat: 'hour24' })
+            .isTime({ hourFormat: 'hour24', mode: 'withSeconds' })
+            .withMessage('Invalid time')
             .withMessage('Invalid time'),
         body('end_in_effect_day_of_week')
             .isInt({ min: 0, max: 6 })
             .withMessage(
                 'End in effect day of week must be a number between 0 and 6',
             ),
-        body('end_in_effect_time').isTime({ hourFormat: 'hour24' }),
+        body('end_in_effect_time')
+            .isTime({ hourFormat: 'hour24', mode: 'withSeconds' })
+            .withMessage('Invalid time'),
         validateRequest,
     ],
     createFareDetail,
@@ -79,13 +82,16 @@ router.put(
             ),
         body('begin_in_effect_time')
             .isTime({ hourFormat: 'hour24' })
+            .withMessage('Invalid time')
             .withMessage('Invalid time'),
         body('end_in_effect_day_of_week')
             .isInt({ min: 0, max: 6 })
             .withMessage(
                 'End in effect day of week must be a number between 0 and 6',
             ),
-        body('end_in_effect_time').isTime({ hourFormat: 'hour24' }),
+        body('end_in_effect_time')
+            .isTime({ hourFormat: 'hour24' })
+            .withMessage('Invalid time'),
         validateRequest,
     ],
     updateFareDetail,
