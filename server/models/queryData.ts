@@ -498,12 +498,76 @@ export const commuteHistoryQueries = {
 };
 
 export const fareDetailsQueries = {
-    getFareDetails: 'SELECT * FROM fare_details',
-    getFareDetailsByAccountId:
-        'SELECT * FROM fare_details WHERE account_id = $1',
-    getFareDetailsByIdAndAccountId:
-        'SELECT * FROM fare_details WHERE fare_detail_id = $1 AND account_id = $2',
-    getFareDetailsById: 'SELECT * FROM fare_details WHERE fare_detail_id = $1',
+    getFareDetails: `
+        SELECT fare_detail_id,
+            fare_details.account_id,
+            fare_details.commute_system_id AS commute_system_id,
+            commute_systems.name AS system_name,
+            fare_details.name AS fare_type,
+            fare_amount,
+            begin_in_effect_day_of_week,
+            begin_in_effect_time,
+            end_in_effect_day_of_week,
+            end_in_effect_time,
+            fare_details.date_created,
+            fare_details.date_modified
+            FROM fare_details
+            LEFT JOIN commute_systems
+            ON fare_details.commute_system_id = commute_systems.commute_system_id
+    `,
+    getFareDetailsByAccountId: `
+        SELECT fare_detail_id,
+            fare_details.account_id,
+            fare_details.commute_system_id AS commute_system_id,
+            commute_systems.name AS system_name,
+            fare_details.name AS fare_type,
+            fare_amount,
+            begin_in_effect_day_of_week,
+            begin_in_effect_time,
+            end_in_effect_day_of_week,
+            end_in_effect_time,
+            fare_details.date_created,
+            fare_details.date_modified
+            FROM fare_details
+            LEFT JOIN commute_systems
+            ON fare_details.commute_system_id = commute_systems.commute_system_id
+            WHERE fare_details.account_id = $1
+        `,
+    getFareDetailsByIdAndAccountId: `
+        SELECT fare_detail_id,
+            fare_details.account_id,
+            fare_details.commute_system_id AS commute_system_id,
+            commute_systems.name AS system_name,
+            fare_details.name AS fare_type,
+            fare_amount,
+            begin_in_effect_day_of_week,
+            begin_in_effect_time,
+            end_in_effect_day_of_week,
+            end_in_effect_time,
+            fare_details.date_created,
+            fare_details.date_modified
+            FROM fare_details
+            LEFT JOIN commute_systems
+            ON fare_details.commute_system_id = commute_systems.commute_system_id
+            WHERE fare_details.fare_detail_id = $1 AND fare_details.account_id = $2
+        `,
+    getFareDetailsById: `
+        SELECT fare_detail_id,
+            fare_details.account_id,
+            fare_details.commute_system_id AS commute_system_id,
+            commute_systems.name AS system_name,
+            fare_details.name AS fare_type,
+            fare_amount,
+            begin_in_effect_day_of_week,
+            begin_in_effect_time,
+            end_in_effect_day_of_week,
+            end_in_effect_time,
+            fare_details.date_created,
+            fare_details.date_modified
+            FROM fare_details
+            LEFT JOIN commute_systems
+            ON fare_details.commute_system_id = commute_systems.commute_system_id
+            WHERE fare_details.fare_detail_id = $1`,
     createFareDetails:
         'INSERT INTO fare_details (account_id, commute_system_id, name, fare_amount, begin_in_effect_day_of_week, begin_in_effect_time, end_in_effect_day_of_week, end_in_effect_time) VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING *',
     updateFareDetails:

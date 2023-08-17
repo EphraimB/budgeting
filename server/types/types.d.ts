@@ -236,7 +236,8 @@ export interface FareDetails {
     fare_detail_id: number;
     account_id: number;
     commute_system_id: number;
-    name: string;
+    system_name: string;
+    fare_type: string;
     fare_amount: number;
     begin_in_effect_day_of_week: number;
     begin_in_effect_time: string;
