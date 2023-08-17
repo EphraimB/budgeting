@@ -92,6 +92,9 @@ export const getFareDetails = async (
         ) {
             response.status(404).send('Fare detail not found');
             return;
+        } else if (fareDetails.length === 0) {
+            response.status(200).json([]);
+            return;
         }
 
         const fareDetailsParsed = fareDetails.map(parseFareDetails);
