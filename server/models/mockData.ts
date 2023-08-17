@@ -517,3 +517,32 @@ export const commuteHistory = [
         date_modified: '2020-01-01',
     },
 ];
+
+export const fareDetails = [
+    {
+        fare_detail_id: 1,
+        account_id: 1,
+        commute_system_id: 1,
+        name: 'Single Ride',
+        fare_amount: 2.75,
+        begin_in_effect_day_of_week: 0,
+        begin_in_effect_time: '00:00:00',
+        end_in_effect_day_of_week: 6,
+        end_in_effect_time: '23:59:59',
+        date_created: '2020-01-01',
+        date_modified: '2020-01-01',
+    },
+    {
+        fare_detail_id: 2,
+        account_id: 1,
+        commute_system_id: 1,
+        name: 'Weekly',
+        fare_amount: 33,
+        begin_in_effect_day_of_week: 0,
+        begin_in_effect_time: '00:00:00',
+        end_in_effect_day_of_week: 6,
+        end_in_effect_time: '23:59:59',
+        date_created: '2020-01-01',
+        date_modified: '2020-01-01',
+    },
+];

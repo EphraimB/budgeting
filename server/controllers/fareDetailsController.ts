@@ -85,7 +85,7 @@ export const getFareDetails = async (
                 (account_id !== null && account_id !== undefined)) &&
             fareDetails.length === 0
         ) {
-            response.status(404).send('Fare details not found');
+            response.status(404).send('Fare detail not found');
             return;
         }
 
@@ -96,9 +96,9 @@ export const getFareDetails = async (
             response,
             `Error getting fare ${
                 id !== null && id !== undefined
-                    ? 'detail for given id'
+                    ? 'details for given id'
                     : account_id !== null && account_id !== undefined
-                    ? 'detail for given account_id'
+                    ? 'details for given account_id'
                     : 'details'
             }`,
         );
@@ -223,14 +223,14 @@ export const deleteFareDetail = async (
         );
 
         if (fareDetails.length === 0) {
-            response.status(404).send('Fare details not found');
+            response.status(404).send('Fare detail not found');
             return;
         }
 
         await executeQuery(fareDetailsQueries.deleteFareDetails, [id]);
-        response.status(200).send('Successfully deleted fare details');
+        response.status(200).send('Successfully deleted fare detail');
     } catch (error) {
         logger.error(error); // Log the error on the server side
-        handleError(response, 'Error deleting fare details');
+        handleError(response, 'Error deleting fare detail');
     }
 };
