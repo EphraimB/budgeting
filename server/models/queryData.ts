@@ -496,3 +496,17 @@ export const commuteHistoryQueries = {
     deleteCommuteHistory:
         'DELETE FROM commute_history WHERE commute_history_id = $1',
 };
+
+export const fareDetailsQueries = {
+    getFareDetails: 'SELECT * FROM fare_details',
+    getFareDetailsByAccountId:
+        'SELECT * FROM fare_details WHERE account_id = $1',
+    getFareDetailsByIdAndAccountId:
+        'SELECT * FROM fare_details WHERE fare_detail_id = $1 AND account_id = $2',
+    getFareDetailsById: 'SELECT * FROM fare_details WHERE fare_detail_id = $1',
+    createFareDetails:
+        'INSERT INTO fare_details (account_id, commute_system_id, name, fare_amount, begin_in_effect_day_of_week, begin_in_effect_day_of_week, end_in_effect_day_of_week, end_in_effect_time) VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING *',
+    updateFareDetails:
+        'UPDATE fare_details SET account_id = $1, commute_system_id = $2, name = $3, fare_amount = $4, begin_in_effect_day_of_week = $5, begin_in_effect_day_of_week= $6, end_in_effect_day_of_week = $7, end_in_effect_time = $8 WHERE fare_detail_id = $9 RETURNING *',
+    deleteFareDetails: 'DELETE FROM fare_details WHERE fare_detail_id = $1',
+};

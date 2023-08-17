@@ -232,6 +232,20 @@ export interface CommuteHistory {
     date_modified: string;
 }
 
+export interface FareDetails {
+    fare_detail_id: number;
+    account_id: number;
+    commute_system_id: number;
+    name: string;
+    fare_amount: number;
+    begin_in_effect_day_of_week: number;
+    begin_in_effect_time: string;
+    end_in_effect_day_of_week: number;
+    end_in_effect_time: string;
+    date_created: string;
+    date_modified: string;
+}
+
 interface CurrentBalance {
     account_id: number;
     account_balance: number;

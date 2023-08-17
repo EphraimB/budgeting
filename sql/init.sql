@@ -183,6 +183,7 @@ CREATE TABLE IF NOT EXISTS commute_systems (
 
 CREATE TABLE IF NOT EXISTS fare_details (
   fare_detail_id SERIAL PRIMARY KEY,
+  account_id INT NOT NULL REFERENCES accounts(account_id),
   commute_system_id INT NOT NULL REFERENCES commute_systems(commute_system_id),
   name VARCHAR(255) NOT NULL,
   fare_amount NUMERIC(5,2) NOT NULL,

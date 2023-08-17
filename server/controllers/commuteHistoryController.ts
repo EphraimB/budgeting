@@ -17,7 +17,7 @@ interface CommuteHistoryInput {
 
 /**
  *
- * @param commuteHistory - Commute commute history object to parse
+ * @param commuteHistory - Commute history object to parse
  * @returns - Parsed commute history object
  */
 const parseCommuteHistory = (
