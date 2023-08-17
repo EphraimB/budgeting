@@ -83,31 +83,30 @@ export const getFareDetails = async (
 
         const fareDetails = await executeQuery<FareDetailsInput>(query, params);
 
-        if (
-            id !== null &&
-            id !== undefined &&
-            account_id !== null &&
-            account_id !== undefined &&
-            fareDetails.length === 0
-        ) {
-            response.status(404).send('Fare detail not found');
-            return;
-        } else if (fareDetails.length === 0) {
-            response.status(200).json([]);
-            return;
+        if (fareDetails.length === 0) {
+            if (id !== null && id !== undefined) {
+                response.status(404).send('Fare detail not found');
+                return;
+            } else if (account_id !== null && account_id !== undefined) {
+                response.status(404).send('Fare detail not found');
+                return;
+            } else {
+                response.status(200).json([]);
+                return;
+            }
         }
 
         const fareDetailsParsed = fareDetails.map(parseFareDetails);
 
         if (
-            id === null &&
-            id === undefined &&
+            (id === null || id === undefined) &&
             account_id !== null &&
             account_id !== undefined
         ) {
             responseObj = {
                 fares: [
                     fareDetailsParsed.map((fareDetail) => ({
+                        account_id: fareDetail.account_id,
                         fare_detail_id: fareDetail.fare_detail_id,
                         commute_system: {
                             commute_system_id: fareDetail.commute_system_id,
@@ -128,12 +127,7 @@ export const getFareDetails = async (
                     })),
                 ],
             };
-        } else if (
-            id === null &&
-            id === undefined &&
-            account_id === null &&
-            account_id === undefined
-        ) {
+        } else if (id === null || id === undefined) {
             // Nest by account_id
             responseObj = {
                 fares_by_account: [
@@ -169,6 +163,7 @@ export const getFareDetails = async (
         } else {
             responseObj = {
                 fare: {
+                    account_id: fareDetailsParsed[0].account_id,
                     fare_detail_id: fareDetailsParsed[0].fare_detail_id,
                     commute_system: {
                         commute_system_id:

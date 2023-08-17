@@ -10,6 +10,7 @@ import {
     type PayrollDate,
     type PayrollTax,
     type Taxes,
+    FareDetails,
 } from '../types/types';
 
 export const employees: Employee[] = [
@@ -518,12 +519,13 @@ export const commuteHistory = [
     },
 ];
 
-export const fareDetails = [
+export const fareDetails: FareDetails[] = [
     {
         fare_detail_id: 1,
         account_id: 1,
         commute_system_id: 1,
-        name: 'Single Ride',
+        system_name: 'OMNY',
+        fare_type: 'Single Ride',
         fare_amount: 2.75,
         begin_in_effect_day_of_week: 0,
         begin_in_effect_time: '00:00:00',
@@ -536,7 +538,8 @@ export const fareDetails = [
         fare_detail_id: 2,
         account_id: 1,
         commute_system_id: 1,
-        name: 'Weekly',
+        system_name: 'LIRR',
+        fare_type: 'Weekly',
         fare_amount: 33,
         begin_in_effect_day_of_week: 0,
         begin_in_effect_time: '00:00:00',

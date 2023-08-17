@@ -69,9 +69,40 @@ describe('GET /api/expenses/commute/fares', () => {
         // Call the function with the mock request and response
         await getFareDetails(mockRequest as Request, mockResponse);
 
+        const responseObj = {
+            fares_by_account: [
+                fareDetails.map((fareDetail) => ({
+                    account_id: fareDetail.account_id,
+                    fares: [
+                        {
+                            fare_detail_id: 1,
+                            commute_system: {
+                                commute_system_id: fareDetail.commute_system_id,
+                                name: fareDetail.system_name,
+                            },
+                            name: fareDetail.fare_type,
+                            fare_amount: fareDetail.fare_amount,
+                            begin_in_effect: {
+                                day_of_week:
+                                    fareDetail.begin_in_effect_day_of_week,
+                                time: fareDetail.begin_in_effect_time,
+                            },
+                            end_in_effect: {
+                                day_of_week:
+                                    fareDetail.end_in_effect_day_of_week,
+                                time: fareDetail.end_in_effect_time,
+                            },
+                            date_created: fareDetail.date_created,
+                            date_modified: fareDetail.date_modified,
+                        },
+                    ],
+                })),
+            ],
+        };
+
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(200);
-        expect(mockResponse.json).toHaveBeenCalledWith(fareDetails);
+        expect(mockResponse.json).toHaveBeenCalledWith(responseObj);
     });
 
     it('should handle errors correctly', async () => {
