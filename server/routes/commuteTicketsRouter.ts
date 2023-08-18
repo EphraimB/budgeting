@@ -36,6 +36,7 @@ router.post(
             .isInt({ min: 1 })
             .withMessage('Fare detail ID must be a number'),
         body('alternate_ticket_id')
+            .optional({ nullable: true })
             .isInt({ min: 1 })
             .withMessage('Alternate ticket ID must be a number'),
         validateRequest,
@@ -54,6 +55,7 @@ router.put(
             .isInt({ min: 1 })
             .withMessage('Fare detail ID must be a number'),
         body('alternate_ticket_id')
+            .optional({ nullable: true })
             .isInt({ min: 1 })
             .withMessage('Alternate ticket ID must be a number'),
         validateRequest,
