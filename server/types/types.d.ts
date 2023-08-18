@@ -247,6 +247,16 @@ export interface FareDetails {
     date_modified: string;
 }
 
+export interface CommuteTicket {
+    commute_ticket_id: number;
+    account_id: number;
+    fare_detail_id: number;
+    name: string;
+    alternate_ticket_id: number | null;
+    date_created: string;
+    date_modified: string;
+}
+
 interface CurrentBalance {
     account_id: number;
     account_balance: number;
