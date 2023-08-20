@@ -11,6 +11,7 @@ import {
     type PayrollTax,
     type Taxes,
     FareDetails,
+    CommuteTicket,
 } from '../types/types';
 
 export const employees: Employee[] = [
@@ -545,6 +546,27 @@ export const fareDetails: FareDetails[] = [
         begin_in_effect_time: '00:00:00',
         end_in_effect_day_of_week: 6,
         end_in_effect_time: '23:59:59',
+        date_created: '2020-01-01',
+        date_modified: '2020-01-01',
+    },
+];
+
+export const commuteTickets: CommuteTicket[] = [
+    {
+        commute_ticket_id: 1,
+        account_id: 1,
+        fare_detail_id: 1,
+        name: 'OMNY Single Ride',
+        alternate_ticket_id: null,
+        date_created: '2020-01-01',
+        date_modified: '2020-01-01',
+    },
+    {
+        commute_ticket_id: 2,
+        account_id: 1,
+        fare_detail_id: 2,
+        name: 'LIRR Weekly',
+        alternate_ticket_id: null,
         date_created: '2020-01-01',
         date_modified: '2020-01-01',
     },
