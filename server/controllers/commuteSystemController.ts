@@ -1,5 +1,8 @@
 import { type Request, type Response } from 'express';
-import { commuteSystemQueries } from '../models/queryData.js';
+import {
+    commuteSystemQueries,
+    fareDetailsQueries,
+} from '../models/queryData.js';
 import { handleError, executeQuery } from '../utils/helperFunctions.js';
 import { type CommuteSystem } from '../types/types.js';
 import { logger } from '../config/winston.js';
@@ -183,6 +186,23 @@ export const deleteCommuteSystem = async (
 
         if (commuteSystem.length === 0) {
             response.status(404).send('System not found');
+            return;
+        }
+
+        const fareDetailsResults = await executeQuery(
+            fareDetailsQueries.getFareDetailsByAccountId,
+            [commuteSystem[0].account_id],
+        );
+        const hasFareDetails: boolean = fareDetailsResults.length > 0;
+
+        if (hasFareDetails) {
+            response.status(400).send({
+                errors: {
+                    msg: 'You need to delete system-related data before deleting the system',
+                    param: null,
+                    location: 'query',
+                },
+            });
             return;
         }
 
