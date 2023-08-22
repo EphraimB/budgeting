@@ -1,5 +1,8 @@
 import { type Request, type Response } from 'express';
-import { commuteTicketQueries } from '../models/queryData.js';
+import {
+    commuteTicketQueries,
+    fareDetailsQueries,
+} from '../models/queryData.js';
 import { handleError, executeQuery } from '../utils/helperFunctions.js';
 import { type CommuteTicket } from '../types/types.js';
 import { logger } from '../config/winston.js';
@@ -117,6 +120,23 @@ export const createCommuteTicket = async (
     const { account_id, fare_detail_id, alternate_ticket_id } = request.body;
 
     try {
+        const fareDetailsResults = await executeQuery(
+            fareDetailsQueries.getFareDetailsByAccountId,
+            [account_id],
+        );
+        const hasFareDetails: boolean = fareDetailsResults.length > 0;
+
+        if (hasFareDetails === false) {
+            response.status(400).send({
+                errors: {
+                    msg: 'You need to create a fare detail before creating a ticket',
+                    param: null,
+                    location: 'query',
+                },
+            });
+            return;
+        }
+
         const rows = await executeQuery<CommuteTicketInput>(
             commuteTicketQueries.createCommuteTicket,
             [account_id, fare_detail_id, alternate_ticket_id],
