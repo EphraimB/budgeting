@@ -190,19 +190,13 @@ export const deleteCommuteSystem = async (
             return;
         }
 
-        const commuteTicketsResults = await executeQuery(
-            commuteTicketQueries.getCommuteTicketsByAccountId,
-            [commuteSystem[0].account_id],
-        );
-        const hasCommuteTickets: boolean = commuteTicketsResults.length > 0;
-
         const fareDetailsResults = await executeQuery(
             fareDetailsQueries.getFareDetailsByAccountId,
             [commuteSystem[0].account_id],
         );
         const hasFareDetails: boolean = fareDetailsResults.length > 0;
 
-        if (hasFareDetails || hasCommuteTickets) {
+        if (hasFareDetails) {
             response.status(400).send({
                 errors: {
                     msg: 'You need to delete system-related data before deleting the system',
