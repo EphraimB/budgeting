@@ -1,5 +1,8 @@
 import { type Request, type Response } from 'express';
-import { fareDetailsQueries } from '../models/queryData.js';
+import {
+    commuteSystemQueries,
+    fareDetailsQueries,
+} from '../models/queryData.js';
 import { handleError, executeQuery } from '../utils/helperFunctions.js';
 import { type FareDetails } from '../types/types.js';
 import { logger } from '../config/winston.js';
@@ -225,6 +228,23 @@ export const createFareDetail = async (
     } = request.body;
 
     try {
+        const commuteSystemResults = await executeQuery(
+            commuteSystemQueries.getCommuteSystemByAccountId,
+            [account_id],
+        );
+        const hasCommuteSystem: boolean = commuteSystemResults.length > 0;
+
+        if (hasCommuteSystem === false) {
+            response.status(400).send({
+                errors: {
+                    msg: 'You need to create a commute system before creating a fare detail',
+                    param: null,
+                    location: 'query',
+                },
+            });
+            return;
+        }
+
         const rows = await executeQuery<FareDetailsInput>(
             fareDetailsQueries.createFareDetails,
             [
