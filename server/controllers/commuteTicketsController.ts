@@ -134,6 +134,22 @@ export const createCommuteTicket = async (
             return;
         }
 
+        const fareDetail = await executeQuery(
+            fareDetailsQueries.getFareDetailsById,
+            [alternate_ticket_id],
+        );
+
+        if (fareDetail.length === 0) {
+            response.status(400).send({
+                errors: {
+                    msg: 'Alternate ticket does not exist',
+                    param: null,
+                    location: 'query',
+                },
+            });
+            return;
+        }
+
         const rows = await executeQuery<CommuteTicketInput>(
             commuteTicketQueries.createCommuteTicket,
             [account_id, fare_detail_id, alternate_ticket_id],
