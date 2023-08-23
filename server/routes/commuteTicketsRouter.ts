@@ -38,7 +38,15 @@ router.post(
         body('alternate_ticket_id')
             .optional({ nullable: true })
             .isInt({ min: 1 })
-            .withMessage('Alternate ticket ID must be a number'),
+            .withMessage('Alternate ticket ID must be a number')
+            .custom((value, { req }) => {
+                if (value === req.body.fare_detail_id) {
+                    throw new Error(
+                        'alternate_ticket_id cannot be the same as fare_detail_id.',
+                    );
+                }
+                return true; // Indicates the success of this synchronous custom validator
+            }),
         validateRequest,
     ],
     createCommuteTicket,
@@ -57,7 +65,15 @@ router.put(
         body('alternate_ticket_id')
             .optional({ nullable: true })
             .isInt({ min: 1 })
-            .withMessage('Alternate ticket ID must be a number'),
+            .withMessage('Alternate ticket ID must be a number')
+            .custom((value, { req }) => {
+                if (value === req.body.fare_detail_id) {
+                    throw new Error(
+                        'alternate_ticket_id cannot be the same as fare_detail_id.',
+                    );
+                }
+                return true; // Indicates the success of this synchronous custom validator
+            }),
         validateRequest,
     ],
     updateCommuteTicket,

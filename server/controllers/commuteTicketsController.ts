@@ -6,10 +6,7 @@ import {
 import { handleError, executeQuery } from '../utils/helperFunctions.js';
 import { type CommuteTicket } from '../types/types.js';
 import { logger } from '../config/winston.js';
-import {
-    parseIntOrFallback,
-    parseFloatOrFallback,
-} from '../utils/helperFunctions.js';
+import { parseIntOrFallback } from '../utils/helperFunctions.js';
 
 interface CommuteTicketInput {
     commute_ticket_id: string;
