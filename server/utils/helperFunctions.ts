@@ -8,13 +8,7 @@ import pool from '../config/db.js';
  * Sends a response with an error message
  */
 export const handleError = (response: Response, message: string): void => {
-    response.status(400).send({
-        errors: {
-            msg: message,
-            param: null,
-            location: 'query',
-        },
-    });
+    response.status(500).send(message);
 };
 
 /**
