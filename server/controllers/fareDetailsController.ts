@@ -270,8 +270,20 @@ export const createFareDetail = async (
         );
         response.status(201).json(fareDetails);
     } catch (error) {
-        logger.error(error); // Log the error on the server side
-        handleError(response, 'Error creating fare detail');
+        if (
+            error.message.includes(
+                'alternate_fare_detail_id cannot be the same as fare_detail_id',
+            )
+        ) {
+            response
+                .status(400)
+                .send(
+                    'alternate_fare_detail_id cannot be the same as fare_detail_id',
+                );
+        } else {
+            logger.error(error); // Log the error on the server side
+            handleError(response, 'Error creating fare detail');
+        }
     }
 };
 
@@ -327,8 +339,20 @@ export const updateFareDetail = async (
         );
         response.status(200).json(fareDetailsParsed);
     } catch (error) {
-        logger.error(error); // Log the error on the server side
-        handleError(response, 'Error updating fare detail');
+        if (
+            error.message.includes(
+                'alternate_fare_detail_id cannot be the same as fare_detail_id',
+            )
+        ) {
+            response
+                .status(400)
+                .send(
+                    'alternate_fare_detail_id cannot be the same as fare_detail_id',
+                );
+        } else {
+            logger.error(error); // Log the error on the server side
+            handleError(response, 'Error updating fare detail');
+        }
     }
 };
 

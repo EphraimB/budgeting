@@ -263,6 +263,18 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
+CREATE OR REPLACE FUNCTION check_fare_detail_id()
+RETURNS TRIGGER AS $$
+BEGIN
+    -- Check if alternate_fare_detail_id is equal to the new fare_detail_id
+    IF NEW.alternate_fare_detail_id = NEW.fare_detail_id THEN
+        RAISE EXCEPTION 'alternate_fare_detail_id cannot be the same as fare_detail_id';
+    END IF;
+    -- If all checks pass, return the new row for insertion
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
 CREATE TRIGGER update_accounts_dates
 BEFORE INSERT OR UPDATE ON accounts
 FOR EACH ROW
@@ -347,3 +359,8 @@ CREATE TRIGGER update_wishlist_priority_trigger
 BEFORE INSERT ON wishlist
 FOR EACH ROW
 EXECUTE FUNCTION update_wishlist_priority();
+
+CREATE TRIGGER trigger_check_fare_detail_id
+BEFORE INSERT ON fare_details
+FOR EACH ROW
+EXECUTE FUNCTION check_fare_detail_id();
