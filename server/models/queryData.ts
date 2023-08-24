@@ -509,6 +509,7 @@ export const fareDetailsQueries = {
             begin_in_effect_time,
             end_in_effect_day_of_week,
             end_in_effect_time,
+            alternate_fare_detail_id,
             fare_details.date_created,
             fare_details.date_modified
             FROM fare_details
@@ -526,6 +527,7 @@ export const fareDetailsQueries = {
             begin_in_effect_time,
             end_in_effect_day_of_week,
             end_in_effect_time,
+            alternate_fare_detail_id,
             fare_details.date_created,
             fare_details.date_modified
             FROM fare_details
@@ -544,6 +546,7 @@ export const fareDetailsQueries = {
             begin_in_effect_time,
             end_in_effect_day_of_week,
             end_in_effect_time,
+            alternate_fare_detail_id,
             fare_details.date_created,
             fare_details.date_modified
             FROM fare_details
@@ -562,6 +565,7 @@ export const fareDetailsQueries = {
             begin_in_effect_time,
             end_in_effect_day_of_week,
             end_in_effect_time,
+            alternate_fare_detail_id,
             fare_details.date_created,
             fare_details.date_modified
             FROM fare_details
@@ -569,9 +573,9 @@ export const fareDetailsQueries = {
             ON fare_details.commute_system_id = commute_systems.commute_system_id
             WHERE fare_details.fare_detail_id = $1`,
     createFareDetails:
-        'INSERT INTO fare_details (account_id, commute_system_id, name, fare_amount, begin_in_effect_day_of_week, begin_in_effect_time, end_in_effect_day_of_week, end_in_effect_time) VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING *',
+        'INSERT INTO fare_details (account_id, commute_system_id, name, fare_amount, begin_in_effect_day_of_week, begin_in_effect_time, end_in_effect_day_of_week, end_in_effect_time, alternate_fare_detail_id) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING *',
     updateFareDetails:
-        'UPDATE fare_details SET account_id = $1, commute_system_id = $2, name = $3, fare_amount = $4, begin_in_effect_day_of_week = $5, begin_in_effect_time = $6, end_in_effect_day_of_week = $7, end_in_effect_time = $8 WHERE fare_detail_id = $9 RETURNING *',
+        'UPDATE fare_details SET account_id = $1, commute_system_id = $2, name = $3, fare_amount = $4, begin_in_effect_day_of_week = $5, begin_in_effect_time = $6, end_in_effect_day_of_week = $7, end_in_effect_time = $8, alternate_fare_detail_id = $9 WHERE fare_detail_id = $10 RETURNING *',
     deleteFareDetails: 'DELETE FROM fare_details WHERE fare_detail_id = $1',
 };
 
@@ -581,7 +585,6 @@ export const commuteTicketQueries = {
         commute_tickets.account_id,
         commute_tickets.fare_detail_id AS fare_detail_id,
         concat(commute_systems.name, ' ', fare_details.name) AS name,
-        alternate_ticket_id,
         commute_tickets.date_created,
         commute_tickets.date_modified
         FROM commute_tickets
@@ -595,7 +598,6 @@ export const commuteTicketQueries = {
         commute_tickets.account_id,
         commute_tickets.fare_detail_id AS fare_detail_id,
         concat(commute_systems.name, ' ', fare_details.name) AS name,
-        alternate_ticket_id,
         commute_tickets.date_created,
         commute_tickets.date_modified
         FROM commute_tickets
@@ -610,7 +612,6 @@ export const commuteTicketQueries = {
             commute_tickets.account_id,
             commute_tickets.fare_detail_id AS fare_detail_id,
             concat(commute_systems.name, ' ', fare_details.name) AS name,
-            alternate_ticket_id,
             commute_tickets.date_created,
             commute_tickets.date_modified
             FROM commute_tickets
@@ -626,7 +627,6 @@ export const commuteTicketQueries = {
             commute_tickets.account_id,
             commute_tickets.fare_detail_id AS fare_detail_id,
             concat(commute_systems.name, ' ', fare_details.name) AS name,
-            alternate_ticket_id,
             commute_tickets.date_created,
             commute_tickets.date_modified
             FROM commute_tickets
@@ -637,9 +637,9 @@ export const commuteTicketQueries = {
             WHERE commute_tickets.commute_ticket_id = $1
         `,
     createCommuteTicket:
-        'INSERT INTO commute_tickets (account_id, fare_detail_id, alternate_ticket_id) VALUES ($1, $2, $3) RETURNING *',
+        'INSERT INTO commute_tickets (account_id, fare_detail_id) VALUES ($1, $2) RETURNING *',
     updateCommuteTicket:
-        'UPDATE commute_tickets SET account_id = $1, fare_detail_id = $2, alternate_ticket_id = $3 WHERE commute_ticket_id = $4 RETURNING *',
+        'UPDATE commute_tickets SET account_id = $1, fare_detail_id = $2 WHERE commute_ticket_id = $3 RETURNING *',
     deleteCommuteTicket:
         'DELETE FROM commute_tickets WHERE commute_ticket_id = $1',
 };

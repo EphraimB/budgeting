@@ -13,7 +13,6 @@ interface CommuteTicketInput {
     account_id: string;
     fare_detail_id: string;
     name: string;
-    alternate_ticket_id: string | null;
     date_created: string;
     date_modified: string;
 }
@@ -30,7 +29,6 @@ const parseCommuteTicket = (
     account_id: parseInt(commuteTicket.account_id),
     fare_detail_id: parseInt(commuteTicket.fare_detail_id),
     name: commuteTicket.name,
-    alternate_ticket_id: parseIntOrFallback(commuteTicket.alternate_ticket_id),
     date_created: commuteTicket.date_created,
     date_modified: commuteTicket.date_modified,
 });
@@ -114,7 +112,7 @@ export const createCommuteTicket = async (
     request: Request,
     response: Response,
 ) => {
-    const { account_id, fare_detail_id, alternate_ticket_id } = request.body;
+    const { account_id, fare_detail_id } = request.body;
 
     try {
         const fareDetailsResults = await executeQuery(
@@ -134,29 +132,9 @@ export const createCommuteTicket = async (
             return;
         }
 
-        const fareDetail = await executeQuery(
-            fareDetailsQueries.getFareDetailsById,
-            [alternate_ticket_id],
-        );
-
-        if (
-            fareDetail.length === 0 &&
-            alternate_ticket_id !== null &&
-            alternate_ticket_id !== undefined
-        ) {
-            response.status(400).send({
-                errors: {
-                    msg: 'Alternate ticket does not exist',
-                    param: null,
-                    location: 'query',
-                },
-            });
-            return;
-        }
-
         const rows = await executeQuery<CommuteTicketInput>(
             commuteTicketQueries.createCommuteTicket,
-            [account_id, fare_detail_id, alternate_ticket_id],
+            [account_id, fare_detail_id],
         );
         const commuteTicket = rows.map((ct) => parseCommuteTicket(ct));
         response.status(201).json(commuteTicket);
@@ -177,7 +155,7 @@ export const updateCommuteTicket = async (
     response: Response,
 ): Promise<void> => {
     const id = parseInt(request.params.id);
-    const { account_id, fare_detail_id, alternate_ticket_id } = request.body;
+    const { account_id, fare_detail_id } = request.body;
     try {
         const commuteTicket = await executeQuery<CommuteTicketInput>(
             commuteTicketQueries.getCommuteTicketsById,
@@ -191,7 +169,7 @@ export const updateCommuteTicket = async (
 
         const rows = await executeQuery<CommuteTicketInput>(
             commuteTicketQueries.updateCommuteTicket,
-            [account_id, fare_detail_id, alternate_ticket_id, id],
+            [account_id, fare_detail_id, id],
         );
         const tickets = rows.map((ticket) => parseCommuteTicket(ticket));
         response.status(200).json(tickets);

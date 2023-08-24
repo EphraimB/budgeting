@@ -243,6 +243,7 @@ export interface FareDetails {
     begin_in_effect_time: string;
     end_in_effect_day_of_week: number;
     end_in_effect_time: string;
+    alternate_fare_detail_id: number | null;
     date_created: string;
     date_modified: string;
 }
@@ -252,7 +253,6 @@ export interface CommuteTicket {
     account_id: number;
     fare_detail_id: number;
     name: string;
-    alternate_ticket_id: number | null;
     date_created: string;
     date_modified: string;
 }

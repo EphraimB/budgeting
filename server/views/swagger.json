@@ -2615,11 +2615,6 @@
             "type": "integer",
             "format": "int64",
             "minimum": 1
-          },
-          "alternate_ticket_id": {
-            "type": "integer",
-            "format": "int64",
-            "minimum": 1
           }
         }
       },
@@ -2691,6 +2686,10 @@
           "end_in_effect_time": {
             "type": "string",
             "pattern": "10:00:00"
+          },
+          "alternate_fare_detail_id": {
+            "type": "integer",
+            "example": null
           }
         }
       },
@@ -3103,6 +3102,10 @@
                     "type": "string",
                     "pattern": "10:00:00"
                   },
+                  "alternate_fare_detail_id": {
+                    "type": "integer",
+                    "example": null
+                  },
                   "date_created": {
                     "type": "string",
                     "format": "date-time"
@@ -3137,11 +3140,6 @@
                     "minimum": 1
                   },
                   "fare_detail_id": {
-                    "type": "integer",
-                    "format": "int64",
-                    "minimum": 1
-                  },
-                  "alternate_ticket_id": {
                     "type": "integer",
                     "format": "int64",
                     "minimum": 1

@@ -56,6 +56,10 @@ router.post(
         body('end_in_effect_time')
             .isTime({ hourFormat: 'hour24', mode: 'withSeconds' })
             .withMessage('Invalid time'),
+        body('alternate_fare_detail_id')
+            .optional({ nullable: true })
+            .isInt({ min: 1 })
+            .withMessage('Alternate fare detail ID must be a number'),
         validateRequest,
     ],
     createFareDetail,
@@ -92,6 +96,10 @@ router.put(
         body('end_in_effect_time')
             .isTime({ hourFormat: 'hour24', mode: 'withSeconds' })
             .withMessage('Invalid time'),
+        body('alternate_fare_detail_id')
+            .optional({ nullable: true })
+            .isInt({ min: 1 })
+            .withMessage('Alternate fare detail ID must be a number'),
         validateRequest,
     ],
     updateFareDetail,

@@ -5,6 +5,7 @@ import {
 } from '../models/queryData.js';
 import { handleError, executeQuery } from '../utils/helperFunctions.js';
 import { type FareDetails } from '../types/types.js';
+import { parseIntOrFallback } from '../utils/helperFunctions.js';
 import { logger } from '../config/winston.js';
 
 interface FareDetailsInput {
@@ -18,6 +19,7 @@ interface FareDetailsInput {
     begin_in_effect_time: string;
     end_in_effect_day_of_week: string;
     end_in_effect_time: string;
+    alternate_fare_detail_id: string | null;
     date_created: string;
     date_modified: string;
 }
@@ -40,6 +42,9 @@ const parseFareDetails = (fareDetails: FareDetailsInput): FareDetails => ({
     begin_in_effect_time: fareDetails.begin_in_effect_time,
     end_in_effect_day_of_week: parseInt(fareDetails.end_in_effect_day_of_week),
     end_in_effect_time: fareDetails.end_in_effect_time,
+    alternate_fare_detail_id: parseIntOrFallback(
+        fareDetails.alternate_fare_detail_id,
+    ),
     date_created: fareDetails.date_created,
     date_modified: fareDetails.date_modified,
 });
@@ -225,6 +230,7 @@ export const createFareDetail = async (
         begin_in_effect_time,
         end_in_effect_day_of_week,
         end_in_effect_time,
+        alternate_fare_detail_id,
     } = request.body;
 
     try {
@@ -256,6 +262,7 @@ export const createFareDetail = async (
                 begin_in_effect_time,
                 end_in_effect_day_of_week,
                 end_in_effect_time,
+                alternate_fare_detail_id,
             ],
         );
         const fareDetails = rows.map((fareDetail) =>
@@ -288,6 +295,7 @@ export const updateFareDetail = async (
         begin_in_effect_time,
         end_in_effect_day_of_week,
         end_in_effect_time,
+        alternate_fare_detail_id,
     } = request.body;
     try {
         const fareDetails = await executeQuery<FareDetailsInput>(
@@ -311,6 +319,7 @@ export const updateFareDetail = async (
                 begin_in_effect_time,
                 end_in_effect_day_of_week,
                 end_in_effect_time,
+                alternate_fare_detail_id,
             ],
         );
         const fareDetailsParsed = rows.map((fareDetail) =>

@@ -191,6 +191,7 @@ CREATE TABLE IF NOT EXISTS fare_details (
   begin_in_effect_time TIME NOT NULL,
   end_in_effect_day_of_week INT NOT NULL,
   end_in_effect_time TIME NOT NULL,
+  alternate_fare_detail_id INT REFERENCES fare_details(fare_detail_id),
   date_created TIMESTAMP NOT NULL,
   date_modified TIMESTAMP NOT NULL
 );
@@ -199,8 +200,6 @@ CREATE TABLE IF NOT EXISTS commute_tickets (
   commute_ticket_id SERIAL PRIMARY KEY,
   account_id INT NOT NULL REFERENCES accounts(account_id),
   fare_detail_id INT NOT NULL REFERENCES fare_details(fare_detail_id),
-  alternate_ticket_id INT REFERENCES fare_details(fare_detail_id),
-  CHECK (alternate_ticket_id != fare_detail_id),
   date_created TIMESTAMP NOT NULL,
   date_modified TIMESTAMP NOT NULL
 );
