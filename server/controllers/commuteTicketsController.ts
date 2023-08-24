@@ -139,7 +139,11 @@ export const createCommuteTicket = async (
             [alternate_ticket_id],
         );
 
-        if (fareDetail.length === 0) {
+        if (
+            fareDetail.length === 0 &&
+            alternate_ticket_id !== null &&
+            alternate_ticket_id !== undefined
+        ) {
             response.status(400).send({
                 errors: {
                     msg: 'Alternate ticket does not exist',
