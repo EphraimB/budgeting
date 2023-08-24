@@ -130,6 +130,8 @@ export const getFareDetails = async (
                             day_of_week: fareDetail.end_in_effect_day_of_week,
                             time: fareDetail.end_in_effect_time,
                         },
+                        alternate_fare_detail_id:
+                            fareDetailsParsed[0].alternate_fare_detail_id,
                         date_created: fareDetail.date_created,
                         date_modified: fareDetail.date_modified,
                     })),
@@ -161,6 +163,9 @@ export const getFareDetails = async (
                                         fareDetail.end_in_effect_day_of_week,
                                     time: fareDetail.end_in_effect_time,
                                 },
+                                alternate_fare_detail_id:
+                                    fareDetailsParsed[0]
+                                        .alternate_fare_detail_id,
                                 date_created: fareDetail.date_created,
                                 date_modified: fareDetail.date_modified,
                             },
@@ -190,6 +195,8 @@ export const getFareDetails = async (
                             fareDetailsParsed[0].end_in_effect_day_of_week,
                         time: fareDetailsParsed[0].end_in_effect_time,
                     },
+                    alternate_fare_detail_id:
+                        fareDetailsParsed[0].alternate_fare_detail_id,
                     date_created: fareDetailsParsed[0].date_created,
                     date_modified: fareDetailsParsed[0].date_modified,
                 },
