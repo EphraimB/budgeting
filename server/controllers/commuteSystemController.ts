@@ -1,7 +1,6 @@
 import { type Request, type Response } from 'express';
 import {
     commuteSystemQueries,
-    commuteTicketQueries,
     fareDetailsQueries,
 } from '../models/queryData.js';
 import { handleError, executeQuery } from '../utils/helperFunctions.js';

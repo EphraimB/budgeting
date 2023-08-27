@@ -705,7 +705,7 @@ export const commuteScheduleQueries = {
         WHERE commute_schedules.account_id = $1
         AND commute_schedules.commute_schedule_id = $2
     `,
-    getCommuteSchedulesById: `
+    getCommuteScheduleById: `
         SELECT commute_schedule_id,
         commute_schedules.account_id AS account_id,
         commute_schedules.commute_ticket_id AS commute_ticket_id,
