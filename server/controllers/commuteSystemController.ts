@@ -197,13 +197,11 @@ export const deleteCommuteSystem = async (
         const hasFareDetails: boolean = fareDetailsResults.length > 0;
 
         if (hasFareDetails) {
-            response.status(400).send({
-                errors: {
-                    msg: 'You need to delete system-related data before deleting the system',
-                    param: null,
-                    location: 'query',
-                },
-            });
+            response
+                .status(400)
+                .send(
+                    'You need to delete system-related data before deleting the system',
+                );
             return;
         }
 

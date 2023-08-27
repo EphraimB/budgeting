@@ -1,6 +1,6 @@
 import { jest } from '@jest/globals';
 import { type Request, type Response } from 'express';
-import { commuteSystems } from '../../models/mockData';
+import { commuteSystems, fareDetails } from '../../models/mockData';
 import { type QueryResultRow } from 'pg';
 import {
     parseIntOrFallback,
@@ -355,6 +355,30 @@ describe('DELETE /api/expenses/commute/systems/:id', () => {
         expect(mockResponse.status).toHaveBeenCalledWith(200);
         expect(mockResponse.send).toHaveBeenCalledWith(
             'Successfully deleted system',
+        );
+    });
+
+    it('should return a 400 error if there is system related data', async () => {
+        // Arrange
+        mockModule(
+            commuteSystems,
+            undefined,
+            fareDetails,
+            'Successfully deleted system',
+        );
+
+        const { deleteCommuteSystem } = await import(
+            '../../controllers/commuteSystemController.js'
+        );
+
+        mockRequest.params = { id: 1 };
+
+        await deleteCommuteSystem(mockRequest as Request, mockResponse);
+
+        // Assert
+        expect(mockResponse.status).toHaveBeenCalledWith(400);
+        expect(mockResponse.send).toHaveBeenCalledWith(
+            'You need to delete system-related data before deleting the system',
         );
     });
 
