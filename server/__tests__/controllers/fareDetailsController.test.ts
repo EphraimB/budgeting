@@ -70,32 +70,28 @@ describe('GET /api/expenses/commute/fares', () => {
         await getFareDetails(mockRequest as Request, mockResponse);
 
         const responseObj = {
-            fares_by_account: [
+            fares: [
                 fareDetails.map((fareDetail) => ({
                     account_id: fareDetail.account_id,
-                    fares: [
-                        {
-                            fare_detail_id: fareDetail.fare_detail_id,
-                            commute_system: {
-                                commute_system_id: fareDetail.commute_system_id,
-                                name: fareDetail.system_name,
-                            },
-                            name: fareDetail.fare_type,
-                            fare_amount: fareDetail.fare_amount,
-                            begin_in_effect: {
-                                day_of_week:
-                                    fareDetail.begin_in_effect_day_of_week,
-                                time: fareDetail.begin_in_effect_time,
-                            },
-                            end_in_effect: {
-                                day_of_week:
-                                    fareDetail.end_in_effect_day_of_week,
-                                time: fareDetail.end_in_effect_time,
-                            },
-                            date_created: fareDetail.date_created,
-                            date_modified: fareDetail.date_modified,
-                        },
-                    ],
+                    fare_detail_id: fareDetail.fare_detail_id,
+                    commute_system: {
+                        commute_system_id: fareDetail.commute_system_id,
+                        name: fareDetail.system_name,
+                    },
+                    name: fareDetail.fare_type,
+                    fare_amount: fareDetail.fare_amount,
+                    begin_in_effect: {
+                        day_of_week: fareDetail.begin_in_effect_day_of_week,
+                        time: fareDetail.begin_in_effect_time,
+                    },
+                    end_in_effect: {
+                        day_of_week: fareDetail.end_in_effect_day_of_week,
+                        time: fareDetail.end_in_effect_time,
+                    },
+                    alternate_fare_detail_id:
+                        fareDetail.alternate_fare_detail_id,
+                    date_created: fareDetail.date_created,
+                    date_modified: fareDetail.date_modified,
                 })),
             ],
         };
@@ -163,6 +159,8 @@ describe('GET /api/expenses/commute/fares', () => {
                             day_of_week: fareDetail.end_in_effect_day_of_week,
                             time: fareDetail.end_in_effect_time,
                         },
+                        alternate_fare_detail_id:
+                            fareDetail.alternate_fare_detail_id,
                         date_created: fareDetail.date_created,
                         date_modified: fareDetail.date_modified,
                     })),
@@ -210,6 +208,7 @@ describe('GET /api/expenses/commute/fares', () => {
                 begin_in_effect_time: '00:00:00',
                 end_in_effect_day_of_week: 7,
                 end_in_effect_time: '23:59:59',
+                alternate_fare_detail_id: null,
                 date_created: '2021-01-01T00:00:00.000Z',
                 date_modified: '2021-01-01T00:00:00.000Z',
             },
@@ -225,26 +224,31 @@ describe('GET /api/expenses/commute/fares', () => {
         await getFareDetails(mockRequest as Request, mockResponse);
 
         const responseObj = {
-            fare: {
-                fare_detail_id: 1,
-                account_id: 1,
-                commute_system: {
-                    commute_system_id: 1,
-                    name: 'BART',
-                },
-                name: 'Adult',
-                fare_amount: 5.65,
-                begin_in_effect: {
-                    day_of_week: 1,
-                    time: '00:00:00',
-                },
-                end_in_effect: {
-                    day_of_week: 7,
-                    time: '23:59:59',
-                },
-                date_created: '2021-01-01T00:00:00.000Z',
-                date_modified: '2021-01-01T00:00:00.000Z',
-            },
+            fares: [
+                [
+                    {
+                        account_id: 1,
+                        fare_detail_id: 1,
+                        commute_system: {
+                            commute_system_id: 1,
+                            name: 'BART',
+                        },
+                        name: 'Adult',
+                        fare_amount: 5.65,
+                        begin_in_effect: {
+                            day_of_week: 1,
+                            time: '00:00:00',
+                        },
+                        end_in_effect: {
+                            day_of_week: 7,
+                            time: '23:59:59',
+                        },
+                        alternate_fare_detail_id: null,
+                        date_created: '2021-01-01T00:00:00.000Z',
+                        date_modified: '2021-01-01T00:00:00.000Z',
+                    },
+                ],
+            ],
         };
 
         // Assert

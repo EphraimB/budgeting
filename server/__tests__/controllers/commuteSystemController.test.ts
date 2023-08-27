@@ -39,11 +39,28 @@ afterEach(() => {
 const mockModule = (
     executeQueryValue: QueryResultRow[] | string | null,
     errorMessage?: string,
+    executeQueryTwoValue?: QueryResultRow[] | string | null,
+    executeQueryThreeValue?: QueryResultRow[] | string | null,
 ) => {
-    const executeQuery =
-        errorMessage !== null && errorMessage !== undefined
-            ? jest.fn(async () => await Promise.reject(new Error(errorMessage)))
-            : jest.fn(async () => await Promise.resolve(executeQueryValue));
+    const executeQuery = jest.fn();
+
+    if (errorMessage) {
+        executeQuery.mockReturnValueOnce(
+            Promise.reject(new Error(errorMessage)),
+        );
+    } else {
+        executeQuery.mockReturnValueOnce(Promise.resolve(executeQueryValue));
+    }
+
+    if (executeQueryTwoValue) {
+        executeQuery.mockReturnValueOnce(Promise.resolve(executeQueryTwoValue));
+    }
+
+    if (executeQueryThreeValue) {
+        executeQuery.mockReturnValueOnce(
+            Promise.resolve(executeQueryThreeValue),
+        );
+    }
 
     jest.mock('../../utils/helperFunctions', () => ({
         executeQuery,
@@ -253,7 +270,7 @@ describe('PUT /api/expenses/commute/systems/:id', () => {
             (system) => system.commute_system_id === 1,
         );
 
-        mockModule(updatedSystem);
+        mockModule(updatedSystem, undefined, updatedSystem);
 
         const { updateCommuteSystem } = await import(
             '../../controllers/commuteSystemController.js'
@@ -319,7 +336,7 @@ describe('PUT /api/expenses/commute/systems/:id', () => {
 describe('DELETE /api/expenses/commute/systems/:id', () => {
     it('should respond with a success message', async () => {
         // Arrange
-        mockModule('Successfully deleted system');
+        mockModule('Successfully deleted system', undefined, [], []);
 
         const { deleteCommuteSystem } = await import(
             '../../controllers/commuteSystemController.js'
