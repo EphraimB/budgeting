@@ -28,19 +28,13 @@ afterEach(() => {
 });
 
 describe('handleError function', () => {
-    it('should send a 400 error with the correct error message', async () => {
+    it('should send a 500 error with the correct error message', async () => {
         const { handleError } = await import('../../utils/helperFunctions');
 
         handleError(mockResponse, 'Test error message');
 
-        expect(mockResponse.status).toHaveBeenCalledWith(400);
-        expect(mockResponse.send).toHaveBeenCalledWith({
-            errors: {
-                msg: 'Test error message',
-                param: null,
-                location: 'query',
-            },
-        });
+        expect(mockResponse.status).toHaveBeenCalledWith(500);
+        expect(mockResponse.send).toHaveBeenCalledWith('Test error message');
     });
 });
 
