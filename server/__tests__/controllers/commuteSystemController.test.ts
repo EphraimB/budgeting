@@ -336,7 +336,12 @@ describe('PUT /api/expenses/commute/systems/:id', () => {
 describe('DELETE /api/expenses/commute/systems/:id', () => {
     it('should respond with a success message', async () => {
         // Arrange
-        mockModule('Successfully deleted system', undefined, [], []);
+        mockModule(
+            commuteSystems,
+            undefined,
+            [],
+            'Successfully deleted system',
+        );
 
         const { deleteCommuteSystem } = await import(
             '../../controllers/commuteSystemController.js'
