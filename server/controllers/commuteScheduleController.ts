@@ -89,6 +89,15 @@ export const getCommuteSchedule = async (
             return;
         }
 
+        const responseObj: object = {
+            schedule: [
+                commuteSystem.map((cs) => ({
+                    day_of_week: cs.day_of_week,
+                    passes: [],
+                })),
+            ],
+        };
+
         response.status(200).json(commuteSystem.map(parseCommuteSchedule));
     } catch (error) {
         logger.error(error); // Log the error on the server side

@@ -644,19 +644,21 @@ export const commuteTicketQueries = {
         'DELETE FROM commute_tickets WHERE commute_ticket_id = $1',
 };
 
-export const commuteScheduleQueries = {
-    getCommuteSchedules: `
-        SELECT commute_schedule_id,
-        commute_schedules.account_id AS account_id,
-        commute_schedules.commute_ticket_id AS commute_ticket_id,
-        commute_schedules.day_of_week AS day_of_week,
+export const commutePassesQueries = {
+    getCommutePasses: `
+        SELECT commute_pass_id,
+        commute_schedule.account_id AS account_id,
+        commute_passes.commute_ticket_id AS commute_ticket_id,
+        commute_schedule.day_of_week AS day_of_week,
         concat(commute_systems.name, ' ', fare_details.name) AS name,
         commute_schedules.commute_system_id AS commute_system_id,
-        commute_schedules.time_of_day AS start_time,
-        commute_schedules.duration AS duration,
-        commute_schedules.date_created,
-        commute_schedules.date_modified
-        FROM commute_schedules
+        commute_passes.start_time AS start_time,
+        commute_passes.duration AS duration,
+        commute_passes.date_created,
+        commute_passes.date_modified
+        FROM commute_passes
+        LEFT JOIN commute_schedules
+        ON commute_passes.commute_schedule_id = commute_schedules.commute_schedule_id
         LEFT JOIN commute_tickets
         ON commute_schedules.commute_ticket_id = commute_tickets.commute_ticket_id
         LEFT JOIN fare_details
@@ -664,18 +666,20 @@ export const commuteScheduleQueries = {
         LEFT JOIN commute_systems
         ON fare_details.commute_system_id = commute_systems.commute_system_id
     `,
-    getCommuteSchedulesByAccountId: `
-        SELECT commute_schedule_id,
-        commute_schedules.account_id AS account_id,
-        commute_schedules.commute_ticket_id AS commute_ticket_id,
-        commute_schedules.day_of_week AS day_of_week,
+    getCommutePassesByAccountId: `
+        SELECT commute_pass_id,
+        commute_schedule.account_id AS account_id,
+        commute_passes.commute_ticket_id AS commute_ticket_id,
+        commute_schedule.day_of_week AS day_of_week,
         concat(commute_systems.name, ' ', fare_details.name) AS name,
         commute_schedules.commute_system_id AS commute_system_id,
-        commute_schedules.time_of_day AS start_time,
-        commute_schedules.duration AS duration,
-        commute_schedules.date_created,
-        commute_schedules.date_modified
-        FROM commute_schedules
+        commute_passes.start_time AS start_time,
+        commute_passes.duration AS duration,
+        commute_passes.date_created,
+        commute_passes.date_modified
+        FROM commute_passes
+        LEFT JOIN commute_schedules
+        ON commute_passes.commute_schedule_id = commute_schedules.commute_schedule_id
         LEFT JOIN commute_tickets
         ON commute_schedules.commute_ticket_id = commute_tickets.commute_ticket_id
         LEFT JOIN fare_details
@@ -684,18 +688,20 @@ export const commuteScheduleQueries = {
         ON fare_details.commute_system_id = commute_systems.commute_system_id
         WHERE commute_schedules.account_id = $1
     `,
-    getCommuteSchedulesByIdAndAccountId: `
-        SELECT commute_schedule_id,
-        commute_schedules.account_id AS account_id,
-        commute_schedules.commute_ticket_id AS commute_ticket_id,
-        commute_schedules.day_of_week AS day_of_week,
+    getCommutePassesByIdAndAccountId: `
+        SELECT commute_pass_id,
+        commute_schedule.account_id AS account_id,
+        commute_passes.commute_ticket_id AS commute_ticket_id,
+        commute_schedule.day_of_week AS day_of_week,
         concat(commute_systems.name, ' ', fare_details.name) AS name,
         commute_schedules.commute_system_id AS commute_system_id,
-        commute_schedules.time_of_day AS start_time,
-        commute_schedules.duration AS duration,
-        commute_schedules.date_created,
-        commute_schedules.date_modified
-        FROM commute_schedules
+        commute_passes.start_time AS start_time,
+        commute_passes.duration AS duration,
+        commute_passes.date_created,
+        commute_passes.date_modified
+        FROM commute_passes
+        LEFT JOIN commute_schedules
+        ON commute_passes.commute_schedule_id = commute_schedules.commute_schedule_id
         LEFT JOIN commute_tickets
         ON commute_schedules.commute_ticket_id = commute_tickets.commute_ticket_id
         LEFT JOIN fare_details
@@ -705,7 +711,7 @@ export const commuteScheduleQueries = {
         WHERE commute_schedules.account_id = $1
         AND commute_schedules.commute_schedule_id = $2
     `,
-    getCommuteScheduleById: `
+    getCommutePassesById: `
         SELECT commute_schedule_id,
         commute_schedules.account_id AS account_id,
         commute_schedules.commute_ticket_id AS commute_ticket_id,
