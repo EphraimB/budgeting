@@ -257,6 +257,17 @@ export interface CommuteTicket {
     date_modified: string;
 }
 
+export interface commuteSchedule {
+    commute_schedule_id: number;
+    account_id: number;
+    commute_ticket_id: number;
+    day_of_week: number;
+    time_of_day: string;
+    duration: number;
+    date_created: string;
+    date_modified: string;
+}
+
 interface CurrentBalance {
     account_id: number;
     account_balance: number;
