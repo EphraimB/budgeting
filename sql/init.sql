@@ -208,8 +208,8 @@ CREATE TABLE IF NOT EXISTS commute_schedule (
   commute_schedule_id SERIAL PRIMARY KEY,
   account_id INT NOT NULL REFERENCES accounts(account_id),
   commute_ticket_id INT NOT NULL REFERENCES commute_tickets(commute_ticket_id),
-  day INT NOT NULL,
-  time TIME NOT NULL,
+  day_of_week INT NOT NULL,
+  time_of_day TIME NOT NULL,
   duration INT NOT NULL,
   date_created TIMESTAMP NOT NULL,
   date_modified TIMESTAMP NOT NULL

@@ -643,3 +643,92 @@ export const commuteTicketQueries = {
     deleteCommuteTicket:
         'DELETE FROM commute_tickets WHERE commute_ticket_id = $1',
 };
+
+export const commuteScheduleQueries = {
+    getCommuteSchedules: `
+        SELECT commute_schedule_id,
+        commute_schedules.account_id AS account_id,
+        commute_schedules.commute_ticket_id AS commute_ticket_id,
+        commute_schedules.day_of_week AS day_of_week,
+        concat(commute_systems.name, ' ', fare_details.name) AS name,
+        commute_schedules.commute_system_id AS commute_system_id,
+        commute_schedules.time_of_day AS start_time,
+        commute_schedules.duration AS duration,
+        commute_schedules.date_created,
+        commute_schedules.date_modified
+        FROM commute_schedules
+        LEFT JOIN commute_tickets
+        ON commute_schedules.commute_ticket_id = commute_tickets.commute_ticket_id
+        LEFT JOIN fare_details
+        ON commute_tickets.fare_detail_id = fare_details.fare_detail_id
+        LEFT JOIN commute_systems
+        ON fare_details.commute_system_id = commute_systems.commute_system_id
+    `,
+    getCommuteSchedulesByAccountId: `
+        SELECT commute_schedule_id,
+        commute_schedules.account_id AS account_id,
+        commute_schedules.commute_ticket_id AS commute_ticket_id,
+        commute_schedules.day_of_week AS day_of_week,
+        concat(commute_systems.name, ' ', fare_details.name) AS name,
+        commute_schedules.commute_system_id AS commute_system_id,
+        commute_schedules.time_of_day AS start_time,
+        commute_schedules.duration AS duration,
+        commute_schedules.date_created,
+        commute_schedules.date_modified
+        FROM commute_schedules
+        LEFT JOIN commute_tickets
+        ON commute_schedules.commute_ticket_id = commute_tickets.commute_ticket_id
+        LEFT JOIN fare_details
+        ON commute_tickets.fare_detail_id = fare_details.fare_detail_id
+        LEFT JOIN commute_systems
+        ON fare_details.commute_system_id = commute_systems.commute_system_id
+        WHERE commute_schedules.account_id = $1
+    `,
+    getCommuteSchedulesByIdAndAccountId: `
+        SELECT commute_schedule_id,
+        commute_schedules.account_id AS account_id,
+        commute_schedules.commute_ticket_id AS commute_ticket_id,
+        commute_schedules.day_of_week AS day_of_week,
+        concat(commute_systems.name, ' ', fare_details.name) AS name,
+        commute_schedules.commute_system_id AS commute_system_id,
+        commute_schedules.time_of_day AS start_time,
+        commute_schedules.duration AS duration,
+        commute_schedules.date_created,
+        commute_schedules.date_modified
+        FROM commute_schedules
+        LEFT JOIN commute_tickets
+        ON commute_schedules.commute_ticket_id = commute_tickets.commute_ticket_id
+        LEFT JOIN fare_details
+        ON commute_tickets.fare_detail_id = fare_details.fare_detail_id
+        LEFT JOIN commute_systems
+        ON fare_details.commute_system_id = commute_systems.commute_system_id
+        WHERE commute_schedules.account_id = $1
+        AND commute_schedules.commute_schedule_id = $2
+    `,
+    getCommuteSchedulesById: `
+        SELECT commute_schedule_id,
+        commute_schedules.account_id AS account_id,
+        commute_schedules.commute_ticket_id AS commute_ticket_id,
+        commute_schedules.day_of_week AS day_of_week,
+        concat(commute_systems.name, ' ', fare_details.name) AS name,
+        commute_schedules.commute_system_id AS commute_system_id,
+        commute_schedules.time_of_day AS start_time,
+        commute_schedules.duration AS duration,
+        commute_schedules.date_created,
+        commute_schedules.date_modified
+        FROM commute_schedules
+        LEFT JOIN commute_tickets
+        ON commute_schedules.commute_ticket_id = commute_tickets.commute_ticket_id
+        LEFT JOIN fare_details
+        ON commute_tickets.fare_detail_id = fare_details.fare_detail_id
+        LEFT JOIN commute_systems
+        ON fare_details.commute_system_id = commute_systems.commute_system_id
+        WHERE commute_schedules.commute_schedule_id = $1
+    `,
+    createCommuteSchedule:
+        'INSERT INTO commute_schedules (account_id, commute_ticket_id, day_of_week, time_of_day, duration) VALUES ($1, $2, $3, $4, $5) RETURNING *',
+    updateCommuteSchedule:
+        'UPDATE commute_schedules SET account_id = $1, commute_ticket_id = $2, day_of_week = $3, time_of_day = $4, duration = $5 WHERE commute_schedule_id = $6 RETURNING *',
+    deleteCommuteSchedule:
+        'DELETE FROM commute_schedules WHERE commute_schedule_id = $1',
+};
