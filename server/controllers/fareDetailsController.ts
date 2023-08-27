@@ -65,7 +65,6 @@ export const getFareDetails = async (
     }; // Destructure id from query string
 
     try {
-        let responseObj: object;
         let query: string;
         let params: any[];
 
@@ -106,102 +105,33 @@ export const getFareDetails = async (
 
         const fareDetailsParsed = fareDetails.map(parseFareDetails);
 
-        if (
-            (id === null || id === undefined) &&
-            account_id !== null &&
-            account_id !== undefined
-        ) {
-            responseObj = {
-                fares: [
-                    fareDetailsParsed.map((fareDetail) => ({
-                        account_id: fareDetail.account_id,
-                        fare_detail_id: fareDetail.fare_detail_id,
-                        commute_system: {
-                            commute_system_id: fareDetail.commute_system_id,
-                            name: fareDetail.system_name,
-                        },
-                        name: fareDetail.fare_type,
-                        fare_amount: fareDetail.fare_amount,
-                        begin_in_effect: {
-                            day_of_week: fareDetail.begin_in_effect_day_of_week,
-                            time: fareDetail.begin_in_effect_time,
-                        },
-                        end_in_effect: {
-                            day_of_week: fareDetail.end_in_effect_day_of_week,
-                            time: fareDetail.end_in_effect_time,
-                        },
-                        alternate_fare_detail_id:
-                            fareDetailsParsed[0].alternate_fare_detail_id,
-                        date_created: fareDetail.date_created,
-                        date_modified: fareDetail.date_modified,
-                    })),
-                ],
-            };
-        } else if (id === null || id === undefined) {
-            // Nest by account_id
-            responseObj = {
-                fares_by_account: [
-                    fareDetailsParsed.map((fareDetail) => ({
-                        account_id: fareDetail.account_id,
-                        fares: [
-                            {
-                                fare_detail_id: fareDetail.fare_detail_id,
-                                commute_system: {
-                                    commute_system_id:
-                                        fareDetail.commute_system_id,
-                                    name: fareDetail.system_name,
-                                },
-                                name: fareDetail.fare_type,
-                                fare_amount: fareDetail.fare_amount,
-                                begin_in_effect: {
-                                    day_of_week:
-                                        fareDetail.begin_in_effect_day_of_week,
-                                    time: fareDetail.begin_in_effect_time,
-                                },
-                                end_in_effect: {
-                                    day_of_week:
-                                        fareDetail.end_in_effect_day_of_week,
-                                    time: fareDetail.end_in_effect_time,
-                                },
-                                alternate_fare_detail_id:
-                                    fareDetailsParsed[0]
-                                        .alternate_fare_detail_id,
-                                date_created: fareDetail.date_created,
-                                date_modified: fareDetail.date_modified,
-                            },
-                        ],
-                    })),
-                ],
-            };
-        } else {
-            responseObj = {
-                fare: {
-                    account_id: fareDetailsParsed[0].account_id,
-                    fare_detail_id: fareDetailsParsed[0].fare_detail_id,
+        const responseObj: object = {
+            fares: [
+                fareDetailsParsed.map((fareDetail) => ({
+                    account_id: fareDetail.account_id,
+                    fare_detail_id: fareDetail.fare_detail_id,
                     commute_system: {
-                        commute_system_id:
-                            fareDetailsParsed[0].commute_system_id,
-                        name: fareDetailsParsed[0].system_name,
+                        commute_system_id: fareDetail.commute_system_id,
+                        name: fareDetail.system_name,
                     },
-                    name: fareDetailsParsed[0].fare_type,
-                    fare_amount: fareDetailsParsed[0].fare_amount,
+                    name: fareDetail.fare_type,
+                    fare_amount: fareDetail.fare_amount,
                     begin_in_effect: {
-                        day_of_week:
-                            fareDetailsParsed[0].begin_in_effect_day_of_week,
-                        time: fareDetailsParsed[0].begin_in_effect_time,
+                        day_of_week: fareDetail.begin_in_effect_day_of_week,
+                        time: fareDetail.begin_in_effect_time,
                     },
                     end_in_effect: {
-                        day_of_week:
-                            fareDetailsParsed[0].end_in_effect_day_of_week,
-                        time: fareDetailsParsed[0].end_in_effect_time,
+                        day_of_week: fareDetail.end_in_effect_day_of_week,
+                        time: fareDetail.end_in_effect_time,
                     },
                     alternate_fare_detail_id:
                         fareDetailsParsed[0].alternate_fare_detail_id,
-                    date_created: fareDetailsParsed[0].date_created,
-                    date_modified: fareDetailsParsed[0].date_modified,
-                },
-            };
-        }
+                    date_created: fareDetail.date_created,
+                    date_modified: fareDetail.date_modified,
+                })),
+            ],
+        };
+
         response.status(200).json(responseObj);
     } catch (error) {
         logger.error(error); // Log the error on the server side
