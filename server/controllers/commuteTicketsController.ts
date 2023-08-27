@@ -119,16 +119,13 @@ export const createCommuteTicket = async (
             fareDetailsQueries.getFareDetailsByAccountId,
             [account_id],
         );
-        const hasFareDetails: boolean = fareDetailsResults.length > 0;
 
-        if (hasFareDetails === false) {
-            response.status(400).send({
-                errors: {
-                    msg: 'You need to create a fare detail before creating a ticket',
-                    param: null,
-                    location: 'query',
-                },
-            });
+        if (fareDetailsResults.length === 0) {
+            response
+                .status(400)
+                .send(
+                    'You need to create a fare detail before creating a ticket',
+                );
             return;
         }
 
@@ -164,6 +161,20 @@ export const updateCommuteTicket = async (
 
         if (commuteTicket.length === 0) {
             response.status(404).send('Ticket not found');
+            return;
+        }
+
+        const fareDetailsResults = await executeQuery(
+            fareDetailsQueries.getFareDetailsByAccountId,
+            [account_id],
+        );
+
+        if (fareDetailsResults.length === 0) {
+            response
+                .status(400)
+                .send(
+                    'You need to create a fare detail before creating a ticket',
+                );
             return;
         }
 

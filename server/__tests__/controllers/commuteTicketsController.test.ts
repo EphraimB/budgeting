@@ -1,6 +1,10 @@
 import { jest } from '@jest/globals';
 import { type Request, type Response } from 'express';
-import { commuteTickets } from '../../models/mockData';
+import {
+    commuteSystems,
+    commuteTickets,
+    fareDetails,
+} from '../../models/mockData';
 import { type QueryResultRow } from 'pg';
 import {
     parseIntOrFallback,
@@ -39,11 +43,28 @@ afterEach(() => {
 const mockModule = (
     executeQueryValue: QueryResultRow[] | string | null,
     errorMessage?: string,
+    executeQueryTwoValue?: QueryResultRow[] | string | null,
+    executeQueryThreeValue?: QueryResultRow[] | string | null,
 ) => {
-    const executeQuery =
-        errorMessage !== null && errorMessage !== undefined
-            ? jest.fn(async () => await Promise.reject(new Error(errorMessage)))
-            : jest.fn(async () => await Promise.resolve(executeQueryValue));
+    const executeQuery = jest.fn();
+
+    if (errorMessage) {
+        executeQuery.mockReturnValueOnce(
+            Promise.reject(new Error(errorMessage)),
+        );
+    } else {
+        executeQuery.mockReturnValueOnce(Promise.resolve(executeQueryValue));
+    }
+
+    if (executeQueryTwoValue) {
+        executeQuery.mockReturnValueOnce(Promise.resolve(executeQueryTwoValue));
+    }
+
+    if (executeQueryThreeValue) {
+        executeQuery.mockReturnValueOnce(
+            Promise.resolve(executeQueryThreeValue),
+        );
+    }
 
     jest.mock('../../utils/helperFunctions', () => ({
         executeQuery,
@@ -207,7 +228,7 @@ describe('POST /api/expenses/commute/tickets', () => {
             (ticket) => ticket.commute_ticket_id === 1,
         );
 
-        mockModule(newTicket);
+        mockModule(commuteSystems, undefined, newTicket);
 
         const { createCommuteTicket } = await import(
             '../../controllers/commuteTicketsController.js'
@@ -220,6 +241,28 @@ describe('POST /api/expenses/commute/tickets', () => {
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(201);
         expect(mockResponse.json).toHaveBeenCalledWith(newTicket);
+    });
+
+    it('should respond with a 400 error for not creating the parent fare detail', async () => {
+        const newTicket = commuteTickets.filter(
+            (ticket) => ticket.commute_ticket_id === 1,
+        );
+
+        mockModule([], undefined, newTicket);
+
+        const { createCommuteTicket } = await import(
+            '../../controllers/commuteTicketsController.js'
+        );
+
+        mockRequest.body = newTicket;
+
+        await createCommuteTicket(mockRequest as Request, mockResponse);
+
+        // Assert
+        expect(mockResponse.status).toHaveBeenCalledWith(400);
+        expect(mockResponse.send).toHaveBeenCalledWith(
+            'You need to create a fare detail before creating a ticket',
+        );
     });
 
     it('should handle errors correctly', async () => {
@@ -253,7 +296,7 @@ describe('PUT /api/expenses/commute/tickets/:id', () => {
             (ticket) => ticket.commute_ticket_id === 1,
         );
 
-        mockModule(updatedTicket);
+        mockModule(commuteSystems, undefined, fareDetails, updatedTicket);
 
         const { updateCommuteTicket } = await import(
             '../../controllers/commuteTicketsController.js'
@@ -267,6 +310,29 @@ describe('PUT /api/expenses/commute/tickets/:id', () => {
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(200);
         expect(mockResponse.json).toHaveBeenCalledWith(updatedTicket);
+    });
+
+    it('should respond with a 400 error for not creating the parent fare detail', async () => {
+        const updatedTicket = commuteTickets.filter(
+            (ticket) => ticket.commute_ticket_id === 1,
+        );
+
+        mockModule(commuteSystems, undefined, [], updatedTicket);
+
+        const { updateCommuteTicket } = await import(
+            '../../controllers/commuteTicketsController.js'
+        );
+
+        mockRequest.params = { id: 1 };
+        mockRequest.body = updatedTicket;
+
+        await updateCommuteTicket(mockRequest as Request, mockResponse);
+
+        // Assert
+        expect(mockResponse.status).toHaveBeenCalledWith(400);
+        expect(mockResponse.send).toHaveBeenCalledWith(
+            'You need to create a fare detail before creating a ticket',
+        );
     });
 
     it('should handle errors correctly', async () => {
