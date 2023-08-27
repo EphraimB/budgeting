@@ -106,30 +106,28 @@ export const getFareDetails = async (
         const fareDetailsParsed = fareDetails.map(parseFareDetails);
 
         const responseObj: object = {
-            fares: [
-                fareDetailsParsed.map((fareDetail) => ({
-                    account_id: fareDetail.account_id,
-                    fare_detail_id: fareDetail.fare_detail_id,
-                    commute_system: {
-                        commute_system_id: fareDetail.commute_system_id,
-                        name: fareDetail.system_name,
-                    },
-                    name: fareDetail.fare_type,
-                    fare_amount: fareDetail.fare_amount,
-                    begin_in_effect: {
-                        day_of_week: fareDetail.begin_in_effect_day_of_week,
-                        time: fareDetail.begin_in_effect_time,
-                    },
-                    end_in_effect: {
-                        day_of_week: fareDetail.end_in_effect_day_of_week,
-                        time: fareDetail.end_in_effect_time,
-                    },
-                    alternate_fare_detail_id:
-                        fareDetailsParsed[0].alternate_fare_detail_id,
-                    date_created: fareDetail.date_created,
-                    date_modified: fareDetail.date_modified,
-                })),
-            ],
+            fares: fareDetailsParsed.map((fareDetail) => ({
+                account_id: fareDetail.account_id,
+                fare_detail_id: fareDetail.fare_detail_id,
+                commute_system: {
+                    commute_system_id: fareDetail.commute_system_id,
+                    name: fareDetail.system_name,
+                },
+                name: fareDetail.fare_type,
+                fare_amount: fareDetail.fare_amount,
+                begin_in_effect: {
+                    day_of_week: fareDetail.begin_in_effect_day_of_week,
+                    time: fareDetail.begin_in_effect_time,
+                },
+                end_in_effect: {
+                    day_of_week: fareDetail.end_in_effect_day_of_week,
+                    time: fareDetail.end_in_effect_time,
+                },
+                alternate_fare_detail_id:
+                    fareDetailsParsed[0].alternate_fare_detail_id,
+                date_created: fareDetail.date_created,
+                date_modified: fareDetail.date_modified,
+            })),
         };
 
         response.status(200).json(responseObj);
