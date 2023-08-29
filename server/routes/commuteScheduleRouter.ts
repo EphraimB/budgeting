@@ -2,6 +2,7 @@ import express, { type Router } from 'express';
 import { query, param, body } from 'express-validator';
 import {
     createCommuteSchedule,
+    deleteCommuteSchedule,
     getCommuteSchedule,
     updateCommuteSchedule,
 } from '../controllers/commuteScheduleController.js';
@@ -71,13 +72,13 @@ router.put(
     updateCommuteSchedule,
 );
 
-// router.delete(
-//     '/:id',
-//     [
-//         param('id').isInt({ min: 1 }).withMessage('ID must be a number'),
-//         validateRequest,
-//     ],
-//     deleteCommuteSystem,
-// );
+router.delete(
+    '/:id',
+    [
+        param('id').isInt({ min: 1 }).withMessage('ID must be a number'),
+        validateRequest,
+    ],
+    deleteCommuteSchedule,
+);
 
 export default router;

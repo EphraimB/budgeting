@@ -137,12 +137,12 @@ export const createCommuteSchedule = async (
     }
 };
 
-// /**
-//  *
-//  * @param request - Request object
-//  * @param response - Response object
-//  * Sends a response with the updated schedule or an error message and updates the schedule in the database
-//  */
+/**
+ *
+ * @param request - Request object
+ * @param response - Response object
+ * Sends a response with the updated schedule or an error message and updates the schedule in the database
+ */
 export const updateCommuteSchedule = async (
     request: Request,
     response: Response,
@@ -181,47 +181,32 @@ export const updateCommuteSchedule = async (
     }
 };
 
-// /**
-//  *
-//  * @param request - Request object
-//  * @param response - Response object
-//  * Sends a response with a success message or an error message and deletes the schedule from the database
-//  */
-// export const deleteCommuteSchedule = async (
-//     request: Request,
-//     response: Response,
-// ): Promise<void> => {
-//     const id = parseInt(request.params.id);
-//     try {
-//         const commuteSchedule = await executeQuery<CommuteScheduleInput>(
-//             commuteScheduleQueries.getCommuteScheduleById,
-//             [id],
-//         );
+/**
+ *
+ * @param request - Request object
+ * @param response - Response object
+ * Sends a response with a success message or an error message and deletes the schedule from the database
+ */
+export const deleteCommuteSchedule = async (
+    request: Request,
+    response: Response,
+): Promise<void> => {
+    const id = parseInt(request.params.id);
+    try {
+        const commuteSchedule = await executeQuery(
+            commuteScheduleQueries.getCommuteSchedulesById,
+            [id],
+        );
 
-//         if (commuteSchedule.length === 0) {
-//             response.status(404).send('Schedule not found');
-//             return;
-//         }
+        if (commuteSchedule.length === 0) {
+            response.status(404).send('Schedule not found');
+            return;
+        }
 
-//         const ticketResults = await executeQuery(
-//             commuteTicketQueries.getCommuteTicketsByAccountId,
-//             [commuteSchedule[0].account_id],
-//         );
-//         const hasTicket: boolean = ticketResults.length > 0;
-
-//         if (hasTicket) {
-//             response
-//                 .status(400)
-//                 .send(
-//                     'You need to delete system-related data before deleting the schedule',
-//                 );
-//             return;
-//         }
-
-//         await executeQuery(commuteScheduleQueries.deleteCommuteSchedule, [id]);
-//         response.status(200).send('Successfully deleted schedule');
-//     } catch (error) {
-//         logger.error(error); // Log the error on the server side
-//         handleError(response, 'Error deleting schedule');
-//     }
-// };
+        await executeQuery(commuteScheduleQueries.deleteCommuteSchedule, [id]);
+        response.status(200).send('Successfully deleted schedule');
+    } catch (error) {
+        logger.error(error); // Log the error on the server side
+        handleError(response, 'Error deleting schedule');
+    }
+};
