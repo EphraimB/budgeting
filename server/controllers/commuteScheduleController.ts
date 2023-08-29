@@ -11,7 +11,6 @@ import { logger } from '../config/winston.js';
 interface CommuteScheduleInput {
     commute_schedule_id: string;
     account_id: string;
-    commute_system_id: string;
     day_of_week: string;
     date_created: string;
     date_modified: string;
@@ -27,7 +26,6 @@ const parseCommuteSchedule = (
 ): CommuteSchedule => ({
     commute_schedule_id: parseInt(commuteSchedule.commute_schedule_id),
     account_id: parseInt(commuteSchedule.account_id),
-    commute_system_id: parseInt(commuteSchedule.commute_system_id),
     day_of_week: parseInt(commuteSchedule.day_of_week),
     date_created: commuteSchedule.date_created,
     date_modified: commuteSchedule.date_modified,
@@ -72,29 +70,48 @@ export const getCommuteSchedule = async (
             params = [];
         }
 
-        const commuteSystem = await executeQuery(query, params);
+        const commuteSchedule = await executeQuery(query, params);
 
         if (
             ((id !== null && id !== undefined) ||
                 (account_id !== null && account_id !== undefined)) &&
-            commuteSystem.length === 0
+            commuteSchedule.length === 0
         ) {
             response.status(404).send('Schedule not found');
             return;
         }
 
-        const responseObj: object = {
-            schedule: [
-                commuteSystem.map((cs) => ({
-                    day_of_week: cs.day_of_week,
-                    passes: [
-                        
-                    ],
-                })),
-            ],
+        const responseObj: {
+            schedule: Array<{
+                day_of_week: number;
+                passes: Array<{
+                    type: string;
+                    start_time: string;
+                    duration: number;
+                }>;
+            }>;
+        } = {
+            schedule: [],
         };
 
-        response.status(200).json(commuteSystem.map(parseCommuteSchedule));
+        const daysOfWeek = [0, 1, 2, 3, 4, 5, 6]; // 0=Sunday, 1=Monday, ..., 6=Saturday
+
+        daysOfWeek.forEach((day) => {
+            const passesForDay = commuteSchedule.filter(
+                (cs) => cs.day_of_week === day,
+            );
+            const passes = passesForDay.map((cs) => ({
+                type: cs.name, // assuming `name` is the type of pass
+                start_time: cs.start_time,
+                duration: cs.duration,
+            }));
+            responseObj.schedule.push({
+                day_of_week: day,
+                passes: passes,
+            });
+        });
+
+        response.status(200).json(commuteSchedule.map(parseCommuteSchedule));
     } catch (error) {
         logger.error(error); // Log the error on the server side
         handleError(
@@ -116,113 +133,113 @@ export const getCommuteSchedule = async (
  * @param response - Response object
  *  Sends a response with the created schedule or an error message and posts the schedule to the database
  */
-export const createCommuteSchedule = async (
-    request: Request,
-    response: Response,
-) => {
-    const {
-        account_id,
-        commute_ticket_id,
-        day_of_week,
-        time_of_day,
-        duration,
-    } = request.body;
+// export const createCommuteSchedule = async (
+//     request: Request,
+//     response: Response,
+// ) => {
+//     const {
+//         account_id,
+//         commute_ticket_id,
+//         day_of_week,
+//         time_of_day,
+//         duration,
+//     } = request.body;
 
-    try {
-        const rows = await executeQuery<CommuteScheduleInput>(
-            commuteScheduleQueries.createCommuteSchedule,
-            [account_id, commute_ticket_id, day_of_week, time_of_day, duration],
-        );
-        const commuteSchedule = rows.map((cs) => parseCommuteSchedule(cs));
-        response.status(201).json(commuteSchedule);
-    } catch (error) {
-        logger.error(error); // Log the error on the server side
-        handleError(response, 'Error creating schedule');
-    }
-};
+//     try {
+//         const rows = await executeQuery<CommuteScheduleInput>(
+//             commuteScheduleQueries.createCommuteSchedule,
+//             [account_id, commute_ticket_id, day_of_week, time_of_day, duration],
+//         );
+//         const commuteSchedule = rows.map((cs) => parseCommuteSchedule(cs));
+//         response.status(201).json(commuteSchedule);
+//     } catch (error) {
+//         logger.error(error); // Log the error on the server side
+//         handleError(response, 'Error creating schedule');
+//     }
+// };
 
-/**
- *
- * @param request - Request object
- * @param response - Response object
- * Sends a response with the updated schedule or an error message and updates the schedule in the database
- */
-export const updateCommuteSchedule = async (
-    request: Request,
-    response: Response,
-): Promise<void> => {
-    const id = parseInt(request.params.id);
-    const {
-        account_id,
-        commute_ticket_id,
-        day_of_week,
-        time_of_day,
-        duration,
-    } = request.body;
-    try {
-        const commuteSchedule = await executeQuery<CommuteScheduleInput>(
-            commuteScheduleQueries.getCommuteScheduleById,
-            [id],
-        );
+// /**
+//  *
+//  * @param request - Request object
+//  * @param response - Response object
+//  * Sends a response with the updated schedule or an error message and updates the schedule in the database
+//  */
+// export const updateCommuteSchedule = async (
+//     request: Request,
+//     response: Response,
+// ): Promise<void> => {
+//     const id = parseInt(request.params.id);
+//     const {
+//         account_id,
+//         commute_ticket_id,
+//         day_of_week,
+//         time_of_day,
+//         duration,
+//     } = request.body;
+//     try {
+//         const commuteSchedule = await executeQuery<CommuteScheduleInput>(
+//             commuteScheduleQueries.getCommuteScheduleById,
+//             [id],
+//         );
 
-        if (commuteSchedule.length === 0) {
-            response.status(404).send('Schedule not found');
-            return;
-        }
+//         if (commuteSchedule.length === 0) {
+//             response.status(404).send('Schedule not found');
+//             return;
+//         }
 
-        const rows = await executeQuery<CommuteScheduleInput>(
-            commuteScheduleQueries.updateCommuteSchedule,
-            [commute_ticket_id, day_of_week, time_of_day, duration, , id],
-        );
-        const schedule = rows.map((s) => parseCommuteSchedule(s));
-        response.status(200).json(schedule);
-    } catch (error) {
-        logger.error(error); // Log the error on the server side
-        handleError(response, 'Error updating schedule');
-    }
-};
+//         const rows = await executeQuery<CommuteScheduleInput>(
+//             commuteScheduleQueries.updateCommuteSchedule,
+//             [commute_ticket_id, day_of_week, time_of_day, duration, , id],
+//         );
+//         const schedule = rows.map((s) => parseCommuteSchedule(s));
+//         response.status(200).json(schedule);
+//     } catch (error) {
+//         logger.error(error); // Log the error on the server side
+//         handleError(response, 'Error updating schedule');
+//     }
+// };
 
-/**
- *
- * @param request - Request object
- * @param response - Response object
- * Sends a response with a success message or an error message and deletes the schedule from the database
- */
-export const deleteCommuteSchedule = async (
-    request: Request,
-    response: Response,
-): Promise<void> => {
-    const id = parseInt(request.params.id);
-    try {
-        const commuteSchedule = await executeQuery<CommuteScheduleInput>(
-            commuteScheduleQueries.getCommuteScheduleById,
-            [id],
-        );
+// /**
+//  *
+//  * @param request - Request object
+//  * @param response - Response object
+//  * Sends a response with a success message or an error message and deletes the schedule from the database
+//  */
+// export const deleteCommuteSchedule = async (
+//     request: Request,
+//     response: Response,
+// ): Promise<void> => {
+//     const id = parseInt(request.params.id);
+//     try {
+//         const commuteSchedule = await executeQuery<CommuteScheduleInput>(
+//             commuteScheduleQueries.getCommuteScheduleById,
+//             [id],
+//         );
 
-        if (commuteSchedule.length === 0) {
-            response.status(404).send('Schedule not found');
-            return;
-        }
+//         if (commuteSchedule.length === 0) {
+//             response.status(404).send('Schedule not found');
+//             return;
+//         }
 
-        const ticketResults = await executeQuery(
-            commuteTicketQueries.getCommuteTicketsByAccountId,
-            [commuteSchedule[0].account_id],
-        );
-        const hasTicket: boolean = ticketResults.length > 0;
+//         const ticketResults = await executeQuery(
+//             commuteTicketQueries.getCommuteTicketsByAccountId,
+//             [commuteSchedule[0].account_id],
+//         );
+//         const hasTicket: boolean = ticketResults.length > 0;
 
-        if (hasTicket) {
-            response
-                .status(400)
-                .send(
-                    'You need to delete system-related data before deleting the schedule',
-                );
-            return;
-        }
+//         if (hasTicket) {
+//             response
+//                 .status(400)
+//                 .send(
+//                     'You need to delete system-related data before deleting the schedule',
+//                 );
+//             return;
+//         }
 
-        await executeQuery(commuteScheduleQueries.deleteCommuteSchedule, [id]);
-        response.status(200).send('Successfully deleted schedule');
-    } catch (error) {
-        logger.error(error); // Log the error on the server side
-        handleError(response, 'Error deleting schedule');
-    }
-};
+//         await executeQuery(commuteScheduleQueries.deleteCommuteSchedule, [id]);
+//         response.status(200).send('Successfully deleted schedule');
+//     } catch (error) {
+//         logger.error(error); // Log the error on the server side
+//         handleError(response, 'Error deleting schedule');
+//     }
+// };
