@@ -265,8 +265,7 @@ export interface CommuteSchedule {
     start_time: string;
     duration: number;
     fare_amount: number;
-    type: string;
-    name: string;
+    pass: string;
     date_created: string;
     date_modified: string;
 }

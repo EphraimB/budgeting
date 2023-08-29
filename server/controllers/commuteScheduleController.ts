@@ -11,7 +11,7 @@ interface Schedule {
     day_of_week: number;
     passes: Array<{
         commute_schedule_id: number;
-        type: string;
+        pass: string;
         start_time: string;
         duration: number;
         fare_amount: number;
@@ -33,8 +33,7 @@ const parseCommuteSchedule = (
     start_time: commuteSchedule.start_time,
     duration: parseInt(commuteSchedule.duration),
     fare_amount: parseFloat(commuteSchedule.fare_amount),
-    type: commuteSchedule.name,
-    name: commuteSchedule.name,
+    pass: commuteSchedule.pass,
     date_created: commuteSchedule.date_created,
     date_modified: commuteSchedule.date_modified,
 });
@@ -104,7 +103,7 @@ export const getCommuteSchedule = async (
                 }
                 acc[dayOfWeek].passes.push({
                     commute_schedule_id: curr.commute_schedule_id,
-                    type: curr.name,
+                    pass: curr.pass,
                     start_time: curr.start_time,
                     duration: curr.duration,
                     fare_amount: curr.fare_amount,

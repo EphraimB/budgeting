@@ -119,6 +119,7 @@ describe('GET /api/expenses/commute/schedule', () => {
                     passes: [
                         {
                             commute_schedule_id: 1,
+                            pass: 'LIRR Peak',
                             start_time: '08:00:00',
                             duration: 60,
                         },
