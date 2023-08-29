@@ -4,7 +4,7 @@ import {
     commuteTicketQueries,
 } from '../models/queryData.js';
 import { handleError, executeQuery } from '../utils/helperFunctions.js';
-import { type CommuteSchedule, type CommutePasses } from '../types/types.js';
+import { type CommuteSchedule } from '../types/types.js';
 import { logger } from '../config/winston.js';
 
 /**
@@ -18,6 +18,9 @@ const parseCommuteSchedule = (
     commute_schedule_id: parseInt(commuteSchedule.commute_schedule_id),
     account_id: parseInt(commuteSchedule.account_id),
     day_of_week: parseInt(commuteSchedule.day_of_week),
+    commute_ticket_id: parseInt(commuteSchedule.commute_ticket_id),
+    start_time: commuteSchedule.start_time,
+    duration: parseInt(commuteSchedule.duration),
     date_created: commuteSchedule.date_created,
     date_modified: commuteSchedule.date_modified,
 });

@@ -1239,6 +1239,46 @@
                 }
             }
         },
+        "/expenses/commute/schedule/{id}": {
+            "put": {
+                "summary": "Update a commute schedule",
+                "description": "Update a commute schedule",
+                "tags": ["commute schedules"],
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Commute schedule id",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "description": "Commute schedule object to be updated",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/CommuteScheduleManipulation"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "$ref": "#/components/responses/SuccessResponseCommuteSchedule"
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/BadRequest"
+                    },
+                    "404": {
+                        "description": "Commute schedule not found"
+                    }
+                }
+            }
+        },
         "/loans": {
             "get": {
                 "summary": "Get all loans",
