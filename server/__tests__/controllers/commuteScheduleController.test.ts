@@ -336,26 +336,34 @@ describe('GET /api/expenses/commute/schedule', () => {
     });
 });
 
-// describe('POST /api/expenses/commute/systems', () => {
-//     it('should respond with the new system', async () => {
-//         const newSystem = commuteSystems.filter(
-//             (system) => system.commute_system_id === 1,
-//         );
+describe('POST /api/expenses/commute/schedule', () => {
+    it('should respond with the new schedule', async () => {
+        const newSchedule = [
+            {
+                commute_schedule_id: 1,
+                account_id: 1,
+                day_of_week: 1,
+                commute_ticket_id: 1,
+                start_time: '08:00:00',
+                duration: 60,
+            },
+        ];
 
-//         mockModule(newSystem);
+        mockModule(newSchedule);
 
-//         const { createCommuteSystem } = await import(
-//             '../../controllers/commuteSystemController.js'
-//         );
+        const { createCommuteSchedule } = await import(
+            '../../controllers/commuteScheduleController.js'
+        );
 
-//         mockRequest.body = newSystem;
+        mockRequest.body = newSchedule;
 
-//         await createCommuteSystem(mockRequest as Request, mockResponse);
+        await createCommuteSchedule(mockRequest as Request, mockResponse);
 
-//         // Assert
-//         expect(mockResponse.status).toHaveBeenCalledWith(201);
-//         expect(mockResponse.json).toHaveBeenCalledWith(newSystem);
-//     });
+        // Assert
+        expect(mockResponse.status).toHaveBeenCalledWith(201);
+        expect(mockResponse.json).toHaveBeenCalledWith(newSchedule);
+    });
+});
 
 //     it('should handle errors correctly', async () => {
 //         // Arrange
