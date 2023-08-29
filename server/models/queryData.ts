@@ -662,7 +662,7 @@ export const commutePassesQueries = {
             cs.account_id AS account_id,
             cp.commute_ticket_id AS commute_ticket_id,
             cs.day_of_week AS day_of_week,
-            concat(cs.name, ' ', fd.name) AS name,
+            concat(csy.name, ' ', fd.name) AS name,
             cp.start_time AS start_time,
             cp.duration AS duration,
             cp.date_created,
@@ -671,12 +671,11 @@ export const commutePassesQueries = {
         LEFT JOIN commute_schedule cs
         ON cp.commute_schedule_id = cs.commute_schedule_id
         LEFT JOIN commute_tickets ct
-        ON cs.commute_ticket_id = ct.commute_ticket_id
+        ON cp.commute_ticket_id = ct.commute_ticket_id
         LEFT JOIN fare_details fd
         ON ct.fare_detail_id = fd.fare_detail_id
         LEFT JOIN commute_systems csy
         ON fd.commute_system_id = csy.commute_system_id
-        WHERE cs.account_id = $1
         ORDER BY cs.day_of_week, cp.start_time;
     `,
     getCommutePassesByAccountId: `
@@ -684,7 +683,7 @@ export const commutePassesQueries = {
             cs.account_id AS account_id,
             cp.commute_ticket_id AS commute_ticket_id,
             cs.day_of_week AS day_of_week,
-            concat(cs.name, ' ', fd.name) AS name,
+            concat(csy.name, ' ', fd.name) AS name,
             cp.start_time AS start_time,
             cp.duration AS duration,
             cp.date_created,
@@ -693,7 +692,7 @@ export const commutePassesQueries = {
         LEFT JOIN commute_schedule cs
         ON cp.commute_schedule_id = cs.commute_schedule_id
         LEFT JOIN commute_tickets ct
-        ON cs.commute_ticket_id = ct.commute_ticket_id
+        ON cp.commute_ticket_id = ct.commute_ticket_id
         LEFT JOIN fare_details fd
         ON ct.fare_detail_id = fd.fare_detail_id
         LEFT JOIN commute_systems csy
@@ -707,7 +706,7 @@ export const commutePassesQueries = {
             cs.account_id AS account_id,
             cp.commute_ticket_id AS commute_ticket_id,
             cs.day_of_week AS day_of_week,
-            concat(cs.name, ' ', fd.name) AS name,
+            concat(csy.name, ' ', fd.name) AS name,
             cp.start_time AS start_time,
             cp.duration AS duration,
             cp.date_created,
@@ -716,7 +715,7 @@ export const commutePassesQueries = {
         LEFT JOIN commute_schedule cs
         ON cp.commute_schedule_id = cs.commute_schedule_id
         LEFT JOIN commute_tickets ct
-        ON cs.commute_ticket_id = ct.commute_ticket_id
+        ON cp.commute_ticket_id = ct.commute_ticket_id
         LEFT JOIN fare_details fd
         ON ct.fare_detail_id = fd.fare_detail_id
         LEFT JOIN commute_systems csy
@@ -731,7 +730,7 @@ export const commutePassesQueries = {
             cs.account_id AS account_id,
             cp.commute_ticket_id AS commute_ticket_id,
             cs.day_of_week AS day_of_week,
-            concat(cs.name, ' ', fd.name) AS name,
+            concat(csy.name, ' ', fd.name) AS name,
             cp.start_time AS start_time,
             cp.duration AS duration,
             cp.date_created,
@@ -740,7 +739,7 @@ export const commutePassesQueries = {
         LEFT JOIN commute_schedule cs
         ON cp.commute_schedule_id = cs.commute_schedule_id
         LEFT JOIN commute_tickets ct
-        ON cs.commute_ticket_id = ct.commute_ticket_id
+        ON cp.commute_ticket_id = ct.commute_ticket_id
         LEFT JOIN fare_details fd
         ON ct.fare_detail_id = fd.fare_detail_id
         LEFT JOIN commute_systems csy
