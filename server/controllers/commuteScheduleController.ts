@@ -81,6 +81,7 @@ export const getCommuteSchedule = async (
                 };
             }
             acc[dayOfWeek].passes.push({
+                commute_schedule_id: curr.commute_schedule_id,
                 type: curr.name,
                 start_time: curr.start_time,
                 duration: curr.duration,
