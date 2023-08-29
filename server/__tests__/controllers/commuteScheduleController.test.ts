@@ -169,7 +169,7 @@ describe('GET /api/expenses/commute/schedule', () => {
         });
     });
 
-    it('should respond with an array of systems with an account_id', async () => {
+    it('should respond with an array of schedules with an account_id', async () => {
         const commuteSchedule = [
             {
                 commute_schedule_id: 1,
@@ -252,29 +252,49 @@ describe('GET /api/expenses/commute/schedule', () => {
             message: 'Error getting schedule for given account_id',
         });
     });
+
+    it('should respond with an array of schedules with an id', async () => {
+        // Arrange
+        mockModule([
+            {
+                commute_schedule_id: 1,
+                account_id: 1,
+                day_of_week: 1,
+                commute_ticket_id: 1,
+                start_time: '08:00:00',
+                duration: 60,
+            },
+        ]);
+
+        const { getCommuteSchedule } = await import(
+            '../../controllers/commuteScheduleController.js'
+        );
+
+        mockRequest.query = { account_id: null, id: 1 };
+
+        // Call the function with the mock request and response
+        await getCommuteSchedule(mockRequest as Request, mockResponse);
+
+        const responseObj = {
+            schedule: [
+                {
+                    day_of_week: 1,
+                    passes: [
+                        {
+                            commute_schedule_id: 1,
+                            start_time: '08:00:00',
+                            duration: 60,
+                        },
+                    ],
+                },
+            ],
+        };
+
+        // Assert
+        expect(mockResponse.status).toHaveBeenCalledWith(200);
+        expect(mockResponse.json).toHaveBeenCalledWith(responseObj);
+    });
 });
-
-//     it('should respond with an array of systems with an id', async () => {
-//         // Arrange
-//         mockModule(
-//             commuteSystems.filter((system) => system.commute_system_id === 1),
-//         );
-
-//         const { getCommuteSystem } = await import(
-//             '../../controllers/commuteSystemController.js'
-//         );
-
-//         mockRequest.query = { account_id: null, id: 1 };
-
-//         // Call the function with the mock request and response
-//         await getCommuteSystem(mockRequest as Request, mockResponse);
-
-//         // Assert
-//         expect(mockResponse.status).toHaveBeenCalledWith(200);
-//         expect(mockResponse.json).toHaveBeenCalledWith(
-//             commuteSystems.filter((system) => system.commute_system_id === 1),
-//         );
-//     });
 
 //     it('should handle errors correctly with an id', async () => {
 //         // Arrange
