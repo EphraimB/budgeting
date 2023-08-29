@@ -515,53 +515,29 @@ describe('DELETE /api/expenses/commute/schedule/:id', () => {
             'Successfully deleted schedule',
         );
     });
+
+    it('should handle errors correctly', async () => {
+        // Arrange
+        const errorMessage = 'Error deleting schedule';
+        const error = new Error(errorMessage);
+        mockModule(null, errorMessage);
+
+        const { deleteCommuteSchedule } = await import(
+            '../../controllers/commuteScheduleController.js'
+        );
+
+        mockRequest.params = { id: 1 };
+
+        // Act
+        await deleteCommuteSchedule(mockRequest as Request, mockResponse);
+
+        // Assert
+        expect(mockResponse.status).toHaveBeenCalledWith(400);
+        expect(mockResponse.json).toHaveBeenCalledWith({
+            message: 'Error deleting schedule',
+        });
+    });
 });
-
-//     it('should return a 400 error if there is system related data', async () => {
-//         // Arrange
-//         mockModule(
-//             commuteSystems,
-//             undefined,
-//             fareDetails,
-//             'Successfully deleted system',
-//         );
-
-//         const { deleteCommuteSystem } = await import(
-//             '../../controllers/commuteSystemController.js'
-//         );
-
-//         mockRequest.params = { id: 1 };
-
-//         await deleteCommuteSystem(mockRequest as Request, mockResponse);
-
-//         // Assert
-//         expect(mockResponse.status).toHaveBeenCalledWith(400);
-//         expect(mockResponse.send).toHaveBeenCalledWith(
-//             'You need to delete system-related data before deleting the system',
-//         );
-//     });
-
-//     it('should handle errors correctly', async () => {
-//         // Arrange
-//         const errorMessage = 'Error deleting system';
-//         const error = new Error(errorMessage);
-//         mockModule(null, errorMessage);
-
-//         const { deleteCommuteSystem } = await import(
-//             '../../controllers/commuteSystemController.js'
-//         );
-
-//         mockRequest.params = { id: 1 };
-
-//         // Act
-//         await deleteCommuteSystem(mockRequest as Request, mockResponse);
-
-//         // Assert
-//         expect(mockResponse.status).toHaveBeenCalledWith(400);
-//         expect(mockResponse.json).toHaveBeenCalledWith({
-//             message: 'Error deleting system',
-//         });
-//     });
 
 //     it('should respond with a 404 error message when the system does not exist', async () => {
 //         // Arrange
