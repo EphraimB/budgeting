@@ -8,14 +8,6 @@ import { handleError, executeQuery } from '../utils/helperFunctions.js';
 import { type CommuteSchedule, type CommutePasses } from '../types/types.js';
 import { logger } from '../config/winston.js';
 
-interface CommuteScheduleInput {
-    commute_schedule_id: string;
-    account_id: string;
-    day_of_week: string;
-    date_created: string;
-    date_modified: string;
-}
-
 /**
  *
  * @param commuteSchedule - Commute schedule object to parse
@@ -111,7 +103,7 @@ export const getCommuteSchedule = async (
             });
         });
 
-        response.status(200).json(commuteSchedule.map(parseCommuteSchedule));
+        response.status(200).json(responseObj);
     } catch (error) {
         logger.error(error); // Log the error on the server side
         handleError(
@@ -133,30 +125,55 @@ export const getCommuteSchedule = async (
  * @param response - Response object
  *  Sends a response with the created schedule or an error message and posts the schedule to the database
  */
-// export const createCommuteSchedule = async (
-//     request: Request,
-//     response: Response,
-// ) => {
-//     const {
-//         account_id,
-//         commute_ticket_id,
-//         day_of_week,
-//         time_of_day,
-//         duration,
-//     } = request.body;
+export const createCommuteSchedule = async (
+    request: Request,
+    response: Response,
+) => {
+    const { account_id, day_of_week, commute_ticket_id, start_time, duration } =
+        request.body;
 
-//     try {
-//         const rows = await executeQuery<CommuteScheduleInput>(
-//             commuteScheduleQueries.createCommuteSchedule,
-//             [account_id, commute_ticket_id, day_of_week, time_of_day, duration],
-//         );
-//         const commuteSchedule = rows.map((cs) => parseCommuteSchedule(cs));
-//         response.status(201).json(commuteSchedule);
-//     } catch (error) {
-//         logger.error(error); // Log the error on the server side
-//         handleError(response, 'Error creating schedule');
-//     }
-// };
+    try {
+        const rows = await executeQuery(
+            commuteScheduleQueries.createCommuteSchedule,
+            [account_id, day_of_week],
+        );
+        const commute_schedule_id = rows[0].commute_schedule_id;
+
+        const rowsTwo = await executeQuery(
+            commutePassesQueries.createCommutePass,
+            [commute_schedule_id, commute_ticket_id, start_time, duration],
+        );
+
+        const responseObj: {
+            schedule: Array<{
+                day_of_week: number;
+                passes: Array<{
+                    type: string;
+                    start_time: string;
+                    duration: number;
+                }>;
+            }>;
+        } = {
+            schedule: [
+                {
+                    day_of_week: day_of_week,
+                    passes: [
+                        {
+                            type: rowsTwo[0].name,
+                            start_time: start_time,
+                            duration: duration,
+                        },
+                    ],
+                },
+            ],
+        };
+
+        response.status(201).json(responseObj);
+    } catch (error) {
+        logger.error(error); // Log the error on the server side
+        handleError(response, 'Error creating schedule');
+    }
+};
 
 // /**
 //  *
