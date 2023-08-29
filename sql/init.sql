@@ -208,20 +208,13 @@ CREATE TABLE IF NOT EXISTS commute_schedule (
   commute_schedule_id SERIAL PRIMARY KEY,
   account_id INT NOT NULL REFERENCES accounts(account_id),
   day_of_week INT NOT NULL,
-  date_created TIMESTAMP NOT NULL,
-  date_modified TIMESTAMP NOT NULL
-);
-
-CREATE TABLE IF NOT EXISTS commute_passes (
-  commute_pass_id SERIAL PRIMARY KEY,
-  commute_schedule_id INT NOT NULL REFERENCES commute_schedule(commute_schedule_id),
-  commute_ticket_id INT NOT NULL REFERENCES commute_tickets(commute_ticket_id),
   start_time TIME NOT NULL,
   duration INT NOT NULL,
+  commute_ticket_id INT NOT NULL REFERENCES commute_tickets(commute_ticket_id),
   date_created TIMESTAMP NOT NULL,
-  date_modified TIMESTAMP NOT NULL
+  date_modified TIMESTAMP NOT NULL,
+  UNIQUE(day_of_week, start_time)
 );
-
 
 CREATE TABLE IF NOT EXISTS commute_history (
   commute_history_id SERIAL PRIMARY KEY,
@@ -350,11 +343,6 @@ EXECUTE PROCEDURE update_dates();
 
 CREATE TRIGGER update_commute_history_dates
 BEFORE INSERT OR UPDATE ON commute_history
-FOR EACH ROW
-EXECUTE PROCEDURE update_dates();
-
-CREATE TRIGGER update_commute_passes_dates
-BEFORE INSERT OR UPDATE ON commute_passes
 FOR EACH ROW
 EXECUTE PROCEDURE update_dates();
 

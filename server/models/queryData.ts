@@ -645,112 +645,86 @@ export const commuteTicketQueries = {
 };
 
 export const commuteScheduleQueries = {
-    createCommuteSchedule: `
-        INSERT INTO commute_schedule (account_id, day_of_week) VALUES ($1, $2) RETURNING *
+    getCommuteSchedules: `
+        SELECT commute_schedule_id,
+            commute_schedule.account_id AS account_id,
+            commute_schedule.commute_ticket_id AS commute_ticket_id,
+            commute_schedule.day_of_week AS day_of_week,
+            concat(commute_systems.name, ' ', fare_details.name) AS name,
+            commute_schedule.start_time AS start_time,
+            commute_schedule.duration AS duration,
+            commute_schedule.date_created,
+            commute_schedule.date_modified
+        FROM commute_schedule
+        LEFT JOIN commute_tickets
+        ON commute_schedule.commute_ticket_id = commute_tickets.commute_ticket_id
+        LEFT JOIN fare_details
+        ON commute_tickets.fare_detail_id = fare_details.fare_detail_id
+        LEFT JOIN commute_systems
+        ON fare_details.commute_system_id = commute_systems.commute_system_id
     `,
-    updateCommuteSchedule: `
-        UPDATE commute_schedule SET account_id = $1, day_of_week = $2 WHERE commute_schedule_id = $3 RETURNING *
-    `,
-    deleteCommuteSchedule: `
-        DELETE FROM commute_schedule WHERE commute_schedule_id = $1
-    `,
-};
-
-export const commutePassesQueries = {
-    getCommutePasses: `
-            SELECT cp.commute_pass_id,
-            cs.account_id AS account_id,
-            cp.commute_ticket_id AS commute_ticket_id,
-            cs.day_of_week AS day_of_week,
-            concat(csy.name, ' ', fd.name) AS name,
-            cp.start_time AS start_time,
-            cp.duration AS duration,
-            cp.date_created,
-            cp.date_modified
-        FROM commute_passes cp
-        LEFT JOIN commute_schedule cs
-        ON cp.commute_schedule_id = cs.commute_schedule_id
-        LEFT JOIN commute_tickets ct
-        ON cp.commute_ticket_id = ct.commute_ticket_id
-        LEFT JOIN fare_details fd
-        ON ct.fare_detail_id = fd.fare_detail_id
-        LEFT JOIN commute_systems csy
-        ON fd.commute_system_id = csy.commute_system_id
-        ORDER BY cs.day_of_week, cp.start_time;
-    `,
-    getCommutePassesByAccountId: `
-            SELECT cp.commute_pass_id,
-            cs.account_id AS account_id,
-            cp.commute_ticket_id AS commute_ticket_id,
-            cs.day_of_week AS day_of_week,
-            concat(csy.name, ' ', fd.name) AS name,
-            cp.start_time AS start_time,
-            cp.duration AS duration,
-            cp.date_created,
-            cp.date_modified
-        FROM commute_passes cp
-        LEFT JOIN commute_schedule cs
-        ON cp.commute_schedule_id = cs.commute_schedule_id
-        LEFT JOIN commute_tickets ct
-        ON cp.commute_ticket_id = ct.commute_ticket_id
-        LEFT JOIN fare_details fd
-        ON ct.fare_detail_id = fd.fare_detail_id
-        LEFT JOIN commute_systems csy
-        ON fd.commute_system_id = csy.commute_system_id
-        WHERE cs.account_id = $1
-        ORDER BY cs.day_of_week, cp.start_time;
+    getCommuteSchedulesByAccountId: `
+        SELECT commute_schedule_id,
+            commute_schedule.account_id AS account_id,
+            commute_schedule.commute_ticket_id AS commute_ticket_id,
+            commute_schedule.day_of_week AS day_of_week,
+            concat(commute_systems.name, ' ', fare_details.name) AS name,
+            commute_schedule.start_time AS start_time,
+            commute_schedule.duration AS duration,
+            commute_schedule.date_created,
+            commute_schedule.date_modified
+        FROM commute_schedule
+        LEFT JOIN commute_tickets
+        ON commute_schedule.commute_ticket_id = commute_tickets.commute_ticket_id
+        LEFT JOIN fare_details
+        ON commute_tickets.fare_detail_id = fare_details.fare_detail_id
+        LEFT JOIN commute_systems
+        ON fare_details.commute_system_id = commute_systems.commute_system_id
         WHERE commute_schedules.account_id = $1
     `,
-    getCommutePassesByIdAndAccountId: `
-            SELECT cp.commute_pass_id,
-            cs.account_id AS account_id,
-            cp.commute_ticket_id AS commute_ticket_id,
-            cs.day_of_week AS day_of_week,
-            concat(csy.name, ' ', fd.name) AS name,
-            cp.start_time AS start_time,
-            cp.duration AS duration,
-            cp.date_created,
-            cp.date_modified
-        FROM commute_passes cp
-        LEFT JOIN commute_schedule cs
-        ON cp.commute_schedule_id = cs.commute_schedule_id
-        LEFT JOIN commute_tickets ct
-        ON cp.commute_ticket_id = ct.commute_ticket_id
-        LEFT JOIN fare_details fd
-        ON ct.fare_detail_id = fd.fare_detail_id
-        LEFT JOIN commute_systems csy
-        ON fd.commute_system_id = csy.commute_system_id
-        WHERE cs.account_id = $1
-        ORDER BY cs.day_of_week, cp.start_time;
+    getCommuteSchedulesByIdAndAccountId: `
+        SELECT commute_schedule_id,
+            commute_schedule.account_id AS account_id,
+            commute_schedule.commute_ticket_id AS commute_ticket_id,
+            commute_schedule.day_of_week AS day_of_week,
+            concat(commute_systems.name, ' ', fare_details.name) AS name,
+            commute_schedule.start_time AS start_time,
+            commute_schedule.duration AS duration,
+            commute_schedule.date_created,
+            commute_schedule.date_modified
+        FROM commute_schedule
+        LEFT JOIN commute_tickets
+        ON commute_schedule.commute_ticket_id = commute_tickets.commute_ticket_id
+        LEFT JOIN fare_details
+        ON commute_tickets.fare_detail_id = fare_details.fare_detail_id
+        LEFT JOIN commute_systems
+        ON fare_details.commute_system_id = commute_systems.commute_system_id
         WHERE commute_schedules.account_id = $1
         AND commute_schedules.commute_schedule_id = $2
     `,
-    getCommutePassesById: `
-            SELECT cp.commute_pass_id,
-            cs.account_id AS account_id,
-            cp.commute_ticket_id AS commute_ticket_id,
-            cs.day_of_week AS day_of_week,
-            concat(csy.name, ' ', fd.name) AS name,
-            cp.start_time AS start_time,
-            cp.duration AS duration,
-            cp.date_created,
-            cp.date_modified
-        FROM commute_passes cp
-        LEFT JOIN commute_schedule cs
-        ON cp.commute_schedule_id = cs.commute_schedule_id
-        LEFT JOIN commute_tickets ct
-        ON cp.commute_ticket_id = ct.commute_ticket_id
-        LEFT JOIN fare_details fd
-        ON ct.fare_detail_id = fd.fare_detail_id
-        LEFT JOIN commute_systems csy
-        ON fd.commute_system_id = csy.commute_system_id
-        WHERE cs.account_id = $1
-        ORDER BY cs.day_of_week, cp.start_time;
+    getCommuteSchedulesById: `
+        SELECT commute_schedule_id,
+            commute_schedule.account_id AS account_id,
+            commute_schedule.commute_ticket_id AS commute_ticket_id,
+            commute_schedule.day_of_week AS day_of_week,
+            concat(commute_systems.name, ' ', fare_details.name) AS name,
+            commute_schedule.start_time AS start_time,
+            commute_schedule.duration AS duration,
+            commute_schedule.date_created,
+            commute_schedule.date_modified
+        FROM commute_schedule
+        LEFT JOIN commute_tickets
+        ON commute_schedule.commute_ticket_id = commute_tickets.commute_ticket_id
+        LEFT JOIN fare_details
+        ON commute_tickets.fare_detail_id = fare_details.fare_detail_id
+        LEFT JOIN commute_systems
+        ON fare_details.commute_system_id = commute_systems.commute_system_id
         WHERE commute_schedules.commute_schedule_id = $1
     `,
-    createCommutePass:
-        'INSERT INTO commute_passes (commute_schedule_id, commute_ticket_id, start_time, duration) VALUES ($1, $2, $3, $4) RETURNING *',
-    updateCommutePass:
-        'UPDATE commute_passes SET commute_schedule_id = $1, commute_ticket_id = $2, start_time = $3, duration = $4 WHERE commute_pass_id = $5 RETURNING *',
-    deleteCommutePass: 'DELETE FROM commute_passes WHERE commute_pass_id = $1',
+    createCommuteSchedule:
+        'INSERT INTO commute_schedule (account_id, commute_ticket_id, day_of_week, start_time, duration) VALUES ($1, $2, $3, $4, $5) RETURNING *',
+    updateCommuteSchedule:
+        'UPDATE commute_schedule SET account_id = $1, commute_ticket_id = $2, day_of_week = $3, start_time = $4, duration = $5 WHERE commute_schedule_id = $6 RETURNING *',
+    deleteCommuteSchedule:
+        'DELETE FROM commute_schedule WHERE commute_schedule_id = $1',
 };

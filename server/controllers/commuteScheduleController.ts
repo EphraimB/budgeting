@@ -1,7 +1,6 @@
 import { type Request, type Response } from 'express';
 import {
     commuteScheduleQueries,
-    commutePassesQueries,
     commuteTicketQueries,
 } from '../models/queryData.js';
 import { handleError, executeQuery } from '../utils/helperFunctions.js';
@@ -49,16 +48,16 @@ export const getCommuteSchedule = async (
             account_id !== null &&
             account_id !== undefined
         ) {
-            query = commutePassesQueries.getCommutePassesByIdAndAccountId;
+            query = commuteScheduleQueries.getCommuteSchedulesByIdAndAccountId;
             params = [id, account_id];
         } else if (id !== null && id !== undefined) {
-            query = commutePassesQueries.getCommutePassesById;
+            query = commuteScheduleQueries.getCommuteSchedulesById;
             params = [id];
         } else if (account_id !== null && account_id !== undefined) {
-            query = commutePassesQueries.getCommutePassesByAccountId;
+            query = commuteScheduleQueries.getCommuteSchedulesByAccountId;
             params = [account_id];
         } else {
-            query = commutePassesQueries.getCommutePasses;
+            query = commuteScheduleQueries.getCommuteSchedules;
             params = [];
         }
 
@@ -73,35 +72,25 @@ export const getCommuteSchedule = async (
             return;
         }
 
-        const responseObj: {
-            schedule: Array<{
-                day_of_week: number;
-                passes: Array<{
-                    type: string;
-                    start_time: string;
-                    duration: number;
-                }>;
-            }>;
-        } = {
-            schedule: [],
-        };
-
-        const daysOfWeek = [0, 1, 2, 3, 4, 5, 6]; // 0=Sunday, 1=Monday, ..., 6=Saturday
-
-        daysOfWeek.forEach((day) => {
-            const passesForDay = commuteSchedule.filter(
-                (cs) => cs.day_of_week === day,
-            );
-            const passes = passesForDay.map((cs) => ({
-                type: cs.name, // assuming `name` is the type of pass
-                start_time: cs.start_time,
-                duration: cs.duration,
-            }));
-            responseObj.schedule.push({
-                day_of_week: day,
-                passes: passes,
+        const groupedByDay = commuteSchedule.reduce((acc, curr) => {
+            const dayOfWeek = curr.day_of_week;
+            if (!acc[dayOfWeek]) {
+                acc[dayOfWeek] = {
+                    day_of_week: dayOfWeek,
+                    passes: [],
+                };
+            }
+            acc[dayOfWeek].passes.push({
+                type: curr.name,
+                start_time: curr.start_time,
+                duration: curr.duration,
             });
-        });
+            return acc;
+        }, {});
+
+        const responseObj = {
+            schedule: Object.values(groupedByDay),
+        };
 
         response.status(200).json(responseObj);
     } catch (error) {
@@ -135,40 +124,12 @@ export const createCommuteSchedule = async (
     try {
         const rows = await executeQuery(
             commuteScheduleQueries.createCommuteSchedule,
-            [account_id, day_of_week],
-        );
-        const commute_schedule_id = rows[0].commute_schedule_id;
-
-        const rowsTwo = await executeQuery(
-            commutePassesQueries.createCommutePass,
-            [commute_schedule_id, commute_ticket_id, start_time, duration],
+            [account_id, day_of_week, commute_ticket_id, start_time, duration],
         );
 
-        const responseObj: {
-            schedule: Array<{
-                day_of_week: number;
-                passes: Array<{
-                    type: string;
-                    start_time: string;
-                    duration: number;
-                }>;
-            }>;
-        } = {
-            schedule: [
-                {
-                    day_of_week: day_of_week,
-                    passes: [
-                        {
-                            type: rowsTwo[0].name,
-                            start_time: start_time,
-                            duration: duration,
-                        },
-                    ],
-                },
-            ],
-        };
+        const commuteSchedule = rows.map((s) => parseCommuteSchedule(s));
 
-        response.status(201).json(responseObj);
+        response.status(201).json(commuteSchedule);
     } catch (error) {
         logger.error(error); // Log the error on the server side
         handleError(response, 'Error creating schedule');
