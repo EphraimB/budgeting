@@ -294,29 +294,29 @@ describe('GET /api/expenses/commute/schedule', () => {
         expect(mockResponse.status).toHaveBeenCalledWith(200);
         expect(mockResponse.json).toHaveBeenCalledWith(responseObj);
     });
+
+    it('should handle errors correctly with an id', async () => {
+        // Arrange
+        const errorMessage = 'Error getting schedule for given id';
+        const error = new Error(errorMessage);
+        mockModule(null, errorMessage);
+
+        const { getCommuteSchedule } = await import(
+            '../../controllers/commuteScheduleController.js'
+        );
+
+        mockRequest.query = { account_id: null, id: 1 };
+
+        // Act
+        await getCommuteSchedule(mockRequest as Request, mockResponse);
+
+        // Assert
+        expect(mockResponse.status).toHaveBeenCalledWith(400);
+        expect(mockResponse.json).toHaveBeenCalledWith({
+            message: 'Error getting schedule for given id',
+        });
+    });
 });
-
-//     it('should handle errors correctly with an id', async () => {
-//         // Arrange
-//         const errorMessage = 'Error getting systems';
-//         const error = new Error(errorMessage);
-//         mockModule(null, errorMessage);
-
-//         const { getCommuteSystem } = await import(
-//             '../../controllers/commuteSystemController.js'
-//         );
-
-//         mockRequest.query = { account_id: null, id: 1 };
-
-//         // Act
-//         await getCommuteSystem(mockRequest as Request, mockResponse);
-
-//         // Assert
-//         expect(mockResponse.status).toHaveBeenCalledWith(400);
-//         expect(mockResponse.json).toHaveBeenCalledWith({
-//             message: 'Error getting system',
-//         });
-//     });
 
 //     it('should respond with a 404 error message when the system does not exist', async () => {
 //         // Arrange
