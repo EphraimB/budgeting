@@ -1,19 +1,18 @@
 import { type Request, type Response } from 'express';
 import {
     commuteScheduleQueries,
+    commutePassesQueries,
     commuteTicketQueries,
 } from '../models/queryData.js';
 import { handleError, executeQuery } from '../utils/helperFunctions.js';
-import { type commuteSchedule } from '../types/types.js';
+import { type CommuteSchedule, type CommutePasses } from '../types/types.js';
 import { logger } from '../config/winston.js';
 
 interface CommuteScheduleInput {
     commute_schedule_id: string;
     account_id: string;
-    commute_ticket_id: string;
+    commute_system_id: string;
     day_of_week: string;
-    time_of_day: string;
-    duration: string;
     date_created: string;
     date_modified: string;
 }
@@ -24,14 +23,12 @@ interface CommuteScheduleInput {
  * @returns - Parsed commute system object
  */
 const parseCommuteSchedule = (
-    commuteSchedule: CommuteScheduleInput,
-): commuteSchedule => ({
+    commuteSchedule: Record<string, string>,
+): CommuteSchedule => ({
     commute_schedule_id: parseInt(commuteSchedule.commute_schedule_id),
     account_id: parseInt(commuteSchedule.account_id),
-    commute_ticket_id: parseInt(commuteSchedule.commute_ticket_id),
+    commute_system_id: parseInt(commuteSchedule.commute_system_id),
     day_of_week: parseInt(commuteSchedule.day_of_week),
-    time_of_day: commuteSchedule.time_of_day,
-    duration: parseInt(commuteSchedule.duration),
     date_created: commuteSchedule.date_created,
     date_modified: commuteSchedule.date_modified,
 });
@@ -62,23 +59,20 @@ export const getCommuteSchedule = async (
             account_id !== null &&
             account_id !== undefined
         ) {
-            query = commuteScheduleQueries.getCommuteSchedulesByIdAndAccountId;
+            query = commutePassesQueries.getCommutePassesByIdAndAccountId;
             params = [id, account_id];
         } else if (id !== null && id !== undefined) {
-            query = commuteScheduleQueries.getCommuteScheduleById;
+            query = commutePassesQueries.getCommutePassesById;
             params = [id];
         } else if (account_id !== null && account_id !== undefined) {
-            query = commuteScheduleQueries.getCommuteSchedulesByAccountId;
+            query = commutePassesQueries.getCommutePassesByAccountId;
             params = [account_id];
         } else {
-            query = commuteScheduleQueries.getCommuteSchedules;
+            query = commutePassesQueries.getCommutePasses;
             params = [];
         }
 
-        const commuteSystem = await executeQuery<CommuteScheduleInput>(
-            query,
-            params,
-        );
+        const commuteSystem = await executeQuery(query, params);
 
         if (
             ((id !== null && id !== undefined) ||
@@ -93,7 +87,9 @@ export const getCommuteSchedule = async (
             schedule: [
                 commuteSystem.map((cs) => ({
                     day_of_week: cs.day_of_week,
-                    passes: [],
+                    passes: [
+                        
+                    ],
                 })),
             ],
         };

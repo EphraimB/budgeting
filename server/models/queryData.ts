@@ -646,10 +646,10 @@ export const commuteTicketQueries = {
 
 export const commuteScheduleQueries = {
     createCommuteSchedule: `
-        INSERT INTO commute_schedule (account_id, commute_system_id, day_of_week) VALUES ($1, $2, $3) RETURNING *
+        INSERT INTO commute_schedule (account_id, day_of_week) VALUES ($1, $2) RETURNING *
     `,
     updateCommuteSchedule: `
-        UPDATE commute_schedule SET account_id = $1, commute_system_id = $2, day_of_week = $3 WHERE commute_schedule_id = $4 RETURNING *
+        UPDATE commute_schedule SET account_id = $1, day_of_week = $2 WHERE commute_schedule_id = $3 RETURNING *
     `,
     deleteCommuteSchedule: `
         DELETE FROM commute_schedule WHERE commute_schedule_id = $1
@@ -663,7 +663,6 @@ export const commutePassesQueries = {
         commute_passes.commute_ticket_id AS commute_ticket_id,
         commute_schedule.day_of_week AS day_of_week,
         concat(commute_systems.name, ' ', fare_details.name) AS name,
-        commute_schedules.commute_system_id AS commute_system_id,
         commute_passes.start_time AS start_time,
         commute_passes.duration AS duration,
         commute_passes.date_created,
@@ -684,7 +683,6 @@ export const commutePassesQueries = {
         commute_passes.commute_ticket_id AS commute_ticket_id,
         commute_schedule.day_of_week AS day_of_week,
         concat(commute_systems.name, ' ', fare_details.name) AS name,
-        commute_schedules.commute_system_id AS commute_system_id,
         commute_passes.start_time AS start_time,
         commute_passes.duration AS duration,
         commute_passes.date_created,
@@ -706,7 +704,6 @@ export const commutePassesQueries = {
         commute_passes.commute_ticket_id AS commute_ticket_id,
         commute_schedule.day_of_week AS day_of_week,
         concat(commute_systems.name, ' ', fare_details.name) AS name,
-        commute_schedules.commute_system_id AS commute_system_id,
         commute_passes.start_time AS start_time,
         commute_passes.duration AS duration,
         commute_passes.date_created,
@@ -729,7 +726,6 @@ export const commutePassesQueries = {
         commute_schedules.commute_ticket_id AS commute_ticket_id,
         commute_schedules.day_of_week AS day_of_week,
         concat(commute_systems.name, ' ', fare_details.name) AS name,
-        commute_schedules.commute_system_id AS commute_system_id,
         commute_schedules.time_of_day AS start_time,
         commute_schedules.duration AS duration,
         commute_schedules.date_created,

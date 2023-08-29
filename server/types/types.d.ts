@@ -260,7 +260,6 @@ export interface CommuteTicket {
 export interface CommuteSchedule {
     commute_schedule_id: number;
     account_id: number;
-    commute_system_id: number;
     day_of_week: number;
     date_created: string;
     date_modified: string;
