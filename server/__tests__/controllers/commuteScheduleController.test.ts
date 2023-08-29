@@ -480,30 +480,42 @@ describe('PUT /api/expenses/commute/systems/:id', () => {
     });
 });
 
-// describe('DELETE /api/expenses/commute/systems/:id', () => {
-//     it('should respond with a success message', async () => {
-//         // Arrange
-//         mockModule(
-//             commuteSystems,
-//             undefined,
-//             [],
-//             'Successfully deleted system',
-//         );
+describe('DELETE /api/expenses/commute/schedule/:id', () => {
+    it('should respond with a success message', async () => {
+        const deletedSchedule = [
+            {
+                commute_schedule_id: 1,
+                account_id: 1,
+                day_of_week: 1,
+                commute_ticket_id: 1,
+                start_time: '08:00:00',
+                duration: 60,
+            },
+        ];
 
-//         const { deleteCommuteSystem } = await import(
-//             '../../controllers/commuteSystemController.js'
-//         );
+        // Arrange
+        mockModule(
+            deletedSchedule,
+            undefined,
+            [],
+            'Successfully deleted schedule',
+        );
 
-//         mockRequest.params = { id: 1 };
+        const { deleteCommuteSchedule } = await import(
+            '../../controllers/commuteScheduleController.js'
+        );
 
-//         await deleteCommuteSystem(mockRequest as Request, mockResponse);
+        mockRequest.params = { id: 1 };
 
-//         // Assert
-//         expect(mockResponse.status).toHaveBeenCalledWith(200);
-//         expect(mockResponse.send).toHaveBeenCalledWith(
-//             'Successfully deleted system',
-//         );
-//     });
+        await deleteCommuteSchedule(mockRequest as Request, mockResponse);
+
+        // Assert
+        expect(mockResponse.status).toHaveBeenCalledWith(200);
+        expect(mockResponse.send).toHaveBeenCalledWith(
+            'Successfully deleted schedule',
+        );
+    });
+});
 
 //     it('should return a 400 error if there is system related data', async () => {
 //         // Arrange
