@@ -1213,6 +1213,30 @@
                         "description": "Commute schedule not found"
                     }
                 }
+            },
+            "post": {
+                "summary": "Create a new commute schedule",
+                "description": "Create a new commute schedule",
+                "tags": ["commute schedules"],
+                "requestBody": {
+                    "description": "Commute schedule object to be created",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/CommuteScheduleManipulation"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "$ref": "#/components/responses/SuccessResponseCommuteSchedule"
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/BadRequest"
+                    }
+                }
             }
         },
         "/loans": {
@@ -2604,6 +2628,33 @@
                     "alternate_fare_detail_id": {
                         "type": "integer",
                         "example": null
+                    }
+                }
+            },
+            "CommuteScheduleManipulation": {
+                "type": "object",
+                "properties": {
+                    "account_id": {
+                        "type": "integer",
+                        "format": "int64",
+                        "minimum": 1
+                    },
+                    "day_of_week": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "commute_ticket_id": {
+                        "type": "integer",
+                        "format": "int64",
+                        "minimum": 1
+                    },
+                    "start_time": {
+                        "type": "string",
+                        "example": "05:00:00"
+                    },
+                    "duration": {
+                        "type": "integer",
+                        "example": 60
                     }
                 }
             },
