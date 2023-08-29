@@ -422,32 +422,37 @@ describe('PUT /api/expenses/commute/systems/:id', () => {
         expect(mockResponse.status).toHaveBeenCalledWith(200);
         expect(mockResponse.json).toHaveBeenCalledWith(updatedSchedule);
     });
+
+    it('should handle errors correctly', async () => {
+        // Arrange
+        const errorMessage = 'Error updating schedule';
+        const error = new Error(errorMessage);
+        mockModule(null, errorMessage);
+
+        const { updateCommuteSchedule } = await import(
+            '../../controllers/commuteScheduleController.js'
+        );
+
+        mockRequest.params = { id: 1 };
+        mockRequest.body = {
+            commute_schedule_id: 1,
+            account_id: 1,
+            day_of_week: 1,
+            commute_ticket_id: 1,
+            start_time: '08:00:00',
+            duration: 60,
+        };
+
+        // Act
+        await updateCommuteSchedule(mockRequest as Request, mockResponse);
+
+        // Assert
+        expect(mockResponse.status).toHaveBeenCalledWith(400);
+        expect(mockResponse.json).toHaveBeenCalledWith({
+            message: 'Error updating schedule',
+        });
+    });
 });
-
-//     it('should handle errors correctly', async () => {
-//         // Arrange
-//         const errorMessage = 'Error updating system';
-//         const error = new Error(errorMessage);
-//         mockModule(null, errorMessage);
-
-//         const { updateCommuteSystem } = await import(
-//             '../../controllers/commuteSystemController.js'
-//         );
-
-//         mockRequest.params = { id: 1 };
-//         mockRequest.body = commuteSystems.filter(
-//             (system) => system.commute_system_id === 1,
-//         );
-
-//         // Act
-//         await updateCommuteSystem(mockRequest as Request, mockResponse);
-
-//         // Assert
-//         expect(mockResponse.status).toHaveBeenCalledWith(400);
-//         expect(mockResponse.json).toHaveBeenCalledWith({
-//             message: 'Error updating system',
-//         });
-//     });
 
 //     it('should respond with a 404 error message when the system does not exist', async () => {
 //         // Arrange
