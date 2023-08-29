@@ -81,6 +81,8 @@ describe('GET /api/expenses/commute/schedule', () => {
                 commute_ticket_id: 1,
                 start_time: '08:00:00',
                 duration: 60,
+                pass: 'LIRR Peak',
+                fare_amount: 10.75,
             },
             {
                 commute_schedule_id: 2,
@@ -89,6 +91,8 @@ describe('GET /api/expenses/commute/schedule', () => {
                 commute_ticket_id: 1,
                 start_time: '17:00:00',
                 duration: 60,
+                pass: 'LIRR Peak',
+                fare_amount: 10.75,
             },
             {
                 commute_schedule_id: 3,
@@ -97,6 +101,8 @@ describe('GET /api/expenses/commute/schedule', () => {
                 commute_ticket_id: 1,
                 start_time: '08:00:00',
                 duration: 60,
+                pass: 'LIRR Peak',
+                fare_amount: 10.75,
             },
         ];
 
@@ -122,11 +128,14 @@ describe('GET /api/expenses/commute/schedule', () => {
                             pass: 'LIRR Peak',
                             start_time: '08:00:00',
                             duration: 60,
+                            fare_amount: 10.75,
                         },
                         {
                             commute_schedule_id: 2,
+                            pass: 'LIRR Peak',
                             start_time: '17:00:00',
                             duration: 60,
+                            fare_amount: 10.75,
                         },
                     ],
                 },
@@ -135,8 +144,10 @@ describe('GET /api/expenses/commute/schedule', () => {
                     passes: [
                         {
                             commute_schedule_id: 3,
+                            pass: 'LIRR Peak',
                             start_time: '08:00:00',
                             duration: 60,
+                            fare_amount: 10.75,
                         },
                     ],
                 },
@@ -179,6 +190,8 @@ describe('GET /api/expenses/commute/schedule', () => {
                 commute_ticket_id: 1,
                 start_time: '08:00:00',
                 duration: 60,
+                pass: 'LIRR Peak',
+                fare_amount: 10.75,
             },
             {
                 commute_schedule_id: 3,
@@ -187,6 +200,8 @@ describe('GET /api/expenses/commute/schedule', () => {
                 commute_ticket_id: 1,
                 start_time: '08:00:00',
                 duration: 60,
+                pass: 'LIRR Peak',
+                fare_amount: 10.75,
             },
         ];
 
@@ -209,8 +224,10 @@ describe('GET /api/expenses/commute/schedule', () => {
                     passes: [
                         {
                             commute_schedule_id: 1,
+                            pass: 'LIRR Peak',
                             start_time: '08:00:00',
                             duration: 60,
+                            fare_amount: 10.75,
                         },
                     ],
                 },
@@ -219,8 +236,10 @@ describe('GET /api/expenses/commute/schedule', () => {
                     passes: [
                         {
                             commute_schedule_id: 3,
+                            pass: 'LIRR Peak',
                             start_time: '08:00:00',
                             duration: 60,
+                            fare_amount: 10.75,
                         },
                     ],
                 },
@@ -264,6 +283,8 @@ describe('GET /api/expenses/commute/schedule', () => {
                 commute_ticket_id: 1,
                 start_time: '08:00:00',
                 duration: 60,
+                pass: 'LIRR Peak',
+                fare_amount: 10.75,
             },
         ]);
 
@@ -285,6 +306,8 @@ describe('GET /api/expenses/commute/schedule', () => {
                             commute_schedule_id: 1,
                             start_time: '08:00:00',
                             duration: 60,
+                            pass: 'LIRR Peak',
+                            fare_amount: 10.75,
                         },
                     ],
                 },
@@ -347,6 +370,8 @@ describe('POST /api/expenses/commute/schedule', () => {
                 commute_ticket_id: 1,
                 start_time: '08:00:00',
                 duration: 60,
+                fare_amount: 10.75,
+                pass: 'LIRR Peak',
             },
         ];
 
@@ -405,6 +430,8 @@ describe('PUT /api/expenses/commute/systems/:id', () => {
                 commute_ticket_id: 1,
                 start_time: '08:00:00',
                 duration: 60,
+                fare_amount: 10.75,
+                pass: 'LIRR Peak',
             },
         ];
 
