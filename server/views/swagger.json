@@ -3248,6 +3248,11 @@
                                                         "duration": {
                                                             "type": "integer",
                                                             "example": 1
+                                                        },
+                                                        "fare_amount": {
+                                                            "type": "number",
+                                                            "format": "double",
+                                                            "example": 10.0
                                                         }
                                                     }
                                                 }

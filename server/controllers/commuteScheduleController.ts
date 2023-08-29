@@ -7,6 +7,17 @@ import { handleError, executeQuery } from '../utils/helperFunctions.js';
 import { type CommuteSchedule } from '../types/types.js';
 import { logger } from '../config/winston.js';
 
+interface Schedule {
+    day_of_week: number;
+    passes: Array<{
+        commute_schedule_id: number;
+        type: string;
+        start_time: string;
+        duration: number;
+        fare_amount: number;
+    }>;
+}
+
 /**
  *
  * @param commuteSchedule - Commute schedule object to parse
@@ -21,6 +32,9 @@ const parseCommuteSchedule = (
     commute_ticket_id: parseInt(commuteSchedule.commute_ticket_id),
     start_time: commuteSchedule.start_time,
     duration: parseInt(commuteSchedule.duration),
+    fare_amount: parseFloat(commuteSchedule.fare_amount),
+    type: commuteSchedule.name,
+    name: commuteSchedule.name,
     date_created: commuteSchedule.date_created,
     date_modified: commuteSchedule.date_modified,
 });
@@ -75,22 +89,30 @@ export const getCommuteSchedule = async (
             return;
         }
 
-        const groupedByDay = commuteSchedule.reduce((acc, curr) => {
-            const dayOfWeek = curr.day_of_week;
-            if (!acc[dayOfWeek]) {
-                acc[dayOfWeek] = {
-                    day_of_week: dayOfWeek,
-                    passes: [],
-                };
-            }
-            acc[dayOfWeek].passes.push({
-                commute_schedule_id: curr.commute_schedule_id,
-                type: curr.name,
-                start_time: curr.start_time,
-                duration: curr.duration,
-            });
-            return acc;
-        }, {});
+        const parsedCommuteSchedule = commuteSchedule.map((s) =>
+            parseCommuteSchedule(s),
+        );
+
+        const groupedByDay = parsedCommuteSchedule.reduce(
+            (acc: Record<number, Schedule>, curr) => {
+                const dayOfWeek = curr.day_of_week;
+                if (!acc[dayOfWeek]) {
+                    acc[dayOfWeek] = {
+                        day_of_week: dayOfWeek,
+                        passes: [],
+                    };
+                }
+                acc[dayOfWeek].passes.push({
+                    commute_schedule_id: curr.commute_schedule_id,
+                    type: curr.name,
+                    start_time: curr.start_time,
+                    duration: curr.duration,
+                    fare_amount: curr.fare_amount,
+                });
+                return acc;
+            },
+            {},
+        );
 
         const responseObj = {
             schedule: Object.values(groupedByDay),
