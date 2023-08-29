@@ -537,23 +537,22 @@ describe('DELETE /api/expenses/commute/schedule/:id', () => {
             message: 'Error deleting schedule',
         });
     });
+
+    it('should respond with a 404 error message when the schedule does not exist', async () => {
+        // Arrange
+        mockModule([]);
+
+        const { deleteCommuteSchedule } = await import(
+            '../../controllers/commuteScheduleController.js'
+        );
+
+        mockRequest.params = { id: 1 };
+
+        // Act
+        await deleteCommuteSchedule(mockRequest as Request, mockResponse);
+
+        // Assert
+        expect(mockResponse.status).toHaveBeenCalledWith(404);
+        expect(mockResponse.send).toHaveBeenCalledWith('Schedule not found');
+    });
 });
-
-//     it('should respond with a 404 error message when the system does not exist', async () => {
-//         // Arrange
-//         mockModule([]);
-
-//         const { deleteCommuteSystem } = await import(
-//             '../../controllers/commuteSystemController.js'
-//         );
-
-//         mockRequest.params = { id: 1 };
-
-//         // Act
-//         await deleteCommuteSystem(mockRequest as Request, mockResponse);
-
-//         // Assert
-//         expect(mockResponse.status).toHaveBeenCalledWith(404);
-//         expect(mockResponse.send).toHaveBeenCalledWith('System not found');
-//     });
-// });
