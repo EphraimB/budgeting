@@ -722,9 +722,9 @@ export const commuteScheduleQueries = {
         WHERE commute_schedule.commute_schedule_id = $1
     `,
     createCommuteSchedule:
-        'INSERT INTO commute_schedule (account_id, commute_ticket_id, day_of_week, start_time, duration) VALUES ($1, $2, $3, $4, $5) RETURNING *',
+        'INSERT INTO commute_schedule (account_id, day_of_week, commute_ticket_id, start_time, duration) VALUES ($1, $2, $3, $4, $5) RETURNING *',
     updateCommuteSchedule:
-        'UPDATE commute_schedule SET account_id = $1, commute_ticket_id = $2, day_of_week = $3, start_time = $4, duration = $5 WHERE commute_schedule_id = $6 RETURNING *',
+        'UPDATE commute_schedule SET account_id = $1, day_of_week = $2, commute_ticket_id = $3, start_time = $4, duration = $5 WHERE commute_schedule_id = $6 RETURNING *',
     deleteCommuteSchedule:
         'DELETE FROM commute_schedule WHERE commute_schedule_id = $1',
 };
