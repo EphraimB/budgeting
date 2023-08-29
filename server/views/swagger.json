@@ -1277,6 +1277,33 @@
                         "description": "Commute schedule not found"
                     }
                 }
+            },
+            "delete": {
+                "summary": "Delete a commute schedule",
+                "description": "Delete a commute schedule",
+                "tags": ["commute schedules"],
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Commute schedule id",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Commute schedule deleted successfully"
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/BadRequest"
+                    },
+                    "404": {
+                        "description": "Commute schedule not found"
+                    }
+                }
             }
         },
         "/loans": {
