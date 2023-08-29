@@ -680,7 +680,7 @@ export const commuteScheduleQueries = {
         ON commute_tickets.fare_detail_id = fare_details.fare_detail_id
         LEFT JOIN commute_systems
         ON fare_details.commute_system_id = commute_systems.commute_system_id
-        WHERE commute_schedules.account_id = $1
+        WHERE commute_schedule.account_id = $1
     `,
     getCommuteSchedulesByIdAndAccountId: `
         SELECT commute_schedule_id,
@@ -699,8 +699,8 @@ export const commuteScheduleQueries = {
         ON commute_tickets.fare_detail_id = fare_details.fare_detail_id
         LEFT JOIN commute_systems
         ON fare_details.commute_system_id = commute_systems.commute_system_id
-        WHERE commute_schedules.account_id = $1
-        AND commute_schedules.commute_schedule_id = $2
+        WHERE commute_schedule.account_id = $1
+        AND commute_schedule.commute_schedule_id = $2
     `,
     getCommuteSchedulesById: `
         SELECT commute_schedule_id,
@@ -719,7 +719,7 @@ export const commuteScheduleQueries = {
         ON commute_tickets.fare_detail_id = fare_details.fare_detail_id
         LEFT JOIN commute_systems
         ON fare_details.commute_system_id = commute_systems.commute_system_id
-        WHERE commute_schedules.commute_schedule_id = $1
+        WHERE commute_schedule.commute_schedule_id = $1
     `,
     createCommuteSchedule:
         'INSERT INTO commute_schedule (account_id, commute_ticket_id, day_of_week, start_time, duration) VALUES ($1, $2, $3, $4, $5) RETURNING *',

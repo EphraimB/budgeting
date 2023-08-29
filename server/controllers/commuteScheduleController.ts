@@ -142,40 +142,43 @@ export const createCommuteSchedule = async (
 //  * @param response - Response object
 //  * Sends a response with the updated schedule or an error message and updates the schedule in the database
 //  */
-// export const updateCommuteSchedule = async (
-//     request: Request,
-//     response: Response,
-// ): Promise<void> => {
-//     const id = parseInt(request.params.id);
-//     const {
-//         account_id,
-//         commute_ticket_id,
-//         day_of_week,
-//         time_of_day,
-//         duration,
-//     } = request.body;
-//     try {
-//         const commuteSchedule = await executeQuery<CommuteScheduleInput>(
-//             commuteScheduleQueries.getCommuteScheduleById,
-//             [id],
-//         );
+export const updateCommuteSchedule = async (
+    request: Request,
+    response: Response,
+): Promise<void> => {
+    const id = parseInt(request.params.id);
+    const { account_id, day_of_week, commute_ticket_id, start_time, duration } =
+        request.body;
+    try {
+        const commuteSchedule = await executeQuery(
+            commuteScheduleQueries.getCommuteSchedulesById,
+            [id],
+        );
 
-//         if (commuteSchedule.length === 0) {
-//             response.status(404).send('Schedule not found');
-//             return;
-//         }
+        if (commuteSchedule.length === 0) {
+            response.status(404).send('Schedule not found');
+            return;
+        }
 
-//         const rows = await executeQuery<CommuteScheduleInput>(
-//             commuteScheduleQueries.updateCommuteSchedule,
-//             [commute_ticket_id, day_of_week, time_of_day, duration, , id],
-//         );
-//         const schedule = rows.map((s) => parseCommuteSchedule(s));
-//         response.status(200).json(schedule);
-//     } catch (error) {
-//         logger.error(error); // Log the error on the server side
-//         handleError(response, 'Error updating schedule');
-//     }
-// };
+        const rows = await executeQuery(
+            commuteScheduleQueries.updateCommuteSchedule,
+            [
+                account_id,
+                day_of_week,
+                commute_ticket_id,
+                start_time,
+                duration,
+                id,
+            ],
+        );
+        const schedule = rows.map((s) => parseCommuteSchedule(s));
+
+        response.status(200).json(schedule);
+    } catch (error) {
+        logger.error(error); // Log the error on the server side
+        handleError(response, 'Error updating schedule');
+    }
+};
 
 // /**
 //  *
