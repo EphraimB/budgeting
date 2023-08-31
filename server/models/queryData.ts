@@ -467,16 +467,12 @@ export const incomeQueries = {
 
 export const commuteSystemQueries = {
     getCommuteSystems: 'SELECT * FROM commute_systems',
-    getCommuteSystemByAccountId:
-        'SELECT * FROM commute_systems WHERE account_id = $1',
-    getCommuteSystemByIdAndAccountId:
-        'SELECT * FROM commute_systems WHERE commute_system_id = $1 AND account_id = $2',
     getCommuteSystemById:
         'SELECT * FROM commute_systems WHERE commute_system_id = $1',
     createCommuteSystem:
-        'INSERT INTO commute_systems (account_id, name, fare_cap, fare_cap_duration) VALUES ($1, $2, $3, $4) RETURNING *',
+        'INSERT INTO commute_systems (name, fare_cap, fare_cap_duration) VALUES ($1, $2, $3) RETURNING *',
     updateCommuteSystem:
-        'UPDATE commute_systems SET account_id = $1, name = $2, fare_cap = $3, fare_cap_duration = $4 WHERE commute_system_id = $5 RETURNING *',
+        'UPDATE commute_systems SET name = $1, fare_cap = $2, fare_cap_duration = $3 WHERE commute_system_id = $4 RETURNING *',
     deleteCommuteSystem:
         'DELETE FROM commute_systems WHERE commute_system_id = $1',
 };

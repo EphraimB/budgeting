@@ -213,7 +213,6 @@ export interface Transfer {
 
 export interface CommuteSystem {
     commute_system_id: number;
-    account_id: number;
     name: string;
     fare_cap: number | null;
     fare_cap_duration: number | null;

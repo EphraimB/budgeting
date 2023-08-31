@@ -13,7 +13,6 @@ import {
 
 interface CommuteSystemInput {
     commute_system_id: string;
-    account_id: string;
     name: string;
     fare_cap: string;
     fare_cap_duration: string;
@@ -30,7 +29,6 @@ const parseCommuteSystem = (
     commuteSystem: CommuteSystemInput,
 ): CommuteSystem => ({
     commute_system_id: parseInt(commuteSystem.commute_system_id),
-    account_id: parseInt(commuteSystem.account_id),
     name: commuteSystem.name,
     fare_cap: parseFloatOrFallback(commuteSystem.fare_cap),
     fare_cap_duration: parseIntOrFallback(commuteSystem.fare_cap_duration),
@@ -48,9 +46,8 @@ export const getCommuteSystem = async (
     request: Request,
     response: Response,
 ): Promise<void> => {
-    const { id, account_id } = request.query as {
+    const { id } = request.query as {
         id?: string;
-        account_id?: string;
     }; // Destructure id from query string
 
     try {
@@ -58,20 +55,9 @@ export const getCommuteSystem = async (
         let params: any[];
 
         // Change the query based on the presence of id
-        if (
-            id !== null &&
-            id !== undefined &&
-            account_id !== null &&
-            account_id !== undefined
-        ) {
-            query = commuteSystemQueries.getCommuteSystemByIdAndAccountId;
-            params = [id, account_id];
-        } else if (id !== null && id !== undefined) {
+        if (id !== null && id !== undefined) {
             query = commuteSystemQueries.getCommuteSystemById;
-            params = [id];
-        } else if (account_id !== null && account_id !== undefined) {
-            query = commuteSystemQueries.getCommuteSystemByAccountId;
-            params = [account_id];
+            params = [];
         } else {
             query = commuteSystemQueries.getCommuteSystems;
             params = [];
@@ -82,11 +68,7 @@ export const getCommuteSystem = async (
             params,
         );
 
-        if (
-            ((id !== null && id !== undefined) ||
-                (account_id !== null && account_id !== undefined)) &&
-            commuteSystem.length === 0
-        ) {
+        if (id !== null && id !== undefined && commuteSystem.length === 0) {
             response.status(404).send('System not found');
             return;
         }
@@ -98,9 +80,7 @@ export const getCommuteSystem = async (
             response,
             `Error getting ${
                 id !== null && id !== undefined
-                    ? 'system'
-                    : account_id !== null && account_id !== undefined
-                    ? 'system for given account_id'
+                    ? 'system with id ' + id
                     : 'systems'
             }`,
         );
@@ -117,12 +97,12 @@ export const createCommuteSystem = async (
     request: Request,
     response: Response,
 ) => {
-    const { account_id, name, fare_cap, fare_cap_duration } = request.body;
+    const { name, fare_cap, fare_cap_duration } = request.body;
 
     try {
         const rows = await executeQuery<CommuteSystemInput>(
             commuteSystemQueries.createCommuteSystem,
-            [account_id, name, fare_cap, fare_cap_duration],
+            [name, fare_cap, fare_cap_duration],
         );
         const commuteSystem = rows.map((cs) => parseCommuteSystem(cs));
         response.status(201).json(commuteSystem);
@@ -143,7 +123,7 @@ export const updateCommuteSystem = async (
     response: Response,
 ): Promise<void> => {
     const id = parseInt(request.params.id);
-    const { account_id, name, fare_cap, fare_cap_duration } = request.body;
+    const { name, fare_cap, fare_cap_duration } = request.body;
     try {
         const commuteSystem = await executeQuery<CommuteSystemInput>(
             commuteSystemQueries.getCommuteSystemById,
@@ -157,7 +137,7 @@ export const updateCommuteSystem = async (
 
         const rows = await executeQuery<CommuteSystemInput>(
             commuteSystemQueries.updateCommuteSystem,
-            [account_id, name, fare_cap, fare_cap_duration, id],
+            [name, fare_cap, fare_cap_duration, id],
         );
         const system = rows.map((s) => parseCommuteSystem(s));
         response.status(200).json(system);
@@ -190,8 +170,8 @@ export const deleteCommuteSystem = async (
         }
 
         const fareDetailsResults = await executeQuery(
-            fareDetailsQueries.getFareDetailsByAccountId,
-            [commuteSystem[0].account_id],
+            fareDetailsQueries.getFareDetails,
+            [],
         );
         const hasFareDetails: boolean = fareDetailsResults.length > 0;
 
