@@ -18,10 +18,6 @@ router.get(
             .isInt({ min: 1 })
             .withMessage('ID must be a number'),
         validateRequest,
-        query('account_id')
-            .optional()
-            .isInt({ min: 1 })
-            .withMessage('Account ID must be a number'),
     ],
     getCommuteSystem,
 );
@@ -29,9 +25,6 @@ router.get(
 router.post(
     '/',
     [
-        body('account_id')
-            .isInt({ min: 1 })
-            .withMessage('Account ID must be a number'),
         body('name').isString().withMessage('Name must be a string'),
         body('fare_cap')
             .optional({ nullable: true })
@@ -50,9 +43,6 @@ router.put(
     '/:id',
     [
         param('id').isInt({ min: 1 }).withMessage('ID must be a number'),
-        body('account_id')
-            .isInt({ min: 1 })
-            .withMessage('Account ID must be a number'),
         body('name').isString().withMessage('Name must be a string'),
         body('fare_cap')
             .optional({ nullable: true })
