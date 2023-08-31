@@ -170,8 +170,8 @@ export const createFareDetail = async (
 
     try {
         const commuteSystemResults = await executeQuery(
-            commuteSystemQueries.getCommuteSystemByAccountId,
-            [account_id],
+            commuteSystemQueries.getCommuteSystems,
+            [],
         );
         const hasCommuteSystem: boolean = commuteSystemResults.length > 0;
 
