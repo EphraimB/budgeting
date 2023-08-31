@@ -1044,15 +1044,6 @@
                         "schema": {
                             "type": "integer"
                         }
-                    },
-                    {
-                        "name": "account_id",
-                        "in": "query",
-                        "description": "Filter by account id",
-                        "required": false,
-                        "schema": {
-                            "type": "integer"
-                        }
                     }
                 ],
                 "responses": {
@@ -2588,11 +2579,6 @@
             "CommuteTicketManipulation": {
                 "type": "object",
                 "properties": {
-                    "account_id": {
-                        "type": "integer",
-                        "format": "int64",
-                        "minimum": 1
-                    },
                     "fare_detail_id": {
                         "type": "integer",
                         "format": "int64",
@@ -3149,11 +3135,6 @@
                                 "type": "object",
                                 "properties": {
                                     "commute_ticket_id": {
-                                        "type": "integer",
-                                        "format": "int64",
-                                        "minimum": 1
-                                    },
-                                    "account_id": {
                                         "type": "integer",
                                         "format": "int64",
                                         "minimum": 1

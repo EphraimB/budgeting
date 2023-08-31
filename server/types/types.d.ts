@@ -248,7 +248,6 @@ export interface FareDetails {
 
 export interface CommuteTicket {
     commute_ticket_id: number;
-    account_id: number;
     fare_detail_id: number;
     name: string;
     date_created: string;

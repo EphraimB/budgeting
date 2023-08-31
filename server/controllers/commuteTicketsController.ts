@@ -6,11 +6,9 @@ import {
 import { handleError, executeQuery } from '../utils/helperFunctions.js';
 import { type CommuteTicket } from '../types/types.js';
 import { logger } from '../config/winston.js';
-import { parseIntOrFallback } from '../utils/helperFunctions.js';
 
 interface CommuteTicketInput {
     commute_ticket_id: string;
-    account_id: string;
     fare_detail_id: string;
     name: string;
     date_created: string;
@@ -26,7 +24,6 @@ const parseCommuteTicket = (
     commuteTicket: CommuteTicketInput,
 ): CommuteTicket => ({
     commute_ticket_id: parseInt(commuteTicket.commute_ticket_id),
-    account_id: parseInt(commuteTicket.account_id),
     fare_detail_id: parseInt(commuteTicket.fare_detail_id),
     name: commuteTicket.name,
     date_created: commuteTicket.date_created,
@@ -43,9 +40,8 @@ export const getCommuteTicket = async (
     request: Request,
     response: Response,
 ): Promise<void> => {
-    const { id, account_id } = request.query as {
+    const { id } = request.query as {
         id?: string;
-        account_id?: string;
     }; // Destructure id from query string
 
     try {
@@ -53,20 +49,9 @@ export const getCommuteTicket = async (
         let params: any[];
 
         // Change the query based on the presence of id
-        if (
-            id !== null &&
-            id !== undefined &&
-            account_id !== null &&
-            account_id !== undefined
-        ) {
-            query = commuteTicketQueries.getCommuteTicketsByIdAndAccountId;
-            params = [id, account_id];
-        } else if (id !== null && id !== undefined) {
-            query = commuteTicketQueries.getCommuteTicketsById;
+        if (id !== null && id !== undefined) {
+            query = commuteTicketQueries.getCommuteTickets;
             params = [id];
-        } else if (account_id !== null && account_id !== undefined) {
-            query = commuteTicketQueries.getCommuteTicketsByAccountId;
-            params = [account_id];
         } else {
             query = commuteTicketQueries.getCommuteTickets;
             params = [];
@@ -77,11 +62,7 @@ export const getCommuteTicket = async (
             params,
         );
 
-        if (
-            ((id !== null && id !== undefined) ||
-                (account_id !== null && account_id !== undefined)) &&
-            commuteTicket.length === 0
-        ) {
+        if (id !== null && id !== undefined && commuteTicket.length === 0) {
             response.status(404).send('Ticket not found');
             return;
         }
@@ -94,8 +75,6 @@ export const getCommuteTicket = async (
             `Error getting ${
                 id !== null && id !== undefined
                     ? 'ticket for given id'
-                    : account_id !== null && account_id !== undefined
-                    ? 'ticket for given account_id'
                     : 'tickets'
             }`,
         );
@@ -112,7 +91,7 @@ export const createCommuteTicket = async (
     request: Request,
     response: Response,
 ) => {
-    const { account_id, fare_detail_id } = request.body;
+    const { fare_detail_id } = request.body;
 
     try {
         const fareDetailsResults = await executeQuery(
@@ -131,7 +110,7 @@ export const createCommuteTicket = async (
 
         const rows = await executeQuery<CommuteTicketInput>(
             commuteTicketQueries.createCommuteTicket,
-            [account_id, fare_detail_id],
+            [fare_detail_id],
         );
         const commuteTicket = rows.map((ct) => parseCommuteTicket(ct));
         response.status(201).json(commuteTicket);
@@ -152,7 +131,7 @@ export const updateCommuteTicket = async (
     response: Response,
 ): Promise<void> => {
     const id = parseInt(request.params.id);
-    const { account_id, fare_detail_id } = request.body;
+    const { fare_detail_id } = request.body;
     try {
         const commuteTicket = await executeQuery<CommuteTicketInput>(
             commuteTicketQueries.getCommuteTicketsById,
@@ -180,7 +159,7 @@ export const updateCommuteTicket = async (
 
         const rows = await executeQuery<CommuteTicketInput>(
             commuteTicketQueries.updateCommuteTicket,
-            [account_id, fare_detail_id, id],
+            [fare_detail_id, id],
         );
         const tickets = rows.map((ticket) => parseCommuteTicket(ticket));
         response.status(200).json(tickets);

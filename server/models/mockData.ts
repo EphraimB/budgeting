@@ -554,7 +554,6 @@ export const fareDetails: FareDetails[] = [
 export const commuteTickets: CommuteTicket[] = [
     {
         commute_ticket_id: 1,
-        account_id: 1,
         fare_detail_id: 1,
         name: 'OMNY Single Ride',
         date_created: '2020-01-01',
@@ -562,7 +561,6 @@ export const commuteTickets: CommuteTicket[] = [
     },
     {
         commute_ticket_id: 2,
-        account_id: 1,
         fare_detail_id: 2,
         name: 'LIRR Weekly',
         date_created: '2020-01-01',

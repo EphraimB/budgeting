@@ -57,9 +57,8 @@ export const getFareDetails = async (
     request: Request,
     response: Response,
 ): Promise<void> => {
-    const { id, account_id } = request.query as {
+    const { id } = request.query as {
         id?: string;
-        account_id?: string;
     }; // Destructure id from query string
 
     try {
@@ -121,8 +120,6 @@ export const getFareDetails = async (
             `Error getting fare ${
                 id !== null && id !== undefined
                     ? 'details for given id'
-                    : account_id !== null && account_id !== undefined
-                    ? 'details for given account_id'
                     : 'details'
             }`,
         );
