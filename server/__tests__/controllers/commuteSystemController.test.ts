@@ -81,7 +81,7 @@ describe('GET /api/expenses/commute/systems', () => {
             '../../controllers/commuteSystemController.js'
         );
 
-        mockRequest.query = { account_id: null, id: null };
+        mockRequest.query = { id: null };
 
         // Call the function with the mock request and response
         await getCommuteSystem(mockRequest as Request, mockResponse);
@@ -101,7 +101,7 @@ describe('GET /api/expenses/commute/systems', () => {
             '../../controllers/commuteSystemController.js'
         );
 
-        mockRequest.query = { account_id: null, id: null };
+        mockRequest.query = { id: null };
 
         // Act
         await getCommuteSystem(mockRequest as Request, mockResponse);
@@ -110,48 +110,6 @@ describe('GET /api/expenses/commute/systems', () => {
         expect(mockResponse.status).toHaveBeenCalledWith(400);
         expect(mockResponse.json).toHaveBeenCalledWith({
             message: 'Error getting systems',
-        });
-    });
-
-    it('should respond with an array of systems with an account_id', async () => {
-        // Arrange
-        mockModule(commuteSystems.filter((system) => system.account_id === 1));
-
-        const { getCommuteSystem } = await import(
-            '../../controllers/commuteSystemController.js'
-        );
-
-        mockRequest.query = { account_id: 1, id: null };
-
-        // Call the function with the mock request and response
-        await getCommuteSystem(mockRequest as Request, mockResponse);
-
-        // Assert
-        expect(mockResponse.status).toHaveBeenCalledWith(200);
-        expect(mockResponse.json).toHaveBeenCalledWith(
-            commuteSystems.filter((system) => system.account_id === 1),
-        );
-    });
-
-    it('should handle errors correctly with an account_id', async () => {
-        // Arrange
-        const errorMessage = 'Error getting systems';
-        const error = new Error(errorMessage);
-        mockModule(null, errorMessage);
-
-        const { getCommuteSystem } = await import(
-            '../../controllers/commuteSystemController.js'
-        );
-
-        mockRequest.query = { account_id: 1, id: null };
-
-        // Act
-        await getCommuteSystem(mockRequest as Request, mockResponse);
-
-        // Assert
-        expect(mockResponse.status).toHaveBeenCalledWith(400);
-        expect(mockResponse.json).toHaveBeenCalledWith({
-            message: 'Error getting system for given account_id',
         });
     });
 
@@ -165,7 +123,7 @@ describe('GET /api/expenses/commute/systems', () => {
             '../../controllers/commuteSystemController.js'
         );
 
-        mockRequest.query = { account_id: null, id: 1 };
+        mockRequest.query = { id: 1 };
 
         // Call the function with the mock request and response
         await getCommuteSystem(mockRequest as Request, mockResponse);
@@ -187,7 +145,7 @@ describe('GET /api/expenses/commute/systems', () => {
             '../../controllers/commuteSystemController.js'
         );
 
-        mockRequest.query = { account_id: null, id: 1 };
+        mockRequest.query = { id: 1 };
 
         // Act
         await getCommuteSystem(mockRequest as Request, mockResponse);
@@ -195,7 +153,7 @@ describe('GET /api/expenses/commute/systems', () => {
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(400);
         expect(mockResponse.json).toHaveBeenCalledWith({
-            message: 'Error getting system',
+            message: 'Error getting system with id 1',
         });
     });
 
@@ -207,7 +165,7 @@ describe('GET /api/expenses/commute/systems', () => {
             '../../controllers/commuteSystemController.js'
         );
 
-        mockRequest.query = { account_id: 3, id: 3 };
+        mockRequest.query = { id: 3 };
 
         // Act
         await getCommuteSystem(mockRequest as Request, mockResponse);

@@ -479,7 +479,6 @@ export const transfers: Transfer[] = [
 export const commuteSystems = [
     {
         commute_system_id: 1,
-        account_id: 1,
         name: 'OMNY',
         fare_cap: 33,
         fare_cap_duration: 1,
@@ -488,7 +487,6 @@ export const commuteSystems = [
     },
     {
         commute_system_id: 2,
-        account_id: 1,
         name: 'LIRR',
         fare_cap: null,
         fare_cap_duration: null,
