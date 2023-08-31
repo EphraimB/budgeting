@@ -10,7 +10,6 @@ import { logger } from '../config/winston.js';
 
 interface FareDetailsInput {
     fare_detail_id: string;
-    account_id: string;
     commute_system_id: string;
     system_name: string;
     fare_type: string;
@@ -31,7 +30,6 @@ interface FareDetailsInput {
  */
 const parseFareDetails = (fareDetails: FareDetailsInput): FareDetails => ({
     fare_detail_id: parseInt(fareDetails.fare_detail_id),
-    account_id: parseInt(fareDetails.account_id),
     commute_system_id: parseInt(fareDetails.commute_system_id),
     system_name: fareDetails.system_name,
     fare_type: fareDetails.fare_type,
@@ -69,20 +67,9 @@ export const getFareDetails = async (
         let params: any[];
 
         // Change the query based on the presence of id
-        if (
-            id !== null &&
-            id !== undefined &&
-            account_id !== null &&
-            account_id !== undefined
-        ) {
-            query = fareDetailsQueries.getFareDetailsByIdAndAccountId;
-            params = [id, account_id];
-        } else if (id !== null && id !== undefined) {
+        if (id !== null && id !== undefined) {
             query = fareDetailsQueries.getFareDetailsById;
             params = [id];
-        } else if (account_id !== null && account_id !== undefined) {
-            query = fareDetailsQueries.getFareDetailsByAccountId;
-            params = [account_id];
         } else {
             query = fareDetailsQueries.getFareDetails;
             params = [];
@@ -92,9 +79,6 @@ export const getFareDetails = async (
 
         if (fareDetails.length === 0) {
             if (id !== null && id !== undefined) {
-                response.status(404).send('Fare detail not found');
-                return;
-            } else if (account_id !== null && account_id !== undefined) {
                 response.status(404).send('Fare detail not found');
                 return;
             } else {
@@ -107,7 +91,6 @@ export const getFareDetails = async (
 
         const responseObj: object = {
             fares: fareDetailsParsed.map((fareDetail) => ({
-                account_id: fareDetail.account_id,
                 fare_detail_id: fareDetail.fare_detail_id,
                 commute_system: {
                     commute_system_id: fareDetail.commute_system_id,
@@ -157,7 +140,6 @@ export const createFareDetail = async (
     response: Response,
 ) => {
     const {
-        account_id,
         commute_system_id,
         name,
         fare_amount,
@@ -189,7 +171,6 @@ export const createFareDetail = async (
         const rows = await executeQuery<FareDetailsInput>(
             fareDetailsQueries.createFareDetails,
             [
-                account_id,
                 commute_system_id,
                 name,
                 fare_amount,
@@ -234,7 +215,6 @@ export const updateFareDetail = async (
 ): Promise<void> => {
     const id = parseInt(request.params.id);
     const {
-        account_id,
         commute_system_id,
         name,
         fare_amount,
@@ -258,7 +238,6 @@ export const updateFareDetail = async (
         const rows = await executeQuery<FareDetailsInput>(
             fareDetailsQueries.updateFareDetails,
             [
-                account_id,
                 commute_system_id,
                 name,
                 fare_amount,

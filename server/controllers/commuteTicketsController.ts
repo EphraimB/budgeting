@@ -116,8 +116,8 @@ export const createCommuteTicket = async (
 
     try {
         const fareDetailsResults = await executeQuery(
-            fareDetailsQueries.getFareDetailsByAccountId,
-            [account_id],
+            fareDetailsQueries.getFareDetails,
+            [],
         );
 
         if (fareDetailsResults.length === 0) {
@@ -165,8 +165,8 @@ export const updateCommuteTicket = async (
         }
 
         const fareDetailsResults = await executeQuery(
-            fareDetailsQueries.getFareDetailsByAccountId,
-            [account_id],
+            fareDetailsQueries.getFareDetails,
+            [],
         );
 
         if (fareDetailsResults.length === 0) {

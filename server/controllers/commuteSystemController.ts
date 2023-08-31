@@ -57,7 +57,7 @@ export const getCommuteSystem = async (
         // Change the query based on the presence of id
         if (id !== null && id !== undefined) {
             query = commuteSystemQueries.getCommuteSystemById;
-            params = [];
+            params = [id];
         } else {
             query = commuteSystemQueries.getCommuteSystems;
             params = [];

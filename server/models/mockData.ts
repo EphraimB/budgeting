@@ -523,7 +523,6 @@ export const commuteHistory = [
 export const fareDetails: FareDetails[] = [
     {
         fare_detail_id: 1,
-        account_id: 1,
         commute_system_id: 1,
         system_name: 'OMNY',
         fare_type: 'Single Ride',
@@ -538,7 +537,6 @@ export const fareDetails: FareDetails[] = [
     },
     {
         fare_detail_id: 2,
-        account_id: 1,
         commute_system_id: 1,
         system_name: 'LIRR',
         fare_type: 'Weekly',
