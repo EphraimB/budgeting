@@ -173,7 +173,6 @@ CREATE TABLE IF NOT EXISTS income (
 
 CREATE TABLE IF NOT EXISTS commute_systems (
   commute_system_id SERIAL PRIMARY KEY,
-  account_id INT NOT NULL REFERENCES accounts(account_id),
   name VARCHAR(255) NOT NULL,
   fare_cap NUMERIC(5,2),
   fare_cap_duration INT,
@@ -183,7 +182,6 @@ CREATE TABLE IF NOT EXISTS commute_systems (
 
 CREATE TABLE IF NOT EXISTS fare_details (
   fare_detail_id SERIAL PRIMARY KEY,
-  account_id INT NOT NULL REFERENCES accounts(account_id),
   commute_system_id INT NOT NULL REFERENCES commute_systems(commute_system_id),
   name VARCHAR(255) NOT NULL,
   fare_amount NUMERIC(5,2) NOT NULL,
@@ -198,7 +196,6 @@ CREATE TABLE IF NOT EXISTS fare_details (
 
 CREATE TABLE IF NOT EXISTS commute_tickets (
   commute_ticket_id SERIAL PRIMARY KEY,
-  account_id INT NOT NULL REFERENCES accounts(account_id),
   fare_detail_id INT NOT NULL REFERENCES fare_details(fare_detail_id),
   date_created TIMESTAMP NOT NULL,
   date_modified TIMESTAMP NOT NULL
