@@ -64,14 +64,13 @@ describe('GET /api/expenses/commute/fares', () => {
             '../../controllers/fareDetailsController.js'
         );
 
-        mockRequest.query = { account_id: null, id: null };
+        mockRequest.query = { id: null };
 
         // Call the function with the mock request and response
         await getFareDetails(mockRequest as Request, mockResponse);
 
         const responseObj = {
             fares: fareDetails.map((fareDetail) => ({
-                account_id: fareDetail.account_id,
                 fare_detail_id: fareDetail.fare_detail_id,
                 commute_system: {
                     commute_system_id: fareDetail.commute_system_id,
@@ -120,81 +119,11 @@ describe('GET /api/expenses/commute/fares', () => {
         });
     });
 
-    it('should respond with an array of fare details with an account_id', async () => {
-        // Arrange
-        mockModule(
-            fareDetails.filter((fareDetail) => fareDetail.account_id === 1),
-        );
-
-        const { getFareDetails } = await import(
-            '../../controllers/fareDetailsController.js'
-        );
-
-        mockRequest.query = { account_id: 1, id: null };
-
-        // Call the function with the mock request and response
-        await getFareDetails(mockRequest as Request, mockResponse);
-
-        const responseObj = {
-            fares: fareDetails
-                .filter((fd) => fd.account_id === 1)
-                .map((fareDetail) => ({
-                    account_id: fareDetail.account_id,
-                    fare_detail_id: fareDetail.fare_detail_id,
-                    commute_system: {
-                        commute_system_id: fareDetail.commute_system_id,
-                        name: fareDetail.system_name,
-                    },
-                    name: fareDetail.fare_type,
-                    fare_amount: fareDetail.fare_amount,
-                    begin_in_effect: {
-                        day_of_week: fareDetail.begin_in_effect_day_of_week,
-                        time: fareDetail.begin_in_effect_time,
-                    },
-                    end_in_effect: {
-                        day_of_week: fareDetail.end_in_effect_day_of_week,
-                        time: fareDetail.end_in_effect_time,
-                    },
-                    alternate_fare_detail_id:
-                        fareDetail.alternate_fare_detail_id,
-                    date_created: fareDetail.date_created,
-                    date_modified: fareDetail.date_modified,
-                })),
-        };
-
-        // Assert
-        expect(mockResponse.status).toHaveBeenCalledWith(200);
-        expect(mockResponse.json).toHaveBeenCalledWith(responseObj);
-    });
-
-    it('should handle errors correctly with an account_id', async () => {
-        // Arrange
-        const errorMessage = 'Error getting fare detail for given account_id';
-        const error = new Error(errorMessage);
-        mockModule(null, errorMessage);
-
-        const { getFareDetails } = await import(
-            '../../controllers/fareDetailsController.js'
-        );
-
-        mockRequest.query = { account_id: 1, id: null };
-
-        // Act
-        await getFareDetails(mockRequest as Request, mockResponse);
-
-        // Assert
-        expect(mockResponse.status).toHaveBeenCalledWith(400);
-        expect(mockResponse.json).toHaveBeenCalledWith({
-            message: 'Error getting fare details for given account_id',
-        });
-    });
-
     it('should respond with an array of fare details with an id', async () => {
         // Arrange
         mockModule([
             {
                 fare_detail_id: 1,
-                account_id: 1,
                 commute_system_id: 1,
                 system_name: 'BART',
                 fare_type: 'Adult',
@@ -221,7 +150,6 @@ describe('GET /api/expenses/commute/fares', () => {
         const responseObj = {
             fares: [
                 {
-                    account_id: 1,
                     fare_detail_id: 1,
                     commute_system: {
                         commute_system_id: 1,
@@ -259,7 +187,7 @@ describe('GET /api/expenses/commute/fares', () => {
             '../../controllers/fareDetailsController.js'
         );
 
-        mockRequest.query = { account_id: null, id: 1 };
+        mockRequest.query = { id: 1 };
 
         // Act
         await getFareDetails(mockRequest as Request, mockResponse);
@@ -279,7 +207,7 @@ describe('GET /api/expenses/commute/fares', () => {
             '../../controllers/fareDetailsController.js'
         );
 
-        mockRequest.query = { account_id: 3, id: 3 };
+        mockRequest.query = { id: 3 };
 
         // Act
         await getFareDetails(mockRequest as Request, mockResponse);
