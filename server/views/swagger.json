@@ -675,15 +675,6 @@
                             "type": "integer",
                             "minimum": 1
                         }
-                    },
-                    {
-                        "name": "account_id",
-                        "in": "query",
-                        "description": "Filter by account id",
-                        "required": false,
-                        "schema": {
-                            "type": "integer"
-                        }
                     }
                 ],
                 "responses": {
@@ -2588,11 +2579,6 @@
             "CommuteSystemManipulation": {
                 "type": "object",
                 "properties": {
-                    "account_id": {
-                        "type": "integer",
-                        "format": "int64",
-                        "minimum": 1
-                    },
                     "name": {
                         "type": "string",
                         "example": "Metro North"
@@ -3000,11 +2986,6 @@
                                 "type": "object",
                                 "properties": {
                                     "commute_system_id": {
-                                        "type": "integer",
-                                        "format": "int64",
-                                        "minimum": 1
-                                    },
-                                    "account_id": {
                                         "type": "integer",
                                         "format": "int64",
                                         "minimum": 1
