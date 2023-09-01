@@ -85,7 +85,7 @@ describe('GET /api/expenses/commute/tickets', () => {
             '../../controllers/commuteTicketsController.js'
         );
 
-        mockRequest.query = { account_id: null, id: null };
+        mockRequest.query = { id: null };
 
         // Call the function with the mock request and response
         await getCommuteTicket(mockRequest as Request, mockResponse);
@@ -105,7 +105,7 @@ describe('GET /api/expenses/commute/tickets', () => {
             '../../controllers/commuteTicketsController.js'
         );
 
-        mockRequest.query = { account_id: null, id: null };
+        mockRequest.query = { id: null };
 
         // Act
         await getCommuteTicket(mockRequest as Request, mockResponse);
@@ -114,48 +114,6 @@ describe('GET /api/expenses/commute/tickets', () => {
         expect(mockResponse.status).toHaveBeenCalledWith(400);
         expect(mockResponse.json).toHaveBeenCalledWith({
             message: 'Error getting tickets',
-        });
-    });
-
-    it('should respond with an array of tickets with an account_id', async () => {
-        // Arrange
-        mockModule(commuteTickets.filter((ticket) => ticket.account_id === 1));
-
-        const { getCommuteTicket } = await import(
-            '../../controllers/commuteTicketsController.js'
-        );
-
-        mockRequest.query = { account_id: 1, id: null };
-
-        // Call the function with the mock request and response
-        await getCommuteTicket(mockRequest as Request, mockResponse);
-
-        // Assert
-        expect(mockResponse.status).toHaveBeenCalledWith(200);
-        expect(mockResponse.json).toHaveBeenCalledWith(
-            commuteTickets.filter((ticket) => ticket.account_id === 1),
-        );
-    });
-
-    it('should handle errors correctly with an account_id', async () => {
-        // Arrange
-        const errorMessage = 'Error getting tickets';
-        const error = new Error(errorMessage);
-        mockModule(null, errorMessage);
-
-        const { getCommuteTicket } = await import(
-            '../../controllers/commuteTicketsController.js'
-        );
-
-        mockRequest.query = { account_id: 1, id: null };
-
-        // Act
-        await getCommuteTicket(mockRequest as Request, mockResponse);
-
-        // Assert
-        expect(mockResponse.status).toHaveBeenCalledWith(400);
-        expect(mockResponse.json).toHaveBeenCalledWith({
-            message: 'Error getting ticket for given account_id',
         });
     });
 
@@ -169,7 +127,7 @@ describe('GET /api/expenses/commute/tickets', () => {
             '../../controllers/commuteTicketsController.js'
         );
 
-        mockRequest.query = { account_id: null, id: 1 };
+        mockRequest.query = { id: 1 };
 
         // Call the function with the mock request and response
         await getCommuteTicket(mockRequest as Request, mockResponse);
@@ -191,7 +149,7 @@ describe('GET /api/expenses/commute/tickets', () => {
             '../../controllers/commuteTicketsController.js'
         );
 
-        mockRequest.query = { account_id: null, id: 1 };
+        mockRequest.query = { id: 1 };
 
         // Act
         await getCommuteTicket(mockRequest as Request, mockResponse);
@@ -211,7 +169,7 @@ describe('GET /api/expenses/commute/tickets', () => {
             '../../controllers/commuteTicketsController.js'
         );
 
-        mockRequest.query = { account_id: 3, id: 3 };
+        mockRequest.query = { id: 3 };
 
         // Act
         await getCommuteTicket(mockRequest as Request, mockResponse);
