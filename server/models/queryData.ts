@@ -657,3 +657,38 @@ export const commuteScheduleQueries = {
     deleteCommuteSchedule:
         'DELETE FROM commute_schedule WHERE commute_schedule_id = $1',
 };
+
+export const commuteOverviewQueries = {
+    getCommuteOverview: `
+        WITH RECURSIVE days AS (
+            SELECT date_trunc('month', current_date)::date AS day
+            UNION ALL
+            SELECT day + 1
+            FROM days
+            WHERE day < date_trunc('month', current_date)::date + interval '1 month' - interval '1 day'
+        ),
+        count_days AS (
+            SELECT
+            extract(dow from day)::int AS day_of_week,
+            COUNT(*) AS num_days
+            FROM days
+            GROUP BY day_of_week
+        ),
+        ticket_fares AS (
+            SELECT
+            cs.commute_schedule_id,
+            cs.day_of_week,
+            COALESCE(fd.fare_amount, 0) AS fare_amount
+            FROM commute_schedule cs
+            JOIN commute_tickets ct ON cs.commute_ticket_id = ct.commute_ticket_id
+            JOIN fare_details fd ON ct.fare_detail_id = fd.fare_detail_id
+            WHERE account_id = $1
+        )
+        SELECT
+            COALESCE(SUM(tf.fare_amount), 0) AS total_cost_per_week,
+            COALESCE(SUM(tf.fare_amount * cd.num_days), 0) AS total_cost_per_month,
+            COALESCE(COUNT(tf.commute_schedule_id), 0) AS total_rides
+        FROM ticket_fares tf
+        JOIN count_days cd ON tf.day_of_week = cd.day_of_week;
+    `,
+};
