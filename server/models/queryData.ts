@@ -680,6 +680,8 @@ export const commuteOverviewQueries = {
             cs.day_of_week,
             csy.name AS system_name,
             fd.commute_system_id,
+            csy.fare_cap AS fare_cap,
+            csy.fare_cap_duration AS fare_cap_duration,
             COALESCE(fd.fare_amount, 0) AS fare_amount
             FROM commute_schedule cs
             JOIN commute_tickets ct ON cs.commute_ticket_id = ct.commute_ticket_id
@@ -692,9 +694,11 @@ export const commuteOverviewQueries = {
             tf.system_name,
             COALESCE(SUM(tf.fare_amount), 0) AS total_cost_per_week,
             COALESCE(SUM(tf.fare_amount * cd.num_days), 0) AS total_cost_per_month,
-            COALESCE(COUNT(tf.commute_schedule_id), 0) AS rides
+            COALESCE(COUNT(tf.commute_schedule_id), 0) AS rides,
+            tf.fare_cap AS fare_cap,
+            tf.fare_cap_duration AS fare_cap_duration
         FROM ticket_fares tf
         JOIN count_days cd ON tf.day_of_week = cd.day_of_week
-        GROUP BY tf.commute_system_id, tf.system_name;
+        GROUP BY tf.commute_system_id, tf.system_name, tf.fare_cap, tf.fare_cap_duration;
     `,
 };
