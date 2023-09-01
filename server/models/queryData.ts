@@ -678,20 +678,23 @@ export const commuteOverviewQueries = {
             SELECT
             cs.commute_schedule_id,
             cs.day_of_week,
+            csy.name AS system_name,
             fd.commute_system_id,
             COALESCE(fd.fare_amount, 0) AS fare_amount
             FROM commute_schedule cs
             JOIN commute_tickets ct ON cs.commute_ticket_id = ct.commute_ticket_id
             JOIN fare_details fd ON ct.fare_detail_id = fd.fare_detail_id
+            JOIN commute_systems csy ON fd.commute_system_id = csy.commute_system_id
             WHERE cs.account_id = $1
         )
         SELECT
             tf.commute_system_id,
+            tf.system_name,
             COALESCE(SUM(tf.fare_amount), 0) AS total_cost_per_week,
             COALESCE(SUM(tf.fare_amount * cd.num_days), 0) AS total_cost_per_month,
             COALESCE(COUNT(tf.commute_schedule_id), 0) AS rides
         FROM ticket_fares tf
         JOIN count_days cd ON tf.day_of_week = cd.day_of_week
-        GROUP BY ROLLUP(tf.commute_system_id);
+        GROUP BY tf.commute_system_id, tf.system_name;
     `,
 };
