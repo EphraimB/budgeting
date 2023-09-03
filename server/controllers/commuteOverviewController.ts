@@ -12,13 +12,25 @@ type ReturnObject = {
             total_cost_per_week: number;
             total_cost_per_month: number;
             rides: number;
-            fare_cap_progress: {
+            fare_cap_progress?: {
                 current_spent: number;
                 fare_cap: number;
                 potential_savings: number;
                 fare_cap_duration: number;
             };
         };
+    };
+};
+
+type SystemDetails = {
+    total_cost_per_week: number;
+    total_cost_per_month: number;
+    rides: number;
+    fare_cap_progress?: {
+        current_spent: number;
+        fare_cap: number;
+        potential_savings: number;
+        fare_cap_duration: number;
     };
 };
 
@@ -63,20 +75,27 @@ export const getCommuteOverview = async (
                 row.total_cost_per_month,
             );
 
-            // Add the system details to the return object
-            returnObject.systems[row.system_name] = {
+            // Initialize systemDetails object
+            const systemDetails: SystemDetails = {
                 total_cost_per_week: parseFloat(row.total_cost_per_week),
                 total_cost_per_month: parseFloat(row.total_cost_per_month),
                 rides: parseInt(row.rides),
-                fare_cap_progress: {
+            };
+
+            // Include fare_cap_progress if fare_cap is not null
+            if (row.fare_cap !== null) {
+                systemDetails.fare_cap_progress = {
                     current_spent: parseFloat(row.current_spent),
                     fare_cap: parseFloat(row.fare_cap),
                     potential_savings:
                         parseFloat(row.fare_cap) -
                         parseFloat(row.current_spent),
                     fare_cap_duration: parseInt(row.fare_cap_duration),
-                },
-            };
+                };
+            }
+
+            // Add the systemDetails to the return object
+            returnObject.systems[row.system_name] = systemDetails;
         });
 
         response.status(200).json(returnObject);
