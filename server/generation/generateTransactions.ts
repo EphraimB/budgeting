@@ -266,7 +266,7 @@ const generate = async (
     request.commuteExpenses
         .filter((cmte) => cmte.account_id === account_id)
         .forEach((account) => {
-            account.commute_expense.forEach((commuteExpense: any) => {
+            account.commute_expenses.forEach((commuteExpense: any) => {
                 generateCommuteExpenses(
                     transactions,
                     skippedTransactions,
