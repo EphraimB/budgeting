@@ -9,7 +9,6 @@ router.get(
     '/',
     [
         query('account_id')
-            .optional()
             .isInt({ min: 1 })
             .withMessage('Account ID must be a number'),
         validateRequest,

@@ -670,7 +670,7 @@
                         "name": "account_id",
                         "in": "query",
                         "description": "Filter by account id",
-                        "required": false,
+                        "required": true,
                         "schema": {
                             "type": "integer",
                             "minimum": 1
