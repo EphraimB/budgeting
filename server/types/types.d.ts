@@ -122,6 +122,19 @@ export interface Expense {
     date_modified?: string;
 }
 
+export interface commuteSchedule {
+    commute_schedule_id?: number;
+    account_id?: number;
+    commute_ticket_id?: number;
+    day_of_week?: number;
+    pass?: string;
+    start_time?: string;
+    duration?: number;
+    fare_amount?: number;
+    date_created?: string;
+    date_modified?: string;
+}
+
 export interface Loan {
     loan_id?: number;
     account_id?: number;
