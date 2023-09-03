@@ -38,7 +38,7 @@ type SystemDetails = {
  *
  * @param request - Request object
  * @param response - Response object
- * Sends a response with all accounts or a single account
+ * Sends a response with a single account
  */
 export const getCommuteOverview = async (
     request: Request,
