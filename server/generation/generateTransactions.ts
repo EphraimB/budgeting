@@ -24,6 +24,7 @@ import {
     generateMonthlyTransfers,
     generateYearlyTransfers,
 } from './generateTransfers.js';
+import { generateCommuteExpenses } from './generateCommuteExpenses.js';
 import generateWishlists from './generateWishlists.js';
 import calculateBalances from './calculateBalances.js';
 import {
@@ -259,6 +260,20 @@ const generate = async (
                         account_id,
                     );
                 }
+            });
+        });
+
+    request.commuteExpenses
+        .filter((cmte) => cmte.account_id === account_id)
+        .forEach((account) => {
+            account.commute_expense.forEach((commuteExpense: any) => {
+                generateCommuteExpenses(
+                    transactions,
+                    skippedTransactions,
+                    commuteExpense,
+                    toDate,
+                    fromDate,
+                );
             });
         });
 

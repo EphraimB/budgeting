@@ -3,6 +3,7 @@ export interface GeneratedTransaction {
     loan_id?: number;
     income_id?: number;
     transfer_id?: number;
+    commute_schedule_id?: number;
     wishlist_id?: number;
     transaction_id?: number;
     title: string;
@@ -281,6 +282,7 @@ declare module 'express-serve-static-core' {
         wishlists: any[];
         transfers: any[];
         income: any[];
+        commuteExpenses: any[];
         currentBalance: CurrentBalance[];
         transactions: any[];
         wishlist_id: number | null | undefined;

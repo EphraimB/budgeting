@@ -18,6 +18,7 @@ import {
     taxesQueries,
     cronJobQueries,
     incomeQueries,
+    commuteScheduleQueries,
 } from '../models/queryData.js';
 import {
     type Income,
@@ -840,6 +841,94 @@ export const getTransfersByAccount = async (
     } catch (error) {
         logger.error(error); // Log the error on the server side
         handleError(response, 'Error getting transfers');
+    }
+};
+
+/**
+ *
+ * @param request - The request object
+ * @param response - The response object
+ * @param next - The next function
+ * Sends a response with all commute expenses or a single commute expense if an id is provided
+ */
+export const getCommuteExpensesByAccount = async (
+    request: Request,
+    response: Response,
+    next: NextFunction,
+): Promise<void> => {
+    const { account_id } = request.query as Record<string, string>;
+
+    try {
+        const commuteExpensesByAccount: Array<{
+            account_id: number;
+            commute_expenses: any;
+        }> = [];
+
+        if (account_id === null || account_id === undefined) {
+            // If account_id is null, fetch all accounts and make request.transactions an array of transactions
+            const accountResults = await executeQuery(
+                accountQueries.getAccounts,
+            );
+
+            await Promise.all(
+                accountResults.map(async (account) => {
+                    const commuteExpensesResults = await executeQuery(
+                        commuteScheduleQueries.getCommuteSchedulesByAccountId,
+                        [account.account_id],
+                    );
+
+                    // Map over results array and convert amount to a float for each Transaction object
+                    const commuteExpensesTransactions =
+                        commuteExpensesResults.map((commute_expense) => ({
+                            ...commute_expense,
+                            amount: parseFloat(commute_expense.fare_amount),
+                        }));
+
+                    commuteExpensesByAccount.push({
+                        account_id: account.account_id,
+                        commute_expenses: commuteExpensesTransactions,
+                    });
+                }),
+            );
+        } else {
+            // Check if account exists and if it doesn't, send a response with an error message
+            const accountExists = await executeQuery(
+                accountQueries.getAccount,
+                [account_id],
+            );
+
+            if (accountExists.length === 0) {
+                response
+                    .status(404)
+                    .send(`Account with ID ${account_id} not found`);
+                return;
+            }
+
+            const results = await executeQuery(
+                commuteScheduleQueries.getCommuteSchedulesByAccountId,
+                [account_id],
+            );
+
+            // Map over results array and convert amount to a float for each Commute Expense object
+            const commuteExpensesTransactions = results.map(
+                (commute_expense) => ({
+                    ...commute_expense,
+                    amount: parseFloat(commute_expense.fare_amount),
+                }),
+            );
+
+            commuteExpensesByAccount.push({
+                account_id: parseInt(account_id),
+                commute_expenses: commuteExpensesTransactions,
+            });
+        }
+
+        request.commuteExpenses = commuteExpensesByAccount;
+
+        next();
+    } catch (error) {
+        logger.error(error); // Log the error on the server side
+        handleError(response, 'Error getting commute expenses');
     }
 };
 
