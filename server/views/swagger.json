@@ -2985,6 +2985,11 @@
                         "schema": {
                             "type": "object",
                             "properties": {
+                                "account_id": {
+                                    "type": "integer",
+                                    "format": "int64",
+                                    "minimum": 1
+                                },
                                 "total_cost_per_week": {
                                     "type": "number",
                                     "format": "double",
