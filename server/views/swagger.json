@@ -660,6 +660,36 @@
                 }
             }
         },
+        "/expenses/commute": {
+            "get": {
+                "summary": "Get all commute expenses",
+                "description": "Get all commute expenses",
+                "tags": ["commute expenses overview"],
+                "parameters": [
+                    {
+                        "name": "account_id",
+                        "in": "query",
+                        "description": "Filter by account id",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "minimum": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "$ref": "#/components/responses/SuccessResponseCommuteExpenses"
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/BadRequest"
+                    },
+                    "404": {
+                        "description": "Commute expense not found"
+                    }
+                }
+            }
+        },
         "/expenses/commute/systems": {
             "get": {
                 "summary": "Get all commute systems",
@@ -2941,6 +2971,76 @@
                                     "date_modified": {
                                         "type": "string",
                                         "format": "date-time"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "SuccessResponseCommuteExpenses": {
+                "description": "A JSON array of commute expenses",
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "total_cost_per_week": {
+                                    "type": "number",
+                                    "format": "double",
+                                    "example": 100.0
+                                },
+                                "total_cost_per_month": {
+                                    "type": "number",
+                                    "format": "double",
+                                    "example": 400.0
+                                },
+                                "systems": {
+                                    "type": "object",
+                                    "properties": {
+                                        "OMNY": {
+                                            "type": "object",
+                                            "properties": {
+                                                "total_cost_per_week": {
+                                                    "type": "number",
+                                                    "format": "double",
+                                                    "example": 50.0
+                                                },
+                                                "total_cost_per_month": {
+                                                    "type": "number",
+                                                    "format": "double",
+                                                    "example": 200.0
+                                                },
+                                                "rides": {
+                                                    "type": "integer",
+                                                    "example": 10
+                                                },
+                                                "fare_cap_progress": {
+                                                    "type": "object",
+                                                    "properties": {
+                                                        "current_spent": {
+                                                            "type": "number",
+                                                            "format": "double",
+                                                            "example": 10.0
+                                                        },
+                                                        "fare_cap": {
+                                                            "type": "number",
+                                                            "format": "double",
+                                                            "example": 33.0
+                                                        },
+                                                        "potential_savings": {
+                                                            "type": "number",
+                                                            "format": "double",
+                                                            "example": 5.0
+                                                        },
+                                                        "cap_duration": {
+                                                            "type": "integer",
+                                                            "example": 1
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
                                     }
                                 }
                             }
