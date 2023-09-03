@@ -3038,7 +3038,7 @@
                                                             "format": "double",
                                                             "example": 5.0
                                                         },
-                                                        "cap_duration": {
+                                                        "fare_cap_duration": {
                                                             "type": "integer",
                                                             "example": 1
                                                         }

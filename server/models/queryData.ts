@@ -676,13 +676,24 @@ export const commuteOverviewQueries = {
         ),
         ticket_fares AS (
             SELECT
-            cs.commute_schedule_id,
-            cs.day_of_week,
-            csy.name AS system_name,
-            fd.commute_system_id,
-            csy.fare_cap AS fare_cap,
-            csy.fare_cap_duration AS fare_cap_duration,
-            COALESCE(fd.fare_amount, 0) AS fare_amount
+                cs.commute_schedule_id,
+                cs.day_of_week,
+                csy.name AS system_name,
+                fd.commute_system_id,
+                csy.fare_cap AS fare_cap,
+                csy.fare_cap_duration AS fare_cap_duration,
+                COALESCE(fd.fare_amount, 0) AS fare_amount,
+                (
+                    SELECT COALESCE(SUM(ch.fare_amount), 0)
+                    FROM commute_history ch
+                    WHERE ch.account_id = cs.account_id
+                    AND ch.commute_system = csy.name
+                    AND (
+                        (csy.fare_cap_duration = 0 AND date(ch.timestamp) = current_date) OR
+                        (csy.fare_cap_duration = 1 AND date_trunc('week', ch.timestamp) = date_trunc('week', current_date)) OR
+                        (csy.fare_cap_duration = 2 AND date_trunc('month', ch.timestamp) = date_trunc('month', current_date))
+                    )
+                ) AS current_spent
             FROM commute_schedule cs
             JOIN commute_tickets ct ON cs.commute_ticket_id = ct.commute_ticket_id
             JOIN fare_details fd ON ct.fare_detail_id = fd.fare_detail_id
@@ -696,9 +707,10 @@ export const commuteOverviewQueries = {
             COALESCE(SUM(tf.fare_amount * cd.num_days), 0) AS total_cost_per_month,
             COALESCE(COUNT(tf.commute_schedule_id), 0) AS rides,
             tf.fare_cap AS fare_cap,
-            tf.fare_cap_duration AS fare_cap_duration
+            tf.fare_cap_duration AS fare_cap_duration,
+            tf.current_spent
         FROM ticket_fares tf
         JOIN count_days cd ON tf.day_of_week = cd.day_of_week
-        GROUP BY tf.commute_system_id, tf.system_name, tf.fare_cap, tf.fare_cap_duration;
+        GROUP BY tf.commute_system_id, tf.system_name, tf.fare_cap, tf.fare_cap_duration, tf.current_spent;
     `,
 };
