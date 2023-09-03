@@ -96,6 +96,26 @@ describe('GET /api/expenses/commute', () => {
         });
     });
 
+    it('should respond with a 404 if the account does not exist', async () => {
+        // Arrange
+        mockModule([]);
+
+        const { getCommuteOverview } = await import(
+            '../../controllers/commuteOverviewController.js'
+        );
+
+        mockRequest.query = { account_id: 2 };
+
+        // Call the function with the mock request and response
+        await getCommuteOverview(mockRequest as Request, mockResponse);
+
+        // Assert
+        expect(mockResponse.status).toHaveBeenCalledWith(404);
+        expect(mockResponse.send).toHaveBeenCalledWith(
+            'Account does not exist',
+        );
+    });
+
     it('should handle errors correctly', async () => {
         // Arrange
         const errorMessage = 'Error getting commute overview for account 1';
