@@ -32,11 +32,11 @@ const generation = (
         const newTransaction: GeneratedTransaction = {
             commute_schedule_id: commuteExpense.commute_schedule_id,
             title: commuteExpense.pass,
-            description: commuteExpense.pass + ' pass ',
+            description: commuteExpense.pass + ' pass',
             date: new Date(commuteExpenseDate),
-            amount: -amount,
+            amount: -commuteExpense.fare_amount,
             tax_rate: 0,
-            total_amount: -amount,
+            total_amount: -commuteExpense.fare_amount,
         };
 
         if (commuteExpenseDate > new Date()) {

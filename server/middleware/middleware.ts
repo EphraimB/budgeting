@@ -881,7 +881,9 @@ export const getCommuteExpensesByAccount = async (
                     const commuteExpensesTransactions =
                         commuteExpensesResults.map((commute_expense) => ({
                             ...commute_expense,
-                            amount: parseFloat(commute_expense.fare_amount),
+                            fare_amount: parseFloat(
+                                commute_expense.fare_amount,
+                            ),
                         }));
 
                     commuteExpensesByAccount.push({
@@ -913,7 +915,7 @@ export const getCommuteExpensesByAccount = async (
             const commuteExpensesTransactions = results.map(
                 (commute_expense) => ({
                     ...commute_expense,
-                    amount: parseFloat(commute_expense.fare_amount),
+                    fare_amount: parseFloat(commute_expense.fare_amount),
                 }),
             );
 
