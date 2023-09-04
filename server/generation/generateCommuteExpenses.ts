@@ -18,12 +18,12 @@ const getNextDate = (
 };
 
 export const generateCommuteExpenses = (
-    transactions: GeneratedTransaction[],
-    skippedTransactions: GeneratedTransaction[],
     commuteExpense: CommuteSchedule,
     toDate: Date,
     fromDate: Date,
-): void => {
+): GeneratedTransaction[] => {
+    let generatedRides: GeneratedTransaction[] = [];
+
     let commuteExpenseDate = getNextDate(
         new Date(),
         commuteExpense.day_of_week,
@@ -41,10 +41,11 @@ export const generateCommuteExpenses = (
             total_amount: -commuteExpense.fare_amount,
         };
 
+        // Instead of pushing to transactions or skippedTransactions:
         if (commuteExpenseDate >= fromDate) {
-            transactions.push(newTransaction);
+            generatedRides.push(newTransaction);
         } else {
-            skippedTransactions.push(newTransaction);
+            generatedRides.push(newTransaction); // We'll filter them out later
         }
 
         commuteExpenseDate = getNextDate(
@@ -53,4 +54,7 @@ export const generateCommuteExpenses = (
             commuteExpense.start_time,
         );
     }
+    
+    // Return the generated rides
+    return generatedRides;
 };

@@ -264,11 +264,6 @@ const generate = async (
             });
         });
 
-    // Use a map to track current_spent for each system.
-    const currentSpentMap: Map<number, number> = new Map();
-
-    const firstRideMap: Map<number, Date> = new Map();
-
     request.commuteExpenses
         .filter((cmte) => cmte.account_id === account_id)
         .forEach((account) => {
@@ -279,20 +274,126 @@ const generate = async (
                         commuteExpense.commute_system_id,
                 );
 
-                // Fetch current_spent for this system.
-                let current_spent =
-                    currentSpentMap.get(commuteExpense.commute_system_id) ||
-                    fareCappingInfo.current_spent;
-
-                logger.info([...currentSpentMap.entries()]);
-
-                generateCommuteExpenses(
-                    transactions,
-                    skippedTransactions,
+                let allRidesForSystem = generateCommuteExpenses(
                     commuteExpense,
                     toDate,
                     fromDate,
                 );
+
+                // Helper function to reset daily cap
+                const isNextDay = (
+                    currentDate: Date,
+                    nextDate: Date,
+                ): boolean => {
+                    return currentDate.getDate() !== nextDate.getDate();
+                };
+
+                // Helper function to reset monthly cap
+                const isNextMonth = (
+                    currentDate: Date,
+                    nextDate: Date,
+                ): boolean => {
+                    return currentDate.getMonth() !== nextDate.getMonth();
+                };
+
+                // Apply fare capping logic
+                const applyFareCapping = (
+                    rides: GeneratedTransaction[],
+                    fareCappingInfo: any,
+                ): GeneratedTransaction[] => {
+                    // Clone the rides array to avoid mutating the original
+                    const processedRides = [...rides];
+
+                    // Sort rides by date
+                    processedRides.sort(
+                        (a, b) => a.date.getTime() - b.date.getTime(),
+                    );
+
+                    let current_spent = 0;
+                    let firstRideDate: Date | null = null;
+
+                    for (let i = 0; i < processedRides.length; i++) {
+                        let ride = processedRides[i];
+
+                        current_spent += Math.abs(ride.amount);
+
+                        switch (fareCappingInfo.duration) {
+                            case 0: // Daily cap
+                                if (current_spent > fareCappingInfo.fare_cap) {
+                                    const excess =
+                                        current_spent -
+                                        fareCappingInfo.fare_cap;
+                                    ride.amount += excess;
+                                    current_spent = fareCappingInfo.fare_cap;
+                                }
+                                if (
+                                    i < processedRides.length - 1 &&
+                                    isNextDay(
+                                        ride.date,
+                                        processedRides[i + 1].date,
+                                    )
+                                ) {
+                                    current_spent = 0;
+                                }
+                                break;
+
+                            case 1: // Weekly cap
+                                if (!firstRideDate) {
+                                    firstRideDate = ride.date;
+                                }
+                                if (current_spent > fareCappingInfo.fare_cap) {
+                                    const excess =
+                                        current_spent -
+                                        fareCappingInfo.fare_cap;
+                                    ride.amount += excess;
+                                    current_spent = fareCappingInfo.fare_cap;
+                                }
+                                if (
+                                    ride.date.getTime() -
+                                        firstRideDate.getTime() >=
+                                    7 * 24 * 60 * 60 * 1000
+                                ) {
+                                    current_spent = 0;
+                                    firstRideDate = ride.date;
+                                }
+                                break;
+
+                            case 2: // Monthly cap
+                                if (current_spent > fareCappingInfo.fare_cap) {
+                                    const excess =
+                                        current_spent -
+                                        fareCappingInfo.fare_cap;
+                                    ride.amount += excess;
+                                    current_spent = fareCappingInfo.fare_cap;
+                                }
+                                if (
+                                    i < processedRides.length - 1 &&
+                                    isNextMonth(
+                                        ride.date,
+                                        processedRides[i + 1].date,
+                                    )
+                                ) {
+                                    current_spent = 0;
+                                }
+                                break;
+                        }
+                    }
+                    return processedRides;
+                };
+
+                allRidesForSystem = applyFareCapping(
+                    allRidesForSystem,
+                    fareCappingInfo,
+                );
+
+                // Add capped rides to transactions or skippedTransactions
+                allRidesForSystem.forEach((ride: any) => {
+                    if (ride.date >= fromDate) {
+                        transactions.push(ride);
+                    } else {
+                        skippedTransactions.push(ride);
+                    }
+                });
             });
         });
 
