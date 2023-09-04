@@ -27,6 +27,7 @@ const parseCommuteSchedule = (
     commuteSchedule: Record<string, string>,
 ): CommuteSchedule => ({
     commute_schedule_id: parseInt(commuteSchedule.commute_schedule_id),
+    commute_system_id: parseInt(commuteSchedule.commute_system_id),
     account_id: parseInt(commuteSchedule.account_id),
     day_of_week: parseInt(commuteSchedule.day_of_week),
     commute_ticket_id: parseInt(commuteSchedule.commute_ticket_id),

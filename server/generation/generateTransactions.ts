@@ -264,15 +264,25 @@ const generate = async (
             });
         });
 
+    // Use a map to track current_spent for each system.
+    const currentSpentMap: Map<number, number> = new Map();
+
+    const firstRideMap: Map<number, Date> = new Map();
+
     request.commuteExpenses
         .filter((cmte) => cmte.account_id === account_id)
         .forEach((account) => {
             account.commute_expenses.forEach((commuteExpense: any) => {
-                const fareCappingInfo: object = account.fare_capping.filter(
+                const fareCappingInfo: any = account.fare_capping.filter(
                     (fareCapping: any) =>
                         fareCapping.commute_system_id ===
                         commuteExpense.commute_system_id,
                 );
+
+                // Fetch current_spent for this system.
+                let current_spent =
+                    currentSpentMap.get(commuteExpense.commute_system_id) ||
+                    fareCappingInfo.current_spent;
 
                 generateCommuteExpenses(
                     transactions,
@@ -281,6 +291,9 @@ const generate = async (
                     toDate,
                     fromDate,
                     fareCappingInfo,
+                    current_spent,
+                    currentSpentMap,
+                    firstRideMap,
                 );
             });
         });
