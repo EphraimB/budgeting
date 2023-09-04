@@ -268,19 +268,19 @@ const generate = async (
         .filter((cmte) => cmte.account_id === account_id)
         .forEach((account) => {
             account.commute_expenses.forEach((commuteExpense: any) => {
-                logger.info(
-                    account.fare_capping.filter(
-                        (fareCapping: any) =>
-                            fareCapping.commute_system_id ===
-                            commuteExpense.commute_system_id,
-                    ),
+                const fareCappingInfo: object = account.fare_capping.filter(
+                    (fareCapping: any) =>
+                        fareCapping.commute_system_id ===
+                        commuteExpense.commute_system_id,
                 );
+
                 generateCommuteExpenses(
                     transactions,
                     skippedTransactions,
                     commuteExpense,
                     toDate,
                     fromDate,
+                    fareCappingInfo,
                 );
             });
         });

@@ -1,3 +1,4 @@
+import { logger } from '../config/winston.js';
 import { GeneratedTransaction } from '../types/types';
 import { CommuteSchedule } from '../types/types';
 
@@ -23,7 +24,10 @@ export const generateCommuteExpenses = (
     commuteExpense: CommuteSchedule,
     toDate: Date,
     fromDate: Date,
+    fareCappingInfo: object,
 ): void => {
+    logger.info(fareCappingInfo);
+
     let commuteExpenseDate = getNextDate(
         new Date(),
         commuteExpense.day_of_week,
