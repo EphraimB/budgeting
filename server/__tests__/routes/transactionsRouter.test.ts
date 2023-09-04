@@ -49,6 +49,14 @@ jest.mock('../../middleware/middleware', () => ({
         req.transfers = [];
         next();
     },
+    getCommuteExpensesByAccount: (
+        req: Request,
+        res: Response,
+        next: NextFunction,
+    ) => {
+        req.commuteExpenses = [];
+        next();
+    },
     getWishlistsByAccount: (
         req: Request,
         res: Response,

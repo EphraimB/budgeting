@@ -365,6 +365,7 @@ describe('POST /api/expenses/commute/schedule', () => {
         const newSchedule = [
             {
                 commute_schedule_id: 1,
+                commute_system_id: 1,
                 account_id: 1,
                 day_of_week: 1,
                 commute_ticket_id: 1,
@@ -372,6 +373,8 @@ describe('POST /api/expenses/commute/schedule', () => {
                 duration: 60,
                 fare_amount: 10.75,
                 pass: 'LIRR Peak',
+                date_created: '2021-01-01',
+                date_modified: '2021-01-01',
             },
         ];
 
@@ -420,11 +423,12 @@ describe('POST /api/expenses/commute/schedule', () => {
     });
 });
 
-describe('PUT /api/expenses/commute/systems/:id', () => {
+describe('PUT /api/expenses/commute/schedule/:id', () => {
     it('should respond with the updated schedule', async () => {
         const updatedSchedule = [
             {
                 commute_schedule_id: 1,
+                commute_system_id: 1,
                 account_id: 1,
                 day_of_week: 1,
                 commute_ticket_id: 1,
@@ -432,6 +436,8 @@ describe('PUT /api/expenses/commute/systems/:id', () => {
                 duration: 60,
                 fare_amount: 10.75,
                 pass: 'LIRR Peak',
+                date_created: '2021-01-01',
+                date_modified: '2021-01-01',
             },
         ];
 
