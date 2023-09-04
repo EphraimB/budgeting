@@ -317,7 +317,7 @@ const generate = async (
 
                         current_spent += Math.abs(ride.amount);
 
-                        switch (fareCappingInfo.duration) {
+                        switch (fareCappingInfo.fare_cap_duration) {
                             case 0: // Daily cap
                                 if (current_spent > fareCappingInfo.fare_cap) {
                                     const excess =
@@ -356,6 +356,7 @@ const generate = async (
                                     current_spent = 0;
                                     firstRideDate = ride.date;
                                 }
+
                                 break;
 
                             case 2: // Monthly cap
