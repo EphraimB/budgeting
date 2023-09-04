@@ -273,7 +273,7 @@ const generate = async (
         .filter((cmte) => cmte.account_id === account_id)
         .forEach((account) => {
             account.commute_expenses.forEach((commuteExpense: any) => {
-                const fareCappingInfo: any = account.fare_capping.filter(
+                const fareCappingInfo: any = account.fare_capping.find(
                     (fareCapping: any) =>
                         fareCapping.commute_system_id ===
                         commuteExpense.commute_system_id,
@@ -283,6 +283,8 @@ const generate = async (
                 let current_spent =
                     currentSpentMap.get(commuteExpense.commute_system_id) ||
                     fareCappingInfo.current_spent;
+
+                logger.info([...currentSpentMap.entries()]);
 
                 generateCommuteExpenses(
                     transactions,
