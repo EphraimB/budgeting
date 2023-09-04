@@ -262,7 +262,7 @@ export interface CommuteSchedule {
     day_of_week: number;
     commute_ticket_id: number;
     start_time: string;
-    fare_cap_duration: number;
+    duration: number;
     fare_amount: number;
     pass: string;
     date_created: string;
