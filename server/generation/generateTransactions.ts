@@ -292,10 +292,6 @@ const generate = async (
                     commuteExpense,
                     toDate,
                     fromDate,
-                    fareCappingInfo,
-                    current_spent,
-                    currentSpentMap,
-                    firstRideMap,
                 );
             });
         });
