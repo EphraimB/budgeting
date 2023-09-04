@@ -387,7 +387,7 @@ const generate = async (
                 );
 
                 // Add capped rides to transactions or skippedTransactions
-                allRidesForSystem.forEach((ride: any) => {
+                allRidesForSystem.forEach((ride: GeneratedTransaction) => {
                     if (ride.date >= fromDate) {
                         transactions.push(ride);
                     } else {
