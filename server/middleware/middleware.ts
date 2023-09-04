@@ -19,6 +19,7 @@ import {
     cronJobQueries,
     incomeQueries,
     commuteScheduleQueries,
+    fareCappingQueries,
 } from '../models/queryData.js';
 import {
     type Income,
@@ -861,7 +862,8 @@ export const getCommuteExpensesByAccount = async (
     try {
         const commuteExpensesByAccount: Array<{
             account_id: number;
-            commute_expenses: any;
+            commute_expenses: object;
+            fare_capping: object;
         }> = [];
 
         if (account_id === null || account_id === undefined) {
@@ -886,9 +888,28 @@ export const getCommuteExpensesByAccount = async (
                             ),
                         }));
 
+                    const fareCappingResults = await executeQuery(
+                        fareCappingQueries.getFareCapping,
+                        [account.account_id],
+                    );
+
+                    const fareCapping = fareCappingResults.map(
+                        (fare_capping) => ({
+                            ...fare_capping,
+                            fare_cap: parseFloat(fare_capping.fare_cap),
+                            current_spent: parseFloat(
+                                fare_capping.current_spent,
+                            ),
+                            fare_cap_duration: parseInt(
+                                fare_capping.fare_cap_duration,
+                            ),
+                        }),
+                    );
+
                     commuteExpensesByAccount.push({
                         account_id: account.account_id,
                         commute_expenses: commuteExpensesTransactions,
+                        fare_capping: fareCapping,
                     });
                 }),
             );
@@ -919,9 +940,22 @@ export const getCommuteExpensesByAccount = async (
                 }),
             );
 
+            const fareCappingResults = await executeQuery(
+                fareCappingQueries.getFareCapping,
+                [account_id],
+            );
+
+            const fareCapping = fareCappingResults.map((fare_capping) => ({
+                ...fare_capping,
+                fare_cap: parseFloat(fare_capping.fare_cap),
+                current_spent: parseFloat(fare_capping.current_spent),
+                fare_cap_duration: parseInt(fare_capping.fare_cap_duration),
+            }));
+
             commuteExpensesByAccount.push({
                 account_id: parseInt(account_id),
                 commute_expenses: commuteExpensesTransactions,
+                fare_capping: fareCapping,
             });
         }
 

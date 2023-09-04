@@ -40,6 +40,7 @@ import {
 } from '../types/types.js';
 import { executeQuery } from '../utils/helperFunctions.js';
 import { accountQueries } from '../models/queryData.js';
+import { logger } from '../config/winston.js';
 
 const fullyPaidBackDates: Record<number, string | null> = {}; // map of loan_id to fullyPaidBackDate
 
@@ -267,6 +268,13 @@ const generate = async (
         .filter((cmte) => cmte.account_id === account_id)
         .forEach((account) => {
             account.commute_expenses.forEach((commuteExpense: any) => {
+                logger.info(
+                    account.fare_capping.filter(
+                        (fareCapping: any) =>
+                            fareCapping.commute_system_id ===
+                            commuteExpense.commute_system_id,
+                    ),
+                );
                 generateCommuteExpenses(
                     transactions,
                     skippedTransactions,

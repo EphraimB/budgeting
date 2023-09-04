@@ -572,6 +572,7 @@ export const commuteTicketQueries = {
 export const commuteScheduleQueries = {
     getCommuteSchedules: `
         SELECT commute_schedule_id,
+            commute_systems.commute_system_id,
             commute_schedule.account_id AS account_id,
             commute_schedule.commute_ticket_id AS commute_ticket_id,
             commute_schedule.day_of_week AS day_of_week,
@@ -591,6 +592,7 @@ export const commuteScheduleQueries = {
     `,
     getCommuteSchedulesByAccountId: `
         SELECT commute_schedule_id,
+            commute_systems.commute_system_id,
             commute_schedule.account_id AS account_id,
             commute_schedule.commute_ticket_id AS commute_ticket_id,
             commute_schedule.day_of_week AS day_of_week,
@@ -611,6 +613,7 @@ export const commuteScheduleQueries = {
     `,
     getCommuteSchedulesByIdAndAccountId: `
         SELECT commute_schedule_id,
+            commute_systems.commute_system_id,
             commute_schedule.account_id AS account_id,
             commute_schedule.commute_ticket_id AS commute_ticket_id,
             commute_schedule.day_of_week AS day_of_week,
@@ -632,6 +635,7 @@ export const commuteScheduleQueries = {
     `,
     getCommuteSchedulesById: `
         SELECT commute_schedule_id,
+            commute_systems.commute_system_id,
             commute_schedule.account_id AS account_id,
             commute_schedule.commute_ticket_id AS commute_ticket_id,
             commute_schedule.day_of_week AS day_of_week,
@@ -711,6 +715,45 @@ export const commuteOverviewQueries = {
             tf.current_spent
         FROM ticket_fares tf
         JOIN count_days cd ON tf.day_of_week = cd.day_of_week
+        GROUP BY tf.commute_system_id, tf.system_name, tf.fare_cap, tf.fare_cap_duration, tf.current_spent;
+    `,
+};
+
+export const fareCappingQueries = {
+    getFareCapping: `
+        WITH RECURSIVE ticket_fares AS (
+            SELECT
+                cs.commute_schedule_id,
+                cs.day_of_week,
+                csy.name AS system_name,
+                fd.commute_system_id,
+                csy.fare_cap AS fare_cap,
+                csy.fare_cap_duration AS fare_cap_duration,
+                COALESCE(fd.fare_amount, 0) AS fare_amount,
+                (
+                    SELECT COALESCE(SUM(ch.fare_amount), 0)
+                    FROM commute_history ch
+                    WHERE ch.account_id = cs.account_id
+                    AND ch.commute_system = csy.name
+                    AND (
+                        (csy.fare_cap_duration = 0 AND date(ch.timestamp) = current_date) OR
+                        (csy.fare_cap_duration = 1 AND date_trunc('week', ch.timestamp) = date_trunc('week', current_date)) OR
+                        (csy.fare_cap_duration = 2 AND date_trunc('month', ch.timestamp) = date_trunc('month', current_date))
+                    )
+                ) AS current_spent
+            FROM commute_schedule cs
+            JOIN commute_tickets ct ON cs.commute_ticket_id = ct.commute_ticket_id
+            JOIN fare_details fd ON ct.fare_detail_id = fd.fare_detail_id
+            JOIN commute_systems csy ON fd.commute_system_id = csy.commute_system_id
+            WHERE cs.account_id = $1
+        )
+        SELECT
+            tf.commute_system_id,
+            tf.system_name,
+            tf.fare_cap AS fare_cap,
+            tf.fare_cap_duration AS fare_cap_duration,
+            tf.current_spent
+        FROM ticket_fares tf
         GROUP BY tf.commute_system_id, tf.system_name, tf.fare_cap, tf.fare_cap_duration, tf.current_spent;
     `,
 };
