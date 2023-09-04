@@ -731,6 +731,60 @@ describe('getTransfersByAccount', () => {
     });
 });
 
+describe('getCommuteExpensesByAccount', () => {
+    it('gets commute expenses for a given account and date', async () => {
+        const commuteExpenses: any[] = [
+            {
+                commute_schedule_id: 1,
+                commute_system_id: 1,
+                account_id: 1,
+                day_of_week: 1,
+                commute_ticket_id: 1,
+                start_time: '8:00',
+                fare_cap_duration: 1,
+                fare_amount: 2.9,
+                pass: 'OMNY Single Ride',
+            },
+        ];
+
+        const fareCapping: any[] = [
+            {
+                commute_system_id: 1,
+                system_name: 'OMNY',
+                fare_cap: 33,
+                current_spent: 0,
+                fare_cap_duration: 1,
+            },
+        ];
+
+        mockModule(
+            [{ account_id: 1 }],
+            fareCapping,
+            undefined,
+            commuteExpenses,
+        );
+
+        const { getCommuteExpensesByAccount } = await import(
+            '../../middleware/middleware.js'
+        );
+
+        mockRequest.query = { account_id: '1', from_date: '2023-06-01' };
+
+        await getCommuteExpensesByAccount(mockRequest, mockResponse, mockNext);
+
+        const commuteExpensesReturn = [
+            {
+                account_id: 1,
+                commute_expenses: commuteExpenses,
+                fare_capping: fareCapping,
+            },
+        ];
+
+        expect(mockRequest.commuteExpenses).toEqual(commuteExpensesReturn);
+        expect(mockNext).toHaveBeenCalled();
+    });
+});
+
 describe('getCurrentBalance', () => {
     it('gets current balance for a given account and date', async () => {
         const mockCurrentBalance: any[] = [
