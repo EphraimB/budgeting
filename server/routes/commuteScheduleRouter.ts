@@ -2,11 +2,25 @@ import express, { type Router } from 'express';
 import { query, param, body } from 'express-validator';
 import {
     createCommuteSchedule,
+    createCommuteScheduleReturnObject,
     deleteCommuteSchedule,
     getCommuteSchedule,
     updateCommuteSchedule,
 } from '../controllers/commuteScheduleController.js';
 import validateRequest from '../utils/validateRequest.js';
+import {
+    setQueries,
+    getCurrentBalance,
+    getTransactionsByAccount,
+    getExpensesByAccount,
+    getIncomeByAccount,
+    getLoansByAccount,
+    getPayrollsMiddleware,
+    getTransfersByAccount,
+    getWishlistsByAccount,
+    updateWishlistCron,
+} from '../middleware/middleware.js';
+import generateTransactions from '../generation/generateTransactions.js';
 
 const router: Router = express.Router();
 
@@ -47,6 +61,18 @@ router.post(
         validateRequest,
     ],
     createCommuteSchedule,
+    setQueries,
+    getCurrentBalance,
+    getTransactionsByAccount,
+    getExpensesByAccount,
+    getIncomeByAccount,
+    getLoansByAccount,
+    getPayrollsMiddleware,
+    getTransfersByAccount,
+    getWishlistsByAccount,
+    generateTransactions,
+    updateWishlistCron,
+    createCommuteScheduleReturnObject,
 );
 
 router.put(

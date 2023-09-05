@@ -660,6 +660,8 @@ export const commuteScheduleQueries = {
         'UPDATE commute_schedule SET account_id = $1, day_of_week = $2, commute_ticket_id = $3, start_time = $4, duration = $5 WHERE commute_schedule_id = $6 RETURNING *',
     deleteCommuteSchedule:
         'DELETE FROM commute_schedule WHERE commute_schedule_id = $1',
+    updateCommuteWithCronJobId:
+        'UPDATE commute_schedule SET cron_job_id = $1 WHERE commute_schedule_id = $2 RETURNING *',
 };
 
 export const commuteOverviewQueries = {

@@ -294,6 +294,7 @@ declare module 'express-serve-static-core' {
         employee_id: number;
         payroll_taxes_id: number;
         income_id: number;
+        commute_schedule_id: number;
         fullyPaidBackDates: Record<number, string | null>;
     }
 }

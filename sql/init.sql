@@ -204,6 +204,7 @@ CREATE TABLE IF NOT EXISTS commute_tickets (
 CREATE TABLE IF NOT EXISTS commute_schedule (
   commute_schedule_id SERIAL PRIMARY KEY,
   account_id INT NOT NULL REFERENCES accounts(account_id),
+  cron_job_id INT REFERENCES cron_jobs(cron_job_id),
   day_of_week INT NOT NULL,
   start_time TIME NOT NULL,
   duration INT NOT NULL,

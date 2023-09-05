@@ -1,11 +1,15 @@
-import { type Request, type Response } from 'express';
+import { NextFunction, type Request, type Response } from 'express';
 import {
     commuteScheduleQueries,
+    commuteSystemQueries,
     commuteTicketQueries,
+    cronJobQueries,
+    fareDetailsQueries,
 } from '../models/queryData.js';
 import { handleError, executeQuery } from '../utils/helperFunctions.js';
 import { type CommuteSchedule } from '../types/types.js';
 import { logger } from '../config/winston.js';
+import scheduleCronJob from '../crontab/scheduleCronJob.js';
 
 interface Schedule {
     day_of_week: number;
@@ -143,6 +147,7 @@ export const getCommuteSchedule = async (
 export const createCommuteSchedule = async (
     request: Request,
     response: Response,
+    next: NextFunction,
 ) => {
     const { account_id, day_of_week, commute_ticket_id, start_time, duration } =
         request.body;
@@ -155,10 +160,93 @@ export const createCommuteSchedule = async (
 
         const commuteSchedule = rows.map((s) => parseCommuteSchedule(s));
 
-        response.status(201).json(commuteSchedule);
+        const [{ fare_detail_id }] = await executeQuery(
+            commuteTicketQueries.getCommuteTicketsById,
+            [commuteSchedule[0].commute_ticket_id],
+        );
+
+        const fareDetail = await executeQuery(
+            fareDetailsQueries.getFareDetailsById,
+            [fare_detail_id],
+        );
+
+        const cronParams = {
+            date: new Date(
+                new Date().setHours(
+                    start_time.split(':')[0],
+                    start_time.split(':')[1],
+                    start_time.split(':')[2],
+                ),
+            ).toISOString(),
+            account_id,
+            id: commuteSchedule[0].commute_schedule_id,
+            amount: -fareDetail[0].fare_amount,
+            title: fareDetail[0].system_name + ' ' + fareDetail[0].fare_type,
+            description:
+                fareDetail[0].system_name +
+                ' ' +
+                fareDetail[0].fare_type +
+                ' pass',
+            frequency_type: 1,
+            frequency_type_variable: 1,
+            frequency_day_of_month: null,
+            frequency_day_of_week: day_of_week,
+            frequency_week_of_month: null,
+            frequency_month_of_year: null,
+            scriptPath: '/app/dist/scripts/createTransaction.sh',
+            type: 'commute',
+        };
+
+        const { cronDate, uniqueId } = await scheduleCronJob(cronParams);
+
+        const cronId: number = (
+            await executeQuery(cronJobQueries.createCronJob, [
+                uniqueId,
+                cronDate,
+            ])
+        )[0].cron_job_id;
+
+        logger.info('Cron job created ' + cronId.toString());
+
+        await executeQuery(commuteScheduleQueries.updateCommuteWithCronJobId, [
+            cronId,
+            commuteSchedule[0].commute_schedule_id,
+        ]);
+
+        request.commute_schedule_id = commuteSchedule[0].commute_schedule_id;
+
+        next();
     } catch (error) {
         logger.error(error); // Log the error on the server side
         handleError(response, 'Error creating schedule');
+    }
+};
+
+/**
+ *
+ * @param request - Request object
+ * @param response - Response object
+ * Sends a response with the created commute schedule
+ */
+export const createCommuteScheduleReturnObject = async (
+    request: Request,
+    response: Response,
+): Promise<void> => {
+    const { commute_schedule_id } = request;
+
+    try {
+        const commuteSchedule = await executeQuery(
+            commuteScheduleQueries.getCommuteSchedulesById,
+            [commute_schedule_id],
+        );
+
+        const modifiedCommuteSchedule =
+            commuteSchedule.map(parseCommuteSchedule);
+
+        response.status(201).json(modifiedCommuteSchedule);
+    } catch (error) {
+        logger.error(error); // Log the error on the server side
+        handleError(response, 'Error getting commute schedule');
     }
 };
 
