@@ -18,6 +18,7 @@ import {
     getLoansByAccount,
     getPayrollsMiddleware,
     getTransfersByAccount,
+    getCommuteExpensesByAccount,
     getWishlistsByAccount,
     updateWishlistCron,
 } from '../middleware/middleware.js';
@@ -93,6 +94,7 @@ router.put(
     getLoansByAccount,
     getPayrollsMiddleware,
     getTransfersByAccount,
+    getCommuteExpensesByAccount,
     getWishlistsByAccount,
     generateTransactions,
     updateWishlistCron,
