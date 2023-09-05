@@ -235,7 +235,7 @@ export const createWishlistCron = async (
             amount: -request.body.amount,
             title: request.body.title,
             description: request.body.description,
-            scriptPath: '/app/dist/scripts/createTransaction.sh',
+            scriptPath: '/app/scripts/createTransaction.sh',
             type: 'wishlist',
         };
 
@@ -388,7 +388,7 @@ export const updateWishlistCron = async (
             amount: -request.body.amount,
             title: request.body.title,
             description: request.body.description,
-            scriptPath: '/app/dist/scripts/createTransaction.sh',
+            scriptPath: '/app/scripts/createTransaction.sh',
             type: 'wishlist',
         };
 

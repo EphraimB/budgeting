@@ -211,7 +211,7 @@ export const createLoan = async (
             frequency_day_of_week,
             frequency_week_of_month,
             frequency_month_of_year,
-            scriptPath: '/app/dist/scripts/createTransaction.sh',
+            scriptPath: '/app/scripts/createTransaction.sh',
             type: 'loan',
         };
 
@@ -244,7 +244,7 @@ export const createLoan = async (
             frequency_day_of_week: null,
             frequency_week_of_month: null,
             frequency_month_of_year: null,
-            scriptPath: '/app/dist/scripts/applyInterest.sh',
+            scriptPath: '/app/scripts/applyInterest.sh',
             type: 'loan_interest',
         };
 
@@ -369,7 +369,7 @@ export const updateLoan = async (
         frequency_day_of_week,
         frequency_week_of_month,
         frequency_month_of_year,
-        scriptPath: '/app/dist/scripts/createTransaction.sh',
+        scriptPath: '/app/scripts/createTransaction.sh',
         type: 'loan',
     };
 
@@ -402,7 +402,7 @@ export const updateLoan = async (
         frequency_day_of_week: null,
         frequency_week_of_month: null,
         frequency_month_of_year: null,
-        scriptPath: '/app/dist/scripts/applyInterest.sh',
+        scriptPath: '/app/scripts/applyInterest.sh',
         type: 'loan_interest',
     };
 

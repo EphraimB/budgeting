@@ -193,7 +193,7 @@ export const createCommuteSchedule = async (
             frequency_day_of_week: day_of_week,
             frequency_week_of_month: null,
             frequency_month_of_year: null,
-            scriptPath: '/app/dist/scripts/createTransaction.sh',
+            scriptPath: '/app/scripts/createTransaction.sh',
             type: 'commute',
         };
 

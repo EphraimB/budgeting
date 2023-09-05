@@ -45,11 +45,17 @@ const transfersParse = (transfer: TransferInput): Transfer => ({
     transfer_begin_date: transfer.transfer_begin_date,
     transfer_end_date: transfer.transfer_end_date ?? null,
     frequency_type: parseInt(transfer.frequency_type),
-    frequency_type_variable: parseIntOrFallback(transfer.frequency_type_variable),
+    frequency_type_variable: parseIntOrFallback(
+        transfer.frequency_type_variable,
+    ),
     frequency_day_of_month: parseIntOrFallback(transfer.frequency_day_of_month),
     frequency_day_of_week: parseIntOrFallback(transfer.frequency_day_of_week),
-    frequency_week_of_month: parseIntOrFallback(transfer.frequency_week_of_month),
-    frequency_month_of_year: parseIntOrFallback(transfer.frequency_month_of_year),
+    frequency_week_of_month: parseIntOrFallback(
+        transfer.frequency_week_of_month,
+    ),
+    frequency_month_of_year: parseIntOrFallback(
+        transfer.frequency_month_of_year,
+    ),
     date_created: transfer.date_created,
     date_modified: transfer.date_modified,
 });
@@ -184,7 +190,7 @@ export const createTransfer = async (
             frequency_day_of_week,
             frequency_week_of_month,
             frequency_month_of_year,
-            scriptPath: '/app/dist/scripts/createTransaction.sh',
+            scriptPath: '/app/scripts/createTransaction.sh',
             type: 'transfer',
         };
 
@@ -285,7 +291,7 @@ export const updateTransfer = async (
             frequency_day_of_week,
             frequency_week_of_month,
             frequency_month_of_year,
-            scriptPath: '/app/dist/scripts/createTransaction.sh',
+            scriptPath: '/app/scripts/createTransaction.sh',
             type: 'transfer',
         };
 
