@@ -301,7 +301,6 @@ export const updateCommuteSchedule = async (
         };
 
         const cronId: number = parseInt(commuteSchedule[0].cron_job_id);
-        logger.info('commuteSchedule ' + commuteSchedule);
         const results = await executeQuery(cronJobQueries.getCronJob, [cronId]);
 
         if (results.length > 0) {
