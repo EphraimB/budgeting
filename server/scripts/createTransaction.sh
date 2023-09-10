@@ -12,7 +12,7 @@ transaction_type=$(echo "${unique_id}" | cut -d '_' -f 1)
 
 if [ "$transaction_type" = "payroll" ]; then
     transaction_tax_rate=$8
-elif [ "$transaction_type" = "loan" ] || [ "$transaction_type" = "income" ]; then
+elif [ "$transaction_type" = "loan" ] || [ "$transaction_type" = "income" ] || [ "$transaction_type" = "commute" ]; then
     transaction_tax_rate=0
 else
     # Get the tax_id for other transaction types
@@ -36,8 +36,60 @@ else
     fi
 fi
 
+if [ "$transaction_type" = "commute" ]; then
+    commute_system = $(PGPASSWORD="$PGPASSWORD" psql -h "$PGHOST" -p "$PGPORT" -d "$PGDB" -U "$PGUSER" -t -c SELECT commute_schedule_id, commute_systems.commute_system_id, commute_schedule.commute_ticket_id AS commute_ticket_id, commute_schedule.day_of_week AS day_of_week, commute_schedule.start_time AS start_time, commute_systems.name AS commute_system, fare_details.name AS fare_type, commute_schedule.date_created, commute_schedule.date_modified FROM commute_schedule LEFT JOIN commute_tickets ON commute_schedule.commute_ticket_id = commute_tickets.commute_ticket_id LEFT JOIN fare_details ON commute_tickets.fare_detail_id = fare_details.fare_detail_id LEFT JOIN commute_systems ON fare_details.commute_system_id = commute_systems.commute_system_id WHERE commute_schedule.commute_schedule_id = '$id'")
+
+    day_of_week=$(echo "$commute_system" | awk -F'\t' '{print $4}')
+    start_time=$(echo "$commute_system" | awk -F'\t' '{print $5}')
+    commute_system_name=$(echo "$commute_system" | awk -F'\t' '{print $6}')
+    fare_type=$(echo "$commute_system" | awk -F'\t' '{print $7}')
+
+    # Get current day of week (0 for Sunday, 1 for Monday, etc.)
+    current_day=$(date +%u)
+
+    # Convert day_of_week string to a number
+    case $day_of_week in
+        Sunday)    target_day=0 ;;
+        Monday)    target_day=1 ;;
+        Tuesday)   target_day=2 ;;
+        Wednesday) target_day=3 ;;
+        Thursday)  target_day=4 ;;
+        Friday)    target_day=5 ;;
+        Saturday)  target_day=6 ;;
+    esac
+
+    # Calculate difference in days
+    if (( target_day > current_day )); then
+        day_diff=$(( target_day - current_day ))
+    else
+        day_diff=$(( 7 - current_day + target_day ))
+    fi
+
+    # Generate the timestamp
+    next_timestamp=$(date -d "$day_diff days $start_time" +"%Y-%m-%d %H:%M:%S")
+
+    echo "Next timestamp: $next_timestamp"
+
+    # Capture the exit status immediately after executing the command
+    cmd_status=$?
+
+    if [ $cmd_status -eq 0 ]; then
+        PGPASSWORD="$PGPASSWORD" psql -h "$PGHOST" -p "$PGPORT" -d "$PGDB" -U "$PGUSER" <<EOF
+        INSERT INTO commute_history
+            (account_id, fare_ammount, commute_system, fare_type, timestamp)
+        VALUES
+            ('$account_id', '$transaction_amount', '$commute_system_name', '$fare_type', '$next_timestamp');
+        EOF
+    fi
+fi
+
 # Fetch the employee IDs from the database using psql and environment variables
-PGPASSWORD="$PGPASSWORD" psql -h "$PGHOST" -p "$PGPORT" -d "$PGDB" -U "$PGUSER" -c "INSERT INTO transaction_history (account_id, transaction_amount, transaction_tax_rate, transaction_title, transaction_description) VALUES ('$account_id', '$transaction_amount', '$transaction_tax_rate', '$transaction_title', '$transaction_description')" -t
+PGPASSWORD="$PGPASSWORD" psql -h "$PGHOST" -p "$PGPORT" -d "$PGDB" -U "$PGUSER" <<EOF
+INSERT INTO transaction_history
+    (account_id, transaction_amount, transaction_tax_rate, transaction_title, transaction_description)
+VALUES
+    ('$account_id', '$transaction_amount', '$transaction_tax_rate', '$transaction_title', '$transaction_description');
+EOF
 
 # Capture the exit status immediately after executing the command
 cmd_status=$?
