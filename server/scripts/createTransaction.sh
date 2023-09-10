@@ -16,8 +16,11 @@ elif [ "$transaction_type" = "loan" ] || [ "$transaction_type" = "income" ]; the
     transaction_tax_rate=0
 else
     # Get the tax_id for other transaction types
-    tax_id=$(PGPASSWORD="$PGPASSWORD" psql -h "$PGHOST" -p "$PGPORT" -d "$PGDB" -U "$PGUSER" -t -c "SELECT tax_id FROM ${transaction_type}s WHERE ${transaction_type}_id = '$id'")
-
+    if [ "$transaction_type" = "income" ]; then
+        tax_id=$(PGPASSWORD="$PGPASSWORD" psql -h "$PGHOST" -p "$PGPORT" -d "$PGDB" -U "$PGUSER" -t -c "SELECT tax_id FROM income WHERE income_id = '$id'")
+    else
+        tax_id=$(PGPASSWORD="$PGPASSWORD" psql -h "$PGHOST" -p "$PGPORT" -d "$PGDB" -U "$PGUSER" -t -c "SELECT tax_id FROM ${transaction_type}s WHERE ${transaction_type}_id = '$id'")
+    fi
     # Capture the exit status immediately after executing the command
     cmd_status=$?
 
