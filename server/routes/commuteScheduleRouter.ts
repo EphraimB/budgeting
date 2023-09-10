@@ -6,6 +6,7 @@ import {
     deleteCommuteSchedule,
     getCommuteSchedule,
     updateCommuteSchedule,
+    updateCommuteScheduleReturnObject,
 } from '../controllers/commuteScheduleController.js';
 import validateRequest from '../utils/validateRequest.js';
 import {
@@ -98,6 +99,19 @@ router.put(
         validateRequest,
     ],
     updateCommuteSchedule,
+    setQueries,
+    getCurrentBalance,
+    getTransactionsByAccount,
+    getExpensesByAccount,
+    getIncomeByAccount,
+    getLoansByAccount,
+    getPayrollsMiddleware,
+    getTransfersByAccount,
+    getCommuteExpensesByAccount,
+    getWishlistsByAccount,
+    generateTransactions,
+    updateWishlistCron,
+    updateCommuteScheduleReturnObject,
 );
 
 router.delete(

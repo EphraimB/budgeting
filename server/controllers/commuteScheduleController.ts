@@ -10,6 +10,7 @@ import { handleError, executeQuery } from '../utils/helperFunctions.js';
 import { type CommuteSchedule } from '../types/types.js';
 import { logger } from '../config/winston.js';
 import scheduleCronJob from '../crontab/scheduleCronJob.js';
+import deleteCronJob from '../crontab/deleteCronJob.js';
 
 interface Schedule {
     day_of_week: number;
@@ -254,11 +255,13 @@ export const createCommuteScheduleReturnObject = async (
  *
  * @param request - Request object
  * @param response - Response object
+ * @param next - Next function
  * Sends a response with the updated schedule or an error message and updates the schedule in the database
  */
 export const updateCommuteSchedule = async (
     request: Request,
     response: Response,
+    next: NextFunction,
 ): Promise<void> => {
     const id = parseInt(request.params.id);
     const { account_id, day_of_week, commute_ticket_id, start_time, duration } =
@@ -274,6 +277,49 @@ export const updateCommuteSchedule = async (
             return;
         }
 
+        const cronParams = {
+            date: new Date(
+                new Date().setHours(
+                    start_time.split(':')[0],
+                    start_time.split(':')[1],
+                    start_time.split(':')[2],
+                ),
+            ).toISOString(),
+            account_id,
+            id,
+            amount: -commuteSchedule[0].fare_amount,
+            title: commuteSchedule[0].pass,
+            description: commuteSchedule[0].pass + ' pass',
+            frequency_type: 1,
+            frequency_type_variable: 1,
+            frequency_day_of_month: null,
+            frequency_day_of_week: day_of_week,
+            frequency_week_of_month: null,
+            frequency_month_of_year: null,
+            scriptPath: '/app/scripts/createTransaction.sh',
+            type: 'commute',
+        };
+
+        const cronId: number = parseInt(commuteSchedule[0].cron_job_id);
+        logger.info('commuteSchedule ' + commuteSchedule);
+        const results = await executeQuery(cronJobQueries.getCronJob, [cronId]);
+
+        if (results.length > 0) {
+            await deleteCronJob(results[0].unique_id);
+        } else {
+            logger.error('Cron job not found');
+            response.status(404).send('Cron job not found');
+            return;
+        }
+
+        const { uniqueId, cronDate } = await scheduleCronJob(cronParams);
+
+        await executeQuery(cronJobQueries.updateCronJob, [
+            uniqueId,
+            cronDate,
+            cronId,
+        ]);
+
         const rows = await executeQuery(
             commuteScheduleQueries.updateCommuteSchedule,
             [
@@ -285,9 +331,38 @@ export const updateCommuteSchedule = async (
                 id,
             ],
         );
-        const schedule = rows.map((s) => parseCommuteSchedule(s));
 
-        response.status(200).json(schedule);
+        request.commute_schedule_id = id;
+
+        next();
+    } catch (error) {
+        logger.error(error); // Log the error on the server side
+        handleError(response, 'Error updating schedule');
+    }
+};
+
+/**
+ *
+ * @param request - Request object
+ * @param response - Response object
+ * Sends a response with the updated schedule
+ */
+export const updateCommuteScheduleReturnObject = async (
+    request: Request,
+    response: Response,
+): Promise<void> => {
+    const { commute_schedule_id } = request;
+
+    try {
+        const commuteSchedule = await executeQuery(
+            commuteScheduleQueries.getCommuteSchedulesById,
+            [commute_schedule_id],
+        );
+
+        const modifiedCommuteSchedule =
+            commuteSchedule.map(parseCommuteSchedule);
+
+        response.status(200).json(modifiedCommuteSchedule);
     } catch (error) {
         logger.error(error); // Log the error on the server side
         handleError(response, 'Error updating schedule');
