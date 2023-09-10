@@ -45,11 +45,17 @@ const parseExpenses = (expense: ExpenseInput): Expense => ({
     expense_title: expense.expense_title,
     expense_description: expense.expense_description,
     frequency_type: parseInt(expense.frequency_type),
-    frequency_type_variable: parseIntOrFallback(expense.frequency_type_variable),
+    frequency_type_variable: parseIntOrFallback(
+        expense.frequency_type_variable,
+    ),
     frequency_day_of_month: parseIntOrFallback(expense.frequency_day_of_month),
     frequency_day_of_week: parseIntOrFallback(expense.frequency_day_of_week),
-    frequency_week_of_month: parseIntOrFallback(expense.frequency_week_of_month),
-    frequency_month_of_year: parseIntOrFallback(expense.frequency_month_of_year),
+    frequency_week_of_month: parseIntOrFallback(
+        expense.frequency_week_of_month,
+    ),
+    frequency_month_of_year: parseIntOrFallback(
+        expense.frequency_month_of_year,
+    ),
     expense_subsidized: parseFloat(expense.expense_subsidized),
     expense_begin_date: expense.expense_begin_date,
     expense_end_date: expense.expense_end_date,
@@ -414,6 +420,12 @@ export const deleteExpense = async (
     }
 };
 
+/**
+ *
+ * @param request - Request object
+ * @param response - Response object
+ * Sends a response with the deleted expense
+ */
 export const deleteExpenseReturnObject = async (
     request: Request,
     response: Response,

@@ -4,6 +4,7 @@ import {
     createCommuteSchedule,
     createCommuteScheduleReturnObject,
     deleteCommuteSchedule,
+    deleteCommuteScheduleReturnObject,
     getCommuteSchedule,
     updateCommuteSchedule,
     updateCommuteScheduleReturnObject,
@@ -121,6 +122,19 @@ router.delete(
         validateRequest,
     ],
     deleteCommuteSchedule,
+    setQueries,
+    getCurrentBalance,
+    getTransactionsByAccount,
+    getExpensesByAccount,
+    getIncomeByAccount,
+    getLoansByAccount,
+    getPayrollsMiddleware,
+    getTransfersByAccount,
+    getCommuteExpensesByAccount,
+    getWishlistsByAccount,
+    generateTransactions,
+    updateWishlistCron,
+    deleteCommuteScheduleReturnObject,
 );
 
 export default router;

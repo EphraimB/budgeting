@@ -372,11 +372,13 @@ export const updateCommuteScheduleReturnObject = async (
  *
  * @param request - Request object
  * @param response - Response object
+ * @param next - Next function
  * Sends a response with a success message or an error message and deletes the schedule from the database
  */
 export const deleteCommuteSchedule = async (
     request: Request,
     response: Response,
+    next: NextFunction,
 ): Promise<void> => {
     const id = parseInt(request.params.id);
     try {
@@ -390,10 +392,38 @@ export const deleteCommuteSchedule = async (
             return;
         }
 
+        const cronId: number = commuteSchedule[0].cron_job_id;
+
         await executeQuery(commuteScheduleQueries.deleteCommuteSchedule, [id]);
-        response.status(200).send('Successfully deleted schedule');
+
+        const results = await executeQuery(cronJobQueries.getCronJob, [cronId]);
+
+        if (results.length > 0) {
+            await deleteCronJob(results[0].unique_id);
+        } else {
+            logger.error('Cron job not found');
+            response.status(404).send('Cron job not found');
+            return;
+        }
+
+        await executeQuery(cronJobQueries.deleteCronJob, [cronId]);
+
+        next();
     } catch (error) {
         logger.error(error); // Log the error on the server side
         handleError(response, 'Error deleting schedule');
     }
+};
+
+/**
+ *
+ * @param request - Request object
+ * @param response - Response object
+ * Sends a response with the deleted schedule
+ */
+export const deleteCommuteScheduleReturnObject = async (
+    request: Request,
+    response: Response,
+): Promise<void> => {
+    response.status(200).send('Successfully deleted schedule');
 };
