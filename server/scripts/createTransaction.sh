@@ -53,7 +53,7 @@ if [ "$transaction_type" = "commute" ]; then
 
         current_timestamp=$(date -u "+%Y-%m-%d %H:%M:%S")
 
-        PGPASSWORD="$PGPASSWORD" psql -h "$PGHOST" -p "$PGPORT" -d "$PGDB" -U "$PGUSER" -c "INSERT INTO commute_history (account_id, fare_amount, commute_system, fare_type, timestamp) VALUES ('$account_id', '$transaction_amount', '$commute_system_name', '$fare_type', '$current_timestamp')"
+        PGPASSWORD="$PGPASSWORD" psql -h "$PGHOST" -p "$PGPORT" -d "$PGDB" -U "$PGUSER" -c "INSERT INTO commute_history (account_id, fare_amount, commute_system, fare_type, timestamp) VALUES ('$account_id', abs($transaction_amount), '$commute_system_name', '$fare_type', '$current_timestamp')"
     fi
 fi
 
