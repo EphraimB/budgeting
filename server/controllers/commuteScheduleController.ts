@@ -277,6 +277,17 @@ export const updateCommuteSchedule = async (
             return;
         }
 
+        // Get the fare amount for the new commute ticket
+        const [{ fare_detail_id }] = await executeQuery(
+            commuteTicketQueries.getCommuteTicketsById,
+            [commute_ticket_id],
+        );
+
+        const fareDetail = await executeQuery(
+            fareDetailsQueries.getFareDetailsById,
+            [fare_detail_id],
+        );
+
         const cronParams = {
             date: new Date(
                 new Date().setHours(
@@ -287,9 +298,13 @@ export const updateCommuteSchedule = async (
             ).toISOString(),
             account_id,
             id,
-            amount: -commuteSchedule[0].fare_amount,
-            title: commuteSchedule[0].pass,
-            description: commuteSchedule[0].pass + ' pass',
+            amount: -fareDetail[0].fare_amount,
+            title: fareDetail[0].system_name + ' ' + fareDetail[0].fare_type,
+            description:
+                fareDetail[0].system_name +
+                ' ' +
+                fareDetail[0].fare_type +
+                ' pass',
             frequency_type: 1,
             frequency_type_variable: 1,
             frequency_day_of_month: null,
