@@ -541,7 +541,7 @@ export const commuteScheduleQueries = {
             commute_systems.commute_system_id,
             commute_schedule.account_id AS account_id,
             commute_schedule.cron_job_id AS cron_job_id,
-            commute_schedule.commute_ticket_id AS commute_ticket_id,
+            commute_schedule.fare_detail_id AS fare_detail_id,
             commute_schedule.day_of_week AS day_of_week,
             concat(commute_systems.name, ' ', fare_details.name) AS pass,
             commute_schedule.start_time AS start_time,
@@ -560,7 +560,7 @@ export const commuteScheduleQueries = {
             commute_systems.commute_system_id,
             commute_schedule.account_id AS account_id,
             commute_schedule.cron_job_id AS cron_job_id,
-            commute_schedule.commute_ticket_id AS commute_ticket_id,
+            commute_schedule.fare_detail_id AS fare_detail_id,
             commute_schedule.day_of_week AS day_of_week,
             concat(commute_systems.name, ' ', fare_details.name) AS pass,
             commute_schedule.start_time AS start_time,
@@ -580,7 +580,7 @@ export const commuteScheduleQueries = {
             commute_systems.commute_system_id,
             commute_schedule.account_id AS account_id,
             commute_schedule.cron_job_id AS cron_job_id,
-            commute_schedule.commute_ticket_id AS commute_ticket_id,
+            commute_schedule.fare_detail_id AS fare_detail_id,
             commute_schedule.day_of_week AS day_of_week,
             concat(commute_systems.name, ' ', fare_details.name) AS pass,
             commute_schedule.start_time AS start_time,
@@ -601,7 +601,7 @@ export const commuteScheduleQueries = {
             commute_systems.commute_system_id,
             commute_schedule.account_id AS account_id,
             commute_schedule.cron_job_id AS cron_job_id,
-            commute_schedule.commute_ticket_id AS commute_ticket_id,
+            commute_schedule.fare_detail_id AS fare_detail_id,
             commute_schedule.day_of_week AS day_of_week,
             concat(commute_systems.name, ' ', fare_details.name) AS pass,
             commute_schedule.start_time AS start_time,
@@ -705,7 +705,6 @@ export const fareCappingQueries = {
                     )
                 ) AS current_spent
             FROM commute_schedule cs
-            JOIN commute_tickets ct ON cs.commute_ticket_id = ct.commute_ticket_id
             JOIN fare_details fd ON ct.fare_detail_id = fd.fare_detail_id
             JOIN commute_systems csy ON fd.commute_system_id = csy.commute_system_id
             WHERE cs.account_id = $1

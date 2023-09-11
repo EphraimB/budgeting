@@ -52,9 +52,9 @@ router.post(
         body('day_of_week')
             .isInt({ min: 0, max: 6 })
             .withMessage('Day of week must be a number between 0 and 6'),
-        body('commute_ticket_id')
+        body('fare_detail_id')
             .isInt({ min: 1 })
-            .withMessage('Commute ticket ID must be a number'),
+            .withMessage('Fare detail ID must be a number'),
         body('start_time')
             .isTime({ hourFormat: 'hour24', mode: 'withSeconds' })
             .withMessage('Start time must be a time'),
@@ -88,9 +88,9 @@ router.put(
         body('day_of_week')
             .isInt({ min: 0, max: 6 })
             .withMessage('Day of week must be a number between 0 and 6'),
-        body('commute_ticket_id')
+        body('fare_detail_id')
             .isInt({ min: 1 })
-            .withMessage('Commute ticket ID must be a number'),
+            .withMessage('Fare detail ID must be a number'),
         body('start_time')
             .isTime({ hourFormat: 'hour24', mode: 'withSeconds' })
             .withMessage('Start time must be a time'),
