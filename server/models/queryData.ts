@@ -535,40 +535,6 @@ export const fareDetailsQueries = {
     deleteFareDetails: 'DELETE FROM fare_details WHERE fare_detail_id = $1',
 };
 
-export const commuteTicketQueries = {
-    getCommuteTickets: `
-        SELECT commute_ticket_id,
-        commute_tickets.fare_detail_id AS fare_detail_id,
-        concat(commute_systems.name, ' ', fare_details.name) AS name,
-        commute_tickets.date_created,
-        commute_tickets.date_modified
-        FROM commute_tickets
-        LEFT JOIN fare_details
-        ON commute_tickets.fare_detail_id = fare_details.fare_detail_id
-        LEFT JOIN commute_systems
-        ON fare_details.commute_system_id = commute_systems.commute_system_id
-    `,
-    getCommuteTicketsById: `
-        SELECT commute_ticket_id,
-            commute_tickets.fare_detail_id AS fare_detail_id,
-            concat(commute_systems.name, ' ', fare_details.name) AS name,
-            commute_tickets.date_created,
-            commute_tickets.date_modified
-            FROM commute_tickets
-            LEFT JOIN fare_details
-            ON commute_tickets.fare_detail_id = fare_details.fare_detail_id
-            LEFT JOIN commute_systems
-            ON fare_details.commute_system_id = commute_systems.commute_system_id
-            WHERE commute_tickets.commute_ticket_id = $1
-        `,
-    createCommuteTicket:
-        'INSERT INTO commute_tickets (fare_detail_id) VALUES ($1) RETURNING *',
-    updateCommuteTicket:
-        'UPDATE commute_tickets SET fare_detail_id = $1 WHERE commute_ticket_id = $2 RETURNING *',
-    deleteCommuteTicket:
-        'DELETE FROM commute_tickets WHERE commute_ticket_id = $1',
-};
-
 export const commuteScheduleQueries = {
     getCommuteSchedules: `
         SELECT commute_schedule_id,
@@ -584,10 +550,8 @@ export const commuteScheduleQueries = {
             commute_schedule.date_created,
             commute_schedule.date_modified
         FROM commute_schedule
-        LEFT JOIN commute_tickets
-        ON commute_schedule.commute_ticket_id = commute_tickets.commute_ticket_id
         LEFT JOIN fare_details
-        ON commute_tickets.fare_detail_id = fare_details.fare_detail_id
+        ON commute_schedule.fare_detail_id = fare_details.fare_detail_id
         LEFT JOIN commute_systems
         ON fare_details.commute_system_id = commute_systems.commute_system_id
     `,
@@ -605,10 +569,8 @@ export const commuteScheduleQueries = {
             commute_schedule.date_created,
             commute_schedule.date_modified
         FROM commute_schedule
-        LEFT JOIN commute_tickets
-        ON commute_schedule.commute_ticket_id = commute_tickets.commute_ticket_id
         LEFT JOIN fare_details
-        ON commute_tickets.fare_detail_id = fare_details.fare_detail_id
+        ON commute_schedule.fare_detail_id = fare_details.fare_detail_id
         LEFT JOIN commute_systems
         ON fare_details.commute_system_id = commute_systems.commute_system_id
         WHERE commute_schedule.account_id = $1
@@ -627,10 +589,8 @@ export const commuteScheduleQueries = {
             commute_schedule.date_created,
             commute_schedule.date_modified
         FROM commute_schedule
-        LEFT JOIN commute_tickets
-        ON commute_schedule.commute_ticket_id = commute_tickets.commute_ticket_id
         LEFT JOIN fare_details
-        ON commute_tickets.fare_detail_id = fare_details.fare_detail_id
+        ON commute_schedule.fare_detail_id = fare_details.fare_detail_id
         LEFT JOIN commute_systems
         ON fare_details.commute_system_id = commute_systems.commute_system_id
         WHERE commute_schedule.account_id = $1
@@ -650,18 +610,16 @@ export const commuteScheduleQueries = {
             commute_schedule.date_created,
             commute_schedule.date_modified
         FROM commute_schedule
-        LEFT JOIN commute_tickets
-        ON commute_schedule.commute_ticket_id = commute_tickets.commute_ticket_id
         LEFT JOIN fare_details
-        ON commute_tickets.fare_detail_id = fare_details.fare_detail_id
+        ON commute_schedule.fare_detail_id = fare_details.fare_detail_id
         LEFT JOIN commute_systems
         ON fare_details.commute_system_id = commute_systems.commute_system_id
         WHERE commute_schedule.commute_schedule_id = $1
     `,
     createCommuteSchedule:
-        'INSERT INTO commute_schedule (account_id, day_of_week, commute_ticket_id, start_time, duration) VALUES ($1, $2, $3, $4, $5) RETURNING *',
+        'INSERT INTO commute_schedule (account_id, day_of_week, fare_detail_id, start_time, duration) VALUES ($1, $2, $3, $4, $5) RETURNING *',
     updateCommuteSchedule:
-        'UPDATE commute_schedule SET account_id = $1, day_of_week = $2, commute_ticket_id = $3, start_time = $4, duration = $5 WHERE commute_schedule_id = $6 RETURNING *',
+        'UPDATE commute_schedule SET account_id = $1, day_of_week = $2, fare_detail_id = $3, start_time = $4, duration = $5 WHERE commute_schedule_id = $6 RETURNING *',
     deleteCommuteSchedule:
         'DELETE FROM commute_schedule WHERE commute_schedule_id = $1',
     updateCommuteWithCronJobId:
@@ -705,7 +663,6 @@ export const commuteOverviewQueries = {
                     )
                 ) AS current_spent
             FROM commute_schedule cs
-            JOIN commute_tickets ct ON cs.commute_ticket_id = ct.commute_ticket_id
             JOIN fare_details fd ON ct.fare_detail_id = fd.fare_detail_id
             JOIN commute_systems csy ON fd.commute_system_id = csy.commute_system_id
             WHERE cs.account_id = $1

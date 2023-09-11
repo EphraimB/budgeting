@@ -1060,126 +1060,6 @@
                 }
             }
         },
-        "/expenses/commute/tickets": {
-            "get": {
-                "summary": "Get all commute tickets",
-                "description": "Get all commute tickets",
-                "tags": ["commute tickets"],
-                "parameters": [
-                    {
-                        "name": "id",
-                        "in": "query",
-                        "description": "Commute ticket id",
-                        "required": false,
-                        "schema": {
-                            "type": "integer"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "$ref": "#/components/responses/SuccessResponseCommuteTickets"
-                    },
-                    "400": {
-                        "$ref": "#/components/responses/BadRequest"
-                    },
-                    "404": {
-                        "description": "Commute ticket not found"
-                    }
-                }
-            },
-            "post": {
-                "summary": "Create a new commute ticket",
-                "description": "Create a new commute ticket",
-                "tags": ["commute tickets"],
-                "requestBody": {
-                    "description": "Commute ticket object to be created",
-                    "required": true,
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "$ref": "#/components/schemas/CommuteTicketManipulation"
-                            }
-                        }
-                    }
-                },
-                "responses": {
-                    "201": {
-                        "$ref": "#/components/responses/SuccessResponseCommuteTickets"
-                    },
-                    "400": {
-                        "$ref": "#/components/responses/BadRequest"
-                    }
-                }
-            }
-        },
-        "/expenses/commute/tickets/{id}": {
-            "put": {
-                "summary": "Update a commute ticket",
-                "description": "Update a commute ticket",
-                "tags": ["commute tickets"],
-                "parameters": [
-                    {
-                        "name": "id",
-                        "in": "path",
-                        "description": "Commute ticket id",
-                        "required": true,
-                        "schema": {
-                            "type": "integer"
-                        }
-                    }
-                ],
-                "requestBody": {
-                    "description": "Commute ticket object to be updated",
-                    "required": true,
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "$ref": "#/components/schemas/CommuteTicketManipulation"
-                            }
-                        }
-                    }
-                },
-                "responses": {
-                    "200": {
-                        "$ref": "#/components/responses/SuccessResponseCommuteTickets"
-                    },
-                    "400": {
-                        "$ref": "#/components/responses/BadRequest"
-                    },
-                    "404": {
-                        "description": "Commute ticket not found"
-                    }
-                }
-            },
-            "delete": {
-                "summary": "Delete a commute ticket",
-                "description": "Delete a commute ticket",
-                "tags": ["commute tickets"],
-                "parameters": [
-                    {
-                        "name": "id",
-                        "in": "path",
-                        "description": "Commute ticket id",
-                        "required": true,
-                        "schema": {
-                            "type": "integer"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Commute ticket deleted successfully"
-                    },
-                    "400": {
-                        "$ref": "#/components/responses/BadRequest"
-                    },
-                    "404": {
-                        "description": "Commute ticket not found"
-                    }
-                }
-            }
-        },
         "/expenses/commute/schedule": {
             "get": {
                 "summary": "Get all commute schedules",
@@ -2606,16 +2486,6 @@
                     }
                 }
             },
-            "CommuteTicketManipulation": {
-                "type": "object",
-                "properties": {
-                    "fare_detail_id": {
-                        "type": "integer",
-                        "format": "int64",
-                        "minimum": 1
-                    }
-                }
-            },
             "CommuteHistoryManipulation": {
                 "type": "object",
                 "properties": {
@@ -2698,7 +2568,7 @@
                         "type": "integer",
                         "example": 1
                     },
-                    "commute_ticket_id": {
+                    "fare_detail_id": {
                         "type": "integer",
                         "format": "int64",
                         "minimum": 1
@@ -3223,39 +3093,6 @@
                                                 "format": "date-time"
                                             }
                                         }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            },
-            "SuccessResponseCommuteTickets": {
-                "description": "A JSON array of commute fares",
-                "content": {
-                    "application/json": {
-                        "schema": {
-                            "type": "array",
-                            "items": {
-                                "type": "object",
-                                "properties": {
-                                    "commute_ticket_id": {
-                                        "type": "integer",
-                                        "format": "int64",
-                                        "minimum": 1
-                                    },
-                                    "fare_detail_id": {
-                                        "type": "integer",
-                                        "format": "int64",
-                                        "minimum": 1
-                                    },
-                                    "date_created": {
-                                        "type": "string",
-                                        "format": "date-time"
-                                    },
-                                    "date_modified": {
-                                        "type": "string",
-                                        "format": "date-time"
                                     }
                                 }
                             }

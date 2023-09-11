@@ -2,7 +2,6 @@ import { NextFunction, type Request, type Response } from 'express';
 import {
     commuteScheduleQueries,
     commuteSystemQueries,
-    commuteTicketQueries,
     cronJobQueries,
     fareDetailsQueries,
 } from '../models/queryData.js';
@@ -150,21 +149,16 @@ export const createCommuteSchedule = async (
     response: Response,
     next: NextFunction,
 ) => {
-    const { account_id, day_of_week, commute_ticket_id, start_time, duration } =
+    const { account_id, day_of_week, fare_detail_id, start_time, duration } =
         request.body;
 
     try {
         const rows = await executeQuery(
             commuteScheduleQueries.createCommuteSchedule,
-            [account_id, day_of_week, commute_ticket_id, start_time, duration],
+            [account_id, day_of_week, fare_detail_id, start_time, duration],
         );
 
         const commuteSchedule = rows.map((s) => parseCommuteSchedule(s));
-
-        const [{ fare_detail_id }] = await executeQuery(
-            commuteTicketQueries.getCommuteTicketsById,
-            [commuteSchedule[0].commute_ticket_id],
-        );
 
         const fareDetail = await executeQuery(
             fareDetailsQueries.getFareDetailsById,
@@ -264,7 +258,7 @@ export const updateCommuteSchedule = async (
     next: NextFunction,
 ): Promise<void> => {
     const id = parseInt(request.params.id);
-    const { account_id, day_of_week, commute_ticket_id, start_time, duration } =
+    const { account_id, day_of_week, fare_detail_id, start_time, duration } =
         request.body;
     try {
         const commuteSchedule = await executeQuery(
@@ -276,12 +270,6 @@ export const updateCommuteSchedule = async (
             response.status(404).send('Schedule not found');
             return;
         }
-
-        // Get the fare amount for the new commute ticket
-        const [{ fare_detail_id }] = await executeQuery(
-            commuteTicketQueries.getCommuteTicketsById,
-            [commute_ticket_id],
-        );
 
         const fareDetail = await executeQuery(
             fareDetailsQueries.getFareDetailsById,
@@ -336,14 +324,7 @@ export const updateCommuteSchedule = async (
 
         const rows = await executeQuery(
             commuteScheduleQueries.updateCommuteSchedule,
-            [
-                account_id,
-                day_of_week,
-                commute_ticket_id,
-                start_time,
-                duration,
-                id,
-            ],
+            [account_id, day_of_week, fare_detail_id, start_time, duration, id],
         );
 
         request.commute_schedule_id = id;
