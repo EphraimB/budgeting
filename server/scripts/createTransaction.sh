@@ -37,15 +37,15 @@ else
 fi
 
 if [ "$transaction_type" = "commute" ]; then
-    commute_system=$(PGPASSWORD="$PGPASSWORD" psql -h "$PGHOST" -p "$PGPORT" -d "$PGDB" -U "$PGUSER" -t -c "SELECT commute_schedule_id, commute_systems.commute_system_id, commute_schedule.commute_ticket_id AS commute_ticket_id, commute_schedule.day_of_week AS day_of_week, commute_schedule.start_time AS start_time, commute_systems.name AS commute_system, fare_details.name AS fare_type, commute_schedule.date_created, commute_schedule.date_modified FROM commute_schedule LEFT JOIN commute_tickets ON commute_schedule.commute_ticket_id = commute_tickets.commute_ticket_id LEFT JOIN fare_details ON commute_tickets.fare_detail_id = fare_details.fare_detail_id LEFT JOIN commute_systems ON fare_details.commute_system_id = commute_systems.commute_system_id WHERE commute_schedule.commute_schedule_id = '$id'")
+    commute_system=$(PGPASSWORD="$PGPASSWORD" psql -h "$PGHOST" -p "$PGPORT" -d "$PGDB" -U "$PGUSER" -t -c "SELECT commute_schedule_id, commute_systems.commute_system_id, commute_systems.fare_cap, commute_schedule.commute_ticket_id AS commute_ticket_id, commute_schedule.day_of_week AS day_of_week, commute_schedule.start_time AS start_time, commute_systems.name AS commute_system, fare_details.name AS fare_type, commute_schedule.date_created, commute_schedule.date_modified FROM commute_schedule LEFT JOIN commute_tickets ON commute_schedule.commute_ticket_id = commute_tickets.commute_ticket_id LEFT JOIN fare_details ON commute_tickets.fare_detail_id = fare_details.fare_detail_id LEFT JOIN commute_systems ON fare_details.commute_system_id = commute_systems.commute_system_id WHERE commute_schedule.commute_schedule_id = '$id'")
 
     # Capture the exit status immediately after executing the command
     cmd_status=$?
 
     if [ $cmd_status -eq 0 ]; then
-
-        commute_system_name=$(echo "$commute_system" | awk -F'|' '{print $6}')
-        fare_type=$(echo "$commute_system" | awk -F'|' '{print $7}')
+        fare_cap=$(echo "$commute_system" | awk -F'|' '{print $3}')
+        commute_system_name=$(echo "$commute_system" | awk -F'|' '{print $7}')
+        fare_type=$(echo "$commute_system" | awk -F'|' '{print $8}')
 
         # Trim whitespace
         commute_system_name=$(echo "$commute_system_name" | xargs)
@@ -53,7 +53,64 @@ if [ "$transaction_type" = "commute" ]; then
 
         current_timestamp=$(date -u "+%Y-%m-%d %H:%M:%S")
 
-        PGPASSWORD="$PGPASSWORD" psql -h "$PGHOST" -p "$PGPORT" -d "$PGDB" -U "$PGUSER" -c "INSERT INTO commute_history (account_id, fare_amount, commute_system, fare_type, timestamp) VALUES ('$account_id', abs($transaction_amount), '$commute_system_name', '$fare_type', '$current_timestamp')"
+        commute_progress=$(PGPASSWORD="$PGPASSWORD" psql -h "$PGHOST" -p "$PGPORT" -d "$PGDB" -U "$PGUSER" -t -c "WITH RECURSIVE ticket_fares AS (
+            SELECT
+                cs.commute_schedule_id,
+                cs.day_of_week,
+                csy.name AS system_name,
+                fd.commute_system_id,
+                csy.fare_cap AS fare_cap,
+                csy.fare_cap_duration AS fare_cap_duration,
+                COALESCE(fd.fare_amount, 0) AS fare_amount,
+                (
+                    SELECT COALESCE(SUM(ch.fare_amount), 0)
+                    FROM commute_history ch
+                    WHERE ch.account_id = cs.account_id
+                    AND ch.commute_system = csy.name
+                    AND (
+                        (csy.fare_cap_duration = 0 AND date(ch.timestamp) = current_date) OR
+                        (csy.fare_cap_duration = 1 AND date_trunc('week', ch.timestamp) = date_trunc('week', current_date)) OR
+                        (csy.fare_cap_duration = 2 AND date_trunc('month', ch.timestamp) = date_trunc('month', current_date))
+                    )
+                ) AS current_spent
+            FROM commute_schedule cs
+            JOIN commute_tickets ct ON cs.commute_ticket_id = ct.commute_ticket_id
+            JOIN fare_details fd ON ct.fare_detail_id = fd.fare_detail_id
+            JOIN commute_systems csy ON fd.commute_system_id = csy.commute_system_id
+            WHERE cs.account_id = $account_id
+        )
+        SELECT
+            tf.commute_system_id,
+            tf.system_name,
+            tf.fare_cap AS fare_cap,
+            tf.fare_cap_duration AS fare_cap_duration,
+            tf.current_spent
+        FROM ticket_fares tf
+        GROUP BY tf.commute_system_id, tf.system_name, tf.fare_cap, tf.fare_cap_duration, tf.current_spent")
+
+        # Capture the exit status immediately after executing the command
+        cmd_status=$?
+
+        if [ $cmd_status -eq 0 ]; then
+            spent=$(echo "$commute_progress" | awk -F'|' '{print $5}')
+
+            # Check if spent exceeds fare_cap
+            if [ "$(echo "$spent > $fare_cap" | bc)" -eq 1 ]; then
+                fare="$fare_cap"
+            else
+                # Calculate fare as the difference between fare_cap and spent
+                fare=$(echo "$fare_cap - $spent" | bc)
+
+                # If fare is less than 0, set it to 0
+                if [ "$(echo "$fare < 0" | bc)" -eq 1 ]; then
+                    fare=0
+                fi
+            fi
+
+            transaction_amount=$(echo "-$fare" | bc)
+
+            PGPASSWORD="$PGPASSWORD" psql -h "$PGHOST" -p "$PGPORT" -d "$PGDB" -U "$PGUSER" -c "INSERT INTO commute_history (account_id, fare_amount, commute_system, fare_type, timestamp) VALUES ('$account_id', '$fare', '$commute_system_name', '$fare_type', '$current_timestamp')"
+        fi
     fi
 fi
 
