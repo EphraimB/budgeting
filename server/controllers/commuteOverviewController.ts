@@ -15,7 +15,6 @@ type ReturnObject = {
             fare_cap_progress?: {
                 current_spent: number;
                 fare_cap: number;
-                potential_savings: number;
                 fare_cap_duration: number;
             };
         };
@@ -29,7 +28,6 @@ type SystemDetails = {
     fare_cap_progress?: {
         current_spent: number;
         fare_cap: number;
-        potential_savings: number;
         fare_cap_duration: number;
     };
 };
@@ -87,9 +85,6 @@ export const getCommuteOverview = async (
                 systemDetails.fare_cap_progress = {
                     current_spent: parseFloat(row.current_spent),
                     fare_cap: parseFloat(row.fare_cap),
-                    potential_savings:
-                        parseFloat(row.fare_cap) -
-                        parseFloat(row.current_spent),
                     fare_cap_duration: parseInt(row.fare_cap_duration),
                 };
             }
