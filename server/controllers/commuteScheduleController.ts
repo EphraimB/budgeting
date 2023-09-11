@@ -379,7 +379,7 @@ export const updateCommuteScheduleReturnObject = async (
         response.status(200).json(modifiedCommuteSchedule);
     } catch (error) {
         logger.error(error); // Log the error on the server side
-        handleError(response, 'Error updating schedule');
+        handleError(response, 'Error getting schedule');
     }
 };
 
