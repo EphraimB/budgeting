@@ -88,7 +88,6 @@ describe('GET /api/expenses/commute', () => {
                     fare_cap_progress: {
                         current_spent: 50,
                         fare_cap: 100,
-                        potential_savings: 50,
                         fare_cap_duration: 2,
                     },
                 },

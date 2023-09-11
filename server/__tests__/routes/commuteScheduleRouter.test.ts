@@ -66,12 +66,22 @@ beforeAll(() => {
                 next();
             },
         ),
+        getCommuteExpensesByAccount: jest.fn(
+            (req: Request, res: Response, next: NextFunction) => {
+                next();
+            },
+        ),
         getWishlistsByAccount: jest.fn(
             (req: Request, res: Response, next: NextFunction) => {
                 next();
             },
         ),
         updateWishlistCron: jest.fn(
+            (req: Request, res: Response, next: NextFunction) => {
+                next();
+            },
+        ),
+        createCommuteScheduleReturnObject: jest.fn(
             (req: Request, res: Response, next: NextFunction) => {
                 next();
             },
@@ -93,12 +103,27 @@ beforeAll(() => {
             res: Response,
             next: NextFunction,
         ) => res.json({ message: 'success' }),
+        createCommuteScheduleReturnObject: (
+            req: Request,
+            res: Response,
+            next: NextFunction,
+        ) => res.json({ message: 'success' }),
         updateCommuteSchedule: (
             req: Request,
             res: Response,
             next: NextFunction,
         ) => res.json({ message: 'success' }),
+        updateCommuteScheduleReturnObject: (
+            req: Request,
+            res: Response,
+            next: NextFunction,
+        ) => res.json({ message: 'success' }),
         deleteCommuteSchedule: (
+            req: Request,
+            res: Response,
+            next: NextFunction,
+        ) => res.json({ message: 'success' }),
+        deleteCommuteScheduleReturnObject: (
             req: Request,
             res: Response,
             next: NextFunction,

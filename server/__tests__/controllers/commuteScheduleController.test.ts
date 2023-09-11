@@ -12,9 +12,26 @@ jest.mock('../../config/winston', () => ({
     },
 }));
 
+jest.mock('../../crontab/scheduleCronJob.js', () => {
+    return jest.fn().mockImplementation(
+        async () =>
+            await Promise.resolve({
+                cronDate: '0 0 16 * *',
+                uniqueId: '123',
+            }),
+    );
+});
+
+jest.mock('../../crontab/deleteCronJob.js', () => {
+    return jest
+        .fn()
+        .mockImplementation(async () => await Promise.resolve('123'));
+});
+
 // Mock request and response
 let mockRequest: any;
 let mockResponse: any;
+let mockNext: any;
 
 beforeEach(() => {
     mockRequest = {};
@@ -23,6 +40,7 @@ beforeEach(() => {
         json: jest.fn(),
         send: jest.fn(),
     };
+    mockNext = jest.fn();
 });
 
 afterEach(() => {
@@ -380,13 +398,16 @@ describe('POST /api/expenses/commute/schedule', () => {
 
         mockModule(newSchedule);
 
-        const { createCommuteSchedule } = await import(
+        const { createCommuteScheduleReturnObject } = await import(
             '../../controllers/commuteScheduleController.js'
         );
 
         mockRequest.body = newSchedule;
 
-        await createCommuteSchedule(mockRequest as Request, mockResponse);
+        await createCommuteScheduleReturnObject(
+            mockRequest as Request,
+            mockResponse,
+        );
 
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(201);
@@ -399,7 +420,7 @@ describe('POST /api/expenses/commute/schedule', () => {
         const error = new Error(errorMessage);
         mockModule(null, errorMessage);
 
-        const { createCommuteSchedule } = await import(
+        const { createCommuteScheduleReturnObject } = await import(
             '../../controllers/commuteScheduleController.js'
         );
 
@@ -413,7 +434,10 @@ describe('POST /api/expenses/commute/schedule', () => {
         };
 
         // Act
-        await createCommuteSchedule(mockRequest as Request, mockResponse);
+        await createCommuteScheduleReturnObject(
+            mockRequest as Request,
+            mockResponse,
+        );
 
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(400);
@@ -443,14 +467,17 @@ describe('PUT /api/expenses/commute/schedule/:id', () => {
 
         mockModule(updatedSchedule, undefined, updatedSchedule);
 
-        const { updateCommuteSchedule } = await import(
+        const { updateCommuteScheduleReturnObject } = await import(
             '../../controllers/commuteScheduleController.js'
         );
 
         mockRequest.params = { id: 1 };
         mockRequest.body = updatedSchedule;
 
-        await updateCommuteSchedule(mockRequest as Request, mockResponse);
+        await updateCommuteScheduleReturnObject(
+            mockRequest as Request,
+            mockResponse,
+        );
 
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(200);
@@ -463,7 +490,7 @@ describe('PUT /api/expenses/commute/schedule/:id', () => {
         const error = new Error(errorMessage);
         mockModule(null, errorMessage);
 
-        const { updateCommuteSchedule } = await import(
+        const { updateCommuteScheduleReturnObject } = await import(
             '../../controllers/commuteScheduleController.js'
         );
 
@@ -478,7 +505,10 @@ describe('PUT /api/expenses/commute/schedule/:id', () => {
         };
 
         // Act
-        await updateCommuteSchedule(mockRequest as Request, mockResponse);
+        await updateCommuteScheduleReturnObject(
+            mockRequest as Request,
+            mockResponse,
+        );
 
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(400);
@@ -491,7 +521,7 @@ describe('PUT /api/expenses/commute/schedule/:id', () => {
         // Arrange
         mockModule([]);
 
-        const { updateCommuteSchedule } = await import(
+        const { updateCommuteScheduleReturnObject } = await import(
             '../../controllers/commuteScheduleController.js'
         );
 
@@ -506,7 +536,10 @@ describe('PUT /api/expenses/commute/schedule/:id', () => {
         };
 
         // Act
-        await updateCommuteSchedule(mockRequest as Request, mockResponse);
+        await updateCommuteScheduleReturnObject(
+            mockRequest as Request,
+            mockResponse,
+        );
 
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(404);
@@ -535,13 +568,16 @@ describe('DELETE /api/expenses/commute/schedule/:id', () => {
             'Successfully deleted schedule',
         );
 
-        const { deleteCommuteSchedule } = await import(
+        const { deleteCommuteScheduleReturnObject } = await import(
             '../../controllers/commuteScheduleController.js'
         );
 
         mockRequest.params = { id: 1 };
 
-        await deleteCommuteSchedule(mockRequest as Request, mockResponse);
+        await deleteCommuteScheduleReturnObject(
+            mockRequest as Request,
+            mockResponse,
+        );
 
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(200);
@@ -556,14 +592,17 @@ describe('DELETE /api/expenses/commute/schedule/:id', () => {
         const error = new Error(errorMessage);
         mockModule(null, errorMessage);
 
-        const { deleteCommuteSchedule } = await import(
+        const { deleteCommuteScheduleReturnObject } = await import(
             '../../controllers/commuteScheduleController.js'
         );
 
         mockRequest.params = { id: 1 };
 
         // Act
-        await deleteCommuteSchedule(mockRequest as Request, mockResponse);
+        await deleteCommuteScheduleReturnObject(
+            mockRequest as Request,
+            mockResponse,
+        );
 
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(400);
@@ -576,14 +615,17 @@ describe('DELETE /api/expenses/commute/schedule/:id', () => {
         // Arrange
         mockModule([]);
 
-        const { deleteCommuteSchedule } = await import(
+        const { deleteCommuteScheduleReturnObject } = await import(
             '../../controllers/commuteScheduleController.js'
         );
 
         mockRequest.params = { id: 1 };
 
         // Act
-        await deleteCommuteSchedule(mockRequest as Request, mockResponse);
+        await deleteCommuteScheduleReturnObject(
+            mockRequest as Request,
+            mockResponse,
+        );
 
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(404);
