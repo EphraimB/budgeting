@@ -243,6 +243,7 @@ export const updateFareDetail = async (
                 end_in_effect_day_of_week,
                 end_in_effect_time,
                 alternate_fare_detail_id,
+                id,
             ],
         );
         const fareDetailsParsed = rows.map((fareDetail) =>
