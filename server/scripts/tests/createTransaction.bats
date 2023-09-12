@@ -64,3 +64,9 @@ teardown() {
     [[ "$output" =~ "Cron Job ID: 1" ]]
     [[ "$output" =~ "Wishlist successfully deleted for id 91011" ]]
 }
+
+@test "Successful commute transaction creation" {
+    run ../createTransaction.sh commute_1234 5678 91011 -1000 "Commute Transaction" "Commute for August"
+    [ "$status" -eq 0 ]
+    [[ "$output" =~ "Transaction successfully created for account_id 5678" ]]
+}
