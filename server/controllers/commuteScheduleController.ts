@@ -163,7 +163,7 @@ export const createCommuteSchedule = async (
             response
                 .status(400)
                 .send(
-                    'A schedule with the provided day and time already exists.',
+                    'A schedule with the provided day and time already exists',
                 );
             return;
         }
