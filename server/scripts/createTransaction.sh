@@ -53,7 +53,12 @@ if [ "$transaction_type" = "commute" ]; then
 
         current_timestamp=$(date -u "+%Y-%m-%d %H:%M:%S")
 
-        commute_progress=$(PGPASSWORD="$PGPASSWORD" psql -h "$PGHOST" -p "$PGPORT" -d "$PGDB" -U "$PGUSER" -t -c "WITH RECURSIVE ticket_fares AS (
+        echo "Fare cap: $fare_cap"
+
+        # Check if fare_cap is not null or empty
+        if [ ! -n "$fare_cap" ]; then
+            echo "Fare cap is not null or empty"
+            commute_progress=$(PGPASSWORD="$PGPASSWORD" psql -h "$PGHOST" -p "$PGPORT" -d "$PGDB" -U "$PGUSER" -t -c "WITH RECURSIVE ticket_fares AS (
             SELECT
                 cs.commute_schedule_id,
                 cs.day_of_week,
@@ -77,27 +82,24 @@ if [ "$transaction_type" = "commute" ]; then
             JOIN fare_details fd ON cs.fare_detail_id = fd.fare_detail_id
             JOIN commute_systems csy ON fd.commute_system_id = csy.commute_system_id
             WHERE cs.account_id = $account_id
-        )
-        SELECT
-            tf.commute_system_id,
-            tf.system_name,
-            tf.fare_cap AS fare_cap,
-            tf.fare_cap_duration AS fare_cap_duration,
-            tf.current_spent
-        FROM ticket_fares tf
-        GROUP BY tf.commute_system_id, tf.system_name, tf.fare_cap, tf.fare_cap_duration, tf.current_spent")
+            )
+            SELECT
+                tf.commute_system_id,
+                tf.system_name,
+                tf.fare_cap AS fare_cap,
+                tf.fare_cap_duration AS fare_cap_duration,
+                tf.current_spent
+            FROM ticket_fares tf
+            GROUP BY tf.commute_system_id, tf.system_name, tf.fare_cap, tf.fare_cap_duration, tf.current_spent")
 
-        # Capture the exit status immediately after executing the command
-        cmd_status=$?
+            # Capture the exit status immediately after executing the command
+            cmd_status=$?
 
-        if [ -n "$fare_cap" ]; then
             if [ $cmd_status -eq 0 ]; then
                 spent=$(echo "$commute_progress" | awk -F'|' '{print $5}')
 
                 # Check if spent exceeds fare_cap
                 if [ "$(echo "$spent > $fare_cap" | bc)" -eq 1 ]; then
-                    fare="$fare_cap"
-                else
                     # Calculate fare as the difference between fare_cap and spent
                     fare=$(echo "$fare_cap - $spent" | bc)
 
@@ -105,13 +107,16 @@ if [ "$transaction_type" = "commute" ]; then
                     if [ "$(echo "$fare < 0" | bc)" -eq 1 ]; then
                         fare=0
                     fi
+                else
+                    fare=$(echo "$transaction_amount" | bc)
                 fi
+                transaction_amount=$(echo "-$fare" | bc)
             fi
-
-            transaction_amount=$(echo "-$fare" | bc)
-
-            PGPASSWORD="$PGPASSWORD" psql -h "$PGHOST" -p "$PGPORT" -d "$PGDB" -U "$PGUSER" -c "INSERT INTO commute_history (account_id, fare_amount, commute_system, fare_type, timestamp) VALUES ('$account_id', '$fare', '$commute_system_name', '$fare_type', '$current_timestamp')"
+        else
+            echo "Fare cap is null or empty"
+            fare=$(echo "$transaction_amount" | bc)
         fi
+        PGPASSWORD="$PGPASSWORD" psql -h "$PGHOST" -p "$PGPORT" -d "$PGDB" -U "$PGUSER" -c "INSERT INTO commute_history (account_id, fare_amount, commute_system, fare_type, timestamp) VALUES ('$account_id', ABS('$fare'), '$commute_system_name', '$fare_type', '$current_timestamp')"
     fi
 fi
 

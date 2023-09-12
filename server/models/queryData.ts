@@ -663,7 +663,7 @@ export const commuteOverviewQueries = {
                     )
                 ) AS current_spent
             FROM commute_schedule cs
-            JOIN fare_details fd ON ct.fare_detail_id = fd.fare_detail_id
+            JOIN fare_details fd ON cs.fare_detail_id = fd.fare_detail_id
             JOIN commute_systems csy ON fd.commute_system_id = csy.commute_system_id
             WHERE cs.account_id = $1
         )
