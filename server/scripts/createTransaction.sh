@@ -7,6 +7,8 @@ transaction_amount=$4
 transaction_title=$5
 transaction_description=$6
 
+absolute_transaction_amount=$(echo "if ($transaction_amount < 0) -($transaction_amount) else $transaction_amount" | bc)
+
 # Get transaction_type from the prefixed unique_id
 transaction_type=$(echo "${unique_id}" | cut -d '_' -f 1)
 
@@ -105,7 +107,6 @@ if [ "$transaction_type" = "commute" ]; then
 
                 # Calculate the remaining fare before hitting the cap
                 fare_remaining=$(echo "$trimmed_fare_cap - $spent" | bc)
-                absolute_transaction_amount=$(echo "if ($transaction_amount < 0) -($transaction_amount) else $transaction_amount" | bc)
 
                 echo "Absolute transaction amount: $absolute_transaction_amount"
                 echo "Fare remaining: $fare_remaining"
