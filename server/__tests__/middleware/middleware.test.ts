@@ -827,7 +827,7 @@ describe('getCommuteExpensesByAccount', () => {
                 commute_system_id: 1,
                 account_id: 1,
                 day_of_week: 1,
-                commute_ticket_id: 1,
+                fare_detail_id: 1,
                 start_time: '8:00',
                 fare_cap_duration: 1,
                 fare_amount: 2.9,
