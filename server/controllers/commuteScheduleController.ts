@@ -153,6 +153,21 @@ export const createCommuteSchedule = async (
         request.body;
 
     try {
+        // Check for overlapping day_of_week and start_time
+        const existingSchedule = await executeQuery(
+            commuteScheduleQueries.getCommuteScheduleByDayAndTime,
+            [account_id, day_of_week, start_time, duration],
+        );
+
+        if (existingSchedule.length > 0) {
+            response
+                .status(400)
+                .send(
+                    'A schedule with the provided day and time already exists.',
+                );
+            return;
+        }
+
         const rows = await executeQuery(
             commuteScheduleQueries.createCommuteSchedule,
             [account_id, day_of_week, fare_detail_id, start_time, duration],
