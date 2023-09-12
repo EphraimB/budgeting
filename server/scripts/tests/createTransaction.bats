@@ -66,7 +66,7 @@ teardown() {
 }
 
 @test "Successful commute transaction creation" {
-    run ../createTransaction.sh commute_1234 5678 91011 -1000 "Commute Transaction" "Commute for August"
+    run ../createTransaction.sh commute_1234 5678 91011 -10 "Commute Transaction" "Commute for August"
     [ "$status" -eq 0 ]
     [[ "$output" =~ "Transaction successfully created for account_id 5678" ]]
 }
