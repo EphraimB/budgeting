@@ -260,7 +260,7 @@ export interface CommuteSchedule {
     commute_system_id: number;
     account_id: number;
     day_of_week: number;
-    commute_ticket_id: number;
+    fare_detail_id: number;
     start_time: string;
     duration: number;
     fare_amount: number;

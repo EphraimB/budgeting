@@ -34,7 +34,7 @@ const parseCommuteSchedule = (
     commute_system_id: parseInt(commuteSchedule.commute_system_id),
     account_id: parseInt(commuteSchedule.account_id),
     day_of_week: parseInt(commuteSchedule.day_of_week),
-    commute_ticket_id: parseInt(commuteSchedule.commute_ticket_id),
+    fare_detail_id: parseInt(commuteSchedule.fare_detail_id),
     start_time: commuteSchedule.start_time,
     duration: parseInt(commuteSchedule.duration),
     fare_amount: parseFloat(commuteSchedule.fare_amount),

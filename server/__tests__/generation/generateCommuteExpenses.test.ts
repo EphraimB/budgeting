@@ -15,7 +15,7 @@ describe('generateCommuteExpenses', () => {
             commute_schedule_id: 1,
             commute_system_id: 1,
             account_id: 1,
-            commute_ticket_id: 1,
+            fare_detail_id: 1,
             duration: 1,
             day_of_week: 4, // Wednesday
             start_time: '08:00',
