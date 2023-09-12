@@ -74,8 +74,7 @@ if [ "$transaction_type" = "commute" ]; then
                     )
                 ) AS current_spent
             FROM commute_schedule cs
-            JOIN commute_tickets ct ON cs.commute_ticket_id = ct.commute_ticket_id
-            JOIN fare_details fd ON ct.fare_detail_id = fd.fare_detail_id
+            JOIN fare_details fd ON cs.fare_detail_id = fd.fare_detail_id
             JOIN commute_systems csy ON fd.commute_system_id = csy.commute_system_id
             WHERE cs.account_id = $account_id
         )
