@@ -59,7 +59,7 @@ router.post(
             .isTime({ hourFormat: 'hour24', mode: 'withSeconds' })
             .withMessage('Start time must be a time'),
         body('duration')
-            .isInt({ min: 0 })
+            .isInt({ min: 0, max: 43800 })
             .withMessage('Duration must be a number'),
         validateRequest,
     ],
@@ -95,7 +95,7 @@ router.put(
             .isTime({ hourFormat: 'hour24', mode: 'withSeconds' })
             .withMessage('Start time must be a time'),
         body('duration')
-            .isInt({ min: 0 })
+            .isInt({ min: 0, max: 43800 })
             .withMessage('Duration must be a number'),
         validateRequest,
     ],
