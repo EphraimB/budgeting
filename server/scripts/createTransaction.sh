@@ -85,7 +85,7 @@ if [ "$transaction_type" = "commute" ]; then
             FROM commute_schedule cs
             JOIN fare_details fd ON cs.fare_detail_id = fd.fare_detail_id
             JOIN commute_systems csy ON fd.commute_system_id = csy.commute_system_id
-            WHERE cs.account_id = $account_id
+            WHERE cs.account_id = $account_id AND fd.commute_system_id = (SELECT commute_system_id FROM commute_systems WHERE name = '$commute_system_name')
             )
             SELECT
                 tf.commute_system_id,
@@ -101,26 +101,35 @@ if [ "$transaction_type" = "commute" ]; then
 
             if [ $cmd_status -eq 0 ]; then
                 spent=$(echo "$commute_progress" | awk -F'|' '{print $5}')
+                echo "Spent: $spent"
 
-                # Check if spent exceeds fare_cap
-                if [ "$(echo "$spent > $fare_cap" | bc)" -eq 1 ]; then
-                    # Calculate fare as the difference between fare_cap and spent
-                    fare=$(echo "$fare_cap - $spent" | bc)
+                # Calculate the remaining fare before hitting the cap
+                fare_remaining=$(echo "$trimmed_fare_cap - $spent" | bc)
+                absolute_transaction_amount=$(echo "if ($transaction_amount < 0) -($transaction_amount) else $transaction_amount" | bc)
 
-                    # If fare is less than 0, set it to 0
-                    if [ "$(echo "$fare < 0" | bc)" -eq 1 ]; then
-                        fare=0
-                    fi
+                echo "Absolute transaction amount: $absolute_transaction_amount"
+                echo "Fare remaining: $fare_remaining"
+
+                # Check if the transaction amount will exceed the fare cap
+                if [ "$(echo "$absolute_transaction_amount > $fare_remaining" | bc)" -eq 1 ]; then
+                    fare="$fare_remaining"
                 else
-                    fare=$(echo "$transaction_amount" | bc)
+                    fare="$absolute_transaction_amount"
                 fi
-                transaction_amount=$(echo "-$fare" | bc)
+
+                # Ensure fare doesn't go negative
+                if [ "$(echo "$fare < 0" | bc)" -eq 1 ]; then
+                    fare=0
+                fi
+
+                # Update transaction_amount
+                transaction_amount="$fare"
             fi
         else
             echo "Fare cap is null or empty"
-            fare=$(echo "$transaction_amount" | bc)
+            fare=$(echo "$absolute_transaction_amount" | bc)
         fi
-        PGPASSWORD="$PGPASSWORD" psql -h "$PGHOST" -p "$PGPORT" -d "$PGDB" -U "$PGUSER" -c "INSERT INTO commute_history (account_id, fare_amount, commute_system, fare_type, timestamp) VALUES ('$account_id', ABS('$fare'), '$commute_system_name', '$fare_type', '$current_timestamp')"
+        PGPASSWORD="$PGPASSWORD" psql -h "$PGHOST" -p "$PGPORT" -d "$PGDB" -U "$PGUSER" -c "INSERT INTO commute_history (account_id, fare_amount, commute_system, fare_type, timestamp) VALUES ('$account_id', '$fare', '$commute_system_name', '$fare_type', '$current_timestamp')"
     fi
 fi
 
