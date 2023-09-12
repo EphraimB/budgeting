@@ -90,19 +90,21 @@ if [ "$transaction_type" = "commute" ]; then
         # Capture the exit status immediately after executing the command
         cmd_status=$?
 
-        if [ $cmd_status -eq 0 ]; then
-            spent=$(echo "$commute_progress" | awk -F'|' '{print $5}')
+        if [ -n "$fare_cap" ]; then
+            if [ $cmd_status -eq 0 ]; then
+                spent=$(echo "$commute_progress" | awk -F'|' '{print $5}')
 
-            # Check if spent exceeds fare_cap
-            if [ "$(echo "$spent > $fare_cap" | bc)" -eq 1 ]; then
-                fare="$fare_cap"
-            else
-                # Calculate fare as the difference between fare_cap and spent
-                fare=$(echo "$fare_cap - $spent" | bc)
+                # Check if spent exceeds fare_cap
+                if [ "$(echo "$spent > $fare_cap" | bc)" -eq 1 ]; then
+                    fare="$fare_cap"
+                else
+                    # Calculate fare as the difference between fare_cap and spent
+                    fare=$(echo "$fare_cap - $spent" | bc)
 
-                # If fare is less than 0, set it to 0
-                if [ "$(echo "$fare < 0" | bc)" -eq 1 ]; then
-                    fare=0
+                    # If fare is less than 0, set it to 0
+                    if [ "$(echo "$fare < 0" | bc)" -eq 1 ]; then
+                        fare=0
+                    fi
                 fi
             fi
 
