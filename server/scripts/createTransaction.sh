@@ -37,7 +37,7 @@ else
 fi
 
 if [ "$transaction_type" = "commute" ]; then
-    commute_system=$(PGPASSWORD="$PGPASSWORD" psql -h "$PGHOST" -p "$PGPORT" -d "$PGDB" -U "$PGUSER" -t -c "SELECT commute_schedule_id, commute_systems.commute_system_id, commute_systems.fare_cap, commute_schedule.commute_ticket_id AS commute_ticket_id, commute_schedule.day_of_week AS day_of_week, commute_schedule.start_time AS start_time, commute_systems.name AS commute_system, fare_details.name AS fare_type, commute_schedule.date_created, commute_schedule.date_modified FROM commute_schedule LEFT JOIN commute_tickets ON commute_schedule.commute_ticket_id = commute_tickets.commute_ticket_id LEFT JOIN fare_details ON commute_tickets.fare_detail_id = fare_details.fare_detail_id LEFT JOIN commute_systems ON fare_details.commute_system_id = commute_systems.commute_system_id WHERE commute_schedule.commute_schedule_id = '$id'")
+    commute_system=$(PGPASSWORD="$PGPASSWORD" psql -h "$PGHOST" -p "$PGPORT" -d "$PGDB" -U "$PGUSER" -t -c "SELECT commute_schedule_id, commute_systems.commute_system_id, commute_systems.fare_cap, commute_schedule.fare_detail_id AS fare_detail_id, commute_schedule.day_of_week AS day_of_week, commute_schedule.start_time AS start_time, commute_systems.name AS commute_system, fare_details.name AS fare_type, commute_schedule.date_created, commute_schedule.date_modified FROM commute_schedule LEFT JOIN fare_details ON commute_schedule.fare_detail_id = fare_details.fare_detail_id LEFT JOIN commute_systems ON fare_details.commute_system_id = commute_systems.commute_system_id WHERE commute_schedule.commute_schedule_id = '$id'")
 
     # Capture the exit status immediately after executing the command
     cmd_status=$?
