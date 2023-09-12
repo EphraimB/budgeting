@@ -184,7 +184,7 @@ describe('POST /', () => {
             commute_schedule_id: 1,
             account_id: 1,
             day_of_week: 1,
-            commute_ticket_id: 1,
+            fare_detail_id: 1,
             start_time: '08:00:00',
             duration: 60,
         };
@@ -206,7 +206,7 @@ describe('PUT /:id', () => {
             commute_schedule_id: 1,
             account_id: 1,
             day_of_week: 1,
-            commute_ticket_id: 1,
+            fare_detail_id: 1,
             start_time: '08:00:00',
             duration: 60,
         };
