@@ -55,8 +55,12 @@ if [ "$transaction_type" = "commute" ]; then
 
         echo "Fare cap: $fare_cap"
 
+        trimmed_fare_cap=$(echo "$fare_cap" | sed 's/^[[:space:]]*//;s/[[:space:]]*$//')
+
+        echo "Trimmed fare_cap: '$trimmed_fare_cap'"
+
         # Check if fare_cap is not null or empty
-        if [ ! -n "$fare_cap" ]; then
+        if [ -n "$trimmed_fare_cap" ]; then
             echo "Fare cap is not null or empty"
             commute_progress=$(PGPASSWORD="$PGPASSWORD" psql -h "$PGHOST" -p "$PGPORT" -d "$PGDB" -U "$PGUSER" -t -c "WITH RECURSIVE ticket_fares AS (
             SELECT
