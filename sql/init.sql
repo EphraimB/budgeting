@@ -328,6 +328,11 @@ BEFORE INSERT OR UPDATE ON fare_details
 FOR EACH ROW
 EXECUTE PROCEDURE update_dates();
 
+CREATE TRIGGER update_timeslots_details_dates
+BEFORE INSERT OR UPDATE ON timeslots
+FOR EACH ROW
+EXECUTE PROCEDURE update_dates();
+
 CREATE TRIGGER update_commute_schedule_dates
 BEFORE INSERT OR UPDATE ON commute_schedule
 FOR EACH ROW
