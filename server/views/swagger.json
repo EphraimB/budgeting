@@ -2530,10 +2530,6 @@
                         "format": "double",
                         "example": 10.0
                     },
-                    "fare_type": {
-                        "type": "string",
-                        "example": "Standard"
-                    },
                     "timeslots": {
                         "type": "array",
                         "items": {
