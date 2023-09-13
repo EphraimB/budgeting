@@ -103,7 +103,15 @@ export const getFareDetails = async (
                 },
                 name: fareDetail.fare_type,
                 fare_amount: fareDetail.fare_amount,
-                timeslots,
+                timeslots: timeslots
+                    .filter(
+                        (ts) => ts.fare_detail_id === fareDetail.fare_detail_id,
+                    )
+                    .map((timeslot) => ({
+                        day_of_week: parseInt(timeslot.day_of_week),
+                        start_time: timeslot.start_time,
+                        end_time: timeslot.end_time,
+                    })),
                 alternate_fare_detail_id:
                     fareDetails[0].alternate_fare_detail_id,
                 date_created: fareDetail.date_created,

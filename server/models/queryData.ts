@@ -648,12 +648,14 @@ export const commuteScheduleQueries = {
 
 export const fareTimeslotsQueries = {
     getTimeslotsByFareId: `
-        SELECT day_of_week,
+        SELECT fare_detail_id,
+            day_of_week,
             start_time,
             end_time
         FROM timeslots WHERE fare_detail_id = $1`,
     getTimeslots: `
-        SELECT day_of_week,
+        SELECT fare_detail_id,
+            day_of_week,
             start_time,
             end_time
         FROM timeslots`,
