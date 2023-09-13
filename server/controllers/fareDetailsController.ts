@@ -163,19 +163,25 @@ export const createFareDetail = async (
             [commute_system_id, name, fare_amount, alternate_fare_detail_id],
         );
 
-        const allTimeslots: Timeslots[] = timeslots.map(
-            async (timeslot: Timeslots) => {
-                await executeQuery<Timeslots>(
-                    fareTimeslotsQueries.createTimeslot,
-                    [
-                        fareDetails[0].fare_detail_id,
-                        timeslot.day_of_week,
-                        timeslot.start_time,
-                        timeslot.end_time,
-                    ],
-                );
-            },
-        );
+        const timeslotPromises = timeslots.map(async (timeslot: Timeslots) => {
+            const timeslotData = await executeQuery(
+                fareTimeslotsQueries.createTimeslot,
+                [
+                    fareDetails[0].fare_detail_id,
+                    timeslot.day_of_week,
+                    timeslot.start_time,
+                    timeslot.end_time,
+                ],
+            );
+
+            return {
+                day_of_week: parseInt(timeslotData[0].day_of_week),
+                start_time: timeslotData[0].start_time,
+                end_time: timeslotData[0].end_time,
+            };
+        });
+
+        const allTimeslots: Timeslots[] = await Promise.all(timeslotPromises);
 
         const responseObj: object = {
             fare_detail_id: fareDetails[0].fare_detail_id,
