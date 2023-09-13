@@ -66,14 +66,17 @@ export const getFareDetails = async (
 
     try {
         let query: string;
+        let queryTwo: string;
         let params: any[];
 
         // Change the query based on the presence of id
         if (id !== null && id !== undefined) {
             query = fareDetailsQueries.getFareDetailsById;
+            queryTwo = fareTimeslotsQueries.getTimeslotsByFareId;
             params = [id];
         } else {
             query = fareDetailsQueries.getFareDetails;
+            queryTwo = fareTimeslotsQueries.getTimeslots;
             params = [];
         }
 
@@ -89,10 +92,10 @@ export const getFareDetails = async (
             }
         }
 
-        const fareDetailsParsed = fareDetails.map(parseFareDetails);
+        const timeslots = await executeQuery(queryTwo, params);
 
         const responseObj: object = {
-            fares: fareDetailsParsed.map((fareDetail) => ({
+            fares: fareDetails.map((fareDetail) => ({
                 fare_detail_id: fareDetail.fare_detail_id,
                 commute_system: {
                     commute_system_id: fareDetail.commute_system_id,
@@ -100,9 +103,9 @@ export const getFareDetails = async (
                 },
                 name: fareDetail.fare_type,
                 fare_amount: fareDetail.fare_amount,
-                timeslots: fareDetail.timeslots,
+                timeslots,
                 alternate_fare_detail_id:
-                    fareDetailsParsed[0].alternate_fare_detail_id,
+                    fareDetails[0].alternate_fare_detail_id,
                 date_created: fareDetail.date_created,
                 date_modified: fareDetail.date_modified,
             })),

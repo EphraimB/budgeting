@@ -495,39 +495,31 @@ export const commuteHistoryQueries = {
 
 export const fareDetailsQueries = {
     getFareDetails: `
-        SELECT fare_detail_id,
+        SELECT fare_details.fare_detail_id,
             fare_details.commute_system_id AS commute_system_id,
             commute_systems.name AS system_name,
             fare_details.name AS fare_type,
             fare_amount,
-            begin_in_effect_day_of_week,
-            begin_in_effect_time,
-            end_in_effect_day_of_week,
-            end_in_effect_time,
             alternate_fare_detail_id,
             fare_details.date_created,
             fare_details.date_modified
-            FROM fare_details
-            LEFT JOIN commute_systems
-            ON fare_details.commute_system_id = commute_systems.commute_system_id
+        FROM fare_details
+        LEFT JOIN commute_systems
+        ON fare_details.commute_system_id = commute_systems.commute_system_id
     `,
     getFareDetailsById: `
-        SELECT fare_detail_id,
+        SELECT fare_details.fare_detail_id,
             fare_details.commute_system_id AS commute_system_id,
             commute_systems.name AS system_name,
             fare_details.name AS fare_type,
             fare_amount,
-            begin_in_effect_day_of_week,
-            begin_in_effect_time,
-            end_in_effect_day_of_week,
-            end_in_effect_time,
             alternate_fare_detail_id,
             fare_details.date_created,
             fare_details.date_modified
-            FROM fare_details
-            LEFT JOIN commute_systems
-            ON fare_details.commute_system_id = commute_systems.commute_system_id
-            WHERE fare_details.fare_detail_id = $1`,
+        FROM fare_details
+        LEFT JOIN commute_systems
+        ON fare_details.commute_system_id = commute_systems.commute_system_id
+        WHERE fare_details.fare_detail_id = $1`,
     createFareDetails:
         'INSERT INTO fare_details (commute_system_id, name, fare_amount, alternate_fare_detail_id) VALUES ($1, $2, $3, $4) RETURNING *',
     updateFareDetails:
@@ -655,6 +647,16 @@ export const commuteScheduleQueries = {
 };
 
 export const fareTimeslotsQueries = {
+    getTimeslotsByFareId: `
+        SELECT day_of_week,
+            start_time,
+            end_time
+        FROM timeslots WHERE fare_detail_id = $1`,
+    getTimeslots: `
+        SELECT day_of_week,
+            start_time,
+            end_time
+        FROM timeslots`,
     createTimeslot:
         'INSERT INTO timeslots (fare_detail_id, day_of_week, start_time, end_time) VALUES ($1, $2, $3, $4) RETURNING *',
     updateTimeslot:
