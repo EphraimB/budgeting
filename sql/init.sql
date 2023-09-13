@@ -198,8 +198,7 @@ CREATE TABLE IF NOT EXISTS commute_schedule (
   commute_schedule_id SERIAL PRIMARY KEY,
   account_id INT NOT NULL REFERENCES accounts(account_id),
   cron_job_id INT REFERENCES cron_jobs(cron_job_id),
-  day_of_week INT NOT NULL,
-  start_time TIME NOT NULL,
+  timeslot_id INT NOT NULL REFERENCES timeslots(timeslot_id),
   duration INT NOT NULL,
   fare_detail_id INT NOT NULL REFERENCES fare_details(fare_detail_id),
   date_created TIMESTAMP NOT NULL,
@@ -214,6 +213,15 @@ CREATE TABLE IF NOT EXISTS commute_history (
   commute_system VARCHAR(255) NOT NULL,
   fare_type VARCHAR(255) NOT NULL,
   timestamp TIMESTAMP NOT NULL,
+  date_created TIMESTAMP NOT NULL,
+  date_modified TIMESTAMP NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS timeslots (
+  timeslot_id SERIAL PRIMARY KEY,
+  day_of_week INT NOT NULL,
+  start_time TIME NOT NULL,
+  end_time TIME NOT NULL,
   date_created TIMESTAMP NOT NULL,
   date_modified TIMESTAMP NOT NULL
 );
