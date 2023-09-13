@@ -293,7 +293,7 @@ export const updateFareDetail = async (
             ]);
         });
 
-        const rows = await executeQuery(fareDetailsQueries.updateFareDetails, [
+        await executeQuery(fareDetailsQueries.updateFareDetails, [
             commute_system_id,
             name,
             fare_amount,
@@ -301,11 +301,16 @@ export const updateFareDetail = async (
             id,
         ]);
 
+        const [{ name: systemName }] = await executeQuery(
+            commuteSystemQueries.getCommuteSystemById,
+            [commute_system_id],
+        );
+
         const responseObj: object = {
             fare_detail_id: fareDetails[0].fare_detail_id,
             commute_system: {
                 commute_system_id: fareDetails[0].commute_system_id,
-                // name: commuteSystemResults[0].name,
+                name: systemName,
             },
             name: fareDetails[0].fare_type,
             fare_amount: parseFloat(fareDetails[0].fare_amount),
