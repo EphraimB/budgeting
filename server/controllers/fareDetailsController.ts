@@ -312,7 +312,9 @@ export const deleteFareDetail = async (
             return;
         }
 
+        await executeQuery(fareTimeslotsQueries.deleteTimeslot, [id]);
         await executeQuery(fareDetailsQueries.deleteFareDetails, [id]);
+
         response.status(200).send('Successfully deleted fare detail');
     } catch (error) {
         logger.error(error); // Log the error on the server side

@@ -663,7 +663,7 @@ export const fareTimeslotsQueries = {
         'INSERT INTO timeslots (fare_detail_id, day_of_week, start_time, end_time) VALUES ($1, $2, $3, $4) RETURNING *',
     updateTimeslot:
         'UPDATE timeslots SET fare_detail_id = $1 day_of_week = $2, start_time = $3, end_time = $4 WHERE timeslot_id = $5',
-    deleteTimeslot: 'DELETE FROM timeslots WHERE timeslot_id = $1',
+    deleteTimeslot: 'DELETE FROM timeslots WHERE fare_detail_id = $1',
 };
 
 export const commuteOverviewQueries = {
