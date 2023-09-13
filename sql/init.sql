@@ -180,22 +180,22 @@ CREATE TABLE IF NOT EXISTS commute_systems (
   date_modified TIMESTAMP NOT NULL
 );
 
-CREATE TABLE IF NOT EXISTS timeslots (
-  timeslot_id SERIAL PRIMARY KEY,
-  day_of_week INT NOT NULL,
-  start_time TIME NOT NULL,
-  end_time TIME NOT NULL,
-  date_created TIMESTAMP NOT NULL,
-  date_modified TIMESTAMP NOT NULL
-);
-
 CREATE TABLE IF NOT EXISTS fare_details (
   fare_detail_id SERIAL PRIMARY KEY,
   commute_system_id INT NOT NULL REFERENCES commute_systems(commute_system_id),
   name VARCHAR(255) NOT NULL,
   fare_amount NUMERIC(5,2) NOT NULL,
-  timeslot_id INT REFERENCES timeslots(timeslot_id),
   alternate_fare_detail_id INT REFERENCES fare_details(fare_detail_id),
+  date_created TIMESTAMP NOT NULL,
+  date_modified TIMESTAMP NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS timeslots (
+  timeslot_id SERIAL PRIMARY KEY,
+  fare_detail_id INT NOT NULL REFERENCES fare_details(fare_detail_id),
+  day_of_week INT NOT NULL,
+  start_time TIME NOT NULL,
+  end_time TIME NOT NULL,
   date_created TIMESTAMP NOT NULL,
   date_modified TIMESTAMP NOT NULL
 );

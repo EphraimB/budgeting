@@ -2,6 +2,7 @@ import { type Request, type Response } from 'express';
 import {
     commuteSystemQueries,
     fareDetailsQueries,
+    fareTimeslotsQueries,
 } from '../models/queryData.js';
 import { handleError, executeQuery } from '../utils/helperFunctions.js';
 import { type FareDetails } from '../types/types.js';
@@ -135,10 +136,7 @@ export const createFareDetail = async (
         commute_system_id,
         name,
         fare_amount,
-        begin_in_effect_day_of_week,
-        begin_in_effect_time,
-        end_in_effect_day_of_week,
-        end_in_effect_time,
+        timeslots,
         alternate_fare_detail_id,
     } = request.body;
 
@@ -160,23 +158,40 @@ export const createFareDetail = async (
             return;
         }
 
-        const rows = await executeQuery<FareDetailsInput>(
+        const fareDetails = await executeQuery<FareDetailsInput>(
             fareDetailsQueries.createFareDetails,
-            [
-                commute_system_id,
-                name,
-                fare_amount,
-                begin_in_effect_day_of_week,
-                begin_in_effect_time,
-                end_in_effect_day_of_week,
-                end_in_effect_time,
-                alternate_fare_detail_id,
-            ],
+            [commute_system_id, name, fare_amount, alternate_fare_detail_id],
         );
-        const fareDetails = rows.map((fareDetail) =>
-            parseFareDetails(fareDetail),
+
+        const allTimeslots: Timeslots[] = timeslots.map(
+            async (timeslot: Timeslots) => {
+                await executeQuery<Timeslots>(
+                    fareTimeslotsQueries.createTimeslot,
+                    [
+                        fareDetails[0].fare_detail_id,
+                        timeslot.day_of_week,
+                        timeslot.start_time,
+                        timeslot.end_time,
+                    ],
+                );
+            },
         );
-        response.status(201).json(fareDetails);
+
+        const responseObj: object = {
+            fare_detail_id: fareDetails[0].fare_detail_id,
+            commute_system: {
+                commute_system_id: fareDetails[0].commute_system_id,
+                name: commuteSystemResults[0].name,
+            },
+            name: fareDetails[0].fare_type,
+            fare_amount: fareDetails[0].fare_amount,
+            timeslots: allTimeslots,
+            alternate_fare_detail_id: fareDetails[0].alternate_fare_detail_id,
+            date_created: fareDetails[0].date_created,
+            date_modified: fareDetails[0].date_modified,
+        };
+
+        response.status(201).json(responseObj);
     } catch (error) {
         if (
             error.message.includes(
