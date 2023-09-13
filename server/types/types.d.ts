@@ -238,13 +238,16 @@ export interface FareDetails {
     system_name: string;
     fare_type: string;
     fare_amount: number;
-    begin_in_effect_day_of_week: number;
-    begin_in_effect_time: string;
-    end_in_effect_day_of_week: number;
-    end_in_effect_time: string;
+    timeslots: Timeslots[];
     alternate_fare_detail_id: number | null;
     date_created: string;
     date_modified: string;
+}
+
+interface Timeslots {
+    day_of_week: number;
+    start_time: string;
+    end_time: string;
 }
 
 export interface CommuteTicket {

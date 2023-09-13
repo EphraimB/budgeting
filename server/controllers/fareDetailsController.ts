@@ -14,13 +14,16 @@ interface FareDetailsInput {
     system_name: string;
     fare_type: string;
     fare_amount: string;
-    begin_in_effect_day_of_week: string;
-    begin_in_effect_time: string;
-    end_in_effect_day_of_week: string;
-    end_in_effect_time: string;
+    timeslots: Timeslots[];
     alternate_fare_detail_id: string | null;
     date_created: string;
     date_modified: string;
+}
+
+interface Timeslots {
+    day_of_week: string;
+    start_time: string;
+    end_time: string;
 }
 
 /**
@@ -34,12 +37,11 @@ const parseFareDetails = (fareDetails: FareDetailsInput): FareDetails => ({
     system_name: fareDetails.system_name,
     fare_type: fareDetails.fare_type,
     fare_amount: parseFloat(fareDetails.fare_amount),
-    begin_in_effect_day_of_week: parseInt(
-        fareDetails.begin_in_effect_day_of_week,
-    ),
-    begin_in_effect_time: fareDetails.begin_in_effect_time,
-    end_in_effect_day_of_week: parseInt(fareDetails.end_in_effect_day_of_week),
-    end_in_effect_time: fareDetails.end_in_effect_time,
+    timeslots: fareDetails.timeslots.map((timeslot: Timeslots) => ({
+        day_of_week: parseInt(timeslot.day_of_week),
+        start_time: timeslot.start_time,
+        end_time: timeslot.end_time,
+    })),
     alternate_fare_detail_id: parseIntOrFallback(
         fareDetails.alternate_fare_detail_id,
     ),
@@ -97,14 +99,7 @@ export const getFareDetails = async (
                 },
                 name: fareDetail.fare_type,
                 fare_amount: fareDetail.fare_amount,
-                begin_in_effect: {
-                    day_of_week: fareDetail.begin_in_effect_day_of_week,
-                    time: fareDetail.begin_in_effect_time,
-                },
-                end_in_effect: {
-                    day_of_week: fareDetail.end_in_effect_day_of_week,
-                    time: fareDetail.end_in_effect_time,
-                },
+                timeslots: fareDetail.timeslots,
                 alternate_fare_detail_id:
                     fareDetailsParsed[0].alternate_fare_detail_id,
                 date_created: fareDetail.date_created,
