@@ -96,13 +96,13 @@ export const getFareDetails = async (
 
         const responseObj: object = {
             fares: fareDetails.map((fareDetail) => ({
-                fare_detail_id: fareDetail.fare_detail_id,
+                fare_detail_id: parseInt(fareDetail.fare_detail_id),
                 commute_system: {
                     commute_system_id: fareDetail.commute_system_id,
                     name: fareDetail.system_name,
                 },
                 name: fareDetail.fare_type,
-                fare_amount: fareDetail.fare_amount,
+                fare_amount: parseFloat(fareDetail.fare_amount),
                 timeslots: timeslots
                     .filter(
                         (ts) => ts.fare_detail_id === fareDetail.fare_detail_id,
@@ -112,8 +112,9 @@ export const getFareDetails = async (
                         start_time: timeslot.start_time,
                         end_time: timeslot.end_time,
                     })),
-                alternate_fare_detail_id:
+                alternate_fare_detail_id: parseIntOrFallback(
                     fareDetails[0].alternate_fare_detail_id,
+                ),
                 date_created: fareDetail.date_created,
                 date_modified: fareDetail.date_modified,
             })),
