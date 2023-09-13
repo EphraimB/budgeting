@@ -32,23 +32,17 @@ router.post(
         body('fare_amount')
             .isFloat()
             .withMessage('Fare amount must be a number'),
-        body('begin_in_effect_day_of_week')
+        body('timeslots.*.day_of_week')
             .isInt({ min: 0, max: 6 })
             .withMessage(
-                'Begin in effect day of week must be a number between 0 and 6',
+                'Invalid day of week value. It should be between 0 (Sunday) and 6 (Saturday).',
             ),
-        body('begin_in_effect_time')
+        body('timeslots.*.start_time')
             .isTime({ hourFormat: 'hour24', mode: 'withSeconds' })
-            .withMessage('Invalid time')
-            .withMessage('Invalid time'),
-        body('end_in_effect_day_of_week')
-            .isInt({ min: 0, max: 6 })
-            .withMessage(
-                'End in effect day of week must be a number between 0 and 6',
-            ),
-        body('end_in_effect_time')
+            .withMessage('Invalid start time format. It should be HH:MM:SS.'),
+        body('timeslots.*.end_time')
             .isTime({ hourFormat: 'hour24', mode: 'withSeconds' })
-            .withMessage('Invalid time'),
+            .withMessage('Invalid end time format. It should be HH:MM:SS.'),
         body('alternate_fare_detail_id')
             .optional({ nullable: true })
             .isInt({ min: 1 })
@@ -69,23 +63,17 @@ router.put(
         body('fare_amount')
             .isFloat()
             .withMessage('Fare amount must be a number'),
-        body('begin_in_effect_day_of_week')
+        body('timeslots.*.day_of_week')
             .isInt({ min: 0, max: 6 })
             .withMessage(
-                'Begin in effect day of week must be a number between 0 and 6',
+                'Invalid day of week value. It should be between 0 (Sunday) and 6 (Saturday).',
             ),
-        body('begin_in_effect_time')
+        body('timeslots.*.start_time')
             .isTime({ hourFormat: 'hour24', mode: 'withSeconds' })
-            .withMessage('Invalid time')
-            .withMessage('Invalid time'),
-        body('end_in_effect_day_of_week')
-            .isInt({ min: 0, max: 6 })
-            .withMessage(
-                'End in effect day of week must be a number between 0 and 6',
-            ),
-        body('end_in_effect_time')
+            .withMessage('Invalid start time format. It should be HH:MM:SS.'),
+        body('timeslots.*.end_time')
             .isTime({ hourFormat: 'hour24', mode: 'withSeconds' })
-            .withMessage('Invalid time'),
+            .withMessage('Invalid end time format. It should be HH:MM:SS.'),
         body('alternate_fare_detail_id')
             .optional({ nullable: true })
             .isInt({ min: 1 })
