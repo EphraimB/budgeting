@@ -5,50 +5,9 @@ import {
     fareTimeslotsQueries,
 } from '../models/queryData.js';
 import { handleError, executeQuery } from '../utils/helperFunctions.js';
-import { type FareDetails } from '../types/types.js';
+import { type FareDetails, type Timeslots } from '../types/types.js';
 import { parseIntOrFallback } from '../utils/helperFunctions.js';
 import { logger } from '../config/winston.js';
-
-interface FareDetailsInput {
-    fare_detail_id: string;
-    commute_system_id: string;
-    system_name: string;
-    fare_type: string;
-    fare_amount: string;
-    timeslots: Timeslots[];
-    alternate_fare_detail_id: string | null;
-    date_created: string;
-    date_modified: string;
-}
-
-interface Timeslots {
-    day_of_week: string;
-    start_time: string;
-    end_time: string;
-}
-
-/**
- *
- * @param fareDetails - Fare details object to parse
- * @returns - Parsed fare details object
- */
-const parseFareDetails = (fareDetails: FareDetailsInput): FareDetails => ({
-    fare_detail_id: parseInt(fareDetails.fare_detail_id),
-    commute_system_id: parseInt(fareDetails.commute_system_id),
-    system_name: fareDetails.system_name,
-    fare_type: fareDetails.fare_type,
-    fare_amount: parseFloat(fareDetails.fare_amount),
-    timeslots: fareDetails.timeslots.map((timeslot: Timeslots) => ({
-        day_of_week: parseInt(timeslot.day_of_week),
-        start_time: timeslot.start_time,
-        end_time: timeslot.end_time,
-    })),
-    alternate_fare_detail_id: parseIntOrFallback(
-        fareDetails.alternate_fare_detail_id,
-    ),
-    date_created: fareDetails.date_created,
-    date_modified: fareDetails.date_modified,
-});
 
 /**
  *
@@ -80,7 +39,7 @@ export const getFareDetails = async (
             params = [];
         }
 
-        const fareDetails = await executeQuery<FareDetailsInput>(query, params);
+        const fareDetails = await executeQuery(query, params);
 
         if (fareDetails.length === 0) {
             if (id !== null && id !== undefined) {
@@ -170,7 +129,7 @@ export const createFareDetail = async (
             return;
         }
 
-        const fareDetails = await executeQuery<FareDetailsInput>(
+        const fareDetails = await executeQuery(
             fareDetailsQueries.createFareDetails,
             [commute_system_id, name, fare_amount, alternate_fare_detail_id],
         );
@@ -230,6 +189,58 @@ export const createFareDetail = async (
 
 /**
  *
+ * @param current - Current timeslots
+ * @param incoming - Incoming timeslots
+ * @returns Object containing timeslots to insert, delete, and update
+ */
+function compareTimeslots(current: Timeslots[], incoming: Timeslots[]) {
+    let toInsert = [];
+    let toDelete = [];
+    let toUpdate = [];
+
+    const currentMap = new Map();
+    const incomingMap = new Map();
+
+    // Create a map from the current timeslots
+    for (let slot of current) {
+        const key = `${slot.day_of_week}-${slot.start_time}-${slot.end_time}`;
+        currentMap.set(key, slot);
+    }
+
+    // Create a map from the incoming timeslots
+    for (let slot of incoming) {
+        const key = `${slot.day_of_week}-${slot.start_time}-${slot.end_time}`;
+        incomingMap.set(key, slot);
+    }
+
+    // Identify new and modified timeslots
+    for (let [key, slot] of incomingMap) {
+        if (!currentMap.has(key)) {
+            toInsert.push(slot);
+        } else {
+            const currentSlot = currentMap.get(key);
+            if (JSON.stringify(currentSlot) !== JSON.stringify(slot)) {
+                toUpdate.push(slot);
+            }
+        }
+    }
+
+    // Identify deleted timeslots
+    for (let key of currentMap.keys()) {
+        if (!incomingMap.has(key)) {
+            toDelete.push(currentMap.get(key));
+        }
+    }
+
+    return {
+        toInsert,
+        toDelete,
+        toUpdate,
+    };
+}
+
+/**
+ *
  * @param request - Request object
  * @param response - Response object
  * Sends a response with the updated fare detail or an error message and updates the fare detail in the database
@@ -247,7 +258,7 @@ export const updateFareDetail = async (
         alternate_fare_detail_id,
     } = request.body;
     try {
-        const fareDetails = await executeQuery<FareDetailsInput>(
+        const fareDetails = await executeQuery(
             fareDetailsQueries.getFareDetailsById,
             [id],
         );
@@ -257,21 +268,54 @@ export const updateFareDetail = async (
             return;
         }
 
-        const rows = await executeQuery<FareDetailsInput>(
-            fareDetailsQueries.updateFareDetails,
-            [
-                commute_system_id,
-                name,
-                fare_amount,
-                timeslots,
-                alternate_fare_detail_id,
+        const currentTimeslots = await executeQuery(
+            fareTimeslotsQueries.getTimeslotsByFareId,
+            [id],
+        );
+
+        const { toInsert, toDelete, toUpdate } = compareTimeslots(
+            currentTimeslots,
+            timeslots,
+        );
+
+        toDelete.forEach(async (timeslot) => {
+            await executeQuery(fareTimeslotsQueries.deleteTimeslot, [
+                timeslot.timeslot_id,
+            ]);
+        });
+
+        toInsert.forEach(async (timeslot) => {
+            await executeQuery(fareTimeslotsQueries.createTimeslot, [
                 id,
-            ],
-        );
-        const fareDetailsParsed = rows.map((fareDetail) =>
-            parseFareDetails(fareDetail),
-        );
-        response.status(200).json(fareDetailsParsed);
+                timeslot.day_of_week,
+                timeslot.start_time,
+                timeslot.end_time,
+            ]);
+        });
+
+        const rows = await executeQuery(fareDetailsQueries.updateFareDetails, [
+            commute_system_id,
+            name,
+            fare_amount,
+            alternate_fare_detail_id,
+            id,
+        ]);
+
+        const responseObj: object = {
+            fare_detail_id: fareDetails[0].fare_detail_id,
+            commute_system: {
+                commute_system_id: fareDetails[0].commute_system_id,
+                // name: commuteSystemResults[0].name,
+            },
+            name: fareDetails[0].fare_type,
+            fare_amount: parseFloat(fareDetails[0].fare_amount),
+            timeslots: timeslots,
+            alternate_fare_detail_id: fareDetails[0].alternate_fare_detail_id,
+            date_created: fareDetails[0].date_created,
+            date_modified: fareDetails[0].date_modified,
+        };
+
+        response.status(200).json(responseObj);
     } catch (error) {
         if (
             error.message.includes(
@@ -302,7 +346,7 @@ export const deleteFareDetail = async (
 ): Promise<void> => {
     const id = parseInt(request.params.id);
     try {
-        const fareDetails = await executeQuery<FareDetailsInput>(
+        const fareDetails = await executeQuery(
             fareDetailsQueries.getFareDetailsById,
             [id],
         );
@@ -312,7 +356,7 @@ export const deleteFareDetail = async (
             return;
         }
 
-        await executeQuery(fareTimeslotsQueries.deleteTimeslot, [id]);
+        await executeQuery(fareTimeslotsQueries.deleteTimeslotByFareId, [id]);
         await executeQuery(fareDetailsQueries.deleteFareDetails, [id]);
 
         response.status(200).send('Successfully deleted fare detail');

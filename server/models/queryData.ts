@@ -647,23 +647,14 @@ export const commuteScheduleQueries = {
 };
 
 export const fareTimeslotsQueries = {
-    getTimeslotsByFareId: `
-        SELECT fare_detail_id,
-            day_of_week,
-            start_time,
-            end_time
-        FROM timeslots WHERE fare_detail_id = $1`,
-    getTimeslots: `
-        SELECT fare_detail_id,
-            day_of_week,
-            start_time,
-            end_time
-        FROM timeslots`,
+    getTimeslotsByFareId: 'SELECT * FROM timeslots WHERE fare_detail_id = $1',
+    getTimeslots: 'SELECT * FROM timeslots',
     createTimeslot:
         'INSERT INTO timeslots (fare_detail_id, day_of_week, start_time, end_time) VALUES ($1, $2, $3, $4) RETURNING *',
     updateTimeslot:
         'UPDATE timeslots SET fare_detail_id = $1 day_of_week = $2, start_time = $3, end_time = $4 WHERE timeslot_id = $5',
-    deleteTimeslot: 'DELETE FROM timeslots WHERE fare_detail_id = $1',
+    deleteTimeslot: 'DELETE FROM timeslots WHERE timeslot_id = $1',
+    deleteTimeslotByFareId: 'DELETE FROM timeslots WHERE fare_detail_id = $1',
 };
 
 export const commuteOverviewQueries = {

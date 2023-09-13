@@ -244,7 +244,9 @@ export interface FareDetails {
     date_modified: string;
 }
 
-interface Timeslots {
+export interface Timeslots {
+    timeslot_id: number;
+    fare_detail_id: number;
     day_of_week: number;
     start_time: string;
     end_time: string;
