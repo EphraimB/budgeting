@@ -518,22 +518,13 @@ export const commuteHistory = [
     },
 ];
 
-export const fareDetails: FareDetails[] = [
+export const fareDetails: any[] = [
     {
         fare_detail_id: 1,
         commute_system_id: 1,
         system_name: 'OMNY',
         fare_type: 'Single Ride',
         fare_amount: 2.75,
-        timeslots: [
-            {
-                timeslot_id: 1,
-                fare_detail_id: 1,
-                day_of_week: 0,
-                start_time: '00:00:00',
-                end_time: '23:59:59',
-            },
-        ],
         alternate_fare_detail_id: null,
         date_created: '2020-01-01',
         date_modified: '2020-01-01',
@@ -544,18 +535,26 @@ export const fareDetails: FareDetails[] = [
         system_name: 'LIRR',
         fare_type: 'Weekly',
         fare_amount: 33,
-        timeslots: [
-            {
-                timeslot_id: 2,
-                fare_detail_id: 2,
-                day_of_week: 0,
-                start_time: '00:00:00',
-                end_time: '23:59:59',
-            },
-        ],
         alternate_fare_detail_id: null,
         date_created: '2020-01-01',
         date_modified: '2020-01-01',
+    },
+];
+
+export const timeslots: any[] = [
+    {
+        timeslot_id: 1,
+        fare_detail_id: 1,
+        day_of_week: 0,
+        start_time: '00:00:00',
+        end_time: '23:59:59',
+    },
+    {
+        timeslot_id: 2,
+        fare_detail_id: 2,
+        day_of_week: 0,
+        start_time: '00:00:00',
+        end_time: '23:59:59',
     },
 ];
 

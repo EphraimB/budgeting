@@ -1,6 +1,6 @@
 import { jest } from '@jest/globals';
 import { type Request, type Response } from 'express';
-import { fareDetails } from '../../models/mockData';
+import { fareDetails, timeslots } from '../../models/mockData';
 import { type QueryResultRow } from 'pg';
 import {
     parseIntOrFallback,
@@ -39,6 +39,7 @@ afterEach(() => {
 const mockModule = (
     executeQueryValue: QueryResultRow[] | string | null,
     errorMessage?: string,
+    executeQueryValueTwo?: QueryResultRow[] | string | null,
 ) => {
     const executeQuery =
         errorMessage !== null && errorMessage !== undefined
@@ -58,7 +59,7 @@ const mockModule = (
 describe('GET /api/expenses/commute/fares', () => {
     it('should respond with an array of fare details', async () => {
         // Arrange
-        mockModule(fareDetails);
+        mockModule(fareDetails, undefined, timeslots);
 
         const { getFareDetails } = await import(
             '../../controllers/fareDetailsController.js'
