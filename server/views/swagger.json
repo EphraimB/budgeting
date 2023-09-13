@@ -2534,21 +2534,25 @@
                         "type": "string",
                         "example": "Standard"
                     },
-                    "begin_in_effect_day_of_week": {
-                        "type": "integer",
-                        "example": 1
-                    },
-                    "begin_in_effect_time": {
-                        "type": "string",
-                        "pattern": "05:00:00"
-                    },
-                    "end_in_effect_day_of_week": {
-                        "type": "integer",
-                        "example": 1
-                    },
-                    "end_in_effect_time": {
-                        "type": "string",
-                        "pattern": "10:00:00"
+                    "timeslots": {
+                        "type": "array",
+                        "items": {
+                            "type": "object",
+                            "properties": {
+                                "day_of_week": {
+                                    "type": "integer",
+                                    "example": 1
+                                },
+                                "start_time": {
+                                    "type": "string",
+                                    "example": "05:00:00"
+                                },
+                                "end_time": {
+                                    "type": "string",
+                                    "example": "10:00:00"
+                                }
+                            }
+                        }
                     },
                     "alternate_fare_detail_id": {
                         "type": "integer",
@@ -3054,29 +3058,23 @@
                                                 "format": "double",
                                                 "example": 10.0
                                             },
-                                            "begin_in_effect": {
-                                                "type": "object",
-                                                "properties": {
-                                                    "day_of_week": {
-                                                        "type": "integer",
-                                                        "example": 1
-                                                    },
-                                                    "time": {
-                                                        "type": "string",
-                                                        "pattern": "05:00:00"
-                                                    }
-                                                }
-                                            },
-                                            "end_in_effect": {
-                                                "type": "object",
-                                                "properties": {
-                                                    "day_of_week": {
-                                                        "type": "integer",
-                                                        "example": 1
-                                                    },
-                                                    "time": {
-                                                        "type": "string",
-                                                        "pattern": "10:00:00"
+                                            "timeslots": {
+                                                "type": "array",
+                                                "items": {
+                                                    "type": "object",
+                                                    "properties": {
+                                                        "day_of_week": {
+                                                            "type": "integer",
+                                                            "example": 1
+                                                        },
+                                                        "start_time": {
+                                                            "type": "string",
+                                                            "example": "05:00:00"
+                                                        },
+                                                        "end_time": {
+                                                            "type": "string",
+                                                            "example": "10:00:00"
+                                                        }
                                                     }
                                                 }
                                             },
