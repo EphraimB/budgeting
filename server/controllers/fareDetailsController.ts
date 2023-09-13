@@ -231,10 +231,7 @@ export const updateFareDetail = async (
         commute_system_id,
         name,
         fare_amount,
-        begin_in_effect_day_of_week,
-        begin_in_effect_time,
-        end_in_effect_day_of_week,
-        end_in_effect_time,
+        timeslots,
         alternate_fare_detail_id,
     } = request.body;
     try {
