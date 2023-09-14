@@ -6,6 +6,7 @@ import {
     parseIntOrFallback,
     parseFloatOrFallback,
 } from '../../utils/helperFunctions';
+import { Timeslots } from '../../types/types';
 
 jest.mock('../../config/winston', () => ({
     logger: {
@@ -79,7 +80,7 @@ describe('GET /api/expenses/commute/fares', () => {
                 },
                 name: fareDetail.fare_type,
                 fare_amount: fareDetail.fare_amount,
-                timeslots: fareDetail.timeslots.map((timeslot) => ({
+                timeslots: fareDetail.timeslots.map((timeslot: Timeslots) => ({
                     day_of_week: timeslot.day_of_week,
                     start_time: timeslot.start_time,
                     end_time: timeslot.end_time,
