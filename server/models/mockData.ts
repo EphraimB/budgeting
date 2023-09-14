@@ -12,6 +12,7 @@ import {
     type Taxes,
     FareDetails,
     CommuteTicket,
+    Timeslots,
 } from '../types/types';
 
 export const employees: Employee[] = [
@@ -541,7 +542,7 @@ export const fareDetails: any[] = [
     },
 ];
 
-export const timeslots: any[] = [
+export const timeslots: Timeslots[] = [
     {
         timeslot_id: 1,
         fare_detail_id: 1,

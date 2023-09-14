@@ -38,22 +38,48 @@ afterEach(() => {
  * @returns - A mock module with the executeQuery and handleError functions
  */
 const mockModule = (
-    executeQueryValue: QueryResultRow[] | string | null,
+    executeQueryValueFirst: QueryResultRow[] | string | null,
     errorMessage?: string,
-    executeQueryValueTwo?: QueryResultRow[] | string | null,
+    executeQueryValueSecond?: QueryResultRow[] | string | null,
+    executeQueryValueThird?: QueryResultRow[] | string | null,
+    executeQueryValueFourth?: QueryResultRow[] | string | null,
 ) => {
-    const executeQuery =
-        errorMessage !== null && errorMessage !== undefined
-            ? jest.fn(async () => await Promise.reject(new Error(errorMessage)))
-            : jest.fn(async () => await Promise.resolve(executeQueryValue));
+    const executeQuery = jest.fn();
 
-    jest.mock('../../utils/helperFunctions', () => ({
+    if (errorMessage !== null && errorMessage !== undefined) {
+        executeQuery.mockImplementationOnce(
+            async () => await Promise.reject(new Error(errorMessage)),
+        );
+    } else {
+        executeQuery.mockImplementationOnce(
+            async () => await Promise.resolve(executeQueryValueFirst),
+        );
+        if (executeQueryValueSecond !== undefined) {
+            executeQuery.mockImplementationOnce(
+                async () => await Promise.resolve(executeQueryValueSecond),
+            );
+
+            if (executeQueryValueThird !== undefined) {
+                executeQuery.mockImplementationOnce(
+                    async () => await Promise.resolve(executeQueryValueThird),
+                );
+
+                if (executeQueryValueFourth !== undefined) {
+                    executeQuery.mockImplementationOnce(
+                        async () =>
+                            await Promise.resolve(executeQueryValueFourth),
+                    );
+                }
+            }
+        }
+    }
+
+    jest.mock('../../utils/helperFunctions.js', () => ({
         executeQuery,
         handleError: jest.fn((res: Response, message: string) => {
             res.status(400).json({ message });
         }),
         parseIntOrFallback,
-        parseFloatOrFallback,
     }));
 };
 
@@ -80,11 +106,15 @@ describe('GET /api/expenses/commute/fares', () => {
                 },
                 name: fareDetail.fare_type,
                 fare_amount: fareDetail.fare_amount,
-                timeslots: fareDetail.timeslots.map((timeslot: Timeslots) => ({
-                    day_of_week: timeslot.day_of_week,
-                    start_time: timeslot.start_time,
-                    end_time: timeslot.end_time,
-                })),
+                timeslots: timeslots
+                    .filter(
+                        (ts) => ts.fare_detail_id === fareDetail.fare_detail_id,
+                    )
+                    .map((timeslot: Timeslots) => ({
+                        day_of_week: timeslot.day_of_week,
+                        start_time: timeslot.start_time,
+                        end_time: timeslot.end_time,
+                    })),
                 alternate_fare_detail_id: fareDetail.alternate_fare_detail_id,
                 date_created: fareDetail.date_created,
                 date_modified: fareDetail.date_modified,
@@ -120,22 +150,33 @@ describe('GET /api/expenses/commute/fares', () => {
 
     it('should respond with an array of fare details with an id', async () => {
         // Arrange
-        mockModule([
-            {
-                fare_detail_id: 1,
-                commute_system_id: 1,
-                system_name: 'BART',
-                fare_type: 'Adult',
-                fare_amount: 5.65,
-                begin_in_effect_day_of_week: 1,
-                begin_in_effect_time: '00:00:00',
-                end_in_effect_day_of_week: 7,
-                end_in_effect_time: '23:59:59',
-                alternate_fare_detail_id: null,
-                date_created: '2021-01-01T00:00:00.000Z',
-                date_modified: '2021-01-01T00:00:00.000Z',
-            },
-        ]);
+        mockModule(
+            [
+                {
+                    fare_detail_id: 1,
+                    commute_system_id: 1,
+                    system_name: 'BART',
+                    fare_type: 'Adult',
+                    fare_amount: 5.65,
+                    begin_in_effect_day_of_week: 1,
+                    begin_in_effect_time: '00:00:00',
+                    end_in_effect_day_of_week: 7,
+                    end_in_effect_time: '23:59:59',
+                    alternate_fare_detail_id: null,
+                    date_created: '2021-01-01T00:00:00.000Z',
+                    date_modified: '2021-01-01T00:00:00.000Z',
+                },
+            ],
+            undefined,
+            [
+                {
+                    fare_detail_id: 1,
+                    day_of_week: 1,
+                    start_time: '00:00:00',
+                    end_time: '23:59:59',
+                },
+            ],
+        );
 
         const { getFareDetails } = await import(
             '../../controllers/fareDetailsController.js'
@@ -156,14 +197,13 @@ describe('GET /api/expenses/commute/fares', () => {
                     },
                     name: 'Adult',
                     fare_amount: 5.65,
-                    begin_in_effect: {
-                        day_of_week: 1,
-                        time: '00:00:00',
-                    },
-                    end_in_effect: {
-                        day_of_week: 7,
-                        time: '23:59:59',
-                    },
+                    timeslots: [
+                        {
+                            day_of_week: 1,
+                            start_time: '00:00:00',
+                            end_time: '23:59:59',
+                        },
+                    ],
                     alternate_fare_detail_id: null,
                     date_created: '2021-01-01T00:00:00.000Z',
                     date_modified: '2021-01-01T00:00:00.000Z',
