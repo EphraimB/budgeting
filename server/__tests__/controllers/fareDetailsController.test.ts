@@ -1,6 +1,6 @@
 import { jest } from '@jest/globals';
 import { type Request, type Response } from 'express';
-import { fareDetails, timeslots } from '../../models/mockData';
+import { commuteSystems, fareDetails, timeslots } from '../../models/mockData';
 import { type QueryResultRow } from 'pg';
 import {
     parseIntOrFallback,
@@ -259,23 +259,81 @@ describe('GET /api/expenses/commute/fares', () => {
 
 describe('POST /api/expenses/commute/fares', () => {
     it('should respond with the new fare detail', async () => {
-        const newFareDetail = fareDetails.filter(
-            (system) => system.fare_detail_id === 1,
-        );
+        const newFareDetail = [
+            {
+                fare_detail_id: 1,
+                commute_system_id: 1,
+                system_name: 'BART',
+                fare_type: 'Adult',
+                fare_amount: 5.65,
+                begin_in_effect_day_of_week: 1,
+                begin_in_effect_time: '00:00:00',
+                end_in_effect_day_of_week: 7,
+                end_in_effect_time: '23:59:59',
+                alternate_fare_detail_id: null,
+                date_created: '2021-01-01T00:00:00.000Z',
+                date_modified: '2021-01-01T00:00:00.000Z',
+            },
+        ];
 
-        mockModule(newFareDetail);
+        mockModule(
+            [{ commute_system_id: 1, name: 'BART' }],
+            undefined,
+            newFareDetail,
+            [
+                {
+                    timeslot_id: 1,
+                    fare_detail_id: 1,
+                    day_of_week: 1,
+                    start_time: '00:00:00',
+                    end_time: '23:59:59',
+                },
+            ],
+        );
 
         const { createFareDetail } = await import(
             '../../controllers/fareDetailsController.js'
         );
 
-        mockRequest.body = newFareDetail;
+        mockRequest.body = {
+            commute_system_id: 1,
+            name: 'Adult',
+            fare_amount: 5.65,
+            timeslots: [
+                {
+                    day_of_week: 1,
+                    start_time: '00:00:00',
+                    end_time: '23:59:59',
+                },
+            ],
+            alternate_fare_detail_id: null,
+        };
 
         await createFareDetail(mockRequest as Request, mockResponse);
 
+        const responseObj = {
+            fare_detail_id: 1,
+            commute_system: {
+                commute_system_id: 1,
+                name: 'BART',
+            },
+            name: 'Adult',
+            fare_amount: 5.65,
+            timeslots: [
+                {
+                    day_of_week: 1,
+                    start_time: '00:00:00',
+                    end_time: '23:59:59',
+                },
+            ],
+            alternate_fare_detail_id: null,
+            date_created: '2021-01-01T00:00:00.000Z',
+            date_modified: '2021-01-01T00:00:00.000Z',
+        };
+
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(201);
-        expect(mockResponse.json).toHaveBeenCalledWith(newFareDetail);
+        expect(mockResponse.json).toHaveBeenCalledWith(responseObj);
     });
 
     it('should handle errors correctly', async () => {
