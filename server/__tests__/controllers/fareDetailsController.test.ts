@@ -2,10 +2,7 @@ import { jest } from '@jest/globals';
 import { type Request, type Response } from 'express';
 import { fareDetails, timeslots } from '../../models/mockData';
 import { type QueryResultRow } from 'pg';
-import {
-    parseIntOrFallback,
-    parseFloatOrFallback,
-} from '../../utils/helperFunctions';
+import { parseIntOrFallback } from '../../utils/helperFunctions';
 import { Timeslots } from '../../types/types';
 
 jest.mock('../../config/winston', () => ({
@@ -410,8 +407,6 @@ describe('PUT /api/expenses/commute/fares/:id', () => {
                     end_time: '23:59:59',
                 },
             ],
-            [],
-            [],
             [],
             [{ name: 'BART' }],
         );
