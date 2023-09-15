@@ -4,6 +4,7 @@ import {
     commuteSystemQueries,
     cronJobQueries,
     fareDetailsQueries,
+    fareTimeslotsQueries,
 } from '../models/queryData.js';
 import { handleError, executeQuery } from '../utils/helperFunctions.js';
 import {
@@ -153,8 +154,9 @@ export const createCommuteSchedule = async (
     response: Response,
     next: NextFunction,
 ) => {
-    const { account_id, day_of_week, fare_detail_id, start_time, duration } =
-        request.body;
+    const { account_id, day_of_week, start_time, duration } = request.body;
+
+    let fare_detail_id: number = request.body.fare_detail_id;
 
     let fareDetail: FareDetails[] = [];
 
@@ -174,34 +176,45 @@ export const createCommuteSchedule = async (
             return;
         }
 
+        fareDetail = await executeQuery(fareDetailsQueries.getFareDetailsById, [
+            fare_detail_id,
+        ]);
+
+        const fareTimeslots: Timeslots[] = await executeQuery(
+            fareTimeslotsQueries.getTimeslotsByFareId,
+            [fare_detail_id],
+        );
+
+        let alternateFareDetailId: number | null = null;
+
+        for (let timeslot of fareTimeslots) {
+            if (
+                !(
+                    start_time >= timeslot.start_time &&
+                    start_time <= timeslot.end_time
+                ) &&
+                day_of_week === timeslot.day_of_week
+            ) {
+                alternateFareDetailId = fareDetail[0].alternate_fare_detail_id;
+                break;
+            }
+        }
+
+        if (alternateFareDetailId) {
+            fareDetail = await executeQuery(
+                fareDetailsQueries.getFareDetailsById,
+                [alternateFareDetailId],
+            );
+
+            fare_detail_id = alternateFareDetailId;
+        }
+
         const rows = await executeQuery(
             commuteScheduleQueries.createCommuteSchedule,
             [account_id, day_of_week, fare_detail_id, start_time, duration],
         );
 
         const commuteSchedule = rows.map((s) => parseCommuteSchedule(s));
-
-        fareDetail = await executeQuery(fareDetailsQueries.getFareDetailsById, [
-            fare_detail_id,
-        ]);
-
-        // Make sure the schedule is in the fare detail's timeslots
-        const timeslots: Timeslots[] = fareDetail[0].timeslots;
-
-        logger.info('Timeslots: ' + timeslots);
-
-        timeslots.forEach(async (timeslot: Timeslots) => {
-            if (
-                start_time > timeslot.start_time &&
-                start_time < timeslot.end_time &&
-                day_of_week === timeslot.day_of_week
-            ) {
-                fareDetail = await executeQuery(
-                    fareDetailsQueries.getFareDetailsById,
-                    [fareDetail[0].alternate_fare_detail_id],
-                );
-            }
-        });
 
         const cronParams = {
             date: new Date(
