@@ -1,6 +1,6 @@
 import { jest } from '@jest/globals';
 import { type Request, type Response } from 'express';
-import { commuteSystems, fareDetails, timeslots } from '../../models/mockData';
+import { fareDetails, timeslots } from '../../models/mockData';
 import { type QueryResultRow } from 'pg';
 import {
     parseIntOrFallback,
@@ -43,6 +43,8 @@ const mockModule = (
     executeQueryValueSecond?: QueryResultRow[] | string | null,
     executeQueryValueThird?: QueryResultRow[] | string | null,
     executeQueryValueFourth?: QueryResultRow[] | string | null,
+    executeQueryValueFifth?: QueryResultRow[] | string | null,
+    executeQueryValueSixth?: QueryResultRow[] | string | null,
 ) => {
     const executeQuery = jest.fn();
 
@@ -69,6 +71,22 @@ const mockModule = (
                         async () =>
                             await Promise.resolve(executeQueryValueFourth),
                     );
+
+                    if (executeQueryValueFifth !== undefined) {
+                        executeQuery.mockImplementationOnce(
+                            async () =>
+                                await Promise.resolve(executeQueryValueFifth),
+                        );
+
+                        if (executeQueryValueSixth !== undefined) {
+                            executeQuery.mockImplementationOnce(
+                                async () =>
+                                    await Promise.resolve(
+                                        executeQueryValueSixth,
+                                    ),
+                            );
+                        }
+                    }
                 }
             }
         }
@@ -363,24 +381,85 @@ describe('POST /api/expenses/commute/fares', () => {
 
 describe('PUT /api/expenses/commute/fares/:id', () => {
     it('should respond with the updated fare detail', async () => {
-        const updatedFareDetail = fareDetails.filter(
-            (history) => history.fare_detail_id === 1,
-        );
+        const updatedFareDetail = [
+            {
+                fare_detail_id: 1,
+                commute_system_id: 1,
+                system_name: 'BART',
+                fare_type: 'Adult',
+                fare_amount: 5.65,
+                begin_in_effect_day_of_week: 1,
+                begin_in_effect_time: '00:00:00',
+                end_in_effect_day_of_week: 7,
+                end_in_effect_time: '23:59:59',
+                alternate_fare_detail_id: null,
+                date_created: '2021-01-01T00:00:00.000Z',
+                date_modified: '2021-01-01T00:00:00.000Z',
+            },
+        ];
 
-        mockModule(updatedFareDetail);
+        mockModule(
+            updatedFareDetail,
+            undefined,
+            [
+                {
+                    timeslot_id: 1,
+                    fare_detail_id: 1,
+                    day_of_week: 1,
+                    start_time: '00:00:00',
+                    end_time: '23:59:59',
+                },
+            ],
+            [],
+            [],
+            [],
+            [{ name: 'BART' }],
+        );
 
         const { updateFareDetail } = await import(
             '../../controllers/fareDetailsController.js'
         );
 
         mockRequest.params = { id: 1 };
-        mockRequest.body = updatedFareDetail;
+        mockRequest.body = {
+            commute_system_id: 1,
+            name: 'Adult',
+            fare_amount: 5.65,
+            timeslots: [
+                {
+                    day_of_week: 1,
+                    start_time: '00:00:00',
+                    end_time: '23:59:59',
+                },
+            ],
+            alternate_fare_detail_id: null,
+        };
 
         await updateFareDetail(mockRequest as Request, mockResponse);
 
+        const responseObj = {
+            fare_detail_id: 1,
+            commute_system: {
+                commute_system_id: 1,
+                name: 'BART',
+            },
+            name: 'Adult',
+            fare_amount: 5.65,
+            timeslots: [
+                {
+                    day_of_week: 1,
+                    start_time: '00:00:00',
+                    end_time: '23:59:59',
+                },
+            ],
+            alternate_fare_detail_id: null,
+            date_created: '2021-01-01T00:00:00.000Z',
+            date_modified: '2021-01-01T00:00:00.000Z',
+        };
+
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(200);
-        expect(mockResponse.json).toHaveBeenCalledWith(updatedFareDetail);
+        expect(mockResponse.json).toHaveBeenCalledWith(responseObj);
     });
 
     it('should handle errors correctly', async () => {

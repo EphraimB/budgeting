@@ -193,7 +193,10 @@ export const createFareDetail = async (
  * @param incoming - Incoming timeslots
  * @returns Object containing timeslots to insert, delete, and update
  */
-function compareTimeslots(current: Timeslots[], incoming: Timeslots[]) {
+export const compareTimeslots = (
+    current: Timeslots[],
+    incoming: Timeslots[],
+) => {
     let toInsert = [];
     let toDelete = [];
     let toUpdate = [];
@@ -237,7 +240,7 @@ function compareTimeslots(current: Timeslots[], incoming: Timeslots[]) {
         toDelete,
         toUpdate,
     };
-}
+};
 
 /**
  *
