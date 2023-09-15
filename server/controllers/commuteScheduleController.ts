@@ -315,6 +315,28 @@ export const createCommuteScheduleReturnObject = async (
 
 /**
  *
+ * @param startTime - Start time of the schedule
+ * @param rangeStart - Start time of the range
+ * @param rangeEnd  - End time of the range
+ * @returns - True if the start time is within the range, false otherwise
+ */
+const isTimeWithinRange = (
+    startTime: string,
+    rangeStart: string,
+    rangeEnd: string,
+): boolean => {
+    const baseDate = '1970-01-01 '; // Using a base date since we're only comparing times
+    const startDateTime = new Date(baseDate + startTime);
+    const rangeStartDateTime = new Date(baseDate + rangeStart);
+    const rangeEndDateTime = new Date(baseDate + rangeEnd);
+
+    return (
+        startDateTime >= rangeStartDateTime && startDateTime < rangeEndDateTime
+    );
+};
+
+/**
+ *
  * @param request - Request object
  * @param response - Response object
  * @param next - Next function
@@ -326,8 +348,8 @@ export const updateCommuteSchedule = async (
     next: NextFunction,
 ): Promise<void> => {
     const id = parseInt(request.params.id);
-    const { account_id, day_of_week, start_time, duration } = request.body;
-    let fare_detail_id: number = request.body.fare_detail_id;
+    const { account_id, day_of_week, fare_detail_id, start_time, duration } =
+        request.body;
     let fareDetail: FareDetails[] = [];
 
     try {
@@ -360,52 +382,13 @@ export const updateCommuteSchedule = async (
             return;
         }
 
-        // fareDetail = await executeQuery(fareDetailsQueries.getFareDetailsById, [
-        //     fare_detail_id,
-        // ]);
-
-        // const fareTimeslots: Timeslots[] = await executeQuery(
-        //     fareTimeslotsQueries.getTimeslotsByFareId,
-        //     [fare_detail_id],
-        // );
-
-        // let alternateFareDetailId: number | null = null;
-
-        // for (let timeslot of fareTimeslots) {
-        //     if (
-        //         !(
-        //             start_time >= timeslot.start_time &&
-        //             start_time <= timeslot.end_time
-        //         ) &&
-        //         day_of_week === timeslot.day_of_week
-        //     ) {
-        //         alternateFareDetailId = fareDetail[0].alternate_fare_detail_id;
-        //         break;
-        //     }
-        // }
-
-        // if (alternateFareDetailId) {
-        //     const oldFare = fareDetail[0].fare_amount;
-
-        //     fareDetail = await executeQuery(
-        //         fareDetailsQueries.getFareDetailsById,
-        //         [alternateFareDetailId],
-        //     );
-
-        //     fare_detail_id = alternateFareDetailId;
-
-        //     alerts.push({
-        //         message: `fare automatically stepped ${
-        //             oldFare - fareDetail[0].fare_amount > 0 ? 'down' : 'up'
-        //         } to ${fareDetail[0].fare_amount}`,
-        //     });
-        // }
-
         while (true) {
-            const fareDetail = await executeQuery(
+            fareDetail = await executeQuery(
                 fareDetailsQueries.getFareDetailsById,
                 [currentFareDetailId],
             );
+
+            console.log('fare detail', fareDetail);
 
             const oldFare = fareDetail[0].fare_amount;
 
@@ -417,22 +400,25 @@ export const updateCommuteSchedule = async (
             let timeslotMatched = false;
 
             for (let timeslot of fareTimeslots) {
+                console.log('timeslot start time', timeslot.start_time);
+                console.log('timeslot end time', timeslot.end_time);
+                console.log('timeslot day of week', timeslot.day_of_week);
+                console.log('start time', start_time);
+                console.log('day of week', day_of_week);
+
                 if (
-                    start_time >= timeslot.start_time &&
-                    start_time <= timeslot.end_time &&
+                    isTimeWithinRange(
+                        start_time,
+                        timeslot.start_time,
+                        timeslot.end_time,
+                    ) &&
                     day_of_week === timeslot.day_of_week
                 ) {
+                    console.log('timeslot matched');
                     timeslotMatched = true;
                     break; // exit the loop once a match is found
                 }
             }
-
-            // console.log(
-            //     fareDetail.filter(
-            //         (fd: FareDetails) =>
-            //             fd.fare_detail_id === currentFareDetailId,
-            //     ),
-            // );
 
             if (timeslotMatched) {
                 break; // exit the while loop since we found a matching timeslot
@@ -504,7 +490,7 @@ export const updateCommuteSchedule = async (
         await executeQuery(commuteScheduleQueries.updateCommuteSchedule, [
             account_id,
             day_of_week,
-            fare_detail_id,
+            currentFareDetailId,
             start_time,
             duration,
             id,
