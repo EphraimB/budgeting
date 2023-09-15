@@ -75,7 +75,7 @@ export const getCommuteSchedule = async (
             account_id !== undefined
         ) {
             query = commuteScheduleQueries.getCommuteSchedulesByIdAndAccountId;
-            params = [id, account_id];
+            params = [account_id, id];
         } else if (id !== null && id !== undefined) {
             query = commuteScheduleQueries.getCommuteSchedulesById;
             params = [id];
