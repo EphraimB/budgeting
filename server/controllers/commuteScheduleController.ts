@@ -6,7 +6,11 @@ import {
     fareDetailsQueries,
 } from '../models/queryData.js';
 import { handleError, executeQuery } from '../utils/helperFunctions.js';
-import { type CommuteSchedule } from '../types/types.js';
+import {
+    Timeslots,
+    type CommuteSchedule,
+    FareDetails,
+} from '../types/types.js';
 import { logger } from '../config/winston.js';
 import scheduleCronJob from '../crontab/scheduleCronJob.js';
 import deleteCronJob from '../crontab/deleteCronJob.js';
@@ -152,6 +156,8 @@ export const createCommuteSchedule = async (
     const { account_id, day_of_week, fare_detail_id, start_time, duration } =
         request.body;
 
+    let fareDetail: FareDetails[] = [];
+
     try {
         // Check for overlapping day_of_week and start_time
         const existingSchedule = await executeQuery(
@@ -175,10 +181,27 @@ export const createCommuteSchedule = async (
 
         const commuteSchedule = rows.map((s) => parseCommuteSchedule(s));
 
-        const fareDetail = await executeQuery(
-            fareDetailsQueries.getFareDetailsById,
-            [fare_detail_id],
-        );
+        fareDetail = await executeQuery(fareDetailsQueries.getFareDetailsById, [
+            fare_detail_id,
+        ]);
+
+        // Make sure the schedule is in the fare detail's timeslots
+        const timeslots: Timeslots[] = fareDetail[0].timeslots;
+
+        logger.info('Timeslots: ' + timeslots);
+
+        timeslots.forEach(async (timeslot: Timeslots) => {
+            if (
+                start_time > timeslot.start_time &&
+                start_time < timeslot.end_time &&
+                day_of_week === timeslot.day_of_week
+            ) {
+                fareDetail = await executeQuery(
+                    fareDetailsQueries.getFareDetailsById,
+                    [fareDetail[0].alternate_fare_detail_id],
+                );
+            }
+        });
 
         const cronParams = {
             date: new Date(

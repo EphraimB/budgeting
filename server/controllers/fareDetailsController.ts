@@ -72,7 +72,7 @@ export const getFareDetails = async (
                         end_time: timeslot.end_time,
                     })),
                 alternate_fare_detail_id: parseIntOrFallback(
-                    fareDetails[0].alternate_fare_detail_id,
+                    fareDetail.alternate_fare_detail_id,
                 ),
                 date_created: fareDetail.date_created,
                 date_modified: fareDetail.date_modified,
