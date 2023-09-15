@@ -309,9 +309,21 @@ export const updateCommuteSchedule = async (
     next: NextFunction,
 ): Promise<void> => {
     const id = parseInt(request.params.id);
-    const { account_id, day_of_week, fare_detail_id, start_time, duration } =
-        request.body;
+    const { account_id, day_of_week, start_time, duration } = request.body;
+    let fare_detail_id: number = request.body.fare_detail_id;
+    let fareDetail: FareDetails[] = [];
+
     try {
+        const commuteSchedule = await executeQuery(
+            commuteScheduleQueries.getCommuteSchedulesById,
+            [id],
+        );
+
+        if (commuteSchedule.length === 0) {
+            response.status(404).send('Schedule not found');
+            return;
+        }
+
         // Check for overlapping day_of_week and start_time
         const existingSchedule = await executeQuery(
             commuteScheduleQueries.getCommuteScheduleByDayAndTime,
@@ -327,20 +339,38 @@ export const updateCommuteSchedule = async (
             return;
         }
 
-        const commuteSchedule = await executeQuery(
-            commuteScheduleQueries.getCommuteSchedulesById,
-            [id],
-        );
+        fareDetail = await executeQuery(fareDetailsQueries.getFareDetailsById, [
+            fare_detail_id,
+        ]);
 
-        if (commuteSchedule.length === 0) {
-            response.status(404).send('Schedule not found');
-            return;
-        }
-
-        const fareDetail = await executeQuery(
-            fareDetailsQueries.getFareDetailsById,
+        const fareTimeslots: Timeslots[] = await executeQuery(
+            fareTimeslotsQueries.getTimeslotsByFareId,
             [fare_detail_id],
         );
+
+        let alternateFareDetailId: number | null = null;
+
+        for (let timeslot of fareTimeslots) {
+            if (
+                !(
+                    start_time >= timeslot.start_time &&
+                    start_time <= timeslot.end_time
+                ) &&
+                day_of_week === timeslot.day_of_week
+            ) {
+                alternateFareDetailId = fareDetail[0].alternate_fare_detail_id;
+                break;
+            }
+        }
+
+        if (alternateFareDetailId) {
+            fareDetail = await executeQuery(
+                fareDetailsQueries.getFareDetailsById,
+                [alternateFareDetailId],
+            );
+
+            fare_detail_id = alternateFareDetailId;
+        }
 
         const cronParams = {
             date: new Date(
