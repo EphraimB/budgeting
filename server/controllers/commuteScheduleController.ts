@@ -448,7 +448,7 @@ export const updateCommuteSchedule = async (
         }
 
         if (systemClosed) {
-            response.status(200).send('System is closed for the given time');
+            response.status(400).send('System is closed for the given time');
             return;
         }
 
