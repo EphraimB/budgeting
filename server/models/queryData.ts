@@ -608,7 +608,7 @@ export const commuteScheduleQueries = {
         ON fare_details.commute_system_id = commute_systems.commute_system_id
         WHERE commute_schedule.commute_schedule_id = $1
     `,
-    getCommuteScheduleByDayAndTime: `
+    getCommuteScheduleByDayAndTimeExcludingId: `
         SELECT commute_schedule_id,
             commute_systems.commute_system_id,
             commute_schedule.account_id AS account_id,
@@ -636,6 +636,34 @@ export const commuteScheduleQueries = {
         (commute_schedule.start_time < $3 + interval '1 minute' * $4 AND commute_schedule.start_time >= $3)
         )
         AND commute_schedule.commute_schedule_id <> $5
+    `,
+    getCommuteScheduleByDayAndTime: `
+        SELECT commute_schedule_id,
+            commute_systems.commute_system_id,
+            commute_schedule.account_id AS account_id,
+            commute_schedule.cron_job_id AS cron_job_id,
+            commute_schedule.fare_detail_id AS fare_detail_id,
+            commute_schedule.day_of_week AS day_of_week,
+            concat(commute_systems.name, ' ', fare_details.name) AS pass,
+            commute_schedule.start_time AS start_time,
+            commute_schedule.duration AS duration,
+            fare_details.fare_amount AS fare_amount,
+            commute_schedule.date_created,
+            commute_schedule.date_modified
+        FROM commute_schedule
+        LEFT JOIN fare_details
+        ON commute_schedule.fare_detail_id = fare_details.fare_detail_id
+        LEFT JOIN commute_systems
+        ON fare_details.commute_system_id = commute_systems.commute_system_id
+        WHERE commute_schedule.account_id = $1
+        AND commute_schedule.day_of_week = $2
+        AND (
+        -- New schedule starts within an existing schedule's time slot
+        (commute_schedule.start_time <= $3 AND $3 < commute_schedule.start_time + interval '1 minute' * commute_schedule.duration)
+        OR
+        -- Existing schedule starts within new schedule's time slot
+        (commute_schedule.start_time < $3 + interval '1 minute' * $4 AND commute_schedule.start_time >= $3)
+        )
     `,
     createCommuteSchedule:
         'INSERT INTO commute_schedule (account_id, day_of_week, fare_detail_id, start_time, duration) VALUES ($1, $2, $3, $4, $5) RETURNING *',

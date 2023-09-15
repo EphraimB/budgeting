@@ -161,6 +161,8 @@ export const createCommuteSchedule = async (
     let fareDetail: FareDetails[] = [];
 
     try {
+        const alerts = [];
+
         // Check for overlapping day_of_week and start_time
         const existingSchedule = await executeQuery(
             commuteScheduleQueries.getCommuteScheduleByDayAndTime,
@@ -201,12 +203,20 @@ export const createCommuteSchedule = async (
         }
 
         if (alternateFareDetailId) {
+            const oldFare = fareDetail[0].fare_amount;
+
             fareDetail = await executeQuery(
                 fareDetailsQueries.getFareDetailsById,
                 [alternateFareDetailId],
             );
 
             fare_detail_id = alternateFareDetailId;
+
+            alerts.push({
+                message: `fare automatically stepped ${
+                    oldFare - fareDetail[0].fare_amount > 0 ? 'down' : 'up'
+                } to ${fareDetail[0].fare_amount}`,
+            });
         }
 
         const rows = await executeQuery(
@@ -260,6 +270,7 @@ export const createCommuteSchedule = async (
         ]);
 
         request.commute_schedule_id = commuteSchedule[0].commute_schedule_id;
+        request.alerts = alerts;
 
         next();
     } catch (error) {
@@ -279,6 +290,7 @@ export const createCommuteScheduleReturnObject = async (
     response: Response,
 ): Promise<void> => {
     const { commute_schedule_id } = request;
+    const { alerts } = request;
 
     try {
         const commuteSchedule = await executeQuery(
@@ -289,7 +301,12 @@ export const createCommuteScheduleReturnObject = async (
         const modifiedCommuteSchedule =
             commuteSchedule.map(parseCommuteSchedule);
 
-        response.status(201).json(modifiedCommuteSchedule);
+        const responseObj = {
+            schedule: modifiedCommuteSchedule,
+            alerts,
+        };
+
+        response.status(201).json(responseObj);
     } catch (error) {
         logger.error(error); // Log the error on the server side
         handleError(response, 'Error getting commute schedule');
@@ -326,7 +343,7 @@ export const updateCommuteSchedule = async (
 
         // Check for overlapping day_of_week and start_time
         const existingSchedule = await executeQuery(
-            commuteScheduleQueries.getCommuteScheduleByDayAndTime,
+            commuteScheduleQueries.getCommuteScheduleByDayAndTimeExcludingId,
             [account_id, day_of_week, start_time, duration, id],
         );
 

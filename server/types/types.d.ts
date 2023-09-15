@@ -301,5 +301,6 @@ declare module 'express-serve-static-core' {
         income_id: number;
         commute_schedule_id: number;
         fullyPaidBackDates: Record<number, string | null>;
+        alerts: object[];
     }
 }
