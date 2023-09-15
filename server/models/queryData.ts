@@ -635,6 +635,7 @@ export const commuteScheduleQueries = {
         -- Existing schedule starts within new schedule's time slot
         (commute_schedule.start_time < $3 + interval '1 minute' * $4 AND commute_schedule.start_time >= $3)
         )
+        AND commute_schedule.commute_schedule_id <> $5
     `,
     createCommuteSchedule:
         'INSERT INTO commute_schedule (account_id, day_of_week, fare_detail_id, start_time, duration) VALUES ($1, $2, $3, $4, $5) RETURNING *',

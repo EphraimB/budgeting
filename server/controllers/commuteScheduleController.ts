@@ -327,7 +327,7 @@ export const updateCommuteSchedule = async (
         // Check for overlapping day_of_week and start_time
         const existingSchedule = await executeQuery(
             commuteScheduleQueries.getCommuteScheduleByDayAndTime,
-            [account_id, day_of_week, start_time, duration],
+            [account_id, day_of_week, start_time, duration, id],
         );
 
         if (existingSchedule.length > 0) {
