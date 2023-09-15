@@ -331,7 +331,9 @@ export const updateCommuteSchedule = async (
     let fareDetail: FareDetails[] = [];
 
     try {
-        const alerts = [];
+        let currentFareDetailId = fare_detail_id;
+        let systemClosed = false;
+        const alerts: object[] = [];
 
         const commuteSchedule = await executeQuery(
             commuteScheduleQueries.getCommuteSchedulesById,
@@ -358,45 +360,99 @@ export const updateCommuteSchedule = async (
             return;
         }
 
-        fareDetail = await executeQuery(fareDetailsQueries.getFareDetailsById, [
-            fare_detail_id,
-        ]);
+        // fareDetail = await executeQuery(fareDetailsQueries.getFareDetailsById, [
+        //     fare_detail_id,
+        // ]);
 
-        const fareTimeslots: Timeslots[] = await executeQuery(
-            fareTimeslotsQueries.getTimeslotsByFareId,
-            [fare_detail_id],
-        );
+        // const fareTimeslots: Timeslots[] = await executeQuery(
+        //     fareTimeslotsQueries.getTimeslotsByFareId,
+        //     [fare_detail_id],
+        // );
 
-        let alternateFareDetailId: number | null = null;
+        // let alternateFareDetailId: number | null = null;
 
-        for (let timeslot of fareTimeslots) {
-            if (
-                !(
+        // for (let timeslot of fareTimeslots) {
+        //     if (
+        //         !(
+        //             start_time >= timeslot.start_time &&
+        //             start_time <= timeslot.end_time
+        //         ) &&
+        //         day_of_week === timeslot.day_of_week
+        //     ) {
+        //         alternateFareDetailId = fareDetail[0].alternate_fare_detail_id;
+        //         break;
+        //     }
+        // }
+
+        // if (alternateFareDetailId) {
+        //     const oldFare = fareDetail[0].fare_amount;
+
+        //     fareDetail = await executeQuery(
+        //         fareDetailsQueries.getFareDetailsById,
+        //         [alternateFareDetailId],
+        //     );
+
+        //     fare_detail_id = alternateFareDetailId;
+
+        //     alerts.push({
+        //         message: `fare automatically stepped ${
+        //             oldFare - fareDetail[0].fare_amount > 0 ? 'down' : 'up'
+        //         } to ${fareDetail[0].fare_amount}`,
+        //     });
+        // }
+
+        while (true) {
+            const fareDetail = await executeQuery(
+                fareDetailsQueries.getFareDetailsById,
+                [currentFareDetailId],
+            );
+
+            const oldFare = fareDetail[0].fare_amount;
+
+            const fareTimeslots: Timeslots[] = await executeQuery(
+                fareTimeslotsQueries.getTimeslotsByFareId,
+                [currentFareDetailId],
+            );
+
+            let timeslotMatched = false;
+
+            for (let timeslot of fareTimeslots) {
+                if (
                     start_time >= timeslot.start_time &&
-                    start_time <= timeslot.end_time
-                ) &&
-                day_of_week === timeslot.day_of_week
-            ) {
-                alternateFareDetailId = fareDetail[0].alternate_fare_detail_id;
+                    start_time <= timeslot.end_time &&
+                    day_of_week === timeslot.day_of_week
+                ) {
+                    timeslotMatched = true;
+                    break; // exit the loop once a match is found
+                }
+            }
+
+            // console.log(
+            //     fareDetail.filter(
+            //         (fd: FareDetails) =>
+            //             fd.fare_detail_id === currentFareDetailId,
+            //     ),
+            // );
+
+            if (timeslotMatched) {
+                break; // exit the while loop since we found a matching timeslot
+            } else if (fareDetail[0].alternate_fare_detail_id) {
+                alerts.push({
+                    message: `fare automatically stepped ${
+                        oldFare - fareDetail[0].fare_amount > 0 ? 'down' : 'up'
+                    } to ${fareDetail[0].fare_amount}`,
+                });
+
+                currentFareDetailId = fareDetail[0].alternate_fare_detail_id; // use the alternate fare ID for the next loop iteration
+            } else {
+                systemClosed = true; // no alternate fare ID and no timeslot matched, so system is closed
                 break;
             }
         }
 
-        if (alternateFareDetailId) {
-            const oldFare = fareDetail[0].fare_amount;
-
-            fareDetail = await executeQuery(
-                fareDetailsQueries.getFareDetailsById,
-                [alternateFareDetailId],
-            );
-
-            fare_detail_id = alternateFareDetailId;
-
-            alerts.push({
-                message: `fare automatically stepped ${
-                    oldFare - fareDetail[0].fare_amount > 0 ? 'down' : 'up'
-                } to ${fareDetail[0].fare_amount}`,
-            });
+        if (systemClosed) {
+            response.status(400).send('System is closed for the given time');
+            return;
         }
 
         const cronParams = {
