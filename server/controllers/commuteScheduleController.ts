@@ -382,15 +382,19 @@ export const updateCommuteSchedule = async (
             return;
         }
 
+        let oldFare = (
+            await executeQuery(fareDetailsQueries.getFareDetailsById, [
+                fare_detail_id,
+            ])
+        )[0].fare_amount;
+
         while (true) {
             fareDetail = await executeQuery(
                 fareDetailsQueries.getFareDetailsById,
                 [currentFareDetailId],
             );
 
-            console.log('fare detail', fareDetail);
-
-            const oldFare = fareDetail[0].fare_amount;
+            console.log('fare detail', fareDetail[0].fare_amount);
 
             const fareTimeslots: Timeslots[] = await executeQuery(
                 fareTimeslotsQueries.getTimeslotsByFareId,
@@ -423,12 +427,19 @@ export const updateCommuteSchedule = async (
             if (timeslotMatched) {
                 break; // exit the while loop since we found a matching timeslot
             } else if (fareDetail[0].alternate_fare_detail_id) {
+                const alternateFareDetail = await executeQuery(
+                    fareDetailsQueries.getFareDetailsById,
+                    [fareDetail[0].alternate_fare_detail_id],
+                );
+                const alternateFare = alternateFareDetail[0].fare_amount;
+
                 alerts.push({
                     message: `fare automatically stepped ${
-                        oldFare - fareDetail[0].fare_amount > 0 ? 'down' : 'up'
-                    } to ${fareDetail[0].fare_amount}`,
+                        oldFare - alternateFare > 0 ? 'down' : 'up'
+                    } to ${alternateFare}`,
                 });
 
+                oldFare = alternateFare;
                 currentFareDetailId = fareDetail[0].alternate_fare_detail_id; // use the alternate fare ID for the next loop iteration
             } else {
                 systemClosed = true; // no alternate fare ID and no timeslot matched, so system is closed
@@ -437,7 +448,7 @@ export const updateCommuteSchedule = async (
         }
 
         if (systemClosed) {
-            response.status(400).send('System is closed for the given time');
+            response.status(200).send('System is closed for the given time');
             return;
         }
 
