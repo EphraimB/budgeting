@@ -62,6 +62,10 @@ const mockModule = (
     executeQueryFourValue?: QueryResultRow[] | string | null,
     executeQueryFiveValue?: QueryResultRow[] | string | null,
     executeQuerySixValue?: QueryResultRow[] | string | null,
+    executeQuerySevenValue?: QueryResultRow[] | string | null,
+    executeQueryEightValue?: QueryResultRow[] | string | null,
+    executeQueryNineValue?: QueryResultRow[] | string | null,
+    executeQueryTenValue?: QueryResultRow[] | string | null,
 ) => {
     const executeQuery = jest.fn();
 
@@ -97,6 +101,28 @@ const mockModule = (
 
     if (executeQuerySixValue) {
         executeQuery.mockReturnValueOnce(Promise.resolve(executeQuerySixValue));
+    }
+
+    if (executeQuerySevenValue) {
+        executeQuery.mockReturnValueOnce(
+            Promise.resolve(executeQuerySevenValue),
+        );
+    }
+
+    if (executeQueryEightValue) {
+        executeQuery.mockReturnValueOnce(
+            Promise.resolve(executeQueryEightValue),
+        );
+    }
+
+    if (executeQueryNineValue) {
+        executeQuery.mockReturnValueOnce(
+            Promise.resolve(executeQueryNineValue),
+        );
+    }
+
+    if (executeQueryTenValue) {
+        executeQuery.mockReturnValueOnce(Promise.resolve(executeQueryTenValue));
     }
 
     jest.mock('../../utils/helperFunctions', () => ({
@@ -414,7 +440,9 @@ describe('POST /api/expenses/commute/schedule', () => {
             [],
             undefined,
             [newSchedule],
-            [{ fare_amount: 10.75, system_name: 'LIRR', fare_type: 'Peak' }],
+            [newSchedule],
+            [{ day_of_week: 1, start_time: '08:00:00', end_time: '09:00:00' }],
+            [newSchedule],
             [{ cron_job_id: 1, unique_id: '123' }],
             [],
         );
