@@ -598,10 +598,12 @@ describe('PUT /api/expenses/commute/schedule/:id', () => {
 
         // Arrange
         mockModule(
-            [],
-            undefined,
             [newSchedule],
+            undefined,
+            [],
             [{ fare_amount: 10.75, system_name: 'LIRR', fare_type: 'Peak' }],
+            [{ fare_amount: 10.75, system_name: 'LIRR', fare_type: 'Peak' }],
+            [{ day_of_week: 1, start_time: '08:00:00', end_time: '09:00:00' }],
             [{ cron_job_id: 1, unique_id: '123' }],
             [],
             [],
