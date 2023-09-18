@@ -693,15 +693,35 @@ describe('PUT /api/expenses/commute/schedule/:id', () => {
         );
 
         mockRequest = { commute_schedule_id: 1 };
+        mockRequest.alerts = [];
 
         await updateCommuteScheduleReturnObject(
             mockRequest as Request,
             mockResponse,
         );
 
+        const responseObj = {
+            schedule: [
+                {
+                    commute_schedule_id: 1,
+                    commute_system_id: 1,
+                    account_id: 1,
+                    day_of_week: 1,
+                    fare_detail_id: 1,
+                    start_time: '08:00:00',
+                    duration: 60,
+                    fare_amount: 10.75,
+                    pass: 'LIRR Peak',
+                    date_created: '2021-01-01',
+                    date_modified: '2021-01-01',
+                },
+            ],
+            alerts: [],
+        };
+
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(200);
-        expect(mockResponse.json).toHaveBeenCalledWith(updatedSchedule);
+        expect(mockResponse.json).toHaveBeenCalledWith(responseObj);
     });
 
     it('should handle errors correctly', async () => {
