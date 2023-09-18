@@ -200,10 +200,6 @@ export const createCommuteSchedule = async (
             return;
         }
 
-        // fareDetail = await executeQuery(fareDetailsQueries.getFareDetailsById, [
-        //     fare_detail_id,
-        // ]);
-
         let oldFare = (
             await executeQuery(fareDetailsQueries.getFareDetailsById, [
                 fare_detail_id,
