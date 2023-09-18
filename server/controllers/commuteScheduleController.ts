@@ -154,14 +154,14 @@ export const createCommuteSchedule = async (
     response: Response,
     next: NextFunction,
 ) => {
-    const { account_id, day_of_week, start_time, duration } = request.body;
-
-    let fare_detail_id: number = request.body.fare_detail_id;
-
+    const { account_id, day_of_week, fare_detail_id, start_time, duration } =
+        request.body;
     let fareDetail: FareDetails[] = [];
 
     try {
-        const alerts = [];
+        let currentFareDetailId = fare_detail_id;
+        let systemClosed = false;
+        const alerts: object[] = [];
 
         // Check for overlapping day_of_week and start_time
         const existingSchedule = await executeQuery(
@@ -182,41 +182,68 @@ export const createCommuteSchedule = async (
             fare_detail_id,
         ]);
 
-        const fareTimeslots: Timeslots[] = await executeQuery(
-            fareTimeslotsQueries.getTimeslotsByFareId,
-            [fare_detail_id],
-        );
+        let oldFare = (
+            await executeQuery(fareDetailsQueries.getFareDetailsById, [
+                fare_detail_id,
+            ])
+        )[0].fare_amount;
 
-        let alternateFareDetailId: number | null = null;
+        while (true) {
+            fareDetail = await executeQuery(
+                fareDetailsQueries.getFareDetailsById,
+                [currentFareDetailId],
+            );
 
-        for (let timeslot of fareTimeslots) {
-            if (
-                !(
-                    start_time >= timeslot.start_time &&
-                    start_time <= timeslot.end_time
-                ) &&
-                day_of_week === timeslot.day_of_week
-            ) {
-                alternateFareDetailId = fareDetail[0].alternate_fare_detail_id;
+            console.log('fare detail', fareDetail[0].fare_amount);
+
+            const fareTimeslots: Timeslots[] = await executeQuery(
+                fareTimeslotsQueries.getTimeslotsByFareId,
+                [currentFareDetailId],
+            );
+
+            let timeslotMatched = false;
+
+            for (let timeslot of fareTimeslots) {
+                if (
+                    isTimeWithinRange(
+                        start_time,
+                        timeslot.start_time,
+                        timeslot.end_time,
+                    ) &&
+                    day_of_week === timeslot.day_of_week
+                ) {
+                    console.log('timeslot matched');
+                    timeslotMatched = true;
+                    break; // exit the loop once a match is found
+                }
+            }
+
+            if (timeslotMatched) {
+                break; // exit the while loop since we found a matching timeslot
+            } else if (fareDetail[0].alternate_fare_detail_id) {
+                const alternateFareDetail = await executeQuery(
+                    fareDetailsQueries.getFareDetailsById,
+                    [fareDetail[0].alternate_fare_detail_id],
+                );
+                const alternateFare = alternateFareDetail[0].fare_amount;
+
+                alerts.push({
+                    message: `fare automatically stepped ${
+                        oldFare - alternateFare > 0 ? 'down' : 'up'
+                    } to ${alternateFare}`,
+                });
+
+                oldFare = alternateFare;
+                currentFareDetailId = fareDetail[0].alternate_fare_detail_id; // use the alternate fare ID for the next loop iteration
+            } else {
+                systemClosed = true; // no alternate fare ID and no timeslot matched, so system is closed
                 break;
             }
         }
 
-        if (alternateFareDetailId) {
-            const oldFare = fareDetail[0].fare_amount;
-
-            fareDetail = await executeQuery(
-                fareDetailsQueries.getFareDetailsById,
-                [alternateFareDetailId],
-            );
-
-            fare_detail_id = alternateFareDetailId;
-
-            alerts.push({
-                message: `fare automatically stepped ${
-                    oldFare - fareDetail[0].fare_amount > 0 ? 'down' : 'up'
-                } to ${fareDetail[0].fare_amount}`,
-            });
+        if (systemClosed) {
+            response.status(400).send('System is closed for the given time');
+            return;
         }
 
         const rows = await executeQuery(
@@ -404,12 +431,6 @@ export const updateCommuteSchedule = async (
             let timeslotMatched = false;
 
             for (let timeslot of fareTimeslots) {
-                console.log('timeslot start time', timeslot.start_time);
-                console.log('timeslot end time', timeslot.end_time);
-                console.log('timeslot day of week', timeslot.day_of_week);
-                console.log('start time', start_time);
-                console.log('day of week', day_of_week);
-
                 if (
                     isTimeWithinRange(
                         start_time,
