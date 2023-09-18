@@ -267,7 +267,13 @@ export const createCommuteSchedule = async (
 
         const rows = await executeQuery(
             commuteScheduleQueries.createCommuteSchedule,
-            [account_id, day_of_week, fare_detail_id, start_time, duration],
+            [
+                account_id,
+                day_of_week,
+                currentFareDetailId,
+                start_time,
+                duration,
+            ],
         );
 
         const commuteSchedule = rows.map((s) => parseCommuteSchedule(s));
