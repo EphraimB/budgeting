@@ -216,8 +216,6 @@ export const createCommuteSchedule = async (
                 [currentFareDetailId],
             );
 
-            console.log('fare detail', fareDetail[0].fare_amount);
-
             const fareTimeslots: Timeslots[] = await executeQuery(
                 fareTimeslotsQueries.getTimeslotsByFareId,
                 [currentFareDetailId],
@@ -234,7 +232,6 @@ export const createCommuteSchedule = async (
                     ) &&
                     day_of_week === timeslot.day_of_week
                 ) {
-                    console.log('timeslot matched');
                     timeslotMatched = true;
                     break; // exit the loop once a match is found
                 }
@@ -421,8 +418,6 @@ export const updateCommuteSchedule = async (
                 [currentFareDetailId],
             );
 
-            console.log('fare detail', fareDetail[0].fare_amount);
-
             const fareTimeslots: Timeslots[] = await executeQuery(
                 fareTimeslotsQueries.getTimeslotsByFareId,
                 [currentFareDetailId],
@@ -439,7 +434,6 @@ export const updateCommuteSchedule = async (
                     ) &&
                     day_of_week === timeslot.day_of_week
                 ) {
-                    console.log('timeslot matched');
                     timeslotMatched = true;
                     break; // exit the loop once a match is found
                 }
