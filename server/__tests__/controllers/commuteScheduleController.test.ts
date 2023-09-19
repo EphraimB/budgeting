@@ -433,6 +433,7 @@ describe('POST /api/expenses/commute/schedule', () => {
             fare_detail_id: 1,
             start_time: '08:00:00',
             duration: 60,
+            timed_pass_duration: null,
         };
 
         // Arrange
@@ -547,6 +548,7 @@ describe('POST /api/expenses/commute/schedule', () => {
                     duration: 60,
                     fare_amount: 10.75,
                     pass: 'LIRR Peak',
+                    timed_pass_duration: null,
                     date_created: '2021-01-01',
                     date_modified: '2021-01-01',
                 },
@@ -742,6 +744,7 @@ describe('PUT /api/expenses/commute/schedule/:id', () => {
                     duration: 60,
                     fare_amount: 10.75,
                     pass: 'LIRR Peak',
+                    timed_pass_duration: null,
                     date_created: '2021-01-01',
                     date_modified: '2021-01-01',
                 },

@@ -21,6 +21,7 @@ describe('generateCommuteExpenses', () => {
             start_time: '08:00',
             pass: 'Sample Pass',
             fare_amount: 100,
+            timed_pass_duration: null,
             date_created: '2021-01-01',
             date_modified: '2021-01-01',
         };
