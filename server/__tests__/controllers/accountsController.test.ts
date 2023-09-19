@@ -210,7 +210,7 @@ describe('PUT /api/accounts/:id', () => {
         );
 
         mockRequest.params = { id: 1 };
-        mockRequest.body = updateAccount;
+        mockRequest.body = updatedAccount;
 
         await updateAccount(mockRequest as Request, mockResponse);
 

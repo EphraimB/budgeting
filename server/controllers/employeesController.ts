@@ -168,7 +168,7 @@ export const updateEmployee = async (
         }
 
         // Define the script command
-        const scriptCommand: string = `/app/dist/scripts/employeeChecker.sh`;
+        const scriptCommand: string = `/app/scripts/employeeChecker.sh`;
 
         // Execute the script
         exec(scriptCommand, (error, stdout, stderr) => {
@@ -270,7 +270,7 @@ export const deleteEmployee = async (
         await executeQuery(payrollQueries.deleteEmployee, [employee_id]);
 
         // Define the script command
-        const scriptCommand: string = `/app/dist/scripts/employeeChecker.sh`;
+        const scriptCommand: string = `/app/scripts/employeeChecker.sh`;
 
         // Execute the script
         exec(scriptCommand, (error, stdout, stderr) => {

@@ -7,17 +7,22 @@ transaction_amount=$4
 transaction_title=$5
 transaction_description=$6
 
+absolute_transaction_amount=$(echo "if ($transaction_amount < 0) -($transaction_amount) else $transaction_amount" | bc)
+
 # Get transaction_type from the prefixed unique_id
 transaction_type=$(echo "${unique_id}" | cut -d '_' -f 1)
 
 if [ "$transaction_type" = "payroll" ]; then
     transaction_tax_rate=$8
-elif [ "$transaction_type" = "loan" ] || [ "$transaction_type" = "income" ]; then
+elif [ "$transaction_type" = "loan" ] || [ "$transaction_type" = "income" ] || [ "$transaction_type" = "commute" ]; then
     transaction_tax_rate=0
 else
     # Get the tax_id for other transaction types
-    tax_id=$(PGPASSWORD="$PGPASSWORD" psql -h "$PGHOST" -p "$PGPORT" -d "$PGDB" -U "$PGUSER" -t -c "SELECT tax_id FROM ${transaction_type}s WHERE ${transaction_type}_id = '$id'")
-
+    if [ "$transaction_type" = "income" ]; then
+        tax_id=$(PGPASSWORD="$PGPASSWORD" psql -h "$PGHOST" -p "$PGPORT" -d "$PGDB" -U "$PGUSER" -t -c "SELECT tax_id FROM income WHERE income_id = '$id'")
+    else
+        tax_id=$(PGPASSWORD="$PGPASSWORD" psql -h "$PGHOST" -p "$PGPORT" -d "$PGDB" -U "$PGUSER" -t -c "SELECT tax_id FROM ${transaction_type}s WHERE ${transaction_type}_id = '$id'")
+    fi
     # Capture the exit status immediately after executing the command
     cmd_status=$?
 
@@ -30,6 +35,102 @@ else
         if [ -z "$transaction_tax_rate" ]; then
             transaction_tax_rate=0
         fi
+    fi
+fi
+
+if [ "$transaction_type" = "commute" ]; then
+    commute_system=$(PGPASSWORD="$PGPASSWORD" psql -h "$PGHOST" -p "$PGPORT" -d "$PGDB" -U "$PGUSER" -t -c "SELECT commute_schedule_id, commute_systems.commute_system_id, commute_systems.fare_cap, commute_schedule.fare_detail_id AS fare_detail_id, commute_schedule.day_of_week AS day_of_week, commute_schedule.start_time AS start_time, commute_systems.name AS commute_system, fare_details.name AS fare_type, commute_schedule.date_created, commute_schedule.date_modified FROM commute_schedule LEFT JOIN fare_details ON commute_schedule.fare_detail_id = fare_details.fare_detail_id LEFT JOIN commute_systems ON fare_details.commute_system_id = commute_systems.commute_system_id WHERE commute_schedule.commute_schedule_id = '$id'")
+
+    # Capture the exit status immediately after executing the command
+    cmd_status=$?
+
+    if [ $cmd_status -eq 0 ]; then
+        fare_cap=$(echo "$commute_system" | awk -F'|' '{print $3}')
+        commute_system_name=$(echo "$commute_system" | awk -F'|' '{print $7}')
+        fare_type=$(echo "$commute_system" | awk -F'|' '{print $8}')
+
+        # Trim whitespace
+        commute_system_name=$(echo "$commute_system_name" | xargs)
+        fare_type=$(echo "$fare_type" | xargs)
+
+        current_timestamp=$(date -u "+%Y-%m-%d %H:%M:%S")
+
+        echo "Fare cap: $fare_cap"
+
+        trimmed_fare_cap=$(echo "$fare_cap" | sed 's/^[[:space:]]*//;s/[[:space:]]*$//')
+
+        echo "Trimmed fare_cap: '$trimmed_fare_cap'"
+
+        # Check if fare_cap is not null or empty
+        if [ -n "$trimmed_fare_cap" ]; then
+            echo "Fare cap is not null or empty"
+            commute_progress=$(PGPASSWORD="$PGPASSWORD" psql -h "$PGHOST" -p "$PGPORT" -d "$PGDB" -U "$PGUSER" -t -c "WITH RECURSIVE ticket_fares AS (
+            SELECT
+                cs.commute_schedule_id,
+                cs.day_of_week,
+                csy.name AS system_name,
+                fd.commute_system_id,
+                csy.fare_cap AS fare_cap,
+                csy.fare_cap_duration AS fare_cap_duration,
+                COALESCE(fd.fare_amount, 0) AS fare_amount,
+                (
+                    SELECT COALESCE(SUM(ch.fare_amount), 0)
+                    FROM commute_history ch
+                    WHERE ch.account_id = cs.account_id
+                    AND ch.commute_system = csy.name
+                    AND (
+                        (csy.fare_cap_duration = 0 AND date(ch.timestamp) = current_date) OR
+                        (csy.fare_cap_duration = 1 AND date_trunc('week', ch.timestamp) = date_trunc('week', current_date)) OR
+                        (csy.fare_cap_duration = 2 AND date_trunc('month', ch.timestamp) = date_trunc('month', current_date))
+                    )
+                ) AS current_spent
+            FROM commute_schedule cs
+            JOIN fare_details fd ON cs.fare_detail_id = fd.fare_detail_id
+            JOIN commute_systems csy ON fd.commute_system_id = csy.commute_system_id
+            WHERE cs.account_id = $account_id AND fd.commute_system_id = (SELECT commute_system_id FROM commute_systems WHERE name = '$commute_system_name')
+            )
+            SELECT
+                tf.commute_system_id,
+                tf.system_name,
+                tf.fare_cap AS fare_cap,
+                tf.fare_cap_duration AS fare_cap_duration,
+                tf.current_spent
+            FROM ticket_fares tf
+            GROUP BY tf.commute_system_id, tf.system_name, tf.fare_cap, tf.fare_cap_duration, tf.current_spent")
+
+            # Capture the exit status immediately after executing the command
+            cmd_status=$?
+
+            if [ $cmd_status -eq 0 ]; then
+                spent=$(echo "$commute_progress" | awk -F'|' '{print $5}')
+                echo "Spent: $spent"
+
+                # Calculate the remaining fare before hitting the cap
+                fare_remaining=$(echo "$trimmed_fare_cap - $spent" | bc)
+
+                echo "Absolute transaction amount: $absolute_transaction_amount"
+                echo "Fare remaining: $fare_remaining"
+
+                # Check if the transaction amount will exceed the fare cap
+                if [ "$(echo "$absolute_transaction_amount > $fare_remaining" | bc)" -eq 1 ]; then
+                    fare="$fare_remaining"
+                else
+                    fare="$absolute_transaction_amount"
+                fi
+
+                # Ensure fare doesn't go negative
+                if [ "$(echo "$fare < 0" | bc)" -eq 1 ]; then
+                    fare=0
+                fi
+
+                # Update transaction_amount
+                transaction_amount="$fare"
+            fi
+        else
+            echo "Fare cap is null or empty"
+            fare=$(echo "$absolute_transaction_amount" | bc)
+        fi
+        PGPASSWORD="$PGPASSWORD" psql -h "$PGHOST" -p "$PGPORT" -d "$PGDB" -U "$PGUSER" -c "INSERT INTO commute_history (account_id, fare_amount, commute_system, fare_type, timestamp) VALUES ('$account_id', '$fare', '$commute_system_name', '$fare_type', '$current_timestamp')"
     fi
 fi
 

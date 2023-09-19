@@ -5,7 +5,7 @@ import deleteCronJob from '../crontab/deleteCronJob.js';
 import {
     handleError,
     executeQuery,
-    parseOrFallback,
+    parseIntOrFallback,
 } from '../utils/helperFunctions.js';
 import { type Loan } from '../types/types.js';
 import { logger } from '../config/winston.js';
@@ -50,11 +50,11 @@ const parseLoan = (loan: LoanInput): Loan => ({
     loan_title: loan.loan_title,
     loan_description: loan.loan_description,
     frequency_type: parseInt(loan.frequency_type),
-    frequency_type_variable: parseOrFallback(loan.frequency_type_variable),
-    frequency_day_of_month: parseOrFallback(loan.frequency_day_of_month),
-    frequency_day_of_week: parseOrFallback(loan.frequency_day_of_week),
-    frequency_week_of_month: parseOrFallback(loan.frequency_week_of_month),
-    frequency_month_of_year: parseOrFallback(loan.frequency_month_of_year),
+    frequency_type_variable: parseIntOrFallback(loan.frequency_type_variable),
+    frequency_day_of_month: parseIntOrFallback(loan.frequency_day_of_month),
+    frequency_day_of_week: parseIntOrFallback(loan.frequency_day_of_week),
+    frequency_week_of_month: parseIntOrFallback(loan.frequency_week_of_month),
+    frequency_month_of_year: parseIntOrFallback(loan.frequency_month_of_year),
     loan_interest_rate: parseFloat(loan.loan_interest_rate),
     loan_interest_frequency_type: parseInt(loan.loan_interest_frequency_type),
     loan_subsidized: parseFloat(loan.loan_subsidized),
@@ -211,7 +211,7 @@ export const createLoan = async (
             frequency_day_of_week,
             frequency_week_of_month,
             frequency_month_of_year,
-            scriptPath: '/app/dist/scripts/createTransaction.sh',
+            scriptPath: '/app/scripts/createTransaction.sh',
             type: 'loan',
         };
 
@@ -244,7 +244,7 @@ export const createLoan = async (
             frequency_day_of_week: null,
             frequency_week_of_month: null,
             frequency_month_of_year: null,
-            scriptPath: '/app/dist/scripts/applyInterest.sh',
+            scriptPath: '/app/scripts/applyInterest.sh',
             type: 'loan_interest',
         };
 
@@ -369,7 +369,7 @@ export const updateLoan = async (
         frequency_day_of_week,
         frequency_week_of_month,
         frequency_month_of_year,
-        scriptPath: '/app/dist/scripts/createTransaction.sh',
+        scriptPath: '/app/scripts/createTransaction.sh',
         type: 'loan',
     };
 
@@ -402,7 +402,7 @@ export const updateLoan = async (
         frequency_day_of_week: null,
         frequency_week_of_month: null,
         frequency_month_of_year: null,
-        scriptPath: '/app/dist/scripts/applyInterest.sh',
+        scriptPath: '/app/scripts/applyInterest.sh',
         type: 'loan_interest',
     };
 

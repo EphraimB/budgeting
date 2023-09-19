@@ -8,13 +8,7 @@ import pool from '../config/db.js';
  * Sends a response with an error message
  */
 export const handleError = (response: Response, message: string): void => {
-    response.status(400).send({
-        errors: {
-            msg: message,
-            param: null,
-            location: 'query',
-        },
-    });
+    response.status(500).send(message);
 };
 
 /**
@@ -38,9 +32,23 @@ export const executeQuery = async <T = any>(
 /**
  *
  * @param input - The input to parse
- * @returns The parsed input or null if the input is not a number
+ * @returns The parsed input or null if the input is not a integer
  */
-export const parseOrFallback = (
+export const parseIntOrFallback = (
+    input: string | null | undefined,
+): number | null => {
+    if (input === null || input === undefined) return null;
+
+    const parsed = parseInt(input, 10);
+    return isNaN(parsed) ? null : parsed;
+};
+
+/**
+ *
+ * @param input - The input to parse
+ * @returns The parsed input or null if the input is not a float
+ */
+export const parseFloatOrFallback = (
     input: string | null | undefined,
 ): number | null => {
     if (input === null || input === undefined) return null;

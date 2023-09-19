@@ -5,7 +5,7 @@ import deleteCronJob from '../crontab/deleteCronJob.js';
 import {
     handleError,
     executeQuery,
-    parseOrFallback,
+    parseIntOrFallback,
 } from '../utils/helperFunctions.js';
 import { type Income } from '../types/types.js';
 import { logger } from '../config/winston.js';
@@ -39,16 +39,16 @@ interface IncomeInput {
 const parseIncome = (income: IncomeInput): Income => ({
     income_id: parseInt(income.income_id),
     account_id: parseInt(income.account_id),
-    tax_id: parseOrFallback(income.tax_id),
+    tax_id: parseIntOrFallback(income.tax_id),
     income_amount: parseFloat(income.income_amount),
     income_title: income.income_title,
     income_description: income.income_description,
     frequency_type: parseInt(income.frequency_type),
-    frequency_type_variable: parseOrFallback(income.frequency_type_variable),
-    frequency_day_of_month: parseOrFallback(income.frequency_day_of_month),
-    frequency_day_of_week: parseOrFallback(income.frequency_day_of_week),
-    frequency_week_of_month: parseOrFallback(income.frequency_week_of_month),
-    frequency_month_of_year: parseOrFallback(income.frequency_month_of_year),
+    frequency_type_variable: parseIntOrFallback(income.frequency_type_variable),
+    frequency_day_of_month: parseIntOrFallback(income.frequency_day_of_month),
+    frequency_day_of_week: parseIntOrFallback(income.frequency_day_of_week),
+    frequency_week_of_month: parseIntOrFallback(income.frequency_week_of_month),
+    frequency_month_of_year: parseIntOrFallback(income.frequency_month_of_year),
     income_begin_date: income.income_begin_date,
     income_end_date: income.income_end_date,
     date_created: income.date_created,
@@ -180,7 +180,7 @@ export const createIncome = async (
             frequency_day_of_week,
             frequency_week_of_month,
             frequency_month_of_year,
-            scriptPath: '/app/dist/scripts/createTransaction.sh',
+            scriptPath: '/app/scripts/createTransaction.sh',
             type: 'income',
         };
 
@@ -278,7 +278,7 @@ export const updateIncome = async (
             frequency_day_of_week,
             frequency_week_of_month,
             frequency_month_of_year,
-            scriptPath: '/app/dist/scripts/createTransaction.sh',
+            scriptPath: '/app/scripts/createTransaction.sh',
             type: 'income',
         };
 

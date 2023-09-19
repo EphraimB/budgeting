@@ -3,6 +3,7 @@ export interface GeneratedTransaction {
     loan_id?: number;
     income_id?: number;
     transfer_id?: number;
+    commute_schedule_id?: number;
     wishlist_id?: number;
     transaction_id?: number;
     title: string;
@@ -211,6 +212,70 @@ export interface Transfer {
     date_modified?: string;
 }
 
+export interface CommuteSystem {
+    commute_system_id: number;
+    name: string;
+    fare_cap: number | null;
+    fare_cap_duration: number | null;
+    date_created: string;
+    date_modified: string;
+}
+
+export interface CommuteHistory {
+    commute_history_id: number;
+    account_id: number;
+    fare_amount: number;
+    commute_system: string;
+    fare_type: string;
+    timestamp: string;
+    date_created: string;
+    date_modified: string;
+}
+
+export interface FareDetails {
+    fare_detail_id: number;
+    commute_system_id: number;
+    system_name: string;
+    fare_type: string;
+    fare_amount: number;
+    timeslots: Timeslots[];
+    timed_pass_duration: number | null;
+    alternate_fare_detail_id: number | null;
+    date_created: string;
+    date_modified: string;
+}
+
+export interface Timeslots {
+    timeslot_id: number;
+    fare_detail_id: number;
+    day_of_week: number;
+    start_time: string;
+    end_time: string;
+}
+
+export interface CommuteTicket {
+    commute_ticket_id: number;
+    fare_detail_id: number;
+    name: string;
+    date_created: string;
+    date_modified: string;
+}
+
+export interface CommuteSchedule {
+    commute_schedule_id: number;
+    commute_system_id: number;
+    account_id: number;
+    day_of_week: number;
+    fare_detail_id: number;
+    start_time: string;
+    duration: number;
+    fare_amount: number;
+    pass: string;
+    timed_pass_duration: number | null;
+    date_created: string;
+    date_modified: string;
+}
+
 interface CurrentBalance {
     account_id: number;
     account_balance: number;
@@ -225,6 +290,7 @@ declare module 'express-serve-static-core' {
         wishlists: any[];
         transfers: any[];
         income: any[];
+        commuteExpenses: any[];
         currentBalance: CurrentBalance[];
         transactions: any[];
         wishlist_id: number | null | undefined;
@@ -235,6 +301,8 @@ declare module 'express-serve-static-core' {
         employee_id: number;
         payroll_taxes_id: number;
         income_id: number;
+        commute_schedule_id: number;
         fullyPaidBackDates: Record<number, string | null>;
+        alerts: object[];
     }
 }

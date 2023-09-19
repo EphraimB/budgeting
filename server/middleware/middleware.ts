@@ -1,7 +1,7 @@
 import { type Request, type Response, type NextFunction } from 'express';
 import { type QueryResultRow } from 'pg';
 import {
-    parseOrFallback,
+    parseIntOrFallback,
     handleError,
     executeQuery,
 } from '../utils/helperFunctions.js';
@@ -18,6 +18,8 @@ import {
     taxesQueries,
     cronJobQueries,
     incomeQueries,
+    commuteScheduleQueries,
+    fareCappingQueries,
 } from '../models/queryData.js';
 import {
     type Income,
@@ -426,18 +428,18 @@ export const getExpensesByAccount = async (
 const parseLoan = (loan: LoanInput): Loan => ({
     loan_id: parseInt(loan.loan_id),
     account_id: parseInt(loan.account_id),
-    tax_id: parseOrFallback(loan.tax_id),
+    tax_id: parseIntOrFallback(loan.tax_id),
     loan_amount: parseFloat(loan.loan_amount),
     loan_plan_amount: parseFloat(loan.loan_plan_amount),
     loan_recipient: loan.loan_recipient,
     loan_title: loan.loan_title,
     loan_description: loan.loan_description,
     frequency_type: parseInt(loan.frequency_type),
-    frequency_type_variable: parseOrFallback(loan.frequency_type_variable),
-    frequency_day_of_month: parseOrFallback(loan.frequency_day_of_month),
-    frequency_day_of_week: parseOrFallback(loan.frequency_day_of_week),
-    frequency_week_of_month: parseOrFallback(loan.frequency_week_of_month),
-    frequency_month_of_year: parseOrFallback(loan.frequency_month_of_year),
+    frequency_type_variable: parseIntOrFallback(loan.frequency_type_variable),
+    frequency_day_of_month: parseIntOrFallback(loan.frequency_day_of_month),
+    frequency_day_of_week: parseIntOrFallback(loan.frequency_day_of_week),
+    frequency_week_of_month: parseIntOrFallback(loan.frequency_week_of_month),
+    frequency_month_of_year: parseIntOrFallback(loan.frequency_month_of_year),
     loan_interest_rate: parseFloat(loan.loan_interest_rate),
     loan_interest_frequency_type: parseInt(loan.loan_interest_frequency_type),
     loan_subsidized: parseFloat(loan.loan_subsidized),
@@ -840,6 +842,129 @@ export const getTransfersByAccount = async (
     } catch (error) {
         logger.error(error); // Log the error on the server side
         handleError(response, 'Error getting transfers');
+    }
+};
+
+/**
+ *
+ * @param request - The request object
+ * @param response - The response object
+ * @param next - The next function
+ * Sends a response with all commute expenses or a single commute expense if an id is provided
+ */
+export const getCommuteExpensesByAccount = async (
+    request: Request,
+    response: Response,
+    next: NextFunction,
+): Promise<void> => {
+    const { account_id } = request.query as Record<string, string>;
+
+    try {
+        const commuteExpensesByAccount: Array<{
+            account_id: number;
+            commute_expenses: object;
+            fare_capping: object;
+        }> = [];
+
+        if (account_id === null || account_id === undefined) {
+            // If account_id is null, fetch all accounts and make request.transactions an array of transactions
+            const accountResults = await executeQuery(
+                accountQueries.getAccounts,
+            );
+
+            await Promise.all(
+                accountResults.map(async (account) => {
+                    const commuteExpensesResults = await executeQuery(
+                        commuteScheduleQueries.getCommuteSchedulesByAccountId,
+                        [account.account_id],
+                    );
+
+                    // Map over results array and convert amount to a float for each Transaction object
+                    const commuteExpensesTransactions =
+                        commuteExpensesResults.map((commute_expense) => ({
+                            ...commute_expense,
+                            fare_amount: parseFloat(
+                                commute_expense.fare_amount,
+                            ),
+                        }));
+
+                    const fareCappingResults = await executeQuery(
+                        fareCappingQueries.getFareCapping,
+                        [account.account_id],
+                    );
+
+                    const fareCapping = fareCappingResults.map(
+                        (fare_capping) => ({
+                            ...fare_capping,
+                            fare_cap: parseFloat(fare_capping.fare_cap),
+                            current_spent: parseFloat(
+                                fare_capping.current_spent,
+                            ),
+                            fare_cap_duration: parseInt(
+                                fare_capping.fare_cap_duration,
+                            ),
+                        }),
+                    );
+
+                    commuteExpensesByAccount.push({
+                        account_id: account.account_id,
+                        commute_expenses: commuteExpensesTransactions,
+                        fare_capping: fareCapping,
+                    });
+                }),
+            );
+        } else {
+            // Check if account exists and if it doesn't, send a response with an error message
+            const accountExists = await executeQuery(
+                accountQueries.getAccount,
+                [account_id],
+            );
+
+            if (accountExists.length === 0) {
+                response
+                    .status(404)
+                    .send(`Account with ID ${account_id} not found`);
+                return;
+            }
+
+            const results = await executeQuery(
+                commuteScheduleQueries.getCommuteSchedulesByAccountId,
+                [account_id],
+            );
+
+            // Map over results array and convert amount to a float for each Commute Expense object
+            const commuteExpensesTransactions = results.map(
+                (commute_expense) => ({
+                    ...commute_expense,
+                    fare_amount: parseFloat(commute_expense.fare_amount),
+                }),
+            );
+
+            const fareCappingResults = await executeQuery(
+                fareCappingQueries.getFareCapping,
+                [account_id],
+            );
+
+            const fareCapping = fareCappingResults.map((fare_capping) => ({
+                ...fare_capping,
+                fare_cap: parseFloat(fare_capping.fare_cap),
+                current_spent: parseFloat(fare_capping.current_spent),
+                fare_cap_duration: parseInt(fare_capping.fare_cap_duration),
+            }));
+
+            commuteExpensesByAccount.push({
+                account_id: parseInt(account_id),
+                commute_expenses: commuteExpensesTransactions,
+                fare_capping: fareCapping,
+            });
+        }
+
+        request.commuteExpenses = commuteExpensesByAccount;
+
+        next();
+    } catch (error) {
+        logger.error(error); // Log the error on the server side
+        handleError(response, 'Error getting commute expenses');
     }
 };
 

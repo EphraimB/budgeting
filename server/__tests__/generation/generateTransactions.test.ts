@@ -80,6 +80,32 @@ beforeAll(() => {
                 ),
             },
         ],
+        commuteExpenses: [
+            {
+                account_id: 1,
+                commute_expenses: [
+                    {
+                        commute_schedule_id: 1,
+                        commute_system_id: 1,
+                        title: 'Sample Pass',
+                        description: 'Sample Pass pass',
+                        day_of_week: 4,
+                        start_time: '08:00',
+                        amount: -100,
+                        tax_rate: 0,
+                        total_amount: -100,
+                    },
+                ],
+                fare_capping: [
+                    {
+                        commute_system_id: 1,
+                        system_name: 'Sample System',
+                        fare_cap: 100,
+                        fare_cap_duration: 1,
+                    },
+                ],
+            },
+        ],
         wishlists: [
             {
                 account_id: 1,

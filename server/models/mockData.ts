@@ -10,6 +10,9 @@ import {
     type PayrollDate,
     type PayrollTax,
     type Taxes,
+    FareDetails,
+    CommuteTicket,
+    Timeslots,
 } from '../types/types';
 
 export const employees: Employee[] = [
@@ -469,6 +472,105 @@ export const transfers: Transfer[] = [
         frequency_day_of_month: null,
         frequency_day_of_week: null,
         frequency_week_of_month: null,
+        date_created: '2020-01-01',
+        date_modified: '2020-01-01',
+    },
+];
+
+export const commuteSystems = [
+    {
+        commute_system_id: 1,
+        name: 'OMNY',
+        fare_cap: 33,
+        fare_cap_duration: 1,
+        date_created: '2020-01-01',
+        date_modified: '2020-01-01',
+    },
+    {
+        commute_system_id: 2,
+        name: 'LIRR',
+        fare_cap: null,
+        fare_cap_duration: null,
+        date_created: '2020-01-01',
+        date_modified: '2020-01-01',
+    },
+];
+
+export const commuteHistory = [
+    {
+        commute_history_id: 1,
+        account_id: 1,
+        fare_amount: 2.75,
+        commute_system: 'OMNY',
+        fare_type: 'Single Ride',
+        timestamp: '2020-01-01',
+        date_created: '2020-01-01',
+        date_modified: '2020-01-01',
+    },
+    {
+        commute_history_id: 2,
+        account_id: 1,
+        fare_amount: 9.75,
+        commute_system: 'LIRR',
+        fare_type: 'Off-Peak',
+        timestamp: '2020-01-01',
+        date_created: '2020-01-01',
+        date_modified: '2020-01-01',
+    },
+];
+
+export const fareDetails: any[] = [
+    {
+        fare_detail_id: 1,
+        commute_system_id: 1,
+        system_name: 'OMNY',
+        fare_type: 'Single Ride',
+        fare_amount: 2.75,
+        alternate_fare_detail_id: null,
+        date_created: '2020-01-01',
+        date_modified: '2020-01-01',
+    },
+    {
+        fare_detail_id: 2,
+        commute_system_id: 1,
+        system_name: 'LIRR',
+        fare_type: 'Weekly',
+        fare_amount: 33,
+        alternate_fare_detail_id: null,
+        date_created: '2020-01-01',
+        date_modified: '2020-01-01',
+    },
+];
+
+export const timeslots: Timeslots[] = [
+    {
+        timeslot_id: 1,
+        fare_detail_id: 1,
+        day_of_week: 0,
+        start_time: '00:00:00',
+        end_time: '23:59:59',
+    },
+    {
+        timeslot_id: 2,
+        fare_detail_id: 2,
+        day_of_week: 0,
+        start_time: '00:00:00',
+        end_time: '23:59:59',
+    },
+];
+
+export const commuteTickets: CommuteTicket[] = [
+    {
+        commute_ticket_id: 1,
+        fare_detail_id: 1,
+        name: 'OMNY Single Ride',
+        date_created: '2020-01-01',
+        date_modified: '2020-01-01',
+    },
+    {
+        commute_ticket_id: 2,
+        fare_detail_id: 2,
+        name: 'LIRR Weekly',
         date_created: '2020-01-01',
         date_modified: '2020-01-01',
     },
