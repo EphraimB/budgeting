@@ -514,7 +514,7 @@ export const fareDetailsQueries = {
             commute_systems.name AS system_name,
             fare_details.name AS fare_type,
             fare_amount,
-            timed_pass_duration
+            timed_pass_duration,
             alternate_fare_detail_id,
             fare_details.date_created,
             fare_details.date_modified
@@ -541,6 +541,7 @@ export const commuteScheduleQueries = {
             commute_schedule.start_time AS start_time,
             commute_schedule.duration AS duration,
             fare_details.fare_amount AS fare_amount,
+            fare_details.timed_pass_duration AS timed_pass_duration,
             commute_schedule.date_created,
             commute_schedule.date_modified
         FROM commute_schedule
@@ -560,6 +561,7 @@ export const commuteScheduleQueries = {
             commute_schedule.start_time AS start_time,
             commute_schedule.duration AS duration,
             fare_details.fare_amount AS fare_amount,
+            fare_details.timed_pass_duration AS timed_pass_duration,
             commute_schedule.date_created,
             commute_schedule.date_modified
         FROM commute_schedule
@@ -580,6 +582,7 @@ export const commuteScheduleQueries = {
             commute_schedule.start_time AS start_time,
             commute_schedule.duration AS duration,
             fare_details.fare_amount AS fare_amount,
+            fare_details.timed_pass_duration AS timed_pass_duration,
             commute_schedule.date_created,
             commute_schedule.date_modified
         FROM commute_schedule
@@ -601,6 +604,7 @@ export const commuteScheduleQueries = {
             commute_schedule.start_time AS start_time,
             commute_schedule.duration AS duration,
             fare_details.fare_amount AS fare_amount,
+            fare_details.timed_pass_duration AS timed_pass_duration,
             commute_schedule.date_created,
             commute_schedule.date_modified
         FROM commute_schedule
@@ -621,6 +625,7 @@ export const commuteScheduleQueries = {
             commute_schedule.start_time AS start_time,
             commute_schedule.duration AS duration,
             fare_details.fare_amount AS fare_amount,
+            fare_details.timed_pass_duration AS timed_pass_duration,
             commute_schedule.date_created,
             commute_schedule.date_modified
         FROM commute_schedule
@@ -650,6 +655,7 @@ export const commuteScheduleQueries = {
             commute_schedule.start_time AS start_time,
             commute_schedule.duration AS duration,
             fare_details.fare_amount AS fare_amount,
+            fare_details.timed_pass_duration AS timed_pass_duration,
             commute_schedule.date_created,
             commute_schedule.date_modified
         FROM commute_schedule

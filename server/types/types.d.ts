@@ -239,6 +239,7 @@ export interface FareDetails {
     fare_type: string;
     fare_amount: number;
     timeslots: Timeslots[];
+    timed_pass_duration: number | null;
     alternate_fare_detail_id: number | null;
     date_created: string;
     date_modified: string;
@@ -270,6 +271,7 @@ export interface CommuteSchedule {
     duration: number;
     fare_amount: number;
     pass: string;
+    timed_pass_duration: number | null;
     date_created: string;
     date_modified: string;
 }

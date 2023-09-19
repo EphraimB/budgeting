@@ -1,12 +1,15 @@
 import { NextFunction, type Request, type Response } from 'express';
 import {
     commuteScheduleQueries,
-    commuteSystemQueries,
     cronJobQueries,
     fareDetailsQueries,
     fareTimeslotsQueries,
 } from '../models/queryData.js';
-import { handleError, executeQuery } from '../utils/helperFunctions.js';
+import {
+    handleError,
+    executeQuery,
+    parseIntOrFallback,
+} from '../utils/helperFunctions.js';
 import {
     Timeslots,
     type CommuteSchedule,
@@ -44,6 +47,9 @@ const parseCommuteSchedule = (
     duration: parseInt(commuteSchedule.duration),
     fare_amount: parseFloat(commuteSchedule.fare_amount),
     pass: commuteSchedule.pass,
+    timed_pass_duration: parseIntOrFallback(
+        commuteSchedule.timed_pass_duration,
+    ),
     date_created: commuteSchedule.date_created,
     date_modified: commuteSchedule.date_modified,
 });
