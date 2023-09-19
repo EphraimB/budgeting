@@ -5,7 +5,7 @@ import deleteCronJob from '../crontab/deleteCronJob.js';
 import {
     handleError,
     executeQuery,
-    parseOrFallback,
+    parseIntOrFallback,
 } from '../utils/helperFunctions.js';
 import { type Expense } from '../types/types.js';
 import { logger } from '../config/winston.js';
@@ -40,16 +40,22 @@ interface ExpenseInput {
 const parseExpenses = (expense: ExpenseInput): Expense => ({
     expense_id: parseInt(expense.expense_id),
     account_id: parseInt(expense.account_id),
-    tax_id: parseOrFallback(expense.tax_id),
+    tax_id: parseIntOrFallback(expense.tax_id),
     expense_amount: parseFloat(expense.expense_amount),
     expense_title: expense.expense_title,
     expense_description: expense.expense_description,
     frequency_type: parseInt(expense.frequency_type),
-    frequency_type_variable: parseOrFallback(expense.frequency_type_variable),
-    frequency_day_of_month: parseOrFallback(expense.frequency_day_of_month),
-    frequency_day_of_week: parseOrFallback(expense.frequency_day_of_week),
-    frequency_week_of_month: parseOrFallback(expense.frequency_week_of_month),
-    frequency_month_of_year: parseOrFallback(expense.frequency_month_of_year),
+    frequency_type_variable: parseIntOrFallback(
+        expense.frequency_type_variable,
+    ),
+    frequency_day_of_month: parseIntOrFallback(expense.frequency_day_of_month),
+    frequency_day_of_week: parseIntOrFallback(expense.frequency_day_of_week),
+    frequency_week_of_month: parseIntOrFallback(
+        expense.frequency_week_of_month,
+    ),
+    frequency_month_of_year: parseIntOrFallback(
+        expense.frequency_month_of_year,
+    ),
     expense_subsidized: parseFloat(expense.expense_subsidized),
     expense_begin_date: expense.expense_begin_date,
     expense_end_date: expense.expense_end_date,
@@ -182,7 +188,7 @@ export const createExpense = async (
             frequency_day_of_week,
             frequency_week_of_month,
             frequency_month_of_year,
-            scriptPath: '/app/dist/scripts/createTransaction.sh',
+            scriptPath: '/app/scripts/createTransaction.sh',
             type: 'expense',
         };
 
@@ -281,7 +287,7 @@ export const updateExpense = async (
             frequency_day_of_week,
             frequency_week_of_month,
             frequency_month_of_year,
-            scriptPath: '/app/dist/scripts/createTransaction.sh',
+            scriptPath: '/app/scripts/createTransaction.sh',
             type: 'expense',
         };
 
@@ -414,6 +420,12 @@ export const deleteExpense = async (
     }
 };
 
+/**
+ *
+ * @param request - Request object
+ * @param response - Response object
+ * Sends a response with the deleted expense
+ */
 export const deleteExpenseReturnObject = async (
     request: Request,
     response: Response,

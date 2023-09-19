@@ -171,6 +171,73 @@ CREATE TABLE IF NOT EXISTS income (
   date_modified TIMESTAMP NOT NULL
 );
 
+CREATE TABLE IF NOT EXISTS commute_systems (
+  commute_system_id SERIAL PRIMARY KEY,
+  name VARCHAR(255) NOT NULL,
+  fare_cap NUMERIC(5,2),
+  fare_cap_duration INT,
+  date_created TIMESTAMP NOT NULL,
+  date_modified TIMESTAMP NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS fare_details (
+  fare_detail_id SERIAL PRIMARY KEY,
+  commute_system_id INT NOT NULL REFERENCES commute_systems(commute_system_id),
+  name VARCHAR(255) NOT NULL,
+  fare_amount NUMERIC(5,2) NOT NULL,
+  timed_pass_duration INT,
+  is_fixed_days BOOLEAN DEFAULT FALSE,
+  is_monthly BOOLEAN DEFAULT FALSE,
+  alternate_fare_detail_id INT REFERENCES fare_details(fare_detail_id),
+  date_created TIMESTAMP NOT NULL,
+  date_modified TIMESTAMP NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS timeslots (
+  timeslot_id SERIAL PRIMARY KEY,
+  fare_detail_id INT NOT NULL REFERENCES fare_details(fare_detail_id),
+  day_of_week INT NOT NULL,
+  start_time TIME NOT NULL,
+  end_time TIME NOT NULL,
+  date_created TIMESTAMP NOT NULL,
+  date_modified TIMESTAMP NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS commute_schedule (
+  commute_schedule_id SERIAL PRIMARY KEY,
+  account_id INT NOT NULL REFERENCES accounts(account_id),
+  cron_job_id INT REFERENCES cron_jobs(cron_job_id),
+  day_of_week INT NOT NULL,
+  start_time TIME NOT NULL,
+  duration INT NOT NULL,
+  fare_detail_id INT NOT NULL REFERENCES fare_details(fare_detail_id),
+  date_created TIMESTAMP NOT NULL,
+  date_modified TIMESTAMP NOT NULL,
+  UNIQUE(day_of_week, start_time)
+);
+
+CREATE TABLE IF NOT EXISTS commute_history (
+  commute_history_id SERIAL PRIMARY KEY,
+  account_id INT NOT NULL REFERENCES accounts(account_id),
+  fare_amount NUMERIC(5,2) NOT NULL,
+  commute_system VARCHAR(255) NOT NULL,
+  fare_type VARCHAR(255) NOT NULL,
+  timestamp TIMESTAMP NOT NULL,
+  is_timed_pass BOOLEAN DEFAULT FALSE,
+  date_created TIMESTAMP NOT NULL,
+  date_modified TIMESTAMP NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS active_timed_passes (
+  active_pass_id SERIAL PRIMARY KEY,
+  commute_schedule_id INT NOT NULL REFERENCES commute_schedule(commute_schedule_id),
+  fare_detail_id INT NOT NULL REFERENCES fare_details(fare_detail_id),
+  start_date TIMESTAMP NOT NULL,
+  end_date TIMESTAMP NOT NULL,
+  date_created TIMESTAMP NOT NULL,
+  date_modified TIMESTAMP NOT NULL
+);
+
 -- Trigger to update the date_modified column when a row is updated
 CREATE OR REPLACE FUNCTION update_dates()
 RETURNS TRIGGER AS $$
@@ -205,6 +272,18 @@ RETURNS TRIGGER AS $$
 BEGIN
   NEW.wishlist_priority = (SELECT COALESCE(MAX(wishlist_priority), 0) + 1 FROM wishlist);
   RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE OR REPLACE FUNCTION check_fare_detail_id()
+RETURNS TRIGGER AS $$
+BEGIN
+    -- Check if alternate_fare_detail_id is equal to the new fare_detail_id
+    IF NEW.alternate_fare_detail_id = NEW.fare_detail_id THEN
+        RAISE EXCEPTION 'alternate_fare_detail_id cannot be the same as fare_detail_id';
+    END IF;
+    -- If all checks pass, return the new row for insertion
+    RETURN NEW;
 END;
 $$ LANGUAGE plpgsql;
 
@@ -253,6 +332,36 @@ BEFORE INSERT OR UPDATE ON income
 FOR EACH ROW
 EXECUTE PROCEDURE update_dates();
 
+CREATE TRIGGER update_comute_systems_dates
+BEFORE INSERT OR UPDATE ON commute_systems
+FOR EACH ROW
+EXECUTE PROCEDURE update_dates();
+
+CREATE TRIGGER update_fare_details_dates
+BEFORE INSERT OR UPDATE ON fare_details
+FOR EACH ROW
+EXECUTE PROCEDURE update_dates();
+
+CREATE TRIGGER update_timeslots_details_dates
+BEFORE INSERT OR UPDATE ON timeslots
+FOR EACH ROW
+EXECUTE PROCEDURE update_dates();
+
+CREATE TRIGGER update_commute_schedule_dates
+BEFORE INSERT OR UPDATE ON commute_schedule
+FOR EACH ROW
+EXECUTE PROCEDURE update_dates();
+
+CREATE TRIGGER update_commute_history_dates
+BEFORE INSERT OR UPDATE ON commute_history
+FOR EACH ROW
+EXECUTE PROCEDURE update_dates();
+
+CREATE TRIGGER update_active_timed_passes_dates
+BEFORE INSERT OR UPDATE ON active_timed_passes
+FOR EACH ROW
+EXECUTE PROCEDURE update_dates();
+
 CREATE TRIGGER set_null_columns_expenses
 BEFORE INSERT OR UPDATE ON expenses
 FOR EACH ROW
@@ -267,3 +376,8 @@ CREATE TRIGGER update_wishlist_priority_trigger
 BEFORE INSERT ON wishlist
 FOR EACH ROW
 EXECUTE FUNCTION update_wishlist_priority();
+
+CREATE TRIGGER trigger_check_fare_detail_id
+BEFORE INSERT ON fare_details
+FOR EACH ROW
+EXECUTE FUNCTION check_fare_detail_id();

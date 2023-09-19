@@ -9,6 +9,7 @@ import {
     getWishlistsByAccount,
     getPayrollsMiddleware,
     getTransfersByAccount,
+    getCommuteExpensesByAccount,
 } from '../middleware/middleware.js';
 import { query } from 'express-validator';
 import validateRequest from '../utils/validateRequest.js';
@@ -49,6 +50,7 @@ router.get(
     getLoansByAccount,
     getPayrollsMiddleware,
     getTransfersByAccount,
+    getCommuteExpensesByAccount,
     getWishlistsByAccount,
     generateTransactions,
     (request: Request, response: Response) => {

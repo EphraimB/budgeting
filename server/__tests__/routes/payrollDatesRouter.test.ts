@@ -72,6 +72,11 @@ beforeAll(() => {
                 next();
             },
         ),
+        getCommuteExpensesByAccount: jest.fn(
+            (req: Request, res: Response, next: NextFunction) => {
+                next();
+            },
+        ),
         getWishlistsByAccount: jest.fn(
             (req: Request, res: Response, next: NextFunction) => {
                 next();

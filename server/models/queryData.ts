@@ -464,3 +464,326 @@ export const incomeQueries = {
         'UPDATE income SET cron_job_id = $1 WHERE income_id = $2 RETURNING *',
     deleteIncome: 'DELETE FROM income WHERE income_id = $1',
 };
+
+export const commuteSystemQueries = {
+    getCommuteSystems: 'SELECT * FROM commute_systems',
+    getCommuteSystemById:
+        'SELECT * FROM commute_systems WHERE commute_system_id = $1',
+    createCommuteSystem:
+        'INSERT INTO commute_systems (name, fare_cap, fare_cap_duration) VALUES ($1, $2, $3) RETURNING *',
+    updateCommuteSystem:
+        'UPDATE commute_systems SET name = $1, fare_cap = $2, fare_cap_duration = $3 WHERE commute_system_id = $4 RETURNING *',
+    deleteCommuteSystem:
+        'DELETE FROM commute_systems WHERE commute_system_id = $1',
+};
+
+export const commuteHistoryQueries = {
+    getCommuteHistory: 'SELECT * FROM commute_history',
+    getCommuteHistoryByAccountId:
+        'SELECT * FROM commute_history WHERE account_id = $1',
+    getCommuteHistoryByIdAndAccountId:
+        'SELECT * FROM commute_history WHERE commute_history_id = $1 AND account_id = $2',
+    getCommuteHistoryById:
+        'SELECT * FROM commute_history WHERE commute_history_id = $1',
+    createCommuteHistory:
+        'INSERT INTO commute_history (account_id, fare_amount, commute_system, fare_type, timestamp) VALUES ($1, $2, $3, $4, $5) RETURNING *',
+    updateCommuteHistory:
+        'UPDATE commute_history SET account_id = $1, fare_amount = $2, commute_system = $3, fare_type = $4, timestamp = $5 WHERE commute_history_id = $6 RETURNING *',
+    deleteCommuteHistory:
+        'DELETE FROM commute_history WHERE commute_history_id = $1',
+};
+
+export const fareDetailsQueries = {
+    getFareDetails: `
+        SELECT fare_details.fare_detail_id,
+            fare_details.commute_system_id AS commute_system_id,
+            commute_systems.name AS system_name,
+            fare_details.name AS fare_type,
+            fare_amount,
+            timed_pass_duration,
+            alternate_fare_detail_id,
+            fare_details.date_created,
+            fare_details.date_modified
+        FROM fare_details
+        LEFT JOIN commute_systems
+        ON fare_details.commute_system_id = commute_systems.commute_system_id
+    `,
+    getFareDetailsById: `
+        SELECT fare_details.fare_detail_id,
+            fare_details.commute_system_id AS commute_system_id,
+            commute_systems.name AS system_name,
+            fare_details.name AS fare_type,
+            fare_amount,
+            timed_pass_duration,
+            alternate_fare_detail_id,
+            fare_details.date_created,
+            fare_details.date_modified
+        FROM fare_details
+        LEFT JOIN commute_systems
+        ON fare_details.commute_system_id = commute_systems.commute_system_id
+        WHERE fare_details.fare_detail_id = $1`,
+    createFareDetails:
+        'INSERT INTO fare_details (commute_system_id, name, fare_amount, timed_pass_duration, alternate_fare_detail_id) VALUES ($1, $2, $3, $4, $5) RETURNING *',
+    updateFareDetails:
+        'UPDATE fare_details SET commute_system_id = $1, name = $2, fare_amount = $3, timed_pass_duration = $4 alternate_fare_detail_id = $5 WHERE fare_detail_id = $6 RETURNING *',
+    deleteFareDetails: 'DELETE FROM fare_details WHERE fare_detail_id = $1',
+};
+
+export const commuteScheduleQueries = {
+    getCommuteSchedules: `
+        SELECT commute_schedule_id,
+            commute_systems.commute_system_id,
+            commute_schedule.account_id AS account_id,
+            commute_schedule.cron_job_id AS cron_job_id,
+            commute_schedule.fare_detail_id AS fare_detail_id,
+            commute_schedule.day_of_week AS day_of_week,
+            concat(commute_systems.name, ' ', fare_details.name) AS pass,
+            commute_schedule.start_time AS start_time,
+            commute_schedule.duration AS duration,
+            fare_details.fare_amount AS fare_amount,
+            fare_details.timed_pass_duration AS timed_pass_duration,
+            commute_schedule.date_created,
+            commute_schedule.date_modified
+        FROM commute_schedule
+        LEFT JOIN fare_details
+        ON commute_schedule.fare_detail_id = fare_details.fare_detail_id
+        LEFT JOIN commute_systems
+        ON fare_details.commute_system_id = commute_systems.commute_system_id
+    `,
+    getCommuteSchedulesByAccountId: `
+        SELECT commute_schedule_id,
+            commute_systems.commute_system_id,
+            commute_schedule.account_id AS account_id,
+            commute_schedule.cron_job_id AS cron_job_id,
+            commute_schedule.fare_detail_id AS fare_detail_id,
+            commute_schedule.day_of_week AS day_of_week,
+            concat(commute_systems.name, ' ', fare_details.name) AS pass,
+            commute_schedule.start_time AS start_time,
+            commute_schedule.duration AS duration,
+            fare_details.fare_amount AS fare_amount,
+            fare_details.timed_pass_duration AS timed_pass_duration,
+            commute_schedule.date_created,
+            commute_schedule.date_modified
+        FROM commute_schedule
+        LEFT JOIN fare_details
+        ON commute_schedule.fare_detail_id = fare_details.fare_detail_id
+        LEFT JOIN commute_systems
+        ON fare_details.commute_system_id = commute_systems.commute_system_id
+        WHERE commute_schedule.account_id = $1
+    `,
+    getCommuteSchedulesByIdAndAccountId: `
+        SELECT commute_schedule_id,
+            commute_systems.commute_system_id,
+            commute_schedule.account_id AS account_id,
+            commute_schedule.cron_job_id AS cron_job_id,
+            commute_schedule.fare_detail_id AS fare_detail_id,
+            commute_schedule.day_of_week AS day_of_week,
+            concat(commute_systems.name, ' ', fare_details.name) AS pass,
+            commute_schedule.start_time AS start_time,
+            commute_schedule.duration AS duration,
+            fare_details.fare_amount AS fare_amount,
+            fare_details.timed_pass_duration AS timed_pass_duration,
+            commute_schedule.date_created,
+            commute_schedule.date_modified
+        FROM commute_schedule
+        LEFT JOIN fare_details
+        ON commute_schedule.fare_detail_id = fare_details.fare_detail_id
+        LEFT JOIN commute_systems
+        ON fare_details.commute_system_id = commute_systems.commute_system_id
+        WHERE commute_schedule.account_id = $1
+        AND commute_schedule.commute_schedule_id = $2
+    `,
+    getCommuteSchedulesById: `
+        SELECT commute_schedule_id,
+            commute_systems.commute_system_id,
+            commute_schedule.account_id AS account_id,
+            commute_schedule.cron_job_id AS cron_job_id,
+            commute_schedule.fare_detail_id AS fare_detail_id,
+            commute_schedule.day_of_week AS day_of_week,
+            concat(commute_systems.name, ' ', fare_details.name) AS pass,
+            commute_schedule.start_time AS start_time,
+            commute_schedule.duration AS duration,
+            fare_details.fare_amount AS fare_amount,
+            fare_details.timed_pass_duration AS timed_pass_duration,
+            commute_schedule.date_created,
+            commute_schedule.date_modified
+        FROM commute_schedule
+        LEFT JOIN fare_details
+        ON commute_schedule.fare_detail_id = fare_details.fare_detail_id
+        LEFT JOIN commute_systems
+        ON fare_details.commute_system_id = commute_systems.commute_system_id
+        WHERE commute_schedule.commute_schedule_id = $1
+    `,
+    getCommuteScheduleByDayAndTimeExcludingId: `
+        SELECT commute_schedule_id,
+            commute_systems.commute_system_id,
+            commute_schedule.account_id AS account_id,
+            commute_schedule.cron_job_id AS cron_job_id,
+            commute_schedule.fare_detail_id AS fare_detail_id,
+            commute_schedule.day_of_week AS day_of_week,
+            concat(commute_systems.name, ' ', fare_details.name) AS pass,
+            commute_schedule.start_time AS start_time,
+            commute_schedule.duration AS duration,
+            fare_details.fare_amount AS fare_amount,
+            fare_details.timed_pass_duration AS timed_pass_duration,
+            commute_schedule.date_created,
+            commute_schedule.date_modified
+        FROM commute_schedule
+        LEFT JOIN fare_details
+        ON commute_schedule.fare_detail_id = fare_details.fare_detail_id
+        LEFT JOIN commute_systems
+        ON fare_details.commute_system_id = commute_systems.commute_system_id
+        WHERE commute_schedule.account_id = $1
+        AND commute_schedule.day_of_week = $2
+        AND (
+        -- New schedule starts within an existing schedule's time slot
+        (commute_schedule.start_time <= $3 AND $3 < commute_schedule.start_time + interval '1 minute' * commute_schedule.duration)
+        OR
+        -- Existing schedule starts within new schedule's time slot
+        (commute_schedule.start_time < $3 + interval '1 minute' * $4 AND commute_schedule.start_time >= $3)
+        )
+        AND commute_schedule.commute_schedule_id <> $5
+    `,
+    getCommuteScheduleByDayAndTime: `
+        SELECT commute_schedule_id,
+            commute_systems.commute_system_id,
+            commute_schedule.account_id AS account_id,
+            commute_schedule.cron_job_id AS cron_job_id,
+            commute_schedule.fare_detail_id AS fare_detail_id,
+            commute_schedule.day_of_week AS day_of_week,
+            concat(commute_systems.name, ' ', fare_details.name) AS pass,
+            commute_schedule.start_time AS start_time,
+            commute_schedule.duration AS duration,
+            fare_details.fare_amount AS fare_amount,
+            fare_details.timed_pass_duration AS timed_pass_duration,
+            commute_schedule.date_created,
+            commute_schedule.date_modified
+        FROM commute_schedule
+        LEFT JOIN fare_details
+        ON commute_schedule.fare_detail_id = fare_details.fare_detail_id
+        LEFT JOIN commute_systems
+        ON fare_details.commute_system_id = commute_systems.commute_system_id
+        WHERE commute_schedule.account_id = $1
+        AND commute_schedule.day_of_week = $2
+        AND (
+        -- New schedule starts within an existing schedule's time slot
+        (commute_schedule.start_time <= $3 AND $3 < commute_schedule.start_time + interval '1 minute' * commute_schedule.duration)
+        OR
+        -- Existing schedule starts within new schedule's time slot
+        (commute_schedule.start_time < $3 + interval '1 minute' * $4 AND commute_schedule.start_time >= $3)
+        )
+    `,
+    createCommuteSchedule:
+        'INSERT INTO commute_schedule (account_id, day_of_week, fare_detail_id, start_time, duration) VALUES ($1, $2, $3, $4, $5) RETURNING *',
+    updateCommuteSchedule:
+        'UPDATE commute_schedule SET account_id = $1, day_of_week = $2, fare_detail_id = $3, start_time = $4, duration = $5 WHERE commute_schedule_id = $6 RETURNING *',
+    deleteCommuteSchedule:
+        'DELETE FROM commute_schedule WHERE commute_schedule_id = $1',
+    updateCommuteWithCronJobId:
+        'UPDATE commute_schedule SET cron_job_id = $1 WHERE commute_schedule_id = $2 RETURNING *',
+};
+
+export const fareTimeslotsQueries = {
+    getTimeslotsByFareId: 'SELECT * FROM timeslots WHERE fare_detail_id = $1',
+    getTimeslots: 'SELECT * FROM timeslots',
+    createTimeslot:
+        'INSERT INTO timeslots (fare_detail_id, day_of_week, start_time, end_time) VALUES ($1, $2, $3, $4) RETURNING *',
+    updateTimeslot:
+        'UPDATE timeslots SET fare_detail_id = $1 day_of_week = $2, start_time = $3, end_time = $4 WHERE timeslot_id = $5',
+    deleteTimeslot: 'DELETE FROM timeslots WHERE timeslot_id = $1',
+    deleteTimeslotByFareId: 'DELETE FROM timeslots WHERE fare_detail_id = $1',
+};
+
+export const commuteOverviewQueries = {
+    getCommuteOverview: `
+        WITH RECURSIVE days AS (
+            SELECT date_trunc('month', current_date)::date as day
+            UNION ALL
+            SELECT day + 1
+            FROM days
+            WHERE day < date_trunc('month', current_date)::date + interval '1 month' - interval '1 day'
+        ),
+        count_days AS (
+            SELECT
+            extract(dow from day)::int AS day_of_week,
+            COUNT(*) AS num_days
+            FROM days
+            GROUP BY day_of_week
+        ),
+        ticket_fares AS (
+            SELECT
+                cs.commute_schedule_id,
+                cs.day_of_week,
+                csy.name AS system_name,
+                fd.commute_system_id,
+                csy.fare_cap AS fare_cap,
+                csy.fare_cap_duration AS fare_cap_duration,
+                COALESCE(fd.fare_amount, 0) AS fare_amount,
+                (
+                    SELECT COALESCE(SUM(ch.fare_amount), 0)
+                    FROM commute_history ch
+                    WHERE ch.account_id = cs.account_id
+                    AND ch.commute_system = csy.name
+                    AND (
+                        (csy.fare_cap_duration = 0 AND date(ch.timestamp) = current_date) OR
+                        (csy.fare_cap_duration = 1 AND date_trunc('week', ch.timestamp) = date_trunc('week', current_date)) OR
+                        (csy.fare_cap_duration = 2 AND date_trunc('month', ch.timestamp) = date_trunc('month', current_date))
+                    )
+                ) AS current_spent
+            FROM commute_schedule cs
+            JOIN fare_details fd ON cs.fare_detail_id = fd.fare_detail_id
+            JOIN commute_systems csy ON fd.commute_system_id = csy.commute_system_id
+            WHERE cs.account_id = $1
+        )
+        SELECT
+            tf.commute_system_id,
+            tf.system_name,
+            COALESCE(SUM(tf.fare_amount), 0) AS total_cost_per_week,
+            COALESCE(SUM(tf.fare_amount * cd.num_days), 0) AS total_cost_per_month,
+            COALESCE(COUNT(tf.commute_schedule_id), 0) AS rides,
+            tf.fare_cap AS fare_cap,
+            tf.fare_cap_duration AS fare_cap_duration,
+            tf.current_spent
+        FROM ticket_fares tf
+        JOIN count_days cd ON tf.day_of_week = cd.day_of_week
+        GROUP BY tf.commute_system_id, tf.system_name, tf.fare_cap, tf.fare_cap_duration, tf.current_spent;
+    `,
+};
+
+export const fareCappingQueries = {
+    getFareCapping: `
+        WITH RECURSIVE ticket_fares AS (
+            SELECT
+                cs.commute_schedule_id,
+                cs.day_of_week,
+                csy.name AS system_name,
+                fd.commute_system_id,
+                csy.fare_cap AS fare_cap,
+                csy.fare_cap_duration AS fare_cap_duration,
+                COALESCE(fd.fare_amount, 0) AS fare_amount,
+                (
+                    SELECT COALESCE(SUM(ch.fare_amount), 0)
+                    FROM commute_history ch
+                    WHERE ch.account_id = cs.account_id
+                    AND ch.commute_system = csy.name
+                    AND (
+                        (csy.fare_cap_duration = 0 AND date(ch.timestamp) = current_date) OR
+                        (csy.fare_cap_duration = 1 AND date_trunc('week', ch.timestamp) = date_trunc('week', current_date)) OR
+                        (csy.fare_cap_duration = 2 AND date_trunc('month', ch.timestamp) = date_trunc('month', current_date))
+                    )
+                ) AS current_spent
+            FROM commute_schedule cs
+            JOIN fare_details fd ON cs.fare_detail_id = fd.fare_detail_id
+            JOIN commute_systems csy ON fd.commute_system_id = csy.commute_system_id
+            WHERE cs.account_id = $1
+        )
+        SELECT
+            tf.commute_system_id,
+            tf.system_name,
+            tf.fare_cap AS fare_cap,
+            tf.fare_cap_duration AS fare_cap_duration,
+            tf.current_spent
+        FROM ticket_fares tf
+        GROUP BY tf.commute_system_id, tf.system_name, tf.fare_cap, tf.fare_cap_duration, tf.current_spent;
+    `,
+};

@@ -112,7 +112,7 @@ export const createPayrollDate = async (
         );
 
         // Define the script command
-        const scriptCommand: string = `/app/dist/scripts/getPayrollsByEmployee.sh ${employee_id}`;
+        const scriptCommand: string = `/app/scripts/getPayrollsByEmployee.sh ${employee_id}`;
 
         // Execute the script
         exec(scriptCommand, (error, stdout, stderr) => {
@@ -189,7 +189,7 @@ export const updatePayrollDate = async (
         }
 
         // Define the script command
-        const scriptCommand: string = `/app/dist/scripts/getPayrollsByEmployee.sh ${employee_id}`;
+        const scriptCommand: string = `/app/scripts/getPayrollsByEmployee.sh ${employee_id}`;
 
         // Execute the script
         exec(scriptCommand, (error, stdout, stderr) => {
@@ -264,7 +264,7 @@ export const deletePayrollDate = async (
         await executeQuery(payrollQueries.deletePayrollDate, [id]);
 
         // Define the script command
-        const scriptCommand: string = `/app/dist/scripts/getPayrollsByEmployee.sh ${parseInt(
+        const scriptCommand: string = `/app/scripts/getPayrollsByEmployee.sh ${parseInt(
             getResults[0].employee_id,
         )}`;
 
