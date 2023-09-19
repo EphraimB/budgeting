@@ -43,6 +43,7 @@ router.post(
         body('timeslots.*.end_time')
             .isTime({ hourFormat: 'hour24', mode: 'withSeconds' })
             .withMessage('Invalid end time format. It should be HH:MM:SS.'),
+        body('timed_pass_duration').isInt({ min: 1 }),
         body('alternate_fare_detail_id')
             .optional({ nullable: true })
             .isInt({ min: 1 })
@@ -74,6 +75,9 @@ router.put(
         body('timeslots.*.end_time')
             .isTime({ hourFormat: 'hour24', mode: 'withSeconds' })
             .withMessage('Invalid end time format. It should be HH:MM:SS.'),
+        body('timed_pass_duration')
+            .isInt({ min: 1 })
+            .withMessage('Timed pass duration must be a number'),
         body('alternate_fare_detail_id')
             .optional({ nullable: true })
             .isInt({ min: 1 })

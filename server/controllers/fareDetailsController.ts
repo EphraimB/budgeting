@@ -108,6 +108,7 @@ export const createFareDetail = async (
         name,
         fare_amount,
         timeslots,
+        timed_pass_duration,
         alternate_fare_detail_id,
     } = request.body;
 
