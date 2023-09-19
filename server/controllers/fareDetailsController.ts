@@ -109,6 +109,8 @@ export const createFareDetail = async (
         fare_amount,
         timeslots,
         timed_pass_duration,
+        is_fixed_days,
+        is_monthly,
         alternate_fare_detail_id,
     } = request.body;
 
@@ -267,6 +269,8 @@ export const updateFareDetail = async (
         fare_amount,
         timeslots,
         timed_pass_duration,
+        is_fixed_days,
+        is_monthly,
         alternate_fare_detail_id,
     } = request.body;
     try {

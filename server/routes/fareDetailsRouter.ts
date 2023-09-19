@@ -46,6 +46,8 @@ router.post(
         body('timed_pass_duration')
             .optional({ nullable: true })
             .isInt({ min: 1 }),
+        body('is_fixed_days').optional().isBoolean(),
+        body('is_monthly').optional().isBoolean(),
         body('alternate_fare_detail_id')
             .optional({ nullable: true })
             .isInt({ min: 1 })
@@ -80,6 +82,8 @@ router.put(
         body('timed_pass_duration')
             .optional({ nullable: true })
             .isInt({ min: 1 }),
+        body('is_fixed_days').optional().isBoolean(),
+        body('is_monthly').optional().isBoolean(),
         body('alternate_fare_detail_id')
             .optional({ nullable: true })
             .isInt({ min: 1 })

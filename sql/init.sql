@@ -186,6 +186,8 @@ CREATE TABLE IF NOT EXISTS fare_details (
   name VARCHAR(255) NOT NULL,
   fare_amount NUMERIC(5,2) NOT NULL,
   timed_pass_duration INT,
+  is_fixed_days BOOLEAN DEFAULT FALSE,
+  is_monthly BOOLEAN DEFAULT FALSE,
   alternate_fare_detail_id INT REFERENCES fare_details(fare_detail_id),
   date_created TIMESTAMP NOT NULL,
   date_modified TIMESTAMP NOT NULL
