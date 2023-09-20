@@ -14,8 +14,10 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <GlobalAppBar />
-      <body>{children}</body>
+      <body>
+        <GlobalAppBar />
+        {children}
+      </body>
     </html>
   );
 }
