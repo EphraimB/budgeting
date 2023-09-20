@@ -1,27 +1,27 @@
 import Image from "next/image";
 import AccountList from "../../components/AccountList";
-import { dehydrate, QueryClient } from "@tanstack/react-query";
-import { fetchAccounts } from "../../hooks";
 
-export default function Home() {
+async function getAccounts() {
+  const res = await fetch("http://server:5001/api/accounts");
+
+  if (!res.ok) {
+    // This will activate the closest `errpor.js` Error Boundary
+    throw new Error("Failed to fetch data");
+  }
+
+  return res.json();
+}
+
+export default async function Home() {
+  const accounts = await getAccounts();
+
   function onAccountClick(account: any) {
     console.log(account);
   }
 
   return (
     <main>
-      <AccountList accounts={getAccounts} onAccountClick={onAccountClick} />
+      <AccountList accounts={accounts} />
     </main>
   );
-}
-
-async function getAccounts() {
-  const queryClient = new QueryClient();
-
-  await queryClient.prefetchQuery({
-    queryKey: ["accounts", 10],
-    queryFn: () => fetchAccounts(10),
-  });
-
-  return queryClient;
 }

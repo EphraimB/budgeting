@@ -1,23 +1,21 @@
+"use client";
+
 import List from "@mui/material/List";
 import ListItem from "@mui/material/ListItem";
 import ListItemText from "@mui/material/ListItemText";
 import Button from "@mui/material/Button";
 
-function AccountList({
-  accounts,
-  onAccountClick,
-}: {
-  accounts: any;
-  onAccountClick: any;
-}) {
+function AccountList({ accounts }: /*onAccountClick*/ { accounts: any }) {
   return (
     <div>
       <List>
         {accounts.map((account: any) => (
-          <ListItem key={account.id} onClick={() => onAccountClick(account)}>
+          <ListItem
+            key={account.account_id} /*onClick={() => onAccountClick(account)}*/
+          >
             <ListItemText
-              primary={account.name}
-              secondary={`Balance: $${account.balance}`}
+              primary={account.account_name}
+              secondary={`Balance: $${account.account_balance}`}
             />
           </ListItem>
         ))}
