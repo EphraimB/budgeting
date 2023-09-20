@@ -10,12 +10,12 @@ export default function Home() {
 
   return (
     <main>
-      <AccountList accounts={getAccounts()} onAccountClick={onAccountClick} />
+      <AccountList accounts={getAccounts} onAccountClick={onAccountClick} />
     </main>
   );
 }
 
-export async function getAccounts() {
+async function getAccounts() {
   const queryClient = new QueryClient();
 
   await queryClient.prefetchQuery({
