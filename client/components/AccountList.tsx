@@ -6,9 +6,11 @@ import Stack from "@mui/material/Stack";
 function AccountList({
   accounts,
   onAccountClick,
+  selectedAccountId,
 }: {
   accounts: object[];
   onAccountClick: any;
+  selectedAccountId: number | null;
 }) {
   return (
     <Stack direction="row" justifyContent="center" spacing={2}>
@@ -16,10 +18,10 @@ function AccountList({
         <Paper
           key={account.account_id}
           onClick={() => onAccountClick(account)}
+          elevation={account.account_id === selectedAccountId ? 1 : 4}
           sx={{
             p: 2,
             cursor: "pointer",
-            // elevation: account.account_id === selectedAccountId ? 0 : 4,
           }}
         >
           <Typography variant="subtitle1" color="text.primary">
