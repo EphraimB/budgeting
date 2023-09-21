@@ -60,7 +60,9 @@ export default function TransactionDisplay({
                 <TableCell align="right">{transaction.title}</TableCell>
                 <TableCell align="right">{transaction.description}</TableCell>
                 <TableCell align="right">${transaction.amount}</TableCell>
-                <TableCell align="right">{transaction.tax_rate * 100}%</TableCell>
+                <TableCell align="right">
+                  {transaction.tax_rate * 100}%
+                </TableCell>
                 <TableCell align="right">${transaction.total_amount}</TableCell>
                 <TableCell align="right">${transaction.balance}</TableCell>
               </TableRow>
