@@ -41,10 +41,10 @@ export default function TransactionDisplay({
             <TableCell>Date</TableCell>
             <TableCell align="right">Title</TableCell>
             <TableCell align="right">Description</TableCell>
-            <TableCell align="right">amount</TableCell>
-            <TableCell align="right">tax_rate</TableCell>
-            <TableCell align="right">total_amount</TableCell>
-            <TableCell align="right">balance</TableCell>
+            <TableCell align="right">Amount</TableCell>
+            <TableCell align="right">Tax rate</TableCell>
+            <TableCell align="right">Total amount</TableCell>
+            <TableCell align="right">Balance</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
