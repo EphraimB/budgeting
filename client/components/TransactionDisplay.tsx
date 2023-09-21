@@ -38,7 +38,8 @@ export default function TransactionDisplay({
       <Table sx={{ minWidth: 650 }} aria-label="simple table">
         <TableHead>
           <TableRow>
-            <TableCell>Title</TableCell>
+            <TableCell>Date</TableCell>
+            <TableCell align="right">Title</TableCell>
             <TableCell align="right">Description</TableCell>
             <TableCell align="right">amount</TableCell>
             <TableCell align="right">tax_rate</TableCell>
@@ -47,21 +48,24 @@ export default function TransactionDisplay({
           </TableRow>
         </TableHead>
         <TableBody>
-          {data.map((transaction: any) => (
-            <TableRow
-              //   key={transaction.name}
-              sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
-            >
-              <TableCell component="th" scope="row">
-                {transaction.title}
-              </TableCell>
-              <TableCell align="right">{transaction.description}</TableCell>
-              <TableCell align="right">{transaction.amount}</TableCell>
-              <TableCell align="right">{transaction.tax_rate}</TableCell>
-              <TableCell align="right">{transaction.total_amount}</TableCell>
-              <TableCell align="right">{transaction.balance}</TableCell>
-            </TableRow>
-          ))}
+          {data.map((dt: any) =>
+            dt.transactions.map((transaction: any) => (
+              <TableRow
+                //   key={transaction.name}
+                sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
+              >
+                <TableCell component="th" scope="row">
+                  {transaction.date}
+                </TableCell>
+                <TableCell align="right">{transaction.title}</TableCell>
+                <TableCell align="right">{transaction.description}</TableCell>
+                <TableCell align="right">${transaction.amount}</TableCell>
+                <TableCell align="right">{transaction.tax_rate}%</TableCell>
+                <TableCell align="right">${transaction.total_amount}</TableCell>
+                <TableCell align="right">${transaction.balance}</TableCell>
+              </TableRow>
+            ))
+          )}
         </TableBody>
       </Table>
     </TableContainer>
