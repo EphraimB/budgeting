@@ -9,6 +9,7 @@ export default function DateRange({
   fromDate,
   setFromDate,
   toDate,
+  setToDate,
 }: {
   fromDate: Dayjs | null;
   setFromDate: (newValue: Dayjs | null) => void;
@@ -26,7 +27,7 @@ export default function DateRange({
         <DateTimePicker
           label="To date"
           value={toDate}
-          onChange={(newToDate) => setFromDate(newToDate)}
+          onChange={(newToDate) => setToDate(newToDate)}
         />
       </Stack>
     </LocalizationProvider>

@@ -1,4 +1,5 @@
 import * as React from "react";
+import { Dayjs } from "dayjs";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
 import TableCell from "@mui/material/TableCell";
@@ -13,20 +14,17 @@ const fetcher: Fetcher = (url: string) => fetch(url).then((r) => r.json());
 
 export default function TransactionDisplay({
   accountId,
+  fromDate,
+  toDate,
 }: {
-  accountId: number | null;
+  accountId: number;
+  fromDate: Dayjs;
+  toDate: Dayjs;
 }) {
-  const dateToday: string = new Date().toISOString().slice(0, 10);
-  const endDate: string = new Date(
-    new Date().getFullYear(),
-    new Date().getMonth() + 1,
-    0
-  )
-    .toISOString()
-    .slice(0, 10);
-
   const { data, error, isLoading } = useSWR<any>(
-    `http://localhost:5001/api/transactions?account_id=${accountId}&from_date=${dateToday}&to_date=${endDate}`,
+    `http://localhost:5001/api/transactions?account_id=${accountId}&from_date=${fromDate
+      .format()
+      .substring(0, 10)}&to_date=${toDate.format().substring(0, 10)}`,
     fetcher
   );
 

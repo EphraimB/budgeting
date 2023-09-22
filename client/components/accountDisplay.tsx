@@ -33,7 +33,13 @@ export default function AccountDisplay({ accounts }: { accounts: object[] }) {
             toDate={toDate}
             setToDate={setToDate}
           />
-          <TransactionDisplay accountId={selectedAccountId} />
+          {fromDate && toDate && (
+            <TransactionDisplay
+              accountId={selectedAccountId}
+              fromDate={fromDate}
+              toDate={toDate}
+            />
+          )}
         </>
       )}
     </>

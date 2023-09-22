@@ -13,7 +13,7 @@ export default async function Home() {
 
   return (
     <main>
-      <AccountDisplay accounts={accounts} />;
+      <AccountDisplay accounts={accounts} />
     </main>
   );
 }
