@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Dayjs } from "dayjs";
+import dayjs, { Dayjs } from "dayjs";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
 import TableCell from "@mui/material/TableCell";
@@ -53,7 +53,9 @@ export default function TransactionDisplay({
                 sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
               >
                 <TableCell component="th" scope="row">
-                  {transaction.date}
+                  {dayjs(transaction.date).format("dddd")}
+                  <br />
+                  {dayjs(transaction.date).format("MMMM D, YYYY")}
                 </TableCell>
                 <TableCell align="right">{transaction.title}</TableCell>
                 <TableCell align="right">{transaction.description}</TableCell>
