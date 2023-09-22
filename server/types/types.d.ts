@@ -1,4 +1,5 @@
 export interface GeneratedTransaction {
+    id: string;
     expense_id?: number;
     loan_id?: number;
     income_id?: number;

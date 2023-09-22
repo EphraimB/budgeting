@@ -1,4 +1,5 @@
 import { type Wishlist, type GeneratedTransaction } from '../types/types';
+import { v4 as uuidv4 } from 'uuid';
 
 /**
  *
@@ -49,6 +50,7 @@ const generateWishlists = (
                 : new Date(affordableDate);
 
         const newTransaction: GeneratedTransaction = {
+            id: uuidv4(),
             wishlist_id: wishlist.wishlist_id,
             title: wishlist.wishlist_title,
             description: wishlist.wishlist_description,

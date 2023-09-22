@@ -1,4 +1,5 @@
 import { type Transfer, type GeneratedTransaction } from '../types/types';
+import { v4 as uuidv4 } from 'uuid';
 
 type GenerateDateFunction = (currentDate: Date, transfer: Transfer) => Date;
 
@@ -70,6 +71,7 @@ const generateTransfers = (
 
     while (transferDate <= toDate) {
         const newTransaction: GeneratedTransaction = {
+            id: uuidv4(),
             transfer_id: transfer.transfer_id,
             title: transfer.transfer_title,
             description: transfer.transfer_description,

@@ -1,4 +1,5 @@
 import { type Income, type GeneratedTransaction } from '../types/types';
+import { v4 as uuidv4 } from 'uuid';
 
 type GenerateDateFunction = (currentDate: Date, income: Income) => Date;
 
@@ -70,6 +71,7 @@ const generateIncome = (
         const taxAmount = initialAmount + initialAmount * taxRate;
 
         const newTransaction: GeneratedTransaction = {
+            id: uuidv4(),
             income_id: income.income_id,
             title: income.income_title,
             description: income.income_description,
