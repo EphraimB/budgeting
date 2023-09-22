@@ -15,7 +15,7 @@ export default function AccountDisplay({ accounts }: { accounts: object[] }) {
   }
 
   return (
-    <main>
+    <>
       <AccountList
         accounts={accounts}
         onAccountClick={onAccountClick}
@@ -24,6 +24,6 @@ export default function AccountDisplay({ accounts }: { accounts: object[] }) {
       {selectedAccountId && (
         <TransactionDisplay accountId={selectedAccountId} />
       )}
-    </main>
+    </>
   );
 }

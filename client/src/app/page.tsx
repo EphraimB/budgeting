@@ -11,5 +11,9 @@ async function getAccounts() {
 export default async function Home() {
   const accounts = await getAccounts();
 
-  return <AccountDisplay accounts={accounts} />;
+  return (
+    <main>
+      <AccountDisplay accounts={accounts} />;
+    </main>
+  );
 }
