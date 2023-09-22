@@ -1,7 +1,9 @@
 "use client";
 
 import { useState } from "react";
+import dayjs, { Dayjs } from "dayjs";
 import AccountList from "./AccountList";
+import DateRange from "./DateRange";
 import TransactionDisplay from "./TransactionDisplay";
 
 export default function AccountDisplay({ accounts }: { accounts: object[] }) {
@@ -9,6 +11,8 @@ export default function AccountDisplay({ accounts }: { accounts: object[] }) {
   const [selectedAccountId, setSelectedAccountId] = useState<number | null>(
     null
   );
+  const [fromDate, setFromDate] = useState<Dayjs | null>(dayjs());
+  const [toDate, setToDate] = useState<Dayjs | null>(dayjs().add(1, "month"));
 
   function onAccountClick(account: any) {
     setSelectedAccountId(account.account_id);
@@ -22,7 +26,15 @@ export default function AccountDisplay({ accounts }: { accounts: object[] }) {
         selectedAccountId={selectedAccountId}
       />
       {selectedAccountId && (
-        <TransactionDisplay accountId={selectedAccountId} />
+        <>
+          <DateRange
+            fromDate={fromDate}
+            setFromDate={setFromDate}
+            toDate={toDate}
+            setToDate={setToDate}
+          />
+          <TransactionDisplay accountId={selectedAccountId} />
+        </>
       )}
     </>
   );

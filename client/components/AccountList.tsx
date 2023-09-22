@@ -13,7 +13,14 @@ function AccountList({
   selectedAccountId: number | null;
 }) {
   return (
-    <Stack direction="row" justifyContent="center" spacing={2}>
+    <Stack
+      direction="row"
+      justifyContent="center"
+      spacing={2}
+      sx={{
+        mb: 5,
+      }}
+    >
       {accounts.map((account: any) => (
         <Paper
           key={account.account_id}
