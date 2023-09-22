@@ -10,7 +10,17 @@ export default function Actions({ accountId }: { accountId: number }) {
   const [value, setValue] = useState(0);
 
   return (
-    <Box sx={{ width: "100%", display: "flex", justifyContent: "center" }}>
+    <Box
+      sx={{
+        position: "absolute", // Set to absolute
+        top: 25,
+        left: 0,
+        zIndex: 15, // Ensure it's above the card content
+        width: "100%",
+        display: "flex",
+        justifyContent: "center",
+      }}
+    >
       <Paper
         elevation={3}
         sx={{
