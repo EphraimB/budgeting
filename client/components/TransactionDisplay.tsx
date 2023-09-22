@@ -56,6 +56,8 @@ export default function TransactionDisplay({
                   {dayjs(transaction.date).format("dddd")}
                   <br />
                   {dayjs(transaction.date).format("MMMM D, YYYY")}
+                  <br />
+                  {dayjs(transaction.date).format("h:mm A")}
                 </TableCell>
                 <TableCell align="right">{transaction.title}</TableCell>
                 <TableCell align="right">{transaction.description}</TableCell>
