@@ -2,6 +2,8 @@ import { exec } from "child_process";
 import { Request, Response } from "express";
 
 export const getCronJobs = async (req: Request, res: Response) => {
+  const { unique_id } = req.query;
+
   exec("crontab -l", (error, stdout, stderr) => {
     if (error) {
       console.error(`exec error: ${error}`);
@@ -27,6 +29,11 @@ export const getCronJobs = async (req: Request, res: Response) => {
 
         return { uniqueId, schedule, command };
       });
+
+    if (unique_id) {
+      const job = jobs.find((job) => job.uniqueId === unique_id);
+      return res.json({ status: "success", data: job });
+    }
 
     res.json({ status: "success", data: jobs });
   });
