@@ -23,10 +23,6 @@ RUN chmod +x /app/scripts/*
 # ------ Runtime stage ------
 FROM node:18-alpine
 
-# Set global environment variables for cron
-ENV SHELL=/bin/sh
-ENV PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
-
 WORKDIR /app
 
 # Copy package.json and package-lock.json
