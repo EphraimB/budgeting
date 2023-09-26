@@ -39,6 +39,25 @@ services:
       - PGDB=mockdb
       - PGUSER=mockuser
       - PGPORT=5432
+  cron:
+    build:
+      context: ./cron/
+      dockerfile: Dockerfile
+    volumes:
+      - ./scripts:/scripts  # Mount the directory containing your cron scripts
+    environment:
+      # Set any environment variables that your cron jobs might need
+      - PGHOST=db
+      - PGDATABASE=${PGDB}
+      - PGUSER=${PGUSER}
+      - PGPASSWORD=${PGPASSWORD}
+      - PGPORT=5432
+    networks:
+      - app-network
+    ports:
+      - "8080:8080"
+    depends_on:
+      - db
   db:
     image: postgres:15.2-alpine3.17
     environment:
