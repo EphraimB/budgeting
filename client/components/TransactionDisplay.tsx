@@ -49,7 +49,7 @@ export default function TransactionDisplay({
           {data.map((dt: any) =>
             dt.transactions.map((transaction: any) => (
               <TableRow
-                key={`${transaction.id}-${transaction.date}-${transaction.title}-${transaction.amount}-${transaction.balance}}`}
+                key={`${transaction.id}-${transaction.date}-${transaction.title}-${transaction.amount}-${transaction.balance}`}
                 sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
               >
                 <TableCell component="th" scope="row">
