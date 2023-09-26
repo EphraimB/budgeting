@@ -2,9 +2,12 @@ import React from "react";
 import { render } from "@testing-library/react";
 import "@testing-library/jest-dom";
 import dayjs from "dayjs";
+import { cleanup } from "@testing-library/react";
 
 describe("TransactionDisplay", () => {
   afterEach(() => {
+    cleanup();
+    jest.clearAllMocks();
     jest.resetModules();
   });
 
