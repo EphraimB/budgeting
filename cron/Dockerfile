@@ -44,7 +44,7 @@ COPY --from=builder /app/dist ./
 RUN mkdir -p /app/tmp && touch /app/tmp/cronjob.lock
 
 # Add the cron job to the system crontab
-RUN echo "0 0 1 * * /app/scripts/employeeChecker.sh >> /app/cron.log 2>&1" > /tmp/mycron
+RUN echo "0 0 1 * * /scripts/employeeChecker.sh >> /app/cron.log 2>&1" > /tmp/mycron
 
 RUN crontab /tmp/mycron
 

@@ -19,7 +19,13 @@ export const getCronJobs = async (req: Request, res: Response) => {
         const parts = job.split(/\s+/);
         const schedule = parts.slice(0, 5).join(" ");
         const command = parts.slice(5).join(" ");
-        return { schedule, command };
+
+        // Extract the uniqueId using a regex pattern
+        const uniqueIdRegex = /(\w{8}-\w{4}-\w{4}-\w{4}-\w{12})/;
+        const match = uniqueIdRegex.exec(command);
+        const uniqueId = match ? match[1] : null;
+
+        return { uniqueId, schedule, command };
       });
 
     res.json({ status: "success", data: jobs });
