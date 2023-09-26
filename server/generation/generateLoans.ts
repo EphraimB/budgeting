@@ -1,4 +1,5 @@
 import { type Loan, type GeneratedTransaction } from '../types/types';
+import { v4 as uuidv4 } from 'uuid';
 
 type GenerateDateFunction = (currentDate: Date, loan: Loan) => Date;
 
@@ -110,6 +111,7 @@ const generateLoans = (
         const subsidizedAmount = amount - amount * (loan.loan_subsidized ?? 0);
 
         const newTransaction: GeneratedTransaction = {
+            id: uuidv4(),
             loan_id: loan.loan_id,
             title: loan.loan_title + ' loan to ' + loan.loan_recipient,
             description: loan.loan_description,

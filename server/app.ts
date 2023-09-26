@@ -5,6 +5,7 @@ import express, {
     type NextFunction,
 } from 'express';
 import bodyParser from 'body-parser';
+import cors from 'cors';
 import { logger } from './config/winston.js';
 import swaggerUi from 'swagger-ui-express';
 import routes from './routes/routes.js';
@@ -38,6 +39,7 @@ const swaggerDocument = JSON.parse(
 
 const app: Express = express();
 
+app.use(cors());
 app.use(bodyParser.json());
 
 app.use('/api/docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));

@@ -1,5 +1,6 @@
 import { GeneratedTransaction } from '../types/types';
 import { CommuteSchedule } from '../types/types';
+import { v4 as uuidv4 } from 'uuid';
 
 const getNextDate = (
     currentDate: Date,
@@ -32,6 +33,7 @@ export const generateCommuteExpenses = (
 
     while (commuteExpenseDate <= toDate) {
         const newTransaction: GeneratedTransaction = {
+            id: uuidv4(),
             commute_schedule_id: commuteExpense.commute_schedule_id,
             title: commuteExpense.pass,
             description: `${commuteExpense.pass} pass`,
@@ -54,7 +56,7 @@ export const generateCommuteExpenses = (
             commuteExpense.start_time,
         );
     }
-    
+
     // Return the generated rides
     return generatedRides;
 };

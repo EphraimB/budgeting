@@ -1,4 +1,5 @@
 import { type Payroll, type GeneratedTransaction } from '../types/types';
+import { v4 as uuidv4 } from 'uuid';
 
 /**
  *
@@ -17,6 +18,7 @@ const generatePayrolls = (
     const payroll_end_date: Date = new Date(payrolls.end_date);
 
     const newTransaction = {
+        id: uuidv4(),
         title: 'Payroll',
         description: 'payroll',
         date: new Date(payroll_end_date),

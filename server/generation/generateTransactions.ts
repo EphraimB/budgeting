@@ -1,4 +1,5 @@
 import { type Request, type Response, type NextFunction } from 'express';
+import { v4 as uuidv4 } from 'uuid';
 import {
     generateDailyIncome,
     generateWeeklyIncome,
@@ -40,7 +41,6 @@ import {
 } from '../types/types.js';
 import { executeQuery } from '../utils/helperFunctions.js';
 import { accountQueries } from '../models/queryData.js';
-import { logger } from '../config/winston.js';
 
 const fullyPaidBackDates: Record<number, string | null> = {}; // map of loan_id to fullyPaidBackDate
 
@@ -62,6 +62,7 @@ const generate = async (
         .forEach((account) =>
             account.transactions.forEach((transaction: Transaction) =>
                 transactions.push({
+                    id: uuidv4(),
                     transaction_id: transaction.transaction_id,
                     title: transaction.transaction_title,
                     description: transaction.transaction_description,
