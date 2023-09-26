@@ -6,10 +6,12 @@ import express, {
 } from "express";
 import bodyParser from "body-parser";
 import { logger } from "./config/winston.js";
+import cronJobRouter from "./routes/cronJobRouter.js";
 
 const app: Express = express();
 
 app.use(bodyParser.json());
+app.use("/api/cron", cronJobRouter);
 
 // Global error handling middleware
 app.use((err: any, req: Request, res: Response, next: NextFunction) => {

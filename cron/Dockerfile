@@ -44,7 +44,11 @@ COPY --from=builder /app/dist ./
 RUN mkdir -p /app/tmp && touch /app/tmp/cronjob.lock
 
 # Add the cron job to the system crontab
-RUN echo "0 0 1 * * /app/scripts/employeeChecker.sh > /app/cron.log 2>&1" >> /var/spool/cron/crontabs/root
+RUN echo "0 0 1 * * /app/scripts/employeeChecker.sh >> /app/cron.log 2>&1" > /tmp/mycron
+
+RUN crontab /tmp/mycron
+
+RUN rm /tmp/mycron
 
 # Start the cron service and run the app
 CMD crond -l 2 -b && npm run start
