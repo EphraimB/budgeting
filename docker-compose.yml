@@ -14,7 +14,7 @@ services:
       context: ./server/
       dockerfile: Dockerfile
     environment:
-      - PGHOST=host.docker.internal
+      - PGHOST=db
       - PGDATABASE=${PGDB}
       - PGUSER=${PGUSER}
       - PGPASSWORD=${PGPASSWORD}
@@ -25,13 +25,13 @@ services:
       - db
   shellcheck:
     build:
-      context: ./server/scripts
+      context: ./cron/scripts
       dockerfile: Dockerfile.shellcheck
     volumes:
-      - ./server/scripts:/scripts
+      - ./cron/scripts:/scripts
   bats-test:
     build:
-      context: ./server/scripts
+      context: ./cron/scripts
       dockerfile: Dockerfile.bats
     environment:
       - PGPASSWORD=mockpassword
@@ -44,7 +44,7 @@ services:
       context: ./cron/
       dockerfile: Dockerfile
     volumes:
-      - ./scripts:/scripts  # Mount the directory containing your cron scripts
+      - ./cron/scripts:/scripts
     environment:
       # Set any environment variables that your cron jobs might need
       - PGHOST=db
