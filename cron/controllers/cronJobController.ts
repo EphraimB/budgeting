@@ -28,11 +28,11 @@ export const getCronJobs = async (req: Request, res: Response) => {
         const uniqueId = uniqueIdMatch ? uniqueIdMatch[1] : null;
 
         // Extract title and description using a regex
-        const titleDescriptionRegex = /"([^"]+)" "([^"]+)"/;
-        const titleDescMatch = titleDescriptionRegex.exec(job);
-        const titleAndDescription = titleDescMatch
-          ? titleDescMatch.slice(1)
-          : [null, null];
+        // const titleDescriptionRegex = /"([^"]+)" "([^"]+)"/;
+        // const titleDescMatch = titleDescriptionRegex.exec(job);
+        // const titleAndDescription = titleDescMatch
+        //   ? titleDescMatch.slice(1)
+        //   : [null, null];
 
         // Determine the type of job by looking at the scriptPath or its arguments
         let expense_type = null;
@@ -52,6 +52,27 @@ export const getCronJobs = async (req: Request, res: Response) => {
           }
         }
 
+        let title, description;
+
+        if (expense_type === "payroll") {
+          title = "Payroll";
+          // When extracting payroll description:
+          // When extracting payroll description:
+          const descriptionRegex = /"Payroll for ([^"]+)"/;
+          const descriptionMatch = descriptionRegex.exec(job);
+          if (descriptionMatch) {
+            description = `Payroll for ${descriptionMatch[1]}`;
+            description = description.replace(/\s+/g, " ");
+          } else {
+            description = null;
+          }
+        } else {
+          const titleDescriptionRegex = /"([^"]*)" "([^"]*)"/;
+          const titleDescMatch = titleDescriptionRegex.exec(job);
+          title = titleDescMatch ? titleDescMatch[1] : null;
+          description = titleDescMatch ? titleDescMatch[2] : null;
+        }
+
         const [account_id, id, amount] = parts.slice(7, 10);
 
         return {
@@ -62,8 +83,8 @@ export const getCronJobs = async (req: Request, res: Response) => {
           account_id: Number(account_id),
           id: Number(id),
           amount: parseFloat(amount),
-          title: titleAndDescription[0],
-          description: titleAndDescription[1],
+          title,
+          description,
         };
       });
 
