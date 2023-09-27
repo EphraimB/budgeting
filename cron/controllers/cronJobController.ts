@@ -27,13 +27,6 @@ export const getCronJobs = async (req: Request, res: Response) => {
         const uniqueIdMatch = uniqueIdRegex.exec(job);
         const uniqueId = uniqueIdMatch ? uniqueIdMatch[1] : null;
 
-        // Extract title and description using a regex
-        // const titleDescriptionRegex = /"([^"]+)" "([^"]+)"/;
-        // const titleDescMatch = titleDescriptionRegex.exec(job);
-        // const titleAndDescription = titleDescMatch
-        //   ? titleDescMatch.slice(1)
-        //   : [null, null];
-
         // Determine the type of job by looking at the scriptPath or its arguments
         let expense_type = null;
 
