@@ -14,11 +14,8 @@ COPY . .
 # Compile TypeScript into JavaScript
 RUN npm run build
 
-# Copy scripts folder into the dist folder
-COPY ./scripts /app/scripts
-
-# Make all files in the scripts directory executable
-RUN chmod +x /app/scripts/*
+# Copy scripts folder into the root folder
+COPY ./scripts /scripts
 
 # ------ Runtime stage ------
 FROM node:18-alpine
@@ -40,6 +37,13 @@ RUN npm ci --only=production
 
 # Copy compiled JavaScript from the previous stage
 COPY --from=builder /app/dist ./
+
+WORKDIR /
+
+COPY --from=builder /app/scripts ./scripts
+
+# Make all files in the scripts directory executable
+RUN chmod +x /scripts/*
 
 RUN mkdir -p /app/tmp && touch /app/tmp/cronjob.lock
 

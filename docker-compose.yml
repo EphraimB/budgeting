@@ -43,8 +43,6 @@ services:
     build:
       context: ./cron/
       dockerfile: Dockerfile
-    volumes:
-      - ./cron/scripts:/scripts
     environment:
       # Set any environment variables that your cron jobs might need
       - PGHOST=db
