@@ -25,7 +25,7 @@ export const getCronJobs = async (req: Request, res: Response) => {
         // Match UUID
         const uniqueIdRegex = /(\w{8}-\w{4}-\w{4}-\w{4}-\w{12})/;
         const uniqueIdMatch = uniqueIdRegex.exec(job);
-        const unique_id = uniqueIdMatch ? uniqueIdMatch[1] : null;
+        const uniqueId = uniqueIdMatch ? uniqueIdMatch[1] : null;
 
         // Extract title and description using a regex
         const titleDescriptionRegex = /"([^"]+)" "([^"]+)"/;
@@ -34,11 +34,19 @@ export const getCronJobs = async (req: Request, res: Response) => {
           ? titleDescMatch.slice(1)
           : [null, null];
 
-        // Extract the expense type by splitting the combined string on underscores and taking the first part
-        const combinedIdentifier = (parts[6].split("/").pop() || "").split(
-          "_"
-        )[0];
-        const expense_type = combinedIdentifier.split("_")[0];
+        // Determine the type of job by looking at the scriptPath or its arguments
+        let expense_type = null;
+
+        // For payroll type
+        if (script_path.includes("createTransaction.sh")) {
+          const identifierRegex =
+            /(\w+)_([0-9]+)_\w{8}-\w{4}-\w{4}-\w{4}-\w{12}/;
+          const identifierMatch = identifierRegex.exec(parts[6]);
+
+          if (identifierMatch) {
+            expense_type = identifierMatch[1]; // This gives us "payroll" or any other type
+          }
+        }
 
         const [account_id, id, amount] = parts.slice(7, 10);
 
