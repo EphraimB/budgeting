@@ -51,7 +51,7 @@ export const getCronJobs = async (req: Request, res: Response) => {
         const [account_id, id, amount] = parts.slice(7, 10);
 
         return {
-          unique_id,
+          unique_id: uniqueId,
           schedule,
           expense_type,
           script_path,
