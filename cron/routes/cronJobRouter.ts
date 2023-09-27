@@ -24,6 +24,9 @@ router.post(
       .isString()
       .withMessage("Schedule must be a cron expression"),
     body("script_path").isString().withMessage("Script path must be a string"),
+    body("expense_type")
+      .isString()
+      .withMessage("Expense type must be a string"),
     body("account_id")
       .isInt({ min: 1 })
       .withMessage("Account id must be a integer"),

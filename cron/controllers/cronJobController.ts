@@ -37,14 +37,18 @@ export const getCronJobs = async (req: Request, res: Response) => {
         // Determine the type of job by looking at the scriptPath or its arguments
         let expense_type = null;
 
-        // For payroll type
-        if (script_path.includes("createTransaction.sh")) {
-          const identifierRegex =
-            /(\w+)_([0-9]+)_\w{8}-\w{4}-\w{4}-\w{4}-\w{12}/;
-          const identifierMatch = identifierRegex.exec(parts[6]);
+        const identifierWithIDRegex =
+          /(\w+)_([0-9]+)_\w{8}-\w{4}-\w{4}-\w{4}-\w{12}/;
+        const identifierWithoutIDRegex = /(\w+)_\w{8}-\w{4}-\w{4}-\w{4}-\w{12}/;
 
+        let identifierMatch = identifierWithIDRegex.exec(parts[6]);
+
+        if (identifierMatch) {
+          expense_type = identifierMatch[1];
+        } else {
+          identifierMatch = identifierWithoutIDRegex.exec(parts[6]);
           if (identifierMatch) {
-            expense_type = identifierMatch[1]; // This gives us "payroll" or any other type
+            expense_type = identifierMatch[1];
           }
         }
 
@@ -73,14 +77,22 @@ export const getCronJobs = async (req: Request, res: Response) => {
 };
 
 export const createCronJob = async (req: Request, res: Response) => {
-  const { schedule, script_path, account_id, id, amount, title, description } =
-    req.body;
+  const {
+    schedule,
+    script_path,
+    expense_type,
+    account_id,
+    id,
+    amount,
+    title,
+    description,
+  } = req.body;
 
   // Generate a unique identifier
   const uniqueId = uuidv4();
 
   // Construct the command with the uniqueId and other parameters
-  const cronCommand = `${script_path} ${uniqueId} ${account_id} ${id} ${amount} "${title}" "${description}"`;
+  const cronCommand = `${script_path} ${expense_type}_${uniqueId} ${account_id} ${id} ${amount} "${title}" "${description}"`;
 
   exec(
     `(crontab -l ; echo '${schedule} ${cronCommand} > /app/cron.log 2>&1') | crontab - `,
