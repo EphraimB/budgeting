@@ -18,21 +18,45 @@ export const getCronJobs = async (req: Request, res: Response) => {
       .trim()
       .split("\n")
       .map((job) => {
-        // Split by space to separate schedule from command
         const parts = job.split(/\s+/);
         const schedule = parts.slice(0, 5).join(" ");
-        const command = parts.slice(5).join(" ");
+        const script_path = parts[5];
 
-        // Extract the uniqueId using a regex pattern
+        // Match UUID
         const uniqueIdRegex = /(\w{8}-\w{4}-\w{4}-\w{4}-\w{12})/;
-        const match = uniqueIdRegex.exec(command);
-        const uniqueId = match ? match[1] : null;
+        const uniqueIdMatch = uniqueIdRegex.exec(job);
+        const unique_id = uniqueIdMatch ? uniqueIdMatch[1] : null;
 
-        return { uniqueId, schedule, command };
+        // Extract title and description using a regex
+        const titleDescriptionRegex = /"([^"]+)" "([^"]+)"/;
+        const titleDescMatch = titleDescriptionRegex.exec(job);
+        const titleAndDescription = titleDescMatch
+          ? titleDescMatch.slice(1)
+          : [null, null];
+
+        // Extract the expense type by splitting the combined string on underscores and taking the first part
+        const combinedIdentifier = (parts[6].split("/").pop() || "").split(
+          "_"
+        )[0];
+        const expense_type = combinedIdentifier.split("_")[0];
+
+        const [account_id, id, amount] = parts.slice(7, 10);
+
+        return {
+          unique_id,
+          schedule,
+          expense_type,
+          script_path,
+          account_id: Number(account_id),
+          id: Number(id),
+          amount: parseFloat(amount),
+          title: titleAndDescription[0],
+          description: titleAndDescription[1],
+        };
       });
 
     if (unique_id) {
-      const job = jobs.find((job) => job.uniqueId === unique_id);
+      const job = jobs.find((job) => job.unique_id === unique_id);
       return res.json({ status: "success", data: job });
     }
 
