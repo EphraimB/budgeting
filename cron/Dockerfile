@@ -45,7 +45,7 @@ COPY --from=builder /app/scripts ./scripts
 # Make all files in the scripts directory executable
 RUN chmod +x /scripts/*
 
-RUN mkdir -p /app/tmp && touch /app/tmp/cronjob.lock
+RUN mkdir -p /app/tmp && touch /tmp/cronjob.lock
 
 # Add the cron job to the system crontab
 RUN echo "0 0 1 * * /scripts/employeeChecker.sh > /app/cron.log 2>&1" > /tmp/mycron
@@ -53,6 +53,8 @@ RUN echo "0 0 1 * * /scripts/employeeChecker.sh > /app/cron.log 2>&1" > /tmp/myc
 RUN crontab /tmp/mycron
 
 RUN rm /tmp/mycron
+
+WORKDIR /app
 
 # Start the cron service and run the app
 CMD crond -l 2 -b && npm run start
