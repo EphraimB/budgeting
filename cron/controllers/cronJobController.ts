@@ -1,5 +1,6 @@
 import { exec } from "child_process";
 import { Request, Response } from "express";
+import { v4 as uuidv4 } from "uuid";
 
 export const getCronJobs = async (req: Request, res: Response) => {
   const { unique_id } = req.query;
@@ -39,7 +40,34 @@ export const getCronJobs = async (req: Request, res: Response) => {
   });
 };
 
-export const createCronJob = async (req: Request, res: Response) => {};
+export const createCronJob = async (req: Request, res: Response) => {
+  const { schedule, script_path, account_id, id, amount, title, description } =
+    req.body;
+
+  // Generate a unique identifier
+  const uniqueId = uuidv4();
+
+  // Construct the command with the uniqueId and other parameters
+  const cronCommand = `${script_path} ${uniqueId} ${account_id} ${id} ${amount} "${title}" "${description}"`;
+
+  exec(
+    `(crontab -l ; echo '${schedule} ${cronCommand} > /app/cron.log 2>&1') | crontab - `,
+    (error, stdout, stderr) => {
+      if (error) {
+        console.error(`exec error: ${error}`);
+        return res
+          .status(500)
+          .json({ status: "error", message: "Failed to create cron job" });
+      }
+
+      res.json({
+        status: "success",
+        message: "Cron job created successfully",
+        uniqueId,
+      });
+    }
+  );
+};
 
 export const updateCronJob = async (req: Request, res: Response) => {};
 
