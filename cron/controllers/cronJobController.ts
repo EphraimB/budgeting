@@ -129,4 +129,23 @@ export const createCronJob = async (req: Request, res: Response) => {
 
 export const updateCronJob = async (req: Request, res: Response) => {};
 
-export const deleteCronJob = async (req: Request, res: Response) => {};
+export const deleteCronJob = async (req: Request, res: Response) => {
+  const { unique_id } = req.params;
+
+  exec(
+    `crontab -l | grep -v '${unique_id}' | crontab -`,
+    (error, stdout, stderr) => {
+      if (error) {
+        console.error(`exec error: ${error}`);
+        return res
+          .status(500)
+          .json({ status: "error", message: "Failed to delete cron job" });
+      }
+
+      res.json({
+        status: "success",
+        message: "Cron job deleted successfully",
+      });
+    }
+  );
+};

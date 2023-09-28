@@ -1,8 +1,9 @@
 import express, { type Router } from "express";
 import { param, query, body } from "express-validator";
 import {
-  createCronJob,
   getCronJobs,
+  createCronJob,
+  deleteCronJob,
 } from "../controllers/cronJobController.js";
 import validateRequest from "../utils/validateRequest.js";
 
@@ -11,7 +12,10 @@ const router: Router = express.Router();
 router.get(
   "/",
   [
-    query("unique_id").optional().isString().withMessage("ID must be a string"),
+    query("unique_id")
+      .optional()
+      .isString()
+      .withMessage("Unique ID must be a string"),
     validateRequest,
   ],
   getCronJobs
@@ -51,13 +55,13 @@ router.post(
 //     updateAccount,
 // );
 
-// router.delete(
-//     '/:id',
-//     [
-//         param('id').isInt({ min: 1 }).withMessage('ID must be a number'),
-//         validateRequest,
-//     ],
-//     deleteAccount,
-// );
+router.delete(
+  "/:unique_id",
+  [
+    param("unique_id").isString().withMessage("Unique ID must be a string"),
+    validateRequest,
+  ],
+  deleteCronJob
+);
 
 export default router;
