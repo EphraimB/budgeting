@@ -127,7 +127,68 @@ export const createCronJob = async (req: Request, res: Response) => {
   );
 };
 
-export const updateCronJob = async (req: Request, res: Response) => {};
+export const updateCronJob = async (req: Request, res: Response) => {
+  const { unique_id } = req.params;
+  const {
+    schedule,
+    script_path,
+    expense_type,
+    account_id,
+    amount,
+    id,
+    title,
+    description,
+  } = req.body;
+
+  exec(`crontab -l | grep '${unique_id}'`, (error, stdout, stderr) => {
+    if (error || !stdout) {
+      console.error(`exec error: ${error}`);
+      return res.status(404).json({
+        status: "error",
+        message: "Cron job not found",
+      });
+    }
+
+    // If the cron job is found, proceed with update
+    exec(
+      `crontab -l | grep -v '${unique_id}' | crontab -`,
+      (delError, delStdout, delStderr) => {
+        if (delError) {
+          console.error(`exec error: ${delError}`);
+          return res.status(500).json({
+            status: "error",
+            message: "Failed to update cron job",
+          });
+        }
+
+        // Generate a unique identifier
+        const uniqueId = uuidv4();
+
+        // Construct the command with the uniqueId and other parameters
+        const cronCommand = `${script_path} ${expense_type}_${uniqueId} ${account_id} ${id} ${amount} "${title}" "${description}"`;
+
+        exec(
+          `(crontab -l ; echo '${schedule} ${cronCommand} > /app/cron.log 2>&1') | crontab - `,
+          (error, stdout, stderr) => {
+            if (error) {
+              console.error(`exec error: ${error}`);
+              return res.status(500).json({
+                status: "error",
+                message: "Failed to update cron job",
+              });
+            }
+
+            res.json({
+              status: "success",
+              message: "Cron job updated successfully",
+              uniqueId,
+            });
+          }
+        );
+      }
+    );
+  });
+};
 
 export const deleteCronJob = async (req: Request, res: Response) => {
   const { unique_id } = req.params;
