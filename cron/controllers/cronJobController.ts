@@ -132,20 +132,32 @@ export const updateCronJob = async (req: Request, res: Response) => {};
 export const deleteCronJob = async (req: Request, res: Response) => {
   const { unique_id } = req.params;
 
-  exec(
-    `crontab -l | grep -v '${unique_id}' | crontab -`,
-    (error, stdout, stderr) => {
-      if (error) {
-        console.error(`exec error: ${error}`);
-        return res
-          .status(500)
-          .json({ status: "error", message: "Failed to delete cron job" });
-      }
-
-      res.json({
-        status: "success",
-        message: "Cron job deleted successfully",
+  exec(`crontab -l | grep '${unique_id}'`, (error, stdout, stderr) => {
+    if (error || !stdout) {
+      console.error(`exec error: ${error}`);
+      return res.status(404).json({
+        status: "error",
+        message: "Cron job not found",
       });
     }
-  );
+
+    // If the cron job is found, proceed with deletion
+    exec(
+      `crontab -l | grep -v '${unique_id}' | crontab -`,
+      (delError, delStdout, delStderr) => {
+        if (delError) {
+          console.error(`exec error: ${delError}`);
+          return res.status(500).json({
+            status: "error",
+            message: "Failed to delete cron job",
+          });
+        }
+
+        res.json({
+          status: "success",
+          message: "Cron job deleted successfully",
+        });
+      }
+    );
+  });
 };
