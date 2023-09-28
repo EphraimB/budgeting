@@ -1,5 +1,8 @@
 import { exec } from "child_process";
+import { logger } from "../config/winston.js";
 import { Request, Response } from "express";
+import { cronJobQueries } from "../models/queryData.js";
+import { executeQuery } from "../utils/helperFunctions.js";
 import { v4 as uuidv4 } from "uuid";
 
 export const getCronJobs = async (req: Request, res: Response) => {
@@ -117,14 +120,21 @@ export const createCronJob = async (req: Request, res: Response) => {
           .status(500)
           .json({ status: "error", message: "Failed to create cron job" });
       }
-
-      res.json({
-        status: "success",
-        message: "Cron job created successfully",
-        unique_id: uniqueId,
-      });
     }
   );
+
+  const cronId: number = (
+    await executeQuery(cronJobQueries.createCronJob, [uniqueId, schedule])
+  )[0].cron_job_id;
+
+  logger.info("Cron job created " + cronId.toString());
+
+  res.json({
+    status: "success",
+    message: "Cron job created successfully",
+    cron_id: cronId,
+    unique_id: uniqueId,
+  });
 };
 
 export const updateCronJob = async (req: Request, res: Response) => {

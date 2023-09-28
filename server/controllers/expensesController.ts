@@ -218,17 +218,8 @@ export const createExpense = async (
         // Parse the JSON from the response
         const responseData = await res.json();
 
-        const cronId: number = (
-            await executeQuery(cronJobQueries.createCronJob, [
-                responseData.unique_id,
-                cronDate,
-            ])
-        )[0].cron_job_id;
-
-        logger.info('Cron job created ' + cronId.toString());
-
         await executeQuery(expenseQueries.updateExpenseWithCronJobId, [
-            cronId,
+            responseData.cron_id,
             modifiedExpenses[0].expense_id,
         ]);
 
