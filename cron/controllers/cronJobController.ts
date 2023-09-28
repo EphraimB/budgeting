@@ -121,7 +121,7 @@ export const createCronJob = async (req: Request, res: Response) => {
       res.json({
         status: "success",
         message: "Cron job created successfully",
-        uniqueId,
+        unique_id: uniqueId,
       });
     }
   );
@@ -181,7 +181,7 @@ export const updateCronJob = async (req: Request, res: Response) => {
             res.json({
               status: "success",
               message: "Cron job updated successfully",
-              uniqueId,
+              unique_id: uniqueId,
             });
           }
         );

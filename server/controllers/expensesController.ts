@@ -2,6 +2,7 @@ import { type NextFunction, type Request, type Response } from 'express';
 import { expenseQueries, cronJobQueries } from '../models/queryData.js';
 import scheduleCronJob from '../crontab/scheduleCronJob.js';
 import deleteCronJob from '../crontab/deleteCronJob.js';
+import determineCronValues from '../crontab/determineCronValues.js';
 import {
     handleError,
     executeQuery,
@@ -175,28 +176,51 @@ export const createExpense = async (
 
         const modifiedExpenses = expenses.map(parseExpenses);
 
-        const cronParams = {
-            date: begin_date,
-            account_id,
-            id: modifiedExpenses[0].expense_id,
-            amount: -amount + amount * subsidized,
-            title,
-            description,
+        const jobDetails = {
             frequency_type,
             frequency_type_variable,
             frequency_day_of_month,
             frequency_day_of_week,
             frequency_week_of_month,
             frequency_month_of_year,
-            scriptPath: '/app/scripts/createTransaction.sh',
-            type: 'expense',
+            date: begin_date,
         };
 
-        const { cronDate, uniqueId } = await scheduleCronJob(cronParams);
+        const cronDate = determineCronValues(jobDetails);
+
+        const url = 'http://cron:8080/api/cron';
+
+        const data = {
+            schedule: cronDate,
+            script_path: '/scripts/createTransaction.sh',
+            expense_type: 'expense',
+            account_id,
+            id: modifiedExpenses[0].expense_id,
+            amount: -amount + amount * subsidized,
+            title,
+            description,
+        };
+
+        const res = await fetch(url, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(data),
+        });
+
+        // Ensure the response is OK and handle potential errors
+        if (!res.ok) {
+            const message = `An error has occurred: ${res.status}`;
+            response.status(500).send(message);
+        }
+
+        // Parse the JSON from the response
+        const responseData = await res.json();
 
         const cronId: number = (
             await executeQuery(cronJobQueries.createCronJob, [
-                uniqueId,
+                responseData.unique_id,
                 cronDate,
             ])
         )[0].cron_job_id;

@@ -18,7 +18,9 @@ services:
       - PGDATABASE=${PGDB}
       - PGUSER=${PGUSER}
       - PGPASSWORD=${PGPASSWORD}
-      - PGPORT=${PGPORT}
+      - PGPORT=5432
+    networks:
+      - app-network
     ports:
       - "5001:5001"
     depends_on:
