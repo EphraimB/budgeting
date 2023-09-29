@@ -64,8 +64,15 @@ const parseExpenses = (expense: ExpenseInput): Expense => ({
     date_modified: expense.date_modified,
 });
 
+/**
+ *
+ * @param data - Data to send to the cron job
+ * @param method - HTTP method
+ * @param unique_id - Unique ID of the cron job
+ * @returns Array of success and response data
+ */
 const manipulateCron = async (
-    data: object,
+    data: object | null,
     method: string,
     unique_id: string | null,
 ) => {
@@ -73,26 +80,37 @@ const manipulateCron = async (
         unique_id ? `/${unique_id}` : ''
     }`;
 
-    console.log('url: ', url);
-
-    const res = await fetch(url, {
-        method,
-        headers: {
+    // Construct headers conditionally
+    let headers: HeadersInit = {};
+    if (data) {
+        headers = {
             'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(data),
-    });
-
-    // Ensure the response is OK and handle potential errors
-    if (!res.ok) {
-        // Return the error message
-        return [false, `An error has occurred: ${res.status}`];
+        };
     }
 
-    // Parse the JSON from the response
-    const responseData = await res.json();
+    // Construct options with conditional body
+    const options: RequestInit = {
+        method,
+        headers,
+    };
+    if (data) {
+        options.body = JSON.stringify(data);
+    }
 
-    return [true, responseData];
+    try {
+        const res = await fetch(url, options);
+
+        // Ensure the response is OK and handle potential errors
+        if (!res.ok) {
+            throw new Error(`An error has occurred: ${res.status}`);
+        }
+
+        // Parse the JSON from the response
+        const responseData = await res.json();
+        return [true, responseData];
+    } catch (error) {
+        return [false, error.message];
+    }
 };
 
 /**
@@ -456,12 +474,14 @@ export const deleteExpense = async (
 
         const results = await executeQuery(cronJobQueries.getCronJob, [cronId]);
 
-        if (results.length > 0) {
-            await deleteCronJob(results[0].unique_id);
-        } else {
-            logger.error('Cron job not found');
-            response.status(404).send('Cron job not found');
-            return;
+        const [success, responseData] = await manipulateCron(
+            null,
+            'DELETE',
+            results[0].unique_id,
+        );
+
+        if (!success) {
+            response.status(500).send(responseData);
         }
 
         await executeQuery(cronJobQueries.deleteCronJob, [cronId]);
