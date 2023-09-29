@@ -495,6 +495,7 @@ export const updateLoan = async (
             cronDateInterest,
             interestCronId,
         ]);
+
         await executeQuery<LoanInput>(loanQueries.updateLoan, [
             account_id,
             amount,
@@ -576,38 +577,46 @@ export const deleteLoan = async (
     try {
         const { id } = request.params;
 
-        const getLoanResults = await executeQuery<LoanInput>(
-            loanQueries.getLoansById,
-            [id],
-        );
+        const getLoanResults = await executeQuery(loanQueries.getLoansById, [
+            id,
+        ]);
 
         if (getLoanResults.length === 0) {
             response.status(404).send('Loan not found');
             return;
         }
 
-        const cronId: number = parseInt(getLoanResults[0].cron_job_id ?? '');
+        const cronId: number = parseInt(getLoanResults[0].cron_job_id);
+
         await executeQuery(loanQueries.deleteLoan, [id]);
 
         const results = await executeQuery(cronJobQueries.getCronJob, [cronId]);
 
-        if (results.length > 0) {
-            await deleteCronJob(results[0].unique_id);
-        } else {
-            logger.error('Cron job not found');
+        const [success, responseData] = await manipulateCron(
+            null,
+            'DELETE',
+            results[0].unique_id,
+        );
+
+        if (!success) {
+            response.status(500).send(responseData);
         }
 
         const interestCronId: number = parseInt(
-            getLoanResults[0].interest_cron_job_id ?? '',
+            getLoanResults[0].interest_cron_job_id,
         );
         const interestResults = await executeQuery(cronJobQueries.getCronJob, [
             interestCronId,
         ]);
 
-        if (interestResults.length > 0) {
-            await deleteCronJob(interestResults[0].unique_id);
-        } else {
-            logger.error('Interest cron job not found');
+        const [successInterest, responseDataInterest] = await manipulateCron(
+            null,
+            'DELETE',
+            interestResults[0].unique_id,
+        );
+
+        if (!successInterest) {
+            response.status(500).send(responseDataInterest);
         }
 
         await executeQuery(cronJobQueries.deleteCronJob, [cronId]);
