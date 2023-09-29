@@ -291,9 +291,6 @@ export const createLoan = async (
             ])
         )[0].cron_job_id;
 
-        logger.info('Cron job created ' + cronId.toString());
-        logger.info('Interest cron job created ' + interestCronId.toString());
-
         await executeQuery(loanQueries.updateLoanWithCronJobId, [
             cronId,
             interestCronId,
