@@ -218,8 +218,15 @@ export const createExpense = async (
         // Parse the JSON from the response
         const responseData = await res.json();
 
+        const cronId: number = (
+            await executeQuery(cronJobQueries.createCronJob, [
+                responseData.unique_id,
+                cronDate,
+            ])
+        )[0].cron_job_id;
+
         await executeQuery(expenseQueries.updateExpenseWithCronJobId, [
-            responseData.cron_id,
+            cronId,
             modifiedExpenses[0].expense_id,
         ]);
 
@@ -289,23 +296,6 @@ export const updateExpense = async (
     } = request.body;
 
     try {
-        const cronParams = {
-            date: begin_date,
-            account_id,
-            id,
-            amount: -amount + amount * subsidized,
-            title,
-            description,
-            frequency_type,
-            frequency_type_variable,
-            frequency_day_of_month,
-            frequency_day_of_week,
-            frequency_week_of_month,
-            frequency_month_of_year,
-            scriptPath: '/app/scripts/createTransaction.sh',
-            type: 'expense',
-        };
-
         const expenseResult = await executeQuery<ExpenseInput>(
             expenseQueries.getExpenseById,
             [id],
@@ -317,20 +307,55 @@ export const updateExpense = async (
         }
 
         const cronId: number = parseInt(expenseResult[0].cron_job_id);
-        const results = await executeQuery(cronJobQueries.getCronJob, [cronId]);
 
-        if (results.length > 0) {
-            await deleteCronJob(results[0].unique_id);
-        } else {
-            logger.error('Cron job not found');
-            response.status(404).send('Cron job not found');
-            return;
+        const jobDetails = {
+            frequency_type,
+            frequency_type_variable,
+            frequency_day_of_month,
+            frequency_day_of_week,
+            frequency_week_of_month,
+            frequency_month_of_year,
+            date: begin_date,
+        };
+
+        const cronDate = determineCronValues(jobDetails);
+
+        const [{ unique_id }] = await executeQuery(cronJobQueries.getCronJob, [
+            cronId,
+        ]);
+
+        const url = `http://cron:8080/api/cron/${unique_id}}`;
+
+        const data = {
+            schedule: cronDate,
+            script_path: '/scripts/createTransaction.sh',
+            expense_type: 'expense',
+            account_id,
+            id,
+            amount: -amount + amount * subsidized,
+            title,
+            description,
+        };
+
+        const res = await fetch(url, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(data),
+        });
+
+        // Ensure the response is OK and handle potential errors
+        if (!res.ok) {
+            const message = `An error has occurred: ${res.status}`;
+            response.status(500).send(message);
         }
 
-        const { uniqueId, cronDate } = await scheduleCronJob(cronParams);
+        // Parse the JSON from the response
+        const responseData = await res.json();
 
         await executeQuery(cronJobQueries.updateCronJob, [
-            uniqueId,
+            responseData.unique_id,
             cronDate,
             cronId,
         ]);
