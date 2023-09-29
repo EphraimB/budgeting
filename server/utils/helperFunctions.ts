@@ -56,3 +56,52 @@ export const parseFloatOrFallback = (
     const parsed = parseInt(input, 10);
     return isNaN(parsed) ? null : parsed;
 };
+
+/**
+ *
+ * @param data - Data to send to the cron job
+ * @param method - HTTP method
+ * @param unique_id - Unique ID of the cron job
+ * @returns Array of success and response data
+ */
+export const manipulateCron = async (
+    data: object | null,
+    method: string,
+    unique_id: string | null,
+) => {
+    const url: string = `http://cron:8080/api/cron${
+        unique_id ? `/${unique_id}` : ''
+    }`;
+
+    // Construct headers conditionally
+    let headers: HeadersInit = {};
+    if (data) {
+        headers = {
+            'Content-Type': 'application/json',
+        };
+    }
+
+    // Construct options with conditional body
+    const options: RequestInit = {
+        method,
+        headers,
+    };
+    if (data) {
+        options.body = JSON.stringify(data);
+    }
+
+    try {
+        const res = await fetch(url, options);
+
+        // Ensure the response is OK and handle potential errors
+        if (!res.ok) {
+            throw new Error(`An error has occurred: ${res.status}`);
+        }
+
+        // Parse the JSON from the response
+        const responseData = await res.json();
+        return [true, responseData];
+    } catch (error) {
+        return [false, error.message];
+    }
+};

@@ -1,7 +1,6 @@
 import { type NextFunction, type Request, type Response } from 'express';
 import { expenseQueries, cronJobQueries } from '../models/queryData.js';
-import scheduleCronJob from '../crontab/scheduleCronJob.js';
-import deleteCronJob from '../crontab/deleteCronJob.js';
+import { manipulateCron } from '../utils/helperFunctions.js';
 import determineCronValues from '../crontab/determineCronValues.js';
 import {
     handleError,
@@ -63,55 +62,6 @@ const parseExpenses = (expense: ExpenseInput): Expense => ({
     date_created: expense.date_created,
     date_modified: expense.date_modified,
 });
-
-/**
- *
- * @param data - Data to send to the cron job
- * @param method - HTTP method
- * @param unique_id - Unique ID of the cron job
- * @returns Array of success and response data
- */
-const manipulateCron = async (
-    data: object | null,
-    method: string,
-    unique_id: string | null,
-) => {
-    const url: string = `http://cron:8080/api/cron${
-        unique_id ? `/${unique_id}` : ''
-    }`;
-
-    // Construct headers conditionally
-    let headers: HeadersInit = {};
-    if (data) {
-        headers = {
-            'Content-Type': 'application/json',
-        };
-    }
-
-    // Construct options with conditional body
-    const options: RequestInit = {
-        method,
-        headers,
-    };
-    if (data) {
-        options.body = JSON.stringify(data);
-    }
-
-    try {
-        const res = await fetch(url, options);
-
-        // Ensure the response is OK and handle potential errors
-        if (!res.ok) {
-            throw new Error(`An error has occurred: ${res.status}`);
-        }
-
-        // Parse the JSON from the response
-        const responseData = await res.json();
-        return [true, responseData];
-    } catch (error) {
-        return [false, error.message];
-    }
-};
 
 /**
  *
