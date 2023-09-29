@@ -10,34 +10,13 @@ import {
 import { type Expense } from '../types/types.js';
 import { logger } from '../config/winston.js';
 
-interface ExpenseInput {
-    expense_id: string;
-    account_id: string;
-    cron_job_id: string;
-    tax_id: string;
-    expense_amount: string;
-    expense_title: string;
-    expense_description: string;
-    frequency_type: string;
-    frequency_type_variable: string;
-    frequency_day_of_month: string;
-    frequency_day_of_week: string;
-    frequency_week_of_month: string;
-    frequency_month_of_year: string;
-    expense_subsidized: string;
-    expense_begin_date: string;
-    expense_end_date: string;
-    date_created: string;
-    date_modified: string;
-}
-
 /**
  *
  * @param expense - Expense object
  * @returns Expense object with the correct types
  * Converts the expense object to the correct types
  **/
-const parseExpenses = (expense: ExpenseInput): Expense => ({
+const parseExpenses = (expense: Record<string, string>): Expense => ({
     expense_id: parseInt(expense.expense_id),
     account_id: parseInt(expense.account_id),
     tax_id: parseIntOrFallback(expense.tax_id),
@@ -98,7 +77,7 @@ export const getExpenses = async (
             params = [];
         }
 
-        const expenses = await executeQuery<ExpenseInput>(query, params);
+        const expenses = await executeQuery(query, params);
 
         if (
             ((id !== null && id !== undefined) ||
@@ -154,24 +133,21 @@ export const createExpense = async (
     } = request.body;
 
     try {
-        const expenses = await executeQuery<ExpenseInput>(
-            expenseQueries.createExpense,
-            [
-                account_id,
-                tax_id,
-                amount,
-                title,
-                description,
-                frequency_type,
-                frequency_type_variable,
-                frequency_day_of_month,
-                frequency_day_of_week,
-                frequency_week_of_month,
-                frequency_month_of_year,
-                subsidized,
-                begin_date,
-            ],
-        );
+        const expenses = await executeQuery(expenseQueries.createExpense, [
+            account_id,
+            tax_id,
+            amount,
+            title,
+            description,
+            frequency_type,
+            frequency_type_variable,
+            frequency_day_of_month,
+            frequency_day_of_week,
+            frequency_week_of_month,
+            frequency_month_of_year,
+            subsidized,
+            begin_date,
+        ]);
 
         const modifiedExpenses = expenses.map(parseExpenses);
 
@@ -242,10 +218,9 @@ export const createExpenseReturnObject = async (
     const { expense_id } = request;
 
     try {
-        const expenses = await executeQuery<ExpenseInput>(
-            expenseQueries.getExpenseById,
-            [expense_id],
-        );
+        const expenses = await executeQuery(expenseQueries.getExpenseById, [
+            expense_id,
+        ]);
 
         const modifiedExpenses = expenses.map(parseExpenses);
 
@@ -286,7 +261,7 @@ export const updateExpense = async (
     } = request.body;
 
     try {
-        const expenseResult = await executeQuery<ExpenseInput>(
+        const expenseResult = await executeQuery(
             expenseQueries.getExpenseById,
             [id],
         );
@@ -341,7 +316,7 @@ export const updateExpense = async (
             cronId,
         ]);
 
-        await executeQuery<ExpenseInput>(expenseQueries.updateExpense, [
+        await executeQuery(expenseQueries.updateExpense, [
             account_id,
             tax_id,
             amount,
@@ -380,10 +355,9 @@ export const updateExpenseReturnObject = async (
     const { expense_id } = request;
 
     try {
-        const expenses = await executeQuery<ExpenseInput>(
-            expenseQueries.getExpenseById,
-            [expense_id],
-        );
+        const expenses = await executeQuery(expenseQueries.getExpenseById, [
+            expense_id,
+        ]);
 
         const modifiedExpenses = expenses.map(parseExpenses);
 
