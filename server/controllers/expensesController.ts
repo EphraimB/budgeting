@@ -324,7 +324,7 @@ export const updateExpense = async (
             cronId,
         ]);
 
-        const url = `http://cron:8080/api/cron/${unique_id}}`;
+        const url = `http://cron:8080/api/cron/${unique_id}`;
 
         const data = {
             schedule: cronDate,
