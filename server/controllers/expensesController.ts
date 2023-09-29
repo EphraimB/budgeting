@@ -71,7 +71,9 @@ const manipulateCron = async (
 ) => {
     const url: string = `http://cron:8080/api/cron${
         unique_id ? `/${unique_id}` : ''
-    }}`;
+    }`;
+
+    console.log('url: ', url);
 
     const res = await fetch(url, {
         method,
@@ -235,8 +237,7 @@ export const createExpense = async (
         );
 
         if (!success) {
-            const message = `An error has occurred: ${responseData}`;
-            response.status(500).send(message);
+            response.status(500).send(responseData);
         }
 
         const cronId: number = (
@@ -363,8 +364,7 @@ export const updateExpense = async (
         );
 
         if (!success) {
-            const message = `An error has occurred: ${responseData}`;
-            response.status(500).send(message);
+            response.status(500).send(responseData);
         }
 
         await executeQuery(cronJobQueries.updateCronJob, [
