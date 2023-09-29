@@ -1,7 +1,5 @@
 import { type NextFunction, type Request, type Response } from 'express';
 import { loanQueries, cronJobQueries } from '../models/queryData.js';
-import scheduleCronJob from '../crontab/scheduleCronJob.js';
-import deleteCronJob from '../crontab/deleteCronJob.js';
 import {
     handleError,
     executeQuery,
@@ -12,38 +10,12 @@ import { type Loan } from '../types/types.js';
 import { logger } from '../config/winston.js';
 import determineCronValues from '../crontab/determineCronValues.js';
 
-interface LoanInput {
-    account_id: string;
-    loan_id: string;
-    cron_job_id?: string;
-    interest_cron_job_id?: string;
-    loan_amount: string;
-    loan_plan_amount: string;
-    loan_recipient: string;
-    loan_title: string;
-    loan_description: string;
-    frequency_type: string;
-    frequency_type_variable: string;
-    frequency_day_of_month: string;
-    frequency_day_of_week: string;
-    frequency_week_of_month: string;
-    frequency_month_of_year: string;
-    loan_interest_rate: string;
-    loan_interest_frequency_type: string;
-    loan_subsidized: string;
-    loan_fully_paid_back: string;
-    loan_begin_date: string;
-    loan_end_date: string;
-    date_created: string;
-    date_modified: string;
-}
-
 /**
  *
  * @param loan - Loan object
  * @returns - Loan object with parsed values
  */
-const parseLoan = (loan: LoanInput): Loan => ({
+const parseLoan = (loan: Record<string, string>): Loan => ({
     loan_id: parseInt(loan.loan_id),
     account_id: parseInt(loan.account_id),
     loan_amount: parseFloat(loan.loan_amount),
@@ -102,7 +74,7 @@ export const getLoans = async (
             params = [];
         }
 
-        const rows: LoanInput[] = await executeQuery(query, params);
+        const rows = await executeQuery(query, params);
 
         if (
             ((id !== null && id !== undefined) ||
@@ -174,27 +146,24 @@ export const createLoan = async (
     } = request.body;
 
     try {
-        const loanResults = await executeQuery<LoanInput>(
-            loanQueries.createLoan,
-            [
-                account_id,
-                amount,
-                plan_amount,
-                recipient,
-                title,
-                description,
-                frequency_type,
-                frequency_type_variable,
-                frequency_day_of_month,
-                frequency_day_of_week,
-                frequency_week_of_month,
-                frequency_month_of_year,
-                interest_rate,
-                interest_frequency_type,
-                subsidized,
-                begin_date,
-            ],
-        );
+        const loanResults = await executeQuery(loanQueries.createLoan, [
+            account_id,
+            amount,
+            plan_amount,
+            recipient,
+            title,
+            description,
+            frequency_type,
+            frequency_type_variable,
+            frequency_day_of_month,
+            frequency_day_of_week,
+            frequency_week_of_month,
+            frequency_month_of_year,
+            interest_rate,
+            interest_frequency_type,
+            subsidized,
+            begin_date,
+        ]);
 
         const loans: Loan[] = loanResults.map((loan) => parseLoan(loan));
 
@@ -319,9 +288,7 @@ export const createLoanReturnObject = async (
     const { loan_id } = request;
 
     try {
-        const loans = await executeQuery<LoanInput>(loanQueries.getLoansById, [
-            loan_id,
-        ]);
+        const loans = await executeQuery(loanQueries.getLoansById, [loan_id]);
 
         const modifiedLoans: Loan[] = loans.map((loan) => {
             // parse loan first
@@ -496,7 +463,7 @@ export const updateLoan = async (
             interestCronId,
         ]);
 
-        await executeQuery<LoanInput>(loanQueries.updateLoan, [
+        await executeQuery(loanQueries.updateLoan, [
             account_id,
             amount,
             plan_amount,
@@ -538,9 +505,7 @@ export const updateLoanReturnObject = async (
     const { loan_id } = request;
 
     try {
-        const loans = await executeQuery<LoanInput>(loanQueries.getLoansById, [
-            loan_id,
-        ]);
+        const loans = await executeQuery(loanQueries.getLoansById, [loan_id]);
 
         const modifiedLoans: Loan[] = loans.map((loan) => {
             // parse loan first
