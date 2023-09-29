@@ -1,8 +1,6 @@
 import { exec } from "child_process";
 import { logger } from "../config/winston.js";
 import { Request, Response } from "express";
-import { cronJobQueries } from "../models/queryData.js";
-import { executeQuery } from "../utils/helperFunctions.js";
 import { v4 as uuidv4 } from "uuid";
 
 export const getCronJobs = async (req: Request, res: Response) => {
