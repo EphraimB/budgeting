@@ -257,12 +257,7 @@ export const createLoan = async (
         }
 
         const jobDetailsInterest = {
-            frequency_type,
-            frequency_type_variable,
-            frequency_day_of_month,
-            frequency_day_of_week,
-            frequency_week_of_month,
-            frequency_month_of_year,
+            frequency_type: interest_frequency_type,
             date: begin_date,
         };
 
@@ -270,15 +265,13 @@ export const createLoan = async (
 
         const dataInterest = {
             schedule: cronDateInterest,
-            script_path: '/scripts/createTransaction.sh',
-            expense_type: 'loan',
+            script_path: '/app/scripts/applyInterest.sh',
+            expense_type: 'loan_interest',
             account_id,
             id: loans[0].loan_id,
-            amount:
-                -parseFloat(plan_amount) +
-                parseFloat(plan_amount) * parseFloat(subsidized),
-            title,
-            description,
+            amount: interest_rate,
+            title: title + ' interest',
+            description: description + ' interest',
         };
 
         const [successInterest, responseDataInterest] = await manipulateCron(
