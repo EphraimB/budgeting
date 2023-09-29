@@ -180,8 +180,9 @@ export const updateCronJob = async (req: Request, res: Response) => {
                 message: "Failed to update cron job",
               });
             }
+
             logger.info(
-              "Cron job created with unique id: " + uniqueId.toString()
+              "Cron job updated with unique id: " + uniqueId.toString()
             );
           }
         );
@@ -219,6 +220,8 @@ export const deleteCronJob = async (req: Request, res: Response) => {
             message: "Failed to delete cron job",
           });
         }
+
+        logger.info("Cron job deleted with unique id: " + unique_id);
 
         res.json({
           status: "success",
