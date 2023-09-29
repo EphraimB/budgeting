@@ -64,6 +64,35 @@ const parseExpenses = (expense: ExpenseInput): Expense => ({
     date_modified: expense.date_modified,
 });
 
+const manipulateCron = async (
+    data: object,
+    method: string,
+    unique_id: string | null,
+) => {
+    const url: string = `http://cron:8080/api/cron${
+        unique_id ? `/${unique_id}` : ''
+    }}`;
+
+    const res = await fetch(url, {
+        method,
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data),
+    });
+
+    // Ensure the response is OK and handle potential errors
+    if (!res.ok) {
+        // Return the error message
+        return [false, `An error has occurred: ${res.status}`];
+    }
+
+    // Parse the JSON from the response
+    const responseData = await res.json();
+
+    return [true, responseData];
+};
+
 /**
  *
  * @param request - Request object
@@ -188,8 +217,6 @@ export const createExpense = async (
 
         const cronDate = determineCronValues(jobDetails);
 
-        const url = 'http://cron:8080/api/cron';
-
         const data = {
             schedule: cronDate,
             script_path: '/scripts/createTransaction.sh',
@@ -201,22 +228,16 @@ export const createExpense = async (
             description,
         };
 
-        const res = await fetch(url, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(data),
-        });
+        const [success, responseData] = await manipulateCron(
+            data,
+            'POST',
+            null,
+        );
 
-        // Ensure the response is OK and handle potential errors
-        if (!res.ok) {
-            const message = `An error has occurred: ${res.status}`;
+        if (!success) {
+            const message = `An error has occurred: ${responseData}`;
             response.status(500).send(message);
         }
-
-        // Parse the JSON from the response
-        const responseData = await res.json();
 
         const cronId: number = (
             await executeQuery(cronJobQueries.createCronJob, [
@@ -324,8 +345,6 @@ export const updateExpense = async (
             cronId,
         ]);
 
-        const url = `http://cron:8080/api/cron/${unique_id}`;
-
         const data = {
             schedule: cronDate,
             script_path: '/scripts/createTransaction.sh',
@@ -337,22 +356,16 @@ export const updateExpense = async (
             description,
         };
 
-        const res = await fetch(url, {
-            method: 'PUT',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(data),
-        });
+        const [success, responseData] = await manipulateCron(
+            data,
+            'PUT',
+            unique_id,
+        );
 
-        // Ensure the response is OK and handle potential errors
-        if (!res.ok) {
-            const message = `An error has occurred: ${res.status}`;
+        if (!success) {
+            const message = `An error has occurred: ${responseData}`;
             response.status(500).send(message);
         }
-
-        // Parse the JSON from the response
-        const responseData = await res.json();
 
         await executeQuery(cronJobQueries.updateCronJob, [
             responseData.unique_id,
