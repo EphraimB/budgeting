@@ -7,8 +7,6 @@ import {
     parseIntOrFallback,
 } from '../utils/helperFunctions.js';
 import { type Wishlist } from '../types/types.js';
-import scheduleCronJob from '../crontab/scheduleCronJob.js';
-import deleteCronJob from '../crontab/deleteCronJob.js';
 import { logger } from '../config/winston.js';
 import determineCronValues from '../crontab/determineCronValues.js';
 
