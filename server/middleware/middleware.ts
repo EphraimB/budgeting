@@ -4,6 +4,7 @@ import {
     parseIntOrFallback,
     handleError,
     executeQuery,
+    manipulateCron,
 } from '../utils/helperFunctions.js';
 import { logger } from '../config/winston.js';
 import {
@@ -31,6 +32,7 @@ import {
 } from '../types/types.js';
 import scheduleCronJob from '../crontab/scheduleCronJob.js';
 import deleteCronJob from '../crontab/deleteCronJob.js';
+import determineCronValues from '../crontab/determineCronValues.js';
 
 interface LoanInput {
     account_id: string;
@@ -1079,9 +1081,17 @@ export const updateWishlistCron = async (
             ]);
 
             if (results.length > 0) {
-                await deleteCronJob(results[0].unique_id);
+                const [success, responseData] = await manipulateCron(
+                    null,
+                    'DELETE',
+                    results[0].unique_id,
+                );
+
+                if (!success) {
+                    response.status(500).send(responseData);
+                }
             } else {
-                console.error('Cron job not found');
+                logger.error('Cron job not found');
             }
         }
 
@@ -1097,24 +1107,38 @@ export const updateWishlistCron = async (
                           .tax_rate
                     : 0;
 
-            const cronParams = {
+            const jobDetails = {
                 date: transactionMap[wslst.wishlist_id],
-                account_id: wslst.account_id,
-                id: wslst.wishlist_id,
-                amount: -wslst.wishlist_amount,
-                tax: taxRate,
-                title: wslst.wishlist_title,
-                description: wslst.wishlist_description,
-                scriptPath: '/app/dist/scripts/createTransaction.sh',
-                type: 'wishlist',
             };
 
-            if (cronParams.date !== null && cronParams.date !== undefined) {
-                const { cronDate, uniqueId } = await scheduleCronJob(
-                    cronParams,
+            if (jobDetails.date !== null && jobDetails.date !== undefined) {
+                const cronDate = determineCronValues(
+                    jobDetails as { date: string },
                 );
+
+                const data = {
+                    schedule: cronDate,
+                    script_path: '/scripts/createTransaction.sh',
+                    expense_type: 'wishlist',
+                    account_id: wslst.account_id,
+                    id: wslst.wishlist_id,
+                    amount: -wslst.wishlist_amount,
+                    title: wslst.wishlist_title,
+                    description: wslst.wishlist_description,
+                };
+
+                const [success, responseData] = await manipulateCron(
+                    data,
+                    'POST',
+                    null,
+                );
+
+                if (!success) {
+                    response.status(500).send(responseData);
+                }
+
                 await executeQuery(cronJobQueries.updateCronJob, [
-                    uniqueId,
+                    responseData.unique_id,
                     cronDate,
                     cronId,
                 ]);
