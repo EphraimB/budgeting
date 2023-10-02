@@ -6,9 +6,11 @@ import {
     handleError,
     executeQuery,
     parseIntOrFallback,
+    manipulateCron,
 } from '../utils/helperFunctions.js';
 import { type Income } from '../types/types.js';
 import { logger } from '../config/winston.js';
+import determineCronValues from '../crontab/determineCronValues.js';
 
 interface IncomeInput {
     income_id: string;
@@ -167,27 +169,42 @@ export const createIncome = async (
 
         const modifiedIncome = income.map(parseIncome);
 
-        const cronParams = {
-            date: begin_date,
-            account_id,
-            id: modifiedIncome[0].income_id,
-            amount,
-            title,
-            description,
+        const jobDetails = {
             frequency_type,
             frequency_type_variable,
             frequency_day_of_month,
             frequency_day_of_week,
             frequency_week_of_month,
             frequency_month_of_year,
-            scriptPath: '/app/scripts/createTransaction.sh',
-            type: 'income',
+            date: begin_date,
         };
 
-        const { cronDate, uniqueId } = await scheduleCronJob(cronParams);
+        const cronDate = determineCronValues(jobDetails);
+
+        const data = {
+            schedule: cronDate,
+            script_path: '/scripts/createTransaction.sh',
+            expense_type: 'income',
+            account_id,
+            id: modifiedIncome[0].income_id,
+            amount: amount,
+            title,
+            description,
+        };
+
+        const [success, responseData] = await manipulateCron(
+            data,
+            'POST',
+            null,
+        );
+
+        if (!success) {
+            response.status(500).send(responseData);
+        }
+
         const cronId: number = (
             await executeQuery(cronJobQueries.createCronJob, [
-                uniqueId,
+                responseData.unique_id,
                 cronDate,
             ])
         )[0].cron_job_id;
