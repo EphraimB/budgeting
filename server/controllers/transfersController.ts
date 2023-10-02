@@ -10,32 +10,12 @@ import { type Transfer } from '../types/types.js';
 import { logger } from '../config/winston.js';
 import determineCronValues from '../crontab/determineCronValues.js';
 
-interface TransferInput {
-    transfer_id: string;
-    cron_job_id?: string;
-    source_account_id: string;
-    destination_account_id: string;
-    transfer_amount: string;
-    transfer_title: string;
-    transfer_description: string;
-    frequency_type: string;
-    frequency_type_variable: string | null | undefined;
-    frequency_day_of_month: string | null | undefined;
-    frequency_day_of_week: string | null | undefined;
-    frequency_week_of_month: string | null | undefined;
-    frequency_month_of_year: string | null | undefined;
-    transfer_begin_date: string;
-    transfer_end_date: string | null | undefined;
-    date_created: string;
-    date_modified: string;
-}
-
 /**
  *
  * @param transfer - The transfer object to parse
  * @returns The parsed transfer object
  */
-const transfersParse = (transfer: TransferInput): Transfer => ({
+const transfersParse = (transfer: Record<string, string>): Transfer => ({
     transfer_id: parseInt(transfer.transfer_id),
     source_account_id: parseInt(transfer.source_account_id),
     destination_account_id: parseInt(transfer.destination_account_id),
@@ -154,7 +134,7 @@ export const createTransfer = async (
     } = request.body;
 
     try {
-        const transferResult = await executeQuery<TransferInput>(
+        const transferResult = await executeQuery(
             transferQueries.createTransfer,
             [
                 source_account_id,
@@ -243,10 +223,9 @@ export const createTransferReturnObject = async (
     const { transfer_id } = request;
 
     try {
-        const transfer = await executeQuery<TransferInput>(
-            transferQueries.getTransfersById,
-            [transfer_id],
-        );
+        const transfer = await executeQuery(transferQueries.getTransfersById, [
+            transfer_id,
+        ]);
 
         const modifiedTransfers = transfer.map(transfersParse);
 
@@ -342,7 +321,7 @@ export const updateTransfer = async (
             cronId,
         ]);
 
-        await executeQuery<TransferInput>(transferQueries.updateTransfer, [
+        await executeQuery(transferQueries.updateTransfer, [
             source_account_id,
             destination_account_id,
             amount,
@@ -383,10 +362,9 @@ export const updateTransferReturnObject = async (
     const { transfer_id } = request;
 
     try {
-        const transfers = await executeQuery<TransferInput>(
-            transferQueries.getTransfersById,
-            [transfer_id],
-        );
+        const transfers = await executeQuery(transferQueries.getTransfersById, [
+            transfer_id,
+        ]);
 
         const modifiedTransfers = transfers.map(transfersParse);
 
