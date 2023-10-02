@@ -246,7 +246,7 @@ export const createWishlistCron = async (
                 account_id: request.body.account_id,
                 id: wishlist_id,
                 amount: -request.body.amount,
-                title: 'wishlist',
+                title: request.body.title,
                 description: request.body.description,
             };
 
@@ -365,15 +365,6 @@ export const updateWishlistCron = async (
         );
         const cronId = wishlistsResults[0].cron_job_id;
 
-        const results = await executeQuery(cronJobQueries.getCronJob, [cronId]);
-        if (results.length > 0) {
-            await deleteCronJob(results[0].unique_id);
-        } else {
-            logger.error('Cron job not found');
-            response.status(404).send('Cron job not found');
-            return;
-        }
-
         // Create a map of wishlist_id to transaction date for faster lookup
         const transactionMap: Record<number, string | null> = {};
         request.transactions.forEach((account) => {
@@ -399,22 +390,43 @@ export const updateWishlistCron = async (
             (wishlist: WishlistInput) => wishlistsParse(wishlist),
         );
 
-        const cronParams = {
+        const jobDetails = {
             date: wishlists[0].wishlist_date_can_purchase,
-            account_id: request.body.account_id,
-            id: wishlist_id,
-            amount: -request.body.amount,
-            title: request.body.title,
-            description: request.body.description,
-            scriptPath: '/app/scripts/createTransaction.sh',
-            type: 'wishlist',
         };
 
-        if (cronParams.date !== null || cronParams.date !== undefined) {
-            const { cronDate, uniqueId } = await scheduleCronJob(cronParams);
+        if (jobDetails.date !== null || jobDetails.date !== undefined) {
+            const cronDate = determineCronValues(
+                jobDetails as { date: string },
+            );
+
+            const [{ unique_id }] = await executeQuery(
+                cronJobQueries.getCronJob,
+                [cronId],
+            );
+
+            const data = {
+                schedule: cronDate,
+                script_path: '/scripts/createTransaction.sh',
+                expense_type: 'wishlist',
+                account_id: request.body.account_id,
+                id: wishlist_id,
+                amount: -request.body.amount,
+                title: request.body.title,
+                description: request.body.description,
+            };
+
+            const [success, responseData] = await manipulateCron(
+                data,
+                'PUT',
+                unique_id,
+            );
+
+            if (!success) {
+                response.status(500).send(responseData);
+            }
 
             await executeQuery(cronJobQueries.updateCronJob, [
-                uniqueId,
+                responseData.unique_id,
                 cronDate,
                 cronId,
             ]);
