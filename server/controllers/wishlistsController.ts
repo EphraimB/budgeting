@@ -3,12 +3,14 @@ import { cronJobQueries, wishlistQueries } from '../models/queryData.js';
 import {
     executeQuery,
     handleError,
+    manipulateCron,
     parseIntOrFallback,
 } from '../utils/helperFunctions.js';
 import { type Wishlist } from '../types/types.js';
 import scheduleCronJob from '../crontab/scheduleCronJob.js';
 import deleteCronJob from '../crontab/deleteCronJob.js';
 import { logger } from '../config/winston.js';
+import determineCronValues from '../crontab/determineCronValues.js';
 
 interface WishlistInput {
     wishlist_id: string;
@@ -228,23 +230,39 @@ export const createWishlistCron = async (
             (wishlist: WishlistInput) => wishlistsParse(wishlist),
         );
 
-        const cronParams = {
+        const jobDetails = {
             date: wishlists[0].wishlist_date_can_purchase,
-            account_id: request.body.account_id,
-            id: wishlist_id,
-            amount: -request.body.amount,
-            title: request.body.title,
-            description: request.body.description,
-            scriptPath: '/app/scripts/createTransaction.sh',
-            type: 'wishlist',
         };
 
-        if (cronParams.date !== null || cronParams.date !== undefined) {
-            const { cronDate, uniqueId } = await scheduleCronJob(cronParams);
+        if (jobDetails.date !== null && jobDetails.date !== undefined) {
+            const cronDate = determineCronValues(
+                jobDetails as { date: string },
+            );
+
+            const data = {
+                schedule: cronDate,
+                script_path: '/scripts/createTransaction.sh',
+                expense_type: 'wishlist',
+                account_id: request.body.account_id,
+                id: wishlist_id,
+                amount: -request.body.amount,
+                title: 'wishlist',
+                description: request.body.description,
+            };
+
+            const [success, responseData] = await manipulateCron(
+                data,
+                'POST',
+                null,
+            );
+
+            if (!success) {
+                response.status(500).send(responseData);
+            }
 
             const cronId: number = (
                 await executeQuery(cronJobQueries.createCronJob, [
-                    uniqueId,
+                    responseData.unique_id,
                     cronDate,
                 ])
             )[0].cron_job_id;
