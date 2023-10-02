@@ -429,10 +429,14 @@ export const deleteTransfer = async (
         const cronId: number = parseInt(transferResults[0].cron_job_id);
         const results = await executeQuery(cronJobQueries.getCronJob, [cronId]);
 
-        if (results.length > 0) {
-            await deleteCronJob(results[0].unique_id);
-        } else {
-            logger.error('Cron job not found');
+        const [success, responseData] = await manipulateCron(
+            null,
+            'DELETE',
+            results[0].unique_id,
+        );
+
+        if (!success) {
+            response.status(500).send(responseData);
         }
 
         await executeQuery(cronJobQueries.deleteCronJob, [cronId]);
