@@ -209,8 +209,6 @@ export const createIncome = async (
             ])
         )[0].cron_job_id;
 
-        logger.info('Cron job created ' + cronId.toString());
-
         await executeQuery(incomeQueries.updateIncomeWithCronJobId, [
             cronId,
             modifiedIncome[0].income_id,
