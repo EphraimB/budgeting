@@ -469,10 +469,14 @@ export const deleteWishlist = async (
             cronId,
         ]);
 
-        if (cronJobResults.length > 0) {
-            await deleteCronJob(cronJobResults[0].unique_id);
-        } else {
-            logger.error('Cron job not found');
+        const [success, responseData] = await manipulateCron(
+            null,
+            'DELETE',
+            cronJobResults[0].unique_id,
+        );
+
+        if (!success) {
+            response.status(500).send(responseData);
         }
 
         await executeQuery(wishlistQueries.deleteWishlist, [id]);
