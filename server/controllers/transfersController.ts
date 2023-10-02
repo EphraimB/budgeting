@@ -1,7 +1,5 @@
 import { type NextFunction, type Request, type Response } from 'express';
 import { transferQueries, cronJobQueries } from '../models/queryData.js';
-import scheduleCronJob from '../crontab/scheduleCronJob.js';
-import deleteCronJob from '../crontab/deleteCronJob.js';
 import {
     handleError,
     executeQuery,
@@ -320,7 +318,7 @@ export const updateTransfer = async (
         const data = {
             schedule: cronDate,
             script_path: '/scripts/createTransaction.sh',
-            expense_type: 'expense',
+            expense_type: 'transfer',
             account_id: source_account_id,
             id,
             amount: -amount,
