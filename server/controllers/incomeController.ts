@@ -280,23 +280,6 @@ export const updateIncome = async (
     } = request.body;
 
     try {
-        const cronParams = {
-            date: begin_date,
-            account_id,
-            id,
-            amount,
-            title,
-            description,
-            frequency_type,
-            frequency_type_variable,
-            frequency_day_of_month,
-            frequency_day_of_week,
-            frequency_week_of_month,
-            frequency_month_of_year,
-            scriptPath: '/app/scripts/createTransaction.sh',
-            type: 'income',
-        };
-
         const incomeResult = await executeQuery<IncomeInput>(
             incomeQueries.getIncomeById,
             [id],
@@ -308,20 +291,46 @@ export const updateIncome = async (
         }
 
         const cronId: number = parseInt(incomeResult[0].cron_job_id);
-        const results = await executeQuery(cronJobQueries.getCronJob, [cronId]);
 
-        if (results.length > 0) {
-            await deleteCronJob(results[0].unique_id);
-        } else {
-            logger.error('Cron job not found');
-            response.status(404).send('Cron job not found');
-            return;
+        const jobDetails = {
+            frequency_type,
+            frequency_type_variable,
+            frequency_day_of_month,
+            frequency_day_of_week,
+            frequency_week_of_month,
+            frequency_month_of_year,
+            date: begin_date,
+        };
+
+        const cronDate = determineCronValues(jobDetails);
+
+        const [{ unique_id }] = await executeQuery(cronJobQueries.getCronJob, [
+            cronId,
+        ]);
+
+        const data = {
+            schedule: cronDate,
+            script_path: '/scripts/createTransaction.sh',
+            expense_type: 'income',
+            account_id,
+            id,
+            amount: amount,
+            title,
+            description,
+        };
+
+        const [success, responseData] = await manipulateCron(
+            data,
+            'PUT',
+            unique_id,
+        );
+
+        if (!success) {
+            response.status(500).send(responseData);
         }
 
-        const { uniqueId, cronDate } = await scheduleCronJob(cronParams);
-
         await executeQuery(cronJobQueries.updateCronJob, [
-            uniqueId,
+            responseData.unique_id,
             cronDate,
             cronId,
         ]);
