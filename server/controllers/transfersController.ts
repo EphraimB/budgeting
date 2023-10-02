@@ -6,9 +6,11 @@ import {
     handleError,
     executeQuery,
     parseIntOrFallback,
+    manipulateCron,
 } from '../utils/helperFunctions.js';
 import { type Transfer } from '../types/types.js';
 import { logger } from '../config/winston.js';
+import determineCronValues from '../crontab/determineCronValues.js';
 
 interface TransferInput {
     transfer_id: string;
@@ -176,33 +178,45 @@ export const createTransfer = async (
         // Parse the data to correct format and return an object
         const transfers: Transfer[] = transferResult.map(transfersParse);
 
-        const cronParams = {
-            date: begin_date,
-            account_id: source_account_id,
-            id: transfers[0].transfer_id,
-            destination_account_id,
-            amount: -amount,
-            title,
-            description,
+        const jobDetails = {
             frequency_type,
             frequency_type_variable,
             frequency_day_of_month,
             frequency_day_of_week,
             frequency_week_of_month,
             frequency_month_of_year,
-            scriptPath: '/app/scripts/createTransaction.sh',
-            type: 'transfer',
+            date: begin_date,
         };
 
-        const { cronDate, uniqueId } = await scheduleCronJob(cronParams);
-        const cronJobResult = await executeQuery(cronJobQueries.createCronJob, [
-            uniqueId,
-            cronDate,
-        ]);
+        const cronDate = determineCronValues(jobDetails);
 
-        const cronId: number = cronJobResult[0].cron_job_id;
+        const data = {
+            schedule: cronDate,
+            script_path: '/scripts/createTransaction.sh',
+            expense_type: 'transfer',
+            account_id: source_account_id,
+            id: transfers[0].transfer_id,
+            amount: -amount,
+            title,
+            description,
+        };
 
-        logger.info('Cron job created ' + cronId.toString());
+        const [success, responseData] = await manipulateCron(
+            data,
+            'POST',
+            null,
+        );
+
+        if (!success) {
+            response.status(500).send(responseData);
+        }
+
+        const cronId: number = (
+            await executeQuery(cronJobQueries.createCronJob, [
+                responseData.unique_id,
+                cronDate,
+            ])
+        )[0].cron_job_id;
 
         await executeQuery(transferQueries.updateTransferWithCronJobId, [
             cronId,
@@ -212,8 +226,6 @@ export const createTransfer = async (
         request.transfer_id = transfers[0].transfer_id;
 
         next();
-
-        // response.status(201).json(transfers);
     } catch (error) {
         logger.error(error); // Log the error on the server side
         handleError(response, 'Error creating transfer');
