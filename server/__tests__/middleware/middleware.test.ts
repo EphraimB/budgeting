@@ -109,6 +109,11 @@ const mockModule = (
         }),
         parseIntOrFallback,
         parseFloatOrFallback,
+        manipulateCron: jest
+            .fn()
+            .mockImplementation(
+                async () => await Promise.resolve([true, '123']),
+            ),
     }));
 };
 
@@ -966,6 +971,7 @@ describe('updateWislistCron', () => {
                 account_id: 1,
                 transactions: [
                     {
+                        id: 'fw33e',
                         wishlist_id: 1,
                         amount: 100,
                         tax_rate: 0,
