@@ -154,3 +154,16 @@ describe('manipulateCron function', () => {
         expect(result).toEqual(mockResponseData);
     });
 });
+
+describe('executePayrollsScript function', () => {
+    it('should execute the payrolls script', async () => {
+        const { executePayrollsScript } = await import(
+            '../../utils/helperFunctions'
+        );
+
+        const mockResponseData = [true, { id: 1, name: 'John Doe' }];
+
+        const result = await executePayrollsScript(1);
+        expect(result).toEqual(mockResponseData);
+    });
+});
