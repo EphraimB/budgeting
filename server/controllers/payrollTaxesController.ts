@@ -5,19 +5,12 @@ import { handleError, executeQuery } from '../utils/helperFunctions.js';
 import { type PayrollTax } from '../types/types.js';
 import { logger } from '../config/winston.js';
 
-interface PayrollTaxInput {
-    payroll_taxes_id: string;
-    employee_id: string;
-    name: string;
-    rate: string;
-}
-
 /**
  *
  * @param payrollTax - Payroll tax object
  * @returns - Payroll tax object with parsed values
  */
-const payrollTaxesParse = (payrollTax: PayrollTaxInput): PayrollTax => ({
+const payrollTaxesParse = (payrollTax: Record<string, string>): PayrollTax => ({
     payroll_taxes_id: parseInt(payrollTax.payroll_taxes_id),
     employee_id: parseInt(payrollTax.employee_id),
     name: payrollTax.name,
@@ -59,7 +52,7 @@ export const getPayrollTaxes = async (
             params = [];
         }
 
-        const rows = await executeQuery<PayrollTaxInput>(query, params);
+        const rows = await executeQuery(query, params);
 
         if (
             ((id !== null && id !== undefined) ||
@@ -105,10 +98,11 @@ export const createPayrollTax = async (
     const { employee_id, name, rate } = request.body;
 
     try {
-        const results = await executeQuery<PayrollTaxInput>(
-            payrollQueries.createPayrollTax,
-            [employee_id, name, rate],
-        );
+        const results = await executeQuery(payrollQueries.createPayrollTax, [
+            employee_id,
+            name,
+            rate,
+        ]);
 
         // Define the script command
         const scriptCommand: string = `/app/scripts/getPayrollsByEmployee.sh ${employee_id}`;
@@ -153,10 +147,9 @@ export const createPayrollTaxReturnObject = async (
     const { payroll_taxes_id } = request;
 
     try {
-        const results = await executeQuery<PayrollTaxInput>(
-            payrollQueries.getPayrollTaxesById,
-            [payroll_taxes_id],
-        );
+        const results = await executeQuery(payrollQueries.getPayrollTaxesById, [
+            payroll_taxes_id,
+        ]);
 
         if (results.length === 0) {
             response.status(404).send('Payroll tax not found');
@@ -190,10 +183,11 @@ export const updatePayrollTax = async (
     const { employee_id, name, rate } = request.body;
 
     try {
-        const results = await executeQuery<PayrollTaxInput>(
-            payrollQueries.updatePayrollTax,
-            [name, rate, id],
-        );
+        const results = await executeQuery(payrollQueries.updatePayrollTax, [
+            name,
+            rate,
+            id,
+        ]);
 
         if (results.length === 0) {
             response.status(404).send('Payroll tax not found');
@@ -231,10 +225,9 @@ export const updatePayrollTaxReturnObject = async (
     const { id } = request.params;
 
     try {
-        const results = await executeQuery<PayrollTaxInput>(
-            payrollQueries.getPayrollTaxesById,
-            [id],
-        );
+        const results = await executeQuery(payrollQueries.getPayrollTaxesById, [
+            id,
+        ]);
 
         if (results.length === 0) {
             response.status(404).send('Payroll tax not found');
@@ -267,7 +260,7 @@ export const deletePayrollTax = async (
     const { id } = request.params;
 
     try {
-        const getResults = await executeQuery<PayrollTaxInput>(
+        const getResults = await executeQuery(
             payrollQueries.getPayrollTaxesById,
             [id],
         );
