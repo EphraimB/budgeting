@@ -30,8 +30,6 @@ import {
     type Transfer,
     type Wishlist,
 } from '../types/types.js';
-import scheduleCronJob from '../crontab/scheduleCronJob.js';
-import deleteCronJob from '../crontab/deleteCronJob.js';
 import determineCronValues from '../crontab/determineCronValues.js';
 
 interface LoanInput {
