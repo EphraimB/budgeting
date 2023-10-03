@@ -5,19 +5,14 @@ import { handleError, executeQuery } from '../utils/helperFunctions.js';
 import { type PayrollDate } from '../types/types.js';
 import { logger } from '../config/winston.js';
 
-interface PayrollDateInput {
-    payroll_date_id: string;
-    employee_id: string;
-    payroll_start_day: string;
-    payroll_end_day: string;
-}
-
 /**
  *
  * @param payrollDate - Payroll date object
  * @returns - Payroll date object with parsed values
  */
-const payrollDatesParse = (payrollDate: PayrollDateInput): PayrollDate => ({
+const payrollDatesParse = (
+    payrollDate: Record<string, string>,
+): PayrollDate => ({
     payroll_date_id: parseInt(payrollDate.payroll_date_id),
     employee_id: parseInt(payrollDate.employee_id),
     payroll_start_day: parseInt(payrollDate.payroll_start_day),
@@ -59,7 +54,7 @@ export const getPayrollDates = async (
             params = [];
         }
 
-        const results = await executeQuery<PayrollDateInput>(query, params);
+        const results = await executeQuery(query, params);
 
         if (
             ((id !== null && id !== undefined) ||
@@ -106,10 +101,11 @@ export const createPayrollDate = async (
     try {
         const { employee_id, start_day, end_day } = request.body;
 
-        const results = await executeQuery<PayrollDateInput>(
-            payrollQueries.createPayrollDate,
-            [employee_id, start_day, end_day],
-        );
+        const results = await executeQuery(payrollQueries.createPayrollDate, [
+            employee_id,
+            start_day,
+            end_day,
+        ]);
 
         // Define the script command
         const scriptCommand: string = `/app/scripts/getPayrollsByEmployee.sh ${employee_id}`;
@@ -145,10 +141,9 @@ export const createPayrollDateReturnObject = async (
     const { payroll_date_id } = request;
 
     try {
-        const results = await executeQuery<PayrollDateInput>(
-            payrollQueries.getPayrollDatesById,
-            [payroll_date_id],
-        );
+        const results = await executeQuery(payrollQueries.getPayrollDatesById, [
+            payroll_date_id,
+        ]);
 
         // Parse the data to correct format and return an object
         const payrollDates: PayrollDate[] = results.map((payrollDate) =>
@@ -178,10 +173,11 @@ export const updatePayrollDate = async (
         const { id } = request.params;
         const { employee_id, start_day, end_day } = request.body;
 
-        const results = await executeQuery<PayrollDateInput>(
-            payrollQueries.updatePayrollDate,
-            [start_day, end_day, id],
-        );
+        const results = await executeQuery(payrollQueries.updatePayrollDate, [
+            start_day,
+            end_day,
+            id,
+        ]);
 
         if (results.length === 0) {
             response.status(404).send('Payroll date not found');
@@ -219,10 +215,9 @@ export const updatePayrollDateReturnObject = async (
     const { id } = request.params;
 
     try {
-        const results = await executeQuery<PayrollDateInput>(
-            payrollQueries.getPayrollDatesById,
-            [id],
-        );
+        const results = await executeQuery(payrollQueries.getPayrollDatesById, [
+            id,
+        ]);
 
         // Parse the data to correct format and return an object
         const payrollDates: PayrollDate[] = results.map((payrollDate) =>
@@ -251,7 +246,7 @@ export const deletePayrollDate = async (
     try {
         const { id } = request.params;
 
-        const getResults = await executeQuery<PayrollDateInput>(
+        const getResults = await executeQuery(
             payrollQueries.getPayrollDatesById,
             [id],
         );
