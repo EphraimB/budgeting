@@ -13,20 +13,13 @@ jest.mock('../../config/winston', () => ({
     },
 }));
 
-jest.mock('../../crontab/scheduleCronJob.js', () => {
+jest.mock('../../crontab/determineCronValues.js', () => {
     return jest.fn().mockImplementation(
         async () =>
             await Promise.resolve({
                 cronDate: '0 0 16 * *',
-                uniqueId: '123',
             }),
     );
-});
-
-jest.mock('../../crontab/deleteCronJob.js', () => {
-    return jest
-        .fn()
-        .mockImplementation(async () => await Promise.resolve('123'));
 });
 
 // Mock request and response
