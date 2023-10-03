@@ -95,7 +95,7 @@ export const manipulateCron = async (
 
         // Ensure the response is OK and handle potential errors
         if (!res.ok) {
-            throw new Error(`An error has occurred: ${res.status}`);
+            return [false, `An error has occurred: ${res.status}`];
         }
 
         // Parse the JSON from the response
