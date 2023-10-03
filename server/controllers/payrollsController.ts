@@ -4,21 +4,12 @@ import { handleError, executeQuery } from '../utils/helperFunctions.js';
 import { type Payroll } from '../types/types.js';
 import { logger } from '../config/winston.js';
 
-interface PayrollInput {
-    start_date: string;
-    end_date: string;
-    work_days: string;
-    gross_pay: string;
-    net_pay: string;
-    hours_worked: string;
-}
-
 /**
  *
  * @param payroll - Payroll object
  * @returns - Payroll object with parsed values
  */
-const payrollsParse = (payroll: PayrollInput): Payroll => ({
+const payrollsParse = (payroll: Record<string, string>): Payroll => ({
     start_date: payroll.start_date,
     end_date: payroll.end_date,
     work_days: parseInt(payroll.work_days),
@@ -40,10 +31,9 @@ export const getPayrolls = async (
     try {
         const { employee_id } = request.query;
 
-        const results = await executeQuery<PayrollInput>(
-            payrollQueries.getPayrolls,
-            [employee_id],
-        );
+        const results = await executeQuery(payrollQueries.getPayrolls, [
+            employee_id,
+        ]);
 
         if (results.length === 0) {
             response.status(404).send('No payrolls for employee or not found');
