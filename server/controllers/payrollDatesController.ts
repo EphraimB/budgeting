@@ -183,16 +183,13 @@ export const updatePayrollDate = async (
             return;
         }
 
-        // Define the script command
-        const scriptCommand: string = `/app/scripts/getPayrollsByEmployee.sh ${employee_id}`;
+        const [success, responseData] = await executePayrollsScript(
+            employee_id,
+        );
 
-        // Execute the script
-        exec(scriptCommand, (error, stdout, stderr) => {
-            if (error != null) {
-                logger.error(`Error executing script: ${error.message}`);
-                response.status(500).send('Error executing script');
-            }
-        });
+        if (!success) {
+            response.status(500).send(responseData);
+        }
 
         next();
     } catch (error) {
@@ -257,18 +254,13 @@ export const deletePayrollDate = async (
 
         await executeQuery(payrollQueries.deletePayrollDate, [id]);
 
-        // Define the script command
-        const scriptCommand: string = `/app/scripts/getPayrollsByEmployee.sh ${parseInt(
+        const [success, responseData] = await executePayrollsScript(
             getResults[0].employee_id,
-        )}`;
+        );
 
-        // Execute the script
-        exec(scriptCommand, (error, stdout, stderr) => {
-            if (error != null) {
-                logger.error(`Error executing script: ${error.message}`);
-                response.status(500).send('Error executing script');
-            }
-        });
+        if (!success) {
+            response.status(500).send(responseData);
+        }
 
         next();
     } catch (error) {
