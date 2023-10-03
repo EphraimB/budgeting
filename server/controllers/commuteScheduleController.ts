@@ -9,6 +9,7 @@ import {
     handleError,
     executeQuery,
     parseIntOrFallback,
+    manipulateCron,
 } from '../utils/helperFunctions.js';
 import {
     Timeslots,
@@ -16,8 +17,7 @@ import {
     FareDetails,
 } from '../types/types.js';
 import { logger } from '../config/winston.js';
-import scheduleCronJob from '../crontab/scheduleCronJob.js';
-import deleteCronJob from '../crontab/deleteCronJob.js';
+import determineCronValues from '../crontab/determineCronValues.js';
 
 interface Schedule {
     day_of_week: number;
@@ -280,7 +280,10 @@ export const createCommuteSchedule = async (
 
         const commuteSchedule = rows.map((s) => parseCommuteSchedule(s));
 
-        const cronParams = {
+        const jobDetails = {
+            frequency_type: 1,
+            frequency_type_variable: 1,
+            frequency_day_of_week: day_of_week,
             date: new Date(
                 new Date().setHours(
                     start_time.split(':')[0],
@@ -288,6 +291,14 @@ export const createCommuteSchedule = async (
                     start_time.split(':')[2],
                 ),
             ).toISOString(),
+        };
+
+        const cronDate = determineCronValues(jobDetails);
+
+        const data = {
+            schedule: cronDate,
+            script_path: '/scripts/createTransaction.sh',
+            expense_type: 'commute',
             account_id,
             id: commuteSchedule[0].commute_schedule_id,
             amount: -fareDetail[0].fare_amount,
@@ -297,21 +308,21 @@ export const createCommuteSchedule = async (
                 ' ' +
                 fareDetail[0].fare_type +
                 ' pass',
-            frequency_type: 1,
-            frequency_type_variable: 1,
-            frequency_day_of_month: null,
-            frequency_day_of_week: day_of_week,
-            frequency_week_of_month: null,
-            frequency_month_of_year: null,
-            scriptPath: '/app/scripts/createTransaction.sh',
-            type: 'commute',
         };
 
-        const { cronDate, uniqueId } = await scheduleCronJob(cronParams);
+        const [success, responseData] = await manipulateCron(
+            data,
+            'POST',
+            null,
+        );
+
+        if (!success) {
+            response.status(500).send(responseData);
+        }
 
         const cronId: number = (
             await executeQuery(cronJobQueries.createCronJob, [
-                uniqueId,
+                responseData.unique_id,
                 cronDate,
             ])
         )[0].cron_job_id;
