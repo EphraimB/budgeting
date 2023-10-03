@@ -327,8 +327,6 @@ export const createCommuteSchedule = async (
             ])
         )[0].cron_job_id;
 
-        logger.info('Cron job created ' + cronId.toString());
-
         await executeQuery(commuteScheduleQueries.updateCommuteWithCronJobId, [
             cronId,
             commuteSchedule[0].commute_schedule_id,
