@@ -1,7 +1,11 @@
 import { type NextFunction, type Request, type Response } from 'express';
 import { payrollQueries } from '../models/queryData.js';
 import { exec } from 'child_process';
-import { handleError, executeQuery } from '../utils/helperFunctions.js';
+import {
+    handleError,
+    executeQuery,
+    executePayrollsScript,
+} from '../utils/helperFunctions.js';
 import { type PayrollDate } from '../types/types.js';
 import { logger } from '../config/winston.js';
 
@@ -107,18 +111,13 @@ export const createPayrollDate = async (
             end_day,
         ]);
 
-        // Define the script command
-        const scriptCommand: string = `/app/scripts/getPayrollsByEmployee.sh ${employee_id}`;
+        const [success, responseData] = await executePayrollsScript(
+            employee_id,
+        );
 
-        // Execute the script
-        exec(scriptCommand, (error, stdout, stderr) => {
-            if (error != null) {
-                logger.error(`Error executing script: ${error.message}`);
-                response.status(500).send('Error executing script');
-                return;
-            }
-            logger.info(`Script output: ${stdout}`);
-        });
+        if (!success) {
+            response.status(500).send(responseData);
+        }
 
         // Parse the data to correct format and return an object
         const payrollDates: PayrollDate[] = results.map((payrollDate) =>

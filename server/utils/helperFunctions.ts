@@ -105,3 +105,36 @@ export const manipulateCron = async (
         return [false, error.message];
     }
 };
+
+export const executePayrollsScript = async (employee_id: number) => {
+    const url: string = 'http://cron:8080/api/update-payrolls';
+
+    // Construct headers conditionally
+    const headers: HeadersInit = {
+        'Content-Type': 'application/json',
+    };
+
+    const body = JSON.stringify({ employee_id });
+
+    // Construct options with conditional body
+    const options: RequestInit = {
+        method: 'POST',
+        headers,
+        body,
+    };
+
+    try {
+        const res = await fetch(url, options);
+
+        // Ensure the response is OK and handle potential errors
+        if (!res.ok) {
+            return [false, `An error has occurred: ${res.status}`];
+        }
+
+        // Parse the JSON from the response
+        const responseData = await res.json();
+        return [true, responseData];
+    } catch (error) {
+        return [false, error.message];
+    }
+};
