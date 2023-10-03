@@ -32,31 +32,6 @@ import {
 } from '../types/types.js';
 import determineCronValues from '../crontab/determineCronValues.js';
 
-interface LoanInput {
-    account_id: string;
-    loan_id: string;
-    cron_job_id?: string;
-    tax_id?: string | null | undefined;
-    loan_amount: string;
-    loan_plan_amount: string;
-    loan_recipient: string;
-    loan_title: string;
-    loan_description: string;
-    frequency_type: string;
-    frequency_type_variable: string;
-    frequency_day_of_month: string;
-    frequency_day_of_week: string;
-    frequency_week_of_month: string;
-    frequency_month_of_year: string;
-    loan_interest_rate: string;
-    loan_interest_frequency_type: string;
-    loan_subsidized: string;
-    loan_begin_date: string;
-    loan_end_date: string;
-    date_created: string;
-    date_modified: string;
-}
-
 /**
  *
  * @param request - The request object
@@ -425,7 +400,7 @@ export const getExpensesByAccount = async (
  * @param loan - Loan object
  * @returns - Loan object with parsed values
  */
-const parseLoan = (loan: LoanInput): Loan => ({
+const parseLoan = (loan: Record<string, string>): Loan => ({
     loan_id: parseInt(loan.loan_id),
     account_id: parseInt(loan.account_id),
     tax_id: parseIntOrFallback(loan.tax_id),
