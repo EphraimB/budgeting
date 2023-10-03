@@ -10,33 +10,13 @@ import { type Income } from '../types/types.js';
 import { logger } from '../config/winston.js';
 import determineCronValues from '../crontab/determineCronValues.js';
 
-interface IncomeInput {
-    income_id: string;
-    account_id: string;
-    cron_job_id: string;
-    tax_id: string;
-    income_amount: string;
-    income_title: string;
-    income_description: string;
-    frequency_type: string;
-    frequency_type_variable: string;
-    frequency_day_of_month: string;
-    frequency_day_of_week: string;
-    frequency_week_of_month: string;
-    frequency_month_of_year: string;
-    income_begin_date: string;
-    income_end_date: string;
-    date_created: string;
-    date_modified: string;
-}
-
 /**
  *
  * @param income - Income object
  * @returns Income object with the correct types
  * Converts the income object to the correct types
  **/
-const parseIncome = (income: IncomeInput): Income => ({
+const parseIncome = (income: Record<string, string>): Income => ({
     income_id: parseInt(income.income_id),
     account_id: parseInt(income.account_id),
     tax_id: parseIntOrFallback(income.tax_id),
@@ -90,7 +70,7 @@ export const getIncome = async (
             params = [];
         }
 
-        const income = await executeQuery<IncomeInput>(query, params);
+        const income = await executeQuery(query, params);
 
         if (
             ((id !== null && id !== undefined) ||
@@ -146,24 +126,21 @@ export const createIncome = async (
     } = request.body;
 
     try {
-        const income = await executeQuery<IncomeInput>(
-            incomeQueries.createIncome,
-            [
-                account_id,
-                tax_id,
-                amount,
-                title,
-                description,
-                frequency_type,
-                frequency_type_variable,
-                frequency_day_of_month,
-                frequency_day_of_week,
-                frequency_week_of_month,
-                frequency_month_of_year,
-                begin_date,
-                end_date,
-            ],
-        );
+        const income = await executeQuery(incomeQueries.createIncome, [
+            account_id,
+            tax_id,
+            amount,
+            title,
+            description,
+            frequency_type,
+            frequency_type_variable,
+            frequency_day_of_month,
+            frequency_day_of_week,
+            frequency_week_of_month,
+            frequency_month_of_year,
+            begin_date,
+            end_date,
+        ]);
 
         const modifiedIncome = income.map(parseIncome);
 
@@ -234,10 +211,9 @@ export const createIncomeReturnObject = async (
     const { income_id } = request;
 
     try {
-        const income = await executeQuery<IncomeInput>(
-            incomeQueries.getIncomeById,
-            [income_id],
-        );
+        const income = await executeQuery(incomeQueries.getIncomeById, [
+            income_id,
+        ]);
 
         const modifiedIncome = income.map(parseIncome);
 
@@ -278,10 +254,9 @@ export const updateIncome = async (
     } = request.body;
 
     try {
-        const incomeResult = await executeQuery<IncomeInput>(
-            incomeQueries.getIncomeById,
-            [id],
-        );
+        const incomeResult = await executeQuery(incomeQueries.getIncomeById, [
+            id,
+        ]);
 
         if (incomeResult.length === 0) {
             response.status(404).send('Income not found');
@@ -333,7 +308,7 @@ export const updateIncome = async (
             cronId,
         ]);
 
-        await executeQuery<IncomeInput>(incomeQueries.updateIncome, [
+        await executeQuery(incomeQueries.updateIncome, [
             account_id,
             tax_id,
             amount,
@@ -372,10 +347,9 @@ export const updateIncomeReturnObject = async (
     const { income_id } = request;
 
     try {
-        const income = await executeQuery<IncomeInput>(
-            incomeQueries.getIncomeById,
-            [income_id],
-        );
+        const income = await executeQuery(incomeQueries.getIncomeById, [
+            income_id,
+        ]);
 
         const modifiedIncome = income.map(parseIncome);
 
