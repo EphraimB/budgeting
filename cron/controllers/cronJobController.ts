@@ -84,10 +84,10 @@ export const getCronJobs = async (req: Request, res: Response) => {
 
     if (unique_id) {
       const job = jobs.find((job) => job.unique_id === unique_id);
-      return res.json({ status: "success", data: job });
+      return res.status(200).json({ status: "success", data: job });
     }
 
-    res.json({ status: "success", data: jobs });
+    res.status(200).json({ status: "success", data: jobs });
   });
 };
 
