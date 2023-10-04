@@ -9,6 +9,7 @@ import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
 import CircularProgress from "@mui/material/CircularProgress";
 import useSWR, { Fetcher } from "swr";
+import { useAlert } from "../context/AlertContext";
 
 const fetcher: Fetcher = (url: string) => fetch(url).then((r) => r.json());
 
@@ -21,6 +22,8 @@ export default function TransactionDisplay({
   fromDate: Dayjs;
   toDate: Dayjs;
 }) {
+  const { showAlert, closeAlert } = useAlert();
+
   const { data, error, isLoading } = useSWR<any>(
     `http://localhost:5001/api/transactions?account_id=${accountId}&from_date=${fromDate
       .format()
@@ -28,7 +31,13 @@ export default function TransactionDisplay({
     fetcher
   );
 
-  if (error) return <div>failed to load</div>;
+  React.useEffect(() => {
+    if (error) {
+      showAlert("Failed to load transactions", "error");
+    }
+  }, [error, showAlert]);
+
+  if (error) return null;
   if (isLoading) return <CircularProgress />;
 
   return (
