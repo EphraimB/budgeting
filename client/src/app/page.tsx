@@ -1,19 +1,16 @@
 import AccountDisplay from "../../components/accountDisplay";
 
-async function getAccounts() {
-  const res = await fetch("http://server:5001/api/accounts");
-  if (!res.ok) {
+export default async function Home() {
+  const data = await fetch("http://client:3000/accounts");
+  if (!data.ok) {
     throw new Error("Failed to fetch data");
   }
-  return res.json();
-}
 
-export default async function Home() {
-  const accounts = await getAccounts();
+  const accounts = await data.json();
 
   return (
     <main>
-      <AccountDisplay accounts={accounts} />
+      <AccountDisplay accounts={accounts.data} />
     </main>
   );
 }
