@@ -163,6 +163,12 @@ export const createCronJob = async (req: Request, res: Response) => {
   }
 };
 
+/**
+ *
+ * @param req - Express request object
+ * @param res - Express response object
+ * Sends a PUT request to the server to update a cron job
+ */
 export const updateCronJob = async (req: Request, res: Response) => {
   const { unique_id } = req.params;
 
@@ -236,37 +242,48 @@ export const updateCronJob = async (req: Request, res: Response) => {
   }
 };
 
+/**
+ *
+ * @param req - Express request object
+ * @param res - Express response object
+ * Sends a DELETE request to the server to delete a cron job
+ */
 export const deleteCronJob = async (req: Request, res: Response) => {
   const { unique_id } = req.params;
 
-  exec(`crontab -l | grep '${unique_id}'`, (error, stdout, stderr) => {
-    if (error || !stdout) {
-      console.error(`exec error: ${error}`);
-      return res.status(404).json({
-        status: "error",
-        message: "Cron job not found",
-      });
-    }
-
-    // If the cron job is found, proceed with deletion
-    exec(
-      `crontab -l | grep -v '${unique_id}' | crontab -`,
-      (delError, delStdout, delStderr) => {
-        if (delError) {
-          logger.error(`exec error: ${delError}`);
-          return res.status(500).json({
-            status: "error",
-            message: "Failed to delete cron job",
-          });
-        }
-
-        logger.info("Cron job deleted with unique id: " + unique_id);
-
-        res.status(200).json({
-          status: "success",
-          message: "Cron job deleted successfully",
+  try {
+    exec(`crontab -l | grep '${unique_id}'`, (error, stdout, stderr) => {
+      if (error || !stdout) {
+        console.error(`exec error: ${error}`);
+        return res.status(404).json({
+          status: "error",
+          message: "Cron job not found",
         });
       }
-    );
-  });
+
+      // If the cron job is found, proceed with deletion
+      exec(
+        `crontab -l | grep -v '${unique_id}' | crontab -`,
+        (delError, delStdout, delStderr) => {
+          if (delError) {
+            logger.error(`exec error: ${delError}`);
+            return res.status(500).json({
+              status: "error",
+              message: "Failed to delete cron job",
+            });
+          }
+
+          logger.info("Cron job deleted with unique id: " + unique_id);
+
+          res.status(200).json({
+            status: "success",
+            message: "Cron job deleted successfully",
+          });
+        }
+      );
+    });
+  } catch (error) {
+    logger.error(error);
+    handleError(res, "Failed to delete cron job");
+  }
 };
