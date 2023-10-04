@@ -223,7 +223,7 @@ export const updateCronJob = async (req: Request, res: Response) => {
     );
   });
 
-  res.json({
+  res.status(200).json({
     status: "success",
     message: "Cron job updated successfully",
     unique_id: uniqueId,
