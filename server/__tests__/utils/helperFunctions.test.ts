@@ -13,6 +13,10 @@ jest.mock('../../config/db.js', () => {
     };
 });
 
+global.fetch = jest.fn((input: RequestInfo, init?: RequestInit | undefined) =>
+    Promise.resolve(new Response(JSON.stringify({ id: 1, name: 'John Doe' }))),
+) as jest.MockedFunction<any>;
+
 // Mock request and response
 let mockResponse: any;
 
@@ -110,5 +114,56 @@ describe('parseOrFallback function', () => {
         const mockInput = 'not a number';
         const result = parseIntOrFallback(mockInput);
         expect(result).toBeNull();
+    });
+});
+
+describe('manipulateCron function', () => {
+    it('should return an array of success and response data for GET', async () => {
+        const { manipulateCron } = await import('../../utils/helperFunctions');
+
+        const mockData = null;
+        const mockMethod = 'GET';
+        const mockUniqueId = null;
+        const mockResponseData = [true, { id: 1, name: 'John Doe' }];
+
+        const result = await manipulateCron(mockData, mockMethod, mockUniqueId);
+        expect(result).toEqual(mockResponseData);
+    });
+
+    it('should return an array of success and response data for POST', async () => {
+        const { manipulateCron } = await import('../../utils/helperFunctions');
+
+        const mockData = { id: 1, name: 'John Doe' };
+        const mockMethod = 'POST';
+        const mockUniqueId = null;
+        const mockResponseData = [true, mockData];
+
+        const result = await manipulateCron(mockData, mockMethod, mockUniqueId);
+        expect(result).toEqual(mockResponseData);
+    });
+
+    it('should return an array of success and response data for PUT', async () => {
+        const { manipulateCron } = await import('../../utils/helperFunctions');
+
+        const mockData = { id: 1, name: 'John Doe' };
+        const mockMethod = 'GET';
+        const mockUniqueId = 'test-unique-id';
+        const mockResponseData = [true, mockData];
+
+        const result = await manipulateCron(mockData, mockMethod, mockUniqueId);
+        expect(result).toEqual(mockResponseData);
+    });
+});
+
+describe('executePayrollsScript function', () => {
+    it('should execute the payrolls script', async () => {
+        const { executePayrollsScript } = await import(
+            '../../utils/helperFunctions'
+        );
+
+        const mockResponseData = [true, { id: 1, name: 'John Doe' }];
+
+        const result = await executePayrollsScript(1);
+        expect(result).toEqual(mockResponseData);
     });
 });

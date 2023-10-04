@@ -11,22 +11,13 @@ import {
     parseFloatOrFallback,
 } from '../utils/helperFunctions.js';
 
-interface CommuteSystemInput {
-    commute_system_id: string;
-    name: string;
-    fare_cap: string;
-    fare_cap_duration: string;
-    date_created: string;
-    date_modified: string;
-}
-
 /**
  *
  * @param commuteSystem - Commute system object to parse
  * @returns - Parsed commute system object
  */
 const parseCommuteSystem = (
-    commuteSystem: CommuteSystemInput,
+    commuteSystem: Record<string, string>,
 ): CommuteSystem => ({
     commute_system_id: parseInt(commuteSystem.commute_system_id),
     name: commuteSystem.name,
@@ -63,10 +54,7 @@ export const getCommuteSystem = async (
             params = [];
         }
 
-        const commuteSystem = await executeQuery<CommuteSystemInput>(
-            query,
-            params,
-        );
+        const commuteSystem = await executeQuery(query, params);
 
         if (id !== null && id !== undefined && commuteSystem.length === 0) {
             response.status(404).send('System not found');
@@ -100,7 +88,7 @@ export const createCommuteSystem = async (
     const { name, fare_cap, fare_cap_duration } = request.body;
 
     try {
-        const rows = await executeQuery<CommuteSystemInput>(
+        const rows = await executeQuery(
             commuteSystemQueries.createCommuteSystem,
             [name, fare_cap, fare_cap_duration],
         );
@@ -125,7 +113,7 @@ export const updateCommuteSystem = async (
     const id = parseInt(request.params.id);
     const { name, fare_cap, fare_cap_duration } = request.body;
     try {
-        const commuteSystem = await executeQuery<CommuteSystemInput>(
+        const commuteSystem = await executeQuery(
             commuteSystemQueries.getCommuteSystemById,
             [id],
         );
@@ -135,7 +123,7 @@ export const updateCommuteSystem = async (
             return;
         }
 
-        const rows = await executeQuery<CommuteSystemInput>(
+        const rows = await executeQuery(
             commuteSystemQueries.updateCommuteSystem,
             [name, fare_cap, fare_cap_duration, id],
         );
@@ -159,7 +147,7 @@ export const deleteCommuteSystem = async (
 ): Promise<void> => {
     const id = parseInt(request.params.id);
     try {
-        const commuteSystem = await executeQuery<CommuteSystemInput>(
+        const commuteSystem = await executeQuery(
             commuteSystemQueries.getCommuteSystemById,
             [id],
         );

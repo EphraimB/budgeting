@@ -9,13 +9,13 @@ for employeeId in $employeeIds; do
     scriptName="getPayrollsByEmployee.sh"
 
     # Check if the script exists at the given path
-    if [ -f /app/scripts/"$scriptName" ]; then
+    if [ -f /scripts/"$scriptName" ]; then
         # If the script exists, execute it with the current employee ID as an argument
-        cd /app/scripts || exit
+        cd /scripts || exit
 
-        "$scriptName" "$employeeId"
+        ./"$scriptName" "$employeeId"
 
-        cd /app || exit
+        cd / || exit
 
         # Print a message indicating that the script was executed
         echo "Executed script for employee $employeeId"

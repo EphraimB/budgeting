@@ -1,34 +1,14 @@
 import { type NextFunction, type Request, type Response } from 'express';
 import { cronJobQueries, incomeQueries } from '../models/queryData.js';
-import scheduleCronJob from '../crontab/scheduleCronJob.js';
-import deleteCronJob from '../crontab/deleteCronJob.js';
 import {
     handleError,
     executeQuery,
     parseIntOrFallback,
+    manipulateCron,
 } from '../utils/helperFunctions.js';
 import { type Income } from '../types/types.js';
 import { logger } from '../config/winston.js';
-
-interface IncomeInput {
-    income_id: string;
-    account_id: string;
-    cron_job_id: string;
-    tax_id: string;
-    income_amount: string;
-    income_title: string;
-    income_description: string;
-    frequency_type: string;
-    frequency_type_variable: string;
-    frequency_day_of_month: string;
-    frequency_day_of_week: string;
-    frequency_week_of_month: string;
-    frequency_month_of_year: string;
-    income_begin_date: string;
-    income_end_date: string;
-    date_created: string;
-    date_modified: string;
-}
+import determineCronValues from '../crontab/determineCronValues.js';
 
 /**
  *
@@ -36,7 +16,7 @@ interface IncomeInput {
  * @returns Income object with the correct types
  * Converts the income object to the correct types
  **/
-const parseIncome = (income: IncomeInput): Income => ({
+const parseIncome = (income: Record<string, string>): Income => ({
     income_id: parseInt(income.income_id),
     account_id: parseInt(income.account_id),
     tax_id: parseIntOrFallback(income.tax_id),
@@ -90,7 +70,7 @@ export const getIncome = async (
             params = [];
         }
 
-        const income = await executeQuery<IncomeInput>(query, params);
+        const income = await executeQuery(query, params);
 
         if (
             ((id !== null && id !== undefined) ||
@@ -146,31 +126,9 @@ export const createIncome = async (
     } = request.body;
 
     try {
-        const income = await executeQuery<IncomeInput>(
-            incomeQueries.createIncome,
-            [
-                account_id,
-                tax_id,
-                amount,
-                title,
-                description,
-                frequency_type,
-                frequency_type_variable,
-                frequency_day_of_month,
-                frequency_day_of_week,
-                frequency_week_of_month,
-                frequency_month_of_year,
-                begin_date,
-                end_date,
-            ],
-        );
-
-        const modifiedIncome = income.map(parseIncome);
-
-        const cronParams = {
-            date: begin_date,
+        const income = await executeQuery(incomeQueries.createIncome, [
             account_id,
-            id: modifiedIncome[0].income_id,
+            tax_id,
             amount,
             title,
             description,
@@ -180,19 +138,51 @@ export const createIncome = async (
             frequency_day_of_week,
             frequency_week_of_month,
             frequency_month_of_year,
-            scriptPath: '/app/scripts/createTransaction.sh',
-            type: 'income',
+            begin_date,
+            end_date,
+        ]);
+
+        const modifiedIncome = income.map(parseIncome);
+
+        const jobDetails = {
+            frequency_type,
+            frequency_type_variable,
+            frequency_day_of_month,
+            frequency_day_of_week,
+            frequency_week_of_month,
+            frequency_month_of_year,
+            date: begin_date,
         };
 
-        const { cronDate, uniqueId } = await scheduleCronJob(cronParams);
+        const cronDate = determineCronValues(jobDetails);
+
+        const data = {
+            schedule: cronDate,
+            script_path: '/scripts/createTransaction.sh',
+            expense_type: 'income',
+            account_id,
+            id: modifiedIncome[0].income_id,
+            amount: amount,
+            title,
+            description,
+        };
+
+        const [success, responseData] = await manipulateCron(
+            data,
+            'POST',
+            null,
+        );
+
+        if (!success) {
+            response.status(500).send(responseData);
+        }
+
         const cronId: number = (
             await executeQuery(cronJobQueries.createCronJob, [
-                uniqueId,
+                responseData.unique_id,
                 cronDate,
             ])
         )[0].cron_job_id;
-
-        logger.info('Cron job created ' + cronId.toString());
 
         await executeQuery(incomeQueries.updateIncomeWithCronJobId, [
             cronId,
@@ -221,10 +211,9 @@ export const createIncomeReturnObject = async (
     const { income_id } = request;
 
     try {
-        const income = await executeQuery<IncomeInput>(
-            incomeQueries.getIncomeById,
-            [income_id],
-        );
+        const income = await executeQuery(incomeQueries.getIncomeById, [
+            income_id,
+        ]);
 
         const modifiedIncome = income.map(parseIncome);
 
@@ -265,27 +254,9 @@ export const updateIncome = async (
     } = request.body;
 
     try {
-        const cronParams = {
-            date: begin_date,
-            account_id,
+        const incomeResult = await executeQuery(incomeQueries.getIncomeById, [
             id,
-            amount,
-            title,
-            description,
-            frequency_type,
-            frequency_type_variable,
-            frequency_day_of_month,
-            frequency_day_of_week,
-            frequency_week_of_month,
-            frequency_month_of_year,
-            scriptPath: '/app/scripts/createTransaction.sh',
-            type: 'income',
-        };
-
-        const incomeResult = await executeQuery<IncomeInput>(
-            incomeQueries.getIncomeById,
-            [id],
-        );
+        ]);
 
         if (incomeResult.length === 0) {
             response.status(404).send('Income not found');
@@ -293,25 +264,51 @@ export const updateIncome = async (
         }
 
         const cronId: number = parseInt(incomeResult[0].cron_job_id);
-        const results = await executeQuery(cronJobQueries.getCronJob, [cronId]);
 
-        if (results.length > 0) {
-            await deleteCronJob(results[0].unique_id);
-        } else {
-            logger.error('Cron job not found');
-            response.status(404).send('Cron job not found');
-            return;
+        const jobDetails = {
+            frequency_type,
+            frequency_type_variable,
+            frequency_day_of_month,
+            frequency_day_of_week,
+            frequency_week_of_month,
+            frequency_month_of_year,
+            date: begin_date,
+        };
+
+        const cronDate = determineCronValues(jobDetails);
+
+        const [{ unique_id }] = await executeQuery(cronJobQueries.getCronJob, [
+            cronId,
+        ]);
+
+        const data = {
+            schedule: cronDate,
+            script_path: '/scripts/createTransaction.sh',
+            expense_type: 'income',
+            account_id,
+            id,
+            amount: amount,
+            title,
+            description,
+        };
+
+        const [success, responseData] = await manipulateCron(
+            data,
+            'PUT',
+            unique_id,
+        );
+
+        if (!success) {
+            response.status(500).send(responseData);
         }
 
-        const { uniqueId, cronDate } = await scheduleCronJob(cronParams);
-
         await executeQuery(cronJobQueries.updateCronJob, [
-            uniqueId,
+            responseData.unique_id,
             cronDate,
             cronId,
         ]);
 
-        await executeQuery<IncomeInput>(incomeQueries.updateIncome, [
+        await executeQuery(incomeQueries.updateIncome, [
             account_id,
             tax_id,
             amount,
@@ -350,10 +347,9 @@ export const updateIncomeReturnObject = async (
     const { income_id } = request;
 
     try {
-        const income = await executeQuery<IncomeInput>(
-            incomeQueries.getIncomeById,
-            [income_id],
-        );
+        const income = await executeQuery(incomeQueries.getIncomeById, [
+            income_id,
+        ]);
 
         const modifiedIncome = income.map(parseIncome);
 
@@ -393,12 +389,14 @@ export const deleteIncome = async (
 
         const results = await executeQuery(cronJobQueries.getCronJob, [cronId]);
 
-        if (results.length > 0) {
-            await deleteCronJob(results[0].unique_id);
-        } else {
-            logger.error('Cron job not found');
-            response.status(404).send('Cron job not found');
-            return;
+        const [success, responseData] = await manipulateCron(
+            null,
+            'DELETE',
+            results[0].unique_id,
+        );
+
+        if (!success) {
+            response.status(500).send(responseData);
         }
 
         await executeQuery(cronJobQueries.deleteCronJob, [cronId]);

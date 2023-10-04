@@ -1,41 +1,21 @@
 import { type NextFunction, type Request, type Response } from 'express';
 import { transferQueries, cronJobQueries } from '../models/queryData.js';
-import scheduleCronJob from '../crontab/scheduleCronJob.js';
-import deleteCronJob from '../crontab/deleteCronJob.js';
 import {
     handleError,
     executeQuery,
     parseIntOrFallback,
+    manipulateCron,
 } from '../utils/helperFunctions.js';
 import { type Transfer } from '../types/types.js';
 import { logger } from '../config/winston.js';
-
-interface TransferInput {
-    transfer_id: string;
-    cron_job_id?: string;
-    source_account_id: string;
-    destination_account_id: string;
-    transfer_amount: string;
-    transfer_title: string;
-    transfer_description: string;
-    frequency_type: string;
-    frequency_type_variable: string | null | undefined;
-    frequency_day_of_month: string | null | undefined;
-    frequency_day_of_week: string | null | undefined;
-    frequency_week_of_month: string | null | undefined;
-    frequency_month_of_year: string | null | undefined;
-    transfer_begin_date: string;
-    transfer_end_date: string | null | undefined;
-    date_created: string;
-    date_modified: string;
-}
+import determineCronValues from '../crontab/determineCronValues.js';
 
 /**
  *
  * @param transfer - The transfer object to parse
  * @returns The parsed transfer object
  */
-const transfersParse = (transfer: TransferInput): Transfer => ({
+const transfersParse = (transfer: Record<string, string>): Transfer => ({
     transfer_id: parseInt(transfer.transfer_id),
     source_account_id: parseInt(transfer.source_account_id),
     destination_account_id: parseInt(transfer.destination_account_id),
@@ -154,7 +134,7 @@ export const createTransfer = async (
     } = request.body;
 
     try {
-        const transferResult = await executeQuery<TransferInput>(
+        const transferResult = await executeQuery(
             transferQueries.createTransfer,
             [
                 source_account_id,
@@ -176,33 +156,45 @@ export const createTransfer = async (
         // Parse the data to correct format and return an object
         const transfers: Transfer[] = transferResult.map(transfersParse);
 
-        const cronParams = {
-            date: begin_date,
-            account_id: source_account_id,
-            id: transfers[0].transfer_id,
-            destination_account_id,
-            amount: -amount,
-            title,
-            description,
+        const jobDetails = {
             frequency_type,
             frequency_type_variable,
             frequency_day_of_month,
             frequency_day_of_week,
             frequency_week_of_month,
             frequency_month_of_year,
-            scriptPath: '/app/scripts/createTransaction.sh',
-            type: 'transfer',
+            date: begin_date,
         };
 
-        const { cronDate, uniqueId } = await scheduleCronJob(cronParams);
-        const cronJobResult = await executeQuery(cronJobQueries.createCronJob, [
-            uniqueId,
-            cronDate,
-        ]);
+        const cronDate = determineCronValues(jobDetails);
 
-        const cronId: number = cronJobResult[0].cron_job_id;
+        const data = {
+            schedule: cronDate,
+            script_path: '/scripts/createTransaction.sh',
+            expense_type: 'transfer',
+            account_id: source_account_id,
+            id: transfers[0].transfer_id,
+            amount: -amount,
+            title,
+            description,
+        };
 
-        logger.info('Cron job created ' + cronId.toString());
+        const [success, responseData] = await manipulateCron(
+            data,
+            'POST',
+            null,
+        );
+
+        if (!success) {
+            response.status(500).send(responseData);
+        }
+
+        const cronId: number = (
+            await executeQuery(cronJobQueries.createCronJob, [
+                responseData.unique_id,
+                cronDate,
+            ])
+        )[0].cron_job_id;
 
         await executeQuery(transferQueries.updateTransferWithCronJobId, [
             cronId,
@@ -212,8 +204,6 @@ export const createTransfer = async (
         request.transfer_id = transfers[0].transfer_id;
 
         next();
-
-        // response.status(201).json(transfers);
     } catch (error) {
         logger.error(error); // Log the error on the server side
         handleError(response, 'Error creating transfer');
@@ -233,10 +223,9 @@ export const createTransferReturnObject = async (
     const { transfer_id } = request;
 
     try {
-        const transfer = await executeQuery<TransferInput>(
-            transferQueries.getTransfersById,
-            [transfer_id],
-        );
+        const transfer = await executeQuery(transferQueries.getTransfersById, [
+            transfer_id,
+        ]);
 
         const modifiedTransfers = transfer.map(transfersParse);
 
@@ -277,24 +266,6 @@ export const updateTransfer = async (
     } = request.body;
 
     try {
-        const cronParams = {
-            date: begin_date,
-            account_id: source_account_id,
-            id,
-            destination_account_id,
-            amount: -amount,
-            title,
-            description,
-            frequency_type,
-            frequency_type_variable,
-            frequency_day_of_month,
-            frequency_day_of_week,
-            frequency_week_of_month,
-            frequency_month_of_year,
-            scriptPath: '/app/scripts/createTransaction.sh',
-            type: 'transfer',
-        };
-
         const transferResults = await executeQuery(
             transferQueries.getTransfersById,
             [id],
@@ -306,23 +277,51 @@ export const updateTransfer = async (
         }
 
         const cronId: number = parseInt(transferResults[0].cron_job_id);
-        const results = await executeQuery(cronJobQueries.getCronJob, [cronId]);
 
-        if (results.length > 0) {
-            await deleteCronJob(results[0].unique_id);
-        } else {
-            logger.error('Cron job not found');
+        const jobDetails = {
+            frequency_type,
+            frequency_type_variable,
+            frequency_day_of_month,
+            frequency_day_of_week,
+            frequency_week_of_month,
+            frequency_month_of_year,
+            date: begin_date,
+        };
+
+        const cronDate = determineCronValues(jobDetails);
+
+        const [{ unique_id }] = await executeQuery(cronJobQueries.getCronJob, [
+            cronId,
+        ]);
+
+        const data = {
+            schedule: cronDate,
+            script_path: '/scripts/createTransaction.sh',
+            expense_type: 'transfer',
+            account_id: source_account_id,
+            id,
+            amount: -amount,
+            title,
+            description,
+        };
+
+        const [success, responseData] = await manipulateCron(
+            data,
+            'PUT',
+            unique_id,
+        );
+
+        if (!success) {
+            response.status(500).send(responseData);
         }
 
-        const { cronDate, uniqueId } = await scheduleCronJob(cronParams);
-
         await executeQuery(cronJobQueries.updateCronJob, [
-            uniqueId,
+            responseData.unique_id,
             cronDate,
             cronId,
         ]);
 
-        await executeQuery<TransferInput>(transferQueries.updateTransfer, [
+        await executeQuery(transferQueries.updateTransfer, [
             source_account_id,
             destination_account_id,
             amount,
@@ -363,10 +362,9 @@ export const updateTransferReturnObject = async (
     const { transfer_id } = request;
 
     try {
-        const transfers = await executeQuery<TransferInput>(
-            transferQueries.getTransfersById,
-            [transfer_id],
-        );
+        const transfers = await executeQuery(transferQueries.getTransfersById, [
+            transfer_id,
+        ]);
 
         const modifiedTransfers = transfers.map(transfersParse);
 
@@ -407,10 +405,14 @@ export const deleteTransfer = async (
         const cronId: number = parseInt(transferResults[0].cron_job_id);
         const results = await executeQuery(cronJobQueries.getCronJob, [cronId]);
 
-        if (results.length > 0) {
-            await deleteCronJob(results[0].unique_id);
-        } else {
-            logger.error('Cron job not found');
+        const [success, responseData] = await manipulateCron(
+            null,
+            'DELETE',
+            results[0].unique_id,
+        );
+
+        if (!success) {
+            response.status(500).send(responseData);
         }
 
         await executeQuery(cronJobQueries.deleteCronJob, [cronId]);

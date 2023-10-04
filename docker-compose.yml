@@ -14,24 +14,26 @@ services:
       context: ./server/
       dockerfile: Dockerfile
     environment:
-      - PGHOST=host.docker.internal
+      - PGHOST=db
       - PGDATABASE=${PGDB}
       - PGUSER=${PGUSER}
       - PGPASSWORD=${PGPASSWORD}
-      - PGPORT=${PGPORT}
+      - PGPORT=5432
+    networks:
+      - app-network
     ports:
       - "5001:5001"
     depends_on:
       - db
   shellcheck:
     build:
-      context: ./server/scripts
+      context: ./cron/scripts
       dockerfile: Dockerfile.shellcheck
     volumes:
-      - ./server/scripts:/scripts
+      - ./cron/scripts:/scripts
   bats-test:
     build:
-      context: ./server/scripts
+      context: ./cron/scripts
       dockerfile: Dockerfile.bats
     environment:
       - PGPASSWORD=mockpassword
@@ -39,6 +41,23 @@ services:
       - PGDB=mockdb
       - PGUSER=mockuser
       - PGPORT=5432
+  cron:
+    build:
+      context: ./cron/
+      dockerfile: Dockerfile
+    environment:
+      # Set any environment variables that your cron jobs might need
+      - PGHOST=db
+      - PGDATABASE=${PGDB}
+      - PGUSER=${PGUSER}
+      - PGPASSWORD=${PGPASSWORD}
+      - PGPORT=5432
+    networks:
+      - app-network
+    ports:
+      - "8080:8080"
+    depends_on:
+      - db
   db:
     image: postgres:15.2-alpine3.17
     environment:

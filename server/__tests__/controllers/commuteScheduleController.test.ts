@@ -13,20 +13,8 @@ jest.mock('../../config/winston', () => ({
     },
 }));
 
-jest.mock('../../crontab/scheduleCronJob.js', () => {
-    return jest.fn().mockImplementation(
-        async () =>
-            await Promise.resolve({
-                cronDate: '0 0 16 * *',
-                uniqueId: '123',
-            }),
-    );
-});
-
-jest.mock('../../crontab/deleteCronJob.js', () => {
-    return jest
-        .fn()
-        .mockImplementation(async () => await Promise.resolve('123'));
+jest.mock('../../crontab/determineCronValues.js', () => {
+    return jest.fn().mockReturnValue('0 0 16 * *');
 });
 
 // Mock request and response
@@ -132,6 +120,11 @@ const mockModule = (
         }),
         parseIntOrFallback,
         parseFloatOrFallback,
+        manipulateCron: jest
+            .fn()
+            .mockImplementation(
+                async () => await Promise.resolve([true, '123']),
+            ),
     }));
 };
 
@@ -436,12 +429,18 @@ describe('POST /api/expenses/commute/schedule', () => {
             timed_pass_duration: null,
         };
 
+        const fareDetail = {
+            fare_amount: 10.75,
+            system_name: 'LIRR',
+            fare_type: 'Peak',
+        };
+
         // Arrange
         mockModule(
             [],
             undefined,
-            [newSchedule],
-            [newSchedule],
+            [{ fare_amount: 10.75 }],
+            [fareDetail],
             [{ day_of_week: 1, start_time: '08:00:00', end_time: '09:00:00' }],
             [newSchedule],
             [{ cron_job_id: 1, unique_id: '123' }],

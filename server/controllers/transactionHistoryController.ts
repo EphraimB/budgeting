@@ -4,17 +4,6 @@ import { handleError, executeQuery } from '../utils/helperFunctions.js';
 import { type TransactionHistory } from '../types/types.js';
 import { logger } from '../config/winston.js';
 
-interface TransactionHistoryInput {
-    transaction_id: string;
-    account_id: string;
-    transaction_amount: string;
-    transaction_tax_rate: string;
-    transaction_title: string;
-    transaction_description: string;
-    date_created: string;
-    date_modified: string;
-}
-
 /**
  *
  * @param transactionHistory - Transaction history object
@@ -22,7 +11,7 @@ interface TransactionHistoryInput {
  * Converts the transaction history object to the correct types
  */
 const parseTransactions = (
-    transactionHistory: TransactionHistoryInput,
+    transactionHistory: Record<string, string>,
 ): TransactionHistory => ({
     transaction_id: parseInt(transactionHistory.transaction_id),
     account_id: parseInt(transactionHistory.account_id),
@@ -69,10 +58,7 @@ export const getTransactions = async (
             params = [];
         }
 
-        const transactionResults = await executeQuery<TransactionHistoryInput>(
-            query,
-            params,
-        );
+        const transactionResults = await executeQuery(query, params);
 
         if (
             ((id !== null && id !== undefined) ||
@@ -107,7 +93,7 @@ export const createTransaction = async (
     const { account_id, title, amount, tax, description } = request.body;
 
     try {
-        const transactionResults = await executeQuery<TransactionHistoryInput>(
+        const transactionResults = await executeQuery(
             transactionHistoryQueries.createTransaction,
             [account_id, amount, tax, title, description],
         );
@@ -137,7 +123,7 @@ export const updateTransaction = async (
     const { account_id, amount, tax, title, description } = request.body;
 
     try {
-        const transactionResults = await executeQuery<TransactionHistoryInput>(
+        const transactionResults = await executeQuery(
             transactionHistoryQueries.updateTransaction,
             [account_id, amount, tax, title, description, id],
         );
@@ -171,11 +157,10 @@ export const deleteTransaction = async (
     const id: number = parseInt(request.params.id);
 
     try {
-        const getTransactionResults =
-            await executeQuery<TransactionHistoryInput>(
-                transactionHistoryQueries.getTransactionById,
-                [id],
-            );
+        const getTransactionResults = await executeQuery(
+            transactionHistoryQueries.getTransactionById,
+            [id],
+        );
 
         if (getTransactionResults.length === 0) {
             response.status(404).send('Transaction not found');

@@ -4,21 +4,12 @@ import { handleError, executeQuery } from '../utils/helperFunctions.js';
 import { type Account } from '../types/types.js';
 import { logger } from '../config/winston.js';
 
-interface AccountInput {
-    account_id: string;
-    account_name: string;
-    account_type: string;
-    account_balance: string;
-    date_created: string;
-    date_modified: string;
-}
-
 /**
  *
  * @param account - Account object to parse
  * @returns - Parsed account object
  */
-const parseAccounts = (account: AccountInput): Account => ({
+const parseAccounts = (account: Record<string, string>): Account => ({
     account_id: parseInt(account.account_id),
     account_name: account.account_name,
     account_type: parseInt(account.account_type),
@@ -46,7 +37,7 @@ export const getAccounts = async (
                 ? accountQueries.getAccount
                 : accountQueries.getAccounts;
         const params = id !== null && id !== undefined ? [id] : [];
-        const accounts = await executeQuery<AccountInput>(query, params);
+        const accounts = await executeQuery(query, params);
 
         if (id !== null && id !== undefined && accounts.length === 0) {
             response.status(404).send('Account not found');
@@ -75,10 +66,11 @@ export const createAccount = async (request: Request, response: Response) => {
     const { name, type, balance } = request.body;
 
     try {
-        const rows = await executeQuery<AccountInput>(
-            accountQueries.createAccount,
-            [name, type, balance],
-        );
+        const rows = await executeQuery(accountQueries.createAccount, [
+            name,
+            type,
+            balance,
+        ]);
         const accounts = rows.map((account) => parseAccounts(account));
         response.status(201).json(accounts);
     } catch (error) {
@@ -100,20 +92,19 @@ export const updateAccount = async (
     const id = parseInt(request.params.id);
     const { name, type, balance } = request.body;
     try {
-        const account = await executeQuery<AccountInput>(
-            accountQueries.getAccount,
-            [id],
-        );
+        const account = await executeQuery(accountQueries.getAccount, [id]);
 
         if (account.length === 0) {
             response.status(404).send('Account not found');
             return;
         }
 
-        const rows = await executeQuery<AccountInput>(
-            accountQueries.updateAccount,
-            [name, type, balance, id],
-        );
+        const rows = await executeQuery(accountQueries.updateAccount, [
+            name,
+            type,
+            balance,
+            id,
+        ]);
         const accounts = rows.map((account) => parseAccounts(account));
         response.status(200).json(accounts);
     } catch (error) {
@@ -134,10 +125,7 @@ export const deleteAccount = async (
 ): Promise<void> => {
     const id = parseInt(request.params.id);
     try {
-        const account = await executeQuery<AccountInput>(
-            accountQueries.getAccount,
-            [id],
-        );
+        const account = await executeQuery(accountQueries.getAccount, [id]);
 
         if (account.length === 0) {
             response.status(404).send('Account not found');

@@ -40,22 +40,6 @@ jest.mock('../../config/winston', () => ({
     },
 }));
 
-jest.mock('../../crontab/scheduleCronJob.js', () => {
-    return jest.fn().mockImplementation(
-        async () =>
-            await Promise.resolve({
-                cronDate: '0 0 16 * *',
-                uniqueId: '123',
-            }),
-    );
-});
-
-jest.mock('../../crontab/deleteCronJob.js', () => {
-    return jest
-        .fn()
-        .mockImplementation(async () => await Promise.resolve('123'));
-});
-
 // Mock request and response
 let mockRequest: any;
 let mockResponse: any;
@@ -103,6 +87,11 @@ const mockModule = (
             res.status(400).json({ message });
         }),
         parseIntOrFallback,
+        manipulateCron: jest
+            .fn()
+            .mockImplementation(
+                async () => await Promise.resolve([true, '123']),
+            ),
     }));
 };
 

@@ -15,23 +15,6 @@ jest.mock('../../config/winston', () => ({
     },
 }));
 
-jest.mock('child_process', () => {
-    return {
-        exec: jest.fn(
-            (
-                command: string,
-                callback: (
-                    error: Error | null,
-                    stdout: string,
-                    stderr: string,
-                ) => void,
-            ) => {
-                callback(null, 'mock stdout', 'mock stderr');
-            },
-        ),
-    };
-});
-
 beforeEach(() => {
     mockRequest = {};
     mockResponse = {
@@ -66,6 +49,11 @@ const mockModule = (
         handleError: jest.fn((res: Response, message: string) => {
             res.status(400).json({ message });
         }),
+        executePayrollsScript: jest
+            .fn()
+            .mockImplementation(
+                async () => await Promise.resolve([true, 'Script executed']),
+            ),
     }));
 };
 
@@ -394,50 +382,6 @@ describe('POST /api/payroll/taxes', () => {
         );
     });
 
-    it('should return a 500 error when the script fails', async () => {
-        mockModule(
-            payrollTaxes.filter(
-                (payrollTax) => payrollTax.payroll_taxes_id === 1,
-            ),
-        );
-
-        jest.mock('child_process', () => ({
-            exec: jest.fn(
-                (
-                    _: string,
-                    callback: (
-                        error: Error | null,
-                        stdout: string | Buffer | null,
-                        stderr: string | Buffer | null,
-                    ) => void,
-                ) => {
-                    callback(new Error('Test error'), null, null);
-                },
-            ),
-        }));
-
-        const { createPayrollTax } = await import(
-            '../../controllers/payrollTaxesController.js'
-        );
-
-        mockRequest.body = {
-            employee_id: 1,
-            name: 'Federal Income Tax',
-            rate: 0.15,
-        };
-
-        await createPayrollTax(
-            mockRequest as Request,
-            mockResponse as Response,
-            mockNext,
-        );
-
-        expect(mockResponse.status).toHaveBeenCalledWith(500);
-        expect(mockResponse.send).toHaveBeenCalledWith(
-            'Failed to execute script for updating cron job payrolls information',
-        );
-    });
-
     it('should return a 404 error if the payroll tax does not exist', async () => {
         mockModule([]);
 
@@ -652,51 +596,6 @@ describe('PUT /api/payroll/taxes/:id', () => {
             message: 'Error getting payroll tax',
         });
     });
-
-    it('should return a 500 error when the script fails', async () => {
-        mockModule(
-            payrollTaxes.filter(
-                (payrollTax) => payrollTax.payroll_taxes_id === 1,
-            ),
-        );
-
-        jest.mock('child_process', () => ({
-            exec: jest.fn(
-                (
-                    _: string,
-                    callback: (
-                        error: Error | null,
-                        stdout: string | Buffer | null,
-                        stderr: string | Buffer | null,
-                    ) => void,
-                ) => {
-                    callback(new Error('Test error'), null, null);
-                },
-            ),
-        }));
-
-        const { updatePayrollTax } = await import(
-            '../../controllers/payrollTaxesController.js'
-        );
-
-        mockRequest.params = { id: 1 };
-        mockRequest.body = {
-            employee_id: 1,
-            name: 'Federal Income Tax',
-            rate: 0.15,
-        };
-
-        await updatePayrollTax(
-            mockRequest as Request,
-            mockResponse as Response,
-            mockNext,
-        );
-
-        expect(mockResponse.status).toHaveBeenCalledWith(500);
-        expect(mockResponse.send).toHaveBeenCalledWith(
-            'Failed to execute script for updating cron job payrolls information',
-        );
-    });
 });
 
 describe('DELETE /api/payroll/taxes/:id', () => {
@@ -791,43 +690,6 @@ describe('DELETE /api/payroll/taxes/:id', () => {
         expect(mockResponse.status).toHaveBeenCalledWith(200);
         expect(mockResponse.send).toHaveBeenCalledWith(
             'Successfully deleted payroll tax',
-        );
-    });
-
-    it('should return a 500 error when the script fails', async () => {
-        mockModule('Successfully deleted payroll tax');
-
-        jest.mock('child_process', () => ({
-            exec: jest.fn(
-                (
-                    _: string,
-                    callback: (
-                        error: Error | null,
-                        stdout: string | Buffer | null,
-                        stderr: string | Buffer | null,
-                    ) => void,
-                ) => {
-                    callback(new Error('Test error'), null, null);
-                },
-            ),
-        }));
-
-        mockRequest.params = { id: 1 };
-        mockRequest.query = { employee_id: 1 };
-
-        const { deletePayrollTax } = await import(
-            '../../controllers/payrollTaxesController.js'
-        );
-
-        await deletePayrollTax(
-            mockRequest as Request,
-            mockResponse as Response,
-            mockNext,
-        );
-
-        expect(mockResponse.status).toHaveBeenCalledWith(500);
-        expect(mockResponse.send).toHaveBeenCalledWith(
-            'Failed to execute script for updating cron job payrolls information',
         );
     });
 });

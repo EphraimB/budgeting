@@ -1,7 +1,7 @@
 import { type NextFunction, type Request, type Response } from 'express';
 import { expenseQueries, cronJobQueries } from '../models/queryData.js';
-import scheduleCronJob from '../crontab/scheduleCronJob.js';
-import deleteCronJob from '../crontab/deleteCronJob.js';
+import { manipulateCron } from '../utils/helperFunctions.js';
+import determineCronValues from '../crontab/determineCronValues.js';
 import {
     handleError,
     executeQuery,
@@ -10,34 +10,13 @@ import {
 import { type Expense } from '../types/types.js';
 import { logger } from '../config/winston.js';
 
-interface ExpenseInput {
-    expense_id: string;
-    account_id: string;
-    cron_job_id: string;
-    tax_id: string;
-    expense_amount: string;
-    expense_title: string;
-    expense_description: string;
-    frequency_type: string;
-    frequency_type_variable: string;
-    frequency_day_of_month: string;
-    frequency_day_of_week: string;
-    frequency_week_of_month: string;
-    frequency_month_of_year: string;
-    expense_subsidized: string;
-    expense_begin_date: string;
-    expense_end_date: string;
-    date_created: string;
-    date_modified: string;
-}
-
 /**
  *
  * @param expense - Expense object
  * @returns Expense object with the correct types
  * Converts the expense object to the correct types
  **/
-const parseExpenses = (expense: ExpenseInput): Expense => ({
+const parseExpenses = (expense: Record<string, string>): Expense => ({
     expense_id: parseInt(expense.expense_id),
     account_id: parseInt(expense.account_id),
     tax_id: parseIntOrFallback(expense.tax_id),
@@ -98,7 +77,7 @@ export const getExpenses = async (
             params = [];
         }
 
-        const expenses = await executeQuery<ExpenseInput>(query, params);
+        const expenses = await executeQuery(query, params);
 
         if (
             ((id !== null && id !== undefined) ||
@@ -154,32 +133,10 @@ export const createExpense = async (
     } = request.body;
 
     try {
-        const expenses = await executeQuery<ExpenseInput>(
-            expenseQueries.createExpense,
-            [
-                account_id,
-                tax_id,
-                amount,
-                title,
-                description,
-                frequency_type,
-                frequency_type_variable,
-                frequency_day_of_month,
-                frequency_day_of_week,
-                frequency_week_of_month,
-                frequency_month_of_year,
-                subsidized,
-                begin_date,
-            ],
-        );
-
-        const modifiedExpenses = expenses.map(parseExpenses);
-
-        const cronParams = {
-            date: begin_date,
+        const expenses = await executeQuery(expenseQueries.createExpense, [
             account_id,
-            id: modifiedExpenses[0].expense_id,
-            amount: -amount + amount * subsidized,
+            tax_id,
+            amount,
             title,
             description,
             frequency_type,
@@ -188,20 +145,51 @@ export const createExpense = async (
             frequency_day_of_week,
             frequency_week_of_month,
             frequency_month_of_year,
-            scriptPath: '/app/scripts/createTransaction.sh',
-            type: 'expense',
+            subsidized,
+            begin_date,
+        ]);
+
+        const modifiedExpenses = expenses.map(parseExpenses);
+
+        const jobDetails = {
+            frequency_type,
+            frequency_type_variable,
+            frequency_day_of_month,
+            frequency_day_of_week,
+            frequency_week_of_month,
+            frequency_month_of_year,
+            date: begin_date,
         };
 
-        const { cronDate, uniqueId } = await scheduleCronJob(cronParams);
+        const cronDate = determineCronValues(jobDetails);
+
+        const data = {
+            schedule: cronDate,
+            script_path: '/scripts/createTransaction.sh',
+            expense_type: 'expense',
+            account_id,
+            id: modifiedExpenses[0].expense_id,
+            amount: -amount + amount * subsidized,
+            title,
+            description,
+        };
+
+        const [success, responseData] = await manipulateCron(
+            data,
+            'POST',
+            null,
+        );
+
+        if (!success) {
+            response.status(500).send(responseData);
+        }
 
         const cronId: number = (
             await executeQuery(cronJobQueries.createCronJob, [
-                uniqueId,
+                responseData.unique_id,
                 cronDate,
             ])
         )[0].cron_job_id;
-
-        logger.info('Cron job created ' + cronId.toString());
 
         await executeQuery(expenseQueries.updateExpenseWithCronJobId, [
             cronId,
@@ -230,10 +218,9 @@ export const createExpenseReturnObject = async (
     const { expense_id } = request;
 
     try {
-        const expenses = await executeQuery<ExpenseInput>(
-            expenseQueries.getExpenseById,
-            [expense_id],
-        );
+        const expenses = await executeQuery(expenseQueries.getExpenseById, [
+            expense_id,
+        ]);
 
         const modifiedExpenses = expenses.map(parseExpenses);
 
@@ -274,24 +261,7 @@ export const updateExpense = async (
     } = request.body;
 
     try {
-        const cronParams = {
-            date: begin_date,
-            account_id,
-            id,
-            amount: -amount + amount * subsidized,
-            title,
-            description,
-            frequency_type,
-            frequency_type_variable,
-            frequency_day_of_month,
-            frequency_day_of_week,
-            frequency_week_of_month,
-            frequency_month_of_year,
-            scriptPath: '/app/scripts/createTransaction.sh',
-            type: 'expense',
-        };
-
-        const expenseResult = await executeQuery<ExpenseInput>(
+        const expenseResult = await executeQuery(
             expenseQueries.getExpenseById,
             [id],
         );
@@ -302,25 +272,51 @@ export const updateExpense = async (
         }
 
         const cronId: number = parseInt(expenseResult[0].cron_job_id);
-        const results = await executeQuery(cronJobQueries.getCronJob, [cronId]);
 
-        if (results.length > 0) {
-            await deleteCronJob(results[0].unique_id);
-        } else {
-            logger.error('Cron job not found');
-            response.status(404).send('Cron job not found');
-            return;
+        const jobDetails = {
+            frequency_type,
+            frequency_type_variable,
+            frequency_day_of_month,
+            frequency_day_of_week,
+            frequency_week_of_month,
+            frequency_month_of_year,
+            date: begin_date,
+        };
+
+        const cronDate = determineCronValues(jobDetails);
+
+        const [{ unique_id }] = await executeQuery(cronJobQueries.getCronJob, [
+            cronId,
+        ]);
+
+        const data = {
+            schedule: cronDate,
+            script_path: '/scripts/createTransaction.sh',
+            expense_type: 'expense',
+            account_id,
+            id,
+            amount: -amount + amount * subsidized,
+            title,
+            description,
+        };
+
+        const [success, responseData] = await manipulateCron(
+            data,
+            'PUT',
+            unique_id,
+        );
+
+        if (!success) {
+            response.status(500).send(responseData);
         }
 
-        const { uniqueId, cronDate } = await scheduleCronJob(cronParams);
-
         await executeQuery(cronJobQueries.updateCronJob, [
-            uniqueId,
+            responseData.unique_id,
             cronDate,
             cronId,
         ]);
 
-        await executeQuery<ExpenseInput>(expenseQueries.updateExpense, [
+        await executeQuery(expenseQueries.updateExpense, [
             account_id,
             tax_id,
             amount,
@@ -359,10 +355,9 @@ export const updateExpenseReturnObject = async (
     const { expense_id } = request;
 
     try {
-        const expenses = await executeQuery<ExpenseInput>(
-            expenseQueries.getExpenseById,
-            [expense_id],
-        );
+        const expenses = await executeQuery(expenseQueries.getExpenseById, [
+            expense_id,
+        ]);
 
         const modifiedExpenses = expenses.map(parseExpenses);
 
@@ -403,12 +398,14 @@ export const deleteExpense = async (
 
         const results = await executeQuery(cronJobQueries.getCronJob, [cronId]);
 
-        if (results.length > 0) {
-            await deleteCronJob(results[0].unique_id);
-        } else {
-            logger.error('Cron job not found');
-            response.status(404).send('Cron job not found');
-            return;
+        const [success, responseData] = await manipulateCron(
+            null,
+            'DELETE',
+            results[0].unique_id,
+        );
+
+        if (!success) {
+            response.status(500).send(responseData);
         }
 
         await executeQuery(cronJobQueries.deleteCronJob, [cronId]);
