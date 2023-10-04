@@ -253,7 +253,7 @@ export const deleteCronJob = async (req: Request, res: Response) => {
       `crontab -l | grep -v '${unique_id}' | crontab -`,
       (delError, delStdout, delStderr) => {
         if (delError) {
-          console.error(`exec error: ${delError}`);
+          logger.error(`exec error: ${delError}`);
           return res.status(500).json({
             status: "error",
             message: "Failed to delete cron job",

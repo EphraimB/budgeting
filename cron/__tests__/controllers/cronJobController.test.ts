@@ -497,45 +497,45 @@ describe("DELETE /api/cron/:id", () => {
     expect(mockResponse.status).toHaveBeenCalledWith(200);
     expect(mockResponse.json).toHaveBeenCalledWith(responseObj);
   });
+
+  it("should respond with a 404 error message when the cron job does not exist", async () => {
+    // Arrange
+    jest.mock("uuid", () => ({
+      v4: jest.fn(() => "1c4d0f1a-1b1a-4b1a-9b1a-1b1a1b1a1b1a"),
+    }));
+
+    jest.mock("child_process", () => ({
+      exec: jest.fn((command, callback) => {
+        (
+          callback as (
+            error: Error | null,
+            stdout: string,
+            stderr: string
+          ) => void
+        )(
+          new Error("test"),
+          '0 0 1 * * /home/runner/work/expense-tracker/expense-tracker/index.sh wishlist_1c4d0f1a-1b1a-4b1a-9b1a-1b1a1b1a1b1a 1 1 -1000 "Wishlist" "Wishlist for 2021-05-01"',
+          ""
+        );
+      }),
+    }));
+
+    const { deleteCronJob } = await import(
+      "../../controllers/cronJobController.js"
+    );
+
+    mockRequest.params = { id: "1c4d0f1a-1b1a-4b1a-9b1a-1b1a1b1a1b1a" };
+
+    // Act
+    await deleteCronJob(mockRequest as Request, mockResponse);
+
+    const responseObj = {
+      message: "Cron job not found",
+      status: "error",
+    };
+
+    // Assert
+    expect(mockResponse.status).toHaveBeenCalledWith(404);
+    expect(mockResponse.json).toHaveBeenCalledWith(responseObj);
+  });
 });
-
-//   it("should handle errors correctly", async () => {
-//     // Arrange
-//     const errorMessage = "Error deleting account";
-//     const error = new Error(errorMessage);
-//     mockModule(null, errorMessage);
-
-//     const { deleteAccount } = await import(
-//       "../../controllers/accountsController.js"
-//     );
-
-//     mockRequest.params = { id: 1 };
-
-//     // Act
-//     await deleteAccount(mockRequest as Request, mockResponse);
-
-//     // Assert
-//     expect(mockResponse.status).toHaveBeenCalledWith(400);
-//     expect(mockResponse.json).toHaveBeenCalledWith({
-//       message: "Error deleting account",
-//     });
-//   });
-
-//   it("should respond with a 404 error message when the account does not exist", async () => {
-//     // Arrange
-//     mockModule([]);
-
-//     const { deleteAccount } = await import(
-//       "../../controllers/accountsController.js"
-//     );
-
-//     mockRequest.params = { id: 1 };
-
-//     // Act
-//     await deleteAccount(mockRequest as Request, mockResponse);
-
-//     // Assert
-//     expect(mockResponse.status).toHaveBeenCalledWith(404);
-//     expect(mockResponse.send).toHaveBeenCalledWith("Account not found");
-//   });
-// });
