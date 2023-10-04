@@ -245,24 +245,58 @@ describe("GET /api/cron", () => {
   });
 });
 
-// describe("POST /api/accounts", () => {
-//   it("should respond with the new account", async () => {
-//     const newAccount = accounts.filter((account) => account.account_id === 1);
+describe("POST /api/accounts", () => {
+  it("should respond with the new account", async () => {
+    const newCronJob = {
+      schedule: "* * * * *",
+      script_path: "test",
+      expense_type: "test",
+      account_id: 1,
+      id: 1,
+      amount: -1000,
+      title: "test",
+      description: "test",
+    };
 
-//     mockModule(accounts.filter((account) => account.account_id === 1));
+    jest.mock("uuid", () => ({
+      v4: jest.fn(() => "1c4d0f1a-1b1a-4b1a-9b1a-1b1a1b1a1b1a"),
+    }));
 
-//     const { createAccount } = await import(
-//       "../../controllers/accountsController.js"
-//     );
+    jest.mock("child_process", () => ({
+      exec: jest.fn((command, callback) => {
+        (
+          callback as (
+            error: Error | null,
+            stdout: string,
+            stderr: string
+          ) => void
+        )(
+          null,
+          '0 0 1 * * /home/runner/work/expense-tracker/expense-tracker/index.sh wishlist_1c4d0f1a-1b1a-4b1a-9b1a-1b1a1b1a1b1a 1 1 -1000 "Wishlist" "Wishlist for 2021-05-01"',
+          ""
+        );
+      }),
+    }));
 
-//     mockRequest.body = newAccount;
+    const { createCronJob } = await import(
+      "../../controllers/cronJobController.js"
+    );
 
-//     await createAccount(mockRequest as Request, mockResponse);
+    mockRequest.body = newCronJob;
 
-//     // Assert
-//     expect(mockResponse.status).toHaveBeenCalledWith(201);
-//     expect(mockResponse.json).toHaveBeenCalledWith(newAccount);
-//   });
+    await createCronJob(mockRequest as Request, mockResponse);
+
+    const responseObj = {
+      message: "Cron job created successfully",
+      status: "success",
+      unique_id: "1c4d0f1a-1b1a-4b1a-9b1a-1b1a1b1a1b1a",
+    };
+
+    // Assert
+    expect(mockResponse.status).toHaveBeenCalledWith(201);
+    expect(mockResponse.json).toHaveBeenCalledWith(responseObj);
+  });
+});
 
 //   it("should handle errors correctly", async () => {
 //     // Arrange

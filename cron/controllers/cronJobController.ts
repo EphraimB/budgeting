@@ -4,6 +4,12 @@ import { Request, Response } from "express";
 import { v4 as uuidv4 } from "uuid";
 import { handleError } from "../utils/helperFunctions.js";
 
+/**
+ *
+ * @param req - Express request object
+ * @param res - Express response object
+ * Sends a GET request to the server to retrieve all or a single cron job
+ */
 export const getCronJobs = async (req: Request, res: Response) => {
   const { unique_id } = req.query;
 
@@ -107,6 +113,12 @@ export const getCronJobs = async (req: Request, res: Response) => {
   }
 };
 
+/**
+ *
+ * @param req - Express request object
+ * @param res - Express response object
+ * Sends a POST request to the server to create a cron job
+ */
 export const createCronJob = async (req: Request, res: Response) => {
   const {
     schedule,
@@ -119,31 +131,36 @@ export const createCronJob = async (req: Request, res: Response) => {
     description,
   } = req.body;
 
-  // Generate a unique identifier
-  const uniqueId = uuidv4();
+  try {
+    // Generate a unique identifier
+    const uniqueId = uuidv4();
 
-  // Construct the command with the uniqueId and other parameters
-  const cronCommand = `${script_path} ${expense_type}_${uniqueId} ${account_id} ${id} ${amount} "${title}" "${description}"`;
+    // Construct the command with the uniqueId and other parameters
+    const cronCommand = `${script_path} ${expense_type}_${uniqueId} ${account_id} ${id} ${amount} "${title}" "${description}"`;
 
-  exec(
-    `(crontab -l ; echo '${schedule} ${cronCommand} > /app/cron.log 2>&1') | crontab - `,
-    (error, stdout, stderr) => {
-      if (error) {
-        console.error(`exec error: ${error}`);
-        return res
-          .status(500)
-          .json({ status: "error", message: "Failed to create cron job" });
+    exec(
+      `(crontab -l ; echo '${schedule} ${cronCommand} > /app/cron.log 2>&1') | crontab - `,
+      (error, stdout, stderr) => {
+        if (error) {
+          console.error(`exec error: ${error}`);
+          return res
+            .status(500)
+            .json({ status: "error", message: "Failed to create cron job" });
+        }
+
+        logger.info("Cron job created with unique id: " + uniqueId.toString());
       }
+    );
 
-      logger.info("Cron job created with unique id: " + uniqueId.toString());
-    }
-  );
-
-  res.json({
-    status: "success",
-    message: "Cron job created successfully",
-    unique_id: uniqueId,
-  });
+    res.status(201).json({
+      status: "success",
+      message: "Cron job created successfully",
+      unique_id: uniqueId,
+    });
+  } catch (error) {
+    logger.error(error);
+    handleError(res, "Failed to create cron job");
+  }
 };
 
 export const updateCronJob = async (req: Request, res: Response) => {
