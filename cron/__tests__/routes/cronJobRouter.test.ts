@@ -72,62 +72,62 @@ describe("GET / with unique_id query", () => {
   });
 });
 
-// describe("POST /", () => {
-//   it("responds with json", async () => {
-//     const newCronJob = {
-//       schedule: "* * * * *",
-//       script_path: "test",
-//       expense_type: "test",
-//       account_id: 1,
-//       id: 1,
-//       amount: 100,
-//       title: "test",
-//       description: "test",
-//     };
+describe("POST /", () => {
+  it("responds with json", async () => {
+    const newCronJob = {
+      schedule: "* * * * *",
+      script_path: "test",
+      expense_type: "test",
+      account_id: 1,
+      id: 1,
+      amount: 100,
+      title: "test",
+      description: "test",
+    };
 
-//     const response: request.Response = await request(app)
-//       .post("/")
-//       .set("Accept", "application/json")
-//       .expect("Content-Type", /json/)
-//       .send(newCronJob);
+    const response: request.Response = await request(app)
+      .post("/")
+      .set("Accept", "application/json")
+      .expect("Content-Type", /json/)
+      .send(newCronJob);
 
-//     expect(response.status).toBe(200);
-//     expect(response.body).toEqual({ message: "success" });
-//   });
-// });
+    expect(response.status).toBe(200);
+    expect(response.body).toEqual({ message: "success" });
+  });
+});
 
-// describe("PUT /:id", () => {
-//   it("responds with json", async () => {
-//     const updatedCronJob = {
-//       schedule: "* * * * *",
-//       script_path: "test",
-//       expense_type: "test",
-//       account_id: 1,
-//       id: 1,
-//       amount: 100,
-//       title: "test",
-//       description: "test",
-//     };
+describe("PUT /:id", () => {
+  it("responds with json", async () => {
+    const updatedCronJob = {
+      schedule: "* * * * *",
+      script_path: "test",
+      expense_type: "test",
+      account_id: 1,
+      id: 1,
+      amount: 100,
+      title: "test",
+      description: "test",
+    };
 
-//     const response: request.Response = await request(app)
-//       .put("/1")
-//       .set("Accept", "application/json")
-//       .expect("Content-Type", /json/)
-//       .send(updatedCronJob);
+    const response: request.Response = await request(app)
+      .put("/1")
+      .set("Accept", "application/json")
+      .expect("Content-Type", /json/)
+      .send(updatedCronJob);
 
-//     expect(response.status).toBe(200);
-//     expect(response.body).toEqual({ message: "success" });
-//   });
-// });
+    expect(response.status).toBe(200);
+    expect(response.body).toEqual({ message: "success" });
+  });
+});
 
-// describe("DELETE /:id", () => {
-//   it("responds with json", async () => {
-//     const response: request.Response = await request(app)
-//       .delete("/1")
-//       .set("Accept", "application/json")
-//       .expect("Content-Type", /json/);
+describe("DELETE /:id", () => {
+  it("responds with json", async () => {
+    const response: request.Response = await request(app)
+      .delete("/1")
+      .set("Accept", "application/json")
+      .expect("Content-Type", /json/);
 
-//     expect(response.status).toBe(200);
-//     expect(response.body).toEqual({ message: "success" });
-//   });
-// });
+    expect(response.status).toBe(200);
+    expect(response.body).toEqual({ message: "success" });
+  });
+});
