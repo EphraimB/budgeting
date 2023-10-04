@@ -10,7 +10,7 @@ export const updatePayrollsCron = async (req: Request, res: Response) => {
 
   exec(scriptCommand, (error, stdout, stderr) => {
     if (error) {
-      console.error(`exec error: ${error}`);
+      logger.error(`exec error: ${error}`);
       return res
         .status(500)
         .json({ status: "error", message: "Failed to create cron job" });
@@ -18,7 +18,7 @@ export const updatePayrollsCron = async (req: Request, res: Response) => {
 
     logger.info(`Script executed: ${scriptCommand}`);
 
-    return res.status(201).json({
+    return res.status(200).json({
       status: "success",
       message: "Script executed",
     });

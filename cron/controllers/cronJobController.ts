@@ -254,7 +254,7 @@ export const deleteCronJob = async (req: Request, res: Response) => {
   try {
     exec(`crontab -l | grep '${unique_id}'`, (error, stdout, stderr) => {
       if (error || !stdout) {
-        console.error(`exec error: ${error}`);
+        logger.error(`exec error: ${error}`);
         return res.status(404).json({
           status: "error",
           message: "Cron job not found",
