@@ -28,12 +28,12 @@ beforeAll(() => {
   jest.mock("../../controllers/cronJobController", () => ({
     getCronJobs: (req: Request, res: Response, next: NextFunction) =>
       res.json({ message: "success" }),
-    // createAccount: (req: Request, res: Response, next: NextFunction) =>
-    //   res.json({ message: "success" }),
-    // updateAccount: (req: Request, res: Response, next: NextFunction) =>
-    //   res.json({ message: "success" }),
-    // deleteAccount: (req: Request, res: Response, next: NextFunction) =>
-    //   res.json({ message: "success" }),
+    createCronJob: (req: Request, res: Response, next: NextFunction) =>
+      res.json({ message: "success" }),
+    updateCronJob: (req: Request, res: Response, next: NextFunction) =>
+      res.json({ message: "success" }),
+    deleteCronJob: (req: Request, res: Response, next: NextFunction) =>
+      res.json({ message: "success" }),
   }));
 });
 
