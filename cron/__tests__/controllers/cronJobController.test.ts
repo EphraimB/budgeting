@@ -296,30 +296,59 @@ describe("POST /api/accounts", () => {
     expect(mockResponse.status).toHaveBeenCalledWith(201);
     expect(mockResponse.json).toHaveBeenCalledWith(responseObj);
   });
+
+  it("should handle errors correctly", async () => {
+    // Arrange
+    const newCronJob = {
+      schedule: "* * * * *",
+      script_path: "test",
+      expense_type: "test",
+      account_id: 1,
+      id: 1,
+      amount: -1000,
+      title: "test",
+      description: "test",
+    };
+
+    jest.mock("uuid", () => ({
+      v4: jest.fn(() => "1c4d0f1a-1b1a-4b1a-9b1a-1b1a1b1a1b1a"),
+    }));
+
+    jest.mock("child_process", () => ({
+      exec: jest.fn((command, callback) => {
+        (
+          callback as (
+            error: Error | null,
+            stdout: string,
+            stderr: string
+          ) => void
+        )(
+          new Error("test"),
+          '0 0 1 * * /home/runner/work/expense-tracker/expense-tracker/index.sh wishlist_1c4d0f1a-1b1a-4b1a-9b1a-1b1a1b1a1b1a 1 1 -1000 "Wishlist" "Wishlist for 2021-05-01"',
+          ""
+        );
+      }),
+    }));
+
+    const { createCronJob } = await import(
+      "../../controllers/cronJobController.js"
+    );
+
+    mockRequest.body = newCronJob;
+
+    // Act
+    await createCronJob(mockRequest as Request, mockResponse);
+
+    const responseObj = {
+      message: "Failed to create cron job",
+      status: "error",
+    };
+
+    // Assert
+    expect(mockResponse.status).toHaveBeenCalledWith(500);
+    expect(mockResponse.json).toHaveBeenCalledWith(responseObj);
+  });
 });
-
-//   it("should handle errors correctly", async () => {
-//     // Arrange
-//     const errorMessage = "Error creating account";
-//     const error = new Error(errorMessage);
-//     mockModule(null, errorMessage);
-
-//     const { createAccount } = await import(
-//       "../../controllers/accountsController.js"
-//     );
-
-//     mockRequest.body = accounts.filter((account) => account.account_id === 1);
-
-//     // Act
-//     await createAccount(mockRequest as Request, mockResponse);
-
-//     // Assert
-//     expect(mockResponse.status).toHaveBeenCalledWith(400);
-//     expect(mockResponse.json).toHaveBeenCalledWith({
-//       message: "Error creating account",
-//     });
-//   });
-// });
 
 // describe("PUT /api/accounts/:id", () => {
 //   it("should respond with the updated account", async () => {

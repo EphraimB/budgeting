@@ -142,7 +142,7 @@ export const createCronJob = async (req: Request, res: Response) => {
       `(crontab -l ; echo '${schedule} ${cronCommand} > /app/cron.log 2>&1') | crontab - `,
       (error, stdout, stderr) => {
         if (error) {
-          console.error(`exec error: ${error}`);
+          logger.error(`exec error: ${error}`);
           return res
             .status(500)
             .json({ status: "error", message: "Failed to create cron job" });
