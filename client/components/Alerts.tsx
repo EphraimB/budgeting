@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import Alert, { AlertColor } from "@mui/material/Alert";
+import Alert from "@mui/material/Alert";
 import { useAlert } from "../context/AlertContext";
 
 export default function Alerts() {
