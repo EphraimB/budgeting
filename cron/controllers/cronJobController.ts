@@ -87,6 +87,15 @@ export const getCronJobs = async (req: Request, res: Response) => {
 
       if (unique_id) {
         const job = jobs.find((job) => job.unique_id === unique_id);
+
+        // If the cron job is not found, return 404
+        if (!job) {
+          return res.status(404).json({
+            status: "error",
+            message: "Cron job not found",
+          });
+        }
+
         return res.status(200).json({ status: "success", data: job });
       }
 
