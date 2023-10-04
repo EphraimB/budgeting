@@ -1,6 +1,7 @@
 import "./globals.css";
 import type { Metadata } from "next";
 import GlobalAppBar from "../../components/GlobalAppBar";
+import Alerts from "../../components/Alerts";
 
 export const metadata: Metadata = {
   title: "Budgeting",
@@ -16,6 +17,7 @@ export default function RootLayout({
     <html lang="en">
       <body>
         <GlobalAppBar />
+        <Alerts message="Testing" severity="success" />
         {children}
       </body>
     </html>

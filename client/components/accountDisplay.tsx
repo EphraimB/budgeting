@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Box from "@mui/material/Box";
 import dayjs, { Dayjs } from "dayjs";
 import AccountList from "./AccountList";
 import DateRange from "./DateRange";
@@ -28,7 +29,11 @@ export default function AccountDisplay({ accounts }: { accounts: object[] }) {
   }
 
   return (
-    <>
+    <Box
+      sx={{
+        mt: 2,
+      }}
+    >
       <AccountList
         accounts={accounts}
         onAccountClick={onAccountClick}
@@ -54,6 +59,6 @@ export default function AccountDisplay({ accounts }: { accounts: object[] }) {
           )}
         </>
       )}
-    </>
+    </Box>
   );
 }
