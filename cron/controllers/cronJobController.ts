@@ -2,93 +2,100 @@ import { exec } from "child_process";
 import { logger } from "../config/winston.js";
 import { Request, Response } from "express";
 import { v4 as uuidv4 } from "uuid";
+import { handleError } from "../utils/helperFunctions.js";
 
 export const getCronJobs = async (req: Request, res: Response) => {
   const { unique_id } = req.query;
 
-  exec("crontab -l", (error, stdout, stderr) => {
-    if (error) {
-      console.error(`exec error: ${error}`);
-      return res
-        .status(500)
-        .json({ status: "error", message: "Failed to retrieve cron jobs" });
-    }
+  try {
+    exec("crontab -l", (error, stdout, stderr) => {
+      if (error) {
+        console.error(`exec error: ${error}`);
+        return res
+          .status(500)
+          .json({ status: "error", message: "Failed to retrieve cron jobs" });
+      }
 
-    // Split the stdout by lines to get individual cron jobs
-    const jobs = stdout
-      .trim()
-      .split("\n")
-      .map((job) => {
-        const parts = job.split(/\s+/);
-        const schedule = parts.slice(0, 5).join(" ");
-        const script_path = parts[5];
+      // Split the stdout by lines to get individual cron jobs
+      const jobs = stdout
+        .trim()
+        .split("\n")
+        .map((job) => {
+          const parts = job.split(/\s+/);
+          const schedule = parts.slice(0, 5).join(" ");
+          const script_path = parts[5];
 
-        // Match UUID
-        const uniqueIdRegex = /(\w{8}-\w{4}-\w{4}-\w{4}-\w{12})/;
-        const uniqueIdMatch = uniqueIdRegex.exec(job);
-        const uniqueId = uniqueIdMatch ? uniqueIdMatch[1] : null;
+          // Match UUID
+          const uniqueIdRegex = /(\w{8}-\w{4}-\w{4}-\w{4}-\w{12})/;
+          const uniqueIdMatch = uniqueIdRegex.exec(job);
+          const uniqueId = uniqueIdMatch ? uniqueIdMatch[1] : null;
 
-        // Determine the type of job by looking at the scriptPath or its arguments
-        let expense_type = null;
+          // Determine the type of job by looking at the scriptPath or its arguments
+          let expense_type = null;
 
-        const identifierWithIDRegex =
-          /(\w+)_([0-9]+)_\w{8}-\w{4}-\w{4}-\w{4}-\w{12}/;
-        const identifierWithoutIDRegex = /(\w+)_\w{8}-\w{4}-\w{4}-\w{4}-\w{12}/;
+          const identifierWithIDRegex =
+            /(\w+)_([0-9]+)_\w{8}-\w{4}-\w{4}-\w{4}-\w{12}/;
+          const identifierWithoutIDRegex =
+            /(\w+)_\w{8}-\w{4}-\w{4}-\w{4}-\w{12}/;
 
-        let identifierMatch = identifierWithIDRegex.exec(parts[6]);
+          let identifierMatch = identifierWithIDRegex.exec(parts[6]);
 
-        if (identifierMatch) {
-          expense_type = identifierMatch[1];
-        } else {
-          identifierMatch = identifierWithoutIDRegex.exec(parts[6]);
           if (identifierMatch) {
             expense_type = identifierMatch[1];
-          }
-        }
-
-        let title, description;
-
-        if (expense_type === "payroll") {
-          title = "Payroll";
-          // When extracting payroll description:
-          // When extracting payroll description:
-          const descriptionRegex = /"Payroll for ([^"]+)"/;
-          const descriptionMatch = descriptionRegex.exec(job);
-          if (descriptionMatch) {
-            description = `Payroll for ${descriptionMatch[1]}`;
-            description = description.replace(/\s+/g, " ");
           } else {
-            description = null;
+            identifierMatch = identifierWithoutIDRegex.exec(parts[6]);
+            if (identifierMatch) {
+              expense_type = identifierMatch[1];
+            }
           }
-        } else {
-          const titleDescriptionRegex = /"([^"]*)" "([^"]*)"/;
-          const titleDescMatch = titleDescriptionRegex.exec(job);
-          title = titleDescMatch ? titleDescMatch[1] : null;
-          description = titleDescMatch ? titleDescMatch[2] : null;
-        }
 
-        const [account_id, id, amount] = parts.slice(7, 10);
+          let title, description;
 
-        return {
-          unique_id: uniqueId,
-          schedule,
-          expense_type,
-          script_path,
-          account_id: Number(account_id),
-          id: Number(id),
-          amount: parseFloat(amount),
-          title,
-          description,
-        };
-      });
+          if (expense_type === "payroll") {
+            title = "Payroll";
+            // When extracting payroll description:
+            // When extracting payroll description:
+            const descriptionRegex = /"Payroll for ([^"]+)"/;
+            const descriptionMatch = descriptionRegex.exec(job);
+            if (descriptionMatch) {
+              description = `Payroll for ${descriptionMatch[1]}`;
+              description = description.replace(/\s+/g, " ");
+            } else {
+              description = null;
+            }
+          } else {
+            const titleDescriptionRegex = /"([^"]*)" "([^"]*)"/;
+            const titleDescMatch = titleDescriptionRegex.exec(job);
+            title = titleDescMatch ? titleDescMatch[1] : null;
+            description = titleDescMatch ? titleDescMatch[2] : null;
+          }
 
-    if (unique_id) {
-      const job = jobs.find((job) => job.unique_id === unique_id);
-      return res.status(200).json({ status: "success", data: job });
-    }
+          const [account_id, id, amount] = parts.slice(7, 10);
 
-    res.status(200).json({ status: "success", data: jobs });
-  });
+          return {
+            unique_id: uniqueId,
+            schedule,
+            expense_type,
+            script_path,
+            account_id: Number(account_id),
+            id: Number(id),
+            amount: parseFloat(amount),
+            title,
+            description,
+          };
+        });
+
+      if (unique_id) {
+        const job = jobs.find((job) => job.unique_id === unique_id);
+        return res.status(200).json({ status: "success", data: job });
+      }
+
+      res.status(200).json({ status: "success", data: jobs });
+    });
+  } catch (error) {
+    logger.error(error);
+    handleError(res, `Failed to get cron ${unique_id ? "job" : "jobs"}`);
+  }
 };
 
 export const createCronJob = async (req: Request, res: Response) => {

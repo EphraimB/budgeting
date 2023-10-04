@@ -27,7 +27,7 @@ afterEach(() => {
 
 jest.mock("../../utils/helperFunctions", () => ({
   handleError: jest.fn((res: Response, message: string) => {
-    res.status(400).json({ message });
+    res.status(500).json({ message });
   }),
 }));
 
@@ -83,53 +83,93 @@ describe("GET /api/cron", () => {
     expect(mockResponse.status).toHaveBeenCalledWith(200);
     expect(mockResponse.json).toHaveBeenCalledWith(responseObj);
   });
+
+  it("should handle errors correctly", async () => {
+    // Arrange
+    jest.mock("child_process", () => ({
+      exec: jest.fn((command, callback) => {
+        (
+          callback as (
+            error: Error | null,
+            stdout: string,
+            stderr: string
+          ) => void
+        )(
+          new Error("test"),
+          '0 0 1 * * /home/runner/work/expense-tracker/expense-tracker/index.sh wishlist_1c4d0f1a-1b1a-4b1a-9b1a-1b1a1b1a1b1a 1 1 -1000 "Wishlist" "Wishlist for 2021-05-01"',
+          ""
+        );
+      }),
+    }));
+
+    const { getCronJobs } = await import(
+      "../../controllers/cronJobController.js"
+    );
+
+    mockRequest.query = { unique_id: null };
+
+    // Act
+    await getCronJobs(mockRequest as Request, mockResponse);
+
+    const responseObj = {
+      message: "Failed to retrieve cron jobs",
+      status: "error",
+    };
+
+    // Assert
+    expect(mockResponse.status).toHaveBeenCalledWith(500);
+    expect(mockResponse.json).toHaveBeenCalledWith(responseObj);
+  });
+
+  it("should respond with an array of accounts with an unique_id", async () => {
+    // Arrange
+    const cronJobs = {
+      schedule: "0 0 1 * *",
+      script_path: "/home/runner/work/expense-tracker/expense-tracker/index.sh",
+      expense_type: "wishlist",
+      account_id: 1,
+      id: 1,
+      amount: -1000,
+      title: "Wishlist",
+      description: "Wishlist for 2021-05-01",
+      unique_id: "1c4d0f1a-1b1a-4b1a-9b1a-1b1a1b1a1b1a",
+    };
+
+    jest.mock("child_process", () => ({
+      exec: jest.fn((command, callback) => {
+        (
+          callback as (
+            error: Error | null,
+            stdout: string,
+            stderr: string
+          ) => void
+        )(
+          null,
+          '0 0 1 * * /home/runner/work/expense-tracker/expense-tracker/index.sh wishlist_1c4d0f1a-1b1a-4b1a-9b1a-1b1a1b1a1b1a 1 1 -1000 "Wishlist" "Wishlist for 2021-05-01"',
+          ""
+        );
+      }),
+    }));
+
+    const { getCronJobs } = await import(
+      "../../controllers/cronJobController.js"
+    );
+
+    mockRequest.query = { unique_id: "1c4d0f1a-1b1a-4b1a-9b1a-1b1a1b1a1b1a" };
+
+    // Call the function with the mock request and response
+    await getCronJobs(mockRequest as Request, mockResponse);
+
+    const responseObj = {
+      data: cronJobs,
+      status: "success",
+    };
+
+    // Assert
+    expect(mockResponse.status).toHaveBeenCalledWith(200);
+    expect(mockResponse.json).toHaveBeenCalledWith(responseObj);
+  });
 });
-
-//   it("should handle errors correctly", async () => {
-//     // Arrange
-//     const errorMessage = "Error getting accounts";
-//     const error = new Error(errorMessage);
-//     mockModule(null, errorMessage);
-
-//     const { getAccounts } = await import(
-//       "../../controllers/accountsController.js"
-//     );
-
-//     mockRequest.query = { id: null };
-
-//     // Act
-//     await getAccounts(mockRequest as Request, mockResponse);
-
-//     // Assert
-//     expect(mockResponse.status).toHaveBeenCalledWith(400);
-//     expect(mockResponse.json).toHaveBeenCalledWith({
-//       message: "Error getting accounts",
-//     });
-//   });
-
-//   it("should respond with an array of accounts with an id", async () => {
-//     // Arrange
-//     jest.mock("child_process", () => ({
-//       exec: jest.fn((command, callback) => {
-//         callback(new Error("test"));
-//       }),
-//     }));
-
-//     const { getCronJobs } = await import(
-//       "../../controllers/cronJobController.js"
-//     );
-
-//     mockRequest.query = { id: 1 };
-
-//     // Call the function with the mock request and response
-//     await getCronJobs(mockRequest as Request, mockResponse);
-
-//     // Assert
-//     expect(mockResponse.status).toHaveBeenCalledWith(200);
-//     expect(mockResponse.json).toHaveBeenCalledWith(
-//       accounts.filter((account) => account.account_id === 1)
-//     );
-//   });
 
 //   it("should handle errors correctly with an id", async () => {
 //     // Arrange
