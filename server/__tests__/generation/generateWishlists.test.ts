@@ -14,6 +14,7 @@ describe('generateWishlists', () => {
     it('Should generate wishlist transaction', () => {
         const transactions: GeneratedTransaction[] = [
             {
+                id: '3fv423fv',
                 title: 'Wishlist test',
                 description: 'A wishlist test',
                 date: new Date('2023-07-01'),
@@ -23,6 +24,7 @@ describe('generateWishlists', () => {
                 balance: 500,
             },
             {
+                id: 'f34t4fe',
                 title: 'Another wishlist test',
                 description: 'Yet another wishlist test',
                 date: new Date('2023-08-01'),
@@ -32,6 +34,7 @@ describe('generateWishlists', () => {
                 balance: 682.25,
             },
             {
+                id: 'f34t4df',
                 title: 'Third wishlist test',
                 description: 'A third wishlist test',
                 date: new Date('2023-09-01'),
@@ -77,6 +80,7 @@ describe('generateWishlists', () => {
     it('Should generate wishlist transaction with a date available set', () => {
         const transactions: GeneratedTransaction[] = [
             {
+                id: '3fv423fv',
                 title: 'First wishlist test',
                 description: 'The first wishlist test',
                 date: new Date('2023-07-01'),
@@ -86,6 +90,7 @@ describe('generateWishlists', () => {
                 balance: 500,
             },
             {
+                id: 'f34t4fe',
                 title: 'Second wishlist test',
                 description: 'The second wishlist test',
                 date: new Date('2023-08-01'),
@@ -95,6 +100,7 @@ describe('generateWishlists', () => {
                 balance: 700,
             },
             {
+                id: 'f34t4df',
                 title: 'Third wishlist test',
                 description: 'A third wishlist test',
                 date: new Date('2023-09-01'),
@@ -138,6 +144,7 @@ describe('generateWishlists', () => {
     it('Should generate wishlist transaction with negative balances in the future', () => {
         const transactions: GeneratedTransaction[] = [
             {
+                id: '3fv423fv',
                 wishlist_id: 1,
                 title: 'First wishlist test',
                 description: 'A first wishlist test',
@@ -148,6 +155,7 @@ describe('generateWishlists', () => {
                 balance: 500,
             },
             {
+                id: 'f34t4fe',
                 wishlist_id: 2,
                 title: 'Second wishlist test',
                 description: 'A second wishlist test',
@@ -158,6 +166,7 @@ describe('generateWishlists', () => {
                 balance: 300,
             },
             {
+                id: 'f34t4df',
                 wishlist_id: 3,
                 title: 'Third wishlist test',
                 description: 'A third wishlist test',
@@ -168,6 +177,7 @@ describe('generateWishlists', () => {
                 balance: 500,
             },
             {
+                id: 'f34t4dz',
                 wishlist_id: 4,
                 title: 'Fourth wishlist test',
                 description: 'A fourth wishlist test',
@@ -178,6 +188,7 @@ describe('generateWishlists', () => {
                 balance: 700,
             },
             {
+                id: 'f34t4yz',
                 wishlist_id: 5,
                 title: 'Fifth wishlist test',
                 description: 'A fifth wishlist test',
@@ -188,6 +199,7 @@ describe('generateWishlists', () => {
                 balance: 900,
             },
             {
+                id: 'z34t4yz',
                 wishlist_id: 6,
                 title: 'Sixth wishlist test',
                 description: 'A sixth wishlist test',
@@ -198,6 +210,7 @@ describe('generateWishlists', () => {
                 balance: 1600,
             },
             {
+                id: 'z34tzzz',
                 wishlist_id: 7,
                 title: 'Seventh wishlist test',
                 description: 'A seventh wishlist test',
@@ -208,6 +221,7 @@ describe('generateWishlists', () => {
                 balance: 2100,
             },
             {
+                id: 'svsgvs',
                 wishlist_id: 8,
                 title: 'Eighth wishlist test',
                 description: 'The eighth wishlist test',
@@ -218,6 +232,7 @@ describe('generateWishlists', () => {
                 balance: 1600,
             },
             {
+                id: 'svsgtt',
                 wishlist_id: 9,
                 title: 'Tenth wishlsit test',
                 description: 'The tenth wishlist test',
@@ -228,6 +243,7 @@ describe('generateWishlists', () => {
                 balance: 2600,
             },
             {
+                id: 'svsgty',
                 wishlist_id: 10,
                 title: 'Eleventh wishlist test',
                 description: 'The eleventh wishlist test',
@@ -271,6 +287,7 @@ describe('generateWishlists', () => {
     it('Should generate wishlists correctly when the from date is greater than the wishlist date', () => {
         const transactions: GeneratedTransaction[] = [
             {
+                id: '3fv423fv',
                 title: 'First wishlist test',
                 description: 'The first wishlist test',
                 date: new Date('2023-07-01'),
@@ -280,6 +297,7 @@ describe('generateWishlists', () => {
                 balance: 500,
             },
             {
+                id: 'f34t4fe',
                 title: 'Second wishlist test',
                 description: 'The second wishlist test',
                 date: new Date('2023-08-01'),
@@ -289,6 +307,7 @@ describe('generateWishlists', () => {
                 balance: 700,
             },
             {
+                id: 'f34t4df',
                 title: 'Third wishlist test',
                 description: 'The third wishlist test',
                 date: new Date('2023-09-01'),
@@ -325,6 +344,7 @@ describe('generateWishlists', () => {
     it("Should not generate wishlists when it can't be afforded", () => {
         const transactions: GeneratedTransaction[] = [
             {
+                id: '3fv423fv',
                 title: 'First wishlist test',
                 description: 'The first wishlist test',
                 date: new Date('2023-07-01'),
@@ -334,6 +354,7 @@ describe('generateWishlists', () => {
                 balance: 500,
             },
             {
+                id: 'f34t4fe',
                 title: 'Second wishlist test',
                 description: 'The second wishlist test',
                 date: new Date('2023-08-01'),
@@ -343,6 +364,7 @@ describe('generateWishlists', () => {
                 balance: 700,
             },
             {
+                id: 'f34t4df',
                 title: 'Third wishlist test',
                 description: 'Third wishlist test',
                 date: new Date('2023-09-01'),

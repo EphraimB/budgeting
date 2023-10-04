@@ -5,7 +5,7 @@ import {
     fareTimeslotsQueries,
 } from '../models/queryData.js';
 import { handleError, executeQuery } from '../utils/helperFunctions.js';
-import { type FareDetails, type Timeslots } from '../types/types.js';
+import { type Timeslots } from '../types/types.js';
 import { parseIntOrFallback } from '../utils/helperFunctions.js';
 import { logger } from '../config/winston.js';
 

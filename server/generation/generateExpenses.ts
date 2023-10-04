@@ -83,7 +83,7 @@ const generateExpenses = (
             date: new Date(expenseDate),
             amount: -amountAfterSubsidy,
             tax_rate: taxRate ?? 0,
-            total_amount: -(amountAfterSubsidy + taxAmount),
+            total_amount: -taxAmount,
         };
 
         if (expenseDate > new Date()) {

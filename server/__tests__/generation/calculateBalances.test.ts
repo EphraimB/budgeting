@@ -16,6 +16,7 @@ describe('calculateBalances', () => {
     it('should calculate the balance for each transaction with no past transactions', () => {
         const transactions: GeneratedTransaction[] = [
             {
+                id: '3fv423fv',
                 title: 'Test Transaction 2',
                 description: 'Testing the transaction 2',
                 date: tomorrow,
@@ -24,6 +25,7 @@ describe('calculateBalances', () => {
                 total_amount: 400,
             },
             {
+                id: 'f34t4fe',
                 title: 'Test Transaction 3',
                 description: 'Testing the transaction 3',
                 date: dayAfterTomorrow,
@@ -32,6 +34,7 @@ describe('calculateBalances', () => {
                 total_amount: -600,
             },
             {
+                id: 'f34t4df',
                 title: 'Test Transaction 4',
                 description: 'Testing the transaction 4',
                 date: dayAfterTomorrow,
@@ -51,6 +54,7 @@ describe('calculateBalances', () => {
     it('should calculate the balance for each transaction with past transactions', () => {
         const transactions: GeneratedTransaction[] = [
             {
+                id: '3fv423fv',
                 transaction_id: 1,
                 title: 'Test Transaction',
                 description: 'Testing the transaction',
@@ -61,6 +65,7 @@ describe('calculateBalances', () => {
                 total_amount: 1200,
             },
             {
+                id: 'f34t4fe',
                 transaction_id: 2,
                 title: 'Test Transaction 2',
                 description: 'Testing the transaction 2',
@@ -71,6 +76,7 @@ describe('calculateBalances', () => {
                 total_amount: -600,
             },
             {
+                id: 'f34t4df',
                 title: 'Test Transaction 2',
                 description: 'Testing the transaction 2',
                 date: tomorrow,
@@ -79,6 +85,7 @@ describe('calculateBalances', () => {
                 total_amount: 400,
             },
             {
+                id: 'f34t4dd',
                 title: 'Test Transaction 3',
                 description: 'Testing the transaction 3',
                 date: dayAfterTomorrow,
@@ -87,6 +94,7 @@ describe('calculateBalances', () => {
                 total_amount: -600,
             },
             {
+                id: 'f34t4dz',
                 title: 'Test Transaction 4',
                 description: 'Testing the transaction 4',
                 date: dayAfterTomorrow,

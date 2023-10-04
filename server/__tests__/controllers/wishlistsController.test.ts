@@ -95,6 +95,11 @@ const mockModule = (
             res.status(400).json({ message });
         }),
         parseIntOrFallback,
+        manipulateCron: jest
+            .fn()
+            .mockImplementation(
+                async () => await Promise.resolve([true, '123']),
+            ),
     }));
 };
 
@@ -508,17 +513,6 @@ describe('POST /api/wishlists', () => {
             ],
         );
 
-        jest.mock('../../crontab/scheduleCronJob.js', () => ({
-            __esModule: true,
-            default: jest.fn(
-                async () =>
-                    await Promise.resolve({
-                        cronDate: '* * * * *',
-                        uniqueId: '1fw34',
-                    }),
-            ),
-        }));
-
         const { createWishlistCron } = await import(
             '../../controllers/wishlistsController.js'
         );
@@ -572,17 +566,6 @@ describe('POST /api/wishlists', () => {
         const { createWishlistCron } = await import(
             '../../controllers/wishlistsController.js'
         );
-
-        jest.mock('../../crontab/scheduleCronJob.js', () => ({
-            __esModule: true,
-            default: jest.fn(
-                async () =>
-                    await Promise.resolve({
-                        cronDate: '* * * * *',
-                        uniqueId: '1fw34',
-                    }),
-            ),
-        }));
 
         mockRequest.wishlist_id = 1;
         mockRequest.transactions = [
@@ -699,22 +682,6 @@ describe('PUT /api/wishlists/:id', () => {
             updatedWishlist,
         );
 
-        jest.mock('../../crontab/deleteCronJob.js', () => ({
-            __esModule: true,
-            default: jest.fn(),
-        }));
-
-        jest.mock('../../crontab/scheduleCronJob.js', () => ({
-            __esModule: true,
-            default: jest.fn(
-                async () =>
-                    await Promise.resolve({
-                        cronDate: '* * * * *',
-                        uniqueId: '1fw34',
-                    }),
-            ),
-        }));
-
         mockRequest.wishlist_id = 1;
         mockRequest.body = updatedWishlist;
         mockRequest.transactions = [
@@ -777,59 +744,6 @@ describe('PUT /api/wishlists/:id', () => {
             message: 'Error updating cron tab',
         });
     });
-
-    it("should respond with an error message if the cron job id can't be found", async () => {
-        // Arrange
-        const updatedWishlist = wishlists.filter(
-            (wishlist) => wishlist.wishlist_id === 1,
-        );
-
-        mockModule(updatedWishlist, undefined, [], [], updatedWishlist);
-
-        jest.mock('../../crontab/deleteCronJob.js', () => ({
-            __esModule: true,
-            default: jest.fn(),
-        }));
-
-        jest.mock('../../crontab/scheduleCronJob.js', () => ({
-            __esModule: true,
-            default: jest.fn(
-                async () =>
-                    await Promise.resolve({
-                        cronDate: '* * * * *',
-                        uniqueId: '1fw34',
-                    }),
-            ),
-        }));
-
-        mockRequest.wishlist_id = 1;
-        mockRequest.body = updatedWishlist;
-        mockRequest.transactions = [
-            {
-                account_id: 1,
-                transactions: [
-                    {
-                        expense_id: 1,
-                        date: '2023-08-14T00:00:00.000Z',
-                        amount: 100,
-                        title: 'Test',
-                        description: 'Test',
-                    },
-                ],
-            },
-        ];
-
-        const { updateWishlistCron } = await import(
-            '../../controllers/wishlistsController.js'
-        );
-
-        // Call the function with the mock request and response
-        await updateWishlistCron(mockRequest as Request, mockResponse);
-
-        // Assert
-        expect(mockResponse.status).toHaveBeenCalledWith(404);
-        expect(mockResponse.send).toHaveBeenCalledWith('Cron job not found');
-    });
 });
 
 describe('DELETE /api/wishlists/:id', () => {
@@ -840,11 +754,6 @@ describe('DELETE /api/wishlists/:id', () => {
             undefined, // error message
             [{ uniqueId: 'ws8fgv89w', cronDate: '* * * * *' }], // getCronJob result
         );
-
-        jest.mock('../../crontab/deleteCronJob.js', () => ({
-            __esModule: true,
-            default: jest.fn(),
-        }));
 
         mockRequest.params = { id: 1 };
 

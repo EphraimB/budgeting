@@ -5,22 +5,12 @@ import { handleError, executeQuery } from '../utils/helperFunctions.js';
 import { type Employee } from '../types/types.js';
 import { logger } from '../config/winston.js';
 
-interface EmployeeInput {
-    employee_id: string;
-    name: string;
-    hourly_rate: string;
-    regular_hours: string;
-    vacation_days: string;
-    sick_days: string;
-    work_schedule: string;
-}
-
 /**
  *
  * @param employee - Employee object
  * @returns - Employee object with correct data types
  */
-const employeeParse = (employee: EmployeeInput): Employee => ({
+const employeeParse = (employee: Record<string, string>): Employee => ({
     employee_id: parseInt(employee.employee_id),
     name: employee.name,
     hourly_rate: parseFloat(employee.hourly_rate),
@@ -52,7 +42,7 @@ export const getEmployee = async (
                 ? [employee_id]
                 : [];
 
-        const results = await executeQuery<EmployeeInput>(query, params);
+        const results = await executeQuery(query, params);
 
         if (
             employee_id !== null &&
@@ -102,17 +92,14 @@ export const createEmployee = async (
             work_schedule,
         } = request.body;
 
-        const results = await executeQuery<EmployeeInput>(
-            payrollQueries.createEmployee,
-            [
-                name,
-                hourly_rate,
-                regular_hours,
-                vacation_days,
-                sick_days,
-                work_schedule,
-            ],
-        );
+        const results = await executeQuery(payrollQueries.createEmployee, [
+            name,
+            hourly_rate,
+            regular_hours,
+            vacation_days,
+            sick_days,
+            work_schedule,
+        ]);
 
         // Parse the data to correct format and return an object
         const employees: Employee[] = results.map((employee) =>
@@ -149,18 +136,15 @@ export const updateEmployee = async (
             work_schedule,
         } = request.body;
 
-        const results = await executeQuery<EmployeeInput>(
-            payrollQueries.updateEmployee,
-            [
-                name,
-                hourly_rate,
-                regular_hours,
-                vacation_days,
-                sick_days,
-                work_schedule,
-                employee_id,
-            ],
-        );
+        const results = await executeQuery(payrollQueries.updateEmployee, [
+            name,
+            hourly_rate,
+            regular_hours,
+            vacation_days,
+            sick_days,
+            work_schedule,
+            employee_id,
+        ]);
 
         if (results.length === 0) {
             response.status(404).send('Employee not found');
@@ -204,10 +188,9 @@ export const updateEmployeeReturnObject = async (
     const { employee_id } = request;
 
     try {
-        const results = await executeQuery<EmployeeInput>(
-            payrollQueries.getEmployee,
-            [employee_id],
-        );
+        const results = await executeQuery(payrollQueries.getEmployee, [
+            employee_id,
+        ]);
 
         // Parse the data to correct format and return an object
         const employees: Employee[] = results.map((employee) =>
@@ -234,10 +217,9 @@ export const deleteEmployee = async (
     try {
         const employee_id = parseInt(request.params.employee_id);
 
-        const transferResults = await executeQuery<EmployeeInput>(
-            payrollQueries.getEmployee,
-            [employee_id],
-        );
+        const transferResults = await executeQuery(payrollQueries.getEmployee, [
+            employee_id,
+        ]);
 
         if (transferResults.length === 0) {
             response.status(404).send('Employee not found');

@@ -14,22 +14,6 @@ jest.mock('../../config/winston', () => ({
     },
 }));
 
-jest.mock('../../crontab/scheduleCronJob.js', () => {
-    return jest.fn().mockImplementation(
-        async () =>
-            await Promise.resolve({
-                cronDate: '0 0 16 * *',
-                uniqueId: '123',
-            }),
-    );
-});
-
-jest.mock('../../crontab/deleteCronJob.js', () => {
-    return jest
-        .fn()
-        .mockImplementation(async () => await Promise.resolve('123'));
-});
-
 // Mock request and response
 let mockRequest: any;
 let mockResponse: any;
@@ -99,6 +83,11 @@ const mockModule = (
         }),
         parseIntOrFallback,
         parseFloatOrFallback,
+        manipulateCron: jest
+            .fn()
+            .mockImplementation(
+                async () => await Promise.resolve([true, '123']),
+            ),
     }));
 };
 
@@ -475,29 +464,6 @@ describe('PUT /api/income/:id', () => {
         expect(mockResponse.send).toHaveBeenCalledWith('Income not found');
     });
 
-    it('should return a 404 when the cron job is not found', async () => {
-        // Arrange
-        mockModule(
-            income.filter((inc) => inc.income_id === 1),
-            undefined,
-            [],
-        );
-
-        const { updateIncome } = await import(
-            '../../controllers/incomeController.js'
-        );
-
-        mockRequest.params = { id: 1 };
-        mockRequest.body = income.filter((inc) => inc.income_id === 1);
-
-        // Act
-        await updateIncome(mockRequest as Request, mockResponse, mockNext);
-
-        // Assert
-        expect(mockResponse.status).toHaveBeenCalledWith(404);
-        expect(mockResponse.send).toHaveBeenCalledWith('Cron job not found');
-    });
-
     it('should respond with an array of income', async () => {
         // Arrange
         const newIncome = income.filter((inc) => inc.income_id === 1);
@@ -613,29 +579,5 @@ describe('DELETE /api/income/:id', () => {
         expect(mockResponse.send).toHaveBeenCalledWith(
             'Income deleted successfully',
         );
-    });
-
-    it('should return a 404 when the cron job is not found', async () => {
-        // Arrange
-        mockModule(
-            income.filter((inc) => inc.income_id === 1),
-            undefined,
-            [],
-            [],
-        );
-
-        const { deleteIncome } = await import(
-            '../../controllers/incomeController.js'
-        );
-
-        mockRequest.params = { id: 1 };
-        mockRequest.body = income.filter((inc) => inc.income_id === 1);
-
-        // Act
-        await deleteIncome(mockRequest as Request, mockResponse, mockNext);
-
-        // Assert
-        expect(mockResponse.status).toHaveBeenCalledWith(404);
-        expect(mockResponse.send).toHaveBeenCalledWith('Cron job not found');
     });
 });

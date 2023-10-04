@@ -1,23 +1,19 @@
 import { type NextFunction, type Request, type Response } from 'express';
 import { payrollQueries } from '../models/queryData.js';
-import { exec } from 'child_process';
-import { handleError, executeQuery } from '../utils/helperFunctions.js';
+import {
+    handleError,
+    executeQuery,
+    executePayrollsScript,
+} from '../utils/helperFunctions.js';
 import { type PayrollTax } from '../types/types.js';
 import { logger } from '../config/winston.js';
-
-interface PayrollTaxInput {
-    payroll_taxes_id: string;
-    employee_id: string;
-    name: string;
-    rate: string;
-}
 
 /**
  *
  * @param payrollTax - Payroll tax object
  * @returns - Payroll tax object with parsed values
  */
-const payrollTaxesParse = (payrollTax: PayrollTaxInput): PayrollTax => ({
+const payrollTaxesParse = (payrollTax: Record<string, string>): PayrollTax => ({
     payroll_taxes_id: parseInt(payrollTax.payroll_taxes_id),
     employee_id: parseInt(payrollTax.employee_id),
     name: payrollTax.name,
@@ -59,7 +55,7 @@ export const getPayrollTaxes = async (
             params = [];
         }
 
-        const rows = await executeQuery<PayrollTaxInput>(query, params);
+        const rows = await executeQuery(query, params);
 
         if (
             ((id !== null && id !== undefined) ||
@@ -105,27 +101,19 @@ export const createPayrollTax = async (
     const { employee_id, name, rate } = request.body;
 
     try {
-        const results = await executeQuery<PayrollTaxInput>(
-            payrollQueries.createPayrollTax,
-            [employee_id, name, rate],
+        const results = await executeQuery(payrollQueries.createPayrollTax, [
+            employee_id,
+            name,
+            rate,
+        ]);
+
+        const [success, responseData] = await executePayrollsScript(
+            employee_id,
         );
 
-        // Define the script command
-        const scriptCommand: string = `/app/scripts/getPayrollsByEmployee.sh ${employee_id}`;
-
-        // Execute the script
-        exec(scriptCommand, (error, stdout, stderr) => {
-            if (error != null) {
-                logger.error(`Error executing script: ${error.message}`);
-                response
-                    .status(500)
-                    .send(
-                        'Failed to execute script for updating cron job payrolls information',
-                    );
-                return;
-            }
-            logger.info(`Script output: ${stdout}`);
-        });
+        if (!success) {
+            response.status(500).send(responseData);
+        }
 
         const payrollTaxes: PayrollTax[] = results.map((payrollTax) =>
             payrollTaxesParse(payrollTax),
@@ -153,10 +141,9 @@ export const createPayrollTaxReturnObject = async (
     const { payroll_taxes_id } = request;
 
     try {
-        const results = await executeQuery<PayrollTaxInput>(
-            payrollQueries.getPayrollTaxesById,
-            [payroll_taxes_id],
-        );
+        const results = await executeQuery(payrollQueries.getPayrollTaxesById, [
+            payroll_taxes_id,
+        ]);
 
         if (results.length === 0) {
             response.status(404).send('Payroll tax not found');
@@ -190,32 +177,24 @@ export const updatePayrollTax = async (
     const { employee_id, name, rate } = request.body;
 
     try {
-        const results = await executeQuery<PayrollTaxInput>(
-            payrollQueries.updatePayrollTax,
-            [name, rate, id],
-        );
+        const results = await executeQuery(payrollQueries.updatePayrollTax, [
+            name,
+            rate,
+            id,
+        ]);
 
         if (results.length === 0) {
             response.status(404).send('Payroll tax not found');
             return;
         }
 
-        // Define the script command
-        const scriptCommand: string = `/app/scripts/getPayrollsByEmployee.sh ${employee_id}`;
+        const [success, responseData] = await executePayrollsScript(
+            employee_id,
+        );
 
-        // Execute the script
-        exec(scriptCommand, (error, stdout, stderr) => {
-            if (error != null) {
-                logger.error(`Error executing script: ${error.message}`);
-                response
-                    .status(500)
-                    .send(
-                        'Failed to execute script for updating cron job payrolls information',
-                    );
-                return;
-            }
-            logger.info(`Script output: ${stdout}`);
-        });
+        if (!success) {
+            response.status(500).send(responseData);
+        }
 
         next();
     } catch (error) {
@@ -231,10 +210,9 @@ export const updatePayrollTaxReturnObject = async (
     const { id } = request.params;
 
     try {
-        const results = await executeQuery<PayrollTaxInput>(
-            payrollQueries.getPayrollTaxesById,
-            [id],
-        );
+        const results = await executeQuery(payrollQueries.getPayrollTaxesById, [
+            id,
+        ]);
 
         if (results.length === 0) {
             response.status(404).send('Payroll tax not found');
@@ -267,7 +245,7 @@ export const deletePayrollTax = async (
     const { id } = request.params;
 
     try {
-        const getResults = await executeQuery<PayrollTaxInput>(
+        const getResults = await executeQuery(
             payrollQueries.getPayrollTaxesById,
             [id],
         );
@@ -279,22 +257,13 @@ export const deletePayrollTax = async (
 
         await executeQuery(payrollQueries.deletePayrollTax, [id]);
 
-        // Define the script command
-        const scriptCommand: string = `/app/scripts/getPayrollsByEmployee.sh ${parseInt(
+        const [success, responseData] = await executePayrollsScript(
             getResults[0].employee_id,
-        )}`;
+        );
 
-        // Execute the script
-        exec(scriptCommand, (error, stdout, stderr) => {
-            if (error != null) {
-                logger.error(`Error executing script: ${error.message}`);
-                response
-                    .status(500)
-                    .send(
-                        'Failed to execute script for updating cron job payrolls information',
-                    );
-            }
-        });
+        if (!success) {
+            response.status(500).send(responseData);
+        }
 
         next();
     } catch (error) {

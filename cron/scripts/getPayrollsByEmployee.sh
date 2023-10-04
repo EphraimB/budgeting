@@ -93,7 +93,7 @@ while IFS="|" read -r startDate endDate _ grossPay netPay; do
 
   # Create the cron command with the payroll details
   taxPercentage=$(echo "scale=4; (($grossPay - $netPay) / $grossPay)" | bc)
-  cronCommand="/app/scripts/createTransaction.sh $cronJobId $1 null $grossPay Payroll \"Payroll for $startDate to $endDate\" null $taxPercentage > /app/cron.log 2>&1"
+  cronCommand="/scripts/createTransaction.sh $cronJobId $1 null $grossPay Payroll \"Payroll for $startDate to $endDate\" null $taxPercentage > /app/cron.log 2>&1"
 
   # Append new cron entry to the existing cron file
   echo "$cronSchedule $cronCommand" >>"$existingCronFile"

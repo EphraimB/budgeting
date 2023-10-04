@@ -1,47 +1,21 @@
 import { type NextFunction, type Request, type Response } from 'express';
 import { loanQueries, cronJobQueries } from '../models/queryData.js';
-import scheduleCronJob from '../crontab/scheduleCronJob.js';
-import deleteCronJob from '../crontab/deleteCronJob.js';
 import {
     handleError,
     executeQuery,
     parseIntOrFallback,
+    manipulateCron,
 } from '../utils/helperFunctions.js';
 import { type Loan } from '../types/types.js';
 import { logger } from '../config/winston.js';
-
-interface LoanInput {
-    account_id: string;
-    loan_id: string;
-    cron_job_id?: string;
-    interest_cron_job_id?: string;
-    loan_amount: string;
-    loan_plan_amount: string;
-    loan_recipient: string;
-    loan_title: string;
-    loan_description: string;
-    frequency_type: string;
-    frequency_type_variable: string;
-    frequency_day_of_month: string;
-    frequency_day_of_week: string;
-    frequency_week_of_month: string;
-    frequency_month_of_year: string;
-    loan_interest_rate: string;
-    loan_interest_frequency_type: string;
-    loan_subsidized: string;
-    loan_fully_paid_back: string;
-    loan_begin_date: string;
-    loan_end_date: string;
-    date_created: string;
-    date_modified: string;
-}
+import determineCronValues from '../crontab/determineCronValues.js';
 
 /**
  *
  * @param loan - Loan object
  * @returns - Loan object with parsed values
  */
-const parseLoan = (loan: LoanInput): Loan => ({
+const parseLoan = (loan: Record<string, string>): Loan => ({
     loan_id: parseInt(loan.loan_id),
     account_id: parseInt(loan.account_id),
     loan_amount: parseFloat(loan.loan_amount),
@@ -100,7 +74,7 @@ export const getLoans = async (
             params = [];
         }
 
-        const rows: LoanInput[] = await executeQuery(query, params);
+        const rows = await executeQuery(query, params);
 
         if (
             ((id !== null && id !== undefined) ||
@@ -169,40 +143,14 @@ export const createLoan = async (
         interest_frequency_type,
         subsidized,
         begin_date,
-    } = request.body as Record<string, string>;
+    } = request.body;
 
     try {
-        const loanResults = await executeQuery<LoanInput>(
-            loanQueries.createLoan,
-            [
-                account_id,
-                amount,
-                plan_amount,
-                recipient,
-                title,
-                description,
-                frequency_type,
-                frequency_type_variable,
-                frequency_day_of_month,
-                frequency_day_of_week,
-                frequency_week_of_month,
-                frequency_month_of_year,
-                interest_rate,
-                interest_frequency_type,
-                subsidized,
-                begin_date,
-            ],
-        );
-
-        const loans: Loan[] = loanResults.map((loan) => parseLoan(loan));
-
-        const cronParams: any = {
-            date: begin_date,
+        const loanResults = await executeQuery(loanQueries.createLoan, [
             account_id,
-            id: loans[0].loan_id,
-            amount:
-                -parseFloat(plan_amount) +
-                parseFloat(plan_amount) * parseFloat(subsidized),
+            amount,
+            plan_amount,
+            recipient,
             title,
             description,
             frequency_type,
@@ -211,9 +159,55 @@ export const createLoan = async (
             frequency_day_of_week,
             frequency_week_of_month,
             frequency_month_of_year,
-            scriptPath: '/app/scripts/createTransaction.sh',
-            type: 'loan',
+            interest_rate,
+            interest_frequency_type,
+            subsidized,
+            begin_date,
+        ]);
+
+        const loans: Loan[] = loanResults.map((loan) => parseLoan(loan));
+
+        const jobDetails = {
+            frequency_type,
+            frequency_type_variable,
+            frequency_day_of_month,
+            frequency_day_of_week,
+            frequency_week_of_month,
+            frequency_month_of_year,
+            date: begin_date,
         };
+
+        const cronDate = determineCronValues(jobDetails);
+
+        const data = {
+            schedule: cronDate,
+            script_path: '/scripts/createTransaction.sh',
+            expense_type: 'loan',
+            account_id,
+            id: loans[0].loan_id,
+            amount:
+                -parseFloat(plan_amount) +
+                parseFloat(plan_amount) * parseFloat(subsidized),
+            title,
+            description,
+        };
+
+        const [success, responseData] = await manipulateCron(
+            data,
+            'POST',
+            null,
+        );
+
+        if (!success) {
+            response.status(500).send(responseData);
+        }
+
+        const cronId: number = (
+            await executeQuery(cronJobQueries.createCronJob, [
+                responseData.unique_id,
+                cronDate,
+            ])
+        )[0].cron_job_id;
 
         const nextDate: Date = new Date(begin_date);
 
@@ -231,44 +225,40 @@ export const createLoan = async (
             nextDate.setFullYear(nextDate.getFullYear() + 1);
         }
 
-        const interestCronParams: any = {
-            date: nextDate.toISOString(),
+        const jobDetailsInterest = {
+            frequency_type: interest_frequency_type,
+            date: begin_date,
+        };
+
+        const cronDateInterest = determineCronValues(jobDetailsInterest);
+
+        const dataInterest = {
+            schedule: cronDateInterest,
+            script_path: '/app/scripts/applyInterest.sh',
+            expense_type: 'loan_interest',
             account_id,
             id: loans[0].loan_id,
             amount: interest_rate,
             title: title + ' interest',
             description: description + ' interest',
-            frequency_type: interest_frequency_type,
-            frequency_type_variable: null,
-            frequency_day_of_month: null,
-            frequency_day_of_week: null,
-            frequency_week_of_month: null,
-            frequency_month_of_year: null,
-            scriptPath: '/app/scripts/applyInterest.sh',
-            type: 'loan_interest',
         };
 
-        const { cronDate, uniqueId } = await scheduleCronJob(cronParams);
+        const [successInterest, responseDataInterest] = await manipulateCron(
+            dataInterest,
+            'POST',
+            null,
+        );
 
-        const cronId: number = (
-            await executeQuery(cronJobQueries.createCronJob, [
-                uniqueId,
-                cronDate,
-            ])
-        )[0].cron_job_id;
-
-        const { cronDate: interestCronDate, uniqueId: interestUniqueId } =
-            await scheduleCronJob(interestCronParams);
+        if (!successInterest) {
+            response.status(500).send(responseDataInterest);
+        }
 
         const interestCronId: number = (
             await executeQuery(cronJobQueries.createCronJob, [
-                interestUniqueId,
-                interestCronDate,
+                responseDataInterest.unique_id,
+                cronDateInterest,
             ])
         )[0].cron_job_id;
-
-        logger.info('Cron job created ' + cronId.toString());
-        logger.info('Interest cron job created ' + interestCronId.toString());
 
         await executeQuery(loanQueries.updateLoanWithCronJobId, [
             cronId,
@@ -298,9 +288,7 @@ export const createLoanReturnObject = async (
     const { loan_id } = request;
 
     try {
-        const loans = await executeQuery<LoanInput>(loanQueries.getLoansById, [
-            loan_id,
-        ]);
+        const loans = await executeQuery(loanQueries.getLoansById, [loan_id]);
 
         const modifiedLoans: Loan[] = loans.map((loan) => {
             // parse loan first
@@ -352,112 +340,130 @@ export const updateLoan = async (
         interest_frequency_type,
         subsidized,
         begin_date,
-    } = request.body as Record<string, string>;
-
-    const cronParams = {
-        date: begin_date,
-        id,
-        account_id,
-        amount:
-            -parseFloat(plan_amount) +
-            parseFloat(plan_amount) * parseFloat(subsidized),
-        title,
-        description,
-        frequency_type,
-        frequency_type_variable,
-        frequency_day_of_month,
-        frequency_day_of_week,
-        frequency_week_of_month,
-        frequency_month_of_year,
-        scriptPath: '/app/scripts/createTransaction.sh',
-        type: 'loan',
-    };
-
-    const nextDate: Date = new Date(begin_date);
-
-    if (parseInt(interest_frequency_type) === 0) {
-        // Daily
-        nextDate.setDate(nextDate.getDate() + 1);
-    } else if (parseInt(interest_frequency_type) === 1) {
-        // Weekly
-        nextDate.setDate(nextDate.getDate() + 7);
-    } else if (parseInt(interest_frequency_type) === 2) {
-        // Monthly
-        nextDate.setMonth(nextDate.getMonth() + 1);
-    } else if (parseInt(interest_frequency_type) === 3) {
-        // Yearly
-        nextDate.setFullYear(nextDate.getFullYear() + 1);
-    }
-
-    const interestCronParams: any = {
-        date: nextDate.toISOString(),
-        account_id,
-        id,
-        amount: interest_rate,
-        title: title + ' interest',
-        description: description + ' interest',
-        frequency_type: interest_frequency_type,
-        frequency_type_variable: null,
-        frequency_day_of_month: null,
-        frequency_day_of_week: null,
-        frequency_week_of_month: null,
-        frequency_month_of_year: null,
-        scriptPath: '/app/scripts/applyInterest.sh',
-        type: 'loan_interest',
-    };
+    } = request.body;
 
     try {
-        const getLoanResults = await executeQuery<LoanInput>(
-            loanQueries.getLoansById,
-            [id],
-        );
+        const getLoanResults = await executeQuery(loanQueries.getLoansById, [
+            id,
+        ]);
 
         if (getLoanResults.length === 0) {
             response.status(404).send('Loan not found');
             return;
         }
 
-        const cronId: number = parseInt(getLoanResults[0].cron_job_id ?? '');
-        const results = await executeQuery(cronJobQueries.getCronJob, [cronId]);
-
-        if (results.length > 0) {
-            await deleteCronJob(results[0].unique_id);
-        } else {
-            logger.error('Cron job not found');
-        }
-
+        const cronId: number = parseInt(getLoanResults[0].cron_job_id);
         const interestCronId: number = parseInt(
-            getLoanResults[0].interest_cron_job_id ?? '',
+            getLoanResults[0].interest_cron_job_id,
         );
-        const interestResults = await executeQuery(cronJobQueries.getCronJob, [
-            interestCronId,
+
+        const jobDetails = {
+            frequency_type,
+            frequency_type_variable,
+            frequency_day_of_month,
+            frequency_day_of_week,
+            frequency_week_of_month,
+            frequency_month_of_year,
+            date: begin_date,
+        };
+
+        const cronDate = determineCronValues(jobDetails);
+
+        const [{ unique_id }] = await executeQuery(cronJobQueries.getCronJob, [
+            cronId,
         ]);
 
-        if (interestResults.length > 0) {
-            await deleteCronJob(interestResults[0].unique_id);
-        } else {
-            logger.error('Interest cron job not found');
+        const [{ unique_id: interestUniqueId }] = await executeQuery(
+            cronJobQueries.getCronJob,
+            [interestCronId],
+        );
+
+        const data = {
+            schedule: cronDate,
+            script_path: '/scripts/createTransaction.sh',
+            expense_type: 'loan',
+            account_id,
+            id,
+            amount:
+                -parseFloat(plan_amount) +
+                parseFloat(plan_amount) * parseFloat(subsidized),
+            title,
+            description,
+        };
+
+        const [success, responseData] = await manipulateCron(
+            data,
+            'PUT',
+            unique_id,
+        );
+
+        if (!success) {
+            response.status(500).send(responseData);
         }
 
-        const { uniqueId, cronDate } = await scheduleCronJob(cronParams);
-
-        logger.info(uniqueId);
-
         await executeQuery(cronJobQueries.updateCronJob, [
-            uniqueId,
+            responseData.unique_id,
             cronDate,
             cronId,
         ]);
 
-        const { uniqueId: interestUniqueId, cronDate: interestCronDate } =
-            await scheduleCronJob(interestCronParams);
+        const nextDate: Date = new Date(begin_date);
+
+        if (parseInt(interest_frequency_type) === 0) {
+            // Daily
+            nextDate.setDate(nextDate.getDate() + 1);
+        } else if (parseInt(interest_frequency_type) === 1) {
+            // Weekly
+            nextDate.setDate(nextDate.getDate() + 7);
+        } else if (parseInt(interest_frequency_type) === 2) {
+            // Monthly
+            nextDate.setMonth(nextDate.getMonth() + 1);
+        } else if (parseInt(interest_frequency_type) === 3) {
+            // Yearly
+            nextDate.setFullYear(nextDate.getFullYear() + 1);
+        }
+
+        const jobDetailsInterest = {
+            frequency_type: interest_frequency_type,
+            date: begin_date,
+        };
+
+        const cronDateInterest = determineCronValues(jobDetailsInterest);
+
+        const dataInterest = {
+            schedule: cronDateInterest,
+            script_path: '/app/scripts/applyInterest.sh',
+            expense_type: 'loan_interest',
+            account_id,
+            id,
+            amount: interest_rate,
+            title: title + ' interest',
+            description: description + ' interest',
+        };
+
+        const [successInterest, responseDataInterest] = await manipulateCron(
+            dataInterest,
+            'PUT',
+            interestUniqueId,
+        );
+
+        if (!successInterest) {
+            response.status(500).send(responseDataInterest);
+        }
 
         await executeQuery(cronJobQueries.updateCronJob, [
-            interestUniqueId,
-            interestCronDate,
+            responseData.unique_id,
+            cronDate,
+            cronId,
+        ]);
+
+        await executeQuery(cronJobQueries.updateCronJob, [
+            responseDataInterest.unique_id,
+            cronDateInterest,
             interestCronId,
         ]);
-        await executeQuery<LoanInput>(loanQueries.updateLoan, [
+
+        await executeQuery(loanQueries.updateLoan, [
             account_id,
             amount,
             plan_amount,
@@ -499,9 +505,7 @@ export const updateLoanReturnObject = async (
     const { loan_id } = request;
 
     try {
-        const loans = await executeQuery<LoanInput>(loanQueries.getLoansById, [
-            loan_id,
-        ]);
+        const loans = await executeQuery(loanQueries.getLoansById, [loan_id]);
 
         const modifiedLoans: Loan[] = loans.map((loan) => {
             // parse loan first
@@ -538,38 +542,46 @@ export const deleteLoan = async (
     try {
         const { id } = request.params;
 
-        const getLoanResults = await executeQuery<LoanInput>(
-            loanQueries.getLoansById,
-            [id],
-        );
+        const getLoanResults = await executeQuery(loanQueries.getLoansById, [
+            id,
+        ]);
 
         if (getLoanResults.length === 0) {
             response.status(404).send('Loan not found');
             return;
         }
 
-        const cronId: number = parseInt(getLoanResults[0].cron_job_id ?? '');
+        const cronId: number = parseInt(getLoanResults[0].cron_job_id);
+
         await executeQuery(loanQueries.deleteLoan, [id]);
 
         const results = await executeQuery(cronJobQueries.getCronJob, [cronId]);
 
-        if (results.length > 0) {
-            await deleteCronJob(results[0].unique_id);
-        } else {
-            logger.error('Cron job not found');
+        const [success, responseData] = await manipulateCron(
+            null,
+            'DELETE',
+            results[0].unique_id,
+        );
+
+        if (!success) {
+            response.status(500).send(responseData);
         }
 
         const interestCronId: number = parseInt(
-            getLoanResults[0].interest_cron_job_id ?? '',
+            getLoanResults[0].interest_cron_job_id,
         );
         const interestResults = await executeQuery(cronJobQueries.getCronJob, [
             interestCronId,
         ]);
 
-        if (interestResults.length > 0) {
-            await deleteCronJob(interestResults[0].unique_id);
-        } else {
-            logger.error('Interest cron job not found');
+        const [successInterest, responseDataInterest] = await manipulateCron(
+            null,
+            'DELETE',
+            interestResults[0].unique_id,
+        );
+
+        if (!successInterest) {
+            response.status(500).send(responseDataInterest);
         }
 
         await executeQuery(cronJobQueries.deleteCronJob, [cronId]);

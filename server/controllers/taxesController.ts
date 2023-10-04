@@ -4,23 +4,13 @@ import { handleError, executeQuery } from '../utils/helperFunctions.js';
 import { type Taxes } from '../types/types.js';
 import { logger } from '../config/winston.js';
 
-interface TaxesInput {
-    tax_id: string;
-    tax_rate: string;
-    tax_title: string;
-    tax_description: string;
-    tax_type: string;
-    date_created: string;
-    date_modified: string;
-}
-
 /**
  *
  * @param transactionHistory - Transaction history object
  * @returns Transaction history object with the correct types
  * Converts the transaction history object to the correct types
  */
-const parseTaxes = (tax: TaxesInput): Taxes => ({
+const parseTaxes = (tax: Record<string, string>): Taxes => ({
     tax_id: parseInt(tax.tax_id),
     tax_rate: parseFloat(tax.tax_rate),
     tax_title: tax.tax_title,
@@ -54,7 +44,7 @@ export const getTaxes = async (
             params = [];
         }
 
-        const taxesResults = await executeQuery<TaxesInput>(query, params);
+        const taxesResults = await executeQuery(query, params);
 
         if (id !== null && id !== undefined && taxesResults.length === 0) {
             response.status(404).send('Tax not found');
@@ -88,10 +78,12 @@ export const createTax = async (
     const { rate, title, description, type } = request.body;
 
     try {
-        const taxesResults = await executeQuery<TaxesInput>(
-            taxesQueries.createTax,
-            [rate, title, description, type],
-        );
+        const taxesResults = await executeQuery(taxesQueries.createTax, [
+            rate,
+            title,
+            description,
+            type,
+        ]);
 
         const taxes: Taxes[] = taxesResults.map((transaction) =>
             parseTaxes(transaction),
@@ -117,10 +109,13 @@ export const updateTax = async (
     const { rate, title, description, type } = request.body;
 
     try {
-        const taxesResults = await executeQuery<TaxesInput>(
-            taxesQueries.updateTax,
-            [rate, title, description, type, id],
-        );
+        const taxesResults = await executeQuery(taxesQueries.updateTax, [
+            rate,
+            title,
+            description,
+            type,
+            id,
+        ]);
 
         if (taxesResults.length === 0) {
             response.status(404).send('Tax not found');
@@ -149,10 +144,7 @@ export const deleteTax = async (
     try {
         const id: number = parseInt(request.params.id);
 
-        const getTaxesResults = await executeQuery<TaxesInput>(
-            taxesQueries.getTax,
-            [id],
-        );
+        const getTaxesResults = await executeQuery(taxesQueries.getTax, [id]);
 
         if (getTaxesResults.length === 0) {
             response.status(404).send('Tax not found');
