@@ -165,6 +165,7 @@ export const createCronJob = async (req: Request, res: Response) => {
 
 export const updateCronJob = async (req: Request, res: Response) => {
   const { unique_id } = req.params;
+
   const {
     schedule,
     script_path,
@@ -176,58 +177,63 @@ export const updateCronJob = async (req: Request, res: Response) => {
     description,
   } = req.body;
 
-  // Generate a unique identifier
-  const uniqueId = uuidv4();
+  try {
+    // Generate a unique identifier
+    const uniqueId = uuidv4();
 
-  exec(`crontab -l | grep '${unique_id}'`, (error, stdout, stderr) => {
-    if (error || !stdout) {
-      logger.error(`exec error: ${error}`);
-      return res.status(404).json({
-        status: "error",
-        message: "Cron job not found",
-      });
-    }
-
-    // If the cron job is found, proceed with update
-    exec(
-      `crontab -l | grep -v '${unique_id}' | crontab -`,
-      (delError, delStdout, delStderr) => {
-        if (delError) {
-          logger.error(`exec error: ${delError}`);
-          return res.status(500).json({
-            status: "error",
-            message: "Failed to update cron job",
-          });
-        }
-
-        // Construct the command with the uniqueId and other parameters
-        const cronCommand = `${script_path} ${expense_type}_${uniqueId} ${account_id} ${id} ${amount} "${title}" "${description}"`;
-
-        exec(
-          `(crontab -l ; echo '${schedule} ${cronCommand} > /app/cron.log 2>&1') | crontab - `,
-          (error, stdout, stderr) => {
-            if (error) {
-              logger.error(`exec error: ${error}`);
-              return res.status(500).json({
-                status: "error",
-                message: "Failed to update cron job",
-              });
-            }
-
-            logger.info(
-              "Cron job updated with unique id: " + uniqueId.toString()
-            );
-          }
-        );
+    exec(`crontab -l | grep '${unique_id}'`, (error, stdout, stderr) => {
+      if (error || !stdout) {
+        logger.error(`exec error: ${error}`);
+        return res.status(404).json({
+          status: "error",
+          message: "Cron job not found",
+        });
       }
-    );
-  });
 
-  res.status(200).json({
-    status: "success",
-    message: "Cron job updated successfully",
-    unique_id: uniqueId,
-  });
+      // If the cron job is found, proceed with update
+      exec(
+        `crontab -l | grep -v '${unique_id}' | crontab -`,
+        (delError, delStdout, delStderr) => {
+          if (delError) {
+            logger.error(`exec error: ${delError}`);
+            return res.status(500).json({
+              status: "error",
+              message: "Failed to update cron job",
+            });
+          }
+
+          // Construct the command with the uniqueId and other parameters
+          const cronCommand = `${script_path} ${expense_type}_${uniqueId} ${account_id} ${id} ${amount} "${title}" "${description}"`;
+
+          exec(
+            `(crontab -l ; echo '${schedule} ${cronCommand} > /app/cron.log 2>&1') | crontab - `,
+            (error, stdout, stderr) => {
+              if (error) {
+                logger.error(`exec error: ${error}`);
+                return res.status(500).json({
+                  status: "error",
+                  message: "Failed to update cron job",
+                });
+              }
+
+              logger.info(
+                "Cron job updated with unique id: " + uniqueId.toString()
+              );
+            }
+          );
+        }
+      );
+    });
+
+    res.status(200).json({
+      status: "success",
+      message: "Cron job updated successfully",
+      unique_id: uniqueId,
+    });
+  } catch (error) {
+    logger.error(error);
+    handleError(res, "Failed to update cron job");
+  }
 };
 
 export const deleteCronJob = async (req: Request, res: Response) => {
@@ -256,7 +262,7 @@ export const deleteCronJob = async (req: Request, res: Response) => {
 
         logger.info("Cron job deleted with unique id: " + unique_id);
 
-        res.json({
+        res.status(200).json({
           status: "success",
           message: "Cron job deleted successfully",
         });
