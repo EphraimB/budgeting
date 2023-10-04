@@ -10,7 +10,12 @@ export default function Alerts() {
   if (!alert.open) return null;
 
   return (
-    <Alert severity={alert.severity} onClose={() => {}}>
+    <Alert
+      severity={alert.severity}
+      onClose={() => {
+        closeAlert();
+      }}
+    >
       {alert.message}
     </Alert>
   );
