@@ -16,6 +16,8 @@ const generatePayrolls = (
     fromDate: Date,
 ): void => {
     const payroll_end_date: Date = new Date(payrolls.end_date);
+    payroll_end_date.setHours(11);
+    payroll_end_date.setMinutes(30);
 
     const newTransaction = {
         id: uuidv4(),
