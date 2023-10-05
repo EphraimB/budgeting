@@ -35,7 +35,7 @@ function AccountList({
             {account.account_name}
           </Typography>
           <Typography variant="body2" color="text.secondary">
-            ${account.account_balance}
+            ${(Math.round(account.account_balance * 100) / 100).toFixed(2)}
           </Typography>
         </Paper>
       ))}
