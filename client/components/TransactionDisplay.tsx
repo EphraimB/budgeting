@@ -10,7 +10,7 @@ import Paper from "@mui/material/Paper";
 import CircularProgress from "@mui/material/CircularProgress";
 import { useAlert } from "../context/AlertContext";
 import { green, red } from "@mui/material/colors";
-import { Theme } from "@mui/material";
+import { createTheme } from "@mui/material/styles";
 
 export default function TransactionDisplay({
   accountId,
@@ -64,7 +64,6 @@ export default function TransactionDisplay({
           <TableRow
             sx={{
               backgroundColor: "#000",
-              color: "#fff",
             }}
           >
             <TableCell>Date</TableCell>
@@ -85,7 +84,6 @@ export default function TransactionDisplay({
                   "&:last-child td, &:last-child th": { border: 0 },
                   backgroundColor:
                     transaction.total_amount >= 0 ? green[500] : red[500],
-                  color: "primary.contrastText",
                 }}
               >
                 <TableCell component="th" scope="row">
