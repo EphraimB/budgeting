@@ -1,4 +1,4 @@
-import * as React from "react";
+import { useState, useEffect } from "react";
 import dayjs, { Dayjs } from "dayjs";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
@@ -8,10 +8,7 @@ import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
 import CircularProgress from "@mui/material/CircularProgress";
-import useSWR, { Fetcher } from "swr";
 import { useAlert } from "../context/AlertContext";
-
-const fetcher: Fetcher = (url: string) => fetch(url).then((r) => r.json());
 
 export default function TransactionDisplay({
   accountId,
@@ -22,23 +19,37 @@ export default function TransactionDisplay({
   fromDate: Dayjs;
   toDate: Dayjs;
 }) {
+  const [transactions, setTransactions] = useState(null) as any[];
+  const [loading, setLoading] = useState(true);
+
   const { showAlert, closeAlert } = useAlert();
 
-  const { data, error, isLoading } = useSWR<any>(
-    `http://localhost:5001/api/transactions?account_id=${accountId}&from_date=${fromDate
-      .format()
-      .substring(0, 10)}&to_date=${toDate.format().substring(0, 10)}`,
-    fetcher
-  );
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await fetch(
+          `http://localhost:3000/transactions?account_id=${accountId}&from_date=${fromDate.format()}&to_date=${toDate.format()}`
+        );
+        if (!response.ok) {
+          showAlert("Failed to load transactions", "error");
+          return;
+        }
 
-  React.useEffect(() => {
-    if (error) {
-      showAlert("Failed to load transactions", "error");
-    }
-  }, [error, showAlert]);
+        const data = await response.json();
+        setTransactions(data.data);
 
-  if (error) return null;
-  if (isLoading) return <CircularProgress />;
+        setLoading(false); // Set loading to false once data is fetched
+      } catch (error) {
+        showAlert("Failed to load transactions", "error");
+        setLoading(false); // Set loading to false even if there is an error
+      }
+    };
+
+    fetchData();
+  }, [showAlert]);
+
+  if (loading) return <CircularProgress />; // Show loader while loading is true
+  if (!transactions) return null;
 
   return (
     <TableContainer component={Paper}>
@@ -55,7 +66,7 @@ export default function TransactionDisplay({
           </TableRow>
         </TableHead>
         <TableBody>
-          {data.map((dt: any) =>
+          {transactions.map((dt: any) =>
             dt.transactions.map((transaction: any) => (
               <TableRow
                 key={`${transaction.id}-${transaction.date}-${transaction.title}-${transaction.amount}-${transaction.balance}`}
