@@ -46,7 +46,7 @@ export default function TransactionDisplay({
     };
 
     fetchData();
-  }, [showAlert]);
+  }, [accountId, fromDate, toDate, showAlert]);
 
   if (loading) return <CircularProgress />; // Show loader while loading is true
   if (!transactions) return null;
