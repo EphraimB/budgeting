@@ -21,7 +21,7 @@ const generatePayrolls = (
         id: uuidv4(),
         title: 'Payroll',
         description: 'payroll',
-        date: new Date(payroll_end_date),
+        date: payroll_end_date,
         amount: payrolls.gross_pay,
         tax_rate: (payrolls.gross_pay - payrolls.net_pay) / payrolls.gross_pay,
         total_amount: payrolls.net_pay,
