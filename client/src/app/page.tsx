@@ -53,7 +53,7 @@ export default function Home() {
     };
 
     fetchData();
-  }, [showAlert]);
+  }, [showAlert, accounts]);
 
   if (loading) return <CircularProgress />; // Show loader while loading is true
   if (!accounts) return null;
