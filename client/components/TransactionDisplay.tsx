@@ -81,12 +81,21 @@ export default function TransactionDisplay({
                 </TableCell>
                 <TableCell align="right">{transaction.title}</TableCell>
                 <TableCell align="right">{transaction.description}</TableCell>
-                <TableCell align="right">${transaction.amount}</TableCell>
+                <TableCell align="right">
+                  ${(Math.round(transaction.amount * 100) / 100).toFixed(2)}
+                </TableCell>
                 <TableCell align="right">
                   {transaction.tax_rate * 100}%
                 </TableCell>
-                <TableCell align="right">${transaction.total_amount}</TableCell>
-                <TableCell align="right">${transaction.balance}</TableCell>
+                <TableCell align="right">
+                  $
+                  {(Math.round(transaction.total_amount * 100) / 100).toFixed(
+                    2
+                  )}
+                </TableCell>
+                <TableCell align="right">
+                  ${(Math.round(transaction.balance * 100) / 100).toFixed(2)}
+                </TableCell>
               </TableRow>
             ))
           )}
