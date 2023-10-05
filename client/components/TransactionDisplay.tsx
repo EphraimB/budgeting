@@ -97,32 +97,68 @@ export default function TransactionDisplay({
                     transaction.total_amount >= 0 ? green[500] : red[500],
                 }}
               >
-                <TableCell sx={{ color: "#fff" }} component="th" scope="row">
+                <TableCell
+                  sx={{
+                    color: transaction.total_amount >= 0 ? "#000" : "#fff",
+                  }}
+                  component="th"
+                  scope="row"
+                >
                   {dayjs(transaction.date).format("dddd")}
                   <br />
                   {dayjs(transaction.date).format("MMMM D, YYYY")}
                   <br />
                   {dayjs(transaction.date).format("h:mm A")}
                 </TableCell>
-                <TableCell sx={{ color: "#fff" }} align="right">
+                <TableCell
+                  sx={{
+                    color: transaction.total_amount >= 0 ? "#000" : "#fff",
+                  }}
+                  align="right"
+                >
                   {transaction.title}
                 </TableCell>
-                <TableCell sx={{ color: "#fff" }} align="right">
+                <TableCell
+                  sx={{
+                    color: transaction.total_amount >= 0 ? "#000" : "#fff",
+                  }}
+                  align="right"
+                >
                   {transaction.description}
                 </TableCell>
-                <TableCell sx={{ color: "#fff" }} align="right">
+                <TableCell
+                  sx={{
+                    color: transaction.total_amount >= 0 ? "#000" : "#fff",
+                  }}
+                  align="right"
+                >
                   ${(Math.round(transaction.amount * 100) / 100).toFixed(2)}
                 </TableCell>
-                <TableCell sx={{ color: "#fff" }} align="right">
+                <TableCell
+                  sx={{
+                    color: transaction.total_amount >= 0 ? "#000" : "#fff",
+                  }}
+                  align="right"
+                >
                   {transaction.tax_rate * 100}%
                 </TableCell>
-                <TableCell sx={{ color: "#fff" }} align="right">
+                <TableCell
+                  sx={{
+                    color: transaction.total_amount >= 0 ? "#000" : "#fff",
+                  }}
+                  align="right"
+                >
                   $
                   {(Math.round(transaction.total_amount * 100) / 100).toFixed(
                     2
                   )}
                 </TableCell>
-                <TableCell sx={{ color: "#fff" }} align="right">
+                <TableCell
+                  sx={{
+                    color: transaction.total_amount >= 0 ? "#000" : "#fff",
+                  }}
+                  align="right"
+                >
                   ${(Math.round(transaction.balance * 100) / 100).toFixed(2)}
                 </TableCell>
               </TableRow>
