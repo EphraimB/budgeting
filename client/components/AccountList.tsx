@@ -1,7 +1,9 @@
+import { useState } from "react";
 import Button from "@mui/material/Button";
 import Paper from "@mui/material/Paper";
 import Typography from "@mui/material/Typography";
 import Stack from "@mui/material/Stack";
+import NewAccountForm from "./NewAccountForm";
 
 function AccountList({
   accounts,
@@ -12,6 +14,8 @@ function AccountList({
   onAccountClick: any;
   selectedAccountId: number | null;
 }) {
+  const [showNewAccountForm, setShowNewAccountForm] = useState(false);
+
   return (
     <Stack
       direction="row"
@@ -39,9 +43,20 @@ function AccountList({
           </Typography>
         </Paper>
       ))}
-      <Button variant="contained" color="primary">
-        Open New Account
-      </Button>
+
+      {!showNewAccountForm && (
+        <Button
+          variant="contained"
+          color="primary"
+          onClick={() => setShowNewAccountForm(true)}
+        >
+          Open New Account
+        </Button>
+      )}
+
+      {showNewAccountForm && (
+        <NewAccountForm setShowNewAccountForm={setShowNewAccountForm} />
+      )}
     </Stack>
   );
 }

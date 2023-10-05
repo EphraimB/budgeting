@@ -24,7 +24,7 @@ export default function Home() {
   const [fromDate, setFromDate] = useState<Dayjs | null>(dayjs());
   const [toDate, setToDate] = useState<Dayjs | null>(dayjs().add(1, "month"));
 
-  function onAccountClick(account: any) {
+  const onAccountClick = (account: any) => {
     if (selectedAccountId === account.account_id) {
       // If the same account is clicked again, toggle the component's visibility
       setComponentVisible(!isComponentVisible);
@@ -32,7 +32,7 @@ export default function Home() {
       setSelectedAccountId(account.account_id);
       setComponentVisible(false);
     }
-  }
+  };
 
   useEffect(() => {
     const fetchData = async () => {
