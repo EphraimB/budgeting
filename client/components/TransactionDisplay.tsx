@@ -53,7 +53,7 @@ export default function TransactionDisplay({
 
   return (
     <TableContainer component={Paper}>
-      <Table sx={{ minWidth: 650 }} aria-label="Transactions table">
+      <Table sx={{ minWidth: 500 }} aria-label="Transactions table">
         <TableHead>
           <TableRow>
             <TableCell>Date</TableCell>
