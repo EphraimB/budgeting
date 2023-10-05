@@ -10,7 +10,6 @@ import Paper from "@mui/material/Paper";
 import CircularProgress from "@mui/material/CircularProgress";
 import { useAlert } from "../context/AlertContext";
 import { green, red } from "@mui/material/colors";
-import { createTheme } from "@mui/material/styles";
 
 export default function TransactionDisplay({
   accountId,
