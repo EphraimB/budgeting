@@ -37,7 +37,7 @@ export const generateCommuteExpenses = (
             commute_schedule_id: commuteExpense.commute_schedule_id,
             title: commuteExpense.pass,
             description: `${commuteExpense.pass} pass`,
-            date: new Date(commuteExpenseDate),
+            date: commuteExpenseDate,
             amount: -commuteExpense.fare_amount,
             tax_rate: 0,
             total_amount: -commuteExpense.fare_amount,
