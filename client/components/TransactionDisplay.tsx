@@ -9,6 +9,8 @@ import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
 import CircularProgress from "@mui/material/CircularProgress";
 import { useAlert } from "../context/AlertContext";
+import { green, red } from "@mui/material/colors";
+import { Theme } from "@mui/material";
 
 export default function TransactionDisplay({
   accountId,
@@ -53,9 +55,18 @@ export default function TransactionDisplay({
 
   return (
     <TableContainer component={Paper}>
-      <Table sx={{ minWidth: 500 }} aria-label="Transactions table">
+      <Table
+        sx={{ minWidth: 650 }}
+        size="small"
+        aria-label="Transactions table"
+      >
         <TableHead>
-          <TableRow>
+          <TableRow
+            sx={{
+              backgroundColor: "#000",
+              color: "#fff",
+            }}
+          >
             <TableCell>Date</TableCell>
             <TableCell align="right">Title</TableCell>
             <TableCell align="right">Description</TableCell>
@@ -70,7 +81,12 @@ export default function TransactionDisplay({
             dt.transactions.map((transaction: any) => (
               <TableRow
                 key={`${transaction.id}-${transaction.date}-${transaction.title}-${transaction.amount}-${transaction.balance}`}
-                sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
+                sx={{
+                  "&:last-child td, &:last-child th": { border: 0 },
+                  backgroundColor:
+                    transaction.total_amount >= 0 ? green[500] : red[500],
+                  color: "primary.contrastText",
+                }}
               >
                 <TableCell component="th" scope="row">
                   {dayjs(transaction.date).format("dddd")}
