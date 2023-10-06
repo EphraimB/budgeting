@@ -1,11 +1,10 @@
 import { useState } from "react";
 import Button from "@mui/material/Button";
 import Paper from "@mui/material/Paper";
-import Typography from "@mui/material/Typography";
 import Stack from "@mui/material/Stack";
 import NewAccountForm from "./NewAccountForm";
-import IconButton from "@mui/material/IconButton";
-import MoreVertIcon from "@mui/icons-material/MoreVert";
+import AccountView from "./AccountView";
+import AccountDelete from "./AccountDelete";
 
 function AccountList({
   accounts,
@@ -17,6 +16,7 @@ function AccountList({
   selectedAccountId: number | null;
 }) {
   const [showNewAccountForm, setShowNewAccountForm] = useState(false);
+  const [accountMode, setAccountMode] = useState(0);
 
   return (
     <Stack
@@ -30,32 +30,33 @@ function AccountList({
       {accounts.map((account: any) => (
         <Paper
           key={account.account_id}
-          onClick={() => onAccountClick(account)}
           elevation={account.account_id === selectedAccountId ? 1 : 4}
           sx={{
             position: "relative",
             p: 2,
-            cursor: "pointer",
           }}
         >
-          <IconButton
-            aria-label="more"
-            sx={{
-              position: "absolute",
-              top: 0,
-              right: 0,
-            }}
-            size="small"
-          >
-            <MoreVertIcon />
-          </IconButton>
-          <br />
-          <Typography variant="subtitle1" color="text.primary">
-            {account.account_name}
-          </Typography>
-          <Typography variant="body2" color="text.secondary">
-            ${(Math.round(account.account_balance * 100) / 100).toFixed(2)}
-          </Typography>
+          {accountMode === 0 ? (
+            <AccountView
+              account={account}
+              setAccountMode={setAccountMode}
+              onAccountClick={onAccountClick}
+            />
+          ) : accountMode === 1 ? (
+            <AccountView
+              account={account}
+              setAccountMode={setAccountMode}
+              onAccountClick={onAccountClick}
+            />
+          ) : accountMode === 2 ? (
+            <AccountDelete account={account} setAccountMode={setAccountMode} />
+          ) : (
+            <AccountView
+              account={account}
+              setAccountMode={setAccountMode}
+              onAccountClick={onAccountClick}
+            />
+          )}
         </Paper>
       ))}
 
