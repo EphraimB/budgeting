@@ -37,7 +37,7 @@ function AccountList({
           }}
         >
           {accountModes[account.account_id] === "delete" ? (
-            <AccountDelete account={account} setAccountMode={setAccountModes} />
+            <AccountDelete account={account} setAccountModes={setAccountModes} />
           ) : accountModes[account.account_id] ===
             "edit" ? //     setAccountModes((prevModes) => ({ //   setAccountMode={() => //   account={account} // <AccountEdit
           //       ...prevModes,

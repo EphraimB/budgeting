@@ -6,10 +6,10 @@ import Button from "@mui/material/Button";
 
 function AccountDelete({
   account,
-  setAccountMode,
+  setAccountModes,
 }: {
   account: any;
-  setAccountMode: any;
+  setAccountModes: any;
 }) {
   const handleDelete = () => {
     // TODO: Delete account
@@ -25,7 +25,10 @@ function AccountDelete({
       } catch (error) {
         console.error("There was an error creating the account!", error);
       }
-      setAccountMode(0);
+      setAccountModes((prevModes: any) => ({
+        ...prevModes,
+        [account.account_id]: "view",
+      }));
     };
 
     deleteAccount(); // Call the async function
@@ -41,7 +44,12 @@ function AccountDelete({
           right: 0,
         }}
         size="small"
-        onClick={() => setAccountMode(0)}
+        onClick={() =>
+          setAccountModes((prevModes: any) => ({
+            ...prevModes,
+            [account.account_id]: "view",
+          }))
+        }
       >
         <CloseIcon />
       </IconButton>
