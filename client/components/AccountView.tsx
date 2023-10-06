@@ -7,11 +7,11 @@ import Box from "@mui/material/Box";
 
 function AccountView({
   account,
-  setAccountMode,
+  setAccountModes,
   onAccountClick,
 }: {
   account: any;
-  setAccountMode: any;
+  setAccountModes: any;
   onAccountClick: any;
 }) {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
@@ -51,7 +51,8 @@ function AccountView({
         open={open}
         handleClick={handleClick}
         handleClose={handleClose}
-        setAccountMode={setAccountMode}
+        setAccountModes={setAccountModes}
+        accountId={account.account_id}
       />
       <br />
       <Box

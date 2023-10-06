@@ -11,16 +11,22 @@ function AccountActionsMenu({
   open,
   handleClick,
   handleClose,
-  setAccountMode,
+  setAccountModes,
+  accountId,
 }: {
   anchorEl: any;
   open: any;
   handleClick: any;
   handleClose: any;
-  setAccountMode: any;
+  setAccountModes: any;
+  accountId: number;
 }) {
   const handleDelete = () => {
-    setAccountMode(2);
+    setAccountModes((prevModes: any) => ({
+      ...prevModes,
+      [accountId]: "delete",
+    }));
+
     handleClose();
   };
 

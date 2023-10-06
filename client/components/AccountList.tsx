@@ -16,7 +16,7 @@ function AccountList({
   selectedAccountId: number | null;
 }) {
   const [showNewAccountForm, setShowNewAccountForm] = useState(false);
-  const [accountMode, setAccountMode] = useState(0);
+  const [accountModes, setAccountModes] = useState<Record<number, string>>({});
 
   return (
     <Stack
@@ -36,24 +36,19 @@ function AccountList({
             p: 2,
           }}
         >
-          {accountMode === 0 ? (
+          {accountModes[account.account_id] === "delete" ? (
+            <AccountDelete account={account} setAccountMode={setAccountModes} />
+          ) : accountModes[account.account_id] ===
+            "edit" ? //     setAccountModes((prevModes) => ({ //   setAccountMode={() => //   account={account} // <AccountEdit
+          //       ...prevModes,
+          //       [account.account_id]: "view",
+          //     }))
+          //   } /*...other props...*/
+          // />
+          null : (
             <AccountView
               account={account}
-              setAccountMode={setAccountMode}
-              onAccountClick={onAccountClick}
-            />
-          ) : accountMode === 1 ? (
-            <AccountView
-              account={account}
-              setAccountMode={setAccountMode}
-              onAccountClick={onAccountClick}
-            />
-          ) : accountMode === 2 ? (
-            <AccountDelete account={account} setAccountMode={setAccountMode} />
-          ) : (
-            <AccountView
-              account={account}
-              setAccountMode={setAccountMode}
+              setAccountModes={setAccountModes}
               onAccountClick={onAccountClick}
             />
           )}
