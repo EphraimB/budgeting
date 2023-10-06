@@ -39,9 +39,15 @@ export async function PUT(request: Request) {
 
 export async function DELETE(request: Request) {
   const { searchParams } = new URL(request.url);
-  const id = searchParams.get("id");
+  const account_id = searchParams.get("account_id");
 
-  const res = await fetch(`http://server:5001/api/accounts/${id}`, {
+  if (!account_id) {
+    return Response.json({
+      error: "Missing required query parameters",
+    });
+  }
+
+  const res = await fetch(`http://server:5001/api/accounts/${account_id}`, {
     method: "DELETE",
     headers: {
       "Content-Type": "application/json",

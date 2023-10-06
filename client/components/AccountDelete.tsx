@@ -16,12 +16,15 @@ function AccountDelete({
     const deleteAccount = async () => {
       try {
         // Post request to create a new account
-        await fetch("http://localhost:3000/accounts", {
-          method: "Delete",
-          headers: {
-            "Content-Type": "application/json",
-          },
-        });
+        await fetch(
+          `http://localhost:3000/accounts?account_id=${account.account_id}`,
+          {
+            method: "DELETE",
+            headers: {
+              "Content-Type": "application/json",
+            },
+          }
+        );
       } catch (error) {
         console.error("There was an error creating the account!", error);
       }
@@ -32,6 +35,13 @@ function AccountDelete({
     };
 
     deleteAccount(); // Call the async function
+  };
+
+  const handleCancel = () => {
+    setAccountModes((prevModes: any) => ({
+      ...prevModes,
+      [account.account_id]: "view",
+    }));
   };
 
   return (
@@ -55,16 +65,16 @@ function AccountDelete({
       </IconButton>
       <br />
       <Box>
-        <Typography variant="h6">Delete {account.name}?</Typography>
+        <Typography variant="h6">Delete {account.account_name}?</Typography>
         <Typography variant="body1">
           Are you sure you want to delete this account? This action cannot be
           undone.
         </Typography>
         <br />
-        <Button variant="contained" color="error">
+        <Button variant="contained" color="error" onClick={handleDelete}>
           Delete
         </Button>
-        <Button variant="contained" onClick={handleDelete}>
+        <Button variant="contained" onClick={handleCancel}>
           Cancel
         </Button>
       </Box>
