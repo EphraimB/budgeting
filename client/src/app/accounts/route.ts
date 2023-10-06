@@ -19,3 +19,34 @@ export async function POST(request: Request) {
 
   return Response.json(res);
 }
+
+export async function PUT(request: Request) {
+  const { searchParams } = new URL(request.url);
+  const id = searchParams.get("id");
+
+  const data = await request.json();
+
+  const res = await fetch(`http://server:5001/api/accounts/${id}`, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(data),
+  });
+
+  return Response.json(res);
+}
+
+export async function DELETE(request: Request) {
+  const { searchParams } = new URL(request.url);
+  const id = searchParams.get("id");
+
+  const res = await fetch(`http://server:5001/api/accounts/${id}`, {
+    method: "DELETE",
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
+
+  return Response.json(res);
+}
