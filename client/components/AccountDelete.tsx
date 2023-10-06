@@ -21,7 +21,6 @@ function AccountDelete({
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify(data),
         });
       } catch (error) {
         console.error("There was an error creating the account!", error);
