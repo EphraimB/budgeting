@@ -1,8 +1,9 @@
 import "./globals.css";
 import type { Metadata } from "next";
 import GlobalAppBar from "../../components/GlobalAppBar";
-import { AlertProvider } from "../../context/AlertContext";
+import { FeedbackProvider } from "../../context/FeedbackContext";
 import Alerts from "../../components/Alerts";
+import SnackbarFeedback from "../../components/SnackbarFeedback";
 
 export const metadata: Metadata = {
   title: "Budgeting",
@@ -18,10 +19,11 @@ export default function RootLayout({
     <html lang="en">
       <body>
         <GlobalAppBar />
-        <AlertProvider>
+        <FeedbackProvider>
           <Alerts />
           {children}
-        </AlertProvider>
+          <SnackbarFeedback />
+        </FeedbackProvider>
       </body>
     </html>
   );

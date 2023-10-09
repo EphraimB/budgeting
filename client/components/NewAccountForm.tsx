@@ -5,14 +5,18 @@ import TextField from "@mui/material/TextField";
 import Stack from "@mui/material/Stack";
 import IconButton from "@mui/material/IconButton";
 import CloseIcon from "@mui/icons-material/Close";
+import { useSnackbar } from "../context/FeedbackContext";
+import { useAlert } from "../context/FeedbackContext";
 
 export default function NewAccountForm({
   setShowNewAccountForm,
 }: {
-  setShowNewAccountForm: any;
+  setShowNewAccountForm: React.Dispatch<React.SetStateAction<boolean>>;
 }) {
   const [accountName, setAccountName] = useState("");
   const [accountBalance, setAccountBalance] = useState("");
+  const { showSnackbar } = useSnackbar();
+  const { showAlert } = useAlert();
 
   const data = {
     name: accountName,
@@ -33,11 +37,13 @@ export default function NewAccountForm({
         });
       } catch (error) {
         console.error("There was an error creating the account!", error);
+        showAlert("There was an error creating the account!", "error");
       }
-      setShowNewAccountForm(false); // You might want to move this into the try block depending on desired behavior
+      setShowNewAccountForm(false);
+      showSnackbar("Account created!");
     };
 
-    submitData(); // Call the async function
+    submitData();
   };
 
   return (
