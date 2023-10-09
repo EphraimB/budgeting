@@ -30,8 +30,8 @@ function AccountDelete({
           }
         );
       } catch (error) {
-        console.error("There was an error creating the account!", error);
-        showAlert("There was an error creating the account!", "error");
+        console.error("There was an error deleting the account!", error);
+        showAlert("There was an error deleting the account!", "error");
       }
       setAccountModes((prevModes: any) => ({
         ...prevModes,
