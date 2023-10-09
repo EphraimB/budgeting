@@ -3,6 +3,8 @@ import Paper from "@mui/material/Paper";
 import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
 import Stack from "@mui/material/Stack";
+import IconButton from "@mui/material/IconButton";
+import CloseIcon from "@mui/icons-material/Close";
 
 export default function NewAccountForm({
   setShowNewAccountForm,
@@ -43,9 +45,23 @@ export default function NewAccountForm({
       elevation={1}
       component="form"
       sx={{
+        position: "relative",
         p: 2,
       }}
     >
+      <IconButton
+        aria-label="more"
+        sx={{
+          position: "absolute",
+          top: 0,
+          right: 0,
+        }}
+        size="small"
+        onClick={() => setShowNewAccountForm(false)}
+      >
+        <CloseIcon />
+      </IconButton>
+      <br />
       <Stack direction="column" spacing={2}>
         <TextField
           id="account_name"
