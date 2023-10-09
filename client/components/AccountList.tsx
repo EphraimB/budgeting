@@ -1,11 +1,13 @@
 import { useState } from "react";
-import Button from "@mui/material/Button";
+import IconButton from "@mui/material/IconButton";
 import Paper from "@mui/material/Paper";
 import Stack from "@mui/material/Stack";
 import NewAccountForm from "./NewAccountForm";
 import AccountView from "./AccountView";
 import AccountDelete from "./AccountDelete";
 import AccountEdit from "./AccountEdit";
+import { Tooltip } from "@mui/material";
+import AddIcon from "@mui/icons-material/Add";
 
 function AccountList({
   accounts,
@@ -35,6 +37,7 @@ function AccountList({
           sx={{
             position: "relative",
             p: 2,
+            width: 125,
           }}
         >
           {accountModes[account.account_id] === "delete" ? (
@@ -55,13 +58,22 @@ function AccountList({
       ))}
 
       {!showNewAccountForm && (
-        <Button
-          variant="contained"
-          color="primary"
-          onClick={() => setShowNewAccountForm(true)}
-        >
-          Open New Account
-        </Button>
+        <Tooltip title="Open new account">
+          <Paper
+            onClick={() => setShowNewAccountForm(true)}
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              width: 125,
+              cursor: "pointer",
+            }}
+          >
+            <IconButton>
+              <AddIcon />
+            </IconButton>
+          </Paper>
+        </Tooltip>
       )}
 
       {showNewAccountForm && (
