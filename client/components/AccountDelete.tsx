@@ -3,6 +3,8 @@ import IconButton from "@mui/material/IconButton";
 import CloseIcon from "@mui/icons-material/Close";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
+import { useSnackbar } from "../context/FeedbackContext";
+import { useAlert } from "../context/FeedbackContext";
 
 function AccountDelete({
   account,
@@ -11,8 +13,10 @@ function AccountDelete({
   account: any;
   setAccountModes: any;
 }) {
+  const { showSnackbar } = useSnackbar();
+  const { showAlert } = useAlert();
+
   const handleDelete = () => {
-    // TODO: Delete account
     const deleteAccount = async () => {
       try {
         // Post request to create a new account
@@ -27,14 +31,16 @@ function AccountDelete({
         );
       } catch (error) {
         console.error("There was an error creating the account!", error);
+        showAlert("There was an error creating the account!", "error");
       }
       setAccountModes((prevModes: any) => ({
         ...prevModes,
         [account.account_id]: "view",
       }));
+      showSnackbar("Account deleted!");
     };
 
-    deleteAccount(); // Call the async function
+    deleteAccount();
   };
 
   const handleCancel = () => {
