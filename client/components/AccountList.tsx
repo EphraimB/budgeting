@@ -5,6 +5,7 @@ import Stack from "@mui/material/Stack";
 import NewAccountForm from "./NewAccountForm";
 import AccountView from "./AccountView";
 import AccountDelete from "./AccountDelete";
+import AccountEdit from "./AccountEdit";
 
 function AccountList({
   accounts,
@@ -37,15 +38,13 @@ function AccountList({
           }}
         >
           {accountModes[account.account_id] === "delete" ? (
-            <AccountDelete account={account} setAccountModes={setAccountModes} />
-          ) : accountModes[account.account_id] ===
-            "edit" ? //     setAccountModes((prevModes) => ({ //   setAccountMode={() => //   account={account} // <AccountEdit
-          //       ...prevModes,
-          //       [account.account_id]: "view",
-          //     }))
-          //   } /*...other props...*/
-          // />
-          null : (
+            <AccountDelete
+              account={account}
+              setAccountModes={setAccountModes}
+            />
+          ) : accountModes[account.account_id] === "edit" ? (
+            <AccountEdit account={account} setAccountModes={setAccountModes} />
+          ) : (
             <AccountView
               account={account}
               setAccountModes={setAccountModes}

@@ -22,11 +22,17 @@ export async function POST(request: Request) {
 
 export async function PUT(request: Request) {
   const { searchParams } = new URL(request.url);
-  const id = searchParams.get("id");
+  const account_id = searchParams.get("account_id");
+
+  if (!account_id) {
+    return Response.json({
+      error: "Missing required query parameters",
+    });
+  }
 
   const data = await request.json();
 
-  const res = await fetch(`http://server:5001/api/accounts/${id}`, {
+  const res = await fetch(`http://server:5001/api/accounts/${account_id}`, {
     method: "PUT",
     headers: {
       "Content-Type": "application/json",

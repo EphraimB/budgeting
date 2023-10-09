@@ -30,6 +30,15 @@ function AccountActionsMenu({
     handleClose();
   };
 
+  const handleEdit = () => {
+    setAccountModes((prevModes: any) => ({
+      ...prevModes,
+      [accountId]: "edit",
+    }));
+
+    handleClose();
+  };
+
   return (
     <Menu
       id="account-menu"
@@ -40,7 +49,7 @@ function AccountActionsMenu({
         "aria-labelledby": "account-action-buttons",
       }}
     >
-      <MenuItem>
+      <MenuItem onClick={handleEdit}>
         <ListItemIcon>
           <EditIcon fontSize="small" />
         </ListItemIcon>
