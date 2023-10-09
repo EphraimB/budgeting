@@ -38,7 +38,6 @@ function AccountList({
             position: "relative",
             p: 2,
             width: 175,
-            height: 250,
           }}
         >
           {accountModes[account.account_id] === "delete" ? (
@@ -63,11 +62,11 @@ function AccountList({
           <Paper
             onClick={() => setShowNewAccountForm(true)}
             sx={{
+              p: 2,
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
               width: 175,
-              height: 250,
               cursor: "pointer",
             }}
           >
