@@ -26,13 +26,16 @@ export default function AccountEdit({
     const submitData = async () => {
       try {
         // Post request to create a new account
-        await fetch(`http://localhost:3000/accounts?id=${account.account_id}`, {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(data),
-        });
+        await fetch(
+          `http://localhost:3000/accounts?account_id=${account.account_id}`,
+          {
+            method: "PUT",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(data),
+          }
+        );
       } catch (error) {
         console.error("There was an error creating the account!", error);
       }
