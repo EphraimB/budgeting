@@ -99,7 +99,7 @@ export default function AccountEdit({
           color="primary"
           onClick={onEditAccountSubmit}
         >
-          Open Account
+          Edit Account
         </Button>
       </Stack>
     </>
