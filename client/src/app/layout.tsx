@@ -4,6 +4,7 @@ import GlobalAppBar from "../../components/GlobalAppBar";
 import { FeedbackProvider } from "../../context/FeedbackContext";
 import Alerts from "../../components/Alerts";
 import SnackbarFeedback from "../../components/SnackbarFeedback";
+import Container from "@mui/material/Container";
 
 export const metadata: Metadata = {
   title: "Budgeting",
@@ -21,7 +22,7 @@ export default function RootLayout({
         <GlobalAppBar />
         <FeedbackProvider>
           <Alerts />
-          {children}
+          <Container maxWidth="lg">{children}</Container>
           <SnackbarFeedback />
         </FeedbackProvider>
       </body>

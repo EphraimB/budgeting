@@ -10,6 +10,7 @@ import DateRange from "../../components/DateRange";
 import TransactionDisplay from "../../components/TransactionDisplay";
 import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
+import DataManagementWidgets from "../../components/DataManagementWidgets";
 
 export default function Home() {
   const { showAlert } = useAlert();
@@ -95,7 +96,7 @@ export default function Home() {
           </>
         )}
         {selectedAccountId && selectedTab == 1 && (
-          <div>Manage data for account {selectedAccountId}</div>
+          <DataManagementWidgets selectedAccountId={selectedAccountId} />
         )}
       </Box>
     </main>
