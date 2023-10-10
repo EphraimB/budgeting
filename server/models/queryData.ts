@@ -108,8 +108,7 @@ export const accountQueries: AccountQueries = {
             accounts.account_id,
             accounts.employee_id,
             accounts.account_name,
-            accounts.account_type,
-            COALESCE(accounts.account_balance, 0) + COALESCE(t.total_transaction_amount_after_tax, 0) AS account_balance,
+            COALESCE(t.total_transaction_amount_after_tax, 0) AS account_balance,
             accounts.date_created, 
             accounts.date_modified 
         FROM 
@@ -130,8 +129,7 @@ export const accountQueries: AccountQueries = {
             accounts.account_id,
             accounts.employee_id,
             accounts.account_name,
-            accounts.account_type,
-            COALESCE(accounts.account_balance, 0) + COALESCE(t.total_transaction_amount_after_tax, 0) AS account_balance,
+            COALESCE(t.total_transaction_amount_after_tax, 0) AS account_balance,
             accounts.date_created, 
             accounts.date_modified 
         FROM 
@@ -148,9 +146,9 @@ export const accountQueries: AccountQueries = {
             accounts.account_id = $1;
   `,
     createAccount:
-        'INSERT INTO accounts (account_name, account_type, account_balance) VALUES ($1, $2, $3) RETURNING *',
+        'INSERT INTO accounts (account_name) VALUES ($1) RETURNING *',
     updateAccount:
-        'UPDATE accounts SET account_name = $1, account_type = $2, account_balance = $3 WHERE account_id = $4 RETURNING *',
+        'UPDATE accounts SET account_name = $1 WHERE account_id = $4 RETURNING *',
     deleteAccount: 'DELETE FROM accounts WHERE account_id = $1',
 };
 
@@ -411,7 +409,7 @@ export const currentBalanceQueries: CurrentBalanceQueries = {
     getCurrentBalance: `
             SELECT 
         accounts.account_id,
-        COALESCE(accounts.account_balance, 0) + COALESCE(t.transaction_amount_after_tax, 0) AS account_balance
+        COALESCE(t.transaction_amount_after_tax, 0) AS account_balance
     FROM 
         accounts
     LEFT JOIN 

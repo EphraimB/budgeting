@@ -13,8 +13,6 @@ CREATE TABLE IF NOT EXISTS accounts (
   account_id SERIAL PRIMARY KEY,
   employee_id INTEGER REFERENCES accounts(account_id),
   account_name VARCHAR(255) NOT NULL,
-  account_type INT NOT NULL,
-  account_balance numeric(20, 2) NOT NULL,
   date_created TIMESTAMP NOT NULL,
   date_modified TIMESTAMP NOT NULL
 );

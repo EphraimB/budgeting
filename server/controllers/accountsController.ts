@@ -12,7 +12,6 @@ import { logger } from '../config/winston.js';
 const parseAccounts = (account: Record<string, string>): Account => ({
     account_id: parseInt(account.account_id),
     account_name: account.account_name,
-    account_type: parseInt(account.account_type),
     account_balance: parseFloat(account.account_balance),
     date_created: account.date_created,
     date_modified: account.date_modified,
@@ -63,14 +62,10 @@ export const getAccounts = async (
  *  Sends a response with the created account or an error message and posts the account to the database
  */
 export const createAccount = async (request: Request, response: Response) => {
-    const { name, type, balance } = request.body;
+    const { name } = request.body;
 
     try {
-        const rows = await executeQuery(accountQueries.createAccount, [
-            name,
-            type,
-            balance,
-        ]);
+        const rows = await executeQuery(accountQueries.createAccount, [name]);
         const accounts = rows.map((account) => parseAccounts(account));
         response.status(201).json(accounts);
     } catch (error) {
@@ -90,7 +85,8 @@ export const updateAccount = async (
     response: Response,
 ): Promise<void> => {
     const id = parseInt(request.params.id);
-    const { name, type, balance } = request.body;
+    const { name } = request.body;
+
     try {
         const account = await executeQuery(accountQueries.getAccount, [id]);
 
@@ -101,8 +97,6 @@ export const updateAccount = async (
 
         const rows = await executeQuery(accountQueries.updateAccount, [
             name,
-            type,
-            balance,
             id,
         ]);
         const accounts = rows.map((account) => parseAccounts(account));

@@ -85,7 +85,6 @@ export interface Account {
     account_id: number;
     employee_id?: number;
     account_name: string;
-    account_type: number;
     account_balance: number;
     date_created: string;
     date_modified: string;
