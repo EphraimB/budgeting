@@ -71,7 +71,7 @@ export default function Home() {
         />
         {selectedAccountId && (
           <Box sx={{ borderBottom: 1, borderColor: "divider", mb: 2 }}>
-            <Tabs onChange={handleChange} centered>
+            <Tabs onChange={handleChange}>
               <Tab label="Transactions" />
               <Tab label="Manage data" />
             </Tabs>
