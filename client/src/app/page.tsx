@@ -70,10 +70,12 @@ export default function Home() {
           selectedAccountId={selectedAccountId}
         />
         {selectedAccountId && (
-          <Tabs onChange={handleChange} centered>
-            <Tab label="Transactions" />
-            <Tab label="Manage data" />
-          </Tabs>
+          <Box sx={{ borderBottom: 1, borderColor: "divider", mb: 2 }}>
+            <Tabs onChange={handleChange} centered>
+              <Tab label="Transactions" />
+              <Tab label="Manage data" />
+            </Tabs>
+          </Box>
         )}
         {selectedAccountId && selectedTab == 0 && (
           <>
