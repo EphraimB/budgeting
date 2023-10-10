@@ -16,14 +16,11 @@ export default function AccountEdit({
   setAccountModes: any;
 }) {
   const [accountName, setAccountName] = useState(account.account_name);
-  const [accountBalance, setAccountBalance] = useState(account.account_balance);
   const { showSnackbar } = useSnackbar();
   const { showAlert } = useAlert();
 
   const data = {
     name: accountName,
-    type: 0,
-    balance: accountBalance,
   };
 
   const onEditAccountSubmit = () => {
@@ -82,15 +79,6 @@ export default function AccountEdit({
           value={accountName}
           onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
             setAccountName(event.target.value);
-          }}
-        />
-        <TextField
-          id="account_balance"
-          label="Account balance"
-          variant="standard"
-          value={accountBalance}
-          onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-            setAccountBalance(event.target.value);
           }}
         />
 

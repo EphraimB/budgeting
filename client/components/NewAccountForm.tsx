@@ -14,14 +14,11 @@ export default function NewAccountForm({
   setShowNewAccountForm: React.Dispatch<React.SetStateAction<boolean>>;
 }) {
   const [accountName, setAccountName] = useState("");
-  const [accountBalance, setAccountBalance] = useState("");
   const { showSnackbar } = useSnackbar();
   const { showAlert } = useAlert();
 
   const data = {
     name: accountName,
-    type: 0,
-    balance: accountBalance,
   };
 
   const onNewAccountSubmit = () => {
@@ -76,15 +73,6 @@ export default function NewAccountForm({
           value={accountName}
           onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
             setAccountName(event.target.value);
-          }}
-        />
-        <TextField
-          id="account_balance"
-          label="Account balance"
-          variant="standard"
-          value={accountBalance}
-          onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-            setAccountBalance(event.target.value);
           }}
         />
 

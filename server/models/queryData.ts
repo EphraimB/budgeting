@@ -148,7 +148,7 @@ export const accountQueries: AccountQueries = {
     createAccount:
         'INSERT INTO accounts (account_name) VALUES ($1) RETURNING *',
     updateAccount:
-        'UPDATE accounts SET account_name = $1 WHERE account_id = $4 RETURNING *',
+        'UPDATE accounts SET account_name = $1 WHERE account_id = $2 RETURNING *',
     deleteAccount: 'DELETE FROM accounts WHERE account_id = $1',
 };
 
