@@ -8,30 +8,25 @@ import dayjs, { Dayjs } from "dayjs";
 import AccountList from "../../components/AccountList";
 import DateRange from "../../components/DateRange";
 import TransactionDisplay from "../../components/TransactionDisplay";
-import Actions from "../../components/Actions";
+import Tabs from "@mui/material/Tabs";
+import Tab from "@mui/material/Tab";
 
 export default function Home() {
   const { showAlert } = useAlert();
   const [accounts, setAccounts] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [selectedTab, setSelectedTab] = useState(0);
 
   // State to keep track of the currently selected account ID
   const [selectedAccountId, setSelectedAccountId] = useState<number | null>(
     null
   );
-  const [isComponentVisible, setComponentVisible] = useState(false);
 
   const [fromDate, setFromDate] = useState<Dayjs | null>(dayjs());
   const [toDate, setToDate] = useState<Dayjs | null>(dayjs().add(1, "month"));
 
   const onAccountClick = (account: any) => {
-    if (selectedAccountId === account.account_id) {
-      // If the same account is clicked again, toggle the component's visibility
-      setComponentVisible(!isComponentVisible);
-    } else {
-      setSelectedAccountId(account.account_id);
-      setComponentVisible(false);
-    }
+    setSelectedAccountId(account.account_id);
   };
 
   useEffect(() => {
@@ -58,6 +53,10 @@ export default function Home() {
   if (loading) return <CircularProgress />; // Show loader while loading is true
   if (!accounts) return null;
 
+  const handleChange = (event: React.SyntheticEvent, newTab: number) => {
+    setSelectedTab(newTab);
+  };
+
   return (
     <main>
       <Box
@@ -70,10 +69,13 @@ export default function Home() {
           onAccountClick={onAccountClick}
           selectedAccountId={selectedAccountId}
         />
-        {isComponentVisible && selectedAccountId && (
-          <Actions accountId={selectedAccountId} />
-        )}
         {selectedAccountId && (
+          <Tabs onChange={handleChange} centered>
+            <Tab label="Transactions" />
+            <Tab label="Manage data" />
+          </Tabs>
+        )}
+        {selectedAccountId && selectedTab == 0 && (
           <>
             <DateRange
               fromDate={fromDate}
@@ -89,6 +91,9 @@ export default function Home() {
               />
             )}
           </>
+        )}
+        {selectedAccountId && selectedTab == 1 && (
+          <div>Manage data for account {selectedAccountId}</div>
         )}
       </Box>
     </main>
