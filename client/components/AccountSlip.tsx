@@ -4,7 +4,7 @@ import CardContent from "@mui/material/CardContent";
 import CardHeader from "@mui/material/CardHeader";
 import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
-import Box from "@mui/material/Box";
+import Stack from "@mui/material/Stack";
 import { useAlert } from "../context/FeedbackContext";
 import { useSnackbar } from "../context/FeedbackContext";
 
@@ -55,21 +55,22 @@ function AccountSlip({ selectedAccountId }: { selectedAccountId: number }) {
     <Card sx={{ p: 2, margin: "auto", maxWidth: 500, flexGrow: 1 }}>
       <CardHeader title="Account Slip" />
       <CardContent sx={{ flexGrow: 1 }}>
-        <Box>
+        <Stack direction="row" spacing={2}>
           <TextField
             id="amount"
             label="Amount"
             value={amount}
-            onChange={(e) => setAmount(parseInt(e.target.value))}
+            onChange={(e) => setAmount(parseFloat(e.target.value))}
             variant="standard"
           />
           <TextField
             id="taxRate"
             label="Tax rate"
-            value={taxRate + "%"}
-            onChange={(e) => setTaxRate(parseInt(e.target.value))}
+            value={taxRate}
+            onChange={(e) => setTaxRate(parseFloat(e.target.value))}
             variant="standard"
           />
+
           <TextField
             id="title"
             label="Title"
@@ -84,7 +85,7 @@ function AccountSlip({ selectedAccountId }: { selectedAccountId: number }) {
             onChange={(e) => setDescription(e.target.value)}
             variant="standard"
           />
-        </Box>
+        </Stack>
         <br />
         <Button variant="contained" color="secondary" onClick={handleSubmit}>
           Submit slip
