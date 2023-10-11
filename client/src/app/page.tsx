@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import { useAlert } from "../../context/FeedbackContext";
-import CircularProgress from "@mui/material/CircularProgress";
+import Skeleton from "@mui/material/Skeleton";
 import Box from "@mui/material/Box";
 import dayjs, { Dayjs } from "dayjs";
 import AccountList from "../../components/AccountList";
@@ -65,11 +65,18 @@ export default function Home() {
           mt: 2,
         }}
       >
-        <AccountList
-          accounts={accounts}
-          onAccountClick={onAccountClick}
-          selectedAccountId={selectedAccountId}
-        />
+        {loading ? (
+          <>
+            <Skeleton variant="text" sx={{ fontSize: "1rem" }} />
+            <Skeleton variant="text" />
+          </>
+        ) : (
+          <AccountList
+            accounts={accounts}
+            onAccountClick={onAccountClick}
+            selectedAccountId={selectedAccountId}
+          />
+        )}
         {selectedAccountId && (
           <Box sx={{ borderBottom: 1, borderColor: "divider", mb: 2 }}>
             <Tabs value={selectedTab} onChange={handleChange}>
