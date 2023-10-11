@@ -86,25 +86,27 @@ export default function TransactionDisplay({
         {loading || !transactions ? (
           <TableRow>
             <TableCell>
-              <Skeleton variant="rectangular" height={50} />
+              <Skeleton variant="text" />
+              <Skeleton variant="text" />
+              <Skeleton variant="text" />
             </TableCell>
             <TableCell>
-              <Skeleton variant="rectangular" height={50} />
+              <Skeleton variant="text" />
             </TableCell>
             <TableCell>
-              <Skeleton variant="rectangular" height={50} />
+              <Skeleton variant="text" />
             </TableCell>
             <TableCell>
-              <Skeleton variant="rectangular" height={50} />
+              <Skeleton variant="text" />
             </TableCell>
             <TableCell>
-              <Skeleton variant="rectangular" height={50} />
+              <Skeleton variant="text" />
             </TableCell>
             <TableCell>
-              <Skeleton variant="rectangular" height={50} />
+              <Skeleton variant="text" />
             </TableCell>
             <TableCell>
-              <Skeleton variant="rectangular" height={50} />
+              <Skeleton variant="text" />
             </TableCell>
           </TableRow>
         ) : (
