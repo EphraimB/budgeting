@@ -3,6 +3,8 @@
 import React, { useEffect, useState } from "react";
 import { useAlert } from "../../context/FeedbackContext";
 import Skeleton from "@mui/material/Skeleton";
+import Stack from "@mui/material/Stack";
+import Card from "@mui/material/Card";
 import Box from "@mui/material/Box";
 import dayjs, { Dayjs } from "dayjs";
 import AccountList from "../../components/AccountList";
@@ -51,9 +53,6 @@ export default function Home() {
     fetchData();
   }, [showAlert, accounts]);
 
-  if (loading) return <CircularProgress />; // Show loader while loading is true
-  if (!accounts) return null;
-
   const handleChange = (event: React.SyntheticEvent, newTab: number) => {
     setSelectedTab(newTab);
   };
@@ -65,11 +64,36 @@ export default function Home() {
           mt: 2,
         }}
       >
-        {loading ? (
-          <>
-            <Skeleton variant="text" sx={{ fontSize: "1rem" }} />
-            <Skeleton variant="text" />
-          </>
+        {loading || !accounts ? (
+          <Stack direction="row" justifyContent="center" spacing={2}>
+            <Card
+              sx={{
+                p: 2,
+                width: 175,
+              }}
+            >
+              <Skeleton variant="text" sx={{ fontSize: "1rem" }} />
+              <Skeleton variant="text" />
+            </Card>
+            <Card
+              sx={{
+                p: 2,
+                width: 175,
+              }}
+            >
+              <Skeleton variant="text" sx={{ fontSize: "1rem" }} />
+              <Skeleton variant="text" />
+            </Card>
+            <Card
+              sx={{
+                p: 2,
+                width: 175,
+              }}
+            >
+              <Skeleton variant="text" sx={{ fontSize: "1rem" }} />
+              <Skeleton variant="text" />
+            </Card>
+          </Stack>
         ) : (
           <AccountList
             accounts={accounts}
