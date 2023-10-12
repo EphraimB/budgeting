@@ -4,8 +4,11 @@ import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
 import Stack from "@mui/material/Stack";
 import InputLabel from "@mui/material/InputLabel";
+import IconButton from "@mui/material/IconButton";
+import CloseIcon from "@mui/icons-material/Close";
 import { useAlert } from "../context/FeedbackContext";
 import { useSnackbar } from "../context/FeedbackContext";
+import { Typography } from "@mui/material";
 
 function AccountDepositForm({
   account,
@@ -62,6 +65,28 @@ function AccountDepositForm({
 
   return (
     <Box>
+      <IconButton
+        aria-label="close"
+        sx={{
+          position: "absolute",
+          top: 0,
+          right: 0,
+        }}
+        size="small"
+        onClick={() =>
+          setAccountModes((prevModes: any) => ({
+            ...prevModes,
+            [account.account_id]: "view",
+          }))
+        }
+      >
+        <CloseIcon />
+      </IconButton>
+      <br />
+      <Typography variant="subtitle2">
+        Deposit into {account.account_name} account of $
+        {account.account_balance}
+      </Typography>
       <Stack direction="column" spacing={2}>
         <Box sx={{ display: "flex", alignItems: "center", gap: "8px" }}>
           <InputLabel htmlFor="amount">$</InputLabel>
