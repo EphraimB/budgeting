@@ -5,21 +5,26 @@ import CardHeader from "@mui/material/CardHeader";
 import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
 import Stack from "@mui/material/Stack";
+import FormControl from "@mui/material/FormControl";
+import InputLabel from "@mui/material/InputLabel";
+import Select from "@mui/material/Select";
+import MenuItem from "@mui/material/MenuItem";
 import { useAlert } from "../context/FeedbackContext";
 import { useSnackbar } from "../context/FeedbackContext";
 
 function AccountSlip({ selectedAccountId }: { selectedAccountId: number }) {
-  const [amount, setAmount] = useState(0);
+  const [amount, setAmount] = useState(0.0);
   const [taxRate, setTaxRate] = useState(0);
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
+  const [withdrawal, setWithdrawal] = useState(0);
 
   const { showAlert } = useAlert();
   const { showSnackbar } = useSnackbar();
 
   const data = {
     account_id: selectedAccountId,
-    amount,
+    amount: withdrawal === 0 ? amount : -amount,
     tax: taxRate / 100,
     title,
     description,
@@ -51,26 +56,62 @@ function AccountSlip({ selectedAccountId }: { selectedAccountId: number }) {
     setDescription("");
   };
 
+  const handleNumericInput = (e: any) => {
+    e.target.value = e.target.value
+      .replace(/[^0-9.]/g, "")
+      .replace(/(\..*?)\./g, "$1");
+  };
+
   return (
     <Card sx={{ p: 2, margin: "auto", maxWidth: 500, flexGrow: 1 }}>
       <CardHeader title="Account Slip" />
       <CardContent sx={{ flexGrow: 1 }}>
-        <Stack direction="row" spacing={2}>
-          <TextField
-            id="amount"
-            label="Amount"
-            value={amount}
-            onChange={(e) => setAmount(parseFloat(e.target.value))}
-            variant="standard"
-          />
-          <TextField
-            id="taxRate"
-            label="Tax rate"
-            value={taxRate}
-            onChange={(e) => setTaxRate(parseFloat(e.target.value))}
-            variant="standard"
-          />
-
+        <Stack direction="column" spacing={2}>
+          <FormControl>
+            <InputLabel id="type">Type</InputLabel>
+            <Select
+              labelId="select-type"
+              id="select-type"
+              value={withdrawal}
+              label="Deposit/Withdrawal"
+              onChange={(e) => setWithdrawal(e.target.value as number)}
+            >
+              <MenuItem value={0}>Deposit</MenuItem>
+              <MenuItem value={1}>Withdrawal</MenuItem>
+            </Select>
+          </FormControl>
+          <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+            <InputLabel htmlFor="amount">$</InputLabel>
+            <TextField
+              fullWidth
+              inputProps={{
+                inputMode: "numeric",
+                pattern: "[0-9]*[.]?[0-9]*",
+              }}
+              onInput={handleNumericInput}
+              id="amount"
+              label="Amount"
+              value={amount}
+              onChange={(e) => setAmount(e.target.value as unknown as number)}
+              variant="standard"
+            />
+          </div>
+          <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+            <TextField
+              fullWidth
+              inputProps={{
+                inputMode: "numeric",
+                pattern: "[0-9]*[.]?[0-9]*",
+              }}
+              onInput={handleNumericInput}
+              id="taxRate"
+              label="Tax rate"
+              value={taxRate}
+              onChange={(e) => setTaxRate(e.target.value as unknown as number)}
+              variant="standard"
+            />
+            <InputLabel htmlFor="taxRate">%</InputLabel>
+          </div>
           <TextField
             id="title"
             label="Title"
