@@ -39,6 +39,15 @@ function AccountActionsMenu({
     handleClose();
   };
 
+  const handleDeposit = () => {
+    setAccountModes((prevModes: any) => ({
+      ...prevModes,
+      [accountId]: "deposit",
+    }));
+
+    handleClose();
+  };
+
   return (
     <Menu
       id="account-menu"
@@ -62,7 +71,7 @@ function AccountActionsMenu({
         <ListItemText>Delete</ListItemText>
       </MenuItem>
       <Divider />
-      <MenuItem onClick={handleClose}>
+      <MenuItem onClick={handleDeposit}>
         <ListItemIcon>
           <AddIcon fontSize="small" />
         </ListItemIcon>
