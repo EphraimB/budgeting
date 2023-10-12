@@ -10,7 +10,7 @@ import { useAlert } from "../context/FeedbackContext";
 import { useSnackbar } from "../context/FeedbackContext";
 import { Typography } from "@mui/material";
 
-function AccountDepositForm({
+function AccountWithdrawalForm({
   account,
   setAccountModes,
 }: {
@@ -26,7 +26,7 @@ function AccountDepositForm({
 
   const data = {
     account_id: account.account_id,
-    amount,
+    amount: -amount,
     tax: 0,
     title,
     description,
@@ -84,7 +84,7 @@ function AccountDepositForm({
       </IconButton>
       <br />
       <Typography variant="subtitle2">
-        Deposit into {account.account_name} account of $
+        Withdraw from {account.account_name} account of $
         {account.account_balance}
       </Typography>
       <Stack direction="column" spacing={2}>
@@ -121,10 +121,10 @@ function AccountDepositForm({
       </Stack>
       <br />
       <Button variant="contained" color="secondary" onClick={handleSubmit}>
-        Deposit
+        Withdraw
       </Button>
     </Box>
   );
 }
 
-export default AccountDepositForm;
+export default AccountWithdrawalForm;

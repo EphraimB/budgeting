@@ -9,6 +9,7 @@ import AccountEdit from "./AccountEdit";
 import { Tooltip } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import AccountDepositForm from "./AccountDepositForm";
+import AccountWithdrawalForm from "./AccountWithdrawalForm";
 
 function AccountList({
   accounts,
@@ -50,6 +51,11 @@ function AccountList({
             <AccountEdit account={account} setAccountModes={setAccountModes} />
           ) : accountModes[account.account_id] === "deposit" ? (
             <AccountDepositForm
+              account={account}
+              setAccountModes={setAccountModes}
+            />
+          ) : accountModes[account.account_id] === "withdraw" ? (
+            <AccountWithdrawalForm
               account={account}
               setAccountModes={setAccountModes}
             />
