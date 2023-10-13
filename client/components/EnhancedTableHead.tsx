@@ -23,16 +23,15 @@ interface EnhancedTableProps {
   headCells: readonly HeadCell[];
 }
 
-function EnhancedTableHead(props: EnhancedTableProps) {
-  const {
-    onSelectAllClick,
-    order,
-    orderBy,
-    numSelected,
-    rowCount,
-    onRequestSort,
-    headCells,
-  } = props;
+function EnhancedTableHead({
+  onSelectAllClick,
+  order,
+  orderBy,
+  numSelected,
+  rowCount,
+  onRequestSort,
+  headCells,
+}: EnhancedTableProps) {
   const createSortHandler =
     (property: string) => (event: React.MouseEvent<unknown>) => {
       onRequestSort(event, property);
