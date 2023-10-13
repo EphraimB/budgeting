@@ -92,7 +92,7 @@ function ExpensesWidget({ selectedAccountId }: { selectedAccountId: number }) {
         }
 
         const data = await response.json();
-        setExpenses(data);
+        setExpenses(data.data);
 
         setLoading(false); // Set loading to false once data is fetched
       } catch (error) {
