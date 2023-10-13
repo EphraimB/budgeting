@@ -1,20 +1,9 @@
-import Paper from "@mui/material/Paper";
-import Stack from "@mui/material/Stack";
 import Box from "@mui/material/Box";
 import TableSortLabel from "@mui/material/TableSortLabel";
 import { visuallyHidden } from "@mui/utils";
-import Toolbar from "@mui/material/Toolbar";
-import { alpha } from "@mui/material";
-import Tooltip from "@mui/material/Tooltip";
-import IconButton from "@mui/material/IconButton";
-import DeleteIcon from "@mui/icons-material/Delete";
-import FilterListIcon from "@mui/icons-material/FilterList";
 import TableCell from "@mui/material/TableCell";
-import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
-import { useAlert } from "../context/FeedbackContext";
-import Skeleton from "@mui/material/Skeleton";
 import Checkbox from "@mui/material/Checkbox";
 
 function descendingComparator<T>(a: T, b: T, orderBy: keyof T) {
@@ -57,44 +46,19 @@ function stableSort<T>(
 }
 
 interface HeadCell {
-  id: keyof Expense;
+  id: string;
   label: string;
   numeric: boolean;
 }
 
-const headCells: readonly HeadCell[] = [
-  {
-    id: "expense_title",
-    numeric: false,
-    label: "Title",
-  },
-  {
-    id: "expense_description",
-    numeric: true,
-    label: "Description",
-  },
-  {
-    id: "expense_amount",
-    numeric: true,
-    label: "Amount ($)",
-  },
-  {
-    id: "expense_begin_date",
-    numeric: false,
-    label: "Date",
-  },
-];
-
 interface EnhancedTableProps {
   numSelected: number;
-  onRequestSort: (
-    event: React.MouseEvent<unknown>,
-    property: keyof Expense
-  ) => void;
+  onRequestSort: (event: React.MouseEvent<unknown>, property: string) => void;
   onSelectAllClick: (event: React.ChangeEvent<HTMLInputElement>) => void;
   order: Order;
   orderBy: string;
   rowCount: number;
+  headCells: readonly HeadCell[];
 }
 
 function EnhancedTableHead(props: EnhancedTableProps) {
@@ -105,9 +69,10 @@ function EnhancedTableHead(props: EnhancedTableProps) {
     numSelected,
     rowCount,
     onRequestSort,
+    headCells,
   } = props;
   const createSortHandler =
-    (property: keyof Expense) => (event: React.MouseEvent<unknown>) => {
+    (property: string) => (event: React.MouseEvent<unknown>) => {
       onRequestSort(event, property);
     };
 
@@ -150,3 +115,5 @@ function EnhancedTableHead(props: EnhancedTableProps) {
     </TableHead>
   );
 }
+
+export default EnhancedTableHead;
