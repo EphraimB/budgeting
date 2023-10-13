@@ -71,7 +71,6 @@ function ExpensesWidget({ selectedAccountId }: { selectedAccountId: number }) {
   const [orderBy, setOrderBy] = useState<string>("expense_title");
   const [selected, setSelected] = useState<readonly string[]>([]);
   const [page, setPage] = useState(0);
-  const [dense, setDense] = useState(false);
   const [rowsPerPage, setRowsPerPage] = useState(5);
 
   const { showAlert, closeAlert } = useAlert();
@@ -149,10 +148,6 @@ function ExpensesWidget({ selectedAccountId }: { selectedAccountId: number }) {
     setPage(0);
   };
 
-  const handleChangeDense = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setDense(event.target.checked);
-  };
-
   const isSelected = (name: string) => selected.indexOf(name) !== -1;
 
   // Avoid a layout jump when reaching the last page with empty rows.
@@ -180,7 +175,7 @@ function ExpensesWidget({ selectedAccountId }: { selectedAccountId: number }) {
           <Table
             sx={{ minWidth: 750 }}
             aria-labelledby="tableTitle"
-            size={dense ? "small" : "medium"}
+            size={"medium"}
           >
             <EnhancedTableHead
               numSelected={selected.length}
