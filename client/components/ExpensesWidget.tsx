@@ -225,16 +225,14 @@ function ExpensesWidget({ selectedAccountId }: { selectedAccountId: number }) {
                         scope="row"
                         padding="none"
                       >
-                        {expenses.expense_title}
+                        {row.expense_title}
                       </TableCell>
                       <TableCell align="right">
-                        {expenses.expense_description}
+                        {row.expense_description}
                       </TableCell>
+                      <TableCell align="right">{row.expense_amount}</TableCell>
                       <TableCell align="right">
-                        {expenses.expense_amount}
-                      </TableCell>
-                      <TableCell align="right">
-                        {expenses.expense_begin_date}
+                        {row.expense_begin_date}
                       </TableCell>
                     </TableRow>
                   );
