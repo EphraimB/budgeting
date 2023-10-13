@@ -221,7 +221,7 @@ function ExpensesWidget({ selectedAccountId }: { selectedAccountId: number }) {
               orderBy={orderBy}
               onSelectAllClick={handleSelectAllClick}
               onRequestSort={handleRequestSort}
-              rowCount={expenses.length}
+              rowCount={!expenses ? 0 : expenses.length}
               headCells={headCells}
             />
             {/* <TableBody>
