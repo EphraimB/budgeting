@@ -257,7 +257,7 @@ function ExpensesWidget({ selectedAccountId }: { selectedAccountId: number }) {
         <TablePagination
           rowsPerPageOptions={[5, 10, 25]}
           component="div"
-          count={expenses.length}
+          count={loading || !expenses ? 0 : expenses.length}
           rowsPerPage={rowsPerPage}
           page={page}
           onPageChange={handleChangePage}
