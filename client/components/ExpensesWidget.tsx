@@ -92,7 +92,7 @@ function ExpensesWidget({ selectedAccountId }: { selectedAccountId: number }) {
         }
 
         const data = await response.json();
-        setExpenses(data.data);
+        setExpenses(data);
 
         setLoading(false); // Set loading to false once data is fetched
       } catch (error) {
@@ -159,17 +159,15 @@ function ExpensesWidget({ selectedAccountId }: { selectedAccountId: number }) {
   const emptyRows =
     page > 0 ? Math.max(0, (1 + page) * rowsPerPage - expenses.length) : 0;
 
-  const visibleRows =
-    loading || !expenses
-      ? null
-      : useMemo(
-          () =>
-            stableSort(expenses, getComparator(order, orderBy)).slice(
-              page * rowsPerPage,
-              page * rowsPerPage + rowsPerPage
-            ),
-          [order, orderBy, page, rowsPerPage]
-        );
+  const visibleRows = useMemo(() => {
+    if (loading || !expenses) {
+      return [];
+    }
+    return stableSort(expenses, getComparator(order, orderBy)).slice(
+      page * rowsPerPage,
+      page * rowsPerPage + rowsPerPage
+    );
+  }, [loading, expenses, order, orderBy, page, rowsPerPage]);
 
   return (
     <Card sx={{ p: 2, margin: "auto", maxWidth: 500, flexGrow: 1 }}>
@@ -192,7 +190,7 @@ function ExpensesWidget({ selectedAccountId }: { selectedAccountId: number }) {
               headCells={headCells}
             />
             <TableBody>
-              {loading || !expenses || visibleRows === null ? (
+              {loading || !expenses ? (
                 <Skeleton />
               ) : (
                 visibleRows.map((row, index) => {
