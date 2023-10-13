@@ -2,23 +2,12 @@ import { useState, useEffect, useMemo } from "react";
 import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
 import CardHeader from "@mui/material/CardHeader";
-import Typography from "@mui/material/Typography";
 import Table from "@mui/material/Table";
-import TableBody from "@mui/material/TableBody";
-import TableHead from "@mui/material/TableHead";
-import TableCell from "@mui/material/TableCell";
 import TableContainer from "@mui/material/TableContainer";
-import TableRow from "@mui/material/TableRow";
 import { useAlert } from "../context/FeedbackContext";
 import Skeleton from "@mui/material/Skeleton";
-import Checkbox from "@mui/material/Checkbox";
-import Toolbar from "@mui/material/Toolbar";
-import { alpha } from "@mui/material";
-import Tooltip from "@mui/material/Tooltip";
-import IconButton from "@mui/material/IconButton";
-import DeleteIcon from "@mui/icons-material/Delete";
-import FilterListIcon from "@mui/icons-material/FilterList";
 import EnhancedTableHead from "./EnhancedTableHead";
+import EnhancedTableToolbar from "./EnhancedTableToolbar";
 
 interface Expense {
   expense_id: number;
@@ -106,63 +95,6 @@ function stableSort<T>(
     return a[1] - b[1];
   });
   return stabilizedThis.map((el) => el[0]);
-}
-
-interface EnhancedTableToolbarProps {
-  numSelected: number;
-}
-
-function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
-  const { numSelected } = props;
-
-  return (
-    <Toolbar
-      sx={{
-        pl: { sm: 2 },
-        pr: { xs: 1, sm: 1 },
-        ...(numSelected > 0 && {
-          bgcolor: (theme) =>
-            alpha(
-              theme.palette.primary.main,
-              theme.palette.action.activatedOpacity
-            ),
-        }),
-      }}
-    >
-      {numSelected > 0 ? (
-        <Typography
-          sx={{ flex: "1 1 100%" }}
-          color="inherit"
-          variant="subtitle1"
-          component="div"
-        >
-          {numSelected} selected
-        </Typography>
-      ) : (
-        <Typography
-          sx={{ flex: "1 1 100%" }}
-          variant="h6"
-          id="tableTitle"
-          component="div"
-        >
-          Expenses
-        </Typography>
-      )}
-      {numSelected > 0 ? (
-        <Tooltip title="Delete">
-          <IconButton>
-            <DeleteIcon />
-          </IconButton>
-        </Tooltip>
-      ) : (
-        <Tooltip title="Filter list">
-          <IconButton>
-            <FilterListIcon />
-          </IconButton>
-        </Tooltip>
-      )}
-    </Toolbar>
-  );
 }
 
 function ExpensesWidget({ selectedAccountId }: { selectedAccountId: number }) {
@@ -276,7 +208,7 @@ function ExpensesWidget({ selectedAccountId }: { selectedAccountId: number }) {
     <Card sx={{ p: 2, margin: "auto", maxWidth: 500, flexGrow: 1 }}>
       <CardHeader title="Expenses" />
       <CardContent sx={{ flexGrow: 1 }}>
-        <EnhancedTableToolbar numSelected={selected.length} />
+        <EnhancedTableToolbar numSelected={selected.length} name="Expenses" />
         <TableContainer>
           <Table
             sx={{ minWidth: 750 }}
