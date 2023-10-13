@@ -2,8 +2,13 @@ import { useState, useEffect, useMemo } from "react";
 import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
 import CardHeader from "@mui/material/CardHeader";
+import TableBody from "@mui/material/TableBody";
+import TableCell from "@mui/material/TableCell";
+import TableRow from "@mui/material/TableRow";
 import Table from "@mui/material/Table";
 import TableContainer from "@mui/material/TableContainer";
+import TablePagination from "@mui/material/TablePagination";
+import Checkbox from "@mui/material/Checkbox";
 import { useAlert } from "../context/FeedbackContext";
 import Skeleton from "@mui/material/Skeleton";
 import EnhancedTableHead from "./EnhancedTableHead";
@@ -186,67 +191,78 @@ function ExpensesWidget({ selectedAccountId }: { selectedAccountId: number }) {
               rowCount={!expenses ? 0 : expenses.length}
               headCells={headCells}
             />
-            {/* <TableBody>
-              {loading || !expenses || !visibleRows ? (
+            <TableBody>
+              {loading || !expenses || visibleRows === null ? (
+                <Skeleton />
               ) : (
-              {visibleRows.map((row, index) => {
-                const isItemSelected = isSelected(expenses.expense_title);
-                const labelId = `enhanced-table-checkbox-${index}`;
+                visibleRows.map((row, index) => {
+                  const isItemSelected = isSelected(expenses.expense_title);
+                  const labelId = `enhanced-table-checkbox-${index}`;
 
-                return (
-                  <TableRow
-                    hover
-                    onClick={(event) =>
-                      handleClick(event, expenses.expense_title)
-                    }
-                    role="checkbox"
-                    aria-checked={isItemSelected}
-                    tabIndex={-1}
-                    key={expenses.expense_title}
-                    selected={isItemSelected}
-                    sx={{ cursor: "pointer" }}
-                  >
-                    <TableCell padding="checkbox">
-                      <Checkbox
-                        color="primary"
-                        checked={isItemSelected}
-                        inputProps={{
-                          "aria-labelledby": labelId,
-                        }}
-                      />
-                    </TableCell>
-                    <TableCell
-                      component="th"
-                      id={labelId}
-                      scope="row"
-                      padding="none"
+                  return (
+                    <TableRow
+                      hover
+                      onClick={(event) =>
+                        handleClick(event, expenses.expense_title)
+                      }
+                      role="checkbox"
+                      aria-checked={isItemSelected}
+                      tabIndex={-1}
+                      key={expenses.expense_title}
+                      selected={isItemSelected}
+                      sx={{ cursor: "pointer" }}
                     >
-                      {expenses.expense_title}
-                    </TableCell>
-                    <TableCell align="right">
-                      {expenses.expense_description}
-                    </TableCell>
-                    <TableCell align="right">
-                      {expenses.expense_amount}
-                    </TableCell>
-                    <TableCell align="right">
-                      {expenses.expense_begin_date}
-                    </TableCell>
-                  </TableRow>
-                );
-              })}
+                      <TableCell padding="checkbox">
+                        <Checkbox
+                          color="primary"
+                          checked={isItemSelected}
+                          inputProps={{
+                            "aria-labelledby": labelId,
+                          }}
+                        />
+                      </TableCell>
+                      <TableCell
+                        component="th"
+                        id={labelId}
+                        scope="row"
+                        padding="none"
+                      >
+                        {expenses.expense_title}
+                      </TableCell>
+                      <TableCell align="right">
+                        {expenses.expense_description}
+                      </TableCell>
+                      <TableCell align="right">
+                        {expenses.expense_amount}
+                      </TableCell>
+                      <TableCell align="right">
+                        {expenses.expense_begin_date}
+                      </TableCell>
+                    </TableRow>
+                  );
+                })
+              )}
               {emptyRows > 0 && (
                 <TableRow
                   style={{
-                    height: (dense ? 33 : 53) * emptyRows,
+                    height: 53 * emptyRows,
                   }}
                 >
                   <TableCell colSpan={6} />
                 </TableRow>
               )}
-            </TableBody> */}
+            </TableBody>
           </Table>
         </TableContainer>
+        <TablePagination
+          rowsPerPageOptions={[5, 10, 25]}
+          component="div"
+          count={expenses.length}
+          rowsPerPage={rowsPerPage}
+          page={page}
+          onPageChange={handleChangePage}
+          onRowsPerPageChange={handleChangeRowsPerPage}
+        />
       </CardContent>
     </Card>
   );
