@@ -15,17 +15,19 @@ import AddIcon from "@mui/icons-material/Add";
 import AccountDepositForm from "./AccountDepositForm";
 import AccountWithdrawalForm from "./AccountWithdrawalForm";
 import { useAlert } from "../context/FeedbackContext";
+import { usePathname } from "next/navigation";
 
 function AccountList() {
   const [accounts, setAccounts] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [selectedAccountId, setSelectedAccountId] = useState<number | null>(
-    null
-  );
   const [showNewAccountForm, setShowNewAccountForm] = useState(false);
   const [accountModes, setAccountModes] = useState<Record<number, string>>({});
 
   const { showAlert, closeAlert } = useAlert();
+
+  const pathname = usePathname();
+
+  const account_id = parseInt(pathname.split("/")[2]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -91,7 +93,7 @@ function AccountList() {
       {accounts.map((account: any) => (
         <Paper
           key={account.account_id}
-          elevation={account.account_id === selectedAccountId ? 1 : 4}
+          elevation={account.account_id === account_id ? 1 : 4}
           sx={{
             position: "relative",
             p: 2,
