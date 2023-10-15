@@ -4,15 +4,14 @@ import IconButton from "@mui/material/IconButton";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import AccountActionsMenu from "./AccountActionsMenu";
 import Box from "@mui/material/Box";
+import Link from "next/link";
 
 function AccountView({
   account,
   setAccountModes,
-  onAccountClick,
 }: {
   account: any;
   setAccountModes: any;
-  onAccountClick: any;
 }) {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
@@ -23,10 +22,6 @@ function AccountView({
 
   const handleClose = () => {
     setAnchorEl(null);
-  };
-
-  const accountViewClicked = () => {
-    onAccountClick(account);
   };
 
   return (
@@ -54,11 +49,9 @@ function AccountView({
         accountId={account.account_id}
       />
       <br />
-      <Box
-        sx={{
-          cursor: "pointer",
-        }}
-        onClick={accountViewClicked}
+      <Link
+        href={`/transactions/${account.account_id}`}
+        style={{ color: "inherit", textDecoration: "inherit" }}
       >
         <Typography variant="subtitle1" color="text.primary">
           {account.account_name}
@@ -66,7 +59,7 @@ function AccountView({
         <Typography variant="body2" color="text.secondary">
           ${(Math.round(account.account_balance * 100) / 100).toFixed(2)}
         </Typography>
-      </Box>
+      </Link>
     </Box>
   );
 }

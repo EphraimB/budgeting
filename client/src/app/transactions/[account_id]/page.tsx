@@ -1,15 +1,15 @@
+"use client";
+
 import React, { useState } from "react";
-import DateRange from "../../../components/DateRange";
-import TransactionDisplay from "../../../components/TransactionDisplay";
-import { useRouter } from "next/router";
+import DateRange from "../../../../components/DateRange";
+import TransactionDisplay from "../../../../components/TransactionDisplay";
 import dayjs, { Dayjs } from "dayjs";
 
-function transactionsPage() {
+function TransactionsPage({ params }: { params: { account_id: string } }) {
   const [fromDate, setFromDate] = useState<Dayjs | null>(dayjs());
   const [toDate, setToDate] = useState<Dayjs | null>(dayjs().add(1, "month"));
 
-  const router = useRouter();
-  const { account_id } = router.query as { account_id: string };
+  const accountId = parseInt(params.account_id);
 
   return (
     <>
@@ -21,7 +21,7 @@ function transactionsPage() {
       />
       {fromDate && toDate && (
         <TransactionDisplay
-          accountId={parseInt(account_id)}
+          accountId={accountId}
           fromDate={fromDate}
           toDate={toDate}
         />
@@ -30,4 +30,4 @@ function transactionsPage() {
   );
 }
 
-export default transactionsPage;
+export default TransactionsPage;

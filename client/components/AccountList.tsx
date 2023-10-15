@@ -1,9 +1,11 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import IconButton from "@mui/material/IconButton";
 import Paper from "@mui/material/Paper";
 import Stack from "@mui/material/Stack";
+import Skeleton from "@mui/material/Skeleton";
+import Card from "@mui/material/Card";
 import NewAccountForm from "./NewAccountForm";
 import AccountView from "./AccountView";
 import AccountDelete from "./AccountDelete";
@@ -12,20 +14,72 @@ import { Tooltip } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import AccountDepositForm from "./AccountDepositForm";
 import AccountWithdrawalForm from "./AccountWithdrawalForm";
+import { useAlert } from "../context/FeedbackContext";
 
-function AccountList({
-  accounts,
-  onAccountClick,
-  selectedAccountId,
-}: {
-  accounts: any;
-  onAccountClick: any;
-  selectedAccountId: number | null;
-}) {
+function AccountList() {
+  const [accounts, setAccounts] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [selectedAccountId, setSelectedAccountId] = useState<number | null>(
+    null
+  );
   const [showNewAccountForm, setShowNewAccountForm] = useState(false);
   const [accountModes, setAccountModes] = useState<Record<number, string>>({});
 
-  return (
+  const { showAlert, closeAlert } = useAlert();
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await fetch("http://localhost:3000/api/accounts");
+        if (!response.ok) {
+          showAlert("Failed to load accounts", "error");
+          return;
+        }
+
+        const data = await response.json();
+        setAccounts(data.data);
+
+        setLoading(false); // Set loading to false once data is fetched
+      } catch (error) {
+        showAlert("Failed to load accounts", "error");
+        setLoading(false); // Set loading to false even if there is an error
+      }
+    };
+
+    fetchData();
+  }, [accounts, showAlert]);
+
+  return loading ? (
+    <Stack direction="row" justifyContent="center" spacing={2}>
+      <Card
+        sx={{
+          p: 2,
+          width: 175,
+        }}
+      >
+        <Skeleton variant="text" sx={{ fontSize: "1rem" }} />
+        <Skeleton variant="text" />
+      </Card>
+      <Card
+        sx={{
+          p: 2,
+          width: 175,
+        }}
+      >
+        <Skeleton variant="text" sx={{ fontSize: "1rem" }} />
+        <Skeleton variant="text" />
+      </Card>
+      <Card
+        sx={{
+          p: 2,
+          width: 175,
+        }}
+      >
+        <Skeleton variant="text" sx={{ fontSize: "1rem" }} />
+        <Skeleton variant="text" />
+      </Card>
+    </Stack>
+  ) : (
     <Stack
       direction="row"
       justifyContent="center"
@@ -62,11 +116,7 @@ function AccountList({
               setAccountModes={setAccountModes}
             />
           ) : (
-            <AccountView
-              account={account}
-              setAccountModes={setAccountModes}
-              onAccountClick={onAccountClick}
-            />
+            <AccountView account={account} setAccountModes={setAccountModes} />
           )}
         </Paper>
       ))}
