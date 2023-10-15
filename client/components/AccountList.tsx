@@ -1,3 +1,5 @@
+"use client";
+
 import { useState } from "react";
 import IconButton from "@mui/material/IconButton";
 import Paper from "@mui/material/Paper";
@@ -16,7 +18,7 @@ function AccountList({
   onAccountClick,
   selectedAccountId,
 }: {
-  accounts: object[];
+  accounts: any;
   onAccountClick: any;
   selectedAccountId: number | null;
 }) {
