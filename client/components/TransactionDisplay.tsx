@@ -12,24 +12,18 @@ import Paper from "@mui/material/Paper";
 import Skeleton from "@mui/material/Skeleton";
 import { useAlert } from "../context/FeedbackContext";
 import { green, red } from "@mui/material/colors";
-import { useSearchParams } from "next/navigation";
 
 export default function TransactionDisplay({
   accountId,
+  from_date,
+  to_date,
 }: {
   accountId: number;
+  from_date: Dayjs;
+  to_date: Dayjs;
 }) {
   const [transactions, setTransactions] = useState(null) as any[];
   const [loading, setLoading] = useState(true);
-
-  const searchParams = useSearchParams();
-
-  const from_date = searchParams.get("from_date")
-    ? dayjs(searchParams.get("from_date"))
-    : dayjs();
-  const to_date = searchParams.get("to_date")
-    ? dayjs(searchParams.get("to_date"))
-    : dayjs();
 
   const { showAlert, closeAlert } = useAlert();
 
