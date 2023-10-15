@@ -72,6 +72,7 @@ function AccountList({
       {!showNewAccountForm && (
         <Tooltip title="Open new account">
           <Paper
+            elevation={4}
             onClick={() => setShowNewAccountForm(true)}
             sx={{
               p: 2,
