@@ -1,3 +1,5 @@
+"use client";
+
 import { useState, useEffect } from "react";
 import dayjs, { Dayjs } from "dayjs";
 import Table from "@mui/material/Table";
@@ -10,18 +12,24 @@ import Paper from "@mui/material/Paper";
 import Skeleton from "@mui/material/Skeleton";
 import { useAlert } from "../context/FeedbackContext";
 import { green, red } from "@mui/material/colors";
+import { useSearchParams } from "next/navigation";
 
 export default function TransactionDisplay({
   accountId,
-  fromDate,
-  toDate,
 }: {
   accountId: number;
-  fromDate: Dayjs;
-  toDate: Dayjs;
 }) {
   const [transactions, setTransactions] = useState(null) as any[];
   const [loading, setLoading] = useState(true);
+
+  const searchParams = useSearchParams();
+
+  const from_date = searchParams.get("from_date")
+    ? dayjs(searchParams.get("from_date"))
+    : dayjs();
+  const to_date = searchParams.get("to_date")
+    ? dayjs(searchParams.get("to_date"))
+    : dayjs();
 
   const { showAlert, closeAlert } = useAlert();
 
@@ -29,7 +37,7 @@ export default function TransactionDisplay({
     const fetchData = async () => {
       try {
         const response = await fetch(
-          `http://localhost:3000/api/transactions?account_id=${accountId}&from_date=${fromDate.format()}&to_date=${toDate.format()}`
+          `http://localhost:3000/api/transactions?account_id=${accountId}&from_date=${from_date.format()}&to_date=${to_date.format()}`
         );
         if (!response.ok) {
           showAlert("Failed to load transactions", "error");
@@ -47,7 +55,7 @@ export default function TransactionDisplay({
     };
 
     fetchData();
-  }, [accountId, fromDate, toDate, showAlert]);
+  }, [accountId, from_date, to_date, showAlert]);
 
   return (
     <TableContainer component={Paper}>
