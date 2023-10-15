@@ -28,7 +28,7 @@ export default function AccountEdit({
       try {
         // Post request to create a new account
         await fetch(
-          `http://localhost:3000/accounts?account_id=${account.account_id}`,
+          `http://localhost:3000/api/accounts?account_id=${account.account_id}`,
           {
             method: "PUT",
             headers: {

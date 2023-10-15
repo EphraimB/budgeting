@@ -25,7 +25,7 @@ export default function NewAccountForm({
     const submitData = async () => {
       try {
         // Post request to create a new account
-        await fetch("http://localhost:3000/accounts", {
+        await fetch("http://localhost:3000/api/accounts", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",

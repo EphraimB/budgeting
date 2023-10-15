@@ -35,7 +35,7 @@ export default function Home() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch("http://localhost:3000/accounts");
+        const response = await fetch("http://localhost:3000/api/accounts");
         if (!response.ok) {
           showAlert("Failed to load accounts", "error");
           return;

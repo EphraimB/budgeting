@@ -49,7 +49,6 @@ function AccountView({
       <AccountActionsMenu
         anchorEl={anchorEl}
         open={open}
-        handleClick={handleClick}
         handleClose={handleClose}
         setAccountModes={setAccountModes}
         accountId={account.account_id}

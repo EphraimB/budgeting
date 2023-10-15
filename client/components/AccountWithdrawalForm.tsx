@@ -35,7 +35,7 @@ function AccountWithdrawalForm({
   const handleSubmit = () => {
     const submitForm = async () => {
       try {
-        await fetch("http://localhost:3000/transactions/history", {
+        await fetch("http://localhost:3000/api/transactions/history", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",

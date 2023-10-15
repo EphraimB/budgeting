@@ -29,7 +29,7 @@ export default function TransactionDisplay({
     const fetchData = async () => {
       try {
         const response = await fetch(
-          `http://localhost:3000/transactions?account_id=${accountId}&from_date=${fromDate.format()}&to_date=${toDate.format()}`
+          `http://localhost:3000/api/transactions?account_id=${accountId}&from_date=${fromDate.format()}&to_date=${toDate.format()}`
         );
         if (!response.ok) {
           showAlert("Failed to load transactions", "error");

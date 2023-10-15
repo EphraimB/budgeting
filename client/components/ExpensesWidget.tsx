@@ -84,7 +84,7 @@ function ExpensesWidget({ selectedAccountId }: { selectedAccountId: number }) {
     const fetchData = async () => {
       try {
         const response = await fetch(
-          `http://localhost:3000/expenses?account_id=${selectedAccountId}`
+          `http://localhost:3000/api/expenses?account_id=${selectedAccountId}`
         );
         if (!response.ok) {
           showAlert("Failed to load expenses", "error");
