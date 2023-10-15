@@ -47,7 +47,7 @@ function AccountList() {
     };
 
     fetchData();
-  }, [accounts, showAlert]);
+  }, []);
 
   return loading ? (
     <Stack direction="row" justifyContent="center" spacing={2}>

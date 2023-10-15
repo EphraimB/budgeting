@@ -55,7 +55,7 @@ export default function TransactionDisplay({
     };
 
     fetchData();
-  }, [accountId, from_date, to_date, showAlert]);
+  }, []);
 
   return (
     <TableContainer component={Paper}>
