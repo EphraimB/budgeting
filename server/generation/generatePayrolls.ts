@@ -16,12 +16,14 @@ const generatePayrolls = (
     fromDate: Date,
 ): void => {
     const payroll_end_date: Date = new Date(payrolls.end_date);
+    payroll_end_date.setHours(11);
+    payroll_end_date.setMinutes(30);
 
     const newTransaction = {
         id: uuidv4(),
         title: 'Payroll',
         description: 'payroll',
-        date: new Date(payroll_end_date),
+        date: payroll_end_date,
         amount: payrolls.gross_pay,
         tax_rate: (payrolls.gross_pay - payrolls.net_pay) / payrolls.gross_pay,
         total_amount: payrolls.net_pay,

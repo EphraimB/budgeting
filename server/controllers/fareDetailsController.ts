@@ -116,8 +116,8 @@ export const createFareDetail = async (
 
     try {
         const commuteSystemResults = await executeQuery(
-            commuteSystemQueries.getCommuteSystems,
-            [],
+            commuteSystemQueries.getCommuteSystemById,
+            [commute_system_id],
         );
         const hasCommuteSystem: boolean = commuteSystemResults.length > 0;
 

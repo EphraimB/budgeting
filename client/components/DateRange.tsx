@@ -1,33 +1,35 @@
+"use client";
+
 import * as React from "react";
 import { Dayjs } from "dayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-import { DateTimePicker } from "@mui/x-date-pickers/DateTimePicker";
+import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import Stack from "@mui/material/Stack";
 
 export default function DateRange({
-  fromDate,
-  setFromDate,
-  toDate,
-  setToDate,
+  from_date,
+  to_date,
+  handleFromDateChange,
+  handleToDateChange,
 }: {
-  fromDate: Dayjs | null;
-  setFromDate: (newValue: Dayjs | null) => void;
-  toDate: Dayjs | null;
-  setToDate: (newValue: Dayjs | null) => void;
+  from_date: Dayjs;
+  to_date: Dayjs;
+  handleFromDateChange: any;
+  handleToDateChange: any;
 }) {
   return (
     <LocalizationProvider dateAdapter={AdapterDayjs}>
       <Stack direction="row" justifyContent="center" spacing={2}>
-        <DateTimePicker
+        <DatePicker
           label="From date"
-          value={fromDate}
-          onChange={(newFromDate) => setFromDate(newFromDate)}
+          value={from_date}
+          onChange={handleFromDateChange}
         />
-        <DateTimePicker
+        <DatePicker
           label="To date"
-          value={toDate}
-          onChange={(newToDate) => setToDate(newToDate)}
+          value={to_date}
+          onChange={handleToDateChange}
         />
       </Stack>
     </LocalizationProvider>
