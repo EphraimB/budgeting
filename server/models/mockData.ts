@@ -31,7 +31,6 @@ export const accounts: Account[] = [
     {
         account_id: 1,
         account_name: 'Test Account',
-        account_type: 0,
         account_balance: 1000,
         date_created: '2020-01-01',
         date_modified: '2020-01-01',
@@ -39,7 +38,6 @@ export const accounts: Account[] = [
     {
         account_id: 2,
         account_name: 'Test Account 2',
-        account_type: 1,
         account_balance: 2000,
         date_created: '2020-01-01',
         date_modified: '2020-01-01',

@@ -2098,15 +2098,6 @@
                     "name": {
                         "type": "string",
                         "example": "Checking"
-                    },
-                    "type": {
-                        "type": "integer",
-                        "example": 0
-                    },
-                    "balance": {
-                        "type": "number",
-                        "format": "double",
-                        "example": 1000.0
                     }
                 }
             },

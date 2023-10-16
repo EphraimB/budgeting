@@ -79,11 +79,7 @@ export const getExpenses = async (
 
         const expenses = await executeQuery(query, params);
 
-        if (
-            ((id !== null && id !== undefined) ||
-                (account_id !== null && account_id !== undefined)) &&
-            expenses.length === 0
-        ) {
+        if (id !== null && id !== undefined && expenses.length === 0) {
             response.status(404).send('Expense not found');
             return;
         }

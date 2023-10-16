@@ -5,6 +5,8 @@ services:
     build:
       context: ./client/
       dockerfile: Dockerfile
+    networks:
+      - app-network
     ports:
       - "3000:3000"
     depends_on:

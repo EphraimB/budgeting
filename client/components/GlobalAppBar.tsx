@@ -5,7 +5,7 @@ import Typography from "@mui/material/Typography";
 
 function GlobalAppBar() {
   return (
-    <Box sx={{ flexGrow: 1 }} mb={2}>
+    <Box sx={{ flexGrow: 1 }}>
       <AppBar position="static">
         <Toolbar>
           <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
