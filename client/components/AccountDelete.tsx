@@ -3,8 +3,7 @@ import IconButton from "@mui/material/IconButton";
 import CloseIcon from "@mui/icons-material/Close";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
-import { useSnackbar } from "../context/FeedbackContext";
-import { useAlert } from "../context/FeedbackContext";
+import { useSnackbar, useAlert, useAccounts } from "../context/FeedbackContext";
 
 function AccountDelete({
   account,
@@ -15,6 +14,7 @@ function AccountDelete({
 }) {
   const { showSnackbar } = useSnackbar();
   const { showAlert } = useAlert();
+  const { fetchAccounts } = useAccounts();
 
   const handleDelete = () => {
     const deleteAccount = async () => {
@@ -41,6 +41,7 @@ function AccountDelete({
     };
 
     deleteAccount();
+    fetchAccounts();
   };
 
   const handleCancel = () => {

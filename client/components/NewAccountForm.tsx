@@ -5,8 +5,7 @@ import TextField from "@mui/material/TextField";
 import Stack from "@mui/material/Stack";
 import IconButton from "@mui/material/IconButton";
 import CloseIcon from "@mui/icons-material/Close";
-import { useSnackbar } from "../context/FeedbackContext";
-import { useAlert } from "../context/FeedbackContext";
+import { useSnackbar, useAlert, useAccounts } from "../context/FeedbackContext";
 
 export default function NewAccountForm({
   setShowNewAccountForm,
@@ -16,6 +15,7 @@ export default function NewAccountForm({
   const [accountName, setAccountName] = useState("");
   const { showSnackbar } = useSnackbar();
   const { showAlert } = useAlert();
+  const { fetchAccounts } = useAccounts();
 
   const data = {
     name: accountName,
@@ -41,6 +41,7 @@ export default function NewAccountForm({
     };
 
     submitData();
+    fetchAccounts();
   };
 
   return (

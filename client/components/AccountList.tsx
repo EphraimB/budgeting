@@ -14,42 +14,18 @@ import { Tooltip } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import AccountDepositForm from "./AccountDepositForm";
 import AccountWithdrawalForm from "./AccountWithdrawalForm";
-import { useAlert } from "../context/FeedbackContext";
 import { usePathname } from "next/navigation";
+import { useAccounts } from "../context/FeedbackContext";
 
 function AccountList() {
-  const [accounts, setAccounts] = useState([]);
-  const [loading, setLoading] = useState(true);
   const [showNewAccountForm, setShowNewAccountForm] = useState(false);
   const [accountModes, setAccountModes] = useState<Record<number, string>>({});
 
-  const { showAlert, closeAlert } = useAlert();
+  const { accounts, loading } = useAccounts();
 
   const pathname = usePathname();
 
   const account_id = parseInt(pathname.split("/")[2]);
-
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await fetch("http://localhost:3000/api/accounts");
-        if (!response.ok) {
-          showAlert("Failed to load accounts", "error");
-          return;
-        }
-
-        const data = await response.json();
-        setAccounts(data.data);
-
-        setLoading(false); // Set loading to false once data is fetched
-      } catch (error) {
-        showAlert("Failed to load accounts", "error");
-        setLoading(false); // Set loading to false even if there is an error
-      }
-    };
-
-    fetchData();
-  }, []);
 
   return loading ? (
     <Stack direction="row" justifyContent="center" spacing={2}>
