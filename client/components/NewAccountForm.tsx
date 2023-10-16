@@ -32,6 +32,7 @@ export default function NewAccountForm({
           },
           body: JSON.stringify(data),
         });
+        fetchAccounts();
       } catch (error) {
         console.error("There was an error creating the account!", error);
         showAlert("There was an error creating the account!", "error");
@@ -41,7 +42,6 @@ export default function NewAccountForm({
     };
 
     submitData();
-    fetchAccounts();
   };
 
   return (

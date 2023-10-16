@@ -37,6 +37,7 @@ export default function AccountEdit({
             body: JSON.stringify(data),
           }
         );
+        fetchAccounts();
       } catch (error) {
         console.error("There was an error editing the account!", error);
         showAlert("There was an error editing the account!", "error");
@@ -49,7 +50,6 @@ export default function AccountEdit({
     };
 
     submitData();
-    fetchAccounts();
   };
 
   return (

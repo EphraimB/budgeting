@@ -29,6 +29,7 @@ function AccountDelete({
             },
           }
         );
+        fetchAccounts();
       } catch (error) {
         console.error("There was an error deleting the account!", error);
         showAlert("There was an error deleting the account!", "error");
@@ -41,7 +42,6 @@ function AccountDelete({
     };
 
     deleteAccount();
-    fetchAccounts();
   };
 
   const handleCancel = () => {
