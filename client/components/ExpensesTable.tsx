@@ -13,7 +13,7 @@ import { useAlert } from "../context/FeedbackContext";
 import Skeleton from "@mui/material/Skeleton";
 import EnhancedTableHead from "../components/EnhancedTableHead";
 import EnhancedTableToolbar from "../components/EnhancedTableToolbar";
-import dayjs, { Dayjs } from "dayjs";
+import dayjs from "dayjs";
 import {
   getComparator,
   stableSort,
