@@ -13,6 +13,7 @@ import { useAlert } from "../../../../context/FeedbackContext";
 import Skeleton from "@mui/material/Skeleton";
 import EnhancedTableHead from "../../../../components/EnhancedTableHead";
 import EnhancedTableToolbar from "../../../../components/EnhancedTableToolbar";
+import dayjs, { Dayjs } from "dayjs";
 import {
   getComparator,
   stableSort,
@@ -53,18 +54,23 @@ const headCells: readonly HeadCell[] = [
   },
   {
     id: "expense_description",
-    numeric: true,
+    numeric: false,
     label: "Description",
   },
   {
     id: "expense_amount",
-    numeric: true,
+    numeric: false,
     label: "Amount ($)",
   },
   {
-    id: "expense_begin_date",
+    id: "next_expense_begin_date",
     numeric: false,
-    label: "Date",
+    label: "Next expense begin date",
+  },
+  {
+    id: "expense_frequency",
+    numeric: false,
+    label: "Expense frequency",
   },
 ];
 
@@ -170,6 +176,64 @@ function Expenses({ params }: { params: { account_id: string } }) {
     );
   }, [loading, expenses, order, orderBy, page, rowsPerPage]);
 
+  const getNextExpenseDateAndFrequency = (expense: any) => {
+    const currentDate = new Date(expense.expense_begin_date);
+    let nextExpenseDate;
+    let expenseFrequency;
+
+    switch (expense.frequency_type) {
+      case 0: // Daily
+        expenseFrequency = "Daily";
+        currentDate.setDate(
+          currentDate.getDate() + expense.frequency_type_variable
+        );
+        nextExpenseDate = currentDate;
+        break;
+      case 1: // Weekly
+        expenseFrequency = "Weekly";
+        currentDate.setDate(
+          currentDate.getDate() + 7 * expense.frequency_type_variable
+        );
+        nextExpenseDate = currentDate;
+        break;
+      case 2: // Monthly
+        expenseFrequency = "Monthly";
+        if (expense.frequency_day_of_month) {
+          currentDate.setMonth(
+            currentDate.getMonth() + expense.frequency_type_variable
+          );
+          currentDate.setDate(expense.frequency_day_of_month);
+        } else {
+          currentDate.setMonth(
+            currentDate.getMonth() + expense.frequency_type_variable
+          );
+        }
+        nextExpenseDate = currentDate;
+        break;
+      case 3: // Yearly
+        expenseFrequency = "Yearly";
+        if (expense.frequency_month_of_year) {
+          currentDate.setFullYear(
+            currentDate.getFullYear() + expense.frequency_type_variable
+          );
+          currentDate.setMonth(expense.frequency_month_of_year - 1); // Months are 0-indexed in JavaScript
+        } else {
+          currentDate.setFullYear(
+            currentDate.getFullYear() + expense.frequency_type_variable
+          );
+        }
+        nextExpenseDate = currentDate;
+        break;
+      default:
+        throw new Error("Invalid frequency type");
+    }
+
+    return {
+      next_expense_date: nextExpenseDate.toISOString().split("T")[0],
+      expense_frequency: expenseFrequency,
+    };
+  };
+
   return (
     <Box>
       <EnhancedTableToolbar numSelected={selected.length} name="Expenses" />
@@ -229,9 +293,27 @@ function Expenses({ params }: { params: { account_id: string } }) {
                     <TableCell align="right">
                       {row.expense_description}
                     </TableCell>
-                    <TableCell align="right">{row.expense_amount}</TableCell>
                     <TableCell align="right">
-                      {row.expense_begin_date}
+                      $
+                      {(
+                        Math.round((row.expense_amount as number) * 100) / 100
+                      ).toFixed(2)}
+                    </TableCell>
+                    <TableCell align="right">
+                      {dayjs(
+                        getNextExpenseDateAndFrequency(row).next_expense_date
+                      ).format("dddd")}
+                      <br />
+                      {dayjs(
+                        getNextExpenseDateAndFrequency(row).next_expense_date
+                      ).format("MMMM D, YYYY")}
+                      <br />
+                      {dayjs(
+                        getNextExpenseDateAndFrequency(row).next_expense_date
+                      ).format("h:mm A")}
+                    </TableCell>
+                    <TableCell align="right">
+                      {getNextExpenseDateAndFrequency(row).expense_frequency}
                     </TableCell>
                   </TableRow>
                 );
