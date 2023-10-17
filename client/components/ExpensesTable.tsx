@@ -77,6 +77,8 @@ const headCells: readonly HeadCell[] = [
 function ExpensesTable({ accountId }: { accountId: number }) {
   const [expenses, setExpenses] = useState(null) as any[];
   const [loading, setLoading] = useState(true);
+  const [taxes, setTaxes] = useState(null) as any[];
+  const [taxesLoading, setTaxesLoading] = useState(true);
   const [order, setOrder] = useState<Order>("asc");
   const [orderBy, setOrderBy] = useState<string>("expense_title");
   const [selected, setSelected] = useState<readonly string[]>([]);
@@ -103,6 +105,30 @@ function ExpensesTable({ accountId }: { accountId: number }) {
       } catch (error) {
         showAlert("Failed to load expenses", "error");
         setLoading(false); // Set loading to false even if there is an error
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await fetch(
+          `http://localhost:3000/api/taxes?account_id=${accountId}`
+        );
+        if (!response.ok) {
+          showAlert("Failed to load taxes", "error");
+          return;
+        }
+
+        const data = await response.json();
+        setTaxes(data.data);
+
+        setTaxesLoading(false); // Set loading to false once data is fetched
+      } catch (error) {
+        showAlert("Failed to load taxes", "error");
+        setTaxesLoading(false); // Set loading to false even if there is an error
       }
     };
 
@@ -312,6 +338,17 @@ function ExpensesTable({ accountId }: { accountId: number }) {
                 const isItemSelected = isSelected(expenses.expense_title);
                 const labelId = `enhanced-table-checkbox-${index}`;
 
+                const taxObject = taxes
+                  ? taxes.find((tax: any) => tax.tax_id === row.tax_id)
+                  : 0;
+                const taxRate = taxObject ? parseFloat(taxObject.tax_rate) : 0;
+                const amountAfterTax: number =
+                  parseFloat(row.expense_amount as string) * (1 + taxRate);
+
+                const amountAfterSubsidy: number =
+                  amountAfterTax -
+                  amountAfterTax * parseFloat(row.expense_subsidized as string);
+
                 return (
                   <TableRow
                     hover
@@ -348,7 +385,7 @@ function ExpensesTable({ accountId }: { accountId: number }) {
                     <TableCell align="right">
                       $
                       {(
-                        Math.round((row.expense_amount as number) * 100) / 100
+                        Math.round((amountAfterSubsidy as number) * 100) / 100
                       ).toFixed(2)}
                     </TableCell>
                     <TableCell align="right">
