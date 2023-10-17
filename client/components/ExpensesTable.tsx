@@ -19,6 +19,7 @@ import {
   stableSort,
   type Order,
 } from "../utils/helperFunctions";
+import RowView from "./RowView";
 
 interface Expense {
   expense_id: number;
@@ -84,6 +85,7 @@ function ExpensesTable({ accountId }: { accountId: number }) {
   const [selected, setSelected] = useState<readonly string[]>([]);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
+  const [rowModes, setRowModes] = useState<Record<number, string>>({});
 
   const { showAlert, closeAlert } = useAlert();
 
@@ -332,90 +334,33 @@ function ExpensesTable({ accountId }: { accountId: number }) {
           />
           <TableBody>
             {loading || !expenses ? (
-              <TableRow
-                sx={{
-                  height: 53 * 5,
-                }}
-              >
+              <TableRow sx={{ height: 53 * 5 }}>
                 <TableCell colSpan={6}>
                   <Skeleton />
                 </TableCell>
               </TableRow>
             ) : (
               visibleRows.map((row, index) => {
-                const isItemSelected = isSelected(expenses.expense_title);
-                const labelId = `enhanced-table-checkbox-${index}`;
-
-                const taxObject = taxes
-                  ? taxes.find((tax: any) => tax.tax_id === row.tax_id)
-                  : 0;
-                const taxRate = taxObject ? parseFloat(taxObject.tax_rate) : 0;
-                const amountAfterTax: number =
-                  parseFloat(row.expense_amount as string) * (1 + taxRate);
-
-                const amountAfterSubsidy: number =
-                  amountAfterTax -
-                  amountAfterTax * parseFloat(row.expense_subsidized as string);
-
-                return (
-                  <TableRow
-                    hover
-                    onClick={(event) =>
-                      handleClick(event, expenses.expense_title)
-                    }
-                    role="checkbox"
-                    aria-checked={isItemSelected}
-                    tabIndex={-1}
-                    key={row.expense_id}
-                    selected={isItemSelected}
-                    sx={{ cursor: "pointer" }}
-                  >
-                    <TableCell padding="checkbox">
-                      <Checkbox
-                        color="primary"
-                        checked={isItemSelected}
-                        inputProps={{
-                          "aria-labelledby": labelId,
-                        }}
-                      />
-                    </TableCell>
-                    <TableCell
-                      component="th"
-                      id={labelId}
-                      scope="row"
-                      padding="none"
-                    >
-                      {row.expense_title}
-                    </TableCell>
-                    <TableCell align="right">
-                      {row.expense_description}
-                    </TableCell>
-                    <TableCell align="right">
-                      $
-                      {(
-                        Math.round((amountAfterSubsidy as number) * 100) / 100
-                      ).toFixed(2)}
-                    </TableCell>
-                    <TableCell align="right">
-                      {dayjs(
-                        getNextExpenseDateAndFrequency(row).next_expense_date
-                      ).format("dddd")}
-                      <br />
-                      {dayjs(
-                        getNextExpenseDateAndFrequency(row).next_expense_date
-                      ).format("MMMM D, YYYY")}
-                      <br />
-                      {dayjs(
-                        getNextExpenseDateAndFrequency(row).next_expense_date
-                      ).format("h:mm A")}
-                    </TableCell>
-                    <TableCell align="right">
-                      {getNextExpenseDateAndFrequency(row).expense_frequency}
-                    </TableCell>
-                  </TableRow>
-                );
+                if (rowModes[row.expense_id as number] === "delete") {
+                  return <Box key={row.expense_id} />;
+                } else {
+                  return (
+                    <RowView
+                      key={row.expense_id}
+                      row={row}
+                      index={index}
+                      handleClick={handleClick}
+                      isSelected={isSelected}
+                      taxes={taxes}
+                      getNextExpenseDateAndFrequency={
+                        getNextExpenseDateAndFrequency
+                      }
+                    />
+                  );
+                }
               })
             )}
+
             {emptyRows > 0 && (
               <TableRow
                 style={{
