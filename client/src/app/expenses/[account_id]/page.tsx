@@ -183,21 +183,63 @@ function Expenses({ params }: { params: { account_id: string } }) {
 
     switch (expense.frequency_type) {
       case 0: // Daily
-        expenseFrequency = "Daily";
+        if (
+          expense.frequency_type_variable === 1 ||
+          expense.frequency_type_variable === null
+        )
+          expenseFrequency = "Daily";
+        else
+          expenseFrequency =
+            "Every " + expense.frequency_type_variable + " days";
+
         currentDate.setDate(
           currentDate.getDate() + expense.frequency_type_variable
         );
         nextExpenseDate = currentDate;
         break;
       case 1: // Weekly
-        expenseFrequency = "Weekly";
+        if (
+          expense.frequency_type_variable === 1 ||
+          expense.frequency_type_variable === null
+        )
+          expenseFrequency = `Weekly on ${dayjs()
+            .day(expense.expense_begin_date)
+            .format("dddd")}`;
+        else {
+          expenseFrequency =
+            "Every " +
+            expense.frequency_type_variable +
+            " weeks on " +
+            dayjs().day(expense.expense_begin_date).format("dddd");
+        }
+
         currentDate.setDate(
           currentDate.getDate() + 7 * expense.frequency_type_variable
         );
         nextExpenseDate = currentDate;
         break;
       case 2: // Monthly
-        expenseFrequency = "Monthly";
+        if (
+          expense.frequency_type_variable === 1 ||
+          expense.frequency_type_variable === null
+        ) {
+          expenseFrequency = `Monthly on the ${dayjs(
+            expense.expense_begin_date
+          ).format("DD")}th`;
+        } else {
+          expenseFrequency = `Every ${
+            expense.frequency_type_variable
+          } months on the ${dayjs(expense.expense_begin_date).format("DD")}th`;
+        }
+
+        if (expense.frequency_day_of_month) {
+          expenseFrequency = `Monthly on the ${expense.frequency_day_of_month}`;
+        } else if (expense.frequency_day_of_week) {
+          expenseFrequency = `Monthly on the ${
+            expense.frequency_week_of_month
+          } ${dayjs().day(expense.frequency_day_of_week).format("dddd")}`;
+        }
+
         if (expense.frequency_day_of_month) {
           currentDate.setMonth(
             currentDate.getMonth() + expense.frequency_type_variable
@@ -211,7 +253,18 @@ function Expenses({ params }: { params: { account_id: string } }) {
         nextExpenseDate = currentDate;
         break;
       case 3: // Yearly
-        expenseFrequency = "Yearly";
+        if (
+          expense.frequency_type_variable === 1 ||
+          expense.frequency_type_variable === null
+        )
+          expenseFrequency = `Yearly on ${dayjs(
+            expense.expense_begin_date
+          ).format("MMMM D")}`;
+        else
+          expenseFrequency = `Every ${
+            expense.frequency_type_variable
+          } years on ${dayjs(expense.expense_begin_date).format("MMMM D")}`;
+
         if (expense.frequency_month_of_year) {
           currentDate.setFullYear(
             currentDate.getFullYear() + expense.frequency_type_variable
@@ -225,11 +278,12 @@ function Expenses({ params }: { params: { account_id: string } }) {
         nextExpenseDate = currentDate;
         break;
       default:
-        throw new Error("Invalid frequency type");
+        expenseFrequency = "Unknown";
+        nextExpenseDate = currentDate;
     }
 
     return {
-      next_expense_date: nextExpenseDate.toISOString().split("T")[0],
+      next_expense_date: nextExpenseDate,
       expense_frequency: expenseFrequency,
     };
   };
