@@ -63,9 +63,9 @@ const headCells: readonly HeadCell[] = [
     label: "Amount ($)",
   },
   {
-    id: "next_expense_begin_date",
+    id: "next_expense_date",
     numeric: false,
-    label: "Next expense begin date",
+    label: "Next expense date",
   },
   {
     id: "expense_frequency",
