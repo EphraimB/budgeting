@@ -358,7 +358,7 @@ function ExpensesTable({ accountId }: { accountId: number }) {
                     role="checkbox"
                     aria-checked={isItemSelected}
                     tabIndex={-1}
-                    key={expenses.expense_title}
+                    key={row.expense_id}
                     selected={isItemSelected}
                     sx={{ cursor: "pointer" }}
                   >
