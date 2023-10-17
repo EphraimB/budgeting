@@ -107,31 +107,33 @@ export default function TransactionDisplay({
             </TableRow>
           </TableHead>
           {loading || !transactions ? (
-            <TableRow>
-              <TableCell>
-                <Skeleton variant="text" />
-                <Skeleton variant="text" />
-                <Skeleton variant="text" />
-              </TableCell>
-              <TableCell>
-                <Skeleton variant="text" />
-              </TableCell>
-              <TableCell>
-                <Skeleton variant="text" />
-              </TableCell>
-              <TableCell>
-                <Skeleton variant="text" />
-              </TableCell>
-              <TableCell>
-                <Skeleton variant="text" />
-              </TableCell>
-              <TableCell>
-                <Skeleton variant="text" />
-              </TableCell>
-              <TableCell>
-                <Skeleton variant="text" />
-              </TableCell>
-            </TableRow>
+            <TableBody>
+              <TableRow>
+                <TableCell>
+                  <Skeleton variant="text" />
+                  <Skeleton variant="text" />
+                  <Skeleton variant="text" />
+                </TableCell>
+                <TableCell>
+                  <Skeleton variant="text" />
+                </TableCell>
+                <TableCell>
+                  <Skeleton variant="text" />
+                </TableCell>
+                <TableCell>
+                  <Skeleton variant="text" />
+                </TableCell>
+                <TableCell>
+                  <Skeleton variant="text" />
+                </TableCell>
+                <TableCell>
+                  <Skeleton variant="text" />
+                </TableCell>
+                <TableCell>
+                  <Skeleton variant="text" />
+                </TableCell>
+              </TableRow>
+            </TableBody>
           ) : (
             <TableBody>
               {flatTransactions
