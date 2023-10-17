@@ -68,7 +68,9 @@ const headCells: readonly HeadCell[] = [
   },
 ];
 
-function Expenses({ selectedAccountId }: { selectedAccountId: number }) {
+function Expenses({ params }: { params: { account_id: string } }) {
+  const accountId = parseInt(params.account_id);
+
   const [expenses, setExpenses] = useState(null) as any[];
   const [loading, setLoading] = useState(true);
   const [order, setOrder] = useState<Order>("asc");
@@ -83,7 +85,7 @@ function Expenses({ selectedAccountId }: { selectedAccountId: number }) {
     const fetchData = async () => {
       try {
         const response = await fetch(
-          `http://localhost:3000/api/expenses?account_id=${selectedAccountId}`
+          `http://localhost:3000/api/expenses?account_id=${accountId}`
         );
         if (!response.ok) {
           showAlert("Failed to load expenses", "error");
@@ -101,7 +103,7 @@ function Expenses({ selectedAccountId }: { selectedAccountId: number }) {
     };
 
     fetchData();
-  }, [selectedAccountId]);
+  }, []);
 
   const handleRequestSort = (
     event: React.MouseEvent<unknown>,
