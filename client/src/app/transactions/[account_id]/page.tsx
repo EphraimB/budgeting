@@ -5,6 +5,7 @@ import dayjs, { Dayjs } from "dayjs";
 import DateRange from "../../../../components/DateRange";
 import TransactionDisplay from "../../../../components/TransactionDisplay";
 import { useRouter, usePathname, useSearchParams } from "next/navigation";
+import DataManagementWidgets from "../../../../components/DataManagementWidgets";
 
 function TransactionsPage({ params }: { params: { account_id: string } }) {
   const accountId = parseInt(params.account_id);
@@ -35,6 +36,8 @@ function TransactionsPage({ params }: { params: { account_id: string } }) {
 
   return (
     <>
+      <DataManagementWidgets accountId={accountId} />
+      <br />
       <DateRange
         from_date={from_date}
         to_date={to_date}
