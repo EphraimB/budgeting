@@ -75,9 +75,19 @@ const headCells: readonly HeadCell[] = [
   },
 ];
 
-function ExpensesTable({ accountId }: { accountId: number }) {
-  const [expenses, setExpenses] = useState(null) as any[];
-  const [loading, setLoading] = useState(true);
+function ExpensesTable({
+  accountId,
+  expenses,
+  setExpenses,
+  loading,
+  setLoading,
+}: {
+  accountId: number;
+  expenses: Expense[];
+  setExpenses: any;
+  loading: boolean;
+  setLoading: any;
+}) {
   const [taxes, setTaxes] = useState(null) as any[];
   const [taxesLoading, setTaxesLoading] = useState(true);
   const [order, setOrder] = useState<Order>("asc");
@@ -111,7 +121,7 @@ function ExpensesTable({ accountId }: { accountId: number }) {
     };
 
     fetchData();
-  }, []);
+  }, [expenses]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -199,7 +209,7 @@ function ExpensesTable({ accountId }: { accountId: number }) {
     if (loading || !expenses) {
       return [];
     }
-    return stableSort(expenses, getComparator(order, orderBy)).slice(
+    return stableSort(expenses as any[], getComparator(order, orderBy)).slice(
       page * rowsPerPage,
       page * rowsPerPage + rowsPerPage
     );

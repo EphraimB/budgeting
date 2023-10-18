@@ -2,6 +2,7 @@ import TableRow from "@mui/material/TableRow";
 import TableCell from "@mui/material/TableCell";
 import Button from "@mui/material/Button";
 import Box from "@mui/material/Box";
+import { useSnackbar, useAlert } from "../context/FeedbackContext";
 
 function RowDelete({
   expense,
@@ -10,6 +11,36 @@ function RowDelete({
   expense: any;
   setRowModes: any;
 }) {
+  const { showSnackbar } = useSnackbar();
+  const { showAlert } = useAlert();
+
+  const handleDelete = () => {
+    const deleteAccount = async () => {
+      try {
+        // Post request to create a new expense
+        await fetch(
+          `http://localhost:3000/api/expenses?expense_id=${expense.expense_id}`,
+          {
+            method: "DELETE",
+            headers: {
+              "Content-Type": "application/json",
+            },
+          }
+        );
+      } catch (error) {
+        console.error("There was an error deleting the expense!", error);
+        showAlert("There was an error deleting the expense!", "error");
+      }
+      setRowModes((prevModes: any) => ({
+        ...prevModes,
+        [expense.expense_id]: "view",
+      }));
+      showSnackbar("Expense deleted!");
+    };
+
+    deleteAccount();
+  };
+
   return (
     <TableRow
       key={expense.expense_id}
@@ -27,9 +58,7 @@ function RowDelete({
             variant="contained"
             color="primary"
             sx={{ mr: 1 }}
-            onClick={() => {
-              console.log("delete expense");
-            }}
+            onClick={handleDelete}
           >
             Delete
           </Button>
