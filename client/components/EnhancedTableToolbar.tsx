@@ -10,12 +10,27 @@ import Typography from "@mui/material/Typography";
 interface EnhancedTableToolbarProps {
   numSelected: number;
   name: string;
+  rowModes: Record<number, string>;
+  setRowModes: any;
+  selectedRows: number[];
 }
 
 function EnhancedTableToolbar({
   numSelected,
   name,
+  rowModes,
+  setRowModes,
+  selectedRows,
 }: EnhancedTableToolbarProps) {
+  const handleDeleteClick = () => {
+    console.log(selectedRows);
+    let updatedRowModes = { ...rowModes }; // Create a shallow copy of the current state
+    for (const expenseId of selectedRows) {
+      updatedRowModes[expenseId] = "delete";
+    }
+    setRowModes(updatedRowModes);
+  };
+
   return (
     <Toolbar
       sx={{
@@ -51,7 +66,7 @@ function EnhancedTableToolbar({
       )}
       {numSelected > 0 ? (
         <Tooltip title="Delete">
-          <IconButton>
+          <IconButton onClick={handleDeleteClick}>
             <DeleteIcon />
           </IconButton>
         </Tooltip>

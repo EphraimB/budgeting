@@ -82,7 +82,7 @@ function ExpensesTable({ accountId }: { accountId: number }) {
   const [taxesLoading, setTaxesLoading] = useState(true);
   const [order, setOrder] = useState<Order>("asc");
   const [orderBy, setOrderBy] = useState<string>("expense_title");
-  const [selected, setSelected] = useState<readonly string[]>([]);
+  const [selected, setSelected] = useState<number[]>([]);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [rowModes, setRowModes] = useState<Record<number, string>>({});
@@ -148,19 +148,22 @@ function ExpensesTable({ accountId }: { accountId: number }) {
 
   const handleSelectAllClick = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.checked) {
-      const newSelected = expenses.map((n: Expense) => n.expense_title);
+      const newSelected = expenses.map((n: Expense) => n.expense_id);
       setSelected(newSelected);
       return;
     }
     setSelected([]);
   };
 
-  const handleClick = (event: React.MouseEvent<unknown>, name: string) => {
-    const selectedIndex = selected.indexOf(name);
-    let newSelected: readonly string[] = [];
+  const handleClick = (
+    event: React.MouseEvent<unknown>,
+    expense_id: number
+  ) => {
+    const selectedIndex = selected.indexOf(expense_id);
+    let newSelected: number[] = [];
 
     if (selectedIndex === -1) {
-      newSelected = newSelected.concat(selected, name);
+      newSelected = newSelected.concat(selected, expense_id);
     } else if (selectedIndex === 0) {
       newSelected = newSelected.concat(selected.slice(1));
     } else if (selectedIndex === selected.length - 1) {
@@ -186,7 +189,8 @@ function ExpensesTable({ accountId }: { accountId: number }) {
     setPage(0);
   };
 
-  const isSelected = (name: string) => selected.indexOf(name) !== -1;
+  const isSelected = (expense_id: number) =>
+    selected.indexOf(expense_id) !== -1;
 
   // Avoid a layout jump when reaching the last page with empty rows.
   const emptyRows =
@@ -316,7 +320,13 @@ function ExpensesTable({ accountId }: { accountId: number }) {
 
   return (
     <Box>
-      <EnhancedTableToolbar numSelected={selected.length} name="Expenses" />
+      <EnhancedTableToolbar
+        numSelected={selected.length}
+        selectedRows={selected}
+        rowModes={rowModes}
+        setRowModes={setRowModes}
+        name="Expenses"
+      />
       <TableContainer>
         <Table
           sx={{ minWidth: 750 }}

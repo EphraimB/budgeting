@@ -18,7 +18,7 @@ function RowView({
   taxes: any;
   getNextExpenseDateAndFrequency: any;
 }) {
-  const isItemSelected = isSelected(row.expense_title);
+  const isItemSelected = isSelected(row.expense_id);
   const labelId = `enhanced-table-checkbox-${index}`;
 
   const taxObject = taxes
@@ -35,7 +35,7 @@ function RowView({
   return (
     <TableRow
       hover
-      onClick={(event) => handleClick(event, row.expense_title)}
+      onClick={(event) => handleClick(event, row.expense_id)}
       role="checkbox"
       aria-checked={isItemSelected}
       tabIndex={-1}
@@ -52,6 +52,7 @@ function RowView({
           }}
         />
       </TableCell>
+
       <TableCell component="th" id={labelId} scope="row" padding="none">
         {row.expense_title}
       </TableCell>
