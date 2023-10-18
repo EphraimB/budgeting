@@ -3,8 +3,13 @@ import TableCell from "@mui/material/TableCell";
 import Button from "@mui/material/Button";
 import Box from "@mui/material/Box";
 
-function RowDelete({ expense }: { expense: any }) {
-  console.log(expense);
+function RowDelete({
+  expense,
+  setRowModes,
+}: {
+  expense: any;
+  setRowModes: any;
+}) {
   return (
     <TableRow
       key={expense.expense_id}
@@ -13,8 +18,8 @@ function RowDelete({ expense }: { expense: any }) {
       }}
     >
       <TableCell colSpan={5} sx={{ color: "#fff" }}>
-        Are you sure you want to delete this expense called{" "}
-        {expense.expense_title}?
+        Are you sure you want to delete this expense called "
+        {expense.expense_title}"?
       </TableCell>
       <TableCell sx={{ color: "#fff" }}>
         <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
@@ -32,7 +37,10 @@ function RowDelete({ expense }: { expense: any }) {
             variant="contained"
             color="secondary"
             onClick={() => {
-              console.log("cancel delete expense");
+              setRowModes((prevModes: any) => ({
+                ...prevModes,
+                [expense.expense_id]: "view",
+              }));
             }}
           >
             Cancel

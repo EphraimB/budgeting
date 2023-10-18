@@ -26,7 +26,7 @@ function RowView({
     : 0;
   const taxRate = taxObject ? parseFloat(taxObject.tax_rate) : 0;
   const amountAfterTax: number =
-    parseFloat(row.expense_amount as string) * (1 + taxRate);
+    parseFloat(row.expense_amount as string) * taxRate;
 
   const amountAfterSubsidy: number =
     amountAfterTax -
@@ -35,7 +35,7 @@ function RowView({
   return (
     <TableRow
       hover
-      onClick={(event) => handleClick(event, row.expense_id)}
+      onClick={(event) => handleClick(event, row)}
       role="checkbox"
       aria-checked={isItemSelected}
       tabIndex={-1}

@@ -8,7 +8,6 @@ import TableRow from "@mui/material/TableRow";
 import Table from "@mui/material/Table";
 import TableContainer from "@mui/material/TableContainer";
 import TablePagination from "@mui/material/TablePagination";
-import Checkbox from "@mui/material/Checkbox";
 import { useAlert } from "../context/FeedbackContext";
 import Skeleton from "@mui/material/Skeleton";
 import EnhancedTableHead from "../components/EnhancedTableHead";
@@ -83,7 +82,7 @@ function ExpensesTable({ accountId }: { accountId: number }) {
   const [taxesLoading, setTaxesLoading] = useState(true);
   const [order, setOrder] = useState<Order>("asc");
   const [orderBy, setOrderBy] = useState<string>("expense_title");
-  const [selected, setSelected] = useState<number[]>([]);
+  const [selected, setSelected] = useState<Expense[]>([]);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [rowModes, setRowModes] = useState<Record<number, string>>({});
@@ -149,31 +148,30 @@ function ExpensesTable({ accountId }: { accountId: number }) {
 
   const handleSelectAllClick = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.checked) {
-      const newSelected = expenses.map((n: Expense) => n.expense_id);
+      const newSelected = expenses.map((n: Expense) => n);
       setSelected(newSelected);
       return;
     }
     setSelected([]);
   };
 
-  const handleClick = (
-    event: React.MouseEvent<unknown>,
-    expense_id: number
-  ) => {
-    const selectedIndex = selected.indexOf(expense_id);
-    let newSelected: number[] = [];
+  const handleClick = (event: React.MouseEvent<unknown>, expense: Expense) => {
+    const selectedIndex = selected.findIndex(
+      (e) => e.expense_id === expense.expense_id
+    );
+    let newSelected: Expense[] = [];
 
     if (selectedIndex === -1) {
-      newSelected = newSelected.concat(selected, expense_id);
+      newSelected = [...selected, expense];
     } else if (selectedIndex === 0) {
-      newSelected = newSelected.concat(selected.slice(1));
+      newSelected = selected.slice(1);
     } else if (selectedIndex === selected.length - 1) {
-      newSelected = newSelected.concat(selected.slice(0, -1));
+      newSelected = selected.slice(0, -1);
     } else if (selectedIndex > 0) {
-      newSelected = newSelected.concat(
-        selected.slice(0, selectedIndex),
-        selected.slice(selectedIndex + 1)
-      );
+      newSelected = [
+        ...selected.slice(0, selectedIndex),
+        ...selected.slice(selectedIndex + 1),
+      ];
     }
 
     setSelected(newSelected);
@@ -190,8 +188,8 @@ function ExpensesTable({ accountId }: { accountId: number }) {
     setPage(0);
   };
 
-  const isSelected = (expense_id: number) =>
-    selected.indexOf(expense_id) !== -1;
+  const isSelected = (expenseId: number) =>
+    selected.some((expense) => expense.expense_id === expenseId);
 
   // Avoid a layout jump when reaching the last page with empty rows.
   const emptyRows =
@@ -353,7 +351,7 @@ function ExpensesTable({ accountId }: { accountId: number }) {
             ) : (
               visibleRows.map((row, index) => {
                 if (rowModes[row.expense_id as number] === "delete") {
-                  return <RowDelete expense={row.expense_id} />;
+                  return <RowDelete expense={row} setRowModes={setRowModes} />;
                 } else {
                   return (
                     <RowView

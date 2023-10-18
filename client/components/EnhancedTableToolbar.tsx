@@ -12,7 +12,7 @@ interface EnhancedTableToolbarProps {
   name: string;
   rowModes: Record<number, string>;
   setRowModes: any;
-  selectedRows: number[];
+  selectedRows: any[];
 }
 
 function EnhancedTableToolbar({
@@ -24,8 +24,8 @@ function EnhancedTableToolbar({
 }: EnhancedTableToolbarProps) {
   const handleDeleteClick = () => {
     let updatedRowModes = { ...rowModes }; // Create a shallow copy of the current state
-    for (const expenseId of selectedRows) {
-      updatedRowModes[expenseId] = "delete";
+    for (const row of selectedRows) {
+      updatedRowModes[row.expense_id] = "delete";
     }
     setRowModes(updatedRowModes);
   };
