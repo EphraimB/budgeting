@@ -1,6 +1,3 @@
-"use client";
-
-import { useState } from "react";
 import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
 import CardHeader from "@mui/material/CardHeader";
@@ -10,9 +7,6 @@ import ExpensesTable from "../../../../components/ExpensesTable";
 
 function Expenses({ params }: { params: { account_id: string } }) {
   const accountId = parseInt(params.account_id);
-
-  const [expenses, setExpenses] = useState(null) as any[];
-  const [loading, setLoading] = useState(true);
 
   return (
     <>
@@ -43,13 +37,7 @@ function Expenses({ params }: { params: { account_id: string } }) {
           </CardContent>
         </Card>
       </Link>
-      <ExpensesTable
-        accountId={accountId}
-        expenses={expenses}
-        setExpenses={setExpenses}
-        loading={loading}
-        setLoading={setLoading}
-      />
+      <ExpensesTable accountId={accountId} />
     </>
   );
 }

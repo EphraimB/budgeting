@@ -75,19 +75,9 @@ const headCells: readonly HeadCell[] = [
   },
 ];
 
-function ExpensesTable({
-  accountId,
-  expenses,
-  setExpenses,
-  loading,
-  setLoading,
-}: {
-  accountId: number;
-  expenses: Expense[];
-  setExpenses: any;
-  loading: boolean;
-  setLoading: any;
-}) {
+function ExpensesTable({ accountId }: { accountId: number }) {
+  const [expenses, setExpenses] = useState(null) as any[];
+  const [loading, setLoading] = useState(true);
   const [taxes, setTaxes] = useState(null) as any[];
   const [taxesLoading, setTaxesLoading] = useState(true);
   const [order, setOrder] = useState<Order>("asc");
@@ -121,7 +111,7 @@ function ExpensesTable({
     };
 
     fetchData();
-  }, [expenses]);
+  }, []);
 
   useEffect(() => {
     const fetchData = async () => {
