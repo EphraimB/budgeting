@@ -23,7 +23,6 @@ function EnhancedTableToolbar({
   selectedRows,
 }: EnhancedTableToolbarProps) {
   const handleDeleteClick = () => {
-    console.log(selectedRows);
     let updatedRowModes = { ...rowModes }; // Create a shallow copy of the current state
     for (const expenseId of selectedRows) {
       updatedRowModes[expenseId] = "delete";

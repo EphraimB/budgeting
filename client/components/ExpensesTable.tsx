@@ -20,6 +20,7 @@ import {
   type Order,
 } from "../utils/helperFunctions";
 import RowView from "./RowView";
+import RowDelete from "./RowDelete";
 
 interface Expense {
   expense_id: number;
@@ -352,7 +353,7 @@ function ExpensesTable({ accountId }: { accountId: number }) {
             ) : (
               visibleRows.map((row, index) => {
                 if (rowModes[row.expense_id as number] === "delete") {
-                  return <Box key={row.expense_id} />;
+                  return <RowDelete expense={row.expense_id} />;
                 } else {
                   return (
                     <RowView
