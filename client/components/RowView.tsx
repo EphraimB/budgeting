@@ -26,6 +26,7 @@ function RowView({
     : 0;
   const taxRate = taxObject ? parseFloat(taxObject.tax_rate) : 0;
   const amountAfterTax: number =
+    parseFloat(row.expense_amount as string) +
     parseFloat(row.expense_amount as string) * taxRate;
 
   const amountAfterSubsidy: number =
