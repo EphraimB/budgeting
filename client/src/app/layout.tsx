@@ -7,9 +7,7 @@ import SnackbarFeedback from "../../components/SnackbarFeedback";
 import Container from "@mui/material/Container";
 import AccountList from "../../components/AccountList";
 import { Suspense } from "react";
-import Stack from "@mui/material/Stack";
-import Card from "@mui/material/Card";
-import Skeleton from "@mui/material/Skeleton";
+import Loading from "./loading";
 
 export const metadata: Metadata = {
   title: "Budgeting",
@@ -42,39 +40,7 @@ export default async function RootLayout({
           <Alerts />
           <br />
           <Container maxWidth="lg">
-            <Suspense
-              fallback={
-                <Stack direction="row" justifyContent="center" spacing={2}>
-                  <Card
-                    sx={{
-                      p: 2,
-                      width: 175,
-                    }}
-                  >
-                    <Skeleton variant="text" sx={{ fontSize: "1rem" }} />
-                    <Skeleton variant="text" />
-                  </Card>
-                  <Card
-                    sx={{
-                      p: 2,
-                      width: 175,
-                    }}
-                  >
-                    <Skeleton variant="text" sx={{ fontSize: "1rem" }} />
-                    <Skeleton variant="text" />
-                  </Card>
-                  <Card
-                    sx={{
-                      p: 2,
-                      width: 175,
-                    }}
-                  >
-                    <Skeleton variant="text" sx={{ fontSize: "1rem" }} />
-                    <Skeleton variant="text" />
-                  </Card>
-                </Stack>
-              }
-            >
+            <Suspense fallback={<Loading />}>
               <AccountList accounts={accounts} />
             </Suspense>
             {children}
