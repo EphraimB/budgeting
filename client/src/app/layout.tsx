@@ -18,8 +18,7 @@ async function getAccounts() {
   const res = await fetch("http://server:5001/api/accounts");
 
   if (!res.ok) {
-    // This will activate the closest `error.js` Error Boundary
-    throw new Error("Failed to fetch data");
+    // open alert
   }
 
   return res.json();
@@ -36,6 +35,7 @@ export default async function RootLayout({
     <html lang="en">
       <body>
         <GlobalAppBar />
+        <Alerts message="" severity="error" open={false} />
         <Container maxWidth="lg">
           <Suspense fallback={<Loading />}>
             <AccountList accounts={accounts} />
