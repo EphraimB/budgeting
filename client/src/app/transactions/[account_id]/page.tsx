@@ -26,8 +26,6 @@ async function TransactionsPage({
 }) {
   const accountId = parseInt(params.account_id);
 
-  console.log(dayjs().format().split("T")[0]);
-
   const transactions = await getTransactions(
     accountId,
     dayjs().format().split("T")[0],
