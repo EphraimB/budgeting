@@ -21,13 +21,13 @@ function AccountList() {
   const [showNewAccountForm, setShowNewAccountForm] = useState(false);
   const [accountModes, setAccountModes] = useState<Record<number, string>>({});
 
-  const { accounts, loading } = useAccounts();
+  const { accounts, accountsLoading } = useAccounts();
 
   const pathname = usePathname();
 
   const account_id = parseInt(pathname.split("/")[2]);
 
-  return loading ? (
+  return accountsLoading ? (
     <Stack direction="row" justifyContent="center" spacing={2}>
       <Card
         sx={{

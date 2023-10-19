@@ -20,6 +20,7 @@ import {
 } from "../utils/helperFunctions";
 import RowView from "./RowView";
 import RowDelete from "./RowDelete";
+import { useExpenses } from "../context/FeedbackContext";
 
 interface Expense {
   expense_id: number;
@@ -76,8 +77,6 @@ const headCells: readonly HeadCell[] = [
 ];
 
 function ExpensesTable({ accountId }: { accountId: number }) {
-  const [expenses, setExpenses] = useState(null) as any[];
-  const [loading, setLoading] = useState(true);
   const [taxes, setTaxes] = useState(null) as any[];
   const [taxesLoading, setTaxesLoading] = useState(true);
   const [order, setOrder] = useState<Order>("asc");
@@ -88,30 +87,11 @@ function ExpensesTable({ accountId }: { accountId: number }) {
   const [rowModes, setRowModes] = useState<Record<number, string>>({});
 
   const { showAlert, closeAlert } = useAlert();
+  const { setSelectedAccountId, expenses, expensesLoading } = useExpenses();
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await fetch(
-          `http://localhost:3000/api/expenses?account_id=${accountId}`
-        );
-        if (!response.ok) {
-          showAlert("Failed to load expenses", "error");
-          return;
-        }
-
-        const data = await response.json();
-        setExpenses(data.data);
-
-        setLoading(false); // Set loading to false once data is fetched
-      } catch (error) {
-        showAlert("Failed to load expenses", "error");
-        setLoading(false); // Set loading to false even if there is an error
-      }
-    };
-
-    fetchData();
-  }, []);
+    setSelectedAccountId(accountId);
+  }, [accountId, setSelectedAccountId]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -196,14 +176,14 @@ function ExpensesTable({ accountId }: { accountId: number }) {
     page > 0 ? Math.max(0, (1 + page) * rowsPerPage - expenses.length) : 0;
 
   const visibleRows = useMemo(() => {
-    if (loading || !expenses) {
+    if (expensesLoading || !expenses) {
       return [];
     }
     return stableSort(expenses as any[], getComparator(order, orderBy)).slice(
       page * rowsPerPage,
       page * rowsPerPage + rowsPerPage
     );
-  }, [loading, expenses, order, orderBy, page, rowsPerPage]);
+  }, [expensesLoading, expenses, order, orderBy, page, rowsPerPage]);
 
   const getNextExpenseDateAndFrequency = (expense: any) => {
     const currentDate = new Date(expense.expense_begin_date);
@@ -342,7 +322,7 @@ function ExpensesTable({ accountId }: { accountId: number }) {
             headCells={headCells}
           />
           <TableBody>
-            {loading || !expenses ? (
+            {expensesLoading || !expenses ? (
               <TableRow sx={{ height: 53 * 5 }}>
                 <TableCell colSpan={6}>
                   <Skeleton />
@@ -385,7 +365,7 @@ function ExpensesTable({ accountId }: { accountId: number }) {
       <TablePagination
         rowsPerPageOptions={[5, 10, 25]}
         component="div"
-        count={loading || !expenses ? 0 : expenses.length}
+        count={expensesLoading || !expenses ? 0 : expenses.length}
         rowsPerPage={rowsPerPage}
         page={page}
         onPageChange={handleChangePage}

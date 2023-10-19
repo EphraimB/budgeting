@@ -30,8 +30,13 @@ type FeedbackContextProps = {
   showSnackbar: (message: string) => void;
   closeSnackbar: () => void;
   accounts: any[];
-  loading: boolean;
+  accountsLoading: boolean;
   fetchAccounts: () => void;
+  selectedAccountId: number | null;
+  setSelectedAccountId: (id: number | null) => void;
+  expenses: any[];
+  expensesLoading: boolean;
+  fetchExpenses: () => void;
 };
 
 const defaultAlert: Alert = {
@@ -52,7 +57,12 @@ export const FeedbackProvider = ({ children }: FeedbackProviderProps) => {
   const [alert, setAlert] = useState<Alert>(defaultAlert);
   const [snackbar, setSnackbar] = useState<Snackbar>(defaultAlert);
   const [accounts, setAccounts] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [accountsLoading, setAccountsLoading] = useState(true);
+  const [selectedAccountId, setSelectedAccountId] = useState<number | null>(
+    null
+  );
+  const [expenses, setExpenses] = useState(null) as any[];
+  const [expensesLoading, setExpensesLoading] = useState(true);
 
   const showAlert = useCallback(
     (message: string, severity: AlertColor | undefined) => {
@@ -84,16 +94,42 @@ export const FeedbackProvider = ({ children }: FeedbackProviderProps) => {
       const data = await response.json();
       setAccounts(data.data);
 
-      setLoading(false); // Set loading to false once data is fetched
+      setAccountsLoading(false); // Set loading to false once data is fetched
     } catch (error) {
       showAlert("Failed to load accounts", "error");
-      setLoading(false); // Set loading to false even if there is an error
+      setAccountsLoading(false); // Set loading to false even if there is an error
+    }
+  };
+
+  const fetchExpenses = async () => {
+    try {
+      const response = await fetch(
+        `http://localhost:3000/api/expenses?account_id=${selectedAccountId}`
+      );
+      if (!response.ok) {
+        showAlert("Failed to load expenses", "error");
+        return;
+      }
+
+      const data = await response.json();
+      setExpenses(data.data);
+
+      setExpensesLoading(false); // Set loading to false once data is fetched
+    } catch (error) {
+      showAlert("Failed to load expenses", "error");
+      setExpensesLoading(false); // Set loading to false even if there is an error
     }
   };
 
   useEffect(() => {
     fetchAccounts();
   }, []);
+
+  useEffect(() => {
+    if (selectedAccountId) {
+      fetchExpenses();
+    }
+  }, [selectedAccountId]);
 
   return (
     <FeedbackContext.Provider
@@ -105,8 +141,13 @@ export const FeedbackProvider = ({ children }: FeedbackProviderProps) => {
         showSnackbar,
         closeSnackbar,
         accounts,
-        loading,
+        accountsLoading,
         fetchAccounts,
+        selectedAccountId,
+        setSelectedAccountId,
+        expenses,
+        expensesLoading,
+        fetchExpenses,
       }}
     >
       {children}
@@ -136,4 +177,14 @@ export const useAccounts = () => {
     throw new Error("useAccounts must be used within an FeedbackProvider");
   }
   return context;
+};
+
+export const useExpenses = () => {
+  const context = useContext(FeedbackContext);
+  if (!context) {
+    throw new Error("useExpenses must be used within an FeedbackProvider");
+  }
+
+  const { expenses, expensesLoading, setSelectedAccountId, ...rest } = context;
+  return { expenses, expensesLoading, setSelectedAccountId, ...rest };
 };
