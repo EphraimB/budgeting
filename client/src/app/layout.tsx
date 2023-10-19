@@ -27,12 +27,12 @@ async function getAccounts() {
   return res.json();
 }
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const accounts = getAccounts();
+  const accounts = await getAccounts();
 
   console.log("accounts", accounts);
 
