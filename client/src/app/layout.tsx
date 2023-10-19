@@ -36,17 +36,12 @@ export default async function RootLayout({
     <html lang="en">
       <body>
         <GlobalAppBar />
-        <FeedbackProvider>
-          <Alerts />
-          <br />
-          <Container maxWidth="lg">
-            <Suspense fallback={<Loading />}>
-              <AccountList accounts={accounts} />
-            </Suspense>
-            {children}
-          </Container>
-          <SnackbarFeedback />
-        </FeedbackProvider>
+        <Container maxWidth="lg">
+          <Suspense fallback={<Loading />}>
+            <AccountList accounts={accounts} />
+          </Suspense>
+          {children}
+        </Container>
       </body>
     </html>
   );
