@@ -34,8 +34,6 @@ export default async function RootLayout({
 }) {
   const accounts = await getAccounts();
 
-  console.log("accounts", accounts);
-
   return (
     <html lang="en">
       <body>
