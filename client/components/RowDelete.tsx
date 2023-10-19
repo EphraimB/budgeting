@@ -2,7 +2,7 @@ import TableRow from "@mui/material/TableRow";
 import TableCell from "@mui/material/TableCell";
 import Button from "@mui/material/Button";
 import Box from "@mui/material/Box";
-import { useSnackbar, useAlert } from "../context/FeedbackContext";
+import { useSnackbar, useAlert, useExpenses } from "../context/FeedbackContext";
 
 function RowDelete({
   expense,
@@ -13,6 +13,7 @@ function RowDelete({
 }) {
   const { showSnackbar } = useSnackbar();
   const { showAlert } = useAlert();
+  const { fetchExpenses } = useExpenses();
 
   const handleDelete = () => {
     const deleteAccount = async () => {
@@ -27,6 +28,7 @@ function RowDelete({
             },
           }
         );
+        fetchExpenses();
       } catch (error) {
         console.error("There was an error deleting the expense!", error);
         showAlert("There was an error deleting the expense!", "error");
