@@ -13,7 +13,9 @@ export const metadata: Metadata = {
 };
 
 async function getAccounts() {
-  const res = await fetch("http://server:5001/api/accounts");
+  const res = await fetch("http://server:5001/api/accounts", {
+    next: { tags: ["accounts"] },
+  });
 
   if (!res.ok) {
     // open alert

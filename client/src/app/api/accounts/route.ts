@@ -1,4 +1,7 @@
-export async function GET(request: Request) {
+import { NextRequest } from "next/server";
+import { revalidateTag } from "next/cache";
+
+export async function GET(request: NextRequest) {
   const res = await fetch("http://server:5001/api/accounts");
 
   const data = await res.json();
@@ -6,7 +9,8 @@ export async function GET(request: Request) {
   return Response.json({ data });
 }
 
-export async function POST(request: Request) {
+export async function POST(request: NextRequest) {
+  const tag = request.nextUrl.searchParams.get("accounts");
   const data = await request.json();
 
   const res = await fetch("http://server:5001/api/accounts", {
@@ -17,10 +21,13 @@ export async function POST(request: Request) {
     body: JSON.stringify(data),
   });
 
+  revalidateTag(tag as string);
+
   return Response.json(res);
 }
 
-export async function PUT(request: Request) {
+export async function PUT(request: NextRequest) {
+  const tag = request.nextUrl.searchParams.get("tag");
   const { searchParams } = new URL(request.url);
   const account_id = searchParams.get("account_id");
 
@@ -40,10 +47,13 @@ export async function PUT(request: Request) {
     body: JSON.stringify(data),
   });
 
+  revalidateTag(tag as string);
+
   return Response.json(res);
 }
 
-export async function DELETE(request: Request) {
+export async function DELETE(request: NextRequest) {
+  const tag = request.nextUrl.searchParams.get("tag");
   const { searchParams } = new URL(request.url);
   const account_id = searchParams.get("account_id");
 
@@ -59,6 +69,8 @@ export async function DELETE(request: Request) {
       "Content-Type": "application/json",
     },
   });
+
+  revalidateTag(tag as string);
 
   return Response.json(res);
 }

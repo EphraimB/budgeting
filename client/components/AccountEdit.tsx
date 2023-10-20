@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import Paper from "@mui/material/Paper";
 import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
 import Stack from "@mui/material/Stack";
@@ -20,34 +19,30 @@ export default function AccountEdit({
     name: accountName,
   };
 
-  // const onEditAccountSubmit = () => {
-  //   const submitData = async () => {
-  //     try {
-  //       // Post request to create a new account
-  //       await fetch(
-  //         `http://localhost:3000/api/accounts?account_id=${account.account_id}`,
-  //         {
-  //           method: "PUT",
-  //           headers: {
-  //             "Content-Type": "application/json",
-  //           },
-  //           body: JSON.stringify(data),
-  //         }
-  //       );
-  //       fetchAccounts();
-  //     } catch (error) {
-  //       console.error("There was an error editing the account!", error);
-  //       showAlert("There was an error editing the account!", "error");
-  //     }
-  //     setAccountModes((prevModes: any) => ({
-  //       ...prevModes,
-  //       [account.account_id]: "view",
-  //     }));
-  //     showSnackbar("Account edited!");
-  //   };
+  const onEditAccountSubmit = () => {
+    const submitData = async () => {
+      try {
+        // Post request to create a new account
+        await fetch(`/api/accounts?account_id=${account.account_id}`, {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(data),
+        });
+      } catch (error) {
+        console.error("There was an error editing the account!", error);
+        // showAlert("There was an error editing the account!", "error");
+      }
+      setAccountModes((prevModes: any) => ({
+        ...prevModes,
+        [account.account_id]: "view",
+      }));
+      // showSnackbar("Account edited!");
+    };
 
-  //   submitData();
-  // };
+    submitData();
+  };
 
   return (
     <>
@@ -83,7 +78,7 @@ export default function AccountEdit({
         <Button
           variant="contained"
           color="primary"
-          onClick={() => console.log("edit")}
+          onClick={onEditAccountSubmit}
         >
           Edit Account
         </Button>

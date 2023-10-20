@@ -15,32 +15,31 @@ export default function NewAccountForm({
 }) {
   const [accountName, setAccountName] = useState("");
 
-  // const data = {
-  //   name: accountName,
-  // };
+  const data = {
+    name: accountName,
+  };
 
-  // const onNewAccountSubmit = () => {
-  //   const submitData = async () => {
-  //     try {
-  //       // Post request to create a new account
-  //       await fetch("http://localhost:3000/api/accounts", {
-  //         method: "POST",
-  //         headers: {
-  //           "Content-Type": "application/json",
-  //         },
-  //         body: JSON.stringify(data),
-  //       });
-  //       fetchAccounts();
-  //     } catch (error) {
-  //       console.error("There was an error creating the account!", error);
-  //       showAlert("There was an error creating the account!", "error");
-  //     }
-  //     setShowNewAccountForm(false);
-  //     showSnackbar("Account created!");
-  //   };
+  const onNewAccountSubmit = () => {
+    const submitData = async () => {
+      try {
+        // Post request to create a new account
+        await fetch("/api/accounts", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(data),
+        });
+      } catch (error) {
+        console.error("There was an error creating the account!", error);
+        // showAlert("There was an error creating the account!", "error");
+      }
+      setShowNewAccountForm(false);
+      // showSnackbar("Account created!");
+    };
 
-  //   submitData();
-  // };
+    submitData();
+  };
 
   return (
     <Paper
@@ -78,7 +77,7 @@ export default function NewAccountForm({
         <Button
           variant="contained"
           color="primary"
-          onClick={() => console.log("submit")}
+          onClick={onNewAccountSubmit}
         >
           Open Account
         </Button>

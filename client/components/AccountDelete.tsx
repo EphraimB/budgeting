@@ -1,3 +1,5 @@
+"use client";
+
 import Typography from "@mui/material/Typography";
 import IconButton from "@mui/material/IconButton";
 import CloseIcon from "@mui/icons-material/Close";
@@ -11,33 +13,29 @@ function AccountDelete({
   account: any;
   setAccountModes: any;
 }) {
-  // const handleDelete = () => {
-  //   const deleteAccount = async () => {
-  //     try {
-  //       // Post request to create a new account
-  //       await fetch(
-  //         `http://localhost:3000/api/accounts?account_id=${account.account_id}`,
-  //         {
-  //           method: "DELETE",
-  //           headers: {
-  //             "Content-Type": "application/json",
-  //           },
-  //         }
-  //       );
-  //       fetchAccounts();
-  //     } catch (error) {
-  //       console.error("There was an error deleting the account!", error);
-  //       showAlert("There was an error deleting the account!", "error");
-  //     }
-  //     setAccountModes((prevModes: any) => ({
-  //       ...prevModes,
-  //       [account.account_id]: "view",
-  //     }));
-  //     showSnackbar("Account deleted!");
-  //   };
+  const handleDelete = () => {
+    const deleteAccount = async () => {
+      try {
+        // Post request to create a new account
+        await fetch(`/api/accounts?account_id=${account.account_id}`, {
+          method: "DELETE",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
+      } catch (error) {
+        console.error("There was an error deleting the account!", error);
+        // showAlert("There was an error deleting the account!", "error");
+      }
+      setAccountModes((prevModes: any) => ({
+        ...prevModes,
+        [account.account_id]: "view",
+      }));
+      // showSnackbar("Account deleted!");
+    };
 
-  //   deleteAccount();
-  // };
+    deleteAccount();
+  };
 
   const handleCancel = () => {
     setAccountModes((prevModes: any) => ({
@@ -68,11 +66,7 @@ function AccountDelete({
           undone.
         </Typography>
         <br />
-        <Button
-          variant="contained"
-          color="error"
-          onClick={() => console.log("Delete")}
-        >
+        <Button variant="contained" color="error" onClick={handleDelete}>
           Delete
         </Button>
         <Button variant="contained" onClick={handleCancel}>
