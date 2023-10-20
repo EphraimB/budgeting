@@ -1,3 +1,4 @@
+import Stack from "@mui/material/Stack";
 import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
 import CardHeader from "@mui/material/CardHeader";
@@ -5,11 +6,38 @@ import Link from "next/link";
 import Typography from "@mui/material/Typography";
 import ExpensesTable from "../../../../components/ExpensesTable";
 
-function Expenses({ params }: { params: { account_id: string } }) {
+async function getExpenses(accountId: number) {
+  const res = await fetch(
+    `http://server:5001/api/expenses?account_id=${accountId}`
+  );
+
+  if (!res.ok) {
+    // open alert
+  }
+
+  return res.json();
+}
+
+async function getTaxes(accountId: number) {
+  const res = await fetch(
+    `http://server:5001/api/taxes?account_id=${accountId}`
+  );
+
+  if (!res.ok) {
+    // open alert
+  }
+
+  return res.json();
+}
+
+async function Expenses({ params }: { params: { account_id: string } }) {
   const accountId = parseInt(params.account_id);
 
+  const expenses = await getExpenses(accountId);
+  const taxes = await getTaxes(accountId);
+
   return (
-    <>
+    <Stack>
       <Link
         href={`/ transactions/${accountId}`}
         as={`/transactions/${accountId}`}
@@ -37,8 +65,8 @@ function Expenses({ params }: { params: { account_id: string } }) {
           </CardContent>
         </Card>
       </Link>
-      <ExpensesTable accountId={accountId} />
-    </>
+      <ExpensesTable expenses={expenses} taxes={taxes} />
+    </Stack>
   );
 }
 

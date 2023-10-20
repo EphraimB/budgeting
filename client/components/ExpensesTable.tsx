@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useMemo } from "react";
+import { useState, Suspense, useMemo } from "react";
 import Box from "@mui/material/Box";
 import TableBody from "@mui/material/TableBody";
 import TableCell from "@mui/material/TableCell";
@@ -8,8 +8,6 @@ import TableRow from "@mui/material/TableRow";
 import Table from "@mui/material/Table";
 import TableContainer from "@mui/material/TableContainer";
 import TablePagination from "@mui/material/TablePagination";
-import { useAlert } from "../context/FeedbackContext";
-import Skeleton from "@mui/material/Skeleton";
 import EnhancedTableHead from "../components/EnhancedTableHead";
 import EnhancedTableToolbar from "../components/EnhancedTableToolbar";
 import dayjs from "dayjs";
@@ -20,7 +18,7 @@ import {
 } from "../utils/helperFunctions";
 import RowView from "./RowView";
 import RowDelete from "./RowDelete";
-import { useExpenses } from "../context/FeedbackContext";
+import Loading from "../src/app/expenses/[account_id]/loading";
 
 interface Expense {
   expense_id: number;
@@ -76,46 +74,19 @@ const headCells: readonly HeadCell[] = [
   },
 ];
 
-function ExpensesTable({ accountId }: { accountId: number }) {
-  const [taxes, setTaxes] = useState(null) as any[];
-  const [taxesLoading, setTaxesLoading] = useState(true);
+function ExpensesTable({
+  expenses,
+  taxes,
+}: {
+  expenses: Expense[];
+  taxes: any[];
+}) {
   const [order, setOrder] = useState<Order>("asc");
   const [orderBy, setOrderBy] = useState<string>("expense_title");
   const [selected, setSelected] = useState<Expense[]>([]);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [rowModes, setRowModes] = useState<Record<number, string>>({});
-
-  const { showAlert, closeAlert } = useAlert();
-  const { setSelectedAccountId, expenses, expensesLoading } = useExpenses();
-
-  useEffect(() => {
-    setSelectedAccountId(accountId);
-  }, [accountId, setSelectedAccountId]);
-
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await fetch(
-          `http://localhost:3000/api/taxes?account_id=${accountId}`
-        );
-        if (!response.ok) {
-          showAlert("Failed to load taxes", "error");
-          return;
-        }
-
-        const data = await response.json();
-        setTaxes(data.data);
-
-        setTaxesLoading(false); // Set loading to false once data is fetched
-      } catch (error) {
-        showAlert("Failed to load taxes", "error");
-        setTaxesLoading(false); // Set loading to false even if there is an error
-      }
-    };
-
-    fetchData();
-  }, []);
 
   const handleRequestSort = (
     event: React.MouseEvent<unknown>,
@@ -176,14 +147,11 @@ function ExpensesTable({ accountId }: { accountId: number }) {
     page > 0 ? Math.max(0, (1 + page) * rowsPerPage - expenses.length) : 0;
 
   const visibleRows = useMemo(() => {
-    if (expensesLoading || !expenses) {
-      return [];
-    }
     return stableSort(expenses as any[], getComparator(order, orderBy)).slice(
       page * rowsPerPage,
       page * rowsPerPage + rowsPerPage
     );
-  }, [expensesLoading, expenses, order, orderBy, page, rowsPerPage]);
+  }, [expenses, order, orderBy, page, rowsPerPage]);
 
   const getNextExpenseDateAndFrequency = (expense: any) => {
     const currentDate = new Date(expense.expense_begin_date);
@@ -322,14 +290,8 @@ function ExpensesTable({ accountId }: { accountId: number }) {
             headCells={headCells}
           />
           <TableBody>
-            {expensesLoading || !expenses ? (
-              <TableRow sx={{ height: 53 * 5 }}>
-                <TableCell colSpan={6}>
-                  <Skeleton />
-                </TableCell>
-              </TableRow>
-            ) : (
-              visibleRows.map((row, index) => {
+            <Suspense fallback={<Loading />}>
+              {visibleRows.map((row, index) => {
                 if (rowModes[row.expense_id as number] === "delete") {
                   return <RowDelete expense={row} setRowModes={setRowModes} />;
                 } else {
@@ -347,9 +309,8 @@ function ExpensesTable({ accountId }: { accountId: number }) {
                     />
                   );
                 }
-              })
-            )}
-
+              })}
+            </Suspense>
             {emptyRows > 0 && (
               <TableRow
                 style={{
@@ -365,7 +326,7 @@ function ExpensesTable({ accountId }: { accountId: number }) {
       <TablePagination
         rowsPerPageOptions={[5, 10, 25]}
         component="div"
-        count={expensesLoading || !expenses ? 0 : expenses.length}
+        count={expenses.length}
         rowsPerPage={rowsPerPage}
         page={page}
         onPageChange={handleChangePage}
