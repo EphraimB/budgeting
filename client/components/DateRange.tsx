@@ -7,6 +7,7 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import Stack from "@mui/material/Stack";
 import { useRouter, usePathname, useSearchParams } from "next/navigation";
+import { revalidateTag } from "next/cache";
 
 export default function DateRange() {
   const router = useRouter();
@@ -30,6 +31,8 @@ export default function DateRange() {
     updatedParams.set("to_date", date ? date.format().split("T")[0] : "");
 
     router.push(`${pathname}?${updatedParams.toString()}`);
+
+    revalidateTag("date");
   };
 
   return (
