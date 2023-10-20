@@ -180,15 +180,15 @@ function ExpensesTable({
           expense.frequency_type_variable === 1 ||
           expense.frequency_type_variable === null
         )
-          expenseFrequency = `Weekly on ${dayjs()
-            .day(expense.expense_begin_date)
-            .format("dddd")}`;
+          expenseFrequency = `Weekly on ${dayjs(
+            expense.expense_begin_date
+          ).format("dddd")}`;
         else {
           expenseFrequency =
             "Every " +
             expense.frequency_type_variable +
             " weeks on " +
-            dayjs().day(expense.expense_begin_date).format("dddd");
+            dayjs(expense.expense_begin_date).format("dddd");
         }
 
         currentDate.setDate(
@@ -215,7 +215,7 @@ function ExpensesTable({
         } else if (expense.frequency_day_of_week) {
           expenseFrequency = `Monthly on the ${
             expense.frequency_week_of_month
-          } ${dayjs().day(expense.frequency_day_of_week).format("dddd")}`;
+          } ${dayjs(expense.frequency_day_of_week).format("dddd")}`;
         }
 
         if (expense.frequency_day_of_month) {
