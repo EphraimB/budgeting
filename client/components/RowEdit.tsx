@@ -22,7 +22,7 @@ function RowEdit({ expense, setRowModes }: { expense: any; setRowModes: any }) {
 
   return (
     <TableRow>
-      <TableCell>
+      <TableCell colSpan={2}>
         <TextField
           label="Title"
           value={expenseTitle}
