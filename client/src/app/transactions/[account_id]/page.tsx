@@ -42,7 +42,7 @@ async function TransactionsPage({
     <>
       <DataManagementWidgets accountId={accountId} />
       <br />
-      <DateRange />
+      <DateRange fromDate={fromDate} toDate={toDate} />
       <TransactionDisplay transactions={transactions} />
     </>
   );
