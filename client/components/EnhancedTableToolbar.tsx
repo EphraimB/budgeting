@@ -3,6 +3,7 @@ import Toolbar from "@mui/material/Toolbar";
 import { alpha } from "@mui/material/styles";
 import Tooltip from "@mui/material/Tooltip";
 import IconButton from "@mui/material/IconButton";
+import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import FilterListIcon from "@mui/icons-material/FilterList";
 import Typography from "@mui/material/Typography";
@@ -22,6 +23,14 @@ function EnhancedTableToolbar({
   setRowModes,
   selectedRows,
 }: EnhancedTableToolbarProps) {
+  const handleEditClick = () => {
+    let updatedRowModes = { ...rowModes }; // Create a shallow copy of the current state
+    for (const row of selectedRows) {
+      updatedRowModes[row.expense_id] = "edit";
+    }
+    setRowModes(updatedRowModes);
+  };
+
   const handleDeleteClick = () => {
     let updatedRowModes = { ...rowModes }; // Create a shallow copy of the current state
     for (const row of selectedRows) {
@@ -64,11 +73,18 @@ function EnhancedTableToolbar({
         </Typography>
       )}
       {numSelected > 0 ? (
-        <Tooltip title="Delete">
-          <IconButton onClick={handleDeleteClick}>
-            <DeleteIcon />
-          </IconButton>
-        </Tooltip>
+        <>
+          <Tooltip title="Edit">
+            <IconButton onClick={handleEditClick}>
+              <EditIcon />
+            </IconButton>
+          </Tooltip>
+          <Tooltip title="Delete">
+            <IconButton onClick={handleDeleteClick}>
+              <DeleteIcon />
+            </IconButton>
+          </Tooltip>
+        </>
       ) : (
         <Tooltip title="Filter list">
           <IconButton>

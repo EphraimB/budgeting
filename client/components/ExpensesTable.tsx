@@ -19,6 +19,7 @@ import {
 import RowView from "./RowView";
 import RowDelete from "./RowDelete";
 import LoadingExpenses from "./LoadingExpenses";
+import RowEdit from "./RowEdit";
 
 interface Expense {
   expense_id: number;
@@ -294,6 +295,8 @@ function ExpensesTable({
               {visibleRows.map((row, index) => {
                 if (rowModes[row.expense_id as number] === "delete") {
                   return <RowDelete expense={row} setRowModes={setRowModes} />;
+                } else if (rowModes[row.expense_id as number] === "edit") {
+                  return <RowEdit expense={row} setRowModes={setRowModes} />;
                 } else {
                   return (
                     <RowView
