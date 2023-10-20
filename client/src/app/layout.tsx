@@ -33,7 +33,8 @@ export default async function RootLayout({
     <html lang="en">
       <body>
         <GlobalAppBar />
-        <Alerts message="" severity="error" open={false} />
+        <br />
+        {/* <Alerts message="" severity="error" open={false} /> */}
         <Container maxWidth="lg">
           <Suspense fallback={<LoadingAccounts />}>
             <AccountList accounts={accounts} />
