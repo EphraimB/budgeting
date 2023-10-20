@@ -4,6 +4,7 @@ import { useState } from "react";
 import TableRow from "@mui/material/TableRow";
 import TableCell from "@mui/material/TableCell";
 import TextField from "@mui/material/TextField";
+import { yellow } from "@mui/material/colors";
 
 function RowEdit({ expense, setRowModes }: { expense: any; setRowModes: any }) {
   const [expenseTitle, setExpenseTitle] = useState(expense.expense_title);
@@ -23,7 +24,7 @@ function RowEdit({ expense, setRowModes }: { expense: any; setRowModes: any }) {
   return (
     <TableRow
       sx={{
-        backgroundColor: "yellow",
+        backgroundColor: yellow[500],
       }}
     >
       <TableCell colSpan={2}>

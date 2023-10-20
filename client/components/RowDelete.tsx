@@ -2,6 +2,7 @@ import TableRow from "@mui/material/TableRow";
 import TableCell from "@mui/material/TableCell";
 import Button from "@mui/material/Button";
 import Box from "@mui/material/Box";
+import { red } from "@mui/material/colors";
 
 function RowDelete({
   expense,
@@ -49,7 +50,7 @@ function RowDelete({
     <TableRow
       key={expense.expense_id}
       sx={{
-        backgroundColor: "red",
+        backgroundColor: red[500],
       }}
     >
       <TableCell colSpan={5} sx={{ color: "#fff" }}>
