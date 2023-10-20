@@ -1,3 +1,5 @@
+"use client";
+
 import { useState } from "react";
 import Paper from "@mui/material/Paper";
 import Button from "@mui/material/Button";
@@ -5,7 +7,6 @@ import TextField from "@mui/material/TextField";
 import Stack from "@mui/material/Stack";
 import IconButton from "@mui/material/IconButton";
 import CloseIcon from "@mui/icons-material/Close";
-import { useSnackbar, useAlert, useAccounts } from "../context/FeedbackContext";
 
 export default function AccountEdit({
   account,
@@ -15,42 +16,38 @@ export default function AccountEdit({
   setAccountModes: any;
 }) {
   const [accountName, setAccountName] = useState(account.account_name);
-  const { showSnackbar } = useSnackbar();
-  const { showAlert } = useAlert();
-  const { fetchAccounts } = useAccounts();
-
   const data = {
     name: accountName,
   };
 
-  const onEditAccountSubmit = () => {
-    const submitData = async () => {
-      try {
-        // Post request to create a new account
-        await fetch(
-          `http://localhost:3000/api/accounts?account_id=${account.account_id}`,
-          {
-            method: "PUT",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify(data),
-          }
-        );
-        fetchAccounts();
-      } catch (error) {
-        console.error("There was an error editing the account!", error);
-        showAlert("There was an error editing the account!", "error");
-      }
-      setAccountModes((prevModes: any) => ({
-        ...prevModes,
-        [account.account_id]: "view",
-      }));
-      showSnackbar("Account edited!");
-    };
+  // const onEditAccountSubmit = () => {
+  //   const submitData = async () => {
+  //     try {
+  //       // Post request to create a new account
+  //       await fetch(
+  //         `http://localhost:3000/api/accounts?account_id=${account.account_id}`,
+  //         {
+  //           method: "PUT",
+  //           headers: {
+  //             "Content-Type": "application/json",
+  //           },
+  //           body: JSON.stringify(data),
+  //         }
+  //       );
+  //       fetchAccounts();
+  //     } catch (error) {
+  //       console.error("There was an error editing the account!", error);
+  //       showAlert("There was an error editing the account!", "error");
+  //     }
+  //     setAccountModes((prevModes: any) => ({
+  //       ...prevModes,
+  //       [account.account_id]: "view",
+  //     }));
+  //     showSnackbar("Account edited!");
+  //   };
 
-    submitData();
-  };
+  //   submitData();
+  // };
 
   return (
     <>
@@ -86,7 +83,7 @@ export default function AccountEdit({
         <Button
           variant="contained"
           color="primary"
-          onClick={onEditAccountSubmit}
+          onClick={() => console.log("edit")}
         >
           Edit Account
         </Button>

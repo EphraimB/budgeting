@@ -3,7 +3,6 @@ import IconButton from "@mui/material/IconButton";
 import CloseIcon from "@mui/icons-material/Close";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
-import { useSnackbar, useAlert, useAccounts } from "../context/FeedbackContext";
 
 function AccountDelete({
   account,
@@ -12,37 +11,33 @@ function AccountDelete({
   account: any;
   setAccountModes: any;
 }) {
-  const { showSnackbar } = useSnackbar();
-  const { showAlert } = useAlert();
-  const { fetchAccounts } = useAccounts();
+  // const handleDelete = () => {
+  //   const deleteAccount = async () => {
+  //     try {
+  //       // Post request to create a new account
+  //       await fetch(
+  //         `http://localhost:3000/api/accounts?account_id=${account.account_id}`,
+  //         {
+  //           method: "DELETE",
+  //           headers: {
+  //             "Content-Type": "application/json",
+  //           },
+  //         }
+  //       );
+  //       fetchAccounts();
+  //     } catch (error) {
+  //       console.error("There was an error deleting the account!", error);
+  //       showAlert("There was an error deleting the account!", "error");
+  //     }
+  //     setAccountModes((prevModes: any) => ({
+  //       ...prevModes,
+  //       [account.account_id]: "view",
+  //     }));
+  //     showSnackbar("Account deleted!");
+  //   };
 
-  const handleDelete = () => {
-    const deleteAccount = async () => {
-      try {
-        // Post request to create a new account
-        await fetch(
-          `http://localhost:3000/api/accounts?account_id=${account.account_id}`,
-          {
-            method: "DELETE",
-            headers: {
-              "Content-Type": "application/json",
-            },
-          }
-        );
-        fetchAccounts();
-      } catch (error) {
-        console.error("There was an error deleting the account!", error);
-        showAlert("There was an error deleting the account!", "error");
-      }
-      setAccountModes((prevModes: any) => ({
-        ...prevModes,
-        [account.account_id]: "view",
-      }));
-      showSnackbar("Account deleted!");
-    };
-
-    deleteAccount();
-  };
+  //   deleteAccount();
+  // };
 
   const handleCancel = () => {
     setAccountModes((prevModes: any) => ({
@@ -61,12 +56,7 @@ function AccountDelete({
           right: 0,
         }}
         size="small"
-        onClick={() =>
-          setAccountModes((prevModes: any) => ({
-            ...prevModes,
-            [account.account_id]: "view",
-          }))
-        }
+        onClick={handleCancel}
       >
         <CloseIcon />
       </IconButton>
@@ -78,7 +68,11 @@ function AccountDelete({
           undone.
         </Typography>
         <br />
-        <Button variant="contained" color="error" onClick={handleDelete}>
+        <Button
+          variant="contained"
+          color="error"
+          onClick={() => console.log("Delete")}
+        >
           Delete
         </Button>
         <Button variant="contained" onClick={handleCancel}>
