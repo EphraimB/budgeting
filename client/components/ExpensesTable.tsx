@@ -18,7 +18,7 @@ import {
 } from "../utils/helperFunctions";
 import RowView from "./RowView";
 import RowDelete from "./RowDelete";
-import Loading from "../src/app/expenses/[account_id]/loading";
+import LoadingExpenses from "./LoadingExpenses";
 
 interface Expense {
   expense_id: number;
@@ -290,7 +290,7 @@ function ExpensesTable({
             headCells={headCells}
           />
           <TableBody>
-            <Suspense fallback={<Loading />}>
+            <Suspense fallback={<LoadingExpenses />}>
               {visibleRows.map((row, index) => {
                 if (rowModes[row.expense_id as number] === "delete") {
                   return <RowDelete expense={row} setRowModes={setRowModes} />;

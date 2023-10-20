@@ -1,9 +1,9 @@
 import TableBody from "@mui/material/TableBody";
+import Skeleton from "@mui/material/Skeleton";
 import TableCell from "@mui/material/TableCell";
 import TableRow from "@mui/material/TableRow";
-import Skeleton from "@mui/material/Skeleton";
 
-function Loading() {
+function LoadingTransactions() {
   return (
     <TableBody>
       <TableRow>
@@ -35,4 +35,4 @@ function Loading() {
   );
 }
 
-export default Loading;
+export default LoadingTransactions;

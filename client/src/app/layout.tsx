@@ -1,13 +1,11 @@
 import "./globals.css";
 import type { Metadata } from "next";
 import GlobalAppBar from "../../components/GlobalAppBar";
-import { FeedbackProvider } from "../../context/FeedbackContext";
 import Alerts from "../../components/Alerts";
-import SnackbarFeedback from "../../components/SnackbarFeedback";
 import Container from "@mui/material/Container";
 import AccountList from "../../components/AccountList";
 import { Suspense } from "react";
-import Loading from "./loading";
+import LoadingAccounts from "../../components/LoadingAccounts";
 
 export const metadata: Metadata = {
   title: "Budgeting",
@@ -37,7 +35,7 @@ export default async function RootLayout({
         <GlobalAppBar />
         <Alerts message="" severity="error" open={false} />
         <Container maxWidth="lg">
-          <Suspense fallback={<Loading />}>
+          <Suspense fallback={<LoadingAccounts />}>
             <AccountList accounts={accounts} />
           </Suspense>
           {children}

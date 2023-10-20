@@ -1,8 +1,8 @@
-import Stack from "@mui/material/Stack";
 import Card from "@mui/material/Card";
 import Skeleton from "@mui/material/Skeleton";
+import Stack from "@mui/material/Stack";
 
-function loading() {
+function LoadingAccounts() {
   return (
     <Stack direction="row" justifyContent="center" spacing={2}>
       <Card
@@ -36,4 +36,4 @@ function loading() {
   );
 }
 
-export default loading;
+export default LoadingAccounts;

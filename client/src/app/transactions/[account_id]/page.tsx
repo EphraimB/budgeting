@@ -29,14 +29,14 @@ async function TransactionsPage({
 }) {
   const accountId = parseInt(params.account_id);
 
-  const fromDate = searchParams?.from_date as string;
-  const toDate = searchParams?.to_date as string;
+  const fromDate = searchParams?.from_date
+    ? (searchParams?.from_date as string)
+    : (dayjs().format().split("T")[0] as string);
+  const toDate = searchParams?.to_date
+    ? (searchParams?.to_date as string)
+    : (dayjs().add(1, "month").format().split("T")[0] as string);
 
-  const transactions = await getTransactions(
-    accountId,
-    fromDate ? fromDate : dayjs().format().split("T")[0],
-    toDate ? toDate : dayjs().add(1, "month").format().split("T")[0]
-  );
+  const transactions = await getTransactions(accountId, fromDate, toDate);
 
   return (
     <>
