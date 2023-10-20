@@ -21,7 +21,11 @@ function RowEdit({ expense, setRowModes }: { expense: any; setRowModes: any }) {
   const [expenseDate, setExpenseDate] = useState(expense.expense_date);
 
   return (
-    <TableRow>
+    <TableRow
+      sx={{
+        backgroundColor: "yellow",
+      }}
+    >
       <TableCell colSpan={2}>
         <TextField
           label="Title"
