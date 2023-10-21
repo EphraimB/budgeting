@@ -7,6 +7,7 @@ import TextField from "@mui/material/TextField";
 import Stack from "@mui/material/Stack";
 import IconButton from "@mui/material/IconButton";
 import CloseIcon from "@mui/icons-material/Close";
+import { revalidateTag } from "next/cache";
 
 export default function NewAccountForm({
   setShowNewAccountForm,
@@ -30,6 +31,7 @@ export default function NewAccountForm({
           },
           body: JSON.stringify(data),
         });
+        revalidateTag("accounts");
       } catch (error) {
         console.error("There was an error creating the account!", error);
         // showAlert("There was an error creating the account!", "error");

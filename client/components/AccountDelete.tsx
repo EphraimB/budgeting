@@ -5,6 +5,7 @@ import IconButton from "@mui/material/IconButton";
 import CloseIcon from "@mui/icons-material/Close";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
+import { revalidateTag } from "next/cache";
 
 function AccountDelete({
   account,
@@ -23,6 +24,7 @@ function AccountDelete({
             "Content-Type": "application/json",
           },
         });
+        revalidateTag("accounts");
       } catch (error) {
         console.error("There was an error deleting the account!", error);
         // showAlert("There was an error deleting the account!", "error");

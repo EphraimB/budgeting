@@ -1,5 +1,4 @@
 import { NextRequest } from "next/server";
-import { revalidateTag } from "next/cache";
 
 export async function GET(request: NextRequest) {
   const res = await fetch("http://server:5001/api/accounts");
@@ -10,7 +9,6 @@ export async function GET(request: NextRequest) {
 }
 
 export async function POST(request: NextRequest) {
-  const tag = request.nextUrl.searchParams.get("accounts");
   const data = await request.json();
 
   const res = await fetch("http://server:5001/api/accounts", {
@@ -21,13 +19,10 @@ export async function POST(request: NextRequest) {
     body: JSON.stringify(data),
   });
 
-  revalidateTag(tag as string);
-
   return Response.json(res);
 }
 
 export async function PUT(request: NextRequest) {
-  const tag = request.nextUrl.searchParams.get("tag");
   const { searchParams } = new URL(request.url);
   const account_id = searchParams.get("account_id");
 
@@ -47,13 +42,10 @@ export async function PUT(request: NextRequest) {
     body: JSON.stringify(data),
   });
 
-  revalidateTag(tag as string);
-
   return Response.json(res);
 }
 
 export async function DELETE(request: NextRequest) {
-  const tag = request.nextUrl.searchParams.get("tag");
   const { searchParams } = new URL(request.url);
   const account_id = searchParams.get("account_id");
 
@@ -69,8 +61,6 @@ export async function DELETE(request: NextRequest) {
       "Content-Type": "application/json",
     },
   });
-
-  revalidateTag(tag as string);
 
   return Response.json(res);
 }
