@@ -5,7 +5,7 @@ import Tooltip from "@mui/material/Tooltip";
 import IconButton from "@mui/material/IconButton";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
-import FilterListIcon from "@mui/icons-material/FilterList";
+import Add from "@mui/icons-material/Add";
 import Typography from "@mui/material/Typography";
 
 interface EnhancedTableToolbarProps {
@@ -88,7 +88,7 @@ function EnhancedTableToolbar({
       ) : (
         <Tooltip title="Filter list">
           <IconButton>
-            <FilterListIcon />
+            <Add />
           </IconButton>
         </Tooltip>
       )}
