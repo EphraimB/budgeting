@@ -20,6 +20,7 @@ import RowView from "./RowView";
 import RowDelete from "./RowDelete";
 import LoadingExpenses from "./LoadingExpenses";
 import RowEdit from "./RowEdit";
+import RowAdd from "./RowAdd";
 
 interface Expense {
   expense_id: number;
@@ -88,6 +89,7 @@ function ExpensesTable({
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [rowModes, setRowModes] = useState<Record<number, string>>({});
+  const [showAddExpenseForm, setShowAddExpenseForm] = useState(false);
 
   const handleRequestSort = (
     event: React.MouseEvent<unknown>,
@@ -273,6 +275,8 @@ function ExpensesTable({
         selectedRows={selected}
         rowModes={rowModes}
         setRowModes={setRowModes}
+        showAddExpenseForm={showAddExpenseForm}
+        setShowAddExpenseForm={setShowAddExpenseForm}
         name="Expenses"
       />
       <TableContainer>
@@ -305,17 +309,26 @@ function ExpensesTable({
                   );
                 } else {
                   return (
-                    <RowView
-                      key={row.expense_id}
-                      row={row}
-                      index={index}
-                      handleClick={handleClick}
-                      isSelected={isSelected}
-                      taxes={taxes}
-                      getNextExpenseDateAndFrequency={
-                        getNextExpenseDateAndFrequency
-                      }
-                    />
+                    <>
+                      {showAddExpenseForm && (
+                        <RowAdd
+                          expense={row}
+                          taxes={taxes}
+                          setShowAddExpenseForm={setShowAddExpenseForm}
+                        />
+                      )}
+                      <RowView
+                        key={row.expense_id}
+                        row={row}
+                        index={index}
+                        handleClick={handleClick}
+                        isSelected={isSelected}
+                        taxes={taxes}
+                        getNextExpenseDateAndFrequency={
+                          getNextExpenseDateAndFrequency
+                        }
+                      />
+                    </>
                   );
                 }
               })}

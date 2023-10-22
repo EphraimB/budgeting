@@ -1,10 +1,10 @@
-import Checkbox from "@mui/material/Checkbox";
 import Toolbar from "@mui/material/Toolbar";
 import { alpha } from "@mui/material/styles";
 import Tooltip from "@mui/material/Tooltip";
 import IconButton from "@mui/material/IconButton";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
+import Close from "@mui/icons-material/Close";
 import Add from "@mui/icons-material/Add";
 import Typography from "@mui/material/Typography";
 
@@ -13,6 +13,8 @@ interface EnhancedTableToolbarProps {
   name: string;
   rowModes: Record<number, string>;
   setRowModes: any;
+  showAddExpenseForm: boolean;
+  setShowAddExpenseForm: any;
   selectedRows: any[];
 }
 
@@ -21,6 +23,8 @@ function EnhancedTableToolbar({
   name,
   rowModes,
   setRowModes,
+  showAddExpenseForm,
+  setShowAddExpenseForm,
   selectedRows,
 }: EnhancedTableToolbarProps) {
   const handleEditClick = () => {
@@ -37,6 +41,14 @@ function EnhancedTableToolbar({
       updatedRowModes[row.expense_id] = "delete";
     }
     setRowModes(updatedRowModes);
+  };
+
+  const handleAddClick = () => {
+    setShowAddExpenseForm(true);
+  };
+
+  const handleCancelClick = () => {
+    setShowAddExpenseForm(false);
   };
 
   return (
@@ -85,9 +97,15 @@ function EnhancedTableToolbar({
             </IconButton>
           </Tooltip>
         </>
+      ) : showAddExpenseForm ? (
+        <Tooltip title="Close">
+          <IconButton onClick={handleCancelClick}>
+            <Close />
+          </IconButton>
+        </Tooltip>
       ) : (
-        <Tooltip title="Filter list">
-          <IconButton>
+        <Tooltip title="Add expense">
+          <IconButton onClick={handleAddClick}>
             <Add />
           </IconButton>
         </Tooltip>
