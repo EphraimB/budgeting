@@ -15,6 +15,8 @@ import FormControl from "@mui/material/FormControl";
 import InputLabel from "@mui/material/InputLabel";
 import Checkbox from "@mui/material/Checkbox";
 import FormControlLabel from "@mui/material/FormControlLabel";
+import Button from "@mui/material/Button";
+import Stack from "@mui/material/Stack";
 
 function RowEdit({
   expense,
@@ -57,6 +59,13 @@ function RowEdit({
     } else {
       setExpenseEndDate(null);
     }
+  };
+
+  const handleCancel = () => {
+    setRowModes((prevModes: any) => ({
+      ...prevModes,
+      [expense.expense_id]: "view",
+    }));
   };
 
   return (
@@ -143,6 +152,17 @@ function RowEdit({
             />
           )}
         </LocalizationProvider>
+      </TableCell>
+      <TableCell>
+        <Stack direction="column" spacing={2}>
+          <Button variant="contained" color="secondary" onClick={handleCancel}>
+            Cancel
+          </Button>
+          <br />
+          <Button variant="contained" color="primary">
+            Update expense
+          </Button>
+        </Stack>
       </TableCell>
     </TableRow>
   );
