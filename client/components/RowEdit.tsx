@@ -46,7 +46,19 @@ function RowEdit({
     expense.expense_end_date ? true : false
   );
   const [expenseFrequency, setExpenseFrequency] = useState(
-    expense.expense_frequency
+    expense.frequency_type
+  );
+  const [frequencyVariable, setFrequencyVariable] = useState(
+    expense.frequency_type_variable
+  );
+  const [frequencyDayOfWeek, setFrequencyDayOfWeek] = useState(
+    expense.frequency_day_of_week
+  );
+  const [frequencyWeekOfMonth, setFrequencyWeekOfMonth] = useState(
+    expense.frequency_week_of_month
+  );
+  const [frequencyMonthOfYear, setFrequencyMonthOfYear] = useState(
+    expense.frequency_month_of_year
   );
 
   const handleExpenseEndDateEnabledChange = (
@@ -80,8 +92,8 @@ function RowEdit({
           value={expenseTitle}
           onChange={(e) => setExpenseTitle(e.target.value)}
         />
-      </TableCell>
-      <TableCell>
+        <br />
+        <br />
         <TextField
           label="Description"
           value={expenseDescription}
@@ -152,6 +164,99 @@ function RowEdit({
             />
           )}
         </LocalizationProvider>
+      </TableCell>
+      <TableCell>
+        <FormControl>
+          <InputLabel id="frequency-select-label">Frequency</InputLabel>
+          <Select
+            labelId="frequency-select-label"
+            label="Frequency"
+            value={expenseFrequency}
+            onChange={(e) => setExpenseFrequency(e.target.value)}
+          >
+            <MenuItem value={0}>Daily</MenuItem>
+            <MenuItem value={1}>Weekly</MenuItem>
+            <MenuItem value={2}>Monthly</MenuItem>
+            <MenuItem value={3}>Yearly</MenuItem>
+          </Select>
+        </FormControl>
+        <br />
+        <br />
+        <TextField
+          label="Frequency variable"
+          value={frequencyVariable}
+          onChange={(e) => setFrequencyVariable(e.target.value)}
+        />
+        <br />
+        <br />
+        {expenseFrequency === 1 &&
+          expenseFrequency === 2 &&
+          expenseFrequency === 3 && (
+            <FormControl>
+              <InputLabel id="frequency-day-of-week-select-label">
+                Frequency day of week
+              </InputLabel>
+              <Select
+                labelId="frequency-day-of-week-select-label"
+                label="Frequency"
+                value={frequencyDayOfWeek}
+                onChange={(e) => setFrequencyDayOfWeek(e.target.value)}
+              >
+                <MenuItem value={0}>Sunday</MenuItem>
+                <MenuItem value={1}>Monday</MenuItem>
+                <MenuItem value={2}>Tuesday</MenuItem>
+                <MenuItem value={3}>Wednesday</MenuItem>
+                <MenuItem value={4}>Thursday</MenuItem>
+                <MenuItem value={5}>Friday</MenuItem>
+                <MenuItem value={6}>Saturday</MenuItem>
+              </Select>
+            </FormControl>
+          )}
+        {expenseFrequency === 2 && expenseFrequency === 3 && (
+          <FormControl>
+            <InputLabel id="frequency-week-of-month-select-label">
+              Frequency week of month
+            </InputLabel>
+            <Select
+              labelId="frequency-week-of-month-select-label"
+              label="Frequency week of month"
+              value={frequencyWeekOfMonth}
+              onChange={(e) => setFrequencyWeekOfMonth(e.target.value)}
+            >
+              <MenuItem value={0}>First</MenuItem>
+              <MenuItem value={1}>Second</MenuItem>
+              <MenuItem value={2}>Third</MenuItem>
+              <MenuItem value={3}>Fourth</MenuItem>
+              <MenuItem value={4}>Last</MenuItem>
+            </Select>
+          </FormControl>
+        )}
+        {expenseFrequency === 3 && (
+          <FormControl>
+            <InputLabel id="frequency-month-of-year-select-label">
+              Frequency month of year
+            </InputLabel>
+            <Select
+              labelId="frequency-month-of-year-select-label"
+              label="Frequency month of year"
+              value={frequencyMonthOfYear}
+              onChange={(e) => setFrequencyMonthOfYear(e.target.value)}
+            >
+              <MenuItem value={0}>January</MenuItem>
+              <MenuItem value={1}>February</MenuItem>
+              <MenuItem value={2}>March</MenuItem>
+              <MenuItem value={3}>April</MenuItem>
+              <MenuItem value={4}>May</MenuItem>
+              <MenuItem value={5}>June</MenuItem>
+              <MenuItem value={6}>July</MenuItem>
+              <MenuItem value={7}>August</MenuItem>
+              <MenuItem value={8}>September</MenuItem>
+              <MenuItem value={9}>October</MenuItem>
+              <MenuItem value={10}>November</MenuItem>
+              <MenuItem value={11}>December</MenuItem>
+            </Select>
+          </FormControl>
+        )}
       </TableCell>
       <TableCell>
         <Stack direction="column" spacing={2}>
