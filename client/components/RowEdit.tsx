@@ -87,7 +87,7 @@ function RowEdit({
               value={expenseTax}
               onChange={(e) => setExpenseTax(e.target.value)}
             >
-              <MenuItem value={0}>None</MenuItem>
+              <MenuItem value={0}>None - 0%</MenuItem>
               {taxes.map((tax: any) => (
                 <MenuItem key={tax.tax_id} value={tax.tax_id}>
                   {tax.tax_title} - {tax.tax_rate * 100}%
