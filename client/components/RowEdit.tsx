@@ -83,7 +83,7 @@ function RowEdit({
           >
             {taxes.map((tax: any) => (
               <option key={tax.tax_id} value={tax.tax_id}>
-                {tax.title} - {tax.rate}%
+                {tax.tax_title} - {tax.tax_rate}%
               </option>
             ))}
           </Select>
