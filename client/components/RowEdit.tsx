@@ -52,13 +52,13 @@ function RowEdit({
     expense.frequency_type_variable
   );
   const [frequencyDayOfWeek, setFrequencyDayOfWeek] = useState(
-    expense.frequency_day_of_week
+    expense.frequency_day_of_week || -1
   );
   const [frequencyWeekOfMonth, setFrequencyWeekOfMonth] = useState(
-    expense.frequency_week_of_month
+    expense.frequency_week_of_month || -1
   );
   const [frequencyMonthOfYear, setFrequencyMonthOfYear] = useState(
-    expense.frequency_month_of_year
+    expense.frequency_month_of_year || -1
   );
 
   const handleExpenseEndDateEnabledChange = (
@@ -174,6 +174,7 @@ function RowEdit({
             value={expenseFrequency}
             onChange={(e) => setExpenseFrequency(e.target.value)}
           >
+            <MenuItem value={-1}>None</MenuItem>
             <MenuItem value={0}>Daily</MenuItem>
             <MenuItem value={1}>Weekly</MenuItem>
             <MenuItem value={2}>Monthly</MenuItem>
@@ -189,40 +190,42 @@ function RowEdit({
         />
         <br />
         <br />
-        {expenseFrequency === 1 &&
-          expenseFrequency === 2 &&
-          expenseFrequency === 3 && (
-            <FormControl>
-              <InputLabel id="frequency-day-of-week-select-label">
-                Frequency day of week
-              </InputLabel>
-              <Select
-                labelId="frequency-day-of-week-select-label"
-                label="Frequency"
-                value={frequencyDayOfWeek}
-                onChange={(e) => setFrequencyDayOfWeek(e.target.value)}
-              >
-                <MenuItem value={0}>Sunday</MenuItem>
-                <MenuItem value={1}>Monday</MenuItem>
-                <MenuItem value={2}>Tuesday</MenuItem>
-                <MenuItem value={3}>Wednesday</MenuItem>
-                <MenuItem value={4}>Thursday</MenuItem>
-                <MenuItem value={5}>Friday</MenuItem>
-                <MenuItem value={6}>Saturday</MenuItem>
-              </Select>
-            </FormControl>
-          )}
-        {expenseFrequency === 2 && expenseFrequency === 3 && (
+        {(expenseFrequency === 1 ||
+          expenseFrequency === 2 ||
+          expenseFrequency === 3) && (
+          <FormControl>
+            <InputLabel id="frequency-day-of-week-select-label">
+              Day of week
+            </InputLabel>
+            <Select
+              labelId="frequency-day-of-week-select-label"
+              label="Day of week"
+              value={frequencyDayOfWeek}
+              onChange={(e) => setFrequencyDayOfWeek(e.target.value)}
+            >
+              <MenuItem value={-1}>None</MenuItem>
+              <MenuItem value={0}>Sunday</MenuItem>
+              <MenuItem value={1}>Monday</MenuItem>
+              <MenuItem value={2}>Tuesday</MenuItem>
+              <MenuItem value={3}>Wednesday</MenuItem>
+              <MenuItem value={4}>Thursday</MenuItem>
+              <MenuItem value={5}>Friday</MenuItem>
+              <MenuItem value={6}>Saturday</MenuItem>
+            </Select>
+          </FormControl>
+        )}
+        {(expenseFrequency === 2 || expenseFrequency === 3) && (
           <FormControl>
             <InputLabel id="frequency-week-of-month-select-label">
-              Frequency week of month
+              Week of month
             </InputLabel>
             <Select
               labelId="frequency-week-of-month-select-label"
-              label="Frequency week of month"
+              label="Week of month"
               value={frequencyWeekOfMonth}
               onChange={(e) => setFrequencyWeekOfMonth(e.target.value)}
             >
+              <MenuItem value={-1}>None</MenuItem>
               <MenuItem value={0}>First</MenuItem>
               <MenuItem value={1}>Second</MenuItem>
               <MenuItem value={2}>Third</MenuItem>
@@ -234,14 +237,15 @@ function RowEdit({
         {expenseFrequency === 3 && (
           <FormControl>
             <InputLabel id="frequency-month-of-year-select-label">
-              Frequency month of year
+              Month of year
             </InputLabel>
             <Select
               labelId="frequency-month-of-year-select-label"
-              label="Frequency month of year"
+              label="Month of year"
               value={frequencyMonthOfYear}
               onChange={(e) => setFrequencyMonthOfYear(e.target.value)}
             >
+              <MenuItem value={-1}>None</MenuItem>
               <MenuItem value={0}>January</MenuItem>
               <MenuItem value={1}>February</MenuItem>
               <MenuItem value={2}>March</MenuItem>
