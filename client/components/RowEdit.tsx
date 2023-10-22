@@ -17,6 +17,7 @@ import Checkbox from "@mui/material/Checkbox";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import Button from "@mui/material/Button";
 import Stack from "@mui/material/Stack";
+import { revalidateTag } from "next/cache";
 
 function RowEdit({
   expense,
@@ -78,6 +79,50 @@ function RowEdit({
       ...prevModes,
       [expense.expense_id]: "view",
     }));
+  };
+
+  const data = {
+    expense_title: expenseTitle,
+    expense_description: expenseDescription,
+    expense_amount: expenseAmount,
+    expense_subsidized: expenseSubsidized,
+    tax_id: expenseTax === 0 ? null : expenseTax,
+    expense_begin_date: expenseBeginDate,
+    expense_end_date: expenseEndDate,
+    frequency_type: parseInt(expenseFrequency),
+    frequency_type_variable: parseInt(frequencyVariable),
+    frequency_day_of_week:
+      frequencyDayOfWeek === -1 ? null : parseInt(frequencyDayOfWeek),
+    frequency_week_of_month:
+      frequencyWeekOfMonth === -1 ? null : parseInt(frequencyWeekOfMonth),
+    frequency_month_of_year:
+      frequencyMonthOfYear === -1 ? null : parseInt(frequencyMonthOfYear),
+  };
+
+  const handleEdit = () => {
+    const submitData = async () => {
+      try {
+        // Post request to create a new expense
+        await fetch(`/api/expenses?expense_id=${expense.expense_id}`, {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(data),
+        });
+        revalidateTag("expenses");
+      } catch (error) {
+        console.error("There was an error editing the expense!", error);
+        // showAlert("There was an error editing the expense!", "error");
+      }
+      setRowModes((prevModes: any) => ({
+        ...prevModes,
+        [expense.expense_id]: "view",
+      }));
+      // showSnackbar("Expense edited!");
+    };
+
+    submitData();
   };
 
   return (
@@ -268,7 +313,7 @@ function RowEdit({
             Cancel
           </Button>
           <br />
-          <Button variant="contained" color="primary">
+          <Button variant="contained" color="primary" onClick={handleEdit}>
             Update expense
           </Button>
         </Stack>
