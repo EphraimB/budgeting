@@ -13,6 +13,8 @@ import Select from "@mui/material/Select";
 import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
 import InputLabel from "@mui/material/InputLabel";
+import Checkbox from "@mui/material/Checkbox";
+import FormControlLabel from "@mui/material/FormControlLabel";
 
 function RowEdit({
   expense,
@@ -35,13 +37,27 @@ function RowEdit({
   const [expenseBeginDate, setExpenseBeginDate] = useState(
     expense.expense_begin_date
   );
-  const [expenseEndDateExists, setExpenseEndDateExists] = useState(false);
   const [expenseEndDate, setExpenseEndDate] = useState(
     expense.expense_end_date
+  );
+  const [expenseEndDateEnabled, setExpenseEndDateEnabled] = useState(
+    expense.expense_end_date ? true : false
   );
   const [expenseFrequency, setExpenseFrequency] = useState(
     expense.expense_frequency
   );
+
+  const handleExpenseEndDateEnabledChange = (
+    e: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    setExpenseEndDateEnabled(e.target.checked);
+
+    if (e.target.checked) {
+      setExpenseEndDate(dayjs().format());
+    } else {
+      setExpenseEndDate(null);
+    }
+  };
 
   return (
     <TableRow
@@ -106,9 +122,27 @@ function RowEdit({
               setExpenseBeginDate(e ? e.format() : dayjs().format())
             }
           />
+          <br />
+          <br />
+          <FormControlLabel
+            control={
+              <Checkbox
+                checked={expenseEndDateEnabled}
+                onChange={handleExpenseEndDateEnabledChange}
+              />
+            }
+            label="Expense end date"
+          />
+          {expenseEndDateEnabled && (
+            <DateTimePicker
+              label="Expense end date"
+              value={dayjs(expenseEndDate) || dayjs()}
+              onChange={(e: Dayjs | null) =>
+                setExpenseEndDate(e ? e.format() : dayjs().format())
+              }
+            />
+          )}
         </LocalizationProvider>
-        {/* <br />
-        <br /> */}
       </TableCell>
     </TableRow>
   );
