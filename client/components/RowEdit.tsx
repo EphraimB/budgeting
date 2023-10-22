@@ -11,6 +11,8 @@ import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import dayjs, { Dayjs } from "dayjs";
 import Select from "@mui/material/Select";
 import MenuItem from "@mui/material/MenuItem";
+import FormControl from "@mui/material/FormControl";
+import InputLabel from "@mui/material/InputLabel";
 
 function RowEdit({
   expense,
@@ -77,18 +79,22 @@ function RowEdit({
         <br />
         <br />
         {taxes.length > 0 ? (
-          <Select
-            label="Tax"
-            value={expenseTax}
-            onChange={(e) => setExpenseTax(e.target.value)}
-          >
-            <MenuItem value={0}>None</MenuItem>
-            {taxes.map((tax: any) => (
-              <MenuItem key={tax.tax_id} value={tax.tax_id}>
-                {tax.tax_title} - {tax.tax_rate * 100}%
-              </MenuItem>
-            ))}
-          </Select>
+          <FormControl>
+            <InputLabel id="tax-select-label">Tax</InputLabel>
+            <Select
+              labelId="tax-select-label"
+              label="Tax"
+              value={expenseTax}
+              onChange={(e) => setExpenseTax(e.target.value)}
+            >
+              <MenuItem value={0}>None</MenuItem>
+              {taxes.map((tax: any) => (
+                <MenuItem key={tax.tax_id} value={tax.tax_id}>
+                  {tax.tax_title} - {tax.tax_rate * 100}%
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
         ) : null}
       </TableCell>
       <TableCell>
