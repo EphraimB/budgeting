@@ -39,8 +39,8 @@ async function Expenses({ params }: { params: { account_id: string } }) {
   return (
     <Stack>
       <Link
-        href={`/ transactions/${accountId}`}
-        as={`/transactions/${accountId}`}
+        href={`/${accountId}`}
+        as={`/${accountId}`}
         style={{ color: "inherit", textDecoration: "inherit" }}
       >
         <Card

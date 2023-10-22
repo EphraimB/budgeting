@@ -7,8 +7,8 @@ import Typography from "@mui/material/Typography";
 function ExpensesWidget({ account_id }: { account_id: number }) {
   return (
     <Link
-      href={`/expenses/${account_id}`}
-      as={`/expenses/${account_id}`}
+      href={`/${account_id}/expenses`}
+      as={`/${account_id}/expenses`}
       style={{ color: "inherit", textDecoration: "inherit" }}
     >
       <Card

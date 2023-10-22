@@ -1,7 +1,7 @@
 import dayjs, { Dayjs } from "dayjs";
-import DateRange from "../../../../components/DateRange";
-import TransactionDisplay from "../../../../components/TransactionDisplay";
-import DataManagementWidgets from "../../../../components/DataManagementWidgets";
+import DateRange from "../../../components/DateRange";
+import TransactionDisplay from "../../../components/TransactionDisplay";
+import DataManagementWidgets from "../../../components/DataManagementWidgets";
 
 async function getTransactions(
   accountId: number,
