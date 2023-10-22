@@ -30,8 +30,8 @@ function RowAdd({
 }) {
   const [expenseTitle, setExpenseTitle] = useState("");
   const [expenseDescription, setExpenseDescription] = useState("");
-  const [expenseAmount, setExpenseAmount] = useState(0);
-  const [expenseSubsidized, setExpenseSubsidized] = useState(0);
+  const [expenseAmount, setExpenseAmount] = useState("0");
+  const [expenseSubsidized, setExpenseSubsidized] = useState("0");
   const [expenseTax, setExpenseTax] = useState(expense.tax_id || 0);
   const [expenseBeginDate, setExpenseBeginDate] = useState(dayjs().format());
   const [expenseEndDate, setExpenseEndDate] = useState<null | string>(null);
@@ -127,14 +127,14 @@ function RowAdd({
         <TextField
           label="Amount"
           value={expenseAmount}
-          onChange={(e) => setExpenseAmount(parseFloat(e.target.value))}
+          onChange={(e) => setExpenseAmount(e.target.value)}
         />
         <br />
         <br />
         <TextField
           label="Subsidized"
           value={expenseSubsidized}
-          onChange={(e) => setExpenseSubsidized(parseFloat(e.target.value))}
+          onChange={(e) => setExpenseSubsidized(e.target.value)}
         />
         <br />
         <br />
