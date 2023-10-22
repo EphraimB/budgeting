@@ -296,7 +296,7 @@ function RowAdd({
           </Button>
           <br />
           <Button variant="contained" color="primary" onClick={handleEdit}>
-            Update expense
+            Add expense
           </Button>
         </Stack>
       </TableCell>
