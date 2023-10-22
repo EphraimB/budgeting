@@ -1,3 +1,5 @@
+"use client";
+
 import TableBody from "@mui/material/TableBody";
 import Skeleton from "@mui/material/Skeleton";
 import TableCell from "@mui/material/TableCell";
