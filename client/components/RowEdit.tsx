@@ -5,6 +5,10 @@ import TableRow from "@mui/material/TableRow";
 import TableCell from "@mui/material/TableCell";
 import TextField from "@mui/material/TextField";
 import { yellow } from "@mui/material/colors";
+import { DateTimePicker } from "@mui/x-date-pickers";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+import dayjs, { Dayjs } from "dayjs";
 
 function RowEdit({ expense, setRowModes }: { expense: any; setRowModes: any }) {
   const [expenseTitle, setExpenseTitle] = useState(expense.expense_title);
@@ -16,10 +20,16 @@ function RowEdit({ expense, setRowModes }: { expense: any; setRowModes: any }) {
     expense.expense_subsidized
   );
   const [expenseTax, setExpenseTax] = useState(expense.tax_id);
+  const [expenseBeginDate, setExpenseBeginDate] = useState(
+    expense.expense_begin_date
+  );
+  const [expenseEndDateExists, setExpenseEndDateExists] = useState(false);
+  const [expenseEndDate, setExpenseEndDate] = useState(
+    expense.expense_end_date
+  );
   const [expenseFrequency, setExpenseFrequency] = useState(
     expense.expense_frequency
   );
-  const [expenseDate, setExpenseDate] = useState(expense.expense_date);
 
   return (
     <TableRow
@@ -48,13 +58,33 @@ function RowEdit({ expense, setRowModes }: { expense: any; setRowModes: any }) {
           onChange={(e) => setExpenseAmount(e.target.value)}
         />
         <br />
+        <br />
         <TextField
           label="Subsidized"
           value={expenseSubsidized}
           onChange={(e) => setExpenseSubsidized(e.target.value)}
         />
+        <br />
+        <br />
+        <TextField
+          label="Tax"
+          value={expenseTax}
+          onChange={(e) => setExpenseTax(e.target.value)}
+        />
       </TableCell>
-      <TableCell></TableCell>
+      <TableCell>
+        <LocalizationProvider dateAdapter={AdapterDayjs}>
+          <DateTimePicker
+            label="Expense begin date"
+            value={dayjs(expenseBeginDate)}
+            onChange={(e: Dayjs | null) =>
+              setExpenseBeginDate(e ? e.format() : dayjs().format())
+            }
+          />
+        </LocalizationProvider>
+        {/* <br />
+        <br /> */}
+      </TableCell>
     </TableRow>
   );
 }
