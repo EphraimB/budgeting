@@ -20,7 +20,7 @@ function AccountList({ accounts }: { accounts: any }) {
 
   const pathname = usePathname();
 
-  const account_id = parseInt(pathname.split("/")[2]);
+  const account_id = parseInt(pathname.split("/")[1]);
 
   return (
     <Stack

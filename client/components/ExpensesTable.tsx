@@ -296,7 +296,13 @@ function ExpensesTable({
                 if (rowModes[row.expense_id as number] === "delete") {
                   return <RowDelete expense={row} setRowModes={setRowModes} />;
                 } else if (rowModes[row.expense_id as number] === "edit") {
-                  return <RowEdit expense={row} setRowModes={setRowModes} />;
+                  return (
+                    <RowEdit
+                      expense={row}
+                      taxes={taxes}
+                      setRowModes={setRowModes}
+                    />
+                  );
                 } else {
                   return (
                     <RowView

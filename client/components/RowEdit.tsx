@@ -9,8 +9,17 @@ import { DateTimePicker } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import dayjs, { Dayjs } from "dayjs";
+import Select from "@mui/material/Select";
 
-function RowEdit({ expense, setRowModes }: { expense: any; setRowModes: any }) {
+function RowEdit({
+  expense,
+  taxes,
+  setRowModes,
+}: {
+  expense: any;
+  taxes: any;
+  setRowModes: any;
+}) {
   const [expenseTitle, setExpenseTitle] = useState(expense.expense_title);
   const [expenseDescription, setExpenseDescription] = useState(
     expense.expense_description
@@ -66,11 +75,19 @@ function RowEdit({ expense, setRowModes }: { expense: any; setRowModes: any }) {
         />
         <br />
         <br />
-        <TextField
-          label="Tax"
-          value={expenseTax}
-          onChange={(e) => setExpenseTax(e.target.value)}
-        />
+        {taxes.length > 0 ? (
+          <Select
+            label="Tax"
+            value={expenseTax}
+            onChange={(e) => setExpenseTax(e.target.value)}
+          >
+            {taxes.map((tax: any) => (
+              <option key={tax.tax_id} value={tax.tax_id}>
+                {tax.title} - {tax.rate}%
+              </option>
+            ))}
+          </Select>
+        ) : null}
       </TableCell>
       <TableCell>
         <LocalizationProvider dateAdapter={AdapterDayjs}>
