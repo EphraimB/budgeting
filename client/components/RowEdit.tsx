@@ -29,7 +29,7 @@ function RowEdit({
   const [expenseSubsidized, setExpenseSubsidized] = useState(
     expense.expense_subsidized
   );
-  const [expenseTax, setExpenseTax] = useState(expense.tax_id);
+  const [expenseTax, setExpenseTax] = useState(expense.tax_id || 0);
   const [expenseBeginDate, setExpenseBeginDate] = useState(
     expense.expense_begin_date
   );
