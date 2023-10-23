@@ -3,7 +3,7 @@ import TableCell from "@mui/material/TableCell";
 import Button from "@mui/material/Button";
 import Box from "@mui/material/Box";
 import { red } from "@mui/material/colors";
-import { revalidateTag } from "next/cache";
+import { useRouter } from "next/navigation";
 
 function RowDelete({
   expense,
@@ -12,6 +12,8 @@ function RowDelete({
   expense: any;
   setRowModes: any;
 }) {
+  const router = useRouter();
+
   const handleDelete = () => {
     const deleteAccount = async () => {
       try {
@@ -25,7 +27,8 @@ function RowDelete({
             },
           }
         );
-        revalidateTag("expenses");
+        
+        router.refresh();
       } catch (error) {
         console.error("There was an error deleting the expense!", error);
         // showAlert("There was an error deleting the expense!", "error");

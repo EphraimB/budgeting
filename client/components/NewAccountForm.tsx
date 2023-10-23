@@ -7,12 +7,15 @@ import TextField from "@mui/material/TextField";
 import Stack from "@mui/material/Stack";
 import IconButton from "@mui/material/IconButton";
 import CloseIcon from "@mui/icons-material/Close";
+import { useRouter } from "next/navigation";
 
 export default function NewAccountForm({
   setShowNewAccountForm,
 }: {
   setShowNewAccountForm: React.Dispatch<React.SetStateAction<boolean>>;
 }) {
+  const router = useRouter();
+
   const [accountName, setAccountName] = useState("");
 
   const data = {
@@ -30,6 +33,8 @@ export default function NewAccountForm({
           },
           body: JSON.stringify(data),
         });
+
+        router.refresh();
       } catch (error) {
         console.error("There was an error creating the account!", error);
         // showAlert("There was an error creating the account!", "error");

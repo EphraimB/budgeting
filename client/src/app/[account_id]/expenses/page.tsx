@@ -8,10 +8,7 @@ import ExpensesTable from "../../../../components/ExpensesTable";
 
 async function getExpenses(accountId: number) {
   const res = await fetch(
-    `http://server:5001/api/expenses?account_id=${accountId}`,
-    {
-      next: { tags: ["expenses"] },
-    }
+    `http://server:5001/api/expenses?account_id=${accountId}`
   );
 
   if (!res.ok) {

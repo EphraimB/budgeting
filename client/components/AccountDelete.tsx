@@ -5,6 +5,7 @@ import IconButton from "@mui/material/IconButton";
 import CloseIcon from "@mui/icons-material/Close";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
+import { useRouter } from "next/navigation";
 
 function AccountDelete({
   account,
@@ -13,6 +14,8 @@ function AccountDelete({
   account: any;
   setAccountModes: any;
 }) {
+  const router = useRouter();
+
   const handleDelete = () => {
     const deleteAccount = async () => {
       try {
@@ -23,6 +26,8 @@ function AccountDelete({
             "Content-Type": "application/json",
           },
         });
+
+        router.refresh();
       } catch (error) {
         console.error("There was an error deleting the account!", error);
         // showAlert("There was an error deleting the account!", "error");
