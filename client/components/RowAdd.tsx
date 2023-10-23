@@ -77,7 +77,7 @@ function RowAdd({
     const submitData = async () => {
       try {
         // Post request to create a new expense
-        await fetch(`/api/expenses`, {
+        await fetch("/api/expenses", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
