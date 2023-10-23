@@ -10,7 +10,6 @@ export async function GET(request: NextRequest) {
 }
 
 export async function POST(request: NextRequest) {
-  const path = request.nextUrl.searchParams.get("path");
   const data = await request.json();
 
   const res = await fetch("http://server:5001/api/accounts", {
@@ -22,15 +21,12 @@ export async function POST(request: NextRequest) {
   });
 
   // revalidate cache
-  if (path) {
-    revalidatePath(path);
-  }
+  revalidatePath("/", "layout");
 
   return Response.json(res);
 }
 
 export async function PUT(request: NextRequest) {
-  const path = request.nextUrl.searchParams.get("path");
   const { searchParams } = new URL(request.url);
   const account_id = searchParams.get("account_id");
 
@@ -51,15 +47,12 @@ export async function PUT(request: NextRequest) {
   });
 
   // revalidate cache
-  if (path) {
-    revalidatePath(path);
-  }
+  revalidatePath("/", "layout");
 
   return Response.json(res);
 }
 
 export async function DELETE(request: NextRequest) {
-  const path = request.nextUrl.searchParams.get("path");
   const { searchParams } = new URL(request.url);
   const account_id = searchParams.get("account_id");
 
@@ -77,9 +70,7 @@ export async function DELETE(request: NextRequest) {
   });
 
   // revalidate cache
-  if (path) {
-    revalidatePath(path);
-  }
+  revalidatePath("/", "layout");
 
   return Response.json(res);
 }
