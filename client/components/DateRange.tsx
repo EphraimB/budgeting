@@ -46,8 +46,6 @@ export default function DateRange({
     );
 
     router.push(`${pathname}?${updatedParams.toString()}`);
-
-    revalidateTag("date");
   };
 
   return (
