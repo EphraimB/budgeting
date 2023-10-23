@@ -1,4 +1,5 @@
 import { type NextRequest } from "next/server";
+import { revalidatePath } from "next/cache";
 
 export async function GET(request: NextRequest) {
   const searchParams = request.nextUrl.searchParams;
@@ -20,7 +21,7 @@ export async function GET(request: NextRequest) {
   return Response.json({ data });
 }
 
-export async function POST(request: Request) {
+export async function POST(request: NextRequest) {
   const data = await request.json();
 
   const res = await fetch("http://server:5001/api/expenses", {
@@ -31,10 +32,13 @@ export async function POST(request: Request) {
     body: JSON.stringify(data),
   });
 
+  // revalidate cache
+  revalidatePath("/[account_id]/expenses", "page");
+
   return Response.json(res);
 }
 
-export async function PUT(request: Request) {
+export async function PUT(request: NextRequest) {
   const { searchParams } = new URL(request.url);
   const expense_id = searchParams.get("expense_id");
 
@@ -54,10 +58,13 @@ export async function PUT(request: Request) {
     body: JSON.stringify(data),
   });
 
+  // revalidate cache
+  revalidatePath("/[account_id]/expenses", "page");
+
   return Response.json(res);
 }
 
-export async function DELETE(request: Request) {
+export async function DELETE(request: NextRequest) {
   const { searchParams } = new URL(request.url);
   const expense_id = searchParams.get("expense_id");
 
@@ -73,6 +80,9 @@ export async function DELETE(request: Request) {
       "Content-Type": "application/json",
     },
   });
+
+  // revalidate cache
+  revalidatePath("/[account_id]/expenses", "page");
 
   return Response.json(res);
 }

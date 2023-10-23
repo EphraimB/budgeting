@@ -17,7 +17,6 @@ import Checkbox from "@mui/material/Checkbox";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import Button from "@mui/material/Button";
 import Stack from "@mui/material/Stack";
-import { useRouter } from "next/navigation";
 
 function RowAdd({
   taxes,
@@ -26,8 +25,6 @@ function RowAdd({
   taxes: any;
   setShowAddExpenseForm: any;
 }) {
-  const router = useRouter();
-
   const [expenseTitle, setExpenseTitle] = useState("");
   const [expenseDescription, setExpenseDescription] = useState("");
   const [expenseAmount, setExpenseAmount] = useState("0");
@@ -87,8 +84,6 @@ function RowAdd({
           },
           body: JSON.stringify(data),
         });
-
-        router.refresh();
       } catch (error) {
         console.error("There was an error editing the expense!", error);
         // showAlert("There was an error editing the expense!", "error");

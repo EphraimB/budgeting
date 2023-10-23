@@ -203,9 +203,16 @@ function ExpensesTable({
           expense.frequency_type_variable === 1 ||
           expense.frequency_type_variable === null
         ) {
-          expenseFrequency = `Monthly on the ${dayjs(
-            expense.expense_begin_date
-          ).format("DD")}th`;
+          const dayOfMonth = dayjs(expense.expense_begin_date).format("DD");
+          expenseFrequency = `Monthly on the ${dayOfMonth}${
+            dayOfMonth.endsWith("1")
+              ? "st"
+              : dayOfMonth.endsWith("2")
+              ? "nd"
+              : dayOfMonth.endsWith("3")
+              ? "rd"
+              : "th"
+          }`;
         } else {
           expenseFrequency = `Every ${
             expense.frequency_type_variable
