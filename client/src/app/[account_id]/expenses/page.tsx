@@ -41,24 +41,23 @@ async function Expenses({ params }: { params: { account_id: string } }) {
 
   return (
     <Stack>
-      <Link
-        href={`/${accountId}`}
-        as={`/${accountId}`}
-        style={{ color: "inherit", textDecoration: "inherit" }}
+      <Card
+        sx={{
+          p: 2,
+          margin: "auto",
+          maxWidth: 250,
+          background:
+            "linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('/img/back-to-transactions.png')",
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+          backgroundRepeat: "no-repeat",
+          color: "white",
+        }}
       >
-        <Card
-          sx={{
-            p: 2,
-            margin: "auto",
-            maxWidth: 250,
-            flexGrow: 1,
-            background:
-              "linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('/img/back-to-transactions.png')",
-            backgroundSize: "cover",
-            backgroundPosition: "center",
-            backgroundRepeat: "no-repeat",
-            color: "white",
-          }}
+        <Link
+          href={`/${accountId}`}
+          as={`/${accountId}`}
+          style={{ color: "inherit", textDecoration: "inherit" }}
         >
           <CardHeader title="< Transactions" />
           <CardContent sx={{ flexGrow: 1 }}>
@@ -66,8 +65,8 @@ async function Expenses({ params }: { params: { account_id: string } }) {
               Go back to transactions.
             </Typography>
           </CardContent>
-        </Card>
-      </Link>
+        </Link>
+      </Card>
       <ExpensesTable expenses={expenses} taxes={taxes} />
     </Stack>
   );
