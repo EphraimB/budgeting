@@ -20,11 +20,9 @@ import Stack from "@mui/material/Stack";
 import { revalidateTag } from "next/cache";
 
 function RowAdd({
-  expense,
   taxes,
   setShowAddExpenseForm,
 }: {
-  expense: any;
   taxes: any;
   setShowAddExpenseForm: any;
 }) {
@@ -32,12 +30,10 @@ function RowAdd({
   const [expenseDescription, setExpenseDescription] = useState("");
   const [expenseAmount, setExpenseAmount] = useState("0");
   const [expenseSubsidized, setExpenseSubsidized] = useState("0");
-  const [expenseTax, setExpenseTax] = useState(expense.tax_id || 0);
+  const [expenseTax, setExpenseTax] = useState(0);
   const [expenseBeginDate, setExpenseBeginDate] = useState(dayjs().format());
   const [expenseEndDate, setExpenseEndDate] = useState<null | string>(null);
-  const [expenseEndDateEnabled, setExpenseEndDateEnabled] = useState(
-    expense.expense_end_date ? true : false
-  );
+  const [expenseEndDateEnabled, setExpenseEndDateEnabled] = useState(false);
   const [expenseFrequency, setExpenseFrequency] = useState(2);
   const [frequencyVariable, setFrequencyVariable] = useState(1);
   const [frequencyDayOfWeek, setFrequencyDayOfWeek] = useState(-1);
@@ -145,7 +141,7 @@ function RowAdd({
               labelId="tax-select-label"
               label="Tax"
               value={expenseTax}
-              onChange={(e) => setExpenseTax(e.target.value)}
+              onChange={(e) => setExpenseTax(e.target.value as number)}
             >
               <MenuItem key={0} value={0}>
                 None - 0%

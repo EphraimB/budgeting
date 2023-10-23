@@ -295,6 +295,12 @@ function ExpensesTable({
             headCells={headCells}
           />
           <TableBody>
+            {showAddExpenseForm && (
+              <RowAdd
+                taxes={taxes}
+                setShowAddExpenseForm={setShowAddExpenseForm}
+              />
+            )}
             <Suspense fallback={<Loading />}>
               {visibleRows.map((row, index) => {
                 if (rowModes[row.expense_id as number] === "delete") {
@@ -309,26 +315,17 @@ function ExpensesTable({
                   );
                 } else {
                   return (
-                    <>
-                      {showAddExpenseForm && (
-                        <RowAdd
-                          expense={row}
-                          taxes={taxes}
-                          setShowAddExpenseForm={setShowAddExpenseForm}
-                        />
-                      )}
-                      <RowView
-                        key={row.expense_id}
-                        row={row}
-                        index={index}
-                        handleClick={handleClick}
-                        isSelected={isSelected}
-                        taxes={taxes}
-                        getNextExpenseDateAndFrequency={
-                          getNextExpenseDateAndFrequency
-                        }
-                      />
-                    </>
+                    <RowView
+                      key={row.expense_id}
+                      row={row}
+                      index={index}
+                      handleClick={handleClick}
+                      isSelected={isSelected}
+                      taxes={taxes}
+                      getNextExpenseDateAndFrequency={
+                        getNextExpenseDateAndFrequency
+                      }
+                    />
                   );
                 }
               })}
