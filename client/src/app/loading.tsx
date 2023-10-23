@@ -4,7 +4,7 @@ import Card from "@mui/material/Card";
 import Skeleton from "@mui/material/Skeleton";
 import Stack from "@mui/material/Stack";
 
-function LoadingAccounts() {
+function Loading() {
   return (
     <Stack direction="row" justifyContent="center" spacing={2}>
       <Card
@@ -38,4 +38,4 @@ function LoadingAccounts() {
   );
 }
 
-export default LoadingAccounts;
+export default Loading;
