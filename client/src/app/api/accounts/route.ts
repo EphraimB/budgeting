@@ -1,4 +1,5 @@
 import { NextRequest } from "next/server";
+import { revalidatePath } from "next/cache";
 
 export async function GET(request: NextRequest) {
   const res = await fetch("http://server:5001/api/accounts");
@@ -9,6 +10,7 @@ export async function GET(request: NextRequest) {
 }
 
 export async function POST(request: NextRequest) {
+  const path = request.nextUrl.searchParams.get("path");
   const data = await request.json();
 
   const res = await fetch("http://server:5001/api/accounts", {
@@ -19,10 +21,16 @@ export async function POST(request: NextRequest) {
     body: JSON.stringify(data),
   });
 
+  // revalidate cache
+  if (path) {
+    revalidatePath(path);
+  }
+
   return Response.json(res);
 }
 
 export async function PUT(request: NextRequest) {
+  const path = request.nextUrl.searchParams.get("path");
   const { searchParams } = new URL(request.url);
   const account_id = searchParams.get("account_id");
 
@@ -42,10 +50,16 @@ export async function PUT(request: NextRequest) {
     body: JSON.stringify(data),
   });
 
+  // revalidate cache
+  if (path) {
+    revalidatePath(path);
+  }
+
   return Response.json(res);
 }
 
 export async function DELETE(request: NextRequest) {
+  const path = request.nextUrl.searchParams.get("path");
   const { searchParams } = new URL(request.url);
   const account_id = searchParams.get("account_id");
 
@@ -61,6 +75,11 @@ export async function DELETE(request: NextRequest) {
       "Content-Type": "application/json",
     },
   });
+
+  // revalidate cache
+  if (path) {
+    revalidatePath(path);
+  }
 
   return Response.json(res);
 }

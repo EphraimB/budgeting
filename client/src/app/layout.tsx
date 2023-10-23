@@ -6,6 +6,7 @@ import Container from "@mui/material/Container";
 import AccountList from "../../components/AccountList";
 import { Suspense } from "react";
 import Loading from "./loading";
+import { revalidatePath } from "next/cache";
 
 export const metadata: Metadata = {
   title: "Budgeting",
@@ -13,9 +14,7 @@ export const metadata: Metadata = {
 };
 
 async function getAccounts() {
-  const res = await fetch("http://server:5001/api/accounts", {
-    next: { tags: ["accounts"] },
-  });
+  const res = await fetch("http://server:5001/api/accounts");
 
   if (!res.ok) {
     // open alert
