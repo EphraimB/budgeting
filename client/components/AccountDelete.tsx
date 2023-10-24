@@ -1,9 +1,11 @@
+"use client";
+
 import Typography from "@mui/material/Typography";
 import IconButton from "@mui/material/IconButton";
 import CloseIcon from "@mui/icons-material/Close";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
-import { useSnackbar, useAlert, useAccounts } from "../context/FeedbackContext";
+import { useRouter } from "next/navigation";
 
 function AccountDelete({
   account,
@@ -12,33 +14,29 @@ function AccountDelete({
   account: any;
   setAccountModes: any;
 }) {
-  const { showSnackbar } = useSnackbar();
-  const { showAlert } = useAlert();
-  const { fetchAccounts } = useAccounts();
+  const router = useRouter();
 
   const handleDelete = () => {
     const deleteAccount = async () => {
       try {
         // Post request to create a new account
-        await fetch(
-          `http://localhost:3000/api/accounts?account_id=${account.account_id}`,
-          {
-            method: "DELETE",
-            headers: {
-              "Content-Type": "application/json",
-            },
-          }
-        );
-        fetchAccounts();
+        await fetch(`/api/accounts?account_id=${account.account_id}`, {
+          method: "DELETE",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
+
+        router.refresh();
       } catch (error) {
         console.error("There was an error deleting the account!", error);
-        showAlert("There was an error deleting the account!", "error");
+        // showAlert("There was an error deleting the account!", "error");
       }
       setAccountModes((prevModes: any) => ({
         ...prevModes,
         [account.account_id]: "view",
       }));
-      showSnackbar("Account deleted!");
+      // showSnackbar("Account deleted!");
     };
 
     deleteAccount();
@@ -61,12 +59,7 @@ function AccountDelete({
           right: 0,
         }}
         size="small"
-        onClick={() =>
-          setAccountModes((prevModes: any) => ({
-            ...prevModes,
-            [account.account_id]: "view",
-          }))
-        }
+        onClick={handleCancel}
       >
         <CloseIcon />
       </IconButton>

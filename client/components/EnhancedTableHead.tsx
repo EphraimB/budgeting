@@ -47,14 +47,14 @@ function EnhancedTableHead({
             checked={rowCount > 0 && numSelected === rowCount}
             onChange={onSelectAllClick}
             inputProps={{
-              "aria-label": "select all desserts",
+              "aria-label": "select all expenses",
             }}
           />
         </TableCell>
         {headCells.map((headCell: HeadCell) => (
           <TableCell
             key={headCell.id}
-            align={headCell.numeric ? "right" : "left"}
+            align={"right"}
             padding={"normal"}
             sortDirection={orderBy === headCell.id ? order : false}
           >

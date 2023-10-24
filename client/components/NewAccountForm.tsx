@@ -1,3 +1,5 @@
+"use client";
+
 import { useState } from "react";
 import Paper from "@mui/material/Paper";
 import Button from "@mui/material/Button";
@@ -5,17 +7,16 @@ import TextField from "@mui/material/TextField";
 import Stack from "@mui/material/Stack";
 import IconButton from "@mui/material/IconButton";
 import CloseIcon from "@mui/icons-material/Close";
-import { useSnackbar, useAlert, useAccounts } from "../context/FeedbackContext";
+import { useRouter } from "next/navigation";
 
 export default function NewAccountForm({
   setShowNewAccountForm,
 }: {
   setShowNewAccountForm: React.Dispatch<React.SetStateAction<boolean>>;
 }) {
+  const router = useRouter();
+
   const [accountName, setAccountName] = useState("");
-  const { showSnackbar } = useSnackbar();
-  const { showAlert } = useAlert();
-  const { fetchAccounts } = useAccounts();
 
   const data = {
     name: accountName,
@@ -25,20 +26,21 @@ export default function NewAccountForm({
     const submitData = async () => {
       try {
         // Post request to create a new account
-        await fetch("http://localhost:3000/api/accounts", {
+        await fetch("/api/accounts", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
           },
           body: JSON.stringify(data),
         });
-        fetchAccounts();
+
+        router.refresh();
       } catch (error) {
         console.error("There was an error creating the account!", error);
-        showAlert("There was an error creating the account!", "error");
+        // showAlert("There was an error creating the account!", "error");
       }
       setShowNewAccountForm(false);
-      showSnackbar("Account created!");
+      // showSnackbar("Account created!");
     };
 
     submitData();

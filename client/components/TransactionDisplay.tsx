@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useMemo } from "react";
+import { useState, Suspense, useMemo } from "react";
 import dayjs, { Dayjs } from "dayjs";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
@@ -9,50 +9,18 @@ import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
-import Skeleton from "@mui/material/Skeleton";
-import { useAlert } from "../context/FeedbackContext";
 import { green, red } from "@mui/material/colors";
 import TablePagination from "@mui/material/TablePagination";
+import Skeleton from "@mui/material/Skeleton";
+import LoadingTransactions from "./LoadingTransactions";
 
 export default function TransactionDisplay({
-  accountId,
-  from_date,
-  to_date,
+  transactions,
 }: {
-  accountId: number;
-  from_date: Dayjs;
-  to_date: Dayjs;
+  transactions: any[];
 }) {
-  const [transactions, setTransactions] = useState(null) as any[];
-  const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
-
-  const { showAlert, closeAlert } = useAlert();
-
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await fetch(
-          `http://localhost:3000/api/transactions?account_id=${accountId}&from_date=${from_date.format()}&to_date=${to_date.format()}`
-        );
-        if (!response.ok) {
-          showAlert("Failed to load transactions", "error");
-          return;
-        }
-
-        const data = await response.json();
-        setTransactions(data.data);
-
-        setLoading(false); // Set loading to false once data is fetched
-      } catch (error) {
-        showAlert("Failed to load transactions", "error");
-        setLoading(false); // Set loading to false even if there is an error
-      }
-    };
-
-    fetchData();
-  }, [from_date, to_date]);
 
   const handleChangePage = (event: unknown, newPage: number) => {
     setPage(newPage);
@@ -81,6 +49,7 @@ export default function TransactionDisplay({
         >
           <TableHead>
             <TableRow
+              key="transactions-table-header"
               sx={{
                 backgroundColor: "#000",
               }}
@@ -106,34 +75,8 @@ export default function TransactionDisplay({
               </TableCell>
             </TableRow>
           </TableHead>
-          {loading || !transactions ? (
-            <TableRow>
-              <TableCell>
-                <Skeleton variant="text" />
-                <Skeleton variant="text" />
-                <Skeleton variant="text" />
-              </TableCell>
-              <TableCell>
-                <Skeleton variant="text" />
-              </TableCell>
-              <TableCell>
-                <Skeleton variant="text" />
-              </TableCell>
-              <TableCell>
-                <Skeleton variant="text" />
-              </TableCell>
-              <TableCell>
-                <Skeleton variant="text" />
-              </TableCell>
-              <TableCell>
-                <Skeleton variant="text" />
-              </TableCell>
-              <TableCell>
-                <Skeleton variant="text" />
-              </TableCell>
-            </TableRow>
-          ) : (
-            <TableBody>
+          <TableBody>
+            <Suspense fallback={<LoadingTransactions />}>
               {flatTransactions
                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                 .map((transaction: any) => (
@@ -212,8 +155,8 @@ export default function TransactionDisplay({
                     </TableCell>
                   </TableRow>
                 ))}
-            </TableBody>
-          )}
+            </Suspense>
+          </TableBody>
         </Table>
       </TableContainer>
       <TablePagination

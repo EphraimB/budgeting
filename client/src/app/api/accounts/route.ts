@@ -1,4 +1,7 @@
-export async function GET(request: Request) {
+import { NextRequest } from "next/server";
+import { revalidatePath } from "next/cache";
+
+export async function GET(request: NextRequest) {
   const res = await fetch("http://server:5001/api/accounts");
 
   const data = await res.json();
@@ -6,7 +9,7 @@ export async function GET(request: Request) {
   return Response.json({ data });
 }
 
-export async function POST(request: Request) {
+export async function POST(request: NextRequest) {
   const data = await request.json();
 
   const res = await fetch("http://server:5001/api/accounts", {
@@ -17,10 +20,13 @@ export async function POST(request: Request) {
     body: JSON.stringify(data),
   });
 
+  // revalidate cache
+  revalidatePath("/", "layout");
+
   return Response.json(res);
 }
 
-export async function PUT(request: Request) {
+export async function PUT(request: NextRequest) {
   const { searchParams } = new URL(request.url);
   const account_id = searchParams.get("account_id");
 
@@ -40,10 +46,13 @@ export async function PUT(request: Request) {
     body: JSON.stringify(data),
   });
 
+  // revalidate cache
+  revalidatePath("/", "layout");
+
   return Response.json(res);
 }
 
-export async function DELETE(request: Request) {
+export async function DELETE(request: NextRequest) {
   const { searchParams } = new URL(request.url);
   const account_id = searchParams.get("account_id");
 
@@ -59,6 +68,9 @@ export async function DELETE(request: Request) {
       "Content-Type": "application/json",
     },
   });
+
+  // revalidate cache
+  revalidatePath("/", "layout");
 
   return Response.json(res);
 }

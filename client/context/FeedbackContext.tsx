@@ -3,7 +3,6 @@
 import React, {
   createContext,
   useState,
-  useEffect,
   useCallback,
   useContext,
   ReactNode,
@@ -29,9 +28,6 @@ type FeedbackContextProps = {
   snackbar: Snackbar;
   showSnackbar: (message: string) => void;
   closeSnackbar: () => void;
-  accounts: any[];
-  loading: boolean;
-  fetchAccounts: () => void;
 };
 
 const defaultAlert: Alert = {
@@ -51,8 +47,6 @@ type FeedbackProviderProps = {
 export const FeedbackProvider = ({ children }: FeedbackProviderProps) => {
   const [alert, setAlert] = useState<Alert>(defaultAlert);
   const [snackbar, setSnackbar] = useState<Snackbar>(defaultAlert);
-  const [accounts, setAccounts] = useState([]);
-  const [loading, setLoading] = useState(true);
 
   const showAlert = useCallback(
     (message: string, severity: AlertColor | undefined) => {
@@ -73,28 +67,6 @@ export const FeedbackProvider = ({ children }: FeedbackProviderProps) => {
     setSnackbar((prev) => ({ ...prev, open: false }));
   }, []);
 
-  const fetchAccounts = async () => {
-    try {
-      const response = await fetch("http://localhost:3000/api/accounts");
-      if (!response.ok) {
-        showAlert("Failed to load accounts", "error");
-        return;
-      }
-
-      const data = await response.json();
-      setAccounts(data.data);
-
-      setLoading(false); // Set loading to false once data is fetched
-    } catch (error) {
-      showAlert("Failed to load accounts", "error");
-      setLoading(false); // Set loading to false even if there is an error
-    }
-  };
-
-  useEffect(() => {
-    fetchAccounts();
-  }, []);
-
   return (
     <FeedbackContext.Provider
       value={{
@@ -104,9 +76,6 @@ export const FeedbackProvider = ({ children }: FeedbackProviderProps) => {
         snackbar,
         showSnackbar,
         closeSnackbar,
-        accounts,
-        loading,
-        fetchAccounts,
       }}
     >
       {children}
@@ -126,14 +95,6 @@ export const useSnackbar = () => {
   const context = useContext(FeedbackContext);
   if (!context) {
     throw new Error("useSnackbar must be used within an FeedbackProvider");
-  }
-  return context;
-};
-
-export const useAccounts = () => {
-  const context = useContext(FeedbackContext);
-  if (!context) {
-    throw new Error("useAccounts must be used within an FeedbackProvider");
   }
   return context;
 };

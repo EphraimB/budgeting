@@ -1,3 +1,5 @@
+"use client";
+
 import React, { useState } from "react";
 import Box from "@mui/material/Box";
 import TextField from "@mui/material/TextField";
@@ -6,8 +8,6 @@ import Stack from "@mui/material/Stack";
 import InputLabel from "@mui/material/InputLabel";
 import IconButton from "@mui/material/IconButton";
 import CloseIcon from "@mui/icons-material/Close";
-import { useAlert } from "../context/FeedbackContext";
-import { useSnackbar } from "../context/FeedbackContext";
 import { Typography } from "@mui/material";
 
 function AccountWithdrawalForm({
@@ -21,41 +21,38 @@ function AccountWithdrawalForm({
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
 
-  const { showAlert } = useAlert();
-  const { showSnackbar } = useSnackbar();
+  // const data = {
+  //   account_id: account.account_id,
+  //   amount: -amount,
+  //   tax: 0,
+  //   title,
+  //   description,
+  // };
 
-  const data = {
-    account_id: account.account_id,
-    amount: -amount,
-    tax: 0,
-    title,
-    description,
-  };
+  // const handleSubmit = () => {
+  //   const submitForm = async () => {
+  //     try {
+  //       await fetch("http://localhost:3000/api/transactions/history", {
+  //         method: "POST",
+  //         headers: {
+  //           "Content-Type": "application/json",
+  //         },
+  //         body: JSON.stringify(data),
+  //       });
+  //     } catch (error) {
+  //       console.error(error);
+  //       showAlert("Failed to create transaction", "error");
+  //     }
+  //     showSnackbar("Transaction created!");
+  //   };
 
-  const handleSubmit = () => {
-    const submitForm = async () => {
-      try {
-        await fetch("http://localhost:3000/api/transactions/history", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(data),
-        });
-      } catch (error) {
-        console.error(error);
-        showAlert("Failed to create transaction", "error");
-      }
-      showSnackbar("Transaction created!");
-    };
+  //   submitForm();
 
-    submitForm();
-
-    setAccountModes((prevModes: any) => ({
-      ...prevModes,
-      [account.account_id]: "view",
-    }));
-  };
+  //   setAccountModes((prevModes: any) => ({
+  //     ...prevModes,
+  //     [account.account_id]: "view",
+  //   }));
+  // };
 
   const handleNumericInput = (e: any) => {
     e.target.value = e.target.value
@@ -120,7 +117,11 @@ function AccountWithdrawalForm({
         />
       </Stack>
       <br />
-      <Button variant="contained" color="secondary" onClick={handleSubmit}>
+      <Button
+        variant="contained"
+        color="secondary"
+        onClick={() => console.log("Submit")}
+      >
         Withdraw
       </Button>
     </Box>
