@@ -1,21 +1,56 @@
-import Checkbox from "@mui/material/Checkbox";
 import Toolbar from "@mui/material/Toolbar";
 import { alpha } from "@mui/material/styles";
 import Tooltip from "@mui/material/Tooltip";
 import IconButton from "@mui/material/IconButton";
+import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
-import FilterListIcon from "@mui/icons-material/FilterList";
+import Close from "@mui/icons-material/Close";
+import Add from "@mui/icons-material/Add";
 import Typography from "@mui/material/Typography";
 
 interface EnhancedTableToolbarProps {
   numSelected: number;
   name: string;
+  rowModes: Record<number, string>;
+  setRowModes: any;
+  showAddExpenseForm: boolean;
+  setShowAddExpenseForm: any;
+  selectedRows: any[];
 }
 
 function EnhancedTableToolbar({
   numSelected,
   name,
+  rowModes,
+  setRowModes,
+  showAddExpenseForm,
+  setShowAddExpenseForm,
+  selectedRows,
 }: EnhancedTableToolbarProps) {
+  const handleEditClick = () => {
+    let updatedRowModes = { ...rowModes }; // Create a shallow copy of the current state
+    for (const row of selectedRows) {
+      updatedRowModes[row.expense_id] = "edit";
+    }
+    setRowModes(updatedRowModes);
+  };
+
+  const handleDeleteClick = () => {
+    let updatedRowModes = { ...rowModes }; // Create a shallow copy of the current state
+    for (const row of selectedRows) {
+      updatedRowModes[row.expense_id] = "delete";
+    }
+    setRowModes(updatedRowModes);
+  };
+
+  const handleAddClick = () => {
+    setShowAddExpenseForm(true);
+  };
+
+  const handleCancelClick = () => {
+    setShowAddExpenseForm(false);
+  };
+
   return (
     <Toolbar
       sx={{
@@ -50,15 +85,28 @@ function EnhancedTableToolbar({
         </Typography>
       )}
       {numSelected > 0 ? (
-        <Tooltip title="Delete">
-          <IconButton>
-            <DeleteIcon />
+        <>
+          <Tooltip title="Edit">
+            <IconButton onClick={handleEditClick}>
+              <EditIcon />
+            </IconButton>
+          </Tooltip>
+          <Tooltip title="Delete">
+            <IconButton onClick={handleDeleteClick}>
+              <DeleteIcon />
+            </IconButton>
+          </Tooltip>
+        </>
+      ) : showAddExpenseForm ? (
+        <Tooltip title="Close">
+          <IconButton onClick={handleCancelClick}>
+            <Close />
           </IconButton>
         </Tooltip>
       ) : (
-        <Tooltip title="Filter list">
-          <IconButton>
-            <FilterListIcon />
+        <Tooltip title="Add expense">
+          <IconButton onClick={handleAddClick}>
+            <Add />
           </IconButton>
         </Tooltip>
       )}

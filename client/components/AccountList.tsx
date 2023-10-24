@@ -1,11 +1,9 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import IconButton from "@mui/material/IconButton";
 import Paper from "@mui/material/Paper";
 import Stack from "@mui/material/Stack";
-import Skeleton from "@mui/material/Skeleton";
-import Card from "@mui/material/Card";
 import NewAccountForm from "./NewAccountForm";
 import AccountView from "./AccountView";
 import AccountDelete from "./AccountDelete";
@@ -15,49 +13,16 @@ import AddIcon from "@mui/icons-material/Add";
 import AccountDepositForm from "./AccountDepositForm";
 import AccountWithdrawalForm from "./AccountWithdrawalForm";
 import { usePathname } from "next/navigation";
-import { useAccounts } from "../context/FeedbackContext";
 
-function AccountList() {
+function AccountList({ accounts }: { accounts: any }) {
   const [showNewAccountForm, setShowNewAccountForm] = useState(false);
   const [accountModes, setAccountModes] = useState<Record<number, string>>({});
 
-  const { accounts, loading } = useAccounts();
-
   const pathname = usePathname();
 
-  const account_id = parseInt(pathname.split("/")[2]);
+  const account_id = parseInt(pathname.split("/")[1]);
 
-  return loading ? (
-    <Stack direction="row" justifyContent="center" spacing={2}>
-      <Card
-        sx={{
-          p: 2,
-          width: 175,
-        }}
-      >
-        <Skeleton variant="text" sx={{ fontSize: "1rem" }} />
-        <Skeleton variant="text" />
-      </Card>
-      <Card
-        sx={{
-          p: 2,
-          width: 175,
-        }}
-      >
-        <Skeleton variant="text" sx={{ fontSize: "1rem" }} />
-        <Skeleton variant="text" />
-      </Card>
-      <Card
-        sx={{
-          p: 2,
-          width: 175,
-        }}
-      >
-        <Skeleton variant="text" sx={{ fontSize: "1rem" }} />
-        <Skeleton variant="text" />
-      </Card>
-    </Stack>
-  ) : (
+  return (
     <Stack
       direction="row"
       justifyContent="center"

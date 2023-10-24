@@ -1,22 +1,27 @@
 "use client";
 
 import * as React from "react";
+import { AlertColor } from "@mui/material/Alert";
 import Alert from "@mui/material/Alert";
 import { useAlert } from "../context/FeedbackContext";
 
-export default function Alerts() {
-  const { alert, closeAlert } = useAlert();
-
-  if (!alert.open) return null;
-
+export default function Alerts({
+  message,
+  severity,
+  open,
+}: {
+  message: string;
+  severity: AlertColor | undefined;
+  open: boolean;
+}) {
   return (
     <Alert
-      severity={alert.severity}
-      onClose={() => {
-        closeAlert();
-      }}
+      severity={severity}
+      // onClose={() => {
+      //   closeAlert();
+      // }}
     >
-      {alert.message}
+      {message}
     </Alert>
   );
 }
