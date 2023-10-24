@@ -48,6 +48,7 @@ export default function TransactionDisplay({
         >
           <TableHead>
             <TableRow
+              key="transactions-table-header"
               sx={{
                 backgroundColor: "#000",
               }}

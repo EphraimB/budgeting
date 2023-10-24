@@ -8,7 +8,7 @@ import TableRow from "@mui/material/TableRow";
 function Loading() {
   return (
     <TableBody>
-      <TableRow>
+      <TableRow key="loading-row">
         <TableCell>
           <Skeleton variant="text" />
           <Skeleton variant="text" />
