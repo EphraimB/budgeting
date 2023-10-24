@@ -64,7 +64,7 @@ async function Expenses({ params }: { params: { account_id: string } }) {
           </CardContent>
         </Link>
       </Card>
-      <ExpensesTable expenses={expenses} taxes={taxes} />
+      <ExpensesTable account_id={accountId} expenses={expenses} taxes={taxes} />
     </Stack>
   );
 }

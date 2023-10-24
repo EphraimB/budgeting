@@ -19,9 +19,11 @@ import Button from "@mui/material/Button";
 import Stack from "@mui/material/Stack";
 
 function RowAdd({
+  account_id,
   taxes,
   setShowAddExpenseForm,
 }: {
+  account_id: number;
   taxes: any;
   setShowAddExpenseForm: any;
 }) {
@@ -56,13 +58,14 @@ function RowAdd({
   };
 
   const data = {
-    expense_title: expenseTitle,
-    expense_description: expenseDescription,
-    expense_amount: expenseAmount,
-    expense_subsidized: expenseSubsidized,
+    account_id,
+    title: expenseTitle,
+    description: expenseDescription,
+    amount: parseFloat(expenseAmount),
+    subsidized: parseFloat(expenseSubsidized),
     tax_id: expenseTax === 0 ? null : expenseTax,
-    expense_begin_date: expenseBeginDate,
-    expense_end_date: expenseEndDate,
+    begin_date: expenseBeginDate,
+    end_date: expenseEndDate,
     frequency_type: expenseFrequency,
     frequency_type_variable: frequencyVariable,
     frequency_day_of_week:
@@ -73,7 +76,7 @@ function RowAdd({
       frequencyMonthOfYear === -1 ? null : frequencyMonthOfYear,
   };
 
-  const handleEdit = () => {
+  const handleAdd = () => {
     const submitData = async () => {
       try {
         // Post request to create a new expense
@@ -291,7 +294,7 @@ function RowAdd({
             Cancel
           </Button>
           <br />
-          <Button variant="contained" color="primary" onClick={handleEdit}>
+          <Button variant="contained" color="primary" onClick={handleAdd}>
             Add expense
           </Button>
         </Stack>

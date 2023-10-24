@@ -77,9 +77,11 @@ const headCells: readonly HeadCell[] = [
 ];
 
 function ExpensesTable({
+  account_id,
   expenses,
   taxes,
 }: {
+  account_id: number;
   expenses: Expense[];
   taxes: any[];
 }) {
@@ -304,6 +306,7 @@ function ExpensesTable({
           <TableBody>
             {showAddExpenseForm && (
               <RowAdd
+                account_id={account_id}
                 taxes={taxes}
                 setShowAddExpenseForm={setShowAddExpenseForm}
               />
