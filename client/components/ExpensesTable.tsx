@@ -205,7 +205,7 @@ function ExpensesTable({
           expense.frequency_type_variable === 1 ||
           expense.frequency_type_variable === null
         ) {
-          const dayOfMonth = dayjs(expense.expense_begin_date).format("DD");
+          const dayOfMonth = dayjs(expense.expense_begin_date).format("D");
           expenseFrequency = `Monthly on the ${dayOfMonth}${
             dayOfMonth.endsWith("1")
               ? "st"
@@ -218,7 +218,7 @@ function ExpensesTable({
         } else {
           expenseFrequency = `Every ${
             expense.frequency_type_variable
-          } months on the ${dayjs(expense.expense_begin_date).format("DD")}th`;
+          } months on the ${dayjs(expense.expense_begin_date).format("D")}th`;
         }
 
         if (expense.frequency_day_of_month) {
