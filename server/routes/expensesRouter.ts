@@ -50,7 +50,7 @@ router.post(
             .isInt({ min: 1 })
             .withMessage('Account ID must be a number'),
         body('tax_id')
-            .optional()
+            .optional({ nullable: true })
             .isInt({ min: 1 })
             .withMessage('Tax ID must be a number'),
         body('amount').isNumeric().withMessage('Amount must be a number'),
@@ -126,7 +126,7 @@ router.put(
             .isInt({ min: 1 })
             .withMessage('Account ID must be a number'),
         body('tax_id')
-            .optional()
+            .optional({ nullable: true })
             .isInt({ min: 1 })
             .withMessage('Tax ID must be a number'),
         body('amount').isNumeric().withMessage('Amount must be a number'),
