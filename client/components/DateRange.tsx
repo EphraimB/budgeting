@@ -17,35 +17,43 @@ export default function DateRange({
   const router = useRouter();
   const pathname = usePathname();
 
-  const handleFromDateChange = (date: Dayjs | null) => {
+  const updateUrl = (fromDate: string, toDate: string) => {
     const updatedParams = new URLSearchParams();
-    updatedParams.set(
-      "from_date",
-      date ? date.format().split("T")[0] : dayjs().format().split("T")[0]
-    );
-    updatedParams.set(
-      "to_date",
-      toDate ? toDate : dayjs().add(1, "month").format().split("T")[0]
-    );
+    updatedParams.set("from_date", fromDate);
+    updatedParams.set("to_date", toDate);
 
     router.push(`${pathname}?${updatedParams.toString()}`);
   };
 
-  const handleToDateChange = (date: Dayjs | null) => {
-    const updatedParams = new URLSearchParams();
-    updatedParams.set(
-      "from_date",
-      fromDate ? fromDate : dayjs().format().split("T")[0]
-    );
-    updatedParams.set(
-      "to_date",
-      date
-        ? date.format().split("T")[0]
-        : dayjs().add(1, "month").format().split("T")[0]
-    );
+  // const handleFromDateChange = (date: Dayjs | null) => {
+  //   const updatedParams = new URLSearchParams();
+  //   updatedParams.set(
+  //     "from_date",
+  //     date ? date.format().split("T")[0] : dayjs().format().split("T")[0]
+  //   );
+  //   updatedParams.set(
+  //     "to_date",
+  //     toDate ? toDate : dayjs().add(1, "month").format().split("T")[0]
+  //   );
 
-    router.push(`${pathname}?${updatedParams.toString()}`);
-  };
+  //   router.push(`${pathname}?${updatedParams.toString()}`);
+  // };
+
+  // const handleToDateChange = (date: Dayjs | null) => {
+  //   const updatedParams = new URLSearchParams();
+  //   updatedParams.set(
+  //     "from_date",
+  //     fromDate ? fromDate : dayjs().format().split("T")[0]
+  //   );
+  //   updatedParams.set(
+  //     "to_date",
+  //     date
+  //       ? date.format().split("T")[0]
+  //       : dayjs().add(1, "month").format().split("T")[0]
+  //   );
+
+  //   router.push(`${pathname}?${updatedParams.toString()}`);
+  // };
 
   return (
     <LocalizationProvider dateAdapter={AdapterDayjs}>
@@ -53,12 +61,23 @@ export default function DateRange({
         <DatePicker
           label="From date"
           value={dayjs(fromDate)}
-          onChange={handleFromDateChange}
+          onChange={(date) =>
+            updateUrl(
+              date?.format().split("T")[0] || dayjs().format().split("T")[0],
+              toDate
+            )
+          }
         />
         <DatePicker
           label="To date"
           value={dayjs(toDate)}
-          onChange={handleToDateChange}
+          onChange={(date) =>
+            updateUrl(
+              fromDate,
+              date?.format().split("T")[0] ||
+                dayjs().add(1, "month").format().split("T")[0]
+            )
+          }
         />
       </Stack>
     </LocalizationProvider>
