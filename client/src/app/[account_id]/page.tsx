@@ -10,7 +10,8 @@ async function getTransactions(
   to_date: string
 ) {
   const res = await fetch(
-    `http://server:5001/api/transactions?account_id=${accountId}&from_date=${from_date}&to_date=${to_date}`
+    `http://server:5001/api/transactions?account_id=${accountId}&from_date=${from_date}&to_date=${to_date}`,
+    { cache: "no-store" }
   );
 
   if (!res.ok) {
