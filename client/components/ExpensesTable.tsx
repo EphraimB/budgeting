@@ -318,6 +318,7 @@ function ExpensesTable({
                 } else if (rowModes[row.expense_id as number] === "edit") {
                   return (
                     <RowEdit
+                      account_id={account_id}
                       expense={row}
                       taxes={taxes}
                       setRowModes={setRowModes}

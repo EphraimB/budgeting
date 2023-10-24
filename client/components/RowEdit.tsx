@@ -19,10 +19,12 @@ import Button from "@mui/material/Button";
 import Stack from "@mui/material/Stack";
 
 function RowEdit({
+  account_id,
   expense,
   taxes,
   setRowModes,
 }: {
+  account_id: number;
   expense: any;
   taxes: any;
   setRowModes: any;
@@ -81,13 +83,14 @@ function RowEdit({
   };
 
   const data = {
-    expense_title: expenseTitle,
-    expense_description: expenseDescription,
-    expense_amount: expenseAmount,
-    expense_subsidized: expenseSubsidized,
+    account_id,
+    title: expenseTitle,
+    description: expenseDescription,
+    amount: parseFloat(expenseAmount),
+    subsidized: parseFloat(expenseSubsidized),
     tax_id: expenseTax === 0 ? null : expenseTax,
-    expense_begin_date: expenseBeginDate,
-    expense_end_date: expenseEndDate,
+    begin_date: expenseBeginDate,
+    end_date: expenseEndDate,
     frequency_type: parseInt(expenseFrequency),
     frequency_type_variable: parseInt(frequencyVariable),
     frequency_day_of_week:
