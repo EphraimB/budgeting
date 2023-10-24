@@ -6,7 +6,6 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import Stack from "@mui/material/Stack";
 import { useRouter, usePathname } from "next/navigation";
-import { revalidateTag } from "next/cache";
 
 export default function DateRange({
   fromDate,
