@@ -174,8 +174,10 @@ function ExpensesTable({
           expenseFrequency =
             "Every " + expense.frequency_type_variable + " days";
 
-        currentDate.add(expense.frequency_type_variable, "day");
-        nextExpenseDate = currentDate;
+        nextExpenseDate = currentDate.add(
+          expense.frequency_type_variable,
+          "day"
+        );
         break;
       case 1: // Weekly
         if (
@@ -183,18 +185,34 @@ function ExpensesTable({
           expense.frequency_type_variable === null
         )
           expenseFrequency = `Weekly on ${dayjs(
-            expense.expense_begin_date
+            expense.frequency_day_of_week
+              ? dayjs(expense.expense_begin_date).day(
+                  expense.frequency_day_of_week
+                )
+              : expense.expense_begin_date
           ).format("dddd")}`;
         else {
           expenseFrequency =
             "Every " +
             expense.frequency_type_variable +
             " weeks on " +
-            dayjs(expense.expense_begin_date).format("dddd");
+            dayjs(
+              expense.frequency_day_of_week
+                ? dayjs(expense.expense_begin_date).day(
+                    expense.frequency_day_of_week
+                  )
+                : expense.expense_begin_date
+            ).format("dddd");
         }
 
-        currentDate.add(7 * expense.frequency_type_variable, "day");
-        nextExpenseDate = currentDate;
+        nextExpenseDate = currentDate.add(
+          expense.frequency_type_variable,
+          "week"
+        );
+
+        if (expense.frequency_day_of_week) {
+          nextExpenseDate = nextExpenseDate.day(expense.frequency_day_of_week);
+        }
         break;
       case 2: // Monthly
         if (
@@ -231,7 +249,9 @@ function ExpensesTable({
               (dayjs().diff(currentDate, "date") > 0 ? 1 : 0),
             "month"
           );
-          currentDate.date(expense.frequency_day_of_month);
+          nextExpenseDate = nextExpenseDate.date(
+            expense.frequency_day_of_month
+          );
         } else {
           nextExpenseDate = currentDate.add(
             expense.frequency_type_variable,
@@ -253,12 +273,19 @@ function ExpensesTable({
           } years on ${dayjs(expense.expense_begin_date).format("MMMM D")}`;
 
         if (expense.frequency_month_of_year) {
-          currentDate.add(expense.frequency_type_variable, "year");
-          currentDate.month(expense.frequency_month_of_year - 1); // Months are 0-indexed in JavaScript
+          nextExpenseDate = currentDate.add(
+            expense.frequency_type_variable,
+            "year"
+          );
+          nextExpenseDate = nextExpenseDate.month(
+            expense.frequency_month_of_year - 1
+          ); // Months are 0-indexed in JavaScript
         } else {
-          currentDate.add(expense.frequency_type_variable, "year");
+          nextExpenseDate = currentDate.add(
+            expense.frequency_type_variable,
+            "year"
+          );
         }
-        nextExpenseDate = currentDate;
         break;
       default:
         expenseFrequency = "Unknown";
