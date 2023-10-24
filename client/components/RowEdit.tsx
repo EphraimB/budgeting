@@ -17,6 +17,7 @@ import Checkbox from "@mui/material/Checkbox";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import Button from "@mui/material/Button";
 import Stack from "@mui/material/Stack";
+import { useRouter } from "next/navigation";
 
 function RowEdit({
   account_id,
@@ -29,6 +30,8 @@ function RowEdit({
   taxes: any;
   setRowModes: any;
 }) {
+  const router = useRouter();
+
   const [expenseTitle, setExpenseTitle] = useState(expense.expense_title);
   const [expenseDescription, setExpenseDescription] = useState(
     expense.expense_description
@@ -112,10 +115,12 @@ function RowEdit({
           },
           body: JSON.stringify(data),
         });
+        router.refresh();
       } catch (error) {
         console.error("There was an error editing the expense!", error);
         // showAlert("There was an error editing the expense!", "error");
       }
+
       setRowModes((prevModes: any) => ({
         ...prevModes,
         [expense.expense_id]: "view",
