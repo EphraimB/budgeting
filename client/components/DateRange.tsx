@@ -25,36 +25,6 @@ export default function DateRange({
     router.push(`${pathname}?${updatedParams.toString()}`);
   };
 
-  // const handleFromDateChange = (date: Dayjs | null) => {
-  //   const updatedParams = new URLSearchParams();
-  //   updatedParams.set(
-  //     "from_date",
-  //     date ? date.format().split("T")[0] : dayjs().format().split("T")[0]
-  //   );
-  //   updatedParams.set(
-  //     "to_date",
-  //     toDate ? toDate : dayjs().add(1, "month").format().split("T")[0]
-  //   );
-
-  //   router.push(`${pathname}?${updatedParams.toString()}`);
-  // };
-
-  // const handleToDateChange = (date: Dayjs | null) => {
-  //   const updatedParams = new URLSearchParams();
-  //   updatedParams.set(
-  //     "from_date",
-  //     fromDate ? fromDate : dayjs().format().split("T")[0]
-  //   );
-  //   updatedParams.set(
-  //     "to_date",
-  //     date
-  //       ? date.format().split("T")[0]
-  //       : dayjs().add(1, "month").format().split("T")[0]
-  //   );
-
-  //   router.push(`${pathname}?${updatedParams.toString()}`);
-  // };
-
   return (
     <LocalizationProvider dateAdapter={AdapterDayjs}>
       <Stack direction="row" justifyContent="center" spacing={2}>
