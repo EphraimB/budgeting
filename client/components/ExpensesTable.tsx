@@ -159,7 +159,7 @@ function ExpensesTable({
   }, [expenses, order, orderBy, page, rowsPerPage]);
 
   const getNextExpenseDateAndFrequency = (expense: any) => {
-    const currentDate = new Date(expense.expense_begin_date);
+    const currentDate = dayjs(expense.expense_begin_date);
     let nextExpenseDate;
     let expenseFrequency;
 
@@ -174,9 +174,7 @@ function ExpensesTable({
           expenseFrequency =
             "Every " + expense.frequency_type_variable + " days";
 
-        currentDate.setDate(
-          currentDate.getDate() + expense.frequency_type_variable
-        );
+        currentDate.add(expense.frequency_type_variable, "day");
         nextExpenseDate = currentDate;
         break;
       case 1: // Weekly
@@ -195,9 +193,7 @@ function ExpensesTable({
             dayjs(expense.expense_begin_date).format("dddd");
         }
 
-        currentDate.setDate(
-          currentDate.getDate() + 7 * expense.frequency_type_variable
-        );
+        currentDate.add(7 * expense.frequency_type_variable, "day");
         nextExpenseDate = currentDate;
         break;
       case 2: // Monthly
@@ -230,16 +226,18 @@ function ExpensesTable({
         }
 
         if (expense.frequency_day_of_month) {
-          currentDate.setMonth(
-            currentDate.getMonth() + expense.frequency_type_variable
+          nextExpenseDate = currentDate.add(
+            expense.frequency_type_variable -
+              (dayjs().diff(currentDate, "date") > 0 ? 1 : 0),
+            "month"
           );
-          currentDate.setDate(expense.frequency_day_of_month);
+          currentDate.date(expense.frequency_day_of_month);
         } else {
-          currentDate.setMonth(
-            currentDate.getMonth() + expense.frequency_type_variable
+          nextExpenseDate = currentDate.add(
+            expense.frequency_type_variable,
+            "month"
           );
         }
-        nextExpenseDate = currentDate;
         break;
       case 3: // Yearly
         if (
@@ -255,14 +253,10 @@ function ExpensesTable({
           } years on ${dayjs(expense.expense_begin_date).format("MMMM D")}`;
 
         if (expense.frequency_month_of_year) {
-          currentDate.setFullYear(
-            currentDate.getFullYear() + expense.frequency_type_variable
-          );
-          currentDate.setMonth(expense.frequency_month_of_year - 1); // Months are 0-indexed in JavaScript
+          currentDate.add(expense.frequency_type_variable, "year");
+          currentDate.month(expense.frequency_month_of_year - 1); // Months are 0-indexed in JavaScript
         } else {
-          currentDate.setFullYear(
-            currentDate.getFullYear() + expense.frequency_type_variable
-          );
+          currentDate.add(expense.frequency_type_variable, "year");
         }
         nextExpenseDate = currentDate;
         break;
