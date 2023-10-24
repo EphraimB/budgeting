@@ -5,8 +5,7 @@ import Alerts from "../../components/Alerts";
 import Container from "@mui/material/Container";
 import AccountList from "../../components/AccountList";
 import { Suspense } from "react";
-import Loading from "./loading";
-import { revalidatePath } from "next/cache";
+import LoadingAccounts from "../../components/LoadingAccounts";
 
 export const metadata: Metadata = {
   title: "Budgeting",
@@ -37,7 +36,7 @@ export default async function RootLayout({
         <br />
         {/* <Alerts message="" severity="error" open={false} /> */}
         <Container maxWidth="lg">
-          <Suspense fallback={<Loading />}>
+          <Suspense fallback={<LoadingAccounts />}>
             <AccountList accounts={accounts} />
           </Suspense>
           {children}

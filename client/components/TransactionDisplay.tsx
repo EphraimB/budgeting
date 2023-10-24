@@ -11,7 +11,8 @@ import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
 import { green, red } from "@mui/material/colors";
 import TablePagination from "@mui/material/TablePagination";
-import Loading from "../src/app/[account_id]/loading";
+import Skeleton from "@mui/material/Skeleton";
+import LoadingTransactions from "./LoadingTransactions";
 
 export default function TransactionDisplay({
   transactions,
@@ -74,8 +75,8 @@ export default function TransactionDisplay({
               </TableCell>
             </TableRow>
           </TableHead>
-          <Suspense fallback={<Loading />}>
-            <TableBody>
+          <TableBody>
+            <Suspense fallback={<LoadingTransactions />}>
               {flatTransactions
                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                 .map((transaction: any) => (
@@ -154,8 +155,8 @@ export default function TransactionDisplay({
                     </TableCell>
                   </TableRow>
                 ))}
-            </TableBody>
-          </Suspense>
+            </Suspense>
+          </TableBody>
         </Table>
       </TableContainer>
       <TablePagination
