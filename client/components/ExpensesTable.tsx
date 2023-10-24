@@ -253,7 +253,8 @@ function ExpensesTable({
           );
         } else {
           nextExpenseDate = currentDate.add(
-            expense.frequency_type_variable,
+            expense.frequency_type_variable -
+              (dayjs().diff(currentDate, "date") > 0 ? 1 : 0),
             "month"
           );
         }
