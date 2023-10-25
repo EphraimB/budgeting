@@ -1,4 +1,5 @@
 import { type GeneratedTransaction } from '../types/types';
+import dayjs, { type Dayjs } from 'dayjs';
 
 /**
  *
@@ -11,7 +12,7 @@ const calculateBalances = (
     currentBalance: number,
 ): void => {
     const sortedTransactions: GeneratedTransaction[] = transactions.sort(
-        (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime(),
+        (a, b) => dayjs(a.date).diff(dayjs(b.date)),
     );
     let pastBalance: number = currentBalance;
     let futureBalance: number = currentBalance;
@@ -31,11 +32,11 @@ const calculateBalances = (
     };
 
     const pastTransactions: GeneratedTransaction[] = sortedTransactions.filter(
-        (transaction) => new Date(transaction.date) < new Date(),
+        (transaction) => dayjs(transaction.date).diff(dayjs()) < 0,
     );
     const futureTransactions: GeneratedTransaction[] =
         sortedTransactions.filter(
-            (transaction) => new Date(transaction.date) >= new Date(),
+            (transaction) => dayjs(transaction.date).diff(dayjs()) >= 0,
         );
 
     pastTransactions.reverse().forEach(calculateBalanceForPastTransaction);
