@@ -90,7 +90,7 @@ export const getExpenses = async (
         modifiedExpenses.map((expense) => {
             const nextExpenseDate = nextTransactionFrequencyDate(expense);
 
-            expense.next_date = nextExpenseDate;
+            expense.next_expense_date = nextExpenseDate;
         });
 
         response.status(200).json(modifiedExpenses);

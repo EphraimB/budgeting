@@ -120,7 +120,7 @@ export interface Expense {
     frequency_week_of_month?: number | null | undefined;
     frequency_month_of_year?: number | null | undefined;
     subsidized?: number;
-    next_date?: string | null;
+    next_expense_date?: string | null;
     date_created?: string;
     date_modified?: string;
 }
