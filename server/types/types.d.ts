@@ -1,3 +1,5 @@
+import { Dayjs } from 'dayjs';
+
 export interface GeneratedTransaction {
     id: string;
     expense_id?: number;
@@ -12,8 +14,8 @@ export interface GeneratedTransaction {
     amount: number;
     tax_rate: number;
     total_amount: number;
-    date: Date;
-    date_modified?: Date;
+    date: Dayjs;
+    date_modified?: Dayjs;
     balance?: number;
 }
 
