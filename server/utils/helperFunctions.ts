@@ -1,5 +1,6 @@
 import { type Response } from 'express';
 import pool from '../config/db.js';
+import dayjs from 'dayjs';
 
 /**
  *
@@ -106,6 +107,11 @@ export const manipulateCron = async (
     }
 };
 
+/**
+ *
+ * @param employee_id - Employee ID
+ * @returns Array of success and response data
+ */
 export const executePayrollsScript = async (employee_id: number) => {
     const url: string = 'http://cron:8080/api/update-payrolls';
 
@@ -137,4 +143,71 @@ export const executePayrollsScript = async (employee_id: number) => {
     } catch (error) {
         return [false, error.message];
     }
+};
+
+/**
+ *
+ * @param transaction - Transaction object
+ * @returns The next transaction frequency date
+ */
+export const nextTransactionFrequencyDate = (transaction: any) => {
+    const currentDate = dayjs(transaction.begin_date);
+    let nextDate;
+
+    // Find the next expense date based on the frequency values
+    switch (transaction.frequency_type) {
+        case 0: // Daily
+            nextDate = currentDate.add(
+                transaction.frequency_type_variable,
+                'day',
+            );
+            break;
+        case 1: // Weekly
+            nextDate = currentDate.add(
+                transaction.frequency_type_variable,
+                'week',
+            );
+
+            if (transaction.frequency_day_of_week !== null) {
+                nextDate = nextDate.day(transaction.frequency_day_of_week);
+            }
+            break;
+        case 2: // Monthly
+            if (transaction.frequency_day_of_month) {
+                nextDate = currentDate.add(
+                    transaction.frequency_type_variable -
+                        (dayjs().diff(currentDate, 'date') > 0 ? 1 : 0),
+                    'month',
+                );
+                nextDate = nextDate.date(transaction.frequency_day_of_month);
+            } else {
+                nextDate = currentDate.add(
+                    transaction.frequency_type_variable -
+                        (dayjs().diff(currentDate, 'date') > 0 ? 1 : 0),
+                    'month',
+                );
+            }
+            break;
+        case 3: // Yearly
+            if (transaction.frequency_month_of_year) {
+                nextDate = currentDate.add(
+                    transaction.frequency_type_variable,
+                    'year',
+                );
+                nextDate = nextDate.month(
+                    transaction.frequency_month_of_year - 1,
+                ); // Months are 0-indexed in JavaScript
+            } else {
+                nextDate = currentDate.add(
+                    transaction.frequency_type_variable,
+                    'year',
+                );
+            }
+            break;
+        default:
+            nextDate = null;
+            break;
+    }
+
+    return nextDate;
 };

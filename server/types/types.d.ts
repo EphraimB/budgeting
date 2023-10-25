@@ -101,23 +101,23 @@ export interface Employee {
 }
 
 export interface Expense {
-    expense_id?: number;
+    id?: number;
     account_id?: number;
     cron_job_id?: number;
     tax_id?: number | null | undefined;
     tax_rate?: number;
-    expense_amount: number;
-    expense_title: string;
-    expense_description: string;
-    expense_begin_date: string;
-    expense_end_date?: string;
+    amount: number;
+    title: string;
+    description: string;
+    begin_date: string;
+    end_date?: string;
     frequency_type?: number;
     frequency_type_variable?: number | null | undefined;
     frequency_day_of_month?: number | null | undefined;
     frequency_day_of_week?: number | null | undefined;
     frequency_week_of_month?: number | null | undefined;
     frequency_month_of_year?: number | null | undefined;
-    expense_subsidized?: number;
+    subsidized?: number;
     date_created?: string;
     date_modified?: string;
 }
