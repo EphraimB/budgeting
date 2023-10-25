@@ -1,5 +1,5 @@
 import { type GeneratedTransaction } from '../types/types';
-import dayjs, { type Dayjs } from 'dayjs';
+import dayjs from 'dayjs';
 
 /**
  *

@@ -1,6 +1,6 @@
 import { type Loan, type GeneratedTransaction } from '../types/types';
 import { v4 as uuidv4 } from 'uuid';
-import dayjs, { Dayjs } from 'dayjs';
+import dayjs, { type Dayjs } from 'dayjs';
 
 type GenerateDateFunction = (currentDate: Dayjs, loan: Loan) => Dayjs;
 
@@ -201,7 +201,7 @@ export const generateMonthlyLoans = (
 ): { fullyPaidBackDate?: string | null } => {
     let monthsIncremented: number = 0;
     const generateDateFn = (currentDate: Dayjs, loan: Loan): Dayjs => {
-        const loanDate: Dayjs = new Dayjs(loan.loan_begin_date).add(
+        const loanDate: Dayjs = dayjs(loan.loan_begin_date).add(
             monthsIncremented +
                 (loan.frequency_type_variable !== null &&
                 loan.frequency_type_variable !== undefined

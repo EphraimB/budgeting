@@ -1,6 +1,6 @@
 import { type Wishlist, type GeneratedTransaction } from '../types/types';
 import { v4 as uuidv4 } from 'uuid';
-import dayjs, { Dayjs } from 'dayjs';
+import dayjs, { type Dayjs } from 'dayjs';
 
 /**
  *

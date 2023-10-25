@@ -41,7 +41,7 @@ import {
 } from '../types/types.js';
 import { executeQuery } from '../utils/helperFunctions.js';
 import { accountQueries } from '../models/queryData.js';
-import dayjs, { Dayjs } from 'dayjs';
+import dayjs, { type Dayjs } from 'dayjs';
 
 const fullyPaidBackDates: Record<number, string | null> = {}; // map of loan_id to fullyPaidBackDate
 
