@@ -177,15 +177,14 @@ export const nextTransactionFrequencyDate = (
         case 2: // Monthly
             if (transaction.frequency_day_of_month) {
                 nextDate = currentDate.add(
-                    transaction.frequency_type_variable -
-                        (dayjs().diff(currentDate, 'date') > 0 ? 1 : 0),
+                    transaction.frequency_type_variable,
                     'month',
                 );
+
                 nextDate = nextDate.date(transaction.frequency_day_of_month);
             } else {
                 nextDate = currentDate.add(
-                    transaction.frequency_type_variable -
-                        (dayjs().diff(currentDate, 'date') > 0 ? 1 : 0),
+                    transaction.frequency_type_variable,
                     'month',
                 );
             }
@@ -211,5 +210,5 @@ export const nextTransactionFrequencyDate = (
             break;
     }
 
-    return nextDate?.format('YYYY-MM-DDTHH::mm:ssZ[Z]') ?? null;
+    return nextDate?.format('YYYY-MM-DDTHH:mm:ssZ[Z]') ?? null;
 };
