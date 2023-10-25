@@ -1,5 +1,6 @@
 import { type Payroll, type GeneratedTransaction } from '../types/types';
 import { v4 as uuidv4 } from 'uuid';
+import dayjs, { type Dayjs } from 'dayjs';
 
 /**
  *
@@ -13,11 +14,11 @@ const generatePayrolls = (
     transactions: GeneratedTransaction[],
     skippedTransactions: GeneratedTransaction[],
     payrolls: Payroll,
-    fromDate: Date,
+    fromDate: Dayjs,
 ): void => {
-    const payroll_end_date: Date = new Date(payrolls.end_date);
-    payroll_end_date.setHours(11);
-    payroll_end_date.setMinutes(30);
+    const payroll_end_date: Dayjs = dayjs(payrolls.end_date)
+        .hour(11)
+        .minute(30);
 
     const newTransaction = {
         id: uuidv4(),
@@ -29,8 +30,8 @@ const generatePayrolls = (
         total_amount: payrolls.net_pay,
     };
 
-    if (payroll_end_date > new Date()) {
-        if (fromDate > payroll_end_date) {
+    if (payroll_end_date.diff(dayjs()) < 0) {
+        if (fromDate.diff(payroll_end_date) > 0) {
             skippedTransactions.push(newTransaction);
         } else {
             transactions.push(newTransaction);
