@@ -399,9 +399,7 @@ const generate = async (
             });
         });
 
-    transactions.sort((a, b) =>
-        dayjs(a.date).diff(dayjs(b.date), 'millisecond'),
-    );
+    transactions.sort((a, b) => dayjs(a.date).diff(dayjs(b.date)));
 
     calculateBalances(transactions.concat(skippedTransactions), currentBalance);
 
@@ -416,9 +414,7 @@ const generate = async (
                     fromDate,
                 );
 
-                transactions.sort((a, b) =>
-                    dayjs(a.date).diff(dayjs(b.date), 'millisecond'),
-                );
+                transactions.sort((a, b) => dayjs(a.date).diff(dayjs(b.date)));
 
                 calculateBalances(
                     transactions.concat(skippedTransactions),

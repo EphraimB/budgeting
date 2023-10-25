@@ -19,9 +19,7 @@ const generateWishlists = (
     const allTransactions: any[] = transactions.concat(skippedTransactions);
     const wishlist_amount: number = wishlist.wishlist_amount;
 
-    allTransactions.sort((a, b) =>
-        dayjs(a.date).diff(dayjs(b.date), 'millisecond'),
-    );
+    allTransactions.sort((a, b) => dayjs(a.date).diff(dayjs(b.date)));
 
     let affordableDate: number | null = null;
     for (let i = 0; i < allTransactions.length; i++) {
@@ -45,7 +43,7 @@ const generateWishlists = (
                 ? dayjs(
                       Math.max(
                           affordableDate,
-                          dayjs(wishlist.wishlist_date_available).millisecond(),
+                          dayjs(wishlist.wishlist_date_available).valueOf(),
                       ),
                   )
                 : dayjs(affordableDate);
@@ -72,7 +70,7 @@ const generateWishlists = (
             ),
         };
 
-        if (fromDate > newTransactionDate) {
+        if (newTransactionDate.diff(fromDate) < 0) {
             skippedTransactions.push(newTransaction);
         } else {
             transactions.push(newTransaction);
