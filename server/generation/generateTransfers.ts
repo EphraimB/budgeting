@@ -68,7 +68,7 @@ const generateTransfers = (
         transferDate.date(newDay);
     }
 
-    while (transferDate.diff(toDate) < 0) {
+    while (transferDate.diff(toDate) <= 0) {
         const newTransaction: GeneratedTransaction = {
             id: uuidv4(),
             transfer_id: transfer.transfer_id,
@@ -86,8 +86,8 @@ const generateTransfers = (
                     : -transfer.transfer_amount,
         };
 
-        if (transferDate.diff(dayjs()) < 0) {
-            if (fromDate > transferDate) {
+        if (transferDate.diff() > 0) {
+            if (transferDate.diff(fromDate) < 0) {
                 skippedTransactions.push(newTransaction);
             } else {
                 transactions.push(newTransaction);
