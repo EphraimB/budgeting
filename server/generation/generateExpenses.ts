@@ -22,7 +22,7 @@ const generateExpenses = (
     fromDate: Dayjs,
     generateDateFn: GenerateDateFunction,
 ) => {
-    let expenseDate = dayjs(expense.begin_date);
+    let expenseDate = dayjs(expense.expense_begin_date);
 
     if (
         expense.frequency_month_of_year !== null &&
@@ -153,8 +153,8 @@ export const generateMonthlyExpenses = (
     fromDate: Dayjs,
 ): void => {
     let monthsIncremented: number = 0;
-    const generateDateFn = (currentDate: Dayjs, expense: Expense): Dayjs => {
-        const expenseDate: Dayjs = dayjs(expense.begin_date).add(
+    const generateDateFn = (currentDate: Dayjs, expense: any): Dayjs => {
+        const expenseDate: Dayjs = dayjs(expense.expense_begin_date).add(
             monthsIncremented +
                 (expense.frequency_type_variable !== null &&
                 expense.frequency_type_variable !== undefined
