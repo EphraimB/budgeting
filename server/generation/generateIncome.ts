@@ -65,11 +65,11 @@ const generateIncome = (
         incomeDate.date(newDay);
     }
 
-    while (incomeDate.diff(toDate) < 0) {
+    while (incomeDate.diff(toDate) <= 0) {
         const initialAmount: number = income.income_amount;
         const taxRate: number = income.tax_rate ?? 0;
 
-        const taxAmount = initialAmount + initialAmount * taxRate;
+        const amountAfterTax = initialAmount + initialAmount * taxRate;
 
         const newTransaction: GeneratedTransaction = {
             id: uuidv4(),
@@ -79,11 +79,11 @@ const generateIncome = (
             date: dayjs(incomeDate),
             amount: initialAmount,
             tax_rate: taxRate,
-            total_amount: initialAmount + taxAmount,
+            total_amount: amountAfterTax,
         };
 
-        if (incomeDate.diff(dayjs()) < 0) {
-            if (fromDate > incomeDate) {
+        if (incomeDate.diff() > 0) {
+            if (incomeDate.diff(fromDate) < 0) {
                 skippedTransactions.push(newTransaction);
             } else {
                 transactions.push(newTransaction);
