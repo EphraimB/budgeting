@@ -288,7 +288,7 @@ function ExpensesTable({
                   return (
                     <RowEdit
                       account_id={account_id}
-                      expense={row}
+                      row={row}
                       taxes={taxes}
                       setRowModes={setRowModes}
                     />

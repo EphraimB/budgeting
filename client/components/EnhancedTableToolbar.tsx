@@ -30,7 +30,7 @@ function EnhancedTableToolbar({
   const handleEditClick = () => {
     let updatedRowModes = { ...rowModes }; // Create a shallow copy of the current state
     for (const row of selectedRows) {
-      updatedRowModes[row.expense_id] = "edit";
+      updatedRowModes[row.id] = "edit";
     }
     setRowModes(updatedRowModes);
   };
@@ -38,7 +38,7 @@ function EnhancedTableToolbar({
   const handleDeleteClick = () => {
     let updatedRowModes = { ...rowModes }; // Create a shallow copy of the current state
     for (const row of selectedRows) {
-      updatedRowModes[row.expense_id] = "delete";
+      updatedRowModes[row.id] = "delete";
     }
     setRowModes(updatedRowModes);
   };

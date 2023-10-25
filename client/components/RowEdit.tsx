@@ -21,80 +21,70 @@ import { useRouter } from "next/navigation";
 
 function RowEdit({
   account_id,
-  expense,
+  row,
   taxes,
   setRowModes,
 }: {
   account_id: number;
-  expense: any;
+  row: any;
   taxes: any;
   setRowModes: any;
 }) {
   const router = useRouter();
 
-  const [expenseTitle, setExpenseTitle] = useState(expense.expense_title);
-  const [expenseDescription, setExpenseDescription] = useState(
-    expense.expense_description
+  const [title, setTitle] = useState(row.title);
+  const [description, setDescription] = useState(row.description);
+  const [amount, setAmount] = useState(row.amount);
+  const [subsidized, setSubsidized] = useState(row.subsidized);
+  const [tax, setTax] = useState(row.tax_id || 0);
+  const [beginDate, setBeginDate] = useState(row.begin_date);
+  const [endDate, setEndDate] = useState(row.end_date);
+  const [endDateEnabled, setEndDateEnabled] = useState(
+    row.end_date ? true : false
   );
-  const [expenseAmount, setExpenseAmount] = useState(expense.expense_amount);
-  const [expenseSubsidized, setExpenseSubsidized] = useState(
-    expense.expense_subsidized
-  );
-  const [expenseTax, setExpenseTax] = useState(expense.tax_id || 0);
-  const [expenseBeginDate, setExpenseBeginDate] = useState(
-    expense.expense_begin_date
-  );
-  const [expenseEndDate, setExpenseEndDate] = useState(
-    expense.expense_end_date
-  );
-  const [expenseEndDateEnabled, setExpenseEndDateEnabled] = useState(
-    expense.expense_end_date ? true : false
-  );
-  const [expenseFrequency, setExpenseFrequency] = useState(
-    expense.frequency_type
-  );
+  const [frequency, setFrequency] = useState(row.frequency_type);
   const [frequencyVariable, setFrequencyVariable] = useState(
-    expense.frequency_type_variable
+    row.frequency_type_variable
   );
   const [frequencyDayOfWeek, setFrequencyDayOfWeek] = useState(
-    expense.frequency_day_of_week || -1
+    row.frequency_day_of_week || -1
   );
   const [frequencyWeekOfMonth, setFrequencyWeekOfMonth] = useState(
-    expense.frequency_week_of_month || -1
+    row.frequency_week_of_month || -1
   );
   const [frequencyMonthOfYear, setFrequencyMonthOfYear] = useState(
-    expense.frequency_month_of_year || -1
+    row.frequency_month_of_year || -1
   );
 
   const handleExpenseEndDateEnabledChange = (
     e: React.ChangeEvent<HTMLInputElement>
   ) => {
-    setExpenseEndDateEnabled(e.target.checked);
+    setEndDateEnabled(e.target.checked);
 
     if (e.target.checked) {
-      setExpenseEndDate(dayjs().format());
+      setEndDate(dayjs().format());
     } else {
-      setExpenseEndDate(null);
+      setEndDate(null);
     }
   };
 
   const handleCancel = () => {
     setRowModes((prevModes: any) => ({
       ...prevModes,
-      [expense.expense_id]: "view",
+      [row.id]: "view",
     }));
   };
 
   const data = {
     account_id,
-    title: expenseTitle,
-    description: expenseDescription,
-    amount: parseFloat(expenseAmount),
-    subsidized: parseFloat(expenseSubsidized),
-    tax_id: expenseTax === 0 ? null : expenseTax,
-    begin_date: expenseBeginDate,
-    end_date: expenseEndDate,
-    frequency_type: parseInt(expenseFrequency),
+    title: title,
+    description: description,
+    amount: parseFloat(amount),
+    subsidized: parseFloat(subsidized),
+    tax_id: tax === 0 ? null : tax,
+    begin_date: beginDate,
+    end_date: endDate,
+    frequency_type: parseInt(frequency),
     frequency_type_variable: parseInt(frequencyVariable),
     frequency_day_of_week:
       frequencyDayOfWeek === -1 ? null : parseInt(frequencyDayOfWeek),
@@ -108,7 +98,7 @@ function RowEdit({
     const submitData = async () => {
       try {
         // Post request to create a new expense
-        await fetch(`/api/expenses?expense_id=${expense.expense_id}`, {
+        await fetch(`/api/expenses?expense_id=${row.id}`, {
           method: "PUT",
           headers: {
             "Content-Type": "application/json",
@@ -123,7 +113,7 @@ function RowEdit({
 
       setRowModes((prevModes: any) => ({
         ...prevModes,
-        [expense.expense_id]: "view",
+        [row.id]: "view",
       }));
       // showSnackbar("Expense edited!");
     };
@@ -133,7 +123,7 @@ function RowEdit({
 
   return (
     <TableRow
-      key={expense.expense_id}
+      key={row.id}
       sx={{
         backgroundColor: yellow[500],
       }}
@@ -141,29 +131,29 @@ function RowEdit({
       <TableCell colSpan={2}>
         <TextField
           label="Title"
-          value={expenseTitle}
-          onChange={(e) => setExpenseTitle(e.target.value)}
+          value={title}
+          onChange={(e) => setTitle(e.target.value)}
         />
         <br />
         <br />
         <TextField
           label="Description"
-          value={expenseDescription}
-          onChange={(e) => setExpenseDescription(e.target.value)}
+          value={description}
+          onChange={(e) => setDescription(e.target.value)}
         />
       </TableCell>
       <TableCell>
         <TextField
           label="Amount"
-          value={expenseAmount}
-          onChange={(e) => setExpenseAmount(e.target.value)}
+          value={amount}
+          onChange={(e) => setAmount(e.target.value)}
         />
         <br />
         <br />
         <TextField
           label="Subsidized"
-          value={expenseSubsidized}
-          onChange={(e) => setExpenseSubsidized(e.target.value)}
+          value={subsidized}
+          onChange={(e) => setSubsidized(e.target.value)}
         />
         <br />
         <br />
@@ -173,8 +163,8 @@ function RowEdit({
             <Select
               labelId="tax-select-label"
               label="Tax"
-              value={expenseTax}
-              onChange={(e) => setExpenseTax(e.target.value)}
+              value={tax}
+              onChange={(e) => setTax(e.target.value)}
             >
               <MenuItem key={0} value={0}>
                 None - 0%
@@ -192,9 +182,9 @@ function RowEdit({
         <LocalizationProvider dateAdapter={AdapterDayjs}>
           <DateTimePicker
             label="Expense begin date"
-            value={dayjs(expenseBeginDate)}
+            value={dayjs(beginDate)}
             onChange={(e: Dayjs | null) =>
-              setExpenseBeginDate(e ? e.format() : dayjs().format())
+              setBeginDate(e ? e.format() : dayjs().format())
             }
           />
           <br />
@@ -202,18 +192,18 @@ function RowEdit({
           <FormControlLabel
             control={
               <Checkbox
-                checked={expenseEndDateEnabled}
+                checked={endDateEnabled}
                 onChange={handleExpenseEndDateEnabledChange}
               />
             }
-            label="Expense end date"
+            label="End date"
           />
-          {expenseEndDateEnabled && (
+          {endDateEnabled && (
             <DateTimePicker
-              label="Expense end date"
-              value={dayjs(expenseEndDate) || dayjs()}
+              label="End date"
+              value={dayjs(endDate) || dayjs()}
               onChange={(e: Dayjs | null) =>
-                setExpenseEndDate(e ? e.format() : dayjs().format())
+                setEndDate(e ? e.format() : dayjs().format())
               }
             />
           )}
@@ -225,8 +215,8 @@ function RowEdit({
           <Select
             labelId="frequency-select-label"
             label="Frequency"
-            value={expenseFrequency}
-            onChange={(e) => setExpenseFrequency(e.target.value)}
+            value={frequency}
+            onChange={(e) => setFrequency(e.target.value)}
           >
             <MenuItem value={-1}>None</MenuItem>
             <MenuItem value={0}>Daily</MenuItem>
@@ -244,9 +234,7 @@ function RowEdit({
         />
         <br />
         <br />
-        {(expenseFrequency === 1 ||
-          expenseFrequency === 2 ||
-          expenseFrequency === 3) && (
+        {(frequency === 1 || frequency === 2 || frequency === 3) && (
           <FormControl>
             <InputLabel id="frequency-day-of-week-select-label">
               Day of week
@@ -268,7 +256,7 @@ function RowEdit({
             </Select>
           </FormControl>
         )}
-        {(expenseFrequency === 2 || expenseFrequency === 3) && (
+        {(frequency === 2 || frequency === 3) && (
           <FormControl>
             <InputLabel id="frequency-week-of-month-select-label">
               Week of month
@@ -288,7 +276,7 @@ function RowEdit({
             </Select>
           </FormControl>
         )}
-        {expenseFrequency === 3 && (
+        {frequency === 3 && (
           <FormControl>
             <InputLabel id="frequency-month-of-year-select-label">
               Month of year
