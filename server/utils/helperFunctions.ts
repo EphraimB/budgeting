@@ -210,5 +210,5 @@ export const nextTransactionFrequencyDate = (
             break;
     }
 
-    return nextDate?.format('YYYY-MM-DDTHH:mm:ssZ[Z]') ?? null;
+    return nextDate?.format() ?? null;
 };
