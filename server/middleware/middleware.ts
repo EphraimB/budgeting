@@ -1,5 +1,6 @@
 import { type Request, type Response, type NextFunction } from 'express';
 import { type QueryResultRow } from 'pg';
+import dayjs, { type Dayjs } from 'dayjs';
 import {
     parseIntOrFallback,
     handleError,
@@ -45,11 +46,8 @@ export const setQueries = async (
     next: NextFunction,
 ): Promise<void> => {
     try {
-        request.query.from_date = new Date().toISOString().slice(0, 10);
-
-        const date = new Date();
-        date.setFullYear(date.getFullYear() + 1);
-        request.query.to_date = date.toISOString().slice(0, 10);
+        request.query.from_date = dayjs().format('YYYY-MM-DD');
+        request.query.to_date = dayjs().add(1, 'year').format('YYYY-MM-DD');
 
         if (
             request.query.account_id === undefined ||
@@ -330,13 +328,11 @@ export const getExpensesByAccount = async (
                             return {
                                 ...expense,
                                 tax_rate: parseFloat(tax.tax_rate),
-                                amount: parseFloat(expense.expense_amount),
+                                amount: parseFloat(expense.amount),
                                 expense_subsidized: parseFloat(
-                                    expense.expense_subsidized,
+                                    expense.subsidized,
                                 ),
-                                expense_amount: parseFloat(
-                                    expense.expense_amount,
-                                ),
+                                expense_amount: parseFloat(expense.amount),
                             };
                         },
                     );
@@ -374,9 +370,9 @@ export const getExpensesByAccount = async (
                 return {
                     ...expense,
                     tax_rate: parseFloat(tax.tax_rate),
-                    amount: parseFloat(expense.expense_amount),
-                    expense_subsidized: parseFloat(expense.expense_subsidized),
-                    expense_amount: parseFloat(expense.expense_amount),
+                    amount: parseFloat(expense.amount),
+                    expense_subsidized: parseFloat(expense.subsidized),
+                    expense_amount: parseFloat(expense.amount),
                 };
             });
 
