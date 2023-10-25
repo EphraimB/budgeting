@@ -65,7 +65,7 @@ const generateExpenses = (
         expenseDate.date(newDay ?? expenseDate.date());
     }
 
-    while (expenseDate.diff(fromDate, 'day') < 0) {
+    while (expenseDate.diff(toDate) <= 0) {
         const initialAmount = expense.amount;
         const taxRate = expense.tax_rate;
         const subsidyRate = expense.subsidized;
@@ -86,8 +86,8 @@ const generateExpenses = (
             total_amount: -taxAmount,
         };
 
-        if (dayjs(expenseDate).diff(toDate, 'day') > 0) {
-            if (expenseDate.diff(fromDate, 'day') < 0) {
+        if (dayjs(expenseDate).diff() > 0) {
+            if (expenseDate.diff(fromDate) < 0) {
                 skippedTransactions.push(newTransaction);
             } else {
                 transactions.push(newTransaction);
@@ -154,6 +154,7 @@ export const generateMonthlyExpenses = (
 ): void => {
     let monthsIncremented: number = 0;
     const generateDateFn = (currentDate: Dayjs, expense: Expense): Dayjs => {
+        console.log('expense', expense);
         const expenseDate: Dayjs = dayjs(expense.begin_date).add(
             monthsIncremented +
                 (expense.frequency_type_variable !== null &&
