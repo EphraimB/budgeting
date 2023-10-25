@@ -30,8 +30,8 @@ const generatePayrolls = (
         total_amount: payrolls.net_pay,
     };
 
-    if (payroll_end_date.diff(dayjs()) < 0) {
-        if (fromDate.diff(payroll_end_date) > 0) {
+    if (payroll_end_date.diff() > 0) {
+        if (payroll_end_date.diff(fromDate) < 0) {
             skippedTransactions.push(newTransaction);
         } else {
             transactions.push(newTransaction);
