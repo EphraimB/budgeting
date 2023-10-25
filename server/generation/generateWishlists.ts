@@ -1,5 +1,6 @@
 import { type Wishlist, type GeneratedTransaction } from '../types/types';
 import { v4 as uuidv4 } from 'uuid';
+import dayjs, { Dayjs } from 'dayjs';
 
 /**
  *
@@ -13,13 +14,13 @@ const generateWishlists = (
     transactions: GeneratedTransaction[],
     skippedTransactions: GeneratedTransaction[],
     wishlist: Wishlist,
-    fromDate: Date,
+    fromDate: Dayjs,
 ): void => {
     const allTransactions: any[] = transactions.concat(skippedTransactions);
     const wishlist_amount: number = wishlist.wishlist_amount;
 
-    allTransactions.sort(
-        (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime(),
+    allTransactions.sort((a, b) =>
+        dayjs(a.date).diff(dayjs(b.date), 'millisecond'),
     );
 
     let affordableDate: number | null = null;
@@ -38,16 +39,16 @@ const generateWishlists = (
     }
 
     if (affordableDate !== null) {
-        const newTransactionDate: Date =
+        const newTransactionDate: Dayjs =
             wishlist.wishlist_date_available !== null &&
             wishlist.wishlist_date_available !== undefined
-                ? new Date(
+                ? dayjs(
                       Math.max(
                           affordableDate,
-                          new Date(wishlist.wishlist_date_available).getTime(),
+                          dayjs(wishlist.wishlist_date_available).millisecond(),
                       ),
                   )
-                : new Date(affordableDate);
+                : dayjs(affordableDate);
 
         const newTransaction: GeneratedTransaction = {
             id: uuidv4(),
