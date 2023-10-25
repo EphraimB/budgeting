@@ -80,13 +80,13 @@ const generateExpenses = (
             expense_id: expense.expense_id,
             title: expense.expense_title,
             description: expense.expense_description,
-            date: dayjs(expenseDate),
+            date: expenseDate,
             amount: -amountAfterSubsidy,
             tax_rate: taxRate ?? 0,
             total_amount: -taxAmount,
         };
 
-        if (dayjs(expenseDate).diff() > 0) {
+        if (expenseDate.diff() > 0) {
             if (expenseDate.diff(fromDate) < 0) {
                 skippedTransactions.push(newTransaction);
             } else {
