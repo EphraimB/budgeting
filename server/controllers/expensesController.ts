@@ -87,10 +87,13 @@ export const getExpenses = async (
 
         const modifiedExpenses = expenses.map(parseExpenses);
 
-        const expensesWithNextDate =
-            nextTransactionFrequencyDate(modifiedExpenses);
+        modifiedExpenses.map((expense) => {
+            const nextExpenseDate = nextTransactionFrequencyDate(expense);
 
-        response.status(200).json(expensesWithNextDate);
+            expense.next_date = nextExpenseDate;
+        });
+
+        response.status(200).json(modifiedExpenses);
     } catch (error) {
         logger.error(error); // Log the error on the server side
         handleError(
