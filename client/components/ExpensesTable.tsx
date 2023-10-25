@@ -23,21 +23,21 @@ import RowEdit from "./RowEdit";
 import RowAdd from "./RowAdd";
 
 interface Expense {
-  expense_id: number;
+  id: number;
   account_id: number;
   tax_id: number;
-  expense_amount: number;
-  expense_title: string;
-  expense_description: string;
+  amount: number;
+  title: string;
+  description: string;
   frequency_type: number;
   frequency_type_variable: number;
   frequency_day_of_month: number;
   frequency_day_of_week: number;
   frequency_week_of_month: number;
   frequency_month_of_year: number;
-  expense_subsidized: number;
-  expense_begin_date: string;
-  expense_end_date: string | null;
+  subsidized: number;
+  begin_date: string;
+  end_date: string | null;
   date_created: string;
   date_modified: string;
 }
@@ -112,9 +112,7 @@ function ExpensesTable({
   };
 
   const handleClick = (event: React.MouseEvent<unknown>, expense: Expense) => {
-    const selectedIndex = selected.findIndex(
-      (e) => e.expense_id === expense.expense_id
-    );
+    const selectedIndex = selected.findIndex((e) => e.id === expense.id);
     let newSelected: Expense[] = [];
 
     if (selectedIndex === -1) {
@@ -145,7 +143,7 @@ function ExpensesTable({
   };
 
   const isSelected = (expenseId: number) =>
-    selected.some((expense) => expense.expense_id === expenseId);
+    selected.some((expense) => expense.id === expenseId);
 
   // Avoid a layout jump when reaching the last page with empty rows.
   const emptyRows =
@@ -158,9 +156,7 @@ function ExpensesTable({
     );
   }, [expenses, order, orderBy, page, rowsPerPage]);
 
-  const getNextExpenseDateAndFrequency = (expense: any) => {
-    const currentDate = dayjs(expense.expense_begin_date);
-    let nextExpenseDate;
+  const getExpenseFrequency = (expense: Expense): string => {
     let expenseFrequency;
 
     switch (expense.frequency_type) {
@@ -174,10 +170,6 @@ function ExpensesTable({
           expenseFrequency =
             "Every " + expense.frequency_type_variable + " days";
 
-        nextExpenseDate = currentDate.add(
-          expense.frequency_type_variable,
-          "day"
-        );
         break;
       case 1: // Weekly
         if (
@@ -186,7 +178,7 @@ function ExpensesTable({
         )
           expenseFrequency = `Weekly ${
             expense.frequency_day_of_week !== null
-              ? `on ${dayjs(expense.expense_begin_date)
+              ? `on ${dayjs(expense.begin_date)
                   .day(expense.frequency_day_of_week)
                   .format("dddd")}`
               : ""
@@ -196,29 +188,19 @@ function ExpensesTable({
             weeks ${
               expense.frequency_day_of_week !== null
                 ? `on ${dayjs(
-                    dayjs(expense.expense_begin_date).day(
-                      expense.frequency_day_of_week
-                    )
+                    dayjs(expense.begin_date).day(expense.frequency_day_of_week)
                   ).format("dddd")}`
                 : ""
             }`;
         }
 
-        nextExpenseDate = currentDate.add(
-          expense.frequency_type_variable,
-          "week"
-        );
-
-        if (expense.frequency_day_of_week !== null) {
-          nextExpenseDate = nextExpenseDate.day(expense.frequency_day_of_week);
-        }
         break;
       case 2: // Monthly
         if (
           expense.frequency_type_variable === 1 ||
           expense.frequency_type_variable === null
         ) {
-          const dayOfMonth = dayjs(expense.expense_begin_date).format("D");
+          const dayOfMonth = dayjs(expense.begin_date).format("D");
           expenseFrequency = `Monthly on the ${dayOfMonth}${
             dayOfMonth.endsWith("1")
               ? "st"
@@ -231,7 +213,7 @@ function ExpensesTable({
         } else {
           expenseFrequency = `Every ${
             expense.frequency_type_variable
-          } months on the ${dayjs(expense.expense_begin_date).format("D")}th`;
+          } months on the ${dayjs(expense.begin_date).format("D")}th`;
         }
 
         if (expense.frequency_day_of_month) {
@@ -242,60 +224,26 @@ function ExpensesTable({
           } ${dayjs(expense.frequency_day_of_week).format("dddd")}`;
         }
 
-        if (expense.frequency_day_of_month) {
-          nextExpenseDate = currentDate.add(
-            expense.frequency_type_variable -
-              (dayjs().diff(currentDate, "date") > 0 ? 1 : 0),
-            "month"
-          );
-          nextExpenseDate = nextExpenseDate.date(
-            expense.frequency_day_of_month
-          );
-        } else {
-          nextExpenseDate = currentDate.add(
-            expense.frequency_type_variable -
-              (dayjs().diff(currentDate, "date") > 0 ? 1 : 0),
-            "month"
-          );
-        }
         break;
       case 3: // Yearly
         if (
           expense.frequency_type_variable === 1 ||
           expense.frequency_type_variable === null
         )
-          expenseFrequency = `Yearly on ${dayjs(
-            expense.expense_begin_date
-          ).format("MMMM D")}`;
+          expenseFrequency = `Yearly on ${dayjs(expense.begin_date).format(
+            "MMMM D"
+          )}`;
         else
           expenseFrequency = `Every ${
             expense.frequency_type_variable
-          } years on ${dayjs(expense.expense_begin_date).format("MMMM D")}`;
+          } years on ${dayjs(expense.begin_date).format("MMMM D")}`;
 
-        if (expense.frequency_month_of_year) {
-          nextExpenseDate = currentDate.add(
-            expense.frequency_type_variable,
-            "year"
-          );
-          nextExpenseDate = nextExpenseDate.month(
-            expense.frequency_month_of_year - 1
-          ); // Months are 0-indexed in JavaScript
-        } else {
-          nextExpenseDate = currentDate.add(
-            expense.frequency_type_variable,
-            "year"
-          );
-        }
         break;
       default:
         expenseFrequency = "Unknown";
-        nextExpenseDate = currentDate;
     }
 
-    return {
-      next_expense_date: nextExpenseDate,
-      expense_frequency: expenseFrequency,
-    };
+    return expenseFrequency;
   };
 
   return (
@@ -334,9 +282,9 @@ function ExpensesTable({
             )}
             <Suspense fallback={<LoadingExpenses />}>
               {visibleRows.map((row, index) => {
-                if (rowModes[row.expense_id as number] === "delete") {
+                if (rowModes[row.id as number] === "delete") {
                   return <RowDelete expense={row} setRowModes={setRowModes} />;
-                } else if (rowModes[row.expense_id as number] === "edit") {
+                } else if (rowModes[row.id as number] === "edit") {
                   return (
                     <RowEdit
                       account_id={account_id}
@@ -348,15 +296,13 @@ function ExpensesTable({
                 } else {
                   return (
                     <RowView
-                      key={row.expense_id}
+                      key={row.id}
                       row={row}
                       index={index}
                       handleClick={handleClick}
                       isSelected={isSelected}
                       taxes={taxes}
-                      getNextExpenseDateAndFrequency={
-                        getNextExpenseDateAndFrequency
-                      }
+                      getExpenseFrequency={getExpenseFrequency}
                     />
                   );
                 }

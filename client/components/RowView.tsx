@@ -9,16 +9,16 @@ function RowView({
   handleClick,
   isSelected,
   taxes,
-  getNextExpenseDateAndFrequency,
+  getExpenseFrequency,
 }: {
   row: any;
   index: number;
   handleClick: any;
   isSelected: any;
   taxes: any;
-  getNextExpenseDateAndFrequency: any;
+  getExpenseFrequency: any;
 }) {
-  const isItemSelected = isSelected(row.expense_id);
+  const isItemSelected = isSelected(row.id);
   const labelId = `enhanced-table-checkbox-${index}`;
 
   const taxObject = taxes
@@ -26,12 +26,11 @@ function RowView({
     : 0;
   const taxRate = taxObject ? parseFloat(taxObject.tax_rate) : 0;
   const amountAfterTax: number =
-    parseFloat(row.expense_amount as string) +
-    parseFloat(row.expense_amount as string) * taxRate;
+    parseFloat(row.amount as string) +
+    parseFloat(row.amount as string) * taxRate;
 
   const amountAfterSubsidy: number =
-    amountAfterTax -
-    amountAfterTax * parseFloat(row.expense_subsidized as string);
+    amountAfterTax - amountAfterTax * parseFloat(row.subsidized as string);
 
   return (
     <TableRow
@@ -40,7 +39,7 @@ function RowView({
       role="checkbox"
       aria-checked={isItemSelected}
       tabIndex={-1}
-      key={row.expense_id}
+      key={row.id}
       selected={isItemSelected}
       sx={{ cursor: "pointer" }}
     >
@@ -55,28 +54,20 @@ function RowView({
       </TableCell>
 
       <TableCell component="th" id={labelId} scope="row" padding="none">
-        {row.expense_title}
+        {row.title}
       </TableCell>
-      <TableCell align="right">{row.expense_description}</TableCell>
+      <TableCell align="right">{row.description}</TableCell>
       <TableCell align="right">
         ${(Math.round((amountAfterSubsidy as number) * 100) / 100).toFixed(2)}
       </TableCell>
       <TableCell align="right">
-        {dayjs(getNextExpenseDateAndFrequency(row).next_expense_date).format(
-          "dddd"
-        )}
+        {dayjs(row.next_date).format("dddd")}
         <br />
-        {dayjs(getNextExpenseDateAndFrequency(row).next_expense_date).format(
-          "MMMM D, YYYY"
-        )}
+        {dayjs(row.next_date).format("MMMM D, YYYY")}
         <br />
-        {dayjs(getNextExpenseDateAndFrequency(row).next_expense_date).format(
-          "h:mm A"
-        )}
+        {dayjs(row.next_date).format("h:mm A")}
       </TableCell>
-      <TableCell align="right">
-        {getNextExpenseDateAndFrequency(row).expense_frequency}
-      </TableCell>
+      <TableCell align="right">{getExpenseFrequency(row)}</TableCell>
     </TableRow>
   );
 }
