@@ -283,7 +283,7 @@ function ExpensesTable({
             <Suspense fallback={<LoadingExpenses />}>
               {visibleRows.map((row, index) => {
                 if (rowModes[row.id as number] === "delete") {
-                  return <RowDelete expense={row} setRowModes={setRowModes} />;
+                  return <RowDelete row={row} setRowModes={setRowModes} />;
                 } else if (rowModes[row.id as number] === "edit") {
                   return (
                     <RowEdit
