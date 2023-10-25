@@ -102,7 +102,7 @@ const generateLoans = (
         loanDate.date(newDay);
     }
 
-    while (toDate.diff(loanDate) <= 0 && loan_amount > 0) {
+    while (loanDate.diff(toDate) <= 0 && loan_amount > 0) {
         const interest = calculateInterest(
             loan_amount,
             loan.loan_interest_rate ?? 0,
@@ -123,8 +123,8 @@ const generateLoans = (
             total_amount: -subsidizedAmount,
         };
 
-        if (loanDate.diff(dayjs()) < 0) {
-            if (fromDate.diff(loanDate) > 0) {
+        if (loanDate.diff() > 0) {
+            if (loanDate.diff(fromDate) < 0) {
                 skippedTransactions.push(newTransaction);
             } else {
                 transactions.push(newTransaction);

@@ -242,12 +242,11 @@ export const generateWeeklyIncome = (
 
     const generateDateFn = (currentDate: Dayjs, income: Income): Dayjs => {
         const newDate: Dayjs = currentDate.add(
-            7 *
-                (income.frequency_type_variable !== null &&
+            income.frequency_type_variable !== null &&
                 income.frequency_type_variable !== undefined
-                    ? income.frequency_type_variable
-                    : 1),
-            'day',
+                ? income.frequency_type_variable
+                : 1,
+            'week',
         );
 
         return newDate;
