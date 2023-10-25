@@ -17,7 +17,7 @@ type GenerateDateFunction = (currentDate: Dayjs, expense: Expense) => Dayjs;
 const generateExpenses = (
     transactions: GeneratedTransaction[],
     skippedTransactions: GeneratedTransaction[],
-    expense: Expense,
+    expense: any,
     toDate: Dayjs,
     fromDate: Dayjs,
     generateDateFn: GenerateDateFunction,
@@ -66,9 +66,9 @@ const generateExpenses = (
     }
 
     while (expenseDate.diff(toDate) <= 0) {
-        const initialAmount = expense.amount;
+        const initialAmount = expense.expense_amount;
         const taxRate = expense.tax_rate;
-        const subsidyRate = expense.subsidized;
+        const subsidyRate = expense.expense_subsidized;
 
         const amountAfterSubsidy =
             initialAmount - initialAmount * (subsidyRate ?? 0);
@@ -77,9 +77,9 @@ const generateExpenses = (
 
         const newTransaction: GeneratedTransaction = {
             id: uuidv4(),
-            expense_id: expense.id,
-            title: expense.title,
-            description: expense.description,
+            expense_id: expense.expense_id,
+            title: expense.expense_title,
+            description: expense.expense_description,
             date: dayjs(expenseDate),
             amount: -amountAfterSubsidy,
             tax_rate: taxRate ?? 0,
@@ -154,7 +154,6 @@ export const generateMonthlyExpenses = (
 ): void => {
     let monthsIncremented: number = 0;
     const generateDateFn = (currentDate: Dayjs, expense: Expense): Dayjs => {
-        console.log('expense', expense);
         const expenseDate: Dayjs = dayjs(expense.begin_date).add(
             monthsIncremented +
                 (expense.frequency_type_variable !== null &&
