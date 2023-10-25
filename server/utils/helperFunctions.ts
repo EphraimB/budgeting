@@ -184,7 +184,8 @@ export const nextTransactionFrequencyDate = (
                 nextDate = nextDate.date(transaction.frequency_day_of_month);
             } else {
                 nextDate = currentDate.add(
-                    transaction.frequency_type_variable,
+                    transaction.frequency_type_variable -
+                        (currentDate.diff() > 0 ? 1 : 0),
                     'month',
                 );
             }
