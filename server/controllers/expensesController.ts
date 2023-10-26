@@ -88,7 +88,10 @@ export const getExpenses = async (
         const modifiedExpenses = expenses.map(parseExpenses);
 
         modifiedExpenses.map((expense) => {
-            const nextExpenseDate = nextTransactionFrequencyDate(expense);
+            const nextExpenseDate = nextTransactionFrequencyDate(
+                expense,
+                'expenses',
+            );
 
             expense.next_date = nextExpenseDate;
         });
