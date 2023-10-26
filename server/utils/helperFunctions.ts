@@ -1,6 +1,13 @@
 import { type Response } from 'express';
 import pool from '../config/db.js';
 import dayjs, { type Dayjs } from 'dayjs';
+import {
+    generateDailyExpenses,
+    generateMonthlyExpenses,
+    generateWeeklyExpenses,
+    generateYearlyExpenses,
+} from '../generation/generateExpenses.js';
+import { GeneratedTransaction } from '../types/types.js';
 
 /**
  *
@@ -153,16 +160,23 @@ export const executePayrollsScript = async (employee_id: number) => {
 export const nextTransactionFrequencyDate = (
     transaction: any,
 ): string | null => {
+    const transactions: GeneratedTransaction[] = [];
     const currentDate: Dayjs = dayjs(transaction.begin_date);
     let nextDate: Dayjs | null = null;
 
     // Find the next expense date based on the frequency values
     switch (transaction.frequency_type) {
         case 0: // Daily
-            nextDate = currentDate.add(
-                transaction.frequency_type_variable,
-                'day',
+            generateDailyExpenses(
+                transactions,
+                [],
+                transaction,
+                currentDate,
+                currentDate.add(1, 'week'),
             );
+
+            nextDate = transactions[0].date;
+
             break;
         case 1: // Weekly
             nextDate = currentDate.add(

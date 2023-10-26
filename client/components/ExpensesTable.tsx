@@ -220,7 +220,15 @@ function ExpensesTable({
           expenseFrequency = `Monthly on the ${expense.frequency_day_of_month}`;
         } else if (expense.frequency_day_of_week) {
           expenseFrequency = `Monthly on the ${
-            expense.frequency_week_of_month
+            expense.frequency_week_of_month === 0
+              ? "first"
+              : expense.frequency_week_of_month === 1
+              ? "second"
+              : expense.frequency_week_of_month === 2
+              ? "third"
+              : expense.frequency_week_of_month === 3
+              ? "fourth"
+              : "last"
           } ${dayjs(expense.frequency_day_of_week).format("dddd")}`;
         }
 
