@@ -163,6 +163,10 @@ export const nextTransactionFrequencyDate = (
 ): string | null => {
     let nextDate: string | null = null;
 
+    if (dayjs(transaction.begin_date).isAfter()) {
+        return transaction.begin_date;
+    }
+
     // Find the next expense date based on the frequency values
     switch (transaction.frequency_type) {
         case 0: // Daily
