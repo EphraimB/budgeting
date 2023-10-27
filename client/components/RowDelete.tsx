@@ -5,28 +5,19 @@ import Box from "@mui/material/Box";
 import { red } from "@mui/material/colors";
 import { useRouter } from "next/navigation";
 
-function RowDelete({
-  expense,
-  setRowModes,
-}: {
-  expense: any;
-  setRowModes: any;
-}) {
+function RowDelete({ row, setRowModes }: { row: any; setRowModes: any }) {
   const router = useRouter();
 
   const handleDelete = () => {
     const deleteAccount = async () => {
       try {
         // Post request to create a new expense
-        await fetch(
-          `http://localhost:3000/api/expenses?expense_id=${expense.expense_id}`,
-          {
-            method: "DELETE",
-            headers: {
-              "Content-Type": "application/json",
-            },
-          }
-        );
+        await fetch(`http://localhost:3000/api/expenses?expense_id=${row.id}`, {
+          method: "DELETE",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
         router.refresh();
       } catch (error) {
         console.error("There was an error deleting the expense!", error);
@@ -35,7 +26,7 @@ function RowDelete({
 
       setRowModes((prevModes: any) => ({
         ...prevModes,
-        [expense.expense_id]: "view",
+        [row.id]: "view",
       }));
       // showSnackbar("Expense deleted!");
     };
@@ -46,20 +37,19 @@ function RowDelete({
   const handleCancel = () => {
     setRowModes((prevModes: any) => ({
       ...prevModes,
-      [expense.expense_id]: "view",
+      [row.id]: "view",
     }));
   };
 
   return (
     <TableRow
-      key={expense.expense_id}
+      key={row.id}
       sx={{
         backgroundColor: red[500],
       }}
     >
       <TableCell colSpan={5} sx={{ color: "#fff" }}>
-        Are you sure you want to delete this expense called "
-        {expense.expense_title}"?
+        Are you sure you want to delete this expense called "{row.title}"?
       </TableCell>
       <TableCell sx={{ color: "#fff" }}>
         <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
