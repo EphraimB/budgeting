@@ -6,6 +6,7 @@ import {
     handleError,
     executeQuery,
     parseIntOrFallback,
+    nextTransactionFrequencyDate,
 } from '../utils/helperFunctions.js';
 import { type Expense } from '../types/types.js';
 import { logger } from '../config/winston.js';
@@ -17,12 +18,12 @@ import { logger } from '../config/winston.js';
  * Converts the expense object to the correct types
  **/
 const parseExpenses = (expense: Record<string, string>): Expense => ({
-    expense_id: parseInt(expense.expense_id),
+    id: parseInt(expense.expense_id),
     account_id: parseInt(expense.account_id),
     tax_id: parseIntOrFallback(expense.tax_id),
-    expense_amount: parseFloat(expense.expense_amount),
-    expense_title: expense.expense_title,
-    expense_description: expense.expense_description,
+    amount: parseFloat(expense.expense_amount),
+    title: expense.expense_title,
+    description: expense.expense_description,
     frequency_type: parseInt(expense.frequency_type),
     frequency_type_variable: parseIntOrFallback(
         expense.frequency_type_variable,
@@ -35,9 +36,9 @@ const parseExpenses = (expense: Record<string, string>): Expense => ({
     frequency_month_of_year: parseIntOrFallback(
         expense.frequency_month_of_year,
     ),
-    expense_subsidized: parseFloat(expense.expense_subsidized),
-    expense_begin_date: expense.expense_begin_date,
-    expense_end_date: expense.expense_end_date,
+    subsidized: parseFloat(expense.expense_subsidized),
+    begin_date: expense.expense_begin_date,
+    end_date: expense.expense_end_date,
     date_created: expense.date_created,
     date_modified: expense.date_modified,
 });
@@ -84,7 +85,18 @@ export const getExpenses = async (
             return;
         }
 
-        response.status(200).json(expenses.map(parseExpenses));
+        const modifiedExpenses = expenses.map(parseExpenses);
+
+        modifiedExpenses.map((expense) => {
+            const nextExpenseDate = nextTransactionFrequencyDate(
+                expense,
+                'expenses',
+            );
+
+            expense.next_date = nextExpenseDate;
+        });
+
+        response.status(200).json(modifiedExpenses);
     } catch (error) {
         logger.error(error); // Log the error on the server side
         handleError(
@@ -164,7 +176,7 @@ export const createExpense = async (
             script_path: '/scripts/createTransaction.sh',
             expense_type: 'expense',
             account_id,
-            id: modifiedExpenses[0].expense_id,
+            id: modifiedExpenses[0].id,
             amount: -amount + amount * subsidized,
             title,
             description,
@@ -189,10 +201,10 @@ export const createExpense = async (
 
         await executeQuery(expenseQueries.updateExpenseWithCronJobId, [
             cronId,
-            modifiedExpenses[0].expense_id,
+            modifiedExpenses[0].id,
         ]);
 
-        request.expense_id = modifiedExpenses[0].expense_id;
+        request.expense_id = modifiedExpenses[0].id;
 
         next();
     } catch (error) {

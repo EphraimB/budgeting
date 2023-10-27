@@ -41,6 +41,7 @@ import {
 } from '../types/types.js';
 import { executeQuery } from '../utils/helperFunctions.js';
 import { accountQueries } from '../models/queryData.js';
+import dayjs, { type Dayjs } from 'dayjs';
 
 const fullyPaidBackDates: Record<number, string | null> = {}; // map of loan_id to fullyPaidBackDate
 
@@ -54,8 +55,8 @@ const generate = async (
     skippedTransactions: GeneratedTransaction[],
     currentBalance: any,
 ): Promise<void> => {
-    const fromDate: Date = new Date(request.query.from_date as string);
-    const toDate: Date = new Date(request.query.to_date as string);
+    const fromDate: Dayjs = dayjs(request.query.from_date as string);
+    const toDate: Dayjs = dayjs(request.query.to_date as string);
 
     request.transaction
         .filter((tran) => tran.account_id === account_id)
@@ -66,8 +67,8 @@ const generate = async (
                     transaction_id: transaction.transaction_id,
                     title: transaction.transaction_title,
                     description: transaction.transaction_description,
-                    date: new Date(transaction.date_created),
-                    date_modified: new Date(transaction.date_modified),
+                    date: dayjs(transaction.date_created),
+                    date_modified: dayjs(transaction.date_modified),
                     amount: transaction.transaction_amount,
                     tax_rate: transaction.transaction_tax_rate ?? 0,
                     total_amount:
@@ -283,18 +284,18 @@ const generate = async (
 
                 // Helper function to reset daily cap
                 const isNextDay = (
-                    currentDate: Date,
-                    nextDate: Date,
+                    currentDate: Dayjs,
+                    nextDate: Dayjs,
                 ): boolean => {
-                    return currentDate.getDate() !== nextDate.getDate();
+                    return currentDate.diff(nextDate, 'day') !== 0;
                 };
 
                 // Helper function to reset monthly cap
                 const isNextMonth = (
-                    currentDate: Date,
-                    nextDate: Date,
+                    currentDate: Dayjs,
+                    nextDate: Dayjs,
                 ): boolean => {
-                    return currentDate.getMonth() !== nextDate.getMonth();
+                    return currentDate.diff(nextDate, 'month') !== 0;
                 };
 
                 // Apply fare capping logic
@@ -306,12 +307,12 @@ const generate = async (
                     const processedRides = [...rides];
 
                     // Sort rides by date
-                    processedRides.sort(
-                        (a, b) => a.date.getTime() - b.date.getTime(),
+                    processedRides.sort((a, b) =>
+                        a.date.diff(b.date, 'millisecond'),
                     );
 
                     let current_spent = 0;
-                    let firstRideDate: Date | null = null;
+                    let firstRideDate: Dayjs | null = null;
 
                     for (let i = 0; i < processedRides.length; i++) {
                         let ride = processedRides[i];
@@ -350,8 +351,7 @@ const generate = async (
                                     current_spent = fareCappingInfo.fare_cap;
                                 }
                                 if (
-                                    ride.date.getTime() -
-                                        firstRideDate.getTime() >=
+                                    ride.date.diff(firstRideDate) >=
                                     7 * 24 * 60 * 60 * 1000
                                 ) {
                                     current_spent = 0;
@@ -399,9 +399,7 @@ const generate = async (
             });
         });
 
-    transactions.sort(
-        (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime(),
-    );
+    transactions.sort((a, b) => dayjs(a.date).diff(dayjs(b.date)));
 
     calculateBalances(transactions.concat(skippedTransactions), currentBalance);
 
@@ -416,10 +414,7 @@ const generate = async (
                     fromDate,
                 );
 
-                transactions.sort(
-                    (a, b) =>
-                        new Date(a.date).getTime() - new Date(b.date).getTime(),
-                );
+                transactions.sort((a, b) => dayjs(a.date).diff(dayjs(b.date)));
 
                 calculateBalances(
                     transactions.concat(skippedTransactions),

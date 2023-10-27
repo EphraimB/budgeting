@@ -1,18 +1,18 @@
 import { GeneratedTransaction } from '../types/types';
 import { CommuteSchedule } from '../types/types';
 import { v4 as uuidv4 } from 'uuid';
+import dayjs, { Dayjs } from 'dayjs';
 
 const getNextDate = (
-    currentDate: Date,
+    currentDate: Dayjs,
     dayOfWeek: number,
     startTime: string,
-): Date => {
+): Dayjs => {
     const [hours, minutes] = startTime.split(':').map(Number);
-    let nextDate = new Date(currentDate);
-    nextDate.setHours(hours, minutes, 0, 0);
+    let nextDate = dayjs(currentDate).hour(hours).minute(minutes).second(0);
 
-    while (nextDate.getDay() !== dayOfWeek || nextDate <= currentDate) {
-        nextDate.setDate(nextDate.getDate() + 1);
+    while (nextDate.day() !== dayOfWeek || nextDate.diff(currentDate) < 0) {
+        nextDate.date(nextDate.date() + 1);
     }
 
     return nextDate;
@@ -20,18 +20,18 @@ const getNextDate = (
 
 export const generateCommuteExpenses = (
     commuteExpense: CommuteSchedule,
-    toDate: Date,
-    fromDate: Date,
+    toDate: Dayjs,
+    fromDate: Dayjs,
 ): GeneratedTransaction[] => {
     let generatedRides: GeneratedTransaction[] = [];
 
     let commuteExpenseDate = getNextDate(
-        new Date(),
+        dayjs(),
         commuteExpense.day_of_week,
         commuteExpense.start_time,
     );
 
-    while (commuteExpenseDate <= toDate) {
+    while (commuteExpenseDate.diff(toDate) <= 0) {
         const newTransaction: GeneratedTransaction = {
             id: uuidv4(),
             commute_schedule_id: commuteExpense.commute_schedule_id,
@@ -51,7 +51,7 @@ export const generateCommuteExpenses = (
         }
 
         commuteExpenseDate = getNextDate(
-            new Date(commuteExpenseDate.getTime() + 24 * 60 * 60 * 1000),
+            dayjs(commuteExpenseDate.millisecond() + 24 * 60 * 60 * 1000),
             commuteExpense.day_of_week,
             commuteExpense.start_time,
         );

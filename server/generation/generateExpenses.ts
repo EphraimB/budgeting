@@ -1,7 +1,8 @@
 import { type Expense, type GeneratedTransaction } from '../types/types';
 import { v4 as uuidv4 } from 'uuid';
+import dayjs, { Dayjs } from 'dayjs';
 
-type GenerateDateFunction = (currentDate: Date, expense: Expense) => Date;
+type GenerateDateFunction = (currentDate: Dayjs, expense: Expense) => Dayjs;
 
 /**
  *
@@ -16,18 +17,18 @@ type GenerateDateFunction = (currentDate: Date, expense: Expense) => Date;
 const generateExpenses = (
     transactions: GeneratedTransaction[],
     skippedTransactions: GeneratedTransaction[],
-    expense: Expense,
-    toDate: Date,
-    fromDate: Date,
+    expense: any,
+    toDate: Dayjs,
+    fromDate: Dayjs,
     generateDateFn: GenerateDateFunction,
 ) => {
-    let expenseDate = new Date(expense.expense_begin_date);
+    let expenseDate = dayjs(expense.expense_begin_date);
 
     if (
         expense.frequency_month_of_year !== null &&
         expense.frequency_month_of_year !== undefined
     ) {
-        expenseDate.setMonth(expense.frequency_month_of_year);
+        expenseDate.month(expense.frequency_month_of_year);
     }
 
     if (
@@ -41,10 +42,10 @@ const generateExpenses = (
             expense.frequency_day_of_week !== undefined
         ) {
             let daysUntilNextFrequency =
-                (7 + expense.frequency_day_of_week - expenseDate.getDay()) % 7;
+                (7 + expense.frequency_day_of_week - expenseDate.day()) % 7;
             daysUntilNextFrequency =
                 daysUntilNextFrequency === 0 ? 7 : daysUntilNextFrequency;
-            newDay = expenseDate.getDate() + daysUntilNextFrequency;
+            newDay = expenseDate.date() + daysUntilNextFrequency;
         }
 
         if (
@@ -52,20 +53,19 @@ const generateExpenses = (
             expense.frequency_week_of_month !== undefined
         ) {
             // first day of the month
-            expenseDate.setDate(1);
+            expenseDate.date(1);
             const daysToAdd =
-                (7 + expense.frequency_day_of_week - expenseDate.getDay()) % 7;
+                (7 + expense.frequency_day_of_week - expenseDate.day()) % 7;
             // setting to the first occurrence of the desired day of week
-            expenseDate.setDate(expenseDate.getDate() + daysToAdd);
+            expenseDate.add(daysToAdd, 'day');
             // setting to the desired week of the month
-            newDay =
-                expenseDate.getDate() + 7 * expense.frequency_week_of_month;
+            newDay = expenseDate.date() + 7 * expense.frequency_week_of_month;
         }
 
-        expenseDate.setDate(newDay ?? expenseDate.getDate());
+        expenseDate.date(newDay ?? expenseDate.date());
     }
 
-    while (expenseDate <= toDate) {
+    while (expenseDate.diff(toDate) <= 0) {
         const initialAmount = expense.expense_amount;
         const taxRate = expense.tax_rate;
         const subsidyRate = expense.expense_subsidized;
@@ -80,14 +80,14 @@ const generateExpenses = (
             expense_id: expense.expense_id,
             title: expense.expense_title,
             description: expense.expense_description,
-            date: new Date(expenseDate),
+            date: expenseDate,
             amount: -amountAfterSubsidy,
             tax_rate: taxRate ?? 0,
             total_amount: -taxAmount,
         };
 
-        if (expenseDate > new Date()) {
-            if (fromDate > expenseDate) {
+        if (expenseDate.diff() > 0) {
+            if (expenseDate.diff(fromDate) < 0) {
                 skippedTransactions.push(newTransaction);
             } else {
                 transactions.push(newTransaction);
@@ -111,18 +111,18 @@ export const generateDailyExpenses = (
     transactions: GeneratedTransaction[],
     skippedTransactions: GeneratedTransaction[],
     expense: Expense,
-    toDate: Date,
-    fromDate: Date,
+    toDate: Dayjs,
+    fromDate: Dayjs,
 ): void => {
-    const generateDateFn = (currentDate: Date, expense: Expense): Date => {
-        const newDate = currentDate;
-        newDate.setDate(
-            newDate.getDate() +
-                (expense.frequency_type_variable !== null &&
+    const generateDateFn = (currentDate: Dayjs, expense: Expense): Dayjs => {
+        const newDate = currentDate.add(
+            expense.frequency_type_variable !== null &&
                 expense.frequency_type_variable !== undefined
-                    ? expense.frequency_type_variable
-                    : 1),
+                ? expense.frequency_type_variable
+                : 1,
+            'day',
         );
+
         return newDate;
     };
 
@@ -149,39 +149,35 @@ export const generateMonthlyExpenses = (
     transactions: GeneratedTransaction[],
     skippedTransactions: GeneratedTransaction[],
     expense: Expense,
-    toDate: Date,
-    fromDate: Date,
+    toDate: Dayjs,
+    fromDate: Dayjs,
 ): void => {
     let monthsIncremented: number = 0;
-    const generateDateFn = (currentDate: Date, expense: Expense): Date => {
-        const expenseDate: Date = new Date(expense.expense_begin_date);
-
-        // advance by number of months specified in frequency_type_variable or by 1 month if not set
-        expenseDate.setMonth(
-            expenseDate.getMonth() +
-                monthsIncremented +
+    const generateDateFn = (currentDate: Dayjs, expense: any): Dayjs => {
+        const expenseDate: Dayjs = dayjs(expense.expense_begin_date).add(
+            monthsIncremented +
                 (expense.frequency_type_variable !== null &&
                 expense.frequency_type_variable !== undefined
                     ? expense.frequency_type_variable
                     : 1),
+            'month',
         );
 
         if (
             expense.frequency_day_of_week !== null &&
             expense.frequency_day_of_week !== undefined
         ) {
-            let newDay: number = expenseDate.getDate();
+            let newDay: number = expenseDate.date();
 
             if (
                 expense.frequency_day_of_week !== null &&
                 expense.frequency_day_of_week !== undefined
             ) {
                 let daysUntilNextFrequency =
-                    (7 + expense.frequency_day_of_week - expenseDate.getDay()) %
-                    7;
+                    (7 + expense.frequency_day_of_week - expenseDate.day()) % 7;
                 daysUntilNextFrequency =
                     daysUntilNextFrequency === 0 ? 7 : daysUntilNextFrequency;
-                newDay = expenseDate.getDate() + daysUntilNextFrequency;
+                newDay = expenseDate.date() + daysUntilNextFrequency;
             }
 
             if (
@@ -189,18 +185,17 @@ export const generateMonthlyExpenses = (
                 expense.frequency_week_of_month !== undefined
             ) {
                 // first day of the month
-                expenseDate.setDate(1);
+                expenseDate.date(1);
                 const daysToAdd: number =
-                    (7 + expense.frequency_day_of_week - expenseDate.getDay()) %
-                    7;
+                    (7 + expense.frequency_day_of_week - expenseDate.day()) % 7;
                 // setting to the first occurrence of the desired day of week
-                expenseDate.setDate(expenseDate.getDate() + daysToAdd);
+                expenseDate.add(daysToAdd, 'day');
                 // setting to the desired week of the month
                 newDay =
-                    expenseDate.getDate() + 7 * expense.frequency_week_of_month;
+                    expenseDate.date() + 7 * expense.frequency_week_of_month;
             }
 
-            expenseDate.setDate(newDay);
+            expenseDate.date(newDay);
         }
 
         monthsIncremented +=
@@ -235,34 +230,30 @@ export const generateWeeklyExpenses = (
     transactions: GeneratedTransaction[],
     skippedTransactions: GeneratedTransaction[],
     expense: Expense,
-    toDate: Date,
-    fromDate: Date,
+    toDate: Dayjs,
+    fromDate: Dayjs,
 ): void => {
-    const expenseDate: Date = new Date(expense.expense_begin_date);
+    const expenseDate: Dayjs = dayjs(expense.begin_date);
 
     if (
         expense.frequency_day_of_week !== null &&
         expense.frequency_day_of_week !== undefined
     ) {
-        const startDay: number = new Date(expense.expense_begin_date).getDay();
+        const startDay: number = dayjs(expense.begin_date).day();
         const frequency_day_of_week: number = expense.frequency_day_of_week;
 
-        expenseDate.setDate(
-            expenseDate.getDate() +
-                ((frequency_day_of_week + 7 - startDay) % 7),
-        );
+        expenseDate.add((frequency_day_of_week + 7 - startDay) % 7, 'day');
     }
 
-    const generateDateFn = (currentDate: Date, expense: Expense): Date => {
-        const newDate: Date = currentDate;
-        newDate.setDate(
-            newDate.getDate() +
-                7 *
-                    (expense.frequency_type_variable !== null &&
-                    expense.frequency_type_variable !== undefined
-                        ? expense.frequency_type_variable
-                        : 1),
+    const generateDateFn = (currentDate: Dayjs, expense: Expense): Dayjs => {
+        const newDate: Dayjs = currentDate.add(
+            expense.frequency_type_variable !== null &&
+                expense.frequency_type_variable !== undefined
+                ? expense.frequency_type_variable
+                : 1,
+            'week',
         );
+
         return newDate;
     };
 
@@ -289,26 +280,25 @@ export const generateYearlyExpenses = (
     transactions: GeneratedTransaction[],
     skippedTransactions: GeneratedTransaction[],
     expense: Expense,
-    toDate: Date,
-    fromDate: Date,
+    toDate: Dayjs,
+    fromDate: Dayjs,
 ): void => {
     let yearsIncremented: number = 0;
-    const generateDateFn = (currentDate: Date, expense: Expense): Date => {
-        const newDate: Date = new Date(expense.expense_begin_date);
-        newDate.setFullYear(
-            newDate.getFullYear() +
-                yearsIncremented +
+    const generateDateFn = (currentDate: Dayjs, expense: Expense): Dayjs => {
+        const newDate: Dayjs = dayjs(expense.begin_date).add(
+            yearsIncremented +
                 (expense.frequency_type_variable !== null &&
                 expense.frequency_type_variable !== undefined
                     ? expense.frequency_type_variable
                     : 1),
+            'year',
         );
 
         if (
             expense.frequency_month_of_year !== null &&
             expense.frequency_month_of_year !== undefined
         ) {
-            newDate.setMonth(expense.frequency_month_of_year);
+            newDate.month(expense.frequency_month_of_year);
         }
 
         if (
@@ -316,23 +306,23 @@ export const generateYearlyExpenses = (
             expense.frequency_day_of_week !== undefined
         ) {
             const daysToAdd: number =
-                (7 - newDate.getDay() + expense.frequency_day_of_week) % 7;
-            newDate.setDate(newDate.getDate() + daysToAdd); // this is the first occurrence of the day_of_week
+                (7 - newDate.day() + expense.frequency_day_of_week) % 7;
+
+            newDate.add(daysToAdd, 'day'); // this is the first occurrence of the day_of_week
 
             if (
                 expense.frequency_week_of_month !== null &&
                 expense.frequency_week_of_month !== undefined
             ) {
                 // add the number of weeks, but check if it overflows into the next month
-                const proposedDate: Date = new Date(newDate.getTime());
-                proposedDate.setDate(
-                    proposedDate.getDate() +
-                        7 * expense.frequency_week_of_month,
+                const proposedDate: Dayjs = dayjs(newDate).add(
+                    expense.frequency_week_of_month,
+                    'week',
                 );
 
-                if (proposedDate.getMonth() === newDate.getMonth()) {
+                if (proposedDate.diff(newDate, 'month') === 0) {
                     // it's in the same month, so it's a valid date
-                    newDate.setDate(proposedDate.getDate());
+                    newDate.date(proposedDate.date());
                 } else {
                     // it's not in the same month, so don't change newDate
                 }
