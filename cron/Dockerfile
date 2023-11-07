@@ -1,5 +1,5 @@
 # ------ Build stage ------
-FROM node:18-alpine AS builder
+FROM node:20-alpine AS builder
 
 # Create app directory
 WORKDIR /app
@@ -18,7 +18,7 @@ RUN npm run build
 COPY ./scripts /scripts
 
 # ------ Runtime stage ------
-FROM node:18-alpine
+FROM node:20-alpine
 
 # Install PostgreSQL client and other necessary utilities
 RUN apk add --no-cache postgresql-client util-linux
