@@ -1,3 +1,17 @@
+-- Create the 'marco' role
+CREATE ROLE marco LOGIN PASSWORD 'securepassword';
+
+-- Connect to the 'budgeting' database to perform further operations
+\c budgeting
+
+-- Now create the pg_cron extension
+CREATE EXTENSION IF NOT EXISTS pg_cron;
+
+-- Grant usage to the 'marco' role
+GRANT USAGE ON SCHEMA cron TO marco;
+
+-- Perform other database initializations as needed
+
 CREATE TABLE employee (
   employee_id SERIAL PRIMARY KEY,
   name TEXT NOT NULL,

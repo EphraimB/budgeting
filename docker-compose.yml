@@ -61,7 +61,9 @@ services:
     depends_on:
       - db
   db:
-    image: postgres:15.2-alpine3.17
+    build:
+      context: ./
+      dockerfile: Dockerfile
     environment:
       - POSTGRES_USER=${PGUSER}
       - POSTGRES_HOST=${PGHOST}
