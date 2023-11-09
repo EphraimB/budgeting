@@ -190,10 +190,12 @@ export const createExpense = async (
         // Get tax rate
         const taxRate = await executeQuery(taxesQueries.getTaxRateByTaxId, [
             tax_id,
-        ]) || 0;
+        ]);
 
         const unique_id = executeQuery(
-            `SELECT cron.schedule('${cronDate}', $$INSERT INTO transaction_history (account_id, transaction_amount, transaction_tax_rate, transaction_title, transaction_description) VALUES (${account_id}, ${amount}, ${taxRate}, ${title}, ${description})$$)`,
+            `SELECT cron.schedule('${cronDate}', $$INSERT INTO transaction_history (account_id, transaction_amount, transaction_tax_rate, transaction_title, transaction_description) VALUES (${account_id}, ${amount}, ${
+                taxRate || 0
+            }, ${title}, ${description})$$)`,
             [],
         );
 
