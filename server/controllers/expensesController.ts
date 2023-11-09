@@ -1,5 +1,10 @@
 import { type NextFunction, type Request, type Response } from 'express';
-import { expenseQueries, cronJobQueries } from '../models/queryData.js';
+import {
+    expenseQueries,
+    cronJobQueries,
+    cronQueries,
+    taxesQueries,
+} from '../models/queryData.js';
 import { manipulateCron } from '../utils/helperFunctions.js';
 import determineCronValues from '../crontab/determineCronValues.js';
 import {
@@ -171,30 +176,40 @@ export const createExpense = async (
 
         const cronDate = determineCronValues(jobDetails);
 
-        const data = {
-            schedule: cronDate,
-            script_path: '/scripts/createTransaction.sh',
-            expense_type: 'expense',
-            account_id,
-            id: modifiedExpenses[0].id,
-            amount: -amount + amount * subsidized,
-            title,
-            description,
-        };
+        // const data = {
+        //     schedule: cronDate,
+        //     script_path: '/scripts/createTransaction.sh',
+        //     expense_type: 'expense',
+        //     account_id,
+        //     id: modifiedExpenses[0].id,
+        //     amount: -amount + amount * subsidized,
+        //     title,
+        //     description,
+        // };
 
-        const [success, responseData] = await manipulateCron(
-            data,
-            'POST',
-            null,
+        // Get tax rate
+        const taxRate = await executeQuery(taxesQueries.getTaxRateByTaxId, [
+            tax_id,
+        ]) || 0;
+
+        const unique_id = executeQuery(
+            `SELECT cron.schedule('${cronDate}', $$INSERT INTO transaction_history (account_id, transaction_amount, transaction_tax_rate, transaction_title, transaction_description) VALUES (${account_id}, ${amount}, ${taxRate}, ${title}, ${description})$$)`,
+            [],
         );
 
-        if (!success) {
-            response.status(500).send(responseData);
-        }
+        // const [success, responseData] = await manipulateCron(
+        //     data,
+        //     'POST',
+        //     null,
+        // );
+
+        // if (!success) {
+        //     response.status(500).send(responseData);
+        // }
 
         const cronId: number = (
             await executeQuery(cronJobQueries.createCronJob, [
-                responseData.unique_id,
+                unique_id,
                 cronDate,
             ])
         )[0].cron_job_id;

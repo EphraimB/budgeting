@@ -1,13 +1,6 @@
 import { type Response } from 'express';
 import pool from '../config/db.js';
 import dayjs, { type Dayjs } from 'dayjs';
-import {
-    generateDailyExpenses,
-    generateMonthlyExpenses,
-    generateWeeklyExpenses,
-    generateYearlyExpenses,
-} from '../generation/generateExpenses.js';
-import { GeneratedTransaction } from '../types/types.js';
 
 /**
  *
