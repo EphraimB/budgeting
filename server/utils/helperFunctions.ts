@@ -31,7 +31,7 @@ export const executeQuery = async <T = any>(
 };
 
 /**
- * 
+ *
  * @param name - Name of the cron job
  * @param cronSchedule - Cron schedule
  * @param query - SQL query
@@ -50,6 +50,23 @@ export const scheduleQuery = async (
         console.log('Job scheduled:', res.rows[0]);
     } catch (err) {
         console.error('Error scheduling job:', err);
+    }
+};
+
+/**
+ *
+ * @param name - Name of the cron job
+ * Unschedules a cron job
+ */
+export const unscheduleQuery = async (name: string) => {
+    const unscheduleQueryText = `
+      SELECT cron.unschedule('${name}');
+    `;
+    try {
+        const res = await pool.query(unscheduleQueryText);
+        console.log('Job unscheduled:', res.rows[0]);
+    } catch (err) {
+        console.error('Error unscheduling job:', err);
     }
 };
 
