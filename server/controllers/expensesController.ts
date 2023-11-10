@@ -185,7 +185,7 @@ export const createExpense = async (
         const unique_id = scheduleQuery(
             modifiedExpenses[0].id + '-' + title,
             cronDate,
-            `INSERT INTO transaction_history (account_id, transaction_amount, transaction_tax_rate, transaction_title, transaction_description) VALUES (${account_id}, ${amount}, ${taxRate}, '${title}', '${description}')`,
+            `INSERT INTO transaction_history (account_id, transaction_amount, transaction_tax_rate, transaction_title, transaction_description) VALUES (${account_id}, ${-amount}, ${taxRate}, '${title}', '${description}')`,
         );
 
         const cronId: number = (
