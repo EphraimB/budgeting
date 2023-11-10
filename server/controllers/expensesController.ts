@@ -182,8 +182,10 @@ export const createExpense = async (
         ]);
         const taxRate = result && result.length > 0 ? result : 0;
 
-        const unique_id = scheduleQuery(
-            modifiedExpenses[0].id + '-' + title,
+        const unique_id = `expense-${modifiedExpenses[0].id}-${title}`;
+
+        scheduleQuery(
+            unique_id,
             cronDate,
             `INSERT INTO transaction_history (account_id, transaction_amount, transaction_tax_rate, transaction_title, transaction_description) VALUES (${account_id}, ${-amount}, ${taxRate}, '${title}', '${description}')`,
         );
