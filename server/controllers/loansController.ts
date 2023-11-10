@@ -4,7 +4,6 @@ import {
     handleError,
     executeQuery,
     parseIntOrFallback,
-    manipulateCron,
     scheduleQuery,
     unscheduleQuery,
 } from '../utils/helperFunctions.js';
@@ -370,14 +369,6 @@ export const updateLoan = async (
             [interestCronId],
         );
 
-        await unscheduleQuery(interestUniqueId);
-
-        await scheduleQuery(
-            interestUniqueId,
-            cronDate,
-            `UPDATE loans SET loan_amount = loan_amount + (loan_amount * ${interest_rate}) WHERE loan_id = ${id}`,
-        );
-
         await executeQuery(cronJobQueries.updateCronJob, [
             unique_id,
             cronDate,
@@ -407,26 +398,13 @@ export const updateLoan = async (
 
         const cronDateInterest = determineCronValues(jobDetailsInterest);
 
-        const dataInterest = {
-            schedule: cronDateInterest,
-            script_path: '/app/scripts/applyInterest.sh',
-            expense_type: 'loan_interest',
-            account_id,
-            id,
-            amount: interest_rate,
-            title: title + ' interest',
-            description: description + ' interest',
-        };
+        await unscheduleQuery(interestUniqueId);
 
-        const [successInterest, responseDataInterest] = await manipulateCron(
-            dataInterest,
-            'PUT',
+        await scheduleQuery(
             interestUniqueId,
+            cronDateInterest,
+            `UPDATE loans SET loan_amount = loan_amount + (loan_amount * ${interest_rate}) WHERE loan_id = ${id}`,
         );
-
-        if (!successInterest) {
-            response.status(500).send(responseDataInterest);
-        }
 
         await executeQuery(cronJobQueries.updateCronJob, [
             unique_id,
@@ -435,7 +413,7 @@ export const updateLoan = async (
         ]);
 
         await executeQuery(cronJobQueries.updateCronJob, [
-            responseDataInterest.unique_id,
+            unique_id,
             cronDateInterest,
             interestCronId,
         ]);
