@@ -31,6 +31,29 @@ export const executeQuery = async <T = any>(
 };
 
 /**
+ * 
+ * @param name - Name of the cron job
+ * @param cronSchedule - Cron schedule
+ * @param query - SQL query
+ * Schedules a cron job
+ */
+export const scheduleQuery = async (
+    name: string,
+    cronSchedule: string,
+    query: string,
+) => {
+    const scheduleQueryText = `
+      SELECT cron.schedule('${name}', $1, $2);
+    `;
+    try {
+        const res = await pool.query(scheduleQueryText, [cronSchedule, query]);
+        console.log('Job scheduled:', res.rows[0]);
+    } catch (err) {
+        console.error('Error scheduling job:', err);
+    }
+};
+
+/**
  *
  * @param input - The input to parse
  * @returns The parsed input or null if the input is not a integer
