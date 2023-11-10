@@ -301,7 +301,7 @@ export const updateExpense = async (
             cronId,
         ]);
 
-        unscheduleQuery(unique_id);
+        await unscheduleQuery(unique_id);
 
         // Get tax rate
         const result = await executeQuery(taxesQueries.getTaxRateByTaxId, [
@@ -405,15 +405,7 @@ export const deleteExpense = async (
 
         const results = await executeQuery(cronJobQueries.getCronJob, [cronId]);
 
-        const [success, responseData] = await manipulateCron(
-            null,
-            'DELETE',
-            results[0].unique_id,
-        );
-
-        if (!success) {
-            response.status(500).send(responseData);
-        }
+        await unscheduleQuery(results[0].unique_id);
 
         await executeQuery(cronJobQueries.deleteCronJob, [cronId]);
 
