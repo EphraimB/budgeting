@@ -2,14 +2,9 @@ import { type NextFunction, type Request, type Response } from 'express';
 import {
     expenseQueries,
     cronJobQueries,
-    cronQueries,
     taxesQueries,
 } from '../models/queryData.js';
-import {
-    manipulateCron,
-    scheduleQuery,
-    unscheduleQuery,
-} from '../utils/helperFunctions.js';
+import { scheduleQuery, unscheduleQuery } from '../utils/helperFunctions.js';
 import determineCronValues from '../crontab/determineCronValues.js';
 import {
     handleError,
