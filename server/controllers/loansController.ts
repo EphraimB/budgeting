@@ -5,6 +5,8 @@ import {
     executeQuery,
     parseIntOrFallback,
     manipulateCron,
+    scheduleQuery,
+    unscheduleQuery,
 } from '../utils/helperFunctions.js';
 import { type Loan } from '../types/types.js';
 import { logger } from '../config/winston.js';
@@ -16,7 +18,7 @@ import determineCronValues from '../crontab/determineCronValues.js';
  * @returns - Loan object with parsed values
  */
 const parseLoan = (loan: Record<string, string>): Loan => ({
-    loan_id: parseInt(loan.loan_id),
+    id: parseInt(loan.loan_id),
     account_id: parseInt(loan.account_id),
     loan_amount: parseFloat(loan.loan_amount),
     loan_plan_amount: parseFloat(loan.loan_plan_amount),
@@ -179,32 +181,22 @@ export const createLoan = async (
 
         const cronDate = determineCronValues(jobDetails);
 
-        const data = {
-            schedule: cronDate,
-            script_path: '/scripts/createTransaction.sh',
-            expense_type: 'loan',
-            account_id,
-            id: loans[0].loan_id,
-            amount:
+        const taxRate = 0;
+
+        const unique_id = `loan-${loans[0].id}-${title}`;
+
+        await scheduleQuery(
+            unique_id,
+            cronDate,
+            `INSERT INTO transaction_history (account_id, transaction_amount, transaction_tax_rate, transaction_title, transaction_description) VALUES (${account_id}, ${
                 -parseFloat(plan_amount) +
-                parseFloat(plan_amount) * parseFloat(subsidized),
-            title,
-            description,
-        };
-
-        const [success, responseData] = await manipulateCron(
-            data,
-            'POST',
-            null,
+                parseFloat(plan_amount) * parseFloat(subsidized)
+            }, ${taxRate}, '${title}', '${description}')`,
         );
-
-        if (!success) {
-            response.status(500).send(responseData);
-        }
 
         const cronId: number = (
             await executeQuery(cronJobQueries.createCronJob, [
-                responseData.unique_id,
+                unique_id,
                 cronDate,
             ])
         )[0].cron_job_id;
@@ -232,30 +224,17 @@ export const createLoan = async (
 
         const cronDateInterest = determineCronValues(jobDetailsInterest);
 
-        const dataInterest = {
-            schedule: cronDateInterest,
-            script_path: '/app/scripts/applyInterest.sh',
-            expense_type: 'loan_interest',
-            account_id,
-            id: loans[0].loan_id,
-            amount: interest_rate,
-            title: title + ' interest',
-            description: description + ' interest',
-        };
+        const interest_unique_id = `loan_interest-${loans[0].id}-${title}`;
 
-        const [successInterest, responseDataInterest] = await manipulateCron(
-            dataInterest,
-            'POST',
-            null,
+        await scheduleQuery(
+            interest_unique_id,
+            cronDateInterest,
+            `UPDATE loans SET loan_amount = loan_amount + (loan_amount * ${interest_rate}) WHERE loan_id = ${loans[0].id}`,
         );
-
-        if (!successInterest) {
-            response.status(500).send(responseDataInterest);
-        }
 
         const interestCronId: number = (
             await executeQuery(cronJobQueries.createCronJob, [
-                responseDataInterest.unique_id,
+                interest_unique_id,
                 cronDateInterest,
             ])
         )[0].cron_job_id;
@@ -263,10 +242,10 @@ export const createLoan = async (
         await executeQuery(loanQueries.updateLoanWithCronJobId, [
             cronId,
             interestCronId,
-            loans[0].loan_id,
+            loans[0].id,
         ]);
 
-        request.loan_id = loans[0].loan_id;
+        request.loan_id = loans[0].id;
 
         next();
     } catch (error) {
@@ -373,36 +352,34 @@ export const updateLoan = async (
             cronId,
         ]);
 
+        const taxRate = 0;
+
+        await unscheduleQuery(unique_id);
+
+        await scheduleQuery(
+            unique_id,
+            cronDate,
+            `INSERT INTO transaction_history (account_id, transaction_amount, transaction_tax_rate, transaction_title, transaction_description) VALUES (${account_id}, ${
+                -parseFloat(plan_amount) +
+                parseFloat(plan_amount) * parseFloat(subsidized)
+            }, ${taxRate}, '${title}', '${description}')`,
+        );
+
         const [{ unique_id: interestUniqueId }] = await executeQuery(
             cronJobQueries.getCronJob,
             [interestCronId],
         );
 
-        const data = {
-            schedule: cronDate,
-            script_path: '/scripts/createTransaction.sh',
-            expense_type: 'loan',
-            account_id,
-            id,
-            amount:
-                -parseFloat(plan_amount) +
-                parseFloat(plan_amount) * parseFloat(subsidized),
-            title,
-            description,
-        };
+        await unscheduleQuery(interestUniqueId);
 
-        const [success, responseData] = await manipulateCron(
-            data,
-            'PUT',
-            unique_id,
+        await scheduleQuery(
+            interestUniqueId,
+            cronDate,
+            `UPDATE loans SET loan_amount = loan_amount + (loan_amount * ${interest_rate}) WHERE loan_id = ${id}`,
         );
 
-        if (!success) {
-            response.status(500).send(responseData);
-        }
-
         await executeQuery(cronJobQueries.updateCronJob, [
-            responseData.unique_id,
+            unique_id,
             cronDate,
             cronId,
         ]);
@@ -452,7 +429,7 @@ export const updateLoan = async (
         }
 
         await executeQuery(cronJobQueries.updateCronJob, [
-            responseData.unique_id,
+            unique_id,
             cronDate,
             cronId,
         ]);
@@ -557,15 +534,7 @@ export const deleteLoan = async (
 
         const results = await executeQuery(cronJobQueries.getCronJob, [cronId]);
 
-        const [success, responseData] = await manipulateCron(
-            null,
-            'DELETE',
-            results[0].unique_id,
-        );
-
-        if (!success) {
-            response.status(500).send(responseData);
-        }
+        await unscheduleQuery(results[0].unique_id);
 
         const interestCronId: number = parseInt(
             getLoanResults[0].interest_cron_job_id,
@@ -574,15 +543,7 @@ export const deleteLoan = async (
             interestCronId,
         ]);
 
-        const [successInterest, responseDataInterest] = await manipulateCron(
-            null,
-            'DELETE',
-            interestResults[0].unique_id,
-        );
-
-        if (!successInterest) {
-            response.status(500).send(responseDataInterest);
-        }
+        await unscheduleQuery(interestResults[0].unique_id);
 
         await executeQuery(cronJobQueries.deleteCronJob, [cronId]);
         await executeQuery(cronJobQueries.deleteCronJob, [interestCronId]);

@@ -126,7 +126,7 @@ export interface Expense {
 }
 
 export interface Loan {
-    loan_id?: number;
+    id?: number;
     account_id?: number;
     cron_job_id?: number;
     tax_id?: number | null | undefined;
