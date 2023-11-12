@@ -7,7 +7,6 @@ import {
 import {
     executeQuery,
     handleError,
-    manipulateCron,
     parseIntOrFallback,
     scheduleQuery,
     unscheduleQuery,
