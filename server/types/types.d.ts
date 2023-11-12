@@ -196,7 +196,7 @@ export interface Wishlist {
 
 export interface Transfer {
     account_id?: number;
-    transfer_id?: number;
+    id?: number;
     cron_job_id?: number;
     source_account_id: number;
     destination_account_id: number;
