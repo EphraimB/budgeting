@@ -1,22 +1,3 @@
-DO $$
-DECLARE
-    employee_record RECORD;
-    query text;
-BEGIN
-    -- Load the query from an external file
-    query := plpython_function_to_read_file('zgetPayrollsByEmployee.sql');
-
-    FOR employee_record IN SELECT employee_id FROM employee
-    LOOP
-        -- Replace placeholder with actual employee ID
-        query := replace(query, '%s', employee_record.employee_id::text);
-
-        -- Execute the query
-        EXECUTE query;
-    END LOOP;
-END$$;
-
-
 INSERT INTO employee (name, hourly_rate, regular_hours, vacation_days, sick_days, work_schedule) VALUES ('John Doe', 16.00, 8, 15, 15, B'0111100');;
 
 INSERT INTO accounts (employee_id, account_name) VALUES (1, 'Personal');

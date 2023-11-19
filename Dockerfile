@@ -11,5 +11,7 @@ RUN apt-get update && apt-get install -y \
 RUN echo "shared_preload_libraries='pg_cron'" >> /usr/share/postgresql/postgresql.conf.sample
 RUN echo "cron.database_name='budgeting'" >> /usr/share/postgresql/postgresql.conf.sample
 
+COPY sql/zgetPayrollsByEmployee.txt /
+
 # restart postgres to load the new config
 RUN service postgresql restart
