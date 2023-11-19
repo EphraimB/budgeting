@@ -19,7 +19,7 @@ const getNextDate = (
 };
 
 export const generateCommuteExpenses = (
-    commuteExpense: CommuteSchedule,
+    commuteExpense: any,
     toDate: Dayjs,
     fromDate: Dayjs,
 ): GeneratedTransaction[] => {

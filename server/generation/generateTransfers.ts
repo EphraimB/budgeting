@@ -18,7 +18,7 @@ type GenerateDateFunction = (currentDate: Dayjs, transfer: Transfer) => Dayjs;
 const generateTransfers = (
     transactions: GeneratedTransaction[],
     skippedTransactions: GeneratedTransaction[],
-    transfer: Transfer,
+    transfer: any,
     toDate: Dayjs,
     fromDate: Dayjs,
     account_id: number,

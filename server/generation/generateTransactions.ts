@@ -177,7 +177,7 @@ const generate = async (
         .forEach((account) => {
             let loanResult: { fullyPaidBackDate?: string | null };
 
-            account.loan.forEach((loan: Loan) => {
+            account.loan.forEach((loan: any) => {
                 if (loan.frequency_type === 0) {
                     loanResult = generateDailyLoans(
                         transactions,
