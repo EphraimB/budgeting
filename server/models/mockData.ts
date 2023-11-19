@@ -101,7 +101,7 @@ export const taxes: Taxes[] = [
 
 export const income: Income[] = [
     {
-        income_id: 1,
+        id: 1,
         account_id: 1,
         tax_id: 1,
         income_amount: 1000,
@@ -214,7 +214,7 @@ export const expenses: Expense[] = [
 
 export const loans: Loan[] = [
     {
-        loan_id: 1,
+        id: 1,
         cron_job_id: 1,
         account_id: 1,
         tax_id: null,
@@ -238,7 +238,7 @@ export const loans: Loan[] = [
         date_modified: '2020-01-01',
     },
     {
-        loan_id: 2,
+        id: 2,
         cron_job_id: 2,
         account_id: 1,
         tax_id: null,
@@ -262,7 +262,7 @@ export const loans: Loan[] = [
         date_modified: '2020-01-01',
     },
     {
-        loan_id: 3,
+        id: 3,
         cron_job_id: 3,
         account_id: 1,
         tax_id: null,
@@ -286,7 +286,7 @@ export const loans: Loan[] = [
         date_modified: '2020-01-01',
     },
     {
-        loan_id: 4,
+        id: 4,
         cron_job_id: 4,
         account_id: 1,
         tax_id: null,
@@ -379,7 +379,7 @@ export const wishlists: Wishlist[] = [
 
 export const transfers: Transfer[] = [
     {
-        transfer_id: 1,
+        id: 1,
         cron_job_id: 1,
         source_account_id: 1,
         destination_account_id: 2,
@@ -398,7 +398,7 @@ export const transfers: Transfer[] = [
         date_modified: '2020-01-01',
     },
     {
-        transfer_id: 2,
+        id: 2,
         cron_job_id: 2,
         source_account_id: 1,
         destination_account_id: 2,
@@ -417,7 +417,7 @@ export const transfers: Transfer[] = [
         date_modified: '2020-01-01',
     },
     {
-        transfer_id: 3,
+        id: 3,
         cron_job_id: 3,
         source_account_id: 1,
         destination_account_id: 2,
@@ -436,7 +436,7 @@ export const transfers: Transfer[] = [
         date_modified: '2020-01-01',
     },
     {
-        transfer_id: 4,
+        id: 4,
         cron_job_id: 4,
         source_account_id: 1,
         destination_account_id: 2,
@@ -455,7 +455,7 @@ export const transfers: Transfer[] = [
         date_modified: '2020-01-01',
     },
     {
-        transfer_id: 5,
+        id: 5,
         cron_job_id: 5,
         source_account_id: 2,
         destination_account_id: 1,
