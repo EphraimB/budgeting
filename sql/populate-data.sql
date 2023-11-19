@@ -4,7 +4,7 @@ DECLARE
     query text;
 BEGIN
     -- Load the query from an external file
-    query := plpython_function_to_read_file('dependency/getPayrollsByEmployee.sql');
+    query := plpython_function_to_read_file('zgetPayrollsByEmployee.sql');
 
     FOR employee_record IN SELECT employee_id FROM employee
     LOOP
