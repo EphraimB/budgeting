@@ -10,6 +10,8 @@ import {
     executeQuery,
     parseIntOrFallback,
     manipulateCron,
+    scheduleQuery,
+    unscheduleQuery,
 } from '../utils/helperFunctions.js';
 import {
     Timeslots,
@@ -38,7 +40,7 @@ interface Schedule {
 const parseCommuteSchedule = (
     commuteSchedule: Record<string, string>,
 ): CommuteSchedule => ({
-    commute_schedule_id: parseInt(commuteSchedule.commute_schedule_id),
+    id: parseInt(commuteSchedule.commute_schedule_id),
     commute_system_id: parseInt(commuteSchedule.commute_system_id),
     account_id: parseInt(commuteSchedule.account_id),
     day_of_week: parseInt(commuteSchedule.day_of_week),
@@ -118,7 +120,7 @@ export const getCommuteSchedule = async (
                     };
                 }
                 acc[dayOfWeek].passes.push({
-                    commute_schedule_id: curr.commute_schedule_id,
+                    commute_schedule_id: curr.id,
                     pass: curr.pass,
                     start_time: curr.start_time,
                     duration: curr.duration,
@@ -295,44 +297,48 @@ export const createCommuteSchedule = async (
 
         const cronDate = determineCronValues(jobDetails);
 
-        const data = {
-            schedule: cronDate,
-            script_path: '/scripts/createTransaction.sh',
-            expense_type: 'commute',
-            account_id,
-            id: commuteSchedule[0].commute_schedule_id,
-            amount: -fareDetail[0].fare_amount,
-            title: fareDetail[0].system_name + ' ' + fareDetail[0].fare_type,
-            description:
+        const taxRate = 0;
+
+        const unique_id = `commute-${commuteSchedule[0].id}-${
+            fareDetail[0].system_name + ' ' + fareDetail[0].fare_type
+        }`;
+
+        await scheduleQuery(
+            unique_id,
+            cronDate,
+            `INSERT INTO commute_history (account_id, fare_amount, commute_system, fare_type, timestamp) VALUES (${account_id}, ${-fareDetail[0]
+                .fare_amount}, '${fareDetail[0].system_name}', '${
+                fareDetail[0].fare_type
+            }', now())`,
+        );
+
+        await scheduleQuery(
+            unique_id,
+            cronDate,
+            `INSERT INTO transaction_history (account_id, transaction_amount, transaction_tax_rate, transaction_title, transaction_description) VALUES (${account_id}, ${-fareDetail[0]
+                .fare_amount}, ${taxRate}, '${
+                fareDetail[0].system_name + ' ' + fareDetail[0].fare_type
+            }', '${
                 fareDetail[0].system_name +
                 ' ' +
                 fareDetail[0].fare_type +
-                ' pass',
-        };
-
-        const [success, responseData] = await manipulateCron(
-            data,
-            'POST',
-            null,
+                ' pass'
+            }')`,
         );
-
-        if (!success) {
-            response.status(500).send(responseData);
-        }
 
         const cronId: number = (
             await executeQuery(cronJobQueries.createCronJob, [
-                responseData.unique_id,
+                unique_id,
                 cronDate,
             ])
         )[0].cron_job_id;
 
         await executeQuery(commuteScheduleQueries.updateCommuteWithCronJobId, [
             cronId,
-            commuteSchedule[0].commute_schedule_id,
+            commuteSchedule[0].id,
         ]);
 
-        request.commute_schedule_id = commuteSchedule[0].commute_schedule_id;
+        request.commute_schedule_id = commuteSchedule[0].id;
         request.alerts = alerts;
 
         next();
@@ -505,33 +511,35 @@ export const updateCommuteSchedule = async (
             cronId,
         ]);
 
-        const data = {
-            schedule: cronDate,
-            script_path: '/scripts/createTransaction.sh',
-            expense_type: 'commute',
-            account_id,
-            id,
-            amount: -fareDetail[0].fare_amount,
-            title: fareDetail[0].system_name + ' ' + fareDetail[0].fare_type,
-            description:
+        const taxRate = 0;
+
+        await unscheduleQuery(unique_id);
+
+        await scheduleQuery(
+            unique_id,
+            cronDate,
+            `INSERT INTO commute_history (account_id, fare_amount, commute_system, fare_type, timestamp) VALUES (${account_id}, ${-fareDetail[0]
+                .fare_amount}, '${fareDetail[0].system_name}', '${
+                fareDetail[0].fare_type
+            }', now())`,
+        );
+
+        await scheduleQuery(
+            unique_id,
+            cronDate,
+            `INSERT INTO transaction_history (account_id, transaction_amount, transaction_tax_rate, transaction_title, transaction_description) VALUES (${account_id}, ${-fareDetail[0]
+                .fare_amount}, ${taxRate}, '${
+                fareDetail[0].system_name + ' ' + fareDetail[0].fare_type
+            }', '${
                 fareDetail[0].system_name +
                 ' ' +
                 fareDetail[0].fare_type +
-                ' pass',
-        };
-
-        const [success, responseData] = await manipulateCron(
-            data,
-            'PUT',
-            unique_id,
+                ' pass'
+            }')`,
         );
 
-        if (!success) {
-            response.status(500).send(responseData);
-        }
-
         await executeQuery(cronJobQueries.updateCronJob, [
-            responseData.unique_id,
+            unique_id,
             cronDate,
             cronId,
         ]);
@@ -619,15 +627,7 @@ export const deleteCommuteSchedule = async (
 
         const results = await executeQuery(cronJobQueries.getCronJob, [cronId]);
 
-        const [success, responseData] = await manipulateCron(
-            null,
-            'DELETE',
-            results[0].unique_id,
-        );
-
-        if (!success) {
-            response.status(500).send(responseData);
-        }
+        await unscheduleQuery(results[0].unique_id);
 
         await executeQuery(cronJobQueries.deleteCronJob, [cronId]);
 

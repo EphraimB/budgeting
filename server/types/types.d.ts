@@ -265,7 +265,7 @@ export interface CommuteTicket {
 }
 
 export interface CommuteSchedule {
-    commute_schedule_id: number;
+    id: number;
     commute_system_id: number;
     account_id: number;
     day_of_week: number;
