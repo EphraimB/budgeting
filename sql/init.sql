@@ -7,6 +7,9 @@ CREATE ROLE marco LOGIN PASSWORD 'securepassword';
 -- Now create the pg_cron extension
 CREATE EXTENSION IF NOT EXISTS pg_cron;
 
+-- Now create the plpythonu extension
+CREATE EXTENSION plpython3u;
+
 -- Grant usage to the 'marco' role
 GRANT USAGE ON SCHEMA cron TO marco;
 
@@ -298,6 +301,12 @@ BEGIN
     RETURN NEW;
 END;
 $$ LANGUAGE plpgsql;
+
+CREATE OR REPLACE FUNCTION plpython_function_to_read_file(filename text)
+RETURNS text AS $$
+    with open(filename, 'r') as file:
+        return file.read()
+$$ LANGUAGE plpython3u;
 
 CREATE TRIGGER update_accounts_dates
 BEFORE INSERT OR UPDATE ON accounts
