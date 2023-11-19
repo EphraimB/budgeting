@@ -393,7 +393,7 @@ export const getExpensesByAccount = async (
  * @returns - Loan object with parsed values
  */
 const parseLoan = (loan: Record<string, string>): Loan => ({
-    loan_id: parseInt(loan.loan_id),
+    id: parseInt(loan.loan_id),
     account_id: parseInt(loan.account_id),
     tax_id: parseIntOrFallback(loan.tax_id),
     loan_amount: parseFloat(loan.loan_amount),
