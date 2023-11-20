@@ -107,13 +107,9 @@ export const createPayrollTax = async (
             rate,
         ]);
 
-        const [success, responseData] = await executePayrollsScript(
-            employee_id,
-        );
-
-        if (!success) {
-            response.status(500).send(responseData);
-        }
+        await executeQuery('SELECT process_payroll_for_employee($1)', [
+            1,
+        ]);
 
         const payrollTaxes: PayrollTax[] = results.map((payrollTax) =>
             payrollTaxesParse(payrollTax),
@@ -188,13 +184,9 @@ export const updatePayrollTax = async (
             return;
         }
 
-        const [success, responseData] = await executePayrollsScript(
-            employee_id,
-        );
-
-        if (!success) {
-            response.status(500).send(responseData);
-        }
+        await executeQuery('SELECT process_payroll_for_employee($1)', [
+            1,
+        ]);
 
         next();
     } catch (error) {
@@ -257,13 +249,9 @@ export const deletePayrollTax = async (
 
         await executeQuery(payrollQueries.deletePayrollTax, [id]);
 
-        const [success, responseData] = await executePayrollsScript(
-            getResults[0].employee_id,
-        );
-
-        if (!success) {
-            response.status(500).send(responseData);
-        }
+        await executeQuery('SELECT process_payroll_for_employee($1)', [
+            1,
+        ]);
 
         next();
     } catch (error) {
