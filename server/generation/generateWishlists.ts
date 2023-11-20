@@ -50,7 +50,7 @@ const generateWishlists = (
 
         const newTransaction: GeneratedTransaction = {
             id: uuidv4(),
-            wishlist_id: wishlist.wishlist_id,
+            wishlist_id: wishlist.id,
             title: wishlist.wishlist_title,
             description: wishlist.wishlist_description,
             date: newTransactionDate,

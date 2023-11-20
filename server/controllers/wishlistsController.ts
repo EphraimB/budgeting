@@ -21,7 +21,7 @@ import determineCronValues from '../crontab/determineCronValues.js';
  * @returns - Wishlist object with parsed values
  */
 const wishlistsParse = (wishlist: Record<string, string>): Wishlist => ({
-    wishlist_id: parseInt(wishlist.wishlist_id),
+    id: parseInt(wishlist.wishlist_id),
     account_id: parseInt(wishlist.account_id),
     tax_id: parseIntOrFallback(wishlist.tax_id),
     wishlist_amount: parseFloat(wishlist.wishlist_amount),
@@ -163,7 +163,7 @@ export const createWishlist = async (
         );
 
         // Store the wishlist_id in the request object so it can be used in the next middleware
-        request.wishlist_id = wishlists[0].wishlist_id;
+        request.wishlist_id = wishlists[0].id;
 
         next();
     } catch (error) {
@@ -228,7 +228,7 @@ export const createWishlistCron = async (
             ]);
             const taxRate = result && result.length > 0 ? result : 0;
 
-            const unique_id = `wishlist-${wishlists[0].wishlist_id}-${request.body.title}`;
+            const unique_id = `wishlist-${wishlists[0].id}-${request.body.title}`;
 
             await scheduleQuery(
                 unique_id,
@@ -313,7 +313,7 @@ export const updateWishlist = async (
         );
 
         // Store the wishlist_id in the request object so it can be used in the next middleware
-        request.wishlist_id = wishlists[0].wishlist_id;
+        request.wishlist_id = wishlists[0].id;
 
         next();
     } catch (error) {

@@ -177,7 +177,7 @@ export interface PayrollTax {
 }
 
 export interface Wishlist {
-    wishlist_id?: number;
+    id?: number;
     account_id?: number;
     tax_id?: number | null;
     tax_rate?: number;
