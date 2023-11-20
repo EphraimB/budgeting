@@ -1,10 +1,8 @@
 import { type NextFunction, type Request, type Response } from 'express';
 import { payrollQueries } from '../models/queryData.js';
-import { exec } from 'child_process';
 import {
     handleError,
     executeQuery,
-    scheduleQuery,
 } from '../utils/helperFunctions.js';
 import { type Employee } from '../types/types.js';
 import { logger } from '../config/winston.js';

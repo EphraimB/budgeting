@@ -3,7 +3,6 @@ import { payrollQueries } from '../models/queryData.js';
 import {
     handleError,
     executeQuery,
-    executePayrollsScript,
 } from '../utils/helperFunctions.js';
 import { type PayrollDate } from '../types/types.js';
 import { logger } from '../config/winston.js';
@@ -110,12 +109,9 @@ export const createPayrollDate = async (
             end_day,
         ]);
 
-        const [success, responseData] =
-            await executePayrollsScript(employee_id);
-
-        if (!success) {
-            response.status(500).send(responseData);
-        }
+        await executeQuery('SELECT process_payroll_for_employee($1)', [
+            1,
+        ]);
 
         // Parse the data to correct format and return an object
         const payrollDates: PayrollDate[] = results.map((payrollDate) =>
@@ -181,12 +177,9 @@ export const updatePayrollDate = async (
             return;
         }
 
-        const [success, responseData] =
-            await executePayrollsScript(employee_id);
-
-        if (!success) {
-            response.status(500).send(responseData);
-        }
+        await executeQuery('SELECT process_payroll_for_employee($1)', [
+            1,
+        ]);
 
         next();
     } catch (error) {
@@ -251,13 +244,9 @@ export const deletePayrollDate = async (
 
         await executeQuery(payrollQueries.deletePayrollDate, [id]);
 
-        const [success, responseData] = await executePayrollsScript(
-            getResults[0].employee_id,
-        );
-
-        if (!success) {
-            response.status(500).send(responseData);
-        }
+        await executeQuery('SELECT process_payroll_for_employee($1)', [
+            1,
+        ]);
 
         next();
     } catch (error) {
