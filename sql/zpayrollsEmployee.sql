@@ -4,7 +4,7 @@ DECLARE
     query text;
 BEGIN
     -- Load the query from an external file
-    query := plpython_function_to_read_file('../../zgetPayrollsByEmployee.txt');
+    query := plpython_function_to_read_file('/zgetPayrollsByEmployee.txt');
 
     FOR employee_record IN SELECT employee_id FROM employee
     LOOP
