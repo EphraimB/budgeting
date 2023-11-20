@@ -9,7 +9,6 @@ import {
     handleError,
     executeQuery,
     parseIntOrFallback,
-    manipulateCron,
     scheduleQuery,
     unscheduleQuery,
 } from '../utils/helperFunctions.js';
