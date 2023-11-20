@@ -243,19 +243,9 @@ export const deleteEmployee = async (
 
         await executeQuery(payrollQueries.deleteEmployee, [employee_id]);
 
-        // Define the script command
-        const scriptCommand: string = `/app/scripts/employeeChecker.sh`;
-
-        // Execute the script
-        exec(scriptCommand, (error, stdout, stderr) => {
-            if (error != null) {
-                logger.error(`Error executing script: ${error.message}`);
-                response.status(500).json({
-                    status: 'error',
-                    message: 'Failed to execute script',
-                });
-            }
-        });
+        await executeQuery('SELECT process_payroll_for_employee($1)', [
+            1,
+        ]);
 
         response.status(200).send('Successfully deleted employee');
     } catch (error) {
