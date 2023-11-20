@@ -1,4 +1,4 @@
-SELECT make_date(extract(year from current_date)::integer, extract(month from current_date)::integer, s2.payroll_start_day::integer) AS start_date,
+SELECT cron.schedule('employee-payroll-%s', '0 0 1 * *', $$make_date(extract(year from current_date)::integer, extract(month from current_date)::integer, s2.payroll_start_day::integer) AS start_date,
             make_date(extract(year from current_date)::integer, extract(month from current_date)::integer, s1.adjusted_payroll_end_day) AS end_date,
             SUM(s.work_days::integer) AS work_days,
                 SUM(COALESCE(
@@ -26,9 +26,9 @@ SELECT make_date(extract(year from current_date)::integer, extract(month from cu
                 s2.payroll_start_day,
                 CASE
                     WHEN EXTRACT(DOW FROM MAKE_DATE(EXTRACT(YEAR FROM current_date)::integer, EXTRACT(MONTH FROM current_date)::integer, s2.unadjusted_payroll_end_day::integer)) = 0 
-                        THEN s2.unadjusted_payroll_end_day - 2 -- If it\'s a Sunday, subtract 2 days to get to Friday
+                        THEN s2.unadjusted_payroll_end_day - 2 -- If it's a Sunday, subtract 2 days to get to Friday
                     WHEN EXTRACT(DOW FROM MAKE_DATE(EXTRACT(YEAR FROM current_date)::integer, EXTRACT(MONTH FROM current_date)::integer, s2.unadjusted_payroll_end_day::integer)) = 6
-                        THEN s2.unadjusted_payroll_end_day - 1 -- If it\'s a Saturday, subtract 1 day to get to Friday
+                        THEN s2.unadjusted_payroll_end_day - 1 -- If it's a Saturday, subtract 1 day to get to Friday
                     ELSE s2.unadjusted_payroll_end_day
                 END::integer AS adjusted_payroll_end_day
             ) s1
@@ -54,6 +54,6 @@ SELECT make_date(extract(year from current_date)::integer, extract(month from cu
                 FROM payroll_taxes
                 GROUP BY employee_id
             ) pt ON e.employee_id = pt.employee_id
-            WHERE e.employee_id = employee_record.employee_id AND work_days <> 0
+            WHERE e.employee_id = %s AND work_days <> 0
             GROUP BY s2.payroll_start_day, e.employee_id, s.work_days, s1.adjusted_payroll_end_day
-            ORDER BY start_date, end_date
+            ORDER BY start_date, end_date$$)
