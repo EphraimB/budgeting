@@ -223,7 +223,7 @@ export const createLoan = async (
 
         const cronDateInterest = determineCronValues(jobDetailsInterest);
 
-        const interest_unique_id = `loan_interest-${loans[0].id}-${title}`;
+        const interest_unique_id = `loan_interest-${loans[0].id}`;
 
         await scheduleQuery(
             interest_unique_id,
