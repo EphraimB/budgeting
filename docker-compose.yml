@@ -27,39 +27,6 @@ services:
       - "5001:5001"
     depends_on:
       - db
-  shellcheck:
-    build:
-      context: ./cron/scripts
-      dockerfile: Dockerfile.shellcheck
-    volumes:
-      - ./cron/scripts:/scripts
-  bats-test:
-    build:
-      context: ./cron/scripts
-      dockerfile: Dockerfile.bats
-    environment:
-      - PGPASSWORD=mockpassword
-      - PGHOST=db
-      - PGDB=mockdb
-      - PGUSER=mockuser
-      - PGPORT=5432
-  cron:
-    build:
-      context: ./cron/
-      dockerfile: Dockerfile
-    environment:
-      # Set any environment variables that your cron jobs might need
-      - PGHOST=db
-      - PGDATABASE=${PGDB}
-      - PGUSER=${PGUSER}
-      - PGPASSWORD=${PGPASSWORD}
-      - PGPORT=5432
-    networks:
-      - app-network
-    ports:
-      - "8080:8080"
-    depends_on:
-      - db
   db:
     build:
       context: ./
