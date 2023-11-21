@@ -1,6 +1,7 @@
 import { type Response } from 'express';
 import pool from '../config/db.js';
 import dayjs, { type Dayjs } from 'dayjs';
+import { logger } from '../config/winston.js';
 
 /**
  *
@@ -47,9 +48,9 @@ export const scheduleQuery = async (
     `;
     try {
         const res = await pool.query(scheduleQueryText, [cronSchedule, query]);
-        console.log('Job scheduled:', res.rows[0]);
+        logger.info('Job scheduled:', res.rows[0]);
     } catch (err) {
-        console.error('Error scheduling job:', err);
+        logger.error('Error scheduling job:', err);
     }
 };
 
@@ -64,9 +65,9 @@ export const unscheduleQuery = async (name: string) => {
     `;
     try {
         const res = await pool.query(unscheduleQueryText);
-        console.log('Job unscheduled:', res.rows[0]);
+        logger.info('Job unscheduled:', res.rows[0]);
     } catch (err) {
-        console.error('Error unscheduling job:', err);
+        logger.error('Error unscheduling job:', err);
     }
 };
 
