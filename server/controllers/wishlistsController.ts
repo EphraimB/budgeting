@@ -51,17 +51,13 @@ export const getWishlists = async (
         let query: string;
         let params: any[];
 
-        if (
-            id !== null ||
-            (id !== undefined && account_id !== null) ||
-            account_id !== undefined
-        ) {
+        if (id && account_id) {
             query = wishlistQueries.getWishlistsByIdAndAccountId;
             params = [id, account_id];
-        } else if (id !== null || id !== undefined) {
+        } else if (id) {
             query = wishlistQueries.getWishlistsById;
             params = [id];
-        } else if (account_id !== null || account_id !== undefined) {
+        } else if (account_id) {
             query = wishlistQueries.getWishlistsByAccountId;
             params = [account_id];
         } else {
@@ -71,13 +67,7 @@ export const getWishlists = async (
 
         const results = await executeQuery(query, params);
 
-        if (
-            (id !== null ||
-                id !== undefined ||
-                account_id !== null ||
-                account_id !== undefined) &&
-            results.length === 0
-        ) {
+        if ((id || account_id) && results.length === 0) {
             response.status(404).send('Wishlist not found');
             return;
         }
@@ -194,6 +184,8 @@ export const createWishlistCron = async (
             });
         });
 
+        console.log(transactionMap);
+
         const results = await executeQuery(wishlistQueries.getWishlistsById, [
             wishlist_id,
         ]);
@@ -202,9 +194,9 @@ export const createWishlistCron = async (
         const modifiedWishlists = results.map((wishlist) => ({
             ...wishlist,
             wishlist_date_can_purchase:
-                transactionMap[Number(wishlist.wishlist_id)] !== null &&
-                transactionMap[Number(wishlist.wishlist_id)] !== undefined
-                    ? transactionMap[Number(wishlist.wishlist_id)]
+                transactionMap[Number(wishlist.id)] !== null &&
+                transactionMap[Number(wishlist.id)] !== undefined
+                    ? transactionMap[Number(wishlist.id)]
                     : null,
         }));
 
