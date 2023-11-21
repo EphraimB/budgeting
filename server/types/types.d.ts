@@ -42,7 +42,7 @@ export interface Transaction {
 }
 
 export interface Taxes {
-    tax_id: number;
+    id: number;
     tax_rate: number;
     tax_title: string;
     tax_description: string;
@@ -52,7 +52,7 @@ export interface Taxes {
 }
 
 export interface Income {
-    income_id: number;
+    id: number;
     account_id: number;
     tax_id?: number | null;
     tax_rate?: number;
@@ -93,7 +93,7 @@ export interface Account {
 }
 
 export interface Employee {
-    employee_id: number;
+    id: number;
     name: string;
     hourly_rate: number;
     regular_hours: number;
@@ -126,7 +126,7 @@ export interface Expense {
 }
 
 export interface Loan {
-    loan_id?: number;
+    id?: number;
     account_id?: number;
     cron_job_id?: number;
     tax_id?: number | null | undefined;
@@ -163,21 +163,21 @@ export interface Payroll {
 }
 
 export interface PayrollDate {
-    payroll_date_id: number;
+    id: number;
     employee_id: number;
     payroll_start_day: number;
     payroll_end_day: number;
 }
 
 export interface PayrollTax {
-    payroll_taxes_id: number;
+    id: number;
     employee_id: number;
     name: string;
     rate: number;
 }
 
 export interface Wishlist {
-    wishlist_id?: number;
+    id?: number;
     account_id?: number;
     tax_id?: number | null;
     tax_rate?: number;
@@ -196,7 +196,7 @@ export interface Wishlist {
 
 export interface Transfer {
     account_id?: number;
-    transfer_id?: number;
+    id?: number;
     cron_job_id?: number;
     source_account_id: number;
     destination_account_id: number;
@@ -265,7 +265,7 @@ export interface CommuteTicket {
 }
 
 export interface CommuteSchedule {
-    commute_schedule_id: number;
+    id: number;
     commute_system_id: number;
     account_id: number;
     day_of_week: number;

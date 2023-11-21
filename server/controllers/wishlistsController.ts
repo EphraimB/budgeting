@@ -1,10 +1,15 @@
 import { type NextFunction, type Request, type Response } from 'express';
-import { cronJobQueries, wishlistQueries } from '../models/queryData.js';
+import {
+    cronJobQueries,
+    taxesQueries,
+    wishlistQueries,
+} from '../models/queryData.js';
 import {
     executeQuery,
     handleError,
-    manipulateCron,
     parseIntOrFallback,
+    scheduleQuery,
+    unscheduleQuery,
 } from '../utils/helperFunctions.js';
 import { type Wishlist } from '../types/types.js';
 import { logger } from '../config/winston.js';
@@ -16,7 +21,7 @@ import determineCronValues from '../crontab/determineCronValues.js';
  * @returns - Wishlist object with parsed values
  */
 const wishlistsParse = (wishlist: Record<string, string>): Wishlist => ({
-    wishlist_id: parseInt(wishlist.wishlist_id),
+    id: parseInt(wishlist.wishlist_id),
     account_id: parseInt(wishlist.account_id),
     tax_id: parseIntOrFallback(wishlist.tax_id),
     wishlist_amount: parseFloat(wishlist.wishlist_amount),
@@ -46,17 +51,13 @@ export const getWishlists = async (
         let query: string;
         let params: any[];
 
-        if (
-            id !== null ||
-            (id !== undefined && account_id !== null) ||
-            account_id !== undefined
-        ) {
+        if (id && account_id) {
             query = wishlistQueries.getWishlistsByIdAndAccountId;
             params = [id, account_id];
-        } else if (id !== null || id !== undefined) {
+        } else if (id) {
             query = wishlistQueries.getWishlistsById;
             params = [id];
-        } else if (account_id !== null || account_id !== undefined) {
+        } else if (account_id) {
             query = wishlistQueries.getWishlistsByAccountId;
             params = [account_id];
         } else {
@@ -66,13 +67,7 @@ export const getWishlists = async (
 
         const results = await executeQuery(query, params);
 
-        if (
-            (id !== null ||
-                id !== undefined ||
-                account_id !== null ||
-                account_id !== undefined) &&
-            results.length === 0
-        ) {
+        if ((id || account_id) && results.length === 0) {
             response.status(404).send('Wishlist not found');
             return;
         }
@@ -158,7 +153,7 @@ export const createWishlist = async (
         );
 
         // Store the wishlist_id in the request object so it can be used in the next middleware
-        request.wishlist_id = wishlists[0].wishlist_id;
+        request.wishlist_id = wishlists[0].id;
 
         next();
     } catch (error) {
@@ -196,11 +191,11 @@ export const createWishlistCron = async (
         // Add the wishlist_date_can_purchase to the wishlist object
         const modifiedWishlists = results.map((wishlist) => ({
             ...wishlist,
-            wishlist_date_can_purchase:
-                transactionMap[Number(wishlist.wishlist_id)] !== null &&
-                transactionMap[Number(wishlist.wishlist_id)] !== undefined
-                    ? transactionMap[Number(wishlist.wishlist_id)]
-                    : null,
+            wishlist_date_can_purchase: transactionMap[
+                Number(wishlist.wishlist_id)
+            ]
+                ? transactionMap[Number(wishlist.wishlist_id)]
+                : null,
         }));
 
         // Parse the data to the correct format
@@ -217,30 +212,27 @@ export const createWishlistCron = async (
                 jobDetails as { date: string },
             );
 
-            const data = {
-                schedule: cronDate,
-                script_path: '/scripts/createTransaction.sh',
-                expense_type: 'wishlist',
-                account_id: request.body.account_id,
-                id: wishlist_id,
-                amount: -request.body.amount,
-                title: request.body.title,
-                description: request.body.description,
-            };
+            // Get tax rate
+            const result = await executeQuery(taxesQueries.getTaxRateByTaxId, [
+                wishlists[0].tax_id,
+            ]);
+            const taxRate = result && result.length > 0 ? result : 0;
 
-            const [success, responseData] = await manipulateCron(
-                data,
-                'POST',
-                null,
+            const unique_id = `wishlist-${wishlists[0].id}`;
+
+            await scheduleQuery(
+                unique_id,
+                cronDate,
+                `INSERT INTO transaction_history (account_id, transaction_amount, transaction_tax_rate, transaction_title, transaction_description) VALUES (${
+                    request.body.account_id
+                }, ${-request.body.amount}, ${taxRate}, '${
+                    request.body.title
+                }', '${request.body.description}')`,
             );
-
-            if (!success) {
-                response.status(500).send(responseData);
-            }
 
             const cronId: number = (
                 await executeQuery(cronJobQueries.createCronJob, [
-                    responseData.unique_id,
+                    unique_id,
                     cronDate,
                 ])
             )[0].cron_job_id;
@@ -311,7 +303,7 @@ export const updateWishlist = async (
         );
 
         // Store the wishlist_id in the request object so it can be used in the next middleware
-        request.wishlist_id = wishlists[0].wishlist_id;
+        request.wishlist_id = wishlists[0].id;
 
         next();
     } catch (error) {
@@ -377,29 +369,26 @@ export const updateWishlistCron = async (
                 [cronId],
             );
 
-            const data = {
-                schedule: cronDate,
-                script_path: '/scripts/createTransaction.sh',
-                expense_type: 'wishlist',
-                account_id: request.body.account_id,
-                id: wishlist_id,
-                amount: -request.body.amount,
-                title: request.body.title,
-                description: request.body.description,
-            };
+            // Get tax rate
+            const result = await executeQuery(taxesQueries.getTaxRateByTaxId, [
+                wishlists[0].tax_id,
+            ]);
+            const taxRate = result && result.length > 0 ? result : 0;
 
-            const [success, responseData] = await manipulateCron(
-                data,
-                'PUT',
+            await unscheduleQuery(unique_id);
+
+            await scheduleQuery(
                 unique_id,
+                cronDate,
+                `INSERT INTO transaction_history (account_id, transaction_amount, transaction_tax_rate, transaction_title, transaction_description) VALUES (${
+                    request.body.account_id
+                }, ${-request.body.amount}, ${taxRate}, '${
+                    request.body.title
+                }', '${request.body.description}')`,
             );
 
-            if (!success) {
-                response.status(500).send(responseData);
-            }
-
             await executeQuery(cronJobQueries.updateCronJob, [
-                responseData.unique_id,
+                unique_id,
                 cronDate,
                 cronId,
             ]);
@@ -442,15 +431,7 @@ export const deleteWishlist = async (
             cronId,
         ]);
 
-        const [success, responseData] = await manipulateCron(
-            null,
-            'DELETE',
-            cronJobResults[0].unique_id,
-        );
-
-        if (!success) {
-            response.status(500).send(responseData);
-        }
+        await unscheduleQuery(cronJobResults[0].unique_id);
 
         await executeQuery(wishlistQueries.deleteWishlist, [id]);
 

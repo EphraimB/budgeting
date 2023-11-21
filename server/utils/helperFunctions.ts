@@ -1,13 +1,7 @@
 import { type Response } from 'express';
 import pool from '../config/db.js';
 import dayjs, { type Dayjs } from 'dayjs';
-import {
-    generateDailyExpenses,
-    generateMonthlyExpenses,
-    generateWeeklyExpenses,
-    generateYearlyExpenses,
-} from '../generation/generateExpenses.js';
-import { GeneratedTransaction } from '../types/types.js';
+import { logger } from '../config/winston.js';
 
 /**
  *
@@ -39,6 +33,46 @@ export const executeQuery = async <T = any>(
 
 /**
  *
+ * @param name - Name of the cron job
+ * @param cronSchedule - Cron schedule
+ * @param query - SQL query
+ * Schedules a cron job
+ */
+export const scheduleQuery = async (
+    name: string,
+    cronSchedule: string,
+    query: string,
+) => {
+    const scheduleQueryText = `
+      SELECT cron.schedule('${name}', $1, $2);
+    `;
+    try {
+        const res = await pool.query(scheduleQueryText, [cronSchedule, query]);
+        logger.info('Job scheduled:', res.rows[0]);
+    } catch (err) {
+        logger.error('Error scheduling job:', err);
+    }
+};
+
+/**
+ *
+ * @param name - Name of the cron job
+ * Unschedules a cron job
+ */
+export const unscheduleQuery = async (name: string) => {
+    const unscheduleQueryText = `
+      SELECT cron.unschedule('${name}');
+    `;
+    try {
+        const res = await pool.query(unscheduleQueryText);
+        logger.info('Job unscheduled:', res.rows[0]);
+    } catch (err) {
+        logger.error('Error unscheduling job:', err);
+    }
+};
+
+/**
+ *
  * @param input - The input to parse
  * @returns The parsed input or null if the input is not a integer
  */
@@ -63,93 +97,6 @@ export const parseFloatOrFallback = (
 
     const parsed = parseInt(input, 10);
     return isNaN(parsed) ? null : parsed;
-};
-
-/**
- *
- * @param data - Data to send to the cron job
- * @param method - HTTP method
- * @param unique_id - Unique ID of the cron job
- * @returns Array of success and response data
- */
-export const manipulateCron = async (
-    data: object | null,
-    method: string,
-    unique_id: string | null,
-) => {
-    const url: string = `http://cron:8080/api/cron${
-        unique_id ? `/${unique_id}` : ''
-    }`;
-
-    // Construct headers conditionally
-    let headers: HeadersInit = {};
-    if (data) {
-        headers = {
-            'Content-Type': 'application/json',
-        };
-    }
-
-    // Construct options with conditional body
-    const options: RequestInit = {
-        method,
-        headers,
-    };
-    if (data) {
-        options.body = JSON.stringify(data);
-    }
-
-    try {
-        const res = await fetch(url, options);
-
-        // Ensure the response is OK and handle potential errors
-        if (!res.ok) {
-            return [false, `An error has occurred: ${res.status}`];
-        }
-
-        // Parse the JSON from the response
-        const responseData = await res.json();
-        return [true, responseData];
-    } catch (error) {
-        return [false, error.message];
-    }
-};
-
-/**
- *
- * @param employee_id - Employee ID
- * @returns Array of success and response data
- */
-export const executePayrollsScript = async (employee_id: number) => {
-    const url: string = 'http://cron:8080/api/update-payrolls';
-
-    // Construct headers conditionally
-    const headers: HeadersInit = {
-        'Content-Type': 'application/json',
-    };
-
-    const body = JSON.stringify({ employee_id });
-
-    // Construct options with conditional body
-    const options: RequestInit = {
-        method: 'POST',
-        headers,
-        body,
-    };
-
-    try {
-        const res = await fetch(url, options);
-
-        // Ensure the response is OK and handle potential errors
-        if (!res.ok) {
-            return [false, `An error has occurred: ${res.status}`];
-        }
-
-        // Parse the JSON from the response
-        const responseData = await res.json();
-        return [true, responseData];
-    } catch (error) {
-        return [false, error.message];
-    }
 };
 
 /**

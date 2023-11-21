@@ -5,7 +5,8 @@ import {
     parseIntOrFallback,
     handleError,
     executeQuery,
-    manipulateCron,
+    unscheduleQuery,
+    scheduleQuery,
 } from '../utils/helperFunctions.js';
 import { logger } from '../config/winston.js';
 import {
@@ -393,7 +394,7 @@ export const getExpensesByAccount = async (
  * @returns - Loan object with parsed values
  */
 const parseLoan = (loan: Record<string, string>): Loan => ({
-    loan_id: parseInt(loan.loan_id),
+    id: parseInt(loan.loan_id),
     account_id: parseInt(loan.account_id),
     tax_id: parseIntOrFallback(loan.tax_id),
     loan_amount: parseFloat(loan.loan_amount),
@@ -1046,15 +1047,7 @@ export const updateWishlistCron = async (
             ]);
 
             if (results.length > 0) {
-                const [success, responseData] = await manipulateCron(
-                    null,
-                    'DELETE',
-                    results[0].unique_id,
-                );
-
-                if (!success) {
-                    response.status(500).send(responseData);
-                }
+                await unscheduleQuery(results[0].unique_id);
             } else {
                 logger.error('Cron job not found');
             }
@@ -1081,29 +1074,20 @@ export const updateWishlistCron = async (
                     jobDetails as { date: string },
                 );
 
-                const data = {
-                    schedule: cronDate,
-                    script_path: '/scripts/createTransaction.sh',
-                    expense_type: 'wishlist',
-                    account_id: wslst.account_id,
-                    id: wslst.wishlist_id,
-                    amount: -wslst.wishlist_amount,
-                    title: wslst.wishlist_title,
-                    description: wslst.wishlist_description,
-                };
+                const unique_id = `wishlist-${wslst.wishlist_id}`;
 
-                const [success, responseData] = await manipulateCron(
-                    data,
-                    'POST',
-                    null,
+                await scheduleQuery(
+                    unique_id,
+                    cronDate,
+                    `INSERT INTO transaction_history (account_id, transaction_amount, transaction_tax_rate, transaction_title, transaction_description) VALUES (${
+                        wslst.account_id
+                    }, ${-wslst.wishlist_amount}, ${taxRate}, '${
+                        wslst.wishlist_title
+                    }', '${wslst.wishlist_description}')`,
                 );
 
-                if (!success) {
-                    response.status(500).send(responseData);
-                }
-
                 await executeQuery(cronJobQueries.updateCronJob, [
-                    responseData.unique_id,
+                    unique_id,
                     cronDate,
                     cronId,
                 ]);

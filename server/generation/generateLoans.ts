@@ -52,7 +52,7 @@ export const calculateInterest = (
 const generateLoans = (
     transactions: GeneratedTransaction[],
     skippedTransactions: GeneratedTransaction[],
-    loan: Loan,
+    loan: any,
     toDate: Dayjs,
     fromDate: Dayjs,
     generateDateFn: GenerateDateFunction,

@@ -4,7 +4,8 @@ import {
     handleError,
     executeQuery,
     parseIntOrFallback,
-    manipulateCron,
+    scheduleQuery,
+    unscheduleQuery,
 } from '../utils/helperFunctions.js';
 import { type Transfer } from '../types/types.js';
 import { logger } from '../config/winston.js';
@@ -16,7 +17,7 @@ import determineCronValues from '../crontab/determineCronValues.js';
  * @returns The parsed transfer object
  */
 const transfersParse = (transfer: Record<string, string>): Transfer => ({
-    transfer_id: parseInt(transfer.transfer_id),
+    id: parseInt(transfer.transfer_id),
     source_account_id: parseInt(transfer.source_account_id),
     destination_account_id: parseInt(transfer.destination_account_id),
     transfer_amount: parseFloat(transfer.transfer_amount),
@@ -168,40 +169,29 @@ export const createTransfer = async (
 
         const cronDate = determineCronValues(jobDetails);
 
-        const data = {
-            schedule: cronDate,
-            script_path: '/scripts/createTransaction.sh',
-            expense_type: 'transfer',
-            account_id: source_account_id,
-            id: transfers[0].transfer_id,
-            amount: -amount,
-            title,
-            description,
-        };
+        const taxRate = 0;
 
-        const [success, responseData] = await manipulateCron(
-            data,
-            'POST',
-            null,
+        const unique_id = `transfer-${transfers[0].id}`;
+
+        await scheduleQuery(
+            unique_id,
+            cronDate,
+            `INSERT INTO transaction_history (account_id, transaction_amount, transaction_tax_rate, transaction_title, transaction_description) VALUES (${source_account_id}, ${-amount}, ${taxRate}, '${title}', '${description}')`,
         );
-
-        if (!success) {
-            response.status(500).send(responseData);
-        }
 
         const cronId: number = (
             await executeQuery(cronJobQueries.createCronJob, [
-                responseData.unique_id,
+                unique_id,
                 cronDate,
             ])
         )[0].cron_job_id;
 
         await executeQuery(transferQueries.updateTransferWithCronJobId, [
             cronId,
-            transfers[0].transfer_id,
+            transfers[0].id,
         ]);
 
-        request.transfer_id = transfers[0].transfer_id;
+        request.transfer_id = transfers[0].id;
 
         next();
     } catch (error) {
@@ -294,29 +284,18 @@ export const updateTransfer = async (
             cronId,
         ]);
 
-        const data = {
-            schedule: cronDate,
-            script_path: '/scripts/createTransaction.sh',
-            expense_type: 'transfer',
-            account_id: source_account_id,
-            id,
-            amount: -amount,
-            title,
-            description,
-        };
+        const taxRate = 0;
 
-        const [success, responseData] = await manipulateCron(
-            data,
-            'PUT',
+        await unscheduleQuery(unique_id);
+
+        await scheduleQuery(
             unique_id,
+            cronDate,
+            `INSERT INTO transaction_history (account_id, transaction_amount, transaction_tax_rate, transaction_title, transaction_description) VALUES (${source_account_id}, ${-amount}, ${taxRate}, '${title}', '${description}')`,
         );
 
-        if (!success) {
-            response.status(500).send(responseData);
-        }
-
         await executeQuery(cronJobQueries.updateCronJob, [
-            responseData.unique_id,
+            unique_id,
             cronDate,
             cronId,
         ]);
@@ -405,15 +384,7 @@ export const deleteTransfer = async (
         const cronId: number = parseInt(transferResults[0].cron_job_id);
         const results = await executeQuery(cronJobQueries.getCronJob, [cronId]);
 
-        const [success, responseData] = await manipulateCron(
-            null,
-            'DELETE',
-            results[0].unique_id,
-        );
-
-        if (!success) {
-            response.status(500).send(responseData);
-        }
+        await unscheduleQuery(results[0].unique_id);
 
         await executeQuery(cronJobQueries.deleteCronJob, [cronId]);
 

@@ -1,10 +1,8 @@
 import { type NextFunction, type Request, type Response } from 'express';
 import { payrollQueries } from '../models/queryData.js';
-import { exec } from 'child_process';
 import {
     handleError,
     executeQuery,
-    executePayrollsScript,
 } from '../utils/helperFunctions.js';
 import { type PayrollDate } from '../types/types.js';
 import { logger } from '../config/winston.js';
@@ -17,7 +15,7 @@ import { logger } from '../config/winston.js';
 const payrollDatesParse = (
     payrollDate: Record<string, string>,
 ): PayrollDate => ({
-    payroll_date_id: parseInt(payrollDate.payroll_date_id),
+    id: parseInt(payrollDate.payroll_date_id),
     employee_id: parseInt(payrollDate.employee_id),
     payroll_start_day: parseInt(payrollDate.payroll_start_day),
     payroll_end_day: parseInt(payrollDate.payroll_end_day),
@@ -111,20 +109,16 @@ export const createPayrollDate = async (
             end_day,
         ]);
 
-        const [success, responseData] = await executePayrollsScript(
-            employee_id,
-        );
-
-        if (!success) {
-            response.status(500).send(responseData);
-        }
+        await executeQuery('SELECT process_payroll_for_employee($1)', [
+            1,
+        ]);
 
         // Parse the data to correct format and return an object
         const payrollDates: PayrollDate[] = results.map((payrollDate) =>
             payrollDatesParse(payrollDate),
         );
 
-        request.payroll_date_id = payrollDates[0].payroll_date_id;
+        request.payroll_date_id = payrollDates[0].id;
 
         next();
     } catch (error) {
@@ -183,13 +177,9 @@ export const updatePayrollDate = async (
             return;
         }
 
-        const [success, responseData] = await executePayrollsScript(
-            employee_id,
-        );
-
-        if (!success) {
-            response.status(500).send(responseData);
-        }
+        await executeQuery('SELECT process_payroll_for_employee($1)', [
+            1,
+        ]);
 
         next();
     } catch (error) {
@@ -254,13 +244,9 @@ export const deletePayrollDate = async (
 
         await executeQuery(payrollQueries.deletePayrollDate, [id]);
 
-        const [success, responseData] = await executePayrollsScript(
-            getResults[0].employee_id,
-        );
-
-        if (!success) {
-            response.status(500).send(responseData);
-        }
+        await executeQuery('SELECT process_payroll_for_employee($1)', [
+            1,
+        ]);
 
         next();
     } catch (error) {

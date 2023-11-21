@@ -4,7 +4,8 @@ import {
     handleError,
     executeQuery,
     parseIntOrFallback,
-    manipulateCron,
+    scheduleQuery,
+    unscheduleQuery,
 } from '../utils/helperFunctions.js';
 import { type Income } from '../types/types.js';
 import { logger } from '../config/winston.js';
@@ -17,7 +18,7 @@ import determineCronValues from '../crontab/determineCronValues.js';
  * Converts the income object to the correct types
  **/
 const parseIncome = (income: Record<string, string>): Income => ({
-    income_id: parseInt(income.income_id),
+    id: parseInt(income.income_id),
     account_id: parseInt(income.account_id),
     tax_id: parseIntOrFallback(income.tax_id),
     income_amount: parseFloat(income.income_amount),
@@ -156,40 +157,29 @@ export const createIncome = async (
 
         const cronDate = determineCronValues(jobDetails);
 
-        const data = {
-            schedule: cronDate,
-            script_path: '/scripts/createTransaction.sh',
-            expense_type: 'income',
-            account_id,
-            id: modifiedIncome[0].income_id,
-            amount: amount,
-            title,
-            description,
-        };
+        const unique_id = `income-${modifiedIncome[0].id}`;
 
-        const [success, responseData] = await manipulateCron(
-            data,
-            'POST',
-            null,
+        const taxRate = 0;
+
+        await scheduleQuery(
+            unique_id,
+            cronDate,
+            `INSERT INTO transaction_history (account_id, transaction_amount, transaction_tax_rate, transaction_title, transaction_description) VALUES (${account_id}, ${amount}, ${taxRate}, '${title}', '${description}')`,
         );
-
-        if (!success) {
-            response.status(500).send(responseData);
-        }
 
         const cronId: number = (
             await executeQuery(cronJobQueries.createCronJob, [
-                responseData.unique_id,
+                unique_id,
                 cronDate,
             ])
         )[0].cron_job_id;
 
         await executeQuery(incomeQueries.updateIncomeWithCronJobId, [
             cronId,
-            modifiedIncome[0].income_id,
+            modifiedIncome[0].id,
         ]);
 
-        request.income_id = modifiedIncome[0].income_id;
+        request.income_id = modifiedIncome[0].id;
 
         next();
     } catch (error) {
@@ -281,29 +271,18 @@ export const updateIncome = async (
             cronId,
         ]);
 
-        const data = {
-            schedule: cronDate,
-            script_path: '/scripts/createTransaction.sh',
-            expense_type: 'income',
-            account_id,
-            id,
-            amount: amount,
-            title,
-            description,
-        };
+        const taxRate = 0;
 
-        const [success, responseData] = await manipulateCron(
-            data,
-            'PUT',
+        await unscheduleQuery(unique_id);
+
+        await scheduleQuery(
             unique_id,
+            cronDate,
+            `INSERT INTO transaction_history (account_id, transaction_amount, transaction_tax_rate, transaction_title, transaction_description) VALUES (${account_id}, ${amount}, ${taxRate}, '${title}', '${description}')`,
         );
 
-        if (!success) {
-            response.status(500).send(responseData);
-        }
-
         await executeQuery(cronJobQueries.updateCronJob, [
-            responseData.unique_id,
+            unique_id,
             cronDate,
             cronId,
         ]);
@@ -389,15 +368,7 @@ export const deleteIncome = async (
 
         const results = await executeQuery(cronJobQueries.getCronJob, [cronId]);
 
-        const [success, responseData] = await manipulateCron(
-            null,
-            'DELETE',
-            results[0].unique_id,
-        );
-
-        if (!success) {
-            response.status(500).send(responseData);
-        }
+        await unscheduleQuery(results[0].unique_id);
 
         await executeQuery(cronJobQueries.deleteCronJob, [cronId]);
 

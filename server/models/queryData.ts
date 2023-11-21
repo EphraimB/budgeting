@@ -439,6 +439,7 @@ export const cronJobQueries: CronJobQueries = {
 export const taxesQueries = {
     getTaxes: 'SELECT * FROM taxes',
     getTax: 'SELECT * FROM taxes WHERE tax_id = $1',
+    getTaxRateByTaxId: 'SELECT tax_rate FROM taxes WHERE tax_id = $1',
     createTax:
         'INSERT INTO taxes (tax_rate, tax_title, tax_description, tax_type) VALUES ($1, $2, $3, $4) RETURNING *',
     updateTax:
@@ -784,4 +785,11 @@ export const fareCappingQueries = {
         FROM ticket_fares tf
         GROUP BY tf.commute_system_id, tf.system_name, tf.fare_cap, tf.fare_cap_duration, tf.current_spent;
     `,
+};
+
+export const cronQueries = {
+    scheduleCreateTransactionHistory: `SELECT 
+        cron.schedule($1, $$
+            INSERT INTO transaction_history (account_id, transaction_amount, transaction_tax_rate, transaction_title, transaction_description) VALUES ($2, $3, $4, $5, $6)
+        $$);`,
 };

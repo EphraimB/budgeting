@@ -10,14 +10,13 @@ import {
     type PayrollDate,
     type PayrollTax,
     type Taxes,
-    FareDetails,
-    CommuteTicket,
-    Timeslots,
+    type CommuteTicket,
+    type Timeslots,
 } from '../types/types';
 
 export const employees: Employee[] = [
     {
-        employee_id: 1,
+        id: 1,
         name: 'Test Employee',
         hourly_rate: 10,
         regular_hours: 40,
@@ -89,7 +88,7 @@ export const transactions: Transaction[] = [
 
 export const taxes: Taxes[] = [
     {
-        tax_id: 1,
+        id: 1,
         tax_rate: 0,
         tax_title: 'Test Tax',
         tax_description: 'Test Tax',
@@ -101,7 +100,7 @@ export const taxes: Taxes[] = [
 
 export const income: Income[] = [
     {
-        income_id: 1,
+        id: 1,
         account_id: 1,
         tax_id: 1,
         income_amount: 1000,
@@ -214,7 +213,7 @@ export const expenses: Expense[] = [
 
 export const loans: Loan[] = [
     {
-        loan_id: 1,
+        id: 1,
         cron_job_id: 1,
         account_id: 1,
         tax_id: null,
@@ -238,7 +237,7 @@ export const loans: Loan[] = [
         date_modified: '2020-01-01',
     },
     {
-        loan_id: 2,
+        id: 2,
         cron_job_id: 2,
         account_id: 1,
         tax_id: null,
@@ -262,7 +261,7 @@ export const loans: Loan[] = [
         date_modified: '2020-01-01',
     },
     {
-        loan_id: 3,
+        id: 3,
         cron_job_id: 3,
         account_id: 1,
         tax_id: null,
@@ -286,7 +285,7 @@ export const loans: Loan[] = [
         date_modified: '2020-01-01',
     },
     {
-        loan_id: 4,
+        id: 4,
         cron_job_id: 4,
         account_id: 1,
         tax_id: null,
@@ -332,13 +331,13 @@ export const payrolls = [
 
 export const payrollDates: PayrollDate[] = [
     {
-        payroll_date_id: 1,
+        id: 1,
         employee_id: 1,
         payroll_start_day: 1,
         payroll_end_day: 15,
     },
     {
-        payroll_date_id: 2,
+        id: 2,
         employee_id: 1,
         payroll_start_day: 15,
         payroll_end_day: 31,
@@ -347,13 +346,13 @@ export const payrollDates: PayrollDate[] = [
 
 export const payrollTaxes: PayrollTax[] = [
     {
-        payroll_taxes_id: 1,
+        id: 1,
         employee_id: 1,
         name: 'Federal Income Tax',
         rate: 0.1,
     },
     {
-        payroll_taxes_id: 2,
+        id: 2,
         employee_id: 1,
         name: 'State Income Tax',
         rate: 0.05,
@@ -362,7 +361,7 @@ export const payrollTaxes: PayrollTax[] = [
 
 export const wishlists: Wishlist[] = [
     {
-        wishlist_id: 1,
+        id: 1,
         cron_job_id: 1,
         tax_id: 1,
         account_id: 1,
@@ -379,7 +378,7 @@ export const wishlists: Wishlist[] = [
 
 export const transfers: Transfer[] = [
     {
-        transfer_id: 1,
+        id: 1,
         cron_job_id: 1,
         source_account_id: 1,
         destination_account_id: 2,
@@ -398,7 +397,7 @@ export const transfers: Transfer[] = [
         date_modified: '2020-01-01',
     },
     {
-        transfer_id: 2,
+        id: 2,
         cron_job_id: 2,
         source_account_id: 1,
         destination_account_id: 2,
@@ -417,7 +416,7 @@ export const transfers: Transfer[] = [
         date_modified: '2020-01-01',
     },
     {
-        transfer_id: 3,
+        id: 3,
         cron_job_id: 3,
         source_account_id: 1,
         destination_account_id: 2,
@@ -436,7 +435,7 @@ export const transfers: Transfer[] = [
         date_modified: '2020-01-01',
     },
     {
-        transfer_id: 4,
+        id: 4,
         cron_job_id: 4,
         source_account_id: 1,
         destination_account_id: 2,
@@ -455,7 +454,7 @@ export const transfers: Transfer[] = [
         date_modified: '2020-01-01',
     },
     {
-        transfer_id: 5,
+        id: 5,
         cron_job_id: 5,
         source_account_id: 2,
         destination_account_id: 1,
