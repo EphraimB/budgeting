@@ -184,8 +184,6 @@ export const createWishlistCron = async (
             });
         });
 
-        console.log(transactionMap);
-
         const results = await executeQuery(wishlistQueries.getWishlistsById, [
             wishlist_id,
         ]);
@@ -193,11 +191,11 @@ export const createWishlistCron = async (
         // Add the wishlist_date_can_purchase to the wishlist object
         const modifiedWishlists = results.map((wishlist) => ({
             ...wishlist,
-            wishlist_date_can_purchase:
-                transactionMap[Number(wishlist.id)] !== null &&
-                transactionMap[Number(wishlist.id)] !== undefined
-                    ? transactionMap[Number(wishlist.id)]
-                    : null,
+            wishlist_date_can_purchase: transactionMap[
+                Number(wishlist.wishlist_id)
+            ]
+                ? transactionMap[Number(wishlist.wishlist_id)]
+                : null,
         }));
 
         // Parse the data to the correct format

@@ -1075,16 +1075,16 @@ export const updateWishlistCron = async (
                     jobDetails as { date: string },
                 );
 
-                const unique_id = `wishlist-${wslst[0].wishlist_id}-${wslst.title}`;
+                const unique_id = `wishlist-${wslst.wishlist_id}-${wslst.wishlist_title}`;
 
                 await scheduleQuery(
                     unique_id,
                     cronDate,
                     `INSERT INTO transaction_history (account_id, transaction_amount, transaction_tax_rate, transaction_title, transaction_description) VALUES (${
                         wslst.account_id
-                    }, ${-wslst.amount}, ${taxRate}, '${wslst.title}', '${
-                        wslst.description
-                    }')`,
+                    }, ${-wslst.wishlist_amount}, ${taxRate}, '${
+                        wslst.wishlist_title
+                    }', '${wslst.wishlist_description}')`,
                 );
 
                 await executeQuery(cronJobQueries.updateCronJob, [

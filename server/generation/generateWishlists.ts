@@ -13,7 +13,7 @@ import dayjs, { type Dayjs } from 'dayjs';
 const generateWishlists = (
     transactions: GeneratedTransaction[],
     skippedTransactions: GeneratedTransaction[],
-    wishlist: Wishlist,
+    wishlist: any,
     fromDate: Dayjs,
 ): void => {
     const allTransactions: any[] = transactions.concat(skippedTransactions);
@@ -37,20 +37,18 @@ const generateWishlists = (
     }
 
     if (affordableDate !== null) {
-        const newTransactionDate: Dayjs =
-            wishlist.wishlist_date_available !== null &&
-            wishlist.wishlist_date_available !== undefined
-                ? dayjs(
-                      Math.max(
-                          affordableDate,
-                          dayjs(wishlist.wishlist_date_available).valueOf(),
-                      ),
-                  )
-                : dayjs(affordableDate);
+        const newTransactionDate: Dayjs = wishlist.wishlist_date_available
+            ? dayjs(
+                  Math.max(
+                      affordableDate,
+                      dayjs(wishlist.wishlist_date_available).valueOf(),
+                  ),
+              )
+            : dayjs(affordableDate);
 
         const newTransaction: GeneratedTransaction = {
             id: uuidv4(),
-            wishlist_id: wishlist.id,
+            wishlist_id: wishlist.wishlist_id,
             title: wishlist.wishlist_title,
             description: wishlist.wishlist_description,
             date: newTransactionDate,
