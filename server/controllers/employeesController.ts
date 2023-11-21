@@ -13,7 +13,7 @@ import { logger } from '../config/winston.js';
  * @returns - Employee object with correct data types
  */
 const employeeParse = (employee: Record<string, string>): Employee => ({
-    employee_id: parseInt(employee.employee_id),
+    id: parseInt(employee.employee_id),
     name: employee.name,
     hourly_rate: parseFloat(employee.hourly_rate),
     regular_hours: parseInt(employee.regular_hours),
@@ -162,7 +162,7 @@ export const updateEmployee = async (
             employeeParse(employee),
         );
 
-        request.employee_id = employees[0].employee_id;
+        request.employee_id = employees[0].id;
 
         next();
     } catch (error) {

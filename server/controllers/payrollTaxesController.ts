@@ -3,7 +3,6 @@ import { payrollQueries } from '../models/queryData.js';
 import {
     handleError,
     executeQuery,
-    executePayrollsScript,
 } from '../utils/helperFunctions.js';
 import { type PayrollTax } from '../types/types.js';
 import { logger } from '../config/winston.js';
@@ -14,7 +13,7 @@ import { logger } from '../config/winston.js';
  * @returns - Payroll tax object with parsed values
  */
 const payrollTaxesParse = (payrollTax: Record<string, string>): PayrollTax => ({
-    payroll_taxes_id: parseInt(payrollTax.payroll_taxes_id),
+    id: parseInt(payrollTax.payroll_taxes_id),
     employee_id: parseInt(payrollTax.employee_id),
     name: payrollTax.name,
     rate: parseFloat(payrollTax.rate),
@@ -115,7 +114,7 @@ export const createPayrollTax = async (
             payrollTaxesParse(payrollTax),
         );
 
-        request.payroll_taxes_id = payrollTaxes[0].payroll_taxes_id;
+        request.payroll_taxes_id = payrollTaxes[0].id;
 
         next();
     } catch (error) {

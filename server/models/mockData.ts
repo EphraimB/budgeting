@@ -10,14 +10,13 @@ import {
     type PayrollDate,
     type PayrollTax,
     type Taxes,
-    FareDetails,
-    CommuteTicket,
-    Timeslots,
+    type CommuteTicket,
+    type Timeslots,
 } from '../types/types';
 
 export const employees: Employee[] = [
     {
-        employee_id: 1,
+        id: 1,
         name: 'Test Employee',
         hourly_rate: 10,
         regular_hours: 40,
@@ -89,7 +88,7 @@ export const transactions: Transaction[] = [
 
 export const taxes: Taxes[] = [
     {
-        tax_id: 1,
+        id: 1,
         tax_rate: 0,
         tax_title: 'Test Tax',
         tax_description: 'Test Tax',
@@ -332,13 +331,13 @@ export const payrolls = [
 
 export const payrollDates: PayrollDate[] = [
     {
-        payroll_date_id: 1,
+        id: 1,
         employee_id: 1,
         payroll_start_day: 1,
         payroll_end_day: 15,
     },
     {
-        payroll_date_id: 2,
+        id: 2,
         employee_id: 1,
         payroll_start_day: 15,
         payroll_end_day: 31,
@@ -347,13 +346,13 @@ export const payrollDates: PayrollDate[] = [
 
 export const payrollTaxes: PayrollTax[] = [
     {
-        payroll_taxes_id: 1,
+        id: 1,
         employee_id: 1,
         name: 'Federal Income Tax',
         rate: 0.1,
     },
     {
-        payroll_taxes_id: 2,
+        id: 2,
         employee_id: 1,
         name: 'State Income Tax',
         rate: 0.05,

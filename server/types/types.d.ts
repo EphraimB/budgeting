@@ -42,7 +42,7 @@ export interface Transaction {
 }
 
 export interface Taxes {
-    tax_id: number;
+    id: number;
     tax_rate: number;
     tax_title: string;
     tax_description: string;
@@ -93,7 +93,7 @@ export interface Account {
 }
 
 export interface Employee {
-    employee_id: number;
+    id: number;
     name: string;
     hourly_rate: number;
     regular_hours: number;
@@ -163,14 +163,14 @@ export interface Payroll {
 }
 
 export interface PayrollDate {
-    payroll_date_id: number;
+    id: number;
     employee_id: number;
     payroll_start_day: number;
     payroll_end_day: number;
 }
 
 export interface PayrollTax {
-    payroll_taxes_id: number;
+    id: number;
     employee_id: number;
     name: string;
     rate: number;

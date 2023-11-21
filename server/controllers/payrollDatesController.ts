@@ -15,7 +15,7 @@ import { logger } from '../config/winston.js';
 const payrollDatesParse = (
     payrollDate: Record<string, string>,
 ): PayrollDate => ({
-    payroll_date_id: parseInt(payrollDate.payroll_date_id),
+    id: parseInt(payrollDate.payroll_date_id),
     employee_id: parseInt(payrollDate.employee_id),
     payroll_start_day: parseInt(payrollDate.payroll_start_day),
     payroll_end_day: parseInt(payrollDate.payroll_end_day),
@@ -118,7 +118,7 @@ export const createPayrollDate = async (
             payrollDatesParse(payrollDate),
         );
 
-        request.payroll_date_id = payrollDates[0].payroll_date_id;
+        request.payroll_date_id = payrollDates[0].id;
 
         next();
     } catch (error) {
