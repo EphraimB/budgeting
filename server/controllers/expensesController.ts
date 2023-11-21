@@ -181,7 +181,7 @@ export const createExpense = async (
         ]);
         const taxRate = result && result.length > 0 ? result : 0;
 
-        const unique_id = `expense-${modifiedExpenses[0].id}-${title}`;
+        const unique_id = `expense-${modifiedExpenses[0].id}`;
 
         await scheduleQuery(
             unique_id,

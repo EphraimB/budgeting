@@ -182,7 +182,7 @@ export const createLoan = async (
 
         const taxRate = 0;
 
-        const unique_id = `loan-${loans[0].id}-${title}`;
+        const unique_id = `loan-${loans[0].id}`;
 
         await scheduleQuery(
             unique_id,

@@ -1074,7 +1074,7 @@ export const updateWishlistCron = async (
                     jobDetails as { date: string },
                 );
 
-                const unique_id = `wishlist-${wslst.wishlist_id}-${wslst.wishlist_title}`;
+                const unique_id = `wishlist-${wslst.wishlist_id}`;
 
                 await scheduleQuery(
                     unique_id,

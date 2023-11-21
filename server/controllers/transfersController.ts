@@ -171,7 +171,7 @@ export const createTransfer = async (
 
         const taxRate = 0;
 
-        const unique_id = `transfer-${transfers[0].id}-${title}`;
+        const unique_id = `transfer-${transfers[0].id}`;
 
         await scheduleQuery(
             unique_id,

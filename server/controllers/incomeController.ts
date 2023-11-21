@@ -157,7 +157,7 @@ export const createIncome = async (
 
         const cronDate = determineCronValues(jobDetails);
 
-        const unique_id = `income-${modifiedIncome[0].id}-${title}`;
+        const unique_id = `income-${modifiedIncome[0].id}`;
 
         const taxRate = 0;
 

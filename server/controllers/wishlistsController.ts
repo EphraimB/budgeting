@@ -218,7 +218,7 @@ export const createWishlistCron = async (
             ]);
             const taxRate = result && result.length > 0 ? result : 0;
 
-            const unique_id = `wishlist-${wishlists[0].id}-${request.body.title}`;
+            const unique_id = `wishlist-${wishlists[0].id}`;
 
             await scheduleQuery(
                 unique_id,

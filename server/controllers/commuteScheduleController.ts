@@ -298,9 +298,7 @@ export const createCommuteSchedule = async (
 
         const taxRate = 0;
 
-        const unique_id = `commute-${commuteSchedule[0].id}-${
-            fareDetail[0].system_name + ' ' + fareDetail[0].fare_type
-        }`;
+        const unique_id = `commute-${commuteSchedule[0].id}`;
 
         await scheduleQuery(
             unique_id,
