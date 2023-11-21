@@ -1,6 +1,6 @@
 "use client";
 
-import dayjs, { Dayjs } from "dayjs";
+import dayjs from "dayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
@@ -26,8 +26,8 @@ export default function DateRange({
   };
 
   return (
-    <LocalizationProvider dateAdapter={AdapterDayjs}>
-      <Stack direction="row" justifyContent="center" spacing={2}>
+    <Stack direction="row" justifyContent="center" spacing={2}>
+      <LocalizationProvider dateAdapter={AdapterDayjs}>
         <DatePicker
           label="From date"
           value={dayjs(fromDate)}
@@ -49,7 +49,7 @@ export default function DateRange({
             )
           }
         />
-      </Stack>
-    </LocalizationProvider>
+      </LocalizationProvider>
+    </Stack>
   );
 }

@@ -1,7 +1,9 @@
 import { type NextFunction, type Request, type Response } from 'express';
 import { payrollQueries } from '../models/queryData.js';
-import { exec } from 'child_process';
-import { handleError, executeQuery } from '../utils/helperFunctions.js';
+import {
+    handleError,
+    executeQuery,
+} from '../utils/helperFunctions.js';
 import { type Employee } from '../types/types.js';
 import { logger } from '../config/winston.js';
 
@@ -11,7 +13,7 @@ import { logger } from '../config/winston.js';
  * @returns - Employee object with correct data types
  */
 const employeeParse = (employee: Record<string, string>): Employee => ({
-    employee_id: parseInt(employee.employee_id),
+    id: parseInt(employee.employee_id),
     name: employee.name,
     hourly_rate: parseFloat(employee.hourly_rate),
     regular_hours: parseInt(employee.regular_hours),
@@ -151,28 +153,16 @@ export const updateEmployee = async (
             return;
         }
 
-        // Define the script command
-        const scriptCommand: string = `/app/scripts/employeeChecker.sh`;
-
-        // Execute the script
-        exec(scriptCommand, (error, stdout, stderr) => {
-            if (error != null) {
-                logger.error(`Error executing script: ${error.message}`);
-                response.status(500).json({
-                    status: 'error',
-                    message: 'Failed to execute script',
-                });
-                return;
-            }
-            logger.info(`Script output: ${stdout}`);
-        });
+        await executeQuery('SELECT process_payroll_for_employee($1)', [
+            1,
+        ]);
 
         // Parse the data to correct format and return an object
         const employees: Employee[] = results.map((employee) =>
             employeeParse(employee),
         );
 
-        request.employee_id = employees[0].employee_id;
+        request.employee_id = employees[0].id;
 
         next();
     } catch (error) {
@@ -251,19 +241,9 @@ export const deleteEmployee = async (
 
         await executeQuery(payrollQueries.deleteEmployee, [employee_id]);
 
-        // Define the script command
-        const scriptCommand: string = `/app/scripts/employeeChecker.sh`;
-
-        // Execute the script
-        exec(scriptCommand, (error, stdout, stderr) => {
-            if (error != null) {
-                logger.error(`Error executing script: ${error.message}`);
-                response.status(500).json({
-                    status: 'error',
-                    message: 'Failed to execute script',
-                });
-            }
-        });
+        await executeQuery('SELECT process_payroll_for_employee($1)', [
+            1,
+        ]);
 
         response.status(200).send('Successfully deleted employee');
     } catch (error) {

@@ -1,6 +1,10 @@
 import { type NextFunction, type Request, type Response } from 'express';
-import { expenseQueries, cronJobQueries } from '../models/queryData.js';
-import { manipulateCron } from '../utils/helperFunctions.js';
+import {
+    expenseQueries,
+    cronJobQueries,
+    taxesQueries,
+} from '../models/queryData.js';
+import { scheduleQuery, unscheduleQuery } from '../utils/helperFunctions.js';
 import determineCronValues from '../crontab/determineCronValues.js';
 import {
     handleError,
@@ -171,30 +175,25 @@ export const createExpense = async (
 
         const cronDate = determineCronValues(jobDetails);
 
-        const data = {
-            schedule: cronDate,
-            script_path: '/scripts/createTransaction.sh',
-            expense_type: 'expense',
-            account_id,
-            id: modifiedExpenses[0].id,
-            amount: -amount + amount * subsidized,
-            title,
-            description,
-        };
+        // Get tax rate
+        const result = await executeQuery(taxesQueries.getTaxRateByTaxId, [
+            tax_id,
+        ]);
+        const taxRate = result && result.length > 0 ? result : 0;
 
-        const [success, responseData] = await manipulateCron(
-            data,
-            'POST',
-            null,
+        const unique_id = `expense-${modifiedExpenses[0].id}`;
+
+        await scheduleQuery(
+            unique_id,
+            cronDate,
+            `INSERT INTO transaction_history (account_id, transaction_amount, transaction_tax_rate, transaction_title, transaction_description) VALUES (${account_id}, ${
+                -amount + amount * subsidized
+            }, ${taxRate}, '${title}', '${description}')`,
         );
-
-        if (!success) {
-            response.status(500).send(responseData);
-        }
 
         const cronId: number = (
             await executeQuery(cronJobQueries.createCronJob, [
-                responseData.unique_id,
+                unique_id,
                 cronDate,
             ])
         )[0].cron_job_id;
@@ -297,29 +296,24 @@ export const updateExpense = async (
             cronId,
         ]);
 
-        const data = {
-            schedule: cronDate,
-            script_path: '/scripts/createTransaction.sh',
-            expense_type: 'expense',
-            account_id,
-            id,
-            amount: -amount + amount * subsidized,
-            title,
-            description,
-        };
+        await unscheduleQuery(unique_id);
 
-        const [success, responseData] = await manipulateCron(
-            data,
-            'PUT',
+        // Get tax rate
+        const result = await executeQuery(taxesQueries.getTaxRateByTaxId, [
+            tax_id,
+        ]);
+        const taxRate = result && result.length > 0 ? result : 0;
+
+        await scheduleQuery(
             unique_id,
+            cronDate,
+            `INSERT INTO transaction_history (account_id, transaction_amount, transaction_tax_rate, transaction_title, transaction_description) VALUES (${account_id}, ${
+                -amount + amount * subsidized
+            }, ${taxRate}, '${title}', '${description}')`,
         );
 
-        if (!success) {
-            response.status(500).send(responseData);
-        }
-
         await executeQuery(cronJobQueries.updateCronJob, [
-            responseData.unique_id,
+            unique_id,
             cronDate,
             cronId,
         ]);
@@ -406,15 +400,7 @@ export const deleteExpense = async (
 
         const results = await executeQuery(cronJobQueries.getCronJob, [cronId]);
 
-        const [success, responseData] = await manipulateCron(
-            null,
-            'DELETE',
-            results[0].unique_id,
-        );
-
-        if (!success) {
-            response.status(500).send(responseData);
-        }
+        await unscheduleQuery(results[0].unique_id);
 
         await executeQuery(cronJobQueries.deleteCronJob, [cronId]);
 

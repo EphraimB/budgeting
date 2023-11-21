@@ -17,7 +17,7 @@ type GenerateDateFunction = (currentDate: Dayjs, income: Income) => Dayjs;
 const generateIncome = (
     transactions: GeneratedTransaction[],
     skippedTransactions: GeneratedTransaction[],
-    income: Income,
+    income: any,
     toDate: Dayjs,
     fromDate: Dayjs,
     generateDateFn: GenerateDateFunction,

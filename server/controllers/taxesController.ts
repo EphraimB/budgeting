@@ -11,7 +11,7 @@ import { logger } from '../config/winston.js';
  * Converts the transaction history object to the correct types
  */
 const parseTaxes = (tax: Record<string, string>): Taxes => ({
-    tax_id: parseInt(tax.tax_id),
+    id: parseInt(tax.tax_id),
     tax_rate: parseFloat(tax.tax_rate),
     tax_title: tax.tax_title,
     tax_description: tax.tax_description,

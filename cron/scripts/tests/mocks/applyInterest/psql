@@ -1,4 +1,0 @@
-#!/bin/sh
-
-# This is a very basic mock. Depending on your needs, you might want to simulate more complex behavior.
-echo "UPDATE 1"  # Simulate successful update by echoing "UPDATE 1"

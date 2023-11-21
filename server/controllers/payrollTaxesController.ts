@@ -3,7 +3,6 @@ import { payrollQueries } from '../models/queryData.js';
 import {
     handleError,
     executeQuery,
-    executePayrollsScript,
 } from '../utils/helperFunctions.js';
 import { type PayrollTax } from '../types/types.js';
 import { logger } from '../config/winston.js';
@@ -14,7 +13,7 @@ import { logger } from '../config/winston.js';
  * @returns - Payroll tax object with parsed values
  */
 const payrollTaxesParse = (payrollTax: Record<string, string>): PayrollTax => ({
-    payroll_taxes_id: parseInt(payrollTax.payroll_taxes_id),
+    id: parseInt(payrollTax.payroll_taxes_id),
     employee_id: parseInt(payrollTax.employee_id),
     name: payrollTax.name,
     rate: parseFloat(payrollTax.rate),
@@ -107,19 +106,15 @@ export const createPayrollTax = async (
             rate,
         ]);
 
-        const [success, responseData] = await executePayrollsScript(
-            employee_id,
-        );
-
-        if (!success) {
-            response.status(500).send(responseData);
-        }
+        await executeQuery('SELECT process_payroll_for_employee($1)', [
+            1,
+        ]);
 
         const payrollTaxes: PayrollTax[] = results.map((payrollTax) =>
             payrollTaxesParse(payrollTax),
         );
 
-        request.payroll_taxes_id = payrollTaxes[0].payroll_taxes_id;
+        request.payroll_taxes_id = payrollTaxes[0].id;
 
         next();
     } catch (error) {
@@ -188,13 +183,9 @@ export const updatePayrollTax = async (
             return;
         }
 
-        const [success, responseData] = await executePayrollsScript(
-            employee_id,
-        );
-
-        if (!success) {
-            response.status(500).send(responseData);
-        }
+        await executeQuery('SELECT process_payroll_for_employee($1)', [
+            1,
+        ]);
 
         next();
     } catch (error) {
@@ -257,13 +248,9 @@ export const deletePayrollTax = async (
 
         await executeQuery(payrollQueries.deletePayrollTax, [id]);
 
-        const [success, responseData] = await executePayrollsScript(
-            getResults[0].employee_id,
-        );
-
-        if (!success) {
-            response.status(500).send(responseData);
-        }
+        await executeQuery('SELECT process_payroll_for_employee($1)', [
+            1,
+        ]);
 
         next();
     } catch (error) {
