@@ -113,7 +113,7 @@ describe('GET /api/wishlists', () => {
         mockRequest.transactions = [
             {
                 transactions: wishlists.map((wishlist, i) => ({
-                    wishlist_id: wishlist.wishlist_id,
+                    wishlist_id: wishlist.id,
                     date: `2023-08-14T00:0${i}:00.000Z`,
                 })),
             },
@@ -135,7 +135,7 @@ describe('GET /api/wishlists', () => {
             wishlist_date_available: wishlist.wishlist_date_available,
             wishlist_date_can_purchase: `2023-08-14T00:0${i}:00.000Z`,
             wishlist_description: wishlist.wishlist_description,
-            wishlist_id: wishlist.wishlist_id,
+            wishlist_id: wishlist.id,
             wishlist_priority: wishlist.wishlist_priority,
             wishlist_title: wishlist.wishlist_title,
             wishlist_url_link: wishlist.wishlist_url_link,
@@ -171,16 +171,16 @@ describe('GET /api/wishlists', () => {
     it('should respond with an array of wishlists with id', async () => {
         const id = 1;
         // Arrange
-        mockModule(wishlists.filter((wishlist) => wishlist.wishlist_id === 1));
+        mockModule(wishlists.filter((wishlist) => wishlist.id === 1));
 
         mockRequest.query = { account_id: null, id };
 
         mockRequest.transactions = [
             {
                 transactions: wishlists
-                    .filter((wishlist) => wishlist.wishlist_id === id)
+                    .filter((wishlist) => wishlist.id === id)
                     .map((wishlist, i) => ({
-                        wishlist_id: wishlist.wishlist_id,
+                        wishlist_id: wishlist.id,
                         date: `2023-08-14T00:0${i}:00.000Z`,
                     })),
             },
@@ -194,7 +194,7 @@ describe('GET /api/wishlists', () => {
         await getWishlists(mockRequest as Request, mockResponse);
 
         const modifiedWishlists = wishlists
-            .filter((wishlist) => wishlist.wishlist_id === id)
+            .filter((wishlist) => wishlist.id === id)
             .map((wishlist, i) => ({
                 account_id: wishlist.account_id,
                 tax_id: wishlist.tax_id,
@@ -204,7 +204,7 @@ describe('GET /api/wishlists', () => {
                 wishlist_date_available: wishlist.wishlist_date_available,
                 wishlist_date_can_purchase: `2023-08-14T00:0${i}:00.000Z`,
                 wishlist_description: wishlist.wishlist_description,
-                wishlist_id: wishlist.wishlist_id,
+                wishlist_id: wishlist.id,
                 wishlist_priority: wishlist.wishlist_priority,
                 wishlist_title: wishlist.wishlist_title,
                 wishlist_url_link: wishlist.wishlist_url_link,
@@ -248,7 +248,7 @@ describe('GET /api/wishlists', () => {
                 transactions: wishlists
                     .filter((wishlist) => wishlist.account_id === 1)
                     .map((wishlist, i) => ({
-                        wishlist_id: wishlist.wishlist_id,
+                        wishlist_id: wishlist.id,
                         date: `2023-08-14T00:0${i}:00.000Z`,
                     })),
             },
@@ -272,7 +272,7 @@ describe('GET /api/wishlists', () => {
                 wishlist_date_available: wishlist.wishlist_date_available,
                 wishlist_date_can_purchase: `2023-08-14T00:0${i}:00.000Z`,
                 wishlist_description: wishlist.wishlist_description,
-                wishlist_id: wishlist.wishlist_id,
+                wishlist_id: wishlist.id,
                 wishlist_priority: wishlist.wishlist_priority,
                 wishlist_title: wishlist.wishlist_title,
                 wishlist_url_link: wishlist.wishlist_url_link,
@@ -309,8 +309,7 @@ describe('GET /api/wishlists', () => {
         // Arrange
         mockModule(
             wishlists.filter(
-                (wishlist) =>
-                    wishlist.account_id === 1 && wishlist.wishlist_id === 1,
+                (wishlist) => wishlist.account_id === 1 && wishlist.id === 1,
             ),
         );
 
@@ -321,11 +320,10 @@ describe('GET /api/wishlists', () => {
                 transactions: wishlists
                     .filter(
                         (wishlist) =>
-                            wishlist.account_id === 1 &&
-                            wishlist.wishlist_id === 1,
+                            wishlist.account_id === 1 && wishlist.id === 1,
                     )
                     .map((wishlist, i) => ({
-                        wishlist_id: wishlist.wishlist_id,
+                        wishlist_id: wishlist.id,
                         date: `2023-08-14T00:0${i}:00.000Z`,
                     })),
             },
@@ -340,8 +338,7 @@ describe('GET /api/wishlists', () => {
 
         const modifiedWishlists = wishlists
             .filter(
-                (wishlist) =>
-                    wishlist.account_id === 1 && wishlist.wishlist_id === 1,
+                (wishlist) => wishlist.account_id === 1 && wishlist.id === 1,
             )
             .map((wishlist, i) => ({
                 account_id: wishlist.account_id,
@@ -352,7 +349,7 @@ describe('GET /api/wishlists', () => {
                 wishlist_date_available: wishlist.wishlist_date_available,
                 wishlist_date_can_purchase: `2023-08-14T00:0${i}:00.000Z`,
                 wishlist_description: wishlist.wishlist_description,
-                wishlist_id: wishlist.wishlist_id,
+                wishlist_id: wishlist.id,
                 wishlist_priority: wishlist.wishlist_priority,
                 wishlist_title: wishlist.wishlist_title,
                 wishlist_url_link: wishlist.wishlist_url_link,
@@ -432,7 +429,7 @@ describe('GET /api/wishlists', () => {
             wishlist_date_available: wishlist.wishlist_date_available,
             wishlist_date_can_purchase: null,
             wishlist_description: wishlist.wishlist_description,
-            wishlist_id: wishlist.wishlist_id,
+            wishlist_id: wishlist.id,
             wishlist_priority: wishlist.wishlist_priority,
             wishlist_title: wishlist.wishlist_title,
             wishlist_url_link: wishlist.wishlist_url_link,
@@ -447,9 +444,7 @@ describe('GET /api/wishlists', () => {
 describe('POST /api/wishlists middleware', () => {
     it('should populate the request.wishlist_id', async () => {
         // Arrange
-        const newWishlist = wishlists.filter(
-            (wishlist) => wishlist.wishlist_id === 1,
-        );
+        const newWishlist = wishlists.filter((wishlist) => wishlist.id === 1);
 
         mockModule(newWishlist);
 
@@ -477,9 +472,7 @@ describe('POST /api/wishlists middleware', () => {
             '../../controllers/wishlistsController.js'
         );
 
-        mockRequest.body = wishlists.filter(
-            (wishlist) => wishlist.wishlist_id === 1,
-        );
+        mockRequest.body = wishlists.filter((wishlist) => wishlist.id === 1);
 
         // Call the function with the mock request and response
         await createWishlist(mockRequest as Request, mockResponse, mockNext);
@@ -495,9 +488,7 @@ describe('POST /api/wishlists middleware', () => {
 describe('POST /api/wishlists', () => {
     it('should respond with the new wishlist', async () => {
         // Arrange
-        const newWishlist = wishlists.filter(
-            (wishlist) => wishlist.wishlist_id === 1,
-        );
+        const newWishlist = wishlists.filter((wishlist) => wishlist.id === 1);
 
         mockModule(
             newWishlist,
@@ -527,7 +518,7 @@ describe('POST /api/wishlists', () => {
             wishlist_date_available: newWishlist[0].wishlist_date_available,
             wishlist_date_can_purchase: null,
             wishlist_description: newWishlist[0].wishlist_description,
-            wishlist_id: newWishlist[0].wishlist_id,
+            id: newWishlist[0].id,
             wishlist_priority: newWishlist[0].wishlist_priority,
             wishlist_title: newWishlist[0].wishlist_title,
             wishlist_url_link: newWishlist[0].wishlist_url_link,
@@ -597,9 +588,7 @@ describe('POST /api/wishlists', () => {
 describe('PUT /api/wishlists middleware', () => {
     it('should populate the request.wishlist_id', async () => {
         // Arrange
-        const newWishlist = wishlists.filter(
-            (wishlist) => wishlist.wishlist_id === 1,
-        );
+        const newWishlist = wishlists.filter((wishlist) => wishlist.id === 1);
 
         mockModule(newWishlist);
 
@@ -620,9 +609,7 @@ describe('PUT /api/wishlists middleware', () => {
 
     it('should respond with a 404 error message when the wishlist does not exist', async () => {
         // Arrange
-        const newWishlist = wishlists.filter(
-            (wishlist) => wishlist.wishlist_id === 1,
-        );
+        const newWishlist = wishlists.filter((wishlist) => wishlist.id === 1);
 
         mockModule([]);
 
@@ -652,9 +639,7 @@ describe('PUT /api/wishlists middleware', () => {
         );
 
         mockRequest.params = { id: 1 };
-        mockRequest.body = wishlists.filter(
-            (wishlist) => wishlist.wishlist_id === 1,
-        );
+        mockRequest.body = wishlists.filter((wishlist) => wishlist.id === 1);
 
         // Call the function with the mock request and response
         await updateWishlist(mockRequest as Request, mockResponse, mockNext);
@@ -671,7 +656,7 @@ describe('PUT /api/wishlists/:id', () => {
     it('should respond with the updated wishlist', async () => {
         // Arrange
         const updatedWishlist = wishlists.filter(
-            (wishlist) => wishlist.wishlist_id === 1,
+            (wishlist) => wishlist.id === 1,
         );
 
         mockModule(
@@ -714,7 +699,7 @@ describe('PUT /api/wishlists/:id', () => {
             wishlist_date_available: updatedWishlist[0].wishlist_date_available,
             wishlist_date_can_purchase: null,
             wishlist_description: updatedWishlist[0].wishlist_description,
-            wishlist_id: updatedWishlist[0].wishlist_id,
+            id: updatedWishlist[0].id,
             wishlist_priority: updatedWishlist[0].wishlist_priority,
             wishlist_title: updatedWishlist[0].wishlist_title,
             wishlist_url_link: updatedWishlist[0].wishlist_url_link,

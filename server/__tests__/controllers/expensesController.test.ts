@@ -130,7 +130,7 @@ describe('GET /api/expenses', () => {
 
     it('should respond with an array of expenses with id', async () => {
         // Arrange
-        mockModule(expenses.filter((expense) => expense.expense_id === 1));
+        mockModule(expenses.filter((expense) => expense.id === 1));
 
         const { getExpenses } = await import(
             '../../controllers/expensesController.js'
@@ -144,7 +144,7 @@ describe('GET /api/expenses', () => {
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(200);
         expect(mockResponse.json).toHaveBeenCalledWith(
-            expenses.filter((expense) => expense.expense_id === 1),
+            expenses.filter((expense) => expense.id === 1),
         );
     });
 
@@ -216,8 +216,7 @@ describe('GET /api/expenses', () => {
         // Arrange
         mockModule(
             expenses.filter(
-                (expense) =>
-                    expense.account_id === 1 && expense.expense_id === 1,
+                (expense) => expense.account_id === 1 && expense.id === 1,
             ),
         );
 
@@ -234,8 +233,7 @@ describe('GET /api/expenses', () => {
         expect(mockResponse.status).toHaveBeenCalledWith(200);
         expect(mockResponse.json).toHaveBeenCalledWith(
             expenses.filter(
-                (expense) =>
-                    expense.account_id === 1 && expense.expense_id === 1,
+                (expense) => expense.account_id === 1 && expense.id === 1,
             ),
         );
     });
@@ -284,9 +282,7 @@ describe('GET /api/expenses', () => {
 describe('POST /api/expenses', () => {
     it('should populate the request.expense_id', async () => {
         // Arrange
-        const newExpense = expenses.filter(
-            (expense) => expense.expense_id === 1,
-        );
+        const newExpense = expenses.filter((expense) => expense.id === 1);
 
         mockModule(newExpense, undefined, [{ cron_job_id: 1 }], []);
 
@@ -297,17 +293,17 @@ describe('POST /api/expenses', () => {
         mockRequest.body = {
             account_id: expenses[0].account_id,
             tax_id: expenses[0].tax_id,
-            amount: expenses[0].expense_amount,
-            title: expenses[0].expense_title,
-            description: expenses[0].expense_description,
+            amount: expenses[0].amount,
+            title: expenses[0].title,
+            description: expenses[0].description,
             frequency_type: expenses[0].frequency_type,
             frequency_type_variable: expenses[0].frequency_type_variable,
             frequency_day_of_month: expenses[0].frequency_day_of_month,
             frequency_day_of_week: expenses[0].frequency_day_of_week,
             frequency_week_of_month: expenses[0].frequency_week_of_month,
             frequency_month_of_year: expenses[0].frequency_month_of_year,
-            subsidized: expenses[0].expense_subsidized,
-            begin_date: expenses[0].expense_begin_date,
+            subsidized: expenses[0].subsidized,
+            begin_date: expenses[0].begin_date,
         };
 
         await createExpense(mockRequest as Request, mockResponse, mockNext);
@@ -327,9 +323,7 @@ describe('POST /api/expenses', () => {
             '../../controllers/expensesController.js'
         );
 
-        mockRequest.body = expenses.filter(
-            (expense) => expense.expense_id === 1,
-        );
+        mockRequest.body = expenses.filter((expense) => expense.id === 1);
 
         // Act
         await createExpense(mockRequest as Request, mockResponse, mockNext);
@@ -351,9 +345,7 @@ describe('POST /api/expenses', () => {
             '../../controllers/expensesController.js'
         );
 
-        mockRequest.body = expenses.filter(
-            (expense) => expense.expense_id === 1,
-        );
+        mockRequest.body = expenses.filter((expense) => expense.id === 1);
 
         // Act
         await createExpenseReturnObject(mockRequest as Request, mockResponse);
@@ -367,9 +359,7 @@ describe('POST /api/expenses', () => {
 
     it('should respond with an array of expenses', async () => {
         // Arrange
-        const newExpense = expenses.filter(
-            (expense) => expense.expense_id === 1,
-        );
+        const newExpense = expenses.filter((expense) => expense.id === 1);
 
         mockModule(newExpense);
 
@@ -390,9 +380,7 @@ describe('POST /api/expenses', () => {
 
 describe('PUT /api/expenses/:id', () => {
     it('should call next in the middleware', async () => {
-        const updatedExpense = expenses.filter(
-            (expense) => expense.expense_id === 1,
-        );
+        const updatedExpense = expenses.filter((expense) => expense.id === 1);
 
         mockModule(updatedExpense, undefined, '1', []);
 
@@ -421,9 +409,7 @@ describe('PUT /api/expenses/:id', () => {
         );
 
         mockRequest.params = { id: 1 };
-        mockRequest.body = expenses.filter(
-            (expense) => expense.expense_id === 1,
-        );
+        mockRequest.body = expenses.filter((expense) => expense.id === 1);
 
         // Act
         await updateExpense(mockRequest as Request, mockResponse, mockNext);
@@ -445,9 +431,7 @@ describe('PUT /api/expenses/:id', () => {
             '../../controllers/expensesController.js'
         );
 
-        mockRequest.body = expenses.filter(
-            (expense) => expense.expense_id === 1,
-        );
+        mockRequest.body = expenses.filter((expense) => expense.id === 1);
 
         // Act
         await updateExpenseReturnObject(mockRequest as Request, mockResponse);
@@ -482,9 +466,7 @@ describe('PUT /api/expenses/:id', () => {
 
     it('should respond with an array of expenses', async () => {
         // Arrange
-        const newExpense = expenses.filter(
-            (expense) => expense.expense_id === 1,
-        );
+        const newExpense = expenses.filter((expense) => expense.id === 1);
 
         mockModule(newExpense);
 

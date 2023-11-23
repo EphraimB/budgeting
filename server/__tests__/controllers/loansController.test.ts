@@ -147,7 +147,7 @@ describe('GET /api/loans', () => {
 
     it('should respond with an array of loans with id', async () => {
         // Arrange
-        mockModule([loans.filter((loan) => loan.loan_id === 1)]);
+        mockModule([loans.filter((loan) => loan.id === 1)]);
 
         mockRequest.query = { id: 1 };
         mockRequest.fullyPaidBackDates = { 1: '2024-01-01' };
@@ -163,7 +163,7 @@ describe('GET /api/loans', () => {
         loans[0].loan_fully_paid_back = '2024-01-01';
 
         const modifiedLoans = loans
-            .filter((loan) => loan.loan_id === 1)
+            .filter((loan) => loan.id === 1)
             .map((loan) => parseLoans(loan));
 
         // Assert
@@ -244,7 +244,7 @@ describe('GET /api/loans', () => {
     it('should respond with an array of loans with account id and id', async () => {
         // Arrange
         mockModule([
-            loans.filter((loan) => loan.account_id === 1 && loan.loan_id === 1),
+            loans.filter((loan) => loan.account_id === 1 && loan.id === 1),
         ]);
 
         mockRequest.query = { account_id: 1, id: 1 };
@@ -261,7 +261,7 @@ describe('GET /api/loans', () => {
         loans[0].loan_fully_paid_back = '2024-01-01';
 
         const modifiedLoans = loans
-            .filter((loan) => loan.loan_id === 1)
+            .filter((loan) => loan.id === 1)
             .map((loan) => parseLoans(loan));
 
         // Assert
@@ -312,7 +312,7 @@ describe('GET /api/loans', () => {
 
 describe('POST /api/loans', () => {
     it('should populate request.loan_id', async () => {
-        const newLoan = loans.filter((loan) => loan.loan_id === 1)[0];
+        const newLoan = loans.filter((loan) => loan.id === 1)[0];
 
         mockModule([[newLoan], '1', '2', []]);
 
@@ -355,7 +355,7 @@ describe('POST /api/loans', () => {
             '../../controllers/loansController.js'
         );
 
-        mockRequest.body = loans.filter((loan) => loan.loan_id === 1);
+        mockRequest.body = loans.filter((loan) => loan.id === 1);
 
         await createLoan(mockRequest as Request, mockResponse, mockNext);
 
@@ -375,7 +375,7 @@ describe('POST /api/loans', () => {
             '../../controllers/loansController.js'
         );
 
-        mockRequest.body = loans.filter((loan) => loan.loan_id === 1);
+        mockRequest.body = loans.filter((loan) => loan.id === 1);
 
         await createLoanReturnObject(mockRequest as Request, mockResponse);
 
@@ -387,7 +387,7 @@ describe('POST /api/loans', () => {
     });
 
     it('should respond with the created loan', async () => {
-        const newLoan = loans.filter((loan) => loan.loan_id === 1);
+        const newLoan = loans.filter((loan) => loan.id === 1);
 
         mockModule([newLoan]);
 
@@ -403,7 +403,7 @@ describe('POST /api/loans', () => {
         loans[0].loan_fully_paid_back = '2024-01-01';
 
         const modifiedLoans = loans
-            .filter((loan) => loan.loan_id === 1)
+            .filter((loan) => loan.id === 1)
             .map((loan) => parseLoans(loan));
 
         // Assert
@@ -545,7 +545,7 @@ describe('PUT /api/loans/:id', () => {
     });
 
     it('should respond with the updated loan', async () => {
-        const updatedLoan = loans.filter((loan) => loan.loan_id === 1);
+        const updatedLoan = loans.filter((loan) => loan.id === 1);
 
         mockModule([updatedLoan]);
 
@@ -562,7 +562,7 @@ describe('PUT /api/loans/:id', () => {
         loans[0].loan_fully_paid_back = '2024-01-01';
 
         const modifiedLoans = loans
-            .filter((loan) => loan.loan_id === 1)
+            .filter((loan) => loan.id === 1)
             .map((loan) => parseLoans(loan));
 
         // Assert

@@ -59,7 +59,7 @@ const mockModule = (
 
 const payrollTaxesReturnObj: PayrollTax[] = payrollTaxes.map(
     (payrollTax: PayrollTax) => ({
-        payroll_taxes_id: payrollTax.payroll_taxes_id,
+        id: payrollTax.id,
         employee_id: payrollTax.employee_id,
         name: payrollTax.name,
         rate: payrollTax.rate,
@@ -199,7 +199,7 @@ describe('GET /api/payroll/taxes', () => {
             payrollTaxes.filter(
                 (payrollTax) =>
                     payrollTax.employee_id === employee_id &&
-                    payrollTax.payroll_taxes_id === id,
+                    payrollTax.id === id,
             ),
         );
 
@@ -218,7 +218,7 @@ describe('GET /api/payroll/taxes', () => {
             payrollTaxes.filter(
                 (payrollTax) =>
                     payrollTax.employee_id === employee_id &&
-                    payrollTax.payroll_taxes_id === id,
+                    payrollTax.id === id,
             ),
         );
     });
@@ -267,11 +267,7 @@ describe('POST /api/payroll/taxes', () => {
     it('should populate payroll_tax_id', async () => {
         const id = 1;
 
-        mockModule(
-            payrollTaxes.filter(
-                (payrollTax) => payrollTax.payroll_taxes_id === id,
-            ),
-        );
+        mockModule(payrollTaxes.filter((payrollTax) => payrollTax.id === id));
 
         const newPayrollTax = {
             employee_id: id,
@@ -350,11 +346,7 @@ describe('POST /api/payroll/taxes', () => {
     it('should respond with the created payroll tax', async () => {
         const id = 1;
 
-        mockModule(
-            payrollTaxes.filter(
-                (payrollTax) => payrollTax.payroll_taxes_id === id,
-            ),
-        );
+        mockModule(payrollTaxes.filter((payrollTax) => payrollTax.id === id));
 
         const newPayrollTax = {
             employee_id: id,
@@ -376,9 +368,7 @@ describe('POST /api/payroll/taxes', () => {
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(201);
         expect(mockResponse.json).toHaveBeenCalledWith(
-            payrollTaxes.filter(
-                (payrollTax) => payrollTax.payroll_taxes_id === id,
-            ),
+            payrollTaxes.filter((payrollTax) => payrollTax.id === id),
         );
     });
 
@@ -426,11 +416,7 @@ describe('PUT /api/payroll/taxes/:id', () => {
     it('should call next on the middleware', async () => {
         const id = 1;
 
-        mockModule(
-            payrollTaxes.filter(
-                (payrollTax) => payrollTax.payroll_taxes_id === id,
-            ),
-        );
+        mockModule(payrollTaxes.filter((payrollTax) => payrollTax.id === id));
 
         const updatedPayrollTax = {
             employee_id: id,
@@ -488,7 +474,7 @@ describe('PUT /api/payroll/taxes/:id', () => {
 
         mockRequest.params = { id: 3 };
         mockRequest.body = payrollTaxes.filter(
-            (payrollTax) => payrollTax.payroll_taxes_id === 1,
+            (payrollTax) => payrollTax.id === 1,
         );
 
         // Act
@@ -502,11 +488,7 @@ describe('PUT /api/payroll/taxes/:id', () => {
     it('should respond with the updated payroll tax', async () => {
         const id = 1;
 
-        mockModule(
-            payrollTaxes.filter(
-                (payrollTax) => payrollTax.payroll_taxes_id === id,
-            ),
-        );
+        mockModule(payrollTaxes.filter((payrollTax) => payrollTax.id === id));
 
         const updatedPayrollTax = {
             employee_id: id,

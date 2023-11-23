@@ -93,7 +93,7 @@ describe('GET /api/taxes', () => {
 
     it('should respond with an array of taxes with id', async () => {
         // Arrange
-        mockModule(taxes.filter((tax) => tax.tax_id === 1));
+        mockModule(taxes.filter((tax) => tax.id === 1));
 
         const { getTaxes } = await import(
             '../../controllers/taxesController.js'
@@ -107,7 +107,7 @@ describe('GET /api/taxes', () => {
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(200);
         expect(mockResponse.json).toHaveBeenCalledWith(
-            taxes.filter((tax) => tax.tax_id === 1),
+            taxes.filter((tax) => tax.id === 1),
         );
     });
 
@@ -154,7 +154,7 @@ describe('GET /api/taxes', () => {
 
 describe('POST /api/taxes', () => {
     it('should respond with the new tax', async () => {
-        const newTax = taxes.filter((tax) => tax.tax_id === 1);
+        const newTax = taxes.filter((tax) => tax.id === 1);
 
         mockModule(newTax);
 
@@ -181,7 +181,7 @@ describe('POST /api/taxes', () => {
             '../../controllers/taxesController.js'
         );
 
-        mockRequest.body = taxes.filter((tax) => tax.tax_id === 1);
+        mockRequest.body = taxes.filter((tax) => tax.id === 1);
 
         // Act
         await createTax(mockRequest as Request, mockResponse);
@@ -196,7 +196,7 @@ describe('POST /api/taxes', () => {
 
 describe('PUT /api/taxes/:id', () => {
     it('should respond with the updated tax', async () => {
-        const updatedTax = taxes.filter((tax) => tax.tax_id === 1);
+        const updatedTax = taxes.filter((tax) => tax.id === 1);
 
         mockModule(updatedTax);
 
@@ -225,7 +225,7 @@ describe('PUT /api/taxes/:id', () => {
         );
 
         mockRequest.params = { id: 1 };
-        mockRequest.body = taxes.filter((tax) => tax.tax_id === 1);
+        mockRequest.body = taxes.filter((tax) => tax.id === 1);
 
         // Act
         await updateTax(mockRequest as Request, mockResponse);
@@ -246,7 +246,7 @@ describe('PUT /api/taxes/:id', () => {
         );
 
         mockRequest.params = { id: 1 };
-        mockRequest.body = taxes.filter((tax) => tax.tax_id === 1);
+        mockRequest.body = taxes.filter((tax) => tax.id === 1);
 
         // Act
         await updateTax(mockRequest as Request, mockResponse);

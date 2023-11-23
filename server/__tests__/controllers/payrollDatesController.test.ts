@@ -60,7 +60,7 @@ const mockModule = (
 
 const payrollDatesReturnObj: PayrollDate[] = payrollDates.map(
     (payrollDate: PayrollDate) => ({
-        payroll_date_id: payrollDate.payroll_date_id,
+        id: payrollDate.id,
         employee_id: payrollDate.employee_id,
         payroll_start_day: payrollDate.payroll_start_day,
         payroll_end_day: payrollDate.payroll_end_day,
@@ -272,11 +272,7 @@ describe('GET /api/payroll/dates', () => {
 describe('POST /api/payroll/dates', () => {
     it('should populate request.payroll_date_id', async () => {
         // Arrange
-        mockModule(
-            payrollDates.filter(
-                (payrollDate) => payrollDate.payroll_date_id === 1,
-            ),
-        );
+        mockModule(payrollDates.filter((payrollDate) => payrollDate.id === 1));
 
         const newPayrollDate = {
             employee_id: 1,
@@ -356,11 +352,7 @@ describe('POST /api/payroll/dates', () => {
 
     it('should respond with the created payroll date', async () => {
         // Arrange
-        mockModule(
-            payrollDates.filter(
-                (payrollDate) => payrollDate.payroll_date_id === 1,
-            ),
-        );
+        mockModule(payrollDates.filter((payrollDate) => payrollDate.id === 1));
 
         const newPayrollDate = {
             employee_id: 1,
@@ -390,11 +382,7 @@ describe('POST /api/payroll/dates', () => {
 describe('PUT /api/payroll/dates/:id', () => {
     it('should call next on the middlware', async () => {
         // Arrange
-        mockModule(
-            payrollDates.filter(
-                (payrollDate) => payrollDate.payroll_date_id === 1,
-            ),
-        );
+        mockModule(payrollDates.filter((payrollDate) => payrollDate.id === 1));
 
         const updatedPayrollDate = {
             employee_id: 1,
@@ -484,7 +472,7 @@ describe('PUT /api/payroll/dates/:id', () => {
 
         mockRequest.params = { id: 3 };
         mockRequest.body = payrollDates.filter(
-            (payrollDate) => payrollDate.payroll_date_id === 1,
+            (payrollDate) => payrollDate.id === 1,
         );
 
         // Act
@@ -499,11 +487,7 @@ describe('PUT /api/payroll/dates/:id', () => {
 
     it('should respond with the updated payroll date', async () => {
         // Arrange
-        mockModule(
-            payrollDates.filter(
-                (payrollDate) => payrollDate.payroll_date_id === 1,
-            ),
-        );
+        mockModule(payrollDates.filter((payrollDate) => payrollDate.id === 1));
 
         const updatedPayrollDate = {
             employee_id: 1,

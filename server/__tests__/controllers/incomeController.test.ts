@@ -134,7 +134,7 @@ describe('GET /api/income', () => {
 
     it('should respond with an array of income with id', async () => {
         // Arrange
-        mockModule(income.filter((inc) => inc.income_id === 1));
+        mockModule(income.filter((inc) => inc.id === 1));
 
         const { getIncome } = await import(
             '../../controllers/incomeController.js'
@@ -148,7 +148,7 @@ describe('GET /api/income', () => {
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(200);
         expect(mockResponse.json).toHaveBeenCalledWith(
-            income.filter((inc) => inc.income_id === 1),
+            income.filter((inc) => inc.id === 1),
         );
     });
 
@@ -219,7 +219,7 @@ describe('GET /api/income', () => {
     it('should respond with an array of income with account id and id', async () => {
         // Arrange
         mockModule(
-            income.filter((inc) => inc.account_id === 1 && inc.income_id === 1),
+            income.filter((inc) => inc.account_id === 1 && inc.id === 1),
         );
 
         const { getIncome } = await import(
@@ -234,7 +234,7 @@ describe('GET /api/income', () => {
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(200);
         expect(mockResponse.json).toHaveBeenCalledWith(
-            income.filter((inc) => inc.account_id === 1 && inc.income_id === 1),
+            income.filter((inc) => inc.account_id === 1 && inc.id === 1),
         );
     });
 
@@ -282,7 +282,7 @@ describe('GET /api/income', () => {
 describe('POST /api/income', () => {
     it('should populate the request.income_id', async () => {
         // Arrange
-        const newIncome = income.filter((inc) => inc.income_id === 1);
+        const newIncome = income.filter((inc) => inc.id === 1);
 
         mockModule(newIncome, undefined, [{ cron_job_id: 1 }], []);
 
@@ -323,7 +323,7 @@ describe('POST /api/income', () => {
             '../../controllers/incomeController.js'
         );
 
-        mockRequest.body = income.filter((inc) => inc.income_id === 1);
+        mockRequest.body = income.filter((inc) => inc.id === 1);
 
         // Act
         await createIncome(mockRequest as Request, mockResponse, mockNext);
@@ -345,7 +345,7 @@ describe('POST /api/income', () => {
             '../../controllers/incomeController.js'
         );
 
-        mockRequest.body = income.filter((inc) => inc.income_id === 1);
+        mockRequest.body = income.filter((inc) => inc.id === 1);
 
         // Act
         await createIncomeReturnObject(mockRequest as Request, mockResponse);
@@ -359,7 +359,7 @@ describe('POST /api/income', () => {
 
     it('should respond with an array of income', async () => {
         // Arrange
-        const newIncome = income.filter((inc) => inc.income_id === 1);
+        const newIncome = income.filter((inc) => inc.id === 1);
 
         mockModule(newIncome);
 
@@ -380,7 +380,7 @@ describe('POST /api/income', () => {
 
 describe('PUT /api/income/:id', () => {
     it('should call next in the middleware', async () => {
-        const updatedIncome = income.filter((inc) => inc.income_id === 1);
+        const updatedIncome = income.filter((inc) => inc.id === 1);
 
         mockModule(updatedIncome, undefined, '1', []);
 
@@ -409,7 +409,7 @@ describe('PUT /api/income/:id', () => {
         );
 
         mockRequest.params = { id: 1 };
-        mockRequest.body = income.filter((inc) => inc.income_id === 1);
+        mockRequest.body = income.filter((inc) => inc.id === 1);
 
         // Act
         await updateIncome(mockRequest as Request, mockResponse, mockNext);
@@ -431,7 +431,7 @@ describe('PUT /api/income/:id', () => {
             '../../controllers/incomeController.js'
         );
 
-        mockRequest.body = income.filter((inc) => inc.income_id === 1);
+        mockRequest.body = income.filter((inc) => inc.id === 1);
 
         // Act
         await updateIncomeReturnObject(mockRequest as Request, mockResponse);
@@ -466,7 +466,7 @@ describe('PUT /api/income/:id', () => {
 
     it('should respond with an array of income', async () => {
         // Arrange
-        const newIncome = income.filter((inc) => inc.income_id === 1);
+        const newIncome = income.filter((inc) => inc.id === 1);
 
         mockModule(newIncome);
 

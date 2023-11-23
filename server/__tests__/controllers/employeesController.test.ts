@@ -126,9 +126,7 @@ describe('GET /api/payroll/employee', () => {
 
     it('should respond with an array of employees with id', async () => {
         // Arrange
-        mockModule([
-            employees.filter((employee) => employee.employee_id === 1),
-        ]);
+        mockModule([employees.filter((employee) => employee.id === 1)]);
 
         mockRequest.query = { employee_id: 1 };
 
@@ -142,7 +140,7 @@ describe('GET /api/payroll/employee', () => {
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(200);
         expect(mockResponse.json).toHaveBeenCalledWith(
-            employees.filter((employee) => employee.employee_id === 1),
+            employees.filter((employee) => employee.id === 1),
         );
     });
 
@@ -190,9 +188,7 @@ describe('GET /api/payroll/employee', () => {
 describe('POST /api/payroll/employee', () => {
     it('should respond with the new employee', async () => {
         // Arrange
-        const newEmployee = employees.filter(
-            (employee) => employee.employee_id === 1,
-        );
+        const newEmployee = employees.filter((employee) => employee.id === 1);
 
         mockModule([newEmployee]);
 
@@ -211,9 +207,7 @@ describe('POST /api/payroll/employee', () => {
 
     it('should respond with an error message', async () => {
         // Arrange
-        const newEmployee = employees.filter(
-            (employee) => employee.employee_id === 1,
-        );
+        const newEmployee = employees.filter((employee) => employee.id === 1);
 
         const errorMessage = 'Error creating employee';
         const error = new Error(errorMessage);
@@ -239,7 +233,7 @@ describe('PUT /api/payroll/employee/:id', () => {
     it('should call next on middleware', async () => {
         // Arrange
         const updatedEmployee = employees.filter(
-            (employee) => employee.employee_id === 1,
+            (employee) => employee.id === 1,
         );
 
         mockModule([updatedEmployee]);
@@ -260,7 +254,7 @@ describe('PUT /api/payroll/employee/:id', () => {
     it('should respond with an error message', async () => {
         // Arrange
         const updatedEmployee = employees.filter(
-            (employee) => employee.employee_id === 1,
+            (employee) => employee.id === 1,
         );
 
         const errorMessage = 'Error updating employee';
@@ -286,7 +280,7 @@ describe('PUT /api/payroll/employee/:id', () => {
     it('should respond with an error message in return object', async () => {
         // Arrange
         const updatedEmployee = employees.filter(
-            (employee) => employee.employee_id === 1,
+            (employee) => employee.id === 1,
         );
 
         const errorMessage = 'Error updating employee';
@@ -318,9 +312,7 @@ describe('PUT /api/payroll/employee/:id', () => {
         );
 
         mockRequest.params = { employee_id: 3 };
-        mockRequest.body = employees.filter(
-            (employee) => employee.employee_id === 3,
-        );
+        mockRequest.body = employees.filter((employee) => employee.id === 3);
 
         // Act
         await updateEmployee(mockRequest as Request, mockResponse, mockNext);
@@ -333,7 +325,7 @@ describe('PUT /api/payroll/employee/:id', () => {
     it('should respond with a 500 error message when the script fails', async () => {
         // Arrange
         const updatedEmployee = employees.filter(
-            (employee) => employee.employee_id === 1,
+            (employee) => employee.id === 1,
         );
 
         mockModule([updatedEmployee]);
@@ -379,7 +371,7 @@ describe('PUT /api/payroll/employee/:id', () => {
     it('should respond with the updated employee', async () => {
         // Arrange
         const updatedEmployee = employees.filter(
-            (employee) => employee.employee_id === 1,
+            (employee) => employee.id === 1,
         );
 
         mockModule([updatedEmployee]);

@@ -5,7 +5,7 @@ import { type QueryResultRow } from 'pg';
 import { parseIntOrFallback } from '../../utils/helperFunctions.js';
 
 const modifiedTransfers = transfers.map((transfer) => ({
-    transfer_id: transfer.transfer_id,
+    transfer_id: transfer.id,
     source_account_id: transfer.source_account_id,
     destination_account_id: transfer.destination_account_id,
     transfer_amount: transfer.transfer_amount,
@@ -121,7 +121,7 @@ describe('GET /api/transfers', () => {
 
     it('should respond with an array of transfers with id', async () => {
         // Arrange
-        mockModule(transfers.filter((transfer) => transfer.transfer_id === 1));
+        mockModule(transfers.filter((transfer) => transfer.id === 1));
 
         mockRequest.query = { id: 1 };
 
@@ -212,8 +212,7 @@ describe('GET /api/transfers', () => {
         mockModule(
             transfers.filter(
                 (transfer) =>
-                    transfer.transfer_id === 1 &&
-                    transfer.source_account_id === 1,
+                    transfer.id === 1 && transfer.source_account_id === 1,
             ),
         );
 
@@ -281,9 +280,7 @@ describe('GET /api/transfers', () => {
 describe('POST /api/transfers', () => {
     it('should populate request.transfer_id', async () => {
         // Arrange
-        const newTransfer = transfers.filter(
-            (transfer) => transfer.transfer_id === 1,
-        );
+        const newTransfer = transfers.filter((transfer) => transfer.id === 1);
 
         mockModule(newTransfer);
 
@@ -310,9 +307,7 @@ describe('POST /api/transfers', () => {
             '../../controllers/transfersController.js'
         );
 
-        mockRequest.body = transfers.filter(
-            (transfer) => transfer.transfer_id === 1,
-        );
+        mockRequest.body = transfers.filter((transfer) => transfer.id === 1);
 
         // Call the function with the mock request and response
         await createTransfer(mockRequest as Request, mockResponse, mockNext);
@@ -334,9 +329,7 @@ describe('POST /api/transfers', () => {
             '../../controllers/transfersController.js'
         );
 
-        mockRequest.body = transfers.filter(
-            (transfer) => transfer.transfer_id === 1,
-        );
+        mockRequest.body = transfers.filter((transfer) => transfer.id === 1);
 
         // Call the function with the mock request and response
         await createTransferReturnObject(mockRequest as Request, mockResponse);
@@ -374,7 +367,7 @@ describe('PUT /api/transfer/:id', () => {
     it('should call next on the middleware', async () => {
         // Arrange
         const updatedTransfer = transfers.filter(
-            (transfer) => transfer.transfer_id === 1,
+            (transfer) => transfer.id === 1,
         );
 
         mockModule(updatedTransfer);
@@ -399,9 +392,7 @@ describe('PUT /api/transfer/:id', () => {
         mockModule(null, errorMessage);
 
         mockRequest.params = { id: 1 };
-        mockRequest.body = transfers.filter(
-            (transfer) => transfer.transfer_id === 1,
-        );
+        mockRequest.body = transfers.filter((transfer) => transfer.id === 1);
 
         const { updateTransfer } = await import(
             '../../controllers/transfersController.js'
@@ -424,9 +415,7 @@ describe('PUT /api/transfer/:id', () => {
         mockModule(null, errorMessage);
 
         mockRequest.params = { id: 1 };
-        mockRequest.body = transfers.filter(
-            (transfer) => transfer.transfer_id === 1,
-        );
+        mockRequest.body = transfers.filter((transfer) => transfer.id === 1);
 
         const { updateTransferReturnObject } = await import(
             '../../controllers/transfersController.js'
@@ -451,9 +440,7 @@ describe('PUT /api/transfer/:id', () => {
         );
 
         mockRequest.params = { id: 3 };
-        mockRequest.body = transfers.filter(
-            (transfer) => transfer.transfer_id === 1,
-        );
+        mockRequest.body = transfers.filter((transfer) => transfer.id === 1);
 
         // Act
         await updateTransfer(mockRequest as Request, mockResponse, mockNext);
