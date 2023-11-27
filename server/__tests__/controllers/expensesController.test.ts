@@ -368,29 +368,28 @@ describe('GET /api/expenses', () => {
         expect(mockResponse.status).toHaveBeenCalledWith(200);
         expect(mockResponse.json).toHaveBeenCalledWith(expectedResponse);
     });
+
+    it('should handle errors correctly with account id', async () => {
+        // Arrange
+        const errorMessage = 'Error getting expense';
+        mockModule([], [errorMessage], [], []);
+
+        const { getExpenses } = await import(
+            '../../controllers/expensesController.js'
+        );
+
+        mockRequest.query = { account_id: 1 };
+
+        // Act
+        await getExpenses(mockRequest as Request, mockResponse);
+
+        // Assert
+        expect(mockResponse.status).toHaveBeenCalledWith(400);
+        expect(mockResponse.json).toHaveBeenCalledWith({
+            message: 'Error getting expenses for given account_id',
+        });
+    });
 });
-
-//     it('should handle errors correctly with account id', async () => {
-//         // Arrange
-//         const errorMessage = 'Error getting expense';
-//         const error = new Error(errorMessage);
-//         mockModule(null, errorMessage);
-
-//         const { getExpenses } = await import(
-//             '../../controllers/expensesController.js'
-//         );
-
-//         mockRequest.query = { account_id: 1 };
-
-//         // Act
-//         await getExpenses(mockRequest as Request, mockResponse);
-
-//         // Assert
-//         expect(mockResponse.status).toHaveBeenCalledWith(400);
-//         expect(mockResponse.json).toHaveBeenCalledWith({
-//             message: 'Error getting expenses for given account_id',
-//         });
-//     });
 
 //     it('should respond with an array of expenses with account id and id', async () => {
 //         // Arrange
