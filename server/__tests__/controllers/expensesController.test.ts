@@ -389,33 +389,68 @@ describe('GET /api/expenses', () => {
             message: 'Error getting expenses for given account_id',
         });
     });
+
+    it('should respond with an array of expenses with account id and id', async () => {
+        // Arrange
+        const expenses = [
+            {
+                expense_id: 1,
+                account_id: 1,
+                tax_id: 1,
+                expense_amount: 50,
+                expense_title: 'Test Expense',
+                expense_description: 'Test Expense to test the expense route',
+                frequency_type: 2,
+                frequency_type_variable: null,
+                frequency_day_of_month: null,
+                frequency_day_of_week: null,
+                frequency_week_of_month: null,
+                frequency_month_of_year: null,
+                expense_subsidized: 0,
+                expense_begin_date: '2020-01-01',
+                date_created: '2020-01-01',
+                date_modified: '2020-01-01',
+            },
+        ];
+
+        const expectedResponse = [
+            {
+                id: 1,
+                account_id: 1,
+                tax_id: 1,
+                amount: 50,
+                title: 'Test Expense',
+                description: 'Test Expense to test the expense route',
+                frequency_type: 2,
+                frequency_type_variable: null,
+                frequency_day_of_month: null,
+                frequency_day_of_week: null,
+                frequency_week_of_month: null,
+                frequency_month_of_year: null,
+                subsidized: 0,
+                begin_date: '2020-01-01',
+                next_date: '2020-01-01',
+                date_created: '2020-01-01',
+                date_modified: '2020-01-01',
+            },
+        ];
+
+        mockModule([expenses], [], [], []);
+
+        const { getExpenses } = await import(
+            '../../controllers/expensesController.js'
+        );
+
+        mockRequest.query = { account_id: 1, id: 1 };
+
+        // Call the function with the mock request and response
+        await getExpenses(mockRequest as Request, mockResponse);
+
+        // Assert
+        expect(mockResponse.status).toHaveBeenCalledWith(200);
+        expect(mockResponse.json).toHaveBeenCalledWith(expectedResponse);
+    });
 });
-
-//     it('should respond with an array of expenses with account id and id', async () => {
-//         // Arrange
-//         mockModule(
-//             expenses.filter(
-//                 (expense) => expense.account_id === 1 && expense.id === 1,
-//             ),
-//         );
-
-//         const { getExpenses } = await import(
-//             '../../controllers/expensesController.js'
-//         );
-
-//         mockRequest.query = { account_id: 1, id: 1 };
-
-//         // Call the function with the mock request and response
-//         await getExpenses(mockRequest as Request, mockResponse);
-
-//         // Assert
-//         expect(mockResponse.status).toHaveBeenCalledWith(200);
-//         expect(mockResponse.json).toHaveBeenCalledWith(
-//             expenses.filter(
-//                 (expense) => expense.account_id === 1 && expense.id === 1,
-//             ),
-//         );
-//     });
 
 //     it('should handle errors correctly with account id and id', async () => {
 //         // Arrange
