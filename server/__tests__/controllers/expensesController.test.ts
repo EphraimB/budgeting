@@ -471,26 +471,25 @@ describe('GET /api/expenses', () => {
             message: 'Error getting expense',
         });
     });
+
+    it('should respond with a 404 error message when the expense does not exist', async () => {
+        // Arrange
+        mockModule([[]]);
+
+        const { getExpenses } = await import(
+            '../../controllers/expensesController.js'
+        );
+
+        mockRequest.query = { id: 3 };
+
+        // Act
+        await getExpenses(mockRequest as Request, mockResponse);
+
+        // Assert
+        expect(mockResponse.status).toHaveBeenCalledWith(404);
+        expect(mockResponse.send).toHaveBeenCalledWith('Expense not found');
+    });
 });
-
-//     it('should respond with a 404 error message when the expense does not exist', async () => {
-//         // Arrange
-//         mockModule([]);
-
-//         const { getExpenses } = await import(
-//             '../../controllers/expensesController.js'
-//         );
-
-//         mockRequest.query = { id: 3 };
-
-//         // Act
-//         await getExpenses(mockRequest as Request, mockResponse);
-
-//         // Assert
-//         expect(mockResponse.status).toHaveBeenCalledWith(404);
-//         expect(mockResponse.send).toHaveBeenCalledWith('Expense not found');
-//     });
-// });
 
 // describe('POST /api/expenses', () => {
 //     it('should populate the request.expense_id', async () => {
