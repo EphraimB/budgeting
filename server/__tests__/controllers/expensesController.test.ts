@@ -491,39 +491,43 @@ describe('GET /api/expenses', () => {
     });
 });
 
-// describe('POST /api/expenses', () => {
-//     it('should populate the request.expense_id', async () => {
-//         // Arrange
-//         const newExpense = expenses.filter((expense) => expense.id === 1);
+describe('POST /api/expenses', () => {
+    it('should populate the request.expense_id', async () => {
+        // Arrange
+        const expenses = [
+            {
+                expense_id: 1,
+                account_id: 1,
+                tax_id: 1,
+                expense_amount: 50,
+                expense_title: 'Test Expense',
+                expense_description: 'Test Expense to test the expense route',
+                frequency_type: 2,
+                frequency_type_variable: null,
+                frequency_day_of_month: null,
+                frequency_day_of_week: null,
+                frequency_week_of_month: null,
+                frequency_month_of_year: null,
+                expense_subsidized: 0,
+                expense_begin_date: '2020-01-01',
+            },
+        ];
 
-//         mockModule(newExpense, undefined, [{ cron_job_id: 1 }], []);
+        mockModule([expenses, [], [{ cron_job_id: 1 }], []], [], [[]], []);
 
-//         const { createExpense } = await import(
-//             '../../controllers/expensesController.js'
-//         );
+        const { createExpense } = await import(
+            '../../controllers/expensesController.js'
+        );
 
-//         mockRequest.body = {
-//             account_id: expenses[0].account_id,
-//             tax_id: expenses[0].tax_id,
-//             amount: expenses[0].amount,
-//             title: expenses[0].title,
-//             description: expenses[0].description,
-//             frequency_type: expenses[0].frequency_type,
-//             frequency_type_variable: expenses[0].frequency_type_variable,
-//             frequency_day_of_month: expenses[0].frequency_day_of_month,
-//             frequency_day_of_week: expenses[0].frequency_day_of_week,
-//             frequency_week_of_month: expenses[0].frequency_week_of_month,
-//             frequency_month_of_year: expenses[0].frequency_month_of_year,
-//             subsidized: expenses[0].subsidized,
-//             begin_date: expenses[0].begin_date,
-//         };
+        mockRequest.body = expenses[0];
 
-//         await createExpense(mockRequest as Request, mockResponse, mockNext);
+        await createExpense(mockRequest as Request, mockResponse, mockNext);
 
-//         // Assert
-//         expect(mockRequest.expense_id).toBe(1);
-//         expect(mockNext).toHaveBeenCalled();
-//     });
+        // Assert
+        expect(mockRequest.expense_id).toBe(1);
+        expect(mockNext).toHaveBeenCalled();
+    });
+});
 
 //     it('should handle errors correctly', async () => {
 //         // Arrange

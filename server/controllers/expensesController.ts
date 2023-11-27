@@ -156,7 +156,9 @@ export const createExpense = async (
             begin_date,
         ]);
 
-        const modifiedExpenses = expenses.map(parseExpenses);
+        const modifiedExpenses = expenses.map((expense) =>
+            parseExpenses(expense),
+        );
 
         const jobDetails = {
             frequency_type,
@@ -197,6 +199,8 @@ export const createExpense = async (
             cronId,
             modifiedExpenses[0].id,
         ]);
+
+        console.log(modifiedExpenses[0]);
 
         request.expense_id = modifiedExpenses[0].id;
 
