@@ -209,7 +209,7 @@ describe('GET /api/expenses', () => {
     it('should handle errors correctly', async () => {
         // Arrange
         const errorMessage = 'Error getting expenses';
-        mockModule([], errorMessage, [], []);
+        mockModule([], [errorMessage], [], []);
 
         const { getExpenses } = await import(
             '../../controllers/expensesController.js'
