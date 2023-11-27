@@ -85,13 +85,9 @@ export const getExpenses = async (
             return;
         }
 
-        console.log(expenses);
-
         const modifiedExpenses: Expense[] = expenses.map(
             (expense: Record<string, string>) => parseExpenses(expense),
         );
-
-        console.log(modifiedExpenses);
 
         modifiedExpenses.map((expense: Expense) => {
             const nextExpenseDate = nextTransactionFrequencyDate(expense);

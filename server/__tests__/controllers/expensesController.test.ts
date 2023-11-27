@@ -4,7 +4,6 @@ import { accounts, expenses } from '../../models/mockData.js';
 import { type QueryResultRow } from 'pg';
 import {
     parseIntOrFallback,
-    nextTransactionFrequencyDate,
 } from '../../utils/helperFunctions.js';
 
 jest.mock('../../config/winston', () => ({
@@ -104,7 +103,7 @@ const mockModule = (
         scheduleQuery,
         unscheduleQuery,
         parseIntOrFallback,
-        nextTransactionFrequencyDate,
+        nextTransactionFrequencyDate: jest.fn().mockReturnValue('2020-01-01'),
     }));
 };
 
@@ -165,6 +164,7 @@ describe('GET /api/expenses', () => {
                 frequency_month_of_year: null,
                 subsidized: 0,
                 begin_date: '2020-01-01',
+                next_date: '2020-01-01',
                 date_created: '2020-01-01',
                 date_modified: '2020-01-01',
             },
@@ -183,6 +183,7 @@ describe('GET /api/expenses', () => {
                 frequency_month_of_year: null,
                 subsidized: 0,
                 begin_date: '2020-01-01',
+                next_date: '2020-01-01',
                 date_created: '2020-01-01',
                 date_modified: '2020-01-01',
             },
