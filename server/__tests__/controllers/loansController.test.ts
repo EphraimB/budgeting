@@ -507,27 +507,50 @@ describe('POST /api/loans', () => {
         expect(mockRequest.loan_id).toBe(1);
         expect(mockNext).toHaveBeenCalled();
     });
+
+    it('should respond with an error message', async () => {
+        const errorMessage = 'Error creating loan';
+        mockModule([null], [errorMessage]);
+
+        const { createLoan } = await import(
+            '../../controllers/loansController.js'
+        );
+
+        mockRequest.body = {
+            loan_id: 1,
+            cron_job_id: 1,
+            account_id: 1,
+            tax_id: null,
+            loan_amount: 10000,
+            loan_plan_amount: 100,
+            loan_recipient: 'Test Loan Recipient',
+            loan_title: 'Test Loan',
+            loan_description: 'Test Loan to test the loan route',
+            frequency_type: 2,
+            frequency_type_variable: null,
+            frequency_month_of_year: null,
+            frequency_day_of_month: null,
+            frequency_day_of_week: null,
+            frequency_week_of_month: null,
+            loan_interest_frequency_type: 2,
+            loan_interest_rate: 0,
+            loan_subsidized: 0,
+            loan_begin_date: '2020-01-02',
+            loan_end_date: '2020-01-01',
+            loan_fully_paid_back: '2024-01-01',
+            date_created: '2020-01-01',
+            date_modified: '2020-01-01',
+        };
+
+        await createLoan(mockRequest as Request, mockResponse, mockNext);
+
+        // Assert
+        expect(mockResponse.status).toHaveBeenCalledWith(400);
+        expect(mockResponse.json).toHaveBeenCalledWith({
+            message: 'Error creating loan',
+        });
+    });
 });
-
-//     it('should respond with an error message', async () => {
-//         const errorMessage = 'Error creating loan';
-//         const error = new Error(errorMessage);
-//         mockModule([null], errorMessage);
-
-//         const { createLoan } = await import(
-//             '../../controllers/loansController.js'
-//         );
-
-//         mockRequest.body = loans.filter((loan) => loan.id === 1);
-
-//         await createLoan(mockRequest as Request, mockResponse, mockNext);
-
-//         // Assert
-//         expect(mockResponse.status).toHaveBeenCalledWith(400);
-//         expect(mockResponse.json).toHaveBeenCalledWith({
-//             message: 'Error creating loan',
-//         });
-//     });
 
 //     it('should respond with an error message in the return object', async () => {
 //         const errorMessage = 'Error creating loan';
