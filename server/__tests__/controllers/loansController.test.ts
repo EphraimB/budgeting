@@ -684,41 +684,39 @@ describe('PUT /api/loans/:id', () => {
         expect(mockRequest.loan_id).toBe(1);
         expect(mockNext).toHaveBeenCalled();
     });
+
+    it('should respond with an error message', async () => {
+        const errorMessage = 'Error updating loan';
+        mockModule([], [errorMessage]);
+
+        const { updateLoan } = await import(
+            '../../controllers/loansController.js'
+        );
+
+        mockRequest.params = { id: 1 };
+        mockRequest.body = {
+            account_id: 1,
+            loan_id: 1,
+            amount: 1000,
+            plan_amount: 100,
+            recipient: 'John Doe',
+            title: 'Test Loan',
+            description: 'Test Loan Description',
+            frequency_type: 2,
+            interest_rate: 0,
+            interest_frequency_type: 0,
+            begin_date: '2021-01-01',
+        };
+
+        await updateLoan(mockRequest as Request, mockResponse, mockNext);
+
+        // Assert
+        expect(mockResponse.status).toHaveBeenCalledWith(400);
+        expect(mockResponse.json).toHaveBeenCalledWith({
+            message: 'Error updating loan',
+        });
+    });
 });
-
-//     it('should respond with an error message', async () => {
-//         const updatedLoan = {
-//             account_id: 1,
-//             loan_id: 1,
-//             amount: 1000,
-//             plan_amount: 100,
-//             recipient: 'John Doe',
-//             title: 'Test Loan',
-//             description: 'Test Loan Description',
-//             frequency_type: 2,
-//             interest_rate: 0,
-//             interest_frequency_type: 0,
-//             begin_date: '2021-01-01',
-//         };
-//         const errorMessage = 'Error updating loan';
-//         const error = new Error(errorMessage);
-//         mockModule([[updatedLoan]], errorMessage);
-
-//         const { updateLoan } = await import(
-//             '../../controllers/loansController.js'
-//         );
-
-//         mockRequest.params = { id: 1 };
-//         mockRequest.body = updatedLoan;
-
-//         await updateLoan(mockRequest as Request, mockResponse, mockNext);
-
-//         // Assert
-//         expect(mockResponse.status).toHaveBeenCalledWith(400);
-//         expect(mockResponse.json).toHaveBeenCalledWith({
-//             message: 'Error updating loan',
-//         });
-//     });
 
 //     it('should respond with an error message on return object', async () => {
 //         const updatedLoan = {
