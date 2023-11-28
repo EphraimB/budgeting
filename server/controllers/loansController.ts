@@ -457,12 +457,13 @@ export const updateLoanReturnObject = async (
         const modifiedLoans: Loan[] = loans.map((loan) => {
             // parse loan first
             const parsedLoan = parseLoan(loan);
+
             // then add fully_paid_back field in request.fullyPaidBackDates
-            parsedLoan.fully_paid_back =
-                request.fullyPaidBackDates[parseInt(loan.loan_id)] !== null &&
-                request.fullyPaidBackDates[parseInt(loan.loan_id)] !== undefined
-                    ? request.fullyPaidBackDates[parseInt(loan.loan_id)]
-                    : null;
+            parsedLoan.fully_paid_back = request.fullyPaidBackDates[
+                parseInt(loan.loan_id)
+            ]
+                ? request.fullyPaidBackDates[parseInt(loan.loan_id)]
+                : null;
 
             return parsedLoan;
         });

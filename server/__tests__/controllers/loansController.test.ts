@@ -779,34 +779,72 @@ describe('PUT /api/loans/:id', () => {
         expect(mockResponse.status).toHaveBeenCalledWith(404);
         expect(mockResponse.send).toHaveBeenCalledWith('Loan not found');
     });
+
+    it('should respond with the updated loan', async () => {
+        const updatedLoan = [
+            {
+                account_id: 1,
+                cron_job_id: 1,
+                interest_cron_job_id: null,
+                loan_id: 1,
+                loan_amount: 1000,
+                loan_plan_amount: 100,
+                loan_recipient: 'John Doe',
+                loan_title: 'Test Loan',
+                loan_description: 'Test Loan Description',
+                frequency_type: 2,
+                loan_interest_rate: 0,
+                loan_interest_frequency_type: 0,
+                loan_begin_date: '2021-01-01',
+                loan_subsidized: 0,
+                date_created: '2020-01-01',
+                date_modified: '2020-01-01',
+            },
+        ];
+
+        const updatedLoanReturnObject = [
+            {
+                account_id: 1,
+                id: 1,
+                amount: 1000,
+                plan_amount: 100,
+                recipient: 'John Doe',
+                title: 'Test Loan',
+                description: 'Test Loan Description',
+                frequency_type: 2,
+                frequency_type_variable: null,
+                frequency_month_of_year: null,
+                frequency_day_of_month: null,
+                frequency_day_of_week: null,
+                frequency_week_of_month: null,
+                interest_rate: 0,
+                interest_frequency_type: 0,
+                begin_date: '2021-01-01',
+                subsidized: 0,
+                end_date: null,
+                fully_paid_back: '2024-01-01',
+                date_created: '2020-01-01',
+                date_modified: '2020-01-01',
+            },
+        ];
+
+        mockModule([updatedLoan]);
+
+        const { updateLoanReturnObject } = await import(
+            '../../controllers/loansController.js'
+        );
+
+        mockRequest.params = { id: 1 };
+        mockRequest.body = updatedLoan[0];
+        mockRequest.fullyPaidBackDates = { 1: '2024-01-01' };
+
+        await updateLoanReturnObject(mockRequest as Request, mockResponse);
+
+        // Assert
+        expect(mockResponse.status).toHaveBeenCalledWith(200);
+        expect(mockResponse.json).toHaveBeenCalledWith(updatedLoanReturnObject);
+    });
 });
-
-//     it('should respond with the updated loan', async () => {
-//         const updatedLoan = loans.filter((loan) => loan.id === 1);
-
-//         mockModule([updatedLoan]);
-
-//         const { updateLoanReturnObject } = await import(
-//             '../../controllers/loansController.js'
-//         );
-
-//         mockRequest.params = { id: 1 };
-//         mockRequest.body = updatedLoan;
-//         mockRequest.fullyPaidBackDates = { 1: '2024-01-01' };
-
-//         await updateLoanReturnObject(mockRequest as Request, mockResponse);
-
-//         loans[0].loan_fully_paid_back = '2024-01-01';
-
-//         const modifiedLoans = loans
-//             .filter((loan) => loan.id === 1)
-//             .map((loan) => parseLoans(loan));
-
-//         // Assert
-//         expect(mockResponse.status).toHaveBeenCalledWith(200);
-//         expect(mockResponse.json).toHaveBeenCalledWith(modifiedLoans);
-//     });
-// });
 
 // describe('DELETE /api/loans/:id', () => {
 //     it('should call next on the middleware', async () => {
