@@ -907,25 +907,25 @@ describe('DELETE /api/expenses/:id', () => {
             message: 'Error deleting expense',
         });
     });
+
+    it('should respond with a 404 error message when the expense does not exist', async () => {
+        // Arrange
+        mockModule([[]]);
+
+        const { deleteExpense } = await import(
+            '../../controllers/expensesController.js'
+        );
+
+        mockRequest.params = { id: 1 };
+
+        // Act
+        await deleteExpense(mockRequest as Request, mockResponse, mockNext);
+
+        // Assert
+        expect(mockResponse.status).toHaveBeenCalledWith(404);
+        expect(mockResponse.send).toHaveBeenCalledWith('Expense not found');
+    });
 });
-
-//     it('should respond with a 404 error message when the account does not exist', async () => {
-//         // Arrange
-//         mockModule([]);
-
-//         const { deleteExpense } = await import(
-//             '../../controllers/expensesController.js'
-//         );
-
-//         mockRequest.params = { id: 1 };
-
-//         // Act
-//         await deleteExpense(mockRequest as Request, mockResponse, mockNext);
-
-//         // Assert
-//         expect(mockResponse.status).toHaveBeenCalledWith(404);
-//         expect(mockResponse.send).toHaveBeenCalledWith('Expense not found');
-//     });
 
 //     it('should respond with a success message', async () => {
 //         // Arrange
