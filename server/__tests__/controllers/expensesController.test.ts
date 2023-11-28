@@ -770,28 +770,63 @@ describe('PUT /api/expenses/:id', () => {
         expect(mockResponse.status).toHaveBeenCalledWith(404);
         expect(mockResponse.send).toHaveBeenCalledWith('Expense not found');
     });
+
+    it('should respond with an array of expenses', async () => {
+        // Arrange
+        const expenses = [
+            {
+                expense_id: 1,
+                account_id: 1,
+                tax_id: 1,
+                expense_amount: 50,
+                expense_title: 'Test Expense',
+                expense_description: 'Test Expense to test the expense route',
+                frequency_type: 2,
+                frequency_type_variable: null,
+                frequency_day_of_month: null,
+                frequency_day_of_week: null,
+                frequency_week_of_month: null,
+                frequency_month_of_year: null,
+                expense_subsidized: 0,
+                expense_begin_date: '2020-01-01',
+            },
+        ];
+
+        const expensesResponse = [
+            {
+                id: 1,
+                account_id: 1,
+                tax_id: 1,
+                amount: 50,
+                title: 'Test Expense',
+                description: 'Test Expense to test the expense route',
+                frequency_type: 2,
+                frequency_type_variable: null,
+                frequency_day_of_month: null,
+                frequency_day_of_week: null,
+                frequency_week_of_month: null,
+                frequency_month_of_year: null,
+                subsidized: 0,
+                begin_date: '2020-01-01',
+            },
+        ];
+
+        mockModule([expenses]);
+
+        const { updateExpenseReturnObject } = await import(
+            '../../controllers/expensesController.js'
+        );
+
+        mockRequest.body = expenses[0];
+
+        // Call the function with the mock request and response
+        await updateExpenseReturnObject(mockRequest as Request, mockResponse);
+
+        // Assert
+        expect(mockResponse.status).toHaveBeenCalledWith(200);
+        expect(mockResponse.json).toHaveBeenCalledWith(expensesResponse);
+    });
 });
-
-//     it('should respond with an array of expenses', async () => {
-//         // Arrange
-//         const newExpense = expenses.filter((expense) => expense.id === 1);
-
-//         mockModule(newExpense);
-
-//         const { updateExpenseReturnObject } = await import(
-//             '../../controllers/expensesController.js'
-//         );
-
-//         mockRequest.body = newExpense;
-
-//         // Call the function with the mock request and response
-//         await updateExpenseReturnObject(mockRequest as Request, mockResponse);
-
-//         // Assert
-//         expect(mockResponse.status).toHaveBeenCalledWith(200);
-//         expect(mockResponse.json).toHaveBeenCalledWith(newExpense);
-//     });
-// });
 
 // describe('DELETE /api/expenses/:id', () => {
 //     it('should call next on the middleware', async () => {
