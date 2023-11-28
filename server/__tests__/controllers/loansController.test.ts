@@ -716,41 +716,39 @@ describe('PUT /api/loans/:id', () => {
             message: 'Error updating loan',
         });
     });
+
+    it('should respond with an error message on return object', async () => {
+        const errorMessage = 'Error updating loan';
+        mockModule([], [errorMessage]);
+
+        const { updateLoanReturnObject } = await import(
+            '../../controllers/loansController.js'
+        );
+
+        mockRequest.params = { id: 1 };
+        mockRequest.body = {
+            account_id: 1,
+            loan_id: 1,
+            amount: 1000,
+            plan_amount: 100,
+            recipient: 'John Doe',
+            title: 'Test Loan',
+            description: 'Test Loan Description',
+            frequency_type: 2,
+            interest_rate: 0,
+            interest_frequency_type: 0,
+            begin_date: '2021-01-01',
+        };
+
+        await updateLoanReturnObject(mockRequest as Request, mockResponse);
+
+        // Assert
+        expect(mockResponse.status).toHaveBeenCalledWith(400);
+        expect(mockResponse.json).toHaveBeenCalledWith({
+            message: 'Error getting loan',
+        });
+    });
 });
-
-//     it('should respond with an error message on return object', async () => {
-//         const updatedLoan = {
-//             account_id: 1,
-//             loan_id: 1,
-//             amount: 1000,
-//             plan_amount: 100,
-//             recipient: 'John Doe',
-//             title: 'Test Loan',
-//             description: 'Test Loan Description',
-//             frequency_type: 2,
-//             interest_rate: 0,
-//             interest_frequency_type: 0,
-//             begin_date: '2021-01-01',
-//         };
-//         const errorMessage = 'Error updating loan';
-//         const error = new Error(errorMessage);
-//         mockModule([[updatedLoan]], errorMessage);
-
-//         const { updateLoanReturnObject } = await import(
-//             '../../controllers/loansController.js'
-//         );
-
-//         mockRequest.params = { id: 1 };
-//         mockRequest.body = updatedLoan;
-
-//         await updateLoanReturnObject(mockRequest as Request, mockResponse);
-
-//         // Assert
-//         expect(mockResponse.status).toHaveBeenCalledWith(400);
-//         expect(mockResponse.json).toHaveBeenCalledWith({
-//             message: 'Error getting loan',
-//         });
-//     });
 
 //     it('should respond with a 404 error message when the loan does not exist', async () => {
 //         // Arrange
