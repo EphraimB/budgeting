@@ -748,39 +748,38 @@ describe('PUT /api/loans/:id', () => {
             message: 'Error getting loan',
         });
     });
+
+    it('should respond with a 404 error message when the loan does not exist', async () => {
+        // Arrange
+        mockModule([[]]);
+
+        const { updateLoan } = await import(
+            '../../controllers/loansController.js'
+        );
+
+        mockRequest.params = { id: 3 };
+        mockRequest.body = {
+            account_id: 1,
+            loan_id: 1,
+            amount: 1000,
+            plan_amount: 100,
+            recipient: 'John Doe',
+            title: 'Test Loan',
+            description: 'Test Loan Description',
+            frequency_type: 2,
+            interest_rate: 0,
+            interest_frequency_type: 0,
+            begin_date: '2021-01-01',
+        };
+
+        // Act
+        await updateLoan(mockRequest as Request, mockResponse, mockNext);
+
+        // Assert
+        expect(mockResponse.status).toHaveBeenCalledWith(404);
+        expect(mockResponse.send).toHaveBeenCalledWith('Loan not found');
+    });
 });
-
-//     it('should respond with a 404 error message when the loan does not exist', async () => {
-//         // Arrange
-//         const updatedLoan = {
-//             account_id: 1,
-//             loan_id: 1,
-//             amount: 1000,
-//             plan_amount: 100,
-//             recipient: 'John Doe',
-//             title: 'Test Loan',
-//             description: 'Test Loan Description',
-//             frequency_type: 2,
-//             interest_rate: 0,
-//             interest_frequency_type: 0,
-//             begin_date: '2021-01-01',
-//         };
-//         mockModule([[]]);
-
-//         const { updateLoan } = await import(
-//             '../../controllers/loansController.js'
-//         );
-
-//         mockRequest.params = { id: 3 };
-//         mockRequest.body = updatedLoan;
-
-//         // Act
-//         await updateLoan(mockRequest as Request, mockResponse, mockNext);
-
-//         // Assert
-//         expect(mockResponse.status).toHaveBeenCalledWith(404);
-//         expect(mockResponse.send).toHaveBeenCalledWith('Loan not found');
-//     });
 
 //     it('should respond with the updated loan', async () => {
 //         const updatedLoan = loans.filter((loan) => loan.id === 1);
