@@ -894,28 +894,27 @@ describe('DELETE /api/loans/:id', () => {
         // Assert
         expect(mockNext).toHaveBeenCalled();
     });
+
+    it('should respond with an error message', async () => {
+        // Arrange
+        const errorMessage = 'Error deleting loan';
+        mockModule([], [errorMessage]);
+
+        const { deleteLoan } = await import(
+            '../../controllers/loansController.js'
+        );
+
+        mockRequest.params = { id: 1 };
+
+        await deleteLoan(mockRequest as Request, mockResponse, mockNext);
+
+        // Assert
+        expect(mockResponse.status).toHaveBeenCalledWith(400);
+        expect(mockResponse.json).toHaveBeenCalledWith({
+            message: 'Error deleting loan',
+        });
+    });
 });
-
-//     it('should respond with an error message', async () => {
-//         // Arrange
-//         const errorMessage = 'Error deleting loan';
-//         const error = new Error(errorMessage);
-//         mockModule([null], errorMessage);
-
-//         const { deleteLoan } = await import(
-//             '../../controllers/loansController.js'
-//         );
-
-//         mockRequest.params = { id: 1 };
-
-//         await deleteLoan(mockRequest as Request, mockResponse, mockNext);
-
-//         // Assert
-//         expect(mockResponse.status).toHaveBeenCalledWith(400);
-//         expect(mockResponse.json).toHaveBeenCalledWith({
-//             message: 'Error deleting loan',
-//         });
-//     });
 
 //     it('should respond with a 404 error message when the loan does not exist', async () => {
 //         // Arrange
