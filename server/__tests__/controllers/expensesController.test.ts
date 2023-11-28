@@ -527,29 +527,28 @@ describe('POST /api/expenses', () => {
         expect(mockRequest.expense_id).toBe(1);
         expect(mockNext).toHaveBeenCalled();
     });
+
+    it('should handle errors correctly', async () => {
+        // Arrange
+        const errorMessage = 'Error creating expense';
+        mockModule([], [errorMessage]);
+
+        const { createExpense } = await import(
+            '../../controllers/expensesController.js'
+        );
+
+        mockRequest.body = expenses.filter((expense) => expense.id === 1);
+
+        // Act
+        await createExpense(mockRequest as Request, mockResponse, mockNext);
+
+        // Assert
+        expect(mockResponse.status).toHaveBeenCalledWith(400);
+        expect(mockResponse.json).toHaveBeenCalledWith({
+            message: 'Error creating expense',
+        });
+    });
 });
-
-//     it('should handle errors correctly', async () => {
-//         // Arrange
-//         const errorMessage = 'Error creating expense';
-//         const error = new Error(errorMessage);
-//         mockModule(null, errorMessage);
-
-//         const { createExpense } = await import(
-//             '../../controllers/expensesController.js'
-//         );
-
-//         mockRequest.body = expenses.filter((expense) => expense.id === 1);
-
-//         // Act
-//         await createExpense(mockRequest as Request, mockResponse, mockNext);
-
-//         // Assert
-//         expect(mockResponse.status).toHaveBeenCalledWith(400);
-//         expect(mockResponse.json).toHaveBeenCalledWith({
-//             message: 'Error creating expense',
-//         });
-//     });
 
 //     it('should handle errors correctly in return object', async () => {
 //         // Arrange
