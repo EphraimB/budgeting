@@ -627,25 +627,43 @@ describe('POST /api/expenses', () => {
     });
 });
 
-// describe('PUT /api/expenses/:id', () => {
-//     it('should call next in the middleware', async () => {
-//         const updatedExpense = expenses.filter((expense) => expense.id === 1);
+describe('PUT /api/expenses/:id', () => {
+    it('should call next in the middleware', async () => {
+        const expenses = [
+            {
+                expense_id: 1,
+                account_id: 1,
+                tax_id: 1,
+                expense_amount: 50,
+                expense_title: 'Test Expense',
+                expense_description: 'Test Expense to test the expense route',
+                frequency_type: 2,
+                frequency_type_variable: null,
+                frequency_day_of_month: null,
+                frequency_day_of_week: null,
+                frequency_week_of_month: null,
+                frequency_month_of_year: null,
+                expense_subsidized: 0,
+                expense_begin_date: '2020-01-01',
+            },
+        ];
 
-//         mockModule(updatedExpense, undefined, '1', []);
+        mockModule([expenses, '1'], [], [], []);
 
-//         const { updateExpense } = await import(
-//             '../../controllers/expensesController.js'
-//         );
+        const { updateExpense } = await import(
+            '../../controllers/expensesController.js'
+        );
 
-//         mockRequest.params = { id: 1 };
-//         mockRequest.body = updatedExpense;
+        mockRequest.params = { id: 1 };
+        mockRequest.body = expenses[0];
 
-//         await updateExpense(mockRequest as Request, mockResponse, mockNext);
+        await updateExpense(mockRequest as Request, mockResponse, mockNext);
 
-//         // Assert
-//         expect(mockRequest.expense_id).toBe(1);
-//         expect(mockNext).toHaveBeenCalled();
-//     });
+        // Assert
+        expect(mockRequest.expense_id).toBe(1);
+        expect(mockNext).toHaveBeenCalled();
+    });
+});
 
 //     it('should handle errors correctly', async () => {
 //         // Arrange

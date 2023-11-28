@@ -200,8 +200,6 @@ export const createExpense = async (
             modifiedExpenses[0].id,
         ]);
 
-        console.log(modifiedExpenses[0]);
-
         request.expense_id = modifiedExpenses[0].id;
 
         next();
