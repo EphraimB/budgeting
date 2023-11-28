@@ -4,6 +4,7 @@ import {
     handleError,
     executeQuery,
     parseIntOrFallback,
+    nextTransactionFrequencyDate,
     scheduleQuery,
     unscheduleQuery,
 } from '../utils/helperFunctions.js';
@@ -372,21 +373,15 @@ export const updateLoan = async (
             cronId,
         ]);
 
-        const nextDate: Date = new Date(begin_date);
+        const modifiedLoan: Loan[] = getLoanResults.map(
+            (loan: Record<string, string>) => parseLoan(loan),
+        );
 
-        if (parseInt(interest_frequency_type) === 0) {
-            // Daily
-            nextDate.setDate(nextDate.getDate() + 1);
-        } else if (parseInt(interest_frequency_type) === 1) {
-            // Weekly
-            nextDate.setDate(nextDate.getDate() + 7);
-        } else if (parseInt(interest_frequency_type) === 2) {
-            // Monthly
-            nextDate.setMonth(nextDate.getMonth() + 1);
-        } else if (parseInt(interest_frequency_type) === 3) {
-            // Yearly
-            nextDate.setFullYear(nextDate.getFullYear() + 1);
-        }
+        modifiedLoan.map((loan: Loan) => {
+            const nextLoanDate = nextTransactionFrequencyDate(loan);
+
+            loan.next_date = nextLoanDate;
+        });
 
         const jobDetailsInterest = {
             frequency_type: interest_frequency_type,

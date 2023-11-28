@@ -147,6 +147,7 @@ export interface Loan {
     fully_paid_back?: string | null;
     begin_date: string;
     end_date?: string;
+    next_date?: string | null;
     date_created?: string;
     date_modified?: string;
 }

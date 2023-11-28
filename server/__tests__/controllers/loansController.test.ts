@@ -644,37 +644,47 @@ describe('POST /api/loans', () => {
     });
 });
 
-// describe('PUT /api/loans/:id', () => {
-//     it('should call next in the middleware', async () => {
-//         const updatedLoan = {
-//             account_id: 1,
-//             loan_id: 1,
-//             amount: 1000,
-//             plan_amount: 100,
-//             recipient: 'John Doe',
-//             title: 'Test Loan',
-//             description: 'Test Loan Description',
-//             frequency_type: 2,
-//             interest_rate: 0,
-//             interest_frequency_type: 0,
-//             begin_date: '2021-01-01',
-//         };
+describe('PUT /api/loans/:id', () => {
+    it('should call next in the middleware', async () => {
+        const updatedLoan = [
+            {
+                account_id: 1,
+                cron_job_id: 1,
+                interest_cron_job_id: null,
+                loan_id: 1,
+                amount: 1000,
+                plan_amount: 100,
+                recipient: 'John Doe',
+                title: 'Test Loan',
+                description: 'Test Loan Description',
+                frequency_type: 2,
+                interest_rate: 0,
+                interest_frequency_type: 0,
+                begin_date: '2021-01-01',
+            },
+        ];
 
-//         mockModule([[updatedLoan]]);
+        mockModule(
+            [updatedLoan, [{ unique_id: 1 }], [{ unique_id: null }], []],
+            [],
+            [[]],
+            [[]],
+        );
 
-//         const { updateLoan } = await import(
-//             '../../controllers/loansController.js'
-//         );
+        const { updateLoan } = await import(
+            '../../controllers/loansController.js'
+        );
 
-//         mockRequest.params = { id: 1 };
-//         mockRequest.body = updatedLoan;
+        mockRequest.params = { id: 1 };
+        mockRequest.body = updatedLoan[0];
 
-//         await updateLoan(mockRequest as Request, mockResponse, mockNext);
+        await updateLoan(mockRequest as Request, mockResponse, mockNext);
 
-//         // Assert
-//         expect(mockRequest.loan_id).toBe(1);
-//         expect(mockNext).toHaveBeenCalled();
-//     });
+        // Assert
+        expect(mockRequest.loan_id).toBe(1);
+        expect(mockNext).toHaveBeenCalled();
+    });
+});
 
 //     it('should respond with an error message', async () => {
 //         const updatedLoan = {
