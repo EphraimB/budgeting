@@ -463,41 +463,51 @@ describe('GET /api/loans', () => {
     });
 });
 
-// describe('POST /api/loans', () => {
-//     it('should populate request.loan_id', async () => {
-//         const newLoan = loans.filter((loan) => loan.id === 1)[0];
+describe('POST /api/loans', () => {
+    it('should populate request.loan_id', async () => {
+        const loans = [
+            {
+                loan_id: 1,
+                cron_job_id: 1,
+                account_id: 1,
+                tax_id: null,
+                loan_amount: 10000,
+                loan_plan_amount: 100,
+                loan_recipient: 'Test Loan Recipient',
+                loan_title: 'Test Loan',
+                loan_description: 'Test Loan to test the loan route',
+                frequency_type: 2,
+                frequency_type_variable: null,
+                frequency_month_of_year: null,
+                frequency_day_of_month: null,
+                frequency_day_of_week: null,
+                frequency_week_of_month: null,
+                loan_interest_frequency_type: 2,
+                loan_interest_rate: 0,
+                loan_subsidized: 0,
+                loan_begin_date: '2020-01-02',
+                loan_end_date: '2020-01-01',
+                loan_fully_paid_back: '2024-01-01',
+                date_created: '2020-01-01',
+                date_modified: '2020-01-01',
+            },
+        ];
 
-//         mockModule([[newLoan], '1', '2', []]);
+        mockModule([loans, '1', '2', []], [], [[]]);
 
-//         const { createLoan } = await import(
-//             '../../controllers/loansController.js'
-//         );
+        const { createLoan } = await import(
+            '../../controllers/loansController.js'
+        );
 
-//         mockRequest.body = {
-//             account_id: 1,
-//             amount: 1000,
-//             plan_amount: 1000,
-//             recipient: 'John Doe',
-//             title: 'Test Loan',
-//             description: 'Test Description',
-//             frequency_type: 2,
-//             frequency_type_variable: null,
-//             frequency_day_of_month: null,
-//             frequency_day_of_week: null,
-//             frequency_week_of_month: null,
-//             frequency_month_of_year: null,
-//             interest_rate: 0,
-//             interest_frequency_type: 2,
-//             subsidized: 0,
-//             begin_date: '2021-01-01',
-//         };
+        mockRequest.body = loans[0];
 
-//         await createLoan(mockRequest as Request, mockResponse, mockNext);
+        await createLoan(mockRequest as Request, mockResponse, mockNext);
 
-//         // Assert
-//         expect(mockRequest.loan_id).toBe(1);
-//         expect(mockNext).toHaveBeenCalled();
-//     });
+        // Assert
+        expect(mockRequest.loan_id).toBe(1);
+        expect(mockNext).toHaveBeenCalled();
+    });
+});
 
 //     it('should respond with an error message', async () => {
 //         const errorMessage = 'Error creating loan';
