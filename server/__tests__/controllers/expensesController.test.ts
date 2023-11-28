@@ -674,7 +674,7 @@ describe('PUT /api/expenses/:id', () => {
         );
 
         mockRequest.params = { id: 1 };
-        (mockRequest.body = {
+        mockRequest.body = {
             expense_id: 1,
             account_id: 1,
             tax_id: 1,
@@ -689,9 +689,10 @@ describe('PUT /api/expenses/:id', () => {
             frequency_month_of_year: null,
             expense_subsidized: 0,
             expense_begin_date: '2020-01-01',
-        }),
-            // Act
-            await updateExpense(mockRequest as Request, mockResponse, mockNext);
+        };
+
+        // Act
+        await updateExpense(mockRequest as Request, mockResponse, mockNext);
 
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(400);
@@ -701,27 +702,41 @@ describe('PUT /api/expenses/:id', () => {
     });
 });
 
-//     it('should handle errors correctly in the return object function', async () => {
-//         // Arrange
-//         const errorMessage = 'Error updating expense';
-//         const error = new Error(errorMessage);
-//         mockModule(null, errorMessage);
+it('should handle errors correctly in the return object function', async () => {
+    // Arrange
+    const errorMessage = 'Error updating expense';
+    mockModule([], [errorMessage]);
 
-//         const { updateExpenseReturnObject } = await import(
-//             '../../controllers/expensesController.js'
-//         );
+    const { updateExpenseReturnObject } = await import(
+        '../../controllers/expensesController.js'
+    );
 
-//         mockRequest.body = expenses.filter((expense) => expense.id === 1);
+    mockRequest.body = {
+        expense_id: 1,
+        account_id: 1,
+        tax_id: 1,
+        expense_amount: 50,
+        expense_title: 'Test Expense',
+        expense_description: 'Test Expense to test the expense route',
+        frequency_type: 2,
+        frequency_type_variable: null,
+        frequency_day_of_month: null,
+        frequency_day_of_week: null,
+        frequency_week_of_month: null,
+        frequency_month_of_year: null,
+        expense_subsidized: 0,
+        expense_begin_date: '2020-01-01',
+    };
 
-//         // Act
-//         await updateExpenseReturnObject(mockRequest as Request, mockResponse);
+    // Act
+    await updateExpenseReturnObject(mockRequest as Request, mockResponse);
 
-//         // Assert
-//         expect(mockResponse.status).toHaveBeenCalledWith(400);
-//         expect(mockResponse.json).toHaveBeenCalledWith({
-//             message: 'Error updating expense',
-//         });
-//     });
+    // Assert
+    expect(mockResponse.status).toHaveBeenCalledWith(400);
+    expect(mockResponse.json).toHaveBeenCalledWith({
+        message: 'Error updating expense',
+    });
+});
 
 //     it('should respond with a 404 error message when the account does not exist', async () => {
 //         // Arrange
