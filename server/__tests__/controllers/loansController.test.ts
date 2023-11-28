@@ -914,25 +914,25 @@ describe('DELETE /api/loans/:id', () => {
             message: 'Error deleting loan',
         });
     });
+
+    it('should respond with a 404 error message when the loan does not exist', async () => {
+        // Arrange
+        mockModule([[]]);
+
+        const { deleteLoan } = await import(
+            '../../controllers/loansController.js'
+        );
+
+        mockRequest.params = { id: 3 };
+
+        // Act
+        await deleteLoan(mockRequest as Request, mockResponse, mockNext);
+
+        // Assert
+        expect(mockResponse.status).toHaveBeenCalledWith(404);
+        expect(mockResponse.send).toHaveBeenCalledWith('Loan not found');
+    });
 });
-
-//     it('should respond with a 404 error message when the loan does not exist', async () => {
-//         // Arrange
-//         mockModule([[]]);
-
-//         const { deleteLoan } = await import(
-//             '../../controllers/loansController.js'
-//         );
-
-//         mockRequest.params = { id: 3 };
-
-//         // Act
-//         await deleteLoan(mockRequest as Request, mockResponse, mockNext);
-
-//         // Assert
-//         expect(mockResponse.status).toHaveBeenCalledWith(404);
-//         expect(mockResponse.send).toHaveBeenCalledWith('Loan not found');
-//     });
 
 //     it('should respond with a success message', async () => {
 //         // Arrange
