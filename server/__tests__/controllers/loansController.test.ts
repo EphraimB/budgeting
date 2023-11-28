@@ -846,22 +846,55 @@ describe('PUT /api/loans/:id', () => {
     });
 });
 
-// describe('DELETE /api/loans/:id', () => {
-//     it('should call next on the middleware', async () => {
-//         // Arrange
-//         mockModule(['Loan deleted successfully']);
+describe('DELETE /api/loans/:id', () => {
+    it('should call next on the middleware', async () => {
+        // Arrange
+        const deletedLoan = [
+            {
+                account_id: 1,
+                cron_job_id: 1,
+                interest_cron_job_id: null,
+                loan_id: 1,
+                loan_amount: 1000,
+                loan_plan_amount: 100,
+                loan_recipient: 'John Doe',
+                loan_title: 'Test Loan',
+                loan_description: 'Test Loan Description',
+                frequency_type: 2,
+                loan_interest_rate: 0,
+                loan_interest_frequency_type: 0,
+                loan_begin_date: '2021-01-01',
+                loan_subsidized: 0,
+                date_created: '2020-01-01',
+                date_modified: '2020-01-01',
+            },
+        ];
 
-//         const { deleteLoan } = await import(
-//             '../../controllers/loansController.js'
-//         );
+        mockModule(
+            [
+                deletedLoan,
+                [],
+                [{ unique_id: 1 }],
+                [{ unique_id: null }],
+                [],
+                [],
+            ],
+            [],
+            [[], []],
+        );
 
-//         mockRequest.params = { id: 1 };
+        const { deleteLoan } = await import(
+            '../../controllers/loansController.js'
+        );
 
-//         await deleteLoan(mockRequest as Request, mockResponse, mockNext);
+        mockRequest.params = { id: 1 };
 
-//         // Assert
-//         expect(mockNext).toHaveBeenCalled();
-//     });
+        await deleteLoan(mockRequest as Request, mockResponse, mockNext);
+
+        // Assert
+        expect(mockNext).toHaveBeenCalled();
+    });
+});
 
 //     it('should respond with an error message', async () => {
 //         // Arrange
