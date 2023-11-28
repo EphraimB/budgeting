@@ -663,30 +663,43 @@ describe('PUT /api/expenses/:id', () => {
         expect(mockRequest.expense_id).toBe(1);
         expect(mockNext).toHaveBeenCalled();
     });
+
+    it('should handle errors correctly', async () => {
+        // Arrange
+        const errorMessage = 'Error updating expense';
+        mockModule([], [errorMessage]);
+
+        const { updateExpense } = await import(
+            '../../controllers/expensesController.js'
+        );
+
+        mockRequest.params = { id: 1 };
+        (mockRequest.body = {
+            expense_id: 1,
+            account_id: 1,
+            tax_id: 1,
+            expense_amount: 50,
+            expense_title: 'Test Expense',
+            expense_description: 'Test Expense to test the expense route',
+            frequency_type: 2,
+            frequency_type_variable: null,
+            frequency_day_of_month: null,
+            frequency_day_of_week: null,
+            frequency_week_of_month: null,
+            frequency_month_of_year: null,
+            expense_subsidized: 0,
+            expense_begin_date: '2020-01-01',
+        }),
+            // Act
+            await updateExpense(mockRequest as Request, mockResponse, mockNext);
+
+        // Assert
+        expect(mockResponse.status).toHaveBeenCalledWith(400);
+        expect(mockResponse.json).toHaveBeenCalledWith({
+            message: 'Error updating expense',
+        });
+    });
 });
-
-//     it('should handle errors correctly', async () => {
-//         // Arrange
-//         const errorMessage = 'Error updating expense';
-//         const error = new Error(errorMessage);
-//         mockModule(null, errorMessage);
-
-//         const { updateExpense } = await import(
-//             '../../controllers/expensesController.js'
-//         );
-
-//         mockRequest.params = { id: 1 };
-//         mockRequest.body = expenses.filter((expense) => expense.id === 1);
-
-//         // Act
-//         await updateExpense(mockRequest as Request, mockResponse, mockNext);
-
-//         // Assert
-//         expect(mockResponse.status).toHaveBeenCalledWith(400);
-//         expect(mockResponse.json).toHaveBeenCalledWith({
-//             message: 'Error updating expense',
-//         });
-//     });
 
 //     it('should handle errors correctly in the return object function', async () => {
 //         // Arrange
