@@ -443,26 +443,25 @@ describe('GET /api/loans', () => {
             message: 'Error getting loan',
         });
     });
+
+    it('should respond with a 404 error message when the loan does not exist', async () => {
+        // Arrange
+        mockModule([[]]);
+
+        const { getLoans } = await import(
+            '../../controllers/loansController.js'
+        );
+
+        mockRequest.query = { id: 3 };
+
+        // Act
+        await getLoans(mockRequest as Request, mockResponse);
+
+        // Assert
+        expect(mockResponse.status).toHaveBeenCalledWith(404);
+        expect(mockResponse.send).toHaveBeenCalledWith('Loan not found');
+    });
 });
-
-//     it('should respond with a 404 error message when the loan does not exist', async () => {
-//         // Arrange
-//         mockModule([[]]);
-
-//         const { getLoans } = await import(
-//             '../../controllers/loansController.js'
-//         );
-
-//         mockRequest.query = { id: 3 };
-
-//         // Act
-//         await getLoans(mockRequest as Request, mockResponse);
-
-//         // Assert
-//         expect(mockResponse.status).toHaveBeenCalledWith(404);
-//         expect(mockResponse.send).toHaveBeenCalledWith('Loan not found');
-//     });
-// });
 
 // describe('POST /api/loans', () => {
 //     it('should populate request.loan_id', async () => {
