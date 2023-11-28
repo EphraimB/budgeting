@@ -349,29 +349,28 @@ describe('GET /api/loans', () => {
         expect(mockResponse.status).toHaveBeenCalledWith(200);
         expect(mockResponse.json).toHaveBeenCalledWith(modifiedLoans);
     });
+
+    it('should respond with an error message with account id', async () => {
+        // Arrange
+        const errorMessage = 'Error getting loan';
+        mockModule([null], [errorMessage]);
+
+        mockRequest.query = { account_id: 1 };
+
+        const { getLoans } = await import(
+            '../../controllers/loansController.js'
+        );
+
+        // Call the function with the mock request and response
+        await getLoans(mockRequest as Request, mockResponse);
+
+        // Assert
+        expect(mockResponse.status).toHaveBeenCalledWith(400);
+        expect(mockResponse.json).toHaveBeenCalledWith({
+            message: 'Error getting loans for given account_id',
+        });
+    });
 });
-
-//     it('should respond with an error message with account id', async () => {
-//         // Arrange
-//         const errorMessage = 'Error getting loan';
-//         const error = new Error(errorMessage);
-//         mockModule([null], errorMessage);
-
-//         mockRequest.query = { account_id: 1 };
-
-//         const { getLoans } = await import(
-//             '../../controllers/loansController.js'
-//         );
-
-//         // Call the function with the mock request and response
-//         await getLoans(mockRequest as Request, mockResponse);
-
-//         // Assert
-//         expect(mockResponse.status).toHaveBeenCalledWith(400);
-//         expect(mockResponse.json).toHaveBeenCalledWith({
-//             message: 'Error getting loans for given account_id',
-//         });
-//     });
 
 //     it('should respond with an array of loans with account id and id', async () => {
 //         // Arrange
