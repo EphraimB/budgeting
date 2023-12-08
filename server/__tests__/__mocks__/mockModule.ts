@@ -1,5 +1,8 @@
 import { jest } from '@jest/globals';
-import { parseIntOrFallback } from '../../utils/helperFunctions';
+import {
+    parseIntOrFallback,
+    parseFloatOrFallback,
+} from '../../utils/helperFunctions';
 
 /**
  *
@@ -72,6 +75,7 @@ export const mockModule = (
         scheduleQuery,
         unscheduleQuery,
         parseIntOrFallback,
+        parseFloatOrFallback,
         nextTransactionFrequencyDate: jest.fn().mockReturnValue('2020-01-01'),
     }));
 };
