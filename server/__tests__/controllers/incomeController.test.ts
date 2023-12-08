@@ -482,25 +482,24 @@ describe('DELETE /api/income/:id', () => {
         expect(mockResponse.status).toHaveBeenCalledWith(404);
         expect(mockResponse.send).toHaveBeenCalledWith('Income not found');
     });
+
+    it('should respond with a success message', async () => {
+        // Arrange
+        mockModule(['Income deleted successfully']);
+
+        const { deleteIncomeReturnObject } = await import(
+            '../../controllers/incomeController.js'
+        );
+
+        mockRequest.params = { id: 1 };
+
+        // Call the function with the mock request and response
+        await deleteIncomeReturnObject(mockRequest as Request, mockResponse);
+
+        // Assert
+        expect(mockResponse.status).toHaveBeenCalledWith(200);
+        expect(mockResponse.send).toHaveBeenCalledWith(
+            'Income deleted successfully',
+        );
+    });
 });
-
-//     it('should respond with a success message', async () => {
-//         // Arrange
-//         mockModule('Income deleted successfully');
-
-//         const { deleteIncomeReturnObject } = await import(
-//             '../../controllers/incomeController.js'
-//         );
-
-//         mockRequest.params = { id: 1 };
-
-//         // Call the function with the mock request and response
-//         await deleteIncomeReturnObject(mockRequest as Request, mockResponse);
-
-//         // Assert
-//         expect(mockResponse.status).toHaveBeenCalledWith(200);
-//         expect(mockResponse.send).toHaveBeenCalledWith(
-//             'Income deleted successfully',
-//         );
-//     });
-// });
