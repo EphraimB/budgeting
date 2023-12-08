@@ -383,28 +383,26 @@ describe('PUT /api/income/:id', () => {
             message: 'Error updating income',
         });
     });
+
+    it('should respond with a 404 error message when the income does not exist', async () => {
+        // Arrange
+        mockModule([[]]);
+
+        const { updateIncome } = await import(
+            '../../controllers/incomeController.js'
+        );
+
+        mockRequest.params = { id: 1 };
+        mockRequest.body = income[0];
+
+        // Act
+        await updateIncome(mockRequest as Request, mockResponse, mockNext);
+
+        // Assert
+        expect(mockResponse.status).toHaveBeenCalledWith(404);
+        expect(mockResponse.send).toHaveBeenCalledWith('Income not found');
+    });
 });
-
-//     it('should respond with a 404 error message when the account does not exist', async () => {
-//         // Arrange
-//         mockModule([]);
-
-//         const { updateIncome } = await import(
-//             '../../controllers/incomeController.js'
-//         );
-
-//         mockRequest.params = { id: 1 };
-//         mockRequest.body = accounts.filter(
-//             (account) => account.account_id === 1,
-//         );
-
-//         // Act
-//         await updateIncome(mockRequest as Request, mockResponse, mockNext);
-
-//         // Assert
-//         expect(mockResponse.status).toHaveBeenCalledWith(404);
-//         expect(mockResponse.send).toHaveBeenCalledWith('Income not found');
-//     });
 
 //     it('should respond with an array of income', async () => {
 //         // Arrange
