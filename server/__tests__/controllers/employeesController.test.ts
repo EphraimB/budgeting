@@ -1,6 +1,5 @@
 import { jest } from '@jest/globals';
 import { type Request, type Response } from 'express';
-import { payrollDates, payrollTaxes } from '../../models/mockData.js';
 
 // Mock request and response
 let mockRequest: any;
