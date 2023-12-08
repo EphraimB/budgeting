@@ -464,25 +464,25 @@ describe('DELETE /api/income/:id', () => {
             message: 'Error deleting income',
         });
     });
+
+    it('should respond with a 404 error message when the account does not exist', async () => {
+        // Arrange
+        mockModule([[]]);
+
+        const { deleteIncome } = await import(
+            '../../controllers/incomeController.js'
+        );
+
+        mockRequest.params = { id: 1 };
+
+        // Act
+        await deleteIncome(mockRequest as Request, mockResponse, mockNext);
+
+        // Assert
+        expect(mockResponse.status).toHaveBeenCalledWith(404);
+        expect(mockResponse.send).toHaveBeenCalledWith('Income not found');
+    });
 });
-
-//     it('should respond with a 404 error message when the account does not exist', async () => {
-//         // Arrange
-//         mockModule([]);
-
-//         const { deleteIncome } = await import(
-//             '../../controllers/incomeController.js'
-//         );
-
-//         mockRequest.params = { id: 1 };
-
-//         // Act
-//         await deleteIncome(mockRequest as Request, mockResponse, mockNext);
-
-//         // Assert
-//         expect(mockResponse.status).toHaveBeenCalledWith(404);
-//         expect(mockResponse.send).toHaveBeenCalledWith('Income not found');
-//     });
 
 //     it('should respond with a success message', async () => {
 //         // Arrange
