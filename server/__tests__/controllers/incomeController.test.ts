@@ -185,29 +185,25 @@ describe('GET /api/income', () => {
             message: 'Error getting income for given account_id',
         });
     });
+
+    it('should respond with an array of income with account id and id', async () => {
+        // Arrange
+        mockModule([income]);
+
+        const { getIncome } = await import(
+            '../../controllers/incomeController.js'
+        );
+
+        mockRequest.query = { account_id: 1, id: 1 };
+
+        // Call the function with the mock request and response
+        await getIncome(mockRequest as Request, mockResponse);
+
+        // Assert
+        expect(mockResponse.status).toHaveBeenCalledWith(200);
+        expect(mockResponse.json).toHaveBeenCalledWith(incomeResponse);
+    });
 });
-
-//     it('should respond with an array of income with account id and id', async () => {
-//         // Arrange
-//         mockModule(
-//             income.filter((inc) => inc.account_id === 1 && inc.id === 1),
-//         );
-
-//         const { getIncome } = await import(
-//             '../../controllers/incomeController.js'
-//         );
-
-//         mockRequest.query = { account_id: 1, id: 1 };
-
-//         // Call the function with the mock request and response
-//         await getIncome(mockRequest as Request, mockResponse);
-
-//         // Assert
-//         expect(mockResponse.status).toHaveBeenCalledWith(200);
-//         expect(mockResponse.json).toHaveBeenCalledWith(
-//             income.filter((inc) => inc.account_id === 1 && inc.id === 1),
-//         );
-//     });
 
 //     it('should handle errors correctly with account id and id', async () => {
 //         // Arrange
