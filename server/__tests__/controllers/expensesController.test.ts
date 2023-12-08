@@ -1,5 +1,12 @@
-import { jest } from '@jest/globals';
-import { type Request, type Response } from 'express';
+import {
+    jest,
+    beforeEach,
+    afterEach,
+    describe,
+    it,
+    expect,
+} from '@jest/globals';
+import { type Request } from 'express';
 import { mockModule } from '../__mocks__/mockModule';
 
 jest.mock('../../config/winston', () => ({
@@ -28,88 +35,88 @@ afterEach(() => {
     jest.resetModules();
 });
 
+const expenses = [
+    {
+        expense_id: 1,
+        account_id: 1,
+        tax_id: 1,
+        expense_amount: 50,
+        expense_title: 'Test Expense',
+        expense_description: 'Test Expense to test the expense route',
+        frequency_type: 2,
+        frequency_type_variable: null,
+        frequency_day_of_month: null,
+        frequency_day_of_week: null,
+        frequency_week_of_month: null,
+        frequency_month_of_year: null,
+        expense_subsidized: 0,
+        expense_begin_date: '2020-01-01',
+        date_created: '2020-01-01',
+        date_modified: '2020-01-01',
+    },
+    {
+        expense_id: 2,
+        account_id: 1,
+        tax_id: 1,
+        expense_amount: 50,
+        expense_title: 'Test Expense 2',
+        expense_description: 'Test Expense 2 to test the expense route',
+        frequency_type: 2,
+        frequency_type_variable: null,
+        frequency_day_of_month: null,
+        frequency_day_of_week: null,
+        frequency_week_of_month: null,
+        frequency_month_of_year: null,
+        expense_subsidized: 0,
+        expense_begin_date: '2020-01-01',
+        date_created: '2020-01-01',
+        date_modified: '2020-01-01',
+    },
+];
+
+const expectedResponse = [
+    {
+        id: 1,
+        account_id: 1,
+        tax_id: 1,
+        amount: 50,
+        title: 'Test Expense',
+        description: 'Test Expense to test the expense route',
+        frequency_type: 2,
+        frequency_type_variable: null,
+        frequency_day_of_month: null,
+        frequency_day_of_week: null,
+        frequency_week_of_month: null,
+        frequency_month_of_year: null,
+        subsidized: 0,
+        begin_date: '2020-01-01',
+        next_date: '2020-01-01',
+        date_created: '2020-01-01',
+        date_modified: '2020-01-01',
+    },
+    {
+        id: 2,
+        account_id: 1,
+        tax_id: 1,
+        amount: 50,
+        title: 'Test Expense 2',
+        description: 'Test Expense 2 to test the expense route',
+        frequency_type: 2,
+        frequency_type_variable: null,
+        frequency_day_of_month: null,
+        frequency_day_of_week: null,
+        frequency_week_of_month: null,
+        frequency_month_of_year: null,
+        subsidized: 0,
+        begin_date: '2020-01-01',
+        next_date: '2020-01-01',
+        date_created: '2020-01-01',
+        date_modified: '2020-01-01',
+    },
+];
+
 describe('GET /api/expenses', () => {
     it('should respond with an array of expenses', async () => {
-        const expenses = [
-            {
-                expense_id: 1,
-                account_id: 1,
-                tax_id: 1,
-                expense_amount: 50,
-                expense_title: 'Test Expense',
-                expense_description: 'Test Expense to test the expense route',
-                frequency_type: 2,
-                frequency_type_variable: null,
-                frequency_day_of_month: null,
-                frequency_day_of_week: null,
-                frequency_week_of_month: null,
-                frequency_month_of_year: null,
-                expense_subsidized: 0,
-                expense_begin_date: '2020-01-01',
-                date_created: '2020-01-01',
-                date_modified: '2020-01-01',
-            },
-            {
-                expense_id: 2,
-                account_id: 1,
-                tax_id: 1,
-                expense_amount: 50,
-                expense_title: 'Test Expense 2',
-                expense_description: 'Test Expense 2 to test the expense route',
-                frequency_type: 2,
-                frequency_type_variable: null,
-                frequency_day_of_month: null,
-                frequency_day_of_week: null,
-                frequency_week_of_month: null,
-                frequency_month_of_year: null,
-                expense_subsidized: 0,
-                expense_begin_date: '2020-01-01',
-                date_created: '2020-01-01',
-                date_modified: '2020-01-01',
-            },
-        ];
-
-        const expectedResponse = [
-            {
-                id: 1,
-                account_id: 1,
-                tax_id: 1,
-                amount: 50,
-                title: 'Test Expense',
-                description: 'Test Expense to test the expense route',
-                frequency_type: 2,
-                frequency_type_variable: null,
-                frequency_day_of_month: null,
-                frequency_day_of_week: null,
-                frequency_week_of_month: null,
-                frequency_month_of_year: null,
-                subsidized: 0,
-                begin_date: '2020-01-01',
-                next_date: '2020-01-01',
-                date_created: '2020-01-01',
-                date_modified: '2020-01-01',
-            },
-            {
-                id: 2,
-                account_id: 1,
-                tax_id: 1,
-                amount: 50,
-                title: 'Test Expense 2',
-                description: 'Test Expense 2 to test the expense route',
-                frequency_type: 2,
-                frequency_type_variable: null,
-                frequency_day_of_month: null,
-                frequency_day_of_week: null,
-                frequency_week_of_month: null,
-                frequency_month_of_year: null,
-                subsidized: 0,
-                begin_date: '2020-01-01',
-                next_date: '2020-01-01',
-                date_created: '2020-01-01',
-                date_modified: '2020-01-01',
-            },
-        ];
-
         // Arrange
         mockModule([expenses], [], [], []);
 
@@ -150,51 +157,12 @@ describe('GET /api/expenses', () => {
 
     it('should respond with an array of expenses with id', async () => {
         // Arrange
-        const expenses = [
-            {
-                expense_id: 1,
-                account_id: 1,
-                tax_id: 1,
-                expense_amount: 50,
-                expense_title: 'Test Expense',
-                expense_description: 'Test Expense to test the expense route',
-                frequency_type: 2,
-                frequency_type_variable: null,
-                frequency_day_of_month: null,
-                frequency_day_of_week: null,
-                frequency_week_of_month: null,
-                frequency_month_of_year: null,
-                expense_subsidized: 0,
-                expense_begin_date: '2020-01-01',
-                date_created: '2020-01-01',
-                date_modified: '2020-01-01',
-            },
-        ];
-
-        const expectedResponse = [
-            {
-                id: 1,
-                account_id: 1,
-                tax_id: 1,
-                amount: 50,
-                title: 'Test Expense',
-                description: 'Test Expense to test the expense route',
-                frequency_type: 2,
-                frequency_type_variable: null,
-                frequency_day_of_month: null,
-                frequency_day_of_week: null,
-                frequency_week_of_month: null,
-                frequency_month_of_year: null,
-                subsidized: 0,
-                begin_date: '2020-01-01',
-                next_date: '2020-01-01',
-                date_created: '2020-01-01',
-                date_modified: '2020-01-01',
-            },
-        ];
-
-        // Arrange
-        mockModule([expenses], [], [], []);
+        mockModule(
+            [expenses.filter((expense) => expense.expense_id === 1)],
+            [],
+            [],
+            [],
+        );
 
         const { getExpenses } = await import(
             '../../controllers/expensesController.js'
@@ -207,7 +175,9 @@ describe('GET /api/expenses', () => {
 
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(200);
-        expect(mockResponse.json).toHaveBeenCalledWith(expectedResponse);
+        expect(mockResponse.json).toHaveBeenCalledWith(
+            expectedResponse.filter((expense) => expense.id === 1),
+        );
     });
 
     it('should handle errors correctly with id', async () => {
