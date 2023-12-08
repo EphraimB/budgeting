@@ -282,29 +282,28 @@ describe('POST /api/income', () => {
             message: 'Error creating income',
         });
     });
+
+    it('should handle errors correctly in return object', async () => {
+        // Arrange
+        const errorMessage = 'Error creating income';
+        mockModule([], [errorMessage]);
+
+        const { createIncomeReturnObject } = await import(
+            '../../controllers/incomeController.js'
+        );
+
+        mockRequest.body = income[0];
+
+        // Act
+        await createIncomeReturnObject(mockRequest as Request, mockResponse);
+
+        // Assert
+        expect(mockResponse.status).toHaveBeenCalledWith(400);
+        expect(mockResponse.json).toHaveBeenCalledWith({
+            message: 'Error creating income',
+        });
+    });
 });
-
-//     it('should handle errors correctly in return object', async () => {
-//         // Arrange
-//         const errorMessage = 'Error creating income';
-//         const error = new Error(errorMessage);
-//         mockModule(null, errorMessage);
-
-//         const { createIncomeReturnObject } = await import(
-//             '../../controllers/incomeController.js'
-//         );
-
-//         mockRequest.body = income.filter((inc) => inc.id === 1);
-
-//         // Act
-//         await createIncomeReturnObject(mockRequest as Request, mockResponse);
-
-//         // Assert
-//         expect(mockResponse.status).toHaveBeenCalledWith(400);
-//         expect(mockResponse.json).toHaveBeenCalledWith({
-//             message: 'Error creating income',
-//         });
-//     });
 
 //     it('should respond with an array of income', async () => {
 //         // Arrange
