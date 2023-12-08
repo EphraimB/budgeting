@@ -224,26 +224,25 @@ describe('GET /api/income', () => {
             message: 'Error getting income',
         });
     });
+
+    it('should respond with a 404 error message when the income does not exist', async () => {
+        // Arrange
+        mockModule([[]]);
+
+        const { getIncome } = await import(
+            '../../controllers/incomeController.js'
+        );
+
+        mockRequest.query = { id: 3 };
+
+        // Act
+        await getIncome(mockRequest as Request, mockResponse);
+
+        // Assert
+        expect(mockResponse.status).toHaveBeenCalledWith(404);
+        expect(mockResponse.send).toHaveBeenCalledWith('Income not found');
+    });
 });
-
-//     it('should respond with a 404 error message when the income does not exist', async () => {
-//         // Arrange
-//         mockModule([]);
-
-//         const { getIncome } = await import(
-//             '../../controllers/incomeController.js'
-//         );
-
-//         mockRequest.query = { id: 3 };
-
-//         // Act
-//         await getIncome(mockRequest as Request, mockResponse);
-
-//         // Assert
-//         expect(mockResponse.status).toHaveBeenCalledWith(404);
-//         expect(mockResponse.send).toHaveBeenCalledWith('Income not found');
-//     });
-// });
 
 // describe('POST /api/income', () => {
 //     it('should populate the request.income_id', async () => {
