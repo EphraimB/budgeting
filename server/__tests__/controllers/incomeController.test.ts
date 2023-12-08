@@ -323,25 +323,24 @@ describe('POST /api/income', () => {
     });
 });
 
-// describe('PUT /api/income/:id', () => {
-//     it('should call next in the middleware', async () => {
-//         const updatedIncome = income.filter((inc) => inc.id === 1);
+describe('PUT /api/income/:id', () => {
+    it('should call next in the middleware', async () => {
+        mockModule([income, [{ cron_job_id: 1 }], []], [], [[]], []);
 
-//         mockModule(updatedIncome, undefined, '1', []);
+        const { updateIncome } = await import(
+            '../../controllers/incomeController.js'
+        );
 
-//         const { updateIncome } = await import(
-//             '../../controllers/incomeController.js'
-//         );
+        mockRequest.params = { id: 1 };
+        mockRequest.body = income[0];
 
-//         mockRequest.params = { id: 1 };
-//         mockRequest.body = updatedIncome;
+        await updateIncome(mockRequest as Request, mockResponse, mockNext);
 
-//         await updateIncome(mockRequest as Request, mockResponse, mockNext);
-
-//         // Assert
-//         expect(mockRequest.income_id).toBe(1);
-//         expect(mockNext).toHaveBeenCalled();
-//     });
+        // Assert
+        expect(mockRequest.income_id).toBe(1);
+        expect(mockNext).toHaveBeenCalled();
+    });
+});
 
 //     it('should handle errors correctly', async () => {
 //         // Arrange
