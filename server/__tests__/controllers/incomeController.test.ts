@@ -340,30 +340,29 @@ describe('PUT /api/income/:id', () => {
         expect(mockRequest.income_id).toBe(1);
         expect(mockNext).toHaveBeenCalled();
     });
+
+    it('should handle errors correctly', async () => {
+        // Arrange
+        const errorMessage = 'Error updating income';
+        mockModule([], [errorMessage]);
+
+        const { updateIncome } = await import(
+            '../../controllers/incomeController.js'
+        );
+
+        mockRequest.params = { id: 1 };
+        mockRequest.body = income[0];
+
+        // Act
+        await updateIncome(mockRequest as Request, mockResponse, mockNext);
+
+        // Assert
+        expect(mockResponse.status).toHaveBeenCalledWith(400);
+        expect(mockResponse.json).toHaveBeenCalledWith({
+            message: 'Error updating income',
+        });
+    });
 });
-
-//     it('should handle errors correctly', async () => {
-//         // Arrange
-//         const errorMessage = 'Error updating income';
-//         const error = new Error(errorMessage);
-//         mockModule(null, errorMessage);
-
-//         const { updateIncome } = await import(
-//             '../../controllers/incomeController.js'
-//         );
-
-//         mockRequest.params = { id: 1 };
-//         mockRequest.body = income.filter((inc) => inc.id === 1);
-
-//         // Act
-//         await updateIncome(mockRequest as Request, mockResponse, mockNext);
-
-//         // Assert
-//         expect(mockResponse.status).toHaveBeenCalledWith(400);
-//         expect(mockResponse.json).toHaveBeenCalledWith({
-//             message: 'Error updating income',
-//         });
-//     });
 
 //     it('should handle errors correctly in the return object function', async () => {
 //         // Arrange
