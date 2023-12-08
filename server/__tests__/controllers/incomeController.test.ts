@@ -443,29 +443,28 @@ describe('DELETE /api/income/:id', () => {
         // Assert
         expect(mockNext).toHaveBeenCalled();
     });
+
+    it('should handle errors correctly', async () => {
+        // Arrange
+        const errorMessage = 'Error deleting income';
+        mockModule([], [errorMessage]);
+
+        const { deleteIncome } = await import(
+            '../../controllers/incomeController.js'
+        );
+
+        mockRequest.params = { id: 1 };
+
+        // Act
+        await deleteIncome(mockRequest as Request, mockResponse, mockNext);
+
+        // Assert
+        expect(mockResponse.status).toHaveBeenCalledWith(400);
+        expect(mockResponse.json).toHaveBeenCalledWith({
+            message: 'Error deleting income',
+        });
+    });
 });
-
-//     it('should handle errors correctly', async () => {
-//         // Arrange
-//         const errorMessage = 'Error deleting income';
-//         const error = new Error(errorMessage);
-//         mockModule(null, errorMessage);
-
-//         const { deleteIncome } = await import(
-//             '../../controllers/incomeController.js'
-//         );
-
-//         mockRequest.params = { id: 1 };
-
-//         // Act
-//         await deleteIncome(mockRequest as Request, mockResponse, mockNext);
-
-//         // Assert
-//         expect(mockResponse.status).toHaveBeenCalledWith(400);
-//         expect(mockResponse.json).toHaveBeenCalledWith({
-//             message: 'Error deleting income',
-//         });
-//     });
 
 //     it('should respond with a 404 error message when the account does not exist', async () => {
 //         // Arrange
