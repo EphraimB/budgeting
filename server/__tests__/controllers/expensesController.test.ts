@@ -74,7 +74,7 @@ const expenses = [
     },
 ];
 
-const expectedResponse = [
+const expensesResponse = [
     {
         id: 1,
         account_id: 1,
@@ -131,7 +131,7 @@ describe('GET /api/expenses', () => {
 
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(200);
-        expect(mockResponse.json).toHaveBeenCalledWith(expectedResponse);
+        expect(mockResponse.json).toHaveBeenCalledWith(expensesResponse);
     });
 
     it('should handle errors correctly', async () => {
@@ -176,7 +176,7 @@ describe('GET /api/expenses', () => {
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(200);
         expect(mockResponse.json).toHaveBeenCalledWith(
-            expectedResponse.filter((expense) => expense.id === 1),
+            expensesResponse.filter((expense) => expense.id === 1),
         );
     });
 
@@ -223,7 +223,7 @@ describe('GET /api/expenses', () => {
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(200);
         expect(mockResponse.json).toHaveBeenCalledWith(
-            expectedResponse.filter((expense) => expense.id === 1),
+            expensesResponse.filter((expense) => expense.id === 1),
         );
     });
 
@@ -273,7 +273,7 @@ describe('GET /api/expenses', () => {
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(200);
         expect(mockResponse.json).toHaveBeenCalledWith(
-            expectedResponse
+            expensesResponse
                 .filter((expense) => expense.account_id === 1)
                 .filter((exnse) => exnse.id === 1),
         );
@@ -396,25 +396,6 @@ describe('POST /api/expenses', () => {
 
     it('should respond with an array of expenses', async () => {
         // Arrange
-        const expenses = [
-            {
-                expense_id: 1,
-                account_id: 1,
-                tax_id: 1,
-                expense_amount: 50,
-                expense_title: 'Test Expense',
-                expense_description: 'Test Expense to test the expense route',
-                frequency_type: 2,
-                frequency_type_variable: null,
-                frequency_day_of_month: null,
-                frequency_day_of_week: null,
-                frequency_week_of_month: null,
-                frequency_month_of_year: null,
-                expense_subsidized: 0,
-                expense_begin_date: '2020-01-01',
-            },
-        ];
-
         const expensesResponse = [
             {
                 id: 1,
@@ -431,10 +412,11 @@ describe('POST /api/expenses', () => {
                 frequency_month_of_year: null,
                 subsidized: 0,
                 begin_date: '2020-01-01',
+                date_created: '2020-01-01',
+                date_modified: '2020-01-01',
             },
         ];
-
-        mockModule([expenses, [], [{ cron_job_id: 1 }], []], [], [[]], []);
+        mockModule([expenses.filter((expense) => expense.expense_id === 1)]);
 
         const { createExpenseReturnObject } = await import(
             '../../controllers/expensesController.js'
@@ -447,7 +429,9 @@ describe('POST /api/expenses', () => {
 
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(201);
-        expect(mockResponse.json).toHaveBeenCalledWith(expensesResponse);
+        expect(mockResponse.json).toHaveBeenCalledWith(
+            expensesResponse.filter((expenses) => expenses.id === 1),
+        );
     });
 });
 
