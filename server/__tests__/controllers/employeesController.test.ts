@@ -592,7 +592,7 @@ describe('DELETE /api/payroll/employee/:id', () => {
                 rate: 0.05,
             },
         ];
-        
+
         // Arrange
         const employee_id = 1;
         mockRequest.params = { employee_id };
@@ -616,25 +616,25 @@ describe('DELETE /api/payroll/employee/:id', () => {
             },
         });
     });
+
+    it('should respond with a 404 error message when the employee does not exist', async () => {
+        // Arrange
+        mockModule([[]]);
+
+        const { deleteEmployee } = await import(
+            '../../controllers/employeesController.js'
+        );
+
+        mockRequest.params = { employee_id: 3 };
+
+        // Act
+        await deleteEmployee(mockRequest as Request, mockResponse);
+
+        // Assert
+        expect(mockResponse.status).toHaveBeenCalledWith(404);
+        expect(mockResponse.send).toHaveBeenCalledWith('Employee not found');
+    });
 });
-
-//     it('should respond with a 404 error message when the employee does not exist', async () => {
-//         // Arrange
-//         mockModule([[], null, null]);
-
-//         const { deleteEmployee } = await import(
-//             '../../controllers/employeesController.js'
-//         );
-
-//         mockRequest.params = { employee_id: 3 };
-
-//         // Act
-//         await deleteEmployee(mockRequest as Request, mockResponse);
-
-//         // Assert
-//         expect(mockResponse.status).toHaveBeenCalledWith(404);
-//         expect(mockResponse.send).toHaveBeenCalledWith('Employee not found');
-//     });
 
 //     it('should respond with a 500 error message when the script fails', async () => {
 //         // Arrange
