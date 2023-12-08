@@ -250,49 +250,80 @@ describe('GET /api/payroll/employee', () => {
     });
 });
 
-// describe('POST /api/payroll/employee', () => {
-//     it('should respond with the new employee', async () => {
-//         // Arrange
-//         const newEmployee = employees.filter((employee) => employee.id === 1);
+describe('POST /api/payroll/employee', () => {
+    it('should respond with the new employee', async () => {
+        const employees = [
+            {
+                employee_id: 1,
+                name: 'Test Employee',
+                hourly_rate: 10,
+                regular_hours: 40,
+                vacation_days: 10,
+                sick_days: 10,
+                work_schedule: '0111100',
+            },
+        ];
 
-//         mockModule([newEmployee]);
+        const employeeResponse = [
+            {
+                id: 1,
+                name: 'Test Employee',
+                hourly_rate: 10,
+                regular_hours: 40,
+                vacation_days: 10,
+                sick_days: 10,
+                work_schedule: '0111100',
+            },
+        ];
 
-//         const { createEmployee } = await import(
-//             '../../controllers/employeesController.js'
-//         );
+        // Arrange
+        mockModule([employees]);
 
-//         mockRequest.body = newEmployee;
+        const { createEmployee } = await import(
+            '../../controllers/employeesController.js'
+        );
 
-//         await createEmployee(mockRequest as Request, mockResponse);
+        mockRequest.body = employees;
 
-//         // Assert
-//         expect(mockResponse.status).toHaveBeenCalledWith(201);
-//         expect(mockResponse.json).toHaveBeenCalledWith(newEmployee);
-//     });
+        await createEmployee(mockRequest as Request, mockResponse);
 
-//     it('should respond with an error message', async () => {
-//         // Arrange
-//         const newEmployee = employees.filter((employee) => employee.id === 1);
+        // Assert
+        expect(mockResponse.status).toHaveBeenCalledWith(201);
+        expect(mockResponse.json).toHaveBeenCalledWith(employeeResponse);
+    });
 
-//         const errorMessage = 'Error creating employee';
-//         const error = new Error(errorMessage);
-//         mockModule(null, errorMessage);
+    it('should respond with an error message', async () => {
+        const employees = [
+            {
+                employee_id: 1,
+                name: 'Test Employee',
+                hourly_rate: 10,
+                regular_hours: 40,
+                vacation_days: 10,
+                sick_days: 10,
+                work_schedule: '0111100',
+            },
+        ];
 
-//         const { createEmployee } = await import(
-//             '../../controllers/employeesController.js'
-//         );
+        // Arrange
+        const errorMessage = 'Error creating employee';
+        mockModule([], [errorMessage]);
 
-//         mockRequest.body = newEmployee;
+        const { createEmployee } = await import(
+            '../../controllers/employeesController.js'
+        );
 
-//         await createEmployee(mockRequest as Request, mockResponse);
+        mockRequest.body = employees;
 
-//         // Assert
-//         expect(mockResponse.status).toHaveBeenCalledWith(400);
-//         expect(mockResponse.json).toHaveBeenCalledWith({
-//             message: 'Error creating employee',
-//         });
-//     });
-// });
+        await createEmployee(mockRequest as Request, mockResponse);
+
+        // Assert
+        expect(mockResponse.status).toHaveBeenCalledWith(400);
+        expect(mockResponse.json).toHaveBeenCalledWith({
+            message: 'Error creating employee',
+        });
+    });
+});
 
 // describe('PUT /api/payroll/employee/:id', () => {
 //     it('should call next on middleware', async () => {
