@@ -261,29 +261,28 @@ describe('POST /api/income', () => {
         expect(mockRequest.income_id).toBe(1);
         expect(mockNext).toHaveBeenCalled();
     });
+
+    it('should handle errors correctly', async () => {
+        // Arrange
+        const errorMessage = 'Error creating income';
+        mockModule([], [errorMessage]);
+
+        const { createIncome } = await import(
+            '../../controllers/incomeController.js'
+        );
+
+        mockRequest.body = income[0];
+
+        // Act
+        await createIncome(mockRequest as Request, mockResponse, mockNext);
+
+        // Assert
+        expect(mockResponse.status).toHaveBeenCalledWith(400);
+        expect(mockResponse.json).toHaveBeenCalledWith({
+            message: 'Error creating income',
+        });
+    });
 });
-
-//     it('should handle errors correctly', async () => {
-//         // Arrange
-//         const errorMessage = 'Error creating income';
-//         const error = new Error(errorMessage);
-//         mockModule(null, errorMessage);
-
-//         const { createIncome } = await import(
-//             '../../controllers/incomeController.js'
-//         );
-
-//         mockRequest.body = income.filter((inc) => inc.id === 1);
-
-//         // Act
-//         await createIncome(mockRequest as Request, mockResponse, mockNext);
-
-//         // Assert
-//         expect(mockResponse.status).toHaveBeenCalledWith(400);
-//         expect(mockResponse.json).toHaveBeenCalledWith({
-//             message: 'Error creating income',
-//         });
-//     });
 
 //     it('should handle errors correctly in return object', async () => {
 //         // Arrange
