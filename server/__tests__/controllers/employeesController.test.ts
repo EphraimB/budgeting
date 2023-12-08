@@ -496,29 +496,79 @@ describe('PUT /api/payroll/employee/:id', () => {
     });
 });
 
-// describe('DELETE /api/payroll/employee/:id', () => {
-//     it('should respond with a success message', async () => {
-//         // Arrange
-//         const employee_id = 1;
+describe('DELETE /api/payroll/employee/:id', () => {
+    it('should respond with a success message', async () => {
+        const employees = [
+            {
+                employee_id: 1,
+                name: 'Test Employee',
+                hourly_rate: 10,
+                regular_hours: 40,
+                vacation_days: 10,
+                sick_days: 10,
+                work_schedule: '0111100',
+            },
+        ];
 
-//         // Mock the executeQuery function to return different values based on the query
-//         mockModule([[employee_id], [], [], 'Successfully deleted employee']);
+        const payrollDates = [
+            {
+                id: 1,
+                employee_id: 1,
+                payroll_start_day: 1,
+                payroll_end_day: 15,
+            },
+            {
+                id: 2,
+                employee_id: 1,
+                payroll_start_day: 15,
+                payroll_end_day: 31,
+            },
+        ];
 
-//         const { deleteEmployee } = await import(
-//             '../../controllers/employeesController.js'
-//         );
+        const payrollTaxes = [
+            {
+                id: 1,
+                employee_id: 1,
+                name: 'Federal Income Tax',
+                rate: 0.1,
+            },
+            {
+                id: 2,
+                employee_id: 1,
+                name: 'State Income Tax',
+                rate: 0.05,
+            },
+        ];
 
-//         mockRequest.params = { employee_id };
+        // Arrange
+        const employee_id = 1;
 
-//         // Act
-//         await deleteEmployee(mockRequest as Request, mockResponse);
+        // Mock the executeQuery function to return different values based on the query
+        mockModule([
+            employees,
+            [],
+            [],
+            [],
+            [],
+            'Successfully deleted employee',
+        ]);
 
-//         // Assert
-//         expect(mockResponse.status).toHaveBeenCalledWith(200);
-//         expect(mockResponse.send).toHaveBeenCalledWith(
-//             'Successfully deleted employee',
-//         );
-//     });
+        const { deleteEmployee } = await import(
+            '../../controllers/employeesController.js'
+        );
+
+        mockRequest.params = { employee_id };
+
+        // Act
+        await deleteEmployee(mockRequest as Request, mockResponse);
+
+        // Assert
+        expect(mockResponse.status).toHaveBeenCalledWith(200);
+        expect(mockResponse.send).toHaveBeenCalledWith(
+            'Successfully deleted employee',
+        );
+    });
+});
 
 //     it('should handle errors correctly', async () => {
 //         // Arrange
