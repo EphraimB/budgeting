@@ -303,28 +303,25 @@ describe('POST /api/income', () => {
             message: 'Error creating income',
         });
     });
+
+    it('should respond with an array of income', async () => {
+        // Arrange
+        mockModule([income, [{ cron_job_id: 1 }], []], [], [[]], []);
+
+        const { createIncomeReturnObject } = await import(
+            '../../controllers/incomeController.js'
+        );
+
+        mockRequest.body = income[0];
+
+        // Call the function with the mock request and response
+        await createIncomeReturnObject(mockRequest as Request, mockResponse);
+
+        // Assert
+        expect(mockResponse.status).toHaveBeenCalledWith(201);
+        expect(mockResponse.json).toHaveBeenCalledWith(incomeResponse);
+    });
 });
-
-//     it('should respond with an array of income', async () => {
-//         // Arrange
-//         const newIncome = income.filter((inc) => inc.id === 1);
-
-//         mockModule(newIncome);
-
-//         const { createIncomeReturnObject } = await import(
-//             '../../controllers/incomeController.js'
-//         );
-
-//         mockRequest.body = newIncome;
-
-//         // Call the function with the mock request and response
-//         await createIncomeReturnObject(mockRequest as Request, mockResponse);
-
-//         // Assert
-//         expect(mockResponse.status).toHaveBeenCalledWith(201);
-//         expect(mockResponse.json).toHaveBeenCalledWith(newIncome);
-//     });
-// });
 
 // describe('PUT /api/income/:id', () => {
 //     it('should call next in the middleware', async () => {
