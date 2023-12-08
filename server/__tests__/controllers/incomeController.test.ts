@@ -422,41 +422,28 @@ describe('PUT /api/income/:id', () => {
     });
 });
 
-// describe('DELETE /api/income/:id', () => {
-//     it('should call next on the middleware', async () => {
-//         // Arrange
-//         mockModule(
-//             [
-//                 {
-//                     income_id: 1,
-//                     account_id: 1,
-//                     cron_job_id: 1,
-//                     tax_id: 1,
-//                     tax_rate: 1,
-//                     income_amount: 1,
-//                     income_title: 'test',
-//                     income_description: 'test',
-//                     date_created: 'test',
-//                     date_modified: 'test',
-//                 },
-//             ],
-//             undefined,
-//             '1',
-//             [{ unique_id: 'wo4if43' }],
-//             [],
-//         );
+describe('DELETE /api/income/:id', () => {
+    it('should call next on the middleware', async () => {
+        // Arrange
+        mockModule(
+            [income, [], [{ cron_job_id: 1, unique_id: 'income-1' }]],
+            [],
+            [],
+            [[]],
+        );
 
-//         const { deleteIncome } = await import(
-//             '../../controllers/incomeController.js'
-//         );
+        const { deleteIncome } = await import(
+            '../../controllers/incomeController.js'
+        );
 
-//         mockRequest.params = { id: 1 };
+        mockRequest.params = { id: 1 };
 
-//         await deleteIncome(mockRequest as Request, mockResponse, mockNext);
+        await deleteIncome(mockRequest as Request, mockResponse, mockNext);
 
-//         // Assert
-//         expect(mockNext).toHaveBeenCalled();
-//     });
+        // Assert
+        expect(mockNext).toHaveBeenCalled();
+    });
+});
 
 //     it('should handle errors correctly', async () => {
 //         // Arrange
