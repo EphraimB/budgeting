@@ -28,48 +28,48 @@ afterEach(() => {
     jest.resetModules();
 });
 
+const income = [
+    {
+        income_id: 1,
+        account_id: 1,
+        tax_id: 1,
+        income_amount: 1000,
+        income_title: 'Test Income',
+        income_description: 'Test Income to test the income route',
+        frequency_type: 2,
+        frequency_type_variable: null,
+        frequency_day_of_month: null,
+        frequency_day_of_week: null,
+        frequency_week_of_month: null,
+        frequency_month_of_year: null,
+        income_begin_date: '2020-01-01',
+        date_created: '2020-01-01',
+        date_modified: '2020-01-01',
+    },
+];
+
+const incomeResponse = [
+    {
+        id: 1,
+        account_id: 1,
+        tax_id: 1,
+        income_amount: 1000,
+        income_title: 'Test Income',
+        income_description: 'Test Income to test the income route',
+        frequency_type: 2,
+        frequency_type_variable: null,
+        frequency_day_of_month: null,
+        frequency_day_of_week: null,
+        frequency_week_of_month: null,
+        frequency_month_of_year: null,
+        income_begin_date: '2020-01-01',
+        date_created: '2020-01-01',
+        date_modified: '2020-01-01',
+    },
+];
+
 describe('GET /api/income', () => {
     it('should respond with an array of income', async () => {
-        const income = [
-            {
-                income_id: 1,
-                account_id: 1,
-                tax_id: 1,
-                income_amount: 1000,
-                income_title: 'Test Income',
-                income_description: 'Test Income to test the income route',
-                frequency_type: 2,
-                frequency_type_variable: null,
-                frequency_day_of_month: null,
-                frequency_day_of_week: null,
-                frequency_week_of_month: null,
-                frequency_month_of_year: null,
-                income_begin_date: '2020-01-01',
-                date_created: '2020-01-01',
-                date_modified: '2020-01-01',
-            },
-        ];
-
-        const incomeResponse = [
-            {
-                id: 1,
-                account_id: 1,
-                tax_id: 1,
-                income_amount: 1000,
-                income_title: 'Test Income',
-                income_description: 'Test Income to test the income route',
-                frequency_type: 2,
-                frequency_type_variable: null,
-                frequency_day_of_month: null,
-                frequency_day_of_week: null,
-                frequency_week_of_month: null,
-                frequency_month_of_year: null,
-                income_begin_date: '2020-01-01',
-                date_created: '2020-01-01',
-                date_modified: '2020-01-01',
-            },
-        ];
-
         // Arrange
         mockModule([income]);
 
@@ -107,27 +107,25 @@ describe('GET /api/income', () => {
             message: 'Error getting income',
         });
     });
+
+    it('should respond with an array of income with id', async () => {
+        // Arrange
+        mockModule([income]);
+
+        const { getIncome } = await import(
+            '../../controllers/incomeController.js'
+        );
+
+        mockRequest.query = { id: 1 };
+
+        // Call the function with the mock request and response
+        await getIncome(mockRequest as Request, mockResponse);
+
+        // Assert
+        expect(mockResponse.status).toHaveBeenCalledWith(200);
+        expect(mockResponse.json).toHaveBeenCalledWith(incomeResponse);
+    });
 });
-
-//     it('should respond with an array of income with id', async () => {
-//         // Arrange
-//         mockModule(income.filter((inc) => inc.id === 1));
-
-//         const { getIncome } = await import(
-//             '../../controllers/incomeController.js'
-//         );
-
-//         mockRequest.query = { id: 1 };
-
-//         // Call the function with the mock request and response
-//         await getIncome(mockRequest as Request, mockResponse);
-
-//         // Assert
-//         expect(mockResponse.status).toHaveBeenCalledWith(200);
-//         expect(mockResponse.json).toHaveBeenCalledWith(
-//             income.filter((inc) => inc.id === 1),
-//         );
-//     });
 
 //     it('should handle errors correctly with id', async () => {
 //         // Arrange
