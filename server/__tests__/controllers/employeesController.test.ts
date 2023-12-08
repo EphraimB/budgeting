@@ -325,168 +325,176 @@ describe('POST /api/payroll/employee', () => {
     });
 });
 
-// describe('PUT /api/payroll/employee/:id', () => {
-//     it('should call next on middleware', async () => {
-//         // Arrange
-//         const updatedEmployee = employees.filter(
-//             (employee) => employee.id === 1,
-//         );
+describe('PUT /api/payroll/employee/:id', () => {
+    it('should call next on middleware', async () => {
+        const employees = [
+            {
+                employee_id: 1,
+                name: 'Test Employee',
+                hourly_rate: 10,
+                regular_hours: 40,
+                vacation_days: 10,
+                sick_days: 10,
+                work_schedule: '0111100',
+            },
+        ];
 
-//         mockModule([updatedEmployee]);
+        // Arrange
+        mockModule([employees]);
 
-//         mockRequest.params = { id: 1 };
-//         mockRequest.body = updatedEmployee;
+        mockRequest.params = { id: 1 };
+        mockRequest.body = employees;
 
-//         const { updateEmployee } = await import(
-//             '../../controllers/employeesController.js'
-//         );
+        const { updateEmployee } = await import(
+            '../../controllers/employeesController.js'
+        );
 
-//         await updateEmployee(mockRequest as Request, mockResponse, mockNext);
+        await updateEmployee(mockRequest as Request, mockResponse, mockNext);
 
-//         // Assert
-//         expect(mockNext).toHaveBeenCalled();
-//     });
+        // Assert
+        expect(mockNext).toHaveBeenCalled();
+    });
 
-//     it('should respond with an error message', async () => {
-//         // Arrange
-//         const updatedEmployee = employees.filter(
-//             (employee) => employee.id === 1,
-//         );
+    it('should respond with an error message', async () => {
+        const employees = [
+            {
+                employee_id: 1,
+                name: 'Test Employee',
+                hourly_rate: 10,
+                regular_hours: 40,
+                vacation_days: 10,
+                sick_days: 10,
+                work_schedule: '0111100',
+            },
+        ];
 
-//         const errorMessage = 'Error updating employee';
-//         const error = new Error(errorMessage);
-//         mockModule(null, errorMessage);
+        // Arrange
+        const errorMessage = 'Error updating employee';
+        mockModule([], [errorMessage]);
 
-//         mockRequest.params = { id: 1 };
-//         mockRequest.body = updatedEmployee;
+        mockRequest.params = { id: 1 };
+        mockRequest.body = employees;
 
-//         const { updateEmployee } = await import(
-//             '../../controllers/employeesController.js'
-//         );
+        const { updateEmployee } = await import(
+            '../../controllers/employeesController.js'
+        );
 
-//         await updateEmployee(mockRequest as Request, mockResponse, mockNext);
+        await updateEmployee(mockRequest as Request, mockResponse, mockNext);
 
-//         // Assert
-//         expect(mockResponse.status).toHaveBeenCalledWith(400);
-//         expect(mockResponse.json).toHaveBeenCalledWith({
-//             message: 'Error updating employee',
-//         });
-//     });
+        // Assert
+        expect(mockResponse.status).toHaveBeenCalledWith(400);
+        expect(mockResponse.json).toHaveBeenCalledWith({
+            message: 'Error updating employee',
+        });
+    });
 
-//     it('should respond with an error message in return object', async () => {
-//         // Arrange
-//         const updatedEmployee = employees.filter(
-//             (employee) => employee.id === 1,
-//         );
+    it('should respond with an error message in return object', async () => {
+        const employees = [
+            {
+                employee_id: 1,
+                name: 'Test Employee',
+                hourly_rate: 10,
+                regular_hours: 40,
+                vacation_days: 10,
+                sick_days: 10,
+                work_schedule: '0111100',
+            },
+        ];
 
-//         const errorMessage = 'Error updating employee';
-//         const error = new Error(errorMessage);
-//         mockModule(null, errorMessage);
+        // Arrange
+        const errorMessage = 'Error updating employee';
+        mockModule([], [errorMessage]);
 
-//         mockRequest.params = { id: 1 };
-//         mockRequest.body = updatedEmployee;
+        mockRequest.params = { id: 1 };
+        mockRequest.body = employees;
 
-//         const { updateEmployeeReturnObject } = await import(
-//             '../../controllers/employeesController.js'
-//         );
+        const { updateEmployeeReturnObject } = await import(
+            '../../controllers/employeesController.js'
+        );
 
-//         await updateEmployeeReturnObject(mockRequest as Request, mockResponse);
+        await updateEmployeeReturnObject(mockRequest as Request, mockResponse);
 
-//         // Assert
-//         expect(mockResponse.status).toHaveBeenCalledWith(400);
-//         expect(mockResponse.json).toHaveBeenCalledWith({
-//             message: 'Error updating employee',
-//         });
-//     });
+        // Assert
+        expect(mockResponse.status).toHaveBeenCalledWith(400);
+        expect(mockResponse.json).toHaveBeenCalledWith({
+            message: 'Error updating employee',
+        });
+    });
 
-//     it('should respond with a 404 error message when the employee does not exist', async () => {
-//         // Arrange
-//         mockModule([[], null, null]);
+    it('should respond with a 404 error message when the employee does not exist', async () => {
+        const employees = [
+            {
+                employee_id: 1,
+                name: 'Test Employee',
+                hourly_rate: 10,
+                regular_hours: 40,
+                vacation_days: 10,
+                sick_days: 10,
+                work_schedule: '0111100',
+            },
+        ];
 
-//         const { updateEmployee } = await import(
-//             '../../controllers/employeesController.js'
-//         );
+        // Arrange
+        mockModule([[]]);
 
-//         mockRequest.params = { employee_id: 3 };
-//         mockRequest.body = employees.filter((employee) => employee.id === 3);
+        const { updateEmployee } = await import(
+            '../../controllers/employeesController.js'
+        );
 
-//         // Act
-//         await updateEmployee(mockRequest as Request, mockResponse, mockNext);
+        mockRequest.params = { employee_id: 3 };
+        mockRequest.body = employees;
 
-//         // Assert
-//         expect(mockResponse.status).toHaveBeenCalledWith(404);
-//         expect(mockResponse.send).toHaveBeenCalledWith('Employee not found');
-//     });
+        // Act
+        await updateEmployee(mockRequest as Request, mockResponse, mockNext);
 
-//     it('should respond with a 500 error message when the script fails', async () => {
-//         // Arrange
-//         const updatedEmployee = employees.filter(
-//             (employee) => employee.id === 1,
-//         );
+        // Assert
+        expect(mockResponse.status).toHaveBeenCalledWith(404);
+        expect(mockResponse.send).toHaveBeenCalledWith('Employee not found');
+    });
 
-//         mockModule([updatedEmployee]);
+    it('should respond with the updated employee', async () => {
+        const employees = [
+            {
+                employee_id: 1,
+                name: 'Test Employee',
+                hourly_rate: 10,
+                regular_hours: 40,
+                vacation_days: 10,
+                sick_days: 10,
+                work_schedule: '0111100',
+            },
+        ];
 
-//         mockRequest.params = { id: 1 };
-//         mockRequest.body = updatedEmployee;
+        const employeeResponse = [
+            {
+                id: 1,
+                name: 'Test Employee',
+                hourly_rate: 10,
+                regular_hours: 40,
+                vacation_days: 10,
+                sick_days: 10,
+                work_schedule: '0111100',
+            },
+        ];
 
-//         // Mock the exec function to throw an error
-//         const errorMessage = 'Error updating employee';
-//         const error = new Error(errorMessage);
-//         jest.mock('child_process', () => {
-//             return {
-//                 exec: jest.fn(
-//                     (
-//                         command: string,
-//                         callback: (
-//                             error: Error | null,
-//                             stdout: string,
-//                             stderr: string,
-//                         ) => void,
-//                     ) => {
-//                         callback(error, 'mock stdout', 'mock stderr');
-//                     },
-//                 ),
-//             };
-//         });
+        // Arrange
+        mockModule([employees]);
 
-//         const { updateEmployee } = await import(
-//             '../../controllers/employeesController.js'
-//         );
+        mockRequest.params = { id: 1 };
+        mockRequest.body = employees;
 
-//         // Act
-//         await updateEmployee(mockRequest as Request, mockResponse, mockNext);
+        const { updateEmployeeReturnObject } = await import(
+            '../../controllers/employeesController.js'
+        );
 
-//         // Assert
-//         expect(mockResponse.status).toHaveBeenCalledWith(500);
-//         expect(mockResponse.json).toHaveBeenCalledWith({
-//             status: 'error',
-//             message: 'Failed to execute script',
-//         });
-//     });
+        // Act
+        await updateEmployeeReturnObject(mockRequest as Request, mockResponse);
 
-//     it('should respond with the updated employee', async () => {
-//         // Arrange
-//         const updatedEmployee = employees.filter(
-//             (employee) => employee.id === 1,
-//         );
-
-//         mockModule([updatedEmployee]);
-
-//         mockRequest.params = { id: 1 };
-//         mockRequest.body = updatedEmployee;
-
-//         const { updateEmployeeReturnObject } = await import(
-//             '../../controllers/employeesController.js'
-//         );
-
-//         // Act
-//         await updateEmployeeReturnObject(mockRequest as Request, mockResponse);
-
-//         // Assert
-//         expect(mockResponse.status).toHaveBeenCalledWith(200);
-//         expect(mockResponse.json).toHaveBeenCalledWith(updatedEmployee);
-//     });
-// });
+        // Assert
+        expect(mockResponse.status).toHaveBeenCalledWith(200);
+        expect(mockResponse.json).toHaveBeenCalledWith(employeeResponse);
+    });
+});
 
 // describe('DELETE /api/payroll/employee/:id', () => {
 //     it('should respond with a success message', async () => {
