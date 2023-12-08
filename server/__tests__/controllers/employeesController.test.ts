@@ -510,36 +510,6 @@ describe('DELETE /api/payroll/employee/:id', () => {
             },
         ];
 
-        const payrollDates = [
-            {
-                id: 1,
-                employee_id: 1,
-                payroll_start_day: 1,
-                payroll_end_day: 15,
-            },
-            {
-                id: 2,
-                employee_id: 1,
-                payroll_start_day: 15,
-                payroll_end_day: 31,
-            },
-        ];
-
-        const payrollTaxes = [
-            {
-                id: 1,
-                employee_id: 1,
-                name: 'Federal Income Tax',
-                rate: 0.1,
-            },
-            {
-                id: 2,
-                employee_id: 1,
-                name: 'State Income Tax',
-                rate: 0.05,
-            },
-        ];
-
         // Arrange
         const employee_id = 1;
 
@@ -591,32 +561,62 @@ describe('DELETE /api/payroll/employee/:id', () => {
             message: 'Error deleting employee',
         });
     });
+
+    it('should not delete employee if there are related data', async () => {
+        const payrollDates = [
+            {
+                id: 1,
+                employee_id: 1,
+                payroll_start_day: 1,
+                payroll_end_day: 15,
+            },
+            {
+                id: 2,
+                employee_id: 1,
+                payroll_start_day: 15,
+                payroll_end_day: 31,
+            },
+        ];
+
+        const payrollTaxes = [
+            {
+                id: 1,
+                employee_id: 1,
+                name: 'Federal Income Tax',
+                rate: 0.1,
+            },
+            {
+                id: 2,
+                employee_id: 1,
+                name: 'State Income Tax',
+                rate: 0.05,
+            },
+        ];
+        
+        // Arrange
+        const employee_id = 1;
+        mockRequest.params = { employee_id };
+
+        mockModule([employee_id, payrollDates, payrollTaxes]);
+
+        const { deleteEmployee } = await import(
+            '../../controllers/employeesController.js'
+        );
+
+        // Act
+        await deleteEmployee(mockRequest as Request, mockResponse);
+
+        // Assert
+        expect(mockResponse.status).toHaveBeenCalledWith(400);
+        expect(mockResponse.send).toHaveBeenCalledWith({
+            errors: {
+                msg: 'You need to delete employee-related data before deleting the employee',
+                param: null,
+                location: 'query',
+            },
+        });
+    });
 });
-
-//     it('should not delete employee if there are related data', async () => {
-//         // Arrange
-//         const employee_id = 1;
-//         mockRequest.params = { employee_id };
-
-//         mockModule([employee_id, payrollDates, payrollTaxes]);
-
-//         const { deleteEmployee } = await import(
-//             '../../controllers/employeesController.js'
-//         );
-
-//         // Act
-//         await deleteEmployee(mockRequest as Request, mockResponse);
-
-//         // Assert
-//         expect(mockResponse.status).toHaveBeenCalledWith(400);
-//         expect(mockResponse.send).toHaveBeenCalledWith({
-//             errors: {
-//                 msg: 'You need to delete employee-related data before deleting the employee',
-//                 param: null,
-//                 location: 'query',
-//             },
-//         });
-//     });
 
 //     it('should respond with a 404 error message when the employee does not exist', async () => {
 //         // Arrange
