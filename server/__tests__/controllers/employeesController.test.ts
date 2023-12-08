@@ -568,31 +568,30 @@ describe('DELETE /api/payroll/employee/:id', () => {
             'Successfully deleted employee',
         );
     });
+
+    it('should handle errors correctly', async () => {
+        // Arrange
+        const employee_id = 1;
+        mockRequest.params = { employee_id };
+
+        // Mock the executeQuery function to throw an error
+        const errorMessage = 'Error deleting employee';
+        mockModule([], [errorMessage]);
+
+        const { deleteEmployee } = await import(
+            '../../controllers/employeesController.js'
+        );
+
+        // Act
+        await deleteEmployee(mockRequest as Request, mockResponse);
+
+        // Assert
+        expect(mockResponse.status).toHaveBeenCalledWith(400);
+        expect(mockResponse.json).toHaveBeenCalledWith({
+            message: 'Error deleting employee',
+        });
+    });
 });
-
-//     it('should handle errors correctly', async () => {
-//         // Arrange
-//         const employee_id = 1;
-//         mockRequest.params = { employee_id };
-
-//         // Mock the executeQuery function to throw an error
-//         const errorMessage = 'Error deleting employee';
-//         const error = new Error(errorMessage);
-//         mockModule([], errorMessage);
-
-//         const { deleteEmployee } = await import(
-//             '../../controllers/employeesController.js'
-//         );
-
-//         // Act
-//         await deleteEmployee(mockRequest as Request, mockResponse);
-
-//         // Assert
-//         expect(mockResponse.status).toHaveBeenCalledWith(400);
-//         expect(mockResponse.json).toHaveBeenCalledWith({
-//             message: 'Error deleting employee',
-//         });
-//     });
 
 //     it('should not delete employee if there are related data', async () => {
 //         // Arrange
