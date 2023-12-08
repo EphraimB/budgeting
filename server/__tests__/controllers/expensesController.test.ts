@@ -380,22 +380,9 @@ describe('POST /api/expenses', () => {
             '../../controllers/expensesController.js'
         );
 
-        mockRequest.body = {
-            expense_id: 1,
-            account_id: 1,
-            tax_id: 1,
-            expense_amount: 50,
-            expense_title: 'Test Expense',
-            expense_description: 'Test Expense to test the expense route',
-            frequency_type: 2,
-            frequency_type_variable: null,
-            frequency_day_of_month: null,
-            frequency_day_of_week: null,
-            frequency_week_of_month: null,
-            frequency_month_of_year: null,
-            expense_subsidized: 0,
-            expense_begin_date: '2020-01-01',
-        };
+        mockRequest.body = expenses.filter(
+            (expense) => expense.expense_id === 1,
+        );
 
         // Act
         await createExpenseReturnObject(mockRequest as Request, mockResponse);
