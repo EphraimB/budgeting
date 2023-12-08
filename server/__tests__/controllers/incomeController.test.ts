@@ -362,29 +362,28 @@ describe('PUT /api/income/:id', () => {
             message: 'Error updating income',
         });
     });
+
+    it('should handle errors correctly in the return object function', async () => {
+        // Arrange
+        const errorMessage = 'Error updating income';
+        mockModule([], [errorMessage]);
+
+        const { updateIncomeReturnObject } = await import(
+            '../../controllers/incomeController.js'
+        );
+
+        mockRequest.body = income[0];
+
+        // Act
+        await updateIncomeReturnObject(mockRequest as Request, mockResponse);
+
+        // Assert
+        expect(mockResponse.status).toHaveBeenCalledWith(400);
+        expect(mockResponse.json).toHaveBeenCalledWith({
+            message: 'Error updating income',
+        });
+    });
 });
-
-//     it('should handle errors correctly in the return object function', async () => {
-//         // Arrange
-//         const errorMessage = 'Error updating income';
-//         const error = new Error(errorMessage);
-//         mockModule(null, errorMessage);
-
-//         const { updateIncomeReturnObject } = await import(
-//             '../../controllers/incomeController.js'
-//         );
-
-//         mockRequest.body = income.filter((inc) => inc.id === 1);
-
-//         // Act
-//         await updateIncomeReturnObject(mockRequest as Request, mockResponse);
-
-//         // Assert
-//         expect(mockResponse.status).toHaveBeenCalledWith(400);
-//         expect(mockResponse.json).toHaveBeenCalledWith({
-//             message: 'Error updating income',
-//         });
-//     });
 
 //     it('should respond with a 404 error message when the account does not exist', async () => {
 //         // Arrange
