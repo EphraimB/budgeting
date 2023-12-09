@@ -263,63 +263,62 @@ describe('PUT /api/accounts/:id', () => {
     });
 });
 
-// describe('DELETE /api/accounts/:id', () => {
-//     it('should respond with a success message', async () => {
-//         // Arrange
-//         mockModule('Successfully deleted account');
+describe('DELETE /api/accounts/:id', () => {
+    it('should respond with a success message', async () => {
+        // Arrange
+        mockModule(['Successfully deleted account']);
 
-//         const { deleteAccount } = await import(
-//             '../../controllers/accountsController.js'
-//         );
+        const { deleteAccount } = await import(
+            '../../controllers/accountsController.js'
+        );
 
-//         mockRequest.params = { id: 1 };
+        mockRequest.params = { id: 1 };
 
-//         await deleteAccount(mockRequest as Request, mockResponse);
+        await deleteAccount(mockRequest as Request, mockResponse);
 
-//         // Assert
-//         expect(mockResponse.status).toHaveBeenCalledWith(200);
-//         expect(mockResponse.send).toHaveBeenCalledWith(
-//             'Successfully deleted account',
-//         );
-//     });
+        // Assert
+        expect(mockResponse.status).toHaveBeenCalledWith(200);
+        expect(mockResponse.send).toHaveBeenCalledWith(
+            'Successfully deleted account',
+        );
+    });
 
-//     it('should handle errors correctly', async () => {
-//         // Arrange
-//         const errorMessage = 'Error deleting account';
-//         const error = new Error(errorMessage);
-//         mockModule(null, errorMessage);
+    it('should handle errors correctly', async () => {
+        // Arrange
+        const errorMessage = 'Error deleting account';
+        mockModule([], [errorMessage]);
 
-//         const { deleteAccount } = await import(
-//             '../../controllers/accountsController.js'
-//         );
+        const { deleteAccount } = await import(
+            '../../controllers/accountsController.js'
+        );
 
-//         mockRequest.params = { id: 1 };
+        mockRequest.params = { id: 1 };
 
-//         // Act
-//         await deleteAccount(mockRequest as Request, mockResponse);
+        // Act
+        await deleteAccount(mockRequest as Request, mockResponse);
 
-//         // Assert
-//         expect(mockResponse.status).toHaveBeenCalledWith(400);
-//         expect(mockResponse.json).toHaveBeenCalledWith({
-//             message: 'Error deleting account',
-//         });
-//     });
+        // Assert
+        expect(mockResponse.status).toHaveBeenCalledWith(400);
+        expect(mockResponse.json).toHaveBeenCalledWith({
+            message: 'Error deleting account',
+        });
+    });
 
-//     it('should respond with a 404 error message when the account does not exist', async () => {
-//         // Arrange
-//         mockModule([]);
+    it('should respond with a 404 error message when the account does not exist', async () => {
+        // Arrange
+        mockModule([[]]);
 
-//         const { deleteAccount } = await import(
-//             '../../controllers/accountsController.js'
-//         );
+        const { deleteAccount } = await import(
+            '../../controllers/accountsController.js'
+        );
 
-//         mockRequest.params = { id: 1 };
+        mockRequest.params = { id: 1 };
 
-//         // Act
-//         await deleteAccount(mockRequest as Request, mockResponse);
+        // Act
+        await deleteAccount(mockRequest as Request, mockResponse);
 
-//         // Assert
-//         expect(mockResponse.status).toHaveBeenCalledWith(404);
-//         expect(mockResponse.send).toHaveBeenCalledWith('Account not found');
-//     });
-// });
+        // Assert
+        expect(mockResponse.status).toHaveBeenCalledWith(404);
+        expect(mockResponse.send).toHaveBeenCalledWith('Account not found');
+    });
+});
