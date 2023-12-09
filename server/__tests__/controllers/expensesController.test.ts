@@ -6,7 +6,7 @@ import {
     it,
     expect,
 } from '@jest/globals';
-import e, { type Request } from 'express';
+import { type Request } from 'express';
 import { mockModule } from '../__mocks__/mockModule';
 
 jest.mock('../../config/winston', () => ({
