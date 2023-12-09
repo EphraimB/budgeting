@@ -195,74 +195,73 @@ describe('POST /api/accounts', () => {
     });
 });
 
-// describe('PUT /api/accounts/:id', () => {
-//     it('should respond with the updated account', async () => {
-//         const updatedAccount = accounts.filter(
-//             (account) => account.account_id === 1,
-//         );
+describe('PUT /api/accounts/:id', () => {
+    it('should respond with the updated account', async () => {
+        const updatedAccount = accounts.filter(
+            (account) => account.account_id === 1,
+        );
 
-//         mockModule(accounts.filter((account) => account.account_id === 1));
+        mockModule([updatedAccount, updatedAccount]);
 
-//         const { updateAccount } = await import(
-//             '../../controllers/accountsController.js'
-//         );
+        const { updateAccount } = await import(
+            '../../controllers/accountsController.js'
+        );
 
-//         mockRequest.params = { id: 1 };
-//         mockRequest.body = updatedAccount;
+        mockRequest.params = { id: 1 };
+        mockRequest.body = updatedAccount;
 
-//         await updateAccount(mockRequest as Request, mockResponse);
+        await updateAccount(mockRequest as Request, mockResponse);
 
-//         // Assert
-//         expect(mockResponse.status).toHaveBeenCalledWith(200);
-//         expect(mockResponse.json).toHaveBeenCalledWith(updatedAccount);
-//     });
+        // Assert
+        expect(mockResponse.status).toHaveBeenCalledWith(200);
+        expect(mockResponse.json).toHaveBeenCalledWith(updatedAccount);
+    });
 
-//     it('should handle errors correctly', async () => {
-//         // Arrange
-//         const errorMessage = 'Error updating account';
-//         const error = new Error(errorMessage);
-//         mockModule(null, errorMessage);
+    it('should handle errors correctly', async () => {
+        // Arrange
+        const errorMessage = 'Error updating account';
+        mockModule([], [errorMessage]);
 
-//         const { updateAccount } = await import(
-//             '../../controllers/accountsController.js'
-//         );
+        const { updateAccount } = await import(
+            '../../controllers/accountsController.js'
+        );
 
-//         mockRequest.params = { id: 1 };
-//         mockRequest.body = accounts.filter(
-//             (account) => account.account_id === 1,
-//         );
+        mockRequest.params = { id: 1 };
+        mockRequest.body = accounts.filter(
+            (account) => account.account_id === 1,
+        );
 
-//         // Act
-//         await updateAccount(mockRequest as Request, mockResponse);
+        // Act
+        await updateAccount(mockRequest as Request, mockResponse);
 
-//         // Assert
-//         expect(mockResponse.status).toHaveBeenCalledWith(400);
-//         expect(mockResponse.json).toHaveBeenCalledWith({
-//             message: 'Error updating account',
-//         });
-//     });
+        // Assert
+        expect(mockResponse.status).toHaveBeenCalledWith(400);
+        expect(mockResponse.json).toHaveBeenCalledWith({
+            message: 'Error updating account',
+        });
+    });
 
-//     it('should respond with a 404 error message when the account does not exist', async () => {
-//         // Arrange
-//         mockModule([]);
+    it('should respond with a 404 error message when the account does not exist', async () => {
+        // Arrange
+        mockModule([[]]);
 
-//         const { updateAccount } = await import(
-//             '../../controllers/accountsController.js'
-//         );
+        const { updateAccount } = await import(
+            '../../controllers/accountsController.js'
+        );
 
-//         mockRequest.params = { id: 1 };
-//         mockRequest.body = accounts.filter(
-//             (account) => account.account_id === 1,
-//         );
+        mockRequest.params = { id: 1 };
+        mockRequest.body = accounts.filter(
+            (account) => account.account_id === 1,
+        );
 
-//         // Act
-//         await updateAccount(mockRequest as Request, mockResponse);
+        // Act
+        await updateAccount(mockRequest as Request, mockResponse);
 
-//         // Assert
-//         expect(mockResponse.status).toHaveBeenCalledWith(404);
-//         expect(mockResponse.send).toHaveBeenCalledWith('Account not found');
-//     });
-// });
+        // Assert
+        expect(mockResponse.status).toHaveBeenCalledWith(404);
+        expect(mockResponse.send).toHaveBeenCalledWith('Account not found');
+    });
+});
 
 // describe('DELETE /api/accounts/:id', () => {
 //     it('should respond with a success message', async () => {

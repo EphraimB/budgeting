@@ -101,6 +101,7 @@ export const updateAccount = async (
             name,
             id,
         ]);
+        
         const accounts = rows.map((account) => parseAccounts(account));
         response.status(200).json(accounts);
     } catch (error) {
