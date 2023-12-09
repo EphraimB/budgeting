@@ -150,51 +150,50 @@ describe('GET /api/accounts', () => {
     });
 });
 
-// describe('POST /api/accounts', () => {
-//     it('should respond with the new account', async () => {
-//         const newAccount = accounts.filter(
-//             (account) => account.account_id === 1,
-//         );
+describe('POST /api/accounts', () => {
+    it('should respond with the new account', async () => {
+        const newAccount = accounts.filter(
+            (account) => account.account_id === 1,
+        );
 
-//         mockModule(accounts.filter((account) => account.account_id === 1));
+        mockModule([newAccount]);
 
-//         const { createAccount } = await import(
-//             '../../controllers/accountsController.js'
-//         );
+        const { createAccount } = await import(
+            '../../controllers/accountsController.js'
+        );
 
-//         mockRequest.body = newAccount;
+        mockRequest.body = newAccount;
 
-//         await createAccount(mockRequest as Request, mockResponse);
+        await createAccount(mockRequest as Request, mockResponse);
 
-//         // Assert
-//         expect(mockResponse.status).toHaveBeenCalledWith(201);
-//         expect(mockResponse.json).toHaveBeenCalledWith(newAccount);
-//     });
+        // Assert
+        expect(mockResponse.status).toHaveBeenCalledWith(201);
+        expect(mockResponse.json).toHaveBeenCalledWith(newAccount);
+    });
 
-//     it('should handle errors correctly', async () => {
-//         // Arrange
-//         const errorMessage = 'Error creating account';
-//         const error = new Error(errorMessage);
-//         mockModule(null, errorMessage);
+    it('should handle errors correctly', async () => {
+        // Arrange
+        const errorMessage = 'Error creating account';
+        mockModule([], [errorMessage]);
 
-//         const { createAccount } = await import(
-//             '../../controllers/accountsController.js'
-//         );
+        const { createAccount } = await import(
+            '../../controllers/accountsController.js'
+        );
 
-//         mockRequest.body = accounts.filter(
-//             (account) => account.account_id === 1,
-//         );
+        mockRequest.body = accounts.filter(
+            (account) => account.account_id === 1,
+        );
 
-//         // Act
-//         await createAccount(mockRequest as Request, mockResponse);
+        // Act
+        await createAccount(mockRequest as Request, mockResponse);
 
-//         // Assert
-//         expect(mockResponse.status).toHaveBeenCalledWith(400);
-//         expect(mockResponse.json).toHaveBeenCalledWith({
-//             message: 'Error creating account',
-//         });
-//     });
-// });
+        // Assert
+        expect(mockResponse.status).toHaveBeenCalledWith(400);
+        expect(mockResponse.json).toHaveBeenCalledWith({
+            message: 'Error creating account',
+        });
+    });
+});
 
 // describe('PUT /api/accounts/:id', () => {
 //     it('should respond with the updated account', async () => {
