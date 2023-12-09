@@ -1,11 +1,14 @@
-import { jest } from '@jest/globals';
-import { type Request, type Response } from 'express';
-import { commuteHistory } from '../../models/mockData';
-import { type QueryResultRow } from 'pg';
+import { type Request } from 'express';
+import { CommuteHistory } from '../../types/types.js';
 import {
-    parseIntOrFallback,
-    parseFloatOrFallback,
-} from '../../utils/helperFunctions';
+    jest,
+    beforeEach,
+    afterEach,
+    describe,
+    it,
+    expect,
+} from '@jest/globals';
+import { mockModule } from '../__mocks__/mockModule';
 
 jest.mock('../../config/winston', () => ({
     logger: {
@@ -30,30 +33,28 @@ afterEach(() => {
     jest.resetModules();
 });
 
-/**
- *
- * @param executeQueryValue - The value to be returned by the executeQuery mock function
- * @param [errorMessage] - The error message to be passed to the handleError mock function
- * @returns - A mock module with the executeQuery and handleError functions
- */
-const mockModule = (
-    executeQueryValue: QueryResultRow[] | string | null,
-    errorMessage?: string,
-) => {
-    const executeQuery =
-        errorMessage !== null && errorMessage !== undefined
-            ? jest.fn(async () => await Promise.reject(new Error(errorMessage)))
-            : jest.fn(async () => await Promise.resolve(executeQueryValue));
-
-    jest.mock('../../utils/helperFunctions', () => ({
-        executeQuery,
-        handleError: jest.fn((res: Response, message: string) => {
-            res.status(400).json({ message });
-        }),
-        parseIntOrFallback,
-        parseFloatOrFallback,
-    }));
-};
+const commuteHistory = [
+    {
+        commute_history_id: 1,
+        account_id: 1,
+        fare_amount: 2.75,
+        commute_system: 'OMNY',
+        fare_type: 'Single Ride',
+        timestamp: '2020-01-01',
+        date_created: '2020-01-01',
+        date_modified: '2020-01-01',
+    },
+    {
+        commute_history_id: 2,
+        account_id: 1,
+        fare_amount: 9.75,
+        commute_system: 'LIRR',
+        fare_type: 'Off-Peak',
+        timestamp: '2020-01-01',
+        date_created: '2020-01-01',
+        date_modified: '2020-01-01',
+    },
+];
 
 describe('GET /api/expenses/commute/history', () => {
     it('should respond with an array of commute history', async () => {
