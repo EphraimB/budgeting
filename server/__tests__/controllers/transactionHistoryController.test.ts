@@ -474,23 +474,22 @@ describe('DELETE /api/transactionHistory/:id', () => {
             message: 'Error deleting transaction history',
         });
     });
+
+    it('should respond with a 404 error message when the transaction does not exist', async () => {
+        // Arrange
+        mockModule([[]]);
+
+        const { deleteTransaction } = await import(
+            '../../controllers/transactionHistoryController.js'
+        );
+
+        mockRequest.params = { id: 8 };
+
+        // Act
+        await deleteTransaction(mockRequest as Request, mockResponse);
+
+        // Assert
+        expect(mockResponse.status).toHaveBeenCalledWith(404);
+        expect(mockResponse.send).toHaveBeenCalledWith('Transaction not found');
+    });
 });
-
-//     it('should respond with a 404 error message when the transaction does not exist', async () => {
-//         // Arrange
-//         mockModule([]);
-
-//         const { deleteTransaction } = await import(
-//             '../../controllers/transactionHistoryController.js'
-//         );
-
-//         mockRequest.params = { id: 8 };
-
-//         // Act
-//         await deleteTransaction(mockRequest as Request, mockResponse);
-
-//         // Assert
-//         expect(mockResponse.status).toHaveBeenCalledWith(404);
-//         expect(mockResponse.send).toHaveBeenCalledWith('Transaction not found');
-//     });
-// });
