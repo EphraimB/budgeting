@@ -329,20 +329,20 @@ export const payrolls = [
     },
 ];
 
-export const payrollDates: PayrollDate[] = [
-    {
-        id: 1,
-        employee_id: 1,
-        payroll_start_day: 1,
-        payroll_end_day: 15,
-    },
-    {
-        id: 2,
-        employee_id: 1,
-        payroll_start_day: 15,
-        payroll_end_day: 31,
-    },
-];
+// export const payrollDates: PayrollDate[] = [
+//     {
+//         id: 1,
+//         employee_id: 1,
+//         payroll_start_day: 1,
+//         payroll_end_day: 15,
+//     },
+//     {
+//         id: 2,
+//         employee_id: 1,
+//         payroll_start_day: 15,
+//         payroll_end_day: 31,
+//     },
+// ];
 
 export const payrollTaxes: PayrollTax[] = [
     {
