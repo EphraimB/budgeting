@@ -1,35 +1,14 @@
-import { jest } from '@jest/globals';
 import { type Request } from 'express';
+import {
+    jest,
+    beforeEach,
+    afterEach,
+    describe,
+    it,
+    expect,
+} from '@jest/globals';
 import { mockModule } from '../__mocks__/mockModule.js';
-
-/**
- *
- * @param loan - Loan object
- * @returns - Parsed loan object
- */
-const parseLoans = (loan: any) => ({
-    id: loan.loan_id,
-    interest_rate: loan.loan_interest_rate,
-    amount: loan.loan_amount,
-    plan_amount: loan.loan_plan_amount,
-    title: loan.loan_title,
-    description: loan.loan_description,
-    subsidized: loan.loan_subsidized,
-    recipient: loan.loan_recipient,
-    frequency_type: loan.frequency_type,
-    frequency_type_variable: loan.frequency_type_variable,
-    frequency_day_of_month: loan.frequency_day_of_month,
-    frequency_day_of_week: loan.frequency_day_of_week,
-    frequency_week_of_month: loan.frequency_week_of_month,
-    frequency_month_of_year: loan.frequency_month_of_year,
-    interest_frequency_type: loan.loan_interest_frequency_type,
-    account_id: loan.account_id,
-    begin_date: loan.loan_begin_date,
-    end_date: loan.loan_end_date,
-    date_created: loan.date_created,
-    date_modified: loan.date_modified,
-    fully_paid_back: loan.loan_fully_paid_back,
-});
+import { Loan } from '../../types/types.js';
 
 jest.mock('../../config/winston', () => ({
     logger: {
@@ -57,62 +36,203 @@ afterEach(() => {
     jest.resetModules();
 });
 
+export const loans = [
+    {
+        loan_id: 1,
+        cron_job_id: 1,
+        account_id: 1,
+        tax_id: null,
+        loan_amount: 10000,
+        loan_plan_amount: 100,
+        loan_recipient: 'Test Loan Recipient',
+        loan_title: 'Test Loan',
+        loan_description: 'Test Loan to test the loan route',
+        frequency_type: 2,
+        frequency_type_variable: null,
+        frequency_month_of_year: null,
+        frequency_day_of_month: null,
+        frequency_day_of_week: null,
+        frequency_week_of_month: null,
+        loan_interest_frequency_type: 2,
+        loan_interest_rate: 0,
+        loan_subsidized: 0,
+        loan_begin_date: '2020-01-02',
+        loan_end_date: '2020-01-01',
+        date_created: '2020-01-01',
+        date_modified: '2020-01-01',
+    },
+    {
+        loan_id: 2,
+        cron_job_id: 2,
+        account_id: 1,
+        tax_id: null,
+        loan_amount: 1000,
+        loan_plan_amount: 100,
+        loan_recipient: 'Test Loan Recipient',
+        loan_title: 'Test Loan',
+        loan_description: 'Test Loan to test the loan route',
+        frequency_type: 0,
+        frequency_type_variable: null,
+        frequency_month_of_year: null,
+        frequency_day_of_month: null,
+        frequency_day_of_week: null,
+        frequency_week_of_month: null,
+        loan_interest_frequency_type: 2,
+        loan_interest_rate: 0,
+        loan_subsidized: 0.15,
+        loan_begin_date: '2020-01-01',
+        loan_end_date: '2020-01-01',
+        date_created: '2020-01-01',
+        date_modified: '2020-01-01',
+    },
+    {
+        loan_id: 3,
+        cron_job_id: 3,
+        account_id: 1,
+        tax_id: null,
+        loan_amount: 1000,
+        loan_plan_amount: 100,
+        loan_recipient: 'Test Loan Recipient',
+        loan_title: 'Test Loan',
+        loan_description: 'Test Loan to test the loan route',
+        frequency_type: 1,
+        frequency_type_variable: null,
+        frequency_month_of_year: null,
+        frequency_day_of_month: null,
+        frequency_day_of_week: null,
+        frequency_week_of_month: null,
+        loan_interest_frequency_type: 2,
+        loan_interest_rate: 0,
+        loan_subsidized: 0.1,
+        loan_begin_date: '2020-01-01',
+        loan_end_date: '2020-01-01',
+        date_created: '2020-01-01',
+        date_modified: '2020-01-01',
+    },
+    {
+        loan_id: 4,
+        cron_job_id: 4,
+        account_id: 1,
+        tax_id: null,
+        loan_amount: 1000,
+        loan_plan_amount: 100,
+        loan_recipient: 'Test Loan Recipient',
+        loan_title: 'Test Loan',
+        loan_description: 'Test Loan to test the loan route',
+        frequency_type: 3,
+        frequency_type_variable: null,
+        frequency_month_of_year: null,
+        frequency_day_of_month: null,
+        frequency_day_of_week: null,
+        frequency_week_of_month: null,
+        loan_interest_frequency_type: 2,
+        loan_interest_rate: 0,
+        loan_subsidized: 0.05,
+        loan_begin_date: '2020-01-01',
+        loan_end_date: '2020-01-01',
+        date_created: '2020-01-01',
+        date_modified: '2020-01-01',
+    },
+];
+
+const loansResponse: Loan[] = [
+    {
+        id: 1,
+        account_id: 1,
+        amount: 10000,
+        plan_amount: 100,
+        recipient: 'Test Loan Recipient',
+        title: 'Test Loan',
+        description: 'Test Loan to test the loan route',
+        frequency_type: 2,
+        frequency_type_variable: null,
+        frequency_month_of_year: null,
+        frequency_day_of_month: null,
+        frequency_day_of_week: null,
+        frequency_week_of_month: null,
+        interest_frequency_type: 2,
+        interest_rate: 0,
+        subsidized: 0,
+        begin_date: '2020-01-02',
+        end_date: '2020-01-01',
+        fully_paid_back: null,
+        date_created: '2020-01-01',
+        date_modified: '2020-01-01',
+    },
+    {
+        id: 2,
+        account_id: 1,
+        amount: 1000,
+        plan_amount: 100,
+        recipient: 'Test Loan Recipient',
+        title: 'Test Loan',
+        description: 'Test Loan to test the loan route',
+        frequency_type: 0,
+        frequency_type_variable: null,
+        frequency_month_of_year: null,
+        frequency_day_of_month: null,
+        frequency_day_of_week: null,
+        frequency_week_of_month: null,
+        interest_frequency_type: 2,
+        interest_rate: 0,
+        subsidized: 0.15,
+        begin_date: '2020-01-01',
+        end_date: '2020-01-01',
+        fully_paid_back: null,
+        date_created: '2020-01-01',
+        date_modified: '2020-01-01',
+    },
+    {
+        id: 3,
+        account_id: 1,
+        amount: 1000,
+        plan_amount: 100,
+        recipient: 'Test Loan Recipient',
+        title: 'Test Loan',
+        description: 'Test Loan to test the loan route',
+        frequency_type: 1,
+        frequency_type_variable: null,
+        frequency_month_of_year: null,
+        frequency_day_of_month: null,
+        frequency_day_of_week: null,
+        frequency_week_of_month: null,
+        interest_frequency_type: 2,
+        interest_rate: 0,
+        subsidized: 0.1,
+        begin_date: '2020-01-01',
+        end_date: '2020-01-01',
+        fully_paid_back: null,
+        date_created: '2020-01-01',
+        date_modified: '2020-01-01',
+    },
+    {
+        id: 4,
+        account_id: 1,
+        amount: 1000,
+        plan_amount: 100,
+        recipient: 'Test Loan Recipient',
+        title: 'Test Loan',
+        description: 'Test Loan to test the loan route',
+        frequency_type: 3,
+        frequency_type_variable: null,
+        frequency_month_of_year: null,
+        frequency_day_of_month: null,
+        frequency_day_of_week: null,
+        frequency_week_of_month: null,
+        interest_frequency_type: 2,
+        interest_rate: 0,
+        subsidized: 0.05,
+        begin_date: '2020-01-01',
+        end_date: '2020-01-01',
+        fully_paid_back: null,
+        date_created: '2020-01-01',
+        date_modified: '2020-01-01',
+    },
+];
+
 describe('GET /api/loans', () => {
     it('should respond with an array of loans', async () => {
         // Arrange
-        const loans = [
-            {
-                loan_id: 1,
-                cron_job_id: 1,
-                account_id: 1,
-                tax_id: null,
-                loan_amount: 10000,
-                loan_plan_amount: 100,
-                loan_recipient: 'Test Loan Recipient',
-                loan_title: 'Test Loan',
-                loan_description: 'Test Loan to test the loan route',
-                frequency_type: 2,
-                frequency_type_variable: null,
-                frequency_month_of_year: null,
-                frequency_day_of_month: null,
-                frequency_day_of_week: null,
-                frequency_week_of_month: null,
-                loan_interest_frequency_type: 2,
-                loan_interest_rate: 0,
-                loan_subsidized: 0,
-                loan_begin_date: '2020-01-02',
-                loan_end_date: '2020-01-01',
-                loan_fully_paid_back: '2024-01-01',
-                date_created: '2020-01-01',
-                date_modified: '2020-01-01',
-            },
-            {
-                loan_id: 2,
-                cron_job_id: 2,
-                account_id: 1,
-                tax_id: null,
-                loan_amount: 1000,
-                loan_plan_amount: 100,
-                loan_recipient: 'Test Loan Recipient',
-                loan_title: 'Test Loan',
-                loan_description: 'Test Loan to test the loan route',
-                frequency_type: 0,
-                frequency_type_variable: null,
-                frequency_month_of_year: null,
-                frequency_day_of_month: null,
-                frequency_day_of_week: null,
-                frequency_week_of_month: null,
-                loan_interest_frequency_type: 2,
-                loan_interest_rate: 0,
-                loan_subsidized: 0.15,
-                loan_begin_date: '2020-01-01',
-                loan_end_date: '2020-01-01',
-                loan_fully_paid_back: null,
-                date_created: '2020-01-01',
-                date_modified: '2020-01-01',
-            },
-        ];
-
         mockModule([loans]);
 
         mockRequest.query = { id: null };
@@ -125,17 +245,17 @@ describe('GET /api/loans', () => {
         // Call the function with the mock request and response
         await getLoans(mockRequest as Request, mockResponse);
 
-        const modifiedLoans = loans.map((loan) => parseLoans(loan));
+        loansResponse[0].fully_paid_back = '2024-01-01';
 
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(200);
-        expect(mockResponse.json).toHaveBeenCalledWith(modifiedLoans);
+        expect(mockResponse.json).toHaveBeenCalledWith(loansResponse);
     });
 
     it('should respond with an error message', async () => {
         // Arrange
         const errorMessage = 'Error getting loans';
-        mockModule([[null]], [errorMessage]);
+        mockModule([], [errorMessage]);
 
         mockRequest.query = { id: null };
 
@@ -155,35 +275,7 @@ describe('GET /api/loans', () => {
 
     it('should respond with an array of loans with id', async () => {
         // Arrange
-        const loans = [
-            {
-                loan_id: 1,
-                cron_job_id: 1,
-                account_id: 1,
-                tax_id: null,
-                loan_amount: 10000,
-                loan_plan_amount: 100,
-                loan_recipient: 'Test Loan Recipient',
-                loan_title: 'Test Loan',
-                loan_description: 'Test Loan to test the loan route',
-                frequency_type: 2,
-                frequency_type_variable: null,
-                frequency_month_of_year: null,
-                frequency_day_of_month: null,
-                frequency_day_of_week: null,
-                frequency_week_of_month: null,
-                loan_interest_frequency_type: 2,
-                loan_interest_rate: 0,
-                loan_subsidized: 0,
-                loan_begin_date: '2020-01-02',
-                loan_end_date: '2020-01-01',
-                loan_fully_paid_back: '2024-01-01',
-                date_created: '2020-01-01',
-                date_modified: '2020-01-01',
-            },
-        ];
-
-        mockModule([loans]);
+        mockModule([loans.filter((loan) => loan.loan_id === 1)]);
 
         mockRequest.query = { id: 1 };
         mockRequest.fullyPaidBackDates = { 1: '2024-01-01' };
@@ -195,20 +287,22 @@ describe('GET /api/loans', () => {
         // Call the function with the mock request and response
         await getLoans(mockRequest as Request, mockResponse);
 
-        // Add loan_fully_paid_back to the loans with id 1
-        // loans[0].loan_fully_paid_back = '2024-01-01';
+        const customLoansResponse = loansResponse.filter(
+            (loan) => loan.id === 1,
+        );
 
-        const modifiedLoans = loans.map((loan) => parseLoans(loan));
+        // Add loan_fully_paid_back to the loans with id 1
+        customLoansResponse[0].fully_paid_back = '2024-01-01';
 
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(200);
-        expect(mockResponse.json).toHaveBeenCalledWith(modifiedLoans);
+        expect(mockResponse.json).toHaveBeenCalledWith(customLoansResponse);
     });
 
     it('should respond with an error message with id', async () => {
         // Arrange
         const errorMessage = 'Error getting loan';
-        mockModule([[null]], [errorMessage]);
+        mockModule([], [errorMessage]);
 
         mockRequest.query = { id: 1 };
 
@@ -228,35 +322,7 @@ describe('GET /api/loans', () => {
 
     it('should respond with an array of loans with account id', async () => {
         // Arrange
-        const loans = [
-            {
-                loan_id: 1,
-                cron_job_id: 1,
-                account_id: 1,
-                tax_id: null,
-                loan_amount: 10000,
-                loan_plan_amount: 100,
-                loan_recipient: 'Test Loan Recipient',
-                loan_title: 'Test Loan',
-                loan_description: 'Test Loan to test the loan route',
-                frequency_type: 2,
-                frequency_type_variable: null,
-                frequency_month_of_year: null,
-                frequency_day_of_month: null,
-                frequency_day_of_week: null,
-                frequency_week_of_month: null,
-                loan_interest_frequency_type: 2,
-                loan_interest_rate: 0,
-                loan_subsidized: 0,
-                loan_begin_date: '2020-01-02',
-                loan_end_date: '2020-01-01',
-                loan_fully_paid_back: '2024-01-01',
-                date_created: '2020-01-01',
-                date_modified: '2020-01-01',
-            },
-        ];
-
-        mockModule([loans]);
+        mockModule([loans.filter((loan) => loan.account_id === 1)]);
 
         mockRequest.query = { account_id: 1 };
         mockRequest.fullyPaidBackDates = { 1: '2024-01-01' };
@@ -268,17 +334,22 @@ describe('GET /api/loans', () => {
         // Call the function with the mock request and response
         await getLoans(mockRequest as Request, mockResponse);
 
-        const modifiedLoans = loans.map((loan) => parseLoans(loan));
+        const customLoansResponse = loansResponse.filter(
+            (loan) => loan.account_id === 1,
+        );
+
+        // Add loan_fully_paid_back to the loans with id 1
+        customLoansResponse[0].fully_paid_back = '2024-01-01';
 
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(200);
-        expect(mockResponse.json).toHaveBeenCalledWith(modifiedLoans);
+        expect(mockResponse.json).toHaveBeenCalledWith(customLoansResponse);
     });
 
     it('should respond with an error message with account id', async () => {
         // Arrange
         const errorMessage = 'Error getting loan';
-        mockModule([null], [errorMessage]);
+        mockModule([], [errorMessage]);
 
         mockRequest.query = { account_id: 1 };
 
@@ -298,35 +369,11 @@ describe('GET /api/loans', () => {
 
     it('should respond with an array of loans with account id and id', async () => {
         // Arrange
-        const loans = [
-            {
-                loan_id: 1,
-                cron_job_id: 1,
-                account_id: 1,
-                tax_id: null,
-                loan_amount: 10000,
-                loan_plan_amount: 100,
-                loan_recipient: 'Test Loan Recipient',
-                loan_title: 'Test Loan',
-                loan_description: 'Test Loan to test the loan route',
-                frequency_type: 2,
-                frequency_type_variable: null,
-                frequency_month_of_year: null,
-                frequency_day_of_month: null,
-                frequency_day_of_week: null,
-                frequency_week_of_month: null,
-                loan_interest_frequency_type: 2,
-                loan_interest_rate: 0,
-                loan_subsidized: 0,
-                loan_begin_date: '2020-01-02',
-                loan_end_date: '2020-01-01',
-                loan_fully_paid_back: '2024-01-01',
-                date_created: '2020-01-01',
-                date_modified: '2020-01-01',
-            },
-        ];
-
-        mockModule([loans]);
+        mockModule([
+            loans
+                .filter((loan) => loan.account_id === 1)
+                .filter((loan) => loan.loan_id === 1),
+        ]);
 
         mockRequest.query = { account_id: 1, id: 1 };
         mockRequest.fullyPaidBackDates = { 1: '2024-01-01' };
@@ -338,20 +385,22 @@ describe('GET /api/loans', () => {
         // Call the function with the mock request and response
         await getLoans(mockRequest as Request, mockResponse);
 
-        // Add loan_fully_paid_back to the loans with id 1
-        loans[0].loan_fully_paid_back = '2024-01-01';
+        const customLoansResponse = loansResponse.filter(
+            (loan) => loan.id === 1,
+        );
 
-        const modifiedLoans = loans.map((loan) => parseLoans(loan));
+        // Add loan_fully_paid_back to the loans with id 1
+        customLoansResponse[0].fully_paid_back = '2024-01-01';
 
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(200);
-        expect(mockResponse.json).toHaveBeenCalledWith(modifiedLoans);
+        expect(mockResponse.json).toHaveBeenCalledWith(customLoansResponse);
     });
 
     it('should respond with an error message with account id and id', async () => {
         // Arrange
         const errorMessage = 'Error getting loan';
-        mockModule([null], [errorMessage]);
+        mockModule([], [errorMessage]);
 
         mockRequest.query = { account_id: 1, id: 1 };
 
@@ -390,35 +439,11 @@ describe('GET /api/loans', () => {
 
 describe('POST /api/loans', () => {
     it('should populate request.loan_id', async () => {
-        const loans = [
-            {
-                loan_id: 1,
-                cron_job_id: 1,
-                account_id: 1,
-                tax_id: null,
-                loan_amount: 10000,
-                loan_plan_amount: 100,
-                loan_recipient: 'Test Loan Recipient',
-                loan_title: 'Test Loan',
-                loan_description: 'Test Loan to test the loan route',
-                frequency_type: 2,
-                frequency_type_variable: null,
-                frequency_month_of_year: null,
-                frequency_day_of_month: null,
-                frequency_day_of_week: null,
-                frequency_week_of_month: null,
-                loan_interest_frequency_type: 2,
-                loan_interest_rate: 0,
-                loan_subsidized: 0,
-                loan_begin_date: '2020-01-02',
-                loan_end_date: '2020-01-01',
-                loan_fully_paid_back: '2024-01-01',
-                date_created: '2020-01-01',
-                date_modified: '2020-01-01',
-            },
-        ];
-
-        mockModule([loans, '1', '2', []], [], [[]]);
+        mockModule(
+            [loans.filter((loan) => loan.loan_id === 1), '1', '2', []],
+            [],
+            [[]],
+        );
 
         const { createLoan } = await import(
             '../../controllers/loansController.js'
@@ -435,37 +460,13 @@ describe('POST /api/loans', () => {
 
     it('should respond with an error message', async () => {
         const errorMessage = 'Error creating loan';
-        mockModule([null], [errorMessage]);
+        mockModule([], [errorMessage]);
 
         const { createLoan } = await import(
             '../../controllers/loansController.js'
         );
 
-        mockRequest.body = {
-            loan_id: 1,
-            cron_job_id: 1,
-            account_id: 1,
-            tax_id: null,
-            loan_amount: 10000,
-            loan_plan_amount: 100,
-            loan_recipient: 'Test Loan Recipient',
-            loan_title: 'Test Loan',
-            loan_description: 'Test Loan to test the loan route',
-            frequency_type: 2,
-            frequency_type_variable: null,
-            frequency_month_of_year: null,
-            frequency_day_of_month: null,
-            frequency_day_of_week: null,
-            frequency_week_of_month: null,
-            loan_interest_frequency_type: 2,
-            loan_interest_rate: 0,
-            loan_subsidized: 0,
-            loan_begin_date: '2020-01-02',
-            loan_end_date: '2020-01-01',
-            loan_fully_paid_back: '2024-01-01',
-            date_created: '2020-01-01',
-            date_modified: '2020-01-01',
-        };
+        mockRequest.body = loans.filter((loan) => loan.loan_id === 1);
 
         await createLoan(mockRequest as Request, mockResponse, mockNext);
 
@@ -478,37 +479,13 @@ describe('POST /api/loans', () => {
 
     it('should respond with an error message in the return object', async () => {
         const errorMessage = 'Error creating loan';
-        mockModule([null], [errorMessage]);
+        mockModule([], [errorMessage]);
 
         const { createLoanReturnObject } = await import(
             '../../controllers/loansController.js'
         );
 
-        mockRequest.body = {
-            loan_id: 1,
-            cron_job_id: 1,
-            account_id: 1,
-            tax_id: null,
-            loan_amount: 10000,
-            loan_plan_amount: 100,
-            loan_recipient: 'Test Loan Recipient',
-            loan_title: 'Test Loan',
-            loan_description: 'Test Loan to test the loan route',
-            frequency_type: 2,
-            frequency_type_variable: null,
-            frequency_month_of_year: null,
-            frequency_day_of_month: null,
-            frequency_day_of_week: null,
-            frequency_week_of_month: null,
-            loan_interest_frequency_type: 2,
-            loan_interest_rate: 0,
-            loan_subsidized: 0,
-            loan_begin_date: '2020-01-02',
-            loan_end_date: '2020-01-01',
-            loan_fully_paid_back: '2024-01-01',
-            date_created: '2020-01-01',
-            date_modified: '2020-01-01',
-        };
+        mockRequest.body = loans.filter((loan) => loan.loan_id === 1);
 
         await createLoanReturnObject(mockRequest as Request, mockResponse);
 
@@ -520,35 +497,7 @@ describe('POST /api/loans', () => {
     });
 
     it('should respond with the created loan', async () => {
-        const loans = [
-            {
-                loan_id: 1,
-                cron_job_id: 1,
-                account_id: 1,
-                tax_id: null,
-                loan_amount: 10000,
-                loan_plan_amount: 100,
-                loan_recipient: 'Test Loan Recipient',
-                loan_title: 'Test Loan',
-                loan_description: 'Test Loan to test the loan route',
-                frequency_type: 2,
-                frequency_type_variable: null,
-                frequency_month_of_year: null,
-                frequency_day_of_month: null,
-                frequency_day_of_week: null,
-                frequency_week_of_month: null,
-                loan_interest_frequency_type: 2,
-                loan_interest_rate: 0,
-                loan_subsidized: 0,
-                loan_begin_date: '2020-01-02',
-                loan_end_date: '2020-01-01',
-                loan_fully_paid_back: '2024-01-01',
-                date_created: '2020-01-01',
-                date_modified: '2020-01-01',
-            },
-        ];
-
-        mockModule([loans]);
+        mockModule([loans.filter((loan) => loan.loan_id === 1), '1', '2', []]);
 
         const { createLoanReturnObject } = await import(
             '../../controllers/loansController.js'
@@ -559,38 +508,27 @@ describe('POST /api/loans', () => {
 
         await createLoanReturnObject(mockRequest as Request, mockResponse);
 
-        loans[0].loan_fully_paid_back = '2024-01-01';
+        const customLoansResponse = loansResponse.filter(
+            (loan) => loan.id === 1,
+        );
 
-        const modifiedLoans = loans.map((loan) => parseLoans(loan));
+        customLoansResponse[0].fully_paid_back = '2024-01-01';
 
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(201);
-        expect(mockResponse.json).toHaveBeenCalledWith(modifiedLoans);
+        expect(mockResponse.json).toHaveBeenCalledWith(customLoansResponse);
     });
 });
 
 describe('PUT /api/loans/:id', () => {
     it('should call next in the middleware', async () => {
-        const updatedLoan = [
-            {
-                account_id: 1,
-                cron_job_id: 1,
-                interest_cron_job_id: null,
-                loan_id: 1,
-                amount: 1000,
-                plan_amount: 100,
-                recipient: 'John Doe',
-                title: 'Test Loan',
-                description: 'Test Loan Description',
-                frequency_type: 2,
-                interest_rate: 0,
-                interest_frequency_type: 0,
-                begin_date: '2021-01-01',
-            },
-        ];
-
         mockModule(
-            [updatedLoan, [{ unique_id: 1 }], [{ unique_id: null }], []],
+            [
+                loans.filter((loan) => loan.loan_id === 1),
+                [{ unique_id: 1 }],
+                [{ unique_id: null }],
+                [],
+            ],
             [],
             [[]],
             [[]],
@@ -601,7 +539,7 @@ describe('PUT /api/loans/:id', () => {
         );
 
         mockRequest.params = { id: 1 };
-        mockRequest.body = updatedLoan[0];
+        mockRequest.body = loans.filter((loan) => loan.loan_id === 1);
 
         await updateLoan(mockRequest as Request, mockResponse, mockNext);
 
@@ -619,19 +557,7 @@ describe('PUT /api/loans/:id', () => {
         );
 
         mockRequest.params = { id: 1 };
-        mockRequest.body = {
-            account_id: 1,
-            loan_id: 1,
-            amount: 1000,
-            plan_amount: 100,
-            recipient: 'John Doe',
-            title: 'Test Loan',
-            description: 'Test Loan Description',
-            frequency_type: 2,
-            interest_rate: 0,
-            interest_frequency_type: 0,
-            begin_date: '2021-01-01',
-        };
+        mockRequest.body = loans.filter((loan) => loan.loan_id === 1);
 
         await updateLoan(mockRequest as Request, mockResponse, mockNext);
 
@@ -651,19 +577,7 @@ describe('PUT /api/loans/:id', () => {
         );
 
         mockRequest.params = { id: 1 };
-        mockRequest.body = {
-            account_id: 1,
-            loan_id: 1,
-            amount: 1000,
-            plan_amount: 100,
-            recipient: 'John Doe',
-            title: 'Test Loan',
-            description: 'Test Loan Description',
-            frequency_type: 2,
-            interest_rate: 0,
-            interest_frequency_type: 0,
-            begin_date: '2021-01-01',
-        };
+        mockRequest.body = loans.filter((loan) => loan.loan_id === 1);
 
         await updateLoanReturnObject(mockRequest as Request, mockResponse);
 
@@ -683,19 +597,7 @@ describe('PUT /api/loans/:id', () => {
         );
 
         mockRequest.params = { id: 3 };
-        mockRequest.body = {
-            account_id: 1,
-            loan_id: 1,
-            amount: 1000,
-            plan_amount: 100,
-            recipient: 'John Doe',
-            title: 'Test Loan',
-            description: 'Test Loan Description',
-            frequency_type: 2,
-            interest_rate: 0,
-            interest_frequency_type: 0,
-            begin_date: '2021-01-01',
-        };
+        mockRequest.body = loans.filter((loan) => loan.loan_id === 1);
 
         // Act
         await updateLoan(mockRequest as Request, mockResponse, mockNext);
@@ -706,98 +608,36 @@ describe('PUT /api/loans/:id', () => {
     });
 
     it('should respond with the updated loan', async () => {
-        const updatedLoan = [
-            {
-                account_id: 1,
-                cron_job_id: 1,
-                interest_cron_job_id: null,
-                loan_id: 1,
-                loan_amount: 1000,
-                loan_plan_amount: 100,
-                loan_recipient: 'John Doe',
-                loan_title: 'Test Loan',
-                loan_description: 'Test Loan Description',
-                frequency_type: 2,
-                loan_interest_rate: 0,
-                loan_interest_frequency_type: 0,
-                loan_begin_date: '2021-01-01',
-                loan_subsidized: 0,
-                date_created: '2020-01-01',
-                date_modified: '2020-01-01',
-            },
-        ];
-
-        const updatedLoanReturnObject = [
-            {
-                account_id: 1,
-                id: 1,
-                amount: 1000,
-                plan_amount: 100,
-                recipient: 'John Doe',
-                title: 'Test Loan',
-                description: 'Test Loan Description',
-                frequency_type: 2,
-                frequency_type_variable: null,
-                frequency_month_of_year: null,
-                frequency_day_of_month: null,
-                frequency_day_of_week: null,
-                frequency_week_of_month: null,
-                interest_rate: 0,
-                interest_frequency_type: 0,
-                begin_date: '2021-01-01',
-                subsidized: 0,
-                end_date: null,
-                fully_paid_back: '2024-01-01',
-                date_created: '2020-01-01',
-                date_modified: '2020-01-01',
-            },
-        ];
-
-        mockModule([updatedLoan]);
+        mockModule([loans.filter((loan) => loan.loan_id === 1)]);
 
         const { updateLoanReturnObject } = await import(
             '../../controllers/loansController.js'
         );
 
         mockRequest.params = { id: 1 };
-        mockRequest.body = updatedLoan[0];
+        mockRequest.body = loans.filter((loan) => loan.loan_id === 1);
         mockRequest.fullyPaidBackDates = { 1: '2024-01-01' };
+
+        const customLoansResponse = loansResponse.filter(
+            (loan) => loan.id === 1,
+        );
+
+        customLoansResponse[0].fully_paid_back = '2024-01-01';
 
         await updateLoanReturnObject(mockRequest as Request, mockResponse);
 
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(200);
-        expect(mockResponse.json).toHaveBeenCalledWith(updatedLoanReturnObject);
+        expect(mockResponse.json).toHaveBeenCalledWith(customLoansResponse);
     });
 });
 
 describe('DELETE /api/loans/:id', () => {
     it('should call next on the middleware', async () => {
         // Arrange
-        const deletedLoan = [
-            {
-                account_id: 1,
-                cron_job_id: 1,
-                interest_cron_job_id: null,
-                loan_id: 1,
-                loan_amount: 1000,
-                loan_plan_amount: 100,
-                loan_recipient: 'John Doe',
-                loan_title: 'Test Loan',
-                loan_description: 'Test Loan Description',
-                frequency_type: 2,
-                loan_interest_rate: 0,
-                loan_interest_frequency_type: 0,
-                loan_begin_date: '2021-01-01',
-                loan_subsidized: 0,
-                date_created: '2020-01-01',
-                date_modified: '2020-01-01',
-            },
-        ];
-
         mockModule(
             [
-                deletedLoan,
+                loans.filter((loan) => loan.loan_id === 1),
                 [],
                 [{ unique_id: 1 }],
                 [{ unique_id: null }],

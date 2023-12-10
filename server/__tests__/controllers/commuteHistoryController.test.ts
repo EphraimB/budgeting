@@ -1,5 +1,4 @@
 import { type Request } from 'express';
-import { CommuteHistory } from '../../types/types.js';
 import {
     jest,
     beforeEach,
