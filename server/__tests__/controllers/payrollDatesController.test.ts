@@ -276,29 +276,31 @@ describe('GET /api/payroll/dates', () => {
     });
 });
 
-// describe('POST /api/payroll/dates', () => {
-//     it('should populate request.payroll_date_id', async () => {
-//         // Arrange
-//         mockModule(payrollDates.filter((payrollDate) => payrollDate.id === 1));
+describe('POST /api/payroll/dates', () => {
+    it('should populate request.payroll_date_id', async () => {
+        // Arrange
+        mockModule([
+            payrollDates.filter(
+                (payrollDate) => payrollDate.payroll_date_id === 1,
+            ),
+            [],
+        ]);
 
-//         const newPayrollDate = {
-//             employee_id: 1,
-//             start_day: 1,
-//             end_day: 15,
-//         };
+        const { createPayrollDate } = await import(
+            '../../controllers/payrollDatesController.js'
+        );
 
-//         const { createPayrollDate } = await import(
-//             '../../controllers/payrollDatesController.js'
-//         );
+        mockRequest.body = payrollDates.filter(
+            (payrollDate) => payrollDate.payroll_date_id === 1,
+        );
 
-//         mockRequest.body = newPayrollDate;
+        await createPayrollDate(mockRequest as Request, mockResponse, mockNext);
 
-//         await createPayrollDate(mockRequest as Request, mockResponse, mockNext);
-
-//         // Assert
-//         expect(mockRequest.payroll_date_id).toBe(1);
-//         expect(mockNext).toHaveBeenCalled();
-//     });
+        // Assert
+        expect(mockRequest.payroll_date_id).toBe(1);
+        expect(mockNext).toHaveBeenCalled();
+    });
+});
 
 //     it('should respond with an error message', async () => {
 //         // Arrange
