@@ -377,29 +377,30 @@ describe('POST /api/payroll/dates', () => {
     });
 });
 
-// describe('PUT /api/payroll/dates/:id', () => {
-//     it('should call next on the middlware', async () => {
-//         // Arrange
-//         mockModule(payrollDates.filter((payrollDate) => payrollDate.id === 1));
+describe('PUT /api/payroll/dates/:id', () => {
+    it('should call next on the middlware', async () => {
+        // Arrange
+        mockModule(
+            payrollDates.filter(
+                (payrollDate) => payrollDate.payroll_date_id === 1,
+            ),
+        );
 
-//         const updatedPayrollDate = {
-//             employee_id: 1,
-//             start_day: 1,
-//             end_day: 15,
-//         };
+        const { updatePayrollDate } = await import(
+            '../../controllers/payrollDatesController.js'
+        );
 
-//         const { updatePayrollDate } = await import(
-//             '../../controllers/payrollDatesController.js'
-//         );
+        mockRequest.params = { id: 1 };
+        mockRequest.body = payrollDates.filter(
+            (payrollDate) => payrollDate.payroll_date_id === 1,
+        );
 
-//         mockRequest.params = { id: 1 };
-//         mockRequest.body = updatedPayrollDate;
+        await updatePayrollDate(mockRequest as Request, mockResponse, mockNext);
 
-//         await updatePayrollDate(mockRequest as Request, mockResponse, mockNext);
-
-//         // Assert
-//         expect(mockNext).toHaveBeenCalled();
-//     });
+        // Assert
+        expect(mockNext).toHaveBeenCalled();
+    });
+});
 
 //     it('should respond with an error message', async () => {
 //         // Arrange
