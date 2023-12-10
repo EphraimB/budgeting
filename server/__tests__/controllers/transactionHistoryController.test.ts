@@ -298,26 +298,25 @@ describe('GET /api/transactionHistory', () => {
             message: 'Error getting transaction history',
         });
     });
+
+    it('should respond with a 404 error message when the transaction does not exist', async () => {
+        // Arrange
+        mockModule([[]]);
+
+        const { getTransactions } = await import(
+            '../../controllers/transactionHistoryController.js'
+        );
+
+        mockRequest.query = { id: 3 };
+
+        // Act
+        await getTransactions(mockRequest as Request, mockResponse);
+
+        // Assert
+        expect(mockResponse.status).toHaveBeenCalledWith(404);
+        expect(mockResponse.send).toHaveBeenCalledWith('Transaction not found');
+    });
 });
-
-//     it('should respond with a 404 error message when the transaction does not exist', async () => {
-//         // Arrange
-//         mockModule([]);
-
-//         const { getTransactions } = await import(
-//             '../../controllers/transactionHistoryController.js'
-//         );
-
-//         mockRequest.query = { id: 3 };
-
-//         // Act
-//         await getTransactions(mockRequest as Request, mockResponse);
-
-//         // Assert
-//         expect(mockResponse.status).toHaveBeenCalledWith(404);
-//         expect(mockResponse.send).toHaveBeenCalledWith('Transaction not found');
-//     });
-// });
 
 // describe('POST /api/transactionHistory', () => {
 //     it('should respond with the new transaction', async () => {
