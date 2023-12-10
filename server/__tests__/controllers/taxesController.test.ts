@@ -201,25 +201,28 @@ describe('POST /api/taxes', () => {
     });
 });
 
-// describe('PUT /api/taxes/:id', () => {
-//     it('should respond with the updated tax', async () => {
-//         const updatedTax = taxes.filter((tax) => tax.id === 1);
+describe('PUT /api/taxes/:id', () => {
+    it('should respond with the updated tax', async () => {
+        const updatedTax = taxes.filter((tax) => tax.tax_id === 1);
 
-//         mockModule(updatedTax);
+        mockModule([updatedTax]);
 
-//         const { updateTax } = await import(
-//             '../../controllers/taxesController.js'
-//         );
+        const { updateTax } = await import(
+            '../../controllers/taxesController.js'
+        );
 
-//         mockRequest.params = { id: 1 };
-//         mockRequest.body = updatedTax;
+        mockRequest.params = { id: 1 };
+        mockRequest.body = updatedTax;
 
-//         await updateTax(mockRequest as Request, mockResponse);
+        await updateTax(mockRequest as Request, mockResponse);
 
-//         // Assert
-//         expect(mockResponse.status).toHaveBeenCalledWith(200);
-//         expect(mockResponse.json).toHaveBeenCalledWith(updatedTax);
-//     });
+        // Assert
+        expect(mockResponse.status).toHaveBeenCalledWith(200);
+        expect(mockResponse.json).toHaveBeenCalledWith(
+            taxesResponse.filter((tax) => tax.id === 1),
+        );
+    });
+});
 
 //     it('should handle errors correctly', async () => {
 //         // Arrange
