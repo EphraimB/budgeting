@@ -597,29 +597,29 @@ describe('PUT /api/wishlists/:id', () => {
     });
 });
 
-// describe('DELETE /api/wishlists/:id', () => {
-//     it('should respond with a success message', async () => {
-//         // Arrange
-//         mockModule(
-//             [{ wishlist_id: 1, cron_job_id: 1 }], // createWishlist result
-//             undefined, // error message
-//             [{ uniqueId: 'ws8fgv89w', cronDate: '* * * * *' }], // getCronJob result
-//         );
+describe('DELETE /api/wishlists/:id', () => {
+    it('should respond with a success message', async () => {
+        // Arrange
+        mockModule([
+            [{ wishlist_id: 1, cron_job_id: 1 }], // createWishlist result
+            [{ uniqueId: 'ws8fgv89w', cronDate: '* * * * *' }], // getCronJob result
+        ]);
 
-//         mockRequest.params = { id: 1 };
+        mockRequest.params = { id: 1 };
 
-//         const { deleteWishlist } = await import(
-//             '../../controllers/wishlistsController.js'
-//         );
+        const { deleteWishlist } = await import(
+            '../../controllers/wishlistsController.js'
+        );
 
-//         await deleteWishlist(mockRequest as Request, mockResponse);
+        await deleteWishlist(mockRequest as Request, mockResponse);
 
-//         // Assert
-//         expect(mockResponse.status).toHaveBeenCalledWith(200);
-//         expect(mockResponse.send).toHaveBeenCalledWith(
-//             'Successfully deleted wishlist item',
-//         );
-//     });
+        // Assert
+        expect(mockResponse.status).toHaveBeenCalledWith(200);
+        expect(mockResponse.send).toHaveBeenCalledWith(
+            'Successfully deleted wishlist item',
+        );
+    });
+});
 
 //     it('should respond with an error message', async () => {
 //         // Arrange
