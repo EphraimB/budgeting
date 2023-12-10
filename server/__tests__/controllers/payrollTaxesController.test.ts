@@ -291,33 +291,28 @@ describe('POST /api/payroll/taxes', () => {
         expect(mockRequest.payroll_taxes_id).toBe(id);
         expect(mockNext).toHaveBeenCalled();
     });
+
+    it('should respond with an error message', async () => {
+        const errorMessage = 'Error creating payroll tax';
+        mockModule([], [errorMessage]);
+
+        mockRequest.body = payrollTaxes.filter(
+            (payrollTax) => payrollTax.payroll_taxes_id === 1,
+        );
+
+        const { createPayrollTax } = await import(
+            '../../controllers/payrollTaxesController.js'
+        );
+
+        await createPayrollTax(mockRequest as Request, mockResponse, mockNext);
+
+        // Assert
+        expect(mockResponse.status).toHaveBeenCalledWith(400);
+        expect(mockResponse.json).toHaveBeenCalledWith({
+            message: 'Error creating payroll tax',
+        });
+    });
 });
-
-//     it('should respond with an error message', async () => {
-//         const errorMessage = 'Error creating payroll tax';
-//         const error = new Error(errorMessage);
-//         mockModule(null, errorMessage);
-
-//         const newPayrollTax = {
-//             employee_id: 1,
-//             name: 'Federal Income Tax',
-//             rate: 0.15,
-//         };
-
-//         mockRequest.body = newPayrollTax;
-
-//         const { createPayrollTax } = await import(
-//             '../../controllers/payrollTaxesController.js'
-//         );
-
-//         await createPayrollTax(mockRequest as Request, mockResponse, mockNext);
-
-//         // Assert
-//         expect(mockResponse.status).toHaveBeenCalledWith(400);
-//         expect(mockResponse.json).toHaveBeenCalledWith({
-//             message: 'Error creating payroll tax',
-//         });
-//     });
 
 //     it('should respond with an error message with return object', async () => {
 //         const errorMessage = 'Error creating payroll tax';
