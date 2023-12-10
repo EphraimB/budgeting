@@ -503,23 +503,24 @@ describe('PUT /api/payroll/dates/:id', () => {
     });
 });
 
-// describe('DELETE /api/payroll/dates/:id', () => {
-//     it('should call next on the middleware', async () => {
-//         // Arrange
-//         mockModule('Successfully deleted payroll date');
+describe('DELETE /api/payroll/dates/:id', () => {
+    it('should call next on the middleware', async () => {
+        // Arrange
+        mockModule(['Successfully deleted payroll date']);
 
-//         mockRequest.params = { id: 1 };
-//         mockRequest.query = { employee_id: 1 };
+        mockRequest.params = { id: 1 };
+        mockRequest.query = { employee_id: 1 };
 
-//         const { deletePayrollDate } = await import(
-//             '../../controllers/payrollDatesController.js'
-//         );
+        const { deletePayrollDate } = await import(
+            '../../controllers/payrollDatesController.js'
+        );
 
-//         await deletePayrollDate(mockRequest as Request, mockResponse, mockNext);
+        await deletePayrollDate(mockRequest as Request, mockResponse, mockNext);
 
-//         // Assert
-//         expect(mockNext).toHaveBeenCalled();
-//     });
+        // Assert
+        expect(mockNext).toHaveBeenCalled();
+    });
+});
 
 //     it('should respond with an error message', async () => {
 //         // Arrange
