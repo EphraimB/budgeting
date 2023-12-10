@@ -590,26 +590,28 @@ describe('PUT /api/transfer/:id', () => {
             message: 'Error getting transfer',
         });
     });
+
+    it('should respond with a 404 error message when the transfer does not exist', async () => {
+        // Arrange
+        mockModule([[]]);
+
+        const { updateTransfer } = await import(
+            '../../controllers/transfersController.js'
+        );
+
+        mockRequest.params = { id: 3 };
+        mockRequest.body = transfers.filter(
+            (transfer) => transfer.transfer_id === 1,
+        );
+
+        // Act
+        await updateTransfer(mockRequest as Request, mockResponse, mockNext);
+
+        // Assert
+        expect(mockResponse.status).toHaveBeenCalledWith(404);
+        expect(mockResponse.send).toHaveBeenCalledWith('Transfer not found');
+    });
 });
-
-//     it('should respond with a 404 error message when the transfer does not exist', async () => {
-//         // Arrange
-//         mockModule([]);
-
-//         const { updateTransfer } = await import(
-//             '../../controllers/transfersController.js'
-//         );
-
-//         mockRequest.params = { id: 3 };
-//         mockRequest.body = transfers.filter((transfer) => transfer.id === 1);
-
-//         // Act
-//         await updateTransfer(mockRequest as Request, mockResponse, mockNext);
-
-//         // Assert
-//         expect(mockResponse.status).toHaveBeenCalledWith(404);
-//         expect(mockResponse.send).toHaveBeenCalledWith('Transfer not found');
-//     });
 
 //     it('should respond with the updated transfer', async () => {
 //         // Arrange
