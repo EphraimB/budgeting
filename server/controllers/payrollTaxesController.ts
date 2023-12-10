@@ -1,9 +1,6 @@
 import { type NextFunction, type Request, type Response } from 'express';
 import { payrollQueries } from '../models/queryData.js';
-import {
-    handleError,
-    executeQuery,
-} from '../utils/helperFunctions.js';
+import { handleError, executeQuery } from '../utils/helperFunctions.js';
 import { type PayrollTax } from '../types/types.js';
 import { logger } from '../config/winston.js';
 
@@ -106,9 +103,7 @@ export const createPayrollTax = async (
             rate,
         ]);
 
-        await executeQuery('SELECT process_payroll_for_employee($1)', [
-            1,
-        ]);
+        await executeQuery('SELECT process_payroll_for_employee($1)', [1]);
 
         const payrollTaxes: PayrollTax[] = results.map((payrollTax) =>
             payrollTaxesParse(payrollTax),
@@ -169,7 +164,7 @@ export const updatePayrollTax = async (
     next: NextFunction,
 ): Promise<void> => {
     const { id } = request.params;
-    const { employee_id, name, rate } = request.body;
+    const { name, rate } = request.body;
 
     try {
         const results = await executeQuery(payrollQueries.updatePayrollTax, [
@@ -183,9 +178,7 @@ export const updatePayrollTax = async (
             return;
         }
 
-        await executeQuery('SELECT process_payroll_for_employee($1)', [
-            1,
-        ]);
+        await executeQuery('SELECT process_payroll_for_employee($1)', [1]);
 
         next();
     } catch (error) {
@@ -248,9 +241,7 @@ export const deletePayrollTax = async (
 
         await executeQuery(payrollQueries.deletePayrollTax, [id]);
 
-        await executeQuery('SELECT process_payroll_for_employee($1)', [
-            1,
-        ]);
+        await executeQuery('SELECT process_payroll_for_employee($1)', [1]);
 
         next();
     } catch (error) {

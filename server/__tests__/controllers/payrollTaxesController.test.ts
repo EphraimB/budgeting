@@ -365,47 +365,27 @@ describe('POST /api/payroll/taxes', () => {
             payrollTaxesResponse.filter((payrollTax) => payrollTax.id === id),
         );
     });
+
+    it('should return a 404 error if the payroll tax does not exist', async () => {
+        mockModule([[]]);
+
+        const { createPayrollTaxReturnObject } = await import(
+            '../../controllers/payrollTaxesController.js'
+        );
+
+        mockRequest.body = payrollTaxes.filter(
+            (payrollTax) => payrollTax.payroll_taxes_id === 1,
+        );
+
+        await createPayrollTaxReturnObject(
+            mockRequest as Request,
+            mockResponse,
+        );
+
+        expect(mockResponse.status).toHaveBeenCalledWith(404);
+        expect(mockResponse.send).toHaveBeenCalledWith('Payroll tax not found');
+    });
 });
-
-//     it('should return a 404 error if the payroll tax does not exist', async () => {
-//         mockModule([]);
-
-//         jest.mock('child_process', () => {
-//             return {
-//                 exec: jest.fn(
-//                     (
-//                         command: string,
-//                         callback: (
-//                             error: Error | null,
-//                             stdout: string,
-//                             stderr: string,
-//                         ) => void,
-//                     ) => {
-//                         callback(null, 'mock stdout', 'mock stderr');
-//                     },
-//                 ),
-//             };
-//         });
-
-//         const { createPayrollTaxReturnObject } = await import(
-//             '../../controllers/payrollTaxesController.js'
-//         );
-
-//         mockRequest.body = {
-//             employee_id: 1,
-//             name: 'Federal Income Tax',
-//             rate: 0.15,
-//         };
-
-//         await createPayrollTaxReturnObject(
-//             mockRequest as Request,
-//             mockResponse as Response,
-//         );
-
-//         expect(mockResponse.status).toHaveBeenCalledWith(404);
-//         expect(mockResponse.send).toHaveBeenCalledWith('Payroll tax not found');
-//     });
-// });
 
 // describe('PUT /api/payroll/taxes/:id', () => {
 //     it('should call next on the middleware', async () => {
