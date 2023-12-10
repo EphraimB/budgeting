@@ -357,36 +357,36 @@ describe('GET /api/transfers', () => {
             message: 'Error getting transfers for given account_id',
         });
     });
+
+    it('should respond with an array of transfers with id and account_id', async () => {
+        // Arrange
+        mockModule(
+            transfers.filter(
+                (transfer) =>
+                    transfer.transfer_id === 1 &&
+                    transfer.source_account_id === 1,
+            ),
+        );
+
+        mockRequest.query = { id: 1, account_id: 1 };
+
+        const { getTransfers } = await import(
+            '../../controllers/transfersController.js'
+        );
+
+        // Call the function with the mock request and response
+        await getTransfers(mockRequest as Request, mockResponse);
+
+        // Assert
+        expect(mockResponse.status).toHaveBeenCalledWith(200);
+        expect(mockResponse.json).toHaveBeenCalledWith(
+            transfersResponse.filter(
+                (transfer) =>
+                    transfer.id === 1 && transfer.source_account_id === 1,
+            ),
+        );
+    });
 });
-
-//     it('should respond with an array of transfers with id and account_id', async () => {
-//         // Arrange
-//         mockModule(
-//             transfers.filter(
-//                 (transfer) =>
-//                     transfer.id === 1 && transfer.source_account_id === 1,
-//             ),
-//         );
-
-//         mockRequest.query = { id: 1, account_id: 1 };
-
-//         const { getTransfers } = await import(
-//             '../../controllers/transfersController.js'
-//         );
-
-//         // Call the function with the mock request and response
-//         await getTransfers(mockRequest as Request, mockResponse);
-
-//         // Assert
-//         expect(mockResponse.status).toHaveBeenCalledWith(200);
-//         expect(mockResponse.json).toHaveBeenCalledWith(
-//             modifiedTransfers.filter(
-//                 (transfer) =>
-//                     transfer.transfer_id === 1 &&
-//                     transfer.source_account_id === 1,
-//             ),
-//         );
-//     });
 
 //     it('should respond with an error message with id and account_id', async () => {
 //         // Arrange
