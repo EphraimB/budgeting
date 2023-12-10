@@ -265,63 +265,62 @@ describe('PUT /api/taxes/:id', () => {
     });
 });
 
-// describe('DELETE /api/taxes/:id', () => {
-//     it('should respond with a success message', async () => {
-//         // Arrange
-//         mockModule('Successfully deleted tax');
+describe('DELETE /api/taxes/:id', () => {
+    it('should respond with a success message', async () => {
+        // Arrange
+        mockModule(['Successfully deleted tax']);
 
-//         const { deleteTax } = await import(
-//             '../../controllers/taxesController.js'
-//         );
+        const { deleteTax } = await import(
+            '../../controllers/taxesController.js'
+        );
 
-//         mockRequest.params = { id: 1 };
+        mockRequest.params = { id: 1 };
 
-//         await deleteTax(mockRequest as Request, mockResponse);
+        await deleteTax(mockRequest as Request, mockResponse);
 
-//         // Assert
-//         expect(mockResponse.status).toHaveBeenCalledWith(200);
-//         expect(mockResponse.send).toHaveBeenCalledWith(
-//             'Successfully deleted tax',
-//         );
-//     });
+        // Assert
+        expect(mockResponse.status).toHaveBeenCalledWith(200);
+        expect(mockResponse.send).toHaveBeenCalledWith(
+            'Successfully deleted tax',
+        );
+    });
 
-//     it('should handle errors correctly', async () => {
-//         // Arrange
-//         const errorMessage = 'Error deleting tax';
-//         const error = new Error(errorMessage);
-//         mockModule(null, errorMessage);
+    it('should handle errors correctly', async () => {
+        // Arrange
+        const errorMessage = 'Error deleting tax';
+        mockModule([], [errorMessage]);
 
-//         const { deleteTax } = await import(
-//             '../../controllers/taxesController.js'
-//         );
+        const { deleteTax } = await import(
+            '../../controllers/taxesController.js'
+        );
 
-//         mockRequest.params = { id: 1 };
+        mockRequest.params = { id: 1 };
 
-//         // Act
-//         await deleteTax(mockRequest as Request, mockResponse);
+        // Act
+        await deleteTax(mockRequest as Request, mockResponse);
 
-//         // Assert
-//         expect(mockResponse.status).toHaveBeenCalledWith(400);
-//         expect(mockResponse.json).toHaveBeenCalledWith({
-//             message: 'Error deleting tax',
-//         });
-//     });
+        // Assert
+        expect(mockResponse.status).toHaveBeenCalledWith(400);
+        expect(mockResponse.json).toHaveBeenCalledWith({
+            message: 'Error deleting tax',
+        });
+    });
 
-//     it('should respond with a 404 error message when the tax does not exist', async () => {
-//         // Arrange
-//         mockModule([]);
+    it('should respond with a 404 error message when the tax does not exist', async () => {
+        // Arrange
+        mockModule([[]]);
 
-//         const { deleteTax } = await import(
-//             '../../controllers/taxesController.js'
-//         );
+        const { deleteTax } = await import(
+            '../../controllers/taxesController.js'
+        );
 
-//         mockRequest.params = { id: 1 };
+        mockRequest.params = { id: 1 };
 
-//         // Act
-//         await deleteTax(mockRequest as Request, mockResponse);
+        // Act
+        await deleteTax(mockRequest as Request, mockResponse);
 
-//         // Assert
-//         expect(mockResponse.status).toHaveBeenCalledWith(404);
-//         expect(mockResponse.send).toHaveBeenCalledWith('Tax not found');
-//     });
-// });
+        // Assert
+        expect(mockResponse.status).toHaveBeenCalledWith(404);
+        expect(mockResponse.send).toHaveBeenCalledWith('Tax not found');
+    });
+});
