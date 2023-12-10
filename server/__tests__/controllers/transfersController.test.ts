@@ -427,25 +427,28 @@ describe('GET /api/transfers', () => {
     });
 });
 
-// describe('POST /api/transfers', () => {
-//     it('should populate request.transfer_id', async () => {
-//         // Arrange
-//         const newTransfer = transfers.filter((transfer) => transfer.id === 1);
+describe('POST /api/transfers', () => {
+    it('should populate request.transfer_id', async () => {
+        // Arrange
+        const newTransfer = transfers.filter(
+            (transfer) => transfer.transfer_id === 1,
+        );
 
-//         mockModule(newTransfer);
+        mockModule(newTransfer);
 
-//         const { createTransfer } = await import(
-//             '../../controllers/transfersController.js'
-//         );
+        const { createTransfer } = await import(
+            '../../controllers/transfersController.js'
+        );
 
-//         mockRequest.body = newTransfer;
+        mockRequest.body = newTransfer;
 
-//         await createTransfer(mockRequest as Request, mockResponse, mockNext);
+        await createTransfer(mockRequest as Request, mockResponse, mockNext);
 
-//         // Assert
-//         expect(mockRequest.transfer_id).toBe(1);
-//         expect(mockNext).toHaveBeenCalled();
-//     });
+        // Assert
+        expect(mockRequest.transfer_id).toBe(1);
+        expect(mockNext).toHaveBeenCalled();
+    });
+});
 
 //     it('should respond with an error message', async () => {
 //         // Arrange
