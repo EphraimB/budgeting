@@ -246,26 +246,25 @@ describe('GET /api/payroll/taxes', () => {
             message: 'Error getting payroll tax',
         });
     });
+
+    it('should respond with a 404 error message when the payroll tax does not exist', async () => {
+        // Arrange
+        mockModule([[]]);
+
+        const { getPayrollTaxes } = await import(
+            '../../controllers/payrollTaxesController.js'
+        );
+
+        mockRequest.query = { id: 3 };
+
+        // Act
+        await getPayrollTaxes(mockRequest as Request, mockResponse);
+
+        // Assert
+        expect(mockResponse.status).toHaveBeenCalledWith(404);
+        expect(mockResponse.send).toHaveBeenCalledWith('Payroll tax not found');
+    });
 });
-
-//     it('should respond with a 404 error message when the payroll tax does not exist', async () => {
-//         // Arrange
-//         mockModule([]);
-
-//         const { getPayrollTaxes } = await import(
-//             '../../controllers/payrollTaxesController.js'
-//         );
-
-//         mockRequest.query = { id: 3 };
-
-//         // Act
-//         await getPayrollTaxes(mockRequest as Request, mockResponse);
-
-//         // Assert
-//         expect(mockResponse.status).toHaveBeenCalledWith(404);
-//         expect(mockResponse.send).toHaveBeenCalledWith('Payroll tax not found');
-//     });
-// });
 
 // describe('POST /api/payroll/taxes', () => {
 //     it('should populate payroll_tax_id', async () => {
