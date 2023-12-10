@@ -576,28 +576,26 @@ describe('PUT /api/wishlists/:id', () => {
             wishlistsResponse.filter((wishlist) => wishlist.id === 1),
         );
     });
+
+    it('should respond with an error message', async () => {
+        // Arrange
+        const errorMessage = 'Error getting wishlist';
+        mockModule([], [errorMessage]);
+
+        const { updateWishlistCron } = await import(
+            '../../controllers/wishlistsController.js'
+        );
+
+        // Call the function with the mock request and response
+        await updateWishlistCron(mockRequest as Request, mockResponse);
+
+        // Assert
+        expect(mockResponse.status).toHaveBeenCalledWith(400);
+        expect(mockResponse.json).toHaveBeenCalledWith({
+            message: 'Error updating cron tab',
+        });
+    });
 });
-
-//     it('should respond with an error message', async () => {
-//         // Arrange
-//         const errorMessage = 'Error getting wishlist';
-//         const error = new Error(errorMessage);
-//         mockModule(null, errorMessage);
-
-//         const { updateWishlistCron } = await import(
-//             '../../controllers/wishlistsController.js'
-//         );
-
-//         // Call the function with the mock request and response
-//         await updateWishlistCron(mockRequest as Request, mockResponse);
-
-//         // Assert
-//         expect(mockResponse.status).toHaveBeenCalledWith(400);
-//         expect(mockResponse.json).toHaveBeenCalledWith({
-//             message: 'Error updating cron tab',
-//         });
-//     });
-// });
 
 // describe('DELETE /api/wishlists/:id', () => {
 //     it('should respond with a success message', async () => {
