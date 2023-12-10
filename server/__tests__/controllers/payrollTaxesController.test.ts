@@ -454,46 +454,37 @@ describe('PUT /api/payroll/taxes/:id', () => {
         expect(mockResponse.status).toHaveBeenCalledWith(404);
         expect(mockResponse.send).toHaveBeenCalledWith('Payroll tax not found');
     });
+
+    it('should respond with the updated payroll tax', async () => {
+        const id = 1;
+
+        mockModule([
+            payrollTaxes.filter(
+                (payrollTax) => payrollTax.payroll_taxes_id === id,
+            ),
+        ]);
+
+        mockRequest.params = { id: 1 };
+        mockRequest.body = payrollTaxes.filter(
+            (payrollTax) => payrollTax.payroll_taxes_id === id,
+        );
+
+        const { updatePayrollTaxReturnObject } = await import(
+            '../../controllers/payrollTaxesController.js'
+        );
+
+        await updatePayrollTaxReturnObject(
+            mockRequest as Request,
+            mockResponse,
+        );
+
+        // Assert
+        expect(mockResponse.status).toHaveBeenCalledWith(200);
+        expect(mockResponse.json).toHaveBeenCalledWith(
+            payrollTaxesResponse.filter((payrollTax) => payrollTax.id === id),
+        );
+    });
 });
-
-//     it('should respond with the updated payroll tax', async () => {
-//         const id = 1;
-
-//         mockModule(payrollTaxes.filter((payrollTax) => payrollTax.id === id));
-
-//         const updatedPayrollTax = {
-//             employee_id: id,
-//             name: 'Federal Income Tax',
-//             rate: 0.1,
-//         };
-
-//         mockRequest.params = { id: 1 };
-//         mockRequest.body = updatedPayrollTax;
-
-//         const { updatePayrollTaxReturnObject } = await import(
-//             '../../controllers/payrollTaxesController.js'
-//         );
-
-//         await updatePayrollTaxReturnObject(
-//             mockRequest as Request,
-//             mockResponse,
-//         );
-
-//         const newPayrollTaxesReturnObj = [
-//             {
-//                 payroll_taxes_id: id,
-//                 employee_id: 1,
-//                 name: 'Federal Income Tax',
-//                 rate: 0.1,
-//             },
-//         ];
-
-//         // Assert
-//         expect(mockResponse.status).toHaveBeenCalledWith(200);
-//         expect(mockResponse.json).toHaveBeenCalledWith(
-//             newPayrollTaxesReturnObj,
-//         );
-//     });
 
 //     it('should return a 404 error if the payroll tax does not exist in the return object', async () => {
 //         mockModule([]);
