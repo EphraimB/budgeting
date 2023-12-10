@@ -505,38 +505,32 @@ describe('PUT /api/payroll/taxes/:id', () => {
         expect(mockResponse.status).toHaveBeenCalledWith(404);
         expect(mockResponse.send).toHaveBeenCalledWith('Payroll tax not found');
     });
+
+    it('should respond with an error message with return object', async () => {
+        const errorMessage = 'Error updating payroll tax';
+        mockModule([], [errorMessage]);
+
+        mockRequest.params = { id: 1 };
+        mockRequest.body = payrollTaxes.filter(
+            (payrollTax) => payrollTax.payroll_taxes_id === 1,
+        );
+
+        const { updatePayrollTaxReturnObject } = await import(
+            '../../controllers/payrollTaxesController.js'
+        );
+
+        await updatePayrollTaxReturnObject(
+            mockRequest as Request,
+            mockResponse,
+        );
+
+        // Assert
+        expect(mockResponse.status).toHaveBeenCalledWith(400);
+        expect(mockResponse.json).toHaveBeenCalledWith({
+            message: 'Error getting payroll tax',
+        });
+    });
 });
-
-//     it('should respond with an error message with return object', async () => {
-//         const errorMessage = 'Error updating payroll tax';
-//         const error = new Error(errorMessage);
-//         mockModule(null, errorMessage);
-
-//         const updatedPayrollTax = {
-//             employee_id: 1,
-//             name: 'Federal Income Tax',
-//             rate: 0.1,
-//         };
-
-//         mockRequest.params = { id: 1 };
-//         mockRequest.body = updatedPayrollTax;
-
-//         const { updatePayrollTaxReturnObject } = await import(
-//             '../../controllers/payrollTaxesController.js'
-//         );
-
-//         await updatePayrollTaxReturnObject(
-//             mockRequest as Request,
-//             mockResponse,
-//         );
-
-//         // Assert
-//         expect(mockResponse.status).toHaveBeenCalledWith(400);
-//         expect(mockResponse.json).toHaveBeenCalledWith({
-//             message: 'Error getting payroll tax',
-//         });
-//     });
-// });
 
 // describe('DELETE /api/payroll/taxes/:id', () => {
 //     it('should call next on the middleware', async () => {
