@@ -365,28 +365,31 @@ describe('POST /api/transactionHistory', () => {
     });
 });
 
-// describe('PUT /api/transactionHistory/:id', () => {
-//     it('should respond with the updated transaction', async () => {
-//         // Arrange
-//         const updatedTransaction = transactions.filter(
-//             (transaction) => transaction.transaction_id === 1,
-//         );
+describe('PUT /api/transactionHistory/:id', () => {
+    it('should respond with the updated transaction', async () => {
+        // Arrange
+        const updatedTransaction = transactions.filter(
+            (transaction) => transaction.transaction_id === 1,
+        );
 
-//         mockModule(updatedTransaction);
+        mockModule([updatedTransaction]);
 
-//         mockRequest.params = { id: 1 };
-//         mockRequest.body = updatedTransaction;
+        mockRequest.params = { id: 1 };
+        mockRequest.body = updatedTransaction;
 
-//         const { updateTransaction } = await import(
-//             '../../controllers/transactionHistoryController.js'
-//         );
+        const { updateTransaction } = await import(
+            '../../controllers/transactionHistoryController.js'
+        );
 
-//         await updateTransaction(mockRequest as Request, mockResponse);
+        await updateTransaction(mockRequest as Request, mockResponse);
 
-//         // Assert
-//         expect(mockResponse.status).toHaveBeenCalledWith(200);
-//         expect(mockResponse.json).toHaveBeenCalledWith(updatedTransaction);
-//     });
+        // Assert
+        expect(mockResponse.status).toHaveBeenCalledWith(200);
+        expect(mockResponse.json).toHaveBeenCalledWith(
+            transactionsResponse.filter((transaction) => transaction.id === 1),
+        );
+    });
+});
 
 //     it('should respond with an error message', async () => {
 //         // Arrange
