@@ -619,45 +619,43 @@ describe('DELETE /api/wishlists/:id', () => {
             'Successfully deleted wishlist item',
         );
     });
+
+    it('should respond with an error message', async () => {
+        // Arrange
+        const errorMessage = 'Error getting wishlist';
+        mockModule([], [errorMessage]);
+
+        const { deleteWishlist } = await import(
+            '../../controllers/wishlistsController.js'
+        );
+
+        mockRequest.params = { id: 1 };
+
+        // Call the function with the mock request and response
+        await deleteWishlist(mockRequest as Request, mockResponse);
+
+        // Assert
+        expect(mockResponse.status).toHaveBeenCalledWith(400);
+        expect(mockResponse.json).toHaveBeenCalledWith({
+            message: 'Error deleting wishlist',
+        });
+    });
+
+    it('should respond with a 404 error message when the wishlist does not exist', async () => {
+        // Arrange
+        mockModule([[]]);
+
+        const { deleteWishlist } = await import(
+            '../../controllers/wishlistsController.js'
+        );
+
+        mockRequest.params = { id: 3 };
+
+        // Act
+        await deleteWishlist(mockRequest as Request, mockResponse);
+
+        // Assert
+        expect(mockResponse.status).toHaveBeenCalledWith(404);
+        expect(mockResponse.send).toHaveBeenCalledWith('Wishlist not found');
+    });
 });
-
-//     it('should respond with an error message', async () => {
-//         // Arrange
-//         const errorMessage = 'Error getting wishlist';
-//         const error = new Error(errorMessage);
-//         mockModule(null, errorMessage);
-
-//         const { deleteWishlist } = await import(
-//             '../../controllers/wishlistsController.js'
-//         );
-
-//         mockRequest.params = { id: 1 };
-
-//         // Call the function with the mock request and response
-//         await deleteWishlist(mockRequest as Request, mockResponse);
-
-//         // Assert
-//         expect(mockResponse.status).toHaveBeenCalledWith(400);
-//         expect(mockResponse.json).toHaveBeenCalledWith({
-//             message: 'Error deleting wishlist',
-//         });
-//     });
-
-//     it('should respond with a 404 error message when the wishlist does not exist', async () => {
-//         // Arrange
-//         mockModule([]);
-
-//         const { deleteWishlist } = await import(
-//             '../../controllers/wishlistsController.js'
-//         );
-
-//         mockRequest.params = { id: 3 };
-
-//         // Act
-//         await deleteWishlist(mockRequest as Request, mockResponse);
-
-//         // Assert
-//         expect(mockResponse.status).toHaveBeenCalledWith(404);
-//         expect(mockResponse.send).toHaveBeenCalledWith('Wishlist not found');
-//     });
-// });
