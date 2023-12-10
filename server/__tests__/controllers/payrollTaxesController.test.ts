@@ -387,30 +387,31 @@ describe('POST /api/payroll/taxes', () => {
     });
 });
 
-// describe('PUT /api/payroll/taxes/:id', () => {
-//     it('should call next on the middleware', async () => {
-//         const id = 1;
+describe('PUT /api/payroll/taxes/:id', () => {
+    it('should call next on the middleware', async () => {
+        const id = 1;
 
-//         mockModule(payrollTaxes.filter((payrollTax) => payrollTax.id === id));
+        mockModule(
+            payrollTaxes.filter(
+                (payrollTax) => payrollTax.payroll_taxes_id === id,
+            ),
+        );
 
-//         const updatedPayrollTax = {
-//             employee_id: id,
-//             name: 'Federal Income Tax',
-//             rate: 0.1,
-//         };
+        mockRequest.params = { id: 1 };
+        mockRequest.body = payrollTaxes.filter(
+            (payrollTax) => payrollTax.payroll_taxes_id === id,
+        );
 
-//         mockRequest.params = { id: 1 };
-//         mockRequest.body = updatedPayrollTax;
+        const { updatePayrollTax } = await import(
+            '../../controllers/payrollTaxesController.js'
+        );
 
-//         const { updatePayrollTax } = await import(
-//             '../../controllers/payrollTaxesController.js'
-//         );
+        await updatePayrollTax(mockRequest as Request, mockResponse, mockNext);
 
-//         await updatePayrollTax(mockRequest as Request, mockResponse, mockNext);
-
-//         // Assert
-//         expect(mockNext).toHaveBeenCalled();
-//     });
+        // Assert
+        expect(mockNext).toHaveBeenCalled();
+    });
+});
 
 //     it('should respond with an error message', async () => {
 //         const errorMessage = 'Error updating payroll tax';
