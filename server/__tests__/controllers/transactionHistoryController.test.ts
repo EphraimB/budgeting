@@ -389,31 +389,30 @@ describe('PUT /api/transactionHistory/:id', () => {
             transactionsResponse.filter((transaction) => transaction.id === 1),
         );
     });
+
+    it('should respond with an error message', async () => {
+        // Arrange
+        const errorMessage = 'Error updating transaction history';
+        mockModule([], [errorMessage]);
+
+        mockRequest.params = { id: 1 };
+        mockRequest.body = transactions.filter(
+            (transaction) => transaction.transaction_id === 1,
+        );
+
+        const { updateTransaction } = await import(
+            '../../controllers/transactionHistoryController.js'
+        );
+
+        await updateTransaction(mockRequest as Request, mockResponse);
+
+        // Assert
+        expect(mockResponse.status).toHaveBeenCalledWith(400);
+        expect(mockResponse.json).toHaveBeenCalledWith({
+            message: 'Error updating transaction history',
+        });
+    });
 });
-
-//     it('should respond with an error message', async () => {
-//         // Arrange
-//         const errorMessage = 'Error updating transaction history';
-//         const error = new Error(errorMessage);
-//         mockModule(null, errorMessage);
-
-//         mockRequest.params = { id: 1 };
-//         mockRequest.body = transactions.filter(
-//             (transaction) => transaction.transaction_id === 1,
-//         );
-
-//         const { updateTransaction } = await import(
-//             '../../controllers/transactionHistoryController.js'
-//         );
-
-//         await updateTransaction(mockRequest as Request, mockResponse);
-
-//         // Assert
-//         expect(mockResponse.status).toHaveBeenCalledWith(400);
-//         expect(mockResponse.json).toHaveBeenCalledWith({
-//             message: 'Error updating transaction history',
-//         });
-//     });
 
 //     it('should respond with a 404 error message when the transaction does not exist', async () => {
 //         // Arrange
