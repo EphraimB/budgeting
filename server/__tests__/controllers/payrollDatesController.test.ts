@@ -254,28 +254,27 @@ describe('GET /api/payroll/dates', () => {
             message: 'Error getting payroll date',
         });
     });
+
+    it('should respond with a 404 error message when the payroll date does not exist', async () => {
+        // Arrange
+        mockModule([[]]);
+
+        const { getPayrollDates } = await import(
+            '../../controllers/payrollDatesController.js'
+        );
+
+        mockRequest.query = { id: 3 };
+
+        // Act
+        await getPayrollDates(mockRequest as Request, mockResponse);
+
+        // Assert
+        expect(mockResponse.status).toHaveBeenCalledWith(404);
+        expect(mockResponse.send).toHaveBeenCalledWith(
+            'Payroll date not found',
+        );
+    });
 });
-
-//     it('should respond with a 404 error message when the payroll date does not exist', async () => {
-//         // Arrange
-//         mockModule([]);
-
-//         const { getPayrollDates } = await import(
-//             '../../controllers/payrollDatesController.js'
-//         );
-
-//         mockRequest.query = { id: 3 };
-
-//         // Act
-//         await getPayrollDates(mockRequest as Request, mockResponse);
-
-//         // Assert
-//         expect(mockResponse.status).toHaveBeenCalledWith(404);
-//         expect(mockResponse.send).toHaveBeenCalledWith(
-//             'Payroll date not found',
-//         );
-//     });
-// });
 
 // describe('POST /api/payroll/dates', () => {
 //     it('should populate request.payroll_date_id', async () => {
