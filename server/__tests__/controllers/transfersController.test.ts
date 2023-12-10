@@ -312,31 +312,31 @@ describe('GET /api/transfers', () => {
             message: 'Error getting transfer',
         });
     });
+
+    it('should respond with an array of transfers with account_id', async () => {
+        // Arrange
+        mockModule(
+            transfers.filter((transfer) => transfer.source_account_id === 1),
+        );
+
+        mockRequest.query = { account_id: 1 };
+
+        const { getTransfers } = await import(
+            '../../controllers/transfersController.js'
+        );
+
+        // Call the function with the mock request and response
+        await getTransfers(mockRequest as Request, mockResponse);
+
+        // Assert
+        expect(mockResponse.status).toHaveBeenCalledWith(200);
+        expect(mockResponse.json).toHaveBeenCalledWith(
+            transfersResponse.filter(
+                (transfer) => transfer.source_account_id === 1,
+            ),
+        );
+    });
 });
-
-//     it('should respond with an array of transfers with account_id', async () => {
-//         // Arrange
-//         mockModule(
-//             transfers.filter((transfer) => transfer.source_account_id === 1),
-//         );
-
-//         mockRequest.query = { account_id: 1 };
-
-//         const { getTransfers } = await import(
-//             '../../controllers/transfersController.js'
-//         );
-
-//         // Call the function with the mock request and response
-//         await getTransfers(mockRequest as Request, mockResponse);
-
-//         // Assert
-//         expect(mockResponse.status).toHaveBeenCalledWith(200);
-//         expect(mockResponse.json).toHaveBeenCalledWith(
-//             modifiedTransfers.filter(
-//                 (transfer) => transfer.source_account_id === 1,
-//             ),
-//         );
-//     });
 
 //     it('should respond with an error message with account_id', async () => {
 //         // Arrange
