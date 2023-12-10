@@ -566,30 +566,31 @@ describe('PUT /api/transfer/:id', () => {
             message: 'Error updating transfer',
         });
     });
+
+    it('should respond with an error message in the return object', async () => {
+        // Arrange
+        const errorMessage = 'Error updating transfer';
+        mockModule([], [errorMessage]);
+
+        mockRequest.params = { id: 1 };
+        mockRequest.body = transfers.filter(
+            (transfer) => transfer.transfer_id === 1,
+        );
+
+        const { updateTransferReturnObject } = await import(
+            '../../controllers/transfersController.js'
+        );
+
+        // Call the function with the mock request and response
+        await updateTransferReturnObject(mockRequest as Request, mockResponse);
+
+        // Assert
+        expect(mockResponse.status).toHaveBeenCalledWith(400);
+        expect(mockResponse.json).toHaveBeenCalledWith({
+            message: 'Error getting transfer',
+        });
+    });
 });
-
-//     it('should respond with an error message in the return object', async () => {
-//         // Arrange
-//         const errorMessage = 'Error updating transfer';
-//         const error = new Error(errorMessage);
-//         mockModule(null, errorMessage);
-
-//         mockRequest.params = { id: 1 };
-//         mockRequest.body = transfers.filter((transfer) => transfer.id === 1);
-
-//         const { updateTransferReturnObject } = await import(
-//             '../../controllers/transfersController.js'
-//         );
-
-//         // Call the function with the mock request and response
-//         await updateTransferReturnObject(mockRequest as Request, mockResponse);
-
-//         // Assert
-//         expect(mockResponse.status).toHaveBeenCalledWith(400);
-//         expect(mockResponse.json).toHaveBeenCalledWith({
-//             message: 'Error getting transfer',
-//         });
-//     });
 
 //     it('should respond with a 404 error message when the transfer does not exist', async () => {
 //         // Arrange
