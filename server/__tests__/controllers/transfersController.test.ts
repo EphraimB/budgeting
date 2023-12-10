@@ -634,45 +634,45 @@ describe('PUT /api/transfer/:id', () => {
     });
 });
 
-// describe('DELETE /api/transfer/:id', () => {
-//     it('should call next on the middleware', async () => {
-//         // Arrange
-//         mockModule('Transfer deleted successfully');
+describe('DELETE /api/transfer/:id', () => {
+    it('should call next on the middleware', async () => {
+        // Arrange
+        mockModule('Transfer deleted successfully');
 
-//         const { deleteTransfer } = await import(
-//             '../../controllers/transfersController.js'
-//         );
+        const { deleteTransfer } = await import(
+            '../../controllers/transfersController.js'
+        );
 
-//         mockRequest.params = { id: 1 };
+        mockRequest.params = { id: 1 };
 
-//         await deleteTransfer(mockRequest as Request, mockResponse, mockNext);
+        await deleteTransfer(mockRequest as Request, mockResponse, mockNext);
 
-//         // Assert
-//         expect(mockNext).toHaveBeenCalled();
-//     });
+        // Assert
+        expect(mockNext).toHaveBeenCalled();
+    });
 
-//     it('should respond with an error message', async () => {
-//         // Arrange
-//         const errorMessage = 'Error deleting transfer';
-//         const error = new Error(errorMessage);
-//         mockModule(null, errorMessage);
+    it('should respond with an error message', async () => {
+        // Arrange
+        const errorMessage = 'Error deleting transfer';
+        mockModule([], [errorMessage]);
 
-//         const { deleteTransfer } = await import(
-//             '../../controllers/transfersController.js'
-//         );
+        const { deleteTransfer } = await import(
+            '../../controllers/transfersController.js'
+        );
 
-//         mockRequest.params = { id: 1 };
-//         mockRequest.query = { account_id: 1 };
+        mockRequest.params = { id: 1 };
+        mockRequest.query = { account_id: 1 };
 
-//         // Call the function with the mock request and response
-//         await deleteTransfer(mockRequest as Request, mockResponse, mockNext);
+        // Call the function with the mock request and response
+        await deleteTransfer(mockRequest as Request, mockResponse, mockNext);
 
-//         // Assert
-//         expect(mockResponse.status).toHaveBeenCalledWith(400);
-//         expect(mockResponse.json).toHaveBeenCalledWith({
-//             message: 'Error deleting transfer',
-//         });
-//     });
+        // Assert
+        expect(mockResponse.status).toHaveBeenCalledWith(400);
+        expect(mockResponse.json).toHaveBeenCalledWith({
+            message: 'Error deleting transfer',
+        });
+    });
+});
 
 //     it('should respond with a 404 error message when the transfer does not exist', async () => {
 //         // Arrange
