@@ -291,29 +291,28 @@ describe('GET /api/transfers', () => {
             transfersResponse.filter((transfer) => transfer.id === 1),
         );
     });
+
+    it('should respond with an error message with id', async () => {
+        // Arrange
+        const errorMessage = 'Error getting transfer';
+        mockModule([], [errorMessage]);
+
+        mockRequest.query = { id: 1 };
+
+        const { getTransfers } = await import(
+            '../../controllers/transfersController.js'
+        );
+
+        // Call the function with the mock request and response
+        await getTransfers(mockRequest as Request, mockResponse);
+
+        // Assert
+        expect(mockResponse.status).toHaveBeenCalledWith(400);
+        expect(mockResponse.json).toHaveBeenCalledWith({
+            message: 'Error getting transfer',
+        });
+    });
 });
-
-//     it('should respond with an error message with id', async () => {
-//         // Arrange
-//         const errorMessage = 'Error getting transfer';
-//         const error = new Error(errorMessage);
-//         mockModule(null, errorMessage);
-
-//         mockRequest.query = { id: 1 };
-
-//         const { getTransfers } = await import(
-//             '../../controllers/transfersController.js'
-//         );
-
-//         // Call the function with the mock request and response
-//         await getTransfers(mockRequest as Request, mockResponse);
-
-//         // Assert
-//         expect(mockResponse.status).toHaveBeenCalledWith(400);
-//         expect(mockResponse.json).toHaveBeenCalledWith({
-//             message: 'Error getting transfer',
-//         });
-//     });
 
 //     it('should respond with an array of transfers with account_id', async () => {
 //         // Arrange
