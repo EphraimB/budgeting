@@ -471,29 +471,30 @@ describe('POST /api/transfers', () => {
             message: 'Error creating transfer',
         });
     });
+
+    it('should respond with an error message with return object', async () => {
+        // Arrange
+        const errorMessage = 'Error creating transfer';
+        mockModule([], [errorMessage]);
+
+        const { createTransferReturnObject } = await import(
+            '../../controllers/transfersController.js'
+        );
+
+        mockRequest.body = transfers.filter(
+            (transfer) => transfer.transfer_id === 1,
+        );
+
+        // Call the function with the mock request and response
+        await createTransferReturnObject(mockRequest as Request, mockResponse);
+
+        // Assert
+        expect(mockResponse.status).toHaveBeenCalledWith(400);
+        expect(mockResponse.json).toHaveBeenCalledWith({
+            message: 'Error creating transfer',
+        });
+    });
 });
-
-//     it('should respond with an error message with return object', async () => {
-//         // Arrange
-//         const errorMessage = 'Error creating transfer';
-//         const error = new Error(errorMessage);
-//         mockModule(null, errorMessage);
-
-//         const { createTransferReturnObject } = await import(
-//             '../../controllers/transfersController.js'
-//         );
-
-//         mockRequest.body = transfers.filter((transfer) => transfer.id === 1);
-
-//         // Call the function with the mock request and response
-//         await createTransferReturnObject(mockRequest as Request, mockResponse);
-
-//         // Assert
-//         expect(mockResponse.status).toHaveBeenCalledWith(400);
-//         expect(mockResponse.json).toHaveBeenCalledWith({
-//             message: 'Error creating transfer',
-//         });
-//     });
 
 //     it('should respond with the created transfer', async () => {
 //         // Arrange
