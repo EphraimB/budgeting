@@ -158,47 +158,48 @@ describe('GET /api/taxes', () => {
     });
 });
 
-// describe('POST /api/taxes', () => {
-//     it('should respond with the new tax', async () => {
-//         const newTax = taxes.filter((tax) => tax.id === 1);
+describe('POST /api/taxes', () => {
+    it('should respond with the new tax', async () => {
+        const newTax = taxes.filter((tax) => tax.tax_id === 1);
 
-//         mockModule(newTax);
+        mockModule([newTax]);
 
-//         const { createTax } = await import(
-//             '../../controllers/taxesController.js'
-//         );
+        const { createTax } = await import(
+            '../../controllers/taxesController.js'
+        );
 
-//         mockRequest.body = newTax;
+        mockRequest.body = newTax;
 
-//         await createTax(mockRequest as Request, mockResponse);
+        await createTax(mockRequest as Request, mockResponse);
 
-//         // Assert
-//         expect(mockResponse.status).toHaveBeenCalledWith(201);
-//         expect(mockResponse.json).toHaveBeenCalledWith(newTax);
-//     });
+        // Assert
+        expect(mockResponse.status).toHaveBeenCalledWith(201);
+        expect(mockResponse.json).toHaveBeenCalledWith(
+            taxesResponse.filter((tax) => tax.id === 1),
+        );
+    });
 
-//     it('should handle errors correctly', async () => {
-//         // Arrange
-//         const errorMessage = 'Error creating tax';
-//         const error = new Error(errorMessage);
-//         mockModule(null, errorMessage);
+    it('should handle errors correctly', async () => {
+        // Arrange
+        const errorMessage = 'Error creating tax';
+        mockModule([], [errorMessage]);
 
-//         const { createTax } = await import(
-//             '../../controllers/taxesController.js'
-//         );
+        const { createTax } = await import(
+            '../../controllers/taxesController.js'
+        );
 
-//         mockRequest.body = taxes.filter((tax) => tax.id === 1);
+        mockRequest.body = taxes.filter((tax) => tax.tax_id === 1);
 
-//         // Act
-//         await createTax(mockRequest as Request, mockResponse);
+        // Act
+        await createTax(mockRequest as Request, mockResponse);
 
-//         // Assert
-//         expect(mockResponse.status).toHaveBeenCalledWith(400);
-//         expect(mockResponse.json).toHaveBeenCalledWith({
-//             message: 'Error creating tax',
-//         });
-//     });
-// });
+        // Assert
+        expect(mockResponse.status).toHaveBeenCalledWith(400);
+        expect(mockResponse.json).toHaveBeenCalledWith({
+            message: 'Error creating tax',
+        });
+    });
+});
 
 // describe('PUT /api/taxes/:id', () => {
 //     it('should respond with the updated tax', async () => {
