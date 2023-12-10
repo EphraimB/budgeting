@@ -222,50 +222,48 @@ describe('PUT /api/taxes/:id', () => {
             taxesResponse.filter((tax) => tax.id === 1),
         );
     });
+
+    it('should handle errors correctly', async () => {
+        // Arrange
+        const errorMessage = 'Error updating tax';
+        mockModule([], [errorMessage]);
+
+        const { updateTax } = await import(
+            '../../controllers/taxesController.js'
+        );
+
+        mockRequest.params = { id: 1 };
+        mockRequest.body = taxes.filter((tax) => tax.tax_id === 1);
+
+        // Act
+        await updateTax(mockRequest as Request, mockResponse);
+
+        // Assert
+        expect(mockResponse.status).toHaveBeenCalledWith(400);
+        expect(mockResponse.json).toHaveBeenCalledWith({
+            message: 'Error updating tax',
+        });
+    });
+
+    it('should respond with a 404 error message when the tax does not exist', async () => {
+        // Arrange
+        mockModule([[]]);
+
+        const { updateTax } = await import(
+            '../../controllers/taxesController.js'
+        );
+
+        mockRequest.params = { id: 1 };
+        mockRequest.body = taxes.filter((tax) => tax.tax_id === 1);
+
+        // Act
+        await updateTax(mockRequest as Request, mockResponse);
+
+        // Assert
+        expect(mockResponse.status).toHaveBeenCalledWith(404);
+        expect(mockResponse.send).toHaveBeenCalledWith('Tax not found');
+    });
 });
-
-//     it('should handle errors correctly', async () => {
-//         // Arrange
-//         const errorMessage = 'Error updating tax';
-//         const error = new Error(errorMessage);
-//         mockModule(null, errorMessage);
-
-//         const { updateTax } = await import(
-//             '../../controllers/taxesController.js'
-//         );
-
-//         mockRequest.params = { id: 1 };
-//         mockRequest.body = taxes.filter((tax) => tax.id === 1);
-
-//         // Act
-//         await updateTax(mockRequest as Request, mockResponse);
-
-//         // Assert
-//         expect(mockResponse.status).toHaveBeenCalledWith(400);
-//         expect(mockResponse.json).toHaveBeenCalledWith({
-//             message: 'Error updating tax',
-//         });
-//     });
-
-//     it('should respond with a 404 error message when the tax does not exist', async () => {
-//         // Arrange
-//         mockModule([]);
-
-//         const { updateTax } = await import(
-//             '../../controllers/taxesController.js'
-//         );
-
-//         mockRequest.params = { id: 1 };
-//         mockRequest.body = taxes.filter((tax) => tax.id === 1);
-
-//         // Act
-//         await updateTax(mockRequest as Request, mockResponse);
-
-//         // Assert
-//         expect(mockResponse.status).toHaveBeenCalledWith(404);
-//         expect(mockResponse.send).toHaveBeenCalledWith('Tax not found');
-//     });
-// });
 
 // describe('DELETE /api/taxes/:id', () => {
 //     it('should respond with a success message', async () => {
