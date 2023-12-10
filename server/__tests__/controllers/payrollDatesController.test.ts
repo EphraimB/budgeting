@@ -423,38 +423,33 @@ describe('PUT /api/payroll/dates/:id', () => {
             message: 'Error updating payroll date',
         });
     });
+
+    it('should respond with an error message', async () => {
+        // Arrange
+        const errorMessage = 'Error updating payroll date';
+        mockModule([], [errorMessage]);
+
+        const { updatePayrollDateReturnObject } = await import(
+            '../../controllers/payrollDatesController.js'
+        );
+
+        mockRequest.params = { id: 1 };
+        mockRequest.body = payrollDates.filter(
+            (payrollDate) => payrollDate.payroll_date_id === 1,
+        );
+
+        await updatePayrollDateReturnObject(
+            mockRequest as Request,
+            mockResponse,
+        );
+
+        // Assert
+        expect(mockResponse.status).toHaveBeenCalledWith(400);
+        expect(mockResponse.json).toHaveBeenCalledWith({
+            message: 'Error updating payroll date',
+        });
+    });
 });
-
-//     it('should respond with an error message', async () => {
-//         // Arrange
-//         const errorMessage = 'Error updating payroll date';
-//         const error = new Error(errorMessage);
-//         mockModule(null, errorMessage);
-
-//         const updatedPayrollDate = {
-//             employee_id: 1,
-//             start_day: 1,
-//             end_day: 15,
-//         };
-
-//         const { updatePayrollDateReturnObject } = await import(
-//             '../../controllers/payrollDatesController.js'
-//         );
-
-//         mockRequest.params = { id: 1 };
-//         mockRequest.body = updatedPayrollDate;
-
-//         await updatePayrollDateReturnObject(
-//             mockRequest as Request,
-//             mockResponse,
-//         );
-
-//         // Assert
-//         expect(mockResponse.status).toHaveBeenCalledWith(400);
-//         expect(mockResponse.json).toHaveBeenCalledWith({
-//             message: 'Error updating payroll date',
-//         });
-//     });
 
 //     it('should respond with a 404 error message when the payroll date does not exist', async () => {
 //         // Arrange
