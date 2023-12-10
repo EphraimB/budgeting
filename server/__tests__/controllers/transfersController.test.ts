@@ -672,26 +672,26 @@ describe('DELETE /api/transfer/:id', () => {
             message: 'Error deleting transfer',
         });
     });
+
+    it('should respond with a 404 error message when the transfer does not exist', async () => {
+        // Arrange
+        mockModule([]);
+
+        const { deleteTransfer } = await import(
+            '../../controllers/transfersController.js'
+        );
+
+        mockRequest.params = { id: 3 };
+        mockRequest.query = { account_id: 1 };
+
+        // Act
+        await deleteTransfer(mockRequest as Request, mockResponse, mockNext);
+
+        // Assert
+        expect(mockResponse.status).toHaveBeenCalledWith(404);
+        expect(mockResponse.send).toHaveBeenCalledWith('Transfer not found');
+    });
 });
-
-//     it('should respond with a 404 error message when the transfer does not exist', async () => {
-//         // Arrange
-//         mockModule([]);
-
-//         const { deleteTransfer } = await import(
-//             '../../controllers/transfersController.js'
-//         );
-
-//         mockRequest.params = { id: 3 };
-//         mockRequest.query = { account_id: 1 };
-
-//         // Act
-//         await deleteTransfer(mockRequest as Request, mockResponse, mockNext);
-
-//         // Assert
-//         expect(mockResponse.status).toHaveBeenCalledWith(404);
-//         expect(mockResponse.send).toHaveBeenCalledWith('Transfer not found');
-//     });
 
 //     it('should respond with a success message with account_id', async () => {
 //         // Arrange
