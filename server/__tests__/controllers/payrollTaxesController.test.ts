@@ -194,39 +194,39 @@ describe('GET /api/payroll/taxes', () => {
             message: 'Error getting payroll taxes for given employee_id',
         });
     });
+
+    it('should respond with an array of payroll taxes with employee_id and id', async () => {
+        const employee_id = 1;
+        const id = 1;
+
+        mockModule([
+            payrollTaxes.filter(
+                (payrollTax) =>
+                    payrollTax.employee_id === employee_id &&
+                    payrollTax.payroll_taxes_id === id,
+            ),
+        ]);
+
+        mockRequest.query = { employee_id, id };
+
+        const { getPayrollTaxes } = await import(
+            '../../controllers/payrollTaxesController.js'
+        );
+
+        // Call the function with the mock request and response
+        await getPayrollTaxes(mockRequest as Request, mockResponse);
+
+        // Assert
+        expect(mockResponse.status).toHaveBeenCalledWith(200);
+        expect(mockResponse.json).toHaveBeenCalledWith(
+            payrollTaxesResponse.filter(
+                (payrollTax) =>
+                    payrollTax.employee_id === employee_id &&
+                    payrollTax.id === id,
+            ),
+        );
+    });
 });
-
-//     it('should respond with an array of payroll taxes with employee_id and id', async () => {
-//         const employee_id = 1;
-//         const id = 1;
-
-//         mockModule(
-//             payrollTaxes.filter(
-//                 (payrollTax) =>
-//                     payrollTax.employee_id === employee_id &&
-//                     payrollTax.id === id,
-//             ),
-//         );
-
-//         mockRequest.query = { employee_id, id };
-
-//         const { getPayrollTaxes } = await import(
-//             '../../controllers/payrollTaxesController.js'
-//         );
-
-//         // Call the function with the mock request and response
-//         await getPayrollTaxes(mockRequest as Request, mockResponse);
-
-//         // Assert
-//         expect(mockResponse.status).toHaveBeenCalledWith(200);
-//         expect(mockResponse.json).toHaveBeenCalledWith(
-//             payrollTaxes.filter(
-//                 (payrollTax) =>
-//                     payrollTax.employee_id === employee_id &&
-//                     payrollTax.id === id,
-//             ),
-//         );
-//     });
 
 //     it('should respond with an error message with employee_id and id', async () => {
 //         const errorMessage = 'Error getting payroll tax';
