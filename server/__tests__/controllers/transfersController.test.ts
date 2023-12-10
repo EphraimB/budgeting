@@ -137,7 +137,6 @@ const transfers = [
 const transfersResponse: Transfer[] = [
     {
         id: 1,
-        cron_job_id: 1,
         source_account_id: 1,
         destination_account_id: 2,
         transfer_amount: 100,
@@ -156,7 +155,6 @@ const transfersResponse: Transfer[] = [
     },
     {
         id: 2,
-        cron_job_id: 2,
         source_account_id: 1,
         destination_account_id: 2,
         transfer_amount: 25,
@@ -175,7 +173,6 @@ const transfersResponse: Transfer[] = [
     },
     {
         id: 3,
-        cron_job_id: 3,
         source_account_id: 1,
         destination_account_id: 2,
         transfer_amount: 50,
@@ -194,7 +191,6 @@ const transfersResponse: Transfer[] = [
     },
     {
         id: 4,
-        cron_job_id: 4,
         source_account_id: 1,
         destination_account_id: 2,
         transfer_amount: 200,
@@ -213,7 +209,6 @@ const transfersResponse: Transfer[] = [
     },
     {
         id: 5,
-        cron_job_id: 5,
         source_account_id: 2,
         destination_account_id: 1,
         transfer_amount: 200,
@@ -436,7 +431,10 @@ describe('POST /api/transfers', () => {
             (transfer) => transfer.transfer_id === 1,
         );
 
-        mockModule([newTransfer]);
+        mockModule(
+            [newTransfer, [{ cron_job_id: 1, unique_id: 'transfers-1' }, []]],
+            [[]],
+        );
 
         const { createTransfer } = await import(
             '../../controllers/transfersController.js'
@@ -499,8 +497,8 @@ describe('POST /api/transfers', () => {
 
     it('should respond with the created transfer', async () => {
         // Arrange
-        const newTransfer = transfersResponse.filter(
-            (transfer) => transfer.id === 1,
+        const newTransfer = transfers.filter(
+            (transfer) => transfer.transfer_id === 1,
         );
 
         mockModule([newTransfer]);
@@ -528,7 +526,15 @@ describe('PUT /api/transfer/:id', () => {
             (transfer) => transfer.transfer_id === 1,
         );
 
-        mockModule(updatedTransfer);
+        mockModule(
+            [
+                updatedTransfer,
+                [{ cron_job_id: 1, unique_id: 'transfers-1' }],
+                [],
+                [],
+            ],
+            [[], [[]]],
+        );
 
         mockRequest.params = { id: 1 };
         mockRequest.body = updatedTransfer;
@@ -614,11 +620,11 @@ describe('PUT /api/transfer/:id', () => {
 
     it('should respond with the updated transfer', async () => {
         // Arrange
-        const updatedTransfer = transfersResponse.filter(
-            (transfer) => transfer.id === 1,
+        const updatedTransfer = transfers.filter(
+            (transfer) => transfer.transfer_id === 1,
         );
 
-        mockModule(updatedTransfer);
+        mockModule([updatedTransfer]);
 
         const { updateTransferReturnObject } = await import(
             '../../controllers/transfersController.js'
@@ -630,14 +636,25 @@ describe('PUT /api/transfer/:id', () => {
 
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(200);
-        expect(mockResponse.json).toHaveBeenCalledWith(updatedTransfer);
+        expect(mockResponse.json).toHaveBeenCalledWith(
+            transfersResponse.filter((transfer) => transfer.id === 1),
+        );
     });
 });
 
 describe('DELETE /api/transfer/:id', () => {
     it('should call next on the middleware', async () => {
         // Arrange
-        mockModule('Transfer deleted successfully');
+        mockModule(
+            [
+                transfers.filter((transfer) => transfer.transfer_id === 1),
+                [],
+                [{ cron_job_id: 1, unique_id: 'transfers-1' }],
+                [],
+            ],
+            [],
+            [[]],
+        );
 
         const { deleteTransfer } = await import(
             '../../controllers/transfersController.js'
@@ -675,7 +692,7 @@ describe('DELETE /api/transfer/:id', () => {
 
     it('should respond with a 404 error message when the transfer does not exist', async () => {
         // Arrange
-        mockModule([]);
+        mockModule([[]]);
 
         const { deleteTransfer } = await import(
             '../../controllers/transfersController.js'
