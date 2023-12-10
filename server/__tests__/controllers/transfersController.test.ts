@@ -386,48 +386,46 @@ describe('GET /api/transfers', () => {
             ),
         );
     });
+
+    it('should respond with an error message with id and account_id', async () => {
+        // Arrange
+        const errorMessage = 'Error getting transfer';
+        mockModule([], [errorMessage]);
+
+        mockRequest.query = { id: 1, account_id: 1 };
+
+        const { getTransfers } = await import(
+            '../../controllers/transfersController.js'
+        );
+
+        // Call the function with the mock request and response
+        await getTransfers(mockRequest as Request, mockResponse);
+
+        // Assert
+        expect(mockResponse.status).toHaveBeenCalledWith(400);
+        expect(mockResponse.json).toHaveBeenCalledWith({
+            message: 'Error getting transfer',
+        });
+    });
+
+    it('should respond with a 404 error message when the transfer does not exist', async () => {
+        // Arrange
+        mockModule([[]]);
+
+        const { getTransfers } = await import(
+            '../../controllers/transfersController.js'
+        );
+
+        mockRequest.query = { id: 3 };
+
+        // Act
+        await getTransfers(mockRequest as Request, mockResponse);
+
+        // Assert
+        expect(mockResponse.status).toHaveBeenCalledWith(404);
+        expect(mockResponse.send).toHaveBeenCalledWith('Transfer not found');
+    });
 });
-
-//     it('should respond with an error message with id and account_id', async () => {
-//         // Arrange
-//         const errorMessage = 'Error getting transfer';
-//         const error = new Error(errorMessage);
-//         mockModule(null, errorMessage);
-
-//         mockRequest.query = { id: 1, account_id: 1 };
-
-//         const { getTransfers } = await import(
-//             '../../controllers/transfersController.js'
-//         );
-
-//         // Call the function with the mock request and response
-//         await getTransfers(mockRequest as Request, mockResponse);
-
-//         // Assert
-//         expect(mockResponse.status).toHaveBeenCalledWith(400);
-//         expect(mockResponse.json).toHaveBeenCalledWith({
-//             message: 'Error getting transfer',
-//         });
-//     });
-
-//     it('should respond with a 404 error message when the transfer does not exist', async () => {
-//         // Arrange
-//         mockModule([]);
-
-//         const { getTransfers } = await import(
-//             '../../controllers/transfersController.js'
-//         );
-
-//         mockRequest.query = { id: 3 };
-
-//         // Act
-//         await getTransfers(mockRequest as Request, mockResponse);
-
-//         // Assert
-//         expect(mockResponse.status).toHaveBeenCalledWith(404);
-//         expect(mockResponse.send).toHaveBeenCalledWith('Transfer not found');
-//     });
-// });
 
 // describe('POST /api/transfers', () => {
 //     it('should populate request.transfer_id', async () => {
