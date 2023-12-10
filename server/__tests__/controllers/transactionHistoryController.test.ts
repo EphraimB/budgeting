@@ -454,28 +454,27 @@ describe('DELETE /api/transactionHistory/:id', () => {
             'Successfully deleted transaction history',
         );
     });
+
+    it('should respond with an error message', async () => {
+        // Arrange
+        const errorMessage = 'Error deleting transaction history';
+        mockModule([], [errorMessage]);
+
+        const { deleteTransaction } = await import(
+            '../../controllers/transactionHistoryController.js'
+        );
+
+        mockRequest.params = { id: 1 };
+
+        await deleteTransaction(mockRequest as Request, mockResponse);
+
+        // Assert
+        expect(mockResponse.status).toHaveBeenCalledWith(400);
+        expect(mockResponse.json).toHaveBeenCalledWith({
+            message: 'Error deleting transaction history',
+        });
+    });
 });
-
-//     it('should respond with an error message', async () => {
-//         // Arrange
-//         const errorMessage = 'Error deleting transaction history';
-//         const error = new Error(errorMessage);
-//         mockModule(null, errorMessage);
-
-//         const { deleteTransaction } = await import(
-//             '../../controllers/transactionHistoryController.js'
-//         );
-
-//         mockRequest.params = { id: 1 };
-
-//         await deleteTransaction(mockRequest as Request, mockResponse);
-
-//         // Assert
-//         expect(mockResponse.status).toHaveBeenCalledWith(400);
-//         expect(mockResponse.json).toHaveBeenCalledWith({
-//             message: 'Error deleting transaction history',
-//         });
-//     });
 
 //     it('should respond with a 404 error message when the transaction does not exist', async () => {
 //         // Arrange
