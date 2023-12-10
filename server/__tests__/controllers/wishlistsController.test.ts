@@ -533,63 +533,50 @@ describe('PUT /api/wishlists middleware', () => {
     });
 });
 
-// describe('PUT /api/wishlists/:id', () => {
-//     it('should respond with the updated wishlist', async () => {
-//         // Arrange
-//         const updatedWishlist = wishlists.filter(
-//             (wishlist) => wishlist.id === 1,
-//         );
+describe('PUT /api/wishlists/:id', () => {
+    it('should respond with the updated wishlist', async () => {
+        // Arrange
+        const updatedWishlist = wishlists.filter(
+            (wishlist) => wishlist.wishlist_id === 1,
+        );
 
-//         mockModule(
-//             updatedWishlist,
-//             undefined,
-//             [{ cron_job_id: 1 }],
-//             [{ wishlist_id: 1, cron_job_id: 1 }],
-//             updatedWishlist,
-//         );
+        mockModule([
+            updatedWishlist,
+            [{ cron_job_id: 1 }],
+            [{ wishlist_id: 1, cron_job_id: 1 }],
+            updatedWishlist,
+        ]);
 
-//         mockRequest.wishlist_id = 1;
-//         mockRequest.body = updatedWishlist;
-//         mockRequest.transactions = [
-//             {
-//                 account_id: 1,
-//                 transactions: [
-//                     {
-//                         expense_id: 1,
-//                         date: '2023-08-14T00:00:00.000Z',
-//                         amount: 100,
-//                         title: 'Test',
-//                         description: 'Test',
-//                     },
-//                 ],
-//             },
-//         ];
+        mockRequest.wishlist_id = 1;
+        mockRequest.body = updatedWishlist;
+        mockRequest.transactions = [
+            {
+                account_id: 1,
+                transactions: [
+                    {
+                        expense_id: 1,
+                        date: '2023-08-14T00:00:00.000Z',
+                        amount: 100,
+                        title: 'Test',
+                        description: 'Test',
+                    },
+                ],
+            },
+        ];
 
-//         const { updateWishlistCron } = await import(
-//             '../../controllers/wishlistsController.js'
-//         );
+        const { updateWishlistCron } = await import(
+            '../../controllers/wishlistsController.js'
+        );
 
-//         await updateWishlistCron(mockRequest as Request, mockResponse);
+        await updateWishlistCron(mockRequest as Request, mockResponse);
 
-//         const modifiedWishlist: Wishlist = {
-//             account_id: updatedWishlist[0].account_id,
-//             tax_id: updatedWishlist[0].tax_id,
-//             date_created: updatedWishlist[0].date_created,
-//             date_modified: updatedWishlist[0].date_modified,
-//             wishlist_amount: updatedWishlist[0].wishlist_amount,
-//             wishlist_date_available: updatedWishlist[0].wishlist_date_available,
-//             wishlist_date_can_purchase: null,
-//             wishlist_description: updatedWishlist[0].wishlist_description,
-//             id: updatedWishlist[0].id,
-//             wishlist_priority: updatedWishlist[0].wishlist_priority,
-//             wishlist_title: updatedWishlist[0].wishlist_title,
-//             wishlist_url_link: updatedWishlist[0].wishlist_url_link,
-//         };
-
-//         // Assert
-//         expect(mockResponse.status).toHaveBeenCalledWith(200);
-//         expect(mockResponse.json).toHaveBeenCalledWith([modifiedWishlist]);
-//     });
+        // Assert
+        expect(mockResponse.status).toHaveBeenCalledWith(200);
+        expect(mockResponse.json).toHaveBeenCalledWith(
+            wishlistsResponse.filter((wishlist) => wishlist.id === 1),
+        );
+    });
+});
 
 //     it('should respond with an error message', async () => {
 //         // Arrange
