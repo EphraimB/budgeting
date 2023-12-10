@@ -521,27 +521,28 @@ describe('POST /api/transfers', () => {
     });
 });
 
-// describe('PUT /api/transfer/:id', () => {
-//     it('should call next on the middleware', async () => {
-//         // Arrange
-//         const updatedTransfer = transfers.filter(
-//             (transfer) => transfer.id === 1,
-//         );
+describe('PUT /api/transfer/:id', () => {
+    it('should call next on the middleware', async () => {
+        // Arrange
+        const updatedTransfer = transfers.filter(
+            (transfer) => transfer.transfer_id === 1,
+        );
 
-//         mockModule(updatedTransfer);
+        mockModule(updatedTransfer);
 
-//         mockRequest.params = { id: 1 };
-//         mockRequest.body = updatedTransfer;
+        mockRequest.params = { id: 1 };
+        mockRequest.body = updatedTransfer;
 
-//         const { updateTransfer } = await import(
-//             '../../controllers/transfersController.js'
-//         );
+        const { updateTransfer } = await import(
+            '../../controllers/transfersController.js'
+        );
 
-//         await updateTransfer(mockRequest as Request, mockResponse, mockNext);
+        await updateTransfer(mockRequest as Request, mockResponse, mockNext);
 
-//         // Assert
-//         expect(mockNext).toHaveBeenCalled();
-//     });
+        // Assert
+        expect(mockNext).toHaveBeenCalled();
+    });
+});
 
 //     it('should respond with an error message', async () => {
 //         // Arrange
