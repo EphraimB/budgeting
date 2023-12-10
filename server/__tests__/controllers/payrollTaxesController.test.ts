@@ -433,28 +433,28 @@ describe('PUT /api/payroll/taxes/:id', () => {
             message: 'Error updating payroll tax',
         });
     });
+
+    it('should respond with a 404 error message when the payroll tax does not exist', async () => {
+        // Arrange
+        mockModule([[]]);
+
+        const { updatePayrollTax } = await import(
+            '../../controllers/payrollTaxesController.js'
+        );
+
+        mockRequest.params = { id: 3 };
+        mockRequest.body = payrollTaxes.filter(
+            (payrollTax) => payrollTax.payroll_taxes_id === 1,
+        );
+
+        // Act
+        await updatePayrollTax(mockRequest as Request, mockResponse, mockNext);
+
+        // Assert
+        expect(mockResponse.status).toHaveBeenCalledWith(404);
+        expect(mockResponse.send).toHaveBeenCalledWith('Payroll tax not found');
+    });
 });
-
-//     it('should respond with a 404 error message when the payroll tax does not exist', async () => {
-//         // Arrange
-//         mockModule([]);
-
-//         const { updatePayrollTax } = await import(
-//             '../../controllers/payrollTaxesController.js'
-//         );
-
-//         mockRequest.params = { id: 3 };
-//         mockRequest.body = payrollTaxes.filter(
-//             (payrollTax) => payrollTax.id === 1,
-//         );
-
-//         // Act
-//         await updatePayrollTax(mockRequest as Request, mockResponse, mockNext);
-
-//         // Assert
-//         expect(mockResponse.status).toHaveBeenCalledWith(404);
-//         expect(mockResponse.send).toHaveBeenCalledWith('Payroll tax not found');
-//     });
 
 //     it('should respond with the updated payroll tax', async () => {
 //         const id = 1;
