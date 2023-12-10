@@ -415,7 +415,7 @@ describe('PUT /api/transactionHistory/:id', () => {
 
     it('should respond with a 404 error message when the transaction does not exist', async () => {
         // Arrange
-        mockModule([]);
+        mockModule([[]]);
 
         const { updateTransaction } = await import(
             '../../controllers/transactionHistoryController.js'

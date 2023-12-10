@@ -13,7 +13,7 @@ import { logger } from '../config/winston.js';
 const parseTransactions = (
     transactionHistory: Record<string, string>,
 ): TransactionHistory => ({
-    transaction_id: parseInt(transactionHistory.transaction_id),
+    id: parseInt(transactionHistory.transaction_id),
     account_id: parseInt(transactionHistory.account_id),
     transaction_amount: parseFloat(transactionHistory.transaction_amount),
     transaction_tax_rate: parseFloat(transactionHistory.transaction_tax_rate),
