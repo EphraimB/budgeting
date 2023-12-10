@@ -129,29 +129,28 @@ describe('GET /api/payroll/dates', () => {
             ),
         );
     });
+
+    it('should respond with an error message with id', async () => {
+        // Arrange
+        const errorMessage = 'Error getting payroll date';
+        mockModule([], [errorMessage]);
+
+        const { getPayrollDates } = await import(
+            '../../controllers/payrollDatesController.js'
+        );
+
+        mockRequest.query = { id: 1, employee_id: null };
+
+        // Call the function with the mock request and response
+        await getPayrollDates(mockRequest as Request, mockResponse);
+
+        // Assert
+        expect(mockResponse.status).toHaveBeenCalledWith(400);
+        expect(mockResponse.json).toHaveBeenCalledWith({
+            message: 'Error getting payroll date',
+        });
+    });
 });
-
-//     it('should respond with an error message with id', async () => {
-//         // Arrange
-//         const errorMessage = 'Error getting payroll date';
-//         const error = new Error(errorMessage);
-//         mockModule(null, errorMessage);
-
-//         const { getPayrollDates } = await import(
-//             '../../controllers/payrollDatesController.js'
-//         );
-
-//         mockRequest.query = { id: 1, employee_id: null };
-
-//         // Call the function with the mock request and response
-//         await getPayrollDates(mockRequest as Request, mockResponse);
-
-//         // Assert
-//         expect(mockResponse.status).toHaveBeenCalledWith(400);
-//         expect(mockResponse.json).toHaveBeenCalledWith({
-//             message: 'Error getting payroll date',
-//         });
-//     });
 
 //     it('should respond with an array of payroll dates with employee_id', async () => {
 //         // Arrange
