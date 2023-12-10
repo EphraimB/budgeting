@@ -336,36 +336,36 @@ describe('POST /api/payroll/taxes', () => {
             message: 'Error getting payroll tax',
         });
     });
+
+    it('should respond with the created payroll tax', async () => {
+        const id = 1;
+
+        mockModule([
+            payrollTaxes.filter(
+                (payrollTax) => payrollTax.payroll_taxes_id === id,
+            ),
+        ]);
+
+        mockRequest.body = payrollTaxes.filter(
+            (payrollTax) => payrollTax.payroll_taxes_id === id,
+        );
+
+        const { createPayrollTaxReturnObject } = await import(
+            '../../controllers/payrollTaxesController.js'
+        );
+
+        await createPayrollTaxReturnObject(
+            mockRequest as Request,
+            mockResponse,
+        );
+
+        // Assert
+        expect(mockResponse.status).toHaveBeenCalledWith(201);
+        expect(mockResponse.json).toHaveBeenCalledWith(
+            payrollTaxesResponse.filter((payrollTax) => payrollTax.id === id),
+        );
+    });
 });
-
-//     it('should respond with the created payroll tax', async () => {
-//         const id = 1;
-
-//         mockModule(payrollTaxes.filter((payrollTax) => payrollTax.id === id));
-
-//         const newPayrollTax = {
-//             employee_id: id,
-//             name: 'Federal Income Tax',
-//             rate: 0.15,
-//         };
-
-//         mockRequest.body = newPayrollTax;
-
-//         const { createPayrollTaxReturnObject } = await import(
-//             '../../controllers/payrollTaxesController.js'
-//         );
-
-//         await createPayrollTaxReturnObject(
-//             mockRequest as Request,
-//             mockResponse,
-//         );
-
-//         // Assert
-//         expect(mockResponse.status).toHaveBeenCalledWith(201);
-//         expect(mockResponse.json).toHaveBeenCalledWith(
-//             payrollTaxes.filter((payrollTax) => payrollTax.id === id),
-//         );
-//     });
 
 //     it('should return a 404 error if the payroll tax does not exist', async () => {
 //         mockModule([]);
