@@ -248,37 +248,36 @@ describe('GET /api/transactionHistory', () => {
             message: 'Error getting transaction history',
         });
     });
+
+    it('should respond with an array of transactions with account id and id', async () => {
+        // Arrange
+        mockModule([
+            transactions.filter(
+                (transaction) =>
+                    transaction.account_id === 1 &&
+                    transaction.transaction_id === 1,
+            ),
+        ]);
+
+        mockRequest.query = { id: 1, account_id: 1 };
+
+        const { getTransactions } = await import(
+            '../../controllers/transactionHistoryController.js'
+        );
+
+        // Call the function with the mock request and response
+        await getTransactions(mockRequest as Request, mockResponse);
+
+        // Assert
+        expect(mockResponse.status).toHaveBeenCalledWith(200);
+        expect(mockResponse.json).toHaveBeenCalledWith(
+            transactionsResponse.filter(
+                (transaction) =>
+                    transaction.account_id === 1 && transaction.id === 1,
+            ),
+        );
+    });
 });
-
-//     it('should respond with an array of transactions with account id and id', async () => {
-//         // Arrange
-//         mockModule(
-//             transactions.filter(
-//                 (transaction) =>
-//                     transaction.account_id === 1 &&
-//                     transaction.transaction_id === 1,
-//             ),
-//         );
-
-//         mockRequest.query = { id: 1, account_id: 1 };
-
-//         const { getTransactions } = await import(
-//             '../../controllers/transactionHistoryController.js'
-//         );
-
-//         // Call the function with the mock request and response
-//         await getTransactions(mockRequest as Request, mockResponse);
-
-//         // Assert
-//         expect(mockResponse.status).toHaveBeenCalledWith(200);
-//         expect(mockResponse.json).toHaveBeenCalledWith(
-//             transactions.filter(
-//                 (transaction) =>
-//                     transaction.account_id === 1 &&
-//                     transaction.transaction_id === 1,
-//             ),
-//         );
-//     });
 
 //     it('should respond with an error message with account id and id', async () => {
 //         // Arrange
