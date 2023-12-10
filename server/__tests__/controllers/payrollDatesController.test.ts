@@ -520,29 +520,28 @@ describe('DELETE /api/payroll/dates/:id', () => {
         // Assert
         expect(mockNext).toHaveBeenCalled();
     });
+
+    it('should respond with an error message', async () => {
+        // Arrange
+        const errorMessage = 'Error deleting payroll date';
+        mockModule([], [errorMessage]);
+
+        mockRequest.params = { id: 1 };
+        mockRequest.query = { employee_id: 1 };
+
+        const { deletePayrollDate } = await import(
+            '../../controllers/payrollDatesController.js'
+        );
+
+        await deletePayrollDate(mockRequest as Request, mockResponse, mockNext);
+
+        // Assert
+        expect(mockResponse.status).toHaveBeenCalledWith(400);
+        expect(mockResponse.json).toHaveBeenCalledWith({
+            message: 'Error deleting payroll date',
+        });
+    });
 });
-
-//     it('should respond with an error message', async () => {
-//         // Arrange
-//         const errorMessage = 'Error deleting payroll date';
-//         const error = new Error(errorMessage);
-//         mockModule(null, errorMessage);
-
-//         mockRequest.params = { id: 1 };
-//         mockRequest.query = { employee_id: 1 };
-
-//         const { deletePayrollDate } = await import(
-//             '../../controllers/payrollDatesController.js'
-//         );
-
-//         await deletePayrollDate(mockRequest as Request, mockResponse, mockNext);
-
-//         // Assert
-//         expect(mockResponse.status).toHaveBeenCalledWith(400);
-//         expect(mockResponse.json).toHaveBeenCalledWith({
-//             message: 'Error deleting payroll date',
-//         });
-//     });
 
 //     it('should respond with a 404 error message when the payroll date does not exist', async () => {
 //         // Arrange
