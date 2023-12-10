@@ -341,31 +341,29 @@ describe('POST /api/transactionHistory', () => {
             transactionsResponse.filter((transaction) => transaction.id === 1),
         );
     });
+
+    it('should respond with an error message', async () => {
+        // Arrange
+        const errorMessage = 'Error creating transaction history';
+        mockModule([], [errorMessage]);
+
+        const { createTransaction } = await import(
+            '../../controllers/transactionHistoryController.js'
+        );
+
+        mockRequest.body = transactions.filter(
+            (transaction) => transaction.transaction_id === 1,
+        );
+
+        await createTransaction(mockRequest as Request, mockResponse);
+
+        // Assert
+        expect(mockResponse.status).toHaveBeenCalledWith(400);
+        expect(mockResponse.json).toHaveBeenCalledWith({
+            message: 'Error creating transaction history',
+        });
+    });
 });
-
-//     it('should respond with an error message', async () => {
-//         // Arrange
-//         const errorMessage = 'Error creating transaction history';
-//         const error = new Error(errorMessage);
-//         mockModule(null, errorMessage);
-
-//         const { createTransaction } = await import(
-//             '../../controllers/transactionHistoryController.js'
-//         );
-
-//         mockRequest.body = transactions.filter(
-//             (transaction) => transaction.transaction_id === 1,
-//         );
-
-//         await createTransaction(mockRequest as Request, mockResponse);
-
-//         // Assert
-//         expect(mockResponse.status).toHaveBeenCalledWith(400);
-//         expect(mockResponse.json).toHaveBeenCalledWith({
-//             message: 'Error creating transaction history',
-//         });
-//     });
-// });
 
 // describe('PUT /api/transactionHistory/:id', () => {
 //     it('should respond with the updated transaction', async () => {
