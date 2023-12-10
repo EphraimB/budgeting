@@ -1,6 +1,14 @@
-import { jest } from '@jest/globals';
-import { type Request, type Response } from 'express';
+import { type Request } from 'express';
+import {
+    jest,
+    beforeEach,
+    afterEach,
+    describe,
+    it,
+    expect,
+} from '@jest/globals';
 import { mockModule } from '../__mocks__/mockModule';
+import { Employee } from '../../types/types.js';
 
 // Mock request and response
 let mockRequest: any;
@@ -28,32 +36,62 @@ afterEach(() => {
     jest.resetModules();
 });
 
+const employees = [
+    {
+        employee_id: 1,
+        name: 'Test Employee',
+        hourly_rate: 10,
+        regular_hours: 40,
+        vacation_days: 10,
+        sick_days: 10,
+        work_schedule: '0111100',
+    },
+];
+
+const payrollDates = [
+    {
+        id: 1,
+        employee_id: 1,
+        payroll_start_day: 1,
+        payroll_end_day: 15,
+    },
+    {
+        id: 2,
+        employee_id: 1,
+        payroll_start_day: 15,
+        payroll_end_day: 31,
+    },
+];
+
+const payrollTaxes = [
+    {
+        id: 1,
+        employee_id: 1,
+        name: 'Federal Income Tax',
+        rate: 0.1,
+    },
+    {
+        id: 2,
+        employee_id: 1,
+        name: 'State Income Tax',
+        rate: 0.05,
+    },
+];
+
+const employeeResponse: Employee[] = [
+    {
+        id: 1,
+        name: 'Test Employee',
+        hourly_rate: 10,
+        regular_hours: 40,
+        vacation_days: 10,
+        sick_days: 10,
+        work_schedule: '0111100',
+    },
+];
+
 describe('GET /api/payroll/employee', () => {
     it('should respond with an array of employees', async () => {
-        const employees = [
-            {
-                employee_id: 1,
-                name: 'Test Employee',
-                hourly_rate: 10,
-                regular_hours: 40,
-                vacation_days: 10,
-                sick_days: 10,
-                work_schedule: '0111100',
-            },
-        ];
-
-        const employeeResponse = [
-            {
-                id: 1,
-                name: 'Test Employee',
-                hourly_rate: 10,
-                regular_hours: 40,
-                vacation_days: 10,
-                sick_days: 10,
-                work_schedule: '0111100',
-            },
-        ];
-
         // Arrange
         mockModule([employees]);
 
@@ -95,30 +133,6 @@ describe('GET /api/payroll/employee', () => {
     });
 
     it('should respond with an array of employees with id', async () => {
-        const employees = [
-            {
-                employee_id: 1,
-                name: 'Test Employee',
-                hourly_rate: 10,
-                regular_hours: 40,
-                vacation_days: 10,
-                sick_days: 10,
-                work_schedule: '0111100',
-            },
-        ];
-
-        const employeeResponse = [
-            {
-                id: 1,
-                name: 'Test Employee',
-                hourly_rate: 10,
-                regular_hours: 40,
-                vacation_days: 10,
-                sick_days: 10,
-                work_schedule: '0111100',
-            },
-        ];
-
         // Arrange
         mockModule([employees]);
 
@@ -178,30 +192,6 @@ describe('GET /api/payroll/employee', () => {
 
 describe('POST /api/payroll/employee', () => {
     it('should respond with the new employee', async () => {
-        const employees = [
-            {
-                employee_id: 1,
-                name: 'Test Employee',
-                hourly_rate: 10,
-                regular_hours: 40,
-                vacation_days: 10,
-                sick_days: 10,
-                work_schedule: '0111100',
-            },
-        ];
-
-        const employeeResponse = [
-            {
-                id: 1,
-                name: 'Test Employee',
-                hourly_rate: 10,
-                regular_hours: 40,
-                vacation_days: 10,
-                sick_days: 10,
-                work_schedule: '0111100',
-            },
-        ];
-
         // Arrange
         mockModule([employees]);
 
@@ -219,18 +209,6 @@ describe('POST /api/payroll/employee', () => {
     });
 
     it('should respond with an error message', async () => {
-        const employees = [
-            {
-                employee_id: 1,
-                name: 'Test Employee',
-                hourly_rate: 10,
-                regular_hours: 40,
-                vacation_days: 10,
-                sick_days: 10,
-                work_schedule: '0111100',
-            },
-        ];
-
         // Arrange
         const errorMessage = 'Error creating employee';
         mockModule([], [errorMessage]);
@@ -253,18 +231,6 @@ describe('POST /api/payroll/employee', () => {
 
 describe('PUT /api/payroll/employee/:id', () => {
     it('should call next on middleware', async () => {
-        const employees = [
-            {
-                employee_id: 1,
-                name: 'Test Employee',
-                hourly_rate: 10,
-                regular_hours: 40,
-                vacation_days: 10,
-                sick_days: 10,
-                work_schedule: '0111100',
-            },
-        ];
-
         // Arrange
         mockModule([employees]);
 
@@ -282,18 +248,6 @@ describe('PUT /api/payroll/employee/:id', () => {
     });
 
     it('should respond with an error message', async () => {
-        const employees = [
-            {
-                employee_id: 1,
-                name: 'Test Employee',
-                hourly_rate: 10,
-                regular_hours: 40,
-                vacation_days: 10,
-                sick_days: 10,
-                work_schedule: '0111100',
-            },
-        ];
-
         // Arrange
         const errorMessage = 'Error updating employee';
         mockModule([], [errorMessage]);
@@ -315,18 +269,6 @@ describe('PUT /api/payroll/employee/:id', () => {
     });
 
     it('should respond with an error message in return object', async () => {
-        const employees = [
-            {
-                employee_id: 1,
-                name: 'Test Employee',
-                hourly_rate: 10,
-                regular_hours: 40,
-                vacation_days: 10,
-                sick_days: 10,
-                work_schedule: '0111100',
-            },
-        ];
-
         // Arrange
         const errorMessage = 'Error updating employee';
         mockModule([], [errorMessage]);
@@ -348,18 +290,6 @@ describe('PUT /api/payroll/employee/:id', () => {
     });
 
     it('should respond with a 404 error message when the employee does not exist', async () => {
-        const employees = [
-            {
-                employee_id: 1,
-                name: 'Test Employee',
-                hourly_rate: 10,
-                regular_hours: 40,
-                vacation_days: 10,
-                sick_days: 10,
-                work_schedule: '0111100',
-            },
-        ];
-
         // Arrange
         mockModule([[]]);
 
@@ -379,30 +309,6 @@ describe('PUT /api/payroll/employee/:id', () => {
     });
 
     it('should respond with the updated employee', async () => {
-        const employees = [
-            {
-                employee_id: 1,
-                name: 'Test Employee',
-                hourly_rate: 10,
-                regular_hours: 40,
-                vacation_days: 10,
-                sick_days: 10,
-                work_schedule: '0111100',
-            },
-        ];
-
-        const employeeResponse = [
-            {
-                id: 1,
-                name: 'Test Employee',
-                hourly_rate: 10,
-                regular_hours: 40,
-                vacation_days: 10,
-                sick_days: 10,
-                work_schedule: '0111100',
-            },
-        ];
-
         // Arrange
         mockModule([employees]);
 
@@ -424,18 +330,6 @@ describe('PUT /api/payroll/employee/:id', () => {
 
 describe('DELETE /api/payroll/employee/:id', () => {
     it('should respond with a success message', async () => {
-        const employees = [
-            {
-                employee_id: 1,
-                name: 'Test Employee',
-                hourly_rate: 10,
-                regular_hours: 40,
-                vacation_days: 10,
-                sick_days: 10,
-                work_schedule: '0111100',
-            },
-        ];
-
         // Arrange
         const employee_id = 1;
 
@@ -489,36 +383,6 @@ describe('DELETE /api/payroll/employee/:id', () => {
     });
 
     it('should not delete employee if there are related data', async () => {
-        const payrollDates = [
-            {
-                id: 1,
-                employee_id: 1,
-                payroll_start_day: 1,
-                payroll_end_day: 15,
-            },
-            {
-                id: 2,
-                employee_id: 1,
-                payroll_start_day: 15,
-                payroll_end_day: 31,
-            },
-        ];
-
-        const payrollTaxes = [
-            {
-                id: 1,
-                employee_id: 1,
-                name: 'Federal Income Tax',
-                rate: 0.1,
-            },
-            {
-                id: 2,
-                employee_id: 1,
-                name: 'State Income Tax',
-                rate: 0.05,
-            },
-        ];
-
         // Arrange
         const employee_id = 1;
         mockRequest.params = { employee_id };
