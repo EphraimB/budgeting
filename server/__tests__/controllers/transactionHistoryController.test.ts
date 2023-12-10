@@ -435,25 +435,26 @@ describe('PUT /api/transactionHistory/:id', () => {
     });
 });
 
-// describe('DELETE /api/transactionHistory/:id', () => {
-//     it('should respond with a success message', async () => {
-//         // Arrange
-//         mockModule('Successfully deleted transaction');
+describe('DELETE /api/transactionHistory/:id', () => {
+    it('should respond with a success message', async () => {
+        // Arrange
+        mockModule(['Successfully deleted transaction']);
 
-//         const { deleteTransaction } = await import(
-//             '../../controllers/transactionHistoryController.js'
-//         );
+        const { deleteTransaction } = await import(
+            '../../controllers/transactionHistoryController.js'
+        );
 
-//         mockRequest.params = { id: 1 };
+        mockRequest.params = { id: 1 };
 
-//         await deleteTransaction(mockRequest as Request, mockResponse);
+        await deleteTransaction(mockRequest as Request, mockResponse);
 
-//         // Assert
-//         expect(mockResponse.status).toHaveBeenCalledWith(200);
-//         expect(mockResponse.send).toHaveBeenCalledWith(
-//             'Successfully deleted transaction history',
-//         );
-//     });
+        // Assert
+        expect(mockResponse.status).toHaveBeenCalledWith(200);
+        expect(mockResponse.send).toHaveBeenCalledWith(
+            'Successfully deleted transaction history',
+        );
+    });
+});
 
 //     it('should respond with an error message', async () => {
 //         // Arrange
