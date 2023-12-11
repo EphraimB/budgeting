@@ -268,29 +268,28 @@ describe('PUT /api/expenses/commute/systems/:id', () => {
             message: 'Error updating system',
         });
     });
+
+    it('should respond with a 404 error message when the system does not exist', async () => {
+        // Arrange
+        mockModule([[]]);
+
+        const { updateCommuteSystem } = await import(
+            '../../controllers/commuteSystemController.js'
+        );
+
+        mockRequest.params = { id: 1 };
+        mockRequest.body = commuteSystems.filter(
+            (system) => system.commute_system_id === 1,
+        );
+
+        // Act
+        await updateCommuteSystem(mockRequest as Request, mockResponse);
+
+        // Assert
+        expect(mockResponse.status).toHaveBeenCalledWith(404);
+        expect(mockResponse.send).toHaveBeenCalledWith('System not found');
+    });
 });
-
-//     it('should respond with a 404 error message when the system does not exist', async () => {
-//         // Arrange
-//         mockModule([]);
-
-//         const { updateCommuteSystem } = await import(
-//             '../../controllers/commuteSystemController.js'
-//         );
-
-//         mockRequest.params = { id: 1 };
-//         mockRequest.body = commuteSystems.filter(
-//             (system) => system.commute_system_id === 1,
-//         );
-
-//         // Act
-//         await updateCommuteSystem(mockRequest as Request, mockResponse);
-
-//         // Assert
-//         expect(mockResponse.status).toHaveBeenCalledWith(404);
-//         expect(mockResponse.send).toHaveBeenCalledWith('System not found');
-//     });
-// });
 
 // describe('DELETE /api/expenses/commute/systems/:id', () => {
 //     it('should respond with a success message', async () => {
