@@ -493,28 +493,28 @@ export const commuteSystems = [
     },
 ];
 
-export const commuteHistory = [
-    {
-        commute_history_id: 1,
-        account_id: 1,
-        fare_amount: 2.75,
-        commute_system: 'OMNY',
-        fare_type: 'Single Ride',
-        timestamp: '2020-01-01',
-        date_created: '2020-01-01',
-        date_modified: '2020-01-01',
-    },
-    {
-        commute_history_id: 2,
-        account_id: 1,
-        fare_amount: 9.75,
-        commute_system: 'LIRR',
-        fare_type: 'Off-Peak',
-        timestamp: '2020-01-01',
-        date_created: '2020-01-01',
-        date_modified: '2020-01-01',
-    },
-];
+// export const commuteHistory = [
+//     {
+//         commute_history_id: 1,
+//         account_id: 1,
+//         fare_amount: 2.75,
+//         commute_system: 'OMNY',
+//         fare_type: 'Single Ride',
+//         timestamp: '2020-01-01',
+//         date_created: '2020-01-01',
+//         date_modified: '2020-01-01',
+//     },
+//     {
+//         commute_history_id: 2,
+//         account_id: 1,
+//         fare_amount: 9.75,
+//         commute_system: 'LIRR',
+//         fare_type: 'Off-Peak',
+//         timestamp: '2020-01-01',
+//         date_created: '2020-01-01',
+//         date_modified: '2020-01-01',
+//     },
+// ];
 
 export const fareDetails: any[] = [
     {
