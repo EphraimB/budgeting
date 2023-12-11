@@ -164,33 +164,31 @@ describe('GET /api/expenses/commute/history', () => {
             message: 'Error getting commute history for given account_id',
         });
     });
+
+    it('should respond with an array of commute history with an id', async () => {
+        // Arrange
+        mockModule([
+            commuteHistory.filter(
+                (history) => history.commute_history_id === 1,
+            ),
+        ]);
+
+        const { getCommuteHistory } = await import(
+            '../../controllers/commuteHistoryController.js'
+        );
+
+        mockRequest.query = { account_id: null, id: 1 };
+
+        // Call the function with the mock request and response
+        await getCommuteHistory(mockRequest as Request, mockResponse);
+
+        // Assert
+        expect(mockResponse.status).toHaveBeenCalledWith(200);
+        expect(mockResponse.json).toHaveBeenCalledWith(
+            commuteHistoryResponse.filter((history) => history.id === 1),
+        );
+    });
 });
-
-//     it('should respond with an array of commute history with an id', async () => {
-//         // Arrange
-//         mockModule(
-//             commuteHistory.filter(
-//                 (history) => history.commute_history_id === 1,
-//             ),
-//         );
-
-//         const { getCommuteHistory } = await import(
-//             '../../controllers/commuteHistoryController.js'
-//         );
-
-//         mockRequest.query = { account_id: null, id: 1 };
-
-//         // Call the function with the mock request and response
-//         await getCommuteHistory(mockRequest as Request, mockResponse);
-
-//         // Assert
-//         expect(mockResponse.status).toHaveBeenCalledWith(200);
-//         expect(mockResponse.json).toHaveBeenCalledWith(
-//             commuteHistory.filter(
-//                 (history) => history.commute_history_id === 1,
-//             ),
-//         );
-//     });
 
 //     it('should handle errors correctly with an id', async () => {
 //         // Arrange
