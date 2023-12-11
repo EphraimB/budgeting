@@ -372,29 +372,28 @@ describe('PUT /api/expenses/commute/fares/:id', () => {
             message: 'Error updating fare detail',
         });
     });
+
+    it('should respond with a 404 error message when the fare detail does not exist', async () => {
+        // Arrange
+        mockModule([[]]);
+
+        const { updateFareDetail } = await import(
+            '../../controllers/fareDetailsController.js'
+        );
+
+        mockRequest.params = { id: 1 };
+        mockRequest.body = fareDetails.filter(
+            (history) => history.fare_detail_id === 1,
+        );
+
+        // Act
+        await updateFareDetail(mockRequest as Request, mockResponse);
+
+        // Assert
+        expect(mockResponse.status).toHaveBeenCalledWith(404);
+        expect(mockResponse.send).toHaveBeenCalledWith('Fare detail not found');
+    });
 });
-
-//     it('should respond with a 404 error message when the fare detail does not exist', async () => {
-//         // Arrange
-//         mockModule([]);
-
-//         const { updateFareDetail } = await import(
-//             '../../controllers/fareDetailsController.js'
-//         );
-
-//         mockRequest.params = { id: 1 };
-//         mockRequest.body = fareDetails.filter(
-//             (history) => history.fare_detail_id === 1,
-//         );
-
-//         // Act
-//         await updateFareDetail(mockRequest as Request, mockResponse);
-
-//         // Assert
-//         expect(mockResponse.status).toHaveBeenCalledWith(404);
-//         expect(mockResponse.send).toHaveBeenCalledWith('Fare detail not found');
-//     });
-// });
 
 // describe('DELETE /api/expenses/commute/fares/:id', () => {
 //     it('should respond with a success message', async () => {
