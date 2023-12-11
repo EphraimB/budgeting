@@ -291,30 +291,26 @@ describe('PUT /api/expenses/commute/systems/:id', () => {
     });
 });
 
-// describe('DELETE /api/expenses/commute/systems/:id', () => {
-//     it('should respond with a success message', async () => {
-//         // Arrange
-//         mockModule(
-//             commuteSystems,
-//             undefined,
-//             [],
-//             'Successfully deleted system',
-//         );
+describe('DELETE /api/expenses/commute/systems/:id', () => {
+    it('should respond with a success message', async () => {
+        // Arrange
+        mockModule([commuteSystems, [], 'Successfully deleted system']);
 
-//         const { deleteCommuteSystem } = await import(
-//             '../../controllers/commuteSystemController.js'
-//         );
+        const { deleteCommuteSystem } = await import(
+            '../../controllers/commuteSystemController.js'
+        );
 
-//         mockRequest.params = { id: 1 };
+        mockRequest.params = { id: 1 };
 
-//         await deleteCommuteSystem(mockRequest as Request, mockResponse);
+        await deleteCommuteSystem(mockRequest as Request, mockResponse);
 
-//         // Assert
-//         expect(mockResponse.status).toHaveBeenCalledWith(200);
-//         expect(mockResponse.send).toHaveBeenCalledWith(
-//             'Successfully deleted system',
-//         );
-//     });
+        // Assert
+        expect(mockResponse.status).toHaveBeenCalledWith(200);
+        expect(mockResponse.send).toHaveBeenCalledWith(
+            'Successfully deleted system',
+        );
+    });
+});
 
 //     it('should return a 400 error if there is system related data', async () => {
 //         // Arrange
