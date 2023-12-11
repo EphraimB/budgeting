@@ -209,28 +209,27 @@ describe('GET /api/expenses/commute/history', () => {
             message: 'Error getting commute history',
         });
     });
+
+    it('should respond with a 404 error message when the commute history does not exist', async () => {
+        // Arrange
+        mockModule([[]]);
+
+        const { getCommuteHistory } = await import(
+            '../../controllers/commuteHistoryController.js'
+        );
+
+        mockRequest.query = { account_id: 3, id: 3 };
+
+        // Act
+        await getCommuteHistory(mockRequest as Request, mockResponse);
+
+        // Assert
+        expect(mockResponse.status).toHaveBeenCalledWith(404);
+        expect(mockResponse.send).toHaveBeenCalledWith(
+            'Commute history not found',
+        );
+    });
 });
-
-//     it('should respond with a 404 error message when the commute history does not exist', async () => {
-//         // Arrange
-//         mockModule([]);
-
-//         const { getCommuteHistory } = await import(
-//             '../../controllers/commuteHistoryController.js'
-//         );
-
-//         mockRequest.query = { account_id: 3, id: 3 };
-
-//         // Act
-//         await getCommuteHistory(mockRequest as Request, mockResponse);
-
-//         // Assert
-//         expect(mockResponse.status).toHaveBeenCalledWith(404);
-//         expect(mockResponse.send).toHaveBeenCalledWith(
-//             'Commute history not found',
-//         );
-//     });
-// });
 
 // describe('POST /api/expenses/commute/history', () => {
 //     it('should respond with the new commute history', async () => {
