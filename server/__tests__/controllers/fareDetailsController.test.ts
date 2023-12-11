@@ -395,25 +395,26 @@ describe('PUT /api/expenses/commute/fares/:id', () => {
     });
 });
 
-// describe('DELETE /api/expenses/commute/fares/:id', () => {
-//     it('should respond with a success message', async () => {
-//         // Arrange
-//         mockModule('Successfully deleted fare detail');
+describe('DELETE /api/expenses/commute/fares/:id', () => {
+    it('should respond with a success message', async () => {
+        // Arrange
+        mockModule(['Successfully deleted fare detail']);
 
-//         const { deleteFareDetail } = await import(
-//             '../../controllers/fareDetailsController.js'
-//         );
+        const { deleteFareDetail } = await import(
+            '../../controllers/fareDetailsController.js'
+        );
 
-//         mockRequest.params = { id: 1 };
+        mockRequest.params = { id: 1 };
 
-//         await deleteFareDetail(mockRequest as Request, mockResponse);
+        await deleteFareDetail(mockRequest as Request, mockResponse);
 
-//         // Assert
-//         expect(mockResponse.status).toHaveBeenCalledWith(200);
-//         expect(mockResponse.send).toHaveBeenCalledWith(
-//             'Successfully deleted fare detail',
-//         );
-//     });
+        // Assert
+        expect(mockResponse.status).toHaveBeenCalledWith(200);
+        expect(mockResponse.send).toHaveBeenCalledWith(
+            'Successfully deleted fare detail',
+        );
+    });
+});
 
 //     it('should handle errors correctly', async () => {
 //         // Arrange
