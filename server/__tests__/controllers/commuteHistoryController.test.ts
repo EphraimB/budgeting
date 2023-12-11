@@ -307,32 +307,31 @@ describe('PUT /api/expenses/commute/history/:id', () => {
             ),
         );
     });
+
+    it('should handle errors correctly', async () => {
+        // Arrange
+        const errorMessage = 'Error updating commute history';
+        mockModule([], [errorMessage]);
+
+        const { updateCommuteHistory } = await import(
+            '../../controllers/commuteHistoryController.js'
+        );
+
+        mockRequest.params = { id: 1 };
+        mockRequest.body = commuteHistory.filter(
+            (commuteHistory) => commuteHistory.commute_history_id === 1,
+        );
+
+        // Act
+        await updateCommuteHistory(mockRequest as Request, mockResponse);
+
+        // Assert
+        expect(mockResponse.status).toHaveBeenCalledWith(400);
+        expect(mockResponse.json).toHaveBeenCalledWith({
+            message: 'Error updating commute history',
+        });
+    });
 });
-
-//     it('should handle errors correctly', async () => {
-//         // Arrange
-//         const errorMessage = 'Error updating commute history';
-//         const error = new Error(errorMessage);
-//         mockModule(null, errorMessage);
-
-//         const { updateCommuteHistory } = await import(
-//             '../../controllers/commuteHistoryController.js'
-//         );
-
-//         mockRequest.params = { id: 1 };
-//         mockRequest.body = commuteHistory.filter(
-//             (history) => history.commute_history_id === 1,
-//         );
-
-//         // Act
-//         await updateCommuteHistory(mockRequest as Request, mockResponse);
-
-//         // Assert
-//         expect(mockResponse.status).toHaveBeenCalledWith(400);
-//         expect(mockResponse.json).toHaveBeenCalledWith({
-//             message: 'Error updating commute history',
-//         });
-//     });
 
 //     it('should respond with a 404 error message when the commute history does not exist', async () => {
 //         // Arrange
