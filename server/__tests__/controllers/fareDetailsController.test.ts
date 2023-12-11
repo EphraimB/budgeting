@@ -206,26 +206,25 @@ describe('GET /api/expenses/commute/fares', () => {
             message: 'Error getting fare details for given id',
         });
     });
+
+    it('should respond with a 404 error message when the fare detail does not exist', async () => {
+        // Arrange
+        mockModule([[]]);
+
+        const { getFareDetails } = await import(
+            '../../controllers/fareDetailsController.js'
+        );
+
+        mockRequest.query = { id: 3 };
+
+        // Act
+        await getFareDetails(mockRequest as Request, mockResponse);
+
+        // Assert
+        expect(mockResponse.status).toHaveBeenCalledWith(404);
+        expect(mockResponse.send).toHaveBeenCalledWith('Fare detail not found');
+    });
 });
-
-//     it('should respond with a 404 error message when the fare detail does not exist', async () => {
-//         // Arrange
-//         mockModule([]);
-
-//         const { getFareDetails } = await import(
-//             '../../controllers/fareDetailsController.js'
-//         );
-
-//         mockRequest.query = { id: 3 };
-
-//         // Act
-//         await getFareDetails(mockRequest as Request, mockResponse);
-
-//         // Assert
-//         expect(mockResponse.status).toHaveBeenCalledWith(404);
-//         expect(mockResponse.send).toHaveBeenCalledWith('Fare detail not found');
-//     });
-// });
 
 // describe('POST /api/expenses/commute/fares', () => {
 //     it('should respond with the new fare detail', async () => {
