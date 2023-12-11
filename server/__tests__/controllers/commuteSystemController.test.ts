@@ -111,29 +111,29 @@ describe('GET /api/expenses/commute/systems', () => {
             message: 'Error getting systems',
         });
     });
+
+    it('should respond with an array of systems with an id', async () => {
+        // Arrange
+        mockModule([
+            commuteSystems.filter((system) => system.commute_system_id === 1),
+        ]);
+
+        const { getCommuteSystem } = await import(
+            '../../controllers/commuteSystemController.js'
+        );
+
+        mockRequest.query = { id: 1 };
+
+        // Call the function with the mock request and response
+        await getCommuteSystem(mockRequest as Request, mockResponse);
+
+        // Assert
+        expect(mockResponse.status).toHaveBeenCalledWith(200);
+        expect(mockResponse.json).toHaveBeenCalledWith(
+            commuteSystemsResponse.filter((system) => system.id === 1),
+        );
+    });
 });
-
-//     it('should respond with an array of systems with an id', async () => {
-//         // Arrange
-//         mockModule(
-//             commuteSystems.filter((system) => system.commute_system_id === 1),
-//         );
-
-//         const { getCommuteSystem } = await import(
-//             '../../controllers/commuteSystemController.js'
-//         );
-
-//         mockRequest.query = { id: 1 };
-
-//         // Call the function with the mock request and response
-//         await getCommuteSystem(mockRequest as Request, mockResponse);
-
-//         // Assert
-//         expect(mockResponse.status).toHaveBeenCalledWith(200);
-//         expect(mockResponse.json).toHaveBeenCalledWith(
-//             commuteSystems.filter((system) => system.commute_system_id === 1),
-//         );
-//     });
 
 //     it('should handle errors correctly with an id', async () => {
 //         // Arrange
