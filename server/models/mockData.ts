@@ -344,20 +344,20 @@ export const payrolls = [
 //     },
 // ];
 
-export const payrollTaxes: PayrollTax[] = [
-    {
-        id: 1,
-        employee_id: 1,
-        name: 'Federal Income Tax',
-        rate: 0.1,
-    },
-    {
-        id: 2,
-        employee_id: 1,
-        name: 'State Income Tax',
-        rate: 0.05,
-    },
-];
+// export const payrollTaxes: PayrollTax[] = [
+//     {
+//         id: 1,
+//         employee_id: 1,
+//         name: 'Federal Income Tax',
+//         rate: 0.1,
+//     },
+//     {
+//         id: 2,
+//         employee_id: 1,
+//         name: 'State Income Tax',
+//         rate: 0.05,
+//     },
+// ];
 
 // export const wishlists: Wishlist[] = [
 //     {
