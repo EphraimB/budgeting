@@ -253,32 +253,30 @@ describe('POST /api/expenses/commute/history', () => {
             commuteHistoryResponse.filter((system) => system.id === 1),
         );
     });
+
+    it('should handle errors correctly', async () => {
+        // Arrange
+        const errorMessage = 'Error creating commute history';
+        mockModule([], [errorMessage]);
+
+        const { createCommuteHistory } = await import(
+            '../../controllers/commuteHistoryController.js'
+        );
+
+        mockRequest.body = commuteHistory.filter(
+            (system) => system.commute_history_id === 1,
+        );
+
+        // Act
+        await createCommuteHistory(mockRequest as Request, mockResponse);
+
+        // Assert
+        expect(mockResponse.status).toHaveBeenCalledWith(400);
+        expect(mockResponse.json).toHaveBeenCalledWith({
+            message: 'Error creating commute history',
+        });
+    });
 });
-
-//     it('should handle errors correctly', async () => {
-//         // Arrange
-//         const errorMessage = 'Error creating commute history';
-//         const error = new Error(errorMessage);
-//         mockModule(null, errorMessage);
-
-//         const { createCommuteHistory } = await import(
-//             '../../controllers/commuteHistoryController.js'
-//         );
-
-//         mockRequest.body = commuteHistory.filter(
-//             (system) => system.commute_history_id === 1,
-//         );
-
-//         // Act
-//         await createCommuteHistory(mockRequest as Request, mockResponse);
-
-//         // Assert
-//         expect(mockResponse.status).toHaveBeenCalledWith(400);
-//         expect(mockResponse.json).toHaveBeenCalledWith({
-//             message: 'Error creating commute history',
-//         });
-//     });
-// });
 
 // describe('PUT /api/expenses/commute/history/:id', () => {
 //     it('should respond with the updated commute history', async () => {
