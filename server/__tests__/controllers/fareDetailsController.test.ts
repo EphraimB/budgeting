@@ -414,29 +414,28 @@ describe('DELETE /api/expenses/commute/fares/:id', () => {
             'Successfully deleted fare detail',
         );
     });
+
+    it('should handle errors correctly', async () => {
+        // Arrange
+        const errorMessage = 'Error deleting fare detail';
+        mockModule([], [errorMessage]);
+
+        const { deleteFareDetail } = await import(
+            '../../controllers/fareDetailsController.js'
+        );
+
+        mockRequest.params = { id: 1 };
+
+        // Act
+        await deleteFareDetail(mockRequest as Request, mockResponse);
+
+        // Assert
+        expect(mockResponse.status).toHaveBeenCalledWith(400);
+        expect(mockResponse.json).toHaveBeenCalledWith({
+            message: 'Error deleting fare detail',
+        });
+    });
 });
-
-//     it('should handle errors correctly', async () => {
-//         // Arrange
-//         const errorMessage = 'Error deleting fare detail';
-//         const error = new Error(errorMessage);
-//         mockModule(null, errorMessage);
-
-//         const { deleteFareDetail } = await import(
-//             '../../controllers/fareDetailsController.js'
-//         );
-
-//         mockRequest.params = { id: 1 };
-
-//         // Act
-//         await deleteFareDetail(mockRequest as Request, mockResponse);
-
-//         // Assert
-//         expect(mockResponse.status).toHaveBeenCalledWith(400);
-//         expect(mockResponse.json).toHaveBeenCalledWith({
-//             message: 'Error deleting fare detail',
-//         });
-//     });
 
 //     it('should respond with a 404 error message when the fare details does not exist', async () => {
 //         // Arrange
