@@ -8,6 +8,7 @@ import {
     expect,
 } from '@jest/globals';
 import { mockModule } from '../__mocks__/mockModule';
+import { TransactionHistory } from '../../types/types.js';
 
 // Mock request and response
 let mockRequest: any;
@@ -76,7 +77,7 @@ const transactions = [
     },
 ];
 
-const transactionsResponse = [
+const transactionsResponse: TransactionHistory[] = [
     {
         id: 1,
         account_id: 1,

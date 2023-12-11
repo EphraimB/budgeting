@@ -36,7 +36,7 @@ afterEach(() => {
     jest.resetModules();
 });
 
-export const loans = [
+const loans = [
     {
         loan_id: 1,
         cron_job_id: 1,

@@ -8,6 +8,7 @@ import {
 } from '@jest/globals';
 import { type Request } from 'express';
 import { mockModule } from '../__mocks__/mockModule.js';
+import { Income } from '../../types/types.js';
 
 jest.mock('../../config/winston', () => ({
     logger: {
@@ -55,7 +56,7 @@ const income = [
     },
 ];
 
-const incomeResponse = [
+const incomeResponse: Income[] = [
     {
         id: 1,
         account_id: 1,

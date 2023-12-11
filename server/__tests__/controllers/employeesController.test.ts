@@ -8,7 +8,7 @@ import {
     expect,
 } from '@jest/globals';
 import { mockModule } from '../__mocks__/mockModule';
-import { Employee } from '../../types/types.js';
+import { Employee, PayrollDate, PayrollTax } from '../../types/types.js';
 
 // Mock request and response
 let mockRequest: any;
@@ -48,7 +48,7 @@ const employees = [
     },
 ];
 
-const payrollDates = [
+const payrollDates: PayrollDate[] = [
     {
         id: 1,
         employee_id: 1,
@@ -63,7 +63,7 @@ const payrollDates = [
     },
 ];
 
-const payrollTaxes = [
+const payrollTaxes: PayrollTax[] = [
     {
         id: 1,
         employee_id: 1,
