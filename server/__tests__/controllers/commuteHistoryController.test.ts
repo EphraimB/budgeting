@@ -169,7 +169,7 @@ describe('GET /api/expenses/commute/history', () => {
         // Arrange
         mockModule([
             commuteHistory.filter(
-                (history) => history.commute_history_id === 1,
+                (commuteHistory) => commuteHistory.commute_history_id === 1,
             ),
         ]);
 
@@ -185,7 +185,9 @@ describe('GET /api/expenses/commute/history', () => {
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(200);
         expect(mockResponse.json).toHaveBeenCalledWith(
-            commuteHistoryResponse.filter((history) => history.id === 1),
+            commuteHistoryResponse.filter(
+                (commuteHistory) => commuteHistory.id === 1,
+            ),
         );
     });
 
@@ -234,7 +236,7 @@ describe('GET /api/expenses/commute/history', () => {
 describe('POST /api/expenses/commute/history', () => {
     it('should respond with the new commute history', async () => {
         const newCommuteHistory = commuteHistory.filter(
-            (system) => system.commute_history_id === 1,
+            (commuteHistory) => commuteHistory.commute_history_id === 1,
         );
 
         mockModule([newCommuteHistory]);
@@ -250,7 +252,9 @@ describe('POST /api/expenses/commute/history', () => {
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(201);
         expect(mockResponse.json).toHaveBeenCalledWith(
-            commuteHistoryResponse.filter((system) => system.id === 1),
+            commuteHistoryResponse.filter(
+                (commuteHistory) => commuteHistory.id === 1,
+            ),
         );
     });
 
@@ -264,7 +268,7 @@ describe('POST /api/expenses/commute/history', () => {
         );
 
         mockRequest.body = commuteHistory.filter(
-            (system) => system.commute_history_id === 1,
+            (commuteHistory) => commuteHistory.commute_history_id === 1,
         );
 
         // Act
@@ -278,27 +282,32 @@ describe('POST /api/expenses/commute/history', () => {
     });
 });
 
-// describe('PUT /api/expenses/commute/history/:id', () => {
-//     it('should respond with the updated commute history', async () => {
-//         const updatedHistory = commuteHistory.filter(
-//             (history) => history.commute_history_id === 1,
-//         );
+describe('PUT /api/expenses/commute/history/:id', () => {
+    it('should respond with the updated commute history', async () => {
+        const updatedHistory = commuteHistory.filter(
+            (commuteHistory) => commuteHistory.commute_history_id === 1,
+        );
 
-//         mockModule(updatedHistory);
+        mockModule([updatedHistory, updatedHistory]);
 
-//         const { updateCommuteHistory } = await import(
-//             '../../controllers/commuteHistoryController.js'
-//         );
+        const { updateCommuteHistory } = await import(
+            '../../controllers/commuteHistoryController.js'
+        );
 
-//         mockRequest.params = { id: 1 };
-//         mockRequest.body = updatedHistory;
+        mockRequest.params = { id: 1 };
+        mockRequest.body = updatedHistory;
 
-//         await updateCommuteHistory(mockRequest as Request, mockResponse);
+        await updateCommuteHistory(mockRequest as Request, mockResponse);
 
-//         // Assert
-//         expect(mockResponse.status).toHaveBeenCalledWith(200);
-//         expect(mockResponse.json).toHaveBeenCalledWith(updatedHistory);
-//     });
+        // Assert
+        expect(mockResponse.status).toHaveBeenCalledWith(200);
+        expect(mockResponse.json).toHaveBeenCalledWith(
+            commuteHistoryResponse.filter(
+                (commuteHistory) => commuteHistory.id === 1,
+            ),
+        );
+    });
+});
 
 //     it('should handle errors correctly', async () => {
 //         // Arrange
