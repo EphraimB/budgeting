@@ -375,29 +375,28 @@ describe('DELETE /api/expenses/commute/history/:id', () => {
             'Successfully deleted commute history',
         );
     });
+
+    it('should handle errors correctly', async () => {
+        // Arrange
+        const errorMessage = 'Error deleting commute history';
+        mockModule([], [errorMessage]);
+
+        const { deleteCommuteHistory } = await import(
+            '../../controllers/commuteHistoryController.js'
+        );
+
+        mockRequest.params = { id: 1 };
+
+        // Act
+        await deleteCommuteHistory(mockRequest as Request, mockResponse);
+
+        // Assert
+        expect(mockResponse.status).toHaveBeenCalledWith(400);
+        expect(mockResponse.json).toHaveBeenCalledWith({
+            message: 'Error deleting commute history',
+        });
+    });
 });
-
-//     it('should handle errors correctly', async () => {
-//         // Arrange
-//         const errorMessage = 'Error deleting commute history';
-//         const error = new Error(errorMessage);
-//         mockModule(null, errorMessage);
-
-//         const { deleteCommuteHistory } = await import(
-//             '../../controllers/commuteHistoryController.js'
-//         );
-
-//         mockRequest.params = { id: 1 };
-
-//         // Act
-//         await deleteCommuteHistory(mockRequest as Request, mockResponse);
-
-//         // Assert
-//         expect(mockResponse.status).toHaveBeenCalledWith(400);
-//         expect(mockResponse.json).toHaveBeenCalledWith({
-//             message: 'Error deleting commute history',
-//         });
-//     });
 
 //     it('should respond with a 404 error message when the commute history does not exist', async () => {
 //         // Arrange
