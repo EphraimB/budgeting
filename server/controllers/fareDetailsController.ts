@@ -144,8 +144,6 @@ export const createFareDetail = async (
             ],
         );
 
-        console.log(timeslots);
-
         const timeslotPromises = timeslots.map(async (timeslot: Timeslots) => {
             const timeslotData = await executeQuery(
                 fareTimeslotsQueries.createTimeslot,
