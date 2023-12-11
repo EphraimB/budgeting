@@ -348,32 +348,31 @@ describe('PUT /api/expenses/commute/fares/:id', () => {
             fareDetailsResponse.filter((fareDetail) => fareDetail.id === 1)[0],
         );
     });
+
+    it('should handle errors correctly', async () => {
+        // Arrange
+        const errorMessage = 'Error updating fare detail';
+        mockModule([], [errorMessage]);
+
+        const { updateFareDetail } = await import(
+            '../../controllers/fareDetailsController.js'
+        );
+
+        mockRequest.params = { id: 1 };
+        mockRequest.body = fareDetails.filter(
+            (history) => history.fare_detail_id === 1,
+        );
+
+        // Act
+        await updateFareDetail(mockRequest as Request, mockResponse);
+
+        // Assert
+        expect(mockResponse.status).toHaveBeenCalledWith(400);
+        expect(mockResponse.json).toHaveBeenCalledWith({
+            message: 'Error updating fare detail',
+        });
+    });
 });
-
-//     it('should handle errors correctly', async () => {
-//         // Arrange
-//         const errorMessage = 'Error updating fare detail';
-//         const error = new Error(errorMessage);
-//         mockModule(null, errorMessage);
-
-//         const { updateFareDetail } = await import(
-//             '../../controllers/fareDetailsController.js'
-//         );
-
-//         mockRequest.params = { id: 1 };
-//         mockRequest.body = fareDetails.filter(
-//             (history) => history.fare_detail_id === 1,
-//         );
-
-//         // Act
-//         await updateFareDetail(mockRequest as Request, mockResponse);
-
-//         // Assert
-//         expect(mockResponse.status).toHaveBeenCalledWith(400);
-//         expect(mockResponse.json).toHaveBeenCalledWith({
-//             message: 'Error updating fare detail',
-//         });
-//     });
 
 //     it('should respond with a 404 error message when the fare detail does not exist', async () => {
 //         // Arrange
