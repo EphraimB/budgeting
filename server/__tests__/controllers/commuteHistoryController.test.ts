@@ -356,25 +356,26 @@ describe('PUT /api/expenses/commute/history/:id', () => {
     });
 });
 
-// describe('DELETE /api/expenses/commute/history/:id', () => {
-//     it('should respond with a success message', async () => {
-//         // Arrange
-//         mockModule('Successfully deleted commute history');
+describe('DELETE /api/expenses/commute/history/:id', () => {
+    it('should respond with a success message', async () => {
+        // Arrange
+        mockModule(['Successfully deleted commute history']);
 
-//         const { deleteCommuteHistory } = await import(
-//             '../../controllers/commuteHistoryController.js'
-//         );
+        const { deleteCommuteHistory } = await import(
+            '../../controllers/commuteHistoryController.js'
+        );
 
-//         mockRequest.params = { id: 1 };
+        mockRequest.params = { id: 1 };
 
-//         await deleteCommuteHistory(mockRequest as Request, mockResponse);
+        await deleteCommuteHistory(mockRequest as Request, mockResponse);
 
-//         // Assert
-//         expect(mockResponse.status).toHaveBeenCalledWith(200);
-//         expect(mockResponse.send).toHaveBeenCalledWith(
-//             'Successfully deleted commute history',
-//         );
-//     });
+        // Assert
+        expect(mockResponse.status).toHaveBeenCalledWith(200);
+        expect(mockResponse.send).toHaveBeenCalledWith(
+            'Successfully deleted commute history',
+        );
+    });
+});
 
 //     it('should handle errors correctly', async () => {
 //         // Arrange
