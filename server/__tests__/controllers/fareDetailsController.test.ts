@@ -435,23 +435,22 @@ describe('DELETE /api/expenses/commute/fares/:id', () => {
             message: 'Error deleting fare detail',
         });
     });
+
+    it('should respond with a 404 error message when the fare details does not exist', async () => {
+        // Arrange
+        mockModule([[]]);
+
+        const { deleteFareDetail } = await import(
+            '../../controllers/fareDetailsController.js'
+        );
+
+        mockRequest.params = { id: 1 };
+
+        // Act
+        await deleteFareDetail(mockRequest as Request, mockResponse);
+
+        // Assert
+        expect(mockResponse.status).toHaveBeenCalledWith(404);
+        expect(mockResponse.send).toHaveBeenCalledWith('Fare detail not found');
+    });
 });
-
-//     it('should respond with a 404 error message when the fare details does not exist', async () => {
-//         // Arrange
-//         mockModule([]);
-
-//         const { deleteFareDetail } = await import(
-//             '../../controllers/fareDetailsController.js'
-//         );
-
-//         mockRequest.params = { id: 1 };
-
-//         // Act
-//         await deleteFareDetail(mockRequest as Request, mockResponse);
-
-//         // Assert
-//         expect(mockResponse.status).toHaveBeenCalledWith(404);
-//         expect(mockResponse.send).toHaveBeenCalledWith('Fare detail not found');
-//     });
-// });
