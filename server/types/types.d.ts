@@ -225,7 +225,7 @@ export interface CommuteSystem {
 }
 
 export interface CommuteHistory {
-    commute_history_id: number;
+    id: number;
     account_id: number;
     fare_amount: number;
     commute_system: string;
