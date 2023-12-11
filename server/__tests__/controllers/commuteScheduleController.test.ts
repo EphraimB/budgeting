@@ -128,29 +128,28 @@ describe('GET /api/expenses/commute/schedule', () => {
         expect(mockResponse.status).toHaveBeenCalledWith(200);
         expect(mockResponse.json).toHaveBeenCalledWith(responseObj);
     });
+
+    it('should handle errors correctly', async () => {
+        // Arrange
+        const errorMessage = 'Error getting schedules';
+        mockModule([], [errorMessage]);
+
+        const { getCommuteSchedule } = await import(
+            '../../controllers/commuteScheduleController.js'
+        );
+
+        mockRequest.query = { account_id: null, id: null };
+
+        // Act
+        await getCommuteSchedule(mockRequest as Request, mockResponse);
+
+        // Assert
+        expect(mockResponse.status).toHaveBeenCalledWith(400);
+        expect(mockResponse.json).toHaveBeenCalledWith({
+            message: 'Error getting schedules',
+        });
+    });
 });
-
-//     it('should handle errors correctly', async () => {
-//         // Arrange
-//         const errorMessage = 'Error getting schedules';
-//         const error = new Error(errorMessage);
-//         mockModule(null, errorMessage);
-
-//         const { getCommuteSchedule } = await import(
-//             '../../controllers/commuteScheduleController.js'
-//         );
-
-//         mockRequest.query = { account_id: null, id: null };
-
-//         // Act
-//         await getCommuteSchedule(mockRequest as Request, mockResponse);
-
-//         // Assert
-//         expect(mockResponse.status).toHaveBeenCalledWith(400);
-//         expect(mockResponse.json).toHaveBeenCalledWith({
-//             message: 'Error getting schedules',
-//         });
-//     });
 
 //     it('should respond with an array of schedules with an account_id', async () => {
 //         const commuteSchedule = [
