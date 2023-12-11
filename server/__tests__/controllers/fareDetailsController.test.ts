@@ -137,97 +137,55 @@ describe('GET /api/expenses/commute/fares', () => {
         expect(mockResponse.status).toHaveBeenCalledWith(200);
         expect(mockResponse.json).toHaveBeenCalledWith(expectedResponse);
     });
+
+    it('should handle errors correctly', async () => {
+        // Arrange
+        const errorMessage = 'Error getting fare details';
+        mockModule([], [errorMessage]);
+
+        const { getFareDetails } = await import(
+            '../../controllers/fareDetailsController.js'
+        );
+
+        mockRequest.query = { account_id: null, id: null };
+
+        // Act
+        await getFareDetails(mockRequest as Request, mockResponse);
+
+        // Assert
+        expect(mockResponse.status).toHaveBeenCalledWith(400);
+        expect(mockResponse.json).toHaveBeenCalledWith({
+            message: 'Error getting fare details',
+        });
+    });
+
+    it('should respond with an array of fare details with an id', async () => {
+        // Arrange
+        mockModule([
+            fareDetails.filter((fareDetail) => fareDetail.fare_detail_id === 1),
+            timeslots.filter((timeslot) => timeslot.fare_detail_id === 1),
+        ]);
+
+        const { getFareDetails } = await import(
+            '../../controllers/fareDetailsController.js'
+        );
+
+        mockRequest.query = { account_id: null, id: 1 };
+
+        // Call the function with the mock request and response
+        await getFareDetails(mockRequest as Request, mockResponse);
+
+        const expectedResponse = {
+            fares: fareDetailsResponse.filter(
+                (fareDetail) => fareDetail.fare_detail_id === 1,
+            ),
+        };
+
+        // Assert
+        expect(mockResponse.status).toHaveBeenCalledWith(200);
+        expect(mockResponse.json).toHaveBeenCalledWith(expectedResponse);
+    });
 });
-
-//     it('should handle errors correctly', async () => {
-//         // Arrange
-//         const errorMessage = 'Error getting fare details';
-//         const error = new Error(errorMessage);
-//         mockModule(null, errorMessage);
-
-//         const { getFareDetails } = await import(
-//             '../../controllers/fareDetailsController.js'
-//         );
-
-//         mockRequest.query = { account_id: null, id: null };
-
-//         // Act
-//         await getFareDetails(mockRequest as Request, mockResponse);
-
-//         // Assert
-//         expect(mockResponse.status).toHaveBeenCalledWith(400);
-//         expect(mockResponse.json).toHaveBeenCalledWith({
-//             message: 'Error getting fare details',
-//         });
-//     });
-
-//     it('should respond with an array of fare details with an id', async () => {
-//         // Arrange
-//         mockModule(
-//             [
-//                 {
-//                     fare_detail_id: 1,
-//                     commute_system_id: 1,
-//                     system_name: 'BART',
-//                     fare_type: 'Adult',
-//                     fare_amount: 5.65,
-//                     begin_in_effect_day_of_week: 1,
-//                     begin_in_effect_time: '00:00:00',
-//                     end_in_effect_day_of_week: 7,
-//                     end_in_effect_time: '23:59:59',
-//                     alternate_fare_detail_id: null,
-//                     date_created: '2021-01-01T00:00:00.000Z',
-//                     date_modified: '2021-01-01T00:00:00.000Z',
-//                 },
-//             ],
-//             undefined,
-//             [
-//                 {
-//                     fare_detail_id: 1,
-//                     day_of_week: 1,
-//                     start_time: '00:00:00',
-//                     end_time: '23:59:59',
-//                 },
-//             ],
-//         );
-
-//         const { getFareDetails } = await import(
-//             '../../controllers/fareDetailsController.js'
-//         );
-
-//         mockRequest.query = { account_id: null, id: 1 };
-
-//         // Call the function with the mock request and response
-//         await getFareDetails(mockRequest as Request, mockResponse);
-
-//         const responseObj = {
-//             fares: [
-//                 {
-//                     fare_detail_id: 1,
-//                     commute_system: {
-//                         commute_system_id: 1,
-//                         name: 'BART',
-//                     },
-//                     name: 'Adult',
-//                     fare_amount: 5.65,
-//                     timeslots: [
-//                         {
-//                             day_of_week: 1,
-//                             start_time: '00:00:00',
-//                             end_time: '23:59:59',
-//                         },
-//                     ],
-//                     alternate_fare_detail_id: null,
-//                     date_created: '2021-01-01T00:00:00.000Z',
-//                     date_modified: '2021-01-01T00:00:00.000Z',
-//                 },
-//             ],
-//         };
-
-//         // Assert
-//         expect(mockResponse.status).toHaveBeenCalledWith(200);
-//         expect(mockResponse.json).toHaveBeenCalledWith(responseObj);
-//     });
 
 //     it('should handle errors correctly with an id', async () => {
 //         // Arrange
