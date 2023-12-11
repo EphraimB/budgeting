@@ -196,32 +196,30 @@ describe('POST /api/expenses/commute/systems', () => {
             commuteSystemsResponse.filter((system) => system.id === 1),
         );
     });
+
+    it('should handle errors correctly', async () => {
+        // Arrange
+        const errorMessage = 'Error creating system';
+        mockModule([], [errorMessage]);
+
+        const { createCommuteSystem } = await import(
+            '../../controllers/commuteSystemController.js'
+        );
+
+        mockRequest.body = commuteSystems.filter(
+            (system) => system.commute_system_id === 1,
+        );
+
+        // Act
+        await createCommuteSystem(mockRequest as Request, mockResponse);
+
+        // Assert
+        expect(mockResponse.status).toHaveBeenCalledWith(400);
+        expect(mockResponse.json).toHaveBeenCalledWith({
+            message: 'Error creating system',
+        });
+    });
 });
-
-//     it('should handle errors correctly', async () => {
-//         // Arrange
-//         const errorMessage = 'Error creating system';
-//         const error = new Error(errorMessage);
-//         mockModule(null, errorMessage);
-
-//         const { createCommuteSystem } = await import(
-//             '../../controllers/commuteSystemController.js'
-//         );
-
-//         mockRequest.body = commuteSystems.filter(
-//             (system) => system.commute_system_id === 1,
-//         );
-
-//         // Act
-//         await createCommuteSystem(mockRequest as Request, mockResponse);
-
-//         // Assert
-//         expect(mockResponse.status).toHaveBeenCalledWith(400);
-//         expect(mockResponse.json).toHaveBeenCalledWith({
-//             message: 'Error creating system',
-//         });
-//     });
-// });
 
 // describe('PUT /api/expenses/commute/systems/:id', () => {
 //     it('should respond with the updated system', async () => {
