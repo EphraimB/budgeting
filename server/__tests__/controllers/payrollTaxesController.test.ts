@@ -586,27 +586,26 @@ describe('DELETE /api/payroll/taxes/:id', () => {
         expect(mockResponse.status).toHaveBeenCalledWith(404);
         expect(mockResponse.send).toHaveBeenCalledWith('Payroll tax not found');
     });
+
+    it('should respond with a success message', async () => {
+        mockModule(['Successfully deleted payroll tax']);
+
+        mockRequest.params = { id: 1 };
+        mockRequest.query = { employee_id: 1 };
+
+        const { deletePayrollTaxReturnObject } = await import(
+            '../../controllers/payrollTaxesController.js'
+        );
+
+        await deletePayrollTaxReturnObject(
+            mockRequest as Request,
+            mockResponse,
+        );
+
+        // Assert
+        expect(mockResponse.status).toHaveBeenCalledWith(200);
+        expect(mockResponse.send).toHaveBeenCalledWith(
+            'Successfully deleted payroll tax',
+        );
+    });
 });
-
-//     it('should respond with a success message', async () => {
-//         mockModule('Successfully deleted payroll tax');
-
-//         mockRequest.params = { id: 1 };
-//         mockRequest.query = { employee_id: 1 };
-
-//         const { deletePayrollTaxReturnObject } = await import(
-//             '../../controllers/payrollTaxesController.js'
-//         );
-
-//         await deletePayrollTaxReturnObject(
-//             mockRequest as Request,
-//             mockResponse,
-//         );
-
-//         // Assert
-//         expect(mockResponse.status).toHaveBeenCalledWith(200);
-//         expect(mockResponse.send).toHaveBeenCalledWith(
-//             'Successfully deleted payroll tax',
-//         );
-//     });
-// });
