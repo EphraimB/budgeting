@@ -532,39 +532,23 @@ describe('PUT /api/payroll/taxes/:id', () => {
     });
 });
 
-// describe('DELETE /api/payroll/taxes/:id', () => {
-//     it('should call next on the middleware', async () => {
-//         mockModule('Successfully deleted payroll tax');
+describe('DELETE /api/payroll/taxes/:id', () => {
+    it('should call next on the middleware', async () => {
+        mockModule(['Successfully deleted payroll tax']);
 
-//         jest.mock('child_process', () => {
-//             return {
-//                 exec: jest.fn(
-//                     (
-//                         command: string,
-//                         callback: (
-//                             error: Error | null,
-//                             stdout: string,
-//                             stderr: string,
-//                         ) => void,
-//                     ) => {
-//                         callback(null, 'mock stdout', 'mock stderr');
-//                     },
-//                 ),
-//             };
-//         });
+        mockRequest.params = { id: 1 };
+        mockRequest.query = { employee_id: 1 };
 
-//         mockRequest.params = { id: 1 };
-//         mockRequest.query = { employee_id: 1 };
+        const { deletePayrollTax } = await import(
+            '../../controllers/payrollTaxesController.js'
+        );
 
-//         const { deletePayrollTax } = await import(
-//             '../../controllers/payrollTaxesController.js'
-//         );
+        await deletePayrollTax(mockRequest as Request, mockResponse, mockNext);
 
-//         await deletePayrollTax(mockRequest as Request, mockResponse, mockNext);
-
-//         // Assert
-//         expect(mockNext).toHaveBeenCalled();
-//     });
+        // Assert
+        expect(mockNext).toHaveBeenCalled();
+    });
+});
 
 //     it('should respond with an error message', async () => {
 //         const errorMessage = 'Error deleting payroll tax';
