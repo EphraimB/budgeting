@@ -548,27 +548,26 @@ describe('DELETE /api/payroll/taxes/:id', () => {
         // Assert
         expect(mockNext).toHaveBeenCalled();
     });
+
+    it('should respond with an error message', async () => {
+        const errorMessage = 'Error deleting payroll tax';
+        mockModule([], [errorMessage]);
+
+        mockRequest.params = { id: 3 };
+
+        const { deletePayrollTax } = await import(
+            '../../controllers/payrollTaxesController.js'
+        );
+
+        await deletePayrollTax(mockRequest as Request, mockResponse, mockNext);
+
+        // Assert
+        expect(mockResponse.status).toHaveBeenCalledWith(400);
+        expect(mockResponse.json).toHaveBeenCalledWith({
+            message: 'Error deleting payroll tax',
+        });
+    });
 });
-
-//     it('should respond with an error message', async () => {
-//         const errorMessage = 'Error deleting payroll tax';
-//         const error = new Error(errorMessage);
-//         mockModule(null, errorMessage);
-
-//         mockRequest.params = { id: 3 };
-
-//         const { deletePayrollTax } = await import(
-//             '../../controllers/payrollTaxesController.js'
-//         );
-
-//         await deletePayrollTax(mockRequest as Request, mockResponse, mockNext);
-
-//         // Assert
-//         expect(mockResponse.status).toHaveBeenCalledWith(400);
-//         expect(mockResponse.json).toHaveBeenCalledWith({
-//             message: 'Error deleting payroll tax',
-//         });
-//     });
 
 //     it('should respond with a 404 error message when the payroll tax does not exist', async () => {
 //         // Arrange
