@@ -149,77 +149,29 @@ describe('GET /api/expenses/commute/schedule', () => {
             message: 'Error getting schedules',
         });
     });
+
+    it('should respond with an array of schedules with an account_id', async () => {
+        // Arrange
+        mockModule([commuteSchedule.filter((s) => s.account_id === 1)]);
+
+        const { getCommuteSchedule } = await import(
+            '../../controllers/commuteScheduleController.js'
+        );
+
+        mockRequest.query = { account_id: 1, id: null };
+
+        // Call the function with the mock request and response
+        await getCommuteSchedule(mockRequest as Request, mockResponse);
+
+        const responseObj = {
+            schedule: commuteScheduleResponse,
+        };
+
+        // Assert
+        expect(mockResponse.status).toHaveBeenCalledWith(200);
+        expect(mockResponse.json).toHaveBeenCalledWith(responseObj);
+    });
 });
-
-//     it('should respond with an array of schedules with an account_id', async () => {
-//         const commuteSchedule = [
-//             {
-//                 commute_schedule_id: 1,
-//                 account_id: 1,
-//                 day_of_week: 1,
-//                 commute_ticket_id: 1,
-//                 start_time: '08:00:00',
-//                 duration: 60,
-//                 pass: 'LIRR Peak',
-//                 fare_amount: 10.75,
-//             },
-//             {
-//                 commute_schedule_id: 3,
-//                 account_id: 1,
-//                 day_of_week: 2,
-//                 commute_ticket_id: 1,
-//                 start_time: '08:00:00',
-//                 duration: 60,
-//                 pass: 'LIRR Peak',
-//                 fare_amount: 10.75,
-//             },
-//         ];
-
-//         // Arrange
-//         mockModule(commuteSchedule);
-
-//         const { getCommuteSchedule } = await import(
-//             '../../controllers/commuteScheduleController.js'
-//         );
-
-//         mockRequest.query = { account_id: 1, id: null };
-
-//         // Call the function with the mock request and response
-//         await getCommuteSchedule(mockRequest as Request, mockResponse);
-
-//         const responseObj = {
-//             schedule: [
-//                 {
-//                     day_of_week: 1,
-//                     passes: [
-//                         {
-//                             commute_schedule_id: 1,
-//                             pass: 'LIRR Peak',
-//                             start_time: '08:00:00',
-//                             duration: 60,
-//                             fare_amount: 10.75,
-//                         },
-//                     ],
-//                 },
-//                 {
-//                     day_of_week: 2,
-//                     passes: [
-//                         {
-//                             commute_schedule_id: 3,
-//                             pass: 'LIRR Peak',
-//                             start_time: '08:00:00',
-//                             duration: 60,
-//                             fare_amount: 10.75,
-//                         },
-//                     ],
-//                 },
-//             ],
-//         };
-
-//         // Assert
-//         expect(mockResponse.status).toHaveBeenCalledWith(200);
-//         expect(mockResponse.json).toHaveBeenCalledWith(responseObj);
-//     });
 
 //     it('should handle errors correctly with an account_id', async () => {
 //         // Arrange
