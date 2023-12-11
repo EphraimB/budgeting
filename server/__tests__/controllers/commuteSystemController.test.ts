@@ -244,32 +244,31 @@ describe('PUT /api/expenses/commute/systems/:id', () => {
             commuteSystemsResponse.filter((system) => system.id === 1),
         );
     });
+
+    it('should handle errors correctly', async () => {
+        // Arrange
+        const errorMessage = 'Error updating system';
+        mockModule([], [errorMessage]);
+
+        const { updateCommuteSystem } = await import(
+            '../../controllers/commuteSystemController.js'
+        );
+
+        mockRequest.params = { id: 1 };
+        mockRequest.body = commuteSystems.filter(
+            (system) => system.commute_system_id === 1,
+        );
+
+        // Act
+        await updateCommuteSystem(mockRequest as Request, mockResponse);
+
+        // Assert
+        expect(mockResponse.status).toHaveBeenCalledWith(400);
+        expect(mockResponse.json).toHaveBeenCalledWith({
+            message: 'Error updating system',
+        });
+    });
 });
-
-//     it('should handle errors correctly', async () => {
-//         // Arrange
-//         const errorMessage = 'Error updating system';
-//         const error = new Error(errorMessage);
-//         mockModule(null, errorMessage);
-
-//         const { updateCommuteSystem } = await import(
-//             '../../controllers/commuteSystemController.js'
-//         );
-
-//         mockRequest.params = { id: 1 };
-//         mockRequest.body = commuteSystems.filter(
-//             (system) => system.commute_system_id === 1,
-//         );
-
-//         // Act
-//         await updateCommuteSystem(mockRequest as Request, mockResponse);
-
-//         // Assert
-//         expect(mockResponse.status).toHaveBeenCalledWith(400);
-//         expect(mockResponse.json).toHaveBeenCalledWith({
-//             message: 'Error updating system',
-//         });
-//     });
 
 //     it('should respond with a 404 error message when the system does not exist', async () => {
 //         // Arrange
