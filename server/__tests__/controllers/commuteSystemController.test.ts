@@ -154,26 +154,25 @@ describe('GET /api/expenses/commute/systems', () => {
             message: 'Error getting system with id 1',
         });
     });
+
+    it('should respond with a 404 error message when the system does not exist', async () => {
+        // Arrange
+        mockModule([[]]);
+
+        const { getCommuteSystem } = await import(
+            '../../controllers/commuteSystemController.js'
+        );
+
+        mockRequest.query = { id: 3 };
+
+        // Act
+        await getCommuteSystem(mockRequest as Request, mockResponse);
+
+        // Assert
+        expect(mockResponse.status).toHaveBeenCalledWith(404);
+        expect(mockResponse.send).toHaveBeenCalledWith('System not found');
+    });
 });
-
-//     it('should respond with a 404 error message when the system does not exist', async () => {
-//         // Arrange
-//         mockModule([]);
-
-//         const { getCommuteSystem } = await import(
-//             '../../controllers/commuteSystemController.js'
-//         );
-
-//         mockRequest.query = { id: 3 };
-
-//         // Act
-//         await getCommuteSystem(mockRequest as Request, mockResponse);
-
-//         // Assert
-//         expect(mockResponse.status).toHaveBeenCalledWith(404);
-//         expect(mockResponse.send).toHaveBeenCalledWith('System not found');
-//     });
-// });
 
 // describe('POST /api/expenses/commute/systems', () => {
 //     it('should respond with the new system', async () => {
