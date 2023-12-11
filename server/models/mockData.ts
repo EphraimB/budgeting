@@ -474,24 +474,24 @@ import {
 //     },
 // ];
 
-export const commuteSystems = [
-    {
-        commute_system_id: 1,
-        name: 'OMNY',
-        fare_cap: 33,
-        fare_cap_duration: 1,
-        date_created: '2020-01-01',
-        date_modified: '2020-01-01',
-    },
-    {
-        commute_system_id: 2,
-        name: 'LIRR',
-        fare_cap: null,
-        fare_cap_duration: null,
-        date_created: '2020-01-01',
-        date_modified: '2020-01-01',
-    },
-];
+// export const commuteSystems = [
+//     {
+//         commute_system_id: 1,
+//         name: 'OMNY',
+//         fare_cap: 33,
+//         fare_cap_duration: 1,
+//         date_created: '2020-01-01',
+//         date_modified: '2020-01-01',
+//     },
+//     {
+//         commute_system_id: 2,
+//         name: 'LIRR',
+//         fare_cap: null,
+//         fare_cap_duration: null,
+//         date_created: '2020-01-01',
+//         date_modified: '2020-01-01',
+//     },
+// ];
 
 // export const commuteHistory = [
 //     {

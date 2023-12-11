@@ -1,5 +1,4 @@
 import { type Request } from 'express';
-import { fareDetails } from '../../models/mockData';
 import {
     jest,
     beforeEach,
@@ -67,6 +66,29 @@ const commuteSystemsResponse: CommuteSystem[] = [
         name: 'LIRR',
         fare_cap: null,
         fare_cap_duration: null,
+        date_created: '2020-01-01',
+        date_modified: '2020-01-01',
+    },
+];
+
+const fareDetails = [
+    {
+        fare_detail_id: 1,
+        commute_system_id: 1,
+        system_name: 'OMNY',
+        fare_type: 'Single Ride',
+        fare_amount: 2.75,
+        alternate_fare_detail_id: null,
+        date_created: '2020-01-01',
+        date_modified: '2020-01-01',
+    },
+    {
+        fare_detail_id: 2,
+        commute_system_id: 1,
+        system_name: 'LIRR',
+        fare_type: 'Weekly',
+        fare_amount: 33,
+        alternate_fare_detail_id: null,
         date_created: '2020-01-01',
         date_modified: '2020-01-01',
     },
