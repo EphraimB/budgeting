@@ -354,23 +354,22 @@ describe('DELETE /api/expenses/commute/systems/:id', () => {
             message: 'Error deleting system',
         });
     });
+
+    it('should respond with a 404 error message when the system does not exist', async () => {
+        // Arrange
+        mockModule([[]]);
+
+        const { deleteCommuteSystem } = await import(
+            '../../controllers/commuteSystemController.js'
+        );
+
+        mockRequest.params = { id: 1 };
+
+        // Act
+        await deleteCommuteSystem(mockRequest as Request, mockResponse);
+
+        // Assert
+        expect(mockResponse.status).toHaveBeenCalledWith(404);
+        expect(mockResponse.send).toHaveBeenCalledWith('System not found');
+    });
 });
-
-//     it('should respond with a 404 error message when the system does not exist', async () => {
-//         // Arrange
-//         mockModule([]);
-
-//         const { deleteCommuteSystem } = await import(
-//             '../../controllers/commuteSystemController.js'
-//         );
-
-//         mockRequest.params = { id: 1 };
-
-//         // Act
-//         await deleteCommuteSystem(mockRequest as Request, mockResponse);
-
-//         // Assert
-//         expect(mockResponse.status).toHaveBeenCalledWith(404);
-//         expect(mockResponse.send).toHaveBeenCalledWith('System not found');
-//     });
-// });
