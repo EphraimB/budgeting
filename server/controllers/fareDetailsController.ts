@@ -327,7 +327,7 @@ export const updateFareDetail = async (
         );
 
         const responseObj: object = {
-            fare_detail_id: fareDetails[0].fare_detail_id,
+            id: fareDetails[0].fare_detail_id,
             commute_system: {
                 commute_system_id: fareDetails[0].commute_system_id,
                 name: systemName,

@@ -308,86 +308,47 @@ describe('POST /api/expenses/commute/fares', () => {
     });
 });
 
-// describe('PUT /api/expenses/commute/fares/:id', () => {
-//     it('should respond with the updated fare detail', async () => {
-//         const updatedFareDetail = [
-//             {
-//                 fare_detail_id: 1,
-//                 commute_system_id: 1,
-//                 system_name: 'BART',
-//                 fare_type: 'Adult',
-//                 fare_amount: 5.65,
-//                 begin_in_effect_day_of_week: 1,
-//                 begin_in_effect_time: '00:00:00',
-//                 end_in_effect_day_of_week: 7,
-//                 end_in_effect_time: '23:59:59',
-//                 alternate_fare_detail_id: null,
-//                 date_created: '2021-01-01T00:00:00.000Z',
-//                 date_modified: '2021-01-01T00:00:00.000Z',
-//             },
-//         ];
+describe('PUT /api/expenses/commute/fares/:id', () => {
+    it('should respond with the updated fare detail', async () => {
+        mockModule([
+            fareDetails.filter((fareDetail) => fareDetail.fare_detail_id === 1),
+            timeslots.filter((timeslot) => timeslot.timeslot_id === 1),
+            [],
+            commuteSystems.filter((system) => system.commute_system_id === 1),
+        ]);
 
-//         mockModule(
-//             updatedFareDetail,
-//             undefined,
-//             [
-//                 {
-//                     timeslot_id: 1,
-//                     fare_detail_id: 1,
-//                     day_of_week: 1,
-//                     start_time: '00:00:00',
-//                     end_time: '23:59:59',
-//                 },
-//             ],
-//             [],
-//             [{ name: 'BART' }],
-//         );
+        const { updateFareDetail } = await import(
+            '../../controllers/fareDetailsController.js'
+        );
 
-//         const { updateFareDetail } = await import(
-//             '../../controllers/fareDetailsController.js'
-//         );
+        mockRequest.params = { id: 1 };
+        mockRequest.body = {
+            fare_detail_id: 1,
+            commute_system_id: 1,
+            system_name: 'OMNY',
+            fare_type: 'Single Ride',
+            fare_amount: 2.75,
+            alternate_fare_detail_id: null,
+            timeslots: [
+                {
+                    day_of_week: 0,
+                    start_time: '00:00:00',
+                    end_time: '23:59:59',
+                },
+            ],
+            date_created: '2020-01-01',
+            date_modified: '2020-01-01',
+        };
 
-//         mockRequest.params = { id: 1 };
-//         mockRequest.body = {
-//             commute_system_id: 1,
-//             name: 'Adult',
-//             fare_amount: 5.65,
-//             timeslots: [
-//                 {
-//                     day_of_week: 1,
-//                     start_time: '00:00:00',
-//                     end_time: '23:59:59',
-//                 },
-//             ],
-//             alternate_fare_detail_id: null,
-//         };
+        await updateFareDetail(mockRequest as Request, mockResponse);
 
-//         await updateFareDetail(mockRequest as Request, mockResponse);
-
-//         const responseObj = {
-//             fare_detail_id: 1,
-//             commute_system: {
-//                 commute_system_id: 1,
-//                 name: 'BART',
-//             },
-//             name: 'Adult',
-//             fare_amount: 5.65,
-//             timeslots: [
-//                 {
-//                     day_of_week: 1,
-//                     start_time: '00:00:00',
-//                     end_time: '23:59:59',
-//                 },
-//             ],
-//             alternate_fare_detail_id: null,
-//             date_created: '2021-01-01T00:00:00.000Z',
-//             date_modified: '2021-01-01T00:00:00.000Z',
-//         };
-
-//         // Assert
-//         expect(mockResponse.status).toHaveBeenCalledWith(200);
-//         expect(mockResponse.json).toHaveBeenCalledWith(responseObj);
-//     });
+        // Assert
+        expect(mockResponse.status).toHaveBeenCalledWith(200);
+        expect(mockResponse.json).toHaveBeenCalledWith(
+            fareDetailsResponse.filter((fareDetail) => fareDetail.id === 1)[0],
+        );
+    });
+});
 
 //     it('should handle errors correctly', async () => {
 //         // Arrange
