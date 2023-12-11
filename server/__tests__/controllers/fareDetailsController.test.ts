@@ -283,32 +283,30 @@ describe('POST /api/expenses/commute/fares', () => {
             fareDetailsResponse.filter((fareDetail) => fareDetail.id === 1)[0],
         );
     });
+
+    it('should handle errors correctly', async () => {
+        // Arrange
+        const errorMessage = 'Error creating fare detail';
+        mockModule([], [errorMessage]);
+
+        const { createFareDetail } = await import(
+            '../../controllers/fareDetailsController.js'
+        );
+
+        mockRequest.body = fareDetails.filter(
+            (system) => system.fare_detail_id === 1,
+        );
+
+        // Act
+        await createFareDetail(mockRequest as Request, mockResponse);
+
+        // Assert
+        expect(mockResponse.status).toHaveBeenCalledWith(400);
+        expect(mockResponse.json).toHaveBeenCalledWith({
+            message: 'Error creating fare detail',
+        });
+    });
 });
-
-//     it('should handle errors correctly', async () => {
-//         // Arrange
-//         const errorMessage = 'Error creating fare detail';
-//         const error = new Error(errorMessage);
-//         mockModule(null, errorMessage);
-
-//         const { createFareDetail } = await import(
-//             '../../controllers/fareDetailsController.js'
-//         );
-
-//         mockRequest.body = fareDetails.filter(
-//             (system) => system.fare_detail_id === 1,
-//         );
-
-//         // Act
-//         await createFareDetail(mockRequest as Request, mockResponse);
-
-//         // Assert
-//         expect(mockResponse.status).toHaveBeenCalledWith(400);
-//         expect(mockResponse.json).toHaveBeenCalledWith({
-//             message: 'Error creating fare detail',
-//         });
-//     });
-// });
 
 // describe('PUT /api/expenses/commute/fares/:id', () => {
 //     it('should respond with the updated fare detail', async () => {
