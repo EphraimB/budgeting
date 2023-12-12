@@ -281,11 +281,7 @@ export const createCommuteSchedule = async (
             ],
         );
 
-        console.log(rows);
-
         const commuteSchedule = rows.map((s) => parseCommuteSchedule(s));
-
-        console.log(commuteSchedule);
 
         const jobDetails = {
             frequency_type: 1,

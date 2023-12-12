@@ -272,14 +272,23 @@ describe('GET /api/expenses/commute/schedule', () => {
 
 describe('POST /api/expenses/commute/schedule', () => {
     it('should call next', async () => {
-        const newSchedule = {
-            commute_schedule_id: 1,
-            account_id: 1,
-            day_of_week: 1,
-            commute_ticket_id: 1,
-            start_time: '08:00:00',
-            duration: 60,
-        };
+        const newSchedule = [
+            {
+                commute_schedule_id: 1,
+                account_id: 1,
+                day_of_week: 1,
+                commute_ticket_id: 1,
+                start_time: '08:00:00',
+                duration: 60,
+                commute_system_id: 1,
+                fare_detail_id: 1,
+                fare_amount: 10.75,
+                pass: 'LIRR Peak',
+                timed_pass_duration: null,
+                date_created: '2021-01-01',
+                date_modified: '2021-01-01',
+            },
+        ];
 
         const fareDetail = {
             fare_amount: 10.75,
@@ -312,7 +321,7 @@ describe('POST /api/expenses/commute/schedule', () => {
             '../../controllers/commuteScheduleController.js'
         );
 
-        mockRequest.body = newSchedule;
+        mockRequest.body = newSchedule[0];
 
         // Act
         await createCommuteSchedule(
