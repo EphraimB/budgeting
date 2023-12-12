@@ -626,8 +626,7 @@ describe('PUT /api/expenses/commute/schedule/:id', () => {
     it('should handle errors correctly', async () => {
         // Arrange
         const errorMessage = 'Error updating schedule';
-        const error = new Error(errorMessage);
-        mockModule(null, errorMessage);
+        mockModule([], [errorMessage]);
 
         const { updateCommuteScheduleReturnObject } = await import(
             '../../controllers/commuteScheduleController.js'
