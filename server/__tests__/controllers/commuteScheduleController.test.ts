@@ -734,24 +734,23 @@ describe('DELETE /api/expenses/commute/schedule/:id', () => {
         expect(mockResponse.status).toHaveBeenCalledWith(404);
         expect(mockResponse.send).toHaveBeenCalledWith('Schedule not found');
     });
+
+    it('should respond with a success message', async () => {
+        // Arrange
+        const { deleteCommuteScheduleReturnObject } = await import(
+            '../../controllers/commuteScheduleController.js'
+        );
+
+        // Act
+        await deleteCommuteScheduleReturnObject(
+            mockRequest as Request,
+            mockResponse,
+        );
+
+        // Assert
+        expect(mockResponse.status).toHaveBeenCalledWith(200);
+        expect(mockResponse.send).toHaveBeenCalledWith(
+            'Successfully deleted schedule',
+        );
+    });
 });
-
-//     it('should respond with a success message', async () => {
-//         // Arrange
-//         const { deleteCommuteScheduleReturnObject } = await import(
-//             '../../controllers/commuteScheduleController.js'
-//         );
-
-//         // Act
-//         await deleteCommuteScheduleReturnObject(
-//             mockRequest as Request,
-//             mockResponse,
-//         );
-
-//         // Assert
-//         expect(mockResponse.status).toHaveBeenCalledWith(200);
-//         expect(mockResponse.send).toHaveBeenCalledWith(
-//             'Successfully deleted schedule',
-//         );
-//     });
-// });
