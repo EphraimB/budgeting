@@ -687,33 +687,32 @@ describe('DELETE /api/expenses/commute/schedule/:id', () => {
         // Assert
         expect(mockNext).toHaveBeenCalled();
     });
+
+    it('should handle errors correctly', async () => {
+        // Arrange
+        const errorMessage = 'Error deleting schedule';
+        mockModule([], [errorMessage]);
+
+        const { deleteCommuteSchedule } = await import(
+            '../../controllers/commuteScheduleController.js'
+        );
+
+        mockRequest.params = { id: 1 };
+
+        // Act
+        await deleteCommuteSchedule(
+            mockRequest as Request,
+            mockResponse,
+            mockNext,
+        );
+
+        // Assert
+        expect(mockResponse.status).toHaveBeenCalledWith(400);
+        expect(mockResponse.json).toHaveBeenCalledWith({
+            message: 'Error deleting schedule',
+        });
+    });
 });
-
-//     it('should handle errors correctly', async () => {
-//         // Arrange
-//         const errorMessage = 'Error deleting schedule';
-//         const error = new Error(errorMessage);
-//         mockModule(null, errorMessage);
-
-//         const { deleteCommuteSchedule } = await import(
-//             '../../controllers/commuteScheduleController.js'
-//         );
-
-//         mockRequest.params = { id: 1 };
-
-//         // Act
-//         await deleteCommuteSchedule(
-//             mockRequest as Request,
-//             mockResponse,
-//             mockNext,
-//         );
-
-//         // Assert
-//         expect(mockResponse.status).toHaveBeenCalledWith(400);
-//         expect(mockResponse.json).toHaveBeenCalledWith({
-//             message: 'Error deleting schedule',
-//         });
-//     });
 
 //     it('should respond with a 404 error message when the schedule does not exist', async () => {
 //         // Arrange
