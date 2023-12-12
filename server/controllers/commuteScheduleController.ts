@@ -19,6 +19,7 @@ import {
 } from '../types/types.js';
 import { logger } from '../config/winston.js';
 import determineCronValues from '../crontab/determineCronValues.js';
+import dayjs from 'dayjs';
 
 interface Schedule {
     day_of_week: number;
@@ -163,9 +164,9 @@ const isTimeWithinRange = (
     rangeEnd: string,
 ): boolean => {
     const baseDate = '1970-01-01 '; // Using a base date since we're only comparing times
-    const startDateTime = new Date(baseDate + startTime);
-    const rangeStartDateTime = new Date(baseDate + rangeStart);
-    const rangeEndDateTime = new Date(baseDate + rangeEnd);
+    const startDateTime = dayjs(baseDate + startTime);
+    const rangeStartDateTime = dayjs(baseDate + rangeStart);
+    const rangeEndDateTime = dayjs(baseDate + rangeEnd);
 
     return (
         startDateTime >= rangeStartDateTime && startDateTime < rangeEndDateTime
@@ -247,6 +248,7 @@ export const createCommuteSchedule = async (
                     fareDetailsQueries.getFareDetailsById,
                     [fareDetail[0].alternate_fare_detail_id],
                 );
+
                 const alternateFare = alternateFareDetail[0].fare_amount;
 
                 alerts.push({
@@ -279,19 +281,21 @@ export const createCommuteSchedule = async (
             ],
         );
 
+        console.log(rows);
+
         const commuteSchedule = rows.map((s) => parseCommuteSchedule(s));
+
+        console.log(commuteSchedule);
 
         const jobDetails = {
             frequency_type: 1,
             frequency_type_variable: 1,
             frequency_day_of_week: day_of_week,
-            date: new Date(
-                new Date().setHours(
-                    start_time.split(':')[0],
-                    start_time.split(':')[1],
-                    start_time.split(':')[2],
-                ),
-            ).toISOString(),
+            date: dayjs()
+                .hour(start_time.split(':')[0])
+                .minute(start_time.split(':')[1])
+                .second(start_time.split(':')[2])
+                .toISOString(),
         };
 
         const cronDate = determineCronValues(jobDetails);
@@ -493,13 +497,11 @@ export const updateCommuteSchedule = async (
             frequency_type: 1,
             frequency_type_variable: 1,
             frequency_day_of_week: day_of_week,
-            date: new Date(
-                new Date().setHours(
-                    start_time.split(':')[0],
-                    start_time.split(':')[1],
-                    start_time.split(':')[2],
-                ),
-            ).toISOString(),
+            date: dayjs()
+                .hour(start_time.split(':')[0])
+                .minute(start_time.split(':')[1])
+                .second(start_time.split(':')[2])
+                .toISOString(),
         };
 
         const cronDate = determineCronValues(jobDetails);

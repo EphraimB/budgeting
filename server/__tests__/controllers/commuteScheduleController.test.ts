@@ -270,52 +270,61 @@ describe('GET /api/expenses/commute/schedule', () => {
     });
 });
 
-// describe('POST /api/expenses/commute/schedule', () => {
-//     it('should call next', async () => {
-//         const newSchedule = {
-//             commute_schedule_id: 1,
-//             account_id: 1,
-//             day_of_week: 1,
-//             fare_detail_id: 1,
-//             start_time: '08:00:00',
-//             duration: 60,
-//             timed_pass_duration: null,
-//         };
+describe('POST /api/expenses/commute/schedule', () => {
+    it('should call next', async () => {
+        const newSchedule = {
+            commute_schedule_id: 1,
+            account_id: 1,
+            day_of_week: 1,
+            commute_ticket_id: 1,
+            start_time: '08:00:00',
+            duration: 60,
+        };
 
-//         const fareDetail = {
-//             fare_amount: 10.75,
-//             system_name: 'LIRR',
-//             fare_type: 'Peak',
-//         };
+        const fareDetail = {
+            fare_amount: 10.75,
+            system_name: 'LIRR',
+            fare_type: 'Peak',
+        };
 
-//         // Arrange
-//         mockModule(
-//             [],
-//             undefined,
-//             [{ fare_amount: 10.75 }],
-//             [fareDetail],
-//             [{ day_of_week: 1, start_time: '08:00:00', end_time: '09:00:00' }],
-//             [newSchedule],
-//             [{ cron_job_id: 1, unique_id: '123' }],
-//             [],
-//         );
+        // Arrange
+        mockModule(
+            [
+                [],
+                [{ fare_amount: 10.75 }],
+                [fareDetail],
+                [
+                    {
+                        day_of_week: 1,
+                        start_time: '08:00:00',
+                        end_time: '09:00:00',
+                    },
+                ],
+                newSchedule,
+                [{ cron_job_id: 1, unique_id: '123' }],
+                [],
+            ],
+            [],
+            [[], []],
+        );
 
-//         const { createCommuteSchedule } = await import(
-//             '../../controllers/commuteScheduleController.js'
-//         );
+        const { createCommuteSchedule } = await import(
+            '../../controllers/commuteScheduleController.js'
+        );
 
-//         mockRequest.body = newSchedule;
+        mockRequest.body = newSchedule;
 
-//         // Act
-//         await createCommuteSchedule(
-//             mockRequest as Request,
-//             mockResponse,
-//             mockNext,
-//         );
+        // Act
+        await createCommuteSchedule(
+            mockRequest as Request,
+            mockResponse,
+            mockNext,
+        );
 
-//         // Assert
-//         expect(mockNext).toHaveBeenCalled();
-//     });
+        // Assert
+        expect(mockNext).toHaveBeenCalled();
+    });
+});
 
 //     it('should respond with a 400 error when schedule overlaps', async () => {
 //         const newSchedule = {
