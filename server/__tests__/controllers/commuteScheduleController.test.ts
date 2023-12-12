@@ -536,37 +536,37 @@ describe('PUT /api/expenses/commute/schedule/:id', () => {
             'A schedule with the provided day and time already exists',
         );
     });
+
+    it('should respond with a 404 error message when the schedule does not exist', async () => {
+        // Arrange
+        mockModule([[]]);
+
+        const { updateCommuteSchedule } = await import(
+            '../../controllers/commuteScheduleController.js'
+        );
+
+        mockRequest.params = { id: 1 };
+        mockRequest.body = {
+            commute_schedule_id: 1,
+            account_id: 1,
+            day_of_week: 1,
+            commute_ticket_id: 1,
+            start_time: '08:00:00',
+            duration: 60,
+        };
+
+        // Act
+        await updateCommuteSchedule(
+            mockRequest as Request,
+            mockResponse,
+            mockNext,
+        );
+
+        // Assert
+        expect(mockResponse.status).toHaveBeenCalledWith(404);
+        expect(mockResponse.send).toHaveBeenCalledWith('Schedule not found');
+    });
 });
-
-//     it('should respond with a 404 error message when the schedule does not exist', async () => {
-//         // Arrange
-//         mockModule([], undefined, []);
-
-//         const { updateCommuteSchedule } = await import(
-//             '../../controllers/commuteScheduleController.js'
-//         );
-
-//         mockRequest.params = { id: 1 };
-//         mockRequest.body = {
-//             commute_schedule_id: 1,
-//             account_id: 1,
-//             day_of_week: 1,
-//             commute_ticket_id: 1,
-//             start_time: '08:00:00',
-//             duration: 60,
-//         };
-
-//         // Act
-//         await updateCommuteSchedule(
-//             mockRequest as Request,
-//             mockResponse,
-//             mockNext,
-//         );
-
-//         // Assert
-//         expect(mockResponse.status).toHaveBeenCalledWith(404);
-//         expect(mockResponse.send).toHaveBeenCalledWith('Schedule not found');
-//     });
 
 //     it('should respond with the updated schedule', async () => {
 //         const updatedSchedule = [

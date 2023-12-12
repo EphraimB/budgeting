@@ -364,12 +364,8 @@ export const createCommuteScheduleReturnObject = async (
             [commute_schedule_id],
         );
 
-        console.log(commuteSchedule);
-
         const modifiedCommuteSchedule =
             commuteSchedule.map(parseCommuteSchedule);
-
-        console.log(modifiedCommuteSchedule);
 
         const responseObj = {
             schedule: modifiedCommuteSchedule,
