@@ -429,33 +429,31 @@ describe('POST /api/expenses/commute/schedule', () => {
         expect(mockResponse.status).toHaveBeenCalledWith(201);
         expect(mockResponse.json).toHaveBeenCalledWith(responseObj);
     });
+
+    it('should handle errors correctly', async () => {
+        // Arrange
+        const errorMessage = 'Error creating schedule';
+        mockModule([], [errorMessage]);
+
+        const { createCommuteScheduleReturnObject } = await import(
+            '../../controllers/commuteScheduleController.js'
+        );
+
+        mockRequest = { commute_schedule_id: 1 };
+
+        // Act
+        await createCommuteScheduleReturnObject(
+            mockRequest as Request,
+            mockResponse,
+        );
+
+        // Assert
+        expect(mockResponse.status).toHaveBeenCalledWith(400);
+        expect(mockResponse.json).toHaveBeenCalledWith({
+            message: 'Error getting commute schedule',
+        });
+    });
 });
-
-//     it('should handle errors correctly', async () => {
-//         // Arrange
-//         const errorMessage = 'Error creating schedule';
-//         const error = new Error(errorMessage);
-//         mockModule(null, errorMessage);
-
-//         const { createCommuteScheduleReturnObject } = await import(
-//             '../../controllers/commuteScheduleController.js'
-//         );
-
-//         mockRequest = { commute_schedule_id: 1 };
-
-//         // Act
-//         await createCommuteScheduleReturnObject(
-//             mockRequest as Request,
-//             mockResponse,
-//         );
-
-//         // Assert
-//         expect(mockResponse.status).toHaveBeenCalledWith(400);
-//         expect(mockResponse.json).toHaveBeenCalledWith({
-//             message: 'Error getting commute schedule',
-//         });
-//     });
-// });
 
 // describe('PUT /api/expenses/commute/schedule/:id', () => {
 //     it('should call next', async () => {
