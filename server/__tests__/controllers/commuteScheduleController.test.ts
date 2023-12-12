@@ -250,26 +250,25 @@ describe('GET /api/expenses/commute/schedule', () => {
             message: 'Error getting schedule for given id',
         });
     });
+
+    it('should respond with a 404 error message when the schedule does not exist', async () => {
+        // Arrange
+        mockModule([[]]);
+
+        const { getCommuteSchedule } = await import(
+            '../../controllers/commuteScheduleController.js'
+        );
+
+        mockRequest.query = { account_id: 3, id: 3 };
+
+        // Act
+        await getCommuteSchedule(mockRequest as Request, mockResponse);
+
+        // Assert
+        expect(mockResponse.status).toHaveBeenCalledWith(404);
+        expect(mockResponse.send).toHaveBeenCalledWith('Schedule not found');
+    });
 });
-
-//     it('should respond with a 404 error message when the schedule does not exist', async () => {
-//         // Arrange
-//         mockModule([]);
-
-//         const { getCommuteSchedule } = await import(
-//             '../../controllers/commuteScheduleController.js'
-//         );
-
-//         mockRequest.query = { account_id: 3, id: 3 };
-
-//         // Act
-//         await getCommuteSchedule(mockRequest as Request, mockResponse);
-
-//         // Assert
-//         expect(mockResponse.status).toHaveBeenCalledWith(404);
-//         expect(mockResponse.send).toHaveBeenCalledWith('Schedule not found');
-//     });
-// });
 
 // describe('POST /api/expenses/commute/schedule', () => {
 //     it('should call next', async () => {
