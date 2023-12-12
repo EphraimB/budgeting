@@ -1,5 +1,4 @@
 import { GeneratedTransaction } from '../types/types';
-import { CommuteSchedule } from '../types/types';
 import { v4 as uuidv4 } from 'uuid';
 import dayjs, { Dayjs } from 'dayjs';
 
@@ -11,8 +10,12 @@ const getNextDate = (
     const [hours, minutes] = startTime.split(':').map(Number);
     let nextDate = dayjs(currentDate).hour(hours).minute(minutes).second(0);
 
-    while (nextDate.day() !== dayOfWeek || nextDate.diff(currentDate) < 0) {
-        nextDate.date(nextDate.date() + 1);
+    while (nextDate.day() !== dayOfWeek) {
+        nextDate = nextDate.add(1, 'day');
+    }
+
+    if (nextDate.isBefore(currentDate, 'minute')) {
+        nextDate = nextDate.add(1, 'week');
     }
 
     return nextDate;
@@ -24,14 +27,16 @@ export const generateCommuteExpenses = (
     fromDate: Dayjs,
 ): GeneratedTransaction[] => {
     let generatedRides: GeneratedTransaction[] = [];
-
     let commuteExpenseDate = getNextDate(
-        dayjs(),
+        fromDate,
         commuteExpense.day_of_week,
         commuteExpense.start_time,
     );
 
-    while (commuteExpenseDate.diff(toDate) <= 0) {
+    while (
+        commuteExpenseDate.isBefore(toDate) ||
+        commuteExpenseDate.isSame(toDate, 'day')
+    ) {
         const newTransaction: GeneratedTransaction = {
             id: uuidv4(),
             commute_schedule_id: commuteExpense.commute_schedule_id,
@@ -43,20 +48,13 @@ export const generateCommuteExpenses = (
             total_amount: -commuteExpense.fare_amount,
         };
 
-        // Instead of pushing to transactions or skippedTransactions:
-        if (commuteExpenseDate >= fromDate) {
-            generatedRides.push(newTransaction);
-        } else {
-            generatedRides.push(newTransaction); // We'll filter them out later
-        }
-
+        generatedRides.push(newTransaction);
         commuteExpenseDate = getNextDate(
-            dayjs(commuteExpenseDate.millisecond() + 24 * 60 * 60 * 1000),
+            commuteExpenseDate.add(1, 'week'),
             commuteExpense.day_of_week,
             commuteExpense.start_time,
         );
     }
 
-    // Return the generated rides
     return generatedRides;
 };

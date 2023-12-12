@@ -43,7 +43,7 @@ describe('generateCommuteExpenses', () => {
         expect(result[0].amount).toEqual(-100);
         expect(result[0].title).toEqual('Sample Pass');
         expect(result[0].description).toEqual('Sample Pass pass');
-        expect(result[0].date).toEqual(new Date('2020-01-02 08:00'));
+        expect(result[0].date).toEqual(dayjs('2020-01-02 08:00'));
         expect(result[0].total_amount).toEqual(-100);
         expect(result[0].tax_rate).toEqual(0);
     });
