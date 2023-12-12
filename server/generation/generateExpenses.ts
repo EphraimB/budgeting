@@ -24,46 +24,37 @@ const generateExpenses = (
 ) => {
     let expenseDate = dayjs(expense.expense_begin_date);
 
-    if (
-        expense.frequency_month_of_year !== null &&
-        expense.frequency_month_of_year !== undefined
-    ) {
-        expenseDate.month(expense.frequency_month_of_year);
-    }
+    // if (expense.frequency_month_of_year) {
+    //     expenseDate.month(expense.frequency_month_of_year);
+    // }
 
-    if (
-        expense.frequency_day_of_week !== null &&
-        expense.frequency_day_of_week !== undefined
-    ) {
-        let newDay;
+    // if (
+    //     expense.frequency_day_of_week !== null &&
+    //     expense.frequency_day_of_week !== undefined
+    // ) {
+    //     let newDay;
 
-        if (
-            expense.frequency_day_of_week !== null &&
-            expense.frequency_day_of_week !== undefined
-        ) {
-            let daysUntilNextFrequency =
-                (7 + expense.frequency_day_of_week - expenseDate.day()) % 7;
-            daysUntilNextFrequency =
-                daysUntilNextFrequency === 0 ? 7 : daysUntilNextFrequency;
-            newDay = expenseDate.date() + daysUntilNextFrequency;
-        }
+    //     if (expense.frequency_day_of_week) {
+    //         let daysUntilNextFrequency =
+    //             (7 + expense.frequency_day_of_week - expenseDate.day()) % 7;
+    //         daysUntilNextFrequency =
+    //             daysUntilNextFrequency === 0 ? 7 : daysUntilNextFrequency;
+    //         newDay = expenseDate.date() + daysUntilNextFrequency;
+    //     }
 
-        if (
-            expense.frequency_week_of_month !== null &&
-            expense.frequency_week_of_month !== undefined
-        ) {
-            // first day of the month
-            expenseDate.date(1);
-            const daysToAdd =
-                (7 + expense.frequency_day_of_week - expenseDate.day()) % 7;
-            // setting to the first occurrence of the desired day of week
-            expenseDate.add(daysToAdd, 'day');
-            // setting to the desired week of the month
-            newDay = expenseDate.date() + 7 * expense.frequency_week_of_month;
-        }
+    //     if (expense.frequency_week_of_month) {
+    //         // first day of the month
+    //         expenseDate.date(1);
+    //         const daysToAdd =
+    //             (7 + expense.frequency_day_of_week - expenseDate.day()) % 7;
+    //         // setting to the first occurrence of the desired day of week
+    //         expenseDate.add(daysToAdd, 'day');
+    //         // setting to the desired week of the month
+    //         newDay = expenseDate.date() + 7 * expense.frequency_week_of_month;
+    //     }
 
-        expenseDate.date(newDay ?? expenseDate.date());
-    }
+    //     expenseDate.date(newDay ?? expenseDate.date());
+    // }
 
     while (expenseDate.diff(toDate) <= 0) {
         const initialAmount = expense.expense_amount;
@@ -116,8 +107,7 @@ export const generateDailyExpenses = (
 ): void => {
     const generateDateFn = (currentDate: Dayjs, expense: Expense): Dayjs => {
         const newDate = currentDate.add(
-            expense.frequency_type_variable !== null &&
-                expense.frequency_type_variable !== undefined
+            expense.frequency_type_variable
                 ? expense.frequency_type_variable
                 : 1,
             'day',
@@ -154,55 +144,34 @@ export const generateMonthlyExpenses = (
 ): void => {
     let monthsIncremented: number = 0;
     const generateDateFn = (currentDate: Dayjs, expense: any): Dayjs => {
-        const expenseDate: Dayjs = dayjs(expense.expense_begin_date).add(
+        let expenseDate: Dayjs = dayjs(expense.expense_begin_date).add(
             monthsIncremented +
-                (expense.frequency_type_variable !== null &&
-                expense.frequency_type_variable !== undefined
+                (expense.frequency_type_variable
                     ? expense.frequency_type_variable
                     : 1),
             'month',
         );
 
-        if (
-            expense.frequency_day_of_week !== null &&
-            expense.frequency_day_of_week !== undefined
-        ) {
-            let newDay: number = expenseDate.date();
-
-            if (
-                expense.frequency_day_of_week !== null &&
-                expense.frequency_day_of_week !== undefined
-            ) {
-                let daysUntilNextFrequency =
-                    (7 + expense.frequency_day_of_week - expenseDate.day()) % 7;
-                daysUntilNextFrequency =
-                    daysUntilNextFrequency === 0 ? 7 : daysUntilNextFrequency;
-                newDay = expenseDate.date() + daysUntilNextFrequency;
+        if (expense.frequency_day_of_week) {
+            // Adjust the date to the next occurrence of the specified day of the week
+            const dayOfWeek: number = expense.frequency_day_of_week;
+            let dayDifference: number = dayOfWeek - expenseDate.day();
+            if (dayDifference < 0) {
+                dayDifference += 7; // Ensure positive difference
             }
 
-            if (
-                expense.frequency_week_of_month !== null &&
-                expense.frequency_week_of_month !== undefined
-            ) {
-                // first day of the month
-                expenseDate.date(1);
-                const daysToAdd: number =
-                    (7 + expense.frequency_day_of_week - expenseDate.day()) % 7;
-                // setting to the first occurrence of the desired day of week
-                expenseDate.add(daysToAdd, 'day');
-                // setting to the desired week of the month
-                newDay =
-                    expenseDate.date() + 7 * expense.frequency_week_of_month;
-            }
+            expenseDate = expenseDate.add(dayDifference, 'day');
 
-            expenseDate.date(newDay);
+            // Adjust for the week of the month, if specified
+            if (expense.frequency_week_of_month) {
+                const weekOfMonth = expense.frequency_week_of_month;
+                expenseDate = expenseDate.add((weekOfMonth - 1) * 7, 'day');
+            }
         }
 
-        monthsIncremented +=
-            expense.frequency_type_variable !== null &&
-            expense.frequency_type_variable !== undefined
-                ? expense.frequency_type_variable
-                : 1;
+        monthsIncremented += expense.frequency_type_variable
+            ? expense.frequency_type_variable
+            : 1;
 
         return expenseDate;
     };
@@ -235,10 +204,7 @@ export const generateWeeklyExpenses = (
 ): void => {
     const expenseDate: Dayjs = dayjs(expense.begin_date);
 
-    if (
-        expense.frequency_day_of_week !== null &&
-        expense.frequency_day_of_week !== undefined
-    ) {
+    if (expense.frequency_day_of_week) {
         const startDay: number = dayjs(expense.begin_date).day();
         const frequency_day_of_week: number = expense.frequency_day_of_week;
 
@@ -247,8 +213,7 @@ export const generateWeeklyExpenses = (
 
     const generateDateFn = (currentDate: Dayjs, expense: Expense): Dayjs => {
         const newDate: Dayjs = currentDate.add(
-            expense.frequency_type_variable !== null &&
-                expense.frequency_type_variable !== undefined
+            expense.frequency_type_variable
                 ? expense.frequency_type_variable
                 : 1,
             'week',
@@ -287,17 +252,13 @@ export const generateYearlyExpenses = (
     const generateDateFn = (currentDate: Dayjs, expense: Expense): Dayjs => {
         const newDate: Dayjs = dayjs(expense.begin_date).add(
             yearsIncremented +
-                (expense.frequency_type_variable !== null &&
-                expense.frequency_type_variable !== undefined
+                (expense.frequency_type_variable
                     ? expense.frequency_type_variable
                     : 1),
             'year',
         );
 
-        if (
-            expense.frequency_month_of_year !== null &&
-            expense.frequency_month_of_year !== undefined
-        ) {
+        if (expense.frequency_month_of_year) {
             newDate.month(expense.frequency_month_of_year);
         }
 
@@ -310,10 +271,7 @@ export const generateYearlyExpenses = (
 
             newDate.add(daysToAdd, 'day'); // this is the first occurrence of the day_of_week
 
-            if (
-                expense.frequency_week_of_month !== null &&
-                expense.frequency_week_of_month !== undefined
-            ) {
+            if (expense.frequency_week_of_month) {
                 // add the number of weeks, but check if it overflows into the next month
                 const proposedDate: Dayjs = dayjs(newDate).add(
                     expense.frequency_week_of_month,
@@ -329,11 +287,9 @@ export const generateYearlyExpenses = (
             }
         }
 
-        yearsIncremented +=
-            expense.frequency_type_variable !== null &&
-            expense.frequency_type_variable !== undefined
-                ? expense.frequency_type_variable
-                : 1;
+        yearsIncremented += expense.frequency_type_variable
+            ? expense.frequency_type_variable
+            : 1;
 
         return newDate;
     };
