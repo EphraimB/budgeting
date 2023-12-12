@@ -335,7 +335,6 @@ describe('Test generateMonthlyExpenses', () => {
 
         // Check if the transactions are on the correct dates (second Tuesday of each month)
         transactions.forEach((transaction, i) => {
-            console.log(transaction);
             const transactionDate: Dayjs = dayjs(transaction.date);
             expect(transactionDate.day()).toBe(expense.frequency_day_of_week);
 
@@ -485,10 +484,7 @@ describe('generateWeeklyExpenses', () => {
         const expectedEndDate: Dayjs = dayjs(
             transactions[transactions.length - 1].date,
         );
-        const toBeEndDate: Dayjs = dayjs('2020-01-01');
-
-        // advance by 4 weeks
-        toBeEndDate.add(4, 'week');
+        let toBeEndDate: Dayjs = dayjs('2020-01-01').add(1, 'month');
 
         // days of the week from 0 (Sunday) to 6 (Saturday)
         const TUESDAY: number = 2;
@@ -497,10 +493,10 @@ describe('generateWeeklyExpenses', () => {
         const daysUntilNextTuesday: number =
             (7 + TUESDAY - toBeEndDate.day()) % 7;
 
-        toBeEndDate.add(daysUntilNextTuesday, 'day');
+        toBeEndDate = toBeEndDate.add(daysUntilNextTuesday, 'day');
 
         // Checking the results
-        expect(transactions.length).toBe(4);
+        expect(transactions.length).toBe(5);
         expect(skippedTransactions.length).toBe(0);
         expect(transactions[0].title).toBe(expense.expense_title);
         expect(transactions[0].description).toBe(expense.expense_description);
