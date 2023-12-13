@@ -78,6 +78,33 @@ const expenses: any[] = [
     },
 ];
 
+const loans: any[] = [
+    {
+        loan_id: 1,
+        account_id: 1,
+        tax_id: 1,
+        loan_amount: 100,
+        amount: 100,
+        loan_plan_amount: 100,
+        loan_recipient: 'Test',
+        loan_title: 'Test',
+        loan_description: 'Test',
+        frequency_type: 2,
+        frequency_type_variable: null,
+        frequency_month_of_year: null,
+        frequency_day_of_month: null,
+        frequency_day_of_week: null,
+        frequency_week_of_month: null,
+        loan_interest_frequency_type: 2,
+        loan_interest_rate: 0,
+        loan_subsidized: 0,
+        loan_begin_date: '2023-06-01',
+        loan_end_date: '2023-06-01',
+        date_created: '2023-06-01',
+        date_modified: '2023-06-01',
+    },
+];
+
 describe('setQueries', () => {
     it('should set from_date and to_date', async () => {
         const { setQueries } = await import('../../middleware/middleware.js');
@@ -286,49 +313,27 @@ describe('getExpensesByAccount', () => {
     });
 });
 
-// describe('getLoansByAccount', () => {
-//     it('gets loans for a given account and date', async () => {
-//         mockModule([{ account_id: 1 }], loans);
+describe('getLoansByAccount', () => {
+    it('gets loans for a given account and date', async () => {
+        mockModule([[{ account_id: 1 }], loans]);
 
-//         const { getLoansByAccount } = await import(
-//             '../../middleware/middleware.js'
-//         );
+        const { getLoansByAccount } = await import(
+            '../../middleware/middleware.js'
+        );
 
-//         mockRequest.query = { account_id: '1', from_date: '2023-06-01' };
+        mockRequest.query = { account_id: '1', from_date: '2023-06-01' };
 
-//         await getLoansByAccount(mockRequest, mockResponse, mockNext);
+        await getLoansByAccount(mockRequest, mockResponse, mockNext);
 
-//         const loansReturn = {
-//             account_id: 1,
-//             loan: loans.map((loan) => ({
-//                 loan_id: loan.loan_id,
-//                 account_id: loan.account_id,
-//                 tax_id: loan.tax_id,
-//                 loan_amount: loan.loan_amount,
-//                 loan_plan_amount: loan.loan_plan_amount,
-//                 loan_recipient: loan.loan_recipient,
-//                 loan_title: loan.loan_title,
-//                 loan_description: loan.loan_description,
-//                 frequency_type: loan.frequency_type,
-//                 frequency_type_variable: loan.frequency_type_variable,
-//                 frequency_month_of_year: loan.frequency_month_of_year,
-//                 frequency_day_of_month: loan.frequency_day_of_month,
-//                 frequency_day_of_week: loan.frequency_day_of_week,
-//                 frequency_week_of_month: loan.frequency_week_of_month,
-//                 loan_interest_frequency_type: loan.loan_interest_frequency_type,
-//                 loan_interest_rate: loan.loan_interest_rate,
-//                 loan_subsidized: loan.loan_subsidized,
-//                 loan_begin_date: loan.loan_begin_date,
-//                 loan_end_date: loan.loan_end_date,
-//                 date_created: loan.date_created,
-//                 date_modified: loan.date_modified,
-//                 amount: loan.loan_plan_amount,
-//             })),
-//         };
+        const loansReturn = {
+            account_id: 1,
+            loan: loans,
+        };
 
-//         expect(mockRequest.loans).toEqual([loansReturn]);
-//         expect(mockNext).toHaveBeenCalled();
-//     });
+        expect(mockRequest.loans).toEqual([loansReturn]);
+        expect(mockNext).toHaveBeenCalled();
+    });
+});
 
 //     it('handles error if there is one', async () => {
 //         // Arrange

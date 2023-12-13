@@ -434,7 +434,7 @@ export const getLoansByAccount = async (
     try {
         const loansByAccount: Array<{ account_id: number; loan: any }> = [];
 
-        if (account_id === null || account_id === undefined) {
+        if (!account_id) {
             // If account_id is null, fetch all accounts and make request.transactions an array of transactions
             const accountResults = await executeQuery(
                 accountQueries.getAccounts,
