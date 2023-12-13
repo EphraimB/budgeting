@@ -785,24 +785,24 @@ describe('getCommuteExpensesByAccount', () => {
             message: 'Error getting commute expenses',
         });
     });
+
+    it('should return a 404 when account_id is not found', async () => {
+        mockModule([[], []]);
+
+        const { getCommuteExpensesByAccount } = await import(
+            '../../middleware/middleware.js'
+        );
+
+        mockRequest.query = { account_id: '5', from_date: '2023-06-01' };
+
+        await getCommuteExpensesByAccount(mockRequest, mockResponse, mockNext);
+
+        expect(mockResponse.status).toHaveBeenCalledWith(404);
+        expect(mockResponse.send).toHaveBeenCalledWith(
+            'Account with ID 5 not found',
+        );
+    });
 });
-
-//     it('should return a 404 when account_id is not found', async () => {
-//         mockModule([], []);
-
-//         const { getCommuteExpensesByAccount } = await import(
-//             '../../middleware/middleware.js'
-//         );
-
-//         mockRequest.query = { account_id: '5', from_date: '2023-06-01' };
-
-//         await getCommuteExpensesByAccount(mockRequest, mockResponse, mockNext);
-
-//         expect(mockResponse.status).toHaveBeenCalledWith(404);
-//         expect(mockResponse.send).toHaveBeenCalledWith(
-//             'Account with ID 5 not found',
-//         );
-//     });
 
 //     it('should fetch all accounts if account_id is not provided', async () => {
 //         const commuteExpenses: any[] = [
