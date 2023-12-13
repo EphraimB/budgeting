@@ -587,35 +587,38 @@ describe('getWishlistsByAccount', () => {
             'Account with ID 5 not found',
         );
     });
+
+    it('should fetch all accounts if account_id is not provided', async () => {
+        mockModule([
+            [{ tax_id: 1, tax_rate: 0 }],
+            [{ account_id: 1 }],
+            wishlists,
+        ]);
+
+        const { getWishlistsByAccount } = await import(
+            '../../middleware/middleware.js'
+        );
+
+        mockRequest.query = { account_id: null, from_date: '2023-06-01' };
+
+        await getWishlistsByAccount(mockRequest, mockResponse, mockNext);
+
+        const wishlistsReturn = wishlists.map((wishlist) => ({
+            account_id: 1,
+            wishlist: [
+                {
+                    ...wishlist,
+                    amount: wishlist.wishlist_amount,
+                    tax_rate: 0,
+                    wishlist_amount: wishlist.wishlist_amount,
+                },
+            ],
+        }));
+
+        expect(mockRequest.wishlists).toEqual(wishlistsReturn);
+        expect(mockNext).toHaveBeenCalled();
+    });
 });
-
-//     it('should fetch all accounts if account_id is not provided', async () => {
-//         mockModule([{ tax_rate: 0 }], wishlists, null, [{ account_id: 1 }]);
-
-//         const { getWishlistsByAccount } = await import(
-//             '../../middleware/middleware.js'
-//         );
-
-//         mockRequest.query = { account_id: null, from_date: '2023-06-01' };
-
-//         await getWishlistsByAccount(mockRequest, mockResponse, mockNext);
-
-//         const wishlistsReturn = wishlists.map((wishlist) => ({
-//             account_id: wishlist.account_id,
-//             wishlist: [
-//                 {
-//                     ...wishlist,
-//                     amount: wishlist.wishlist_amount,
-//                     tax_rate: 0,
-//                     wishlist_amount: wishlist.wishlist_amount,
-//                 },
-//             ],
-//         }));
-
-//         expect(mockRequest.wishlists).toEqual(wishlistsReturn);
-//         expect(mockNext).toHaveBeenCalled();
-//     });
-// });
 
 // describe('getTransfersByAccount', () => {
 //     it('gets transfers for a given account and date', async () => {
