@@ -1,20 +1,15 @@
 import { jest } from '@jest/globals';
-import {
-    parseIntOrFallback,
-    parseFloatOrFallback,
-} from '../../utils/helperFunctions';
-import { type Response } from 'express';
-import { type QueryResultRow } from 'pg';
-import {
-    expenses,
-    income,
-    loans,
-    payrolls,
-    transactions,
-    transfers,
-    wishlists,
-} from '../../models/mockData';
 import MockDate from 'mockdate';
+import {
+    beforeAll,
+    afterAll,
+    beforeEach,
+    afterEach,
+    describe,
+    it,
+    expect,
+} from '@jest/globals';
+import { mockModule } from '../__mocks__/mockModule';
 
 // Mock request and response
 let mockRequest: any;
@@ -54,68 +49,6 @@ afterEach(() => {
 afterAll(() => {
     MockDate.reset();
 });
-
-/**
- *
- * @param getAccountsValue - The value to be returned by the executeQuery mock function
- * @param getTransactionsDateMiddlewareValue - The value to be returned by the executeQuery mock function
- * @param [errorMessage] - The error message to be passed to the handleError mock function
- * @param [getEmployeeValue] - The value to be returned by the executeQuery mock function
- * @returns - A mock module with the executeQuery and handleError functions
- */
-const mockModule = (
-    getAccountsValue: QueryResultRow[],
-    getTransactionsDateMiddlewareValue: QueryResultRow[],
-    errorMessage?: string | null,
-    getEmployeeValue?: QueryResultRow[],
-    getTaxRate?: QueryResultRow[],
-) => {
-    const executeQuery = jest.fn();
-
-    if (errorMessage !== null && errorMessage !== undefined) {
-        executeQuery.mockImplementation(() => {
-            throw new Error(errorMessage);
-        });
-    } else if (getEmployeeValue != null) {
-        executeQuery
-            .mockImplementationOnce(
-                async () => await Promise.resolve(getAccountsValue),
-            )
-            .mockImplementationOnce(
-                async () => await Promise.resolve(getEmployeeValue),
-            )
-            .mockImplementationOnce(
-                async () =>
-                    await Promise.resolve(getTransactionsDateMiddlewareValue),
-            )
-            .mockImplementationOnce(
-                async () => await Promise.resolve(getTaxRate),
-            );
-    } else {
-        executeQuery
-            .mockImplementationOnce(
-                async () => await Promise.resolve(getAccountsValue),
-            )
-            .mockImplementationOnce(
-                async () =>
-                    await Promise.resolve(getTransactionsDateMiddlewareValue),
-            );
-    }
-
-    jest.mock('../../utils/helperFunctions.js', () => ({
-        executeQuery,
-        handleError: jest.fn((res: Response, message: string) => {
-            res.status(400).json({ message });
-        }),
-        parseIntOrFallback,
-        parseFloatOrFallback,
-        manipulateCron: jest
-            .fn()
-            .mockImplementation(
-                async () => await Promise.resolve([true, '123']),
-            ),
-    }));
-};
 
 describe('setQueries', () => {
     it('should set from_date and to_date', async () => {
