@@ -907,35 +907,30 @@ describe('getCurrentBalance', () => {
     });
 });
 
-// describe('updateWislistCron', () => {
-//     it('updates wishlist cron job', async () => {
-//         mockModule(wishlists, [{ tax_rate: 1 }], null, []);
-//         const { updateWishlistCron } = await import(
-//             '../../middleware/middleware.js'
-//         );
+describe('updateWislistCron', () => {
+    it('updates wishlist cron job', async () => {
+        mockModule(
+            [wishlists, [{ cron_job_id: 1 }], [{ tax_id: 1, tax_rate: 1 }], []],
+            [],
+            [[]],
+            [[]],
+        );
+        const { updateWishlistCron } = await import(
+            '../../middleware/middleware.js'
+        );
 
-//         mockRequest.transactions = [
-//             {
-//                 account_id: 1,
-//                 transactions: [
-//                     {
-//                         id: 'fw33e',
-//                         wishlist_id: 1,
-//                         amount: 100,
-//                         tax_rate: 0,
-//                         total_amount: 100,
-//                         date: '2023-06-01',
-//                         title: 'Test',
-//                         description: 'Test',
-//                     },
-//                 ],
-//             },
-//         ];
+        mockRequest.transactions = [
+            {
+                account_id: 1,
+                transactions: wishlists,
+            },
+        ];
 
-//         await updateWishlistCron(mockRequest, mockResponse, mockNext);
+        await updateWishlistCron(mockRequest, mockResponse, mockNext);
 
-//         expect(mockNext).toHaveBeenCalled();
-//     });
+        expect(mockNext).toHaveBeenCalled();
+    });
+});
 
 //     it('handles error if there is one', async () => {
 //         // Arrange

@@ -1039,6 +1039,8 @@ export const updateWishlistCron = async (
             });
         });
 
+        console.log(transactionMap);
+
         // First, delete all necessary cron jobs
         for (const wslst of wishlistsResults) {
             const cronId = wslst.cron_job_id;
@@ -1059,11 +1061,9 @@ export const updateWishlistCron = async (
             const taxId = wslst.tax_id;
 
             // Get tax amount from tax_id in taxes table
-            const taxRate: number =
-                taxId !== null && taxId !== undefined
-                    ? (await executeQuery(taxesQueries.getTax, [taxId]))[0]
-                          .tax_rate
-                    : 0;
+            const taxRate: number = !taxId
+                ? (await executeQuery(taxesQueries.getTax, [taxId]))[0].tax_rate
+                : 0;
 
             const jobDetails = {
                 date: transactionMap[wslst.wishlist_id],
