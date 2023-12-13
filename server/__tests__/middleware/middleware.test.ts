@@ -333,27 +333,26 @@ describe('getLoansByAccount', () => {
         expect(mockRequest.loans).toEqual([loansReturn]);
         expect(mockNext).toHaveBeenCalled();
     });
+
+    it('handles error if there is one', async () => {
+        // Arrange
+        const errorMessage = 'Fake error';
+        mockModule([], [errorMessage]);
+
+        const { getLoansByAccount } = await import(
+            '../../middleware/middleware.js'
+        );
+
+        mockRequest.query = { account_id: '1', from_date: '2023-06-01' };
+
+        await getLoansByAccount(mockRequest, mockResponse, mockNext);
+
+        expect(mockResponse.status).toHaveBeenCalledWith(400);
+        expect(mockResponse.json).toHaveBeenCalledWith({
+            message: 'Error getting loans',
+        });
+    });
 });
-
-//     it('handles error if there is one', async () => {
-//         // Arrange
-//         const errorMessage = 'Fake error';
-//         const error = new Error(errorMessage);
-//         mockModule([], [], errorMessage);
-
-//         const { getLoansByAccount } = await import(
-//             '../../middleware/middleware.js'
-//         );
-
-//         mockRequest.query = { account_id: '1', from_date: '2023-06-01' };
-
-//         await getLoansByAccount(mockRequest, mockResponse, mockNext);
-
-//         expect(mockResponse.status).toHaveBeenCalledWith(400);
-//         expect(mockResponse.json).toHaveBeenCalledWith({
-//             message: 'Error getting loans',
-//         });
-//     });
 
 //     it('should return a 404 when account_id is not found', async () => {
 //         mockModule([], []);
