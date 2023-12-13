@@ -930,26 +930,24 @@ describe('updateWislistCron', () => {
 
         expect(mockNext).toHaveBeenCalled();
     });
+
+    it('handles error if there is one', async () => {
+        // Arrange
+        const errorMessage = 'Fake error';
+        mockModule([], [errorMessage]);
+
+        const { updateWishlistCron } = await import(
+            '../../middleware/middleware.js'
+        );
+
+        await updateWishlistCron(mockRequest, mockResponse, mockNext);
+
+        expect(mockResponse.status).toHaveBeenCalledWith(400);
+        expect(mockResponse.json).toHaveBeenCalledWith({
+            message: 'Error updating cron tab',
+        });
+    });
 });
-
-//     it('handles error if there is one', async () => {
-//         // Arrange
-//         const errorMessage = 'Fake error';
-//         const error = new Error(errorMessage);
-//         mockModule([], [], errorMessage);
-
-//         const { updateWishlistCron } = await import(
-//             '../../middleware/middleware.js'
-//         );
-
-//         await updateWishlistCron(mockRequest, mockResponse, mockNext);
-
-//         expect(mockResponse.status).toHaveBeenCalledWith(400);
-//         expect(mockResponse.json).toHaveBeenCalledWith({
-//             message: 'Error updating cron tab',
-//         });
-//     });
-// });
 
 // describe('getIncomeByAccount', () => {
 //     it('gets income for a given account and date', async () => {
