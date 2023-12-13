@@ -105,6 +105,30 @@ const loans: any[] = [
     },
 ];
 
+const payrolls: any[] = [
+    {
+        payroll_id: 1,
+        employee_id: 1,
+        account_id: 1,
+        tax_id: 1,
+        payroll_amount: 100,
+        gross_pay: 150,
+        net_pay: 100,
+        payroll_title: 'Test',
+        payroll_description: 'Test',
+        frequency_type: 2,
+        frequency_type_variable: null,
+        frequency_month_of_year: null,
+        frequency_day_of_month: null,
+        frequency_day_of_week: null,
+        frequency_week_of_month: null,
+        payroll_begin_date: '2023-06-01',
+        payroll_end_date: '2023-06-01',
+        date_created: '2023-06-01',
+        date_modified: '2023-06-01',
+    },
+];
+
 describe('setQueries', () => {
     it('should set from_date and to_date', async () => {
         const { setQueries } = await import('../../middleware/middleware.js');
@@ -393,29 +417,34 @@ describe('getLoansByAccount', () => {
     });
 });
 
-// describe('getPayrollsMiddleware', () => {
-//     it('gets payrolls for a given account and date', async () => {
-//         mockModule([{ account_id: 1 }], payrolls, null, [{ employee_id: 1 }]);
+describe('getPayrollsMiddleware', () => {
+    it('gets payrolls for a given account and date', async () => {
+        mockModule([
+            [{ account_id: 1 }],
+            [{ account_id: 1, employee_id: 1 }],
+            payrolls,
+        ]);
 
-//         const { getPayrollsMiddleware } = await import(
-//             '../../middleware/middleware.js'
-//         );
+        const { getPayrollsMiddleware } = await import(
+            '../../middleware/middleware.js'
+        );
 
-//         mockRequest.query = { account_id: '1', from_date: '2023-06-01' };
+        mockRequest.query = { account_id: '1', from_date: '2023-06-01' };
 
-//         await getPayrollsMiddleware(mockRequest, mockResponse, mockNext);
+        await getPayrollsMiddleware(mockRequest, mockResponse, mockNext);
 
-//         const returnPayrolls = {
-//             employee_id: 1,
-//             payroll: payrolls.map((payroll) => ({
-//                 ...payroll,
-//                 net_pay: payroll.net_pay,
-//             })),
-//         };
+        const returnPayrolls = {
+            employee_id: 1,
+            payroll: payrolls.map((payroll) => ({
+                ...payroll,
+                net_pay: payroll.net_pay,
+            })),
+        };
 
-//         expect(mockRequest.payrolls).toEqual([returnPayrolls]);
-//         expect(mockNext).toHaveBeenCalled();
-//     });
+        expect(mockRequest.payrolls).toEqual([returnPayrolls]);
+        expect(mockNext).toHaveBeenCalled();
+    });
+});
 
 //     it('handles error if there is one', async () => {
 //         // Arrange
