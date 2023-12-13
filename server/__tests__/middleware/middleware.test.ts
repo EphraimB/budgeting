@@ -884,29 +884,28 @@ describe('getCurrentBalance', () => {
             'Account with ID 5 not found',
         );
     });
+
+    it('should fetch all accounts if account_id is not provided', async () => {
+        const mockCurrentBalance: any[] = [
+            { id: 1, account_id: 1, account_balance: 100, date: '2023-06-01' },
+        ];
+
+        mockModule([[{ account_id: 1 }], mockCurrentBalance]);
+
+        const { getCurrentBalance } = await import(
+            '../../middleware/middleware.js'
+        );
+
+        mockRequest.query = { account_id: null, from_date: '2023-06-01' };
+
+        await getCurrentBalance(mockRequest, mockResponse, mockNext);
+
+        expect(mockRequest.currentBalance).toEqual([
+            { account_id: 1, account_balance: 100 },
+        ]);
+        expect(mockNext).toHaveBeenCalled();
+    });
 });
-
-//     it('should fetch all accounts if account_id is not provided', async () => {
-//         const mockCurrentBalance: any[] = [
-//             { id: 1, account_id: 1, account_balance: 100, date: '2023-06-01' },
-//         ];
-
-//         mockModule([{ account_id: 1 }], mockCurrentBalance);
-
-//         const { getCurrentBalance } = await import(
-//             '../../middleware/middleware.js'
-//         );
-
-//         mockRequest.query = { account_id: null, from_date: '2023-06-01' };
-
-//         await getCurrentBalance(mockRequest, mockResponse, mockNext);
-
-//         expect(mockRequest.currentBalance).toEqual([
-//             { account_id: 1, account_balance: 100 },
-//         ]);
-//         expect(mockNext).toHaveBeenCalled();
-//     });
-// });
 
 // describe('updateWislistCron', () => {
 //     it('updates wishlist cron job', async () => {
