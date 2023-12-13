@@ -1,6 +1,6 @@
-import { jest } from '@jest/globals';
 import MockDate from 'mockdate';
 import {
+    jest,
     beforeAll,
     afterAll,
     beforeEach,
