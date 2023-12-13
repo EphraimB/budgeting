@@ -956,7 +956,7 @@ export const getCurrentBalance = async (
             account_balance: number;
         }> = [];
 
-        if (account_id === null || account_id === undefined) {
+        if (!account_id) {
             const accountResults = await executeQuery(
                 accountQueries.getAccounts,
             );

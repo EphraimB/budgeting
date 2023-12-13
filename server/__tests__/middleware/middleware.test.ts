@@ -827,27 +827,28 @@ describe('getCommuteExpensesByAccount', () => {
     });
 });
 
-// describe('getCurrentBalance', () => {
-//     it('gets current balance for a given account and date', async () => {
-//         const mockCurrentBalance: any[] = [
-//             { id: 1, account_id: 1, account_balance: 100, date: '2023-06-01' },
-//         ];
+describe('getCurrentBalance', () => {
+    it('gets current balance for a given account and date', async () => {
+        const mockCurrentBalance: any[] = [
+            { id: 1, account_id: 1, account_balance: 100, date: '2023-06-01' },
+        ];
 
-//         mockModule([{ account_id: 1 }], mockCurrentBalance);
+        mockModule([[{ account_id: 1 }], mockCurrentBalance]);
 
-//         const { getCurrentBalance } = await import(
-//             '../../middleware/middleware.js'
-//         );
+        const { getCurrentBalance } = await import(
+            '../../middleware/middleware.js'
+        );
 
-//         mockRequest.query = { account_id: '1', from_date: '2023-06-01' };
+        mockRequest.query = { account_id: '1', from_date: '2023-06-01' };
 
-//         await getCurrentBalance(mockRequest, mockResponse, mockNext);
+        await getCurrentBalance(mockRequest, mockResponse, mockNext);
 
-//         expect(mockRequest.currentBalance).toEqual([
-//             { account_id: 1, account_balance: 100 },
-//         ]);
-//         expect(mockNext).toHaveBeenCalled();
-//     });
+        expect(mockRequest.currentBalance).toEqual([
+            { account_id: 1, account_balance: 100 },
+        ]);
+        expect(mockNext).toHaveBeenCalled();
+    });
+});
 
 //     it('handles error if there is one', async () => {
 //         // Arrange
