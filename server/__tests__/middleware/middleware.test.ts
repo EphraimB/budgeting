@@ -693,33 +693,32 @@ describe('getTransfersByAccount', () => {
             'Account with ID 5 not found',
         );
     });
+
+    it('should fetch all accounts if account_id is not provided', async () => {
+        mockModule([[{ account_id: 1 }], transfers]);
+
+        const { getTransfersByAccount } = await import(
+            '../../middleware/middleware.js'
+        );
+
+        mockRequest.query = { account_id: null, from_date: '2023-06-01' };
+
+        await getTransfersByAccount(mockRequest, mockResponse, mockNext);
+
+        const transfersReturn = [
+            {
+                account_id: 1,
+                transfer: transfers.map((transfer) => ({
+                    ...transfer,
+                    amount: transfer.transfer_amount,
+                })),
+            },
+        ];
+
+        expect(mockRequest.transfers).toEqual(transfersReturn);
+        expect(mockNext).toHaveBeenCalled();
+    });
 });
-
-//     it('should fetch all accounts if account_id is not provided', async () => {
-//         mockModule([{ account_id: 1 }], transfers);
-
-//         const { getTransfersByAccount } = await import(
-//             '../../middleware/middleware.js'
-//         );
-
-//         mockRequest.query = { account_id: null, from_date: '2023-06-01' };
-
-//         await getTransfersByAccount(mockRequest, mockResponse, mockNext);
-
-//         const transfersReturn = [
-//             {
-//                 account_id: 1,
-//                 transfer: transfers.map((transfer) => ({
-//                     ...transfer,
-//                     amount: transfer.transfer_amount,
-//                 })),
-//             },
-//         ];
-
-//         expect(mockRequest.transfers).toEqual(transfersReturn);
-//         expect(mockNext).toHaveBeenCalled();
-//     });
-// });
 
 // describe('getCommuteExpensesByAccount', () => {
 //     it('gets commute expenses for a given account and date', async () => {
