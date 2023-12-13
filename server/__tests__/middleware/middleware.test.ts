@@ -142,6 +142,18 @@ const wishlists: any[] = [
     },
 ];
 
+const transfers: any[] = [
+    {
+        transfer_id: 1,
+        account_id: 1,
+        transfer_amount: 100,
+        transfer_title: 'Test',
+        transfer_description: 'Test',
+        date_created: '2023-06-01',
+        date_modified: '2023-06-01',
+    },
+];
+
 describe('setQueries', () => {
     it('should set from_date and to_date', async () => {
         const { setQueries } = await import('../../middleware/middleware.js');
@@ -620,31 +632,32 @@ describe('getWishlistsByAccount', () => {
     });
 });
 
-// describe('getTransfersByAccount', () => {
-//     it('gets transfers for a given account and date', async () => {
-//         mockModule([{ account_id: 1 }], transfers);
+describe('getTransfersByAccount', () => {
+    it('gets transfers for a given account and date', async () => {
+        mockModule([[{ account_id: 1 }], transfers]);
 
-//         const { getTransfersByAccount } = await import(
-//             '../../middleware/middleware.js'
-//         );
+        const { getTransfersByAccount } = await import(
+            '../../middleware/middleware.js'
+        );
 
-//         mockRequest.query = { account_id: '1', from_date: '2023-06-01' };
+        mockRequest.query = { account_id: '1', from_date: '2023-06-01' };
 
-//         await getTransfersByAccount(mockRequest, mockResponse, mockNext);
+        await getTransfersByAccount(mockRequest, mockResponse, mockNext);
 
-//         const transfersReturn = [
-//             {
-//                 account_id: 1,
-//                 transfer: transfers.map((transfer) => ({
-//                     ...transfer,
-//                     amount: transfer.transfer_amount,
-//                 })),
-//             },
-//         ];
+        const transfersReturn = [
+            {
+                account_id: 1,
+                transfer: transfers.map((transfer) => ({
+                    ...transfer,
+                    amount: transfer.transfer_amount,
+                })),
+            },
+        ];
 
-//         expect(mockRequest.transfers).toEqual(transfersReturn);
-//         expect(mockNext).toHaveBeenCalled();
-//     });
+        expect(mockRequest.transfers).toEqual(transfersReturn);
+        expect(mockNext).toHaveBeenCalled();
+    });
+});
 
 //     it('handles error if there is one', async () => {
 //         // Arrange
