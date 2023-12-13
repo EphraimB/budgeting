@@ -444,27 +444,26 @@ describe('getPayrollsMiddleware', () => {
         expect(mockRequest.payrolls).toEqual([returnPayrolls]);
         expect(mockNext).toHaveBeenCalled();
     });
+
+    it('handles error if there is one', async () => {
+        // Arrange
+        const errorMessage = 'Fake error';
+        mockModule([], [errorMessage]);
+
+        const { getPayrollsMiddleware } = await import(
+            '../../middleware/middleware.js'
+        );
+
+        mockRequest.query = { account_id: '1', from_date: '2023-06-01' };
+
+        await getPayrollsMiddleware(mockRequest, mockResponse, mockNext);
+
+        expect(mockResponse.status).toHaveBeenCalledWith(400);
+        expect(mockResponse.json).toHaveBeenCalledWith({
+            message: 'Error getting payrolls',
+        });
+    });
 });
-
-//     it('handles error if there is one', async () => {
-//         // Arrange
-//         const errorMessage = 'Fake error';
-//         const error = new Error(errorMessage);
-//         mockModule([], [], errorMessage);
-
-//         const { getPayrollsMiddleware } = await import(
-//             '../../middleware/middleware.js'
-//         );
-
-//         mockRequest.query = { account_id: '1', from_date: '2023-06-01' };
-
-//         await getPayrollsMiddleware(mockRequest, mockResponse, mockNext);
-
-//         expect(mockResponse.status).toHaveBeenCalledWith(400);
-//         expect(mockResponse.json).toHaveBeenCalledWith({
-//             message: 'Error getting payrolls',
-//         });
-//     });
 
 //     it('should return a 404 when account_id is not found', async () => {
 //         mockModule([], []);
