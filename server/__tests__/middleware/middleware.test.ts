@@ -50,6 +50,19 @@ afterAll(() => {
     MockDate.reset();
 });
 
+const transactions: any[] = [
+    {
+        id: 'fw33e',
+        account_id: 1,
+        transaction_amount: 100,
+        transaction_tax_rate: 0,
+        total_amount: 100,
+        date: '2023-06-01',
+        title: 'Test',
+        description: 'Test',
+    },
+];
+
 describe('setQueries', () => {
     it('should set from_date and to_date', async () => {
         const { setQueries } = await import('../../middleware/middleware.js');
@@ -91,18 +104,6 @@ describe('setQueries', () => {
 describe('getTransactionsByAccount', () => {
     it('gets transactions for a given account and date', async () => {
         const mockAccount = [{ account_id: 1 }];
-        const transactions: any[] = [
-            {
-                id: 'fw33e',
-                account_id: 1,
-                transaction_amount: 100,
-                transaction_tax_rate: 0,
-                total_amount: 100,
-                date: '2023-06-01',
-                title: 'Test',
-                description: 'Test',
-            },
-        ];
 
         mockModule([mockAccount, transactions]);
 
@@ -122,72 +123,65 @@ describe('getTransactionsByAccount', () => {
         expect(mockRequest.transaction).toEqual([transactionsReturn]);
         expect(mockNext).toHaveBeenCalled();
     });
+
+    it('handles error if there is one', async () => {
+        // Arrange
+        const errorMessage = 'Fake error';
+        mockModule([], [errorMessage]);
+
+        const { getTransactionsByAccount } = await import(
+            '../../middleware/middleware.js'
+        );
+
+        mockRequest.query = { account_id: '1', from_date: '2020-01-01' };
+
+        await getTransactionsByAccount(mockRequest, mockResponse, mockNext);
+
+        expect(mockResponse.status).toHaveBeenCalledWith(400);
+        expect(mockResponse.json).toHaveBeenCalledWith({
+            message: 'Error getting transactions',
+        });
+    });
+
+    it('should return a 404 when account_id is not found', async () => {
+        mockModule([[]]);
+
+        const { getTransactionsByAccount } = await import(
+            '../../middleware/middleware.js'
+        );
+
+        mockRequest.query = { account_id: '5', from_date: '2020-01-01' };
+
+        await getTransactionsByAccount(mockRequest, mockResponse, mockNext);
+
+        expect(mockResponse.status).toHaveBeenCalledWith(404);
+        expect(mockResponse.send).toHaveBeenCalledWith(
+            'Account with ID 5 not found',
+        );
+    });
+
+    it('should fetch all accounts if account_id is not provided', async () => {
+        mockModule([[{ account_id: 1 }], transactions]);
+
+        const { getTransactionsByAccount } = await import(
+            '../../middleware/middleware.js'
+        );
+
+        mockRequest.query = { account_id: null, from_date: '2020-01-01' };
+
+        await getTransactionsByAccount(mockRequest, mockResponse, mockNext);
+
+        const transactionsReturn = [
+            {
+                account_id: 1,
+                transactions: transactions,
+            },
+        ];
+
+        expect(mockRequest.transaction).toEqual(transactionsReturn);
+        expect(mockNext).toHaveBeenCalled();
+    });
 });
-
-//     it('handles error if there is one', async () => {
-//         // Arrange
-//         const errorMessage = 'Fake error';
-//         const error = new Error(errorMessage);
-//         mockModule([], [], errorMessage);
-
-//         const { getTransactionsByAccount } = await import(
-//             '../../middleware/middleware.js'
-//         );
-
-//         mockRequest.query = { account_id: '1', from_date: '2020-01-01' };
-
-//         await getTransactionsByAccount(mockRequest, mockResponse, mockNext);
-
-//         expect(mockResponse.status).toHaveBeenCalledWith(400);
-//         expect(mockResponse.json).toHaveBeenCalledWith({
-//             message: 'Error getting transactions',
-//         });
-//     });
-
-//     it('should return a 404 when account_id is not found', async () => {
-//         mockModule([], []);
-
-//         const { getTransactionsByAccount } = await import(
-//             '../../middleware/middleware.js'
-//         );
-
-//         mockRequest.query = { account_id: '5', from_date: '2020-01-01' };
-
-//         await getTransactionsByAccount(mockRequest, mockResponse, mockNext);
-
-//         expect(mockResponse.status).toHaveBeenCalledWith(404);
-//         expect(mockResponse.send).toHaveBeenCalledWith(
-//             'Account with ID 5 not found',
-//         );
-//     });
-
-//     it('should fetch all accounts if account_id is not provided', async () => {
-//         mockModule([{ account_id: 1 }], transactions);
-
-//         const { getTransactionsByAccount } = await import(
-//             '../../middleware/middleware.js'
-//         );
-
-//         mockRequest.query = { account_id: null, from_date: '2020-01-01' };
-
-//         await getTransactionsByAccount(mockRequest, mockResponse, mockNext);
-
-//         const transactionsReturn = [
-//             {
-//                 account_id: 1,
-//                 transactions: transactions
-//                     .filter((t) => t.account_id === 1)
-//                     .map((transaction) => ({
-//                         ...transaction,
-//                         transaction_amount: transaction.transaction_amount,
-//                     })),
-//             },
-//         ];
-
-//         expect(mockRequest.transaction).toEqual(transactionsReturn);
-//         expect(mockNext).toHaveBeenCalled();
-//     });
-// });
 
 // describe('getExpensesByAccount', () => {
 //     it('gets expenses for a given account and date', async () => {
