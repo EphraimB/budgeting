@@ -369,56 +369,29 @@ describe('getLoansByAccount', () => {
             'Account with ID 5 not found',
         );
     });
+
+    it('should fetch all accounts if account_id is not provided', async () => {
+        mockModule([[{ account_id: 1 }], loans]);
+
+        const { getLoansByAccount } = await import(
+            '../../middleware/middleware.js'
+        );
+
+        mockRequest.query = { account_id: null, from_date: '2023-06-01' };
+
+        await getLoansByAccount(mockRequest, mockResponse, mockNext);
+
+        const loansReturn = [
+            {
+                account_id: 1,
+                loan: loans,
+            },
+        ];
+
+        expect(mockRequest.loans).toEqual(loansReturn);
+        expect(mockNext).toHaveBeenCalled();
+    });
 });
-
-//     it('should fetch all accounts if account_id is not provided', async () => {
-//         mockModule([{ account_id: 1 }], loans);
-
-//         const { getLoansByAccount } = await import(
-//             '../../middleware/middleware.js'
-//         );
-
-//         mockRequest.query = { account_id: null, from_date: '2023-06-01' };
-
-//         await getLoansByAccount(mockRequest, mockResponse, mockNext);
-
-//         const loansReturn = [
-//             {
-//                 account_id: 1,
-//                 loan: loans
-//                     .filter((l) => l.account_id === 1)
-//                     .map((loan) => ({
-//                         loan_id: loan.loan_id,
-//                         account_id: loan.account_id,
-//                         tax_id: loan.tax_id,
-//                         loan_amount: loan.loan_amount,
-//                         loan_plan_amount: loan.loan_plan_amount,
-//                         loan_recipient: loan.loan_recipient,
-//                         loan_title: loan.loan_title,
-//                         loan_description: loan.loan_description,
-//                         frequency_type: loan.frequency_type,
-//                         frequency_type_variable: loan.frequency_type_variable,
-//                         frequency_month_of_year: loan.frequency_month_of_year,
-//                         frequency_day_of_month: loan.frequency_day_of_month,
-//                         frequency_day_of_week: loan.frequency_day_of_week,
-//                         frequency_week_of_month: loan.frequency_week_of_month,
-//                         loan_interest_frequency_type:
-//                             loan.loan_interest_frequency_type,
-//                         loan_interest_rate: loan.loan_interest_rate,
-//                         loan_subsidized: loan.loan_subsidized,
-//                         loan_begin_date: loan.loan_begin_date,
-//                         loan_end_date: loan.loan_end_date,
-//                         date_created: loan.date_created,
-//                         date_modified: loan.date_modified,
-//                         amount: loan.loan_plan_amount,
-//                     })),
-//             },
-//         ];
-
-//         expect(mockRequest.loans).toEqual(loansReturn);
-//         expect(mockNext).toHaveBeenCalled();
-//     });
-// });
 
 // describe('getPayrollsMiddleware', () => {
 //     it('gets payrolls for a given account and date', async () => {
