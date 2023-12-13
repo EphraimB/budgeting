@@ -307,7 +307,7 @@ export const getExpensesByAccount = async (
             expenses: Expense[];
         }> = [];
 
-        if (account_id === null || account_id === undefined) {
+        if (!account_id) {
             const accountResults = await executeQuery(
                 accountQueries.getAccounts,
             );

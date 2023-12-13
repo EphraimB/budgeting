@@ -63,6 +63,21 @@ const transactions: any[] = [
     },
 ];
 
+const expenses: any[] = [
+    {
+        id: 'fw33e',
+        expense_id: 1,
+        account_id: 1,
+        amount: 100,
+        tax_rate: 0,
+        subsidized: 0,
+        total_amount: 100,
+        date: '2023-06-01',
+        title: 'Test',
+        description: 'Test',
+    },
+];
+
 describe('setQueries', () => {
     it('should set from_date and to_date', async () => {
         const { setQueries } = await import('../../middleware/middleware.js');
@@ -183,31 +198,31 @@ describe('getTransactionsByAccount', () => {
     });
 });
 
-// describe('getExpensesByAccount', () => {
-//     it('gets expenses for a given account and date', async () => {
-//         mockModule([{ tax_rate: 0 }], expenses, null, [{ account_id: 1 }]);
+describe('getExpensesByAccount', () => {
+    it('gets expenses for a given account and date', async () => {
+        mockModule([
+            [{ tax_id: 1, tax_rate: 0 }],
+            [{ account_id: 1 }],
+            expenses,
+        ]);
 
-//         const { getExpensesByAccount } = await import(
-//             '../../middleware/middleware.js'
-//         );
+        const { getExpensesByAccount } = await import(
+            '../../middleware/middleware.js'
+        );
 
-//         mockRequest.query = { account_id: '1', from_date: '2023-06-01' };
+        mockRequest.query = { account_id: '1', from_date: '2023-06-01' };
 
-//         await getExpensesByAccount(mockRequest, mockResponse, mockNext);
+        await getExpensesByAccount(mockRequest, mockResponse, mockNext);
 
-//         const expensesReturn = {
-//             account_id: 1,
-//             expenses: expenses.map((expense) => ({
-//                 ...expense,
-//                 amount: expense.expense_amount,
-//                 tax_rate: 0,
-//                 expense_amount: expense.expense_amount,
-//             })),
-//         };
+        const expensesReturn = {
+            account_id: 1,
+            expenses: expenses,
+        };
 
-//         expect(mockRequest.expenses).toEqual([expensesReturn]);
-//         expect(mockNext).toHaveBeenCalled();
-//     });
+        expect(mockRequest.expenses).toEqual([expensesReturn]);
+        expect(mockNext).toHaveBeenCalled();
+    });
+});
 
 //     it('handles error if there is one', async () => {
 //         // Arrange
