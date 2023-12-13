@@ -551,27 +551,26 @@ describe('getWishlistsByAccount', () => {
         expect(mockRequest.wishlists).toEqual(wishlistsReturn);
         expect(mockNext).toHaveBeenCalled();
     });
+
+    it('handles error if there is one', async () => {
+        // Arrange
+        const errorMessage = 'Fake error';
+        mockModule([], [errorMessage]);
+
+        const { getWishlistsByAccount } = await import(
+            '../../middleware/middleware.js'
+        );
+
+        mockRequest.query = { account_id: '1', from_date: '2023-06-01' };
+
+        await getWishlistsByAccount(mockRequest, mockResponse, mockNext);
+
+        expect(mockResponse.status).toHaveBeenCalledWith(400);
+        expect(mockResponse.json).toHaveBeenCalledWith({
+            message: 'Error getting wishlists',
+        });
+    });
 });
-
-//     it('handles error if there is one', async () => {
-//         // Arrange
-//         const errorMessage = 'Fake error';
-//         const error = new Error(errorMessage);
-//         mockModule([], [], errorMessage);
-
-//         const { getWishlistsByAccount } = await import(
-//             '../../middleware/middleware.js'
-//         );
-
-//         mockRequest.query = { account_id: '1', from_date: '2023-06-01' };
-
-//         await getWishlistsByAccount(mockRequest, mockResponse, mockNext);
-
-//         expect(mockResponse.status).toHaveBeenCalledWith(400);
-//         expect(mockResponse.json).toHaveBeenCalledWith({
-//             message: 'Error getting wishlists',
-//         });
-//     });
 
 //     it('should return a 404 when account_id is not found', async () => {
 //         mockModule([], []);
