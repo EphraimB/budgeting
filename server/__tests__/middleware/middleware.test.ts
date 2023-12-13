@@ -258,36 +258,33 @@ describe('getExpensesByAccount', () => {
             'Account with ID 5 not found',
         );
     });
+
+    it('should fetch all accounts if account_id is not provided', async () => {
+        mockModule([
+            [{ tax_id: 1, tax_rate: 0 }],
+            [{ account_id: 1 }],
+            expenses,
+        ]);
+
+        const { getExpensesByAccount } = await import(
+            '../../middleware/middleware.js'
+        );
+
+        mockRequest.query = { account_id: null, from_date: '2023-06-01' };
+
+        await getExpensesByAccount(mockRequest, mockResponse, mockNext);
+
+        const expensesReturn = [
+            {
+                account_id: 1,
+                expenses: expenses,
+            },
+        ];
+
+        expect(mockRequest.expenses).toEqual(expensesReturn);
+        expect(mockNext).toHaveBeenCalled();
+    });
 });
-
-//     it('should fetch all accounts if account_id is not provided', async () => {
-//         mockModule([{ tax_rate: 0 }], expenses, null, [{ account_id: 1 }]);
-
-//         const { getExpensesByAccount } = await import(
-//             '../../middleware/middleware.js'
-//         );
-
-//         mockRequest.query = { account_id: null, from_date: '2023-06-01' };
-
-//         await getExpensesByAccount(mockRequest, mockResponse, mockNext);
-
-//         const expensesReturn = [
-//             {
-//                 account_id: 1,
-//                 expenses: expenses
-//                     .filter((e) => e.account_id === 1)
-//                     .map((expense) => ({
-//                         ...expense,
-//                         amount: expense.expense_amount,
-//                         tax_rate: 0,
-//                     })),
-//             },
-//         ];
-
-//         expect(mockRequest.expenses).toEqual(expensesReturn);
-//         expect(mockNext).toHaveBeenCalled();
-//     });
-// });
 
 // describe('getLoansByAccount', () => {
 //     it('gets loans for a given account and date', async () => {
