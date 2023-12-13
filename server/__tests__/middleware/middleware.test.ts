@@ -767,26 +767,25 @@ describe('getCommuteExpensesByAccount', () => {
         expect(mockRequest.commuteExpenses).toEqual(commuteExpensesReturn);
         expect(mockNext).toHaveBeenCalled();
     });
+
+    it('handles error if there is one', async () => {
+        const errorMessage = 'Fake error';
+        mockModule([], [errorMessage]);
+
+        const { getCommuteExpensesByAccount } = await import(
+            '../../middleware/middleware.js'
+        );
+
+        mockRequest.query = { account_id: '1', from_date: '2023-06-01' };
+
+        await getCommuteExpensesByAccount(mockRequest, mockResponse, mockNext);
+
+        expect(mockResponse.status).toHaveBeenCalledWith(400);
+        expect(mockResponse.json).toHaveBeenCalledWith({
+            message: 'Error getting commute expenses',
+        });
+    });
 });
-
-//     it('handles error if there is one', async () => {
-//         const errorMessage = 'Fake error';
-//         const error = new Error(errorMessage);
-//         mockModule([], [], errorMessage);
-
-//         const { getCommuteExpensesByAccount } = await import(
-//             '../../middleware/middleware.js'
-//         );
-
-//         mockRequest.query = { account_id: '1', from_date: '2023-06-01' };
-
-//         await getCommuteExpensesByAccount(mockRequest, mockResponse, mockNext);
-
-//         expect(mockResponse.status).toHaveBeenCalledWith(400);
-//         expect(mockResponse.json).toHaveBeenCalledWith({
-//             message: 'Error getting commute expenses',
-//         });
-//     });
 
 //     it('should return a 404 when account_id is not found', async () => {
 //         mockModule([], []);
