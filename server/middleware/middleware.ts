@@ -746,7 +746,7 @@ export const getTransfersByAccount = async (
             transfer: Transfer[];
         }> = [];
 
-        if (account_id === null || account_id === undefined) {
+        if (!account_id) {
             // If account_id is null, fetch all accounts and make request.transactions an array of transactions
             const accountResults = await executeQuery(
                 accountQueries.getAccounts,
@@ -834,7 +834,7 @@ export const getCommuteExpensesByAccount = async (
             fare_capping: object;
         }> = [];
 
-        if (account_id === null || account_id === undefined) {
+        if (!account_id) {
             // If account_id is null, fetch all accounts and make request.transactions an array of transactions
             const accountResults = await executeQuery(
                 accountQueries.getAccounts,

@@ -154,6 +154,30 @@ const transfers: any[] = [
     },
 ];
 
+const commuteExpenses: any[] = [
+    {
+        commute_schedule_id: 1,
+        commute_system_id: 1,
+        account_id: 1,
+        day_of_week: 1,
+        commute_ticket_id: 1,
+        start_time: '8:00',
+        fare_cap_duration: 1,
+        fare_amount: 2.9,
+        pass: 'OMNY Single Ride',
+    },
+];
+
+const fareCapping: any[] = [
+    {
+        commute_system_id: 1,
+        system_name: 'OMNY',
+        fare_cap: 33,
+        current_spent: 0,
+        fare_cap_duration: 1,
+    },
+];
+
 describe('setQueries', () => {
     it('should set from_date and to_date', async () => {
         const { setQueries } = await import('../../middleware/middleware.js');
@@ -720,58 +744,30 @@ describe('getTransfersByAccount', () => {
     });
 });
 
-// describe('getCommuteExpensesByAccount', () => {
-//     it('gets commute expenses for a given account and date', async () => {
-//         const commuteExpenses: any[] = [
-//             {
-//                 commute_schedule_id: 1,
-//                 commute_system_id: 1,
-//                 account_id: 1,
-//                 day_of_week: 1,
-//                 commute_ticket_id: 1,
-//                 start_time: '8:00',
-//                 fare_cap_duration: 1,
-//                 fare_amount: 2.9,
-//                 pass: 'OMNY Single Ride',
-//             },
-//         ];
+describe('getCommuteExpensesByAccount', () => {
+    it('gets commute expenses for a given account and date', async () => {
+        mockModule([[{ account_id: 1 }], commuteExpenses, fareCapping]);
 
-//         const fareCapping: any[] = [
-//             {
-//                 commute_system_id: 1,
-//                 system_name: 'OMNY',
-//                 fare_cap: 33,
-//                 current_spent: 0,
-//                 fare_cap_duration: 1,
-//             },
-//         ];
+        const { getCommuteExpensesByAccount } = await import(
+            '../../middleware/middleware.js'
+        );
 
-//         mockModule(
-//             [{ account_id: 1 }],
-//             fareCapping,
-//             undefined,
-//             commuteExpenses,
-//         );
+        mockRequest.query = { account_id: '1', from_date: '2023-06-01' };
 
-//         const { getCommuteExpensesByAccount } = await import(
-//             '../../middleware/middleware.js'
-//         );
+        await getCommuteExpensesByAccount(mockRequest, mockResponse, mockNext);
 
-//         mockRequest.query = { account_id: '1', from_date: '2023-06-01' };
+        const commuteExpensesReturn = [
+            {
+                account_id: 1,
+                commute_expenses: commuteExpenses,
+                fare_capping: fareCapping,
+            },
+        ];
 
-//         await getCommuteExpensesByAccount(mockRequest, mockResponse, mockNext);
-
-//         const commuteExpensesReturn = [
-//             {
-//                 account_id: 1,
-//                 commute_expenses: commuteExpenses,
-//                 fare_capping: fareCapping,
-//             },
-//         ];
-
-//         expect(mockRequest.commuteExpenses).toEqual(commuteExpensesReturn);
-//         expect(mockNext).toHaveBeenCalled();
-//     });
+        expect(mockRequest.commuteExpenses).toEqual(commuteExpensesReturn);
+        expect(mockNext).toHaveBeenCalled();
+    });
+});
 
 //     it('handles error if there is one', async () => {
 //         const errorMessage = 'Fake error';
