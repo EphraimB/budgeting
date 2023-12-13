@@ -129,6 +129,19 @@ const payrolls: any[] = [
     },
 ];
 
+const wishlists: any[] = [
+    {
+        wishlist_id: 1,
+        wishlist_amount: 100,
+        amount: 100,
+        wishlist_title: 'Test',
+        wishlist_description: 'Test',
+        tax_rate: 0,
+        date_created: '2023-06-01',
+        date_modified: '2023-06-01',
+    },
+];
+
 describe('setQueries', () => {
     it('should set from_date and to_date', async () => {
         const { setQueries } = await import('../../middleware/middleware.js');
@@ -507,33 +520,38 @@ describe('getPayrollsMiddleware', () => {
     });
 });
 
-// describe('getWishlistsByAccount', () => {
-//     it('gets wishlists for a given account and date', async () => {
-//         mockModule([{ tax_rate: 0 }], wishlists, null, [{ account_id: 1 }]);
+describe('getWishlistsByAccount', () => {
+    it('gets wishlists for a given account and date', async () => {
+        mockModule([
+            [{ tax_id: 1, tax_rate: 0 }],
+            [{ account_id: 1 }],
+            wishlists,
+        ]);
 
-//         const { getWishlistsByAccount } = await import(
-//             '../../middleware/middleware.js'
-//         );
+        const { getWishlistsByAccount } = await import(
+            '../../middleware/middleware.js'
+        );
 
-//         mockRequest.query = { account_id: '1', from_date: '2023-06-01' };
+        mockRequest.query = { account_id: '1', from_date: '2023-06-01' };
 
-//         await getWishlistsByAccount(mockRequest, mockResponse, mockNext);
+        await getWishlistsByAccount(mockRequest, mockResponse, mockNext);
 
-//         const wishlistsReturn = wishlists.map((wishlist) => ({
-//             account_id: wishlist.account_id,
-//             wishlist: [
-//                 {
-//                     ...wishlist,
-//                     amount: wishlist.wishlist_amount,
-//                     tax_rate: 0,
-//                     wishlist_amount: wishlist.wishlist_amount,
-//                 },
-//             ],
-//         }));
+        const wishlistsReturn = [
+            {
+                account_id: 1,
+                wishlist: wishlists.map((wishlist) => ({
+                    ...wishlist,
+                    amount: wishlist.wishlist_amount,
+                    tax_rate: 0,
+                    wishlist_amount: wishlist.wishlist_amount,
+                })),
+            },
+        ];
 
-//         expect(mockRequest.wishlists).toEqual(wishlistsReturn);
-//         expect(mockNext).toHaveBeenCalled();
-//     });
+        expect(mockRequest.wishlists).toEqual(wishlistsReturn);
+        expect(mockNext).toHaveBeenCalled();
+    });
+});
 
 //     it('handles error if there is one', async () => {
 //         // Arrange
