@@ -178,6 +178,18 @@ const fareCapping: any[] = [
     },
 ];
 
+const income: any[] = [
+    {
+        income_id: 1,
+        account_id: 1,
+        income_amount: 100,
+        income_title: 'Test',
+        income_description: 'Test',
+        date_created: '2023-06-01',
+        date_modified: '2023-06-01',
+    },
+];
+
 describe('setQueries', () => {
     it('should set from_date and to_date', async () => {
         const { setQueries } = await import('../../middleware/middleware.js');
@@ -949,32 +961,33 @@ describe('updateWislistCron', () => {
     });
 });
 
-// describe('getIncomeByAccount', () => {
-//     it('gets income for a given account and date', async () => {
-//         mockModule([], income, undefined, [{ account_id: 1 }]);
+describe('getIncomeByAccount', () => {
+    it('gets income for a given account and date', async () => {
+        mockModule([[{ tax_id: 1, tax_rate: 0 }], [{ account_id: 1 }], income]);
 
-//         const { getIncomeByAccount } = await import(
-//             '../../middleware/middleware.js'
-//         );
+        const { getIncomeByAccount } = await import(
+            '../../middleware/middleware.js'
+        );
 
-//         mockRequest.query = { account_id: '1', to_date: '2023-06-01' };
+        mockRequest.query = { account_id: '1', to_date: '2023-06-01' };
 
-//         await getIncomeByAccount(mockRequest, mockResponse, mockNext);
+        await getIncomeByAccount(mockRequest, mockResponse, mockNext);
 
-//         const incomeReturn = [
-//             {
-//                 account_id: 1,
-//                 income: income.map((income) => ({
-//                     ...income,
-//                     amount: income.income_amount,
-//                     tax_rate: 0,
-//                 })),
-//             },
-//         ];
+        const incomeReturn = [
+            {
+                account_id: 1,
+                income: income.map((income) => ({
+                    ...income,
+                    amount: income.income_amount,
+                    tax_rate: 0,
+                })),
+            },
+        ];
 
-//         expect(mockRequest.income).toEqual(incomeReturn);
-//         expect(mockNext).toHaveBeenCalled();
-//     });
+        expect(mockRequest.income).toEqual(incomeReturn);
+        expect(mockNext).toHaveBeenCalled();
+    });
+});
 
 //     it('handles error if there is one', async () => {
 //         mockModule([], [], 'Fake error', [{ account_id: 1 }]);
