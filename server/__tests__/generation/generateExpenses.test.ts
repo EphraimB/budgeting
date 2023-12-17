@@ -70,7 +70,7 @@ describe('Test generateDailyExpenses', () => {
     });
 
     it('Should generate daily expenses correctly every 2 days', () => {
-        // Preparing the test data'
+        // Preparing the test data
         const expense: any = {
             expense_begin_date: '2020-01-02',
             expense_title: 'Test expense',
