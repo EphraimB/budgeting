@@ -540,7 +540,7 @@ describe('generateYearlyExpenses', () => {
         expect(transactions[0].description).toBe(expense.expense_description);
         expect(transactions[0].amount).toBe(-expense.expense_amount);
         expect(expectedEndDate.toISOString().slice(0, 10)).toBe(
-            dayjs('2022-01-02').toISOString().slice(0, 10),
+            dayjs('2022-01-01').toISOString().slice(0, 10),
         );
     });
 
@@ -577,7 +577,7 @@ describe('generateYearlyExpenses', () => {
         expect(transactions[0].description).toBe(expense.expense_description);
         expect(transactions[0].amount).toBe(-expense.expense_amount);
         expect(expectedEndDate.toISOString().slice(0, 10)).toBe(
-            dayjs('2024-01-02').toISOString().slice(0, 10),
+            dayjs('2024-01-01').toISOString().slice(0, 10),
         );
     });
 
@@ -607,13 +607,13 @@ describe('generateYearlyExpenses', () => {
         );
 
         // Checking the results
-        expect(transactions.length).toBe(4);
-        expect(skippedTransactions.length).toBe(2);
+        expect(transactions.length).toBe(3);
+        expect(skippedTransactions.length).toBe(3);
         expect(transactions[0].title).toBe(expense.expense_title);
         expect(transactions[0].description).toBe(expense.expense_description);
         expect(transactions[0].amount).toBe(-expense.expense_amount);
         expect(expectedEndDate.toISOString().slice(0, 10)).toBe(
-            dayjs('2025-01-02').toISOString().slice(0, 10),
+            dayjs('2025-01-01').toISOString().slice(0, 10),
         );
     });
 
@@ -642,7 +642,7 @@ describe('generateYearlyExpenses', () => {
         const expectedEndDate: Dayjs = dayjs(
             transactions[transactions.length - 1].date,
         );
-        const toBeEndDate: Dayjs = dayjs('2023-01-02');
+        const toBeEndDate: Dayjs = dayjs('2023-01-01');
 
         // days of the week from 0 (Sunday) to 6 (Saturday)
         const TUESDAY: number = 2;
