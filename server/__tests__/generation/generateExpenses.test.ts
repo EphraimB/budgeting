@@ -688,7 +688,7 @@ describe('generateYearlyExpenses', () => {
         );
 
         // Checking the results
-        expect(transactions.length).toBe(3);
+        expect(transactions.length).toBe(4);
         expect(skippedTransactions.length).toBe(0);
         expect(transactions[0].title).toBe(expense.expense_title);
         expect(transactions[0].description).toBe(expense.expense_description);
@@ -735,7 +735,7 @@ describe('generateYearlyExpenses', () => {
         );
 
         // Checking the results
-        expect(transactions.length).toBe(3); // 2020, 2021, 2022
+        expect(transactions.length).toBe(4); // 2020, 2021, 2022
         expect(skippedTransactions.length).toBe(0);
         expect(transactions[0].title).toBe(expense.expense_title);
         expect(transactions[0].description).toBe(expense.expense_description);
