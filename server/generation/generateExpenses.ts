@@ -24,6 +24,27 @@ const generateExpenses = (
 ) => {
     let expenseDate = dayjs(expense.expense_begin_date);
 
+    // Adjust for the day of the week
+    if (expense.frequency_day_of_week) {
+        expenseDate = expenseDate.startOf('month');
+        let firstOccurrence = expenseDate.day(expense.frequency_day_of_week);
+
+        // If the first occurrence is before the start of the month, move to the next week
+        if (firstOccurrence.isBefore(expenseDate)) {
+            firstOccurrence = firstOccurrence.add(1, 'week');
+        }
+
+        // Adjust for the specific week of the month
+        if (expense.frequency_week_of_month) {
+            expenseDate = firstOccurrence.add(
+                expense.frequency_week_of_month,
+                'week',
+            );
+        } else {
+            expenseDate = firstOccurrence;
+        }
+    }
+
     while (expenseDate.diff(toDate) <= 0) {
         const initialAmount = expense.expense_amount;
         const taxRate = expense.tax_rate;
@@ -126,13 +147,16 @@ export const generateMonthlyExpenses = (
             let firstOccurrence = expenseDate.day(
                 expense.frequency_day_of_week,
             );
-            if (firstOccurrence.date() > 7)
-                firstOccurrence = firstOccurrence.subtract(7, 'day');
+
+            // If the first occurrence is before the start of the month, move to the next week
+            if (firstOccurrence.isBefore(expenseDate)) {
+                firstOccurrence = firstOccurrence.add(1, 'week');
+            }
 
             // Adjust for the specific week of the month
             if (expense.frequency_week_of_month) {
                 expenseDate = firstOccurrence.add(
-                    expense.frequency_week_of_month - 1,
+                    expense.frequency_week_of_month,
                     'week',
                 );
             } else {
@@ -173,13 +197,19 @@ export const generateWeeklyExpenses = (
     toDate: Dayjs,
     fromDate: Dayjs,
 ): void => {
-    const expenseDate: Dayjs = dayjs(expense.begin_date);
+    let expenseDate: Dayjs = dayjs(expense.begin_date);
 
+    // Adjust for the day of the week
     if (expense.frequency_day_of_week) {
-        const startDay: number = dayjs(expense.begin_date).day();
-        const frequency_day_of_week: number = expense.frequency_day_of_week;
+        expenseDate = expenseDate.startOf('month');
+        let firstOccurrence = expenseDate.day(expense.frequency_day_of_week);
 
-        expenseDate.add((frequency_day_of_week - startDay) % 7, 'week');
+        // If the first occurrence is before the start of the month, move to the next week
+        if (firstOccurrence.isBefore(expenseDate)) {
+            firstOccurrence = firstOccurrence.add(1, 'week');
+        }
+
+        expenseDate = firstOccurrence;
     }
 
     const generateDateFn = (currentDate: Dayjs, expense: Expense): Dayjs => {

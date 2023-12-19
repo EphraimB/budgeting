@@ -343,7 +343,7 @@ describe('Test generateMonthlyExpenses', () => {
             expect(secondWeekOfMonth).toBeTruthy();
 
             // Since we start from the current month and increment each month
-            const expectedMonth: number = (fromDate.month() + i + 1) % 12;
+            const expectedMonth: number = (fromDate.month() + i) % 12;
             expect(transactionDate.month()).toBe(expectedMonth);
         });
     });
@@ -469,7 +469,7 @@ describe('generateWeeklyExpenses', () => {
             frequency_day_of_week: 2,
             expense_subsidized: 0,
         };
-        const toDate: Dayjs = dayjs('2020-02-02');
+        const toDate: Dayjs = dayjs('2020-02-05');
         const fromDate: Dayjs = dayjs('2020-01-01');
 
         // Running the function
@@ -493,7 +493,10 @@ describe('generateWeeklyExpenses', () => {
         const daysUntilNextTuesday: number =
             (7 + TUESDAY - toBeEndDate.day()) % 7;
 
-        toBeEndDate = toBeEndDate.add(daysUntilNextTuesday, 'day');
+        const toBeEndDateAdjusted = toBeEndDate.add(
+            daysUntilNextTuesday,
+            'day',
+        );
 
         // Checking the results
         expect(transactions.length).toBe(5);
@@ -502,7 +505,7 @@ describe('generateWeeklyExpenses', () => {
         expect(transactions[0].description).toBe(expense.expense_description);
         expect(transactions[0].amount).toBe(-expense.expense_amount);
         expect(expectedEndDate.toISOString().slice(0, 10)).toBe(
-            toBeEndDate.toISOString().slice(0, 10),
+            toBeEndDateAdjusted.toISOString().slice(0, 10),
         );
     });
 });
