@@ -5,7 +5,14 @@ import {
     generateWeeklyIncome,
     generateYearlyIncome,
 } from '../../generation/generateIncome';
-import { describe, it, expect, beforeAll, afterAll } from '@jest/globals';
+import {
+    describe,
+    it,
+    expect,
+    beforeEach,
+    beforeAll,
+    afterAll,
+} from '@jest/globals';
 import MockDate from 'mockdate';
 import dayjs, { Dayjs } from 'dayjs';
 
@@ -17,8 +24,13 @@ afterAll(() => {
     MockDate.reset();
 });
 
-const transactions: GeneratedTransaction[] = [];
-const skippedTransactions: GeneratedTransaction[] = [];
+let transactions: GeneratedTransaction[];
+let skippedTransactions: GeneratedTransaction[];
+
+beforeEach(() => {
+    transactions = [];
+    skippedTransactions = [];
+});
 
 describe('Test generateDailyIncome', () => {
     it('Should generate daily income correctly', () => {
@@ -160,7 +172,7 @@ describe('Test generateMonthlyIncome', () => {
         expect(transactions[0].description).toBe(income.income_description);
         expect(transactions[0].amount).toBe(income.income_amount);
         expect(expectedEndDate.toISOString().slice(0, 10)).toBe(
-            dayjs('2020-06-01').toISOString().slice(0, 10),
+            dayjs('2020-06-02').toISOString().slice(0, 10),
         );
     });
 
@@ -196,7 +208,7 @@ describe('Test generateMonthlyIncome', () => {
         expect(transactions[0].description).toBe(income.income_description);
         expect(transactions[0].amount).toBe(income.income_amount);
         expect(expectedEndDate.toISOString().slice(0, 10)).toBe(
-            dayjs('2020-07-01').toISOString().slice(0, 10),
+            dayjs('2020-07-02').toISOString().slice(0, 10),
         );
     });
 
@@ -225,13 +237,13 @@ describe('Test generateMonthlyIncome', () => {
         );
 
         // Checking the results
-        expect(transactions.length).toBe(2);
-        expect(skippedTransactions.length).toBe(6);
+        expect(transactions.length).toBe(3);
+        expect(skippedTransactions.length).toBe(5);
         expect(transactions[0].title).toBe(income.income_title);
         expect(transactions[0].description).toBe(income.income_description);
         expect(transactions[0].amount).toBe(income.income_amount);
         expect(expectedEndDate.toISOString().slice(0, 10)).toBe(
-            dayjs('2020-08-01').toISOString().slice(0, 10),
+            dayjs('2020-08-02').toISOString().slice(0, 10),
         );
     });
 
@@ -271,7 +283,7 @@ describe('Test generateMonthlyIncome', () => {
         toBeEndDate = toBeEndDate.add(daysUntilNextTuesday, 'day');
 
         // Checking the results
-        expect(transactions.length).toBe(5);
+        expect(transactions.length).toBe(6);
         expect(skippedTransactions.length).toBe(0);
         expect(transactions[0].title).toBe(income.income_title);
         expect(transactions[0].description).toBe(income.income_description);
@@ -320,7 +332,7 @@ describe('Test generateMonthlyIncome', () => {
             expect(secondWeekOfMonth).toBeTruthy();
 
             // Since we start from the current month and increment each month
-            const expectedMonth: number = (fromDate.month() + i + 1) % 12;
+            const expectedMonth: number = (fromDate.month() + i) % 12;
             expect(transactionDate.month()).toBe(expectedMonth);
         });
     });
@@ -442,7 +454,7 @@ describe('generateWeeklyIncome', () => {
             income_amount: 150,
             frequency_day_of_week: 2,
         };
-        const toDate: Dayjs = dayjs('2020-02-02');
+        const toDate: Dayjs = dayjs('2020-02-05');
         const fromDate: Dayjs = dayjs('2020-01-01');
 
         // Running the function
@@ -457,10 +469,7 @@ describe('generateWeeklyIncome', () => {
         const expectedEndDate: Dayjs = dayjs(
             transactions[transactions.length - 1].date,
         );
-        let toBeEndDate: Dayjs = dayjs('2020-01-01');
-
-        // advance by 4 weeks
-        toBeEndDate.add(4, 'week');
+        let toBeEndDate: Dayjs = dayjs('2020-01-01').add(1, 'month');
 
         // days of the week from 0 (Sunday) to 6 (Saturday)
         const TUESDAY: number = 2;
@@ -469,16 +478,19 @@ describe('generateWeeklyIncome', () => {
         const daysUntilNextTuesday: number =
             (7 + TUESDAY - toBeEndDate.day()) % 7;
 
-        toBeEndDate = toBeEndDate.add(daysUntilNextTuesday, 'day');
+        const toBeEndDateAdjusted = toBeEndDate.add(
+            daysUntilNextTuesday,
+            'day',
+        );
 
         // Checking the results
-        expect(transactions.length).toBe(4);
+        expect(transactions.length).toBe(5);
         expect(skippedTransactions.length).toBe(0);
         expect(transactions[0].title).toBe(income.income_title);
         expect(transactions[0].description).toBe(income.income_description);
         expect(transactions[0].amount).toBe(income.income_amount);
         expect(expectedEndDate.toISOString().slice(0, 10)).toBe(
-            toBeEndDate.toISOString().slice(0, 10),
+            toBeEndDateAdjusted.toISOString().slice(0, 10),
         );
     });
 });
