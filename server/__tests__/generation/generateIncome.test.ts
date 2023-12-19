@@ -17,8 +17,8 @@ afterAll(() => {
     MockDate.reset();
 });
 
-let transactions: GeneratedTransaction[];
-let skippedTransactions: GeneratedTransaction[];
+const transactions: GeneratedTransaction[] = [];
+const skippedTransactions: GeneratedTransaction[] = [];
 
 describe('Test generateDailyIncome', () => {
     it('Should generate daily income correctly', () => {
