@@ -24,23 +24,14 @@ const generateIncome = (
 ) => {
     let incomeDate = dayjs(income.income_begin_date);
 
-    if (
-        income.frequency_month_of_year !== null &&
-        income.frequency_month_of_year !== undefined
-    ) {
+    if (income.frequency_month_of_year) {
         incomeDate.month(income.frequency_month_of_year);
     }
 
-    if (
-        income.frequency_day_of_week !== null &&
-        income.frequency_day_of_week !== undefined
-    ) {
+    if (income.frequency_day_of_week) {
         let newDay: number = incomeDate.date();
 
-        if (
-            income.frequency_day_of_week !== null &&
-            income.frequency_day_of_week !== undefined
-        ) {
+        if (income.frequency_day_of_week) {
             let daysUntilNextFrequency =
                 (7 + income.frequency_day_of_week - incomeDate.day()) % 7;
             daysUntilNextFrequency =
@@ -48,10 +39,7 @@ const generateIncome = (
             newDay = incomeDate.date() + daysUntilNextFrequency;
         }
 
-        if (
-            income.frequency_week_of_month !== null &&
-            income.frequency_week_of_month !== undefined
-        ) {
+        if (income.frequency_week_of_month) {
             // first day of the month
             incomeDate.date(1);
             const daysToAdd =
@@ -112,10 +100,7 @@ export const generateDailyIncome = (
 ): void => {
     const generateDateFn = (currentDate: Dayjs, income: Income): Dayjs => {
         const newDate = currentDate.add(
-            income.frequency_type_variable !== null &&
-                income.frequency_type_variable !== undefined
-                ? income.frequency_type_variable
-                : 1,
+            income.frequency_type_variable ? income.frequency_type_variable : 1,
             'day',
         );
 
@@ -152,23 +137,16 @@ export const generateMonthlyIncome = (
     const generateDateFn = (currentDate: Dayjs, income: Income): Dayjs => {
         const incomeDate: Dayjs = dayjs(income.income_begin_date).add(
             monthsIncremented +
-                (income.frequency_type_variable !== null &&
-                income.frequency_type_variable !== undefined
+                (income.frequency_type_variable
                     ? income.frequency_type_variable
                     : 1),
             'month',
         );
 
-        if (
-            income.frequency_day_of_week !== null &&
-            income.frequency_day_of_week !== undefined
-        ) {
+        if (income.frequency_day_of_week) {
             let newDay: number = incomeDate.date();
 
-            if (
-                income.frequency_day_of_week !== null &&
-                income.frequency_day_of_week !== undefined
-            ) {
+            if (income.frequency_day_of_week) {
                 let daysUntilNextFrequency =
                     (7 + income.frequency_day_of_week - incomeDate.day()) % 7;
                 daysUntilNextFrequency =
@@ -176,10 +154,7 @@ export const generateMonthlyIncome = (
                 newDay = incomeDate.date() + daysUntilNextFrequency;
             }
 
-            if (
-                income.frequency_week_of_month !== null &&
-                income.frequency_week_of_month !== undefined
-            ) {
+            if (income.frequency_week_of_month) {
                 // first day of the month
                 incomeDate.date(1);
                 const daysToAdd: number =
@@ -193,11 +168,9 @@ export const generateMonthlyIncome = (
             incomeDate.date(newDay);
         }
 
-        monthsIncremented +=
-            income.frequency_type_variable !== null &&
-            income.frequency_type_variable !== undefined
-                ? income.frequency_type_variable
-                : 1;
+        monthsIncremented += income.frequency_type_variable
+            ? income.frequency_type_variable
+            : 1;
 
         return incomeDate;
     };
@@ -230,10 +203,7 @@ export const generateWeeklyIncome = (
 ): void => {
     const incomeDate: Dayjs = dayjs(income.income_begin_date);
 
-    if (
-        income.frequency_day_of_week !== null &&
-        income.frequency_day_of_week !== undefined
-    ) {
+    if (income.frequency_day_of_week) {
         const startDay: number = dayjs(income.income_begin_date).day();
         const frequency_day_of_week: number = income.frequency_day_of_week;
 
@@ -242,10 +212,7 @@ export const generateWeeklyIncome = (
 
     const generateDateFn = (currentDate: Dayjs, income: Income): Dayjs => {
         const newDate: Dayjs = currentDate.add(
-            income.frequency_type_variable !== null &&
-                income.frequency_type_variable !== undefined
-                ? income.frequency_type_variable
-                : 1,
+            income.frequency_type_variable ? income.frequency_type_variable : 1,
             'week',
         );
 
@@ -282,32 +249,22 @@ export const generateYearlyIncome = (
     const generateDateFn = (currentDate: Dayjs, income: Income): Dayjs => {
         const newDate: Dayjs = dayjs(income.income_begin_date).add(
             yearsIncremented +
-                (income.frequency_type_variable !== null &&
-                income.frequency_type_variable !== undefined
+                (income.frequency_type_variable
                     ? income.frequency_type_variable
                     : 1),
             'year',
         );
 
-        if (
-            income.frequency_month_of_year !== null &&
-            income.frequency_month_of_year !== undefined
-        ) {
+        if (income.frequency_month_of_year) {
             newDate.month(income.frequency_month_of_year);
         }
 
-        if (
-            income.frequency_day_of_week !== null &&
-            income.frequency_day_of_week !== undefined
-        ) {
+        if (income.frequency_day_of_week) {
             const daysToAdd: number =
                 (7 - newDate.day() + income.frequency_day_of_week) % 7;
             newDate.add(daysToAdd, 'day'); // this is the first occurrence of the day_of_week
 
-            if (
-                income.frequency_week_of_month !== null &&
-                income.frequency_week_of_month !== undefined
-            ) {
+            if (income.frequency_week_of_month) {
                 // add the number of weeks, but check if it overflows into the next month
                 const proposedDate: Dayjs = dayjs(newDate).add(
                     income.frequency_week_of_month,
@@ -321,11 +278,9 @@ export const generateYearlyIncome = (
             }
         }
 
-        yearsIncremented +=
-            income.frequency_type_variable !== null &&
-            income.frequency_type_variable !== undefined
-                ? income.frequency_type_variable
-                : 1;
+        yearsIncremented += income.frequency_type_variable
+            ? income.frequency_type_variable
+            : 1;
 
         return newDate;
     };
