@@ -38,38 +38,103 @@ beforeAll(() => {
         transaction: [
             {
                 account_id: 1,
-                transactions: transactions.filter(
-                    (transaction) => transaction.account_id === 1,
-                ),
+                transactions: [
+                    {
+                        id: '1',
+                        title: 'Sample Transaction',
+                        description: 'Sample Transaction',
+                        date: '2023-07-01',
+                        amount: 100,
+                        tax_rate: 0,
+                        total_amount: 100,
+                    },
+                ],
             },
         ],
         income: [
             {
                 account_id: 1,
-                income: income.filter((income) => income.account_id === 1),
+                income: [
+                    {
+                        income_id: 1,
+                        income_title: 'Sample Income',
+                        income_description: 'Sample Income',
+                        income_amount: 100,
+                        frequency_day_of_week: 4,
+                        frequency_week_of_month: 1,
+                        frequency_month_of_year: 7,
+                        tax_rate: 0,
+                        income_begin_date: '2023-07-01',
+                    },
+                ],
             },
         ],
         expenses: [
             {
                 account_id: 1,
-                expenses: expenses.filter(
-                    (expense) => expense.account_id === 1,
-                ),
+                expenses: [
+                    {
+                        expense_id: 1,
+                        expense_title: 'Sample Expense',
+                        expense_description: 'Sample Expense',
+                        expense_amount: 100,
+                        frequency_day_of_week: 4,
+                        frequency_week_of_month: 1,
+                        frequency_month_of_year: 7,
+                        tax_rate: 0,
+                        expense_begin_date: '2023-07-01',
+                    },
+                ],
             },
         ],
-        payrolls: [{ employee_id: 1, payroll: payrolls }],
+        payrolls: [
+            {
+                employee_id: 1,
+                payroll: [
+                    {
+                        payroll_id: 1,
+                        employee_id: 1,
+                        gross_pay: 3000,
+                        net_pay: 2000,
+                        end_date: '2023-08-01',
+                    },
+                ],
+            },
+        ],
         loans: [
             {
                 account_id: 1,
-                loan: loans.filter((loan) => loan.account_id === 1),
+                loan: [
+                    {
+                        loan_id: 1,
+                        loan_title: 'Sample Loan',
+                        loan_description: 'Sample Loan',
+                        loan_amount: 100,
+                        frequency_day_of_week: 4,
+                        frequency_week_of_month: 1,
+                        frequency_month_of_year: 7,
+                        tax_rate: 0,
+                        loan_begin_date: '2023-07-01',
+                    },
+                ],
             },
         ],
         transfers: [
             {
                 account_id: 1,
-                transfer: transfers.filter(
-                    (transfer) => transfer.source_account_id === 1,
-                ),
+                transfer: [
+                    {
+                        transfer_id: 1,
+                        source_account_id: 1,
+                        destination_account_id: 2,
+                        transfer_amount: 100,
+                        frequency_day_of_week: 4,
+                        frequency_week_of_month: 1,
+                        frequency_month_of_year: 7,
+                        tax_rate: 0,
+                        transfer_begin_date: '2023-07-01',
+                    },
+                ],
             },
         ],
         commuteExpenses: [
@@ -101,9 +166,19 @@ beforeAll(() => {
         wishlists: [
             {
                 account_id: 1,
-                wishlist: wishlists.filter(
-                    (wishlist) => wishlist.account_id === 1,
-                ),
+                wishlist: [
+                    {
+                        wishlist_id: 1,
+                        wishlist_title: 'Sample Wishlist',
+                        wishlist_description: 'Sample Wishlist',
+                        wishlist_amount: 100,
+                        frequency_day_of_week: 4,
+                        frequency_week_of_month: 1,
+                        frequency_month_of_year: 7,
+                        tax_rate: 0,
+                        wishlist_begin_date: '2023-07-01',
+                    },
+                ],
             },
         ],
     };
