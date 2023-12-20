@@ -1,13 +1,5 @@
 import { jest } from '@jest/globals';
-import {
-    transactions,
-    expenses,
-    payrolls,
-    loans,
-    transfers,
-    wishlists,
-    income,
-} from '../../models/mockData';
+import { describe, it, expect, beforeAll, afterAll } from '@jest/globals';
 import MockDate from 'mockdate';
 import { type GeneratedTransaction } from '../../types/types';
 
