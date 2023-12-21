@@ -1,6 +1,15 @@
 import { type GeneratedTransaction, type Payroll } from '../../types/types';
 import generatePayrolls from '../../generation/generatePayrolls';
+import {
+    describe,
+    it,
+    expect,
+    beforeEach,
+    beforeAll,
+    afterAll,
+} from '@jest/globals';
 import MockDate from 'mockdate';
+import dayjs, { Dayjs } from 'dayjs';
 
 beforeAll(() => {
     MockDate.set('2020-01-01');
@@ -21,11 +30,11 @@ beforeEach(() => {
 describe('generatePayrolls', () => {
     it('should generate payroll transaction', () => {
         const payroll: Payroll = {
-            end_date: '2023-08-01',
+            end_date: '2023-08-01T15:30:00.000Z',
             net_pay: 2000,
             gross_pay: 3000,
         };
-        const fromDate: Date = new Date('2023-07-01');
+        const fromDate: Dayjs = dayjs('2023-07-01');
 
         generatePayrolls(transactions, skippedTransactions, payroll, fromDate);
 
@@ -36,7 +45,7 @@ describe('generatePayrolls', () => {
         // check if the new transaction has correct properties
         expect(payrollTransaction.title).toBe('Payroll');
         expect(payrollTransaction.description).toBe('payroll');
-        expect(payrollTransaction.date).toEqual(new Date(payroll.end_date));
+        expect(payrollTransaction.date).toEqual(dayjs(payroll.end_date));
         expect(payrollTransaction.amount).toBe(payroll.gross_pay);
         expect(payrollTransaction.tax_rate).toBe(
             (payroll.gross_pay - payroll.net_pay) / payroll.gross_pay,
@@ -50,7 +59,7 @@ describe('generatePayrolls', () => {
             net_pay: 2000,
             gross_pay: 3000,
         };
-        const fromDate: Date = new Date('2023-07-01');
+        const fromDate: Dayjs = dayjs('2023-07-01');
 
         generatePayrolls(transactions, skippedTransactions, payroll, fromDate);
 
@@ -60,11 +69,11 @@ describe('generatePayrolls', () => {
 
     it('should add payroll transaction to skippedTransactions for future date before fromDate', () => {
         const payroll: Payroll = {
-            end_date: '2023-06-01',
+            end_date: '2023-06-01T15:30:00.000Z',
             net_pay: 2000,
             gross_pay: 3000,
         };
-        const fromDate: Date = new Date('2023-07-01');
+        const fromDate: Dayjs = dayjs('2023-07-01');
 
         generatePayrolls(transactions, skippedTransactions, payroll, fromDate);
 
@@ -78,7 +87,7 @@ describe('generatePayrolls', () => {
         // check if the new transaction has correct properties
         expect(payrollTransaction.title).toBe('Payroll');
         expect(payrollTransaction.description).toBe('payroll');
-        expect(payrollTransaction.date).toEqual(new Date(payroll.end_date));
+        expect(payrollTransaction.date).toEqual(dayjs(payroll.end_date));
         expect(payrollTransaction.amount).toBe(payroll.gross_pay);
         expect(payrollTransaction.tax_rate).toBe(
             (payroll.gross_pay - payroll.net_pay) / payroll.gross_pay,
@@ -92,7 +101,7 @@ describe('generatePayrolls', () => {
             net_pay: 2000,
             gross_pay: 3000,
         };
-        const fromDate: Date = new Date('2020-10-01');
+        const fromDate: Dayjs = dayjs('2020-10-01');
 
         generatePayrolls(transactions, skippedTransactions, payroll, fromDate);
 

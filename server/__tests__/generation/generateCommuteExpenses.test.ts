@@ -1,5 +1,7 @@
 import { generateCommuteExpenses } from '../../generation/generateCommuteExpenses';
 import MockDate from 'mockdate';
+import { describe, it, expect, beforeAll, afterAll } from '@jest/globals';
+import dayjs, { Dayjs } from 'dayjs';
 
 beforeAll(() => {
     MockDate.set('2020-01-01');
@@ -26,8 +28,8 @@ describe('generateCommuteExpenses', () => {
             date_modified: '2021-01-01',
         };
 
-        const fromDate = new Date('2020-01-01');
-        const toDate = new Date('2021-01-15');
+        const fromDate: Dayjs = dayjs('2020-01-01');
+        const toDate: Dayjs = dayjs('2021-01-15');
 
         const result = generateCommuteExpenses(
             commuteExpenseSample,
@@ -41,7 +43,7 @@ describe('generateCommuteExpenses', () => {
         expect(result[0].amount).toEqual(-100);
         expect(result[0].title).toEqual('Sample Pass');
         expect(result[0].description).toEqual('Sample Pass pass');
-        expect(result[0].date).toEqual(new Date('2020-01-02 08:00'));
+        expect(result[0].date).toEqual(dayjs('2020-01-02 08:00'));
         expect(result[0].total_amount).toEqual(-100);
         expect(result[0].tax_rate).toEqual(0);
     });

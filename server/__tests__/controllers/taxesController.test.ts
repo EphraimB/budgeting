@@ -1,7 +1,14 @@
-import { jest } from '@jest/globals';
-import { type Request, type Response } from 'express';
-import { taxes } from '../../models/mockData.js';
-import { type QueryResultRow } from 'pg';
+import { type Request } from 'express';
+import {
+    jest,
+    beforeEach,
+    afterEach,
+    describe,
+    it,
+    expect,
+} from '@jest/globals';
+import { mockModule } from '../__mocks__/mockModule';
+import { Taxes } from '../../types/types.js';
 
 // Mock request and response
 let mockRequest: any;
@@ -27,33 +34,34 @@ afterEach(() => {
     jest.resetModules();
 });
 
-/**
- *
- * @param executeQueryValue - The value to be returned by the executeQuery mock function
- * @param [errorMessage] - The error message to be passed to the handleError mock function
- * @returns - A mock module with the executeQuery and handleError functions
- */
-const mockModule = (
-    executeQueryValue: QueryResultRow[] | string | null,
-    errorMessage?: string,
-) => {
-    const executeQuery =
-        errorMessage !== null && errorMessage !== undefined
-            ? jest.fn(async () => await Promise.reject(new Error(errorMessage)))
-            : jest.fn(async () => await Promise.resolve(executeQueryValue));
+const taxes = [
+    {
+        tax_id: 1,
+        tax_rate: 0,
+        tax_title: 'Test Tax',
+        tax_description: 'Test Tax',
+        tax_type: 0,
+        date_created: '2020-01-01',
+        date_modified: '2020-01-01',
+    },
+];
 
-    jest.mock('../../utils/helperFunctions.js', () => ({
-        executeQuery,
-        handleError: jest.fn((res: Response, message: string) => {
-            res.status(400).json({ message });
-        }),
-    }));
-};
+const taxesResponse: Taxes[] = [
+    {
+        id: 1,
+        tax_rate: 0,
+        tax_title: 'Test Tax',
+        tax_description: 'Test Tax',
+        tax_type: 0,
+        date_created: '2020-01-01',
+        date_modified: '2020-01-01',
+    },
+];
 
 describe('GET /api/taxes', () => {
     it('should respond with an array of taxes', async () => {
         // Arrange
-        mockModule(taxes);
+        mockModule([taxes]);
 
         const { getTaxes } = await import(
             '../../controllers/taxesController.js'
@@ -66,14 +74,13 @@ describe('GET /api/taxes', () => {
 
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(200);
-        expect(mockResponse.json).toHaveBeenCalledWith(taxes);
+        expect(mockResponse.json).toHaveBeenCalledWith(taxesResponse);
     });
 
     it('should handle errors correctly', async () => {
         // Arrange
         const errorMessage = 'Error getting taxes';
-        const error = new Error(errorMessage);
-        mockModule(null, errorMessage);
+        mockModule([], [errorMessage]);
 
         const { getTaxes } = await import(
             '../../controllers/taxesController.js'
@@ -93,7 +100,7 @@ describe('GET /api/taxes', () => {
 
     it('should respond with an array of taxes with id', async () => {
         // Arrange
-        mockModule(taxes.filter((tax) => tax.tax_id === 1));
+        mockModule([taxes.filter((tax) => tax.tax_id === 1)]);
 
         const { getTaxes } = await import(
             '../../controllers/taxesController.js'
@@ -107,15 +114,14 @@ describe('GET /api/taxes', () => {
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(200);
         expect(mockResponse.json).toHaveBeenCalledWith(
-            taxes.filter((tax) => tax.tax_id === 1),
+            taxesResponse.filter((tax) => tax.id === 1),
         );
     });
 
     it('should handle errors correctly with id', async () => {
         // Arrange
         const errorMessage = 'Error getting tax';
-        const error = new Error(errorMessage);
-        mockModule(null, errorMessage);
+        mockModule([], [errorMessage]);
 
         const { getTaxes } = await import(
             '../../controllers/taxesController.js'
@@ -135,7 +141,7 @@ describe('GET /api/taxes', () => {
 
     it('should respond with a 404 error message when the tax does not exist', async () => {
         // Arrange
-        mockModule([]);
+        mockModule([[]]);
 
         const { getTaxes } = await import(
             '../../controllers/taxesController.js'
@@ -156,7 +162,7 @@ describe('POST /api/taxes', () => {
     it('should respond with the new tax', async () => {
         const newTax = taxes.filter((tax) => tax.tax_id === 1);
 
-        mockModule(newTax);
+        mockModule([newTax]);
 
         const { createTax } = await import(
             '../../controllers/taxesController.js'
@@ -168,14 +174,15 @@ describe('POST /api/taxes', () => {
 
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(201);
-        expect(mockResponse.json).toHaveBeenCalledWith(newTax);
+        expect(mockResponse.json).toHaveBeenCalledWith(
+            taxesResponse.filter((tax) => tax.id === 1),
+        );
     });
 
     it('should handle errors correctly', async () => {
         // Arrange
         const errorMessage = 'Error creating tax';
-        const error = new Error(errorMessage);
-        mockModule(null, errorMessage);
+        mockModule([], [errorMessage]);
 
         const { createTax } = await import(
             '../../controllers/taxesController.js'
@@ -198,7 +205,7 @@ describe('PUT /api/taxes/:id', () => {
     it('should respond with the updated tax', async () => {
         const updatedTax = taxes.filter((tax) => tax.tax_id === 1);
 
-        mockModule(updatedTax);
+        mockModule([updatedTax]);
 
         const { updateTax } = await import(
             '../../controllers/taxesController.js'
@@ -211,14 +218,15 @@ describe('PUT /api/taxes/:id', () => {
 
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(200);
-        expect(mockResponse.json).toHaveBeenCalledWith(updatedTax);
+        expect(mockResponse.json).toHaveBeenCalledWith(
+            taxesResponse.filter((tax) => tax.id === 1),
+        );
     });
 
     it('should handle errors correctly', async () => {
         // Arrange
         const errorMessage = 'Error updating tax';
-        const error = new Error(errorMessage);
-        mockModule(null, errorMessage);
+        mockModule([], [errorMessage]);
 
         const { updateTax } = await import(
             '../../controllers/taxesController.js'
@@ -239,7 +247,7 @@ describe('PUT /api/taxes/:id', () => {
 
     it('should respond with a 404 error message when the tax does not exist', async () => {
         // Arrange
-        mockModule([]);
+        mockModule([[]]);
 
         const { updateTax } = await import(
             '../../controllers/taxesController.js'
@@ -260,7 +268,7 @@ describe('PUT /api/taxes/:id', () => {
 describe('DELETE /api/taxes/:id', () => {
     it('should respond with a success message', async () => {
         // Arrange
-        mockModule('Successfully deleted tax');
+        mockModule(['Successfully deleted tax']);
 
         const { deleteTax } = await import(
             '../../controllers/taxesController.js'
@@ -280,8 +288,7 @@ describe('DELETE /api/taxes/:id', () => {
     it('should handle errors correctly', async () => {
         // Arrange
         const errorMessage = 'Error deleting tax';
-        const error = new Error(errorMessage);
-        mockModule(null, errorMessage);
+        mockModule([], [errorMessage]);
 
         const { deleteTax } = await import(
             '../../controllers/taxesController.js'
@@ -301,7 +308,7 @@ describe('DELETE /api/taxes/:id', () => {
 
     it('should respond with a 404 error message when the tax does not exist', async () => {
         // Arrange
-        mockModule([]);
+        mockModule([[]]);
 
         const { deleteTax } = await import(
             '../../controllers/taxesController.js'

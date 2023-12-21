@@ -106,7 +106,6 @@ export const parseFloatOrFallback = (
  */
 export const nextTransactionFrequencyDate = (
     transaction: any,
-    type: string,
 ): string | null => {
     let nextDate: string | null = null;
 

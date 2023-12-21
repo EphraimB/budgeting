@@ -43,7 +43,9 @@ export const getAccounts = async (
             return;
         }
 
-        response.status(200).json(accounts.map(parseAccounts));
+        response
+            .status(200)
+            .json(accounts.map((account) => parseAccounts(account)));
     } catch (error) {
         logger.error(error); // Log the error on the server side
         handleError(
@@ -99,6 +101,7 @@ export const updateAccount = async (
             name,
             id,
         ]);
+        
         const accounts = rows.map((account) => parseAccounts(account));
         response.status(200).json(accounts);
     } catch (error) {

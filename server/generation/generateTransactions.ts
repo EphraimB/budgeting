@@ -212,10 +212,9 @@ const generate = async (
                     );
                 }
 
-                if (loan.loan_id !== undefined) {
+                if (!loan.loan_id) {
                     fullyPaidBackDates[loan.loan_id] =
-                        loanResult.fullyPaidBackDate !== null &&
-                        loanResult.fullyPaidBackDate !== undefined
+                        loanResult.fullyPaidBackDate
                             ? loanResult.fullyPaidBackDate
                             : null;
                 }
@@ -307,9 +306,7 @@ const generate = async (
                     const processedRides = [...rides];
 
                     // Sort rides by date
-                    processedRides.sort((a, b) =>
-                        a.date.diff(b.date, 'millisecond'),
-                    );
+                    processedRides.sort((a, b) => a.date.diff(b.date));
 
                     let current_spent = 0;
                     let firstRideDate: Dayjs | null = null;
@@ -442,7 +439,7 @@ const generateTransactions = async (
     const transactions: GeneratedTransaction[] = [];
     const skippedTransactions: GeneratedTransaction[] = [];
 
-    if (account_id === undefined || account_id === null) {
+    if (!account_id) {
         const accountResults = await executeQuery(
             accountQueries.getAccounts,
             [],

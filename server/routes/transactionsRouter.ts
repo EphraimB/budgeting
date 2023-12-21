@@ -29,7 +29,7 @@ router.get(
         query('account_id')
             .exists()
             .withMessage('Account ID is required')
-            .isInt({ min: 0 })
+            .isInt({ min: 1 })
             .withMessage('Account ID must be an integer'),
         query('from_date')
             .exists()

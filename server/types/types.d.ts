@@ -73,7 +73,7 @@ export interface Income {
 }
 
 export interface TransactionHistory {
-    transaction_id: number;
+    id: number;
     account_id: number;
     transaction_amount: number;
     transaction_tax_rate: number;
@@ -130,24 +130,24 @@ export interface Loan {
     account_id?: number;
     cron_job_id?: number;
     tax_id?: number | null | undefined;
-    loan_amount?: number;
-    loan_plan_amount: number;
-    loan_recipient: string;
-    loan_title: string;
-    loan_description: string;
+    amount?: number;
+    plan_amount: number;
+    recipient: string;
+    title: string;
+    description: string;
     frequency_type?: number;
     frequency_type_variable?: number | null;
     frequency_day_of_month?: number | null;
     frequency_day_of_week?: number | null;
     frequency_week_of_month?: number | null;
     frequency_month_of_year?: number | null;
-    loan_interest_rate?: number;
-    loan_interest_frequency_type?: number;
-    loan_subsidized?: number;
+    interest_rate?: number;
+    interest_frequency_type?: number;
+    subsidized?: number;
     fully_paid_back?: string | null;
-    loan_fully_paid_back?: string | null;
-    loan_begin_date: string;
-    loan_end_date?: string;
+    begin_date: string;
+    end_date?: string;
+    next_date?: string | null;
     date_created?: string;
     date_modified?: string;
 }
@@ -216,7 +216,7 @@ export interface Transfer {
 }
 
 export interface CommuteSystem {
-    commute_system_id: number;
+    id: number;
     name: string;
     fare_cap: number | null;
     fare_cap_duration: number | null;
@@ -225,7 +225,7 @@ export interface CommuteSystem {
 }
 
 export interface CommuteHistory {
-    commute_history_id: number;
+    id: number;
     account_id: number;
     fare_amount: number;
     commute_system: string;

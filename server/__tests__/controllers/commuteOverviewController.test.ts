@@ -1,6 +1,13 @@
-import { jest } from '@jest/globals';
-import { type Request, type Response } from 'express';
-import { type QueryResultRow } from 'pg';
+import { type Request } from 'express';
+import {
+    jest,
+    beforeEach,
+    afterEach,
+    describe,
+    it,
+    expect,
+} from '@jest/globals';
+import { mockModule } from '../__mocks__/mockModule';
 
 jest.mock('../../config/winston', () => ({
     logger: {
@@ -25,44 +32,23 @@ afterEach(() => {
     jest.resetModules();
 });
 
-/**
- *
- * @param executeQueryValue - The value to be returned by the executeQuery mock function
- * @param [errorMessage] - The error message to be passed to the handleError mock function
- * @returns - A mock module with the executeQuery and handleError functions
- */
-const mockModule = (
-    executeQueryValue: QueryResultRow[] | string | null,
-    errorMessage?: string,
-) => {
-    const executeQuery =
-        errorMessage !== null && errorMessage !== undefined
-            ? jest.fn(async () => await Promise.reject(new Error(errorMessage)))
-            : jest.fn(async () => await Promise.resolve(executeQueryValue));
-
-    jest.mock('../../utils/helperFunctions', () => ({
-        executeQuery,
-        handleError: jest.fn((res: Response, message: string) => {
-            res.status(400).json({ message });
-        }),
-    }));
-};
-
 describe('GET /api/expenses/commute', () => {
     it('should respond with an overview of commute expenses', async () => {
         // Arrange
         mockModule([
-            {
-                account_id: 1,
-                total_cost_per_week: 100,
-                total_cost_per_month: 400,
-                commute_system_id: 1,
-                system_name: 'BART',
-                rides: 10,
-                fare_cap: 100,
-                fare_cap_duration: 2,
-                current_spent: 50,
-            },
+            [
+                {
+                    account_id: 1,
+                    total_cost_per_week: 100,
+                    total_cost_per_month: 400,
+                    commute_system_id: 1,
+                    system_name: 'BART',
+                    rides: 10,
+                    fare_cap: 100,
+                    fare_cap_duration: 2,
+                    current_spent: 50,
+                },
+            ],
         ]);
 
         const { getCommuteOverview } = await import(
@@ -97,7 +83,7 @@ describe('GET /api/expenses/commute', () => {
 
     it('should respond with a 404 if the account does not exist', async () => {
         // Arrange
-        mockModule([]);
+        mockModule([[]]);
 
         const { getCommuteOverview } = await import(
             '../../controllers/commuteOverviewController.js'
@@ -118,8 +104,7 @@ describe('GET /api/expenses/commute', () => {
     it('should handle errors correctly', async () => {
         // Arrange
         const errorMessage = 'Error getting commute overview for account 1';
-        const error = new Error(errorMessage);
-        mockModule(null, errorMessage);
+        mockModule([], [errorMessage]);
 
         const { getCommuteOverview } = await import(
             '../../controllers/commuteOverviewController.js'

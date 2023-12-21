@@ -1,11 +1,14 @@
-import { jest } from '@jest/globals';
-import { type Request, type Response } from 'express';
-import { commuteSystems, fareDetails } from '../../models/mockData';
-import { type QueryResultRow } from 'pg';
+import { type Request } from 'express';
 import {
-    parseIntOrFallback,
-    parseFloatOrFallback,
-} from '../../utils/helperFunctions';
+    jest,
+    beforeEach,
+    afterEach,
+    describe,
+    it,
+    expect,
+} from '@jest/globals';
+import { mockModule } from '../__mocks__/mockModule';
+import { CommuteSystem } from '../../types/types.js';
 
 jest.mock('../../config/winston', () => ({
     logger: {
@@ -30,52 +33,71 @@ afterEach(() => {
     jest.resetModules();
 });
 
-/**
- *
- * @param executeQueryValue - The value to be returned by the executeQuery mock function
- * @param [errorMessage] - The error message to be passed to the handleError mock function
- * @returns - A mock module with the executeQuery and handleError functions
- */
-const mockModule = (
-    executeQueryValue: QueryResultRow[] | string | null,
-    errorMessage?: string,
-    executeQueryTwoValue?: QueryResultRow[] | string | null,
-    executeQueryThreeValue?: QueryResultRow[] | string | null,
-) => {
-    const executeQuery = jest.fn();
+const commuteSystems = [
+    {
+        commute_system_id: 1,
+        name: 'OMNY',
+        fare_cap: 33,
+        fare_cap_duration: 1,
+        date_created: '2020-01-01',
+        date_modified: '2020-01-01',
+    },
+    {
+        commute_system_id: 2,
+        name: 'LIRR',
+        fare_cap: null,
+        fare_cap_duration: null,
+        date_created: '2020-01-01',
+        date_modified: '2020-01-01',
+    },
+];
 
-    if (errorMessage) {
-        executeQuery.mockReturnValueOnce(
-            Promise.reject(new Error(errorMessage)),
-        );
-    } else {
-        executeQuery.mockReturnValueOnce(Promise.resolve(executeQueryValue));
-    }
+const commuteSystemsResponse: CommuteSystem[] = [
+    {
+        id: 1,
+        name: 'OMNY',
+        fare_cap: 33,
+        fare_cap_duration: 1,
+        date_created: '2020-01-01',
+        date_modified: '2020-01-01',
+    },
+    {
+        id: 2,
+        name: 'LIRR',
+        fare_cap: null,
+        fare_cap_duration: null,
+        date_created: '2020-01-01',
+        date_modified: '2020-01-01',
+    },
+];
 
-    if (executeQueryTwoValue) {
-        executeQuery.mockReturnValueOnce(Promise.resolve(executeQueryTwoValue));
-    }
-
-    if (executeQueryThreeValue) {
-        executeQuery.mockReturnValueOnce(
-            Promise.resolve(executeQueryThreeValue),
-        );
-    }
-
-    jest.mock('../../utils/helperFunctions', () => ({
-        executeQuery,
-        handleError: jest.fn((res: Response, message: string) => {
-            res.status(400).json({ message });
-        }),
-        parseIntOrFallback,
-        parseFloatOrFallback,
-    }));
-};
+const fareDetails = [
+    {
+        fare_detail_id: 1,
+        commute_system_id: 1,
+        system_name: 'OMNY',
+        fare_type: 'Single Ride',
+        fare_amount: 2.75,
+        alternate_fare_detail_id: null,
+        date_created: '2020-01-01',
+        date_modified: '2020-01-01',
+    },
+    {
+        fare_detail_id: 2,
+        commute_system_id: 1,
+        system_name: 'LIRR',
+        fare_type: 'Weekly',
+        fare_amount: 33,
+        alternate_fare_detail_id: null,
+        date_created: '2020-01-01',
+        date_modified: '2020-01-01',
+    },
+];
 
 describe('GET /api/expenses/commute/systems', () => {
     it('should respond with an array of systems', async () => {
         // Arrange
-        mockModule(commuteSystems);
+        mockModule([commuteSystems]);
 
         const { getCommuteSystem } = await import(
             '../../controllers/commuteSystemController.js'
@@ -88,14 +110,13 @@ describe('GET /api/expenses/commute/systems', () => {
 
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(200);
-        expect(mockResponse.json).toHaveBeenCalledWith(commuteSystems);
+        expect(mockResponse.json).toHaveBeenCalledWith(commuteSystemsResponse);
     });
 
     it('should handle errors correctly', async () => {
         // Arrange
         const errorMessage = 'Error getting systems';
-        const error = new Error(errorMessage);
-        mockModule(null, errorMessage);
+        mockModule([], [errorMessage]);
 
         const { getCommuteSystem } = await import(
             '../../controllers/commuteSystemController.js'
@@ -115,9 +136,9 @@ describe('GET /api/expenses/commute/systems', () => {
 
     it('should respond with an array of systems with an id', async () => {
         // Arrange
-        mockModule(
+        mockModule([
             commuteSystems.filter((system) => system.commute_system_id === 1),
-        );
+        ]);
 
         const { getCommuteSystem } = await import(
             '../../controllers/commuteSystemController.js'
@@ -131,15 +152,14 @@ describe('GET /api/expenses/commute/systems', () => {
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(200);
         expect(mockResponse.json).toHaveBeenCalledWith(
-            commuteSystems.filter((system) => system.commute_system_id === 1),
+            commuteSystemsResponse.filter((system) => system.id === 1),
         );
     });
 
     it('should handle errors correctly with an id', async () => {
         // Arrange
         const errorMessage = 'Error getting systems';
-        const error = new Error(errorMessage);
-        mockModule(null, errorMessage);
+        mockModule([], [errorMessage]);
 
         const { getCommuteSystem } = await import(
             '../../controllers/commuteSystemController.js'
@@ -159,7 +179,7 @@ describe('GET /api/expenses/commute/systems', () => {
 
     it('should respond with a 404 error message when the system does not exist', async () => {
         // Arrange
-        mockModule([]);
+        mockModule([[]]);
 
         const { getCommuteSystem } = await import(
             '../../controllers/commuteSystemController.js'
@@ -182,7 +202,7 @@ describe('POST /api/expenses/commute/systems', () => {
             (system) => system.commute_system_id === 1,
         );
 
-        mockModule(newSystem);
+        mockModule([newSystem]);
 
         const { createCommuteSystem } = await import(
             '../../controllers/commuteSystemController.js'
@@ -194,14 +214,15 @@ describe('POST /api/expenses/commute/systems', () => {
 
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(201);
-        expect(mockResponse.json).toHaveBeenCalledWith(newSystem);
+        expect(mockResponse.json).toHaveBeenCalledWith(
+            commuteSystemsResponse.filter((system) => system.id === 1),
+        );
     });
 
     it('should handle errors correctly', async () => {
         // Arrange
         const errorMessage = 'Error creating system';
-        const error = new Error(errorMessage);
-        mockModule(null, errorMessage);
+        mockModule([], [errorMessage]);
 
         const { createCommuteSystem } = await import(
             '../../controllers/commuteSystemController.js'
@@ -228,7 +249,7 @@ describe('PUT /api/expenses/commute/systems/:id', () => {
             (system) => system.commute_system_id === 1,
         );
 
-        mockModule(updatedSystem, undefined, updatedSystem);
+        mockModule([updatedSystem, updatedSystem]);
 
         const { updateCommuteSystem } = await import(
             '../../controllers/commuteSystemController.js'
@@ -241,14 +262,15 @@ describe('PUT /api/expenses/commute/systems/:id', () => {
 
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(200);
-        expect(mockResponse.json).toHaveBeenCalledWith(updatedSystem);
+        expect(mockResponse.json).toHaveBeenCalledWith(
+            commuteSystemsResponse.filter((system) => system.id === 1),
+        );
     });
 
     it('should handle errors correctly', async () => {
         // Arrange
         const errorMessage = 'Error updating system';
-        const error = new Error(errorMessage);
-        mockModule(null, errorMessage);
+        mockModule([], [errorMessage]);
 
         const { updateCommuteSystem } = await import(
             '../../controllers/commuteSystemController.js'
@@ -271,7 +293,7 @@ describe('PUT /api/expenses/commute/systems/:id', () => {
 
     it('should respond with a 404 error message when the system does not exist', async () => {
         // Arrange
-        mockModule([]);
+        mockModule([[]]);
 
         const { updateCommuteSystem } = await import(
             '../../controllers/commuteSystemController.js'
@@ -294,12 +316,7 @@ describe('PUT /api/expenses/commute/systems/:id', () => {
 describe('DELETE /api/expenses/commute/systems/:id', () => {
     it('should respond with a success message', async () => {
         // Arrange
-        mockModule(
-            commuteSystems,
-            undefined,
-            [],
-            'Successfully deleted system',
-        );
+        mockModule([commuteSystems, [], 'Successfully deleted system']);
 
         const { deleteCommuteSystem } = await import(
             '../../controllers/commuteSystemController.js'
@@ -318,12 +335,11 @@ describe('DELETE /api/expenses/commute/systems/:id', () => {
 
     it('should return a 400 error if there is system related data', async () => {
         // Arrange
-        mockModule(
+        mockModule([
             commuteSystems,
-            undefined,
             fareDetails,
             'Successfully deleted system',
-        );
+        ]);
 
         const { deleteCommuteSystem } = await import(
             '../../controllers/commuteSystemController.js'
@@ -343,8 +359,7 @@ describe('DELETE /api/expenses/commute/systems/:id', () => {
     it('should handle errors correctly', async () => {
         // Arrange
         const errorMessage = 'Error deleting system';
-        const error = new Error(errorMessage);
-        mockModule(null, errorMessage);
+        mockModule([], [errorMessage]);
 
         const { deleteCommuteSystem } = await import(
             '../../controllers/commuteSystemController.js'
@@ -364,7 +379,7 @@ describe('DELETE /api/expenses/commute/systems/:id', () => {
 
     it('should respond with a 404 error message when the system does not exist', async () => {
         // Arrange
-        mockModule([]);
+        mockModule([[]]);
 
         const { deleteCommuteSystem } = await import(
             '../../controllers/commuteSystemController.js'

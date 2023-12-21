@@ -1,11 +1,14 @@
-import { jest } from '@jest/globals';
-import { type Request, type Response } from 'express';
-import { accounts, income } from '../../models/mockData.js';
-import { type QueryResultRow } from 'pg';
 import {
-    parseIntOrFallback,
-    parseFloatOrFallback,
-} from '../../utils/helperFunctions.js';
+    jest,
+    beforeEach,
+    afterEach,
+    describe,
+    it,
+    expect,
+} from '@jest/globals';
+import { type Request } from 'express';
+import { mockModule } from '../__mocks__/mockModule.js';
+import { Income } from '../../types/types.js';
 
 jest.mock('../../config/winston', () => ({
     logger: {
@@ -33,68 +36,50 @@ afterEach(() => {
     jest.resetModules();
 });
 
-/**
- *
- * @param executeQueryValue - The value to be returned by the executeQuery mock function
- * @param [errorMessage] - The error message to be passed to the handleError mock function
- * @returns - A mock module with the executeQuery and handleError functions
- */
-const mockModule = (
-    executeQueryValueFirst: QueryResultRow[] | string | null,
-    errorMessage?: string,
-    executeQueryValueSecond?: QueryResultRow[] | string | null,
-    executeQueryValueThird?: QueryResultRow[] | string | null,
-    executeQueryValueFourth?: QueryResultRow[] | string | null,
-) => {
-    const executeQuery = jest.fn();
+const income = [
+    {
+        income_id: 1,
+        account_id: 1,
+        tax_id: 1,
+        income_amount: 1000,
+        income_title: 'Test Income',
+        income_description: 'Test Income to test the income route',
+        frequency_type: 2,
+        frequency_type_variable: null,
+        frequency_day_of_month: null,
+        frequency_day_of_week: null,
+        frequency_week_of_month: null,
+        frequency_month_of_year: null,
+        income_begin_date: '2020-01-01',
+        date_created: '2020-01-01',
+        date_modified: '2020-01-01',
+    },
+];
 
-    if (errorMessage !== null && errorMessage !== undefined) {
-        executeQuery.mockImplementationOnce(
-            async () => await Promise.reject(new Error(errorMessage)),
-        );
-    } else {
-        executeQuery.mockImplementationOnce(
-            async () => await Promise.resolve(executeQueryValueFirst),
-        );
-        if (executeQueryValueSecond !== undefined) {
-            executeQuery.mockImplementationOnce(
-                async () => await Promise.resolve(executeQueryValueSecond),
-            );
-
-            if (executeQueryValueThird !== undefined) {
-                executeQuery.mockImplementationOnce(
-                    async () => await Promise.resolve(executeQueryValueThird),
-                );
-
-                if (executeQueryValueFourth !== undefined) {
-                    executeQuery.mockImplementationOnce(
-                        async () =>
-                            await Promise.resolve(executeQueryValueFourth),
-                    );
-                }
-            }
-        }
-    }
-
-    jest.mock('../../utils/helperFunctions.js', () => ({
-        executeQuery,
-        handleError: jest.fn((res: Response, message: string) => {
-            res.status(400).json({ message });
-        }),
-        parseIntOrFallback,
-        parseFloatOrFallback,
-        manipulateCron: jest
-            .fn()
-            .mockImplementation(
-                async () => await Promise.resolve([true, '123']),
-            ),
-    }));
-};
+const incomeResponse: Income[] = [
+    {
+        id: 1,
+        account_id: 1,
+        tax_id: 1,
+        income_amount: 1000,
+        income_title: 'Test Income',
+        income_description: 'Test Income to test the income route',
+        frequency_type: 2,
+        frequency_type_variable: null,
+        frequency_day_of_month: null,
+        frequency_day_of_week: null,
+        frequency_week_of_month: null,
+        frequency_month_of_year: null,
+        income_begin_date: '2020-01-01',
+        date_created: '2020-01-01',
+        date_modified: '2020-01-01',
+    },
+];
 
 describe('GET /api/income', () => {
     it('should respond with an array of income', async () => {
         // Arrange
-        mockModule(income);
+        mockModule([income]);
 
         const { getIncome } = await import(
             '../../controllers/incomeController.js'
@@ -107,14 +92,13 @@ describe('GET /api/income', () => {
 
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(200);
-        expect(mockResponse.json).toHaveBeenCalledWith(income);
+        expect(mockResponse.json).toHaveBeenCalledWith(incomeResponse);
     });
 
     it('should handle errors correctly', async () => {
         // Arrange
         const errorMessage = 'Error getting income';
-        const error = new Error(errorMessage);
-        mockModule(null, errorMessage);
+        mockModule([], [errorMessage]);
 
         const { getIncome } = await import(
             '../../controllers/incomeController.js'
@@ -134,7 +118,7 @@ describe('GET /api/income', () => {
 
     it('should respond with an array of income with id', async () => {
         // Arrange
-        mockModule(income.filter((inc) => inc.income_id === 1));
+        mockModule([income]);
 
         const { getIncome } = await import(
             '../../controllers/incomeController.js'
@@ -147,16 +131,13 @@ describe('GET /api/income', () => {
 
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(200);
-        expect(mockResponse.json).toHaveBeenCalledWith(
-            income.filter((inc) => inc.income_id === 1),
-        );
+        expect(mockResponse.json).toHaveBeenCalledWith(incomeResponse);
     });
 
     it('should handle errors correctly with id', async () => {
         // Arrange
         const errorMessage = 'Error getting income';
-        const error = new Error(errorMessage);
-        mockModule(null, errorMessage);
+        mockModule([], [errorMessage]);
 
         const { getIncome } = await import(
             '../../controllers/incomeController.js'
@@ -176,7 +157,7 @@ describe('GET /api/income', () => {
 
     it('should respond with an array of income with account id', async () => {
         // Arrange
-        mockModule(income.filter((inc) => inc.account_id === 1));
+        mockModule([income]);
 
         const { getIncome } = await import(
             '../../controllers/incomeController.js'
@@ -189,16 +170,13 @@ describe('GET /api/income', () => {
 
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(200);
-        expect(mockResponse.json).toHaveBeenCalledWith(
-            income.filter((inc) => inc.account_id === 1),
-        );
+        expect(mockResponse.json).toHaveBeenCalledWith(incomeResponse);
     });
 
     it('should handle errors correctly with account id', async () => {
         // Arrange
         const errorMessage = 'Error getting income';
-        const error = new Error(errorMessage);
-        mockModule(null, errorMessage);
+        mockModule([], [errorMessage]);
 
         const { getIncome } = await import(
             '../../controllers/incomeController.js'
@@ -218,9 +196,7 @@ describe('GET /api/income', () => {
 
     it('should respond with an array of income with account id and id', async () => {
         // Arrange
-        mockModule(
-            income.filter((inc) => inc.account_id === 1 && inc.income_id === 1),
-        );
+        mockModule([income]);
 
         const { getIncome } = await import(
             '../../controllers/incomeController.js'
@@ -233,16 +209,13 @@ describe('GET /api/income', () => {
 
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(200);
-        expect(mockResponse.json).toHaveBeenCalledWith(
-            income.filter((inc) => inc.account_id === 1 && inc.income_id === 1),
-        );
+        expect(mockResponse.json).toHaveBeenCalledWith(incomeResponse);
     });
 
     it('should handle errors correctly with account id and id', async () => {
         // Arrange
         const errorMessage = 'Error getting income';
-        const error = new Error(errorMessage);
-        mockModule(null, errorMessage);
+        mockModule([], [errorMessage]);
 
         const { getIncome } = await import(
             '../../controllers/incomeController.js'
@@ -262,7 +235,7 @@ describe('GET /api/income', () => {
 
     it('should respond with a 404 error message when the income does not exist', async () => {
         // Arrange
-        mockModule([]);
+        mockModule([[]]);
 
         const { getIncome } = await import(
             '../../controllers/incomeController.js'
@@ -282,29 +255,13 @@ describe('GET /api/income', () => {
 describe('POST /api/income', () => {
     it('should populate the request.income_id', async () => {
         // Arrange
-        const newIncome = income.filter((inc) => inc.income_id === 1);
-
-        mockModule(newIncome, undefined, [{ cron_job_id: 1 }], []);
+        mockModule([income, [{ cron_job_id: 1 }], []], [], [[]], []);
 
         const { createIncome } = await import(
             '../../controllers/incomeController.js'
         );
 
-        mockRequest.body = {
-            account_id: income[0].account_id,
-            tax_id: income[0].tax_id,
-            amount: income[0].income_amount,
-            title: income[0].income_title,
-            description: income[0].income_description,
-            frequency_type: income[0].frequency_type,
-            frequency_type_variable: income[0].frequency_type_variable,
-            frequency_day_of_month: income[0].frequency_day_of_month,
-            frequency_day_of_week: income[0].frequency_day_of_week,
-            frequency_week_of_month: income[0].frequency_week_of_month,
-            frequency_month_of_year: income[0].frequency_month_of_year,
-            begin_date: income[0].income_begin_date,
-            end_date: income[0].income_end_date,
-        };
+        mockRequest.body = income[0];
 
         await createIncome(mockRequest as Request, mockResponse, mockNext);
 
@@ -316,14 +273,13 @@ describe('POST /api/income', () => {
     it('should handle errors correctly', async () => {
         // Arrange
         const errorMessage = 'Error creating income';
-        const error = new Error(errorMessage);
-        mockModule(null, errorMessage);
+        mockModule([], [errorMessage]);
 
         const { createIncome } = await import(
             '../../controllers/incomeController.js'
         );
 
-        mockRequest.body = income.filter((inc) => inc.income_id === 1);
+        mockRequest.body = income[0];
 
         // Act
         await createIncome(mockRequest as Request, mockResponse, mockNext);
@@ -338,14 +294,13 @@ describe('POST /api/income', () => {
     it('should handle errors correctly in return object', async () => {
         // Arrange
         const errorMessage = 'Error creating income';
-        const error = new Error(errorMessage);
-        mockModule(null, errorMessage);
+        mockModule([], [errorMessage]);
 
         const { createIncomeReturnObject } = await import(
             '../../controllers/incomeController.js'
         );
 
-        mockRequest.body = income.filter((inc) => inc.income_id === 1);
+        mockRequest.body = income[0];
 
         // Act
         await createIncomeReturnObject(mockRequest as Request, mockResponse);
@@ -359,37 +314,33 @@ describe('POST /api/income', () => {
 
     it('should respond with an array of income', async () => {
         // Arrange
-        const newIncome = income.filter((inc) => inc.income_id === 1);
-
-        mockModule(newIncome);
+        mockModule([income, [{ cron_job_id: 1 }], []], [], [[]], []);
 
         const { createIncomeReturnObject } = await import(
             '../../controllers/incomeController.js'
         );
 
-        mockRequest.body = newIncome;
+        mockRequest.body = income[0];
 
         // Call the function with the mock request and response
         await createIncomeReturnObject(mockRequest as Request, mockResponse);
 
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(201);
-        expect(mockResponse.json).toHaveBeenCalledWith(newIncome);
+        expect(mockResponse.json).toHaveBeenCalledWith(incomeResponse);
     });
 });
 
 describe('PUT /api/income/:id', () => {
     it('should call next in the middleware', async () => {
-        const updatedIncome = income.filter((inc) => inc.income_id === 1);
-
-        mockModule(updatedIncome, undefined, '1', []);
+        mockModule([income, [{ cron_job_id: 1 }], []], [], [[]], []);
 
         const { updateIncome } = await import(
             '../../controllers/incomeController.js'
         );
 
         mockRequest.params = { id: 1 };
-        mockRequest.body = updatedIncome;
+        mockRequest.body = income[0];
 
         await updateIncome(mockRequest as Request, mockResponse, mockNext);
 
@@ -401,15 +352,14 @@ describe('PUT /api/income/:id', () => {
     it('should handle errors correctly', async () => {
         // Arrange
         const errorMessage = 'Error updating income';
-        const error = new Error(errorMessage);
-        mockModule(null, errorMessage);
+        mockModule([], [errorMessage]);
 
         const { updateIncome } = await import(
             '../../controllers/incomeController.js'
         );
 
         mockRequest.params = { id: 1 };
-        mockRequest.body = income.filter((inc) => inc.income_id === 1);
+        mockRequest.body = income[0];
 
         // Act
         await updateIncome(mockRequest as Request, mockResponse, mockNext);
@@ -424,14 +374,13 @@ describe('PUT /api/income/:id', () => {
     it('should handle errors correctly in the return object function', async () => {
         // Arrange
         const errorMessage = 'Error updating income';
-        const error = new Error(errorMessage);
-        mockModule(null, errorMessage);
+        mockModule([], [errorMessage]);
 
         const { updateIncomeReturnObject } = await import(
             '../../controllers/incomeController.js'
         );
 
-        mockRequest.body = income.filter((inc) => inc.income_id === 1);
+        mockRequest.body = income[0];
 
         // Act
         await updateIncomeReturnObject(mockRequest as Request, mockResponse);
@@ -443,18 +392,16 @@ describe('PUT /api/income/:id', () => {
         });
     });
 
-    it('should respond with a 404 error message when the account does not exist', async () => {
+    it('should respond with a 404 error message when the income does not exist', async () => {
         // Arrange
-        mockModule([]);
+        mockModule([[]]);
 
         const { updateIncome } = await import(
             '../../controllers/incomeController.js'
         );
 
         mockRequest.params = { id: 1 };
-        mockRequest.body = accounts.filter(
-            (account) => account.account_id === 1,
-        );
+        mockRequest.body = income[0];
 
         // Act
         await updateIncome(mockRequest as Request, mockResponse, mockNext);
@@ -466,22 +413,20 @@ describe('PUT /api/income/:id', () => {
 
     it('should respond with an array of income', async () => {
         // Arrange
-        const newIncome = income.filter((inc) => inc.income_id === 1);
-
-        mockModule(newIncome);
+        mockModule([income, [{ cron_job_id: 1 }], []], [], [[]], []);
 
         const { updateIncomeReturnObject } = await import(
             '../../controllers/incomeController.js'
         );
 
-        mockRequest.body = newIncome;
+        mockRequest.body = income[0];
 
         // Call the function with the mock request and response
         await updateIncomeReturnObject(mockRequest as Request, mockResponse);
 
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(200);
-        expect(mockResponse.json).toHaveBeenCalledWith(newIncome);
+        expect(mockResponse.json).toHaveBeenCalledWith(incomeResponse);
     });
 });
 
@@ -489,24 +434,10 @@ describe('DELETE /api/income/:id', () => {
     it('should call next on the middleware', async () => {
         // Arrange
         mockModule(
-            [
-                {
-                    income_id: 1,
-                    account_id: 1,
-                    cron_job_id: 1,
-                    tax_id: 1,
-                    tax_rate: 1,
-                    income_amount: 1,
-                    income_title: 'test',
-                    income_description: 'test',
-                    date_created: 'test',
-                    date_modified: 'test',
-                },
-            ],
-            undefined,
-            '1',
-            [{ unique_id: 'wo4if43' }],
+            [income, [], [{ cron_job_id: 1, unique_id: 'income-1' }]],
             [],
+            [],
+            [[]],
         );
 
         const { deleteIncome } = await import(
@@ -524,8 +455,7 @@ describe('DELETE /api/income/:id', () => {
     it('should handle errors correctly', async () => {
         // Arrange
         const errorMessage = 'Error deleting income';
-        const error = new Error(errorMessage);
-        mockModule(null, errorMessage);
+        mockModule([], [errorMessage]);
 
         const { deleteIncome } = await import(
             '../../controllers/incomeController.js'
@@ -545,7 +475,7 @@ describe('DELETE /api/income/:id', () => {
 
     it('should respond with a 404 error message when the account does not exist', async () => {
         // Arrange
-        mockModule([]);
+        mockModule([[]]);
 
         const { deleteIncome } = await import(
             '../../controllers/incomeController.js'
@@ -563,7 +493,7 @@ describe('DELETE /api/income/:id', () => {
 
     it('should respond with a success message', async () => {
         // Arrange
-        mockModule('Income deleted successfully');
+        mockModule(['Income deleted successfully']);
 
         const { deleteIncomeReturnObject } = await import(
             '../../controllers/incomeController.js'

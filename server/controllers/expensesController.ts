@@ -4,13 +4,14 @@ import {
     cronJobQueries,
     taxesQueries,
 } from '../models/queryData.js';
-import { scheduleQuery, unscheduleQuery } from '../utils/helperFunctions.js';
 import determineCronValues from '../crontab/determineCronValues.js';
 import {
     handleError,
     executeQuery,
     parseIntOrFallback,
     nextTransactionFrequencyDate,
+    scheduleQuery,
+    unscheduleQuery,
 } from '../utils/helperFunctions.js';
 import { type Expense } from '../types/types.js';
 import { logger } from '../config/winston.js';
@@ -63,18 +64,13 @@ export const getExpenses = async (
         let query: string;
         let params: any[];
 
-        if (
-            id !== null &&
-            id !== undefined &&
-            account_id !== null &&
-            account_id !== undefined
-        ) {
+        if (id && account_id) {
             query = expenseQueries.getExpenseByIdAndAccountId;
             params = [id, account_id];
-        } else if (id !== null && id !== undefined) {
+        } else if (id) {
             query = expenseQueries.getExpenseById;
             params = [id];
-        } else if (account_id !== null && account_id !== undefined) {
+        } else if (account_id) {
             query = expenseQueries.getExpensesByAccountId;
             params = [account_id];
         } else {
@@ -84,18 +80,17 @@ export const getExpenses = async (
 
         const expenses = await executeQuery(query, params);
 
-        if (id !== null && id !== undefined && expenses.length === 0) {
+        if (id && expenses.length === 0) {
             response.status(404).send('Expense not found');
             return;
         }
 
-        const modifiedExpenses = expenses.map(parseExpenses);
+        const modifiedExpenses: Expense[] = expenses.map(
+            (expense: Record<string, string>) => parseExpenses(expense),
+        );
 
-        modifiedExpenses.map((expense) => {
-            const nextExpenseDate = nextTransactionFrequencyDate(
-                expense,
-                'expenses',
-            );
+        modifiedExpenses.map((expense: Expense) => {
+            const nextExpenseDate = nextTransactionFrequencyDate(expense);
 
             expense.next_date = nextExpenseDate;
         });
@@ -161,7 +156,9 @@ export const createExpense = async (
             begin_date,
         ]);
 
-        const modifiedExpenses = expenses.map(parseExpenses);
+        const modifiedExpenses = expenses.map((expense) =>
+            parseExpenses(expense),
+        );
 
         const jobDetails = {
             frequency_type,
