@@ -372,7 +372,7 @@ describe('Test generateMonthlyTransfers', () => {
             expect(secondWeekOfMonth).toBeTruthy();
 
             // Since we start from the current month and increment each month
-            const expectedMonth: number = (fromDate.month() + i + 1) % 12;
+            const expectedMonth: number = (fromDate.month() + i) % 12;
             expect(transactionDate.month()).toBe(expectedMonth);
         });
     });
@@ -513,7 +513,7 @@ describe('generateWeeklyTransfers', () => {
             transfer_amount: 150,
             frequency_day_of_week: 2,
         };
-        const toDate: Dayjs = dayjs('2020-02-02');
+        const toDate: Dayjs = dayjs('2020-02-05');
         const fromDate: Dayjs = dayjs('2020-01-01');
 
         // Running the function
@@ -529,7 +529,7 @@ describe('generateWeeklyTransfers', () => {
         const expectedEndDate: Dayjs = dayjs(
             transactions[transactions.length - 1].date,
         );
-        const toBeEndDate: Dayjs = dayjs('2020-01-01').add(4, 'week');
+        let toBeEndDate: Dayjs = dayjs('2020-01-01').add(4, 'week');
 
         // days of the week from 0 (Sunday) to 6 (Saturday)
         const TUESDAY: number = 2;
@@ -538,10 +538,10 @@ describe('generateWeeklyTransfers', () => {
         const daysUntilNextTuesday: number =
             (7 + TUESDAY - toBeEndDate.day()) % 7;
 
-        toBeEndDate.add(daysUntilNextTuesday, 'day');
+        toBeEndDate = toBeEndDate.add(daysUntilNextTuesday, 'day');
 
         // Checking the results
-        expect(transactions.length).toBe(4);
+        expect(transactions.length).toBe(5);
         expect(skippedTransactions.length).toBe(0);
         expect(transactions[0].title).toBe(transfer.transfer_title);
         expect(transactions[0].description).toBe(transfer.transfer_description);
@@ -703,7 +703,7 @@ describe('generateYearlyTransfers', () => {
         const expectedEndDate: Dayjs = dayjs(
             transactions[transactions.length - 1].date,
         );
-        const toBeEndDate: Dayjs = dayjs('2023-01-02');
+        let toBeEndDate: Dayjs = dayjs('2023-01-02');
 
         // days of the week from 0 (Sunday) to 6 (Saturday)
         const TUESDAY: number = 2;
@@ -712,7 +712,7 @@ describe('generateYearlyTransfers', () => {
         const daysUntilNextTuesday: number =
             (7 + TUESDAY - toBeEndDate.day()) % 7;
 
-        toBeEndDate.add(daysUntilNextTuesday, 'day');
+        toBeEndDate = toBeEndDate.add(daysUntilNextTuesday, 'day');
 
         // Checking the results
         expect(transactions.length).toBe(4);
