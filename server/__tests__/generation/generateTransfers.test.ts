@@ -192,7 +192,7 @@ describe('Test generateMonthlyTransfers', () => {
         expect(transactions[0].description).toBe(transfer.transfer_description);
         expect(transactions[0].amount).toBe(-transfer.transfer_amount);
         expect(expectedEndDate.toISOString().slice(0, 10)).toBe(
-            dayjs('2020-06-01').toISOString().slice(0, 10),
+            dayjs('2020-06-02').toISOString().slice(0, 10),
         );
     });
 
@@ -233,7 +233,7 @@ describe('Test generateMonthlyTransfers', () => {
         expect(transactions[0].description).toBe(transfer.transfer_description);
         expect(transactions[0].amount).toBe(-transfer.transfer_amount);
         expect(expectedEndDate.toISOString().slice(0, 10)).toBe(
-            dayjs('2020-07-01').toISOString().slice(0, 10),
+            dayjs('2020-07-02').toISOString().slice(0, 10),
         );
     });
 
@@ -267,13 +267,13 @@ describe('Test generateMonthlyTransfers', () => {
         );
 
         // Checking the results
-        expect(transactions.length).toBe(2);
-        expect(skippedTransactions.length).toBe(6);
+        expect(transactions.length).toBe(3);
+        expect(skippedTransactions.length).toBe(5);
         expect(transactions[0].title).toBe(transfer.transfer_title);
         expect(transactions[0].description).toBe(transfer.transfer_description);
         expect(transactions[0].amount).toBe(-transfer.transfer_amount);
         expect(expectedEndDate.toISOString().slice(0, 10)).toBe(
-            dayjs('2020-08-01').toISOString().slice(0, 10),
+            dayjs('2020-08-02').toISOString().slice(0, 10),
         );
     });
 
@@ -306,7 +306,7 @@ describe('Test generateMonthlyTransfers', () => {
         const expectedEndDate: Dayjs = dayjs(
             transactions[transactions.length - 1].date,
         );
-        const toBeEndDate: Dayjs = dayjs('2020-01-01').add(5, 'month');
+        let toBeEndDate: Dayjs = dayjs('2020-01-01').add(5, 'month');
 
         // days of the week from 0 (Sunday) to 6 (Saturday)
         const TUESDAY: number = 2;
@@ -315,10 +315,10 @@ describe('Test generateMonthlyTransfers', () => {
         const daysUntilNextTuesday: number =
             (7 + TUESDAY - toBeEndDate.day()) % 7;
 
-        toBeEndDate.add(daysUntilNextTuesday, 'day');
+        toBeEndDate = toBeEndDate.add(daysUntilNextTuesday, 'day');
 
         // Checking the results
-        expect(transactions.length).toBe(5);
+        expect(transactions.length).toBe(6);
         expect(skippedTransactions.length).toBe(0);
         expect(transactions[0].title).toBe(transfer.transfer_title);
         expect(transactions[0].description).toBe(transfer.transfer_description);
