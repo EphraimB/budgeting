@@ -1,4 +1,3 @@
-import { jest } from '@jest/globals';
 import request from 'supertest';
 import express, {
     type Express,
@@ -7,7 +6,7 @@ import express, {
     type NextFunction,
     type Router,
 } from 'express';
-import { beforeAll, describe, it, expect } from '@jest/globals';
+import { jest, beforeAll, describe, it, expect } from '@jest/globals';
 
 jest.mock('../../middleware/middleware', () => ({
     getCurrentBalance: (req: Request, res: Response, next: NextFunction) => {
