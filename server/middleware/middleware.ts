@@ -50,11 +50,8 @@ export const setQueries = async (
         request.query.from_date = dayjs().format('YYYY-MM-DD');
         request.query.to_date = dayjs().add(1, 'year').format('YYYY-MM-DD');
 
-        if (
-            request.query.account_id === undefined ||
-            request.query.account_id === null
-        ) {
-            if (request.query.id !== undefined && request.query.id !== null) {
+        if (request.query.account_id) {
+            if (request.query.id) {
                 const results = await executeQuery(
                     wishlistQueries.getWishlistsById,
                     [request.query.id],
@@ -93,7 +90,7 @@ export const getTransactionsByAccount = async (
 
         let transactions: any[] = []; // Initialize transactions as an empty array
 
-        if (account_id === null || account_id === undefined) {
+        if (!account_id) {
             // If account_id is null, fetch all accounts and make request.transactions an array of transactions
             const accountResults = await executeQuery(
                 accountQueries.getAccounts,
@@ -1039,8 +1036,6 @@ export const updateWishlistCron = async (
             });
         });
 
-        console.log(transactionMap);
-
         // First, delete all necessary cron jobs
         for (const wslst of wishlistsResults) {
             const cronId = wslst.cron_job_id;
@@ -1069,7 +1064,7 @@ export const updateWishlistCron = async (
                 date: transactionMap[wslst.wishlist_id],
             };
 
-            if (jobDetails.date !== null && jobDetails.date !== undefined) {
+            if (jobDetails.date) {
                 const cronDate = determineCronValues(
                     jobDetails as { date: string },
                 );
