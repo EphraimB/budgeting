@@ -50,7 +50,7 @@ export const setQueries = async (
         request.query.from_date = dayjs().format('YYYY-MM-DD');
         request.query.to_date = dayjs().add(1, 'year').format('YYYY-MM-DD');
 
-        if (request.query.account_id) {
+        if (!request.query.account_id) {
             if (request.query.id) {
                 const results = await executeQuery(
                     wishlistQueries.getWishlistsById,
