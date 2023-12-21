@@ -1,4 +1,4 @@
-import { jest } from '@jest/globals';
+import { jest, describe, it, expect } from '@jest/globals';
 import {
     parseIntOrFallback,
     parseFloatOrFallback,
@@ -79,3 +79,31 @@ export const mockModule = (
         nextTransactionFrequencyDate: jest.fn().mockReturnValue('2020-01-01'),
     }));
 };
+
+describe('Testing mockModule', () => {
+    it('should return a module with mock implementations', () => {
+        const executeQueryResponses = [new Error('Error')];
+        const handleErrorResponses = [{ status: 500, message: 'Error' }];
+        const scheduleQueryResponses = [new Error('Error')];
+        const unscheduleQueryResponses = [new Error('Error')];
+
+        mockModule(
+            executeQueryResponses,
+            handleErrorResponses,
+            scheduleQueryResponses,
+            unscheduleQueryResponses,
+        );
+
+        const {
+            executeQuery,
+            handleError,
+            scheduleQuery,
+            unscheduleQuery,
+        } = require('../../utils/helperFunctions.js');
+
+        expect(executeQuery).toBeDefined();
+        expect(handleError).toBeDefined();
+        expect(scheduleQuery).toBeDefined();
+        expect(unscheduleQuery).toBeDefined();
+    });
+});
