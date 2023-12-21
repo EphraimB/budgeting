@@ -1,10 +1,13 @@
-import { jest } from '@jest/globals';
-import { type Request, type Response } from 'express';
-import { type QueryResultRow } from 'pg';
+import { type Request } from 'express';
 import {
-    parseIntOrFallback,
-    parseFloatOrFallback,
-} from '../../utils/helperFunctions';
+    jest,
+    beforeEach,
+    afterEach,
+    describe,
+    it,
+    expect,
+} from '@jest/globals';
+import { mockModule } from '../__mocks__/mockModule';
 
 jest.mock('../../config/winston', () => ({
     logger: {
@@ -36,135 +39,77 @@ afterEach(() => {
     jest.resetModules();
 });
 
-/**
- *
- * @param executeQueryValue - The value to be returned by the executeQuery mock function
- * @param [errorMessage] - The error message to be passed to the handleError mock function
- * @returns - A mock module with the executeQuery and handleError functions
- */
-const mockModule = (
-    executeQueryValue: QueryResultRow[] | string | null,
-    errorMessage?: string,
-    executeQueryTwoValue?: QueryResultRow[] | string | null,
-    executeQueryThreeValue?: QueryResultRow[] | string | null,
-    executeQueryFourValue?: QueryResultRow[] | string | null,
-    executeQueryFiveValue?: QueryResultRow[] | string | null,
-    executeQuerySixValue?: QueryResultRow[] | string | null,
-    executeQuerySevenValue?: QueryResultRow[] | string | null,
-    executeQueryEightValue?: QueryResultRow[] | string | null,
-    executeQueryNineValue?: QueryResultRow[] | string | null,
-    executeQueryTenValue?: QueryResultRow[] | string | null,
-) => {
-    const executeQuery = jest.fn();
+const commuteSchedule = [
+    {
+        commute_schedule_id: 1,
+        account_id: 1,
+        day_of_week: 1,
+        commute_ticket_id: 1,
+        start_time: '08:00:00',
+        duration: 60,
+        pass: 'LIRR Peak',
+        fare_amount: 10.75,
+    },
+    {
+        commute_schedule_id: 2,
+        account_id: 1,
+        day_of_week: 1,
+        commute_ticket_id: 1,
+        start_time: '17:00:00',
+        duration: 60,
+        pass: 'LIRR Peak',
+        fare_amount: 10.75,
+    },
+    {
+        commute_schedule_id: 3,
+        account_id: 1,
+        day_of_week: 2,
+        commute_ticket_id: 1,
+        start_time: '08:00:00',
+        duration: 60,
+        pass: 'LIRR Peak',
+        fare_amount: 10.75,
+    },
+];
 
-    if (errorMessage) {
-        executeQuery.mockReturnValueOnce(
-            Promise.reject(new Error(errorMessage)),
-        );
-    } else {
-        executeQuery.mockReturnValueOnce(Promise.resolve(executeQueryValue));
-    }
-
-    if (executeQueryTwoValue) {
-        executeQuery.mockReturnValueOnce(Promise.resolve(executeQueryTwoValue));
-    }
-
-    if (executeQueryThreeValue) {
-        executeQuery.mockReturnValueOnce(
-            Promise.resolve(executeQueryThreeValue),
-        );
-    }
-
-    if (executeQueryFourValue) {
-        executeQuery.mockReturnValueOnce(
-            Promise.resolve(executeQueryFourValue),
-        );
-    }
-
-    if (executeQueryFiveValue) {
-        executeQuery.mockReturnValueOnce(
-            Promise.resolve(executeQueryFiveValue),
-        );
-    }
-
-    if (executeQuerySixValue) {
-        executeQuery.mockReturnValueOnce(Promise.resolve(executeQuerySixValue));
-    }
-
-    if (executeQuerySevenValue) {
-        executeQuery.mockReturnValueOnce(
-            Promise.resolve(executeQuerySevenValue),
-        );
-    }
-
-    if (executeQueryEightValue) {
-        executeQuery.mockReturnValueOnce(
-            Promise.resolve(executeQueryEightValue),
-        );
-    }
-
-    if (executeQueryNineValue) {
-        executeQuery.mockReturnValueOnce(
-            Promise.resolve(executeQueryNineValue),
-        );
-    }
-
-    if (executeQueryTenValue) {
-        executeQuery.mockReturnValueOnce(Promise.resolve(executeQueryTenValue));
-    }
-
-    jest.mock('../../utils/helperFunctions', () => ({
-        executeQuery,
-        handleError: jest.fn((res: Response, message: string) => {
-            res.status(400).json({ message });
-        }),
-        parseIntOrFallback,
-        parseFloatOrFallback,
-        manipulateCron: jest
-            .fn()
-            .mockImplementation(
-                async () => await Promise.resolve([true, '123']),
-            ),
-    }));
-};
-
-describe('GET /api/expenses/commute/schedule', () => {
-    it('should respond with an array of schedules', async () => {
-        const commuteSchedule = [
+const commuteScheduleResponse = [
+    {
+        day_of_week: 1,
+        passes: [
             {
                 commute_schedule_id: 1,
-                account_id: 1,
-                day_of_week: 1,
-                commute_ticket_id: 1,
+                pass: 'LIRR Peak',
                 start_time: '08:00:00',
                 duration: 60,
-                pass: 'LIRR Peak',
                 fare_amount: 10.75,
             },
             {
                 commute_schedule_id: 2,
-                account_id: 1,
-                day_of_week: 1,
-                commute_ticket_id: 1,
+                pass: 'LIRR Peak',
                 start_time: '17:00:00',
                 duration: 60,
-                pass: 'LIRR Peak',
                 fare_amount: 10.75,
             },
+        ],
+    },
+    {
+        day_of_week: 2,
+        passes: [
             {
                 commute_schedule_id: 3,
-                account_id: 1,
-                day_of_week: 2,
-                commute_ticket_id: 1,
+                pass: 'LIRR Peak',
                 start_time: '08:00:00',
                 duration: 60,
-                pass: 'LIRR Peak',
                 fare_amount: 10.75,
             },
-        ];
+        ],
+    },
+];
 
+describe('GET /api/expenses/commute/schedule', () => {
+    it('should respond with an array of schedules', async () => {
         // Arrange
-        mockModule(commuteSchedule);
+        mockModule([commuteSchedule]);
 
         const { getCommuteSchedule } = await import(
             '../../controllers/commuteScheduleController.js'
@@ -176,39 +121,7 @@ describe('GET /api/expenses/commute/schedule', () => {
         await getCommuteSchedule(mockRequest as Request, mockResponse);
 
         const responseObj = {
-            schedule: [
-                {
-                    day_of_week: 1,
-                    passes: [
-                        {
-                            commute_schedule_id: 1,
-                            pass: 'LIRR Peak',
-                            start_time: '08:00:00',
-                            duration: 60,
-                            fare_amount: 10.75,
-                        },
-                        {
-                            commute_schedule_id: 2,
-                            pass: 'LIRR Peak',
-                            start_time: '17:00:00',
-                            duration: 60,
-                            fare_amount: 10.75,
-                        },
-                    ],
-                },
-                {
-                    day_of_week: 2,
-                    passes: [
-                        {
-                            commute_schedule_id: 3,
-                            pass: 'LIRR Peak',
-                            start_time: '08:00:00',
-                            duration: 60,
-                            fare_amount: 10.75,
-                        },
-                    ],
-                },
-            ],
+            schedule: commuteScheduleResponse,
         };
 
         // Assert
@@ -219,8 +132,7 @@ describe('GET /api/expenses/commute/schedule', () => {
     it('should handle errors correctly', async () => {
         // Arrange
         const errorMessage = 'Error getting schedules';
-        const error = new Error(errorMessage);
-        mockModule(null, errorMessage);
+        mockModule([], [errorMessage]);
 
         const { getCommuteSchedule } = await import(
             '../../controllers/commuteScheduleController.js'
@@ -239,31 +151,8 @@ describe('GET /api/expenses/commute/schedule', () => {
     });
 
     it('should respond with an array of schedules with an account_id', async () => {
-        const commuteSchedule = [
-            {
-                commute_schedule_id: 1,
-                account_id: 1,
-                day_of_week: 1,
-                commute_ticket_id: 1,
-                start_time: '08:00:00',
-                duration: 60,
-                pass: 'LIRR Peak',
-                fare_amount: 10.75,
-            },
-            {
-                commute_schedule_id: 3,
-                account_id: 1,
-                day_of_week: 2,
-                commute_ticket_id: 1,
-                start_time: '08:00:00',
-                duration: 60,
-                pass: 'LIRR Peak',
-                fare_amount: 10.75,
-            },
-        ];
-
         // Arrange
-        mockModule(commuteSchedule);
+        mockModule([commuteSchedule.filter((s) => s.account_id === 1)]);
 
         const { getCommuteSchedule } = await import(
             '../../controllers/commuteScheduleController.js'
@@ -275,32 +164,7 @@ describe('GET /api/expenses/commute/schedule', () => {
         await getCommuteSchedule(mockRequest as Request, mockResponse);
 
         const responseObj = {
-            schedule: [
-                {
-                    day_of_week: 1,
-                    passes: [
-                        {
-                            commute_schedule_id: 1,
-                            pass: 'LIRR Peak',
-                            start_time: '08:00:00',
-                            duration: 60,
-                            fare_amount: 10.75,
-                        },
-                    ],
-                },
-                {
-                    day_of_week: 2,
-                    passes: [
-                        {
-                            commute_schedule_id: 3,
-                            pass: 'LIRR Peak',
-                            start_time: '08:00:00',
-                            duration: 60,
-                            fare_amount: 10.75,
-                        },
-                    ],
-                },
-            ],
+            schedule: commuteScheduleResponse,
         };
 
         // Assert
@@ -311,8 +175,7 @@ describe('GET /api/expenses/commute/schedule', () => {
     it('should handle errors correctly with an account_id', async () => {
         // Arrange
         const errorMessage = 'Error getting schedules for given account_id';
-        const error = new Error(errorMessage);
-        mockModule(null, errorMessage);
+        mockModule([], [errorMessage]);
 
         const { getCommuteSchedule } = await import(
             '../../controllers/commuteScheduleController.js'
@@ -333,16 +196,7 @@ describe('GET /api/expenses/commute/schedule', () => {
     it('should respond with an array of schedules with an id', async () => {
         // Arrange
         mockModule([
-            {
-                commute_schedule_id: 1,
-                account_id: 1,
-                day_of_week: 1,
-                commute_ticket_id: 1,
-                start_time: '08:00:00',
-                duration: 60,
-                pass: 'LIRR Peak',
-                fare_amount: 10.75,
-            },
+            commuteSchedule.filter((s) => s.commute_schedule_id === 1),
         ]);
 
         const { getCommuteSchedule } = await import(
@@ -379,8 +233,7 @@ describe('GET /api/expenses/commute/schedule', () => {
     it('should handle errors correctly with an id', async () => {
         // Arrange
         const errorMessage = 'Error getting schedule for given id';
-        const error = new Error(errorMessage);
-        mockModule(null, errorMessage);
+        mockModule([], [errorMessage]);
 
         const { getCommuteSchedule } = await import(
             '../../controllers/commuteScheduleController.js'
@@ -400,7 +253,7 @@ describe('GET /api/expenses/commute/schedule', () => {
 
     it('should respond with a 404 error message when the schedule does not exist', async () => {
         // Arrange
-        mockModule([]);
+        mockModule([[]]);
 
         const { getCommuteSchedule } = await import(
             '../../controllers/commuteScheduleController.js'
@@ -419,15 +272,23 @@ describe('GET /api/expenses/commute/schedule', () => {
 
 describe('POST /api/expenses/commute/schedule', () => {
     it('should call next', async () => {
-        const newSchedule = {
-            commute_schedule_id: 1,
-            account_id: 1,
-            day_of_week: 1,
-            fare_detail_id: 1,
-            start_time: '08:00:00',
-            duration: 60,
-            timed_pass_duration: null,
-        };
+        const newSchedule = [
+            {
+                commute_schedule_id: 1,
+                account_id: 1,
+                day_of_week: 1,
+                commute_ticket_id: 1,
+                start_time: '08:00:00',
+                duration: 60,
+                commute_system_id: 1,
+                fare_detail_id: 1,
+                fare_amount: 10.75,
+                pass: 'LIRR Peak',
+                timed_pass_duration: null,
+                date_created: '2021-01-01',
+                date_modified: '2021-01-01',
+            },
+        ];
 
         const fareDetail = {
             fare_amount: 10.75,
@@ -437,21 +298,30 @@ describe('POST /api/expenses/commute/schedule', () => {
 
         // Arrange
         mockModule(
+            [
+                [],
+                [{ fare_amount: 10.75 }],
+                [fareDetail],
+                [
+                    {
+                        day_of_week: 1,
+                        start_time: '08:00:00',
+                        end_time: '09:00:00',
+                    },
+                ],
+                newSchedule,
+                [{ cron_job_id: 1, unique_id: '123' }],
+                [],
+            ],
             [],
-            undefined,
-            [{ fare_amount: 10.75 }],
-            [fareDetail],
-            [{ day_of_week: 1, start_time: '08:00:00', end_time: '09:00:00' }],
-            [newSchedule],
-            [{ cron_job_id: 1, unique_id: '123' }],
-            [],
+            [[], []],
         );
 
         const { createCommuteSchedule } = await import(
             '../../controllers/commuteScheduleController.js'
         );
 
-        mockRequest.body = newSchedule;
+        mockRequest.body = newSchedule[0];
 
         // Act
         await createCommuteSchedule(
@@ -475,14 +345,14 @@ describe('POST /api/expenses/commute/schedule', () => {
         };
 
         // Arrange
-        mockModule(
+        mockModule([
             [{ commute_schedule_id: 1 }],
             undefined,
             [newSchedule],
             [{ fare_amount: 10.75, system_name: 'LIRR', fare_type: 'Peak' }],
             [{ cron_job_id: 1, unique_id: '123' }],
             [],
-        );
+        ]);
 
         const { createCommuteSchedule } = await import(
             '../../controllers/commuteScheduleController.js'
@@ -521,7 +391,7 @@ describe('POST /api/expenses/commute/schedule', () => {
             },
         ];
 
-        mockModule(newSchedule);
+        mockModule([newSchedule]);
 
         const { createCommuteScheduleReturnObject } = await import(
             '../../controllers/commuteScheduleController.js'
@@ -538,7 +408,7 @@ describe('POST /api/expenses/commute/schedule', () => {
         const responseObj = {
             schedule: [
                 {
-                    commute_schedule_id: 1,
+                    id: 1,
                     commute_system_id: 1,
                     account_id: 1,
                     day_of_week: 1,
@@ -563,8 +433,7 @@ describe('POST /api/expenses/commute/schedule', () => {
     it('should handle errors correctly', async () => {
         // Arrange
         const errorMessage = 'Error creating schedule';
-        const error = new Error(errorMessage);
-        mockModule(null, errorMessage);
+        mockModule([], [errorMessage]);
 
         const { createCommuteScheduleReturnObject } = await import(
             '../../controllers/commuteScheduleController.js'
@@ -598,9 +467,8 @@ describe('PUT /api/expenses/commute/schedule/:id', () => {
         };
 
         // Arrange
-        mockModule(
+        mockModule([
             [newSchedule],
-            undefined,
             [],
             [{ fare_amount: 10.75, system_name: 'LIRR', fare_type: 'Peak' }],
             [{ fare_amount: 10.75, system_name: 'LIRR', fare_type: 'Peak' }],
@@ -608,7 +476,7 @@ describe('PUT /api/expenses/commute/schedule/:id', () => {
             [{ cron_job_id: 1, unique_id: '123' }],
             [],
             [],
-        );
+        ]);
 
         const { updateCommuteSchedule } = await import(
             '../../controllers/commuteScheduleController.js'
@@ -639,15 +507,14 @@ describe('PUT /api/expenses/commute/schedule/:id', () => {
         };
 
         // Arrange
-        mockModule(
+        mockModule([
             [{ commute_schedule_id: 1 }],
-            undefined,
             [newSchedule],
             [{ fare_amount: 10.75, system_name: 'LIRR', fare_type: 'Peak' }],
             [{ cron_job_id: 1, unique_id: '123' }],
             [],
             [],
-        );
+        ]);
 
         const { updateCommuteSchedule } = await import(
             '../../controllers/commuteScheduleController.js'
@@ -672,7 +539,7 @@ describe('PUT /api/expenses/commute/schedule/:id', () => {
 
     it('should respond with a 404 error message when the schedule does not exist', async () => {
         // Arrange
-        mockModule([], undefined, []);
+        mockModule([[]]);
 
         const { updateCommuteSchedule } = await import(
             '../../controllers/commuteScheduleController.js'
@@ -701,7 +568,7 @@ describe('PUT /api/expenses/commute/schedule/:id', () => {
     });
 
     it('should respond with the updated schedule', async () => {
-        const updatedSchedule = [
+        const newSchedule = [
             {
                 commute_schedule_id: 1,
                 commute_system_id: 1,
@@ -717,7 +584,7 @@ describe('PUT /api/expenses/commute/schedule/:id', () => {
             },
         ];
 
-        mockModule(updatedSchedule);
+        mockModule([newSchedule]);
 
         const { updateCommuteScheduleReturnObject } = await import(
             '../../controllers/commuteScheduleController.js'
@@ -734,7 +601,7 @@ describe('PUT /api/expenses/commute/schedule/:id', () => {
         const responseObj = {
             schedule: [
                 {
-                    commute_schedule_id: 1,
+                    id: 1,
                     commute_system_id: 1,
                     account_id: 1,
                     day_of_week: 1,
@@ -759,8 +626,7 @@ describe('PUT /api/expenses/commute/schedule/:id', () => {
     it('should handle errors correctly', async () => {
         // Arrange
         const errorMessage = 'Error updating schedule';
-        const error = new Error(errorMessage);
-        mockModule(null, errorMessage);
+        mockModule([], [errorMessage]);
 
         const { updateCommuteScheduleReturnObject } = await import(
             '../../controllers/commuteScheduleController.js'
@@ -804,7 +670,7 @@ describe('DELETE /api/expenses/commute/schedule/:id', () => {
         ];
 
         // Arrange
-        mockModule(deletedSchedule, undefined, [], [{ cron_job_id: 1 }], []);
+        mockModule([deletedSchedule, [], [{ cron_job_id: 1 }], []]);
 
         const { deleteCommuteSchedule } = await import(
             '../../controllers/commuteScheduleController.js'
@@ -825,8 +691,7 @@ describe('DELETE /api/expenses/commute/schedule/:id', () => {
     it('should handle errors correctly', async () => {
         // Arrange
         const errorMessage = 'Error deleting schedule';
-        const error = new Error(errorMessage);
-        mockModule(null, errorMessage);
+        mockModule([], [errorMessage]);
 
         const { deleteCommuteSchedule } = await import(
             '../../controllers/commuteScheduleController.js'
@@ -850,7 +715,7 @@ describe('DELETE /api/expenses/commute/schedule/:id', () => {
 
     it('should respond with a 404 error message when the schedule does not exist', async () => {
         // Arrange
-        mockModule([]);
+        mockModule([[]]);
 
         const { deleteCommuteSchedule } = await import(
             '../../controllers/commuteScheduleController.js'

@@ -55,7 +55,7 @@ export const getFareDetails = async (
 
         const responseObj: object = {
             fares: fareDetails.map((fareDetail) => ({
-                fare_detail_id: parseInt(fareDetail.fare_detail_id),
+                id: parseInt(fareDetail.fare_detail_id),
                 commute_system: {
                     commute_system_id: fareDetail.commute_system_id,
                     name: fareDetail.system_name,
@@ -129,6 +129,7 @@ export const createFareDetail = async (
                     location: 'query',
                 },
             });
+
             return;
         }
 
@@ -164,7 +165,7 @@ export const createFareDetail = async (
         const allTimeslots: Timeslots[] = await Promise.all(timeslotPromises);
 
         const responseObj: object = {
-            fare_detail_id: fareDetails[0].fare_detail_id,
+            id: fareDetails[0].fare_detail_id,
             commute_system: {
                 commute_system_id: fareDetails[0].commute_system_id,
                 name: commuteSystemResults[0].name,
@@ -324,7 +325,7 @@ export const updateFareDetail = async (
         );
 
         const responseObj: object = {
-            fare_detail_id: fareDetails[0].fare_detail_id,
+            id: fareDetails[0].fare_detail_id,
             commute_system: {
                 commute_system_id: fareDetails[0].commute_system_id,
                 name: systemName,

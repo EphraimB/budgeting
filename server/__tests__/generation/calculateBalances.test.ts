@@ -1,16 +1,7 @@
 import { type GeneratedTransaction } from '../../types/types.js';
 import calculateBalances from '../../generation/calculateBalances.js';
-
-// Create dates properly
-const now = new Date();
-const lastWeek = new Date();
-lastWeek.setDate(now.getDate() - 7);
-const yesterday = new Date();
-yesterday.setDate(now.getDate() - 1);
-const tomorrow = new Date();
-tomorrow.setDate(now.getDate() + 1);
-const dayAfterTomorrow = new Date();
-dayAfterTomorrow.setDate(now.getDate() + 2);
+import dayjs from 'dayjs';
+import { describe, it, expect } from '@jest/globals';
 
 describe('calculateBalances', () => {
     it('should calculate the balance for each transaction with no past transactions', () => {
@@ -19,7 +10,7 @@ describe('calculateBalances', () => {
                 id: '3fv423fv',
                 title: 'Test Transaction 2',
                 description: 'Testing the transaction 2',
-                date: tomorrow,
+                date: dayjs().add(1, 'day'),
                 amount: 500,
                 tax_rate: 0.2,
                 total_amount: 400,
@@ -28,7 +19,7 @@ describe('calculateBalances', () => {
                 id: 'f34t4fe',
                 title: 'Test Transaction 3',
                 description: 'Testing the transaction 3',
-                date: dayAfterTomorrow,
+                date: dayjs().add(2, 'day'),
                 amount: -500,
                 tax_rate: 0.2,
                 total_amount: -600,
@@ -37,7 +28,7 @@ describe('calculateBalances', () => {
                 id: 'f34t4df',
                 title: 'Test Transaction 4',
                 description: 'Testing the transaction 4',
-                date: dayAfterTomorrow,
+                date: dayjs().add(2, 'day'),
                 amount: 1000,
                 tax_rate: 0.2,
                 total_amount: 1200,
@@ -58,8 +49,8 @@ describe('calculateBalances', () => {
                 transaction_id: 1,
                 title: 'Test Transaction',
                 description: 'Testing the transaction',
-                date: lastWeek,
-                date_modified: lastWeek,
+                date: dayjs().subtract(1, 'week'),
+                date_modified: dayjs().subtract(1, 'week'),
                 amount: 1000,
                 tax_rate: 0.2,
                 total_amount: 1200,
@@ -69,8 +60,8 @@ describe('calculateBalances', () => {
                 transaction_id: 2,
                 title: 'Test Transaction 2',
                 description: 'Testing the transaction 2',
-                date: yesterday,
-                date_modified: yesterday,
+                date: dayjs().subtract(1, 'day'),
+                date_modified: dayjs().subtract(1, 'day'),
                 amount: -500,
                 tax_rate: 0.2,
                 total_amount: -600,
@@ -79,7 +70,7 @@ describe('calculateBalances', () => {
                 id: 'f34t4df',
                 title: 'Test Transaction 2',
                 description: 'Testing the transaction 2',
-                date: tomorrow,
+                date: dayjs().add(1, 'day'),
                 amount: 500,
                 tax_rate: 0.2,
                 total_amount: 400,
@@ -88,7 +79,7 @@ describe('calculateBalances', () => {
                 id: 'f34t4dd',
                 title: 'Test Transaction 3',
                 description: 'Testing the transaction 3',
-                date: dayAfterTomorrow,
+                date: dayjs().add(2, 'day'),
                 amount: -500,
                 tax_rate: 0.2,
                 total_amount: -600,
@@ -97,7 +88,7 @@ describe('calculateBalances', () => {
                 id: 'f34t4dz',
                 title: 'Test Transaction 4',
                 description: 'Testing the transaction 4',
-                date: dayAfterTomorrow,
+                date: dayjs().add(2, 'day'),
                 amount: 1000,
                 tax_rate: 0.2,
                 total_amount: 1200,

@@ -1,12 +1,18 @@
-import { jest } from '@jest/globals';
-import { type Request, type Response } from 'express';
-import { payrolls } from '../../models/mockData.js';
-import { type QueryResultRow } from 'pg';
+import { type Request } from 'express';
+import {
+    jest,
+    beforeEach,
+    afterEach,
+    describe,
+    it,
+    expect,
+} from '@jest/globals';
+import { mockModule } from '../__mocks__/mockModule.js';
+import { Payroll } from '../../types/types.js';
 
 // Mock request and response
 let mockRequest: any;
 let mockResponse: any;
-let consoleSpy: any;
 
 jest.mock('../../config/winston', () => ({
     logger: {
@@ -28,33 +34,29 @@ afterEach(() => {
     jest.resetModules();
 });
 
-/**
- *
- * @param executeQueryValue - The value to be returned by the executeQuery mock function
- * @param [errorMessage] - The error message to be passed to the handleError mock function
- * @returns - A mock module with the executeQuery and handleError functions
- */
-const mockModule = (
-    executeQueryValue: QueryResultRow[] | string | null,
-    errorMessage?: string,
-) => {
-    const executeQuery =
-        errorMessage !== null && errorMessage !== undefined
-            ? jest.fn(async () => await Promise.reject(new Error(errorMessage)))
-            : jest.fn(async () => await Promise.resolve(executeQueryValue));
-
-    jest.mock('../../utils/helperFunctions.js', () => ({
-        executeQuery,
-        handleError: jest.fn((res: Response, message: string) => {
-            res.status(400).json({ message });
-        }),
-    }));
-};
+const payrolls: Payroll[] = [
+    {
+        start_date: '2020-01-01',
+        end_date: '2020-01-15',
+        work_days: 5,
+        gross_pay: 500,
+        net_pay: 400,
+        hours_worked: 40,
+    },
+    {
+        start_date: '2020-01-15',
+        end_date: '2020-01-31',
+        work_days: 5,
+        gross_pay: 500,
+        net_pay: 400,
+        hours_worked: 40,
+    },
+];
 
 describe('GET /api/payrolls', () => {
     it('should respond with an array of payrolls', async () => {
         // Arrange
-        mockModule(payrolls);
+        mockModule([payrolls]);
 
         mockRequest.query = { employee_id: 1 };
 
@@ -78,8 +80,7 @@ describe('GET /api/payrolls', () => {
     it('should respond with an error message', async () => {
         // Arrange
         const errorMessage = 'Error getting payrolls';
-        const error = new Error(errorMessage);
-        mockModule(null, errorMessage);
+        mockModule([], [errorMessage]);
 
         mockRequest.query = { employee_id: 1 };
 
@@ -99,7 +100,7 @@ describe('GET /api/payrolls', () => {
 
     it('should respond with a 404 error message when the payroll tax does not exist', async () => {
         // Arrange
-        mockModule([]);
+        mockModule([[]]);
 
         const { getPayrolls } = await import(
             '../../controllers/payrollsController.js'

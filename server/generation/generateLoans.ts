@@ -60,46 +60,28 @@ const generateLoans = (
     let loanDate: Dayjs = dayjs(loan.loan_begin_date);
     let loan_amount: number = loan.loan_amount ?? 0;
 
-    if (
-        loan.frequency_month_of_year !== null &&
-        loan.frequency_month_of_year !== undefined
-    ) {
-        loanDate.month(loan.frequency_month_of_year);
-    }
+    if (loan.frequency_month_of_year)
+        loanDate = loanDate.month(loan.frequency_month_of_year);
 
-    if (
-        loan.frequency_day_of_week !== null &&
-        loan.frequency_day_of_week !== undefined
-    ) {
-        let newDay = loanDate.date();
+    // Adjust for the day of the week
+    if (loan.frequency_day_of_week) {
+        loanDate = loanDate.startOf('month');
+        let firstOccurrence = loanDate.day(loan.frequency_day_of_week);
 
-        if (
-            loan.frequency_day_of_week !== null &&
-            loan.frequency_day_of_week !== undefined
-        ) {
-            let daysUntilNextFrequency: number =
-                (7 + loan.frequency_day_of_week - loanDate.day()) % 7;
-            daysUntilNextFrequency =
-                daysUntilNextFrequency === 0 ? 7 : daysUntilNextFrequency;
-            newDay = loanDate.date() + daysUntilNextFrequency;
+        // If the first occurrence is before the start of the month, move to the next week
+        if (firstOccurrence.isBefore(loanDate)) {
+            firstOccurrence = firstOccurrence.add(1, 'week');
         }
 
-        if (
-            loan.frequency_week_of_month !== null &&
-            loan.frequency_week_of_month !== undefined
-        ) {
-            // first day of the month
-            loanDate.date(1);
-            const daysToAdd =
-                (7 + loan.frequency_day_of_week - loanDate.day()) % 7;
-            // setting to the first occurrence of the desired day of week
-            loanDate.add(daysToAdd, 'day');
-            // setting to the desired week of the month
-
-            newDay = loanDate.date() + 7 * loan.frequency_week_of_month;
+        // Adjust for the specific week of the month
+        if (loan.frequency_week_of_month) {
+            loanDate = firstOccurrence.add(
+                loan.frequency_week_of_month,
+                'week',
+            );
+        } else {
+            loanDate = firstOccurrence;
         }
-
-        loanDate.date(newDay);
     }
 
     while (loanDate.diff(toDate) <= 0 && loan_amount > 0) {
@@ -163,10 +145,7 @@ export const generateDailyLoans = (
 ): { fullyPaidBackDate?: string | null } => {
     const generateDateFn = (currentDate: Dayjs, loan: Loan): Dayjs => {
         const newDate: Dayjs = currentDate.add(
-            loan.frequency_type_variable !== null &&
-                loan.frequency_type_variable !== undefined
-                ? loan.frequency_type_variable
-                : 1,
+            loan.frequency_type_variable ? loan.frequency_type_variable : 1,
             'day',
         );
 
@@ -200,49 +179,34 @@ export const generateMonthlyLoans = (
     fromDate: Dayjs,
 ): { fullyPaidBackDate?: string | null } => {
     let monthsIncremented: number = 0;
-    const generateDateFn = (currentDate: Dayjs, loan: Loan): Dayjs => {
-        const loanDate: Dayjs = dayjs(loan.loan_begin_date).add(
+    const generateDateFn = (currentDate: Dayjs, loan: any): Dayjs => {
+        let loanDate: Dayjs = dayjs(loan.loan_begin_date).add(
             monthsIncremented +
-                (loan.frequency_type_variable !== null &&
-                loan.frequency_type_variable !== undefined
+                (loan.frequency_type_variable
                     ? loan.frequency_type_variable
                     : 1),
             'month',
         );
 
-        if (
-            loan.frequency_day_of_week !== null &&
-            loan.frequency_day_of_week !== undefined
-        ) {
-            let newDay: number = loanDate.date();
+        // Adjust for the day of the week
+        if (loan.frequency_day_of_week) {
+            loanDate = loanDate.startOf('month');
+            let firstOccurrence = loanDate.day(loan.frequency_day_of_week);
 
-            if (
-                loan.frequency_day_of_week !== null &&
-                loan.frequency_day_of_week !== undefined
-            ) {
-                let daysUntilNextFrequency: number =
-                    (7 + loan.frequency_day_of_week - loanDate.day()) % 7;
-                daysUntilNextFrequency =
-                    daysUntilNextFrequency === 0 ? 7 : daysUntilNextFrequency;
-                newDay = loanDate.date() + daysUntilNextFrequency;
+            // If the first occurrence is before the start of the month, move to the next week
+            if (firstOccurrence.isBefore(loanDate)) {
+                firstOccurrence = firstOccurrence.add(1, 'week');
             }
 
-            if (
-                loan.frequency_week_of_month !== null &&
-                loan.frequency_week_of_month !== undefined
-            ) {
-                // first day of the month
-                loanDate.date(1);
-                const daysToAdd =
-                    (7 + loan.frequency_day_of_week - loanDate.day()) % 7;
-                // setting to the first occurrence of the desired day of week
-                loanDate.add(daysToAdd, 'day');
-
-                // setting to the desired week of the month
-                newDay = loanDate.date() + 7 * loan.frequency_week_of_month;
+            // Adjust for the specific week of the month
+            if (loan.frequency_week_of_month) {
+                loanDate = firstOccurrence.add(
+                    loan.frequency_week_of_month,
+                    'week',
+                );
+            } else {
+                loanDate = firstOccurrence;
             }
-
-            loanDate.date(newDay);
         }
 
         monthsIncremented +=
@@ -276,28 +240,28 @@ export const generateMonthlyLoans = (
 export const generateWeeklyLoans = (
     transactions: GeneratedTransaction[],
     skippedTransactions: GeneratedTransaction[],
-    loan: Loan,
+    loan: any,
     toDate: Dayjs,
     fromDate: Dayjs,
 ): { fullyPaidBackDate?: string | null } => {
-    const loanDate: Dayjs = dayjs(loan.loan_begin_date);
+    let loanDate: Dayjs = dayjs(loan.loan_begin_date);
 
-    if (
-        loan.frequency_day_of_week !== null &&
-        loan.frequency_day_of_week !== undefined
-    ) {
-        const startDay: number = loanDate.day();
-        const frequency_day_of_week: number = loan.frequency_day_of_week;
+    // Adjust for the day of the week
+    if (loan.frequency_day_of_week) {
+        loanDate = loanDate.startOf('month');
+        let firstOccurrence = loanDate.day(loan.frequency_day_of_week);
 
-        loanDate.add((frequency_day_of_week + 7 - startDay) % 7, 'day');
+        // If the first occurrence is before the start of the month, move to the next week
+        if (firstOccurrence.isBefore(loanDate)) {
+            firstOccurrence = firstOccurrence.add(1, 'week');
+        }
+
+        loanDate = firstOccurrence;
     }
 
     const generateDateFn = (currentDate: Dayjs, loan: Loan): Dayjs => {
         const newDate: Dayjs = currentDate.add(
-            loan.frequency_type_variable !== null &&
-                loan.frequency_type_variable !== undefined
-                ? loan.frequency_type_variable
-                : 1,
+            loan.frequency_type_variable ? loan.frequency_type_variable : 1,
             'week',
         );
 
@@ -331,52 +295,41 @@ export const generateYearlyLoans = (
     fromDate: Dayjs,
 ): { fullyPaidBackDate?: string | null } => {
     let yearsIncremented: number = 0;
-    const generateDateFn = (currentDate: Dayjs, loan: Loan): Dayjs => {
-        const loanDate: Dayjs = dayjs(loan.loan_begin_date).add(
+    const generateDateFn = (currentDate: Dayjs, loan: any): Dayjs => {
+        let loanDate: Dayjs = dayjs(loan.loan_begin_date).add(
             yearsIncremented +
-                (loan.frequency_type_variable !== null &&
-                loan.frequency_type_variable !== undefined
+                (loan.frequency_type_variable
                     ? loan.frequency_type_variable
                     : 1),
             'year',
         );
 
-        if (
-            loan.frequency_month_of_year !== null &&
-            loan.frequency_month_of_year !== undefined
-        ) {
-            loanDate.month(loan.frequency_month_of_year);
-        }
+        if (loan.frequency_month_of_year)
+            loanDate = loanDate.month(loan.frequency_month_of_year);
 
-        if (
-            loan.frequency_day_of_week !== null &&
-            loan.frequency_day_of_week !== undefined
-        ) {
-            const daysToAdd: number =
-                (7 - loanDate.day() + loan.frequency_day_of_week) % 7;
-            loanDate.add(daysToAdd, 'day'); // this is the first occurrence of the day_of_week
+        // Adjust for the day of the week
+        if (loan.frequency_day_of_week) {
+            loanDate = loanDate.startOf('month');
+            let firstOccurrence = loanDate.day(loan.frequency_day_of_week);
 
-            if (
-                loan.frequency_week_of_month !== null &&
-                loan.frequency_week_of_month !== undefined
-            ) {
-                // add the number of weeks, but check if it overflows into the next month
-                const proposedDate: Dayjs = dayjs(loanDate).add(
+            // If the first occurrence is before the start of the month, move to the next week
+            if (firstOccurrence.isBefore(loanDate)) {
+                firstOccurrence = firstOccurrence.add(1, 'week');
+            }
+
+            // Adjust for the specific week of the month
+            if (loan.frequency_week_of_month) {
+                loanDate = firstOccurrence.add(
                     loan.frequency_week_of_month,
                     'week',
                 );
-
-                if (proposedDate.diff(loanDate, 'month') === 0) {
-                    // it's in the same month, so it's a valid date
-                    loanDate.date(proposedDate.date());
-                }
+            } else {
+                loanDate = firstOccurrence;
             }
         }
-        yearsIncremented +=
-            loan.frequency_type_variable !== null &&
-            loan.frequency_type_variable !== undefined
-                ? loan.frequency_type_variable
-                : 1;
+        yearsIncremented += loan.frequency_type_variable
+            ? loan.frequency_type_variable
+            : 1;
 
         return loanDate;
     };

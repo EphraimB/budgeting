@@ -23,7 +23,7 @@ interface CommuteHistoryInput {
 const parseCommuteHistory = (
     commuteHistory: CommuteHistoryInput,
 ): CommuteHistory => ({
-    commute_history_id: parseInt(commuteHistory.commute_history_id),
+    id: parseInt(commuteHistory.commute_history_id),
     account_id: parseInt(commuteHistory.account_id),
     fare_amount: parseFloat(commuteHistory.fare_amount),
     commute_system: commuteHistory.commute_system,

@@ -1,8 +1,14 @@
-import { jest } from '@jest/globals';
-import { type Request, type Response } from 'express';
-import { payrollDates } from '../../models/mockData.js';
-import { type QueryResultRow } from 'pg';
+import { type Request } from 'express';
 import { type PayrollDate } from '../../types/types.js';
+import {
+    jest,
+    beforeEach,
+    afterEach,
+    describe,
+    it,
+    expect,
+} from '@jest/globals';
+import { mockModule } from '../__mocks__/mockModule.js';
 
 // Mock request and response
 let mockRequest: any;
@@ -30,47 +36,40 @@ afterEach(() => {
     jest.resetModules();
 });
 
-/**
- *
- * @param executeQueryValue - The value to be returned by the executeQuery mock function
- * @param [errorMessage] - The error message to be passed to the handleError mock function
- * @returns - A mock module with the executeQuery and handleError functions
- */
-const mockModule = (
-    executeQueryValue: QueryResultRow[] | string | null,
-    errorMessage?: string,
-) => {
-    const executeQuery =
-        errorMessage !== null && errorMessage !== undefined
-            ? jest.fn(async () => await Promise.reject(new Error(errorMessage)))
-            : jest.fn(async () => await Promise.resolve(executeQueryValue));
+const payrollDates = [
+    {
+        payroll_date_id: 1,
+        employee_id: 1,
+        payroll_start_day: 1,
+        payroll_end_day: 15,
+    },
+    {
+        payroll_date_id: 2,
+        employee_id: 1,
+        payroll_start_day: 15,
+        payroll_end_day: 31,
+    },
+];
 
-    jest.mock('../../utils/helperFunctions.js', () => ({
-        executeQuery,
-        handleError: jest.fn((res: Response, message: string) => {
-            res.status(400).json({ message });
-        }),
-        executePayrollsScript: jest
-            .fn()
-            .mockImplementation(
-                async () => await Promise.resolve([true, 'Script executed']),
-            ),
-    }));
-};
-
-const payrollDatesReturnObj: PayrollDate[] = payrollDates.map(
-    (payrollDate: PayrollDate) => ({
-        payroll_date_id: payrollDate.payroll_date_id,
-        employee_id: payrollDate.employee_id,
-        payroll_start_day: payrollDate.payroll_start_day,
-        payroll_end_day: payrollDate.payroll_end_day,
-    }),
-);
+const payrollDatesResponse: PayrollDate[] = [
+    {
+        id: 1,
+        employee_id: 1,
+        payroll_start_day: 1,
+        payroll_end_day: 15,
+    },
+    {
+        id: 2,
+        employee_id: 1,
+        payroll_start_day: 15,
+        payroll_end_day: 31,
+    },
+];
 
 describe('GET /api/payroll/dates', () => {
     it('should respond with an array of payroll dates', async () => {
         // Arrange
-        mockModule(payrollDates);
+        mockModule([payrollDates]);
 
         mockRequest.query = { id: null, employee_id: null };
 
@@ -83,14 +82,13 @@ describe('GET /api/payroll/dates', () => {
 
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(200);
-        expect(mockResponse.json).toHaveBeenCalledWith(payrollDatesReturnObj);
+        expect(mockResponse.json).toHaveBeenCalledWith(payrollDatesResponse);
     });
 
     it('should respond with an error message', async () => {
         // Arrange
         const errorMessage = 'Error getting payroll dates';
-        const error = new Error(errorMessage);
-        mockModule(null, errorMessage);
+        mockModule([], [errorMessage]);
 
         mockRequest.query = { id: null, employee_id: null };
 
@@ -110,9 +108,9 @@ describe('GET /api/payroll/dates', () => {
 
     it('should respond with an array of payroll dates with id', async () => {
         // Arrange
-        mockModule(
+        mockModule([
             payrollDates.filter((payrollDate) => payrollDate.employee_id === 1),
-        );
+        ]);
 
         const { getPayrollDates } = await import(
             '../../controllers/payrollDatesController.js'
@@ -125,14 +123,17 @@ describe('GET /api/payroll/dates', () => {
 
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(200);
-        expect(mockResponse.json).toHaveBeenCalledWith(payrollDatesReturnObj);
+        expect(mockResponse.json).toHaveBeenCalledWith(
+            payrollDatesResponse.filter(
+                (payrollDate) => payrollDate.employee_id === 1,
+            ),
+        );
     });
 
     it('should respond with an error message with id', async () => {
         // Arrange
         const errorMessage = 'Error getting payroll date';
-        const error = new Error(errorMessage);
-        mockModule(null, errorMessage);
+        mockModule([], [errorMessage]);
 
         const { getPayrollDates } = await import(
             '../../controllers/payrollDatesController.js'
@@ -154,11 +155,11 @@ describe('GET /api/payroll/dates', () => {
         // Arrange
         const employee_id = 1;
 
-        mockModule(
+        mockModule([
             payrollDates.filter(
                 (payrollDate) => payrollDate.employee_id === employee_id,
             ),
-        );
+        ]);
 
         const { getPayrollDates } = await import(
             '../../controllers/payrollDatesController.js'
@@ -171,7 +172,7 @@ describe('GET /api/payroll/dates', () => {
 
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(200);
-        expect(mockResponse.json).toHaveBeenCalledWith(payrollDatesReturnObj);
+        expect(mockResponse.json).toHaveBeenCalledWith(payrollDatesResponse);
     });
 
     it('should respond with an error message with employee_id', async () => {
@@ -179,8 +180,7 @@ describe('GET /api/payroll/dates', () => {
         const employee_id = 1;
 
         const errorMessage = 'Error getting payroll date';
-        const error = new Error(errorMessage);
-        mockModule(null, errorMessage);
+        mockModule([], [errorMessage]);
 
         const { getPayrollDates } = await import(
             '../../controllers/payrollDatesController.js'
@@ -203,11 +203,13 @@ describe('GET /api/payroll/dates', () => {
         const id = 1;
         const employee_id = 1;
 
-        mockModule(
-            payrollDates.filter(
-                (payrollDate) => payrollDate.employee_id === employee_id,
-            ),
-        );
+        mockModule([
+            payrollDates
+                .filter(
+                    (payrollDate) => payrollDate.employee_id === employee_id,
+                )
+                .filter((payrollDate) => payrollDate.payroll_date_id === id),
+        ]);
 
         const { getPayrollDates } = await import(
             '../../controllers/payrollDatesController.js'
@@ -220,7 +222,13 @@ describe('GET /api/payroll/dates', () => {
 
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(200);
-        expect(mockResponse.json).toHaveBeenCalledWith(payrollDatesReturnObj);
+        expect(mockResponse.json).toHaveBeenCalledWith(
+            payrollDatesResponse
+                .filter(
+                    (payrollDate) => payrollDate.employee_id === employee_id,
+                )
+                .filter((payrollDate) => payrollDate.id === id),
+        );
     });
 
     it('should respond with an error message with id and employee_id', async () => {
@@ -229,8 +237,7 @@ describe('GET /api/payroll/dates', () => {
         const employee_id = 1;
 
         const errorMessage = 'Error getting payroll date';
-        const error = new Error(errorMessage);
-        mockModule(null, errorMessage);
+        mockModule([], [errorMessage]);
 
         const { getPayrollDates } = await import(
             '../../controllers/payrollDatesController.js'
@@ -250,7 +257,7 @@ describe('GET /api/payroll/dates', () => {
 
     it('should respond with a 404 error message when the payroll date does not exist', async () => {
         // Arrange
-        mockModule([]);
+        mockModule([[]]);
 
         const { getPayrollDates } = await import(
             '../../controllers/payrollDatesController.js'
@@ -272,23 +279,20 @@ describe('GET /api/payroll/dates', () => {
 describe('POST /api/payroll/dates', () => {
     it('should populate request.payroll_date_id', async () => {
         // Arrange
-        mockModule(
+        mockModule([
             payrollDates.filter(
                 (payrollDate) => payrollDate.payroll_date_id === 1,
             ),
-        );
-
-        const newPayrollDate = {
-            employee_id: 1,
-            start_day: 1,
-            end_day: 15,
-        };
+            [],
+        ]);
 
         const { createPayrollDate } = await import(
             '../../controllers/payrollDatesController.js'
         );
 
-        mockRequest.body = newPayrollDate;
+        mockRequest.body = payrollDates.filter(
+            (payrollDate) => payrollDate.payroll_date_id === 1,
+        );
 
         await createPayrollDate(mockRequest as Request, mockResponse, mockNext);
 
@@ -300,20 +304,15 @@ describe('POST /api/payroll/dates', () => {
     it('should respond with an error message', async () => {
         // Arrange
         const errorMessage = 'Error creating payroll date';
-        const error = new Error(errorMessage);
-        mockModule(null, errorMessage);
-
-        const newPayrollDate = {
-            employee_id: 1,
-            start_day: 1,
-            end_day: 15,
-        };
+        mockModule([], [errorMessage]);
 
         const { createPayrollDate } = await import(
             '../../controllers/payrollDatesController.js'
         );
 
-        mockRequest.body = newPayrollDate;
+        mockRequest.body = payrollDates.filter(
+            (payrollDate) => payrollDate.payroll_date_id === 1,
+        );
 
         await createPayrollDate(mockRequest as Request, mockResponse, mockNext);
 
@@ -324,23 +323,18 @@ describe('POST /api/payroll/dates', () => {
         });
     });
 
-    it('should respond with an error message', async () => {
+    it('should respond with an error message in return object', async () => {
         // Arrange
         const errorMessage = 'Error creating payroll date';
-        const error = new Error(errorMessage);
-        mockModule(null, errorMessage);
-
-        const newPayrollDate = {
-            employee_id: 1,
-            start_day: 1,
-            end_day: 15,
-        };
+        mockModule([], [errorMessage]);
 
         const { createPayrollDateReturnObject } = await import(
             '../../controllers/payrollDatesController.js'
         );
 
-        mockRequest.body = newPayrollDate;
+        mockRequest.body = payrollDates.filter(
+            (payrollDate) => payrollDate.payroll_date_id === 1,
+        );
 
         await createPayrollDateReturnObject(
             mockRequest as Request,
@@ -356,23 +350,19 @@ describe('POST /api/payroll/dates', () => {
 
     it('should respond with the created payroll date', async () => {
         // Arrange
-        mockModule(
+        mockModule([
             payrollDates.filter(
                 (payrollDate) => payrollDate.payroll_date_id === 1,
             ),
-        );
-
-        const newPayrollDate = {
-            employee_id: 1,
-            start_day: 1,
-            end_day: 15,
-        };
+        ]);
 
         const { createPayrollDateReturnObject } = await import(
             '../../controllers/payrollDatesController.js'
         );
 
-        mockRequest.body = newPayrollDate;
+        mockRequest.body = payrollDates.filter(
+            (payrollDate) => payrollDate.payroll_date_id === 1,
+        );
 
         await createPayrollDateReturnObject(
             mockRequest as Request,
@@ -381,9 +371,9 @@ describe('POST /api/payroll/dates', () => {
 
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(201);
-        expect(mockResponse.json).toHaveBeenCalledWith([
-            payrollDatesReturnObj[0],
-        ]);
+        expect(mockResponse.json).toHaveBeenCalledWith(
+            payrollDatesResponse.filter((payrollDate) => payrollDate.id === 1),
+        );
     });
 });
 
@@ -396,18 +386,14 @@ describe('PUT /api/payroll/dates/:id', () => {
             ),
         );
 
-        const updatedPayrollDate = {
-            employee_id: 1,
-            start_day: 1,
-            end_day: 15,
-        };
-
         const { updatePayrollDate } = await import(
             '../../controllers/payrollDatesController.js'
         );
 
         mockRequest.params = { id: 1 };
-        mockRequest.body = updatedPayrollDate;
+        mockRequest.body = payrollDates.filter(
+            (payrollDate) => payrollDate.payroll_date_id === 1,
+        );
 
         await updatePayrollDate(mockRequest as Request, mockResponse, mockNext);
 
@@ -418,21 +404,16 @@ describe('PUT /api/payroll/dates/:id', () => {
     it('should respond with an error message', async () => {
         // Arrange
         const errorMessage = 'Error updating payroll date';
-        const error = new Error(errorMessage);
-        mockModule(null, errorMessage);
-
-        const updatedPayrollDate = {
-            employee_id: 1,
-            start_day: 1,
-            end_day: 15,
-        };
+        mockModule([], [errorMessage]);
 
         const { updatePayrollDate } = await import(
             '../../controllers/payrollDatesController.js'
         );
 
         mockRequest.params = { id: 1 };
-        mockRequest.body = updatedPayrollDate;
+        mockRequest.body = payrollDates.filter(
+            (payrollDate) => payrollDate.payroll_date_id === 1,
+        );
 
         await updatePayrollDate(mockRequest as Request, mockResponse, mockNext);
 
@@ -446,21 +427,16 @@ describe('PUT /api/payroll/dates/:id', () => {
     it('should respond with an error message', async () => {
         // Arrange
         const errorMessage = 'Error updating payroll date';
-        const error = new Error(errorMessage);
-        mockModule(null, errorMessage);
-
-        const updatedPayrollDate = {
-            employee_id: 1,
-            start_day: 1,
-            end_day: 15,
-        };
+        mockModule([], [errorMessage]);
 
         const { updatePayrollDateReturnObject } = await import(
             '../../controllers/payrollDatesController.js'
         );
 
         mockRequest.params = { id: 1 };
-        mockRequest.body = updatedPayrollDate;
+        mockRequest.body = payrollDates.filter(
+            (payrollDate) => payrollDate.payroll_date_id === 1,
+        );
 
         await updatePayrollDateReturnObject(
             mockRequest as Request,
@@ -476,7 +452,7 @@ describe('PUT /api/payroll/dates/:id', () => {
 
     it('should respond with a 404 error message when the payroll date does not exist', async () => {
         // Arrange
-        mockModule([]);
+        mockModule([[]]);
 
         const { updatePayrollDate } = await import(
             '../../controllers/payrollDatesController.js'
@@ -499,24 +475,20 @@ describe('PUT /api/payroll/dates/:id', () => {
 
     it('should respond with the updated payroll date', async () => {
         // Arrange
-        mockModule(
+        mockModule([
             payrollDates.filter(
                 (payrollDate) => payrollDate.payroll_date_id === 1,
             ),
-        );
-
-        const updatedPayrollDate = {
-            employee_id: 1,
-            start_day: 1,
-            end_day: 15,
-        };
+        ]);
 
         const { updatePayrollDateReturnObject } = await import(
             '../../controllers/payrollDatesController.js'
         );
 
         mockRequest.params = { id: 1 };
-        mockRequest.body = updatedPayrollDate;
+        mockRequest.body = payrollDates.filter(
+            (payrollDate) => payrollDate.payroll_date_id === 1,
+        );
 
         await updatePayrollDateReturnObject(
             mockRequest as Request,
@@ -525,16 +497,16 @@ describe('PUT /api/payroll/dates/:id', () => {
 
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(200);
-        expect(mockResponse.json).toHaveBeenCalledWith([
-            payrollDatesReturnObj[0],
-        ]);
+        expect(mockResponse.json).toHaveBeenCalledWith(
+            payrollDatesResponse.filter((payrollDate) => payrollDate.id === 1),
+        );
     });
 });
 
 describe('DELETE /api/payroll/dates/:id', () => {
     it('should call next on the middleware', async () => {
         // Arrange
-        mockModule('Successfully deleted payroll date');
+        mockModule(['Successfully deleted payroll date']);
 
         mockRequest.params = { id: 1 };
         mockRequest.query = { employee_id: 1 };
@@ -552,8 +524,7 @@ describe('DELETE /api/payroll/dates/:id', () => {
     it('should respond with an error message', async () => {
         // Arrange
         const errorMessage = 'Error deleting payroll date';
-        const error = new Error(errorMessage);
-        mockModule(null, errorMessage);
+        mockModule([], [errorMessage]);
 
         mockRequest.params = { id: 1 };
         mockRequest.query = { employee_id: 1 };
@@ -573,7 +544,7 @@ describe('DELETE /api/payroll/dates/:id', () => {
 
     it('should respond with a 404 error message when the payroll date does not exist', async () => {
         // Arrange
-        mockModule([]);
+        mockModule([[]]);
 
         const { deletePayrollDate } = await import(
             '../../controllers/payrollDatesController.js'
@@ -594,7 +565,7 @@ describe('DELETE /api/payroll/dates/:id', () => {
 
     it('should respond with a success message', async () => {
         // Arrange
-        mockModule('Successfully deleted payroll date');
+        mockModule(['Successfully deleted payroll date']);
 
         const { deletePayrollDateReturnObject } = await import(
             '../../controllers/payrollDatesController.js'

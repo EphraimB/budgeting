@@ -1,11 +1,14 @@
-import { jest } from '@jest/globals';
-import { type Request, type Response } from 'express';
-import { commuteHistory } from '../../models/mockData';
-import { type QueryResultRow } from 'pg';
+import { type Request } from 'express';
 import {
-    parseIntOrFallback,
-    parseFloatOrFallback,
-} from '../../utils/helperFunctions';
+    jest,
+    beforeEach,
+    afterEach,
+    describe,
+    it,
+    expect,
+} from '@jest/globals';
+import { mockModule } from '../__mocks__/mockModule';
+import { CommuteHistory } from '../../types/types.js';
 
 jest.mock('../../config/winston', () => ({
     logger: {
@@ -30,35 +33,56 @@ afterEach(() => {
     jest.resetModules();
 });
 
-/**
- *
- * @param executeQueryValue - The value to be returned by the executeQuery mock function
- * @param [errorMessage] - The error message to be passed to the handleError mock function
- * @returns - A mock module with the executeQuery and handleError functions
- */
-const mockModule = (
-    executeQueryValue: QueryResultRow[] | string | null,
-    errorMessage?: string,
-) => {
-    const executeQuery =
-        errorMessage !== null && errorMessage !== undefined
-            ? jest.fn(async () => await Promise.reject(new Error(errorMessage)))
-            : jest.fn(async () => await Promise.resolve(executeQueryValue));
+const commuteHistory = [
+    {
+        commute_history_id: 1,
+        account_id: 1,
+        fare_amount: 2.75,
+        commute_system: 'OMNY',
+        fare_type: 'Single Ride',
+        timestamp: '2020-01-01',
+        date_created: '2020-01-01',
+        date_modified: '2020-01-01',
+    },
+    {
+        commute_history_id: 2,
+        account_id: 1,
+        fare_amount: 9.75,
+        commute_system: 'LIRR',
+        fare_type: 'Off-Peak',
+        timestamp: '2020-01-01',
+        date_created: '2020-01-01',
+        date_modified: '2020-01-01',
+    },
+];
 
-    jest.mock('../../utils/helperFunctions', () => ({
-        executeQuery,
-        handleError: jest.fn((res: Response, message: string) => {
-            res.status(400).json({ message });
-        }),
-        parseIntOrFallback,
-        parseFloatOrFallback,
-    }));
-};
+const commuteHistoryResponse: CommuteHistory[] = [
+    {
+        id: 1,
+        account_id: 1,
+        fare_amount: 2.75,
+        commute_system: 'OMNY',
+        fare_type: 'Single Ride',
+        timestamp: '2020-01-01',
+        date_created: '2020-01-01',
+        date_modified: '2020-01-01',
+    },
+    {
+        id: 2,
+        account_id: 1,
+        fare_amount: 9.75,
+        commute_system: 'LIRR',
+        fare_type: 'Off-Peak',
+        timestamp: '2020-01-01',
+        date_created: '2020-01-01',
+        date_modified: '2020-01-01',
+    },
+];
 
 describe('GET /api/expenses/commute/history', () => {
     it('should respond with an array of commute history', async () => {
         // Arrange
-        mockModule(commuteHistory);
+        mockModule([commuteHistory]);
 
         const { getCommuteHistory } = await import(
             '../../controllers/commuteHistoryController.js'
@@ -71,14 +95,13 @@ describe('GET /api/expenses/commute/history', () => {
 
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(200);
-        expect(mockResponse.json).toHaveBeenCalledWith(commuteHistory);
+        expect(mockResponse.json).toHaveBeenCalledWith(commuteHistoryResponse);
     });
 
     it('should handle errors correctly', async () => {
         // Arrange
         const errorMessage = 'Error getting commute history';
-        const error = new Error(errorMessage);
-        mockModule(null, errorMessage);
+        mockModule([], [errorMessage]);
 
         const { getCommuteHistory } = await import(
             '../../controllers/commuteHistoryController.js'
@@ -98,9 +121,9 @@ describe('GET /api/expenses/commute/history', () => {
 
     it('should respond with an array of commute history with an account_id', async () => {
         // Arrange
-        mockModule(
+        mockModule([
             commuteHistory.filter((history) => history.account_id === 1),
-        );
+        ]);
 
         const { getCommuteHistory } = await import(
             '../../controllers/commuteHistoryController.js'
@@ -114,7 +137,9 @@ describe('GET /api/expenses/commute/history', () => {
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(200);
         expect(mockResponse.json).toHaveBeenCalledWith(
-            commuteHistory.filter((history) => history.account_id === 1),
+            commuteHistoryResponse.filter(
+                (history) => history.account_id === 1,
+            ),
         );
     });
 
@@ -122,8 +147,7 @@ describe('GET /api/expenses/commute/history', () => {
         // Arrange
         const errorMessage =
             'Error getting commute history for given account_id';
-        const error = new Error(errorMessage);
-        mockModule(null, errorMessage);
+        mockModule([], [errorMessage]);
 
         const { getCommuteHistory } = await import(
             '../../controllers/commuteHistoryController.js'
@@ -143,11 +167,11 @@ describe('GET /api/expenses/commute/history', () => {
 
     it('should respond with an array of commute history with an id', async () => {
         // Arrange
-        mockModule(
+        mockModule([
             commuteHistory.filter(
-                (history) => history.commute_history_id === 1,
+                (commuteHistory) => commuteHistory.commute_history_id === 1,
             ),
-        );
+        ]);
 
         const { getCommuteHistory } = await import(
             '../../controllers/commuteHistoryController.js'
@@ -161,8 +185,8 @@ describe('GET /api/expenses/commute/history', () => {
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(200);
         expect(mockResponse.json).toHaveBeenCalledWith(
-            commuteHistory.filter(
-                (history) => history.commute_history_id === 1,
+            commuteHistoryResponse.filter(
+                (commuteHistory) => commuteHistory.id === 1,
             ),
         );
     });
@@ -170,8 +194,7 @@ describe('GET /api/expenses/commute/history', () => {
     it('should handle errors correctly with an id', async () => {
         // Arrange
         const errorMessage = 'Error getting commute history for given id';
-        const error = new Error(errorMessage);
-        mockModule(null, errorMessage);
+        mockModule([], [errorMessage]);
 
         const { getCommuteHistory } = await import(
             '../../controllers/commuteHistoryController.js'
@@ -191,7 +214,7 @@ describe('GET /api/expenses/commute/history', () => {
 
     it('should respond with a 404 error message when the commute history does not exist', async () => {
         // Arrange
-        mockModule([]);
+        mockModule([[]]);
 
         const { getCommuteHistory } = await import(
             '../../controllers/commuteHistoryController.js'
@@ -213,10 +236,10 @@ describe('GET /api/expenses/commute/history', () => {
 describe('POST /api/expenses/commute/history', () => {
     it('should respond with the new commute history', async () => {
         const newCommuteHistory = commuteHistory.filter(
-            (system) => system.commute_history_id === 1,
+            (commuteHistory) => commuteHistory.commute_history_id === 1,
         );
 
-        mockModule(newCommuteHistory);
+        mockModule([newCommuteHistory]);
 
         const { createCommuteHistory } = await import(
             '../../controllers/commuteHistoryController.js'
@@ -228,21 +251,24 @@ describe('POST /api/expenses/commute/history', () => {
 
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(201);
-        expect(mockResponse.json).toHaveBeenCalledWith(newCommuteHistory);
+        expect(mockResponse.json).toHaveBeenCalledWith(
+            commuteHistoryResponse.filter(
+                (commuteHistory) => commuteHistory.id === 1,
+            ),
+        );
     });
 
     it('should handle errors correctly', async () => {
         // Arrange
         const errorMessage = 'Error creating commute history';
-        const error = new Error(errorMessage);
-        mockModule(null, errorMessage);
+        mockModule([], [errorMessage]);
 
         const { createCommuteHistory } = await import(
             '../../controllers/commuteHistoryController.js'
         );
 
         mockRequest.body = commuteHistory.filter(
-            (system) => system.commute_history_id === 1,
+            (commuteHistory) => commuteHistory.commute_history_id === 1,
         );
 
         // Act
@@ -259,10 +285,10 @@ describe('POST /api/expenses/commute/history', () => {
 describe('PUT /api/expenses/commute/history/:id', () => {
     it('should respond with the updated commute history', async () => {
         const updatedHistory = commuteHistory.filter(
-            (history) => history.commute_history_id === 1,
+            (commuteHistory) => commuteHistory.commute_history_id === 1,
         );
 
-        mockModule(updatedHistory);
+        mockModule([updatedHistory, updatedHistory]);
 
         const { updateCommuteHistory } = await import(
             '../../controllers/commuteHistoryController.js'
@@ -275,14 +301,17 @@ describe('PUT /api/expenses/commute/history/:id', () => {
 
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(200);
-        expect(mockResponse.json).toHaveBeenCalledWith(updatedHistory);
+        expect(mockResponse.json).toHaveBeenCalledWith(
+            commuteHistoryResponse.filter(
+                (commuteHistory) => commuteHistory.id === 1,
+            ),
+        );
     });
 
     it('should handle errors correctly', async () => {
         // Arrange
         const errorMessage = 'Error updating commute history';
-        const error = new Error(errorMessage);
-        mockModule(null, errorMessage);
+        mockModule([], [errorMessage]);
 
         const { updateCommuteHistory } = await import(
             '../../controllers/commuteHistoryController.js'
@@ -290,7 +319,7 @@ describe('PUT /api/expenses/commute/history/:id', () => {
 
         mockRequest.params = { id: 1 };
         mockRequest.body = commuteHistory.filter(
-            (history) => history.commute_history_id === 1,
+            (commuteHistory) => commuteHistory.commute_history_id === 1,
         );
 
         // Act
@@ -305,7 +334,7 @@ describe('PUT /api/expenses/commute/history/:id', () => {
 
     it('should respond with a 404 error message when the commute history does not exist', async () => {
         // Arrange
-        mockModule([]);
+        mockModule([[]]);
 
         const { updateCommuteHistory } = await import(
             '../../controllers/commuteHistoryController.js'
@@ -313,7 +342,7 @@ describe('PUT /api/expenses/commute/history/:id', () => {
 
         mockRequest.params = { id: 1 };
         mockRequest.body = commuteHistory.filter(
-            (history) => history.commute_history_id === 1,
+            (commuteHistory) => commuteHistory.commute_history_id === 1,
         );
 
         // Act
@@ -330,7 +359,7 @@ describe('PUT /api/expenses/commute/history/:id', () => {
 describe('DELETE /api/expenses/commute/history/:id', () => {
     it('should respond with a success message', async () => {
         // Arrange
-        mockModule('Successfully deleted commute history');
+        mockModule(['Successfully deleted commute history']);
 
         const { deleteCommuteHistory } = await import(
             '../../controllers/commuteHistoryController.js'
@@ -350,8 +379,7 @@ describe('DELETE /api/expenses/commute/history/:id', () => {
     it('should handle errors correctly', async () => {
         // Arrange
         const errorMessage = 'Error deleting commute history';
-        const error = new Error(errorMessage);
-        mockModule(null, errorMessage);
+        mockModule([], [errorMessage]);
 
         const { deleteCommuteHistory } = await import(
             '../../controllers/commuteHistoryController.js'
@@ -371,7 +399,7 @@ describe('DELETE /api/expenses/commute/history/:id', () => {
 
     it('should respond with a 404 error message when the commute history does not exist', async () => {
         // Arrange
-        mockModule([]);
+        mockModule([[]]);
 
         const { deleteCommuteHistory } = await import(
             '../../controllers/commuteHistoryController.js'

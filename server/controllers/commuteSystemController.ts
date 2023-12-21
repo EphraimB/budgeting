@@ -19,7 +19,7 @@ import {
 const parseCommuteSystem = (
     commuteSystem: Record<string, string>,
 ): CommuteSystem => ({
-    commute_system_id: parseInt(commuteSystem.commute_system_id),
+    id: parseInt(commuteSystem.commute_system_id),
     name: commuteSystem.name,
     fare_cap: parseFloatOrFallback(commuteSystem.fare_cap),
     fare_cap_duration: parseIntOrFallback(commuteSystem.fare_cap_duration),
