@@ -11,6 +11,7 @@ import {
 import { type Loan } from '../types/types.js';
 import { logger } from '../config/winston.js';
 import determineCronValues from '../crontab/determineCronValues.js';
+import dayjs, { Dayjs } from 'dayjs';
 
 /**
  *
@@ -57,18 +58,13 @@ export const getLoans = async (
         let query: string;
         let params: any[];
 
-        if (
-            id !== null &&
-            id !== undefined &&
-            account_id !== null &&
-            account_id !== undefined
-        ) {
+        if (id && account_id) {
             query = loanQueries.getLoansByIdAndAccountId;
             params = [id, account_id];
-        } else if (id !== null && id !== undefined) {
+        } else if (id) {
             query = loanQueries.getLoansById;
             params = [id];
-        } else if (account_id !== null && account_id !== undefined) {
+        } else if (account_id) {
             query = loanQueries.getLoansByAccountId;
             params = [account_id];
         } else {
@@ -88,13 +84,19 @@ export const getLoans = async (
             const parsedLoan = parseLoan(loan);
 
             // then add fully_paid_back field in request.fullyPaidBackDates
-            parsedLoan.fully_paid_back =
-                request.fullyPaidBackDates[parseInt(loan.loan_id)] !== null &&
-                request.fullyPaidBackDates[parseInt(loan.loan_id)] !== undefined
-                    ? request.fullyPaidBackDates[parseInt(loan.loan_id)]
-                    : null;
+            parsedLoan.fully_paid_back = request.fullyPaidBackDates[
+                parseInt(loan.loan_id)
+            ]
+                ? request.fullyPaidBackDates[parseInt(loan.loan_id)]
+                : null;
 
             return parsedLoan;
+        });
+
+        loans.map((loan: Loan) => {
+            const nextExpenseDate = nextTransactionFrequencyDate(loan);
+
+            loan.next_date = nextExpenseDate;
         });
 
         response.status(200).json(loans);
@@ -103,9 +105,9 @@ export const getLoans = async (
         handleError(
             response,
             `Error getting ${
-                id !== null && id !== undefined
+                id
                     ? 'loan'
-                    : account_id !== null && account_id !== undefined
+                    : account_id
                     ? 'loans for given account_id'
                     : 'loans'
             }`,
@@ -198,20 +200,20 @@ export const createLoan = async (
             ])
         )[0].cron_job_id;
 
-        const nextDate: Date = new Date(begin_date);
+        const nextDate: Dayjs = dayjs(begin_date);
 
         if (parseInt(interest_frequency_type) === 0) {
             // Daily
-            nextDate.setDate(nextDate.getDate() + 1);
+            nextDate.add(1, 'day');
         } else if (parseInt(interest_frequency_type) === 1) {
             // Weekly
-            nextDate.setDate(nextDate.getDate() + 7);
+            nextDate.add(1, 'week');
         } else if (parseInt(interest_frequency_type) === 2) {
             // Monthly
-            nextDate.setMonth(nextDate.getMonth() + 1);
+            nextDate.add(1, 'month');
         } else if (parseInt(interest_frequency_type) === 3) {
             // Yearly
-            nextDate.setFullYear(nextDate.getFullYear() + 1);
+            nextDate.add(1, 'year');
         }
 
         const jobDetailsInterest = {
@@ -270,11 +272,11 @@ export const createLoanReturnObject = async (
             // parse loan first
             const parsedLoan = parseLoan(loan);
             // then add fully_paid_back field in request.fullyPaidBackDates
-            parsedLoan.fully_paid_back =
-                request.fullyPaidBackDates[parseInt(loan.loan_id)] !== null &&
-                request.fullyPaidBackDates[parseInt(loan.loan_id)] !== undefined
-                    ? request.fullyPaidBackDates[parseInt(loan.loan_id)]
-                    : null;
+            parsedLoan.fully_paid_back = request.fullyPaidBackDates[
+                parseInt(loan.loan_id)
+            ]
+                ? request.fullyPaidBackDates[parseInt(loan.loan_id)]
+                : null;
 
             return parsedLoan;
         });

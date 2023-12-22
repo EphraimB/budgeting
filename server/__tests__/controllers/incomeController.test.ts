@@ -90,6 +90,11 @@ describe('GET /api/income', () => {
         // Call the function with the mock request and response
         await getIncome(mockRequest as Request, mockResponse);
 
+        // Add next date to the income response
+        incomeResponse.map((income: any) => {
+            income.next_date = '2020-01-01';
+        });
+
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(200);
         expect(mockResponse.json).toHaveBeenCalledWith(incomeResponse);
@@ -128,6 +133,11 @@ describe('GET /api/income', () => {
 
         // Call the function with the mock request and response
         await getIncome(mockRequest as Request, mockResponse);
+
+        // Add next date to the income response
+        incomeResponse.map((income: any) => {
+            income.next_date = '2020-01-01';
+        });
 
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(200);
@@ -168,6 +178,11 @@ describe('GET /api/income', () => {
         // Call the function with the mock request and response
         await getIncome(mockRequest as Request, mockResponse);
 
+        // Add next date to the income response
+        incomeResponse.map((income: any) => {
+            income.next_date = '2020-01-01';
+        });
+
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(200);
         expect(mockResponse.json).toHaveBeenCalledWith(incomeResponse);
@@ -206,6 +221,11 @@ describe('GET /api/income', () => {
 
         // Call the function with the mock request and response
         await getIncome(mockRequest as Request, mockResponse);
+
+        // Add next date to the income response
+        incomeResponse.map((income: any) => {
+            income.next_date = '2020-01-01';
+        });
 
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(200);
@@ -264,6 +284,11 @@ describe('POST /api/income', () => {
         mockRequest.body = income[0];
 
         await createIncome(mockRequest as Request, mockResponse, mockNext);
+
+        // Add next date to the income response
+        incomeResponse.map((income: any) => {
+            income.next_date = undefined;
+        });
 
         // Assert
         expect(mockRequest.income_id).toBe(1);

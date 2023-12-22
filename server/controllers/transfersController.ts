@@ -6,6 +6,7 @@ import {
     parseIntOrFallback,
     scheduleQuery,
     unscheduleQuery,
+    nextTransactionFrequencyDate,
 } from '../utils/helperFunctions.js';
 import { type Transfer } from '../types/types.js';
 import { logger } from '../config/winston.js';
@@ -57,18 +58,13 @@ export const getTransfers = async (
         let query: string;
         let params: any[];
 
-        if (
-            id !== null &&
-            id !== undefined &&
-            account_id !== null &&
-            account_id !== undefined
-        ) {
+        if (id && account_id) {
             query = transferQueries.getTransfersByIdAndAccountId;
             params = [id, account_id];
-        } else if (id !== null && id !== undefined) {
+        } else if (id) {
             query = transferQueries.getTransfersById;
             params = [id];
-        } else if (account_id !== null && account_id !== undefined) {
+        } else if (account_id) {
             query = transferQueries.getTransfersByAccountId;
             params = [account_id];
         } else {
@@ -78,17 +74,19 @@ export const getTransfers = async (
 
         const results = await executeQuery(query, params);
 
-        if (
-            ((id !== null && id !== undefined) ||
-                (account_id !== null && account_id !== undefined)) &&
-            results.length === 0
-        ) {
+        if ((id || account_id) && results.length === 0) {
             response.status(404).send('Transfer not found');
             return;
         }
 
         // Parse the data to the correct format
-        const transfers = results.map(transfersParse);
+        const transfers = results.map((result) => transfersParse(result));
+
+        transfers.map((transfer: any) => {
+            const nextExpenseDate = nextTransactionFrequencyDate(transfer);
+
+            transfer.next_date = nextExpenseDate;
+        });
 
         response.status(200).json(transfers);
     } catch (error) {
@@ -96,9 +94,9 @@ export const getTransfers = async (
         handleError(
             response,
             `Error getting ${
-                id !== null && id !== undefined
+                id
                     ? 'transfer'
-                    : account_id !== null && account_id !== undefined
+                    : account_id
                     ? 'transfers for given account_id'
                     : 'transfers'
             }`,
