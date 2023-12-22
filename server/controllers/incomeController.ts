@@ -6,6 +6,7 @@ import {
     parseIntOrFallback,
     scheduleQuery,
     unscheduleQuery,
+    nextTransactionFrequencyDate,
 } from '../utils/helperFunctions.js';
 import { type Income } from '../types/types.js';
 import { logger } from '../config/winston.js';
@@ -52,18 +53,13 @@ export const getIncome = async (
         let query: string;
         let params: any[];
 
-        if (
-            id !== null &&
-            id !== undefined &&
-            account_id !== null &&
-            account_id !== undefined
-        ) {
+        if (id && account_id) {
             query = incomeQueries.getIncomeByIdAndAccountId;
             params = [id, account_id];
-        } else if (id !== null && id !== undefined) {
+        } else if (id) {
             query = incomeQueries.getIncomeById;
             params = [id];
-        } else if (account_id !== null && account_id !== undefined) {
+        } else if (account_id) {
             query = incomeQueries.getIncomeByAccountId;
             params = [account_id];
         } else {
@@ -73,24 +69,28 @@ export const getIncome = async (
 
         const income = await executeQuery(query, params);
 
-        if (
-            ((id !== null && id !== undefined) ||
-                (account_id !== null && account_id !== undefined)) &&
-            income.length === 0
-        ) {
+        if ((id || account_id) && income.length === 0) {
             response.status(404).send('Income not found');
             return;
         }
 
-        response.status(200).json(income.map(parseIncome));
+        const parsedIncome = income.map(parseIncome);
+
+        parsedIncome.map((income: any) => {
+            const nextExpenseDate = nextTransactionFrequencyDate(income);
+
+            income.next_date = nextExpenseDate;
+        });
+
+        response.status(200).json(parsedIncome);
     } catch (error) {
         logger.error(error); // Log the error on the server side
         handleError(
             response,
             `Error getting ${
-                id !== null && id !== undefined
+                id
                     ? 'income'
-                    : account_id !== null && account_id !== undefined
+                    : account_id
                     ? 'income for given account_id'
                     : 'income'
             }`,
