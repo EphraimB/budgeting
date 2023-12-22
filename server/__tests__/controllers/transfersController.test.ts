@@ -241,6 +241,11 @@ describe('GET /api/transfers', () => {
         // Call the function with the mock request and response
         await getTransfers(mockRequest as Request, mockResponse);
 
+        // Add next date to the transfers response
+        transfersResponse.map((transfer: any) => {
+            transfer.next_date = '2020-01-01';
+        });
+
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(200);
         expect(mockResponse.json).toHaveBeenCalledWith(transfersResponse);
@@ -281,6 +286,11 @@ describe('GET /api/transfers', () => {
 
         // Call the function with the mock request and response
         await getTransfers(mockRequest as Request, mockResponse);
+
+        // Add next date to the transfers response
+        transfersResponse.map((transfer: any) => {
+            transfer.next_date = '2020-01-01';
+        });
 
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(200);
@@ -324,6 +334,11 @@ describe('GET /api/transfers', () => {
 
         // Call the function with the mock request and response
         await getTransfers(mockRequest as Request, mockResponse);
+
+        // Add next date to the transfers response
+        transfersResponse.map((transfer: any) => {
+            transfer.next_date = '2020-01-01';
+        });
 
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(200);
@@ -373,6 +388,11 @@ describe('GET /api/transfers', () => {
 
         // Call the function with the mock request and response
         await getTransfers(mockRequest as Request, mockResponse);
+
+        // Add next date to the transfers response
+        transfersResponse.map((transfer: any) => {
+            transfer.next_date = '2020-01-01';
+        });
 
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(200);
@@ -443,6 +463,11 @@ describe('POST /api/transfers', () => {
         mockRequest.body = newTransfer;
 
         await createTransfer(mockRequest as Request, mockResponse, mockNext);
+
+        // Add next date to the transfers response
+        transfersResponse.map((transfer: any) => {
+            transfer.next_date = undefined;
+        });
 
         // Assert
         expect(mockRequest.transfer_id).toBe(1);
