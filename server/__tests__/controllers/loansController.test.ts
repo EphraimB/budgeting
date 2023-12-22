@@ -245,6 +245,11 @@ describe('GET /api/loans', () => {
         // Call the function with the mock request and response
         await getLoans(mockRequest as Request, mockResponse);
 
+        // Add next date to the loans response
+        loansResponse.map((loan: any) => {
+            loan.next_date = '2020-01-01';
+        });
+
         loansResponse[0].fully_paid_back = '2024-01-01';
 
         // Assert
@@ -291,6 +296,11 @@ describe('GET /api/loans', () => {
             (loan) => loan.id === 1,
         );
 
+        // Add next date to the loans response
+        loansResponse.map((loan: any) => {
+            loan.next_date = '2020-01-01';
+        });
+
         // Add loan_fully_paid_back to the loans with id 1
         customLoansResponse[0].fully_paid_back = '2024-01-01';
 
@@ -322,6 +332,11 @@ describe('GET /api/loans', () => {
 
     it('should respond with an array of loans with account id', async () => {
         // Arrange
+        // Add next date to the loans
+        loans.map((loan: any) => {
+            loan.next_date = '2020-01-01';
+        });
+
         mockModule([loans.filter((loan) => loan.account_id === 1)]);
 
         mockRequest.query = { account_id: 1 };
@@ -337,6 +352,11 @@ describe('GET /api/loans', () => {
         const customLoansResponse = loansResponse.filter(
             (loan) => loan.account_id === 1,
         );
+
+        // Add next date to the loans response
+        loansResponse.map((loan: any) => {
+            loan.next_date = '2020-01-01';
+        });
 
         // Add loan_fully_paid_back to the loans with id 1
         customLoansResponse[0].fully_paid_back = '2024-01-01';
@@ -369,6 +389,11 @@ describe('GET /api/loans', () => {
 
     it('should respond with an array of loans with account id and id', async () => {
         // Arrange
+        // Add next date to the loans
+        loans.map((loan: any) => {
+            loan.next_date = '2020-01-01';
+        });
+
         mockModule([
             loans
                 .filter((loan) => loan.account_id === 1)
@@ -388,6 +413,11 @@ describe('GET /api/loans', () => {
         const customLoansResponse = loansResponse.filter(
             (loan) => loan.id === 1,
         );
+
+        // Add next date to the loans response
+        loansResponse.map((loan: any) => {
+            loan.next_date = '2020-01-01';
+        });
 
         // Add loan_fully_paid_back to the loans with id 1
         customLoansResponse[0].fully_paid_back = '2024-01-01';
@@ -511,6 +541,11 @@ describe('POST /api/loans', () => {
         const customLoansResponse = loansResponse.filter(
             (loan) => loan.id === 1,
         );
+
+        // Add next date to the loans response
+        loansResponse.map((loan: any) => {
+            loan.next_date = undefined;
+        });
 
         customLoansResponse[0].fully_paid_back = '2024-01-01';
 
