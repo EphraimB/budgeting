@@ -11,43 +11,24 @@ import TablePagination from "@mui/material/TablePagination";
 import EnhancedTableHead from "../components/EnhancedTableHead";
 import EnhancedTableToolbar from "../components/EnhancedTableToolbar";
 import dayjs from "dayjs";
-import {
-  getComparator,
-  stableSort,
-  type Order,
-} from "../utils/helperFunctions";
 import RowView from "./RowView";
 import RowDelete from "./RowDelete";
 import LoadingExpenses from "./LoadingExpenses";
 import RowEdit from "./RowEdit";
 import RowAdd from "./RowAdd";
 import { addExpense } from "../services/actions/expense";
-
-interface Expense {
-  id: number;
-  account_id: number;
-  tax_id: number;
-  amount: number;
-  title: string;
-  description: string;
-  frequency_type: number;
-  frequency_type_variable: number;
-  frequency_day_of_month: number;
-  frequency_day_of_week: number;
-  frequency_week_of_month: number;
-  frequency_month_of_year: number;
-  subsidized: number;
-  begin_date: string;
-  end_date: string | null;
-  date_created: string;
-  date_modified: string;
-}
-
-interface HeadCell {
-  id: string;
-  label: string;
-  numeric: boolean;
-}
+import { Expense, HeadCell } from "@/app/types/types";
+import {
+  Order,
+  getFrequency,
+  handleChangePage,
+  handleChangeRowsPerPage,
+  handleClick,
+  handleRequestSort,
+  handleSelectAllClick,
+  isSelected,
+  useVisibleRows,
+} from "../utils/helperFunctions";
 
 const headCells: readonly HeadCell[] = [
   {
@@ -108,167 +89,6 @@ function ExpensesTable({
   const [frequencyWeekOfMonth, setFrequencyWeekOfMonth] = useState(-1);
   const [frequencyMonthOfYear, setFrequencyMonthOfYear] = useState(-1);
 
-  const handleRequestSort = (
-    event: React.MouseEvent<unknown>,
-    property: string
-  ) => {
-    const isAsc = orderBy === property && order === "asc";
-    setOrder(isAsc ? "desc" : "asc");
-    setOrderBy(property);
-  };
-
-  const handleSelectAllClick = (event: React.ChangeEvent<HTMLInputElement>) => {
-    if (event.target.checked) {
-      const newSelected = expenses.map((n: Expense) => n);
-      setSelected(newSelected);
-      return;
-    }
-    setSelected([]);
-  };
-
-  const handleClick = (event: React.MouseEvent<unknown>, expense: Expense) => {
-    const selectedIndex = selected.findIndex((e) => e.id === expense.id);
-    let newSelected: Expense[] = [];
-
-    if (selectedIndex === -1) {
-      newSelected = [...selected, expense];
-    } else if (selectedIndex === 0) {
-      newSelected = selected.slice(1);
-    } else if (selectedIndex === selected.length - 1) {
-      newSelected = selected.slice(0, -1);
-    } else if (selectedIndex > 0) {
-      newSelected = [
-        ...selected.slice(0, selectedIndex),
-        ...selected.slice(selectedIndex + 1),
-      ];
-    }
-
-    setSelected(newSelected);
-  };
-
-  const handleChangePage = (event: unknown, newPage: number) => {
-    setPage(newPage);
-  };
-
-  const handleChangeRowsPerPage = (
-    event: React.ChangeEvent<HTMLInputElement>
-  ) => {
-    setRowsPerPage(parseInt(event.target.value, 10));
-    setPage(0);
-  };
-
-  const isSelected = (expenseId: number) =>
-    selected.some((expense) => expense.id === expenseId);
-
-  // Avoid a layout jump when reaching the last page with empty rows.
-  const emptyRows =
-    page > 0 ? Math.max(0, (1 + page) * rowsPerPage - expenses.length) : 0;
-
-  const visibleRows = useMemo(() => {
-    return stableSort(expenses as any[], getComparator(order, orderBy)).slice(
-      page * rowsPerPage,
-      page * rowsPerPage + rowsPerPage
-    );
-  }, [expenses, order, orderBy, page, rowsPerPage]);
-
-  const getExpenseFrequency = (expense: Expense): string => {
-    let expenseFrequency;
-
-    switch (expense.frequency_type) {
-      case 0: // Daily
-        if (
-          expense.frequency_type_variable === 1 ||
-          expense.frequency_type_variable === null
-        )
-          expenseFrequency = "Daily";
-        else
-          expenseFrequency =
-            "Every " + expense.frequency_type_variable + " days";
-
-        break;
-      case 1: // Weekly
-        if (
-          expense.frequency_type_variable === 1 ||
-          expense.frequency_type_variable === null
-        )
-          expenseFrequency = `Weekly ${
-            expense.frequency_day_of_week !== null
-              ? `on ${dayjs(expense.begin_date)
-                  .day(expense.frequency_day_of_week)
-                  .format("dddd")}`
-              : ""
-          }`;
-        else {
-          expenseFrequency = `Every ${expense.frequency_type_variable}
-            weeks ${
-              expense.frequency_day_of_week !== null
-                ? `on ${dayjs(
-                    dayjs(expense.begin_date).day(expense.frequency_day_of_week)
-                  ).format("dddd")}`
-                : ""
-            }`;
-        }
-
-        break;
-      case 2: // Monthly
-        if (
-          expense.frequency_type_variable === 1 ||
-          expense.frequency_type_variable === null
-        ) {
-          const dayOfMonth = dayjs(expense.begin_date).format("D");
-          expenseFrequency = `Monthly on the ${dayOfMonth}${
-            dayOfMonth.endsWith("1")
-              ? "st"
-              : dayOfMonth.endsWith("2")
-              ? "nd"
-              : dayOfMonth.endsWith("3")
-              ? "rd"
-              : "th"
-          }`;
-        } else {
-          expenseFrequency = `Every ${
-            expense.frequency_type_variable
-          } months on the ${dayjs(expense.begin_date).format("D")}th`;
-        }
-
-        if (expense.frequency_day_of_month) {
-          expenseFrequency = `Monthly on the ${expense.frequency_day_of_month}`;
-        } else if (expense.frequency_day_of_week) {
-          expenseFrequency = `Monthly on the ${
-            expense.frequency_week_of_month === 0
-              ? "first"
-              : expense.frequency_week_of_month === 1
-              ? "second"
-              : expense.frequency_week_of_month === 2
-              ? "third"
-              : expense.frequency_week_of_month === 3
-              ? "fourth"
-              : "last"
-          } ${dayjs(expense.frequency_day_of_week).format("dddd")}`;
-        }
-
-        break;
-      case 3: // Yearly
-        if (
-          expense.frequency_type_variable === 1 ||
-          expense.frequency_type_variable === null
-        )
-          expenseFrequency = `Yearly on ${dayjs(expense.begin_date).format(
-            "MMMM D"
-          )}`;
-        else
-          expenseFrequency = `Every ${
-            expense.frequency_type_variable
-          } years on ${dayjs(expense.begin_date).format("MMMM D")}`;
-
-        break;
-      default:
-        expenseFrequency = "Unknown";
-    }
-
-    return expenseFrequency;
-  };
-
   const handleExpenseEndDateEnabledChange = (
     e: React.ChangeEvent<HTMLInputElement>
   ) => {
@@ -281,9 +101,20 @@ function ExpensesTable({
     }
   };
 
+  const emptyRows =
+    page > 0 ? Math.max(0, (1 + page) * rowsPerPage - expenses.length) : 0;
+
+  const visibleRows = useVisibleRows(
+    expenses,
+    order,
+    orderBy,
+    page,
+    rowsPerPage
+  );
+
   return (
     <Box>
-      <form id="expense-data">
+      <form id="row-data" action={addExpense}>
         <input type="hidden" name="account_id" value={account_id} />
       </form>
 
@@ -306,8 +137,22 @@ function ExpensesTable({
             numSelected={selected.length}
             order={order}
             orderBy={orderBy}
-            onSelectAllClick={handleSelectAllClick}
-            onRequestSort={handleRequestSort}
+            onSelectAllClick={(event: React.ChangeEvent<HTMLInputElement>) =>
+              handleSelectAllClick(event, expenses, setSelected)
+            }
+            onRequestSort={(
+              event: React.MouseEvent<unknown>,
+              property: string
+            ) =>
+              handleRequestSort(
+                event,
+                property,
+                order,
+                orderBy,
+                setOrder,
+                setOrderBy
+              )
+            }
             rowCount={!expenses ? 0 : expenses.length}
             headCells={headCells}
           />
@@ -348,7 +193,7 @@ function ExpensesTable({
               />
             )}
             <Suspense fallback={<LoadingExpenses />}>
-              {visibleRows.map((row, index) => {
+              {visibleRows.map((row: any, index: number) => {
                 if (rowModes[row.id as number] === "delete") {
                   return <RowDelete row={row} setRowModes={setRowModes} />;
                 } else if (rowModes[row.id as number] === "edit") {
@@ -366,10 +211,13 @@ function ExpensesTable({
                       key={row.id}
                       row={row}
                       index={index}
-                      handleClick={handleClick}
-                      isSelected={isSelected}
+                      handleClick={(
+                        event: React.MouseEvent<unknown>,
+                        row: any
+                      ) => handleClick(event, row, selected, setSelected)}
+                      isSelected={(id: number) => isSelected(id, selected)}
                       taxes={taxes}
-                      getExpenseFrequency={getExpenseFrequency}
+                      getExpenseFrequency={getFrequency}
                     />
                   );
                 }
@@ -393,8 +241,13 @@ function ExpensesTable({
         count={expenses.length}
         rowsPerPage={rowsPerPage}
         page={page}
-        onPageChange={handleChangePage}
-        onRowsPerPageChange={handleChangeRowsPerPage}
+        onPageChange={(
+          event: React.MouseEvent<HTMLButtonElement> | null,
+          newPage: number
+        ) => handleChangePage(event, newPage, setPage)}
+        onRowsPerPageChange={(event: React.ChangeEvent<HTMLInputElement>) =>
+          handleChangeRowsPerPage(event, setRowsPerPage, setPage)
+        }
       />
     </Box>
   );
