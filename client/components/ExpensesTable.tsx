@@ -10,13 +10,11 @@ import TableContainer from "@mui/material/TableContainer";
 import TablePagination from "@mui/material/TablePagination";
 import EnhancedTableHead from "../components/EnhancedTableHead";
 import EnhancedTableToolbar from "../components/EnhancedTableToolbar";
-import dayjs from "dayjs";
 import RowView from "./RowView";
 import RowDelete from "./RowDelete";
 import LoadingExpenses from "./LoadingExpenses";
 import RowEdit from "./RowEdit";
 import RowAdd from "./RowAdd";
-import { addExpense } from "../services/actions/expense";
 import { Expense, HeadCell } from "@/app/types/types";
 import {
   Order,
@@ -75,32 +73,6 @@ function ExpensesTable({
   const [rowModes, setRowModes] = useState<Record<number, string>>({});
   const [showAddExpenseForm, setShowAddExpenseForm] = useState(false);
 
-  const [expenseTitle, setExpenseTitle] = useState("");
-  const [expenseDescription, setExpenseDescription] = useState("");
-  const [expenseAmount, setExpenseAmount] = useState("0");
-  const [expenseSubsidized, setExpenseSubsidized] = useState("0");
-  const [expenseTax, setExpenseTax] = useState(0);
-  const [expenseBeginDate, setExpenseBeginDate] = useState(dayjs().format());
-  const [expenseEndDate, setExpenseEndDate] = useState<null | string>(null);
-  const [expenseEndDateEnabled, setExpenseEndDateEnabled] = useState(false);
-  const [expenseFrequency, setExpenseFrequency] = useState(2);
-  const [frequencyVariable, setFrequencyVariable] = useState(1);
-  const [frequencyDayOfWeek, setFrequencyDayOfWeek] = useState(-1);
-  const [frequencyWeekOfMonth, setFrequencyWeekOfMonth] = useState(-1);
-  const [frequencyMonthOfYear, setFrequencyMonthOfYear] = useState(-1);
-
-  const handleExpenseEndDateEnabledChange = (
-    e: React.ChangeEvent<HTMLInputElement>
-  ) => {
-    setExpenseEndDateEnabled(e.target.checked);
-
-    if (e.target.checked) {
-      setExpenseEndDate(dayjs().format());
-    } else {
-      setExpenseEndDate(null);
-    }
-  };
-
   const emptyRows =
     page > 0 ? Math.max(0, (1 + page) * rowsPerPage - expenses.length) : 0;
 
@@ -114,10 +86,6 @@ function ExpensesTable({
 
   return (
     <Box>
-      <form id="row-data" action={addExpense}>
-        <input type="hidden" name="account_id" value={account_id} />
-      </form>
-
       <EnhancedTableToolbar
         numSelected={selected.length}
         selectedRows={selected}
@@ -159,37 +127,9 @@ function ExpensesTable({
           <TableBody>
             {showAddExpenseForm && (
               <RowAdd
+                account_id={account_id}
                 taxes={taxes}
                 setShowAddExpenseForm={setShowAddExpenseForm}
-                handleExpenseEndDateEnabledChange={
-                  handleExpenseEndDateEnabledChange
-                }
-                expenseTitle={expenseTitle}
-                setExpenseTitle={setExpenseTitle}
-                expenseDescription={expenseDescription}
-                setExpenseDescription={setExpenseDescription}
-                expenseAmount={expenseAmount}
-                setExpenseAmount={setExpenseAmount}
-                expenseSubsidized={expenseSubsidized}
-                setExpenseSubsidized={setExpenseSubsidized}
-                expenseTax={expenseTax}
-                setExpenseTax={setExpenseTax}
-                expenseBeginDate={expenseBeginDate}
-                setExpenseBeginDate={setExpenseBeginDate}
-                expenseEndDate={expenseEndDate}
-                setExpenseEndDate={setExpenseEndDate}
-                expenseEndDateEnabled={expenseEndDateEnabled}
-                setExpenseEndDateEnabled={setExpenseEndDateEnabled}
-                expenseFrequency={expenseFrequency}
-                setExpenseFrequency={setExpenseFrequency}
-                frequencyVariable={frequencyVariable}
-                setFrequencyVariable={setFrequencyVariable}
-                frequencyDayOfWeek={frequencyDayOfWeek}
-                setFrequencyDayOfWeek={setFrequencyDayOfWeek}
-                frequencyWeekOfMonth={frequencyWeekOfMonth}
-                setFrequencyWeekOfMonth={setFrequencyWeekOfMonth}
-                frequencyMonthOfYear={frequencyMonthOfYear}
-                setFrequencyMonthOfYear={setFrequencyMonthOfYear}
               />
             )}
             <Suspense fallback={<LoadingExpenses />}>

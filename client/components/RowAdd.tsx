@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import TableRow from "@mui/material/TableRow";
 import TableCell from "@mui/material/TableCell";
 import TextField from "@mui/material/TextField";
@@ -16,90 +17,68 @@ import Checkbox from "@mui/material/Checkbox";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import Button from "@mui/material/Button";
 import Stack from "@mui/material/Stack";
+import { useRouter } from "next/navigation";
+import { addExpense } from "../services/actions/expense";
 
 function RowAdd({
+  account_id,
   taxes,
   setShowAddExpenseForm,
-  handleExpenseEndDateEnabledChange,
-  expenseTitle,
-  setExpenseTitle,
-  expenseDescription,
-  setExpenseDescription,
-  expenseAmount,
-  setExpenseAmount,
-  expenseSubsidized,
-  setExpenseSubsidized,
-  expenseTax,
-  setExpenseTax,
-  expenseBeginDate,
-  setExpenseBeginDate,
-  expenseEndDate,
-  setExpenseEndDate,
-  expenseEndDateEnabled,
-  setExpenseEndDateEnabled,
-  expenseFrequency,
-  setExpenseFrequency,
-  frequencyVariable,
-  setFrequencyVariable,
-  frequencyDayOfWeek,
-  setFrequencyDayOfWeek,
-  frequencyWeekOfMonth,
-  setFrequencyWeekOfMonth,
-  frequencyMonthOfYear,
-  setFrequencyMonthOfYear,
 }: {
+  account_id: number;
   taxes: any;
   setShowAddExpenseForm: any;
-  handleExpenseEndDateEnabledChange: any;
-  expenseTitle: string;
-  setExpenseTitle: any;
-  expenseDescription: string;
-  setExpenseDescription: any;
-  expenseAmount: string;
-  setExpenseAmount: any;
-  expenseSubsidized: string;
-  setExpenseSubsidized: any;
-  expenseTax: number;
-  setExpenseTax: any;
-  expenseBeginDate: string;
-  setExpenseBeginDate: any;
-  expenseEndDate: string | null;
-  setExpenseEndDate: any;
-  expenseEndDateEnabled: boolean;
-  setExpenseEndDateEnabled: any;
-  expenseFrequency: number;
-  setExpenseFrequency: any;
-  frequencyVariable: number;
-  setFrequencyVariable: any;
-  frequencyDayOfWeek: number;
-  setFrequencyDayOfWeek: any;
-  frequencyWeekOfMonth: number;
-  setFrequencyWeekOfMonth: any;
-  frequencyMonthOfYear: number;
-  setFrequencyMonthOfYear: any;
 }) {
+  const router = useRouter();
+
+  const [expenseTitle, setExpenseTitle] = useState("");
+  const [expenseDescription, setExpenseDescription] = useState("");
+  const [expenseAmount, setExpenseAmount] = useState("0");
+  const [expenseSubsidized, setExpenseSubsidized] = useState("0");
+  const [expenseTax, setExpenseTax] = useState(0);
+  const [expenseBeginDate, setExpenseBeginDate] = useState(dayjs().format());
+  const [expenseEndDate, setExpenseEndDate] = useState<null | string>(null);
+  const [expenseEndDateEnabled, setExpenseEndDateEnabled] = useState(false);
+  const [expenseFrequency, setExpenseFrequency] = useState(2);
+  const [frequencyVariable, setFrequencyVariable] = useState(1);
+  const [frequencyDayOfWeek, setFrequencyDayOfWeek] = useState(-1);
+  const [frequencyWeekOfMonth, setFrequencyWeekOfMonth] = useState(-1);
+  const [frequencyMonthOfYear, setFrequencyMonthOfYear] = useState(-1);
+
+  const handleExpenseEndDateEnabledChange = (
+    e: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    setExpenseEndDateEnabled(e.target.checked);
+
+    if (e.target.checked) {
+      setExpenseEndDate(dayjs().format());
+    } else {
+      setExpenseEndDate(null);
+    }
+  };
+
   const handleCancel = () => {
     setShowAddExpenseForm(false);
   };
 
-  // const data = {
-  //   account_id,
-  //   title: expenseTitle,
-  //   description: expenseDescription,
-  //   amount: parseFloat(expenseAmount),
-  //   subsidized: parseFloat(expenseSubsidized),
-  //   tax_id: expenseTax === 0 ? null : expenseTax,
-  //   begin_date: expenseBeginDate,
-  //   end_date: expenseEndDate,
-  //   frequency_type: expenseFrequency,
-  //   frequency_type_variable: frequencyVariable,
-  //   frequency_day_of_week:
-  //     frequencyDayOfWeek === -1 ? null : frequencyDayOfWeek,
-  //   frequency_week_of_month:
-  //     frequencyWeekOfMonth === -1 ? null : frequencyWeekOfMonth,
-  //   frequency_month_of_year:
-  //     frequencyMonthOfYear === -1 ? null : frequencyMonthOfYear,
-  // };
+  const data = {
+    account_id,
+    title: expenseTitle,
+    description: expenseDescription,
+    amount: parseFloat(expenseAmount),
+    subsidized: parseFloat(expenseSubsidized),
+    tax_id: expenseTax === 0 ? null : expenseTax,
+    begin_date: expenseBeginDate,
+    end_date: expenseEndDate,
+    frequency_type: expenseFrequency,
+    frequency_type_variable: frequencyVariable,
+    frequency_day_of_week:
+      frequencyDayOfWeek === -1 ? null : frequencyDayOfWeek,
+    frequency_week_of_month:
+      frequencyWeekOfMonth === -1 ? null : frequencyWeekOfMonth,
+    frequency_month_of_year:
+      frequencyMonthOfYear === -1 ? null : frequencyMonthOfYear,
+  };
 
   // const handleAdd = () => {
   //   const submitData = async () => {
@@ -320,7 +299,11 @@ function RowAdd({
             Cancel
           </Button>
           <br />
-          <Button variant="contained" color="primary" onClick={}>
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={() => addExpense(data)}
+          >
             Add expense
           </Button>
         </Stack>
