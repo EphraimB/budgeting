@@ -1,8 +1,8 @@
 "use server";
 
-export async function addExpense(expense: any) {
-  console.log("expense: ", expense);
+import { revalidatePath } from "next/cache";
 
+export async function addExpense(expense: any) {
   const response = await fetch(`http://server:5001/api/expenses`, {
     method: "POST",
     headers: {
@@ -11,5 +11,7 @@ export async function addExpense(expense: any) {
     body: JSON.stringify(expense),
   });
   const result = await response.json();
+
+  revalidatePath("/expenses");
   return result;
 }

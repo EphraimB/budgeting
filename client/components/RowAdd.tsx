@@ -23,14 +23,12 @@ import { addExpense } from "../services/actions/expense";
 function RowAdd({
   account_id,
   taxes,
-  setShowAddExpenseForm,
+  setShowAddForm,
 }: {
   account_id: number;
   taxes: any;
-  setShowAddExpenseForm: any;
+  setShowAddForm: any;
 }) {
-  const router = useRouter();
-
   const [expenseTitle, setExpenseTitle] = useState("");
   const [expenseDescription, setExpenseDescription] = useState("");
   const [expenseAmount, setExpenseAmount] = useState("0");
@@ -58,7 +56,7 @@ function RowAdd({
   };
 
   const handleCancel = () => {
-    setShowAddExpenseForm(false);
+    setShowAddForm(false);
   };
 
   const data = {
@@ -80,29 +78,15 @@ function RowAdd({
       frequencyMonthOfYear === -1 ? null : frequencyMonthOfYear,
   };
 
-  // const handleAdd = () => {
-  //   const submitData = async () => {
-  //     try {
-  //       // Post request to create a new expense
-  //       await fetch("/api/expenses", {
-  //         method: "POST",
-  //         headers: {
-  //           "Content-Type": "application/json",
-  //         },
-  //         body: JSON.stringify(data),
-  //       });
-  //       router.refresh();
-  //     } catch (error) {
-  //       console.error("There was an error editing the expense!", error);
-  //       // showAlert("There was an error editing the expense!", "error");
-  //     }
+  const handleSubmit = async () => {
+    try {
+      await addExpense(data);
+    } catch (err) {
+      console.error(err);
+    }
 
-  //     setShowAddExpenseForm(false);
-  //     // showSnackbar("Expense edited!");
-  //   };
-
-  //   submitData();
-  // };
+    setShowAddForm(false);
+  };
 
   return (
     <TableRow
@@ -299,11 +283,7 @@ function RowAdd({
             Cancel
           </Button>
           <br />
-          <Button
-            variant="contained"
-            color="primary"
-            onClick={() => addExpense(data)}
-          >
+          <Button variant="contained" color="primary" onClick={handleSubmit}>
             Add expense
           </Button>
         </Stack>

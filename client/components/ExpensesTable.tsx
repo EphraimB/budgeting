@@ -129,7 +129,7 @@ function ExpensesTable({
               <RowAdd
                 account_id={account_id}
                 taxes={taxes}
-                setShowAddExpenseForm={setShowAddExpenseForm}
+                setShowAddForm={setShowAddExpenseForm}
               />
             )}
             <Suspense fallback={<LoadingExpenses />}>
