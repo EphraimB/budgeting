@@ -211,7 +211,7 @@ export const getIncomeByAccount = async (
                             const tax: QueryResultRow =
                                 taxLookup[income.tax_id] !== undefined
                                     ? taxLookup[income.tax_id]
-                                    : { tax_rate: 0 };
+                                    : { rate: 0 };
 
                             return {
                                 ...income,
@@ -250,7 +250,7 @@ export const getIncomeByAccount = async (
                 const tax: QueryResultRow =
                     taxLookup[income.tax_id] !== undefined
                         ? taxLookup[income.tax_id]
-                        : { tax_rate: 0 };
+                        : { rate: 0 };
 
                 return {
                     ...income,
@@ -321,7 +321,7 @@ export const getExpensesByAccount = async (
                             const tax: QueryResultRow =
                                 taxLookup[expense.tax_id] !== undefined
                                     ? taxLookup[expense.tax_id]
-                                    : { tax_rate: 0 };
+                                    : { rate: 0 };
 
                             return {
                                 ...expense,
@@ -360,7 +360,7 @@ export const getExpensesByAccount = async (
                 const tax: QueryResultRow =
                     taxLookup[expense.tax_id] !== undefined
                         ? taxLookup[expense.tax_id]
-                        : { tax_rate: 0 };
+                        : { rate: 0 };
 
                 return {
                     ...expense,
@@ -655,7 +655,7 @@ export const getWishlistsByAccount = async (
                             const tax: QueryResultRow =
                                 taxLookup[wishlist.tax_id] !== undefined
                                     ? taxLookup[wishlist.tax_id]
-                                    : { tax_rate: 0 };
+                                    : { rate: 0 };
 
                             return {
                                 ...wishlist,
@@ -698,7 +698,7 @@ export const getWishlistsByAccount = async (
                 const tax: QueryResultRow =
                     taxLookup[wishlist.tax_id] !== undefined
                         ? taxLookup[wishlist.tax_id]
-                        : { tax_rate: 0 };
+                        : { rate: 0 };
 
                 return {
                     ...wishlist,
