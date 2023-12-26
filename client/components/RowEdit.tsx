@@ -282,7 +282,11 @@ function RowEdit({
             Cancel
           </Button>
           <br />
-          <Button variant="contained" color="primary" onClick={handleEdit}>
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={() => handleEdit(data, row.id)}
+          >
             Update expense
           </Button>
         </Stack>

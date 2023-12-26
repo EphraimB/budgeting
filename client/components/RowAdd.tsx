@@ -80,7 +80,7 @@ function RowAdd({
 
   return (
     <TableRow
-      key="expense-add"
+      key="row-add"
       sx={{
         backgroundColor: green[500],
       }}
@@ -273,7 +273,11 @@ function RowAdd({
             Cancel
           </Button>
           <br />
-          <Button variant="contained" color="primary" onClick={handleAdd}>
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={() => handleAdd(data)}
+          >
             Add expense
           </Button>
         </Stack>
