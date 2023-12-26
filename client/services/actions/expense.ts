@@ -29,3 +29,11 @@ export async function editExpense(expense: any, id: number) {
   revalidatePath("/expenses");
   return result;
 }
+
+export async function deleteExpense(id: number) {
+  await fetch(`http://server:5001/api/expenses/${id}`, {
+    method: "DELETE",
+  });
+
+  revalidatePath("/expenses");
+}

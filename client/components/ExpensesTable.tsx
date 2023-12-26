@@ -27,7 +27,11 @@ import {
   isSelected,
   useVisibleRows,
 } from "../utils/helperFunctions";
-import { addExpense, editExpense } from "../services/actions/expense";
+import {
+  addExpense,
+  deleteExpense,
+  editExpense,
+} from "../services/actions/expense";
 
 const headCells: readonly HeadCell[] = [
   {
@@ -108,6 +112,19 @@ function ExpensesTable({
     }));
   };
 
+  const handleDelete = async (id: number) => {
+    try {
+      await deleteExpense(id);
+    } catch (err) {
+      console.error(err);
+    }
+
+    setRowModes((prevModes: any) => ({
+      ...prevModes,
+      [id]: "view",
+    }));
+  };
+
   return (
     <Box>
       <EnhancedTableToolbar
@@ -160,7 +177,13 @@ function ExpensesTable({
             <Suspense fallback={<LoadingExpenses />}>
               {visibleRows.map((row: any, index: number) => {
                 if (rowModes[row.id as number] === "delete") {
-                  return <RowDelete row={row} setRowModes={setRowModes} />;
+                  return (
+                    <RowDelete
+                      row={row}
+                      setRowModes={setRowModes}
+                      handleDelete={handleDelete}
+                    />
+                  );
                 } else if (rowModes[row.id as number] === "edit") {
                   return (
                     <RowEdit
