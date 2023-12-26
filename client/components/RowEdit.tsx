@@ -17,7 +17,7 @@ import Checkbox from "@mui/material/Checkbox";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import Button from "@mui/material/Button";
 import Stack from "@mui/material/Stack";
-import { useRouter } from "next/navigation";
+import { editExpense } from "../services/actions/expense";
 
 function RowEdit({
   account_id,
@@ -30,8 +30,6 @@ function RowEdit({
   taxes: any;
   setRowModes: any;
 }) {
-  const router = useRouter();
-
   const [title, setTitle] = useState(row.title);
   const [description, setDescription] = useState(row.description);
   const [amount, setAmount] = useState(row.amount);
@@ -94,31 +92,17 @@ function RowEdit({
       frequencyMonthOfYear === -1 ? null : parseInt(frequencyMonthOfYear),
   };
 
-  const handleEdit = () => {
-    const submitData = async () => {
-      try {
-        // Post request to create a new expense
-        await fetch(`/api/expenses?expense_id=${row.id}`, {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(data),
-        });
-        router.refresh();
-      } catch (error) {
-        console.error("There was an error editing the expense!", error);
-        // showAlert("There was an error editing the expense!", "error");
-      }
+  const handleEdit = async () => {
+    try {
+      await editExpense(data, row.id);
+    } catch (err) {
+      console.error(err);
+    }
 
-      setRowModes((prevModes: any) => ({
-        ...prevModes,
-        [row.id]: "view",
-      }));
-      // showSnackbar("Expense edited!");
-    };
-
-    submitData();
+    setRowModes((prevModes: any) => ({
+      ...prevModes,
+      [row.id]: "view",
+    }));
   };
 
   return (

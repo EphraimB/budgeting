@@ -15,3 +15,5 @@ export async function addExpense(expense: any) {
   revalidatePath("/expenses");
   return result;
 }
+
+export async function editExpense(expense: any, id: number) {}
