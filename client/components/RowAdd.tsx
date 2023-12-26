@@ -17,17 +17,17 @@ import Checkbox from "@mui/material/Checkbox";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import Button from "@mui/material/Button";
 import Stack from "@mui/material/Stack";
-import { useRouter } from "next/navigation";
-import { addExpense } from "../services/actions/expense";
 
 function RowAdd({
   account_id,
   taxes,
   setShowAddForm,
+  handleAdd,
 }: {
   account_id: number;
   taxes: any;
   setShowAddForm: any;
+  handleAdd: any;
 }) {
   const [expenseTitle, setExpenseTitle] = useState("");
   const [expenseDescription, setExpenseDescription] = useState("");
@@ -76,16 +76,6 @@ function RowAdd({
       frequencyWeekOfMonth === -1 ? null : frequencyWeekOfMonth,
     frequency_month_of_year:
       frequencyMonthOfYear === -1 ? null : frequencyMonthOfYear,
-  };
-
-  const handleSubmit = async () => {
-    try {
-      await addExpense(data);
-    } catch (err) {
-      console.error(err);
-    }
-
-    setShowAddForm(false);
   };
 
   return (
@@ -283,7 +273,7 @@ function RowAdd({
             Cancel
           </Button>
           <br />
-          <Button variant="contained" color="primary" onClick={handleSubmit}>
+          <Button variant="contained" color="primary" onClick={handleAdd}>
             Add expense
           </Button>
         </Stack>

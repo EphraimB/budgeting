@@ -16,4 +16,16 @@ export async function addExpense(expense: any) {
   return result;
 }
 
-export async function editExpense(expense: any, id: number) {}
+export async function editExpense(expense: any, id: number) {
+  const response = await fetch(`http://server:5001/api/expenses/${id}`, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(expense),
+  });
+  const result = await response.json();
+
+  revalidatePath("/expenses");
+  return result;
+}

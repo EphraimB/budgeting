@@ -17,18 +17,19 @@ import Checkbox from "@mui/material/Checkbox";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import Button from "@mui/material/Button";
 import Stack from "@mui/material/Stack";
-import { editExpense } from "../services/actions/expense";
 
 function RowEdit({
   account_id,
   row,
   taxes,
   setRowModes,
+  handleEdit,
 }: {
   account_id: number;
   row: any;
   taxes: any;
   setRowModes: any;
+  handleEdit: any;
 }) {
   const [title, setTitle] = useState(row.title);
   const [description, setDescription] = useState(row.description);
@@ -90,19 +91,6 @@ function RowEdit({
       frequencyWeekOfMonth === -1 ? null : parseInt(frequencyWeekOfMonth),
     frequency_month_of_year:
       frequencyMonthOfYear === -1 ? null : parseInt(frequencyMonthOfYear),
-  };
-
-  const handleEdit = async () => {
-    try {
-      await editExpense(data, row.id);
-    } catch (err) {
-      console.error(err);
-    }
-
-    setRowModes((prevModes: any) => ({
-      ...prevModes,
-      [row.id]: "view",
-    }));
   };
 
   return (

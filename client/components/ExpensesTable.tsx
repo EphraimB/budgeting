@@ -27,6 +27,7 @@ import {
   isSelected,
   useVisibleRows,
 } from "../utils/helperFunctions";
+import { addExpense, editExpense } from "../services/actions/expense";
 
 const headCells: readonly HeadCell[] = [
   {
@@ -84,6 +85,29 @@ function ExpensesTable({
     rowsPerPage
   );
 
+  const handleAdd = async (expense: any) => {
+    try {
+      await addExpense(expense);
+    } catch (err) {
+      console.error(err);
+    }
+
+    setShowAddExpenseForm(false);
+  };
+
+  const handleEdit = async (expense: any, id: number) => {
+    try {
+      await editExpense(expense, id);
+    } catch (err) {
+      console.error(err);
+    }
+
+    setRowModes((prevModes: any) => ({
+      ...prevModes,
+      [id]: "view",
+    }));
+  };
+
   return (
     <Box>
       <EnhancedTableToolbar
@@ -130,6 +154,7 @@ function ExpensesTable({
                 account_id={account_id}
                 taxes={taxes}
                 setShowAddForm={setShowAddExpenseForm}
+                handleAdd={handleAdd}
               />
             )}
             <Suspense fallback={<LoadingExpenses />}>
@@ -143,6 +168,7 @@ function ExpensesTable({
                       row={row}
                       taxes={taxes}
                       setRowModes={setRowModes}
+                      handleEdit={handleEdit}
                     />
                   );
                 } else {
