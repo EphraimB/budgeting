@@ -37,21 +37,21 @@ function RowEdit({
   const [subsidized, setSubsidized] = useState(row.subsidized);
   const [tax, setTax] = useState(row.tax_id || 0);
   const [beginDate, setBeginDate] = useState(row.begin_date);
-  const [endDate, setEndDate] = useState(row.end_date);
+  const [endDate, setEndDate] = useState<null | string>(row.end_date);
   const [endDateEnabled, setEndDateEnabled] = useState(
     row.end_date ? true : false
   );
   const [frequency, setFrequency] = useState(row.frequency_type);
-  const [frequencyVariable, setFrequencyVariable] = useState(
+  const [frequencyVariable, setFrequencyVariable] = useState<number>(
     row.frequency_type_variable
   );
-  const [frequencyDayOfWeek, setFrequencyDayOfWeek] = useState(
+  const [frequencyDayOfWeek, setFrequencyDayOfWeek] = useState<number>(
     row.frequency_day_of_week || -1
   );
-  const [frequencyWeekOfMonth, setFrequencyWeekOfMonth] = useState(
+  const [frequencyWeekOfMonth, setFrequencyWeekOfMonth] = useState<number>(
     row.frequency_week_of_month || -1
   );
-  const [frequencyMonthOfYear, setFrequencyMonthOfYear] = useState(
+  const [frequencyMonthOfYear, setFrequencyMonthOfYear] = useState<number>(
     row.frequency_month_of_year || -1
   );
 
@@ -84,13 +84,13 @@ function RowEdit({
     begin_date: beginDate,
     end_date: endDate,
     frequency_type: parseInt(frequency),
-    frequency_type_variable: parseInt(frequencyVariable),
+    frequency_type_variable: frequencyVariable,
     frequency_day_of_week:
-      frequencyDayOfWeek === -1 ? null : parseInt(frequencyDayOfWeek),
+      frequencyDayOfWeek === -1 ? null : frequencyDayOfWeek,
     frequency_week_of_month:
-      frequencyWeekOfMonth === -1 ? null : parseInt(frequencyWeekOfMonth),
+      frequencyWeekOfMonth === -1 ? null : frequencyWeekOfMonth,
     frequency_month_of_year:
-      frequencyMonthOfYear === -1 ? null : parseInt(frequencyMonthOfYear),
+      frequencyMonthOfYear === -1 ? null : frequencyMonthOfYear,
   };
 
   return (
@@ -202,7 +202,7 @@ function RowEdit({
         <TextField
           label="Frequency variable"
           value={frequencyVariable}
-          onChange={(e) => setFrequencyVariable(e.target.value)}
+          onChange={(e) => setFrequencyVariable(parseInt(e.target.value))}
         />
         <br />
         <br />
@@ -215,7 +215,7 @@ function RowEdit({
               labelId="frequency-day-of-week-select-label"
               label="Day of week"
               value={frequencyDayOfWeek}
-              onChange={(e) => setFrequencyDayOfWeek(e.target.value)}
+              onChange={(e) => setFrequencyDayOfWeek(e.target.value as number)}
             >
               <MenuItem value={-1}>None</MenuItem>
               <MenuItem value={0}>Sunday</MenuItem>
@@ -237,7 +237,9 @@ function RowEdit({
               labelId="frequency-week-of-month-select-label"
               label="Week of month"
               value={frequencyWeekOfMonth}
-              onChange={(e) => setFrequencyWeekOfMonth(e.target.value)}
+              onChange={(e) =>
+                setFrequencyWeekOfMonth(e.target.value as number)
+              }
             >
               <MenuItem value={-1}>None</MenuItem>
               <MenuItem value={0}>First</MenuItem>
@@ -257,7 +259,9 @@ function RowEdit({
               labelId="frequency-month-of-year-select-label"
               label="Month of year"
               value={frequencyMonthOfYear}
-              onChange={(e) => setFrequencyMonthOfYear(e.target.value)}
+              onChange={(e) =>
+                setFrequencyMonthOfYear(e.target.value as number)
+              }
             >
               <MenuItem value={-1}>None</MenuItem>
               <MenuItem value={0}>January</MenuItem>
