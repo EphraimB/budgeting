@@ -17,44 +17,47 @@ import Checkbox from "@mui/material/Checkbox";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import Button from "@mui/material/Button";
 import Stack from "@mui/material/Stack";
-import { useRouter } from "next/navigation";
 
 function RowEdit({
   account_id,
   row,
   taxes,
   setRowModes,
+  handleEdit,
 }: {
   account_id: number;
   row: any;
   taxes: any;
   setRowModes: any;
+  handleEdit: any;
 }) {
-  const router = useRouter();
-
   const [title, setTitle] = useState(row.title);
   const [description, setDescription] = useState(row.description);
   const [amount, setAmount] = useState(row.amount);
   const [subsidized, setSubsidized] = useState(row.subsidized);
   const [tax, setTax] = useState(row.tax_id || 0);
   const [beginDate, setBeginDate] = useState(row.begin_date);
-  const [endDate, setEndDate] = useState(row.end_date);
+  const [endDate, setEndDate] = useState<null | string>(row.end_date);
   const [endDateEnabled, setEndDateEnabled] = useState(
     row.end_date ? true : false
   );
   const [frequency, setFrequency] = useState(row.frequency_type);
-  const [frequencyVariable, setFrequencyVariable] = useState(
+  const [frequencyVariable, setFrequencyVariable] = useState<number>(
     row.frequency_type_variable
   );
-  const [frequencyDayOfWeek, setFrequencyDayOfWeek] = useState(
+  const [frequencyDayOfWeek, setFrequencyDayOfWeek] = useState<number>(
     row.frequency_day_of_week || -1
   );
-  const [frequencyWeekOfMonth, setFrequencyWeekOfMonth] = useState(
+  const [frequencyWeekOfMonth, setFrequencyWeekOfMonth] = useState<number>(
     row.frequency_week_of_month || -1
   );
-  const [frequencyMonthOfYear, setFrequencyMonthOfYear] = useState(
+  const [frequencyMonthOfYear, setFrequencyMonthOfYear] = useState<number>(
     row.frequency_month_of_year || -1
   );
+
+  const [titleError, setTitleError] = useState("");
+  const [descriptionError, setDescriptionError] = useState("");
+  const [amountError, setAmountError] = useState("");
 
   const handleExpenseEndDateEnabledChange = (
     e: React.ChangeEvent<HTMLInputElement>
@@ -85,40 +88,61 @@ function RowEdit({
     begin_date: beginDate,
     end_date: endDate,
     frequency_type: parseInt(frequency),
-    frequency_type_variable: parseInt(frequencyVariable),
+    frequency_type_variable: frequencyVariable,
     frequency_day_of_week:
-      frequencyDayOfWeek === -1 ? null : parseInt(frequencyDayOfWeek),
+      frequencyDayOfWeek === -1 ? null : frequencyDayOfWeek,
     frequency_week_of_month:
-      frequencyWeekOfMonth === -1 ? null : parseInt(frequencyWeekOfMonth),
+      frequencyWeekOfMonth === -1 ? null : frequencyWeekOfMonth,
     frequency_month_of_year:
-      frequencyMonthOfYear === -1 ? null : parseInt(frequencyMonthOfYear),
+      frequencyMonthOfYear === -1 ? null : frequencyMonthOfYear,
   };
 
-  const handleEdit = () => {
-    const submitData = async () => {
+  const validateTitle = () => {
+    if (!title) {
+      setTitleError("Title is required");
+      return false;
+    }
+
+    setTitleError("");
+
+    return true;
+  };
+
+  const validateDescription = () => {
+    if (!description) {
+      setDescriptionError("Description is required");
+      return false;
+    }
+
+    setDescriptionError("");
+
+    return true;
+  };
+
+  const validateAmount = () => {
+    if (parseFloat(amount) === 0) {
+      setAmountError("Amount needs to be greater than 0");
+      return false;
+    }
+
+    setAmountError("");
+
+    return true;
+  };
+
+  const handleSubmit = () => {
+    const isTitleValid = validateTitle();
+    const isDescriptionValid = validateDescription();
+    const isAmountValid = validateAmount();
+
+    if (isTitleValid && isDescriptionValid && isAmountValid) {
+      // Submit data
       try {
-        // Post request to create a new expense
-        await fetch(`/api/expenses?expense_id=${row.id}`, {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(data),
-        });
-        router.refresh();
+        handleEdit(data, row.id);
       } catch (error) {
-        console.error("There was an error editing the expense!", error);
-        // showAlert("There was an error editing the expense!", "error");
+        console.log(error);
       }
-
-      setRowModes((prevModes: any) => ({
-        ...prevModes,
-        [row.id]: "view",
-      }));
-      // showSnackbar("Expense edited!");
-    };
-
-    submitData();
+    }
   };
 
   return (
@@ -133,6 +157,8 @@ function RowEdit({
           label="Title"
           value={title}
           onChange={(e) => setTitle(e.target.value)}
+          error={!!titleError}
+          helperText={titleError}
         />
         <br />
         <br />
@@ -140,6 +166,8 @@ function RowEdit({
           label="Description"
           value={description}
           onChange={(e) => setDescription(e.target.value)}
+          error={!!descriptionError}
+          helperText={descriptionError}
         />
       </TableCell>
       <TableCell>
@@ -147,6 +175,8 @@ function RowEdit({
           label="Amount"
           value={amount}
           onChange={(e) => setAmount(e.target.value)}
+          error={!!amountError}
+          helperText={amountError}
         />
         <br />
         <br />
@@ -230,7 +260,7 @@ function RowEdit({
         <TextField
           label="Frequency variable"
           value={frequencyVariable}
-          onChange={(e) => setFrequencyVariable(e.target.value)}
+          onChange={(e) => setFrequencyVariable(parseInt(e.target.value))}
         />
         <br />
         <br />
@@ -243,7 +273,7 @@ function RowEdit({
               labelId="frequency-day-of-week-select-label"
               label="Day of week"
               value={frequencyDayOfWeek}
-              onChange={(e) => setFrequencyDayOfWeek(e.target.value)}
+              onChange={(e) => setFrequencyDayOfWeek(e.target.value as number)}
             >
               <MenuItem value={-1}>None</MenuItem>
               <MenuItem value={0}>Sunday</MenuItem>
@@ -265,7 +295,9 @@ function RowEdit({
               labelId="frequency-week-of-month-select-label"
               label="Week of month"
               value={frequencyWeekOfMonth}
-              onChange={(e) => setFrequencyWeekOfMonth(e.target.value)}
+              onChange={(e) =>
+                setFrequencyWeekOfMonth(e.target.value as number)
+              }
             >
               <MenuItem value={-1}>None</MenuItem>
               <MenuItem value={0}>First</MenuItem>
@@ -285,7 +317,9 @@ function RowEdit({
               labelId="frequency-month-of-year-select-label"
               label="Month of year"
               value={frequencyMonthOfYear}
-              onChange={(e) => setFrequencyMonthOfYear(e.target.value)}
+              onChange={(e) =>
+                setFrequencyMonthOfYear(e.target.value as number)
+              }
             >
               <MenuItem value={-1}>None</MenuItem>
               <MenuItem value={0}>January</MenuItem>
@@ -310,7 +344,7 @@ function RowEdit({
             Cancel
           </Button>
           <br />
-          <Button variant="contained" color="primary" onClick={handleEdit}>
+          <Button variant="contained" color="primary" onClick={handleSubmit}>
             Update expense
           </Button>
         </Stack>

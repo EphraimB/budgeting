@@ -211,11 +211,11 @@ export const getIncomeByAccount = async (
                             const tax: QueryResultRow =
                                 taxLookup[income.tax_id] !== undefined
                                     ? taxLookup[income.tax_id]
-                                    : { tax_rate: 0 };
+                                    : { rate: 0 };
 
                             return {
                                 ...income,
-                                tax_rate: parseFloat(tax.tax_rate),
+                                tax_rate: parseFloat(tax.rate),
                                 amount: parseFloat(income.income_amount),
                                 income_amount: parseFloat(income.income_amount),
                             };
@@ -250,11 +250,11 @@ export const getIncomeByAccount = async (
                 const tax: QueryResultRow =
                     taxLookup[income.tax_id] !== undefined
                         ? taxLookup[income.tax_id]
-                        : { tax_rate: 0 };
+                        : { rate: 0 };
 
                 return {
                     ...income,
-                    tax_rate: parseFloat(tax.tax_rate),
+                    tax_rate: parseFloat(tax.rate),
                     amount: parseFloat(income.income_amount),
                     income_amount: parseFloat(income.income_amount),
                 };
@@ -321,11 +321,11 @@ export const getExpensesByAccount = async (
                             const tax: QueryResultRow =
                                 taxLookup[expense.tax_id] !== undefined
                                     ? taxLookup[expense.tax_id]
-                                    : { tax_rate: 0 };
+                                    : { rate: 0 };
 
                             return {
                                 ...expense,
-                                tax_rate: parseFloat(tax.tax_rate),
+                                tax_rate: parseFloat(tax.rate),
                                 amount: parseFloat(expense.amount),
                                 subsidized: parseFloat(expense.subsidized),
                             };
@@ -360,11 +360,11 @@ export const getExpensesByAccount = async (
                 const tax: QueryResultRow =
                     taxLookup[expense.tax_id] !== undefined
                         ? taxLookup[expense.tax_id]
-                        : { tax_rate: 0 };
+                        : { rate: 0 };
 
                 return {
                     ...expense,
-                    tax_rate: parseFloat(tax.tax_rate),
+                    tax_rate: parseFloat(tax.rate),
                     amount: parseFloat(expense.amount),
                     subsidized: parseFloat(expense.subsidized),
                 };
@@ -655,11 +655,11 @@ export const getWishlistsByAccount = async (
                             const tax: QueryResultRow =
                                 taxLookup[wishlist.tax_id] !== undefined
                                     ? taxLookup[wishlist.tax_id]
-                                    : { tax_rate: 0 };
+                                    : { rate: 0 };
 
                             return {
                                 ...wishlist,
-                                tax_rate: parseFloat(tax.tax_rate),
+                                tax_rate: parseFloat(tax.rate),
                                 amount: parseFloat(wishlist.wishlist_amount),
                                 wishlist_amount: parseFloat(
                                     wishlist.wishlist_amount,
@@ -698,11 +698,11 @@ export const getWishlistsByAccount = async (
                 const tax: QueryResultRow =
                     taxLookup[wishlist.tax_id] !== undefined
                         ? taxLookup[wishlist.tax_id]
-                        : { tax_rate: 0 };
+                        : { rate: 0 };
 
                 return {
                     ...wishlist,
-                    tax_rate: parseFloat(tax.tax_rate),
+                    tax_rate: parseFloat(tax.rate),
                     amount: parseFloat(wishlist.wishlist_amount),
                     wishlist_amount: parseFloat(wishlist.wishlist_amount),
                 };
@@ -1056,7 +1056,7 @@ export const updateWishlistCron = async (
             const taxId = wslst.tax_id;
 
             // Get tax amount from tax_id in taxes table
-            const taxRate: number = !taxId
+            const taxRate: number = taxId
                 ? (await executeQuery(taxesQueries.getTax, [taxId]))[0].tax_rate
                 : 0;
 
