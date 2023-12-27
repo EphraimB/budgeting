@@ -55,6 +55,10 @@ function RowEdit({
     row.frequency_month_of_year || -1
   );
 
+  const [titleError, setTitleError] = useState("");
+  const [descriptionError, setDescriptionError] = useState("");
+  const [amountError, setAmountError] = useState("");
+
   const handleExpenseEndDateEnabledChange = (
     e: React.ChangeEvent<HTMLInputElement>
   ) => {
@@ -93,6 +97,54 @@ function RowEdit({
       frequencyMonthOfYear === -1 ? null : frequencyMonthOfYear,
   };
 
+  const validateTitle = () => {
+    if (!title) {
+      setTitleError("Title is required");
+      return false;
+    }
+
+    setTitleError("");
+
+    return true;
+  };
+
+  const validateDescription = () => {
+    if (!description) {
+      setDescriptionError("Description is required");
+      return false;
+    }
+
+    setDescriptionError("");
+
+    return true;
+  };
+
+  const validateAmount = () => {
+    if (parseFloat(amount) === 0) {
+      setAmountError("Amount needs to be greater than 0");
+      return false;
+    }
+
+    setAmountError("");
+
+    return true;
+  };
+
+  const handleSubmit = () => {
+    const isTitleValid = validateTitle();
+    const isDescriptionValid = validateDescription();
+    const isAmountValid = validateAmount();
+
+    if (isTitleValid && isDescriptionValid && isAmountValid) {
+      // Submit data
+      try {
+        handleEdit(data, row.id);
+      } catch (error) {
+        console.log(error);
+      }
+    }
+  };
+
   return (
     <TableRow
       key={row.id}
@@ -105,6 +157,8 @@ function RowEdit({
           label="Title"
           value={title}
           onChange={(e) => setTitle(e.target.value)}
+          error={!!titleError}
+          helperText={titleError}
         />
         <br />
         <br />
@@ -112,6 +166,8 @@ function RowEdit({
           label="Description"
           value={description}
           onChange={(e) => setDescription(e.target.value)}
+          error={!!descriptionError}
+          helperText={descriptionError}
         />
       </TableCell>
       <TableCell>
@@ -119,6 +175,8 @@ function RowEdit({
           label="Amount"
           value={amount}
           onChange={(e) => setAmount(e.target.value)}
+          error={!!amountError}
+          helperText={amountError}
         />
         <br />
         <br />
@@ -286,11 +344,7 @@ function RowEdit({
             Cancel
           </Button>
           <br />
-          <Button
-            variant="contained"
-            color="primary"
-            onClick={() => handleEdit(data, row.id)}
-          >
+          <Button variant="contained" color="primary" onClick={handleSubmit}>
             Update expense
           </Button>
         </Stack>
