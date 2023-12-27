@@ -31,8 +31,8 @@ function RowAdd({
 }) {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
-  const [amount, setAmount] = useState<number>(0);
-  const [subsidized, setSubsidized] = useState<number>(0);
+  const [amount, setAmount] = useState("0");
+  const [subsidized, setSubsidized] = useState("0");
   const [tax, setTax] = useState(0);
   const [beginDate, setBeginDate] = useState(dayjs().format());
   const [endDate, setEndDate] = useState<null | string>(null);
@@ -67,8 +67,8 @@ function RowAdd({
     account_id,
     title: title,
     description: description,
-    amount: amount,
-    subsidized: subsidized,
+    amount: parseFloat(amount),
+    subsidized: parseFloat(subsidized),
     tax_id: tax === 0 ? null : tax,
     begin_date: beginDate,
     end_date: endDate,
@@ -83,6 +83,7 @@ function RowAdd({
   };
 
   const validateTitle = () => {
+    console.log(title.length);
     if (title.length > 0) {
       setTitleError("Title is required");
       return false;
@@ -105,7 +106,7 @@ function RowAdd({
   };
 
   const validateAmount = () => {
-    if (amount === 0) {
+    if (parseFloat(amount) === 0) {
       setAmountError("Amount needs to be greater than 0");
       return false;
     }
@@ -159,7 +160,7 @@ function RowAdd({
         <TextField
           label="Amount"
           value={amount}
-          onChange={(e) => setAmount(parseFloat(e.target.value))}
+          onChange={(e) => setAmount(e.target.value)}
           error={!!amountError}
           helperText={amountError}
         />
@@ -168,7 +169,7 @@ function RowAdd({
         <TextField
           label="Subsidized"
           value={subsidized}
-          onChange={(e) => setSubsidized(parseFloat(e.target.value))}
+          onChange={(e) => setSubsidized(e.target.value)}
         />
         <br />
         <br />
