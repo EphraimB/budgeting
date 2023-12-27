@@ -83,8 +83,7 @@ function RowAdd({
   };
 
   const validateTitle = () => {
-    console.log(title.length);
-    if (title.length > 0) {
+    if (!title) {
       setTitleError("Title is required");
       return false;
     }
@@ -95,7 +94,7 @@ function RowAdd({
   };
 
   const validateDescription = () => {
-    if (description.length > 0) {
+    if (!description) {
       setDescriptionError("Description is required");
       return false;
     }
