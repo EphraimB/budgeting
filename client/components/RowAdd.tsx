@@ -31,17 +31,21 @@ function RowAdd({
 }) {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
-  const [amount, setAmount] = useState("0");
-  const [subsidized, setSubsidized] = useState("0");
+  const [amount, setAmount] = useState<number>(0);
+  const [subsidized, setSubsidized] = useState<number>(0);
   const [tax, setTax] = useState(0);
   const [beginDate, setBeginDate] = useState(dayjs().format());
   const [endDate, setEndDate] = useState<null | string>(null);
   const [endDateEnabled, setEndDateEnabled] = useState(false);
   const [frequency, setFrequency] = useState(2);
-  const [frequencyVariable, setFrequencyVariable] = useState(1);
-  const [frequencyDayOfWeek, setFrequencyDayOfWeek] = useState(-1);
-  const [frequencyWeekOfMonth, setFrequencyWeekOfMonth] = useState(-1);
-  const [frequencyMonthOfYear, setFrequencyMonthOfYear] = useState(-1);
+  const [frequencyVariable, setFrequencyVariable] = useState<number>(1);
+  const [frequencyDayOfWeek, setFrequencyDayOfWeek] = useState<number>(-1);
+  const [frequencyWeekOfMonth, setFrequencyWeekOfMonth] = useState<number>(-1);
+  const [frequencyMonthOfYear, setFrequencyMonthOfYear] = useState<number>(-1);
+
+  const [titleError, setTitleError] = useState("");
+  const [descriptionError, setDescriptionError] = useState("");
+  const [amountError, setAmountError] = useState("");
 
   const handleEndDateEnabledChange = (
     e: React.ChangeEvent<HTMLInputElement>
@@ -63,8 +67,8 @@ function RowAdd({
     account_id,
     title: title,
     description: description,
-    amount: parseFloat(amount),
-    subsidized: parseFloat(subsidized),
+    amount: amount,
+    subsidized: subsidized,
     tax_id: tax === 0 ? null : tax,
     begin_date: beginDate,
     end_date: endDate,
@@ -103,14 +107,14 @@ function RowAdd({
         <TextField
           label="Amount"
           value={amount}
-          onChange={(e) => setAmount(e.target.value)}
+          onChange={(e) => setAmount(parseFloat(e.target.value))}
         />
         <br />
         <br />
         <TextField
           label="Subsidized"
           value={subsidized}
-          onChange={(e) => setSubsidized(e.target.value)}
+          onChange={(e) => setSubsidized(parseFloat(e.target.value))}
         />
         <br />
         <br />
