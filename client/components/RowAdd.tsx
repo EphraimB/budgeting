@@ -87,14 +87,40 @@ function RowAdd({
       setTitleError("Title is required");
       return false;
     }
+
     setTitleError("");
+
+    return true;
+  };
+
+  const validateDescription = () => {
+    if (description.length > 0) {
+      setDescriptionError("Description is required");
+      return false;
+    }
+
+    setDescriptionError("");
+
+    return true;
+  };
+
+  const validateAmount = () => {
+    if (amount === 0) {
+      setAmountError("Amount needs to be greater than 0");
+      return false;
+    }
+
+    setAmountError("");
+
     return true;
   };
 
   const handleSubmit = () => {
     const isTitleValid = validateTitle();
+    const isDescriptionValid = validateDescription();
+    const isAmountValid = validateAmount();
 
-    if (isTitleValid) {
+    if (isTitleValid && isDescriptionValid && isAmountValid) {
       // Submit data
       try {
         handleAdd(data);
@@ -116,6 +142,8 @@ function RowAdd({
           label="Title"
           value={title}
           onChange={(e) => setTitle(e.target.value)}
+          error={!!titleError}
+          helperText={titleError}
         />
         <br />
         <br />
@@ -123,6 +151,8 @@ function RowAdd({
           label="Description"
           value={description}
           onChange={(e) => setDescription(e.target.value)}
+          error={!!descriptionError}
+          helperText={descriptionError}
         />
       </TableCell>
       <TableCell>
@@ -130,6 +160,8 @@ function RowAdd({
           label="Amount"
           value={amount}
           onChange={(e) => setAmount(parseFloat(e.target.value))}
+          error={!!amountError}
+          helperText={amountError}
         />
         <br />
         <br />
