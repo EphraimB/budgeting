@@ -82,6 +82,28 @@ function RowAdd({
       frequencyMonthOfYear === -1 ? null : frequencyMonthOfYear,
   };
 
+  const validateTitle = () => {
+    if (title.length > 0) {
+      setTitleError("Title is required");
+      return false;
+    }
+    setTitleError("");
+    return true;
+  };
+
+  const handleSubmit = () => {
+    const isTitleValid = validateTitle();
+
+    if (isTitleValid) {
+      // Submit data
+      try {
+        handleAdd(data);
+      } catch (error) {
+        console.log(error);
+      }
+    }
+  };
+
   return (
     <TableRow
       key="row-add"
@@ -275,11 +297,7 @@ function RowAdd({
             Cancel
           </Button>
           <br />
-          <Button
-            variant="contained"
-            color="primary"
-            onClick={() => handleAdd(data)}
-          >
+          <Button variant="contained" color="primary" onClick={handleSubmit}>
             Add expense
           </Button>
         </Stack>
