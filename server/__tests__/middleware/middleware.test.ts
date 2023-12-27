@@ -313,7 +313,7 @@ describe('getTransactionsByAccount', () => {
 describe('getExpensesByAccount', () => {
     it('gets expenses for a given account and date', async () => {
         mockModule([
-            [{ tax_id: 1, tax_rate: 0 }],
+            [{ tax_id: 1, rate: 0 }],
             [{ account_id: 1 }],
             expenses,
         ]);
@@ -1006,7 +1006,7 @@ describe('getIncomeByAccount', () => {
     });
 
     it('should fetch accounts if account_id is not provided', async () => {
-        mockModule([[{ tax_id: 1, tax_rate: 0 }], [{ account_id: 1 }], income]);
+        mockModule([[{ tax_id: 1, rate: 0 }], [{ account_id: 1 }], income]);
 
         const { getIncomeByAccount } = await import(
             '../../middleware/middleware.js'
