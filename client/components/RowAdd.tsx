@@ -43,7 +43,7 @@ function RowAdd({
   const [frequencyWeekOfMonth, setFrequencyWeekOfMonth] = useState(-1);
   const [frequencyMonthOfYear, setFrequencyMonthOfYear] = useState(-1);
 
-  const handleExpenseEndDateEnabledChange = (
+  const handleEndDateEnabledChange = (
     e: React.ChangeEvent<HTMLInputElement>
   ) => {
     setEndDateEnabled(e.target.checked);
@@ -150,7 +150,7 @@ function RowAdd({
             control={
               <Checkbox
                 checked={endDateEnabled}
-                onChange={handleExpenseEndDateEnabledChange}
+                onChange={handleEndDateEnabledChange}
               />
             }
             label="Expense end date"
