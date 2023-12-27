@@ -29,15 +29,15 @@ function RowAdd({
   setShowAddForm: any;
   handleAdd: any;
 }) {
-  const [expenseTitle, setExpenseTitle] = useState("");
-  const [expenseDescription, setExpenseDescription] = useState("");
-  const [expenseAmount, setExpenseAmount] = useState("0");
-  const [expenseSubsidized, setExpenseSubsidized] = useState("0");
-  const [expenseTax, setExpenseTax] = useState(0);
-  const [expenseBeginDate, setExpenseBeginDate] = useState(dayjs().format());
-  const [expenseEndDate, setExpenseEndDate] = useState<null | string>(null);
-  const [expenseEndDateEnabled, setExpenseEndDateEnabled] = useState(false);
-  const [expenseFrequency, setExpenseFrequency] = useState(2);
+  const [title, setTitle] = useState("");
+  const [description, setDescription] = useState("");
+  const [amount, setAmount] = useState("0");
+  const [subsidized, setSubsidized] = useState("0");
+  const [tax, setTax] = useState(0);
+  const [beginDate, setBeginDate] = useState(dayjs().format());
+  const [endDate, setEndDate] = useState<null | string>(null);
+  const [endDateEnabled, setEndDateEnabled] = useState(false);
+  const [frequency, setFrequency] = useState(2);
   const [frequencyVariable, setFrequencyVariable] = useState(1);
   const [frequencyDayOfWeek, setFrequencyDayOfWeek] = useState(-1);
   const [frequencyWeekOfMonth, setFrequencyWeekOfMonth] = useState(-1);
@@ -46,12 +46,12 @@ function RowAdd({
   const handleExpenseEndDateEnabledChange = (
     e: React.ChangeEvent<HTMLInputElement>
   ) => {
-    setExpenseEndDateEnabled(e.target.checked);
+    setEndDateEnabled(e.target.checked);
 
     if (e.target.checked) {
-      setExpenseEndDate(dayjs().format());
+      setEndDate(dayjs().format());
     } else {
-      setExpenseEndDate(null);
+      setEndDate(null);
     }
   };
 
@@ -61,14 +61,14 @@ function RowAdd({
 
   const data = {
     account_id,
-    title: expenseTitle,
-    description: expenseDescription,
-    amount: parseFloat(expenseAmount),
-    subsidized: parseFloat(expenseSubsidized),
-    tax_id: expenseTax === 0 ? null : expenseTax,
-    begin_date: expenseBeginDate,
-    end_date: expenseEndDate,
-    frequency_type: expenseFrequency,
+    title: title,
+    description: description,
+    amount: parseFloat(amount),
+    subsidized: parseFloat(subsidized),
+    tax_id: tax === 0 ? null : tax,
+    begin_date: beginDate,
+    end_date: endDate,
+    frequency_type: frequency,
     frequency_type_variable: frequencyVariable,
     frequency_day_of_week:
       frequencyDayOfWeek === -1 ? null : frequencyDayOfWeek,
@@ -88,29 +88,29 @@ function RowAdd({
       <TableCell colSpan={2}>
         <TextField
           label="Title"
-          value={expenseTitle}
-          onChange={(e) => setExpenseTitle(e.target.value)}
+          value={title}
+          onChange={(e) => setTitle(e.target.value)}
         />
         <br />
         <br />
         <TextField
           label="Description"
-          value={expenseDescription}
-          onChange={(e) => setExpenseDescription(e.target.value)}
+          value={description}
+          onChange={(e) => setDescription(e.target.value)}
         />
       </TableCell>
       <TableCell>
         <TextField
           label="Amount"
-          value={expenseAmount}
-          onChange={(e) => setExpenseAmount(e.target.value)}
+          value={amount}
+          onChange={(e) => setAmount(e.target.value)}
         />
         <br />
         <br />
         <TextField
           label="Subsidized"
-          value={expenseSubsidized}
-          onChange={(e) => setExpenseSubsidized(e.target.value)}
+          value={subsidized}
+          onChange={(e) => setSubsidized(e.target.value)}
         />
         <br />
         <br />
@@ -120,8 +120,8 @@ function RowAdd({
             <Select
               labelId="tax-select-label"
               label="Tax"
-              value={expenseTax}
-              onChange={(e) => setExpenseTax(e.target.value as number)}
+              value={tax}
+              onChange={(e) => setTax(e.target.value as number)}
             >
               <MenuItem key={0} value={0}>
                 None - 0%
@@ -139,9 +139,9 @@ function RowAdd({
         <LocalizationProvider dateAdapter={AdapterDayjs}>
           <DateTimePicker
             label="Expense begin date"
-            value={dayjs(expenseBeginDate)}
+            value={dayjs(beginDate)}
             onChange={(e: Dayjs | null) =>
-              setExpenseBeginDate(e ? e.format() : dayjs().format())
+              setBeginDate(e ? e.format() : dayjs().format())
             }
           />
           <br />
@@ -149,18 +149,18 @@ function RowAdd({
           <FormControlLabel
             control={
               <Checkbox
-                checked={expenseEndDateEnabled}
+                checked={endDateEnabled}
                 onChange={handleExpenseEndDateEnabledChange}
               />
             }
             label="Expense end date"
           />
-          {expenseEndDateEnabled && (
+          {endDateEnabled && (
             <DateTimePicker
               label="Expense end date"
-              value={dayjs(expenseEndDate) || dayjs()}
+              value={dayjs(endDate) || dayjs()}
               onChange={(e: Dayjs | null) =>
-                setExpenseEndDate(e ? e.format() : dayjs().format())
+                setEndDate(e ? e.format() : dayjs().format())
               }
             />
           )}
@@ -172,8 +172,8 @@ function RowAdd({
           <Select
             labelId="frequency-select-label"
             label="Frequency"
-            value={expenseFrequency}
-            onChange={(e) => setExpenseFrequency(e.target.value as number)}
+            value={frequency}
+            onChange={(e) => setFrequency(e.target.value as number)}
           >
             <MenuItem value={-1}>None</MenuItem>
             <MenuItem value={0}>Daily</MenuItem>
@@ -191,9 +191,7 @@ function RowAdd({
         />
         <br />
         <br />
-        {(expenseFrequency === 1 ||
-          expenseFrequency === 2 ||
-          expenseFrequency === 3) && (
+        {(frequency === 1 || frequency === 2 || frequency === 3) && (
           <FormControl>
             <InputLabel id="frequency-day-of-week-select-label">
               Day of week
@@ -215,7 +213,7 @@ function RowAdd({
             </Select>
           </FormControl>
         )}
-        {(expenseFrequency === 2 || expenseFrequency === 3) && (
+        {(frequency === 2 || frequency === 3) && (
           <FormControl>
             <InputLabel id="frequency-week-of-month-select-label">
               Week of month
@@ -237,7 +235,7 @@ function RowAdd({
             </Select>
           </FormControl>
         )}
-        {expenseFrequency === 3 && (
+        {frequency === 3 && (
           <FormControl>
             <InputLabel id="frequency-month-of-year-select-label">
               Month of year
