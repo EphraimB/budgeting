@@ -12,13 +12,7 @@ describe("AccountList", () => {
 
     const onAccountClick = jest.fn();
 
-    const { getByText } = render(
-      <AccountList
-        accounts={mockAccounts}
-        onAccountClick={onAccountClick}
-        selectedAccountId={1}
-      />
-    );
+    const { getByText } = render(<AccountList accounts={mockAccounts} />);
 
     // Check if the accounts are rendered with the correct values
     expect(getByText("Account A")).toBeInTheDocument();
