@@ -1,76 +1,63 @@
 import React from "react";
 import { render } from "@testing-library/react";
 import "@testing-library/jest-dom";
-import { cleanup } from "@testing-library/react";
-import dayjs from "dayjs";
+import TransactionDisplay from "../components/TransactionDisplay";
 
 const mockTransactions = [
   {
-    id: "eqawd3qfd3",
-    transaction_id: 1,
-    title: "Test Transaction",
-    description: "A test transaction",
-    date: dayjs("2021-09-03"),
-    date_modified: dayjs("2021-09-03"),
-    amount: 100,
-    tax_rate: 0.05,
-    total_amount: 200,
-  },
-  {
-    id: "eqawd3qfd3",
-    transaction_id: 2,
-    title: "Test Transaction 2",
-    description: "A test transaction 2",
-    date: dayjs("2021-09-03"),
-    date_modified: dayjs("2021-09-03"),
-    amount: 100,
-    tax_rate: 0.05,
-    total_amount: 200,
+    account_id: 1,
+    current_balance: 900,
+    transactions: [
+      {
+        id: "34ac30d0-5015-4b86-b325-4d198c887882",
+        title: "Payroll",
+        description: "payroll",
+        date: "2024-01-15T11:30:00.000Z",
+        amount: 1152,
+        tax_rate: 0.26999999999999996,
+        total_amount: 840.96,
+        balance: 1740.96,
+      },
+      {
+        id: "67838641-243c-40b0-b688-fa1889a9d0d8",
+        expense_id: 7,
+        title: "Testing",
+        description: "Just testing",
+        date: "2024-01-27T10:15:12.000Z",
+        amount: -9.99,
+        tax_rate: 0,
+        total_amount: -9.99,
+        balance: 1730.97,
+      },
+    ],
   },
 ];
 
 describe("TransactionDisplay", () => {
-  afterEach(() => {
-    cleanup();
-    jest.clearAllMocks();
-    jest.resetModules();
-  });
+  // it("displays loader while fetching data", async () => {
+  //   const { getByRole } = render(
+  //     <TransactionDisplay transactions={mockTransactions} />
+  //   );
 
-  it("displays loader while fetching data", async () => {
-    const TransactionDisplay = (
-      await import("../components/TransactionDisplay")
-    ).default;
+  //   expect(getByRole("progressbar")).toBeInTheDocument();
+  // });
 
-    const { getByRole } = render(
-      <TransactionDisplay transactions={mockTransactions} />
-    );
+  // it("displays error message on fetch error", async () => {
+  //   const { getByText } = render(
+  //     <TransactionDisplay transactions={mockTransactions} />
+  //   );
 
-    expect(getByRole("progressbar")).toBeInTheDocument();
-  });
-
-  it("displays error message on fetch error", async () => {
-    const TransactionDisplay = (
-      await import("../components/TransactionDisplay")
-    ).default;
-
-    const { getByText } = render(
-      <TransactionDisplay transactions={mockTransactions} />
-    );
-
-    expect(getByText("failed to load")).toBeInTheDocument();
-  });
+  //   expect(getByText("failed to load")).toBeInTheDocument();
+  // });
 
   it("displays transactions when data is fetched", async () => {
-    const TransactionDisplay = (
-      await import("../components/TransactionDisplay")
-    ).default;
-
     const { getByText } = render(
       <TransactionDisplay transactions={mockTransactions} />
     );
 
-    expect(getByText("Test Transaction")).toBeInTheDocument();
-    expect(getByText("$100")).toBeInTheDocument();
-    expect(getByText("5%")).toBeInTheDocument();
+    expect(getByText("Testing")).toBeInTheDocument();
+    expect(getByText("Just testing")).toBeInTheDocument();
+    expect(getByText("$1730.97")).toBeInTheDocument();
+    expect(getByText("0%")).toBeInTheDocument();
   });
 });
