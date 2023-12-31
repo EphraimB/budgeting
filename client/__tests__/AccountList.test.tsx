@@ -8,15 +8,15 @@ jest.mock("next/navigation", () => ({
 }));
 
 describe("AccountList", () => {
-  it("renders accounts correctly and responds to account click", () => {
+  it("renders accounts correctly", () => {
     const mockAccounts = [
       { account_id: 1, account_name: "Account A", account_balance: 100 },
       { account_id: 2, account_name: "Account B", account_balance: 200 },
     ];
 
-    const onAccountClick = jest.fn();
-
-    const { getByText } = render(<AccountList accounts={mockAccounts} />);
+    const { getByText, getByLabelText } = render(
+      <AccountList accounts={mockAccounts} />
+    );
 
     // Check if the accounts are rendered with the correct values
     expect(getByText("Account A")).toBeInTheDocument();
@@ -24,11 +24,7 @@ describe("AccountList", () => {
     expect(getByText("Account B")).toBeInTheDocument();
     expect(getByText("$200.00")).toBeInTheDocument();
 
-    // Simulate clicking on an account and check if onAccountClick is called with the correct account
-    fireEvent.click(getByText("Account A"));
-    expect(onAccountClick).toHaveBeenCalledWith(mockAccounts[0]);
-
-    // Check if the "Open New Account" button is rendered
-    expect(getByText("Open New Account")).toBeInTheDocument();
+    const tooltip = getByLabelText("Open new account");
+    expect(tooltip).toBeInTheDocument();
   });
 });
