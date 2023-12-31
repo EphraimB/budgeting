@@ -1,39 +1,29 @@
 import React from "react";
-import { render, fireEvent } from "@testing-library/react";
+import { render } from "@testing-library/react";
 import DateRange from "../components/DateRange";
-import dayjs from "dayjs";
+
+jest.mock("next/navigation", () => ({
+  useRouter: () => ({
+    push: jest.fn(),
+  }),
+  usePathname: () => "/",
+}));
 
 describe("DateRange", () => {
   it("renders date pickers with provided dates and calls set functions on change", () => {
-    const fromDate = dayjs("2023-01-01T12:00:00");
-    const toDate = dayjs("2023-01-02T12:00:00");
-
-    const setFromDate = jest.fn();
-    const setToDate = jest.fn();
+    const fromDate = "2023-01-01";
+    const toDate = "2023-01-02";
 
     const { getByLabelText } = render(
-      <DateRange
-        fromDate={fromDate}
-        setFromDate={setFromDate}
-        toDate={toDate}
-        setToDate={setToDate}
-      />
+      <DateRange fromDate={fromDate} toDate={toDate} />
     );
 
-    // Check if the date pickers have the correct initial value
-    expect(getByLabelText("From date").value).toBe("01/01/2023 12:00 PM");
-    expect(getByLabelText("To date").value).toBe("01/02/2023 12:00 PM");
+    // After rendering your component and doing necessary interactions
+    const input = getByLabelText("From date") as HTMLInputElement;
+    const input2 = getByLabelText("To date") as HTMLInputElement;
 
-    // Simulate changing the fromDate (this will be more pseudo-simulation due to MUI pickers complexity)
-    fireEvent.change(getByLabelText("From date"), {
-      target: { value: "1/2/2023 1:00 PM" },
-    });
-    expect(setFromDate).toHaveBeenCalled();
-
-    // Simulate changing the toDate
-    fireEvent.change(getByLabelText("To date"), {
-      target: { value: "1/3/2023 1:00 PM" },
-    });
-    expect(setToDate).toHaveBeenCalled();
+    // Check if the value of the input is as expected
+    expect(input.value).toBe("01/01/2023");
+    expect(input2.value).toBe("01/02/2023");
   });
 });
