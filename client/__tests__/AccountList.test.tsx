@@ -3,6 +3,10 @@ import { render, fireEvent } from "@testing-library/react";
 import AccountList from "../components/AccountList";
 import "@testing-library/jest-dom";
 
+jest.mock("next/navigation", () => ({
+  usePathname: () => "/",
+}));
+
 describe("AccountList", () => {
   it("renders accounts correctly and responds to account click", () => {
     const mockAccounts = [
@@ -16,9 +20,9 @@ describe("AccountList", () => {
 
     // Check if the accounts are rendered with the correct values
     expect(getByText("Account A")).toBeInTheDocument();
-    expect(getByText("$100")).toBeInTheDocument();
+    expect(getByText("$100.00")).toBeInTheDocument();
     expect(getByText("Account B")).toBeInTheDocument();
-    expect(getByText("$200")).toBeInTheDocument();
+    expect(getByText("$200.00")).toBeInTheDocument();
 
     // Simulate clicking on an account and check if onAccountClick is called with the correct account
     fireEvent.click(getByText("Account A"));
