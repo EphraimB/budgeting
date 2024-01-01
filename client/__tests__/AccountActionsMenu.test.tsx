@@ -1,13 +1,12 @@
-import { useState } from "react";
 import { render } from "@testing-library/react";
 import "@testing-library/jest-dom";
 import AccountActionsMenu from "../components/AccountActionsMenu";
 
 const setAccountModes = jest.fn();
 
-const anchorEl = null;
+const anchorEl = document.createElement("div");
 
-const open = Boolean(anchorEl);
+const open = true;
 
 const handleClose = () => jest.fn();
 
