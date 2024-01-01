@@ -34,22 +34,6 @@ const mockTransactions = [
 ];
 
 describe("TransactionDisplay", () => {
-  // it("displays loader while fetching data", async () => {
-  //   const { getByRole } = render(
-  //     <TransactionDisplay transactions={mockTransactions} />
-  //   );
-
-  //   expect(getByRole("progressbar")).toBeInTheDocument();
-  // });
-
-  // it("displays error message on fetch error", async () => {
-  //   const { getByText } = render(
-  //     <TransactionDisplay transactions={mockTransactions} />
-  //   );
-
-  //   expect(getByText("failed to load")).toBeInTheDocument();
-  // });
-
   it("displays transactions when data is fetched", async () => {
     const { getByText } = render(
       <TransactionDisplay transactions={mockTransactions} />
