@@ -1,6 +1,6 @@
 import React from "react";
 import { render } from "@testing-library/react";
-import DateRange from "../components/DateRange";
+import DateRange from "../../components/DateRange";
 
 jest.mock("next/navigation", () => ({
   useRouter: () => ({

@@ -1,6 +1,6 @@
 import React from "react";
 import { render, fireEvent } from "@testing-library/react";
-import AccountList from "../components/AccountList";
+import AccountList from "../../components/AccountList";
 import "@testing-library/jest-dom";
 
 jest.mock("next/navigation", () => ({

@@ -1,6 +1,6 @@
 import { render } from "@testing-library/react";
 import "@testing-library/jest-dom";
-import AccountActionsMenu from "../components/AccountActionsMenu";
+import AccountActionsMenu from "../../components/AccountActionsMenu";
 
 const setAccountModes = jest.fn();
 
