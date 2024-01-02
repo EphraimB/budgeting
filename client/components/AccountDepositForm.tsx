@@ -9,6 +9,7 @@ import InputLabel from "@mui/material/InputLabel";
 import IconButton from "@mui/material/IconButton";
 import CloseIcon from "@mui/icons-material/Close";
 import { Typography } from "@mui/material";
+import { addTransactionHistory } from "../services/actions/transactionHistory";
 
 function AccountDepositForm({
   account,
@@ -21,38 +22,70 @@ function AccountDepositForm({
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
 
-  // const data = {
-  //   account_id: account.account_id,
-  //   amount,
-  //   tax: 0,
-  //   title,
-  //   description,
-  // };
+  const [amountError, setAmountError] = useState("");
+  const [titleError, setTitleError] = useState("");
+  const [descriptionError, setDescriptionError] = useState("");
 
-  // const handleSubmit = () => {
-  //   const submitForm = async () => {
-  //     try {
-  //       await fetch("http://localhost:3000/api/transactions/history", {
-  //         method: "POST",
-  //         headers: {
-  //           "Content-Type": "application/json",
-  //         },
-  //         body: JSON.stringify(data),
-  //       });
-  //     } catch (error) {
-  //       console.error(error);
-  //       showAlert("Failed to create transaction", "error");
-  //     }
-  //     showSnackbar("Transaction created!");
-  //   };
+  const data = {
+    account_id: account.account_id,
+    amount,
+    tax: 0,
+    title,
+    description,
+  };
 
-  //   submitForm();
+  const validateAmount = () => {
+    if (!amount) {
+      setAmountError("Amount is required");
+      return false;
+    }
 
-  //   setAccountModes((prevModes: any) => ({
-  //     ...prevModes,
-  //     [account.account_id]: "view",
-  //   }));
-  // };
+    setAmountError("");
+
+    return true;
+  };
+
+  const validateTitle = () => {
+    if (!title) {
+      setTitleError("Title is required");
+      return false;
+    }
+
+    setTitleError("");
+
+    return true;
+  };
+
+  const validateDescription = () => {
+    if (!description) {
+      setDescriptionError("Description is required");
+      return false;
+    }
+
+    setDescriptionError("");
+
+    return true;
+  };
+
+  const handleSubmit = async () => {
+    const isAmountValid = validateAmount();
+    const isTitleValid = validateTitle();
+    const isDescriptionValid = validateDescription();
+
+    if (isAmountValid && isTitleValid && isDescriptionValid) {
+      // Submit data
+      try {
+        await addTransactionHistory(data);
+      } catch (error) {
+        console.log(error);
+      }
+
+      setAccountModes((prevModes: any) => ({
+        ...prevModes,
+        [account.account_id]: "view",
+      }));
+    }
+  };
 
   const handleNumericInput = (e: any) => {
     e.target.value = e.target.value
@@ -98,6 +131,8 @@ function AccountDepositForm({
             label="Amount"
             value={amount}
             onChange={(e) => setAmount(e.target.value as unknown as number)}
+            error={!!amountError}
+            helperText={amountError}
             variant="standard"
           />
         </Box>
@@ -106,6 +141,8 @@ function AccountDepositForm({
           label="Title"
           value={title}
           onChange={(e) => setTitle(e.target.value)}
+          error={!!titleError}
+          helperText={titleError}
           variant="standard"
         />
         <TextField
@@ -113,15 +150,13 @@ function AccountDepositForm({
           label="Description"
           value={description}
           onChange={(e) => setDescription(e.target.value)}
+          error={!!descriptionError}
+          helperText={descriptionError}
           variant="standard"
         />
       </Stack>
       <br />
-      <Button
-        variant="contained"
-        color="secondary"
-        onClick={() => console.log("Submit")}
-      >
+      <Button variant="contained" color="secondary" onClick={handleSubmit}>
         Deposit
       </Button>
     </Box>

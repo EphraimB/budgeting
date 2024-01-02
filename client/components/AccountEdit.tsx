@@ -16,6 +16,7 @@ export default function AccountEdit({
   setAccountModes: any;
 }) {
   const [accountName, setAccountName] = useState(account.account_name);
+  
   const [nameError, setNameError] = useState("");
 
   const data = {
