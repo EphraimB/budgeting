@@ -22,5 +22,6 @@ describe("AccountList", () => {
       />
     );
     expect(getByText("Cancel")).toBeInTheDocument();
+    expect(getByText("Delete")).toBeInTheDocument();
   });
 });
