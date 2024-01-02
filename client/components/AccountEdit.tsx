@@ -16,6 +16,8 @@ export default function AccountEdit({
   setAccountModes: any;
 }) {
   const [accountName, setAccountName] = useState(account.account_name);
+  const [nameError, setNameError] = useState("");
+
   const data = {
     name: accountName,
   };
@@ -75,6 +77,8 @@ export default function AccountEdit({
           onInput={(event: React.ChangeEvent<HTMLInputElement>) => {
             setAccountName(event.target.value);
           }}
+          error={!!nameError}
+          helperText={nameError}
         />
 
         <Button variant="contained" color="primary" onClick={handleSubmit}>
