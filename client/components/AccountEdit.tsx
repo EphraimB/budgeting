@@ -25,7 +25,7 @@ export default function AccountEdit({
   const validateName = () => {
     if (!accountName) {
       setNameError("Name is required");
-      
+
       return false;
     }
 
