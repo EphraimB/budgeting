@@ -130,7 +130,7 @@ function RowEdit({
     return true;
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     const isTitleValid = validateTitle();
     const isDescriptionValid = validateDescription();
     const isAmountValid = validateAmount();
@@ -138,7 +138,7 @@ function RowEdit({
     if (isTitleValid && isDescriptionValid && isAmountValid) {
       // Submit data
       try {
-        handleEdit(data, row.id);
+        await handleEdit(data, row.id);
       } catch (error) {
         console.log(error);
       }
