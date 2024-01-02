@@ -1,16 +1,16 @@
 import React from "react";
 import { render } from "@testing-library/react";
+import AccountEdit from "../../components/AccountEdit";
 import "@testing-library/jest-dom";
-import AccountDelete from "../../components/AccountDelete";
 
 jest.mock("next/navigation", () => ({
   useRouter: jest.fn(),
 }));
 
-describe("AccountList", () => {
+describe("AccountEdit", () => {
   it("renders", () => {
     const { getByText } = render(
-      <AccountDelete
+      <AccountEdit
         account={{
           account_id: 1,
           account_name: "Test Account",
@@ -21,6 +21,6 @@ describe("AccountList", () => {
       />
     );
     expect(getByText("Cancel")).toBeInTheDocument();
-    expect(getByText("Delete")).toBeInTheDocument();
+    expect(getByText("Save")).toBeInTheDocument();
   });
 });

@@ -1,4 +1,4 @@
-import dayjs, { Dayjs } from "dayjs";
+import dayjs from "dayjs";
 import DateRange from "../../../components/DateRange";
 import TransactionDisplay from "../../../components/TransactionDisplay";
 import DataManagementWidgets from "../../../components/DataManagementWidgets";
@@ -10,8 +10,7 @@ async function getTransactions(
   to_date: string
 ) {
   const res = await fetch(
-    `http://server:5001/api/transactions?account_id=${accountId}&from_date=${from_date}&to_date=${to_date}`,
-    { cache: "no-store" }
+    `http://server:5001/api/transactions?account_id=${accountId}&from_date=${from_date}&to_date=${to_date}`
   );
 
   if (!res.ok) {
