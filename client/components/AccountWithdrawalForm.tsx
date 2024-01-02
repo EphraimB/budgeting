@@ -156,11 +156,7 @@ function AccountWithdrawalForm({
         />
       </Stack>
       <br />
-      <Button
-        variant="contained"
-        color="secondary"
-        onClick={() => console.log("Submit")}
-      >
+      <Button variant="contained" color="secondary" onClick={handleSubmit}>
         Withdraw
       </Button>
     </Box>
