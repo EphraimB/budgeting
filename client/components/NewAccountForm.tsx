@@ -42,6 +42,8 @@ export default function NewAccountForm({
       } catch (error) {
         console.log(error);
       }
+
+      setShowNewAccountForm(false);
     }
   };
 
