@@ -20,7 +20,7 @@ describe("AccountEdit", () => {
         setAccountModes={() => {}}
       />
     );
-    expect(getByText("Cancel")).toBeInTheDocument();
-    expect(getByText("Save")).toBeInTheDocument();
+
+    expect(getByText("Edit Account")).toBeInTheDocument();
   });
 });
