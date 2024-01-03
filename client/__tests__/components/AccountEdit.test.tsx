@@ -3,10 +3,6 @@ import { render } from "@testing-library/react";
 import AccountEdit from "../../components/AccountEdit";
 import "@testing-library/jest-dom";
 
-jest.mock("next/navigation", () => ({
-  useRouter: jest.fn(),
-}));
-
 describe("AccountEdit", () => {
   it("renders", () => {
     const { getByText, getByDisplayValue } = render(
