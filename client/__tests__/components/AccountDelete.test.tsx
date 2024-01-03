@@ -3,10 +3,6 @@ import { render } from "@testing-library/react";
 import "@testing-library/jest-dom";
 import AccountDelete from "../../components/AccountDelete";
 
-jest.mock("next/navigation", () => ({
-  useRouter: jest.fn(),
-}));
-
 describe("AccountList", () => {
   it("renders", () => {
     const { getByText } = render(

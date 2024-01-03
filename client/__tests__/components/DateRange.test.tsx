@@ -3,9 +3,7 @@ import { render } from "@testing-library/react";
 import DateRange from "../../components/DateRange";
 
 jest.mock("next/navigation", () => ({
-  useRouter: () => ({
-    push: jest.fn(),
-  }),
+  useRouter: jest.fn(),
   usePathname: () => "/",
 }));
 
