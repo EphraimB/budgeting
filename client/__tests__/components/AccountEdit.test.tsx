@@ -9,7 +9,7 @@ jest.mock("next/navigation", () => ({
 
 describe("AccountEdit", () => {
   it("renders", () => {
-    const { getByText } = render(
+    const { getByText, getByDisplayValue } = render(
       <AccountEdit
         account={{
           account_id: 1,
@@ -21,6 +21,8 @@ describe("AccountEdit", () => {
       />
     );
 
+    expect(getByText("Account name")).toBeInTheDocument();
+    expect(getByDisplayValue("Test Account")).toBeInTheDocument();
     expect(getByText("Edit Account")).toBeInTheDocument();
   });
 });
