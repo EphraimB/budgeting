@@ -172,26 +172,26 @@ function RowAdd({
         />
         <br />
         <br />
-        {taxes.length > 0 ? (
-          <FormControl>
-            <InputLabel id="tax-select-label">Tax</InputLabel>
-            <Select
-              labelId="tax-select-label"
-              label="Tax"
-              value={tax}
-              onChange={(e) => setTax(e.target.value as number)}
-            >
-              <MenuItem key={0} value={0}>
-                None - 0%
-              </MenuItem>
-              {taxes.map((tax: any) => (
-                <MenuItem key={tax.id} value={tax.id}>
-                  {tax.title} - {tax.rate * 100}%
-                </MenuItem>
-              ))}
-            </Select>
-          </FormControl>
-        ) : null}
+        <FormControl>
+          <InputLabel id="tax-select-label">Tax</InputLabel>
+          <Select
+            labelId="tax-select-label"
+            label="Tax"
+            value={tax}
+            onChange={(e) => setTax(e.target.value as number)}
+          >
+            <MenuItem key={0} value={0}>
+              None - 0%
+            </MenuItem>
+            {taxes
+              ? taxes.map((tax: any) => (
+                  <MenuItem key={tax.id} value={tax.id}>
+                    {tax.title} - {tax.rate * 100}%
+                  </MenuItem>
+                ))
+              : null}
+          </Select>
+        </FormControl>
       </TableCell>
       <TableCell>
         <LocalizationProvider dateAdapter={AdapterDayjs}>

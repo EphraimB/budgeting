@@ -2,6 +2,7 @@ import React from "react";
 import { render } from "@testing-library/react";
 import RowAdd from "../../components/RowAdd";
 import "@testing-library/jest-dom";
+import { Table, TableBody } from "@mui/material";
 
 describe("RowAdd", () => {
   test("renders RowAdd component", () => {
@@ -20,13 +21,17 @@ describe("RowAdd", () => {
     const setShowAddForm = jest.fn();
     const handleAdd = jest.fn();
 
-    const { getByLabelText } = render(
-      <RowAdd
-        account_id={1}
-        taxes={[]}
-        setShowAddForm={setShowAddForm}
-        handleAdd={handleAdd}
-      />
+    const { getByLabelText, getByText } = render(
+      <Table>
+        <TableBody>
+          <RowAdd
+            account_id={1}
+            taxes={[]}
+            setShowAddForm={setShowAddForm}
+            handleAdd={handleAdd}
+          />
+        </TableBody>
+      </Table>
     );
 
     expect(getByLabelText("Title")).toBeInTheDocument();
@@ -36,8 +41,7 @@ describe("RowAdd", () => {
     expect(getByLabelText("Expense begin date")).toBeInTheDocument();
     expect(getByLabelText("Tax")).toBeInTheDocument();
     expect(getByLabelText("Subsidized")).toBeInTheDocument();
-    expect(getByLabelText("Account")).toBeInTheDocument();
-    expect(getByLabelText("Add")).toBeInTheDocument();
-    expect(getByLabelText("Cancel")).toBeInTheDocument();
+    expect(getByText("Add expense")).toBeInTheDocument();
+    expect(getByText("Cancel")).toBeInTheDocument();
   });
 });
