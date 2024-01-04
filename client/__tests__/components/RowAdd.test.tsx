@@ -5,7 +5,7 @@ import "@testing-library/jest-dom";
 import { Table, TableBody } from "@mui/material";
 
 describe("RowAdd", () => {
-  test("renders RowAdd component", () => {
+  it("renders RowAdd component", () => {
     const setShowAddForm = jest.fn();
     const handleAdd = jest.fn();
 
@@ -33,7 +33,7 @@ describe("RowAdd", () => {
     expect(getByText("Cancel")).toBeInTheDocument();
   });
 
-  test("renders RowAdd component with taxes", () => {
+  it("renders RowAdd component with taxes", () => {
     const setShowAddForm = jest.fn();
     const handleAdd = jest.fn();
 
