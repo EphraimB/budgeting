@@ -233,7 +233,6 @@ function RowAdd({
             value={frequency}
             onChange={(e) => setFrequency(e.target.value as number)}
           >
-            <MenuItem value={-1}>None</MenuItem>
             <MenuItem value={0}>Daily</MenuItem>
             <MenuItem value={1}>Weekly</MenuItem>
             <MenuItem value={2}>Monthly</MenuItem>

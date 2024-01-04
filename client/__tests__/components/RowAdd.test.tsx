@@ -108,4 +108,45 @@ describe("RowAdd", () => {
     expect(getByText("Add expense")).toBeInTheDocument();
     expect(getByText("Cancel")).toBeInTheDocument();
   });
+
+  it("renders RowAdd component with frequency daily", () => {
+    const setShowAddForm = jest.fn();
+    const handleAdd = jest.fn();
+
+    const { getByLabelText, getByText } = render(
+      <Table>
+        <TableBody>
+          <RowAdd
+            account_id={1}
+            taxes={[]}
+            setShowAddForm={setShowAddForm}
+            handleAdd={handleAdd}
+          />
+        </TableBody>
+      </Table>
+    );
+
+    // Check frequency
+    const frequency = getByLabelText("Frequency");
+    expect(frequency).toBeInTheDocument();
+    expect(frequency).toHaveValue(2);
+
+    act(() => {
+      frequency.focus();
+      frequency.setSelectionRange(0, frequency.value.length);
+      frequency.blur();
+    });
+
+    expect(frequency).toHaveValue(0);
+
+    expect(getByLabelText("Title")).toBeInTheDocument();
+    expect(getByLabelText("Description")).toBeInTheDocument();
+    expect(getByLabelText("Amount")).toBeInTheDocument();
+    expect(getByLabelText("Frequency")).toBeInTheDocument();
+    expect(getByLabelText("Expense begin date")).toBeInTheDocument();
+    expect(getByLabelText("Tax")).toBeInTheDocument();
+    expect(getByLabelText("Subsidized")).toBeInTheDocument();
+    expect(getByText("Add expense")).toBeInTheDocument();
+    expect(getByText("Cancel")).toBeInTheDocument();
+  });
 });
