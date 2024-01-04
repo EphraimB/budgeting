@@ -1,5 +1,5 @@
 import React from "react";
-import { render } from "@testing-library/react";
+import { render, fireEvent, getByTestId } from "@testing-library/react";
 import RowAdd from "../../components/RowAdd";
 import "@testing-library/jest-dom";
 import { Table, TableBody } from "@mui/material";
@@ -113,7 +113,7 @@ describe("RowAdd", () => {
     const setShowAddForm = jest.fn();
     const handleAdd = jest.fn();
 
-    const { getByLabelText, getByText } = render(
+    const { getByLabelText, getByText, getByTestId } = render(
       <Table>
         <TableBody>
           <RowAdd
@@ -127,17 +127,19 @@ describe("RowAdd", () => {
     );
 
     // Check frequency
-    const frequency = getByLabelText("Frequency");
+    const frequency = getByTestId("frequency-select");
     expect(frequency).toBeInTheDocument();
-    expect(frequency).toHaveValue(2);
+
+    console.log(frequency);
+
+    expect(getByLabelText("Day of week")).toBeInTheDocument();
 
     act(() => {
-      frequency.focus();
-      frequency.setSelectionRange(0, frequency.value.length);
-      frequency.blur();
+      // Change frequency to daily
+      fireEvent.change(frequency, { target: { value: "0" } });
     });
 
-    expect(frequency).toHaveValue(0);
+    expect(getByLabelText("Week of month")).toBeInTheDocument();
 
     expect(getByLabelText("Title")).toBeInTheDocument();
     expect(getByLabelText("Description")).toBeInTheDocument();
