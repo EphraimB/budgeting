@@ -1,11 +1,11 @@
 import React from "react";
-import { render } from "@testing-library/react";
+import { render, screen } from "@testing-library/react";
 import AccountView from "../../components/AccountView";
 import "@testing-library/jest-dom";
 
 describe("AccountView", () => {
   it("renders", () => {
-    const { getByText } = render(
+    render(
       <AccountView
         account={{
           account_id: 1,
@@ -16,7 +16,7 @@ describe("AccountView", () => {
       />
     );
 
-    expect(getByText("Test Account")).toBeInTheDocument();
-    expect(getByText("$155.99")).toBeInTheDocument();
+    expect(screen.getByText("Test Account")).toBeInTheDocument();
+    expect(screen.getByText("$155.99")).toBeInTheDocument();
   });
 });

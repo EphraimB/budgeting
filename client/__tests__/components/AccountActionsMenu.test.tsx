@@ -1,4 +1,4 @@
-import { render } from "@testing-library/react";
+import { render, screen } from "@testing-library/react";
 import "@testing-library/jest-dom";
 import AccountActionsMenu from "../../components/AccountActionsMenu";
 
@@ -12,7 +12,7 @@ const handleClose = () => jest.fn();
 
 describe("AccountActionsMenu", () => {
   it("displays the menu when the button is clicked", async () => {
-    const { getByText } = render(
+    render(
       <AccountActionsMenu
         anchorEl={anchorEl}
         open={open}
@@ -22,9 +22,9 @@ describe("AccountActionsMenu", () => {
       />
     );
 
-    expect(getByText("Edit")).toBeInTheDocument();
-    expect(getByText("Delete")).toBeInTheDocument();
-    expect(getByText("Deposit")).toBeInTheDocument();
-    expect(getByText("Withdraw")).toBeInTheDocument();
+    expect(screen.getByText("Edit")).toBeInTheDocument();
+    expect(screen.getByText("Delete")).toBeInTheDocument();
+    expect(screen.getByText("Deposit")).toBeInTheDocument();
+    expect(screen.getByText("Withdraw")).toBeInTheDocument();
   });
 });

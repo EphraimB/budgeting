@@ -1,12 +1,12 @@
 import React from "react";
-import { render } from "@testing-library/react";
+import { render, screen } from "@testing-library/react";
 import GlobalAppBar from "../../components/GlobalAppBar";
 import "@testing-library/jest-dom";
 
 describe("GlobalAppBar", () => {
   it('renders with the title "Budgeting"', () => {
-    const { getByText } = render(<GlobalAppBar />);
+    render(<GlobalAppBar />);
 
-    expect(getByText("Budgeting")).toBeInTheDocument();
+    expect(screen.getByText("Budgeting")).toBeInTheDocument();
   });
 });

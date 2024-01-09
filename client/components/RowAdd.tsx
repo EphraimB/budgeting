@@ -228,7 +228,6 @@ function RowAdd({
         <FormControl>
           <InputLabel id="frequency-select-label">Frequency</InputLabel>
           <Select
-            data-testid="frequency-select"
             labelId="frequency-select-label"
             label="Frequency"
             value={frequency}

@@ -1,5 +1,5 @@
 import React from "react";
-import { render } from "@testing-library/react";
+import { render, screen } from "@testing-library/react";
 import RowDelete from "../../components/RowDelete";
 import "@testing-library/jest-dom";
 
@@ -20,7 +20,7 @@ describe("RowDelete", () => {
     const setRowModes = jest.fn();
     const handleDelete = jest.fn();
 
-    const { getByText } = render(
+    render(
       <RowDelete
         row={row}
         setRowModes={setRowModes}
@@ -29,9 +29,11 @@ describe("RowDelete", () => {
     );
 
     expect(
-      getByText('Are you sure you want to delete this expense called "Test"?')
+      screen.getByText(
+        'Are you sure you want to delete this expense called "Test"?'
+      )
     ).toBeInTheDocument();
-    expect(getByText("Delete")).toBeInTheDocument();
-    expect(getByText("Cancel")).toBeInTheDocument();
+    expect(screen.getByText("Delete")).toBeInTheDocument();
+    expect(screen.getByText("Cancel")).toBeInTheDocument();
   });
 });

@@ -1,11 +1,11 @@
 import React from "react";
-import { render } from "@testing-library/react";
+import { render, screen } from "@testing-library/react";
 import "@testing-library/jest-dom";
 import AccountWithdrawalForm from "../../components/AccountWithdrawalForm";
 
 describe("AccountWithdrawalForm", () => {
   it("renders", () => {
-    const { getByText, getByDisplayValue, getByLabelText } = render(
+    render(
       <AccountWithdrawalForm
         account={{
           account_id: 1,
@@ -16,14 +16,14 @@ describe("AccountWithdrawalForm", () => {
       />
     );
 
-    expect(getByLabelText("close")).toBeInTheDocument();
+    expect(screen.getByLabelText("close")).toBeInTheDocument();
     expect(
-      getByText("Withdraw from Test Account account of $155.99")
+      screen.getByText("Withdraw from Test Account account of $155.99")
     ).toBeInTheDocument();
-    expect(getByText("Amount")).toBeInTheDocument();
-    expect(getByDisplayValue("0")).toBeInTheDocument();
-    expect(getByText("Title")).toBeInTheDocument();
-    expect(getByText("Description")).toBeInTheDocument();
-    expect(getByText("Withdraw")).toBeInTheDocument();
+    expect(screen.getByText("Amount")).toBeInTheDocument();
+    expect(screen.getByDisplayValue("0")).toBeInTheDocument();
+    expect(screen.getByText("Title")).toBeInTheDocument();
+    expect(screen.getByText("Description")).toBeInTheDocument();
+    expect(screen.getByText("Withdraw")).toBeInTheDocument();
   });
 });

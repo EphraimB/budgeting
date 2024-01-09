@@ -1,5 +1,5 @@
 import React from "react";
-import { render } from "@testing-library/react";
+import { render, screen } from "@testing-library/react";
 import "@testing-library/jest-dom";
 import AccountDelete from "../../components/AccountDelete";
 
@@ -16,7 +16,7 @@ describe("AccountList", () => {
         setAccountModes={() => {}}
       />
     );
-    expect(getByText("Cancel")).toBeInTheDocument();
-    expect(getByText("Delete")).toBeInTheDocument();
+    expect(screen.getByText("Cancel")).toBeInTheDocument();
+    expect(screen.getByText("Delete")).toBeInTheDocument();
   });
 });

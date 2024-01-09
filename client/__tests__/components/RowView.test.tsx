@@ -1,5 +1,5 @@
 import React from "react";
-import { render } from "@testing-library/react";
+import { render, screen } from "@testing-library/react";
 import RowView from "../../components/RowView";
 import "@testing-library/jest-dom";
 import { Table, TableBody } from "@mui/material";
@@ -29,7 +29,7 @@ describe("RowView", () => {
     ];
     const getExpenseFrequency = jest.fn();
 
-    const { getByText } = render(
+    render(
       <Table>
         <TableBody>
           <RowView
@@ -44,8 +44,8 @@ describe("RowView", () => {
       </Table>
     );
 
-    expect(getByText("Test")).toBeInTheDocument();
-    expect(getByText("Just a test")).toBeInTheDocument();
-    expect(getByText("$1.00")).toBeInTheDocument();
+    expect(screen.getByText("Test")).toBeInTheDocument();
+    expect(screen.getByText("Just a test")).toBeInTheDocument();
+    expect(screen.getByText("$1.00")).toBeInTheDocument();
   });
 });

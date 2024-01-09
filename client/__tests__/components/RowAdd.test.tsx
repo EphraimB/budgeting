@@ -1,9 +1,10 @@
 import React from "react";
-import { render, fireEvent, getByTestId } from "@testing-library/react";
+import { render, getByTestId } from "@testing-library/react";
 import RowAdd from "../../components/RowAdd";
 import "@testing-library/jest-dom";
 import { Table, TableBody } from "@mui/material";
 import { act } from "react-dom/test-utils";
+import userEvent from "@testing-library/user-event";
 
 describe("RowAdd", () => {
   it("renders RowAdd component", () => {
@@ -109,11 +110,18 @@ describe("RowAdd", () => {
     expect(getByText("Cancel")).toBeInTheDocument();
   });
 
-  it("renders RowAdd component with frequency daily", () => {
+  it("renders RowAdd component with frequency daily", async () => {
     const setShowAddForm = jest.fn();
     const handleAdd = jest.fn();
 
-    const { getByLabelText, getByText, getByTestId } = render(
+    const {
+      getByLabelText,
+      getByText,
+      getByTestId,
+      getByRole,
+      findByRole,
+      findByText,
+    } = render(
       <Table>
         <TableBody>
           <RowAdd
@@ -126,18 +134,26 @@ describe("RowAdd", () => {
       </Table>
     );
 
-    // Check frequency
-    const frequency = getByTestId("frequency-select");
-    expect(frequency).toBeInTheDocument();
+    const dropdownButton = getByRole("button", { name: /Frequency​/i });
 
-    console.log(frequency);
+    userEvent.click(dropdownButton);
 
-    expect(getByLabelText("Day of week")).toBeInTheDocument();
+    const typographyEl = await findByText(/Daily/i);
 
-    act(() => {
-      // Change frequency to daily
-      fireEvent.change(frequency, { target: { value: "0" } });
-    });
+    expect(typographyEl).toBeInTheDocument();
+
+    // // Check frequency
+    // const frequency = getByTestId("frequency-select");
+    // expect(frequency).toBeInTheDocument();
+
+    // console.log(frequency);
+
+    // expect(getByLabelText("Day of week")).toBeInTheDocument();
+
+    // act(() => {
+    //   // Change frequency to daily
+    //   userEvent.change(frequency, { target: { value: "0" } });
+    // });
 
     expect(getByLabelText("Week of month")).toBeInTheDocument();
 

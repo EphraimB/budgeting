@@ -1,5 +1,5 @@
 import React from "react";
-import { render } from "@testing-library/react";
+import { render, screen } from "@testing-library/react";
 import "@testing-library/jest-dom";
 import TransactionDisplay from "../../components/TransactionDisplay";
 
@@ -35,13 +35,11 @@ const mockTransactions = [
 
 describe("TransactionDisplay", () => {
   it("displays transactions when data is fetched", async () => {
-    const { getByText } = render(
-      <TransactionDisplay transactions={mockTransactions} />
-    );
+    render(<TransactionDisplay transactions={mockTransactions} />);
 
-    expect(getByText("Testing")).toBeInTheDocument();
-    expect(getByText("Just testing")).toBeInTheDocument();
-    expect(getByText("$1730.97")).toBeInTheDocument();
-    expect(getByText("0%")).toBeInTheDocument();
+    expect(screen.getByText("Testing")).toBeInTheDocument();
+    expect(screen.getByText("Just testing")).toBeInTheDocument();
+    expect(screen.getByText("$1730.97")).toBeInTheDocument();
+    expect(screen.getByText("0%")).toBeInTheDocument();
   });
 });

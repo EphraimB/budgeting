@@ -1,12 +1,12 @@
 import React from "react";
-import { render } from "@testing-library/react";
+import { render, screen } from "@testing-library/react";
 import EnhancedTableToolbar from "../../components/EnhancedTableToolbar";
 import "@testing-library/jest-dom";
 
 describe("EnhancedTableToolbar", () => {
   it("renders table toolbar with provided name", () => {
     const name = "Test name";
-    const { getByText } = render(
+    render(
       <EnhancedTableToolbar
         numSelected={0}
         name={name}
@@ -18,12 +18,12 @@ describe("EnhancedTableToolbar", () => {
       />
     );
 
-    expect(getByText(name)).toBeInTheDocument();
+    expect(screen.getByText(name)).toBeInTheDocument();
   });
 
   it("renders table toolbar with provided numSelected", () => {
     const numSelected = 1;
-    const { getByText } = render(
+    render(
       <EnhancedTableToolbar
         numSelected={numSelected}
         name={""}
@@ -35,7 +35,7 @@ describe("EnhancedTableToolbar", () => {
       />
     );
 
-    expect(getByText(`${numSelected} selected`)).toBeInTheDocument();
+    expect(screen.getByText(`${numSelected} selected`)).toBeInTheDocument();
   });
 
   it("renders table toolbar with provided showAddExpenseForm", () => {
