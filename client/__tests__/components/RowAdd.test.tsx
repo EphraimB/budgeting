@@ -1,5 +1,5 @@
 import React from "react";
-import { render, getByTestId } from "@testing-library/react";
+import { fireEvent, render, screen } from "@testing-library/react";
 import RowAdd from "../../components/RowAdd";
 import "@testing-library/jest-dom";
 import { Table, TableBody } from "@mui/material";
@@ -11,7 +11,7 @@ describe("RowAdd", () => {
     const setShowAddForm = jest.fn();
     const handleAdd = jest.fn();
 
-    const { getByLabelText, getByText } = render(
+    render(
       <Table>
         <TableBody>
           <RowAdd
@@ -24,22 +24,22 @@ describe("RowAdd", () => {
       </Table>
     );
 
-    expect(getByLabelText("Title")).toBeInTheDocument();
-    expect(getByLabelText("Description")).toBeInTheDocument();
-    expect(getByLabelText("Amount")).toBeInTheDocument();
-    expect(getByLabelText("Frequency")).toBeInTheDocument();
-    expect(getByLabelText("Expense begin date")).toBeInTheDocument();
-    expect(getByLabelText("Tax")).toBeInTheDocument();
-    expect(getByLabelText("Subsidized")).toBeInTheDocument();
-    expect(getByText("Add expense")).toBeInTheDocument();
-    expect(getByText("Cancel")).toBeInTheDocument();
+    expect(screen.getByLabelText("Title")).toBeInTheDocument();
+    expect(screen.getByLabelText("Description")).toBeInTheDocument();
+    expect(screen.getByLabelText("Amount")).toBeInTheDocument();
+    expect(screen.getByLabelText("Frequency")).toBeInTheDocument();
+    expect(screen.getByLabelText("Expense begin date")).toBeInTheDocument();
+    expect(screen.getByLabelText("Tax")).toBeInTheDocument();
+    expect(screen.getByLabelText("Subsidized")).toBeInTheDocument();
+    expect(screen.getByText("Add expense")).toBeInTheDocument();
+    expect(screen.getByText("Cancel")).toBeInTheDocument();
   });
 
   it("renders RowAdd component with taxes", () => {
     const setShowAddForm = jest.fn();
     const handleAdd = jest.fn();
 
-    const { getByLabelText, getByText, getByDisplayValue } = render(
+    render(
       <Table>
         <TableBody>
           <RowAdd
@@ -59,23 +59,23 @@ describe("RowAdd", () => {
       </Table>
     );
 
-    expect(getByLabelText("Title")).toBeInTheDocument();
-    expect(getByLabelText("Description")).toBeInTheDocument();
-    expect(getByLabelText("Amount")).toBeInTheDocument();
-    expect(getByLabelText("Frequency")).toBeInTheDocument();
-    expect(getByLabelText("Expense begin date")).toBeInTheDocument();
-    expect(getByLabelText("Tax")).toBeInTheDocument();
-    expect(getByDisplayValue("1")).toBeInTheDocument();
-    expect(getByLabelText("Subsidized")).toBeInTheDocument();
-    expect(getByText("Add expense")).toBeInTheDocument();
-    expect(getByText("Cancel")).toBeInTheDocument();
+    expect(screen.getByLabelText("Title")).toBeInTheDocument();
+    expect(screen.getByLabelText("Description")).toBeInTheDocument();
+    expect(screen.getByLabelText("Amount")).toBeInTheDocument();
+    expect(screen.getByLabelText("Frequency")).toBeInTheDocument();
+    expect(screen.getByLabelText("Expense begin date")).toBeInTheDocument();
+    expect(screen.getByLabelText("Tax")).toBeInTheDocument();
+    expect(screen.getByDisplayValue("1")).toBeInTheDocument();
+    expect(screen.getByLabelText("Subsidized")).toBeInTheDocument();
+    expect(screen.getByText("Add expense")).toBeInTheDocument();
+    expect(screen.getByText("Cancel")).toBeInTheDocument();
   });
 
   it("renders RowAdd component with end date checked", () => {
     const setShowAddForm = jest.fn();
     const handleAdd = jest.fn();
 
-    const { getByLabelText, getByText } = render(
+    render(
       <Table>
         <TableBody>
           <RowAdd
@@ -89,7 +89,7 @@ describe("RowAdd", () => {
     );
 
     // Check end date
-    const endDate = getByLabelText("Expense end date");
+    const endDate = screen.getByLabelText("Expense end date");
     expect(endDate).toBeInTheDocument();
     expect(endDate).not.toBeChecked();
 
@@ -99,29 +99,22 @@ describe("RowAdd", () => {
 
     expect(endDate).toBeChecked();
 
-    expect(getByLabelText("Title")).toBeInTheDocument();
-    expect(getByLabelText("Description")).toBeInTheDocument();
-    expect(getByLabelText("Amount")).toBeInTheDocument();
-    expect(getByLabelText("Frequency")).toBeInTheDocument();
-    expect(getByLabelText("Expense begin date")).toBeInTheDocument();
-    expect(getByLabelText("Tax")).toBeInTheDocument();
-    expect(getByLabelText("Subsidized")).toBeInTheDocument();
-    expect(getByText("Add expense")).toBeInTheDocument();
-    expect(getByText("Cancel")).toBeInTheDocument();
+    expect(screen.getByLabelText("Title")).toBeInTheDocument();
+    expect(screen.getByLabelText("Description")).toBeInTheDocument();
+    expect(screen.getByLabelText("Amount")).toBeInTheDocument();
+    expect(screen.getByLabelText("Frequency")).toBeInTheDocument();
+    expect(screen.getByLabelText("Expense begin date")).toBeInTheDocument();
+    expect(screen.getByLabelText("Tax")).toBeInTheDocument();
+    expect(screen.getByLabelText("Subsidized")).toBeInTheDocument();
+    expect(screen.getByText("Add expense")).toBeInTheDocument();
+    expect(screen.getByText("Cancel")).toBeInTheDocument();
   });
 
   it("renders RowAdd component with frequency daily", async () => {
     const setShowAddForm = jest.fn();
     const handleAdd = jest.fn();
 
-    const {
-      getByLabelText,
-      getByText,
-      getByTestId,
-      getByRole,
-      findByRole,
-      findByText,
-    } = render(
+    render(
       <Table>
         <TableBody>
           <RowAdd
@@ -134,37 +127,42 @@ describe("RowAdd", () => {
       </Table>
     );
 
-    const dropdownButton = getByRole("button", { name: /Frequency​/i });
+    const selectElement = screen.getByLabelText("Frequency");
+    fireEvent.mouseDown(selectElement);
 
-    userEvent.click(dropdownButton);
+    const dailyOption = screen.getByTestId("daily-menu-item");
+    fireEvent.click(dailyOption);
 
-    const typographyEl = await findByText(/Daily/i);
+    // expect(selectElement).toHaveValue(0);
 
-    expect(typographyEl).toBeInTheDocument();
+    expect(
+      (screen.getByRole("option", { name: "Daily" }) as HTMLOptionElement)
+        .selected
+    ).toBe(true);
 
-    // // Check frequency
-    // const frequency = getByTestId("frequency-select");
-    // expect(frequency).toBeInTheDocument();
+    // const dropdownButton = screen.getByLabelText("Frequency");
 
-    // console.log(frequency);
+    // userEvent.click(dropdownButton);
 
-    // expect(getByLabelText("Day of week")).toBeInTheDocument();
+    // const daily = screen.getByDisplayValue("0");
+
+    // userEvent.click(daily);
 
     // act(() => {
-    //   // Change frequency to daily
-    //   userEvent.change(frequency, { target: { value: "0" } });
+    //   userEvent.selectOptions(typographyEl, "0");
     // });
 
-    expect(getByLabelText("Week of month")).toBeInTheDocument();
+    // expect(typographyEl).toBeInTheDocument();
 
-    expect(getByLabelText("Title")).toBeInTheDocument();
-    expect(getByLabelText("Description")).toBeInTheDocument();
-    expect(getByLabelText("Amount")).toBeInTheDocument();
-    expect(getByLabelText("Frequency")).toBeInTheDocument();
-    expect(getByLabelText("Expense begin date")).toBeInTheDocument();
-    expect(getByLabelText("Tax")).toBeInTheDocument();
-    expect(getByLabelText("Subsidized")).toBeInTheDocument();
-    expect(getByText("Add expense")).toBeInTheDocument();
-    expect(getByText("Cancel")).toBeInTheDocument();
+    expect(screen.getByLabelText("Week of month")).toBeInTheDocument();
+
+    expect(screen.getByLabelText("Title")).toBeInTheDocument();
+    expect(screen.getByLabelText("Description")).toBeInTheDocument();
+    expect(screen.getByLabelText("Amount")).toBeInTheDocument();
+    expect(screen.getByLabelText("Expense begin date")).toBeInTheDocument();
+    expect(screen.getByLabelText("Tax")).toBeInTheDocument();
+    expect(screen.getByLabelText("Subsidized")).toBeInTheDocument();
+    expect(screen.getByText("Add expense")).toBeInTheDocument();
+    expect(screen.getByText("Cancel")).toBeInTheDocument();
   });
 });
