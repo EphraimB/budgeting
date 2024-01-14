@@ -172,6 +172,7 @@ function ExpensesTable({
                 taxes={taxes}
                 setShowAddForm={setShowAddExpenseForm}
                 handleAdd={handleAdd}
+                type={0}
               />
             )}
             <Suspense fallback={<LoadingExpenses />}>
@@ -192,6 +193,7 @@ function ExpensesTable({
                       taxes={taxes}
                       setRowModes={setRowModes}
                       handleEdit={handleEdit}
+                      type={0}
                     />
                   );
                 } else {

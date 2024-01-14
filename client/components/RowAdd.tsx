@@ -23,11 +23,13 @@ function RowAdd({
   taxes,
   setShowAddForm,
   handleAdd,
+  type,
 }: {
   account_id: number;
   taxes: any;
   setShowAddForm: any;
   handleAdd: any;
+  type: number;
 }) {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
@@ -69,7 +71,7 @@ function RowAdd({
     description: description,
     amount: parseFloat(amount),
     subsidized: parseFloat(subsidized),
-    tax_id: tax === 0 ? null : tax,
+    ...(type === 1 && { tax_id: tax === 0 ? null : tax }),
     begin_date: beginDate,
     end_date: endDate,
     frequency_type: frequency,
@@ -172,26 +174,28 @@ function RowAdd({
         />
         <br />
         <br />
-        <FormControl>
-          <InputLabel id="tax-select-label">Tax</InputLabel>
-          <Select
-            labelId="tax-select-label"
-            label="Tax"
-            value={tax}
-            onChange={(e) => setTax(e.target.value as number)}
-          >
-            <MenuItem key={0} value={0}>
-              None - 0%
-            </MenuItem>
-            {taxes
-              ? taxes.map((tax: any) => (
-                  <MenuItem key={tax.id} value={tax.id}>
-                    {tax.title} - {tax.rate * 100}%
-                  </MenuItem>
-                ))
-              : null}
-          </Select>
-        </FormControl>
+        {type === 1 && (
+          <FormControl>
+            <InputLabel id="tax-select-label">Tax</InputLabel>
+            <Select
+              labelId="tax-select-label"
+              label="Tax"
+              value={tax}
+              onChange={(e) => setTax(e.target.value as number)}
+            >
+              <MenuItem key={0} value={0}>
+                None - 0%
+              </MenuItem>
+              {taxes
+                ? taxes.map((tax: any) => (
+                    <MenuItem key={tax.id} value={tax.id}>
+                      {tax.title} - {tax.rate * 100}%
+                    </MenuItem>
+                  ))
+                : null}
+            </Select>
+          </FormControl>
+        )}
       </TableCell>
       <TableCell>
         <LocalizationProvider dateAdapter={AdapterDayjs}>
@@ -233,10 +237,18 @@ function RowAdd({
             value={frequency}
             onChange={(e) => setFrequency(e.target.value as number)}
           >
-            <MenuItem data-testid="daily-menu-item" value={0}>Daily</MenuItem>
-            <MenuItem data-testid="weekly-menu-item" value={1}>Weekly</MenuItem>
-            <MenuItem data-testid="monthly-menu-item" value={2}>Monthly</MenuItem>
-            <MenuItem data-testid="yearly-menu-item" value={3}>Yearly</MenuItem>
+            <MenuItem data-testid="daily-menu-item" value={0}>
+              Daily
+            </MenuItem>
+            <MenuItem data-testid="weekly-menu-item" value={1}>
+              Weekly
+            </MenuItem>
+            <MenuItem data-testid="monthly-menu-item" value={2}>
+              Monthly
+            </MenuItem>
+            <MenuItem data-testid="yearly-menu-item" value={3}>
+              Yearly
+            </MenuItem>
           </Select>
         </FormControl>
         <br />

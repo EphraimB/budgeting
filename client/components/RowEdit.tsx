@@ -24,12 +24,14 @@ function RowEdit({
   taxes,
   setRowModes,
   handleEdit,
+  type,
 }: {
   account_id: number;
   row: any;
   taxes: any;
   setRowModes: any;
   handleEdit: any;
+  type: number;
 }) {
   const [title, setTitle] = useState(row.title);
   const [description, setDescription] = useState(row.description);
@@ -84,7 +86,7 @@ function RowEdit({
     description: description,
     amount: parseFloat(amount),
     subsidized: parseFloat(subsidized),
-    tax_id: tax === 0 ? null : tax,
+    ...(type === 1 && { tax_id: tax === 0 ? null : tax }),
     begin_date: beginDate,
     end_date: endDate,
     frequency_type: parseInt(frequency),
@@ -187,7 +189,7 @@ function RowEdit({
         />
         <br />
         <br />
-        {taxes.length > 0 ? (
+        {type === 1 && (
           <FormControl>
             <InputLabel id="tax-select-label">Tax</InputLabel>
             <Select
@@ -206,7 +208,7 @@ function RowEdit({
               ))}
             </Select>
           </FormControl>
-        ) : null}
+        )}
       </TableCell>
       <TableCell>
         <LocalizationProvider dateAdapter={AdapterDayjs}>
