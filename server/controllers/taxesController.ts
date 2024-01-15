@@ -36,7 +36,7 @@ export const getTaxes = async (
         let query: string;
         let params: any[];
 
-        if (id !== null && id !== undefined) {
+        if (id) {
             query = taxesQueries.getTax;
             params = [id];
         } else {
@@ -46,7 +46,7 @@ export const getTaxes = async (
 
         const taxesResults = await executeQuery(query, params);
 
-        if (id !== null && id !== undefined && taxesResults.length === 0) {
+        if (id && taxesResults.length === 0) {
             response.status(404).send('Tax not found');
             return;
         }

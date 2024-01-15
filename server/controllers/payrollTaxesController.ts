@@ -32,18 +32,13 @@ export const getPayrollTaxes = async (
         let query: string;
         let params: any[];
 
-        if (
-            id !== null &&
-            id !== undefined &&
-            employee_id !== null &&
-            employee_id !== undefined
-        ) {
+        if (id && employee_id) {
             query = payrollQueries.getPayrollTaxesByIdAndEmployeeId;
             params = [id, employee_id];
-        } else if (id !== null && id !== undefined) {
+        } else if (id) {
             query = payrollQueries.getPayrollTaxesById;
             params = [id];
-        } else if (employee_id !== null && employee_id !== undefined) {
+        } else if (employee_id) {
             query = payrollQueries.getPayrollTaxesByEmployeeId;
             params = [employee_id];
         } else {
@@ -53,11 +48,7 @@ export const getPayrollTaxes = async (
 
         const rows = await executeQuery(query, params);
 
-        if (
-            ((id !== null && id !== undefined) ||
-                (employee_id !== null && employee_id !== undefined)) &&
-            rows.length === 0
-        ) {
+        if (id && rows.length === 0) {
             response.status(404).send('Payroll tax not found');
             return;
         }
@@ -72,9 +63,9 @@ export const getPayrollTaxes = async (
         handleError(
             response,
             `Error getting ${
-                id !== null && id !== undefined
+                id
                     ? 'payroll tax'
-                    : employee_id !== null && employee_id !== undefined
+                    : employee_id
                     ? 'payroll taxes for given employee_id'
                     : 'payroll taxes'
             }`,

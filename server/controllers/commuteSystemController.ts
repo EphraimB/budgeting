@@ -46,7 +46,7 @@ export const getCommuteSystem = async (
         let params: any[];
 
         // Change the query based on the presence of id
-        if (id !== null && id !== undefined) {
+        if (id) {
             query = commuteSystemQueries.getCommuteSystemById;
             params = [id];
         } else {
@@ -56,7 +56,7 @@ export const getCommuteSystem = async (
 
         const commuteSystem = await executeQuery(query, params);
 
-        if (id !== null && id !== undefined && commuteSystem.length === 0) {
+        if (id && commuteSystem.length === 0) {
             response.status(404).send('System not found');
             return;
         }
@@ -66,11 +66,7 @@ export const getCommuteSystem = async (
         logger.error(error); // Log the error on the server side
         handleError(
             response,
-            `Error getting ${
-                id !== null && id !== undefined
-                    ? 'system with id ' + id
-                    : 'systems'
-            }`,
+            `Error getting ${id ? 'system with id ' + id : 'systems'}`,
         );
     }
 };

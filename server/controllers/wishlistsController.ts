@@ -67,7 +67,7 @@ export const getWishlists = async (
 
         const results = await executeQuery(query, params);
 
-        if ((id || account_id) && results.length === 0) {
+        if (id && results.length === 0) {
             response.status(404).send('Wishlist not found');
             return;
         }
@@ -101,9 +101,9 @@ export const getWishlists = async (
         handleError(
             response,
             `Error getting ${
-                id !== null && id !== undefined
+                id
                     ? 'wishlist'
-                    : account_id !== null && account_id !== undefined
+                    : account_id
                     ? 'wishlists for given account_id'
                     : 'wishlists'
             }`,
