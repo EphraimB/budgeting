@@ -212,12 +212,9 @@ const generate = async (
                     );
                 }
 
-                if (!loan.loan_id) {
-                    fullyPaidBackDates[loan.loan_id] =
-                        loanResult.fullyPaidBackDate
-                            ? loanResult.fullyPaidBackDate
-                            : null;
-                }
+                fullyPaidBackDates[loan.loan_id] = loanResult.fullyPaidBackDate
+                    ? loanResult.fullyPaidBackDate
+                    : null;
             });
         });
 
