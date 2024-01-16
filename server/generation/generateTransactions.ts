@@ -212,8 +212,6 @@ const generate = async (
                     );
                 }
 
-                console.log(loanResult);
-
                 fullyPaidBackDates[loan.loan_id] = loanResult.fullyPaidBackDate
                     ? loanResult.fullyPaidBackDate
                     : null;

@@ -48,13 +48,18 @@ const headCells: readonly HeadCell[] = [
   {
     id: "next_expense_date",
     numeric: false,
-    label: "Next expense date",
+    label: "Next loan date",
   },
   {
     id: "loan_frequency",
     numeric: false,
     label: "Loan frequency",
   },
+  {
+    id: "fully_paid_back",
+    numeric: false,
+    label: "Fully paid back",
+  }
 ];
 
 function LoansTable({
@@ -67,7 +72,7 @@ function LoansTable({
   taxes: any[];
 }) {
   const [order, setOrder] = useState<Order>("asc");
-  const [orderBy, setOrderBy] = useState<string>("expense_title");
+  const [orderBy, setOrderBy] = useState<string>("loan_title");
   const [selected, setSelected] = useState<Loan[]>([]);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
@@ -124,7 +129,7 @@ function LoansTable({
         setRowModes={setRowModes}
         showAddExpenseForm={showAddExpenseForm}
         setShowAddExpenseForm={setShowAddExpenseForm}
-        name="Expenses"
+        name="Loans"
       />
       <TableContainer>
         <Table
@@ -199,6 +204,7 @@ function LoansTable({
                       isSelected={(id: number) => isSelected(id, selected)}
                       taxes={taxes}
                       getExpenseFrequency={getFrequency}
+                      type={1}
                     />
                   );
                 }

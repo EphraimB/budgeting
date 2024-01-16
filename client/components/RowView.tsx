@@ -10,6 +10,7 @@ function RowView({
   isSelected,
   taxes,
   getExpenseFrequency,
+  type,
 }: {
   row: any;
   index: number;
@@ -17,6 +18,7 @@ function RowView({
   isSelected: any;
   taxes: any;
   getExpenseFrequency: any;
+  type: number;
 }) {
   const isItemSelected = isSelected(row.id);
   const labelId = `enhanced-table-checkbox-${index}`;
@@ -68,6 +70,16 @@ function RowView({
         {dayjs(row.next_date).format("h:mm A")}
       </TableCell>
       <TableCell align="right">{getExpenseFrequency(row)}</TableCell>
+      {type === 1 && (
+        <TableCell align="right">
+          {dayjs(row.fully_paid_back).format("dddd")}
+          <br />
+          {dayjs(row.fully_paid_back).format("MMMM D, YYYY")}
+          <br />
+          {dayjs(row.fully_paid_back).format("h:mm A")}
+        </TableCell>
+      )}
+      <br />
     </TableRow>
   );
 }

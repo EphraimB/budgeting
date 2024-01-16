@@ -209,6 +209,7 @@ function ExpensesTable({
                       isSelected={(id: number) => isSelected(id, selected)}
                       taxes={taxes}
                       getExpenseFrequency={getFrequency}
+                      type={0}
                     />
                   );
                 }
