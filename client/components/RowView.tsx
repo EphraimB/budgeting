@@ -59,8 +59,12 @@ function RowView({
         {row.title}
       </TableCell>
       <TableCell align="right">{row.description}</TableCell>
+      {type == 1 && <TableCell align="right">${row.plan_amount}</TableCell>}
       <TableCell align="right">
-        ${(Math.round((amountAfterSubsidy as number) * 100) / 100).toFixed(2)}
+        $
+        {type == 0
+          ? (Math.round((amountAfterSubsidy as number) * 100) / 100).toFixed(2)
+          : row.amount}
       </TableCell>
       <TableCell align="right">
         {dayjs(row.next_date).format("dddd")}

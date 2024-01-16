@@ -41,6 +41,11 @@ const headCells: readonly HeadCell[] = [
     label: "Description",
   },
   {
+    id: "loan_plan_amount",
+    numeric: false,
+    label: "Plan amount ($)",
+  },
+  {
     id: "loan_amount",
     numeric: false,
     label: "Amount ($)",
@@ -59,7 +64,7 @@ const headCells: readonly HeadCell[] = [
     id: "fully_paid_back",
     numeric: false,
     label: "Fully paid back",
-  }
+  },
 ];
 
 function LoansTable({
