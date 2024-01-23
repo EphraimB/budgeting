@@ -3,6 +3,7 @@ import { render, screen } from "@testing-library/react";
 import RowView from "../../components/RowView";
 import "@testing-library/jest-dom";
 import { Table, TableBody } from "@mui/material";
+import { getFrequency } from "../../utils/helperFunctions";
 
 describe("RowView", () => {
   test("renders RowView component", () => {
@@ -11,8 +12,10 @@ describe("RowView", () => {
       title: "Test",
       description: "Just a test",
       amount: 1,
-      frequency: 2,
-      next_date: "2021-10-10",
+      frequency_type: 2,
+      frequency_type_variable: 1,
+      begin_date: "2021-10-10",
+      next_date: "2021-11-10",
       tax_id: null,
       subsidized: 0,
       account_id: 1,
@@ -27,7 +30,6 @@ describe("RowView", () => {
         tax_rate: 1,
       },
     ];
-    const getExpenseFrequency = jest.fn();
 
     render(
       <Table>
@@ -38,7 +40,8 @@ describe("RowView", () => {
             handleClick={handleClick}
             isSelected={isSelected}
             taxes={taxes}
-            getExpenseFrequency={getExpenseFrequency}
+            getExpenseFrequency={getFrequency}
+            type={0}
           />
         </TableBody>
       </Table>
@@ -47,5 +50,6 @@ describe("RowView", () => {
     expect(screen.getByText("Test")).toBeInTheDocument();
     expect(screen.getByText("Just a test")).toBeInTheDocument();
     expect(screen.getByText("$1.00")).toBeInTheDocument();
+    expect(screen.getByText("Monthly on the 10th")).toBeInTheDocument();
   });
 });
