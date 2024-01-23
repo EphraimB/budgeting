@@ -202,8 +202,8 @@ function RowEdit({
                 None - 0%
               </MenuItem>
               {taxes.map((tax: any) => (
-                <MenuItem key={tax.tax_id} value={tax.tax_id}>
-                  {tax.tax_title} - {tax.tax_rate * 100}%
+                <MenuItem key={tax.id} value={tax.id}>
+                  {tax.title} - {tax.rate * 100}%
                 </MenuItem>
               ))}
             </Select>

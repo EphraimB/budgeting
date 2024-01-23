@@ -1,9 +1,10 @@
 import React from "react";
-import { fireEvent, render, screen } from "@testing-library/react";
+import { fireEvent, queries, render, screen } from "@testing-library/react";
 import RowEdit from "../../components/RowEdit";
 import "@testing-library/jest-dom";
 import { Table, TableBody } from "@mui/material";
 import { act } from "react-dom/test-utils";
+import userEvent from "@testing-library/user-event";
 
 describe("RowEdit", () => {
   it("renders RowEdit component with monthly frequency", () => {
@@ -176,7 +177,7 @@ describe("RowEdit", () => {
     expect(screen.getByText("Cancel")).toBeInTheDocument();
   });
 
-  it("renders RowEdit component with type 2", () => {
+  it("renders RowEdit component with type 2", async () => {
     const setRowModes = jest.fn();
     const handleEdit = jest.fn();
 
@@ -188,14 +189,14 @@ describe("RowEdit", () => {
             taxes={[
               {
                 id: 1,
-                name: "GST",
-                rate: 5,
+                title: "GST",
+                rate: 0.05,
                 account_id: 1,
               },
               {
                 id: 2,
-                name: "PST",
-                rate: 7,
+                title: "PST",
+                rate: 0.07,
                 account_id: 1,
               },
             ]}
@@ -228,6 +229,14 @@ describe("RowEdit", () => {
     expect(screen.getByLabelText("Subsidized")).toBeInTheDocument();
     expect(screen.getByLabelText("Tax")).toBeInTheDocument();
     expect(screen.getByText("None - 0%")).toBeInTheDocument();
+
+    act(async () => {
+      userEvent.click(screen.getByRole("combobox", { name: "Tax" }));
+
+      expect(await screen.findByText("GST - 5%")).toBeInTheDocument();
+      expect(await screen.findByText("PST - 7%")).toBeInTheDocument();
+    });
+
     expect(screen.getByText("Update expense")).toBeInTheDocument();
     expect(screen.getByText("Cancel")).toBeInTheDocument();
   });
