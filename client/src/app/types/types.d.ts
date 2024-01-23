@@ -12,7 +12,7 @@ export interface Expense {
   title: string;
   description: string;
   frequency_type: number;
-  frequency_type_variable: number;
+  frequency_type_variable: number | null;
   frequency_day_of_month: number | null;
   frequency_day_of_week: number | null;
   frequency_week_of_month: number | null;
@@ -27,16 +27,15 @@ export interface Expense {
 export interface Loan {
   id: number;
   account_id: number;
-  tax_id: number;
   amount: number;
   title: string;
   description: string;
   frequency_type: number;
-  frequency_type_variable: number;
-  frequency_day_of_month: number;
-  frequency_day_of_week: number;
-  frequency_week_of_month: number;
-  frequency_month_of_year: number;
+  frequency_type_variable: number | null;
+  frequency_day_of_month: number | null;
+  frequency_day_of_week: number | null;
+  frequency_week_of_month: number | null;
+  frequency_month_of_year: number | null;
   subsidized: number;
   begin_date: string;
   end_date: string | null;

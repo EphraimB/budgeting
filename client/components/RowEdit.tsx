@@ -28,7 +28,7 @@ function RowEdit({
 }: {
   account_id: number;
   row: any;
-  taxes: any;
+  taxes?: any;
   setRowModes: any;
   handleEdit: any;
   type: number;

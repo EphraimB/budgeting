@@ -26,7 +26,7 @@ function RowAdd({
   type,
 }: {
   account_id: number;
-  taxes: any;
+  taxes?: any;
   setShowAddForm: any;
   handleAdd: any;
   type: number;

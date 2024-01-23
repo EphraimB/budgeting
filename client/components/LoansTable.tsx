@@ -70,11 +70,9 @@ const headCells: readonly HeadCell[] = [
 function LoansTable({
   account_id,
   loans,
-  taxes,
 }: {
   account_id: number;
   loans: Loan[];
-  taxes: any[];
 }) {
   const [order, setOrder] = useState<Order>("asc");
   const [orderBy, setOrderBy] = useState<string>("loan_title");
@@ -169,7 +167,6 @@ function LoansTable({
             {showAddExpenseForm && (
               <RowAdd
                 account_id={account_id}
-                taxes={taxes}
                 setShowAddForm={setShowAddExpenseForm}
                 handleAdd={handleAdd}
                 type={1}
@@ -190,7 +187,6 @@ function LoansTable({
                     <RowEdit
                       account_id={account_id}
                       row={row}
-                      taxes={taxes}
                       setRowModes={setRowModes}
                       handleEdit={handleEdit}
                       type={1}
@@ -207,7 +203,6 @@ function LoansTable({
                         row: any
                       ) => handleClick(event, row, selected, setSelected)}
                       isSelected={(id: number) => isSelected(id, selected)}
-                      taxes={taxes}
                       getExpenseFrequency={getFrequency}
                       type={1}
                     />

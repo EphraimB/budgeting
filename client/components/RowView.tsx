@@ -16,7 +16,7 @@ function RowView({
   index: number;
   handleClick: any;
   isSelected: any;
-  taxes: any;
+  taxes?: any;
   getExpenseFrequency: any;
   type: number;
 }) {
