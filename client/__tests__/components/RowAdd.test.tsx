@@ -55,7 +55,7 @@ describe("RowAdd", () => {
             ]}
             setShowAddForm={setShowAddForm}
             handleAdd={handleAdd}
-            type={0}
+            type={2}
           />
         </TableBody>
       </Table>
@@ -70,6 +70,7 @@ describe("RowAdd", () => {
     expect(screen.getByLabelText("Subsidized")).toBeInTheDocument();
     expect(screen.getByLabelText("Day of week")).toBeInTheDocument();
     expect(screen.getByLabelText("Week of month")).toBeInTheDocument();
+    expect(screen.getByLabelText("Tax")).toBeInTheDocument();
     expect(screen.getByText("Add expense")).toBeInTheDocument();
     expect(screen.getByText("Cancel")).toBeInTheDocument();
   });
