@@ -83,7 +83,6 @@ function RowView({
           {dayjs(row.fully_paid_back).format("h:mm A")}
         </TableCell>
       )}
-      <br />
     </TableRow>
   );
 }
