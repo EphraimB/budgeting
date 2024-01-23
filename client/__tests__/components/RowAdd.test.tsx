@@ -15,7 +15,14 @@ describe("RowAdd", () => {
         <TableBody>
           <RowAdd
             account_id={1}
-            taxes={[]}
+            taxes={[
+              {
+                id: 1,
+                title: "IVA",
+                rate: 0.05,
+                account_id: 1,
+              },
+            ]}
             setShowAddForm={setShowAddForm}
             handleAdd={handleAdd}
             type={0}
@@ -30,13 +37,14 @@ describe("RowAdd", () => {
     expect(screen.getByLabelText("Frequency")).toBeInTheDocument();
     expect(screen.getByLabelText("Expense begin date")).toBeInTheDocument();
     expect(screen.getByLabelText("Subsidized")).toBeInTheDocument();
+    expect(screen.getByLabelText("Tax")).toBeInTheDocument();
     expect(screen.getByLabelText("Day of week")).toBeInTheDocument();
     expect(screen.getByLabelText("Week of month")).toBeInTheDocument();
     expect(screen.getByText("Add expense")).toBeInTheDocument();
     expect(screen.getByText("Cancel")).toBeInTheDocument();
   });
 
-  it("renders RowAdd component with taxes", () => {
+  it("renders RowAdd component without taxes", () => {
     const setShowAddForm = jest.fn();
     const handleAdd = jest.fn();
 
@@ -45,17 +53,9 @@ describe("RowAdd", () => {
         <TableBody>
           <RowAdd
             account_id={1}
-            taxes={[
-              {
-                id: 1,
-                title: "IVA",
-                rate: 0.05,
-                account_id: 1,
-              },
-            ]}
             setShowAddForm={setShowAddForm}
             handleAdd={handleAdd}
-            type={2}
+            type={1}
           />
         </TableBody>
       </Table>
@@ -70,7 +70,6 @@ describe("RowAdd", () => {
     expect(screen.getByLabelText("Subsidized")).toBeInTheDocument();
     expect(screen.getByLabelText("Day of week")).toBeInTheDocument();
     expect(screen.getByLabelText("Week of month")).toBeInTheDocument();
-    expect(screen.getByLabelText("Tax")).toBeInTheDocument();
     expect(screen.getByText("Add expense")).toBeInTheDocument();
     expect(screen.getByText("Cancel")).toBeInTheDocument();
   });
@@ -110,6 +109,7 @@ describe("RowAdd", () => {
     expect(screen.getByLabelText("Frequency")).toBeInTheDocument();
     expect(screen.getByLabelText("Expense begin date")).toBeInTheDocument();
     expect(screen.getByLabelText("Subsidized")).toBeInTheDocument();
+    expect(screen.getByLabelText("Tax")).toBeInTheDocument();
     expect(screen.getByLabelText("Week of month")).toBeInTheDocument();
     expect(screen.getByText("Add expense")).toBeInTheDocument();
     expect(screen.getByText("Cancel")).toBeInTheDocument();
@@ -144,6 +144,7 @@ describe("RowAdd", () => {
     expect(screen.getByLabelText("Amount")).toBeInTheDocument();
     expect(screen.getByLabelText("Expense begin date")).toBeInTheDocument();
     expect(screen.getByLabelText("Subsidized")).toBeInTheDocument();
+    expect(screen.getByLabelText("Tax")).toBeInTheDocument();
     expect(screen.getByText("Add expense")).toBeInTheDocument();
     expect(screen.getByText("Cancel")).toBeInTheDocument();
   });
@@ -178,6 +179,7 @@ it("renders RowAdd component with frequency weekly", async () => {
   expect(screen.getByLabelText("Amount")).toBeInTheDocument();
   expect(screen.getByLabelText("Expense begin date")).toBeInTheDocument();
   expect(screen.getByLabelText("Subsidized")).toBeInTheDocument();
+  expect(screen.getByLabelText("Tax")).toBeInTheDocument();
   expect(screen.getByLabelText("Day of week")).toBeInTheDocument();
   expect(screen.getByText("Add expense")).toBeInTheDocument();
   expect(screen.getByText("Cancel")).toBeInTheDocument();
@@ -212,6 +214,7 @@ it("renders RowAdd component with frequency yearly", async () => {
   expect(screen.getByLabelText("Amount")).toBeInTheDocument();
   expect(screen.getByLabelText("Expense begin date")).toBeInTheDocument();
   expect(screen.getByLabelText("Subsidized")).toBeInTheDocument();
+  expect(screen.getByLabelText("Tax")).toBeInTheDocument();
   expect(screen.getByLabelText("Day of week")).toBeInTheDocument();
   expect(screen.getByLabelText("Week of month")).toBeInTheDocument();
   expect(screen.getByLabelText("Month of year")).toBeInTheDocument();

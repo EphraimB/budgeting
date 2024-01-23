@@ -174,7 +174,7 @@ function RowAdd({
         />
         <br />
         <br />
-        {type === 2 && (
+        {type === 0 && (
           <FormControl>
             <InputLabel id="tax-select-label">Tax</InputLabel>
             <Select

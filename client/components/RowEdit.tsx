@@ -86,7 +86,7 @@ function RowEdit({
     description: description,
     amount: parseFloat(amount),
     subsidized: parseFloat(subsidized),
-    ...(type === 2 && { tax_id: tax === 0 ? null : tax }),
+    ...(type === 0 && { tax_id: tax === 0 ? null : tax }),
     begin_date: beginDate,
     end_date: endDate,
     frequency_type: parseInt(frequency),
@@ -189,7 +189,7 @@ function RowEdit({
         />
         <br />
         <br />
-        {type === 2 && (
+        {type === 0 && (
           <FormControl>
             <InputLabel id="tax-select-label">Tax</InputLabel>
             <Select

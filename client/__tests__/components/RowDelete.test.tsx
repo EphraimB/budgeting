@@ -2,6 +2,8 @@ import React from "react";
 import { render, screen } from "@testing-library/react";
 import RowDelete from "../../components/RowDelete";
 import "@testing-library/jest-dom";
+import Table from "@mui/material/Table";
+import TableBody from "@mui/material/TableBody";
 
 describe("RowDelete", () => {
   test("renders RowDelete component", () => {
@@ -21,11 +23,15 @@ describe("RowDelete", () => {
     const handleDelete = jest.fn();
 
     render(
-      <RowDelete
-        row={row}
-        setRowModes={setRowModes}
-        handleDelete={handleDelete}
-      />
+      <Table>
+        <TableBody>
+          <RowDelete
+            row={row}
+            setRowModes={setRowModes}
+            handleDelete={handleDelete}
+          />
+        </TableBody>
+      </Table>
     );
 
     expect(
