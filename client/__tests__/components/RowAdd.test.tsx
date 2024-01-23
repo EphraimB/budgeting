@@ -4,7 +4,6 @@ import RowAdd from "../../components/RowAdd";
 import "@testing-library/jest-dom";
 import { Table, TableBody } from "@mui/material";
 import { act } from "react-dom/test-utils";
-import userEvent from "@testing-library/user-event";
 
 describe("RowAdd", () => {
   it("renders RowAdd component", () => {
@@ -31,6 +30,7 @@ describe("RowAdd", () => {
     expect(screen.getByLabelText("Frequency")).toBeInTheDocument();
     expect(screen.getByLabelText("Expense begin date")).toBeInTheDocument();
     expect(screen.getByLabelText("Subsidized")).toBeInTheDocument();
+    expect(screen.getByLabelText("Week of month")).toBeInTheDocument();
     expect(screen.getByText("Add expense")).toBeInTheDocument();
     expect(screen.getByText("Cancel")).toBeInTheDocument();
   });
@@ -67,6 +67,7 @@ describe("RowAdd", () => {
     expect(screen.getByLabelText("Expense begin date")).toBeInTheDocument();
     expect(screen.getByDisplayValue("1")).toBeInTheDocument();
     expect(screen.getByLabelText("Subsidized")).toBeInTheDocument();
+    expect(screen.getByLabelText("Week of month")).toBeInTheDocument();
     expect(screen.getByText("Add expense")).toBeInTheDocument();
     expect(screen.getByText("Cancel")).toBeInTheDocument();
   });
@@ -106,6 +107,7 @@ describe("RowAdd", () => {
     expect(screen.getByLabelText("Frequency")).toBeInTheDocument();
     expect(screen.getByLabelText("Expense begin date")).toBeInTheDocument();
     expect(screen.getByLabelText("Subsidized")).toBeInTheDocument();
+    expect(screen.getByLabelText("Week of month")).toBeInTheDocument();
     expect(screen.getByText("Add expense")).toBeInTheDocument();
     expect(screen.getByText("Cancel")).toBeInTheDocument();
   });
@@ -133,29 +135,6 @@ describe("RowAdd", () => {
 
     const dailyOption = screen.getByTestId("daily-menu-item");
     fireEvent.click(dailyOption);
-
-    // expect(selectElement).toHaveValue(0);
-
-    // expect(
-    //   (screen.getByRole("option", { name: "Daily" }) as HTMLOptionElement)
-    //     .selected
-    // ).toBe(true);
-
-    // const dropdownButton = screen.getByLabelText("Frequency");
-
-    // userEvent.click(dropdownButton);
-
-    // const daily = screen.getByDisplayValue("0");
-
-    // userEvent.click(daily);
-
-    // act(() => {
-    //   userEvent.selectOptions(typographyEl, "0");
-    // });
-
-    // expect(typographyEl).toBeInTheDocument();
-
-    // expect(screen.getByLabelText("Week of month")).toBeInTheDocument();
 
     expect(screen.getByLabelText("Title")).toBeInTheDocument();
     expect(screen.getByLabelText("Description")).toBeInTheDocument();
