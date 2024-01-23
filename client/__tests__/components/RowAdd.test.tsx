@@ -30,6 +30,7 @@ describe("RowAdd", () => {
     expect(screen.getByLabelText("Frequency")).toBeInTheDocument();
     expect(screen.getByLabelText("Expense begin date")).toBeInTheDocument();
     expect(screen.getByLabelText("Subsidized")).toBeInTheDocument();
+    expect(screen.getByLabelText("Day of week")).toBeInTheDocument();
     expect(screen.getByLabelText("Week of month")).toBeInTheDocument();
     expect(screen.getByText("Add expense")).toBeInTheDocument();
     expect(screen.getByText("Cancel")).toBeInTheDocument();
@@ -67,6 +68,7 @@ describe("RowAdd", () => {
     expect(screen.getByLabelText("Expense begin date")).toBeInTheDocument();
     expect(screen.getByDisplayValue("1")).toBeInTheDocument();
     expect(screen.getByLabelText("Subsidized")).toBeInTheDocument();
+    expect(screen.getByLabelText("Day of week")).toBeInTheDocument();
     expect(screen.getByLabelText("Week of month")).toBeInTheDocument();
     expect(screen.getByText("Add expense")).toBeInTheDocument();
     expect(screen.getByText("Cancel")).toBeInTheDocument();
