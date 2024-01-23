@@ -12,10 +12,10 @@ import { logger } from '../config/winston.js';
  */
 const parseTaxes = (tax: Record<string, string>): Taxes => ({
     id: parseInt(tax.tax_id),
-    tax_rate: parseFloat(tax.tax_rate),
-    tax_title: tax.tax_title,
-    tax_description: tax.tax_description,
-    tax_type: parseInt(tax.tax_type),
+    rate: parseFloat(tax.tax_rate),
+    title: tax.tax_title,
+    description: tax.tax_description,
+    type: parseInt(tax.tax_type),
     date_created: tax.date_created,
     date_modified: tax.date_modified,
 });

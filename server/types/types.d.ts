@@ -43,10 +43,10 @@ export interface Transaction {
 
 export interface Taxes {
     id: number;
-    tax_rate: number;
-    tax_title: string;
-    tax_description: string;
-    tax_type: number;
+    rate: number;
+    title: string;
+    description: string;
+    type: number;
     date_created: string;
     date_modified: string;
 }

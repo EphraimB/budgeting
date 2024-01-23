@@ -42,3 +42,13 @@ export interface Loan {
   date_created: string;
   date_modified: string;
 }
+
+export interface Taxes {
+  id: number;
+  rate: number;
+  title: string;
+  description: string;
+  type: number;
+  date_created: string;
+  date_modified: string;
+}

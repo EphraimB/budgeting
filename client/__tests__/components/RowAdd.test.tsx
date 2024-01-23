@@ -19,8 +19,11 @@ describe("RowAdd", () => {
               {
                 id: 1,
                 title: "IVA",
+                description: "Impuesto al Valor Agregado",
+                type: 0,
                 rate: 0.05,
-                account_id: 1,
+                date_created: "2021-10-01T00:00:00.000Z",
+                date_modified: "2021-10-01T00:00:00.000Z",
               },
             ]}
             setShowAddForm={setShowAddForm}

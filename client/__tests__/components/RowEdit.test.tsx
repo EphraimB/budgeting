@@ -21,14 +21,20 @@ describe("RowEdit", () => {
               {
                 id: 1,
                 title: "GST",
+                description: "Goods and Services Tax",
                 rate: 0.05,
-                account_id: 1,
+                type: 0,
+                date_created: "2021-10-01T00:00:00.000Z",
+                date_modified: "2021-10-01T00:00:00.000Z",
               },
               {
                 id: 2,
                 title: "PST",
+                description: "Provincial Sales Tax",
                 rate: 0.07,
-                account_id: 1,
+                type: 0,
+                date_created: "2021-10-01T00:00:00.000Z",
+                date_modified: "2021-10-01T00:00:00.000Z",
               },
             ]}
             type={0}

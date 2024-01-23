@@ -49,10 +49,10 @@ const taxes = [
 const taxesResponse: Taxes[] = [
     {
         id: 1,
-        tax_rate: 0,
-        tax_title: 'Test Tax',
-        tax_description: 'Test Tax',
-        tax_type: 0,
+        rate: 0,
+        title: 'Test Tax',
+        description: 'Test Tax',
+        type: 0,
         date_created: '2020-01-01',
         date_modified: '2020-01-01',
     },

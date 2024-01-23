@@ -17,6 +17,7 @@ import Checkbox from "@mui/material/Checkbox";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import Button from "@mui/material/Button";
 import Stack from "@mui/material/Stack";
+import { Taxes } from "@/app/types/types";
 
 function RowEdit({
   account_id,
@@ -28,7 +29,7 @@ function RowEdit({
 }: {
   account_id: number;
   row: any;
-  taxes?: any;
+  taxes?: Taxes[];
   setRowModes: any;
   handleEdit: any;
   type: number;
@@ -201,11 +202,13 @@ function RowEdit({
               <MenuItem key={0} value={0}>
                 None - 0%
               </MenuItem>
-              {taxes.map((tax: any) => (
-                <MenuItem key={tax.id} value={tax.id}>
-                  {tax.title} - {tax.rate * 100}%
-                </MenuItem>
-              ))}
+              {taxes
+                ? taxes.map((tax: any) => (
+                    <MenuItem key={tax.id} value={tax.id}>
+                      {tax.title} - {tax.rate * 100}%
+                    </MenuItem>
+                  ))
+                : null}
             </Select>
           </FormControl>
         )}

@@ -17,6 +17,7 @@ import Checkbox from "@mui/material/Checkbox";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import Button from "@mui/material/Button";
 import Stack from "@mui/material/Stack";
+import { Taxes } from "@/app/types/types";
 
 function RowAdd({
   account_id,
@@ -26,7 +27,7 @@ function RowAdd({
   type,
 }: {
   account_id: number;
-  taxes?: any;
+  taxes?: Taxes[];
   setShowAddForm: any;
   handleAdd: any;
   type: number;
