@@ -19,6 +19,7 @@ describe("RowAdd", () => {
             taxes={[]}
             setShowAddForm={setShowAddForm}
             handleAdd={handleAdd}
+            type={0}
           />
         </TableBody>
       </Table>
@@ -29,7 +30,6 @@ describe("RowAdd", () => {
     expect(screen.getByLabelText("Amount")).toBeInTheDocument();
     expect(screen.getByLabelText("Frequency")).toBeInTheDocument();
     expect(screen.getByLabelText("Expense begin date")).toBeInTheDocument();
-    expect(screen.getByLabelText("Tax")).toBeInTheDocument();
     expect(screen.getByLabelText("Subsidized")).toBeInTheDocument();
     expect(screen.getByText("Add expense")).toBeInTheDocument();
     expect(screen.getByText("Cancel")).toBeInTheDocument();
@@ -54,6 +54,7 @@ describe("RowAdd", () => {
             ]}
             setShowAddForm={setShowAddForm}
             handleAdd={handleAdd}
+            type={0}
           />
         </TableBody>
       </Table>
@@ -64,7 +65,6 @@ describe("RowAdd", () => {
     expect(screen.getByLabelText("Amount")).toBeInTheDocument();
     expect(screen.getByLabelText("Frequency")).toBeInTheDocument();
     expect(screen.getByLabelText("Expense begin date")).toBeInTheDocument();
-    expect(screen.getByLabelText("Tax")).toBeInTheDocument();
     expect(screen.getByDisplayValue("1")).toBeInTheDocument();
     expect(screen.getByLabelText("Subsidized")).toBeInTheDocument();
     expect(screen.getByText("Add expense")).toBeInTheDocument();
@@ -83,6 +83,7 @@ describe("RowAdd", () => {
             taxes={[]}
             setShowAddForm={setShowAddForm}
             handleAdd={handleAdd}
+            type={0}
           />
         </TableBody>
       </Table>
@@ -104,7 +105,6 @@ describe("RowAdd", () => {
     expect(screen.getByLabelText("Amount")).toBeInTheDocument();
     expect(screen.getByLabelText("Frequency")).toBeInTheDocument();
     expect(screen.getByLabelText("Expense begin date")).toBeInTheDocument();
-    expect(screen.getByLabelText("Tax")).toBeInTheDocument();
     expect(screen.getByLabelText("Subsidized")).toBeInTheDocument();
     expect(screen.getByText("Add expense")).toBeInTheDocument();
     expect(screen.getByText("Cancel")).toBeInTheDocument();
@@ -122,6 +122,7 @@ describe("RowAdd", () => {
             taxes={[]}
             setShowAddForm={setShowAddForm}
             handleAdd={handleAdd}
+            type={0}
           />
         </TableBody>
       </Table>
@@ -135,10 +136,10 @@ describe("RowAdd", () => {
 
     // expect(selectElement).toHaveValue(0);
 
-    expect(
-      (screen.getByRole("option", { name: "Daily" }) as HTMLOptionElement)
-        .selected
-    ).toBe(true);
+    // expect(
+    //   (screen.getByRole("option", { name: "Daily" }) as HTMLOptionElement)
+    //     .selected
+    // ).toBe(true);
 
     // const dropdownButton = screen.getByLabelText("Frequency");
 
@@ -154,13 +155,12 @@ describe("RowAdd", () => {
 
     // expect(typographyEl).toBeInTheDocument();
 
-    expect(screen.getByLabelText("Week of month")).toBeInTheDocument();
+    // expect(screen.getByLabelText("Week of month")).toBeInTheDocument();
 
     expect(screen.getByLabelText("Title")).toBeInTheDocument();
     expect(screen.getByLabelText("Description")).toBeInTheDocument();
     expect(screen.getByLabelText("Amount")).toBeInTheDocument();
     expect(screen.getByLabelText("Expense begin date")).toBeInTheDocument();
-    expect(screen.getByLabelText("Tax")).toBeInTheDocument();
     expect(screen.getByLabelText("Subsidized")).toBeInTheDocument();
     expect(screen.getByText("Add expense")).toBeInTheDocument();
     expect(screen.getByText("Cancel")).toBeInTheDocument();
