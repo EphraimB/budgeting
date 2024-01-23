@@ -65,7 +65,7 @@ const generateExpenses = (
             description: expense.expense_description,
             date: expenseDate,
             amount: -amountAfterSubsidy,
-            tax_rate: taxRate ?? 0,
+            tax_rate: taxRate,
             total_amount: -taxAmount,
         };
 
