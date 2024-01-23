@@ -72,7 +72,7 @@ function RowAdd({
     description: description,
     amount: parseFloat(amount),
     subsidized: parseFloat(subsidized),
-    ...(type === 2 && { tax_id: tax === 0 ? null : tax }),
+    ...(type === 0 && { tax_id: tax === 0 ? null : tax }),
     begin_date: beginDate,
     end_date: endDate,
     frequency_type: frequency,
