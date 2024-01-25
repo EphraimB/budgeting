@@ -6,9 +6,9 @@ import Link from "next/link";
 import Typography from "@mui/material/Typography";
 import ExpensesTable from "../../../../components/ExpensesTable";
 
-async function getExpenses(accountId: number) {
+async function getExpenses(account_id: number) {
   const res = await fetch(
-    `http://server:5001/api/expenses?account_id=${accountId}`
+    `http://server:5001/api/expenses?account_id=${account_id}`
   );
 
   if (!res.ok) {
@@ -18,9 +18,9 @@ async function getExpenses(accountId: number) {
   return res.json();
 }
 
-async function getTaxes(accountId: number) {
+async function getTaxes(account_id: number) {
   const res = await fetch(
-    `http://server:5001/api/taxes?account_id=${accountId}`
+    `http://server:5001/api/taxes?account_id=${account_id}`
   );
 
   if (!res.ok) {
@@ -31,10 +31,10 @@ async function getTaxes(accountId: number) {
 }
 
 async function Expenses({ params }: { params: { account_id: string } }) {
-  const accountId = parseInt(params.account_id);
+  const account_id = parseInt(params.account_id);
 
-  const expenses = await getExpenses(accountId);
-  const taxes = await getTaxes(accountId);
+  const expenses = await getExpenses(account_id);
+  const taxes = await getTaxes(account_id);
 
   return (
     <Stack>
@@ -52,8 +52,8 @@ async function Expenses({ params }: { params: { account_id: string } }) {
         }}
       >
         <Link
-          href={`/${accountId}`}
-          as={`/${accountId}`}
+          href={`/${account_id}`}
+          as={`/${account_id}`}
           style={{ color: "inherit", textDecoration: "inherit" }}
         >
           <CardHeader title="< Transactions" />
@@ -64,7 +64,11 @@ async function Expenses({ params }: { params: { account_id: string } }) {
           </CardContent>
         </Link>
       </Card>
-      <ExpensesTable account_id={accountId} expenses={expenses} taxes={taxes} />
+      <ExpensesTable
+        account_id={account_id}
+        expenses={expenses}
+        taxes={taxes}
+      />
     </Stack>
   );
 }

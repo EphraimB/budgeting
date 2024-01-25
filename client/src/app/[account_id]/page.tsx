@@ -20,6 +20,30 @@ async function getTransactions(
   return res.json();
 }
 
+async function getExpenses(account_id: number) {
+  const res = await fetch(
+    `http://server:5001/api/expenses?account_id=${account_id}`
+  );
+
+  if (!res.ok) {
+    // open alert
+  }
+
+  return res.json();
+}
+
+async function getTaxes(account_id: number) {
+  const res = await fetch(
+    `http://server:5001/api/taxes?account_id=${account_id}`
+  );
+
+  if (!res.ok) {
+    // open alert
+  }
+
+  return res.json();
+}
+
 async function TransactionsPage({
   params,
   searchParams,
@@ -29,7 +53,7 @@ async function TransactionsPage({
 }) {
   dayjs.extend(customParseFormat);
 
-  const accountId = parseInt(params.account_id);
+  const account_id = parseInt(params.account_id);
 
   // If no search params are provided, set to the current date for from date and one month from now for to date and change the URL
   if (
@@ -48,11 +72,17 @@ async function TransactionsPage({
   const fromDate = searchParams.from_date as string;
   const toDate = searchParams.to_date as string;
 
-  const transactions = await getTransactions(accountId, fromDate, toDate);
+  const transactions = await getTransactions(account_id, fromDate, toDate);
+  const expenses = await getExpenses(account_id);
+  const taxes = await getTaxes(account_id);
 
   return (
     <>
-      <DataManagementWidgets accountId={accountId} />
+      <DataManagementWidgets
+        account_id={account_id}
+        expenses={expenses}
+        taxes={taxes}
+      />
       <br />
       <DateRange fromDate={fromDate} toDate={toDate} />
       <TransactionDisplay transactions={transactions} />
