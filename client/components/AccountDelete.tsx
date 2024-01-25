@@ -5,7 +5,7 @@ import IconButton from "@mui/material/IconButton";
 import CloseIcon from "@mui/icons-material/Close";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
-import { useRouter } from "next/navigation";
+import { deleteAccount } from "../services/actions/account";
 
 function AccountDelete({
   account,
@@ -14,32 +14,17 @@ function AccountDelete({
   account: any;
   setAccountModes: any;
 }) {
-  const router = useRouter();
+  const handleDelete = async () => {
+    try {
+      await deleteAccount(account.account_id);
+    } catch (error) {
+      console.log(error);
+    }
 
-  const handleDelete = () => {
-    const deleteAccount = async () => {
-      try {
-        // Post request to create a new account
-        await fetch(`/api/accounts?account_id=${account.account_id}`, {
-          method: "DELETE",
-          headers: {
-            "Content-Type": "application/json",
-          },
-        });
-
-        router.refresh();
-      } catch (error) {
-        console.error("There was an error deleting the account!", error);
-        // showAlert("There was an error deleting the account!", "error");
-      }
-      setAccountModes((prevModes: any) => ({
-        ...prevModes,
-        [account.account_id]: "view",
-      }));
-      // showSnackbar("Account deleted!");
-    };
-
-    deleteAccount();
+    setAccountModes((prevModes: any) => ({
+      ...prevModes,
+      [account.account_id]: "view",
+    }));
   };
 
   const handleCancel = () => {

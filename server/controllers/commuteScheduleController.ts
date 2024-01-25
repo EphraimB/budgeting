@@ -76,18 +76,13 @@ export const getCommuteSchedule = async (
         let params: any[];
 
         // Change the query based on the presence of id
-        if (
-            id !== null &&
-            id !== undefined &&
-            account_id !== null &&
-            account_id !== undefined
-        ) {
+        if (id && account_id) {
             query = commuteScheduleQueries.getCommuteSchedulesByIdAndAccountId;
             params = [account_id, id];
-        } else if (id !== null && id !== undefined) {
+        } else if (id) {
             query = commuteScheduleQueries.getCommuteSchedulesById;
             params = [id];
-        } else if (account_id !== null && account_id !== undefined) {
+        } else if (account_id) {
             query = commuteScheduleQueries.getCommuteSchedulesByAccountId;
             params = [account_id];
         } else {
@@ -97,11 +92,7 @@ export const getCommuteSchedule = async (
 
         const commuteSchedule = await executeQuery(query, params);
 
-        if (
-            ((id !== null && id !== undefined) ||
-                (account_id !== null && account_id !== undefined)) &&
-            commuteSchedule.length === 0
-        ) {
+        if (id && commuteSchedule.length === 0) {
             response.status(404).send('Schedule not found');
             return;
         }
@@ -141,9 +132,9 @@ export const getCommuteSchedule = async (
         handleError(
             response,
             `Error getting ${
-                id !== null && id !== undefined
+                id
                     ? 'schedule for given id'
-                    : account_id !== null && account_id !== undefined
+                    : account_id
                     ? 'schedule for given account_id'
                     : 'schedules'
             }`,

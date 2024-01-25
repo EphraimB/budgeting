@@ -53,18 +53,13 @@ export const getCommuteHistory = async (
         let params: any[];
 
         // Change the query based on the presence of id
-        if (
-            id !== null &&
-            id !== undefined &&
-            account_id !== null &&
-            account_id !== undefined
-        ) {
+        if (id && account_id) {
             query = commuteHistoryQueries.getCommuteHistoryByIdAndAccountId;
             params = [id, account_id];
-        } else if (id !== null && id !== undefined) {
+        } else if (id) {
             query = commuteHistoryQueries.getCommuteHistoryById;
             params = [id];
-        } else if (account_id !== null && account_id !== undefined) {
+        } else if (account_id) {
             query = commuteHistoryQueries.getCommuteHistoryByAccountId;
             params = [account_id];
         } else {
@@ -77,11 +72,7 @@ export const getCommuteHistory = async (
             params,
         );
 
-        if (
-            ((id !== null && id !== undefined) ||
-                (account_id !== null && account_id !== undefined)) &&
-            commuteHistory.length === 0
-        ) {
+        if (id && commuteHistory.length === 0) {
             response.status(404).send('Commute history not found');
             return;
         }
@@ -92,9 +83,9 @@ export const getCommuteHistory = async (
         handleError(
             response,
             `Error getting commute ${
-                id !== null && id !== undefined
+                id
                     ? 'history'
-                    : account_id !== null && account_id !== undefined
+                    : account_id
                     ? 'history for given account_id'
                     : 'histories'
             }`,

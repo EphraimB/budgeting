@@ -74,7 +74,7 @@ export const getLoans = async (
 
         const rows = await executeQuery(query, params);
 
-        if ((id || account_id) && rows.length === 0) {
+        if (id && rows.length === 0) {
             response.status(404).send('Loan not found');
             return;
         }

@@ -10,6 +10,21 @@ let next: any;
 beforeAll(() => {
     MockDate.set('2020-01-01');
 
+    jest.mock('../../generation/generateLoans', () => ({
+        generateDailyLoans: jest
+            .fn()
+            .mockReturnValue({ fullyPaidBackDate: '2024-01-01' }),
+        generateWeeklyLoans: jest
+            .fn()
+            .mockReturnValue({ fullyPaidBackDate: '2024-01-01' }),
+        generateMonthlyLoans: jest
+            .fn()
+            .mockReturnValue({ fullyPaidBackDate: '2024-01-01' }),
+        generateYearlyLoans: jest
+            .fn()
+            .mockReturnValue({ fullyPaidBackDate: '2024-01-01' }),
+    }));
+
     jest.mock('../../utils/helperFunctions', () => ({
         executeQuery: jest.fn().mockImplementation(
             async () =>
@@ -137,6 +152,7 @@ beforeAll(() => {
                         loan_title: 'Sample Loan',
                         loan_description: 'Sample Loan',
                         loan_amount: 100,
+                        frequency_type: 0,
                         frequency_day_of_week: 4,
                         frequency_week_of_month: 1,
                         frequency_month_of_year: 7,
@@ -267,6 +283,7 @@ describe('generateTransactions', () => {
                 loan_title: 'Sample Loan',
                 loan_description: 'Sample Loan',
                 loan_amount: 100,
+                frequency_type: 0,
                 frequency_day_of_week: 4,
                 frequency_week_of_month: 1,
                 frequency_month_of_year: 7,
@@ -375,6 +392,7 @@ describe('generateTransactions', () => {
                 loan_title: 'Sample Loan',
                 loan_description: 'Sample Loan',
                 loan_amount: 100,
+                frequency_type: 0,
                 frequency_day_of_week: 4,
                 frequency_week_of_month: 1,
                 frequency_month_of_year: 7,

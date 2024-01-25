@@ -1,9 +1,6 @@
 import { type NextFunction, type Request, type Response } from 'express';
 import { payrollQueries } from '../models/queryData.js';
-import {
-    handleError,
-    executeQuery,
-} from '../utils/helperFunctions.js';
+import { handleError, executeQuery } from '../utils/helperFunctions.js';
 import { type Employee } from '../types/types.js';
 import { logger } from '../config/winston.js';
 
@@ -35,22 +32,14 @@ export const getEmployee = async (
     const { employee_id } = request.query;
 
     try {
-        const query: string =
-            employee_id !== null && employee_id !== undefined
-                ? payrollQueries.getEmployee
-                : payrollQueries.getEmployees;
-        const params: any[] =
-            employee_id !== null && employee_id !== undefined
-                ? [employee_id]
-                : [];
+        const query: string = employee_id
+            ? payrollQueries.getEmployee
+            : payrollQueries.getEmployees;
+        const params: any[] = employee_id ? [employee_id] : [];
 
         const results = await executeQuery(query, params);
 
-        if (
-            employee_id !== null &&
-            employee_id !== undefined &&
-            results.length === 0
-        ) {
+        if (employee_id && results.length === 0) {
             response.status(404).send('Employee not found');
             return;
         }
@@ -65,11 +54,7 @@ export const getEmployee = async (
         logger.error(error); // Log the error on the server side
         handleError(
             response,
-            `Error getting ${
-                employee_id !== null && employee_id !== undefined
-                    ? 'employee'
-                    : 'employees'
-            }`,
+            `Error getting ${employee_id ? 'employee' : 'employees'}`,
         );
     }
 };
@@ -153,9 +138,7 @@ export const updateEmployee = async (
             return;
         }
 
-        await executeQuery('SELECT process_payroll_for_employee($1)', [
-            1,
-        ]);
+        await executeQuery('SELECT process_payroll_for_employee($1)', [1]);
 
         // Parse the data to correct format and return an object
         const employees: Employee[] = results.map((employee) =>
@@ -241,9 +224,7 @@ export const deleteEmployee = async (
 
         await executeQuery(payrollQueries.deleteEmployee, [employee_id]);
 
-        await executeQuery('SELECT process_payroll_for_employee($1)', [
-            1,
-        ]);
+        await executeQuery('SELECT process_payroll_for_employee($1)', [1]);
 
         response.status(200).send('Successfully deleted employee');
     } catch (error) {

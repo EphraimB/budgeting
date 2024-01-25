@@ -179,9 +179,18 @@ export const getFrequency = (row: any): string => {
             : "th"
         }`;
       } else {
+        const dayOfMonth = dayjs(row.begin_date).format("D");
         expenseFrequency = `Every ${
           row.frequency_type_variable
-        } months on the ${dayjs(row.begin_date).format("D")}th`;
+        } months on the ${dayOfMonth}${
+          dayOfMonth.endsWith("1")
+            ? "st"
+            : dayOfMonth.endsWith("2")
+            ? "nd"
+            : dayOfMonth.endsWith("3")
+            ? "rd"
+            : "th"
+        }`;
       }
 
       if (row.frequency_day_of_month) {

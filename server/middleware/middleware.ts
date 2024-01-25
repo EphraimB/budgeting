@@ -321,11 +321,11 @@ export const getExpensesByAccount = async (
                             const tax: QueryResultRow =
                                 taxLookup[expense.tax_id] !== undefined
                                     ? taxLookup[expense.tax_id]
-                                    : { rate: 0 };
+                                    : { tax_rate: 0 };
 
                             return {
                                 ...expense,
-                                tax_rate: parseFloat(tax.rate),
+                                tax_rate: parseFloat(tax.tax_rate),
                                 amount: parseFloat(expense.amount),
                                 subsidized: parseFloat(expense.subsidized),
                             };
@@ -360,11 +360,11 @@ export const getExpensesByAccount = async (
                 const tax: QueryResultRow =
                     taxLookup[expense.tax_id] !== undefined
                         ? taxLookup[expense.tax_id]
-                        : { rate: 0 };
+                        : { tax_rate: 0 };
 
                 return {
                     ...expense,
-                    tax_rate: parseFloat(tax.rate),
+                    tax_rate: parseFloat(tax.tax_rate),
                     amount: parseFloat(expense.amount),
                     subsidized: parseFloat(expense.subsidized),
                 };

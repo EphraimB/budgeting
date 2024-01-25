@@ -6,7 +6,7 @@ import TextField from "@mui/material/TextField";
 import Stack from "@mui/material/Stack";
 import IconButton from "@mui/material/IconButton";
 import CloseIcon from "@mui/icons-material/Close";
-import { useRouter } from "next/navigation";
+import { editAccount } from "../services/actions/account";
 
 export default function AccountEdit({
   account,
@@ -15,38 +15,40 @@ export default function AccountEdit({
   account: any;
   setAccountModes: any;
 }) {
-  const router = useRouter();
-
   const [accountName, setAccountName] = useState(account.account_name);
+  
+  const [nameError, setNameError] = useState("");
+
   const data = {
     name: accountName,
   };
 
-  const onEditAccountSubmit = () => {
-    const submitData = async () => {
+  const validateName = () => {
+    if (!accountName) {
+      setNameError("Name is required");
+
+      return false;
+    }
+
+    return true;
+  };
+
+  const handleSubmit = async () => {
+    const isNameValid = validateName();
+
+    if (isNameValid) {
+      // Submit data
       try {
-        // Post request to create a new account
-        await fetch(`/api/accounts?account_id=${account.account_id}`, {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(data),
-        });
-        
-        router.refresh();
+        await editAccount(data, account.account_id);
       } catch (error) {
-        console.error("There was an error editing the account!", error);
-        // showAlert("There was an error editing the account!", "error");
+        console.log(error);
       }
+
       setAccountModes((prevModes: any) => ({
         ...prevModes,
         [account.account_id]: "view",
       }));
-      // showSnackbar("Account edited!");
-    };
-
-    submitData();
+    }
   };
 
   return (
@@ -78,13 +80,11 @@ export default function AccountEdit({
           onInput={(event: React.ChangeEvent<HTMLInputElement>) => {
             setAccountName(event.target.value);
           }}
+          error={!!nameError}
+          helperText={nameError}
         />
 
-        <Button
-          variant="contained"
-          color="primary"
-          onClick={onEditAccountSubmit}
-        >
+        <Button variant="contained" color="primary" onClick={handleSubmit}>
           Edit Account
         </Button>
       </Stack>

@@ -101,9 +101,9 @@ export const getExpenses = async (
         handleError(
             response,
             `Error getting ${
-                id !== null && id !== undefined
+                id
                     ? 'expense'
-                    : account_id !== null && account_id !== undefined
+                    : account_id
                     ? 'expenses for given account_id'
                     : 'expenses'
             }`,

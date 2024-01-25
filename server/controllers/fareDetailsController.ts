@@ -29,7 +29,7 @@ export const getFareDetails = async (
         let params: any[];
 
         // Change the query based on the presence of id
-        if (id !== null && id !== undefined) {
+        if (id) {
             query = fareDetailsQueries.getFareDetailsById;
             queryTwo = fareTimeslotsQueries.getTimeslotsByFareId;
             params = [id];
@@ -42,7 +42,7 @@ export const getFareDetails = async (
         const fareDetails = await executeQuery(query, params);
 
         if (fareDetails.length === 0) {
-            if (id !== null && id !== undefined) {
+            if (id) {
                 response.status(404).send('Fare detail not found');
                 return;
             } else {
@@ -84,11 +84,7 @@ export const getFareDetails = async (
         logger.error(error); // Log the error on the server side
         handleError(
             response,
-            `Error getting fare ${
-                id !== null && id !== undefined
-                    ? 'details for given id'
-                    : 'details'
-            }`,
+            `Error getting fare ${id ? 'details for given id' : 'details'}`,
         );
     }
 };

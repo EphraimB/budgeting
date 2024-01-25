@@ -1,9 +1,6 @@
 import { type NextFunction, type Request, type Response } from 'express';
 import { payrollQueries } from '../models/queryData.js';
-import {
-    handleError,
-    executeQuery,
-} from '../utils/helperFunctions.js';
+import { handleError, executeQuery } from '../utils/helperFunctions.js';
 import { type PayrollDate } from '../types/types.js';
 import { logger } from '../config/winston.js';
 
@@ -37,18 +34,13 @@ export const getPayrollDates = async (
         let query: string;
         let params: any[];
 
-        if (
-            id !== null &&
-            id !== undefined &&
-            employee_id !== null &&
-            employee_id !== undefined
-        ) {
+        if (id && employee_id) {
             query = payrollQueries.getPayrollDatesByIdAndEmployeeId;
             params = [id, employee_id];
-        } else if (id !== null && id !== undefined) {
+        } else if (id) {
             query = payrollQueries.getPayrollDatesById;
             params = [id];
-        } else if (employee_id !== null && employee_id !== undefined) {
+        } else if (employee_id) {
             query = payrollQueries.getPayrollDatesByEmployeeId;
             params = [employee_id];
         } else {
@@ -58,11 +50,7 @@ export const getPayrollDates = async (
 
         const results = await executeQuery(query, params);
 
-        if (
-            ((id !== null && id !== undefined) ||
-                (employee_id !== null && employee_id !== undefined)) &&
-            results.length === 0
-        ) {
+        if ((id || employee_id) && results.length === 0) {
             response.status(404).send('Payroll date not found');
             return;
         }
@@ -78,9 +66,9 @@ export const getPayrollDates = async (
         handleError(
             response,
             `Error getting ${
-                id !== null && id !== undefined
+                id
                     ? 'payroll date'
-                    : employee_id !== null && employee_id !== undefined
+                    : employee_id
                     ? 'payroll dates for given employee_id'
                     : 'payroll dates'
             }`,
@@ -109,9 +97,7 @@ export const createPayrollDate = async (
             end_day,
         ]);
 
-        await executeQuery('SELECT process_payroll_for_employee($1)', [
-            1,
-        ]);
+        await executeQuery('SELECT process_payroll_for_employee($1)', [1]);
 
         // Parse the data to correct format and return an object
         const payrollDates: PayrollDate[] = results.map((payrollDate) =>
@@ -177,9 +163,7 @@ export const updatePayrollDate = async (
             return;
         }
 
-        await executeQuery('SELECT process_payroll_for_employee($1)', [
-            1,
-        ]);
+        await executeQuery('SELECT process_payroll_for_employee($1)', [1]);
 
         next();
     } catch (error) {
@@ -244,9 +228,7 @@ export const deletePayrollDate = async (
 
         await executeQuery(payrollQueries.deletePayrollDate, [id]);
 
-        await executeQuery('SELECT process_payroll_for_employee($1)', [
-            1,
-        ]);
+        await executeQuery('SELECT process_payroll_for_employee($1)', [1]);
 
         next();
     } catch (error) {

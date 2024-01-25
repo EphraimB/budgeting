@@ -69,7 +69,7 @@ export const getIncome = async (
 
         const income = await executeQuery(query, params);
 
-        if ((id || account_id) && income.length === 0) {
+        if (id && income.length === 0) {
             response.status(404).send('Income not found');
             return;
         }

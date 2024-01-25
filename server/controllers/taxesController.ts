@@ -12,10 +12,10 @@ import { logger } from '../config/winston.js';
  */
 const parseTaxes = (tax: Record<string, string>): Taxes => ({
     id: parseInt(tax.tax_id),
-    tax_rate: parseFloat(tax.tax_rate),
-    tax_title: tax.tax_title,
-    tax_description: tax.tax_description,
-    tax_type: parseInt(tax.tax_type),
+    rate: parseFloat(tax.tax_rate),
+    title: tax.tax_title,
+    description: tax.tax_description,
+    type: parseInt(tax.tax_type),
     date_created: tax.date_created,
     date_modified: tax.date_modified,
 });
@@ -36,7 +36,7 @@ export const getTaxes = async (
         let query: string;
         let params: any[];
 
-        if (id !== null && id !== undefined) {
+        if (id) {
             query = taxesQueries.getTax;
             params = [id];
         } else {
@@ -46,7 +46,7 @@ export const getTaxes = async (
 
         const taxesResults = await executeQuery(query, params);
 
-        if (id !== null && id !== undefined && taxesResults.length === 0) {
+        if (id && taxesResults.length === 0) {
             response.status(404).send('Tax not found');
             return;
         }

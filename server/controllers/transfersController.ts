@@ -74,7 +74,7 @@ export const getTransfers = async (
 
         const results = await executeQuery(query, params);
 
-        if ((id || account_id) && results.length === 0) {
+        if (id && results.length === 0) {
             response.status(404).send('Transfer not found');
             return;
         }
