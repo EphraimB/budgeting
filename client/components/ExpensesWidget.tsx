@@ -53,7 +53,7 @@ function ExpensesWidget({
         <CardContent sx={{ flexGrow: 1 }}>
           <Typography variant="body1">
             You have {expenses.length} expense{expenses.length === 1 ? "" : "s"}{" "}
-            with a total of ${totalWithTaxes.toFixed(2)}
+            with a total of ${totalWithTaxes.toFixed(2)} including taxes.
           </Typography>
         </CardContent>
       </Card>
