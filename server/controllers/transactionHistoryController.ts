@@ -39,18 +39,13 @@ export const getTransactions = async (
         let query: string;
         let params: any[];
 
-        if (
-            id !== null &&
-            id !== undefined &&
-            account_id !== null &&
-            account_id !== undefined
-        ) {
+        if (id && account_id) {
             query = transactionHistoryQueries.getTransactionByIdAndAccountId;
             params = [id, account_id];
-        } else if (id !== null && id !== undefined) {
+        } else if (id) {
             query = transactionHistoryQueries.getTransactionById;
             params = [id];
-        } else if (account_id !== null && account_id !== undefined) {
+        } else if (account_id) {
             query = transactionHistoryQueries.getTransactionsByAccountId;
             params = [account_id];
         } else {
@@ -60,11 +55,7 @@ export const getTransactions = async (
 
         const transactionResults = await executeQuery(query, params);
 
-        if (
-            ((id !== null && id !== undefined) ||
-                (account_id !== null && account_id !== undefined)) &&
-            transactionResults.length === 0
-        ) {
+        if (id && transactionResults.length === 0) {
             response.status(404).send('Transaction not found');
             return;
         }

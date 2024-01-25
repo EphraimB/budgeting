@@ -31,11 +31,10 @@ export const getAccounts = async (
 
     try {
         // Change the query based on the presence of id
-        const query: string =
-            id !== null && id !== undefined
-                ? accountQueries.getAccount
-                : accountQueries.getAccounts;
-        const params = id !== null && id !== undefined ? [id] : [];
+        const query: string = id
+            ? accountQueries.getAccount
+            : accountQueries.getAccounts;
+        const params = id ? [id] : [];
         const accounts = await executeQuery(query, params);
 
         if (id !== null && id !== undefined && accounts.length === 0) {
@@ -48,12 +47,7 @@ export const getAccounts = async (
             .json(accounts.map((account) => parseAccounts(account)));
     } catch (error) {
         logger.error(error); // Log the error on the server side
-        handleError(
-            response,
-            `Error getting ${
-                id !== null && id !== undefined ? 'account' : 'accounts'
-            }`,
-        );
+        handleError(response, `Error getting ${id ? 'account' : 'accounts'}`);
     }
 };
 
@@ -101,7 +95,7 @@ export const updateAccount = async (
             name,
             id,
         ]);
-        
+
         const accounts = rows.map((account) => parseAccounts(account));
         response.status(200).json(accounts);
     } catch (error) {

@@ -17,6 +17,7 @@ import Checkbox from "@mui/material/Checkbox";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import Button from "@mui/material/Button";
 import Stack from "@mui/material/Stack";
+import { Taxes } from "@/app/types/types";
 
 function RowEdit({
   account_id,
@@ -24,12 +25,14 @@ function RowEdit({
   taxes,
   setRowModes,
   handleEdit,
+  type,
 }: {
   account_id: number;
   row: any;
-  taxes: any;
+  taxes?: Taxes[];
   setRowModes: any;
   handleEdit: any;
+  type: number;
 }) {
   const [title, setTitle] = useState(row.title);
   const [description, setDescription] = useState(row.description);
@@ -84,7 +87,7 @@ function RowEdit({
     description: description,
     amount: parseFloat(amount),
     subsidized: parseFloat(subsidized),
-    tax_id: tax === 0 ? null : tax,
+    ...(type === 0 && { tax_id: tax === 0 ? null : tax }),
     begin_date: beginDate,
     end_date: endDate,
     frequency_type: parseInt(frequency),
@@ -130,7 +133,7 @@ function RowEdit({
     return true;
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     const isTitleValid = validateTitle();
     const isDescriptionValid = validateDescription();
     const isAmountValid = validateAmount();
@@ -138,7 +141,7 @@ function RowEdit({
     if (isTitleValid && isDescriptionValid && isAmountValid) {
       // Submit data
       try {
-        handleEdit(data, row.id);
+        await handleEdit(data, row.id);
       } catch (error) {
         console.log(error);
       }
@@ -187,7 +190,7 @@ function RowEdit({
         />
         <br />
         <br />
-        {taxes.length > 0 ? (
+        {type === 0 && (
           <FormControl>
             <InputLabel id="tax-select-label">Tax</InputLabel>
             <Select
@@ -199,14 +202,16 @@ function RowEdit({
               <MenuItem key={0} value={0}>
                 None - 0%
               </MenuItem>
-              {taxes.map((tax: any) => (
-                <MenuItem key={tax.tax_id} value={tax.tax_id}>
-                  {tax.tax_title} - {tax.tax_rate * 100}%
-                </MenuItem>
-              ))}
+              {taxes
+                ? taxes.map((tax: any) => (
+                    <MenuItem key={tax.id} value={tax.id}>
+                      {tax.title} - {tax.rate * 100}%
+                    </MenuItem>
+                  ))
+                : null}
             </Select>
           </FormControl>
-        ) : null}
+        )}
       </TableCell>
       <TableCell>
         <LocalizationProvider dateAdapter={AdapterDayjs}>

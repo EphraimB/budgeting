@@ -7,43 +7,44 @@ import TextField from "@mui/material/TextField";
 import Stack from "@mui/material/Stack";
 import IconButton from "@mui/material/IconButton";
 import CloseIcon from "@mui/icons-material/Close";
-import { useRouter } from "next/navigation";
+import { addAccount } from "../services/actions/account";
 
 export default function NewAccountForm({
   setShowNewAccountForm,
 }: {
   setShowNewAccountForm: React.Dispatch<React.SetStateAction<boolean>>;
 }) {
-  const router = useRouter();
-
   const [accountName, setAccountName] = useState("");
+  const [nameError, setNameError] = useState("");
 
   const data = {
     name: accountName,
   };
 
-  const onNewAccountSubmit = () => {
-    const submitData = async () => {
+  const validateName = () => {
+    if (!accountName) {
+      setNameError("Name is required");
+      return false;
+    }
+
+    setNameError("");
+
+    return true;
+  };
+
+  const handleSubmit = async () => {
+    const isNameValid = validateName();
+
+    if (isNameValid) {
+      // Submit data
       try {
-        // Post request to create a new account
-        await fetch("/api/accounts", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(data),
-        });
-
-        router.refresh();
+        await addAccount(data);
       } catch (error) {
-        console.error("There was an error creating the account!", error);
-        // showAlert("There was an error creating the account!", "error");
+        console.log(error);
       }
-      setShowNewAccountForm(false);
-      // showSnackbar("Account created!");
-    };
 
-    submitData();
+      setShowNewAccountForm(false);
+    }
   };
 
   return (
@@ -77,13 +78,11 @@ export default function NewAccountForm({
           onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
             setAccountName(event.target.value);
           }}
+          error={!!nameError}
+          helperText={nameError}
         />
 
-        <Button
-          variant="contained"
-          color="primary"
-          onClick={onNewAccountSubmit}
-        >
+        <Button variant="contained" color="primary" onClick={handleSubmit}>
           Open Account
         </Button>
       </Stack>

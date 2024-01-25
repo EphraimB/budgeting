@@ -10,13 +10,15 @@ function RowView({
   isSelected,
   taxes,
   getExpenseFrequency,
+  type,
 }: {
   row: any;
   index: number;
   handleClick: any;
   isSelected: any;
-  taxes: any;
+  taxes?: any;
   getExpenseFrequency: any;
+  type: number;
 }) {
   const isItemSelected = isSelected(row.id);
   const labelId = `enhanced-table-checkbox-${index}`;
@@ -57,8 +59,12 @@ function RowView({
         {row.title}
       </TableCell>
       <TableCell align="right">{row.description}</TableCell>
+      {type == 1 && <TableCell align="right">${row.plan_amount}</TableCell>}
       <TableCell align="right">
-        ${(Math.round((amountAfterSubsidy as number) * 100) / 100).toFixed(2)}
+        $
+        {type == 0
+          ? (Math.round((amountAfterSubsidy as number) * 100) / 100).toFixed(2)
+          : row.amount}
       </TableCell>
       <TableCell align="right">
         {dayjs(row.next_date).format("dddd")}
@@ -68,6 +74,15 @@ function RowView({
         {dayjs(row.next_date).format("h:mm A")}
       </TableCell>
       <TableCell align="right">{getExpenseFrequency(row)}</TableCell>
+      {type === 1 && (
+        <TableCell align="right">
+          {dayjs(row.fully_paid_back).format("dddd")}
+          <br />
+          {dayjs(row.fully_paid_back).format("MMMM D, YYYY")}
+          <br />
+          {dayjs(row.fully_paid_back).format("h:mm A")}
+        </TableCell>
+      )}
     </TableRow>
   );
 }

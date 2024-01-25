@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, Suspense, useMemo } from "react";
-import dayjs, { Dayjs } from "dayjs";
+import dayjs from "dayjs";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
 import TableCell from "@mui/material/TableCell";
@@ -11,7 +11,6 @@ import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
 import { green, red } from "@mui/material/colors";
 import TablePagination from "@mui/material/TablePagination";
-import Skeleton from "@mui/material/Skeleton";
 import LoadingTransactions from "./LoadingTransactions";
 
 export default function TransactionDisplay({
