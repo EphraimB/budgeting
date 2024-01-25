@@ -18,23 +18,10 @@ async function getLoans(accountId: number) {
   return res.json();
 }
 
-async function getTaxes(accountId: number) {
-  const res = await fetch(
-    `http://server:5001/api/taxes?account_id=${accountId}`
-  );
-
-  if (!res.ok) {
-    // open alert
-  }
-
-  return res.json();
-}
-
 async function Loans({ params }: { params: { account_id: string } }) {
-  const accountId = parseInt(params.account_id);
+  const account_id = parseInt(params.account_id);
 
-  const loans = await getLoans(accountId);
-  const taxes = await getTaxes(accountId);
+  const loans = await getLoans(account_id);
 
   return (
     <Stack>
@@ -52,8 +39,8 @@ async function Loans({ params }: { params: { account_id: string } }) {
         }}
       >
         <Link
-          href={`/${accountId}`}
-          as={`/${accountId}`}
+          href={`/${account_id}`}
+          as={`/${account_id}`}
           style={{ color: "inherit", textDecoration: "inherit" }}
         >
           <CardHeader title="< Transactions" />
@@ -64,7 +51,7 @@ async function Loans({ params }: { params: { account_id: string } }) {
           </CardContent>
         </Link>
       </Card>
-      <LoansTable account_id={accountId} loans={loans} taxes={taxes} />
+      <LoansTable account_id={account_id} loans={loans} />
     </Stack>
   );
 }

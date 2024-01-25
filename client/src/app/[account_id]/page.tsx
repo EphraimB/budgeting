@@ -44,6 +44,18 @@ async function getTaxes(account_id: number) {
   return res.json();
 }
 
+async function getLoans(accountId: number) {
+  const res = await fetch(
+    `http://server:5001/api/loans?account_id=${accountId}`
+  );
+
+  if (!res.ok) {
+    // open alert
+  }
+
+  return res.json();
+}
+
 async function TransactionsPage({
   params,
   searchParams,
@@ -75,6 +87,7 @@ async function TransactionsPage({
   const transactions = await getTransactions(account_id, fromDate, toDate);
   const expenses = await getExpenses(account_id);
   const taxes = await getTaxes(account_id);
+  const loans = await getLoans(account_id);
 
   return (
     <>
@@ -82,6 +95,7 @@ async function TransactionsPage({
         account_id={account_id}
         expenses={expenses}
         taxes={taxes}
+        loans={loans}
       />
       <br />
       <DateRange fromDate={fromDate} toDate={toDate} />

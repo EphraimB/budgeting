@@ -39,6 +39,7 @@ export interface Loan {
   subsidized: number;
   begin_date: string;
   end_date: string | null;
+  fully_paid_back: string;
   date_created: string;
   date_modified: string;
 }

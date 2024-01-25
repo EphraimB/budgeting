@@ -1,15 +1,17 @@
 import Stack from "@mui/material/Stack";
 import ExpensesWidget from "./ExpensesWidget";
 import LoansWidget from "./LoansWidget";
-import { Expense, Taxes } from "@/app/types/types";
+import { Expense, Loan, Taxes } from "@/app/types/types";
 
 function DataManagementWidgets({
   account_id,
   expenses,
+  loans,
   taxes,
 }: {
   account_id: number;
   expenses: Expense[];
+  loans: Loan[];
   taxes: Taxes[];
 }) {
   return (
@@ -19,7 +21,7 @@ function DataManagementWidgets({
         expenses={expenses}
         taxes={taxes}
       />
-      <LoansWidget account_id={account_id} />
+      <LoansWidget account_id={account_id} loans={loans} />
     </Stack>
   );
 }

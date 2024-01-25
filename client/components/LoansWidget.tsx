@@ -3,8 +3,33 @@ import CardContent from "@mui/material/CardContent";
 import CardHeader from "@mui/material/CardHeader";
 import Link from "next/link";
 import Typography from "@mui/material/Typography";
+import { Loan } from "@/app/types/types";
+import dayjs from "dayjs";
 
-function LoansWidget({ account_id }: { account_id: number }) {
+function LoansWidget({
+  account_id,
+  loans,
+}: {
+  account_id: number;
+  loans: Loan[];
+}) {
+  function findLatestFullyPaidBackDate(loans: Loan[]) {
+    if (loans.length === 0) return null; // Return null if no loans
+
+    // Convert all fully_paid_back dates to Day.js objects and find the max
+    let latest = dayjs(loans[0].fully_paid_back);
+    loans.forEach((loan: Loan) => {
+      const fullyPaidBackDate = dayjs(loan.fully_paid_back);
+      if (fullyPaidBackDate.isAfter(latest)) {
+        latest = fullyPaidBackDate;
+      }
+    });
+
+    return latest; // Returns a Day.js object of the most distant date
+  }
+
+  const latestFullyPaidBackDate = findLatestFullyPaidBackDate(loans);
+
   return (
     <Link
       href={`/${account_id}/loans`}
@@ -27,8 +52,15 @@ function LoansWidget({ account_id }: { account_id: number }) {
       >
         <CardHeader title="Loans" />
         <CardContent sx={{ flexGrow: 1 }}>
-          <Typography variant="body2" color="white">
-            View and manage your loans.
+          <Typography variant="body1" color="white">
+            You have {loans.length} loan{loans.length === 1 ? "" : "s"} with a
+            total of ${loans.reduce((acc, loan) => acc + loan.amount, 0)}.{" "}
+            {latestFullyPaidBackDate
+              ? "You will be debt free on " +
+                latestFullyPaidBackDate.format("MM/DD/YYYY")
+              : loans.length === 0
+              ? "You are debt free!"
+              : ""}
           </Typography>
         </CardContent>
       </Card>
