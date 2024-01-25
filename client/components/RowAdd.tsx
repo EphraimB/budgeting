@@ -34,6 +34,7 @@ function RowAdd({
 }) {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
+  const [planAmount, setPlanAmount] = useState("0");
   const [amount, setAmount] = useState("0");
   const [subsidized, setSubsidized] = useState("0");
   const [tax, setTax] = useState(0);
@@ -70,6 +71,7 @@ function RowAdd({
     account_id,
     title: title,
     description: description,
+    ...(type === 1 && { plan_amount: parseFloat(planAmount) }),
     amount: parseFloat(amount),
     subsidized: parseFloat(subsidized),
     ...(type === 0 && { tax_id: tax === 0 ? null : tax }),
@@ -158,6 +160,14 @@ function RowAdd({
           helperText={descriptionError}
         />
       </TableCell>
+      <br />
+      {type === 1 && (
+        <TextField
+          label="Plan amount"
+          value={planAmount}
+          onChange={(e) => setPlanAmount(e.target.value)}
+        />
+      )}
       <TableCell>
         <TextField
           label="Amount"

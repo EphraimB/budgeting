@@ -87,7 +87,7 @@ function LoansTable({
 
   const visibleRows = useVisibleRows(loans, order, orderBy, page, rowsPerPage);
 
-  const handleAdd = async (loan: any) => {
+  const handleAdd = async (loan: Loan) => {
     try {
       await addLoan(loan);
     } catch (err) {
@@ -97,9 +97,9 @@ function LoansTable({
     setShowAddExpenseForm(false);
   };
 
-  const handleEdit = async (expense: any, id: number) => {
+  const handleEdit = async (loan: Loan, id: number) => {
     try {
-      await editLoan(expense, id);
+      await editLoan(loan, id);
     } catch (err) {
       console.error(err);
     }
