@@ -55,11 +55,11 @@ function LoansWidget({
           <Typography variant="body1" color="white">
             You have {loans.length} loan{loans.length === 1 ? "" : "s"} with a
             total of ${loans.reduce((acc, loan) => acc + loan.amount, 0)}.{" "}
-            {latestFullyPaidBackDate
-              ? "You will be debt free on " +
-                latestFullyPaidBackDate.format("MM/DD/YYYY")
-              : loans.length === 0
+            {loans.length === 0
               ? "You are debt free!"
+              : latestFullyPaidBackDate
+              ? "You will be debt free on " +
+                latestFullyPaidBackDate.format("dddd, MMMM D, YYYY h:mm A")
               : ""}
           </Typography>
         </CardContent>
