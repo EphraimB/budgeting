@@ -148,7 +148,7 @@ function RowAdd({
       isTitleValid &&
       isDescriptionValid &&
       isAmountValid &&
-      isPlanAmountValid
+      (type === 1 ? isPlanAmountValid : true)
     ) {
       // Submit data
       try {

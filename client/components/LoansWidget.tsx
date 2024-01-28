@@ -4,7 +4,7 @@ import CardHeader from "@mui/material/CardHeader";
 import Link from "next/link";
 import Typography from "@mui/material/Typography";
 import { Loan } from "@/app/types/types";
-import dayjs from "dayjs";
+import dayjs, { Dayjs } from "dayjs";
 
 function LoansWidget({
   account_id,
@@ -13,8 +13,10 @@ function LoansWidget({
   account_id: number;
   loans: Loan[];
 }) {
-  function findLatestFullyPaidBackDate(loans: Loan[]) {
+  function findLatestFullyPaidBackDate(loans: Loan[]): Dayjs | string | null {
     if (loans.length === 0) return null; // Return null if no loans
+    if (loans.map((loan: Loan) => loan.fully_paid_back === null))
+      return "not in the near future";
 
     // Convert all fully_paid_back dates to Day.js objects and find the max
     let latest = dayjs(loans[0].fully_paid_back);
@@ -25,7 +27,9 @@ function LoansWidget({
       }
     });
 
-    return latest; // Returns a Day.js object of the most distant date
+    latest ? latest.format("dddd, MMMM D, YYYY h:mm A") : null;
+
+    return latest;
   }
 
   const latestFullyPaidBackDate = findLatestFullyPaidBackDate(loans);
@@ -58,8 +62,7 @@ function LoansWidget({
             {loans.length === 0
               ? "You are debt free!"
               : latestFullyPaidBackDate
-              ? "You will be debt free on " +
-                latestFullyPaidBackDate.format("dddd, MMMM D, YYYY h:mm A")
+              ? "You will be debt free " + latestFullyPaidBackDate
               : ""}
           </Typography>
         </CardContent>
