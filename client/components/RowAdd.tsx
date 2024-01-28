@@ -53,6 +53,7 @@ function RowAdd({
   const [titleError, setTitleError] = useState("");
   const [descriptionError, setDescriptionError] = useState("");
   const [amountError, setAmountError] = useState("");
+  const [planAmountError, setPlanAmountError] = useState("");
 
   const handleEndDateEnabledChange = (
     e: React.ChangeEvent<HTMLInputElement>
@@ -126,12 +127,29 @@ function RowAdd({
     return true;
   };
 
+  const validatePlanAmount = () => {
+    if (parseFloat(planAmount) === 0) {
+      setPlanAmountError("Plan amount needs to be greater than 0");
+      return false;
+    }
+
+    setPlanAmountError("");
+
+    return true;
+  };
+
   const handleSubmit = () => {
     const isTitleValid = validateTitle();
     const isDescriptionValid = validateDescription();
     const isAmountValid = validateAmount();
+    const isPlanAmountValid = validatePlanAmount();
 
-    if (isTitleValid && isDescriptionValid && isAmountValid) {
+    if (
+      isTitleValid &&
+      isDescriptionValid &&
+      isAmountValid &&
+      isPlanAmountValid
+    ) {
       // Submit data
       try {
         handleAdd(data);
