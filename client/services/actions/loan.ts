@@ -4,7 +4,7 @@ import { Loan } from "@/app/types/types";
 import { revalidatePath } from "next/cache";
 
 export async function addLoan(loan: Loan) {
-  const response = await fetch(`http://server:5001/api/loans`, {
+  const response = await fetch("http://server:5001/api/loans", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",

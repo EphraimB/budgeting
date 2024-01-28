@@ -4,7 +4,7 @@ import { Expense } from "@/app/types/types";
 import { revalidatePath } from "next/cache";
 
 export async function addExpense(expense: Expense) {
-  const response = await fetch(`http://server:5001/api/expenses`, {
+  const response = await fetch("http://server:5001/api/expenses", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",

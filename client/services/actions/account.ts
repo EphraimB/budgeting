@@ -4,7 +4,7 @@ import { Account } from "@/app/types/types";
 import { revalidatePath } from "next/cache";
 
 export async function addAccount(account: any) {
-  const response = await fetch(`http://server:5001/api/accounts`, {
+  const response = await fetch("http://server:5001/api/accounts", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",

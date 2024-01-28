@@ -36,6 +36,7 @@ function RowAdd({
   const [description, setDescription] = useState("");
   const [planAmount, setPlanAmount] = useState("0");
   const [amount, setAmount] = useState("0");
+  const [recipient, setRecipient] = useState("");
   const [subsidized, setSubsidized] = useState("0");
   const [interestRate, setInterestRate] = useState("0");
   const [interestFrequencyType, setInterestFrequencyType] = useState(0);
@@ -79,6 +80,7 @@ function RowAdd({
     ...(type === 0 && { tax_id: tax === 0 ? null : tax }),
     ...(type === 1 && { interest_rate: parseFloat(interestRate) }),
     ...(type === 1 && { interest_frequency_type: interestFrequencyType }),
+    ...(type === 1 && { recipient: recipient }),
     begin_date: beginDate,
     end_date: endDate,
     frequency_type: frequency,
@@ -147,6 +149,17 @@ function RowAdd({
       }}
     >
       <TableCell colSpan={2}>
+        {type === 1 && (
+          <>
+            <TextField
+              label="Recipient"
+              value={recipient}
+              onChange={(e) => setRecipient(e.target.value)}
+            />
+            <br />
+            <br />
+          </>
+        )}
         <TextField
           label="Title"
           value={title}
