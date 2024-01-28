@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import React, { useState } from "react";
 import TableRow from "@mui/material/TableRow";
 import TableCell from "@mui/material/TableCell";
 import TextField from "@mui/material/TextField";
@@ -28,8 +28,8 @@ function RowAdd({
 }: {
   account_id: number;
   taxes?: Taxes[];
-  setShowAddForm: any;
-  handleAdd: any;
+  setShowAddForm: React.Dispatch<React.SetStateAction<boolean>>;
+  handleAdd: React.Dispatch<React.SetStateAction<any>>;
   type: number;
 }) {
   const [title, setTitle] = useState("");
@@ -37,6 +37,8 @@ function RowAdd({
   const [planAmount, setPlanAmount] = useState("0");
   const [amount, setAmount] = useState("0");
   const [subsidized, setSubsidized] = useState("0");
+  const [interestRate, setInterestRate] = useState("0");
+  const [interestFrequencyType, setInterestFrequencyType] = useState(0);
   const [tax, setTax] = useState(0);
   const [beginDate, setBeginDate] = useState(dayjs().format());
   const [endDate, setEndDate] = useState<null | string>(null);
@@ -75,6 +77,8 @@ function RowAdd({
     amount: parseFloat(amount),
     subsidized: parseFloat(subsidized),
     ...(type === 0 && { tax_id: tax === 0 ? null : tax }),
+    ...(type === 1 && { interest_rate: parseFloat(interestRate) }),
+    ...(type === 1 && { interest_frequency_type: interestFrequencyType }),
     begin_date: beginDate,
     end_date: endDate,
     frequency_type: frequency,
@@ -160,15 +164,16 @@ function RowAdd({
           helperText={descriptionError}
         />
       </TableCell>
-      <br />
-      {type === 1 && (
-        <TextField
-          label="Plan amount"
-          value={planAmount}
-          onChange={(e) => setPlanAmount(e.target.value)}
-        />
-      )}
       <TableCell>
+        {type === 1 && (
+          <TextField
+            label="Plan amount"
+            value={planAmount}
+            onChange={(e) => setPlanAmount(e.target.value)}
+          />
+        )}
+        <br />
+        <br />
         <TextField
           label="Amount"
           value={amount}
@@ -206,6 +211,26 @@ function RowAdd({
                 : null}
             </Select>
           </FormControl>
+        )}
+      </TableCell>
+      <TableCell>
+        {type === 1 && (
+          <>
+            <TextField
+              label="Interest rate"
+              value={interestRate}
+              onChange={(e) => setInterestRate(e.target.value)}
+            />
+            <br />
+            <br />
+            <TextField
+              label="Interest frequency type"
+              value={interestFrequencyType}
+              onChange={(e) =>
+                setInterestFrequencyType(parseInt(e.target.value))
+              }
+            />
+          </>
         )}
       </TableCell>
       <TableCell>
@@ -352,7 +377,7 @@ function RowAdd({
           </Button>
           <br />
           <Button variant="contained" color="primary" onClick={handleSubmit}>
-            Add expense
+            Add {type === 0 ? "expense" : type === 1 ? "loan" : "expense"}
           </Button>
         </Stack>
       </TableCell>
