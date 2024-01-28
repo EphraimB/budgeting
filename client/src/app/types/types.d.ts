@@ -62,7 +62,7 @@ export interface Loan {
   date_modified: string;
 }
 
-export interface Taxes {
+export interface Tax {
   id: number;
   rate: number;
   title: string;

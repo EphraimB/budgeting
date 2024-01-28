@@ -17,7 +17,7 @@ import Checkbox from "@mui/material/Checkbox";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import Button from "@mui/material/Button";
 import Stack from "@mui/material/Stack";
-import { Taxes } from "@/app/types/types";
+import { Tax } from "@/app/types/types";
 
 function RowEdit({
   account_id,
@@ -29,7 +29,7 @@ function RowEdit({
 }: {
   account_id: number;
   row: any;
-  taxes?: Taxes[];
+  taxes?: Tax[];
   setRowModes: React.Dispatch<React.SetStateAction<any>>;
   handleEdit: any;
   type: number;

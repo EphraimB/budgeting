@@ -17,7 +17,7 @@ import Checkbox from "@mui/material/Checkbox";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import Button from "@mui/material/Button";
 import Stack from "@mui/material/Stack";
-import { Taxes } from "@/app/types/types";
+import { Tax } from "@/app/types/types";
 
 function RowAdd({
   account_id,
@@ -27,7 +27,7 @@ function RowAdd({
   type,
 }: {
   account_id: number;
-  taxes?: Taxes[];
+  taxes?: Tax[];
   setShowAddForm: React.Dispatch<React.SetStateAction<boolean>>;
   handleAdd: React.Dispatch<React.SetStateAction<any>>;
   type: number;
@@ -82,7 +82,7 @@ function RowAdd({
     ...(type === 1 && { interest_frequency_type: interestFrequencyType }),
     ...(type === 1 && { recipient: recipient }),
     begin_date: beginDate,
-    end_date: endDate,
+    ...(type === 0 && { end_date: endDate }),
     frequency_type: frequency,
     frequency_type_variable: frequencyVariable,
     frequency_day_of_week:

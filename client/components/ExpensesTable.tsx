@@ -15,7 +15,7 @@ import RowDelete from "./RowDelete";
 import LoadingExpenses from "./LoadingExpenses";
 import RowEdit from "./RowEdit";
 import RowAdd from "./RowAdd";
-import { Expense, HeadCell } from "@/app/types/types";
+import { Expense, HeadCell, Tax } from "@/app/types/types";
 import {
   Order,
   getFrequency,
@@ -68,7 +68,7 @@ function ExpensesTable({
 }: {
   account_id: number;
   expenses: Expense[];
-  taxes: any[];
+  taxes: Tax[];
 }) {
   const [order, setOrder] = useState<Order>("asc");
   const [orderBy, setOrderBy] = useState<string>("expense_title");

@@ -76,11 +76,17 @@ function RowView({
       <TableCell align="right">{getExpenseFrequency(row)}</TableCell>
       {type === 1 && (
         <TableCell align="right">
-          {dayjs(row.fully_paid_back).format("dddd")}
-          <br />
-          {dayjs(row.fully_paid_back).format("MMMM D, YYYY")}
-          <br />
-          {dayjs(row.fully_paid_back).format("h:mm A")}
+          {row.fully_paid_back === null ? (
+            <span>Not in the near future</span>
+          ) : (
+            <span>
+              {dayjs(row.fully_paid_back).format("dddd")}
+              <br />
+              {dayjs(row.fully_paid_back).format("MMMM D, YYYY")}
+              <br />
+              {dayjs(row.fully_paid_back).format("h:mm A")}
+            </span>
+          )}
         </TableCell>
       )}
     </TableRow>
