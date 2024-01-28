@@ -4,6 +4,24 @@ export interface HeadCell {
   numeric: boolean;
 }
 
+export interface TransactionHistory {
+  id: number;
+  account_id: number;
+  amount: number;
+  title: string;
+  description: string;
+  date_created: string;
+  date_modified: string;
+}
+
+export interface Account {
+  id: number;
+  name: string;
+  balance: number;
+  date_created: string;
+  date_modified: string;
+}
+
 export interface Expense {
   id: number;
   account_id: number;
@@ -50,6 +68,18 @@ export interface Taxes {
   title: string;
   description: string;
   type: number;
+  date_created: string;
+  date_modified: string;
+}
+
+export interface GeneratedTransaction {
+  id: number;
+  account_id: number;
+  amount: number;
+  tax_rate: number | null;
+  total_amount: number;
+  title: string;
+  description: string;
   date_created: string;
   date_modified: string;
 }

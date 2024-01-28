@@ -1,5 +1,6 @@
 "use server";
 
+import { Account } from "@/app/types/types";
 import { revalidatePath } from "next/cache";
 
 export async function addAccount(account: any) {

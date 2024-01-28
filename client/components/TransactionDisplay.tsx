@@ -12,11 +12,12 @@ import Paper from "@mui/material/Paper";
 import { green, red } from "@mui/material/colors";
 import TablePagination from "@mui/material/TablePagination";
 import LoadingTransactions from "./LoadingTransactions";
+import { GeneratedTransaction } from "@/app/types/types";
 
 export default function TransactionDisplay({
   transactions,
 }: {
-  transactions: any[];
+  transactions: GeneratedTransaction[];
 }) {
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);

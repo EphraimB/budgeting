@@ -1,8 +1,9 @@
 "use server";
 
+import { Expense } from "@/app/types/types";
 import { revalidatePath } from "next/cache";
 
-export async function addExpense(expense: any) {
+export async function addExpense(expense: Expense) {
   const response = await fetch(`http://server:5001/api/expenses`, {
     method: "POST",
     headers: {
@@ -16,7 +17,7 @@ export async function addExpense(expense: any) {
   return result;
 }
 
-export async function editExpense(expense: any, id: number) {
+export async function editExpense(expense: Expense, id: number) {
   const response = await fetch(`http://server:5001/api/expenses/${id}`, {
     method: "PUT",
     headers: {

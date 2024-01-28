@@ -3,6 +3,7 @@ import TableCell from "@mui/material/TableCell";
 import Button from "@mui/material/Button";
 import Box from "@mui/material/Box";
 import { red } from "@mui/material/colors";
+import React from "react";
 
 function RowDelete({
   row,
@@ -10,7 +11,7 @@ function RowDelete({
   handleDelete,
 }: {
   row: any;
-  setRowModes: any;
+  setRowModes: React.Dispatch<React.SetStateAction<any>>;
   handleDelete: any;
 }) {
   const handleCancel = () => {

@@ -1,8 +1,9 @@
 "use server";
 
+import { Loan } from "@/app/types/types";
 import { revalidatePath } from "next/cache";
 
-export async function addLoan(loan: any) {
+export async function addLoan(loan: Loan) {
   const response = await fetch(`http://server:5001/api/loans`, {
     method: "POST",
     headers: {
@@ -16,7 +17,7 @@ export async function addLoan(loan: any) {
   return result;
 }
 
-export async function editLoan(loan: any, id: number) {
+export async function editLoan(loan: Loan, id: number) {
   const response = await fetch(`http://server:5001/api/loans/${id}`, {
     method: "PUT",
     headers: {

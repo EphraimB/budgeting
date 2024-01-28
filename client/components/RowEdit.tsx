@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import React, { useState } from "react";
 import TableRow from "@mui/material/TableRow";
 import TableCell from "@mui/material/TableCell";
 import TextField from "@mui/material/TextField";
@@ -30,7 +30,7 @@ function RowEdit({
   account_id: number;
   row: any;
   taxes?: Taxes[];
-  setRowModes: any;
+  setRowModes: React.Dispatch<React.SetStateAction<any>>;
   handleEdit: any;
   type: number;
 }) {
