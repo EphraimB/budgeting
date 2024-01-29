@@ -38,6 +38,7 @@ export interface Expense {
   subsidized: number;
   begin_date: string;
   end_date: string | null;
+  next_date: string | null;
   date_created: string;
   date_modified: string;
 }
