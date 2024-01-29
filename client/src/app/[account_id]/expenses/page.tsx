@@ -6,6 +6,8 @@ import Link from "next/link";
 import Typography from "@mui/material/Typography";
 import { Expense, Tax } from "@/app/types/types";
 import ExpensesView from "../../../../components/ExpensesView";
+import Fab from "@mui/material/Fab";
+import AddIcon from "@mui/icons-material/Add";
 
 async function getExpenses(account_id: number) {
   const res = await fetch(
@@ -31,8 +33,13 @@ async function getTaxes(account_id: number) {
   return res.json();
 }
 
-async function Expenses({ params }: { params: { account_id: string } }) {
+async function Expenses({
+  params,
+}: {
+  params: { account_id: string; add: boolean };
+}) {
   const account_id = parseInt(params.account_id);
+  const add = params.add;
 
   const expenses = await getExpenses(account_id);
   const taxes = await getTaxes(account_id);
@@ -106,12 +113,24 @@ async function Expenses({ params }: { params: { account_id: string } }) {
         </Typography>
       )}
       <Stack direction="row" spacing={2}>
+        {add && (
+          <Card sx={{ maxWidth: "18rem" }}>Edit form under construction</Card>
+        )}
+
         {expenses.map((expense: Expense) => (
           <Card sx={{ maxWidth: "18rem" }}>
             <ExpensesView expense={expense} taxes={taxes} />
           </Card>
         ))}
       </Stack>
+      <Fab color="primary">
+        <link
+          href={`/${account_id}/expenses/add`}
+          as={`/${account_id}/expenses/add`}
+        >
+          <AddIcon />
+        </link>
+      </Fab>
     </Stack>
   );
 }
