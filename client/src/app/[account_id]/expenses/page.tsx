@@ -5,9 +5,7 @@ import CardHeader from "@mui/material/CardHeader";
 import Link from "next/link";
 import Typography from "@mui/material/Typography";
 import { Expense, Tax } from "@/app/types/types";
-import ExpensesView from "../../../../components/ExpensesView";
-import Fab from "@mui/material/Fab";
-import AddIcon from "@mui/icons-material/Add";
+import ExpensesCards from "../../../../components/ExpensesCards";
 
 async function getExpenses(account_id: number) {
   const res = await fetch(
@@ -61,11 +59,8 @@ async function Expenses({
 
   const totalWithSubsidies = expenses.reduce(
     (acc: number, expense: Expense) => {
-      const taxRate = getTaxRate(expense.tax_id);
-      const taxAmount = expense.amount * taxRate;
-      const amountAfterTax = expense.amount + taxAmount;
       const amountAfterSubsidy =
-        amountAfterTax - amountAfterTax * expense.subsidized;
+        totalWithTaxes - totalWithTaxes * expense.subsidized;
       return acc + amountAfterSubsidy;
     },
     0
@@ -112,25 +107,7 @@ async function Expenses({
           taxes and subsidies.
         </Typography>
       )}
-      <Stack direction="row" spacing={2}>
-        {add && (
-          <Card sx={{ maxWidth: "18rem" }}>Edit form under construction</Card>
-        )}
-
-        {expenses.map((expense: Expense) => (
-          <Card sx={{ maxWidth: "18rem" }}>
-            <ExpensesView expense={expense} taxes={taxes} />
-          </Card>
-        ))}
-      </Stack>
-      <Fab color="primary">
-        <link
-          href={`/${account_id}/expenses/add`}
-          as={`/${account_id}/expenses/add`}
-        >
-          <AddIcon />
-        </link>
-      </Fab>
+      <ExpensesCards expenses={expenses} taxes={taxes} />
     </Stack>
   );
 }
