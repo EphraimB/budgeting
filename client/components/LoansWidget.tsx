@@ -15,8 +15,10 @@ function LoansWidget({
 }) {
   function findLatestFullyPaidBackDate(loans: Loan[]): Dayjs | string | null {
     if (loans.length === 0) return null; // Return null if no loans
-    if (loans.map((loan: Loan) => loan.fully_paid_back === null))
+    // Check if any loan has not been fully paid back
+    if (loans.some((loan: Loan) => loan.fully_paid_back === null)) {
       return "not in the near future";
+    }
 
     // Convert all fully_paid_back dates to Day.js objects and find the max
     let latest = dayjs(loans[0].fully_paid_back);
@@ -63,7 +65,7 @@ function LoansWidget({
             {loans.length === 0
               ? "You are debt free!"
               : latestFullyPaidBackDate
-              ? "You will be debt free " + latestFullyPaidBackDate
+              ? `You will be debt free ${latestFullyPaidBackDate}.`
               : ""}
           </Typography>
         </CardContent>

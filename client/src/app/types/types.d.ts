@@ -46,6 +46,7 @@ export interface Loan {
   id: number;
   account_id: number;
   amount: number;
+  plan_amount: number;
   title: string;
   description: string;
   frequency_type: number;
@@ -57,7 +58,7 @@ export interface Loan {
   subsidized: number;
   begin_date: string;
   end_date: string | null;
-  fully_paid_back: string;
+  fully_paid_back: string | null;
   date_created: string;
   date_modified: string;
 }
