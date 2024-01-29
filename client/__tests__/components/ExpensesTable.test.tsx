@@ -35,7 +35,7 @@ describe("ExpensesTable", () => {
             title: "GST",
             description: "Goods and Services Tax",
             rate: 0.05,
-            account_id: 1,
+            type: 1,
             date_created: "2021-10-01T00:00:00.000Z",
             date_modified: "2021-10-01T00:00:00.000Z",
           },
