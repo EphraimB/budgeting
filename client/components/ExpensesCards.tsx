@@ -31,7 +31,6 @@ function ExpensesCards({
           </Card>
         ))}
       </Stack>
-      <br />
       <Box sx={{ position: "absolute", bottom: 16, right: 16 }}>
         <Fab color="primary" onClick={() => setShowExpenseForm(true)}>
           <AddIcon />
