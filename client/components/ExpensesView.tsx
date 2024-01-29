@@ -27,11 +27,11 @@ function ExpensesView({ expense, taxes }: { expense: Expense; taxes: Tax[] }) {
       <CardHeader title={expense.title} subheader={expense.description} />
       <CardContent>
         <Typography variant="body2">
-          You will be charged ${amountAfterSubsidy} next on{" "}
-          {dayjs(expense.next_date).format("dddd MMMM D, YYYY h:mm A")}
+          You will be charged ${amountAfterSubsidy.toFixed(2)} next on{" "}
+          {dayjs(expense.next_date).format("dddd MMMM D, YYYY at h:mm A")}.
         </Typography>
         <Typography variant="body2">
-          You get charged {getFrequency(expense)}
+          You get charged {getFrequency(expense)}.
         </Typography>
       </CardContent>
     </>

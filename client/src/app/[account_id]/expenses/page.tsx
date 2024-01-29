@@ -68,6 +68,7 @@ async function Expenses({ params }: { params: { account_id: string } }) {
       <Typography variant="h4" component="h2">
         Expenses
       </Typography>
+      <br />
       <Stack direction="row" spacing={2}>
         {expenses.map((expense: Expense) => (
           <Card sx={{ maxWidth: "18rem" }}>
