@@ -58,7 +58,8 @@ function LoansWidget({
         <CardContent sx={{ flexGrow: 1 }}>
           <Typography variant="body1" color="white">
             You have {loans.length} loan{loans.length === 1 ? "" : "s"} with a
-            total of ${loans.reduce((acc, loan) => acc + loan.amount, 0)}.{" "}
+            total of $
+            {loans.reduce((acc, loan) => acc + loan.amount, 0).toFixed(2)}.{" "}
             {loans.length === 0
               ? "You are debt free!"
               : latestFullyPaidBackDate
