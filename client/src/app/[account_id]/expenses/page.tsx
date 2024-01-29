@@ -76,15 +76,10 @@ async function Expenses({ params }: { params: { account_id: string } }) {
       <Typography variant="h4" component="h2">
         Expenses
       </Typography>
-      <Grid direction="row" spacing={2}>
+      <Grid direction="column" spacing={2}>
         {expenses.map((expense: Expense) => (
-          <Card>
-            <CardHeader>
-              <Typography variant="h6" component="div">
-                {expense.title}
-              </Typography>
-              <Typography variant="body2">{expense.description}</Typography>
-            </CardHeader>
+          <Card sx={{ maxWidth: "18rem" }}>
+            <CardHeader title={expense.title} subheader={expense.description} />
             <CardContent>
               <Typography variant="body2">
                 You will be charged ${expense.amount} next on{" "}
