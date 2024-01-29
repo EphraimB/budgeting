@@ -32,7 +32,7 @@ function ExpensesCards({
         ))}
       </Stack>
       <br />
-      <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
+      <Box sx={{ position: "absolute", bottom: 16, right: 16 }}>
         <Fab color="primary" onClick={() => setShowExpenseForm(true)}>
           <AddIcon />
         </Fab>
