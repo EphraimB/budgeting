@@ -3,7 +3,7 @@ import CardContent from "@mui/material/CardContent";
 import CardHeader from "@mui/material/CardHeader";
 import Link from "next/link";
 import Typography from "@mui/material/Typography";
-import { Expense, Taxes } from "@/app/types/types";
+import { Expense, Tax } from "@/app/types/types";
 
 function ExpensesWidget({
   account_id,
@@ -12,7 +12,7 @@ function ExpensesWidget({
 }: {
   account_id: number;
   expenses: Expense[];
-  taxes: Taxes[];
+  taxes: Tax[];
 }) {
   // Function to find tax rate by tax_id
   const getTaxRate = (tax_id: number | null) => {
