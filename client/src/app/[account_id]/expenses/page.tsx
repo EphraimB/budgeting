@@ -7,7 +7,6 @@ import Typography from "@mui/material/Typography";
 import ExpensesTable from "../../../../components/ExpensesTable";
 import { Expense } from "@/app/types/types";
 import { getFrequency } from "../../../../utils/helperFunctions";
-import { Grid } from "@mui/material";
 import dayjs from "dayjs";
 
 async function getExpenses(account_id: number) {
@@ -76,7 +75,7 @@ async function Expenses({ params }: { params: { account_id: string } }) {
       <Typography variant="h4" component="h2">
         Expenses
       </Typography>
-      <Grid direction="column" spacing={2}>
+      <Stack direction="row" spacing={2}>
         {expenses.map((expense: Expense) => (
           <Card sx={{ maxWidth: "18rem" }}>
             <CardHeader title={expense.title} subheader={expense.description} />
@@ -91,7 +90,7 @@ async function Expenses({ params }: { params: { account_id: string } }) {
             </CardContent>
           </Card>
         ))}
-      </Grid>
+      </Stack>
     </Stack>
   );
 }
