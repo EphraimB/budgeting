@@ -4,10 +4,8 @@ import CardContent from "@mui/material/CardContent";
 import CardHeader from "@mui/material/CardHeader";
 import Link from "next/link";
 import Typography from "@mui/material/Typography";
-import ExpensesTable from "../../../../components/ExpensesTable";
 import { Expense } from "@/app/types/types";
-import { getFrequency } from "../../../../utils/helperFunctions";
-import dayjs from "dayjs";
+import ExpensesView from "../../../../components/ExpensesView";
 
 async function getExpenses(account_id: number) {
   const res = await fetch(
@@ -67,27 +65,13 @@ async function Expenses({ params }: { params: { account_id: string } }) {
           </CardContent>
         </Link>
       </Card>
-      {/* <ExpensesTable
-        account_id={account_id}
-        expenses={expenses}
-        taxes={taxes}
-      /> */}
       <Typography variant="h4" component="h2">
         Expenses
       </Typography>
       <Stack direction="row" spacing={2}>
         {expenses.map((expense: Expense) => (
           <Card sx={{ maxWidth: "18rem" }}>
-            <CardHeader title={expense.title} subheader={expense.description} />
-            <CardContent>
-              <Typography variant="body2">
-                You will be charged ${expense.amount} next on{" "}
-                {dayjs(expense.next_date).format("dddd MMMM D, YYYY h:mm A")}
-              </Typography>
-              <Typography variant="body2">
-                You get charged {getFrequency(expense)}
-              </Typography>
-            </CardContent>
+            <ExpensesView expense={expense} taxes={taxes} />
           </Card>
         ))}
       </Stack>
