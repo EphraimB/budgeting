@@ -1,10 +1,12 @@
 "use client";
 
+import { useState } from "react";
 import Card from "@mui/material/Card";
 import IconButton from "@mui/material/IconButton";
 import Close from "@mui/icons-material/Close";
 import Typography from "@mui/material/Typography";
 import { Tax } from "@/app/types/types";
+import { CardContent, CardHeader, TextField } from "@mui/material";
 
 function NewExpenseForm({
   setShowExpenseForm,
@@ -13,6 +15,9 @@ function NewExpenseForm({
   setShowExpenseForm: Function;
   taxes: Tax[];
 }) {
+  const [title, setTitle] = useState("");
+  const [description, setDescription] = useState("");
+
   return (
     <Card
       component="form"
@@ -34,9 +39,24 @@ function NewExpenseForm({
         <Close />
       </IconButton>
       <br />
-      <Typography variant="h6" component="h3">
-        New Expense
-      </Typography>
+      <CardContent>
+        <TextField
+          label="Title"
+          variant="standard"
+          value={title}
+          onChange={(e) => setTitle(e.target.value)}
+          fullWidth
+        />
+        <br />
+        <br />
+        <TextField
+          label="Description"
+          variant="standard"
+          value={description}
+          onChange={(e) => setDescription(e.target.value)}
+          fullWidth
+        />
+      </CardContent>
     </Card>
   );
 }
