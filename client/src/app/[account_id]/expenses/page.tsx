@@ -37,7 +37,6 @@ async function Expenses({
   params: { account_id: string; add: boolean };
 }) {
   const account_id = parseInt(params.account_id);
-  const add = params.add;
 
   const expenses = await getExpenses(account_id);
   const taxes = await getTaxes(account_id);
@@ -103,8 +102,8 @@ async function Expenses({
       ) : (
         // Sum of expenses
         <Typography variant="h6">
-          All of your expenses are ${totalWithSubsidies.toFixed(2)} including
-          taxes and subsidies.
+          All {expenses.length} of your expenses are $
+          {totalWithSubsidies.toFixed(2)} including taxes and subsidies.
         </Typography>
       )}
       <ExpensesCards expenses={expenses} taxes={taxes} />
