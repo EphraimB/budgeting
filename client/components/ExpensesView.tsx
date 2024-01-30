@@ -1,12 +1,38 @@
-import React from "react";
+"use client";
+
+import { useState } from "react";
 import dayjs from "dayjs";
 import CardHeader from "@mui/material/CardHeader";
 import CardContent from "@mui/material/CardContent";
 import Typography from "@mui/material/Typography";
 import { Expense, Tax } from "@/app/types/types";
 import { getFrequency } from "../utils/helperFunctions";
+import IconButton from "@mui/material/IconButton";
+import MoreVert from "@mui/icons-material/MoreVert";
+import ExpenseActionsMenu from "./ExpenseActionsMenu";
 
-function ExpensesView({ expense, taxes }: { expense: Expense; taxes: Tax[] }) {
+function ExpensesView({
+  expense,
+  taxes,
+  expenseModes,
+  setExpenseModes,
+}: {
+  expense: Expense;
+  taxes: Tax[];
+  expenseModes: Record<number, string>;
+  setExpenseModes: React.Dispatch<React.SetStateAction<Record<number, string>>>;
+}) {
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const open = Boolean(anchorEl);
+
+  const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+
   // Find the tax object that matches the expense's tax_id
   const taxObject = taxes
     ? taxes.find((tax: any) => tax.tax_id === expense.tax_id)
@@ -24,12 +50,34 @@ function ExpensesView({ expense, taxes }: { expense: Expense; taxes: Tax[] }) {
 
   return (
     <>
+      <IconButton
+        aria-label="more"
+        sx={{
+          position: "absolute",
+          top: 0,
+          right: 0,
+        }}
+        size="small"
+        onClick={handleClick}
+        aria-controls={open ? "account-menu" : undefined}
+        aria-haspopup="true"
+        aria-expanded={open ? "true" : undefined}
+      >
+        <MoreVert />
+      </IconButton>
+      <ExpenseActionsMenu
+        anchorEl={anchorEl}
+        open={open}
+        handleClose={handleClose}
+        setExpenseModes={setExpenseModes}
+        expense_id={expense.id}
+      />
       <CardHeader title={expense.title} subheader={expense.description} />
       <CardContent>
         <Typography variant="body2">
           You will be charged ${amountAfterSubsidy.toFixed(2)} next on{" "}
-          {dayjs(expense.next_date).format("dddd MMMM D, YYYY h:mm A")}. You
-          get charged {getFrequency(expense)}.
+          {dayjs(expense.next_date).format("dddd MMMM D, YYYY h:mm A")}. You get
+          charged {getFrequency(expense)}.
         </Typography>
       </CardContent>
     </>

@@ -12,7 +12,7 @@ function AccountView({
   setAccountModes,
 }: {
   account: Account;
-  setAccountModes: React.Dispatch<React.SetStateAction<string[]>>;
+  setAccountModes: React.Dispatch<React.SetStateAction<Record<number, string>>>;
 }) {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
