@@ -8,6 +8,8 @@ import ExpensesView from "./ExpensesView";
 import Fab from "@mui/material/Fab";
 import AddIcon from "@mui/icons-material/Add";
 import Box from "@mui/material/Box";
+import ExpenseDelete from "./ExpenseDelete";
+import ExpenseEdit from "./ExpenseEdit";
 
 function ExpensesCards({
   expenses,
@@ -31,12 +33,24 @@ function ExpensesCards({
             key={expense.id}
             sx={{ maxWidth: "18rem", position: "relative" }}
           >
-            <ExpensesView
-              expense={expense}
-              taxes={taxes}
-              expenseModes={expenseModes}
-              setExpenseModes={setExpenseModes}
-            />
+            {expenseModes[expense.id] === "delete" ? (
+              <ExpenseDelete
+                expense={expense}
+                setExpenseModes={setExpenseModes}
+              />
+            ) : expenseModes[expense.id] === "edit" ? (
+              <ExpenseEdit
+                expense={expense}
+                setExpenseModes={setExpenseModes}
+              />
+            ) : (
+              <ExpensesView
+                expense={expense}
+                taxes={taxes}
+                expenseModes={expenseModes}
+                setExpenseModes={setExpenseModes}
+              />
+            )}
           </Card>
         ))}
       </Stack>
