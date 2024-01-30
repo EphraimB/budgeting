@@ -8,6 +8,8 @@ import ExpensesView from "./ExpensesView";
 import Fab from "@mui/material/Fab";
 import AddIcon from "@mui/icons-material/Add";
 import Box from "@mui/material/Box";
+import MoreVert from "@mui/icons-material/MoreVert";
+import IconButton from "@mui/material/IconButton";
 
 function ExpensesCards({
   expenses,
@@ -17,6 +19,16 @@ function ExpensesCards({
   taxes: Tax[];
 }) {
   const [showExpenseForm, setShowExpenseForm] = useState(false);
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const open = Boolean(anchorEl);
+
+  const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
 
   return (
     <>
@@ -26,7 +38,25 @@ function ExpensesCards({
         )}
 
         {expenses.map((expense: Expense) => (
-          <Card key={expense.id} sx={{ maxWidth: "18rem" }}>
+          <Card
+            key={expense.id}
+            sx={{ maxWidth: "18rem", position: "relative" }}
+          >
+            <IconButton
+              aria-label="more"
+              sx={{
+                position: "absolute",
+                top: 0,
+                right: 0,
+              }}
+              size="small"
+              onClick={handleClick}
+              aria-controls={open ? "account-menu" : undefined}
+              aria-haspopup="true"
+              aria-expanded={open ? "true" : undefined}
+            >
+              <MoreVert />
+            </IconButton>
             <ExpensesView expense={expense} taxes={taxes} />
           </Card>
         ))}

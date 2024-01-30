@@ -15,9 +15,9 @@ export interface TransactionHistory {
 }
 
 export interface Account {
-  id: number;
-  name: string;
-  balance: number;
+  account_id: number;
+  account_name: string;
+  account_balance: number;
   date_created: string;
   date_modified: string;
 }

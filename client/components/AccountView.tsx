@@ -5,13 +5,14 @@ import MoreVertIcon from "@mui/icons-material/MoreVert";
 import AccountActionsMenu from "./AccountActionsMenu";
 import Box from "@mui/material/Box";
 import Link from "next/link";
+import { Account } from "@/app/types/types";
 
 function AccountView({
   account,
   setAccountModes,
 }: {
-  account: any;
-  setAccountModes: any;
+  account: Account;
+  setAccountModes: React.Dispatch<React.SetStateAction<string[]>>;
 }) {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
