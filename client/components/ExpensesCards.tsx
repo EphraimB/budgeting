@@ -10,6 +10,7 @@ import AddIcon from "@mui/icons-material/Add";
 import Box from "@mui/material/Box";
 import ExpenseDelete from "./ExpenseDelete";
 import ExpenseEdit from "./ExpenseEdit";
+import NewExpenseForm from "./NewExpenseForm";
 
 function ExpensesCards({
   expenses,
@@ -25,7 +26,10 @@ function ExpensesCards({
     <>
       <Stack direction="row" spacing={2}>
         {showExpenseForm && (
-          <Card sx={{ maxWidth: "18rem" }}>Edit form under construction</Card>
+          <NewExpenseForm
+            setShowExpenseForm={setShowExpenseForm}
+            taxes={taxes}
+          />
         )}
 
         {expenses.map((expense: Expense) => (
