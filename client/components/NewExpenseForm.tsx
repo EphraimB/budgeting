@@ -111,7 +111,12 @@ function NewExpenseForm({
             <br />
             <FormControl fullWidth>
               <InputLabel id="tax-select-label">Tax</InputLabel>
-              <Select labelId="tax-select-label" label="Tax" variant="standard" value={0}>
+              <Select
+                labelId="tax-select-label"
+                label="Tax"
+                variant="standard"
+                value={0}
+              >
                 <MenuItem value={0}>No tax - 0%</MenuItem>
                 {taxes.map((tax: Tax) => (
                   <MenuItem key={tax.id} value={tax.id}>
@@ -127,7 +132,6 @@ function NewExpenseForm({
               variant="standard"
               value={subsidized}
               onChange={(e) => setSubsidized(e.target.value)}
-              fullWidth
             />
             %
           </>
