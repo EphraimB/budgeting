@@ -24,6 +24,7 @@ function NewExpenseForm({
 }) {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
+  const [amount, setAmount] = useState(0);
   const [activeStep, setActiveStep] = useState(0);
 
   const theme = useTheme();
@@ -84,7 +85,13 @@ function NewExpenseForm({
           </>
         ) : activeStep === 1 ? (
           <>
-            <TextField label="Amount" variant="standard" fullWidth />
+            <TextField
+              label="Amount"
+              variant="standard"
+              value={amount}
+              onChange={(e) => setAmount(parseFloat(e.target.value))}
+              fullWidth
+            />
             <br />
             <br />
           </>
