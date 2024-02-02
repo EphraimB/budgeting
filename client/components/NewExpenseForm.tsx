@@ -63,7 +63,7 @@ function NewExpenseForm({
         }}
       />
       <CardContent>
-        {activeStep === 0 && (
+        {activeStep === 0 ? (
           <>
             <TextField
               label="Title"
@@ -82,7 +82,13 @@ function NewExpenseForm({
               fullWidth
             />
           </>
-        )}
+        ) : activeStep === 1 ? (
+          <>
+            <TextField label="Amount" variant="standard" fullWidth />
+            <br />
+            <br />
+          </>
+        ) : null}
         <br />
         <br />
         <MobileStepper
