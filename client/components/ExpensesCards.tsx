@@ -13,9 +13,11 @@ import ExpenseEdit from "./ExpenseEdit";
 import NewExpenseForm from "./NewExpenseForm";
 
 function ExpensesCards({
+  account_id,
   expenses,
   taxes,
 }: {
+  account_id: number;
   expenses: Expense[];
   taxes: Tax[];
 }) {
@@ -27,6 +29,7 @@ function ExpensesCards({
       <Stack direction="row" spacing={2}>
         {showExpenseForm && (
           <NewExpenseForm
+            account_id={account_id}
             setShowExpenseForm={setShowExpenseForm}
             taxes={taxes}
           />

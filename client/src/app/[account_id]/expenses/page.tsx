@@ -106,7 +106,7 @@ async function Expenses({
           {totalWithSubsidies.toFixed(2)} including taxes and subsidies.
         </Typography>
       )}
-      <ExpensesCards expenses={expenses} taxes={taxes} />
+      <ExpensesCards account_id={account_id} expenses={expenses} taxes={taxes} />
     </Stack>
   );
 }

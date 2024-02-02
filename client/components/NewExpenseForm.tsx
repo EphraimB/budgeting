@@ -14,17 +14,24 @@ import Button from "@mui/material/Button";
 import KeyboardArrowLeft from "@mui/icons-material/KeyboardArrowLeft";
 import KeyboardArrowRight from "@mui/icons-material/KeyboardArrowRight";
 import { useTheme } from "@mui/material/styles";
+import FormControl from "@mui/material/FormControl";
+import InputLabel from "@mui/material/InputLabel";
+import Select from "@mui/material/Select";
+import MenuItem from "@mui/material/MenuItem";
 
 function NewExpenseForm({
+  account_id,
   setShowExpenseForm,
   taxes,
 }: {
+  account_id: number;
   setShowExpenseForm: Function;
   taxes: Tax[];
 }) {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [amount, setAmount] = useState("0");
+  const [subsidized, setSubsidized] = useState("0");
   const [activeStep, setActiveStep] = useState(0);
 
   const theme = useTheme();
@@ -38,9 +45,11 @@ function NewExpenseForm({
   };
 
   const data = {
+    account_id,
     title,
     description,
     amount: parseFloat(amount),
+    subsidized: parseFloat(subsidized),
   };
 
   return (
@@ -91,16 +100,39 @@ function NewExpenseForm({
           </>
         ) : activeStep === 1 ? (
           <>
+            $
             <TextField
               label="Amount"
               variant="standard"
               value={amount}
               onChange={(e) => setAmount(e.target.value)}
-              fullWidth
             />
             <br />
             <br />
+            <FormControl fullWidth>
+              <InputLabel id="tax-select-label">Tax</InputLabel>
+              <Select labelId="tax-select-label" label="Tax" variant="standard" value={0}>
+                <MenuItem value={0}>No tax - 0%</MenuItem>
+                {taxes.map((tax: Tax) => (
+                  <MenuItem key={tax.id} value={tax.id}>
+                    {tax.title} - {tax.rate * 100}%
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+            <br />
+            <br />
+            <TextField
+              label="Subsidized"
+              variant="standard"
+              value={subsidized}
+              onChange={(e) => setSubsidized(e.target.value)}
+              fullWidth
+            />
+            %
           </>
+        ) : activeStep === 2 ? (
+          <></>
         ) : null}
         <br />
         <br />
