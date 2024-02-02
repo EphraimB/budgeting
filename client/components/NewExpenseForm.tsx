@@ -24,7 +24,7 @@ function NewExpenseForm({
 }) {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
-  const [amount, setAmount] = useState(0);
+  const [amount, setAmount] = useState("0");
   const [activeStep, setActiveStep] = useState(0);
 
   const theme = useTheme();
@@ -35,6 +35,12 @@ function NewExpenseForm({
 
   const handleBack = () => {
     setActiveStep((prevActiveStep) => prevActiveStep - 1);
+  };
+
+  const data = {
+    title,
+    description,
+    amount: parseFloat(amount),
   };
 
   return (
@@ -89,7 +95,7 @@ function NewExpenseForm({
               label="Amount"
               variant="standard"
               value={amount}
-              onChange={(e) => setAmount(parseFloat(e.target.value))}
+              onChange={(e) => setAmount(e.target.value)}
               fullWidth
             />
             <br />
