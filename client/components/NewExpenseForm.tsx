@@ -21,6 +21,9 @@ import dayjs, { Dayjs } from "dayjs";
 import { DateTimePicker } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+import Checkbox from "@mui/material/Checkbox";
+import FormControlLabel from "@mui/material/FormControlLabel";
+import { addExpense } from "../services/actions/expense";
 
 function NewExpenseForm({
   account_id,
@@ -43,6 +46,8 @@ function NewExpenseForm({
   const [frequency_type_variable, setFrequencyTypeVariable] =
     useState<number>(1);
   const [begin_date, setBeginDate] = useState<string>(dayjs().format());
+  const [endDateEnabled, setEndDateEnabled] = useState(false);
+  const [end_date, setEndDate] = useState<null | string>(null);
   const [activeStep, setActiveStep] = useState(0);
 
   const theme = useTheme();
@@ -72,6 +77,28 @@ function NewExpenseForm({
       : -1,
     frequency_type_variable,
     begin_date,
+    end_date,
+  };
+
+  const handleSubmit = async () => {
+    // Submit data
+    try {
+      await addExpense(data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const handleEndDateEnabledChange = (
+    e: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    setEndDateEnabled(e.target.checked);
+
+    if (e.target.checked) {
+      setEndDate(dayjs().format());
+    } else {
+      setEndDate(null);
+    }
   };
 
   return (
@@ -95,7 +122,7 @@ function NewExpenseForm({
       </IconButton>
       <br />
       <CardHeader
-        title={`New Expense - Step ${activeStep + 1} of 6`}
+        title={`New Expense - Step ${activeStep + 1} of 4`}
         sx={{
           textAlign: "center",
         }}
@@ -281,15 +308,42 @@ function NewExpenseForm({
             />
           </>
         ) : activeStep === 3 ? (
-          <LocalizationProvider dateAdapter={AdapterDayjs}>
-            <DateTimePicker
-              label="Expense begin date"
-              value={dayjs(begin_date)}
-              onChange={(e: Dayjs | null) =>
-                setBeginDate(e ? e.format() : dayjs().format())
-              }
-            />
-          </LocalizationProvider>
+          <>
+            <LocalizationProvider dateAdapter={AdapterDayjs}>
+              <DateTimePicker
+                label="Expense begin date"
+                value={dayjs(begin_date)}
+                onChange={(e: Dayjs | null) =>
+                  setBeginDate(e ? e.format() : dayjs().format())
+                }
+              />
+              <br />
+              <br />
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    checked={endDateEnabled}
+                    onChange={handleEndDateEnabledChange}
+                  />
+                }
+                label="Expense end date"
+              />
+              {endDateEnabled && (
+                <DateTimePicker
+                  label="Expense end date"
+                  value={dayjs(end_date) || dayjs()}
+                  onChange={(e: Dayjs | null) =>
+                    setEndDate(e ? e.format() : dayjs().format())
+                  }
+                />
+              )}
+            </LocalizationProvider>
+            <br />
+            <br />
+            <Button variant="contained" onClick={handleSubmit}>
+              Submit
+            </Button>
+          </>
         ) : null}
         <br />
         <br />
@@ -303,7 +357,7 @@ function NewExpenseForm({
             <Button
               size="small"
               onClick={handleNext}
-              disabled={activeStep === 5}
+              disabled={activeStep === 3}
             >
               Next
               {theme.direction === "rtl" ? (
