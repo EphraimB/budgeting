@@ -86,6 +86,9 @@ function NewExpenseForm({
     } catch (error) {
       console.log(error);
     }
+
+    // Close form
+    setShowExpenseForm(false);
   };
 
   const handleEndDateEnabledChange = (
