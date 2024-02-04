@@ -32,6 +32,7 @@ function NewExpenseForm({
   const [description, setDescription] = useState("");
   const [amount, setAmount] = useState("0");
   const [subsidized, setSubsidized] = useState("0");
+  const [taxId, setTaxId] = useState(0);
   const [activeStep, setActiveStep] = useState(0);
 
   const theme = useTheme();
@@ -46,6 +47,7 @@ function NewExpenseForm({
 
   const data = {
     account_id,
+    tax_id: taxId,
     title,
     description,
     amount: parseFloat(amount),
@@ -100,12 +102,11 @@ function NewExpenseForm({
           </>
         ) : activeStep === 1 ? (
           <>
-            $
             <TextField
               label="Amount"
               variant="standard"
-              value={amount}
-              onChange={(e) => setAmount(e.target.value)}
+              value={"$" + amount}
+              onChange={(e) => setAmount(e.target.value.substring(1))}
             />
             <br />
             <br />
@@ -115,7 +116,8 @@ function NewExpenseForm({
                 labelId="tax-select-label"
                 label="Tax"
                 variant="standard"
-                value={0}
+                value={taxId}
+                onChange={(e) => setTaxId(e.target.value as number)}
               >
                 <MenuItem value={0}>No tax - 0%</MenuItem>
                 {taxes.map((tax: Tax) => (
@@ -130,10 +132,13 @@ function NewExpenseForm({
             <TextField
               label="Subsidized"
               variant="standard"
-              value={subsidized}
-              onChange={(e) => setSubsidized(e.target.value)}
+              value={subsidized + "%"}
+              onChange={(e) =>
+                setSubsidized(
+                  e.target.value.substring(0, e.target.value.length - 1)
+                )
+              }
             />
-            %
           </>
         ) : activeStep === 2 ? (
           <></>
