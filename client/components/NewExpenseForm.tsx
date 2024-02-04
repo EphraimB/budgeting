@@ -4,7 +4,6 @@ import { useState } from "react";
 import Card from "@mui/material/Card";
 import IconButton from "@mui/material/IconButton";
 import Close from "@mui/icons-material/Close";
-import Typography from "@mui/material/Typography";
 import { Tax } from "@/app/types/types";
 import CardContent from "@mui/material/CardContent";
 import CardHeader from "@mui/material/CardHeader";
@@ -18,6 +17,8 @@ import FormControl from "@mui/material/FormControl";
 import InputLabel from "@mui/material/InputLabel";
 import Select from "@mui/material/Select";
 import MenuItem from "@mui/material/MenuItem";
+import dayjs, { Dayjs } from "dayjs";
+import { DateTimePicker } from "@mui/x-date-pickers";
 
 function NewExpenseForm({
   account_id,
@@ -37,6 +38,9 @@ function NewExpenseForm({
   const [frequency_day_of_week, setFrequencyDayOfWeek] = useState(-1);
   const [frequency_week_of_month, setFrequencyWeekOfMonth] = useState(-1);
   const [frequency_month_of_year, setFrequencyMonthOfYear] = useState(-1);
+  const [frequency_type_variable, setFrequencyTypeVariable] =
+    useState<number>(1);
+  const [begin_date, setBeginDate] = useState<string>(dayjs().format());
   const [activeStep, setActiveStep] = useState(0);
 
   const theme = useTheme();
@@ -56,6 +60,16 @@ function NewExpenseForm({
     description,
     amount: parseFloat(amount),
     subsidized: parseFloat(subsidized),
+    frequency_type,
+    frequency_day_of_week: frequency_day_of_week ? frequency_day_of_week : -1,
+    frequency_week_of_month: frequency_week_of_month
+      ? frequency_week_of_month
+      : -1,
+    frequency_month_of_year: frequency_month_of_year
+      ? frequency_month_of_year
+      : -1,
+    frequency_type_variable,
+    begin_date,
   };
 
   return (
@@ -161,92 +175,118 @@ function NewExpenseForm({
                 <MenuItem value={3}>Yearly</MenuItem>
               </Select>
             </FormControl>
-            <br />
-            <br />
             {(frequency_type === 1 ||
               frequency_type === 2 ||
               frequency_type === 3) && (
-              <FormControl fullWidth>
-                <InputLabel id="frequency-day-of-week-select-label">
-                  Day of Week
-                </InputLabel>
-                <Select
-                  labelId="frequency-day-of-week-select-label"
-                  label="Frequency"
-                  variant="standard"
-                  value={frequency_day_of_week}
-                  onChange={(e) =>
-                    setFrequencyDayOfWeek(e.target.value as number)
-                  }
-                >
-                  <MenuItem value={-1}>None</MenuItem>
-                  <MenuItem value={0}>Sunday</MenuItem>
-                  <MenuItem value={1}>Monday</MenuItem>
-                  <MenuItem value={2}>Tuesday</MenuItem>
-                  <MenuItem value={3}>Wednesday</MenuItem>
-                  <MenuItem value={4}>Thursday</MenuItem>
-                  <MenuItem value={5}>Friday</MenuItem>
-                  <MenuItem value={6}>Saturday</MenuItem>
-                </Select>
-              </FormControl>
+              <>
+                <br />
+                <br />
+                <FormControl fullWidth>
+                  <InputLabel id="frequency-day-of-week-select-label">
+                    Day of Week
+                  </InputLabel>
+                  <Select
+                    labelId="frequency-day-of-week-select-label"
+                    label="Frequency"
+                    variant="standard"
+                    value={frequency_day_of_week}
+                    onChange={(e) =>
+                      setFrequencyDayOfWeek(e.target.value as number)
+                    }
+                  >
+                    <MenuItem value={-1}>None</MenuItem>
+                    <MenuItem value={0}>Sunday</MenuItem>
+                    <MenuItem value={1}>Monday</MenuItem>
+                    <MenuItem value={2}>Tuesday</MenuItem>
+                    <MenuItem value={3}>Wednesday</MenuItem>
+                    <MenuItem value={4}>Thursday</MenuItem>
+                    <MenuItem value={5}>Friday</MenuItem>
+                    <MenuItem value={6}>Saturday</MenuItem>
+                  </Select>
+                </FormControl>
+              </>
             )}
-            <br />
-            <br />
             {(frequency_type === 2 || frequency_type === 3) && (
-              <FormControl fullWidth>
-                <InputLabel id="frequency-week-of-month-select-label">
-                  Week of Month
-                </InputLabel>
-                <Select
-                  labelId="frequency-week-of-month-select-label"
-                  label="Frequency"
-                  variant="standard"
-                  value={frequency_week_of_month}
-                  onChange={(e) =>
-                    setFrequencyWeekOfMonth(e.target.value as number)
-                  }
-                >
-                  <MenuItem value={-1}>None</MenuItem>
-                  <MenuItem value={0}>First</MenuItem>
-                  <MenuItem value={1}>Second</MenuItem>
-                  <MenuItem value={2}>Third</MenuItem>
-                  <MenuItem value={3}>Fourth</MenuItem>
-                  <MenuItem value={4}>Last</MenuItem>
-                </Select>
-              </FormControl>
+              <>
+                <br />
+                <br />
+                <FormControl fullWidth>
+                  <InputLabel id="frequency-week-of-month-select-label">
+                    Week of Month
+                  </InputLabel>
+                  <Select
+                    labelId="frequency-week-of-month-select-label"
+                    label="Frequency"
+                    variant="standard"
+                    value={frequency_week_of_month}
+                    onChange={(e) =>
+                      setFrequencyWeekOfMonth(e.target.value as number)
+                    }
+                  >
+                    <MenuItem value={-1}>None</MenuItem>
+                    <MenuItem value={0}>First</MenuItem>
+                    <MenuItem value={1}>Second</MenuItem>
+                    <MenuItem value={2}>Third</MenuItem>
+                    <MenuItem value={3}>Fourth</MenuItem>
+                    <MenuItem value={4}>Last</MenuItem>
+                  </Select>
+                </FormControl>
+              </>
             )}
-            <br />
-            <br />
             {frequency_type === 3 && (
-              <FormControl fullWidth>
-                <InputLabel id="frequency-month-of-year-select-label">
-                  Month of Year
-                </InputLabel>
-                <Select
-                  labelId="frequency-month-of-year-select-label"
-                  label="Frequency"
-                  variant="standard"
-                  value={frequency_month_of_year}
-                  onChange={(e) =>
-                    setFrequencyMonthOfYear(e.target.value as number)
-                  }
-                >
-                  <MenuItem value={-1}>None</MenuItem>
-                  <MenuItem value={0}>January</MenuItem>
-                  <MenuItem value={1}>February</MenuItem>
-                  <MenuItem value={2}>March</MenuItem>
-                  <MenuItem value={3}>April</MenuItem>
-                  <MenuItem value={4}>May</MenuItem>
-                  <MenuItem value={5}>June</MenuItem>
-                  <MenuItem value={6}>July</MenuItem>
-                  <MenuItem value={7}>August</MenuItem>
-                  <MenuItem value={8}>September</MenuItem>
-                  <MenuItem value={9}>October</MenuItem>
-                  <MenuItem value={10}>November</MenuItem>
-                  <MenuItem value={11}>December</MenuItem>
-                </Select>
-              </FormControl>
+              <>
+                <br />
+                <br />
+                <FormControl fullWidth>
+                  <InputLabel id="frequency-month-of-year-select-label">
+                    Month of Year
+                  </InputLabel>
+                  <Select
+                    labelId="frequency-month-of-year-select-label"
+                    label="Frequency"
+                    variant="standard"
+                    value={frequency_month_of_year}
+                    onChange={(e) =>
+                      setFrequencyMonthOfYear(e.target.value as number)
+                    }
+                  >
+                    <MenuItem value={-1}>None</MenuItem>
+                    <MenuItem value={0}>January</MenuItem>
+                    <MenuItem value={1}>February</MenuItem>
+                    <MenuItem value={2}>March</MenuItem>
+                    <MenuItem value={3}>April</MenuItem>
+                    <MenuItem value={4}>May</MenuItem>
+                    <MenuItem value={5}>June</MenuItem>
+                    <MenuItem value={6}>July</MenuItem>
+                    <MenuItem value={7}>August</MenuItem>
+                    <MenuItem value={8}>September</MenuItem>
+                    <MenuItem value={9}>October</MenuItem>
+                    <MenuItem value={10}>November</MenuItem>
+                    <MenuItem value={11}>December</MenuItem>
+                  </Select>
+                </FormControl>
+              </>
             )}
+            <br />
+            <br />
+            <TextField
+              label="Frequency Type Variable"
+              variant="standard"
+              value={frequency_type_variable}
+              onChange={(e) =>
+                setFrequencyTypeVariable(e.target.value as unknown as number)
+              }
+            />
+          </>
+        ) : activeStep === 3 ? (
+          <>
+            <DateTimePicker
+              label="Expense begin date"
+              value={dayjs(begin_date)}
+              onChange={(e: Dayjs | null) =>
+                setBeginDate(e ? e.format() : dayjs().format())
+              }
+            />
           </>
         ) : null}
         <br />
