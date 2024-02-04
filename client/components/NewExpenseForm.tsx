@@ -19,6 +19,8 @@ import Select from "@mui/material/Select";
 import MenuItem from "@mui/material/MenuItem";
 import dayjs, { Dayjs } from "dayjs";
 import { DateTimePicker } from "@mui/x-date-pickers";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 
 function NewExpenseForm({
   account_id,
@@ -279,7 +281,7 @@ function NewExpenseForm({
             />
           </>
         ) : activeStep === 3 ? (
-          <>
+          <LocalizationProvider dateAdapter={AdapterDayjs}>
             <DateTimePicker
               label="Expense begin date"
               value={dayjs(begin_date)}
@@ -287,7 +289,7 @@ function NewExpenseForm({
                 setBeginDate(e ? e.format() : dayjs().format())
               }
             />
-          </>
+          </LocalizationProvider>
         ) : null}
         <br />
         <br />
