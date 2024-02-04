@@ -349,7 +349,7 @@ function NewExpenseForm({
         <br />
         <MobileStepper
           variant="dots"
-          steps={6}
+          steps={4}
           position="static"
           activeStep={activeStep}
           sx={{ maxWidth: 400, flexGrow: 1 }}

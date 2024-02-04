@@ -19,6 +19,8 @@ interface ExpenseRequest {
 }
 
 export async function addExpense(expense: ExpenseRequest) {
+  console.log(expense);
+
   const response = await fetch("http://server:5001/api/expenses", {
     method: "POST",
     headers: {
