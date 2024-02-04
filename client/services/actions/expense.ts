@@ -10,9 +10,9 @@ interface ExpenseRequest {
   amount: number;
   subsidized: number;
   frequency_type: number;
-  frequency_day_of_week: number;
-  frequency_week_of_month: number;
-  frequency_month_of_year: number;
+  frequency_day_of_week: number | null;
+  frequency_week_of_month: number | null;
+  frequency_month_of_year: number | null;
   frequency_type_variable: number;
   begin_date: string;
   end_date: string | null;

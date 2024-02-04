@@ -68,13 +68,12 @@ function NewExpenseForm({
     amount: parseFloat(amount),
     subsidized: parseFloat(subsidized),
     frequency_type,
-    frequency_day_of_week: frequency_day_of_week ? frequency_day_of_week : -1,
-    frequency_week_of_month: frequency_week_of_month
-      ? frequency_week_of_month
-      : -1,
-    frequency_month_of_year: frequency_month_of_year
-      ? frequency_month_of_year
-      : -1,
+    frequency_day_of_week:
+      frequency_day_of_week === -1 ? null : frequency_day_of_week,
+    frequency_week_of_month:
+      frequency_week_of_month === -1 ? null : frequency_week_of_month,
+    frequency_month_of_year:
+      frequency_month_of_year === -1 ? null : frequency_month_of_year,
     frequency_type_variable,
     begin_date,
     end_date,
