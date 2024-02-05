@@ -67,7 +67,7 @@ function ExpensesCards({
         ))}
       </Grid>
       <br />
-      <Box sx={{ position: "absolute", bottom: 16, right: 16 }}>
+      <Box sx={{ position: "fixed", bottom: 16, right: 16 }}>
         <Fab color="primary" onClick={() => setShowExpenseForm(true)}>
           <AddIcon />
         </Fab>
