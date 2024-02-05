@@ -11,6 +11,7 @@ import Box from "@mui/material/Box";
 import ExpenseDelete from "./ExpenseDelete";
 import ExpenseEdit from "./ExpenseEdit";
 import NewExpenseForm from "./NewExpenseForm";
+import Grid from "@mui/material/Grid";
 
 function ExpensesCards({
   account_id,
@@ -26,41 +27,46 @@ function ExpensesCards({
 
   return (
     <>
-      <Stack direction="row" spacing={2}>
+      <Grid container spacing={2}>
         {showExpenseForm && (
-          <NewExpenseForm
-            account_id={account_id}
-            setShowExpenseForm={setShowExpenseForm}
-            taxes={taxes}
-          />
+          <Grid item>
+            <NewExpenseForm
+              account_id={account_id}
+              setShowExpenseForm={setShowExpenseForm}
+              taxes={taxes}
+            />
+          </Grid>
         )}
 
         {expenses.map((expense: Expense) => (
-          <Card
-            key={expense.id}
-            sx={{ maxWidth: "18rem", position: "relative" }}
-          >
-            {expenseModes[expense.id] === "delete" ? (
-              <ExpenseDelete
-                expense={expense}
-                setExpenseModes={setExpenseModes}
-              />
-            ) : expenseModes[expense.id] === "edit" ? (
-              <ExpenseEdit
-                expense={expense}
-                setExpenseModes={setExpenseModes}
-              />
-            ) : (
-              <ExpensesView
-                expense={expense}
-                taxes={taxes}
-                expenseModes={expenseModes}
-                setExpenseModes={setExpenseModes}
-              />
-            )}
-          </Card>
+          <Grid item>
+            <Card
+              key={expense.id}
+              sx={{ maxWidth: "18rem", position: "relative" }}
+            >
+              {expenseModes[expense.id] === "delete" ? (
+                <ExpenseDelete
+                  expense={expense}
+                  setExpenseModes={setExpenseModes}
+                />
+              ) : expenseModes[expense.id] === "edit" ? (
+                <ExpenseEdit
+                  expense={expense}
+                  setExpenseModes={setExpenseModes}
+                />
+              ) : (
+                <ExpensesView
+                  expense={expense}
+                  taxes={taxes}
+                  expenseModes={expenseModes}
+                  setExpenseModes={setExpenseModes}
+                />
+              )}
+            </Card>
+          </Grid>
         ))}
-      </Stack>
+      </Grid>
+      <br />
       <Box sx={{ position: "absolute", bottom: 16, right: 16 }}>
         <Fab color="primary" onClick={() => setShowExpenseForm(true)}>
           <AddIcon />
