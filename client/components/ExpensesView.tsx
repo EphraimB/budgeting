@@ -35,11 +35,11 @@ function ExpensesView({
 
   // Find the tax object that matches the expense's tax_id
   const taxObject = taxes
-    ? taxes.find((tax: any) => tax.tax_id === expense.tax_id)
+    ? taxes.find((tax: Tax) => tax.id === expense.tax_id)
     : 0;
 
   // Get the tax rate from the tax object
-  const taxRate = taxObject ? taxObject.rate : 0;
+  const taxRate: number = taxObject ? taxObject.rate : 0;
 
   // Calculate the amount after tax
   const amountAfterTax: number = expense.amount + expense.amount * taxRate;

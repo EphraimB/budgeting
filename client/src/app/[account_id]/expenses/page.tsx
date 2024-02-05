@@ -19,10 +19,8 @@ async function getExpenses(account_id: number) {
   return res.json();
 }
 
-async function getTaxes(account_id: number) {
-  const res = await fetch(
-    `http://server:5001/api/taxes?account_id=${account_id}`
-  );
+async function getTaxes() {
+  const res = await fetch("http://server:5001/api/taxes");
 
   if (!res.ok) {
     // open alert
@@ -38,8 +36,8 @@ async function Expenses({
 }) {
   const account_id = parseInt(params.account_id);
 
-  const expenses = await getExpenses(account_id);
-  const taxes = await getTaxes(account_id);
+  const expenses: Expense[] = await getExpenses(account_id);
+  const taxes: Tax[] = await getTaxes();
 
   // Function to find tax rate by tax_id
   const getTaxRate = (tax_id: number | null) => {
