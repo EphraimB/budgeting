@@ -9,6 +9,7 @@ import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
 import LoansView from "./LoansView";
 import LoanDelete from "./LoanDelete";
+import LoanEdit from "./LoanEdit";
 
 function LoansCards({
   account_id,
