@@ -125,6 +125,8 @@ function NewLoanForm({
               onChange={(e) => setRecipient(e.target.value)}
               fullWidth
             />
+            <br />
+            <br />
             <TextField
               label="Title"
               variant="standard"

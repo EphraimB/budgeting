@@ -58,7 +58,8 @@ function LoansView({
         <Typography variant="body2">
           You will be charged ${loan.plan_amount.toFixed(2)} next on{" "}
           {dayjs(loan.next_date).format("dddd MMMM D, YYYY h:mm A")}. You get
-          charged {getFrequency(loan)}.
+          charged {getFrequency(loan)}. This loan will be fully paid off on{" "}
+          {dayjs(loan.fully_paid_back).format("dddd MMMM D, YYYY")}.
         </Typography>
       </CardContent>
     </>
