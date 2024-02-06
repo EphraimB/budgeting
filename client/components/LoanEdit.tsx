@@ -303,7 +303,9 @@ function LoanEdit({
               variant="standard"
               value={interest_rate + "%"}
               onChange={(e) =>
-                e.target.value.substring(0, e.target.value.length - 1)
+                setInterestRate(
+                  e.target.value.substring(0, e.target.value.length - 1)
+                )
               }
             />
             <br />

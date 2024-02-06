@@ -31,9 +31,9 @@ function NewLoanForm({
 }) {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
-  const [amount, setAmount] = useState("");
-  const [plan_amount, setPlanAmount] = useState("");
-  const [subsidized, setSubsidized] = useState("");
+  const [amount, setAmount] = useState("0");
+  const [plan_amount, setPlanAmount] = useState("0");
+  const [subsidized, setSubsidized] = useState("0");
   const [frequency_type, setFrequencyType] = useState(2);
   const [frequency_day_of_week, setFrequencyDayOfWeek] = useState(-1);
   const [frequency_week_of_month, setFrequencyWeekOfMonth] = useState(-1);
@@ -289,7 +289,9 @@ function NewLoanForm({
               variant="standard"
               value={interest_rate + "%"}
               onChange={(e) =>
-                e.target.value.substring(0, e.target.value.length - 1)
+                setInterestRate(
+                  e.target.value.substring(0, e.target.value.length - 1)
+                )
               }
             />
             <br />
