@@ -8,6 +8,7 @@ import AddIcon from "@mui/icons-material/Add";
 import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
 import LoansView from "./LoansView";
+import LoanDelete from "./LoanDelete";
 
 function LoansCards({
   account_id,
