@@ -25,7 +25,7 @@ async function Loans({ params }: { params: { account_id: string } }) {
   const loans = await getLoans(account_id);
 
   const totalLoansAmount = loans.reduce((acc: number, loan: Loan): number => {
-    return acc + loan.plan_amount;
+    return acc + loan.amount;
   }, 0);
 
   return (
