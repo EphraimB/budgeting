@@ -124,7 +124,7 @@ function LoanEdit({
       </IconButton>
       <br />
       <CardHeader
-        title={`New Expense - Step ${activeStep + 1} of 4`}
+        title={`Edit Loan - Step ${activeStep + 1} of 4`}
         sx={{
           textAlign: "center",
         }}

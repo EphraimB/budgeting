@@ -133,7 +133,7 @@ function ExpenseEdit({
       </IconButton>
       <br />
       <CardHeader
-        title={`New Expense - Step ${activeStep + 1} of 4`}
+        title={`Edit Expense - Step ${activeStep + 1} of 4`}
         sx={{
           textAlign: "center",
         }}
