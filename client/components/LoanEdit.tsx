@@ -32,6 +32,7 @@ function LoanEdit({
   loan: Loan;
   setLoanModes: (loanModes: Record<number, string>) => void;
 }) {
+  const [recipient, setRecipient] = useState(loan.recipient);
   const [title, setTitle] = useState(loan.title);
   const [description, setDescription] = useState(loan.description);
   const [amount, setAmount] = useState(loan.amount.toString());
@@ -71,6 +72,7 @@ function LoanEdit({
 
   const data = {
     account_id,
+    recipient,
     title,
     description,
     plan_amount: parseFloat(plan_amount),
@@ -130,6 +132,13 @@ function LoanEdit({
       <CardContent>
         {activeStep === 0 ? (
           <>
+            <TextField
+              label="Recipient"
+              variant="standard"
+              value={recipient}
+              onChange={(e) => setRecipient(e.target.value)}
+              fullWidth
+            />
             <TextField
               label="Title"
               variant="standard"

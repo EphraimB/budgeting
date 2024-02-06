@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 
 interface LoanRequest {
   account_id: number;
+  recipient: string;
   amount: number;
   plan_amount: number;
   title: string;

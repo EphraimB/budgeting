@@ -46,6 +46,7 @@ export interface Expense {
 export interface Loan {
   id: number;
   account_id: number;
+  recipient: string;
   amount: number;
   plan_amount: number;
   title: string;

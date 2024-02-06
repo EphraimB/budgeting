@@ -29,6 +29,7 @@ function NewLoanForm({
   account_id: number;
   setShowLoanForm: Function;
 }) {
+  const [recipient, setRecipient] = useState("");
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [amount, setAmount] = useState("0");
@@ -57,6 +58,7 @@ function NewLoanForm({
 
   const data = {
     account_id,
+    recipient,
     title,
     description,
     plan_amount: parseFloat(plan_amount),
@@ -116,6 +118,13 @@ function NewLoanForm({
       <CardContent>
         {activeStep === 0 ? (
           <>
+            <TextField
+              label="Recipient"
+              variant="standard"
+              value={recipient}
+              onChange={(e) => setRecipient(e.target.value)}
+              fullWidth
+            />
             <TextField
               label="Title"
               variant="standard"
