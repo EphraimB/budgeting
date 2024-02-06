@@ -47,13 +47,6 @@ async function Expenses({
     return tax ? tax.rate : 0;
   };
 
-  // Calculate total expenses including taxes
-  const totalWithTaxes = expenses.reduce((acc: number, expense: Expense) => {
-    const taxRate = getTaxRate(expense.tax_id); // Assume this function returns the tax rate as a decimal
-    const taxAmount = expense.amount * taxRate;
-    return acc + expense.amount + taxAmount; // Adds the expense amount plus the calculated tax
-  }, 0);
-
   // Calculate total after applying subsidies to each expense individually
   const totalWithSubsidies = expenses.reduce(
     (acc: number, expense: Expense) => {

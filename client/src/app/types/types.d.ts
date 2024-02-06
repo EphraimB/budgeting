@@ -57,6 +57,8 @@ export interface Loan {
   frequency_week_of_month: number | null;
   frequency_month_of_year: number | null;
   subsidized: number;
+  interest_rate: number;
+  interest_frequency_type: number;
   begin_date: string;
   end_date: string | null;
   fully_paid_back: string | null;
