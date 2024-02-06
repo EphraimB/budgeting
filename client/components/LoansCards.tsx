@@ -10,6 +10,7 @@ import Grid from "@mui/material/Grid";
 import LoansView from "./LoansView";
 import LoanDelete from "./LoanDelete";
 import LoanEdit from "./LoanEdit";
+import NewLoanForm from "./NewLoanForm";
 
 function LoansCards({
   account_id,
@@ -28,7 +29,7 @@ function LoansCards({
           <Grid key="new-loan" item>
             <NewLoanForm
               account_id={account_id}
-              setShowExpenseForm={setShowLoanForm}
+              setShowLoanForm={setShowLoanForm}
             />
           </Grid>
         )}

@@ -4,7 +4,6 @@ import { useState } from "react";
 import Card from "@mui/material/Card";
 import IconButton from "@mui/material/IconButton";
 import Close from "@mui/icons-material/Close";
-import { Loan } from "@/app/types/types";
 import CardContent from "@mui/material/CardContent";
 import CardHeader from "@mui/material/CardHeader";
 import TextField from "@mui/material/TextField";
@@ -21,42 +20,29 @@ import dayjs, { Dayjs } from "dayjs";
 import { DateTimePicker } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
-import { editLoan } from "../services/actions/loan";
+import { addLoan } from "../services/actions/loan";
 
-function LoanEdit({
+function NewLoanForm({
   account_id,
-  loan,
-  setLoanModes,
+  setShowLoanForm,
 }: {
   account_id: number;
-  loan: Loan;
-  setLoanModes: (loanModes: Record<number, string>) => void;
+  setShowLoanForm: Function;
 }) {
-  const [title, setTitle] = useState(loan.title);
-  const [description, setDescription] = useState(loan.description);
-  const [amount, setAmount] = useState(loan.amount.toString());
-  const [plan_amount, setPlanAmount] = useState(loan.plan_amount.toString());
-  const [subsidized, setSubsidized] = useState(loan.subsidized.toString());
-  const [frequency_type, setFrequencyType] = useState(loan.frequency_type);
-  const [frequency_day_of_week, setFrequencyDayOfWeek] = useState(
-    loan.frequency_day_of_week || -1
-  );
-  const [frequency_week_of_month, setFrequencyWeekOfMonth] = useState(
-    loan.frequency_week_of_month || -1
-  );
-  const [frequency_month_of_year, setFrequencyMonthOfYear] = useState(
-    loan.frequency_month_of_year || -1
-  );
-  const [frequency_type_variable, setFrequencyTypeVariable] = useState<number>(
-    loan.frequency_type_variable || 1
-  );
-  const [interest_rate, setInterestRate] = useState(
-    loan.interest_rate.toString()
-  );
-  const [interest_frequency_type, setInterestFrequencyType] = useState(
-    loan.interest_frequency_type.toString()
-  );
-  const [begin_date, setBeginDate] = useState<string>(loan.begin_date);
+  const [title, setTitle] = useState("");
+  const [description, setDescription] = useState("");
+  const [amount, setAmount] = useState("");
+  const [plan_amount, setPlanAmount] = useState("");
+  const [subsidized, setSubsidized] = useState("");
+  const [frequency_type, setFrequencyType] = useState(2);
+  const [frequency_day_of_week, setFrequencyDayOfWeek] = useState(-1);
+  const [frequency_week_of_month, setFrequencyWeekOfMonth] = useState(-1);
+  const [frequency_month_of_year, setFrequencyMonthOfYear] = useState(-1);
+  const [frequency_type_variable, setFrequencyTypeVariable] =
+    useState<number>(1);
+  const [interest_rate, setInterestRate] = useState("0");
+  const [interest_frequency_type, setInterestFrequencyType] = useState(2);
+  const [begin_date, setBeginDate] = useState<string>(dayjs().format());
   const [activeStep, setActiveStep] = useState(0);
 
   const theme = useTheme();
@@ -85,20 +71,20 @@ function LoanEdit({
       frequency_month_of_year === -1 ? null : frequency_month_of_year,
     frequency_type_variable,
     interest_rate: parseFloat(interest_rate),
-    interest_frequency_type: parseInt(interest_frequency_type),
+    interest_frequency_type: interest_frequency_type,
     begin_date,
   };
 
   const handleSubmit = async () => {
     // Submit data
     try {
-      await editLoan(data, loan.id);
+      await addLoan(data);
     } catch (error) {
       console.log(error);
     }
 
     // Close form
-    setLoanModes({});
+    setShowLoanForm(false);
   };
 
   return (
@@ -116,13 +102,13 @@ function LoanEdit({
           right: 0,
         }}
         size="small"
-        onClick={() => setLoanModes({})}
+        onClick={() => setShowLoanForm(false)}
       >
         <Close />
       </IconButton>
       <br />
       <CardHeader
-        title={`Edit Loan - Step ${activeStep + 1} of 5`}
+        title={`Add Loan - Step ${activeStep + 1} of 5`}
         sx={{
           textAlign: "center",
         }}
@@ -317,7 +303,9 @@ function LoanEdit({
                 label="Interest Frequency"
                 variant="standard"
                 value={interest_frequency_type}
-                onChange={(e) => setInterestFrequencyType(e.target.value)}
+                onChange={(e) =>
+                  setInterestFrequencyType(e.target.value as number)
+                }
               >
                 <MenuItem value={0}>Daily</MenuItem>
                 <MenuItem value={1}>Weekly</MenuItem>
@@ -386,4 +374,4 @@ function LoanEdit({
   );
 }
 
-export default LoanEdit;
+export default NewLoanForm;
