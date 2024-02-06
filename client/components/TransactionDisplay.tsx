@@ -11,7 +11,6 @@ import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
 import { green, red } from "@mui/material/colors";
 import TablePagination from "@mui/material/TablePagination";
-import LoadingTransactions from "./LoadingTransactions";
 import { GeneratedTransaction } from "@/app/types/types";
 
 export default function TransactionDisplay({
@@ -76,86 +75,83 @@ export default function TransactionDisplay({
             </TableRow>
           </TableHead>
           <TableBody>
-            <Suspense fallback={<LoadingTransactions />}>
-              {flatTransactions
-                .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                .map((transaction: any) => (
-                  <TableRow
-                    key={`${transaction.id}-${transaction.date}-${transaction.title}-${transaction.amount}-${transaction.balance}`}
+            {flatTransactions
+              .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+              .map((transaction: any) => (
+                <TableRow
+                  key={`${transaction.id}-${transaction.date}-${transaction.title}-${transaction.amount}-${transaction.balance}`}
+                  sx={{
+                    "&:last-child td, &:last-child th": { border: 0 },
+                    backgroundColor:
+                      transaction.total_amount >= 0 ? green[500] : red[500],
+                  }}
+                >
+                  <TableCell
                     sx={{
-                      "&:last-child td, &:last-child th": { border: 0 },
-                      backgroundColor:
-                        transaction.total_amount >= 0 ? green[500] : red[500],
+                      color: transaction.total_amount >= 0 ? "#000" : "#fff",
                     }}
+                    component="th"
+                    scope="row"
                   >
-                    <TableCell
-                      sx={{
-                        color: transaction.total_amount >= 0 ? "#000" : "#fff",
-                      }}
-                      component="th"
-                      scope="row"
-                    >
-                      {dayjs(transaction.date).format("dddd")}
-                      <br />
-                      {dayjs(transaction.date).format("MMMM D, YYYY")}
-                      <br />
-                      {dayjs(transaction.date).format("h:mm A")}
-                    </TableCell>
-                    <TableCell
-                      sx={{
-                        color: transaction.total_amount >= 0 ? "#000" : "#fff",
-                      }}
-                      align="right"
-                    >
-                      {transaction.title}
-                    </TableCell>
-                    <TableCell
-                      sx={{
-                        color: transaction.total_amount >= 0 ? "#000" : "#fff",
-                      }}
-                      align="right"
-                    >
-                      {transaction.description}
-                    </TableCell>
-                    <TableCell
-                      sx={{
-                        color: transaction.total_amount >= 0 ? "#000" : "#fff",
-                      }}
-                      align="right"
-                    >
-                      ${(Math.round(transaction.amount * 100) / 100).toFixed(2)}
-                    </TableCell>
-                    <TableCell
-                      sx={{
-                        color: transaction.total_amount >= 0 ? "#000" : "#fff",
-                      }}
-                      align="right"
-                    >
-                      {transaction.tax_rate * 100}%
-                    </TableCell>
-                    <TableCell
-                      sx={{
-                        color: transaction.total_amount >= 0 ? "#000" : "#fff",
-                      }}
-                      align="right"
-                    >
-                      $
-                      {(
-                        Math.round(transaction.total_amount * 100) / 100
-                      ).toFixed(2)}
-                    </TableCell>
-                    <TableCell
-                      sx={{
-                        color: transaction.total_amount >= 0 ? "#000" : "#fff",
-                      }}
-                      align="right"
-                    >
-                      $
-                      {(Math.round(transaction.balance * 100) / 100).toFixed(2)}
-                    </TableCell>
-                  </TableRow>
-                ))}
-            </Suspense>
+                    {dayjs(transaction.date).format("dddd")}
+                    <br />
+                    {dayjs(transaction.date).format("MMMM D, YYYY")}
+                    <br />
+                    {dayjs(transaction.date).format("h:mm A")}
+                  </TableCell>
+                  <TableCell
+                    sx={{
+                      color: transaction.total_amount >= 0 ? "#000" : "#fff",
+                    }}
+                    align="right"
+                  >
+                    {transaction.title}
+                  </TableCell>
+                  <TableCell
+                    sx={{
+                      color: transaction.total_amount >= 0 ? "#000" : "#fff",
+                    }}
+                    align="right"
+                  >
+                    {transaction.description}
+                  </TableCell>
+                  <TableCell
+                    sx={{
+                      color: transaction.total_amount >= 0 ? "#000" : "#fff",
+                    }}
+                    align="right"
+                  >
+                    ${(Math.round(transaction.amount * 100) / 100).toFixed(2)}
+                  </TableCell>
+                  <TableCell
+                    sx={{
+                      color: transaction.total_amount >= 0 ? "#000" : "#fff",
+                    }}
+                    align="right"
+                  >
+                    {transaction.tax_rate * 100}%
+                  </TableCell>
+                  <TableCell
+                    sx={{
+                      color: transaction.total_amount >= 0 ? "#000" : "#fff",
+                    }}
+                    align="right"
+                  >
+                    $
+                    {(Math.round(transaction.total_amount * 100) / 100).toFixed(
+                      2
+                    )}
+                  </TableCell>
+                  <TableCell
+                    sx={{
+                      color: transaction.total_amount >= 0 ? "#000" : "#fff",
+                    }}
+                    align="right"
+                  >
+                    ${(Math.round(transaction.balance * 100) / 100).toFixed(2)}
+                  </TableCell>
+                </TableRow>
+              ))}
           </TableBody>
         </Table>
       </TableContainer>
