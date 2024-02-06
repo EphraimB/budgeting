@@ -29,7 +29,7 @@ function ExpensesCards({
     <>
       <Grid container spacing={2}>
         {showExpenseForm && (
-          <Grid item>
+          <Grid key="new-expense" item>
             <NewExpenseForm
               account_id={account_id}
               setShowExpenseForm={setShowExpenseForm}
@@ -39,11 +39,8 @@ function ExpensesCards({
         )}
 
         {expenses.map((expense: Expense) => (
-          <Grid item>
-            <Card
-              key={expense.id}
-              sx={{ maxWidth: "18rem", position: "relative" }}
-            >
+          <Grid key={expense.id} item>
+            <Card sx={{ maxWidth: "18rem", position: "relative" }}>
               {expenseModes[expense.id] === "delete" ? (
                 <ExpenseDelete
                   expense={expense}
@@ -51,8 +48,10 @@ function ExpensesCards({
                 />
               ) : expenseModes[expense.id] === "edit" ? (
                 <ExpenseEdit
+                  account_id={account_id}
                   expense={expense}
                   setExpenseModes={setExpenseModes}
+                  taxes={taxes}
                 />
               ) : (
                 <ExpensesView
