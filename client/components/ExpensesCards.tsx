@@ -56,7 +56,6 @@ function ExpensesCards({
                 <ExpensesView
                   expense={expense}
                   taxes={taxes}
-                  expenseModes={expenseModes}
                   setExpenseModes={setExpenseModes}
                 />
               )}

@@ -7,6 +7,7 @@ import Fab from "@mui/material/Fab";
 import AddIcon from "@mui/icons-material/Add";
 import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
+import LoansView from "./LoansView";
 
 function LoansCards({
   account_id,
@@ -42,11 +43,7 @@ function LoansCards({
                   setLoanModes={setLoanModes}
                 />
               ) : (
-                <LoansView
-                  loan={loan}
-                  loanModes={loanModes}
-                  setLoanModes={setLoanModes}
-                />
+                <LoansView loan={loan} setLoanModes={setLoanModes} />
               )}
             </Card>
           </Grid>

@@ -14,12 +14,10 @@ import ExpenseActionsMenu from "./ExpenseActionsMenu";
 function ExpensesView({
   expense,
   taxes,
-  expenseModes,
   setExpenseModes,
 }: {
   expense: Expense;
   taxes: Tax[];
-  expenseModes: Record<number, string>;
   setExpenseModes: React.Dispatch<React.SetStateAction<Record<number, string>>>;
 }) {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
