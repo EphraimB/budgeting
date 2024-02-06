@@ -152,6 +152,14 @@ function LoanEdit({
         ) : activeStep === 1 ? (
           <>
             <TextField
+              label="Plan Amount"
+              variant="standard"
+              value={"$" + plan_amount}
+              onChange={(e) => setPlanAmount(e.target.value.substring(1))}
+            />
+            <br />
+            <br />
+            <TextField
               label="Amount"
               variant="standard"
               value={"$" + amount}
@@ -292,9 +300,39 @@ function LoanEdit({
           </>
         ) : activeStep === 3 ? (
           <>
+            <TextField
+              label="Interest rate"
+              variant="standard"
+              value={interest_rate + "%"}
+              onChange={(e) =>
+                e.target.value.substring(0, e.target.value.length - 1)
+              }
+            />
+            <br />
+            <br />
+            <FormControl fullWidth>
+              <InputLabel id="interest-frequency-select-label">
+                Interest Frequency
+              </InputLabel>
+              <Select
+                labelId="interest-frequency-select-label"
+                label="Interest Frequency"
+                variant="standard"
+                value={interest_frequency_type}
+                onChange={(e) => setInterestFrequencyType(e.target.value)}
+              >
+                <MenuItem value={0}>Daily</MenuItem>
+                <MenuItem value={1}>Weekly</MenuItem>
+                <MenuItem value={2}>Monthly</MenuItem>
+                <MenuItem value={3}>Yearly</MenuItem>
+              </Select>
+            </FormControl>
+          </>
+        ) : activeStep === 4 ? (
+          <>
             <LocalizationProvider dateAdapter={AdapterDayjs}>
               <DateTimePicker
-                label="Expense begin date"
+                label="Loan begin date"
                 value={dayjs(begin_date)}
                 onChange={(e: Dayjs | null) =>
                   setBeginDate(e ? e.format() : dayjs().format())
@@ -312,7 +350,7 @@ function LoanEdit({
         <br />
         <MobileStepper
           variant="dots"
-          steps={4}
+          steps={5}
           position="static"
           activeStep={activeStep}
           sx={{ maxWidth: 400, flexGrow: 1 }}
@@ -320,7 +358,7 @@ function LoanEdit({
             <Button
               size="small"
               onClick={handleNext}
-              disabled={activeStep === 3}
+              disabled={activeStep === 4}
             >
               Next
               {theme.direction === "rtl" ? (
