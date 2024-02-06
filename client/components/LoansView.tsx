@@ -29,43 +29,6 @@ function LoansView({
     setAnchorEl(null);
   };
 
-  // Calculate the loan with interest
-  let periodsPerYear;
-
-  // Determine the number of periods in a year based on the interest frequency
-  switch (loan.interest_frequency_type) {
-    case 0: // Daily
-      periodsPerYear = 365;
-      break;
-    case 1: // Weekly
-      periodsPerYear = 52;
-      break;
-    case 2: // Monthly
-      periodsPerYear = 12;
-      break;
-    case 3: // Yearly
-      periodsPerYear = 1;
-      break;
-    default:
-      throw new Error("Invalid interest frequency type");
-  }
-
-  // Infer the number of periods from the total repayment and the repayment plan
-  const inferredPeriods =
-    loan.plan_amount > 0 ? loan.amount / loan.plan_amount : 0;
-
-  // Adjust the interest rate per period
-  const interestRatePerPeriod = loan.interest_rate / periodsPerYear;
-
-  // Calculate the compound interest for the inferred number of periods
-  const interestMultiplier = Math.pow(
-    1 + interestRatePerPeriod,
-    inferredPeriods
-  );
-
-  // Calculate the total amount after interest
-  const amountAfterInterest = loan.amount * interestMultiplier;
-
   return (
     <>
       <IconButton
@@ -93,7 +56,7 @@ function LoansView({
       <CardHeader title={loan.title} subheader={loan.description} />
       <CardContent>
         <Typography variant="body2">
-          You will be charged ${amountAfterInterest.toFixed(2)} next on{" "}
+          You will be charged ${loan.plan_amount.toFixed(2)} next on{" "}
           {dayjs(loan.next_date).format("dddd MMMM D, YYYY h:mm A")}. You get
           charged {getFrequency(loan)}.
         </Typography>
