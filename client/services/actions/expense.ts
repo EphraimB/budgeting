@@ -28,7 +28,8 @@ export async function addExpense(expense: ExpenseRequest) {
   });
   const result = await response.json();
 
-  revalidatePath("/expenses");
+  revalidatePath("/[account_id]", "page");
+
   return result;
 }
 
@@ -42,7 +43,7 @@ export async function editExpense(expense: ExpenseRequest, id: number) {
   });
   const result = await response.json();
 
-  revalidatePath("/expenses");
+  revalidatePath("/[account_id]", "page");
   return result;
 }
 
@@ -51,5 +52,5 @@ export async function deleteExpense(id: number) {
     method: "DELETE",
   });
 
-  revalidatePath("/expenses");
+  revalidatePath("/[account_id]", "page");
 }
