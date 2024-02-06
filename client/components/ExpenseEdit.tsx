@@ -91,7 +91,7 @@ function ExpenseEdit({
   const handleSubmit = async () => {
     // Submit data
     try {
-      await editExpense(data, account_id);
+      await editExpense(data, expense.id);
     } catch (error) {
       console.log(error);
     }
