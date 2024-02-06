@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import Card from "@mui/material/Card";
-import Stack from "@mui/material/Stack";
 import { Expense, Tax } from "@/app/types/types";
 import ExpensesView from "./ExpensesView";
 import Fab from "@mui/material/Fab";
