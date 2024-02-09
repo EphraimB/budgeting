@@ -1,18 +1,18 @@
 import React from "react";
 import "@testing-library/jest-dom";
 import { render, screen } from "@testing-library/react";
-import ExpenseCards from "../../components/ExpensesCards";
+import LoansCards from "../../components/LoansCards";
 
 jest.mock("next/navigation", () => ({
   useRouter: jest.fn(),
   usePathname: () => "/",
 }));
 
-describe("ExpensesCards", () => {
-  it("renders expense cards with provided expenses and taxes", () => {
+describe("LoansCards", () => {
+  it("renders loan cards with provided loans", () => {
     const account_id = 1;
 
-    render(<ExpenseCards account_id={account_id} expenses={[]} taxes={[]} />);
+    render(<LoansCards account_id={account_id} loans={[]} />);
 
     // Assert that the FAB with the AddIcon is rendered
     expect(screen.getByTestId("AddIcon")).toBeInTheDocument();
