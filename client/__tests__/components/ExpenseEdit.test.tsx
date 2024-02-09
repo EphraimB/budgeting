@@ -68,5 +68,7 @@ describe("ExpenseEdit", () => {
 
     expect(screen.getByText("Edit Expense - Step 2 of 4")).toBeInTheDocument();
     expect(screen.getByLabelText("Amount")).toHaveValue("$155.99");
+    expect(screen.getByLabelText("Tax")).toHaveValue("Test Tax");
+    expect(screen.getByLabelText("Subsidized")).toHaveValue("0");
   });
 });
