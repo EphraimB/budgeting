@@ -120,7 +120,7 @@ function ExpenseEdit({
       }}
     >
       <IconButton
-        aria-label="more"
+        aria-label="close"
         sx={{
           position: "absolute",
           top: 0,
