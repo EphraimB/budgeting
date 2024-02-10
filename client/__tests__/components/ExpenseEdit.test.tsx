@@ -86,5 +86,12 @@ describe("ExpenseEdit", () => {
     expect(screen.getByText("No tax - 0%"));
 
     expect(screen.getByLabelText("Subsidized")).toHaveValue("0%");
+
+    // Go to the next step by clicking the "Next" button
+    await userEvent.click(screen.getByText("Next"));
+
+    expect(screen.getByText("Edit Expense - Step 3 of 4")).toBeInTheDocument();
+
+    expect(screen.getByLabelText("Frequency")).toBeInTheDocument();
   });
 });
