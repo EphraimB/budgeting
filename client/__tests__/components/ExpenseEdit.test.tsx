@@ -43,6 +43,15 @@ describe("ExpenseEdit", () => {
         date_created: "2021-10-01",
         date_modified: "2021-10-01",
       },
+      {
+        id: 2,
+        rate: 0.08875,
+        title: "NYC Sales Tax",
+        description: "New York City Sales Tax",
+        type: 1,
+        date_created: "2021-10-01",
+        date_modified: "2021-10-01",
+      },
     ];
 
     render(
@@ -68,7 +77,14 @@ describe("ExpenseEdit", () => {
 
     expect(screen.getByText("Edit Expense - Step 2 of 4")).toBeInTheDocument();
     expect(screen.getByLabelText("Amount")).toHaveValue("$155.99");
-    expect(screen.getByLabelText("Tax")).toHaveValue("Test Tax");
-    expect(screen.getByLabelText("Subsidized")).toHaveValue("0");
+
+    expect(screen.getByLabelText("Tax")).toBeInTheDocument();
+    expect(screen.getByText("Test Tax - 5%"));
+
+    await userEvent.click(screen.getByText("Test Tax - 5%"));
+    expect(screen.getByText("NYC Sales Tax - 8.875%")).toBeInTheDocument();
+    expect(screen.getByText("No tax - 0%"));
+
+    expect(screen.getByLabelText("Subsidized")).toHaveValue("0%");
   });
 });
