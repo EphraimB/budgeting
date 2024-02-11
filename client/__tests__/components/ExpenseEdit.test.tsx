@@ -147,5 +147,27 @@ describe("ExpenseEdit", () => {
     expect(screen.getByText("October")).toBeInTheDocument();
     expect(screen.getByText("November")).toBeInTheDocument();
     expect(screen.getByText("December")).toBeInTheDocument();
+
+    // Click on the "Yearly" frequency again to make the other options appear
+    await userEvent.click(screen.getByText("Yearly"));
+
+    // Switch to daily frequency
+    await userEvent.click(screen.getByText("Daily"));
+
+    // Make sure that the "Day of Week" input is not present
+    expect(screen.queryByLabelText("Day of Week")).not.toBeInTheDocument();
+    expect(screen.queryByLabelText("Week of Month")).not.toBeInTheDocument();
+    expect(screen.queryByLabelText("Month of Year")).not.toBeInTheDocument();
+
+    // Click on the "Daily" frequency again to make the other options appear
+    await userEvent.click(screen.getByText("Daily"));
+
+    // Switch to weekly frequency
+    await userEvent.click(screen.getByText("Weekly"));
+
+    // Make sure that the "Day of Week" input is present
+    expect(screen.queryByLabelText("Day of Week")).toBeInTheDocument();
+    expect(screen.queryByLabelText("Week of Month")).not.toBeInTheDocument();
+    expect(screen.queryByLabelText("Month of Year")).not.toBeInTheDocument();
   });
 });
