@@ -123,5 +123,26 @@ describe("ExpenseEdit", () => {
     expect(screen.getByText("Third")).toBeInTheDocument();
     expect(screen.getByText("Fourth")).toBeInTheDocument();
     expect(screen.getByText("Last")).toBeInTheDocument();
+
+    // Switch to yearly frequency
+    await userEvent.click(screen.getByText("Yearly"));
+
+    const monthOfYear = screen.getByLabelText("Month of Year");
+    expect(monthOfYear).toBeInTheDocument();
+    expect(within(monthOfYear).getByText("None")).toBeInTheDocument();
+
+    await userEvent.click(monthOfYear);
+    expect(screen.getByText("January")).toBeInTheDocument();
+    expect(screen.getByText("February")).toBeInTheDocument();
+    expect(screen.getByText("March")).toBeInTheDocument();
+    expect(screen.getByText("April")).toBeInTheDocument();
+    expect(screen.getByText("May")).toBeInTheDocument();
+    expect(screen.getByText("June")).toBeInTheDocument();
+    expect(screen.getByText("July")).toBeInTheDocument();
+    expect(screen.getByText("August")).toBeInTheDocument();
+    expect(screen.getByText("September")).toBeInTheDocument();
+    expect(screen.getByText("October")).toBeInTheDocument();
+    expect(screen.getByText("November")).toBeInTheDocument();
+    expect(screen.getByText("December")).toBeInTheDocument();
   });
 });
