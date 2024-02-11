@@ -93,5 +93,11 @@ describe("ExpenseEdit", () => {
     expect(screen.getByText("Edit Expense - Step 3 of 4")).toBeInTheDocument();
 
     expect(screen.getByLabelText("Frequency")).toBeInTheDocument();
+    expect(screen.getByText("Monthly")).toBeInTheDocument();
+
+    await userEvent.click(screen.getByText("Monthly"));
+    expect(screen.getByText("Yearly")).toBeInTheDocument();
+    expect(screen.getByText("Weekly")).toBeInTheDocument();
+    expect(screen.getByText("Daily")).toBeInTheDocument();
   });
 });
