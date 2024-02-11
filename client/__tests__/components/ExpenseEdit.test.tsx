@@ -195,5 +195,8 @@ describe("ExpenseEdit", () => {
     expect(screen.getByLabelText("Expense end date")).toHaveValue(
       dayjs().format("MM/DD/YYYY hh:mm A")
     );
+
+    // Check that "Submit" button is present
+    expect(screen.getByText("Submit")).toBeInTheDocument();
   });
 });
