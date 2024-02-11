@@ -31,7 +31,7 @@ function NewExpenseForm({
   taxes,
 }: {
   account_id: number;
-  setShowExpenseForm: Function;
+  setShowExpenseForm: (show: boolean) => void;
   taxes: Tax[];
 }) {
   const [title, setTitle] = useState("");
@@ -111,7 +111,7 @@ function NewExpenseForm({
       }}
     >
       <IconButton
-        aria-label="more"
+        aria-label="close"
         sx={{
           position: "absolute",
           top: 0,
@@ -328,7 +328,7 @@ function NewExpenseForm({
                     onChange={handleEndDateEnabledChange}
                   />
                 }
-                label="Expense end date"
+                label="Expense end date enabled"
               />
               {endDateEnabled && (
                 <DateTimePicker
