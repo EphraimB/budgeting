@@ -1,6 +1,6 @@
 import React from "react";
 import "@testing-library/jest-dom";
-import { render, screen } from "@testing-library/react";
+import { render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { act } from "react-dom/test-utils";
 import ExpenseEdit from "../../components/ExpenseEdit";
@@ -100,12 +100,11 @@ describe("ExpenseEdit", () => {
     expect(screen.getByText("Weekly")).toBeInTheDocument();
     expect(screen.getByText("Daily")).toBeInTheDocument();
 
-    expect(screen.getByLabelText("Day of Week")).toBeInTheDocument();
+    const dayOfWeek = screen.getByLabelText("Day of Week");
+    expect(dayOfWeek).toBeInTheDocument();
+    expect(within(dayOfWeek).getByText("None")).toBeInTheDocument();
 
-    // Check that None of day of week is selected
-    expect(screen.getByText("None")).toBeInTheDocument();
-
-    await userEvent.click(screen.getByText("None"));
+    await userEvent.click(screen.getByLabelText("Day of Week"));
     expect(screen.getByText("Sunday")).toBeInTheDocument();
     expect(screen.getByText("Monday")).toBeInTheDocument();
     expect(screen.getByText("Tuesday")).toBeInTheDocument();
