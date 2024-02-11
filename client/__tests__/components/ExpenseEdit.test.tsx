@@ -174,5 +174,17 @@ describe("ExpenseEdit", () => {
     expect(
       screen.getByLabelText("Frequency Type Variable")
     ).toBeInTheDocument();
+
+    // Go to the next step by clicking the "Next" button
+    await userEvent.click(screen.getByText("Next"));
+
+    expect(screen.getByText("Edit Expense - Step 4 of 4")).toBeInTheDocument();
+
+    expect(screen.getByLabelText("Expense begin date")).toHaveValue(
+      "10/01/2021 12:00 AM"
+    );
+
+    // Check that the "Expense end date" input is not checked
+    expect(screen.getByLabelText("Expense end date")).not.toBeChecked();
   });
 });
