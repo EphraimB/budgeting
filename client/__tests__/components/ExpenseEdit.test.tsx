@@ -2,8 +2,8 @@ import React from "react";
 import "@testing-library/jest-dom";
 import { render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { act } from "react-dom/test-utils";
 import ExpenseEdit from "../../components/ExpenseEdit";
+import dayjs from "dayjs";
 
 jest.mock("next/navigation", () => ({
   useRouter: jest.fn(),
@@ -191,5 +191,9 @@ describe("ExpenseEdit", () => {
     await userEvent.click(screen.getByLabelText("Expense end date enabled"));
 
     expect(screen.getByLabelText("Expense end date enabled")).toBeChecked();
+
+    expect(screen.getByLabelText("Expense end date")).toHaveValue(
+      dayjs().format("MM/DD/YYYY hh:mm A")
+    );
   });
 });
