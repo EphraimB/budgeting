@@ -337,7 +337,7 @@ function ExpenseEdit({
                     onChange={handleEndDateEnabledChange}
                   />
                 }
-                label="Expense end date"
+                label="Expense end date enabled"
               />
               {endDateEnabled && (
                 <DateTimePicker

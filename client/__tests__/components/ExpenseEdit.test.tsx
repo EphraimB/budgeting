@@ -185,6 +185,11 @@ describe("ExpenseEdit", () => {
     );
 
     // Check that the "Expense end date" input is not checked
-    expect(screen.getByLabelText("Expense end date")).not.toBeChecked();
+    expect(screen.getByLabelText("Expense end date enabled")).not.toBeChecked();
+
+    // Check the "Expense end date" checkbox
+    await userEvent.click(screen.getByLabelText("Expense end date enabled"));
+
+    expect(screen.getByLabelText("Expense end date enabled")).toBeChecked();
   });
 });
