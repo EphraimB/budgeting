@@ -99,5 +99,19 @@ describe("ExpenseEdit", () => {
     expect(screen.getByText("Yearly")).toBeInTheDocument();
     expect(screen.getByText("Weekly")).toBeInTheDocument();
     expect(screen.getByText("Daily")).toBeInTheDocument();
+
+    expect(screen.getByLabelText("Day of Week")).toBeInTheDocument();
+
+    // Check that None of day of week is selected
+    expect(screen.getByText("None")).toBeInTheDocument();
+
+    await userEvent.click(screen.getByText("None"));
+    expect(screen.getByText("Sunday")).toBeInTheDocument();
+    expect(screen.getByText("Monday")).toBeInTheDocument();
+    expect(screen.getByText("Tuesday")).toBeInTheDocument();
+    expect(screen.getByText("Wednesday")).toBeInTheDocument();
+    expect(screen.getByText("Thursday")).toBeInTheDocument();
+    expect(screen.getByText("Friday")).toBeInTheDocument();
+    expect(screen.getByText("Saturday")).toBeInTheDocument();
   });
 });
