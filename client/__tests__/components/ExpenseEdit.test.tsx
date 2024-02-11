@@ -104,7 +104,7 @@ describe("ExpenseEdit", () => {
     expect(dayOfWeek).toBeInTheDocument();
     expect(within(dayOfWeek).getByText("None")).toBeInTheDocument();
 
-    await userEvent.click(screen.getByLabelText("Day of Week"));
+    await userEvent.click(dayOfWeek);
     expect(screen.getByText("Sunday")).toBeInTheDocument();
     expect(screen.getByText("Monday")).toBeInTheDocument();
     expect(screen.getByText("Tuesday")).toBeInTheDocument();
@@ -112,5 +112,16 @@ describe("ExpenseEdit", () => {
     expect(screen.getByText("Thursday")).toBeInTheDocument();
     expect(screen.getByText("Friday")).toBeInTheDocument();
     expect(screen.getByText("Saturday")).toBeInTheDocument();
+
+    const weekOfMonth = screen.getByLabelText("Week of Month");
+    expect(weekOfMonth).toBeInTheDocument();
+    expect(within(weekOfMonth).getByText("None")).toBeInTheDocument();
+
+    await userEvent.click(weekOfMonth);
+    expect(screen.getByText("First")).toBeInTheDocument();
+    expect(screen.getByText("Second")).toBeInTheDocument();
+    expect(screen.getByText("Third")).toBeInTheDocument();
+    expect(screen.getByText("Fourth")).toBeInTheDocument();
+    expect(screen.getByText("Last")).toBeInTheDocument();
   });
 });
