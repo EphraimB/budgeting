@@ -86,7 +86,7 @@ function LoanEdit({
     frequency_month_of_year:
       frequency_month_of_year === -1 ? null : frequency_month_of_year,
     frequency_type_variable,
-    interest_rate: parseFloat(interest_rate),
+    interest_rate: parseFloat(interest_rate) / 100,
     interest_frequency_type: parseInt(interest_frequency_type),
     begin_date,
   };

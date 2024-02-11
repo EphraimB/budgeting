@@ -72,7 +72,7 @@ function NewLoanForm({
     frequency_month_of_year:
       frequency_month_of_year === -1 ? null : frequency_month_of_year,
     frequency_type_variable,
-    interest_rate: parseFloat(interest_rate),
+    interest_rate: parseFloat(interest_rate) / 100,
     interest_frequency_type: interest_frequency_type,
     begin_date,
   };
@@ -97,7 +97,7 @@ function NewLoanForm({
       }}
     >
       <IconButton
-        aria-label="more"
+        aria-label="close"
         sx={{
           position: "absolute",
           top: 0,
@@ -296,9 +296,9 @@ function NewLoanForm({
         ) : activeStep === 3 ? (
           <>
             <TextField
-              label="Interest rate"
+              label="Interest Rate"
               variant="standard"
-              value={interest_rate + "%"}
+              value={parseInt(interest_rate) * 100 + "%"}
               onChange={(e) =>
                 setInterestRate(
                   e.target.value.substring(0, e.target.value.length - 1)
