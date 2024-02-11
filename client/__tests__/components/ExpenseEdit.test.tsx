@@ -124,6 +124,9 @@ describe("ExpenseEdit", () => {
     expect(screen.getByText("Fourth")).toBeInTheDocument();
     expect(screen.getByText("Last")).toBeInTheDocument();
 
+    // Make sure that the "Month of Year" input is not present
+    expect(screen.queryByLabelText("Month of Year")).not.toBeInTheDocument();
+
     // Switch to yearly frequency
     await userEvent.click(screen.getByText("Yearly"));
 
