@@ -111,7 +111,7 @@ function LoanEdit({
       }}
     >
       <IconButton
-        aria-label="more"
+        aria-label="close"
         sx={{
           position: "absolute",
           top: 0,
@@ -310,9 +310,9 @@ function LoanEdit({
         ) : activeStep === 3 ? (
           <>
             <TextField
-              label="Interest rate"
+              label="Interest Rate"
               variant="standard"
-              value={interest_rate + "%"}
+              value={parseFloat(interest_rate) * 100 + "%"}
               onChange={(e) =>
                 setInterestRate(
                   e.target.value.substring(0, e.target.value.length - 1)
