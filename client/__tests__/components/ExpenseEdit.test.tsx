@@ -169,5 +169,10 @@ describe("ExpenseEdit", () => {
     expect(screen.queryByLabelText("Day of Week")).toBeInTheDocument();
     expect(screen.queryByLabelText("Week of Month")).not.toBeInTheDocument();
     expect(screen.queryByLabelText("Month of Year")).not.toBeInTheDocument();
+
+    // Make sure that "Frequency Type Variable" input is present
+    expect(
+      screen.getByLabelText("Frequency Type Variable")
+    ).toBeInTheDocument();
   });
 });
