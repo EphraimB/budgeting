@@ -6,6 +6,7 @@ import Link from "next/link";
 import Typography from "@mui/material/Typography";
 import { Expense, Tax } from "@/app/types/types";
 import ExpensesCards from "../../../../components/ExpensesCards";
+import DataManagementWidgets from "../../../../components/DataManagementWidgets";
 
 async function getExpenses(account_id: number) {
   const res = await fetch(
@@ -62,32 +63,6 @@ async function Expenses({
 
   return (
     <Stack>
-      <Card
-        sx={{
-          p: 2,
-          margin: "auto",
-          maxWidth: 250,
-          background:
-            "linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('/img/back-to-transactions.png')",
-          backgroundSize: "cover",
-          backgroundPosition: "center",
-          backgroundRepeat: "no-repeat",
-          color: "white",
-        }}
-      >
-        <Link
-          href={`/${account_id}`}
-          as={`/${account_id}`}
-          style={{ color: "inherit", textDecoration: "inherit" }}
-        >
-          <CardHeader title="< Transactions" />
-          <CardContent sx={{ flexGrow: 1 }}>
-            <Typography variant="body2" color="white">
-              Go back to transactions.
-            </Typography>
-          </CardContent>
-        </Link>
-      </Card>
       <Typography variant="h4" component="h2">
         Expenses
       </Typography>

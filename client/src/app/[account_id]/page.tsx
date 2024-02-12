@@ -1,52 +1,15 @@
 import dayjs from "dayjs";
 import DateRange from "../../../components/DateRange";
 import TransactionDisplay from "../../../components/TransactionDisplay";
-import DataManagementWidgets from "../../../components/DataManagementWidgets";
 import customParseFormat from "dayjs/plugin/customParseFormat";
 
 async function getTransactions(
-  accountId: number,
+  account_id: number,
   from_date: string,
   to_date: string
 ) {
   const res = await fetch(
-    `http://server:5001/api/transactions?account_id=${accountId}&from_date=${from_date}&to_date=${to_date}`
-  );
-
-  if (!res.ok) {
-    // open alert
-  }
-
-  return res.json();
-}
-
-async function getExpenses(account_id: number) {
-  const res = await fetch(
-    `http://server:5001/api/expenses?account_id=${account_id}`
-  );
-
-  if (!res.ok) {
-    // open alert
-  }
-
-  return res.json();
-}
-
-async function getTaxes(account_id: number) {
-  const res = await fetch(
-    `http://server:5001/api/taxes?account_id=${account_id}`
-  );
-
-  if (!res.ok) {
-    // open alert
-  }
-
-  return res.json();
-}
-
-async function getLoans(accountId: number) {
-  const res = await fetch(
-    `http://server:5001/api/loans?account_id=${accountId}`
+    `http://server:5001/api/transactions?account_id=${account_id}&from_date=${from_date}&to_date=${to_date}`
   );
 
   if (!res.ok) {
@@ -85,19 +48,9 @@ async function TransactionsPage({
   const toDate = searchParams.to_date as string;
 
   const transactions = await getTransactions(account_id, fromDate, toDate);
-  const expenses = await getExpenses(account_id);
-  const taxes = await getTaxes(account_id);
-  const loans = await getLoans(account_id);
 
   return (
     <>
-      <DataManagementWidgets
-        account_id={account_id}
-        expenses={expenses}
-        taxes={taxes}
-        loans={loans}
-      />
-      <br />
       <DateRange fromDate={fromDate} toDate={toDate} />
       <TransactionDisplay transactions={transactions} />
     </>
