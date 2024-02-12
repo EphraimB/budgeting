@@ -4,7 +4,6 @@ import GlobalAppBar from "../../components/GlobalAppBar";
 import Alerts from "../../components/Alerts";
 import Container from "@mui/material/Container";
 import AccountList from "../../components/AccountList";
-import { Suspense } from "react";
 
 export const metadata: Metadata = {
   title: "Budgeting",
