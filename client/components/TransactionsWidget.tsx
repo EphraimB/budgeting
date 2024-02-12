@@ -26,10 +26,10 @@ function TransactionsWidget({ account_id }: { account_id: number }) {
           color: "white",
         }}
       >
-        <CardHeader title="< Transactions" />
+        <CardHeader title="Transactions" />
         <CardContent sx={{ flexGrow: 1 }}>
-          <Typography variant="body2" color="white">
-            Go back to transactions.
+          <Typography variant="body1" color="white">
+            Transactions table
           </Typography>
         </CardContent>
       </Card>
