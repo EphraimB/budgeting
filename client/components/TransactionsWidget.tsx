@@ -16,7 +16,8 @@ function TransactionsWidget({ account_id }: { account_id: number }) {
         sx={{
           p: 2,
           margin: "auto",
-          maxWidth: 250,
+          width: 250,
+          height: 200,
           background:
             "linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('/img/back-to-transactions.png')",
           backgroundSize: "cover",

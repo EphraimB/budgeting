@@ -30,32 +30,6 @@ async function Loans({ params }: { params: { account_id: string } }) {
 
   return (
     <Stack>
-      <Card
-        sx={{
-          p: 2,
-          margin: "auto",
-          maxWidth: 250,
-          background:
-            "linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('/img/back-to-transactions.png')",
-          backgroundSize: "cover",
-          backgroundPosition: "center",
-          backgroundRepeat: "no-repeat",
-          color: "white",
-        }}
-      >
-        <Link
-          href={`/${account_id}`}
-          as={`/${account_id}`}
-          style={{ color: "inherit", textDecoration: "inherit" }}
-        >
-          <CardHeader title="< Transactions" />
-          <CardContent sx={{ flexGrow: 1 }}>
-            <Typography variant="body2" color="white">
-              Go back to transactions.
-            </Typography>
-          </CardContent>
-        </Link>
-      </Card>
       <Typography variant="h4" component="h2">
         Loans
       </Typography>

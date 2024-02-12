@@ -46,7 +46,8 @@ function LoansWidget({
         sx={{
           p: 2,
           margin: "auto",
-          maxWidth: 250,
+          width: 250,
+          height: 200,
           flexGrow: 1,
           background:
             "linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('/img/loans.png')",
