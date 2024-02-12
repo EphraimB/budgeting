@@ -29,7 +29,7 @@ function TransactionsWidget({ account_id }: { account_id: number }) {
         <CardHeader title="Transactions" />
         <CardContent sx={{ flexGrow: 1 }}>
           <Typography variant="body1" color="white">
-            Transactions table
+            Click here to view transactions
           </Typography>
         </CardContent>
       </Card>
