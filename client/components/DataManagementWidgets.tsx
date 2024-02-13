@@ -55,7 +55,7 @@ function DataManagementWidgets({
   const otherWidgets = widgets.filter((w) => w.id !== selectedWidget.id);
 
   // Calculate the minWidth for widgets in the scrollable area
-  const widgetMinWidth = `calc(70% / ${Math.min(3, otherWidgets.length)})`;
+  const widgetMinWidth = `calc(100% / ${Math.min(3, otherWidgets.length)})`;
 
   return (
     <Stack direction="row" spacing={2} sx={{ mb: 2 }}>
@@ -67,7 +67,6 @@ function DataManagementWidgets({
       {/* Scrollable Area for Other Widgets */}
       <Box
         sx={{
-          flexGrow: 1,
           overflowX: "auto",
           "&::-webkit-scrollbar": { display: "none" },
         }}
@@ -78,10 +77,6 @@ function DataManagementWidgets({
               key={widget.id}
               sx={{
                 minWidth: widgetMinWidth,
-                flexShrink: 0,
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "center",
               }}
             >
               {widget.content}
