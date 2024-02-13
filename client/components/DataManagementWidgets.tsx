@@ -3,6 +3,7 @@ import ExpensesWidget from "./ExpensesWidget";
 import LoansWidget from "./LoansWidget";
 import { Expense, Loan, Tax } from "@/app/types/types";
 import TransactionsWidget from "./TransactionsWidget";
+import { usePathname } from "next/navigation";
 
 function DataManagementWidgets({
   account_id,
@@ -15,6 +16,9 @@ function DataManagementWidgets({
   loans: Loan[];
   taxes: Tax[];
 }) {
+  const pathname = usePathname();
+
+  
   return (
     <Stack direction="row" spacing={2}>
       <TransactionsWidget account_id={account_id} />

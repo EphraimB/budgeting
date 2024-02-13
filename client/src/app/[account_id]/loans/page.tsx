@@ -1,8 +1,4 @@
 import Stack from "@mui/material/Stack";
-import Card from "@mui/material/Card";
-import CardContent from "@mui/material/CardContent";
-import CardHeader from "@mui/material/CardHeader";
-import Link from "next/link";
 import Typography from "@mui/material/Typography";
 import { Loan } from "@/app/types/types";
 import LoansCards from "../../../../components/LoansCards";
@@ -22,7 +18,7 @@ async function getLoans(account_id: number) {
 async function Loans({ params }: { params: { account_id: string } }) {
   const account_id = parseInt(params.account_id);
 
-  const loans = await getLoans(account_id);
+  const loans: Loan[] = await getLoans(account_id);
 
   const totalLoansAmount = loans.reduce((acc: number, loan: Loan): number => {
     return acc + loan.amount;
