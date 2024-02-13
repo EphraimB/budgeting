@@ -2,6 +2,7 @@
 
 import React from "react";
 import Box from "@mui/material/Box";
+import Stack from "@mui/material/Stack";
 import Divider from "@mui/material/Divider";
 import TransactionsWidget from "./TransactionsWidget";
 import ExpensesWidget from "./ExpensesWidget";
@@ -22,7 +23,6 @@ function DataManagementWidgets({
 }) {
   const pathname = usePathname();
 
-  // Identify the selected widget
   const isSelected = (widgetId: string) => pathname.includes(widgetId);
 
   const widgets = [
@@ -47,49 +47,49 @@ function DataManagementWidgets({
       content: <LoansWidget account_id={account_id} loans={loans} />,
       selected: isSelected("loans"),
     },
-    // ...other widgets
+    // Add more widgets as needed
   ];
 
-  // Separate the selected widget from the others
-  const selectedWidget = widgets.find((widget) => widget.selected);
-  const otherWidgets = widgets.filter((widget) => !widget.selected);
+  const selectedWidget =
+    widgets.find((widget) => widget.selected) || widgets[0];
+  const otherWidgets = widgets.filter((w) => w.id !== selectedWidget.id);
+
+  // Calculate the minWidth for widgets in the scrollable area
+  const widgetMinWidth = `calc(70% / ${Math.min(3, otherWidgets.length)})`;
 
   return (
-    <Box
-      sx={{ display: "flex", alignItems: "flex-start", overflowY: "hidden" }}
-    >
+    <Stack direction="row" spacing={2} sx={{ mb: 2 }}>
       {/* Selected Widget */}
-      <Box sx={{ flexShrink: 0, width: 300, height: 200, marginRight: 1 }}>
-        {selectedWidget && selectedWidget.content}
-      </Box>
+      <Box>{selectedWidget.content}</Box>
 
       <Divider orientation="vertical" flexItem />
 
-      {/* Scrollable Widget Area */}
+      {/* Scrollable Area for Other Widgets */}
       <Box
         sx={{
-          display: "flex",
-          overflowY: "auto",
-          marginLeft: 1,
-          "&::-webkit-scrollbar": {
-            display: "none", // Hides scrollbar for a cleaner look
-          },
-          // Hints at more content
-          "& > :last-child": {
-            marginRight: "50px", // Adjust this value to ensure the last widget is partially visible
-          },
+          flexGrow: 1,
+          overflowX: "auto",
+          "&::-webkit-scrollbar": { display: "none" },
         }}
       >
-        {otherWidgets.map((widget, index) => (
-          <Box
-            key={widget.id}
-            sx={{ flex: "0 0 auto", width: 300, height: 200, marginRight: 2 }}
-          >
-            {widget.content}
-          </Box>
-        ))}
+        <Stack direction="row" spacing={2} sx={{ height: "100%" }}>
+          {otherWidgets.map((widget, index) => (
+            <Box
+              key={widget.id}
+              sx={{
+                minWidth: widgetMinWidth,
+                flexShrink: 0,
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+            >
+              {widget.content}
+            </Box>
+          ))}
+        </Stack>
       </Box>
-    </Box>
+    </Stack>
   );
 }
 
