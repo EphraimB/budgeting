@@ -13,8 +13,9 @@ import AddIcon from "@mui/icons-material/Add";
 import AccountDepositForm from "./AccountDepositForm";
 import AccountWithdrawalForm from "./AccountWithdrawalForm";
 import { usePathname } from "next/navigation";
+import { Account } from "@/app/types/types";
 
-function AccountList({ accounts }: { accounts: any }) {
+function AccountList({ accounts }: { accounts: Account[] }) {
   const [showNewAccountForm, setShowNewAccountForm] = useState(false);
   const [accountModes, setAccountModes] = useState<Record<number, string>>({});
 
@@ -31,7 +32,7 @@ function AccountList({ accounts }: { accounts: any }) {
         mb: 5,
       }}
     >
-      {accounts.map((account: any) => (
+      {accounts.map((account: Account) => (
         <Paper
           key={account.account_id}
           elevation={account.account_id === account_id ? 1 : 4}
