@@ -5,7 +5,13 @@ import CardContent from "@mui/material/CardContent";
 import CardHeader from "@mui/material/CardHeader";
 import Typography from "@mui/material/Typography";
 
-function TransactionsWidget({ account_id }: { account_id: number }) {
+function TransactionsWidget({
+  account_id,
+  border,
+}: {
+  account_id: number;
+  border: boolean;
+}) {
   return (
     <Link
       href={`/${account_id}`}
@@ -13,6 +19,7 @@ function TransactionsWidget({ account_id }: { account_id: number }) {
       style={{ color: "inherit", textDecoration: "inherit" }}
     >
       <Card
+        elevation={border ? 1 : 4}
         sx={{
           p: 2,
           margin: "auto",
