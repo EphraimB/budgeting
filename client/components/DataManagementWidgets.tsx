@@ -63,7 +63,7 @@ function DataManagementWidgets({
         {selectedWidget && selectedWidget.content}
       </Box>
 
-      <Divider orientation="vertical" flexItem sx={{ bgColor: "black" }} />
+      <Divider orientation="vertical" flexItem />
 
       {/* Scrollable Widget Area */}
       <Box
