@@ -58,32 +58,32 @@ function DataManagementWidgets({
   const widgetMinWidth = `calc(100% / ${Math.min(3, otherWidgets.length)})`;
 
   return (
-    <Stack direction="row" spacing={2} sx={{ mb: 2 }}>
+    <Stack direction="row" spacing={2} sx={{ mb: 2, height: "20vh" }}>
       {/* Selected Widget */}
-      <Box>{selectedWidget.content}</Box>
+      {selectedWidget.content}
 
       <Divider orientation="vertical" flexItem />
 
       {/* Scrollable Area for Other Widgets */}
-      <Box
+      <Stack
+        direction="row"
+        spacing={2}
         sx={{
           overflowX: "auto",
           "&::-webkit-scrollbar": { display: "none" },
         }}
       >
-        <Stack direction="row" spacing={2} sx={{ height: "100%" }}>
-          {otherWidgets.map((widget, index) => (
-            <Box
-              key={widget.id}
-              sx={{
-                minWidth: widgetMinWidth,
-              }}
-            >
-              {widget.content}
-            </Box>
-          ))}
-        </Stack>
-      </Box>
+        {otherWidgets.map((widget, index) => (
+          <Box
+            key={widget.id}
+            sx={{
+              minWidth: widgetMinWidth,
+            }}
+          >
+            {widget.content}
+          </Box>
+        ))}
+      </Stack>
     </Stack>
   );
 }
