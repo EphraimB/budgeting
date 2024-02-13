@@ -21,7 +21,6 @@ interface LoanRequest {
 }
 
 export async function addLoan(loan: LoanRequest) {
-  console.log("loan: ", loan);
   const response = await fetch("http://server:5001/api/loans", {
     method: "POST",
     headers: {

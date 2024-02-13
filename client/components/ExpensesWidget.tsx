@@ -9,12 +9,10 @@ function ExpensesWidget({
   account_id,
   expenses,
   taxes,
-  border,
 }: {
   account_id: number;
   expenses: Expense[];
   taxes: Tax[];
-  border: boolean;
 }) {
   // Function to find tax rate by tax_id
   const getTaxRate = (tax_id: number | null) => {
@@ -38,13 +36,9 @@ function ExpensesWidget({
       style={{ color: "inherit", textDecoration: "inherit" }}
     >
       <Card
-        elevation={border ? 1 : 4}
         sx={{
           p: 2,
           margin: "auto",
-          width: 250,
-          height: 200,
-          flexGrow: 1,
           background:
             "linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('/img/expenses.png')",
           backgroundSize: "cover",

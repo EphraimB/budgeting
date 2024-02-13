@@ -9,11 +9,9 @@ import dayjs, { Dayjs } from "dayjs";
 function LoansWidget({
   account_id,
   loans,
-  border,
 }: {
   account_id: number;
   loans: Loan[];
-  border: boolean;
 }) {
   function findLatestFullyPaidBackDate(loans: Loan[]): Dayjs | string | null {
     if (loans.length === 0) return null; // Return null if no loans
@@ -45,12 +43,9 @@ function LoansWidget({
       style={{ color: "inherit", textDecoration: "inherit" }}
     >
       <Card
-        elevation={border ? 1 : 4}
         sx={{
           p: 2,
           margin: "auto",
-          width: 250,
-          height: 200,
           flexGrow: 1,
           background:
             "linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('/img/loans.png')",
