@@ -111,10 +111,13 @@ function DataManagementWidgets({
 
   return (
     <Grid container spacing={2}>
-      {/* Selected Widget with fixed width */}
-      <Link href={selectedWidget.link} as={selectedWidget.link}>
+      {/* Selected Widget */}
+      <Link
+        key={selectedWidget.id}
+        href={selectedWidget.link}
+        as={selectedWidget.link}
+      >
         <Paper
-          key={selectedWidget.id}
           sx={{
             p: 2,
             width: "25%",
@@ -131,9 +134,8 @@ function DataManagementWidgets({
 
       {/* Other Widgets */}
       {otherWidgets.map((widget) => (
-        <Link href={widget.link} as={widget.link}>
+        <Link key={widget.id} href={widget.link} as={widget.link}>
           <Paper
-            key={widget.id}
             sx={{
               p: 2,
               width: "25%",
