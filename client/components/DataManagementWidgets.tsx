@@ -4,11 +4,12 @@ import React from "react";
 import Box from "@mui/material/Box";
 import Stack from "@mui/material/Stack";
 import Divider from "@mui/material/Divider";
-import TransactionsWidget from "./TransactionsWidget";
-import ExpensesWidget from "./ExpensesWidget";
-import LoansWidget from "./LoansWidget";
 import { Expense, Loan, Tax } from "@/app/types/types";
 import { usePathname } from "next/navigation";
+import dayjs, { Dayjs } from "dayjs";
+import Grid from "@mui/material/Grid";
+import Paper from "@mui/material/Paper";
+import Link from "next/link";
 
 function DataManagementWidgets({
   account_id,
@@ -25,29 +26,83 @@ function DataManagementWidgets({
 
   const isSelected = (widgetId: string) => pathname.includes(widgetId);
 
+  // Function to find tax rate by tax_id
+  const getTaxRate = (tax_id: number | null) => {
+    if (!tax_id) return 0;
+
+    const tax = taxes.find((tax) => tax.id === tax_id);
+    return tax ? tax.rate : 0;
+  };
+
+  // Calculate total expenses including taxes
+  const totalWithTaxes = expenses.reduce((acc, expense) => {
+    const taxRate = getTaxRate(expense.tax_id);
+    const taxAmount = expense.amount * taxRate;
+    return acc + expense.amount + taxAmount;
+  }, 0);
+
+  function findLatestFullyPaidBackDate(loans: Loan[]): Dayjs | string | null {
+    if (loans.length === 0) return null; // Return null if no loans
+    // Check if any loan has not been fully paid back
+    if (loans.some((loan: Loan) => loan.fully_paid_back === null)) {
+      return "not in the near future";
+    }
+
+    // Convert all fully_paid_back dates to Day.js objects and find the max
+    let latest = dayjs(loans[0].fully_paid_back);
+    loans.forEach((loan: Loan) => {
+      const fullyPaidBackDate = dayjs(loan.fully_paid_back);
+      if (fullyPaidBackDate.isAfter(latest)) {
+        latest = fullyPaidBackDate;
+      }
+    });
+
+    latest ? latest.format("dddd, MMMM D, YYYY h:mm A") : null;
+
+    return latest;
+  }
+
+  const latestFullyPaidBackDate = findLatestFullyPaidBackDate(loans);
+
   const widgets = [
     {
       id: "transactions",
-      content: <TransactionsWidget account_id={account_id} />,
+      title: "Transactions",
+      link: `/${account_id}/transactions`,
+      backgroundImage: "url('/img/back-to-transactions.png')",
+      content: "Click here to view transactions",
       selected: isSelected("transactions"),
     },
     {
       id: "expenses",
-      content: (
-        <ExpensesWidget
-          account_id={account_id}
-          expenses={expenses}
-          taxes={taxes}
-        />
-      ),
+      title: "Expenses",
+      link: `/${account_id}/expenses`,
+      backgroundImage:
+        "linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('/img/expenses.png')",
+      content: `You have ${expenses.length} expense${
+        expenses.length === 1 ? "" : "s"
+      } with a total of $${totalWithTaxes.toFixed(2)} including taxes.`,
       selected: isSelected("expenses"),
     },
     {
       id: "loans",
-      content: <LoansWidget account_id={account_id} loans={loans} />,
+      title: "Loans",
+      link: `/${account_id}/loans`,
+      backgroundImage:
+        "linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('/img/loans.png')",
+      content: `You have ${loans.length} loan${
+        loans.length === 1 ? "" : "s"
+      } with a
+      total of $${loans.reduce((acc, loan) => acc + loan.amount, 0).toFixed(2)}.
+      ${
+        loans.length === 0
+          ? "You are debt free!"
+          : latestFullyPaidBackDate
+          ? `You will be debt free ${latestFullyPaidBackDate}.`
+          : ""
+      }`,
       selected: isSelected("loans"),
     },
-    // Add more widgets as needed
   ];
 
   const selectedWidget =
@@ -55,30 +110,43 @@ function DataManagementWidgets({
   const otherWidgets = widgets.filter((w) => w.id !== selectedWidget.id);
 
   return (
-    <Stack
-      direction="row"
-      spacing={2}
-      sx={{ mb: 2, width: "100%", alignItems: "flex-start" }}
-    >
+    <Grid container spacing={2}>
       {/* Selected Widget with fixed width */}
-      <Box>{selectedWidget.content}</Box>
+      <Link href={selectedWidget.link} as={selectedWidget.link}>
+        <Paper
+          key={selectedWidget.id}
+          sx={{
+            p: 2,
+            width: "25%",
+            height: "25%",
+            borderRadius: "50%",
+          }}
+        >
+          {selectedWidget.title}
+          {selectedWidget.content}
+        </Paper>
+      </Link>
 
       <Divider orientation="vertical" flexItem />
 
-      {/* Scrollable Area for Other Widgets with fixed width */}
-      <Box
-        sx={{
-          overflowX: "auto",
-          "&::-webkit-scrollbar": { display: "none" },
-        }}
-      >
-        <Stack direction="row" spacing={2}>
-          {otherWidgets.map((widget) => (
-            <Box key={widget.id}>{widget.content}</Box>
-          ))}
-        </Stack>
-      </Box>
-    </Stack>
+      {/* Other Widgets */}
+      {otherWidgets.map((widget) => (
+        <Link href={widget.link} as={widget.link}>
+          <Paper
+            key={widget.id}
+            sx={{
+              p: 2,
+              width: "25%",
+              height: "25%",
+              borderRadius: "50%",
+            }}
+          >
+            {widget.title}
+            {widget.content}
+          </Paper>
+        </Link>
+      ))}
+    </Grid>
   );
 }
 
