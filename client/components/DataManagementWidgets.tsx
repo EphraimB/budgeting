@@ -132,8 +132,16 @@ function DataManagementWidgets({
             borderRadius: "50%",
           }}
         >
-          <ArcText text={selectedWidget.title} direction="downward" />
-          <ArcText text={selectedWidget.content} direction="upward" />
+          <ArcText
+            text={selectedWidget.title}
+            direction="downward"
+            textAnchor="top"
+          />
+          <ArcText
+            text={selectedWidget.content}
+            direction="upward"
+            textAnchor="bottom"
+          />
         </Paper>
       </Link>
 
@@ -150,8 +158,16 @@ function DataManagementWidgets({
               borderRadius: "50%",
             }}
           >
-            <ArcText text={widget.title} direction="downward" />
-            <ArcText text={widget.content} direction="upward" />
+            <ArcText
+              text={widget.title}
+              direction="downward"
+              textAnchor="top"
+            />
+            <ArcText
+              text={widget.content}
+              direction="upward"
+              textAnchor="bottom"
+            />
           </Paper>
         </Link>
       ))}
