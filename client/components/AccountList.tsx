@@ -31,9 +31,6 @@ function AccountList({ accounts }: { accounts: Account[] }) {
       sx={{
         mb: 5,
         width: "100%",
-        overflowX: "scroll",
-        overflowY: "visible",
-        whiteSpace: "nowrap",
       }}
     >
       {accounts.map((account: Account) => (

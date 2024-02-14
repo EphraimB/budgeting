@@ -58,18 +58,16 @@ function DataManagementWidgets({
     <Stack
       direction="row"
       spacing={2}
-      sx={{ mb: 2, width: "100%", height: "20vh", alignItems: "flex-start" }}
+      sx={{ mb: 2, width: "100%", alignItems: "flex-start" }}
     >
       {/* Selected Widget with fixed width */}
-      <Box sx={{ width: "20%", height: "100%" }}>{selectedWidget.content}</Box>
+      <Box>{selectedWidget.content}</Box>
 
       <Divider orientation="vertical" flexItem />
 
       {/* Scrollable Area for Other Widgets with fixed width */}
       <Box
         sx={{
-          width: "100%",
-          height: "100%",
           overflowX: "auto",
           "&::-webkit-scrollbar": { display: "none" },
         }}
