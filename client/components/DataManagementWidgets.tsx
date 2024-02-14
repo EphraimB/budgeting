@@ -74,14 +74,7 @@ function DataManagementWidgets({
       >
         <Stack direction="row" spacing={2}>
           {otherWidgets.map((widget) => (
-            <Box
-              key={widget.id}
-              sx={{
-                width: "33%",
-              }}
-            >
-              {widget.content}
-            </Box>
+            <Box key={widget.id}>{widget.content}</Box>
           ))}
         </Stack>
       </Box>
