@@ -10,6 +10,7 @@ import dayjs, { Dayjs } from "dayjs";
 import Grid from "@mui/material/Grid";
 import Paper from "@mui/material/Paper";
 import Link from "next/link";
+import ArcText from "./ArcText";
 
 function DataManagementWidgets({
   account_id,
@@ -110,7 +111,13 @@ function DataManagementWidgets({
   const otherWidgets = widgets.filter((w) => w.id !== selectedWidget.id);
 
   return (
-    <Grid container spacing={2}>
+    <Grid
+      container
+      spacing={2}
+      sx={{
+        width: "100%",
+      }}
+    >
       {/* Selected Widget */}
       <Link
         key={selectedWidget.id}
@@ -125,8 +132,8 @@ function DataManagementWidgets({
             borderRadius: "50%",
           }}
         >
-          {selectedWidget.title}
-          {selectedWidget.content}
+          <ArcText text={selectedWidget.title} direction="downward" />
+          <ArcText text={selectedWidget.content} direction="upward" />
         </Paper>
       </Link>
 
@@ -143,8 +150,8 @@ function DataManagementWidgets({
               borderRadius: "50%",
             }}
           >
-            {widget.title}
-            {widget.content}
+            <ArcText text={widget.title} direction="downward" />
+            <ArcText text={widget.content} direction="upward" />
           </Paper>
         </Link>
       ))}
