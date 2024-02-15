@@ -111,65 +111,59 @@ function DataManagementWidgets({
   const otherWidgets = widgets.filter((w) => w.id !== selectedWidget.id);
 
   return (
-    <Grid
-      container
-      spacing={2}
-      sx={{
-        width: "100%",
-      }}
-    >
+    <Grid container direction="row" spacing={2}>
       {/* Selected Widget */}
-      <Link
-        key={selectedWidget.id}
-        href={selectedWidget.link}
-        as={selectedWidget.link}
-      >
-        <Paper
-          sx={{
-            p: 2,
-            width: "25%",
-            height: "25%",
-            borderRadius: "50%",
-          }}
+      <Grid item>
+        <Link
+          key={selectedWidget.id}
+          href={selectedWidget.link}
+          as={selectedWidget.link}
         >
-          <ArcText
-            text={selectedWidget.title}
-            direction="downward"
-            textAnchor="top"
-          />
-          <ArcText
-            text={selectedWidget.content}
-            direction="upward"
-            textAnchor="bottom"
-          />
-        </Paper>
-      </Link>
-
-      <Divider orientation="vertical" flexItem />
-
-      {/* Other Widgets */}
-      {otherWidgets.map((widget) => (
-        <Link key={widget.id} href={widget.link} as={widget.link}>
           <Paper
             sx={{
-              p: 2,
-              width: "25%",
-              height: "25%",
               borderRadius: "50%",
+              position: "relative",
             }}
           >
             <ArcText
-              text={widget.title}
+              text={selectedWidget.title}
               direction="downward"
               textAnchor="top"
             />
             <ArcText
-              text={widget.content}
+              text={selectedWidget.content}
               direction="upward"
               textAnchor="bottom"
             />
           </Paper>
         </Link>
+      </Grid>
+
+      <Divider orientation="vertical" flexItem />
+
+      {/* Other Widgets */}
+      {otherWidgets.map((widget) => (
+        <Grid item>
+          <Link href={widget.link} as={widget.link}>
+            <Paper
+              sx={{
+                borderRadius: "50%",
+                position: "relative",
+              }}
+            >
+              <ArcText
+                text={widget.title}
+                direction="downward"
+                textAnchor="top"
+              />
+              <ArcText
+                text={widget.content}
+                direction="upward"
+                textAnchor="bottom"
+              />
+            </Paper>
+          </Link>
+        </Grid>
       ))}
     </Grid>
   );
