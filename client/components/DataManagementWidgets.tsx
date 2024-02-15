@@ -101,7 +101,7 @@ function DataManagementWidgets({
         </CardActionArea>
       </Link>
 
-      {/* <Divider orientation="vertical" flexItem /> */}
+      <Divider orientation="vertical" flexItem />
 
       {/* Scrollable Area for Other Widgets */}
       <Box sx={{ overflowX: "auto", display: "flex" }}>
