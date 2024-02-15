@@ -1,12 +1,9 @@
 "use client";
 
 import React from "react";
-import Box from "@mui/material/Box";
-import Stack from "@mui/material/Stack";
 import Divider from "@mui/material/Divider";
 import { Expense, Loan, Tax } from "@/app/types/types";
 import { usePathname } from "next/navigation";
-import dayjs, { Dayjs } from "dayjs";
 import Grid from "@mui/material/Grid";
 import Paper from "@mui/material/Paper";
 import Link from "next/link";
@@ -14,7 +11,6 @@ import Typography from "@mui/material/Typography";
 import {
   calculateTotalWithTaxes,
   findLatestFullyPaidBackDate,
-  getTaxRate,
 } from "../utils/helperFunctions";
 
 function DataManagementWidgets({
