@@ -6,11 +6,13 @@ import { Expense, Loan, Tax } from "@/app/types/types";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
 import Typography from "@mui/material/Typography";
-import Box from "@mui/material/Box";
-import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
 import CardActionArea from "@mui/material/CardActionArea";
 import Stack from "@mui/material/Stack";
+import Box from "@mui/material/Box";
+import Card from "@mui/material/Card";
+import { useTheme } from "@mui/material/styles";
+import useMediaQuery from "@mui/material/useMediaQuery";
 import {
   calculateTotalWithTaxes,
   findLatestFullyPaidBackDate,
@@ -80,61 +82,63 @@ function DataManagementWidgets({
     widgets.find((widget) => widget.selected) || widgets[0];
   const otherWidgets = widgets.filter((w) => w.id !== selectedWidget.id);
 
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
+
   return (
-    <Stack direction="row" spacing={2} alignItems="center">
+    <Box
+      sx={{
+        display: "flex",
+        flexDirection: "row",
+        alignItems: "center",
+        width: "100%",
+        overflow: "hidden",
+      }}
+    >
       {/* Fixed Selected Widget */}
-      <Link
-        href={selectedWidget.link}
-        as={selectedWidget.link}
-        style={{ color: "inherit", textDecoration: "inherit" }}
-        passHref
-      >
-        <CardActionArea component="a">
-          <Card>
-            <CardContent>
-              <Typography gutterBottom variant="h5">
-                {selectedWidget.title}
-              </Typography>
-              <Typography variant="body2">{selectedWidget.content}</Typography>
-            </CardContent>
-          </Card>
-        </CardActionArea>
-      </Link>
+      <Card sx={{ flexShrink: 0 }}>
+        <CardContent>
+          <Typography gutterBottom variant="h5">
+            {selectedWidget.title}
+          </Typography>
+          <Typography variant="body2">{selectedWidget.content}</Typography>
+        </CardContent>
+      </Card>
 
       <Divider orientation="vertical" flexItem />
 
       {/* Scrollable Area for Other Widgets */}
-      <Box sx={{ overflowX: "auto", display: "flex" }}>
-        {otherWidgets.map((widget) => (
-          <Box
-            key={widget.id}
-            sx={{
-              minWidth: 160,
-              flexShrink: 0,
-              "&:not(:last-child)": { marginRight: 2 },
-            }}
-          >
-            <Link
-              href={widget.link}
-              as={widget.link}
-              style={{ color: "inherit", textDecoration: "inherit" }}
-              passHref
+      <Box sx={{ overflowX: "auto", display: "flex", flexGrow: 1 }}>
+        <Stack direction="row" spacing={2}>
+          {otherWidgets.map((widget) => (
+            <Card
+              key={widget.id}
+              sx={{
+                minWidth: isMobile ? 300 : 200,
+                width: "auto",
+                flexShrink: 0,
+              }}
             >
-              <CardActionArea component="a">
-                <Card>
+              <CardActionArea>
+                <Link
+                  href={widget.link}
+                  as={widget.link}
+                  style={{ color: "inherit", textDecoration: "inherit" }}
+                  passHref
+                >
                   <CardContent>
                     <Typography gutterBottom variant="h6">
                       {widget.title}
                     </Typography>
                     <Typography variant="body2">{widget.content}</Typography>
                   </CardContent>
-                </Card>
+                </Link>
               </CardActionArea>
-            </Link>
-          </Box>
-        ))}
+            </Card>
+          ))}
+        </Stack>
       </Box>
-    </Stack>
+    </Box>
   );
 }
 
