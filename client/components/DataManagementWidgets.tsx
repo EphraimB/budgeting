@@ -10,7 +10,12 @@ import dayjs, { Dayjs } from "dayjs";
 import Grid from "@mui/material/Grid";
 import Paper from "@mui/material/Paper";
 import Link from "next/link";
-import ArcText from "./ArcText";
+import Typography from "@mui/material/Typography";
+import {
+  calculateTotalWithTaxes,
+  findLatestFullyPaidBackDate,
+  getTaxRate,
+} from "../utils/helperFunctions";
 
 function DataManagementWidgets({
   account_id,
@@ -26,42 +31,6 @@ function DataManagementWidgets({
   const pathname = usePathname();
 
   const isSelected = (widgetId: string) => pathname.includes(widgetId);
-
-  // Function to find tax rate by tax_id
-  const getTaxRate = (tax_id: number | null) => {
-    if (!tax_id) return 0;
-
-    const tax = taxes.find((tax) => tax.id === tax_id);
-    return tax ? tax.rate : 0;
-  };
-
-  // Calculate total expenses including taxes
-  const totalWithTaxes = expenses.reduce((acc, expense) => {
-    const taxRate = getTaxRate(expense.tax_id);
-    const taxAmount = expense.amount * taxRate;
-    return acc + expense.amount + taxAmount;
-  }, 0);
-
-  function findLatestFullyPaidBackDate(loans: Loan[]): Dayjs | string | null {
-    if (loans.length === 0) return null; // Return null if no loans
-    // Check if any loan has not been fully paid back
-    if (loans.some((loan: Loan) => loan.fully_paid_back === null)) {
-      return "not in the near future";
-    }
-
-    // Convert all fully_paid_back dates to Day.js objects and find the max
-    let latest = dayjs(loans[0].fully_paid_back);
-    loans.forEach((loan: Loan) => {
-      const fullyPaidBackDate = dayjs(loan.fully_paid_back);
-      if (fullyPaidBackDate.isAfter(latest)) {
-        latest = fullyPaidBackDate;
-      }
-    });
-
-    latest ? latest.format("dddd, MMMM D, YYYY h:mm A") : null;
-
-    return latest;
-  }
 
   const latestFullyPaidBackDate = findLatestFullyPaidBackDate(loans);
 
@@ -82,7 +51,9 @@ function DataManagementWidgets({
         "linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('/img/expenses.png')",
       content: `You have ${expenses.length} expense${
         expenses.length === 1 ? "" : "s"
-      } with a total of $${totalWithTaxes.toFixed(2)} including taxes.`,
+      } with a total of $${calculateTotalWithTaxes(expenses, taxes).toFixed(
+        2
+      )} including taxes.`,
       selected: isSelected("expenses"),
     },
     {
@@ -113,54 +84,26 @@ function DataManagementWidgets({
   return (
     <Grid container direction="row" spacing={2}>
       {/* Selected Widget */}
-      <Grid item>
-        <Link
-          key={selectedWidget.id}
-          href={selectedWidget.link}
-          as={selectedWidget.link}
-        >
-          <Paper
-            sx={{
-              borderRadius: "50%",
-              position: "relative",
-            }}
-          >
-            <ArcText
-              text={selectedWidget.title}
-              direction="downward"
-              textAnchor="top"
-            />
-            <ArcText
-              text={selectedWidget.content}
-              direction="upward"
-              textAnchor="bottom"
-            />
+      <Grid key={selectedWidget.id} item>
+        <Link href={selectedWidget.link} as={selectedWidget.link}>
+          <Paper sx={{ p: 2 }}>
+            <Typography variant="h6">{selectedWidget.title}</Typography>
+            <Typography variant="body1">{selectedWidget.content}</Typography>
           </Paper>
         </Link>
       </Grid>
 
-      <Divider orientation="vertical" flexItem />
+      {/* <Grid item>
+        <Divider orientation="vertical" flexItem />
+      </Grid> */}
 
       {/* Other Widgets */}
       {otherWidgets.map((widget) => (
-        <Grid item>
+        <Grid key={widget.id} item>
           <Link href={widget.link} as={widget.link}>
-            <Paper
-              sx={{
-                borderRadius: "50%",
-                position: "relative",
-              }}
-            >
-              <ArcText
-                text={widget.title}
-                direction="downward"
-                textAnchor="top"
-              />
-              <ArcText
-                text={widget.content}
-                direction="upward"
-                textAnchor="bottom"
-              />
+            <Paper sx={{ p: 2 }}>
+              <Typography variant="h6">{widget.title}</Typography>
+              <Typography variant="body1">{widget.content}</Typography>
             </Paper>
           </Link>
         </Grid>

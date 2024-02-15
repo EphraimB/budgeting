@@ -1,4 +1,5 @@
-import dayjs from "dayjs";
+import { Loan, Tax } from "@/app/types/types";
+import dayjs, { Dayjs } from "dayjs";
 
 export const getFrequency = (row: any): string => {
   let expenseFrequency;
@@ -103,4 +104,50 @@ export const getFrequency = (row: any): string => {
   }
 
   return expenseFrequency;
+};
+
+export const findLatestFullyPaidBackDate = (
+  loans: Loan[]
+): Dayjs | string | null => {
+  if (loans.length === 0) return null; // Return null if no loans
+  // Check if any loan has not been fully paid back
+  if (loans.some((loan: Loan) => loan.fully_paid_back === null)) {
+    return "not in the near future";
+  }
+
+  // Convert all fully_paid_back dates to Day.js objects and find the max
+  let latest = dayjs(loans[0].fully_paid_back);
+  loans.forEach((loan: Loan) => {
+    const fullyPaidBackDate = dayjs(loan.fully_paid_back);
+    if (fullyPaidBackDate.isAfter(latest)) {
+      latest = fullyPaidBackDate;
+    }
+  });
+
+  latest ? latest.format("dddd, MMMM D, YYYY h:mm A") : null;
+
+  return latest;
+};
+
+export const getTaxRate = (taxes: Tax[], tax_id: number | null) => {
+  if (!tax_id) return 0;
+
+  const tax = taxes.find((tax) => tax.id === tax_id);
+  return tax ? tax.rate : 0;
+};
+
+// Calculate total expenses including taxes
+export const calculateTotalWithTaxes = (
+  transaction: any,
+  taxes: Tax[]
+): number => {
+  const totalWithTaxes = transaction.reduce((acc: number, transaction: any) => {
+    if (!transaction.tax_id) return 0;
+
+    const taxRate = getTaxRate(taxes, transaction.tax_id);
+    const taxAmount = transaction.amount * taxRate;
+    return acc + transaction.amount + taxAmount;
+  }, 0);
+
+  return totalWithTaxes;
 };
