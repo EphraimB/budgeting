@@ -116,7 +116,7 @@ function DataManagementWidgets({
           >
             <Link
               href={widget.link}
-              as={selectedWidget.link}
+              as={widget.link}
               style={{ color: "inherit", textDecoration: "inherit" }}
               passHref
             >
