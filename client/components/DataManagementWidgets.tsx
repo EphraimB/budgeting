@@ -85,7 +85,7 @@ function DataManagementWidgets({
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
-  const widgetWidth = isMobile ? "80vw" : "25vw"; // Adjust widget width here
+  const widgetWidth = "25vw"; // Adjust widget width here
 
   return (
     <Box sx={{ display: "flex", flexDirection: "row", p: 2 }}>
