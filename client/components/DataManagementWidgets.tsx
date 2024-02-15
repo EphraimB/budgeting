@@ -84,8 +84,12 @@ function DataManagementWidgets({
   return (
     <Grid container direction="row" spacing={2}>
       {/* Selected Widget */}
-      <Grid key={selectedWidget.id} item>
-        <Link href={selectedWidget.link} as={selectedWidget.link}>
+      <Grid key={selectedWidget.id} item xs={5} md={2}>
+        <Link
+          href={selectedWidget.link}
+          as={selectedWidget.link}
+          style={{ color: "inherit", textDecoration: "inherit" }}
+        >
           <Paper sx={{ p: 2 }}>
             <Typography variant="h6">{selectedWidget.title}</Typography>
             <Typography variant="body1">{selectedWidget.content}</Typography>
@@ -93,14 +97,18 @@ function DataManagementWidgets({
         </Link>
       </Grid>
 
-      {/* <Grid item>
+      <Grid item xs={2} md={1}>
         <Divider orientation="vertical" flexItem />
-      </Grid> */}
+      </Grid>
 
       {/* Other Widgets */}
       {otherWidgets.map((widget) => (
-        <Grid key={widget.id} item>
-          <Link href={widget.link} as={widget.link}>
+        <Grid key={widget.id} item xs={5} md={2}>
+          <Link
+            href={widget.link}
+            as={widget.link}
+            style={{ color: "inherit", textDecoration: "inherit" }}
+          >
             <Paper sx={{ p: 2 }}>
               <Typography variant="h6">{widget.title}</Typography>
               <Typography variant="body1">{widget.content}</Typography>
