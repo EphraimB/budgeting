@@ -85,58 +85,57 @@ function DataManagementWidgets({
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
+  const widgetWidth = isMobile ? "80vw" : "25vw"; // Adjust widget width here
+
   return (
-    <Box
-      sx={{
-        display: "flex",
-        flexDirection: "row",
-        alignItems: "center",
-        width: "100%",
-        overflow: "hidden",
-      }}
-    >
-      {/* Fixed Selected Widget */}
-      <Card sx={{ flexShrink: 0 }}>
-        <CardContent>
-          <Typography gutterBottom variant="h5">
-            {selectedWidget.title}
-          </Typography>
-          <Typography variant="body2">{selectedWidget.content}</Typography>
-        </CardContent>
-      </Card>
+    <Box sx={{ display: "flex", flexDirection: "row", p: 2 }}>
+      {/* Selected Widget stays fixed */}
+      <Box sx={{ mb: 2 }}>
+        <Card raised sx={{ width: widgetWidth }}>
+          <CardContent>
+            <Typography gutterBottom variant="h5">
+              {selectedWidget.title}
+            </Typography>
+            <Typography variant="body2">{selectedWidget.content}</Typography>
+          </CardContent>
+        </Card>
+      </Box>
 
-      <Divider orientation="vertical" flexItem />
+      <Divider orientation="vertical" />
 
-      {/* Scrollable Area for Other Widgets */}
-      <Box sx={{ overflowX: "auto", display: "flex", flexGrow: 1 }}>
-        <Stack direction="row" spacing={2}>
-          {otherWidgets.map((widget) => (
-            <Card
+      {/* Scrollable Row for Other Widgets */}
+      <Box sx={{ overflowX: "auto", p: 1, position: "relative" }}>
+        <Box sx={{ display: "flex", flexDirection: "row", p: 1 }}>
+          {otherWidgets.map((widget, index) => (
+            <Box
               key={widget.id}
               sx={{
-                minWidth: isMobile ? 300 : 200,
-                width: "auto",
+                width: widgetWidth,
+                mr: -4, // Negative margin to create the overlap effect
                 flexShrink: 0,
+                ":last-child": {
+                  mr: 0, // Remove negative margin for the last widget
+                },
               }}
             >
-              <CardActionArea>
-                <Link
-                  href={widget.link}
-                  as={widget.link}
-                  style={{ color: "inherit", textDecoration: "inherit" }}
-                  passHref
-                >
+              <Link
+                href={widget.link}
+                as={widget.link}
+                style={{ color: "inherit", textDecoration: "inherit" }}
+                passHref
+              >
+                <Card raised sx={{ width: "100%", cursor: "pointer" }}>
                   <CardContent>
                     <Typography gutterBottom variant="h6">
                       {widget.title}
                     </Typography>
                     <Typography variant="body2">{widget.content}</Typography>
                   </CardContent>
-                </Link>
-              </CardActionArea>
-            </Card>
+                </Card>
+              </Link>
+            </Box>
           ))}
-        </Stack>
+        </Box>
       </Box>
     </Box>
   );
