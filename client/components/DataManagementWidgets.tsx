@@ -4,10 +4,13 @@ import React from "react";
 import Divider from "@mui/material/Divider";
 import { Expense, Loan, Tax } from "@/app/types/types";
 import { usePathname } from "next/navigation";
-import Grid from "@mui/material/Grid";
-import Paper from "@mui/material/Paper";
 import Link from "next/link";
 import Typography from "@mui/material/Typography";
+import Box from "@mui/material/Box";
+import Card from "@mui/material/Card";
+import CardContent from "@mui/material/CardContent";
+import CardActionArea from "@mui/material/CardActionArea";
+import Stack from "@mui/material/Stack";
 import {
   calculateTotalWithTaxes,
   findLatestFullyPaidBackDate,
@@ -78,41 +81,60 @@ function DataManagementWidgets({
   const otherWidgets = widgets.filter((w) => w.id !== selectedWidget.id);
 
   return (
-    <Grid container direction="row" spacing={2}>
-      {/* Selected Widget */}
-      <Grid key={selectedWidget.id} item xs={5} md={2}>
-        <Link
-          href={selectedWidget.link}
-          as={selectedWidget.link}
-          style={{ color: "inherit", textDecoration: "inherit" }}
-        >
-          <Paper sx={{ p: 2 }}>
-            <Typography variant="h6">{selectedWidget.title}</Typography>
-            <Typography variant="body1">{selectedWidget.content}</Typography>
-          </Paper>
-        </Link>
-      </Grid>
+    <Stack direction="row" spacing={2} alignItems="center">
+      {/* Fixed Selected Widget */}
+      <Link
+        href={selectedWidget.link}
+        as={selectedWidget.link}
+        style={{ color: "inherit", textDecoration: "inherit" }}
+        passHref
+      >
+        <CardActionArea component="a">
+          <Card>
+            <CardContent>
+              <Typography gutterBottom variant="h5">
+                {selectedWidget.title}
+              </Typography>
+              <Typography variant="body2">{selectedWidget.content}</Typography>
+            </CardContent>
+          </Card>
+        </CardActionArea>
+      </Link>
 
-      <Grid item xs={2} md={1}>
-        <Divider orientation="vertical" flexItem />
-      </Grid>
+      {/* <Divider orientation="vertical" flexItem /> */}
 
-      {/* Other Widgets */}
-      {otherWidgets.map((widget) => (
-        <Grid key={widget.id} item xs={5} md={2}>
-          <Link
-            href={widget.link}
-            as={widget.link}
-            style={{ color: "inherit", textDecoration: "inherit" }}
+      {/* Scrollable Area for Other Widgets */}
+      <Box sx={{ overflowX: "auto", display: "flex" }}>
+        {otherWidgets.map((widget) => (
+          <Box
+            key={widget.id}
+            sx={{
+              minWidth: 160,
+              flexShrink: 0,
+              "&:not(:last-child)": { marginRight: 2 },
+            }}
           >
-            <Paper sx={{ p: 2 }}>
-              <Typography variant="h6">{widget.title}</Typography>
-              <Typography variant="body1">{widget.content}</Typography>
-            </Paper>
-          </Link>
-        </Grid>
-      ))}
-    </Grid>
+            <Link
+              href={widget.link}
+              as={selectedWidget.link}
+              style={{ color: "inherit", textDecoration: "inherit" }}
+              passHref
+            >
+              <CardActionArea component="a">
+                <Card>
+                  <CardContent>
+                    <Typography gutterBottom variant="h6">
+                      {widget.title}
+                    </Typography>
+                    <Typography variant="body2">{widget.content}</Typography>
+                  </CardContent>
+                </Card>
+              </CardActionArea>
+            </Link>
+          </Box>
+        ))}
+      </Box>
+    </Stack>
   );
 }
 
