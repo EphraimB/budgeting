@@ -43,7 +43,7 @@ function DataManagementWidgets({
     {
       id: "transactions",
       title: "Transactions",
-      link: `/${account_id}/transactions`,
+      link: `/${account_id}/`,
       backgroundImage: "url('/img/back-to-transactions.png')",
       content: "Click here to view transactions",
       selected: isSelected("transactions"),
@@ -85,13 +85,13 @@ function DataManagementWidgets({
   const handleScroll = () => {
     const container = refContainer.current;
 
-    // Check that the container is not null
     if (container) {
       const { scrollLeft, offsetWidth } = container;
       const centerPosition = scrollLeft + offsetWidth / 2;
 
-      widgets.forEach((_, i) => {
-        const card = container.children[i];
+      Array.from(container.children).forEach((child, i) => {
+        // Use type assertion here
+        const card = child as HTMLElement;
         const cardLeft = card.offsetLeft;
         const cardWidth = card.offsetWidth;
         const cardCenter = cardLeft + cardWidth / 2;
@@ -117,7 +117,7 @@ function DataManagementWidgets({
   const widgetWidth = "25vw"; // Adjust widget width here
 
   return (
-    <Stack spacing={2} sx={{ position: "absolute" }}>
+    <Stack spacing={2} direction="row">
       {/* Selected Widget stays fixed */}
       <Box sx={{ mb: 2 }}>
         <Card raised sx={{ width: widgetWidth }}>
@@ -141,23 +141,16 @@ function DataManagementWidgets({
         {otherWidgets.map((widget, index) => (
           <motion.div
             key={widget.id}
-            animate={{
-              scale:
-                1 -
-                Math.min(
-                  Math.abs(cardCenter - centerPosition) / offsetWidth,
-                  0.2
-                ),
-              transition: { duration: 0.2 },
-            }}
+            animate={controls}
             initial={{ scale: 0.8 }}
           >
-            <Link href={widget.link} passHref>
-              <Card
-                component="a"
-                raised
-                sx={{ minWidth: 300, cursor: "pointer", m: 1 }}
-              >
+            <Link
+              href={widget.link}
+              as={widget.link}
+              style={{ color: "inherit", textDecoration: "inherit" }}
+              passHref
+            >
+              <Card component="a" raised sx={{ width: widgetWidth }}>
                 <CardContent>
                   <Typography variant="h5">{widget.title}</Typography>
                   <Typography variant="body2">{widget.content}</Typography>
