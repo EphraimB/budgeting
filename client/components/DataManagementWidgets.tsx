@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useRef } from "react";
 import Divider from "@mui/material/Divider";
 import { Expense, Loan, Tax } from "@/app/types/types";
 import { usePathname } from "next/navigation";
@@ -11,6 +11,7 @@ import CardActionArea from "@mui/material/CardActionArea";
 import Stack from "@mui/material/Stack";
 import Box from "@mui/material/Box";
 import Card from "@mui/material/Card";
+import { motion, useAnimation } from "framer-motion";
 import { useTheme } from "@mui/material/styles";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import {
@@ -34,6 +35,9 @@ function DataManagementWidgets({
   const isSelected = (widgetId: string) => pathname.includes(widgetId);
 
   const latestFullyPaidBackDate = findLatestFullyPaidBackDate(loans);
+
+  const controls = useAnimation();
+  const refContainer = useRef<HTMLDivElement>(null);
 
   const widgets = [
     {
@@ -78,6 +82,31 @@ function DataManagementWidgets({
     },
   ];
 
+  const handleScroll = () => {
+    const container = refContainer.current;
+
+    // Check that the container is not null
+    if (container) {
+      const { scrollLeft, offsetWidth } = container;
+      const centerPosition = scrollLeft + offsetWidth / 2;
+
+      widgets.forEach((_, i) => {
+        const card = container.children[i];
+        const cardLeft = card.offsetLeft;
+        const cardWidth = card.offsetWidth;
+        const cardCenter = cardLeft + cardWidth / 2;
+
+        const scale =
+          1 -
+          Math.min(Math.abs(cardCenter - centerPosition) / offsetWidth, 0.2);
+        controls.start({
+          scale: scale,
+          transition: { duration: 0.2 },
+        });
+      });
+    }
+  };
+
   const selectedWidget =
     widgets.find((widget) => widget.selected) || widgets[0];
   const otherWidgets = widgets.filter((w) => w.id !== selectedWidget.id);
@@ -88,7 +117,7 @@ function DataManagementWidgets({
   const widgetWidth = "25vw"; // Adjust widget width here
 
   return (
-    <Box sx={{ display: "flex", flexDirection: "row", p: 2 }}>
+    <Stack spacing={2} sx={{ position: "absolute" }}>
       {/* Selected Widget stays fixed */}
       <Box sx={{ mb: 2 }}>
         <Card raised sx={{ width: widgetWidth }}>
@@ -104,40 +133,41 @@ function DataManagementWidgets({
       <Divider orientation="vertical" />
 
       {/* Scrollable Row for Other Widgets */}
-      <Box sx={{ overflowX: "auto", p: 1, position: "relative" }}>
-        <Box sx={{ display: "flex", flexDirection: "row", p: 1 }}>
-          {otherWidgets.map((widget, index) => (
-            <Box
-              key={widget.id}
-              sx={{
-                width: widgetWidth,
-                mr: -4, // Negative margin to create the overlap effect
-                flexShrink: 0,
-                ":last-child": {
-                  mr: 0, // Remove negative margin for the last widget
-                },
-              }}
-            >
-              <Link
-                href={widget.link}
-                as={widget.link}
-                style={{ color: "inherit", textDecoration: "inherit" }}
-                passHref
+      <Box
+        ref={refContainer}
+        sx={{ display: "flex", overflowX: "scroll" }}
+        onScroll={handleScroll}
+      >
+        {otherWidgets.map((widget, index) => (
+          <motion.div
+            key={widget.id}
+            animate={{
+              scale:
+                1 -
+                Math.min(
+                  Math.abs(cardCenter - centerPosition) / offsetWidth,
+                  0.2
+                ),
+              transition: { duration: 0.2 },
+            }}
+            initial={{ scale: 0.8 }}
+          >
+            <Link href={widget.link} passHref>
+              <Card
+                component="a"
+                raised
+                sx={{ minWidth: 300, cursor: "pointer", m: 1 }}
               >
-                <Card raised sx={{ width: "100%", cursor: "pointer" }}>
-                  <CardContent>
-                    <Typography gutterBottom variant="h6">
-                      {widget.title}
-                    </Typography>
-                    <Typography variant="body2">{widget.content}</Typography>
-                  </CardContent>
-                </Card>
-              </Link>
-            </Box>
-          ))}
-        </Box>
+                <CardContent>
+                  <Typography variant="h5">{widget.title}</Typography>
+                  <Typography variant="body2">{widget.content}</Typography>
+                </CardContent>
+              </Card>
+            </Link>
+          </motion.div>
+        ))}
       </Box>
-    </Box>
+    </Stack>
   );
 }
 
