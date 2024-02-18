@@ -142,8 +142,6 @@ export const calculateTotalWithTaxes = (
   taxes: Tax[]
 ): number => {
   const totalWithTaxes = transaction.reduce((acc: number, transaction: any) => {
-    if (!transaction.tax_id) return 0;
-
     const taxRate = getTaxRate(taxes, transaction.tax_id);
     const taxAmount = transaction.amount * taxRate;
     return acc + transaction.amount + taxAmount;

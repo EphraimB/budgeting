@@ -130,7 +130,7 @@ function DataManagementWidgets({
         </Card>
       </Box>
 
-      <Divider orientation="vertical" />
+      <Divider orientation="vertical" flexItem />
 
       {/* Scrollable Row for Other Widgets */}
       <Box
