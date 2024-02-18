@@ -150,7 +150,7 @@ function DataManagementWidgets({
               style={{ color: "inherit", textDecoration: "inherit" }}
               passHref
             >
-              <Card component="a" raised sx={{ width: widgetWidth }}>
+              <Card raised sx={{ width: widgetWidth }}>
                 <CardContent>
                   <Typography variant="h5">{widget.title}</Typography>
                   <Typography variant="body2">{widget.content}</Typography>
