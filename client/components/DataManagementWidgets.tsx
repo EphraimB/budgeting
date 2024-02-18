@@ -117,25 +117,27 @@ function DataManagementWidgets({
   const widgetWidth = "25vw"; // Adjust widget width here
 
   return (
-    <Stack spacing={2} direction="row">
+    <Box sx={{ display: "flex", justifyContent: "flex-start" }}>
       {/* Selected Widget stays fixed */}
-      <Box sx={{ mb: 2 }}>
-        <Card raised sx={{ width: widgetWidth }}>
-          <CardContent>
-            <Typography gutterBottom variant="h5">
-              {selectedWidget.title}
-            </Typography>
-            <Typography variant="body2">{selectedWidget.content}</Typography>
-          </CardContent>
-        </Card>
-      </Box>
+      <Card raised sx={{ width: widgetWidth }}>
+        <CardContent>
+          <Typography gutterBottom variant="h5">
+            {selectedWidget.title}
+          </Typography>
+          <Typography variant="body2">{selectedWidget.content}</Typography>
+        </CardContent>
+      </Card>
 
-      <Divider orientation="vertical" flexItem />
+      <Divider orientation="vertical" />
 
       {/* Scrollable Row for Other Widgets */}
       <Box
         ref={refContainer}
-        sx={{ display: "flex", overflowX: "scroll" }}
+        sx={{
+          display: "flex",
+          justifyContent: "flex-start",
+          overflowX: "scroll",
+        }}
         onScroll={handleScroll}
       >
         {otherWidgets.map((widget, index) => (
@@ -160,7 +162,7 @@ function DataManagementWidgets({
           </motion.div>
         ))}
       </Box>
-    </Stack>
+    </Box>
   );
 }
 
