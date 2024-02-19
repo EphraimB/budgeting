@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useRef } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import Divider from "@mui/material/Divider";
 import { Expense, Loan, Tax } from "@/app/types/types";
 import { usePathname } from "next/navigation";
@@ -11,7 +11,7 @@ import CardActionArea from "@mui/material/CardActionArea";
 import Stack from "@mui/material/Stack";
 import Box from "@mui/material/Box";
 import Card from "@mui/material/Card";
-import { motion, useAnimation } from "framer-motion";
+import { motion, useScroll, useTransform } from "framer-motion";
 import { useTheme } from "@mui/material/styles";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import {
@@ -30,14 +30,17 @@ function DataManagementWidgets({
   loans: Loan[];
   taxes: Tax[];
 }) {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [centeredIndex, setCenteredIndex] = useState(0);
+
   const pathname = usePathname();
 
   const isSelected = (widgetId: string) => pathname.includes(widgetId);
 
   const latestFullyPaidBackDate = findLatestFullyPaidBackDate(loans);
 
-  const controls = useAnimation();
-  const refContainer = useRef<HTMLDivElement>(null);
+  // const controls = useAnimation();
+  // const refContainer = useRef<HTMLDivElement>(null);
 
   const widgets = [
     {
@@ -82,44 +85,38 @@ function DataManagementWidgets({
     },
   ];
 
-  const handleScroll = () => {
-    const container = refContainer.current;
-
-    if (container) {
-      const { scrollLeft, offsetWidth } = container;
-      const centerPosition = scrollLeft + offsetWidth / 2;
-
-      Array.from(container.children).forEach((child, i) => {
-        // Use type assertion here
-        const card = child as HTMLElement;
-        const cardLeft = card.offsetLeft;
-        const cardWidth = card.offsetWidth;
-        const cardCenter = cardLeft + cardWidth / 2;
-
-        const scale =
-          1 -
-          Math.min(Math.abs(cardCenter - centerPosition) / offsetWidth, 0.2);
-        controls.start({
-          scale: scale,
-          transition: { duration: 0.2 },
-        });
-      });
-    }
-  };
-
   const selectedWidget =
     widgets.find((widget) => widget.selected) || widgets[0];
   const otherWidgets = widgets.filter((w) => w.id !== selectedWidget.id);
 
-  const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
+  useEffect(() => {
+    const handleScroll = () => {
+      const container = containerRef.current;
+      if (!container) return;
 
-  const widgetWidth = "25vw"; // Adjust widget width here
+      const scrollCenter = container.scrollLeft + container.offsetWidth / 2;
+      // Use the first child for width reference if it exists and is an HTMLElement
+      const childWidth =
+        container.firstChild instanceof HTMLElement
+          ? container.firstChild.offsetWidth
+          : 0;
+      if (childWidth === 0) return;
+
+      const newCenteredIndex = Math.round(scrollCenter / childWidth - 0.5);
+      setCenteredIndex(newCenteredIndex);
+    };
+
+    containerRef.current?.addEventListener("scroll", handleScroll);
+
+    return () => {
+      containerRef.current?.removeEventListener("scroll", handleScroll);
+    };
+  }, []);
 
   return (
     <Box sx={{ display: "flex", justifyContent: "flex-start" }}>
       {/* Selected Widget stays fixed */}
-      <Card raised sx={{ width: widgetWidth }}>
+      <Card raised sx={{ width: 300, height: 200 }}>
         <CardContent>
           <Typography gutterBottom variant="h5">
             {selectedWidget.title}
@@ -127,40 +124,44 @@ function DataManagementWidgets({
           <Typography variant="body2">{selectedWidget.content}</Typography>
         </CardContent>
       </Card>
-
-      <Divider orientation="vertical" />
-
+      <Divider orientation="vertical" flexItem sx={{ ml: 1, mr: 1 }} />
       {/* Scrollable Row for Other Widgets */}
-      <Box
-        ref={refContainer}
-        sx={{
-          display: "flex",
-          justifyContent: "flex-start",
-          overflowX: "scroll",
-        }}
-        onScroll={handleScroll}
-      >
-        {otherWidgets.map((widget, index) => (
-          <motion.div
-            key={widget.id}
-            animate={controls}
-            initial={{ scale: 0.8 }}
-          >
-            <Link
-              href={widget.link}
-              as={widget.link}
-              style={{ color: "inherit", textDecoration: "inherit" }}
-              passHref
+      <Box ref={containerRef} sx={{ overflowX: "scroll", display: "flex" }}>
+        {otherWidgets.map((widget, index) => {
+          const isCentered = index === centeredIndex;
+          const scale = isCentered ? 1 : 0.8;
+
+          return (
+            <motion.div
+              key={widget.id}
+              style={{
+                scale: isCentered ? 1 : 0.8,
+                zIndex: isCentered ? 1 : 0,
+                flexShrink: 0,
+                left: -16,
+                cursor: "pointer",
+              }}
+              initial={{ scale: 0.8 }}
+              animate={{ scale }}
+              transition={{ type: "spring", stiffness: 300 }}
             >
-              <Card raised sx={{ width: widgetWidth }}>
-                <CardContent>
-                  <Typography variant="h5">{widget.title}</Typography>
-                  <Typography variant="body2">{widget.content}</Typography>
-                </CardContent>
-              </Card>
-            </Link>
-          </motion.div>
-        ))}
+              <Link
+                href={widget.link}
+                style={{ color: "inherit", textDecoration: "inherit" }}
+                passHref
+              >
+                <Card sx={{ width: 300, height: 200, cursor: "pointer" }}>
+                  {" "}
+                  {/* Adjust size as needed */}
+                  <CardContent>
+                    <Typography variant="h5">{widget.title}</Typography>
+                    <Typography variant="body2">{widget.content}</Typography>
+                  </CardContent>
+                </Card>
+              </Link>
+            </motion.div>
+          );
+        })}
       </Box>
     </Box>
   );
