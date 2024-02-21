@@ -1,17 +1,14 @@
 "use client";
 
 import React, { useState, useEffect, useRef } from "react";
-import Divider from "@mui/material/Divider";
 import { Expense, Loan, Tax } from "@/app/types/types";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
 import Typography from "@mui/material/Typography";
 import CardContent from "@mui/material/CardContent";
-import CardActionArea from "@mui/material/CardActionArea";
 import Stack from "@mui/material/Stack";
-import Box from "@mui/material/Box";
 import Card from "@mui/material/Card";
-import { motion, useScroll, useTransform } from "framer-motion";
+import { motion } from "framer-motion";
 import { useTheme } from "@mui/material/styles";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import {
