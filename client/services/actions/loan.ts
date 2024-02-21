@@ -2,8 +2,26 @@
 
 import { revalidatePath } from "next/cache";
 
-export async function addLoan(loan: any) {
-  const response = await fetch(`http://server:5001/api/loans`, {
+interface LoanRequest {
+  account_id: number;
+  recipient: string;
+  amount: number;
+  plan_amount: number;
+  title: string;
+  description: string;
+  frequency_type: number;
+  frequency_type_variable: number | null;
+  frequency_day_of_week: number | null;
+  frequency_week_of_month: number | null;
+  frequency_month_of_year: number | null;
+  subsidized: number;
+  interest_rate: number;
+  interest_frequency_type: number;
+  begin_date: string;
+}
+
+export async function addLoan(loan: LoanRequest) {
+  const response = await fetch("http://server:5001/api/loans", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -12,11 +30,11 @@ export async function addLoan(loan: any) {
   });
   const result = await response.json();
 
-  revalidatePath("/loans");
+  revalidatePath("/[account_id]", "page");
   return result;
 }
 
-export async function editLoan(loan: any, id: number) {
+export async function editLoan(loan: LoanRequest, id: number) {
   const response = await fetch(`http://server:5001/api/loans/${id}`, {
     method: "PUT",
     headers: {
@@ -26,7 +44,7 @@ export async function editLoan(loan: any, id: number) {
   });
   const result = await response.json();
 
-  revalidatePath("/loans");
+  revalidatePath("/[account_id]", "page");
   return result;
 }
 
@@ -35,5 +53,5 @@ export async function deleteLoan(id: number) {
     method: "DELETE",
   });
 
-  revalidatePath("/loans");
+  revalidatePath("/[account_id]", "page");
 }

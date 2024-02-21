@@ -4,6 +4,24 @@ export interface HeadCell {
   numeric: boolean;
 }
 
+export interface TransactionHistory {
+  id: number;
+  account_id: number;
+  amount: number;
+  title: string;
+  description: string;
+  date_created: string;
+  date_modified: string;
+}
+
+export interface Account {
+  account_id: number;
+  account_name: string;
+  account_balance: number;
+  date_created: string;
+  date_modified: string;
+}
+
 export interface Expense {
   id: number;
   account_id: number;
@@ -20,6 +38,7 @@ export interface Expense {
   subsidized: number;
   begin_date: string;
   end_date: string | null;
+  next_date: string | null;
   date_created: string;
   date_modified: string;
 }
@@ -27,7 +46,9 @@ export interface Expense {
 export interface Loan {
   id: number;
   account_id: number;
+  recipient: string;
   amount: number;
+  plan_amount: number;
   title: string;
   description: string;
   frequency_type: number;
@@ -37,13 +58,17 @@ export interface Loan {
   frequency_week_of_month: number | null;
   frequency_month_of_year: number | null;
   subsidized: number;
+  interest_rate: number;
+  interest_frequency_type: number;
   begin_date: string;
   end_date: string | null;
+  fully_paid_back: string | null;
+  next_date: string | null;
   date_created: string;
   date_modified: string;
 }
 
-export interface Taxes {
+export interface Tax {
   id: number;
   rate: number;
   title: string;
@@ -51,4 +76,23 @@ export interface Taxes {
   type: number;
   date_created: string;
   date_modified: string;
+}
+
+interface Transaction {
+  id: string;
+  title: string;
+  description: string;
+  date: string;
+  amount: number;
+  tax_rate: number | null;
+  total_amount: number;
+  balance: number;
+  date_created: string;
+  date_modified: string;
+}
+
+export interface GeneratedTransaction {
+  account_id: number;
+  current_balance: number;
+  transactions: Transaction[];
 }
