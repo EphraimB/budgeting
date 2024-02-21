@@ -1,130 +1,5 @@
-import { useMemo } from "react";
-import dayjs from "dayjs";
-
-export const descendingComparator = <T>(a: T, b: T, orderBy: keyof T) => {
-  if (b[orderBy] < a[orderBy]) {
-    return -1;
-  }
-  if (b[orderBy] > a[orderBy]) {
-    return 1;
-  }
-  return 0;
-};
-
-export type Order = "asc" | "desc";
-
-export const getComparator = <Key extends keyof any>(
-  order: Order,
-  orderBy: Key
-): ((
-  a: { [key in Key]: number | string },
-  b: { [key in Key]: number | string }
-) => number) => {
-  return order === "desc"
-    ? (a, b) => descendingComparator(a, b, orderBy)
-    : (a, b) => -descendingComparator(a, b, orderBy);
-};
-
-export const stableSort = <T>(
-  array: readonly T[],
-  comparator: (a: T, b: T) => number
-) => {
-  const stabilizedThis = array.map((el, index) => [el, index] as [T, number]);
-  stabilizedThis.sort((a, b) => {
-    const order = comparator(a[0], b[0]);
-    if (order !== 0) {
-      return order;
-    }
-    return a[1] - b[1];
-  });
-  return stabilizedThis.map((el) => el[0]);
-};
-
-export const handleRequestSort = (
-  event: React.MouseEvent<unknown>,
-  property: string,
-  order: Order, // current order state
-  orderBy: string, // current orderBy state
-  setOrder: any, // function to set order
-  setOrderBy: any // function to set orderBy
-) => {
-  const isAsc = orderBy === property && order === "asc";
-  setOrder(isAsc ? "desc" : "asc");
-  setOrderBy(property);
-};
-
-export const handleSelectAllClick = (
-  event: React.ChangeEvent<HTMLInputElement>,
-  row: any[],
-  setSelected: any
-) => {
-  if (event.target.checked) {
-    const newSelected = row.map((n: any) => n);
-    setSelected(newSelected);
-    return;
-  }
-  setSelected([]);
-};
-
-export const handleClick = (
-  event: React.MouseEvent<unknown>,
-  row: any,
-  selected: any[],
-  setSelected: any
-) => {
-  const selectedIndex = selected.findIndex((e) => e.id === row.id);
-  let newSelected: any[] = [];
-
-  if (selectedIndex === -1) {
-    newSelected = [...selected, row];
-  } else if (selectedIndex === 0) {
-    newSelected = selected.slice(1);
-  } else if (selectedIndex === selected.length - 1) {
-    newSelected = selected.slice(0, -1);
-  } else if (selectedIndex > 0) {
-    newSelected = [
-      ...selected.slice(0, selectedIndex),
-      ...selected.slice(selectedIndex + 1),
-    ];
-  }
-
-  setSelected(newSelected);
-};
-
-export const handleChangePage = (
-  event: unknown,
-  newPage: number,
-  setPage: any
-) => {
-  setPage(newPage);
-};
-
-export const handleChangeRowsPerPage = (
-  event: React.ChangeEvent<HTMLInputElement>,
-  setRowsPerPage: any,
-  setPage: any
-) => {
-  setRowsPerPage(parseInt(event.target.value, 10));
-  setPage(0);
-};
-
-export const isSelected = (id: number, selected: any) =>
-  selected.some((row: any) => row.id === id);
-
-export const useVisibleRows = (
-  rows: any[],
-  order: Order,
-  orderBy: string,
-  page: number,
-  rowsPerPage: number
-) => {
-  return useMemo(() => {
-    return stableSort(rows, getComparator(order, orderBy)).slice(
-      page * rowsPerPage,
-      page * rowsPerPage + rowsPerPage
-    );
-  }, [rows, order, orderBy, page, rowsPerPage]);
-};
+import { Loan, Tax } from "@/app/types/types";
+import dayjs, { Dayjs } from "dayjs";
 
 export const getFrequency = (row: any): string => {
   let expenseFrequency;
@@ -135,8 +10,8 @@ export const getFrequency = (row: any): string => {
         row.frequency_type_variable === 1 ||
         row.frequency_type_variable === null
       )
-        expenseFrequency = "Daily";
-      else expenseFrequency = "Every " + row.frequency_type_variable + " days";
+        expenseFrequency = "daily";
+      else expenseFrequency = "every " + row.frequency_type_variable + " days";
 
       break;
     case 1: // Weekly
@@ -144,7 +19,7 @@ export const getFrequency = (row: any): string => {
         row.frequency_type_variable === 1 ||
         row.frequency_type_variable === null
       )
-        expenseFrequency = `Weekly ${
+        expenseFrequency = `weekly ${
           row.frequency_day_of_week !== null
             ? `on ${dayjs(row.begin_date)
                 .day(row.frequency_day_of_week)
@@ -152,7 +27,7 @@ export const getFrequency = (row: any): string => {
             : ""
         }`;
       else {
-        expenseFrequency = `Every ${row.frequency_type_variable}
+        expenseFrequency = `every ${row.frequency_type_variable}
           weeks ${
             row.frequency_day_of_week !== null
               ? `on ${dayjs(
@@ -169,7 +44,7 @@ export const getFrequency = (row: any): string => {
         row.frequency_type_variable === null
       ) {
         const dayOfMonth = dayjs(row.begin_date).format("D");
-        expenseFrequency = `Monthly on the ${dayOfMonth}${
+        expenseFrequency = `monthly on the ${dayOfMonth}${
           dayOfMonth.endsWith("1")
             ? "st"
             : dayOfMonth.endsWith("2")
@@ -180,7 +55,7 @@ export const getFrequency = (row: any): string => {
         }`;
       } else {
         const dayOfMonth = dayjs(row.begin_date).format("D");
-        expenseFrequency = `Every ${
+        expenseFrequency = `every ${
           row.frequency_type_variable
         } months on the ${dayOfMonth}${
           dayOfMonth.endsWith("1")
@@ -194,9 +69,9 @@ export const getFrequency = (row: any): string => {
       }
 
       if (row.frequency_day_of_month) {
-        expenseFrequency = `Monthly on the ${row.frequency_day_of_month}`;
+        expenseFrequency = `monthly on the ${row.frequency_day_of_month}`;
       } else if (row.frequency_day_of_week) {
-        expenseFrequency = `Monthly on the ${
+        expenseFrequency = `monthly on the ${
           row.frequency_week_of_month === 0
             ? "first"
             : row.frequency_week_of_month === 1
@@ -215,11 +90,11 @@ export const getFrequency = (row: any): string => {
         row.frequency_type_variable === 1 ||
         row.frequency_type_variable === null
       )
-        expenseFrequency = `Yearly on ${dayjs(row.begin_date).format(
+        expenseFrequency = `yearly on ${dayjs(row.begin_date).format(
           "MMMM D"
         )}`;
       else
-        expenseFrequency = `Every ${
+        expenseFrequency = `every ${
           row.frequency_type_variable
         } years on ${dayjs(row.begin_date).format("MMMM D")}`;
 
@@ -229,4 +104,48 @@ export const getFrequency = (row: any): string => {
   }
 
   return expenseFrequency;
+};
+
+export const findLatestFullyPaidBackDate = (
+  loans: Loan[]
+): Dayjs | string | null => {
+  if (loans.length === 0) return null; // Return null if no loans
+  // Check if any loan has not been fully paid back
+  if (loans.some((loan: Loan) => loan.fully_paid_back === null)) {
+    return "not in the near future";
+  }
+
+  // Convert all fully_paid_back dates to Day.js objects and find the max
+  let latest = dayjs(loans[0].fully_paid_back);
+  loans.forEach((loan: Loan) => {
+    const fullyPaidBackDate = dayjs(loan.fully_paid_back);
+    if (fullyPaidBackDate.isAfter(latest)) {
+      latest = fullyPaidBackDate;
+    }
+  });
+
+  latest ? latest.format("dddd, MMMM D, YYYY h:mm A") : null;
+
+  return latest;
+};
+
+export const getTaxRate = (taxes: Tax[], tax_id: number | null) => {
+  if (!tax_id) return 0;
+
+  const tax = taxes.find((tax) => tax.id === tax_id);
+  return tax ? tax.rate : 0;
+};
+
+// Calculate total expenses including taxes
+export const calculateTotalWithTaxes = (
+  transaction: any,
+  taxes: Tax[]
+): number => {
+  const totalWithTaxes = transaction.reduce((acc: number, transaction: any) => {
+    const taxRate = getTaxRate(taxes, transaction.tax_id);
+    const taxAmount = transaction.amount * taxRate;
+    return acc + transaction.amount + taxAmount;
+  }, 0);
+
+  return totalWithTaxes;
 };

@@ -1,16 +1,16 @@
 import dayjs from "dayjs";
 import DateRange from "../../../components/DateRange";
 import TransactionDisplay from "../../../components/TransactionDisplay";
-import DataManagementWidgets from "../../../components/DataManagementWidgets";
 import customParseFormat from "dayjs/plugin/customParseFormat";
+import { GeneratedTransaction } from "../types/types";
 
 async function getTransactions(
-  accountId: number,
+  account_id: number,
   from_date: string,
   to_date: string
 ) {
   const res = await fetch(
-    `http://server:5001/api/transactions?account_id=${accountId}&from_date=${from_date}&to_date=${to_date}`
+    `http://server:5001/api/transactions?account_id=${account_id}&from_date=${from_date}&to_date=${to_date}`
   );
 
   if (!res.ok) {
@@ -29,7 +29,7 @@ async function TransactionsPage({
 }) {
   dayjs.extend(customParseFormat);
 
-  const accountId = parseInt(params.account_id);
+  const account_id = parseInt(params.account_id);
 
   // If no search params are provided, set to the current date for from date and one month from now for to date and change the URL
   if (
@@ -48,12 +48,14 @@ async function TransactionsPage({
   const fromDate = searchParams.from_date as string;
   const toDate = searchParams.to_date as string;
 
-  const transactions = await getTransactions(accountId, fromDate, toDate);
+  const transactions: GeneratedTransaction[] = await getTransactions(
+    account_id,
+    fromDate,
+    toDate
+  );
 
   return (
     <>
-      <DataManagementWidgets accountId={accountId} />
-      <br />
       <DateRange fromDate={fromDate} toDate={toDate} />
       <TransactionDisplay transactions={transactions} />
     </>

@@ -10,8 +10,20 @@ jest.mock("next/navigation", () => ({
 describe("AccountList", () => {
   it("renders accounts correctly", () => {
     const mockAccounts = [
-      { account_id: 1, account_name: "Account A", account_balance: 100 },
-      { account_id: 2, account_name: "Account B", account_balance: 200 },
+      {
+        account_id: 1,
+        account_name: "Account A",
+        account_balance: 100,
+        date_created: "2022-01-01",
+        date_modified: "2022-01-01",
+      },
+      {
+        account_id: 2,
+        account_name: "Account B",
+        account_balance: 200,
+        date_created: "2022-01-01",
+        date_modified: "2022-01-01",
+      },
     ];
 
     render(<AccountList accounts={mockAccounts} />);
