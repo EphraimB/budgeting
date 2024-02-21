@@ -143,6 +143,7 @@ function DataManagementWidgets({
               key={widget.id}
               style={{
                 width: isSmallScreen ? 150 : 175,
+                height: "100%",
                 scale: isSmallScreen ? (isCentered ? 1 : 0.8) : 1,
                 zIndex: isCentered ? 1 : 0,
                 flexShrink: 0,
@@ -157,7 +158,7 @@ function DataManagementWidgets({
                 style={{ color: "inherit", textDecoration: "inherit" }}
                 passHref
               >
-                <Card elevation={4} sx={{ cursor: "pointer" }}>
+                <Card elevation={4} sx={{ cursor: "pointer", height: "100%" }}>
                   {/* Adjust size as needed */}
                   <CardContent>
                     <Typography variant="h5">{widget.title}</Typography>
