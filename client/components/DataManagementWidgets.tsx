@@ -44,7 +44,6 @@ function DataManagementWidgets({
       id: "transactions",
       title: "Transactions",
       link: `/${account_id}/`,
-      backgroundImage: "url('/img/back-to-transactions.png')",
       content: "Click here to view transactions",
       selected: isSelected("transactions"),
     },
@@ -52,8 +51,6 @@ function DataManagementWidgets({
       id: "expenses",
       title: "Expenses",
       link: `/${account_id}/expenses`,
-      backgroundImage:
-        "linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('/img/expenses.png')",
       content: `You have ${expenses.length} expense${
         expenses.length === 1 ? "" : "s"
       } with a total of $${calculateTotalWithTaxes(expenses, taxes).toFixed(
@@ -65,8 +62,6 @@ function DataManagementWidgets({
       id: "loans",
       title: "Loans",
       link: `/${account_id}/loans`,
-      backgroundImage:
-        "linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('/img/loans.png')",
       content: `You have ${loans.length} loan${
         loans.length === 1 ? "" : "s"
       } with a
