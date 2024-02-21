@@ -78,14 +78,21 @@ export interface Tax {
   date_modified: string;
 }
 
-export interface GeneratedTransaction {
-  id: number;
-  account_id: number;
+interface Transaction {
+  id: string;
+  title: string;
+  description: string;
+  date: string;
   amount: number;
   tax_rate: number | null;
   total_amount: number;
-  title: string;
-  description: string;
+  balance: number;
   date_created: string;
   date_modified: string;
+}
+
+export interface GeneratedTransaction {
+  account_id: number;
+  current_balance: number;
+  transactions: Transaction[];
 }

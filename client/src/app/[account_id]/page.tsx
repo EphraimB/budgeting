@@ -2,6 +2,7 @@ import dayjs from "dayjs";
 import DateRange from "../../../components/DateRange";
 import TransactionDisplay from "../../../components/TransactionDisplay";
 import customParseFormat from "dayjs/plugin/customParseFormat";
+import { GeneratedTransaction } from "../types/types";
 
 async function getTransactions(
   account_id: number,
@@ -47,7 +48,11 @@ async function TransactionsPage({
   const fromDate = searchParams.from_date as string;
   const toDate = searchParams.to_date as string;
 
-  const transactions = await getTransactions(account_id, fromDate, toDate);
+  const transactions: GeneratedTransaction[] = await getTransactions(
+    account_id,
+    fromDate,
+    toDate
+  );
 
   return (
     <>
