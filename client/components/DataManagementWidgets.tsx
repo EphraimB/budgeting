@@ -33,14 +33,14 @@ function DataManagementWidgets({
   const containerRef = useRef<HTMLDivElement>(null);
   const [centeredIndex, setCenteredIndex] = useState(0);
 
+  const theme = useTheme();
+  const isSmallScreen = useMediaQuery(theme.breakpoints.down("sm"));
+
   const pathname = usePathname();
 
   const isSelected = (widgetId: string) => pathname.includes(widgetId);
 
   const latestFullyPaidBackDate = findLatestFullyPaidBackDate(loans);
-
-  // const controls = useAnimation();
-  // const refContainer = useRef<HTMLDivElement>(null);
 
   const widgets = [
     {
@@ -114,9 +114,9 @@ function DataManagementWidgets({
   }, []);
 
   return (
-    <Box sx={{ display: "flex", justifyContent: "flex-start" }}>
+    <Stack direction="row" spacing={isSmallScreen ? 1 : 2}>
       {/* Selected Widget stays fixed */}
-      <Card raised sx={{ width: 300, height: 200 }}>
+      <Card elevation={1} sx={{ width: 175, overflow: "visible" }}>
         <CardContent>
           <Typography gutterBottom variant="h5">
             {selectedWidget.title}
@@ -124,24 +124,34 @@ function DataManagementWidgets({
           <Typography variant="body2">{selectedWidget.content}</Typography>
         </CardContent>
       </Card>
-      <Divider orientation="vertical" flexItem sx={{ ml: 1, mr: 1 }} />
+
       {/* Scrollable Row for Other Widgets */}
-      <Box ref={containerRef} sx={{ overflowX: "scroll", display: "flex" }}>
+      <Stack
+        ref={containerRef}
+        direction="row"
+        spacing={isSmallScreen ? 1 : 2}
+        sx={{
+          overflowX: isSmallScreen ? "scroll" : "visible",
+          "&::-webkit-scrollbar": { display: "none" },
+          "&::MsOverflowStyle": "none",
+          scrollbarWidth: "none",
+        }}
+      >
         {otherWidgets.map((widget, index) => {
           const isCentered = index === centeredIndex;
-          const scale = isCentered ? 1 : 0.8;
+          const scale = isSmallScreen ? (isCentered ? 1 : 0.8) : 1;
 
           return (
             <motion.div
               key={widget.id}
               style={{
-                scale: isCentered ? 1 : 0.8,
+                width: isSmallScreen ? 150 : 175,
+                scale: isSmallScreen ? (isCentered ? 1 : 0.8) : 1,
                 zIndex: isCentered ? 1 : 0,
                 flexShrink: 0,
-                left: -16,
                 cursor: "pointer",
               }}
-              initial={{ scale: 0.8 }}
+              initial={{ scale: isSmallScreen ? 0.8 : 1 }}
               animate={{ scale }}
               transition={{ type: "spring", stiffness: 300 }}
             >
@@ -150,8 +160,7 @@ function DataManagementWidgets({
                 style={{ color: "inherit", textDecoration: "inherit" }}
                 passHref
               >
-                <Card sx={{ width: 300, height: 200, cursor: "pointer" }}>
-                  {" "}
+                <Card elevation={4} sx={{ cursor: "pointer" }}>
                   {/* Adjust size as needed */}
                   <CardContent>
                     <Typography variant="h5">{widget.title}</Typography>
@@ -162,8 +171,8 @@ function DataManagementWidgets({
             </motion.div>
           );
         })}
-      </Box>
-    </Box>
+      </Stack>
+    </Stack>
   );
 }
 
