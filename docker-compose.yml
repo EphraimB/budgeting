@@ -17,19 +17,15 @@ services:
     depends_on:
       - server
   server:
-    command:
-      [
-        "/bin/bash",
-        "-c",
-        "npm install && npm run build && sleep 2 && ./node_modules/nodemon/bin/nodemon.js /home/node/app/dist/server.js",
-      ]
+    build:
+      context: ./server/
+      dockerfile: Dockerfile
     environment:
       - PGHOST=db
       - PGDATABASE=${PGDB}
       - PGUSER=${PGUSER}
       - PGPASSWORD=${PGPASSWORD}
       - PGPORT=5432
-    image: node:20
     networks:
       - app-network
     ports:
