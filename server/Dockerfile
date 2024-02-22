@@ -39,4 +39,4 @@ EXPOSE 5001
 ENV PORT 5001
 
 # Start the app
-CMD ["./node_modules/nodemon/bin/nodemon.js", "dist/server.js"]
+CMD ["./node_modules/nodemon/bin/nodemon.js", "server.js"]

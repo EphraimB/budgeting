@@ -31,7 +31,6 @@ services:
     ports:
       - "5001:5001"
     volumes:
-      - "./server:/home/node/app"
       - "server-modules:/home/node/app/node_modules"
       - "npm-cache:/root/.npm/_cacache"
     working_dir: "/home/node/app"
