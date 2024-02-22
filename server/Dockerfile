@@ -22,11 +22,15 @@ WORKDIR /home/node/app
 
 # Copy package.json and package-lock.json for production dependency installation
 COPY package*.json ./
+
+# Install app dependencies
 RUN npm ci --only=production
 
 # Copy compiled JavaScript and other necessary files from the build stage
-COPY --from=builder /home/node/app/dist ./home/node/app/
-COPY --from=builder /home/node/app/views/swagger.json ./home/node/app/views/swagger.json
+COPY --from=builder /home/node/app/dist ./
+
+# Copy the views folder
+COPY ./views/swagger.json ./views/swagger.json
 
 # Expose the port the app runs on
 EXPOSE 5001
