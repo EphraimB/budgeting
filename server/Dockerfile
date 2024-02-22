@@ -25,8 +25,8 @@ COPY package*.json ./
 RUN npm ci --only=production
 
 # Copy compiled JavaScript and other necessary files from the build stage
-COPY --from=builder /home/node/app/dist ./dist
-COPY --from=builder /home/node/app/views/swagger.json ./views/swagger.json
+COPY --from=builder /home/node/app/dist ./home/node/app/
+COPY --from=builder /home/node/app/views/swagger.json ./home/node/app/views/swagger.json
 
 # Expose the port the app runs on
 EXPOSE 5001
