@@ -1,5 +1,7 @@
 FROM node:20-alpine as base
-RUN apk add --no-cache g++ make py3-pip libc6-compat
+RUN apk add --no-cache g++ make py3-pip libc6-compat && \
+    addgroup -g 1001 -S nodejs && \
+    adduser -S nextjs -u 1001
 WORKDIR /home/node/app
 COPY package*.json ./
 EXPOSE 3000
@@ -15,11 +17,6 @@ WORKDIR /home/node/app
 
 ENV NODE_ENV=production
 RUN npm ci
-
-RUN addgroup -g 1001 -S nodejs
-RUN adduser -S nextjs -u 1001
-USER nextjs
-
 
 COPY --from=builder --chown=nextjs:nodejs /home/node/app/.next ./.next
 COPY --from=builder /home/node/app/node_modules ./node_modules
