@@ -9,9 +9,6 @@ services:
       - app-network
     ports:
       - "3000:3000"
-    volumes:
-      - "client-modules:/home/node/app/node_modules"
-      - "npm-cache:/root/.npm/_cacache"
     working_dir: "/home/node/app"
     depends_on:
       - server
@@ -29,9 +26,6 @@ services:
       - app-network
     ports:
       - "5001:5001"
-    volumes:
-      - "server-modules:/home/node/app/node_modules"
-      - "npm-cache:/root/.npm/_cacache"
     working_dir: "/home/node/app"
     depends_on:
       - db
@@ -54,8 +48,3 @@ services:
 networks:
   app-network:
     driver: bridge
-
-volumes:
-  client-modules:
-  server-modules:
-  npm-cache:

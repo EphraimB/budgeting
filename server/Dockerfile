@@ -6,7 +6,7 @@ WORKDIR /home/node/app
 
 # Install app dependencies by copying package.json and package-lock.json
 COPY package*.json ./
-RUN npm install
+RUN npm install && npm cache clean --force
 
 # Bundle app source by copying the rest of your application code
 COPY . .
@@ -19,6 +19,9 @@ FROM node:20-alpine
 
 # Set the working directory to match the Docker Compose setup
 WORKDIR /home/node/app
+
+# Install nodemon globally
+RUN npm install -g nodemon
 
 # Copy package.json and package-lock.json for production dependency installation
 COPY package*.json ./
@@ -39,4 +42,4 @@ EXPOSE 5001
 ENV PORT 5001
 
 # Start the app
-CMD ["./node_modules/nodemon/bin/nodemon.js", "server.js"]
+CMD ["nodemon", "server.js"]
