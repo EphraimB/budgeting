@@ -2,10 +2,10 @@
   "name": "budgeting-server",
   "version": "1.0.0",
   "description": "A budgeting app that calculates the projected budget at a certain date",
-  "main": "server.js",
+  "main": "src/server.js",
   "scripts": {
     "build": "tsc",
-    "start": "node server.js",
+    "start": "node src/server.js",
     "lint": "npx eslint '**/*.{js,ts}'",
     "test": "cross-env NODE_OPTIONS=--experimental-vm-modules TS_JEST_LOG=ts-jest.log jest"
   },
