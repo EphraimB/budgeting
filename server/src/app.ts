@@ -27,22 +27,21 @@ import transferRouter from './routes/transfersRouter.js';
 import transactionsRouter from './routes/transactionsRouter.js';
 import taxesRouter from './routes/taxesRouter.js';
 import incomeRouter from './routes/incomeRouter.js';
-import fs from 'fs';
-import path from 'path';
+import { swaggerSpec } from './config/swaggerSpec.js';
 
-const swaggerDocument = JSON.parse(
-    fs.readFileSync(
-        path.resolve(process.cwd(), './src/views/swagger.json'),
-        'utf8',
-    ),
-);
+// const swaggerDocument = JSON.parse(
+//     fs.readFileSync(
+//         path.resolve(process.cwd(), './src/views/swagger.json'),
+//         'utf8',
+//     ),
+// );
 
 const app: Express = express();
 
 app.use(cors());
 app.use(bodyParser.json());
 
-app.use('/api/docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+app.use('/api/docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 // Routes
 app.use('/api/', routes);

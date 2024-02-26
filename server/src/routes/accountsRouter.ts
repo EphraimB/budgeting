@@ -10,6 +10,15 @@ import validateRequest from '../utils/validateRequest.js';
 
 const router: Router = express.Router();
 
+/**
+ * @openapi
+ * /:
+ *   get:
+ *     description: Returns an array of accounts.
+ *     responses:
+ *       200:
+ *         description: Returns an array of accounts.
+ */
 router.get(
     '/',
     [
@@ -22,6 +31,23 @@ router.get(
     getAccounts,
 );
 
+/**
+ * @openapi
+ * /:
+ *   post:
+ *     description: Create a new account.
+ *     requestBody:
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               name:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: Returns the newly created account.
+ */
 router.post(
     '/',
     [
@@ -31,6 +57,29 @@ router.post(
     createAccount,
 );
 
+/**
+ * @openapi
+ * /:
+ *   put:
+ *     description: Update an account.
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *     requestBody:
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               name:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: Returns the updated account.
+ */
 router.put(
     '/:id',
     [
@@ -41,6 +90,21 @@ router.put(
     updateAccount,
 );
 
+/**
+ * @openapi
+ * /:
+ *   delete:
+ *     description: Delete an account.
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *     responses:
+ *       200:
+ *         description: Returns the deleted account.
+ */
 router.delete(
     '/:id',
     [
