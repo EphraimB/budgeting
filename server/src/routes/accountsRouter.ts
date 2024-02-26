@@ -12,12 +12,22 @@ const router: Router = express.Router();
 
 /**
  * @openapi
- * /:
+ * /api/accounts/:
  *   get:
  *     description: Returns an array of accounts.
+ *    parameters:
+ *      - in: query
+ *       name: id
+ *      schema:
+ *       type: integer
+ *      minimum: 1
+ *    description: ID of the account
+ *   required: false
  *     responses:
  *       200:
  *         description: Returns an array of accounts.
+ *      400:
+ *       description: Invalid request.
  */
 router.get(
     '/',
