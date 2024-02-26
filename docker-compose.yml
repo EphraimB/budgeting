@@ -9,6 +9,7 @@ services:
       - app-network
     ports:
       - "3000:3000"
+    working_dir: "/home/node/app"
     depends_on:
       - server
   server:
@@ -25,6 +26,7 @@ services:
       - app-network
     ports:
       - "5001:5001"
+    working_dir: "/home/node/app"
     depends_on:
       - db
   db:
@@ -37,7 +39,7 @@ services:
       - POSTGRES_PASSWORD=${PGPASSWORD}
       - POSTGRES_DB=${PGDB}
     ports:
-      - "${PGPORT}:5432"
+      - "${PGPORT:-5432}:5432"
     volumes:
       - ./sql:/docker-entrypoint-initdb.d
     networks:
