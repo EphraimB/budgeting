@@ -10,7 +10,7 @@ const options = {
                 'A budgeting app that generates future transactions based on expenses, loans, current balance, and income',
         },
     },
-    apis: ['./routes/*.js'], // Path to the API docs
+    apis: ['./src/routes/*.js'], // Path to the API docs
 };
 
 export const swaggerSpec = swaggerJsdoc(options);
