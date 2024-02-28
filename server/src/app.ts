@@ -7,7 +7,6 @@ import express, {
 import bodyParser from 'body-parser';
 import cors from 'cors';
 import { logger } from './config/winston.js';
-import swaggerUi from 'swagger-ui-express';
 import routes from './routes/routes.js';
 import accountsRouter from './routes/accountsRouter.js';
 import transactionHistoryRouter from './routes/transactionHistoryRouter.js';
@@ -27,21 +26,24 @@ import transferRouter from './routes/transfersRouter.js';
 import transactionsRouter from './routes/transactionsRouter.js';
 import taxesRouter from './routes/taxesRouter.js';
 import incomeRouter from './routes/incomeRouter.js';
-import { swaggerSpec } from './config/swaggerSpec.js';
+import path from 'path';
+import fs from 'fs';
+import swaggerUi from 'swagger-ui-express';
 
-// const swaggerDocument = JSON.parse(
-//     fs.readFileSync(
-//         path.resolve(process.cwd(), './src/views/swagger.json'),
-//         'utf8',
-//     ),
-// );
+const swaggerDocument = JSON.parse(
+    fs.readFileSync(
+        path.resolve(process.cwd(), './src/config/swagger-output.json'),
+        'utf8',
+    ),
+);
 
 const app: Express = express();
 
 app.use(cors());
 app.use(bodyParser.json());
 
-app.use('/api/docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+// Serve swagger-ui
+app.use('/api/docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 // Routes
 app.use('/api/', routes);

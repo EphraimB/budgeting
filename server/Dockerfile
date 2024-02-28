@@ -33,7 +33,9 @@ RUN npm ci --only=production
 COPY --from=builder /home/node/app/src/dist ./
 
 # Copy the views folder
-COPY ./src/views/swagger.json ./src/views/swagger.json
+# COPY ./src/views/swagger.json ./src/views/swagger.json
+
+RUN npm run swagger
 
 # Expose the port the app runs on
 EXPOSE 5001
