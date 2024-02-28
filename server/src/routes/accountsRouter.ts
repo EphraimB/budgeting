@@ -11,6 +11,10 @@ import validateRequest from '../utils/validateRequest.js';
 const router: Router = express.Router();
 
 router.get(
+    // #swagger.tags = ['Accounts']
+    // #swagger.summary = 'Get all accounts'
+    // #swagger.description = 'Get all accounts'
+
     '/',
     [
         query('id')
@@ -22,24 +26,10 @@ router.get(
     getAccounts,
 );
 
-/**
- * @openapi
- * /:
- *   post:
- *     description: Create a new account.
- *     requestBody:
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             properties:
- *               name:
- *                 type: string
- *     responses:
- *       200:
- *         description: Returns the newly created account.
- */
 router.post(
+    // #swagger.tags = ['Accounts']
+    // #swagger.summary = 'Create an account'
+    // #swagger.description = 'Create an account'
     '/',
     [
         body('name').isString().withMessage('Name must be a string'),
@@ -48,30 +38,10 @@ router.post(
     createAccount,
 );
 
-/**
- * @openapi
- * /:
- *   put:
- *     description: Update an account.
- *     parameters:
- *       - in: path
- *         name: id
- *         required: true
- *         schema:
- *           type: integer
- *     requestBody:
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             properties:
- *               name:
- *                 type: string
- *     responses:
- *       200:
- *         description: Returns the updated account.
- */
 router.put(
+    // #swagger.tags = ['Accounts']
+    // #swagger.summary = 'Update an account'
+    // #swagger.description = 'Update an account'
     '/:id',
     [
         param('id').isInt({ min: 1 }).withMessage('ID must be a number'),
@@ -81,22 +51,10 @@ router.put(
     updateAccount,
 );
 
-/**
- * @openapi
- * /:
- *   delete:
- *     description: Delete an account.
- *     parameters:
- *       - in: path
- *         name: id
- *         required: true
- *         schema:
- *           type: integer
- *     responses:
- *       200:
- *         description: Returns the deleted account.
- */
 router.delete(
+    // #swagger.tags = ['Accounts']
+    // #swagger.summary = 'Delete an account'
+    // #swagger.description = 'Delete an account'
     '/:id',
     [
         param('id').isInt({ min: 1 }).withMessage('ID must be a number'),
