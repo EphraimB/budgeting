@@ -15,6 +15,20 @@ router.get(
     // #swagger.summary = 'Get all accounts'
     // #swagger.description = 'Get all accounts'
 
+    // #swagger.parameters['id'] = { description: 'Filter by account id' }
+
+    /* #swagger.responses[200] = {
+            description: "Success",
+            content: {
+                "application/json": {
+                    schema:{
+                        $ref: "#/components/responses/SuccessResponse"
+                    }
+                }           
+            }
+        }   
+    */
+
     '/',
     [
         query('id')
@@ -30,6 +44,21 @@ router.post(
     // #swagger.tags = ['Accounts']
     // #swagger.summary = 'Create an account'
     // #swagger.description = 'Create an account'
+
+    // #swagger.parameters['id'] = { description: 'Filter by account id' }
+
+    /*  #swagger.requestBody = {
+            required: true,
+            content: {
+                "application/json": {
+                    schema: {
+                        $ref: "#/components/schemas/Accounts"
+                    }  
+                }
+            }
+        } 
+    */
+
     '/',
     [
         body('name').isString().withMessage('Name must be a string'),

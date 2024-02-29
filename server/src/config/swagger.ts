@@ -8,6 +8,57 @@ const doc = {
         version: '0.2.0',
     },
     host: 'localhost:5001',
+    components: {
+        schemas: {
+            Accounts: {
+                $name: 'Accounts',
+            },
+        },
+        responses: {
+            SuccessResponse: {
+                type: 'array',
+                items: {
+                    type: 'object',
+                    properties: {
+                        account_id: {
+                            type: 'integer',
+                            format: 'int64',
+                            minimium: 1,
+                        },
+                        account_name: {
+                            type: 'string',
+                            example: 'Checking',
+                        },
+                        account_balance: {
+                            type: 'number',
+                            format: 'double',
+                            example: 1000.0,
+                        },
+                        date_created: {
+                            type: 'string',
+                            format: 'date-time',
+                        },
+                        date_modified: {
+                            type: 'string',
+                            format: 'date-time',
+                        },
+                    },
+                },
+            },
+            ErrorResponse: {
+                type: 'object',
+                properties: {
+                    message: {
+                        type: 'string',
+                    },
+                    code: {
+                        type: 'integer',
+                        format: 'int32',
+                    },
+                },
+            },
+        },
+    },
 };
 
 const outputFile = './swagger-output.json';
