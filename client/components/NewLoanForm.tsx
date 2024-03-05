@@ -30,7 +30,7 @@ function NewLoanForm({
   setShowLoanForm,
 }: {
   account_id: number;
-  setShowLoanForm: Function;
+  setShowLoanForm: (show: boolean) => void;
 }) {
   const [recipient, setRecipient] = useState("");
   const [title, setTitle] = useState("");
