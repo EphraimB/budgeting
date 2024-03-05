@@ -129,7 +129,7 @@ function NewTaxForm({
         <br />
         <MobileStepper
           variant="dots"
-          steps={4}
+          steps={2}
           position="static"
           activeStep={activeStep}
           sx={{ maxWidth: 400, flexGrow: 1 }}
@@ -137,7 +137,7 @@ function NewTaxForm({
             <Button
               size="small"
               onClick={handleNext}
-              disabled={activeStep === 3}
+              disabled={activeStep === 1}
             >
               Next
               {theme.direction === "rtl" ? (
