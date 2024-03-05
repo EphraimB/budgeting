@@ -21,9 +21,12 @@ import dayjs, { Dayjs } from "dayjs";
 import { DateTimePicker } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+import utc from "dayjs/plugin/utc";
 import Checkbox from "@mui/material/Checkbox";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import { editExpense } from "../services/actions/expense";
+
+dayjs.extend(utc);
 
 function ExpenseEdit({
   account_id,

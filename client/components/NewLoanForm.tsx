@@ -20,7 +20,10 @@ import dayjs, { Dayjs } from "dayjs";
 import { DateTimePicker } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+import utc from "dayjs/plugin/utc";
 import { addLoan } from "../services/actions/loan";
+
+dayjs.extend(utc);
 
 function NewLoanForm({
   account_id,
@@ -332,10 +335,11 @@ function NewLoanForm({
             <LocalizationProvider dateAdapter={AdapterDayjs}>
               <DateTimePicker
                 label="Loan begin date"
-                value={dayjs(begin_date)}
-                onChange={(e: Dayjs | null) =>
-                  setBeginDate(e ? e.format() : dayjs().format())
-                }
+                value={dayjs.utc(begin_date).local()}
+                onChange={(e: Dayjs | null) => {
+                  const utcDate = e ? e.utc().format() : dayjs.utc().format();
+                  setBeginDate(utcDate);
+                }}
               />
             </LocalizationProvider>
             <br />
