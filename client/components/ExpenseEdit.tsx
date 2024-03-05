@@ -190,12 +190,21 @@ function ExpenseEdit({
             <TextField
               label="Subsidized"
               variant="standard"
-              value={subsidized + "%"}
-              onChange={(e) =>
-                setSubsidized(
-                  e.target.value.substring(0, e.target.value.length - 1)
-                )
-              }
+              // Convert the decimal to a percentage for display
+              value={`${parseFloat(subsidized) * 100}%`}
+              onChange={(e) => {
+                // Remove the '%' sign and convert back to decimal for the state
+                const valueWithoutPercent = e.target.value.replace("%", "");
+                if (
+                  !isNaN(parseInt(valueWithoutPercent)) &&
+                  valueWithoutPercent !== ""
+                ) {
+                  setSubsidized(String(parseFloat(valueWithoutPercent) / 100));
+                } else if (valueWithoutPercent === "") {
+                  // Handle the case where the input field is cleared
+                  setSubsidized("");
+                }
+              }}
             />
           </>
         ) : activeStep === 2 ? (
@@ -323,10 +332,11 @@ function ExpenseEdit({
             <LocalizationProvider dateAdapter={AdapterDayjs}>
               <DateTimePicker
                 label="Expense begin date"
-                value={dayjs(begin_date)}
-                onChange={(e: Dayjs | null) =>
-                  setBeginDate(e ? e.format() : dayjs().format())
-                }
+                value={dayjs.utc(begin_date).local()}
+                onChange={(e: Dayjs | null) => {
+                  const utcDate = e ? e.utc().format() : dayjs.utc().format();
+                  setBeginDate(utcDate);
+                }}
               />
               <br />
               <br />
@@ -342,10 +352,11 @@ function ExpenseEdit({
               {endDateEnabled && (
                 <DateTimePicker
                   label="Expense end date"
-                  value={dayjs(end_date) || dayjs()}
-                  onChange={(e: Dayjs | null) =>
-                    setEndDate(e ? e.format() : dayjs().format())
-                  }
+                  value={dayjs.utc(end_date).local() || dayjs()}
+                  onChange={(e: Dayjs | null) => {
+                    const utcDate = e ? e.utc().format() : dayjs.utc().format();
+                    setEndDate(utcDate);
+                  }}
                 />
               )}
             </LocalizationProvider>
