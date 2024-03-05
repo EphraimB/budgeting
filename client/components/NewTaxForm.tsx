@@ -100,7 +100,7 @@ function NewTaxForm({
               fullWidth
             />
           </>
-        ) : activeStep === 2 ? (
+        ) : activeStep === 1 ? (
           <>
             <TextField
               label="Rate"
