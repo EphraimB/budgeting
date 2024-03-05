@@ -181,7 +181,7 @@ describe("ExpenseEdit", () => {
     expect(screen.getByText("Edit Expense - Step 4 of 4")).toBeInTheDocument();
 
     expect(screen.getByLabelText("Expense begin date")).toHaveValue(
-      "10/01/2021 12:00 AM"
+      "09/30/2021 08:00 PM"
     );
 
     // Check that the "Expense end date" input is not checked
