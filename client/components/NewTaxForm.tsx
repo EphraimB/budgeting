@@ -105,8 +105,21 @@ function NewTaxForm({
             <TextField
               label="Rate"
               variant="standard"
-              value={rate}
-              onChange={(e) => setRate(e.target.value)}
+              // Convert the decimal to a percentage for display
+              value={`${parseFloat(rate) * 100}%`}
+              onChange={(e) => {
+                // Remove the '%' sign and convert back to decimal for the state
+                const valueWithoutPercent = e.target.value.replace("%", "");
+                if (
+                  !isNaN(parseInt(valueWithoutPercent)) &&
+                  valueWithoutPercent !== ""
+                ) {
+                  setRate(String(parseFloat(valueWithoutPercent) / 100));
+                } else if (valueWithoutPercent === "") {
+                  // Handle the case where the input field is cleared
+                  setRate("");
+                }
+              }}
               fullWidth
             />
             <br />
