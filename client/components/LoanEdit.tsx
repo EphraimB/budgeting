@@ -182,12 +182,21 @@ function LoanEdit({
             <TextField
               label="Subsidized"
               variant="standard"
-              value={subsidized + "%"}
-              onChange={(e) =>
-                setSubsidized(
-                  e.target.value.substring(0, e.target.value.length - 1)
-                )
-              }
+              // Convert the decimal to a percentage for display
+              value={`${parseFloat(subsidized) * 100}%`}
+              onChange={(e) => {
+                // Remove the '%' sign and convert back to decimal for the state
+                const valueWithoutPercent = e.target.value.replace("%", "");
+                if (
+                  !isNaN(parseInt(valueWithoutPercent)) &&
+                  valueWithoutPercent !== ""
+                ) {
+                  setSubsidized(String(parseFloat(valueWithoutPercent) / 100));
+                } else if (valueWithoutPercent === "") {
+                  // Handle the case where the input field is cleared
+                  setSubsidized("");
+                }
+              }}
             />
           </>
         ) : activeStep === 2 ? (
