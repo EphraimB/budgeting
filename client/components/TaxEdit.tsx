@@ -15,7 +15,13 @@ import KeyboardArrowRight from "@mui/icons-material/KeyboardArrowRight";
 import { useTheme } from "@mui/material/styles";
 import { Tax } from "@/app/types/types";
 
-function TaxEdit({ tax, setTaxModes }: { tax: Tax; setTaxModes: any }) {
+function TaxEdit({
+  tax,
+  setTaxModes,
+}: {
+  tax: Tax;
+  setTaxModes: (expenseModes: Record<number, string>) => void;
+}) {
   const [title, setTitle] = useState(tax.title);
   const [description, setDescription] = useState(tax.description);
   const [rate, setRate] = useState(tax.rate.toString());
