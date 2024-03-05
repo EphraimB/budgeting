@@ -75,7 +75,7 @@ function NewTaxForm({
       </IconButton>
       <br />
       <CardHeader
-        title={"New Tax"}
+        title={`New Tax - Step ${activeStep + 1} of 2`}
         sx={{
           textAlign: "center",
         }}
