@@ -14,6 +14,7 @@ import KeyboardArrowLeft from "@mui/icons-material/KeyboardArrowLeft";
 import KeyboardArrowRight from "@mui/icons-material/KeyboardArrowRight";
 import { useTheme } from "@mui/material/styles";
 import { Tax } from "@/app/types/types";
+import InputAdornment from "@mui/material/InputAdornment";
 
 function TaxEdit({
   tax,
@@ -108,20 +109,18 @@ function TaxEdit({
             <TextField
               label="Rate"
               variant="standard"
-              // Convert the decimal to a percentage for display
-              value={`${parseFloat(rate) * 100}%`}
+              value={rate ? parseFloat(rate) * 100 : "0"}
               onChange={(e) => {
-                // Remove the '%' sign and convert back to decimal for the state
-                const valueWithoutPercent = e.target.value.replace("%", "");
-                if (
-                  !isNaN(parseInt(valueWithoutPercent)) &&
-                  valueWithoutPercent !== ""
-                ) {
-                  setRate(String(parseFloat(valueWithoutPercent) / 100));
-                } else if (valueWithoutPercent === "") {
-                  // Handle the case where the input field is cleared
-                  setRate("");
+                const inputVal = e.target.value;
+                // Check if the input value is either empty, a valid float, or a float ending with a dot
+                if (inputVal === "" || /^\d*\.?\d*$/.test(inputVal)) {
+                  let newRate =
+                    inputVal === "" ? "" : parseFloat(inputVal) / 100; // Convert input value to a decimal for the state
+                  setRate(newRate.toString()); // Store the rate as a string to preserve any trailing dot
                 }
+              }}
+              InputProps={{
+                endAdornment: <InputAdornment position="end">%</InputAdornment>,
               }}
               fullWidth
             />
