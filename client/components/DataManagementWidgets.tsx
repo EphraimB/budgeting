@@ -52,6 +52,7 @@ function DataManagementWidgets({
       title: "Taxes",
       link: `/${account_id}/taxes`,
       content: `You have ${taxes.length} tax${taxes.length === 1 ? "" : "es"}`,
+      selected: isSelected("taxes"),
     },
     {
       id: "expenses",
