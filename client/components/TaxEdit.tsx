@@ -109,16 +109,14 @@ function TaxEdit({
             <TextField
               label="Rate"
               variant="standard"
-              value={rate ? parseFloat(rate) * 100 : "0"}
-              onChange={(e) => {
-                const inputVal = e.target.value;
-                // Check if the input value is either empty, a valid float, or a float ending with a dot
-                if (inputVal === "" || /^\d*\.?\d*$/.test(inputVal)) {
-                  let newRate =
-                    inputVal === "" ? "" : parseFloat(inputVal) / 100; // Convert input value to a decimal for the state
-                  setRate(newRate.toString()); // Store the rate as a string to preserve any trailing dot
-                }
+              type="number"
+              inputProps={{
+                step: 0.01,
               }}
+              value={rate ? parseFloat(rate) * 100 : "0"}
+              onChange={(e) =>
+                setRate((parseFloat(e.target.value) / 100).toString())
+              }
               InputProps={{
                 endAdornment: <InputAdornment position="end">%</InputAdornment>,
               }}
