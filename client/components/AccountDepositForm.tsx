@@ -10,6 +10,7 @@ import IconButton from "@mui/material/IconButton";
 import CloseIcon from "@mui/icons-material/Close";
 import { Typography } from "@mui/material";
 import { addTransactionHistory } from "../services/actions/transactionHistory";
+import InputAdornment from "@mui/material/InputAdornment";
 
 function AccountDepositForm({
   account,
@@ -18,7 +19,7 @@ function AccountDepositForm({
   account: any;
   setAccountModes: any;
 }) {
-  const [amount, setAmount] = useState(0.0);
+  const [amount, setAmount] = useState("0");
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
 
@@ -28,7 +29,7 @@ function AccountDepositForm({
 
   const data = {
     account_id: account.account_id,
-    amount,
+    amount: parseFloat(amount),
     tax: 0,
     title,
     description,
@@ -87,12 +88,6 @@ function AccountDepositForm({
     }
   };
 
-  const handleNumericInput = (e: any) => {
-    e.target.value = e.target.value
-      .replace(/[^0-9.]/g, "")
-      .replace(/(\..*?)\./g, "$1");
-  };
-
   return (
     <Box>
       <IconButton
@@ -119,18 +114,18 @@ function AccountDepositForm({
       </Typography>
       <Stack direction="column" spacing={2}>
         <Box sx={{ display: "flex", alignItems: "center", gap: "8px" }}>
-          <InputLabel htmlFor="amount">$</InputLabel>
           <TextField
             fullWidth
-            inputProps={{
-              inputMode: "numeric",
-              pattern: "[0-9]*[.]?[0-9]*",
-            }}
-            onInput={handleNumericInput}
             id="amount"
             label="Amount"
-            value={amount}
-            onChange={(e) => setAmount(e.target.value as unknown as number)}
+            type="number"
+            value={amount ? amount : "0"}
+            onChange={(e) => setAmount(e.target.value)}
+            InputProps={{
+              startAdornment: (
+                <InputAdornment position="start">$</InputAdornment>
+              ),
+            }}
             error={!!amountError}
             helperText={amountError}
             variant="standard"

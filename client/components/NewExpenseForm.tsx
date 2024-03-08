@@ -25,6 +25,7 @@ import utc from "dayjs/plugin/utc";
 import Checkbox from "@mui/material/Checkbox";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import { addExpense } from "../services/actions/expense";
+import InputAdornment from "@mui/material/InputAdornment";
 
 dayjs.extend(utc);
 
@@ -157,8 +158,17 @@ function NewExpenseForm({
             <TextField
               label="Amount"
               variant="standard"
-              value={"$" + amount}
-              onChange={(e) => setAmount(e.target.value.substring(1))}
+              type="number"
+              inputProps={{
+                step: 0.01,
+              }}
+              value={amount ? amount : "0"}
+              onChange={(e) => setAmount(e.target.value)}
+              InputProps={{
+                startAdornment: (
+                  <InputAdornment position="start">$</InputAdornment>
+                ),
+              }}
             />
             <br />
             <br />
@@ -184,20 +194,16 @@ function NewExpenseForm({
             <TextField
               label="Subsidized"
               variant="standard"
-              // Convert the decimal to a percentage for display
-              value={`${parseFloat(subsidized) * 100}%`}
-              onChange={(e) => {
-                // Remove the '%' sign and convert back to decimal for the state
-                const valueWithoutPercent = e.target.value.replace("%", "");
-                if (
-                  !isNaN(parseInt(valueWithoutPercent)) &&
-                  valueWithoutPercent !== ""
-                ) {
-                  setSubsidized(String(parseFloat(valueWithoutPercent) / 100));
-                } else if (valueWithoutPercent === "") {
-                  // Handle the case where the input field is cleared
-                  setSubsidized("");
-                }
+              type="number"
+              inputProps={{
+                step: 0.01,
+              }}
+              value={subsidized ? parseFloat(subsidized) * 100 : "0"}
+              onChange={(e) =>
+                setSubsidized((parseFloat(e.target.value) / 100).toString())
+              }
+              InputProps={{
+                endAdornment: <InputAdornment position="end">%</InputAdornment>,
               }}
             />
           </>
