@@ -76,7 +76,7 @@ describe("ExpenseEdit", () => {
     await userEvent.click(screen.getByText("Next"));
 
     expect(screen.getByText("Edit Expense - Step 2 of 4")).toBeInTheDocument();
-    expect(screen.getByLabelText("Amount")).toHaveValue("$155.99");
+    expect(screen.getByLabelText("Amount")).toHaveValue(155.99);
 
     expect(screen.getByLabelText("Tax")).toBeInTheDocument();
     expect(screen.getByText("Test Tax - 5%"));
@@ -85,7 +85,7 @@ describe("ExpenseEdit", () => {
     expect(screen.getByText("NYC Sales Tax - 8.875%")).toBeInTheDocument();
     expect(screen.getByText("No tax - 0%"));
 
-    expect(screen.getByLabelText("Subsidized")).toHaveValue("0%");
+    expect(screen.getByLabelText("Subsidized")).toHaveValue(0);
 
     // Go to the next step by clicking the "Next" button
     await userEvent.click(screen.getByText("Next"));
