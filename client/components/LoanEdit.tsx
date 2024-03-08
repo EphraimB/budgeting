@@ -23,6 +23,7 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import utc from "dayjs/plugin/utc";
 import { editLoan } from "../services/actions/loan";
+import InputAdornment from "@mui/material/InputAdornment";
 
 dayjs.extend(utc);
 
@@ -166,36 +167,50 @@ function LoanEdit({
             <TextField
               label="Plan Amount"
               variant="standard"
-              value={"$" + plan_amount}
-              onChange={(e) => setPlanAmount(e.target.value.substring(1))}
+              type="number"
+              inputProps={{
+                step: 0.01,
+              }}
+              value={plan_amount ? plan_amount : "0"}
+              onChange={(e) => setPlanAmount(e.target.value)}
+              InputProps={{
+                endAdornment: (
+                  <InputAdornment position="start">$</InputAdornment>
+                ),
+              }}
             />
             <br />
             <br />
             <TextField
               label="Amount"
               variant="standard"
-              value={"$" + amount}
-              onChange={(e) => setAmount(e.target.value.substring(1))}
+              type="number"
+              inputProps={{
+                step: 0.01,
+              }}
+              value={amount ? amount : "0"}
+              onChange={(e) => setAmount(e.target.value)}
+              InputProps={{
+                endAdornment: (
+                  <InputAdornment position="start">$</InputAdornment>
+                ),
+              }}
             />
             <br />
             <br />
             <TextField
               label="Subsidized"
               variant="standard"
-              // Convert the decimal to a percentage for display
-              value={`${parseFloat(subsidized) * 100}%`}
-              onChange={(e) => {
-                // Remove the '%' sign and convert back to decimal for the state
-                const valueWithoutPercent = e.target.value.replace("%", "");
-                if (
-                  !isNaN(parseInt(valueWithoutPercent)) &&
-                  valueWithoutPercent !== ""
-                ) {
-                  setSubsidized(String(parseFloat(valueWithoutPercent) / 100));
-                } else if (valueWithoutPercent === "") {
-                  // Handle the case where the input field is cleared
-                  setSubsidized("");
-                }
+              type="number"
+              inputProps={{
+                step: 0.01,
+              }}
+              value={subsidized ? parseFloat(subsidized) * 100 : "0"}
+              onChange={(e) =>
+                setSubsidized((parseFloat(e.target.value) / 100).toString())
+              }
+              InputProps={{
+                endAdornment: <InputAdornment position="end">%</InputAdornment>,
               }}
             />
           </>
