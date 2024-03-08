@@ -13,6 +13,7 @@ import MobileStepper from "@mui/material/MobileStepper";
 import KeyboardArrowLeft from "@mui/icons-material/KeyboardArrowLeft";
 import KeyboardArrowRight from "@mui/icons-material/KeyboardArrowRight";
 import { useTheme } from "@mui/material/styles";
+import InputAdornment from "@mui/material/InputAdornment";
 
 function NewTaxForm({
   setShowTaxForm,
@@ -105,20 +106,16 @@ function NewTaxForm({
             <TextField
               label="Rate"
               variant="standard"
-              // Convert the decimal to a percentage for display
-              value={`${parseFloat(rate) * 100}%`}
-              onChange={(e) => {
-                // Remove the '%' sign and convert back to decimal for the state
-                const valueWithoutPercent = e.target.value.replace("%", "");
-                if (
-                  !isNaN(parseInt(valueWithoutPercent)) &&
-                  valueWithoutPercent !== ""
-                ) {
-                  setRate(String(parseFloat(valueWithoutPercent) / 100));
-                } else if (valueWithoutPercent === "") {
-                  // Handle the case where the input field is cleared
-                  setRate("");
-                }
+              type="number"
+              inputProps={{
+                step: 0.01,
+              }}
+              value={rate ? parseFloat(rate) * 100 : "0"}
+              onChange={(e) =>
+                setRate((parseFloat(e.target.value) / 100).toString())
+              }
+              InputProps={{
+                endAdornment: <InputAdornment position="end">%</InputAdornment>,
               }}
               fullWidth
             />
