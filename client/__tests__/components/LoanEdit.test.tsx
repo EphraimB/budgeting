@@ -52,10 +52,10 @@ describe("LoanEdit", () => {
     await userEvent.click(screen.getByText("Next"));
 
     expect(screen.getByText("Edit Loan - Step 2 of 5")).toBeInTheDocument();
-    expect(screen.getByLabelText("Plan Amount")).toHaveValue("$99.99");
-    expect(screen.getByLabelText("Amount")).toHaveValue("$999.99");
+    expect(screen.getByLabelText("Plan Amount")).toHaveValue(99.99);
+    expect(screen.getByLabelText("Amount")).toHaveValue(999.99);
 
-    expect(screen.getByLabelText("Subsidized")).toHaveValue("0%");
+    expect(screen.getByLabelText("Subsidized")).toHaveValue(0);
 
     // Go to the next step by clicking the "Next" button
     await userEvent.click(screen.getByText("Next"));
