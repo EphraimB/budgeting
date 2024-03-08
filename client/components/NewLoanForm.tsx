@@ -160,7 +160,7 @@ function NewLoanForm({
               value={plan_amount ? plan_amount : "0"}
               onChange={(e) => setPlanAmount(e.target.value)}
               InputProps={{
-                endAdornment: (
+                startAdornment: (
                   <InputAdornment position="start">$</InputAdornment>
                 ),
               }}
@@ -177,7 +177,7 @@ function NewLoanForm({
               value={amount ? amount : "0"}
               onChange={(e) => setAmount(e.target.value)}
               InputProps={{
-                endAdornment: (
+                startAdornment: (
                   <InputAdornment position="start">$</InputAdornment>
                 ),
               }}

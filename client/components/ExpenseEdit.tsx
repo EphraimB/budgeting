@@ -174,7 +174,7 @@ function ExpenseEdit({
               value={amount ? amount : "0"}
               onChange={(e) => setAmount(e.target.value)}
               InputProps={{
-                endAdornment: (
+                startAdornment: (
                   <InputAdornment position="start">$</InputAdornment>
                 ),
               }}

@@ -122,7 +122,9 @@ function AccountDepositForm({
             value={amount ? amount : "0"}
             onChange={(e) => setAmount(e.target.value)}
             InputProps={{
-              endAdornment: <InputAdornment position="start">$</InputAdornment>,
+              startAdornment: (
+                <InputAdornment position="start">$</InputAdornment>
+              ),
             }}
             error={!!amountError}
             helperText={amountError}
