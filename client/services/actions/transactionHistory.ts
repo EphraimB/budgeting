@@ -1,9 +1,18 @@
 "use server";
 
-import { TransactionHistory } from "@/app/types/types";
 import { revalidatePath } from "next/cache";
 
-export async function addTransactionHistory(transaction: TransactionHistory) {
+interface TransactionHistoryRequest {
+  account_id: number;
+  amount: number;
+  tax: number;
+  title: string;
+  description: string;
+}
+
+export async function addTransactionHistory(
+  transaction: TransactionHistoryRequest
+) {
   const response = await fetch("http://server:5001/api/transactions/history", {
     method: "POST",
     headers: {
