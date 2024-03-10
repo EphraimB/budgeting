@@ -205,6 +205,11 @@ export const nextTransactionFrequencyDate = (
                         7 * transaction.frequency_week_of_month;
                 }
 
+                // Loop through the months until it's after the current date
+                while (dayjs(transactionDate).isBefore()) {
+                    transactionDate.add(1, 'month');
+                }
+
                 transactionDate.date(newDay);
             }
 
