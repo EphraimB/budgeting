@@ -156,7 +156,7 @@ export const nextTransactionFrequencyDate = (
 
             break;
         case 2: // Monthly
-            const transactionDate: Dayjs = dayjs(transaction.begin_date).add(
+            let transactionDate: Dayjs = dayjs(transaction.begin_date).add(
                 transaction.frequency_type_variable !== null &&
                     transaction.frequency_type_variable !== undefined
                     ? transaction.frequency_type_variable
@@ -207,7 +207,7 @@ export const nextTransactionFrequencyDate = (
 
                 // Loop through the months until it's after the current date
                 while (dayjs(transactionDate).isBefore()) {
-                    transactionDate.add(1, 'month');
+                    transactionDate = transactionDate.add(1, 'month');
                 }
 
                 transactionDate.date(newDay);
