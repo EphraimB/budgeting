@@ -1,10 +1,10 @@
-import { type Expense, type GeneratedTransaction } from '../../types/types';
+import { type Expense, type GeneratedTransaction } from '../../src/types/types';
 import {
     generateDailyExpenses,
     generateMonthlyExpenses,
     generateWeeklyExpenses,
     generateYearlyExpenses,
-} from '../../generation/generateExpenses';
+} from '../../src/generation/generateExpenses';
 import MockDate from 'mockdate';
 import {
     describe,

@@ -25,7 +25,7 @@ const createApp = async (): Promise<Express> => {
     app.use(express.json());
 
     // Import the module that uses the mock
-    const routerModule = await import('../../routes/payrollTaxesRouter');
+    const routerModule = await import('../../src/routes/payrollTaxesRouter');
     const payrollTaxesRouter: Router = routerModule.default;
     app.use('/', payrollTaxesRouter);
 
@@ -39,7 +39,7 @@ const payrollTaxes = {
 };
 
 beforeAll(() => {
-    jest.mock('../../middleware/middleware', () => ({
+    jest.mock('../../src/middleware/middleware', () => ({
         setQueries: jest.fn(
             (req: Request, res: Response, next: NextFunction) => {
                 next();
@@ -97,14 +97,14 @@ beforeAll(() => {
         ),
     }));
 
-    jest.mock('../../generation/generateTransactions', () => {
+    jest.mock('../../src/generation/generateTransactions', () => {
         return jest.fn((req: Request, res: Response, next: NextFunction) => {
             req.transactions = [];
             next();
         });
     });
 
-    jest.mock('../../controllers/PayrollTaxesController', () => ({
+    jest.mock('../../src/controllers/PayrollTaxesController', () => ({
         getPayrollTaxes: jest.fn(
             (req: Request, res: Response, next: NextFunction) =>
                 res.json({ message: 'success' }),

@@ -25,7 +25,7 @@ const createApp = async (): Promise<Express> => {
     app.use(express.json());
 
     // Import the module that uses the mock
-    const routerModule = await import('../../routes/expensesRouter');
+    const routerModule = await import('../../src/routes/expensesRouter');
     const expensesRouter: Router = routerModule.default;
     app.use('/', expensesRouter);
 
@@ -53,7 +53,7 @@ const createFutureExpense = () => {
 };
 
 beforeAll(() => {
-    jest.mock('../../middleware/middleware', () => ({
+    jest.mock('../../src/middleware/middleware', () => ({
         setQueries: jest.fn(
             (req: Request, res: Response, next: NextFunction) => {
                 next();
@@ -111,14 +111,14 @@ beforeAll(() => {
         ),
     }));
 
-    jest.mock('../../generation/generateTransactions', () => {
+    jest.mock('../../src/generation/generateTransactions', () => {
         return jest.fn((req: Request, res: Response, next: NextFunction) => {
             req.transactions = [];
             next();
         });
     });
 
-    jest.mock('../../controllers/expensesController', () => ({
+    jest.mock('../../src/controllers/expensesController', () => ({
         getExpenses: jest.fn(
             (req: Request, res: Response, next: NextFunction) =>
                 res.json({ message: 'success' }),

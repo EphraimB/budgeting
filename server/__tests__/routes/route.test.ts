@@ -11,7 +11,7 @@ const createApp = async (): Promise<Express> => {
     app.use(express.json());
 
     // Import the module that uses the mock
-    const routerModule = await import('../../routes/routes');
+    const routerModule = await import('../../src/routes/routes');
     const router: Router = routerModule.default;
     app.use('/', router);
 

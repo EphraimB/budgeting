@@ -9,14 +9,14 @@ import {
 } from '@jest/globals';
 import { mockModule } from '../__mocks__/mockModule';
 
-jest.mock('../../config/winston', () => ({
+jest.mock('../../src/config/winston', () => ({
     logger: {
         info: jest.fn(),
         error: jest.fn(),
     },
 }));
 
-jest.mock('../../crontab/determineCronValues.js', () => {
+jest.mock('../../src/crontab/determineCronValues.js', () => {
     return jest.fn().mockReturnValue('0 0 16 * *');
 });
 
@@ -112,7 +112,7 @@ describe('GET /api/expenses/commute/schedule', () => {
         mockModule([commuteSchedule]);
 
         const { getCommuteSchedule } = await import(
-            '../../controllers/commuteScheduleController.js'
+            '../../src/controllers/commuteScheduleController.js'
         );
 
         mockRequest.query = { account_id: null, id: null };
@@ -135,7 +135,7 @@ describe('GET /api/expenses/commute/schedule', () => {
         mockModule([], [errorMessage]);
 
         const { getCommuteSchedule } = await import(
-            '../../controllers/commuteScheduleController.js'
+            '../../src/controllers/commuteScheduleController.js'
         );
 
         mockRequest.query = { account_id: null, id: null };
@@ -155,7 +155,7 @@ describe('GET /api/expenses/commute/schedule', () => {
         mockModule([commuteSchedule.filter((s) => s.account_id === 1)]);
 
         const { getCommuteSchedule } = await import(
-            '../../controllers/commuteScheduleController.js'
+            '../../src/controllers/commuteScheduleController.js'
         );
 
         mockRequest.query = { account_id: 1, id: null };
@@ -178,7 +178,7 @@ describe('GET /api/expenses/commute/schedule', () => {
         mockModule([], [errorMessage]);
 
         const { getCommuteSchedule } = await import(
-            '../../controllers/commuteScheduleController.js'
+            '../../src/controllers/commuteScheduleController.js'
         );
 
         mockRequest.query = { account_id: 1, id: null };
@@ -200,7 +200,7 @@ describe('GET /api/expenses/commute/schedule', () => {
         ]);
 
         const { getCommuteSchedule } = await import(
-            '../../controllers/commuteScheduleController.js'
+            '../../src/controllers/commuteScheduleController.js'
         );
 
         mockRequest.query = { account_id: null, id: 1 };
@@ -236,7 +236,7 @@ describe('GET /api/expenses/commute/schedule', () => {
         mockModule([], [errorMessage]);
 
         const { getCommuteSchedule } = await import(
-            '../../controllers/commuteScheduleController.js'
+            '../../src/controllers/commuteScheduleController.js'
         );
 
         mockRequest.query = { account_id: null, id: 1 };
@@ -256,7 +256,7 @@ describe('GET /api/expenses/commute/schedule', () => {
         mockModule([[]]);
 
         const { getCommuteSchedule } = await import(
-            '../../controllers/commuteScheduleController.js'
+            '../../src/controllers/commuteScheduleController.js'
         );
 
         mockRequest.query = { account_id: 3, id: 3 };
@@ -318,7 +318,7 @@ describe('POST /api/expenses/commute/schedule', () => {
         );
 
         const { createCommuteSchedule } = await import(
-            '../../controllers/commuteScheduleController.js'
+            '../../src/controllers/commuteScheduleController.js'
         );
 
         mockRequest.body = newSchedule[0];
@@ -355,7 +355,7 @@ describe('POST /api/expenses/commute/schedule', () => {
         ]);
 
         const { createCommuteSchedule } = await import(
-            '../../controllers/commuteScheduleController.js'
+            '../../src/controllers/commuteScheduleController.js'
         );
 
         mockRequest.body = newSchedule;
@@ -394,7 +394,7 @@ describe('POST /api/expenses/commute/schedule', () => {
         mockModule([newSchedule]);
 
         const { createCommuteScheduleReturnObject } = await import(
-            '../../controllers/commuteScheduleController.js'
+            '../../src/controllers/commuteScheduleController.js'
         );
 
         mockRequest = { commute_schedule_id: 1 };
@@ -436,7 +436,7 @@ describe('POST /api/expenses/commute/schedule', () => {
         mockModule([], [errorMessage]);
 
         const { createCommuteScheduleReturnObject } = await import(
-            '../../controllers/commuteScheduleController.js'
+            '../../src/controllers/commuteScheduleController.js'
         );
 
         mockRequest = { commute_schedule_id: 1 };
@@ -479,7 +479,7 @@ describe('PUT /api/expenses/commute/schedule/:id', () => {
         ]);
 
         const { updateCommuteSchedule } = await import(
-            '../../controllers/commuteScheduleController.js'
+            '../../src/controllers/commuteScheduleController.js'
         );
 
         mockRequest.params = { id: 1 };
@@ -517,7 +517,7 @@ describe('PUT /api/expenses/commute/schedule/:id', () => {
         ]);
 
         const { updateCommuteSchedule } = await import(
-            '../../controllers/commuteScheduleController.js'
+            '../../src/controllers/commuteScheduleController.js'
         );
 
         mockRequest.params = { id: 1 };
@@ -542,7 +542,7 @@ describe('PUT /api/expenses/commute/schedule/:id', () => {
         mockModule([[]]);
 
         const { updateCommuteSchedule } = await import(
-            '../../controllers/commuteScheduleController.js'
+            '../../src/controllers/commuteScheduleController.js'
         );
 
         mockRequest.params = { id: 1 };
@@ -587,7 +587,7 @@ describe('PUT /api/expenses/commute/schedule/:id', () => {
         mockModule([newSchedule]);
 
         const { updateCommuteScheduleReturnObject } = await import(
-            '../../controllers/commuteScheduleController.js'
+            '../../src/controllers/commuteScheduleController.js'
         );
 
         mockRequest = { commute_schedule_id: 1 };
@@ -629,7 +629,7 @@ describe('PUT /api/expenses/commute/schedule/:id', () => {
         mockModule([], [errorMessage]);
 
         const { updateCommuteScheduleReturnObject } = await import(
-            '../../controllers/commuteScheduleController.js'
+            '../../src/controllers/commuteScheduleController.js'
         );
 
         mockRequest.params = { id: 1 };
@@ -673,7 +673,7 @@ describe('DELETE /api/expenses/commute/schedule/:id', () => {
         mockModule([deletedSchedule, [], [{ cron_job_id: 1 }], []]);
 
         const { deleteCommuteSchedule } = await import(
-            '../../controllers/commuteScheduleController.js'
+            '../../src/controllers/commuteScheduleController.js'
         );
 
         mockRequest.params = { id: 1 };
@@ -694,7 +694,7 @@ describe('DELETE /api/expenses/commute/schedule/:id', () => {
         mockModule([], [errorMessage]);
 
         const { deleteCommuteSchedule } = await import(
-            '../../controllers/commuteScheduleController.js'
+            '../../src/controllers/commuteScheduleController.js'
         );
 
         mockRequest.params = { id: 1 };
@@ -718,7 +718,7 @@ describe('DELETE /api/expenses/commute/schedule/:id', () => {
         mockModule([[]]);
 
         const { deleteCommuteSchedule } = await import(
-            '../../controllers/commuteScheduleController.js'
+            '../../src/controllers/commuteScheduleController.js'
         );
 
         mockRequest.params = { id: 1 };
@@ -738,7 +738,7 @@ describe('DELETE /api/expenses/commute/schedule/:id', () => {
     it('should respond with a success message', async () => {
         // Arrange
         const { deleteCommuteScheduleReturnObject } = await import(
-            '../../controllers/commuteScheduleController.js'
+            '../../src/controllers/commuteScheduleController.js'
         );
 
         // Act

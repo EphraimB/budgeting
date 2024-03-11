@@ -1,4 +1,4 @@
-import determineCronValues from '../../crontab/determineCronValues.js';
+import determineCronValues from '../../src/crontab/determineCronValues.js';
 import { describe, it, expect } from '@jest/globals';
 
 describe('determineCronValues', () => {

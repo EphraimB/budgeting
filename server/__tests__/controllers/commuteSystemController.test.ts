@@ -8,9 +8,9 @@ import {
     expect,
 } from '@jest/globals';
 import { mockModule } from '../__mocks__/mockModule';
-import { CommuteSystem } from '../../types/types.js';
+import { CommuteSystem } from '../../src/types/types.js';
 
-jest.mock('../../config/winston', () => ({
+jest.mock('../../src/config/winston', () => ({
     logger: {
         error: jest.fn(),
     },
@@ -100,7 +100,7 @@ describe('GET /api/expenses/commute/systems', () => {
         mockModule([commuteSystems]);
 
         const { getCommuteSystem } = await import(
-            '../../controllers/commuteSystemController.js'
+            '../../src/controllers/commuteSystemController.js'
         );
 
         mockRequest.query = { id: null };
@@ -119,7 +119,7 @@ describe('GET /api/expenses/commute/systems', () => {
         mockModule([], [errorMessage]);
 
         const { getCommuteSystem } = await import(
-            '../../controllers/commuteSystemController.js'
+            '../../src/controllers/commuteSystemController.js'
         );
 
         mockRequest.query = { id: null };
@@ -141,7 +141,7 @@ describe('GET /api/expenses/commute/systems', () => {
         ]);
 
         const { getCommuteSystem } = await import(
-            '../../controllers/commuteSystemController.js'
+            '../../src/controllers/commuteSystemController.js'
         );
 
         mockRequest.query = { id: 1 };
@@ -162,7 +162,7 @@ describe('GET /api/expenses/commute/systems', () => {
         mockModule([], [errorMessage]);
 
         const { getCommuteSystem } = await import(
-            '../../controllers/commuteSystemController.js'
+            '../../src/controllers/commuteSystemController.js'
         );
 
         mockRequest.query = { id: 1 };
@@ -182,7 +182,7 @@ describe('GET /api/expenses/commute/systems', () => {
         mockModule([[]]);
 
         const { getCommuteSystem } = await import(
-            '../../controllers/commuteSystemController.js'
+            '../../src/controllers/commuteSystemController.js'
         );
 
         mockRequest.query = { id: 3 };
@@ -205,7 +205,7 @@ describe('POST /api/expenses/commute/systems', () => {
         mockModule([newSystem]);
 
         const { createCommuteSystem } = await import(
-            '../../controllers/commuteSystemController.js'
+            '../../src/controllers/commuteSystemController.js'
         );
 
         mockRequest.body = newSystem;
@@ -225,7 +225,7 @@ describe('POST /api/expenses/commute/systems', () => {
         mockModule([], [errorMessage]);
 
         const { createCommuteSystem } = await import(
-            '../../controllers/commuteSystemController.js'
+            '../../src/controllers/commuteSystemController.js'
         );
 
         mockRequest.body = commuteSystems.filter(
@@ -252,7 +252,7 @@ describe('PUT /api/expenses/commute/systems/:id', () => {
         mockModule([updatedSystem, updatedSystem]);
 
         const { updateCommuteSystem } = await import(
-            '../../controllers/commuteSystemController.js'
+            '../../src/controllers/commuteSystemController.js'
         );
 
         mockRequest.params = { id: 1 };
@@ -273,7 +273,7 @@ describe('PUT /api/expenses/commute/systems/:id', () => {
         mockModule([], [errorMessage]);
 
         const { updateCommuteSystem } = await import(
-            '../../controllers/commuteSystemController.js'
+            '../../src/controllers/commuteSystemController.js'
         );
 
         mockRequest.params = { id: 1 };
@@ -296,7 +296,7 @@ describe('PUT /api/expenses/commute/systems/:id', () => {
         mockModule([[]]);
 
         const { updateCommuteSystem } = await import(
-            '../../controllers/commuteSystemController.js'
+            '../../src/controllers/commuteSystemController.js'
         );
 
         mockRequest.params = { id: 1 };
@@ -319,7 +319,7 @@ describe('DELETE /api/expenses/commute/systems/:id', () => {
         mockModule([commuteSystems, [], 'Successfully deleted system']);
 
         const { deleteCommuteSystem } = await import(
-            '../../controllers/commuteSystemController.js'
+            '../../src/controllers/commuteSystemController.js'
         );
 
         mockRequest.params = { id: 1 };
@@ -342,7 +342,7 @@ describe('DELETE /api/expenses/commute/systems/:id', () => {
         ]);
 
         const { deleteCommuteSystem } = await import(
-            '../../controllers/commuteSystemController.js'
+            '../../src/controllers/commuteSystemController.js'
         );
 
         mockRequest.params = { id: 1 };
@@ -362,7 +362,7 @@ describe('DELETE /api/expenses/commute/systems/:id', () => {
         mockModule([], [errorMessage]);
 
         const { deleteCommuteSystem } = await import(
-            '../../controllers/commuteSystemController.js'
+            '../../src/controllers/commuteSystemController.js'
         );
 
         mockRequest.params = { id: 1 };
@@ -382,7 +382,7 @@ describe('DELETE /api/expenses/commute/systems/:id', () => {
         mockModule([[]]);
 
         const { deleteCommuteSystem } = await import(
-            '../../controllers/commuteSystemController.js'
+            '../../src/controllers/commuteSystemController.js'
         );
 
         mockRequest.params = { id: 1 };

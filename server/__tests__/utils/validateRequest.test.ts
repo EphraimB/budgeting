@@ -20,7 +20,7 @@ describe('validateRequest', () => {
         }));
 
         const { default: importedValidateRequest } = await import(
-            '../../utils/validateRequest.js'
+            '../../src/utils/validateRequest.js'
         );
         validateRequest = importedValidateRequest;
 

@@ -25,7 +25,7 @@ const createApp = async (): Promise<Express> => {
     app.use(express.json());
 
     // Import the module that uses the mock
-    const routerModule = await import('../../routes/commuteScheduleRouter');
+    const routerModule = await import('../../src/routes/commuteScheduleRouter');
     const commuteScheduleRouter: Router = routerModule.default;
     app.use('/', commuteScheduleRouter);
 
@@ -33,7 +33,7 @@ const createApp = async (): Promise<Express> => {
 };
 
 beforeAll(() => {
-    jest.mock('../../middleware/middleware', () => ({
+    jest.mock('../../src/middleware/middleware', () => ({
         setQueries: jest.fn(
             (req: Request, res: Response, next: NextFunction) => {
                 next();
@@ -96,14 +96,14 @@ beforeAll(() => {
         ),
     }));
 
-    jest.mock('../../generation/generateTransactions', () => {
+    jest.mock('../../src/generation/generateTransactions', () => {
         return jest.fn((req: Request, res: Response, next: NextFunction) => {
             req.transactions = [];
             next();
         });
     });
 
-    jest.mock('../../controllers/commuteScheduleController', () => ({
+    jest.mock('../../src/controllers/commuteScheduleController', () => ({
         getCommuteSchedule: (req: Request, res: Response, next: NextFunction) =>
             res.json({ message: 'success' }),
         createCommuteSchedule: (

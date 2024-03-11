@@ -1,5 +1,8 @@
-import { type GeneratedTransaction, type Wishlist } from '../../types/types';
-import generateWishlists from '../../generation/generateWishlists';
+import {
+    type GeneratedTransaction,
+    type Wishlist,
+} from '../../src/types/types';
+import generateWishlists from '../../src/generation/generateWishlists';
 import { describe, it, expect, beforeAll, afterAll } from '@jest/globals';
 import MockDate from 'mockdate';
 import dayjs, { Dayjs } from 'dayjs';

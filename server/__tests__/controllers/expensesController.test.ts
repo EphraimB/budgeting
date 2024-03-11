@@ -8,9 +8,9 @@ import {
 } from '@jest/globals';
 import { type Request } from 'express';
 import { mockModule } from '../__mocks__/mockModule';
-import { Expense } from '../../types/types.js';
+import { Expense } from '../../src/types/types.js';
 
-jest.mock('../../config/winston', () => ({
+jest.mock('../../src/config/winston', () => ({
     logger: {
         error: jest.fn(),
         info: jest.fn(),
@@ -122,7 +122,7 @@ describe('GET /api/expenses', () => {
         mockModule([expenses], [], [], []);
 
         const { getExpenses } = await import(
-            '../../controllers/expensesController.js'
+            '../../src/controllers/expensesController.js'
         );
 
         mockRequest.query = { id: null };
@@ -141,7 +141,7 @@ describe('GET /api/expenses', () => {
         mockModule([], [errorMessage], [], []);
 
         const { getExpenses } = await import(
-            '../../controllers/expensesController.js'
+            '../../src/controllers/expensesController.js'
         );
 
         mockRequest.query = { id: null };
@@ -166,7 +166,7 @@ describe('GET /api/expenses', () => {
         );
 
         const { getExpenses } = await import(
-            '../../controllers/expensesController.js'
+            '../../src/controllers/expensesController.js'
         );
 
         mockRequest.query = { id: 1 };
@@ -187,7 +187,7 @@ describe('GET /api/expenses', () => {
         mockModule([], [errorMessage], [], []);
 
         const { getExpenses } = await import(
-            '../../controllers/expensesController.js'
+            '../../src/controllers/expensesController.js'
         );
 
         mockRequest.query = { id: 1 };
@@ -213,7 +213,7 @@ describe('GET /api/expenses', () => {
         );
 
         const { getExpenses } = await import(
-            '../../controllers/expensesController.js'
+            '../../src/controllers/expensesController.js'
         );
 
         mockRequest.query = { account_id: 1 };
@@ -234,7 +234,7 @@ describe('GET /api/expenses', () => {
         mockModule([], [errorMessage], [], []);
 
         const { getExpenses } = await import(
-            '../../controllers/expensesController.js'
+            '../../src/controllers/expensesController.js'
         );
 
         mockRequest.query = { account_id: 1 };
@@ -263,7 +263,7 @@ describe('GET /api/expenses', () => {
         );
 
         const { getExpenses } = await import(
-            '../../controllers/expensesController.js'
+            '../../src/controllers/expensesController.js'
         );
 
         mockRequest.query = { account_id: 1, id: 1 };
@@ -286,7 +286,7 @@ describe('GET /api/expenses', () => {
         mockModule([], [errorMessage], [], []);
 
         const { getExpenses } = await import(
-            '../../controllers/expensesController.js'
+            '../../src/controllers/expensesController.js'
         );
 
         mockRequest.query = { account_id: 1, id: 1 };
@@ -306,7 +306,7 @@ describe('GET /api/expenses', () => {
         mockModule([[]]);
 
         const { getExpenses } = await import(
-            '../../controllers/expensesController.js'
+            '../../src/controllers/expensesController.js'
         );
 
         mockRequest.query = { id: 3 };
@@ -337,7 +337,7 @@ describe('POST /api/expenses', () => {
         );
 
         const { createExpense } = await import(
-            '../../controllers/expensesController.js'
+            '../../src/controllers/expensesController.js'
         );
 
         mockRequest.body = expenses[0];
@@ -355,7 +355,7 @@ describe('POST /api/expenses', () => {
         mockModule([], [errorMessage]);
 
         const { createExpense } = await import(
-            '../../controllers/expensesController.js'
+            '../../src/controllers/expensesController.js'
         );
 
         mockRequest.body = expenses.filter(
@@ -378,7 +378,7 @@ describe('POST /api/expenses', () => {
         mockModule([], [errorMessage]);
 
         const { createExpenseReturnObject } = await import(
-            '../../controllers/expensesController.js'
+            '../../src/controllers/expensesController.js'
         );
 
         mockRequest.body = expenses.filter(
@@ -421,7 +421,7 @@ describe('POST /api/expenses', () => {
         mockModule([expenses.filter((expense) => expense.expense_id === 1)]);
 
         const { createExpenseReturnObject } = await import(
-            '../../controllers/expensesController.js'
+            '../../src/controllers/expensesController.js'
         );
 
         mockRequest.body = expenses[0];
@@ -448,7 +448,7 @@ describe('PUT /api/expenses/:id', () => {
         );
 
         const { updateExpense } = await import(
-            '../../controllers/expensesController.js'
+            '../../src/controllers/expensesController.js'
         );
 
         mockRequest.params = { id: 1 };
@@ -467,7 +467,7 @@ describe('PUT /api/expenses/:id', () => {
         mockModule([], [errorMessage]);
 
         const { updateExpense } = await import(
-            '../../controllers/expensesController.js'
+            '../../src/controllers/expensesController.js'
         );
 
         mockRequest.params = { id: 1 };
@@ -491,7 +491,7 @@ describe('PUT /api/expenses/:id', () => {
         mockModule([], [errorMessage]);
 
         const { updateExpenseReturnObject } = await import(
-            '../../controllers/expensesController.js'
+            '../../src/controllers/expensesController.js'
         );
 
         mockRequest.body = expenses.filter(
@@ -513,7 +513,7 @@ describe('PUT /api/expenses/:id', () => {
         mockModule([[]]);
 
         const { updateExpense } = await import(
-            '../../controllers/expensesController.js'
+            '../../src/controllers/expensesController.js'
         );
 
         mockRequest.params = { id: 1 };
@@ -555,7 +555,7 @@ describe('PUT /api/expenses/:id', () => {
         mockModule([expenses.filter((expense) => expense.expense_id === 1)]);
 
         const { updateExpenseReturnObject } = await import(
-            '../../controllers/expensesController.js'
+            '../../src/controllers/expensesController.js'
         );
 
         mockRequest.body = expenses.filter(
@@ -588,7 +588,7 @@ describe('DELETE /api/expenses/:id', () => {
         );
 
         const { deleteExpense } = await import(
-            '../../controllers/expensesController.js'
+            '../../src/controllers/expensesController.js'
         );
 
         mockRequest.params = { id: 1 };
@@ -605,7 +605,7 @@ describe('DELETE /api/expenses/:id', () => {
         mockModule([], [errorMessage]);
 
         const { deleteExpense } = await import(
-            '../../controllers/expensesController.js'
+            '../../src/controllers/expensesController.js'
         );
 
         mockRequest.params = { id: 1 };
@@ -625,7 +625,7 @@ describe('DELETE /api/expenses/:id', () => {
         mockModule([[]]);
 
         const { deleteExpense } = await import(
-            '../../controllers/expensesController.js'
+            '../../src/controllers/expensesController.js'
         );
 
         mockRequest.params = { id: 1 };
@@ -643,7 +643,7 @@ describe('DELETE /api/expenses/:id', () => {
         mockModule(['Expense deleted successfully']);
 
         const { deleteExpenseReturnObject } = await import(
-            '../../controllers/expensesController.js'
+            '../../src/controllers/expensesController.js'
         );
 
         mockRequest.params = { id: 1 };

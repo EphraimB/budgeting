@@ -1,5 +1,5 @@
 import { type Request } from 'express';
-import { type PayrollDate } from '../../types/types.js';
+import { type PayrollDate } from '../../src/types/types.js';
 import {
     jest,
     beforeEach,
@@ -15,7 +15,7 @@ let mockRequest: any;
 let mockResponse: any;
 let mockNext: any;
 
-jest.mock('../../config/winston', () => ({
+jest.mock('../../src/config/winston', () => ({
     logger: {
         error: jest.fn(),
         info: jest.fn(),
@@ -74,7 +74,7 @@ describe('GET /api/payroll/dates', () => {
         mockRequest.query = { id: null, employee_id: null };
 
         const { getPayrollDates } = await import(
-            '../../controllers/payrollDatesController.js'
+            '../../src/controllers/payrollDatesController.js'
         );
 
         // Call the function with the mock request and response
@@ -93,7 +93,7 @@ describe('GET /api/payroll/dates', () => {
         mockRequest.query = { id: null, employee_id: null };
 
         const { getPayrollDates } = await import(
-            '../../controllers/payrollDatesController.js'
+            '../../src/controllers/payrollDatesController.js'
         );
 
         // Call the function with the mock request and response
@@ -113,7 +113,7 @@ describe('GET /api/payroll/dates', () => {
         ]);
 
         const { getPayrollDates } = await import(
-            '../../controllers/payrollDatesController.js'
+            '../../src/controllers/payrollDatesController.js'
         );
 
         mockRequest.query = { id: 1, employee_id: null };
@@ -136,7 +136,7 @@ describe('GET /api/payroll/dates', () => {
         mockModule([], [errorMessage]);
 
         const { getPayrollDates } = await import(
-            '../../controllers/payrollDatesController.js'
+            '../../src/controllers/payrollDatesController.js'
         );
 
         mockRequest.query = { id: 1, employee_id: null };
@@ -162,7 +162,7 @@ describe('GET /api/payroll/dates', () => {
         ]);
 
         const { getPayrollDates } = await import(
-            '../../controllers/payrollDatesController.js'
+            '../../src/controllers/payrollDatesController.js'
         );
 
         mockRequest.query = { id: null, employee_id };
@@ -183,7 +183,7 @@ describe('GET /api/payroll/dates', () => {
         mockModule([], [errorMessage]);
 
         const { getPayrollDates } = await import(
-            '../../controllers/payrollDatesController.js'
+            '../../src/controllers/payrollDatesController.js'
         );
 
         mockRequest.query = { id: null, employee_id };
@@ -212,7 +212,7 @@ describe('GET /api/payroll/dates', () => {
         ]);
 
         const { getPayrollDates } = await import(
-            '../../controllers/payrollDatesController.js'
+            '../../src/controllers/payrollDatesController.js'
         );
 
         mockRequest.query = { id, employee_id };
@@ -240,7 +240,7 @@ describe('GET /api/payroll/dates', () => {
         mockModule([], [errorMessage]);
 
         const { getPayrollDates } = await import(
-            '../../controllers/payrollDatesController.js'
+            '../../src/controllers/payrollDatesController.js'
         );
 
         mockRequest.query = { id, employee_id };
@@ -260,7 +260,7 @@ describe('GET /api/payroll/dates', () => {
         mockModule([[]]);
 
         const { getPayrollDates } = await import(
-            '../../controllers/payrollDatesController.js'
+            '../../src/controllers/payrollDatesController.js'
         );
 
         mockRequest.query = { id: 3 };
@@ -287,7 +287,7 @@ describe('POST /api/payroll/dates', () => {
         ]);
 
         const { createPayrollDate } = await import(
-            '../../controllers/payrollDatesController.js'
+            '../../src/controllers/payrollDatesController.js'
         );
 
         mockRequest.body = payrollDates.filter(
@@ -307,7 +307,7 @@ describe('POST /api/payroll/dates', () => {
         mockModule([], [errorMessage]);
 
         const { createPayrollDate } = await import(
-            '../../controllers/payrollDatesController.js'
+            '../../src/controllers/payrollDatesController.js'
         );
 
         mockRequest.body = payrollDates.filter(
@@ -329,7 +329,7 @@ describe('POST /api/payroll/dates', () => {
         mockModule([], [errorMessage]);
 
         const { createPayrollDateReturnObject } = await import(
-            '../../controllers/payrollDatesController.js'
+            '../../src/controllers/payrollDatesController.js'
         );
 
         mockRequest.body = payrollDates.filter(
@@ -357,7 +357,7 @@ describe('POST /api/payroll/dates', () => {
         ]);
 
         const { createPayrollDateReturnObject } = await import(
-            '../../controllers/payrollDatesController.js'
+            '../../src/controllers/payrollDatesController.js'
         );
 
         mockRequest.body = payrollDates.filter(
@@ -387,7 +387,7 @@ describe('PUT /api/payroll/dates/:id', () => {
         );
 
         const { updatePayrollDate } = await import(
-            '../../controllers/payrollDatesController.js'
+            '../../src/controllers/payrollDatesController.js'
         );
 
         mockRequest.params = { id: 1 };
@@ -407,7 +407,7 @@ describe('PUT /api/payroll/dates/:id', () => {
         mockModule([], [errorMessage]);
 
         const { updatePayrollDate } = await import(
-            '../../controllers/payrollDatesController.js'
+            '../../src/controllers/payrollDatesController.js'
         );
 
         mockRequest.params = { id: 1 };
@@ -430,7 +430,7 @@ describe('PUT /api/payroll/dates/:id', () => {
         mockModule([], [errorMessage]);
 
         const { updatePayrollDateReturnObject } = await import(
-            '../../controllers/payrollDatesController.js'
+            '../../src/controllers/payrollDatesController.js'
         );
 
         mockRequest.params = { id: 1 };
@@ -455,7 +455,7 @@ describe('PUT /api/payroll/dates/:id', () => {
         mockModule([[]]);
 
         const { updatePayrollDate } = await import(
-            '../../controllers/payrollDatesController.js'
+            '../../src/controllers/payrollDatesController.js'
         );
 
         mockRequest.params = { id: 3 };
@@ -482,7 +482,7 @@ describe('PUT /api/payroll/dates/:id', () => {
         ]);
 
         const { updatePayrollDateReturnObject } = await import(
-            '../../controllers/payrollDatesController.js'
+            '../../src/controllers/payrollDatesController.js'
         );
 
         mockRequest.params = { id: 1 };
@@ -512,7 +512,7 @@ describe('DELETE /api/payroll/dates/:id', () => {
         mockRequest.query = { employee_id: 1 };
 
         const { deletePayrollDate } = await import(
-            '../../controllers/payrollDatesController.js'
+            '../../src/controllers/payrollDatesController.js'
         );
 
         await deletePayrollDate(mockRequest as Request, mockResponse, mockNext);
@@ -530,7 +530,7 @@ describe('DELETE /api/payroll/dates/:id', () => {
         mockRequest.query = { employee_id: 1 };
 
         const { deletePayrollDate } = await import(
-            '../../controllers/payrollDatesController.js'
+            '../../src/controllers/payrollDatesController.js'
         );
 
         await deletePayrollDate(mockRequest as Request, mockResponse, mockNext);
@@ -547,7 +547,7 @@ describe('DELETE /api/payroll/dates/:id', () => {
         mockModule([[]]);
 
         const { deletePayrollDate } = await import(
-            '../../controllers/payrollDatesController.js'
+            '../../src/controllers/payrollDatesController.js'
         );
 
         mockRequest.params = { id: 3 };
@@ -568,7 +568,7 @@ describe('DELETE /api/payroll/dates/:id', () => {
         mockModule(['Successfully deleted payroll date']);
 
         const { deletePayrollDateReturnObject } = await import(
-            '../../controllers/payrollDatesController.js'
+            '../../src/controllers/payrollDatesController.js'
         );
 
         mockRequest.params = { id: 1 };
