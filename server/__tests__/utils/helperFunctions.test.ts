@@ -133,7 +133,7 @@ describe('parseOrFallback function', () => {
 });
 
 describe('nextTransactionFrequencyDate function', () => {
-    it('should return the next transaction frequency date', async () => {
+    it('should return the next transaction frequency date on a regular monthly', async () => {
         const { nextTransactionFrequencyDate } = await import(
             '../../src/utils/helperFunctions'
         );
@@ -145,5 +145,20 @@ describe('nextTransactionFrequencyDate function', () => {
 
         const result = nextTransactionFrequencyDate(transaction);
         expect(result).toEqual('2021-01-15T00:00:00-05:00');
+    });
+
+    it('should return the next transaction frequency date on a regular weekly', async () => {
+        const { nextTransactionFrequencyDate } = await import(
+            '../../src/utils/helperFunctions'
+        );
+
+        const transaction = {
+            frequency_type: 1,
+            frequency_type_variable: 1,
+            begin_date: '2020-12-15',
+        };
+
+        const result = nextTransactionFrequencyDate(transaction);
+        expect(result).toEqual('2020-12-22T00:00:00-05:00');
     });
 });

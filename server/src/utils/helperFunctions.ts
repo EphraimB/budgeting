@@ -128,7 +128,7 @@ export const nextTransactionFrequencyDate = (
 
             break;
         case 1: // Weekly
-            const expenseDate: Dayjs = dayjs(transaction.begin_date);
+            let expenseDate: Dayjs = dayjs(transaction.begin_date);
 
             if (
                 transaction.frequency_day_of_week !== null &&
@@ -138,13 +138,13 @@ export const nextTransactionFrequencyDate = (
                 const frequency_day_of_week: number =
                     transaction.frequency_day_of_week;
 
-                expenseDate.add(
+                expenseDate = expenseDate.add(
                     (frequency_day_of_week + 7 - startDay) % 7,
                     'day',
                 );
             }
 
-            expenseDate.add(
+            expenseDate = expenseDate.add(
                 transaction.frequency_type_variable !== null &&
                     transaction.frequency_type_variable !== undefined
                     ? transaction.frequency_type_variable
