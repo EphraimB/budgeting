@@ -8,13 +8,13 @@ import {
     expect,
 } from '@jest/globals';
 import { mockModule } from '../__mocks__/mockModule.js';
-import { Payroll } from '../../types/types.js';
+import { Payroll } from '../../src/types/types.js';
 
 // Mock request and response
 let mockRequest: any;
 let mockResponse: any;
 
-jest.mock('../../config/winston', () => ({
+jest.mock('../../src/config/winston', () => ({
     logger: {
         error: jest.fn(),
         info: jest.fn(),
@@ -61,7 +61,7 @@ describe('GET /api/payrolls', () => {
         mockRequest.query = { employee_id: 1 };
 
         const { getPayrolls } = await import(
-            '../../controllers/payrollsController.js'
+            '../../src/controllers/payrollsController.js'
         );
 
         // Call the function with the mock request and response
@@ -85,7 +85,7 @@ describe('GET /api/payrolls', () => {
         mockRequest.query = { employee_id: 1 };
 
         const { getPayrolls } = await import(
-            '../../controllers/payrollsController.js'
+            '../../src/controllers/payrollsController.js'
         );
 
         // Call the function with the mock request and response
@@ -103,7 +103,7 @@ describe('GET /api/payrolls', () => {
         mockModule([[]]);
 
         const { getPayrolls } = await import(
-            '../../controllers/payrollsController.js'
+            '../../src/controllers/payrollsController.js'
         );
 
         mockRequest.query = { employee_id: 3 };

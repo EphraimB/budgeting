@@ -128,7 +128,7 @@ export const nextTransactionFrequencyDate = (
 
             break;
         case 1: // Weekly
-            const expenseDate: Dayjs = dayjs(transaction.begin_date);
+            let expenseDate: Dayjs = dayjs(transaction.begin_date);
 
             if (
                 transaction.frequency_day_of_week !== null &&
@@ -138,13 +138,13 @@ export const nextTransactionFrequencyDate = (
                 const frequency_day_of_week: number =
                     transaction.frequency_day_of_week;
 
-                expenseDate.add(
+                expenseDate = expenseDate.add(
                     (frequency_day_of_week + 7 - startDay) % 7,
                     'day',
                 );
             }
 
-            expenseDate.add(
+            expenseDate = expenseDate.add(
                 transaction.frequency_type_variable !== null &&
                     transaction.frequency_type_variable !== undefined
                     ? transaction.frequency_type_variable
@@ -156,7 +156,7 @@ export const nextTransactionFrequencyDate = (
 
             break;
         case 2: // Monthly
-            const transactionDate: Dayjs = dayjs(transaction.begin_date).add(
+            let transactionDate: Dayjs = dayjs(transaction.begin_date).add(
                 transaction.frequency_type_variable !== null &&
                     transaction.frequency_type_variable !== undefined
                     ? transaction.frequency_type_variable
@@ -205,14 +205,22 @@ export const nextTransactionFrequencyDate = (
                         7 * transaction.frequency_week_of_month;
                 }
 
-                transactionDate.date(newDay);
+                transactionDate = transactionDate.date(newDay);
+            }
+
+            // Loop through the months until it's after the current date
+            while (transactionDate.isBefore()) {
+                transactionDate = transactionDate.add(
+                    transaction.frequency_type_variable ?? 1,
+                    'month',
+                );
             }
 
             nextDate = transactionDate.format();
 
             break;
         case 3: // Yearly
-            const newDate: Dayjs = dayjs(transaction.begin_date).add(
+            let newDate: Dayjs = dayjs(transaction.begin_date).add(
                 transaction.frequency_type_variable !== null &&
                     transaction.frequency_type_variable !== undefined
                     ? transaction.frequency_type_variable
@@ -224,7 +232,7 @@ export const nextTransactionFrequencyDate = (
                 transaction.frequency_month_of_year !== null &&
                 transaction.frequency_month_of_year !== undefined
             ) {
-                newDate.month(transaction.frequency_month_of_year);
+                newDate = newDate.month(transaction.frequency_month_of_year);
             }
 
             if (
@@ -234,7 +242,7 @@ export const nextTransactionFrequencyDate = (
                 const daysToAdd: number =
                     (7 - newDate.day() + transaction.frequency_day_of_week) % 7;
 
-                newDate.add(daysToAdd, 'day'); // this is the first occurrence of the day_of_week
+                newDate = newDate.add(daysToAdd, 'day'); // this is the first occurrence of the day_of_week
 
                 if (
                     transaction.frequency_week_of_month !== null &&
@@ -248,7 +256,7 @@ export const nextTransactionFrequencyDate = (
 
                     if (proposedDate.diff(newDate, 'month') === 0) {
                         // it's in the same month, so it's a valid date
-                        newDate.date(proposedDate.date());
+                        newDate = newDate.date(proposedDate.date());
                     }
                 }
             }

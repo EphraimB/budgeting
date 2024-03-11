@@ -8,7 +8,7 @@ import express, {
 } from 'express';
 import { jest, beforeAll, describe, it, expect } from '@jest/globals';
 
-jest.mock('../../middleware/middleware', () => ({
+jest.mock('../../src/middleware/middleware', () => ({
     getCurrentBalance: (req: Request, res: Response, next: NextFunction) => {
         req.currentBalance = [{ account_id: 1, account_balance: 100 }];
         next();
@@ -67,7 +67,7 @@ jest.mock('../../middleware/middleware', () => ({
     },
 }));
 
-jest.mock('../../generation/generateTransactions', () => {
+jest.mock('../../src/generation/generateTransactions', () => {
     return jest.fn((req: Request, res: Response, next: NextFunction) => {
         req.transactions = [
             {
@@ -89,7 +89,7 @@ const createApp = async (): Promise<Express> => {
     app.use(express.json());
 
     // Import the module that uses the mock
-    const routerModule = await import('../../routes/transactionsRouter');
+    const routerModule = await import('../../src/routes/transactionsRouter');
     const transactionsRouter: Router = routerModule.default;
     app.use('/', transactionsRouter);
 

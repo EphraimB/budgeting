@@ -8,9 +8,9 @@ import {
     expect,
 } from '@jest/globals';
 import { mockModule } from '../__mocks__/mockModule';
-import { Transfer } from '../../types/types.js';
+import { Transfer } from '../../src/types/types.js';
 
-jest.mock('../../config/winston', () => ({
+jest.mock('../../src/config/winston', () => ({
     logger: {
         error: jest.fn(),
         info: jest.fn(),
@@ -235,7 +235,7 @@ describe('GET /api/transfers', () => {
         mockRequest.query = { id: null };
 
         const { getTransfers } = await import(
-            '../../controllers/transfersController.js'
+            '../../src/controllers/transfersController.js'
         );
 
         // Call the function with the mock request and response
@@ -259,7 +259,7 @@ describe('GET /api/transfers', () => {
         mockRequest.query = { id: null };
 
         const { getTransfers } = await import(
-            '../../controllers/transfersController.js'
+            '../../src/controllers/transfersController.js'
         );
 
         // Call the function with the mock request and response
@@ -281,7 +281,7 @@ describe('GET /api/transfers', () => {
         mockRequest.query = { id: 1 };
 
         const { getTransfers } = await import(
-            '../../controllers/transfersController.js'
+            '../../src/controllers/transfersController.js'
         );
 
         // Call the function with the mock request and response
@@ -307,7 +307,7 @@ describe('GET /api/transfers', () => {
         mockRequest.query = { id: 1 };
 
         const { getTransfers } = await import(
-            '../../controllers/transfersController.js'
+            '../../src/controllers/transfersController.js'
         );
 
         // Call the function with the mock request and response
@@ -329,7 +329,7 @@ describe('GET /api/transfers', () => {
         mockRequest.query = { account_id: 1 };
 
         const { getTransfers } = await import(
-            '../../controllers/transfersController.js'
+            '../../src/controllers/transfersController.js'
         );
 
         // Call the function with the mock request and response
@@ -357,7 +357,7 @@ describe('GET /api/transfers', () => {
         mockRequest.query = { account_id: 1 };
 
         const { getTransfers } = await import(
-            '../../controllers/transfersController.js'
+            '../../src/controllers/transfersController.js'
         );
 
         // Call the function with the mock request and response
@@ -383,7 +383,7 @@ describe('GET /api/transfers', () => {
         mockRequest.query = { id: 1, account_id: 1 };
 
         const { getTransfers } = await import(
-            '../../controllers/transfersController.js'
+            '../../src/controllers/transfersController.js'
         );
 
         // Call the function with the mock request and response
@@ -412,7 +412,7 @@ describe('GET /api/transfers', () => {
         mockRequest.query = { id: 1, account_id: 1 };
 
         const { getTransfers } = await import(
-            '../../controllers/transfersController.js'
+            '../../src/controllers/transfersController.js'
         );
 
         // Call the function with the mock request and response
@@ -430,7 +430,7 @@ describe('GET /api/transfers', () => {
         mockModule([[]]);
 
         const { getTransfers } = await import(
-            '../../controllers/transfersController.js'
+            '../../src/controllers/transfersController.js'
         );
 
         mockRequest.query = { id: 3 };
@@ -457,7 +457,7 @@ describe('POST /api/transfers', () => {
         );
 
         const { createTransfer } = await import(
-            '../../controllers/transfersController.js'
+            '../../src/controllers/transfersController.js'
         );
 
         mockRequest.body = newTransfer;
@@ -480,7 +480,7 @@ describe('POST /api/transfers', () => {
         mockModule([], [errorMessage]);
 
         const { createTransfer } = await import(
-            '../../controllers/transfersController.js'
+            '../../src/controllers/transfersController.js'
         );
 
         mockRequest.body = transfers.filter(
@@ -503,7 +503,7 @@ describe('POST /api/transfers', () => {
         mockModule([], [errorMessage]);
 
         const { createTransferReturnObject } = await import(
-            '../../controllers/transfersController.js'
+            '../../src/controllers/transfersController.js'
         );
 
         mockRequest.body = transfers.filter(
@@ -529,7 +529,7 @@ describe('POST /api/transfers', () => {
         mockModule([newTransfer]);
 
         const { createTransferReturnObject } = await import(
-            '../../controllers/transfersController.js'
+            '../../src/controllers/transfersController.js'
         );
 
         mockRequest.body = newTransfer;
@@ -565,7 +565,7 @@ describe('PUT /api/transfer/:id', () => {
         mockRequest.body = updatedTransfer;
 
         const { updateTransfer } = await import(
-            '../../controllers/transfersController.js'
+            '../../src/controllers/transfersController.js'
         );
 
         await updateTransfer(mockRequest as Request, mockResponse, mockNext);
@@ -585,7 +585,7 @@ describe('PUT /api/transfer/:id', () => {
         );
 
         const { updateTransfer } = await import(
-            '../../controllers/transfersController.js'
+            '../../src/controllers/transfersController.js'
         );
 
         // Call the function with the mock request and response
@@ -609,7 +609,7 @@ describe('PUT /api/transfer/:id', () => {
         );
 
         const { updateTransferReturnObject } = await import(
-            '../../controllers/transfersController.js'
+            '../../src/controllers/transfersController.js'
         );
 
         // Call the function with the mock request and response
@@ -627,7 +627,7 @@ describe('PUT /api/transfer/:id', () => {
         mockModule([[]]);
 
         const { updateTransfer } = await import(
-            '../../controllers/transfersController.js'
+            '../../src/controllers/transfersController.js'
         );
 
         mockRequest.params = { id: 3 };
@@ -652,7 +652,7 @@ describe('PUT /api/transfer/:id', () => {
         mockModule([updatedTransfer]);
 
         const { updateTransferReturnObject } = await import(
-            '../../controllers/transfersController.js'
+            '../../src/controllers/transfersController.js'
         );
 
         mockRequest = { transfer_id: 1 };
@@ -682,7 +682,7 @@ describe('DELETE /api/transfer/:id', () => {
         );
 
         const { deleteTransfer } = await import(
-            '../../controllers/transfersController.js'
+            '../../src/controllers/transfersController.js'
         );
 
         mockRequest.params = { id: 1 };
@@ -699,7 +699,7 @@ describe('DELETE /api/transfer/:id', () => {
         mockModule([], [errorMessage]);
 
         const { deleteTransfer } = await import(
-            '../../controllers/transfersController.js'
+            '../../src/controllers/transfersController.js'
         );
 
         mockRequest.params = { id: 1 };
@@ -720,7 +720,7 @@ describe('DELETE /api/transfer/:id', () => {
         mockModule([[]]);
 
         const { deleteTransfer } = await import(
-            '../../controllers/transfersController.js'
+            '../../src/controllers/transfersController.js'
         );
 
         mockRequest.params = { id: 3 };
@@ -739,7 +739,7 @@ describe('DELETE /api/transfer/:id', () => {
         mockModule(['Transfer deleted successfully']);
 
         const { deleteTransferReturnObject } = await import(
-            '../../controllers/transfersController.js'
+            '../../src/controllers/transfersController.js'
         );
 
         mockRequest.params = { id: 1 };

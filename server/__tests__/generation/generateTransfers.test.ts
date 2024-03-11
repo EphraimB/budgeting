@@ -1,10 +1,13 @@
-import { type GeneratedTransaction, type Transfer } from '../../types/types';
+import {
+    type GeneratedTransaction,
+    type Transfer,
+} from '../../src/types/types';
 import {
     generateDailyTransfers,
     generateMonthlyTransfers,
     generateWeeklyTransfers,
     generateYearlyTransfers,
-} from '../../generation/generateTransfers';
+} from '../../src/generation/generateTransfers';
 import {
     describe,
     it,

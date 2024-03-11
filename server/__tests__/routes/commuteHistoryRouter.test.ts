@@ -25,7 +25,7 @@ const createApp = async (): Promise<Express> => {
     app.use(express.json());
 
     // Import the module that uses the mock
-    const routerModule = await import('../../routes/commuteHistoryRouter');
+    const routerModule = await import('../../src/routes/commuteHistoryRouter');
     const commuteHistoryRouter: Router = routerModule.default;
     app.use('/', commuteHistoryRouter);
 
@@ -33,7 +33,7 @@ const createApp = async (): Promise<Express> => {
 };
 
 beforeAll(() => {
-    jest.mock('../../controllers/commuteHistoryController', () => ({
+    jest.mock('../../src/controllers/commuteHistoryController', () => ({
         getCommuteHistory: (req: Request, res: Response, next: NextFunction) =>
             res.json({ message: 'success' }),
         createCommuteHistory: (

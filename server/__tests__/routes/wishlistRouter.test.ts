@@ -25,7 +25,7 @@ const createApp = async (): Promise<Express> => {
     app.use(express.json());
 
     // Import the module that uses the mock
-    const routerModule = await import('../../routes/wishlistRouter');
+    const routerModule = await import('../../src/routes/wishlistRouter');
     const wishlistRouter: Router = routerModule.default;
     app.use('/', wishlistRouter);
 
@@ -40,7 +40,7 @@ const newWishlist = {
 };
 
 beforeAll(() => {
-    jest.mock('../../middleware/middleware', () => ({
+    jest.mock('../../src/middleware/middleware', () => ({
         setQueries: jest.fn(
             (req: Request, res: Response, next: NextFunction) => {
                 next();
@@ -93,14 +93,14 @@ beforeAll(() => {
         ),
     }));
 
-    jest.mock('../../generation/generateTransactions', () => {
+    jest.mock('../../src/generation/generateTransactions', () => {
         return jest.fn((req: Request, res: Response, next: NextFunction) => {
             req.transactions = [];
             next();
         });
     });
 
-    jest.mock('../../controllers/wishlistsController', () => ({
+    jest.mock('../../src/controllers/wishlistsController', () => ({
         getWishlists: jest.fn(
             (req: Request, res: Response, next: NextFunction) =>
                 res.json({ message: 'success' }),

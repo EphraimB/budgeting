@@ -1,11 +1,11 @@
-import { type GeneratedTransaction } from '../../types/types';
+import { type GeneratedTransaction } from '../../src/types/types';
 import {
     generateDailyLoans,
     generateMonthlyLoans,
     generateWeeklyLoans,
     generateYearlyLoans,
     calculateInterest,
-} from '../../generation/generateLoans';
+} from '../../src/generation/generateLoans';
 import {
     describe,
     it,

@@ -1,10 +1,10 @@
-import { type GeneratedTransaction } from '../../types/types';
+import { type GeneratedTransaction } from '../../src/types/types';
 import {
     generateDailyIncome,
     generateMonthlyIncome,
     generateWeeklyIncome,
     generateYearlyIncome,
-} from '../../generation/generateIncome';
+} from '../../src/generation/generateIncome';
 import {
     describe,
     it,

@@ -6,7 +6,7 @@ import { describe, it, expect } from '@jest/globals';
 
 const vol = Volume.fromJSON(
     {
-        'views/swagger.json': '[]',
+        'src/views/swagger.json': '[]',
     },
     process.cwd(),
 );
@@ -16,7 +16,7 @@ jest.doMock('fs', () => ({
     default: vol,
 }));
 
-jest.mock('../config/winston', () => ({
+jest.mock('../src/config/winston', () => ({
     __esModule: true,
     logger: {
         info: jest.fn(),
@@ -30,7 +30,7 @@ jest.mock('../config/winston', () => ({
 describe('Test application', () => {
     it('should trigger not found for site 404', async () => {
         // Import the module that uses the mock
-        const appModule = await import('../app.js');
+        const appModule = await import('../src/app.js');
         const app: Express = appModule.default;
 
         const response: request.Response = await request(app).get(

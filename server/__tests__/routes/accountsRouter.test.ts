@@ -25,7 +25,7 @@ const createApp = async (): Promise<Express> => {
     app.use(express.json());
 
     // Import the module that uses the mock
-    const routerModule = await import('../../routes/accountsRouter');
+    const routerModule = await import('../../src/routes/accountsRouter');
     const accountsRouter: Router = routerModule.default;
     app.use('/', accountsRouter);
 
@@ -33,7 +33,7 @@ const createApp = async (): Promise<Express> => {
 };
 
 beforeAll(() => {
-    jest.mock('../../controllers/accountsController', () => ({
+    jest.mock('../../src/controllers/accountsController', () => ({
         getAccounts: (req: Request, res: Response, next: NextFunction) =>
             res.json({ message: 'success' }),
         createAccount: (req: Request, res: Response, next: NextFunction) =>

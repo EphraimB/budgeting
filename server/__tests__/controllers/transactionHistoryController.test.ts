@@ -8,13 +8,13 @@ import {
     expect,
 } from '@jest/globals';
 import { mockModule } from '../__mocks__/mockModule';
-import { TransactionHistory } from '../../types/types.js';
+import { TransactionHistory } from '../../src/types/types.js';
 
 // Mock request and response
 let mockRequest: any;
 let mockResponse: any;
 
-jest.mock('../../config/winston', () => ({
+jest.mock('../../src/config/winston', () => ({
     logger: {
         error: jest.fn(),
         info: jest.fn(),
@@ -128,7 +128,7 @@ describe('GET /api/transactionHistory', () => {
         mockRequest.query = { id: null };
 
         const { getTransactions } = await import(
-            '../../controllers/transactionHistoryController.js'
+            '../../src/controllers/transactionHistoryController.js'
         );
 
         // Call the function with the mock request and response
@@ -147,7 +147,7 @@ describe('GET /api/transactionHistory', () => {
         mockRequest.query = { id: null };
 
         const { getTransactions } = await import(
-            '../../controllers/transactionHistoryController.js'
+            '../../src/controllers/transactionHistoryController.js'
         );
 
         // Call the function with the mock request and response
@@ -171,7 +171,7 @@ describe('GET /api/transactionHistory', () => {
         mockRequest.query = { id: 1 };
 
         const { getTransactions } = await import(
-            '../../controllers/transactionHistoryController.js'
+            '../../src/controllers/transactionHistoryController.js'
         );
 
         // Call the function with the mock request and response
@@ -192,7 +192,7 @@ describe('GET /api/transactionHistory', () => {
         mockRequest.query = { id: 1 };
 
         const { getTransactions } = await import(
-            '../../controllers/transactionHistoryController.js'
+            '../../src/controllers/transactionHistoryController.js'
         );
 
         // Call the function with the mock request and response
@@ -214,7 +214,7 @@ describe('GET /api/transactionHistory', () => {
         mockRequest.query = { id: null, account_id: 1 };
 
         const { getTransactions } = await import(
-            '../../controllers/transactionHistoryController.js'
+            '../../src/controllers/transactionHistoryController.js'
         );
 
         // Call the function with the mock request and response
@@ -237,7 +237,7 @@ describe('GET /api/transactionHistory', () => {
         mockRequest.query = { id: null, account_id: 1 };
 
         const { getTransactions } = await import(
-            '../../controllers/transactionHistoryController.js'
+            '../../src/controllers/transactionHistoryController.js'
         );
 
         // Call the function with the mock request and response
@@ -263,7 +263,7 @@ describe('GET /api/transactionHistory', () => {
         mockRequest.query = { id: 1, account_id: 1 };
 
         const { getTransactions } = await import(
-            '../../controllers/transactionHistoryController.js'
+            '../../src/controllers/transactionHistoryController.js'
         );
 
         // Call the function with the mock request and response
@@ -287,7 +287,7 @@ describe('GET /api/transactionHistory', () => {
         mockRequest.query = { id: 1, account_id: 1 };
 
         const { getTransactions } = await import(
-            '../../controllers/transactionHistoryController.js'
+            '../../src/controllers/transactionHistoryController.js'
         );
 
         // Call the function with the mock request and response
@@ -305,7 +305,7 @@ describe('GET /api/transactionHistory', () => {
         mockModule([[]]);
 
         const { getTransactions } = await import(
-            '../../controllers/transactionHistoryController.js'
+            '../../src/controllers/transactionHistoryController.js'
         );
 
         mockRequest.query = { id: 3 };
@@ -329,7 +329,7 @@ describe('POST /api/transactionHistory', () => {
         mockModule([newTransaction]);
 
         const { createTransaction } = await import(
-            '../../controllers/transactionHistoryController.js'
+            '../../src/controllers/transactionHistoryController.js'
         );
 
         mockRequest.body = newTransaction;
@@ -349,7 +349,7 @@ describe('POST /api/transactionHistory', () => {
         mockModule([], [errorMessage]);
 
         const { createTransaction } = await import(
-            '../../controllers/transactionHistoryController.js'
+            '../../src/controllers/transactionHistoryController.js'
         );
 
         mockRequest.body = transactions.filter(
@@ -379,7 +379,7 @@ describe('PUT /api/transactionHistory/:id', () => {
         mockRequest.body = updatedTransaction;
 
         const { updateTransaction } = await import(
-            '../../controllers/transactionHistoryController.js'
+            '../../src/controllers/transactionHistoryController.js'
         );
 
         await updateTransaction(mockRequest as Request, mockResponse);
@@ -402,7 +402,7 @@ describe('PUT /api/transactionHistory/:id', () => {
         );
 
         const { updateTransaction } = await import(
-            '../../controllers/transactionHistoryController.js'
+            '../../src/controllers/transactionHistoryController.js'
         );
 
         await updateTransaction(mockRequest as Request, mockResponse);
@@ -419,7 +419,7 @@ describe('PUT /api/transactionHistory/:id', () => {
         mockModule([[]]);
 
         const { updateTransaction } = await import(
-            '../../controllers/transactionHistoryController.js'
+            '../../src/controllers/transactionHistoryController.js'
         );
 
         mockRequest.params = { id: 3 };
@@ -442,7 +442,7 @@ describe('DELETE /api/transactionHistory/:id', () => {
         mockModule(['Successfully deleted transaction']);
 
         const { deleteTransaction } = await import(
-            '../../controllers/transactionHistoryController.js'
+            '../../src/controllers/transactionHistoryController.js'
         );
 
         mockRequest.params = { id: 1 };
@@ -462,7 +462,7 @@ describe('DELETE /api/transactionHistory/:id', () => {
         mockModule([], [errorMessage]);
 
         const { deleteTransaction } = await import(
-            '../../controllers/transactionHistoryController.js'
+            '../../src/controllers/transactionHistoryController.js'
         );
 
         mockRequest.params = { id: 1 };
@@ -481,7 +481,7 @@ describe('DELETE /api/transactionHistory/:id', () => {
         mockModule([[]]);
 
         const { deleteTransaction } = await import(
-            '../../controllers/transactionHistoryController.js'
+            '../../src/controllers/transactionHistoryController.js'
         );
 
         mockRequest.params = { id: 8 };

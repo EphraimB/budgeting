@@ -26,7 +26,7 @@ const createApp = async (): Promise<Express> => {
     app.use(express.json());
 
     // Import the module that uses the mock
-    const routerModule = await import('../../routes/loansRouter');
+    const routerModule = await import('../../src/routes/loansRouter');
     const loansRouter: Router = routerModule.default;
     app.use('/', loansRouter);
 
@@ -36,7 +36,7 @@ const createApp = async (): Promise<Express> => {
 beforeAll(() => {
     MockDate.set('2020-01-01');
 
-    jest.mock('../../middleware/middleware', () => ({
+    jest.mock('../../src/middleware/middleware', () => ({
         setQueries: jest.fn(
             (req: Request, res: Response, next: NextFunction) => {
                 next();
@@ -94,14 +94,14 @@ beforeAll(() => {
         ),
     }));
 
-    jest.mock('../../generation/generateTransactions', () => {
+    jest.mock('../../src/generation/generateTransactions', () => {
         return jest.fn((req: Request, res: Response, next: NextFunction) => {
             req.transactions = [];
             next();
         });
     });
 
-    jest.mock('../../controllers/loansController', () => ({
+    jest.mock('../../src/controllers/loansController', () => ({
         getLoans: jest.fn((req: Request, res: Response, next: NextFunction) =>
             res.json({ message: 'success' }),
         ),
