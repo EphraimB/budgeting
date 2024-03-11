@@ -1,5 +1,7 @@
 import { jest } from '@jest/globals';
 import { beforeEach, afterEach, describe, it, expect } from '@jest/globals';
+import dayjs from 'dayjs';
+import mockDate from 'mockdate';
 
 // Define the type for the function that is being mocked
 type MyQueryFunction = (sql: string, params: any[]) => Promise<{ rows: any[] }>;
@@ -26,10 +28,16 @@ beforeEach(() => {
         status: jest.fn(() => mockResponse),
         send: jest.fn(),
     };
+
+    // Mock current date
+    mockDate.set('2021-01-01');
 });
 
 afterEach(() => {
     jest.resetModules();
+
+    // Reset current date
+    mockDate.reset();
 });
 
 describe('handleError function', () => {
@@ -121,5 +129,21 @@ describe('parseOrFallback function', () => {
         const mockInput = 'not a number';
         const result = parseIntOrFallback(mockInput);
         expect(result).toBeNull();
+    });
+});
+
+describe('nextTransactionFrequencyDate function', () => {
+    it('should return the next transaction frequency date', async () => {
+        const { nextTransactionFrequencyDate } = await import(
+            '../../src/utils/helperFunctions'
+        );
+
+        const transaction = {
+            frequency_type: 2,
+            begin_date: '2020-12-15',
+        };
+
+        const result = nextTransactionFrequencyDate(transaction);
+        expect(result).toEqual('2021-01-15T00:00:00-05:00');
     });
 });
