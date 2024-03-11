@@ -10,7 +10,7 @@ let next: any;
 beforeAll(() => {
     MockDate.set('2020-01-01');
 
-    jest.mock('../../generation/generateLoans', () => ({
+    jest.mock('../../src/generation/generateLoans', () => ({
         generateDailyLoans: jest
             .fn()
             .mockReturnValue({ fullyPaidBackDate: '2024-01-01' }),
@@ -25,7 +25,7 @@ beforeAll(() => {
             .mockReturnValue({ fullyPaidBackDate: '2024-01-01' }),
     }));
 
-    jest.mock('../../utils/helperFunctions', () => ({
+    jest.mock('../../src/utils/helperFunctions', () => ({
         executeQuery: jest.fn().mockImplementation(
             async () =>
                 await Promise.resolve([

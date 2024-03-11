@@ -69,7 +69,7 @@ export const mockModule = (
         }
     });
 
-    jest.mock('../../utils/helperFunctions.js', () => ({
+    jest.mock('../../src/utils/helperFunctions.js', () => ({
         executeQuery,
         handleError,
         scheduleQuery,
@@ -99,7 +99,7 @@ describe('Testing mockModule', () => {
             handleError,
             scheduleQuery,
             unscheduleQuery,
-        } = require('../../utils/helperFunctions.js');
+        } = require('../../src/utils/helperFunctions.js');
 
         expect(executeQuery).toBeDefined();
         expect(handleError).toBeDefined();

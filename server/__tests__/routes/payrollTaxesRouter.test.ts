@@ -97,14 +97,14 @@ beforeAll(() => {
         ),
     }));
 
-    jest.mock('../../generation/generateTransactions', () => {
+    jest.mock('../../src/generation/generateTransactions', () => {
         return jest.fn((req: Request, res: Response, next: NextFunction) => {
             req.transactions = [];
             next();
         });
     });
 
-    jest.mock('../../controllers/PayrollTaxesController', () => ({
+    jest.mock('../../src/controllers/PayrollTaxesController', () => ({
         getPayrollTaxes: jest.fn(
             (req: Request, res: Response, next: NextFunction) =>
                 res.json({ message: 'success' }),
