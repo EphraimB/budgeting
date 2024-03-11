@@ -220,4 +220,18 @@ describe('nextTransactionFrequencyDate function', () => {
         const result = nextTransactionFrequencyDate(transaction);
         expect(result).toEqual('2022-12-15');
     });
+
+    it('should return null if the frequency type is invalid', async () => {
+        const { nextTransactionFrequencyDate } = await import(
+            '../../src/utils/helperFunctions'
+        );
+
+        const transaction = {
+            frequency_type: 4,
+            begin_date: '2020-12-15',
+        };
+
+        const result = nextTransactionFrequencyDate(transaction);
+        expect(result).toBeNull();
+    });
 });
