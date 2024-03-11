@@ -176,4 +176,20 @@ describe('nextTransactionFrequencyDate function', () => {
         const result = nextTransactionFrequencyDate(transaction);
         expect(result).toEqual('2020-12-16T00:00:00-05:00');
     });
+
+    it('should return the next transaction frequency date on a weekly with a specific day', async () => {
+        const { nextTransactionFrequencyDate } = await import(
+            '../../src/utils/helperFunctions'
+        );
+
+        const transaction = {
+            frequency_type: 1,
+            frequency_type_variable: 1,
+            frequency_day_of_week: 3,
+            begin_date: '2020-12-15',
+        };
+
+        const result = nextTransactionFrequencyDate(transaction);
+        expect(result).toEqual('2020-12-23T00:00:00-05:00');
+    });
 });
