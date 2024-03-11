@@ -5,7 +5,7 @@ import { beforeEach, afterEach, describe, it, expect } from '@jest/globals';
 type MyQueryFunction = (sql: string, params: any[]) => Promise<{ rows: any[] }>;
 
 // Mocking db.js module
-jest.mock('../../config/db.js', () => {
+jest.mock('../../src/config/db.js', () => {
     return {
         query: jest
             .fn<MyQueryFunction>()

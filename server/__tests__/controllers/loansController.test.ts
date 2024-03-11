@@ -10,7 +10,7 @@ import {
 import { mockModule } from '../__mocks__/mockModule.js';
 import { Loan } from '../../src/types/types.js';
 
-jest.mock('../../config/winston', () => ({
+jest.mock('../../src/config/winston', () => ({
     logger: {
         error: jest.fn(),
         info: jest.fn(),

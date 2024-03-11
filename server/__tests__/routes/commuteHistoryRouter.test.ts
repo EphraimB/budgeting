@@ -33,7 +33,7 @@ const createApp = async (): Promise<Express> => {
 };
 
 beforeAll(() => {
-    jest.mock('../../controllers/commuteHistoryController', () => ({
+    jest.mock('../../src/controllers/commuteHistoryController', () => ({
         getCommuteHistory: (req: Request, res: Response, next: NextFunction) =>
             res.json({ message: 'success' }),
         createCommuteHistory: (

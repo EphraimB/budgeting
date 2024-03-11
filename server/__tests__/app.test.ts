@@ -16,7 +16,7 @@ jest.doMock('fs', () => ({
     default: vol,
 }));
 
-jest.mock('../config/winston', () => ({
+jest.mock('../src/config/winston', () => ({
     __esModule: true,
     logger: {
         info: jest.fn(),

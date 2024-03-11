@@ -33,7 +33,7 @@ const createApp = async (): Promise<Express> => {
 };
 
 beforeAll(() => {
-    jest.mock('../../controllers/commuteSystemController', () => ({
+    jest.mock('../../src/controllers/commuteSystemController', () => ({
         getCommuteSystem: (req: Request, res: Response, next: NextFunction) =>
             res.json({ message: 'success' }),
         createCommuteSystem: (

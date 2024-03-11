@@ -43,7 +43,7 @@ const newTransaction = {
 };
 
 beforeAll(() => {
-    jest.mock('../../controllers/transactionHistoryController', () => ({
+    jest.mock('../../src/controllers/transactionHistoryController', () => ({
         getTransactions: (req: Request, res: Response, next: NextFunction) =>
             res.json({ message: 'success' }),
         createTransaction: (req: Request, res: Response, next: NextFunction) =>

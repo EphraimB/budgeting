@@ -10,7 +10,7 @@ import {
 import { mockModule } from '../__mocks__/mockModule';
 import { CommuteHistory } from '../../src/types/types.js';
 
-jest.mock('../../config/winston', () => ({
+jest.mock('../../src/config/winston', () => ({
     logger: {
         error: jest.fn(),
     },

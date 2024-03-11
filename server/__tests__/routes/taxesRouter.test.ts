@@ -33,7 +33,7 @@ const createApp = async (): Promise<Express> => {
 };
 
 beforeAll(() => {
-    jest.mock('../../controllers/taxesController', () => ({
+    jest.mock('../../src/controllers/taxesController', () => ({
         getTaxes: (req: Request, res: Response, next: NextFunction) =>
             res.json({ message: 'success' }),
         createTax: (req: Request, res: Response, next: NextFunction) =>

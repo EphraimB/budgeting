@@ -9,14 +9,14 @@ import {
 } from '@jest/globals';
 import { mockModule } from '../__mocks__/mockModule';
 
-jest.mock('../../config/winston', () => ({
+jest.mock('../../src/config/winston', () => ({
     logger: {
         info: jest.fn(),
         error: jest.fn(),
     },
 }));
 
-jest.mock('../../crontab/determineCronValues.js', () => {
+jest.mock('../../src/crontab/determineCronValues.js', () => {
     return jest.fn().mockReturnValue('0 0 16 * *');
 });
 

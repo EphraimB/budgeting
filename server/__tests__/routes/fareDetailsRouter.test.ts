@@ -33,7 +33,7 @@ const createApp = async (): Promise<Express> => {
 };
 
 beforeAll(() => {
-    jest.mock('../../controllers/fareDetailsController', () => ({
+    jest.mock('../../src/controllers/fareDetailsController', () => ({
         getFareDetails: (req: Request, res: Response, next: NextFunction) =>
             res.json({ message: 'success' }),
         createFareDetail: (req: Request, res: Response, next: NextFunction) =>

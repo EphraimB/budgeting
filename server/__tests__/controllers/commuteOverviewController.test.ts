@@ -9,7 +9,7 @@ import {
 } from '@jest/globals';
 import { mockModule } from '../__mocks__/mockModule';
 
-jest.mock('../../config/winston', () => ({
+jest.mock('../../src/config/winston', () => ({
     logger: {
         error: jest.fn(),
     },

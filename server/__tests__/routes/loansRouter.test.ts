@@ -36,7 +36,7 @@ const createApp = async (): Promise<Express> => {
 beforeAll(() => {
     MockDate.set('2020-01-01');
 
-    jest.mock('../../middleware/middleware', () => ({
+    jest.mock('../../src/middleware/middleware', () => ({
         setQueries: jest.fn(
             (req: Request, res: Response, next: NextFunction) => {
                 next();

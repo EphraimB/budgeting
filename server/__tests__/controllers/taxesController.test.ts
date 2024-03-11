@@ -14,7 +14,7 @@ import { Taxes } from '../../src/types/types.js';
 let mockRequest: any;
 let mockResponse: any;
 
-jest.mock('../../config/winston', () => ({
+jest.mock('../../src/config/winston', () => ({
     logger: {
         error: jest.fn(),
         info: jest.fn(),

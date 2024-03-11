@@ -8,7 +8,7 @@ import express, {
 } from 'express';
 import { jest, beforeAll, describe, it, expect } from '@jest/globals';
 
-jest.mock('../../middleware/middleware', () => ({
+jest.mock('../../src/middleware/middleware', () => ({
     getCurrentBalance: (req: Request, res: Response, next: NextFunction) => {
         req.currentBalance = [{ account_id: 1, account_balance: 100 }];
         next();
@@ -67,7 +67,7 @@ jest.mock('../../middleware/middleware', () => ({
     },
 }));
 
-jest.mock('../../generation/generateTransactions', () => {
+jest.mock('../../src/generation/generateTransactions', () => {
     return jest.fn((req: Request, res: Response, next: NextFunction) => {
         req.transactions = [
             {

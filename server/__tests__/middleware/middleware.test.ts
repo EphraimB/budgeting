@@ -16,7 +16,7 @@ let mockRequest: any;
 let mockResponse: any;
 let mockNext: any;
 
-jest.mock('../../config/winston', () => ({
+jest.mock('../../src/config/winston', () => ({
     logger: {
         error: jest.fn(),
         info: jest.fn(),
