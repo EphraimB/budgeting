@@ -192,7 +192,9 @@ const income: any[] = [
 
 describe('setQueries', () => {
     it('should set from_date and to_date', async () => {
-        const { setQueries } = await import('../../middleware/middleware.js');
+        const { setQueries } = await import(
+            '../../src/middleware/middleware.js'
+        );
 
         mockRequest.query = { account_id: 1, id: 1 };
 
@@ -206,7 +208,9 @@ describe('setQueries', () => {
     it('should set account_id when query contains id', async () => {
         mockModule([[{ account_id: 1 }], []]);
 
-        const { setQueries } = await import('../../middleware/middleware.js');
+        const { setQueries } = await import(
+            '../../src/middleware/middleware.js'
+        );
 
         mockRequest.query = { account_id: null, id: 1 };
 
@@ -217,7 +221,9 @@ describe('setQueries', () => {
     });
 
     it('should not set account_id when query does not contain id', async () => {
-        const { setQueries } = await import('../../middleware/middleware.js');
+        const { setQueries } = await import(
+            '../../src/middleware/middleware.js'
+        );
 
         mockRequest.query = { account_id: null, id: null };
 
@@ -235,7 +241,7 @@ describe('getTransactionsByAccount', () => {
         mockModule([mockAccount, transactions]);
 
         const { getTransactionsByAccount } = await import(
-            '../../middleware/middleware.js'
+            '../../src/middleware/middleware.js'
         );
 
         mockRequest.query = { account_id: 1, from_date: '2023-06-01' };
@@ -257,7 +263,7 @@ describe('getTransactionsByAccount', () => {
         mockModule([], [errorMessage]);
 
         const { getTransactionsByAccount } = await import(
-            '../../middleware/middleware.js'
+            '../../src/middleware/middleware.js'
         );
 
         mockRequest.query = { account_id: '1', from_date: '2020-01-01' };
@@ -274,7 +280,7 @@ describe('getTransactionsByAccount', () => {
         mockModule([[]]);
 
         const { getTransactionsByAccount } = await import(
-            '../../middleware/middleware.js'
+            '../../src/middleware/middleware.js'
         );
 
         mockRequest.query = { account_id: '5', from_date: '2020-01-01' };
@@ -291,7 +297,7 @@ describe('getTransactionsByAccount', () => {
         mockModule([[{ account_id: 1 }], transactions]);
 
         const { getTransactionsByAccount } = await import(
-            '../../middleware/middleware.js'
+            '../../src/middleware/middleware.js'
         );
 
         mockRequest.query = { account_id: null, from_date: '2020-01-01' };
@@ -312,14 +318,10 @@ describe('getTransactionsByAccount', () => {
 
 describe('getExpensesByAccount', () => {
     it('gets expenses for a given account and date', async () => {
-        mockModule([
-            [{ tax_id: 1, rate: 0 }],
-            [{ account_id: 1 }],
-            expenses,
-        ]);
+        mockModule([[{ tax_id: 1, rate: 0 }], [{ account_id: 1 }], expenses]);
 
         const { getExpensesByAccount } = await import(
-            '../../middleware/middleware.js'
+            '../../src/middleware/middleware.js'
         );
 
         mockRequest.query = { account_id: '1', from_date: '2023-06-01' };
@@ -341,7 +343,7 @@ describe('getExpensesByAccount', () => {
         mockModule([], [errorMessage]);
 
         const { getExpensesByAccount } = await import(
-            '../../middleware/middleware.js'
+            '../../src/middleware/middleware.js'
         );
 
         mockRequest.query = { account_id: '1', from_date: '2023-06-01' };
@@ -358,7 +360,7 @@ describe('getExpensesByAccount', () => {
         mockModule([[], []]);
 
         const { getExpensesByAccount } = await import(
-            '../../middleware/middleware.js'
+            '../../src/middleware/middleware.js'
         );
 
         mockRequest.query = { account_id: '5', from_date: '2023-06-01' };
@@ -379,7 +381,7 @@ describe('getExpensesByAccount', () => {
         ]);
 
         const { getExpensesByAccount } = await import(
-            '../../middleware/middleware.js'
+            '../../src/middleware/middleware.js'
         );
 
         mockRequest.query = { account_id: null, from_date: '2023-06-01' };
@@ -403,7 +405,7 @@ describe('getLoansByAccount', () => {
         mockModule([[{ account_id: 1 }], loans]);
 
         const { getLoansByAccount } = await import(
-            '../../middleware/middleware.js'
+            '../../src/middleware/middleware.js'
         );
 
         mockRequest.query = { account_id: '1', from_date: '2023-06-01' };
@@ -425,7 +427,7 @@ describe('getLoansByAccount', () => {
         mockModule([], [errorMessage]);
 
         const { getLoansByAccount } = await import(
-            '../../middleware/middleware.js'
+            '../../src/middleware/middleware.js'
         );
 
         mockRequest.query = { account_id: '1', from_date: '2023-06-01' };
@@ -442,7 +444,7 @@ describe('getLoansByAccount', () => {
         mockModule([[], []]);
 
         const { getLoansByAccount } = await import(
-            '../../middleware/middleware.js'
+            '../../src/middleware/middleware.js'
         );
 
         mockRequest.query = { account_id: '5', from_date: '2023-06-01' };
@@ -459,7 +461,7 @@ describe('getLoansByAccount', () => {
         mockModule([[{ account_id: 1 }], loans]);
 
         const { getLoansByAccount } = await import(
-            '../../middleware/middleware.js'
+            '../../src/middleware/middleware.js'
         );
 
         mockRequest.query = { account_id: null, from_date: '2023-06-01' };
@@ -487,7 +489,7 @@ describe('getPayrollsMiddleware', () => {
         ]);
 
         const { getPayrollsMiddleware } = await import(
-            '../../middleware/middleware.js'
+            '../../src/middleware/middleware.js'
         );
 
         mockRequest.query = { account_id: '1', from_date: '2023-06-01' };
@@ -512,7 +514,7 @@ describe('getPayrollsMiddleware', () => {
         mockModule([], [errorMessage]);
 
         const { getPayrollsMiddleware } = await import(
-            '../../middleware/middleware.js'
+            '../../src/middleware/middleware.js'
         );
 
         mockRequest.query = { account_id: '1', from_date: '2023-06-01' };
@@ -529,7 +531,7 @@ describe('getPayrollsMiddleware', () => {
         mockModule([[], []]);
 
         const { getPayrollsMiddleware } = await import(
-            '../../middleware/middleware.js'
+            '../../src/middleware/middleware.js'
         );
 
         mockRequest.query = { account_id: '5', from_date: '2023-06-01' };
@@ -546,7 +548,7 @@ describe('getPayrollsMiddleware', () => {
         mockModule([[{ account_id: 1, employee_id: 1 }], payrolls]);
 
         const { getPayrollsMiddleware } = await import(
-            '../../middleware/middleware.js'
+            '../../src/middleware/middleware.js'
         );
 
         mockRequest.query = { account_id: null, from_date: '2023-06-01' };
@@ -577,7 +579,7 @@ describe('getWishlistsByAccount', () => {
         ]);
 
         const { getWishlistsByAccount } = await import(
-            '../../middleware/middleware.js'
+            '../../src/middleware/middleware.js'
         );
 
         mockRequest.query = { account_id: '1', from_date: '2023-06-01' };
@@ -606,7 +608,7 @@ describe('getWishlistsByAccount', () => {
         mockModule([], [errorMessage]);
 
         const { getWishlistsByAccount } = await import(
-            '../../middleware/middleware.js'
+            '../../src/middleware/middleware.js'
         );
 
         mockRequest.query = { account_id: '1', from_date: '2023-06-01' };
@@ -623,7 +625,7 @@ describe('getWishlistsByAccount', () => {
         mockModule([[], []]);
 
         const { getWishlistsByAccount } = await import(
-            '../../middleware/middleware.js'
+            '../../src/middleware/middleware.js'
         );
 
         mockRequest.query = { account_id: '5', from_date: '2023-06-01' };
@@ -644,7 +646,7 @@ describe('getWishlistsByAccount', () => {
         ]);
 
         const { getWishlistsByAccount } = await import(
-            '../../middleware/middleware.js'
+            '../../src/middleware/middleware.js'
         );
 
         mockRequest.query = { account_id: null, from_date: '2023-06-01' };
@@ -673,7 +675,7 @@ describe('getTransfersByAccount', () => {
         mockModule([[{ account_id: 1 }], transfers]);
 
         const { getTransfersByAccount } = await import(
-            '../../middleware/middleware.js'
+            '../../src/middleware/middleware.js'
         );
 
         mockRequest.query = { account_id: '1', from_date: '2023-06-01' };
@@ -700,7 +702,7 @@ describe('getTransfersByAccount', () => {
         mockModule([], [errorMessage]);
 
         const { getTransfersByAccount } = await import(
-            '../../middleware/middleware.js'
+            '../../src/middleware/middleware.js'
         );
 
         mockRequest.query = { account_id: '1', from_date: '2023-06-01' };
@@ -717,7 +719,7 @@ describe('getTransfersByAccount', () => {
         mockModule([[], []]);
 
         const { getTransfersByAccount } = await import(
-            '../../middleware/middleware.js'
+            '../../src/middleware/middleware.js'
         );
 
         mockRequest.query = { account_id: '5', from_date: '2023-06-01' };
@@ -734,7 +736,7 @@ describe('getTransfersByAccount', () => {
         mockModule([[{ account_id: 1 }], transfers]);
 
         const { getTransfersByAccount } = await import(
-            '../../middleware/middleware.js'
+            '../../src/middleware/middleware.js'
         );
 
         mockRequest.query = { account_id: null, from_date: '2023-06-01' };
@@ -761,7 +763,7 @@ describe('getCommuteExpensesByAccount', () => {
         mockModule([[{ account_id: 1 }], commuteExpenses, fareCapping]);
 
         const { getCommuteExpensesByAccount } = await import(
-            '../../middleware/middleware.js'
+            '../../src/middleware/middleware.js'
         );
 
         mockRequest.query = { account_id: '1', from_date: '2023-06-01' };
@@ -785,7 +787,7 @@ describe('getCommuteExpensesByAccount', () => {
         mockModule([], [errorMessage]);
 
         const { getCommuteExpensesByAccount } = await import(
-            '../../middleware/middleware.js'
+            '../../src/middleware/middleware.js'
         );
 
         mockRequest.query = { account_id: '1', from_date: '2023-06-01' };
@@ -802,7 +804,7 @@ describe('getCommuteExpensesByAccount', () => {
         mockModule([[], []]);
 
         const { getCommuteExpensesByAccount } = await import(
-            '../../middleware/middleware.js'
+            '../../src/middleware/middleware.js'
         );
 
         mockRequest.query = { account_id: '5', from_date: '2023-06-01' };
@@ -819,7 +821,7 @@ describe('getCommuteExpensesByAccount', () => {
         mockModule([[{ account_id: 1 }], commuteExpenses, fareCapping]);
 
         const { getCommuteExpensesByAccount } = await import(
-            '../../middleware/middleware.js'
+            '../../src/middleware/middleware.js'
         );
 
         mockRequest.query = { account_id: null, from_date: '2023-06-01' };
@@ -848,7 +850,7 @@ describe('getCurrentBalance', () => {
         mockModule([[{ account_id: 1 }], mockCurrentBalance]);
 
         const { getCurrentBalance } = await import(
-            '../../middleware/middleware.js'
+            '../../src/middleware/middleware.js'
         );
 
         mockRequest.query = { account_id: '1', from_date: '2023-06-01' };
@@ -867,7 +869,7 @@ describe('getCurrentBalance', () => {
         mockModule([], [errorMessage]);
 
         const { getCurrentBalance } = await import(
-            '../../middleware/middleware.js'
+            '../../src/middleware/middleware.js'
         );
 
         mockRequest.query = { account_id: '1', from_date: '2023-06-01' };
@@ -884,7 +886,7 @@ describe('getCurrentBalance', () => {
         mockModule([[], []]);
 
         const { getCurrentBalance } = await import(
-            '../../middleware/middleware.js'
+            '../../src/middleware/middleware.js'
         );
 
         mockRequest.query = { account_id: '5', from_date: '2023-06-01' };
@@ -905,7 +907,7 @@ describe('getCurrentBalance', () => {
         mockModule([[{ account_id: 1 }], mockCurrentBalance]);
 
         const { getCurrentBalance } = await import(
-            '../../middleware/middleware.js'
+            '../../src/middleware/middleware.js'
         );
 
         mockRequest.query = { account_id: null, from_date: '2023-06-01' };
@@ -928,7 +930,7 @@ describe('updateWislistCron', () => {
             [[]],
         );
         const { updateWishlistCron } = await import(
-            '../../middleware/middleware.js'
+            '../../src/middleware/middleware.js'
         );
 
         mockRequest.transactions = [
@@ -949,7 +951,7 @@ describe('updateWislistCron', () => {
         mockModule([], [errorMessage]);
 
         const { updateWishlistCron } = await import(
-            '../../middleware/middleware.js'
+            '../../src/middleware/middleware.js'
         );
 
         await updateWishlistCron(mockRequest, mockResponse, mockNext);
@@ -966,7 +968,7 @@ describe('getIncomeByAccount', () => {
         mockModule([[{ tax_id: 1, tax_rate: 0 }], [{ account_id: 1 }], income]);
 
         const { getIncomeByAccount } = await import(
-            '../../middleware/middleware.js'
+            '../../src/middleware/middleware.js'
         );
 
         mockRequest.query = { account_id: '1', to_date: '2023-06-01' };
@@ -992,7 +994,7 @@ describe('getIncomeByAccount', () => {
         mockModule([[{ account_id: 1 }]], ['Fake error']);
 
         const { getIncomeByAccount } = await import(
-            '../../middleware/middleware.js'
+            '../../src/middleware/middleware.js'
         );
 
         mockRequest.query = { account_id: '1', to_date: '2023-06-01' };
@@ -1009,7 +1011,7 @@ describe('getIncomeByAccount', () => {
         mockModule([[{ tax_id: 1, rate: 0 }], [{ account_id: 1 }], income]);
 
         const { getIncomeByAccount } = await import(
-            '../../middleware/middleware.js'
+            '../../src/middleware/middleware.js'
         );
 
         mockRequest.query = { account_id: null, to_date: '2023-06-01' };

@@ -1,4 +1,4 @@
-import { generateCommuteExpenses } from '../../generation/generateCommuteExpenses';
+import { generateCommuteExpenses } from '../../src/generation/generateCommuteExpenses';
 import MockDate from 'mockdate';
 import { describe, it, expect, beforeAll, afterAll } from '@jest/globals';
 import dayjs, { Dayjs } from 'dayjs';

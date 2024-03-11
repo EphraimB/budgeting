@@ -34,7 +34,7 @@ afterEach(() => {
 
 describe('handleError function', () => {
     it('should send a 500 error with the correct error message', async () => {
-        const { handleError } = await import('../../utils/helperFunctions');
+        const { handleError } = await import('../../src/utils/helperFunctions');
 
         handleError(mockResponse, 'Test error message');
 
@@ -45,7 +45,9 @@ describe('handleError function', () => {
 
 describe('executeQuery function', () => {
     it('should execute the given query with the provided params', async () => {
-        const { executeQuery } = await import('../../utils/helperFunctions');
+        const { executeQuery } = await import(
+            '../../src/utils/helperFunctions'
+        );
 
         const mockQuery = 'SELECT * FROM accounts WHERE id = $1';
         const mockParams = [1];
@@ -56,7 +58,9 @@ describe('executeQuery function', () => {
     });
 
     it('should execute the given query with no params', async () => {
-        const { executeQuery } = await import('../../utils/helperFunctions');
+        const { executeQuery } = await import(
+            '../../src/utils/helperFunctions'
+        );
 
         const mockQuery = 'SELECT * FROM accounts';
         const mockRows = [{ id: 1, name: 'John Doe' }];
@@ -66,7 +70,9 @@ describe('executeQuery function', () => {
     });
 
     it('should throw an error if the query fails', async () => {
-        const { executeQuery } = await import('../../utils/helperFunctions');
+        const { executeQuery } = await import(
+            '../../src/utils/helperFunctions'
+        );
 
         const mockQuery = 'SELECT * FROM nonExistingTable';
         const mockError = 'Error: Table does not exist';
@@ -79,7 +85,7 @@ describe('executeQuery function', () => {
 describe('parseOrFallback function', () => {
     it('should return the parsed input', async () => {
         const { parseIntOrFallback } = await import(
-            '../../utils/helperFunctions'
+            '../../src/utils/helperFunctions'
         );
 
         const mockInput = '1';
@@ -89,7 +95,7 @@ describe('parseOrFallback function', () => {
 
     it('should return null if the input is null', async () => {
         const { parseIntOrFallback } = await import(
-            '../../utils/helperFunctions'
+            '../../src/utils/helperFunctions'
         );
 
         const mockInput = null;
@@ -99,7 +105,7 @@ describe('parseOrFallback function', () => {
 
     it('should return null if the input is undefined', async () => {
         const { parseIntOrFallback } = await import(
-            '../../utils/helperFunctions'
+            '../../src/utils/helperFunctions'
         );
 
         const mockInput = undefined;
@@ -109,7 +115,7 @@ describe('parseOrFallback function', () => {
 
     it('should return null if the input is not a number', async () => {
         const { parseIntOrFallback } = await import(
-            '../../utils/helperFunctions'
+            '../../src/utils/helperFunctions'
         );
 
         const mockInput = 'not a number';

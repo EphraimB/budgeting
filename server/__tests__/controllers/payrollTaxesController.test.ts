@@ -1,5 +1,5 @@
 import { type Request } from 'express';
-import { type PayrollTax } from '../../types/types.js';
+import { type PayrollTax } from '../../src/types/types.js';
 import {
     jest,
     beforeEach,
@@ -72,7 +72,7 @@ describe('GET /api/payroll/taxes', () => {
         mockRequest.query = { employee_id: 1, id: null };
 
         const { getPayrollTaxes } = await import(
-            '../../controllers/payrollTaxesController.js'
+            '../../src/controllers/payrollTaxesController.js'
         );
 
         // Call the function with the mock request and response
@@ -90,7 +90,7 @@ describe('GET /api/payroll/taxes', () => {
         mockRequest.query = { employee_id: null, id: null };
 
         const { getPayrollTaxes } = await import(
-            '../../controllers/payrollTaxesController.js'
+            '../../src/controllers/payrollTaxesController.js'
         );
 
         // Call the function with the mock request and response
@@ -115,7 +115,7 @@ describe('GET /api/payroll/taxes', () => {
         mockRequest.query = { employee_id: id, id: 1 };
 
         const { getPayrollTaxes } = await import(
-            '../../controllers/payrollTaxesController.js'
+            '../../src/controllers/payrollTaxesController.js'
         );
 
         // Call the function with the mock request and response
@@ -135,7 +135,7 @@ describe('GET /api/payroll/taxes', () => {
         mockRequest.query = { employee_id: null, id: 1 };
 
         const { getPayrollTaxes } = await import(
-            '../../controllers/payrollTaxesController.js'
+            '../../src/controllers/payrollTaxesController.js'
         );
 
         // Call the function with the mock request and response
@@ -160,7 +160,7 @@ describe('GET /api/payroll/taxes', () => {
         mockRequest.query = { employee_id, id: null };
 
         const { getPayrollTaxes } = await import(
-            '../../controllers/payrollTaxesController.js'
+            '../../src/controllers/payrollTaxesController.js'
         );
 
         // Call the function with the mock request and response
@@ -182,7 +182,7 @@ describe('GET /api/payroll/taxes', () => {
         mockRequest.query = { employee_id: 1, id: null };
 
         const { getPayrollTaxes } = await import(
-            '../../controllers/payrollTaxesController.js'
+            '../../src/controllers/payrollTaxesController.js'
         );
 
         // Call the function with the mock request and response
@@ -210,7 +210,7 @@ describe('GET /api/payroll/taxes', () => {
         mockRequest.query = { employee_id, id };
 
         const { getPayrollTaxes } = await import(
-            '../../controllers/payrollTaxesController.js'
+            '../../src/controllers/payrollTaxesController.js'
         );
 
         // Call the function with the mock request and response
@@ -234,7 +234,7 @@ describe('GET /api/payroll/taxes', () => {
         mockRequest.query = { employee_id: 1, id: 1 };
 
         const { getPayrollTaxes } = await import(
-            '../../controllers/payrollTaxesController.js'
+            '../../src/controllers/payrollTaxesController.js'
         );
 
         // Call the function with the mock request and response
@@ -252,7 +252,7 @@ describe('GET /api/payroll/taxes', () => {
         mockModule([[]]);
 
         const { getPayrollTaxes } = await import(
-            '../../controllers/payrollTaxesController.js'
+            '../../src/controllers/payrollTaxesController.js'
         );
 
         mockRequest.query = { id: 3 };
@@ -282,7 +282,7 @@ describe('POST /api/payroll/taxes', () => {
         );
 
         const { createPayrollTax } = await import(
-            '../../controllers/payrollTaxesController.js'
+            '../../src/controllers/payrollTaxesController.js'
         );
 
         await createPayrollTax(mockRequest as Request, mockResponse, mockNext);
@@ -301,7 +301,7 @@ describe('POST /api/payroll/taxes', () => {
         );
 
         const { createPayrollTax } = await import(
-            '../../controllers/payrollTaxesController.js'
+            '../../src/controllers/payrollTaxesController.js'
         );
 
         await createPayrollTax(mockRequest as Request, mockResponse, mockNext);
@@ -322,7 +322,7 @@ describe('POST /api/payroll/taxes', () => {
         );
 
         const { createPayrollTaxReturnObject } = await import(
-            '../../controllers/payrollTaxesController.js'
+            '../../src/controllers/payrollTaxesController.js'
         );
 
         await createPayrollTaxReturnObject(
@@ -351,7 +351,7 @@ describe('POST /api/payroll/taxes', () => {
         );
 
         const { createPayrollTaxReturnObject } = await import(
-            '../../controllers/payrollTaxesController.js'
+            '../../src/controllers/payrollTaxesController.js'
         );
 
         await createPayrollTaxReturnObject(
@@ -370,7 +370,7 @@ describe('POST /api/payroll/taxes', () => {
         mockModule([[]]);
 
         const { createPayrollTaxReturnObject } = await import(
-            '../../controllers/payrollTaxesController.js'
+            '../../src/controllers/payrollTaxesController.js'
         );
 
         mockRequest.body = payrollTaxes.filter(
@@ -403,7 +403,7 @@ describe('PUT /api/payroll/taxes/:id', () => {
         );
 
         const { updatePayrollTax } = await import(
-            '../../controllers/payrollTaxesController.js'
+            '../../src/controllers/payrollTaxesController.js'
         );
 
         await updatePayrollTax(mockRequest as Request, mockResponse, mockNext);
@@ -422,7 +422,7 @@ describe('PUT /api/payroll/taxes/:id', () => {
         );
 
         const { updatePayrollTax } = await import(
-            '../../controllers/payrollTaxesController.js'
+            '../../src/controllers/payrollTaxesController.js'
         );
 
         await updatePayrollTax(mockRequest as Request, mockResponse, mockNext);
@@ -439,7 +439,7 @@ describe('PUT /api/payroll/taxes/:id', () => {
         mockModule([[]]);
 
         const { updatePayrollTax } = await import(
-            '../../controllers/payrollTaxesController.js'
+            '../../src/controllers/payrollTaxesController.js'
         );
 
         mockRequest.params = { id: 3 };
@@ -470,7 +470,7 @@ describe('PUT /api/payroll/taxes/:id', () => {
         );
 
         const { updatePayrollTaxReturnObject } = await import(
-            '../../controllers/payrollTaxesController.js'
+            '../../src/controllers/payrollTaxesController.js'
         );
 
         await updatePayrollTaxReturnObject(
@@ -494,7 +494,7 @@ describe('PUT /api/payroll/taxes/:id', () => {
         );
 
         const { updatePayrollTaxReturnObject } = await import(
-            '../../controllers/payrollTaxesController.js'
+            '../../src/controllers/payrollTaxesController.js'
         );
 
         await updatePayrollTaxReturnObject(
@@ -516,7 +516,7 @@ describe('PUT /api/payroll/taxes/:id', () => {
         );
 
         const { updatePayrollTaxReturnObject } = await import(
-            '../../controllers/payrollTaxesController.js'
+            '../../src/controllers/payrollTaxesController.js'
         );
 
         await updatePayrollTaxReturnObject(
@@ -540,7 +540,7 @@ describe('DELETE /api/payroll/taxes/:id', () => {
         mockRequest.query = { employee_id: 1 };
 
         const { deletePayrollTax } = await import(
-            '../../controllers/payrollTaxesController.js'
+            '../../src/controllers/payrollTaxesController.js'
         );
 
         await deletePayrollTax(mockRequest as Request, mockResponse, mockNext);
@@ -556,7 +556,7 @@ describe('DELETE /api/payroll/taxes/:id', () => {
         mockRequest.params = { id: 3 };
 
         const { deletePayrollTax } = await import(
-            '../../controllers/payrollTaxesController.js'
+            '../../src/controllers/payrollTaxesController.js'
         );
 
         await deletePayrollTax(mockRequest as Request, mockResponse, mockNext);
@@ -573,7 +573,7 @@ describe('DELETE /api/payroll/taxes/:id', () => {
         mockModule([[]]);
 
         const { deletePayrollTax } = await import(
-            '../../controllers/payrollTaxesController.js'
+            '../../src/controllers/payrollTaxesController.js'
         );
 
         mockRequest.params = { id: 3 };
@@ -594,7 +594,7 @@ describe('DELETE /api/payroll/taxes/:id', () => {
         mockRequest.query = { employee_id: 1 };
 
         const { deletePayrollTaxReturnObject } = await import(
-            '../../controllers/payrollTaxesController.js'
+            '../../src/controllers/payrollTaxesController.js'
         );
 
         await deletePayrollTaxReturnObject(

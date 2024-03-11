@@ -1,5 +1,5 @@
-import { type GeneratedTransaction } from '../../types/types.js';
-import calculateBalances from '../../generation/calculateBalances.js';
+import { type GeneratedTransaction } from '../../src/types/types.js';
+import calculateBalances from '../../src/generation/calculateBalances.js';
 import dayjs from 'dayjs';
 import { describe, it, expect } from '@jest/globals';
 

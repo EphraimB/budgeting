@@ -1,7 +1,7 @@
 import { jest } from '@jest/globals';
 import { describe, it, expect, beforeAll, afterAll } from '@jest/globals';
 import MockDate from 'mockdate';
-import { type GeneratedTransaction } from '../../types/types';
+import { type GeneratedTransaction } from '../../src/types/types';
 
 let mockRequest: any;
 let mockResponse: any;
@@ -238,7 +238,7 @@ afterAll(() => {
 describe('generateTransactions', () => {
     it('should process transactions correctly', async () => {
         const { default: generateTransactions } = await import(
-            '../../generation/generateTransactions'
+            '../../src/generation/generateTransactions'
         );
 
         // Call your function with the mock data
@@ -321,7 +321,7 @@ describe('generateTransactions', () => {
 
     it('should make sure that transactions are sorted by date', async () => {
         const { default: generateTransactions } = await import(
-            '../../generation/generateTransactions'
+            '../../src/generation/generateTransactions'
         );
 
         // Call your function with the mock data
@@ -341,7 +341,7 @@ describe('generateTransactions', () => {
 
     it('should process transactions correctly when an account_id is not provided', async () => {
         const { default: generateTransactions } = await import(
-            '../../generation/generateTransactions'
+            '../../src/generation/generateTransactions'
         );
 
         mockRequest.query = {

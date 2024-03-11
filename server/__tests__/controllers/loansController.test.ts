@@ -8,7 +8,7 @@ import {
     expect,
 } from '@jest/globals';
 import { mockModule } from '../__mocks__/mockModule.js';
-import { Loan } from '../../types/types.js';
+import { Loan } from '../../src/types/types.js';
 
 jest.mock('../../config/winston', () => ({
     logger: {
@@ -239,7 +239,7 @@ describe('GET /api/loans', () => {
         mockRequest.fullyPaidBackDates = { 1: '2024-01-01' };
 
         const { getLoans } = await import(
-            '../../controllers/loansController.js'
+            '../../src/controllers/loansController.js'
         );
 
         // Call the function with the mock request and response
@@ -265,7 +265,7 @@ describe('GET /api/loans', () => {
         mockRequest.query = { id: null };
 
         const { getLoans } = await import(
-            '../../controllers/loansController.js'
+            '../../src/controllers/loansController.js'
         );
 
         // Call the function with the mock request and response
@@ -286,7 +286,7 @@ describe('GET /api/loans', () => {
         mockRequest.fullyPaidBackDates = { 1: '2024-01-01' };
 
         const { getLoans } = await import(
-            '../../controllers/loansController.js'
+            '../../src/controllers/loansController.js'
         );
 
         // Call the function with the mock request and response
@@ -317,7 +317,7 @@ describe('GET /api/loans', () => {
         mockRequest.query = { id: 1 };
 
         const { getLoans } = await import(
-            '../../controllers/loansController.js'
+            '../../src/controllers/loansController.js'
         );
 
         // Call the function with the mock request and response
@@ -343,7 +343,7 @@ describe('GET /api/loans', () => {
         mockRequest.fullyPaidBackDates = { 1: '2024-01-01' };
 
         const { getLoans } = await import(
-            '../../controllers/loansController.js'
+            '../../src/controllers/loansController.js'
         );
 
         // Call the function with the mock request and response
@@ -374,7 +374,7 @@ describe('GET /api/loans', () => {
         mockRequest.query = { account_id: 1 };
 
         const { getLoans } = await import(
-            '../../controllers/loansController.js'
+            '../../src/controllers/loansController.js'
         );
 
         // Call the function with the mock request and response
@@ -404,7 +404,7 @@ describe('GET /api/loans', () => {
         mockRequest.fullyPaidBackDates = { 1: '2024-01-01' };
 
         const { getLoans } = await import(
-            '../../controllers/loansController.js'
+            '../../src/controllers/loansController.js'
         );
 
         // Call the function with the mock request and response
@@ -435,7 +435,7 @@ describe('GET /api/loans', () => {
         mockRequest.query = { account_id: 1, id: 1 };
 
         const { getLoans } = await import(
-            '../../controllers/loansController.js'
+            '../../src/controllers/loansController.js'
         );
 
         // Call the function with the mock request and response
@@ -453,7 +453,7 @@ describe('GET /api/loans', () => {
         mockModule([[]]);
 
         const { getLoans } = await import(
-            '../../controllers/loansController.js'
+            '../../src/controllers/loansController.js'
         );
 
         mockRequest.query = { id: 3 };
@@ -476,7 +476,7 @@ describe('POST /api/loans', () => {
         );
 
         const { createLoan } = await import(
-            '../../controllers/loansController.js'
+            '../../src/controllers/loansController.js'
         );
 
         mockRequest.body = loans[0];
@@ -493,7 +493,7 @@ describe('POST /api/loans', () => {
         mockModule([], [errorMessage]);
 
         const { createLoan } = await import(
-            '../../controllers/loansController.js'
+            '../../src/controllers/loansController.js'
         );
 
         mockRequest.body = loans.filter((loan) => loan.loan_id === 1);
@@ -512,7 +512,7 @@ describe('POST /api/loans', () => {
         mockModule([], [errorMessage]);
 
         const { createLoanReturnObject } = await import(
-            '../../controllers/loansController.js'
+            '../../src/controllers/loansController.js'
         );
 
         mockRequest.body = loans.filter((loan) => loan.loan_id === 1);
@@ -530,7 +530,7 @@ describe('POST /api/loans', () => {
         mockModule([loans.filter((loan) => loan.loan_id === 1), '1', '2', []]);
 
         const { createLoanReturnObject } = await import(
-            '../../controllers/loansController.js'
+            '../../src/controllers/loansController.js'
         );
 
         mockRequest.body = loans[0];
@@ -570,7 +570,7 @@ describe('PUT /api/loans/:id', () => {
         );
 
         const { updateLoan } = await import(
-            '../../controllers/loansController.js'
+            '../../src/controllers/loansController.js'
         );
 
         mockRequest.params = { id: 1 };
@@ -588,7 +588,7 @@ describe('PUT /api/loans/:id', () => {
         mockModule([], [errorMessage]);
 
         const { updateLoan } = await import(
-            '../../controllers/loansController.js'
+            '../../src/controllers/loansController.js'
         );
 
         mockRequest.params = { id: 1 };
@@ -608,7 +608,7 @@ describe('PUT /api/loans/:id', () => {
         mockModule([], [errorMessage]);
 
         const { updateLoanReturnObject } = await import(
-            '../../controllers/loansController.js'
+            '../../src/controllers/loansController.js'
         );
 
         mockRequest.params = { id: 1 };
@@ -628,7 +628,7 @@ describe('PUT /api/loans/:id', () => {
         mockModule([[]]);
 
         const { updateLoan } = await import(
-            '../../controllers/loansController.js'
+            '../../src/controllers/loansController.js'
         );
 
         mockRequest.params = { id: 3 };
@@ -646,7 +646,7 @@ describe('PUT /api/loans/:id', () => {
         mockModule([loans.filter((loan) => loan.loan_id === 1)]);
 
         const { updateLoanReturnObject } = await import(
-            '../../controllers/loansController.js'
+            '../../src/controllers/loansController.js'
         );
 
         mockRequest.params = { id: 1 };
@@ -684,7 +684,7 @@ describe('DELETE /api/loans/:id', () => {
         );
 
         const { deleteLoan } = await import(
-            '../../controllers/loansController.js'
+            '../../src/controllers/loansController.js'
         );
 
         mockRequest.params = { id: 1 };
@@ -701,7 +701,7 @@ describe('DELETE /api/loans/:id', () => {
         mockModule([], [errorMessage]);
 
         const { deleteLoan } = await import(
-            '../../controllers/loansController.js'
+            '../../src/controllers/loansController.js'
         );
 
         mockRequest.params = { id: 1 };
@@ -720,7 +720,7 @@ describe('DELETE /api/loans/:id', () => {
         mockModule([[]]);
 
         const { deleteLoan } = await import(
-            '../../controllers/loansController.js'
+            '../../src/controllers/loansController.js'
         );
 
         mockRequest.params = { id: 3 };
@@ -738,7 +738,7 @@ describe('DELETE /api/loans/:id', () => {
         mockModule(['Loan deleted successfully']);
 
         const { deleteLoanReturnObject } = await import(
-            '../../controllers/loansController.js'
+            '../../src/controllers/loansController.js'
         );
 
         mockRequest.params = { id: 1 };

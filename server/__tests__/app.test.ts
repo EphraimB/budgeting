@@ -30,7 +30,7 @@ jest.mock('../config/winston', () => ({
 describe('Test application', () => {
     it('should trigger not found for site 404', async () => {
         // Import the module that uses the mock
-        const appModule = await import('../app.js');
+        const appModule = await import('../src/app.js');
         const app: Express = appModule.default;
 
         const response: request.Response = await request(app).get(

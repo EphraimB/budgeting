@@ -1,5 +1,5 @@
 import { type Request } from 'express';
-import { Account } from '../../types/types.js';
+import { Account } from '../../src/types/types.js';
 import {
     jest,
     beforeEach,
@@ -56,7 +56,7 @@ describe('GET /api/accounts', () => {
         mockModule([accounts]);
 
         const { getAccounts } = await import(
-            '../../controllers/accountsController.js'
+            '../../src/controllers/accountsController.js'
         );
 
         mockRequest.query = { id: null };
@@ -75,7 +75,7 @@ describe('GET /api/accounts', () => {
         mockModule([], [errorMessage]);
 
         const { getAccounts } = await import(
-            '../../controllers/accountsController.js'
+            '../../src/controllers/accountsController.js'
         );
 
         mockRequest.query = { id: null };
@@ -95,7 +95,7 @@ describe('GET /api/accounts', () => {
         mockModule([accounts.filter((account) => account.account_id === 1)]);
 
         const { getAccounts } = await import(
-            '../../controllers/accountsController.js'
+            '../../src/controllers/accountsController.js'
         );
 
         mockRequest.query = { id: 1 };
@@ -116,7 +116,7 @@ describe('GET /api/accounts', () => {
         mockModule([], [errorMessage]);
 
         const { getAccounts } = await import(
-            '../../controllers/accountsController.js'
+            '../../src/controllers/accountsController.js'
         );
 
         mockRequest.query = { id: 1 };
@@ -136,7 +136,7 @@ describe('GET /api/accounts', () => {
         mockModule([[]]);
 
         const { getAccounts } = await import(
-            '../../controllers/accountsController.js'
+            '../../src/controllers/accountsController.js'
         );
 
         mockRequest.query = { id: 3 };
@@ -159,7 +159,7 @@ describe('POST /api/accounts', () => {
         mockModule([newAccount]);
 
         const { createAccount } = await import(
-            '../../controllers/accountsController.js'
+            '../../src/controllers/accountsController.js'
         );
 
         mockRequest.body = newAccount;
@@ -177,7 +177,7 @@ describe('POST /api/accounts', () => {
         mockModule([], [errorMessage]);
 
         const { createAccount } = await import(
-            '../../controllers/accountsController.js'
+            '../../src/controllers/accountsController.js'
         );
 
         mockRequest.body = accounts.filter(
@@ -204,7 +204,7 @@ describe('PUT /api/accounts/:id', () => {
         mockModule([updatedAccount, updatedAccount]);
 
         const { updateAccount } = await import(
-            '../../controllers/accountsController.js'
+            '../../src/controllers/accountsController.js'
         );
 
         mockRequest.params = { id: 1 };
@@ -223,7 +223,7 @@ describe('PUT /api/accounts/:id', () => {
         mockModule([], [errorMessage]);
 
         const { updateAccount } = await import(
-            '../../controllers/accountsController.js'
+            '../../src/controllers/accountsController.js'
         );
 
         mockRequest.params = { id: 1 };
@@ -246,7 +246,7 @@ describe('PUT /api/accounts/:id', () => {
         mockModule([[]]);
 
         const { updateAccount } = await import(
-            '../../controllers/accountsController.js'
+            '../../src/controllers/accountsController.js'
         );
 
         mockRequest.params = { id: 1 };
@@ -269,7 +269,7 @@ describe('DELETE /api/accounts/:id', () => {
         mockModule(['Successfully deleted account']);
 
         const { deleteAccount } = await import(
-            '../../controllers/accountsController.js'
+            '../../src/controllers/accountsController.js'
         );
 
         mockRequest.params = { id: 1 };
@@ -289,7 +289,7 @@ describe('DELETE /api/accounts/:id', () => {
         mockModule([], [errorMessage]);
 
         const { deleteAccount } = await import(
-            '../../controllers/accountsController.js'
+            '../../src/controllers/accountsController.js'
         );
 
         mockRequest.params = { id: 1 };
@@ -309,7 +309,7 @@ describe('DELETE /api/accounts/:id', () => {
         mockModule([[]]);
 
         const { deleteAccount } = await import(
-            '../../controllers/accountsController.js'
+            '../../src/controllers/accountsController.js'
         );
 
         mockRequest.params = { id: 1 };

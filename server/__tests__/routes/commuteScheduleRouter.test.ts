@@ -25,7 +25,7 @@ const createApp = async (): Promise<Express> => {
     app.use(express.json());
 
     // Import the module that uses the mock
-    const routerModule = await import('../../routes/commuteScheduleRouter');
+    const routerModule = await import('../../src/routes/commuteScheduleRouter');
     const commuteScheduleRouter: Router = routerModule.default;
     app.use('/', commuteScheduleRouter);
 

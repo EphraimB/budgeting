@@ -52,7 +52,7 @@ describe('GET /api/expenses/commute', () => {
         ]);
 
         const { getCommuteOverview } = await import(
-            '../../controllers/commuteOverviewController.js'
+            '../../src/controllers/commuteOverviewController.js'
         );
 
         mockRequest.query = { account_id: 1 };
@@ -86,7 +86,7 @@ describe('GET /api/expenses/commute', () => {
         mockModule([[]]);
 
         const { getCommuteOverview } = await import(
-            '../../controllers/commuteOverviewController.js'
+            '../../src/controllers/commuteOverviewController.js'
         );
 
         mockRequest.query = { account_id: 2 };
@@ -107,7 +107,7 @@ describe('GET /api/expenses/commute', () => {
         mockModule([], [errorMessage]);
 
         const { getCommuteOverview } = await import(
-            '../../controllers/commuteOverviewController.js'
+            '../../src/controllers/commuteOverviewController.js'
         );
 
         mockRequest.query = { account_id: 1 };

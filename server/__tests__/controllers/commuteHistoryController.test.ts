@@ -8,7 +8,7 @@ import {
     expect,
 } from '@jest/globals';
 import { mockModule } from '../__mocks__/mockModule';
-import { CommuteHistory } from '../../types/types.js';
+import { CommuteHistory } from '../../src/types/types.js';
 
 jest.mock('../../config/winston', () => ({
     logger: {
@@ -85,7 +85,7 @@ describe('GET /api/expenses/commute/history', () => {
         mockModule([commuteHistory]);
 
         const { getCommuteHistory } = await import(
-            '../../controllers/commuteHistoryController.js'
+            '../../src/controllers/commuteHistoryController.js'
         );
 
         mockRequest.query = { account_id: null, id: null };
@@ -104,7 +104,7 @@ describe('GET /api/expenses/commute/history', () => {
         mockModule([], [errorMessage]);
 
         const { getCommuteHistory } = await import(
-            '../../controllers/commuteHistoryController.js'
+            '../../src/controllers/commuteHistoryController.js'
         );
 
         mockRequest.query = { account_id: null, id: null };
@@ -126,7 +126,7 @@ describe('GET /api/expenses/commute/history', () => {
         ]);
 
         const { getCommuteHistory } = await import(
-            '../../controllers/commuteHistoryController.js'
+            '../../src/controllers/commuteHistoryController.js'
         );
 
         mockRequest.query = { account_id: 1, id: null };
@@ -150,7 +150,7 @@ describe('GET /api/expenses/commute/history', () => {
         mockModule([], [errorMessage]);
 
         const { getCommuteHistory } = await import(
-            '../../controllers/commuteHistoryController.js'
+            '../../src/controllers/commuteHistoryController.js'
         );
 
         mockRequest.query = { account_id: 1, id: null };
@@ -174,7 +174,7 @@ describe('GET /api/expenses/commute/history', () => {
         ]);
 
         const { getCommuteHistory } = await import(
-            '../../controllers/commuteHistoryController.js'
+            '../../src/controllers/commuteHistoryController.js'
         );
 
         mockRequest.query = { account_id: null, id: 1 };
@@ -197,7 +197,7 @@ describe('GET /api/expenses/commute/history', () => {
         mockModule([], [errorMessage]);
 
         const { getCommuteHistory } = await import(
-            '../../controllers/commuteHistoryController.js'
+            '../../src/controllers/commuteHistoryController.js'
         );
 
         mockRequest.query = { account_id: null, id: 1 };
@@ -217,7 +217,7 @@ describe('GET /api/expenses/commute/history', () => {
         mockModule([[]]);
 
         const { getCommuteHistory } = await import(
-            '../../controllers/commuteHistoryController.js'
+            '../../src/controllers/commuteHistoryController.js'
         );
 
         mockRequest.query = { account_id: 3, id: 3 };
@@ -242,7 +242,7 @@ describe('POST /api/expenses/commute/history', () => {
         mockModule([newCommuteHistory]);
 
         const { createCommuteHistory } = await import(
-            '../../controllers/commuteHistoryController.js'
+            '../../src/controllers/commuteHistoryController.js'
         );
 
         mockRequest.body = newCommuteHistory;
@@ -264,7 +264,7 @@ describe('POST /api/expenses/commute/history', () => {
         mockModule([], [errorMessage]);
 
         const { createCommuteHistory } = await import(
-            '../../controllers/commuteHistoryController.js'
+            '../../src/controllers/commuteHistoryController.js'
         );
 
         mockRequest.body = commuteHistory.filter(
@@ -291,7 +291,7 @@ describe('PUT /api/expenses/commute/history/:id', () => {
         mockModule([updatedHistory, updatedHistory]);
 
         const { updateCommuteHistory } = await import(
-            '../../controllers/commuteHistoryController.js'
+            '../../src/controllers/commuteHistoryController.js'
         );
 
         mockRequest.params = { id: 1 };
@@ -314,7 +314,7 @@ describe('PUT /api/expenses/commute/history/:id', () => {
         mockModule([], [errorMessage]);
 
         const { updateCommuteHistory } = await import(
-            '../../controllers/commuteHistoryController.js'
+            '../../src/controllers/commuteHistoryController.js'
         );
 
         mockRequest.params = { id: 1 };
@@ -337,7 +337,7 @@ describe('PUT /api/expenses/commute/history/:id', () => {
         mockModule([[]]);
 
         const { updateCommuteHistory } = await import(
-            '../../controllers/commuteHistoryController.js'
+            '../../src/controllers/commuteHistoryController.js'
         );
 
         mockRequest.params = { id: 1 };
@@ -362,7 +362,7 @@ describe('DELETE /api/expenses/commute/history/:id', () => {
         mockModule(['Successfully deleted commute history']);
 
         const { deleteCommuteHistory } = await import(
-            '../../controllers/commuteHistoryController.js'
+            '../../src/controllers/commuteHistoryController.js'
         );
 
         mockRequest.params = { id: 1 };
@@ -382,7 +382,7 @@ describe('DELETE /api/expenses/commute/history/:id', () => {
         mockModule([], [errorMessage]);
 
         const { deleteCommuteHistory } = await import(
-            '../../controllers/commuteHistoryController.js'
+            '../../src/controllers/commuteHistoryController.js'
         );
 
         mockRequest.params = { id: 1 };
@@ -402,7 +402,7 @@ describe('DELETE /api/expenses/commute/history/:id', () => {
         mockModule([[]]);
 
         const { deleteCommuteHistory } = await import(
-            '../../controllers/commuteHistoryController.js'
+            '../../src/controllers/commuteHistoryController.js'
         );
 
         mockRequest.params = { id: 1 };

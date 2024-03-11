@@ -1,5 +1,5 @@
 import { type Request } from 'express';
-import { type Wishlist } from '../../types/types.js';
+import { type Wishlist } from '../../src/types/types.js';
 import {
     jest,
     beforeEach,
@@ -87,7 +87,7 @@ describe('GET /api/wishlists', () => {
         ];
 
         const { getWishlists } = await import(
-            '../../controllers/wishlistsController.js'
+            '../../src/controllers/wishlistsController.js'
         );
 
         // Call the function with the mock request and response
@@ -109,7 +109,7 @@ describe('GET /api/wishlists', () => {
         mockRequest.query = { account_id: null, id: null };
 
         const { getWishlists } = await import(
-            '../../controllers/wishlistsController.js'
+            '../../src/controllers/wishlistsController.js'
         );
 
         // Call the function with the mock request and response
@@ -143,7 +143,7 @@ describe('GET /api/wishlists', () => {
         ];
 
         const { getWishlists } = await import(
-            '../../controllers/wishlistsController.js'
+            '../../src/controllers/wishlistsController.js'
         );
 
         // Call the function with the mock request and response
@@ -162,7 +162,7 @@ describe('GET /api/wishlists', () => {
         mockRequest.query = { account_id: null, id: 1 };
 
         const { getWishlists } = await import(
-            '../../controllers/wishlistsController.js'
+            '../../src/controllers/wishlistsController.js'
         );
 
         // Call the function with the mock request and response
@@ -193,7 +193,7 @@ describe('GET /api/wishlists', () => {
         ];
 
         const { getWishlists } = await import(
-            '../../controllers/wishlistsController.js'
+            '../../src/controllers/wishlistsController.js'
         );
 
         // Call the function with the mock request and response
@@ -212,7 +212,7 @@ describe('GET /api/wishlists', () => {
         mockRequest.query = { account_id: 1 };
 
         const { getWishlists } = await import(
-            '../../controllers/wishlistsController.js'
+            '../../src/controllers/wishlistsController.js'
         );
 
         // Call the function with the mock request and response
@@ -252,7 +252,7 @@ describe('GET /api/wishlists', () => {
         ];
 
         const { getWishlists } = await import(
-            '../../controllers/wishlistsController.js'
+            '../../src/controllers/wishlistsController.js'
         );
 
         // Call the function with the mock request and response
@@ -272,7 +272,7 @@ describe('GET /api/wishlists', () => {
         mockRequest.query = { account_id: 1, id: 1 };
 
         const { getWishlists } = await import(
-            '../../controllers/wishlistsController.js'
+            '../../src/controllers/wishlistsController.js'
         );
 
         // Call the function with the mock request and response
@@ -290,7 +290,7 @@ describe('GET /api/wishlists', () => {
         mockModule([[]]);
 
         const { getWishlists } = await import(
-            '../../controllers/wishlistsController.js'
+            '../../src/controllers/wishlistsController.js'
         );
 
         mockRequest.query = { id: 3 };
@@ -316,7 +316,7 @@ describe('GET /api/wishlists', () => {
         ];
 
         const { getWishlists } = await import(
-            '../../controllers/wishlistsController.js'
+            '../../src/controllers/wishlistsController.js'
         );
 
         // Call the function with the mock request and response
@@ -340,7 +340,7 @@ describe('POST /api/wishlists middleware', () => {
         mockModule([newWishlist]);
 
         const { createWishlist } = await import(
-            '../../controllers/wishlistsController.js'
+            '../../src/controllers/wishlistsController.js'
         );
 
         mockRequest.body = newWishlist;
@@ -359,7 +359,7 @@ describe('POST /api/wishlists middleware', () => {
         mockModule([], [errorMessage]);
 
         const { createWishlist } = await import(
-            '../../controllers/wishlistsController.js'
+            '../../src/controllers/wishlistsController.js'
         );
 
         mockRequest.body = wishlists.filter(
@@ -398,7 +398,7 @@ describe('POST /api/wishlists', () => {
         ]);
 
         const { createWishlistCron } = await import(
-            '../../controllers/wishlistsController.js'
+            '../../src/controllers/wishlistsController.js'
         );
 
         mockRequest.wishlist_id = 1;
@@ -431,7 +431,7 @@ describe('POST /api/wishlists', () => {
         mockModule([], [errorMessage]);
 
         const { createWishlistCron } = await import(
-            '../../controllers/wishlistsController.js'
+            '../../src/controllers/wishlistsController.js'
         );
 
         mockRequest.wishlist_id = 1;
@@ -471,7 +471,7 @@ describe('PUT /api/wishlists middleware', () => {
         mockModule([newWishlist]);
 
         const { updateWishlist } = await import(
-            '../../controllers/wishlistsController.js'
+            '../../src/controllers/wishlistsController.js'
         );
 
         mockRequest.params = { id: 1 };
@@ -494,7 +494,7 @@ describe('PUT /api/wishlists middleware', () => {
         mockModule([[]]);
 
         const { updateWishlist } = await import(
-            '../../controllers/wishlistsController.js'
+            '../../src/controllers/wishlistsController.js'
         );
 
         mockRequest.params = { id: 3 };
@@ -514,7 +514,7 @@ describe('PUT /api/wishlists middleware', () => {
         mockModule([], [errorMessage]);
 
         const { updateWishlist } = await import(
-            '../../controllers/wishlistsController.js'
+            '../../src/controllers/wishlistsController.js'
         );
 
         mockRequest.params = { id: 1 };
@@ -565,7 +565,7 @@ describe('PUT /api/wishlists/:id', () => {
         ];
 
         const { updateWishlistCron } = await import(
-            '../../controllers/wishlistsController.js'
+            '../../src/controllers/wishlistsController.js'
         );
 
         await updateWishlistCron(mockRequest as Request, mockResponse);
@@ -583,7 +583,7 @@ describe('PUT /api/wishlists/:id', () => {
         mockModule([], [errorMessage]);
 
         const { updateWishlistCron } = await import(
-            '../../controllers/wishlistsController.js'
+            '../../src/controllers/wishlistsController.js'
         );
 
         // Call the function with the mock request and response
@@ -608,7 +608,7 @@ describe('DELETE /api/wishlists/:id', () => {
         mockRequest.params = { id: 1 };
 
         const { deleteWishlist } = await import(
-            '../../controllers/wishlistsController.js'
+            '../../src/controllers/wishlistsController.js'
         );
 
         await deleteWishlist(mockRequest as Request, mockResponse);
@@ -626,7 +626,7 @@ describe('DELETE /api/wishlists/:id', () => {
         mockModule([], [errorMessage]);
 
         const { deleteWishlist } = await import(
-            '../../controllers/wishlistsController.js'
+            '../../src/controllers/wishlistsController.js'
         );
 
         mockRequest.params = { id: 1 };
@@ -646,7 +646,7 @@ describe('DELETE /api/wishlists/:id', () => {
         mockModule([[]]);
 
         const { deleteWishlist } = await import(
-            '../../controllers/wishlistsController.js'
+            '../../src/controllers/wishlistsController.js'
         );
 
         mockRequest.params = { id: 3 };

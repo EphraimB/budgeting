@@ -8,7 +8,7 @@ import {
 } from '@jest/globals';
 import { type Request } from 'express';
 import { mockModule } from '../__mocks__/mockModule.js';
-import { Income } from '../../types/types.js';
+import { Income } from '../../src/types/types.js';
 
 jest.mock('../../config/winston', () => ({
     logger: {
@@ -82,7 +82,7 @@ describe('GET /api/income', () => {
         mockModule([income]);
 
         const { getIncome } = await import(
-            '../../controllers/incomeController.js'
+            '../../src/controllers/incomeController.js'
         );
 
         mockRequest.query = { id: null };
@@ -106,7 +106,7 @@ describe('GET /api/income', () => {
         mockModule([], [errorMessage]);
 
         const { getIncome } = await import(
-            '../../controllers/incomeController.js'
+            '../../src/controllers/incomeController.js'
         );
 
         mockRequest.query = { id: null };
@@ -126,7 +126,7 @@ describe('GET /api/income', () => {
         mockModule([income]);
 
         const { getIncome } = await import(
-            '../../controllers/incomeController.js'
+            '../../src/controllers/incomeController.js'
         );
 
         mockRequest.query = { id: 1 };
@@ -150,7 +150,7 @@ describe('GET /api/income', () => {
         mockModule([], [errorMessage]);
 
         const { getIncome } = await import(
-            '../../controllers/incomeController.js'
+            '../../src/controllers/incomeController.js'
         );
 
         mockRequest.query = { id: 1 };
@@ -170,7 +170,7 @@ describe('GET /api/income', () => {
         mockModule([income]);
 
         const { getIncome } = await import(
-            '../../controllers/incomeController.js'
+            '../../src/controllers/incomeController.js'
         );
 
         mockRequest.query = { account_id: 1 };
@@ -194,7 +194,7 @@ describe('GET /api/income', () => {
         mockModule([], [errorMessage]);
 
         const { getIncome } = await import(
-            '../../controllers/incomeController.js'
+            '../../src/controllers/incomeController.js'
         );
 
         mockRequest.query = { account_id: 1 };
@@ -214,7 +214,7 @@ describe('GET /api/income', () => {
         mockModule([income]);
 
         const { getIncome } = await import(
-            '../../controllers/incomeController.js'
+            '../../src/controllers/incomeController.js'
         );
 
         mockRequest.query = { account_id: 1, id: 1 };
@@ -238,7 +238,7 @@ describe('GET /api/income', () => {
         mockModule([], [errorMessage]);
 
         const { getIncome } = await import(
-            '../../controllers/incomeController.js'
+            '../../src/controllers/incomeController.js'
         );
 
         mockRequest.query = { account_id: 1, id: 1 };
@@ -258,7 +258,7 @@ describe('GET /api/income', () => {
         mockModule([[]]);
 
         const { getIncome } = await import(
-            '../../controllers/incomeController.js'
+            '../../src/controllers/incomeController.js'
         );
 
         mockRequest.query = { id: 3 };
@@ -278,7 +278,7 @@ describe('POST /api/income', () => {
         mockModule([income, [{ cron_job_id: 1 }], []], [], [[]], []);
 
         const { createIncome } = await import(
-            '../../controllers/incomeController.js'
+            '../../src/controllers/incomeController.js'
         );
 
         mockRequest.body = income[0];
@@ -301,7 +301,7 @@ describe('POST /api/income', () => {
         mockModule([], [errorMessage]);
 
         const { createIncome } = await import(
-            '../../controllers/incomeController.js'
+            '../../src/controllers/incomeController.js'
         );
 
         mockRequest.body = income[0];
@@ -322,7 +322,7 @@ describe('POST /api/income', () => {
         mockModule([], [errorMessage]);
 
         const { createIncomeReturnObject } = await import(
-            '../../controllers/incomeController.js'
+            '../../src/controllers/incomeController.js'
         );
 
         mockRequest.body = income[0];
@@ -342,7 +342,7 @@ describe('POST /api/income', () => {
         mockModule([income, [{ cron_job_id: 1 }], []], [], [[]], []);
 
         const { createIncomeReturnObject } = await import(
-            '../../controllers/incomeController.js'
+            '../../src/controllers/incomeController.js'
         );
 
         mockRequest.body = income[0];
@@ -361,7 +361,7 @@ describe('PUT /api/income/:id', () => {
         mockModule([income, [{ cron_job_id: 1 }], []], [], [[]], []);
 
         const { updateIncome } = await import(
-            '../../controllers/incomeController.js'
+            '../../src/controllers/incomeController.js'
         );
 
         mockRequest.params = { id: 1 };
@@ -380,7 +380,7 @@ describe('PUT /api/income/:id', () => {
         mockModule([], [errorMessage]);
 
         const { updateIncome } = await import(
-            '../../controllers/incomeController.js'
+            '../../src/controllers/incomeController.js'
         );
 
         mockRequest.params = { id: 1 };
@@ -402,7 +402,7 @@ describe('PUT /api/income/:id', () => {
         mockModule([], [errorMessage]);
 
         const { updateIncomeReturnObject } = await import(
-            '../../controllers/incomeController.js'
+            '../../src/controllers/incomeController.js'
         );
 
         mockRequest.body = income[0];
@@ -422,7 +422,7 @@ describe('PUT /api/income/:id', () => {
         mockModule([[]]);
 
         const { updateIncome } = await import(
-            '../../controllers/incomeController.js'
+            '../../src/controllers/incomeController.js'
         );
 
         mockRequest.params = { id: 1 };
@@ -441,7 +441,7 @@ describe('PUT /api/income/:id', () => {
         mockModule([income, [{ cron_job_id: 1 }], []], [], [[]], []);
 
         const { updateIncomeReturnObject } = await import(
-            '../../controllers/incomeController.js'
+            '../../src/controllers/incomeController.js'
         );
 
         mockRequest.body = income[0];
@@ -466,7 +466,7 @@ describe('DELETE /api/income/:id', () => {
         );
 
         const { deleteIncome } = await import(
-            '../../controllers/incomeController.js'
+            '../../src/controllers/incomeController.js'
         );
 
         mockRequest.params = { id: 1 };
@@ -483,7 +483,7 @@ describe('DELETE /api/income/:id', () => {
         mockModule([], [errorMessage]);
 
         const { deleteIncome } = await import(
-            '../../controllers/incomeController.js'
+            '../../src/controllers/incomeController.js'
         );
 
         mockRequest.params = { id: 1 };
@@ -503,7 +503,7 @@ describe('DELETE /api/income/:id', () => {
         mockModule([[]]);
 
         const { deleteIncome } = await import(
-            '../../controllers/incomeController.js'
+            '../../src/controllers/incomeController.js'
         );
 
         mockRequest.params = { id: 1 };
@@ -521,7 +521,7 @@ describe('DELETE /api/income/:id', () => {
         mockModule(['Income deleted successfully']);
 
         const { deleteIncomeReturnObject } = await import(
-            '../../controllers/incomeController.js'
+            '../../src/controllers/incomeController.js'
         );
 
         mockRequest.params = { id: 1 };

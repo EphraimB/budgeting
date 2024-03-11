@@ -8,7 +8,7 @@ import {
     expect,
 } from '@jest/globals';
 import { mockModule } from '../__mocks__/mockModule';
-import { Timeslots } from '../../types/types';
+import { Timeslots } from '../../src/types/types';
 
 jest.mock('../../config/winston', () => ({
     logger: {
@@ -140,7 +140,7 @@ describe('GET /api/expenses/commute/fares', () => {
         mockModule([fareDetails, timeslots]);
 
         const { getFareDetails } = await import(
-            '../../controllers/fareDetailsController.js'
+            '../../src/controllers/fareDetailsController.js'
         );
 
         mockRequest.query = { id: null };
@@ -163,7 +163,7 @@ describe('GET /api/expenses/commute/fares', () => {
         mockModule([], [errorMessage]);
 
         const { getFareDetails } = await import(
-            '../../controllers/fareDetailsController.js'
+            '../../src/controllers/fareDetailsController.js'
         );
 
         mockRequest.query = { account_id: null, id: null };
@@ -186,7 +186,7 @@ describe('GET /api/expenses/commute/fares', () => {
         ]);
 
         const { getFareDetails } = await import(
-            '../../controllers/fareDetailsController.js'
+            '../../src/controllers/fareDetailsController.js'
         );
 
         mockRequest.query = { account_id: null, id: 1 };
@@ -211,7 +211,7 @@ describe('GET /api/expenses/commute/fares', () => {
         mockModule([], [errorMessage]);
 
         const { getFareDetails } = await import(
-            '../../controllers/fareDetailsController.js'
+            '../../src/controllers/fareDetailsController.js'
         );
 
         mockRequest.query = { id: 1 };
@@ -231,7 +231,7 @@ describe('GET /api/expenses/commute/fares', () => {
         mockModule([[]]);
 
         const { getFareDetails } = await import(
-            '../../controllers/fareDetailsController.js'
+            '../../src/controllers/fareDetailsController.js'
         );
 
         mockRequest.query = { id: 3 };
@@ -254,7 +254,7 @@ describe('POST /api/expenses/commute/fares', () => {
         ]);
 
         const { createFareDetail } = await import(
-            '../../controllers/fareDetailsController.js'
+            '../../src/controllers/fareDetailsController.js'
         );
 
         mockRequest.body = {
@@ -290,7 +290,7 @@ describe('POST /api/expenses/commute/fares', () => {
         mockModule([], [errorMessage]);
 
         const { createFareDetail } = await import(
-            '../../controllers/fareDetailsController.js'
+            '../../src/controllers/fareDetailsController.js'
         );
 
         mockRequest.body = fareDetails.filter(
@@ -318,7 +318,7 @@ describe('PUT /api/expenses/commute/fares/:id', () => {
         ]);
 
         const { updateFareDetail } = await import(
-            '../../controllers/fareDetailsController.js'
+            '../../src/controllers/fareDetailsController.js'
         );
 
         mockRequest.params = { id: 1 };
@@ -355,7 +355,7 @@ describe('PUT /api/expenses/commute/fares/:id', () => {
         mockModule([], [errorMessage]);
 
         const { updateFareDetail } = await import(
-            '../../controllers/fareDetailsController.js'
+            '../../src/controllers/fareDetailsController.js'
         );
 
         mockRequest.params = { id: 1 };
@@ -378,7 +378,7 @@ describe('PUT /api/expenses/commute/fares/:id', () => {
         mockModule([[]]);
 
         const { updateFareDetail } = await import(
-            '../../controllers/fareDetailsController.js'
+            '../../src/controllers/fareDetailsController.js'
         );
 
         mockRequest.params = { id: 1 };
@@ -401,7 +401,7 @@ describe('DELETE /api/expenses/commute/fares/:id', () => {
         mockModule(['Successfully deleted fare detail']);
 
         const { deleteFareDetail } = await import(
-            '../../controllers/fareDetailsController.js'
+            '../../src/controllers/fareDetailsController.js'
         );
 
         mockRequest.params = { id: 1 };
@@ -421,7 +421,7 @@ describe('DELETE /api/expenses/commute/fares/:id', () => {
         mockModule([], [errorMessage]);
 
         const { deleteFareDetail } = await import(
-            '../../controllers/fareDetailsController.js'
+            '../../src/controllers/fareDetailsController.js'
         );
 
         mockRequest.params = { id: 1 };
@@ -441,7 +441,7 @@ describe('DELETE /api/expenses/commute/fares/:id', () => {
         mockModule([[]]);
 
         const { deleteFareDetail } = await import(
-            '../../controllers/fareDetailsController.js'
+            '../../src/controllers/fareDetailsController.js'
         );
 
         mockRequest.params = { id: 1 };

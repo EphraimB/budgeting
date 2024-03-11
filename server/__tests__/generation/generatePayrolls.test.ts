@@ -1,5 +1,5 @@
-import { type GeneratedTransaction, type Payroll } from '../../types/types';
-import generatePayrolls from '../../generation/generatePayrolls';
+import { type GeneratedTransaction, type Payroll } from '../../src/types/types';
+import generatePayrolls from '../../src/generation/generatePayrolls';
 import {
     describe,
     it,
