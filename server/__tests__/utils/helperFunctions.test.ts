@@ -222,6 +222,21 @@ describe('nextTransactionFrequencyDate function', () => {
         expect(result).toEqual('2020-12-23T00:00:00-05:00');
     });
 
+    it('should return the next transaction frequency date on a weekly every other week', async () => {
+        const { nextTransactionFrequencyDate } = await import(
+            '../../src/utils/helperFunctions'
+        );
+
+        const transaction = {
+            frequency_type: 1,
+            frequency_type_variable: 2,
+            begin_date: '2020-12-15',
+        };
+
+        const result = nextTransactionFrequencyDate(transaction);
+        expect(result).toEqual('2020-12-29T00:00:00-05:00');
+    });
+
     it('should return the next transaction frequency date on a yearly with a specific day and month', async () => {
         const { nextTransactionFrequencyDate } = await import(
             '../../src/utils/helperFunctions'
