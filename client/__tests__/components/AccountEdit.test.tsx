@@ -3,6 +3,15 @@ import { render, screen } from "@testing-library/react";
 import AccountEdit from "../../components/AccountEdit";
 import "@testing-library/jest-dom";
 
+jest.mock("../../context/FeedbackContext", () => ({
+  useAlert: () => ({
+    showAlert: () => {},
+  }),
+  useSnackbar: () => ({
+    showSnackbar: () => {},
+  }),
+}));
+
 describe("AccountEdit", () => {
   it("renders", () => {
     render(

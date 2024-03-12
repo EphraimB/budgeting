@@ -10,6 +10,15 @@ jest.mock("next/navigation", () => ({
   usePathname: () => "/",
 }));
 
+jest.mock("../../context/FeedbackContext", () => ({
+  useAlert: () => ({
+    showAlert: () => {},
+  }),
+  useSnackbar: () => ({
+    showSnackbar: () => {},
+  }),
+}));
+
 describe("NewExpenseForm", () => {
   it("renders the component", async () => {
     const taxes = [
