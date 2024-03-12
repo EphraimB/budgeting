@@ -363,9 +363,9 @@ BEGIN
         SELECT job_id, SUM(rate) AS rate
         FROM payroll_taxes
         GROUP BY job_id
-      ) pt ON e.employee_id = pt.job_id
-      WHERE e.employee_id = selected_job_id AND work_days <> 0
-      GROUP BY s2.payroll_start_day, e.employee_id, e.job_id, s.work_days, s1.adjusted_payroll_end_day
+      ) pt ON j.job_id = pt.job_id
+      WHERE j.job_id = selected_job_id AND work_days <> 0
+      GROUP BY s2.payroll_start_day, j.job_id, j.job_id, s.work_days, s1.adjusted_payroll_end_day
       ORDER BY start_date, end_date
     LOOP
         cron_expression := '0 0 ' || EXTRACT(DAY FROM pay_period.end_date) || ' ' || EXTRACT(MONTH FROM pay_period.end_date) || ' *';
