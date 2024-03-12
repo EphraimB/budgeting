@@ -106,7 +106,6 @@ export const accountQueries: AccountQueries = {
     getAccounts: `
             SELECT 
             accounts.account_id,
-            accounts.employee_id,
             accounts.account_name,
             COALESCE(t.total_transaction_amount_after_tax, 0) AS account_balance,
             accounts.date_created, 
@@ -127,7 +126,6 @@ export const accountQueries: AccountQueries = {
     getAccount: `
             SELECT 
             accounts.account_id,
-            accounts.employee_id,
             accounts.account_name,
             COALESCE(t.total_transaction_amount_after_tax, 0) AS account_balance,
             accounts.date_created, 
