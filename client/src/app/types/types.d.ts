@@ -92,7 +92,7 @@ interface Transaction {
 }
 
 export interface Job {
-  employee_id: number;
+  id: number;
   name: string;
   hourly_rate: number;
   regular_hours: number;

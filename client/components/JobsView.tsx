@@ -51,7 +51,7 @@ function LoansView({
         open={open}
         handleClose={handleClose}
         setJobModes={setJobModes}
-        job_id={job.employee_id}
+        job_id={job.id}
       />
       <CardHeader title={job.name} />
       <CardContent>
