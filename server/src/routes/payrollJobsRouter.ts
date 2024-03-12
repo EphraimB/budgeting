@@ -28,10 +28,10 @@ const router: Router = express.Router();
 router.get(
     '/',
     [
-        query('employee_id')
+        query('job_id')
             .optional()
             .isInt({ min: 1 })
-            .withMessage('ID must be a number'),
+            .withMessage('Job ID must be a number'),
         validateRequest,
     ],
     getJobs,
@@ -62,11 +62,11 @@ router.post(
 );
 
 router.put(
-    '/:employee_id',
+    '/:job_id',
     [
-        param('employee_id')
+        param('job_id')
             .isInt({ min: 1 })
-            .withMessage('Employee ID must be a number'),
+            .withMessage('Job ID must be a number'),
         body('name').isString().withMessage('Name must be a string'),
         body('hourly_rate')
             .isFloat({ min: 0 })
@@ -102,11 +102,11 @@ router.put(
 );
 
 router.delete(
-    '/:employee_id',
+    '/:job_id',
     [
-        param('employee_id')
+        param('job_id')
             .isInt({ min: 1 })
-            .withMessage('Employee ID must be a number'),
+            .withMessage('Job ID must be a number'),
         validateRequest,
     ],
     deleteEmployee,
