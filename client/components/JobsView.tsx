@@ -1,15 +1,13 @@
 "use client";
 
 import { useState } from "react";
-import dayjs from "dayjs";
 import CardHeader from "@mui/material/CardHeader";
 import CardContent from "@mui/material/CardContent";
 import Typography from "@mui/material/Typography";
 import { Job } from "@/app/types/types";
-import { getFrequency } from "../utils/helperFunctions";
 import IconButton from "@mui/material/IconButton";
 import MoreVert from "@mui/icons-material/MoreVert";
-import LoanActionsMenu from "./LoanActionMenu";
+import JobActionsMenu from "./JobActionsMenu";
 
 function LoansView({
   job,
@@ -56,14 +54,8 @@ function LoansView({
       <CardHeader title={job.name} />
       <CardContent>
         <Typography variant="body2">
-          You will be charged ${loan.plan_amount.toFixed(2)} next on{" "}
-          {dayjs(loan.next_date).format("dddd MMMM D, YYYY h:mm A")}. You get
-          charged {getFrequency(loan)}. This loan{" "}
-          {loan.fully_paid_back
-            ? `will be fully paid off on
-          ${dayjs(loan.fully_paid_back).format("dddd MMMM D, YYYY")}`
-            : "won't be paid off in the near future"}
-          .
+          You get paid ${job.hourly_rate} per hour, and you work{" "}
+          {job.regular_hours} hours per week.
         </Typography>
       </CardContent>
     </>

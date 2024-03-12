@@ -6,10 +6,7 @@ import Fab from "@mui/material/Fab";
 import AddIcon from "@mui/icons-material/Add";
 import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
-// import LoansView from "./LoansView";
-// import LoanDelete from "./LoanDelete";
-// import LoanEdit from "./LoanEdit";
-// import NewLoanForm from "./NewLoanForm";
+import JobsView from "./JobsView";
 
 function JobCards({ jobs }: { jobs: any }) {
   const [showJobForm, setShowJobForm] = useState(false);
