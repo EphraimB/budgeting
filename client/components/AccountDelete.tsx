@@ -6,19 +6,27 @@ import CloseIcon from "@mui/icons-material/Close";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import { deleteAccount } from "../services/actions/account";
+import { Account } from "@/app/types/types";
+import { useRouter, usePathname } from "next/navigation";
 
 function AccountDelete({
   account,
   setAccountModes,
 }: {
-  account: any;
-  setAccountModes: any;
+  account: Account;
+  setAccountModes: (prevModes: any) => void;
 }) {
+  const router = useRouter();
+  const pathname = usePathname();
   const handleDelete = async () => {
     try {
       await deleteAccount(account.account_id);
     } catch (error) {
       console.log(error);
+    }
+
+    if (account.account_id === parseInt(pathname.split("/")[1])) {
+      router.push("/");
     }
 
     setAccountModes((prevModes: any) => ({

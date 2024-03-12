@@ -48,7 +48,7 @@ CREATE TABLE IF NOT EXISTS taxes (
 -- Create a transactions table in postgres
 CREATE TABLE IF NOT EXISTS transaction_history (
   transaction_id SERIAL PRIMARY KEY,
-  account_id INT NOT NULL REFERENCES accounts(account_id),
+  account_id INT NOT NULL REFERENCES accounts(account_id) ON DELETE CASCADE,
   transaction_amount numeric(12, 2) NOT NULL,
   transaction_tax_rate numeric(8, 6) NOT NULL,
   transaction_title VARCHAR(255) NOT NULL,
@@ -69,7 +69,7 @@ CREATE TABLE IF NOT EXISTS cron_jobs (
 -- Create a expenses table in postgres
 CREATE TABLE IF NOT EXISTS expenses (
   expense_id SERIAL PRIMARY KEY,
-  account_id INT NOT NULL REFERENCES accounts(account_id),
+  account_id INT NOT NULL REFERENCES accounts(account_id) ON DELETE CASCADE,
   tax_id INT REFERENCES taxes(tax_id),
   cron_job_id INT REFERENCES cron_jobs(cron_job_id),
   expense_amount numeric(12, 2) NOT NULL,
@@ -91,7 +91,7 @@ CREATE TABLE IF NOT EXISTS expenses (
 -- Create a loans table in postgres
 CREATE TABLE IF NOT EXISTS loans (
   loan_id SERIAL PRIMARY KEY,
-  account_id INT NOT NULL REFERENCES accounts(account_id),
+  account_id INT NOT NULL REFERENCES accounts(account_id) ON DELETE CASCADE,
   cron_job_id INT REFERENCES cron_jobs(cron_job_id),
   interest_cron_job_id INT REFERENCES cron_jobs(cron_job_id),
   loan_amount numeric(12, 2) NOT NULL,
@@ -131,7 +131,7 @@ CREATE TABLE payroll_taxes (
 -- Create a wishlist table in postgres
 CREATE TABLE IF NOT EXISTS wishlist (
   wishlist_id SERIAL PRIMARY KEY,
-  account_id INT NOT NULL REFERENCES accounts(account_id),
+  account_id INT NOT NULL REFERENCES accounts(account_id) ON DELETE CASCADE,
   tax_id INT REFERENCES taxes(tax_id),
   cron_job_id INT REFERENCES cron_jobs(cron_job_id),
   wishlist_amount numeric(12, 2) NOT NULL,
@@ -148,7 +148,7 @@ CREATE TABLE IF NOT EXISTS wishlist (
 CREATE TABLE IF NOT EXISTS transfers (
   transfer_id SERIAL PRIMARY KEY,
   cron_job_id INT REFERENCES cron_jobs(cron_job_id),
-  source_account_id INT NOT NULL REFERENCES accounts(account_id),
+  source_account_id INT NOT NULL REFERENCES accounts(account_id) ON DELETE CASCADE,
   destination_account_id INT NOT NULL REFERENCES accounts(account_id),
   transfer_amount numeric(12, 2) NOT NULL,
   transfer_title VARCHAR(255) NOT NULL,
@@ -168,7 +168,7 @@ CREATE TABLE IF NOT EXISTS transfers (
 -- Create a income table in postgres
 CREATE TABLE IF NOT EXISTS income (
   income_id SERIAL PRIMARY KEY,
-  account_id INT NOT NULL REFERENCES accounts(account_id),
+  account_id INT NOT NULL REFERENCES accounts(account_id) ON DELETE CASCADE,
   tax_id INT REFERENCES taxes(tax_id),
   cron_job_id INT REFERENCES cron_jobs(cron_job_id),
   income_amount numeric(12, 2) NOT NULL,
@@ -220,7 +220,7 @@ CREATE TABLE IF NOT EXISTS timeslots (
 
 CREATE TABLE IF NOT EXISTS commute_schedule (
   commute_schedule_id SERIAL PRIMARY KEY,
-  account_id INT NOT NULL REFERENCES accounts(account_id),
+  account_id INT NOT NULL REFERENCES accounts(account_id) ON DELETE CASCADE,
   cron_job_id INT REFERENCES cron_jobs(cron_job_id),
   day_of_week INT NOT NULL,
   start_time TIME NOT NULL,
@@ -233,7 +233,7 @@ CREATE TABLE IF NOT EXISTS commute_schedule (
 
 CREATE TABLE IF NOT EXISTS commute_history (
   commute_history_id SERIAL PRIMARY KEY,
-  account_id INT NOT NULL REFERENCES accounts(account_id),
+  account_id INT NOT NULL REFERENCES accounts(account_id) ON DELETE CASCADE,
   fare_amount NUMERIC(5,2) NOT NULL,
   commute_system VARCHAR(255) NOT NULL,
   fare_type VARCHAR(255) NOT NULL,
