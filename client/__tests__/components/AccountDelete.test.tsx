@@ -3,15 +3,23 @@ import { render, screen } from "@testing-library/react";
 import "@testing-library/jest-dom";
 import AccountDelete from "../../components/AccountDelete";
 
+jest.mock("next/navigation", () => ({
+  useRouter: () => ({
+    push: jest.fn(),
+  }),
+  usePathname: () => "/1",
+}));
+
 describe("AccountList", () => {
   it("renders", () => {
-    const { getByText } = render(
+    render(
       <AccountDelete
         account={{
           account_id: 1,
           account_name: "Test Account",
-          account_type: "Checking",
           account_balance: 0,
+          date_created: "2021-01-01",
+          date_modified: "2021-01-01",
         }}
         setAccountModes={() => {}}
       />
