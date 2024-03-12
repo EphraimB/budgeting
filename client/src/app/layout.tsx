@@ -4,6 +4,7 @@ import GlobalAppBar from "../../components/GlobalAppBar";
 import Alerts from "../../components/Alerts";
 import Container from "@mui/material/Container";
 import AccountList from "../../components/AccountList";
+import { FeedbackProvider, useAlert } from "../../context/FeedbackContext";
 
 export const metadata: Metadata = {
   title: "Budgeting",
@@ -15,6 +16,7 @@ async function getAccounts() {
 
   if (!res.ok) {
     // open alert
+    // showAlert("Failed to fetch accounts", "error");
   }
 
   return res.json();
@@ -31,12 +33,14 @@ export default async function RootLayout({
     <html lang="en">
       <body>
         <GlobalAppBar />
-        <br />
-        {/* <Alerts message="" severity="error" open={false} /> */}
-        <Container maxWidth="lg">
-          <AccountList accounts={accounts} />
-          {children}
-        </Container>
+        <FeedbackProvider>
+          <Alerts />
+          <br />
+          <Container maxWidth="lg">
+            <AccountList accounts={accounts} />
+            {children}
+          </Container>
+        </FeedbackProvider>
       </body>
     </html>
   );

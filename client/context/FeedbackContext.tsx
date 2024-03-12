@@ -7,7 +7,6 @@ import React, {
   useContext,
   ReactNode,
 } from "react";
-
 import { AlertColor } from "@mui/material/Alert";
 
 type Alert = {
