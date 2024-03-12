@@ -16,7 +16,9 @@
             "get": {
                 "summary": "Get one account",
                 "description": "Get one account",
-                "tags": ["accounts"],
+                "tags": [
+                    "accounts"
+                ],
                 "parameters": [
                     {
                         "name": "id",
@@ -43,7 +45,9 @@
             "post": {
                 "summary": "Create a new account",
                 "description": "Create a new account",
-                "tags": ["accounts"],
+                "tags": [
+                    "accounts"
+                ],
                 "requestBody": {
                     "description": "Account object to be created",
                     "required": true,
@@ -69,7 +73,9 @@
             "put": {
                 "summary": "Update an account",
                 "description": "Update an account",
-                "tags": ["accounts"],
+                "tags": [
+                    "accounts"
+                ],
                 "parameters": [
                     {
                         "in": "path",
@@ -107,7 +113,9 @@
             "delete": {
                 "summary": "Delete an account",
                 "description": "Delete an account",
-                "tags": ["accounts"],
+                "tags": [
+                    "accounts"
+                ],
                 "parameters": [
                     {
                         "in": "path",
@@ -136,7 +144,9 @@
             "get": {
                 "summary": "Get all taxes",
                 "description": "Get all taxes",
-                "tags": ["taxes"],
+                "tags": [
+                    "taxes"
+                ],
                 "parameters": [
                     {
                         "name": "id",
@@ -172,7 +182,9 @@
             "post": {
                 "summary": "Create a new tax",
                 "description": "Create a new tax",
-                "tags": ["taxes"],
+                "tags": [
+                    "taxes"
+                ],
                 "requestBody": {
                     "description": "Tax object to be created",
                     "required": true,
@@ -198,7 +210,9 @@
             "put": {
                 "summary": "Update a tax",
                 "description": "Update a tax",
-                "tags": ["taxes"],
+                "tags": [
+                    "taxes"
+                ],
                 "parameters": [
                     {
                         "in": "path",
@@ -236,7 +250,9 @@
             "delete": {
                 "summary": "Delete a tax",
                 "description": "Delete a tax",
-                "tags": ["taxes"],
+                "tags": [
+                    "taxes"
+                ],
                 "parameters": [
                     {
                         "in": "path",
@@ -265,7 +281,9 @@
             "get": {
                 "summary": "Get all transactions by account",
                 "description": "Get all transactions by account",
-                "tags": ["transaction history"],
+                "tags": [
+                    "transaction history"
+                ],
                 "parameters": [
                     {
                         "name": "id",
@@ -303,7 +321,9 @@
             "post": {
                 "summary": "Create a new transaction",
                 "description": "Create a new transaction",
-                "tags": ["transaction history"],
+                "tags": [
+                    "transaction history"
+                ],
                 "requestBody": {
                     "description": "transaction object to be created",
                     "required": true,
@@ -329,7 +349,9 @@
             "put": {
                 "summary": "Update a transaction",
                 "description": "Update a transaction",
-                "tags": ["transaction history"],
+                "tags": [
+                    "transaction history"
+                ],
                 "parameters": [
                     {
                         "name": "id",
@@ -368,7 +390,9 @@
             "delete": {
                 "summary": "Delete a transaction",
                 "description": "Delete a transaction",
-                "tags": ["transaction history"],
+                "tags": [
+                    "transaction history"
+                ],
                 "parameters": [
                     {
                         "name": "id",
@@ -398,7 +422,9 @@
             "get": {
                 "summary": "Get all income by account",
                 "description": "Get all income by account",
-                "tags": ["income"],
+                "tags": [
+                    "income"
+                ],
                 "parameters": [
                     {
                         "name": "id",
@@ -436,7 +462,9 @@
             "post": {
                 "summary": "Create a new income",
                 "description": "Create a new income",
-                "tags": ["income"],
+                "tags": [
+                    "income"
+                ],
                 "requestBody": {
                     "description": "income object to be created",
                     "required": true,
@@ -462,7 +490,9 @@
             "put": {
                 "summary": "Update an income",
                 "description": "Update an income",
-                "tags": ["income"],
+                "tags": [
+                    "income"
+                ],
                 "parameters": [
                     {
                         "name": "id",
@@ -501,7 +531,9 @@
             "delete": {
                 "summary": "Delete an income",
                 "description": "Delete an income",
-                "tags": ["income"],
+                "tags": [
+                    "income"
+                ],
                 "parameters": [
                     {
                         "name": "id",
@@ -531,7 +563,9 @@
             "get": {
                 "summary": "Get all expenses by account",
                 "description": "Get all expenses by account",
-                "tags": ["expenses"],
+                "tags": [
+                    "expenses"
+                ],
                 "parameters": [
                     {
                         "name": "id",
@@ -569,7 +603,9 @@
             "post": {
                 "summary": "Create a new expense",
                 "description": "Create a new expense",
-                "tags": ["expenses"],
+                "tags": [
+                    "expenses"
+                ],
                 "requestBody": {
                     "description": "Expenses object to be created",
                     "required": true,
@@ -595,7 +631,9 @@
             "put": {
                 "summary": "Update an expense",
                 "description": "Update an expense",
-                "tags": ["expenses"],
+                "tags": [
+                    "expenses"
+                ],
                 "parameters": [
                     {
                         "name": "id",
@@ -634,7 +672,9 @@
             "delete": {
                 "summary": "Delete an expense",
                 "description": "Delete an expense",
-                "tags": ["expenses"],
+                "tags": [
+                    "expenses"
+                ],
                 "parameters": [
                     {
                         "name": "id",
@@ -664,7 +704,9 @@
             "get": {
                 "summary": "Get all commute expenses",
                 "description": "Get all commute expenses",
-                "tags": ["commute expenses overview"],
+                "tags": [
+                    "commute expenses overview"
+                ],
                 "parameters": [
                     {
                         "name": "account_id",
@@ -694,7 +736,9 @@
             "get": {
                 "summary": "Get all commute systems",
                 "description": "Get all commute systems",
-                "tags": ["commute systems"],
+                "tags": [
+                    "commute systems"
+                ],
                 "parameters": [
                     {
                         "name": "id",
@@ -722,7 +766,9 @@
             "post": {
                 "summary": "Create a new commute system",
                 "description": "Create a new commute system",
-                "tags": ["commute systems"],
+                "tags": [
+                    "commute systems"
+                ],
                 "requestBody": {
                     "description": "Commute system object to be created",
                     "required": true,
@@ -748,7 +794,9 @@
             "put": {
                 "summary": "Update a commute system",
                 "description": "Update a commute system",
-                "tags": ["commute systems"],
+                "tags": [
+                    "commute systems"
+                ],
                 "parameters": [
                     {
                         "name": "id",
@@ -786,7 +834,9 @@
             "delete": {
                 "summary": "Delete a commute system",
                 "description": "Delete a commute system",
-                "tags": ["commute systems"],
+                "tags": [
+                    "commute systems"
+                ],
                 "parameters": [
                     {
                         "name": "id",
@@ -815,7 +865,9 @@
             "get": {
                 "summary": "Get all commute history",
                 "description": "Get all commute history",
-                "tags": ["commute history"],
+                "tags": [
+                    "commute history"
+                ],
                 "parameters": [
                     {
                         "name": "id",
@@ -851,7 +903,9 @@
             "post": {
                 "summary": "Create a new commute history",
                 "description": "Create a new commute history",
-                "tags": ["commute history"],
+                "tags": [
+                    "commute history"
+                ],
                 "requestBody": {
                     "description": "Commute history object to be created",
                     "required": true,
@@ -877,7 +931,9 @@
             "put": {
                 "summary": "Update a commute history",
                 "description": "Update a commute history",
-                "tags": ["commute history"],
+                "tags": [
+                    "commute history"
+                ],
                 "parameters": [
                     {
                         "name": "id",
@@ -915,7 +971,9 @@
             "delete": {
                 "summary": "Delete a commute history",
                 "description": "Delete a commute history",
-                "tags": ["commute history"],
+                "tags": [
+                    "commute history"
+                ],
                 "parameters": [
                     {
                         "name": "id",
@@ -944,7 +1002,9 @@
             "get": {
                 "summary": "Get all commute fares",
                 "description": "Get all commute fares",
-                "tags": ["commute fares"],
+                "tags": [
+                    "commute fares"
+                ],
                 "parameters": [
                     {
                         "name": "id",
@@ -971,7 +1031,9 @@
             "post": {
                 "summary": "Create a new commute fare",
                 "description": "Create a new commute fare",
-                "tags": ["commute fares"],
+                "tags": [
+                    "commute fares"
+                ],
                 "requestBody": {
                     "description": "Commute fare object to be created",
                     "required": true,
@@ -997,7 +1059,9 @@
             "put": {
                 "summary": "Update a commute fare",
                 "description": "Update a commute fare",
-                "tags": ["commute fares"],
+                "tags": [
+                    "commute fares"
+                ],
                 "parameters": [
                     {
                         "name": "id",
@@ -1035,7 +1099,9 @@
             "delete": {
                 "summary": "Delete a commute fare",
                 "description": "Delete a commute fare",
-                "tags": ["commute fares"],
+                "tags": [
+                    "commute fares"
+                ],
                 "parameters": [
                     {
                         "name": "id",
@@ -1064,7 +1130,9 @@
             "get": {
                 "summary": "Get all commute schedules",
                 "description": "Get all commute schedules",
-                "tags": ["commute schedules"],
+                "tags": [
+                    "commute schedules"
+                ],
                 "parameters": [
                     {
                         "name": "id",
@@ -1100,7 +1168,9 @@
             "post": {
                 "summary": "Create a new commute schedule",
                 "description": "Create a new commute schedule",
-                "tags": ["commute schedules"],
+                "tags": [
+                    "commute schedules"
+                ],
                 "requestBody": {
                     "description": "Commute schedule object to be created",
                     "required": true,
@@ -1126,7 +1196,9 @@
             "put": {
                 "summary": "Update a commute schedule",
                 "description": "Update a commute schedule",
-                "tags": ["commute schedules"],
+                "tags": [
+                    "commute schedules"
+                ],
                 "parameters": [
                     {
                         "name": "id",
@@ -1164,7 +1236,9 @@
             "delete": {
                 "summary": "Delete a commute schedule",
                 "description": "Delete a commute schedule",
-                "tags": ["commute schedules"],
+                "tags": [
+                    "commute schedules"
+                ],
                 "parameters": [
                     {
                         "name": "id",
@@ -1193,7 +1267,9 @@
             "get": {
                 "summary": "Get all loans",
                 "description": "Get all loans",
-                "tags": ["loans"],
+                "tags": [
+                    "loans"
+                ],
                 "parameters": [
                     {
                         "name": "id",
@@ -1231,7 +1307,9 @@
             "post": {
                 "summary": "Create a loan",
                 "description": "Create a loan",
-                "tags": ["loans"],
+                "tags": [
+                    "loans"
+                ],
                 "requestBody": {
                     "description": "Loans object to be created",
                     "required": true,
@@ -1257,7 +1335,9 @@
             "put": {
                 "summary": "Update a loan",
                 "description": "Update a loan",
-                "tags": ["loans"],
+                "tags": [
+                    "loans"
+                ],
                 "parameters": [
                     {
                         "name": "id",
@@ -1296,7 +1376,9 @@
             "delete": {
                 "summary": "Delete a loan",
                 "description": "Delete a loan",
-                "tags": ["loans"],
+                "tags": [
+                    "loans"
+                ],
                 "parameters": [
                     {
                         "name": "id",
@@ -1326,12 +1408,14 @@
             "get": {
                 "summary": "Get all payrolls",
                 "description": "Get all payrolls",
-                "tags": ["payroll"],
+                "tags": [
+                    "payroll"
+                ],
                 "parameters": [
                     {
-                        "name": "employee_id",
+                        "name": "job_id",
                         "in": "query",
-                        "description": "Employee id",
+                        "description": "Job id",
                         "required": true,
                         "schema": {
                             "type": "integer",
@@ -1347,7 +1431,7 @@
                         "$ref": "#/components/responses/BadRequest"
                     },
                     "404": {
-                        "description": "No payrolls for employee or not found"
+                        "description": "No jobs or not found"
                     }
                 }
             }
@@ -1356,7 +1440,9 @@
             "get": {
                 "summary": "Get all payroll taxes",
                 "description": "Get all payroll taxes",
-                "tags": ["payroll taxes"],
+                "tags": [
+                    "payroll taxes"
+                ],
                 "parameters": [
                     {
                         "name": "id",
@@ -1369,9 +1455,9 @@
                         }
                     },
                     {
-                        "name": "employee_id",
+                        "name": "job_id",
                         "in": "query",
-                        "description": "Employee id",
+                        "description": "Job id",
                         "required": false,
                         "schema": {
                             "type": "integer",
@@ -1394,7 +1480,9 @@
             "post": {
                 "summary": "Create a payroll tax",
                 "description": "Create a payroll tax",
-                "tags": ["payroll taxes"],
+                "tags": [
+                    "payroll taxes"
+                ],
                 "requestBody": {
                     "description": "Payroll tax object to be created",
                     "required": true,
@@ -1420,7 +1508,9 @@
             "put": {
                 "summary": "Update a payroll tax",
                 "description": "Update a payroll tax",
-                "tags": ["payroll taxes"],
+                "tags": [
+                    "payroll taxes"
+                ],
                 "parameters": [
                     {
                         "name": "id",
@@ -1459,7 +1549,9 @@
             "delete": {
                 "summary": "Delete a payroll tax",
                 "description": "Delete a payroll tax",
-                "tags": ["payroll taxes"],
+                "tags": [
+                    "payroll taxes"
+                ],
                 "parameters": [
                     {
                         "name": "id",
@@ -1489,7 +1581,9 @@
             "get": {
                 "summary": "Get all payroll dates",
                 "description": "Get all payroll dates",
-                "tags": ["payroll dates"],
+                "tags": [
+                    "payroll dates"
+                ],
                 "parameters": [
                     {
                         "name": "id",
@@ -1502,9 +1596,9 @@
                         }
                     },
                     {
-                        "name": "employee_id",
+                        "name": "job_id",
                         "in": "query",
-                        "description": "Employee id",
+                        "description": "Job id",
                         "required": false,
                         "schema": {
                             "type": "integer",
@@ -1527,7 +1621,9 @@
             "post": {
                 "summary": "Create a payroll date",
                 "description": "Create a payroll date",
-                "tags": ["payroll dates"],
+                "tags": [
+                    "payroll dates"
+                ],
                 "requestBody": {
                     "description": "Payroll date object to be created",
                     "required": true,
@@ -1553,7 +1649,9 @@
             "put": {
                 "summary": "Update a payroll date",
                 "description": "Update a payroll date",
-                "tags": ["payroll dates"],
+                "tags": [
+                    "payroll dates"
+                ],
                 "parameters": [
                     {
                         "name": "id",
@@ -1592,7 +1690,9 @@
             "delete": {
                 "summary": "Delete a payroll date",
                 "description": "Delete a payroll date",
-                "tags": ["payroll dates"],
+                "tags": [
+                    "payroll dates"
+                ],
                 "parameters": [
                     {
                         "name": "id",
@@ -1618,16 +1718,18 @@
                 }
             }
         },
-        "/payroll/employee/": {
+        "/payroll/jobs/": {
             "get": {
-                "summary": "Get all payroll employees",
-                "description": "Get all payroll employees",
-                "tags": ["payroll employees"],
+                "summary": "Get all jobs",
+                "description": "Get all jobs",
+                "tags": [
+                    "jobs"
+                ],
                 "parameters": [
                     {
-                        "name": "employee_id",
+                        "name": "job_id",
                         "in": "query",
-                        "description": "Employee id",
+                        "description": "Job id",
                         "required": false,
                         "schema": {
                             "type": "integer",
@@ -1643,16 +1745,18 @@
                         "$ref": "#/components/responses/BadRequest"
                     },
                     "404": {
-                        "description": "Employee not found"
+                        "description": "Job not found"
                     }
                 }
             },
             "post": {
-                "summary": "Create a payroll employee",
-                "description": "Create a payroll employee",
-                "tags": ["payroll employees"],
+                "summary": "Create a job",
+                "description": "Create a job",
+                "tags": [
+                    "jobs"
+                ],
                 "requestBody": {
-                    "description": "Payroll employee object to be created",
+                    "description": "Job object to be created",
                     "required": true,
                     "content": {
                         "application/json": {
@@ -1672,16 +1776,18 @@
                 }
             }
         },
-        "/payroll/employee/{id}": {
+        "/payroll/jobs/{id}": {
             "put": {
-                "summary": "Update a payroll employee",
-                "description": "Update a payroll employee",
-                "tags": ["payroll employees"],
+                "summary": "Update a job",
+                "description": "Update a job",
+                "tags": [
+                    "jobs"
+                ],
                 "parameters": [
                     {
                         "name": "id",
                         "in": "path",
-                        "description": "Employee id",
+                        "description": "Job id",
                         "required": true,
                         "schema": {
                             "type": "integer",
@@ -1690,7 +1796,7 @@
                     }
                 ],
                 "requestBody": {
-                    "description": "Payroll employee object to be updated",
+                    "description": "Job object to be updated",
                     "required": true,
                     "content": {
                         "application/json": {
@@ -1708,19 +1814,21 @@
                         "$ref": "#/components/responses/BadRequest"
                     },
                     "404": {
-                        "description": "Employee not found"
+                        "description": "Job not found"
                     }
                 }
             },
             "delete": {
-                "summary": "Delete a payroll employee",
-                "description": "Delete a payroll employee",
-                "tags": ["payroll employees"],
+                "summary": "Delete a job",
+                "description": "Delete a job",
+                "tags": [
+                    "jobs"
+                ],
                 "parameters": [
                     {
                         "name": "id",
                         "in": "path",
-                        "description": "Employee id",
+                        "description": "Job id",
                         "required": true,
                         "schema": {
                             "type": "integer",
@@ -1730,13 +1838,13 @@
                 ],
                 "responses": {
                     "200": {
-                        "description": "Successfully deleted employee"
+                        "description": "Successfully deleted job"
                     },
                     "400": {
                         "$ref": "#/components/responses/BadRequest"
                     },
                     "404": {
-                        "description": "Employee not found"
+                        "description": "Job not found"
                     }
                 }
             }
@@ -1745,7 +1853,9 @@
             "get": {
                 "summary": "Get a list of wishlists",
                 "description": "Get a list of wishlists",
-                "tags": ["wishlists"],
+                "tags": [
+                    "wishlists"
+                ],
                 "parameters": [
                     {
                         "name": "id",
@@ -1783,7 +1893,9 @@
             "post": {
                 "summary": "Create a wishlist",
                 "description": "Create a wishlist",
-                "tags": ["wishlists"],
+                "tags": [
+                    "wishlists"
+                ],
                 "requestBody": {
                     "description": "Wishlists object to be created",
                     "required": true,
@@ -1809,7 +1921,9 @@
             "put": {
                 "summary": "Update a wishlist",
                 "description": "Update a wishlist",
-                "tags": ["wishlists"],
+                "tags": [
+                    "wishlists"
+                ],
                 "parameters": [
                     {
                         "name": "id",
@@ -1848,7 +1962,9 @@
             "delete": {
                 "summary": "Delete a wishlist",
                 "description": "Delete a wishlist",
-                "tags": ["wishlists"],
+                "tags": [
+                    "wishlists"
+                ],
                 "parameters": [
                     {
                         "name": "id",
@@ -1878,7 +1994,9 @@
             "get": {
                 "summary": "Get a list of transfers",
                 "description": "Get a list of transfers",
-                "tags": ["transfers"],
+                "tags": [
+                    "transfers"
+                ],
                 "parameters": [
                     {
                         "name": "id",
@@ -1916,7 +2034,9 @@
             "post": {
                 "summary": "Create a new transfer",
                 "description": "Create a new transfer",
-                "tags": ["transfers"],
+                "tags": [
+                    "transfers"
+                ],
                 "requestBody": {
                     "description": "Transfers object to be created",
                     "required": true,
@@ -1942,7 +2062,9 @@
             "put": {
                 "summary": "Update a transfer",
                 "description": "Update a transfer",
-                "tags": ["transfers"],
+                "tags": [
+                    "transfers"
+                ],
                 "parameters": [
                     {
                         "name": "id",
@@ -1981,7 +2103,9 @@
             "delete": {
                 "summary": "Delete a transfer",
                 "description": "Delete a transfer",
-                "tags": ["transfers"],
+                "tags": [
+                    "transfers"
+                ],
                 "parameters": [
                     {
                         "name": "id",
@@ -2011,7 +2135,9 @@
             "get": {
                 "summary": "Get all transactions",
                 "description": "Get all transactions",
-                "tags": ["transactions"],
+                "tags": [
+                    "transactions"
+                ],
                 "parameters": [
                     {
                         "name": "account_id",
@@ -2287,7 +2413,7 @@
             "PayrollTaxManipulation": {
                 "type": "object",
                 "properties": {
-                    "employee_id": {
+                    "job_id": {
                         "type": "integer",
                         "format": "int64",
                         "minimum": 1
@@ -2306,7 +2432,7 @@
             "PayrollDateManipulation": {
                 "type": "object",
                 "properties": {
-                    "employee_id": {
+                    "job_id": {
                         "type": "integer",
                         "format": "int64",
                         "minimum": 1
@@ -3323,7 +3449,7 @@
                         "schema": {
                             "type": "object",
                             "properties": {
-                                "employee_id": {
+                                "job_id": {
                                     "type": "integer",
                                     "format": "int64",
                                     "minimum": 1
@@ -3380,7 +3506,7 @@
                                     "format": "int64",
                                     "minimum": 1
                                 },
-                                "employee_id": {
+                                "job_id": {
                                     "type": "integer",
                                     "format": "int64",
                                     "minimum": 1
@@ -3411,7 +3537,7 @@
                                     "format": "int64",
                                     "minimum": 1
                                 },
-                                "employee_id": {
+                                "job_id": {
                                     "type": "integer",
                                     "format": "int64",
                                     "minimum": 1
@@ -3430,20 +3556,20 @@
                 }
             },
             "SuccessResponsePayrollEmployees": {
-                "description": "A JSON array of payroll employees",
+                "description": "A JSON array of jobs",
                 "content": {
                     "application/json": {
                         "schema": {
                             "type": "object",
                             "properties": {
-                                "employee_id": {
+                                "job_id": {
                                     "type": "integer",
                                     "format": "int64",
                                     "minimum": 1
                                 },
                                 "name": {
                                     "type": "string",
-                                    "example": "Employee test"
+                                    "example": "Job test"
                                 },
                                 "hourly_rate": {
                                     "type": "number",
