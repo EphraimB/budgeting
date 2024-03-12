@@ -272,15 +272,15 @@ export const payrollQueries: PayrollQueries = {
         make_date(extract(year from d1)::integer, extract(month from d1)::integer, s1.adjusted_payroll_end_day) AS end_date,
         SUM(s.work_days::integer) AS work_days,
         SUM(COALESCE(
-            e.regular_hours * e.hourly_rate * work_days
+            j.regular_hours * j.hourly_rate * work_days
         ))::numeric(20, 2) AS gross_pay,
         SUM(COALESCE(
-            e.regular_hours * e.hourly_rate * (1 - COALESCE(pt.rate, 0)) * work_days
+            j.regular_hours * j.hourly_rate * (1 - COALESCE(pt.rate, 0)) * work_days
         ))::numeric(20, 2) AS net_pay,
       SUM(COALESCE(
             e.regular_hours * work_days
         ))::numeric(20, 2) AS hours_worked
-        FROM employee e
+        FROM jobs j
       CROSS JOIN LATERAL generate_series(
           current_date, 
           $2::date + INTERVAL '1 month',
