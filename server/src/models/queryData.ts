@@ -53,17 +53,17 @@ interface PayrollQueries {
     deletePayrollTax: string;
     getAllPayrollDates: string;
     getPayrollDatesById: string;
-    getPayrollDatesByEmployeeId: string;
+    getPayrollDatesByJobId: string;
     getPayrollDatesByIdAndEmployeeId: string;
     createPayrollDate: string;
     updatePayrollDate: string;
     deletePayrollDate: string;
-    getEmployees: string;
-    getEmployee: string;
-    getAccountIdFromEmployee: string;
-    createEmployee: string;
-    updateEmployee: string;
-    deleteEmployee: string;
+    getJobs: string;
+    getJob: string;
+    getAccountIdFromJobs: string;
+    createJob: string;
+    updateJob: string;
+    deleteJob: string;
 }
 
 interface WishlistQueries {
@@ -350,7 +350,7 @@ export const payrollQueries: PayrollQueries = {
     getAllPayrollDates: 'SELECT * FROM payroll_dates',
     getPayrollDatesById:
         'SELECT * FROM payroll_dates WHERE payroll_date_id = $1',
-    getPayrollDatesByEmployeeId:
+    getPayrollDatesByJobId:
         'SELECT * FROM payroll_dates WHERE employee_id = $1',
     getPayrollDatesByIdAndEmployeeId:
         'SELECT * FROM payroll_dates WHERE payroll_date_id = $1 AND employee_id = $2',
@@ -359,15 +359,14 @@ export const payrollQueries: PayrollQueries = {
     updatePayrollDate:
         'UPDATE payroll_dates SET payroll_start_day = $1, payroll_end_day = $2 WHERE payroll_date_id = $3 RETURNING *',
     deletePayrollDate: 'DELETE FROM payroll_dates WHERE payroll_date_id = $1',
-    getEmployees: 'SELECT * FROM employee',
-    getEmployee: 'SELECT * FROM employee WHERE employee_id = $1',
-    getAccountIdFromEmployee:
-        'SELECT account_id FROM accounts WHERE employee_id = $1',
-    createEmployee:
-        'INSERT INTO employee (name, hourly_rate, regular_hours, vacation_days, sick_days, work_schedule) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *',
-    updateEmployee:
-        'UPDATE employee SET name = $1, hourly_rate = $2, regular_hours = $3, vacation_days = $4, sick_days = $5, work_schedule = $6 WHERE employee_id = $7 RETURNING *',
-    deleteEmployee: 'DELETE FROM employee WHERE employee_id = $1',
+    getJobs: 'SELECT * FROM jobs',
+    getJob: 'SELECT * FROM job WHERE job_id = $1',
+    getAccountIdFromJobs: 'SELECT account_id FROM accounts WHERE job_id = $1',
+    createJob:
+        'INSERT INTO jobs (job_name, hourly_rate, regular_hours, vacation_days, sick_days, work_schedule) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *',
+    updateJob:
+        'UPDATE employee SET job_name = $1, hourly_rate = $2, regular_hours = $3, vacation_days = $4, sick_days = $5, work_schedule = $6 WHERE job_id = $7 RETURNING *',
+    deleteJob: 'DELETE FROM jobs WHERE job_id = $1',
 };
 
 export const wishlistQueries: WishlistQueries = {

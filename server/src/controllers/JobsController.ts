@@ -1,61 +1,56 @@
 import { type NextFunction, type Request, type Response } from 'express';
 import { payrollQueries } from '../models/queryData.js';
 import { handleError, executeQuery } from '../utils/helperFunctions.js';
-import { type Employee } from '../types/types.js';
+import { type Job } from '../types/types.js';
 import { logger } from '../config/winston.js';
 
 /**
  *
- * @param employee - Employee object
+ * @param job - Job object
  * @returns - Employee object with correct data types
  */
-const employeeParse = (employee: Record<string, string>): Employee => ({
-    id: parseInt(employee.employee_id),
-    name: employee.name,
-    hourly_rate: parseFloat(employee.hourly_rate),
-    regular_hours: parseInt(employee.regular_hours),
-    vacation_days: parseInt(employee.vacation_days),
-    sick_days: parseInt(employee.sick_days),
-    work_schedule: employee.work_schedule,
+const jobsParse = (jobs: Record<string, string>): Job => ({
+    id: parseInt(jobs.employee_id),
+    name: jobs.job_name,
+    hourly_rate: parseFloat(jobs.hourly_rate),
+    regular_hours: parseInt(jobs.regular_hours),
+    vacation_days: parseInt(jobs.vacation_days),
+    sick_days: parseInt(jobs.sick_days),
+    work_schedule: jobs.work_schedule,
 });
 
 /**
  *
  * @param request - Request object
  * @param response - Response object
- * Sends a GET request to the database to retrieve all employees
+ * Sends a GET request to the database to retrieve all jobs
  */
-export const getEmployee = async (
+export const getJobs = async (
     request: Request,
     response: Response,
 ): Promise<void> => {
-    const { employee_id } = request.query;
+    const { job_id } = request.query;
 
     try {
-        const query: string = employee_id
-            ? payrollQueries.getEmployee
-            : payrollQueries.getEmployees;
-        const params: any[] = employee_id ? [employee_id] : [];
+        const query: string = job_id
+            ? payrollQueries.getJob
+            : payrollQueries.getJobs;
+        const params: any[] = job_id ? [job_id] : [];
 
         const results = await executeQuery(query, params);
 
-        if (employee_id && results.length === 0) {
-            response.status(404).send('Employee not found');
+        if (job_id && results.length === 0) {
+            response.status(404).send('Job not found');
             return;
         }
 
         // Parse the data to the correct format and return an object
-        const employees: Employee[] = results.map((employee) =>
-            employeeParse(employee),
-        );
+        const jobs: Job[] = results.map((employee) => jobsParse(employee));
 
-        response.status(200).json(employees);
+        response.status(200).json(jobs);
     } catch (error) {
         logger.error(error); // Log the error on the server side
-        handleError(
-            response,
-            `Error getting ${employee_id ? 'employee' : 'employees'}`,
-        );
+        handleError(response, `Error getting ${job_id ? 'job' : 'jobs'}`);
     }
 };
 
@@ -63,9 +58,9 @@ export const getEmployee = async (
  *
  * @param request - Request object
  * @param response - Response object
- * Sends a POST request to the database to create a new employee
+ * Sends a POST request to the database to create a new job
  */
-export const createEmployee = async (
+export const createJob = async (
     request: Request,
     response: Response,
 ): Promise<void> => {
@@ -79,7 +74,7 @@ export const createEmployee = async (
             work_schedule,
         } = request.body;
 
-        const results = await executeQuery(payrollQueries.createEmployee, [
+        const results = await executeQuery(payrollQueries.createJob, [
             name,
             hourly_rate,
             regular_hours,
@@ -89,11 +84,9 @@ export const createEmployee = async (
         ]);
 
         // Parse the data to correct format and return an object
-        const employees: Employee[] = results.map((employee) =>
-            employeeParse(employee),
-        );
+        const jobs: Job[] = results.map((job) => jobsParse(job));
 
-        response.status(201).json(employees);
+        response.status(201).json(jobs);
     } catch (error) {
         logger.error(error); // Log the error on the server side
         handleError(response, 'Error creating employee');
@@ -105,15 +98,15 @@ export const createEmployee = async (
  * @param request - Request object
  * @param response - Response object
  * @param next - Next function
- * Sends a PUT request to the database to update an employee
+ * Sends a PUT request to the database to update an job
  */
-export const updateEmployee = async (
+export const updateJob = async (
     request: Request,
     response: Response,
     next: NextFunction,
 ): Promise<void> => {
     try {
-        const employee_id = parseInt(request.params.employee_id);
+        const job_id = parseInt(request.params.job_id);
         const {
             name,
             hourly_rate,
@@ -123,34 +116,32 @@ export const updateEmployee = async (
             work_schedule,
         } = request.body;
 
-        const results = await executeQuery(payrollQueries.updateEmployee, [
+        const results = await executeQuery(payrollQueries.updateJob, [
             name,
             hourly_rate,
             regular_hours,
             vacation_days,
             sick_days,
             work_schedule,
-            employee_id,
+            job_id,
         ]);
 
         if (results.length === 0) {
-            response.status(404).send('Employee not found');
+            response.status(404).send('Job not found');
             return;
         }
 
-        await executeQuery('SELECT process_payroll_for_employee($1)', [1]);
+        await executeQuery('SELECT process_payroll_for_job($1)', [1]);
 
         // Parse the data to correct format and return an object
-        const employees: Employee[] = results.map((employee) =>
-            employeeParse(employee),
-        );
+        const jobs: Job[] = results.map((job) => jobsParse(job));
 
-        request.employee_id = employees[0].id;
+        request.job_id = jobs[0].id;
 
         next();
     } catch (error) {
         logger.error(error); // Log the error on the server side
-        handleError(response, 'Error updating employee');
+        handleError(response, 'Error updating job');
     }
 };
 
@@ -158,22 +149,18 @@ export const updateEmployeeReturnObject = async (
     request: Request,
     response: Response,
 ): Promise<void> => {
-    const { employee_id } = request;
+    const { job_id } = request;
 
     try {
-        const results = await executeQuery(payrollQueries.getEmployee, [
-            employee_id,
-        ]);
+        const results = await executeQuery(payrollQueries.getJob, [job_id]);
 
         // Parse the data to correct format and return an object
-        const employees: Employee[] = results.map((employee) =>
-            employeeParse(employee),
-        );
+        const jobs: Job[] = results.map((job) => jobsParse(job));
 
-        response.status(200).json(employees);
+        response.status(200).json(jobs);
     } catch (error) {
         logger.error(error); // Log the error on the server side
-        handleError(response, 'Error updating employee');
+        handleError(response, 'Error updating job');
     }
 };
 
@@ -188,33 +175,33 @@ export const deleteEmployee = async (
     response: Response,
 ): Promise<void> => {
     try {
-        const employee_id = parseInt(request.params.employee_id);
+        const job_id = parseInt(request.params.job_id);
 
-        const transferResults = await executeQuery(payrollQueries.getEmployee, [
-            employee_id,
+        const transferResults = await executeQuery(payrollQueries.getJob, [
+            job_id,
         ]);
 
         if (transferResults.length === 0) {
-            response.status(404).send('Employee not found');
+            response.status(404).send('Job not found');
             return;
         }
 
         const payrollDatesResults = await executeQuery(
-            payrollQueries.getPayrollDatesByEmployeeId,
-            [employee_id],
+            payrollQueries.getPayrollDatesByJobId,
+            [job_id],
         );
         const hasPayrollDates: boolean = payrollDatesResults.length > 0;
 
         const payrollTaxesResults = await executeQuery(
             payrollQueries.getPayrollTaxesByEmployeeId,
-            [employee_id],
+            [job_id],
         );
         const hasPayrollTaxes: boolean = payrollTaxesResults.length > 0;
 
         if (hasPayrollDates || hasPayrollTaxes) {
             response.status(400).send({
                 errors: {
-                    msg: 'You need to delete employee-related data before deleting the employee',
+                    msg: 'You need to delete job-related data before deleting the job',
                     param: null,
                     location: 'query',
                 },
@@ -222,13 +209,13 @@ export const deleteEmployee = async (
             return;
         }
 
-        await executeQuery(payrollQueries.deleteEmployee, [employee_id]);
+        await executeQuery(payrollQueries.deleteJob, [job_id]);
 
-        await executeQuery('SELECT process_payroll_for_employee($1)', [1]);
+        await executeQuery('SELECT process_payroll_for_job($1)', [1]);
 
-        response.status(200).send('Successfully deleted employee');
+        response.status(200).send('Successfully deleted job');
     } catch (error) {
         logger.error(error); // Log the error on the server side
-        handleError(response, 'Error deleting employee');
+        handleError(response, 'Error deleting job');
     }
 };

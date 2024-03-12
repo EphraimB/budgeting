@@ -1,12 +1,12 @@
 import express, { type Router } from 'express';
 import { query, param, body } from 'express-validator';
 import {
-    getEmployee,
-    createEmployee,
-    updateEmployee,
+    getJobs,
+    createJob,
+    updateJob,
     updateEmployeeReturnObject,
     deleteEmployee,
-} from '../controllers/employeesController.js';
+} from '../controllers/JobsController.js';
 import validateRequest from '../utils/validateRequest.js';
 import generateTransactions from '../generation/generateTransactions.js';
 import {
@@ -34,7 +34,7 @@ router.get(
             .withMessage('ID must be a number'),
         validateRequest,
     ],
-    getEmployee,
+    getJobs,
 );
 
 router.post(
@@ -58,7 +58,7 @@ router.post(
             .withMessage('Work schedule must be a string'),
         validateRequest,
     ],
-    createEmployee,
+    createJob,
 );
 
 router.put(
@@ -85,7 +85,7 @@ router.put(
             .withMessage('Work schedule must be a string'),
         validateRequest,
     ],
-    updateEmployee,
+    updateJob,
     setQueries,
     getCurrentBalance,
     getTransactionsByAccount,

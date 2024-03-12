@@ -92,7 +92,7 @@ export interface Account {
     date_modified: string;
 }
 
-export interface Employee {
+export interface Job {
     id: number;
     name: string;
     hourly_rate: number;
@@ -300,7 +300,7 @@ declare module 'express-serve-static-core' {
         loan_id: number | null | undefined;
         transfer_id: number | null | undefined;
         payroll_date_id: number;
-        employee_id: number;
+        job_id: number;
         payroll_taxes_id: number;
         income_id: number;
         commute_schedule_id: number;
