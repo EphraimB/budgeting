@@ -22,7 +22,7 @@ function TaxEdit({
   setTaxModes,
 }: {
   tax: Tax;
-  setTaxModes: (expenseModes: Record<number, string>) => void;
+  setTaxModes: (taxModes: Record<number, string>) => void;
 }) {
   const [title, setTitle] = useState(tax.title);
   const [description, setDescription] = useState(tax.description);
