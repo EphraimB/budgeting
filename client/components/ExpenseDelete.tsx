@@ -7,6 +7,7 @@ import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
 import IconButton from "@mui/material/IconButton";
 import CloseIcon from "@mui/icons-material/Close";
+import { useAlert, useSnackbar } from "../context/FeedbackContext";
 
 function ExpenseDelete({
   expense,
@@ -15,11 +16,20 @@ function ExpenseDelete({
   expense: Expense;
   setExpenseModes: React.Dispatch<React.SetStateAction<Record<number, string>>>;
 }) {
+  const { showSnackbar } = useSnackbar();
+  const { showAlert } = useAlert();
+
   const handleDelete = async () => {
     try {
       await deleteExpense(expense.id);
+
+      // Show success message
+      showSnackbar(`Expense "${expense.title}" deleted successfully`);
     } catch (error) {
       console.log(error);
+
+      // Show error message
+      showAlert(`Error deleting expense "${expense.title}"`, "error");
     }
     setExpenseModes((prev) => ({ ...prev, [expense.id]: "view" }));
   };

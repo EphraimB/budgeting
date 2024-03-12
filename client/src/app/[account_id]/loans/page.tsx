@@ -9,7 +9,7 @@ async function getLoans(account_id: number) {
   );
 
   if (!res.ok) {
-    // open alert
+    throw new Error("Failed to fetch loans");
   }
 
   return res.json();

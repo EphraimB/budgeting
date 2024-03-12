@@ -23,6 +23,7 @@ import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import utc from "dayjs/plugin/utc";
 import { addLoan } from "../services/actions/loan";
 import InputAdornment from "@mui/material/InputAdornment";
+import { useAlert, useSnackbar } from "../context/FeedbackContext";
 
 dayjs.extend(utc);
 
@@ -49,6 +50,9 @@ function NewLoanForm({
   const [interest_frequency_type, setInterestFrequencyType] = useState(2);
   const [begin_date, setBeginDate] = useState<string>(dayjs().format());
   const [activeStep, setActiveStep] = useState(0);
+
+  const { showSnackbar } = useSnackbar();
+  const { showAlert } = useAlert();
 
   const theme = useTheme();
 
@@ -85,8 +89,14 @@ function NewLoanForm({
     // Submit data
     try {
       await addLoan(data);
+
+      // Show success message
+      showSnackbar(`Loan named "${title}" added successfully`);
     } catch (error) {
       console.log(error);
+
+      // Show error message
+      showAlert(`Error adding loan named "${title}"`, "error");
     }
 
     // Close form

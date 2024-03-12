@@ -14,7 +14,7 @@ async function getTransactions(
   );
 
   if (!res.ok) {
-    // open alert
+    throw new Error("Failed to fetch transactions");
   }
 
   return res.json();

@@ -8,6 +8,7 @@ import Button from "@mui/material/Button";
 import { deleteAccount } from "../services/actions/account";
 import { Account } from "@/app/types/types";
 import { useRouter, usePathname } from "next/navigation";
+import { useAlert, useSnackbar } from "../context/FeedbackContext";
 
 function AccountDelete({
   account,
@@ -18,11 +19,21 @@ function AccountDelete({
 }) {
   const router = useRouter();
   const pathname = usePathname();
+
+  const { showSnackbar } = useSnackbar();
+  const { showAlert } = useAlert();
+
   const handleDelete = async () => {
     try {
       await deleteAccount(account.account_id);
+
+      // Show success message
+      showSnackbar(`Account "${account.account_name}" deleted successfully`);
     } catch (error) {
       console.log(error);
+
+      // Show error message
+      showAlert(`Error deleting account "${account.account_name}"`, "error");
     }
 
     if (account.account_id === parseInt(pathname.split("/")[1])) {

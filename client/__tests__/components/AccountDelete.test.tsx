@@ -10,6 +10,15 @@ jest.mock("next/navigation", () => ({
   usePathname: () => "/1",
 }));
 
+jest.mock("../../context/FeedbackContext", () => ({
+  useAlert: () => ({
+    showAlert: () => {},
+  }),
+  useSnackbar: () => ({
+    showSnackbar: () => {},
+  }),
+}));
+
 describe("AccountList", () => {
   it("renders", () => {
     render(

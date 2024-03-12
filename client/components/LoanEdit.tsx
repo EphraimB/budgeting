@@ -24,6 +24,7 @@ import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import utc from "dayjs/plugin/utc";
 import { editLoan } from "../services/actions/loan";
 import InputAdornment from "@mui/material/InputAdornment";
+import { useAlert, useSnackbar } from "../context/FeedbackContext";
 
 dayjs.extend(utc);
 
@@ -64,6 +65,9 @@ function LoanEdit({
   const [begin_date, setBeginDate] = useState<string>(loan.begin_date);
   const [activeStep, setActiveStep] = useState(0);
 
+  const { showSnackbar } = useSnackbar();
+  const { showAlert } = useAlert();
+
   const theme = useTheme();
 
   const handleNext = () => {
@@ -99,8 +103,14 @@ function LoanEdit({
     // Submit data
     try {
       await editLoan(data, loan.id);
+
+      // Show success message
+      showSnackbar(`Loan "${title}" edited successfully`);
     } catch (error) {
       console.log(error);
+
+      // Show error message
+      showAlert(`Error editing loan "${title}"`, "error");
     }
 
     // Close form

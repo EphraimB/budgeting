@@ -3,6 +3,15 @@ import { render, screen } from "@testing-library/react";
 import NewAccountForm from "../../components/NewAccountForm";
 import "@testing-library/jest-dom";
 
+jest.mock("../../context/FeedbackContext", () => ({
+  useAlert: () => ({
+    showAlert: () => {},
+  }),
+  useSnackbar: () => ({
+    showSnackbar: () => {},
+  }),
+}));
+
 describe("NewAccountForm", () => {
   test("renders NewAccountForm component", () => {
     const setShowNewAccountForm = jest.fn();
