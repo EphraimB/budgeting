@@ -91,6 +91,16 @@ interface Transaction {
   date_modified: string;
 }
 
+export interface Job {
+  employee_id: number;
+  name: string;
+  hourly_rate: number;
+  regular_hours: number;
+  vacation_days: number;
+  sick_days: number;
+  work_schedule: string;
+}
+
 export interface GeneratedTransaction {
   account_id: number;
   current_balance: number;

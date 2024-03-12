@@ -1,12 +1,7 @@
 import Stack from "@mui/material/Stack";
-import Card from "@mui/material/Card";
-import CardContent from "@mui/material/CardContent";
-import CardHeader from "@mui/material/CardHeader";
-import Link from "next/link";
 import Typography from "@mui/material/Typography";
 import { Expense, Tax } from "@/app/types/types";
 import ExpensesCards from "../../../../components/ExpensesCards";
-import DataManagementWidgets from "../../../../components/DataManagementWidgets";
 
 async function getExpenses(account_id: number) {
   const res = await fetch(

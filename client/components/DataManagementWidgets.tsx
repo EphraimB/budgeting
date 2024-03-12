@@ -48,6 +48,13 @@ function DataManagementWidgets({
       selected: isSelected("transactions"),
     },
     {
+      id: "jobs",
+      title: "Jobs",
+      link: `/${account_id}/jobs`,
+      content: "Click here to view your job info",
+      selected: isSelected("jobs"),
+    },
+    {
       id: "taxes",
       title: "Taxes",
       link: `/${account_id}/taxes`,
