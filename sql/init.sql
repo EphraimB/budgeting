@@ -312,13 +312,13 @@ BEGIN
         make_date(extract(year from current_date)::integer, extract(month from current_date)::integer, s1.adjusted_payroll_end_day) AS end_date,
         SUM(s.work_days::integer) AS work_days,
         SUM(COALESCE(
-            e.regular_hours * e.hourly_rate * work_days
+            j.regular_hours * j.hourly_rate * work_days
         ))::numeric(20, 2) AS gross_pay,
         SUM(COALESCE(
-            e.regular_hours * e.hourly_rate * (1 - COALESCE(pt.rate, 0)) * work_days
+            j.regular_hours * j.hourly_rate * (1 - COALESCE(pt.rate, 0)) * work_days
         ))::numeric(20, 2) AS net_pay,
       SUM(COALESCE(
-            e.regular_hours * work_days
+            j.regular_hours * work_days
         ))::numeric(20, 2) AS hours_worked
         FROM jobs j
       CROSS JOIN LATERAL (
@@ -374,7 +374,7 @@ BEGIN
                     selected_job_id, pay_period.net_pay, (pay_period.gross_pay - pay_period.net_pay) / pay_period.gross_pay, pay_period.start_date, pay_period.end_date);
 
         EXECUTE format('SELECT cron.schedule(%L, %L, %L)',
-            'payroll-' || selected_employee_id || '-' || pay_period.start_date || '-' || pay_period.end_date,
+            'payroll-' || selected_job_id || '-' || pay_period.start_date || '-' || pay_period.end_date,
             cron_expression,
             inner_sql);
     END LOOP;
