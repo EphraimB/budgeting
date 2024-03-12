@@ -13,8 +13,8 @@ jest.mock("../../context/FeedbackContext", () => ({
   }),
 }));
 
-describe("NewAccountForm", () => {
-  test("renders NewAccountForm component", async () => {
+describe("NewTaxForm", () => {
+  test("renders NewTaxForm component", async () => {
     const setShowTaxForm = jest.fn();
 
     render(<NewTaxForm setShowTaxForm={setShowTaxForm} />);

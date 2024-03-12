@@ -27,10 +27,10 @@ jest.mock("../../context/FeedbackContext", () => ({
   }),
 }));
 
-describe("NewAccountForm", () => {
-  test("renders NewAccountForm component", async () => {
+describe("TaxEdit", () => {
+  it("renders TaxEdit form component", async () => {
     const tax = {
-      id: 2,
+      id: 1,
       rate: 0.08875,
       title: "NYC Sales Tax",
       description: "New York City Sales Tax",
