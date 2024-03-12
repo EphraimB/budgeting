@@ -18,7 +18,7 @@ function JobCards({ jobs }: { jobs: any }) {
       <Grid container spacing={2}>
         {showJobForm && (
           <Grid key="new-job" item>
-            <NewJobForm setShowJobForm={setShowJobForm} />
+            {/* <NewJobForm setShowJobForm={setShowJobForm} /> */}
           </Grid>
         )}
 
@@ -28,7 +28,8 @@ function JobCards({ jobs }: { jobs: any }) {
               {jobModes[job.id] === "delete" ? (
                 <JobDelete job={job} setJobModes={setJobModes} />
               ) : jobModes[job.id] === "edit" ? (
-                <JobEdit job={job} setJobModes={setJobModes} />
+                // <JobEdit job={job} setJobModes={setJobModes} />
+                <div></div>
               ) : (
                 <JobsView job={job} setJobModes={setJobModes} />
               )}
