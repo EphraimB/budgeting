@@ -46,7 +46,7 @@ export const getPayrolls = async (
         );
 
         const returnObj = {
-            employee_id: parseInt(job_id as string),
+            job_id: parseInt(job_id as string),
             payrolls,
         };
 
