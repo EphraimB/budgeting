@@ -193,7 +193,7 @@ export const deleteEmployee = async (
         const hasPayrollDates: boolean = payrollDatesResults.length > 0;
 
         const payrollTaxesResults = await executeQuery(
-            payrollQueries.getPayrollTaxesByEmployeeId,
+            payrollQueries.getPayrollTaxesByJobId,
             [job_id],
         );
         const hasPayrollTaxes: boolean = payrollTaxesResults.length > 0;

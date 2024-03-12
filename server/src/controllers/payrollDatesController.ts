@@ -28,21 +28,21 @@ export const getPayrollDates = async (
     request: Request,
     response: Response,
 ): Promise<void> => {
-    const { employee_id, id } = request.query;
+    const { job_id, id } = request.query;
 
     try {
         let query: string;
         let params: any[];
 
-        if (id && employee_id) {
-            query = payrollQueries.getPayrollDatesByIdAndEmployeeId;
-            params = [id, employee_id];
+        if (id && job_id) {
+            query = payrollQueries.getPayrollDatesByIdAndJobId;
+            params = [id, job_id];
         } else if (id) {
             query = payrollQueries.getPayrollDatesById;
             params = [id];
-        } else if (employee_id) {
-            query = payrollQueries.getPayrollDatesByEmployeeId;
-            params = [employee_id];
+        } else if (job_id) {
+            query = payrollQueries.getPayrollDatesByJobId;
+            params = [job_id];
         } else {
             query = payrollQueries.getAllPayrollDates;
             params = [];
@@ -50,7 +50,7 @@ export const getPayrollDates = async (
 
         const results = await executeQuery(query, params);
 
-        if ((id || employee_id) && results.length === 0) {
+        if ((id || job_id) && results.length === 0) {
             response.status(404).send('Payroll date not found');
             return;
         }
@@ -68,8 +68,8 @@ export const getPayrollDates = async (
             `Error getting ${
                 id
                     ? 'payroll date'
-                    : employee_id
-                    ? 'payroll dates for given employee_id'
+                    : job_id
+                    ? 'payroll dates for given job_id'
                     : 'payroll dates'
             }`,
         );
@@ -89,15 +89,15 @@ export const createPayrollDate = async (
     next: NextFunction,
 ): Promise<void> => {
     try {
-        const { employee_id, start_day, end_day } = request.body;
+        const { job_id, start_day, end_day } = request.body;
 
         const results = await executeQuery(payrollQueries.createPayrollDate, [
-            employee_id,
+            job_id,
             start_day,
             end_day,
         ]);
 
-        await executeQuery('SELECT process_payroll_for_employee($1)', [1]);
+        await executeQuery('SELECT process_payroll_for_job($1)', [1]);
 
         // Parse the data to correct format and return an object
         const payrollDates: PayrollDate[] = results.map((payrollDate) =>
@@ -150,7 +150,7 @@ export const updatePayrollDate = async (
 ): Promise<void> => {
     try {
         const { id } = request.params;
-        const { employee_id, start_day, end_day } = request.body;
+        const { job_id, start_day, end_day } = request.body;
 
         const results = await executeQuery(payrollQueries.updatePayrollDate, [
             start_day,
@@ -163,7 +163,7 @@ export const updatePayrollDate = async (
             return;
         }
 
-        await executeQuery('SELECT process_payroll_for_employee($1)', [1]);
+        await executeQuery('SELECT process_payroll_for_job($1)', [1]);
 
         next();
     } catch (error) {
@@ -228,7 +228,7 @@ export const deletePayrollDate = async (
 
         await executeQuery(payrollQueries.deletePayrollDate, [id]);
 
-        await executeQuery('SELECT process_payroll_for_employee($1)', [1]);
+        await executeQuery('SELECT process_payroll_for_job($1)', [1]);
 
         next();
     } catch (error) {

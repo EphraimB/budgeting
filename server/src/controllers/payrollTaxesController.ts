@@ -26,21 +26,21 @@ export const getPayrollTaxes = async (
     request: Request,
     response: Response,
 ): Promise<void> => {
-    const { employee_id, id } = request.query;
+    const { job_id, id } = request.query;
 
     try {
         let query: string;
         let params: any[];
 
-        if (id && employee_id) {
-            query = payrollQueries.getPayrollTaxesByIdAndEmployeeId;
-            params = [id, employee_id];
+        if (id && job_id) {
+            query = payrollQueries.getPayrollTaxesByIdAndJobId;
+            params = [id, job_id];
         } else if (id) {
             query = payrollQueries.getPayrollTaxesById;
             params = [id];
-        } else if (employee_id) {
-            query = payrollQueries.getPayrollTaxesByEmployeeId;
-            params = [employee_id];
+        } else if (job_id) {
+            query = payrollQueries.getPayrollTaxesByJobId;
+            params = [job_id];
         } else {
             query = payrollQueries.getAllPayrollTaxes;
             params = [];
@@ -65,7 +65,7 @@ export const getPayrollTaxes = async (
             `Error getting ${
                 id
                     ? 'payroll tax'
-                    : employee_id
+                    : job_id
                     ? 'payroll taxes for given employee_id'
                     : 'payroll taxes'
             }`,

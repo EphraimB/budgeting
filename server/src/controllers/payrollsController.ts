@@ -29,14 +29,14 @@ export const getPayrolls = async (
     response: Response,
 ): Promise<void> => {
     try {
-        const { employee_id } = request.query;
+        const { job_id } = request.query;
 
         const results = await executeQuery(payrollQueries.getPayrolls, [
-            employee_id,
+            job_id,
         ]);
 
         if (results.length === 0) {
-            response.status(404).send('No payrolls for employee or not found');
+            response.status(404).send('No payrolls for job or not found');
             return;
         }
 
@@ -46,7 +46,7 @@ export const getPayrolls = async (
         );
 
         const returnObj = {
-            employee_id: parseInt(employee_id as string),
+            employee_id: parseInt(job_id as string),
             payrolls,
         };
 
