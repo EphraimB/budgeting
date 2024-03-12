@@ -10,7 +10,7 @@ import { logger } from '../config/winston.js';
  * @returns - Employee object with correct data types
  */
 const jobsParse = (jobs: Record<string, string>): Job => ({
-    id: parseInt(jobs.employee_id),
+    id: parseInt(jobs.job_id),
     name: jobs.job_name,
     hourly_rate: parseFloat(jobs.hourly_rate),
     regular_hours: parseInt(jobs.regular_hours),
