@@ -7,6 +7,7 @@ import AddIcon from "@mui/icons-material/Add";
 import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
 import JobsView from "./JobsView";
+import JobDelete from "./JobDelete";
 
 function JobCards({ jobs }: { jobs: any }) {
   const [showJobForm, setShowJobForm] = useState(false);
