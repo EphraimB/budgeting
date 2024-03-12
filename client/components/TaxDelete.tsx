@@ -7,6 +7,7 @@ import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
 import IconButton from "@mui/material/IconButton";
 import CloseIcon from "@mui/icons-material/Close";
+import { useAlert, useSnackbar } from "../context/FeedbackContext";
 
 function TaxDelete({
   tax,
@@ -15,11 +16,20 @@ function TaxDelete({
   tax: Tax;
   setTaxModes: React.Dispatch<React.SetStateAction<Record<number, string>>>;
 }) {
+  const { showSnackbar } = useSnackbar();
+  const { showAlert } = useAlert();
+
   const handleDelete = async () => {
     try {
       await deleteTax(tax.id);
+
+      // Show success message
+      showSnackbar(`Tax "${tax.title}" deleted successfully`);
     } catch (error) {
       console.log(error);
+
+      // Show error message
+      showAlert(`Error deleting tax "${tax.title}"`, "error");
     }
     setTaxModes((prev) => ({ ...prev, [tax.id]: "view" }));
   };
