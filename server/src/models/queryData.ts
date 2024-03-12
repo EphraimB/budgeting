@@ -219,7 +219,7 @@ export const payrollQueries: PayrollQueries = {
       SUM(COALESCE(
             j.regular_hours * work_days
         ))::numeric(20, 2) AS hours_worked
-        FROM job j
+        FROM jobs j
       CROSS JOIN LATERAL (
       SELECT
         payroll_start_day,
@@ -256,7 +256,7 @@ export const payrollQueries: PayrollQueries = {
             THEN 1 
             ELSE 0 
           END) AS work_days
-        FROM job j
+        FROM jobs j
       ) s
       LEFT JOIN (
         SELECT job_id, SUM(rate) AS rate
