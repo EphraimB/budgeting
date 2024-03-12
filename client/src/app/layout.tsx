@@ -5,6 +5,7 @@ import Alerts from "../../components/Alerts";
 import Container from "@mui/material/Container";
 import AccountList from "../../components/AccountList";
 import { FeedbackProvider } from "../../context/FeedbackContext";
+import SnackbarFeedback from "../../components/SnackbarFeedback";
 
 export const metadata: Metadata = {
   title: "Budgeting",
@@ -39,6 +40,7 @@ export default async function RootLayout({
             <AccountList accounts={accounts} />
             {children}
           </Container>
+          <SnackbarFeedback />
         </FeedbackProvider>
       </body>
     </html>
