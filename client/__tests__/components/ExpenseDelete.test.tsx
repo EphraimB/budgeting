@@ -3,6 +3,15 @@ import { render, screen } from "@testing-library/react";
 import "@testing-library/jest-dom";
 import ExpenseDelete from "../../components/ExpenseDelete";
 
+jest.mock("../../context/FeedbackContext", () => ({
+  useAlert: () => ({
+    showAlert: () => {},
+  }),
+  useSnackbar: () => ({
+    showSnackbar: () => {},
+  }),
+}));
+
 describe("ExpenseDelete", () => {
   it("renders the component", () => {
     const expense = {

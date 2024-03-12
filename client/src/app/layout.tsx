@@ -4,6 +4,8 @@ import GlobalAppBar from "../../components/GlobalAppBar";
 import Alerts from "../../components/Alerts";
 import Container from "@mui/material/Container";
 import AccountList from "../../components/AccountList";
+import { FeedbackProvider } from "../../context/FeedbackContext";
+import SnackbarFeedback from "../../components/SnackbarFeedback";
 
 export const metadata: Metadata = {
   title: "Budgeting",
@@ -14,7 +16,7 @@ async function getAccounts() {
   const res = await fetch("http://server:5001/api/accounts");
 
   if (!res.ok) {
-    // open alert
+    throw new Error("Failed to fetch accounts");
   }
 
   return res.json();
@@ -31,12 +33,15 @@ export default async function RootLayout({
     <html lang="en">
       <body>
         <GlobalAppBar />
-        <br />
-        {/* <Alerts message="" severity="error" open={false} /> */}
-        <Container maxWidth="lg">
-          <AccountList accounts={accounts} />
-          {children}
-        </Container>
+        <FeedbackProvider>
+          <Alerts />
+          <br />
+          <Container maxWidth="lg">
+            <AccountList accounts={accounts} />
+            {children}
+          </Container>
+          <SnackbarFeedback />
+        </FeedbackProvider>
       </body>
     </html>
   );

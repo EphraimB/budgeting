@@ -14,6 +14,7 @@ import KeyboardArrowLeft from "@mui/icons-material/KeyboardArrowLeft";
 import KeyboardArrowRight from "@mui/icons-material/KeyboardArrowRight";
 import { useTheme } from "@mui/material/styles";
 import InputAdornment from "@mui/material/InputAdornment";
+import { useAlert, useSnackbar } from "../context/FeedbackContext";
 
 function NewTaxForm({
   setShowTaxForm,
@@ -25,6 +26,9 @@ function NewTaxForm({
   const [rate, setRate] = useState("0");
   const [type, setType] = useState("0");
   const [activeStep, setActiveStep] = useState(0);
+
+  const { showSnackbar } = useSnackbar();
+  const { showAlert } = useAlert();
 
   const theme = useTheme();
 
@@ -47,8 +51,14 @@ function NewTaxForm({
     // Submit data
     try {
       await addTax(data);
+
+      // Show success message
+      showSnackbar(`Tax "${title}" added successfully`);
     } catch (error) {
       console.log(error);
+
+      // Show error message
+      showAlert(`Error adding tax "${title}"`, "error");
     }
 
     // Close form

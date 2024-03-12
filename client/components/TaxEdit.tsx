@@ -15,19 +15,23 @@ import KeyboardArrowRight from "@mui/icons-material/KeyboardArrowRight";
 import { useTheme } from "@mui/material/styles";
 import { Tax } from "@/app/types/types";
 import InputAdornment from "@mui/material/InputAdornment";
+import { useAlert, useSnackbar } from "../context/FeedbackContext";
 
 function TaxEdit({
   tax,
   setTaxModes,
 }: {
   tax: Tax;
-  setTaxModes: (expenseModes: Record<number, string>) => void;
+  setTaxModes: (taxModes: Record<number, string>) => void;
 }) {
   const [title, setTitle] = useState(tax.title);
   const [description, setDescription] = useState(tax.description);
   const [rate, setRate] = useState(tax.rate.toString());
   const [type, setType] = useState(tax.type);
   const [activeStep, setActiveStep] = useState(0);
+
+  const { showSnackbar } = useSnackbar();
+  const { showAlert } = useAlert();
 
   const theme = useTheme();
 
@@ -50,8 +54,14 @@ function TaxEdit({
     // Submit data
     try {
       await editTax(data, tax.id);
+
+      // Show success message
+      showSnackbar(`Tax "${title}" edited successfully`);
     } catch (error) {
       console.log(error);
+
+      // Show error message
+      showAlert(`Error editing tax "${title}"`, "error");
     }
 
     // Close form

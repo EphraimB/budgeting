@@ -7,6 +7,7 @@ import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
 import IconButton from "@mui/material/IconButton";
 import CloseIcon from "@mui/icons-material/Close";
+import { useAlert, useSnackbar } from "../context/FeedbackContext";
 
 function LoanDelete({
   loan,
@@ -15,11 +16,20 @@ function LoanDelete({
   loan: Loan;
   setLoanModes: React.Dispatch<React.SetStateAction<Record<number, string>>>;
 }) {
+  const { showSnackbar } = useSnackbar();
+  const { showAlert } = useAlert();
+
   const handleDelete = async () => {
     try {
       await deleteLoan(loan.id);
+
+      // Show success message
+      showSnackbar(`Loan "${loan.title}" deleted successfully`);
     } catch (error) {
       console.log(error);
+
+      // Show error message
+      showAlert(`Error deleting loan "${loan.title}"`, "error");
     }
     setLoanModes((prev) => ({ ...prev, [loan.id]: "view" }));
   };

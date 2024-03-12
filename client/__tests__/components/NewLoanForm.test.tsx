@@ -10,6 +10,15 @@ jest.mock("next/navigation", () => ({
   usePathname: () => "/",
 }));
 
+jest.mock("../../context/FeedbackContext", () => ({
+  useAlert: () => ({
+    showAlert: () => {},
+  }),
+  useSnackbar: () => ({
+    showSnackbar: () => {},
+  }),
+}));
+
 describe("NewLoanForm", () => {
   it("renders the component", async () => {
     render(<NewLoanForm account_id={1} setShowLoanForm={() => true} />);

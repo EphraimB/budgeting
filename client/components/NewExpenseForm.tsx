@@ -26,6 +26,7 @@ import Checkbox from "@mui/material/Checkbox";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import { addExpense } from "../services/actions/expense";
 import InputAdornment from "@mui/material/InputAdornment";
+import { useAlert, useSnackbar } from "../context/FeedbackContext";
 
 dayjs.extend(utc);
 
@@ -54,6 +55,8 @@ function NewExpenseForm({
   const [end_date, setEndDate] = useState<null | string>(null);
   const [activeStep, setActiveStep] = useState(0);
 
+  const { showSnackbar } = useSnackbar();
+  const { showAlert } = useAlert();
   const theme = useTheme();
 
   const handleNext = () => {
@@ -87,8 +90,14 @@ function NewExpenseForm({
     // Submit data
     try {
       await addExpense(data);
+
+      // Show success message
+      showSnackbar(`Expense named "${title}" added successfully`);
     } catch (error) {
       console.log(error);
+
+      // Show error message
+      showAlert(`Error adding expense named "${title}"`, "error");
     }
 
     // Close form

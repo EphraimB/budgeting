@@ -8,6 +8,7 @@ import Stack from "@mui/material/Stack";
 import IconButton from "@mui/material/IconButton";
 import CloseIcon from "@mui/icons-material/Close";
 import { addAccount } from "../services/actions/account";
+import { useAlert, useSnackbar } from "../context/FeedbackContext";
 
 export default function NewAccountForm({
   setShowNewAccountForm,
@@ -16,6 +17,9 @@ export default function NewAccountForm({
 }) {
   const [accountName, setAccountName] = useState("");
   const [nameError, setNameError] = useState("");
+
+  const { showSnackbar } = useSnackbar();
+  const { showAlert } = useAlert();
 
   const data = {
     name: accountName,
@@ -39,8 +43,14 @@ export default function NewAccountForm({
       // Submit data
       try {
         await addAccount(data);
+
+        // Show success message
+        showSnackbar(`Account named "${accountName}" added successfully`);
       } catch (error) {
         console.log(error);
+
+        // Show error message
+        showAlert(`Error adding account named "${accountName}"`, "error");
       }
 
       setShowNewAccountForm(false);

@@ -3,6 +3,15 @@ import { render, screen } from "@testing-library/react";
 import "@testing-library/jest-dom";
 import LoanDelete from "../../components/LoanDelete";
 
+jest.mock("../../context/FeedbackContext", () => ({
+  useAlert: () => ({
+    showAlert: () => {},
+  }),
+  useSnackbar: () => ({
+    showSnackbar: () => {},
+  }),
+}));
+
 describe("LoanDelete", () => {
   it("renders the component", () => {
     const loan = {

@@ -7,7 +7,6 @@ async function getAccount(account_id: number) {
 
   if (!res.ok) {
     return notFound();
-    // open alert
   }
 
   return res.json();
@@ -19,7 +18,7 @@ async function getExpenses(account_id: number) {
   );
 
   if (!res.ok) {
-    // open alert
+    throw new Error("Failed to fetch expenses");
   }
 
   return res.json();
@@ -31,7 +30,7 @@ async function getTaxes(account_id: number) {
   );
 
   if (!res.ok) {
-    // open alert
+    throw new Error("Failed to fetch taxes");
   }
 
   return res.json();
@@ -43,7 +42,7 @@ async function getLoans(accountId: number) {
   );
 
   if (!res.ok) {
-    // open alert
+    throw new Error("Failed to fetch loans");
   }
 
   return res.json();

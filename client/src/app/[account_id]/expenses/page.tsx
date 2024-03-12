@@ -14,7 +14,7 @@ async function getExpenses(account_id: number) {
   );
 
   if (!res.ok) {
-    // open alert
+    throw new Error("Failed to fetch expenses");
   }
 
   return res.json();
@@ -24,7 +24,7 @@ async function getTaxes() {
   const res = await fetch("http://server:5001/api/taxes");
 
   if (!res.ok) {
-    // open alert
+    throw new Error("Failed to fetch taxes");
   }
 
   return res.json();
