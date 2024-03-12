@@ -16,7 +16,7 @@ async function getAccounts() {
   const res = await fetch("http://server:5001/api/accounts");
 
   if (!res.ok) {
-    // open alert
+    throw new Error("Failed to fetch accounts");
   }
 
   return res.json();
