@@ -4,7 +4,8 @@ import GlobalAppBar from "../../components/GlobalAppBar";
 import Alerts from "../../components/Alerts";
 import Container from "@mui/material/Container";
 import AccountList from "../../components/AccountList";
-import { FeedbackProvider, useAlert } from "../../context/FeedbackContext";
+import { FeedbackProvider } from "../../context/FeedbackContext";
+import TriggerAlert from "../../components/TriggerAlert";
 
 export const metadata: Metadata = {
   title: "Budgeting",
@@ -16,7 +17,10 @@ async function getAccounts() {
 
   if (!res.ok) {
     // open alert
-    // showAlert("Failed to fetch accounts", "error");
+    TriggerAlert({
+      message: "Failed to load accounts",
+      severity: "error",
+    });
   }
 
   return res.json();
