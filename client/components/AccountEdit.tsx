@@ -7,6 +7,7 @@ import Stack from "@mui/material/Stack";
 import IconButton from "@mui/material/IconButton";
 import CloseIcon from "@mui/icons-material/Close";
 import { editAccount } from "../services/actions/account";
+import { useAlert, useSnackbar } from "../context/FeedbackContext";
 
 export default function AccountEdit({
   account,
@@ -16,8 +17,11 @@ export default function AccountEdit({
   setAccountModes: any;
 }) {
   const [accountName, setAccountName] = useState(account.account_name);
-  
+
   const [nameError, setNameError] = useState("");
+
+  const { showSnackbar } = useSnackbar();
+  const { showAlert } = useAlert();
 
   const data = {
     name: accountName,
@@ -40,8 +44,14 @@ export default function AccountEdit({
       // Submit data
       try {
         await editAccount(data, account.account_id);
+
+        // Show success message
+        showSnackbar(`Account named "${accountName}" edited successfully`);
       } catch (error) {
         console.log(error);
+
+        // Show error message
+        showAlert(`Error editing account named "${accountName}"`, "error");
       }
 
       setAccountModes((prevModes: any) => ({
