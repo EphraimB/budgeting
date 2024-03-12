@@ -15,9 +15,9 @@ GRANT USAGE ON SCHEMA cron TO marco;
 
 -- Perform other database initializations as needed
 
-CREATE TABLE employee (
-  employee_id SERIAL PRIMARY KEY,
-  name TEXT NOT NULL,
+CREATE TABLE jobs (
+  job_id SERIAL PRIMARY KEY,
+  job_name TEXT NOT NULL,
   hourly_rate NUMERIC(6,2) NOT NULL,
   regular_hours NUMERIC(4,2) NOT NULL,
   vacation_days INTEGER NOT NULL DEFAULT 0,
@@ -28,7 +28,6 @@ CREATE TABLE employee (
 -- Create a accounts table in postgres
 CREATE TABLE IF NOT EXISTS accounts (
   account_id SERIAL PRIMARY KEY,
-  employee_id INTEGER REFERENCES accounts(account_id),
   account_name VARCHAR(255) NOT NULL,
   date_created TIMESTAMP NOT NULL,
   date_modified TIMESTAMP NOT NULL
@@ -116,14 +115,14 @@ CREATE TABLE IF NOT EXISTS loans (
 -- Create tables for payroll in postgres.
 CREATE TABLE payroll_dates (
   payroll_date_id SERIAL PRIMARY KEY,
-  employee_id INTEGER NOT NULL REFERENCES employee(employee_id),
+  job_id INTEGER NOT NULL REFERENCES jobs(job_id) ON DELETE CASCADE,
   payroll_start_day INTEGER NOT NULL,
   payroll_end_day INTEGER NOT NULL
 );
 
 CREATE TABLE payroll_taxes (
     payroll_taxes_id SERIAL PRIMARY KEY,
-    employee_id INTEGER NOT NULL REFERENCES employee(employee_id),
+    job_id INTEGER NOT NULL REFERENCES jobs(job_id) ON DELETE CASCADE,
     name TEXT NOT NULL,
     rate NUMERIC(5,2) NOT NULL
 );
@@ -302,7 +301,7 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
-CREATE OR REPLACE FUNCTION process_payroll_for_employee(selected_employee_id integer) RETURNS void AS $$
+CREATE OR REPLACE FUNCTION process_payroll_for_job(selected_job_id integer) RETURNS void AS $$
 DECLARE
     pay_period RECORD;
     cron_expression text;
@@ -321,7 +320,7 @@ BEGIN
       SUM(COALESCE(
             e.regular_hours * work_days
         ))::numeric(20, 2) AS hours_worked
-        FROM employee e
+        FROM jobs j
       CROSS JOIN LATERAL (
       SELECT
         payroll_start_day,
@@ -358,10 +357,10 @@ BEGIN
             THEN 1 
             ELSE 0 
           END) AS work_days
-        FROM employee e
+        FROM jobs j
       ) s
       LEFT JOIN (
-        SELECT employee_id, SUM(rate) AS rate
+        SELECT job_id, SUM(rate) AS rate
         FROM payroll_taxes
         GROUP BY employee_id
       ) pt ON e.employee_id = pt.employee_id
