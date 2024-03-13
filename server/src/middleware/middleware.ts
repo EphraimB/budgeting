@@ -568,7 +568,7 @@ export const getPayrollsMiddleware = async (
                             payroll: payrollTransactions,
                         });
 
-                        request.payrolls = payrollsByAccount;
+                        return payrollsByAccount;
                     });
                 }),
             );
@@ -613,9 +613,11 @@ export const getPayrollsMiddleware = async (
                     payroll: payrollsTransactions,
                 });
 
-                request.payrolls = payrollsByAccount;
+                return payrollsByAccount;
             });
         }
+
+        request.payrolls = payrollsByAccount;
 
         next();
     } catch (error) {
