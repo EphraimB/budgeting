@@ -549,7 +549,7 @@ export const getPayrollsMiddleware = async (
                             return {
                                 job_id: job.job_id,
                                 job_name: job.job_name,
-                                payroll: payrollResults.map((payroll) => ({
+                                payrolls: payrollResults.map((payroll) => ({
                                     ...payroll,
                                     net_pay: parseFloat(payroll.net_pay),
                                     gross_pay: parseFloat(payroll.gross_pay),
@@ -593,7 +593,7 @@ export const getPayrollsMiddleware = async (
                     return {
                         job_id: job.job_id,
                         job_name: job.job_name,
-                        payroll: payrollResults.map((payroll) => ({
+                        payrolls: payrollResults.map((payroll) => ({
                             ...payroll,
                             net_pay: parseFloat(payroll.net_pay),
                             gross_pay: parseFloat(payroll.gross_pay),
