@@ -9,6 +9,7 @@ router.get(
     '/',
     [
         query('job_id')
+            .optional()
             .isInt({ min: 1 })
             .withMessage('Job ID must be a number'),
         validateRequest,

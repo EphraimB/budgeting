@@ -22,7 +22,7 @@ const generatePayrolls = (
 
     const newTransaction = {
         id: uuidv4(),
-        title: 'Payroll',
+        title: `Payroll for`,
         description: 'payroll',
         date: payroll_end_date,
         amount: payrolls.gross_pay,

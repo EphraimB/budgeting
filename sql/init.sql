@@ -25,7 +25,7 @@ CREATE TABLE IF NOT EXISTS accounts (
 
 CREATE TABLE jobs (
   job_id SERIAL PRIMARY KEY,
-  account_id INTEGER REFERENCES accounts(account_id),
+  account_id INTEGER NOT NULL REFERENCES accounts(account_id),
   job_name TEXT NOT NULL,
   hourly_rate NUMERIC(6,2) NOT NULL,
   regular_hours NUMERIC(4,2) NOT NULL,

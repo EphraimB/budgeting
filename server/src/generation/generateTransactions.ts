@@ -50,7 +50,7 @@ const generate = async (
     response: Response,
     next: NextFunction,
     account_id: number,
-    employee_id: number,
+    job_id: number,
     transactions: GeneratedTransaction[],
     skippedTransactions: GeneratedTransaction[],
     currentBalance: any,
@@ -160,9 +160,9 @@ const generate = async (
         });
 
     request.payrolls
-        .filter((pyrl) => pyrl.employee_id === employee_id)
-        .forEach((employee) => {
-            employee.payroll.forEach((payroll: Payroll) => {
+        .filter((pyrl) => pyrl.job_id === job_id)
+        .forEach((job) => {
+            job.payroll.forEach((payroll: Payroll) => {
                 generatePayrollTransactions(
                     transactions,
                     skippedTransactions,

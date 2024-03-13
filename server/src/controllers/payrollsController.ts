@@ -30,6 +30,33 @@ export const getPayrolls = async (
 ): Promise<void> => {
     try {
         const { job_id } = request.query;
+        let returnObj: object;
+
+        if (!job_id) {
+            // Get all payrolls for all jobs
+            const jobs = await executeQuery(payrollQueries.getJobs, []);
+
+            if (jobs.length === 0) {
+                response.status(404).send('No jobs found');
+                return;
+            }
+
+            await Promise.all(
+                jobs.map(async (job) => {
+                    const results = await executeQuery(
+                        payrollQueries.getPayrolls,
+                        [job.job_id],
+                    );
+
+                    returnObj = {
+                        job_id: job.job_id,
+                        payrolls: results.map((payroll) =>
+                            payrollsParse(payroll),
+                        ),
+                    };
+                }),
+            );
+        }
 
         const results = await executeQuery(payrollQueries.getPayrolls, [
             job_id,
@@ -45,7 +72,7 @@ export const getPayrolls = async (
             payrollsParse(payroll),
         );
 
-        const returnObj = {
+        returnObj = {
             job_id: parseInt(job_id as string),
             payrolls,
         };
