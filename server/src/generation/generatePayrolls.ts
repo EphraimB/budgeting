@@ -13,24 +13,20 @@ import dayjs, { type Dayjs } from 'dayjs';
 const generatePayrolls = (
     transactions: GeneratedTransaction[],
     skippedTransactions: GeneratedTransaction[],
-    job: any,
+    job_name: string,
     payroll: any,
     fromDate: Dayjs,
 ): void => {
-    const payroll_end_date: Dayjs = dayjs(payroll.payroll.end_date)
-        .hour(11)
-        .minute(30);
+    const payroll_end_date: Dayjs = dayjs(payroll.end_date).hour(11).minute(30);
 
     const newTransaction = {
         id: uuidv4(),
-        title: `Payroll for ${payroll.job_name}`,
-        description: `payroll for ${payroll.job_name}`,
+        title: `Payroll for ${job_name}`,
+        description: `payroll for ${job_name}`,
         date: payroll_end_date,
-        amount: payroll.payroll.gross_pay,
-        tax_rate:
-            (payroll.payroll.gross_pay - payroll.payroll.net_pay) /
-            payroll.payroll.gross_pay,
-        total_amount: payroll.payroll.net_pay,
+        amount: payroll.gross_pay,
+        tax_rate: (payroll.gross_pay - payroll.net_pay) / payroll.gross_pay,
+        total_amount: payroll.net_pay,
     };
 
     console.log(newTransaction);

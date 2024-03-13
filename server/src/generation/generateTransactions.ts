@@ -164,10 +164,11 @@ const generate = async (
         .forEach((account) => {
             account.jobs.forEach((job: any) => {
                 job.payrolls.forEach((payroll: Payroll) => {
+                    console.log(payroll);
                     generatePayrollTransactions(
                         transactions,
                         skippedTransactions,
-                        job,
+                        job.job_name,
                         payroll,
                         fromDate,
                     );
