@@ -15,6 +15,14 @@ GRANT USAGE ON SCHEMA cron TO marco;
 
 -- Perform other database initializations as needed
 
+-- Create a accounts table in postgres
+CREATE TABLE IF NOT EXISTS accounts (
+  account_id SERIAL PRIMARY KEY,
+  account_name VARCHAR(255) NOT NULL,
+  date_created TIMESTAMP NOT NULL,
+  date_modified TIMESTAMP NOT NULL
+);
+
 CREATE TABLE jobs (
   job_id SERIAL PRIMARY KEY,
   account_id INTEGER REFERENCES accounts(account_id),
@@ -24,14 +32,6 @@ CREATE TABLE jobs (
   vacation_days INTEGER NOT NULL DEFAULT 0,
   sick_days INTEGER NOT NULL DEFAULT 0,
   work_schedule BIT(7) NOT NULL
-);
-
--- Create a accounts table in postgres
-CREATE TABLE IF NOT EXISTS accounts (
-  account_id SERIAL PRIMARY KEY,
-  account_name VARCHAR(255) NOT NULL,
-  date_created TIMESTAMP NOT NULL,
-  date_modified TIMESTAMP NOT NULL
 );
 
 -- Create a taxes table in postgres
