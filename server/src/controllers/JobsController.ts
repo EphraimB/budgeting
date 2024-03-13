@@ -7,7 +7,7 @@ import { logger } from '../config/winston.js';
 /**
  *
  * @param job - Job object
- * @returns - Employee object with correct data types
+ * @returns - Job object with correct data types
  */
 const jobsParse = (jobs: Record<string, string>): Job => ({
     id: parseInt(jobs.job_id),
@@ -45,7 +45,7 @@ export const getJobs = async (
         }
 
         // Parse the data to the correct format and return an object
-        const jobs: Job[] = results.map((employee) => jobsParse(employee));
+        const jobs: Job[] = results.map((job) => jobsParse(job));
 
         response.status(200).json(jobs);
     } catch (error) {
@@ -89,7 +89,7 @@ export const createJob = async (
         response.status(201).json(jobs);
     } catch (error) {
         logger.error(error); // Log the error on the server side
-        handleError(response, 'Error creating employee');
+        handleError(response, 'Error creating job');
     }
 };
 
@@ -145,7 +145,7 @@ export const updateJob = async (
     }
 };
 
-export const updateEmployeeReturnObject = async (
+export const updateJobReturnObject = async (
     request: Request,
     response: Response,
 ): Promise<void> => {
@@ -168,9 +168,9 @@ export const updateEmployeeReturnObject = async (
  *
  * @param request - Request object
  * @param response - Response object
- * Sends a DELETE request to the database to delete an employee
+ * Sends a DELETE request to the database to delete an job
  */
-export const deleteEmployee = async (
+export const deleteJob = async (
     request: Request,
     response: Response,
 ): Promise<void> => {

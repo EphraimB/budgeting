@@ -4,8 +4,8 @@ import {
     getJobs,
     createJob,
     updateJob,
-    updateEmployeeReturnObject,
-    deleteEmployee,
+    updateJobReturnObject,
+    deleteJob,
 } from '../controllers/JobsController.js';
 import validateRequest from '../utils/validateRequest.js';
 import generateTransactions from '../generation/generateTransactions.js';
@@ -104,7 +104,7 @@ router.put(
     getWishlistsByAccount,
     generateTransactions,
     updateWishlistCron,
-    updateEmployeeReturnObject,
+    updateJobReturnObject,
 );
 
 router.delete(
@@ -115,7 +115,7 @@ router.delete(
             .withMessage('Job ID must be a number'),
         validateRequest,
     ],
-    deleteEmployee,
+    deleteJob,
 );
 
 export default router;
