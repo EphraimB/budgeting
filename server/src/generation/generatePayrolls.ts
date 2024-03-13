@@ -29,8 +29,6 @@ const generatePayrolls = (
         total_amount: payroll.net_pay,
     };
 
-    console.log(newTransaction);
-
     if (payroll_end_date.diff() > 0) {
         if (payroll_end_date.diff(fromDate) < 0) {
             skippedTransactions.push(newTransaction);
