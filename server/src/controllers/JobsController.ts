@@ -11,6 +11,7 @@ import { logger } from '../config/winston.js';
  */
 const jobsParse = (jobs: Record<string, string>): Job => ({
     id: parseInt(jobs.job_id),
+    account_id: parseInt(jobs.account_id),
     name: jobs.job_name,
     hourly_rate: parseFloat(jobs.hourly_rate),
     regular_hours: parseInt(jobs.regular_hours),
