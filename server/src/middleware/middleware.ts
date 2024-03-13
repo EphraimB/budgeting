@@ -527,6 +527,7 @@ export const getPayrollsMiddleware = async (
     try {
         const payrollsByAccount: Array<{
             job_id: number;
+            job_name: string;
             payroll: Payroll[];
         }> = [];
 
@@ -563,6 +564,7 @@ export const getPayrollsMiddleware = async (
 
                         payrollsByAccount.push({
                             job_id: account.job_id,
+                            job_name: jobResult.job_name,
                             payroll: payrollTransactions,
                         });
                     });
@@ -605,6 +607,7 @@ export const getPayrollsMiddleware = async (
 
                 payrollsByAccount.push({
                     job_id: parseInt(job_id as string),
+                    job_name: jobResult.job_name,
                     payroll: payrollsTransactions,
                 });
             });

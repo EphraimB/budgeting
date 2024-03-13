@@ -22,8 +22,8 @@ const generatePayrolls = (
 
     const newTransaction = {
         id: uuidv4(),
-        title: `Payroll for`,
-        description: 'payroll',
+        title: `Payroll for ${payrolls.job_name}`,
+        description: `payroll for ${payrolls.job_name}`,
         date: payroll_end_date,
         amount: payrolls.gross_pay,
         tax_rate: (payrolls.gross_pay - payrolls.net_pay) / payrolls.gross_pay,

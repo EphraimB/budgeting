@@ -152,6 +152,7 @@ export interface Loan {
 }
 
 export interface Payroll {
+    job_name?: string;
     start_date?: string;
     end_date: string;
     net_pay: number;
