@@ -1436,7 +1436,7 @@
                 }
             }
         },
-        "/payroll/taxes": {
+        "/jobs/payroll/taxes": {
             "get": {
                 "summary": "Get all payroll taxes",
                 "description": "Get all payroll taxes",
@@ -1504,7 +1504,7 @@
                 }
             }
         },
-        "/payroll/taxes/{id}": {
+        "/jobs/payroll/taxes/{id}": {
             "put": {
                 "summary": "Update a payroll tax",
                 "description": "Update a payroll tax",
@@ -1577,7 +1577,7 @@
                 }
             }
         },
-        "/payroll/dates/": {
+        "/jobs/payroll/dates/": {
             "get": {
                 "summary": "Get all payroll dates",
                 "description": "Get all payroll dates",
@@ -1645,7 +1645,7 @@
                 }
             }
         },
-        "/payroll/dates/{id}": {
+        "/jobs/payroll/dates/{id}": {
             "put": {
                 "summary": "Update a payroll date",
                 "description": "Update a payroll date",
@@ -1718,7 +1718,7 @@
                 }
             }
         },
-        "/payroll/jobs/": {
+        "/jobs/": {
             "get": {
                 "summary": "Get all jobs",
                 "description": "Get all jobs",
@@ -1776,7 +1776,7 @@
                 }
             }
         },
-        "/payroll/jobs/{id}": {
+        "/jobs/{id}": {
             "put": {
                 "summary": "Update a job",
                 "description": "Update a job",

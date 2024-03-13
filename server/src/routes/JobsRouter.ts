@@ -40,6 +40,9 @@ router.get(
 router.post(
     '/',
     [
+        body('account_id')
+            .isInt({ min: 1 })
+            .withMessage('Account ID must be a number'),
         body('name').isString().withMessage('Name must be a string'),
         body('hourly_rate')
             .isFloat({ min: 0 })
@@ -67,6 +70,9 @@ router.put(
         param('job_id')
             .isInt({ min: 1 })
             .withMessage('Job ID must be a number'),
+        body('account_id')
+            .isInt({ min: 1 })
+            .withMessage('Account ID must be a number'),
         body('name').isString().withMessage('Name must be a string'),
         body('hourly_rate')
             .isFloat({ min: 0 })
