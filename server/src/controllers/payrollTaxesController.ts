@@ -11,7 +11,7 @@ import { logger } from '../config/winston.js';
  */
 const payrollTaxesParse = (payrollTax: Record<string, string>): PayrollTax => ({
     id: parseInt(payrollTax.payroll_taxes_id),
-    employee_id: parseInt(payrollTax.employee_id),
+    job_id: parseInt(payrollTax.job_id),
     name: payrollTax.name,
     rate: parseFloat(payrollTax.rate),
 });
@@ -66,7 +66,7 @@ export const getPayrollTaxes = async (
                 id
                     ? 'payroll tax'
                     : job_id
-                    ? 'payroll taxes for given employee_id'
+                    ? 'payroll taxes for given job_id'
                     : 'payroll taxes'
             }`,
         );
@@ -85,16 +85,16 @@ export const createPayrollTax = async (
     response: Response,
     next: NextFunction,
 ): Promise<void> => {
-    const { employee_id, name, rate } = request.body;
+    const { job_id, name, rate } = request.body;
 
     try {
         const results = await executeQuery(payrollQueries.createPayrollTax, [
-            employee_id,
+            job_id,
             name,
             rate,
         ]);
 
-        await executeQuery('SELECT process_payroll_for_employee($1)', [1]);
+        await executeQuery('SELECT process_payroll_for_job($1)', [1]);
 
         const payrollTaxes: PayrollTax[] = results.map((payrollTax) =>
             payrollTaxesParse(payrollTax),
@@ -169,7 +169,7 @@ export const updatePayrollTax = async (
             return;
         }
 
-        await executeQuery('SELECT process_payroll_for_employee($1)', [1]);
+        await executeQuery('SELECT process_payroll_for_job($1)', [1]);
 
         next();
     } catch (error) {
@@ -232,7 +232,7 @@ export const deletePayrollTax = async (
 
         await executeQuery(payrollQueries.deletePayrollTax, [id]);
 
-        await executeQuery('SELECT process_payroll_for_employee($1)', [1]);
+        await executeQuery('SELECT process_payroll_for_job($1)', [1]);
 
         next();
     } catch (error) {

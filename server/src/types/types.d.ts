@@ -163,14 +163,14 @@ export interface Payroll {
 
 export interface PayrollDate {
     id: number;
-    employee_id: number;
+    job_id: number;
     payroll_start_day: number;
     payroll_end_day: number;
 }
 
 export interface PayrollTax {
     id: number;
-    employee_id: number;
+    job_id: number;
     name: string;
     rate: number;
 }
