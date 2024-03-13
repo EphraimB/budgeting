@@ -159,6 +159,8 @@ const generate = async (
             });
         });
 
+    console.log(request.payrolls);
+
     request.payrolls
         .filter((pyrl) => pyrl.job_id === job_id)
         .forEach((job) => {

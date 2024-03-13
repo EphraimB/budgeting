@@ -558,7 +558,12 @@ export const getPayrollsMiddleware = async (
                         }),
                     );
 
-                    payrollsByAccount.push(...jobsPayrolls);
+                    const returnObj = {
+                        account_id: parseInt(account_id as string),
+                        jobs: jobsPayrolls,
+                    };
+
+                    payrollsByAccount.push(returnObj);
                 }),
             );
         } else {
@@ -597,10 +602,13 @@ export const getPayrollsMiddleware = async (
                 }),
             );
 
-            payrollsByAccount.push(...jobsPayrolls);
-        }
+            const returnObj = {
+                account_id: parseInt(account_id as string),
+                jobs: jobsPayrolls,
+            };
 
-        console.log(payrollsByAccount);
+            payrollsByAccount.push(returnObj);
+        }
 
         request.payrolls = payrollsByAccount;
 
