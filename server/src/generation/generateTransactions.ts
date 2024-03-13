@@ -159,12 +159,10 @@ const generate = async (
             });
         });
 
-    console.log(request.payrolls);
-
     request.payrolls
-        .filter((pyrl) => pyrl.job_id === job_id)
-        .forEach((job) => {
-            job.payroll.forEach((payroll: Payroll) => {
+        .filter((pyrl) => pyrl.account_id === account_id)
+        .forEach((account) => {
+            account.jobs.forEach((payroll: Payroll) => {
                 generatePayrollTransactions(
                     transactions,
                     skippedTransactions,
