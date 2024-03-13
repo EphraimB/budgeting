@@ -162,13 +162,16 @@ const generate = async (
     request.payrolls
         .filter((pyrl) => pyrl.account_id === account_id)
         .forEach((account) => {
-            account.jobs.forEach((payroll: Payroll) => {
-                generatePayrollTransactions(
-                    transactions,
-                    skippedTransactions,
-                    payroll,
-                    fromDate,
-                );
+            account.jobs.forEach((job: any) => {
+                job.payrolls.forEach((payroll: Payroll) => {
+                    generatePayrollTransactions(
+                        transactions,
+                        skippedTransactions,
+                        job,
+                        payroll,
+                        fromDate,
+                    );
+                });
             });
         });
 
