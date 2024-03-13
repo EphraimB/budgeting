@@ -356,7 +356,7 @@ export const payrollQueries: PayrollQueries = {
         'UPDATE payroll_dates SET payroll_start_day = $1, payroll_end_day = $2 WHERE payroll_date_id = $3 RETURNING *',
     deletePayrollDate: 'DELETE FROM payroll_dates WHERE payroll_date_id = $1',
     getJobs: 'SELECT * FROM jobs',
-    getJob: 'SELECT * FROM job WHERE job_id = $1',
+    getJob: 'SELECT * FROM jobs WHERE job_id = $1',
     getAccountIdFromJobs: 'SELECT account_id FROM accounts WHERE job_id = $1',
     createJob:
         'INSERT INTO jobs (job_name, hourly_rate, regular_hours, vacation_days, sick_days, work_schedule) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *',
