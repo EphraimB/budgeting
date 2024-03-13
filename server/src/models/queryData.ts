@@ -58,6 +58,7 @@ interface PayrollQueries {
     createPayrollDate: string;
     updatePayrollDate: string;
     deletePayrollDate: string;
+    getJobsByAccountId: string;
     getJobs: string;
     getJob: string;
     getAccountIdFromJobs: string;
@@ -355,6 +356,7 @@ export const payrollQueries: PayrollQueries = {
     updatePayrollDate:
         'UPDATE payroll_dates SET payroll_start_day = $1, payroll_end_day = $2 WHERE payroll_date_id = $3 RETURNING *',
     deletePayrollDate: 'DELETE FROM payroll_dates WHERE payroll_date_id = $1',
+    getJobsByAccountId: 'SELECT * FROM jobs WHERE account_id = $1',
     getJobs: 'SELECT * FROM jobs',
     getJob: 'SELECT * FROM jobs WHERE job_id = $1',
     getAccountIdFromJobs: 'SELECT account_id FROM accounts WHERE job_id = $1',

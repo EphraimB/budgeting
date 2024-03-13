@@ -572,17 +572,17 @@ export const getPayrollsMiddleware = async (
                 return;
             }
 
-            // Get employee_id from account_id
-            const employeeResults = await executeQuery(
-                accountQueries.getAccount,
+            // Get job_id from account_id
+            const jobResults = await executeQuery(
+                payrollQueries.getJobsByAccountId,
                 [account_id],
             );
 
-            const employee_id = employeeResults[0].employee_id;
+            const job_id = jobResults[0].job_id;
 
             const results = await executeQuery(
                 payrollQueries.getPayrollsMiddleware,
-                [employee_id, to_date],
+                [job_id, to_date],
             );
 
             // Map over results array and convert net_pay to a float for each Payroll object

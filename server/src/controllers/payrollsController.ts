@@ -50,6 +50,7 @@ export const getPayrolls = async (
 
                     returnObj = {
                         job_id: job.job_id,
+                        job_name: job.job_name,
                         payrolls: results.map((payroll) =>
                             payrollsParse(payroll),
                         ),
@@ -71,8 +72,14 @@ export const getPayrolls = async (
                 payrollsParse(payroll),
             );
 
+            const resultsForSingleJob = await executeQuery(
+                payrollQueries.getPayrolls,
+                [job_id],
+            );
+
             returnObj = {
                 job_id: parseInt(job_id as string),
+                job_name: resultsForSingleJob,
                 payrolls,
             };
         }
