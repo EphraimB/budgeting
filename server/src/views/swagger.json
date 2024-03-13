@@ -1404,7 +1404,7 @@
                 }
             }
         },
-        "/payroll": {
+        "/jobs/payroll": {
             "get": {
                 "summary": "Get all payrolls",
                 "description": "Get all payrolls",
