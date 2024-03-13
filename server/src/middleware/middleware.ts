@@ -526,7 +526,7 @@ export const getPayrollsMiddleware = async (
 
     try {
         const payrollsByAccount: Array<{
-            employee_id: number;
+            job_id: number;
             payroll: Payroll[];
         }> = [];
 
@@ -538,23 +538,33 @@ export const getPayrollsMiddleware = async (
 
             await Promise.all(
                 accountResults.map(async (account) => {
-                    const payrollResults = await executeQuery(
-                        payrollQueries.getPayrollsMiddleware,
-                        [account.employee_id, to_date],
+                    // Get job_id from account_id
+                    const jobResults = await executeQuery(
+                        payrollQueries.getJobsByAccountId,
+                        [account_id],
                     );
 
-                    // Map over results array and convert amount to a float for each Transaction object
-                    const payrollTransactions = payrollResults.map(
-                        (payroll) => ({
-                            ...payroll,
-                            net_pay: parseFloat(payroll.net_pay),
-                            gross_pay: parseFloat(payroll.gross_pay),
-                        }),
-                    );
+                    jobResults.map(async (jobResult) => {
+                        const job_id = jobResult.job_id;
 
-                    payrollsByAccount.push({
-                        employee_id: account.employee_id,
-                        payroll: payrollTransactions,
+                        const payrollResults = await executeQuery(
+                            payrollQueries.getPayrollsMiddleware,
+                            [job_id, to_date],
+                        );
+
+                        // Map over results array and convert amount to a float for each Transaction object
+                        const payrollTransactions = payrollResults.map(
+                            (payroll) => ({
+                                ...payroll,
+                                net_pay: parseFloat(payroll.net_pay),
+                                gross_pay: parseFloat(payroll.gross_pay),
+                            }),
+                        );
+
+                        payrollsByAccount.push({
+                            job_id: account.job_id,
+                            payroll: payrollTransactions,
+                        });
                     });
                 }),
             );
@@ -578,23 +588,25 @@ export const getPayrollsMiddleware = async (
                 [account_id],
             );
 
-            const job_id = jobResults[0].job_id;
+            jobResults.map(async (jobResult) => {
+                const job_id = jobResult.job_id;
 
-            const results = await executeQuery(
-                payrollQueries.getPayrollsMiddleware,
-                [job_id, to_date],
-            );
+                const results = await executeQuery(
+                    payrollQueries.getPayrollsMiddleware,
+                    [job_id, to_date],
+                );
 
-            // Map over results array and convert net_pay to a float for each Payroll object
-            const payrollsTransactions = results.map((payroll) => ({
-                ...payroll,
-                net_pay: parseFloat(payroll.net_pay),
-                gross_pay: parseFloat(payroll.gross_pay),
-            }));
+                // Map over results array and convert net_pay to a float for each Payroll object
+                const payrollsTransactions = results.map((payroll) => ({
+                    ...payroll,
+                    net_pay: parseFloat(payroll.net_pay),
+                    gross_pay: parseFloat(payroll.gross_pay),
+                }));
 
-            payrollsByAccount.push({
-                employee_id: parseInt(employee_id as string),
-                payroll: payrollsTransactions,
+                payrollsByAccount.push({
+                    job_id: parseInt(job_id as string),
+                    payroll: payrollsTransactions,
+                });
             });
         }
 

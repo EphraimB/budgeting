@@ -85,7 +85,6 @@ export interface TransactionHistory {
 
 export interface Account {
     account_id: number;
-    employee_id?: number;
     account_name: string;
     account_balance: number;
     date_created: string;
@@ -94,6 +93,7 @@ export interface Account {
 
 export interface Job {
     id: number;
+    account_id: number;
     name: string;
     hourly_rate: number;
     regular_hours: number;
