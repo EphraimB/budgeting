@@ -567,6 +567,8 @@ export const getPayrollsMiddleware = async (
                             job_name: jobResult.job_name,
                             payroll: payrollTransactions,
                         });
+
+                        request.payrolls = payrollsByAccount;
                     });
                 }),
             );
@@ -610,10 +612,10 @@ export const getPayrollsMiddleware = async (
                     job_name: jobResult.job_name,
                     payroll: payrollsTransactions,
                 });
+
+                request.payrolls = payrollsByAccount;
             });
         }
-
-        request.payrolls = payrollsByAccount;
 
         next();
     } catch (error) {
