@@ -1,4 +1,4 @@
-INSERT INTO jobs (job_name, hourly_rate, regular_hours, vacation_days, sick_days, work_schedule) VALUES ('Testing Inc.', 16.00, 8, 15, 15, B'0111100');;
+INSERT INTO jobs (account_id, job_name, hourly_rate, regular_hours, vacation_days, sick_days, work_schedule) VALUES (1, 'Testing Inc.', 16.00, 8, 15, 15, B'0111100');;
 
 INSERT INTO accounts (account_name) VALUES ('Personal');
 INSERT INTO accounts (account_name) VALUES ('Savings');
