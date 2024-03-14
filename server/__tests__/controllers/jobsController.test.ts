@@ -40,7 +40,7 @@ const jobs: any[] = [
     {
         job_id: 1,
         account_id: 1,
-        name: 'Test Job',
+        job_name: 'Test Job',
         hourly_rate: 10,
         regular_hours: 40,
         vacation_days: 10,
