@@ -56,7 +56,7 @@ const payrolls: Payroll[] = [
 describe('GET /api/payrolls', () => {
     it('should respond with an array of payrolls', async () => {
         // Arrange
-        mockModule([payrolls]);
+        mockModule([payrolls, [{ job_id: 1, job_name: 'Test Job' }]]);
 
         mockRequest.query = { job_id: 1 };
 
