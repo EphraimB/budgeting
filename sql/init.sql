@@ -23,12 +23,12 @@ CREATE TABLE IF NOT EXISTS accounts (
   date_modified TIMESTAMP NOT NULL
 );
 
-CREATE TABLE IF NOT EXISTS job_schedule {
+CREATE TABLE IF NOT EXISTS job_schedule (
   job_schedule_id SERIAL PRIMARY KEY,
   day_of_week INTEGER NOT NULL,
   start_time TIME NOT NULL,
   end_time TIME NOT NULL,
-}
+);
 
 CREATE TABLE IF NOT EXISTS jobs (
   job_id SERIAL PRIMARY KEY,
