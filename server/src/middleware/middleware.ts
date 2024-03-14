@@ -521,88 +521,100 @@ export const getPayrollsMiddleware = async (
     request: Request,
     response: Response,
     next: NextFunction,
-): Promise<void> => {
-    const { account_id, to_date } = request.query as Record<string, string>;
+) => {
+    const { account_id, to_date } = request.query;
 
     try {
-        const payrollsByAccount: Array<{
-            employee_id: number;
-            payroll: Payroll[];
-        }> = [];
+        const payrollsByAccount = [];
 
         if (!account_id) {
-            // If account_id is null, fetch all accounts and make request.transactions an array of transactions
             const accountResults = await executeQuery(
                 accountQueries.getAccounts,
             );
 
             await Promise.all(
                 accountResults.map(async (account) => {
-                    const payrollResults = await executeQuery(
-                        payrollQueries.getPayrollsMiddleware,
-                        [account.employee_id, to_date],
+                    const jobResults = await executeQuery(
+                        payrollQueries.getJobsByAccountId,
+                        [account.account_id],
                     );
 
-                    // Map over results array and convert amount to a float for each Transaction object
-                    const payrollTransactions = payrollResults.map(
-                        (payroll) => ({
-                            ...payroll,
-                            net_pay: parseFloat(payroll.net_pay),
-                            gross_pay: parseFloat(payroll.gross_pay),
+                    const jobsPayrolls = await Promise.all(
+                        jobResults.map(async (job) => {
+                            const payrollResults = await executeQuery(
+                                payrollQueries.getPayrollsMiddleware,
+                                [job.job_id, to_date],
+                            );
+
+                            return {
+                                job_id: job.job_id,
+                                job_name: job.job_name,
+                                payrolls: payrollResults.map((payroll) => ({
+                                    ...payroll,
+                                    net_pay: parseFloat(payroll.net_pay),
+                                    gross_pay: parseFloat(payroll.gross_pay),
+                                })),
+                            };
                         }),
                     );
 
-                    payrollsByAccount.push({
-                        employee_id: account.employee_id,
-                        payroll: payrollTransactions,
-                    });
+                    const returnObj = {
+                        account_id: parseInt(account.account_id as string),
+                        jobs: jobsPayrolls,
+                    };
+
+                    payrollsByAccount.push(returnObj);
                 }),
             );
         } else {
-            // Check if account exists and if it doesn't, send a response with an error message
             const accountExists = await executeQuery(
                 accountQueries.getAccount,
                 [account_id],
             );
 
             if (accountExists.length === 0) {
-                response
+                return response
                     .status(404)
                     .send(`Account with ID ${account_id} not found`);
-                return;
             }
 
-            // Get employee_id from account_id
-            const employeeResults = await executeQuery(
-                accountQueries.getAccount,
+            const jobResults = await executeQuery(
+                payrollQueries.getJobsByAccountId,
                 [account_id],
             );
 
-            const employee_id = employeeResults[0].employee_id;
+            const jobsPayrolls = await Promise.all(
+                jobResults.map(async (job) => {
+                    const payrollResults = await executeQuery(
+                        payrollQueries.getPayrollsMiddleware,
+                        [job.job_id, to_date],
+                    );
 
-            const results = await executeQuery(
-                payrollQueries.getPayrollsMiddleware,
-                [employee_id, to_date],
+                    return {
+                        job_id: job.job_id,
+                        job_name: job.job_name,
+                        payrolls: payrollResults.map((payroll) => ({
+                            ...payroll,
+                            net_pay: parseFloat(payroll.net_pay),
+                            gross_pay: parseFloat(payroll.gross_pay),
+                        })),
+                    };
+                }),
             );
 
-            // Map over results array and convert net_pay to a float for each Payroll object
-            const payrollsTransactions = results.map((payroll) => ({
-                ...payroll,
-                net_pay: parseFloat(payroll.net_pay),
-                gross_pay: parseFloat(payroll.gross_pay),
-            }));
+            const returnObj = {
+                account_id: parseInt(account_id as string),
+                jobs: jobsPayrolls,
+            };
 
-            payrollsByAccount.push({
-                employee_id: parseInt(employee_id as string),
-                payroll: payrollsTransactions,
-            });
+            payrollsByAccount.push(returnObj);
         }
 
         request.payrolls = payrollsByAccount;
 
         next();
     } catch (error) {
-        logger.error(error); // Log the error on the server side
+        logger.error(error);
         handleError(response, 'Error getting payrolls');
     }
 };

@@ -1,12 +1,12 @@
 import express, { type Router } from 'express';
 import { query, param, body } from 'express-validator';
 import {
-    getEmployee,
-    createEmployee,
-    updateEmployee,
-    updateEmployeeReturnObject,
-    deleteEmployee,
-} from '../controllers/employeesController.js';
+    getJobs,
+    createJob,
+    updateJob,
+    updateJobReturnObject,
+    deleteJob,
+} from '../controllers/jobsController.js';
 import validateRequest from '../utils/validateRequest.js';
 import generateTransactions from '../generation/generateTransactions.js';
 import {
@@ -28,18 +28,21 @@ const router: Router = express.Router();
 router.get(
     '/',
     [
-        query('employee_id')
+        query('job_id')
             .optional()
             .isInt({ min: 1 })
-            .withMessage('ID must be a number'),
+            .withMessage('Job ID must be a number'),
         validateRequest,
     ],
-    getEmployee,
+    getJobs,
 );
 
 router.post(
     '/',
     [
+        body('account_id')
+            .isInt({ min: 1 })
+            .withMessage('Account ID must be a number'),
         body('name').isString().withMessage('Name must be a string'),
         body('hourly_rate')
             .isFloat({ min: 0 })
@@ -58,15 +61,18 @@ router.post(
             .withMessage('Work schedule must be a string'),
         validateRequest,
     ],
-    createEmployee,
+    createJob,
 );
 
 router.put(
-    '/:employee_id',
+    '/:job_id',
     [
-        param('employee_id')
+        param('job_id')
             .isInt({ min: 1 })
-            .withMessage('Employee ID must be a number'),
+            .withMessage('Job ID must be a number'),
+        body('account_id')
+            .isInt({ min: 1 })
+            .withMessage('Account ID must be a number'),
         body('name').isString().withMessage('Name must be a string'),
         body('hourly_rate')
             .isFloat({ min: 0 })
@@ -85,7 +91,7 @@ router.put(
             .withMessage('Work schedule must be a string'),
         validateRequest,
     ],
-    updateEmployee,
+    updateJob,
     setQueries,
     getCurrentBalance,
     getTransactionsByAccount,
@@ -98,18 +104,18 @@ router.put(
     getWishlistsByAccount,
     generateTransactions,
     updateWishlistCron,
-    updateEmployeeReturnObject,
+    updateJobReturnObject,
 );
 
 router.delete(
-    '/:employee_id',
+    '/:job_id',
     [
-        param('employee_id')
+        param('job_id')
             .isInt({ min: 1 })
-            .withMessage('Employee ID must be a number'),
+            .withMessage('Job ID must be a number'),
         validateRequest,
     ],
-    deleteEmployee,
+    deleteJob,
 );
 
 export default router;

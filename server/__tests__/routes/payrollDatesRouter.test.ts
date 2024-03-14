@@ -33,7 +33,7 @@ const createApp = async (): Promise<Express> => {
 };
 
 const payrollDates = {
-    employee_id: 1,
+    job_id: 1,
     start_day: 1,
     end_day: 15,
 };
@@ -153,7 +153,7 @@ beforeEach(async () => {
 describe('GET /', () => {
     it('responds with json', async () => {
         const response: request.Response = await request(app)
-            .get('/?employee_id=1')
+            .get('/?job_id=1')
             .set('Accept', 'application/json')
             .expect('Content-Type', /json/);
 
@@ -165,7 +165,7 @@ describe('GET /', () => {
 describe('GET / with id query', () => {
     it('responds with json', async () => {
         const response: request.Response = await request(app)
-            .get('/?employee_id=1&id=1')
+            .get('/?job_id=1&id=1')
             .set('Accept', 'application/json')
             .expect('Content-Type', /json/);
 
@@ -203,7 +203,7 @@ describe('PUT /:id', () => {
 describe('DELETE /:id', () => {
     it('responds with json', async () => {
         const response: request.Response = await request(app)
-            .delete('/1?employee_id=1')
+            .delete('/1?job_id=1')
             .set('Accept', 'application/json')
             .expect('Content-Type', /json/);
 

@@ -85,15 +85,15 @@ export interface TransactionHistory {
 
 export interface Account {
     account_id: number;
-    employee_id?: number;
     account_name: string;
     account_balance: number;
     date_created: string;
     date_modified: string;
 }
 
-export interface Employee {
+export interface Job {
     id: number;
+    account_id: number;
     name: string;
     hourly_rate: number;
     regular_hours: number;
@@ -152,6 +152,7 @@ export interface Loan {
 }
 
 export interface Payroll {
+    job_name?: string;
     start_date?: string;
     end_date: string;
     net_pay: number;
@@ -163,14 +164,14 @@ export interface Payroll {
 
 export interface PayrollDate {
     id: number;
-    employee_id: number;
+    job_id: number;
     payroll_start_day: number;
     payroll_end_day: number;
 }
 
 export interface PayrollTax {
     id: number;
-    employee_id: number;
+    job_id: number;
     name: string;
     rate: number;
 }
@@ -300,7 +301,7 @@ declare module 'express-serve-static-core' {
         loan_id: number | null | undefined;
         transfer_id: number | null | undefined;
         payroll_date_id: number;
-        employee_id: number;
+        job_id: number;
         payroll_taxes_id: number;
         income_id: number;
         commute_schedule_id: number;
