@@ -36,15 +36,21 @@ describe('generatePayrolls', () => {
         };
         const fromDate: Dayjs = dayjs('2023-07-01');
 
-        generatePayrolls(transactions, skippedTransactions, payroll, fromDate);
+        generatePayrolls(
+            transactions,
+            skippedTransactions,
+            'Testing Inc.',
+            payroll,
+            fromDate,
+        );
 
         // check if transactions array has one new element
         expect(transactions).toHaveLength(1);
         const payrollTransaction: GeneratedTransaction = transactions[0];
 
         // check if the new transaction has correct properties
-        expect(payrollTransaction.title).toBe('Payroll');
-        expect(payrollTransaction.description).toBe('payroll');
+        expect(payrollTransaction.title).toBe('Payroll for Testing Inc.');
+        expect(payrollTransaction.description).toBe('payroll for Testing Inc.');
         expect(payrollTransaction.date).toEqual(dayjs(payroll.end_date));
         expect(payrollTransaction.amount).toBe(payroll.gross_pay);
         expect(payrollTransaction.tax_rate).toBe(
@@ -61,7 +67,13 @@ describe('generatePayrolls', () => {
         };
         const fromDate: Dayjs = dayjs('2023-07-01');
 
-        generatePayrolls(transactions, skippedTransactions, payroll, fromDate);
+        generatePayrolls(
+            transactions,
+            skippedTransactions,
+            'Testing Inc.',
+            payroll,
+            fromDate,
+        );
 
         // check if transactions array is still empty
         expect(transactions).toHaveLength(0);
@@ -75,7 +87,13 @@ describe('generatePayrolls', () => {
         };
         const fromDate: Dayjs = dayjs('2023-07-01');
 
-        generatePayrolls(transactions, skippedTransactions, payroll, fromDate);
+        generatePayrolls(
+            transactions,
+            skippedTransactions,
+            'Testing Inc.',
+            payroll,
+            fromDate,
+        );
 
         // check if transactions array is still empty
         expect(transactions).toHaveLength(0);
@@ -85,8 +103,8 @@ describe('generatePayrolls', () => {
         const payrollTransaction: GeneratedTransaction = skippedTransactions[0];
 
         // check if the new transaction has correct properties
-        expect(payrollTransaction.title).toBe('Payroll');
-        expect(payrollTransaction.description).toBe('payroll');
+        expect(payrollTransaction.title).toBe('Payroll for Testing Inc.');
+        expect(payrollTransaction.description).toBe('payroll for Testing Inc.');
         expect(payrollTransaction.date).toEqual(dayjs(payroll.end_date));
         expect(payrollTransaction.amount).toBe(payroll.gross_pay);
         expect(payrollTransaction.tax_rate).toBe(
@@ -103,7 +121,13 @@ describe('generatePayrolls', () => {
         };
         const fromDate: Dayjs = dayjs('2020-10-01');
 
-        generatePayrolls(transactions, skippedTransactions, payroll, fromDate);
+        generatePayrolls(
+            transactions,
+            skippedTransactions,
+            'Testing Inc.',
+            payroll,
+            fromDate,
+        );
 
         // check if transactions array has no elements
         expect(transactions).toHaveLength(0);

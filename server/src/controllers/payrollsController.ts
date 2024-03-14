@@ -29,26 +29,59 @@ export const getPayrolls = async (
     response: Response,
 ): Promise<void> => {
     try {
-        const { employee_id } = request.query;
+        const { job_id } = request.query;
+        let returnObj: object = {};
 
-        const results = await executeQuery(payrollQueries.getPayrolls, [
-            employee_id,
-        ]);
+        if (!job_id) {
+            // Get all payrolls for all jobs
+            const jobs = await executeQuery(payrollQueries.getJobs, []);
 
-        if (results.length === 0) {
-            response.status(404).send('No payrolls for employee or not found');
-            return;
+            if (jobs.length === 0) {
+                response.status(404).send('No jobs found');
+                return;
+            }
+
+            await Promise.all(
+                jobs.map(async (job) => {
+                    const results = await executeQuery(
+                        payrollQueries.getPayrolls,
+                        [job.job_id],
+                    );
+
+                    returnObj = {
+                        job_id: job.job_id,
+                        job_name: job.job_name,
+                        payrolls: results.map((payroll) =>
+                            payrollsParse(payroll),
+                        ),
+                    };
+                }),
+            );
+        } else {
+            const results = await executeQuery(payrollQueries.getPayrolls, [
+                job_id,
+            ]);
+
+            if (results.length === 0) {
+                response.status(404).send('No payrolls for job or not found');
+                return;
+            }
+
+            // Parse the data to correct format and return an object
+            const payrolls: Payroll[] = results.map((payroll) =>
+                payrollsParse(payroll),
+            );
+
+            const jobResults = await executeQuery(payrollQueries.getJob, [
+                job_id,
+            ]);
+
+            returnObj = {
+                job_id: parseInt(job_id as string),
+                job_name: jobResults[0].job_name,
+                payrolls,
+            };
         }
-
-        // Parse the data to correct format and return an object
-        const payrolls: Payroll[] = results.map((payroll) =>
-            payrollsParse(payroll),
-        );
-
-        const returnObj = {
-            employee_id: parseInt(employee_id as string),
-            payrolls,
-        };
 
         response.status(200).json(returnObj);
     } catch (error) {

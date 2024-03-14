@@ -15,23 +15,23 @@ GRANT USAGE ON SCHEMA cron TO marco;
 
 -- Perform other database initializations as needed
 
-CREATE TABLE employee (
-  employee_id SERIAL PRIMARY KEY,
-  name TEXT NOT NULL,
+-- Create a accounts table in postgres
+CREATE TABLE IF NOT EXISTS accounts (
+  account_id SERIAL PRIMARY KEY,
+  account_name VARCHAR(255) NOT NULL,
+  date_created TIMESTAMP NOT NULL,
+  date_modified TIMESTAMP NOT NULL
+);
+
+CREATE TABLE jobs (
+  job_id SERIAL PRIMARY KEY,
+  account_id INTEGER NOT NULL REFERENCES accounts(account_id),
+  job_name TEXT NOT NULL,
   hourly_rate NUMERIC(6,2) NOT NULL,
   regular_hours NUMERIC(4,2) NOT NULL,
   vacation_days INTEGER NOT NULL DEFAULT 0,
   sick_days INTEGER NOT NULL DEFAULT 0,
   work_schedule BIT(7) NOT NULL
-);
-
--- Create a accounts table in postgres
-CREATE TABLE IF NOT EXISTS accounts (
-  account_id SERIAL PRIMARY KEY,
-  employee_id INTEGER REFERENCES accounts(account_id),
-  account_name VARCHAR(255) NOT NULL,
-  date_created TIMESTAMP NOT NULL,
-  date_modified TIMESTAMP NOT NULL
 );
 
 -- Create a taxes table in postgres
@@ -116,14 +116,14 @@ CREATE TABLE IF NOT EXISTS loans (
 -- Create tables for payroll in postgres.
 CREATE TABLE payroll_dates (
   payroll_date_id SERIAL PRIMARY KEY,
-  employee_id INTEGER NOT NULL REFERENCES employee(employee_id),
+  job_id INTEGER NOT NULL REFERENCES jobs(job_id) ON DELETE CASCADE,
   payroll_start_day INTEGER NOT NULL,
   payroll_end_day INTEGER NOT NULL
 );
 
 CREATE TABLE payroll_taxes (
     payroll_taxes_id SERIAL PRIMARY KEY,
-    employee_id INTEGER NOT NULL REFERENCES employee(employee_id),
+    job_id INTEGER NOT NULL REFERENCES jobs(job_id) ON DELETE CASCADE,
     name TEXT NOT NULL,
     rate NUMERIC(5,2) NOT NULL
 );
@@ -302,7 +302,7 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
-CREATE OR REPLACE FUNCTION process_payroll_for_employee(selected_employee_id integer) RETURNS void AS $$
+CREATE OR REPLACE FUNCTION process_payroll_for_job(selected_job_id integer) RETURNS void AS $$
 DECLARE
     pay_period RECORD;
     cron_expression text;
@@ -313,15 +313,15 @@ BEGIN
         make_date(extract(year from current_date)::integer, extract(month from current_date)::integer, s1.adjusted_payroll_end_day) AS end_date,
         SUM(s.work_days::integer) AS work_days,
         SUM(COALESCE(
-            e.regular_hours * e.hourly_rate * work_days
+            j.regular_hours * j.hourly_rate * work_days
         ))::numeric(20, 2) AS gross_pay,
         SUM(COALESCE(
-            e.regular_hours * e.hourly_rate * (1 - COALESCE(pt.rate, 0)) * work_days
+            j.regular_hours * j.hourly_rate * (1 - COALESCE(pt.rate, 0)) * work_days
         ))::numeric(20, 2) AS net_pay,
       SUM(COALESCE(
-            e.regular_hours * work_days
+            j.regular_hours * work_days
         ))::numeric(20, 2) AS hours_worked
-        FROM employee e
+        FROM jobs j
       CROSS JOIN LATERAL (
       SELECT
         payroll_start_day,
@@ -358,24 +358,24 @@ BEGIN
             THEN 1 
             ELSE 0 
           END) AS work_days
-        FROM employee e
+        FROM jobs j
       ) s
       LEFT JOIN (
-        SELECT employee_id, SUM(rate) AS rate
+        SELECT job_id, SUM(rate) AS rate
         FROM payroll_taxes
-        GROUP BY employee_id
-      ) pt ON e.employee_id = pt.employee_id
-      WHERE e.employee_id = selected_employee_id AND work_days <> 0
-      GROUP BY s2.payroll_start_day, e.employee_id, e.employee_id, s.work_days, s1.adjusted_payroll_end_day
+        GROUP BY job_id
+      ) pt ON j.job_id = pt.job_id
+      WHERE j.job_id = selected_job_id AND work_days <> 0
+      GROUP BY s2.payroll_start_day, j.job_id, j.job_id, s.work_days, s1.adjusted_payroll_end_day
       ORDER BY start_date, end_date
     LOOP
         cron_expression := '0 0 ' || EXTRACT(DAY FROM pay_period.end_date) || ' ' || EXTRACT(MONTH FROM pay_period.end_date) || ' *';
 
-        inner_sql := format('INSERT INTO transaction_history (account_id, transaction_amount, transaction_tax_rate, transaction_title, transaction_description, date_created, date_modified) VALUES ((SELECT account_id FROM accounts WHERE employee_id = %L), %L, %L, ''Payroll'', ''Payroll for %s to %s'', current_timestamp, current_timestamp)',
-                    selected_employee_id, pay_period.net_pay, (pay_period.gross_pay - pay_period.net_pay) / pay_period.gross_pay, pay_period.start_date, pay_period.end_date);
+        inner_sql := format('INSERT INTO transaction_history (account_id, transaction_amount, transaction_tax_rate, transaction_title, transaction_description, date_created, date_modified) VALUES ((SELECT account_id FROM accounts WHERE job_id = %L), %L, %L, ''Payroll'', ''Payroll for %s to %s'', current_timestamp, current_timestamp)',
+                    selected_job_id, pay_period.net_pay, (pay_period.gross_pay - pay_period.net_pay) / pay_period.gross_pay, pay_period.start_date, pay_period.end_date);
 
         EXECUTE format('SELECT cron.schedule(%L, %L, %L)',
-            'payroll-' || selected_employee_id || '-' || pay_period.start_date || '-' || pay_period.end_date,
+            'payroll-' || selected_job_id || '-' || pay_period.start_date || '-' || pay_period.end_date,
             cron_expression,
             inner_sql);
     END LOOP;

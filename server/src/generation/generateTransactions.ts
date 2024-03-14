@@ -50,7 +50,7 @@ const generate = async (
     response: Response,
     next: NextFunction,
     account_id: number,
-    employee_id: number,
+    job_id: number,
     transactions: GeneratedTransaction[],
     skippedTransactions: GeneratedTransaction[],
     currentBalance: any,
@@ -160,15 +160,18 @@ const generate = async (
         });
 
     request.payrolls
-        .filter((pyrl) => pyrl.employee_id === employee_id)
-        .forEach((employee) => {
-            employee.payroll.forEach((payroll: Payroll) => {
-                generatePayrollTransactions(
-                    transactions,
-                    skippedTransactions,
-                    payroll,
-                    fromDate,
-                );
+        .filter((pyrl) => pyrl.account_id === account_id)
+        .forEach((account) => {
+            account.jobs.forEach((job: any) => {
+                job.payrolls.forEach((payroll: Payroll) => {
+                    generatePayrollTransactions(
+                        transactions,
+                        skippedTransactions,
+                        job.job_name,
+                        payroll,
+                        fromDate,
+                    );
+                });
             });
         });
 

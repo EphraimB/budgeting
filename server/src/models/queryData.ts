@@ -46,24 +46,25 @@ interface PayrollQueries {
     getPayrollsMiddleware: string;
     getAllPayrollTaxes: string;
     getPayrollTaxesById: string;
-    getPayrollTaxesByEmployeeId: string;
-    getPayrollTaxesByIdAndEmployeeId: string;
+    getPayrollTaxesByJobId: string;
+    getPayrollTaxesByIdAndJobId: string;
     createPayrollTax: string;
     updatePayrollTax: string;
     deletePayrollTax: string;
     getAllPayrollDates: string;
     getPayrollDatesById: string;
-    getPayrollDatesByEmployeeId: string;
-    getPayrollDatesByIdAndEmployeeId: string;
+    getPayrollDatesByJobId: string;
+    getPayrollDatesByIdAndJobId: string;
     createPayrollDate: string;
     updatePayrollDate: string;
     deletePayrollDate: string;
-    getEmployees: string;
-    getEmployee: string;
-    getAccountIdFromEmployee: string;
-    createEmployee: string;
-    updateEmployee: string;
-    deleteEmployee: string;
+    getJobsByAccountId: string;
+    getJobs: string;
+    getJob: string;
+    getAccountIdFromJobs: string;
+    createJob: string;
+    updateJob: string;
+    deleteJob: string;
 }
 
 interface WishlistQueries {
@@ -106,7 +107,6 @@ export const accountQueries: AccountQueries = {
     getAccounts: `
             SELECT 
             accounts.account_id,
-            accounts.employee_id,
             accounts.account_name,
             COALESCE(t.total_transaction_amount_after_tax, 0) AS account_balance,
             accounts.date_created, 
@@ -127,7 +127,6 @@ export const accountQueries: AccountQueries = {
     getAccount: `
             SELECT 
             accounts.account_id,
-            accounts.employee_id,
             accounts.account_name,
             COALESCE(t.total_transaction_amount_after_tax, 0) AS account_balance,
             accounts.date_created, 
@@ -213,15 +212,15 @@ export const payrollQueries: PayrollQueries = {
         make_date(extract(year from current_date)::integer, extract(month from current_date)::integer, s1.adjusted_payroll_end_day) AS end_date,
         SUM(s.work_days::integer) AS work_days,
         SUM(COALESCE(
-            e.regular_hours * e.hourly_rate * work_days
+            j.regular_hours * j.hourly_rate * work_days
         ))::numeric(20, 2) AS gross_pay,
         SUM(COALESCE(
-            e.regular_hours * e.hourly_rate * (1 - COALESCE(pt.rate, 0)) * work_days
+            j.regular_hours * j.hourly_rate * (1 - COALESCE(pt.rate, 0)) * work_days
         ))::numeric(20, 2) AS net_pay,
       SUM(COALESCE(
-            e.regular_hours * work_days
+            j.regular_hours * work_days
         ))::numeric(20, 2) AS hours_worked
-        FROM employee e
+        FROM jobs j
       CROSS JOIN LATERAL (
       SELECT
         payroll_start_day,
@@ -258,15 +257,15 @@ export const payrollQueries: PayrollQueries = {
             THEN 1 
             ELSE 0 
           END) AS work_days
-        FROM employee e
+        FROM jobs j
       ) s
       LEFT JOIN (
-        SELECT employee_id, SUM(rate) AS rate
+        SELECT job_id, SUM(rate) AS rate
         FROM payroll_taxes
-        GROUP BY employee_id
-      ) pt ON e.employee_id = pt.employee_id
-      WHERE e.employee_id = $1 AND work_days <> 0
-      GROUP BY s2.payroll_start_day, e.employee_id, e.employee_id, s.work_days, s1.adjusted_payroll_end_day
+        GROUP BY job_id
+      ) pt ON j.job_id = pt.job_id
+      WHERE j.job_id = $1 AND work_days <> 0
+      GROUP BY s2.payroll_start_day, j.job_id, j.job_id, s.work_days, s1.adjusted_payroll_end_day
       ORDER BY start_date, end_date
    `,
     getPayrollsMiddleware: `
@@ -274,15 +273,15 @@ export const payrollQueries: PayrollQueries = {
         make_date(extract(year from d1)::integer, extract(month from d1)::integer, s1.adjusted_payroll_end_day) AS end_date,
         SUM(s.work_days::integer) AS work_days,
         SUM(COALESCE(
-            e.regular_hours * e.hourly_rate * work_days
+            j.regular_hours * j.hourly_rate * work_days
         ))::numeric(20, 2) AS gross_pay,
         SUM(COALESCE(
-            e.regular_hours * e.hourly_rate * (1 - COALESCE(pt.rate, 0)) * work_days
+            j.regular_hours * j.hourly_rate * (1 - COALESCE(pt.rate, 0)) * work_days
         ))::numeric(20, 2) AS net_pay,
       SUM(COALESCE(
-            e.regular_hours * work_days
+            j.regular_hours * work_days
         ))::numeric(20, 2) AS hours_worked
-        FROM employee e
+        FROM jobs j
       CROSS JOIN LATERAL generate_series(
           current_date, 
           $2::date + INTERVAL '1 month',
@@ -324,50 +323,48 @@ export const payrollQueries: PayrollQueries = {
             THEN 1 
             ELSE 0 
           END) AS work_days
-        FROM employee e
+        FROM jobs j
       ) s
       LEFT JOIN (
-        SELECT employee_id, SUM(rate) AS rate
+        SELECT job_id, SUM(rate) AS rate
         FROM payroll_taxes
-        GROUP BY employee_id
-      ) pt ON e.employee_id = pt.employee_id
-      WHERE e.employee_id = $1 AND work_days <> 0 AND make_date(extract(year from d1)::integer, extract(month from d1)::integer, s1.adjusted_payroll_end_day) >= CURRENT_DATE AND make_date(extract(year from d1)::integer, extract(month from d1)::integer, s1.adjusted_payroll_end_day) <= $2::date
-      GROUP BY d1, s2.payroll_start_day, e.employee_id, e.employee_id, s.work_days, s1.adjusted_payroll_end_day
+        GROUP BY job_id
+      ) pt ON j.job_id = pt.job_id
+      WHERE j.job_id = $1 AND work_days <> 0 AND make_date(extract(year from d1)::integer, extract(month from d1)::integer, s1.adjusted_payroll_end_day) >= CURRENT_DATE AND make_date(extract(year from d1)::integer, extract(month from d1)::integer, s1.adjusted_payroll_end_day) <= $2::date
+      GROUP BY d1, s2.payroll_start_day, j.job_id, j.job_id, s.work_days, s1.adjusted_payroll_end_day
       ORDER BY start_date, end_date
    `,
     getAllPayrollTaxes: 'SELECT * FROM payroll_taxes',
     getPayrollTaxesById:
         'SELECT * FROM payroll_taxes WHERE payroll_taxes_id = $1',
-    getPayrollTaxesByEmployeeId:
-        'SELECT * FROM payroll_taxes WHERE employee_id = $1',
-    getPayrollTaxesByIdAndEmployeeId:
-        'SELECT * FROM payroll_taxes WHERE payroll_taxes_id = $1 AND employee_id = $2',
+    getPayrollTaxesByJobId: 'SELECT * FROM payroll_taxes WHERE job_id = $1',
+    getPayrollTaxesByIdAndJobId:
+        'SELECT * FROM payroll_taxes WHERE payroll_taxes_id = $1 AND job_id = $2',
     createPayrollTax:
-        'INSERT INTO payroll_taxes (employee_id, name, rate) VALUES ($1, $2, $3) RETURNING *',
+        'INSERT INTO payroll_taxes (job_id, name, rate) VALUES ($1, $2, $3) RETURNING *',
     updatePayrollTax:
         'UPDATE payroll_taxes SET name = $1, rate = $2 WHERE payroll_taxes_id = $3 RETURNING *',
     deletePayrollTax: 'DELETE FROM payroll_taxes WHERE payroll_taxes_id = $1',
     getAllPayrollDates: 'SELECT * FROM payroll_dates',
     getPayrollDatesById:
         'SELECT * FROM payroll_dates WHERE payroll_date_id = $1',
-    getPayrollDatesByEmployeeId:
-        'SELECT * FROM payroll_dates WHERE employee_id = $1',
-    getPayrollDatesByIdAndEmployeeId:
-        'SELECT * FROM payroll_dates WHERE payroll_date_id = $1 AND employee_id = $2',
+    getPayrollDatesByJobId: 'SELECT * FROM payroll_dates WHERE job_id = $1',
+    getPayrollDatesByIdAndJobId:
+        'SELECT * FROM payroll_dates WHERE payroll_date_id = $1 AND job_id = $2',
     createPayrollDate:
-        'INSERT INTO payroll_dates (employee_id, payroll_start_day, payroll_end_day) VALUES ($1, $2, $3) RETURNING *',
+        'INSERT INTO payroll_dates (job_id, payroll_start_day, payroll_end_day) VALUES ($1, $2, $3) RETURNING *',
     updatePayrollDate:
         'UPDATE payroll_dates SET payroll_start_day = $1, payroll_end_day = $2 WHERE payroll_date_id = $3 RETURNING *',
     deletePayrollDate: 'DELETE FROM payroll_dates WHERE payroll_date_id = $1',
-    getEmployees: 'SELECT * FROM employee',
-    getEmployee: 'SELECT * FROM employee WHERE employee_id = $1',
-    getAccountIdFromEmployee:
-        'SELECT account_id FROM accounts WHERE employee_id = $1',
-    createEmployee:
-        'INSERT INTO employee (name, hourly_rate, regular_hours, vacation_days, sick_days, work_schedule) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *',
-    updateEmployee:
-        'UPDATE employee SET name = $1, hourly_rate = $2, regular_hours = $3, vacation_days = $4, sick_days = $5, work_schedule = $6 WHERE employee_id = $7 RETURNING *',
-    deleteEmployee: 'DELETE FROM employee WHERE employee_id = $1',
+    getJobsByAccountId: 'SELECT * FROM jobs WHERE account_id = $1',
+    getJobs: 'SELECT * FROM jobs',
+    getJob: 'SELECT * FROM jobs WHERE job_id = $1',
+    getAccountIdFromJobs: 'SELECT account_id FROM accounts WHERE job_id = $1',
+    createJob:
+        'INSERT INTO jobs (account_id, job_name, hourly_rate, regular_hours, vacation_days, sick_days, work_schedule) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *',
+    updateJob:
+        'UPDATE jobs SET account_id = $1, job_name = $2, hourly_rate = $3, regular_hours = $4, vacation_days = $5, sick_days = $6, work_schedule = $7 WHERE job_id = $8 RETURNING *',
+    deleteJob: 'DELETE FROM jobs WHERE job_id = $1',
 };
 
 export const wishlistQueries: WishlistQueries = {
