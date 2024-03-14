@@ -39,6 +39,7 @@ afterEach(() => {
 const jobs: any[] = [
     {
         job_id: 1,
+        account_id: 1,
         name: 'Test Job',
         hourly_rate: 10,
         regular_hours: 40,
@@ -168,7 +169,7 @@ describe('GET /api/jobs', () => {
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(400);
         expect(mockResponse.json).toHaveBeenCalledWith({
-            message: 'Error getting jobs',
+            message: 'Error getting job',
         });
     });
 
@@ -225,7 +226,7 @@ describe('POST /api/jobs', () => {
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(400);
         expect(mockResponse.json).toHaveBeenCalledWith({
-            message: 'Error creating Job',
+            message: 'Error creating job',
         });
     });
 });

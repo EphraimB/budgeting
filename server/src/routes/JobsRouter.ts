@@ -6,7 +6,7 @@ import {
     updateJob,
     updateJobReturnObject,
     deleteJob,
-} from '../controllers/JobsController.js';
+} from '../controllers/jobsController.js';
 import validateRequest from '../utils/validateRequest.js';
 import generateTransactions from '../generation/generateTransactions.js';
 import {
