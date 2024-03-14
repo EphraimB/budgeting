@@ -30,7 +30,9 @@ async function Jobs({
         <Typography variant="h6">You have no jobs</Typography>
       ) : (
         <>
-          <Typography variant="h6">You have {jobs.length} jobs</Typography>
+          <Typography variant="h6">
+            You have {jobs.length} job{jobs.length === 1 ? "" : "s"}
+          </Typography>
 
           <JobCards jobs={jobs} />
         </>
