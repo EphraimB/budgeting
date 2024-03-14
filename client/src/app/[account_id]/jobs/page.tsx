@@ -4,7 +4,7 @@ import { Job } from "@/app/types/types";
 import JobCards from "../../../../components/JobCards";
 
 async function getJobs() {
-  const res = await fetch("http://server:5001/api/payroll/jobs");
+  const res = await fetch("http://server:5001/api/jobs");
 
   if (!res.ok) {
     throw new Error("Failed to fetch jobs");
