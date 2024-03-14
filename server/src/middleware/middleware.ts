@@ -615,7 +615,7 @@ export const getPayrollsMiddleware = async (
         next();
     } catch (error) {
         logger.error(error);
-        response.status(500).send('Error getting payrolls');
+        handleError(response, 'Error getting payrolls');
     }
 };
 
