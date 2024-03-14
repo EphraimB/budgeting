@@ -58,7 +58,7 @@ describe('GET /api/payrolls', () => {
         // Arrange
         mockModule([payrolls]);
 
-        mockRequest.query = { employee_id: 1 };
+        mockRequest.query = { job_id: 1 };
 
         const { getPayrolls } = await import(
             '../../src/controllers/payrollsController.js'
@@ -68,7 +68,8 @@ describe('GET /api/payrolls', () => {
         await getPayrolls(mockRequest as Request, mockResponse);
 
         const expectedPayrolls = {
-            employee_id: 1,
+            job_id: 1,
+            job_name: 'Test Job',
             payrolls,
         };
 
@@ -113,8 +114,6 @@ describe('GET /api/payrolls', () => {
 
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(404);
-        expect(mockResponse.send).toHaveBeenCalledWith(
-            'No payrolls for employee or not found',
-        );
+        expect(mockResponse.send).toHaveBeenCalledWith('No jobs found');
     });
 });
