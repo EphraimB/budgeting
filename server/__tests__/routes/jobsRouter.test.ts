@@ -22,14 +22,14 @@ const createApp = async () => {
     app.use(express.json());
 
     // Import the module that uses the mock
-    const routerModule = await import('../../src/routes/payrollEmployeeRouter');
-    const payrollEmployeeRouter: Router = routerModule.default;
-    app.use('/', payrollEmployeeRouter);
+    const routerModule = await import('../../src/routes/jobsRouter');
+    const jobsRouter: Router = routerModule.default;
+    app.use('/', jobsRouter);
 
     return app;
 };
 
-const newPayrollEmployee = {
+const newJob = {
     name: 'test',
     hourly_rate: 10,
     regular_hours: 40,
@@ -104,27 +104,24 @@ beforeAll(() => {
         });
     });
 
-    jest.mock('../../src/controllers/employeesController', () => ({
-        getEmployee: jest.fn(
-            (req: Request, res: Response, next: NextFunction) =>
-                res.json({ message: 'success' }),
+    jest.mock('../../src/controllers/jobsController', () => ({
+        getJobs: jest.fn((req: Request, res: Response, next: NextFunction) =>
+            res.json({ message: 'success' }),
         ),
-        createEmployee: jest.fn(
-            (req: Request, res: Response, next: NextFunction) =>
-                res.json({ message: 'success' }),
+        createJob: jest.fn((req: Request, res: Response, next: NextFunction) =>
+            res.json({ message: 'success' }),
         ),
-        updateEmployee: jest.fn(
+        updateJob: jest.fn(
             (req: Request, res: Response, next: NextFunction) => {
                 next();
             },
         ),
-        updateEmployeeReturnObject: jest.fn(
+        updateJobReturnObject: jest.fn(
             (req: Request, res: Response, next: NextFunction) =>
                 res.json({ message: 'success' }),
         ),
-        deleteEmployee: jest.fn(
-            (req: Request, res: Response, next: NextFunction) =>
-                res.json({ message: 'success' }),
+        deleteJob: jest.fn((req: Request, res: Response, next: NextFunction) =>
+            res.json({ message: 'success' }),
         ),
     }));
 });
@@ -155,7 +152,7 @@ describe('GET /', () => {
 describe('GET / with id query', () => {
     it('responds with json', async () => {
         const response: request.Response = await request(app)
-            .get('/?employee_id=1')
+            .get('/?job_id=1')
             .set('Accept', 'application/json')
             .expect('Content-Type', /json/);
 
@@ -170,7 +167,7 @@ describe('POST /', () => {
             .post('/')
             .set('Accept', 'application/json')
             .expect('Content-Type', /json/)
-            .send(newPayrollEmployee);
+            .send(newJob);
 
         expect(response.status).toBe(200);
         expect(response.body).toEqual({ message: 'success' });
@@ -183,7 +180,7 @@ describe('PUT /:id', () => {
             .put('/1')
             .set('Accept', 'application/json')
             .expect('Content-Type', /json/)
-            .send(newPayrollEmployee);
+            .send(newJob);
 
         expect(response.status).toBe(200);
         expect(response.body).toEqual({ message: 'success' });

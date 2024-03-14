@@ -21,7 +21,7 @@ import loansRouter from './routes/loansRouter.js';
 import payrollRouter from './routes/payrollRouter.js';
 import payrollDatesRouter from './routes/payrollDatesRouter.js';
 import payrollTaxesRouter from './routes/payrollTaxesRouter.js';
-import jobsRouter from './routes/JobsRouter.js';
+import jobsRouter from './routes/jobsRouter.js';
 import wishlistRouter from './routes/wishlistRouter.js';
 import transferRouter from './routes/transfersRouter.js';
 import transactionsRouter from './routes/transactionsRouter.js';
