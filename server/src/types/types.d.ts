@@ -91,15 +91,20 @@ export interface Account {
     date_modified: string;
 }
 
+interface WorkSchedule {
+    day_of_week: number;
+    start_time: string;
+    end_time: string;
+}
+
 export interface Job {
     id: number;
     account_id: number;
     name: string;
     hourly_rate: number;
-    regular_hours: number;
     vacation_days: number;
     sick_days: number;
-    work_schedule: string;
+    work_schedule: WorkSchedule;
 }
 
 export interface Expense {

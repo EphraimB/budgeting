@@ -14,10 +14,9 @@ const jobsParse = (jobs: Record<string, string>): Job => ({
     account_id: parseInt(jobs.account_id),
     name: jobs.job_name,
     hourly_rate: parseFloat(jobs.hourly_rate),
-    regular_hours: parseInt(jobs.regular_hours),
     vacation_days: parseInt(jobs.vacation_days),
     sick_days: parseInt(jobs.sick_days),
-    work_schedule: jobs.work_schedule,
+    work_schedule: JSON.parse(jobs.work_schedule),
 });
 
 /**
@@ -70,7 +69,6 @@ export const createJob = async (
             account_id,
             name,
             hourly_rate,
-            regular_hours,
             vacation_days,
             sick_days,
             work_schedule,
@@ -80,7 +78,6 @@ export const createJob = async (
             account_id,
             name,
             hourly_rate,
-            regular_hours,
             vacation_days,
             sick_days,
             work_schedule,

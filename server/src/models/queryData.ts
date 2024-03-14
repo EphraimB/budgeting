@@ -361,9 +361,9 @@ export const payrollQueries: PayrollQueries = {
     getJob: 'SELECT * FROM jobs WHERE job_id = $1',
     getAccountIdFromJobs: 'SELECT account_id FROM accounts WHERE job_id = $1',
     createJob:
-        'INSERT INTO jobs (account_id, job_name, hourly_rate, regular_hours, vacation_days, sick_days, work_schedule) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *',
+        'INSERT INTO jobs (account_id, job_name, hourly_rate, vacation_days, sick_days, work_schedule) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *',
     updateJob:
-        'UPDATE jobs SET account_id = $1, job_name = $2, hourly_rate = $3, regular_hours = $4, vacation_days = $5, sick_days = $6, work_schedule = $7 WHERE job_id = $8 RETURNING *',
+        'UPDATE jobs SET account_id = $1, job_name = $2, hourly_rate = $3, vacation_days = $4, sick_days = $5, work_schedule = $6 WHERE job_id = $7 RETURNING *',
     deleteJob: 'DELETE FROM jobs WHERE job_id = $1',
 };
 
