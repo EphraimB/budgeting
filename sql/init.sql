@@ -30,7 +30,7 @@ CREATE TABLE IF NOT EXISTS jobs (
   job_name TEXT NOT NULL,
   hourly_rate NUMERIC(6,2) NOT NULL,
   vacation_days INTEGER NOT NULL DEFAULT 0,
-  sick_days INTEGER NOT NULL DEFAULT 0,
+  sick_days INTEGER NOT NULL DEFAULT 0
 );
 
 -- Create a work_schedule table in postgres
