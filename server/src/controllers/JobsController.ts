@@ -67,6 +67,7 @@ export const createJob = async (
 ): Promise<void> => {
     try {
         const {
+            account_id,
             name,
             hourly_rate,
             regular_hours,
@@ -76,6 +77,7 @@ export const createJob = async (
         } = request.body;
 
         const results = await executeQuery(payrollQueries.createJob, [
+            account_id,
             name,
             hourly_rate,
             regular_hours,

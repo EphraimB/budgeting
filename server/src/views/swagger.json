@@ -2454,6 +2454,11 @@
             "PayrollEmployeeManipulation": {
                 "type": "object",
                 "properties": {
+                    "account_id": {
+                        "type": "integer",
+                        "format": "int64",
+                        "minimum": 1
+                    },
                     "name": {
                         "type": "string",
                         "example": "John Doe"
@@ -3563,6 +3568,11 @@
                             "type": "object",
                             "properties": {
                                 "job_id": {
+                                    "type": "integer",
+                                    "format": "int64",
+                                    "minimum": 1
+                                },
+                                "account_id": {
                                     "type": "integer",
                                     "format": "int64",
                                     "minimum": 1
