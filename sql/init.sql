@@ -23,16 +23,6 @@ CREATE TABLE IF NOT EXISTS accounts (
   date_modified TIMESTAMP NOT NULL
 );
 
--- Create a work_schedule table in postgres
-CREATE TABLE IF NOT EXISTS job_schedule (
-  job_schedule_id SERIAL PRIMARY KEY,
-  job_id INTEGER NOT NULL REFERENCES jobs(job_id) ON DELETE CASCADE,
-  day_of_week INTEGER NOT NULL,
-  start_time TIME NOT NULL,
-  end_time TIME NOT NULL,
-  UNIQUE(day_of_week, start_time)
-);
-
 -- Create a jobs table in postgres
 CREATE TABLE IF NOT EXISTS jobs (
   job_id SERIAL PRIMARY KEY,
@@ -41,6 +31,16 @@ CREATE TABLE IF NOT EXISTS jobs (
   hourly_rate NUMERIC(6,2) NOT NULL,
   vacation_days INTEGER NOT NULL DEFAULT 0,
   sick_days INTEGER NOT NULL DEFAULT 0,
+);
+
+-- Create a work_schedule table in postgres
+CREATE TABLE IF NOT EXISTS job_schedule (
+  job_schedule_id SERIAL PRIMARY KEY,
+  job_id INTEGER NOT NULL REFERENCES jobs(job_id) ON DELETE CASCADE,
+  day_of_week INTEGER NOT NULL,
+  start_time TIME NOT NULL,
+  end_time TIME NOT NULL,
+  UNIQUE(day_of_week, start_time)
 );
 
 -- Create a taxes table in postgres
