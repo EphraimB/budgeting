@@ -30,6 +30,7 @@ const createApp = async () => {
 };
 
 const newJob = {
+    account_id: 1,
     name: 'test',
     hourly_rate: 10,
     regular_hours: 40,
