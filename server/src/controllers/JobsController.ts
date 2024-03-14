@@ -111,6 +111,7 @@ export const updateJob = async (
     try {
         const job_id = parseInt(request.params.job_id);
         const {
+            account_id,
             name,
             hourly_rate,
             regular_hours,
@@ -120,6 +121,7 @@ export const updateJob = async (
         } = request.body;
 
         const results = await executeQuery(payrollQueries.updateJob, [
+            account_id,
             name,
             hourly_rate,
             regular_hours,

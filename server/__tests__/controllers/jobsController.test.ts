@@ -234,7 +234,7 @@ describe('POST /api/jobs', () => {
 describe('PUT /api/jobs/:id', () => {
     it('should call next on middleware', async () => {
         // Arrange
-        mockModule([jobs]);
+        mockModule([jobResponse]);
 
         mockRequest.params = { id: 1 };
         mockRequest.body = jobs;
