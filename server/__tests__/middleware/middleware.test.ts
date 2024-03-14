@@ -108,7 +108,7 @@ const loans: any[] = [
 const payrolls: any[] = [
     {
         payroll_id: 1,
-        employee_id: 1,
+        job_id: 1,
         account_id: 1,
         tax_id: 1,
         payroll_amount: 100,
@@ -484,7 +484,7 @@ describe('getPayrollsMiddleware', () => {
     it('gets payrolls for a given account and date', async () => {
         mockModule([
             [{ account_id: 1 }],
-            [{ account_id: 1, employee_id: 1 }],
+            [{ job_id: 1, job_name: 'Testing Inc.' }],
             payrolls,
         ]);
 
@@ -497,11 +497,17 @@ describe('getPayrollsMiddleware', () => {
         await getPayrollsMiddleware(mockRequest, mockResponse, mockNext);
 
         const returnPayrolls = {
-            employee_id: 1,
-            payroll: payrolls.map((payroll) => ({
-                ...payroll,
-                net_pay: payroll.net_pay,
-            })),
+            account_id: 1,
+            jobs: [
+                {
+                    job_id: 1,
+                    job_name: 'Testing Inc.',
+                    payrolls: payrolls.map((payroll) => ({
+                        ...payroll,
+                        net_pay: payroll.net_pay,
+                    })),
+                },
+            ],
         };
 
         expect(mockRequest.payrolls).toEqual([returnPayrolls]);
@@ -545,7 +551,7 @@ describe('getPayrollsMiddleware', () => {
     });
 
     it('should fetch all accounts if account_id is not provided', async () => {
-        mockModule([[{ account_id: 1, employee_id: 1 }], payrolls]);
+        mockModule([[{ account_id: 1, job_id: 1 }], payrolls]);
 
         const { getPayrollsMiddleware } = await import(
             '../../src/middleware/middleware.js'
@@ -557,7 +563,8 @@ describe('getPayrollsMiddleware', () => {
 
         const returnPayrolls = [
             {
-                employee_id: 1,
+                job_id: 1,
+                job_name: 'Testing Inc.',
                 payroll: payrolls.map((payroll) => ({
                     ...payroll,
                     net_pay: payroll.net_pay,
