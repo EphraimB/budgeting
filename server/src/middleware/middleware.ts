@@ -559,7 +559,7 @@ export const getPayrollsMiddleware = async (
                     );
 
                     const returnObj = {
-                        account_id: parseInt(account_id as string),
+                        account_id: parseInt(account.account_id as string),
                         jobs: jobsPayrolls,
                     };
 
