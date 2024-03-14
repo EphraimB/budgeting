@@ -58,13 +58,13 @@ router.post(
         body('sick_days')
             .isFloat({ min: 0 })
             .withMessage('Sick days must be a number'),
-        body('work_schedule')
+        body('job_schedule')
             .isArray()
             .withMessage('Work schedule must be an array'),
-        body('work_schedule.*.day_of_week')
+        body('job_schedule.*.day_of_week')
             .isInt({ min: 0, max: 6 })
             .withMessage('Day of week must be a number'),
-        body('work_schedule.*.start_time')
+        body('job_schedule.*.start_time')
             .isString()
             .withMessage('Start time must be a string')
             .matches(/^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$/)
@@ -95,7 +95,7 @@ router.post(
                 return true;
             }),
 
-        body('work_schedule.*.end_time')
+        body('job_schedule.*.end_time')
             .isString()
             .withMessage('End time must be a string')
             .matches(/^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$/)
@@ -136,13 +136,13 @@ router.put(
         body('sick_days')
             .isFloat({ min: 0 })
             .withMessage('Sick days must be a number'),
-        body('work_schedule')
+        body('job_schedule')
             .isArray()
             .withMessage('Work schedule must be an array'),
-        body('work_schedule.*.day_of_week')
+        body('job_schedule.*.day_of_week')
             .isInt({ min: 0, max: 6 })
             .withMessage('Day of week must be a number'),
-        body('work_schedule.*.start_time')
+        body('job_schedule.*.start_time')
             .isString()
             .withMessage('Start time must be a string')
             .matches(/^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$/)
@@ -173,7 +173,7 @@ router.put(
                 return true;
             }),
 
-        body('work_schedule.*.end_time')
+        body('job_schedule.*.end_time')
             .isString()
             .withMessage('End time must be a string')
             .matches(/^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$/)

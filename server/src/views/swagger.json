@@ -2476,7 +2476,7 @@
                         "type": "integer",
                         "example": 10
                     },
-                    "work_schedule": {
+                    "job_schedule": {
                         "type": "array",
                         "items": {
                             "type": "object",
@@ -3605,7 +3605,7 @@
                                     "type": "integer",
                                     "example": 5
                                 },
-                                "work_schedule": {
+                                "job_schedule": {
                                     "type": "array",
                                     "items": {
                                         "type": "object",

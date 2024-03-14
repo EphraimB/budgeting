@@ -23,15 +23,21 @@ CREATE TABLE IF NOT EXISTS accounts (
   date_modified TIMESTAMP NOT NULL
 );
 
-CREATE TABLE jobs (
+CREATE TABLE IF NOT EXISTS job_schedule {
+  job_schedule_id SERIAL PRIMARY KEY,
+  day_of_week INTEGER NOT NULL,
+  start_time TIME NOT NULL,
+  end_time TIME NOT NULL,
+}
+
+CREATE TABLE IF NOT EXISTS jobs (
   job_id SERIAL PRIMARY KEY,
   account_id INTEGER NOT NULL REFERENCES accounts(account_id),
   job_name TEXT NOT NULL,
   hourly_rate NUMERIC(6,2) NOT NULL,
-  regular_hours NUMERIC(4,2) NOT NULL,
   vacation_days INTEGER NOT NULL DEFAULT 0,
   sick_days INTEGER NOT NULL DEFAULT 0,
-  work_schedule BIT(7) NOT NULL
+  job_schedule_id INTEGER NOT NULL REFERENCES job_schedule(job_schedule_id),
 );
 
 -- Create a taxes table in postgres
