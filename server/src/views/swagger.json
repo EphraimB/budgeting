@@ -2461,7 +2461,7 @@
                     },
                     "name": {
                         "type": "string",
-                        "example": "John Doe"
+                        "example": "Testing Inc."
                     },
                     "hourly_rate": {
                         "type": "number",
@@ -3590,7 +3590,7 @@
                                 },
                                 "name": {
                                     "type": "string",
-                                    "example": "Job test"
+                                    "example": "Testing Inc."
                                 },
                                 "hourly_rate": {
                                     "type": "number",
