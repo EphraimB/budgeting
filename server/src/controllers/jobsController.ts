@@ -116,6 +116,8 @@ export const createJob = async (
             })),
         };
 
+        await executeQuery('SELECT process_payroll_for_job($1)', [jobId]);
+
         // Parse the data to correct format and return an object
         const jobs = jobsParse(responseObject);
 
@@ -166,7 +168,7 @@ export const updateJob = async (
             return;
         }
 
-        await executeQuery('SELECT process_payroll_for_job($1)', [1]);
+        await executeQuery('SELECT process_payroll_for_job($1)', [job_id]);
 
         // Parse the data to correct format and return an object
         const jobs: Job[] = results.map((job) => jobsParse(job));
@@ -246,7 +248,7 @@ export const deleteJob = async (
 
         await executeQuery(payrollQueries.deleteJob, [job_id]);
 
-        await executeQuery('SELECT process_payroll_for_job($1)', [1]);
+        await executeQuery('SELECT process_payroll_for_job($1)', [job_id]);
 
         response.status(200).send('Successfully deleted job');
     } catch (error) {
