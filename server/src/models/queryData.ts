@@ -61,6 +61,9 @@ interface PayrollQueries {
     getJobsByAccountId: string;
     getJobs: string;
     getJob: string;
+    getJobScheduleByJobId: string;
+    getJobsWithSchedulesByJobId: string;
+    getAllJobsWithSchedules: string;
     getAccountIdFromJobs: string;
     createJob: string;
     updateJob: string;
@@ -362,6 +365,53 @@ export const payrollQueries: PayrollQueries = {
         SELECT * FROM jobs
     `,
     getJob: 'SELECT * FROM jobs WHERE job_id = $1',
+    getJobScheduleByJobId: 'SELECT * FROM job_schedule WHERE job_id = $1',
+    getJobsWithSchedulesByJobId: `
+        SELECT
+            j.job_id AS "job_id",
+            j.account_id AS "account_id",
+            j.job_name AS "name",
+            j.hourly_rate AS "hourly_rate",
+            j.vacation_days AS "vacation_days",
+            j.sick_days AS "sick_days",
+            json_agg(
+                json_build_object(
+                    'day_of_week', js.day_of_week,
+                    'start_time', js.start_time,
+                    'end_time', js.end_time
+                )
+            ) AS job_schedule
+        FROM
+            jobs j
+        JOIN
+            job_schedule js ON j.job_id = js.job_id
+        WHERE
+            j.job_id = $1
+        GROUP BY
+            j.job_id;
+    `,
+    getAllJobsWithSchedules: `
+        SELECT
+            j.job_id AS "job_id",
+            j.account_id AS "account_id",
+            j.job_name AS "name",
+            j.hourly_rate AS "hourly_rate",
+            j.vacation_days AS "vacation_days",
+            j.sick_days AS "sick_days",
+            json_agg(
+                json_build_object(
+                    'day_of_week', js.day_of_week,
+                    'start_time', js.start_time,
+                    'end_time', js.end_time
+                )
+            ) AS job_schedule
+        FROM
+            jobs j
+        JOIN
+            job_schedule js ON j.job_id = js.job_id
+        GROUP BY
+            j.job_id;
+    `,
     getAccountIdFromJobs: 'SELECT account_id FROM accounts WHERE job_id = $1',
     createJob:
         'INSERT INTO jobs (account_id, job_name, hourly_rate, vacation_days, sick_days, work_schedule) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *',

@@ -33,8 +33,8 @@ export const getJobs = async (
 
     try {
         const query: string = job_id
-            ? payrollQueries.getJob
-            : payrollQueries.getJobs;
+            ? payrollQueries.getJobsWithSchedulesByJobId
+            : payrollQueries.getAllJobsWithSchedules;
         const params: any[] = job_id ? [job_id] : [];
 
         const results = await executeQuery(query, params);
@@ -44,10 +44,15 @@ export const getJobs = async (
             return;
         }
 
-        // Parse the data to the correct format and return an object
-        const jobs: Job[] = results.map((job) => jobsParse(job));
+        // // Parse the data to the correct format and return an object
+        // const jobs: Job[] = results.map((job) => jobsParse(job));
 
-        response.status(200).json(jobs);
+        // const jobScheduleResults = await executeQuery(
+        //     payrollQueries.getJobScheduleByJobId,
+        //     [job_id],
+        // );
+
+        response.status(200).json(results);
     } catch (error) {
         logger.error(error); // Log the error on the server side
         handleError(response, `Error getting ${job_id ? 'job' : 'jobs'}`);
