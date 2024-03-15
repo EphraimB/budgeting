@@ -104,7 +104,7 @@ export interface Job {
     hourly_rate: number;
     vacation_days: number;
     sick_days: number;
-    job_schedule: WorkSchedule;
+    job_schedule: WorkSchedule[];
 }
 
 export interface Expense {

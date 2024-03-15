@@ -16,11 +16,11 @@ const jobsParse = (jobs: Record<string, any>): Job => ({
     hourly_rate: parseFloat(jobs.hourly_rate),
     vacation_days: parseInt(jobs.vacation_days),
     sick_days: parseInt(jobs.sick_days),
-    job_schedule: {
-        day_of_week: parseInt(jobs.job_schedule.day_of_week),
-        start_time: jobs.job_schedule.start_time,
-        end_time: jobs.job_schedule.end_time,
-    },
+    job_schedule: jobs.job_schedule.map((schedule: Record<string, any>) => ({
+        day_of_week: parseInt(schedule.day_of_week),
+        start_time: schedule.start_time,
+        end_time: schedule.end_time,
+    })),
 });
 
 /**

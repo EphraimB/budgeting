@@ -370,7 +370,7 @@ export const payrollQueries: PayrollQueries = {
         SELECT
             j.job_id AS "job_id",
             j.account_id AS "account_id",
-            j.job_name AS "name",
+            j.job_name AS "job_name",
             j.hourly_rate AS "hourly_rate",
             j.vacation_days AS "vacation_days",
             j.sick_days AS "sick_days",
@@ -394,7 +394,7 @@ export const payrollQueries: PayrollQueries = {
         SELECT
             j.job_id AS "job_id",
             j.account_id AS "account_id",
-            j.job_name AS "name",
+            j.job_name AS "job_name",
             j.hourly_rate AS "hourly_rate",
             j.vacation_days AS "vacation_days",
             j.sick_days AS "sick_days",
