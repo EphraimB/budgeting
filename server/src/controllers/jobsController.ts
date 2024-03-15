@@ -1,8 +1,9 @@
 import { type NextFunction, type Request, type Response } from 'express';
 import { payrollQueries } from '../models/queryData.js';
 import { handleError, executeQuery } from '../utils/helperFunctions.js';
-import { type Job } from '../types/types.js';
+import { JobSchedule, type Job } from '../types/types.js';
 import { logger } from '../config/winston.js';
+import { QueryResult } from 'pg';
 
 /**
  *
@@ -75,20 +76,48 @@ export const createJob = async (
             hourly_rate,
             vacation_days,
             sick_days,
-            work_schedule,
+            job_schedule,
         } = request.body;
 
-        const results = await executeQuery(payrollQueries.createJob, [
+        // First, create the job and get its ID
+        const jobResult = await executeQuery(payrollQueries.createJob, [
             account_id,
             name,
             hourly_rate,
             vacation_days,
             sick_days,
-            work_schedule,
         ]);
+        const jobId = jobResult[0].job_id;
+
+        // Then, create schedules for this job
+        const schedulePromises = job_schedule.map((js: JobSchedule) =>
+            executeQuery(payrollQueries.createJobSchedule, [
+                jobId,
+                js.day_of_week,
+                js.start_time,
+                js.end_time,
+            ]),
+        );
+
+        // Wait for all schedule creation promises to resolve
+        await Promise.all(schedulePromises);
+
+        // Create the response object
+        const responseObject = {
+            job_id: jobId,
+            account_id,
+            name,
+            hourly_rate,
+            vacation_days,
+            sick_days,
+            job_schedule: job_schedule.map((schedule: JobSchedule) => ({
+                ...schedule,
+                job_id: jobId, // Ensure all schedules in the response contain the new job's ID
+            })),
+        };
 
         // Parse the data to correct format and return an object
-        const jobs: Job[] = results.map((job) => jobsParse(job));
+        const jobs = jobsParse(responseObject);
 
         response.status(201).json(jobs);
     } catch (error) {

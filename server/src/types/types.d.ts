@@ -91,7 +91,8 @@ export interface Account {
     date_modified: string;
 }
 
-interface WorkSchedule {
+interface JobSchedule {
+    job_id: number;
     day_of_week: number;
     start_time: string;
     end_time: string;
@@ -104,7 +105,7 @@ export interface Job {
     hourly_rate: number;
     vacation_days: number;
     sick_days: number;
-    job_schedule: WorkSchedule[];
+    job_schedule: JobSchedule[];
 }
 
 export interface Expense {

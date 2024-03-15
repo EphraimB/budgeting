@@ -66,7 +66,9 @@ interface PayrollQueries {
     getAllJobsWithSchedules: string;
     getAccountIdFromJobs: string;
     createJob: string;
+    createJobSchedule: string;
     updateJob: string;
+    updateJobSchedule: string;
     deleteJob: string;
 }
 
@@ -414,9 +416,13 @@ export const payrollQueries: PayrollQueries = {
     `,
     getAccountIdFromJobs: 'SELECT account_id FROM accounts WHERE job_id = $1',
     createJob:
-        'INSERT INTO jobs (account_id, job_name, hourly_rate, vacation_days, sick_days, work_schedule) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *',
+        'INSERT INTO jobs (account_id, job_name, hourly_rate, vacation_days, sick_days) VALUES ($1, $2, $3, $4, $5) RETURNING *',
+    createJobSchedule:
+        'INSERT INTO job_schedule (job_id, day_of_week, start_time, end_time) VALUES ($1, $2, $3, $4) RETURNING *',
     updateJob:
-        'UPDATE jobs SET account_id = $1, job_name = $2, hourly_rate = $3, vacation_days = $4, sick_days = $5, work_schedule = $6 WHERE job_id = $7 RETURNING *',
+        'UPDATE jobs SET account_id = $1, job_name = $2, hourly_rate = $3, vacation_days = $4, sick_days = $5 WHERE job_id = $6 RETURNING *',
+    updateJobSchedule:
+        'UPDATE job_schedule SET day_of_week = $1, start_time = $2, end_time = $3 WHERE job_id = $4 RETURNING *',
     deleteJob: 'DELETE FROM jobs WHERE job_id = $1',
 };
 
