@@ -9,7 +9,7 @@ import { logger } from '../config/winston.js';
  * @param job - Job object
  * @returns - Job object with correct data types
  */
-const jobsParse = (jobs: Record<string, string>): Job => ({
+const jobsParse = (jobs: Record<string, any>): Job => ({
     id: parseInt(jobs.job_id),
     account_id: parseInt(jobs.account_id),
     name: jobs.job_name,
@@ -17,9 +17,9 @@ const jobsParse = (jobs: Record<string, string>): Job => ({
     vacation_days: parseInt(jobs.vacation_days),
     sick_days: parseInt(jobs.sick_days),
     job_schedule: {
-        day_of_week: parseInt(jobs.day_of_week),
-        start_time: jobs.start_time,
-        end_time: jobs.end_time,
+        day_of_week: parseInt(jobs.job_schedule.day_of_week),
+        start_time: jobs.job_schedule.start_time,
+        end_time: jobs.job_schedule.end_time,
     },
 });
 
