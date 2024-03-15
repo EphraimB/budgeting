@@ -16,7 +16,11 @@ const jobsParse = (jobs: Record<string, string>): Job => ({
     hourly_rate: parseFloat(jobs.hourly_rate),
     vacation_days: parseInt(jobs.vacation_days),
     sick_days: parseInt(jobs.sick_days),
-    work_schedule: JSON.parse(jobs.work_schedule),
+    job_schedule: {
+        day_of_week: parseInt(jobs.day_of_week),
+        start_time: jobs.start_time,
+        end_time: jobs.end_time,
+    },
 });
 
 /**
@@ -45,14 +49,9 @@ export const getJobs = async (
         }
 
         // // Parse the data to the correct format and return an object
-        // const jobs: Job[] = results.map((job) => jobsParse(job));
+        const jobs: Job[] = results.map((job) => jobsParse(job));
 
-        // const jobScheduleResults = await executeQuery(
-        //     payrollQueries.getJobScheduleByJobId,
-        //     [job_id],
-        // );
-
-        response.status(200).json(results);
+        response.status(200).json(jobs);
     } catch (error) {
         logger.error(error); // Log the error on the server side
         handleError(response, `Error getting ${job_id ? 'job' : 'jobs'}`);
