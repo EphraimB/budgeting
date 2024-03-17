@@ -167,10 +167,10 @@ export const updateJob = async (
 
         const schedulePromises = job_schedule.map((js: JobSchedule) =>
             executeQuery(payrollQueries.updateJobSchedule, [
-                job_id,
                 js.day_of_week,
                 js.start_time,
                 js.end_time,
+                job_id,
             ]),
         );
 
