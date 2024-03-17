@@ -223,29 +223,6 @@ export const deleteJob = async (
             return;
         }
 
-        const payrollDatesResults = await executeQuery(
-            payrollQueries.getPayrollDatesByJobId,
-            [job_id],
-        );
-        const hasPayrollDates: boolean = payrollDatesResults.length > 0;
-
-        const payrollTaxesResults = await executeQuery(
-            payrollQueries.getPayrollTaxesByJobId,
-            [job_id],
-        );
-        const hasPayrollTaxes: boolean = payrollTaxesResults.length > 0;
-
-        if (hasPayrollDates || hasPayrollTaxes) {
-            response.status(400).send({
-                errors: {
-                    msg: 'You need to delete job-related data before deleting the job',
-                    param: null,
-                    location: 'query',
-                },
-            });
-            return;
-        }
-
         await executeQuery(payrollQueries.deleteJob, [job_id]);
 
         await executeQuery('SELECT process_payroll_for_job($1)', [job_id]);
