@@ -72,7 +72,7 @@ const generate = async (
                     amount: transaction.transaction_amount,
                     tax_rate: transaction.transaction_tax_rate ?? 0,
                     total_amount:
-                        transaction.transaction_amount +
+                        transaction.transaction_amount -
                         transaction.transaction_amount *
                             (transaction.transaction_tax_rate ?? 0),
                 }),

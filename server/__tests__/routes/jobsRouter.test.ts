@@ -33,10 +33,35 @@ const newJob = {
     account_id: 1,
     name: 'test',
     hourly_rate: 10,
-    regular_hours: 40,
     vacation_days: 10,
     sick_days: 10,
-    work_schedule: '0111100',
+    job_schedule: [
+        {
+            day_of_week: 1,
+            start_time: '09:00:00',
+            end_time: '17:00:00',
+        },
+        {
+            day_of_week: 2,
+            start_time: '09:00:00',
+            end_time: '17:00:00',
+        },
+        {
+            day_of_week: 3,
+            start_time: '09:00:00',
+            end_time: '17:00:00',
+        },
+        {
+            day_of_week: 4,
+            start_time: '09:00:00',
+            end_time: '17:00:00',
+        },
+        {
+            day_of_week: 5,
+            start_time: '09:00:00',
+            end_time: '17:00:00',
+        },
+    ],
 };
 
 beforeAll(() => {

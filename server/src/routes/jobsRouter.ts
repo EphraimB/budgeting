@@ -47,18 +47,29 @@ router.post(
         body('hourly_rate')
             .isFloat({ min: 0 })
             .withMessage('Hourly rate must be a number'),
-        body('regular_hours')
-            .isInt({ min: 0 })
-            .withMessage('Regular hours must be a number'),
         body('vacation_days')
             .isInt({ min: 0 })
             .withMessage('Vacation days must be a number'),
         body('sick_days')
             .isFloat({ min: 0 })
             .withMessage('Sick days must be a number'),
-        body('work_schedule')
+        body('job_schedule')
+            .isArray()
+            .withMessage('Work schedule must be an array'),
+        body('job_schedule.*.day_of_week')
+            .isInt({ min: 0, max: 6 })
+            .withMessage('Day of week must be a number'),
+        body('job_schedule.*.start_time')
             .isString()
-            .withMessage('Work schedule must be a string'),
+            .withMessage('Start time must be a string')
+            .isTime({ hourFormat: 'hour24', mode: 'withSeconds' })
+            .withMessage('Start time must be in HH:MM:SS format'),
+
+        body('job_schedule.*.end_time')
+            .isString()
+            .withMessage('End time must be a string')
+            .isTime({ hourFormat: 'hour24', mode: 'withSeconds' })
+            .withMessage('End time must be in HH:MM:SS'),
         validateRequest,
     ],
     createJob,
@@ -77,18 +88,29 @@ router.put(
         body('hourly_rate')
             .isFloat({ min: 0 })
             .withMessage('Hourly rate must be a number'),
-        body('regular_hours')
-            .isInt({ min: 0 })
-            .withMessage('Regular hours must be a number'),
         body('vacation_days')
             .isInt({ min: 0 })
             .withMessage('Vacation days must be a number'),
         body('sick_days')
             .isFloat({ min: 0 })
             .withMessage('Sick days must be a number'),
-        body('work_schedule')
+        body('job_schedule')
+            .isArray()
+            .withMessage('Work schedule must be an array'),
+        body('job_schedule.*.day_of_week')
+            .isInt({ min: 0, max: 6 })
+            .withMessage('Day of week must be a number'),
+        body('job_schedule.*.start_time')
             .isString()
-            .withMessage('Work schedule must be a string'),
+            .withMessage('Start time must be a string')
+            .isTime({ hourFormat: 'hour24', mode: 'withSeconds' })
+            .withMessage('Start time must be in HH:MM:SS format'),
+
+        body('job_schedule.*.end_time')
+            .isString()
+            .withMessage('End time must be a string')
+            .isTime({ hourFormat: 'hour24', mode: 'withSeconds' })
+            .withMessage('End time must be in HH:MM:SS format'),
         validateRequest,
     ],
     updateJob,

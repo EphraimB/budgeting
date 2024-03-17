@@ -61,10 +61,16 @@ interface PayrollQueries {
     getJobsByAccountId: string;
     getJobs: string;
     getJob: string;
+    getJobScheduleByJobId: string;
+    getJobsWithSchedulesByJobId: string;
+    getAllJobsWithSchedules: string;
     getAccountIdFromJobs: string;
     createJob: string;
+    createJobSchedule: string;
     updateJob: string;
+    updateJobSchedule: string;
     deleteJob: string;
+    deleteJobSchedule: string;
 }
 
 interface WishlistQueries {
@@ -208,131 +214,132 @@ export const loanQueries: LoanQueries = {
 
 export const payrollQueries: PayrollQueries = {
     getPayrolls: `
-        SELECT make_date(extract(year from current_date)::integer, extract(month from current_date)::integer, s2.payroll_start_day::integer) AS start_date,
-        make_date(extract(year from current_date)::integer, extract(month from current_date)::integer, s1.adjusted_payroll_end_day) AS end_date,
-        SUM(s.work_days::integer) AS work_days,
-        SUM(COALESCE(
-            j.regular_hours * j.hourly_rate * work_days
-        ))::numeric(20, 2) AS gross_pay,
-        SUM(COALESCE(
-            j.regular_hours * j.hourly_rate * (1 - COALESCE(pt.rate, 0)) * work_days
-        ))::numeric(20, 2) AS net_pay,
-      SUM(COALESCE(
-            j.regular_hours * work_days
-        ))::numeric(20, 2) AS hours_worked
-        FROM jobs j
-      CROSS JOIN LATERAL (
-      SELECT
-        payroll_start_day,
-        CASE 
-              WHEN payroll_end_day > EXTRACT(DAY FROM DATE_TRUNC('MONTH', current_date) + INTERVAL '1 MONTH - 1 DAY') 
-              THEN EXTRACT(DAY FROM DATE_TRUNC('MONTH', current_date) + INTERVAL '1 MONTH - 1 DAY')
-              ELSE payroll_end_day 
-            END AS unadjusted_payroll_end_day
-        FROM payroll_dates
-      ) s2
-      CROSS JOIN LATERAL (
-        SELECT
-        s2.payroll_start_day,
-        CASE
-              WHEN EXTRACT(DOW FROM MAKE_DATE(EXTRACT(YEAR FROM current_date)::integer, EXTRACT(MONTH FROM current_date)::integer, s2.unadjusted_payroll_end_day::integer)) = 0 
-                  THEN s2.unadjusted_payroll_end_day - 2 -- If it's a Sunday, subtract 2 days to get to Friday
-              WHEN EXTRACT(DOW FROM MAKE_DATE(EXTRACT(YEAR FROM current_date)::integer, EXTRACT(MONTH FROM current_date)::integer, s2.unadjusted_payroll_end_day::integer)) = 6
-                  THEN s2.unadjusted_payroll_end_day - 1 -- If it's a Saturday, subtract 1 day to get to Friday
-              ELSE s2.unadjusted_payroll_end_day
-          END::integer AS adjusted_payroll_end_day
-      ) s1
-      CROSS JOIN LATERAL(
-        SELECT
-        generate_series(
-          make_date(extract(year from current_date)::integer, extract(month from current_date)::integer, s1.payroll_start_day), 
-          make_date(extract(year from current_date)::integer, extract(month from current_date)::integer, s1.adjusted_payroll_end_day),
-          '1 day'
-          )
-        ) AS dates(date)
-      CROSS JOIN LATERAL (
-        SELECT
-          SUM(CASE 
-            WHEN (work_schedule::integer & (1 << (6 - extract(dow from dates.date)::integer))) <> 0
-            THEN 1 
-            ELSE 0 
-          END) AS work_days
-        FROM jobs j
-      ) s
-      LEFT JOIN (
-        SELECT job_id, SUM(rate) AS rate
-        FROM payroll_taxes
-        GROUP BY job_id
-      ) pt ON j.job_id = pt.job_id
-      WHERE j.job_id = $1 AND work_days <> 0
-      GROUP BY s2.payroll_start_day, j.job_id, j.job_id, s.work_days, s1.adjusted_payroll_end_day
-      ORDER BY start_date, end_date
-   `,
+        SELECT 
+            make_date(extract(year from current_date)::integer, extract(month from current_date)::integer, s2.payroll_start_day::integer) AS start_date,
+            make_date(extract(year from current_date)::integer, extract(month from current_date)::integer, s1.adjusted_payroll_end_day) AS end_date,
+            COUNT(js.day_of_week) AS work_days,
+            SUM(
+                COALESCE(
+                    EXTRACT(EPOCH FROM (js.end_time - js.start_time)) / 3600 * j.hourly_rate, 
+                    0
+                )
+            )::numeric(20, 2) AS gross_pay,
+            SUM(
+                COALESCE(
+                    EXTRACT(EPOCH FROM (js.end_time - js.start_time)) / 3600 * j.hourly_rate * (1 - COALESCE(pt.rate, 0)), 
+                    0
+                )
+            )::numeric(20, 2) AS net_pay,
+            SUM(
+                COALESCE(
+                    EXTRACT(EPOCH FROM (js.end_time - js.start_time)) / 3600, 
+                    0
+                )
+            )::numeric(20, 2) AS hours_worked
+        FROM 
+            jobs j
+            JOIN job_schedule js ON j.job_id = js.job_id
+            CROSS JOIN LATERAL (
+                SELECT 
+                    payroll_start_day,
+                    CASE 
+                        WHEN payroll_end_day > EXTRACT(DAY FROM DATE_TRUNC('MONTH', current_date) + INTERVAL '1 MONTH - 1 DAY') THEN 
+                            EXTRACT(DAY FROM DATE_TRUNC('MONTH', current_date) + INTERVAL '1 MONTH - 1 DAY')
+                        ELSE payroll_end_day 
+                    END AS unadjusted_payroll_end_day
+                FROM payroll_dates
+            ) s2
+            CROSS JOIN LATERAL (
+                SELECT
+                    s2.payroll_start_day,
+                    CASE
+                        WHEN EXTRACT(DOW FROM MAKE_DATE(EXTRACT(YEAR FROM current_date)::integer, EXTRACT(MONTH FROM current_date)::integer, s2.unadjusted_payroll_end_day::integer)) = 0 THEN
+                            s2.unadjusted_payroll_end_day - 2
+                        WHEN EXTRACT(DOW FROM MAKE_DATE(EXTRACT(YEAR FROM current_date)::integer, EXTRACT(MONTH FROM current_date)::integer, s2.unadjusted_payroll_end_day::integer)) = 6 THEN
+                            s2.unadjusted_payroll_end_day - 1
+                        ELSE s2.unadjusted_payroll_end_day
+                    END::integer AS adjusted_payroll_end_day
+            ) s1
+            JOIN LATERAL generate_series(
+                make_date(extract(year from current_date)::integer, extract(month from current_date)::integer, s1.payroll_start_day), 
+                make_date(extract(year from current_date)::integer, extract(month from current_date)::integer, s1.adjusted_payroll_end_day),
+                '1 day'
+            ) AS gs(date) ON true
+            LEFT JOIN (
+                SELECT job_id, SUM(rate) AS rate
+                FROM payroll_taxes
+                GROUP BY job_id
+            ) pt ON j.job_id = pt.job_id
+        WHERE 
+            j.job_id = $1
+            AND js.day_of_week = EXTRACT(DOW FROM gs.date)::integer
+        GROUP BY 
+            s2.payroll_start_day, s1.adjusted_payroll_end_day
+        ORDER BY 
+            start_date, end_date
+    `,
     getPayrollsMiddleware: `
-        SELECT make_date(extract(year from d1)::integer, extract(month from d1)::integer, s2.payroll_start_day::integer) AS start_date,
-        make_date(extract(year from d1)::integer, extract(month from d1)::integer, s1.adjusted_payroll_end_day) AS end_date,
-        SUM(s.work_days::integer) AS work_days,
-        SUM(COALESCE(
-            j.regular_hours * j.hourly_rate * work_days
-        ))::numeric(20, 2) AS gross_pay,
-        SUM(COALESCE(
-            j.regular_hours * j.hourly_rate * (1 - COALESCE(pt.rate, 0)) * work_days
-        ))::numeric(20, 2) AS net_pay,
-      SUM(COALESCE(
-            j.regular_hours * work_days
-        ))::numeric(20, 2) AS hours_worked
-        FROM jobs j
-      CROSS JOIN LATERAL generate_series(
-          current_date, 
-          $2::date + INTERVAL '1 month',
-          '1 month'
-      ) AS d1(date)
-      CROSS JOIN LATERAL (
-      SELECT
-        payroll_start_day,
-        CASE 
-              WHEN payroll_end_day > EXTRACT(DAY FROM DATE_TRUNC('MONTH', d1) + INTERVAL '1 MONTH - 1 DAY') 
-              THEN EXTRACT(DAY FROM DATE_TRUNC('MONTH', d1) + INTERVAL '1 MONTH - 1 DAY')
-              ELSE payroll_end_day 
-            END AS unadjusted_payroll_end_day
-        FROM payroll_dates
-      ) s2
-      CROSS JOIN LATERAL (
+        WITH work_days_and_hours AS (
+            SELECT
+                make_date(extract(year from d1)::integer, extract(month from d1)::integer, s2.payroll_start_day::integer) AS start_date,
+                make_date(extract(year from d1)::integer, extract(month from d1)::integer, s1.adjusted_payroll_end_day) AS end_date,
+                d.date AS work_date,
+                EXTRACT(EPOCH FROM (js.end_time - js.start_time)) / 3600 AS hours_worked_per_day,
+                j.hourly_rate,
+                COALESCE(pt.rate, 0) AS tax_rate
+            FROM 
+                jobs j
+                JOIN job_schedule js ON j.job_id = js.job_id
+                CROSS JOIN LATERAL generate_series(current_date, $2::date + INTERVAL '1 month', '1 month') AS d1(date)
+                CROSS JOIN LATERAL (
+                    SELECT
+                        payroll_start_day,
+                        CASE 
+                            WHEN payroll_end_day > EXTRACT(DAY FROM DATE_TRUNC('MONTH', d1) + INTERVAL '1 MONTH - 1 DAY') 
+                            THEN EXTRACT(DAY FROM DATE_TRUNC('MONTH', d1) + INTERVAL '1 MONTH - 1 DAY')
+                            ELSE payroll_end_day 
+                        END AS unadjusted_payroll_end_day
+                    FROM payroll_dates
+                ) s2
+                CROSS JOIN LATERAL (
+                    SELECT
+                        s2.payroll_start_day,
+                        CASE
+                            WHEN EXTRACT(DOW FROM MAKE_DATE(EXTRACT(YEAR FROM d1)::integer, EXTRACT(MONTH FROM d1)::integer, s2.unadjusted_payroll_end_day::integer)) = 0 
+                                THEN s2.unadjusted_payroll_end_day - 2 -- If it's a Sunday, adjust to Friday
+                            WHEN EXTRACT(DOW FROM MAKE_DATE(EXTRACT(YEAR FROM d1)::integer, EXTRACT(MONTH FROM d1)::integer, s2.unadjusted_payroll_end_day::integer)) = 6
+                                THEN s2.unadjusted_payroll_end_day - 1 -- If it's a Saturday, adjust to Friday
+                            ELSE s2.unadjusted_payroll_end_day
+                        END::integer AS adjusted_payroll_end_day
+                ) s1
+                JOIN LATERAL generate_series(
+                    make_date(extract(year from d1)::integer, extract(month from d1)::integer, s1.payroll_start_day), 
+                    make_date(extract(year from d1)::integer, extract(month from d1)::integer, s1.adjusted_payroll_end_day),
+                    '1 day'
+                ) AS d(date) ON js.day_of_week = EXTRACT(DOW FROM d.date)::integer
+                LEFT JOIN (
+                    SELECT job_id, SUM(rate) AS rate
+                    FROM payroll_taxes
+                    GROUP BY job_id
+                ) pt ON j.job_id = pt.job_id
+            WHERE 
+                j.job_id = $1 
+                AND d.date >= CURRENT_DATE 
+                AND d.date <= $2::date
+        )
         SELECT
-        s2.payroll_start_day,
-        CASE
-              WHEN EXTRACT(DOW FROM MAKE_DATE(EXTRACT(YEAR FROM d1)::integer, EXTRACT(MONTH FROM d1)::integer, s2.unadjusted_payroll_end_day::integer)) = 0 
-                  THEN s2.unadjusted_payroll_end_day - 2 -- If it's a Sunday, subtract 2 days to get to Friday
-              WHEN EXTRACT(DOW FROM MAKE_DATE(EXTRACT(YEAR FROM d1)::integer, EXTRACT(MONTH FROM d1)::integer, s2.unadjusted_payroll_end_day::integer)) = 6
-                  THEN s2.unadjusted_payroll_end_day - 1 -- If it's a Saturday, subtract 1 day to get to Friday
-              ELSE s2.unadjusted_payroll_end_day
-          END::integer AS adjusted_payroll_end_day
-      ) s1
-      CROSS JOIN LATERAL(
-        SELECT
-        generate_series(
-          make_date(extract(year from d1)::integer, extract(month from d1)::integer, s1.payroll_start_day), 
-          make_date(extract(year from d1)::integer, extract(month from d1)::integer, s1.adjusted_payroll_end_day),
-          '1 day'
-          )
-        ) AS dates(date)
-      CROSS JOIN LATERAL (
-        SELECT
-          SUM(CASE 
-            WHEN (work_schedule::integer & (1 << (6 - extract(dow from dates.date)::integer))) <> 0
-            THEN 1 
-            ELSE 0 
-          END) AS work_days
-        FROM jobs j
-      ) s
-      LEFT JOIN (
-        SELECT job_id, SUM(rate) AS rate
-        FROM payroll_taxes
-        GROUP BY job_id
-      ) pt ON j.job_id = pt.job_id
-      WHERE j.job_id = $1 AND work_days <> 0 AND make_date(extract(year from d1)::integer, extract(month from d1)::integer, s1.adjusted_payroll_end_day) >= CURRENT_DATE AND make_date(extract(year from d1)::integer, extract(month from d1)::integer, s1.adjusted_payroll_end_day) <= $2::date
-      GROUP BY d1, s2.payroll_start_day, j.job_id, j.job_id, s.work_days, s1.adjusted_payroll_end_day
-      ORDER BY start_date, end_date
+            start_date,
+            end_date,
+            COUNT(work_date) AS work_days,
+            SUM(hours_worked_per_day * hourly_rate) AS gross_pay,
+            SUM(hours_worked_per_day * hourly_rate * (1 - tax_rate)) AS net_pay,
+            SUM(hours_worked_per_day) AS hours_worked
+        FROM 
+            work_days_and_hours
+        GROUP BY 
+            start_date, end_date
+        ORDER BY 
+            start_date, end_date;    
    `,
     getAllPayrollTaxes: 'SELECT * FROM payroll_taxes',
     getPayrollTaxesById:
@@ -357,14 +364,68 @@ export const payrollQueries: PayrollQueries = {
         'UPDATE payroll_dates SET payroll_start_day = $1, payroll_end_day = $2 WHERE payroll_date_id = $3 RETURNING *',
     deletePayrollDate: 'DELETE FROM payroll_dates WHERE payroll_date_id = $1',
     getJobsByAccountId: 'SELECT * FROM jobs WHERE account_id = $1',
-    getJobs: 'SELECT * FROM jobs',
+    getJobs: `
+        SELECT * FROM jobs
+    `,
     getJob: 'SELECT * FROM jobs WHERE job_id = $1',
+    getJobScheduleByJobId: 'SELECT * FROM job_schedule WHERE job_id = $1',
+    getJobsWithSchedulesByJobId: `
+        SELECT
+            j.job_id AS "job_id",
+            j.account_id AS "account_id",
+            j.job_name AS "job_name",
+            j.hourly_rate AS "hourly_rate",
+            j.vacation_days AS "vacation_days",
+            j.sick_days AS "sick_days",
+            json_agg(
+                json_build_object(
+                    'day_of_week', js.day_of_week,
+                    'start_time', js.start_time,
+                    'end_time', js.end_time
+                )
+            ) AS job_schedule
+        FROM
+            jobs j
+        JOIN
+            job_schedule js ON j.job_id = js.job_id
+        WHERE
+            j.job_id = $1
+        GROUP BY
+            j.job_id;
+    `,
+    getAllJobsWithSchedules: `
+        SELECT
+            j.job_id AS "job_id",
+            j.account_id AS "account_id",
+            j.job_name AS "job_name",
+            j.hourly_rate AS "hourly_rate",
+            j.vacation_days AS "vacation_days",
+            j.sick_days AS "sick_days",
+            json_agg(
+                json_build_object(
+                    'day_of_week', js.day_of_week,
+                    'start_time', js.start_time,
+                    'end_time', js.end_time
+                )
+            ) AS job_schedule
+        FROM
+            jobs j
+        JOIN
+            job_schedule js ON j.job_id = js.job_id
+        GROUP BY
+            j.job_id;
+    `,
     getAccountIdFromJobs: 'SELECT account_id FROM accounts WHERE job_id = $1',
     createJob:
-        'INSERT INTO jobs (account_id, job_name, hourly_rate, regular_hours, vacation_days, sick_days, work_schedule) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *',
+        'INSERT INTO jobs (account_id, job_name, hourly_rate, vacation_days, sick_days) VALUES ($1, $2, $3, $4, $5) RETURNING *',
+    createJobSchedule:
+        'INSERT INTO job_schedule (job_id, day_of_week, start_time, end_time) VALUES ($1, $2, $3, $4) RETURNING *',
     updateJob:
-        'UPDATE jobs SET account_id = $1, job_name = $2, hourly_rate = $3, regular_hours = $4, vacation_days = $5, sick_days = $6, work_schedule = $7 WHERE job_id = $8 RETURNING *',
+        'UPDATE jobs SET account_id = $1, job_name = $2, hourly_rate = $3, vacation_days = $4, sick_days = $5 WHERE job_id = $6 RETURNING *',
+    updateJobSchedule:
+        'UPDATE job_schedule SET day_of_week = $1, start_time = $2, end_time = $3 WHERE job_id = $4 RETURNING *',
     deleteJob: 'DELETE FROM jobs WHERE job_id = $1',
+    deleteJobSchedule: 'DELETE FROM job_schedule WHERE job_id = $1',
 };
 
 export const wishlistQueries: WishlistQueries = {
