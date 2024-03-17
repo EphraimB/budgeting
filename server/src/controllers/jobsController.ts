@@ -179,7 +179,7 @@ export const updateJob = async (
 
         await executeQuery('SELECT process_payroll_for_job($1)', [job_id]);
 
-        request.job_id = results[0].id;
+        request.job_id = job_id;
 
         next();
     } catch (error) {
@@ -195,7 +195,10 @@ export const updateJobReturnObject = async (
     const { job_id } = request;
 
     try {
-        const results = await executeQuery(payrollQueries.getJob, [job_id]);
+        const results = await executeQuery(
+            payrollQueries.getJobsWithSchedulesByJobId,
+            [job_id],
+        );
 
         // Parse the data to correct format and return an object
         const jobs: Job[] = results.map((job) => jobsParse(job));
