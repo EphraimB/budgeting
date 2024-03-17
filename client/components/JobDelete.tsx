@@ -67,4 +67,4 @@ function JobDelete({
   );
 }
 
-export default ExpenseDelete;
+export default JobDelete;

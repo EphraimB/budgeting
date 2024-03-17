@@ -2461,17 +2461,12 @@
                     },
                     "name": {
                         "type": "string",
-                        "example": "John Doe"
+                        "example": "Testing Inc."
                     },
                     "hourly_rate": {
                         "type": "number",
                         "format": "double",
                         "example": 15.0
-                    },
-                    "regular_hours": {
-                        "type": "number",
-                        "format": "double",
-                        "example": 8.0
                     },
                     "vacation_days": {
                         "type": "integer",
@@ -2481,9 +2476,25 @@
                         "type": "integer",
                         "example": 10
                     },
-                    "work_schedule": {
-                        "type": "string",
-                        "example": "0111110"
+                    "job_schedule": {
+                        "type": "array",
+                        "items": {
+                            "type": "object",
+                            "properties": {
+                                "day_of_week": {
+                                    "type": "integer",
+                                    "example": 1
+                                },
+                                "start_time": {
+                                    "type": "string",
+                                    "example": "09:00:00"
+                                },
+                                "end_time": {
+                                    "type": "string",
+                                    "example": "17:00:00"
+                                }
+                            }
+                        }
                     }
                 }
             },
@@ -3579,17 +3590,12 @@
                                 },
                                 "name": {
                                     "type": "string",
-                                    "example": "Job test"
+                                    "example": "Testing Inc."
                                 },
                                 "hourly_rate": {
                                     "type": "number",
                                     "format": "double",
                                     "example": 16.0
-                                },
-                                "regular_hours": {
-                                    "type": "number",
-                                    "format": "double",
-                                    "example": 8.0
                                 },
                                 "vacation_days": {
                                     "type": "integer",
@@ -3599,9 +3605,25 @@
                                     "type": "integer",
                                     "example": 5
                                 },
-                                "work_schedule": {
-                                    "type": "string",
-                                    "example": "0111110"
+                                "job_schedule": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "object",
+                                        "properties": {
+                                            "day_of_week": {
+                                                "type": "integer",
+                                                "example": 1
+                                            },
+                                            "start_time": {
+                                                "type": "string",
+                                                "example": "09:00:00"
+                                            },
+                                            "end_time": {
+                                                "type": "string",
+                                                "example": "17:00:00"
+                                            }
+                                        }
+                                    }
                                 }
                             }
                         }

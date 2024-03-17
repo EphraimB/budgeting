@@ -1,7 +1,7 @@
 import { type NextFunction, type Request, type Response } from 'express';
 import { payrollQueries } from '../models/queryData.js';
 import { handleError, executeQuery } from '../utils/helperFunctions.js';
-import { type Job } from '../types/types.js';
+import { JobSchedule, type Job } from '../types/types.js';
 import { logger } from '../config/winston.js';
 
 /**
@@ -9,15 +9,18 @@ import { logger } from '../config/winston.js';
  * @param job - Job object
  * @returns - Job object with correct data types
  */
-const jobsParse = (jobs: Record<string, string>): Job => ({
+const jobsParse = (jobs: Record<string, any>): Job => ({
     id: parseInt(jobs.job_id),
     account_id: parseInt(jobs.account_id),
     name: jobs.job_name,
     hourly_rate: parseFloat(jobs.hourly_rate),
-    regular_hours: parseInt(jobs.regular_hours),
     vacation_days: parseInt(jobs.vacation_days),
     sick_days: parseInt(jobs.sick_days),
-    work_schedule: jobs.work_schedule,
+    job_schedule: jobs.job_schedule.map((schedule: Record<string, any>) => ({
+        day_of_week: parseInt(schedule.day_of_week),
+        start_time: schedule.start_time,
+        end_time: schedule.end_time,
+    })),
 });
 
 /**
@@ -34,8 +37,8 @@ export const getJobs = async (
 
     try {
         const query: string = job_id
-            ? payrollQueries.getJob
-            : payrollQueries.getJobs;
+            ? payrollQueries.getJobsWithSchedulesByJobId
+            : payrollQueries.getAllJobsWithSchedules;
         const params: any[] = job_id ? [job_id] : [];
 
         const results = await executeQuery(query, params);
@@ -45,7 +48,7 @@ export const getJobs = async (
             return;
         }
 
-        // Parse the data to the correct format and return an object
+        // // Parse the data to the correct format and return an object
         const jobs: Job[] = results.map((job) => jobsParse(job));
 
         response.status(200).json(jobs);
@@ -70,24 +73,52 @@ export const createJob = async (
             account_id,
             name,
             hourly_rate,
-            regular_hours,
             vacation_days,
             sick_days,
-            work_schedule,
+            job_schedule,
         } = request.body;
 
-        const results = await executeQuery(payrollQueries.createJob, [
+        // First, create the job and get its ID
+        const jobResult = await executeQuery(payrollQueries.createJob, [
             account_id,
             name,
             hourly_rate,
-            regular_hours,
             vacation_days,
             sick_days,
-            work_schedule,
         ]);
+        const jobId = jobResult[0].job_id;
+
+        // Then, create schedules for this job
+        const schedulePromises = job_schedule.map((js: JobSchedule) =>
+            executeQuery(payrollQueries.createJobSchedule, [
+                jobId,
+                js.day_of_week,
+                js.start_time,
+                js.end_time,
+            ]),
+        );
+
+        // Wait for all schedule creation promises to resolve
+        await Promise.all(schedulePromises);
+
+        // Create the response object
+        const responseObject = {
+            job_id: jobId,
+            account_id,
+            job_name: name,
+            hourly_rate,
+            vacation_days,
+            sick_days,
+            job_schedule: job_schedule.map((schedule: JobSchedule) => ({
+                ...schedule,
+                job_id: jobId, // Ensure all schedules in the response contain the new job's ID
+            })),
+        };
+
+        await executeQuery('SELECT process_payroll_for_job($1)', [jobId]);
 
         // Parse the data to correct format and return an object
-        const jobs: Job[] = results.map((job) => jobsParse(job));
+        const jobs = jobsParse(responseObject);
 
         response.status(201).json(jobs);
     } catch (error) {
@@ -114,20 +145,17 @@ export const updateJob = async (
             account_id,
             name,
             hourly_rate,
-            regular_hours,
             vacation_days,
             sick_days,
-            work_schedule,
+            job_schedule,
         } = request.body;
 
         const results = await executeQuery(payrollQueries.updateJob, [
             account_id,
             name,
             hourly_rate,
-            regular_hours,
             vacation_days,
             sick_days,
-            work_schedule,
             job_id,
         ]);
 
@@ -136,12 +164,21 @@ export const updateJob = async (
             return;
         }
 
-        await executeQuery('SELECT process_payroll_for_job($1)', [1]);
+        const schedulePromises = job_schedule.map((js: JobSchedule) =>
+            executeQuery(payrollQueries.updateJobSchedule, [
+                js.day_of_week,
+                js.start_time,
+                js.end_time,
+                job_id,
+            ]),
+        );
 
-        // Parse the data to correct format and return an object
-        const jobs: Job[] = results.map((job) => jobsParse(job));
+        // Wait for all schedule creation promises to resolve
+        await Promise.all(schedulePromises);
 
-        request.job_id = jobs[0].id;
+        await executeQuery('SELECT process_payroll_for_job($1)', [job_id]);
+
+        request.job_id = job_id;
 
         next();
     } catch (error) {
@@ -157,7 +194,10 @@ export const updateJobReturnObject = async (
     const { job_id } = request;
 
     try {
-        const results = await executeQuery(payrollQueries.getJob, [job_id]);
+        const results = await executeQuery(
+            payrollQueries.getJobsWithSchedulesByJobId,
+            [job_id],
+        );
 
         // Parse the data to correct format and return an object
         const jobs: Job[] = results.map((job) => jobsParse(job));
@@ -191,32 +231,9 @@ export const deleteJob = async (
             return;
         }
 
-        const payrollDatesResults = await executeQuery(
-            payrollQueries.getPayrollDatesByJobId,
-            [job_id],
-        );
-        const hasPayrollDates: boolean = payrollDatesResults.length > 0;
-
-        const payrollTaxesResults = await executeQuery(
-            payrollQueries.getPayrollTaxesByJobId,
-            [job_id],
-        );
-        const hasPayrollTaxes: boolean = payrollTaxesResults.length > 0;
-
-        if (hasPayrollDates || hasPayrollTaxes) {
-            response.status(400).send({
-                errors: {
-                    msg: 'You need to delete job-related data before deleting the job',
-                    param: null,
-                    location: 'query',
-                },
-            });
-            return;
-        }
-
         await executeQuery(payrollQueries.deleteJob, [job_id]);
 
-        await executeQuery('SELECT process_payroll_for_job($1)', [1]);
+        await executeQuery('SELECT process_payroll_for_job($1)', [job_id]);
 
         response.status(200).send('Successfully deleted job');
     } catch (error) {
