@@ -3,7 +3,6 @@ import { payrollQueries } from '../models/queryData.js';
 import { handleError, executeQuery } from '../utils/helperFunctions.js';
 import { JobSchedule, type Job } from '../types/types.js';
 import { logger } from '../config/winston.js';
-import { QueryResult } from 'pg';
 
 /**
  *
@@ -106,7 +105,7 @@ export const createJob = async (
         const responseObject = {
             job_id: jobId,
             account_id,
-            name,
+            job_name: name,
             hourly_rate,
             vacation_days,
             sick_days,

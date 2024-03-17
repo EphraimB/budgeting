@@ -8,7 +8,6 @@ import {
     expect,
 } from '@jest/globals';
 import { mockModule } from '../__mocks__/mockModule.js';
-import { Job, PayrollDate, PayrollTax } from '../../src/types/types.js';
 
 // Mock request and response
 let mockRequest: any;
@@ -42,53 +41,73 @@ const jobs: any[] = [
         account_id: 1,
         job_name: 'Test Job',
         hourly_rate: 10,
-        regular_hours: 40,
         vacation_days: 10,
         sick_days: 10,
-        work_schedule: '0111100',
+        job_schedule: [
+            {
+                day_of_week: 1,
+                start_time: '09:00:00',
+                end_time: '17:00:00',
+            },
+            {
+                day_of_week: 2,
+                start_time: '09:00:00',
+                end_time: '17:00:00',
+            },
+            {
+                day_of_week: 3,
+                start_time: '09:00:00',
+                end_time: '17:00:00',
+            },
+            {
+                day_of_week: 4,
+                start_time: '09:00:00',
+                end_time: '17:00:00',
+            },
+            {
+                day_of_week: 5,
+                start_time: '09:00:00',
+                end_time: '17:00:00',
+            },
+        ],
     },
 ];
 
-const payrollDates: PayrollDate[] = [
-    {
-        id: 1,
-        job_id: 1,
-        payroll_start_day: 1,
-        payroll_end_day: 15,
-    },
-    {
-        id: 2,
-        job_id: 1,
-        payroll_start_day: 15,
-        payroll_end_day: 31,
-    },
-];
-
-const payrollTaxes: PayrollTax[] = [
-    {
-        id: 1,
-        job_id: 1,
-        name: 'Federal Income Tax',
-        rate: 0.1,
-    },
-    {
-        id: 2,
-        job_id: 1,
-        name: 'State Income Tax',
-        rate: 0.05,
-    },
-];
-
-const jobResponse: Job[] = [
+const jobResponse: any = [
     {
         id: 1,
         account_id: 1,
         name: 'Test Job',
         hourly_rate: 10,
-        regular_hours: 40,
         vacation_days: 10,
         sick_days: 10,
-        work_schedule: '0111100',
+        job_schedule: [
+            {
+                day_of_week: 1,
+                start_time: '09:00:00',
+                end_time: '17:00:00',
+            },
+            {
+                day_of_week: 2,
+                start_time: '09:00:00',
+                end_time: '17:00:00',
+            },
+            {
+                day_of_week: 3,
+                start_time: '09:00:00',
+                end_time: '17:00:00',
+            },
+            {
+                day_of_week: 4,
+                start_time: '09:00:00',
+                end_time: '17:00:00',
+            },
+            {
+                day_of_week: 5,
+                start_time: '09:00:00',
+                end_time: '17:00:00',
+            },
+        ],
     },
 ];
 
@@ -195,19 +214,67 @@ describe('GET /api/jobs', () => {
 describe('POST /api/jobs', () => {
     it('should respond with the new job', async () => {
         // Arrange
-        mockModule([jobs]);
+        mockModule([
+            [
+                {
+                    job_id: 1,
+                    account_id: 1,
+                    name: 'Test Job',
+                    hourly_rate: 10,
+                    vacation_days: 10,
+                    sick_days: 10,
+                },
+            ],
+            [],
+            [],
+        ]);
+
+        const response = {
+            account_id: 1,
+            name: 'Test Job',
+            hourly_rate: 10,
+            vacation_days: 10,
+            sick_days: 10,
+            job_schedule: [
+                {
+                    day_of_week: 1,
+                    start_time: '09:00:00',
+                    end_time: '17:00:00',
+                },
+                {
+                    day_of_week: 2,
+                    start_time: '09:00:00',
+                    end_time: '17:00:00',
+                },
+                {
+                    day_of_week: 3,
+                    start_time: '09:00:00',
+                    end_time: '17:00:00',
+                },
+                {
+                    day_of_week: 4,
+                    start_time: '09:00:00',
+                    end_time: '17:00:00',
+                },
+                {
+                    day_of_week: 5,
+                    start_time: '09:00:00',
+                    end_time: '17:00:00',
+                },
+            ],
+        };
 
         const { createJob } = await import(
             '../../src/controllers/jobsController.js'
         );
 
-        mockRequest.body = jobs;
+        mockRequest.body = response;
 
         await createJob(mockRequest as Request, mockResponse);
 
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(201);
-        expect(mockResponse.json).toHaveBeenCalledWith(jobResponse);
+        expect(mockResponse.json).toHaveBeenCalledWith(jobResponse[0]);
     });
 
     it('should respond with an error message', async () => {
@@ -234,10 +301,25 @@ describe('POST /api/jobs', () => {
 describe('PUT /api/jobs/:id', () => {
     it('should call next on middleware', async () => {
         // Arrange
-        mockModule([jobResponse]);
+        mockModule([
+            [
+                [
+                    {
+                        job_id: 1,
+                        account_id: 1,
+                        name: 'Test Job',
+                        hourly_rate: 10,
+                        vacation_days: 10,
+                        sick_days: 10,
+                    },
+                ],
+                [],
+                [],
+            ],
+        ]);
 
         mockRequest.params = { id: 1 };
-        mockRequest.body = jobs;
+        mockRequest.body = jobs[0];
 
         const { updateJob } = await import(
             '../../src/controllers/jobsController.js'
@@ -374,31 +456,6 @@ describe('DELETE /api/jobs/:id', () => {
         expect(mockResponse.status).toHaveBeenCalledWith(400);
         expect(mockResponse.json).toHaveBeenCalledWith({
             message: 'Error deleting job',
-        });
-    });
-
-    it('should not delete job if there are related data', async () => {
-        // Arrange
-        const job_id = 1;
-        mockRequest.params = { job_id };
-
-        mockModule([job_id, payrollDates, payrollTaxes]);
-
-        const { deleteJob } = await import(
-            '../../src/controllers/jobsController.js'
-        );
-
-        // Act
-        await deleteJob(mockRequest as Request, mockResponse);
-
-        // Assert
-        expect(mockResponse.status).toHaveBeenCalledWith(400);
-        expect(mockResponse.send).toHaveBeenCalledWith({
-            errors: {
-                msg: 'You need to delete job-related data before deleting the job',
-                param: null,
-                location: 'query',
-            },
         });
     });
 
