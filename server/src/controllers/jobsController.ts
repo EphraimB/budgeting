@@ -149,7 +149,7 @@ export const updateJob = async (
             regular_hours,
             vacation_days,
             sick_days,
-            work_schedule,
+            job_schedule,
         } = request.body;
 
         const results = await executeQuery(payrollQueries.updateJob, [
@@ -159,7 +159,6 @@ export const updateJob = async (
             regular_hours,
             vacation_days,
             sick_days,
-            work_schedule,
             job_id,
         ]);
 
@@ -167,6 +166,18 @@ export const updateJob = async (
             response.status(404).send('Job not found');
             return;
         }
+
+        const schedulePromises = job_schedule.map((js: JobSchedule) =>
+            executeQuery(payrollQueries.updateJobSchedule, [
+                job_id,
+                js.day_of_week,
+                js.start_time,
+                js.end_time,
+            ]),
+        );
+
+        // Wait for all schedule creation promises to resolve
+        await Promise.all(schedulePromises);
 
         await executeQuery('SELECT process_payroll_for_job($1)', [job_id]);
 

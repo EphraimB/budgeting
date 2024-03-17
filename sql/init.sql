@@ -26,7 +26,7 @@ CREATE TABLE IF NOT EXISTS accounts (
 -- Create a jobs table in postgres
 CREATE TABLE IF NOT EXISTS jobs (
   job_id SERIAL PRIMARY KEY,
-  account_id INTEGER NOT NULL REFERENCES accounts(account_id),
+  account_id INTEGER NOT NULL REFERENCES accounts(account_id) ON DELETE CASCADE,
   job_name TEXT NOT NULL,
   hourly_rate NUMERIC(6,2) NOT NULL,
   vacation_days INTEGER NOT NULL DEFAULT 0,
