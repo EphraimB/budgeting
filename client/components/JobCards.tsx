@@ -8,6 +8,7 @@ import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
 import JobsView from "./JobsView";
 import JobDelete from "./JobDelete";
+import { Job } from "@/app/types/types";
 
 function JobCards({ jobs }: { jobs: any }) {
   const [showJobForm, setShowJobForm] = useState(false);
@@ -22,7 +23,7 @@ function JobCards({ jobs }: { jobs: any }) {
           </Grid>
         )}
 
-        {jobs.map((job: any) => (
+        {jobs.map((job: Job) => (
           <Grid key={job.id} item>
             <Card sx={{ maxWidth: "18rem", position: "relative" }}>
               {jobModes[job.id] === "delete" ? (
