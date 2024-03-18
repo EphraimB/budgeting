@@ -98,12 +98,7 @@ export const generateDailyExpenses = (
     fromDate: Dayjs,
 ): void => {
     const generateDateFn = (currentDate: Dayjs, expense: Expense): Dayjs => {
-        const newDate = currentDate.add(
-            expense.frequency_type_variable
-                ? expense.frequency_type_variable
-                : 1,
-            'day',
-        );
+        const newDate = currentDate.add(expense.frequency_type_variable, 'day');
 
         return newDate;
     };
@@ -137,10 +132,7 @@ export const generateMonthlyExpenses = (
     let monthsIncremented: number = 0;
     const generateDateFn = (currentDate: Dayjs, expense: any): Dayjs => {
         let expenseDate: Dayjs = dayjs(expense.expense_begin_date).add(
-            monthsIncremented +
-                (expense.frequency_type_variable
-                    ? expense.frequency_type_variable
-                    : 1),
+            monthsIncremented + expense.frequency_type_variable,
             'month',
         );
 
@@ -167,9 +159,7 @@ export const generateMonthlyExpenses = (
             }
         }
 
-        monthsIncremented += expense.frequency_type_variable
-            ? expense.frequency_type_variable
-            : 1;
+        monthsIncremented += expense.frequency_type_variable;
 
         return expenseDate;
     };
@@ -217,9 +207,7 @@ export const generateWeeklyExpenses = (
 
     const generateDateFn = (currentDate: Dayjs, expense: Expense): Dayjs => {
         const newDate: Dayjs = currentDate.add(
-            expense.frequency_type_variable
-                ? expense.frequency_type_variable
-                : 1,
+            expense.frequency_type_variable,
             'week',
         );
 
@@ -255,10 +243,7 @@ export const generateYearlyExpenses = (
     let yearsIncremented: number = 0;
     const generateDateFn = (currentDate: Dayjs, expense: any): Dayjs => {
         let expenseDate: Dayjs = dayjs(expense.expense_begin_date).add(
-            yearsIncremented +
-                (expense.frequency_type_variable
-                    ? expense.frequency_type_variable
-                    : 1),
+            yearsIncremented + expense.frequency_type_variable,
             'year',
         );
 
@@ -288,9 +273,7 @@ export const generateYearlyExpenses = (
             }
         }
 
-        yearsIncremented += expense.frequency_type_variable
-            ? expense.frequency_type_variable
-            : 1;
+        yearsIncremented += expense.frequency_type_variable;
 
         return expenseDate;
     };

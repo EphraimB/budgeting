@@ -100,9 +100,7 @@ export const generateDailyTransfers = (
 ): void => {
     const generateDateFn = (currentDate: Dayjs, transfer: Transfer): Dayjs => {
         const newDate: Dayjs = currentDate.add(
-            transfer.frequency_type_variable
-                ? transfer.frequency_type_variable
-                : 1,
+            transfer.frequency_type_variable,
             'day',
         );
 
@@ -141,10 +139,7 @@ export const generateMonthlyTransfers = (
     let monthsIncremented: number = 0;
     const generateDateFn = (currentDate: Dayjs, transfer: Transfer): Dayjs => {
         let transferDate: Dayjs = dayjs(transfer.transfer_begin_date).add(
-            monthsIncremented +
-                (transfer.frequency_type_variable
-                    ? transfer.frequency_type_variable
-                    : 1),
+            monthsIncremented + transfer.frequency_type_variable,
             'month',
         );
 
@@ -171,9 +166,7 @@ export const generateMonthlyTransfers = (
             }
         }
 
-        monthsIncremented += transfer.frequency_type_variable
-            ? transfer.frequency_type_variable
-            : 1;
+        monthsIncremented += transfer.frequency_type_variable;
 
         return transferDate;
     };
@@ -224,9 +217,7 @@ export const generateWeeklyTransfers = (
 
     const generateDateFn = (currentDate: Dayjs, transfer: Transfer): Dayjs => {
         const newDate: Dayjs = currentDate.add(
-            transfer.frequency_type_variable
-                ? transfer.frequency_type_variable
-                : 1,
+            transfer.frequency_type_variable,
             'week',
         );
 
@@ -265,10 +256,7 @@ export const generateYearlyTransfers = (
     let yearsIncremented: number = 0;
     const generateDateFn = (currentDate: Dayjs, transfer: Transfer): Dayjs => {
         let transferDate: Dayjs = dayjs(transfer.transfer_begin_date).add(
-            yearsIncremented +
-                (transfer.frequency_type_variable
-                    ? transfer.frequency_type_variable
-                    : 1),
+            yearsIncremented + transfer.frequency_type_variable,
             'year',
         );
 
@@ -298,9 +286,7 @@ export const generateYearlyTransfers = (
             }
         }
 
-        yearsIncremented += transfer.frequency_type_variable
-            ? transfer.frequency_type_variable
-            : 1;
+        yearsIncremented += transfer.frequency_type_variable;
 
         return transferDate;
     };

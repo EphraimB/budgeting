@@ -145,7 +145,7 @@ export const generateDailyLoans = (
 ): { fullyPaidBackDate?: string | null } => {
     const generateDateFn = (currentDate: Dayjs, loan: Loan): Dayjs => {
         const newDate: Dayjs = currentDate.add(
-            loan.frequency_type_variable ? loan.frequency_type_variable : 1,
+            loan.frequency_type_variable,
             'day',
         );
 
@@ -181,10 +181,7 @@ export const generateMonthlyLoans = (
     let monthsIncremented: number = 0;
     const generateDateFn = (currentDate: Dayjs, loan: any): Dayjs => {
         let loanDate: Dayjs = dayjs(loan.loan_begin_date).add(
-            monthsIncremented +
-                (loan.frequency_type_variable
-                    ? loan.frequency_type_variable
-                    : 1),
+            monthsIncremented + loan.frequency_type_variable,
             'month',
         );
 
@@ -209,11 +206,7 @@ export const generateMonthlyLoans = (
             }
         }
 
-        monthsIncremented +=
-            loan.frequency_type_variable !== null &&
-            loan.frequency_type_variable !== undefined
-                ? loan.frequency_type_variable
-                : 1;
+        monthsIncremented += loan.frequency_type_variable;
 
         return loanDate;
     };
@@ -261,7 +254,7 @@ export const generateWeeklyLoans = (
 
     const generateDateFn = (currentDate: Dayjs, loan: Loan): Dayjs => {
         const newDate: Dayjs = currentDate.add(
-            loan.frequency_type_variable ? loan.frequency_type_variable : 1,
+            loan.frequency_type_variable,
             'week',
         );
 
@@ -297,10 +290,7 @@ export const generateYearlyLoans = (
     let yearsIncremented: number = 0;
     const generateDateFn = (currentDate: Dayjs, loan: any): Dayjs => {
         let loanDate: Dayjs = dayjs(loan.loan_begin_date).add(
-            yearsIncremented +
-                (loan.frequency_type_variable
-                    ? loan.frequency_type_variable
-                    : 1),
+            yearsIncremented + loan.frequency_type_variable,
             'year',
         );
 
@@ -327,9 +317,7 @@ export const generateYearlyLoans = (
                 loanDate = firstOccurrence;
             }
         }
-        yearsIncremented += loan.frequency_type_variable
-            ? loan.frequency_type_variable
-            : 1;
+        yearsIncremented += loan.frequency_type_variable;
 
         return loanDate;
     };

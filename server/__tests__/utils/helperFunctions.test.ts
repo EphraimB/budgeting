@@ -140,6 +140,7 @@ describe('nextTransactionFrequencyDate function', () => {
 
         const transaction = {
             frequency_type: 2,
+            frequency_type_variable: 1,
             begin_date: '2020-12-15',
         };
 
@@ -199,6 +200,7 @@ describe('nextTransactionFrequencyDate function', () => {
 
         const transaction = {
             frequency_type: 3,
+            frequency_type_variable: 1,
             begin_date: '2020-12-15',
         };
 
@@ -244,6 +246,7 @@ describe('nextTransactionFrequencyDate function', () => {
 
         const transaction = {
             frequency_type: 3,
+            frequency_type_variable: 1,
             begin_date: '2020-12-15',
             frequency_month_of_year: 10,
             frequency_day_of_week: 3,
@@ -260,6 +263,7 @@ describe('nextTransactionFrequencyDate function', () => {
 
         const transaction = {
             frequency_type: 2,
+            frequency_type_variable: 1,
             begin_date: '2022-12-15',
         };
 
@@ -274,6 +278,7 @@ describe('nextTransactionFrequencyDate function', () => {
 
         const transaction = {
             frequency_type: 4,
+            frequency_type_variable: 1,
             begin_date: '2020-12-15',
         };
 

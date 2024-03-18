@@ -36,6 +36,7 @@ describe('Test generateDailyExpenses', () => {
     it('Should generate daily expenses correctly', () => {
         // Preparing the test data
         const expense: any = {
+            frequency_type_variable: 1,
             expense_begin_date: '2020-01-02',
             expense_title: 'Test expense',
             expense_description: 'Test description',
@@ -109,6 +110,7 @@ describe('Test generateDailyExpenses', () => {
     it('Should generate daily expenses correctly when the expense begin date is less than the from date', () => {
         // Preparing the test data
         const expense: any = {
+            frequency_type_variable: 1,
             expense_begin_date: '2020-01-02',
             expense_title: 'Test expense',
             expense_description: 'Test description',
@@ -147,6 +149,7 @@ describe('Test generateMonthlyExpenses', () => {
     it('Should generate monthly expenses correctly', () => {
         // Preparing the test data
         const expense: any = {
+            frequency_type_variable: 1,
             expense_begin_date: '2020-01-02',
             expense_title: 'Test expense',
             expense_description: 'Test description',
@@ -220,6 +223,7 @@ describe('Test generateMonthlyExpenses', () => {
     it('Should generate monthly expenses correctly when the expense begin date is less than the from date', () => {
         // Preparing the test data
         const expense: any = {
+            frequency_type_variable: 1,
             expense_begin_date: '2020-01-02',
             expense_title: 'Test expense',
             expense_description: 'Test description',
@@ -256,6 +260,7 @@ describe('Test generateMonthlyExpenses', () => {
     it('Should generate monthly expenses correctly when the frequency day of week is set', () => {
         // Preparing the test data
         const expense: any = {
+            frequency_type_variable: 1,
             expense_begin_date: '2020-01-02',
             expense_title: 'Test expense',
             expense_description: 'Test description',
@@ -306,6 +311,7 @@ describe('Test generateMonthlyExpenses', () => {
     it('Should generate monthly expenses correctly when the frequency week of month is set', () => {
         // Preparing the test data
         const expense: any = {
+            frequency_type_variable: 1,
             expense_begin_date: '2020-01-02',
             expense_title: 'Test expense',
             expense_description: 'Test description',
@@ -353,6 +359,7 @@ describe('generateWeeklyExpenses', () => {
     it('Should generate weekly expenses correctly', () => {
         // Preparing the test data
         const expense: any = {
+            frequency_type_variable: 1,
             expense_begin_date: '2020-01-02',
             expense_title: 'Test expense',
             expense_description: 'Test description',
@@ -426,6 +433,7 @@ describe('generateWeeklyExpenses', () => {
     it('Should generate weekly expenses correctly when the expense begin date is less than the from date', () => {
         // Preparing the test data
         const expense: any = {
+            frequency_type_variable: 1,
             expense_begin_date: '2020-01-02',
             expense_title: 'Test expense',
             expense_description: 'Test description',
@@ -462,6 +470,7 @@ describe('generateWeeklyExpenses', () => {
     it('Should generate weekly expenses correctly when the frequency day of week is set', () => {
         // Preparing the test data
         const expense: any = {
+            frequency_type_variable: 1,
             expense_begin_date: '2020-01-02',
             expense_title: 'Test expense',
             expense_description: 'Test description',
@@ -514,6 +523,7 @@ describe('generateYearlyExpenses', () => {
     it('Should generate yearly expenses correctly', () => {
         // Preparing the test data
         const expense: any = {
+            frequency_type_variable: 1,
             expense_begin_date: '2020-01-02',
             expense_title: 'Test expense',
             expense_description: 'Test description',
@@ -587,6 +597,7 @@ describe('generateYearlyExpenses', () => {
     it('Should generate yearly expenses correctly when the expense begin date is less than the from date', () => {
         // Preparing the test data
         const expense: any = {
+            frequency_type_variable: 1,
             expense_begin_date: '2020-01-02',
             expense_title: 'Test expense',
             expense_description: 'Test description',
@@ -623,6 +634,7 @@ describe('generateYearlyExpenses', () => {
     it('Should generate yearly expenses correctly when the frequency day of week is set', () => {
         // Preparing the test data
         const expense: any = {
+            frequency_type_variable: 1,
             expense_begin_date: '2020-01-02',
             expense_title: 'Test expense',
             expense_description: 'Test description',
@@ -670,6 +682,7 @@ describe('generateYearlyExpenses', () => {
     it('Should generate yearly expenses correctly when the frequency week of month is set', () => {
         // Preparing the test data
         const expense: any = {
+            frequency_type_variable: 1,
             expense_begin_date: '2020-01-02',
             expense_title: 'Test expense',
             expense_description: 'Test description',
@@ -720,6 +733,7 @@ describe('generateYearlyExpenses', () => {
             expense_title: 'Test expense',
             expense_description: 'Test description',
             expense_amount: 150,
+            frequency_type_variable: 1,
             frequency_day_of_week: 2, // Tuesday
             frequency_week_of_month: 1, // Second week
             frequency_month_of_year: 5, // June

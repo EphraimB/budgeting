@@ -30,9 +30,7 @@ const parseExpenses = (expense: Record<string, string>): Expense => ({
     title: expense.expense_title,
     description: expense.expense_description,
     frequency_type: parseInt(expense.frequency_type),
-    frequency_type_variable: parseIntOrFallback(
-        expense.frequency_type_variable,
-    ),
+    frequency_type_variable: parseInt(expense.frequency_type_variable),
     frequency_day_of_month: parseIntOrFallback(expense.frequency_day_of_month),
     frequency_day_of_week: parseIntOrFallback(expense.frequency_day_of_week),
     frequency_week_of_month: parseIntOrFallback(
