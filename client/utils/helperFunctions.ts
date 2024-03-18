@@ -6,19 +6,12 @@ export const getFrequency = (row: any): string => {
 
   switch (row.frequency_type) {
     case 0: // Daily
-      if (
-        row.frequency_type_variable === 1 ||
-        row.frequency_type_variable === null
-      )
-        expenseFrequency = "daily";
+      if (row.frequency_type_variable === 1) expenseFrequency = "daily";
       else expenseFrequency = "every " + row.frequency_type_variable + " days";
 
       break;
     case 1: // Weekly
-      if (
-        row.frequency_type_variable === 1 ||
-        row.frequency_type_variable === null
-      )
+      if (row.frequency_type_variable === 1)
         expenseFrequency = `weekly ${
           row.frequency_day_of_week !== null
             ? `on ${dayjs(row.begin_date)
@@ -39,10 +32,7 @@ export const getFrequency = (row: any): string => {
 
       break;
     case 2: // Monthly
-      if (
-        row.frequency_type_variable === 1 ||
-        row.frequency_type_variable === null
-      ) {
+      if (row.frequency_type_variable === 1) {
         const dayOfMonth = dayjs(row.begin_date).format("D");
         expenseFrequency = `monthly on the ${dayOfMonth}${
           dayOfMonth.endsWith("1")
@@ -86,10 +76,7 @@ export const getFrequency = (row: any): string => {
 
       break;
     case 3: // Yearly
-      if (
-        row.frequency_type_variable === 1 ||
-        row.frequency_type_variable === null
-      )
+      if (row.frequency_type_variable === 1)
         expenseFrequency = `yearly on ${dayjs(row.begin_date).format(
           "MMMM D"
         )}`;

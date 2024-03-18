@@ -400,7 +400,7 @@ const parseLoan = (loan: Record<string, string>): any => ({
     loan_title: loan.loan_title,
     loan_description: loan.loan_description,
     frequency_type: parseInt(loan.frequency_type),
-    frequency_type_variable: parseIntOrFallback(loan.frequency_type_variable),
+    frequency_type_variable: parseInt(loan.frequency_type_variable),
     frequency_day_of_month: parseIntOrFallback(loan.frequency_day_of_month),
     frequency_day_of_week: parseIntOrFallback(loan.frequency_day_of_week),
     frequency_week_of_month: parseIntOrFallback(loan.frequency_week_of_month),

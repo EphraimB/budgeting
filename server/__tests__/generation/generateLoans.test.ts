@@ -37,6 +37,7 @@ describe('Test generateDailyLoans', () => {
     it('Should generate daily loans correctly', () => {
         // Preparing the test data
         const loan: any = {
+            frequency_type_variable: 1,
             loan_title: 'Test Loan',
             loan_description: 'Test Description',
             loan_recipient: 'Test Recipient',
@@ -122,6 +123,7 @@ describe('Test generateDailyLoans', () => {
     it('Should generate daily loans correctly when the loan begin date is less than the from date', () => {
         // Preparing the test data
         const loan: any = {
+            frequency_type_variable: 1,
             loan_title: 'Test Loan',
             loan_description: 'Test Description',
             loan_recipient: 'Test Recipient',
@@ -164,6 +166,7 @@ describe('Test generateDailyLoans', () => {
     it('should generate daily loans with yearly interest', () => {
         // Preparing the test data
         const loan: any = {
+            frequency_type_variable: 1,
             loan_title: 'Test Loan',
             loan_description: 'Test Description',
             loan_recipient: 'Test Recipient',
@@ -207,6 +210,7 @@ describe('Test generateMonthlyLoans', () => {
     it('Should generate monthly loans correctly', () => {
         // Preparing the test data
         const loan: any = {
+            frequency_type_variable: 1,
             loan_title: 'Test Loan',
             loan_description: 'Test Description',
             loan_recipient: 'Test Recipient',
@@ -292,6 +296,7 @@ describe('Test generateMonthlyLoans', () => {
     it('Should generate monthly loans correctly when the loan begin date is less than the from date', () => {
         // Preparing the test data
         const loan: any = {
+            frequency_type_variable: 1,
             loan_title: 'Test Loan',
             loan_description: 'Test Description',
             loan_recipient: 'Test Recipient',
@@ -334,6 +339,7 @@ describe('Test generateMonthlyLoans', () => {
     it('Should generate monthly loans correctly when the frequency day of week is set', () => {
         // Preparing the test data
         const loan: any = {
+            frequency_type_variable: 1,
             loan_title: 'Test Loan',
             loan_description: 'Test Description',
             loan_recipient: 'Test Recipient',
@@ -393,6 +399,7 @@ describe('Test generateMonthlyLoans', () => {
             loan_amount: 1000,
             loan_plan_amount: 100,
             loan_subsidized: 0,
+            frequency_type_variable: 1,
             frequency_day_of_week: 2,
             frequency_week_of_month: 1,
             loan_interest_rate: 0,
@@ -440,6 +447,7 @@ describe('generateWeeklyLoans', () => {
     it('Should generate weekly loans correctly', () => {
         // Preparing the test data
         const loan: any = {
+            frequency_type_variable: 1,
             loan_title: 'Test Loan',
             loan_description: 'Test Description',
             loan_recipient: 'Test Recipient',
@@ -525,6 +533,7 @@ describe('generateWeeklyLoans', () => {
     it('Should generate weekly loans correctly when the loan begin date is less than the from date', () => {
         // Preparing the test data
         const loan: any = {
+            frequency_type_variable: 1,
             loan_title: 'Test Loan',
             loan_description: 'Test Description',
             loan_recipient: 'Test Recipient',
@@ -567,6 +576,7 @@ describe('generateWeeklyLoans', () => {
     it('Should generate weekly loans correctly when the frequency day of week is set', () => {
         // Preparing the test data
         const loan: any = {
+            frequency_type_variable: 1,
             loan_title: 'Test Loan',
             loan_description: 'Test Description',
             loan_recipient: 'Test Recipient',
@@ -622,6 +632,7 @@ describe('generateYearlyLoans', () => {
     it('Should generate yearly loans correctly', () => {
         // Preparing the test data
         const loan: any = {
+            frequency_type_variable: 1,
             loan_title: 'Test Loan',
             loan_description: 'Test Description',
             loan_recipient: 'Test Recipient',
@@ -707,6 +718,7 @@ describe('generateYearlyLoans', () => {
     it('Should generate yearly loans correctly when the loan begin date is less than the from date', () => {
         // Preparing the test data
         const loan: any = {
+            frequency_type_variable: 1,
             loan_title: 'Test Loan',
             loan_description: 'Test Description',
             loan_recipient: 'Test Recipient',
@@ -749,6 +761,7 @@ describe('generateYearlyLoans', () => {
     it('Should generate yearly loans correctly when the frequency day of week is set', () => {
         // Preparing the test data
         const loan: any = {
+            frequency_type_variable: 1,
             loan_title: 'Test Loan',
             loan_description: 'Test Description',
             loan_recipient: 'Test Recipient',
@@ -802,6 +815,7 @@ describe('generateYearlyLoans', () => {
     it('Should generate yearly loans correctly when the frequency week of month is set', () => {
         // Preparing the test data
         const loan: any = {
+            frequency_type_variable: 1,
             loan_title: 'Test Loan',
             loan_description: 'Test Description',
             loan_recipient: 'Test Recipient',
@@ -853,6 +867,7 @@ describe('generateYearlyLoans', () => {
     it('Should generate yearly loans correctly when the frequency month of year is set', () => {
         // Preparing the test data
         const loan: any = {
+            frequency_type_variable: 1,
             loan_title: 'Test Loan',
             loan_description: 'Test Description',
             loan_recipient: 'Test Recipient',

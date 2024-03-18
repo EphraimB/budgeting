@@ -27,9 +27,7 @@ const transfersParse = (transfer: Record<string, string>): Transfer => ({
     transfer_begin_date: transfer.transfer_begin_date,
     transfer_end_date: transfer.transfer_end_date ?? null,
     frequency_type: parseInt(transfer.frequency_type),
-    frequency_type_variable: parseIntOrFallback(
-        transfer.frequency_type_variable,
-    ),
+    frequency_type_variable: parseInt(transfer.frequency_type_variable),
     frequency_day_of_month: parseIntOrFallback(transfer.frequency_day_of_month),
     frequency_day_of_week: parseIntOrFallback(transfer.frequency_day_of_week),
     frequency_week_of_month: parseIntOrFallback(

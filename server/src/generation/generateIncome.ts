@@ -94,10 +94,7 @@ export const generateDailyIncome = (
     fromDate: Dayjs,
 ): void => {
     const generateDateFn = (currentDate: Dayjs, income: Income): Dayjs => {
-        const newDate = currentDate.add(
-            income.frequency_type_variable ? income.frequency_type_variable : 1,
-            'day',
-        );
+        const newDate = currentDate.add(income.frequency_type_variable, 'day');
 
         return newDate;
     };
@@ -131,10 +128,7 @@ export const generateMonthlyIncome = (
     let monthsIncremented: number = 0;
     const generateDateFn = (currentDate: Dayjs, income: Income): Dayjs => {
         let incomeDate: Dayjs = dayjs(income.income_begin_date).add(
-            monthsIncremented +
-                (income.frequency_type_variable
-                    ? income.frequency_type_variable
-                    : 1),
+            monthsIncremented + income.frequency_type_variable,
             'month',
         );
 
@@ -159,9 +153,7 @@ export const generateMonthlyIncome = (
             }
         }
 
-        monthsIncremented += income.frequency_type_variable
-            ? income.frequency_type_variable
-            : 1;
+        monthsIncremented += income.frequency_type_variable;
 
         return incomeDate;
     };
@@ -209,7 +201,7 @@ export const generateWeeklyIncome = (
 
     const generateDateFn = (currentDate: Dayjs, income: Income): Dayjs => {
         const newDate: Dayjs = currentDate.add(
-            income.frequency_type_variable ? income.frequency_type_variable : 1,
+            income.frequency_type_variable,
             'week',
         );
 
@@ -245,10 +237,7 @@ export const generateYearlyIncome = (
     let yearsIncremented: number = 0;
     const generateDateFn = (currentDate: Dayjs, income: Income): Dayjs => {
         let incomeDate: Dayjs = dayjs(income.income_begin_date).add(
-            yearsIncremented +
-                (income.frequency_type_variable
-                    ? income.frequency_type_variable
-                    : 1),
+            yearsIncremented + income.frequency_type_variable,
             'year',
         );
 
@@ -276,9 +265,7 @@ export const generateYearlyIncome = (
             }
         }
 
-        yearsIncremented += income.frequency_type_variable
-            ? income.frequency_type_variable
-            : 1;
+        yearsIncremented += income.frequency_type_variable;
 
         return incomeDate;
     };

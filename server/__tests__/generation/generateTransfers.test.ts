@@ -41,6 +41,7 @@ describe('Test generateDailyTransfers', () => {
 
         // Preparing the test data
         const transfer: Transfer = {
+            frequency_type_variable: 1,
             source_account_id: 1,
             destination_account_id: 2,
             transfer_begin_date: '2020-01-02',
@@ -122,6 +123,7 @@ describe('Test generateDailyTransfers', () => {
 
         // Preparing the test data
         const transfer: Transfer = {
+            frequency_type_variable: 1,
             source_account_id: 1,
             destination_account_id: 2,
             transfer_begin_date: '2020-01-02',
@@ -164,6 +166,7 @@ describe('Test generateMonthlyTransfers', () => {
 
         // Preparing the test data
         const transfer: Transfer = {
+            frequency_type_variable: 1,
             source_account_id: 1,
             destination_account_id: 2,
             transfer_begin_date: '2020-01-02',
@@ -245,6 +248,7 @@ describe('Test generateMonthlyTransfers', () => {
 
         // Preparing the test data
         const transfer: Transfer = {
+            frequency_type_variable: 1,
             source_account_id: 1,
             destination_account_id: 2,
             transfer_begin_date: '2020-01-02',
@@ -285,6 +289,7 @@ describe('Test generateMonthlyTransfers', () => {
 
         // Preparing the test data
         const transfer: Transfer = {
+            frequency_type_variable: 1,
             source_account_id: 1,
             destination_account_id: 2,
             transfer_begin_date: '2020-01-02',
@@ -336,6 +341,7 @@ describe('Test generateMonthlyTransfers', () => {
 
         // Preparing the test data
         const transfer: Transfer = {
+            frequency_type_variable: 1,
             source_account_id: 1,
             destination_account_id: 2,
             transfer_begin_date: '2020-01-02',
@@ -387,6 +393,7 @@ describe('generateWeeklyTransfers', () => {
 
         // Preparing the test data
         const transfer: Transfer = {
+            frequency_type_variable: 1,
             source_account_id: 1,
             destination_account_id: 2,
             transfer_begin_date: '2020-01-02',
@@ -468,6 +475,7 @@ describe('generateWeeklyTransfers', () => {
 
         // Preparing the test data
         const transfer: Transfer = {
+            frequency_type_variable: 1,
             source_account_id: 1,
             destination_account_id: 2,
             transfer_begin_date: '2020-01-02',
@@ -508,6 +516,7 @@ describe('generateWeeklyTransfers', () => {
 
         // Preparing the test data
         const transfer: Transfer = {
+            frequency_type_variable: 1,
             source_account_id: 1,
             destination_account_id: 2,
             transfer_begin_date: '2020-01-02',
@@ -561,6 +570,7 @@ describe('generateYearlyTransfers', () => {
 
         // Preparing the test data
         const transfer: Transfer = {
+            frequency_type_variable: 1,
             source_account_id: 1,
             destination_account_id: 2,
             transfer_begin_date: '2020-01-02',
@@ -642,6 +652,7 @@ describe('generateYearlyTransfers', () => {
 
         // Preparing the test data
         const transfer: Transfer = {
+            frequency_type_variable: 1,
             source_account_id: 1,
             destination_account_id: 2,
             transfer_begin_date: '2020-01-02',
@@ -682,6 +693,7 @@ describe('generateYearlyTransfers', () => {
 
         // Preparing the test data
         const transfer: Transfer = {
+            frequency_type_variable: 1,
             source_account_id: 1,
             destination_account_id: 2,
             transfer_begin_date: '2020-01-02',
@@ -733,6 +745,7 @@ describe('generateYearlyTransfers', () => {
 
         // Preparing the test data
         const transfer: Transfer = {
+            frequency_type_variable: 1,
             source_account_id: 1,
             destination_account_id: 2,
             transfer_begin_date: '2020-01-02',
@@ -789,6 +802,7 @@ describe('generateYearlyTransfers', () => {
             transfer_title: 'Test transfer',
             transfer_description: 'Test description',
             transfer_amount: 150,
+            frequency_type_variable: 1,
             frequency_day_of_week: 2,
             frequency_week_of_month: 1,
             frequency_month_of_year: 5, // June
