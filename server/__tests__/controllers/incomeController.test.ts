@@ -45,7 +45,7 @@ const income = [
         income_title: 'Test Income',
         income_description: 'Test Income to test the income route',
         frequency_type: 2,
-        frequency_type_variable: null,
+        frequency_type_variable: 1,
         frequency_day_of_month: null,
         frequency_day_of_week: null,
         frequency_week_of_month: null,
