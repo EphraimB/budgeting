@@ -117,13 +117,7 @@ export const nextTransactionFrequencyDate = (
     switch (transaction.frequency_type) {
         case 0: // Daily
             nextDate = dayjs(transaction.begin_date)
-                .add(
-                    transaction.frequency_type_variable !== null &&
-                        transaction.frequency_type_variable !== undefined
-                        ? transaction.frequency_type_variable
-                        : 1,
-                    'day',
-                )
+                .add(transaction.frequency_type_variable, 'day')
                 .format();
 
             break;
@@ -145,10 +139,7 @@ export const nextTransactionFrequencyDate = (
             }
 
             expenseDate = expenseDate.add(
-                transaction.frequency_type_variable !== null &&
-                    transaction.frequency_type_variable !== undefined
-                    ? transaction.frequency_type_variable
-                    : 1,
+                transaction.frequency_type_variable,
                 'week',
             );
 
@@ -157,10 +148,7 @@ export const nextTransactionFrequencyDate = (
             break;
         case 2: // Monthly
             let transactionDate: Dayjs = dayjs(transaction.begin_date).add(
-                transaction.frequency_type_variable !== null &&
-                    transaction.frequency_type_variable !== undefined
-                    ? transaction.frequency_type_variable
-                    : 1,
+                transaction.frequency_type_variable,
                 'month',
             );
 
@@ -211,7 +199,7 @@ export const nextTransactionFrequencyDate = (
             // Loop through the months until it's after the current date
             while (transactionDate.isBefore()) {
                 transactionDate = transactionDate.add(
-                    transaction.frequency_type_variable ?? 1,
+                    transaction.frequency_type_variable,
                     'month',
                 );
             }
@@ -221,10 +209,7 @@ export const nextTransactionFrequencyDate = (
             break;
         case 3: // Yearly
             let newDate: Dayjs = dayjs(transaction.begin_date).add(
-                transaction.frequency_type_variable !== null &&
-                    transaction.frequency_type_variable !== undefined
-                    ? transaction.frequency_type_variable
-                    : 1,
+                transaction.frequency_type_variable,
                 'year',
             );
 

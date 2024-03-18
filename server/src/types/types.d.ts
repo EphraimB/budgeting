@@ -63,7 +63,7 @@ export interface Income {
     income_begin_date: string;
     income_end_date?: string;
     frequency_type?: number;
-    frequency_type_variable?: number | null | undefined;
+    frequency_type_variable: number;
     frequency_day_of_month?: number | null | undefined;
     frequency_day_of_week?: number | null | undefined;
     frequency_week_of_month?: number | null | undefined;
@@ -120,7 +120,7 @@ export interface Expense {
     begin_date: string;
     end_date?: string;
     frequency_type?: number;
-    frequency_type_variable?: number | null | undefined;
+    frequency_type_variable: number;
     frequency_day_of_month?: number | null | undefined;
     frequency_day_of_week?: number | null | undefined;
     frequency_week_of_month?: number | null | undefined;
@@ -141,7 +141,7 @@ export interface Loan {
     title: string;
     description: string;
     frequency_type?: number;
-    frequency_type_variable?: number | null;
+    frequency_type_variable: number;
     frequency_day_of_month?: number | null;
     frequency_day_of_week?: number | null;
     frequency_week_of_month?: number | null;
@@ -212,7 +212,7 @@ export interface Transfer {
     transfer_begin_date: string;
     transfer_end_date?: string | null | undefined;
     frequency_type?: number;
-    frequency_type_variable?: number | null | undefined;
+    frequency_type_variable: number;
     frequency_day_of_month?: number | null | undefined;
     frequency_day_of_week?: number | null | undefined;
     frequency_week_of_month?: number | null | undefined;

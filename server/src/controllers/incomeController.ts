@@ -26,7 +26,7 @@ const parseIncome = (income: Record<string, string>): Income => ({
     income_title: income.income_title,
     income_description: income.income_description,
     frequency_type: parseInt(income.frequency_type),
-    frequency_type_variable: parseIntOrFallback(income.frequency_type_variable),
+    frequency_type_variable: parseInt(income.frequency_type_variable),
     frequency_day_of_month: parseIntOrFallback(income.frequency_day_of_month),
     frequency_day_of_week: parseIntOrFallback(income.frequency_day_of_week),
     frequency_week_of_month: parseIntOrFallback(income.frequency_week_of_month),
