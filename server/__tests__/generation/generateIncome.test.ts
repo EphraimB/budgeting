@@ -36,6 +36,7 @@ describe('Test generateDailyIncome', () => {
     it('Should generate daily income correctly', () => {
         // Preparing the test data
         const income: any = {
+            frequency_type_variable: 1,
             income_begin_date: '2020-01-02',
             income_title: 'Test income',
             income_description: 'Test description',
@@ -107,6 +108,7 @@ describe('Test generateDailyIncome', () => {
     it('Should generate daily income correctly when the income begin date is less than the from date', () => {
         // Preparing the test data
         const income: any = {
+            frequency_type_variable: 1,
             income_begin_date: '2020-01-02',
             income_title: 'Test income',
             income_description: 'Test description',
@@ -144,6 +146,7 @@ describe('Test generateMonthlyIncome', () => {
     it('Should generate monthly income correctly', () => {
         // Preparing the test data
         const income: any = {
+            frequency_type_variable: 1,
             income_begin_date: '2020-01-02',
             income_title: 'Test income',
             income_description: 'Test description',
@@ -215,6 +218,7 @@ describe('Test generateMonthlyIncome', () => {
     it('Should generate monthly income correctly when the income begin date is less than the from date', () => {
         // Preparing the test data
         const income: any = {
+            frequency_type_variable: 1,
             income_begin_date: '2020-01-02',
             income_title: 'Test income',
             income_description: 'Test description',
@@ -250,6 +254,7 @@ describe('Test generateMonthlyIncome', () => {
     it('Should generate monthly income correctly when the frequency day of week is set', () => {
         // Preparing the test data
         const income: any = {
+            frequency_type_variable: 1,
             income_begin_date: '2020-01-02',
             income_title: 'Test income',
             income_description: 'Test description',
@@ -300,6 +305,7 @@ describe('Test generateMonthlyIncome', () => {
             income_title: 'Test income',
             income_description: 'Test description',
             income_amount: 150,
+            frequency_type_variable: 1,
             frequency_day_of_week: 2,
             frequency_week_of_month: 1,
         };
@@ -342,6 +348,7 @@ describe('generateWeeklyIncome', () => {
     it('Should generate weekly income correctly', () => {
         // Preparing the test data
         const income: any = {
+            frequency_type_variable: 1,
             income_begin_date: '2020-01-02',
             income_title: 'Test income',
             income_description: 'Test description',
@@ -413,6 +420,7 @@ describe('generateWeeklyIncome', () => {
     it('Should generate weekly income correctly when the income begin date is less than the from date', () => {
         // Preparing the test data
         const income: any = {
+            frequency_type_variable: 1,
             income_begin_date: '2020-01-02',
             income_title: 'Test income',
             income_description: 'Test description',
@@ -452,6 +460,7 @@ describe('generateWeeklyIncome', () => {
             income_title: 'Test income',
             income_description: 'Test description',
             income_amount: 150,
+            frequency_type_variable: 1,
             frequency_day_of_week: 2,
         };
         const toDate: Dayjs = dayjs('2020-02-05');
@@ -499,6 +508,7 @@ describe('generateYearlyIncome', () => {
     it('Should generate yearly income correctly', () => {
         // Preparing the test data
         const income: any = {
+            frequency_type_variable: 1,
             income_begin_date: '2020-01-02',
             income_title: 'Test income',
             income_description: 'Test description',
@@ -570,6 +580,7 @@ describe('generateYearlyIncome', () => {
     it('Should generate yearly income correctly when the income begin date is less than the from date', () => {
         // Preparing the test data
         const income: any = {
+            frequency_type_variable: 1,
             income_begin_date: '2020-01-02',
             income_title: 'Test income',
             income_description: 'Test description',
@@ -609,6 +620,7 @@ describe('generateYearlyIncome', () => {
             income_title: 'Test income',
             income_description: 'Test description',
             income_amount: 150,
+            frequency_type_variable: 1,
             frequency_day_of_week: 2,
         };
         const toDate: Dayjs = dayjs('2023-01-10');
@@ -655,6 +667,7 @@ describe('generateYearlyIncome', () => {
             income_title: 'Test income',
             income_description: 'Test description',
             income_amount: 150,
+            frequency_type_variable: 1,
             frequency_day_of_week: 2,
             frequency_week_of_month: 1,
         };
@@ -700,6 +713,7 @@ describe('generateYearlyIncome', () => {
             income_title: 'Test income',
             income_description: 'Test description',
             income_amount: 150,
+            frequency_type_variable: 1,
             frequency_day_of_week: 2, // Tuesday
             frequency_week_of_month: 1, // Second week
             frequency_month_of_year: 5, // June
