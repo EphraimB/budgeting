@@ -13,11 +13,7 @@ async function getJobs() {
   return res.json();
 }
 
-async function Jobs({
-  params,
-}: {
-  params: { account_id: string; add: boolean };
-}) {
+async function Jobs() {
   const jobs: Job[] = await getJobs();
 
   return (
