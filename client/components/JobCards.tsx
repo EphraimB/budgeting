@@ -9,9 +9,10 @@ import Grid from "@mui/material/Grid";
 import JobsView from "./JobsView";
 import JobDelete from "./JobDelete";
 import JobEdit from "./JobEdit";
+import NewJobForm from "./NewJobForm";
 import { Job } from "@/app/types/types";
 
-function JobCards({ jobs }: { jobs: any }) {
+function JobCards({ jobs, account_id }: { jobs: Job[]; account_id: number }) {
   const [showJobForm, setShowJobForm] = useState(false);
   const [jobModes, setJobModes] = useState<Record<number, string>>({});
 
@@ -20,7 +21,10 @@ function JobCards({ jobs }: { jobs: any }) {
       <Grid container spacing={2}>
         {showJobForm && (
           <Grid key="new-job" item>
-            {/* <NewJobForm setShowJobForm={setShowJobForm} /> */}
+            <NewJobForm
+              setShowJobForm={setShowJobForm}
+              account_id={account_id}
+            />
           </Grid>
         )}
 
@@ -30,7 +34,11 @@ function JobCards({ jobs }: { jobs: any }) {
               {jobModes[job.id] === "delete" ? (
                 <JobDelete job={job} setJobModes={setJobModes} />
               ) : jobModes[job.id] === "edit" ? (
-                <JobEdit job={job} setJobModes={setJobModes} />
+                <JobEdit
+                  job={job}
+                  setJobModes={setJobModes}
+                  account_id={account_id}
+                />
               ) : (
                 <JobsView job={job} setJobModes={setJobModes} />
               )}

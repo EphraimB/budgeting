@@ -20,9 +20,11 @@ import InputAdornment from "@mui/material/InputAdornment";
 function JobEdit({
   job,
   setJobModes,
+  account_id,
 }: {
   job: Job;
   setJobModes: (jobModes: Record<number, string>) => void;
+  account_id: number;
 }) {
   const [name, setName] = useState(job.name);
   const [hourly_rate, setHourlyRate] = useState(job.hourly_rate);
@@ -41,7 +43,7 @@ function JobEdit({
   };
 
   const data = {
-    account_id: job.account_id,
+    account_id,
     name,
     hourly_rate,
     vacation_days,
@@ -63,7 +65,7 @@ function JobEdit({
       console.log(error);
 
       // Show error message
-      showAlert(`Error editing expense "${name}"`, "error");
+      showAlert(`Error editing job "${name}"`, "error");
     }
 
     // Close form
@@ -91,7 +93,7 @@ function JobEdit({
       </IconButton>
       <br />
       <CardHeader
-        title={`Edit Job - Step ${activeStep + 1} of 4`}
+        title={`Edit Job - Step ${activeStep + 1} of 2`}
         sx={{
           textAlign: "center",
         }}

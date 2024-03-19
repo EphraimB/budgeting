@@ -13,8 +13,9 @@ async function getJobs() {
   return res.json();
 }
 
-async function Jobs() {
+async function Jobs({ params }: { params: { account_id: string } }) {
   const jobs: Job[] = await getJobs();
+  const accound_id = parseInt(params.account_id);
 
   return (
     <Stack>
@@ -30,7 +31,7 @@ async function Jobs() {
             You have {jobs.length} job{jobs.length === 1 ? "" : "s"}
           </Typography>
 
-          <JobCards jobs={jobs} />
+          <JobCards jobs={jobs} account_id={accound_id} />
         </>
       )}
     </Stack>
