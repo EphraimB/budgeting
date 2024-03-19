@@ -166,7 +166,7 @@ export const updateJob = async (
                 js.day_of_week,
                 js.start_time,
                 js.end_time,
-                job_id,
+                js.job_id,
             ]),
         );
 
