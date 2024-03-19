@@ -26,8 +26,8 @@ function JobEdit({
 }) {
   const [name, setName] = useState(job.name);
   const [hourly_rate, setHourlyRate] = useState(job.hourly_rate);
-  const [vacation_days, setVacationDays] = useState(0);
-  const [sick_days, setSickDays] = useState(0);
+  const [vacation_days, setVacationDays] = useState(job.vacation_days);
+  const [sick_days, setSickDays] = useState(job.sick_days);
   const [activeStep, setActiveStep] = useState(0);
 
   const theme = useTheme();
