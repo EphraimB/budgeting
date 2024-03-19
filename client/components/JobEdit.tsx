@@ -44,7 +44,7 @@ function JobEdit({
     hourly_rate,
     vacation_days,
     sick_days,
-    job_schedule: [],
+    job_schedule: job.job_schedule,
   };
 
   const { showSnackbar } = useSnackbar();
