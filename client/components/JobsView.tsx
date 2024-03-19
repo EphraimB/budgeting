@@ -55,8 +55,10 @@ function LoansView({
       <CardContent>
         <Typography variant="body2">
           You get paid ${job.hourly_rate} per hour, and you work{" "}
-          {job.regular_hours} hours per week. Your work schedule throughout the
-          week is {job.work_schedule}.
+          {job.total_hours_per_week} hours per week.
+        </Typography>
+        <Typography variant="body2">
+          Click to view more details about this job.
         </Typography>
       </CardContent>
     </>
