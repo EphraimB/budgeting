@@ -27,6 +27,8 @@ export async function addJob(job: JobRequest) {
   });
   const result = await response.json();
 
+  console.log(result);
+
   revalidatePath("/[account_id]/jobs", "page");
 
   return result;

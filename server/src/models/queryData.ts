@@ -403,17 +403,17 @@ export const payrollQueries: PayrollQueries = {
             j.hourly_rate AS "hourly_rate",
             j.vacation_days AS "vacation_days",
             j.sick_days AS "sick_days",
-            SUM(EXTRACT(HOUR FROM (js.end_time - js.start_time))) AS total_hours_per_week,
-            json_agg(
+            COALESCE(SUM(EXTRACT(EPOCH FROM (js.end_time - js.start_time)) / 3600), 0) AS total_hours_per_week,
+            COALESCE(json_agg(
                 json_build_object(
                     'day_of_week', js.day_of_week,
                     'start_time', js.start_time,
                     'end_time', js.end_time
-                )
-            ) AS job_schedule
+                ) ORDER BY js.day_of_week
+            ) FILTER (WHERE js.job_id IS NOT NULL), '[]') AS job_schedule
         FROM
             jobs j
-        JOIN
+        LEFT JOIN
             job_schedule js ON j.job_id = js.job_id
         GROUP BY
             j.job_id;
