@@ -15,6 +15,7 @@ import MobileStepper from "@mui/material/MobileStepper";
 import Button from "@mui/material/Button";
 import KeyboardArrowLeft from "@mui/icons-material/KeyboardArrowLeft";
 import KeyboardArrowRight from "@mui/icons-material/KeyboardArrowRight";
+import InputAdornment from "@mui/material/InputAdornment";
 
 function JobEdit({
   job,
@@ -112,6 +113,11 @@ function JobEdit({
               variant="standard"
               value={hourly_rate}
               onChange={(e) => setHourlyRate(parseInt(e.target.value))}
+              InputProps={{
+                startAdornment: (
+                  <InputAdornment position="start">$</InputAdornment>
+                ),
+              }}
               fullWidth
             />
             <br />
