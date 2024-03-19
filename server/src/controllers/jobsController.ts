@@ -161,14 +161,42 @@ export const updateJob = async (
             return;
         }
 
-        const schedulePromises = job_schedule.map((js: JobSchedule) =>
-            executeQuery(payrollQueries.updateJobSchedule, [
-                js.day_of_week,
-                js.start_time,
-                js.end_time,
-                js.job_id,
+        const existingSchedules = await executeQuery(
+            payrollQueries.getJobScheduleByJobId,
+            [job_id],
+        );
+
+        // Map existing schedules to a form that's easy to check for existence
+        const existingScheduleMap = new Map(
+            existingSchedules.map((s) => [
+                `${s.day_of_week}-${s.start_time}-${s.end_time}`,
+                s.job_schedule_id,
             ]),
         );
+
+        const schedulePromises = job_schedule.map((js: JobSchedule) => {
+            // Create a unique key for the current schedule to check against existing schedules
+            const scheduleKey = `${js.day_of_week}-${js.start_time}-${js.end_time}`;
+
+            if (existingScheduleMap.has(scheduleKey)) {
+                // If the schedule exists, update it using its unique ID
+                const jobScheduleId = existingScheduleMap.get(scheduleKey);
+                return executeQuery(payrollQueries.updateJobSchedule, [
+                    js.day_of_week,
+                    js.start_time,
+                    js.end_time,
+                    jobScheduleId, // Assuming updateJobScheduleById requires job_schedule_id as the last parameter
+                ]);
+            } else {
+                // If the schedule does not exist, insert it as a new entry
+                return executeQuery(payrollQueries.createJobSchedule, [
+                    job_id,
+                    js.day_of_week,
+                    js.start_time,
+                    js.end_time,
+                ]);
+            }
+        });
 
         // Wait for all schedule creation promises to resolve
         await Promise.all(schedulePromises);

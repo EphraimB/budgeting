@@ -378,7 +378,7 @@ export const payrollQueries: PayrollQueries = {
             j.vacation_days AS "vacation_days",
             j.sick_days AS "sick_days",
             SUM(EXTRACT(HOUR FROM (js.end_time - js.start_time))) AS total_hours_per_week,
-            SUM(EXTRACT(HOUR FROM (js.end_time - js.start_time))) AS total_hours
+            SUM(EXTRACT(HOUR FROM (js.end_time - js.start_time))) AS total_hours,
             json_agg(
                 json_build_object(
                     'day_of_week', js.day_of_week,
