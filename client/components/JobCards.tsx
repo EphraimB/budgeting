@@ -8,6 +8,7 @@ import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
 import JobsView from "./JobsView";
 import JobDelete from "./JobDelete";
+import JobEdit from "./JobEdit";
 import { Job } from "@/app/types/types";
 
 function JobCards({ jobs }: { jobs: any }) {
@@ -29,8 +30,7 @@ function JobCards({ jobs }: { jobs: any }) {
               {jobModes[job.id] === "delete" ? (
                 <JobDelete job={job} setJobModes={setJobModes} />
               ) : jobModes[job.id] === "edit" ? (
-                // <JobEdit job={job} setJobModes={setJobModes} />
-                <div></div>
+                <JobEdit job={job} setJobModes={setJobModes} />
               ) : (
                 <JobsView job={job} setJobModes={setJobModes} />
               )}

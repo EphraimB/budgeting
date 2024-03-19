@@ -16,7 +16,7 @@ import Button from "@mui/material/Button";
 import KeyboardArrowLeft from "@mui/icons-material/KeyboardArrowLeft";
 import KeyboardArrowRight from "@mui/icons-material/KeyboardArrowRight";
 
-function JobsEdit({
+function JobEdit({
   job,
   setJobModes,
 }: {
@@ -183,4 +183,4 @@ function JobsEdit({
   );
 }
 
-export default JobsEdit;
+export default JobEdit;
