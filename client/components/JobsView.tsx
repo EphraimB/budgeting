@@ -57,6 +57,7 @@ function LoansView({
           You get paid ${job.hourly_rate} per hour, and you work{" "}
           {job.total_hours_per_week} hours per week.
         </Typography>
+        <br />
         <Typography variant="body2">
           Click to view more details about this job.
         </Typography>
