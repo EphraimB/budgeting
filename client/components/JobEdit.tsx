@@ -4,7 +4,7 @@ import React, { useState } from "react";
 import { useAlert, useSnackbar } from "../context/FeedbackContext";
 import { Job } from "@/app/types/types";
 import { useTheme } from "@mui/material/styles";
-import { editJobs } from "../services/actions/job";
+import { editJob } from "../services/actions/job";
 import Card from "@mui/material/Card";
 import CardHeader from "@mui/material/CardHeader";
 import CardContent from "@mui/material/CardContent";
@@ -40,6 +40,7 @@ function JobEdit({
   };
 
   const data = {
+    account_id: job.account_id,
     name,
     hourly_rate,
     vacation_days,
@@ -53,7 +54,7 @@ function JobEdit({
   const handleSubmit = async () => {
     // Submit data
     try {
-      await editJobs(data, job.id);
+      await editJob(data, job.id);
 
       // Show success message
       showSnackbar(`Job "${name}" edited successfully`);
@@ -89,7 +90,7 @@ function JobEdit({
       </IconButton>
       <br />
       <CardHeader
-        title={`Edit Expense - Step ${activeStep + 1} of 4`}
+        title={`Edit Job - Step ${activeStep + 1} of 4`}
         sx={{
           textAlign: "center",
         }}
