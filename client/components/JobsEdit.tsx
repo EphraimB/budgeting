@@ -15,11 +15,6 @@ import MobileStepper from "@mui/material/MobileStepper";
 import Button from "@mui/material/Button";
 import KeyboardArrowLeft from "@mui/icons-material/KeyboardArrowLeft";
 import KeyboardArrowRight from "@mui/icons-material/KeyboardArrowRight";
-import ToggleButton from "@mui/material/ToggleButton";
-import ToggleButtonGroup from "@mui/material/ToggleButtonGroup";
-import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
-import { TimePicker } from "@mui/x-date-pickers";
 
 function JobsEdit({
   job,
@@ -28,24 +23,10 @@ function JobsEdit({
   job: Job;
   setJobModes: (jobModes: Record<number, string>) => void;
 }) {
-  const daysOfWeekArray: number[] = [];
-  const startTimes: string[] = [];
-  const endTimes: string[] = [];
-
-  job.job_schedule.forEach((schedule) => {
-    daysOfWeekArray.push(schedule.day_of_week);
-    startTimes.push(schedule.start_time);
-    endTimes.push(schedule.end_time);
-  });
-
   const [name, setName] = useState(job.name);
   const [hourly_rate, setHourlyRate] = useState(job.hourly_rate);
   const [vacation_days, setVacationDays] = useState(0);
   const [sick_days, setSickDays] = useState(0);
-  const [selectedDays, setSelectedDays] = useState<number[]>(daysOfWeekArray);
-  const [selectedStartTime, setSelectedStartTime] =
-    useState<string[]>(startTimes);
-  const [selectedEndTime, setSelectedEndTime] = useState<string[]>(endTimes);
   const [activeStep, setActiveStep] = useState(0);
 
   const theme = useTheme();
@@ -58,25 +39,12 @@ function JobsEdit({
     setActiveStep((prevActiveStep) => prevActiveStep - 1);
   };
 
-  const daysOfWeek = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
-
-  const handleDayChange = (
-    e: React.MouseEvent<HTMLElement, MouseEvent>,
-    newDays: React.SetStateAction<number[]>
-  ) => {
-    setSelectedDays(newDays);
-  };
-
   const data = {
     name,
     hourly_rate,
     vacation_days,
     sick_days,
-    job_schedule: job.job_schedule.map((js, index) => ({
-      day_of_week: selectedDays[index],
-      start_time: selectedStartTime[index],
-      end_time: selectedEndTime[index],
-    })),
+    job_schedule: [],
   };
 
   const { showSnackbar } = useSnackbar();
@@ -166,32 +134,6 @@ function JobsEdit({
               onChange={(e) => setSickDays(parseInt(e.target.value))}
               fullWidth
             />
-          </>
-        ) : activeStep === 2 ? (
-          <>
-            <ToggleButtonGroup
-              value={selectedDays}
-              onChange={handleDayChange}
-              aria-label="day of week"
-            >
-              {daysOfWeek.map((day) => (
-                <ToggleButton key={day} value={day} aria-label={day}>
-                  {day}
-                </ToggleButton>
-              ))}
-            </ToggleButtonGroup>
-            <LocalizationProvider dateAdapter={AdapterDayjs}>
-              <TimePicker
-                label="Select Start Time"
-                value={selectedStartTime}
-                onChange={(newValue) => setSelectedStartTime(newValue)}
-              />
-              <TimePicker
-                label="Select End Time"
-                value={selectedEndTime}
-                onChange={(newValue) => setSelectedEndTime(newValue)}
-              />
-            </LocalizationProvider>
             <br />
             <br />
             <Button variant="contained" onClick={handleSubmit}>
