@@ -426,9 +426,9 @@ export const payrollQueries: PayrollQueries = {
     updateJob:
         'UPDATE jobs SET account_id = $1, job_name = $2, hourly_rate = $3, vacation_days = $4, sick_days = $5 WHERE job_id = $6 RETURNING *',
     updateJobSchedule:
-        'UPDATE job_schedule SET day_of_week = $1, start_time = $2, end_time = $3 WHERE job_id = $4 RETURNING *',
+        'UPDATE job_schedule SET day_of_week = $1, start_time = $2, end_time = $3 WHERE job_schedule_id = $4 RETURNING *',
     deleteJob: 'DELETE FROM jobs WHERE job_id = $1',
-    deleteJobSchedule: 'DELETE FROM job_schedule WHERE job_id = $1',
+    deleteJobSchedule: 'DELETE FROM job_schedule WHERE job_schedule_id = $1',
 };
 
 export const wishlistQueries: WishlistQueries = {
