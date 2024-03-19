@@ -16,6 +16,7 @@ const jobsParse = (jobs: Record<string, any>): Job => ({
     hourly_rate: parseFloat(jobs.hourly_rate),
     vacation_days: parseInt(jobs.vacation_days),
     sick_days: parseInt(jobs.sick_days),
+    total_hours_per_week: parseFloat(jobs.total_hours_per_week),
     job_schedule: jobs.job_schedule.map((schedule: Record<string, any>) => ({
         day_of_week: parseInt(schedule.day_of_week),
         start_time: schedule.start_time,
@@ -117,10 +118,7 @@ export const createJob = async (
 
         await executeQuery('SELECT process_payroll_for_job($1)', [jobId]);
 
-        // Parse the data to correct format and return an object
-        const jobs = jobsParse(responseObject);
-
-        response.status(201).json(jobs);
+        response.status(201).json(responseObject);
     } catch (error) {
         logger.error(error); // Log the error on the server side
         handleError(response, 'Error creating job');

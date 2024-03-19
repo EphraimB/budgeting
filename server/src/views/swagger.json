@@ -3605,6 +3605,11 @@
                                     "type": "integer",
                                     "example": 5
                                 },
+                                "total_hours_per_week": {
+                                    "type": "number",
+                                    "format": "double",
+                                    "example": 40.0
+                                },
                                 "job_schedule": {
                                     "type": "array",
                                     "items": {

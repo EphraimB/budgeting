@@ -105,6 +105,7 @@ export interface Job {
     hourly_rate: number;
     vacation_days: number;
     sick_days: number;
+    total_hours_per_week: number;
     job_schedule: JobSchedule[];
 }
 
