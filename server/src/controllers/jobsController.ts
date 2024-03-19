@@ -104,15 +104,14 @@ export const createJob = async (
 
         // Create the response object
         const responseObject = {
-            job_id: jobId,
+            id: jobId,
             account_id,
-            job_name: name,
+            name,
             hourly_rate,
             vacation_days,
             sick_days,
             job_schedule: job_schedule.map((schedule: JobSchedule) => ({
                 ...schedule,
-                job_id: jobId, // Ensure all schedules in the response contain the new job's ID
             })),
         };
 

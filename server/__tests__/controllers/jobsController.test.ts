@@ -43,6 +43,7 @@ const jobs: any[] = [
         hourly_rate: 10,
         vacation_days: 10,
         sick_days: 10,
+        total_hours_per_week: 40,
         job_schedule: [
             {
                 day_of_week: 1,
@@ -81,6 +82,7 @@ const jobResponse: any = [
         hourly_rate: 10,
         vacation_days: 10,
         sick_days: 10,
+        total_hours_per_week: 40,
         job_schedule: [
             {
                 day_of_week: 1,
@@ -272,9 +274,45 @@ describe('POST /api/jobs', () => {
 
         await createJob(mockRequest as Request, mockResponse);
 
+        const responseObj = {
+            id: 1,
+            account_id: 1,
+            name: 'Test Job',
+            hourly_rate: 10,
+            vacation_days: 10,
+            sick_days: 10,
+            job_schedule: [
+                {
+                    day_of_week: 1,
+                    start_time: '09:00:00',
+                    end_time: '17:00:00',
+                },
+                {
+                    day_of_week: 2,
+                    start_time: '09:00:00',
+                    end_time: '17:00:00',
+                },
+                {
+                    day_of_week: 3,
+                    start_time: '09:00:00',
+                    end_time: '17:00:00',
+                },
+                {
+                    day_of_week: 4,
+                    start_time: '09:00:00',
+                    end_time: '17:00:00',
+                },
+                {
+                    day_of_week: 5,
+                    start_time: '09:00:00',
+                    end_time: '17:00:00',
+                },
+            ],
+        };
+
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(201);
-        expect(mockResponse.json).toHaveBeenCalledWith(jobResponse[0]);
+        expect(mockResponse.json).toHaveBeenCalledWith(responseObj);
     });
 
     it('should respond with an error message', async () => {
