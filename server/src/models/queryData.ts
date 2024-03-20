@@ -45,6 +45,7 @@ interface JobQueries {
     getJobsByAccountId: string;
     getJobs: string;
     getJob: string;
+    getJobsWithSchedulesByAccountId: string;
     getJobsWithSchedulesByJobIdAndAccountId: string;
     getJobScheduleByJobId: string;
     getJobsWithSchedulesByJobId: string;
@@ -223,6 +224,31 @@ export const jobQueries: JobQueries = {
     `,
     getJob: 'SELECT * FROM jobs WHERE job_id = $1',
     getJobScheduleByJobId: 'SELECT * FROM job_schedule WHERE job_id = $1',
+    getJobsWithSchedulesByAccountId: `
+        SELECT
+            j.job_id AS "job_id",
+            j.account_id AS "account_id",
+            j.job_name AS "job_name",
+            j.hourly_rate AS "hourly_rate",
+            j.vacation_days AS "vacation_days",
+            j.sick_days AS "sick_days",
+            COALESCE(SUM(EXTRACT(EPOCH FROM (js.end_time - js.start_time)) / 3600), 0) AS total_hours_per_week,
+            COALESCE(json_agg(
+                json_build_object(
+                    'day_of_week', js.day_of_week,
+                    'start_time', js.start_time,
+                    'end_time', js.end_time
+                ) ORDER BY js.day_of_week
+            ) FILTER (WHERE js.job_id IS NOT NULL), '[]') AS job_schedule
+        FROM
+            jobs j
+        JOIN
+            job_schedule js ON j.job_id = js.job_id
+        WHERE
+            j.account_id = $1
+        GROUP BY
+            j.account_id;
+    `,
     getJobsWithSchedulesByJobIdAndAccountId: `
         SELECT
             j.job_id AS "job_id",

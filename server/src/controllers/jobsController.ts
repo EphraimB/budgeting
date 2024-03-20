@@ -34,17 +34,29 @@ export const getJobs = async (
     request: Request,
     response: Response,
 ): Promise<void> => {
-    const { job_id } = request.query;
+    const { account_id, id } = request.query;
 
     try {
-        const query: string = job_id
-            ? jobQueries.getJobsWithSchedulesByJobId
-            : jobQueries.getAllJobsWithSchedules;
-        const params: any[] = job_id ? [job_id] : [];
+        let query: string;
+        let params: any[];
+
+        if (id && account_id) {
+            query = jobQueries.getJobsWithSchedulesByJobIdAndAccountId;
+            params = [id, account_id];
+        } else if (id) {
+            query = jobQueries.getJobsWithSchedulesByJobId;
+            params = [id];
+        } else if (account_id) {
+            query = jobQueries.getJobsWithSchedulesByAccountId;
+            params = [account_id];
+        } else {
+            query = jobQueries.getAllJobsWithSchedules;
+            params = [];
+        }
 
         const results = await executeQuery(query, params);
 
-        if (job_id && results.length === 0) {
+        if (id && results.length === 0) {
             response.status(404).send('Job not found');
             return;
         }
@@ -55,7 +67,7 @@ export const getJobs = async (
         response.status(200).json(jobs);
     } catch (error) {
         logger.error(error); // Log the error on the server side
-        handleError(response, `Error getting ${job_id ? 'job' : 'jobs'}`);
+        handleError(response, `Error getting ${id ? 'job' : 'jobs'}`);
     }
 };
 
