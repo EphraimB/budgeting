@@ -247,7 +247,7 @@ export const jobQueries: JobQueries = {
         WHERE
             j.account_id = $1
         GROUP BY
-            j.account_id;
+            j.job_id;
     `,
     getJobsWithSchedulesByJobIdAndAccountId: `
         SELECT
