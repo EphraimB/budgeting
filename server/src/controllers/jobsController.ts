@@ -1,5 +1,5 @@
 import { type NextFunction, type Request, type Response } from 'express';
-import { payrollQueries } from '../models/queryData.js';
+import { jobQueries } from '../models/queryData.js';
 import { handleError, executeQuery } from '../utils/helperFunctions.js';
 import { JobSchedule, type Job } from '../types/types.js';
 import { logger } from '../config/winston.js';
@@ -38,8 +38,8 @@ export const getJobs = async (
 
     try {
         const query: string = job_id
-            ? payrollQueries.getJobsWithSchedulesByJobId
-            : payrollQueries.getAllJobsWithSchedules;
+            ? jobQueries.getJobsWithSchedulesByJobId
+            : jobQueries.getAllJobsWithSchedules;
         const params: any[] = job_id ? [job_id] : [];
 
         const results = await executeQuery(query, params);
@@ -80,7 +80,7 @@ export const createJob = async (
         } = request.body;
 
         // First, create the job and get its ID
-        const jobResult = await executeQuery(payrollQueries.createJob, [
+        const jobResult = await executeQuery(jobQueries.createJob, [
             account_id,
             name,
             hourly_rate,
@@ -91,7 +91,7 @@ export const createJob = async (
 
         // Then, create schedules for this job
         const schedulePromises = job_schedule.map((js: JobSchedule) =>
-            executeQuery(payrollQueries.createJobSchedule, [
+            executeQuery(jobQueries.createJobSchedule, [
                 jobId,
                 js.day_of_week,
                 js.start_time,
@@ -147,7 +147,7 @@ export const updateJob = async (
             job_schedule,
         } = request.body;
 
-        const results = await executeQuery(payrollQueries.updateJob, [
+        const results = await executeQuery(jobQueries.updateJob, [
             account_id,
             name,
             hourly_rate,
@@ -162,7 +162,7 @@ export const updateJob = async (
         }
 
         const existingSchedules = await executeQuery(
-            payrollQueries.getJobScheduleByJobId,
+            jobQueries.getJobScheduleByJobId,
             [job_id],
         );
 
@@ -181,7 +181,7 @@ export const updateJob = async (
             if (existingScheduleMap.has(scheduleKey)) {
                 // If the schedule exists, update it using its unique ID
                 const jobScheduleId = existingScheduleMap.get(scheduleKey);
-                return executeQuery(payrollQueries.updateJobSchedule, [
+                return executeQuery(jobQueries.updateJobSchedule, [
                     js.day_of_week,
                     js.start_time,
                     js.end_time,
@@ -189,7 +189,7 @@ export const updateJob = async (
                 ]);
             } else {
                 // If the schedule does not exist, insert it as a new entry
-                return executeQuery(payrollQueries.createJobSchedule, [
+                return executeQuery(jobQueries.createJobSchedule, [
                     job_id,
                     js.day_of_week,
                     js.start_time,
@@ -220,7 +220,7 @@ export const updateJobReturnObject = async (
 
     try {
         const results = await executeQuery(
-            payrollQueries.getJobsWithSchedulesByJobId,
+            jobQueries.getJobsWithSchedulesByJobId,
             [job_id],
         );
 
@@ -247,16 +247,14 @@ export const deleteJob = async (
     try {
         const job_id = parseInt(request.params.job_id);
 
-        const transferResults = await executeQuery(payrollQueries.getJob, [
-            job_id,
-        ]);
+        const transferResults = await executeQuery(jobQueries.getJob, [job_id]);
 
         if (transferResults.length === 0) {
             response.status(404).send('Job not found');
             return;
         }
 
-        await executeQuery(payrollQueries.deleteJob, [job_id]);
+        await executeQuery(jobQueries.deleteJob, [job_id]);
 
         await executeQuery('SELECT process_payroll_for_job($1)', [job_id]);
 
