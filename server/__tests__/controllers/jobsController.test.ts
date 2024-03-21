@@ -43,6 +43,7 @@ const jobs: any[] = [
         hourly_rate: 10,
         vacation_days: 10,
         sick_days: 10,
+        total_hours_per_week: 40,
         job_schedule: [
             {
                 day_of_week: 1,
@@ -81,6 +82,7 @@ const jobResponse: any = [
         hourly_rate: 10,
         vacation_days: 10,
         sick_days: 10,
+        total_hours_per_week: 40,
         job_schedule: [
             {
                 day_of_week: 1,
@@ -188,8 +190,65 @@ describe('GET /api/jobs', () => {
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(400);
         expect(mockResponse.json).toHaveBeenCalledWith({
-            message: 'Error getting job',
+            message: 'Error getting jobs',
         });
+    });
+
+    it('should respond with an array of jobs with account_id', async () => {
+        // Arrange
+        mockModule([jobs]);
+
+        mockRequest.query = { account_id: 1 };
+
+        const { getJobs } = await import(
+            '../../src/controllers/jobsController.js'
+        );
+
+        // Call the function with the mock request and response
+        await getJobs(mockRequest as Request, mockResponse);
+
+        // Assert
+        expect(mockResponse.status).toHaveBeenCalledWith(200);
+        expect(mockResponse.json).toHaveBeenCalledWith(jobResponse);
+    });
+
+    it('should respond with an error message with account_id', async () => {
+        // Arrange
+        const errorMessage = 'Error getting jobs';
+        mockModule([], [errorMessage]);
+
+        mockRequest.query = { account_id: 1 };
+
+        const { getJobs } = await import(
+            '../../src/controllers/jobsController.js'
+        );
+
+        // Call the function with the mock request and response
+        await getJobs(mockRequest as Request, mockResponse);
+
+        // Assert
+        expect(mockResponse.status).toHaveBeenCalledWith(400);
+        expect(mockResponse.json).toHaveBeenCalledWith({
+            message: 'Error getting jobs',
+        });
+    });
+
+    it('should respond with an array of jobs with id and account_id', async () => {
+        // Arrange
+        mockModule([jobs]);
+
+        mockRequest.query = { account_id: 1, id: 1 };
+
+        const { getJobs } = await import(
+            '../../src/controllers/jobsController.js'
+        );
+
+        // Call the function with the mock request and response
+        await getJobs(mockRequest as Request, mockResponse);
+
+        // Assert
+        expect(mockResponse.status).toHaveBeenCalledWith(200);
+        expect(mockResponse.json).toHaveBeenCalledWith(jobResponse);
     });
 
     it('should respond with a 404 error message when the job does not exist', async () => {
@@ -200,7 +259,7 @@ describe('GET /api/jobs', () => {
             '../../src/controllers/jobsController.js'
         );
 
-        mockRequest.query = { job_id: 3 };
+        mockRequest.query = { id: 3 };
 
         // Act
         await getJobs(mockRequest as Request, mockResponse);
@@ -272,9 +331,45 @@ describe('POST /api/jobs', () => {
 
         await createJob(mockRequest as Request, mockResponse);
 
+        const responseObj = {
+            id: 1,
+            account_id: 1,
+            name: 'Test Job',
+            hourly_rate: 10,
+            vacation_days: 10,
+            sick_days: 10,
+            job_schedule: [
+                {
+                    day_of_week: 1,
+                    start_time: '09:00:00',
+                    end_time: '17:00:00',
+                },
+                {
+                    day_of_week: 2,
+                    start_time: '09:00:00',
+                    end_time: '17:00:00',
+                },
+                {
+                    day_of_week: 3,
+                    start_time: '09:00:00',
+                    end_time: '17:00:00',
+                },
+                {
+                    day_of_week: 4,
+                    start_time: '09:00:00',
+                    end_time: '17:00:00',
+                },
+                {
+                    day_of_week: 5,
+                    start_time: '09:00:00',
+                    end_time: '17:00:00',
+                },
+            ],
+        };
+
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(201);
-        expect(mockResponse.json).toHaveBeenCalledWith(jobResponse[0]);
+        expect(mockResponse.json).toHaveBeenCalledWith(responseObj);
     });
 
     it('should respond with an error message', async () => {
@@ -303,18 +398,28 @@ describe('PUT /api/jobs/:id', () => {
         // Arrange
         mockModule([
             [
-                [
-                    {
-                        job_id: 1,
-                        account_id: 1,
-                        name: 'Test Job',
-                        hourly_rate: 10,
-                        vacation_days: 10,
-                        sick_days: 10,
-                    },
-                ],
-                [],
-                [],
+                {
+                    job_id: 1,
+                    account_id: 1,
+                    name: 'Test Job',
+                    hourly_rate: 10,
+                    vacation_days: 10,
+                    sick_days: 10,
+                },
+            ],
+            [
+                {
+                    day_of_week: 1,
+                    start_time: '09:00:00',
+                    end_time: '17:00:00',
+                },
+            ],
+            [
+                {
+                    day_of_week: 1,
+                    start_time: '09:00:00',
+                    end_time: '17:00:00',
+                },
             ],
         ]);
 

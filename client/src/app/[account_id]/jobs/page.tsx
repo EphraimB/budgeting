@@ -3,8 +3,10 @@ import Typography from "@mui/material/Typography";
 import { Job } from "@/app/types/types";
 import JobCards from "../../../../components/JobCards";
 
-async function getJobs() {
-  const res = await fetch("http://server:5001/api/jobs");
+async function getJobs(account_id: number) {
+  const res = await fetch(
+    `http://server:5001/api/jobs?account_id=${account_id}`
+  );
 
   if (!res.ok) {
     throw new Error("Failed to fetch jobs");
@@ -13,12 +15,10 @@ async function getJobs() {
   return res.json();
 }
 
-async function Jobs({
-  params,
-}: {
-  params: { account_id: string; add: boolean };
-}) {
-  const jobs: Job[] = await getJobs();
+async function Jobs({ params }: { params: { account_id: string } }) {
+  const account_id = parseInt(params.account_id);
+
+  const jobs: Job[] = await getJobs(account_id);
 
   return (
     <Stack>
@@ -34,7 +34,7 @@ async function Jobs({
             You have {jobs.length} job{jobs.length === 1 ? "" : "s"}
           </Typography>
 
-          <JobCards jobs={jobs} />
+          <JobCards jobs={jobs} account_id={account_id} />
         </>
       )}
     </Stack>

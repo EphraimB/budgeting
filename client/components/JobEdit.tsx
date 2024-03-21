@@ -4,7 +4,7 @@ import React, { useState } from "react";
 import { useAlert, useSnackbar } from "../context/FeedbackContext";
 import { Job } from "@/app/types/types";
 import { useTheme } from "@mui/material/styles";
-import { addJob } from "../services/actions/job";
+import { editJob } from "../services/actions/job";
 import Card from "@mui/material/Card";
 import CardHeader from "@mui/material/CardHeader";
 import CardContent from "@mui/material/CardContent";
@@ -17,17 +17,19 @@ import KeyboardArrowLeft from "@mui/icons-material/KeyboardArrowLeft";
 import KeyboardArrowRight from "@mui/icons-material/KeyboardArrowRight";
 import InputAdornment from "@mui/material/InputAdornment";
 
-function NewJobForm({
-  setShowJobForm,
+function JobEdit({
+  job,
+  setJobModes,
   account_id,
 }: {
-  setShowJobForm: (showJobForm: boolean) => void;
+  job: Job;
+  setJobModes: (jobModes: Record<number, string>) => void;
   account_id: number;
 }) {
-  const [name, setName] = useState("");
-  const [hourly_rate, setHourlyRate] = useState(0);
-  const [vacation_days, setVacationDays] = useState(0);
-  const [sick_days, setSickDays] = useState(0);
+  const [name, setName] = useState(job.name);
+  const [hourly_rate, setHourlyRate] = useState(job.hourly_rate);
+  const [vacation_days, setVacationDays] = useState(job.vacation_days);
+  const [sick_days, setSickDays] = useState(job.sick_days);
   const [activeStep, setActiveStep] = useState(0);
 
   const theme = useTheme();
@@ -46,7 +48,7 @@ function NewJobForm({
     hourly_rate,
     vacation_days,
     sick_days,
-    job_schedule: [],
+    job_schedule: job.job_schedule,
   };
 
   const { showSnackbar } = useSnackbar();
@@ -55,18 +57,19 @@ function NewJobForm({
   const handleSubmit = async () => {
     // Submit data
     try {
-      await addJob(data);
+      await editJob(data, job.id);
 
       // Show success message
-      showSnackbar(`Job "${name}" created successfully`);
+      showSnackbar(`Job "${name}" edited successfully`);
     } catch (error) {
       console.log(error);
 
       // Show error message
-      showAlert(`Error creating job "${name}"`, "error");
+      showAlert(`Error editing job "${name}"`, "error");
     }
 
-    setShowJobForm(false);
+    // Close form
+    setJobModes({});
   };
 
   return (
@@ -84,13 +87,13 @@ function NewJobForm({
           right: 0,
         }}
         size="small"
-        onClick={() => setShowJobForm(false)}
+        onClick={() => setJobModes({})}
       >
         <Close />
       </IconButton>
       <br />
       <CardHeader
-        title={`Add Job - Step ${activeStep + 1} of 2`}
+        title={`Edit Job - Step ${activeStep + 1} of 2`}
         sx={{
           textAlign: "center",
         }}
@@ -189,4 +192,4 @@ function NewJobForm({
   );
 }
 
-export default NewJobForm;
+export default JobEdit;

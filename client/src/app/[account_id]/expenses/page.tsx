@@ -25,11 +25,7 @@ async function getTaxes() {
   return res.json();
 }
 
-async function Expenses({
-  params,
-}: {
-  params: { account_id: string; add: boolean };
-}) {
+async function Expenses({ params }: { params: { account_id: string } }) {
   const account_id = parseInt(params.account_id);
 
   const expenses: Expense[] = await getExpenses(account_id);

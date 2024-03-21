@@ -52,7 +52,7 @@ export interface Loan {
   title: string;
   description: string;
   frequency_type: number;
-  frequency_type_variable: number | null;
+  frequency_type_variable: number;
   frequency_day_of_month: number | null;
   frequency_day_of_week: number | null;
   frequency_week_of_month: number | null;
@@ -91,14 +91,22 @@ interface Transaction {
   date_modified: string;
 }
 
+interface JobSchedule {
+  job_id: number;
+  day_of_week: number;
+  start_time: string;
+  end_time: string;
+}
+
 export interface Job {
   id: number;
+  account_id: number;
   name: string;
   hourly_rate: number;
-  regular_hours: number;
   vacation_days: number;
   sick_days: number;
-  work_schedule: string;
+  total_hours_per_week: number;
+  job_schedule: JobSchedule[];
 }
 
 export interface GeneratedTransaction {
