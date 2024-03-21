@@ -1,6 +1,6 @@
 import React from "react";
 import { render, screen } from "@testing-library/react";
-import JobView from "../../components/JobsView";
+import JobsView from "../../components/JobsView";
 import "@testing-library/jest-dom";
 
 describe("JobsView", () => {
@@ -25,7 +25,7 @@ describe("JobsView", () => {
   };
 
   it("renders", () => {
-    render(<JobView job={job} setJobModes={setJobModes} />);
+    render(<JobsView job={job} setJobModes={setJobModes} />);
 
     expect(screen.getByTestId("MoreVertIcon")).toBeInTheDocument();
     expect(screen.getByText("Testing Inc.")).toBeInTheDocument();
