@@ -37,7 +37,7 @@ describe("JobDelete", () => {
     render(<JobDelete job={job} setJobModes={setJobModes} />);
 
     expect(screen.getByText('Delete "Testing Inc."?')).toBeInTheDocument();
-    
+
     expect(screen.getByText("Delete")).toBeInTheDocument();
     expect(screen.getByText("Cancel")).toBeInTheDocument();
   });
