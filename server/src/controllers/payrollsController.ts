@@ -1,5 +1,5 @@
 import { type Request, type Response } from 'express';
-import { payrollQueries } from '../models/queryData.js';
+import { jobQueries, payrollQueries } from '../models/queryData.js';
 import { handleError, executeQuery } from '../utils/helperFunctions.js';
 import { type Payroll } from '../types/types.js';
 import { logger } from '../config/winston.js';
@@ -34,7 +34,7 @@ export const getPayrolls = async (
 
         if (!job_id) {
             // Get all payrolls for all jobs
-            const jobs = await executeQuery(payrollQueries.getJobs, []);
+            const jobs = await executeQuery(jobQueries.getJobs, []);
 
             if (jobs.length === 0) {
                 response.status(404).send('No jobs found');
@@ -72,9 +72,7 @@ export const getPayrolls = async (
                 payrollsParse(payroll),
             );
 
-            const jobResults = await executeQuery(payrollQueries.getJob, [
-                job_id,
-            ]);
+            const jobResults = await executeQuery(jobQueries.getJob, [job_id]);
 
             returnObj = {
                 job_id: parseInt(job_id as string),

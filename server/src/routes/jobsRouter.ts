@@ -28,7 +28,11 @@ const router: Router = express.Router();
 router.get(
     '/',
     [
-        query('job_id')
+        query('account_id')
+            .optional()
+            .isInt({ min: 1 })
+            .withMessage('Account ID must be a number'),
+        query('id')
             .optional()
             .isInt({ min: 1 })
             .withMessage('Job ID must be a number'),

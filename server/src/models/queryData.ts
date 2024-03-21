@@ -41,6 +41,24 @@ interface LoanQueries {
     deleteLoan: string;
 }
 
+interface JobQueries {
+    getJobsByAccountId: string;
+    getJobs: string;
+    getJob: string;
+    getJobsWithSchedulesByAccountId: string;
+    getJobsWithSchedulesByJobIdAndAccountId: string;
+    getJobScheduleByJobId: string;
+    getJobsWithSchedulesByJobId: string;
+    getAllJobsWithSchedules: string;
+    getAccountIdFromJobs: string;
+    createJob: string;
+    createJobSchedule: string;
+    updateJob: string;
+    updateJobSchedule: string;
+    deleteJob: string;
+    deleteJobSchedule: string;
+}
+
 interface PayrollQueries {
     getPayrolls: string;
     getPayrollsMiddleware: string;
@@ -58,19 +76,6 @@ interface PayrollQueries {
     createPayrollDate: string;
     updatePayrollDate: string;
     deletePayrollDate: string;
-    getJobsByAccountId: string;
-    getJobs: string;
-    getJob: string;
-    getJobScheduleByJobId: string;
-    getJobsWithSchedulesByJobId: string;
-    getAllJobsWithSchedules: string;
-    getAccountIdFromJobs: string;
-    createJob: string;
-    createJobSchedule: string;
-    updateJob: string;
-    updateJobSchedule: string;
-    deleteJob: string;
-    deleteJobSchedule: string;
 }
 
 interface WishlistQueries {
@@ -210,6 +215,125 @@ export const loanQueries: LoanQueries = {
     updateLoanWithCronJobId:
         'UPDATE loans SET cron_job_id = $1, interest_cron_job_id = $2 WHERE loan_id = $3 RETURNING *',
     deleteLoan: 'DELETE FROM loans WHERE loan_id = $1',
+};
+
+export const jobQueries: JobQueries = {
+    getJobsByAccountId: 'SELECT * FROM jobs WHERE account_id = $1',
+    getJobs: `
+        SELECT * FROM jobs
+    `,
+    getJob: 'SELECT * FROM jobs WHERE job_id = $1',
+    getJobScheduleByJobId: 'SELECT * FROM job_schedule WHERE job_id = $1',
+    getJobsWithSchedulesByAccountId: `
+        SELECT
+            j.job_id AS "job_id",
+            j.account_id AS "account_id",
+            j.job_name AS "job_name",
+            j.hourly_rate AS "hourly_rate",
+            j.vacation_days AS "vacation_days",
+            j.sick_days AS "sick_days",
+            COALESCE(SUM(EXTRACT(EPOCH FROM (js.end_time - js.start_time)) / 3600), 0) AS total_hours_per_week,
+            COALESCE(json_agg(
+                json_build_object(
+                    'day_of_week', js.day_of_week,
+                    'start_time', js.start_time,
+                    'end_time', js.end_time
+                ) ORDER BY js.day_of_week
+            ) FILTER (WHERE js.job_id IS NOT NULL), '[]') AS job_schedule
+        FROM
+            jobs j
+        JOIN
+            job_schedule js ON j.job_id = js.job_id
+        WHERE
+            j.account_id = $1
+        GROUP BY
+            j.job_id;
+    `,
+    getJobsWithSchedulesByJobIdAndAccountId: `
+        SELECT
+            j.job_id AS "job_id",
+            j.account_id AS "account_id",
+            j.job_name AS "job_name",
+            j.hourly_rate AS "hourly_rate",
+            j.vacation_days AS "vacation_days",
+            j.sick_days AS "sick_days",
+            COALESCE(SUM(EXTRACT(EPOCH FROM (js.end_time - js.start_time)) / 3600), 0) AS total_hours_per_week,
+            COALESCE(json_agg(
+                json_build_object(
+                    'day_of_week', js.day_of_week,
+                    'start_time', js.start_time,
+                    'end_time', js.end_time
+                ) ORDER BY js.day_of_week
+            ) FILTER (WHERE js.job_id IS NOT NULL), '[]') AS job_schedule
+        FROM
+            jobs j
+        JOIN
+            job_schedule js ON j.job_id = js.job_id
+        WHERE
+            j.job_id = $1
+            AND j.account_id = $2
+        GROUP BY
+            j.job_id;
+    `,
+    getJobsWithSchedulesByJobId: `
+        SELECT
+            j.job_id AS "job_id",
+            j.account_id AS "account_id",
+            j.job_name AS "job_name",
+            j.hourly_rate AS "hourly_rate",
+            j.vacation_days AS "vacation_days",
+            j.sick_days AS "sick_days",
+            COALESCE(SUM(EXTRACT(EPOCH FROM (js.end_time - js.start_time)) / 3600), 0) AS total_hours_per_week,
+            COALESCE(json_agg(
+                json_build_object(
+                    'day_of_week', js.day_of_week,
+                    'start_time', js.start_time,
+                    'end_time', js.end_time
+                ) ORDER BY js.day_of_week
+            ) FILTER (WHERE js.job_id IS NOT NULL), '[]') AS job_schedule
+        FROM
+            jobs j
+        JOIN
+            job_schedule js ON j.job_id = js.job_id
+        WHERE
+            j.job_id = $1
+        GROUP BY
+            j.job_id;
+    `,
+    getAllJobsWithSchedules: `
+        SELECT
+            j.job_id AS "job_id",
+            j.account_id AS "account_id",
+            j.job_name AS "job_name",
+            j.hourly_rate AS "hourly_rate",
+            j.vacation_days AS "vacation_days",
+            j.sick_days AS "sick_days",
+            COALESCE(SUM(EXTRACT(EPOCH FROM (js.end_time - js.start_time)) / 3600), 0) AS total_hours_per_week,
+            COALESCE(json_agg(
+                json_build_object(
+                    'day_of_week', js.day_of_week,
+                    'start_time', js.start_time,
+                    'end_time', js.end_time
+                ) ORDER BY js.day_of_week
+            ) FILTER (WHERE js.job_id IS NOT NULL), '[]') AS job_schedule
+        FROM
+            jobs j
+        LEFT JOIN
+            job_schedule js ON j.job_id = js.job_id
+        GROUP BY
+            j.job_id;
+    `,
+    getAccountIdFromJobs: 'SELECT account_id FROM accounts WHERE job_id = $1',
+    createJob:
+        'INSERT INTO jobs (account_id, job_name, hourly_rate, vacation_days, sick_days) VALUES ($1, $2, $3, $4, $5) RETURNING *',
+    createJobSchedule:
+        'INSERT INTO job_schedule (job_id, day_of_week, start_time, end_time) VALUES ($1, $2, $3, $4) RETURNING *',
+    updateJob:
+        'UPDATE jobs SET account_id = $1, job_name = $2, hourly_rate = $3, vacation_days = $4, sick_days = $5 WHERE job_id = $6 RETURNING *',
+    updateJobSchedule:
+        'UPDATE job_schedule SET day_of_week = $1, start_time = $2, end_time = $3 WHERE job_schedule_id = $4 RETURNING *',
+    deleteJob: 'DELETE FROM jobs WHERE job_id = $1',
+    deleteJobSchedule: 'DELETE FROM job_schedule WHERE job_id = $1',
 };
 
 export const payrollQueries: PayrollQueries = {
@@ -363,69 +487,6 @@ export const payrollQueries: PayrollQueries = {
     updatePayrollDate:
         'UPDATE payroll_dates SET payroll_start_day = $1, payroll_end_day = $2 WHERE payroll_date_id = $3 RETURNING *',
     deletePayrollDate: 'DELETE FROM payroll_dates WHERE payroll_date_id = $1',
-    getJobsByAccountId: 'SELECT * FROM jobs WHERE account_id = $1',
-    getJobs: `
-        SELECT * FROM jobs
-    `,
-    getJob: 'SELECT * FROM jobs WHERE job_id = $1',
-    getJobScheduleByJobId: 'SELECT * FROM job_schedule WHERE job_id = $1',
-    getJobsWithSchedulesByJobId: `
-        SELECT
-            j.job_id AS "job_id",
-            j.account_id AS "account_id",
-            j.job_name AS "job_name",
-            j.hourly_rate AS "hourly_rate",
-            j.vacation_days AS "vacation_days",
-            j.sick_days AS "sick_days",
-            json_agg(
-                json_build_object(
-                    'day_of_week', js.day_of_week,
-                    'start_time', js.start_time,
-                    'end_time', js.end_time
-                )
-            ) AS job_schedule
-        FROM
-            jobs j
-        JOIN
-            job_schedule js ON j.job_id = js.job_id
-        WHERE
-            j.job_id = $1
-        GROUP BY
-            j.job_id;
-    `,
-    getAllJobsWithSchedules: `
-        SELECT
-            j.job_id AS "job_id",
-            j.account_id AS "account_id",
-            j.job_name AS "job_name",
-            j.hourly_rate AS "hourly_rate",
-            j.vacation_days AS "vacation_days",
-            j.sick_days AS "sick_days",
-            json_agg(
-                json_build_object(
-                    'day_of_week', js.day_of_week,
-                    'start_time', js.start_time,
-                    'end_time', js.end_time
-                )
-            ) AS job_schedule
-        FROM
-            jobs j
-        JOIN
-            job_schedule js ON j.job_id = js.job_id
-        GROUP BY
-            j.job_id;
-    `,
-    getAccountIdFromJobs: 'SELECT account_id FROM accounts WHERE job_id = $1',
-    createJob:
-        'INSERT INTO jobs (account_id, job_name, hourly_rate, vacation_days, sick_days) VALUES ($1, $2, $3, $4, $5) RETURNING *',
-    createJobSchedule:
-        'INSERT INTO job_schedule (job_id, day_of_week, start_time, end_time) VALUES ($1, $2, $3, $4) RETURNING *',
-    updateJob:
-        'UPDATE jobs SET account_id = $1, job_name = $2, hourly_rate = $3, vacation_days = $4, sick_days = $5 WHERE job_id = $6 RETURNING *',
-    updateJobSchedule:
-        'UPDATE job_schedule SET day_of_week = $1, start_time = $2, end_time = $3 WHERE job_id = $4 RETURNING *',
-    deleteJob: 'DELETE FROM jobs WHERE job_id = $1',
-    deleteJobSchedule: 'DELETE FROM job_schedule WHERE job_id = $1',
 };
 
 export const wishlistQueries: WishlistQueries = {

@@ -1,6 +1,6 @@
 import { type Request, type Response, type NextFunction } from 'express';
 import { type QueryResultRow } from 'pg';
-import dayjs, { type Dayjs } from 'dayjs';
+import dayjs from 'dayjs';
 import {
     parseIntOrFallback,
     handleError,
@@ -23,12 +23,11 @@ import {
     incomeQueries,
     commuteScheduleQueries,
     fareCappingQueries,
+    jobQueries,
 } from '../models/queryData.js';
 import {
     type Income,
     type Expense,
-    type Loan,
-    type Payroll,
     type Transfer,
     type Wishlist,
 } from '../types/types.js';
@@ -535,7 +534,7 @@ export const getPayrollsMiddleware = async (
             await Promise.all(
                 accountResults.map(async (account) => {
                     const jobResults = await executeQuery(
-                        payrollQueries.getJobsByAccountId,
+                        jobQueries.getJobsByAccountId,
                         [account.account_id],
                     );
 
@@ -579,7 +578,7 @@ export const getPayrollsMiddleware = async (
             }
 
             const jobResults = await executeQuery(
-                payrollQueries.getJobsByAccountId,
+                jobQueries.getJobsByAccountId,
                 [account_id],
             );
 
