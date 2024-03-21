@@ -25,7 +25,7 @@ describe("JobsView", () => {
   };
 
   it("renders", () => {
-    render(<JobsView job={job} setJobModes={setJobModes} />);
+    render(<JobsView job={job} setJobModes={setJobModes} account_id={1} />);
 
     expect(screen.getByTestId("MoreVertIcon")).toBeInTheDocument();
     expect(screen.getByText("Testing Inc.")).toBeInTheDocument();

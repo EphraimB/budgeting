@@ -52,7 +52,7 @@ export interface Loan {
   title: string;
   description: string;
   frequency_type: number;
-  frequency_type_variable: number | null;
+  frequency_type_variable: number;
   frequency_day_of_month: number | null;
   frequency_day_of_week: number | null;
   frequency_week_of_month: number | null;

@@ -40,7 +40,11 @@ function JobCards({ jobs, account_id }: { jobs: Job[]; account_id: number }) {
                   account_id={account_id}
                 />
               ) : (
-                <JobsView job={job} setJobModes={setJobModes} />
+                <JobsView
+                  job={job}
+                  setJobModes={setJobModes}
+                  account_id={account_id}
+                />
               )}
             </Card>
           </Grid>
