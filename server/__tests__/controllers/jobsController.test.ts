@@ -190,7 +190,7 @@ describe('GET /api/jobs', () => {
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(400);
         expect(mockResponse.json).toHaveBeenCalledWith({
-            message: 'Error getting job',
+            message: 'Error getting jobs',
         });
     });
 
@@ -202,7 +202,7 @@ describe('GET /api/jobs', () => {
             '../../src/controllers/jobsController.js'
         );
 
-        mockRequest.query = { job_id: 3 };
+        mockRequest.query = { id: 3 };
 
         // Act
         await getJobs(mockRequest as Request, mockResponse);
@@ -341,18 +341,28 @@ describe('PUT /api/jobs/:id', () => {
         // Arrange
         mockModule([
             [
-                [
-                    {
-                        job_id: 1,
-                        account_id: 1,
-                        name: 'Test Job',
-                        hourly_rate: 10,
-                        vacation_days: 10,
-                        sick_days: 10,
-                    },
-                ],
-                [],
-                [],
+                {
+                    job_id: 1,
+                    account_id: 1,
+                    name: 'Test Job',
+                    hourly_rate: 10,
+                    vacation_days: 10,
+                    sick_days: 10,
+                },
+            ],
+            [
+                {
+                    day_of_week: 1,
+                    start_time: '09:00:00',
+                    end_time: '17:00:00',
+                },
+            ],
+            [
+                {
+                    day_of_week: 1,
+                    start_time: '09:00:00',
+                    end_time: '17:00:00',
+                },
             ],
         ]);
 
