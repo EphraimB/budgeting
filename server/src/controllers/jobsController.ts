@@ -61,7 +61,7 @@ export const getJobs = async (
             return;
         }
 
-        // // Parse the data to the correct format and return an object
+        // Parse the data to the correct format and return an object
         const jobs: Job[] = results.map((job) => jobsParse(job));
 
         response.status(200).json(jobs);

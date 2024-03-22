@@ -16,15 +16,15 @@ async function getJob(job_id: number) {
 async function JobDetails({ params }: { params: { job_id: string } }) {
   const job_id = parseInt(params.job_id);
 
-  const job: Job = await getJob(job_id);
+  const job: Job[] = await getJob(job_id);
 
   return (
     <Stack>
       <Typography variant="h4" component="h2">
-        Job Details for {job.name}
+        Job Details for {job[0].name}
       </Typography>
       <br />
-      <JobScheduleDayView job_schedule={job.job_schedule} />
+      <JobScheduleDayView job_schedule={job[0].job_schedule} />
     </Stack>
   );
 }
