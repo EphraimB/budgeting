@@ -8,15 +8,7 @@ import { Typography } from "@mui/material";
 import { JobSchedule } from "@/app/types/types";
 import JobScheduleView from "./JobScheduleView";
 
-function JobScheduleDayView({
-  job_schedule,
-  scheduleIsExpanded,
-  setScheduleIsExpanded,
-}: {
-  job_schedule: JobSchedule[];
-  scheduleIsExpanded: number | null;
-  setScheduleIsExpanded: React.Dispatch<React.SetStateAction<number | null>>;
-}) {
+function JobScheduleDayView({ job_schedule }: { job_schedule: JobSchedule[] }) {
   const days = [
     "Sunday",
     "Monday",
@@ -58,9 +50,6 @@ function JobScheduleDayView({
             job_day_of_week={job_schedule.filter(
               (js) => js.day_of_week === index
             )}
-            day={index}
-            scheduleIsExpanded={scheduleIsExpanded}
-            setScheduleIsExpanded={setScheduleIsExpanded}
           />
         </Paper>
       ))}
