@@ -1,13 +1,10 @@
 "use client";
 
-import React, { useState } from "react";
-import { useAlert, useSnackbar } from "../context/FeedbackContext";
-import Paper from "@mui/material/Paper";
-import Grid from "@mui/material/Grid";
+import React from "react";
 import Box from "@mui/material/Box";
-import { createTheme, ThemeProvider } from "@mui/material/styles";
-import { Typography } from "@mui/material";
+import { createTheme } from "@mui/material/styles";
 import { JobSchedule } from "@/app/types/types";
+import Tooltip from "@mui/material/Tooltip";
 
 // Define your custom theme
 const theme = createTheme({
@@ -51,16 +48,21 @@ function JobScheduleView({
           const widthPercent = endPercent - startPercent;
 
           return (
-            <Box
-              key={index}
-              sx={{
-                height: "100%",
-                backgroundColor: theme.palette.primary.main,
-                position: "absolute",
-                left: `${startPercent}%`,
-                width: `${widthPercent}%`,
-              }}
-            />
+            <Tooltip
+              title={job.start_time + "-" + job.end_time}
+              placement="top"
+            >
+              <Box
+                key={index}
+                sx={{
+                  height: "100%",
+                  backgroundColor: theme.palette.primary.main,
+                  position: "absolute",
+                  left: `${startPercent}%`,
+                  width: `${widthPercent}%`,
+                }}
+              />
+            </Tooltip>
           );
         })}
       </Box>
