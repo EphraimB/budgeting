@@ -56,6 +56,7 @@ function JobScheduleView({
       transition={{ type: "spring", stiffness: 300, damping: 20 }}
       onClick={handleScheduleClick}
       style={{
+        filter: "none",
         width: "100%",
         position: "absolute",
         left: 0,
