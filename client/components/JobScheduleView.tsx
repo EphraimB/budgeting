@@ -49,11 +49,11 @@ function JobScheduleView({
 
           return (
             <Tooltip
+              key={index}
               title={job.start_time + "-" + job.end_time}
               placement="top"
             >
               <Box
-                key={index}
                 sx={{
                   height: "100%",
                   backgroundColor: theme.palette.primary.main,
