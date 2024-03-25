@@ -20,7 +20,13 @@ function JobScheduleDayView({ job_schedule }: { job_schedule: JobSchedule[] }) {
   ];
 
   return (
-    <Stack direction="row" spacing={2} useFlexGap flexWrap="wrap">
+    <Stack
+      direction="row"
+      spacing={2}
+      useFlexGap
+      flexWrap="wrap"
+      alignItems="center"
+    >
       {days.map((day, index) => (
         <Paper
           key={index}
