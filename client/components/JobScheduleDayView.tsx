@@ -23,11 +23,19 @@ function JobScheduleDayView({ job_schedule }: { job_schedule: JobSchedule[] }) {
     <Grid container spacing={2}>
       {days.map((day, index) => (
         <Grid key={index} item xs={6} md={1}>
-          <Paper sx={{ backgroundColor: "black", color: "white", p: 2, position: "relative" }}>
+          <Paper
+            sx={{
+              backgroundColor: "black",
+              color: "white",
+              p: 2,
+              position: "relative",
+            }}
+          >
             <Typography
               variant="body2"
-              component="span"
+              component="p"
               sx={{ textAlign: "center" }}
+              gutterBottom
             >
               {day}
             </Typography>
