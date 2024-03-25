@@ -45,6 +45,7 @@ function JobScheduleView({
         left: 0,
         bottom: 0,
       }}
+      onClick={() => setOpen(true)}
     >
       {job_day_of_week.map((job, index) => {
         const startPercent = timeToPercent(job.start_time);
