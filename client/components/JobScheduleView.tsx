@@ -1,10 +1,11 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import Box from "@mui/material/Box";
 import { createTheme } from "@mui/material/styles";
 import { JobSchedule } from "@/app/types/types";
 import Tooltip from "@mui/material/Tooltip";
+import { motion } from "framer-motion";
 
 // Define your custom theme
 const theme = createTheme({
@@ -30,8 +31,31 @@ function JobScheduleView({
 }: {
   job_day_of_week: JobSchedule[];
 }) {
+  const [isExpanded, setIsExpanded] = useState(false);
+
+  const handleScheduleClick = () => {
+    setIsExpanded(!isExpanded); // Toggle the expanded state
+  };
+
   return (
-    <Box sx={{ position: "absolute", width: "100%", left: 0, bottom: 0 }}>
+    <motion.div
+      initial={false}
+      animate={{
+        height: isExpanded ? "100px" : "20px",
+        filter: isExpanded ? "blur(4px)" : "none",
+      }}
+      transition={{ type: "spring", stiffness: 300, damping: 20 }}
+      onClick={handleScheduleClick}
+      style={{
+        width: "100%",
+        position: "absolute",
+        left: 0,
+        bottom: 0,
+        display: "flex",
+        alignItems: "center",
+        backgroundColor: theme.palette.background.default,
+      }}
+    >
       <Box
         sx={{
           width: "100%",
@@ -66,7 +90,7 @@ function JobScheduleView({
           );
         })}
       </Box>
-    </Box>
+    </motion.div>
   );
 }
 
