@@ -34,34 +34,36 @@ function JobScheduleView({
   job_day_of_week: JobSchedule[];
 }) {
   return (
-    <Box
-      sx={{
-        width: "100%",
-        height: "20px",
-        backgroundColor: theme.palette.background.default,
-        position: "relative",
-        display: "flex",
-        alignItems: "center",
-      }}
-    >
-      {job_day_of_week.map((job, index) => {
-        const startPercent = timeToPercent(job.start_time);
-        const endPercent = timeToPercent(job.end_time);
-        const widthPercent = endPercent - startPercent;
+    <Box sx={{ position: "absolute", width: "100%", left: 0, bottom: 0 }}>
+      <Box
+        sx={{
+          width: "100%",
+          height: "20px",
+          backgroundColor: theme.palette.background.default,
+          position: "relative",
+          display: "flex",
+          alignItems: "center",
+        }}
+      >
+        {job_day_of_week.map((job, index) => {
+          const startPercent = timeToPercent(job.start_time);
+          const endPercent = timeToPercent(job.end_time);
+          const widthPercent = endPercent - startPercent;
 
-        return (
-          <Box
-            key={index}
-            sx={{
-              height: "100%",
-              backgroundColor: theme.palette.primary.main,
-              position: "absolute",
-              left: `${startPercent}%`,
-              width: `${widthPercent}%`,
-            }}
-          />
-        );
-      })}
+          return (
+            <Box
+              key={index}
+              sx={{
+                height: "100%",
+                backgroundColor: theme.palette.primary.main,
+                position: "absolute",
+                left: `${startPercent}%`,
+                width: `${widthPercent}%`,
+              }}
+            />
+          );
+        })}
+      </Box>
     </Box>
   );
 }
