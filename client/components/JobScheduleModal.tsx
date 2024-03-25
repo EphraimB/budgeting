@@ -41,15 +41,21 @@ function JobScheduleModal({
       onClose={() => setOpen(false)}
       aria-labelledby="modal-modal-title"
       aria-describedby="modal-modal-description"
+      sx={{
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+      }}
     >
       <Box
         sx={{
-          width: "100%",
+          width: "50%",
           height: "20px",
           backgroundColor: theme.palette.background.default,
           position: "relative",
           display: "flex",
           alignItems: "center",
+          justifyContent: "center",
         }}
       >
         {job_day_of_week.map((job, index) => {
