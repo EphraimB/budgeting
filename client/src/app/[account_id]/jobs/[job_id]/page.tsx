@@ -5,6 +5,7 @@ import JobScheduleDayView from "../../../../../components/JobScheduleDayView";
 import HourlyWage from "../../../../../components/HourlyWage";
 import SickDays from "../../../../../components/SickDays";
 import VacationDays from "../../../../../components/VacationDays";
+import JobDetailsView from "../../../../../components/JobDetailsView";
 
 async function getJob(job_id: number) {
   const res = await fetch(`http://server:5001/api/jobs?id=${job_id}`);
@@ -21,21 +22,7 @@ async function JobDetails({ params }: { params: { job_id: string } }) {
 
   const job: Job[] = await getJob(job_id);
 
-  return (
-    <Stack>
-      <Typography variant="h4" component="h2">
-        Job Details for {job[0].name}
-      </Typography>
-      <br />
-      <Stack direction="row" spacing={2} justifyContent="center">
-        <HourlyWage hourly_wage={job[0].hourly_rate} />
-        <SickDays sick_days={job[0].sick_days} />
-        <VacationDays vacation_days={job[0].vacation_days} />
-      </Stack>
-      <br />
-      <JobScheduleDayView job_schedule={job[0].job_schedule} />
-    </Stack>
-  );
+  return <JobDetailsView job={job[0]} />;
 }
 
 export default JobDetails;
