@@ -58,6 +58,7 @@ function JobScheduleDayView({
             job_day_of_week={job_schedule.filter(
               (js) => js.day_of_week === index
             )}
+            day={index}
             scheduleIsExpanded={scheduleIsExpanded}
             setScheduleIsExpanded={setScheduleIsExpanded}
           />

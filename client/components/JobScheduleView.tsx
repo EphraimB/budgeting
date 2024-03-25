@@ -28,22 +28,24 @@ const timeToPercent = (time: string) => {
 
 function JobScheduleView({
   job_day_of_week,
+  day,
   scheduleIsExpanded,
   setScheduleIsExpanded,
 }: {
   job_day_of_week: JobSchedule[];
+  day: number;
   scheduleIsExpanded: number | null;
   setScheduleIsExpanded: React.Dispatch<React.SetStateAction<number | null>>;
 }) {
   const handleScheduleClick = () => {
     if (scheduleIsExpanded === null) {
-      setScheduleIsExpanded(job_day_of_week[0].day_of_week); // Expand the schedule
+      setScheduleIsExpanded(day); // Expand the schedule
     } else {
       setScheduleIsExpanded(null); // Collapse the schedule
     }
   };
 
-  const expanded = scheduleIsExpanded === job_day_of_week[0].day_of_week;
+  const expanded = scheduleIsExpanded === day;
 
   return (
     <motion.div
