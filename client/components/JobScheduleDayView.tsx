@@ -25,7 +25,7 @@ function JobScheduleDayView({ job_schedule }: { job_schedule: JobSchedule[] }) {
       spacing={2}
       useFlexGap
       flexWrap="wrap"
-      alignItems="center"
+      justifyContent="center"
     >
       {days.map((day, index) => (
         <Paper

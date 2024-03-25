@@ -27,7 +27,7 @@ async function JobDetails({ params }: { params: { job_id: string } }) {
         Job Details for {job[0].name}
       </Typography>
       <br />
-      <Stack direction="row" spacing={2} alignItems="center">
+      <Stack direction="row" spacing={2} justifyContent="center">
         <HourlyWage hourly_wage={job[0].hourly_rate} />
         <SickDays sick_days={job[0].sick_days} />
         <VacationDays vacation_days={job[0].vacation_days} />
