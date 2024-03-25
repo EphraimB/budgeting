@@ -6,6 +6,7 @@ import Paper from "@mui/material/Paper";
 import Grid from "@mui/material/Grid";
 import { Typography } from "@mui/material";
 import { JobSchedule } from "@/app/types/types";
+import JobScheduleView from "./JobScheduleView";
 
 function JobScheduleDayView({ job_schedule }: { job_schedule: JobSchedule[] }) {
   const days = [
@@ -26,6 +27,11 @@ function JobScheduleDayView({ job_schedule }: { job_schedule: JobSchedule[] }) {
             <Typography variant="body2" component="span">
               {day}
             </Typography>
+            <JobScheduleView
+              job_day_of_week={job_schedule.filter(
+                (js) => js.day_of_week === index
+              )}
+            />
           </Paper>
         </Grid>
       ))}
