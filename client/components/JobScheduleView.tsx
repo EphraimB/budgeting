@@ -5,7 +5,6 @@ import Box from "@mui/material/Box";
 import { createTheme } from "@mui/material/styles";
 import { JobSchedule } from "@/app/types/types";
 import Tooltip from "@mui/material/Tooltip";
-import JobScheduleModal from "./JobScheduleModal";
 
 // Define your custom theme
 const theme = createTheme({

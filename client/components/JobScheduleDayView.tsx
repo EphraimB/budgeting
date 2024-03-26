@@ -68,7 +68,7 @@ function JobScheduleDayView({ job_schedule }: { job_schedule: JobSchedule[] }) {
           />
         </Paper>
       ))}
-      {modalState.dayOfWeek && (
+      {modalState.dayOfWeek !== null && (
         <JobScheduleModal
           job_day_of_week={job_schedule.filter(
             (js) => js.day_of_week === modalState.dayOfWeek
