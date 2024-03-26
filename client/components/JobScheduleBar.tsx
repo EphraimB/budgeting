@@ -53,6 +53,7 @@ function JobScheduleBar({
       isDragging: !!monitor.isDragging(),
     }),
     end: (item, monitor) => {
+      console.log("monitor", monitor.getDropResult());
       const dropResult: DropResult | null = monitor.getDropResult();
       if (item && dropResult) {
         // You need to convert dropResult.position to time and update the job schedule
@@ -101,7 +102,6 @@ function JobScheduleBar({
         sx={{
           height: "100%",
           backgroundColor: theme.palette.primary.main,
-          position: "absolute",
           left: `${startPercent}%`,
           width: `${widthPercent}%`,
         }}

@@ -8,6 +8,7 @@ import { JobSchedule } from "@/app/types/types";
 import Typography from "@mui/material/Typography";
 import Stack from "@mui/material/Stack";
 import { DndProvider } from "react-dnd";
+import { HTML5Backend } from "react-dnd-html5-backend";
 import { TouchBackend } from "react-dnd-touch-backend";
 import dayjs from "dayjs";
 import customParseFormat from "dayjs/plugin/customParseFormat"; // Import plugin for custom parsing
@@ -140,11 +141,13 @@ function JobScheduleModal({
       return job;
     });
 
+    console.log(updatedJobs);
+
     setJobSchedules(updatedJobs); // Update the state
   };
 
   return (
-    <DndProvider backend={TouchBackend} options={options}>
+    <DndProvider backend={HTML5Backend} options={options}>
       <Modal
         open={open}
         onClose={() => setOpen(false)}
