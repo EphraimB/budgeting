@@ -28,13 +28,15 @@ const timeToPercent = (time: string) => {
 
 function JobScheduleView({
   job_day_of_week,
+  open,
+  setOpen,
   day_of_week,
 }: {
   job_day_of_week: JobSchedule[];
+  open: boolean;
+  setOpen: React.Dispatch<React.SetStateAction<boolean>>;
   day_of_week: string;
 }) {
-  const [open, setOpen] = useState(false);
-
   return (
     <Box
       sx={{
@@ -47,6 +49,7 @@ function JobScheduleView({
         left: 0,
         bottom: 0,
       }}
+      onClick={() => setOpen(true)}
     >
       {job_day_of_week.map((job, index) => {
         const startPercent = timeToPercent(job.start_time);

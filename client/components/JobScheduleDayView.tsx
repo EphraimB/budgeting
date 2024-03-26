@@ -9,6 +9,8 @@ import { JobSchedule } from "@/app/types/types";
 import JobScheduleView from "./JobScheduleView";
 
 function JobScheduleDayView({ job_schedule }: { job_schedule: JobSchedule[] }) {
+  const [open, setOpen] = useState(false);
+
   const days = [
     "Sunday",
     "Monday",
@@ -50,6 +52,8 @@ function JobScheduleDayView({ job_schedule }: { job_schedule: JobSchedule[] }) {
             job_day_of_week={job_schedule.filter(
               (js) => js.day_of_week === index
             )}
+            open={open}
+            setOpen={setOpen}
             day_of_week={day}
           />
         </Paper>
