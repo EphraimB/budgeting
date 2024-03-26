@@ -28,8 +28,10 @@ const timeToPercent = (time: string) => {
 
 function JobScheduleView({
   job_day_of_week,
+  day_of_week,
 }: {
   job_day_of_week: JobSchedule[];
+  day_of_week: string;
 }) {
   const [open, setOpen] = useState(false);
 
@@ -72,6 +74,7 @@ function JobScheduleView({
       })}
       <JobScheduleModal
         job_day_of_week={job_day_of_week}
+        day_of_week={day_of_week}
         open={open}
         setOpen={setOpen}
       />
