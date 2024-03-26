@@ -4,7 +4,7 @@ import React from "react";
 import Modal from "@mui/material/Modal";
 import Box from "@mui/material/Box";
 import { createTheme } from "@mui/material/styles";
-import { JobSchedule } from "@/app/types/types";
+import { Job, JobSchedule } from "@/app/types/types";
 import Typography from "@mui/material/Typography";
 import Stack from "@mui/material/Stack";
 import dayjs from "dayjs";
@@ -108,20 +108,18 @@ const generateHourTicks = () => {
 function JobScheduleModal({
   job_day_of_week,
   day_of_week,
-  day_of_week_index,
   open,
   setOpen,
 }: {
   job_day_of_week: JobSchedule[];
-  day_of_week: string;
-  day_of_week_index: number;
-  open: number | null;
-  setOpen: React.Dispatch<React.SetStateAction<number | null>>;
+  day_of_week: number;
+  open: boolean;
+  setOpen: (isOpen: boolean) => void;
 }) {
   return (
     <Modal
-      open={open !== null && open === day_of_week_index}
-      onClose={() => setOpen(null)}
+      open={open}
+      onClose={() => setOpen(false)}
       aria-labelledby="modal-modal-title"
       aria-describedby="modal-modal-description"
       sx={{

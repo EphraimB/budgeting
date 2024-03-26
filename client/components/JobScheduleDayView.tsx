@@ -7,9 +7,13 @@ import Stack from "@mui/material/Stack";
 import { Typography } from "@mui/material";
 import { JobSchedule } from "@/app/types/types";
 import JobScheduleView from "./JobScheduleView";
+import JobScheduleModal from "./JobScheduleModal";
 
 function JobScheduleDayView({ job_schedule }: { job_schedule: JobSchedule[] }) {
-  const [open, setOpen] = useState<number | null>(null);
+  const [modalState, setModalState] = useState<{
+    open: boolean;
+    dayOfWeek: number | null;
+  }>({ open: false, dayOfWeek: null });
 
   const days = [
     "Sunday",
@@ -20,6 +24,13 @@ function JobScheduleDayView({ job_schedule }: { job_schedule: JobSchedule[] }) {
     "Friday",
     "Saturday",
   ];
+
+  const handleOpenModal = (day: number) => {
+    setModalState({
+      open: true,
+      dayOfWeek: day,
+    });
+  };
 
   return (
     <Stack
@@ -52,13 +63,23 @@ function JobScheduleDayView({ job_schedule }: { job_schedule: JobSchedule[] }) {
             job_day_of_week={job_schedule.filter(
               (js) => js.day_of_week === index
             )}
-            open={open}
-            setOpen={setOpen}
-            day_of_week={day}
-            day_of_week_index={index}
+            day_of_week={index}
+            handleOpenModal={handleOpenModal}
           />
         </Paper>
       ))}
+      {modalState.dayOfWeek && (
+        <JobScheduleModal
+          job_day_of_week={job_schedule.filter(
+            (js) => js.day_of_week === modalState.dayOfWeek
+          )}
+          day_of_week={modalState.dayOfWeek}
+          open={modalState.open}
+          setOpen={(isOpen) =>
+            setModalState((prevState) => ({ ...prevState, open: isOpen }))
+          }
+        />
+      )}
     </Stack>
   );
 }

@@ -28,16 +28,12 @@ const timeToPercent = (time: string) => {
 
 function JobScheduleView({
   job_day_of_week,
-  open,
-  setOpen,
   day_of_week,
-  day_of_week_index,
+  handleOpenModal,
 }: {
   job_day_of_week: JobSchedule[];
-  open: number | null;
-  setOpen: React.Dispatch<React.SetStateAction<number | null>>;
-  day_of_week: string;
-  day_of_week_index: number;
+  day_of_week: number;
+  handleOpenModal: (day: number) => void;
 }) {
   return (
     <Box
@@ -51,7 +47,7 @@ function JobScheduleView({
         left: 0,
         bottom: 0,
       }}
-      onClick={() => setOpen(day_of_week_index)}
+      onClick={() => handleOpenModal(day_of_week)}
     >
       {job_day_of_week.map((job, index) => {
         const startPercent = timeToPercent(job.start_time);
@@ -76,13 +72,6 @@ function JobScheduleView({
           </Tooltip>
         );
       })}
-      <JobScheduleModal
-        job_day_of_week={job_day_of_week}
-        day_of_week={day_of_week}
-        day_of_week_index={day_of_week_index}
-        open={open}
-        setOpen={setOpen}
-      />
     </Box>
   );
 }
