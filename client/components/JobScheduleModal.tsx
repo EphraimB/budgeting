@@ -130,12 +130,12 @@ function JobScheduleModal({
   };
 
   const updateJobSchedule = (
-    start_time: string,
+    id: number,
     newStartTime: string,
     newEndTime: string
   ) => {
-    const updatedJobs = jobSchedules.map((job) => {
-      if (job.start_time === start_time) {
+    const updatedJobs = jobSchedules.map((job, index) => {
+      if (index === id) {
         return { ...job, start_time: newStartTime, end_time: newEndTime };
       }
       return job;

@@ -9,13 +9,13 @@ import dayjs from "dayjs";
 import { useDrag } from "react-dnd";
 
 type UpdateJobSchedule = (
-  start_time: string,
+  id: number,
   newStartTime: string,
   newEndTime: string
 ) => void;
 
 interface DropResult {
-  position: { start: string; end: string };
+  position: { start_time: string; end_time: string };
 }
 
 function JobScheduleBar({
@@ -46,28 +46,35 @@ function JobScheduleBar({
     return (totalMinutes / 1440) * 100; // 1440 minutes in a day
   };
 
-  const [{ isDragging }, drag] = useDrag(() => ({
-    type: "job",
-    item: { id: job.start_time, index },
-    collect: (monitor) => ({
-      isDragging: !!monitor.isDragging(),
-    }),
+  // Dragging logic for the start handle
+  const [, dragStart] = useDrag(() => ({
+    type: "job-start",
+    item: { id: index },
     end: (item, monitor) => {
-      console.log("monitor", monitor.getDropResult());
       const dropResult: DropResult | null = monitor.getDropResult();
       if (item && dropResult) {
-        // You need to convert dropResult.position to time and update the job schedule
-        updateJobSchedule(
-          item.id,
-          dropResult.position.start,
-          dropResult.position.end
-        );
+        // Logic to update job's start time using dropResult
+        updateJobSchedule(index, dropResult.position.start_time, job.end_time);
       }
     },
   }));
 
-  // Style adjustments while dragging
-  const opacity = isDragging ? 0.5 : 1;
+  // Dragging logic for the end handle
+  const [, dragEnd] = useDrag(() => ({
+    type: "job-end",
+    item: { id: index },
+    end: (item, monitor) => {
+      const dropResult: DropResult | null = monitor.getDropResult();
+      if (item && dropResult) {
+        // Logic to update job's end time using dropResult
+        updateJobSchedule(
+          item.id,
+          job.start_time,
+          dropResult.position.end_time
+        );
+      }
+    },
+  }));
 
   const is12HourClock = () => {
     const dateTimeFormat = new Intl.DateTimeFormat([], {
@@ -86,27 +93,51 @@ function JobScheduleBar({
   const widthPercent = endPercent - startPercent;
 
   return (
-    <Tooltip
-      key={index}
-      title={
-        use12HourClock
-          ? dayjs(job.start_time, "HH:mm:ss").format("h:mm:ss A") +
-            "-" +
-            dayjs(job.end_time, "HH:mm:ss").format("h:mm:ss A")
-          : job.start_time + "-" + job.end_time
-      }
-      placement="top"
-    >
+    <Box sx={{ position: "relative", width: "100%", height: "20px" }}>
       <Box
-        ref={drag}
+        ref={dragStart}
         sx={{
           height: "100%",
           backgroundColor: theme.palette.primary.main,
           left: `${startPercent}%`,
-          width: `${widthPercent}%`,
+          width: "10px",
+          position: "absolute",
+          cursor: "ew-resize",
         }}
       />
-    </Tooltip>
+      <Tooltip
+        key={index}
+        title={
+          use12HourClock
+            ? dayjs(job.start_time, "HH:mm:ss").format("h:mm:ss A") +
+              "-" +
+              dayjs(job.end_time, "HH:mm:ss").format("h:mm:ss A")
+            : job.start_time + "-" + job.end_time
+        }
+        placement="top"
+      >
+        <Box
+          sx={{
+            position: "absolute",
+            height: "100%",
+            backgroundColor: theme.palette.primary.main,
+            left: `${startPercent}%`,
+            width: `${widthPercent}%`,
+          }}
+        />
+      </Tooltip>
+      <Box
+        ref={dragEnd}
+        sx={{
+          height: "100%",
+          backgroundColor: theme.palette.primary.main,
+          left: `${endPercent}%`,
+          width: "10px",
+          position: "absolute",
+          cursor: "ew-resize",
+        }}
+      />
+    </Box>
   );
 }
 
