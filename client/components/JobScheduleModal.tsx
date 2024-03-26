@@ -127,6 +127,8 @@ function JobScheduleModal({
     "Saturday",
   ];
 
+  const use12HourClock = is12HourClock(); // Determine if we should use 12-hour clock
+
   return (
     <Modal
       open={open}
@@ -167,7 +169,13 @@ function JobScheduleModal({
             return (
               <Tooltip
                 key={index}
-                title={job.start_time + "-" + job.end_time}
+                title={
+                  use12HourClock
+                    ? dayjs(job.start_time, "HH:mm:ss").format("h:mm:ss A") +
+                      "-" +
+                      dayjs(job.end_time, "HH:mm:ss").format("h:mm:ss A")
+                    : job.start_time + "-" + job.end_time
+                }
                 placement="top"
               >
                 <Box
