@@ -54,8 +54,8 @@ const generateHourTicks = () => {
       ? i === 0 || i === 12 || i === 23
       : i % 4 === 0;
     let timeString = use12HourClock
-      ? dayjs().hour(i).minute(0).format("h:mm A")
-      : dayjs().hour(i).minute(0).format("HH:mm");
+      ? dayjs().hour(i).minute(0).format("hA")
+      : dayjs().hour(i).minute(0).format("HH");
 
     // For mobile view, adjust the format to be shorter and adjust font size
     if (mobileView && showHourLabel) {
