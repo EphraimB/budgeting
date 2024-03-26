@@ -3,7 +3,6 @@
 import React from "react";
 import Modal from "@mui/material/Modal";
 import Box from "@mui/material/Box";
-import Tooltip from "@mui/material/Tooltip";
 import { createTheme } from "@mui/material/styles";
 import { JobSchedule } from "@/app/types/types";
 import Typography from "@mui/material/Typography";
@@ -26,6 +25,47 @@ const timeToPercent = (time: string) => {
   const [hours, minutes] = time.split(":").map(Number);
   const totalMinutes = hours * 60 + minutes;
   return (totalMinutes / 1440) * 100; // 1440 minutes in a day
+};
+
+const generateHourTicks = () => {
+  const ticks = [];
+  for (let i = 0; i < 24; i++) {
+    const showHourText = i % 4 === 0; // Show hour text only every 4 hours
+
+    ticks.push(
+      <Box
+        key={i}
+        sx={{
+          position: "absolute",
+          left: `${(100 / 24) * i}%`,
+          top: "-20px", // Adjust this value as needed to position the time text
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center", // Center the tick and text above it
+        }}
+      >
+        {showHourText && ( // Conditionally render the Typography component
+          <Typography
+            variant="caption"
+            sx={{
+              color: "black",
+              mb: 0.5, // Margin bottom to create some space between the text and the tick
+            }}
+          >
+            {`${i}:00`} // Displaying the hour
+          </Typography>
+        )}
+        <Box
+          sx={{
+            height: "5px",
+            width: "2px",
+            backgroundColor: "black",
+          }}
+        />
+      </Box>
+    );
+  }
+  return ticks;
 };
 
 function JobScheduleModal({
@@ -70,27 +110,22 @@ function JobScheduleModal({
             justifyContent: "center",
           }}
         >
-          {job_day_of_week.map((job, index) => {
+          {generateHourTicks()}
+          {job_day_of_week.map((job) => {
             const startPercent = timeToPercent(job.start_time);
             const endPercent = timeToPercent(job.end_time);
             const widthPercent = endPercent - startPercent;
 
             return (
-              <Tooltip
-                key={index}
-                title={job.start_time + "-" + job.end_time}
-                placement="top"
-              >
-                <Box
-                  sx={{
-                    height: "100%",
-                    backgroundColor: theme.palette.primary.main,
-                    position: "absolute",
-                    left: `${startPercent}%`,
-                    width: `${widthPercent}%`,
-                  }}
-                />
-              </Tooltip>
+              <Box
+                sx={{
+                  height: "100%",
+                  backgroundColor: theme.palette.primary.main,
+                  position: "absolute",
+                  left: `${startPercent}%`,
+                  width: `${widthPercent}%`,
+                }}
+              />
             );
           })}
         </Box>
