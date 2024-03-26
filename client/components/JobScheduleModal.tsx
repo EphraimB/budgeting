@@ -116,6 +116,16 @@ function JobScheduleModal({
   open: boolean;
   setOpen: (isOpen: boolean) => void;
 }) {
+  const days = [
+    "Sunday",
+    "Monday",
+    "Tuesday",
+    "Wednesday",
+    "Thursday",
+    "Friday",
+    "Saturday",
+  ];
+
   return (
     <Modal
       open={open}
@@ -134,7 +144,7 @@ function JobScheduleModal({
         sx={{ width: "50%", bgcolor: "background.paper", p: 4 }}
       >
         <Typography variant="h6" component="h2" gutterBottom>
-          {day_of_week}
+          {days[day_of_week]}
         </Typography>
         <Box
           sx={{
