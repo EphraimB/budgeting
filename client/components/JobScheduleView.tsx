@@ -31,11 +31,13 @@ function JobScheduleView({
   open,
   setOpen,
   day_of_week,
+  day_of_week_index,
 }: {
   job_day_of_week: JobSchedule[];
-  open: boolean;
-  setOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  open: number | null;
+  setOpen: React.Dispatch<React.SetStateAction<number | null>>;
   day_of_week: string;
+  day_of_week_index: number;
 }) {
   return (
     <Box
@@ -49,7 +51,7 @@ function JobScheduleView({
         left: 0,
         bottom: 0,
       }}
-      onClick={() => setOpen(true)}
+      onClick={() => setOpen(day_of_week_index)}
     >
       {job_day_of_week.map((job, index) => {
         const startPercent = timeToPercent(job.start_time);
@@ -77,6 +79,7 @@ function JobScheduleView({
       <JobScheduleModal
         job_day_of_week={job_day_of_week}
         day_of_week={day_of_week}
+        day_of_week_index={day_of_week_index}
         open={open}
         setOpen={setOpen}
       />

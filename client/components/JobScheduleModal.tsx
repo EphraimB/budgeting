@@ -108,18 +108,20 @@ const generateHourTicks = () => {
 function JobScheduleModal({
   job_day_of_week,
   day_of_week,
+  day_of_week_index,
   open,
   setOpen,
 }: {
   job_day_of_week: JobSchedule[];
   day_of_week: string;
-  open: boolean;
-  setOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  day_of_week_index: number;
+  open: number | null;
+  setOpen: React.Dispatch<React.SetStateAction<number | null>>;
 }) {
   return (
     <Modal
-      open={open}
-      onClose={() => setOpen(false)}
+      open={open !== null && open === day_of_week_index}
+      onClose={() => setOpen(null)}
       aria-labelledby="modal-modal-title"
       aria-describedby="modal-modal-description"
       sx={{
