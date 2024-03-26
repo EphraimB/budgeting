@@ -57,11 +57,6 @@ const generateHourTicks = () => {
       ? dayjs().hour(i).minute(0).format("hA")
       : dayjs().hour(i).minute(0).format("HH");
 
-    // For mobile view, adjust the format to be shorter and adjust font size
-    if (mobileView && showHourLabel) {
-      timeString = dayjs().hour(i).minute(0).format("hA"); // e.g., '12A', '12P'
-    }
-
     ticks.push(
       <Box
         key={i}
@@ -80,10 +75,10 @@ const generateHourTicks = () => {
             sx={{
               color: "black",
               position: "absolute",
-              top: mobileView ? "-15px" : "-20px", // Closer to the tick in mobile view
+              top: "-15px",
               transform: "translateX(-50%)",
               whiteSpace: "nowrap",
-              fontSize: mobileView ? "0.7rem" : "inherit", // Smaller font size for mobile view
+              fontSize: "0.7rem",
             }}
           >
             {timeString}
@@ -91,7 +86,7 @@ const generateHourTicks = () => {
         )}
         <Box
           sx={{
-            height: mobileView ? "75%" : "100%", // Shorter ticks for mobile view
+            height: "75%",
             width: "1px",
             backgroundColor: showHourLabel ? "black" : "rgba(0,0,0,0.5)",
             position: "absolute",
