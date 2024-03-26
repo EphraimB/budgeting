@@ -7,6 +7,7 @@ import { createTheme } from "@mui/material/styles";
 import { Job, JobSchedule } from "@/app/types/types";
 import Typography from "@mui/material/Typography";
 import Stack from "@mui/material/Stack";
+import Tooltip from "@mui/material/Tooltip";
 import dayjs from "dayjs";
 import customParseFormat from "dayjs/plugin/customParseFormat"; // Import plugin for custom parsing
 dayjs.extend(customParseFormat);
@@ -158,22 +159,27 @@ function JobScheduleModal({
           }}
         >
           {generateHourTicks()}
-          {job_day_of_week.map((job) => {
+          {job_day_of_week.map((job, index) => {
             const startPercent = timeToPercent(job.start_time);
             const endPercent = timeToPercent(job.end_time);
             const widthPercent = endPercent - startPercent;
 
             return (
-              <Box
-                key={job.start_time}
-                sx={{
-                  height: "100%",
-                  backgroundColor: theme.palette.primary.main,
-                  position: "absolute",
-                  left: `${startPercent}%`,
-                  width: `${widthPercent}%`,
-                }}
-              />
+              <Tooltip
+                key={index}
+                title={job.start_time + "-" + job.end_time}
+                placement="top"
+              >
+                <Box
+                  sx={{
+                    height: "100%",
+                    backgroundColor: theme.palette.primary.main,
+                    position: "absolute",
+                    left: `${startPercent}%`,
+                    width: `${widthPercent}%`,
+                  }}
+                />
+              </Tooltip>
             );
           })}
         </Box>
