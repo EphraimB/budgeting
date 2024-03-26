@@ -1,10 +1,11 @@
 "use client";
 
-import React, { useState } from "react";
+import React from "react";
 import Box from "@mui/material/Box";
 import { createTheme } from "@mui/material/styles";
 import { JobSchedule } from "@/app/types/types";
 import Tooltip from "@mui/material/Tooltip";
+import dayjs from "dayjs";
 
 // Define your custom theme
 const theme = createTheme({
@@ -34,6 +35,18 @@ function JobScheduleView({
   day_of_week: number;
   handleOpenModal: (day: number) => void;
 }) {
+  const is12HourClock = () => {
+    const dateTimeFormat = new Intl.DateTimeFormat([], {
+      hour: "numeric",
+      hour12: true,
+    });
+    // Format a date at 23:00 to see if 'AM'/'PM' is used in the formatted string
+    const formattedTime = dateTimeFormat.format(new Date(0, 0, 0, 23, 0, 0));
+    return formattedTime.includes("AM") || formattedTime.includes("PM");
+  };
+
+  const use12HourClock = is12HourClock(); // Determine if we should use 12-hour clock
+
   return (
     <Box
       sx={{
@@ -56,7 +69,13 @@ function JobScheduleView({
         return (
           <Tooltip
             key={index}
-            title={job.start_time + "-" + job.end_time}
+            title={
+              use12HourClock
+                ? dayjs(job.start_time, "HH:mm:ss").format("h:mm:ss A") +
+                  "-" +
+                  dayjs(job.end_time, "HH:mm:ss").format("h:mm:ss A")
+                : job.start_time + "-" + job.end_time
+            }
             placement="top"
           >
             <Box

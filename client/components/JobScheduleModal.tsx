@@ -4,7 +4,7 @@ import React from "react";
 import Modal from "@mui/material/Modal";
 import Box from "@mui/material/Box";
 import { createTheme } from "@mui/material/styles";
-import { Job, JobSchedule } from "@/app/types/types";
+import { JobSchedule } from "@/app/types/types";
 import Typography from "@mui/material/Typography";
 import Stack from "@mui/material/Stack";
 import Tooltip from "@mui/material/Tooltip";
