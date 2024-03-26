@@ -52,7 +52,7 @@ const generateHourTicks = () => {
               mb: 0.5, // Margin bottom to create some space between the text and the tick
             }}
           >
-            {`${i}:00`} // Displaying the hour
+            {`${i}:00`}
           </Typography>
         )}
         <Box
