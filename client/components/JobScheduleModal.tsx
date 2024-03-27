@@ -1,20 +1,23 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import Modal from "@mui/material/Modal";
 import Box from "@mui/material/Box";
 import { createTheme } from "@mui/material/styles";
 import { Job, JobSchedule } from "@/app/types/types";
 import Typography from "@mui/material/Typography";
 import Stack from "@mui/material/Stack";
-import { DndProvider } from "react-dnd";
-import { HTML5Backend } from "react-dnd-html5-backend";
-import { TouchBackend } from "react-dnd-touch-backend";
-import dayjs from "dayjs";
+import dayjs, { Dayjs } from "dayjs";
 import customParseFormat from "dayjs/plugin/customParseFormat"; // Import plugin for custom parsing
 import JobScheduleBar from "./JobScheduleBar";
 import { editJob } from "../services/actions/job";
+import JobDayTimeslots from "./JobDayTimeslots";
 dayjs.extend(customParseFormat);
+
+interface Timeslot {
+  startTime: string;
+  endTime: string;
+}
 
 // Define your custom theme
 const theme = createTheme({
@@ -116,7 +119,7 @@ function JobScheduleModal({
   open: boolean;
   setOpen: (isOpen: boolean) => void;
 }) {
-  const [jobSchedules, setJobSchedules] = React.useState(job_day_of_week);
+  const [jobSchedules, setJobSchedules] = useState(job_day_of_week);
 
   const days = [
     "Sunday",
@@ -127,10 +130,6 @@ function JobScheduleModal({
     "Friday",
     "Saturday",
   ];
-
-  const options = {
-    scrollAngleRanges: [{ start: 300 }, { end: 60 }, { start: 120, end: 240 }],
-  };
 
   const updateJobSchedule = (
     id: number,
@@ -163,51 +162,60 @@ function JobScheduleModal({
     }
   };
 
+  const onSave = (timeslots: Timeslot[]) => {
+    timeslots.forEach((timeslot, index) => {
+      updateJobSchedule(index, timeslot.startTime, timeslot.endTime);
+    });
+  };
+
+  const onclose = () => {
+    setOpen(false);
+  };
+
   return (
-    <DndProvider backend={HTML5Backend} options={options}>
-      <Modal
-        open={open}
-        onClose={() => setOpen(false)}
-        aria-labelledby="modal-modal-title"
-        aria-describedby="modal-modal-description"
-        sx={{
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-        }}
+    <Modal
+      open={open}
+      onClose={() => setOpen(false)}
+      aria-labelledby="modal-modal-title"
+      aria-describedby="modal-modal-description"
+      sx={{
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+      }}
+    >
+      <Stack
+        direction="column"
+        spacing={2}
+        sx={{ width: "50%", bgcolor: "background.paper", p: 4 }}
       >
-        <Stack
-          direction="column"
-          spacing={2}
-          sx={{ width: "50%", bgcolor: "background.paper", p: 4 }}
+        <Typography variant="h6" component="h2" gutterBottom>
+          {days[day_of_week]}
+        </Typography>
+
+        <JobDayTimeslots
+          job_schedule={job.job_schedule}
+          onSave={onSave}
+          onClose={onclose}
+        />
+        <Box
+          sx={{
+            width: "100%",
+            height: "20px",
+            backgroundColor: theme.palette.background.default,
+            position: "relative",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
         >
-          <Typography variant="h6" component="h2" gutterBottom>
-            {days[day_of_week]}
-          </Typography>
-          <Box
-            sx={{
-              width: "100%",
-              height: "20px",
-              backgroundColor: theme.palette.background.default,
-              position: "relative",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-            }}
-          >
-            {generateHourTicks()}
-            {job_day_of_week.map((job, index) => (
-              <JobScheduleBar
-                key={index}
-                job={job}
-                index={index}
-                updateJobSchedule={updateJobSchedule}
-              />
-            ))}
-          </Box>
-        </Stack>
-      </Modal>
-    </DndProvider>
+          {generateHourTicks()}
+          {job_day_of_week.map((job, index) => (
+            <JobScheduleBar key={index} job={job} index={index} />
+          ))}
+        </Box>
+      </Stack>
+    </Modal>
   );
 }
 
