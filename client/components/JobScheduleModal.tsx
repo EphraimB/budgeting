@@ -15,8 +15,8 @@ import JobDayTimeslots from "./JobDayTimeslots";
 dayjs.extend(customParseFormat);
 
 interface Timeslot {
-  startTime: string;
-  endTime: string;
+  startTime: string | null;
+  endTime: string | null;
 }
 
 // Define your custom theme
@@ -164,7 +164,8 @@ function JobScheduleModal({
 
   const onSave = (timeslots: Timeslot[]) => {
     timeslots.forEach((timeslot, index) => {
-      updateJobSchedule(index, timeslot.startTime, timeslot.endTime);
+      if (timeslot.startTime && timeslot.endTime)
+        updateJobSchedule(index, timeslot.startTime, timeslot.endTime);
     });
   };
 
@@ -194,7 +195,9 @@ function JobScheduleModal({
         </Typography>
 
         <JobDayTimeslots
-          job_schedule={job.job_schedule}
+          job_schedule={job.job_schedule.filter(
+            (js) => js.day_of_week === day_of_week
+          )}
           onSave={onSave}
           onClose={onclose}
         />

@@ -4,16 +4,16 @@ import Button from "@mui/material/Button";
 import { TimePicker } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers";
-import TextField from "@mui/material/TextField";
 import IconButton from "@mui/material/IconButton";
 import DeleteIcon from "@mui/icons-material/Delete";
-import { Dayjs } from "dayjs";
 import { JobSchedule } from "@/app/types/types";
 import dayjs from "dayjs";
+import customParseFormat from "dayjs/plugin/customParseFormat";
+dayjs.extend(customParseFormat);
 
 interface Timeslot {
-  startTime: string;
-  endTime: string;
+  startTime: string | null;
+  endTime: string | null;
 }
 
 function JobDayTimeslots({
@@ -47,8 +47,8 @@ function JobDayTimeslots({
     setTimeslots([
       ...timeslots,
       {
-        startTime: dayjs().format("HH:mm:ss"),
-        endTime: dayjs().format("HH:mm:ss"),
+        startTime: null,
+        endTime: null,
       },
     ]);
   };
@@ -75,16 +75,24 @@ function JobDayTimeslots({
           >
             <TimePicker
               label="Start Time"
-              value={timeslot.startTime}
+              value={dayjs(timeslot.startTime, "HH:mm:ss")}
               onChange={(newValue) =>
-                handleTimeChange(index, "startTime", newValue)
+                handleTimeChange(
+                  index,
+                  "startTime",
+                  newValue ? newValue.format("HH:mm:ss") : null
+                )
               }
             />
             <TimePicker
               label="End Time"
-              value={timeslot.endTime}
+              value={dayjs(timeslot.endTime, "HH:mm:ss")}
               onChange={(newValue) =>
-                handleTimeChange(index, "endTime", newValue)
+                handleTimeChange(
+                  index,
+                  "endTime",
+                  newValue ? newValue.format("HH:mm:ss") : null
+                )
               }
             />
             <IconButton
