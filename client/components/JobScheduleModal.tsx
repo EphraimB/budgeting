@@ -15,8 +15,8 @@ import JobDayTimeslots from "./JobDayTimeslots";
 dayjs.extend(customParseFormat);
 
 interface Timeslot {
-  startTime: string | null;
-  endTime: string | null;
+  startTime: string;
+  endTime: string;
 }
 
 // Define your custom theme
@@ -164,8 +164,25 @@ function JobScheduleModal({
 
   const onSave = (timeslots: Timeslot[]) => {
     timeslots.forEach((timeslot, index) => {
-      if (timeslot.startTime && timeslot.endTime)
-        updateJobSchedule(index, timeslot.startTime, timeslot.endTime);
+      try {
+        editJob(
+          {
+            account_id: job.account_id,
+            name: job.name,
+            hourly_rate: job.hourly_rate,
+            vacation_days: job.vacation_days,
+            sick_days: job.sick_days,
+            job_schedule: timeslots.map((slot, i) => ({
+              day_of_week: day_of_week,
+              start_time: slot.startTime,
+              end_time: slot.endTime,
+            })),
+          },
+          job.id
+        );
+      } catch (error) {
+        console.error(error);
+      }
     });
   };
 

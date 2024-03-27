@@ -12,8 +12,8 @@ import customParseFormat from "dayjs/plugin/customParseFormat";
 dayjs.extend(customParseFormat);
 
 interface Timeslot {
-  startTime: string | null;
-  endTime: string | null;
+  startTime: string;
+  endTime: string;
 }
 
 function JobDayTimeslots({
@@ -47,8 +47,8 @@ function JobDayTimeslots({
     setTimeslots([
       ...timeslots,
       {
-        startTime: null,
-        endTime: null,
+        startTime: "",
+        endTime: "",
       },
     ]);
   };
