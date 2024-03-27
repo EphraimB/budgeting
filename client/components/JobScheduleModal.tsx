@@ -163,27 +163,25 @@ function JobScheduleModal({
   };
 
   const onSave = (timeslots: Timeslot[]) => {
-    timeslots.forEach((timeslot, index) => {
-      try {
-        editJob(
-          {
-            account_id: job.account_id,
-            name: job.name,
-            hourly_rate: job.hourly_rate,
-            vacation_days: job.vacation_days,
-            sick_days: job.sick_days,
-            job_schedule: timeslots.map((slot, i) => ({
-              day_of_week: day_of_week,
-              start_time: slot.startTime,
-              end_time: slot.endTime,
-            })),
-          },
-          job.id
-        );
-      } catch (error) {
-        console.error(error);
-      }
-    });
+    try {
+      editJob(
+        {
+          account_id: job.account_id,
+          name: job.name,
+          hourly_rate: job.hourly_rate,
+          vacation_days: job.vacation_days,
+          sick_days: job.sick_days,
+          job_schedule: timeslots.map((slot, i) => ({
+            day_of_week: day_of_week,
+            start_time: slot.startTime,
+            end_time: slot.endTime,
+          })),
+        },
+        job.id
+      );
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   const onclose = () => {
