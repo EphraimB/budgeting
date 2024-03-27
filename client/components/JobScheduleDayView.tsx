@@ -5,11 +5,11 @@ import { useAlert, useSnackbar } from "../context/FeedbackContext";
 import Paper from "@mui/material/Paper";
 import Stack from "@mui/material/Stack";
 import { Typography } from "@mui/material";
-import { JobSchedule } from "@/app/types/types";
+import { Job, JobSchedule } from "@/app/types/types";
 import JobScheduleView from "./JobScheduleView";
 import JobScheduleModal from "./JobScheduleModal";
 
-function JobScheduleDayView({ job_schedule }: { job_schedule: JobSchedule[] }) {
+function JobScheduleDayView({ job }: { job: Job }) {
   const [modalState, setModalState] = useState<{
     open: boolean;
     dayOfWeek: number | null;
@@ -60,7 +60,7 @@ function JobScheduleDayView({ job_schedule }: { job_schedule: JobSchedule[] }) {
             {day}
           </Typography>
           <JobScheduleView
-            job_day_of_week={job_schedule.filter(
+            job_day_of_week={job.job_schedule.filter(
               (js) => js.day_of_week === index
             )}
             day_of_week={index}
@@ -70,7 +70,8 @@ function JobScheduleDayView({ job_schedule }: { job_schedule: JobSchedule[] }) {
       ))}
       {modalState.dayOfWeek !== null && (
         <JobScheduleModal
-          job_day_of_week={job_schedule.filter(
+          job={job}
+          job_day_of_week={job.job_schedule.filter(
             (js) => js.day_of_week === modalState.dayOfWeek
           )}
           day_of_week={modalState.dayOfWeek}

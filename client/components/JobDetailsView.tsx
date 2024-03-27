@@ -22,7 +22,7 @@ function JobDetailsView({ job }: { job: Job }) {
         <VacationDays vacation_days={job.vacation_days} />
       </Stack>
       <br />
-      <JobScheduleDayView job_schedule={job.job_schedule} />
+      <JobScheduleDayView job={job} />
     </Stack>
   );
 }

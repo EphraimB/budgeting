@@ -4,7 +4,7 @@ import React from "react";
 import Modal from "@mui/material/Modal";
 import Box from "@mui/material/Box";
 import { createTheme } from "@mui/material/styles";
-import { JobSchedule } from "@/app/types/types";
+import { Job, JobSchedule } from "@/app/types/types";
 import Typography from "@mui/material/Typography";
 import Stack from "@mui/material/Stack";
 import { DndProvider } from "react-dnd";
@@ -13,6 +13,7 @@ import { TouchBackend } from "react-dnd-touch-backend";
 import dayjs from "dayjs";
 import customParseFormat from "dayjs/plugin/customParseFormat"; // Import plugin for custom parsing
 import JobScheduleBar from "./JobScheduleBar";
+import { editJob } from "../services/actions/job";
 dayjs.extend(customParseFormat);
 
 // Define your custom theme
@@ -103,11 +104,13 @@ const generateHourTicks = () => {
 };
 
 function JobScheduleModal({
+  job,
   job_day_of_week,
   day_of_week,
   open,
   setOpen,
 }: {
+  job: Job;
   job_day_of_week: JobSchedule[];
   day_of_week: number;
   open: boolean;
@@ -143,7 +146,21 @@ function JobScheduleModal({
 
     console.log(updatedJobs);
 
-    setJobSchedules(updatedJobs); // Update the state
+    try {
+      editJob(
+        {
+          account_id: job.account_id,
+          name: job.name,
+          hourly_rate: job.hourly_rate,
+          vacation_days: job.vacation_days,
+          sick_days: job.sick_days,
+          job_schedule: updatedJobs,
+        },
+        1
+      );
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   return (

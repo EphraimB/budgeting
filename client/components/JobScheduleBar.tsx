@@ -1,22 +1,12 @@
 "use client";
 
-import { JobSchedule } from "@/app/types/types";
-import React from "react";
+import React, { useState, useRef, useEffect } from "react";
 import Box from "@mui/material/Box";
 import Tooltip from "@mui/material/Tooltip";
-import { createTheme } from "@mui/material/styles";
-import dayjs from "dayjs";
 import { useDrag } from "react-dnd";
-
-type UpdateJobSchedule = (
-  id: number,
-  newStartTime: string,
-  newEndTime: string
-) => void;
-
-interface DropResult {
-  position: { start_time: string; end_time: string };
-}
+import dayjs from "dayjs";
+import { JobSchedule } from "@/app/types/types";
+import { createTheme } from "@mui/material/styles";
 
 function JobScheduleBar({
   job,
@@ -25,8 +15,16 @@ function JobScheduleBar({
 }: {
   job: JobSchedule;
   index: number;
-  updateJobSchedule: UpdateJobSchedule;
+  updateJobSchedule: (
+    index: number,
+    startTime: string,
+    endTime: string
+  ) => void;
 }) {
+  const [localJob, setLocalJob] = useState(job);
+  const containerRef = useRef<HTMLElement>(null);
+  const [containerWidth, setContainerWidth] = useState(0);
+
   // Define your custom theme
   const theme = createTheme({
     palette: {
@@ -39,42 +37,84 @@ function JobScheduleBar({
     },
   });
 
-  // Convert time to a percentage of the day
+  // Effect to measure and set the container's width
+  useEffect(() => {
+    const updateContainerWidth = () => {
+      if (containerRef.current) {
+        setContainerWidth(containerRef.current.offsetWidth);
+      }
+    };
+
+    updateContainerWidth();
+    window.addEventListener("resize", updateContainerWidth);
+
+    return () => window.removeEventListener("resize", updateContainerWidth);
+  }, []);
+
   const timeToPercent = (time: string) => {
     const [hours, minutes] = time.split(":").map(Number);
-    const totalMinutes = hours * 60 + minutes;
-    return (totalMinutes / 1440) * 100; // 1440 minutes in a day
+    return ((hours * 60 + minutes) / 1440) * 100;
+  };
+
+  const updateTime = (time: string, dx: number, limit: string) => {
+    const percentChange = (dx / containerWidth) * 100;
+    const timeChange = (1440 * percentChange) / 100;
+    let [hours, minutes] = time.split(":").map(Number);
+    minutes += timeChange;
+    hours += Math.floor(minutes / 60);
+    minutes %= 60;
+    if (hours < 0 || hours >= 24) return limit; // Limit the change within 0-24 hours
+    return `${String(hours).padStart(2, "0")}:${String(minutes).padStart(
+      2,
+      "0"
+    )}:00`;
+  };
+
+  const handleDrag = (type: string, dx: number) => {
+    const newStartTime =
+      type === "start"
+        ? updateTime(localJob.start_time, dx, localJob.end_time)
+        : localJob.start_time;
+    const newEndTime =
+      type === "end"
+        ? updateTime(localJob.end_time, dx, localJob.start_time)
+        : localJob.end_time;
+    setLocalJob({
+      ...localJob,
+      start_time: newStartTime,
+      end_time: newEndTime,
+    });
   };
 
   // Dragging logic for the start handle
   const [, dragStart] = useDrag(() => ({
-    type: "job-start",
-    item: { id: index },
+    type: "job-handle",
+    item: { id: index, type: "start" },
     end: (item, monitor) => {
-      const dropResult: DropResult | null = monitor.getDropResult();
-      if (item && dropResult) {
-        // Logic to update job's start time using dropResult
-        updateJobSchedule(index, dropResult.position.start_time, job.end_time);
+      const delta = monitor.getDifferenceFromInitialOffset();
+      if (delta) {
+        handleDrag("start", delta.x);
+        updateJobSchedule(index, localJob.start_time, localJob.end_time);
       }
     },
   }));
 
   // Dragging logic for the end handle
   const [, dragEnd] = useDrag(() => ({
-    type: "job-end",
-    item: { id: index },
+    type: "job-handle",
+    item: { id: index, type: "end" },
     end: (item, monitor) => {
-      const dropResult: DropResult | null = monitor.getDropResult();
-      if (item && dropResult) {
-        // Logic to update job's end time using dropResult
-        updateJobSchedule(
-          item.id,
-          job.start_time,
-          dropResult.position.end_time
-        );
+      const delta = monitor.getDifferenceFromInitialOffset();
+      if (delta) {
+        handleDrag("end", delta.x);
+        updateJobSchedule(index, localJob.start_time, localJob.end_time);
       }
     },
   }));
+
+  const startPercent = timeToPercent(localJob.start_time);
+  const endPercent = timeToPercent(localJob.end_time);
+  const widthPercent = endPercent - startPercent;
 
   const is12HourClock = () => {
     const dateTimeFormat = new Intl.DateTimeFormat([], {
@@ -88,21 +128,21 @@ function JobScheduleBar({
 
   const use12HourClock = is12HourClock();
 
-  const startPercent = timeToPercent(job.start_time);
-  const endPercent = timeToPercent(job.end_time);
-  const widthPercent = endPercent - startPercent;
-
   return (
-    <Box sx={{ position: "relative", width: "100%", height: "20px" }}>
+    <Box
+      ref={containerRef}
+      sx={{ position: "relative", width: "100%", height: "20px" }}
+    >
       <Box
         ref={dragStart}
         sx={{
           height: "100%",
-          backgroundColor: theme.palette.primary.main,
+          backgroundColor: "black",
           left: `${startPercent}%`,
           width: "10px",
           position: "absolute",
           cursor: "ew-resize",
+          zIndex: 1,
         }}
       />
       <Tooltip
@@ -130,11 +170,12 @@ function JobScheduleBar({
         ref={dragEnd}
         sx={{
           height: "100%",
-          backgroundColor: theme.palette.primary.main,
+          backgroundColor: "black",
           left: `${endPercent}%`,
           width: "10px",
           position: "absolute",
           cursor: "ew-resize",
+          zIndex: 1,
         }}
       />
     </Box>
