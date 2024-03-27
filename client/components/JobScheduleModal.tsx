@@ -119,8 +119,6 @@ function JobScheduleModal({
   open: boolean;
   setOpen: (isOpen: boolean) => void;
 }) {
-  const [jobSchedules, setJobSchedules] = useState(job_day_of_week);
-
   const days = [
     "Sunday",
     "Monday",
@@ -130,37 +128,6 @@ function JobScheduleModal({
     "Friday",
     "Saturday",
   ];
-
-  const updateJobSchedule = (
-    id: number,
-    newStartTime: string,
-    newEndTime: string
-  ) => {
-    const updatedJobs = jobSchedules.map((job, index) => {
-      if (index === id) {
-        return { ...job, start_time: newStartTime, end_time: newEndTime };
-      }
-      return job;
-    });
-
-    console.log(updatedJobs);
-
-    try {
-      editJob(
-        {
-          account_id: job.account_id,
-          name: job.name,
-          hourly_rate: job.hourly_rate,
-          vacation_days: job.vacation_days,
-          sick_days: job.sick_days,
-          job_schedule: updatedJobs,
-        },
-        job.id
-      );
-    } catch (error) {
-      console.error(error);
-    }
-  };
 
   const onSave = (timeslots: Timeslot[]) => {
     try {
