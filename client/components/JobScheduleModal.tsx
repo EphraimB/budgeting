@@ -155,7 +155,7 @@ function JobScheduleModal({
           sick_days: job.sick_days,
           job_schedule: updatedJobs,
         },
-        1
+        job.id
       );
     } catch (error) {
       console.error(error);
