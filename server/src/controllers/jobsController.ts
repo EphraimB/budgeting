@@ -173,45 +173,52 @@ export const updateJob = async (
             return;
         }
 
+        // Fetch existing schedules for the job
         const existingSchedules = await executeQuery(
             jobQueries.getJobScheduleByJobId,
             [job_id],
         );
 
-        // Map existing schedules to a form that's easy to check for existence
-        const existingScheduleMap = new Map(
-            existingSchedules.map((s) => [
-                `${s.day_of_week}-${s.start_time}-${s.end_time}`,
-                s.job_schedule_id,
-            ]),
-        );
+        // Set to track IDs of schedules that are still present
+        const updatedOrAddedScheduleIds = new Set();
 
-        const schedulePromises = job_schedule.map((js: JobSchedule) => {
-            // Create a unique key for the current schedule to check against existing schedules
-            const scheduleKey = `${js.day_of_week}-${js.start_time}-${js.end_time}`;
+        for (const js of job_schedule) {
+            const existingSchedule = existingSchedules.find(
+                (s) =>
+                    s.day_of_week === js.day_of_week &&
+                    s.start_time === js.start_time &&
+                    s.end_time === js.end_time,
+            );
 
-            if (existingScheduleMap.has(scheduleKey)) {
-                // If the schedule exists, update it using its unique ID
-                const jobScheduleId = existingScheduleMap.get(scheduleKey);
-                return executeQuery(jobQueries.updateJobSchedule, [
+            if (existingSchedule) {
+                // Update the existing schedule
+                await executeQuery(jobQueries.updateJobSchedule, [
                     js.day_of_week,
                     js.start_time,
                     js.end_time,
-                    jobScheduleId, // Assuming updateJobScheduleById requires job_schedule_id as the last parameter
+                    existingSchedule.job_schedule_id,
                 ]);
+                updatedOrAddedScheduleIds.add(existingSchedule.job_schedule_id);
             } else {
-                // If the schedule does not exist, insert it as a new entry
-                return executeQuery(jobQueries.createJobSchedule, [
-                    job_id,
-                    js.day_of_week,
-                    js.start_time,
-                    js.end_time,
-                ]);
+                // Insert a new schedule
+                const result = await executeQuery(
+                    jobQueries.createJobSchedule,
+                    [job_id, js.day_of_week, js.start_time, js.end_time],
+                );
+                // Assuming the result includes the ID of the inserted schedule
+                updatedOrAddedScheduleIds.add(result[0].job_id);
             }
-        });
+        }
 
-        // Wait for all schedule creation promises to resolve
-        await Promise.all(schedulePromises);
+        // Delete schedules that were not in the updatedOrAddedScheduleIds set
+        const schedulesToDelete = existingSchedules.filter(
+            (s) => !updatedOrAddedScheduleIds.has(s.job_schedule_id),
+        );
+        for (const schedule of schedulesToDelete) {
+            await executeQuery(jobQueries.deleteJobScheduleByJobId, [
+                schedule.job_schedule_id,
+            ]);
+        }
 
         await executeQuery('SELECT process_payroll_for_job($1)', [job_id]);
 
