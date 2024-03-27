@@ -131,6 +131,18 @@ function JobScheduleModal({
 
   const onSave = (timeslots: Timeslot[]) => {
     try {
+      const updatedJobSchedule: JobSchedule[] = job.job_schedule
+        .filter((js) => js.day_of_week !== day_of_week) // Remove existing entries for the specified day
+        .concat(
+          timeslots.map((slot) => ({
+            // Add updated timeslots for the specified day
+            day_of_week,
+            start_time: slot.startTime,
+            end_time: slot.endTime,
+            job_id: job.id,
+          }))
+        );
+
       editJob(
         {
           account_id: job.account_id,
@@ -138,11 +150,7 @@ function JobScheduleModal({
           hourly_rate: job.hourly_rate,
           vacation_days: job.vacation_days,
           sick_days: job.sick_days,
-          job_schedule: timeslots.map((slot, i) => ({
-            day_of_week: day_of_week,
-            start_time: slot.startTime,
-            end_time: slot.endTime,
-          })),
+          job_schedule: updatedJobSchedule,
         },
         job.id
       );
