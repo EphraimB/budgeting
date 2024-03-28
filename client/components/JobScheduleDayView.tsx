@@ -1,11 +1,10 @@
 "use client";
 
 import React, { useState } from "react";
-import { useAlert, useSnackbar } from "../context/FeedbackContext";
 import Paper from "@mui/material/Paper";
 import Stack from "@mui/material/Stack";
 import { Typography } from "@mui/material";
-import { Job, JobSchedule } from "@/app/types/types";
+import { Job } from "@/app/types/types";
 import JobScheduleView from "./JobScheduleView";
 import JobScheduleModal from "./JobScheduleModal";
 
