@@ -394,7 +394,7 @@ describe('POST /api/jobs', () => {
 });
 
 describe('PUT /api/jobs/:id', () => {
-    it('should call next on middleware', async () => {
+    it('should call next on middleware when updating the same schedule', async () => {
         // Arrange
         mockModule([
             [
@@ -427,6 +427,66 @@ describe('PUT /api/jobs/:id', () => {
             job_schedule: [
                 {
                     day_of_week: 1,
+                    start_time: '09:00:00',
+                    end_time: '17:00:00',
+                },
+            ],
+        };
+
+        const { updateJob } = await import(
+            '../../src/controllers/jobsController.js'
+        );
+
+        await updateJob(mockRequest as Request, mockResponse, mockNext);
+
+        // Assert
+        expect(mockNext).toHaveBeenCalled();
+    });
+
+    it('should call next on middleware when updating a new schedule', async () => {
+        // Arrange
+        mockModule([
+            [
+                {
+                    job_id: 1,
+                    account_id: 1,
+                    name: 'Test Job',
+                    hourly_rate: 10,
+                    vacation_days: 10,
+                    sick_days: 10,
+                },
+            ],
+            [
+                {
+                    job_schedule_id: 1,
+                    day_of_week: 1,
+                    start_time: '09:00:00',
+                    end_time: '17:00:00',
+                },
+                {
+                    job_schedule_id: 2,
+                    day_of_week: 2,
+                    start_time: '09:00:00',
+                    end_time: '17:00:00',
+                },
+            ],
+        ]);
+
+        mockRequest.params = { id: 1 };
+        mockRequest.body = {
+            account_id: 1,
+            name: 'Test Job',
+            hourly_rate: 10,
+            vacation_days: 10,
+            sick_days: 10,
+            job_schedule: [
+                {
+                    day_of_week: 1,
+                    start_time: '09:00:00',
+                    end_time: '17:00:00',
+                },
+                {
+                    day_of_week: 2,
                     start_time: '09:00:00',
                     end_time: '17:00:00',
                 },
