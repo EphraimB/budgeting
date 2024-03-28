@@ -503,6 +503,42 @@ describe('PUT /api/jobs/:id', () => {
         expect(mockNext).toHaveBeenCalled();
     });
 
+    it('should call next on middleware when deleting a schedule', async () => {
+        // Arrange
+        mockModule([
+            [
+                {
+                    job_id: 1,
+                    account_id: 1,
+                    name: 'Test Job',
+                    hourly_rate: 10,
+                    vacation_days: 10,
+                    sick_days: 10,
+                },
+            ],
+            [],
+        ]);
+
+        mockRequest.params = { id: 1 };
+        mockRequest.body = {
+            account_id: 1,
+            name: 'Test Job',
+            hourly_rate: 10,
+            vacation_days: 10,
+            sick_days: 10,
+            job_schedule: [],
+        };
+
+        const { updateJob } = await import(
+            '../../src/controllers/jobsController.js'
+        );
+
+        await updateJob(mockRequest as Request, mockResponse, mockNext);
+
+        // Assert
+        expect(mockNext).toHaveBeenCalled();
+    });
+
     it('should respond with an error message', async () => {
         // Arrange
         const errorMessage = 'Error updating job';
