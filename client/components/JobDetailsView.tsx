@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React from "react";
 import { Job, PayrollDate } from "@/app/types/types";
 import Stack from "@mui/material/Stack";
 import { Typography } from "@mui/material";
@@ -34,7 +34,7 @@ function JobDetailsView({
       <Typography variant="h5" component="h3">
         Payroll Dates
       </Typography>
-      <PayrollDates payroll_dates={payroll_dates} />
+      <PayrollDates job_id={job.id} payroll_dates={payroll_dates} />
     </Stack>
   );
 }
