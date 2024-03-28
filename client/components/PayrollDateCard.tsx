@@ -6,6 +6,7 @@ import { PayrollDate } from "@/app/types/types";
 import {
   addPayrollDate,
   deletePayrollDate,
+  editPayrollDate,
 } from "../services/actions/payrollDate";
 import { useAlert, useSnackbar } from "../context/FeedbackContext";
 
@@ -13,11 +14,13 @@ function PayrollDateCard({
   job_id,
   payroll_date,
   start_day,
+  regenerateStartDays,
   date,
 }: {
   job_id: number;
   payroll_date: PayrollDate | null;
   start_day: number;
+  regenerateStartDays: () => void;
   date: number;
 }) {
   const { showSnackbar } = useSnackbar();
@@ -29,18 +32,20 @@ function PayrollDateCard({
     end_day: date,
   };
 
-  const handleClick = () => {
+  const handleClick = async () => {
     if (payroll_date) {
       try {
-        deletePayrollDate(payroll_date.id);
+        await deletePayrollDate(payroll_date.id);
 
         showSnackbar("Payroll date deleted successfully");
+
+        regenerateStartDays();
       } catch (error) {
         showAlert("Failed to delete payroll date", "error");
       }
     } else {
       try {
-        addPayrollDate(data);
+        await addPayrollDate(data);
 
         showSnackbar("Payroll date added successfully");
       } catch (error) {
@@ -48,6 +53,7 @@ function PayrollDateCard({
       }
     }
   };
+
   return (
     <Paper
       elevation={3} // Adds some shadow to the Paper component for better visibility
