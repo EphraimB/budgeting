@@ -60,7 +60,7 @@ function PayrollDates({
           editPayrollDate(
             {
               job_id,
-              start_day: sortedPayrollDates[index - 1].payroll_end_day + 1 || 1,
+              start_day: sortedPayrollDates[index - 1].payroll_end_day + 1,
               end_day: payrollDate.payroll_end_day,
             },
             payrollDate.id
