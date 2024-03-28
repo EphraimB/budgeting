@@ -44,7 +44,7 @@ function PayrollDateCard({
       }
     } else {
       try {
-        const result = await addPayrollDate(data);
+        await addPayrollDate(data);
 
         regenerateStartDays();
 

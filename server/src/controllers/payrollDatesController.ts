@@ -50,7 +50,7 @@ export const getPayrollDates = async (
 
         const results = await executeQuery(query, params);
 
-        if ((id || job_id) && results.length === 0) {
+        if (id && results.length === 0) {
             response.status(404).send('Payroll date not found');
             return;
         }
