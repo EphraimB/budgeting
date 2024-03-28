@@ -214,6 +214,7 @@ export const updateJob = async (
         const schedulesToDelete = existingSchedules.filter(
             (s) => !updatedOrAddedScheduleIds.has(s.job_schedule_id),
         );
+        
         for (const schedule of schedulesToDelete) {
             await executeQuery(jobQueries.deleteJobScheduleByJobId, [
                 schedule.job_schedule_id,

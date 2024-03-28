@@ -409,13 +409,7 @@ describe('PUT /api/jobs/:id', () => {
             ],
             [
                 {
-                    day_of_week: 1,
-                    start_time: '09:00:00',
-                    end_time: '17:00:00',
-                },
-            ],
-            [
-                {
+                    job_schedule_id: 1,
                     day_of_week: 1,
                     start_time: '09:00:00',
                     end_time: '17:00:00',
@@ -424,7 +418,20 @@ describe('PUT /api/jobs/:id', () => {
         ]);
 
         mockRequest.params = { id: 1 };
-        mockRequest.body = jobs[0];
+        mockRequest.body = {
+            account_id: 1,
+            name: 'Test Job',
+            hourly_rate: 10,
+            vacation_days: 10,
+            sick_days: 10,
+            job_schedule: [
+                {
+                    day_of_week: 1,
+                    start_time: '09:00:00',
+                    end_time: '17:00:00',
+                },
+            ],
+        };
 
         const { updateJob } = await import(
             '../../src/controllers/jobsController.js'
