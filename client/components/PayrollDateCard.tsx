@@ -6,7 +6,6 @@ import { PayrollDate } from "@/app/types/types";
 import {
   addPayrollDate,
   deletePayrollDate,
-  editPayrollDate,
 } from "../services/actions/payrollDate";
 import { useAlert, useSnackbar } from "../context/FeedbackContext";
 
@@ -45,7 +44,9 @@ function PayrollDateCard({
       }
     } else {
       try {
-        await addPayrollDate(data);
+        const result = await addPayrollDate(data);
+
+        regenerateStartDays();
 
         showSnackbar("Payroll date added successfully");
       } catch (error) {
@@ -65,6 +66,7 @@ function PayrollDateCard({
         justifyContent: "center", // Center horizontally
         alignItems: "center", // Center vertically
         height: 100, // Set a fixed height for the card
+        cursor: "pointer", // Change cursor to pointer on hover
       }}
       onClick={handleClick}
     >
