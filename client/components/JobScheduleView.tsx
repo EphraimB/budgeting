@@ -79,6 +79,7 @@ function JobScheduleView({
             placement="top"
           >
             <Box
+              data-testid="job-schedule"
               sx={{
                 height: "100%",
                 backgroundColor: theme.palette.primary.main,
