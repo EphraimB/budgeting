@@ -109,6 +109,13 @@ export interface Job {
   job_schedule: JobSchedule[];
 }
 
+export interface PayrollDate {
+  id: number;
+  job_id: number;
+  payroll_start_day: number;
+  payroll_end_day: number;
+}
+
 export interface GeneratedTransaction {
   account_id: number;
   current_balance: number;
