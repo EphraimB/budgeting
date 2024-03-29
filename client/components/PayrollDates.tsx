@@ -33,9 +33,7 @@ function PayrollDates({
     );
 
     // If found, return the day after the previous payroll end day, otherwise return payroll end day + 1
-    return previousPayrollDate
-      ? previousPayrollDate.payroll_end_day + 1
-      : currentDay + 1;
+    return previousPayrollDate ? previousPayrollDate.payroll_end_day + 1 : 1;
   };
 
   const regenerateStartDays = async () => {

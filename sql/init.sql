@@ -126,7 +126,8 @@ CREATE TABLE IF NOT EXISTS loans (
 CREATE TABLE payroll_dates (
   payroll_date_id SERIAL PRIMARY KEY,
   job_id INTEGER NOT NULL REFERENCES jobs(job_id) ON DELETE CASCADE,
-  payroll_end_date INTEGER NOT NULL
+  payroll_start_day INTEGER NOT NULL,
+  payroll_end_day INTEGER NOT NULL
 );
 
 CREATE TABLE payroll_taxes (
@@ -319,7 +320,7 @@ BEGIN
     FOR pay_period IN 
     SELECT 
         make_date(extract(year from current_date)::integer, extract(month from current_date)::integer, s2.payroll_start_day::integer) AS start_date,
-        make_date(extract(year from current_date)::integer, extract(month from current_date)::integer, s1.adjusted_payroll_end_date) AS end_date,
+        make_date(extract(year from current_date)::integer, extract(month from current_date)::integer, s1.adjusted_payroll_end_day) AS end_date,
         COUNT(js.day_of_week) AS work_days,
         SUM(
             COALESCE(
@@ -346,26 +347,26 @@ BEGIN
             SELECT 
                 payroll_start_day,
                 CASE 
-                    WHEN payroll_end_date > EXTRACT(DAY FROM DATE_TRUNC('MONTH', current_date) + INTERVAL '1 MONTH - 1 DAY') THEN 
+                    WHEN payroll_end_day > EXTRACT(DAY FROM DATE_TRUNC('MONTH', current_date) + INTERVAL '1 MONTH - 1 DAY') THEN 
                         EXTRACT(DAY FROM DATE_TRUNC('MONTH', current_date) + INTERVAL '1 MONTH - 1 DAY')
-                    ELSE payroll_end_date
-                END AS unadjusted_payroll_end_date
+                    ELSE payroll_end_day
+                END AS unadjusted_payroll_end_day
             FROM payroll_dates
         ) s2
         CROSS JOIN LATERAL (
             SELECT
                 s2.payroll_start_day,
                 CASE
-                    WHEN EXTRACT(DOW FROM MAKE_DATE(EXTRACT(YEAR FROM current_date)::integer, EXTRACT(MONTH FROM current_date)::integer, s2.unadjusted_payroll_end_date::integer)) = 0 THEN
-                        s2.unadjusted_payroll_end_date - 2
-                    WHEN EXTRACT(DOW FROM MAKE_DATE(EXTRACT(YEAR FROM current_date)::integer, EXTRACT(MONTH FROM current_date)::integer, s2.unadjusted_payroll_end_date::integer)) = 6 THEN
-                        s2.unadjusted_payroll_end_date - 1
-                    ELSE s2.unadjusted_payroll_end_date
-                END::integer AS adjusted_payroll_end_date
+                    WHEN EXTRACT(DOW FROM MAKE_DATE(EXTRACT(YEAR FROM current_date)::integer, EXTRACT(MONTH FROM current_date)::integer, s2.unadjusted_payroll_end_day::integer)) = 0 THEN
+                        s2.unadjusted_payroll_end_day - 2
+                    WHEN EXTRACT(DOW FROM MAKE_DATE(EXTRACT(YEAR FROM current_date)::integer, EXTRACT(MONTH FROM current_date)::integer, s2.unadjusted_payroll_end_day::integer)) = 6 THEN
+                        s2.unadjusted_payroll_end_day - 1
+                    ELSE s2.unadjusted_payroll_end_day
+                END::integer AS adjusted_payroll_end_day
         ) s1
         JOIN LATERAL generate_series(
             make_date(extract(year from current_date)::integer, extract(month from current_date)::integer, s1.payroll_start_day), 
-            make_date(extract(year from current_date)::integer, extract(month from current_date)::integer, s1.adjusted_payroll_end_date),
+            make_date(extract(year from current_date)::integer, extract(month from current_date)::integer, s1.adjusted_payroll_end_day),
             '1 day'
         ) AS gs(date) ON true
         LEFT JOIN (
@@ -377,7 +378,7 @@ BEGIN
         j.job_id = selected_job_id
         AND js.day_of_week = EXTRACT(DOW FROM gs.date)::integer
     GROUP BY 
-        s2.payroll_start_day, s1.adjusted_payroll_end_date
+        s2.payroll_start_day, s1.adjusted_payroll_end_day
     ORDER BY 
         start_date, end_date
     LOOP
