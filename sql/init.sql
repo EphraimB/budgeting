@@ -126,8 +126,7 @@ CREATE TABLE IF NOT EXISTS loans (
 CREATE TABLE payroll_dates (
   payroll_date_id SERIAL PRIMARY KEY,
   job_id INTEGER NOT NULL REFERENCES jobs(job_id) ON DELETE CASCADE,
-  payroll_start_day INTEGER NOT NULL,
-  payroll_end_day INTEGER NOT NULL
+  payroll_end_date INTEGER NOT NULL
 );
 
 CREATE TABLE payroll_taxes (
