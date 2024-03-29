@@ -36,40 +36,53 @@ function PayrollDates({
     return previousPayrollDate ? previousPayrollDate.payroll_end_day + 1 : 1;
   };
 
-  const regenerateStartDays = () => {
+  const regenerateStartDays = async (newPayrollDate: PayrollDate | null) => {
     try {
-      // Sort payroll dates in descending order of their end days
-      const sortedPayrollDates = payroll_dates.sort(
-        (a, b) => b.payroll_end_day - a.payroll_end_day
-      );
+      if (!newPayrollDate) return;
 
-      // Loop through each payroll date
-      sortedPayrollDates.forEach((payrollDate, index) => {
-        // If it's the first payroll date, set the start day to 1
-        if (index === 0) {
-          editPayrollDate(
+      let updatedPayrollDates = [...payroll_dates];
+
+      // Insert the new payroll date in the correct position based on end_day
+      const insertionIndex = updatedPayrollDates.findIndex(
+        (pd) => pd.payroll_end_day > newPayrollDate.payroll_end_day
+      );
+      if (insertionIndex >= 0) {
+        updatedPayrollDates.splice(insertionIndex, 0, newPayrollDate);
+      } else {
+        updatedPayrollDates.push(newPayrollDate); // Add to the end if it's the latest
+      }
+
+      // Adjust the end_day of the payroll period immediately before the new date
+      if (insertionIndex > 0) {
+        const previousDate = updatedPayrollDates[insertionIndex - 1];
+        if (previousDate.payroll_end_day >= newPayrollDate.payroll_start_day) {
+          await editPayrollDate(
             {
-              job_id,
-              start_day: 1,
-              end_day: payrollDate.payroll_end_day,
+              job_id: previousDate.job_id,
+              start_day: previousDate.payroll_start_day, // Ensure this matches the expected property name
+              end_day: newPayrollDate.payroll_start_day - 1,
             },
-            payrollDate.id
-          );
-        } else {
-          // Otherwise, set the start day to the day after the previous payroll end day
-          editPayrollDate(
-            {
-              job_id,
-              start_day: sortedPayrollDates[index - 1].payroll_end_day + 1,
-              end_day: payrollDate.payroll_end_day,
-            },
-            payrollDate.id
+            previousDate.id
           );
         }
-      });
-      showSnackbar("Start days regenerated successfully");
+      }
+
+      // Adjust the start_day of the payroll period immediately after the new date
+      if (insertionIndex < updatedPayrollDates.length - 1) {
+        const nextDate = updatedPayrollDates[insertionIndex + 1];
+        await editPayrollDate(
+          {
+            job_id: nextDate.job_id,
+            start_day: newPayrollDate.payroll_end_day + 1, // Ensure this matches the expected property name
+            end_day: nextDate.payroll_end_day,
+          },
+          nextDate.id
+        );
+      }
+
+      showSnackbar("Payroll dates updated successfully.");
     } catch (error) {
-      showAlert("Failed to regenerate start days", "error");
+      showAlert("Failed to update payroll dates.", "error");
     }
   };
 

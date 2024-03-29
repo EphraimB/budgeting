@@ -19,7 +19,7 @@ function PayrollDateCard({
   job_id: number;
   payroll_date: PayrollDate | null;
   start_day: number;
-  regenerateStartDays: () => void;
+  regenerateStartDays: (newPayrollDate: PayrollDate | null) => void;
   date: number;
 }) {
   const { showSnackbar } = useSnackbar();
@@ -38,15 +38,15 @@ function PayrollDateCard({
 
         showSnackbar("Payroll date deleted successfully");
 
-        regenerateStartDays();
+        regenerateStartDays(null);
       } catch (error) {
         showAlert("Failed to delete payroll date", "error");
       }
     } else {
       try {
-        await addPayrollDate(data);
+        const result = await addPayrollDate(data);
 
-        regenerateStartDays();
+        regenerateStartDays(result);
 
         showSnackbar("Payroll date added successfully");
       } catch (error) {
