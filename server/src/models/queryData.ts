@@ -57,6 +57,7 @@ interface JobQueries {
     updateJobSchedule: string;
     deleteJob: string;
     deleteJobSchedule: string;
+    deleteJobScheduleByJobId: string;
 }
 
 interface PayrollQueries {
@@ -334,6 +335,8 @@ export const jobQueries: JobQueries = {
         'UPDATE job_schedule SET day_of_week = $1, start_time = $2, end_time = $3 WHERE job_schedule_id = $4 RETURNING *',
     deleteJob: 'DELETE FROM jobs WHERE job_id = $1',
     deleteJobSchedule: 'DELETE FROM job_schedule WHERE job_id = $1',
+    deleteJobScheduleByJobId:
+        'DELETE FROM job_schedule WHERE job_schedule_id = $1',
 };
 
 export const payrollQueries: PayrollQueries = {

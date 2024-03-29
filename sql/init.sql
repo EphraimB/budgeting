@@ -349,7 +349,7 @@ BEGIN
                 CASE 
                     WHEN payroll_end_day > EXTRACT(DAY FROM DATE_TRUNC('MONTH', current_date) + INTERVAL '1 MONTH - 1 DAY') THEN 
                         EXTRACT(DAY FROM DATE_TRUNC('MONTH', current_date) + INTERVAL '1 MONTH - 1 DAY')
-                    ELSE payroll_end_day 
+                    ELSE payroll_end_day
                 END AS unadjusted_payroll_end_day
             FROM payroll_dates
         ) s2
