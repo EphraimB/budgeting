@@ -8,6 +8,7 @@ import {
   deletePayrollDate,
 } from "../services/actions/payrollDate";
 import { useAlert, useSnackbar } from "../context/FeedbackContext";
+import { get } from "http";
 
 function PayrollDateCard({
   job_id,
@@ -19,7 +20,7 @@ function PayrollDateCard({
   job_id: number;
   payroll_date: PayrollDate | null;
   start_day: number;
-  regenerateStartDays: (newPayrollDate: PayrollDate | null) => void;
+  regenerateStartDays: () => void;
   date: number;
 }) {
   const { showSnackbar } = useSnackbar();
@@ -38,15 +39,15 @@ function PayrollDateCard({
 
         showSnackbar("Payroll date deleted successfully");
 
-        regenerateStartDays(null);
+        // regenerateStartDays();
       } catch (error) {
         showAlert("Failed to delete payroll date", "error");
       }
     } else {
       try {
-        const result = await addPayrollDate(data);
+        await addPayrollDate(data);
 
-        regenerateStartDays(result);
+        // regenerateStartDays();
 
         showSnackbar("Payroll date added successfully");
       } catch (error) {
