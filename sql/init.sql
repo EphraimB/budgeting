@@ -317,9 +317,8 @@ DECLARE
     inner_sql text;
 BEGIN
     FOR pay_period IN 
-    SELECT 
-        make_date(extract(year from current_date)::integer, extract(month from current_date)::integer, s2.payroll_start_day::integer) AS start_date,
-        make_date(extract(year from current_date)::integer, extract(month from current_date)::integer, s1.adjusted_payroll_end_day) AS end_date,
+    SELECT
+        make_date(extract(year from current_date)::integer, extract(month from current_date)::integer, s1.adjusted_payroll_end_day) AS payroll_date,
         COUNT(js.day_of_week) AS work_days,
         SUM(
             COALESCE(
@@ -343,8 +342,7 @@ BEGIN
         jobs j
         JOIN job_schedule js ON j.job_id = js.job_id
         CROSS JOIN LATERAL (
-            SELECT 
-                payroll_start_day,
+            SELECT
                 CASE 
                     WHEN payroll_end_day > EXTRACT(DAY FROM DATE_TRUNC('MONTH', current_date) + INTERVAL '1 MONTH - 1 DAY') THEN 
                         EXTRACT(DAY FROM DATE_TRUNC('MONTH', current_date) + INTERVAL '1 MONTH - 1 DAY')
