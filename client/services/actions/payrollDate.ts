@@ -4,7 +4,6 @@ import { revalidatePath } from "next/cache";
 
 interface PayrollDateRequest {
   job_id: number;
-  start_day: number;
   end_day: number;
 }
 
