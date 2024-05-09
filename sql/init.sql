@@ -316,7 +316,12 @@ DECLARE
     cron_expression text;
     inner_sql text;
 BEGIN
-    FOR pay_period IN 
+    FOR pay_period IN
+    WITH ordered_table AS (
+            SELECT payroll_day,
+            ROW_NUMBER() OVER (ORDER BY payroll_day) AS row_num
+            FROM payroll_dates
+    )
     SELECT
         make_date(extract(year from current_date)::integer, extract(month from current_date)::integer, s1.adjusted_payroll_end_day) AS payroll_date,
         COUNT(js.day_of_week) AS work_days,
@@ -343,12 +348,13 @@ BEGIN
         JOIN job_schedule js ON j.job_id = js.job_id
         CROSS JOIN LATERAL (
             SELECT
+                COALESCE(LAG(payroll_day) OVER (ORDER BY row_num), 0) + 1 AS payroll_start_day,
                 CASE 
-                    WHEN payroll_end_day > EXTRACT(DAY FROM DATE_TRUNC('MONTH', current_date) + INTERVAL '1 MONTH - 1 DAY') THEN 
+                    WHEN payroll_day > EXTRACT(DAY FROM DATE_TRUNC('MONTH', current_date) + INTERVAL '1 MONTH - 1 DAY') THEN 
                         EXTRACT(DAY FROM DATE_TRUNC('MONTH', current_date) + INTERVAL '1 MONTH - 1 DAY')
-                    ELSE payroll_end_day
+                    ELSE payroll_day
                 END AS unadjusted_payroll_end_day
-            FROM payroll_dates
+            FROM ordered_table
         ) s2
         CROSS JOIN LATERAL (
             SELECT

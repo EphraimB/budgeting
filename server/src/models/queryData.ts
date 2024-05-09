@@ -417,7 +417,7 @@ export const payrollQueries: PayrollQueries = {
             SELECT payroll_day,
             ROW_NUMBER() OVER (ORDER BY payroll_day) AS row_num
             FROM payroll_dates
-    )
+        )
                 SELECT
                     make_date(extract(year from d1)::integer, extract(month from d1)::integer, s2.payroll_start_day::integer) AS start_date,
                     make_date(extract(year from d1)::integer, extract(month from d1)::integer, s1.adjusted_payroll_end_day) AS end_date,
@@ -477,7 +477,7 @@ export const payrollQueries: PayrollQueries = {
             GROUP BY 
                 start_date, end_date
             ORDER BY 
-                start_date, end_date;     
+                start_date, end_date;
    `,
     getAllPayrollTaxes: 'SELECT * FROM payroll_taxes',
     getPayrollTaxesById:
