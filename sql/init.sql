@@ -323,6 +323,7 @@ BEGIN
             FROM payroll_dates
     )
     SELECT
+        make_date(extract(year from current_date)::integer, extract(month from current_date)::integer, s2.payroll_start_day::integer) AS start_date,
         make_date(extract(year from current_date)::integer, extract(month from current_date)::integer, s1.adjusted_payroll_end_day) AS payroll_date,
         COUNT(js.day_of_week) AS work_days,
         SUM(
@@ -383,15 +384,15 @@ BEGIN
     GROUP BY 
         s2.payroll_start_day, s1.adjusted_payroll_end_day
     ORDER BY 
-        start_date, end_date
+        start_date, payroll_date
     LOOP
-        cron_expression := '0 0 ' || EXTRACT(DAY FROM pay_period.end_date) || ' ' || EXTRACT(MONTH FROM pay_period.end_date) || ' *';
+        cron_expression := '0 0 ' || EXTRACT(DAY FROM pay_period.payroll_date) || ' ' || EXTRACT(MONTH FROM pay_period.payroll_date) || ' *';
 
         inner_sql := format('INSERT INTO transaction_history (account_id, transaction_amount, transaction_tax_rate, transaction_title, transaction_description, date_created, date_modified) VALUES ((SELECT account_id FROM jobs WHERE job_id = %L), %L, %L, ''Payroll'', ''Payroll for %s to %s'', current_timestamp, current_timestamp)',
-                    selected_job_id, pay_period.gross_pay, (pay_period.gross_pay - pay_period.net_pay) / pay_period.gross_pay, pay_period.start_date, pay_period.end_date);
+                    selected_job_id, pay_period.gross_pay, (pay_period.gross_pay - pay_period.net_pay) / pay_period.gross_pay, pay_period.start_date, pay_period.payroll_date);
 
         EXECUTE format('SELECT cron.schedule(%L, %L, %L)',
-            'payroll-' || selected_job_id || '-' || pay_period.start_date || '-' || pay_period.end_date,
+            'payroll-' || selected_job_id || '-' || pay_period.start_date || '-' || pay_period.payroll_date,
             cron_expression,
             inner_sql);
     END LOOP;
