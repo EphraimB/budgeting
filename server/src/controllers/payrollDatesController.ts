@@ -89,11 +89,10 @@ export const createPayrollDate = async (
     next: NextFunction,
 ): Promise<void> => {
     try {
-        const { job_id, start_day, end_day } = request.body;
+        const { job_id, end_day } = request.body;
 
         const results = await executeQuery(payrollQueries.createPayrollDate, [
             job_id,
-            start_day,
             end_day,
         ]);
 
@@ -150,10 +149,9 @@ export const updatePayrollDate = async (
 ): Promise<void> => {
     try {
         const { id } = request.params;
-        const { job_id, start_day, end_day } = request.body;
+        const { end_day } = request.body;
 
         const results = await executeQuery(payrollQueries.updatePayrollDate, [
-            start_day,
             end_day,
             id,
         ]);
