@@ -341,79 +341,75 @@ export const jobQueries: JobQueries = {
 
 export const payrollQueries: PayrollQueries = {
     getPayrolls: `
-        SELECT 
-            make_date(extract(year from current_date)::integer, extract(month from current_date)::integer, s2.payroll_start_day) AS start_date,
-            make_date(extract(year from current_date)::integer, extract(month from current_date)::integer, s1.adjusted_payroll_day) AS end_date,
-            COUNT(js.day_of_week) AS work_days,
-            SUM(
-                COALESCE(
-                    EXTRACT(EPOCH FROM (js.end_time - js.start_time)) / 3600 * j.hourly_rate, 
-                    0
-                )
-            )::numeric(20, 2) AS gross_pay,
-            SUM(
-                COALESCE(
-                    EXTRACT(EPOCH FROM (js.end_time - js.start_time)) / 3600 * j.hourly_rate * (1 - COALESCE(pt.rate, 0)), 
-                    0
-                )
-            )::numeric(20, 2) AS net_pay,
-            SUM(
-                COALESCE(
-                    EXTRACT(EPOCH FROM (js.end_time - js.start_time)) / 3600, 
-                    0
-                )
-            )::numeric(20, 2) AS hours_worked
-        FROM 
-            jobs j
-            JOIN job_schedule js ON j.job_id = js.job_id
-            CROSS JOIN LATERAL (
-                SELECT
-                    CASE 
-                    WHEN extract(day from make_date(extract(year from current_date)::integer, extract(month from current_date)::integer, payroll_day::integer)) = extract(day from (DATE_TRUNC('MONTH', current_date) + INTERVAL '1 MONTH - 1 DAY')) THEN
-                        1
-                    ELSE
-                        payroll_day + 1
-                    END AS payroll_start_day,
-                    CASE 
-                        WHEN payroll_day > EXTRACT(DAY FROM DATE_TRUNC('MONTH', current_date) + INTERVAL '1 MONTH - 1 DAY') THEN 
-                            EXTRACT(DAY FROM DATE_TRUNC('MONTH', current_date) + INTERVAL '1 MONTH - 1 DAY')
-                        ELSE payroll_day 
-                    END AS unadjusted_payroll_day
-                FROM payroll_dates
-            ) s2
-            CROSS JOIN LATERAL (
-                SELECT 
-                    CASE 
-                        WHEN extract(day from make_date(extract(year from current_date)::integer, extract(month from current_date)::integer, s2.unadjusted_payroll_day::integer)) = extract(day from (DATE_TRUNC('MONTH', current_date) + INTERVAL '1 MONTH - 1 DAY')) THEN
-                            1
-                        ELSE
-                            s2.unadjusted_payroll_day::integer + 1
-                    END AS payroll_start_day,
-                    CASE
-                        WHEN EXTRACT(DOW FROM MAKE_DATE(EXTRACT(YEAR FROM current_date)::integer, EXTRACT(MONTH FROM current_date)::integer, s2.unadjusted_payroll_day::integer)) = 0 THEN
-                            s2.unadjusted_payroll_day - 2
-                        WHEN EXTRACT(DOW FROM MAKE_DATE(EXTRACT(YEAR FROM current_date)::integer, EXTRACT(MONTH FROM current_date)::integer, s2.unadjusted_payroll_day::integer)) = 6 THEN
-                            s2.unadjusted_payroll_day - 1
-                        ELSE s2.unadjusted_payroll_day
-                    END::integer AS adjusted_payroll_day
-            ) s1
-            JOIN LATERAL generate_series(
-                make_date(extract(year from current_date)::integer, extract(month from current_date)::integer, s1.payroll_start_day),
-                make_date(extract(year from current_date)::integer, extract(month from current_date)::integer, s1.adjusted_payroll_day),
-                '1 day'::interval
-            ) AS gs(date) ON true
-            LEFT JOIN (
-                SELECT job_id, SUM(rate) AS rate
-                FROM payroll_taxes
-                GROUP BY job_id
-            ) pt ON j.job_id = pt.job_id
-        WHERE 
-            j.job_id = $1
-            AND js.day_of_week = EXTRACT(DOW FROM gs.date)::integer
-        GROUP BY 
-            s2.payroll_start_day, s1.adjusted_payroll_day
-        ORDER BY 
-            start_date, end_date
+    WITH ordered_table AS (
+        SELECT payroll_day,
+        ROW_NUMBER() OVER (ORDER BY payroll_day) AS row_num
+        FROM payroll_dates
+    )
+    SELECT 
+                make_date(extract(year from current_date)::integer, extract(month from current_date)::integer, s2.payroll_start_day) AS start_date,
+                make_date(extract(year from current_date)::integer, extract(month from current_date)::integer, s1.adjusted_payroll_day) AS end_date,
+                COUNT(js.day_of_week) AS work_days,
+                SUM(
+                    COALESCE(
+                        EXTRACT(EPOCH FROM (js.end_time - js.start_time)) / 3600 * j.hourly_rate, 
+                        0
+                    )
+                )::numeric(20, 2) AS gross_pay,
+                SUM(
+                    COALESCE(
+                        EXTRACT(EPOCH FROM (js.end_time - js.start_time)) / 3600 * j.hourly_rate * (1 - COALESCE(pt.rate, 0)), 
+                        0
+                    )
+                )::numeric(20, 2) AS net_pay,
+                SUM(
+                    COALESCE(
+                        EXTRACT(EPOCH FROM (js.end_time - js.start_time)) / 3600, 
+                        0
+                    )
+                )::numeric(20, 2) AS hours_worked
+            FROM 
+                jobs j
+                JOIN job_schedule js ON j.job_id = js.job_id
+                CROSS JOIN LATERAL (
+                    SELECT
+                        COALESCE(LAG(payroll_day) OVER (ORDER BY row_num), 0) + 1 AS payroll_start_day,
+                        CASE 
+                            WHEN payroll_day > EXTRACT(DAY FROM DATE_TRUNC('MONTH', current_date) + INTERVAL '1 MONTH - 1 DAY') THEN 
+                                EXTRACT(DAY FROM DATE_TRUNC('MONTH', current_date) + INTERVAL '1 MONTH - 1 DAY')
+                            ELSE payroll_day 
+                        END AS unadjusted_payroll_day
+                    FROM ordered_table
+                ) s2
+                CROSS JOIN LATERAL (
+                    SELECT 
+                        COALESCE(LAG(payroll_day) OVER (ORDER BY row_num), 0) + 1 AS payroll_start_day,
+                        CASE
+                            WHEN EXTRACT(DOW FROM MAKE_DATE(EXTRACT(YEAR FROM current_date)::integer, EXTRACT(MONTH FROM current_date)::integer, s2.unadjusted_payroll_day::integer)) = 0 THEN
+                                s2.unadjusted_payroll_day - 2
+                            WHEN EXTRACT(DOW FROM MAKE_DATE(EXTRACT(YEAR FROM current_date)::integer, EXTRACT(MONTH FROM current_date)::integer, s2.unadjusted_payroll_day::integer)) = 6 THEN
+                                s2.unadjusted_payroll_day - 1
+                            ELSE s2.unadjusted_payroll_day
+                        END::integer AS adjusted_payroll_day
+                    FROM ordered_table
+                ) s1
+                JOIN LATERAL generate_series(
+                    make_date(extract(year from current_date)::integer, extract(month from current_date)::integer, s1.payroll_start_day),
+                    make_date(extract(year from current_date)::integer, extract(month from current_date)::integer, s1.adjusted_payroll_day),
+                    '1 day'::interval
+                ) AS gs(date) ON true
+                LEFT JOIN (
+                    SELECT job_id, SUM(rate) AS rate
+                    FROM payroll_taxes
+                    GROUP BY job_id
+                ) pt ON j.job_id = pt.job_id
+            WHERE 
+                j.job_id = 1
+                AND js.day_of_week = EXTRACT(DOW FROM gs.date)::integer
+            GROUP BY 
+                s2.payroll_start_day, s1.adjusted_payroll_day
+            ORDER BY 
+                start_date, end_date
     `,
     getPayrollsMiddleware: `
         WITH work_days_and_hours AS (
