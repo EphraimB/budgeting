@@ -404,7 +404,7 @@ export const payrollQueries: PayrollQueries = {
                     GROUP BY job_id
                 ) pt ON j.job_id = pt.job_id
             WHERE 
-                j.job_id = 1
+                j.job_id = $1
                 AND js.day_of_week = EXTRACT(DOW FROM gs.date)::integer
             GROUP BY 
                 s2.payroll_start_day, s1.adjusted_payroll_day
