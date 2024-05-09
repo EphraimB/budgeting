@@ -112,8 +112,7 @@ export interface Job {
 export interface PayrollDate {
   id: number;
   job_id: number;
-  payroll_start_day: number;
-  payroll_end_day: number;
+  payroll_day: number;
 }
 
 export interface GeneratedTransaction {

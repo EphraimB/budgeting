@@ -4,8 +4,6 @@ import { PayrollDate } from "@/app/types/types";
 import React from "react";
 import Grid from "@mui/material/Grid";
 import PayrollDateCard from "./PayrollDateCard";
-import { useAlert, useSnackbar } from "../context/FeedbackContext";
-import { editPayrollDate } from "../services/actions/payrollDate";
 
 function PayrollDates({
   job_id,
@@ -14,9 +12,6 @@ function PayrollDates({
   job_id: number;
   payroll_dates: PayrollDate[];
 }) {
-  const { showSnackbar } = useSnackbar();
-  const { showAlert } = useAlert();
-
   // Generate an array of numbers from 1 to 31
   const numbers = Array.from({ length: 31 }, (_, index) => index + 1);
 
@@ -25,7 +20,7 @@ function PayrollDates({
       {numbers.map((number) => {
         // Find the payroll date that matches the current number/day
         const payrollDateForDay = payroll_dates.find(
-          (payrollDate) => payrollDate.payroll_end_day === number
+          (payrollDate) => payrollDate.payroll_day === number
         );
 
         return (
