@@ -14,8 +14,7 @@ const payrollDatesParse = (
 ): PayrollDate => ({
     id: parseInt(payrollDate.payroll_date_id),
     job_id: parseInt(payrollDate.job_id),
-    payroll_start_day: parseInt(payrollDate.payroll_start_day),
-    payroll_end_day: parseInt(payrollDate.payroll_end_day),
+    payroll_day: parseInt(payrollDate.payroll_day),
 });
 
 /**
