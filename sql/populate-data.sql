@@ -13,7 +13,7 @@ INSERT INTO transaction_history (account_id, transaction_amount, transaction_tax
 INSERT INTO transaction_history (account_id, transaction_amount, transaction_tax_rate, transaction_title, transaction_description) VALUES (1, -100.00, 0, 'Test Withdrawal', 'Just a test withdrawal');
 INSERT INTO transaction_history (account_id, transaction_amount, transaction_tax_rate, transaction_title, transaction_description) VALUES (2, -500.00, 0.08875, 'Test Withdrawal', 'Just a test withdrawal');
 
-INSERT INTO payroll_dates (job_id, payroll_start_day, payroll_end_day) VALUES (1, 1, 15), (1, 16, 31);
+INSERT INTO payroll_dates (job_id, payroll_end_day) VALUES (1, 15), (1, 31);
 
 -- Insert mock data for payroll_taxes table
 INSERT INTO payroll_taxes (job_id, name, rate) VALUES 
