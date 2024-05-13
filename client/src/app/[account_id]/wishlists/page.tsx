@@ -23,7 +23,7 @@ async function Wishlists({ params }: { params: { account_id: string } }) {
   return (
     <Stack>
       <Typography variant="h4" component="h2">
-        Loans
+        Wishlists
       </Typography>
       <br />
       {wishlists.length === 0 ? (
@@ -31,7 +31,7 @@ async function Wishlists({ params }: { params: { account_id: string } }) {
       ) : (
         // Sum of expenses
         <Typography variant="h6">
-          You have ${wishlists.length} items on your wishlist.
+          You have {wishlists.length} items on your wishlist
         </Typography>
       )}
       <WishlistsCards account_id={account_id} wishlists={wishlists} />
