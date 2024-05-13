@@ -437,7 +437,7 @@ export const payrollQueries: PayrollQueries = {
                     CROSS JOIN LATERAL (
                         SELECT
 							 CASE WHEN
-								(SELECT COUNT(*) FROM payroll_dates) = 1 THEN -(payroll_day + 1)
+                                (SELECT COUNT(*) FROM payroll_dates) = 1 AND payroll_day < 31 THEN -(payroll_day + 1)
 							 ELSE 
 								COALESCE(LAG(payroll_day) OVER (ORDER BY row_num), 0) + 1
 							 END AS payroll_start_day,
