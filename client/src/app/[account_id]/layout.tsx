@@ -36,13 +36,25 @@ async function getTaxes(account_id: number) {
   return res.json();
 }
 
-async function getLoans(accountId: number) {
+async function getLoans(account_id: number) {
   const res = await fetch(
-    `http://server:5001/api/loans?account_id=${accountId}`
+    `http://server:5001/api/loans?account_id=${account_id}`
   );
 
   if (!res.ok) {
     throw new Error("Failed to fetch loans");
+  }
+
+  return res.json();
+}
+
+async function getWishlists(account_id: number) {
+  const res = await fetch(
+    `http://server:5001/api/wishlists?account_id=${account_id}`
+  );
+
+  if (!res.ok) {
+    throw new Error("Failed to fetch wishlists");
   }
 
   return res.json();
@@ -62,6 +74,7 @@ export default async function Layout({
   const expenses = await getExpenses(account_id);
   const taxes = await getTaxes(account_id);
   const loans = await getLoans(account_id);
+  const wishlists = await getWishlists(account_id);
 
   return (
     <>
@@ -70,6 +83,7 @@ export default async function Layout({
         expenses={expenses}
         taxes={taxes}
         loans={loans}
+        wishlists={wishlists}
       />
       <br />
       {children}
