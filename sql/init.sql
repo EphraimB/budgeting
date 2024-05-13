@@ -126,8 +126,7 @@ CREATE TABLE IF NOT EXISTS loans (
 CREATE TABLE payroll_dates (
   payroll_date_id SERIAL PRIMARY KEY,
   job_id INTEGER NOT NULL REFERENCES jobs(job_id) ON DELETE CASCADE,
-  payroll_start_day INTEGER NOT NULL,
-  payroll_end_day INTEGER NOT NULL
+  payroll_day INTEGER NOT NULL
 );
 
 CREATE TABLE payroll_taxes (
@@ -317,10 +316,15 @@ DECLARE
     cron_expression text;
     inner_sql text;
 BEGIN
-    FOR pay_period IN 
-    SELECT 
+    FOR pay_period IN
+    WITH ordered_table AS (
+            SELECT payroll_day,
+            ROW_NUMBER() OVER (ORDER BY payroll_day) AS row_num
+            FROM payroll_dates
+    )
+    SELECT
         make_date(extract(year from current_date)::integer, extract(month from current_date)::integer, s2.payroll_start_day::integer) AS start_date,
-        make_date(extract(year from current_date)::integer, extract(month from current_date)::integer, s1.adjusted_payroll_end_day) AS end_date,
+        make_date(extract(year from current_date)::integer, extract(month from current_date)::integer, s1.adjusted_payroll_end_day) AS payroll_date,
         COUNT(js.day_of_week) AS work_days,
         SUM(
             COALESCE(
@@ -344,14 +348,14 @@ BEGIN
         jobs j
         JOIN job_schedule js ON j.job_id = js.job_id
         CROSS JOIN LATERAL (
-            SELECT 
-                payroll_start_day,
+            SELECT
+                COALESCE(LAG(payroll_day) OVER (ORDER BY row_num), 0) + 1 AS payroll_start_day,
                 CASE 
-                    WHEN payroll_end_day > EXTRACT(DAY FROM DATE_TRUNC('MONTH', current_date) + INTERVAL '1 MONTH - 1 DAY') THEN 
+                    WHEN payroll_day > EXTRACT(DAY FROM DATE_TRUNC('MONTH', current_date) + INTERVAL '1 MONTH - 1 DAY') THEN 
                         EXTRACT(DAY FROM DATE_TRUNC('MONTH', current_date) + INTERVAL '1 MONTH - 1 DAY')
-                    ELSE payroll_end_day
+                    ELSE payroll_day
                 END AS unadjusted_payroll_end_day
-            FROM payroll_dates
+            FROM ordered_table
         ) s2
         CROSS JOIN LATERAL (
             SELECT
@@ -380,15 +384,15 @@ BEGIN
     GROUP BY 
         s2.payroll_start_day, s1.adjusted_payroll_end_day
     ORDER BY 
-        start_date, end_date
+        start_date, payroll_date
     LOOP
-        cron_expression := '0 0 ' || EXTRACT(DAY FROM pay_period.end_date) || ' ' || EXTRACT(MONTH FROM pay_period.end_date) || ' *';
+        cron_expression := '0 0 ' || EXTRACT(DAY FROM pay_period.payroll_date) || ' ' || EXTRACT(MONTH FROM pay_period.payroll_date) || ' *';
 
         inner_sql := format('INSERT INTO transaction_history (account_id, transaction_amount, transaction_tax_rate, transaction_title, transaction_description, date_created, date_modified) VALUES ((SELECT account_id FROM jobs WHERE job_id = %L), %L, %L, ''Payroll'', ''Payroll for %s to %s'', current_timestamp, current_timestamp)',
-                    selected_job_id, pay_period.gross_pay, (pay_period.gross_pay - pay_period.net_pay) / pay_period.gross_pay, pay_period.start_date, pay_period.end_date);
+                    selected_job_id, pay_period.gross_pay, (pay_period.gross_pay - pay_period.net_pay) / pay_period.gross_pay, pay_period.start_date, pay_period.payroll_date);
 
         EXECUTE format('SELECT cron.schedule(%L, %L, %L)',
-            'payroll-' || selected_job_id || '-' || pay_period.start_date || '-' || pay_period.end_date,
+            'payroll-' || selected_job_id || '-' || pay_period.start_date || '-' || pay_period.payroll_date,
             cron_expression,
             inner_sql);
     END LOOP;
