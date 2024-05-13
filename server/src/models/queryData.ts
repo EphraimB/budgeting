@@ -412,14 +412,19 @@ export const payrollQueries: PayrollQueries = {
                 start_date, end_date
     `,
     getPayrollsMiddleware: `
-    WITH work_days_and_hours AS (
-        WITH ordered_table AS (
-            SELECT payroll_day,
-            ROW_NUMBER() OVER (ORDER BY payroll_day) AS row_num
-            FROM payroll_dates
-        )
+        WITH work_days_and_hours AS (
+            WITH ordered_table AS (
+                SELECT payroll_day,
+                ROW_NUMBER() OVER (ORDER BY payroll_day) AS row_num
+                FROM payroll_dates
+            )
                 SELECT
-                    make_date(extract(year from d1)::integer, extract(month from d1)::integer, s2.payroll_start_day::integer) AS start_date,
+                    CASE
+						WHEN s2.payroll_start_day::integer < 0 THEN
+							(make_date(extract(year from d1)::integer, extract(month from d1)::integer, ABS(s2.payroll_start_day::integer)) - INTERVAL '1 MONTH')::DATE
+						ELSE 
+							make_date(extract(year from d1)::integer, extract(month from d1)::integer, s2.payroll_start_day::integer)
+					END AS start_date,
                     make_date(extract(year from d1)::integer, extract(month from d1)::integer, s1.adjusted_payroll_end_day) AS end_date,
                     d.date AS work_date,
                     EXTRACT(EPOCH FROM (js.end_time - js.start_time)) / 3600 AS hours_worked_per_day,
@@ -431,7 +436,11 @@ export const payrollQueries: PayrollQueries = {
                     CROSS JOIN LATERAL generate_series(current_date, $2::date + INTERVAL '1 month', '1 month') AS d1(date)
                     CROSS JOIN LATERAL (
                         SELECT
-                            COALESCE(LAG(payroll_day) OVER (ORDER BY row_num), 0) + 1 AS payroll_start_day,
+							 CASE WHEN
+								(SELECT COUNT(*) FROM payroll_dates) = 1 THEN -(payroll_day + 1)
+							 ELSE 
+								COALESCE(LAG(payroll_day) OVER (ORDER BY row_num), 0) + 1
+							 END AS payroll_start_day,
                             CASE 
                                 WHEN payroll_day > EXTRACT(DAY FROM DATE_TRUNC('MONTH', d1) + INTERVAL '1 MONTH - 1 DAY') 
                                 THEN EXTRACT(DAY FROM DATE_TRUNC('MONTH', d1) + INTERVAL '1 MONTH - 1 DAY')
@@ -451,7 +460,12 @@ export const payrollQueries: PayrollQueries = {
                             END::integer AS adjusted_payroll_end_day
                     ) s1
                     JOIN LATERAL generate_series(
-                        make_date(extract(year from d1)::integer, extract(month from d1)::integer, s1.payroll_start_day), 
+                    CASE
+						WHEN s2.payroll_start_day::integer < 0 THEN
+							(make_date(extract(year from d1)::integer, extract(month from d1)::integer, ABS(s2.payroll_start_day::integer)) - INTERVAL '1 MONTH')::DATE
+						ELSE 
+							make_date(extract(year from d1)::integer, extract(month from d1)::integer, s2.payroll_start_day::integer)
+					END, 
                         make_date(extract(year from d1)::integer, extract(month from d1)::integer, s1.adjusted_payroll_end_day),
                         '1 day'
                     ) AS d(date) ON js.day_of_week = EXTRACT(DOW FROM d.date)::integer
