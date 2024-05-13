@@ -11,7 +11,7 @@ interface WishlistRequest {
   url_link: string;
 }
 
-export async function addLoan(wishlist: WishlistRequest) {
+export async function addWishlist(wishlist: WishlistRequest) {
   const response = await fetch("http://server:5001/api/loans", {
     method: "POST",
     headers: {

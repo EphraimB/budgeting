@@ -4,7 +4,6 @@ import { useState } from "react";
 import Card from "@mui/material/Card";
 import IconButton from "@mui/material/IconButton";
 import Close from "@mui/icons-material/Close";
-import { Wishlist } from "@/app/types/types";
 import CardContent from "@mui/material/CardContent";
 import CardHeader from "@mui/material/CardHeader";
 import TextField from "@mui/material/TextField";
@@ -16,24 +15,22 @@ import { useTheme } from "@mui/material/styles";
 import dayjs from "dayjs";
 import utc from "dayjs/plugin/utc";
 import { useAlert, useSnackbar } from "../context/FeedbackContext";
-import { editWishlist } from "../services/actions/wishlist";
+import { addWishlist } from "../services/actions/wishlist";
 
 dayjs.extend(utc);
 
-function WishlistEdit({
+function NewWishlistForm({
   account_id,
-  wishlist,
-  setWishlistModes,
+  setShowWishlistForm,
 }: {
   account_id: number;
-  wishlist: Wishlist;
-  setWishlistModes: (wishlistModes: Record<number, string>) => void;
+  setShowWishlistForm: (show: boolean) => void;
 }) {
-  const [title, setTitle] = useState(wishlist.wishlist_title);
-  const [description, setDescription] = useState(wishlist.wishlist_description);
-  const [amount, setAmount] = useState(wishlist.wishlist_amount.toString());
-  const [priority, setPriority] = useState(wishlist.wishlist_priority);
-  const [url_link, setUrlLink] = useState(wishlist.wishlist_url_link);
+  const [title, setTitle] = useState("");
+  const [description, setDescription] = useState("");
+  const [amount, setAmount] = useState("0");
+  const [priority, setPriority] = useState(0);
+  const [url_link, setUrlLink] = useState("");
   const [activeStep, setActiveStep] = useState(0);
 
   const { showSnackbar } = useSnackbar();
@@ -61,19 +58,19 @@ function WishlistEdit({
   const handleSubmit = async () => {
     // Submit data
     try {
-      await editWishlist(data, wishlist.id);
+      await addWishlist(data);
 
       // Show success message
-      showSnackbar(`Wishlist "${title}" edited successfully`);
+      showSnackbar(`Loan named "${title}" added successfully`);
     } catch (error) {
       console.log(error);
 
       // Show error message
-      showAlert(`Error editing wishlist "${title}"`, "error");
+      showAlert(`Error adding loan named "${title}"`, "error");
     }
 
     // Close form
-    setWishlistModes({});
+    setShowWishlistForm(false);
   };
 
   return (
@@ -91,13 +88,13 @@ function WishlistEdit({
           right: 0,
         }}
         size="small"
-        onClick={() => setWishlistModes({})}
+        onClick={() => setShowWishlistForm(false)}
       >
         <Close />
       </IconButton>
       <br />
       <CardHeader
-        title={`Edit wishlist - Step ${activeStep + 1} of 2`}
+        title={`Add wishlist - Step ${activeStep + 1} of 2`}
         sx={{
           textAlign: "center",
         }}
@@ -196,4 +193,4 @@ function WishlistEdit({
   );
 }
 
-export default WishlistEdit;
+export default NewWishlistForm;

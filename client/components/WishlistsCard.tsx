@@ -9,7 +9,7 @@ import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
 import WishlistDelete from "./WishlistDelete";
 import WishlistEdit from "./wishlistEdit";
-import NewLoanForm from "./NewLoanForm";
+import NewWishlistForm from "./NewWishlistForm";
 import WishlistsView from "./WishlistsView";
 
 function WishlistsCards({
@@ -29,9 +29,9 @@ function WishlistsCards({
       <Grid container spacing={2}>
         {showWishlistForm && (
           <Grid key="new-wishlist" item>
-            <NewLoanForm
+            <NewWishlistForm
               account_id={account_id}
-              setShowLoanForm={setShowWishlistForm}
+              setShowWishlistForm={setShowWishlistForm}
             />
           </Grid>
         )}
