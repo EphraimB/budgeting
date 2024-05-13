@@ -60,7 +60,7 @@ function WishlistsView({
       />
       <CardContent>
         <Typography variant="body2">
-          You will be charged for this item on{" "}
+          You will be charged ${wishlist.wishlist_amount} for this item on{" "}
           {dayjs(wishlist.wishlist_date_can_purchase).format(
             "dddd MMMM D, YYYY h:mm A"
           )}

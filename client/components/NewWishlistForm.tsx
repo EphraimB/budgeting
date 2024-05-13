@@ -61,12 +61,12 @@ function NewWishlistForm({
       await addWishlist(data);
 
       // Show success message
-      showSnackbar(`Loan named "${title}" added successfully`);
+      showSnackbar(`Wishlist named "${title}" added successfully`);
     } catch (error) {
       console.log(error);
 
       // Show error message
-      showAlert(`Error adding loan named "${title}"`, "error");
+      showAlert(`Error adding wihslist named "${title}"`, "error");
     }
 
     // Close form
