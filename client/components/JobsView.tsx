@@ -31,11 +31,7 @@ function JobsView({
   };
 
   return (
-    <Link
-      href={`/${account_id}/jobs/${job.id}`}
-      as={`/${account_id}/jobs/${job.id}`}
-      style={{ textDecoration: "none", color: "inherit" }}
-    >
+    <>
       <IconButton
         aria-label="more"
         sx={{
@@ -58,18 +54,24 @@ function JobsView({
         setJobModes={setJobModes}
         job_id={job.id}
       />
-      <CardHeader title={job.name} />
-      <CardContent>
-        <Typography variant="body2">
-          You get paid ${job.hourly_rate} per hour, and you work{" "}
-          {job.total_hours_per_week} hours per week.
-        </Typography>
-        <br />
-        <Typography variant="body2">
-          Click to view more details about this job.
-        </Typography>
-      </CardContent>
-    </Link>
+      <Link
+        href={`/${account_id}/jobs/${job.id}`}
+        as={`/${account_id}/jobs/${job.id}`}
+        style={{ textDecoration: "none", color: "inherit" }}
+      >
+        <CardHeader title={job.name} />
+        <CardContent>
+          <Typography variant="body2">
+            You get paid ${job.hourly_rate} per hour, and you work{" "}
+            {job.total_hours_per_week} hours per week.
+          </Typography>
+          <br />
+          <Typography variant="body2">
+            Click to view more details about this job.
+          </Typography>
+        </CardContent>
+      </Link>
+    </>
   );
 }
 
