@@ -12,7 +12,7 @@ interface WishlistRequest {
 }
 
 export async function addWishlist(wishlist: WishlistRequest) {
-  const response = await fetch("http://server:5001/api/loans", {
+  const response = await fetch("http://server:5001/api/wishlists", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
