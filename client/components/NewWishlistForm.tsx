@@ -16,6 +16,7 @@ import dayjs from "dayjs";
 import utc from "dayjs/plugin/utc";
 import { useAlert, useSnackbar } from "../context/FeedbackContext";
 import { addWishlist } from "../services/actions/wishlist";
+import { InputAdornment } from "@mui/material";
 
 dayjs.extend(utc);
 
@@ -105,8 +106,16 @@ function NewWishlistForm({
             <TextField
               label="Amount"
               variant="standard"
+              inputProps={{
+                step: 0.01,
+              }}
               value={amount}
               onChange={(e) => setAmount(e.target.value)}
+              InputProps={{
+                startAdornment: (
+                  <InputAdornment position="start">$</InputAdornment>
+                ),
+              }}
               fullWidth
             />
             <br />

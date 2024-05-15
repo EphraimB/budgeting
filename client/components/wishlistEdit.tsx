@@ -17,6 +17,7 @@ import dayjs from "dayjs";
 import utc from "dayjs/plugin/utc";
 import { useAlert, useSnackbar } from "../context/FeedbackContext";
 import { editWishlist } from "../services/actions/wishlist";
+import { InputAdornment } from "@mui/material";
 
 dayjs.extend(utc);
 
@@ -24,10 +25,12 @@ function WishlistEdit({
   account_id,
   wishlist,
   setWishlistModes,
+  total_items,
 }: {
   account_id: number;
   wishlist: Wishlist;
   setWishlistModes: (wishlistModes: Record<number, string>) => void;
+  total_items: number;
 }) {
   const [title, setTitle] = useState(wishlist.wishlist_title);
   const [description, setDescription] = useState(wishlist.wishlist_description);
@@ -108,8 +111,16 @@ function WishlistEdit({
             <TextField
               label="Amount"
               variant="standard"
+              inputProps={{
+                step: 0.01,
+              }}
               value={amount}
               onChange={(e) => setAmount(e.target.value)}
+              InputProps={{
+                startAdornment: (
+                  <InputAdornment position="start">$</InputAdornment>
+                ),
+              }}
               fullWidth
             />
             <br />

@@ -49,6 +49,7 @@ function WishlistsCards({
                   account_id={account_id}
                   wishlist={wishlist}
                   setWishlistModes={setWishlistModes}
+                  total_items={wishlists.length}
                 />
               ) : (
                 <WishlistsView
