@@ -13,11 +13,13 @@ import Button from "@mui/material/Button";
 import KeyboardArrowLeft from "@mui/icons-material/KeyboardArrowLeft";
 import KeyboardArrowRight from "@mui/icons-material/KeyboardArrowRight";
 import { useTheme } from "@mui/material/styles";
-import dayjs from "dayjs";
+import dayjs, { Dayjs } from "dayjs";
 import utc from "dayjs/plugin/utc";
 import { useAlert, useSnackbar } from "../context/FeedbackContext";
 import { editWishlist } from "../services/actions/wishlist";
-import { InputAdornment } from "@mui/material";
+import { Checkbox, FormControlLabel, InputAdornment } from "@mui/material";
+import { DateTimePicker, LocalizationProvider } from "@mui/x-date-pickers";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 
 dayjs.extend(utc);
 
@@ -37,6 +39,10 @@ function WishlistEdit({
   const [amount, setAmount] = useState(wishlist.wishlist_amount.toString());
   const [priority, setPriority] = useState(wishlist.wishlist_priority);
   const [url_link, setUrlLink] = useState(wishlist.wishlist_url_link);
+  const [preorder, setPreorder] = useState(!!wishlist.wishlist_date_available);
+  const [date_available, setDateAvailable] = useState<null | string>(
+    wishlist.wishlist_date_available
+  );
   const [activeStep, setActiveStep] = useState(0);
 
   const { showSnackbar } = useSnackbar();
@@ -79,6 +85,16 @@ function WishlistEdit({
     setWishlistModes({});
   };
 
+  const handlePreorderChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setPreorder(e.target.checked);
+
+    if (e.target.checked) {
+      setDateAvailable(dayjs().format());
+    } else {
+      setDateAvailable(null);
+    }
+  };
+
   return (
     <Card
       sx={{
@@ -100,7 +116,7 @@ function WishlistEdit({
       </IconButton>
       <br />
       <CardHeader
-        title={`Edit wishlist - Step ${activeStep + 1} of 2`}
+        title={`Edit wishlist - Step ${activeStep + 1} of 3`}
         sx={{
           textAlign: "center",
         }}
@@ -158,6 +174,25 @@ function WishlistEdit({
               value={url_link}
               onChange={(e) => setUrlLink(e.target.value)}
             />
+          </>
+        ) : activeStep === 2 ? (
+          <>
+            <FormControlLabel
+              control={
+                <Checkbox checked={preorder} onChange={handlePreorderChange} />
+              }
+              label="Preorder?"
+            />
+            <LocalizationProvider dateAdapter={AdapterDayjs}>
+              <DateTimePicker
+                label="Product avalable date"
+                value={dayjs.utc(date_available).local()}
+                onChange={(e: Dayjs | null) => {
+                  const utcDate = e ? e.utc().format() : dayjs.utc().format();
+                  setDateAvailable(utcDate);
+                }}
+              />
+            </LocalizationProvider>
             <br />
             <br />
             <Button variant="contained" onClick={handleSubmit}>
@@ -169,7 +204,7 @@ function WishlistEdit({
         <br />
         <MobileStepper
           variant="dots"
-          steps={2}
+          steps={3}
           position="static"
           activeStep={activeStep}
           sx={{ maxWidth: 400, flexGrow: 1 }}
@@ -177,7 +212,7 @@ function WishlistEdit({
             <Button
               size="small"
               onClick={handleNext}
-              disabled={activeStep === 1}
+              disabled={activeStep === 2}
             >
               Next
               {theme.direction === "rtl" ? (
