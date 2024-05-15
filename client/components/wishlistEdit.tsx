@@ -183,16 +183,18 @@ function WishlistEdit({
               }
               label="Preorder?"
             />
-            <LocalizationProvider dateAdapter={AdapterDayjs}>
-              <DateTimePicker
-                label="Product avalable date"
-                value={dayjs.utc(date_available).local()}
-                onChange={(e: Dayjs | null) => {
-                  const utcDate = e ? e.utc().format() : dayjs.utc().format();
-                  setDateAvailable(utcDate);
-                }}
-              />
-            </LocalizationProvider>
+            {preorder && (
+              <LocalizationProvider dateAdapter={AdapterDayjs}>
+                <DateTimePicker
+                  label="Product avalable date"
+                  value={dayjs.utc(date_available).local()}
+                  onChange={(e: Dayjs | null) => {
+                    const utcDate = e ? e.utc().format() : dayjs.utc().format();
+                    setDateAvailable(utcDate);
+                  }}
+                />
+              </LocalizationProvider>
+            )}
             <br />
             <br />
             <Button variant="contained" onClick={handleSubmit}>
