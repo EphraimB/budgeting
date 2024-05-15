@@ -32,6 +32,7 @@ function WishlistsCards({
             <NewWishlistForm
               account_id={account_id}
               setShowWishlistForm={setShowWishlistForm}
+              total_items={wishlists.length}
             />
           </Grid>
         )}

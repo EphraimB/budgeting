@@ -16,7 +16,12 @@ import dayjs, { Dayjs } from "dayjs";
 import utc from "dayjs/plugin/utc";
 import { useAlert, useSnackbar } from "../context/FeedbackContext";
 import { addWishlist } from "../services/actions/wishlist";
-import { Checkbox, FormControlLabel, InputAdornment } from "@mui/material";
+import {
+  Checkbox,
+  FormControlLabel,
+  InputAdornment,
+  Slider,
+} from "@mui/material";
 import { DateTimePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 
@@ -25,9 +30,11 @@ dayjs.extend(utc);
 function NewWishlistForm({
   account_id,
   setShowWishlistForm,
+  total_items,
 }: {
   account_id: number;
   setShowWishlistForm: (show: boolean) => void;
+  total_items: number;
 }) {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
@@ -56,7 +63,7 @@ function NewWishlistForm({
     title,
     description,
     amount: parseFloat(amount),
-    priority,
+    priority: Math.round((priority / 100) * total_items),
     url_link,
     date_available,
   };
@@ -154,11 +161,25 @@ function NewWishlistForm({
           </>
         ) : activeStep === 1 ? (
           <>
-            <TextField
-              label="Priority"
-              variant="standard"
-              value={priority}
-              onChange={(e) => setPriority(parseInt(e.target.value))}
+            <Slider
+              aria-label="Priority"
+              defaultValue={priority}
+              step={100 / (total_items - 1)}
+              valueLabelDisplay="auto"
+              marks={Array.from(new Array(total_items), (_, i) => ({
+                value: Math.round((i / (total_items - 1)) * 100),
+                label:
+                  i === 0
+                    ? "Highest"
+                    : i === total_items - 1
+                    ? "Lowest"
+                    : `Priority ${i + 1}`,
+              }))}
+              onChange={(event, value) => {
+                if (typeof value === "number") {
+                  setPriority(value); // Update the state with the new value
+                }
+              }}
             />
             <br />
             <br />
