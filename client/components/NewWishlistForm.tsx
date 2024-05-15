@@ -58,6 +58,7 @@ function NewWishlistForm({
     amount: parseFloat(amount),
     priority,
     url_link,
+    date_available,
   };
 
   const handleSubmit = async () => {
