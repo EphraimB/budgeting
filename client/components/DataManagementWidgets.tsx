@@ -96,7 +96,7 @@ function DataManagementWidgets({
       title: "Wishlists",
       link: `/${account_id}/wishlists`,
       content: `${
-        loans.length === 0
+        wishlists.length === 0
           ? "You have nothing on your wishlist"
           : `You have ${wishlists.length} items on your wishlist.`
       }`,
