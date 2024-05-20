@@ -63,7 +63,7 @@ function NewWishlistForm({
     title,
     description,
     amount: parseFloat(amount),
-    priority: Math.round((priority / 100) * total_items),
+    priority,
     url_link,
     date_available,
   };
