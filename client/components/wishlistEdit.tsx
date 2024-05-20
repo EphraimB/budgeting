@@ -48,7 +48,7 @@ function WishlistEdit({
   const [title, setTitle] = useState(wishlist.wishlist_title);
   const [description, setDescription] = useState(wishlist.wishlist_description);
   const [amount, setAmount] = useState(wishlist.wishlist_amount.toString());
-  const [tax_id, setTaxId] = useState(wishlist.tax_id);
+  const [tax_id, setTaxId] = useState(wishlist.tax_id || 0);
   const [priority, setPriority] = useState(wishlist.wishlist_priority);
   const [url_link, setUrlLink] = useState(wishlist.wishlist_url_link);
   const [preorder, setPreorder] = useState(!!wishlist.wishlist_date_available);
