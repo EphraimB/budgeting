@@ -101,7 +101,7 @@ function NewWishlistForm({
       ? [{ value: 0, label: "Highest" }]
       : Array.from(new Array(total_items + 1), (_, i) => ({
           value: i,
-          label: "",
+          label: i === 0 ? "Highest" : "",
         }));
 
   return (
