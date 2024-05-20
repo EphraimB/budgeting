@@ -97,7 +97,7 @@ function NewWishlistForm({
   };
 
   function valuetext(value: number) {
-    return `${value}°C`;
+    return `${value}`;
   }
 
   return (
