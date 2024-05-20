@@ -191,6 +191,8 @@ function NewWishlistForm({
                 ))}
               </Select>
             </FormControl>
+            <br />
+            <br />
             <Slider
               aria-label="Priority"
               value={priority}

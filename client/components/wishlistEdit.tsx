@@ -195,6 +195,8 @@ function WishlistEdit({
                 ))}
               </Select>
             </FormControl>
+            <br />
+            <br />
             <Slider
               aria-label="Priority"
               value={priority}
