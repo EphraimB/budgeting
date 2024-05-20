@@ -175,7 +175,7 @@ function NewWishlistForm({
               marks={
                 total_items > 1
                   ? Array.from(new Array(total_items), (_, i) => ({
-                      value: Math.round((i / (total_items - 1)) * 100),
+                      value: i, // Use the index as the value
                       label:
                         i === 0
                           ? "Highest"
@@ -184,7 +184,7 @@ function NewWishlistForm({
                           : "",
                     }))
                   : total_items === 1
-                  ? [{ value: 50, label: "" }] // Add a default mark with value 50 when total_items is 1
+                  ? [{ value: 0, label: "" }] // Add a default mark with value 0 when total_items is 1
                   : [{ value: 0, label: "" }] // Add a default mark with value 0 when total_items is 0
               }
               onChange={(event, value) => {
