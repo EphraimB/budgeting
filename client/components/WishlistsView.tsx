@@ -55,28 +55,30 @@ function WishlistsView({
         setWishlistModes={setWishlistModes}
         wishlist_id={wishlist.id}
       />
-      <Link
-        href={wishlist.wishlist_url_link}
-        target="_blank"
-        style={{ color: "inherit", textDecoration: "none" }}
-      >
-        <CardHeader
-          title={wishlist.wishlist_title}
-          subheader={wishlist.wishlist_description}
-        />
-        <CardContent>
-          <Typography variant="body2">
-            You will be charged ${wishlist.wishlist_amount} for this item{" "}
-            {wishlist.wishlist_date_can_purchase
-              ? "on " +
-                dayjs(wishlist.wishlist_date_can_purchase).format(
-                  "dddd MMMM D, YYYY h:mm A"
-                )
-              : "in more than a year"}
-            .
-          </Typography>
-        </CardContent>
-      </Link>
+      <CardHeader
+        title={wishlist.wishlist_title}
+        subheader={wishlist.wishlist_description}
+      />
+      <CardContent>
+        <Typography variant="body2">
+          You will be charged ${wishlist.wishlist_amount} for this item{" "}
+          {wishlist.wishlist_date_can_purchase
+            ? "on " +
+              dayjs(wishlist.wishlist_date_can_purchase).format(
+                "dddd MMMM D, YYYY h:mm A"
+              )
+            : "in more than a year"}
+          .
+        </Typography>
+        {wishlist.wishlist_url_link && (
+          <>
+            <br />
+            <Link href={wishlist.wishlist_url_link} target="_blank">
+              <Typography variant="body2">View wishlist item here</Typography>
+            </Link>
+          </>
+        )}
+      </CardContent>
     </>
   );
 }
