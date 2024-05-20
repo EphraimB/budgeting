@@ -4,7 +4,7 @@ import { useState } from "react";
 import Card from "@mui/material/Card";
 import IconButton from "@mui/material/IconButton";
 import Close from "@mui/icons-material/Close";
-import { Wishlist } from "@/app/types/types";
+import { Tax, Wishlist } from "@/app/types/types";
 import CardContent from "@mui/material/CardContent";
 import CardHeader from "@mui/material/CardHeader";
 import TextField from "@mui/material/TextField";
@@ -19,8 +19,12 @@ import { useAlert, useSnackbar } from "../context/FeedbackContext";
 import { editWishlist } from "../services/actions/wishlist";
 import {
   Checkbox,
+  FormControl,
   FormControlLabel,
   InputAdornment,
+  InputLabel,
+  MenuItem,
+  Select,
   Slider,
 } from "@mui/material";
 import { DateTimePicker, LocalizationProvider } from "@mui/x-date-pickers";
@@ -31,17 +35,20 @@ dayjs.extend(utc);
 function WishlistEdit({
   account_id,
   wishlist,
+  taxes,
   setWishlistModes,
   total_items,
 }: {
   account_id: number;
   wishlist: Wishlist;
+  taxes: Tax[];
   setWishlistModes: (wishlistModes: Record<number, string>) => void;
   total_items: number;
 }) {
   const [title, setTitle] = useState(wishlist.wishlist_title);
   const [description, setDescription] = useState(wishlist.wishlist_description);
   const [amount, setAmount] = useState(wishlist.wishlist_amount.toString());
+  const [tax_id, setTaxId] = useState(wishlist.tax_id);
   const [priority, setPriority] = useState(wishlist.wishlist_priority);
   const [url_link, setUrlLink] = useState(wishlist.wishlist_url_link);
   const [preorder, setPreorder] = useState(!!wishlist.wishlist_date_available);
@@ -68,6 +75,7 @@ function WishlistEdit({
     title,
     description,
     amount: parseFloat(amount),
+    tax_id: tax_id === 0 ? null : tax_id,
     priority,
     url_link,
     date_available,
@@ -170,6 +178,23 @@ function WishlistEdit({
           </>
         ) : activeStep === 1 ? (
           <>
+            <FormControl fullWidth>
+              <InputLabel id="tax-select-label">Tax</InputLabel>
+              <Select
+                labelId="tax-select-label"
+                label="Tax"
+                variant="standard"
+                value={tax_id}
+                onChange={(e) => setTaxId(e.target.value as number)}
+              >
+                <MenuItem value={0}>No tax - 0%</MenuItem>
+                {taxes.map((tax: Tax) => (
+                  <MenuItem key={tax.id} value={tax.id}>
+                    {tax.title} - {tax.rate * 100}%
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
             <Slider
               aria-label="Priority"
               value={priority}

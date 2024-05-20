@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Card from "@mui/material/Card";
-import { Wishlist } from "@/app/types/types";
+import { Tax, Wishlist } from "@/app/types/types";
 import Fab from "@mui/material/Fab";
 import AddIcon from "@mui/icons-material/Add";
 import Box from "@mui/material/Box";
@@ -15,9 +15,11 @@ import WishlistsView from "./WishlistsView";
 function WishlistsCards({
   account_id,
   wishlists,
+  taxes,
 }: {
   account_id: number;
   wishlists: Wishlist[];
+  taxes: Tax[];
 }) {
   const [showWishlistForm, setShowWishlistForm] = useState(false);
   const [wishlistModes, setWishlistModes] = useState<Record<number, string>>(
@@ -31,6 +33,7 @@ function WishlistsCards({
           <Grid key="new-wishlist" item>
             <NewWishlistForm
               account_id={account_id}
+              taxes={taxes}
               setShowWishlistForm={setShowWishlistForm}
               total_items={wishlists.length}
             />
@@ -49,6 +52,7 @@ function WishlistsCards({
                 <WishlistEdit
                   account_id={account_id}
                   wishlist={wishlist}
+                  taxes={taxes}
                   setWishlistModes={setWishlistModes}
                   total_items={wishlists.length}
                 />

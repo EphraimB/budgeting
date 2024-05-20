@@ -7,6 +7,7 @@ interface WishlistRequest {
   amount: number;
   title: string;
   description: string;
+  tax_id: number | null;
   priority: number;
   url_link: string;
 }

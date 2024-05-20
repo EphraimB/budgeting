@@ -1,7 +1,7 @@
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
-import { Wishlist } from "@/app/types/types";
-import WishlistsCards from "../../../../components/WishlistsCard";
+import { Tax, Wishlist } from "@/app/types/types";
+import WishlistsCards from "../../../../components/WishlistsCards";
 
 async function getWishlists(account_id: number) {
   const res = await fetch(
@@ -15,10 +15,21 @@ async function getWishlists(account_id: number) {
   return res.json();
 }
 
+async function getTaxes() {
+  const res = await fetch("http://server:5001/api/taxes");
+
+  if (!res.ok) {
+    throw new Error("Failed to fetch taxes");
+  }
+
+  return res.json();
+}
+
 async function Wishlists({ params }: { params: { account_id: string } }) {
   const account_id = parseInt(params.account_id);
 
   const wishlists: Wishlist[] = await getWishlists(account_id);
+  const taxes: Tax[] = await getTaxes();
 
   return (
     <Stack>
@@ -34,7 +45,11 @@ async function Wishlists({ params }: { params: { account_id: string } }) {
           You have {wishlists.length} items on your wishlist
         </Typography>
       )}
-      <WishlistsCards account_id={account_id} wishlists={wishlists} />
+      <WishlistsCards
+        account_id={account_id}
+        wishlists={wishlists}
+        taxes={taxes}
+      />
     </Stack>
   );
 }

@@ -18,27 +18,35 @@ import { useAlert, useSnackbar } from "../context/FeedbackContext";
 import { addWishlist } from "../services/actions/wishlist";
 import {
   Checkbox,
+  FormControl,
   FormControlLabel,
   InputAdornment,
+  InputLabel,
+  MenuItem,
+  Select,
   Slider,
 } from "@mui/material";
 import { DateTimePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import { Tax } from "@/app/types/types";
 
 dayjs.extend(utc);
 
 function NewWishlistForm({
   account_id,
+  taxes,
   setShowWishlistForm,
   total_items,
 }: {
   account_id: number;
+  taxes: Tax[];
   setShowWishlistForm: (show: boolean) => void;
   total_items: number;
 }) {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [amount, setAmount] = useState("0");
+  const [tax_id, setTaxId] = useState(0);
   const [priority, setPriority] = useState(total_items);
   const [url_link, setUrlLink] = useState("");
   const [preorder, setPreorder] = useState(false);
@@ -63,6 +71,7 @@ function NewWishlistForm({
     title,
     description,
     amount: parseFloat(amount),
+    tax_id: tax_id === 0 ? null : tax_id,
     priority,
     url_link,
     date_available,
@@ -165,6 +174,23 @@ function NewWishlistForm({
           </>
         ) : activeStep === 1 ? (
           <>
+            <FormControl fullWidth>
+              <InputLabel id="tax-select-label">Tax</InputLabel>
+              <Select
+                labelId="tax-select-label"
+                label="Tax"
+                variant="standard"
+                value={tax_id}
+                onChange={(e) => setTaxId(e.target.value as number)}
+              >
+                <MenuItem value={0}>No tax - 0%</MenuItem>
+                {taxes.map((tax: Tax) => (
+                  <MenuItem key={tax.id} value={tax.id}>
+                    {tax.title} - {tax.rate * 100}%
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
             <Slider
               aria-label="Priority"
               value={priority}
