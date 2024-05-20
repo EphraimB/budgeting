@@ -39,7 +39,7 @@ function NewWishlistForm({
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [amount, setAmount] = useState("0");
-  const [priority, setPriority] = useState(0);
+  const [priority, setPriority] = useState(total_items);
   const [url_link, setUrlLink] = useState("");
   const [preorder, setPreorder] = useState(false);
   const [date_available, setDateAvailable] = useState<null | string>(null);
@@ -96,13 +96,9 @@ function NewWishlistForm({
     }
   };
 
-  const marks =
-    total_items === 0
-      ? [{ value: 0, label: "Highest" }]
-      : Array.from(new Array(total_items + 1), (_, i) => ({
-          value: i,
-          label: i === 0 ? "Highest" : "",
-        }));
+  function valuetext(value: number) {
+    return `${value}°C`;
+  }
 
   return (
     <Card
@@ -171,19 +167,17 @@ function NewWishlistForm({
           <>
             <Slider
               aria-label="Priority"
-              defaultValue={priority}
-              step={
-                total_items > 1
-                  ? 100 / (total_items - 1)
-                  : total_items == 1
-                  ? 50
-                  : 0
-              }
+              value={priority}
+              getAriaValueText={valuetext}
               valueLabelDisplay="auto"
-              marks={marks}
-              onChange={(event, value) => {
+              step={1}
+              marks
+              min={0}
+              max={total_items}
+              onChange={(e, value) => {
                 if (typeof value === "number") {
-                  setPriority(value); // Update the state with the new value
+                  console.log(value);
+                  setPriority(value);
                 }
               }}
             />
