@@ -176,7 +176,6 @@ function NewWishlistForm({
               max={total_items}
               onChange={(e, value) => {
                 if (typeof value === "number") {
-                  console.log(value);
                   setPriority(value);
                 }
               }}

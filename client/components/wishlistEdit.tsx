@@ -17,7 +17,12 @@ import dayjs, { Dayjs } from "dayjs";
 import utc from "dayjs/plugin/utc";
 import { useAlert, useSnackbar } from "../context/FeedbackContext";
 import { editWishlist } from "../services/actions/wishlist";
-import { Checkbox, FormControlLabel, InputAdornment } from "@mui/material";
+import {
+  Checkbox,
+  FormControlLabel,
+  InputAdornment,
+  Slider,
+} from "@mui/material";
 import { DateTimePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 
@@ -96,6 +101,10 @@ function WishlistEdit({
     }
   };
 
+  function valuetext(value: number) {
+    return `${value}`;
+  }
+
   return (
     <Card
       sx={{
@@ -161,11 +170,20 @@ function WishlistEdit({
           </>
         ) : activeStep === 1 ? (
           <>
-            <TextField
-              label="Priority"
-              variant="standard"
+            <Slider
+              aria-label="Priority"
               value={priority}
-              onChange={(e) => setPriority(parseInt(e.target.value))}
+              getAriaValueText={valuetext}
+              valueLabelDisplay="auto"
+              step={1}
+              marks
+              min={0}
+              max={total_items - 1}
+              onChange={(e, value) => {
+                if (typeof value === "number") {
+                  setPriority(value);
+                }
+              }}
             />
             <br />
             <br />
