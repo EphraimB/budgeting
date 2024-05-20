@@ -68,6 +68,22 @@ export interface Loan {
   date_modified: string;
 }
 
+export interface Wishlist {
+  id: number;
+  account_id: number;
+  tax_id: number | null;
+  tax_rate: number;
+  wishlist_amount: number;
+  wishlist_title: string;
+  wishlist_description: string;
+  wishlist_date_available: string | null;
+  wishlist_date_can_purchase: string | null;
+  wishlist_url_link: string;
+  wishlist_priority: number;
+  date_created?: string;
+  date_modified?: string;
+}
+
 export interface Tax {
   id: number;
   rate: number;
