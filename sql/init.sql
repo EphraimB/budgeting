@@ -290,14 +290,6 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
-CREATE OR REPLACE FUNCTION update_wishlist_priority()
-RETURNS TRIGGER AS $$
-BEGIN
-  NEW.wishlist_priority = (SELECT COALESCE(MAX(wishlist_priority), 0) + 1 FROM wishlist);
-  RETURN NEW;
-END;
-$$ LANGUAGE plpgsql;
-
 CREATE OR REPLACE FUNCTION check_fare_detail_id()
 RETURNS TRIGGER AS $$
 BEGIN
@@ -483,11 +475,6 @@ CREATE TRIGGER set_null_columns_loans
 BEFORE INSERT OR UPDATE ON loans
 FOR EACH ROW
 EXECUTE FUNCTION set_null_columns();
-
-CREATE TRIGGER update_wishlist_priority_trigger
-BEFORE INSERT ON wishlist
-FOR EACH ROW
-EXECUTE FUNCTION update_wishlist_priority();
 
 CREATE TRIGGER trigger_check_fare_detail_id
 BEFORE INSERT ON fare_details

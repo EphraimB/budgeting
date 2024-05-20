@@ -57,7 +57,7 @@ router.post(
     [
         body('amount').isNumeric().withMessage('Amount must be a number'),
         body('tax_id')
-            .optional()
+            .optional({ nullable: true })
             .isInt({ min: 1 })
             .withMessage('Tax ID must be a number'),
         body('title').isString().withMessage('Title must be a string'),
@@ -88,7 +88,7 @@ router.put(
         param('id').isInt({ min: 1 }).withMessage('ID must be a number'),
         body('amount').isNumeric().withMessage('Amount must be a number'),
         body('tax_id')
-            .optional()
+            .optional({ nullable: true })
             .isInt({ min: 1 })
             .withMessage('Tax ID must be a number'),
         body('title').isString().withMessage('Title must be a string'),

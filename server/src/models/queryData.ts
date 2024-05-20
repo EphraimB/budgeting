@@ -549,9 +549,9 @@ export const wishlistQueries: WishlistQueries = {
     getWishlistsByIdAndAccountId:
         'SELECT * FROM wishlist WHERE wishlist_id = $1 AND account_id = $2',
     createWishlist:
-        'INSERT INTO wishlist (account_id, tax_id, cron_job_id, wishlist_amount, wishlist_title, wishlist_description, wishlist_priority, wishlist_url_link) VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING *',
+        'INSERT INTO wishlist (account_id, tax_id, cron_job_id, wishlist_amount, wishlist_title, wishlist_description, wishlist_priority, wishlist_url_link, wishlist_date_available) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING *',
     updateWishlist:
-        'UPDATE wishlist SET account_id = $1, tax_id = $2, wishlist_amount = $3, wishlist_title = $4, wishlist_description = $5, wishlist_priority = $6, wishlist_url_link = $7 WHERE wishlist_id = $8 RETURNING *',
+        'UPDATE wishlist SET account_id = $1, tax_id = $2, wishlist_amount = $3, wishlist_title = $4, wishlist_description = $5, wishlist_priority = $6, wishlist_url_link = $7, wishlist_date_available = $8 WHERE wishlist_id = $9 RETURNING *',
     updateWishlistWithCronJobId:
         'UPDATE wishlist SET cron_job_id = $1 WHERE wishlist_id = $2 RETURNING *',
     deleteWishlist: 'DELETE FROM wishlist WHERE wishlist_id = $1',

@@ -131,6 +131,7 @@ export const createWishlist = async (
         description,
         priority,
         url_link,
+        date_available,
     } = request.body;
 
     try {
@@ -145,6 +146,7 @@ export const createWishlist = async (
             description,
             priority,
             url_link,
+            date_available,
         ]);
 
         // Parse the data to correct format and return an object
@@ -278,6 +280,7 @@ export const updateWishlist = async (
         description,
         priority,
         url_link,
+        date_available,
     } = request.body;
 
     try {
@@ -289,6 +292,7 @@ export const updateWishlist = async (
             description,
             priority,
             url_link,
+            date_available,
             id,
         ]);
 
