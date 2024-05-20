@@ -96,6 +96,14 @@ function NewWishlistForm({
     }
   };
 
+  const marks =
+    total_items === 0
+      ? [{ value: 0, label: "Highest" }]
+      : Array.from(new Array(total_items + 1), (_, i) => ({
+          value: i,
+          label: "",
+        }));
+
   return (
     <Card
       sx={{
@@ -172,21 +180,7 @@ function NewWishlistForm({
                   : 0
               }
               valueLabelDisplay="auto"
-              marks={
-                total_items > 1
-                  ? Array.from(new Array(total_items), (_, i) => ({
-                      value: i, // Use the index as the value
-                      label:
-                        i === 0
-                          ? "Highest"
-                          : i === total_items - 1
-                          ? "Lowest"
-                          : "",
-                    }))
-                  : total_items === 1
-                  ? [{ value: 0, label: "" }] // Add a default mark with value 0 when total_items is 1
-                  : [{ value: 0, label: "" }] // Add a default mark with value 0 when total_items is 0
-              }
+              marks={marks}
               onChange={(event, value) => {
                 if (typeof value === "number") {
                   setPriority(value); // Update the state with the new value
