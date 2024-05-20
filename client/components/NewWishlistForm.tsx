@@ -164,17 +164,29 @@ function NewWishlistForm({
             <Slider
               aria-label="Priority"
               defaultValue={priority}
-              step={100 / (total_items - 1)}
+              step={
+                total_items > 1
+                  ? 100 / (total_items - 1)
+                  : total_items == 1
+                  ? 50
+                  : 0
+              }
               valueLabelDisplay="auto"
-              marks={Array.from(new Array(total_items), (_, i) => ({
-                value: Math.round((i / (total_items - 1)) * 100),
-                label:
-                  i === 0
-                    ? "Highest"
-                    : i === total_items - 1
-                    ? "Lowest"
-                    : `Priority ${i + 1}`,
-              }))}
+              marks={
+                total_items > 1
+                  ? Array.from(new Array(total_items), (_, i) => ({
+                      value: Math.round((i / (total_items - 1)) * 100),
+                      label:
+                        i === 0
+                          ? "Highest"
+                          : i === total_items - 1
+                          ? "Lowest"
+                          : "",
+                    }))
+                  : total_items === 1
+                  ? [{ value: 50, label: "" }] // Add a default mark with value 50 when total_items is 1
+                  : [{ value: 0, label: "" }] // Add a default mark with value 0 when total_items is 0
+              }
               onChange={(event, value) => {
                 if (typeof value === "number") {
                   setPriority(value); // Update the state with the new value
