@@ -142,6 +142,12 @@ function NewExpenseForm({
 
       // Close form
       setShowExpenseForm(false);
+    } else {
+      // Show error message
+      showAlert(
+        "You need to fill in all the required fields before adding this expense",
+        "error"
+      );
     }
   };
 

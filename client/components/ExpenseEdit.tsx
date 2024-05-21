@@ -152,6 +152,12 @@ function ExpenseEdit({
 
       // Close form
       setExpenseModes({});
+    } else {
+      // Show error message
+      showAlert(
+        "You need to fill in all the required fields before editing this expense",
+        "error"
+      );
     }
   };
 
