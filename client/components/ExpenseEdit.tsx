@@ -113,7 +113,7 @@ function ExpenseEdit({
 
   const validateDescription = () => {
     if (!description) {
-      setTitleError("Description is required");
+      setDescriptionError("Description is required");
 
       return false;
     }
