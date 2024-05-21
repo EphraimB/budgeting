@@ -212,6 +212,8 @@ function ExpenseEdit({
               variant="standard"
               value={description}
               onChange={(e) => setDescription(e.target.value)}
+              error={!!descriptionError}
+              helperText={descriptionError}
               fullWidth
             />
           </>
@@ -226,6 +228,8 @@ function ExpenseEdit({
               }}
               value={amount ? amount : "0"}
               onChange={(e) => setAmount(e.target.value)}
+              error={!!amountError}
+              helperText={amountError}
               InputProps={{
                 startAdornment: (
                   <InputAdornment position="start">$</InputAdornment>
