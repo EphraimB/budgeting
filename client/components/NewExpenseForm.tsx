@@ -53,6 +53,11 @@ function NewExpenseForm({
   const [begin_date, setBeginDate] = useState<string>(dayjs().format());
   const [endDateEnabled, setEndDateEnabled] = useState(false);
   const [end_date, setEndDate] = useState<null | string>(null);
+
+  const [titleError, setTitleError] = useState("");
+  const [descriptionError, setDescriptionError] = useState("");
+  const [amountError, setAmountError] = useState("");
+
   const [activeStep, setActiveStep] = useState(0);
 
   const { showSnackbar } = useSnackbar();
@@ -86,22 +91,58 @@ function NewExpenseForm({
     end_date,
   };
 
-  const handleSubmit = async () => {
-    // Submit data
-    try {
-      await addExpense(data);
+  const validateTitle = () => {
+    if (!title) {
+      setTitleError("Title is required");
 
-      // Show success message
-      showSnackbar(`Expense named "${title}" added successfully`);
-    } catch (error) {
-      console.log(error);
-
-      // Show error message
-      showAlert(`Error adding expense named "${title}"`, "error");
+      return false;
     }
 
-    // Close form
-    setShowExpenseForm(false);
+    return true;
+  };
+
+  const validateDescription = () => {
+    if (!description) {
+      setDescriptionError("Description is required");
+
+      return false;
+    }
+
+    return true;
+  };
+
+  const validateAmount = () => {
+    if (parseInt(amount) <= 0) {
+      setAmountError("Amount needs to be more than $0.00");
+
+      return false;
+    }
+
+    return true;
+  };
+
+  const handleSubmit = async () => {
+    const isTitleValid = validateTitle();
+    const isDescriptionValid = validateDescription();
+    const isAmountValid = validateAmount();
+
+    if (isTitleValid && isDescriptionValid && isAmountValid) {
+      // Submit data
+      try {
+        await addExpense(data);
+
+        // Show success message
+        showSnackbar(`Expense named "${title}" added successfully`);
+      } catch (error) {
+        console.log(error);
+
+        // Show error message
+        showAlert(`Error adding expense named "${title}"`, "error");
+      }
+
+      // Close form
+      setShowExpenseForm(false);
+    }
   };
 
   const handleEndDateEnabledChange = (
@@ -150,6 +191,8 @@ function NewExpenseForm({
               variant="standard"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
+              error={!!titleError}
+              helperText={titleError}
               fullWidth
             />
             <br />
@@ -159,6 +202,8 @@ function NewExpenseForm({
               variant="standard"
               value={description}
               onChange={(e) => setDescription(e.target.value)}
+              error={!!descriptionError}
+              helperText={descriptionError}
               fullWidth
             />
           </>
@@ -173,6 +218,8 @@ function NewExpenseForm({
               }}
               value={amount ? amount : "0"}
               onChange={(e) => setAmount(e.target.value)}
+              error={!!amountError}
+              helperText={amountError}
               InputProps={{
                 startAdornment: (
                   <InputAdornment position="start">$</InputAdornment>
