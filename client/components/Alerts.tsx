@@ -14,6 +14,11 @@ export default function Alerts() {
         onClose={() => {
           closeAlert();
         }}
+        sx={{
+          position: "sticky",
+          top: 0,
+          zIndex: 1000,
+        }}
       >
         {alert.message}
       </Alert>
