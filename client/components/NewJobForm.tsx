@@ -2,7 +2,6 @@
 
 import React, { useState } from "react";
 import { useAlert, useSnackbar } from "../context/FeedbackContext";
-import { Job } from "@/app/types/types";
 import { useTheme } from "@mui/material/styles";
 import { addJob } from "../services/actions/job";
 import Card from "@mui/material/Card";
