@@ -62,6 +62,11 @@ function ExpenseEdit({
   const [begin_date, setBeginDate] = useState<string>(expense.begin_date);
   const [endDateEnabled, setEndDateEnabled] = useState(!!expense.end_date);
   const [end_date, setEndDate] = useState<null | string>(expense.end_date);
+
+  const [titleError, setTitleError] = useState("");
+  const [descriptionError, setDescriptionError] = useState("");
+  const [amountError, setAmountError] = useState("");
+
   const [activeStep, setActiveStep] = useState(0);
 
   const { showSnackbar } = useSnackbar();
@@ -96,22 +101,64 @@ function ExpenseEdit({
     end_date,
   };
 
-  const handleSubmit = async () => {
-    // Submit data
-    try {
-      await editExpense(data, expense.id);
+  const validateTitle = () => {
+    if (!title) {
+      setTitleError("Title is required");
 
-      // Show success message
-      showSnackbar(`Expense "${title}" edited successfully`);
-    } catch (error) {
-      console.log(error);
-
-      // Show error message
-      showAlert(`Error editing expense "${title}"`, "error");
+      return false;
     }
 
-    // Close form
-    setExpenseModes({});
+    return true;
+  };
+
+  const validateDescription = () => {
+    if (!description) {
+      setDescriptionError("Description is required");
+
+      return false;
+    }
+
+    return true;
+  };
+
+  const validateAmount = () => {
+    if (parseFloat(amount) <= 0) {
+      setAmountError("Amount needs to be more than $0.00");
+
+      return false;
+    }
+
+    return true;
+  };
+
+  const handleSubmit = async () => {
+    const isTitleValid = validateTitle();
+    const isDescriptionValid = validateDescription();
+    const isAmountValid = validateAmount();
+
+    if (isTitleValid && isDescriptionValid && isAmountValid) {
+      // Submit data
+      try {
+        await editExpense(data, expense.id);
+
+        // Show success message
+        showSnackbar(`Expense "${title}" edited successfully`);
+      } catch (error) {
+        console.log(error);
+
+        // Show error message
+        showAlert(`Error editing expense "${title}"`, "error");
+      }
+
+      // Close form
+      setExpenseModes({});
+    } else {
+      // Show error message
+      showAlert(
+        "You need to fill in all the required fields before editing this expense",
+        "error"
+      );
+    }
   };
 
   const handleEndDateEnabledChange = (
@@ -160,6 +207,8 @@ function ExpenseEdit({
               variant="standard"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
+              error={!!titleError}
+              helperText={titleError}
               fullWidth
             />
             <br />
@@ -169,6 +218,8 @@ function ExpenseEdit({
               variant="standard"
               value={description}
               onChange={(e) => setDescription(e.target.value)}
+              error={!!descriptionError}
+              helperText={descriptionError}
               fullWidth
             />
           </>
@@ -183,6 +234,8 @@ function ExpenseEdit({
               }}
               value={amount ? amount : "0"}
               onChange={(e) => setAmount(e.target.value)}
+              error={!!amountError}
+              helperText={amountError}
               InputProps={{
                 startAdornment: (
                   <InputAdornment position="start">$</InputAdornment>
