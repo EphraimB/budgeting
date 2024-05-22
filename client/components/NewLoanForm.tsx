@@ -49,6 +49,13 @@ function NewLoanForm({
   const [interest_rate, setInterestRate] = useState("0");
   const [interest_frequency_type, setInterestFrequencyType] = useState(2);
   const [begin_date, setBeginDate] = useState<string>(dayjs().format());
+
+  const [recipientError, setRecipientError] = useState("");
+  const [titleError, setTitleError] = useState("");
+  const [descriptionError, setDescriptionError] = useState("");
+  const [planAmountError, setPlanAmountError] = useState("");
+  const [amountError, setAmountError] = useState("");
+
   const [activeStep, setActiveStep] = useState(0);
 
   const { showSnackbar } = useSnackbar();
@@ -85,22 +92,92 @@ function NewLoanForm({
     begin_date,
   };
 
-  const handleSubmit = async () => {
-    // Submit data
-    try {
-      await addLoan(data);
+  const validateRecipient = () => {
+    if (!title) {
+      setRecipientError("Recipient is required");
 
-      // Show success message
-      showSnackbar(`Loan named "${title}" added successfully`);
-    } catch (error) {
-      console.log(error);
-
-      // Show error message
-      showAlert(`Error adding loan named "${title}"`, "error");
+      return false;
     }
 
-    // Close form
-    setShowLoanForm(false);
+    return true;
+  };
+
+  const validateTitle = () => {
+    if (!title) {
+      setTitleError("Title is required");
+
+      return false;
+    }
+
+    return true;
+  };
+
+  const validateDescription = () => {
+    if (!description) {
+      setDescriptionError("Description is required");
+
+      return false;
+    }
+
+    return true;
+  };
+
+  const validatePlanAmount = () => {
+    if (parseFloat(plan_amount) <= 0) {
+      setAmountError("Amount needs to be more than $0.00");
+
+      return false;
+    }
+
+    return true;
+  };
+
+  const validateAmount = () => {
+    if (parseFloat(amount) <= 0) {
+      setAmountError("Amount needs to be more than $0.00");
+
+      return false;
+    }
+
+    return true;
+  };
+
+  const handleSubmit = async () => {
+    const isRecipientValid = validateRecipient();
+    const isTitleValid = validateTitle();
+    const isDescriptionValid = validateDescription();
+    const isPlanAmountValid = validatePlanAmount();
+    const isAmountValid = validateAmount();
+
+    if (
+      isRecipientValid &&
+      isTitleValid &&
+      isDescriptionValid &&
+      isPlanAmountValid &&
+      isAmountValid
+    ) {
+      // Submit data
+      try {
+        await addLoan(data);
+
+        // Show success message
+        showSnackbar(`Loan named "${title}" added successfully`);
+      } catch (error) {
+        console.log(error);
+
+        // Show error message
+        showAlert(`Error adding loan named "${title}"`, "error");
+      }
+
+      // Close form
+      setShowLoanForm(false);
+    } else {
+      // Show error message
+      showAlert(
+        "You need to fill in all the required fields before adding this loan",
+        "error"
+      );
+    }
   };
 
   return (
@@ -136,6 +213,8 @@ function NewLoanForm({
               label="Recipient"
               variant="standard"
               value={recipient}
+              error={!!recipientError}
+              helperText={recipientError}
               onChange={(e) => setRecipient(e.target.value)}
               fullWidth
             />
@@ -145,6 +224,8 @@ function NewLoanForm({
               label="Title"
               variant="standard"
               value={title}
+              error={!!titleError}
+              helperText={titleError}
               onChange={(e) => setTitle(e.target.value)}
               fullWidth
             />
@@ -154,6 +235,8 @@ function NewLoanForm({
               label="Description"
               variant="standard"
               value={description}
+              error={!!descriptionError}
+              helperText={descriptionError}
               onChange={(e) => setDescription(e.target.value)}
               fullWidth
             />
@@ -169,6 +252,8 @@ function NewLoanForm({
               }}
               value={plan_amount ? plan_amount : "0"}
               onChange={(e) => setPlanAmount(e.target.value)}
+              error={!!planAmountError}
+              helperText={planAmountError}
               InputProps={{
                 startAdornment: (
                   <InputAdornment position="start">$</InputAdornment>
@@ -185,6 +270,8 @@ function NewLoanForm({
                 step: 0.01,
               }}
               value={amount ? amount : "0"}
+              error={!!amountError}
+              helperText={amountError}
               onChange={(e) => setAmount(e.target.value)}
               InputProps={{
                 startAdornment: (
