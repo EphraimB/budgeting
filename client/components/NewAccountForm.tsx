@@ -54,6 +54,12 @@ export default function NewAccountForm({
       }
 
       setShowNewAccountForm(false);
+    } else {
+      // Show error message
+      showAlert(
+        "You need to fill in all the required fields before adding this account",
+        "error"
+      );
     }
   };
 

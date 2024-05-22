@@ -58,6 +58,12 @@ export default function AccountEdit({
         ...prevModes,
         [account.account_id]: "view",
       }));
+    } else {
+      // Show error message
+      showAlert(
+        "You need to fill in all the required fields before editing this account",
+        "error"
+      );
     }
   };
 
