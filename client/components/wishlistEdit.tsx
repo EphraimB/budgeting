@@ -55,6 +55,11 @@ function WishlistEdit({
   const [date_available, setDateAvailable] = useState<null | string>(
     wishlist.wishlist_date_available
   );
+
+  const [titleError, setTitleError] = useState("");
+  const [descriptionError, setDescriptionError] = useState("");
+  const [amountError, setAmountError] = useState("");
+
   const [activeStep, setActiveStep] = useState(0);
 
   const { showSnackbar } = useSnackbar();
@@ -81,22 +86,64 @@ function WishlistEdit({
     date_available,
   };
 
-  const handleSubmit = async () => {
-    // Submit data
-    try {
-      await editWishlist(data, wishlist.id);
+  const validateTitle = () => {
+    if (!title) {
+      setTitleError("Title is required");
 
-      // Show success message
-      showSnackbar(`Wishlist "${title}" edited successfully`);
-    } catch (error) {
-      console.log(error);
-
-      // Show error message
-      showAlert(`Error editing wishlist "${title}"`, "error");
+      return false;
     }
 
-    // Close form
-    setWishlistModes({});
+    return true;
+  };
+
+  const validateDescription = () => {
+    if (!description) {
+      setDescriptionError("Description is required");
+
+      return false;
+    }
+
+    return true;
+  };
+
+  const validateAmount = () => {
+    if (parseFloat(amount) <= 0) {
+      setAmountError("Amount is required");
+
+      return false;
+    }
+
+    return true;
+  };
+
+  const handleSubmit = async () => {
+    const isTitleValid = validateTitle();
+    const isDescriptionValid = validateDescription();
+    const isAmountValid = validateAmount();
+
+    if (isTitleValid && isDescriptionValid && isAmountValid) {
+      // Submit data
+      try {
+        await editWishlist(data, wishlist.id);
+
+        // Show success message
+        showSnackbar(`Wishlist "${title}" edited successfully`);
+      } catch (error) {
+        console.log(error);
+
+        // Show error message
+        showAlert(`Error editing wishlist "${title}"`, "error");
+      }
+
+      // Close form
+      setWishlistModes({});
+    } else {
+      // Show error message
+      showAlert(
+        "You need to fill in all the required fields before editing this wishlist",
+        "error"
+      );
+    }
   };
 
   const handlePreorderChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -149,6 +196,8 @@ function WishlistEdit({
                 step: 0.01,
               }}
               value={amount}
+              error={!!amountError}
+              helperText={amountError}
               onChange={(e) => setAmount(e.target.value)}
               InputProps={{
                 startAdornment: (
@@ -163,6 +212,8 @@ function WishlistEdit({
               label="Title"
               variant="standard"
               value={title}
+              error={!!titleError}
+              helperText={titleError}
               onChange={(e) => setTitle(e.target.value)}
               fullWidth
             />
@@ -172,6 +223,8 @@ function WishlistEdit({
               label="Description"
               variant="standard"
               value={description}
+              error={!!descriptionError}
+              helperText={descriptionError}
               onChange={(e) => setDescription(e.target.value)}
               fullWidth
             />
