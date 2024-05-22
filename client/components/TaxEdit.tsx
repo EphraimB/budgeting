@@ -148,6 +148,8 @@ function TaxEdit({
               label="Title"
               variant="standard"
               value={title}
+              error={!!titleError}
+              helperText={titleError}
               onChange={(e) => setTitle(e.target.value)}
               fullWidth
             />
@@ -157,6 +159,8 @@ function TaxEdit({
               label="Description"
               variant="standard"
               value={description}
+              error={!!descriptionError}
+              helperText={descriptionError}
               onChange={(e) => setDescription(e.target.value)}
               fullWidth
             />
@@ -171,6 +175,8 @@ function TaxEdit({
                 step: 0.01,
               }}
               value={rate ? parseFloat(rate) * 100 : "0"}
+              error={!!rateError}
+              helperText={rateError}
               onChange={(e) =>
                 setRate((parseFloat(e.target.value) / 100).toString())
               }
