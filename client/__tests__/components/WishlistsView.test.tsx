@@ -38,6 +38,7 @@ describe("WishlistView", () => {
     ).toBeInTheDocument();
   });
 });
+
 it("Renders a wishlist view with a url link provided", () => {
   const setWishlistModes = jest.fn();
 
