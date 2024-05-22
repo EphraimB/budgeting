@@ -55,14 +55,12 @@ const payrollDatesResponse: PayrollDate[] = [
     {
         id: 1,
         job_id: 1,
-        payroll_start_day: 1,
-        payroll_end_day: 15,
+        payroll_day: 15,
     },
     {
         id: 2,
         job_id: 1,
-        payroll_start_day: 15,
-        payroll_end_day: 31,
+        payroll_day: 31,
     },
 ];
 
