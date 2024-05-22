@@ -63,6 +63,13 @@ function LoanEdit({
     loan.interest_frequency_type.toString()
   );
   const [begin_date, setBeginDate] = useState<string>(loan.begin_date);
+
+  const [recipientError, setRecipientError] = useState("");
+  const [titleError, setTitleError] = useState("");
+  const [descriptionError, setDescriptionError] = useState("");
+  const [planAmountError, setPlanAmountError] = useState("");
+  const [amountError, setAmountError] = useState("");
+
   const [activeStep, setActiveStep] = useState(0);
 
   const { showSnackbar } = useSnackbar();
@@ -99,22 +106,92 @@ function LoanEdit({
     begin_date,
   };
 
-  const handleSubmit = async () => {
-    // Submit data
-    try {
-      await editLoan(data, loan.id);
+  const validateRecipient = () => {
+    if (!title) {
+      setRecipientError("Recipient is required");
 
-      // Show success message
-      showSnackbar(`Loan "${title}" edited successfully`);
-    } catch (error) {
-      console.log(error);
-
-      // Show error message
-      showAlert(`Error editing loan "${title}"`, "error");
+      return false;
     }
 
-    // Close form
-    setLoanModes({});
+    return true;
+  };
+
+  const validateTitle = () => {
+    if (!title) {
+      setTitleError("Title is required");
+
+      return false;
+    }
+
+    return true;
+  };
+
+  const validateDescription = () => {
+    if (!description) {
+      setDescriptionError("Description is required");
+
+      return false;
+    }
+
+    return true;
+  };
+
+  const validatePlanAmount = () => {
+    if (parseFloat(plan_amount) <= 0) {
+      setPlanAmountError("Plan amount needs to be more than $0.00");
+
+      return false;
+    }
+
+    return true;
+  };
+
+  const validateAmount = () => {
+    if (parseFloat(amount) <= 0) {
+      setAmountError("Amount needs to be more than $0.00");
+
+      return false;
+    }
+
+    return true;
+  };
+
+  const handleSubmit = async () => {
+    const isRecipientValid = validateRecipient();
+    const isTitleValid = validateTitle();
+    const isDescriptionValid = validateDescription();
+    const isPlanAmountValid = validatePlanAmount();
+    const isAmountValid = validateAmount();
+
+    if (
+      isRecipientValid &&
+      isTitleValid &&
+      isDescriptionValid &&
+      isPlanAmountValid &&
+      isAmountValid
+    ) {
+      // Submit data
+      try {
+        await editLoan(data, loan.id);
+
+        // Show success message
+        showSnackbar(`Loan "${title}" edited successfully`);
+      } catch (error) {
+        console.log(error);
+
+        // Show error message
+        showAlert(`Error editing loan "${title}"`, "error");
+      }
+
+      // Close form
+      setLoanModes({});
+    } else {
+      // Show error message
+      showAlert(
+        "You need to fill in all the required fields before editing this loan",
+        "error"
+      );
+    }
   };
 
   return (
@@ -150,6 +227,8 @@ function LoanEdit({
               label="Recipient"
               variant="standard"
               value={recipient}
+              error={!!recipientError}
+              helperText={recipientError}
               onChange={(e) => setRecipient(e.target.value)}
               fullWidth
             />
@@ -159,6 +238,8 @@ function LoanEdit({
               label="Title"
               variant="standard"
               value={title}
+              error={!!titleError}
+              helperText={titleError}
               onChange={(e) => setTitle(e.target.value)}
               fullWidth
             />
@@ -168,6 +249,8 @@ function LoanEdit({
               label="Description"
               variant="standard"
               value={description}
+              error={!!descriptionError}
+              helperText={descriptionError}
               onChange={(e) => setDescription(e.target.value)}
               fullWidth
             />
@@ -183,6 +266,8 @@ function LoanEdit({
               }}
               value={plan_amount ? plan_amount : "0"}
               onChange={(e) => setPlanAmount(e.target.value)}
+              error={!!planAmountError}
+              helperText={planAmountError}
               InputProps={{
                 startAdornment: (
                   <InputAdornment position="start">$</InputAdornment>
@@ -199,6 +284,8 @@ function LoanEdit({
                 step: 0.01,
               }}
               value={amount ? amount : "0"}
+              error={!!amountError}
+              helperText={amountError}
               onChange={(e) => setAmount(e.target.value)}
               InputProps={{
                 startAdornment: (

@@ -25,6 +25,11 @@ function NewTaxForm({
   const [description, setDescription] = useState("");
   const [rate, setRate] = useState("0");
   const [type, setType] = useState("0");
+
+  const [titleError, setTitleError] = useState("");
+  const [descriptionError, setDescriptionError] = useState("");
+  const [rateError, setRateError] = useState("");
+
   const [activeStep, setActiveStep] = useState(0);
 
   const { showSnackbar } = useSnackbar();
@@ -47,22 +52,64 @@ function NewTaxForm({
     type: parseInt(type),
   };
 
-  const handleSubmit = async () => {
-    // Submit data
-    try {
-      await addTax(data);
+  const validateTitle = () => {
+    if (!title) {
+      setTitleError("Title is required");
 
-      // Show success message
-      showSnackbar(`Tax "${title}" added successfully`);
-    } catch (error) {
-      console.log(error);
-
-      // Show error message
-      showAlert(`Error adding tax "${title}"`, "error");
+      return false;
     }
 
-    // Close form
-    setShowTaxForm(false);
+    return true;
+  };
+
+  const validateDescription = () => {
+    if (!description) {
+      setDescriptionError("Description is required");
+
+      return false;
+    }
+
+    return true;
+  };
+
+  const validateRate = () => {
+    if (parseFloat(rate) <= 0) {
+      setRateError("Rate is required");
+
+      return false;
+    }
+
+    return true;
+  };
+
+  const handleSubmit = async () => {
+    const isTitleValid = validateTitle();
+    const isDescriptionValid = validateDescription();
+    const isRateValid = validateRate();
+
+    if (isTitleValid && isDescriptionValid && isRateValid) {
+      // Submit data
+      try {
+        await addTax(data);
+
+        // Show success message
+        showSnackbar(`Tax "${title}" added successfully`);
+      } catch (error) {
+        console.log(error);
+
+        // Show error message
+        showAlert(`Error adding tax "${title}"`, "error");
+      }
+
+      // Close form
+      setShowTaxForm(false);
+    } else {
+      // Show error message
+      showAlert(
+        "You need to fill in all the required fields before adding this tax",
+        "error"
+      );
+    }
   };
 
   return (
@@ -98,6 +145,8 @@ function NewTaxForm({
               label="Title"
               variant="standard"
               value={title}
+              error={!!titleError}
+              helperText={titleError}
               onChange={(e) => setTitle(e.target.value)}
               fullWidth
             />
@@ -107,6 +156,8 @@ function NewTaxForm({
               label="Description"
               variant="standard"
               value={description}
+              error={!!descriptionError}
+              helperText={descriptionError}
               onChange={(e) => setDescription(e.target.value)}
               fullWidth
             />
@@ -117,6 +168,8 @@ function NewTaxForm({
               label="Rate"
               variant="standard"
               type="number"
+              error={!!rateError}
+              helperText={rateError}
               inputProps={{
                 step: 0.01,
               }}

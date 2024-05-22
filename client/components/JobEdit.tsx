@@ -30,7 +30,14 @@ function JobEdit({
   const [hourly_rate, setHourlyRate] = useState(job.hourly_rate);
   const [vacation_days, setVacationDays] = useState(job.vacation_days);
   const [sick_days, setSickDays] = useState(job.sick_days);
+
+  const [nameError, setNameError] = useState("");
+  const [hourlyRateError, setHourlyRateError] = useState("");
+
   const [activeStep, setActiveStep] = useState(0);
+
+  const { showSnackbar } = useSnackbar();
+  const { showAlert } = useAlert();
 
   const theme = useTheme();
 
@@ -51,25 +58,53 @@ function JobEdit({
     job_schedule: job.job_schedule,
   };
 
-  const { showSnackbar } = useSnackbar();
-  const { showAlert } = useAlert();
+  const validateName = () => {
+    if (!name) {
+      setNameError("Name is required");
 
-  const handleSubmit = async () => {
-    // Submit data
-    try {
-      await editJob(data, job.id);
-
-      // Show success message
-      showSnackbar(`Job "${name}" edited successfully`);
-    } catch (error) {
-      console.log(error);
-
-      // Show error message
-      showAlert(`Error editing job "${name}"`, "error");
+      return false;
     }
 
-    // Close form
-    setJobModes({});
+    return true;
+  };
+
+  const validateHourlyRate = () => {
+    if (!hourly_rate) {
+      setHourlyRateError("Hourly rate is required");
+
+      return false;
+    }
+
+    return true;
+  };
+
+  const handleSubmit = async () => {
+    const isNameValid = validateName();
+    const isHourlyRateValid = validateHourlyRate();
+
+    if (isNameValid && isHourlyRateValid) {
+      // Submit data
+      try {
+        await editJob(data, job.id);
+
+        // Show success message
+        showSnackbar(`Job "${name}" edited successfully`);
+      } catch (error) {
+        console.log(error);
+
+        // Show error message
+        showAlert(`Error editing job "${name}"`, "error");
+      }
+
+      // Close form
+      setJobModes({});
+    } else {
+      // Show error message
+      showAlert(
+        "You need to fill in all the required fields before editing this job",
+        "error"
+      );
+    }
   };
 
   return (
@@ -105,6 +140,8 @@ function JobEdit({
               label="Name"
               variant="standard"
               value={name}
+              error={!!nameError}
+              helperText={nameError}
               onChange={(e) => setName(e.target.value)}
               fullWidth
             />
@@ -114,6 +151,8 @@ function JobEdit({
               label="Hourly Rate"
               variant="standard"
               value={hourly_rate}
+              error={!!hourlyRateError}
+              helperText={hourlyRateError}
               onChange={(e) => setHourlyRate(parseInt(e.target.value))}
               InputProps={{
                 startAdornment: (

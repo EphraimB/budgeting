@@ -51,6 +51,11 @@ function NewWishlistForm({
   const [url_link, setUrlLink] = useState("");
   const [preorder, setPreorder] = useState(false);
   const [date_available, setDateAvailable] = useState<null | string>(null);
+
+  const [titleError, setTitleError] = useState("");
+  const [descriptionError, setDescriptionError] = useState("");
+  const [amountError, setAmountError] = useState("");
+
   const [activeStep, setActiveStep] = useState(0);
 
   const { showSnackbar } = useSnackbar();
@@ -77,22 +82,64 @@ function NewWishlistForm({
     date_available,
   };
 
-  const handleSubmit = async () => {
-    // Submit data
-    try {
-      await addWishlist(data);
+  const validateTitle = () => {
+    if (!title) {
+      setTitleError("Title is required");
 
-      // Show success message
-      showSnackbar(`Wishlist named "${title}" added successfully`);
-    } catch (error) {
-      console.log(error);
-
-      // Show error message
-      showAlert(`Error adding wishlist named "${title}"`, "error");
+      return false;
     }
 
-    // Close form
-    setShowWishlistForm(false);
+    return true;
+  };
+
+  const validateDescription = () => {
+    if (!description) {
+      setDescriptionError("Description is required");
+
+      return false;
+    }
+
+    return true;
+  };
+
+  const validateAmount = () => {
+    if (parseFloat(amount) <= 0) {
+      setAmountError("Amount is required");
+
+      return false;
+    }
+
+    return true;
+  };
+
+  const handleSubmit = async () => {
+    const isTitleValid = validateTitle();
+    const isDescriptionValid = validateDescription();
+    const isAmountValid = validateAmount();
+
+    if (isTitleValid && isDescriptionValid && isAmountValid) {
+      // Submit data
+      try {
+        await addWishlist(data);
+
+        // Show success message
+        showSnackbar(`Wishlist named "${title}" added successfully`);
+      } catch (error) {
+        console.log(error);
+
+        // Show error message
+        showAlert(`Error adding wishlist named "${title}"`, "error");
+      }
+
+      // Close form
+      setShowWishlistForm(false);
+    } else {
+      // Show error message
+      showAlert(
+        "You need to fill in all the required fields before adding this wishlist",
+        "error"
+      );
+    }
   };
 
   const handlePreorderChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -145,6 +192,8 @@ function NewWishlistForm({
                 step: 0.01,
               }}
               value={amount}
+              error={!!amountError}
+              helperText={amountError}
               onChange={(e) => setAmount(e.target.value)}
               InputProps={{
                 startAdornment: (
@@ -159,6 +208,8 @@ function NewWishlistForm({
               label="Title"
               variant="standard"
               value={title}
+              error={!!titleError}
+              helperText={titleError}
               onChange={(e) => setTitle(e.target.value)}
               fullWidth
             />
@@ -168,6 +219,8 @@ function NewWishlistForm({
               label="Description"
               variant="standard"
               value={description}
+              error={!!descriptionError}
+              helperText={descriptionError}
               onChange={(e) => setDescription(e.target.value)}
               fullWidth
             />
