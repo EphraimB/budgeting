@@ -33,7 +33,7 @@ describe("WishlistView", () => {
     expect(screen.getByText("This is a test wishlist")).toBeInTheDocument();
     expect(
       screen.getByText(
-        "You will be charged $1000 for this item on  next on Thursday Octoober 10, 2024 12:00 AM."
+        "You will be charged $1000 for this item on Thursday October 10, 2024 12:00 AM."
       )
     ).toBeInTheDocument();
   });
