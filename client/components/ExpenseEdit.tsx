@@ -122,7 +122,7 @@ function ExpenseEdit({
   };
 
   const validateAmount = () => {
-    if (parseInt(amount) <= 0) {
+    if (parseFloat(amount) <= 0) {
       setAmountError("Amount needs to be more than $0.00");
 
       return false;

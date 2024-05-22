@@ -73,7 +73,7 @@ function NewTaxForm({
   };
 
   const validateRate = () => {
-    if (!rate) {
+    if (parseFloat(rate) <= 0) {
       setRateError("Rate is required");
 
       return false;
