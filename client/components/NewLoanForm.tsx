@@ -124,7 +124,7 @@ function NewLoanForm({
 
   const validatePlanAmount = () => {
     if (parseFloat(plan_amount) <= 0) {
-      setAmountError("Amount needs to be more than $0.00");
+      setPlanAmountError("Amount needs to be more than $0.00");
 
       return false;
     }
