@@ -28,6 +28,11 @@ function TaxEdit({
   const [description, setDescription] = useState(tax.description);
   const [rate, setRate] = useState(tax.rate.toString());
   const [type, setType] = useState(tax.type);
+
+  const [titleError, setTitleError] = useState("");
+  const [descriptionError, setDescriptionError] = useState("");
+  const [rateError, setRateError] = useState("");
+
   const [activeStep, setActiveStep] = useState(0);
 
   const { showSnackbar } = useSnackbar();
@@ -50,22 +55,64 @@ function TaxEdit({
     type: type,
   };
 
-  const handleSubmit = async () => {
-    // Submit data
-    try {
-      await editTax(data, tax.id);
+  const validateTitle = () => {
+    if (!title) {
+      setTitleError("Title is required");
 
-      // Show success message
-      showSnackbar(`Tax "${title}" edited successfully`);
-    } catch (error) {
-      console.log(error);
-
-      // Show error message
-      showAlert(`Error editing tax "${title}"`, "error");
+      return false;
     }
 
-    // Close form
-    setTaxModes({});
+    return true;
+  };
+
+  const validateDescription = () => {
+    if (!description) {
+      setDescriptionError("Description is required");
+
+      return false;
+    }
+
+    return true;
+  };
+
+  const validateRate = () => {
+    if (!rate) {
+      setRateError("Rate is required");
+
+      return false;
+    }
+
+    return true;
+  };
+
+  const handleSubmit = async () => {
+    const isTitleValid = validateTitle();
+    const isDescriptionValid = validateDescription();
+    const isRateValid = validateRate();
+
+    if (isTitleValid && isDescriptionValid && isRateValid) {
+      // Submit data
+      try {
+        await editTax(data, tax.id);
+
+        // Show success message
+        showSnackbar(`Tax "${title}" edited successfully`);
+      } catch (error) {
+        console.log(error);
+
+        // Show error message
+        showAlert(`Error editing tax "${title}"`, "error");
+      }
+
+      // Close form
+      setTaxModes({});
+    } else {
+      // Show error message
+      showAlert(
+        "You need to fill in all the required fields before editing this tax",
+        "error"
+      );
+    }
   };
 
   return (
