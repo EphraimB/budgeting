@@ -28,7 +28,14 @@ function NewJobForm({
   const [hourly_rate, setHourlyRate] = useState(0);
   const [vacation_days, setVacationDays] = useState(0);
   const [sick_days, setSickDays] = useState(0);
+
+  const [nameError, setNameError] = useState("");
+  const [hourlyRateError, setHourlyRateError] = useState("");
+
   const [activeStep, setActiveStep] = useState(0);
+
+  const { showSnackbar } = useSnackbar();
+  const { showAlert } = useAlert();
 
   const theme = useTheme();
 
@@ -49,24 +56,52 @@ function NewJobForm({
     job_schedule: [],
   };
 
-  const { showSnackbar } = useSnackbar();
-  const { showAlert } = useAlert();
+  const validateName = () => {
+    if (!name) {
+      setNameError("Name is required");
 
-  const handleSubmit = async () => {
-    // Submit data
-    try {
-      await addJob(data);
-
-      // Show success message
-      showSnackbar(`Job "${name}" created successfully`);
-    } catch (error) {
-      console.log(error);
-
-      // Show error message
-      showAlert(`Error creating job "${name}"`, "error");
+      return false;
     }
 
-    setShowJobForm(false);
+    return true;
+  };
+
+  const validateHourlyRate = () => {
+    if (!hourly_rate) {
+      setHourlyRateError("Hourly rate is required");
+
+      return false;
+    }
+
+    return true;
+  };
+
+  const handleSubmit = async () => {
+    const isNameValid = validateName();
+    const isHourlyRateValid = validateHourlyRate();
+
+    if (isNameValid && isHourlyRateValid) {
+      // Submit data
+      try {
+        await addJob(data);
+
+        // Show success message
+        showSnackbar(`Job "${name}" created successfully`);
+      } catch (error) {
+        console.log(error);
+
+        // Show error message
+        showAlert(`Error creating job "${name}"`, "error");
+      }
+
+      setShowJobForm(false);
+    } else {
+      // Show error message
+      showAlert(
+        "You need to fill in all the required fields before adding this job",
+        "error"
+      );
+    }
   };
 
   return (
@@ -102,6 +137,8 @@ function NewJobForm({
               label="Name"
               variant="standard"
               value={name}
+              error={!!nameError}
+              helperText={nameError}
               onChange={(e) => setName(e.target.value)}
               fullWidth
             />
@@ -111,6 +148,8 @@ function NewJobForm({
               label="Hourly Rate"
               variant="standard"
               value={hourly_rate}
+              error={!!hourlyRateError}
+              helperText={hourlyRateError}
               onChange={(e) => setHourlyRate(parseInt(e.target.value))}
               InputProps={{
                 startAdornment: (
