@@ -46,7 +46,7 @@ describe("DataManagementWidgets", () => {
             interest_rate: 0.1,
             begin_date: "2022-01-01",
             frequency_type: 2,
-            frequency_type_variable: null,
+            frequency_type_variable: 1,
             frequency_day_of_month: null,
             frequency_day_of_week: null,
             frequency_week_of_month: null,
@@ -58,6 +58,21 @@ describe("DataManagementWidgets", () => {
             end_date: "2022-01-01",
             date_created: "2022-01-01",
             date_modified: "2022-01-01",
+          },
+        ]}
+        wishlists={[
+          {
+            account_id: 1,
+            id: 1,
+            tax_id: null,
+            tax_rate: 0.08875,
+            wishlist_amount: 1699.0,
+            wishlist_title: "iPhone 16 Pro Max",
+            wishlist_description: "iPhone 16 Pro Max 1TB",
+            wishlist_date_available: "2024-09-22",
+            wishlist_date_can_purchase: "2024-09-22",
+            wishlist_url_link: "https://www.apple.com/iphone",
+            wishlist_priority: 0,
           },
         ]}
         taxes={[

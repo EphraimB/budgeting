@@ -48,6 +48,7 @@ function PayrollDateCard({
 
   return (
     <Paper
+      data-testid="payroll-date-card"
       elevation={3} // Adds some shadow to the Paper component for better visibility
       sx={{
         p: 2, // Add some padding around the content
