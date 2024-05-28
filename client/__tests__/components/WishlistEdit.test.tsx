@@ -1,6 +1,6 @@
 import React from "react";
 import "@testing-library/jest-dom";
-import { render, screen, within } from "@testing-library/react";
+import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import WishlistEdit from "../../components/wishlistEdit";
 import { Tax } from "@/app/types/types";
@@ -96,7 +96,7 @@ describe("WishlistEdit", () => {
     expect(screen.getByLabelText("Preorder?")).toBeChecked();
 
     expect(screen.getByLabelText("Product avalable date")).toHaveValue(
-      dayjs("2025-04-10").format("MM/DD/YYYY hh:mm A")
+      dayjs("2025-04-09T20:00").format("MM/DD/YYYY hh:mm A")
     );
 
     // Uncheck the "Preorder?" checkbox
