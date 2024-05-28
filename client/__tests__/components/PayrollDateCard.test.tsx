@@ -14,7 +14,7 @@ jest.mock("../../context/FeedbackContext", () => ({
   }),
 }));
 
-describe("PayrollDates", () => {
+describe("PayrollDateCard", () => {
   const payroll_date: PayrollDate = {
     id: 1,
     job_id: 1,
