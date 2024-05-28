@@ -8,7 +8,7 @@ import AddIcon from "@mui/icons-material/Add";
 import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
 import WishlistDelete from "./WishlistDelete";
-import WishlistEdit from "./wishlistEdit";
+import WishlistEdit from "./WishlistEdit";
 import NewWishlistForm from "./NewWishlistForm";
 import WishlistsView from "./WishlistsView";
 
