@@ -13,18 +13,18 @@ function AccountActionsMenu({
   open,
   handleClose,
   setAccountModes,
-  accountId,
+  account_id,
 }: {
   anchorEl: any;
   open: any;
   handleClose: any;
   setAccountModes: any;
-  accountId: number;
+  account_id: number;
 }) {
   const handleDelete = () => {
     setAccountModes((prevModes: any) => ({
       ...prevModes,
-      [accountId]: "delete",
+      [account_id]: "delete",
     }));
 
     handleClose();
@@ -33,7 +33,7 @@ function AccountActionsMenu({
   const handleEdit = () => {
     setAccountModes((prevModes: any) => ({
       ...prevModes,
-      [accountId]: "edit",
+      [account_id]: "edit",
     }));
 
     handleClose();
@@ -42,7 +42,7 @@ function AccountActionsMenu({
   const handleDeposit = () => {
     setAccountModes((prevModes: any) => ({
       ...prevModes,
-      [accountId]: "deposit",
+      [account_id]: "deposit",
     }));
 
     handleClose();
@@ -51,7 +51,7 @@ function AccountActionsMenu({
   const handleWithdraw = () => {
     setAccountModes((prevModes: any) => ({
       ...prevModes,
-      [accountId]: "withdraw",
+      [account_id]: "withdraw",
     }));
 
     handleClose();

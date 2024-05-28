@@ -9,7 +9,7 @@ import { Loan } from "@/app/types/types";
 import { getFrequency } from "../utils/helperFunctions";
 import IconButton from "@mui/material/IconButton";
 import MoreVert from "@mui/icons-material/MoreVert";
-import LoanActionsMenu from "./LoanActionMenu";
+import LoanActionsMenu from "./LoanActionsMenu";
 
 function LoansView({
   loan,

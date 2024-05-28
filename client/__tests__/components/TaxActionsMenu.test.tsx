@@ -1,8 +1,8 @@
 import { render, screen } from "@testing-library/react";
 import "@testing-library/jest-dom";
-import AccountActionsMenu from "../../components/AccountActionsMenu";
+import TaxActionsMenu from "../../components/TaxActionsMenu";
 
-const setAccountModes = jest.fn();
+const setTaxModes = jest.fn();
 
 const anchorEl = document.createElement("div");
 
@@ -10,21 +10,19 @@ const open = true;
 
 const handleClose = () => jest.fn();
 
-describe("AccountActionsMenu", () => {
+describe("TaxActionsMenu", () => {
   it("displays the menu when the button is clicked", async () => {
     render(
-      <AccountActionsMenu
+      <TaxActionsMenu
+        tax_id={1}
         anchorEl={anchorEl}
         open={open}
         handleClose={handleClose}
-        setAccountModes={setAccountModes}
-        account_id={1}
+        setTaxModes={setTaxModes}
       />
     );
 
     expect(screen.getByText("Edit")).toBeInTheDocument();
     expect(screen.getByText("Delete")).toBeInTheDocument();
-    expect(screen.getByText("Deposit")).toBeInTheDocument();
-    expect(screen.getByText("Withdraw")).toBeInTheDocument();
   });
 });

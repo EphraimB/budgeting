@@ -3,6 +3,16 @@ import { render, screen } from "@testing-library/react";
 import JobDetailsView from "../../components/JobDetailsView";
 import "@testing-library/jest-dom";
 
+jest.mock("../../context/FeedbackContext", () => ({
+  useAlert: () => ({
+    alert: { open: true, severity: "error", message: "Testing" },
+    closeAlert: () => {},
+  }),
+  useSnackbar: () => ({
+    showSnackbar: () => {},
+  }),
+}));
+
 describe("JobDetailsView", () => {
   const job = {
     id: 1,
@@ -22,8 +32,21 @@ describe("JobDetailsView", () => {
     ],
   };
 
+  const payroll_dates = [
+    {
+      id: 1,
+      job_id: 1,
+      payroll_day: 15,
+    },
+    {
+      id: 2,
+      job_id: 1,
+      payroll_day: 31,
+    },
+  ];
+
   it("renders", () => {
-    render(<JobDetailsView job={job} />);
+    render(<JobDetailsView job={job} payroll_dates={payroll_dates} />);
 
     expect(
       screen.getByText("Job Details for Testing Inc.")
