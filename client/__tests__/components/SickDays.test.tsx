@@ -3,8 +3,8 @@ import { render, screen } from "@testing-library/react";
 import SickDays from "../../components/SickDays";
 import "@testing-library/jest-dom";
 
-describe("VacationDays", () => {
-  it("renders a vacation days box", () => {
+describe("SickDays", () => {
+  it("renders a sick days box", () => {
     render(<SickDays sick_days={15} />);
 
     expect(screen.getByText("Sick days")).toBeInTheDocument();
