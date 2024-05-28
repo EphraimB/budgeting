@@ -20,9 +20,19 @@ describe("PayrollDates", () => {
     job_id: 1,
     payroll_day: 15,
   };
+
   it("renders a box which is not a payroll day", () => {
-    render(<PayrollDateCard job_id={1} payroll_date={payroll_date} date={1} />);
+    render(<PayrollDateCard job_id={1} payroll_date={null} date={1} />);
 
     expect(screen.getByText("1")).toBeInTheDocument();
+  });
+
+  it("renders a box which is a payroll day", () => {
+    render(
+      <PayrollDateCard job_id={1} payroll_date={payroll_date} date={15} />
+    );
+
+    expect(screen.getByText("15")).toBeInTheDocument();
+    expect(screen.getByText("$")).toBeInTheDocument();
   });
 });
