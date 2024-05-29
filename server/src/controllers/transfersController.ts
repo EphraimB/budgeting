@@ -172,7 +172,12 @@ export const createTransfer = async (
         await scheduleQuery(
             unique_id,
             cronDate,
-            `INSERT INTO transaction_history (account_id, transaction_amount, transaction_tax_rate, transaction_title, transaction_description) VALUES (${source_account_id}, ${-amount}, ${taxRate}, '${title}', '${description}')`,
+            `
+                BEGIN;
+                INSERT INTO transaction_history (account_id, transaction_amount, transaction_tax_rate, transaction_title, transaction_description) VALUES (${source_account_id}, ${-amount}, ${taxRate}, '${title}', '${description}');
+                INSERT INTO transaction_history (account_id, transaction_amount, transaction_tax_rate, transaction_title, transaction_description) VALUES (${destination_account_id}, ${amount}, ${taxRate}, '${title}', '${description}');
+                COMMIT;
+            `,
         );
 
         const cronId: number = (
@@ -287,7 +292,12 @@ export const updateTransfer = async (
         await scheduleQuery(
             unique_id,
             cronDate,
-            `INSERT INTO transaction_history (account_id, transaction_amount, transaction_tax_rate, transaction_title, transaction_description) VALUES (${source_account_id}, ${-amount}, ${taxRate}, '${title}', '${description}')`,
+            `
+                BEGIN;
+                INSERT INTO transaction_history (account_id, transaction_amount, transaction_tax_rate, transaction_title, transaction_description) VALUES (${source_account_id}, ${-amount}, ${taxRate}, '${title}', '${description}');
+                INSERT INTO transaction_history (account_id, transaction_amount, transaction_tax_rate, transaction_title, transaction_description) VALUES (${destination_account_id}, ${amount}, ${taxRate}, '${title}', '${description}');
+                COMMIT;
+            `,
         );
 
         await executeQuery(cronJobQueries.updateCronJob, [
