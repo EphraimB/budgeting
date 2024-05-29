@@ -60,6 +60,18 @@ async function getWishlists(account_id: number) {
   return res.json();
 }
 
+async function getTransfers(account_id: number) {
+  const res = await fetch(
+    `http://server:5001/api/transfers?account_id=${account_id}`
+  );
+
+  if (!res.ok) {
+    throw new Error("Failed to fetch transfers");
+  }
+
+  return res.json();
+}
+
 export default async function Layout({
   children,
   params,
@@ -75,6 +87,7 @@ export default async function Layout({
   const taxes = await getTaxes(account_id);
   const loans = await getLoans(account_id);
   const wishlists = await getWishlists(account_id);
+  const transfers = await getTransfers(account_id);
 
   return (
     <>
@@ -84,6 +97,7 @@ export default async function Layout({
         taxes={taxes}
         loans={loans}
         wishlists={wishlists}
+        transfers={transfers}
       />
       <br />
       {children}

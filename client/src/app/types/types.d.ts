@@ -131,6 +131,26 @@ export interface PayrollDate {
   payroll_day: number;
 }
 
+export interface Transfer {
+  account_id: number;
+  id: number;
+  source_account_id: number;
+  destination_account_id: number;
+  transfer_amount: number;
+  transfer_title: string;
+  transfer_description: string;
+  transfer_begin_date: string;
+  transfer_end_date: string | null;
+  frequency_type: number;
+  frequency_type_variable: number;
+  frequency_day_of_month: number | null;
+  frequency_day_of_week: number | null;
+  frequency_week_of_month: number | null;
+  frequency_month_of_year: number | null;
+  date_created: string;
+  date_modified: string;
+}
+
 export interface GeneratedTransaction {
   account_id: number;
   current_balance: number;
