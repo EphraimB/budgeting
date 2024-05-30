@@ -217,7 +217,7 @@ function TransferEdit({
       </IconButton>
       <br />
       <CardHeader
-        title={`Edit transfer - Step ${activeStep + 1} of 4`}
+        title={`Edit Transfer - Step ${activeStep + 1} of 4`}
         sx={{
           textAlign: "center",
         }}
