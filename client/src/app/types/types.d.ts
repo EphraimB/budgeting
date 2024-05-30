@@ -147,6 +147,7 @@ export interface Transfer {
   frequency_day_of_week: number | null;
   frequency_week_of_month: number | null;
   frequency_month_of_year: number | null;
+  next_date: string;
   date_created: string;
   date_modified: string;
 }

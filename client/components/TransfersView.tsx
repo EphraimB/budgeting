@@ -8,6 +8,7 @@ import { Transfer } from "@/app/types/types";
 import IconButton from "@mui/material/IconButton";
 import MoreVert from "@mui/icons-material/MoreVert";
 import TransfersActionsMenu from "./TransfersActionsMenu";
+import dayjs from "dayjs";
 
 function TransfersView({
   account_id,
@@ -67,7 +68,8 @@ function TransfersView({
             : transfer.destination_account_id === account_id
             ? "to"
             : "n/a"}{" "}
-          your account.
+          your account on{" "}
+          {dayjs(transfer.next_date).format("dddd MMMM D, YYYY h:mm A")}.
         </Typography>
       </CardContent>
     </>
