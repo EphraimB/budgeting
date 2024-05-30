@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, useRef } from "react";
-import { Expense, Loan, Tax, Wishlist } from "@/app/types/types";
+import { Expense, Loan, Tax, Transfer, Wishlist } from "@/app/types/types";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
 import Typography from "@mui/material/Typography";
@@ -21,12 +21,14 @@ function DataManagementWidgets({
   expenses,
   loans,
   wishlists,
+  transfers,
   taxes,
 }: {
   account_id: number;
   expenses: Expense[];
   loans: Loan[];
   wishlists: Wishlist[];
+  transfers: Transfer[];
   taxes: Tax[];
 }) {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -101,6 +103,17 @@ function DataManagementWidgets({
           : `You have ${wishlists.length} items on your wishlist.`
       }`,
       selected: isSelected("wishlists"),
+    },
+    {
+      id: "transfers",
+      title: "Transfers",
+      link: `/${account_id}/transfers`,
+      content: `${
+        transfers.length === 0
+          ? "You have no transfers"
+          : `You have ${transfers.length} transfers.`
+      }`,
+      selected: isSelected("transfers"),
     },
   ];
 
