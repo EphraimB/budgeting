@@ -4,7 +4,7 @@ import { useState } from "react";
 import Card from "@mui/material/Card";
 import IconButton from "@mui/material/IconButton";
 import Close from "@mui/icons-material/Close";
-import { Account, Tax } from "@/app/types/types";
+import { Account, Tax, Transfer } from "@/app/types/types";
 import CardContent from "@mui/material/CardContent";
 import CardHeader from "@mui/material/CardHeader";
 import TextField from "@mui/material/TextField";
@@ -24,35 +24,51 @@ import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import utc from "dayjs/plugin/utc";
 import Checkbox from "@mui/material/Checkbox";
 import FormControlLabel from "@mui/material/FormControlLabel";
-import { addExpense } from "../services/actions/expense";
 import InputAdornment from "@mui/material/InputAdornment";
 import { useAlert, useSnackbar } from "../context/FeedbackContext";
 import { addTransfer } from "../services/actions/transfer";
 
 dayjs.extend(utc);
 
-function NewTransferForm({
+function TransferEdit({
   account_id,
-  setShowTransferForm,
+  transfers,
+  setTransferModes,
   accounts,
 }: {
   account_id: number;
-  setShowTransferForm: (show: boolean) => void;
+  transfers: Transfer;
+  setTransferModes: (transferModes: Record<number, string>) => void;
   accounts: Account[];
 }) {
-  const [destination_account_id, setDestinationAccountId] = useState(0);
-  const [title, setTitle] = useState("");
-  const [description, setDescription] = useState("");
-  const [amount, setAmount] = useState("0");
-  const [frequency_type, setFrequencyType] = useState(2);
-  const [frequency_day_of_week, setFrequencyDayOfWeek] = useState(-1);
-  const [frequency_week_of_month, setFrequencyWeekOfMonth] = useState(-1);
-  const [frequency_month_of_year, setFrequencyMonthOfYear] = useState(-1);
-  const [frequency_type_variable, setFrequencyTypeVariable] =
-    useState<number>(1);
-  const [begin_date, setBeginDate] = useState<string>(dayjs().format());
+  const [destination_account_id, setDestinationAccountId] = useState(
+    transfers.destination_account_id
+  );
+  const [title, setTitle] = useState(transfers.transfer_title);
+  const [description, setDescription] = useState(
+    transfers.transfer_description
+  );
+  const [amount, setAmount] = useState(transfers.transfer_amount.toString());
+  const [frequency_type, setFrequencyType] = useState(transfers.frequency_type);
+  const [frequency_day_of_week, setFrequencyDayOfWeek] = useState(
+    transfers.frequency_day_of_week
+  );
+  const [frequency_week_of_month, setFrequencyWeekOfMonth] = useState(
+    transfers.frequency_week_of_month
+  );
+  const [frequency_month_of_year, setFrequencyMonthOfYear] = useState(
+    transfers.frequency_month_of_year
+  );
+  const [frequency_type_variable, setFrequencyTypeVariable] = useState<number>(
+    transfers.frequency_type_variable
+  );
+  const [begin_date, setBeginDate] = useState<string>(
+    transfers.transfer_begin_date
+  );
   const [endDateEnabled, setEndDateEnabled] = useState(false);
-  const [end_date, setEndDate] = useState<null | string>(null);
+  const [end_date, setEndDate] = useState<null | string>(
+    transfers.transfer_end_date
+  );
 
   const [titleError, setTitleError] = useState("");
   const [descriptionError, setDescriptionError] = useState("");
@@ -90,6 +106,18 @@ function NewTransferForm({
     end_date,
   };
 
+  const validateDestinationAccountId = () => {
+    if (destination_account_id === 0 || destination_account_id === account_id) {
+      setTitleError(
+        "Destination account can't be 0 or the same account as the source"
+      );
+
+      return false;
+    }
+
+    return true;
+  };
+
   const validateTitle = () => {
     if (!title) {
       setTitleError("Title is required");
@@ -124,8 +152,14 @@ function NewTransferForm({
     const isTitleValid = validateTitle();
     const isDescriptionValid = validateDescription();
     const isAmountValid = validateAmount();
+    const isDestinationAccountIdValid = validateDestinationAccountId();
 
-    if (isTitleValid && isDescriptionValid && isAmountValid) {
+    if (
+      isTitleValid &&
+      isDescriptionValid &&
+      isAmountValid &&
+      isDestinationAccountIdValid
+    ) {
       // Submit data
       try {
         await addTransfer(data);
@@ -140,11 +174,11 @@ function NewTransferForm({
       }
 
       // Close form
-      setShowTransferForm(false);
+      setTransferModes({});
     } else {
       // Show error message
       showAlert(
-        "You need to fill in all the required fields before adding this transfer",
+        "You need to fill in all the required fields before editing this transfer",
         "error"
       );
     }
@@ -177,13 +211,13 @@ function NewTransferForm({
           right: 0,
         }}
         size="small"
-        onClick={() => setShowTransferForm(false)}
+        onClick={() => setTransferModes({})}
       >
         <Close />
       </IconButton>
       <br />
       <CardHeader
-        title={`New Transfer - Step ${activeStep + 1} of 4`}
+        title={`Edit transfer - Step ${activeStep + 1} of 4`}
         sx={{
           textAlign: "center",
         }}
@@ -461,4 +495,4 @@ function NewTransferForm({
   );
 }
 
-export default NewTransferForm;
+export default TransferEdit;

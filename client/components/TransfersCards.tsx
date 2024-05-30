@@ -10,6 +10,7 @@ import Grid from "@mui/material/Grid";
 import TransferDelete from "./TransferDelete";
 import TransfersView from "./TransfersView";
 import NewTransferForm from "./NewTransferForm";
+import TransferEdit from "./TransferEdit";
 
 function TransferCards({
   account_id,
@@ -47,14 +48,12 @@ function TransferCards({
                   setTransferModes={setTransferModes}
                 />
               ) : transferModes[transfer.id] === "edit" ? (
-                // <WishlistEdit
-                //   account_id={account_id}
-                //   wishlist={wishlist}
-                //   taxes={taxes}
-                //   setWishlistModes={setWishlistModes}
-                //   total_items={wishlists.length}
-                // />
-                <></>
+                <TransferEdit
+                  account_id={account_id}
+                  transfers={transfer}
+                  setTransferModes={setTransferModes}
+                  accounts={accounts}
+                />
               ) : (
                 <TransfersView
                   account_id={account_id}
