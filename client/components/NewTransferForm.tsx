@@ -4,7 +4,7 @@ import { useState } from "react";
 import Card from "@mui/material/Card";
 import IconButton from "@mui/material/IconButton";
 import Close from "@mui/icons-material/Close";
-import { Account, Tax } from "@/app/types/types";
+import { Account } from "@/app/types/types";
 import CardContent from "@mui/material/CardContent";
 import CardHeader from "@mui/material/CardHeader";
 import TextField from "@mui/material/TextField";
@@ -24,7 +24,6 @@ import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import utc from "dayjs/plugin/utc";
 import Checkbox from "@mui/material/Checkbox";
 import FormControlLabel from "@mui/material/FormControlLabel";
-import { addExpense } from "../services/actions/expense";
 import InputAdornment from "@mui/material/InputAdornment";
 import { useAlert, useSnackbar } from "../context/FeedbackContext";
 import { addTransfer } from "../services/actions/transfer";
@@ -40,7 +39,9 @@ function NewTransferForm({
   setShowTransferForm: (show: boolean) => void;
   accounts: Account[];
 }) {
-  const [destination_account_id, setDestinationAccountId] = useState(0);
+  const [destination_account_id, setDestinationAccountId] = useState(
+    accounts[0].account_id
+  );
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [amount, setAmount] = useState("0");

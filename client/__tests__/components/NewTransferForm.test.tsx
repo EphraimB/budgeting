@@ -2,9 +2,9 @@ import React from "react";
 import "@testing-library/jest-dom";
 import { render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import TransferEdit from "../../components/TransferEdit";
+import NewTransferForm from "../../components/NewTransferForm";
 import dayjs from "dayjs";
-import { Account, Transfer } from "@/app/types/types";
+import { Account } from "@/app/types/types";
 
 jest.mock("next/navigation", () => ({
   useRouter: jest.fn(),
@@ -20,28 +20,8 @@ jest.mock("../../context/FeedbackContext", () => ({
   }),
 }));
 
-describe("TransferEdit", () => {
+describe("NewTransferForm", () => {
   it("renders the component", async () => {
-    const transfer: Transfer = {
-      source_account_id: 1,
-      destination_account_id: 2,
-      id: 1,
-      transfer_title: "Test Transfer",
-      transfer_amount: 155.99,
-      transfer_description: "Test Description",
-      frequency_type: 2,
-      frequency_type_variable: 1,
-      frequency_day_of_month: null,
-      frequency_day_of_week: null,
-      frequency_week_of_month: null,
-      frequency_month_of_year: null,
-      transfer_begin_date: "2021-10-01",
-      transfer_end_date: null,
-      next_date: "2021-11-01",
-      date_created: "2021-10-01",
-      date_modified: "2021-10-01",
-    };
-
     const accounts: Account[] = [
       {
         account_id: 2,
@@ -60,31 +40,29 @@ describe("TransferEdit", () => {
     ];
 
     render(
-      <TransferEdit
+      <NewTransferForm
         account_id={1}
-        transfers={transfer}
-        setTransferModes={() => {}}
+        setShowTransferForm={() => true}
         accounts={accounts}
       />
     );
 
     expect(screen.getByLabelText("close")).toBeInTheDocument();
-    expect(screen.getByText("Edit Transfer - Step 1 of 4")).toBeInTheDocument();
+    expect(screen.getByText("New Transfer - Step 1 of 4")).toBeInTheDocument();
     expect(screen.getByText("Next")).toBeInTheDocument();
 
-    expect(screen.getByLabelText("Title")).toHaveValue("Test Transfer");
-    expect(screen.getByLabelText("Description")).toHaveValue(
-      "Test Description"
-    );
+    expect(screen.getByLabelText("Title")).toHaveValue("");
+    expect(screen.getByLabelText("Description")).toHaveValue("");
 
     // Go to the next step by clicking the "Next" button
     await userEvent.click(screen.getByText("Next"));
 
-    expect(screen.getByText("Edit Transfer - Step 2 of 4")).toBeInTheDocument();
-    expect(screen.getByLabelText("Amount")).toHaveValue(155.99);
+    expect(screen.getByText("New Transfer - Step 2 of 4")).toBeInTheDocument();
+    expect(screen.getByLabelText("Amount")).toHaveValue(0);
 
     expect(screen.getByLabelText("Account")).toBeInTheDocument();
-    expect(screen.getByText("Testing 2 - $500"));
+
+    expect(screen.getByText("Testing 2 - $500")).toBeInTheDocument();
 
     await userEvent.click(screen.getByText("Testing 2 - $500"));
     expect(screen.getByText("Testing 3 - $400")).toBeInTheDocument();
@@ -92,7 +70,7 @@ describe("TransferEdit", () => {
     // Go to the next step by clicking the "Next" button
     await userEvent.click(screen.getByText("Next"));
 
-    expect(screen.getByText("Edit Transfer - Step 3 of 4")).toBeInTheDocument();
+    expect(screen.getByText("New Transfer - Step 3 of 4")).toBeInTheDocument();
 
     expect(screen.getByLabelText("Frequency")).toBeInTheDocument();
     expect(screen.getByText("Monthly")).toBeInTheDocument();
@@ -180,10 +158,10 @@ describe("TransferEdit", () => {
     // Go to the next step by clicking the "Next" button
     await userEvent.click(screen.getByText("Next"));
 
-    expect(screen.getByText("Edit Transfer - Step 4 of 4")).toBeInTheDocument();
+    expect(screen.getByText("New Transfer - Step 4 of 4")).toBeInTheDocument();
 
     expect(screen.getByLabelText("Transfer begin date")).toHaveValue(
-      "09/30/2021 08:00 PM"
+      dayjs().format("MM/DD/YYYY hh:mm A")
     );
 
     // Check that the "Transfer end date" input is not checked
