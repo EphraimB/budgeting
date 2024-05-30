@@ -86,6 +86,27 @@ describe("DataManagementWidgets", () => {
             date_modified: "2022-01-01",
           },
         ]}
+        transfers={[
+          {
+            id: 1,
+            source_account_id: 1,
+            destination_account_id: 2,
+            transfer_title: "Test transfer",
+            transfer_description: "Just testing transfers",
+            transfer_amount: 250.0,
+            transfer_begin_date: "2022-01-01",
+            transfer_end_date: null,
+            frequency_type: 2,
+            frequency_type_variable: 1,
+            frequency_day_of_month: null,
+            frequency_day_of_week: null,
+            frequency_week_of_month: null,
+            frequency_month_of_year: null,
+            next_date: "2022-02-01",
+            date_created: "2022-01-01",
+            date_modified: "2022-01-01",
+          },
+        ]}
       />
     );
 
