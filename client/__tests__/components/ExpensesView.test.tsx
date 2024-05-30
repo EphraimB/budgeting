@@ -1,19 +1,18 @@
 import React from "react";
 import { render, screen } from "@testing-library/react";
-import LoansView from "../../components/LoansView";
+import ExpensesView from "../../components/ExpensesView";
 import "@testing-library/jest-dom";
-import { Loan } from "@/app/types/types";
+import { Expense } from "@/app/types/types";
 
-describe("LoansView", () => {
-  const setLoanModes = jest.fn();
+describe("ExpensesView", () => {
+  const setExpenseModes = jest.fn();
 
-  const loan: Loan = {
+  const expense: Expense = {
     id: 1,
+    tax_id: null,
     account_id: 1,
-    recipient: "John Doe",
     title: "Test",
-    description: "This is a test loan",
-    plan_amount: 100,
+    description: "This is a test expense",
     amount: 1000,
     next_date: "2022-01-01T00:00:00.000Z",
     frequency_day_of_month: null,
@@ -23,23 +22,26 @@ describe("LoansView", () => {
     frequency_week_of_month: null,
     frequency_month_of_year: null,
     subsidized: 0,
-    interest_rate: 0,
-    interest_frequency_type: 0,
     begin_date: "2021-01-01T00:00:00.000Z",
     end_date: null,
-    fully_paid_back: null,
     date_created: "2021-10-01T00:00:00.000Z",
     date_modified: "2021-10-01T00:00:00.000Z",
   };
 
   it("renders", () => {
-    render(<LoansView loan={loan} setLoanModes={setLoanModes} />);
+    render(
+      <ExpensesView
+        expense={expense}
+        setExpenseModes={setExpenseModes}
+        taxes={[]}
+      />
+    );
 
     expect(screen.getByTestId("MoreVertIcon")).toBeInTheDocument();
     expect(screen.getByText("Test")).toBeInTheDocument();
     expect(
       screen.getByText(
-        "You will be charged $100.00 next on Friday December 31, 2021 7:00 PM. You get charged monthly on the 31st. This loan won't be paid off in the near future."
+        "You will be charged $1000.00 next on Friday December 31, 2021 7:00 PM. You get charged monthly on the 31st."
       )
     ).toBeInTheDocument();
   });
