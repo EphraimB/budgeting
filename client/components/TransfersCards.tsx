@@ -2,24 +2,23 @@
 
 import { useState } from "react";
 import Card from "@mui/material/Card";
-import { Transfer, Wishlist } from "@/app/types/types";
+import { Account, Transfer } from "@/app/types/types";
 import Fab from "@mui/material/Fab";
 import AddIcon from "@mui/icons-material/Add";
 import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
-import WishlistDelete from "./WishlistDelete";
-import WishlistEdit from "./WishlistEdit";
-import NewWishlistForm from "./NewWishlistForm";
-import WishlistsView from "./WishlistsView";
 import TransferDelete from "./TransferDelete";
 import TransfersView from "./TransfersView";
+import NewTransferForm from "./NewTransferForm";
 
 function TransferCards({
   account_id,
   transfers,
+  accounts,
 }: {
   account_id: number;
   transfers: Transfer[];
+  accounts: Account[];
 }) {
   const [showTransferForm, setShowTransferForm] = useState(false);
   const [transferModes, setTransferModes] = useState<Record<number, string>>(
@@ -31,11 +30,10 @@ function TransferCards({
       <Grid container spacing={2}>
         {showTransferForm && (
           <Grid key="new-transfer" item>
-            <NewWishlistForm
+            <NewTransferForm
               account_id={account_id}
-              taxes={taxes}
-              setShowWishlistForm={setShowWishlistForm}
-              total_items={wishlists.length}
+              setShowTransferForm={setShowTransferForm}
+              accounts={accounts}
             />
           </Grid>
         )}
@@ -49,13 +47,14 @@ function TransferCards({
                   setTransferModes={setTransferModes}
                 />
               ) : transferModes[transfer.id] === "edit" ? (
-                <WishlistEdit
-                  account_id={account_id}
-                  wishlist={wishlist}
-                  taxes={taxes}
-                  setWishlistModes={setWishlistModes}
-                  total_items={wishlists.length}
-                />
+                // <WishlistEdit
+                //   account_id={account_id}
+                //   wishlist={wishlist}
+                //   taxes={taxes}
+                //   setWishlistModes={setWishlistModes}
+                //   total_items={wishlists.length}
+                // />
+                <></>
               ) : (
                 <TransfersView
                   account_id={account_id}

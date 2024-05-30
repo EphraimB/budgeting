@@ -14,7 +14,7 @@ interface TransferRequest {
   frequency_week_of_month: number | null;
   frequency_month_of_year: number | null;
   begin_date: string;
-  end_date: string;
+  end_date: string | null;
 }
 
 export async function addTransfer(transfer: TransferRequest) {
