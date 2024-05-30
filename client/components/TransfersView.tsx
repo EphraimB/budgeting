@@ -34,28 +34,32 @@ function TransfersView({
 
   return (
     <>
-      <IconButton
-        aria-label="more"
-        sx={{
-          position: "absolute",
-          top: 0,
-          right: 0,
-        }}
-        size="small"
-        onClick={handleClick}
-        aria-controls={open ? "transfer-action-menu" : undefined}
-        aria-haspopup="true"
-        aria-expanded={open ? "true" : undefined}
-      >
-        <MoreVert />
-      </IconButton>
-      <TransfersActionsMenu
-        anchorEl={anchorEl}
-        open={open}
-        handleClose={handleClose}
-        setTransferModes={setTransferModes}
-        transfer_id={transfer.id}
-      />
+      {transfer.destination_account_id === account_id && (
+        <>
+          <IconButton
+            aria-label="more"
+            sx={{
+              position: "absolute",
+              top: 0,
+              right: 0,
+            }}
+            size="small"
+            onClick={handleClick}
+            aria-controls={open ? "transfer-action-menu" : undefined}
+            aria-haspopup="true"
+            aria-expanded={open ? "true" : undefined}
+          >
+            <MoreVert />
+          </IconButton>
+          <TransfersActionsMenu
+            anchorEl={anchorEl}
+            open={open}
+            handleClose={handleClose}
+            setTransferModes={setTransferModes}
+            transfer_id={transfer.id}
+          />
+        </>
+      )}
       <CardHeader
         title={transfer.transfer_title}
         subheader={transfer.transfer_description}
