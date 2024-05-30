@@ -34,7 +34,7 @@ function TransfersView({
 
   return (
     <>
-      {transfer.destination_account_id === account_id && (
+      {transfer.source_account_id === account_id && (
         <>
           <IconButton
             aria-label="more"
