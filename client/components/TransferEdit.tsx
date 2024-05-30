@@ -26,7 +26,7 @@ import Checkbox from "@mui/material/Checkbox";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import InputAdornment from "@mui/material/InputAdornment";
 import { useAlert, useSnackbar } from "../context/FeedbackContext";
-import { addTransfer } from "../services/actions/transfer";
+import { addTransfer, editTransfer } from "../services/actions/transfer";
 
 dayjs.extend(utc);
 
@@ -42,7 +42,7 @@ function TransferEdit({
   accounts: Account[];
 }) {
   const [destination_account_id, setDestinationAccountId] = useState(
-    transfers.destination_account_id
+    transfers.destination_account_id || 0
   );
   const [title, setTitle] = useState(transfers.transfer_title);
   const [description, setDescription] = useState(
@@ -51,16 +51,16 @@ function TransferEdit({
   const [amount, setAmount] = useState(transfers.transfer_amount.toString());
   const [frequency_type, setFrequencyType] = useState(transfers.frequency_type);
   const [frequency_day_of_week, setFrequencyDayOfWeek] = useState(
-    transfers.frequency_day_of_week
+    transfers.frequency_day_of_week || -1
   );
   const [frequency_week_of_month, setFrequencyWeekOfMonth] = useState(
-    transfers.frequency_week_of_month
+    transfers.frequency_week_of_month || -1
   );
   const [frequency_month_of_year, setFrequencyMonthOfYear] = useState(
-    transfers.frequency_month_of_year
+    transfers.frequency_month_of_year || -1
   );
   const [frequency_type_variable, setFrequencyTypeVariable] = useState<number>(
-    transfers.frequency_type_variable
+    transfers.frequency_type_variable || 1
   );
   const [begin_date, setBeginDate] = useState<string>(
     transfers.transfer_begin_date
@@ -162,7 +162,7 @@ function TransferEdit({
     ) {
       // Submit data
       try {
-        await addTransfer(data);
+        await editTransfer(data, account_id);
 
         // Show success message
         showSnackbar(`Transfer named "${title}" added successfully`);
