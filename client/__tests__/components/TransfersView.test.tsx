@@ -27,7 +27,7 @@ describe("TransfersView", () => {
     date_modified: "2021-10-01T00:00:00.000Z",
   };
 
-  it("renders", () => {
+  it("renders as source account", () => {
     render(
       <TransfersView
         account_id={1}
@@ -41,6 +41,23 @@ describe("TransfersView", () => {
     expect(
       screen.getByText(
         "$1000 will be transfered from your account on Friday December 31, 2021 7:00 PM."
+      )
+    ).toBeInTheDocument();
+  });
+
+  it("renders as destination account", () => {
+    render(
+      <TransfersView
+        account_id={2}
+        transfer={transfer}
+        setTransferModes={setTransferModes}
+      />
+    );
+
+    expect(screen.getByText("Test")).toBeInTheDocument();
+    expect(
+      screen.getByText(
+        "$1000 will be transfered to your account on Friday December 31, 2021 7:00 PM."
       )
     ).toBeInTheDocument();
   });
