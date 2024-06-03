@@ -11,13 +11,14 @@ import CloseIcon from "@mui/icons-material/Close";
 import { Typography } from "@mui/material";
 import { addTransactionHistory } from "../services/actions/transactionHistory";
 import InputAdornment from "@mui/material/InputAdornment";
+import { Account } from "@/app/types/types";
 
 function AccountDepositForm({
   account,
   setAccountModes,
 }: {
-  account: any;
-  setAccountModes: any;
+  account: Account;
+  setAccountModes: React.Dispatch<React.SetStateAction<Record<number, string>>>;
 }) {
   const [amount, setAmount] = useState("0");
   const [title, setTitle] = useState("");
