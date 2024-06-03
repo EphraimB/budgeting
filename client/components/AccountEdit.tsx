@@ -8,13 +8,14 @@ import IconButton from "@mui/material/IconButton";
 import CloseIcon from "@mui/icons-material/Close";
 import { editAccount } from "../services/actions/account";
 import { useAlert, useSnackbar } from "../context/FeedbackContext";
+import { Account } from "@/app/types/types";
 
 export default function AccountEdit({
   account,
   setAccountModes,
 }: {
-  account: any;
-  setAccountModes: any;
+  account: Account;
+  setAccountModes: React.Dispatch<React.SetStateAction<Record<number, string>>>;
 }) {
   const [accountName, setAccountName] = useState(account.account_name);
 
