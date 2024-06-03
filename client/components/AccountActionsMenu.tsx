@@ -15,10 +15,10 @@ function AccountActionsMenu({
   setAccountModes,
   account_id,
 }: {
-  anchorEl: any;
-  open: any;
-  handleClose: any;
-  setAccountModes: any;
+  anchorEl: HTMLElement | null;
+  open: boolean;
+  handleClose: () => void;
+  setAccountModes: React.Dispatch<React.SetStateAction<Record<number, string>>>;
   account_id: number;
 }) {
   const handleDelete = () => {
