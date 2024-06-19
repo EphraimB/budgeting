@@ -268,7 +268,7 @@ export const jobQueries: JobQueries = {
             ) FILTER (WHERE js.job_id IS NOT NULL), '[]') AS job_schedule
         FROM
             jobs j
-        JOIN
+        LEFT JOIN
             job_schedule js ON j.job_id = js.job_id
         WHERE
             j.job_id = $1
@@ -294,7 +294,7 @@ export const jobQueries: JobQueries = {
             ) FILTER (WHERE js.job_id IS NOT NULL), '[]') AS job_schedule
         FROM
             jobs j
-        JOIN
+        LEFT JOIN
             job_schedule js ON j.job_id = js.job_id
         WHERE
             j.job_id = $1
