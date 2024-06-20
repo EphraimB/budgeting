@@ -345,6 +345,7 @@ export const payrollQueries: PayrollQueries = {
             SELECT payroll_day,
             ROW_NUMBER() OVER (ORDER BY payroll_day) AS row_num
             FROM payroll_dates
+            WHERE job_id = $1
         )
         SELECT 
             CASE
@@ -435,6 +436,7 @@ export const payrollQueries: PayrollQueries = {
                 SELECT payroll_day,
                 ROW_NUMBER() OVER (ORDER BY payroll_day) AS row_num
                 FROM payroll_dates
+                WHERE job_id = $1
             )
                 SELECT
                     CASE
@@ -511,6 +513,7 @@ export const payrollQueries: PayrollQueries = {
                 SUM(hours_worked_per_day) AS hours_worked
             FROM 
                 work_days_and_hours
+            WHERE end_date <= $2::date
             GROUP BY 
                 start_date, end_date
             ORDER BY 

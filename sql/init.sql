@@ -313,6 +313,7 @@ BEGIN
             SELECT payroll_day,
             ROW_NUMBER() OVER (ORDER BY payroll_day) AS row_num
             FROM payroll_dates
+            WHERE job_id = selected_job_id
     )
     SELECT
         make_date(extract(year from current_date)::integer, extract(month from current_date)::integer, s2.payroll_start_day::integer) AS start_date,
