@@ -3,10 +3,7 @@ import Paper from "@mui/material/Paper";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import { PayrollDate } from "@/app/types/types";
-import {
-  addPayrollDate,
-  deletePayrollDate,
-} from "../services/actions/payrollDate";
+import { togglePayrollDate } from "../services/actions/payrollDate";
 import { useAlert, useSnackbar } from "../context/FeedbackContext";
 
 function PayrollDateCard({
@@ -27,22 +24,12 @@ function PayrollDateCard({
   };
 
   const handleClick = async () => {
-    if (payroll_date) {
-      try {
-        await deletePayrollDate(payroll_date.id);
+    try {
+      await togglePayrollDate(data);
 
-        showSnackbar("Payroll date deleted successfully");
-      } catch (error) {
-        showAlert("Failed to delete payroll date", "error");
-      }
-    } else {
-      try {
-        await addPayrollDate(data);
-
-        showSnackbar("Payroll date added successfully");
-      } catch (error) {
-        showAlert("Failed to add payroll date", "error");
-      }
+      showSnackbar("Payroll date toggled successfully");
+    } catch (error) {
+      showAlert("Failed to toggle payroll date", "error");
     }
   };
 

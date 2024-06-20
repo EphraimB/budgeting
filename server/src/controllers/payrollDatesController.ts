@@ -80,6 +80,68 @@ export const getPayrollDates = async (
  * @param request - Request object
  * @param response - Response object
  * @param next - Next function
+ * Sends a POST request to the database to toggle a payroll date
+ */
+export const togglePayrollDate = async (
+    request: Request,
+    response: Response,
+    next: NextFunction,
+): Promise<void> => {
+    const { job_id, payroll_day } = request.body;
+    try {
+        const results = await executeQuery(
+            payrollQueries.getPayrollDateByJobIdAndPayrollDay,
+            [job_id, payroll_day],
+        );
+
+        const payrollDates: PayrollDate[] = results.map((payrollDate) =>
+            payrollDatesParse(payrollDate),
+        );
+
+        if (results[0].payroll_day) {
+            const results = await executeQuery(
+                payrollQueries.createPayrollDate,
+                [job_id, payroll_day],
+            );
+
+            await executeQuery('SELECT process_payroll_for_job($1)', [job_id]);
+        } else {
+            await executeQuery(payrollQueries.deletePayrollDate, [job_id]);
+        }
+
+        request.payroll_date_id = payrollDates[0].id;
+    } catch (error) {
+        logger.error(error); // Log the error on the server side
+        handleError(
+            response,
+            `Error getting, creating, or updating payroll dates for the day of ${payroll_day} of job id of ${job_id}`,
+        );
+    }
+};
+
+export const togglePayrollDateReturnObject = async (
+    request: Request,
+    response: Response,
+): Promise<void> => {
+    const { payroll_date_id } = request;
+
+    try {
+        response
+            .status(201)
+            .json(
+                `Payroll date for payroll date id of ${payroll_date_id} toggled`,
+            );
+    } catch (error) {
+        logger.error(error); // Log the error on the server side
+        handleError(response, 'Error toggling payroll date');
+    }
+};
+
+/**
+ *
+ * @param request - Request object
+ * @param response - Response object
+ * @param next - Next function
  * Sends a POST request to the database to create a new payroll date
  */
 export const createPayrollDate = async (

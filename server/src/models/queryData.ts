@@ -73,6 +73,7 @@ interface PayrollQueries {
     getAllPayrollDates: string;
     getPayrollDatesById: string;
     getPayrollDatesByJobId: string;
+    getPayrollDateByJobIdAndPayrollDay: string;
     getPayrollDatesByIdAndJobId: string;
     createPayrollDate: string;
     updatePayrollDate: string;
@@ -534,6 +535,8 @@ export const payrollQueries: PayrollQueries = {
     getPayrollDatesById:
         'SELECT * FROM payroll_dates WHERE payroll_date_id = $1',
     getPayrollDatesByJobId: 'SELECT * FROM payroll_dates WHERE job_id = $1',
+    getPayrollDateByJobIdAndPayrollDay:
+        'SELECT payroll_day FROM payroll_dates WHERE job_id = $1 AND payroll_day = $2',
     getPayrollDatesByIdAndJobId:
         'SELECT * FROM payroll_dates WHERE payroll_date_id = $1 AND job_id = $2',
     createPayrollDate:
