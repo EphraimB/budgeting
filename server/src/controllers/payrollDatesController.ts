@@ -95,7 +95,7 @@ export const togglePayrollDate = async (
             [job_id, payroll_day],
         );
 
-        if (results[0].payroll_day) {
+        if (results.length > 0) {
             await executeQuery(payrollQueries.deletePayrollDate, [
                 results[0].payroll_date_id,
             ]);
