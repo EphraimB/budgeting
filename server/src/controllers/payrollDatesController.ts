@@ -108,8 +108,6 @@ export const togglePayrollDate = async (
             await executeQuery('SELECT process_payroll_for_job($1)', [job_id]);
         }
 
-        request.payroll_date_id = results[0].payroll_date_id;
-
         next();
     } catch (error) {
         logger.error(error); // Log the error on the server side
@@ -124,14 +122,8 @@ export const togglePayrollDateReturnObject = async (
     request: Request,
     response: Response,
 ): Promise<void> => {
-    const { payroll_date_id } = request;
-
     try {
-        response
-            .status(201)
-            .json(
-                `Payroll date for payroll date id of ${payroll_date_id} toggled`,
-            );
+        response.status(201).json('Payroll date toggled');
     } catch (error) {
         logger.error(error); // Log the error on the server side
         handleError(response, 'Error toggling payroll date');
