@@ -99,14 +99,14 @@ export const togglePayrollDate = async (
         );
 
         if (results[0].payroll_day) {
-            const results = await executeQuery(
-                payrollQueries.createPayrollDate,
-                [job_id, payroll_day],
-            );
+            await executeQuery(payrollQueries.deletePayrollDate, [job_id]);
+        } else {
+            await executeQuery(payrollQueries.createPayrollDate, [
+                job_id,
+                payroll_day,
+            ]);
 
             await executeQuery('SELECT process_payroll_for_job($1)', [job_id]);
-        } else {
-            await executeQuery(payrollQueries.deletePayrollDate, [job_id]);
         }
 
         request.payroll_date_id = payrollDates[0].id;
