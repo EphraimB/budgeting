@@ -536,7 +536,7 @@ export const payrollQueries: PayrollQueries = {
         'SELECT * FROM payroll_dates WHERE payroll_date_id = $1',
     getPayrollDatesByJobId: 'SELECT * FROM payroll_dates WHERE job_id = $1',
     getPayrollDateByJobIdAndPayrollDay:
-        'SELECT payroll_day FROM payroll_dates WHERE job_id = $1 AND payroll_day = $2',
+        'SELECT * FROM payroll_dates WHERE job_id = $1 AND payroll_day = $2',
     getPayrollDatesByIdAndJobId:
         'SELECT * FROM payroll_dates WHERE payroll_date_id = $1 AND job_id = $2',
     createPayrollDate:

@@ -95,10 +95,6 @@ export const togglePayrollDate = async (
             [job_id, payroll_day],
         );
 
-        const payrollDates: PayrollDate[] = results.map((payrollDate) =>
-            payrollDatesParse(payrollDate),
-        );
-
         if (results[0].payroll_day) {
             await executeQuery(payrollQueries.deletePayrollDate, [
                 results[0].payroll_date_id,
@@ -112,7 +108,7 @@ export const togglePayrollDate = async (
             await executeQuery('SELECT process_payroll_for_job($1)', [job_id]);
         }
 
-        request.payroll_date_id = payrollDates[0].id;
+        request.payroll_date_id = results[0].payroll_date_id;
 
         next();
     } catch (error) {
