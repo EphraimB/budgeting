@@ -4,7 +4,7 @@ import { revalidatePath } from "next/cache";
 
 interface PayrollDateRequest {
   job_id: number;
-  end_day: number;
+  payroll_day: number;
 }
 
 export async function addPayrollDate(payroll_date: PayrollDateRequest) {

@@ -342,7 +342,11 @@ BEGIN
         JOIN job_schedule js ON j.job_id = js.job_id
         CROSS JOIN LATERAL (
             SELECT
-                COALESCE(LAG(payroll_day) OVER (ORDER BY row_num), 0) + 1 AS payroll_start_day,
+                CASE WHEN
+                  (SELECT COUNT(*) FROM payroll_dates) = 1 AND payroll_day < 31 THEN -(payroll_day + 1)
+							 ELSE 
+								COALESCE(LAG(payroll_day) OVER (ORDER BY row_num), 0) + 1
+							 END AS payroll_start_day,
                 CASE 
                     WHEN payroll_day > EXTRACT(DAY FROM DATE_TRUNC('MONTH', current_date) + INTERVAL '1 MONTH - 1 DAY') THEN 
                         EXTRACT(DAY FROM DATE_TRUNC('MONTH', current_date) + INTERVAL '1 MONTH - 1 DAY')

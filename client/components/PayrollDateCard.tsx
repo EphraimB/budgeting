@@ -23,7 +23,7 @@ function PayrollDateCard({
 
   const data = {
     job_id,
-    end_day: date,
+    payroll_day: date,
   };
 
   const handleClick = async () => {

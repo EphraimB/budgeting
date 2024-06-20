@@ -88,14 +88,14 @@ export const createPayrollDate = async (
     next: NextFunction,
 ): Promise<void> => {
     try {
-        const { job_id, end_day } = request.body;
+        const { job_id, payroll_day } = request.body;
 
         const results = await executeQuery(payrollQueries.createPayrollDate, [
             job_id,
-            end_day,
+            payroll_day,
         ]);
 
-        await executeQuery('SELECT process_payroll_for_job($1)', [1]);
+        await executeQuery('SELECT process_payroll_for_job($1)', [job_id]);
 
         // Parse the data to correct format and return an object
         const payrollDates: PayrollDate[] = results.map((payrollDate) =>
@@ -148,10 +148,11 @@ export const updatePayrollDate = async (
 ): Promise<void> => {
     try {
         const { id } = request.params;
-        const { end_day } = request.body;
+        const { job_id, payroll_day } = request.body;
 
         const results = await executeQuery(payrollQueries.updatePayrollDate, [
-            end_day,
+            job_id,
+            payroll_day,
             id,
         ]);
 
@@ -160,7 +161,7 @@ export const updatePayrollDate = async (
             return;
         }
 
-        await executeQuery('SELECT process_payroll_for_job($1)', [1]);
+        await executeQuery('SELECT process_payroll_for_job($1)', [job_id]);
 
         next();
     } catch (error) {
@@ -225,7 +226,7 @@ export const deletePayrollDate = async (
 
         await executeQuery(payrollQueries.deletePayrollDate, [id]);
 
-        await executeQuery('SELECT process_payroll_for_job($1)', [1]);
+        // await executeQuery('SELECT process_payroll_for_job($1)', [1]);
 
         next();
     } catch (error) {
