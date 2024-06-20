@@ -88,6 +88,7 @@ export const togglePayrollDate = async (
     next: NextFunction,
 ): Promise<void> => {
     const { job_id, payroll_day } = request.body;
+
     try {
         const results = await executeQuery(
             payrollQueries.getPayrollDateByJobIdAndPayrollDay,
@@ -99,7 +100,9 @@ export const togglePayrollDate = async (
         );
 
         if (results[0].payroll_day) {
-            await executeQuery(payrollQueries.deletePayrollDate, [job_id]);
+            await executeQuery(payrollQueries.deletePayrollDate, [
+                results[0].payroll_date_id,
+            ]);
         } else {
             await executeQuery(payrollQueries.createPayrollDate, [
                 job_id,
@@ -110,6 +113,8 @@ export const togglePayrollDate = async (
         }
 
         request.payroll_date_id = payrollDates[0].id;
+
+        next();
     } catch (error) {
         logger.error(error); // Log the error on the server side
         handleError(
