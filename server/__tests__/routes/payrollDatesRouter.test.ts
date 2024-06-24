@@ -15,6 +15,10 @@ import {
     it,
     expect,
 } from '@jest/globals';
+import {
+    togglePayrollDate,
+    togglePayrollDateReturnObject,
+} from '../../src/controllers/payrollDatesController';
 
 /**
  *
@@ -34,8 +38,7 @@ const createApp = async (): Promise<Express> => {
 
 const payrollDates = {
     job_id: 1,
-    start_day: 1,
-    end_day: 15,
+    payroll_day: 15,
 };
 
 beforeAll(() => {
@@ -118,6 +121,14 @@ beforeAll(() => {
             (req: Request, res: Response, next: NextFunction) =>
                 res.json({ message: 'success' }),
         ),
+        togglePayrollDate: jest.fn(
+            (req: Request, res: Response, next: NextFunction) =>
+                res.json({ message: 'success' }),
+        ),
+        togglePayrollDateReturnObject: jest.fn(
+            (req: Request, res: Response, next: NextFunction) =>
+                res.json({ message: 'success' }),
+        ),
         updatePayrollDate: jest.fn(
             (req: Request, res: Response, next: NextFunction) => {
                 next();
@@ -178,6 +189,19 @@ describe('POST /', () => {
     it('responds with json', async () => {
         const response: request.Response = await request(app)
             .post('/')
+            .set('Accept', 'application/json')
+            .expect('Content-Type', /json/)
+            .send(payrollDates);
+
+        expect(response.status).toBe(200);
+        expect(response.body).toEqual({ message: 'success' });
+    });
+});
+
+describe('POST /toggle', () => {
+    it('responds with json', async () => {
+        const response: request.Response = await request(app)
+            .post('/toggle')
             .set('Accept', 'application/json')
             .expect('Content-Type', /json/)
             .send(payrollDates);
