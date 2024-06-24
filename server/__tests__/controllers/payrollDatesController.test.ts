@@ -266,6 +266,31 @@ describe('GET /api/payroll/dates', () => {
     });
 });
 
+describe('POST /api/payroll/dates/toggle', () => {
+    it('should pass without any errors', async () => {
+        // Arrange
+        mockModule([
+            payrollDates.filter(
+                (payrollDate) => payrollDate.payroll_date_id === 1,
+            ),
+            [],
+        ]);
+
+        const { togglePayrollDate } = await import(
+            '../../src/controllers/payrollDatesController.js'
+        );
+
+        mockRequest.body = payrollDates.filter(
+            (payrollDate) => payrollDate.payroll_date_id === 1,
+        );
+
+        await togglePayrollDate(mockRequest as Request, mockResponse, mockNext);
+
+        // Assert
+        expect(mockNext).toHaveBeenCalled();
+    });
+});
+
 describe('POST /api/payroll/dates', () => {
     it('should populate request.payroll_date_id', async () => {
         // Arrange
