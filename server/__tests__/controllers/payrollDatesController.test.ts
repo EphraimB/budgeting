@@ -267,7 +267,7 @@ describe('GET /api/payroll/dates', () => {
 });
 
 describe('POST /api/payroll/dates/toggle', () => {
-    it('should pass without any errors', async () => {
+    it('should pass without any errors when there is a row', async () => {
         // Arrange
         mockModule([
             payrollDates.filter(
@@ -288,6 +288,48 @@ describe('POST /api/payroll/dates/toggle', () => {
 
         // Assert
         expect(mockNext).toHaveBeenCalled();
+    });
+
+    it('should pass without any errors when there is no rows', async () => {
+        // Arrange
+        mockModule([[], []]);
+
+        const { togglePayrollDate } = await import(
+            '../../src/controllers/payrollDatesController.js'
+        );
+
+        mockRequest.body = payrollDates.filter(
+            (payrollDate) => payrollDate.payroll_date_id === 1,
+        );
+
+        await togglePayrollDate(mockRequest as Request, mockResponse, mockNext);
+
+        // Assert
+        expect(mockNext).toHaveBeenCalled();
+    });
+
+    it('should respond with an error message', async () => {
+        // Arrange
+        const errorMessage =
+            'Error getting, creating, or updating payroll dates for the day of 15 of job id of 1';
+        mockModule([], [errorMessage]);
+
+        const { togglePayrollDate } = await import(
+            '../../src/controllers/payrollDatesController.js'
+        );
+
+        mockRequest.body = payrollDates.filter(
+            (payrollDate) => payrollDate.payroll_date_id === 1,
+        )[0];
+
+        await togglePayrollDate(mockRequest as Request, mockResponse, mockNext);
+
+        // Assert
+        expect(mockResponse.status).toHaveBeenCalledWith(400);
+        expect(mockResponse.json).toHaveBeenCalledWith({
+            message:
+                'Error getting, creating, or updating payroll dates for the day of 15 of job id of 1',
+        });
     });
 });
 
