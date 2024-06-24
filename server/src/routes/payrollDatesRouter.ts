@@ -8,6 +8,8 @@ import {
     updatePayrollDateReturnObject,
     deletePayrollDate,
     deletePayrollDateReturnObject,
+    togglePayrollDate,
+    togglePayrollDateReturnObject,
 } from '../controllers/payrollDatesController.js';
 import validateRequest from '../utils/validateRequest.js';
 import generateTransactions from '../generation/generateTransactions.js';
@@ -47,9 +49,9 @@ router.post(
     '/',
     [
         body('job_id').isInt({ min: 1 }).withMessage('Job ID must be a number'),
-        body('end_day')
+        body('payroll_day')
             .isInt({ min: 1, max: 31 })
-            .withMessage('End day must be a number between 1 and 31'),
+            .withMessage('Payroll day must be a number between 1 and 31'),
         validateRequest,
     ],
     createPayrollDate,
@@ -68,14 +70,39 @@ router.post(
     createPayrollDateReturnObject,
 );
 
+router.post(
+    '/toggle',
+    [
+        body('job_id').isInt({ min: 1 }).withMessage('Job ID must be a number'),
+        body('payroll_day')
+            .isInt({ min: 1, max: 31 })
+            .withMessage('Payroll day must be a number between 1 and 31'),
+        validateRequest,
+    ],
+    togglePayrollDate,
+    setQueries,
+    getCurrentBalance,
+    getTransactionsByAccount,
+    getIncomeByAccount,
+    getExpensesByAccount,
+    getLoansByAccount,
+    getPayrollsMiddleware,
+    getTransfersByAccount,
+    getCommuteExpensesByAccount,
+    getWishlistsByAccount,
+    generateTransactions,
+    updateWishlistCron,
+    togglePayrollDateReturnObject,
+);
+
 router.put(
     '/:id',
     [
         param('id').isInt({ min: 1 }).withMessage('ID must be a number'),
         body('job_id').isInt({ min: 1 }).withMessage('Job ID must be a number'),
-        body('end_day')
+        body('payroll_day')
             .isInt({ min: 1, max: 31 })
-            .withMessage('End day must be a number between 1 and 31'),
+            .withMessage('Payroll day must be a number between 1 and 31'),
         validateRequest,
     ],
     updatePayrollDate,

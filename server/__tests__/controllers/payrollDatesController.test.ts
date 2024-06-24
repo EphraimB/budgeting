@@ -266,6 +266,110 @@ describe('GET /api/payroll/dates', () => {
     });
 });
 
+describe('POST /api/payroll/dates/toggle', () => {
+    it('should pass without any errors when there is a row', async () => {
+        // Arrange
+        mockModule([
+            payrollDates.filter(
+                (payrollDate) => payrollDate.payroll_date_id === 1,
+            ),
+            [],
+        ]);
+
+        const { togglePayrollDate } = await import(
+            '../../src/controllers/payrollDatesController.js'
+        );
+
+        mockRequest.body = payrollDates.filter(
+            (payrollDate) => payrollDate.payroll_date_id === 1,
+        );
+
+        await togglePayrollDate(mockRequest as Request, mockResponse, mockNext);
+
+        // Assert
+        expect(mockNext).toHaveBeenCalled();
+    });
+
+    it('should pass without any errors when there is no rows', async () => {
+        // Arrange
+        mockModule([[], []]);
+
+        const { togglePayrollDate } = await import(
+            '../../src/controllers/payrollDatesController.js'
+        );
+
+        mockRequest.body = payrollDates.filter(
+            (payrollDate) => payrollDate.payroll_date_id === 1,
+        );
+
+        await togglePayrollDate(mockRequest as Request, mockResponse, mockNext);
+
+        // Assert
+        expect(mockNext).toHaveBeenCalled();
+    });
+
+    it('should respond with an error message', async () => {
+        // Arrange
+        const errorMessage =
+            'Error getting, creating, or updating payroll dates for the day of 15 of job id of 1';
+        mockModule([], [errorMessage]);
+
+        const { togglePayrollDate } = await import(
+            '../../src/controllers/payrollDatesController.js'
+        );
+
+        mockRequest.body = payrollDates.filter(
+            (payrollDate) => payrollDate.payroll_date_id === 1,
+        )[0];
+
+        await togglePayrollDate(mockRequest as Request, mockResponse, mockNext);
+
+        // Assert
+        expect(mockResponse.status).toHaveBeenCalledWith(400);
+        expect(mockResponse.json).toHaveBeenCalledWith({
+            message:
+                'Error getting, creating, or updating payroll dates for the day of 15 of job id of 1',
+        });
+    });
+
+    it('should respond with a message that the payroll date was toggled', async () => {
+        // Arrange
+        const { togglePayrollDateReturnObject } = await import(
+            '../../src/controllers/payrollDatesController.js'
+        );
+
+        await togglePayrollDateReturnObject(
+            mockRequest as Request,
+            mockResponse,
+        );
+
+        // Assert
+        expect(mockResponse.status).toHaveBeenCalledWith(201);
+        expect(mockResponse.json).toHaveBeenCalledWith('Payroll date toggled');
+    });
+
+    // it('should respond with an error message that thre was a problem toggling the payroll date', async () => {
+    //     // Arrange
+    //     const errorMessage = 'Error toggling payroll date';
+    //     mockModule([], [errorMessage]);
+
+    //     const { togglePayrollDateReturnObject } = await import(
+    //         '../../src/controllers/payrollDatesController.js'
+    //     );
+
+    //     await togglePayrollDateReturnObject(
+    //         mockRequest as Request,
+    //         mockResponse,
+    //     );
+
+    //     // Assert
+    //     expect(mockResponse.status).toHaveBeenCalledWith(400);
+    //     expect(mockResponse.json).toHaveBeenCalledWith(
+    //         'Error toggling payroll date',
+    //     );
+    // });
+});
+
 describe('POST /api/payroll/dates', () => {
     it('should populate request.payroll_date_id', async () => {
         // Arrange

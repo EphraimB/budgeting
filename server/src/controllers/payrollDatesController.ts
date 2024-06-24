@@ -80,6 +80,61 @@ export const getPayrollDates = async (
  * @param request - Request object
  * @param response - Response object
  * @param next - Next function
+ * Sends a POST request to the database to toggle a payroll date
+ */
+export const togglePayrollDate = async (
+    request: Request,
+    response: Response,
+    next: NextFunction,
+): Promise<void> => {
+    const { job_id, payroll_day } = request.body;
+
+    try {
+        const results = await executeQuery(
+            payrollQueries.getPayrollDateByJobIdAndPayrollDay,
+            [job_id, payroll_day],
+        );
+
+        if (results.length > 0) {
+            await executeQuery(payrollQueries.deletePayrollDate, [
+                results[0].payroll_date_id,
+            ]);
+        } else {
+            await executeQuery(payrollQueries.createPayrollDate, [
+                job_id,
+                payroll_day,
+            ]);
+
+            await executeQuery('SELECT process_payroll_for_job($1)', [job_id]);
+        }
+
+        next();
+    } catch (error) {
+        logger.error(error); // Log the error on the server side
+        handleError(
+            response,
+            `Error getting, creating, or updating payroll dates for the day of ${payroll_day} of job id of ${job_id}`,
+        );
+    }
+};
+
+export const togglePayrollDateReturnObject = async (
+    request: Request,
+    response: Response,
+): Promise<void> => {
+    try {
+        response.status(201).json('Payroll date toggled');
+    } catch (error) {
+        logger.error(error); // Log the error on the server side
+        handleError(response, 'Error toggling payroll date');
+    }
+};
+
+/**
+ *
+ * @param request - Request object
+ * @param response - Response object
+ * @param next - Next function
  * Sends a POST request to the database to create a new payroll date
  */
 export const createPayrollDate = async (
@@ -88,14 +143,14 @@ export const createPayrollDate = async (
     next: NextFunction,
 ): Promise<void> => {
     try {
-        const { job_id, end_day } = request.body;
+        const { job_id, payroll_day } = request.body;
 
         const results = await executeQuery(payrollQueries.createPayrollDate, [
             job_id,
-            end_day,
+            payroll_day,
         ]);
 
-        await executeQuery('SELECT process_payroll_for_job($1)', [1]);
+        await executeQuery('SELECT process_payroll_for_job($1)', [job_id]);
 
         // Parse the data to correct format and return an object
         const payrollDates: PayrollDate[] = results.map((payrollDate) =>
@@ -148,10 +203,11 @@ export const updatePayrollDate = async (
 ): Promise<void> => {
     try {
         const { id } = request.params;
-        const { end_day } = request.body;
+        const { job_id, payroll_day } = request.body;
 
         const results = await executeQuery(payrollQueries.updatePayrollDate, [
-            end_day,
+            job_id,
+            payroll_day,
             id,
         ]);
 
@@ -160,7 +216,7 @@ export const updatePayrollDate = async (
             return;
         }
 
-        await executeQuery('SELECT process_payroll_for_job($1)', [1]);
+        await executeQuery('SELECT process_payroll_for_job($1)', [job_id]);
 
         next();
     } catch (error) {
@@ -225,7 +281,7 @@ export const deletePayrollDate = async (
 
         await executeQuery(payrollQueries.deletePayrollDate, [id]);
 
-        await executeQuery('SELECT process_payroll_for_job($1)', [1]);
+        // await executeQuery('SELECT process_payroll_for_job($1)', [1]);
 
         next();
     } catch (error) {

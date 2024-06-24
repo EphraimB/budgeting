@@ -313,9 +313,15 @@ BEGIN
             SELECT payroll_day,
             ROW_NUMBER() OVER (ORDER BY payroll_day) AS row_num
             FROM payroll_dates
+            WHERE job_id = selected_job_id
     )
     SELECT
-        make_date(extract(year from current_date)::integer, extract(month from current_date)::integer, s2.payroll_start_day::integer) AS start_date,
+        CASE
+						WHEN s2.payroll_start_day::integer < 0 THEN
+							(make_date(extract(year from current_date)::integer, extract(month from current_date)::integer, ABS(s2.payroll_start_day::integer)) - INTERVAL '1 MONTH')::DATE
+						ELSE 
+							make_date(extract(year from current_date)::integer, extract(month from current_date)::integer, s2.payroll_start_day::integer)
+					END AS start_date,
         make_date(extract(year from current_date)::integer, extract(month from current_date)::integer, s1.adjusted_payroll_end_day) AS payroll_date,
         COUNT(js.day_of_week) AS work_days,
         SUM(
@@ -341,7 +347,11 @@ BEGIN
         JOIN job_schedule js ON j.job_id = js.job_id
         CROSS JOIN LATERAL (
             SELECT
-                COALESCE(LAG(payroll_day) OVER (ORDER BY row_num), 0) + 1 AS payroll_start_day,
+                CASE WHEN
+                  (SELECT COUNT(*) FROM payroll_dates) = 1 AND payroll_day < 31 THEN -(payroll_day + 1)
+							 ELSE 
+								COALESCE(LAG(payroll_day) OVER (ORDER BY row_num), 0) + 1
+							 END AS payroll_start_day,
                 CASE 
                     WHEN payroll_day > EXTRACT(DAY FROM DATE_TRUNC('MONTH', current_date) + INTERVAL '1 MONTH - 1 DAY') THEN 
                         EXTRACT(DAY FROM DATE_TRUNC('MONTH', current_date) + INTERVAL '1 MONTH - 1 DAY')
