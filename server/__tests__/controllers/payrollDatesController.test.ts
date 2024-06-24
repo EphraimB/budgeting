@@ -331,6 +331,43 @@ describe('POST /api/payroll/dates/toggle', () => {
                 'Error getting, creating, or updating payroll dates for the day of 15 of job id of 1',
         });
     });
+
+    it('should respond with a message that the payroll date was toggled', async () => {
+        // Arrange
+        const { togglePayrollDateReturnObject } = await import(
+            '../../src/controllers/payrollDatesController.js'
+        );
+
+        await togglePayrollDateReturnObject(
+            mockRequest as Request,
+            mockResponse,
+        );
+
+        // Assert
+        expect(mockResponse.status).toHaveBeenCalledWith(201);
+        expect(mockResponse.json).toHaveBeenCalledWith('Payroll date toggled');
+    });
+
+    // it('should respond with an error message that thre was a problem toggling the payroll date', async () => {
+    //     // Arrange
+    //     const errorMessage = 'Error toggling payroll date';
+    //     mockModule([], [errorMessage]);
+
+    //     const { togglePayrollDateReturnObject } = await import(
+    //         '../../src/controllers/payrollDatesController.js'
+    //     );
+
+    //     await togglePayrollDateReturnObject(
+    //         mockRequest as Request,
+    //         mockResponse,
+    //     );
+
+    //     // Assert
+    //     expect(mockResponse.status).toHaveBeenCalledWith(400);
+    //     expect(mockResponse.json).toHaveBeenCalledWith(
+    //         'Error toggling payroll date',
+    //     );
+    // });
 });
 
 describe('POST /api/payroll/dates', () => {
