@@ -1,22 +1,20 @@
 "use client";
 
 import React from "react";
-import { Job, PayrollDate } from "@/app/types/types";
+import { Job } from "@/app/types/types";
 import Stack from "@mui/material/Stack";
-import { Typography } from "@mui/material";
+import { Card, CardContent, Paper, Typography } from "@mui/material";
 import HourlyWage from "./HourlyWage";
 import SickDays from "./SickDays";
 import VacationDays from "./VacationDays";
 import JobScheduleDayView from "./JobScheduleDayView";
-import PayrollDates from "./PayrollDates";
+import Link from "next/link";
+import { useParams } from "next/navigation";
 
-function JobDetailsView({
-  job,
-  payroll_dates,
-}: {
-  job: Job;
-  payroll_dates: PayrollDate[];
-}) {
+function JobDetailsView({ job }: { job: Job }) {
+  const account_id = useParams()[0];
+  const job_id = useParams()[1];
+
   return (
     <Stack>
       <Typography variant="h4" component="h2">
@@ -31,10 +29,19 @@ function JobDetailsView({
       <br />
       <JobScheduleDayView job={job} />
       <br />
-      <Typography variant="h5" component="h3">
-        Payroll Dates
-      </Typography>
-      <PayrollDates job_id={job.id} payroll_dates={payroll_dates} />
+      <Link
+        href={`/${account_id}/jobs/${job_id}/dates`}
+        as={`/${account_id}/jobs/${job_id}/dates`}
+        style={{ color: "inherit", textDecoration: "inherit" }}
+      >
+        <Card elevation={1} sx={{ width: 175, overflow: "visible" }}>
+          <CardContent>
+            <Typography gutterBottom variant="h5">
+              Payroll dates
+            </Typography>
+          </CardContent>
+        </Card>
+      </Link>
     </Stack>
   );
 }
