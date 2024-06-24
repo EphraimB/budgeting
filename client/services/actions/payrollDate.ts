@@ -4,7 +4,27 @@ import { revalidatePath } from "next/cache";
 
 interface PayrollDateRequest {
   job_id: number;
-  end_day: number;
+  payroll_day: number;
+}
+
+export async function togglePayrollDate(payroll_date: PayrollDateRequest) {
+  const response = await fetch(
+    "http://server:5001/api/jobs/payroll/dates/toggle",
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(payroll_date),
+    }
+  );
+  const result = await response.json();
+
+  console.log(result);
+
+  revalidatePath("/[account_id]/jobs", "page");
+
+  return result;
 }
 
 export async function addPayrollDate(payroll_date: PayrollDateRequest) {
