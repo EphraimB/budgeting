@@ -71,6 +71,20 @@ function JobDetailsView({
             </CardContent>
           </Card>
         </Link>
+        <Link
+          href={`/${account_id}/jobs/${job.id}/taxes`}
+          as={`/${account_id}/jobs/${job.id}/taxes`}
+          style={{ color: "inherit", textDecoration: "inherit" }}
+        >
+          <Card elevation={1} sx={{ width: 175, overflow: "visible" }}>
+            <CardContent>
+              <Typography gutterBottom variant="h5">
+                Payroll taxes
+              </Typography>
+              <Typography></Typography>
+            </CardContent>
+          </Card>
+        </Link>
       </Stack>
     </Stack>
   );

@@ -151,6 +151,13 @@ export interface Transfer {
   date_modified: string;
 }
 
+export interface PayrollTax {
+  id: number;
+  job_id: number;
+  name: string;
+  rate: number;
+}
+
 export interface GeneratedTransaction {
   account_id: number;
   current_balance: number;
