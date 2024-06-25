@@ -10,6 +10,7 @@ import AddIcon from "@mui/icons-material/Add";
 import Card from "@mui/material/Card";
 import Box from "@mui/material/Box";
 import PayrollTaxesView from "./PayrollTaxesView";
+import PayrollTaxDelete from "./PayrollTaxDelete";
 
 function PayrollTaxesCards({
   job,
@@ -42,7 +43,10 @@ function PayrollTaxesCards({
           <Grid key={payrollTax.id} item>
             <Card sx={{ maxWidth: "18rem", position: "relative" }}>
               {payrollTaxModes[payrollTax.id] === "delete" ? (
-                <JobDelete job={job} setPayrollTaxModes={setPayrollTaxModes} />
+                <PayrollTaxDelete
+                  payrollTax={payrollTax}
+                  setPayrollTaxModes={setPayrollTaxModes}
+                />
               ) : payrollTaxModes[payrollTax.id] === "edit" ? (
                 <JobEdit
                   job={job}
