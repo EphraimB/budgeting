@@ -69,7 +69,7 @@ function JobDetailsView({
                       })
                       .join(", ")
                       .replace(/, ([^,]+)$/, " and $1")}{" "}
-                of the month.
+                of the month
               </Typography>
             </CardContent>
           </Card>
