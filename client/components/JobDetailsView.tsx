@@ -35,6 +35,7 @@ function JobDetailsView({
       <JobScheduleDayView job={job} />
       <br />
       <Stack
+        spacing={2}
         direction="row"
         sx={{
           justifyContent: "center",
