@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { Job, PayrollDate } from "@/app/types/types";
+import { Job, PayrollDate, PayrollTax } from "@/app/types/types";
 import Stack from "@mui/material/Stack";
 import { Card, CardContent, Typography } from "@mui/material";
 import HourlyWage from "./HourlyWage";
@@ -15,10 +15,12 @@ function JobDetailsView({
   account_id,
   job,
   payroll_dates,
+  payroll_taxes,
 }: {
   account_id: number;
   job: Job;
   payroll_dates: PayrollDate[];
+  payroll_taxes: PayrollTax[];
 }) {
   return (
     <Stack>
@@ -82,7 +84,11 @@ function JobDetailsView({
               <Typography gutterBottom variant="h5">
                 Payroll taxes
               </Typography>
-              <Typography></Typography>
+              <Typography>
+                All {payroll_taxes.length} of your payroll taxes take{" "}
+                {payroll_taxes.reduce((acc, current) => acc + current.rate, 0)}%
+                of your payroll
+              </Typography>
             </CardContent>
           </Card>
         </Link>

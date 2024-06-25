@@ -1,4 +1,4 @@
-import { Job, PayrollDate } from "@/app/types/types";
+import { Job, PayrollDate, PayrollTax } from "@/app/types/types";
 import JobDetailsView from "../../../../../components/JobDetailsView";
 
 async function getJob(job_id: number) {
@@ -23,6 +23,18 @@ async function getPayrollDates(job_id: number) {
   return res.json();
 }
 
+async function getPayrollTaxes(job_id: number) {
+  const res = await fetch(
+    `http://server:5001/api/jobs/payroll/taxes?job_id=${job_id}`
+  );
+
+  if (!res.ok) {
+    throw new Error("Failed to fetch payroll taxes");
+  }
+
+  return res.json();
+}
+
 async function JobDetails({
   params,
 }: {
@@ -33,12 +45,14 @@ async function JobDetails({
 
   const job: Job[] = await getJob(job_id);
   const payroll_dates: PayrollDate[] = await getPayrollDates(job_id);
+  const payroll_taxes: PayrollTax[] = await getPayrollTaxes(job_id);
 
   return (
     <JobDetailsView
       account_id={account_id}
       job={job[0]}
       payroll_dates={payroll_dates}
+      payroll_taxes={payroll_taxes}
     />
   );
 }
