@@ -7,7 +7,9 @@ import { Typography } from "@mui/material";
 import NewPayrollTaxForm from "./NewPayrollTaxForm";
 import Fab from "@mui/material/Fab";
 import AddIcon from "@mui/icons-material/Add";
+import Card from "@mui/material/Card";
 import Box from "@mui/material/Box";
+import PayrollTaxesView from "./PayrollTaxesView";
 
 function PayrollTaxesCards({
   job,
@@ -17,6 +19,10 @@ function PayrollTaxesCards({
   payroll_taxes: PayrollTax[];
 }) {
   const [showPayrollTaxesForm, setShowPayrollTaxesForm] = useState(false);
+  const [payrollTaxModes, setPayrollTaxModes] = useState<
+    Record<number, string>
+  >({});
+
   return (
     <>
       <Typography variant="h3" component="h2">
@@ -32,6 +38,27 @@ function PayrollTaxesCards({
             />
           </Grid>
         )}
+        {payroll_taxes.map((payrollTax: PayrollTax) => (
+          <Grid key={payrollTax.id} item>
+            <Card sx={{ maxWidth: "18rem", position: "relative" }}>
+              {payrollTaxModes[payrollTax.id] === "delete" ? (
+                <JobDelete job={job} setPayrollTaxModes={setPayrollTaxModes} />
+              ) : payrollTaxModes[payrollTax.id] === "edit" ? (
+                <JobEdit
+                  job={job}
+                  setShowPayrollTaxesForm={setShowPayrollTaxesForm}
+                  job_id={job.id}
+                />
+              ) : (
+                <PayrollTaxesView
+                  payrollTax={payrollTax}
+                  setPayrollTaxModes={setPayrollTaxModes}
+                  job_id={job.id}
+                />
+              )}
+            </Card>
+          </Grid>
+        ))}
       </Grid>
       <br />
       <Box sx={{ position: "fixed", bottom: 16, right: 16 }}>
