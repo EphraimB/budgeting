@@ -57,7 +57,9 @@ function JobDetailsView({
                       payroll_dates[0].payroll_day
                     )}`
                   : payroll_dates
-                      .map((payrollDate, index) => {
+                      .slice() // Create a copy of the array
+                      .sort((a, b) => a.payroll_day - b.payroll_day) // Sort the array
+                      .map((payrollDate) => {
                         return `${payrollDate.payroll_day}${getOrdinalSuffix(
                           payrollDate.payroll_day
                         )}`;
