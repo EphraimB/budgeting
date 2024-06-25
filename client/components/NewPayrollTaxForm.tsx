@@ -103,7 +103,7 @@ function NewPayrollTaxForm({
       </IconButton>
       <br />
       <CardHeader
-        title={"Add Payroll tax"}
+        title={"Add payroll tax"}
         sx={{
           textAlign: "center",
         }}
@@ -122,12 +122,18 @@ function NewPayrollTaxForm({
           <br />
           <br />
           <TextField
-            label="Payroll tax Rate"
+            label="Payroll tax rate"
             variant="standard"
-            value={rate}
+            type="number"
+            inputProps={{
+              step: 0.01,
+            }}
+            value={rate ? parseFloat(rate) * 100 : "0"}
+            onChange={(e) =>
+              setRate((parseFloat(e.target.value) / 100).toString())
+            }
             error={!!rateError}
             helperText={rateError}
-            onChange={(e) => setRate(e.target.value)}
             InputProps={{
               endAdornment: <InputAdornment position="end">%</InputAdornment>,
             }}
