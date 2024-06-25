@@ -11,6 +11,7 @@ import Card from "@mui/material/Card";
 import Box from "@mui/material/Box";
 import PayrollTaxesView from "./PayrollTaxesView";
 import PayrollTaxDelete from "./PayrollTaxDelete";
+import PayrollTaxEdit from "./PayrollTaxEdit";
 
 function PayrollTaxesCards({
   job,
@@ -48,10 +49,10 @@ function PayrollTaxesCards({
                   setPayrollTaxModes={setPayrollTaxModes}
                 />
               ) : payrollTaxModes[payrollTax.id] === "edit" ? (
-                <JobEdit
-                  job={job}
-                  setShowPayrollTaxesForm={setShowPayrollTaxesForm}
+                <PayrollTaxEdit
                   job_id={job.id}
+                  setShowPayrollTaxesForm={setShowPayrollTaxesForm}
+                  payrollTax={payrollTax}
                 />
               ) : (
                 <PayrollTaxesView

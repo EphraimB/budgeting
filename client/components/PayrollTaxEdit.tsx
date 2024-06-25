@@ -11,16 +11,19 @@ import TextField from "@mui/material/TextField";
 import InputAdornment from "@mui/material/InputAdornment";
 import Button from "@mui/material/Button";
 import { addPayrollTax } from "../services/actions/payrollTax";
+import { PayrollTax } from "@/app/types/types";
 
-function NewPayrollTaxForm({
+function PayrollTaxEdit({
   job_id,
+  payrollTax,
   setShowPayrollTaxesForm,
 }: {
   job_id: number;
+  payrollTax: PayrollTax;
   setShowPayrollTaxesForm: (show: boolean) => void;
 }) {
-  const [name, setName] = useState("");
-  const [rate, setRate] = useState("");
+  const [name, setName] = useState(payrollTax.name);
+  const [rate, setRate] = useState(payrollTax.rate.toString());
 
   const [nameError, setNameError] = useState("");
   const [rateError, setRateError] = useState("");
@@ -144,4 +147,4 @@ function NewPayrollTaxForm({
   );
 }
 
-export default NewPayrollTaxForm;
+export default PayrollTaxEdit;
