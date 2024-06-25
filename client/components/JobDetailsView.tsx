@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { Job } from "@/app/types/types";
+import { Job, PayrollDate } from "@/app/types/types";
 import Stack from "@mui/material/Stack";
 import { Card, CardContent, Typography } from "@mui/material";
 import HourlyWage from "./HourlyWage";
@@ -10,7 +10,15 @@ import VacationDays from "./VacationDays";
 import JobScheduleDayView from "./JobScheduleDayView";
 import Link from "next/link";
 
-function JobDetailsView({ account_id, job }: { account_id: number; job: Job }) {
+function JobDetailsView({
+  account_id,
+  job,
+  payroll_dates,
+}: {
+  account_id: number;
+  job: Job;
+  payroll_dates: PayrollDate[];
+}) {
   return (
     <Stack>
       <Typography variant="h4" component="h2">
@@ -34,6 +42,19 @@ function JobDetailsView({ account_id, job }: { account_id: number; job: Job }) {
           <CardContent>
             <Typography gutterBottom variant="h5">
               Payroll dates
+            </Typography>
+            <Typography variant="body2">
+              I get paid on the{" "}
+              {payroll_dates.length === 1
+                ? `${payroll_dates[0].payroll_day}th`
+                : payroll_dates
+                    .map((payrollDate, index) => {
+                      return `${payrollDate.payroll_day}${
+                        index === payroll_dates.length - 1 ? "" : ", "
+                      }`;
+                    })
+                    .join(" and ")}{" "}
+              of the month.
             </Typography>
           </CardContent>
         </Card>
