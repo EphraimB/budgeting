@@ -1,6 +1,5 @@
-import { Job, PayrollDate, PayrollTax } from "@/app/types/types";
-import PayrollDates from "../../../../../../components/PayrollDates";
-import PayrollTaxes from "../../../../../../components/PayrollTaxes";
+import { Job, PayrollTax } from "@/app/types/types";
+import PayrollTaxesCards from "../../../../../../components/PayrollTaxesCards";
 
 async function getJob(job_id: number) {
   const res = await fetch(`http://server:5001/api/jobs?id=${job_id}`);
@@ -30,7 +29,7 @@ async function JobPayrollTaxes({ params }: { params: { job_id: string } }) {
   const job: Job[] = await getJob(job_id);
   const payroll_taxes: PayrollTax[] = await getPayrollTaxes(job_id);
 
-  return <PayrollTaxes job={job[0]} payroll_taxes={payroll_taxes} />;
+  return <PayrollTaxesCards job={job[0]} payroll_taxes={payroll_taxes} />;
 }
 
 export default JobPayrollTaxes;
