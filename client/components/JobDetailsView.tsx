@@ -9,6 +9,7 @@ import SickDays from "./SickDays";
 import VacationDays from "./VacationDays";
 import JobScheduleDayView from "./JobScheduleDayView";
 import Link from "next/link";
+import { getOrdinalSuffix } from "../utils/helperFunctions";
 
 function JobDetailsView({
   account_id,
@@ -33,32 +34,42 @@ function JobDetailsView({
       <br />
       <JobScheduleDayView job={job} />
       <br />
-      <Link
-        href={`/${account_id}/jobs/${job.id}/dates`}
-        as={`/${account_id}/jobs/${job.id}/dates`}
-        style={{ color: "inherit", textDecoration: "inherit" }}
+      <Stack
+        direction="row"
+        sx={{
+          justifyContent: "center",
+        }}
       >
-        <Card elevation={1} sx={{ width: 175, overflow: "visible" }}>
-          <CardContent>
-            <Typography gutterBottom variant="h5">
-              Payroll dates
-            </Typography>
-            <Typography variant="body2">
-              I get paid on the{" "}
-              {payroll_dates.length === 1
-                ? `${payroll_dates[0].payroll_day}th`
-                : payroll_dates
-                    .map((payrollDate, index) => {
-                      return `${payrollDate.payroll_day}${
-                        index === payroll_dates.length - 1 ? "" : ", "
-                      }`;
-                    })
-                    .join(" and ")}{" "}
-              of the month.
-            </Typography>
-          </CardContent>
-        </Card>
-      </Link>
+        <Link
+          href={`/${account_id}/jobs/${job.id}/dates`}
+          as={`/${account_id}/jobs/${job.id}/dates`}
+          style={{ color: "inherit", textDecoration: "inherit" }}
+        >
+          <Card elevation={1} sx={{ width: 175, overflow: "visible" }}>
+            <CardContent>
+              <Typography gutterBottom variant="h5">
+                Payroll dates
+              </Typography>
+              <Typography>
+                You get paid on the{" "}
+                {payroll_dates.length === 1
+                  ? `${payroll_dates[0].payroll_day}${getOrdinalSuffix(
+                      payroll_dates[0].payroll_day
+                    )}`
+                  : payroll_dates
+                      .map((payrollDate, index) => {
+                        return `${payrollDate.payroll_day}${getOrdinalSuffix(
+                          payrollDate.payroll_day
+                        )}`;
+                      })
+                      .join(", ")
+                      .replace(/, ([^,]+)$/, " and $1")}{" "}
+                of the month.
+              </Typography>
+            </CardContent>
+          </Card>
+        </Link>
+      </Stack>
     </Stack>
   );
 }
