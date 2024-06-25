@@ -51,7 +51,7 @@ function PayrollTaxesCards({
               ) : payrollTaxModes[payrollTax.id] === "edit" ? (
                 <PayrollTaxEdit
                   job_id={job.id}
-                  setShowPayrollTaxesForm={setShowPayrollTaxesForm}
+                  setPayrollTaxModes={setPayrollTaxModes}
                   payrollTax={payrollTax}
                 />
               ) : (

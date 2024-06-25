@@ -16,11 +16,11 @@ import { PayrollTax } from "@/app/types/types";
 function PayrollTaxEdit({
   job_id,
   payrollTax,
-  setShowPayrollTaxesForm,
+  setPayrollTaxModes,
 }: {
   job_id: number;
   payrollTax: PayrollTax;
-  setShowPayrollTaxesForm: (show: boolean) => void;
+  setPayrollTaxModes: (taxModes: Record<number, string>) => void;
 }) {
   const [name, setName] = useState(payrollTax.name);
   const [rate, setRate] = useState(payrollTax.rate.toString());
@@ -75,7 +75,8 @@ function PayrollTaxEdit({
         showAlert(`Error creating payroll tax "${name}"`, "error");
       }
 
-      setShowPayrollTaxesForm(false);
+      // Close form
+      setPayrollTaxModes({});
     } else {
       // Show error message
       showAlert(
@@ -100,7 +101,7 @@ function PayrollTaxEdit({
           right: 0,
         }}
         size="small"
-        onClick={() => setShowPayrollTaxesForm(false)}
+        onClick={() => setPayrollTaxModes({})}
       >
         <Close />
       </IconButton>
