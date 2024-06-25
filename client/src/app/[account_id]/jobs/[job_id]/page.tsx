@@ -11,12 +11,17 @@ async function getJob(job_id: number) {
   return res.json();
 }
 
-async function JobDetails({ params }: { params: { job_id: string } }) {
+async function JobDetails({
+  params,
+}: {
+  params: { account_id: string; job_id: string };
+}) {
+  const account_id = parseInt(params.account_id);
   const job_id = parseInt(params.job_id);
 
   const job: Job[] = await getJob(job_id);
 
-  return <JobDetailsView job={job[0]} />;
+  return <JobDetailsView account_id={account_id} job={job[0]} />;
 }
 
 export default JobDetails;

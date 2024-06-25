@@ -3,18 +3,14 @@
 import React from "react";
 import { Job } from "@/app/types/types";
 import Stack from "@mui/material/Stack";
-import { Card, CardContent, Paper, Typography } from "@mui/material";
+import { Card, CardContent, Typography } from "@mui/material";
 import HourlyWage from "./HourlyWage";
 import SickDays from "./SickDays";
 import VacationDays from "./VacationDays";
 import JobScheduleDayView from "./JobScheduleDayView";
 import Link from "next/link";
-import { useParams } from "next/navigation";
 
-function JobDetailsView({ job }: { job: Job }) {
-  const account_id = useParams()[0];
-  const job_id = useParams()[1];
-
+function JobDetailsView({ account_id, job }: { account_id: number; job: Job }) {
   return (
     <Stack>
       <Typography variant="h4" component="h2">
@@ -30,8 +26,8 @@ function JobDetailsView({ job }: { job: Job }) {
       <JobScheduleDayView job={job} />
       <br />
       <Link
-        href={`/${account_id}/jobs/${job_id}/dates`}
-        as={`/${account_id}/jobs/${job_id}/dates`}
+        href={`/${account_id}/jobs/${job.id}/dates`}
+        as={`/${account_id}/jobs/${job.id}/dates`}
         style={{ color: "inherit", textDecoration: "inherit" }}
       >
         <Card elevation={1} sx={{ width: 175, overflow: "visible" }}>

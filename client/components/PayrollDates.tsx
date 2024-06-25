@@ -18,7 +18,7 @@ function PayrollDates({
 
   return (
     <>
-      <Typography variant="h2" component="h2">
+      <Typography variant="h3" component="h2">
         Payroll dates
       </Typography>
       <Grid container spacing={2}>
