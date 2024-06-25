@@ -10,7 +10,7 @@ import Close from "@mui/icons-material/Close";
 import TextField from "@mui/material/TextField";
 import InputAdornment from "@mui/material/InputAdornment";
 import Button from "@mui/material/Button";
-import { addPayrollTax } from "../services/actions/payrollTax";
+import { editPayrollTax } from "../services/actions/payrollTax";
 import { PayrollTax } from "@/app/types/types";
 
 function PayrollTaxEdit({
@@ -64,15 +64,15 @@ function PayrollTaxEdit({
     if (isNameValid && isRateValid) {
       // Submit data
       try {
-        await addPayrollTax(data);
+        await editPayrollTax(data, payrollTax.id);
 
         // Show success message
-        showSnackbar(`Payroll tax "${name}" created successfully`);
+        showSnackbar(`Payroll tax "${name}" updated successfully`);
       } catch (error) {
         console.log(error);
 
         // Show error message
-        showAlert(`Error creating payroll tax "${name}"`, "error");
+        showAlert(`Error updating payroll tax "${name}"`, "error");
       }
 
       // Close form
