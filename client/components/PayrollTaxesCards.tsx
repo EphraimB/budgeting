@@ -33,8 +33,8 @@ function PayrollTaxesCards({
       <br />
       <Typography variant="h6" component="h3">
         All {payroll_taxes.length} of your payroll taxes take{" "}
-        {payroll_taxes.reduce((acc, current) => acc + current.rate, 0)}% of your
-        payroll
+        {payroll_taxes.reduce((acc, current) => acc + current.rate, 0) * 100}%
+        of your payroll
       </Typography>
       <Grid container spacing={2}>
         {showPayrollTaxesForm && (

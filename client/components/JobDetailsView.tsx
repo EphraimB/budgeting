@@ -86,8 +86,9 @@ function JobDetailsView({
               </Typography>
               <Typography>
                 All {payroll_taxes.length} of your payroll taxes take{" "}
-                {payroll_taxes.reduce((acc, current) => acc + current.rate, 0)}%
-                of your payroll
+                {payroll_taxes.reduce((acc, current) => acc + current.rate, 0) *
+                  100}
+                % of your payroll
               </Typography>
             </CardContent>
           </Card>
