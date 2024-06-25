@@ -30,7 +30,7 @@ async function JobPayrollTaxes({ params }: { params: { job_id: string } }) {
   const job: Job[] = await getJob(job_id);
   const payroll_taxes: PayrollTax[] = await getPayrollTaxes(job_id);
 
-  return <PayrollTaxes job_id={job[0].id} payroll_taxes={payroll_taxes} />;
+  return <PayrollTaxes job={job[0]} payroll_taxes={payroll_taxes} />;
 }
 
 export default JobPayrollTaxes;

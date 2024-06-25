@@ -1,16 +1,16 @@
 "use client";
 
-import { PayrollDate } from "@/app/types/types";
+import { Job, PayrollDate } from "@/app/types/types";
 import React from "react";
 import Grid from "@mui/material/Grid";
 import PayrollDateCard from "./PayrollDateCard";
 import { Typography } from "@mui/material";
 
 function PayrollDates({
-  job_id,
+  job,
   payroll_dates,
 }: {
-  job_id: number;
+  job: Job;
   payroll_dates: PayrollDate[];
 }) {
   // Generate an array of numbers from 1 to 31
@@ -19,7 +19,7 @@ function PayrollDates({
   return (
     <>
       <Typography variant="h3" component="h2">
-        Payroll dates
+        Payroll dates for {job.name}
       </Typography>
       <Grid container spacing={2}>
         {numbers.map((number) => {
@@ -32,7 +32,7 @@ function PayrollDates({
             <Grid item key={number} xs={6} md={2}>
               <PayrollDateCard
                 key={number}
-                job_id={job_id}
+                job_id={job.id}
                 payroll_date={payrollDateForDay || null}
                 date={number}
               />
