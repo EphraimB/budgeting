@@ -12,7 +12,7 @@ import { motion } from "framer-motion";
 import { useTheme } from "@mui/material/styles";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import {
-  calculateTotalWithTaxes,
+  calculateTotalWithSubsidies,
   findLatestFullyPaidBackDate,
 } from "../utils/helperFunctions";
 
@@ -71,9 +71,9 @@ function DataManagementWidgets({
       link: `/${account_id}/expenses`,
       content: `You have ${expenses.length} expense${
         expenses.length === 1 ? "" : "s"
-      } with a total of $${calculateTotalWithTaxes(expenses, taxes).toFixed(
+      } with a total of $${calculateTotalWithSubsidies(expenses, taxes).toFixed(
         2
-      )} including taxes.`,
+      )} including taxes and subsidies.`,
       selected: isSelected("expenses"),
     },
     {

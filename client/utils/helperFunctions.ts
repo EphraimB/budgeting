@@ -1,4 +1,4 @@
-import { Loan, Tax } from "@/app/types/types";
+import { Expense, Loan, Tax } from "@/app/types/types";
 import dayjs, { Dayjs } from "dayjs";
 
 export const getOrdinalSuffix = (day: number) => {
@@ -152,4 +152,23 @@ export const calculateTotalWithTaxes = (
   }, 0);
 
   return totalWithTaxes;
+};
+
+// Calculate total expenses including subsidies
+export const calculateTotalWithSubsidies = (
+  expenses: Expense[],
+  taxes: Tax[]
+): number => {
+  const totalWithTaxesAndSubsidies = expenses.reduce(
+    (acc: number, expense: Expense) => {
+      const taxRate = getTaxRate(taxes, expense.tax_id);
+      const taxAmount = expense.amount * taxRate;
+      const subsidyAmount = expense.subsidized || 0; // Add subsidy amount
+
+      return acc + expense.amount + taxAmount - subsidyAmount; // Subtract subsidy from total
+    },
+    0
+  );
+
+  return totalWithTaxesAndSubsidies;
 };
