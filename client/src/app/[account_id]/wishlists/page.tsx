@@ -1,7 +1,7 @@
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 import { Tax, Wishlist } from "@/app/types/types";
-import WishlistsCards from "../../../../components/WishlistsCards";
+import WishlistsCards from "../../../../components/wishlists/WishlistsCards";
 
 async function getWishlists(account_id: number) {
   const res = await fetch(

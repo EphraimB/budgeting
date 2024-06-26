@@ -1,7 +1,7 @@
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 import { Expense, Tax } from "@/app/types/types";
-import ExpensesCards from "../../../../components/ExpensesCards";
+import ExpensesCards from "../../../../components/expenses/ExpensesCards";
 
 async function getExpenses(account_id: number) {
   const res = await fetch(
