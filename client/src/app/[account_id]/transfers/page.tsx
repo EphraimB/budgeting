@@ -1,7 +1,7 @@
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 import { Account, Transfer } from "@/app/types/types";
-import TransferCards from "../../../../components/TransfersCards";
+import TransferCards from "../../../../components/transfers/TransfersCards";
 
 async function getTransfers(account_id: number) {
   const res = await fetch(

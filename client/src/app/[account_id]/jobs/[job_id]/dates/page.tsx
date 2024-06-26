@@ -1,5 +1,5 @@
 import { Job, PayrollDate } from "@/app/types/types";
-import PayrollDates from "../../../../../../components/PayrollDates";
+import PayrollDates from "../../../../../../components/payrollDates/PayrollDates";
 
 async function getJob(job_id: number) {
   const res = await fetch(`http://server:5001/api/jobs?id=${job_id}`);

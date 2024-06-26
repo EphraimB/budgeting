@@ -3,7 +3,7 @@ import type { Metadata } from "next";
 import GlobalAppBar from "../../components/GlobalAppBar";
 import Alerts from "../../components/Alerts";
 import Container from "@mui/material/Container";
-import AccountList from "../../components/AccountList";
+import AccountList from "../../components/accounts/AccountList";
 import { FeedbackProvider } from "../../context/FeedbackContext";
 import SnackbarFeedback from "../../components/SnackbarFeedback";
 

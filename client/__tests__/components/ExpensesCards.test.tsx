@@ -1,7 +1,7 @@
 import React from "react";
 import "@testing-library/jest-dom";
 import { render, screen } from "@testing-library/react";
-import ExpenseCards from "../../components/ExpensesCards";
+import ExpenseCards from "../../components/expenses/ExpensesCards";
 
 jest.mock("next/navigation", () => ({
   useRouter: jest.fn(),

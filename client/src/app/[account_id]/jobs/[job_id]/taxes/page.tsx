@@ -1,5 +1,5 @@
 import { Job, PayrollTax } from "@/app/types/types";
-import PayrollTaxesCards from "../../../../../../components/PayrollTaxesCards";
+import PayrollTaxesCards from "../../../../../../components/payrollTaxes/PayrollTaxesCards";
 
 async function getJob(job_id: number) {
   const res = await fetch(`http://server:5001/api/jobs?id=${job_id}`);

@@ -1,6 +1,6 @@
 import { render, screen } from "@testing-library/react";
 import "@testing-library/jest-dom";
-import TaxActionsMenu from "../../components/TaxActionsMenu";
+import TaxActionsMenu from "../../components/taxes/TaxActionsMenu";
 
 const setTaxModes = jest.fn();
 

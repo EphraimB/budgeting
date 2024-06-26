@@ -1,6 +1,6 @@
 import React from "react";
 import { render, screen } from "@testing-library/react";
-import JobScheduleView from "../../components/JobScheduleView";
+import JobScheduleView from "../../components/jobs/JobScheduleView";
 import "@testing-library/jest-dom";
 import userEvent from "@testing-library/user-event";
 

@@ -1,6 +1,6 @@
 import React from "react";
 import { render } from "@testing-library/react";
-import JobDayTimeslots from "../../components/JobDayTimeslots";
+import JobDayTimeslots from "../../components/jobs/JobDayTimeslots";
 import "@testing-library/jest-dom";
 import userEvent from "@testing-library/user-event";
 
