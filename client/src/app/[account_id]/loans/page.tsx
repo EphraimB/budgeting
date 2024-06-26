@@ -1,7 +1,7 @@
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 import { Loan } from "@/app/types/types";
-import LoansCards from "../../../../components/LoansCards";
+import LoansCards from "../../../../components/loans/LoansCards";
 
 async function getLoans(account_id: number) {
   const res = await fetch(
