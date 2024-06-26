@@ -31,7 +31,7 @@ describe("PayrollDates", () => {
   const job: Job = {
     id: 1,
     account_id: 1,
-    name: "personal",
+    name: "Personal",
     hourly_rate: 16,
     vacation_days: 15,
     sick_days: 15,
@@ -41,6 +41,7 @@ describe("PayrollDates", () => {
 
   it("renders correct number of PayrollDateCards", () => {
     render(<PayrollDates job={job} payroll_dates={payroll_dates} />);
+    expect(screen.getByText("Payroll dates for Personal"));
     expect(screen.getAllByTestId("payroll-date-card")).toHaveLength(31);
   });
 });
