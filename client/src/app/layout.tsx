@@ -1,11 +1,11 @@
 import "./globals.css";
 import type { Metadata } from "next";
 import GlobalAppBar from "../../components/GlobalAppBar";
-import Alerts from "../../components/Alerts";
+import Alerts from "../../components/feedback/Alerts";
 import Container from "@mui/material/Container";
 import AccountList from "../../components/accounts/AccountList";
 import { FeedbackProvider } from "../../context/FeedbackContext";
-import SnackbarFeedback from "../../components/SnackbarFeedback";
+import SnackbarFeedback from "../../components/feedback/SnackbarFeedback";
 
 export const metadata: Metadata = {
   title: "Budgeting",

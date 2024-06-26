@@ -1,7 +1,7 @@
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 import { Job } from "@/app/types/types";
-import JobCards from "../../../../components/JobCards";
+import JobCards from "../../../../components/jobs/JobCards";
 
 async function getJobs(account_id: number) {
   const res = await fetch(

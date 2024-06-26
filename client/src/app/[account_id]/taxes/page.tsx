@@ -1,7 +1,7 @@
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 import { Tax } from "@/app/types/types";
-import TaxCards from "../../../../components/TaxCards";
+import TaxCards from "../../../../components/taxes/TaxCards";
 
 async function getTaxes() {
   const res = await fetch("http://server:5001/api/taxes");
