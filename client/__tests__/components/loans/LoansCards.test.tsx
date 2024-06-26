@@ -1,7 +1,7 @@
 import React from "react";
 import "@testing-library/jest-dom";
 import { render, screen } from "@testing-library/react";
-import LoansCards from "../../components/loans/LoansCards";
+import LoansCards from "../../../components/loans/LoansCards";
 
 jest.mock("next/navigation", () => ({
   useRouter: jest.fn(),

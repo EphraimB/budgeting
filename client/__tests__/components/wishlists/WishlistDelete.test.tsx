@@ -1,7 +1,7 @@
 import React from "react";
 import { render, screen } from "@testing-library/react";
 import "@testing-library/jest-dom";
-import WishlistDelete from "../../components/WishlistDelete";
+import WishlistDelete from "../../../components/wishlists/WishlistDelete";
 
 jest.mock("../../context/FeedbackContext", () => ({
   useAlert: () => ({

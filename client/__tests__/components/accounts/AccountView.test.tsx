@@ -1,6 +1,6 @@
 import React from "react";
 import { render, screen } from "@testing-library/react";
-import AccountView from "../../components/AccountView";
+import AccountView from "../../../components/accounts/AccountView";
 import "@testing-library/jest-dom";
 
 describe("AccountView", () => {

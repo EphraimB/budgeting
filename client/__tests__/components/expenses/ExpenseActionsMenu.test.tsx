@@ -1,6 +1,6 @@
 import { render, screen } from "@testing-library/react";
 import "@testing-library/jest-dom";
-import ExpenseActionsMenu from "../../components/expenses/ExpenseActionsMenu";
+import ExpenseActionsMenu from "../../../components/expenses/ExpenseActionsMenu";
 
 const setExpenseModes = jest.fn();
 

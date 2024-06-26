@@ -1,6 +1,6 @@
 import React from "react";
 import { render, screen } from "@testing-library/react";
-import JobCards from "../../components/JobCards";
+import JobCards from "../../../components/jobs/JobCards";
 import "@testing-library/jest-dom";
 
 describe("JobCards", () => {

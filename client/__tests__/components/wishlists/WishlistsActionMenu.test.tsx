@@ -1,6 +1,6 @@
 import { render, screen } from "@testing-library/react";
 import "@testing-library/jest-dom";
-import WishlistsActionsMenu from "../../components/wishlists/WishlistsActionsMenu";
+import WishlistsActionsMenu from "../../../components/wishlists/WishlistsActionsMenu";
 
 const setWishlistModes = jest.fn();
 

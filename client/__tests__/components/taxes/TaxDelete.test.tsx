@@ -1,7 +1,7 @@
 import React from "react";
 import { render, screen } from "@testing-library/react";
 import "@testing-library/jest-dom";
-import TaxDelete from "../../components/TaxDelete";
+import TaxDelete from "../../../components/taxes/TaxDelete";
 
 jest.mock("../../context/FeedbackContext", () => ({
   useAlert: () => ({

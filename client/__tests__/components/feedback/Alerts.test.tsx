@@ -1,6 +1,6 @@
 import React from "react";
 import { render, screen } from "@testing-library/react";
-import Alerts from "../../components/Alerts";
+import Alerts from "../../../components/feedback/Alerts";
 import "@testing-library/jest-dom";
 
 jest.mock("../../context/FeedbackContext", () => ({

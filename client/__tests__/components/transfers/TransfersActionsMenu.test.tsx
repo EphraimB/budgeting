@@ -1,6 +1,6 @@
 import { render, screen } from "@testing-library/react";
 import "@testing-library/jest-dom";
-import TransfersActionsMenu from "../../components/transfers/TransfersActionsMenu";
+import TransfersActionsMenu from "../../../components/transfers/TransfersActionsMenu";
 
 const setTransferModes = jest.fn();
 

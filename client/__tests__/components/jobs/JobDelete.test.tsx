@@ -1,6 +1,6 @@
 import React from "react";
 import { render, screen } from "@testing-library/react";
-import JobDelete from "../../components/JobDelete";
+import JobDelete from "../../../components/jobs/JobDelete";
 import "@testing-library/jest-dom";
 
 jest.mock("../../context/FeedbackContext", () => ({

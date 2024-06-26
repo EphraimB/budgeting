@@ -1,6 +1,6 @@
 import React from "react";
 import { render, screen } from "@testing-library/react";
-import SnackbarFeedback from "../../components/SnackbarFeedback";
+import SnackbarFeedback from "../../../components/feedback/SnackbarFeedback";
 import "@testing-library/jest-dom";
 
 jest.mock("../../context/FeedbackContext", () => ({

@@ -1,6 +1,6 @@
 import React from "react";
 import { render, screen } from "@testing-library/react";
-import AccountEdit from "../../components/AccountEdit";
+import AccountEdit from "../../../components/accounts/AccountEdit";
 import "@testing-library/jest-dom";
 
 jest.mock("../../context/FeedbackContext", () => ({
@@ -19,8 +19,9 @@ describe("AccountEdit", () => {
         account={{
           account_id: 1,
           account_name: "Test Account",
-          account_type: "Checking",
           account_balance: 0,
+          date_created: "2022-12-31",
+          date_modified: "2022-12-31",
         }}
         setAccountModes={() => {}}
       />

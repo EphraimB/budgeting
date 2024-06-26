@@ -1,7 +1,7 @@
 import React from "react";
 import { render, screen } from "@testing-library/react";
 import "@testing-library/jest-dom";
-import AccountDelete from "../../components/AccountDelete";
+import AccountDelete from "../../../components/accounts/AccountDelete";
 
 jest.mock("next/navigation", () => ({
   useRouter: () => ({

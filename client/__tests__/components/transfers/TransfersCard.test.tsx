@@ -1,7 +1,7 @@
 import React from "react";
 import "@testing-library/jest-dom";
 import { render, screen } from "@testing-library/react";
-import TransferCards from "../../components/transfers/TransfersCards";
+import TransferCards from "../../../components/transfers/TransfersCards";
 
 jest.mock("next/navigation", () => ({
   useRouter: jest.fn(),

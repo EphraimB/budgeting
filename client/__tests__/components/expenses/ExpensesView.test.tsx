@@ -1,6 +1,6 @@
 import React from "react";
 import { render, screen } from "@testing-library/react";
-import ExpensesView from "../../components/ExpensesView";
+import ExpensesView from "../../../components/expenses/ExpensesView";
 import "@testing-library/jest-dom";
 import { Expense } from "@/app/types/types";
 

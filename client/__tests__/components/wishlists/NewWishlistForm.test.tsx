@@ -2,7 +2,7 @@ import React from "react";
 import "@testing-library/jest-dom";
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import NewWishlistForm from "../../components/NewWishlistForm";
+import NewWishlistForm from "../../../components/wishlists/NewWishlistForm";
 import { Tax } from "@/app/types/types";
 import dayjs from "dayjs";
 

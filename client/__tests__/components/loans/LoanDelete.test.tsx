@@ -1,7 +1,7 @@
 import React from "react";
 import { render, screen } from "@testing-library/react";
 import "@testing-library/jest-dom";
-import LoanDelete from "../../components/LoanDelete";
+import LoanDelete from "../../../components/loans/LoanDelete";
 
 jest.mock("../../context/FeedbackContext", () => ({
   useAlert: () => ({

@@ -1,6 +1,6 @@
 import React from "react";
 import { render, screen } from "@testing-library/react";
-import VacationDays from "../../components/jobs/VacationDays";
+import VacationDays from "../../../components/jobs/VacationDays";
 import "@testing-library/jest-dom";
 
 describe("VacationDays", () => {

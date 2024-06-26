@@ -1,6 +1,6 @@
 import React from "react";
 import { render, screen } from "@testing-library/react";
-import LoansView from "../../components/LoansView";
+import LoansView from "../../../components/loans/LoansView";
 import "@testing-library/jest-dom";
 import { Loan } from "@/app/types/types";
 

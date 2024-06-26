@@ -1,7 +1,7 @@
 import React from "react";
 import { render, screen } from "@testing-library/react";
 import "@testing-library/jest-dom";
-import AccountWithdrawalForm from "../../components/AccountWithdrawalForm";
+import AccountWithdrawalForm from "../../../components/accounts/AccountWithdrawalForm";
 
 describe("AccountWithdrawalForm", () => {
   it("renders", () => {

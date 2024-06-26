@@ -1,6 +1,6 @@
 import React from "react";
 import { render, screen } from "@testing-library/react";
-import JobScheduleBar from "../../components/jobs/JobScheduleBar";
+import JobScheduleBar from "../../../components/jobs/JobScheduleBar";
 import "@testing-library/jest-dom";
 
 jest.mock("dayjs", () => () => ({

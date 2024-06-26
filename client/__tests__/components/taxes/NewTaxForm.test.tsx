@@ -1,6 +1,6 @@
 import React from "react";
 import { render, screen } from "@testing-library/react";
-import NewTaxForm from "../../components/NewTaxForm";
+import NewTaxForm from "../../../components/taxes/NewTaxForm";
 import "@testing-library/jest-dom";
 import userEvent from "@testing-library/user-event";
 

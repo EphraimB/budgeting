@@ -1,7 +1,7 @@
 import React from "react";
 import "@testing-library/jest-dom";
 import { render, screen } from "@testing-library/react";
-import WishlistsCards from "../../components/wishlists/WishlistsCards";
+import WishlistsCards from "../../../components/wishlists/WishlistsCards";
 import { Tax } from "@/app/types/types";
 
 jest.mock("next/navigation", () => ({

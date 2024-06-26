@@ -1,7 +1,7 @@
 import React from "react";
 import { render, screen } from "@testing-library/react";
 import "@testing-library/jest-dom";
-import TransferDelete from "../../components/TransferDelete";
+import TransferDelete from "../../../components/transfers/TransferDelete";
 import { Transfer } from "@/app/types/types";
 
 jest.mock("../../context/FeedbackContext", () => ({

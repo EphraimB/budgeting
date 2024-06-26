@@ -1,6 +1,6 @@
 import React from "react";
 import { render, screen } from "@testing-library/react";
-import WishlistsView from "../../components/WishlistsView";
+import WishlistsView from "../../../components/wishlists/WishlistsView";
 import "@testing-library/jest-dom";
 import { Wishlist } from "@/app/types/types";
 

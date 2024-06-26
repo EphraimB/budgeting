@@ -2,7 +2,7 @@ import React from "react";
 import "@testing-library/jest-dom";
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import WishlistEdit from "../../components/WishlistEdit";
+import WishlistEdit from "../../../components/wishlists/WishlistEdit";
 import { Tax } from "@/app/types/types";
 import dayjs from "dayjs";
 

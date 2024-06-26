@@ -1,6 +1,6 @@
 import React from "react";
 import { render, screen } from "@testing-library/react";
-import JobActionsMenu from "../../components/jobs/JobActionsMenu";
+import JobActionsMenu from "../../../components/jobs/JobActionsMenu";
 import "@testing-library/jest-dom";
 
 describe("JobActionsMenu", () => {

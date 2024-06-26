@@ -1,6 +1,6 @@
 import React from "react";
 import { render, screen } from "@testing-library/react";
-import JobDetailsView from "../../components/JobDetailsView";
+import JobDetailsView from "../../../components/jobs/JobDetailsView";
 import "@testing-library/jest-dom";
 
 jest.mock("../../context/FeedbackContext", () => ({
@@ -46,7 +46,14 @@ describe("JobDetailsView", () => {
   ];
 
   it("renders", () => {
-    render(<JobDetailsView job={job} payroll_dates={payroll_dates} />);
+    render(
+      <JobDetailsView
+        account_id={1}
+        job={job}
+        payroll_dates={payroll_dates}
+        payroll_taxes={[]}
+      />
+    );
 
     expect(
       screen.getByText("Job Details for Testing Inc.")

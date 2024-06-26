@@ -1,6 +1,6 @@
 import { render, screen } from "@testing-library/react";
 import "@testing-library/jest-dom";
-import LoanActionsMenu from "../../components/loans/LoanActionsMenu";
+import LoanActionsMenu from "../../../components/loans/LoanActionsMenu";
 
 const setLoanModes = jest.fn();
 

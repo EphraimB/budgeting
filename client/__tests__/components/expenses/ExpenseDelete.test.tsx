@@ -1,7 +1,7 @@
 import React from "react";
 import { render, screen } from "@testing-library/react";
 import "@testing-library/jest-dom";
-import ExpenseDelete from "../../components/ExpenseDelete";
+import ExpenseDelete from "../../../components/expenses/ExpenseDelete";
 
 jest.mock("../../context/FeedbackContext", () => ({
   useAlert: () => ({

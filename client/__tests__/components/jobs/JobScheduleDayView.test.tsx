@@ -1,6 +1,6 @@
 import React from "react";
 import { render, screen } from "@testing-library/react";
-import JobScheduleDayView from "../../components/JobScheduleDayView";
+import JobScheduleDayView from "../../../components/jobs/JobScheduleDayView";
 import "@testing-library/jest-dom";
 
 describe("JobScheduleDayView", () => {

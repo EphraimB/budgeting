@@ -1,6 +1,6 @@
 import React from "react";
 import { render, screen } from "@testing-library/react";
-import PayrollDateCard from "../../components/PayrollDateCard";
+import PayrollDateCard from "../../../components/payrollDates/PayrollDateCard";
 import "@testing-library/jest-dom";
 import { PayrollDate } from "@/app/types/types";
 

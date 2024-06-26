@@ -2,7 +2,7 @@ import React from "react";
 import "@testing-library/jest-dom";
 import { render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import NewExpenseForm from "../../components/NewExpenseForm";
+import NewExpenseForm from "../../../components/expenses/NewExpenseForm";
 import dayjs from "dayjs";
 
 jest.mock("next/navigation", () => ({

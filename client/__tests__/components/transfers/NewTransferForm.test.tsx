@@ -2,7 +2,7 @@ import React from "react";
 import "@testing-library/jest-dom";
 import { render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import NewTransferForm from "../../components/NewTransferForm";
+import NewTransferForm from "../../../components/transfers/NewTransferForm";
 import dayjs from "dayjs";
 import { Account } from "@/app/types/types";
 

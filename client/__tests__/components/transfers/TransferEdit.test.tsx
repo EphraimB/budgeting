@@ -2,7 +2,7 @@ import React from "react";
 import "@testing-library/jest-dom";
 import { render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import TransferEdit from "../../components/TransferEdit";
+import TransferEdit from "../../../components/transfers/TransferEdit";
 import dayjs from "dayjs";
 import { Account, Transfer } from "@/app/types/types";
 

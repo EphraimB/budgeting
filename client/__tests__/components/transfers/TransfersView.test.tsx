@@ -1,6 +1,6 @@
 import React from "react";
 import { render, screen } from "@testing-library/react";
-import TransfersView from "../../components/TransfersView";
+import TransfersView from "../../../components/transfers/TransfersView";
 import "@testing-library/jest-dom";
 import { Transfer } from "@/app/types/types";
 

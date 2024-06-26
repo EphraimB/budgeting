@@ -1,7 +1,7 @@
 import React from "react";
 import { render, screen } from "@testing-library/react";
 import "@testing-library/jest-dom";
-import AccountDepositForm from "../../components/AccountDepositForm";
+import AccountDepositForm from "../../../components/accounts/AccountDepositForm";
 
 describe("AccountDepositForm", () => {
   it("renders", () => {
@@ -11,6 +11,8 @@ describe("AccountDepositForm", () => {
           account_id: 1,
           account_name: "Test Account",
           account_balance: 155.99,
+          date_created: "2022-12-31",
+          date_modified: "2022-12-31",
         }}
         setAccountModes={() => {}}
       />

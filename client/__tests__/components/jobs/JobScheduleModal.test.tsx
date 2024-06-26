@@ -1,6 +1,6 @@
 import React from "react";
 import { render, screen } from "@testing-library/react";
-import JobScheduleModal from "../../components/JobScheduleModal";
+import JobScheduleModal from "../../../components/jobs/JobScheduleModal";
 import "@testing-library/jest-dom";
 
 describe("JobScheduleModal", () => {

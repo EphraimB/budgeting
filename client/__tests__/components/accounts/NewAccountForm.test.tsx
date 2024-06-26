@@ -1,6 +1,6 @@
 import React from "react";
 import { render, screen } from "@testing-library/react";
-import NewAccountForm from "../../components/NewAccountForm";
+import NewAccountForm from "../../../components/accounts/NewAccountForm";
 import "@testing-library/jest-dom";
 
 jest.mock("../../context/FeedbackContext", () => ({
