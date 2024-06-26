@@ -1,6 +1,6 @@
 "use client";
 
-import { PayrollTax, Tax } from "@/app/types/types";
+import { PayrollTax } from "@/app/types/types";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
