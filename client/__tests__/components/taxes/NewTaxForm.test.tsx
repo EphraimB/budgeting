@@ -4,7 +4,7 @@ import NewTaxForm from "../../../components/taxes/NewTaxForm";
 import "@testing-library/jest-dom";
 import userEvent from "@testing-library/user-event";
 
-jest.mock("../../context/FeedbackContext", () => ({
+jest.mock("../../../context/FeedbackContext", () => ({
   useAlert: () => ({
     showAlert: () => {},
   }),

@@ -3,7 +3,7 @@ import { render, screen } from "@testing-library/react";
 import SnackbarFeedback from "../../../components/feedback/SnackbarFeedback";
 import "@testing-library/jest-dom";
 
-jest.mock("../../context/FeedbackContext", () => ({
+jest.mock("../../../context/FeedbackContext", () => ({
   useSnackbar: () => ({
     snackbar: { open: true, message: "Testing" },
     closeSnackbar: () => {},

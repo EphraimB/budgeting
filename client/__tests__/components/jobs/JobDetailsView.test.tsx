@@ -4,7 +4,7 @@ import JobDetailsView from "../../../components/jobs/JobDetailsView";
 import "@testing-library/jest-dom";
 import { PayrollDate, PayrollTax } from "@/app/types/types";
 
-jest.mock("../../context/FeedbackContext", () => ({
+jest.mock("../../../context/FeedbackContext", () => ({
   useAlert: () => ({
     alert: { open: true, severity: "error", message: "Testing" },
     closeAlert: () => {},
@@ -51,13 +51,13 @@ describe("JobDetailsView", () => {
       id: 1,
       job_id: 1,
       name: "Social Security",
-      rate: 0.2,
+      rate: 0.02,
     },
     {
       id: 2,
       job_id: 1,
       name: "Medicare",
-      rate: 0.1,
+      rate: 0.01,
     },
   ];
 

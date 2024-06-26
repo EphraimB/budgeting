@@ -3,7 +3,7 @@ import { render, screen } from "@testing-library/react";
 import AccountEdit from "../../../components/accounts/AccountEdit";
 import "@testing-library/jest-dom";
 
-jest.mock("../../context/FeedbackContext", () => ({
+jest.mock("../../../context/FeedbackContext", () => ({
   useAlert: () => ({
     showAlert: () => {},
   }),

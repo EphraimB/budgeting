@@ -4,7 +4,7 @@ import "@testing-library/jest-dom";
 import TransferDelete from "../../../components/transfers/TransferDelete";
 import { Transfer } from "@/app/types/types";
 
-jest.mock("../../context/FeedbackContext", () => ({
+jest.mock("../../../context/FeedbackContext", () => ({
   useAlert: () => ({
     showAlert: () => {},
   }),

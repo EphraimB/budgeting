@@ -10,7 +10,7 @@ jest.mock("next/navigation", () => ({
   usePathname: () => "/1",
 }));
 
-jest.mock("../../context/FeedbackContext", () => ({
+jest.mock("../../../context/FeedbackContext", () => ({
   useAlert: () => ({
     showAlert: () => {},
   }),

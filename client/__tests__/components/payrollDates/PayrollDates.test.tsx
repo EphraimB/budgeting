@@ -4,7 +4,7 @@ import PayrollDates from "../../../components/payrollDates/PayrollDates";
 import "@testing-library/jest-dom";
 import { Job, PayrollDate } from "@/app/types/types";
 
-jest.mock("../../context/FeedbackContext", () => ({
+jest.mock("../../../context/FeedbackContext", () => ({
   useAlert: () => ({
     alert: () => {},
     closeAlert: () => {},
