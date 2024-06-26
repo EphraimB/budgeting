@@ -42,7 +42,7 @@ export const getCommuteOverview = async (
     request: Request,
     response: Response,
 ): Promise<void> => {
-    const { account_id } = request.query as { account_id?: string }; // Destructure id from query string
+    const { account_id } = request.query as { account_id: string }; // Destructure id from query string
 
     try {
         // Change the query based on the presence of id
@@ -50,14 +50,9 @@ export const getCommuteOverview = async (
         const params = [account_id];
         const overview = await executeQuery(query, params);
 
-        if (overview.length === 0) {
-            response.status(404).send('Account does not exist');
-            return;
-        }
-
         // Initialize the return object
         const returnObject: ReturnObject = {
-            account_id: 1, // set the account_id
+            account_id: parseInt(account_id),
             total_cost_per_week: 0,
             total_cost_per_month: 0,
             systems: {},
