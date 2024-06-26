@@ -163,10 +163,12 @@ function DataManagementWidgets({
         direction="row"
         spacing={isSmallScreen ? 1 : 2}
         sx={{
-          overflowX: isSmallScreen ? "scroll" : "visible",
+          overflowX: "scroll",
+          width: "75%",
           "&::-webkit-scrollbar": { display: "none" },
           "&::MsOverflowStyle": "none",
           scrollbarWidth: "none",
+          boxShadow: "0px 2px 4px rgba(0,0,0,0.1)",
         }}
       >
         {otherWidgets.map((widget, index) => {
