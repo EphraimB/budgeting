@@ -12,7 +12,7 @@ import { motion } from "framer-motion";
 import { useTheme } from "@mui/material/styles";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import {
-  calculateTotalWithTaxes,
+  calculateTotalWithSubsidies,
   findLatestFullyPaidBackDate,
 } from "../utils/helperFunctions";
 
@@ -71,9 +71,9 @@ function DataManagementWidgets({
       link: `/${account_id}/expenses`,
       content: `You have ${expenses.length} expense${
         expenses.length === 1 ? "" : "s"
-      } with a total of $${calculateTotalWithTaxes(expenses, taxes).toFixed(
+      } with a total of $${calculateTotalWithSubsidies(expenses, taxes).toFixed(
         2
-      )} including taxes.`,
+      )} including taxes and subsidies.`,
       selected: isSelected("expenses"),
     },
     {
@@ -163,10 +163,12 @@ function DataManagementWidgets({
         direction="row"
         spacing={isSmallScreen ? 1 : 2}
         sx={{
-          overflowX: isSmallScreen ? "scroll" : "visible",
+          overflowX: "scroll",
+          width: "75%",
           "&::-webkit-scrollbar": { display: "none" },
           "&::MsOverflowStyle": "none",
           scrollbarWidth: "none",
+          boxShadow: "0px 2px 4px rgba(0,0,0,0.1)",
         }}
       >
         {otherWidgets.map((widget, index) => {
