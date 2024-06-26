@@ -12,13 +12,11 @@ import PayrollTaxesActionsMenu from "./PayrollTaxesActionsMenu";
 function PayrollTaxesView({
   payrollTax,
   setPayrollTaxModes,
-  job_id,
 }: {
   payrollTax: PayrollTax;
   setPayrollTaxModes: React.Dispatch<
     React.SetStateAction<Record<number, string>>
   >;
-  job_id: number;
 }) {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);

@@ -63,7 +63,6 @@ function PayrollTaxesCards({
                 <PayrollTaxesView
                   payrollTax={payrollTax}
                   setPayrollTaxModes={setPayrollTaxModes}
-                  job_id={job.id}
                 />
               )}
             </Card>
