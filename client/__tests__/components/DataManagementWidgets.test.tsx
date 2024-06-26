@@ -114,7 +114,7 @@ describe("DataManagementWidgets", () => {
     expect(screen.getByText("Expenses")).toBeInTheDocument();
     expect(
       screen.getByText(
-        "You have 1 expense with a total of $171.59 including taxes."
+        "You have 1 expense with a total of $171.59 including taxes and subsidies."
       )
     ).toBeInTheDocument();
 
