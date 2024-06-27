@@ -885,6 +885,7 @@ export const commuteOverviewQueries = {
         ticket_fares AS (
             SELECT
                 cs.commute_schedule_id,
+                cs.account_id,
                 cs.day_of_week,
                 csy.name AS system_name,
                 fd.commute_system_id,
@@ -908,6 +909,7 @@ export const commuteOverviewQueries = {
             WHERE cs.account_id = $1
         )
         SELECT
+            tf.account_id,
             tf.commute_system_id,
             tf.system_name,
             COALESCE(SUM(tf.fare_amount), 0) AS total_cost_per_week,
@@ -918,7 +920,7 @@ export const commuteOverviewQueries = {
             tf.current_spent
         FROM ticket_fares tf
         JOIN count_days cd ON tf.day_of_week = cd.day_of_week
-        GROUP BY tf.commute_system_id, tf.system_name, tf.fare_cap, tf.fare_cap_duration, tf.current_spent;
+        GROUP BY tf.account_id, tf.commute_system_id, tf.system_name, tf.fare_cap, tf.fare_cap_duration, tf.current_spent;
     `,
     getCommuteOverview: `
         WITH RECURSIVE days AS (
@@ -938,6 +940,7 @@ export const commuteOverviewQueries = {
         ticket_fares AS (
             SELECT
                 cs.commute_schedule_id,
+                cs.account_id,
                 cs.day_of_week,
                 csy.name AS system_name,
                 fd.commute_system_id,
@@ -960,6 +963,7 @@ export const commuteOverviewQueries = {
             JOIN commute_systems csy ON fd.commute_system_id = csy.commute_system_id
         )
         SELECT
+            tf.account_id,
             tf.commute_system_id,
             tf.system_name,
             COALESCE(SUM(tf.fare_amount), 0) AS total_cost_per_week,
@@ -970,7 +974,7 @@ export const commuteOverviewQueries = {
             tf.current_spent
         FROM ticket_fares tf
         JOIN count_days cd ON tf.day_of_week = cd.day_of_week
-        GROUP BY tf.commute_system_id, tf.system_name, tf.fare_cap, tf.fare_cap_duration, tf.current_spent;
+        GROUP BY tf.account_id, tf.commute_system_id, tf.system_name, tf.fare_cap, tf.fare_cap_duration, tf.current_spent;
     `,
 };
 

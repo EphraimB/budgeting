@@ -8,18 +8,7 @@ type ReturnObject = {
     account_id: number;
     total_cost_per_week: number;
     total_cost_per_month: number;
-    systems: {
-        [key: string]: {
-            total_cost_per_week: number;
-            total_cost_per_month: number;
-            rides: number;
-            fare_cap_progress?: {
-                current_spent: number;
-                fare_cap: number;
-                fare_cap_duration: number;
-            };
-        };
-    };
+    systems: SystemDetails[];
 };
 
 type SystemDetails = {
@@ -71,12 +60,14 @@ export const getCommuteOverview = async (
             }),
         );
 
+        console.log(overviews);
+
         const returnObjects = accounts.map((account_id) => {
             const returnObject: ReturnObject = {
                 account_id,
                 total_cost_per_week: 0,
                 total_cost_per_month: 0,
-                systems: {},
+                systems: [],
             };
 
             const overview = overviews.find(
@@ -110,10 +101,9 @@ export const getCommuteOverview = async (
                         };
                     }
 
-                    returnObject.systems[row.system_name] = systemDetails;
+                    returnObject.systems.push(systemDetails);
                 });
             }
-
             return returnObject;
         });
 
