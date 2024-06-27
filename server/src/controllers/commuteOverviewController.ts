@@ -60,8 +60,6 @@ export const getCommuteOverview = async (
             }),
         );
 
-        console.log(overviews);
-
         const returnObjects = accounts.map((account_id) => {
             const returnObject: ReturnObject = {
                 account_id,
