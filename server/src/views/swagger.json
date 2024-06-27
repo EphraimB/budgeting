@@ -2924,11 +2924,6 @@
                                                                     "format": "double",
                                                                     "example": 33.0
                                                                 },
-                                                                "potential_savings": {
-                                                                    "type": "number",
-                                                                    "format": "double",
-                                                                    "example": 5.0
-                                                                },
                                                                 "fare_cap_duration": {
                                                                     "type": "integer",
                                                                     "example": 1
