@@ -867,7 +867,7 @@ export const fareTimeslotsQueries = {
 };
 
 export const commuteOverviewQueries = {
-    getCommuteOverview: `
+    getCommuteOverviewByAccountId: `
         WITH RECURSIVE days AS (
             SELECT date_trunc('month', current_date)::date as day
             UNION ALL
@@ -906,6 +906,58 @@ export const commuteOverviewQueries = {
             JOIN fare_details fd ON cs.fare_detail_id = fd.fare_detail_id
             JOIN commute_systems csy ON fd.commute_system_id = csy.commute_system_id
             WHERE cs.account_id = $1
+        )
+        SELECT
+            tf.commute_system_id,
+            tf.system_name,
+            COALESCE(SUM(tf.fare_amount), 0) AS total_cost_per_week,
+            COALESCE(SUM(tf.fare_amount * cd.num_days), 0) AS total_cost_per_month,
+            COALESCE(COUNT(tf.commute_schedule_id), 0) AS rides,
+            tf.fare_cap AS fare_cap,
+            tf.fare_cap_duration AS fare_cap_duration,
+            tf.current_spent
+        FROM ticket_fares tf
+        JOIN count_days cd ON tf.day_of_week = cd.day_of_week
+        GROUP BY tf.commute_system_id, tf.system_name, tf.fare_cap, tf.fare_cap_duration, tf.current_spent;
+    `,
+    getCommuteOverview: `
+        WITH RECURSIVE days AS (
+            SELECT date_trunc('month', current_date)::date as day
+            UNION ALL
+            SELECT day + 1
+            FROM days
+            WHERE day < date_trunc('month', current_date)::date + interval '1 month' - interval '1 day'
+        ),
+        count_days AS (
+            SELECT
+            extract(dow from day)::int AS day_of_week,
+            COUNT(*) AS num_days
+            FROM days
+            GROUP BY day_of_week
+        ),
+        ticket_fares AS (
+            SELECT
+                cs.commute_schedule_id,
+                cs.day_of_week,
+                csy.name AS system_name,
+                fd.commute_system_id,
+                csy.fare_cap AS fare_cap,
+                csy.fare_cap_duration AS fare_cap_duration,
+                COALESCE(fd.fare_amount, 0) AS fare_amount,
+                (
+                    SELECT COALESCE(SUM(ch.fare_amount), 0)
+                    FROM commute_history ch
+                    WHERE ch.account_id = cs.account_id
+                    AND ch.commute_system = csy.name
+                    AND (
+                        (csy.fare_cap_duration = 0 AND date(ch.timestamp) = current_date) OR
+                        (csy.fare_cap_duration = 1 AND date_trunc('week', ch.timestamp) = date_trunc('week', current_date)) OR
+                        (csy.fare_cap_duration = 2 AND date_trunc('month', ch.timestamp) = date_trunc('month', current_date))
+                    )
+                ) AS current_spent
+            FROM commute_schedule cs
+            JOIN fare_details fd ON cs.fare_detail_id = fd.fare_detail_id
+            JOIN commute_systems csy ON fd.commute_system_id = csy.commute_system_id
         )
         SELECT
             tf.commute_system_id,
