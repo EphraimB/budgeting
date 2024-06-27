@@ -104,6 +104,7 @@ export const getCommuteOverview = async (
                     returnObject.systems.push(systemDetails);
                 });
             }
+
             return returnObject;
         });
 
