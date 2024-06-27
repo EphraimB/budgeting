@@ -12,6 +12,7 @@ type ReturnObject = {
 };
 
 type SystemDetails = {
+    system_name: string;
     total_cost_per_week: number;
     total_cost_per_month: number;
     rides: number;
@@ -82,6 +83,7 @@ export const getCommuteOverview = async (
                     );
 
                     const systemDetails: SystemDetails = {
+                        system_name: row.system_name,
                         total_cost_per_week: parseFloat(
                             row.total_cost_per_week,
                         ),
