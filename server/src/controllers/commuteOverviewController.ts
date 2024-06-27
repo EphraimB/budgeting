@@ -47,6 +47,12 @@ export const getCommuteOverview = async (
                 accountQueries.getAccount,
                 [account_id],
             );
+
+            if (results.length === 0) {
+                response.status(404).send('Account does not exist');
+                return;
+            }
+
             accounts.push(results[0].account_id);
         } else {
             const results: Account[] = await executeQuery(
