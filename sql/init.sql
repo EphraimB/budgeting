@@ -211,7 +211,6 @@ CREATE TABLE IF NOT EXISTS fare_details (
   duration INT,  -- NULL for trip-based fares or an integer representing days for passes
   day_start INT, -- NULL for no specific start day, or an integer representing the day of the month the pass starts
   alternate_fare_detail_id INT REFERENCES fare_details(fare_detail_id),
-  alternate_fare_detail_id INT REFERENCES fare_details(fare_detail_id),
   date_created TIMESTAMP NOT NULL,
   date_modified TIMESTAMP NOT NULL
 );
