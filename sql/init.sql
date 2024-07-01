@@ -208,6 +208,7 @@ CREATE TABLE IF NOT EXISTS fare_details (
   commute_system_id INT NOT NULL REFERENCES commute_systems(commute_system_id),
   name VARCHAR(255) NOT NULL,
   fare_amount NUMERIC(5,2) NOT NULL,
+  duration INT NOT NULL,  -- Duration in minutes
   alternate_fare_detail_id INT REFERENCES fare_details(fare_detail_id),
   date_created TIMESTAMP NOT NULL,
   date_modified TIMESTAMP NOT NULL
@@ -229,7 +230,7 @@ CREATE TABLE IF NOT EXISTS commute_schedule (
   cron_job_id INT REFERENCES cron_jobs(cron_job_id),
   day_of_week INT NOT NULL,
   start_time TIME NOT NULL,
-  duration INT NOT NULL,
+  duration INT NOT NULL,  -- Duration in minutes
   fare_detail_id INT NOT NULL REFERENCES fare_details(fare_detail_id),
   date_created TIMESTAMP NOT NULL,
   date_modified TIMESTAMP NOT NULL,
@@ -244,15 +245,6 @@ CREATE TABLE IF NOT EXISTS commute_history (
   fare_type VARCHAR(255) NOT NULL,
   timestamp TIMESTAMP NOT NULL,
   is_timed_pass BOOLEAN DEFAULT FALSE,
-  date_created TIMESTAMP NOT NULL,
-  date_modified TIMESTAMP NOT NULL
-);
-
-CREATE TABLE IF NOT EXISTS active_timed_passes (
-  active_pass_id SERIAL PRIMARY KEY,
-  fare_detail_id INT NOT NULL REFERENCES fare_details(fare_detail_id),
-  start_date TIMESTAMP NOT NULL,
-  end_date TIMESTAMP NOT NULL,
   date_created TIMESTAMP NOT NULL,
   date_modified TIMESTAMP NOT NULL
 );
