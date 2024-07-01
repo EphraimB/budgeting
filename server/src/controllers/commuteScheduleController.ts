@@ -278,7 +278,10 @@ export const createCommuteSchedule = async (
         const jobDetails = {
             frequency_type: 1,
             frequency_type_variable: 1,
-            frequency_day_of_week: day_of_week,
+            frequency_day_of_month: commuteSchedule[0].day_start || undefined,
+            frequency_day_of_week: commuteSchedule[0].duration
+                ? undefined
+                : day_of_week,
             date: dayjs()
                 .hour(start_time.split(':')[0])
                 .minute(start_time.split(':')[1])
