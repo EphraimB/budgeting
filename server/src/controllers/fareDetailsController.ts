@@ -264,8 +264,6 @@ export const updateFareDetail = async (
         fare_amount,
         timeslots,
         duration,
-        is_fixed_days,
-        is_monthly,
         alternate_fare_detail_id,
     } = request.body;
     try {
