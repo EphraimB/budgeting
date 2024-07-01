@@ -44,7 +44,13 @@ router.post(
             .isTime({ hourFormat: 'hour24', mode: 'withSeconds' })
             .withMessage('Invalid end time format. It should be HH:MM:SS.'),
         body('duration')
-            .isInt({ min: 1 }),
+            .optional({ nullable: true })
+            .isInt({ min: 1 })
+            .withMessage('Duration must be be an integer'),
+        body('day_start')
+            .optional({ nullable: true })
+            .isInt({ min: 1 })
+            .withMessage('day start must be an integer'),
         body('alternate_fare_detail_id')
             .optional({ nullable: true })
             .isInt({ min: 1 })
@@ -76,8 +82,14 @@ router.put(
         body('timeslots.*.end_time')
             .isTime({ hourFormat: 'hour24', mode: 'withSeconds' })
             .withMessage('Invalid end time format. It should be HH:MM:SS.'),
-            body('duration')
-            .isInt({ min: 1 }),
+        body('duration')
+            .optional({ nullable: true })
+            .isInt({ min: 1 })
+            .withMessage('Duration must be be an integer'),
+        body('day_start')
+            .optional({ nullable: true })
+            .isInt({ min: 1 })
+            .withMessage('day start must be an integer'),
         body('alternate_fare_detail_id')
             .optional({ nullable: true })
             .isInt({ min: 1 })

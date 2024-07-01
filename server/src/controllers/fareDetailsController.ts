@@ -105,6 +105,7 @@ export const createFareDetail = async (
         fare_amount,
         timeslots,
         duration,
+        day_start,
         alternate_fare_detail_id,
     } = request.body;
 
@@ -134,6 +135,7 @@ export const createFareDetail = async (
                 name,
                 fare_amount,
                 duration,
+                day_start,
                 alternate_fare_detail_id,
             ],
         );
@@ -168,6 +170,7 @@ export const createFareDetail = async (
             fare_amount: parseFloat(fareDetails[0].fare_amount),
             timeslots: allTimeslots,
             duration: fareDetails[0].duration,
+            day_start: fareDetails[0].day_start,
             alternate_fare_detail_id: fareDetails[0].alternate_fare_detail_id,
             date_created: fareDetails[0].date_created,
             date_modified: fareDetails[0].date_modified,
@@ -264,6 +267,7 @@ export const updateFareDetail = async (
         fare_amount,
         timeslots,
         duration,
+        day_start,
         alternate_fare_detail_id,
     } = request.body;
     try {
@@ -307,6 +311,7 @@ export const updateFareDetail = async (
             name,
             fare_amount,
             duration,
+            day_start,
             alternate_fare_detail_id,
             id,
         ]);
@@ -326,6 +331,7 @@ export const updateFareDetail = async (
             fare_amount: parseFloat(fareDetails[0].fare_amount),
             timeslots: timeslots,
             duration: fareDetails[0].duration,
+            day_start: fareDetails[0].day_start,
             alternate_fare_detail_id: fareDetails[0].alternate_fare_detail_id,
             date_created: fareDetails[0].date_created,
             date_modified: fareDetails[0].date_modified,
