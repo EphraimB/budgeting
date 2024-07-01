@@ -804,10 +804,10 @@ export const commuteScheduleQueries = {
         AND commute_schedule.day_of_week = $2
         AND (
         -- New schedule starts within an existing schedule's time slot
-        (commute_schedule.start_time <= $3 AND $3 < commute_schedule.start_time + interval '1 minute' * commute_schedule.duration)
+        (commute_schedule.start_time <= $3 AND $3 < commute_schedule.end_time)
         OR
         -- Existing schedule starts within new schedule's time slot
-        (commute_schedule.start_time < $3 + interval '1 minute' * $4 AND commute_schedule.start_time >= $3)
+        (commute_schedule.end_time < $4 AND commute_schedule.start_time >= $3)
         )
         AND commute_schedule.commute_schedule_id <> $5
     `,
@@ -833,10 +833,10 @@ export const commuteScheduleQueries = {
         AND commute_schedule.day_of_week = $2
         AND (
         -- New schedule starts within an existing schedule's time slot
-        (commute_schedule.start_time <= $3 AND $3 < commute_schedule.start_time + interval '1 minute' * commute_schedule.duration)
+        (commute_schedule.start_time <= $3 AND $3 < commute_schedule.end_time)
         OR
         -- Existing schedule starts within new schedule's time slot
-        (commute_schedule.start_time < $3 + interval '1 minute' * $4 AND commute_schedule.start_time >= $3)
+        (commute_schedule.end_time < $4 AND commute_schedule.start_time >= $3)
         )
     `,
     createCommuteSchedule:

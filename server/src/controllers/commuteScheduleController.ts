@@ -173,7 +173,7 @@ export const createCommuteSchedule = async (
     response: Response,
     next: NextFunction,
 ) => {
-    const { account_id, day_of_week, fare_detail_id, start_time, duration } =
+    const { account_id, day_of_week, fare_detail_id, start_time, end_time } =
         request.body;
     let fareDetail: FareDetails[] = [];
 
@@ -185,7 +185,7 @@ export const createCommuteSchedule = async (
         // Check for overlapping day_of_week and start_time
         const existingSchedule = await executeQuery(
             commuteScheduleQueries.getCommuteScheduleByDayAndTime,
-            [account_id, day_of_week, start_time, duration],
+            [account_id, day_of_week, start_time, end_time],
         );
 
         if (existingSchedule.length > 0) {
@@ -266,7 +266,7 @@ export const createCommuteSchedule = async (
                 day_of_week,
                 currentFareDetailId,
                 start_time,
-                duration,
+                end_time,
             ],
         );
 
@@ -381,7 +381,7 @@ export const updateCommuteSchedule = async (
     next: NextFunction,
 ): Promise<void> => {
     const id = parseInt(request.params.id);
-    const { account_id, day_of_week, fare_detail_id, start_time, duration } =
+    const { account_id, day_of_week, fare_detail_id, start_time, end_time } =
         request.body;
     let fareDetail: FareDetails[] = [];
 
@@ -403,7 +403,7 @@ export const updateCommuteSchedule = async (
         // Check for overlapping day_of_week and start_time
         const existingSchedule = await executeQuery(
             commuteScheduleQueries.getCommuteScheduleByDayAndTimeExcludingId,
-            [account_id, day_of_week, start_time, duration, id],
+            [account_id, day_of_week, start_time, end_time, id],
         );
 
         if (existingSchedule.length > 0) {
@@ -533,7 +533,7 @@ export const updateCommuteSchedule = async (
             day_of_week,
             currentFareDetailId,
             start_time,
-            duration,
+            end_time,
             id,
         ]);
 
