@@ -230,7 +230,7 @@ CREATE TABLE IF NOT EXISTS commute_schedule (
   cron_job_id INT REFERENCES cron_jobs(cron_job_id),
   day_of_week INT NOT NULL,
   start_time TIME NOT NULL,
-  duration INT NOT NULL,  -- Duration in minutes
+  end_time TIME NOT NULL,
   fare_detail_id INT NOT NULL REFERENCES fare_details(fare_detail_id),
   date_created TIMESTAMP NOT NULL,
   date_modified TIMESTAMP NOT NULL,
@@ -456,11 +456,6 @@ EXECUTE PROCEDURE update_dates();
 
 CREATE TRIGGER update_commute_history_dates
 BEFORE INSERT OR UPDATE ON commute_history
-FOR EACH ROW
-EXECUTE PROCEDURE update_dates();
-
-CREATE TRIGGER update_active_timed_passes_dates
-BEFORE INSERT OR UPDATE ON active_timed_passes
 FOR EACH ROW
 EXECUTE PROCEDURE update_dates();
 

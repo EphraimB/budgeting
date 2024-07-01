@@ -2567,6 +2567,11 @@
                             }
                         }
                     },
+                    "duration": {
+                        "type": "number",
+                        "format": "integer",
+                        "example": 90
+                    },
                     "alternate_fare_detail_id": {
                         "type": "integer",
                         "example": null
@@ -3091,6 +3096,11 @@
                                                         }
                                                     }
                                                 }
+                                            },
+                                            "duration": {
+                                                "type": "number",
+                                                "format": "integer",
+                                                "example": 90
                                             },
                                             "alternate_fare_detail_id": {
                                                 "type": "integer",

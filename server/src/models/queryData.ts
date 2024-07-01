@@ -672,7 +672,7 @@ export const fareDetailsQueries = {
             commute_systems.name AS system_name,
             fare_details.name AS fare_type,
             fare_amount,
-            timed_pass_duration,
+            duration,
             alternate_fare_detail_id,
             fare_details.date_created,
             fare_details.date_modified
@@ -686,7 +686,7 @@ export const fareDetailsQueries = {
             commute_systems.name AS system_name,
             fare_details.name AS fare_type,
             fare_amount,
-            timed_pass_duration,
+            duration,
             alternate_fare_detail_id,
             fare_details.date_created,
             fare_details.date_modified
@@ -695,9 +695,9 @@ export const fareDetailsQueries = {
         ON fare_details.commute_system_id = commute_systems.commute_system_id
         WHERE fare_details.fare_detail_id = $1`,
     createFareDetails:
-        'INSERT INTO fare_details (commute_system_id, name, fare_amount, timed_pass_duration, alternate_fare_detail_id) VALUES ($1, $2, $3, $4, $5) RETURNING *',
+        'INSERT INTO fare_details (commute_system_id, name, fare_amount, duration, alternate_fare_detail_id) VALUES ($1, $2, $3, $4, $5) RETURNING *',
     updateFareDetails:
-        'UPDATE fare_details SET commute_system_id = $1, name = $2, fare_amount = $3, timed_pass_duration = $4 alternate_fare_detail_id = $5 WHERE fare_detail_id = $6 RETURNING *',
+        'UPDATE fare_details SET commute_system_id = $1, name = $2, fare_amount = $3, duration = $4 alternate_fare_detail_id = $5 WHERE fare_detail_id = $6 RETURNING *',
     deleteFareDetails: 'DELETE FROM fare_details WHERE fare_detail_id = $1',
 };
 
@@ -711,7 +711,7 @@ export const commuteScheduleQueries = {
             commute_schedule.day_of_week AS day_of_week,
             concat(commute_systems.name, ' ', fare_details.name) AS pass,
             commute_schedule.start_time AS start_time,
-            commute_schedule.duration AS duration,
+            commute_schedule.end_time AS end_time,
             fare_details.fare_amount AS fare_amount,
             commute_schedule.date_created,
             commute_schedule.date_modified
@@ -730,7 +730,7 @@ export const commuteScheduleQueries = {
             commute_schedule.day_of_week AS day_of_week,
             concat(commute_systems.name, ' ', fare_details.name) AS pass,
             commute_schedule.start_time AS start_time,
-            commute_schedule.duration AS duration,
+            commute_schedule.end_time AS end_time,
             fare_details.fare_amount AS fare_amount,
             commute_schedule.date_created,
             commute_schedule.date_modified
@@ -750,7 +750,7 @@ export const commuteScheduleQueries = {
             commute_schedule.day_of_week AS day_of_week,
             concat(commute_systems.name, ' ', fare_details.name) AS pass,
             commute_schedule.start_time AS start_time,
-            commute_schedule.duration AS duration,
+            commute_schedule.end_time AS end_time,
             fare_details.fare_amount AS fare_amount,
             commute_schedule.date_created,
             commute_schedule.date_modified
@@ -771,7 +771,7 @@ export const commuteScheduleQueries = {
             commute_schedule.day_of_week AS day_of_week,
             concat(commute_systems.name, ' ', fare_details.name) AS pass,
             commute_schedule.start_time AS start_time,
-            commute_schedule.duration AS duration,
+            commute_schedule.end_time AS end_time,
             fare_details.fare_amount AS fare_amount,
             commute_schedule.date_created,
             commute_schedule.date_modified
@@ -791,7 +791,7 @@ export const commuteScheduleQueries = {
             commute_schedule.day_of_week AS day_of_week,
             concat(commute_systems.name, ' ', fare_details.name) AS pass,
             commute_schedule.start_time AS start_time,
-            commute_schedule.duration AS duration,
+            commute_schedule.end_time AS end_time,
             fare_details.fare_amount AS fare_amount,
             commute_schedule.date_created,
             commute_schedule.date_modified
@@ -820,7 +820,7 @@ export const commuteScheduleQueries = {
             commute_schedule.day_of_week AS day_of_week,
             concat(commute_systems.name, ' ', fare_details.name) AS pass,
             commute_schedule.start_time AS start_time,
-            commute_schedule.duration AS duration,
+            commute_schedule.end_time AS end_time,
             fare_details.fare_amount AS fare_amount,
             commute_schedule.date_created,
             commute_schedule.date_modified
@@ -840,9 +840,9 @@ export const commuteScheduleQueries = {
         )
     `,
     createCommuteSchedule:
-        'INSERT INTO commute_schedule (account_id, day_of_week, fare_detail_id, start_time, duration) VALUES ($1, $2, $3, $4, $5) RETURNING *',
+        'INSERT INTO commute_schedule (account_id, day_of_week, fare_detail_id, start_time, end_time) VALUES ($1, $2, $3, $4, $5) RETURNING *',
     updateCommuteSchedule:
-        'UPDATE commute_schedule SET account_id = $1, day_of_week = $2, fare_detail_id = $3, start_time = $4, duration = $5 WHERE commute_schedule_id = $6 RETURNING *',
+        'UPDATE commute_schedule SET account_id = $1, day_of_week = $2, fare_detail_id = $3, start_time = $4, end_time = $5 WHERE commute_schedule_id = $6 RETURNING *',
     deleteCommuteSchedule:
         'DELETE FROM commute_schedule WHERE commute_schedule_id = $1',
     updateCommuteWithCronJobId:

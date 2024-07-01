@@ -46,12 +46,10 @@ const parseCommuteSchedule = (
     day_of_week: parseInt(commuteSchedule.day_of_week),
     fare_detail_id: parseInt(commuteSchedule.fare_detail_id),
     start_time: commuteSchedule.start_time,
+    end_time: commuteSchedule.end_time,
     duration: parseInt(commuteSchedule.duration),
     fare_amount: parseFloat(commuteSchedule.fare_amount),
     pass: commuteSchedule.pass,
-    timed_pass_duration: parseIntOrFallback(
-        commuteSchedule.timed_pass_duration,
-    ),
     date_created: commuteSchedule.date_created,
     date_modified: commuteSchedule.date_modified,
 });
