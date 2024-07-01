@@ -714,6 +714,8 @@ export const commuteScheduleQueries = {
             concat(commute_systems.name, ' ', fare_details.name) AS pass,
             commute_schedule.start_time AS start_time,
             commute_schedule.end_time AS end_time,
+            fare_details.duration AS duration,
+            fare_details.day_start AS day_start,
             fare_details.fare_amount AS fare_amount,
             commute_schedule.date_created,
             commute_schedule.date_modified
@@ -733,6 +735,8 @@ export const commuteScheduleQueries = {
             concat(commute_systems.name, ' ', fare_details.name) AS pass,
             commute_schedule.start_time AS start_time,
             commute_schedule.end_time AS end_time,
+            fare_details.duration AS duration,
+            fare_details.day_start AS day_start,
             fare_details.fare_amount AS fare_amount,
             commute_schedule.date_created,
             commute_schedule.date_modified
@@ -753,6 +757,8 @@ export const commuteScheduleQueries = {
             concat(commute_systems.name, ' ', fare_details.name) AS pass,
             commute_schedule.start_time AS start_time,
             commute_schedule.end_time AS end_time,
+            fare_details.duration AS duration,
+            fare_details.day_start AS day_start,
             fare_details.fare_amount AS fare_amount,
             commute_schedule.date_created,
             commute_schedule.date_modified
@@ -774,6 +780,8 @@ export const commuteScheduleQueries = {
             concat(commute_systems.name, ' ', fare_details.name) AS pass,
             commute_schedule.start_time AS start_time,
             commute_schedule.end_time AS end_time,
+            fare_details.duration AS duration,
+            fare_details.day_start AS day_start,
             fare_details.fare_amount AS fare_amount,
             commute_schedule.date_created,
             commute_schedule.date_modified
@@ -794,6 +802,8 @@ export const commuteScheduleQueries = {
             concat(commute_systems.name, ' ', fare_details.name) AS pass,
             commute_schedule.start_time AS start_time,
             commute_schedule.end_time AS end_time,
+            fare_details.duration AS duration,
+            fare_details.day_start AS day_start,
             fare_details.fare_amount AS fare_amount,
             commute_schedule.date_created,
             commute_schedule.date_modified
@@ -823,6 +833,8 @@ export const commuteScheduleQueries = {
             concat(commute_systems.name, ' ', fare_details.name) AS pass,
             commute_schedule.start_time AS start_time,
             commute_schedule.end_time AS end_time,
+            fare_details.duration AS duration,
+            fare_details.day_start AS day_start,
             fare_details.fare_amount AS fare_amount,
             commute_schedule.date_created,
             commute_schedule.date_modified

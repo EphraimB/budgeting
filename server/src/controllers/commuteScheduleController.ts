@@ -27,7 +27,8 @@ interface Schedule {
         commute_schedule_id: number;
         pass: string;
         start_time: string;
-        duration: number;
+        duration: number | null;
+        day_start: number | null;
         fare_amount: number;
     }>;
 }
@@ -47,7 +48,8 @@ const parseCommuteSchedule = (
     fare_detail_id: parseInt(commuteSchedule.fare_detail_id),
     start_time: commuteSchedule.start_time,
     end_time: commuteSchedule.end_time,
-    duration: parseInt(commuteSchedule.duration),
+    duration: parseIntOrFallback(commuteSchedule.duration),
+    day_start: parseIntOrFallback(commuteSchedule.day_start),
     fare_amount: parseFloat(commuteSchedule.fare_amount),
     pass: commuteSchedule.pass,
     date_created: commuteSchedule.date_created,
@@ -113,6 +115,7 @@ export const getCommuteSchedule = async (
                     pass: curr.pass,
                     start_time: curr.start_time,
                     duration: curr.duration,
+                    day_start: curr.day_start,
                     fare_amount: curr.fare_amount,
                 });
                 return acc;
