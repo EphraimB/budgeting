@@ -33,9 +33,14 @@ afterEach(() => {
 });
 
 describe('GET /api/expenses/commute', () => {
-    it('should respond with an overview of commute expenses', async () => {
+    it('should respond with an overview of commute expenses with an account_id provided', async () => {
         // Arrange
         mockModule([
+            [
+                {
+                    account_id: 1,
+                },
+            ],
             [
                 {
                     account_id: 1,
@@ -62,23 +67,92 @@ describe('GET /api/expenses/commute', () => {
 
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(200);
-        expect(mockResponse.json).toHaveBeenCalledWith({
-            account_id: 1,
-            total_cost_per_week: 100,
-            total_cost_per_month: 400,
-            systems: {
-                BART: {
+        expect(mockResponse.json).toHaveBeenCalledWith([
+            {
+                account_id: 1,
+                total_cost_per_week: 100,
+                total_cost_per_month: 400,
+                systems: [
+                    {
+                        system_name: 'BART',
+                        total_cost_per_week: 100,
+                        total_cost_per_month: 400,
+                        rides: 10,
+                        fare_cap_progress: {
+                            current_spent: 50,
+                            fare_cap: 100,
+                            fare_cap_duration: 2,
+                        },
+                    },
+                ],
+            },
+        ]);
+    });
+
+    it('should respond with an overview of commute expenses with no account_id provided', async () => {
+        // Arrange
+        mockModule([
+            [
+                {
+                    account_id: 1,
+                },
+                {
+                    account_id: 2,
+                },
+            ],
+            [
+                {
+                    account_id: 1,
                     total_cost_per_week: 100,
                     total_cost_per_month: 400,
+                    commute_system_id: 1,
+                    system_name: 'BART',
                     rides: 10,
-                    fare_cap_progress: {
-                        current_spent: 50,
-                        fare_cap: 100,
-                        fare_cap_duration: 2,
-                    },
+                    fare_cap: 100,
+                    fare_cap_duration: 2,
+                    current_spent: 50,
                 },
+            ],
+            [],
+        ]);
+
+        const { getCommuteOverview } = await import(
+            '../../src/controllers/commuteOverviewController.js'
+        );
+
+        mockRequest.query = {};
+
+        // Call the function with the mock request and response
+        await getCommuteOverview(mockRequest as Request, mockResponse);
+
+        // Assert
+        expect(mockResponse.status).toHaveBeenCalledWith(200);
+        expect(mockResponse.json).toHaveBeenCalledWith([
+            {
+                account_id: 1,
+                total_cost_per_week: 100,
+                total_cost_per_month: 400,
+                systems: [
+                    {
+                        system_name: 'BART',
+                        total_cost_per_week: 100,
+                        total_cost_per_month: 400,
+                        rides: 10,
+                        fare_cap_progress: {
+                            current_spent: 50,
+                            fare_cap: 100,
+                            fare_cap_duration: 2,
+                        },
+                    },
+                ],
             },
-        });
+            {
+                account_id: 2,
+                total_cost_per_week: 0,
+                total_cost_per_month: 0,
+                systems: [],
+            },
+        ]);
     });
 
     it('should respond with a 404 if the account does not exist', async () => {

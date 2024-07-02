@@ -208,9 +208,8 @@ CREATE TABLE IF NOT EXISTS fare_details (
   commute_system_id INT NOT NULL REFERENCES commute_systems(commute_system_id),
   name VARCHAR(255) NOT NULL,
   fare_amount NUMERIC(5,2) NOT NULL,
-  timed_pass_duration INT,
-  is_fixed_days BOOLEAN DEFAULT FALSE,
-  is_monthly BOOLEAN DEFAULT FALSE,
+  duration INT,  -- NULL for trip-based fares or an integer representing days for passes
+  day_start INT, -- NULL for no specific start day, or an integer representing the day of the month the pass starts
   alternate_fare_detail_id INT REFERENCES fare_details(fare_detail_id),
   date_created TIMESTAMP NOT NULL,
   date_modified TIMESTAMP NOT NULL
@@ -232,7 +231,7 @@ CREATE TABLE IF NOT EXISTS commute_schedule (
   cron_job_id INT REFERENCES cron_jobs(cron_job_id),
   day_of_week INT NOT NULL,
   start_time TIME NOT NULL,
-  duration INT NOT NULL,
+  end_time TIME NOT NULL,
   fare_detail_id INT NOT NULL REFERENCES fare_details(fare_detail_id),
   date_created TIMESTAMP NOT NULL,
   date_modified TIMESTAMP NOT NULL,
@@ -247,16 +246,6 @@ CREATE TABLE IF NOT EXISTS commute_history (
   fare_type VARCHAR(255) NOT NULL,
   timestamp TIMESTAMP NOT NULL,
   is_timed_pass BOOLEAN DEFAULT FALSE,
-  date_created TIMESTAMP NOT NULL,
-  date_modified TIMESTAMP NOT NULL
-);
-
-CREATE TABLE IF NOT EXISTS active_timed_passes (
-  active_pass_id SERIAL PRIMARY KEY,
-  commute_schedule_id INT NOT NULL REFERENCES commute_schedule(commute_schedule_id),
-  fare_detail_id INT NOT NULL REFERENCES fare_details(fare_detail_id),
-  start_date TIMESTAMP NOT NULL,
-  end_date TIMESTAMP NOT NULL,
   date_created TIMESTAMP NOT NULL,
   date_modified TIMESTAMP NOT NULL
 );
@@ -468,11 +457,6 @@ EXECUTE PROCEDURE update_dates();
 
 CREATE TRIGGER update_commute_history_dates
 BEFORE INSERT OR UPDATE ON commute_history
-FOR EACH ROW
-EXECUTE PROCEDURE update_dates();
-
-CREATE TRIGGER update_active_timed_passes_dates
-BEFORE INSERT OR UPDATE ON active_timed_passes
 FOR EACH ROW
 EXECUTE PROCEDURE update_dates();
 

@@ -43,11 +43,14 @@ router.post(
         body('timeslots.*.end_time')
             .isTime({ hourFormat: 'hour24', mode: 'withSeconds' })
             .withMessage('Invalid end time format. It should be HH:MM:SS.'),
-        body('timed_pass_duration')
+        body('duration')
             .optional({ nullable: true })
-            .isInt({ min: 1 }),
-        body('is_fixed_days').optional().isBoolean(),
-        body('is_monthly').optional().isBoolean(),
+            .isInt({ min: 1 })
+            .withMessage('Duration must be be an integer'),
+        body('day_start')
+            .optional({ nullable: true })
+            .isInt({ min: 1 })
+            .withMessage('day start must be an integer'),
         body('alternate_fare_detail_id')
             .optional({ nullable: true })
             .isInt({ min: 1 })
@@ -79,11 +82,14 @@ router.put(
         body('timeslots.*.end_time')
             .isTime({ hourFormat: 'hour24', mode: 'withSeconds' })
             .withMessage('Invalid end time format. It should be HH:MM:SS.'),
-        body('timed_pass_duration')
+        body('duration')
             .optional({ nullable: true })
-            .isInt({ min: 1 }),
-        body('is_fixed_days').optional().isBoolean(),
-        body('is_monthly').optional().isBoolean(),
+            .isInt({ min: 1 })
+            .withMessage('Duration must be be an integer'),
+        body('day_start')
+            .optional({ nullable: true })
+            .isInt({ min: 1 })
+            .withMessage('day start must be an integer'),
         body('alternate_fare_detail_id')
             .optional({ nullable: true })
             .isInt({ min: 1 })
