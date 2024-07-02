@@ -1,15 +1,15 @@
 services:
-  client:
-    build:
-      context: ./client/
-      dockerfile: Dockerfile
-    networks:
-      - app-network
-    ports:
-      - "3000:3000"
-    working_dir: "/home/node/app"
-    depends_on:
-      - server
+  # client:
+  #   build:
+  #     context: ./client/
+  #     dockerfile: Dockerfile
+  #   networks:
+  #     - app-network
+  #   ports:
+  #     - "3000:3000"
+  #   working_dir: "/home/node/app"
+  #   depends_on:
+  #     - server
   server:
     build:
       context: ./server/

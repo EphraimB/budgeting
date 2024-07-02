@@ -2,7 +2,7 @@ import { type Request, type Response } from 'express';
 import { accountQueries, commuteOverviewQueries } from '../models/queryData.js';
 import { handleError, executeQuery } from '../utils/helperFunctions.js';
 import { logger } from '../config/winston.js';
-import { Account } from '../../src/types/types.js';
+import { Account } from '../types/types.js';
 
 type ReturnObject = {
     account_id: number;
