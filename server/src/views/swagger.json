@@ -712,7 +712,7 @@
                         "name": "account_id",
                         "in": "query",
                         "description": "Filter by account id",
-                        "required": true,
+                        "required": false,
                         "schema": {
                             "type": "integer",
                             "minimum": 1
@@ -2693,6 +2693,14 @@
                             }
                         }
                     },
+                    "duration": {
+                        "type": "integer",
+                        "example": null
+                    },
+                    "day_start": {
+                        "type": "integer",
+                        "example": null
+                    },
                     "alternate_fare_detail_id": {
                         "type": "integer",
                         "example": null
@@ -2720,9 +2728,9 @@
                         "type": "string",
                         "example": "05:00:00"
                     },
-                    "duration": {
-                        "type": "integer",
-                        "example": 60
+                    "end_time": {
+                        "type": "string",
+                        "example": "10:00:00"
                     }
                 }
             },
@@ -2996,64 +3004,65 @@
                 "content": {
                     "application/json": {
                         "schema": {
-                            "type": "object",
-                            "properties": {
-                                "account_id": {
-                                    "type": "integer",
-                                    "format": "int64",
-                                    "minimum": 1
-                                },
-                                "total_cost_per_week": {
-                                    "type": "number",
-                                    "format": "double",
-                                    "example": 100.0
-                                },
-                                "total_cost_per_month": {
-                                    "type": "number",
-                                    "format": "double",
-                                    "example": 400.0
-                                },
-                                "systems": {
-                                    "type": "object",
-                                    "properties": {
-                                        "OMNY": {
+                            "type": "array",
+                            "items": {
+                                "type": "object",
+                                "properties": {
+                                    "account_id": {
+                                        "type": "integer",
+                                        "format": "int64",
+                                        "minimum": 1
+                                    },
+                                    "total_cost_per_week": {
+                                        "type": "number",
+                                        "format": "double",
+                                        "example": 100.0
+                                    },
+                                    "total_cost_per_month": {
+                                        "type": "number",
+                                        "format": "double",
+                                        "example": 400.0
+                                    },
+                                    "systems": {
+                                        "type": "array",
+                                        "items": {
                                             "type": "object",
                                             "properties": {
-                                                "total_cost_per_week": {
-                                                    "type": "number",
-                                                    "format": "double",
-                                                    "example": 50.0
-                                                },
-                                                "total_cost_per_month": {
-                                                    "type": "number",
-                                                    "format": "double",
-                                                    "example": 200.0
-                                                },
-                                                "rides": {
-                                                    "type": "integer",
-                                                    "example": 10
-                                                },
-                                                "fare_cap_progress": {
+                                                "OMNY": {
                                                     "type": "object",
                                                     "properties": {
-                                                        "current_spent": {
+                                                        "total_cost_per_week": {
                                                             "type": "number",
                                                             "format": "double",
-                                                            "example": 10.0
+                                                            "example": 50.0
                                                         },
-                                                        "fare_cap": {
+                                                        "total_cost_per_month": {
                                                             "type": "number",
                                                             "format": "double",
-                                                            "example": 33.0
+                                                            "example": 200.0
                                                         },
-                                                        "potential_savings": {
-                                                            "type": "number",
-                                                            "format": "double",
-                                                            "example": 5.0
-                                                        },
-                                                        "fare_cap_duration": {
+                                                        "rides": {
                                                             "type": "integer",
-                                                            "example": 1
+                                                            "example": 10
+                                                        },
+                                                        "fare_cap_progress": {
+                                                            "type": "object",
+                                                            "properties": {
+                                                                "current_spent": {
+                                                                    "type": "number",
+                                                                    "format": "double",
+                                                                    "example": 10.0
+                                                                },
+                                                                "fare_cap": {
+                                                                    "type": "number",
+                                                                    "format": "double",
+                                                                    "example": 33.0
+                                                                },
+                                                                "fare_cap_duration": {
+                                                                    "type": "integer",
+                                                                    "example": 1
+                                                                }
+                                                            }
                                                         }
                                                     }
                                                 }
@@ -3217,6 +3226,14 @@
                                                     }
                                                 }
                                             },
+                                            "duration": {
+                                                "type": "integer",
+                                                "example": null
+                                            },
+                                            "day_start": {
+                                                "type": "integer",
+                                                "example": null
+                                            },
                                             "alternate_fare_detail_id": {
                                                 "type": "integer",
                                                 "example": null
@@ -3267,9 +3284,9 @@
                                                             "type": "string",
                                                             "example": "05:00:00"
                                                         },
-                                                        "duration": {
-                                                            "type": "integer",
-                                                            "example": 1
+                                                        "end_time": {
+                                                            "type": "string",
+                                                            "example": "10:00:00"
                                                         },
                                                         "fare_amount": {
                                                             "type": "number",

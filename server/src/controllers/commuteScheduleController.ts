@@ -27,7 +27,8 @@ interface Schedule {
         commute_schedule_id: number;
         pass: string;
         start_time: string;
-        duration: number;
+        duration: number | null;
+        day_start: number | null;
         fare_amount: number;
     }>;
 }
@@ -46,12 +47,11 @@ const parseCommuteSchedule = (
     day_of_week: parseInt(commuteSchedule.day_of_week),
     fare_detail_id: parseInt(commuteSchedule.fare_detail_id),
     start_time: commuteSchedule.start_time,
-    duration: parseInt(commuteSchedule.duration),
+    end_time: commuteSchedule.end_time,
+    duration: parseIntOrFallback(commuteSchedule.duration),
+    day_start: parseIntOrFallback(commuteSchedule.day_start),
     fare_amount: parseFloat(commuteSchedule.fare_amount),
     pass: commuteSchedule.pass,
-    timed_pass_duration: parseIntOrFallback(
-        commuteSchedule.timed_pass_duration,
-    ),
     date_created: commuteSchedule.date_created,
     date_modified: commuteSchedule.date_modified,
 });
@@ -115,6 +115,7 @@ export const getCommuteSchedule = async (
                     pass: curr.pass,
                     start_time: curr.start_time,
                     duration: curr.duration,
+                    day_start: curr.day_start,
                     fare_amount: curr.fare_amount,
                 });
                 return acc;
@@ -175,7 +176,7 @@ export const createCommuteSchedule = async (
     response: Response,
     next: NextFunction,
 ) => {
-    const { account_id, day_of_week, fare_detail_id, start_time, duration } =
+    const { account_id, day_of_week, fare_detail_id, start_time, end_time } =
         request.body;
     let fareDetail: FareDetails[] = [];
 
@@ -187,7 +188,7 @@ export const createCommuteSchedule = async (
         // Check for overlapping day_of_week and start_time
         const existingSchedule = await executeQuery(
             commuteScheduleQueries.getCommuteScheduleByDayAndTime,
-            [account_id, day_of_week, start_time, duration],
+            [account_id, day_of_week, start_time, end_time],
         );
 
         if (existingSchedule.length > 0) {
@@ -268,16 +269,32 @@ export const createCommuteSchedule = async (
                 day_of_week,
                 currentFareDetailId,
                 start_time,
-                duration,
+                end_time,
             ],
         );
 
-        const commuteSchedule = rows.map((s) => parseCommuteSchedule(s));
+        const results = await executeQuery(
+            commuteScheduleQueries.getCommuteSchedulesById,
+            [rows[0].commute_schedule_id],
+        );
+
+        const commuteSchedule = results.map((result) =>
+            parseCommuteSchedule(result),
+        );
+
+        console.log(commuteSchedule);
 
         const jobDetails = {
-            frequency_type: 1,
+            frequency_type:
+                commuteSchedule[0].duration !== null &&
+                commuteSchedule[0].duration > 30
+                    ? 2
+                    : 1,
             frequency_type_variable: 1,
-            frequency_day_of_week: day_of_week,
+            frequency_day_of_month: commuteSchedule[0].day_start || undefined,
+            frequency_day_of_week: commuteSchedule[0].duration
+                ? undefined
+                : day_of_week,
             date: dayjs()
                 .hour(start_time.split(':')[0])
                 .minute(start_time.split(':')[1])
@@ -383,7 +400,7 @@ export const updateCommuteSchedule = async (
     next: NextFunction,
 ): Promise<void> => {
     const id = parseInt(request.params.id);
-    const { account_id, day_of_week, fare_detail_id, start_time, duration } =
+    const { account_id, day_of_week, fare_detail_id, start_time, end_time } =
         request.body;
     let fareDetail: FareDetails[] = [];
 
@@ -405,7 +422,7 @@ export const updateCommuteSchedule = async (
         // Check for overlapping day_of_week and start_time
         const existingSchedule = await executeQuery(
             commuteScheduleQueries.getCommuteScheduleByDayAndTimeExcludingId,
-            [account_id, day_of_week, start_time, duration, id],
+            [account_id, day_of_week, start_time, end_time, id],
         );
 
         if (existingSchedule.length > 0) {
@@ -535,7 +552,7 @@ export const updateCommuteSchedule = async (
             day_of_week,
             currentFareDetailId,
             start_time,
-            duration,
+            end_time,
             id,
         ]);
 

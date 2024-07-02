@@ -1,27 +1,18 @@
 import { type Request, type Response } from 'express';
-import { commuteOverviewQueries } from '../models/queryData.js';
+import { accountQueries, commuteOverviewQueries } from '../models/queryData.js';
 import { handleError, executeQuery } from '../utils/helperFunctions.js';
 import { logger } from '../config/winston.js';
+import { Account } from '../../src/types/types.js';
 
 type ReturnObject = {
     account_id: number;
     total_cost_per_week: number;
     total_cost_per_month: number;
-    systems: {
-        [key: string]: {
-            total_cost_per_week: number;
-            total_cost_per_month: number;
-            rides: number;
-            fare_cap_progress?: {
-                current_spent: number;
-                fare_cap: number;
-                fare_cap_duration: number;
-            };
-        };
-    };
+    systems: SystemDetails[];
 };
 
 type SystemDetails = {
+    system_name: string;
     total_cost_per_week: number;
     total_cost_per_month: number;
     rides: number;
@@ -32,73 +23,99 @@ type SystemDetails = {
     };
 };
 
-/**
- *
- * @param request - Request object
- * @param response - Response object
- * Sends a response with a single account
- */
 export const getCommuteOverview = async (
     request: Request,
     response: Response,
 ): Promise<void> => {
-    const { account_id } = request.query as { account_id?: string }; // Destructure id from query string
+    const { account_id } = request.query;
 
     try {
-        // Change the query based on the presence of id
-        const query: string = commuteOverviewQueries.getCommuteOverview;
-        const params = [account_id];
-        const overview = await executeQuery(query, params);
+        const accounts: number[] = [];
 
-        if (overview.length === 0) {
-            response.status(404).send('Account does not exist');
-            return;
-        }
-
-        // Initialize the return object
-        const returnObject: ReturnObject = {
-            account_id: 1, // set the account_id
-            total_cost_per_week: 0,
-            total_cost_per_month: 0,
-            systems: {},
-        };
-
-        // Loop through the query result and build the return object
-        overview.forEach((row) => {
-            // Update the total_cost_per_week and total_cost_per_month
-            returnObject.total_cost_per_week += parseFloat(
-                row.total_cost_per_week,
-            );
-            returnObject.total_cost_per_month += parseFloat(
-                row.total_cost_per_month,
+        if (account_id) {
+            const results: Account[] = await executeQuery(
+                accountQueries.getAccount,
+                [account_id],
             );
 
-            // Initialize systemDetails object
-            const systemDetails: SystemDetails = {
-                total_cost_per_week: parseFloat(row.total_cost_per_week),
-                total_cost_per_month: parseFloat(row.total_cost_per_month),
-                rides: parseInt(row.rides),
-            };
-
-            // Include fare_cap_progress if fare_cap is not null
-            if (row.fare_cap !== null) {
-                systemDetails.fare_cap_progress = {
-                    current_spent: parseFloat(row.current_spent),
-                    fare_cap: parseFloat(row.fare_cap),
-                    fare_cap_duration: parseInt(row.fare_cap_duration),
-                };
+            if (results.length === 0) {
+                response.status(404).send('Account does not exist');
+                return;
             }
 
-            // Add the systemDetails to the return object
-            returnObject.systems[row.system_name] = systemDetails;
+            accounts.push(results[0].account_id);
+        } else {
+            const results: Account[] = await executeQuery(
+                accountQueries.getAccounts,
+                [],
+            );
+            accounts.push(...results.map((account) => account.account_id));
+        }
+
+        const overviews = await Promise.all(
+            accounts.map(async (account_id) => {
+                return await executeQuery(
+                    commuteOverviewQueries.getCommuteOverviewByAccountId,
+                    [account_id],
+                );
+            }),
+        );
+
+        const returnObjects = accounts.map((account_id) => {
+            const returnObject: ReturnObject = {
+                account_id,
+                total_cost_per_week: 0,
+                total_cost_per_month: 0,
+                systems: [],
+            };
+
+            const overview = overviews.find(
+                (overview) => overview[0]?.account_id === account_id,
+            );
+
+            if (overview) {
+                overview.forEach((row) => {
+                    returnObject.total_cost_per_week += parseFloat(
+                        row.total_cost_per_week,
+                    );
+                    returnObject.total_cost_per_month += parseFloat(
+                        row.total_cost_per_month,
+                    );
+
+                    const systemDetails: SystemDetails = {
+                        system_name: row.system_name,
+                        total_cost_per_week: parseFloat(
+                            row.total_cost_per_week,
+                        ),
+                        total_cost_per_month: parseFloat(
+                            row.total_cost_per_month,
+                        ),
+                        rides: parseInt(row.rides),
+                    };
+
+                    if (row.fare_cap !== null) {
+                        systemDetails.fare_cap_progress = {
+                            current_spent: parseFloat(row.current_spent),
+                            fare_cap: parseFloat(row.fare_cap),
+                            fare_cap_duration: parseInt(row.fare_cap_duration),
+                        };
+                    }
+
+                    returnObject.systems.push(systemDetails);
+                });
+            }
+
+            return returnObject;
         });
 
-        response.status(200).json(returnObject);
+        response.status(200).json(returnObjects);
     } catch (error) {
-        logger.error(error); // Log the error on the server side
+        logger.error(error);
         handleError(
             response,
-            `Error getting commute overview for account ${account_id}`,
+            account_id
+                ? `Error getting commute overview for account ${account_id}`
+                : `Error getting commute overview for all accounts`,
         );
     }
 };
