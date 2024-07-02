@@ -273,10 +273,23 @@ export const createCommuteSchedule = async (
             ],
         );
 
-        const commuteSchedule = rows.map((s) => parseCommuteSchedule(s));
+        const results = await executeQuery(
+            commuteScheduleQueries.getCommuteSchedulesById,
+            [rows[0].commute_schedule_id],
+        );
+
+        const commuteSchedule = results.map((result) =>
+            parseCommuteSchedule(result),
+        );
+
+        console.log(commuteSchedule);
 
         const jobDetails = {
-            frequency_type: 1,
+            frequency_type:
+                commuteSchedule[0].duration !== null &&
+                commuteSchedule[0].duration > 30
+                    ? 2
+                    : 1,
             frequency_type_variable: 1,
             frequency_day_of_month: commuteSchedule[0].day_start || undefined,
             frequency_day_of_week: commuteSchedule[0].duration

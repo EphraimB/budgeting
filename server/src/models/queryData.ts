@@ -697,7 +697,7 @@ export const fareDetailsQueries = {
         ON fare_details.commute_system_id = commute_systems.commute_system_id
         WHERE fare_details.fare_detail_id = $1`,
     createFareDetails:
-        'INSERT INTO fare_details (commute_system_id, name, fare_amount, duration, day_start, alternate_fare_detail_id) VALUES ($1, $2, $3, $4, $5) RETURNING *',
+        'INSERT INTO fare_details (commute_system_id, name, fare_amount, duration, day_start, alternate_fare_detail_id) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *',
     updateFareDetails:
         'UPDATE fare_details SET commute_system_id = $1, name = $2, fare_amount = $3, duration = $4, day_start = $5, alternate_fare_detail_id = $6 WHERE fare_detail_id = $7 RETURNING *',
     deleteFareDetails: 'DELETE FROM fare_details WHERE fare_detail_id = $1',
