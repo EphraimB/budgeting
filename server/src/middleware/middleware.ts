@@ -32,6 +32,7 @@ import {
     type Wishlist,
 } from '../types/types.js';
 import determineCronValues from '../crontab/determineCronValues.js';
+import pool from '../config/db.js';
 
 /**
  *
@@ -1032,9 +1033,11 @@ export const updateWishlistCron = async (
     response: Response,
     next: NextFunction,
 ): Promise<void> => {
+    const client = await pool.connect(); // Get a client from the pool
+
     try {
         // Get all wishlists
-        const wishlistsResults = await executeQuery(
+        const { rows: wishlistsResults } = await client.query(
             wishlistQueries.getAllWishlists,
             [],
         );
@@ -1050,9 +1053,10 @@ export const updateWishlistCron = async (
         // First, delete all necessary cron jobs
         for (const wslst of wishlistsResults) {
             const cronId = wslst.cron_job_id;
-            const results = await executeQuery(cronJobQueries.getCronJob, [
-                cronId,
-            ]);
+            const { rows: results } = await client.query(
+                cronJobQueries.getCronJob,
+                [cronId],
+            );
 
             if (results.length > 0) {
                 await unscheduleQuery(results[0].unique_id);
@@ -1092,7 +1096,17 @@ export const updateWishlistCron = async (
                     }', '${wslst.wishlist_description}')`,
                 );
 
-                await executeQuery(cronJobQueries.updateCronJob, [
+                await client.query(`
+                    SELECT cron.schedule '${unique_id}', ${cronDate},
+                    INSERT INTO transaction_history
+                        (account_id, transaction_amount, transaction_tax_rate, transaction_title, transaction_description)
+                        VALUES (${
+                            wslst.account_id
+                        }, ${-wslst.wishlist_amount}, ${taxRate}, '${
+                            wslst.wishlist_title
+                        }', '${wslst.wishlist_description}')`);
+
+                await client.query(cronJobQueries.updateCronJob, [
                     unique_id,
                     cronDate,
                     cronId,
@@ -1103,6 +1117,8 @@ export const updateWishlistCron = async (
         // Move on to the next middleware or route handler
         next();
     } catch (error) {
+        await client.query('ROLLBACK;');
+
         logger.error(error); // Log the error on the server side
         handleError(response, 'Error updating cron tab');
     }

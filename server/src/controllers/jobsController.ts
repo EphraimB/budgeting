@@ -1,8 +1,9 @@
 import { type NextFunction, type Request, type Response } from 'express';
 import { jobQueries } from '../models/queryData.js';
-import { handleError, executeQuery } from '../utils/helperFunctions.js';
+import { handleError } from '../utils/helperFunctions.js';
 import { JobSchedule, type Job } from '../types/types.js';
 import { logger } from '../config/winston.js';
+import pool from '../config/db.js';
 
 /**
  *
@@ -36,6 +37,8 @@ export const getJobs = async (
 ): Promise<void> => {
     const { account_id, id } = request.query;
 
+    const client = await pool.connect(); // Get a client from the pool
+
     try {
         let query: string;
         let params: any[];
@@ -54,20 +57,22 @@ export const getJobs = async (
             params = [];
         }
 
-        const results = await executeQuery(query, params);
+        const { rows } = await client.query(query, params);
 
-        if (id && results.length === 0) {
+        if (id && rows.length === 0) {
             response.status(404).send('Job not found');
             return;
         }
 
         // Parse the data to the correct format and return an object
-        const jobs: Job[] = results.map((job) => jobsParse(job));
+        const jobs: Job[] = rows.map((row) => jobsParse(row));
 
         response.status(200).json(jobs);
     } catch (error) {
         logger.error(error); // Log the error on the server side
         handleError(response, `Error getting ${id ? 'job' : 'jobs'}`);
+    } finally {
+        client.release(); // Release the client back to the pool
     }
 };
 
@@ -81,6 +86,8 @@ export const createJob = async (
     request: Request,
     response: Response,
 ): Promise<void> => {
+    const client = await pool.connect(); // Get a client from the pool
+
     try {
         const {
             account_id,
@@ -91,19 +98,21 @@ export const createJob = async (
             job_schedule,
         } = request.body;
 
+        await client.query('BEGIN;');
+
         // First, create the job and get its ID
-        const jobResult = await executeQuery(jobQueries.createJob, [
+        const { rows } = await client.query(jobQueries.createJob, [
             account_id,
             name,
             hourly_rate,
             vacation_days,
             sick_days,
         ]);
-        const jobId = jobResult[0].job_id;
+        const jobId = rows[0].job_id;
 
         // Then, create schedules for this job
         const schedulePromises = job_schedule.map((js: JobSchedule) =>
-            executeQuery(jobQueries.createJobSchedule, [
+            client.query(jobQueries.createJobSchedule, [
                 jobId,
                 js.day_of_week,
                 js.start_time,
@@ -127,12 +136,18 @@ export const createJob = async (
             })),
         };
 
-        await executeQuery('SELECT process_payroll_for_job($1)', [jobId]);
+        await client.query('SELECT process_payroll_for_job($1)', [jobId]);
+
+        await client.query('COMMIT;');
 
         response.status(201).json(responseObject);
     } catch (error) {
+        await client.query('ROLLBACK;');
+
         logger.error(error); // Log the error on the server side
         handleError(response, 'Error creating job');
+    } finally {
+        client.release(); // Release the client back to the pool
     }
 };
 
@@ -148,6 +163,8 @@ export const updateJob = async (
     response: Response,
     next: NextFunction,
 ): Promise<void> => {
+    const client = await pool.connect(); // Get a client from the pool
+
     try {
         const job_id = parseInt(request.params.job_id);
         const {
@@ -159,7 +176,16 @@ export const updateJob = async (
             job_schedule,
         } = request.body;
 
-        const results = await executeQuery(jobQueries.updateJob, [
+        const { rows } = await client.query(jobQueries.getJob, [job_id]);
+
+        if (rows.length === 0) {
+            response.status(404).send('Job not found');
+            return;
+        }
+
+        await client.query('BEGIN;');
+
+        await client.query(jobQueries.updateJob, [
             account_id,
             name,
             hourly_rate,
@@ -168,13 +194,8 @@ export const updateJob = async (
             job_id,
         ]);
 
-        if (results.length === 0) {
-            response.status(404).send('Job not found');
-            return;
-        }
-
         // Fetch existing schedules for the job
-        const existingSchedules = await executeQuery(
+        const { rows: existingSchedules } = await client.query(
             jobQueries.getJobScheduleByJobId,
             [job_id],
         );
@@ -192,7 +213,7 @@ export const updateJob = async (
 
             if (existingSchedule) {
                 // Update the existing schedule
-                await executeQuery(jobQueries.updateJobSchedule, [
+                await client.query(jobQueries.updateJobSchedule, [
                     js.day_of_week,
                     js.start_time,
                     js.end_time,
@@ -201,7 +222,7 @@ export const updateJob = async (
                 updatedOrAddedScheduleIds.add(existingSchedule.job_schedule_id);
             } else {
                 // Insert a new schedule
-                const result = await executeQuery(
+                const { rows: result } = await client.query(
                     jobQueries.createJobSchedule,
                     [job_id, js.day_of_week, js.start_time, js.end_time],
                 );
@@ -214,21 +235,27 @@ export const updateJob = async (
         const schedulesToDelete = existingSchedules.filter(
             (s) => !updatedOrAddedScheduleIds.has(s.job_schedule_id),
         );
-        
+
         for (const schedule of schedulesToDelete) {
-            await executeQuery(jobQueries.deleteJobScheduleByJobId, [
+            await client.query(jobQueries.deleteJobScheduleByJobId, [
                 schedule.job_schedule_id,
             ]);
         }
 
-        await executeQuery('SELECT process_payroll_for_job($1)', [job_id]);
+        await client.query('SELECT process_payroll_for_job($1)', [job_id]);
+
+        await client.query('COMMIT;');
 
         request.job_id = job_id;
 
         next();
     } catch (error) {
+        await client.query('ROLLBACK;');
+
         logger.error(error); // Log the error on the server side
         handleError(response, 'Error updating job');
+    } finally {
+        client.release(); // Release the client back to the pool
     }
 };
 
@@ -238,19 +265,25 @@ export const updateJobReturnObject = async (
 ): Promise<void> => {
     const { job_id } = request;
 
+    const client = await pool.connect(); // Get a client from the pool
+
     try {
-        const results = await executeQuery(
+        const { rows } = await client.query(
             jobQueries.getJobsWithSchedulesByJobId,
             [job_id],
         );
 
+        await client.query('COMMIT;');
+
         // Parse the data to correct format and return an object
-        const jobs: Job[] = results.map((job) => jobsParse(job));
+        const jobs: Job[] = rows.map((row) => jobsParse(row));
 
         response.status(200).json(jobs);
     } catch (error) {
         logger.error(error); // Log the error on the server side
         handleError(response, 'Error updating job');
+    } finally {
+        client.release(); // Release the client back to the pool
     }
 };
 
@@ -264,22 +297,30 @@ export const deleteJob = async (
     request: Request,
     response: Response,
 ): Promise<void> => {
+    const client = await pool.connect(); // Get a client from the pool
+
     try {
         const job_id = parseInt(request.params.job_id);
 
-        const transferResults = await executeQuery(jobQueries.getJob, [job_id]);
+        const { rows } = await client.query(jobQueries.getJob, [job_id]);
 
-        if (transferResults.length === 0) {
+        if (rows.length === 0) {
             response.status(404).send('Job not found');
             return;
         }
 
-        await executeQuery(jobQueries.deleteJob, [job_id]);
+        await client.query('BEGIN;');
 
-        await executeQuery('SELECT process_payroll_for_job($1)', [job_id]);
+        await client.query(jobQueries.deleteJob, [job_id]);
+
+        await client.query('SELECT process_payroll_for_job($1)', [job_id]);
+
+        await client.query('COMMIT;');
 
         response.status(200).send('Successfully deleted job');
     } catch (error) {
+        await client.query('ROLLBACK');
+
         logger.error(error); // Log the error on the server side
         handleError(response, 'Error deleting job');
     }
