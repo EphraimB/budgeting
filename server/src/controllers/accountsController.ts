@@ -1,8 +1,9 @@
 import { type Request, type Response } from 'express';
 import { accountQueries } from '../models/queryData.js';
-import { handleError, executeQuery } from '../utils/helperFunctions.js';
+import { handleError } from '../utils/helperFunctions.js';
 import { type Account } from '../types/types.js';
 import { logger } from '../config/winston.js';
+import pool from '../config/db.js';
 
 /**
  *
@@ -29,25 +30,27 @@ export const getAccounts = async (
 ): Promise<void> => {
     const { id } = request.query as { id?: string }; // Destructure id from query string
 
+    const client = await pool.connect(); // Get a client from the pool
+
     try {
         // Change the query based on the presence of id
         const query: string = id
             ? accountQueries.getAccount
             : accountQueries.getAccounts;
         const params = id ? [id] : [];
-        const accounts = await executeQuery(query, params);
+        const { rows } = await client.query(query, params);
 
-        if (id !== null && id !== undefined && accounts.length === 0) {
+        if (id !== null && id !== undefined && rows.length === 0) {
             response.status(404).send('Account not found');
             return;
         }
 
-        response
-            .status(200)
-            .json(accounts.map((account) => parseAccounts(account)));
+        response.status(200).json(rows.map((row) => parseAccounts(row)));
     } catch (error) {
         logger.error(error); // Log the error on the server side
         handleError(response, `Error getting ${id ? 'account' : 'accounts'}`);
+    } finally {
+        client.release(); // Release the client back to the pool
     }
 };
 
@@ -60,13 +63,19 @@ export const getAccounts = async (
 export const createAccount = async (request: Request, response: Response) => {
     const { name } = request.body;
 
+    const client = await pool.connect(); // Get a client from the pool
+
     try {
-        const rows = await executeQuery(accountQueries.createAccount, [name]);
+        const { rows } = await client.query(accountQueries.createAccount, [
+            name,
+        ]);
         const accounts = rows.map((account) => parseAccounts(account));
         response.status(201).json(accounts);
     } catch (error) {
         logger.error(error); // Log the error on the server side
         handleError(response, 'Error creating account');
+    } finally {
+        client.release(); // Release the client back to the pool
     }
 };
 
@@ -83,15 +92,20 @@ export const updateAccount = async (
     const id = parseInt(request.params.id);
     const { name } = request.body;
 
+    const client = await pool.connect(); // Get a client from the pool
+
     try {
-        const account = await executeQuery(accountQueries.getAccount, [id]);
+        const { rows: account } = await client.query(
+            accountQueries.getAccount,
+            [id],
+        );
 
         if (account.length === 0) {
             response.status(404).send('Account not found');
             return;
         }
 
-        const rows = await executeQuery(accountQueries.updateAccount, [
+        const { rows } = await client.query(accountQueries.updateAccount, [
             name,
             id,
         ]);
@@ -101,6 +115,8 @@ export const updateAccount = async (
     } catch (error) {
         logger.error(error); // Log the error on the server side
         handleError(response, 'Error updating account');
+    } finally {
+        client.release(); // Release the client back to the pool
     }
 };
 
@@ -115,15 +131,22 @@ export const deleteAccount = async (
     response: Response,
 ): Promise<void> => {
     const id = parseInt(request.params.id);
+
+    const client = await pool.connect(); // Get a client from the pool
+
     try {
-        const account = await executeQuery(accountQueries.getAccount, [id]);
+        const { rows: account } = await client.query(
+            accountQueries.getAccount,
+            [id],
+        );
 
         if (account.length === 0) {
             response.status(404).send('Account not found');
             return;
         }
 
-        await executeQuery(accountQueries.deleteAccount, [id]);
+        await client.query(accountQueries.deleteAccount, [id]);
+        
         response.status(200).send('Successfully deleted account');
     } catch (error) {
         logger.error(error); // Log the error on the server side
