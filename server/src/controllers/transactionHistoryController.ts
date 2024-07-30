@@ -1,8 +1,9 @@
 import { type Request, type Response } from 'express';
 import { transactionHistoryQueries } from '../models/queryData.js';
-import { handleError, executeQuery } from '../utils/helperFunctions.js';
+import { handleError } from '../utils/helperFunctions.js';
 import { type TransactionHistory } from '../types/types.js';
 import { logger } from '../config/winston.js';
+import pool from '../config/db.js';
 
 /**
  *
@@ -35,6 +36,8 @@ export const getTransactions = async (
 ): Promise<void> => {
     const { id, account_id } = request.query;
 
+    const client = await pool.connect(); // Get a client from the pool
+
     try {
         let query: string;
         let params: any[];
@@ -53,7 +56,7 @@ export const getTransactions = async (
             params = [];
         }
 
-        const transactionResults = await executeQuery(query, params);
+        const { rows: transactionResults } = await client.query(query, params);
 
         if (id && transactionResults.length === 0) {
             response.status(404).send('Transaction not found');
@@ -68,6 +71,8 @@ export const getTransactions = async (
     } catch (error) {
         logger.error(error); // Log the error on the server side
         handleError(response, 'Error getting transaction history');
+    } finally {
+        client.release(); // Release the client back to the pool
     }
 };
 
@@ -83,20 +88,24 @@ export const createTransaction = async (
 ): Promise<void> => {
     const { account_id, title, amount, tax, description } = request.body;
 
+    const client = await pool.connect(); // Get a client from the pool
+
     try {
-        const transactionResults = await executeQuery(
+        const { rows } = await client.query(
             transactionHistoryQueries.createTransaction,
             [account_id, amount, tax, title, description],
         );
 
-        const transactionHistory: TransactionHistory[] = transactionResults.map(
-            (transaction) => parseTransactions(transaction),
+        const transactionHistory: TransactionHistory[] = rows.map((row) =>
+            parseTransactions(row),
         );
 
         response.status(201).json(transactionHistory);
     } catch (error) {
         logger.error(error); // Log the error on the server side
         handleError(response, 'Error creating transaction history');
+    } finally {
+        client.release(); // Release the client back to the pool
     }
 };
 
@@ -113,25 +122,29 @@ export const updateTransaction = async (
     const id: number = parseInt(request.params.id);
     const { account_id, amount, tax, title, description } = request.body;
 
+    const client = await pool.connect(); // Get a client from the pool
+
     try {
-        const transactionResults = await executeQuery(
+        const { rows } = await client.query(
             transactionHistoryQueries.updateTransaction,
             [account_id, amount, tax, title, description, id],
         );
 
-        if (transactionResults.length === 0) {
+        if (rows.length === 0) {
             response.status(404).send('Transaction not found');
             return;
         }
 
-        const transactionHistory: TransactionHistory[] = transactionResults.map(
-            (transaction) => parseTransactions(transaction),
+        const transactionHistory: TransactionHistory[] = rows.map((row) =>
+            parseTransactions(row),
         );
 
         response.status(200).json(transactionHistory);
     } catch (error) {
         logger.error(error); // Log the error on the server side
         handleError(response, 'Error updating transaction history');
+    } finally {
+        client.release(); // Release the client back to the pool
     }
 };
 
@@ -147,22 +160,26 @@ export const deleteTransaction = async (
 ): Promise<void> => {
     const id: number = parseInt(request.params.id);
 
+    const client = await pool.connect(); // Get a client from the pool
+
     try {
-        const getTransactionResults = await executeQuery(
+        const { rows } = await client.query(
             transactionHistoryQueries.getTransactionById,
             [id],
         );
 
-        if (getTransactionResults.length === 0) {
+        if (rows.length === 0) {
             response.status(404).send('Transaction not found');
             return;
         }
 
-        await executeQuery(transactionHistoryQueries.deleteTransaction, [id]);
+        await client.query(transactionHistoryQueries.deleteTransaction, [id]);
 
         response.status(200).send('Successfully deleted transaction history');
     } catch (error) {
         logger.error(error); // Log the error on the server side
         handleError(response, 'Error deleting transaction history');
+    } finally {
+        client.release(); // Release the client back to the pool
     }
 };
