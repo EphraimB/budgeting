@@ -3,6 +3,7 @@ import { jobQueries, payrollQueries } from '../models/queryData.js';
 import { handleError, executeQuery } from '../utils/helperFunctions.js';
 import { type Payroll } from '../types/types.js';
 import { logger } from '../config/winston.js';
+import pool from '../config/db.js';
 
 /**
  *
@@ -28,29 +29,31 @@ export const getPayrolls = async (
     request: Request,
     response: Response,
 ): Promise<void> => {
+    const client = await pool.connect(); // Get a client from the pool
+
     try {
         const { job_id } = request.query;
         let returnObj: object = {};
 
         if (!job_id) {
             // Get all payrolls for all jobs
-            const jobs = await executeQuery(jobQueries.getJobs, []);
+            const { rows } = await client.query(jobQueries.getJobs, []);
 
-            if (jobs.length === 0) {
+            if (rows.length === 0) {
                 response.status(404).send('No jobs found');
                 return;
             }
 
             await Promise.all(
-                jobs.map(async (job) => {
+                rows.map(async (row) => {
                     const results = await executeQuery(
                         payrollQueries.getPayrolls,
-                        [job.job_id],
+                        [row.job_id],
                     );
 
                     returnObj = {
-                        job_id: job.job_id,
-                        job_name: job.job_name,
+                        jobId: row.job_id,
+                        jobName: row.job_name,
                         payrolls: results.map((payroll) =>
                             payrollsParse(payroll),
                         ),
@@ -58,25 +61,23 @@ export const getPayrolls = async (
                 }),
             );
         } else {
-            const results = await executeQuery(payrollQueries.getPayrolls, [
+            const { rows } = await client.query(payrollQueries.getPayrolls, [
                 job_id,
             ]);
 
-            if (results.length === 0) {
+            if (rows.length === 0) {
                 response.status(404).send('No payrolls for job or not found');
                 return;
             }
 
             // Parse the data to correct format and return an object
-            const payrolls: Payroll[] = results.map((payroll) =>
-                payrollsParse(payroll),
-            );
+            const payrolls: Payroll[] = rows.map((row) => payrollsParse(row));
 
             const jobResults = await executeQuery(jobQueries.getJob, [job_id]);
 
             returnObj = {
-                job_id: parseInt(job_id as string),
-                job_name: jobResults[0].job_name,
+                jobId: parseInt(job_id as string),
+                jobName: jobResults[0].job_name,
                 payrolls,
             };
         }
@@ -85,5 +86,7 @@ export const getPayrolls = async (
     } catch (error) {
         logger.error(error); // Log the error on the server side
         handleError(response, 'Error getting payrolls');
+    } finally {
+        client.release(); // Release the client back to the pool
     }
 };
