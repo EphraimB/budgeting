@@ -1,6 +1,6 @@
 import { type Request, type Response } from 'express';
 import { jobQueries, payrollQueries } from '../models/queryData.js';
-import { handleError, executeQuery } from '../utils/helperFunctions.js';
+import { handleError } from '../utils/helperFunctions.js';
 import { type Payroll } from '../types/types.js';
 import { logger } from '../config/winston.js';
 import pool from '../config/db.js';
@@ -46,7 +46,7 @@ export const getPayrolls = async (
 
             await Promise.all(
                 rows.map(async (row) => {
-                    const results = await executeQuery(
+                    const { rows: results } = await client.query(
                         payrollQueries.getPayrolls,
                         [row.job_id],
                     );
@@ -73,7 +73,9 @@ export const getPayrolls = async (
             // Parse the data to correct format and return an object
             const payrolls: Payroll[] = rows.map((row) => payrollsParse(row));
 
-            const jobResults = await executeQuery(jobQueries.getJob, [job_id]);
+            const { rows: jobResults } = await client.query(jobQueries.getJob, [
+                job_id,
+            ]);
 
             returnObj = {
                 jobId: parseInt(job_id as string),

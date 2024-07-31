@@ -1,6 +1,6 @@
 import { type NextFunction, type Request, type Response } from 'express';
 import { payrollQueries } from '../models/queryData.js';
-import { handleError, executeQuery } from '../utils/helperFunctions.js';
+import { handleError } from '../utils/helperFunctions.js';
 import { type PayrollDate } from '../types/types.js';
 import { logger } from '../config/winston.js';
 import pool from '../config/db.js';
@@ -255,7 +255,7 @@ export const updatePayrollDate = async (
             id,
         ]);
 
-        await executeQuery('SELECT process_payroll_for_job($1)', [job_id]);
+        await client.query('SELECT process_payroll_for_job($1)', [job_id]);
 
         await client.query('COMMIT;');
 
@@ -335,7 +335,7 @@ export const deletePayrollDate = async (
 
         await client.query(payrollQueries.deletePayrollDate, [id]);
 
-        await executeQuery('SELECT process_payroll_for_job($1)', [
+        await client.query('SELECT process_payroll_for_job($1)', [
             rows[0].job_id,
         ]);
 
