@@ -111,13 +111,14 @@ export const createJob = async (
         const jobId = rows[0].job_id;
 
         // Then, create schedules for this job
-        const schedulePromises = job_schedule.map((js: JobSchedule) =>
-            client.query(jobQueries.createJobSchedule, [
-                jobId,
-                js.day_of_week,
-                js.start_time,
-                js.end_time,
-            ]),
+        const schedulePromises = job_schedule.map(
+            async (js: JobSchedule) =>
+                await client.query(jobQueries.createJobSchedule, [
+                    jobId,
+                    js.day_of_week,
+                    js.start_time,
+                    js.end_time,
+                ]),
         );
 
         // Wait for all schedule creation promises to resolve
