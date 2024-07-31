@@ -1098,13 +1098,13 @@ export const updateWishlistCron = async (
 
                 await client.query(`
                     SELECT cron.schedule '${unique_id}', ${cronDate},
-                    INSERT INTO transaction_history
+                    $$INSERT INTO transaction_history
                         (account_id, transaction_amount, transaction_tax_rate, transaction_title, transaction_description)
                         VALUES (${
                             wslst.account_id
                         }, ${-wslst.wishlist_amount}, ${taxRate}, '${
                             wslst.wishlist_title
-                        }', '${wslst.wishlist_description}')`);
+                        }', '${wslst.wishlist_description}')$$`);
 
                 await client.query(cronJobQueries.updateCronJob, [
                     unique_id,
