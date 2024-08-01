@@ -1,6 +1,6 @@
 import { type NextFunction, type Request, type Response } from 'express';
 import { payrollQueries } from '../models/queryData.js';
-import { handleError, executeQuery } from '../utils/helperFunctions.js';
+import { handleError } from '../utils/helperFunctions.js';
 import { type PayrollTax } from '../types/types.js';
 import { logger } from '../config/winston.js';
 import pool from '../config/db.js';
@@ -103,7 +103,7 @@ export const createPayrollTax = async (
             rate,
         ]);
 
-        await executeQuery('SELECT process_payroll_for_job($1)', [1]);
+        await client.query('SELECT process_payroll_for_job($1)', [1]);
 
         await client.query('COMMIT;');
 
