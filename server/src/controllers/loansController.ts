@@ -2,11 +2,8 @@ import { type NextFunction, type Request, type Response } from 'express';
 import { loanQueries, cronJobQueries } from '../models/queryData.js';
 import {
     handleError,
-    executeQuery,
     parseIntOrFallback,
     nextTransactionFrequencyDate,
-    scheduleQuery,
-    unscheduleQuery,
 } from '../utils/helperFunctions.js';
 import { type Loan } from '../types/types.js';
 import { logger } from '../config/winston.js';
