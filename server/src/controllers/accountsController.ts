@@ -38,9 +38,10 @@ export const getAccounts = async (
             ? accountQueries.getAccount
             : accountQueries.getAccounts;
         const params = id ? [id] : [];
+
         const { rows } = await client.query(query, params);
 
-        if (id !== null && id !== undefined && rows.length === 0) {
+        if (id && rows.length === 0) {
             response.status(404).send('Account not found');
             return;
         }
@@ -146,7 +147,7 @@ export const deleteAccount = async (
         }
 
         await client.query(accountQueries.deleteAccount, [id]);
-        
+
         response.status(200).send('Successfully deleted account');
     } catch (error) {
         logger.error(error); // Log the error on the server side
