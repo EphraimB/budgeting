@@ -12,6 +12,7 @@ import { type Loan } from '../types/types.js';
 import { logger } from '../config/winston.js';
 import determineCronValues from '../crontab/determineCronValues.js';
 import dayjs, { Dayjs } from 'dayjs';
+import pool from '../config/db.js';
 
 /**
  *
@@ -54,6 +55,8 @@ export const getLoans = async (
 ): Promise<void> => {
     const { account_id, id } = request.query;
 
+    const client = await pool.connect(); // Get a client from the pool
+
     try {
         let query: string;
         let params: any[];
@@ -72,7 +75,7 @@ export const getLoans = async (
             params = [];
         }
 
-        const rows = await executeQuery(query, params);
+        const { rows } = await client.query(query, params);
 
         if (id && rows.length === 0) {
             response.status(404).send('Loan not found');
@@ -108,10 +111,12 @@ export const getLoans = async (
                 id
                     ? 'loan'
                     : account_id
-                    ? 'loans for given account_id'
+                    ? 'loans for given account id'
                     : 'loans'
             }`,
         );
+    } finally {
+        client.release(); // Release the client back to the pool
     }
 };
 
@@ -146,25 +151,32 @@ export const createLoan = async (
         begin_date,
     } = request.body;
 
+    const client = await pool.connect(); // Get a client from the pool
+
     try {
-        const loanResults = await executeQuery(loanQueries.createLoan, [
-            account_id,
-            amount,
-            plan_amount,
-            recipient,
-            title,
-            description,
-            frequency_type,
-            frequency_type_variable,
-            frequency_day_of_month,
-            frequency_day_of_week,
-            frequency_week_of_month,
-            frequency_month_of_year,
-            interest_rate,
-            interest_frequency_type,
-            subsidized,
-            begin_date,
-        ]);
+        await client.query('BEGIN;');
+
+        const { rows: loanResults } = await client.query(
+            loanQueries.createLoan,
+            [
+                account_id,
+                amount,
+                plan_amount,
+                recipient,
+                title,
+                description,
+                frequency_type,
+                frequency_type_variable,
+                frequency_day_of_month,
+                frequency_day_of_week,
+                frequency_week_of_month,
+                frequency_month_of_year,
+                interest_rate,
+                interest_frequency_type,
+                subsidized,
+                begin_date,
+            ],
+        );
 
         const loans: Loan[] = loanResults.map((loan) => parseLoan(loan));
 
@@ -182,23 +194,21 @@ export const createLoan = async (
 
         const taxRate = 0;
 
-        const unique_id = `loan-${loans[0].id}`;
+        const uniqueId = `loan-${loans[0].id}`;
 
-        await scheduleQuery(
-            unique_id,
-            cronDate,
-            `INSERT INTO transaction_history (account_id, transaction_amount, transaction_tax_rate, transaction_title, transaction_description) VALUES (${account_id}, ${
+        await client.query(`
+            SELECT cron.schedule '${uniqueId}', ${cronDate},
+            $$INSERT INTO transaction_history (account_id, transaction_amount, transaction_tax_rate, transaction_title, transaction_description) VALUES (${account_id}, ${
                 -parseFloat(plan_amount) +
                 parseFloat(plan_amount) * parseFloat(subsidized)
-            }, ${taxRate}, '${title}', '${description}')`,
+            }, ${taxRate}, '${title}', '${description}')$$`);
+
+        const { rows: cronIdResult } = await client.query(
+            cronJobQueries.createCronJob,
+            [uniqueId, cronDate],
         );
 
-        const cronId: number = (
-            await executeQuery(cronJobQueries.createCronJob, [
-                unique_id,
-                cronDate,
-            ])
-        )[0].cron_job_id;
+        const cronId = cronIdResult[0].cron_job_id;
 
         const nextDate: Dayjs = dayjs(begin_date);
 
@@ -223,33 +233,37 @@ export const createLoan = async (
 
         const cronDateInterest = determineCronValues(jobDetailsInterest);
 
-        const interest_unique_id = `loan_interest-${loans[0].id}`;
+        const interestUniqueId = `loan_interest-${loans[0].id}`;
 
-        await scheduleQuery(
-            interest_unique_id,
-            cronDateInterest,
-            `UPDATE loans SET loan_amount = loan_amount + (loan_amount * ${interest_rate}) WHERE loan_id = ${loans[0].id}`,
+        await client.query(`
+            SELECT cron.schedule '${interestUniqueId}', ${cronDateInterest},
+            $$UPDATE loans SET loan_amount = loan_amount + (loan_amount * ${interest_rate}) WHERE loan_id = ${loans[0].id}$$`);
+
+        const { rows: interestCronIdResult } = await client.query(
+            cronJobQueries.createCronJob,
+            [interestUniqueId, cronDateInterest],
         );
 
-        const interestCronId: number = (
-            await executeQuery(cronJobQueries.createCronJob, [
-                interest_unique_id,
-                cronDateInterest,
-            ])
-        )[0].cron_job_id;
+        const interestCronId: number = interestCronIdResult[0].cron_job_id;
 
-        await executeQuery(loanQueries.updateLoanWithCronJobId, [
+        await client.query(loanQueries.updateLoanWithCronJobId, [
             cronId,
             interestCronId,
             loans[0].id,
         ]);
 
+        await client.query('COMMIT;');
+
         request.loan_id = loans[0].id;
 
         next();
     } catch (error) {
+        await client.query('ROLLBACK;');
+
         logger.error(error); // Log the error on the server side
         handleError(response, 'Error creating loan');
+    } finally {
+        client.release(); // Release the client back to the pool
     }
 };
 
@@ -265,8 +279,12 @@ export const createLoanReturnObject = async (
 ): Promise<void> => {
     const { loan_id } = request;
 
+    const client = await pool.connect(); // Get a client from the pool
+
     try {
-        const loans = await executeQuery(loanQueries.getLoansById, [loan_id]);
+        const { rows: loans } = await client.query(loanQueries.getLoansById, [
+            loan_id,
+        ]);
 
         const modifiedLoans: Loan[] = loans.map((loan) => {
             // parse loan first
@@ -285,6 +303,8 @@ export const createLoanReturnObject = async (
     } catch (error) {
         logger.error(error); // Log the error on the server side
         handleError(response, 'Error creating loan');
+    } finally {
+        client.release(); // Release the client back to the pool
     }
 };
 
@@ -320,20 +340,18 @@ export const updateLoan = async (
         begin_date,
     } = request.body;
 
-    try {
-        const getLoanResults = await executeQuery(loanQueries.getLoansById, [
-            id,
-        ]);
+    const client = await pool.connect(); // Get a client from the pool
 
-        if (getLoanResults.length === 0) {
+    try {
+        const { rows } = await client.query(loanQueries.getLoansById, [id]);
+
+        if (rows.length === 0) {
             response.status(404).send('Loan not found');
             return;
         }
 
-        const cronId: number = parseInt(getLoanResults[0].cron_job_id);
-        const interestCronId: number = parseInt(
-            getLoanResults[0].interest_cron_job_id,
-        );
+        const cronId: number = parseInt(rows[0].cron_job_id);
+        const interestCronId: number = parseInt(rows[0].interest_cron_job_id);
 
         const jobDetails = {
             frequency_type,
@@ -347,36 +365,41 @@ export const updateLoan = async (
 
         const cronDate = determineCronValues(jobDetails);
 
-        const [{ unique_id }] = await executeQuery(cronJobQueries.getCronJob, [
-            cronId,
-        ]);
+        const { rows: uniqueIdResults } = await client.query(
+            cronJobQueries.getCronJob,
+            [cronId],
+        );
+
+        const uniqueId = uniqueIdResults[0].unique_id;
 
         const taxRate = 0;
 
-        await unscheduleQuery(unique_id);
+        await client.query('BEGIN;');
 
-        await scheduleQuery(
-            unique_id,
-            cronDate,
-            `INSERT INTO transaction_history (account_id, transaction_amount, transaction_tax_rate, transaction_title, transaction_description) VALUES (${account_id}, ${
+        await client.query(`cron.unschedule(${uniqueId})`);
+
+        await client.query(`
+            SELECT cron.schedule '${uniqueId}', ${cronDate},
+            $$INSERT INTO transaction_history (account_id, transaction_amount, transaction_tax_rate, transaction_title, transaction_description) VALUES (${account_id}, ${
                 -parseFloat(plan_amount) +
                 parseFloat(plan_amount) * parseFloat(subsidized)
-            }, ${taxRate}, '${title}', '${description}')`,
-        );
+            }, ${taxRate}, '${title}', '${description}')$$`);
 
-        const [{ unique_id: interestUniqueId }] = await executeQuery(
+        const { rows: interestUniqueIdResults } = await client.query(
             cronJobQueries.getCronJob,
             [interestCronId],
         );
 
-        await executeQuery(cronJobQueries.updateCronJob, [
-            unique_id,
+        const interestUniqueId = interestUniqueIdResults[0].interestUniqueId;
+
+        await client.query(cronJobQueries.updateCronJob, [
+            uniqueId,
             cronDate,
             cronId,
         ]);
 
-        const modifiedLoan: Loan[] = getLoanResults.map(
-            (loan: Record<string, string>) => parseLoan(loan),
+        const modifiedLoan: Loan[] = rows.map((loan: Record<string, string>) =>
+            parseLoan(loan),
         );
 
         modifiedLoan.map((loan: Loan) => {
@@ -392,27 +415,25 @@ export const updateLoan = async (
 
         const cronDateInterest = determineCronValues(jobDetailsInterest);
 
-        await unscheduleQuery(interestUniqueId);
+        await client.query(`cron.unschedule(${interestUniqueId})`);
 
-        await scheduleQuery(
-            interestUniqueId,
-            cronDateInterest,
-            `UPDATE loans SET loan_amount = loan_amount + (loan_amount * ${interest_rate}) WHERE loan_id = ${id}`,
-        );
+        await client.query(`
+            SELECT cron.schedule '${interestUniqueId}', ${cronDateInterest},
+            $$UPDATE loans SET loan_amount = loan_amount + (loan_amount * ${interest_rate}) WHERE loan_id = ${id}$$`);
 
-        await executeQuery(cronJobQueries.updateCronJob, [
-            unique_id,
+        await client.query(cronJobQueries.updateCronJob, [
+            uniqueId,
             cronDate,
             cronId,
         ]);
 
-        await executeQuery(cronJobQueries.updateCronJob, [
-            unique_id,
+        await client.query(cronJobQueries.updateCronJob, [
+            uniqueId,
             cronDateInterest,
             interestCronId,
         ]);
 
-        await executeQuery(loanQueries.updateLoan, [
+        await client.query(loanQueries.updateLoan, [
             account_id,
             amount,
             plan_amount,
@@ -432,12 +453,18 @@ export const updateLoan = async (
             id,
         ]);
 
+        await client.query('COMMIT;');
+
         request.loan_id = id;
 
         next();
     } catch (error) {
+        await client.query('ROLLBACK;');
+
         logger.error(error); // Log the error on the server side
         handleError(response, 'Error updating loan');
+    } finally {
+        client.release(); // Release the client back to the pool
     }
 };
 
@@ -453,10 +480,14 @@ export const updateLoanReturnObject = async (
 ): Promise<void> => {
     const { loan_id } = request;
 
-    try {
-        const loans = await executeQuery(loanQueries.getLoansById, [loan_id]);
+    const client = await pool.connect(); // Get a client from the pool
 
-        const modifiedLoans: Loan[] = loans.map((loan) => {
+    try {
+        const { rows } = await client.query(loanQueries.getLoansById, [
+            loan_id,
+        ]);
+
+        const modifiedLoans: Loan[] = rows.map((loan) => {
             // parse loan first
             const parsedLoan = parseLoan(loan);
 
@@ -474,6 +505,8 @@ export const updateLoanReturnObject = async (
     } catch (error) {
         logger.error(error); // Log the error on the server side
         handleError(response, 'Error getting loan');
+    } finally {
+        client.release(); // Release the client back to the pool
     }
 };
 
@@ -489,42 +522,52 @@ export const deleteLoan = async (
     response: Response,
     next: NextFunction,
 ): Promise<void> => {
+    const { id } = request.params;
+
+    const client = await pool.connect(); // Get a client from the pool
+
     try {
-        const { id } = request.params;
+        const { rows } = await client.query(loanQueries.getLoansById, [id]);
 
-        const getLoanResults = await executeQuery(loanQueries.getLoansById, [
-            id,
-        ]);
-
-        if (getLoanResults.length === 0) {
+        if (rows.length === 0) {
             response.status(404).send('Loan not found');
             return;
         }
 
-        const cronId: number = parseInt(getLoanResults[0].cron_job_id);
+        const cronId: number = parseInt(rows[0].cron_job_id);
 
-        await executeQuery(loanQueries.deleteLoan, [id]);
+        await client.query('BEGIN;');
 
-        const results = await executeQuery(cronJobQueries.getCronJob, [cronId]);
+        await client.query(loanQueries.deleteLoan, [id]);
 
-        await unscheduleQuery(results[0].unique_id);
-
-        const interestCronId: number = parseInt(
-            getLoanResults[0].interest_cron_job_id,
+        const { rows: results } = await client.query(
+            cronJobQueries.getCronJob,
+            [cronId],
         );
-        const interestResults = await executeQuery(cronJobQueries.getCronJob, [
-            interestCronId,
-        ]);
 
-        await unscheduleQuery(interestResults[0].unique_id);
+        await client.query(`cron.unschedule(${results[0].unique_id})`);
 
-        await executeQuery(cronJobQueries.deleteCronJob, [cronId]);
-        await executeQuery(cronJobQueries.deleteCronJob, [interestCronId]);
+        const interestCronId: number = parseInt(rows[0].interest_cron_job_id);
+        const { rows: interestResults } = await client.query(
+            cronJobQueries.getCronJob,
+            [interestCronId],
+        );
+
+        await client.query(`cron.unschedule(${interestResults[0].unique_id})`);
+
+        await client.query(cronJobQueries.deleteCronJob, [cronId]);
+        await client.query(cronJobQueries.deleteCronJob, [interestCronId]);
+
+        await client.query('COMMIT;');
 
         next();
     } catch (error) {
+        await client.query('ROLLBACK;');
+
         logger.error(error); // Log the error on the server side
         handleError(response, 'Error deleting loan');
+    } finally {
+        client.release(); // Release the client back to the pool
     }
 };
 
