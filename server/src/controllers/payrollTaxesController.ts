@@ -3,6 +3,7 @@ import { payrollQueries } from '../models/queryData.js';
 import { handleError, executeQuery } from '../utils/helperFunctions.js';
 import { type PayrollTax } from '../types/types.js';
 import { logger } from '../config/winston.js';
+import pool from '../config/db.js';
 
 /**
  *
@@ -28,6 +29,8 @@ export const getPayrollTaxes = async (
 ): Promise<void> => {
     const { job_id, id } = request.query;
 
+    const client = await pool.connect(); // Get a client from the pool
+
     try {
         let query: string;
         let params: any[];
@@ -46,7 +49,7 @@ export const getPayrollTaxes = async (
             params = [];
         }
 
-        const rows = await executeQuery(query, params);
+        const { rows } = await client.query(query, params);
 
         if (id && rows.length === 0) {
             response.status(404).send('Payroll tax not found');
@@ -66,10 +69,12 @@ export const getPayrollTaxes = async (
                 id
                     ? 'payroll tax'
                     : job_id
-                    ? 'payroll taxes for given job_id'
+                    ? 'payroll taxes for given job id'
                     : 'payroll taxes'
             }`,
         );
+    } finally {
+        client.release(); // Release the client back to the pool
     }
 };
 
@@ -87,8 +92,12 @@ export const createPayrollTax = async (
 ): Promise<void> => {
     const { job_id, name, rate } = request.body;
 
+    const client = await pool.connect(); // Get a client from the pool
+
     try {
-        const results = await executeQuery(payrollQueries.createPayrollTax, [
+        await client.query('BEGIN;');
+
+        const { rows } = await client.query(payrollQueries.createPayrollTax, [
             job_id,
             name,
             rate,
@@ -96,16 +105,22 @@ export const createPayrollTax = async (
 
         await executeQuery('SELECT process_payroll_for_job($1)', [1]);
 
-        const payrollTaxes: PayrollTax[] = results.map((payrollTax) =>
-            payrollTaxesParse(payrollTax),
+        await client.query('COMMIT;');
+
+        const payrollTaxes: PayrollTax[] = rows.map((row) =>
+            payrollTaxesParse(row),
         );
 
         request.payroll_taxes_id = payrollTaxes[0].id;
 
         next();
     } catch (error) {
+        await client.query('ROLLBACK;');
+
         logger.error(error); // Log the error on the server side
         handleError(response, 'Error creating payroll tax');
+    } finally {
+        client.release(); // Release the client back to the pool
     }
 };
 
@@ -121,24 +136,29 @@ export const createPayrollTaxReturnObject = async (
 ): Promise<void> => {
     const { payroll_taxes_id } = request;
 
-    try {
-        const results = await executeQuery(payrollQueries.getPayrollTaxesById, [
-            payroll_taxes_id,
-        ]);
+    const client = await pool.connect(); // Get a client from the pool
 
-        if (results.length === 0) {
+    try {
+        const { rows } = await client.query(
+            payrollQueries.getPayrollTaxesById,
+            [payroll_taxes_id],
+        );
+
+        if (rows.length === 0) {
             response.status(404).send('Payroll tax not found');
             return;
         }
 
-        const payrollTaxes: PayrollTax[] = results.map((payrollTax) =>
-            payrollTaxesParse(payrollTax),
+        const payrollTaxes: PayrollTax[] = rows.map((row) =>
+            payrollTaxesParse(row),
         );
 
         response.status(201).json(payrollTaxes);
     } catch (error) {
         logger.error(error); // Log the error on the server side
         handleError(response, 'Error getting payroll tax');
+    } finally {
+        client.release(); // Release the client back to the pool
     }
 };
 
@@ -157,24 +177,37 @@ export const updatePayrollTax = async (
     const { id } = request.params;
     const { name, rate } = request.body;
 
-    try {
-        const results = await executeQuery(payrollQueries.updatePayrollTax, [
-            name,
-            rate,
-            id,
-        ]);
+    const client = await pool.connect(); // Get a client from the pool
 
-        if (results.length === 0) {
+    try {
+        const { rows } = await client.query(
+            payrollQueries.getPayrollTaxesById,
+            [id],
+        );
+
+        if (rows.length === 0) {
             response.status(404).send('Payroll tax not found');
             return;
         }
 
-        await executeQuery('SELECT process_payroll_for_job($1)', [1]);
+        await client.query('BEGIN;');
+
+        await client.query(payrollQueries.updatePayrollTax, [name, rate, id]);
+
+        await client.query('SELECT process_payroll_for_job($1)', [
+            rows[0].job_id,
+        ]);
+
+        await client.query('COMMIT;');
 
         next();
     } catch (error) {
+        await client.query('ROLLBACK;');
+
         logger.error(error); // Log the error on the server side
         handleError(response, 'Error updating payroll tax');
+    } finally {
+        client.release(); // Release the client back to the pool
     }
 };
 
@@ -184,24 +217,29 @@ export const updatePayrollTaxReturnObject = async (
 ): Promise<void> => {
     const { id } = request.params;
 
-    try {
-        const results = await executeQuery(payrollQueries.getPayrollTaxesById, [
-            id,
-        ]);
+    const client = await pool.connect(); // Get a client from the pool
 
-        if (results.length === 0) {
+    try {
+        const { rows } = await client.query(
+            payrollQueries.getPayrollTaxesById,
+            [id],
+        );
+
+        if (rows.length === 0) {
             response.status(404).send('Payroll tax not found');
             return;
         }
 
-        const payrollTaxes: PayrollTax[] = results.map((payrollTax) =>
-            payrollTaxesParse(payrollTax),
+        const payrollTaxes: PayrollTax[] = rows.map((row) =>
+            payrollTaxesParse(row),
         );
 
         response.status(200).json(payrollTaxes);
     } catch (error) {
         logger.error(error); // Log the error on the server side
         handleError(response, 'Error getting payroll tax');
+    } finally {
+        client.release(); // Release the client back to the pool
     }
 };
 
@@ -219,25 +257,37 @@ export const deletePayrollTax = async (
 ): Promise<void> => {
     const { id } = request.params;
 
+    const client = await pool.connect(); // Get a client from the pool
+
     try {
-        const getResults = await executeQuery(
+        const { rows } = await client.query(
             payrollQueries.getPayrollTaxesById,
             [id],
         );
 
-        if (getResults.length === 0) {
+        if (rows.length === 0) {
             response.status(404).send('Payroll tax not found');
             return;
         }
 
-        await executeQuery(payrollQueries.deletePayrollTax, [id]);
+        await client.query('BEGIN;');
 
-        await executeQuery('SELECT process_payroll_for_job($1)', [1]);
+        await client.query(payrollQueries.deletePayrollTax, [id]);
+
+        await client.query('SELECT process_payroll_for_job($1)', [
+            rows[0].job_id,
+        ]);
+
+        await client.query('COMMIT;');
 
         next();
     } catch (error) {
+        await client.query('ROLLBACK;');
+
         logger.error(error); // Log the error on the server side
         handleError(response, 'Error deleting payroll tax');
+    } finally {
+        client.release(); // Release the client back to the pool
     }
 };
 
