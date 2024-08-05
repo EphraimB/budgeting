@@ -1,8 +1,7 @@
 import { type Request, type Response } from 'express';
 import { accountQueries, commuteOverviewQueries } from '../models/queryData.js';
-import { handleError, executeQuery } from '../utils/helperFunctions.js';
+import { handleError } from '../utils/helperFunctions.js';
 import { logger } from '../config/winston.js';
-import { Account } from '../../src/types/types.js';
 import pool from '../config/db.js';
 
 type ReturnObject = {
