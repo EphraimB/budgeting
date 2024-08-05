@@ -1,9 +1,6 @@
 import { type Request, type Response } from 'express';
-import {
-    commuteSystemQueries,
-    fareDetailsQueries,
-} from '../models/queryData.js';
-import { handleError, executeQuery } from '../utils/helperFunctions.js';
+import { commuteSystemQueries } from '../models/queryData.js';
+import { handleError } from '../utils/helperFunctions.js';
 import { type CommuteSystem } from '../types/types.js';
 import { logger } from '../config/winston.js';
 import {
