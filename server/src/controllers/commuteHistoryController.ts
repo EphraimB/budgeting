@@ -1,6 +1,6 @@
 import { type Request, type Response } from 'express';
 import { commuteHistoryQueries } from '../models/queryData.js';
-import { handleError, executeQuery } from '../utils/helperFunctions.js';
+import { handleError } from '../utils/helperFunctions.js';
 import { type CommuteHistory } from '../types/types.js';
 import { logger } from '../config/winston.js';
 import pool from '../config/db.js';
