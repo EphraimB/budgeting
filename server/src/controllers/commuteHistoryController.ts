@@ -3,6 +3,7 @@ import { commuteHistoryQueries } from '../models/queryData.js';
 import { handleError, executeQuery } from '../utils/helperFunctions.js';
 import { type CommuteHistory } from '../types/types.js';
 import { logger } from '../config/winston.js';
+import pool from '../config/db.js';
 
 interface CommuteHistoryInput {
     commute_history_id: string;
@@ -48,6 +49,8 @@ export const getCommuteHistory = async (
         account_id?: string;
     }; // Destructure id from query string
 
+    const client = await pool.connect(); // Get a client from the pool
+
     try {
         let query: string;
         let params: any[];
@@ -67,17 +70,16 @@ export const getCommuteHistory = async (
             params = [];
         }
 
-        const commuteHistory = await executeQuery<CommuteHistoryInput>(
-            query,
-            params,
-        );
+        const { rows } = await client.query(query, params);
 
-        if (id && commuteHistory.length === 0) {
+        if (id && rows.length === 0) {
             response.status(404).send('Commute history not found');
             return;
         }
 
-        response.status(200).json(commuteHistory.map(parseCommuteHistory));
+        const commuteHistory = rows.map((row) => parseCommuteHistory(row));
+
+        response.status(200).json(commuteHistory);
     } catch (error) {
         logger.error(error); // Log the error on the server side
         handleError(
@@ -86,10 +88,12 @@ export const getCommuteHistory = async (
                 id
                     ? 'history'
                     : account_id
-                    ? 'history for given account_id'
+                    ? 'history for given account id'
                     : 'histories'
             }`,
         );
+    } finally {
+        client.release(); // Release the client back to the pool
     }
 };
 
@@ -106,8 +110,10 @@ export const createCommuteHistory = async (
     const { account_id, fare_amount, commute_system, fare_type, timestamp } =
         request.body;
 
+    const client = await pool.connect(); // Get a client from the pool
+
     try {
-        const rows = await executeQuery<CommuteHistoryInput>(
+        const { rows } = await client.query(
             commuteHistoryQueries.createCommuteHistory,
             [account_id, fare_amount, commute_system, fare_type, timestamp],
         );
@@ -118,6 +124,8 @@ export const createCommuteHistory = async (
     } catch (error) {
         logger.error(error); // Log the error on the server side
         handleError(response, 'Error creating commute history');
+    } finally {
+        client.release(); // Release the client back to the pool
     }
 };
 
@@ -134,26 +142,35 @@ export const updateCommuteHistory = async (
     const id = parseInt(request.params.id);
     const { account_id, fare_amount, commute_system, fare_type, timestamp } =
         request.body;
+
+    const client = await pool.connect(); // Get a client from the pool
+
     try {
-        const commuteHistory = await executeQuery<CommuteHistoryInput>(
+        const { rows } = await client.query(
             commuteHistoryQueries.getCommuteHistoryById,
             [id],
         );
 
-        if (commuteHistory.length === 0) {
+        if (rows.length === 0) {
             response.status(404).send('Commute history not found');
             return;
         }
 
-        const rows = await executeQuery<CommuteHistoryInput>(
+        const { rows: updateCommuteHistory } = await client.query(
             commuteHistoryQueries.updateCommuteHistory,
             [account_id, fare_amount, commute_system, fare_type, timestamp, id],
         );
-        const histories = rows.map((history) => parseCommuteHistory(history));
+
+        const histories = updateCommuteHistory.map((history) =>
+            parseCommuteHistory(history),
+        );
+
         response.status(200).json(histories);
     } catch (error) {
         logger.error(error); // Log the error on the server side
         handleError(response, 'Error updating commute history');
+    } finally {
+        client.release(); // Release the client back to the pool
     }
 };
 
@@ -168,21 +185,27 @@ export const deleteCommuteHistory = async (
     response: Response,
 ): Promise<void> => {
     const id = parseInt(request.params.id);
+
+    const client = await pool.connect(); // Get a client from the pool
+
     try {
-        const commuteHistory = await executeQuery<CommuteHistoryInput>(
+        const { rows } = await client.query(
             commuteHistoryQueries.getCommuteHistoryById,
             [id],
         );
 
-        if (commuteHistory.length === 0) {
+        if (rows.length === 0) {
             response.status(404).send('Commute history not found');
             return;
         }
 
-        await executeQuery(commuteHistoryQueries.deleteCommuteHistory, [id]);
+        await client.query(commuteHistoryQueries.deleteCommuteHistory, [id]);
+
         response.status(200).send('Successfully deleted commute history');
     } catch (error) {
         logger.error(error); // Log the error on the server side
         handleError(response, 'Error deleting commute history');
+    } finally {
+        client.release(); // Release the client back to the pool
     }
 };
