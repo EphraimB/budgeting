@@ -182,8 +182,8 @@ export const createTransfer = async (
             $$INSERT INTO transaction_history
                 (account_id, transaction_amount, transaction_tax_rate, transaction_title, transaction_description)
                 VALUES
-                (${source_account_id}, ${-amount}, ${taxRate}, '${title}', '${description}');
-                (${destination_account_id}, ${amount}, ${taxRate}, '${title}', '${description}');$$`);
+                (${source_account_id}, ${-amount}, ${taxRate}, '${title}', '${description}')
+                (${destination_account_id}, ${amount}, ${taxRate}, '${title}', '${description}')$$`);
 
         const { rows: cronIdResults } = await client.query(
             cronJobQueries.createCronJob,
@@ -315,8 +315,8 @@ export const updateTransfer = async (
             $$INSERT INTO transaction_history
                 (account_id, transaction_amount, transaction_tax_rate, transaction_title, transaction_description)
                 VALUES
-                (${source_account_id}, ${-amount}, ${taxRate}, '${title}', '${description}');
-                (${destination_account_id}, ${amount}, ${taxRate}, '${title}', '${description}');$$`);
+                (${source_account_id}, ${-amount}, ${taxRate}, '${title}', '${description}')
+                (${destination_account_id}, ${amount}, ${taxRate}, '${title}', '${description}')$$`);
 
         await client.query(cronJobQueries.updateCronJob, [
             uniqueId,

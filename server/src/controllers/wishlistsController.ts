@@ -4,16 +4,11 @@ import {
     taxesQueries,
     wishlistQueries,
 } from '../models/queryData.js';
-import {
-    executeQuery,
-    handleError,
-    parseIntOrFallback,
-    scheduleQuery,
-    unscheduleQuery,
-} from '../utils/helperFunctions.js';
+import { handleError, parseIntOrFallback } from '../utils/helperFunctions.js';
 import { type Wishlist } from '../types/types.js';
 import { logger } from '../config/winston.js';
 import determineCronValues from '../crontab/determineCronValues.js';
+import pool from '../config/db.js';
 
 /**
  *
@@ -47,6 +42,8 @@ export const getWishlists = async (
 ): Promise<void> => {
     const { account_id, id } = request.query;
 
+    const client = await pool.connect(); // Get a client from the pool
+
     try {
         let query: string;
         let params: any[];
@@ -65,9 +62,9 @@ export const getWishlists = async (
             params = [];
         }
 
-        const results = await executeQuery(query, params);
+        const { rows } = await client.query(query, params);
 
-        if (id && results.length === 0) {
+        if (id && rows.length === 0) {
             response.status(404).send('Wishlist not found');
             return;
         }
@@ -81,7 +78,7 @@ export const getWishlists = async (
         });
 
         // Add the wishlist_date_can_purchase to the wishlist object
-        const modifiedWishlists = results.map((wishlist) => ({
+        const modifiedWishlists = rows.map((wishlist) => ({
             ...wishlist,
             wishlist_date_can_purchase:
                 transactionMap[Number(wishlist.wishlist_id)] !== null &&
@@ -104,10 +101,12 @@ export const getWishlists = async (
                 id
                     ? 'wishlist'
                     : account_id
-                    ? 'wishlists for given account_id'
+                    ? 'wishlists for given account id'
                     : 'wishlists'
             }`,
         );
+    } finally {
+        client.release(); // Release the client back to the pool
     }
 };
 
@@ -134,10 +133,12 @@ export const createWishlist = async (
         date_available,
     } = request.body;
 
+    const client = await pool.connect(); // Get a client from the pool
+
     try {
         const cron_job_id: number | null = null;
 
-        const results = await executeQuery(wishlistQueries.createWishlist, [
+        const { rows } = await client.query(wishlistQueries.createWishlist, [
             account_id,
             tax_id,
             cron_job_id,
@@ -150,7 +151,7 @@ export const createWishlist = async (
         ]);
 
         // Parse the data to correct format and return an object
-        const wishlists: Wishlist[] = results.map((wishlist) =>
+        const wishlists: Wishlist[] = rows.map((wishlist) =>
             wishlistsParse(wishlist),
         );
 
@@ -161,6 +162,8 @@ export const createWishlist = async (
     } catch (error) {
         logger.error(error); // Log the error on the server side
         handleError(response, 'Error creating wishlist');
+    } finally {
+        client.release(); // Release the client back to the pool
     }
 };
 
@@ -176,6 +179,8 @@ export const createWishlistCron = async (
 ): Promise<void> => {
     const { wishlist_id } = request;
 
+    const client = await pool.connect(); // Get a client from the pool
+
     try {
         // Create a map of wishlist_id to transaction date for faster lookup
         const transactionMap: Record<number, string | null> = {};
@@ -186,12 +191,12 @@ export const createWishlistCron = async (
             });
         });
 
-        const results = await executeQuery(wishlistQueries.getWishlistsById, [
+        const { rows } = await client.query(wishlistQueries.getWishlistsById, [
             wishlist_id,
         ]);
 
         // Add the wishlist_date_can_purchase to the wishlist object
-        const modifiedWishlists = results.map((wishlist) => ({
+        const modifiedWishlists = rows.map((wishlist) => ({
             ...wishlist,
             wishlist_date_can_purchase: transactionMap[
                 Number(wishlist.wishlist_id)
@@ -209,37 +214,38 @@ export const createWishlistCron = async (
             date: wishlists[0].wishlist_date_can_purchase,
         };
 
+        await client.query('BEGIN;');
+
         if (jobDetails.date !== null && jobDetails.date !== undefined) {
             const cronDate = determineCronValues(
                 jobDetails as { date: string },
             );
 
             // Get tax rate
-            const result = await executeQuery(taxesQueries.getTaxRateByTaxId, [
-                wishlists[0].tax_id,
-            ]);
+            const { rows: result } = await client.query(
+                taxesQueries.getTaxRateByTaxId,
+                [wishlists[0].tax_id],
+            );
             const taxRate = result && result.length > 0 ? result : 0;
 
-            const unique_id = `wishlist-${wishlists[0].id}`;
+            const uniqueId = `wishlist-${wishlists[0].id}`;
 
-            await scheduleQuery(
-                unique_id,
-                cronDate,
-                `INSERT INTO transaction_history (account_id, transaction_amount, transaction_tax_rate, transaction_title, transaction_description) VALUES (${
+            await client.query(`
+                SELECT cron.schedule '${uniqueId}', ${cronDate},
+                $$INSERT INTO transaction_history (account_id, transaction_amount, transaction_tax_rate, transaction_title, transaction_description) VALUES (${
                     request.body.account_id
                 }, ${-request.body.amount}, ${taxRate}, '${
                     request.body.title
-                }', '${request.body.description}')`,
+                }', '${request.body.description}')$$`);
+
+            const { rows: cronIdResults } = await client.query(
+                cronJobQueries.createCronJob,
+                [uniqueId, cronDate],
             );
 
-            const cronId: number = (
-                await executeQuery(cronJobQueries.createCronJob, [
-                    unique_id,
-                    cronDate,
-                ])
-            )[0].cron_job_id;
+            const cronId = cronIdResults[0].cron_job_id;
 
-            const updateWishlist = await executeQuery(
+            const { rows: updateWishlist } = await client.query(
                 wishlistQueries.updateWishlistWithCronJobId,
                 [cronId, wishlist_id],
             );
@@ -247,15 +253,21 @@ export const createWishlistCron = async (
             if (updateWishlist.length === 0) {
                 response
                     .status(400)
-                    .send("Wishlist couldn't update the cron_job_id");
+                    .send("Wishlist couldn't update the cron job id");
                 return;
             }
         }
 
+        await client.query('COMMIT;');
+
         response.status(201).json(wishlists);
     } catch (error) {
+        await client.query('ROLLBACK;');
+
         logger.error(error); // Log the error on the server side
         handleError(response, 'Error updating cron tab');
+    } finally {
+        client.release(); // Release the client back to the pool
     }
 };
 
@@ -283,8 +295,10 @@ export const updateWishlist = async (
         date_available,
     } = request.body;
 
+    const client = await pool.connect(); // Get a client from the pool
+
     try {
-        const results = await executeQuery(wishlistQueries.updateWishlist, [
+        const { rows } = await client.query(wishlistQueries.updateWishlist, [
             account_id,
             tax_id,
             amount,
@@ -296,13 +310,13 @@ export const updateWishlist = async (
             id,
         ]);
 
-        if (results.length === 0) {
+        if (rows.length === 0) {
             response.status(404).send('Wishlist not found');
             return;
         }
 
         // Parse the data to correct format and return an object
-        const wishlists: Wishlist[] = results.map((wishlist) =>
+        const wishlists: Wishlist[] = rows.map((wishlist) =>
             wishlistsParse(wishlist),
         );
 
@@ -313,6 +327,8 @@ export const updateWishlist = async (
     } catch (error) {
         logger.error(error); // Log the error on the server side
         handleError(response, 'Error updating wishlist');
+    } finally {
+        client.release(); // Release the client back to the pool
     }
 };
 
@@ -328,13 +344,14 @@ export const updateWishlistCron = async (
 ): Promise<void> => {
     const { wishlist_id } = request;
 
+    const client = await pool.connect(); // Get a client from the pool
+
     try {
         // Get cron job id
-        const wishlistsResults = await executeQuery(
-            wishlistQueries.getWishlistsById,
-            [wishlist_id],
-        );
-        const cronId = wishlistsResults[0].cron_job_id;
+        const { rows } = await client.query(wishlistQueries.getWishlistsById, [
+            wishlist_id,
+        ]);
+        const cronId = rows[0].cron_job_id;
 
         // Create a map of wishlist_id to transaction date for faster lookup
         const transactionMap: Record<number, string | null> = {};
@@ -345,7 +362,7 @@ export const updateWishlistCron = async (
         });
 
         // Add the wishlist_date_can_purchase to the wishlist object
-        const modifiedWishlists = wishlistsResults.map((wishlist) => ({
+        const modifiedWishlists = rows.map((wishlist) => ({
             ...wishlist,
             wishlist_date_can_purchase:
                 transactionMap[Number(wishlist.wishlist_id)] !== null &&
@@ -363,45 +380,54 @@ export const updateWishlistCron = async (
             date: wishlists[0].wishlist_date_can_purchase,
         };
 
+        await client.query('BEGIN;');
+
         if (jobDetails.date !== null || jobDetails.date !== undefined) {
             const cronDate = determineCronValues(
                 jobDetails as { date: string },
             );
 
-            const [{ unique_id }] = await executeQuery(
+            const { rows: uniqueIdResults } = await client.query(
                 cronJobQueries.getCronJob,
                 [cronId],
             );
 
+            const uniqueId = uniqueIdResults[0].unique_id;
+
             // Get tax rate
-            const result = await executeQuery(taxesQueries.getTaxRateByTaxId, [
-                wishlists[0].tax_id,
-            ]);
+            const { rows: result } = await client.query(
+                taxesQueries.getTaxRateByTaxId,
+                [wishlists[0].tax_id],
+            );
             const taxRate = result && result.length > 0 ? result : 0;
 
-            await unscheduleQuery(unique_id);
+            await client.query(`cron.unschedule(${uniqueId})`);
 
-            await scheduleQuery(
-                unique_id,
-                cronDate,
-                `INSERT INTO transaction_history (account_id, transaction_amount, transaction_tax_rate, transaction_title, transaction_description) VALUES (${
+            await client.query(`
+                SELECT cron.schedule '${uniqueId}', ${cronDate},
+                $$INSERT INTO transaction_history (account_id, transaction_amount, transaction_tax_rate, transaction_title, transaction_description) VALUES (${
                     request.body.account_id
                 }, ${-request.body.amount}, ${taxRate}, '${
                     request.body.title
-                }', '${request.body.description}')`,
-            );
+                }', '${request.body.description}')$$`);
 
-            await executeQuery(cronJobQueries.updateCronJob, [
-                unique_id,
+            await client.query(cronJobQueries.updateCronJob, [
+                uniqueId,
                 cronDate,
                 cronId,
             ]);
         }
 
+        await client.query('COMMIT;');
+
         response.status(200).json(wishlists);
     } catch (error) {
+        await client.query('ROLLBACK;');
+
         logger.error(error); // Log the error on the server side
         handleError(response, 'Error updating cron tab');
+    } finally {
+        client.release(); // Release the client back to the pool
     }
 };
 
@@ -417,34 +443,44 @@ export const deleteWishlist = async (
 ): Promise<void> => {
     const { id } = request.params;
 
+    const client = await pool.connect(); // Get a client from the pool
+
     try {
         // Delete cron job from crontab
-        const getWishlistResults = await executeQuery(
-            wishlistQueries.getWishlistsById,
-            [id],
-        );
+        const { rows } = await client.query(wishlistQueries.getWishlistsById, [
+            id,
+        ]);
 
-        if (getWishlistResults.length === 0) {
+        if (rows.length === 0) {
             response.status(404).send('Wishlist not found');
             return;
         }
 
-        const cronId = getWishlistResults[0].cron_job_id;
+        const cronId = rows[0].cron_job_id;
 
-        const cronJobResults = await executeQuery(cronJobQueries.getCronJob, [
-            cronId,
-        ]);
+        const { rows: cronJobResults } = await client.query(
+            cronJobQueries.getCronJob,
+            [cronId],
+        );
 
-        await unscheduleQuery(cronJobResults[0].unique_id);
+        await client.query('BEGIN;');
 
-        await executeQuery(wishlistQueries.deleteWishlist, [id]);
+        await client.query(`cron.unschedule(${cronJobResults[0].unique_id})`);
+
+        await client.query(wishlistQueries.deleteWishlist, [id]);
 
         // Delete wishlist from database
-        await executeQuery(cronJobQueries.deleteCronJob, [cronId]);
+        await client.query(cronJobQueries.deleteCronJob, [cronId]);
+
+        await client.query('COMMIT;');
 
         response.status(200).send('Successfully deleted wishlist item');
     } catch (error) {
+        await client.query('ROLLBACK;');
+
         logger.error(error); // Log the error on the server side
         handleError(response, 'Error deleting wishlist');
+    } finally {
+        client.release(); // Release the client back to the pool
     }
 };
