@@ -2,10 +2,7 @@ import { type NextFunction, type Request, type Response } from 'express';
 import { transferQueries, cronJobQueries } from '../models/queryData.js';
 import {
     handleError,
-    executeQuery,
     parseIntOrFallback,
-    scheduleQuery,
-    unscheduleQuery,
     nextTransactionFrequencyDate,
 } from '../utils/helperFunctions.js';
 import { type Transfer } from '../types/types.js';
