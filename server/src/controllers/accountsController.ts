@@ -41,7 +41,9 @@ export const getAccounts = async (
 
         const { rows } = await client.query(query, params);
 
-        console.log(rows)
+        console.log(rows);
+
+        console.log(id);
 
         if (id && rows.length === 0) {
             response.status(404).send('Account not found');
@@ -114,6 +116,7 @@ export const updateAccount = async (
         ]);
 
         const accounts = rows.map((account) => parseAccounts(account));
+
         response.status(200).json(accounts);
     } catch (error) {
         logger.error(error); // Log the error on the server side

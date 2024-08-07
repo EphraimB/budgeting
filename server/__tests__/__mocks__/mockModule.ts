@@ -10,14 +10,20 @@ import {
  * Mock module with mock implementations for the database client and handleError
  */
 export const mockModule = (
-    poolResponses: any = [], // Array of responses for the database client
+    poolResponses: any[], // Array of responses for the database client
 ) => {
     const pool = jest.fn();
     const handleError = jest.fn();
 
-    poolResponses.forEach((response: Response) => {
-        pool.mockImplementationOnce(() => Promise.resolve(response));
-    });
+    if (poolResponses === undefined) {
+        pool.mockImplementationOnce(() =>
+            Promise.reject({ status: 400, message: 'Error' }),
+        );
+    } else {
+        poolResponses.forEach((response: any[]) => {
+            pool.mockImplementationOnce(() => Promise.resolve(response));
+        });
+    }
 
     jest.mock('../../src/utils/helperFunctions.js', () => ({
         handleError,
@@ -29,15 +35,7 @@ export const mockModule = (
     jest.mock('../../src/config/db.js', () => ({
         connect: jest.fn(() => ({
             query: jest.fn(() => ({
-                rows:
-                    poolResponses.length > 0
-                        ? poolResponses
-                        : pool.mockImplementationOnce(() =>
-                              Promise.reject({
-                                  status: 400,
-                                  message: 'Error',
-                              }),
-                          ),
+                rows: poolResponses,
             })),
             release: jest.fn(),
         })),
@@ -48,7 +46,7 @@ describe('Testing mockModule', () => {
     it('should return a module with mock implementations', async () => {
         const poolResponses = [{ rows: [{ id: 1 }] }];
 
-        mockModule(poolResponses);
+        mockModule([poolResponses]);
 
         const { handleError } = require('../../src/utils/helperFunctions.js');
         const db = require('../../src/config/db.js');
