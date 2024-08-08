@@ -15,15 +15,9 @@ export const mockModule = (
     const pool = jest.fn();
     const handleError = jest.fn();
 
-    if (poolResponses === undefined) {
-        pool.mockImplementationOnce(() =>
-            Promise.reject({ status: 400, message: 'Error' }),
-        );
-    } else {
-        poolResponses.forEach((response: any[]) => {
-            pool.mockImplementationOnce(() => Promise.resolve(response));
-        });
-    }
+    poolResponses.forEach((response) => {
+        pool.mockImplementationOnce(() => Promise.resolve({ rows: response }));
+    });
 
     jest.mock('../../src/utils/helperFunctions.js', () => ({
         handleError,
@@ -35,7 +29,7 @@ export const mockModule = (
     jest.mock('../../src/config/db.js', () => ({
         connect: jest.fn(() => ({
             query: jest.fn(() => ({
-                rows: poolResponses,
+                rows: poolResponses[0],
             })),
             release: jest.fn(),
         })),
@@ -44,7 +38,7 @@ export const mockModule = (
 
 describe('Testing mockModule', () => {
     it('should return a module with mock implementations', async () => {
-        const poolResponses = [{ rows: [{ id: 1 }] }];
+        const poolResponses = [{ id: 1 }];
 
         mockModule([poolResponses]);
 

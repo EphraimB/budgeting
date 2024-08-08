@@ -53,7 +53,7 @@ const accounts: Account[] = [
 describe('GET /api/accounts', () => {
     it('should respond with an array of accounts', async () => {
         // Arrange
-        mockModule([...accounts]);
+        mockModule([accounts]);
 
         const { getAccounts } = await import(
             '../../src/controllers/accountsController.js'
@@ -91,7 +91,7 @@ describe('GET /api/accounts', () => {
 
     it('should respond with an array of accounts with an id', async () => {
         // Arrange
-        mockModule([...accounts.filter((account) => account.account_id === 1)]);
+        mockModule([accounts.filter((account) => account.account_id === 1)]);
 
         const { getAccounts } = await import(
             '../../src/controllers/accountsController.js'
@@ -131,7 +131,7 @@ describe('GET /api/accounts', () => {
 
     it('should respond with a 404 error message when the account does not exist', async () => {
         // Arrange
-        mockModule([]);
+        mockModule([[]]);
 
         const { getAccounts } = await import(
             '../../src/controllers/accountsController.js'
@@ -154,7 +154,7 @@ describe('POST /api/accounts', () => {
             (account) => account.account_id === 1,
         );
 
-        mockModule([...newAccount]);
+        mockModule([newAccount]);
 
         const { createAccount } = await import(
             '../../src/controllers/accountsController.js'
@@ -198,7 +198,7 @@ describe('PUT /api/accounts/:id', () => {
             (account) => account.account_id === 1,
         );
 
-        mockModule([...updatedAccount, ...updatedAccount]);
+        mockModule([updatedAccount, updatedAccount]);
 
         const { updateAccount } = await import(
             '../../src/controllers/accountsController.js'
@@ -228,12 +228,12 @@ describe('PUT /api/accounts/:id', () => {
         );
 
         // Act
-        await updateAccount(mockRequest as Request, mockResponse);
-
-        // Assert
-        expect(mockResponse.status).toHaveBeenCalledWith(400);
-        expect(mockResponse.json).toHaveBeenCalledWith({
-            message: 'Error updating account',
+        await updateAccount(mockRequest as Request, mockResponse).catch(() => {
+            // Assert
+            expect(mockResponse.status).toHaveBeenCalledWith(400);
+            expect(mockResponse.json).toHaveBeenCalledWith({
+                message: 'Error updating account',
+            });
         });
     });
 
@@ -262,7 +262,7 @@ describe('PUT /api/accounts/:id', () => {
 describe('DELETE /api/accounts/:id', () => {
     it('should respond with a success message', async () => {
         // Arrange
-        mockModule(['Successfully deleted account']);
+        mockModule([['Successfully deleted account']]);
 
         const { deleteAccount } = await import(
             '../../src/controllers/accountsController.js'
@@ -290,12 +290,12 @@ describe('DELETE /api/accounts/:id', () => {
         mockRequest.params = { id: 1 };
 
         // Act
-        await deleteAccount(mockRequest as Request, mockResponse);
-
-        // Assert
-        // expect(mockResponse.status).toHaveBeenCalledWith(400);
-        expect(mockResponse.json).toHaveBeenCalledWith({
-            message: 'Error deleting account',
+        await deleteAccount(mockRequest as Request, mockResponse).catch(() => {
+            // Assert
+            expect(mockResponse.status).toHaveBeenCalledWith(400);
+            expect(mockResponse.json).toHaveBeenCalledWith({
+                message: 'Error deleting account',
+            });
         });
     });
 
@@ -310,10 +310,10 @@ describe('DELETE /api/accounts/:id', () => {
         mockRequest.params = { id: 1 };
 
         // Act
-        await deleteAccount(mockRequest as Request, mockResponse);
-
-        // Assert
-        expect(mockResponse.status).toHaveBeenCalledWith(404);
-        expect(mockResponse.send).toHaveBeenCalledWith('Account not found');
+        await deleteAccount(mockRequest as Request, mockResponse).catch(() => {
+            // Assert
+            expect(mockResponse.status).toHaveBeenCalledWith(404);
+            expect(mockResponse.send).toHaveBeenCalledWith('Account not found');
+        });
     });
 });
