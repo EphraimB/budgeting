@@ -41,10 +41,6 @@ export const getAccounts = async (
 
         const { rows } = await client.query(query, params);
 
-        console.log(rows);
-
-        console.log(id);
-
         if (id && rows.length === 0) {
             response.status(404).send('Account not found');
             return;
