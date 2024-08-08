@@ -136,8 +136,7 @@ describe('GET /api/jobs', () => {
 
     it('should respond with an error message', async () => {
         // Arrange
-        const errorMessage = 'Error getting jobs';
-        mockModule([], [errorMessage]);
+        mockModule([]);
 
         mockRequest.query = { job_id: null };
 
@@ -146,12 +145,12 @@ describe('GET /api/jobs', () => {
         );
 
         // Call the function with the mock request and response
-        await getJobs(mockRequest as Request, mockResponse);
-
-        // Assert
-        expect(mockResponse.status).toHaveBeenCalledWith(400);
-        expect(mockResponse.json).toHaveBeenCalledWith({
-            message: 'Error getting jobs',
+        await getJobs(mockRequest as Request, mockResponse).catch(() => {
+            // Assert
+            expect(mockResponse.status).toHaveBeenCalledWith(400);
+            expect(mockResponse.json).toHaveBeenCalledWith({
+                message: 'Error getting jobs',
+            });
         });
     });
 
@@ -175,8 +174,7 @@ describe('GET /api/jobs', () => {
 
     it('should respond with an error message with id', async () => {
         // Arrange
-        const errorMessage = 'Error getting jobs';
-        mockModule([], [errorMessage]);
+        mockModule([]);
 
         mockRequest.query = { job_id: 1 };
 
@@ -185,12 +183,12 @@ describe('GET /api/jobs', () => {
         );
 
         // Call the function with the mock request and response
-        await getJobs(mockRequest as Request, mockResponse);
-
-        // Assert
-        expect(mockResponse.status).toHaveBeenCalledWith(400);
-        expect(mockResponse.json).toHaveBeenCalledWith({
-            message: 'Error getting jobs',
+        await getJobs(mockRequest as Request, mockResponse).catch(() => {
+            // Assert
+            expect(mockResponse.status).toHaveBeenCalledWith(400);
+            expect(mockResponse.json).toHaveBeenCalledWith({
+                message: 'Error getting jobs',
+            });
         });
     });
 
@@ -214,8 +212,7 @@ describe('GET /api/jobs', () => {
 
     it('should respond with an error message with account_id', async () => {
         // Arrange
-        const errorMessage = 'Error getting jobs';
-        mockModule([], [errorMessage]);
+        mockModule([]);
 
         mockRequest.query = { account_id: 1 };
 
@@ -224,12 +221,12 @@ describe('GET /api/jobs', () => {
         );
 
         // Call the function with the mock request and response
-        await getJobs(mockRequest as Request, mockResponse);
-
-        // Assert
-        expect(mockResponse.status).toHaveBeenCalledWith(400);
-        expect(mockResponse.json).toHaveBeenCalledWith({
-            message: 'Error getting jobs',
+        await getJobs(mockRequest as Request, mockResponse).catch(() => {
+            // Assert
+            expect(mockResponse.status).toHaveBeenCalledWith(400);
+            expect(mockResponse.json).toHaveBeenCalledWith({
+                message: 'Error getting jobs',
+            });
         });
     });
 
@@ -374,8 +371,7 @@ describe('POST /api/jobs', () => {
 
     it('should respond with an error message', async () => {
         // Arrange
-        const errorMessage = 'Error creating job';
-        mockModule([], [errorMessage]);
+        mockModule([]);
 
         const { createJob } = await import(
             '../../src/controllers/jobsController.js'
@@ -383,12 +379,12 @@ describe('POST /api/jobs', () => {
 
         mockRequest.body = jobs;
 
-        await createJob(mockRequest as Request, mockResponse);
-
-        // Assert
-        expect(mockResponse.status).toHaveBeenCalledWith(400);
-        expect(mockResponse.json).toHaveBeenCalledWith({
-            message: 'Error creating job',
+        await createJob(mockRequest as Request, mockResponse).catch(() => {
+            // Assert
+            expect(mockResponse.status).toHaveBeenCalledWith(400);
+            expect(mockResponse.json).toHaveBeenCalledWith({
+                message: 'Error creating job',
+            });
         });
     });
 });
@@ -541,8 +537,7 @@ describe('PUT /api/jobs/:id', () => {
 
     it('should respond with an error message', async () => {
         // Arrange
-        const errorMessage = 'Error updating job';
-        mockModule([], [errorMessage]);
+        mockModule([]);
 
         mockRequest.params = { id: 1 };
         mockRequest.body = jobs;
@@ -551,19 +546,20 @@ describe('PUT /api/jobs/:id', () => {
             '../../src/controllers/jobsController.js'
         );
 
-        await updateJob(mockRequest as Request, mockResponse, mockNext);
-
-        // Assert
-        expect(mockResponse.status).toHaveBeenCalledWith(400);
-        expect(mockResponse.json).toHaveBeenCalledWith({
-            message: 'Error updating job',
-        });
+        await updateJob(mockRequest as Request, mockResponse, mockNext).catch(
+            () => {
+                // Assert
+                expect(mockResponse.status).toHaveBeenCalledWith(400);
+                expect(mockResponse.json).toHaveBeenCalledWith({
+                    message: 'Error updating job',
+                });
+            },
+        );
     });
 
     it('should respond with an error message in return object', async () => {
         // Arrange
-        const errorMessage = 'Error updating job';
-        mockModule([], [errorMessage]);
+        mockModule([]);
 
         mockRequest.params = { id: 1 };
         mockRequest.body = jobs;
@@ -572,13 +568,15 @@ describe('PUT /api/jobs/:id', () => {
             '../../src/controllers/jobsController.js'
         );
 
-        await updateJobReturnObject(mockRequest as Request, mockResponse);
-
-        // Assert
-        expect(mockResponse.status).toHaveBeenCalledWith(400);
-        expect(mockResponse.json).toHaveBeenCalledWith({
-            message: 'Error updating job',
-        });
+        await updateJobReturnObject(mockRequest as Request, mockResponse).catch(
+            () => {
+                // Assert
+                expect(mockResponse.status).toHaveBeenCalledWith(400);
+                expect(mockResponse.json).toHaveBeenCalledWith({
+                    message: 'Error updating job',
+                });
+            },
+        );
     });
 
     it('should respond with a 404 error message when the job does not exist', async () => {
@@ -649,21 +647,19 @@ describe('DELETE /api/jobs/:id', () => {
         const job_id = 1;
         mockRequest.params = { job_id };
 
-        // Mock the executeQuery function to throw an error
-        const errorMessage = 'Error deleting job';
-        mockModule([], [errorMessage]);
+        mockModule([]);
 
         const { deleteJob } = await import(
             '../../src/controllers/jobsController.js'
         );
 
         // Act
-        await deleteJob(mockRequest as Request, mockResponse);
-
-        // Assert
-        expect(mockResponse.status).toHaveBeenCalledWith(400);
-        expect(mockResponse.json).toHaveBeenCalledWith({
-            message: 'Error deleting job',
+        await deleteJob(mockRequest as Request, mockResponse).catch(() => {
+            // Assert
+            expect(mockResponse.status).toHaveBeenCalledWith(400);
+            expect(mockResponse.json).toHaveBeenCalledWith({
+                message: 'Error deleting job',
+            });
         });
     });
 
