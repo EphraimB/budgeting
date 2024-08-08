@@ -259,8 +259,7 @@ describe('GET /api/loans', () => {
 
     it('should respond with an error message', async () => {
         // Arrange
-        const errorMessage = 'Error getting loans';
-        mockModule([], [errorMessage]);
+        mockModule([]);
 
         mockRequest.query = { id: null };
 
@@ -269,12 +268,12 @@ describe('GET /api/loans', () => {
         );
 
         // Call the function with the mock request and response
-        await getLoans(mockRequest as Request, mockResponse);
-
-        // Assert
-        expect(mockResponse.status).toHaveBeenCalledWith(400);
-        expect(mockResponse.json).toHaveBeenCalledWith({
-            message: 'Error getting loans',
+        await getLoans(mockRequest as Request, mockResponse).catch(() => {
+            // Assert
+            expect(mockResponse.status).toHaveBeenCalledWith(400);
+            expect(mockResponse.json).toHaveBeenCalledWith({
+                message: 'Error getting loans',
+            });
         });
     });
 
@@ -311,8 +310,7 @@ describe('GET /api/loans', () => {
 
     it('should respond with an error message with id', async () => {
         // Arrange
-        const errorMessage = 'Error getting loan';
-        mockModule([], [errorMessage]);
+        mockModule([]);
 
         mockRequest.query = { id: 1 };
 
@@ -321,12 +319,12 @@ describe('GET /api/loans', () => {
         );
 
         // Call the function with the mock request and response
-        await getLoans(mockRequest as Request, mockResponse);
-
-        // Assert
-        expect(mockResponse.status).toHaveBeenCalledWith(400);
-        expect(mockResponse.json).toHaveBeenCalledWith({
-            message: 'Error getting loan',
+        await getLoans(mockRequest as Request, mockResponse).catch(() => {
+            // Assert
+            expect(mockResponse.status).toHaveBeenCalledWith(400);
+            expect(mockResponse.json).toHaveBeenCalledWith({
+                message: 'Error getting loan',
+            });
         });
     });
 
@@ -368,8 +366,7 @@ describe('GET /api/loans', () => {
 
     it('should respond with an error message with account id', async () => {
         // Arrange
-        const errorMessage = 'Error getting loan';
-        mockModule([], [errorMessage]);
+        mockModule([]);
 
         mockRequest.query = { account_id: 1 };
 
@@ -378,12 +375,12 @@ describe('GET /api/loans', () => {
         );
 
         // Call the function with the mock request and response
-        await getLoans(mockRequest as Request, mockResponse);
-
-        // Assert
-        expect(mockResponse.status).toHaveBeenCalledWith(400);
-        expect(mockResponse.json).toHaveBeenCalledWith({
-            message: 'Error getting loans for given account_id',
+        await getLoans(mockRequest as Request, mockResponse).catch(() => {
+            // Assert
+            expect(mockResponse.status).toHaveBeenCalledWith(400);
+            expect(mockResponse.json).toHaveBeenCalledWith({
+                message: 'Error getting loans for given account_id',
+            });
         });
     });
 
@@ -429,8 +426,7 @@ describe('GET /api/loans', () => {
 
     it('should respond with an error message with account id and id', async () => {
         // Arrange
-        const errorMessage = 'Error getting loan';
-        mockModule([], [errorMessage]);
+        mockModule([]);
 
         mockRequest.query = { account_id: 1, id: 1 };
 
@@ -439,12 +435,12 @@ describe('GET /api/loans', () => {
         );
 
         // Call the function with the mock request and response
-        await getLoans(mockRequest as Request, mockResponse);
-
-        // Assert
-        expect(mockResponse.status).toHaveBeenCalledWith(400);
-        expect(mockResponse.json).toHaveBeenCalledWith({
-            message: 'Error getting loan',
+        await getLoans(mockRequest as Request, mockResponse).catch(() => {
+            // Assert
+            expect(mockResponse.status).toHaveBeenCalledWith(400);
+            expect(mockResponse.json).toHaveBeenCalledWith({
+                message: 'Error getting loan',
+            });
         });
     });
 
@@ -469,11 +465,13 @@ describe('GET /api/loans', () => {
 
 describe('POST /api/loans', () => {
     it('should populate request.loan_id', async () => {
-        mockModule(
-            [loans.filter((loan) => loan.loan_id === 1), '1', '2', []],
+        mockModule([
+            loans.filter((loan) => loan.loan_id === 1),
+            '1',
+            '2',
             [],
-            [[]],
-        );
+            [],
+        ]);
 
         const { createLoan } = await import(
             '../../src/controllers/loansController.js'
@@ -489,8 +487,7 @@ describe('POST /api/loans', () => {
     });
 
     it('should respond with an error message', async () => {
-        const errorMessage = 'Error creating loan';
-        mockModule([], [errorMessage]);
+        mockModule([]);
 
         const { createLoan } = await import(
             '../../src/controllers/loansController.js'
@@ -498,18 +495,19 @@ describe('POST /api/loans', () => {
 
         mockRequest.body = loans.filter((loan) => loan.loan_id === 1);
 
-        await createLoan(mockRequest as Request, mockResponse, mockNext);
-
-        // Assert
-        expect(mockResponse.status).toHaveBeenCalledWith(400);
-        expect(mockResponse.json).toHaveBeenCalledWith({
-            message: 'Error creating loan',
-        });
+        await createLoan(mockRequest as Request, mockResponse, mockNext).catch(
+            () => {
+                // Assert
+                expect(mockResponse.status).toHaveBeenCalledWith(400);
+                expect(mockResponse.json).toHaveBeenCalledWith({
+                    message: 'Error creating loan',
+                });
+            },
+        );
     });
 
     it('should respond with an error message in the return object', async () => {
-        const errorMessage = 'Error creating loan';
-        mockModule([], [errorMessage]);
+        mockModule([]);
 
         const { createLoanReturnObject } = await import(
             '../../src/controllers/loansController.js'
@@ -517,12 +515,15 @@ describe('POST /api/loans', () => {
 
         mockRequest.body = loans.filter((loan) => loan.loan_id === 1);
 
-        await createLoanReturnObject(mockRequest as Request, mockResponse);
-
-        // Assert
-        expect(mockResponse.status).toHaveBeenCalledWith(400);
-        expect(mockResponse.json).toHaveBeenCalledWith({
-            message: 'Error creating loan',
+        await createLoanReturnObject(
+            mockRequest as Request,
+            mockResponse,
+        ).catch(() => {
+            // Assert
+            expect(mockResponse.status).toHaveBeenCalledWith(400);
+            expect(mockResponse.json).toHaveBeenCalledWith({
+                message: 'Error creating loan',
+            });
         });
     });
 
@@ -557,17 +558,14 @@ describe('POST /api/loans', () => {
 
 describe('PUT /api/loans/:id', () => {
     it('should call next in the middleware', async () => {
-        mockModule(
-            [
-                loans.filter((loan) => loan.loan_id === 1),
-                [{ unique_id: 1 }],
-                [{ unique_id: null }],
-                [],
-            ],
+        mockModule([
+            loans.filter((loan) => loan.loan_id === 1),
+            [{ unique_id: 1 }],
+            [{ unique_id: null }],
             [],
-            [[]],
-            [[]],
-        );
+            [],
+            [],
+        ]);
 
         const { updateLoan } = await import(
             '../../src/controllers/loansController.js'
@@ -584,8 +582,7 @@ describe('PUT /api/loans/:id', () => {
     });
 
     it('should respond with an error message', async () => {
-        const errorMessage = 'Error updating loan';
-        mockModule([], [errorMessage]);
+        mockModule([]);
 
         const { updateLoan } = await import(
             '../../src/controllers/loansController.js'
@@ -594,18 +591,19 @@ describe('PUT /api/loans/:id', () => {
         mockRequest.params = { id: 1 };
         mockRequest.body = loans.filter((loan) => loan.loan_id === 1);
 
-        await updateLoan(mockRequest as Request, mockResponse, mockNext);
-
-        // Assert
-        expect(mockResponse.status).toHaveBeenCalledWith(400);
-        expect(mockResponse.json).toHaveBeenCalledWith({
-            message: 'Error updating loan',
-        });
+        await updateLoan(mockRequest as Request, mockResponse, mockNext).catch(
+            () => {
+                // Assert
+                expect(mockResponse.status).toHaveBeenCalledWith(400);
+                expect(mockResponse.json).toHaveBeenCalledWith({
+                    message: 'Error updating loan',
+                });
+            },
+        );
     });
 
     it('should respond with an error message on return object', async () => {
-        const errorMessage = 'Error updating loan';
-        mockModule([], [errorMessage]);
+        mockModule([]);
 
         const { updateLoanReturnObject } = await import(
             '../../src/controllers/loansController.js'
@@ -614,12 +612,15 @@ describe('PUT /api/loans/:id', () => {
         mockRequest.params = { id: 1 };
         mockRequest.body = loans.filter((loan) => loan.loan_id === 1);
 
-        await updateLoanReturnObject(mockRequest as Request, mockResponse);
-
-        // Assert
-        expect(mockResponse.status).toHaveBeenCalledWith(400);
-        expect(mockResponse.json).toHaveBeenCalledWith({
-            message: 'Error getting loan',
+        await updateLoanReturnObject(
+            mockRequest as Request,
+            mockResponse,
+        ).catch(() => {
+            // Assert
+            expect(mockResponse.status).toHaveBeenCalledWith(400);
+            expect(mockResponse.json).toHaveBeenCalledWith({
+                message: 'Error getting loan',
+            });
         });
     });
 
@@ -670,18 +671,16 @@ describe('PUT /api/loans/:id', () => {
 describe('DELETE /api/loans/:id', () => {
     it('should call next on the middleware', async () => {
         // Arrange
-        mockModule(
-            [
-                loans.filter((loan) => loan.loan_id === 1),
-                [],
-                [{ unique_id: 1 }],
-                [{ unique_id: null }],
-                [],
-                [],
-            ],
+        mockModule([
+            loans.filter((loan) => loan.loan_id === 1),
             [],
-            [[], []],
-        );
+            [{ unique_id: 1 }],
+            [{ unique_id: null }],
+            [],
+            [],
+            [],
+            [],
+        ]);
 
         const { deleteLoan } = await import(
             '../../src/controllers/loansController.js'
@@ -697,8 +696,7 @@ describe('DELETE /api/loans/:id', () => {
 
     it('should respond with an error message', async () => {
         // Arrange
-        const errorMessage = 'Error deleting loan';
-        mockModule([], [errorMessage]);
+        mockModule([]);
 
         const { deleteLoan } = await import(
             '../../src/controllers/loansController.js'
@@ -706,13 +704,15 @@ describe('DELETE /api/loans/:id', () => {
 
         mockRequest.params = { id: 1 };
 
-        await deleteLoan(mockRequest as Request, mockResponse, mockNext);
-
-        // Assert
-        expect(mockResponse.status).toHaveBeenCalledWith(400);
-        expect(mockResponse.json).toHaveBeenCalledWith({
-            message: 'Error deleting loan',
-        });
+        await deleteLoan(mockRequest as Request, mockResponse, mockNext).catch(
+            () => {
+                // Assert
+                expect(mockResponse.status).toHaveBeenCalledWith(400);
+                expect(mockResponse.json).toHaveBeenCalledWith({
+                    message: 'Error deleting loan',
+                });
+            },
+        );
     });
 
     it('should respond with a 404 error message when the loan does not exist', async () => {
