@@ -262,7 +262,7 @@ describe('PUT /api/accounts/:id', () => {
 describe('DELETE /api/accounts/:id', () => {
     it('should respond with a success message', async () => {
         // Arrange
-        mockModule([['Successfully deleted account']]);
+        mockModule(['Successfully deleted account']);
 
         const { deleteAccount } = await import(
             '../../src/controllers/accountsController.js'

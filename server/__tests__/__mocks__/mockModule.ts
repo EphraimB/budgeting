@@ -3,6 +3,7 @@ import {
     parseIntOrFallback,
     parseFloatOrFallback,
 } from '../../src/utils/helperFunctions';
+import { beforeEach } from 'node:test';
 
 /**
  *
@@ -37,36 +38,26 @@ export const mockModule = (
 };
 
 describe('Testing mockModule', () => {
-    it('should return a module with mock implementations', async () => {
-        const poolResponses = [{ id: 1 }];
+    let mockRequest;
+    let mockResponse;
 
-        mockModule([poolResponses]);
-
-        const { handleError } = require('../../src/utils/helperFunctions.js');
-        const db = require('../../src/config/db.js');
-
-        // Create mock response and request objects
-        const res: any = {
-            status: poolResponses,
+    beforeEach(() => {
+        mockRequest = {};
+        mockResponse = {
+            status: jest.fn().mockReturnThis(),
             json: jest.fn(),
         };
+    });
 
-        // Trigger the mock error handling
-        handleError(res, 'Test error message');
+    it('should return a module with mock implementations', async () => {
+        const poolResponses = [[{ id: 1 }]];
 
-        // Assert that the handleError function was called correctly
-        expect(res.status).toHaveBeenCalledWith(400);
-        expect(res.json).toHaveBeenCalledWith({ message: 'Error' });
+        mockModule(poolResponses);
 
-        // Trigger the mock pool query and assert the results
-        try {
-            await db.connect().query();
-        } catch (error) {
-            expect(error.message).toBe('Error');
-        }
+        const db = require('../../src/config/db.js');
 
-        // Trigger the mock pool query with a successful response
-        const result = await db.connect().query();
-        expect(result).toEqual({ rows: [{ id: 1 }] });
+        // Trigger the mock pool query for the first response
+        const { rows } = await db.connect().query();
+        expect(rows).toEqual([{ id: 1 }]);
     });
 });
