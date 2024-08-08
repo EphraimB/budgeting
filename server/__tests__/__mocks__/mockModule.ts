@@ -3,7 +3,7 @@ import {
     parseIntOrFallback,
     parseFloatOrFallback,
 } from '../../src/utils/helperFunctions';
-import { beforeEach } from 'node:test';
+import { beforeEach } from '@jest/globals';
 
 /**
  *
@@ -17,7 +17,9 @@ export const mockModule = (
     const handleError = jest.fn();
 
     poolResponses.forEach((response) => {
-        pool.mockImplementationOnce(() => Promise.resolve({ rows: response }));
+        response.forEach((res: any) => {
+            pool.mockImplementationOnce(() => Promise.resolve({ rows: res }));
+        });
     });
 
     jest.mock('../../src/utils/helperFunctions.js', () => ({

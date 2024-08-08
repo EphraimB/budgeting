@@ -113,6 +113,8 @@ describe('GET /api/payrolls', () => {
 
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(404);
-        expect(mockResponse.send).toHaveBeenCalledWith('No jobs found');
+        expect(mockResponse.send).toHaveBeenCalledWith(
+            'No payrolls for job or not found',
+        );
     });
 });
