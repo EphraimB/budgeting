@@ -22,26 +22,22 @@ import pool from '../config/db.js';
  **/
 const parseExpenses = (expense: Record<string, string>): Expense => ({
     id: parseInt(expense.expense_id),
-    account_id: parseInt(expense.account_id),
-    tax_id: parseIntOrFallback(expense.tax_id),
+    accountId: parseInt(expense.account_id),
+    taxId: parseIntOrFallback(expense.tax_id),
     amount: parseFloat(expense.expense_amount),
     title: expense.expense_title,
     description: expense.expense_description,
-    frequency_type: parseInt(expense.frequency_type),
-    frequency_type_variable: parseInt(expense.frequency_type_variable),
-    frequency_day_of_month: parseIntOrFallback(expense.frequency_day_of_month),
-    frequency_day_of_week: parseIntOrFallback(expense.frequency_day_of_week),
-    frequency_week_of_month: parseIntOrFallback(
-        expense.frequency_week_of_month,
-    ),
-    frequency_month_of_year: parseIntOrFallback(
-        expense.frequency_month_of_year,
-    ),
+    frequencyType: parseInt(expense.frequency_type),
+    frequencyTypeVariable: parseInt(expense.frequency_type_variable),
+    frequencyDayOfMonth: parseIntOrFallback(expense.frequency_day_of_month),
+    frequencyDayOfWeek: parseIntOrFallback(expense.frequency_day_of_week),
+    frequencyWeekOfMonth: parseIntOrFallback(expense.frequency_week_of_month),
+    frequencyMonthOfYear: parseIntOrFallback(expense.frequency_month_of_year),
     subsidized: parseFloat(expense.expense_subsidized),
-    begin_date: expense.expense_begin_date,
-    end_date: expense.expense_end_date,
-    date_created: expense.date_created,
-    date_modified: expense.date_modified,
+    beginDate: expense.expense_begin_date,
+    endDate: expense.expense_end_date,
+    dateCreated: expense.date_created,
+    dateModified: expense.date_modified,
 });
 
 /**
@@ -54,7 +50,7 @@ export const getExpenses = async (
     request: Request,
     response: Response,
 ): Promise<void> => {
-    const { id, account_id } = request.query;
+    const { id, accountId } = request.query;
 
     const client = await pool.connect(); // Get a client from the pool
 
@@ -62,15 +58,15 @@ export const getExpenses = async (
         let query: string;
         let params: any[];
 
-        if (id && account_id) {
+        if (id && accountId) {
             query = expenseQueries.getExpenseByIdAndAccountId;
-            params = [id, account_id];
+            params = [id, accountId];
         } else if (id) {
             query = expenseQueries.getExpenseById;
             params = [id];
-        } else if (account_id) {
+        } else if (accountId) {
             query = expenseQueries.getExpensesByAccountId;
-            params = [account_id];
+            params = [accountId];
         } else {
             query = expenseQueries.getAllExpenses;
             params = [];
@@ -90,7 +86,7 @@ export const getExpenses = async (
         modifiedExpenses.map((expense: Expense) => {
             const nextExpenseDate = nextTransactionFrequencyDate(expense);
 
-            expense.next_date = nextExpenseDate;
+            expense.nextDate = nextExpenseDate;
         });
 
         response.status(200).json(modifiedExpenses);
@@ -101,7 +97,7 @@ export const getExpenses = async (
             `Error getting ${
                 id
                     ? 'expense'
-                    : account_id
+                    : accountId
                     ? 'expenses for given account id'
                     : 'expenses'
             }`,
@@ -124,17 +120,17 @@ export const createExpense = async (
     next: NextFunction,
 ): Promise<void> => {
     const {
-        account_id,
-        tax_id,
+        accountId,
+        taxId,
         amount,
         title,
         description,
-        frequency_type,
-        frequency_type_variable,
-        frequency_day_of_month,
-        frequency_day_of_week,
-        frequency_week_of_month,
-        frequency_month_of_year,
+        frequencyType,
+        frequencyTypeVariable,
+        frequencyDayOfMonth,
+        frequencyDayOfWeek,
+        frequencyWeekOfMonth,
+        frequencyMonthOfYear,
         subsidized,
         begin_date,
     } = request.body;
@@ -145,17 +141,17 @@ export const createExpense = async (
         await client.query('BEGIN;');
 
         const { rows } = await client.query(expenseQueries.createExpense, [
-            account_id,
-            tax_id,
+            accountId,
+            taxId,
             amount,
             title,
             description,
-            frequency_type,
-            frequency_type_variable,
-            frequency_day_of_month,
-            frequency_day_of_week,
-            frequency_week_of_month,
-            frequency_month_of_year,
+            frequencyType,
+            frequencyTypeVariable,
+            frequencyDayOfMonth,
+            frequencyDayOfWeek,
+            frequencyWeekOfMonth,
+            frequencyMonthOfYear,
             subsidized,
             begin_date,
         ]);
@@ -163,12 +159,12 @@ export const createExpense = async (
         const modifiedExpenses = rows.map((row) => parseExpenses(row));
 
         const jobDetails = {
-            frequency_type,
-            frequency_type_variable,
-            frequency_day_of_month,
-            frequency_day_of_week,
-            frequency_week_of_month,
-            frequency_month_of_year,
+            frequencyType,
+            frequencyTypeVariable,
+            frequencyDayOfMonth,
+            frequencyDayOfWeek,
+            frequencyWeekOfMonth,
+            frequencyMonthOfYear,
             date: begin_date,
         };
 
@@ -177,7 +173,7 @@ export const createExpense = async (
         // Get tax rate
         const { rows: result } = await client.query(
             taxesQueries.getTaxRateByTaxId,
-            [tax_id],
+            [taxId],
         );
         const taxRate = result && result.length > 0 ? result : 0;
 
@@ -185,7 +181,7 @@ export const createExpense = async (
 
         await client.query(`
             SELECT cron.schedule('${uniqueId}', '${cronDate}',
-            $$INSERT INTO transaction_history (account_id, transaction_amount, transaction_tax_rate, transaction_title, transaction_description) VALUES (${account_id}, ${
+            $$INSERT INTO transaction_history (account_id, transaction_amount, transaction_tax_rate, transaction_title, transaction_description) VALUES (${accountId}, ${
                 -amount + amount * subsidized
             }, ${taxRate}, '${title}', '${description}')$$)`);
 
@@ -203,7 +199,7 @@ export const createExpense = async (
 
         await client.query('COMMIT;');
 
-        request.expense_id = modifiedExpenses[0].id;
+        request.expenseId = modifiedExpenses[0].id;
 
         next();
     } catch (error) {
@@ -226,13 +222,13 @@ export const createExpenseReturnObject = async (
     request: Request,
     response: Response,
 ): Promise<void> => {
-    const { expense_id } = request;
+    const { expenseId } = request;
 
     const client = await pool.connect(); // Get a client from the pool
 
     try {
         const { rows } = await client.query(expenseQueries.getExpenseById, [
-            expense_id,
+            expenseId,
         ]);
 
         const modifiedExpenses = rows.map((row) => parseExpenses(row));
@@ -260,19 +256,19 @@ export const updateExpense = async (
 ): Promise<void> => {
     const id: number = parseInt(request.params.id);
     const {
-        account_id,
-        tax_id,
+        accountId,
+        taxId,
         amount,
         title,
         description,
-        frequency_type,
-        frequency_type_variable,
-        frequency_day_of_month,
-        frequency_day_of_week,
-        frequency_week_of_month,
-        frequency_month_of_year,
+        frequencyType,
+        frequencyTypeVariable,
+        frequencyDayOfMonth,
+        frequencyDayOfWeek,
+        frequencyWeekOfMonth,
+        frequencyMonthOfYear,
         subsidized,
-        begin_date,
+        beginDate,
     } = request.body;
 
     const client = await pool.connect(); // Get a client from the pool
@@ -290,13 +286,13 @@ export const updateExpense = async (
         const cronId: number = parseInt(rows[0].cron_job_id);
 
         const jobDetails = {
-            frequency_type,
-            frequency_type_variable,
-            frequency_day_of_month,
-            frequency_day_of_week,
-            frequency_week_of_month,
-            frequency_month_of_year,
-            date: begin_date,
+            frequencyType,
+            frequencyTypeVariable,
+            frequencyDayOfMonth,
+            frequencyDayOfWeek,
+            frequencyWeekOfMonth,
+            frequencyMonthOfYear,
+            date: beginDate,
         };
 
         const cronDate = determineCronValues(jobDetails);
@@ -315,13 +311,13 @@ export const updateExpense = async (
         // Get tax rate
         const { rows: result } = await client.query(
             taxesQueries.getTaxRateByTaxId,
-            [tax_id],
+            [taxId],
         );
         const taxRate = result && result.length > 0 ? result : 0;
 
         await client.query(`
             SELECT cron.schedule('${uniqueId}', '${cronDate}',
-            $$INSERT INTO transaction_history (account_id, transaction_amount, transaction_tax_rate, transaction_title, transaction_description) VALUES (${account_id}, ${
+            $$INSERT INTO transaction_history (account_id, transaction_amount, transaction_tax_rate, transaction_title, transaction_description) VALUES (${accountId}, ${
                 -amount + amount * subsidized
             }, ${taxRate}, '${title}', '${description}')$$)`);
 
@@ -332,25 +328,25 @@ export const updateExpense = async (
         ]);
 
         await client.query(expenseQueries.updateExpense, [
-            account_id,
-            tax_id,
+            accountId,
+            taxId,
             amount,
             title,
             description,
-            frequency_type,
-            frequency_type_variable,
-            frequency_day_of_month,
-            frequency_day_of_week,
-            frequency_week_of_month,
-            frequency_month_of_year,
+            frequencyType,
+            frequencyTypeVariable,
+            frequencyDayOfMonth,
+            frequencyDayOfWeek,
+            frequencyWeekOfMonth,
+            frequencyMonthOfYear,
             subsidized,
-            begin_date,
+            beginDate,
             id,
         ]);
 
         await client.query('COMMIT;');
 
-        request.expense_id = id;
+        request.expenseId = id;
 
         next();
     } catch (error) {
@@ -373,13 +369,13 @@ export const updateExpenseReturnObject = async (
     request: Request,
     response: Response,
 ): Promise<void> => {
-    const { expense_id } = request;
+    const { expenseId } = request;
 
     const client = await pool.connect(); // Get a client from the pool
 
     try {
         const { rows } = await client.query(expenseQueries.getExpenseById, [
-            expense_id,
+            expenseId,
         ]);
 
         const modifiedExpenses = rows.map((row) => parseExpenses(row));
