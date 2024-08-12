@@ -18,7 +18,7 @@ router.get(
             .isInt({ min: 1 })
             .withMessage('ID must be a number'),
         validateRequest,
-        query('account_id')
+        query('accountId')
             .optional()
             .isInt({ min: 1 })
             .withMessage('Account ID must be a number'),
@@ -29,16 +29,16 @@ router.get(
 router.post(
     '/',
     [
-        body('account_id')
+        body('accountId')
             .isInt({ min: 1 })
             .withMessage('Account ID must be a number'),
-        body('fare_amount')
+        body('fareAmount')
             .isFloat({ min: 0 })
             .withMessage('Fare amount must be a number'),
-        body('commute_system')
+        body('commuteSystem')
             .isString()
             .withMessage('Commute system must be a string'),
-        body('fare_type').isString().withMessage('Fare type must be a string'),
+        body('fareType').isString().withMessage('Fare type must be a string'),
         body('timestamp').isString().withMessage('Timestamp must be a string'),
         validateRequest,
     ],
@@ -49,16 +49,16 @@ router.put(
     '/:id',
     [
         param('id').isInt({ min: 1 }).withMessage('ID must be a number'),
-        body('account_id')
+        body('accountId')
             .isInt({ min: 1 })
             .withMessage('Account ID must be a number'),
-        body('fare_amount')
+        body('fareAmount')
             .isFloat({ min: 0 })
             .withMessage('Fare amount must be a number'),
-        body('commute_system')
+        body('commuteSystem')
             .isString()
             .withMessage('Commute system must be a string'),
-        body('fare_type').isString().withMessage('Fare type must be a string'),
+        body('fareType').isString().withMessage('Fare type must be a string'),
         body('timestamp').isString().withMessage('Timestamp must be a string'),
         validateRequest,
     ],

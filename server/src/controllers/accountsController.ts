@@ -11,11 +11,11 @@ import pool from '../config/db.js';
  * @returns - Parsed account object
  */
 const parseAccounts = (account: Record<string, string>): Account => ({
-    account_id: parseInt(account.account_id),
-    account_name: account.account_name,
-    account_balance: parseFloat(account.account_balance),
-    date_created: account.date_created,
-    date_modified: account.date_modified,
+    accountId: parseInt(account.account_id),
+    accountName: account.account_name,
+    accountBalance: parseFloat(account.account_balance),
+    dateCreated: account.date_created,
+    dateModified: account.date_modified,
 });
 
 /**
@@ -153,5 +153,7 @@ export const deleteAccount = async (
     } catch (error) {
         logger.error(error); // Log the error on the server side
         handleError(response, 'Error deleting account');
+    } finally {
+        client.release(); // Release the client back to the pool
     }
 };

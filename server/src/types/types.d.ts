@@ -84,11 +84,11 @@ export interface TransactionHistory {
 }
 
 export interface Account {
-    account_id: number;
-    account_name: string;
-    account_balance: number;
-    date_created: string;
-    date_modified: string;
+    accountId: number;
+    accountName: string;
+    accountBalance: number;
+    dateCreated: string;
+    dateModified: string;
 }
 
 interface JobSchedule {
@@ -232,13 +232,13 @@ export interface CommuteSystem {
 
 export interface CommuteHistory {
     id: number;
-    account_id: number;
-    fare_amount: number;
-    commute_system: string;
-    fare_type: string;
+    accountId: number;
+    fareAmount: number;
+    commuteSystem: string;
+    fareType: string;
     timestamp: string;
-    date_created: string;
-    date_modified: string;
+    dateCreated: string;
+    dateModified: string;
 }
 
 export interface FareDetails {

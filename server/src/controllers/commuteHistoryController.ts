@@ -25,13 +25,13 @@ const parseCommuteHistory = (
     commuteHistory: CommuteHistoryInput,
 ): CommuteHistory => ({
     id: parseInt(commuteHistory.commute_history_id),
-    account_id: parseInt(commuteHistory.account_id),
-    fare_amount: parseFloat(commuteHistory.fare_amount),
-    commute_system: commuteHistory.commute_system,
-    fare_type: commuteHistory.fare_type,
+    accountId: parseInt(commuteHistory.account_id),
+    fareAmount: parseFloat(commuteHistory.fare_amount),
+    commuteSystem: commuteHistory.commute_system,
+    fareType: commuteHistory.fare_type,
     timestamp: commuteHistory.timestamp,
-    date_created: commuteHistory.date_created,
-    date_modified: commuteHistory.date_modified,
+    dateCreated: commuteHistory.date_created,
+    dateModified: commuteHistory.date_modified,
 });
 
 /**
@@ -44,9 +44,9 @@ export const getCommuteHistory = async (
     request: Request,
     response: Response,
 ): Promise<void> => {
-    const { id, account_id } = request.query as {
+    const { id, accountId } = request.query as {
         id?: string;
-        account_id?: string;
+        accountId?: string;
     }; // Destructure id from query string
 
     const client = await pool.connect(); // Get a client from the pool
@@ -56,15 +56,15 @@ export const getCommuteHistory = async (
         let params: any[];
 
         // Change the query based on the presence of id
-        if (id && account_id) {
+        if (id && accountId) {
             query = commuteHistoryQueries.getCommuteHistoryByIdAndAccountId;
-            params = [id, account_id];
+            params = [id, accountId];
         } else if (id) {
             query = commuteHistoryQueries.getCommuteHistoryById;
             params = [id];
-        } else if (account_id) {
+        } else if (accountId) {
             query = commuteHistoryQueries.getCommuteHistoryByAccountId;
-            params = [account_id];
+            params = [accountId];
         } else {
             query = commuteHistoryQueries.getCommuteHistory;
             params = [];
@@ -87,7 +87,7 @@ export const getCommuteHistory = async (
             `Error getting commute ${
                 id
                     ? 'history'
-                    : account_id
+                    : accountId
                     ? 'history for given account id'
                     : 'histories'
             }`,
@@ -107,7 +107,7 @@ export const createCommuteHistory = async (
     request: Request,
     response: Response,
 ) => {
-    const { account_id, fare_amount, commute_system, fare_type, timestamp } =
+    const { accountId, fareAmount, commuteSystem, fareType, timestamp } =
         request.body;
 
     const client = await pool.connect(); // Get a client from the pool
@@ -115,7 +115,7 @@ export const createCommuteHistory = async (
     try {
         const { rows } = await client.query(
             commuteHistoryQueries.createCommuteHistory,
-            [account_id, fare_amount, commute_system, fare_type, timestamp],
+            [accountId, fareAmount, commuteSystem, fareType, timestamp],
         );
         const commuteHistories = rows.map((commuteHistory) =>
             parseCommuteHistory(commuteHistory),
@@ -140,7 +140,7 @@ export const updateCommuteHistory = async (
     response: Response,
 ): Promise<void> => {
     const id = parseInt(request.params.id);
-    const { account_id, fare_amount, commute_system, fare_type, timestamp } =
+    const { accountId, fareAmount, commuteSystem, fareType, timestamp } =
         request.body;
 
     const client = await pool.connect(); // Get a client from the pool
@@ -158,7 +158,7 @@ export const updateCommuteHistory = async (
 
         const { rows: updateCommuteHistory } = await client.query(
             commuteHistoryQueries.updateCommuteHistory,
-            [account_id, fare_amount, commute_system, fare_type, timestamp, id],
+            [accountId, fareAmount, commuteSystem, fareType, timestamp, id],
         );
 
         const histories = updateCommuteHistory.map((history) =>
