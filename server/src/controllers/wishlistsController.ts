@@ -231,12 +231,12 @@ export const createWishlistCron = async (
             const uniqueId = `wishlist-${wishlists[0].id}`;
 
             await client.query(`
-                SELECT cron.schedule '${uniqueId}', '${cronDate}',
+                SELECT cron.schedule('${uniqueId}', '${cronDate}',
                 $$INSERT INTO transaction_history (account_id, transaction_amount, transaction_tax_rate, transaction_title, transaction_description) VALUES (${
                     request.body.account_id
                 }, ${-request.body.amount}, ${taxRate}, '${
                     request.body.title
-                }', '${request.body.description}')$$`);
+                }', '${request.body.description}')$$)`);
 
             const { rows: cronIdResults } = await client.query(
                 cronJobQueries.createCronJob,
@@ -404,12 +404,12 @@ export const updateWishlistCron = async (
             await client.query(`cron.unschedule(${uniqueId})`);
 
             await client.query(`
-                SELECT cron.schedule '${uniqueId}', '${cronDate}',
+                SELECT cron.schedule('${uniqueId}', '${cronDate}',
                 $$INSERT INTO transaction_history (account_id, transaction_amount, transaction_tax_rate, transaction_title, transaction_description) VALUES (${
                     request.body.account_id
                 }, ${-request.body.amount}, ${taxRate}, '${
                     request.body.title
-                }', '${request.body.description}')$$`);
+                }', '${request.body.description}')$$)`);
 
             await client.query(cronJobQueries.updateCronJob, [
                 uniqueId,

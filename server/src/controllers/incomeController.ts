@@ -168,10 +168,10 @@ export const createIncome = async (
         const taxRate = 0;
 
         await client.query(`
-            SELECT cron.schedule '${uniqueId}', '${cronDate}',
+            SELECT cron.schedule('${uniqueId}', '${cronDate}',
             $$INSERT INTO transaction_history
             (account_id, transaction_amount, transaction_tax_rate, transaction_title, transaction_description)
-            VALUES (${account_id}, ${amount}, ${taxRate}, '${title}', '${description}')$$`);
+            VALUES (${account_id}, ${amount}, ${taxRate}, '${title}', '${description}')$$)`);
 
         const { rows: cronIdResults } = await client.query(
             cronJobQueries.createCronJob,
@@ -297,10 +297,10 @@ export const updateIncome = async (
         await client.query(`cron.unschedule(${uniqueId})`);
 
         await client.query(`
-            SELECT cron.schedule '${uniqueId}', '${cronDate}',
+            SELECT cron.schedule('${uniqueId}', '${cronDate}',
             $$INSERT INTO transaction_history
             (account_id, transaction_amount, transaction_tax_rate, transaction_title, transaction_description)
-            VALUES (${account_id}, ${amount}, ${taxRate}, '${title}', '${description}')$$`);
+            VALUES (${account_id}, ${amount}, ${taxRate}, '${title}', '${description}')$$)`);
 
         await client.query(cronJobQueries.updateCronJob, [
             uniqueId,

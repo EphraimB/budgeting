@@ -300,14 +300,14 @@ export const createCommuteSchedule = async (
         const uniqueId = `commute-${commuteSchedule[0].id}`;
 
         await client.query(`
-            SELECT cron.schedule '${uniqueId}', '${cronDate}',
+            SELECT cron.schedule('${uniqueId}', '${cronDate}',
             $$INSERT INTO commute_history (account_id, fare_amount, commute_system, fare_type, timestamp) VALUES (${account_id}, ${-fareDetail[0]
                 .fare_amount}, '${fareDetail[0].system_name}', '${
                 fareDetail[0].fare_type
-            }', now())$$`);
+            }', now())$$)`);
 
         await client.query(`
-            SELECT cron.schedule '${uniqueId}', '${cronDate}',
+            SELECT cron.schedule('${uniqueId}', '${cronDate}',
             $$INSERT INTO transaction_history (account_id, transaction_amount, transaction_tax_rate, transaction_title, transaction_description) VALUES (${account_id}, ${-fareDetail[0]
                 .fare_amount}, ${taxRate}, '${
                 fareDetail[0].system_name + ' ' + fareDetail[0].fare_type
@@ -316,7 +316,7 @@ export const createCommuteSchedule = async (
                 ' ' +
                 fareDetail[0].fare_type +
                 ' pass'
-            }')$$`);
+            }')$$)`);
 
         const { rows: cronIdResults } = await client.query(
             cronJobQueries.createCronJob,
@@ -527,14 +527,14 @@ export const updateCommuteSchedule = async (
         await client.query(`cron.unschedule(${uniqueId})`);
 
         await client.query(`
-            SELECT cron.schedule '${uniqueId}', '${cronDate}',
+            SELECT cron.schedule('${uniqueId}', '${cronDate}',
             $$INSERT INTO commute_history (account_id, fare_amount, commute_system, fare_type, timestamp) VALUES (${account_id}, ${-fareDetail[0]
                 .fare_amount}, '${fareDetail[0].system_name}', '${
                 fareDetail[0].fare_type
-            }', now())$$`);
+            }', now())$$)`);
 
         await client.query(`
-            SELECT cron.schedule '${uniqueId}', '${cronDate}',
+            SELECT cron.schedule('${uniqueId}', '${cronDate}',
             $$INSERT INTO transaction_history (account_id, transaction_amount, transaction_tax_rate, transaction_title, transaction_description) VALUES (${account_id}, ${-fareDetail[0]
                 .fare_amount}, ${taxRate}, '${
                 fareDetail[0].system_name + ' ' + fareDetail[0].fare_type
@@ -543,7 +543,7 @@ export const updateCommuteSchedule = async (
                 ' ' +
                 fareDetail[0].fare_type +
                 ' pass'
-            }')$$`);
+            }')$$)`);
 
         await client.query(cronJobQueries.updateCronJob, [
             uniqueId,
