@@ -1,8 +1,8 @@
 import { type Request, type Response } from 'express';
 import { accountQueries, commuteOverviewQueries } from '../models/queryData.js';
-import { handleError, executeQuery } from '../utils/helperFunctions.js';
+import { handleError } from '../utils/helperFunctions.js';
 import { logger } from '../config/winston.js';
-import { Account } from '../../src/types/types.js';
+import pool from '../config/db.js';
 
 type ReturnObject = {
     account_id: number;
@@ -29,32 +29,30 @@ export const getCommuteOverview = async (
 ): Promise<void> => {
     const { account_id } = request.query;
 
+    const client = await pool.connect(); // Get a client from the pool
+
     try {
         const accounts: number[] = [];
 
         if (account_id) {
-            const results: Account[] = await executeQuery(
-                accountQueries.getAccount,
-                [account_id],
-            );
+            const { rows } = await client.query(accountQueries.getAccount, [
+                account_id,
+            ]);
 
-            if (results.length === 0) {
+            if (rows.length === 0) {
                 response.status(404).send('Account does not exist');
                 return;
             }
 
-            accounts.push(results[0].account_id);
+            accounts.push(rows[0].account_id);
         } else {
-            const results: Account[] = await executeQuery(
-                accountQueries.getAccounts,
-                [],
-            );
-            accounts.push(...results.map((account) => account.account_id));
+            const { rows } = await client.query(accountQueries.getAccounts, []);
+            accounts.push(...rows.map((account) => account.account_id));
         }
 
         const overviews = await Promise.all(
             accounts.map(async (account_id) => {
-                return await executeQuery(
+                return await client.query(
                     commuteOverviewQueries.getCommuteOverviewByAccountId,
                     [account_id],
                 );
@@ -70,11 +68,11 @@ export const getCommuteOverview = async (
             };
 
             const overview = overviews.find(
-                (overview) => overview[0]?.account_id === account_id,
+                (overview) => overview.rows[0]?.account_id === account_id,
             );
 
             if (overview) {
-                overview.forEach((row) => {
+                overview.rows.forEach((row) => {
                     returnObject.total_cost_per_week += parseFloat(
                         row.total_cost_per_week,
                     );
@@ -117,5 +115,7 @@ export const getCommuteOverview = async (
                 ? `Error getting commute overview for account ${account_id}`
                 : `Error getting commute overview for all accounts`,
         );
+    } finally {
+        client.release(); // Release the client back to the pool
     }
 };

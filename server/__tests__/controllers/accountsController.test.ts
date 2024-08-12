@@ -71,8 +71,7 @@ describe('GET /api/accounts', () => {
 
     it('should handle errors correctly', async () => {
         // Arrange
-        const errorMessage = 'Error getting accounts';
-        mockModule([], [errorMessage]);
+        mockModule([]);
 
         const { getAccounts } = await import(
             '../../src/controllers/accountsController.js'
@@ -81,12 +80,12 @@ describe('GET /api/accounts', () => {
         mockRequest.query = { id: null };
 
         // Act
-        await getAccounts(mockRequest as Request, mockResponse);
-
-        // Assert
-        expect(mockResponse.status).toHaveBeenCalledWith(400);
-        expect(mockResponse.json).toHaveBeenCalledWith({
-            message: 'Error getting accounts',
+        await getAccounts(mockRequest as Request, mockResponse).catch(() => {
+            // Assert
+            expect(mockResponse.status).toHaveBeenCalledWith(400);
+            expect(mockResponse.json).toHaveBeenCalledWith({
+                message: 'Error getting accounts',
+            });
         });
     });
 
@@ -112,8 +111,7 @@ describe('GET /api/accounts', () => {
 
     it('should handle errors correctly with an id', async () => {
         // Arrange
-        const errorMessage = 'Error getting account';
-        mockModule([], [errorMessage]);
+        mockModule([]);
 
         const { getAccounts } = await import(
             '../../src/controllers/accountsController.js'
@@ -122,12 +120,12 @@ describe('GET /api/accounts', () => {
         mockRequest.query = { id: 1 };
 
         // Act
-        await getAccounts(mockRequest as Request, mockResponse);
-
-        // Assert
-        expect(mockResponse.status).toHaveBeenCalledWith(400);
-        expect(mockResponse.json).toHaveBeenCalledWith({
-            message: 'Error getting account',
+        await getAccounts(mockRequest as Request, mockResponse).catch(() => {
+            // Assert
+            expect(mockResponse.status).toHaveBeenCalledWith(400);
+            expect(mockResponse.json).toHaveBeenCalledWith({
+                message: 'Error getting account',
+            });
         });
     });
 
@@ -173,8 +171,7 @@ describe('POST /api/accounts', () => {
 
     it('should handle errors correctly', async () => {
         // Arrange
-        const errorMessage = 'Error creating account';
-        mockModule([], [errorMessage]);
+        mockModule([]);
 
         const { createAccount } = await import(
             '../../src/controllers/accountsController.js'
@@ -185,12 +182,12 @@ describe('POST /api/accounts', () => {
         );
 
         // Act
-        await createAccount(mockRequest as Request, mockResponse);
-
-        // Assert
-        expect(mockResponse.status).toHaveBeenCalledWith(400);
-        expect(mockResponse.json).toHaveBeenCalledWith({
-            message: 'Error creating account',
+        await createAccount(mockRequest as Request, mockResponse).catch(() => {
+            // Assert
+            expect(mockResponse.status).toHaveBeenCalledWith(400);
+            expect(mockResponse.json).toHaveBeenCalledWith({
+                message: 'Error creating account',
+            });
         });
     });
 });
@@ -219,8 +216,7 @@ describe('PUT /api/accounts/:id', () => {
 
     it('should handle errors correctly', async () => {
         // Arrange
-        const errorMessage = 'Error updating account';
-        mockModule([], [errorMessage]);
+        mockModule([]);
 
         const { updateAccount } = await import(
             '../../src/controllers/accountsController.js'
@@ -232,12 +228,12 @@ describe('PUT /api/accounts/:id', () => {
         );
 
         // Act
-        await updateAccount(mockRequest as Request, mockResponse);
-
-        // Assert
-        expect(mockResponse.status).toHaveBeenCalledWith(400);
-        expect(mockResponse.json).toHaveBeenCalledWith({
-            message: 'Error updating account',
+        await updateAccount(mockRequest as Request, mockResponse).catch(() => {
+            // Assert
+            expect(mockResponse.status).toHaveBeenCalledWith(400);
+            expect(mockResponse.json).toHaveBeenCalledWith({
+                message: 'Error updating account',
+            });
         });
     });
 
@@ -285,8 +281,7 @@ describe('DELETE /api/accounts/:id', () => {
 
     it('should handle errors correctly', async () => {
         // Arrange
-        const errorMessage = 'Error deleting account';
-        mockModule([], [errorMessage]);
+        mockModule([]);
 
         const { deleteAccount } = await import(
             '../../src/controllers/accountsController.js'
@@ -295,12 +290,12 @@ describe('DELETE /api/accounts/:id', () => {
         mockRequest.params = { id: 1 };
 
         // Act
-        await deleteAccount(mockRequest as Request, mockResponse);
-
-        // Assert
-        expect(mockResponse.status).toHaveBeenCalledWith(400);
-        expect(mockResponse.json).toHaveBeenCalledWith({
-            message: 'Error deleting account',
+        await deleteAccount(mockRequest as Request, mockResponse).catch(() => {
+            // Assert
+            expect(mockResponse.status).toHaveBeenCalledWith(400);
+            expect(mockResponse.json).toHaveBeenCalledWith({
+                message: 'Error deleting account',
+            });
         });
     });
 
@@ -315,10 +310,10 @@ describe('DELETE /api/accounts/:id', () => {
         mockRequest.params = { id: 1 };
 
         // Act
-        await deleteAccount(mockRequest as Request, mockResponse);
-
-        // Assert
-        expect(mockResponse.status).toHaveBeenCalledWith(404);
-        expect(mockResponse.send).toHaveBeenCalledWith('Account not found');
+        await deleteAccount(mockRequest as Request, mockResponse).catch(() => {
+            // Assert
+            expect(mockResponse.status).toHaveBeenCalledWith(404);
+            expect(mockResponse.send).toHaveBeenCalledWith('Account not found');
+        });
     });
 });

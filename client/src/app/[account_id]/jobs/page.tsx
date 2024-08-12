@@ -33,10 +33,9 @@ async function Jobs({ params }: { params: { account_id: string } }) {
           <Typography variant="h6">
             You have {jobs.length} job{jobs.length === 1 ? "" : "s"}
           </Typography>
-
-          <JobCards jobs={jobs} account_id={account_id} />
         </>
       )}
+      <JobCards jobs={jobs} account_id={account_id} />
     </Stack>
   );
 }

@@ -1,8 +1,9 @@
 import { type Request, type Response } from 'express';
 import { taxesQueries } from '../models/queryData.js';
-import { handleError, executeQuery } from '../utils/helperFunctions.js';
+import { handleError } from '../utils/helperFunctions.js';
 import { type Taxes } from '../types/types.js';
 import { logger } from '../config/winston.js';
+import pool from '../config/db.js';
 
 /**
  *
@@ -32,6 +33,8 @@ export const getTaxes = async (
 ): Promise<void> => {
     const { id } = request.query;
 
+    const client = await pool.connect(); // Get a client from the pool
+
     try {
         let query: string;
         let params: any[];
@@ -44,7 +47,7 @@ export const getTaxes = async (
             params = [];
         }
 
-        const taxesResults = await executeQuery(query, params);
+        const { rows: taxesResults } = await client.query(query, params);
 
         if (id && taxesResults.length === 0) {
             response.status(404).send('Tax not found');
@@ -62,6 +65,8 @@ export const getTaxes = async (
                 id !== null && id !== undefined ? 'tax' : 'taxes'
             }`,
         );
+    } finally {
+        client.release(); // Release the client back to the pool
     }
 };
 
@@ -77,13 +82,13 @@ export const createTax = async (
 ): Promise<void> => {
     const { rate, title, description, type } = request.body;
 
+    const client = await pool.connect(); // Get a client from the pool
+
     try {
-        const taxesResults = await executeQuery(taxesQueries.createTax, [
-            rate,
-            title,
-            description,
-            type,
-        ]);
+        const { rows: taxesResults } = await client.query(
+            taxesQueries.createTax,
+            [rate, title, description, type],
+        );
 
         const taxes: Taxes[] = taxesResults.map((transaction) =>
             parseTaxes(transaction),
@@ -92,6 +97,8 @@ export const createTax = async (
     } catch (error) {
         logger.error(error); // Log the error on the server side
         handleError(response, 'Error creating tax');
+    } finally {
+        client.release(); // Release the client back to the pool
     }
 };
 
@@ -108,14 +115,13 @@ export const updateTax = async (
     const id: number = parseInt(request.params.id);
     const { rate, title, description, type } = request.body;
 
+    const client = await pool.connect(); // Get a client from the pool
+
     try {
-        const taxesResults = await executeQuery(taxesQueries.updateTax, [
-            rate,
-            title,
-            description,
-            type,
-            id,
-        ]);
+        const { rows: taxesResults } = await client.query(
+            taxesQueries.updateTax,
+            [rate, title, description, type, id],
+        );
 
         if (taxesResults.length === 0) {
             response.status(404).send('Tax not found');
@@ -128,6 +134,8 @@ export const updateTax = async (
     } catch (error) {
         logger.error(error); // Log the error on the server side
         handleError(response, 'Error updating tax');
+    } finally {
+        client.release(); // Release the client back to the pool
     }
 };
 
@@ -141,21 +149,28 @@ export const deleteTax = async (
     request: Request,
     response: Response,
 ): Promise<void> => {
-    try {
-        const id: number = parseInt(request.params.id);
+    const id: number = parseInt(request.params.id);
 
-        const getTaxesResults = await executeQuery(taxesQueries.getTax, [id]);
+    const client = await pool.connect(); // Get a client from the pool
+
+    try {
+        const { rows: getTaxesResults } = await client.query(
+            taxesQueries.getTax,
+            [id],
+        );
 
         if (getTaxesResults.length === 0) {
             response.status(404).send('Tax not found');
             return;
         }
 
-        await executeQuery(taxesQueries.deleteTax, [id]);
+        await client.query(taxesQueries.deleteTax, [id]);
 
         response.status(200).send('Successfully deleted tax');
     } catch (error) {
         logger.error(error); // Log the error on the server side
         handleError(response, 'Error deleting tax');
+    } finally {
+        client.release(); // Release the client back to the pool
     }
 };

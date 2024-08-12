@@ -189,12 +189,11 @@ describe('GET / with account_id query', () => {
 describe('POST /', () => {
     it('responds with json', async () => {
         const newSchedule = {
-            commute_schedule_id: 1,
             account_id: 1,
             day_of_week: 1,
             fare_detail_id: 1,
             start_time: '08:00:00',
-            duration: 60,
+            end_time: '10:00:00',
         };
 
         const response: request.Response = await request(app)
@@ -211,12 +210,11 @@ describe('POST /', () => {
 describe('PUT /:id', () => {
     it('responds with json', async () => {
         const updatedSchedule = {
-            commute_schedule_id: 1,
             account_id: 1,
             day_of_week: 1,
             fare_detail_id: 1,
             start_time: '08:00:00',
-            duration: 60,
+            end_time: '10:00:00',
         };
 
         const response: request.Response = await request(app)

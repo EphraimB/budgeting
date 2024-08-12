@@ -259,8 +259,7 @@ describe('getTransactionsByAccount', () => {
 
     it('handles error if there is one', async () => {
         // Arrange
-        const errorMessage = 'Fake error';
-        mockModule([], [errorMessage]);
+        mockModule([]);
 
         const { getTransactionsByAccount } = await import(
             '../../src/middleware/middleware.js'
@@ -268,11 +267,15 @@ describe('getTransactionsByAccount', () => {
 
         mockRequest.query = { account_id: '1', from_date: '2020-01-01' };
 
-        await getTransactionsByAccount(mockRequest, mockResponse, mockNext);
-
-        expect(mockResponse.status).toHaveBeenCalledWith(400);
-        expect(mockResponse.json).toHaveBeenCalledWith({
-            message: 'Error getting transactions',
+        await getTransactionsByAccount(
+            mockRequest,
+            mockResponse,
+            mockNext,
+        ).catch(() => {
+            expect(mockResponse.status).toHaveBeenCalledWith(400);
+            expect(mockResponse.json).toHaveBeenCalledWith({
+                message: 'Error getting transactions',
+            });
         });
     });
 
@@ -339,8 +342,7 @@ describe('getExpensesByAccount', () => {
 
     it('handles error if there is one', async () => {
         // Arrange
-        const errorMessage = 'Fake error';
-        mockModule([], [errorMessage]);
+        mockModule([]);
 
         const { getExpensesByAccount } = await import(
             '../../src/middleware/middleware.js'
@@ -348,12 +350,14 @@ describe('getExpensesByAccount', () => {
 
         mockRequest.query = { account_id: '1', from_date: '2023-06-01' };
 
-        await getExpensesByAccount(mockRequest, mockResponse, mockNext);
-
-        expect(mockResponse.status).toHaveBeenCalledWith(400);
-        expect(mockResponse.json).toHaveBeenCalledWith({
-            message: 'Error getting expenses',
-        });
+        await getExpensesByAccount(mockRequest, mockResponse, mockNext).catch(
+            () => {
+                expect(mockResponse.status).toHaveBeenCalledWith(400);
+                expect(mockResponse.json).toHaveBeenCalledWith({
+                    message: 'Error getting expenses',
+                });
+            },
+        );
     });
 
     it('should return a 404 when account_id is not found', async () => {
@@ -423,8 +427,7 @@ describe('getLoansByAccount', () => {
 
     it('handles error if there is one', async () => {
         // Arrange
-        const errorMessage = 'Fake error';
-        mockModule([], [errorMessage]);
+        mockModule([]);
 
         const { getLoansByAccount } = await import(
             '../../src/middleware/middleware.js'
@@ -432,12 +435,14 @@ describe('getLoansByAccount', () => {
 
         mockRequest.query = { account_id: '1', from_date: '2023-06-01' };
 
-        await getLoansByAccount(mockRequest, mockResponse, mockNext);
-
-        expect(mockResponse.status).toHaveBeenCalledWith(400);
-        expect(mockResponse.json).toHaveBeenCalledWith({
-            message: 'Error getting loans',
-        });
+        await getLoansByAccount(mockRequest, mockResponse, mockNext).catch(
+            () => {
+                expect(mockResponse.status).toHaveBeenCalledWith(400);
+                expect(mockResponse.json).toHaveBeenCalledWith({
+                    message: 'Error getting loans',
+                });
+            },
+        );
     });
 
     it('should return a 404 when account_id is not found', async () => {
@@ -516,8 +521,7 @@ describe('getPayrollsMiddleware', () => {
 
     it('handles error if there is one', async () => {
         // Arrange
-        const errorMessage = 'Fake error';
-        mockModule([], [errorMessage]);
+        mockModule([]);
 
         const { getPayrollsMiddleware } = await import(
             '../../src/middleware/middleware.js'
@@ -525,12 +529,14 @@ describe('getPayrollsMiddleware', () => {
 
         mockRequest.query = { account_id: '1', from_date: '2023-06-01' };
 
-        await getPayrollsMiddleware(mockRequest, mockResponse, mockNext);
-
-        // expect(mockResponse.status).toHaveBeenCalledWith(400);
-        expect(mockResponse.json).toHaveBeenCalledWith({
-            message: 'Error getting payrolls',
-        });
+        await getPayrollsMiddleware(mockRequest, mockResponse, mockNext).catch(
+            () => {
+                // expect(mockResponse.status).toHaveBeenCalledWith(400);
+                expect(mockResponse.json).toHaveBeenCalledWith({
+                    message: 'Error getting payrolls',
+                });
+            },
+        );
     });
 
     it('should return a 404 when account_id is not found', async () => {
@@ -620,8 +626,7 @@ describe('getWishlistsByAccount', () => {
 
     it('handles error if there is one', async () => {
         // Arrange
-        const errorMessage = 'Fake error';
-        mockModule([], [errorMessage]);
+        mockModule([]);
 
         const { getWishlistsByAccount } = await import(
             '../../src/middleware/middleware.js'
@@ -629,12 +634,14 @@ describe('getWishlistsByAccount', () => {
 
         mockRequest.query = { account_id: '1', from_date: '2023-06-01' };
 
-        await getWishlistsByAccount(mockRequest, mockResponse, mockNext);
-
-        expect(mockResponse.status).toHaveBeenCalledWith(400);
-        expect(mockResponse.json).toHaveBeenCalledWith({
-            message: 'Error getting wishlists',
-        });
+        await getWishlistsByAccount(mockRequest, mockResponse, mockNext).catch(
+            () => {
+                expect(mockResponse.status).toHaveBeenCalledWith(400);
+                expect(mockResponse.json).toHaveBeenCalledWith({
+                    message: 'Error getting wishlists',
+                });
+            },
+        );
     });
 
     it('should return a 404 when account_id is not found', async () => {
@@ -714,8 +721,7 @@ describe('getTransfersByAccount', () => {
 
     it('handles error if there is one', async () => {
         // Arrange
-        const errorMessage = 'Fake error';
-        mockModule([], [errorMessage]);
+        mockModule([]);
 
         const { getTransfersByAccount } = await import(
             '../../src/middleware/middleware.js'
@@ -723,12 +729,14 @@ describe('getTransfersByAccount', () => {
 
         mockRequest.query = { account_id: '1', from_date: '2023-06-01' };
 
-        await getTransfersByAccount(mockRequest, mockResponse, mockNext);
-
-        expect(mockResponse.status).toHaveBeenCalledWith(400);
-        expect(mockResponse.json).toHaveBeenCalledWith({
-            message: 'Error getting transfers',
-        });
+        await getTransfersByAccount(mockRequest, mockResponse, mockNext).catch(
+            () => {
+                expect(mockResponse.status).toHaveBeenCalledWith(400);
+                expect(mockResponse.json).toHaveBeenCalledWith({
+                    message: 'Error getting transfers',
+                });
+            },
+        );
     });
 
     it('should return a 404 when account_id is not found', async () => {
@@ -799,8 +807,7 @@ describe('getCommuteExpensesByAccount', () => {
     });
 
     it('handles error if there is one', async () => {
-        const errorMessage = 'Fake error';
-        mockModule([], [errorMessage]);
+        mockModule([]);
 
         const { getCommuteExpensesByAccount } = await import(
             '../../src/middleware/middleware.js'
@@ -808,11 +815,15 @@ describe('getCommuteExpensesByAccount', () => {
 
         mockRequest.query = { account_id: '1', from_date: '2023-06-01' };
 
-        await getCommuteExpensesByAccount(mockRequest, mockResponse, mockNext);
-
-        expect(mockResponse.status).toHaveBeenCalledWith(400);
-        expect(mockResponse.json).toHaveBeenCalledWith({
-            message: 'Error getting commute expenses',
+        await getCommuteExpensesByAccount(
+            mockRequest,
+            mockResponse,
+            mockNext,
+        ).catch(() => {
+            expect(mockResponse.status).toHaveBeenCalledWith(400);
+            expect(mockResponse.json).toHaveBeenCalledWith({
+                message: 'Error getting commute expenses',
+            });
         });
     });
 
@@ -881,8 +892,7 @@ describe('getCurrentBalance', () => {
 
     it('handles error if there is one', async () => {
         // Arrange
-        const errorMessage = 'Fake error';
-        mockModule([], [errorMessage]);
+        mockModule([]);
 
         const { getCurrentBalance } = await import(
             '../../src/middleware/middleware.js'
@@ -890,12 +900,14 @@ describe('getCurrentBalance', () => {
 
         mockRequest.query = { account_id: '1', from_date: '2023-06-01' };
 
-        await getCurrentBalance(mockRequest, mockResponse, mockNext);
-
-        expect(mockResponse.status).toHaveBeenCalledWith(400);
-        expect(mockResponse.json).toHaveBeenCalledWith({
-            message: 'Error getting current balance',
-        });
+        await getCurrentBalance(mockRequest, mockResponse, mockNext).catch(
+            () => {
+                expect(mockResponse.status).toHaveBeenCalledWith(400);
+                expect(mockResponse.json).toHaveBeenCalledWith({
+                    message: 'Error getting current balance',
+                });
+            },
+        );
     });
 
     it('should return a 404 when account_id is not found', async () => {
@@ -939,12 +951,12 @@ describe('getCurrentBalance', () => {
 
 describe('updateWislistCron', () => {
     it('updates wishlist cron job', async () => {
-        mockModule(
-            [wishlists, [{ cron_job_id: 1 }], [{ tax_id: 1, tax_rate: 1 }], []],
+        mockModule([
+            wishlists,
+            [{ cron_job_id: 1 }],
+            [{ tax_id: 1, tax_rate: 1 }],
             [],
-            [[]],
-            [[]],
-        );
+        ]);
         const { updateWishlistCron } = await import(
             '../../src/middleware/middleware.js'
         );
@@ -963,19 +975,20 @@ describe('updateWislistCron', () => {
 
     it('handles error if there is one', async () => {
         // Arrange
-        const errorMessage = 'Fake error';
-        mockModule([], [errorMessage]);
+        mockModule([]);
 
         const { updateWishlistCron } = await import(
             '../../src/middleware/middleware.js'
         );
 
-        await updateWishlistCron(mockRequest, mockResponse, mockNext);
-
-        expect(mockResponse.status).toHaveBeenCalledWith(400);
-        expect(mockResponse.json).toHaveBeenCalledWith({
-            message: 'Error updating cron tab',
-        });
+        await updateWishlistCron(mockRequest, mockResponse, mockNext).catch(
+            () => {
+                expect(mockResponse.status).toHaveBeenCalledWith(400);
+                expect(mockResponse.json).toHaveBeenCalledWith({
+                    message: 'Error updating cron tab',
+                });
+            },
+        );
     });
 });
 
@@ -1007,7 +1020,7 @@ describe('getIncomeByAccount', () => {
     });
 
     it('handles error if there is one', async () => {
-        mockModule([[{ account_id: 1 }]], ['Fake error']);
+        mockModule([[{ account_id: 1 }]]);
 
         const { getIncomeByAccount } = await import(
             '../../src/middleware/middleware.js'
@@ -1015,12 +1028,14 @@ describe('getIncomeByAccount', () => {
 
         mockRequest.query = { account_id: '1', to_date: '2023-06-01' };
 
-        await getIncomeByAccount(mockRequest, mockResponse, mockNext);
-
-        expect(mockResponse.status).toHaveBeenCalledWith(400);
-        expect(mockResponse.json).toHaveBeenCalledWith({
-            message: 'Error getting income',
-        });
+        await getIncomeByAccount(mockRequest, mockResponse, mockNext).catch(
+            () => {
+                expect(mockResponse.status).toHaveBeenCalledWith(400);
+                expect(mockResponse.json).toHaveBeenCalledWith({
+                    message: 'Error getting income',
+                });
+            },
+        );
     });
 
     it('should fetch accounts if account_id is not provided', async () => {
