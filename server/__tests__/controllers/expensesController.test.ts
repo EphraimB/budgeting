@@ -319,12 +319,12 @@ describe('POST /api/expenses', () => {
         // Arrange
 
         mockModule([
+            [],
             expenses.filter((expense) => expense.expense_id === 1),
+            [],
             [],
             [{ cron_job_id: 1 }],
             [],
-            [],
-            [[]],
             [],
         ]);
 
@@ -586,10 +586,11 @@ describe('DELETE /api/expenses/:id', () => {
         mockModule([
             expenses.filter((expense) => expense.expense_id === 1),
             [],
+            [],
             [{ cron_job_id: 1, unique_id: 'income-1' }],
             [],
             [],
-            [[]],
+            [],
         ]);
 
         const { deleteExpense } = await import(
