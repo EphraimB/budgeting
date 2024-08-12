@@ -184,7 +184,7 @@ export const createExpense = async (
         const uniqueId = `expense-${modifiedExpenses[0].id}`;
 
         await client.query(`
-            SELECT cron.schedule '${uniqueId}', ${cronDate},
+            SELECT cron.schedule '${uniqueId}', '${cronDate}',
             $$INSERT INTO transaction_history (account_id, transaction_amount, transaction_tax_rate, transaction_title, transaction_description) VALUES (${account_id}, ${
                 -amount + amount * subsidized
             }, ${taxRate}, '${title}', '${description}')$$`);
@@ -320,7 +320,7 @@ export const updateExpense = async (
         const taxRate = result && result.length > 0 ? result : 0;
 
         await client.query(`
-            SELECT cron.schedule '${uniqueId}', ${cronDate},
+            SELECT cron.schedule '${uniqueId}', '${cronDate}',
             $$INSERT INTO transaction_history (account_id, transaction_amount, transaction_tax_rate, transaction_title, transaction_description) VALUES (${account_id}, ${
                 -amount + amount * subsidized
             }, ${taxRate}, '${title}', '${description}')$$`);

@@ -178,7 +178,7 @@ export const createTransfer = async (
         const uniqueId = `transfer-${transfers[0].id}`;
 
         await client.query(`
-            SELECT cron.schedule '${uniqueId}', ${cronDate},
+            SELECT cron.schedule '${uniqueId}', '${cronDate}',
             $$INSERT INTO transaction_history
                 (account_id, transaction_amount, transaction_tax_rate, transaction_title, transaction_description)
                 VALUES
@@ -311,7 +311,7 @@ export const updateTransfer = async (
         await client.query(`cron.unschedule(${uniqueId})`);
 
         await client.query(`
-            SELECT cron.schedule '${uniqueId}', ${cronDate},
+            SELECT cron.schedule '${uniqueId}', '${cronDate}',
             $$INSERT INTO transaction_history
                 (account_id, transaction_amount, transaction_tax_rate, transaction_title, transaction_description)
                 VALUES

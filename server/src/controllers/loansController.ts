@@ -194,7 +194,7 @@ export const createLoan = async (
         const uniqueId = `loan-${loans[0].id}`;
 
         await client.query(`
-            SELECT cron.schedule '${uniqueId}', ${cronDate},
+            SELECT cron.schedule '${uniqueId}', '${cronDate}',
             $$INSERT INTO transaction_history (account_id, transaction_amount, transaction_tax_rate, transaction_title, transaction_description) VALUES (${account_id}, ${
                 -parseFloat(plan_amount) +
                 parseFloat(plan_amount) * parseFloat(subsidized)
@@ -376,7 +376,7 @@ export const updateLoan = async (
         await client.query(`cron.unschedule(${uniqueId})`);
 
         await client.query(`
-            SELECT cron.schedule '${uniqueId}', ${cronDate},
+            SELECT cron.schedule '${uniqueId}', '${cronDate}',
             $$INSERT INTO transaction_history (account_id, transaction_amount, transaction_tax_rate, transaction_title, transaction_description) VALUES (${account_id}, ${
                 -parseFloat(plan_amount) +
                 parseFloat(plan_amount) * parseFloat(subsidized)
