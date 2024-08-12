@@ -1,15 +1,13 @@
 import { type Request, type Response } from 'express';
-import {
-    commuteSystemQueries,
-    fareDetailsQueries,
-} from '../models/queryData.js';
-import { handleError, executeQuery } from '../utils/helperFunctions.js';
+import { commuteSystemQueries } from '../models/queryData.js';
+import { handleError } from '../utils/helperFunctions.js';
 import { type CommuteSystem } from '../types/types.js';
 import { logger } from '../config/winston.js';
 import {
     parseIntOrFallback,
     parseFloatOrFallback,
 } from '../utils/helperFunctions.js';
+import pool from '../config/db.js';
 
 /**
  *
@@ -41,6 +39,8 @@ export const getCommuteSystem = async (
         id?: string;
     }; // Destructure id from query string
 
+    const client = await pool.connect(); // Get a client from the pool
+
     try {
         let query: string;
         let params: any[];
@@ -54,20 +54,26 @@ export const getCommuteSystem = async (
             params = [];
         }
 
-        const commuteSystem = await executeQuery(query, params);
+        const { rows } = await client.query(query, params);
 
-        if (id && commuteSystem.length === 0) {
+        if (id && rows.length === 0) {
             response.status(404).send('System not found');
             return;
         }
 
-        response.status(200).json(commuteSystem.map(parseCommuteSystem));
+        const commuteSystems = rows.map((commuteSystem) =>
+            parseCommuteSystem(commuteSystem),
+        );
+
+        response.status(200).json(commuteSystems);
     } catch (error) {
         logger.error(error); // Log the error on the server side
         handleError(
             response,
             `Error getting ${id ? 'system with id ' + id : 'systems'}`,
         );
+    } finally {
+        client.release(); // Release the client back to the pool
     }
 };
 
@@ -83,16 +89,21 @@ export const createCommuteSystem = async (
 ) => {
     const { name, fare_cap, fare_cap_duration } = request.body;
 
+    const client = await pool.connect(); // Get a client from the pool
+
     try {
-        const rows = await executeQuery(
+        const { rows } = await client.query(
             commuteSystemQueries.createCommuteSystem,
             [name, fare_cap, fare_cap_duration],
         );
         const commuteSystem = rows.map((cs) => parseCommuteSystem(cs));
+
         response.status(201).json(commuteSystem);
     } catch (error) {
         logger.error(error); // Log the error on the server side
         handleError(response, 'Error creating system');
+    } finally {
+        client.release(); // Release the client back to the pool
     }
 };
 
@@ -108,26 +119,32 @@ export const updateCommuteSystem = async (
 ): Promise<void> => {
     const id = parseInt(request.params.id);
     const { name, fare_cap, fare_cap_duration } = request.body;
+
+    const client = await pool.connect(); // Get a client from the pool
+
     try {
-        const commuteSystem = await executeQuery(
+        const { rows } = await client.query(
             commuteSystemQueries.getCommuteSystemById,
             [id],
         );
 
-        if (commuteSystem.length === 0) {
+        if (rows.length === 0) {
             response.status(404).send('System not found');
             return;
         }
 
-        const rows = await executeQuery(
+        const { rows: updateCommuteSystem } = await client.query(
             commuteSystemQueries.updateCommuteSystem,
             [name, fare_cap, fare_cap_duration, id],
         );
-        const system = rows.map((s) => parseCommuteSystem(s));
+        const system = updateCommuteSystem.map((s) => parseCommuteSystem(s));
+
         response.status(200).json(system);
     } catch (error) {
         logger.error(error); // Log the error on the server side
         handleError(response, 'Error updating system');
+    } finally {
+        client.release(); // Release the client back to the pool
     }
 };
 
@@ -142,36 +159,27 @@ export const deleteCommuteSystem = async (
     response: Response,
 ): Promise<void> => {
     const id = parseInt(request.params.id);
+
+    const client = await pool.connect(); // Get a client from the pool
+
     try {
-        const commuteSystem = await executeQuery(
+        const { rows } = await client.query(
             commuteSystemQueries.getCommuteSystemById,
             [id],
         );
 
-        if (commuteSystem.length === 0) {
+        if (rows.length === 0) {
             response.status(404).send('System not found');
             return;
         }
 
-        const fareDetailsResults = await executeQuery(
-            fareDetailsQueries.getFareDetails,
-            [],
-        );
-        const hasFareDetails: boolean = fareDetailsResults.length > 0;
+        await client.query(commuteSystemQueries.deleteCommuteSystem, [id]);
 
-        if (hasFareDetails) {
-            response
-                .status(400)
-                .send(
-                    'You need to delete system-related data before deleting the system',
-                );
-            return;
-        }
-
-        await executeQuery(commuteSystemQueries.deleteCommuteSystem, [id]);
         response.status(200).send('Successfully deleted system');
     } catch (error) {
         logger.error(error); // Log the error on the server side
         handleError(response, 'Error deleting system');
+    } finally {
+        client.release(); // Release the client back to the pool
     }
 };

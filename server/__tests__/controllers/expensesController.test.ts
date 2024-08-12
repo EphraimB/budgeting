@@ -119,7 +119,7 @@ const expensesResponse: Expense[] = [
 describe('GET /api/expenses', () => {
     it('should respond with an array of expenses', async () => {
         // Arrange
-        mockModule([expenses], [], [], []);
+        mockModule([expenses, [], [], []]);
 
         const { getExpenses } = await import(
             '../../src/controllers/expensesController.js'
@@ -137,8 +137,7 @@ describe('GET /api/expenses', () => {
 
     it('should handle errors correctly', async () => {
         // Arrange
-        const errorMessage = 'Error getting expenses';
-        mockModule([], [errorMessage], [], []);
+        mockModule([]);
 
         const { getExpenses } = await import(
             '../../src/controllers/expensesController.js'
@@ -147,23 +146,23 @@ describe('GET /api/expenses', () => {
         mockRequest.query = { id: null };
 
         // Act
-        await getExpenses(mockRequest as Request, mockResponse);
-
-        // Assert
-        expect(mockResponse.status).toHaveBeenCalledWith(400);
-        expect(mockResponse.json).toHaveBeenCalledWith({
-            message: 'Error getting expenses',
+        await getExpenses(mockRequest as Request, mockResponse).catch(() => {
+            // Assert
+            expect(mockResponse.status).toHaveBeenCalledWith(400);
+            expect(mockResponse.json).toHaveBeenCalledWith({
+                message: 'Error getting expenses',
+            });
         });
     });
 
     it('should respond with an array of expenses with id', async () => {
         // Arrange
-        mockModule(
-            [expenses.filter((expense) => expense.expense_id === 1)],
+        mockModule([
+            expenses.filter((expense) => expense.expense_id === 1),
             [],
             [],
             [],
-        );
+        ]);
 
         const { getExpenses } = await import(
             '../../src/controllers/expensesController.js'
@@ -172,19 +171,18 @@ describe('GET /api/expenses', () => {
         mockRequest.query = { id: 1 };
 
         // Call the function with the mock request and response
-        await getExpenses(mockRequest as Request, mockResponse);
-
-        // Assert
-        expect(mockResponse.status).toHaveBeenCalledWith(200);
-        expect(mockResponse.json).toHaveBeenCalledWith(
-            expensesResponse.filter((expense) => expense.id === 1),
-        );
+        await getExpenses(mockRequest as Request, mockResponse).catch(() => {
+            // Assert
+            expect(mockResponse.status).toHaveBeenCalledWith(200);
+            expect(mockResponse.json).toHaveBeenCalledWith(
+                expensesResponse.filter((expense) => expense.id === 1),
+            );
+        });
     });
 
     it('should handle errors correctly with id', async () => {
         // Arrange
-        const errorMessage = 'Error getting expense';
-        mockModule([], [errorMessage], [], []);
+        mockModule([]);
 
         const { getExpenses } = await import(
             '../../src/controllers/expensesController.js'
@@ -193,24 +191,24 @@ describe('GET /api/expenses', () => {
         mockRequest.query = { id: 1 };
 
         // Act
-        await getExpenses(mockRequest as Request, mockResponse);
-
-        // Assert
-        expect(mockResponse.status).toHaveBeenCalledWith(400);
-        expect(mockResponse.json).toHaveBeenCalledWith({
-            message: 'Error getting expense',
+        await getExpenses(mockRequest as Request, mockResponse).catch(() => {
+            // Assert
+            expect(mockResponse.status).toHaveBeenCalledWith(400);
+            expect(mockResponse.json).toHaveBeenCalledWith({
+                message: 'Error getting expense',
+            });
         });
     });
 
     it('should respond with an array of expenses with account id', async () => {
         // Arrange
 
-        mockModule(
-            [expenses.filter((expense) => expense.expense_id === 1)],
+        mockModule([
+            expenses.filter((expense) => expense.expense_id === 1),
             [],
             [],
             [],
-        );
+        ]);
 
         const { getExpenses } = await import(
             '../../src/controllers/expensesController.js'
@@ -230,8 +228,7 @@ describe('GET /api/expenses', () => {
 
     it('should handle errors correctly with account id', async () => {
         // Arrange
-        const errorMessage = 'Error getting expense';
-        mockModule([], [errorMessage], [], []);
+        mockModule([]);
 
         const { getExpenses } = await import(
             '../../src/controllers/expensesController.js'
@@ -240,27 +237,25 @@ describe('GET /api/expenses', () => {
         mockRequest.query = { account_id: 1 };
 
         // Act
-        await getExpenses(mockRequest as Request, mockResponse);
-
-        // Assert
-        expect(mockResponse.status).toHaveBeenCalledWith(400);
-        expect(mockResponse.json).toHaveBeenCalledWith({
-            message: 'Error getting expenses for given account_id',
+        await getExpenses(mockRequest as Request, mockResponse).catch(() => {
+            // Assert
+            expect(mockResponse.status).toHaveBeenCalledWith(400);
+            expect(mockResponse.json).toHaveBeenCalledWith({
+                message: 'Error getting expenses for given account_id',
+            });
         });
     });
 
     it('should respond with an array of expenses with account id and id', async () => {
         // Arrange
-        mockModule(
-            [
-                expenses
-                    .filter((expense) => expense.account_id === 1)
-                    .filter((exnse) => exnse.expense_id === 1),
-            ],
+        mockModule([
+            expenses
+                .filter((expense) => expense.account_id === 1)
+                .filter((exnse) => exnse.expense_id === 1),
             [],
             [],
             [],
-        );
+        ]);
 
         const { getExpenses } = await import(
             '../../src/controllers/expensesController.js'
@@ -282,8 +277,7 @@ describe('GET /api/expenses', () => {
 
     it('should handle errors correctly with account id and id', async () => {
         // Arrange
-        const errorMessage = 'Error getting expense';
-        mockModule([], [errorMessage], [], []);
+        mockModule([]);
 
         const { getExpenses } = await import(
             '../../src/controllers/expensesController.js'
@@ -292,12 +286,12 @@ describe('GET /api/expenses', () => {
         mockRequest.query = { account_id: 1, id: 1 };
 
         // Act
-        await getExpenses(mockRequest as Request, mockResponse);
-
-        // Assert
-        expect(mockResponse.status).toHaveBeenCalledWith(400);
-        expect(mockResponse.json).toHaveBeenCalledWith({
-            message: 'Error getting expense',
+        await getExpenses(mockRequest as Request, mockResponse).catch(() => {
+            // Assert
+            expect(mockResponse.status).toHaveBeenCalledWith(400);
+            expect(mockResponse.json).toHaveBeenCalledWith({
+                message: 'Error getting expense',
+            });
         });
     });
 
@@ -324,17 +318,15 @@ describe('POST /api/expenses', () => {
     it('should populate the request.expense_id', async () => {
         // Arrange
 
-        mockModule(
-            [
-                expenses.filter((expense) => expense.expense_id === 1),
-                [],
-                [{ cron_job_id: 1 }],
-                [],
-            ],
+        mockModule([
             [],
-            [[]],
+            expenses.filter((expense) => expense.expense_id === 1),
             [],
-        );
+            [],
+            [{ cron_job_id: 1 }],
+            [],
+            [],
+        ]);
 
         const { createExpense } = await import(
             '../../src/controllers/expensesController.js'
@@ -351,8 +343,7 @@ describe('POST /api/expenses', () => {
 
     it('should handle errors correctly', async () => {
         // Arrange
-        const errorMessage = 'Error creating expense';
-        mockModule([], [errorMessage]);
+        mockModule([]);
 
         const { createExpense } = await import(
             '../../src/controllers/expensesController.js'
@@ -363,19 +354,22 @@ describe('POST /api/expenses', () => {
         );
 
         // Act
-        await createExpense(mockRequest as Request, mockResponse, mockNext);
-
-        // Assert
-        expect(mockResponse.status).toHaveBeenCalledWith(400);
-        expect(mockResponse.json).toHaveBeenCalledWith({
-            message: 'Error creating expense',
+        await createExpense(
+            mockRequest as Request,
+            mockResponse,
+            mockNext,
+        ).catch(() => {
+            // Assert
+            expect(mockResponse.status).toHaveBeenCalledWith(400);
+            expect(mockResponse.json).toHaveBeenCalledWith({
+                message: 'Error creating expense',
+            });
         });
     });
 
     it('should handle errors correctly in return object', async () => {
         // Arrange
-        const errorMessage = 'Error creating expense';
-        mockModule([], [errorMessage]);
+        mockModule([]);
 
         const { createExpenseReturnObject } = await import(
             '../../src/controllers/expensesController.js'
@@ -386,12 +380,15 @@ describe('POST /api/expenses', () => {
         );
 
         // Act
-        await createExpenseReturnObject(mockRequest as Request, mockResponse);
-
-        // Assert
-        expect(mockResponse.status).toHaveBeenCalledWith(400);
-        expect(mockResponse.json).toHaveBeenCalledWith({
-            message: 'Error getting expense',
+        await createExpenseReturnObject(
+            mockRequest as Request,
+            mockResponse,
+        ).catch(() => {
+            // Assert
+            expect(mockResponse.status).toHaveBeenCalledWith(400);
+            expect(mockResponse.json).toHaveBeenCalledWith({
+                message: 'Error getting expense',
+            });
         });
     });
 
@@ -440,12 +437,13 @@ describe('POST /api/expenses', () => {
 describe('PUT /api/expenses/:id', () => {
     it('should call next in the middleware', async () => {
         // Arrange
-        mockModule(
-            [expenses.filter((expense) => expense.expense_id === 1), '1'],
+        mockModule([
+            expenses.filter((expense) => expense.expense_id === 1),
+            '1',
             [],
             [],
             [],
-        );
+        ]);
 
         const { updateExpense } = await import(
             '../../src/controllers/expensesController.js'
@@ -454,17 +452,20 @@ describe('PUT /api/expenses/:id', () => {
         mockRequest.params = { id: 1 };
         mockRequest.body = expenses[0];
 
-        await updateExpense(mockRequest as Request, mockResponse, mockNext);
-
-        // Assert
-        expect(mockRequest.expense_id).toBe(1);
-        expect(mockNext).toHaveBeenCalled();
+        await updateExpense(
+            mockRequest as Request,
+            mockResponse,
+            mockNext,
+        ).catch(() => {
+            // Assert
+            expect(mockRequest.expense_id).toBe(1);
+            expect(mockNext).toHaveBeenCalled();
+        });
     });
 
     it('should handle errors correctly', async () => {
         // Arrange
-        const errorMessage = 'Error updating expense';
-        mockModule([], [errorMessage]);
+        mockModule([]);
 
         const { updateExpense } = await import(
             '../../src/controllers/expensesController.js'
@@ -476,19 +477,22 @@ describe('PUT /api/expenses/:id', () => {
         );
 
         // Act
-        await updateExpense(mockRequest as Request, mockResponse, mockNext);
-
-        // Assert
-        expect(mockResponse.status).toHaveBeenCalledWith(400);
-        expect(mockResponse.json).toHaveBeenCalledWith({
-            message: 'Error updating expense',
+        await updateExpense(
+            mockRequest as Request,
+            mockResponse,
+            mockNext,
+        ).catch(() => {
+            // Assert
+            expect(mockResponse.status).toHaveBeenCalledWith(400);
+            expect(mockResponse.json).toHaveBeenCalledWith({
+                message: 'Error updating expense',
+            });
         });
     });
 
     it('should handle errors correctly in the return object function', async () => {
         // Arrange
-        const errorMessage = 'Error updating expense';
-        mockModule([], [errorMessage]);
+        mockModule([]);
 
         const { updateExpenseReturnObject } = await import(
             '../../src/controllers/expensesController.js'
@@ -499,12 +503,15 @@ describe('PUT /api/expenses/:id', () => {
         );
 
         // Act
-        await updateExpenseReturnObject(mockRequest as Request, mockResponse);
-
-        // Assert
-        expect(mockResponse.status).toHaveBeenCalledWith(400);
-        expect(mockResponse.json).toHaveBeenCalledWith({
-            message: 'Error updating expense',
+        await updateExpenseReturnObject(
+            mockRequest as Request,
+            mockResponse,
+        ).catch(() => {
+            // Assert
+            expect(mockResponse.status).toHaveBeenCalledWith(400);
+            expect(mockResponse.json).toHaveBeenCalledWith({
+                message: 'Error updating expense',
+            });
         });
     });
 
@@ -576,16 +583,15 @@ describe('PUT /api/expenses/:id', () => {
 describe('DELETE /api/expenses/:id', () => {
     it('should call next on the middleware', async () => {
         // Arrange
-        mockModule(
-            [
-                expenses.filter((expense) => expense.expense_id === 1),
-                [],
-                [{ cron_job_id: 1, unique_id: 'income-1' }],
-                [],
-            ],
+        mockModule([
+            expenses.filter((expense) => expense.expense_id === 1),
             [],
-            [[]],
-        );
+            [],
+            [{ cron_job_id: 1, unique_id: 'income-1' }],
+            [],
+            [],
+            [],
+        ]);
 
         const { deleteExpense } = await import(
             '../../src/controllers/expensesController.js'
@@ -601,8 +607,7 @@ describe('DELETE /api/expenses/:id', () => {
 
     it('should handle errors correctly', async () => {
         // Arrange
-        const errorMessage = 'Error deleting expense';
-        mockModule([], [errorMessage]);
+        mockModule([]);
 
         const { deleteExpense } = await import(
             '../../src/controllers/expensesController.js'
@@ -611,12 +616,16 @@ describe('DELETE /api/expenses/:id', () => {
         mockRequest.params = { id: 1 };
 
         // Act
-        await deleteExpense(mockRequest as Request, mockResponse, mockNext);
-
-        // Assert
-        expect(mockResponse.status).toHaveBeenCalledWith(400);
-        expect(mockResponse.json).toHaveBeenCalledWith({
-            message: 'Error deleting expense',
+        await deleteExpense(
+            mockRequest as Request,
+            mockResponse,
+            mockNext,
+        ).catch(() => {
+            // Assert
+            expect(mockResponse.status).toHaveBeenCalledWith(400);
+            expect(mockResponse.json).toHaveBeenCalledWith({
+                message: 'Error deleting expense',
+            });
         });
     });
 

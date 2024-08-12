@@ -2,15 +2,13 @@ import { type NextFunction, type Request, type Response } from 'express';
 import { transferQueries, cronJobQueries } from '../models/queryData.js';
 import {
     handleError,
-    executeQuery,
     parseIntOrFallback,
-    scheduleQuery,
-    unscheduleQuery,
     nextTransactionFrequencyDate,
 } from '../utils/helperFunctions.js';
 import { type Transfer } from '../types/types.js';
 import { logger } from '../config/winston.js';
 import determineCronValues from '../crontab/determineCronValues.js';
+import pool from '../config/db.js';
 
 /**
  *
@@ -52,6 +50,8 @@ export const getTransfers = async (
 ): Promise<void> => {
     const { account_id, id } = request.query;
 
+    const client = await pool.connect(); // Get a client from the pool
+
     try {
         let query: string;
         let params: any[];
@@ -70,15 +70,15 @@ export const getTransfers = async (
             params = [];
         }
 
-        const results = await executeQuery(query, params);
+        const { rows } = await client.query(query, params);
 
-        if (id && results.length === 0) {
+        if (id && rows.length === 0) {
             response.status(404).send('Transfer not found');
             return;
         }
 
         // Parse the data to the correct format
-        const transfers = results.map((result) => transfersParse(result));
+        const transfers = rows.map((row) => transfersParse(row));
 
         transfers.map((transfer: any) => {
             const nextExpenseDate = nextTransactionFrequencyDate(transfer);
@@ -95,10 +95,12 @@ export const getTransfers = async (
                 id
                     ? 'transfer'
                     : account_id
-                    ? 'transfers for given account_id'
+                    ? 'transfers for given account id'
                     : 'transfers'
             }`,
         );
+    } finally {
+        client.release(); // Release the client back to the pool
     }
 };
 
@@ -130,8 +132,12 @@ export const createTransfer = async (
         end_date,
     } = request.body;
 
+    const client = await pool.connect(); // Get a client from the pool
+
     try {
-        const transferResult = await executeQuery(
+        await client.query('BEGIN;');
+
+        const { rows: transferResult } = await client.query(
             transferQueries.createTransfer,
             [
                 source_account_id,
@@ -151,7 +157,9 @@ export const createTransfer = async (
         );
 
         // Parse the data to correct format and return an object
-        const transfers: Transfer[] = transferResult.map(transfersParse);
+        const transfers: Transfer[] = transferResult.map((row) =>
+            transfersParse(row),
+        );
 
         const jobDetails = {
             frequency_type,
@@ -167,37 +175,40 @@ export const createTransfer = async (
 
         const taxRate = 0;
 
-        const unique_id = `transfer-${transfers[0].id}`;
+        const uniqueId = `transfer-${transfers[0].id}`;
 
-        await scheduleQuery(
-            unique_id,
-            cronDate,
-            `
-                BEGIN;
-                INSERT INTO transaction_history (account_id, transaction_amount, transaction_tax_rate, transaction_title, transaction_description) VALUES (${source_account_id}, ${-amount}, ${taxRate}, '${title}', '${description}');
-                INSERT INTO transaction_history (account_id, transaction_amount, transaction_tax_rate, transaction_title, transaction_description) VALUES (${destination_account_id}, ${amount}, ${taxRate}, '${title}', '${description}');
-                COMMIT;
-            `,
+        await client.query(`
+            SELECT cron.schedule('${uniqueId}', '${cronDate}',
+            $$INSERT INTO transaction_history
+                (account_id, transaction_amount, transaction_tax_rate, transaction_title, transaction_description)
+                VALUES
+                (${source_account_id}, ${-amount}, ${taxRate}, '${title}', '${description}')
+                (${destination_account_id}, ${amount}, ${taxRate}, '${title}', '${description}')$$)`);
+
+        const { rows: cronIdResults } = await client.query(
+            cronJobQueries.createCronJob,
+            [uniqueId, cronDate],
         );
 
-        const cronId: number = (
-            await executeQuery(cronJobQueries.createCronJob, [
-                unique_id,
-                cronDate,
-            ])
-        )[0].cron_job_id;
+        const cronId = cronIdResults[0].cron_job_id;
 
-        await executeQuery(transferQueries.updateTransferWithCronJobId, [
+        await client.query(transferQueries.updateTransferWithCronJobId, [
             cronId,
             transfers[0].id,
         ]);
+
+        await client.query('COMMIT;');
 
         request.transfer_id = transfers[0].id;
 
         next();
     } catch (error) {
+        await client.query('ROLLBACK;');
+
         logger.error(error); // Log the error on the server side
         handleError(response, 'Error creating transfer');
+    } finally {
+        client.release(); // Release the client back to the pool
     }
 };
 
@@ -213,17 +224,21 @@ export const createTransferReturnObject = async (
 ): Promise<void> => {
     const { transfer_id } = request;
 
+    const client = await pool.connect(); // Get a client from the pool
+
     try {
-        const transfer = await executeQuery(transferQueries.getTransfersById, [
+        const { rows } = await client.query(transferQueries.getTransfersById, [
             transfer_id,
         ]);
 
-        const modifiedTransfers = transfer.map(transfersParse);
+        const modifiedTransfers = rows.map((row) => transfersParse(row));
 
         response.status(201).json(modifiedTransfers);
     } catch (error) {
         logger.error(error); // Log the error on the server side
         handleError(response, 'Error creating transfer');
+    } finally {
+        client.release(); // Release the client back to the pool
     }
 };
 
@@ -256,18 +271,19 @@ export const updateTransfer = async (
         end_date,
     } = request.body;
 
-    try {
-        const transferResults = await executeQuery(
-            transferQueries.getTransfersById,
-            [id],
-        );
+    const client = await pool.connect(); // Get a client from the pool
 
-        if (transferResults.length === 0) {
+    try {
+        const { rows } = await client.query(transferQueries.getTransfersById, [
+            id,
+        ]);
+
+        if (rows.length === 0) {
             response.status(404).send('Transfer not found');
             return;
         }
 
-        const cronId: number = parseInt(transferResults[0].cron_job_id);
+        const cronId: number = parseInt(rows[0].cron_job_id);
 
         const jobDetails = {
             frequency_type,
@@ -281,32 +297,34 @@ export const updateTransfer = async (
 
         const cronDate = determineCronValues(jobDetails);
 
-        const [{ unique_id }] = await executeQuery(cronJobQueries.getCronJob, [
-            cronId,
-        ]);
+        const { rows: uniqueIdResults } = await client.query(
+            cronJobQueries.getCronJob,
+            [cronId],
+        );
+
+        const uniqueId = uniqueIdResults[0].unique_id;
 
         const taxRate = 0;
 
-        await unscheduleQuery(unique_id);
+        await client.query('BEGIN;');
 
-        await scheduleQuery(
-            unique_id,
-            cronDate,
-            `
-                BEGIN;
-                INSERT INTO transaction_history (account_id, transaction_amount, transaction_tax_rate, transaction_title, transaction_description) VALUES (${source_account_id}, ${-amount}, ${taxRate}, '${title}', '${description}');
-                INSERT INTO transaction_history (account_id, transaction_amount, transaction_tax_rate, transaction_title, transaction_description) VALUES (${destination_account_id}, ${amount}, ${taxRate}, '${title}', '${description}');
-                COMMIT;
-            `,
-        );
+        await client.query(`SELECT cron.unschedule('${uniqueId}')`);
 
-        await executeQuery(cronJobQueries.updateCronJob, [
-            unique_id,
+        await client.query(`
+            SELECT cron.schedule('${uniqueId}', '${cronDate}',
+            $$INSERT INTO transaction_history
+                (account_id, transaction_amount, transaction_tax_rate, transaction_title, transaction_description)
+                VALUES
+                (${source_account_id}, ${-amount}, ${taxRate}, '${title}', '${description}')
+                (${destination_account_id}, ${amount}, ${taxRate}, '${title}', '${description}')$$)`);
+
+        await client.query(cronJobQueries.updateCronJob, [
+            uniqueId,
             cronDate,
             cronId,
         ]);
 
-        await executeQuery(transferQueries.updateTransfer, [
+        await client.query(transferQueries.updateTransfer, [
             source_account_id,
             destination_account_id,
             amount,
@@ -323,14 +341,18 @@ export const updateTransfer = async (
             id,
         ]);
 
+        await client.query('COMMIT;');
+
         request.transfer_id = id;
 
         next();
-
-        // response.status(200).json(transfers);
     } catch (error) {
+        await client.query('ROLLBACK;');
+
         logger.error(error); // Log the error on the server side
         handleError(response, 'Error updating transfer');
+    } finally {
+        client.release(); // Release the client back to the pool
     }
 };
 
@@ -346,17 +368,21 @@ export const updateTransferReturnObject = async (
 ): Promise<void> => {
     const { transfer_id } = request;
 
+    const client = await pool.connect(); // Get a client from the pool
+
     try {
-        const transfers = await executeQuery(transferQueries.getTransfersById, [
+        const { rows } = await client.query(transferQueries.getTransfersById, [
             transfer_id,
         ]);
 
-        const modifiedTransfers = transfers.map(transfersParse);
+        const modifiedTransfers = rows.map((row) => transfersParse(row));
 
         response.status(200).json(modifiedTransfers);
     } catch (error) {
         logger.error(error); // Log the error on the server side
         handleError(response, 'Error getting transfer');
+    } finally {
+        client.release(); // Release the client back to the pool
     }
 };
 
@@ -372,32 +398,45 @@ export const deleteTransfer = async (
     response: Response,
     next: NextFunction,
 ): Promise<void> => {
+    const { id } = request.params;
+
+    const client = await pool.connect(); // Get a client from the pool
+
     try {
-        const { id } = request.params;
+        const { rows } = await client.query(transferQueries.getTransfersById, [
+            id,
+        ]);
 
-        const transferResults = await executeQuery(
-            transferQueries.getTransfersById,
-            [id],
-        );
-
-        if (transferResults.length === 0) {
+        if (rows.length === 0) {
             response.status(404).send('Transfer not found');
             return;
         }
 
-        await executeQuery(transferQueries.deleteTransfer, [id]);
+        await client.query('BEGIN;');
 
-        const cronId: number = parseInt(transferResults[0].cron_job_id);
-        const results = await executeQuery(cronJobQueries.getCronJob, [cronId]);
+        await client.query(transferQueries.deleteTransfer, [id]);
 
-        await unscheduleQuery(results[0].unique_id);
+        const cronId: number = parseInt(rows[0].cron_job_id);
 
-        await executeQuery(cronJobQueries.deleteCronJob, [cronId]);
+        const { rows: results } = await client.query(
+            cronJobQueries.getCronJob,
+            [cronId],
+        );
+
+        await client.query(`SELECT cron.unschedule('${results[0].unique_id}')`);
+
+        await client.query(cronJobQueries.deleteCronJob, [cronId]);
+
+        await client.query('COMMIT;');
 
         next();
     } catch (error) {
+        await client.query('ROLLBACK;');
+
         logger.error(error); // Log the error on the server side
         handleError(response, 'Error deleting transfer');
+    } finally {
+        client.release(); // Release the client back to the pool
     }
 };
 

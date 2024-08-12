@@ -3,107 +3,72 @@ import {
     parseIntOrFallback,
     parseFloatOrFallback,
 } from '../../src/utils/helperFunctions';
+import { beforeEach } from '@jest/globals';
 
 /**
  *
- * @param executeQueryResponses - Array of responses for executeQuery
- * @param handleErrorResponses - Array of responses for handleError
- * @param scheduleQueryResponses - Array of responses for scheduleQuery
- * @param unscheduleQueryResponses - Array of responses for unscheduleQuery
- * Mock module with mock implementations for executeQuery, handleError, scheduleQuery, and unscheduleQuery
+ * @param poolResponses - Array of responses for the database client
+ * Mock module with mock implementations for the database client and handleError
  */
 export const mockModule = (
-    executeQueryResponses: any = [], // Array of responses for executeQuery
-    handleErrorResponses: any = [], // Array of responses for handleError
-    scheduleQueryResponses: any = [], // Array of responses for scheduleQuery
-    unscheduleQueryResponses: any = [], // Array of responses for unscheduleQuery
+    poolResponses: any[], // Array of responses for the database client
 ) => {
-    const executeQuery = jest.fn();
+    const pool = jest.fn();
     const handleError = jest.fn();
-    const scheduleQuery = jest.fn();
-    const unscheduleQuery = jest.fn();
 
-    // Set up mock implementations for executeQuery
-    executeQueryResponses.forEach((response: Response) => {
-        if (response instanceof Error) {
-            executeQuery.mockImplementationOnce(() => Promise.reject(response));
-        } else {
-            executeQuery.mockImplementationOnce(() =>
-                Promise.resolve(response),
-            );
-        }
-    });
-
-    // Set up mock implementations for handleError
-    handleErrorResponses.forEach((response: any) => {
-        handleError.mockImplementationOnce((res: any, message: any) => {
-            res.status(response.status || 400).json({
-                message: response.message || message,
-            });
-        });
-    });
-
-    // Set up mock implementations for scheduleQuery
-    scheduleQueryResponses.forEach((response: Response) => {
-        if (response instanceof Error) {
-            scheduleQuery.mockImplementationOnce(() =>
-                Promise.reject(response),
-            );
-        } else {
-            scheduleQuery.mockImplementationOnce(() =>
-                Promise.resolve(response),
-            );
-        }
-    });
-
-    // Set up mock implementations for unscheduleQuery
-    unscheduleQueryResponses.forEach((response: Response) => {
-        if (response instanceof Error) {
-            unscheduleQuery.mockImplementationOnce(() =>
-                Promise.reject(response),
-            );
-        } else {
-            unscheduleQuery.mockImplementationOnce(() =>
-                Promise.resolve(response),
-            );
-        }
+    poolResponses.forEach((response, index) => {
+        pool.mockImplementationOnce(() =>
+            Promise.resolve({ rows: response[index] }),
+        );
     });
 
     jest.mock('../../src/utils/helperFunctions.js', () => ({
-        executeQuery,
         handleError,
-        scheduleQuery,
-        unscheduleQuery,
         parseIntOrFallback,
         parseFloatOrFallback,
         nextTransactionFrequencyDate: jest.fn().mockReturnValue('2020-01-01'),
     }));
+
+    let callCount = 0;
+
+    jest.mock('../../src/config/db.js', () => ({
+        connect: jest.fn(() => ({
+            query: jest.fn(() => {
+                const response = poolResponses[callCount];
+                callCount++;
+                return { rows: response };
+            }),
+            release: jest.fn(),
+        })),
+    }));
 };
 
 describe('Testing mockModule', () => {
-    it('should return a module with mock implementations', () => {
-        const executeQueryResponses = [new Error('Error')];
-        const handleErrorResponses = [{ status: 500, message: 'Error' }];
-        const scheduleQueryResponses = [new Error('Error')];
-        const unscheduleQueryResponses = [new Error('Error')];
+    let mockRequest;
+    let mockResponse;
 
-        mockModule(
-            executeQueryResponses,
-            handleErrorResponses,
-            scheduleQueryResponses,
-            unscheduleQueryResponses,
-        );
+    beforeEach(() => {
+        mockRequest = {};
+        mockResponse = {
+            status: jest.fn().mockReturnThis(),
+            json: jest.fn(),
+        };
+    });
 
-        const {
-            executeQuery,
-            handleError,
-            scheduleQuery,
-            unscheduleQuery,
-        } = require('../../src/utils/helperFunctions.js');
+    it('should return a module with mock implementations', async () => {
+        const poolResponses = [[{ id: 1 }], [{ id: 2 }]];
 
-        expect(executeQuery).toBeDefined();
-        expect(handleError).toBeDefined();
-        expect(scheduleQuery).toBeDefined();
-        expect(unscheduleQuery).toBeDefined();
+        mockModule(poolResponses);
+
+        const db = require('../../src/config/db.js');
+
+        // Trigger the mock pool query for the first response
+        const { rows } = await db.connect().query();
+
+        // Trigger the mock pool query for the second response
+        const { rows: secondRow } = await db.connect().query();
+
+        expect(rows).toEqual([{ id: 1 }]);
+        expect(secondRow).toEqual([{ id: 2 }]);
     });
 });

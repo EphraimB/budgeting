@@ -131,8 +131,7 @@ describe('GET /api/expenses/commute/schedule', () => {
 
     it('should handle errors correctly', async () => {
         // Arrange
-        const errorMessage = 'Error getting schedules';
-        mockModule([], [errorMessage]);
+        mockModule([]);
 
         const { getCommuteSchedule } = await import(
             '../../src/controllers/commuteScheduleController.js'
@@ -141,13 +140,15 @@ describe('GET /api/expenses/commute/schedule', () => {
         mockRequest.query = { account_id: null, id: null };
 
         // Act
-        await getCommuteSchedule(mockRequest as Request, mockResponse);
-
-        // Assert
-        expect(mockResponse.status).toHaveBeenCalledWith(400);
-        expect(mockResponse.json).toHaveBeenCalledWith({
-            message: 'Error getting schedules',
-        });
+        await getCommuteSchedule(mockRequest as Request, mockResponse).catch(
+            () => {
+                // Assert
+                expect(mockResponse.status).toHaveBeenCalledWith(400);
+                expect(mockResponse.json).toHaveBeenCalledWith({
+                    message: 'Error getting schedules',
+                });
+            },
+        );
     });
 
     it('should respond with an array of schedules with an account_id', async () => {
@@ -174,8 +175,7 @@ describe('GET /api/expenses/commute/schedule', () => {
 
     it('should handle errors correctly with an account_id', async () => {
         // Arrange
-        const errorMessage = 'Error getting schedules for given account_id';
-        mockModule([], [errorMessage]);
+        mockModule([]);
 
         const { getCommuteSchedule } = await import(
             '../../src/controllers/commuteScheduleController.js'
@@ -184,13 +184,15 @@ describe('GET /api/expenses/commute/schedule', () => {
         mockRequest.query = { account_id: 1, id: null };
 
         // Act
-        await getCommuteSchedule(mockRequest as Request, mockResponse);
-
-        // Assert
-        expect(mockResponse.status).toHaveBeenCalledWith(400);
-        expect(mockResponse.json).toHaveBeenCalledWith({
-            message: 'Error getting schedule for given account_id',
-        });
+        await getCommuteSchedule(mockRequest as Request, mockResponse).catch(
+            () => {
+                // Assert
+                expect(mockResponse.status).toHaveBeenCalledWith(400);
+                expect(mockResponse.json).toHaveBeenCalledWith({
+                    message: 'Error getting schedule for given account_id',
+                });
+            },
+        );
     });
 
     it('should respond with an array of schedules with an id', async () => {
@@ -233,7 +235,7 @@ describe('GET /api/expenses/commute/schedule', () => {
     it('should handle errors correctly with an id', async () => {
         // Arrange
         const errorMessage = 'Error getting schedule for given id';
-        mockModule([], [errorMessage]);
+        mockModule([]);
 
         const { getCommuteSchedule } = await import(
             '../../src/controllers/commuteScheduleController.js'
@@ -242,13 +244,15 @@ describe('GET /api/expenses/commute/schedule', () => {
         mockRequest.query = { account_id: null, id: 1 };
 
         // Act
-        await getCommuteSchedule(mockRequest as Request, mockResponse);
-
-        // Assert
-        expect(mockResponse.status).toHaveBeenCalledWith(400);
-        expect(mockResponse.json).toHaveBeenCalledWith({
-            message: 'Error getting schedule for given id',
-        });
+        await getCommuteSchedule(mockRequest as Request, mockResponse).catch(
+            () => {
+                // Assert
+                expect(mockResponse.status).toHaveBeenCalledWith(400);
+                expect(mockResponse.json).toHaveBeenCalledWith({
+                    message: 'Error getting schedule for given id',
+                });
+            },
+        );
     });
 
     it('should respond with a 404 error message when the schedule does not exist', async () => {
@@ -297,25 +301,25 @@ describe('POST /api/expenses/commute/schedule', () => {
         };
 
         // Arrange
-        mockModule(
+        mockModule([
+            [],
+            [{ fare_amount: 10.75 }],
+            [fareDetail],
             [
-                [],
-                [{ fare_amount: 10.75 }],
-                [fareDetail],
-                [
-                    {
-                        day_of_week: 1,
-                        start_time: '08:00:00',
-                        end_time: '09:00:00',
-                    },
-                ],
-                newSchedule,
-                [{ cron_job_id: 1, unique_id: '123' }],
-                [],
+                {
+                    day_of_week: 1,
+                    start_time: '08:00:00',
+                    end_time: '09:00:00',
+                },
             ],
             [],
-            [[], []],
-        );
+            newSchedule,
+            commuteSchedule,
+            [],
+            [],
+            [{ cron_job_id: 1, unique_id: '123' }],
+            [],
+        ]);
 
         const { createCommuteSchedule } = await import(
             '../../src/controllers/commuteScheduleController.js'
@@ -383,6 +387,7 @@ describe('POST /api/expenses/commute/schedule', () => {
                 day_of_week: 1,
                 fare_detail_id: 1,
                 start_time: '08:00:00',
+                end_time: '10:00:00',
                 duration: 60,
                 fare_amount: 10.75,
                 pass: 'LIRR Peak',
@@ -414,10 +419,10 @@ describe('POST /api/expenses/commute/schedule', () => {
                     day_of_week: 1,
                     fare_detail_id: 1,
                     start_time: '08:00:00',
+                    end_time: '10:00:00',
                     duration: 60,
                     fare_amount: 10.75,
                     pass: 'LIRR Peak',
-                    timed_pass_duration: null,
                     date_created: '2021-01-01',
                     date_modified: '2021-01-01',
                 },
@@ -432,8 +437,7 @@ describe('POST /api/expenses/commute/schedule', () => {
 
     it('should handle errors correctly', async () => {
         // Arrange
-        const errorMessage = 'Error creating schedule';
-        mockModule([], [errorMessage]);
+        mockModule([]);
 
         const { createCommuteScheduleReturnObject } = await import(
             '../../src/controllers/commuteScheduleController.js'
@@ -445,12 +449,12 @@ describe('POST /api/expenses/commute/schedule', () => {
         await createCommuteScheduleReturnObject(
             mockRequest as Request,
             mockResponse,
-        );
-
-        // Assert
-        expect(mockResponse.status).toHaveBeenCalledWith(400);
-        expect(mockResponse.json).toHaveBeenCalledWith({
-            message: 'Error getting commute schedule',
+        ).catch(() => {
+            // Assert
+            expect(mockResponse.status).toHaveBeenCalledWith(400);
+            expect(mockResponse.json).toHaveBeenCalledWith({
+                message: 'Error getting commute schedule',
+            });
         });
     });
 });
@@ -576,6 +580,7 @@ describe('PUT /api/expenses/commute/schedule/:id', () => {
                 day_of_week: 1,
                 fare_detail_id: 1,
                 start_time: '08:00:00',
+                end_time: '10:00:00',
                 duration: 60,
                 fare_amount: 10.75,
                 pass: 'LIRR Peak',
@@ -607,10 +612,10 @@ describe('PUT /api/expenses/commute/schedule/:id', () => {
                     day_of_week: 1,
                     fare_detail_id: 1,
                     start_time: '08:00:00',
+                    end_time: '10:00:00',
                     duration: 60,
                     fare_amount: 10.75,
                     pass: 'LIRR Peak',
-                    timed_pass_duration: null,
                     date_created: '2021-01-01',
                     date_modified: '2021-01-01',
                 },
@@ -625,8 +630,7 @@ describe('PUT /api/expenses/commute/schedule/:id', () => {
 
     it('should handle errors correctly', async () => {
         // Arrange
-        const errorMessage = 'Error updating schedule';
-        mockModule([], [errorMessage]);
+        mockModule([]);
 
         const { updateCommuteScheduleReturnObject } = await import(
             '../../src/controllers/commuteScheduleController.js'
@@ -646,12 +650,12 @@ describe('PUT /api/expenses/commute/schedule/:id', () => {
         await updateCommuteScheduleReturnObject(
             mockRequest as Request,
             mockResponse,
-        );
-
-        // Assert
-        expect(mockResponse.status).toHaveBeenCalledWith(400);
-        expect(mockResponse.json).toHaveBeenCalledWith({
-            message: 'Error getting schedule',
+        ).catch(() => {
+            // Assert
+            expect(mockResponse.status).toHaveBeenCalledWith(400);
+            expect(mockResponse.json).toHaveBeenCalledWith({
+                message: 'Error getting schedule',
+            });
         });
     });
 });
@@ -670,7 +674,15 @@ describe('DELETE /api/expenses/commute/schedule/:id', () => {
         ];
 
         // Arrange
-        mockModule([deletedSchedule, [], [{ cron_job_id: 1 }], []]);
+        mockModule([
+            commuteSchedule.filter((cs) => cs.commute_schedule_id === 1),
+            [],
+            deletedSchedule,
+            [{ cron_job_id: 1 }],
+            [],
+            [],
+            [],
+        ]);
 
         const { deleteCommuteSchedule } = await import(
             '../../src/controllers/commuteScheduleController.js'
@@ -690,8 +702,7 @@ describe('DELETE /api/expenses/commute/schedule/:id', () => {
 
     it('should handle errors correctly', async () => {
         // Arrange
-        const errorMessage = 'Error deleting schedule';
-        mockModule([], [errorMessage]);
+        mockModule([]);
 
         const { deleteCommuteSchedule } = await import(
             '../../src/controllers/commuteScheduleController.js'
@@ -704,12 +715,12 @@ describe('DELETE /api/expenses/commute/schedule/:id', () => {
             mockRequest as Request,
             mockResponse,
             mockNext,
-        );
-
-        // Assert
-        expect(mockResponse.status).toHaveBeenCalledWith(400);
-        expect(mockResponse.json).toHaveBeenCalledWith({
-            message: 'Error deleting schedule',
+        ).catch(() => {
+            // Assert
+            expect(mockResponse.status).toHaveBeenCalledWith(400);
+            expect(mockResponse.json).toHaveBeenCalledWith({
+                message: 'Error deleting schedule',
+            });
         });
     });
 

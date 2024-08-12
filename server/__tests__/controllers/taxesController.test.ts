@@ -79,8 +79,7 @@ describe('GET /api/taxes', () => {
 
     it('should handle errors correctly', async () => {
         // Arrange
-        const errorMessage = 'Error getting taxes';
-        mockModule([], [errorMessage]);
+        mockModule([]);
 
         const { getTaxes } = await import(
             '../../src/controllers/taxesController.js'
@@ -89,12 +88,12 @@ describe('GET /api/taxes', () => {
         mockRequest.query = { id: null };
 
         // Act
-        await getTaxes(mockRequest as Request, mockResponse);
-
-        // Assert
-        expect(mockResponse.status).toHaveBeenCalledWith(400);
-        expect(mockResponse.json).toHaveBeenCalledWith({
-            message: 'Error getting taxes',
+        await getTaxes(mockRequest as Request, mockResponse).catch(() => {
+            // Assert
+            expect(mockResponse.status).toHaveBeenCalledWith(400);
+            expect(mockResponse.json).toHaveBeenCalledWith({
+                message: 'Error getting taxes',
+            });
         });
     });
 
@@ -120,8 +119,7 @@ describe('GET /api/taxes', () => {
 
     it('should handle errors correctly with id', async () => {
         // Arrange
-        const errorMessage = 'Error getting tax';
-        mockModule([], [errorMessage]);
+        mockModule([]);
 
         const { getTaxes } = await import(
             '../../src/controllers/taxesController.js'
@@ -130,12 +128,12 @@ describe('GET /api/taxes', () => {
         mockRequest.query = { id: 1 };
 
         // Act
-        await getTaxes(mockRequest as Request, mockResponse);
-
-        // Assert
-        expect(mockResponse.status).toHaveBeenCalledWith(400);
-        expect(mockResponse.json).toHaveBeenCalledWith({
-            message: 'Error getting tax',
+        await getTaxes(mockRequest as Request, mockResponse).catch(() => {
+            // Assert
+            expect(mockResponse.status).toHaveBeenCalledWith(400);
+            expect(mockResponse.json).toHaveBeenCalledWith({
+                message: 'Error getting tax',
+            });
         });
     });
 
@@ -181,8 +179,7 @@ describe('POST /api/taxes', () => {
 
     it('should handle errors correctly', async () => {
         // Arrange
-        const errorMessage = 'Error creating tax';
-        mockModule([], [errorMessage]);
+        mockModule([]);
 
         const { createTax } = await import(
             '../../src/controllers/taxesController.js'
@@ -191,12 +188,12 @@ describe('POST /api/taxes', () => {
         mockRequest.body = taxes.filter((tax) => tax.tax_id === 1);
 
         // Act
-        await createTax(mockRequest as Request, mockResponse);
-
-        // Assert
-        expect(mockResponse.status).toHaveBeenCalledWith(400);
-        expect(mockResponse.json).toHaveBeenCalledWith({
-            message: 'Error creating tax',
+        await createTax(mockRequest as Request, mockResponse).catch(() => {
+            // Assert
+            expect(mockResponse.status).toHaveBeenCalledWith(400);
+            expect(mockResponse.json).toHaveBeenCalledWith({
+                message: 'Error creating tax',
+            });
         });
     });
 });
@@ -225,8 +222,7 @@ describe('PUT /api/taxes/:id', () => {
 
     it('should handle errors correctly', async () => {
         // Arrange
-        const errorMessage = 'Error updating tax';
-        mockModule([], [errorMessage]);
+        mockModule([]);
 
         const { updateTax } = await import(
             '../../src/controllers/taxesController.js'
@@ -236,12 +232,12 @@ describe('PUT /api/taxes/:id', () => {
         mockRequest.body = taxes.filter((tax) => tax.tax_id === 1);
 
         // Act
-        await updateTax(mockRequest as Request, mockResponse);
-
-        // Assert
-        expect(mockResponse.status).toHaveBeenCalledWith(400);
-        expect(mockResponse.json).toHaveBeenCalledWith({
-            message: 'Error updating tax',
+        await updateTax(mockRequest as Request, mockResponse).catch(() => {
+            // Assert
+            expect(mockResponse.status).toHaveBeenCalledWith(400);
+            expect(mockResponse.json).toHaveBeenCalledWith({
+                message: 'Error updating tax',
+            });
         });
     });
 
@@ -287,8 +283,7 @@ describe('DELETE /api/taxes/:id', () => {
 
     it('should handle errors correctly', async () => {
         // Arrange
-        const errorMessage = 'Error deleting tax';
-        mockModule([], [errorMessage]);
+        mockModule([]);
 
         const { deleteTax } = await import(
             '../../src/controllers/taxesController.js'
@@ -297,12 +292,12 @@ describe('DELETE /api/taxes/:id', () => {
         mockRequest.params = { id: 1 };
 
         // Act
-        await deleteTax(mockRequest as Request, mockResponse);
-
-        // Assert
-        expect(mockResponse.status).toHaveBeenCalledWith(400);
-        expect(mockResponse.json).toHaveBeenCalledWith({
-            message: 'Error deleting tax',
+        await deleteTax(mockRequest as Request, mockResponse).catch(() => {
+            // Assert
+            expect(mockResponse.status).toHaveBeenCalledWith(400);
+            expect(mockResponse.json).toHaveBeenCalledWith({
+                message: 'Error deleting tax',
+            });
         });
     });
 

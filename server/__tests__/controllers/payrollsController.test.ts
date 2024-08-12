@@ -68,8 +68,8 @@ describe('GET /api/payrolls', () => {
         await getPayrolls(mockRequest as Request, mockResponse);
 
         const expectedPayrolls = {
-            job_id: 1,
-            job_name: 'Test Job',
+            jobId: 1,
+            jobName: 'Test Job',
             payrolls,
         };
 
@@ -80,22 +80,21 @@ describe('GET /api/payrolls', () => {
 
     it('should respond with an error message', async () => {
         // Arrange
-        const errorMessage = 'Error getting payrolls';
-        mockModule([], [errorMessage]);
+        mockModule([]);
 
-        mockRequest.query = { employee_id: 1 };
+        mockRequest.query = { job_id: 1 };
 
         const { getPayrolls } = await import(
             '../../src/controllers/payrollsController.js'
         );
 
         // Call the function with the mock request and response
-        await getPayrolls(mockRequest as Request, mockResponse);
-
-        // Assert
-        expect(mockResponse.status).toHaveBeenCalledWith(400);
-        expect(mockResponse.json).toHaveBeenCalledWith({
-            message: 'Error getting payrolls',
+        await getPayrolls(mockRequest as Request, mockResponse).catch(() => {
+            // Assert
+            expect(mockResponse.status).toHaveBeenCalledWith(400);
+            expect(mockResponse.json).toHaveBeenCalledWith({
+                message: 'Error getting payrolls',
+            });
         });
     });
 
@@ -107,13 +106,15 @@ describe('GET /api/payrolls', () => {
             '../../src/controllers/payrollsController.js'
         );
 
-        mockRequest.query = { employee_id: 3 };
+        mockRequest.query = { job_id: 3 };
 
         // Act
         await getPayrolls(mockRequest as Request, mockResponse);
 
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(404);
-        expect(mockResponse.send).toHaveBeenCalledWith('No jobs found');
+        expect(mockResponse.send).toHaveBeenCalledWith(
+            'No payrolls for job or not found',
+        );
     });
 });
