@@ -271,6 +271,7 @@ describe('POST /api/jobs', () => {
     it('should respond with the new job', async () => {
         // Arrange
         mockModule([
+            [],
             [
                 {
                     job_id: 1,
@@ -403,6 +404,8 @@ describe('PUT /api/jobs/:id', () => {
                     sick_days: 10,
                 },
             ],
+            [],
+            [],
             [
                 {
                     job_schedule_id: 1,
@@ -411,6 +414,7 @@ describe('PUT /api/jobs/:id', () => {
                     end_time: '17:00:00',
                 },
             ],
+            [],
         ]);
 
         mockRequest.params = { id: 1 };
@@ -452,6 +456,8 @@ describe('PUT /api/jobs/:id', () => {
                     sick_days: 10,
                 },
             ],
+            [],
+            [],
             [
                 {
                     job_schedule_id: 1,
@@ -466,6 +472,8 @@ describe('PUT /api/jobs/:id', () => {
                     end_time: '17:00:00',
                 },
             ],
+            [],
+            [],
         ]);
 
         mockRequest.params = { id: 1 };
@@ -512,6 +520,9 @@ describe('PUT /api/jobs/:id', () => {
                     sick_days: 10,
                 },
             ],
+            [],
+            [],
+            [],
             [],
         ]);
 
