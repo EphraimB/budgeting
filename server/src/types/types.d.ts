@@ -279,7 +279,6 @@ export interface CommuteSchedule {
     start_time: string;
     end_time: string;
     duration: number | null;
-    day_start: number | null;
     fare_amount: number;
     pass: string;
     date_created: string;

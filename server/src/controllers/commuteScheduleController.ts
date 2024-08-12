@@ -19,7 +19,6 @@ interface Schedule {
         pass: string;
         start_time: string;
         duration: number | null;
-        day_start: number | null;
         fare_amount: number;
     }>;
 }
@@ -40,7 +39,6 @@ const parseCommuteSchedule = (
     start_time: commuteSchedule.start_time,
     end_time: commuteSchedule.end_time,
     duration: parseIntOrFallback(commuteSchedule.duration),
-    day_start: parseIntOrFallback(commuteSchedule.day_start),
     fare_amount: parseFloat(commuteSchedule.fare_amount),
     pass: commuteSchedule.pass,
     date_created: commuteSchedule.date_created,
@@ -106,7 +104,6 @@ export const getCommuteSchedule = async (
                     pass: curr.pass,
                     start_time: curr.start_time,
                     duration: curr.duration,
-                    day_start: curr.day_start,
                     fare_amount: curr.fare_amount,
                 });
                 return acc;
@@ -273,13 +270,9 @@ export const createCommuteSchedule = async (
             ],
         );
 
-        const { rows: results } = await client.query(
+        const { rows: commuteSchedule } = await client.query(
             commuteScheduleQueries.getCommuteSchedulesById,
             [createCommuteSchedule[0].commute_schedule_id],
-        );
-
-        const commuteSchedule = results.map((result) =>
-            parseCommuteSchedule(result),
         );
 
         const jobDetails = {
@@ -289,7 +282,7 @@ export const createCommuteSchedule = async (
                     ? 2
                     : 1,
             frequency_type_variable: 1,
-            frequency_day_of_month: commuteSchedule[0].day_start || undefined,
+            frequency_day_of_month: commuteSchedule[0].day_of_week || undefined,
             frequency_day_of_week: commuteSchedule[0].duration
                 ? undefined
                 : day_of_week,
@@ -374,7 +367,9 @@ export const createCommuteScheduleReturnObject = async (
             [commute_schedule_id],
         );
 
-        const modifiedCommuteSchedule = rows.map(parseCommuteSchedule);
+        const modifiedCommuteSchedule = rows.map((row) =>
+            parseCommuteSchedule(row),
+        );
 
         const responseObj = {
             schedule: modifiedCommuteSchedule,
@@ -602,7 +597,9 @@ export const updateCommuteScheduleReturnObject = async (
             [commute_schedule_id],
         );
 
-        const modifiedCommuteSchedule = rows.map(parseCommuteSchedule);
+        const modifiedCommuteSchedule = rows.map((row) =>
+            parseCommuteSchedule(row),
+        );
 
         const responseObj = {
             schedule: modifiedCommuteSchedule,
