@@ -16,10 +16,10 @@ export const mockModule = (
     const pool = jest.fn();
     const handleError = jest.fn();
 
-    poolResponses.forEach((response) => {
-        response.forEach((res: any) => {
-            pool.mockImplementationOnce(() => Promise.resolve({ rows: res }));
-        });
+    poolResponses.forEach((response, index) => {
+        pool.mockImplementationOnce(() =>
+            Promise.resolve({ rows: response[index] }),
+        );
     });
 
     jest.mock('../../src/utils/helperFunctions.js', () => ({
@@ -29,11 +29,15 @@ export const mockModule = (
         nextTransactionFrequencyDate: jest.fn().mockReturnValue('2020-01-01'),
     }));
 
+    let callCount = 0;
+
     jest.mock('../../src/config/db.js', () => ({
         connect: jest.fn(() => ({
-            query: jest.fn(() => ({
-                rows: poolResponses[0],
-            })),
+            query: jest.fn(() => {
+                const response = poolResponses[callCount];
+                callCount++;
+                return { rows: response };
+            }),
             release: jest.fn(),
         })),
     }));
@@ -52,7 +56,7 @@ describe('Testing mockModule', () => {
     });
 
     it('should return a module with mock implementations', async () => {
-        const poolResponses = [[{ id: 1 }]];
+        const poolResponses = [[{ id: 1 }], [{ id: 2 }]];
 
         mockModule(poolResponses);
 
@@ -60,6 +64,11 @@ describe('Testing mockModule', () => {
 
         // Trigger the mock pool query for the first response
         const { rows } = await db.connect().query();
+
+        // Trigger the mock pool query for the second response
+        const { rows: secondRow } = await db.connect().query();
+
         expect(rows).toEqual([{ id: 1 }]);
+        expect(secondRow).toEqual([{ id: 2 }]);
     });
 });
