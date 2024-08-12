@@ -7,12 +7,12 @@ import { type JobDetails } from '../types/types';
  */
 const determineCronValues = (jobDetails: JobDetails): string => {
     const {
-        frequency_type,
-        frequency_type_variable,
-        frequency_day_of_month,
-        frequency_day_of_week,
-        frequency_week_of_month,
-        frequency_month_of_year,
+        frequencyType,
+        frequencyTypeVariable,
+        frequencyDayOfMonth,
+        frequencyDayOfWeek,
+        frequencyWeekOfMonth,
+        frequencyMonthOfYear,
         date,
     } = jobDetails;
 
@@ -23,31 +23,31 @@ const determineCronValues = (jobDetails: JobDetails): string => {
     let cronDayOfWeek = '*';
     let cronWeekOfMonthExpression = '';
 
-    if (frequency_type === null || frequency_type === undefined) {
+    if (frequencyType === null || frequencyType === undefined) {
         const month = new Date(date).getMonth() + 1;
 
         cronDay = new Date(date).getDate().toString();
         cronMonth = month.toString();
     } else {
-        if (frequency_type === 0) {
+        if (frequencyType === 0) {
             cronDay =
                 '*/' +
-                (frequency_type_variable !== null &&
-                frequency_type_variable !== undefined
-                    ? frequency_type_variable
+                (frequencyTypeVariable !== null &&
+                frequencyTypeVariable !== undefined
+                    ? frequencyTypeVariable
                     : 1
                 ).toString();
-        } else if (frequency_type === 1) {
+        } else if (frequencyType === 1) {
             if (
-                frequency_day_of_week !== null &&
-                frequency_day_of_week !== undefined
+                frequencyDayOfWeek !== null &&
+                frequencyDayOfWeek !== undefined
             ) {
                 cronMonth = '*';
-                cronDayOfWeek = frequency_day_of_week.toString();
+                cronDayOfWeek = frequencyDayOfWeek.toString();
                 cronDay =
-                    frequency_day_of_month !== null &&
-                    frequency_day_of_month !== undefined
-                        ? frequency_day_of_month.toString()
+                    frequencyDayOfMonth !== null &&
+                    frequencyDayOfMonth !== undefined
+                        ? frequencyDayOfMonth.toString()
                         : '*';
             } else {
                 cronMonth = '*';
@@ -55,78 +55,78 @@ const determineCronValues = (jobDetails: JobDetails): string => {
                     '*/' +
                     (
                         7 *
-                        (frequency_type_variable !== null &&
-                        frequency_type_variable !== undefined
-                            ? frequency_type_variable
+                        (frequencyTypeVariable !== null &&
+                        frequencyTypeVariable !== undefined
+                            ? frequencyTypeVariable
                             : 1)
                     ).toString();
             }
-        } else if (frequency_type === 2) {
+        } else if (frequencyType === 2) {
             if (
-                frequency_day_of_week !== null &&
-                frequency_day_of_week !== undefined
+                frequencyDayOfWeek !== null &&
+                frequencyDayOfWeek !== undefined
             ) {
                 cronMonth = '*';
-                cronDayOfWeek = frequency_day_of_week.toString();
+                cronDayOfWeek = frequencyDayOfWeek.toString();
                 cronDay =
-                    frequency_day_of_month !== null &&
-                    frequency_day_of_month !== undefined
-                        ? frequency_day_of_month.toString()
+                    frequencyDayOfMonth !== null &&
+                    frequencyDayOfMonth !== undefined
+                        ? frequencyDayOfMonth.toString()
                         : '*';
                 cronWeekOfMonthExpression =
-                    frequency_week_of_month !== null &&
-                    frequency_week_of_month !== undefined
-                        ? `[ "$(date +%m)" != "$(date +%m -d '${frequency_week_of_month} week')" ] &&`
+                    frequencyWeekOfMonth !== null &&
+                    frequencyWeekOfMonth !== undefined
+                        ? `[ "$(date +%m)" != "$(date +%m -d '${frequencyWeekOfMonth} week')" ] &&`
                         : '';
             } else {
                 cronMonth =
                     '*/' +
-                    (frequency_type_variable !== null &&
-                    frequency_type_variable !== undefined
-                        ? frequency_type_variable
+                    (frequencyTypeVariable !== null &&
+                    frequencyTypeVariable !== undefined
+                        ? frequencyTypeVariable
                         : 1
                     ).toString();
                 cronDay =
-                    frequency_day_of_month !== null &&
-                    frequency_day_of_month !== undefined
-                        ? frequency_day_of_month.toString()
+                    frequencyDayOfMonth !== null &&
+                    frequencyDayOfMonth !== undefined
+                        ? frequencyDayOfMonth.toString()
                         : new Date(date).getDate().toString();
             }
-        } else if (frequency_type === 3) {
+        } else if (frequencyType === 3) {
             if (
-                frequency_day_of_week !== null &&
-                frequency_day_of_week !== undefined
+                frequencyDayOfWeek !== null &&
+                frequencyDayOfWeek !== undefined
             ) {
                 cronMonth =
-                    frequency_month_of_year !== null &&
-                    frequency_month_of_year !== undefined
-                        ? frequency_month_of_year.toString()
+                    frequencyMonthOfYear !== null &&
+                    frequencyMonthOfYear !== undefined
+                        ? frequencyMonthOfYear.toString()
                         : '*';
-                cronDayOfWeek = frequency_day_of_week.toString();
+                cronDayOfWeek = frequencyDayOfWeek.toString();
                 cronDay =
-                    frequency_day_of_month !== null &&
-                    frequency_day_of_month !== undefined
-                        ? frequency_day_of_month.toString()
+                    frequencyDayOfMonth !== null &&
+                    frequencyDayOfMonth !== undefined
+                        ? frequencyDayOfMonth.toString()
                         : '*';
                 cronWeekOfMonthExpression =
-                    frequency_week_of_month !== null &&
-                    frequency_week_of_month !== undefined
-                        ? `[ "$(date +%m)" != "$(date +%m -d '${frequency_week_of_month} week')" ] &&`
+                    frequencyWeekOfMonth !== null &&
+                    frequencyWeekOfMonth !== undefined
+                        ? `[ "$(date +%m)" != "$(date +%m -d '${frequencyWeekOfMonth} week')" ] &&`
                         : '';
             } else {
                 cronMonth =
                     '*/' +
                     (
                         12 *
-                        (frequency_type_variable !== null &&
-                        frequency_type_variable !== undefined
-                            ? frequency_type_variable
+                        (frequencyTypeVariable !== null &&
+                        frequencyTypeVariable !== undefined
+                            ? frequencyTypeVariable
                             : 1)
                     ).toString();
                 cronDay =
-                    frequency_day_of_month !== null &&
-                    frequency_day_of_month !== undefined
-                        ? frequency_day_of_month.toString()
+                    frequencyDayOfMonth !== null &&
+                    frequencyDayOfMonth !== undefined
+                        ? frequencyDayOfMonth.toString()
                         : new Date(date).getDate().toString();
             }
         }
