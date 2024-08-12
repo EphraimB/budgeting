@@ -466,9 +466,12 @@ describe('GET /api/loans', () => {
 describe('POST /api/loans', () => {
     it('should populate request.loan_id', async () => {
         mockModule([
+            [],
             loans.filter((loan) => loan.loan_id === 1),
-            '1',
-            '2',
+            [],
+            [{ cron_job_id: 1 }],
+            [],
+            [{ cron_job_id: 2 }],
             [],
             [],
         ]);
@@ -561,7 +564,14 @@ describe('PUT /api/loans/:id', () => {
         mockModule([
             loans.filter((loan) => loan.loan_id === 1),
             [{ unique_id: 1 }],
+            [],
+            [],
+            [],
             [{ unique_id: null }],
+            [],
+            [],
+            [],
+            [],
             [],
             [],
             [],
@@ -674,7 +684,9 @@ describe('DELETE /api/loans/:id', () => {
         mockModule([
             loans.filter((loan) => loan.loan_id === 1),
             [],
+            [],
             [{ unique_id: 1 }],
+            [],
             [{ unique_id: null }],
             [],
             [],
