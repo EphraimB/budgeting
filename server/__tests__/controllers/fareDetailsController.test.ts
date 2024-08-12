@@ -247,6 +247,7 @@ describe('POST /api/expenses/commute/fares', () => {
     it('should respond with the new fare detail', async () => {
         mockModule([
             commuteSystems.filter((system) => system.commute_system_id === 1),
+            [],
             fareDetails.filter((fareDetail) => fareDetail.fare_detail_id === 1),
             timeslots.filter((timeslot) => timeslot.timeslot_id === 1),
         ]);
@@ -312,6 +313,8 @@ describe('PUT /api/expenses/commute/fares/:id', () => {
         mockModule([
             fareDetails.filter((fareDetail) => fareDetail.fare_detail_id === 1),
             timeslots.filter((timeslot) => timeslot.timeslot_id === 1),
+            [],
+            [],
             [],
             commuteSystems.filter((system) => system.commute_system_id === 1),
         ]);
