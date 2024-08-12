@@ -373,7 +373,7 @@ export const updateLoan = async (
 
         await client.query('BEGIN;');
 
-        await client.query(`SELECT cron.unschedule(${uniqueId})`);
+        await client.query(`SELECT cron.unschedule('${uniqueId}')`);
 
         await client.query(`
             SELECT cron.schedule('${uniqueId}', '${cronDate}',
@@ -412,7 +412,7 @@ export const updateLoan = async (
 
         const cronDateInterest = determineCronValues(jobDetailsInterest);
 
-        await client.query(`SELECT cron.unschedule(${interestUniqueId})`);
+        await client.query(`SELECT cron.unschedule('${interestUniqueId}')`);
 
         await client.query(`
             SELECT cron.schedule('${interestUniqueId}', ${cronDateInterest},
@@ -542,7 +542,7 @@ export const deleteLoan = async (
             [cronId],
         );
 
-        await client.query(`SELECT cron.unschedule(${results[0].unique_id})`);
+        await client.query(`SELECT cron.unschedule('${results[0].unique_id}')`);
 
         const interestCronId: number = parseInt(rows[0].interest_cron_job_id);
         const { rows: interestResults } = await client.query(
@@ -550,7 +550,9 @@ export const deleteLoan = async (
             [interestCronId],
         );
 
-        await client.query(`SELECT cron.unschedule(${interestResults[0].unique_id})`);
+        await client.query(
+            `SELECT cron.unschedule('${interestResults[0].unique_id}')`,
+        );
 
         await client.query(cronJobQueries.deleteCronJob, [cronId]);
         await client.query(cronJobQueries.deleteCronJob, [interestCronId]);

@@ -401,7 +401,7 @@ export const updateWishlistCron = async (
             );
             const taxRate = result && result.length > 0 ? result : 0;
 
-            await client.query(`SELECT cron.unschedule(${uniqueId})`);
+            await client.query(`SELECT cron.unschedule('${uniqueId}')`);
 
             await client.query(`
                 SELECT cron.schedule('${uniqueId}', '${cronDate}',
@@ -465,7 +465,9 @@ export const deleteWishlist = async (
 
         await client.query('BEGIN;');
 
-        await client.query(`SELECT cron.unschedule(${cronJobResults[0].unique_id})`);
+        await client.query(
+            `SELECT cron.unschedule('${cronJobResults[0].unique_id}')`,
+        );
 
         await client.query(wishlistQueries.deleteWishlist, [id]);
 

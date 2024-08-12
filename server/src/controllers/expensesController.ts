@@ -310,7 +310,7 @@ export const updateExpense = async (
 
         const uniqueId = cronResults[0].unique_id;
 
-        await client.query(`SELECT CRON.unschedule(${uniqueId})`);
+        await client.query(`SELECT CRON.unschedule('${uniqueId}')`);
 
         // Get tax rate
         const { rows: result } = await client.query(
@@ -429,7 +429,7 @@ export const deleteExpense = async (
             [cronId],
         );
 
-        await client.query(`SELECT cron.unschedule(${results[0].unique_id})`);
+        await client.query(`SELECT cron.unschedule('${results[0].unique_id}')`);
 
         await client.query(cronJobQueries.deleteCronJob, [cronId]);
 
