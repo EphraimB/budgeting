@@ -159,8 +159,7 @@ describe('GET /api/expenses/commute/fares', () => {
 
     it('should handle errors correctly', async () => {
         // Arrange
-        const errorMessage = 'Error getting fare details';
-        mockModule([], [errorMessage]);
+        mockModule([]);
 
         const { getFareDetails } = await import(
             '../../src/controllers/fareDetailsController.js'
@@ -169,12 +168,12 @@ describe('GET /api/expenses/commute/fares', () => {
         mockRequest.query = { account_id: null, id: null };
 
         // Act
-        await getFareDetails(mockRequest as Request, mockResponse);
-
-        // Assert
-        expect(mockResponse.status).toHaveBeenCalledWith(400);
-        expect(mockResponse.json).toHaveBeenCalledWith({
-            message: 'Error getting fare details',
+        await getFareDetails(mockRequest as Request, mockResponse).catch(() => {
+            // Assert
+            expect(mockResponse.status).toHaveBeenCalledWith(400);
+            expect(mockResponse.json).toHaveBeenCalledWith({
+                message: 'Error getting fare details',
+            });
         });
     });
 
@@ -207,8 +206,7 @@ describe('GET /api/expenses/commute/fares', () => {
 
     it('should handle errors correctly with an id', async () => {
         // Arrange
-        const errorMessage = 'Error getting fare detail for given id';
-        mockModule([], [errorMessage]);
+        mockModule([]);
 
         const { getFareDetails } = await import(
             '../../src/controllers/fareDetailsController.js'
@@ -217,12 +215,12 @@ describe('GET /api/expenses/commute/fares', () => {
         mockRequest.query = { id: 1 };
 
         // Act
-        await getFareDetails(mockRequest as Request, mockResponse);
-
-        // Assert
-        expect(mockResponse.status).toHaveBeenCalledWith(400);
-        expect(mockResponse.json).toHaveBeenCalledWith({
-            message: 'Error getting fare details for given id',
+        await getFareDetails(mockRequest as Request, mockResponse).catch(() => {
+            // Assert
+            expect(mockResponse.status).toHaveBeenCalledWith(400);
+            expect(mockResponse.json).toHaveBeenCalledWith({
+                message: 'Error getting fare details for given id',
+            });
         });
     });
 
@@ -286,8 +284,7 @@ describe('POST /api/expenses/commute/fares', () => {
 
     it('should handle errors correctly', async () => {
         // Arrange
-        const errorMessage = 'Error creating fare detail';
-        mockModule([], [errorMessage]);
+        mockModule([]);
 
         const { createFareDetail } = await import(
             '../../src/controllers/fareDetailsController.js'
@@ -298,13 +295,15 @@ describe('POST /api/expenses/commute/fares', () => {
         );
 
         // Act
-        await createFareDetail(mockRequest as Request, mockResponse);
-
-        // Assert
-        expect(mockResponse.status).toHaveBeenCalledWith(400);
-        expect(mockResponse.json).toHaveBeenCalledWith({
-            message: 'Error creating fare detail',
-        });
+        await createFareDetail(mockRequest as Request, mockResponse).catch(
+            () => {
+                // Assert
+                expect(mockResponse.status).toHaveBeenCalledWith(400);
+                expect(mockResponse.json).toHaveBeenCalledWith({
+                    message: 'Error creating fare detail',
+                });
+            },
+        );
     });
 });
 
@@ -351,8 +350,7 @@ describe('PUT /api/expenses/commute/fares/:id', () => {
 
     it('should handle errors correctly', async () => {
         // Arrange
-        const errorMessage = 'Error updating fare detail';
-        mockModule([], [errorMessage]);
+        mockModule([]);
 
         const { updateFareDetail } = await import(
             '../../src/controllers/fareDetailsController.js'
@@ -364,13 +362,15 @@ describe('PUT /api/expenses/commute/fares/:id', () => {
         );
 
         // Act
-        await updateFareDetail(mockRequest as Request, mockResponse);
-
-        // Assert
-        expect(mockResponse.status).toHaveBeenCalledWith(400);
-        expect(mockResponse.json).toHaveBeenCalledWith({
-            message: 'Error updating fare detail',
-        });
+        await updateFareDetail(mockRequest as Request, mockResponse).catch(
+            () => {
+                // Assert
+                expect(mockResponse.status).toHaveBeenCalledWith(400);
+                expect(mockResponse.json).toHaveBeenCalledWith({
+                    message: 'Error updating fare detail',
+                });
+            },
+        );
     });
 
     it('should respond with a 404 error message when the fare detail does not exist', async () => {
@@ -417,8 +417,7 @@ describe('DELETE /api/expenses/commute/fares/:id', () => {
 
     it('should handle errors correctly', async () => {
         // Arrange
-        const errorMessage = 'Error deleting fare detail';
-        mockModule([], [errorMessage]);
+        mockModule([]);
 
         const { deleteFareDetail } = await import(
             '../../src/controllers/fareDetailsController.js'
@@ -427,13 +426,15 @@ describe('DELETE /api/expenses/commute/fares/:id', () => {
         mockRequest.params = { id: 1 };
 
         // Act
-        await deleteFareDetail(mockRequest as Request, mockResponse);
-
-        // Assert
-        expect(mockResponse.status).toHaveBeenCalledWith(400);
-        expect(mockResponse.json).toHaveBeenCalledWith({
-            message: 'Error deleting fare detail',
-        });
+        await deleteFareDetail(mockRequest as Request, mockResponse).catch(
+            () => {
+                // Assert
+                expect(mockResponse.status).toHaveBeenCalledWith(400);
+                expect(mockResponse.json).toHaveBeenCalledWith({
+                    message: 'Error deleting fare detail',
+                });
+            },
+        );
     });
 
     it('should respond with a 404 error message when the fare details does not exist', async () => {

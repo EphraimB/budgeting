@@ -4,10 +4,11 @@ import {
     fareDetailsQueries,
     fareTimeslotsQueries,
 } from '../models/queryData.js';
-import { handleError, executeQuery } from '../utils/helperFunctions.js';
+import { handleError } from '../utils/helperFunctions.js';
 import { type Timeslots } from '../types/types.js';
 import { parseIntOrFallback } from '../utils/helperFunctions.js';
 import { logger } from '../config/winston.js';
+import pool from '../config/db.js';
 
 /**
  *
@@ -22,6 +23,8 @@ export const getFareDetails = async (
     const { id } = request.query as {
         id?: string;
     }; // Destructure id from query string
+
+    const client = await pool.connect(); // Get a client from the pool
 
     try {
         let query: string;
@@ -39,7 +42,7 @@ export const getFareDetails = async (
             params = [];
         }
 
-        const fareDetails = await executeQuery(query, params);
+        const { rows: fareDetails } = await client.query(query, params);
 
         if (fareDetails.length === 0) {
             if (id) {
@@ -51,7 +54,7 @@ export const getFareDetails = async (
             }
         }
 
-        const timeslots = await executeQuery(queryTwo, params);
+        const { rows: timeslots } = await client.query(queryTwo, params);
 
         const responseObj: object = {
             fares: fareDetails.map((fareDetail) => ({
@@ -86,6 +89,8 @@ export const getFareDetails = async (
             response,
             `Error getting fare ${id ? 'details for given id' : 'details'}`,
         );
+    } finally {
+        client.release(); // Release the client back to the pool
     }
 };
 
@@ -109,8 +114,10 @@ export const createFareDetail = async (
         alternate_fare_detail_id,
     } = request.body;
 
+    const client = await pool.connect(); // Get a client from the pool
+
     try {
-        const commuteSystemResults = await executeQuery(
+        const { rows: commuteSystemResults } = await client.query(
             commuteSystemQueries.getCommuteSystemById,
             [commute_system_id],
         );
@@ -128,7 +135,9 @@ export const createFareDetail = async (
             return;
         }
 
-        const fareDetails = await executeQuery(
+        await client.query('BEGIN;');
+
+        const { rows: fareDetails } = await client.query(
             fareDetailsQueries.createFareDetails,
             [
                 commute_system_id,
@@ -141,7 +150,7 @@ export const createFareDetail = async (
         );
 
         const timeslotPromises = timeslots.map(async (timeslot: Timeslots) => {
-            const timeslotData = await executeQuery(
+            const { rows: timeslotData } = await client.query(
                 fareTimeslotsQueries.createTimeslot,
                 [
                     fareDetails[0].fare_detail_id,
@@ -159,6 +168,8 @@ export const createFareDetail = async (
         });
 
         const allTimeslots: Timeslots[] = await Promise.all(timeslotPromises);
+
+        await client.query('COMMIT;');
 
         const responseObj: object = {
             id: fareDetails[0].fare_detail_id,
@@ -189,9 +200,13 @@ export const createFareDetail = async (
                     'alternate_fare_detail_id cannot be the same as fare_detail_id',
                 );
         } else {
+            await client.query('ROLLBACK;');
+
             logger.error(error); // Log the error on the server side
             handleError(response, 'Error creating fare detail');
         }
+    } finally {
+        client.release(); // Release the client back to the pool
     }
 };
 
@@ -270,8 +285,11 @@ export const updateFareDetail = async (
         day_start,
         alternate_fare_detail_id,
     } = request.body;
+
+    const client = await pool.connect(); // Get a client from the pool
+
     try {
-        const fareDetails = await executeQuery(
+        const { rows: fareDetails } = await client.query(
             fareDetailsQueries.getFareDetailsById,
             [id],
         );
@@ -281,7 +299,7 @@ export const updateFareDetail = async (
             return;
         }
 
-        const currentTimeslots = await executeQuery(
+        const { rows: currentTimeslots } = await client.query(
             fareTimeslotsQueries.getTimeslotsByFareId,
             [id],
         );
@@ -291,14 +309,16 @@ export const updateFareDetail = async (
             timeslots,
         );
 
+        await client.query('BEGIN;');
+
         toDelete.forEach(async (timeslot) => {
-            await executeQuery(fareTimeslotsQueries.deleteTimeslot, [
+            await client.query(fareTimeslotsQueries.deleteTimeslot, [
                 timeslot.timeslot_id,
             ]);
         });
 
         toInsert.forEach(async (timeslot) => {
-            await executeQuery(fareTimeslotsQueries.createTimeslot, [
+            await client.query(fareTimeslotsQueries.createTimeslot, [
                 id,
                 timeslot.day_of_week,
                 timeslot.start_time,
@@ -306,7 +326,7 @@ export const updateFareDetail = async (
             ]);
         });
 
-        await executeQuery(fareDetailsQueries.updateFareDetails, [
+        await client.query(fareDetailsQueries.updateFareDetails, [
             commute_system_id,
             name,
             fare_amount,
@@ -316,10 +336,14 @@ export const updateFareDetail = async (
             id,
         ]);
 
-        const [{ name: systemName }] = await executeQuery(
+        await client.query('COMMIT;');
+
+        const { rows: commuteSystemResults } = await client.query(
             commuteSystemQueries.getCommuteSystemById,
             [commute_system_id],
         );
+
+        const systemName = commuteSystemResults[0].name;
 
         const responseObj: object = {
             id: fareDetails[0].fare_detail_id,
@@ -350,9 +374,13 @@ export const updateFareDetail = async (
                     'alternate_fare_detail_id cannot be the same as fare_detail_id',
                 );
         } else {
+            await client.query('ROLLBACK;');
+
             logger.error(error); // Log the error on the server side
             handleError(response, 'Error updating fare detail');
         }
+    } finally {
+        client.release(); // Release the client back to the pool
     }
 };
 
@@ -367,8 +395,11 @@ export const deleteFareDetail = async (
     response: Response,
 ): Promise<void> => {
     const id = parseInt(request.params.id);
+
+    const client = await pool.connect(); // Get a client from the pool
+
     try {
-        const fareDetails = await executeQuery(
+        const { rows: fareDetails } = await client.query(
             fareDetailsQueries.getFareDetailsById,
             [id],
         );
@@ -378,12 +409,20 @@ export const deleteFareDetail = async (
             return;
         }
 
-        await executeQuery(fareTimeslotsQueries.deleteTimeslotByFareId, [id]);
-        await executeQuery(fareDetailsQueries.deleteFareDetails, [id]);
+        await client.query('BEGIN;');
+
+        await client.query(fareTimeslotsQueries.deleteTimeslotByFareId, [id]);
+        await client.query(fareDetailsQueries.deleteFareDetails, [id]);
+
+        await client.query('COMMIT;');
 
         response.status(200).send('Successfully deleted fare detail');
     } catch (error) {
+        await client.query('ROLLBACK;');
+
         logger.error(error); // Log the error on the server side
         handleError(response, 'Error deleting fare detail');
+    } finally {
+        client.release(); // Release the client back to the pool
     }
 };
