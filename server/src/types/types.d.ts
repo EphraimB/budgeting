@@ -74,13 +74,13 @@ export interface Income {
 
 export interface TransactionHistory {
     id: number;
-    account_id: number;
-    transaction_amount: number;
-    transaction_tax_rate: number;
-    transaction_title: string;
-    transaction_description: string;
-    date_created: string;
-    date_modified: string;
+    accountId: number;
+    transactionAmount: number;
+    transactionTaxRate: number;
+    transactionTitle: string;
+    transactionDescription: string;
+    dateCreated: string;
+    dateModified: string;
 }
 
 export interface Account {

@@ -15,13 +15,13 @@ const parseTransactions = (
     transactionHistory: Record<string, string>,
 ): TransactionHistory => ({
     id: parseInt(transactionHistory.transaction_id),
-    account_id: parseInt(transactionHistory.account_id),
-    transaction_amount: parseFloat(transactionHistory.transaction_amount),
-    transaction_tax_rate: parseFloat(transactionHistory.transaction_tax_rate),
-    transaction_title: transactionHistory.transaction_title,
-    transaction_description: transactionHistory.transaction_description,
-    date_created: transactionHistory.date_created,
-    date_modified: transactionHistory.date_modified,
+    accountId: parseInt(transactionHistory.account_id),
+    transactionAmount: parseFloat(transactionHistory.transaction_amount),
+    transactionTaxRate: parseFloat(transactionHistory.transaction_tax_rate),
+    transactionTitle: transactionHistory.transaction_title,
+    transactionDescription: transactionHistory.transaction_description,
+    dateCreated: transactionHistory.date_created,
+    dateModified: transactionHistory.date_modified,
 });
 
 /**
@@ -34,7 +34,7 @@ export const getTransactions = async (
     request: Request,
     response: Response,
 ): Promise<void> => {
-    const { id, account_id } = request.query;
+    const { id, accountId } = request.query;
 
     const client = await pool.connect(); // Get a client from the pool
 
@@ -42,15 +42,15 @@ export const getTransactions = async (
         let query: string;
         let params: any[];
 
-        if (id && account_id) {
+        if (id && accountId) {
             query = transactionHistoryQueries.getTransactionByIdAndAccountId;
-            params = [id, account_id];
+            params = [id, accountId];
         } else if (id) {
             query = transactionHistoryQueries.getTransactionById;
             params = [id];
-        } else if (account_id) {
+        } else if (accountId) {
             query = transactionHistoryQueries.getTransactionsByAccountId;
-            params = [account_id];
+            params = [accountId];
         } else {
             query = transactionHistoryQueries.getAllTransactions;
             params = [];
@@ -86,14 +86,14 @@ export const createTransaction = async (
     request: Request,
     response: Response,
 ): Promise<void> => {
-    const { account_id, title, amount, tax, description } = request.body;
+    const { accountId, title, amount, tax, description } = request.body;
 
     const client = await pool.connect(); // Get a client from the pool
 
     try {
         const { rows } = await client.query(
             transactionHistoryQueries.createTransaction,
-            [account_id, amount, tax, title, description],
+            [accountId, amount, tax, title, description],
         );
 
         const transactionHistory: TransactionHistory[] = rows.map((row) =>
@@ -120,14 +120,14 @@ export const updateTransaction = async (
     response: Response,
 ): Promise<void> => {
     const id: number = parseInt(request.params.id);
-    const { account_id, amount, tax, title, description } = request.body;
+    const { accountId, amount, tax, title, description } = request.body;
 
     const client = await pool.connect(); // Get a client from the pool
 
     try {
         const { rows } = await client.query(
             transactionHistoryQueries.updateTransaction,
-            [account_id, amount, tax, title, description, id],
+            [accountId, amount, tax, title, description, id],
         );
 
         if (rows.length === 0) {
