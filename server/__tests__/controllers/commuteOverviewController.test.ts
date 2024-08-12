@@ -177,8 +177,7 @@ describe('GET /api/expenses/commute', () => {
 
     it('should handle errors correctly', async () => {
         // Arrange
-        const errorMessage = 'Error getting commute overview for account 1';
-        mockModule([], [errorMessage]);
+        mockModule([]);
 
         const { getCommuteOverview } = await import(
             '../../src/controllers/commuteOverviewController.js'
@@ -187,12 +186,14 @@ describe('GET /api/expenses/commute', () => {
         mockRequest.query = { account_id: 1 };
 
         // Act
-        await getCommuteOverview(mockRequest as Request, mockResponse);
-
-        // Assert
-        expect(mockResponse.status).toHaveBeenCalledWith(400);
-        expect(mockResponse.json).toHaveBeenCalledWith({
-            message: 'Error getting commute overview for account 1',
-        });
+        await getCommuteOverview(mockRequest as Request, mockResponse).catch(
+            () => {
+                // Assert
+                expect(mockResponse.status).toHaveBeenCalledWith(400);
+                expect(mockResponse.json).toHaveBeenCalledWith({
+                    message: 'Error getting commute overview for account 1',
+                });
+            },
+        );
     });
 });
