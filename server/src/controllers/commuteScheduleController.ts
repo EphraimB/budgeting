@@ -524,7 +524,7 @@ export const updateCommuteSchedule = async (
 
         await client.query('BEGIN;');
 
-        await client.query(`cron.unschedule(${uniqueId})`);
+        await client.query(`SELECT cron.unschedule(${uniqueId})`);
 
         await client.query(`
             SELECT cron.schedule('${uniqueId}', '${cronDate}',
@@ -653,7 +653,7 @@ export const deleteCommuteSchedule = async (
             [cronId],
         );
 
-        await client.query(`cron.unschedule(${results[0].unique_id})`);
+        await client.query(`SELECT cron.unschedule(${results[0].unique_id})`);
 
         await client.query(cronJobQueries.deleteCronJob, [cronId]);
 
