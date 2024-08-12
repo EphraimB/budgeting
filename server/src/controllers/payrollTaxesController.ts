@@ -103,7 +103,7 @@ export const createPayrollTax = async (
             rate,
         ]);
 
-        await client.query('SELECT process_payroll_for_job($1)', [1]);
+        await client.query('SELECT process_payroll_for_job($1)', [job_id]);
 
         await client.query('COMMIT;');
 
