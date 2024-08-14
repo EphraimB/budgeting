@@ -272,17 +272,17 @@ export interface CommuteTicket {
 
 export interface CommuteSchedule {
     id: number;
-    commute_system_id: number;
-    account_id: number;
-    day_of_week: number;
-    fare_detail_id: number;
-    start_time: string;
-    end_time: string;
+    commuteSystemId: number;
+    accountId: number;
+    dayOfWeek: number;
+    fareDetailId: number;
+    startTime: string;
+    endTime: string;
     duration: number | null;
-    fare_amount: number;
+    fareAmount: number;
     pass: string;
-    date_created: string;
-    date_modified: string;
+    dateCreated: string;
+    dateModified: string;
 }
 
 interface CurrentBalance {
@@ -310,7 +310,7 @@ declare module 'express-serve-static-core' {
         jobId: number;
         payrollTaxesId: number;
         incomeId: number;
-        commute_schedule_id: number;
+        commuteScheduleId: number;
         fullyPaidBackDates: Record<number, string | null>;
         alerts: object[];
     }

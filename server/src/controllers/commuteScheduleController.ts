@@ -13,13 +13,13 @@ import dayjs from 'dayjs';
 import pool from '../config/db.js';
 
 interface Schedule {
-    day_of_week: number;
+    dayOfWeek: number;
     passes: Array<{
-        commute_schedule_id: number;
+        commuteScheduleId: number;
         pass: string;
-        start_time: string;
+        startTime: string;
         duration: number | null;
-        fare_amount: number;
+        fareAmount: number;
     }>;
 }
 
@@ -32,17 +32,17 @@ const parseCommuteSchedule = (
     commuteSchedule: Record<string, string>,
 ): CommuteSchedule => ({
     id: parseInt(commuteSchedule.commute_schedule_id),
-    commute_system_id: parseInt(commuteSchedule.commute_system_id),
-    account_id: parseInt(commuteSchedule.account_id),
-    day_of_week: parseInt(commuteSchedule.day_of_week),
-    fare_detail_id: parseInt(commuteSchedule.fare_detail_id),
-    start_time: commuteSchedule.start_time,
-    end_time: commuteSchedule.end_time,
+    commuteSystemId: parseInt(commuteSchedule.commute_system_id),
+    accountId: parseInt(commuteSchedule.account_id),
+    dayOfWeek: parseInt(commuteSchedule.day_of_week),
+    fareDetailId: parseInt(commuteSchedule.fare_detail_id),
+    startTime: commuteSchedule.start_time,
+    endTime: commuteSchedule.end_time,
     duration: parseIntOrFallback(commuteSchedule.duration),
-    fare_amount: parseFloat(commuteSchedule.fare_amount),
+    fareAmount: parseFloat(commuteSchedule.fare_amount),
     pass: commuteSchedule.pass,
-    date_created: commuteSchedule.date_created,
-    date_modified: commuteSchedule.date_modified,
+    dateCreated: commuteSchedule.date_created,
+    dateModified: commuteSchedule.date_modified,
 });
 
 /**
@@ -55,9 +55,9 @@ export const getCommuteSchedule = async (
     request: Request,
     response: Response,
 ): Promise<void> => {
-    const { id, account_id } = request.query as {
+    const { id, accountId } = request.query as {
         id?: string;
-        account_id?: string;
+        accountId?: string;
     }; // Destructure id from query string
 
     const client = await pool.connect(); // Get a client from the pool
@@ -67,15 +67,15 @@ export const getCommuteSchedule = async (
         let params: any[];
 
         // Change the query based on the presence of id
-        if (id && account_id) {
+        if (id && accountId) {
             query = commuteScheduleQueries.getCommuteSchedulesByIdAndAccountId;
-            params = [account_id, id];
+            params = [accountId, id];
         } else if (id) {
             query = commuteScheduleQueries.getCommuteSchedulesById;
             params = [id];
-        } else if (account_id) {
+        } else if (accountId) {
             query = commuteScheduleQueries.getCommuteSchedulesByAccountId;
-            params = [account_id];
+            params = [accountId];
         } else {
             query = commuteScheduleQueries.getCommuteSchedules;
             params = [];
@@ -92,19 +92,19 @@ export const getCommuteSchedule = async (
 
         const groupedByDay = parsedCommuteSchedule.reduce(
             (acc: Record<number, Schedule>, curr) => {
-                const dayOfWeek = curr.day_of_week;
+                const dayOfWeek = curr.dayOfWeek;
                 if (!acc[dayOfWeek]) {
                     acc[dayOfWeek] = {
-                        day_of_week: dayOfWeek,
+                        dayOfWeek: dayOfWeek,
                         passes: [],
                     };
                 }
                 acc[dayOfWeek].passes.push({
-                    commute_schedule_id: curr.id,
+                    commuteScheduleId: curr.id,
                     pass: curr.pass,
-                    start_time: curr.start_time,
+                    startTime: curr.startTime,
                     duration: curr.duration,
-                    fare_amount: curr.fare_amount,
+                    fareAmount: curr.fareAmount,
                 });
                 return acc;
             },
@@ -123,7 +123,7 @@ export const getCommuteSchedule = async (
             `Error getting ${
                 id
                     ? 'schedule for given id'
-                    : account_id
+                    : accountId
                     ? 'schedule for given account id'
                     : 'schedules'
             }`,
@@ -166,21 +166,21 @@ export const createCommuteSchedule = async (
     response: Response,
     next: NextFunction,
 ) => {
-    const { account_id, day_of_week, fare_detail_id, start_time, end_time } =
+    const { accountId, dayOfWeek, fareDetailId, startTime, endTime } =
         request.body;
     let fareDetail: FareDetails[] = [];
 
     const client = await pool.connect(); // Get a client from the pool
 
     try {
-        let currentFareDetailId = fare_detail_id;
+        let currentFareDetailId = fareDetailId;
         let systemClosed = false;
         const alerts: object[] = [];
 
-        // Check for overlapping day_of_week and start_time
+        // Check for overlapping day of week and start time
         const { rows } = await client.query(
             commuteScheduleQueries.getCommuteScheduleByDayAndTime,
-            [account_id, day_of_week, start_time, end_time],
+            [accountId, dayOfWeek, startTime, endTime],
         );
 
         if (rows.length > 0) {
@@ -194,7 +194,7 @@ export const createCommuteSchedule = async (
 
         const { rows: fareAmountResults } = await client.query(
             fareDetailsQueries.getFareDetailsById,
-            [fare_detail_id],
+            [fareDetailId],
         );
 
         let oldFare = fareAmountResults[0].fare_amount;
@@ -217,11 +217,11 @@ export const createCommuteSchedule = async (
             for (let timeslot of fareTimeslots) {
                 if (
                     isTimeWithinRange(
-                        start_time,
+                        startTime,
                         timeslot.start_time,
                         timeslot.end_time,
                     ) &&
-                    day_of_week === timeslot.day_of_week
+                    dayOfWeek === timeslot.day_of_week
                 ) {
                     timeslotMatched = true;
                     break; // exit the loop once a match is found
@@ -230,10 +230,10 @@ export const createCommuteSchedule = async (
 
             if (timeslotMatched) {
                 break; // exit the while loop since we found a matching timeslot
-            } else if (fareDetail[0].alternate_fare_detail_id) {
+            } else if (fareDetail[0].alternateFareDetailId) {
                 const { rows: alternateFareDetail } = await client.query(
                     fareDetailsQueries.getFareDetailsById,
-                    [fareDetail[0].alternate_fare_detail_id],
+                    [fareDetail[0].alternateFareDetailId],
                 );
 
                 const alternateFare = alternateFareDetail[0].fare_amount;
@@ -245,7 +245,7 @@ export const createCommuteSchedule = async (
                 });
 
                 oldFare = alternateFare;
-                currentFareDetailId = fareDetail[0].alternate_fare_detail_id; // use the alternate fare ID for the next loop iteration
+                currentFareDetailId = fareDetail[0].alternateFareDetailId; // use the alternate fare ID for the next loop iteration
             } else {
                 systemClosed = true; // no alternate fare ID and no timeslot matched, so system is closed
                 break;
@@ -261,13 +261,7 @@ export const createCommuteSchedule = async (
 
         const { rows: createCommuteSchedule } = await client.query(
             commuteScheduleQueries.createCommuteSchedule,
-            [
-                account_id,
-                day_of_week,
-                currentFareDetailId,
-                start_time,
-                end_time,
-            ],
+            [accountId, dayOfWeek, fareDetailId, startTime, endTime],
         );
 
         const { rows: commuteSchedule } = await client.query(
@@ -285,11 +279,11 @@ export const createCommuteSchedule = async (
             frequency_day_of_month: commuteSchedule[0].day_of_week || undefined,
             frequency_day_of_week: commuteSchedule[0].duration
                 ? undefined
-                : day_of_week,
+                : dayOfWeek,
             date: dayjs()
-                .hour(start_time.split(':')[0])
-                .minute(start_time.split(':')[1])
-                .second(start_time.split(':')[2])
+                .hour(startTime.split(':')[0])
+                .minute(startTime.split(':')[1])
+                .second(startTime.split(':')[2])
                 .toISOString(),
         };
 
@@ -301,20 +295,20 @@ export const createCommuteSchedule = async (
 
         await client.query(`
             SELECT cron.schedule('${uniqueId}', '${cronDate}',
-            $$INSERT INTO commute_history (account_id, fare_amount, commute_system, fare_type, timestamp) VALUES (${account_id}, ${-fareDetail[0]
-                .fare_amount}, '${fareDetail[0].system_name}', '${
-                fareDetail[0].fare_type
+            $$INSERT INTO commute_history (account_id, fare_amount, commute_system, fare_type, timestamp) VALUES (${accountId}, ${-fareDetail[0]
+                .fareAmount}, '${fareDetail[0].systemName}', '${
+                fareDetail[0].fareType
             }', now())$$)`);
 
         await client.query(`
             SELECT cron.schedule('${uniqueId}', '${cronDate}',
-            $$INSERT INTO transaction_history (account_id, transaction_amount, transaction_tax_rate, transaction_title, transaction_description) VALUES (${account_id}, ${-fareDetail[0]
-                .fare_amount}, ${taxRate}, '${
-                fareDetail[0].system_name + ' ' + fareDetail[0].fare_type
+            $$INSERT INTO transaction_history (account_id, transaction_amount, transaction_tax_rate, transaction_title, transaction_description) VALUES (${accountId}, ${-fareDetail[0]
+                .fareAmount}, ${taxRate}, '${
+                fareDetail[0].systemName + ' ' + fareDetail[0].fareType
             }', '${
-                fareDetail[0].system_name +
+                fareDetail[0].systemName +
                 ' ' +
-                fareDetail[0].fare_type +
+                fareDetail[0].fareType +
                 ' pass'
             }')$$)`);
 
@@ -332,7 +326,7 @@ export const createCommuteSchedule = async (
 
         await client.query('COMMIT;');
 
-        request.commute_schedule_id = commuteSchedule[0].id;
+        request.commuteScheduleId = commuteSchedule[0].id;
         request.alerts = alerts;
 
         next();
@@ -356,7 +350,7 @@ export const createCommuteScheduleReturnObject = async (
     request: Request,
     response: Response,
 ): Promise<void> => {
-    const { commute_schedule_id } = request;
+    const { commuteScheduleId } = request;
     const { alerts } = request;
 
     const client = await pool.connect(); // Get a client from the pool
@@ -364,7 +358,7 @@ export const createCommuteScheduleReturnObject = async (
     try {
         const { rows } = await client.query(
             commuteScheduleQueries.getCommuteSchedulesById,
-            [commute_schedule_id],
+            [commuteScheduleId],
         );
 
         const modifiedCommuteSchedule = rows.map((row) =>
@@ -398,14 +392,14 @@ export const updateCommuteSchedule = async (
     next: NextFunction,
 ): Promise<void> => {
     const id = parseInt(request.params.id);
-    const { account_id, day_of_week, fare_detail_id, start_time, end_time } =
+    const { accountId, dayOfWeek, fareDetailId, startTime, endTime } =
         request.body;
     let fareDetail: FareDetails[] = [];
 
     const client = await pool.connect(); // Get a client from the pool
 
     try {
-        let currentFareDetailId = fare_detail_id;
+        let currentFareDetailId = fareDetailId;
         let systemClosed = false;
         const alerts: object[] = [];
 
@@ -422,7 +416,7 @@ export const updateCommuteSchedule = async (
         // Check for overlapping day_of_week and start_time
         const { rows: existingSchedule } = await client.query(
             commuteScheduleQueries.getCommuteScheduleByDayAndTimeExcludingId,
-            [account_id, day_of_week, start_time, end_time, id],
+            [accountId, dayOfWeek, startTime, endTime, id],
         );
 
         if (existingSchedule.length > 0) {
@@ -436,7 +430,7 @@ export const updateCommuteSchedule = async (
 
         const { rows: oldFareResults } = await client.query(
             fareDetailsQueries.getFareDetailsById,
-            [fare_detail_id],
+            [fareDetailId],
         );
 
         let oldFare = oldFareResults[0].fare_amount;
@@ -459,11 +453,11 @@ export const updateCommuteSchedule = async (
             for (let timeslot of fareTimeslots) {
                 if (
                     isTimeWithinRange(
-                        start_time,
+                        startTime,
                         timeslot.start_time,
                         timeslot.end_time,
                     ) &&
-                    day_of_week === timeslot.day_of_week
+                    dayOfWeek === timeslot.day_of_week
                 ) {
                     timeslotMatched = true;
                     break; // exit the loop once a match is found
@@ -472,10 +466,10 @@ export const updateCommuteSchedule = async (
 
             if (timeslotMatched) {
                 break; // exit the while loop since we found a matching timeslot
-            } else if (fareDetail[0].alternate_fare_detail_id) {
+            } else if (fareDetail[0].alternateFareDetailId) {
                 const { rows: alternateFareDetail } = await client.query(
                     fareDetailsQueries.getFareDetailsById,
-                    [fareDetail[0].alternate_fare_detail_id],
+                    [fareDetail[0].alternateFareDetailId],
                 );
                 const alternateFare = alternateFareDetail[0].fare_amount;
 
@@ -486,7 +480,7 @@ export const updateCommuteSchedule = async (
                 });
 
                 oldFare = alternateFare;
-                currentFareDetailId = fareDetail[0].alternate_fare_detail_id; // use the alternate fare ID for the next loop iteration
+                currentFareDetailId = fareDetail[0].alternateFareDetailId; // use the alternate fare ID for the next loop iteration
             } else {
                 systemClosed = true; // no alternate fare ID and no timeslot matched, so system is closed
                 break;
@@ -501,13 +495,13 @@ export const updateCommuteSchedule = async (
         const cronId: number = parseInt(rows[0].cron_job_id);
 
         const jobDetails = {
-            frequency_type: 1,
-            frequency_type_variable: 1,
-            frequency_day_of_week: day_of_week,
+            frequencyType: 1,
+            frequencyTypeVariable: 1,
+            frequency_day_of_week: dayOfWeek,
             date: dayjs()
-                .hour(start_time.split(':')[0])
-                .minute(start_time.split(':')[1])
-                .second(start_time.split(':')[2])
+                .hour(startTime.split(':')[0])
+                .minute(startTime.split(':')[1])
+                .second(startTime.split(':')[2])
                 .toISOString(),
         };
 
@@ -528,20 +522,20 @@ export const updateCommuteSchedule = async (
 
         await client.query(`
             SELECT cron.schedule('${uniqueId}', '${cronDate}',
-            $$INSERT INTO commute_history (account_id, fare_amount, commute_system, fare_type, timestamp) VALUES (${account_id}, ${-fareDetail[0]
-                .fare_amount}, '${fareDetail[0].system_name}', '${
-                fareDetail[0].fare_type
+            $$INSERT INTO commute_history (account_id, fare_amount, commute_system, fare_type, timestamp) VALUES (${accountId}, ${-fareDetail[0]
+                .fareAmount}, '${fareDetail[0].systemName}', '${
+                fareDetail[0].fareType
             }', now())$$)`);
 
         await client.query(`
             SELECT cron.schedule('${uniqueId}', '${cronDate}',
-            $$INSERT INTO transaction_history (account_id, transaction_amount, transaction_tax_rate, transaction_title, transaction_description) VALUES (${account_id}, ${-fareDetail[0]
-                .fare_amount}, ${taxRate}, '${
-                fareDetail[0].system_name + ' ' + fareDetail[0].fare_type
+            $$INSERT INTO transaction_history (account_id, transaction_amount, transaction_tax_rate, transaction_title, transaction_description) VALUES (${accountId}, ${-fareDetail[0]
+                .fareAmount}, ${taxRate}, '${
+                fareDetail[0].systemName + ' ' + fareDetail[0].fareType
             }', '${
-                fareDetail[0].system_name +
+                fareDetail[0].systemName +
                 ' ' +
-                fareDetail[0].fare_type +
+                fareDetail[0].fareType +
                 ' pass'
             }')$$)`);
 
@@ -552,17 +546,17 @@ export const updateCommuteSchedule = async (
         ]);
 
         await client.query(commuteScheduleQueries.updateCommuteSchedule, [
-            account_id,
-            day_of_week,
+            accountId,
+            dayOfWeek,
             currentFareDetailId,
-            start_time,
-            end_time,
+            startTime,
+            endTime,
             id,
         ]);
 
         await client.query('COMMIT;');
 
-        request.commute_schedule_id = id;
+        request.commuteScheduleId = id;
         request.alerts = alerts;
 
         next();
@@ -586,7 +580,7 @@ export const updateCommuteScheduleReturnObject = async (
     request: Request,
     response: Response,
 ): Promise<void> => {
-    const { commute_schedule_id } = request;
+    const { commuteScheduleId } = request;
     const { alerts } = request;
 
     const client = await pool.connect(); // Get a client from the pool
@@ -594,7 +588,7 @@ export const updateCommuteScheduleReturnObject = async (
     try {
         const { rows } = await client.query(
             commuteScheduleQueries.getCommuteSchedulesById,
-            [commute_schedule_id],
+            [commuteScheduleId],
         );
 
         const modifiedCommuteSchedule = rows.map((row) =>

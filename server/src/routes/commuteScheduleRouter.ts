@@ -35,7 +35,7 @@ router.get(
             .isInt({ min: 1 })
             .withMessage('ID must be a number'),
         validateRequest,
-        query('account_id')
+        query('accountId')
             .optional()
             .isInt({ min: 1 })
             .withMessage('Account ID must be a number'),
@@ -46,19 +46,19 @@ router.get(
 router.post(
     '/',
     [
-        body('account_id')
+        body('accountId')
             .isInt({ min: 1 })
             .withMessage('Account ID must be a number'),
-        body('day_of_week')
+        body('dayOfWeek')
             .isInt({ min: 0, max: 6 })
             .withMessage('Day of week must be a number between 0 and 6'),
-        body('fare_detail_id')
+        body('fareDetailId')
             .isInt({ min: 1 })
             .withMessage('Fare detail ID must be a number'),
-        body('start_time')
+        body('startTime')
             .isTime({ hourFormat: 'hour24', mode: 'withSeconds' })
             .withMessage('Start time must be a time'),
-        body('end_time')
+        body('endTime')
             .isTime({ hourFormat: 'hour24', mode: 'withSeconds' })
             .withMessage('End time must be a time'),
         validateRequest,
@@ -82,19 +82,19 @@ router.post(
 router.put(
     '/:id',
     [
-        body('account_id')
+        body('accountId')
             .isInt({ min: 1 })
             .withMessage('Account ID must be a number'),
-        body('day_of_week')
+        body('dayOfWeek')
             .isInt({ min: 0, max: 6 })
             .withMessage('Day of week must be a number between 0 and 6'),
-        body('fare_detail_id')
+        body('fareDetailId')
             .isInt({ min: 1 })
             .withMessage('Fare detail ID must be a number'),
-        body('start_time')
+        body('startTime')
             .isTime({ hourFormat: 'hour24', mode: 'withSeconds' })
             .withMessage('Start time must be a time'),
-        body('end_time')
+        body('endTime')
             .isTime({ hourFormat: 'hour24', mode: 'withSeconds' })
             .withMessage('End time must be a time'),
         validateRequest,
