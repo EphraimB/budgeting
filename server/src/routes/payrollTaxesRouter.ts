@@ -34,7 +34,7 @@ router.get(
             .optional()
             .isInt({ min: 1 })
             .withMessage('ID must be a number'),
-        query('job_id')
+        query('jobId')
             .optional()
             .isInt({ min: 1 })
             .withMessage('Job ID must be a number'),
@@ -46,7 +46,7 @@ router.get(
 router.post(
     '/',
     [
-        body('job_id').isInt({ min: 1 }).withMessage('Job ID must be a number'),
+        body('jobId').isInt({ min: 1 }).withMessage('Job ID must be a number'),
         body('name').isString().withMessage('Name must be a string'),
         body('rate').isFloat({ min: 0 }).withMessage('Rate must be a number'),
         validateRequest,
@@ -71,7 +71,7 @@ router.put(
     '/:id',
     [
         param('id').isInt({ min: 1 }).withMessage('ID must be a number'),
-        body('job_id').isInt({ min: 1 }).withMessage('Job ID must be a number'),
+        body('jobId').isInt({ min: 1 }).withMessage('Job ID must be a number'),
         body('name').isString().withMessage('Name must be a string'),
         body('rate').isFloat({ min: 0 }).withMessage('Rate must be a number'),
         validateRequest,

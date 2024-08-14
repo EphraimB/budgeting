@@ -177,7 +177,7 @@ export interface PayrollDate {
 
 export interface PayrollTax {
     id: number;
-    job_id: number;
+    jobId: number;
     name: string;
     rate: number;
 }
@@ -308,7 +308,7 @@ declare module 'express-serve-static-core' {
         transfer_id: number | null | undefined;
         payrollDateId: number;
         jobId: number;
-        payroll_taxes_id: number;
+        payrollTaxesId: number;
         income_id: number;
         commute_schedule_id: number;
         fullyPaidBackDates: Record<number, string | null>;

@@ -12,7 +12,7 @@ import pool from '../config/db.js';
  */
 const payrollTaxesParse = (payrollTax: Record<string, string>): PayrollTax => ({
     id: parseInt(payrollTax.payroll_taxes_id),
-    job_id: parseInt(payrollTax.job_id),
+    jobId: parseInt(payrollTax.job_id),
     name: payrollTax.name,
     rate: parseFloat(payrollTax.rate),
 });
@@ -27,7 +27,7 @@ export const getPayrollTaxes = async (
     request: Request,
     response: Response,
 ): Promise<void> => {
-    const { job_id, id } = request.query;
+    const { jobId, id } = request.query;
 
     const client = await pool.connect(); // Get a client from the pool
 
@@ -35,15 +35,15 @@ export const getPayrollTaxes = async (
         let query: string;
         let params: any[];
 
-        if (id && job_id) {
+        if (id && jobId) {
             query = payrollQueries.getPayrollTaxesByIdAndJobId;
-            params = [id, job_id];
+            params = [id, jobId];
         } else if (id) {
             query = payrollQueries.getPayrollTaxesById;
             params = [id];
-        } else if (job_id) {
+        } else if (jobId) {
             query = payrollQueries.getPayrollTaxesByJobId;
-            params = [job_id];
+            params = [jobId];
         } else {
             query = payrollQueries.getAllPayrollTaxes;
             params = [];
@@ -68,7 +68,7 @@ export const getPayrollTaxes = async (
             `Error getting ${
                 id
                     ? 'payroll tax'
-                    : job_id
+                    : jobId
                     ? 'payroll taxes for given job id'
                     : 'payroll taxes'
             }`,
@@ -90,7 +90,7 @@ export const createPayrollTax = async (
     response: Response,
     next: NextFunction,
 ): Promise<void> => {
-    const { job_id, name, rate } = request.body;
+    const { jobId, name, rate } = request.body;
 
     const client = await pool.connect(); // Get a client from the pool
 
@@ -98,12 +98,12 @@ export const createPayrollTax = async (
         await client.query('BEGIN;');
 
         const { rows } = await client.query(payrollQueries.createPayrollTax, [
-            job_id,
+            jobId,
             name,
             rate,
         ]);
 
-        await client.query('SELECT process_payroll_for_job($1)', [job_id]);
+        await client.query('SELECT process_payroll_for_job($1)', [jobId]);
 
         await client.query('COMMIT;');
 
@@ -111,7 +111,7 @@ export const createPayrollTax = async (
             payrollTaxesParse(row),
         );
 
-        request.payroll_taxes_id = payrollTaxes[0].id;
+        request.payrollTaxesId = payrollTaxes[0].id;
 
         next();
     } catch (error) {
@@ -134,14 +134,14 @@ export const createPayrollTaxReturnObject = async (
     request: Request,
     response: Response,
 ): Promise<void> => {
-    const { payroll_taxes_id } = request;
+    const { payrollTaxesId } = request;
 
     const client = await pool.connect(); // Get a client from the pool
 
     try {
         const { rows } = await client.query(
             payrollQueries.getPayrollTaxesById,
-            [payroll_taxes_id],
+            [payrollTaxesId],
         );
 
         if (rows.length === 0) {
