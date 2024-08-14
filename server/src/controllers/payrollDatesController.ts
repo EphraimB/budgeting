@@ -14,8 +14,8 @@ const payrollDatesParse = (
     payrollDate: Record<string, string>,
 ): PayrollDate => ({
     id: parseInt(payrollDate.payroll_date_id),
-    job_id: parseInt(payrollDate.job_id),
-    payroll_day: parseInt(payrollDate.payroll_day),
+    jobId: parseInt(payrollDate.job_id),
+    payrollDay: parseInt(payrollDate.payroll_day),
 });
 
 /**
@@ -28,7 +28,7 @@ export const getPayrollDates = async (
     request: Request,
     response: Response,
 ): Promise<void> => {
-    const { job_id, id } = request.query;
+    const { jobId, id } = request.query;
 
     const client = await pool.connect(); // Get a client from the pool
 
@@ -36,15 +36,15 @@ export const getPayrollDates = async (
         let query: string;
         let params: any[];
 
-        if (id && job_id) {
+        if (id && jobId) {
             query = payrollQueries.getPayrollDatesByIdAndJobId;
-            params = [id, job_id];
+            params = [id, jobId];
         } else if (id) {
             query = payrollQueries.getPayrollDatesById;
             params = [id];
-        } else if (job_id) {
+        } else if (jobId) {
             query = payrollQueries.getPayrollDatesByJobId;
-            params = [job_id];
+            params = [jobId];
         } else {
             query = payrollQueries.getAllPayrollDates;
             params = [];
@@ -70,7 +70,7 @@ export const getPayrollDates = async (
             `Error getting ${
                 id
                     ? 'payroll date'
-                    : job_id
+                    : jobId
                     ? 'payroll dates for given job id'
                     : 'payroll dates'
             }`,
@@ -92,14 +92,14 @@ export const togglePayrollDate = async (
     response: Response,
     next: NextFunction,
 ): Promise<void> => {
-    const { job_id, payroll_day } = request.body;
+    const { jobId, payrollDay } = request.body;
 
     const client = await pool.connect(); // Get a client from the pool
 
     try {
         const { rows } = await client.query(
             payrollQueries.getPayrollDateByJobIdAndPayrollDay,
-            [job_id, payroll_day],
+            [jobId, payrollDay],
         );
 
         await client.query('BEGIN;');
@@ -110,11 +110,11 @@ export const togglePayrollDate = async (
             ]);
         } else {
             await client.query(payrollQueries.createPayrollDate, [
-                job_id,
-                payroll_day,
+                jobId,
+                payrollDay,
             ]);
 
-            await client.query('SELECT process_payroll_for_job($1)', [job_id]);
+            await client.query('SELECT process_payroll_for_job($1)', [jobId]);
         }
 
         await client.query('COMMIT;');
@@ -126,7 +126,7 @@ export const togglePayrollDate = async (
         logger.error(error); // Log the error on the server side
         handleError(
             response,
-            `Error getting, creating, or updating payroll dates for the day of ${payroll_day} of job id of ${job_id}`,
+            `Error getting, creating, or updating payroll dates for the day of ${payrollDay} of job id of ${jobId}`,
         );
     } finally {
         client.release(); // Release the client back to the pool
@@ -157,7 +157,7 @@ export const createPayrollDate = async (
     response: Response,
     next: NextFunction,
 ): Promise<void> => {
-    const { job_id, payroll_day } = request.body;
+    const { jobId, payrollDay } = request.body;
 
     const client = await pool.connect(); // Get a client from the pool
 
@@ -165,11 +165,11 @@ export const createPayrollDate = async (
         await client.query('BEGIN;');
 
         const { rows } = await client.query(payrollQueries.createPayrollDate, [
-            job_id,
-            payroll_day,
+            jobId,
+            payrollDay,
         ]);
 
-        await client.query('SELECT process_payroll_for_job($1)', [job_id]);
+        await client.query('SELECT process_payroll_for_job($1)', [jobId]);
 
         await client.query('COMMIT;');
 
@@ -178,7 +178,7 @@ export const createPayrollDate = async (
             payrollDatesParse(row),
         );
 
-        request.payroll_date_id = payrollDates[0].id;
+        request.payrollDateId = payrollDates[0].id;
 
         next();
     } catch (error) {
@@ -195,14 +195,14 @@ export const createPayrollDateReturnObject = async (
     request: Request,
     response: Response,
 ): Promise<void> => {
-    const { payroll_date_id } = request;
+    const { payrollDateId } = request;
 
     const client = await pool.connect(); // Get a client from the pool
 
     try {
         const { rows } = await client.query(
             payrollQueries.getPayrollDatesById,
-            [payroll_date_id],
+            [payrollDateId],
         );
 
         // Parse the data to correct format and return an object
@@ -232,7 +232,7 @@ export const updatePayrollDate = async (
     next: NextFunction,
 ): Promise<void> => {
     const { id } = request.params;
-    const { job_id, payroll_day } = request.body;
+    const { jobId, payrollDay } = request.body;
 
     const client = await pool.connect(); // Get a client from the pool
 
@@ -250,12 +250,12 @@ export const updatePayrollDate = async (
         await client.query('BEGIN;');
 
         await client.query(payrollQueries.updatePayrollDate, [
-            job_id,
-            payroll_day,
+            jobId,
+            payrollDay,
             id,
         ]);
 
-        await client.query('SELECT process_payroll_for_job($1)', [job_id]);
+        await client.query('SELECT process_payroll_for_job($1)', [jobId]);
 
         await client.query('COMMIT;');
 

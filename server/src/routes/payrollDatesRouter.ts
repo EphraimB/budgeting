@@ -36,7 +36,7 @@ router.get(
             .optional()
             .isInt({ min: 1 })
             .withMessage('ID must be a number'),
-        query('job_id')
+        query('jobId')
             .optional()
             .isInt({ min: 1 })
             .withMessage('Job ID must be a number'),
@@ -48,8 +48,8 @@ router.get(
 router.post(
     '/',
     [
-        body('job_id').isInt({ min: 1 }).withMessage('Job ID must be a number'),
-        body('payroll_day')
+        body('jobId').isInt({ min: 1 }).withMessage('Job ID must be a number'),
+        body('payrollDay')
             .isInt({ min: 1, max: 31 })
             .withMessage('Payroll day must be a number between 1 and 31'),
         validateRequest,
@@ -73,8 +73,8 @@ router.post(
 router.post(
     '/toggle',
     [
-        body('job_id').isInt({ min: 1 }).withMessage('Job ID must be a number'),
-        body('payroll_day')
+        body('jobId').isInt({ min: 1 }).withMessage('Job ID must be a number'),
+        body('payrollDay')
             .isInt({ min: 1, max: 31 })
             .withMessage('Payroll day must be a number between 1 and 31'),
         validateRequest,
@@ -99,8 +99,8 @@ router.put(
     '/:id',
     [
         param('id').isInt({ min: 1 }).withMessage('ID must be a number'),
-        body('job_id').isInt({ min: 1 }).withMessage('Job ID must be a number'),
-        body('payroll_day')
+        body('jobId').isInt({ min: 1 }).withMessage('Job ID must be a number'),
+        body('payrollDay')
             .isInt({ min: 1, max: 31 })
             .withMessage('Payroll day must be a number between 1 and 31'),
         validateRequest,

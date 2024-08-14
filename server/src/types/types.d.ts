@@ -171,8 +171,8 @@ export interface Payroll {
 
 export interface PayrollDate {
     id: number;
-    job_id: number;
-    payroll_day: number;
+    jobId: number;
+    payrollDay: number;
 }
 
 export interface PayrollTax {
@@ -306,7 +306,7 @@ declare module 'express-serve-static-core' {
         expenseId: number | null | undefined;
         loan_id: number | null | undefined;
         transfer_id: number | null | undefined;
-        payroll_date_id: number;
+        payrollDateId: number;
         jobId: number;
         payroll_taxes_id: number;
         income_id: number;
