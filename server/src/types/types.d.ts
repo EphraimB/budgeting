@@ -242,24 +242,24 @@ export interface CommuteHistory {
 }
 
 export interface FareDetails {
-    fare_detail_id: number;
-    commute_system_id: number;
-    system_name: string;
-    fare_type: string;
-    fare_amount: number;
+    fareDetailId: number;
+    commuteSystemId: number;
+    systemName: string;
+    fareType: string;
+    fareAmount: number;
     timeslots: Timeslots[];
-    timed_pass_duration: number | null;
-    alternate_fare_detail_id: number | null;
-    date_created: string;
-    date_modified: string;
+    timedPassDuration: number | null;
+    alternateFareDetailId: number | null;
+    dateCreated: string;
+    dateModified: string;
 }
 
 export interface Timeslots {
-    timeslot_id: number;
-    fare_detail_id: number;
-    day_of_week: number;
-    start_time: string;
-    end_time: string;
+    timeslotId: number;
+    fareDetailId: number;
+    dayOfWeek: number;
+    startTime: string;
+    endTime: string;
 }
 
 export interface CommuteTicket {

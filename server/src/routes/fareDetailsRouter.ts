@@ -25,33 +25,33 @@ router.get(
 router.post(
     '/',
     [
-        body('commute_system_id')
+        body('commuteSystemId')
             .isInt({ min: 1 })
             .withMessage('Commute System ID must be a number'),
         body('name').isString().withMessage('Name must be a string'),
-        body('fare_amount')
+        body('fareAmount')
             .isFloat()
             .withMessage('Fare amount must be a number'),
-        body('timeslots.*.day_of_week')
+        body('timeslots.*.dayOfWeek')
             .isInt({ min: 0, max: 6 })
             .withMessage(
                 'Invalid day of week value. It should be between 0 (Sunday) and 6 (Saturday).',
             ),
-        body('timeslots.*.start_time')
+        body('timeslots.*.startTime')
             .isTime({ hourFormat: 'hour24', mode: 'withSeconds' })
             .withMessage('Invalid start time format. It should be HH:MM:SS.'),
-        body('timeslots.*.end_time')
+        body('timeslots.*.endTime')
             .isTime({ hourFormat: 'hour24', mode: 'withSeconds' })
             .withMessage('Invalid end time format. It should be HH:MM:SS.'),
         body('duration')
             .optional({ nullable: true })
             .isInt({ min: 1 })
             .withMessage('Duration must be be an integer'),
-        body('day_start')
+        body('dayStart')
             .optional({ nullable: true })
             .isInt({ min: 1 })
             .withMessage('day start must be an integer'),
-        body('alternate_fare_detail_id')
+        body('alternateFareDetailId')
             .optional({ nullable: true })
             .isInt({ min: 1 })
             .withMessage('Alternate fare detail ID must be a number'),
@@ -64,22 +64,22 @@ router.put(
     '/:id',
     [
         param('id').isInt({ min: 1 }).withMessage('ID must be a number'),
-        body('commute_system_id')
+        body('commuteSystemId')
             .isInt({ min: 1 })
             .withMessage('Commute System ID must be a number'),
         body('name').isString().withMessage('Name must be a string'),
-        body('fare_amount')
+        body('fareAmount')
             .isFloat()
             .withMessage('Fare amount must be a number'),
-        body('timeslots.*.day_of_week')
+        body('timeslots.*.dayOfWeek')
             .isInt({ min: 0, max: 6 })
             .withMessage(
                 'Invalid day of week value. It should be between 0 (Sunday) and 6 (Saturday).',
             ),
-        body('timeslots.*.start_time')
+        body('timeslots.*.startTime')
             .isTime({ hourFormat: 'hour24', mode: 'withSeconds' })
             .withMessage('Invalid start time format. It should be HH:MM:SS.'),
-        body('timeslots.*.end_time')
+        body('timeslots.*.endTime')
             .isTime({ hourFormat: 'hour24', mode: 'withSeconds' })
             .withMessage('Invalid end time format. It should be HH:MM:SS.'),
         body('duration')
@@ -90,7 +90,7 @@ router.put(
             .optional({ nullable: true })
             .isInt({ min: 1 })
             .withMessage('day start must be an integer'),
-        body('alternate_fare_detail_id')
+        body('alternateFareDetailId')
             .optional({ nullable: true })
             .isInt({ min: 1 })
             .withMessage('Alternate fare detail ID must be a number'),

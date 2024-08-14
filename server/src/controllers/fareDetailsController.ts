@@ -59,26 +59,26 @@ export const getFareDetails = async (
         const responseObj: object = {
             fares: fareDetails.map((fareDetail) => ({
                 id: parseInt(fareDetail.fare_detail_id),
-                commute_system: {
-                    commute_system_id: fareDetail.commute_system_id,
+                commuteSystem: {
+                    commuteSystemId: fareDetail.commute_system_id,
                     name: fareDetail.system_name,
                 },
                 name: fareDetail.fare_type,
-                fare_amount: parseFloat(fareDetail.fare_amount),
+                fareAmount: parseFloat(fareDetail.fare_amount),
                 timeslots: timeslots
                     .filter(
                         (ts) => ts.fare_detail_id === fareDetail.fare_detail_id,
                     )
                     .map((timeslot) => ({
-                        day_of_week: parseInt(timeslot.day_of_week),
-                        start_time: timeslot.start_time,
-                        end_time: timeslot.end_time,
+                        dayOfWeek: parseInt(timeslot.day_of_week),
+                        startTime: timeslot.start_time,
+                        endTime: timeslot.end_time,
                     })),
-                alternate_fare_detail_id: parseIntOrFallback(
+                alternateFareDetailId: parseIntOrFallback(
                     fareDetail.alternate_fare_detail_id,
                 ),
-                date_created: fareDetail.date_created,
-                date_modified: fareDetail.date_modified,
+                dateCreated: fareDetail.date_created,
+                dateModified: fareDetail.date_modified,
             })),
         };
 
@@ -105,13 +105,13 @@ export const createFareDetail = async (
     response: Response,
 ) => {
     const {
-        commute_system_id,
+        commuteSystemId,
         name,
-        fare_amount,
+        fareAmount,
         timeslots,
         duration,
-        day_start,
-        alternate_fare_detail_id,
+        dayStart,
+        alternateFareDetailId,
     } = request.body;
 
     const client = await pool.connect(); // Get a client from the pool
@@ -119,7 +119,7 @@ export const createFareDetail = async (
     try {
         const { rows: commuteSystemResults } = await client.query(
             commuteSystemQueries.getCommuteSystemById,
-            [commute_system_id],
+            [commuteSystemId],
         );
         const hasCommuteSystem: boolean = commuteSystemResults.length > 0;
 
@@ -140,12 +140,12 @@ export const createFareDetail = async (
         const { rows: fareDetails } = await client.query(
             fareDetailsQueries.createFareDetails,
             [
-                commute_system_id,
+                commuteSystemId,
                 name,
-                fare_amount,
+                fareAmount,
                 duration,
-                day_start,
-                alternate_fare_detail_id,
+                dayStart,
+                alternateFareDetailId,
             ],
         );
 
@@ -154,9 +154,9 @@ export const createFareDetail = async (
                 fareTimeslotsQueries.createTimeslot,
                 [
                     fareDetails[0].fare_detail_id,
-                    timeslot.day_of_week,
-                    timeslot.start_time,
-                    timeslot.end_time,
+                    timeslot.dayOfWeek,
+                    timeslot.startTime,
+                    timeslot.endTime,
                 ],
             );
 
@@ -173,31 +173,31 @@ export const createFareDetail = async (
 
         const responseObj: object = {
             id: fareDetails[0].fare_detail_id,
-            commute_system: {
-                commute_system_id: fareDetails[0].commute_system_id,
+            commuteSystem: {
+                commuteSystemId: fareDetails[0].commute_system_id,
                 name: commuteSystemResults[0].name,
             },
             name: fareDetails[0].fare_type,
-            fare_amount: parseFloat(fareDetails[0].fare_amount),
+            fareAmount: parseFloat(fareDetails[0].fare_amount),
             timeslots: allTimeslots,
             duration: fareDetails[0].duration,
-            day_start: fareDetails[0].day_start,
-            alternate_fare_detail_id: fareDetails[0].alternate_fare_detail_id,
-            date_created: fareDetails[0].date_created,
-            date_modified: fareDetails[0].date_modified,
+            dayStart: fareDetails[0].day_start,
+            alternateFareDetailId: fareDetails[0].alternate_fare_detail_id,
+            dateCreated: fareDetails[0].date_created,
+            dateModified: fareDetails[0].date_modified,
         };
 
         response.status(201).json(responseObj);
     } catch (error) {
         if (
             error.message.includes(
-                'alternate_fare_detail_id cannot be the same as fare_detail_id',
+                'alternate fare detail id cannot be the same as fare detail id',
             )
         ) {
             response
                 .status(400)
                 .send(
-                    'alternate_fare_detail_id cannot be the same as fare_detail_id',
+                    'alternate fare detail id cannot be the same as fare detail id',
                 );
         } else {
             await client.query('ROLLBACK;');
@@ -229,13 +229,13 @@ export const compareTimeslots = (
 
     // Create a map from the current timeslots
     for (let slot of current) {
-        const key = `${slot.day_of_week}-${slot.start_time}-${slot.end_time}`;
+        const key = `${slot.dayOfWeek}-${slot.startTime}-${slot.endTime}`;
         currentMap.set(key, slot);
     }
 
     // Create a map from the incoming timeslots
     for (let slot of incoming) {
-        const key = `${slot.day_of_week}-${slot.start_time}-${slot.end_time}`;
+        const key = `${slot.dayOfWeek}-${slot.startTime}-${slot.endTime}`;
         incomingMap.set(key, slot);
     }
 
@@ -277,13 +277,13 @@ export const updateFareDetail = async (
 ): Promise<void> => {
     const id = parseInt(request.params.id);
     const {
-        commute_system_id,
+        commuteSystemId,
         name,
-        fare_amount,
+        fareAmount,
         timeslots,
         duration,
-        day_start,
-        alternate_fare_detail_id,
+        dayStart,
+        alternateFareDetailId,
     } = request.body;
 
     const client = await pool.connect(); // Get a client from the pool
@@ -327,12 +327,12 @@ export const updateFareDetail = async (
         });
 
         await client.query(fareDetailsQueries.updateFareDetails, [
-            commute_system_id,
+            commuteSystemId,
             name,
-            fare_amount,
+            fareAmount,
             duration,
-            day_start,
-            alternate_fare_detail_id,
+            dayStart,
+            alternateFareDetailId,
             id,
         ]);
 
@@ -340,38 +340,38 @@ export const updateFareDetail = async (
 
         const { rows: commuteSystemResults } = await client.query(
             commuteSystemQueries.getCommuteSystemById,
-            [commute_system_id],
+            [commuteSystemId],
         );
 
         const systemName = commuteSystemResults[0].name;
 
         const responseObj: object = {
             id: fareDetails[0].fare_detail_id,
-            commute_system: {
-                commute_system_id: fareDetails[0].commute_system_id,
+            commuteSystem: {
+                commuteSystemId: fareDetails[0].commute_system_id,
                 name: systemName,
             },
             name: fareDetails[0].fare_type,
-            fare_amount: parseFloat(fareDetails[0].fare_amount),
+            fareAmount: parseFloat(fareDetails[0].fare_amount),
             timeslots: timeslots,
             duration: fareDetails[0].duration,
-            day_start: fareDetails[0].day_start,
-            alternate_fare_detail_id: fareDetails[0].alternate_fare_detail_id,
-            date_created: fareDetails[0].date_created,
-            date_modified: fareDetails[0].date_modified,
+            dayStart: fareDetails[0].day_start,
+            alternateFareDetailId: fareDetails[0].alternate_fare_detail_id,
+            dateCreated: fareDetails[0].date_created,
+            dateModified: fareDetails[0].date_modified,
         };
 
         response.status(200).json(responseObj);
     } catch (error) {
         if (
             error.message.includes(
-                'alternate_fare_detail_id cannot be the same as fare_detail_id',
+                'alternate fare detail id cannot be the same as fare detail id',
             )
         ) {
             response
                 .status(400)
                 .send(
-                    'alternate_fare_detail_id cannot be the same as fare_detail_id',
+                    'alternate fare detail id cannot be the same as fare detail id',
                 );
         } else {
             await client.query('ROLLBACK;');
