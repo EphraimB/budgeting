@@ -8,7 +8,7 @@ const router: Router = express.Router();
 router.get(
     '/',
     [
-        query('account_id')
+        query('accountId')
             .optional()
             .isInt({ min: 1 })
             .withMessage('Account ID must be a number'),

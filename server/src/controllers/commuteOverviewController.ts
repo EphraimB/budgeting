@@ -5,21 +5,21 @@ import { logger } from '../config/winston.js';
 import pool from '../config/db.js';
 
 type ReturnObject = {
-    account_id: number;
-    total_cost_per_week: number;
-    total_cost_per_month: number;
+    accountId: number;
+    totalCostPerWeek: number;
+    totalCostPerMonth: number;
     systems: SystemDetails[];
 };
 
 type SystemDetails = {
-    system_name: string;
-    total_cost_per_week: number;
-    total_cost_per_month: number;
+    systemName: string;
+    totalCostPerWeek: number;
+    totalCostPerMonth: number;
     rides: number;
-    fare_cap_progress?: {
-        current_spent: number;
-        fare_cap: number;
-        fare_cap_duration: number;
+    fareCapProgress?: {
+        currentSpent: number;
+        fareCap: number;
+        fareCapDuration: number;
     };
 };
 
@@ -27,16 +27,16 @@ export const getCommuteOverview = async (
     request: Request,
     response: Response,
 ): Promise<void> => {
-    const { account_id } = request.query;
+    const { accountId } = request.query;
 
     const client = await pool.connect(); // Get a client from the pool
 
     try {
         const accounts: number[] = [];
 
-        if (account_id) {
+        if (accountId) {
             const { rows } = await client.query(accountQueries.getAccount, [
-                account_id,
+                accountId,
             ]);
 
             if (rows.length === 0) {
@@ -59,43 +59,39 @@ export const getCommuteOverview = async (
             }),
         );
 
-        const returnObjects = accounts.map((account_id) => {
+        const returnObjects = accounts.map((accountId) => {
             const returnObject: ReturnObject = {
-                account_id,
-                total_cost_per_week: 0,
-                total_cost_per_month: 0,
+                accountId,
+                totalCostPerWeek: 0,
+                totalCostPerMonth: 0,
                 systems: [],
             };
 
             const overview = overviews.find(
-                (overview) => overview.rows[0]?.account_id === account_id,
+                (overview) => overview.rows[0]?.account_id === accountId,
             );
 
             if (overview) {
                 overview.rows.forEach((row) => {
-                    returnObject.total_cost_per_week += parseFloat(
+                    returnObject.totalCostPerWeek += parseFloat(
                         row.total_cost_per_week,
                     );
-                    returnObject.total_cost_per_month += parseFloat(
+                    returnObject.totalCostPerMonth += parseFloat(
                         row.total_cost_per_month,
                     );
 
                     const systemDetails: SystemDetails = {
-                        system_name: row.system_name,
-                        total_cost_per_week: parseFloat(
-                            row.total_cost_per_week,
-                        ),
-                        total_cost_per_month: parseFloat(
-                            row.total_cost_per_month,
-                        ),
+                        systemName: row.system_name,
+                        totalCostPerWeek: parseFloat(row.total_cost_per_week),
+                        totalCostPerMonth: parseFloat(row.total_cost_per_month),
                         rides: parseInt(row.rides),
                     };
 
                     if (row.fare_cap !== null) {
-                        systemDetails.fare_cap_progress = {
-                            current_spent: parseFloat(row.current_spent),
-                            fare_cap: parseFloat(row.fare_cap),
-                            fare_cap_duration: parseInt(row.fare_cap_duration),
+                        systemDetails.fareCapProgress = {
+                            currentSpent: parseFloat(row.current_spent),
+                            fareCap: parseFloat(row.fare_cap),
+                            fareCapDuration: parseInt(row.fare_cap_duration),
                         };
                     }
 
@@ -111,8 +107,8 @@ export const getCommuteOverview = async (
         logger.error(error);
         handleError(
             response,
-            account_id
-                ? `Error getting commute overview for account ${account_id}`
+            accountId
+                ? `Error getting commute overview for account ${accountId}`
                 : `Error getting commute overview for all accounts`,
         );
     } finally {
