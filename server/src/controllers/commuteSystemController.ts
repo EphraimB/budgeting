@@ -19,10 +19,10 @@ const parseCommuteSystem = (
 ): CommuteSystem => ({
     id: parseInt(commuteSystem.commute_system_id),
     name: commuteSystem.name,
-    fare_cap: parseFloatOrFallback(commuteSystem.fare_cap),
-    fare_cap_duration: parseIntOrFallback(commuteSystem.fare_cap_duration),
-    date_created: commuteSystem.date_created,
-    date_modified: commuteSystem.date_modified,
+    fareCap: parseFloatOrFallback(commuteSystem.fare_cap),
+    fareCapDuration: parseIntOrFallback(commuteSystem.fare_cap_duration),
+    dateCreated: commuteSystem.date_created,
+    dateModified: commuteSystem.date_modified,
 });
 
 /**
@@ -87,14 +87,14 @@ export const createCommuteSystem = async (
     request: Request,
     response: Response,
 ) => {
-    const { name, fare_cap, fare_cap_duration } = request.body;
+    const { name, fareCap, fareCapDuration } = request.body;
 
     const client = await pool.connect(); // Get a client from the pool
 
     try {
         const { rows } = await client.query(
             commuteSystemQueries.createCommuteSystem,
-            [name, fare_cap, fare_cap_duration],
+            [name, fareCap, fareCapDuration],
         );
         const commuteSystem = rows.map((cs) => parseCommuteSystem(cs));
 
@@ -118,7 +118,7 @@ export const updateCommuteSystem = async (
     response: Response,
 ): Promise<void> => {
     const id = parseInt(request.params.id);
-    const { name, fare_cap, fare_cap_duration } = request.body;
+    const { name, fareCap, fareCapDuration } = request.body;
 
     const client = await pool.connect(); // Get a client from the pool
 
@@ -135,7 +135,7 @@ export const updateCommuteSystem = async (
 
         const { rows: updateCommuteSystem } = await client.query(
             commuteSystemQueries.updateCommuteSystem,
-            [name, fare_cap, fare_cap_duration, id],
+            [name, fareCap, fareCapDuration, id],
         );
         const system = updateCommuteSystem.map((s) => parseCommuteSystem(s));
 

@@ -224,10 +224,10 @@ export interface Transfer {
 export interface CommuteSystem {
     id: number;
     name: string;
-    fare_cap: number | null;
-    fare_cap_duration: number | null;
-    date_created: string;
-    date_modified: string;
+    fareCap: number | null;
+    fareCapDuration: number | null;
+    dateCreated: string;
+    dateModified: string;
 }
 
 export interface CommuteHistory {
