@@ -18,26 +18,26 @@ import pool from '../config/db.js';
  */
 const parseLoan = (loan: Record<string, string>): Loan => ({
     id: parseInt(loan.loan_id),
-    account_id: parseInt(loan.account_id),
+    accountId: parseInt(loan.account_id),
     amount: parseFloat(loan.loan_amount),
-    plan_amount: parseFloat(loan.loan_plan_amount),
+    planAmount: parseFloat(loan.loan_plan_amount),
     recipient: loan.loan_recipient,
     title: loan.loan_title,
     description: loan.loan_description,
-    frequency_type: parseInt(loan.frequency_type),
-    frequency_type_variable: parseInt(loan.frequency_type_variable),
-    frequency_day_of_month: parseIntOrFallback(loan.frequency_day_of_month),
-    frequency_day_of_week: parseIntOrFallback(loan.frequency_day_of_week),
-    frequency_week_of_month: parseIntOrFallback(loan.frequency_week_of_month),
-    frequency_month_of_year: parseIntOrFallback(loan.frequency_month_of_year),
-    interest_rate: parseFloat(loan.loan_interest_rate),
-    interest_frequency_type: parseInt(loan.loan_interest_frequency_type),
+    frequencyType: parseInt(loan.frequency_type),
+    frequencyTypeVariable: parseInt(loan.frequency_type_variable),
+    frequencyDayOfMonth: parseIntOrFallback(loan.frequency_day_of_month),
+    frequencyDayOfWeek: parseIntOrFallback(loan.frequency_day_of_week),
+    frequencyWeekOfMonth: parseIntOrFallback(loan.frequency_week_of_month),
+    frequencyMonthOfYear: parseIntOrFallback(loan.frequency_month_of_year),
+    interestRate: parseFloat(loan.loan_interest_rate),
+    interestFrequencyType: parseInt(loan.loan_interest_frequency_type),
     subsidized: parseFloat(loan.loan_subsidized),
-    fully_paid_back: loan.loan_fully_paid_back,
-    begin_date: loan.loan_begin_date,
-    end_date: loan.loan_end_date ?? null,
-    date_created: loan.date_created,
-    date_modified: loan.date_modified,
+    fullyPaidBack: loan.loan_fully_paid_back,
+    beginDate: loan.loan_begin_date,
+    endDate: loan.loan_end_date ?? null,
+    dateCreated: loan.date_created,
+    dateModified: loan.date_modified,
 });
 
 /**
@@ -50,7 +50,7 @@ export const getLoans = async (
     request: Request,
     response: Response,
 ): Promise<void> => {
-    const { account_id, id } = request.query;
+    const { accountId, id } = request.query;
 
     const client = await pool.connect(); // Get a client from the pool
 
@@ -58,15 +58,15 @@ export const getLoans = async (
         let query: string;
         let params: any[];
 
-        if (id && account_id) {
+        if (id && accountId) {
             query = loanQueries.getLoansByIdAndAccountId;
-            params = [id, account_id];
+            params = [id, accountId];
         } else if (id) {
             query = loanQueries.getLoansById;
             params = [id];
-        } else if (account_id) {
+        } else if (accountId) {
             query = loanQueries.getLoansByAccountId;
-            params = [account_id];
+            params = [accountId];
         } else {
             query = loanQueries.getAllLoans;
             params = [];
@@ -84,7 +84,7 @@ export const getLoans = async (
             const parsedLoan = parseLoan(loan);
 
             // then add fully_paid_back field in request.fullyPaidBackDates
-            parsedLoan.fully_paid_back = request.fullyPaidBackDates[
+            parsedLoan.fullyPaidBack = request.fullyPaidBackDates[
                 parseInt(loan.loan_id)
             ]
                 ? request.fullyPaidBackDates[parseInt(loan.loan_id)]
@@ -96,7 +96,7 @@ export const getLoans = async (
         loans.map((loan: Loan) => {
             const nextExpenseDate = nextTransactionFrequencyDate(loan);
 
-            loan.next_date = nextExpenseDate;
+            loan.nextDate = nextExpenseDate;
         });
 
         response.status(200).json(loans);
@@ -105,11 +105,7 @@ export const getLoans = async (
         handleError(
             response,
             `Error getting ${
-                id
-                    ? 'loan'
-                    : account_id
-                    ? 'loans for given account id'
-                    : 'loans'
+                id ? 'loan' : accountId ? 'loans for given account id' : 'loans'
             }`,
         );
     } finally {
@@ -130,22 +126,22 @@ export const createLoan = async (
     next: NextFunction,
 ): Promise<void> => {
     const {
-        account_id,
+        accountId,
         amount,
-        plan_amount,
+        planAmount,
         recipient,
         title,
         description,
-        frequency_type,
-        frequency_type_variable,
-        frequency_day_of_month,
-        frequency_day_of_week,
-        frequency_week_of_month,
-        frequency_month_of_year,
-        interest_rate,
-        interest_frequency_type,
+        frequencyType,
+        frequencyTypeVariable,
+        frequencyDayOfMonth,
+        frequencyDayOfWeek,
+        frequencyWeekOfMonth,
+        frequencyMonthOfYear,
+        interestRate,
+        interestFrequencyType,
         subsidized,
-        begin_date,
+        beginDate,
     } = request.body;
 
     const client = await pool.connect(); // Get a client from the pool
@@ -156,35 +152,35 @@ export const createLoan = async (
         const { rows: loanResults } = await client.query(
             loanQueries.createLoan,
             [
-                account_id,
+                accountId,
                 amount,
-                plan_amount,
+                planAmount,
                 recipient,
                 title,
                 description,
-                frequency_type,
-                frequency_type_variable,
-                frequency_day_of_month,
-                frequency_day_of_week,
-                frequency_week_of_month,
-                frequency_month_of_year,
-                interest_rate,
-                interest_frequency_type,
+                frequencyType,
+                frequencyTypeVariable,
+                frequencyDayOfMonth,
+                frequencyDayOfWeek,
+                frequencyWeekOfMonth,
+                frequencyMonthOfYear,
+                interestRate,
+                interestFrequencyType,
                 subsidized,
-                begin_date,
+                beginDate,
             ],
         );
 
         const loans: Loan[] = loanResults.map((loan) => parseLoan(loan));
 
         const jobDetails = {
-            frequency_type,
-            frequency_type_variable,
-            frequency_day_of_month,
-            frequency_day_of_week,
-            frequency_week_of_month,
-            frequency_month_of_year,
-            date: begin_date,
+            frequencyType,
+            frequencyTypeVariable,
+            frequencyDayOfMonth,
+            frequencyDayOfWeek,
+            frequencyWeekOfMonth,
+            frequencyMonthOfYear,
+            date: beginDate,
         };
 
         const cronDate = determineCronValues(jobDetails);
@@ -195,9 +191,9 @@ export const createLoan = async (
 
         await client.query(`
             SELECT cron.schedule('${uniqueId}', '${cronDate}',
-            $$INSERT INTO transaction_history (account_id, transaction_amount, transaction_tax_rate, transaction_title, transaction_description) VALUES (${account_id}, ${
-                -parseFloat(plan_amount) +
-                parseFloat(plan_amount) * parseFloat(subsidized)
+            $$INSERT INTO transaction_history (account_id, transaction_amount, transaction_tax_rate, transaction_title, transaction_description) VALUES (${accountId}, ${
+                -parseFloat(planAmount) +
+                parseFloat(planAmount) * parseFloat(subsidized)
             }, ${taxRate}, '${title}', '${description}')$$)`);
 
         const { rows: cronIdResult } = await client.query(
@@ -207,25 +203,25 @@ export const createLoan = async (
 
         const cronId = cronIdResult[0].cron_job_id;
 
-        const nextDate: Dayjs = dayjs(begin_date);
+        const nextDate: Dayjs = dayjs(beginDate);
 
-        if (parseInt(interest_frequency_type) === 0) {
+        if (parseInt(interestFrequencyType) === 0) {
             // Daily
             nextDate.add(1, 'day');
-        } else if (parseInt(interest_frequency_type) === 1) {
+        } else if (parseInt(interestFrequencyType) === 1) {
             // Weekly
             nextDate.add(1, 'week');
-        } else if (parseInt(interest_frequency_type) === 2) {
+        } else if (parseInt(interestFrequencyType) === 2) {
             // Monthly
             nextDate.add(1, 'month');
-        } else if (parseInt(interest_frequency_type) === 3) {
+        } else if (parseInt(interestFrequencyType) === 3) {
             // Yearly
             nextDate.add(1, 'year');
         }
 
         const jobDetailsInterest = {
-            frequency_type: interest_frequency_type,
-            date: begin_date,
+            frequency_type: interestFrequencyType,
+            date: beginDate,
         };
 
         const cronDateInterest = determineCronValues(jobDetailsInterest);
@@ -234,7 +230,7 @@ export const createLoan = async (
 
         await client.query(`
             SELECT cron.schedule('${interestUniqueId}', '${cronDateInterest}',
-            $$UPDATE loans SET loan_amount = loan_amount + (loan_amount * ${interest_rate}) WHERE loan_id = ${loans[0].id}$$)`);
+            $$UPDATE loans SET loan_amount = loan_amount + (loan_amount * ${interestRate}) WHERE loan_id = ${loans[0].id}$$)`);
 
         const { rows: interestCronIdResult } = await client.query(
             cronJobQueries.createCronJob,
@@ -251,7 +247,7 @@ export const createLoan = async (
 
         await client.query('COMMIT;');
 
-        request.loan_id = loans[0].id;
+        request.loanId = loans[0].id;
 
         next();
     } catch (error) {
@@ -274,20 +270,20 @@ export const createLoanReturnObject = async (
     request: Request,
     response: Response,
 ): Promise<void> => {
-    const { loan_id } = request;
+    const { loanId } = request;
 
     const client = await pool.connect(); // Get a client from the pool
 
     try {
         const { rows: loans } = await client.query(loanQueries.getLoansById, [
-            loan_id,
+            loanId,
         ]);
 
         const modifiedLoans: Loan[] = loans.map((loan) => {
             // parse loan first
             const parsedLoan = parseLoan(loan);
             // then add fully_paid_back field in request.fullyPaidBackDates
-            parsedLoan.fully_paid_back = request.fullyPaidBackDates[
+            parsedLoan.fullyPaidBack = request.fullyPaidBackDates[
                 parseInt(loan.loan_id)
             ]
                 ? request.fullyPaidBackDates[parseInt(loan.loan_id)]
@@ -319,22 +315,22 @@ export const updateLoan = async (
 ): Promise<void> => {
     const id: number = parseInt(request.params.id);
     const {
-        account_id,
+        accountId,
         amount,
-        plan_amount,
+        planAmount,
         recipient,
         title,
         description,
-        frequency_type,
-        frequency_type_variable,
-        frequency_day_of_month,
-        frequency_day_of_week,
-        frequency_week_of_month,
-        frequency_month_of_year,
-        interest_rate,
-        interest_frequency_type,
+        frequencyType,
+        frequencyTypeVariable,
+        frequencyDayOfMonth,
+        frequencyDayOfWeek,
+        frequencyWeekOfMonth,
+        frequencyMonthOfYear,
+        interestRate,
+        interestFrequencyType,
         subsidized,
-        begin_date,
+        beginDate,
     } = request.body;
 
     const client = await pool.connect(); // Get a client from the pool
@@ -351,13 +347,13 @@ export const updateLoan = async (
         const interestCronId: number = parseInt(rows[0].interest_cron_job_id);
 
         const jobDetails = {
-            frequency_type,
-            frequency_type_variable,
-            frequency_day_of_month,
-            frequency_day_of_week,
-            frequency_week_of_month,
-            frequency_month_of_year,
-            date: begin_date,
+            frequencyType,
+            frequencyTypeVariable,
+            frequencyDayOfMonth,
+            frequencyDayOfWeek,
+            frequencyWeekOfMonth,
+            frequencyMonthOfYear,
+            date: beginDate,
         };
 
         const cronDate = determineCronValues(jobDetails);
@@ -377,9 +373,9 @@ export const updateLoan = async (
 
         await client.query(`
             SELECT cron.schedule('${uniqueId}', '${cronDate}',
-            $$INSERT INTO transaction_history (account_id, transaction_amount, transaction_tax_rate, transaction_title, transaction_description) VALUES (${account_id}, ${
-                -parseFloat(plan_amount) +
-                parseFloat(plan_amount) * parseFloat(subsidized)
+            $$INSERT INTO transaction_history (account_id, transaction_amount, transaction_tax_rate, transaction_title, transaction_description) VALUES (${accountId}, ${
+                -parseFloat(planAmount) +
+                parseFloat(planAmount) * parseFloat(subsidized)
             }, ${taxRate}, '${title}', '${description}')$$)`);
 
         const { rows: interestUniqueIdResults } = await client.query(
@@ -402,12 +398,12 @@ export const updateLoan = async (
         modifiedLoan.map((loan: Loan) => {
             const nextLoanDate = nextTransactionFrequencyDate(loan);
 
-            loan.next_date = nextLoanDate;
+            loan.nextDate = nextLoanDate;
         });
 
         const jobDetailsInterest = {
-            frequency_type: interest_frequency_type,
-            date: begin_date,
+            frequencyType: interestFrequencyType,
+            date: beginDate,
         };
 
         const cronDateInterest = determineCronValues(jobDetailsInterest);
@@ -416,7 +412,7 @@ export const updateLoan = async (
 
         await client.query(`
             SELECT cron.schedule('${interestUniqueId}', '${cronDateInterest}',
-            $$UPDATE loans SET loan_amount = loan_amount + (loan_amount * ${interest_rate}) WHERE loan_id = ${id}$$)`);
+            $$UPDATE loans SET loan_amount = loan_amount + (loan_amount * ${interestRate}) WHERE loan_id = ${id}$$)`);
 
         await client.query(cronJobQueries.updateCronJob, [
             uniqueId,
@@ -431,28 +427,28 @@ export const updateLoan = async (
         ]);
 
         await client.query(loanQueries.updateLoan, [
-            account_id,
+            accountId,
             amount,
-            plan_amount,
+            planAmount,
             recipient,
             title,
             description,
-            frequency_type,
-            frequency_type_variable,
-            frequency_day_of_month,
-            frequency_day_of_week,
-            frequency_week_of_month,
-            frequency_month_of_year,
-            interest_rate,
-            interest_frequency_type,
+            frequencyType,
+            frequencyTypeVariable,
+            frequencyDayOfMonth,
+            frequencyDayOfWeek,
+            frequencyWeekOfMonth,
+            frequencyMonthOfYear,
+            interestRate,
+            interestFrequencyType,
             subsidized,
-            begin_date,
+            beginDate,
             id,
         ]);
 
         await client.query('COMMIT;');
 
-        request.loan_id = id;
+        request.loanId = id;
 
         next();
     } catch (error) {
@@ -475,21 +471,19 @@ export const updateLoanReturnObject = async (
     request: Request,
     response: Response,
 ): Promise<void> => {
-    const { loan_id } = request;
+    const { loanId } = request;
 
     const client = await pool.connect(); // Get a client from the pool
 
     try {
-        const { rows } = await client.query(loanQueries.getLoansById, [
-            loan_id,
-        ]);
+        const { rows } = await client.query(loanQueries.getLoansById, [loanId]);
 
         const modifiedLoans: Loan[] = rows.map((loan) => {
             // parse loan first
             const parsedLoan = parseLoan(loan);
 
             // then add fully_paid_back field in request.fullyPaidBackDates
-            parsedLoan.fully_paid_back = request.fullyPaidBackDates[
+            parsedLoan.fullyPaidBack = request.fullyPaidBackDates[
                 parseInt(loan.loan_id)
             ]
                 ? request.fullyPaidBackDates[parseInt(loan.loan_id)]

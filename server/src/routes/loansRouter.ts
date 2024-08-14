@@ -34,7 +34,7 @@ router.get(
             .optional()
             .isInt({ min: 1 })
             .withMessage('ID must be a number'),
-        query('account_id')
+        query('accountId')
             .optional()
             .isInt({ min: 1 })
             .withMessage('Account ID must be a number'),
@@ -57,11 +57,11 @@ router.get(
 router.post(
     '/',
     [
-        body('account_id')
+        body('accountId')
             .isInt({ min: 1 })
             .withMessage('Account ID must be a number'),
         body('amount').isNumeric().withMessage('Amount must be a number'),
-        body('plan_amount')
+        body('planAmount')
             .isNumeric()
             .withMessage('Planned amount must be a number'),
         body('recipient').isString().withMessage('Recipient must be a string'),
@@ -69,47 +69,47 @@ router.post(
         body('description')
             .isString()
             .withMessage('Description must be a string'),
-        body('frequency_type')
+        body('frequencyType')
             .optional()
             .isInt({ min: 0, max: 3 })
             .withMessage('Frequency type must be a number between 0 and 3'),
-        body('frequency_type_variable')
+        body('frequencyTypeVariable')
             .optional()
             .isInt({ min: 1 })
             .withMessage('Frequency variable must be a number'),
-        body('frequency_day_of_week')
+        body('frequencyDayOfWeek')
             .optional({ nullable: true })
             .isInt({ min: 0, max: 6 })
             .withMessage(
                 'Frequency day of week must be a number between 0 and 6',
             ),
-        body('frequency_week_of_month')
+        body('frequencyWeekOfMonth')
             .optional({ nullable: true })
             .isInt({ min: 0, max: 4 })
             .withMessage(
                 'Frequency week of month must be a number between 0 and 4',
             ),
-        body('frequency_day_of_month')
+        body('frequencyDayOfMonth')
             .optional({ nullable: true })
             .isInt({ min: 0, max: 30 })
             .withMessage(
                 'Frequency day of month must be a number between 0 and 30',
             ),
-        body('frequency_month_of_year')
+        body('frequencyMonthOfYear')
             .optional({ nullable: true })
             .isInt({ min: 0, max: 11 })
             .withMessage(
                 'Frequency month of year must be a number between 0 and 11',
             ),
-        body('interest_rate')
+        body('interestRate')
             .isNumeric()
             .withMessage('Interest rate must be a number'),
-        body('interest_frequency_type')
+        body('interestFrequencyType')
             .isInt({ min: 0, max: 3 })
             .withMessage(
                 'Interest frequency type must be a number between 0 and 3',
             ),
-        body('begin_date')
+        body('beginDate')
             .isISO8601()
             .withMessage('Begin date must be a datetime'),
         validateRequest,
@@ -134,11 +134,11 @@ router.put(
     '/:id',
     [
         param('id').isInt({ min: 1 }).withMessage('ID must be a number'),
-        body('account_id')
+        body('accountId')
             .isInt({ min: 1 })
             .withMessage('Account ID must be a number'),
         body('amount').isNumeric().withMessage('Amount must be a number'),
-        body('plan_amount')
+        body('planAmount')
             .isNumeric()
             .withMessage('Planned amount must be a number'),
         body('recipient').isString().withMessage('Recipient must be a string'),
@@ -146,47 +146,47 @@ router.put(
         body('description')
             .isString()
             .withMessage('Description must be a string'),
-        body('frequency_type')
+        body('frequencyType')
             .optional({ nullable: true })
             .isInt({ min: 0, max: 3 })
             .withMessage('Frequency type must be a number between 0 and 3'),
-        body('frequency_type_variable')
+        body('frequencyType_variable')
             .optional({ nullable: true })
             .isInt({ min: 1 })
             .withMessage('Frequency variable must be a number'),
-        body('frequency_day_of_week')
+        body('frequencyDayOfWeek')
             .optional({ nullable: true })
             .isInt({ min: 0, max: 6 })
             .withMessage(
                 'Frequency day of week must be a number between 0 and 6',
             ),
-        body('frequency_week_of_month')
+        body('frequencyWeekOfMonth')
             .optional({ nullable: true })
             .isInt({ min: 0, max: 4 })
             .withMessage(
                 'Frequency week of month must be a number between 0 and 4',
             ),
-        body('frequency_day_of_month')
+        body('frequencyDayOfMonth')
             .optional({ nullable: true })
             .isInt({ min: 0, max: 30 })
             .withMessage(
                 'Frequency day of month must be a number between 0 and 30',
             ),
-        body('frequency_month_of_year')
+        body('frequencyMonthOfYear')
             .optional({ nullable: true })
             .isInt({ min: 0, max: 11 })
             .withMessage(
                 'Frequency month of year must be a number between 0 and 11',
             ),
-        body('interest_rate')
+        body('interestRate')
             .isNumeric()
             .withMessage('Interest rate must be a number'),
-        body('interest_frequency_type')
+        body('interestFrequencyType')
             .isInt({ min: 0, max: 3 })
             .withMessage(
                 'Interest frequency type must be a number between 0 and 3',
             ),
-        body('begin_date')
+        body('beginDate')
             .isISO8601()
             .withMessage('Begin date must be a datetime'),
         validateRequest,

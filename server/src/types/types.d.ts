@@ -134,28 +134,28 @@ export interface Expense {
 
 export interface Loan {
     id?: number;
-    account_id?: number;
-    cron_job_id?: number;
+    accountId?: number;
+    cronJobId?: number;
     amount?: number;
-    plan_amount: number;
+    planAmount: number;
     recipient: string;
     title: string;
     description: string;
-    frequency_type?: number;
-    frequency_type_variable: number;
-    frequency_day_of_month?: number | null;
-    frequency_day_of_week?: number | null;
-    frequency_week_of_month?: number | null;
-    frequency_month_of_year?: number | null;
-    interest_rate?: number;
-    interest_frequency_type?: number;
+    frequencyType?: number;
+    frequencyTypeVariable: number;
+    frequencyDayOfMonth?: number | null;
+    frequencyDayOfWeek?: number | null;
+    frequencyWeekOfMonth?: number | null;
+    frequencyMonthOfYear?: number | null;
+    interestRate?: number;
+    interestFrequencyType?: number;
     subsidized?: number;
-    fully_paid_back?: string | null;
-    begin_date: string;
-    end_date?: string;
-    next_date?: string | null;
-    date_created?: string;
-    date_modified?: string;
+    fullyPaidBack?: string | null;
+    beginDate: string;
+    endDate?: string;
+    nextDate?: string | null;
+    dateCreated?: string;
+    dateModified?: string;
 }
 
 export interface Payroll {
@@ -304,7 +304,7 @@ declare module 'express-serve-static-core' {
         transactions: any[];
         wishlist_id: number | null | undefined;
         expenseId: number | null | undefined;
-        loan_id: number | null | undefined;
+        loanId: number | null | undefined;
         transfer_id: number | null | undefined;
         payrollDateId: number;
         jobId: number;
