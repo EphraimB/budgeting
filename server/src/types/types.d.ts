@@ -92,21 +92,21 @@ export interface Account {
 }
 
 interface JobSchedule {
-    job_id: number;
-    day_of_week: number;
-    start_time: string;
-    end_time: string;
+    jobId: number;
+    dayOfWeek: number;
+    startTime: string;
+    endTime: string;
 }
 
 export interface Job {
     id: number;
-    account_id: number;
+    accountId: number;
     name: string;
-    hourly_rate: number;
-    vacation_days: number;
-    sick_days: number;
-    total_hours_per_week: number;
-    job_schedule: JobSchedule[];
+    hourlyRate: number;
+    vacationDays: number;
+    sickDays: number;
+    totalHoursPerWeek: number;
+    jobSchedule: JobSchedule[];
 }
 
 export interface Expense {
@@ -307,7 +307,7 @@ declare module 'express-serve-static-core' {
         loan_id: number | null | undefined;
         transfer_id: number | null | undefined;
         payroll_date_id: number;
-        job_id: number;
+        jobId: number;
         payroll_taxes_id: number;
         income_id: number;
         commute_schedule_id: number;

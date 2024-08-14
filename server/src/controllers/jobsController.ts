@@ -12,16 +12,16 @@ import pool from '../config/db.js';
  */
 const jobsParse = (jobs: Record<string, any>): Job => ({
     id: parseInt(jobs.job_id),
-    account_id: parseInt(jobs.account_id),
+    accountId: parseInt(jobs.account_id),
     name: jobs.job_name,
-    hourly_rate: parseFloat(jobs.hourly_rate),
-    vacation_days: parseInt(jobs.vacation_days),
-    sick_days: parseInt(jobs.sick_days),
-    total_hours_per_week: parseFloat(jobs.total_hours_per_week),
-    job_schedule: jobs.job_schedule.map((schedule: Record<string, any>) => ({
-        day_of_week: parseInt(schedule.day_of_week),
-        start_time: schedule.start_time,
-        end_time: schedule.end_time,
+    hourlyRate: parseFloat(jobs.hourly_rate),
+    vacationDays: parseInt(jobs.vacation_days),
+    sickDays: parseInt(jobs.sick_days),
+    totalHoursPerWeek: parseFloat(jobs.total_hours_per_week),
+    jobSchedule: jobs.job_schedule.map((schedule: Record<string, any>) => ({
+        dayOfWeek: parseInt(schedule.day_of_week),
+        startTime: schedule.start_time,
+        endTime: schedule.end_time,
     })),
 });
 
@@ -35,7 +35,7 @@ export const getJobs = async (
     request: Request,
     response: Response,
 ): Promise<void> => {
-    const { account_id, id } = request.query;
+    const { accountId, id } = request.query;
 
     const client = await pool.connect(); // Get a client from the pool
 
@@ -43,15 +43,15 @@ export const getJobs = async (
         let query: string;
         let params: any[];
 
-        if (id && account_id) {
+        if (id && accountId) {
             query = jobQueries.getJobsWithSchedulesByJobIdAndAccountId;
-            params = [id, account_id];
+            params = [id, accountId];
         } else if (id) {
             query = jobQueries.getJobsWithSchedulesByJobId;
             params = [id];
-        } else if (account_id) {
+        } else if (accountId) {
             query = jobQueries.getJobsWithSchedulesByAccountId;
-            params = [account_id];
+            params = [accountId];
         } else {
             query = jobQueries.getAllJobsWithSchedules;
             params = [];
@@ -90,34 +90,34 @@ export const createJob = async (
 
     try {
         const {
-            account_id,
+            accountId,
             name,
-            hourly_rate,
-            vacation_days,
-            sick_days,
-            job_schedule,
+            hourlyRate,
+            vacationDays,
+            sickDays,
+            jobSchedule,
         } = request.body;
 
         await client.query('BEGIN;');
 
         // First, create the job and get its ID
         const { rows } = await client.query(jobQueries.createJob, [
-            account_id,
+            accountId,
             name,
-            hourly_rate,
-            vacation_days,
-            sick_days,
+            hourlyRate,
+            vacationDays,
+            sickDays,
         ]);
         const jobId = rows[0].job_id;
 
         // Then, create schedules for this job
-        const schedulePromises = job_schedule.map(
+        const schedulePromises = jobSchedule.map(
             async (js: JobSchedule) =>
                 await client.query(jobQueries.createJobSchedule, [
                     jobId,
-                    js.day_of_week,
-                    js.start_time,
-                    js.end_time,
+                    js.dayOfWeek,
+                    js.startTime,
+                    js.endTime,
                 ]),
         );
 
@@ -127,12 +127,12 @@ export const createJob = async (
         // Create the response object
         const responseObject = {
             id: jobId,
-            account_id,
+            accountId,
             name,
-            hourly_rate,
-            vacation_days,
-            sick_days,
-            job_schedule: job_schedule.map((schedule: JobSchedule) => ({
+            hourlyRate,
+            vacationDays,
+            sickDays,
+            job_schedule: jobSchedule.map((schedule: JobSchedule) => ({
                 ...schedule,
             })),
         };
@@ -167,17 +167,17 @@ export const updateJob = async (
     const client = await pool.connect(); // Get a client from the pool
 
     try {
-        const job_id = parseInt(request.params.job_id);
+        const jobId = parseInt(request.params.jobId);
         const {
-            account_id,
+            accountId,
             name,
-            hourly_rate,
-            vacation_days,
-            sick_days,
-            job_schedule,
+            hourlyRate,
+            vacationDays,
+            sickDays,
+            jobSchedule,
         } = request.body;
 
-        const { rows } = await client.query(jobQueries.getJob, [job_id]);
+        const { rows } = await client.query(jobQueries.getJob, [jobId]);
 
         if (rows.length === 0) {
             response.status(404).send('Job not found');
@@ -187,37 +187,37 @@ export const updateJob = async (
         await client.query('BEGIN;');
 
         await client.query(jobQueries.updateJob, [
-            account_id,
+            accountId,
             name,
-            hourly_rate,
-            vacation_days,
-            sick_days,
-            job_id,
+            hourlyRate,
+            vacationDays,
+            sickDays,
+            jobId,
         ]);
 
         // Fetch existing schedules for the job
         const { rows: existingSchedules } = await client.query(
             jobQueries.getJobScheduleByJobId,
-            [job_id],
+            [jobId],
         );
 
         // Set to track IDs of schedules that are still present
         const updatedOrAddedScheduleIds = new Set();
 
-        for (const js of job_schedule) {
+        for (const js of jobSchedule) {
             const existingSchedule = existingSchedules.find(
                 (s) =>
-                    s.day_of_week === js.day_of_week &&
-                    s.start_time === js.start_time &&
-                    s.end_time === js.end_time,
+                    s.day_of_week === js.dayOfWeek &&
+                    s.start_time === js.startTime &&
+                    s.end_time === js.endTime,
             );
 
             if (existingSchedule) {
                 // Update the existing schedule
                 await client.query(jobQueries.updateJobSchedule, [
-                    js.day_of_week,
-                    js.start_time,
-                    js.end_time,
+                    js.dayOfWeek,
+                    js.startTime,
+                    js.endTime,
                     existingSchedule.job_schedule_id,
                 ]);
                 updatedOrAddedScheduleIds.add(existingSchedule.job_schedule_id);
@@ -225,7 +225,7 @@ export const updateJob = async (
                 // Insert a new schedule
                 const { rows: result } = await client.query(
                     jobQueries.createJobSchedule,
-                    [job_id, js.day_of_week, js.start_time, js.end_time],
+                    [jobId, js.dayOfWeek, js.startTime, js.endTime],
                 );
                 // Assuming the result includes the ID of the inserted schedule
                 updatedOrAddedScheduleIds.add(result[0].job_id);
@@ -243,11 +243,11 @@ export const updateJob = async (
             ]);
         }
 
-        await client.query('SELECT process_payroll_for_job($1)', [job_id]);
+        await client.query('SELECT process_payroll_for_job($1)', [jobId]);
 
         await client.query('COMMIT;');
 
-        request.job_id = job_id;
+        request.jobId = jobId;
 
         next();
     } catch (error) {
@@ -264,14 +264,14 @@ export const updateJobReturnObject = async (
     request: Request,
     response: Response,
 ): Promise<void> => {
-    const { job_id } = request;
+    const { jobId } = request;
 
     const client = await pool.connect(); // Get a client from the pool
 
     try {
         const { rows } = await client.query(
             jobQueries.getJobsWithSchedulesByJobId,
-            [job_id],
+            [jobId],
         );
 
         await client.query('COMMIT;');
@@ -301,9 +301,9 @@ export const deleteJob = async (
     const client = await pool.connect(); // Get a client from the pool
 
     try {
-        const job_id = parseInt(request.params.job_id);
+        const jobId = parseInt(request.params.jobId);
 
-        const { rows } = await client.query(jobQueries.getJob, [job_id]);
+        const { rows } = await client.query(jobQueries.getJob, [jobId]);
 
         if (rows.length === 0) {
             response.status(404).send('Job not found');
@@ -312,9 +312,9 @@ export const deleteJob = async (
 
         await client.query('BEGIN;');
 
-        await client.query(jobQueries.deleteJob, [job_id]);
+        await client.query(jobQueries.deleteJob, [jobId]);
 
-        await client.query('SELECT process_payroll_for_job($1)', [job_id]);
+        await client.query('SELECT process_payroll_for_job($1)', [jobId]);
 
         await client.query('COMMIT;');
 

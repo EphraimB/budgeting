@@ -28,7 +28,7 @@ const router: Router = express.Router();
 router.get(
     '/',
     [
-        query('account_id')
+        query('accountId')
             .optional()
             .isInt({ min: 1 })
             .withMessage('Account ID must be a number'),
@@ -44,32 +44,32 @@ router.get(
 router.post(
     '/',
     [
-        body('account_id')
+        body('accountId')
             .isInt({ min: 1 })
             .withMessage('Account ID must be a number'),
         body('name').isString().withMessage('Name must be a string'),
-        body('hourly_rate')
+        body('hourlyRate')
             .isFloat({ min: 0 })
             .withMessage('Hourly rate must be a number'),
-        body('vacation_days')
+        body('vacationDays')
             .isInt({ min: 0 })
             .withMessage('Vacation days must be a number'),
-        body('sick_days')
+        body('sickDays')
             .isFloat({ min: 0 })
             .withMessage('Sick days must be a number'),
-        body('job_schedule')
+        body('jobSchedule')
             .isArray()
             .withMessage('Work schedule must be an array'),
-        body('job_schedule.*.day_of_week')
+        body('jobSchedule.*.dayOfWeek')
             .isInt({ min: 0, max: 6 })
             .withMessage('Day of week must be a number'),
-        body('job_schedule.*.start_time')
+        body('jobSchedule.*.startTime')
             .isString()
             .withMessage('Start time must be a string')
             .isTime({ hourFormat: 'hour24', mode: 'withSeconds' })
             .withMessage('Start time must be in HH:MM:SS format'),
 
-        body('job_schedule.*.end_time')
+        body('jobSchedule.*.endTime')
             .isString()
             .withMessage('End time must be a string')
             .isTime({ hourFormat: 'hour24', mode: 'withSeconds' })
@@ -82,35 +82,35 @@ router.post(
 router.put(
     '/:job_id',
     [
-        param('job_id')
+        param('jobId')
             .isInt({ min: 1 })
             .withMessage('Job ID must be a number'),
-        body('account_id')
+        body('accountId')
             .isInt({ min: 1 })
             .withMessage('Account ID must be a number'),
         body('name').isString().withMessage('Name must be a string'),
-        body('hourly_rate')
+        body('hourlyRate')
             .isFloat({ min: 0 })
             .withMessage('Hourly rate must be a number'),
-        body('vacation_days')
+        body('vacationDays')
             .isInt({ min: 0 })
             .withMessage('Vacation days must be a number'),
-        body('sick_days')
+        body('sickDays')
             .isFloat({ min: 0 })
             .withMessage('Sick days must be a number'),
-        body('job_schedule')
+        body('jobSchedule')
             .isArray()
             .withMessage('Work schedule must be an array'),
-        body('job_schedule.*.day_of_week')
+        body('jobSchedule.*.dayOfWeek')
             .isInt({ min: 0, max: 6 })
             .withMessage('Day of week must be a number'),
-        body('job_schedule.*.start_time')
+        body('jobSchedule.*.startTime')
             .isString()
             .withMessage('Start time must be a string')
             .isTime({ hourFormat: 'hour24', mode: 'withSeconds' })
             .withMessage('Start time must be in HH:MM:SS format'),
 
-        body('job_schedule.*.end_time')
+        body('jobSchedule.*.endTime')
             .isString()
             .withMessage('End time must be a string')
             .isTime({ hourFormat: 'hour24', mode: 'withSeconds' })
@@ -136,9 +136,7 @@ router.put(
 router.delete(
     '/:job_id',
     [
-        param('job_id')
-            .isInt({ min: 1 })
-            .withMessage('Job ID must be a number'),
+        param('jobId').isInt({ min: 1 }).withMessage('Job ID must be a number'),
         validateRequest,
     ],
     deleteJob,
