@@ -53,23 +53,23 @@ export interface Taxes {
 
 export interface Income {
     id: number;
-    account_id: number;
-    tax_id?: number | null;
-    tax_rate?: number;
-    total_amount?: number;
-    income_amount: number;
-    income_title: string;
-    income_description: string;
-    income_begin_date: string;
-    income_end_date?: string;
-    frequency_type?: number;
-    frequency_type_variable: number;
-    frequency_day_of_month?: number | null | undefined;
-    frequency_day_of_week?: number | null | undefined;
-    frequency_week_of_month?: number | null | undefined;
-    frequency_month_of_year?: number | null | undefined;
-    date_created: string;
-    date_modified: string;
+    accountId: number;
+    taxId?: number | null;
+    taxRate?: number;
+    totalAmount?: number;
+    incomeAmount: number;
+    incomeTitle: string;
+    incomeDescription: string;
+    incomeBeginDate: string;
+    incomeEndDate?: string;
+    frequencyType?: number;
+    frequencyTypeVariable: number;
+    frequencyDayOfMonth?: number | null | undefined;
+    frequencyDayOfWeek?: number | null | undefined;
+    frequencyWeekOfMonth?: number | null | undefined;
+    frequencyMonthOfYear?: number | null | undefined;
+    dateCreated: string;
+    dateModified: string;
 }
 
 export interface TransactionHistory {
@@ -309,7 +309,7 @@ declare module 'express-serve-static-core' {
         payrollDateId: number;
         jobId: number;
         payrollTaxesId: number;
-        income_id: number;
+        incomeId: number;
         commute_schedule_id: number;
         fullyPaidBackDates: Record<number, string | null>;
         alerts: object[];

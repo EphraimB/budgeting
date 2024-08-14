@@ -18,21 +18,21 @@ import pool from '../config/db.js';
  **/
 const parseIncome = (income: Record<string, string>): Income => ({
     id: parseInt(income.income_id),
-    account_id: parseInt(income.account_id),
-    tax_id: parseIntOrFallback(income.tax_id),
-    income_amount: parseFloat(income.income_amount),
-    income_title: income.income_title,
-    income_description: income.income_description,
-    frequency_type: parseInt(income.frequency_type),
-    frequency_type_variable: parseInt(income.frequency_type_variable),
-    frequency_day_of_month: parseIntOrFallback(income.frequency_day_of_month),
-    frequency_day_of_week: parseIntOrFallback(income.frequency_day_of_week),
-    frequency_week_of_month: parseIntOrFallback(income.frequency_week_of_month),
-    frequency_month_of_year: parseIntOrFallback(income.frequency_month_of_year),
-    income_begin_date: income.income_begin_date,
-    income_end_date: income.income_end_date,
-    date_created: income.date_created,
-    date_modified: income.date_modified,
+    accountId: parseInt(income.account_id),
+    taxId: parseIntOrFallback(income.tax_id),
+    incomeAmount: parseFloat(income.income_amount),
+    incomeTitle: income.income_title,
+    incomeDescription: income.income_description,
+    frequencyType: parseInt(income.frequency_type),
+    frequencyTypeVariable: parseInt(income.frequency_type_variable),
+    frequencyDayOfMonth: parseIntOrFallback(income.frequency_day_of_month),
+    frequencyDayOfWeek: parseIntOrFallback(income.frequency_day_of_week),
+    frequencyWeekOfMonth: parseIntOrFallback(income.frequency_week_of_month),
+    frequencyMonthOfYear: parseIntOrFallback(income.frequency_month_of_year),
+    incomeBeginDate: income.income_begin_date,
+    incomeEndDate: income.income_end_date,
+    dateCreated: income.date_created,
+    dateModified: income.date_modified,
 });
 
 /**
@@ -45,7 +45,7 @@ export const getIncome = async (
     request: Request,
     response: Response,
 ): Promise<void> => {
-    const { id, account_id } = request.query;
+    const { id, accountId } = request.query;
 
     const client = await pool.connect(); // Get a client from the pool
 
@@ -53,15 +53,15 @@ export const getIncome = async (
         let query: string;
         let params: any[];
 
-        if (id && account_id) {
+        if (id && accountId) {
             query = incomeQueries.getIncomeByIdAndAccountId;
-            params = [id, account_id];
+            params = [id, accountId];
         } else if (id) {
             query = incomeQueries.getIncomeById;
             params = [id];
-        } else if (account_id) {
+        } else if (accountId) {
             query = incomeQueries.getIncomeByAccountId;
-            params = [account_id];
+            params = [accountId];
         } else {
             query = incomeQueries.getIncome;
             params = [];
@@ -90,7 +90,7 @@ export const getIncome = async (
             `Error getting ${
                 id
                     ? 'income'
-                    : account_id
+                    : accountId
                     ? 'income for given account id'
                     : 'income'
             }`,
@@ -113,19 +113,19 @@ export const createIncome = async (
     next: NextFunction,
 ): Promise<void> => {
     const {
-        account_id,
-        tax_id,
+        accountId,
+        taxId,
         amount,
         title,
         description,
-        frequency_type,
-        frequency_type_variable,
-        frequency_day_of_month,
-        frequency_day_of_week,
-        frequency_week_of_month,
-        frequency_month_of_year,
-        begin_date,
-        end_date,
+        frequencyType,
+        frequencyTypeVariable,
+        frequencyDayOfMonth,
+        frequencyDayOfWeek,
+        frequencyWeekOfMonth,
+        frequencyMonthOfYear,
+        beginDate,
+        endDate,
     } = request.body;
 
     const client = await pool.connect(); // Get a client from the pool
@@ -134,31 +134,31 @@ export const createIncome = async (
         await client.query('BEGIN;');
 
         const { rows } = await client.query(incomeQueries.createIncome, [
-            account_id,
-            tax_id,
+            accountId,
+            taxId,
             amount,
             title,
             description,
-            frequency_type,
-            frequency_type_variable,
-            frequency_day_of_month,
-            frequency_day_of_week,
-            frequency_week_of_month,
-            frequency_month_of_year,
-            begin_date,
-            end_date,
+            frequencyType,
+            frequencyTypeVariable,
+            frequencyDayOfMonth,
+            frequencyDayOfWeek,
+            frequencyWeekOfMonth,
+            frequencyMonthOfYear,
+            beginDate,
+            endDate,
         ]);
 
         const modifiedIncome = rows.map((row) => parseIncome(row));
 
         const jobDetails = {
-            frequency_type,
-            frequency_type_variable,
-            frequency_day_of_month,
-            frequency_day_of_week,
-            frequency_week_of_month,
-            frequency_month_of_year,
-            date: begin_date,
+            frequencyType,
+            frequencyTypeVariable,
+            frequencyDayOfMonth,
+            frequencyDayOfWeek,
+            frequencyWeekOfMonth,
+            frequencyMonthOfYear,
+            date: beginDate,
         };
 
         const cronDate = determineCronValues(jobDetails);
@@ -171,7 +171,7 @@ export const createIncome = async (
             SELECT cron.schedule('${uniqueId}', '${cronDate}',
             $$INSERT INTO transaction_history
             (account_id, transaction_amount, transaction_tax_rate, transaction_title, transaction_description)
-            VALUES (${account_id}, ${amount}, ${taxRate}, '${title}', '${description}')$$)`);
+            VALUES (${accountId}, ${amount}, ${taxRate}, '${title}', '${description}')$$)`);
 
         const { rows: cronIdResults } = await client.query(
             cronJobQueries.createCronJob,
@@ -187,7 +187,7 @@ export const createIncome = async (
 
         await client.query('COMMIT;');
 
-        request.income_id = modifiedIncome[0].id;
+        request.incomeId = modifiedIncome[0].id;
 
         next();
     } catch (error) {
@@ -210,13 +210,13 @@ export const createIncomeReturnObject = async (
     request: Request,
     response: Response,
 ): Promise<void> => {
-    const { income_id } = request;
+    const { incomeId } = request;
 
     const client = await pool.connect(); // Get a client from the pool
 
     try {
         const { rows } = await client.query(incomeQueries.getIncomeById, [
-            income_id,
+            incomeId,
         ]);
 
         const modifiedIncome = rows.map((row) => parseIncome(row));
@@ -244,19 +244,19 @@ export const updateIncome = async (
 ): Promise<void> => {
     const id: number = parseInt(request.params.id);
     const {
-        account_id,
-        tax_id,
+        accountId,
+        taxId,
         amount,
         title,
         description,
-        frequency_type,
-        frequency_type_variable,
-        frequency_day_of_month,
-        frequency_day_of_week,
-        frequency_week_of_month,
-        frequency_month_of_year,
-        begin_date,
-        end_date,
+        frequencyType,
+        frequencyTypeVariable,
+        frequencyDayOfMonth,
+        frequencyDayOfWeek,
+        frequencyWeekOfMonth,
+        frequencyMonthOfYear,
+        beginDate,
+        endDate,
     } = request.body;
 
     const client = await pool.connect(); // Get a client from the pool
@@ -272,13 +272,13 @@ export const updateIncome = async (
         const cronId: number = parseInt(rows[0].cron_job_id);
 
         const jobDetails = {
-            frequency_type,
-            frequency_type_variable,
-            frequency_day_of_month,
-            frequency_day_of_week,
-            frequency_week_of_month,
-            frequency_month_of_year,
-            date: begin_date,
+            frequencyType,
+            frequencyTypeVariable,
+            frequencyDayOfMonth,
+            frequencyDayOfWeek,
+            frequencyWeekOfMonth,
+            frequencyMonthOfYear,
+            date: beginDate,
         };
 
         const cronDate = determineCronValues(jobDetails);
@@ -300,7 +300,7 @@ export const updateIncome = async (
             SELECT cron.schedule('${uniqueId}', '${cronDate}',
             $$INSERT INTO transaction_history
             (account_id, transaction_amount, transaction_tax_rate, transaction_title, transaction_description)
-            VALUES (${account_id}, ${amount}, ${taxRate}, '${title}', '${description}')$$)`);
+            VALUES (${accountId}, ${amount}, ${taxRate}, '${title}', '${description}')$$)`);
 
         await client.query(cronJobQueries.updateCronJob, [
             uniqueId,
@@ -309,25 +309,25 @@ export const updateIncome = async (
         ]);
 
         await client.query(incomeQueries.updateIncome, [
-            account_id,
-            tax_id,
+            accountId,
+            taxId,
             amount,
             title,
             description,
-            frequency_type,
-            frequency_type_variable,
-            frequency_day_of_month,
-            frequency_day_of_week,
-            frequency_week_of_month,
-            frequency_month_of_year,
-            begin_date,
-            end_date,
+            frequencyType,
+            frequencyTypeVariable,
+            frequencyDayOfMonth,
+            frequencyDayOfWeek,
+            frequencyWeekOfMonth,
+            frequencyMonthOfYear,
+            beginDate,
+            endDate,
             id,
         ]);
 
         await client.query('COMMIT;');
 
-        request.income_id = id;
+        request.incomeId = id;
 
         next();
     } catch (error) {
@@ -350,13 +350,13 @@ export const updateIncomeReturnObject = async (
     request: Request,
     response: Response,
 ): Promise<void> => {
-    const { income_id } = request;
+    const { incomeId } = request;
 
     const client = await pool.connect(); // Get a client from the pool
 
     try {
         const { rows } = await client.query(incomeQueries.getIncomeById, [
-            income_id,
+            incomeId,
         ]);
 
         const modifiedIncome = rows.map((row) => parseIncome(row));
