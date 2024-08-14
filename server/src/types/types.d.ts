@@ -184,20 +184,20 @@ export interface PayrollTax {
 
 export interface Wishlist {
     id?: number;
-    account_id?: number;
-    tax_id?: number | null;
-    tax_rate?: number;
-    cron_job_id?: number;
-    wishlist_amount: number;
-    wishlist_tax_rate?: number;
-    wishlist_title: string;
-    wishlist_description: string;
-    wishlist_date_available?: string | null;
-    wishlist_date_can_purchase?: string | null;
-    wishlist_url_link?: string;
-    wishlist_priority?: number;
-    date_created?: string;
-    date_modified?: string;
+    accountId?: number;
+    taxId?: number | null;
+    taxRate?: number;
+    cronJobId?: number;
+    wishlistAmount: number;
+    wishlistTaxRate?: number;
+    wishlistTitle: string;
+    wishlistDescription: string;
+    wishlistDateAvailable?: string | null;
+    wishlistDateCanPurchase?: string | null;
+    wishlistUrlLink?: string;
+    wishlistPriority?: number;
+    dateCreated?: string;
+    dateModified?: string;
 }
 
 export interface Transfer {
@@ -302,7 +302,7 @@ declare module 'express-serve-static-core' {
         commuteExpenses: any[];
         currentBalance: CurrentBalance[];
         transactions: any[];
-        wishlist_id: number | null | undefined;
+        wishlistId: number | null | undefined;
         expenseId: number | null | undefined;
         loanId: number | null | undefined;
         transferId: number | null | undefined;

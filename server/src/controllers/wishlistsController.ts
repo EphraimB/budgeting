@@ -17,17 +17,17 @@ import pool from '../config/db.js';
  */
 const wishlistsParse = (wishlist: Record<string, string>): Wishlist => ({
     id: parseInt(wishlist.wishlist_id),
-    account_id: parseInt(wishlist.account_id),
-    tax_id: parseIntOrFallback(wishlist.tax_id),
-    wishlist_amount: parseFloat(wishlist.wishlist_amount),
-    wishlist_title: wishlist.wishlist_title,
-    wishlist_description: wishlist.wishlist_description,
-    wishlist_url_link: wishlist.wishlist_url_link,
-    wishlist_priority: parseInt(wishlist.wishlist_priority),
-    wishlist_date_available: wishlist.wishlist_date_available,
-    wishlist_date_can_purchase: wishlist.wishlist_date_can_purchase,
-    date_created: wishlist.date_created,
-    date_modified: wishlist.date_modified,
+    accountId: parseInt(wishlist.account_id),
+    taxId: parseIntOrFallback(wishlist.tax_id),
+    wishlistAmount: parseFloat(wishlist.wishlist_amount),
+    wishlistTitle: wishlist.wishlist_title,
+    wishlistDescription: wishlist.wishlist_description,
+    wishlistUrlLink: wishlist.wishlist_url_link,
+    wishlistPriority: parseInt(wishlist.wishlist_priority),
+    wishlistDateAvailable: wishlist.wishlist_date_available,
+    wishlistDateCanPurchase: wishlist.wishlist_date_can_purchase,
+    dateCreated: wishlist.date_created,
+    dateModified: wishlist.date_modified,
 });
 
 /**
@@ -40,7 +40,7 @@ export const getWishlists = async (
     request: Request,
     response: Response,
 ): Promise<void> => {
-    const { account_id, id } = request.query;
+    const { accountId, id } = request.query;
 
     const client = await pool.connect(); // Get a client from the pool
 
@@ -48,15 +48,15 @@ export const getWishlists = async (
         let query: string;
         let params: any[];
 
-        if (id && account_id) {
+        if (id && accountId) {
             query = wishlistQueries.getWishlistsByIdAndAccountId;
-            params = [id, account_id];
+            params = [id, accountId];
         } else if (id) {
             query = wishlistQueries.getWishlistsById;
             params = [id];
-        } else if (account_id) {
+        } else if (accountId) {
             query = wishlistQueries.getWishlistsByAccountId;
-            params = [account_id];
+            params = [accountId];
         } else {
             query = wishlistQueries.getAllWishlists;
             params = [];
@@ -100,7 +100,7 @@ export const getWishlists = async (
             `Error getting ${
                 id
                     ? 'wishlist'
-                    : account_id
+                    : accountId
                     ? 'wishlists for given account id'
                     : 'wishlists'
             }`,
@@ -123,14 +123,14 @@ export const createWishlist = async (
     next: NextFunction,
 ): Promise<void> => {
     const {
-        account_id,
-        tax_id,
+        accountId,
+        taxId,
         amount,
         title,
         description,
         priority,
-        url_link,
-        date_available,
+        urlLink,
+        dateAvailable,
     } = request.body;
 
     const client = await pool.connect(); // Get a client from the pool
@@ -139,15 +139,15 @@ export const createWishlist = async (
         const cron_job_id: number | null = null;
 
         const { rows } = await client.query(wishlistQueries.createWishlist, [
-            account_id,
-            tax_id,
+            accountId,
+            taxId,
             cron_job_id,
             amount,
             title,
             description,
             priority,
-            url_link,
-            date_available,
+            urlLink,
+            dateAvailable,
         ]);
 
         // Parse the data to correct format and return an object
@@ -156,7 +156,7 @@ export const createWishlist = async (
         );
 
         // Store the wishlist_id in the request object so it can be used in the next middleware
-        request.wishlist_id = wishlists[0].id;
+        request.wishlistId = wishlists[0].id;
 
         next();
     } catch (error) {
@@ -177,7 +177,7 @@ export const createWishlistCron = async (
     request: Request,
     response: Response,
 ): Promise<void> => {
-    const { wishlist_id } = request;
+    const { wishlistId } = request;
 
     const client = await pool.connect(); // Get a client from the pool
 
@@ -192,7 +192,7 @@ export const createWishlistCron = async (
         });
 
         const { rows } = await client.query(wishlistQueries.getWishlistsById, [
-            wishlist_id,
+            wishlistId,
         ]);
 
         // Add the wishlist_date_can_purchase to the wishlist object
@@ -211,7 +211,7 @@ export const createWishlistCron = async (
         );
 
         const jobDetails = {
-            date: wishlists[0].wishlist_date_can_purchase,
+            date: wishlists[0].wishlistDateCanPurchase,
         };
 
         await client.query('BEGIN;');
@@ -224,7 +224,7 @@ export const createWishlistCron = async (
             // Get tax rate
             const { rows: result } = await client.query(
                 taxesQueries.getTaxRateByTaxId,
-                [wishlists[0].tax_id],
+                [wishlists[0].taxId],
             );
             const taxRate = result && result.length > 0 ? result : 0;
 
@@ -247,7 +247,7 @@ export const createWishlistCron = async (
 
             const { rows: updateWishlist } = await client.query(
                 wishlistQueries.updateWishlistWithCronJobId,
-                [cronId, wishlist_id],
+                [cronId, wishlistId],
             );
 
             if (updateWishlist.length === 0) {
@@ -285,28 +285,28 @@ export const updateWishlist = async (
 ): Promise<void> => {
     const { id } = request.params;
     const {
-        account_id,
-        tax_id,
+        accountId,
+        taxId,
         amount,
         title,
         description,
         priority,
-        url_link,
-        date_available,
+        urlLink,
+        dateAvailable,
     } = request.body;
 
     const client = await pool.connect(); // Get a client from the pool
 
     try {
         const { rows } = await client.query(wishlistQueries.updateWishlist, [
-            account_id,
-            tax_id,
+            accountId,
+            taxId,
             amount,
             title,
             description,
             priority,
-            url_link,
-            date_available,
+            urlLink,
+            dateAvailable,
             id,
         ]);
 
@@ -321,7 +321,7 @@ export const updateWishlist = async (
         );
 
         // Store the wishlist_id in the request object so it can be used in the next middleware
-        request.wishlist_id = wishlists[0].id;
+        request.wishlistId = wishlists[0].id;
 
         next();
     } catch (error) {
@@ -342,14 +342,14 @@ export const updateWishlistCron = async (
     request: Request,
     response: Response,
 ): Promise<void> => {
-    const { wishlist_id } = request;
+    const { wishlistId } = request;
 
     const client = await pool.connect(); // Get a client from the pool
 
     try {
         // Get cron job id
         const { rows } = await client.query(wishlistQueries.getWishlistsById, [
-            wishlist_id,
+            wishlistId,
         ]);
         const cronId = rows[0].cron_job_id;
 
@@ -377,7 +377,7 @@ export const updateWishlistCron = async (
         );
 
         const jobDetails = {
-            date: wishlists[0].wishlist_date_can_purchase,
+            date: wishlists[0].wishlistDateCanPurchase,
         };
 
         await client.query('BEGIN;');
@@ -397,7 +397,7 @@ export const updateWishlistCron = async (
             // Get tax rate
             const { rows: result } = await client.query(
                 taxesQueries.getTaxRateByTaxId,
-                [wishlists[0].tax_id],
+                [wishlists[0].taxId],
             );
             const taxRate = result && result.length > 0 ? result : 0;
 

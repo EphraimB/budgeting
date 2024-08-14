@@ -32,7 +32,7 @@ router.get(
             .optional()
             .isInt({ min: 1 })
             .withMessage('ID must be an integer'),
-        query('account_id')
+        query('accountId')
             .optional()
             .isInt({ min: 1 })
             .withMessage('Account ID must be an integer'),
@@ -56,7 +56,7 @@ router.post(
     '/',
     [
         body('amount').isNumeric().withMessage('Amount must be a number'),
-        body('tax_id')
+        body('taxId')
             .optional({ nullable: true })
             .isInt({ min: 1 })
             .withMessage('Tax ID must be a number'),
@@ -87,7 +87,7 @@ router.put(
     [
         param('id').isInt({ min: 1 }).withMessage('ID must be a number'),
         body('amount').isNumeric().withMessage('Amount must be a number'),
-        body('tax_id')
+        body('taxId')
             .optional({ nullable: true })
             .isInt({ min: 1 })
             .withMessage('Tax ID must be a number'),
