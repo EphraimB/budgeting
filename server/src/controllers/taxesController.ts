@@ -17,8 +17,8 @@ const parseTaxes = (tax: Record<string, string>): Taxes => ({
     title: tax.tax_title,
     description: tax.tax_description,
     type: parseInt(tax.tax_type),
-    date_created: tax.date_created,
-    date_modified: tax.date_modified,
+    dateCreated: tax.date_created,
+    dateModified: tax.date_modified,
 });
 
 /**

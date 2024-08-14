@@ -47,8 +47,8 @@ export interface Taxes {
     title: string;
     description: string;
     type: number;
-    date_created: string;
-    date_modified: string;
+    dateCreated: string;
+    dateModified: string;
 }
 
 export interface Income {
