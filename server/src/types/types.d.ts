@@ -159,14 +159,14 @@ export interface Loan {
 }
 
 export interface Payroll {
-    job_name?: string;
-    start_date?: string;
-    end_date: string;
-    net_pay: number;
-    work_days?: number;
-    regular_hours?: number;
-    gross_pay: number;
-    hours_worked?: number;
+    jobName?: string;
+    startDate?: string;
+    endDate: string;
+    netPay: number;
+    workDays?: number;
+    regularHours?: number;
+    grossPay: number;
+    hoursWorked?: number;
 }
 
 export interface PayrollDate {

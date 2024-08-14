@@ -8,7 +8,7 @@ const router: Router = express.Router();
 router.get(
     '/',
     [
-        query('job_id')
+        query('jobId')
             .optional()
             .isInt({ min: 1 })
             .withMessage('Job ID must be a number'),

@@ -11,12 +11,12 @@ import pool from '../config/db.js';
  * @returns - Payroll object with parsed values
  */
 const payrollsParse = (payroll: Record<string, string>): Payroll => ({
-    start_date: payroll.start_date,
-    end_date: payroll.end_date,
-    work_days: parseInt(payroll.work_days),
-    gross_pay: parseFloat(payroll.gross_pay),
-    net_pay: parseFloat(payroll.net_pay),
-    hours_worked: parseFloat(payroll.hours_worked),
+    startDate: payroll.start_date,
+    endDate: payroll.end_date,
+    workDays: parseInt(payroll.work_days),
+    grossPay: parseFloat(payroll.gross_pay),
+    netPay: parseFloat(payroll.net_pay),
+    hoursWorked: parseFloat(payroll.hours_worked),
 });
 
 /**
@@ -32,10 +32,10 @@ export const getPayrolls = async (
     const client = await pool.connect(); // Get a client from the pool
 
     try {
-        const { job_id } = request.query;
+        const { jobId } = request.query;
         let returnObj: object = {};
 
-        if (!job_id) {
+        if (!jobId) {
             // Get all payrolls for all jobs
             const { rows } = await client.query(jobQueries.getJobs, []);
 
@@ -62,7 +62,7 @@ export const getPayrolls = async (
             );
         } else {
             const { rows } = await client.query(payrollQueries.getPayrolls, [
-                job_id,
+                jobId,
             ]);
 
             if (rows.length === 0) {
@@ -74,11 +74,11 @@ export const getPayrolls = async (
             const payrolls: Payroll[] = rows.map((row) => payrollsParse(row));
 
             const { rows: jobResults } = await client.query(jobQueries.getJob, [
-                job_id,
+                jobId,
             ]);
 
             returnObj = {
-                jobId: parseInt(job_id as string),
+                jobId: parseInt(jobId as string),
                 jobName: jobResults[0].job_name,
                 payrolls,
             };
