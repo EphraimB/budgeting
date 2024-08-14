@@ -201,24 +201,24 @@ export interface Wishlist {
 }
 
 export interface Transfer {
-    account_id?: number;
+    accountId?: number;
     id?: number;
-    cron_job_id?: number;
-    source_account_id: number;
-    destination_account_id: number;
-    transfer_amount: number;
-    transfer_title: string;
-    transfer_description: string;
-    transfer_begin_date: string;
-    transfer_end_date?: string | null | undefined;
-    frequency_type?: number;
-    frequency_type_variable: number;
-    frequency_day_of_month?: number | null | undefined;
-    frequency_day_of_week?: number | null | undefined;
-    frequency_week_of_month?: number | null | undefined;
-    frequency_month_of_year?: number | null | undefined;
-    date_created?: string;
-    date_modified?: string;
+    cronJobId?: number;
+    sourceAccountId: number;
+    destinationAccountId: number;
+    transferAmount: number;
+    transferTitle: string;
+    transferDescription: string;
+    transferBeginDate: string;
+    transferEndDate?: string | null | undefined;
+    frequencyType?: number;
+    frequencyTypeVariable: number;
+    frequencyDayOfMonth?: number | null | undefined;
+    frequencyDayOfWeek?: number | null | undefined;
+    frequencyWeekOfMonth?: number | null | undefined;
+    frequencyMonthOfYear?: number | null | undefined;
+    dateCreated?: string;
+    dateModified?: string;
 }
 
 export interface CommuteSystem {
@@ -305,7 +305,7 @@ declare module 'express-serve-static-core' {
         wishlist_id: number | null | undefined;
         expenseId: number | null | undefined;
         loanId: number | null | undefined;
-        transfer_id: number | null | undefined;
+        transferId: number | null | undefined;
         payrollDateId: number;
         jobId: number;
         payrollTaxesId: number;

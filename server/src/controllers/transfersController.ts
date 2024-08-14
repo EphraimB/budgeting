@@ -17,25 +17,21 @@ import pool from '../config/db.js';
  */
 const transfersParse = (transfer: Record<string, string>): Transfer => ({
     id: parseInt(transfer.transfer_id),
-    source_account_id: parseInt(transfer.source_account_id),
-    destination_account_id: parseInt(transfer.destination_account_id),
-    transfer_amount: parseFloat(transfer.transfer_amount),
-    transfer_title: transfer.transfer_title,
-    transfer_description: transfer.transfer_description,
-    transfer_begin_date: transfer.transfer_begin_date,
-    transfer_end_date: transfer.transfer_end_date ?? null,
-    frequency_type: parseInt(transfer.frequency_type),
-    frequency_type_variable: parseInt(transfer.frequency_type_variable),
-    frequency_day_of_month: parseIntOrFallback(transfer.frequency_day_of_month),
-    frequency_day_of_week: parseIntOrFallback(transfer.frequency_day_of_week),
-    frequency_week_of_month: parseIntOrFallback(
-        transfer.frequency_week_of_month,
-    ),
-    frequency_month_of_year: parseIntOrFallback(
-        transfer.frequency_month_of_year,
-    ),
-    date_created: transfer.date_created,
-    date_modified: transfer.date_modified,
+    sourceAccountId: parseInt(transfer.source_account_id),
+    destinationAccountId: parseInt(transfer.destination_account_id),
+    transferAmount: parseFloat(transfer.transfer_amount),
+    transferTitle: transfer.transfer_title,
+    transferDescription: transfer.transfer_description,
+    transferBeginDate: transfer.transfer_begin_date,
+    transferEndDate: transfer.transfer_end_date ?? null,
+    frequencyType: parseInt(transfer.frequency_type),
+    frequencyTypeVariable: parseInt(transfer.frequency_type_variable),
+    frequencyDayOfMonth: parseIntOrFallback(transfer.frequency_day_of_month),
+    frequencyDayOfWeek: parseIntOrFallback(transfer.frequency_day_of_week),
+    frequencyWeekOfMonth: parseIntOrFallback(transfer.frequency_week_of_month),
+    frequencyMonthOfYear: parseIntOrFallback(transfer.frequency_month_of_year),
+    dateCreated: transfer.date_created,
+    dateModified: transfer.date_modified,
 });
 
 /**
@@ -48,7 +44,7 @@ export const getTransfers = async (
     request: Request,
     response: Response,
 ): Promise<void> => {
-    const { account_id, id } = request.query;
+    const { accountId, id } = request.query;
 
     const client = await pool.connect(); // Get a client from the pool
 
@@ -56,15 +52,15 @@ export const getTransfers = async (
         let query: string;
         let params: any[];
 
-        if (id && account_id) {
+        if (id && accountId) {
             query = transferQueries.getTransfersByIdAndAccountId;
-            params = [id, account_id];
+            params = [id, accountId];
         } else if (id) {
             query = transferQueries.getTransfersById;
             params = [id];
-        } else if (account_id) {
+        } else if (accountId) {
             query = transferQueries.getTransfersByAccountId;
-            params = [account_id];
+            params = [accountId];
         } else {
             query = transferQueries.getAllTransfers;
             params = [];
@@ -94,7 +90,7 @@ export const getTransfers = async (
             `Error getting ${
                 id
                     ? 'transfer'
-                    : account_id
+                    : accountId
                     ? 'transfers for given account id'
                     : 'transfers'
             }`,
@@ -117,19 +113,19 @@ export const createTransfer = async (
     next: NextFunction,
 ): Promise<void> => {
     const {
-        source_account_id,
-        destination_account_id,
+        sourceAccountId,
+        destinationAccountId,
         amount,
         title,
         description,
-        frequency_type,
-        frequency_type_variable,
-        frequency_day_of_month,
-        frequency_day_of_week,
-        frequency_week_of_month,
-        frequency_month_of_year,
-        begin_date,
-        end_date,
+        frequencyType,
+        frequencyTypeVariable,
+        frequencyDayOfMonth,
+        frequencyDayOfWeek,
+        frequencyWeekOfMonth,
+        frequencyMonthOfYear,
+        beginDate,
+        endDate,
     } = request.body;
 
     const client = await pool.connect(); // Get a client from the pool
@@ -140,19 +136,19 @@ export const createTransfer = async (
         const { rows: transferResult } = await client.query(
             transferQueries.createTransfer,
             [
-                source_account_id,
-                destination_account_id,
+                sourceAccountId,
+                destinationAccountId,
                 amount,
                 title,
                 description,
-                frequency_type,
-                frequency_type_variable,
-                frequency_day_of_month,
-                frequency_day_of_week,
-                frequency_week_of_month,
-                frequency_month_of_year,
-                begin_date,
-                end_date,
+                frequencyType,
+                frequencyTypeVariable,
+                frequencyDayOfMonth,
+                frequencyDayOfWeek,
+                frequencyWeekOfMonth,
+                frequencyMonthOfYear,
+                beginDate,
+                endDate,
             ],
         );
 
@@ -162,13 +158,13 @@ export const createTransfer = async (
         );
 
         const jobDetails = {
-            frequency_type,
-            frequency_type_variable,
-            frequency_day_of_month,
-            frequency_day_of_week,
-            frequency_week_of_month,
-            frequency_month_of_year,
-            date: begin_date,
+            frequencyType,
+            frequencyTypeVariable,
+            frequencyDayOfMonth,
+            frequencyDayOfWeek,
+            frequencyWeekOfMonth,
+            frequencyMonthOfYear,
+            date: beginDate,
         };
 
         const cronDate = determineCronValues(jobDetails);
@@ -182,8 +178,8 @@ export const createTransfer = async (
             $$INSERT INTO transaction_history
                 (account_id, transaction_amount, transaction_tax_rate, transaction_title, transaction_description)
                 VALUES
-                (${source_account_id}, ${-amount}, ${taxRate}, '${title}', '${description}')
-                (${destination_account_id}, ${amount}, ${taxRate}, '${title}', '${description}')$$)`);
+                (${sourceAccountId}, ${-amount}, ${taxRate}, '${title}', '${description}')
+                (${destinationAccountId}, ${amount}, ${taxRate}, '${title}', '${description}')$$)`);
 
         const { rows: cronIdResults } = await client.query(
             cronJobQueries.createCronJob,
@@ -199,7 +195,7 @@ export const createTransfer = async (
 
         await client.query('COMMIT;');
 
-        request.transfer_id = transfers[0].id;
+        request.transferId = transfers[0].id;
 
         next();
     } catch (error) {
@@ -222,13 +218,13 @@ export const createTransferReturnObject = async (
     request: Request,
     response: Response,
 ): Promise<void> => {
-    const { transfer_id } = request;
+    const { transferId } = request;
 
     const client = await pool.connect(); // Get a client from the pool
 
     try {
         const { rows } = await client.query(transferQueries.getTransfersById, [
-            transfer_id,
+            transferId,
         ]);
 
         const modifiedTransfers = rows.map((row) => transfersParse(row));
@@ -256,19 +252,19 @@ export const updateTransfer = async (
 ): Promise<void> => {
     const id: number = parseInt(request.params.id);
     const {
-        source_account_id,
-        destination_account_id,
+        sourceAccountId,
+        destinationAccountId,
         amount,
         title,
         description,
-        frequency_type,
-        frequency_type_variable,
-        frequency_day_of_month,
-        frequency_day_of_week,
-        frequency_week_of_month,
-        frequency_month_of_year,
-        begin_date,
-        end_date,
+        frequencyType,
+        frequencyTypeVariable,
+        frequencyDayOfMonth,
+        frequencyDayOfWeek,
+        frequencyWeekOfMonth,
+        frequencyMonthOfYear,
+        beginDate,
+        endDate,
     } = request.body;
 
     const client = await pool.connect(); // Get a client from the pool
@@ -286,13 +282,13 @@ export const updateTransfer = async (
         const cronId: number = parseInt(rows[0].cron_job_id);
 
         const jobDetails = {
-            frequency_type,
-            frequency_type_variable,
-            frequency_day_of_month,
-            frequency_day_of_week,
-            frequency_week_of_month,
-            frequency_month_of_year,
-            date: begin_date,
+            frequencyType,
+            frequencyTypeVariable,
+            frequencyDayOfMonth,
+            frequencyDayOfWeek,
+            frequencyWeekOfMonth,
+            frequencyMonthOfYear,
+            date: beginDate,
         };
 
         const cronDate = determineCronValues(jobDetails);
@@ -315,8 +311,8 @@ export const updateTransfer = async (
             $$INSERT INTO transaction_history
                 (account_id, transaction_amount, transaction_tax_rate, transaction_title, transaction_description)
                 VALUES
-                (${source_account_id}, ${-amount}, ${taxRate}, '${title}', '${description}')
-                (${destination_account_id}, ${amount}, ${taxRate}, '${title}', '${description}')$$)`);
+                (${sourceAccountId}, ${-amount}, ${taxRate}, '${title}', '${description}')
+                (${destinationAccountId}, ${amount}, ${taxRate}, '${title}', '${description}')$$)`);
 
         await client.query(cronJobQueries.updateCronJob, [
             uniqueId,
@@ -325,25 +321,25 @@ export const updateTransfer = async (
         ]);
 
         await client.query(transferQueries.updateTransfer, [
-            source_account_id,
-            destination_account_id,
+            sourceAccountId,
+            destinationAccountId,
             amount,
             title,
             description,
-            frequency_type,
-            frequency_type_variable,
-            frequency_day_of_month,
-            frequency_day_of_week,
-            frequency_week_of_month,
-            frequency_month_of_year,
-            begin_date,
-            end_date,
+            frequencyType,
+            frequencyTypeVariable,
+            frequencyDayOfMonth,
+            frequencyDayOfWeek,
+            frequencyWeekOfMonth,
+            frequencyMonthOfYear,
+            beginDate,
+            endDate,
             id,
         ]);
 
         await client.query('COMMIT;');
 
-        request.transfer_id = id;
+        request.transferId = id;
 
         next();
     } catch (error) {
@@ -366,13 +362,13 @@ export const updateTransferReturnObject = async (
     request: Request,
     response: Response,
 ): Promise<void> => {
-    const { transfer_id } = request;
+    const { transferId } = request;
 
     const client = await pool.connect(); // Get a client from the pool
 
     try {
         const { rows } = await client.query(transferQueries.getTransfersById, [
-            transfer_id,
+            transferId,
         ]);
 
         const modifiedTransfers = rows.map((row) => transfersParse(row));
