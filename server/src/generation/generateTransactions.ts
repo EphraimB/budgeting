@@ -39,9 +39,11 @@ import {
     type Transfer,
     type Wishlist,
 } from '../types/types.js';
-import { executeQuery } from '../utils/helperFunctions.js';
 import { accountQueries } from '../models/queryData.js';
 import dayjs, { type Dayjs } from 'dayjs';
+import pool from '../config/db.js';
+import { handleError } from '../../src/utils/helperFunctions.js';
+import { logger } from '../../src/config/winston.js';
 
 const fullyPaidBackDates: Record<number, string | null> = {}; // map of loan_id to fullyPaidBackDate
 
@@ -433,33 +435,68 @@ const generateTransactions = async (
     response: Response,
     next: NextFunction,
 ): Promise<void> => {
+    const client = await pool.connect(); // Get a client from the pool
+
     const accountId: string = request.query.accountId as string;
     const currentBalance: any = request.currentBalance;
     const allTransactions: any[] = [];
     const transactions: GeneratedTransaction[] = [];
     const skippedTransactions: GeneratedTransaction[] = [];
 
-    if (!accountId) {
-        const accountResults = await executeQuery(
-            accountQueries.getAccounts,
-            [],
-        );
+    try {
+        if (!accountId) {
+            const { rows: accountResults } = await client.query(
+                accountQueries.getAccounts,
+                [],
+            );
 
-        for (const account of accountResults) {
+            for (const account of accountResults) {
+                const currentBalanceValue: number = parseFloat(
+                    currentBalance.find(
+                        (balance: CurrentBalance) =>
+                            balance.accountId === account.account_id,
+                    ).account_balance,
+                );
+
+                const jobId = account.jobId ?? 0;
+
+                await generate(
+                    request,
+                    response,
+                    next,
+                    account.account_id,
+                    jobId,
+                    transactions,
+                    skippedTransactions,
+                    currentBalanceValue,
+                );
+
+                allTransactions.push({
+                    accountId: account.account_id,
+                    currentBalance: currentBalanceValue,
+                    transactions,
+                });
+            }
+        } else {
             const currentBalanceValue: number = parseFloat(
                 currentBalance.find(
                     (balance: CurrentBalance) =>
-                        balance.accountId === account.account_id,
+                        balance.accountId === parseInt(accountId),
                 ).account_balance,
             );
 
-            const jobId = account.jobId ?? 0;
+            const { rows: jobResults } = await client.query(
+                accountQueries.getAccount,
+                [accountId],
+            );
+
+            const jobId: number = jobResults[0].job_id;
 
             await generate(
                 request,
                 response,
                 next,
-                account.account_id,
+                parseInt(accountId),
                 jobId,
                 transactions,
                 skippedTransactions,
@@ -467,41 +504,16 @@ const generateTransactions = async (
             );
 
             allTransactions.push({
-                accountId: account.account_id,
+                accountId: parseInt(accountId),
                 currentBalance: currentBalanceValue,
                 transactions,
             });
         }
-    } else {
-        const currentBalanceValue: number = parseFloat(
-            currentBalance.find(
-                (balance: CurrentBalance) =>
-                    balance.accountId === parseInt(accountId),
-            ).account_balance,
-        );
-
-        const jobResults = await executeQuery(accountQueries.getAccount, [
-            accountId,
-        ]);
-
-        const jobId: number = jobResults[0].job_id;
-
-        await generate(
-            request,
-            response,
-            next,
-            parseInt(accountId),
-            jobId,
-            transactions,
-            skippedTransactions,
-            currentBalanceValue,
-        );
-
-        allTransactions.push({
-            accountId: parseInt(accountId),
-            currentBalance: currentBalanceValue,
-            transactions,
-        });
+    } catch (error) {
+        logger.error(error); // Log the error on the server side
+        handleError(response, 'Error getting generated transactions');
+    } finally {
+        client.release(); // Release the client back to the pool
     }
 
     request.transactions = allTransactions;
