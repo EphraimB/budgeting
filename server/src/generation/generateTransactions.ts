@@ -49,8 +49,8 @@ const generate = async (
     request: Request,
     response: Response,
     next: NextFunction,
-    account_id: number,
-    job_id: number,
+    accountId: number,
+    jobId: number,
     transactions: GeneratedTransaction[],
     skippedTransactions: GeneratedTransaction[],
     currentBalance: any,
@@ -59,31 +59,31 @@ const generate = async (
     const toDate: Dayjs = dayjs(request.query.to_date as string);
 
     request.transaction
-        .filter((tran) => tran.account_id === account_id)
+        .filter((tran) => tran.accountId === accountId)
         .forEach((account) =>
             account.transactions.forEach((transaction: Transaction) =>
                 transactions.push({
                     id: uuidv4(),
-                    transaction_id: transaction.transaction_id,
-                    title: transaction.transaction_title,
-                    description: transaction.transaction_description,
-                    date: dayjs(transaction.date_created),
-                    date_modified: dayjs(transaction.date_modified),
-                    amount: transaction.transaction_amount,
-                    tax_rate: transaction.transaction_tax_rate ?? 0,
-                    total_amount:
-                        transaction.transaction_amount -
-                        transaction.transaction_amount *
-                            (transaction.transaction_tax_rate ?? 0),
+                    transactionId: transaction.transactionId,
+                    title: transaction.transactionTitle,
+                    description: transaction.transactionDescription,
+                    date: dayjs(transaction.dateCreated),
+                    dateModified: dayjs(transaction.dateModified),
+                    amount: transaction.transactionAmount,
+                    taxRate: transaction.transactionTaxRate ?? 0,
+                    totalAmount:
+                        transaction.transactionAmount -
+                        transaction.transactionAmount *
+                            (transaction.transactionTaxRate ?? 0),
                 }),
             ),
         );
 
     request.income
-        .filter((inc) => inc.account_id === account_id)
+        .filter((inc) => inc.account_id === accountId)
         .forEach((account) => {
             account.income.forEach((income: Income) => {
-                if (income.frequency_type === 0) {
+                if (income.frequencyType === 0) {
                     generateDailyIncome(
                         transactions,
                         skippedTransactions,
@@ -91,7 +91,7 @@ const generate = async (
                         toDate,
                         fromDate,
                     );
-                } else if (income.frequency_type === 1) {
+                } else if (income.frequencyType === 1) {
                     generateWeeklyIncome(
                         transactions,
                         skippedTransactions,
@@ -99,7 +99,7 @@ const generate = async (
                         toDate,
                         fromDate,
                     );
-                } else if (income.frequency_type === 2) {
+                } else if (income.frequencyType === 2) {
                     generateMonthlyIncome(
                         transactions,
                         skippedTransactions,
@@ -107,7 +107,7 @@ const generate = async (
                         toDate,
                         fromDate,
                     );
-                } else if (income.frequency_type === 3) {
+                } else if (income.frequencyType === 3) {
                     generateYearlyIncome(
                         transactions,
                         skippedTransactions,
@@ -120,10 +120,10 @@ const generate = async (
         });
 
     request.expenses
-        .filter((exp) => exp.account_id === account_id)
+        .filter((exp) => exp.account_id === accountId)
         .forEach((account) => {
             account.expenses.forEach((expense: Expense) => {
-                if (expense.frequency_type === 0) {
+                if (expense.frequencyType === 0) {
                     generateDailyExpenses(
                         transactions,
                         skippedTransactions,
@@ -131,7 +131,7 @@ const generate = async (
                         toDate,
                         fromDate,
                     );
-                } else if (expense.frequency_type === 1) {
+                } else if (expense.frequencyType === 1) {
                     generateWeeklyExpenses(
                         transactions,
                         skippedTransactions,
@@ -139,7 +139,7 @@ const generate = async (
                         toDate,
                         fromDate,
                     );
-                } else if (expense.frequency_type === 2) {
+                } else if (expense.frequencyType === 2) {
                     generateMonthlyExpenses(
                         transactions,
                         skippedTransactions,
@@ -147,7 +147,7 @@ const generate = async (
                         toDate,
                         fromDate,
                     );
-                } else if (expense.frequency_type === 3) {
+                } else if (expense.frequencyType === 3) {
                     generateYearlyExpenses(
                         transactions,
                         skippedTransactions,
@@ -160,7 +160,7 @@ const generate = async (
         });
 
     request.payrolls
-        .filter((pyrl) => pyrl.account_id === account_id)
+        .filter((pyrl) => pyrl.account_id === accountId)
         .forEach((account) => {
             account.jobs.forEach((job: any) => {
                 job.payrolls.forEach((payroll: Payroll) => {
@@ -176,7 +176,7 @@ const generate = async (
         });
 
     request.loans
-        .filter((lns) => lns.account_id === account_id)
+        .filter((lns) => lns.account_id === accountId)
         .forEach((account) => {
             let loanResult: { fullyPaidBackDate?: string | null };
 
@@ -222,51 +222,51 @@ const generate = async (
         });
 
     request.transfers
-        .filter((trnfrs) => trnfrs.account_id === account_id)
+        .filter((trnfrs) => trnfrs.account_id === accountId)
         .forEach((account) => {
             account.transfer.forEach((transfer: Transfer) => {
-                if (transfer.frequency_type === 0) {
+                if (transfer.frequencyType === 0) {
                     generateDailyTransfers(
                         transactions,
                         skippedTransactions,
                         transfer,
                         toDate,
                         fromDate,
-                        account_id,
+                        accountId,
                     );
-                } else if (transfer.frequency_type === 1) {
+                } else if (transfer.frequencyType === 1) {
                     generateWeeklyTransfers(
                         transactions,
                         skippedTransactions,
                         transfer,
                         toDate,
                         fromDate,
-                        account_id,
+                        accountId,
                     );
-                } else if (transfer.frequency_type === 2) {
+                } else if (transfer.frequencyType === 2) {
                     generateMonthlyTransfers(
                         transactions,
                         skippedTransactions,
                         transfer,
                         toDate,
                         fromDate,
-                        account_id,
+                        accountId,
                     );
-                } else if (transfer.frequency_type === 3) {
+                } else if (transfer.frequencyType === 3) {
                     generateYearlyTransfers(
                         transactions,
                         skippedTransactions,
                         transfer,
                         toDate,
                         fromDate,
-                        account_id,
+                        accountId,
                     );
                 }
             });
         });
 
     request.commuteExpenses
-        .filter((cmte) => cmte.account_id === account_id)
+        .filter((cmte) => cmte.account_id === accountId)
         .forEach((account) => {
             account.commute_expenses.forEach((commuteExpense: any) => {
                 const fareCappingInfo: any = account.fare_capping.find(
@@ -401,7 +401,7 @@ const generate = async (
     calculateBalances(transactions.concat(skippedTransactions), currentBalance);
 
     request.wishlists
-        .filter((wslsts) => wslsts.account_id === account_id)
+        .filter((wslsts) => wslsts.account_id === accountId)
         .forEach((account) => {
             account.wishlist.forEach((wishlist: Wishlist) => {
                 generateWishlists(
@@ -433,13 +433,13 @@ const generateTransactions = async (
     response: Response,
     next: NextFunction,
 ): Promise<void> => {
-    const account_id: string = request.query.account_id as string;
+    const accountId: string = request.query.accountId as string;
     const currentBalance: any = request.currentBalance;
     const allTransactions: any[] = [];
     const transactions: GeneratedTransaction[] = [];
     const skippedTransactions: GeneratedTransaction[] = [];
 
-    if (!account_id) {
+    if (!accountId) {
         const accountResults = await executeQuery(
             accountQueries.getAccounts,
             [],
@@ -449,26 +449,26 @@ const generateTransactions = async (
             const currentBalanceValue: number = parseFloat(
                 currentBalance.find(
                     (balance: CurrentBalance) =>
-                        balance.account_id === account.account_id,
+                        balance.accountId === account.account_id,
                 ).account_balance,
             );
 
-            const employee_id = account.employee_id ?? 0;
+            const jobId = account.jobId ?? 0;
 
             await generate(
                 request,
                 response,
                 next,
                 account.account_id,
-                employee_id,
+                jobId,
                 transactions,
                 skippedTransactions,
                 currentBalanceValue,
             );
 
             allTransactions.push({
-                account_id: account.account_id,
-                current_balance: currentBalanceValue,
+                accountId: account.account_id,
+                currentBalance: currentBalanceValue,
                 transactions,
             });
         }
@@ -476,30 +476,30 @@ const generateTransactions = async (
         const currentBalanceValue: number = parseFloat(
             currentBalance.find(
                 (balance: CurrentBalance) =>
-                    balance.account_id === parseInt(account_id),
+                    balance.accountId === parseInt(accountId),
             ).account_balance,
         );
 
-        const employeeResults = await executeQuery(accountQueries.getAccount, [
-            account_id,
+        const jobResults = await executeQuery(accountQueries.getAccount, [
+            accountId,
         ]);
 
-        const employee_id: number = employeeResults[0].employee_id;
+        const jobId: number = jobResults[0].job_id;
 
         await generate(
             request,
             response,
             next,
-            parseInt(account_id),
-            employee_id,
+            parseInt(accountId),
+            jobId,
             transactions,
             skippedTransactions,
             currentBalanceValue,
         );
 
         allTransactions.push({
-            account_id: parseInt(account_id),
-            current_balance: currentBalanceValue,
+            accountId: parseInt(accountId),
+            currentBalance: currentBalanceValue,
             transactions,
         });
     }

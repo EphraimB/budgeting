@@ -21,7 +21,7 @@ const generateTransfers = (
     transfer: any,
     toDate: Dayjs,
     fromDate: Dayjs,
-    account_id: number,
+    accountId: number,
     generateDateFn: GenerateDateFunction,
 ): void => {
     let transferDate: Dayjs = dayjs(transfer.transfer_begin_date);
@@ -53,17 +53,17 @@ const generateTransfers = (
     while (transferDate.diff(toDate) <= 0) {
         const newTransaction: GeneratedTransaction = {
             id: uuidv4(),
-            transfer_id: transfer.transfer_id,
+            transferId: transfer.transfer_id,
             title: transfer.transfer_title,
             description: transfer.transfer_description,
             date: dayjs(transferDate),
             amount:
-                transfer.destination_account_id === account_id
+                transfer.destination_account_id === accountId
                     ? +transfer.transfer_amount
                     : -transfer.transfer_amount,
-            tax_rate: 0,
-            total_amount:
-                transfer.destination_account_id === account_id
+            taxRate: 0,
+            totalAmount:
+                transfer.destination_account_id === accountId
                     ? +transfer.transfer_amount
                     : -transfer.transfer_amount,
         };
@@ -100,7 +100,7 @@ export const generateDailyTransfers = (
 ): void => {
     const generateDateFn = (currentDate: Dayjs, transfer: Transfer): Dayjs => {
         const newDate: Dayjs = currentDate.add(
-            transfer.frequency_type_variable,
+            transfer.frequencyTypeVariable,
             'day',
         );
 
@@ -138,17 +138,15 @@ export const generateMonthlyTransfers = (
 ): void => {
     let monthsIncremented: number = 0;
     const generateDateFn = (currentDate: Dayjs, transfer: Transfer): Dayjs => {
-        let transferDate: Dayjs = dayjs(transfer.transfer_begin_date).add(
-            monthsIncremented + transfer.frequency_type_variable,
+        let transferDate: Dayjs = dayjs(transfer.transferBeginDate).add(
+            monthsIncremented + transfer.frequencyTypeVariable,
             'month',
         );
 
         // Adjust for the day of the week
-        if (transfer.frequency_day_of_week) {
+        if (transfer.frequencyDayOfWeek) {
             transferDate = transferDate.startOf('month');
-            let firstOccurrence = transferDate.day(
-                transfer.frequency_day_of_week,
-            );
+            let firstOccurrence = transferDate.day(transfer.frequencyDayOfWeek);
 
             // If the first occurrence is before the start of the month, move to the next week
             if (firstOccurrence.isBefore(transferDate)) {
@@ -156,9 +154,9 @@ export const generateMonthlyTransfers = (
             }
 
             // Adjust for the specific week of the month
-            if (transfer.frequency_week_of_month) {
+            if (transfer.frequencyWeekOfMonth) {
                 transferDate = firstOccurrence.add(
-                    transfer.frequency_week_of_month,
+                    transfer.frequencyWeekOfMonth,
                     'week',
                 );
             } else {
@@ -166,7 +164,7 @@ export const generateMonthlyTransfers = (
             }
         }
 
-        monthsIncremented += transfer.frequency_type_variable;
+        monthsIncremented += transfer.frequencyTypeVariable;
 
         return transferDate;
     };
@@ -198,14 +196,14 @@ export const generateWeeklyTransfers = (
     transfer: Transfer,
     toDate: Dayjs,
     fromDate: Dayjs,
-    account_id: number,
+    accountId: number,
 ): void => {
-    let transferDate: Dayjs = dayjs(transfer.transfer_begin_date);
+    let transferDate: Dayjs = dayjs(transfer.transferBeginDate);
 
     // Adjust for the day of the week
-    if (transfer.frequency_day_of_week) {
+    if (transfer.frequencyDayOfWeek) {
         transferDate = transferDate.startOf('month');
-        let firstOccurrence = transferDate.day(transfer.frequency_day_of_week);
+        let firstOccurrence = transferDate.day(transfer.frequencyDayOfWeek);
 
         // If the first occurrence is before the start of the month, move to the next week
         if (firstOccurrence.isBefore(transferDate)) {
@@ -217,7 +215,7 @@ export const generateWeeklyTransfers = (
 
     const generateDateFn = (currentDate: Dayjs, transfer: Transfer): Dayjs => {
         const newDate: Dayjs = currentDate.add(
-            transfer.frequency_type_variable,
+            transfer.frequencyTypeVariable,
             'week',
         );
 
@@ -230,7 +228,7 @@ export const generateWeeklyTransfers = (
         transfer,
         toDate,
         fromDate,
-        account_id,
+        accountId,
         generateDateFn,
     );
 };
@@ -242,7 +240,7 @@ export const generateWeeklyTransfers = (
  * @param transfer - The transfer to generate
  * @param toDate - The date to generate transfers to
  * @param fromDate - The date to generate transfers from
- * @param account_id - The account id to generate transfers for
+ * @param accountId - The account id to generate transfers for
  * Generate yearly transfers for a given transfer
  */
 export const generateYearlyTransfers = (
@@ -251,24 +249,22 @@ export const generateYearlyTransfers = (
     transfer: Transfer,
     toDate: Dayjs,
     fromDate: Dayjs,
-    account_id: number,
+    accountId: number,
 ): void => {
     let yearsIncremented: number = 0;
     const generateDateFn = (currentDate: Dayjs, transfer: Transfer): Dayjs => {
-        let transferDate: Dayjs = dayjs(transfer.transfer_begin_date).add(
-            yearsIncremented + transfer.frequency_type_variable,
+        let transferDate: Dayjs = dayjs(transfer.transferBeginDate).add(
+            yearsIncremented + transfer.frequencyTypeVariable,
             'year',
         );
 
-        if (transfer.frequency_month_of_year)
-            transferDate = transferDate.month(transfer.frequency_month_of_year);
+        if (transfer.frequencyMonthOfYear)
+            transferDate = transferDate.month(transfer.frequencyMonthOfYear);
 
         // Adjust for the day of the week
-        if (transfer.frequency_day_of_week) {
+        if (transfer.frequencyDayOfWeek) {
             transferDate = transferDate.startOf('month');
-            let firstOccurrence = transferDate.day(
-                transfer.frequency_day_of_week,
-            );
+            let firstOccurrence = transferDate.day(transfer.frequencyDayOfWeek);
 
             // If the first occurrence is before the start of the month, move to the next week
             if (firstOccurrence.isBefore(transferDate)) {
@@ -276,9 +272,9 @@ export const generateYearlyTransfers = (
             }
 
             // Adjust for the specific week of the month
-            if (transfer.frequency_week_of_month) {
+            if (transfer.frequencyWeekOfMonth) {
                 transferDate = firstOccurrence.add(
-                    transfer.frequency_week_of_month,
+                    transfer.frequencyWeekOfMonth,
                     'week',
                 );
             } else {
@@ -286,7 +282,7 @@ export const generateYearlyTransfers = (
             }
         }
 
-        yearsIncremented += transfer.frequency_type_variable;
+        yearsIncremented += transfer.frequencyTypeVariable;
 
         return transferDate;
     };
@@ -297,7 +293,7 @@ export const generateYearlyTransfers = (
         transfer,
         toDate,
         fromDate,
-        account_id,
+        accountId,
         generateDateFn,
     );
 };

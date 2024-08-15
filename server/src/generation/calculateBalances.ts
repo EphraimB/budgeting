@@ -21,13 +21,13 @@ const calculateBalances = (
         transaction: GeneratedTransaction,
     ) => {
         transaction.balance = pastBalance;
-        pastBalance -= transaction.total_amount;
+        pastBalance -= transaction.totalAmount;
     };
 
     const calculateBalanceForFutureTransaction = (
         transaction: GeneratedTransaction,
     ) => {
-        futureBalance += transaction.total_amount;
+        futureBalance += transaction.totalAmount;
         transaction.balance = futureBalance;
     };
 

@@ -17,16 +17,16 @@ const generateWishlists = (
     fromDate: Dayjs,
 ): void => {
     const allTransactions: any[] = transactions.concat(skippedTransactions);
-    const wishlist_amount: number = wishlist.wishlist_amount;
+    const wishlistAmount: number = wishlist.wishlist_amount;
 
     allTransactions.sort((a, b) => dayjs(a.date).diff(dayjs(b.date)));
 
     let affordableDate: number | null = null;
     for (let i = 0; i < allTransactions.length; i++) {
-        if (allTransactions[i].balance >= wishlist_amount) {
+        if (allTransactions[i].balance >= wishlistAmount) {
             affordableDate = allTransactions[i].date;
             for (let j = i + 1; j < allTransactions.length; j++) {
-                if (allTransactions[j].balance < wishlist_amount) {
+                if (allTransactions[j].balance < wishlistAmount) {
                     affordableDate = null;
                     break;
                 }
@@ -48,19 +48,19 @@ const generateWishlists = (
 
         const newTransaction: GeneratedTransaction = {
             id: uuidv4(),
-            wishlist_id: wishlist.wishlist_id,
+            wishlistId: wishlist.wishlist_id,
             title: wishlist.wishlist_title,
             description: wishlist.wishlist_description,
             date: newTransactionDate,
-            amount: -wishlist_amount,
-            tax_rate:
+            amount: -wishlistAmount,
+            taxRate:
                 wishlist.wishlist_tax_rate !== undefined
                     ? wishlist.wishlist_tax_rate
                     : 0,
-            total_amount: Number(
+            totalAmount: Number(
                 -(
-                    wishlist_amount +
-                    wishlist_amount *
+                    wishlistAmount +
+                    wishlistAmount *
                         (wishlist.wishlist_tax_rate !== undefined
                             ? wishlist.wishlist_tax_rate
                             : 0)

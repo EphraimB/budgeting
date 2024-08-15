@@ -60,13 +60,13 @@ const generateExpenses = (
 
         const newTransaction: GeneratedTransaction = {
             id: uuidv4(),
-            expense_id: expense.expense_id,
+            expenseId: expense.expense_id,
             title: expense.expense_title,
             description: expense.expense_description,
             date: expenseDate,
             amount: -amountAfterSubsidy,
-            tax_rate: taxRate,
-            total_amount: -taxAmount,
+            taxRate: taxRate,
+            totalAmount: -taxAmount,
         };
 
         if (expenseDate.diff() > 0) {
@@ -98,7 +98,7 @@ export const generateDailyExpenses = (
     fromDate: Dayjs,
 ): void => {
     const generateDateFn = (currentDate: Dayjs, expense: Expense): Dayjs => {
-        const newDate = currentDate.add(expense.frequency_type_variable, 'day');
+        const newDate = currentDate.add(expense.frequencyTypeVariable, 'day');
 
         return newDate;
     };
@@ -207,7 +207,7 @@ export const generateWeeklyExpenses = (
 
     const generateDateFn = (currentDate: Dayjs, expense: Expense): Dayjs => {
         const newDate: Dayjs = currentDate.add(
-            expense.frequency_type_variable,
+            expense.frequencyTypeVariable,
             'week',
         );
 

@@ -39,13 +39,13 @@ export const generateCommuteExpenses = (
     ) {
         const newTransaction: GeneratedTransaction = {
             id: uuidv4(),
-            commute_schedule_id: commuteExpense.commute_schedule_id,
+            commuteScheduleId: commuteExpense.commute_schedule_id,
             title: commuteExpense.pass,
             description: `${commuteExpense.pass} pass`,
             date: commuteExpenseDate,
             amount: -commuteExpense.fare_amount,
-            tax_rate: 0,
-            total_amount: -commuteExpense.fare_amount,
+            taxRate: 0,
+            totalAmount: -commuteExpense.fare_amount,
         };
 
         generatedRides.push(newTransaction);

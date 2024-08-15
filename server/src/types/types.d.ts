@@ -30,14 +30,14 @@ export interface JobDetails {
 }
 
 export interface Transaction {
-    account_id: number;
-    transaction_id: number;
-    transaction_title: string;
-    transaction_description: string;
-    date_created: string;
-    date_modified: string;
-    transaction_amount: number;
-    transaction_tax_rate?: number;
+    accountId: number;
+    transactionId: number;
+    transactionTitle: string;
+    transactionDescription: string;
+    dateCreated: string;
+    dateModified: string;
+    transactionAmount: number;
+    transactionTaxRate?: number;
     balance?: number;
 }
 
