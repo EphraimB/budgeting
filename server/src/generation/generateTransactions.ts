@@ -177,51 +177,52 @@ const generate = async (
             });
         });
 
-    // request.loans
-    //     .filter((lns) => lns.accountId === accountId)
-    //     .forEach((account) => {
-    //         let loanResult: { fullyPaidBackDate?: string | null };
+    request.loans
+        .filter((lns) => lns.accountId === accountId)
+        .forEach((account) => {
+            let loanResult: { fullyPaidBackDate?: string | null };
 
-    //         account.loan.forEach((loan: any) => {
-    //             if (loan.frequencyType === 0) {
-    //                 loanResult = generateDailyLoans(
-    //                     transactions,
-    //                     skippedTransactions,
-    //                     loan,
-    //                     toDate,
-    //                     fromDate,
-    //                 );
-    //             } else if (loan.frequencyType === 1) {
-    //                 loanResult = generateWeeklyLoans(
-    //                     transactions,
-    //                     skippedTransactions,
-    //                     loan,
-    //                     toDate,
-    //                     fromDate,
-    //                 );
-    //             } else if (loan.frequencyType === 2) {
-    //                 loanResult = generateMonthlyLoans(
-    //                     transactions,
-    //                     skippedTransactions,
-    //                     loan,
-    //                     toDate,
-    //                     fromDate,
-    //                 );
-    //             } else if (loan.frequencyType === 3) {
-    //                 loanResult = generateYearlyLoans(
-    //                     transactions,
-    //                     skippedTransactions,
-    //                     loan,
-    //                     toDate,
-    //                     fromDate,
-    //                 );
-    //             }
+            account.loan.forEach((loan: any) => {
+                console.log(loan)
+                if (loan.frequencyType === 0) {
+                    loanResult = generateDailyLoans(
+                        transactions,
+                        skippedTransactions,
+                        loan,
+                        toDate,
+                        fromDate,
+                    );
+                } else if (loan.frequencyType === 1) {
+                    loanResult = generateWeeklyLoans(
+                        transactions,
+                        skippedTransactions,
+                        loan,
+                        toDate,
+                        fromDate,
+                    );
+                } else if (loan.frequencyType === 2) {
+                    loanResult = generateMonthlyLoans(
+                        transactions,
+                        skippedTransactions,
+                        loan,
+                        toDate,
+                        fromDate,
+                    );
+                } else if (loan.frequencyType === 3) {
+                    loanResult = generateYearlyLoans(
+                        transactions,
+                        skippedTransactions,
+                        loan,
+                        toDate,
+                        fromDate,
+                    );
+                }
 
-    //             fullyPaidBackDates[loan.loanId] = loanResult.fullyPaidBackDate
-    //                 ? loanResult.fullyPaidBackDate
-    //                 : null;
-    //         });
-    //     });
+                fullyPaidBackDates[loan.loanId] = loanResult.fullyPaidBackDate
+                    ? loanResult.fullyPaidBackDate
+                    : null;
+            });
+        });
 
     // request.transfers
     //     .filter((trnfrs) => trnfrs.accountId === accountId)

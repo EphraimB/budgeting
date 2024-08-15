@@ -455,18 +455,9 @@ export const getLoansByAccount = async (
                         parseLoan(loan),
                     );
 
-                    const loansTransactionsWithAmount = loansTransactions.map(
-                        (loan) => ({
-                            ...loan,
-                            amount: parseFloat(
-                                loan.loan_plan_amount as unknown as string,
-                            ),
-                        }),
-                    );
-
                     loansByAccount.push({
                         accountId: account.account_id,
-                        loan: loansTransactionsWithAmount,
+                        loan: loansTransactions,
                     });
                 }),
             );
@@ -492,18 +483,9 @@ export const getLoansByAccount = async (
             // Map over results array and convert amount to a float for each Loan object
             const loansTransactions = results.map((loan) => parseLoan(loan));
 
-            const loansTransactionsWithAmount = loansTransactions.map(
-                (loan) => ({
-                    ...loan,
-                    amount: parseFloat(
-                        loan.loan_plan_amount as unknown as string,
-                    ),
-                }),
-            );
-
             loansByAccount.push({
                 accountId: parseInt(accountId as string),
-                loan: loansTransactionsWithAmount,
+                loan: loansTransactions,
             });
         }
 
