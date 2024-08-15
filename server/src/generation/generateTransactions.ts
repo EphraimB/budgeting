@@ -122,7 +122,7 @@ const generate = async (
         });
 
     request.expenses
-        .filter((exp) => exp.account_id === accountId)
+        .filter((exp) => exp.accountId === accountId)
         .forEach((account) => {
             account.expenses.forEach((expense: Expense) => {
                 if (expense.frequencyType === 0) {
@@ -162,7 +162,7 @@ const generate = async (
         });
 
     request.payrolls
-        .filter((pyrl) => pyrl.account_id === accountId)
+        .filter((pyrl) => pyrl.accountId === accountId)
         .forEach((account) => {
             account.jobs.forEach((job: any) => {
                 job.payrolls.forEach((payroll: Payroll) => {
@@ -178,12 +178,12 @@ const generate = async (
         });
 
     request.loans
-        .filter((lns) => lns.account_id === accountId)
+        .filter((lns) => lns.accountId === accountId)
         .forEach((account) => {
             let loanResult: { fullyPaidBackDate?: string | null };
 
             account.loan.forEach((loan: any) => {
-                if (loan.frequency_type === 0) {
+                if (loan.frequencyType === 0) {
                     loanResult = generateDailyLoans(
                         transactions,
                         skippedTransactions,
@@ -191,7 +191,7 @@ const generate = async (
                         toDate,
                         fromDate,
                     );
-                } else if (loan.frequency_type === 1) {
+                } else if (loan.frequencyType === 1) {
                     loanResult = generateWeeklyLoans(
                         transactions,
                         skippedTransactions,
@@ -199,7 +199,7 @@ const generate = async (
                         toDate,
                         fromDate,
                     );
-                } else if (loan.frequency_type === 2) {
+                } else if (loan.frequencyType === 2) {
                     loanResult = generateMonthlyLoans(
                         transactions,
                         skippedTransactions,
@@ -207,7 +207,7 @@ const generate = async (
                         toDate,
                         fromDate,
                     );
-                } else if (loan.frequency_type === 3) {
+                } else if (loan.frequencyType === 3) {
                     loanResult = generateYearlyLoans(
                         transactions,
                         skippedTransactions,
@@ -217,14 +217,14 @@ const generate = async (
                     );
                 }
 
-                fullyPaidBackDates[loan.loan_id] = loanResult.fullyPaidBackDate
+                fullyPaidBackDates[loan.loanId] = loanResult.fullyPaidBackDate
                     ? loanResult.fullyPaidBackDate
                     : null;
             });
         });
 
     request.transfers
-        .filter((trnfrs) => trnfrs.account_id === accountId)
+        .filter((trnfrs) => trnfrs.accountId === accountId)
         .forEach((account) => {
             account.transfer.forEach((transfer: Transfer) => {
                 if (transfer.frequencyType === 0) {
@@ -268,13 +268,13 @@ const generate = async (
         });
 
     request.commuteExpenses
-        .filter((cmte) => cmte.account_id === accountId)
+        .filter((cmte) => cmte.accountId === accountId)
         .forEach((account) => {
             account.commute_expenses.forEach((commuteExpense: any) => {
-                const fareCappingInfo: any = account.fare_capping.find(
+                const fareCappingInfo: any = account.fareCapping.find(
                     (fareCapping: any) =>
-                        fareCapping.commute_system_id ===
-                        commuteExpense.commute_system_id,
+                        fareCapping.commuteSystemId ===
+                        commuteExpense.commuteSystemId,
                 );
 
                 let allRidesForSystem = generateCommuteExpenses(
@@ -310,22 +310,21 @@ const generate = async (
                     // Sort rides by date
                     processedRides.sort((a, b) => a.date.diff(b.date));
 
-                    let current_spent = 0;
+                    let currentSpent = 0;
                     let firstRideDate: Dayjs | null = null;
 
                     for (let i = 0; i < processedRides.length; i++) {
                         let ride = processedRides[i];
 
-                        current_spent += Math.abs(ride.amount);
+                        currentSpent += Math.abs(ride.amount);
 
-                        switch (fareCappingInfo.fare_cap_duration) {
+                        switch (fareCappingInfo.fareCapDuration) {
                             case 0: // Daily cap
-                                if (current_spent > fareCappingInfo.fare_cap) {
+                                if (currentSpent > fareCappingInfo.fareCap) {
                                     const excess =
-                                        current_spent -
-                                        fareCappingInfo.fare_cap;
+                                        currentSpent - fareCappingInfo.fareCap;
                                     ride.amount += excess;
-                                    current_spent = fareCappingInfo.fare_cap;
+                                    currentSpent = fareCappingInfo.fareCap;
                                 }
                                 if (
                                     i < processedRides.length - 1 &&
@@ -334,7 +333,7 @@ const generate = async (
                                         processedRides[i + 1].date,
                                     )
                                 ) {
-                                    current_spent = 0;
+                                    currentSpent = 0;
                                 }
                                 break;
 
@@ -342,30 +341,28 @@ const generate = async (
                                 if (!firstRideDate) {
                                     firstRideDate = ride.date;
                                 }
-                                if (current_spent > fareCappingInfo.fare_cap) {
+                                if (currentSpent > fareCappingInfo.fareCap) {
                                     const excess =
-                                        current_spent -
-                                        fareCappingInfo.fare_cap;
+                                        currentSpent - fareCappingInfo.fareCap;
                                     ride.amount += excess;
-                                    current_spent = fareCappingInfo.fare_cap;
+                                    currentSpent = fareCappingInfo.fareCap;
                                 }
                                 if (
                                     ride.date.diff(firstRideDate) >=
                                     7 * 24 * 60 * 60 * 1000
                                 ) {
-                                    current_spent = 0;
+                                    currentSpent = 0;
                                     firstRideDate = ride.date;
                                 }
 
                                 break;
 
                             case 2: // Monthly cap
-                                if (current_spent > fareCappingInfo.fare_cap) {
+                                if (currentSpent > fareCappingInfo.fareCap) {
                                     const excess =
-                                        current_spent -
-                                        fareCappingInfo.fare_cap;
+                                        currentSpent - fareCappingInfo.fareCap;
                                     ride.amount += excess;
-                                    current_spent = fareCappingInfo.fare_cap;
+                                    currentSpent = fareCappingInfo.fareCap;
                                 }
                                 if (
                                     i < processedRides.length - 1 &&
@@ -374,7 +371,7 @@ const generate = async (
                                         processedRides[i + 1].date,
                                     )
                                 ) {
-                                    current_spent = 0;
+                                    currentSpent = 0;
                                 }
                                 break;
                         }
@@ -403,7 +400,7 @@ const generate = async (
     calculateBalances(transactions.concat(skippedTransactions), currentBalance);
 
     request.wishlists
-        .filter((wslsts) => wslsts.account_id === accountId)
+        .filter((wslsts) => wslsts.accountId === accountId)
         .forEach((account) => {
             account.wishlist.forEach((wishlist: Wishlist) => {
                 generateWishlists(
@@ -454,7 +451,7 @@ const generateTransactions = async (
                 const currentBalanceValue: number = parseFloat(
                     currentBalance.find(
                         (balance: CurrentBalance) =>
-                            balance.accountId === account.account_id,
+                            balance.accountId === account.accountId,
                     ).account_balance,
                 );
 
@@ -464,7 +461,7 @@ const generateTransactions = async (
                     request,
                     response,
                     next,
-                    account.account_id,
+                    account.accountId,
                     jobId,
                     transactions,
                     skippedTransactions,
@@ -472,7 +469,7 @@ const generateTransactions = async (
                 );
 
                 allTransactions.push({
-                    accountId: account.account_id,
+                    accountId: account.accountId,
                     currentBalance: currentBalanceValue,
                     transactions,
                 });
@@ -482,7 +479,7 @@ const generateTransactions = async (
                 currentBalance.find(
                     (balance: CurrentBalance) =>
                         balance.accountId === parseInt(accountId),
-                ).account_balance,
+                ).accountBalance,
             );
 
             const { rows: jobResults } = await client.query(
