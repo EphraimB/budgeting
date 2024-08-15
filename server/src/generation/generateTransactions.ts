@@ -57,8 +57,8 @@ const generate = async (
     skippedTransactions: GeneratedTransaction[],
     currentBalance: any,
 ): Promise<void> => {
-    const fromDate: Dayjs = dayjs(request.query.from_date as string);
-    const toDate: Dayjs = dayjs(request.query.to_date as string);
+    const fromDate: Dayjs = dayjs(request.query.fromDate as string);
+    const toDate: Dayjs = dayjs(request.query.toDate as string);
 
     request.transaction
         .filter((tran) => tran.accountId === accountId)
@@ -169,7 +169,7 @@ const generate = async (
                     generatePayrollTransactions(
                         transactions,
                         skippedTransactions,
-                        job.job_name,
+                        job.jobName,
                         payroll,
                         fromDate,
                     );
@@ -177,223 +177,223 @@ const generate = async (
             });
         });
 
-    request.loans
-        .filter((lns) => lns.accountId === accountId)
-        .forEach((account) => {
-            let loanResult: { fullyPaidBackDate?: string | null };
+    // request.loans
+    //     .filter((lns) => lns.accountId === accountId)
+    //     .forEach((account) => {
+    //         let loanResult: { fullyPaidBackDate?: string | null };
 
-            account.loan.forEach((loan: any) => {
-                if (loan.frequencyType === 0) {
-                    loanResult = generateDailyLoans(
-                        transactions,
-                        skippedTransactions,
-                        loan,
-                        toDate,
-                        fromDate,
-                    );
-                } else if (loan.frequencyType === 1) {
-                    loanResult = generateWeeklyLoans(
-                        transactions,
-                        skippedTransactions,
-                        loan,
-                        toDate,
-                        fromDate,
-                    );
-                } else if (loan.frequencyType === 2) {
-                    loanResult = generateMonthlyLoans(
-                        transactions,
-                        skippedTransactions,
-                        loan,
-                        toDate,
-                        fromDate,
-                    );
-                } else if (loan.frequencyType === 3) {
-                    loanResult = generateYearlyLoans(
-                        transactions,
-                        skippedTransactions,
-                        loan,
-                        toDate,
-                        fromDate,
-                    );
-                }
+    //         account.loan.forEach((loan: any) => {
+    //             if (loan.frequencyType === 0) {
+    //                 loanResult = generateDailyLoans(
+    //                     transactions,
+    //                     skippedTransactions,
+    //                     loan,
+    //                     toDate,
+    //                     fromDate,
+    //                 );
+    //             } else if (loan.frequencyType === 1) {
+    //                 loanResult = generateWeeklyLoans(
+    //                     transactions,
+    //                     skippedTransactions,
+    //                     loan,
+    //                     toDate,
+    //                     fromDate,
+    //                 );
+    //             } else if (loan.frequencyType === 2) {
+    //                 loanResult = generateMonthlyLoans(
+    //                     transactions,
+    //                     skippedTransactions,
+    //                     loan,
+    //                     toDate,
+    //                     fromDate,
+    //                 );
+    //             } else if (loan.frequencyType === 3) {
+    //                 loanResult = generateYearlyLoans(
+    //                     transactions,
+    //                     skippedTransactions,
+    //                     loan,
+    //                     toDate,
+    //                     fromDate,
+    //                 );
+    //             }
 
-                fullyPaidBackDates[loan.loanId] = loanResult.fullyPaidBackDate
-                    ? loanResult.fullyPaidBackDate
-                    : null;
-            });
-        });
+    //             fullyPaidBackDates[loan.loanId] = loanResult.fullyPaidBackDate
+    //                 ? loanResult.fullyPaidBackDate
+    //                 : null;
+    //         });
+    //     });
 
-    request.transfers
-        .filter((trnfrs) => trnfrs.accountId === accountId)
-        .forEach((account) => {
-            account.transfer.forEach((transfer: Transfer) => {
-                if (transfer.frequencyType === 0) {
-                    generateDailyTransfers(
-                        transactions,
-                        skippedTransactions,
-                        transfer,
-                        toDate,
-                        fromDate,
-                        accountId,
-                    );
-                } else if (transfer.frequencyType === 1) {
-                    generateWeeklyTransfers(
-                        transactions,
-                        skippedTransactions,
-                        transfer,
-                        toDate,
-                        fromDate,
-                        accountId,
-                    );
-                } else if (transfer.frequencyType === 2) {
-                    generateMonthlyTransfers(
-                        transactions,
-                        skippedTransactions,
-                        transfer,
-                        toDate,
-                        fromDate,
-                        accountId,
-                    );
-                } else if (transfer.frequencyType === 3) {
-                    generateYearlyTransfers(
-                        transactions,
-                        skippedTransactions,
-                        transfer,
-                        toDate,
-                        fromDate,
-                        accountId,
-                    );
-                }
-            });
-        });
+    // request.transfers
+    //     .filter((trnfrs) => trnfrs.accountId === accountId)
+    //     .forEach((account) => {
+    //         account.transfer.forEach((transfer: Transfer) => {
+    //             if (transfer.frequencyType === 0) {
+    //                 generateDailyTransfers(
+    //                     transactions,
+    //                     skippedTransactions,
+    //                     transfer,
+    //                     toDate,
+    //                     fromDate,
+    //                     accountId,
+    //                 );
+    //             } else if (transfer.frequencyType === 1) {
+    //                 generateWeeklyTransfers(
+    //                     transactions,
+    //                     skippedTransactions,
+    //                     transfer,
+    //                     toDate,
+    //                     fromDate,
+    //                     accountId,
+    //                 );
+    //             } else if (transfer.frequencyType === 2) {
+    //                 generateMonthlyTransfers(
+    //                     transactions,
+    //                     skippedTransactions,
+    //                     transfer,
+    //                     toDate,
+    //                     fromDate,
+    //                     accountId,
+    //                 );
+    //             } else if (transfer.frequencyType === 3) {
+    //                 generateYearlyTransfers(
+    //                     transactions,
+    //                     skippedTransactions,
+    //                     transfer,
+    //                     toDate,
+    //                     fromDate,
+    //                     accountId,
+    //                 );
+    //             }
+    //         });
+    //     });
 
-    request.commuteExpenses
-        .filter((cmte) => cmte.accountId === accountId)
-        .forEach((account) => {
-            account.commute_expenses.forEach((commuteExpense: any) => {
-                const fareCappingInfo: any = account.fareCapping.find(
-                    (fareCapping: any) =>
-                        fareCapping.commuteSystemId ===
-                        commuteExpense.commuteSystemId,
-                );
+    // request.commuteExpenses
+    //     .filter((cmte) => cmte.accountId === accountId)
+    //     .forEach((account) => {
+    //         account.commute_expenses.forEach((commuteExpense: any) => {
+    //             const fareCappingInfo: any = account.fareCapping.find(
+    //                 (fareCapping: any) =>
+    //                     fareCapping.commuteSystemId ===
+    //                     commuteExpense.commuteSystemId,
+    //             );
 
-                let allRidesForSystem = generateCommuteExpenses(
-                    commuteExpense,
-                    toDate,
-                    fromDate,
-                );
+    //             let allRidesForSystem = generateCommuteExpenses(
+    //                 commuteExpense,
+    //                 toDate,
+    //                 fromDate,
+    //             );
 
-                // Helper function to reset daily cap
-                const isNextDay = (
-                    currentDate: Dayjs,
-                    nextDate: Dayjs,
-                ): boolean => {
-                    return currentDate.diff(nextDate, 'day') !== 0;
-                };
+    //             // Helper function to reset daily cap
+    //             const isNextDay = (
+    //                 currentDate: Dayjs,
+    //                 nextDate: Dayjs,
+    //             ): boolean => {
+    //                 return currentDate.diff(nextDate, 'day') !== 0;
+    //             };
 
-                // Helper function to reset monthly cap
-                const isNextMonth = (
-                    currentDate: Dayjs,
-                    nextDate: Dayjs,
-                ): boolean => {
-                    return currentDate.diff(nextDate, 'month') !== 0;
-                };
+    //             // Helper function to reset monthly cap
+    //             const isNextMonth = (
+    //                 currentDate: Dayjs,
+    //                 nextDate: Dayjs,
+    //             ): boolean => {
+    //                 return currentDate.diff(nextDate, 'month') !== 0;
+    //             };
 
-                // Apply fare capping logic
-                const applyFareCapping = (
-                    rides: GeneratedTransaction[],
-                    fareCappingInfo: any,
-                ): GeneratedTransaction[] => {
-                    // Clone the rides array to avoid mutating the original
-                    const processedRides = [...rides];
+    //             // Apply fare capping logic
+    //             const applyFareCapping = (
+    //                 rides: GeneratedTransaction[],
+    //                 fareCappingInfo: any,
+    //             ): GeneratedTransaction[] => {
+    //                 // Clone the rides array to avoid mutating the original
+    //                 const processedRides = [...rides];
 
-                    // Sort rides by date
-                    processedRides.sort((a, b) => a.date.diff(b.date));
+    //                 // Sort rides by date
+    //                 processedRides.sort((a, b) => a.date.diff(b.date));
 
-                    let currentSpent = 0;
-                    let firstRideDate: Dayjs | null = null;
+    //                 let currentSpent = 0;
+    //                 let firstRideDate: Dayjs | null = null;
 
-                    for (let i = 0; i < processedRides.length; i++) {
-                        let ride = processedRides[i];
+    //                 for (let i = 0; i < processedRides.length; i++) {
+    //                     let ride = processedRides[i];
 
-                        currentSpent += Math.abs(ride.amount);
+    //                     currentSpent += Math.abs(ride.amount);
 
-                        switch (fareCappingInfo.fareCapDuration) {
-                            case 0: // Daily cap
-                                if (currentSpent > fareCappingInfo.fareCap) {
-                                    const excess =
-                                        currentSpent - fareCappingInfo.fareCap;
-                                    ride.amount += excess;
-                                    currentSpent = fareCappingInfo.fareCap;
-                                }
-                                if (
-                                    i < processedRides.length - 1 &&
-                                    isNextDay(
-                                        ride.date,
-                                        processedRides[i + 1].date,
-                                    )
-                                ) {
-                                    currentSpent = 0;
-                                }
-                                break;
+    //                     switch (fareCappingInfo.fareCapDuration) {
+    //                         case 0: // Daily cap
+    //                             if (currentSpent > fareCappingInfo.fareCap) {
+    //                                 const excess =
+    //                                     currentSpent - fareCappingInfo.fareCap;
+    //                                 ride.amount += excess;
+    //                                 currentSpent = fareCappingInfo.fareCap;
+    //                             }
+    //                             if (
+    //                                 i < processedRides.length - 1 &&
+    //                                 isNextDay(
+    //                                     ride.date,
+    //                                     processedRides[i + 1].date,
+    //                                 )
+    //                             ) {
+    //                                 currentSpent = 0;
+    //                             }
+    //                             break;
 
-                            case 1: // Weekly cap
-                                if (!firstRideDate) {
-                                    firstRideDate = ride.date;
-                                }
-                                if (currentSpent > fareCappingInfo.fareCap) {
-                                    const excess =
-                                        currentSpent - fareCappingInfo.fareCap;
-                                    ride.amount += excess;
-                                    currentSpent = fareCappingInfo.fareCap;
-                                }
-                                if (
-                                    ride.date.diff(firstRideDate) >=
-                                    7 * 24 * 60 * 60 * 1000
-                                ) {
-                                    currentSpent = 0;
-                                    firstRideDate = ride.date;
-                                }
+    //                         case 1: // Weekly cap
+    //                             if (!firstRideDate) {
+    //                                 firstRideDate = ride.date;
+    //                             }
+    //                             if (currentSpent > fareCappingInfo.fareCap) {
+    //                                 const excess =
+    //                                     currentSpent - fareCappingInfo.fareCap;
+    //                                 ride.amount += excess;
+    //                                 currentSpent = fareCappingInfo.fareCap;
+    //                             }
+    //                             if (
+    //                                 ride.date.diff(firstRideDate) >=
+    //                                 7 * 24 * 60 * 60 * 1000
+    //                             ) {
+    //                                 currentSpent = 0;
+    //                                 firstRideDate = ride.date;
+    //                             }
 
-                                break;
+    //                             break;
 
-                            case 2: // Monthly cap
-                                if (currentSpent > fareCappingInfo.fareCap) {
-                                    const excess =
-                                        currentSpent - fareCappingInfo.fareCap;
-                                    ride.amount += excess;
-                                    currentSpent = fareCappingInfo.fareCap;
-                                }
-                                if (
-                                    i < processedRides.length - 1 &&
-                                    isNextMonth(
-                                        ride.date,
-                                        processedRides[i + 1].date,
-                                    )
-                                ) {
-                                    currentSpent = 0;
-                                }
-                                break;
-                        }
-                    }
-                    return processedRides;
-                };
+    //                         case 2: // Monthly cap
+    //                             if (currentSpent > fareCappingInfo.fareCap) {
+    //                                 const excess =
+    //                                     currentSpent - fareCappingInfo.fareCap;
+    //                                 ride.amount += excess;
+    //                                 currentSpent = fareCappingInfo.fareCap;
+    //                             }
+    //                             if (
+    //                                 i < processedRides.length - 1 &&
+    //                                 isNextMonth(
+    //                                     ride.date,
+    //                                     processedRides[i + 1].date,
+    //                                 )
+    //                             ) {
+    //                                 currentSpent = 0;
+    //                             }
+    //                             break;
+    //                     }
+    //                 }
+    //                 return processedRides;
+    //             };
 
-                allRidesForSystem = applyFareCapping(
-                    allRidesForSystem,
-                    fareCappingInfo,
-                );
+    //             allRidesForSystem = applyFareCapping(
+    //                 allRidesForSystem,
+    //                 fareCappingInfo,
+    //             );
 
-                // Add capped rides to transactions or skippedTransactions
-                allRidesForSystem.forEach((ride: GeneratedTransaction) => {
-                    if (ride.date >= fromDate) {
-                        transactions.push(ride);
-                    } else {
-                        skippedTransactions.push(ride);
-                    }
-                });
-            });
-        });
+    //             // Add capped rides to transactions or skippedTransactions
+    //             allRidesForSystem.forEach((ride: GeneratedTransaction) => {
+    //                 if (ride.date >= fromDate) {
+    //                     transactions.push(ride);
+    //                 } else {
+    //                     skippedTransactions.push(ride);
+    //                 }
+    //             });
+    //         });
+    //     });
 
     transactions.sort((a, b) => dayjs(a.date).diff(dayjs(b.date)));
 
