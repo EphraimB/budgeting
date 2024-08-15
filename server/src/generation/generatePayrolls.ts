@@ -24,9 +24,9 @@ const generatePayrolls = (
         title: `Payroll for ${jobName}`,
         description: `payroll for ${jobName}`,
         date: payrollEndDate,
-        amount: payroll.gross_pay,
-        taxRate: (payroll.gross_pay - payroll.net_pay) / payroll.gross_pay,
-        totalAmount: payroll.net_pay,
+        amount: payroll.grossPay,
+        taxRate: (payroll.grossPay - payroll.netPay) / payroll.grossPay,
+        totalAmount: payroll.netPay,
     };
 
     if (payrollEndDate.diff() > 0) {

@@ -332,8 +332,6 @@ export const getExpensesByAccount = async (
                             return {
                                 ...expense,
                                 tax_rate: parseFloat(tax.tax_rate),
-                                amount: parseFloat(expense.amount),
-                                subsidized: parseFloat(expense.subsidized),
                             };
                         },
                     );
@@ -371,8 +369,6 @@ export const getExpensesByAccount = async (
                 return {
                     ...expense,
                     tax_rate: parseFloat(tax.tax_rate),
-                    amount: parseFloat(expense.amount),
-                    subsidized: parseFloat(expense.subsidized),
                 };
             });
 

@@ -124,8 +124,8 @@ const generate = async (
     request.expenses
         .filter((exp) => exp.accountId === accountId)
         .forEach((account) => {
-            account.expenses.forEach((expense: Expense) => {
-                if (expense.frequencyType === 0) {
+            account.expenses.forEach((expense: any) => {
+                if (expense.frequency_type === 0) {
                     generateDailyExpenses(
                         transactions,
                         skippedTransactions,
@@ -133,7 +133,7 @@ const generate = async (
                         toDate,
                         fromDate,
                     );
-                } else if (expense.frequencyType === 1) {
+                } else if (expense.frequency_type === 1) {
                     generateWeeklyExpenses(
                         transactions,
                         skippedTransactions,
@@ -141,7 +141,7 @@ const generate = async (
                         toDate,
                         fromDate,
                     );
-                } else if (expense.frequencyType === 2) {
+                } else if (expense.frequency_type === 2) {
                     generateMonthlyExpenses(
                         transactions,
                         skippedTransactions,
@@ -149,7 +149,7 @@ const generate = async (
                         toDate,
                         fromDate,
                     );
-                } else if (expense.frequencyType === 3) {
+                } else if (expense.frequency_type === 3) {
                     generateYearlyExpenses(
                         transactions,
                         skippedTransactions,
