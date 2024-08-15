@@ -15,64 +15,6 @@ export const handleError = (response: Response, message: string): void => {
 
 /**
  *
- * @param query - SQL query
- * @param params - Query parameters
- * @returns - Query result
- */
-export const executeQuery = async <T = any>(
-    query: string,
-    params: any[] = [],
-): Promise<T[]> => {
-    try {
-        const { rows } = await pool.query(query, params);
-        return rows;
-    } catch (error) {
-        throw new Error(error);
-    }
-};
-
-/**
- *
- * @param name - Name of the cron job
- * @param cronSchedule - Cron schedule
- * @param query - SQL query
- * Schedules a cron job
- */
-export const scheduleQuery = async (
-    name: string,
-    cronSchedule: string,
-    query: string,
-) => {
-    const scheduleQueryText = `
-      SELECT cron.schedule('${name}', $1, $2);
-    `;
-    try {
-        const res = await pool.query(scheduleQueryText, [cronSchedule, query]);
-        logger.info('Job scheduled:', res.rows[0]);
-    } catch (err) {
-        logger.error('Error scheduling job:', err);
-    }
-};
-
-/**
- *
- * @param name - Name of the cron job
- * Unschedules a cron job
- */
-export const unscheduleQuery = async (name: string) => {
-    const unscheduleQueryText = `
-      SELECT cron.unschedule('${name}');
-    `;
-    try {
-        const res = await pool.query(unscheduleQueryText);
-        logger.info('Job unscheduled:', res.rows[0]);
-    } catch (err) {
-        logger.error('Error unscheduling job:', err);
-    }
-};
-
-/**
- *
  * @param input - The input to parse
  * @returns The parsed input or null if the input is not a integer
  */
@@ -129,11 +71,11 @@ export const nextTransactionFrequencyDate = (
                 transaction.frequency_day_of_week !== undefined
             ) {
                 const startDay: number = dayjs(transaction.begin_date).day();
-                const frequency_day_of_week: number =
+                const frequencyDayOfWeek: number =
                     transaction.frequency_day_of_week;
 
                 expenseDate = expenseDate.add(
-                    (frequency_day_of_week + 7 - startDay) % 7,
+                    (frequencyDayOfWeek + 7 - startDay) % 7,
                     'day',
                 );
             }
