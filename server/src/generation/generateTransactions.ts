@@ -82,7 +82,7 @@ const generate = async (
         );
 
     request.income
-        .filter((inc) => inc.account_id === accountId)
+        .filter((inc) => inc.accountId === accountId)
         .forEach((account) => {
             account.income.forEach((income: Income) => {
                 if (income.frequencyType === 0) {
