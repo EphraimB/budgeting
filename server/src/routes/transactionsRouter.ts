@@ -26,17 +26,17 @@ const router: Router = express.Router();
 router.get(
     '/',
     [
-        query('account_id')
+        query('accountId')
             .exists()
             .withMessage('Account ID is required')
             .isInt({ min: 1 })
             .withMessage('Account ID must be an integer'),
-        query('from_date')
+        query('fromDate')
             .exists()
             .withMessage('From date is required')
             .isDate()
             .withMessage('From date must be a date in YYYY-MM-DD format'),
-        query('to_date')
+        query('toDate')
             .exists()
             .withMessage('To date is required')
             .isDate()

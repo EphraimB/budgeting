@@ -43,10 +43,10 @@ export const setQueries = async (
     const client = await pool.connect(); // Get a client from the pool
 
     try {
-        request.query.from_date = dayjs().format('YYYY-MM-DD');
-        request.query.to_date = dayjs().add(1, 'year').format('YYYY-MM-DD');
+        request.query.fromDate = dayjs().format('YYYY-MM-DD');
+        request.query.toDate = dayjs().add(1, 'year').format('YYYY-MM-DD');
 
-        if (!request.query.account_id) {
+        if (!request.query.accountId) {
             if (request.query.id) {
                 const { rows } = await client.query(
                     wishlistQueries.getWishlistsById,
@@ -78,19 +78,19 @@ export const getTransactionsByAccount = async (
     response: Response,
     next: NextFunction,
 ): Promise<void> => {
-    const { account_id, from_date } = request.query;
+    const { accountId, fromDate } = request.query;
 
     const client = await pool.connect(); // Get a client from the pool
 
     try {
         const transactionsByAccount: Array<{
-            account_id: number;
+            accountId: number;
             transactions: any;
         }> = [];
 
         let transactions: any[] = []; // Initialize transactions as an empty array
 
-        if (!account_id) {
+        if (!accountId) {
             // If account_id is null, fetch all accounts and make request.transactions an array of transactions
             const { rows } = await client.query(accountQueries.getAccounts);
 
@@ -98,7 +98,7 @@ export const getTransactionsByAccount = async (
                 rows.map(async (row) => {
                     const { rows: transactionsResults } = await client.query(
                         transactionHistoryQueries.getTransactionsDateMiddleware,
-                        [row.account_id, from_date],
+                        [row.account_id, fromDate],
                     );
 
                     // Map over results array and convert amount to a float for each Transaction object
@@ -115,7 +115,7 @@ export const getTransactionsByAccount = async (
                     );
 
                     transactionsByAccount.push({
-                        account_id: row.account_id,
+                        accountId: row.account_id,
                         transactions: accountTransactions,
                     });
                 }),
@@ -124,19 +124,19 @@ export const getTransactionsByAccount = async (
             // Check if account exists and if it doesn't, send a response with an error message
             const { rows: accountExists } = await client.query(
                 accountQueries.getAccount,
-                [account_id],
+                [accountId],
             );
 
             if (accountExists.length === 0) {
                 response
                     .status(404)
-                    .send(`Account with ID ${account_id} not found`);
+                    .send(`Account with ID ${accountId} not found`);
                 return;
             }
 
             const { rows: results } = await client.query(
                 transactionHistoryQueries.getTransactionsDateMiddleware,
-                [account_id, from_date],
+                [accountId, fromDate],
             );
 
             // Map over results array and convert amount to a float for each Transaction object
@@ -149,7 +149,7 @@ export const getTransactionsByAccount = async (
             }));
 
             transactionsByAccount.push({
-                account_id: parseInt(account_id as string),
+                accountId: parseInt(accountId as string),
                 transactions,
             });
         }
@@ -177,7 +177,7 @@ export const getIncomeByAccount = async (
     response: Response,
     next: NextFunction,
 ): Promise<void> => {
-    const { account_id, to_date } = request.query;
+    const { accountId, toDate } = request.query;
 
     const client = await pool.connect(); // Get a client from the pool
 
@@ -192,11 +192,11 @@ export const getIncomeByAccount = async (
         );
 
         const incomeByAccount: Array<{
-            account_id: number;
+            accountId: number;
             income: Income[];
         }> = [];
 
-        if (!account_id) {
+        if (!accountId) {
             const { rows: accountResults } = await client.query(
                 accountQueries.getAccounts,
             );
@@ -205,7 +205,7 @@ export const getIncomeByAccount = async (
                 accountResults.map(async (account) => {
                     const { rows: incomeResults } = await client.query(
                         incomeQueries.getIncomeMiddleware,
-                        [account.account_id, to_date],
+                        [account.account_id, toDate],
                     );
 
                     const incomeTransactions: Income[] = incomeResults.map(
@@ -225,7 +225,7 @@ export const getIncomeByAccount = async (
                     );
 
                     incomeByAccount.push({
-                        account_id: account.account_id,
+                        accountId: account.account_id,
                         income: incomeTransactions,
                     });
                 }),
@@ -233,19 +233,19 @@ export const getIncomeByAccount = async (
         } else {
             const { rows: accountExists } = await client.query(
                 accountQueries.getAccount,
-                [account_id],
+                [accountId],
             );
 
             if (accountExists.length === 0) {
                 response
                     .status(404)
-                    .send(`Account with ID ${account_id} not found`);
+                    .send(`Account with ID ${accountId} not found`);
                 return;
             }
 
             const { rows: incomeResults } = await client.query(
                 incomeQueries.getIncomeMiddleware,
-                [account_id, to_date],
+                [accountId, toDate],
             );
 
             const incomeTransactions: Income[] = incomeResults.map((income) => {
@@ -263,7 +263,7 @@ export const getIncomeByAccount = async (
             });
 
             incomeByAccount.push({
-                account_id: parseInt(account_id as string),
+                accountId: parseInt(accountId as string),
                 income: incomeTransactions,
             });
         }
@@ -291,7 +291,7 @@ export const getExpensesByAccount = async (
     response: Response,
     next: NextFunction,
 ): Promise<void> => {
-    const { account_id, to_date } = request.query;
+    const { accountId, toDate } = request.query;
 
     const client = await pool.connect(); // Get a client from the pool
 
@@ -306,11 +306,11 @@ export const getExpensesByAccount = async (
         );
 
         const expensesByAccount: Array<{
-            account_id: number;
+            accountId: number;
             expenses: Expense[];
         }> = [];
 
-        if (!account_id) {
+        if (!accountId) {
             const { rows: accountResults } = await client.query(
                 accountQueries.getAccounts,
             );
@@ -319,7 +319,7 @@ export const getExpensesByAccount = async (
                 accountResults.map(async (account) => {
                     const { rows: expenseResults } = await client.query(
                         expenseQueries.getExpensesMiddleware,
-                        [account.account_id, to_date],
+                        [account.account_id, toDate],
                     );
 
                     const expenseTransactions = expenseResults.map(
@@ -339,7 +339,7 @@ export const getExpensesByAccount = async (
                     );
 
                     expensesByAccount.push({
-                        account_id: account.account_id,
+                        accountId: account.account_id,
                         expenses: expenseTransactions,
                     });
                 }),
@@ -347,19 +347,19 @@ export const getExpensesByAccount = async (
         } else {
             const { rows: accountExists } = await client.query(
                 accountQueries.getAccount,
-                [account_id],
+                [accountId],
             );
 
             if (accountExists.length === 0) {
                 response
                     .status(404)
-                    .send(`Account with ID ${account_id} not found`);
+                    .send(`Account with ID ${accountId} not found`);
                 return;
             }
 
             const { rows: expenseResults } = await client.query(
                 expenseQueries.getExpensesMiddleware,
-                [account_id, to_date],
+                [accountId, toDate],
             );
 
             const expenseTransactions = expenseResults.map((expense) => {
@@ -377,7 +377,7 @@ export const getExpensesByAccount = async (
             });
 
             expensesByAccount.push({
-                account_id: parseInt(account_id as string),
+                accountId: parseInt(accountId as string),
                 expenses: expenseTransactions,
             });
         }
@@ -399,27 +399,27 @@ export const getExpensesByAccount = async (
  * @returns - Loan object with parsed values
  */
 const parseLoan = (loan: Record<string, string>): any => ({
-    loan_id: parseInt(loan.loan_id),
-    account_id: parseInt(loan.account_id),
-    tax_id: parseIntOrFallback(loan.tax_id),
-    loan_amount: parseFloat(loan.loan_amount),
-    loan_plan_amount: parseFloat(loan.loan_plan_amount),
-    loan_recipient: loan.loan_recipient,
-    loan_title: loan.loan_title,
-    loan_description: loan.loan_description,
-    frequency_type: parseInt(loan.frequency_type),
-    frequency_type_variable: parseInt(loan.frequency_type_variable),
-    frequency_day_of_month: parseIntOrFallback(loan.frequency_day_of_month),
-    frequency_day_of_week: parseIntOrFallback(loan.frequency_day_of_week),
-    frequency_week_of_month: parseIntOrFallback(loan.frequency_week_of_month),
-    frequency_month_of_year: parseIntOrFallback(loan.frequency_month_of_year),
-    loan_interest_rate: parseFloat(loan.loan_interest_rate),
-    loan_interest_frequency_type: parseInt(loan.loan_interest_frequency_type),
-    loan_subsidized: parseFloat(loan.loan_subsidized),
-    loan_begin_date: loan.loan_begin_date,
-    loan_end_date: loan.loan_end_date ?? null,
-    date_created: loan.date_created,
-    date_modified: loan.date_modified,
+    loanId: parseInt(loan.loan_id),
+    accountId: parseInt(loan.account_id),
+    taxId: parseIntOrFallback(loan.tax_id),
+    loanAmount: parseFloat(loan.loan_amount),
+    loanPlanAmount: parseFloat(loan.loan_plan_amount),
+    loanRecipient: loan.loan_recipient,
+    loanTitle: loan.loan_title,
+    loanDescription: loan.loan_description,
+    frequencyType: parseInt(loan.frequency_type),
+    frequencyTypeVariable: parseInt(loan.frequency_type_variable),
+    frequencyDayOfMonth: parseIntOrFallback(loan.frequency_day_of_month),
+    frequencyDayOfWeek: parseIntOrFallback(loan.frequency_day_of_week),
+    frequencyWeekOfMonth: parseIntOrFallback(loan.frequency_week_of_month),
+    frequencyMonthOfYear: parseIntOrFallback(loan.frequency_month_of_year),
+    loanInterestRate: parseFloat(loan.loan_interest_rate),
+    loanInterestFrequencyType: parseInt(loan.loan_interest_frequency_type),
+    loanSubsidized: parseFloat(loan.loan_subsidized),
+    loanBeginDate: loan.loan_begin_date,
+    loanEndDate: loan.loan_end_date ?? null,
+    dateCreated: loan.date_created,
+    dateModified: loan.date_modified,
 });
 
 /**
@@ -434,14 +434,14 @@ export const getLoansByAccount = async (
     response: Response,
     next: NextFunction,
 ): Promise<void> => {
-    const { account_id, to_date } = request.query;
+    const { accountId, toDate } = request.query;
 
     const client = await pool.connect(); // Get a client from the pool
 
     try {
-        const loansByAccount: Array<{ account_id: number; loan: any }> = [];
+        const loansByAccount: Array<{ accountId: number; loan: any }> = [];
 
-        if (!account_id) {
+        if (!accountId) {
             // If account_id is null, fetch all accounts and make request.transactions an array of transactions
             const { rows: accountResults } = await client.query(
                 accountQueries.getAccounts,
@@ -451,7 +451,7 @@ export const getLoansByAccount = async (
                 accountResults.map(async (account) => {
                     const { rows: loanResults } = await client.query(
                         loanQueries.getLoansMiddleware,
-                        [account.account_id, to_date],
+                        [account.account_id, toDate],
                     );
 
                     // Map over results array and convert amount to a float for each Loan object
@@ -469,7 +469,7 @@ export const getLoansByAccount = async (
                     );
 
                     loansByAccount.push({
-                        account_id: account.account_id,
+                        accountId: account.account_id,
                         loan: loansTransactionsWithAmount,
                     });
                 }),
@@ -478,19 +478,19 @@ export const getLoansByAccount = async (
             // Check if account exists and if it doesn't, send a response with an error message
             const { rows: accountExists } = await client.query(
                 accountQueries.getAccount,
-                [account_id],
+                [accountId],
             );
 
             if (accountExists.length === 0) {
                 response
                     .status(404)
-                    .send(`Account with ID ${account_id} not found`);
+                    .send(`Account with ID ${accountId} not found`);
                 return;
             }
 
             const { rows: results } = await client.query(
                 loanQueries.getLoansMiddleware,
-                [account_id, to_date],
+                [accountId, toDate],
             );
 
             // Map over results array and convert amount to a float for each Loan object
@@ -506,7 +506,7 @@ export const getLoansByAccount = async (
             );
 
             loansByAccount.push({
-                account_id: parseInt(account_id as string),
+                accountId: parseInt(accountId as string),
                 loan: loansTransactionsWithAmount,
             });
         }
@@ -534,14 +534,14 @@ export const getPayrollsMiddleware = async (
     response: Response,
     next: NextFunction,
 ) => {
-    const { account_id, to_date } = request.query;
+    const { accountId, toDate } = request.query;
 
     const client = await pool.connect(); // Get a client from the pool
 
     try {
         const payrollsByAccount = [];
 
-        if (!account_id) {
+        if (!accountId) {
             const { rows: accountResults } = await client.query(
                 accountQueries.getAccounts,
             );
@@ -557,23 +557,23 @@ export const getPayrollsMiddleware = async (
                         jobResults.map(async (job) => {
                             const { rows: payrollResults } = await client.query(
                                 payrollQueries.getPayrollsMiddleware,
-                                [job.job_id, to_date],
+                                [job.job_id, toDate],
                             );
 
                             return {
-                                job_id: job.job_id,
-                                job_name: job.job_name,
+                                jobId: job.job_id,
+                                jobName: job.job_name,
                                 payrolls: payrollResults.map((payroll) => ({
                                     ...payroll,
-                                    net_pay: parseFloat(payroll.net_pay),
-                                    gross_pay: parseFloat(payroll.gross_pay),
+                                    netPay: parseFloat(payroll.net_pay),
+                                    grossPay: parseFloat(payroll.gross_pay),
                                 })),
                             };
                         }),
                     );
 
                     const returnObj = {
-                        account_id: parseInt(account.account_id as string),
+                        accountId: parseInt(account.account_id as string),
                         jobs: jobsPayrolls,
                     };
 
@@ -583,41 +583,41 @@ export const getPayrollsMiddleware = async (
         } else {
             const { rows: accountExists } = await client.query(
                 accountQueries.getAccount,
-                [account_id],
+                [accountId],
             );
 
             if (accountExists.length === 0) {
                 return response
                     .status(404)
-                    .send(`Account with ID ${account_id} not found`);
+                    .send(`Account with ID ${accountId} not found`);
             }
 
             const { rows: jobResults } = await client.query(
                 jobQueries.getJobsByAccountId,
-                [account_id],
+                [accountId],
             );
 
             const jobsPayrolls = await Promise.all(
                 jobResults.map(async (job) => {
                     const { rows: payrollResults } = await client.query(
                         payrollQueries.getPayrollsMiddleware,
-                        [job.job_id, to_date],
+                        [job.job_id, toDate],
                     );
 
                     return {
-                        job_id: job.job_id,
-                        job_name: job.job_name,
+                        jobId: job.job_id,
+                        jobName: job.job_name,
                         payrolls: payrollResults.map((payroll) => ({
                             ...payroll,
-                            net_pay: parseFloat(payroll.net_pay),
-                            gross_pay: parseFloat(payroll.gross_pay),
+                            netPay: parseFloat(payroll.net_pay),
+                            grossPay: parseFloat(payroll.gross_pay),
                         })),
                     };
                 }),
             );
 
             const returnObj = {
-                account_id: parseInt(account_id as string),
+                accountId: parseInt(accountId as string),
                 jobs: jobsPayrolls,
             };
 
@@ -647,7 +647,7 @@ export const getWishlistsByAccount = async (
     response: Response,
     next: NextFunction,
 ): Promise<void> => {
-    const { account_id, to_date } = request.query;
+    const { accountId, toDate } = request.query;
 
     const client = await pool.connect(); // Get a client from the pool
 
@@ -662,11 +662,11 @@ export const getWishlistsByAccount = async (
         );
 
         const wishlistsByAccount: Array<{
-            account_id: number;
+            accountId: number;
             wishlist: Wishlist[];
         }> = [];
 
-        if (!account_id) {
+        if (!accountId) {
             // If account_id is null, fetch all accounts and make request.transactions an array of transactions
             const { rows: accountResults } = await client.query(
                 accountQueries.getAccounts,
@@ -676,7 +676,7 @@ export const getWishlistsByAccount = async (
                 accountResults.map(async (account) => {
                     const { rows: wishlistResults } = await client.query(
                         wishlistQueries.getWishlistsMiddleware,
-                        [account.account_id, to_date],
+                        [account.account_id, toDate],
                     );
 
                     // Map over results array and convert amount to a float for each Transaction object
@@ -689,9 +689,9 @@ export const getWishlistsByAccount = async (
 
                             return {
                                 ...wishlist,
-                                tax_rate: parseFloat(tax.rate),
+                                taxRate: parseFloat(tax.rate),
                                 amount: parseFloat(wishlist.wishlist_amount),
-                                wishlist_amount: parseFloat(
+                                wishlistAmount: parseFloat(
                                     wishlist.wishlist_amount,
                                 ),
                             };
@@ -699,7 +699,7 @@ export const getWishlistsByAccount = async (
                     );
 
                     wishlistsByAccount.push({
-                        account_id: account.account_id,
+                        accountId: account.account_id,
                         wishlist: wishlistTransactions,
                     });
                 }),
@@ -708,19 +708,19 @@ export const getWishlistsByAccount = async (
             // Check if account exists and if it doesn't, send a response with an error message
             const { rows: accountExists } = await client.query(
                 accountQueries.getAccount,
-                [account_id],
+                [accountId],
             );
 
             if (accountExists.length === 0) {
                 response
                     .status(404)
-                    .send(`Account with ID ${account_id} not found`);
+                    .send(`Account with ID ${accountId} not found`);
                 return;
             }
 
             const { rows: results } = await client.query(
                 wishlistQueries.getWishlistsMiddleware,
-                [account_id, to_date],
+                [accountId, toDate],
             );
 
             // Map over results array and convert amount to a float for each Wishlist object
@@ -732,14 +732,14 @@ export const getWishlistsByAccount = async (
 
                 return {
                     ...wishlist,
-                    tax_rate: parseFloat(tax.rate),
+                    taxRate: parseFloat(tax.rate),
                     amount: parseFloat(wishlist.wishlist_amount),
-                    wishlist_amount: parseFloat(wishlist.wishlist_amount),
+                    wishlistAmount: parseFloat(wishlist.wishlist_amount),
                 };
             });
 
             wishlistsByAccount.push({
-                account_id: parseInt(account_id as string),
+                accountId: parseInt(accountId as string),
                 wishlist: wishlistsTransactions,
             });
         }
@@ -767,17 +767,17 @@ export const getTransfersByAccount = async (
     response: Response,
     next: NextFunction,
 ): Promise<void> => {
-    const { account_id, to_date } = request.query as Record<string, string>;
+    const { accountId, toDate } = request.query as Record<string, string>;
 
     const client = await pool.connect(); // Get a client from the pool
 
     try {
         const transferByAccount: Array<{
-            account_id: number;
+            accountId: number;
             transfer: Transfer[];
         }> = [];
 
-        if (!account_id) {
+        if (!accountId) {
             // If account_id is null, fetch all accounts and make request.transactions an array of transactions
             const { rows: accountResults } = await client.query(
                 accountQueries.getAccounts,
@@ -787,7 +787,7 @@ export const getTransfersByAccount = async (
                 accountResults.map(async (account) => {
                     const { rows: transferResults } = await client.query(
                         transferQueries.getTransfersMiddleware,
-                        [account.account_id, to_date],
+                        [account.account_id, toDate],
                     );
 
                     // Map over results array and convert amount to a float for each Transaction object
@@ -799,7 +799,7 @@ export const getTransfersByAccount = async (
                     );
 
                     transferByAccount.push({
-                        account_id: account.account_id,
+                        accountId: account.account_id,
                         transfer: transferTransactions,
                     });
                 }),
@@ -808,19 +808,19 @@ export const getTransfersByAccount = async (
             // Check if account exists and if it doesn't, send a response with an error message
             const { rows: accountExists } = await client.query(
                 accountQueries.getAccount,
-                [account_id],
+                [accountId],
             );
 
             if (accountExists.length === 0) {
                 response
                     .status(404)
-                    .send(`Account with ID ${account_id} not found`);
+                    .send(`Account with ID ${accountId} not found`);
                 return;
             }
 
             const { rows: results } = await client.query(
                 transferQueries.getTransfersMiddleware,
-                [account_id, to_date],
+                [accountId, toDate],
             );
 
             // Map over results array and convert amount to a float for each Transfer object
@@ -830,7 +830,7 @@ export const getTransfersByAccount = async (
             }));
 
             transferByAccount.push({
-                account_id: parseInt(account_id),
+                accountId: parseInt(accountId),
                 transfer: transferTransactions,
             });
         }
@@ -858,18 +858,18 @@ export const getCommuteExpensesByAccount = async (
     response: Response,
     next: NextFunction,
 ): Promise<void> => {
-    const { account_id } = request.query as Record<string, string>;
+    const { accountId } = request.query as Record<string, string>;
 
     const client = await pool.connect(); // Get a client from the pool
 
     try {
         const commuteExpensesByAccount: Array<{
-            account_id: number;
-            commute_expenses: object;
-            fare_capping: object;
+            accountId: number;
+            commuteExpenses: object;
+            fareCapping: object;
         }> = [];
 
-        if (!account_id) {
+        if (!accountId) {
             // If account_id is null, fetch all accounts and make request.transactions an array of transactions
             const { rows: accountResults } = await client.query(
                 accountQueries.getAccounts,
@@ -884,11 +884,9 @@ export const getCommuteExpensesByAccount = async (
 
                     // Map over results array and convert amount to a float for each Transaction object
                     const commuteExpensesTransactions =
-                        commuteExpensesResults.map((commute_expense) => ({
-                            ...commute_expense,
-                            fare_amount: parseFloat(
-                                commute_expense.fare_amount,
-                            ),
+                        commuteExpensesResults.map((commuteExpense) => ({
+                            ...commuteExpense,
+                            fare_amount: parseFloat(commuteExpense.fare_amount),
                         }));
 
                     const { rows: fareCappingResults } = await client.query(
@@ -897,22 +895,20 @@ export const getCommuteExpensesByAccount = async (
                     );
 
                     const fareCapping = fareCappingResults.map(
-                        (fare_capping) => ({
-                            ...fare_capping,
-                            fare_cap: parseFloat(fare_capping.fare_cap),
-                            current_spent: parseFloat(
-                                fare_capping.current_spent,
-                            ),
+                        (fareCapping) => ({
+                            ...fareCapping,
+                            fareCap: parseFloat(fareCapping.fare_cap),
+                            currentSpent: parseFloat(fareCapping.current_spent),
                             fare_cap_duration: parseInt(
-                                fare_capping.fare_cap_duration,
+                                fareCapping.fare_cap_duration,
                             ),
                         }),
                     );
 
                     commuteExpensesByAccount.push({
-                        account_id: account.account_id,
-                        commute_expenses: commuteExpensesTransactions,
-                        fare_capping: fareCapping,
+                        accountId: account.account_id,
+                        commuteExpenses: commuteExpensesTransactions,
+                        fareCapping: fareCapping,
                     });
                 }),
             );
@@ -920,45 +916,45 @@ export const getCommuteExpensesByAccount = async (
             // Check if account exists and if it doesn't, send a response with an error message
             const { rows: accountExists } = await client.query(
                 accountQueries.getAccount,
-                [account_id],
+                [accountId],
             );
 
             if (accountExists.length === 0) {
                 response
                     .status(404)
-                    .send(`Account with ID ${account_id} not found`);
+                    .send(`Account with ID ${accountId} not found`);
                 return;
             }
 
             const { rows: results } = await client.query(
                 commuteScheduleQueries.getCommuteSchedulesByAccountId,
-                [account_id],
+                [accountId],
             );
 
             // Map over results array and convert amount to a float for each Commute Expense object
             const commuteExpensesTransactions = results.map(
-                (commute_expense) => ({
-                    ...commute_expense,
-                    fare_amount: parseFloat(commute_expense.fare_amount),
+                (commuteExpense) => ({
+                    ...commuteExpense,
+                    fareAmount: parseFloat(commuteExpense.fare_amount),
                 }),
             );
 
             const { rows: fareCappingResults } = await client.query(
                 fareCappingQueries.getFareCapping,
-                [account_id],
+                [accountId],
             );
 
-            const fareCapping = fareCappingResults.map((fare_capping) => ({
-                ...fare_capping,
-                fare_cap: parseFloat(fare_capping.fare_cap),
-                current_spent: parseFloat(fare_capping.current_spent),
-                fare_cap_duration: parseInt(fare_capping.fare_cap_duration),
+            const fareCapping = fareCappingResults.map((fareCapping) => ({
+                ...fareCapping,
+                fareCap: parseFloat(fareCapping.fare_cap),
+                currentSpent: parseFloat(fareCapping.current_spent),
+                fareCapDuration: parseInt(fareCapping.fare_cap_duration),
             }));
 
             commuteExpensesByAccount.push({
-                account_id: parseInt(account_id),
-                commute_expenses: commuteExpensesTransactions,
-                fare_capping: fareCapping,
+                accountId: parseInt(accountId),
+                commuteExpenses: commuteExpensesTransactions,
+                fareCapping: fareCapping,
             });
         }
 
@@ -985,17 +981,17 @@ export const getCurrentBalance = async (
     response: Response,
     next: NextFunction,
 ): Promise<void> => {
-    const { account_id } = request.query as { account_id: string };
+    const { accountId } = request.query as { accountId: string };
 
     const client = await pool.connect(); // Get a client from the pool
 
     try {
         let currentBalance: Array<{
-            account_id: number;
-            account_balance: number;
+            accountId: number;
+            accountBalance: number;
         }> = [];
 
-        if (!account_id) {
+        if (!accountId) {
             const { rows: accountResults } = await client.query(
                 accountQueries.getAccounts,
             );
@@ -1008,8 +1004,8 @@ export const getCurrentBalance = async (
                     );
 
                     return {
-                        account_id: account.account_id,
-                        account_balance: parseFloat(
+                        accountId: account.account_id,
+                        accountBalance: parseFloat(
                             currentBalanceResults[0].account_balance,
                         ),
                     };
@@ -1019,25 +1015,25 @@ export const getCurrentBalance = async (
             // Check if account exists and if it doesn't, send a response with an error message
             const { rows: accountExists } = await client.query(
                 accountQueries.getAccount,
-                [account_id],
+                [accountId],
             );
 
             if (accountExists.length === 0) {
                 response
                     .status(404)
-                    .send(`Account with ID ${account_id} not found`);
+                    .send(`Account with ID ${accountId} not found`);
                 return;
             }
 
             const { rows: results } = await client.query(
                 currentBalanceQueries.getCurrentBalance,
-                [account_id],
+                [accountId],
             );
 
             currentBalance = [
                 {
-                    account_id: parseInt(account_id),
-                    account_balance: parseFloat(results[0].account_balance),
+                    accountId: parseInt(accountId),
+                    accountBalance: parseFloat(results[0].account_balance),
                 },
             ];
         }
@@ -1078,7 +1074,7 @@ export const updateWishlistCron = async (
         const transactionMap: Record<number, string | null> = {};
         request.transactions.forEach((account) => {
             account.transactions.forEach((transaction: any) => {
-                transactionMap[transaction.wishlist_id] = transaction.date;
+                transactionMap[transaction.wishlistId] = transaction.date;
             });
         });
 
@@ -1091,7 +1087,9 @@ export const updateWishlistCron = async (
             );
 
             if (results.length > 0) {
-                await client.query(`cron.unschedule(${results[0].unique_id})`);
+                await client.query(
+                    `SELECT cron.unschedule('${results[0].unique_id}')`,
+                );
             } else {
                 logger.error('Cron job not found');
             }
@@ -1119,10 +1117,10 @@ export const updateWishlistCron = async (
                     jobDetails as { date: string },
                 );
 
-                const unique_id = `wishlist-${wslst.wishlist_id}`;
+                const uniqueId = `wishlist-${wslst.wishlist_id}`;
 
                 await client.query(`
-                    SELECT cron.schedule '${unique_id}', ${cronDate},
+                    SELECT cron.schedule '${uniqueId}', '${cronDate}',
                     $$INSERT INTO transaction_history
                         (account_id, transaction_amount, transaction_tax_rate, transaction_title, transaction_description)
                         VALUES (${
@@ -1132,7 +1130,7 @@ export const updateWishlistCron = async (
                         }', '${wslst.wishlist_description}')$$`);
 
                 await client.query(cronJobQueries.updateCronJob, [
-                    unique_id,
+                    uniqueId,
                     cronDate,
                     cronId,
                 ]);

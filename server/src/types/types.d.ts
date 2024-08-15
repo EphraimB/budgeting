@@ -2,20 +2,20 @@ import { Dayjs } from 'dayjs';
 
 export interface GeneratedTransaction {
     id: string;
-    expense_id?: number;
-    loan_id?: number;
-    income_id?: number;
-    transfer_id?: number;
-    commute_schedule_id?: number;
-    wishlist_id?: number;
-    transaction_id?: number;
+    expenseId?: number;
+    loanId?: number;
+    incomeId?: number;
+    transferId?: number;
+    commuteScheduleId?: number;
+    wishlistId?: number;
+    transactionId?: number;
     title: string;
     description: string;
     amount: number;
-    tax_rate: number;
-    total_amount: number;
+    taxRate: number;
+    totalAmount: number;
     date: Dayjs;
-    date_modified?: Dayjs;
+    dateModified?: Dayjs;
     balance?: number;
 }
 
@@ -263,11 +263,11 @@ export interface Timeslots {
 }
 
 export interface CommuteTicket {
-    commute_ticket_id: number;
-    fare_detail_id: number;
+    commuteTicketId: number;
+    fareDetailId: number;
     name: string;
-    date_created: string;
-    date_modified: string;
+    dateCreated: string;
+    dateModified: string;
 }
 
 export interface CommuteSchedule {
@@ -286,8 +286,8 @@ export interface CommuteSchedule {
 }
 
 interface CurrentBalance {
-    account_id: number;
-    account_balance: number;
+    accountId: number;
+    accountBalance: number;
 }
 
 declare module 'express-serve-static-core' {
