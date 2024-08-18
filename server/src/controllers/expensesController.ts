@@ -88,8 +88,23 @@ export const getExpenses = async (
                             date_trunc('week', now()) + interval '1 day' * (frequency_day_of_week::int - extract('dow' from now())::int)
                         -- Monthly frequency
                         WHEN frequency_type = 2 THEN 
-                            -- Default to the next month if day_of_month is not set
-                            begin_date + interval '1 month' * frequency_type_variable
+                            -- Calculate the base next month date
+                            (begin_date + interval '1 month' * frequency_type_variable)::date +
+                            -- Adjust for frequency_day_of_week (if provided)
+                            (CASE 
+                                WHEN frequency_day_of_week IS NOT NULL THEN
+                                    -- Calculate day difference and add it as an interval
+                                    interval '1 day' * ((frequency_day_of_week - extract('dow' from (begin_date + interval '1 month' * frequency_type_variable)::date) + 7) % 7)
+                                ELSE
+                                    interval '0 day'
+                            END) +
+                            -- Adjust for week_of_month (if provided)
+                            (CASE 
+                                WHEN frequency_week_of_month IS NOT NULL THEN
+                                    interval '1 week' * frequency_week_of_month
+                                ELSE
+                                    interval '0 day'
+                            END)
                         -- Annual frequency
                         WHEN frequency_type = 3 THEN 
                             -- Calculate the next date based on the month and day
@@ -143,8 +158,23 @@ export const getExpenses = async (
                             date_trunc('week', now()) + interval '1 day' * (frequency_day_of_week::int - extract('dow' from now())::int)
                         -- Monthly frequency
                         WHEN frequency_type = 2 THEN 
-                            -- Default to the next month if day_of_month is not set
-                            begin_date + interval '1 month' * frequency_type_variable
+                            -- Calculate the base next month date
+                            (begin_date + interval '1 month' * frequency_type_variable)::date +
+                            -- Adjust for frequency_day_of_week (if provided)
+                            (CASE 
+                                WHEN frequency_day_of_week IS NOT NULL THEN
+                                    -- Calculate day difference and add it as an interval
+                                    interval '1 day' * ((frequency_day_of_week - extract('dow' from (begin_date + interval '1 month' * frequency_type_variable)::date) + 7) % 7)
+                                ELSE
+                                    interval '0 day'
+                            END) +
+                            -- Adjust for week_of_month (if provided)
+                            (CASE 
+                                WHEN frequency_week_of_month IS NOT NULL THEN
+                                    interval '1 week' * frequency_week_of_month
+                                ELSE
+                                    interval '0 day'
+                            END)
                         -- Annual frequency
                         WHEN frequency_type = 3 THEN 
                             -- Calculate the next date based on the month and day
@@ -235,8 +265,23 @@ export const getExpensesById = async (
                             date_trunc('week', now()) + interval '1 day' * (frequency_day_of_week::int - extract('dow' from now())::int)
                         -- Monthly frequency
                         WHEN frequency_type = 2 THEN 
-                            -- Default to the next month if day_of_month is not set
-                            begin_date + interval '1 month' * frequency_type_variable
+                            -- Calculate the base next month date
+                            (begin_date + interval '1 month' * frequency_type_variable)::date +
+                            -- Adjust for frequency_day_of_week (if provided)
+                            (CASE 
+                                WHEN frequency_day_of_week IS NOT NULL THEN
+                                    -- Calculate day difference and add it as an interval
+                                    interval '1 day' * ((frequency_day_of_week - extract('dow' from (begin_date + interval '1 month' * frequency_type_variable)::date) + 7) % 7)
+                                ELSE
+                                    interval '0 day'
+                            END) +
+                            -- Adjust for week_of_month (if provided)
+                            (CASE 
+                                WHEN frequency_week_of_month IS NOT NULL THEN
+                                    interval '1 week' * frequency_week_of_month
+                                ELSE
+                                    interval '0 day'
+                            END)
                         -- Annual frequency
                         WHEN frequency_type = 3 THEN 
                             -- Calculate the next date based on the month and day
@@ -256,7 +301,7 @@ export const getExpensesById = async (
                                         )
                                     ) AS creation_dates
                 FROM expenses
-                account_id = $1 AND id = $2
+                WHERE id = $1, account_id = $2
                 GROUP BY id
             `;
             params = [id, accountId];
@@ -290,8 +335,23 @@ export const getExpensesById = async (
                             date_trunc('week', now()) + interval '1 day' * (frequency_day_of_week::int - extract('dow' from now())::int)
                         -- Monthly frequency
                         WHEN frequency_type = 2 THEN 
-                            -- Default to the next month if day_of_month is not set
-                            begin_date + interval '1 month' * frequency_type_variable
+                            -- Calculate the base next month date
+                            (begin_date + interval '1 month' * frequency_type_variable)::date +
+                            -- Adjust for frequency_day_of_week (if provided)
+                            (CASE 
+                                WHEN frequency_day_of_week IS NOT NULL THEN
+                                    -- Calculate day difference and add it as an interval
+                                    interval '1 day' * ((frequency_day_of_week - extract('dow' from (begin_date + interval '1 month' * frequency_type_variable)::date) + 7) % 7)
+                                ELSE
+                                    interval '0 day'
+                            END) +
+                            -- Adjust for week_of_month (if provided)
+                            (CASE 
+                                WHEN frequency_week_of_month IS NOT NULL THEN
+                                    interval '1 week' * frequency_week_of_month
+                                ELSE
+                                    interval '0 day'
+                            END)
                         -- Annual frequency
                         WHEN frequency_type = 3 THEN 
                             -- Calculate the next date based on the month and day
