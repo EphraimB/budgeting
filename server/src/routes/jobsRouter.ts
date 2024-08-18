@@ -6,6 +6,7 @@ import {
     updateJob,
     updateJobReturnObject,
     deleteJob,
+    getJobsById,
 } from '../controllers/jobsController.js';
 import validateRequest from '../utils/validateRequest.js';
 import generateTransactions from '../generation/generateTransactions.js';
@@ -32,13 +33,22 @@ router.get(
             .optional()
             .isInt({ min: 1 })
             .withMessage('Account ID must be a number'),
-        query('id')
-            .optional()
-            .isInt({ min: 1 })
-            .withMessage('Job ID must be a number'),
         validateRequest,
     ],
     getJobs,
+);
+
+router.get(
+    '/:id',
+    [
+        query('accountId')
+            .optional()
+            .isInt({ min: 1 })
+            .withMessage('Account ID must be a number'),
+        param('id').isInt({ min: 1 }).withMessage('Job ID must be a number'),
+        validateRequest,
+    ],
+    getJobsById,
 );
 
 router.post(
@@ -82,9 +92,7 @@ router.post(
 router.put(
     '/:job_id',
     [
-        param('jobId')
-            .isInt({ min: 1 })
-            .withMessage('Job ID must be a number'),
+        param('jobId').isInt({ min: 1 }).withMessage('Job ID must be a number'),
         body('accountId')
             .isInt({ min: 1 })
             .withMessage('Account ID must be a number'),
