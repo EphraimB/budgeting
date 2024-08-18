@@ -1,11 +1,7 @@
 import { type NextFunction, type Request, type Response } from 'express';
 import { taxesQueries } from '../models/queryData.js';
 import determineCronValues from '../crontab/determineCronValues.js';
-import {
-    handleError,
-    nextTransactionFrequencyDate,
-} from '../utils/helperFunctions.js';
-import { type Expense } from '../types/types.js';
+import { handleError } from '../utils/helperFunctions.js';
 import { logger } from '../config/winston.js';
 import pool from '../config/db.js';
 
@@ -215,12 +211,6 @@ export const getExpenses = async (
         }
 
         const { rows } = await client.query(query, params);
-
-        rows.map((expense: Expense) => {
-            const nextExpenseDate = nextTransactionFrequencyDate(expense);
-
-            expense.nextDate = nextExpenseDate;
-        });
 
         response.status(200).json(rows);
     } catch (error) {
@@ -444,12 +434,6 @@ export const getExpensesById = async (
             response.status(404).send('Expense not found');
             return;
         }
-
-        rows.map((expense: Expense) => {
-            const nextExpenseDate = nextTransactionFrequencyDate(expense);
-
-            expense.nextDate = nextExpenseDate;
-        });
 
         response.status(200).json(rows);
     } catch (error) {
