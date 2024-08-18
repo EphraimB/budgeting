@@ -504,7 +504,7 @@ export const updateExpense = async (
     response: Response,
     next: NextFunction,
 ): Promise<void> => {
-    const id: number = parseInt(request.params.id);
+    const { id } = request.params;
     const {
         accountId,
         taxId,
@@ -524,9 +524,14 @@ export const updateExpense = async (
     const client = await pool.connect(); // Get a client from the pool
 
     try {
-        const { rows } = await client.query(expenseQueries.getExpenseById, [
-            id,
-        ]);
+        const { rows } = await client.query(
+            `
+                SELECT *
+                    FROM expenses
+                    WHERE id = $1
+            `,
+            [id],
+        );
 
         if (rows.length === 0) {
             response.status(404).send('Expense not found');
@@ -550,7 +555,11 @@ export const updateExpense = async (
         await client.query('BEGIN;');
 
         const { rows: cronResults } = await client.query(
-            cronJobQueries.getCronJob,
+            `
+                SELECT unique_id
+                    FROM cron_jobs
+                    WHERE id = $1
+            `,
             [cronId],
         );
 
@@ -560,43 +569,71 @@ export const updateExpense = async (
 
         // Get tax rate
         const { rows: result } = await client.query(
-            taxesQueries.getTaxRateByTaxId,
+            `
+                SELECT tax_rate
+                    FROM taxes
+                    WHERE id = $1
+            `,
             [taxId],
         );
         const taxRate = result && result.length > 0 ? result : 0;
 
         await client.query(`
             SELECT cron.schedule('${uniqueId}', '${cronDate}',
-            $$INSERT INTO transaction_history (account_id, transaction_amount, transaction_tax_rate, transaction_title, transaction_description) VALUES (${accountId}, ${
+            $$INSERT INTO transaction_history (account_id, amount, tax_rate, title, description) VALUES (${accountId}, ${
                 -amount + amount * subsidized
             }, ${taxRate}, '${title}', '${description}')$$)`);
 
-        await client.query(cronJobQueries.updateCronJob, [
-            uniqueId,
-            cronDate,
-            cronId,
-        ]);
+        await client.query(
+            `
+                UPDATE cron_jobs
+                    SET unique_id = $1,
+                    cron_expression = $2
+                    WHERE id = $3
+                    RETURNING *
+            `,
+            [uniqueId, cronDate, cronId],
+        );
 
-        await client.query(expenseQueries.updateExpense, [
-            accountId,
-            taxId,
-            amount,
-            title,
-            description,
-            frequencyType,
-            frequencyTypeVariable,
-            frequencyDayOfMonth,
-            frequencyDayOfWeek,
-            frequencyWeekOfMonth,
-            frequencyMonthOfYear,
-            subsidized,
-            beginDate,
-            id,
-        ]);
+        await client.query(
+            `
+                UPDATE expenses
+                    SET account_id = $1,
+                    tax_id = $2,
+                    amount = $3,
+                    title = $4,
+                    description = $5,
+                    frequency_type = $6,
+                    frequency_type_variable = $7,
+                    frequency_day_of_month = $8,
+                    frequency_day_of_week = $9,
+                    frequency_week_of_month = $10,
+                    frequency_month_of_year = $11,
+                    subsidized = $12,
+                    begin_date = $13
+                    WHERE id = $14 RETURNING *
+            `,
+            [
+                accountId,
+                taxId,
+                amount,
+                title,
+                description,
+                frequencyType,
+                frequencyTypeVariable,
+                frequencyDayOfMonth,
+                frequencyDayOfWeek,
+                frequencyWeekOfMonth,
+                frequencyMonthOfYear,
+                subsidized,
+                beginDate,
+                id,
+            ],
+        );
 
         await client.query('COMMIT;');
 
-        request.expenseId = id;
+        request.expenseId = +id;
 
         next();
     } catch (error) {
@@ -624,13 +661,16 @@ export const updateExpenseReturnObject = async (
     const client = await pool.connect(); // Get a client from the pool
 
     try {
-        const { rows } = await client.query(expenseQueries.getExpenseById, [
-            expenseId,
-        ]);
+        const { rows } = await client.query(
+            `
+                SELECT *
+                    FROM expenses
+                    WHERE id = $1
+            `,
+            [expenseId],
+        );
 
-        const modifiedExpenses = rows.map((row) => parseExpenses(row));
-
-        response.status(200).json(modifiedExpenses);
+        response.status(200).json(rows);
     } catch (error) {
         logger.error(error); // Log the error on the server side
         handleError(response, 'Error updating expense');
@@ -656,9 +696,14 @@ export const deleteExpense = async (
     const client = await pool.connect(); // Get a client from the pool
 
     try {
-        const { rows } = await client.query(expenseQueries.getExpenseById, [
-            id,
-        ]);
+        const { rows } = await client.query(
+            `
+                SELECT id, cron_job_id
+                    FROM expenses
+                    WHERE id = $1
+            `,
+            [id],
+        );
         if (rows.length === 0) {
             response.status(404).send('Expense not found');
             return;
@@ -668,16 +713,32 @@ export const deleteExpense = async (
 
         await client.query('BEGIN;');
 
-        await client.query(expenseQueries.deleteExpense, [id]);
+        await client.query(
+            `
+                DELETE FROM expenses
+                    WHERE id = $1
+            `,
+            [id],
+        );
 
         const { rows: results } = await client.query(
-            cronJobQueries.getCronJob,
+            `
+                SELECT *
+                    FROM cron_jobs
+                    WHERE id = $1
+            `,
             [cronId],
         );
 
         await client.query(`SELECT cron.unschedule('${results[0].unique_id}')`);
 
-        await client.query(cronJobQueries.deleteCronJob, [cronId]);
+        await client.query(
+            `
+                DELETE FROM cron_jobs
+                    WHERE id = $1
+            `,
+            [cronId],
+        );
 
         await client.query('COMMIT;');
 
@@ -699,7 +760,7 @@ export const deleteExpense = async (
  * Sends a response with the deleted expense
  */
 export const deleteExpenseReturnObject = async (
-    request: Request,
+    _: Request,
     response: Response,
 ): Promise<void> => {
     response.status(200).send('Expense deleted successfully');
