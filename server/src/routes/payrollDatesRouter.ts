@@ -10,6 +10,7 @@ import {
     deletePayrollDateReturnObject,
     togglePayrollDate,
     togglePayrollDateReturnObject,
+    getPayrollDatesById,
 } from '../controllers/payrollDatesController.js';
 import validateRequest from '../utils/validateRequest.js';
 import generateTransactions from '../generation/generateTransactions.js';
@@ -32,10 +33,6 @@ const router: Router = express.Router();
 router.get(
     '/',
     [
-        query('id')
-            .optional()
-            .isInt({ min: 1 })
-            .withMessage('ID must be a number'),
         query('jobId')
             .optional()
             .isInt({ min: 1 })
@@ -43,6 +40,19 @@ router.get(
         validateRequest,
     ],
     getPayrollDates,
+);
+
+router.get(
+    '/',
+    [
+        param('id').isInt({ min: 1 }).withMessage('ID must be a number'),
+        query('jobId')
+            .optional()
+            .isInt({ min: 1 })
+            .withMessage('Job ID must be a number'),
+        validateRequest,
+    ],
+    getPayrollDatesById,
 );
 
 router.post(
