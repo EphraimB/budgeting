@@ -424,16 +424,26 @@ export const createExpense = async (
             }, ${taxRate}, '${title}', '${description}')$$)`);
 
         const { rows: cronJobResult } = await client.query(
-            cronJobQueries.createCronJob,
+            `
+                INSERT INTO cron_jobs
+                    (unique_id, cron_expression)
+                    VALUES ($1, $2)
+                    RETURNING *
+            `,
             [uniqueId, cronDate],
         );
 
-        const cronId: number = cronJobResult[0].cron_job_id;
+        const cronId: number = cronJobResult[0].id;
 
-        await client.query(expenseQueries.updateExpenseWithCronJobId, [
-            cronId,
-            rows[0].id,
-        ]);
+        await client.query(
+            `
+                UPDATE expenses
+                SET cron_job_id = $1
+                WHERE id = $2
+                RETURNING *
+            `,
+            [cronId, rows[0].id],
+        );
 
         await client.query('COMMIT;');
 
@@ -465,13 +475,15 @@ export const createExpenseReturnObject = async (
     const client = await pool.connect(); // Get a client from the pool
 
     try {
-        const { rows } = await client.query(expenseQueries.getExpenseById, [
-            expenseId,
-        ]);
+        const { rows } = await client.query(
+            `
+                SELECT * FROM expenses
+                    WHERE id = $1
+            `,
+            [expenseId],
+        );
 
-        const modifiedExpenses = rows.map((row) => parseExpenses(row));
-
-        response.status(201).json(modifiedExpenses);
+        response.status(201).json(rows);
     } catch (error) {
         logger.error(error); // Log the error on the server side
         handleError(response, 'Error getting expense');
