@@ -1,7 +1,5 @@
 import { type Request, type Response } from 'express';
-import { accountQueries } from '../models/queryData.js';
 import { handleError } from '../utils/helperFunctions.js';
-import { type Account } from '../types/types.js';
 import { logger } from '../config/winston.js';
 import pool from '../config/db.js';
 
