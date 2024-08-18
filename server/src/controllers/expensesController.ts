@@ -81,7 +81,7 @@ export const getExpenses = async (
                         -- Daily frequency
                         WHEN frequency_type = 0 THEN 
                             -- Daily billing
-                            now()::date + interval '1 day'
+                            now()::date + interval '1 day' * frequency_type_variable
                         -- Weekly frequency
                         WHEN frequency_type = 1 THEN 
                             -- Calculate the next date based on the day of the week
@@ -151,7 +151,7 @@ export const getExpenses = async (
                         -- Daily frequency
                         WHEN frequency_type = 0 THEN 
                             -- Daily billing
-                            now()::date + interval '1 day'
+                            now()::date + interval '1 day' * frequency_type_variable
                         -- Weekly frequency
                         WHEN frequency_type = 1 THEN 
                             -- Calculate the next date based on the day of the week
@@ -258,7 +258,7 @@ export const getExpensesById = async (
                         -- Daily frequency
                         WHEN frequency_type = 0 THEN 
                             -- Daily billing
-                            now()::date + interval '1 day'
+                            now()::date + interval '1 day' * frequency_type_variable
                         -- Weekly frequency
                         WHEN frequency_type = 1 THEN 
                             -- Calculate the next date based on the day of the week
@@ -328,7 +328,7 @@ export const getExpensesById = async (
                         -- Daily frequency
                         WHEN frequency_type = 0 THEN 
                             -- Daily billing
-                            now()::date + interval '1 day'
+                            now()::date + interval '1 day' * frequency_type_variable
                         -- Weekly frequency
                         WHEN frequency_type = 1 THEN 
                             -- Calculate the next date based on the day of the week
