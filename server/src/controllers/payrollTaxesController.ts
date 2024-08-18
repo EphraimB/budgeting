@@ -1,21 +1,7 @@
 import { type NextFunction, type Request, type Response } from 'express';
-import { payrollQueries } from '../models/queryData.js';
 import { handleError } from '../utils/helperFunctions.js';
-import { type PayrollTax } from '../types/types.js';
 import { logger } from '../config/winston.js';
 import pool from '../config/db.js';
-
-/**
- *
- * @param payrollTax - Payroll tax object
- * @returns - Payroll tax object with parsed values
- */
-const payrollTaxesParse = (payrollTax: Record<string, string>): PayrollTax => ({
-    id: parseInt(payrollTax.payroll_taxes_id),
-    jobId: parseInt(payrollTax.job_id),
-    name: payrollTax.name,
-    rate: parseFloat(payrollTax.rate),
-});
 
 /**
  *
