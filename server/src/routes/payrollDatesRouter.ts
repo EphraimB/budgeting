@@ -43,7 +43,7 @@ router.get(
 );
 
 router.get(
-    '/',
+    '/:id',
     [
         param('id').isInt({ min: 1 }).withMessage('ID must be a number'),
         query('jobId')

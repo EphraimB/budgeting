@@ -8,6 +8,7 @@ import {
     updatePayrollTaxReturnObject,
     deletePayrollTax,
     deletePayrollTaxReturnObject,
+    getPayrollTaxesById,
 } from '../controllers/payrollTaxesController.js';
 import validateRequest from '../utils/validateRequest.js';
 import generateTransactions from '../generation/generateTransactions.js';
@@ -30,7 +31,19 @@ const router: Router = express.Router();
 router.get(
     '/',
     [
-        query('id')
+        query('jobId')
+            .optional()
+            .isInt({ min: 1 })
+            .withMessage('Job ID must be a number'),
+        validateRequest,
+    ],
+    getPayrollTaxes,
+);
+
+router.get(
+    '/:id',
+    [
+        param('id')
             .optional()
             .isInt({ min: 1 })
             .withMessage('ID must be a number'),
@@ -40,7 +53,7 @@ router.get(
             .withMessage('Job ID must be a number'),
         validateRequest,
     ],
-    getPayrollTaxes,
+    getPayrollTaxesById,
 );
 
 router.post(
