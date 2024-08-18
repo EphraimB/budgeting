@@ -1,44 +1,13 @@
 import { type NextFunction, type Request, type Response } from 'express';
-import {
-    expenseQueries,
-    cronJobQueries,
-    taxesQueries,
-} from '../models/queryData.js';
+import { taxesQueries } from '../models/queryData.js';
 import determineCronValues from '../crontab/determineCronValues.js';
 import {
     handleError,
-    parseIntOrFallback,
     nextTransactionFrequencyDate,
 } from '../utils/helperFunctions.js';
 import { type Expense } from '../types/types.js';
 import { logger } from '../config/winston.js';
 import pool from '../config/db.js';
-
-/**
- *
- * @param expense - Expense object
- * @returns Expense object with the correct types
- * Converts the expense object to the correct types
- **/
-const parseExpenses = (expense: Record<string, string>): Expense => ({
-    id: parseInt(expense.expense_id),
-    accountId: parseInt(expense.account_id),
-    taxId: parseIntOrFallback(expense.tax_id),
-    amount: parseFloat(expense.expense_amount),
-    title: expense.expense_title,
-    description: expense.expense_description,
-    frequencyType: parseInt(expense.frequency_type),
-    frequencyTypeVariable: parseInt(expense.frequency_type_variable),
-    frequencyDayOfMonth: parseIntOrFallback(expense.frequency_day_of_month),
-    frequencyDayOfWeek: parseIntOrFallback(expense.frequency_day_of_week),
-    frequencyWeekOfMonth: parseIntOrFallback(expense.frequency_week_of_month),
-    frequencyMonthOfYear: parseIntOrFallback(expense.frequency_month_of_year),
-    subsidized: parseFloat(expense.expense_subsidized),
-    beginDate: expense.expense_begin_date,
-    endDate: expense.expense_end_date,
-    dateCreated: expense.date_created,
-    dateModified: expense.date_modified,
-});
 
 /**
  *
@@ -81,7 +50,7 @@ export const getExpenses = async (
                         -- Daily frequency
                         WHEN frequency_type = 0 THEN 
                             -- Daily billing
-                            now()::date + interval '1 day' * frequency_type_variable
+                            begin_date::date + interval '1 day' * frequency_type_variable
                         -- Weekly frequency
                         WHEN frequency_type = 1 THEN 
                             -- Calculate the next date based on the day of the week
@@ -151,7 +120,7 @@ export const getExpenses = async (
                         -- Daily frequency
                         WHEN frequency_type = 0 THEN 
                             -- Daily billing
-                            now()::date + interval '1 day' * frequency_type_variable
+                            begin_date::date + interval '1 day' * frequency_type_variable
                         -- Weekly frequency
                         WHEN frequency_type = 1 THEN 
                             -- Calculate the next date based on the day of the week
@@ -258,7 +227,7 @@ export const getExpensesById = async (
                         -- Daily frequency
                         WHEN frequency_type = 0 THEN 
                             -- Daily billing
-                            now()::date + interval '1 day' * frequency_type_variable
+                            begin_date::date + interval '1 day' * frequency_type_variable
                         -- Weekly frequency
                         WHEN frequency_type = 1 THEN 
                             -- Calculate the next date based on the day of the week
@@ -328,7 +297,7 @@ export const getExpensesById = async (
                         -- Daily frequency
                         WHEN frequency_type = 0 THEN 
                             -- Daily billing
-                            now()::date + interval '1 day' * frequency_type_variable
+                            begin_date::date + interval '1 day' * frequency_type_variable
                         -- Weekly frequency
                         WHEN frequency_type = 1 THEN 
                             -- Calculate the next date based on the day of the week
