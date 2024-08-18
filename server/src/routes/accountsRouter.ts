@@ -5,21 +5,21 @@ import {
     createAccount,
     updateAccount,
     deleteAccount,
+    getAccountsById,
 } from '../controllers/accountsController.js';
 import validateRequest from '../utils/validateRequest.js';
 
 const router: Router = express.Router();
 
+router.get('/', getAccounts);
+
 router.get(
-    '/',
+    '/:id',
     [
-        query('id')
-            .optional()
-            .isInt({ min: 1 })
-            .withMessage('ID must be a number'),
+        param('id').isInt({ min: 1 }).withMessage('ID must be a number'),
         validateRequest,
     ],
-    getAccounts,
+    getAccountsById,
 );
 
 router.post(

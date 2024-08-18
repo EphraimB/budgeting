@@ -28,28 +28,81 @@ export const getAccounts = async (
     request: Request,
     response: Response,
 ): Promise<void> => {
-    const { id } = request.query as { id?: string }; // Destructure id from query string
+    const client = await pool.connect(); // Get a client from the pool
+
+    try {
+        const { rows } = await client.query(`
+            SELECT 
+                accounts.id,
+                accounts.name,
+                COALESCE(t.total_transaction_amount_after_tax, 0) AS balance,
+                accounts.date_created, 
+                accounts.date_modified 
+            FROM 
+                accounts
+            LEFT JOIN 
+                (SELECT 
+                account_id, 
+                SUM(amount + (amount * tax_rate)) AS total_transaction_amount_after_tax 
+                FROM 
+                transaction_history 
+                GROUP BY 
+                account_id) AS t ON accounts.id = t.account_id 
+            ORDER BY 
+                accounts.id ASC;
+            `);
+
+        response.status(200).json(rows);
+    } catch (error) {
+        logger.error(error); // Log the error on the server side
+        handleError(response, `Error getting accounts`);
+    } finally {
+        client.release(); // Release the client back to the pool
+    }
+};
+
+export const getAccountsById = async (
+    request: Request,
+    response: Response,
+): Promise<void> => {
+    const { id } = request.params;
 
     const client = await pool.connect(); // Get a client from the pool
 
     try {
-        // Change the query based on the presence of id
-        const query: string = id
-            ? accountQueries.getAccount
-            : accountQueries.getAccounts;
-        const params = id ? [id] : [];
+        const { rows } = await client.query(
+            `
+            SELECT 
+                accounts.id,
+                accounts.name,
+                COALESCE(t.total_transaction_amount_after_tax, 0) AS balance,
+                accounts.date_created, 
+                accounts.date_modified 
+            FROM 
+                accounts
+            LEFT JOIN 
+                (SELECT 
+                account_id, 
+                SUM(amount + (amount * tax_rate)) AS total_transaction_amount_after_tax 
+                FROM 
+                transaction_history 
+                GROUP BY 
+                account_id) AS t ON accounts.id = t.account_id 
+            WHERE 
+                accounts.id = $1;
+            `,
+            [id],
+        );
 
-        const { rows } = await client.query(query, params);
-
-        if (id && rows.length === 0) {
+        if (rows.length === 0) {
             response.status(404).send('Account not found');
             return;
         }
 
-        response.status(200).json(rows.map((row) => parseAccounts(row)));
+        response.status(200).json(rows);
     } catch (error) {
         logger.error(error); // Log the error on the server side
-        handleError(response, `Error getting ${id ? 'account' : 'accounts'}`);
+        handleError(response, `Error getting account of ${id}`);
     } finally {
         client.release(); // Release the client back to the pool
     }
@@ -67,11 +120,17 @@ export const createAccount = async (request: Request, response: Response) => {
     const client = await pool.connect(); // Get a client from the pool
 
     try {
-        const { rows } = await client.query(accountQueries.createAccount, [
-            name,
-        ]);
-        const accounts = rows.map((account) => parseAccounts(account));
-        response.status(201).json(accounts);
+        const { rows } = await client.query(
+            `
+            INSERT INTO accounts
+                (name)
+                VALUES ($1)
+                RETURNING *
+        `,
+            [name],
+        );
+
+        response.status(201).json(rows);
     } catch (error) {
         logger.error(error); // Log the error on the server side
         handleError(response, 'Error creating account');
@@ -90,14 +149,18 @@ export const updateAccount = async (
     request: Request,
     response: Response,
 ): Promise<void> => {
-    const id = parseInt(request.params.id);
+    const { id } = request.params;
     const { name } = request.body;
 
     const client = await pool.connect(); // Get a client from the pool
 
     try {
         const { rows: account } = await client.query(
-            accountQueries.getAccount,
+            `
+                SELECT COUNT(id)
+                    FROM accounts
+                    WHERE id = $1;
+            `,
             [id],
         );
 
@@ -106,14 +169,17 @@ export const updateAccount = async (
             return;
         }
 
-        const { rows } = await client.query(accountQueries.updateAccount, [
-            name,
-            id,
-        ]);
+        const { rows } = await client.query(
+            `
+            UPDATE accounts
+                SET name = $1
+                WHERE id = $2
+                RETURNING *
+            `,
+            [name, id],
+        );
 
-        const accounts = rows.map((account) => parseAccounts(account));
-
-        response.status(200).json(accounts);
+        response.status(200).json(rows);
     } catch (error) {
         logger.error(error); // Log the error on the server side
         handleError(response, 'Error updating account');
@@ -132,13 +198,17 @@ export const deleteAccount = async (
     request: Request,
     response: Response,
 ): Promise<void> => {
-    const id = parseInt(request.params.id);
+    const { id } = request.params;
 
     const client = await pool.connect(); // Get a client from the pool
 
     try {
         const { rows: account } = await client.query(
-            accountQueries.getAccount,
+            `
+                SELECT COUNT(id)
+                    FROM accounts
+                    WHERE id = $1;
+            `,
             [id],
         );
 
@@ -147,7 +217,13 @@ export const deleteAccount = async (
             return;
         }
 
-        await client.query(accountQueries.deleteAccount, [id]);
+        await client.query(
+            `
+            DELETE FROM accounts
+                WHERE id = $1
+            `,
+            [id],
+        );
 
         response.status(200).send('Successfully deleted account');
     } catch (error) {
