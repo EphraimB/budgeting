@@ -1,23 +1,7 @@
 import { type Request, type Response } from 'express';
-import { jobQueries, payrollQueries } from '../models/queryData.js';
 import { handleError } from '../utils/helperFunctions.js';
-import { type Payroll } from '../types/types.js';
 import { logger } from '../config/winston.js';
 import pool from '../config/db.js';
-
-/**
- *
- * @param payroll - Payroll object
- * @returns - Payroll object with parsed values
- */
-const payrollsParse = (payroll: Record<string, string>): Payroll => ({
-    startDate: payroll.start_date,
-    endDate: payroll.end_date,
-    workDays: parseInt(payroll.work_days),
-    grossPay: parseFloat(payroll.gross_pay),
-    netPay: parseFloat(payroll.net_pay),
-    hoursWorked: parseFloat(payroll.hours_worked),
-});
 
 /**
  *
@@ -26,68 +10,268 @@ const payrollsParse = (payroll: Record<string, string>): Payroll => ({
  * Sends a GET request to the database to retrieve all payrolls
  */
 export const getPayrolls = async (
-    request: Request,
+    _: Request,
     response: Response,
 ): Promise<void> => {
     const client = await pool.connect(); // Get a client from the pool
 
     try {
-        const { jobId } = request.query;
         let returnObj: object = {};
 
-        if (!jobId) {
-            // Get all payrolls for all jobs
-            const { rows } = await client.query(jobQueries.getJobs, []);
+        // Get all payrolls for all jobs
+        const { rows } = await client.query(
+            `
+                SELECT COUNT(id)
+                    FROM jobs;
+            `,
+        );
 
-            if (rows.length === 0) {
-                response.status(404).send('No jobs found');
-                return;
-            }
-
-            await Promise.all(
-                rows.map(async (row) => {
-                    const { rows: results } = await client.query(
-                        payrollQueries.getPayrolls,
-                        [row.job_id],
-                    );
-
-                    returnObj = {
-                        jobId: row.job_id,
-                        jobName: row.job_name,
-                        payrolls: results.map((payroll) =>
-                            payrollsParse(payroll),
-                        ),
-                    };
-                }),
-            );
-        } else {
-            const { rows } = await client.query(payrollQueries.getPayrolls, [
-                jobId,
-            ]);
-
-            if (rows.length === 0) {
-                response.status(404).send('No payrolls for job or not found');
-                return;
-            }
-
-            // Parse the data to correct format and return an object
-            const payrolls: Payroll[] = rows.map((row) => payrollsParse(row));
-
-            const { rows: jobResults } = await client.query(jobQueries.getJob, [
-                jobId,
-            ]);
-
-            returnObj = {
-                jobId: parseInt(jobId as string),
-                jobName: jobResults[0].job_name,
-                payrolls,
-            };
+        if (rows[0].id === 0) {
+            response.status(404).send('No jobs found');
+            return;
         }
+
+        await Promise.all(
+            rows.map(async (row) => {
+                const { rows: results } = await client.query(
+                    `
+                        WITH work_days_and_hours AS (
+                            WITH ordered_table AS (
+                                SELECT payroll_day,
+                                ROW_NUMBER() OVER (ORDER BY payroll_day) AS row_num
+                                FROM payroll_dates
+                                WHERE job_id = $1
+                            )
+                                SELECT
+                                    CASE
+                                        WHEN s2.payroll_start_day::integer < 0 THEN
+                                            (make_date(extract(year from current_date)::integer, extract(month from current_date)::integer, ABS(s2.payroll_start_day::integer)) - INTERVAL '1 MONTH')::DATE
+                                        ELSE 
+                                            make_date(extract(year from current_date)::integer, extract(month from current_date)::integer, s2.payroll_start_day::integer)
+                                    END AS start_date,
+                                    make_date(extract(year from current_date)::integer, extract(month from current_date)::integer, s1.adjusted_payroll_end_day) AS end_date,
+                                    d.date AS work_date,
+                                    EXTRACT(EPOCH FROM (js.end_time - js.start_time)) / 3600 AS hours_worked_per_day,
+                                    j.hourly_rate,
+                                    COALESCE(pt.rate, 0) AS tax_rate
+                                FROM 
+                                    jobs j
+                                    JOIN job_schedule js ON j.id = js.job_id
+                                    
+                                    CROSS JOIN LATERAL (
+                                        SELECT
+                                            CASE WHEN
+                                (SELECT COUNT(*) FROM payroll_dates) = 1 AND payroll_day < 31 THEN -(payroll_day + 1)
+                                            ELSE 
+                                                COALESCE(LAG(payroll_day) OVER (ORDER BY row_num), 0) + 1
+                                            END AS payroll_start_day,
+                                            CASE 
+                                                WHEN payroll_day > EXTRACT(DAY FROM DATE_TRUNC('MONTH', current_date) + INTERVAL '1 MONTH - 1 DAY') 
+                                                THEN EXTRACT(DAY FROM DATE_TRUNC('MONTH', current_date) + INTERVAL '1 MONTH - 1 DAY')
+                                                ELSE payroll_day 
+                                            END AS unadjusted_payroll_end_day
+                                        FROM ordered_table
+                                    ) s2
+                                    CROSS JOIN LATERAL (
+                                        SELECT
+                                            s2.payroll_start_day,
+                                            CASE
+                                                WHEN EXTRACT(DOW FROM MAKE_DATE(EXTRACT(YEAR FROM current_date)::integer, EXTRACT(MONTH FROM current_date)::integer, s2.unadjusted_payroll_end_day::integer)) = 0 
+                                                    THEN s2.unadjusted_payroll_end_day - 2 -- If it's a Sunday, adjust to Friday
+                                                WHEN EXTRACT(DOW FROM MAKE_DATE(EXTRACT(YEAR FROM current_date)::integer, EXTRACT(MONTH FROM current_date)::integer, s2.unadjusted_payroll_end_day::integer)) = 6
+                                                    THEN s2.unadjusted_payroll_end_day - 1 -- If it's a Saturday, adjust to Friday
+                                                ELSE s2.unadjusted_payroll_end_day
+                                            END::integer AS adjusted_payroll_end_day
+                                    ) s1
+                                    JOIN LATERAL generate_series(
+                                    CASE
+                                        WHEN s2.payroll_start_day::integer < 0 THEN
+                                            (make_date(extract(year from current_date)::integer, extract(month from current_date)::integer, ABS(s2.payroll_start_day::integer)) - INTERVAL '1 MONTH')::DATE
+                                        ELSE 
+                                            make_date(extract(year from current_date)::integer, extract(month from current_date)::integer, s2.payroll_start_day::integer)
+                                    END, 
+                                        make_date(extract(year from current_date)::integer, extract(month from current_date)::integer, s1.adjusted_payroll_end_day),
+                                        '1 day'
+                                    ) AS d(date) ON js.day_of_week = EXTRACT(DOW FROM d.date)::integer
+                                    LEFT JOIN (
+                                        SELECT job_id, SUM(rate) AS rate
+                                        FROM payroll_taxes
+                                        GROUP BY job_id
+                                    ) pt ON j.id = pt.job_id
+                                WHERE 
+                                    j.id = $1 
+                                    AND d.date >= CASE
+                                        WHEN s2.payroll_start_day::integer < 0 THEN
+                                            (make_date(extract(year from current_date)::integer, extract(month from current_date)::integer, ABS(s2.payroll_start_day::integer)) - INTERVAL '1 MONTH')::DATE
+                                        ELSE 
+                                            make_date(extract(year from current_date)::integer, extract(month from current_date)::integer, s2.payroll_start_day::integer)
+                                    END
+                            )
+                            SELECT
+                                start_date,
+                                end_date,
+                                COUNT(work_date) AS work_days,
+                                SUM(hours_worked_per_day * hourly_rate) AS gross_pay,
+                                SUM(hours_worked_per_day * hourly_rate * (1 - tax_rate)) AS net_pay,
+                                SUM(hours_worked_per_day) AS hours_worked
+                            FROM 
+                                work_days_and_hours
+                            GROUP BY 
+                                start_date, end_date
+                            ORDER BY 
+                                start_date, end_date;
+                    `,
+                    [row.id],
+                );
+
+                returnObj = {
+                    id: row.id,
+                    name: row.name,
+                    payrolls: results,
+                };
+            }),
+        );
 
         response.status(200).json(returnObj);
     } catch (error) {
         logger.error(error); // Log the error on the server side
         handleError(response, 'Error getting payrolls');
+    } finally {
+        client.release(); // Release the client back to the pool
+    }
+};
+
+/**
+ *
+ * @param request - Request object
+ * @param response - Response object
+ * Sends a GET request to the database to retrieve payrolls for a single job id
+ */
+export const getPayrollsByJobId = async (
+    request: Request,
+    response: Response,
+): Promise<void> => {
+    const { id } = request.params;
+    const client = await pool.connect(); // Get a client from the pool
+
+    try {
+        let returnObj: object = {};
+
+        const { rows: payrolls } = await client.query(
+            `
+                WITH work_days_and_hours AS (
+                    WITH ordered_table AS (
+                        SELECT payroll_day,
+                        ROW_NUMBER() OVER (ORDER BY payroll_day) AS row_num
+                        FROM payroll_dates
+                        WHERE job_id = $1
+                    )
+                        SELECT
+                            CASE
+                                WHEN s2.payroll_start_day::integer < 0 THEN
+                                    (make_date(extract(year from current_date)::integer, extract(month from current_date)::integer, ABS(s2.payroll_start_day::integer)) - INTERVAL '1 MONTH')::DATE
+                                ELSE 
+                                    make_date(extract(year from current_date)::integer, extract(month from current_date)::integer, s2.payroll_start_day::integer)
+                            END AS start_date,
+                            make_date(extract(year from current_date)::integer, extract(month from current_date)::integer, s1.adjusted_payroll_end_day) AS end_date,
+                            d.date AS work_date,
+                            EXTRACT(EPOCH FROM (js.end_time - js.start_time)) / 3600 AS hours_worked_per_day,
+                            j.hourly_rate,
+                            COALESCE(pt.rate, 0) AS tax_rate
+                        FROM 
+                            jobs j
+                            JOIN job_schedule js ON j.job_id = js.job_id
+                            
+                            CROSS JOIN LATERAL (
+                                SELECT
+                                    CASE WHEN
+                        (SELECT COUNT(*) FROM payroll_dates) = 1 AND payroll_day < 31 THEN -(payroll_day + 1)
+                                    ELSE 
+                                        COALESCE(LAG(payroll_day) OVER (ORDER BY row_num), 0) + 1
+                                    END AS payroll_start_day,
+                                    CASE 
+                                        WHEN payroll_day > EXTRACT(DAY FROM DATE_TRUNC('MONTH', current_date) + INTERVAL '1 MONTH - 1 DAY') 
+                                        THEN EXTRACT(DAY FROM DATE_TRUNC('MONTH', current_date) + INTERVAL '1 MONTH - 1 DAY')
+                                        ELSE payroll_day 
+                                    END AS unadjusted_payroll_end_day
+                                FROM ordered_table
+                            ) s2
+                            CROSS JOIN LATERAL (
+                                SELECT
+                                    s2.payroll_start_day,
+                                    CASE
+                                        WHEN EXTRACT(DOW FROM MAKE_DATE(EXTRACT(YEAR FROM current_date)::integer, EXTRACT(MONTH FROM current_date)::integer, s2.unadjusted_payroll_end_day::integer)) = 0 
+                                            THEN s2.unadjusted_payroll_end_day - 2 -- If it's a Sunday, adjust to Friday
+                                        WHEN EXTRACT(DOW FROM MAKE_DATE(EXTRACT(YEAR FROM current_date)::integer, EXTRACT(MONTH FROM current_date)::integer, s2.unadjusted_payroll_end_day::integer)) = 6
+                                            THEN s2.unadjusted_payroll_end_day - 1 -- If it's a Saturday, adjust to Friday
+                                        ELSE s2.unadjusted_payroll_end_day
+                                    END::integer AS adjusted_payroll_end_day
+                            ) s1
+                            JOIN LATERAL generate_series(
+                            CASE
+                                WHEN s2.payroll_start_day::integer < 0 THEN
+                                    (make_date(extract(year from current_date)::integer, extract(month from current_date)::integer, ABS(s2.payroll_start_day::integer)) - INTERVAL '1 MONTH')::DATE
+                                ELSE 
+                                    make_date(extract(year from current_date)::integer, extract(month from current_date)::integer, s2.payroll_start_day::integer)
+                            END, 
+                                make_date(extract(year from current_date)::integer, extract(month from current_date)::integer, s1.adjusted_payroll_end_day),
+                                '1 day'
+                            ) AS d(date) ON js.day_of_week = EXTRACT(DOW FROM d.date)::integer
+                            LEFT JOIN (
+                                SELECT job_id, SUM(rate) AS rate
+                                FROM payroll_taxes
+                                GROUP BY job_id
+                            ) pt ON j.job_id = pt.job_id
+                        WHERE 
+                            j.job_id = $1 
+                            AND d.date >= CASE
+                                WHEN s2.payroll_start_day::integer < 0 THEN
+                                    (make_date(extract(year from current_date)::integer, extract(month from current_date)::integer, ABS(s2.payroll_start_day::integer)) - INTERVAL '1 MONTH')::DATE
+                                ELSE 
+                                    make_date(extract(year from current_date)::integer, extract(month from current_date)::integer, s2.payroll_start_day::integer)
+                            END
+                    )
+                    SELECT
+                        start_date,
+                        end_date,
+                        COUNT(work_date) AS work_days,
+                        SUM(hours_worked_per_day * hourly_rate) AS gross_pay,
+                        SUM(hours_worked_per_day * hourly_rate * (1 - tax_rate)) AS net_pay,
+                        SUM(hours_worked_per_day) AS hours_worked
+                    FROM 
+                        work_days_and_hours
+                    GROUP BY 
+                        start_date, end_date
+                    ORDER BY 
+                        start_date, end_date;
+            `,
+            [id],
+        );
+
+        if (payrolls.length === 0) {
+            response.status(404).send('No payrolls for job or not found');
+            return;
+        }
+
+        const { rows: jobResults } = await client.query(
+            `
+                SELECT name
+                    FROM jobs
+                    WHERE id = $1
+            `,
+            [id],
+        );
+
+        returnObj = {
+            id,
+            name: jobResults[0].name,
+            payrolls,
+        };
+
+        response.status(200).json(returnObj);
+    } catch (error) {
+        logger.error(error); // Log the error on the server side
+        handleError(response, `Error getting payrolls for job id of ${id}`);
     } finally {
         client.release(); // Release the client back to the pool
     }
