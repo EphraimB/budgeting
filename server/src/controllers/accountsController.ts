@@ -7,22 +7,9 @@ import pool from '../config/db.js';
 
 /**
  *
- * @param account - Account object to parse
- * @returns - Parsed account object
- */
-const parseAccounts = (account: Record<string, string>): Account => ({
-    accountId: parseInt(account.account_id),
-    accountName: account.account_name,
-    accountBalance: parseFloat(account.account_balance),
-    dateCreated: account.date_created,
-    dateModified: account.date_modified,
-});
-
-/**
- *
  * @param request - Request object
  * @param response - Response object
- * Sends a response with all accounts or a single account
+ * Sends a response with all accounts
  */
 export const getAccounts = async (
     request: Request,
@@ -61,6 +48,12 @@ export const getAccounts = async (
     }
 };
 
+/**
+ *
+ * @param request - Request object
+ * @param response - Response object
+ * Sends a response with a single account
+ */
 export const getAccountsById = async (
     request: Request,
     response: Response,
