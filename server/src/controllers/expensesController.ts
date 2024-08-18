@@ -89,13 +89,23 @@ export const getExpenses = async (
                             END)
                         -- Annual frequency
                         WHEN frequency_type = 3 THEN 
-                            -- Calculate the next date based on the month and day
-                            CASE 
-                                WHEN now()::date <= make_date(extract('year' from now())::int, frequency_month_of_year::int, frequency_day_of_month::int) THEN
-                                    make_date(extract('year' from now())::int, frequency_month_of_year::int, frequency_day_of_month::int)
+                            -- Calculate the base next year date
+                            (begin_date + interval '1 year' * frequency_type_variable)::date +
+                            -- Adjust for frequency_day_of_week (if provided)
+                            (CASE 
+                                WHEN frequency_day_of_week IS NOT NULL THEN
+                                    -- Calculate day difference and add it as an interval
+                                    interval '1 day' * ((frequency_day_of_week - extract('dow' from (begin_date + interval '1 month' * frequency_type_variable)::date) + 7) % 7)
                                 ELSE
-                                    make_date(extract('year' from now())::int + 1, frequency_month_of_year::int, frequency_day_of_month::int)
-                            END
+                                    interval '0 day'
+                            END) +
+                            -- Adjust for week_of_month (if provided)
+                            (CASE 
+                                WHEN frequency_week_of_month IS NOT NULL THEN
+                                    interval '1 week' * frequency_week_of_month
+                                ELSE
+                                    interval '0 day'
+                            END)
                         ELSE 
                             NULL
                     END AS next_date,
@@ -172,13 +182,23 @@ export const getExpenses = async (
                             END)
                         -- Annual frequency
                         WHEN frequency_type = 3 THEN 
-                            -- Calculate the next date based on the month and day
-                            CASE 
-                                WHEN now()::date <= make_date(extract('year' from now())::int, frequency_month_of_year::int, frequency_day_of_month::int) THEN
-                                    make_date(extract('year' from now())::int, frequency_month_of_year::int, frequency_day_of_month::int)
+                            -- Calculate the base next year date
+                            (begin_date + interval '1 year' * frequency_type_variable)::date +
+                            -- Adjust for frequency_day_of_week (if provided)
+                            (CASE 
+                                WHEN frequency_day_of_week IS NOT NULL THEN
+                                    -- Calculate day difference and add it as an interval
+                                    interval '1 day' * ((frequency_day_of_week - extract('dow' from (begin_date + interval '1 month' * frequency_type_variable)::date) + 7) % 7)
                                 ELSE
-                                    make_date(extract('year' from now())::int + 1, frequency_month_of_year::int, frequency_day_of_month::int)
-                            END
+                                    interval '0 day'
+                            END) +
+                            -- Adjust for week_of_month (if provided)
+                            (CASE 
+                                WHEN frequency_week_of_month IS NOT NULL THEN
+                                    interval '1 week' * frequency_week_of_month
+                                ELSE
+                                    interval '0 day'
+                            END)
                         ELSE 
                             NULL
                     END AS next_date,
@@ -290,15 +310,25 @@ export const getExpensesById = async (
                                 ELSE
                                     interval '0 day'
                             END)
-                        -- Annual frequency
+                       -- Annual frequency
                         WHEN frequency_type = 3 THEN 
-                            -- Calculate the next date based on the month and day
-                            CASE 
-                                WHEN now()::date <= make_date(extract('year' from now())::int, frequency_month_of_year::int, frequency_day_of_month::int) THEN
-                                    make_date(extract('year' from now())::int, frequency_month_of_year::int, frequency_day_of_month::int)
+                            -- Calculate the base next year date
+                            (begin_date + interval '1 year' * frequency_type_variable)::date +
+                            -- Adjust for frequency_day_of_week (if provided)
+                            (CASE 
+                                WHEN frequency_day_of_week IS NOT NULL THEN
+                                    -- Calculate day difference and add it as an interval
+                                    interval '1 day' * ((frequency_day_of_week - extract('dow' from (begin_date + interval '1 month' * frequency_type_variable)::date) + 7) % 7)
                                 ELSE
-                                    make_date(extract('year' from now())::int + 1, frequency_month_of_year::int, frequency_day_of_month::int)
-                            END
+                                    interval '0 day'
+                            END) +
+                            -- Adjust for week_of_month (if provided)
+                            (CASE 
+                                WHEN frequency_week_of_month IS NOT NULL THEN
+                                    interval '1 week' * frequency_week_of_month
+                                ELSE
+                                    interval '0 day'
+                            END)
                         ELSE 
                             NULL
                     END AS next_date,
@@ -375,13 +405,23 @@ export const getExpensesById = async (
                             END)
                         -- Annual frequency
                         WHEN frequency_type = 3 THEN 
-                            -- Calculate the next date based on the month and day
-                            CASE 
-                                WHEN now()::date <= make_date(extract('year' from now())::int, frequency_month_of_year::int, frequency_day_of_month::int) THEN
-                                    make_date(extract('year' from now())::int, frequency_month_of_year::int, frequency_day_of_month::int)
+                            -- Calculate the base next year date
+                            (begin_date + interval '1 year' * frequency_type_variable)::date +
+                            -- Adjust for frequency_day_of_week (if provided)
+                            (CASE 
+                                WHEN frequency_day_of_week IS NOT NULL THEN
+                                    -- Calculate day difference and add it as an interval
+                                    interval '1 day' * ((frequency_day_of_week - extract('dow' from (begin_date + interval '1 month' * frequency_type_variable)::date) + 7) % 7)
                                 ELSE
-                                    make_date(extract('year' from now())::int + 1, frequency_month_of_year::int, frequency_day_of_month::int)
-                            END
+                                    interval '0 day'
+                            END) +
+                            -- Adjust for week_of_month (if provided)
+                            (CASE 
+                                WHEN frequency_week_of_month IS NOT NULL THEN
+                                    interval '1 week' * frequency_week_of_month
+                                ELSE
+                                    interval '0 day'
+                            END)
                         ELSE 
                             NULL
                     END AS next_date,
