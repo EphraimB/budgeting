@@ -93,7 +93,7 @@ export const getAccountsById = async (
         response.status(200).json(rows);
     } catch (error) {
         logger.error(error); // Log the error on the server side
-        handleError(response, `Error getting account of ${id}`);
+        handleError(response, `Error getting account for id of ${id}`);
     } finally {
         client.release(); // Release the client back to the pool
     }
@@ -155,7 +155,7 @@ export const updateAccount = async (
             [id],
         );
 
-        if (account.length === 0) {
+        if (account[0].id === 0) {
             response.status(404).send('Account not found');
             return;
         }
@@ -203,7 +203,7 @@ export const deleteAccount = async (
             [id],
         );
 
-        if (account.length === 0) {
+        if (account[0].id === 0) {
             response.status(404).send('Account not found');
             return;
         }

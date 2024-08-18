@@ -5,6 +5,7 @@ import {
     createTransaction,
     updateTransaction,
     deleteTransaction,
+    getTransactionsById,
 } from '../controllers/transactionHistoryController.js';
 import validateRequest from '../utils/validateRequest.js';
 
@@ -13,10 +14,6 @@ const router: Router = express.Router();
 router.get(
     '/',
     [
-        query('id')
-            .optional()
-            .isInt({ min: 1 })
-            .withMessage('ID must be a number'),
         query('accountId')
             .optional()
             .isInt({ min: 1 })
@@ -24,6 +21,19 @@ router.get(
         validateRequest,
     ],
     getTransactions,
+);
+
+router.get(
+    ':id',
+    [
+        param('id').isInt({ min: 1 }).withMessage('ID must be a number'),
+        query('accountId')
+            .optional()
+            .isInt({ min: 1 })
+            .withMessage('Account ID must be a number'),
+        validateRequest,
+    ],
+    getTransactionsById,
 );
 
 router.post(
