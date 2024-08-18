@@ -30,7 +30,19 @@ const router: Router = express.Router();
 router.get(
     '/',
     [
-        query('id')
+        query('accountId')
+            .optional()
+            .isInt({ min: 1 })
+            .withMessage('Account ID must be a number'),
+        validateRequest,
+    ],
+    getExpenses,
+);
+
+router.get(
+    '/:id',
+    [
+        param('id')
             .optional()
             .isInt({ min: 1 })
             .withMessage('ID must be a number'),
@@ -40,7 +52,7 @@ router.get(
             .withMessage('Account ID must be a number'),
         validateRequest,
     ],
-    getExpenses,
+    getExpensesById,
 );
 
 router.post(

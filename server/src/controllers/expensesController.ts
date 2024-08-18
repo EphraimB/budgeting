@@ -50,7 +50,7 @@ export const getExpenses = async (
     request: Request,
     response: Response,
 ): Promise<void> => {
-    const { id, accountId } = request.query;
+    const { accountId } = request.query;
 
     const client = await pool.connect(); // Get a client from the pool
 
@@ -58,50 +58,282 @@ export const getExpenses = async (
         let query: string;
         let params: any[];
 
-        if (id && accountId) {
-            query = expenseQueries.getExpenseByIdAndAccountId;
-            params = [id, accountId];
-        } else if (id) {
-            query = expenseQueries.getExpenseById;
-            params = [id];
-        } else if (accountId) {
-            query = expenseQueries.getExpensesByAccountId;
+        if (accountId) {
+            query = `
+                SELECT id, account_id, tax_id, cron_job_id, amount, title, description, json_agg(
+                        json_build_object(
+                            'type', frequency_type,
+                            'typeVariable', frequency_type_variable,
+                          	'dayOfMonth', frequency_day_of_month,
+                          	'dayOfWeek', frequency_day_of_week,
+                          	'weekOfMonth', frequency_week_of_month,
+                          	'monthOfYear', frequency_month_of_year	
+                        )
+                    ) AS frequency,
+                    subsidized,
+                     json_agg(
+                        json_build_object(
+                          'beginDate', begin_date,
+                          'endDate', end_date
+                          )
+                       ) AS dates,
+                       CASE 
+                        -- Daily frequency
+                        WHEN frequency_type = 0 THEN 
+                            -- Daily billing
+                            now()::date + interval '1 day'
+                        -- Weekly frequency
+                        WHEN frequency_type = 1 THEN 
+                            -- Calculate the next date based on the day of the week
+                            date_trunc('week', now()) + interval '1 day' * (frequency_day_of_week::int - extract('dow' from now())::int)
+                        -- Monthly frequency
+                        WHEN frequency_type = 2 THEN 
+                            -- Default to the next month if day_of_month is not set
+                            begin_date + interval '1 month' * frequency_type_variable
+                        -- Annual frequency
+                        WHEN frequency_type = 3 THEN 
+                            -- Calculate the next date based on the month and day
+                            CASE 
+                                WHEN now()::date <= make_date(extract('year' from now())::int, frequency_month_of_year::int, frequency_day_of_month::int) THEN
+                                    make_date(extract('year' from now())::int, frequency_month_of_year::int, frequency_day_of_month::int)
+                                ELSE
+                                    make_date(extract('year' from now())::int + 1, frequency_month_of_year::int, frequency_day_of_month::int)
+                            END
+                        ELSE 
+                            NULL
+                    END AS next_date,
+                                    json_agg(
+                                        json_build_object(
+                                        'dateCreated', date_created,
+                                        'dateModified', date_modified
+                                        )
+                                    ) AS creation_dates
+                FROM expenses
+                WHERE account_id = $1
+                GROUP BY id
+            `;
             params = [accountId];
         } else {
-            query = expenseQueries.getAllExpenses;
+            query = `
+                SELECT id, account_id, tax_id, cron_job_id, amount, title, description, json_agg(
+                        json_build_object(
+                            'type', frequency_type,
+                            'typeVariable', frequency_type_variable,
+                          	'dayOfMonth', frequency_day_of_month,
+                          	'dayOfWeek', frequency_day_of_week,
+                          	'weekOfMonth', frequency_week_of_month,
+                          	'monthOfYear', frequency_month_of_year	
+                        )
+                    ) AS frequency,
+                    subsidized,
+                     json_agg(
+                        json_build_object(
+                          'beginDate', begin_date,
+                          'endDate', end_date
+                          )
+                       ) AS dates,
+                       CASE 
+                        -- Daily frequency
+                        WHEN frequency_type = 0 THEN 
+                            -- Daily billing
+                            now()::date + interval '1 day'
+                        -- Weekly frequency
+                        WHEN frequency_type = 1 THEN 
+                            -- Calculate the next date based on the day of the week
+                            date_trunc('week', now()) + interval '1 day' * (frequency_day_of_week::int - extract('dow' from now())::int)
+                        -- Monthly frequency
+                        WHEN frequency_type = 2 THEN 
+                            -- Default to the next month if day_of_month is not set
+                            begin_date + interval '1 month' * frequency_type_variable
+                        -- Annual frequency
+                        WHEN frequency_type = 3 THEN 
+                            -- Calculate the next date based on the month and day
+                            CASE 
+                                WHEN now()::date <= make_date(extract('year' from now())::int, frequency_month_of_year::int, frequency_day_of_month::int) THEN
+                                    make_date(extract('year' from now())::int, frequency_month_of_year::int, frequency_day_of_month::int)
+                                ELSE
+                                    make_date(extract('year' from now())::int + 1, frequency_month_of_year::int, frequency_day_of_month::int)
+                            END
+                        ELSE 
+                            NULL
+                    END AS next_date,
+                                    json_agg(
+                                        json_build_object(
+                                        'dateCreated', date_created,
+                                        'dateModified', date_modified
+                                        )
+                                    ) AS creation_dates
+                FROM expenses
+                GROUP BY id
+            `;
             params = [];
         }
 
         const { rows } = await client.query(query, params);
 
-        if (id && rows.length === 0) {
-            response.status(404).send('Expense not found');
-            return;
-        }
-
-        const modifiedExpenses: Expense[] = rows.map(
-            (row: Record<string, string>) => parseExpenses(row),
-        );
-
-        modifiedExpenses.map((expense: Expense) => {
+        rows.map((expense: Expense) => {
             const nextExpenseDate = nextTransactionFrequencyDate(expense);
 
             expense.nextDate = nextExpenseDate;
         });
 
-        response.status(200).json(modifiedExpenses);
+        response.status(200).json(rows);
     } catch (error) {
         logger.error(error); // Log the error on the server side
-        handleError(
-            response,
-            `Error getting ${
-                id
-                    ? 'expense'
-                    : accountId
-                    ? 'expenses for given account id'
-                    : 'expenses'
-            }`,
-        );
+        handleError(response, 'Error getting expenses');
+    } finally {
+        client.release(); // Release the client back to the pool
+    }
+};
+
+/**
+ *
+ * @param request - Request object
+ * @param response - Response object
+ * Sends a response with the expenses
+ */
+export const getExpensesById = async (
+    request: Request,
+    response: Response,
+): Promise<void> => {
+    const { id } = request.params;
+    const { accountId } = request.query;
+
+    const client = await pool.connect(); // Get a client from the pool
+
+    try {
+        let query: string;
+        let params: any[];
+
+        if (accountId) {
+            query = `
+                SELECT id, account_id, tax_id, cron_job_id, amount, title, description, json_agg(
+                        json_build_object(
+                            'type', frequency_type,
+                            'typeVariable', frequency_type_variable,
+                          	'dayOfMonth', frequency_day_of_month,
+                          	'dayOfWeek', frequency_day_of_week,
+                          	'weekOfMonth', frequency_week_of_month,
+                          	'monthOfYear', frequency_month_of_year	
+                        )
+                    ) AS frequency,
+                    subsidized,
+                     json_agg(
+                        json_build_object(
+                          'beginDate', begin_date,
+                          'endDate', end_date
+                          )
+                       ) AS dates,
+                       CASE 
+                        -- Daily frequency
+                        WHEN frequency_type = 0 THEN 
+                            -- Daily billing
+                            now()::date + interval '1 day'
+                        -- Weekly frequency
+                        WHEN frequency_type = 1 THEN 
+                            -- Calculate the next date based on the day of the week
+                            date_trunc('week', now()) + interval '1 day' * (frequency_day_of_week::int - extract('dow' from now())::int)
+                        -- Monthly frequency
+                        WHEN frequency_type = 2 THEN 
+                            -- Default to the next month if day_of_month is not set
+                            begin_date + interval '1 month' * frequency_type_variable
+                        -- Annual frequency
+                        WHEN frequency_type = 3 THEN 
+                            -- Calculate the next date based on the month and day
+                            CASE 
+                                WHEN now()::date <= make_date(extract('year' from now())::int, frequency_month_of_year::int, frequency_day_of_month::int) THEN
+                                    make_date(extract('year' from now())::int, frequency_month_of_year::int, frequency_day_of_month::int)
+                                ELSE
+                                    make_date(extract('year' from now())::int + 1, frequency_month_of_year::int, frequency_day_of_month::int)
+                            END
+                        ELSE 
+                            NULL
+                    END AS next_date,
+                                    json_agg(
+                                        json_build_object(
+                                        'dateCreated', date_created,
+                                        'dateModified', date_modified
+                                        )
+                                    ) AS creation_dates
+                FROM expenses
+                account_id = $1 AND id = $2
+                GROUP BY id
+            `;
+            params = [id, accountId];
+        } else {
+            query = `
+                SELECT id, account_id, tax_id, cron_job_id, amount, title, description, json_agg(
+                        json_build_object(
+                            'type', frequency_type,
+                            'typeVariable', frequency_type_variable,
+                          	'dayOfMonth', frequency_day_of_month,
+                          	'dayOfWeek', frequency_day_of_week,
+                          	'weekOfMonth', frequency_week_of_month,
+                          	'monthOfYear', frequency_month_of_year	
+                        )
+                    ) AS frequency,
+                    subsidized,
+                     json_agg(
+                        json_build_object(
+                          'beginDate', begin_date,
+                          'endDate', end_date
+                          )
+                       ) AS dates,
+                       CASE 
+                        -- Daily frequency
+                        WHEN frequency_type = 0 THEN 
+                            -- Daily billing
+                            now()::date + interval '1 day'
+                        -- Weekly frequency
+                        WHEN frequency_type = 1 THEN 
+                            -- Calculate the next date based on the day of the week
+                            date_trunc('week', now()) + interval '1 day' * (frequency_day_of_week::int - extract('dow' from now())::int)
+                        -- Monthly frequency
+                        WHEN frequency_type = 2 THEN 
+                            -- Default to the next month if day_of_month is not set
+                            begin_date + interval '1 month' * frequency_type_variable
+                        -- Annual frequency
+                        WHEN frequency_type = 3 THEN 
+                            -- Calculate the next date based on the month and day
+                            CASE 
+                                WHEN now()::date <= make_date(extract('year' from now())::int, frequency_month_of_year::int, frequency_day_of_month::int) THEN
+                                    make_date(extract('year' from now())::int, frequency_month_of_year::int, frequency_day_of_month::int)
+                                ELSE
+                                    make_date(extract('year' from now())::int + 1, frequency_month_of_year::int, frequency_day_of_month::int)
+                            END
+                        ELSE 
+                            NULL
+                    END AS next_date,
+                                    json_agg(
+                                        json_build_object(
+                                        'dateCreated', date_created,
+                                        'dateModified', date_modified
+                                        )
+                                    ) AS creation_dates
+                FROM expenses
+                WHERE id = $1
+                GROUP BY id
+            `;
+            params = [id];
+        }
+
+        const { rows } = await client.query(query, params);
+
+        if (rows.length === 0) {
+            response.status(404).send('Expense not found');
+            return;
+        }
+
+        rows.map((expense: Expense) => {
+            const nextExpenseDate = nextTransactionFrequencyDate(expense);
+
+            expense.nextDate = nextExpenseDate;
+        });
+
+        response.status(200).json(rows);
+    } catch (error) {
+        logger.error(error); // Log the error on the server side
+        handleError(response, `Error getting expenses for id of ${id}`);
     } finally {
         client.release(); // Release the client back to the pool
     }
