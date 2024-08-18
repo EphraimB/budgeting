@@ -8,6 +8,7 @@ import {
     updateExpenseReturnObject,
     deleteExpense,
     deleteExpenseReturnObject,
+    getExpensesById,
 } from '../controllers/expensesController.js';
 import validateRequest from '../utils/validateRequest.js';
 import generateTransactions from '../generation/generateTransactions.js';

@@ -372,23 +372,29 @@ export const createExpense = async (
     try {
         await client.query('BEGIN;');
 
-        const { rows } = await client.query(expenseQueries.createExpense, [
-            accountId,
-            taxId,
-            amount,
-            title,
-            description,
-            frequencyType,
-            frequencyTypeVariable,
-            frequencyDayOfMonth,
-            frequencyDayOfWeek,
-            frequencyWeekOfMonth,
-            frequencyMonthOfYear,
-            subsidized,
-            begin_date,
-        ]);
-
-        const modifiedExpenses = rows.map((row) => parseExpenses(row));
+        const { rows } = await client.query(
+            `
+                INSERT INTO expenses
+                    (account_id, tax_id, amount, title, description, frequency_type, frequency_type_variable, frequency_day_of_month, frequency_day_of_week, frequency_week_of_month, frequency_month_of_year, subsidized, begin_date)
+                    VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13)
+                    RETURNING *
+            `,
+            [
+                accountId,
+                taxId,
+                amount,
+                title,
+                description,
+                frequencyType,
+                frequencyTypeVariable,
+                frequencyDayOfMonth,
+                frequencyDayOfWeek,
+                frequencyWeekOfMonth,
+                frequencyMonthOfYear,
+                subsidized,
+                begin_date,
+            ],
+        );
 
         const jobDetails = {
             frequencyType,
@@ -409,11 +415,11 @@ export const createExpense = async (
         );
         const taxRate = result && result.length > 0 ? result : 0;
 
-        const uniqueId = `expense-${modifiedExpenses[0].id}`;
+        const uniqueId = `expense-${rows[0].id}`;
 
         await client.query(`
             SELECT cron.schedule('${uniqueId}', '${cronDate}',
-            $$INSERT INTO transaction_history (account_id, transaction_amount, transaction_tax_rate, transaction_title, transaction_description) VALUES (${accountId}, ${
+            $$INSERT INTO transaction_history (account_id, amount, tax_rate, title, description) VALUES (${accountId}, ${
                 -amount + amount * subsidized
             }, ${taxRate}, '${title}', '${description}')$$)`);
 
@@ -426,12 +432,12 @@ export const createExpense = async (
 
         await client.query(expenseQueries.updateExpenseWithCronJobId, [
             cronId,
-            modifiedExpenses[0].id,
+            rows[0].id,
         ]);
 
         await client.query('COMMIT;');
 
-        request.expenseId = modifiedExpenses[0].id;
+        request.expenseId = rows[0].id;
 
         next();
     } catch (error) {
