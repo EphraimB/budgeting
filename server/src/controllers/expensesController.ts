@@ -53,8 +53,21 @@ export const getExpenses = async (
                             begin_date::date + interval '1 day' * frequency_type_variable
                         -- Weekly frequency
                         WHEN frequency_type = 1 THEN 
-                            -- Calculate the next date based on the day of the week
-                            date_trunc('week', now()) + interval '1 day' * (frequency_day_of_week::int - extract('dow' from now())::int)
+                            CASE 
+                                WHEN frequency_day_of_week IS NOT NULL THEN
+                                    CASE
+                                        -- If the desired day of the week is today or later this week
+                                        WHEN frequency_day_of_week >= extract('dow' from begin_date) THEN
+                                            begin_date + interval '1 week' * frequency_type_variable + interval '1 day' * (frequency_day_of_week - extract('dow' from now()))
+                                        ELSE
+                                            -- If the desired day of the week is earlier in the week, move to the next week
+                                            begin_date + interval '1 week' * frequency_type_variable + interval '1 day' * frequency_day_of_week
+                                    END
+                                ELSE
+                                    -- Handle the case where frequency_day_of_week is NULL
+                                    -- Return a default value, e.g., the current date or next week's start date
+                                    begin_date + interval '1 week' * frequency_type_variable
+                            END
                         -- Monthly frequency
                         WHEN frequency_type = 2 THEN 
                             -- Calculate the base next month date
@@ -123,8 +136,21 @@ export const getExpenses = async (
                             begin_date::date + interval '1 day' * frequency_type_variable
                         -- Weekly frequency
                         WHEN frequency_type = 1 THEN 
-                            -- Calculate the next date based on the day of the week
-                            date_trunc('week', now()) + interval '1 day' * (frequency_day_of_week::int - extract('dow' from now())::int)
+                        CASE 
+                            WHEN frequency_day_of_week IS NOT NULL THEN
+                                CASE
+                                    -- If the desired day of the week is today or later this week
+                                    WHEN frequency_day_of_week >= extract('dow' from begin_date) THEN
+                                        begin_date + interval '1 week' * frequency_type_variable + interval '1 day' * (frequency_day_of_week - extract('dow' from now()))
+                                    ELSE
+                                        -- If the desired day of the week is earlier in the week, move to the next week
+                                        begin_date + interval '1 week' * frequency_type_variable + interval '1 day' * frequency_day_of_week
+                                END
+                            ELSE
+                                -- Handle the case where frequency_day_of_week is NULL
+                                -- Return a default value, e.g., the current date or next week's start date
+                                begin_date + interval '1 week' * frequency_type_variable
+                        END
                         -- Monthly frequency
                         WHEN frequency_type = 2 THEN 
                             -- Calculate the base next month date
@@ -230,8 +256,21 @@ export const getExpensesById = async (
                             begin_date::date + interval '1 day' * frequency_type_variable
                         -- Weekly frequency
                         WHEN frequency_type = 1 THEN 
-                            -- Calculate the next date based on the day of the week
-                            date_trunc('week', now()) + interval '1 day' * (frequency_day_of_week::int - extract('dow' from now())::int)
+                        CASE 
+                            WHEN frequency_day_of_week IS NOT NULL THEN
+                                CASE
+                                    -- If the desired day of the week is today or later this week
+                                    WHEN frequency_day_of_week >= extract('dow' from begin_date) THEN
+                                        begin_date + interval '1 week' * frequency_type_variable + interval '1 day' * (frequency_day_of_week - extract('dow' from now()))
+                                    ELSE
+                                        -- If the desired day of the week is earlier in the week, move to the next week
+                                        begin_date + interval '1 week' * frequency_type_variable + interval '1 day' * frequency_day_of_week
+                                END
+                            ELSE
+                                -- Handle the case where frequency_day_of_week is NULL
+                                -- Return a default value, e.g., the current date or next week's start date
+                                begin_date + interval '1 week' * frequency_type_variable
+                        END
                         -- Monthly frequency
                         WHEN frequency_type = 2 THEN 
                             -- Calculate the base next month date
@@ -300,8 +339,21 @@ export const getExpensesById = async (
                             begin_date::date + interval '1 day' * frequency_type_variable
                         -- Weekly frequency
                         WHEN frequency_type = 1 THEN 
-                            -- Calculate the next date based on the day of the week
-                            date_trunc('week', now()) + interval '1 day' * (frequency_day_of_week::int - extract('dow' from now())::int)
+                        CASE 
+                            WHEN frequency_day_of_week IS NOT NULL THEN
+                                CASE
+                                    -- If the desired day of the week is today or later this week
+                                    WHEN frequency_day_of_week >= extract('dow' from begin_date) THEN
+                                        begin_date + interval '1 week' * frequency_type_variable + interval '1 day' * (frequency_day_of_week - extract('dow' from now()))
+                                    ELSE
+                                        -- If the desired day of the week is earlier in the week, move to the next week
+                                        begin_date + interval '1 week' * frequency_type_variable + interval '1 day' * frequency_day_of_week
+                                END
+                            ELSE
+                                -- Handle the case where frequency_day_of_week is NULL
+                                -- Return a default value, e.g., the current date or next week's start date
+                                begin_date + interval '1 week' * frequency_type_variable
+                        END
                         -- Monthly frequency
                         WHEN frequency_type = 2 THEN 
                             -- Calculate the base next month date
