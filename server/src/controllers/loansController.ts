@@ -1,44 +1,8 @@
 import { type NextFunction, type Request, type Response } from 'express';
-import { loanQueries, cronJobQueries } from '../models/queryData.js';
-import {
-    handleError,
-    parseIntOrFallback,
-    nextTransactionFrequencyDate,
-} from '../utils/helperFunctions.js';
-import { type Loan } from '../types/types.js';
+import { handleError } from '../utils/helperFunctions.js';
 import { logger } from '../config/winston.js';
 import determineCronValues from '../crontab/determineCronValues.js';
-import dayjs, { Dayjs } from 'dayjs';
 import pool from '../config/db.js';
-
-/**
- *
- * @param loan - Loan object
- * @returns - Loan object with parsed values
- */
-const parseLoan = (loan: Record<string, string>): Loan => ({
-    id: parseInt(loan.loan_id),
-    accountId: parseInt(loan.account_id),
-    amount: parseFloat(loan.loan_amount),
-    planAmount: parseFloat(loan.loan_plan_amount),
-    recipient: loan.loan_recipient,
-    title: loan.loan_title,
-    description: loan.loan_description,
-    frequencyType: parseInt(loan.frequency_type),
-    frequencyTypeVariable: parseInt(loan.frequency_type_variable),
-    frequencyDayOfMonth: parseIntOrFallback(loan.frequency_day_of_month),
-    frequencyDayOfWeek: parseIntOrFallback(loan.frequency_day_of_week),
-    frequencyWeekOfMonth: parseIntOrFallback(loan.frequency_week_of_month),
-    frequencyMonthOfYear: parseIntOrFallback(loan.frequency_month_of_year),
-    interestRate: parseFloat(loan.loan_interest_rate),
-    interestFrequencyType: parseInt(loan.loan_interest_frequency_type),
-    subsidized: parseFloat(loan.loan_subsidized),
-    fullyPaidBack: loan.loan_fully_paid_back,
-    beginDate: loan.loan_begin_date,
-    endDate: loan.loan_end_date ?? null,
-    dateCreated: loan.date_created,
-    dateModified: loan.date_modified,
-});
 
 /**
  *
@@ -283,21 +247,7 @@ export const getLoans = async (
 
         const { rows } = await client.query(query, params);
 
-        const loans: Loan[] = rows.map((loan) => {
-            // parse loan first
-            const parsedLoan = parseLoan(loan);
-
-            // then add fully_paid_back field in request.fullyPaidBackDates
-            parsedLoan.fullyPaidBack = request.fullyPaidBackDates[
-                parseInt(loan.loan_id)
-            ]
-                ? request.fullyPaidBackDates[parseInt(loan.loan_id)]
-                : null;
-
-            return parsedLoan;
-        });
-
-        response.status(200).json(loans);
+        response.status(200).json(rows);
     } catch (error) {
         logger.error(error); // Log the error on the server side
         handleError(response, 'Error getting loans');
@@ -556,21 +506,7 @@ export const getLoansById = async (
             return;
         }
 
-        const loans: Loan[] = rows.map((loan) => {
-            // parse loan first
-            const parsedLoan = parseLoan(loan);
-
-            // then add fully_paid_back field in request.fullyPaidBackDates
-            parsedLoan.fullyPaidBack = request.fullyPaidBackDates[
-                parseInt(loan.loan_id)
-            ]
-                ? request.fullyPaidBackDates[parseInt(loan.loan_id)]
-                : null;
-
-            return parsedLoan;
-        });
-
-        response.status(200).json(loans);
+        response.status(200).json(rows);
     } catch (error) {
         logger.error(error); // Log the error on the server side
         handleError(response, `Error getting loans for id of ${id}`);
@@ -983,21 +919,7 @@ export const updateLoanReturnObject = async (
             [loanId],
         );
 
-        const modifiedLoans: Loan[] = rows.map((loan) => {
-            // parse loan first
-            const parsedLoan = parseLoan(loan);
-
-            // then add fully_paid_back field in request.fullyPaidBackDates
-            parsedLoan.fullyPaidBack = request.fullyPaidBackDates[
-                parseInt(loan.id)
-            ]
-                ? request.fullyPaidBackDates[parseInt(loan.id)]
-                : null;
-
-            return parsedLoan;
-        });
-
-        response.status(200).json(modifiedLoans);
+        response.status(200).json(rows);
     } catch (error) {
         logger.error(error); // Log the error on the server side
         handleError(response, 'Error getting loan');
