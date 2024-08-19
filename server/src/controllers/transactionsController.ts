@@ -21,10 +21,68 @@ export const getTransactionsByAccountId = async (
     try {
         const { rows } = await client.query(
             `
-                
+                WITH transaction_details AS (
+                -- Get all transactions and calculate amount after tax
+                SELECT 
+                    th.account_id,
+                    th.title,
+                    th.description,
+                    th.date_created AS date,
+                    th.amount + (th.amount * th.tax_rate) AS amount
+                FROM 
+                    transaction_history th
+            ),
+            current_balance AS (
+                -- Calculate the current balance for each account
+                SELECT 
+                    account_id,
+                    COALESCE(SUM(amount), 0) AS current_balance
+                FROM 
+                    transaction_details
+                GROUP BY 
+                    account_id
+            ),
+            transaction_with_balance AS (
+                -- Calculate the remaining balance after each transaction
+                SELECT 
+                    td.account_id,
+                    td.title,
+                    td.description,
+                    td.date,
+                    td.amount,
+                    SUM(td.amount) OVER (PARTITION BY td.account_id ORDER BY td.date DESC) AS running_balance
+                FROM 
+                    transaction_details td
+            )
+            SELECT
+                a.id AS account_id,
+                COALESCE(cb.current_balance, 0) AS current_balance,
+                COALESCE(
+                    JSON_AGG(
+                        JSON_BUILD_OBJECT(
+                            'title', twb.title,
+                            'description', twb.description,
+                            'amount', twb.amount,
+                            'date', twb.date,
+                            'balance', cb.current_balance - twb.running_balance + twb.amount
+                        ) ORDER BY twb.date
+                    ) FILTER (WHERE twb.account_id IS NOT NULL), '[]'::json
+                ) AS transactions
+            FROM 
+                accounts a
+            LEFT JOIN 
+                current_balance cb ON a.id = cb.account_id
+            LEFT JOIN 
+                transaction_with_balance twb ON a.id = twb.account_id
+            GROUP BY 
+                a.id, cb.current_balance
+            ORDER BY 
+                a.id;
             `,
             [accountId, fromDate, toDate],
         );
+
+        response.status(200).json(rows);
     } catch (error) {
         logger.error(error); // Log the error on the server side
         handleError(response, 'Error getting generated transactions');
