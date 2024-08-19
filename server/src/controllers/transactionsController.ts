@@ -32,8 +32,25 @@ export const getTransactionsByAccountId = async (
                 FROM 
                     transaction_history th
             ),
+            expenses_details AS (
+                -- Get all expenses and calculate amount after tax as negative amounts to subtract from balance
+                SELECT 
+                    e.account_id,
+                    e.title,
+                    e.description,
+                    e.begin_date + interval '1 month' AS date,
+                    -(e.amount + (e.amount * COALESCE((SELECT rate FROM taxes WHERE id = e.tax_id), 0))) AS amount
+                FROM 
+                    expenses e
+            ),
+            combined_details AS (
+                -- Combine transaction details and expense details into one result set
+                SELECT * FROM transaction_details
+                UNION ALL
+                SELECT * FROM expenses_details
+            ),
             current_balance AS (
-                -- Calculate the current balance for each account
+                -- Calculate the current balance for each account based on transactions only
                 SELECT 
                     account_id,
                     COALESCE(SUM(amount), 0) AS current_balance
@@ -43,16 +60,16 @@ export const getTransactionsByAccountId = async (
                     account_id
             ),
             transaction_with_balance AS (
-                -- Calculate the remaining balance after each transaction
+                -- Calculate the running balance after each transaction and expense (combined in chronological order)
                 SELECT 
-                    td.account_id,
-                    td.title,
-                    td.description,
-                    td.date,
-                    td.amount,
-                    SUM(td.amount) OVER (PARTITION BY td.account_id ORDER BY td.date DESC) AS running_balance
+                    cd.account_id,
+                    cd.title,
+                    cd.description,
+                    cd.date,
+                    cd.amount,
+                    SUM(cd.amount) OVER (PARTITION BY cd.account_id ORDER BY cd.date ASC) AS running_balance
                 FROM 
-                    transaction_details td
+                    combined_details cd
             )
             SELECT
                 a.id AS account_id,
@@ -64,7 +81,11 @@ export const getTransactionsByAccountId = async (
                             'description', twb.description,
                             'amount', twb.amount,
                             'date', twb.date,
-                            'balance', cb.current_balance - twb.running_balance + twb.amount
+                            'balance', 
+                                CASE 
+                                    WHEN twb.running_balance IS NOT NULL THEN twb.running_balance
+                                    ELSE NULL 
+                                END
                         ) ORDER BY twb.date
                     ) FILTER (WHERE twb.account_id IS NOT NULL), '[]'::json
                 ) AS transactions
