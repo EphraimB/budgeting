@@ -21,7 +21,85 @@ export const getTransactionsByAccountId = async (
     try {
         const { rows } = await client.query(
             `
-                WITH transaction_details AS (
+                WITH RECURSIVE expenses_recurring AS (
+                -- Initialize with the starting dates of expenses
+                SELECT 
+                    e.account_id,
+                    e.title,
+                    e.description,
+                    e.begin_date AS date,
+                    -e.amount + (-e.amount * COALESCE((SELECT rate FROM taxes WHERE id = e.tax_id), 0)) AS amount,
+                    e.end_date,
+                    e.frequency_type,
+                    e.frequency_type_variable,
+                    e.frequency_day_of_week,
+                    e.frequency_week_of_month,
+                    e.frequency_month_of_year
+                FROM 
+                    expenses e
+                UNION ALL
+                -- Generate subsequent billing dates based on frequency type
+                SELECT
+                    er.account_id,
+                    er.title,
+                    er.description,
+                    CASE
+                        -- Daily frequency
+                        WHEN er.frequency_type = 0 THEN er.date + interval '1 day' * er.frequency_type_variable
+                        -- Weekly frequency
+                        WHEN er.frequency_type = 1 THEN 
+                            CASE
+                                WHEN extract('dow' from er.date) <= er.frequency_day_of_week THEN
+                                    er.date + interval '1 week' * er.frequency_type_variable + interval '1 day' * (er.frequency_day_of_week - extract('dow' from er.date))
+                                ELSE
+                                    er.date + interval '1 week' * er.frequency_type_variable + interval '1 day' * (7 - extract('dow' from er.date) + er.frequency_day_of_week)
+                            END
+                        -- Monthly frequency
+                        WHEN er.frequency_type = 2 THEN
+                            (er.date + interval '1 month' * er.frequency_type_variable)::date +
+                            (CASE 
+                                WHEN er.frequency_day_of_week IS NOT NULL THEN
+                                    interval '1 day' * ((er.frequency_day_of_week - extract('dow' from (er.date + interval '1 month' * er.frequency_type_variable)::date) + 7) % 7)
+                                ELSE
+                                    interval '0 day'
+                            END) +
+                            (CASE 
+                                WHEN er.frequency_week_of_month IS NOT NULL THEN
+                                    interval '1 week' * er.frequency_week_of_month
+                                ELSE
+                                    interval '0 day'
+                            END)
+                        -- Annual frequency
+                        WHEN er.frequency_type = 3 THEN
+                            (er.date + interval '1 year' * er.frequency_type_variable)::date +
+                            (CASE 
+                                WHEN er.frequency_day_of_week IS NOT NULL THEN
+                                    interval '1 day' * ((er.frequency_day_of_week - extract('dow' from (er.date + interval '1 year' * er.frequency_type_variable)::date) + 7) % 7)
+                                ELSE
+                                    interval '0 day'
+                            END) +
+                            (CASE 
+                                WHEN er.frequency_week_of_month IS NOT NULL THEN
+                                    interval '1 week' * er.frequency_week_of_month
+                                ELSE
+                                    interval '0 day'
+                            END)
+                        ELSE 
+                            NULL
+                    END AS date,
+                    er.amount,
+                    er.end_date,
+                    er.frequency_type,
+                    er.frequency_type_variable,
+                    er.frequency_day_of_week,
+                    er.frequency_week_of_month,
+                    er.frequency_month_of_year
+                FROM 
+                    expenses_recurring er
+                WHERE
+                    (er.date + interval '1 day') <= '2024-12-31'
+            ),
+            transaction_details AS (
                 -- Get all transactions and calculate amount after tax
                 SELECT 
                     th.account_id,
@@ -32,25 +110,14 @@ export const getTransactionsByAccountId = async (
                 FROM 
                     transaction_history th
             ),
-            expenses_details AS (
-                -- Get all expenses and calculate amount after tax as negative amounts to subtract from balance
-                SELECT 
-                    e.account_id,
-                    e.title,
-                    e.description,
-                    e.begin_date + interval '1 month' AS date,
-                    -(e.amount + (e.amount * COALESCE((SELECT rate FROM taxes WHERE id = e.tax_id), 0))) AS amount
-                FROM 
-                    expenses e
-            ),
             combined_details AS (
-                -- Combine transaction details and expense details into one result set
-                SELECT * FROM transaction_details
-                UNION ALL
-                SELECT * FROM expenses_details
+                -- Combine transaction details and the recurring expense details
+                --SELECT * FROM transaction_details
+                --UNION ALL
+                SELECT account_id, title, description, date, amount FROM expenses_recurring WHERE date >= now()
             ),
             current_balance AS (
-                -- Calculate the current balance for each account based on transactions only
+                -- Calculate the current balance for each account based on transactions
                 SELECT 
                     account_id,
                     COALESCE(SUM(amount), 0) AS current_balance
@@ -60,16 +127,28 @@ export const getTransactionsByAccountId = async (
                     account_id
             ),
             transaction_with_balance AS (
-                -- Calculate the running balance after each transaction and expense (combined in chronological order)
+                -- Calculate the remaining balance after each transaction (reversed for transactions)
                 SELECT 
+                    td.account_id,
+                    td.title,
+                    td.description,
+                    td.date,
+                    td.amount,
+                    SUM(td.amount) OVER (PARTITION BY td.account_id ORDER BY td.date DESC) AS running_balance
+                FROM 
+                    transaction_details td
+                UNION
+                    SELECT
                     cd.account_id,
                     cd.title,
                     cd.description,
                     cd.date,
                     cd.amount,
-                    SUM(cd.amount) OVER (PARTITION BY cd.account_id ORDER BY cd.date ASC) AS running_balance
+                    SUM(-cd.amount) OVER (PARTITION BY cd.account_id ORDER BY cd.date) AS running_balance
                 FROM 
                     combined_details cd
+                WHERE 
+                    cd.date < '2024-12-31'
             )
             SELECT
                 a.id AS account_id,
@@ -83,7 +162,7 @@ export const getTransactionsByAccountId = async (
                             'date', twb.date,
                             'balance', 
                                 CASE 
-                                    WHEN twb.running_balance IS NOT NULL THEN twb.running_balance
+                                    WHEN twb.running_balance IS NOT NULL THEN cb.current_balance - twb.running_balance + twb.amount 
                                     ELSE NULL 
                                 END
                         ) ORDER BY twb.date
