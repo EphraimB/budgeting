@@ -30,10 +30,30 @@ const router: Router = express.Router();
 router.get(
     '/',
     [
-        query('id')
+        query('accountId')
             .optional()
             .isInt({ min: 1 })
-            .withMessage('ID must be a number'),
+            .withMessage('Account ID must be a number'),
+        validateRequest,
+    ],
+    setQueries,
+    getCurrentBalance,
+    getTransactionsByAccount,
+    getIncomeByAccount,
+    getExpensesByAccount,
+    getLoansByAccount,
+    getPayrollsMiddleware,
+    getTransfersByAccount,
+    getCommuteExpensesByAccount,
+    getWishlistsByAccount,
+    generateTransactions,
+    getLoans,
+);
+
+router.get(
+    '/:id',
+    [
+        param('id').isInt({ min: 1 }).withMessage('ID must be a number'),
         query('accountId')
             .optional()
             .isInt({ min: 1 })

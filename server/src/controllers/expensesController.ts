@@ -46,27 +46,42 @@ export const getExpenses = async (
                         -- Daily frequency
                         WHEN frequency_type = 0 THEN 
                             -- Daily billing
-                            begin_date::date + interval '1 day' * frequency_type_variable
-                        -- Weekly frequency
-                        WHEN frequency_type = 1 THEN 
-                            CASE 
-                                WHEN frequency_day_of_week IS NOT NULL THEN
-                                    CASE
-                                        -- If the desired day of the week is today or later this week
-                                        WHEN frequency_day_of_week >= extract('dow' from begin_date) THEN
-                                            begin_date + interval '1 week' * frequency_type_variable + interval '1 day' * (frequency_day_of_week - extract('dow' from now()))
-                                        ELSE
-                                            -- If the desired day of the week is earlier in the week, move to the next week
-                                            begin_date + interval '1 week' * frequency_type_variable + interval '1 day' * frequency_day_of_week
-                                    END
-                                ELSE
-                                    -- Handle the case where frequency_day_of_week is NULL
-                                    -- Return a default value, e.g., the current date or next week's start date
-                                    begin_date + interval '1 week' * frequency_type_variable
+                            CASE
+                                WHEN begin_date > now() THEN
+                            begin_date
+                            ELSE
+                                begin_date::date + interval '1 day' * frequency_type_variable
                             END
+                        -- Weekly frequency
+                    WHEN frequency_type = 1 THEN 
+                    CASE
+                    WHEN begin_date > now() THEN
+                        begin_date
+                    ELSE
+                        CASE 
+                            WHEN frequency_day_of_week IS NOT NULL THEN
+                                CASE
+                                    -- If the desired day of the week is today or later this week
+                                    WHEN frequency_day_of_week >= extract('dow' from begin_date) THEN
+                                        begin_date + interval '1 week' * frequency_type_variable + interval '1 day' * (frequency_day_of_week - extract('dow' from now()))
+                                    ELSE
+                                        -- If the desired day of the week is earlier in the week, move to the next week
+                                        begin_date + interval '1 week' * frequency_type_variable + interval '1 day' * frequency_day_of_week
+                                END
+                            ELSE
+                                -- Handle the case where frequency_day_of_week is NULL
+                                -- Return a default value, e.g., the current date or next week's start date
+                                begin_date + interval '1 week' * frequency_type_variable
+                            END
+                        END
+
                         -- Monthly frequency
                         WHEN frequency_type = 2 THEN 
                             -- Calculate the base next month date
+                            CASE
+                                WHEN begin_date > now() THEN
+                            begin_date
+                            ELSE
                             (begin_date + interval '1 month' * frequency_type_variable)::date +
                             -- Adjust for frequency_day_of_week (if provided)
                             (CASE 
@@ -83,8 +98,13 @@ export const getExpenses = async (
                                 ELSE
                                     interval '0 day'
                             END)
+                        END
                         -- Annual frequency
                         WHEN frequency_type = 3 THEN 
+                            CASE
+                                WHEN begin_date > now() THEN
+                            begin_date
+                            ELSE
                             -- Calculate the base next year date
                             (begin_date + interval '1 year' * frequency_type_variable)::date +
                             -- Adjust for frequency_day_of_week (if provided)
@@ -102,6 +122,7 @@ export const getExpenses = async (
                                 ELSE
                                     interval '0 day'
                             END)
+                            END
                         ELSE 
                             NULL
                     END AS next_date,
@@ -139,9 +160,18 @@ export const getExpenses = async (
                         -- Daily frequency
                         WHEN frequency_type = 0 THEN 
                             -- Daily billing
-                            begin_date::date + interval '1 day' * frequency_type_variable
+                            CASE
+                                WHEN begin_date > now() THEN
+                            begin_date
+                            ELSE
+                                begin_date::date + interval '1 day' * frequency_type_variable
+                            END
                         -- Weekly frequency
-                        WHEN frequency_type = 1 THEN 
+                    WHEN frequency_type = 1 THEN 
+                    CASE
+                    WHEN begin_date > now() THEN
+                        begin_date
+                    ELSE
                         CASE 
                             WHEN frequency_day_of_week IS NOT NULL THEN
                                 CASE
@@ -156,10 +186,16 @@ export const getExpenses = async (
                                 -- Handle the case where frequency_day_of_week is NULL
                                 -- Return a default value, e.g., the current date or next week's start date
                                 begin_date + interval '1 week' * frequency_type_variable
+                            END
                         END
+
                         -- Monthly frequency
                         WHEN frequency_type = 2 THEN 
                             -- Calculate the base next month date
+                            CASE
+                                WHEN begin_date > now() THEN
+                            begin_date
+                            ELSE
                             (begin_date + interval '1 month' * frequency_type_variable)::date +
                             -- Adjust for frequency_day_of_week (if provided)
                             (CASE 
@@ -176,8 +212,13 @@ export const getExpenses = async (
                                 ELSE
                                     interval '0 day'
                             END)
+                        END
                         -- Annual frequency
                         WHEN frequency_type = 3 THEN 
+                            CASE
+                                WHEN begin_date > now() THEN
+                            begin_date
+                            ELSE
                             -- Calculate the base next year date
                             (begin_date + interval '1 year' * frequency_type_variable)::date +
                             -- Adjust for frequency_day_of_week (if provided)
@@ -195,6 +236,7 @@ export const getExpenses = async (
                                 ELSE
                                     interval '0 day'
                             END)
+                            END
                         ELSE 
                             NULL
                     END AS next_date,
@@ -263,9 +305,18 @@ export const getExpensesById = async (
                         -- Daily frequency
                         WHEN frequency_type = 0 THEN 
                             -- Daily billing
-                            begin_date::date + interval '1 day' * frequency_type_variable
+                            CASE
+                                WHEN begin_date > now() THEN
+                            begin_date
+                            ELSE
+                                begin_date::date + interval '1 day' * frequency_type_variable
+                            END
                         -- Weekly frequency
-                        WHEN frequency_type = 1 THEN 
+                    WHEN frequency_type = 1 THEN 
+                    CASE
+                    WHEN begin_date > now() THEN
+                        begin_date
+                    ELSE
                         CASE 
                             WHEN frequency_day_of_week IS NOT NULL THEN
                                 CASE
@@ -280,10 +331,16 @@ export const getExpensesById = async (
                                 -- Handle the case where frequency_day_of_week is NULL
                                 -- Return a default value, e.g., the current date or next week's start date
                                 begin_date + interval '1 week' * frequency_type_variable
+                            END
                         END
+
                         -- Monthly frequency
                         WHEN frequency_type = 2 THEN 
                             -- Calculate the base next month date
+                            CASE
+                                WHEN begin_date > now() THEN
+                            begin_date
+                            ELSE
                             (begin_date + interval '1 month' * frequency_type_variable)::date +
                             -- Adjust for frequency_day_of_week (if provided)
                             (CASE 
@@ -300,8 +357,13 @@ export const getExpensesById = async (
                                 ELSE
                                     interval '0 day'
                             END)
-                       -- Annual frequency
+                        END
+                        -- Annual frequency
                         WHEN frequency_type = 3 THEN 
+                            CASE
+                                WHEN begin_date > now() THEN
+                            begin_date
+                            ELSE
                             -- Calculate the base next year date
                             (begin_date + interval '1 year' * frequency_type_variable)::date +
                             -- Adjust for frequency_day_of_week (if provided)
@@ -319,6 +381,7 @@ export const getExpensesById = async (
                                 ELSE
                                     interval '0 day'
                             END)
+                            END
                         ELSE 
                             NULL
                     END AS next_date,
@@ -356,9 +419,18 @@ export const getExpensesById = async (
                         -- Daily frequency
                         WHEN frequency_type = 0 THEN 
                             -- Daily billing
-                            begin_date::date + interval '1 day' * frequency_type_variable
+                            CASE
+                                WHEN begin_date > now() THEN
+                            begin_date
+                            ELSE
+                                begin_date::date + interval '1 day' * frequency_type_variable
+                            END
                         -- Weekly frequency
-                        WHEN frequency_type = 1 THEN 
+                    WHEN frequency_type = 1 THEN 
+                    CASE
+                    WHEN begin_date > now() THEN
+                        begin_date
+                    ELSE
                         CASE 
                             WHEN frequency_day_of_week IS NOT NULL THEN
                                 CASE
@@ -373,10 +445,16 @@ export const getExpensesById = async (
                                 -- Handle the case where frequency_day_of_week is NULL
                                 -- Return a default value, e.g., the current date or next week's start date
                                 begin_date + interval '1 week' * frequency_type_variable
+                            END
                         END
+
                         -- Monthly frequency
                         WHEN frequency_type = 2 THEN 
                             -- Calculate the base next month date
+                            CASE
+                                WHEN begin_date > now() THEN
+                            begin_date
+                            ELSE
                             (begin_date + interval '1 month' * frequency_type_variable)::date +
                             -- Adjust for frequency_day_of_week (if provided)
                             (CASE 
@@ -393,8 +471,13 @@ export const getExpensesById = async (
                                 ELSE
                                     interval '0 day'
                             END)
+                        END
                         -- Annual frequency
                         WHEN frequency_type = 3 THEN 
+                            CASE
+                                WHEN begin_date > now() THEN
+                            begin_date
+                            ELSE
                             -- Calculate the base next year date
                             (begin_date + interval '1 year' * frequency_type_variable)::date +
                             -- Adjust for frequency_day_of_week (if provided)
@@ -412,6 +495,7 @@ export const getExpensesById = async (
                                 ELSE
                                     interval '0 day'
                             END)
+                            END
                         ELSE 
                             NULL
                     END AS next_date,
