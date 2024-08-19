@@ -40,7 +40,80 @@ export const getWishlists = async (
     request: Request,
     response: Response,
 ): Promise<void> => {
-    const { accountId, id } = request.query;
+    const { accountId } = request.query;
+
+    const client = await pool.connect(); // Get a client from the pool
+
+    try {
+        let query: string;
+        let params: any[];
+
+        if (accountId) {
+            query = `
+
+            `;
+        }
+
+        const { rows } = await client.query(query, params);
+
+        if (id && rows.length === 0) {
+            response.status(404).send('Wishlist not found');
+            return;
+        }
+
+        // Create a map of wishlist_id to transaction date for faster lookup
+        const transactionMap: Record<number, string | null> = {};
+        request.transactions.forEach((account) => {
+            account.transactions.forEach((transaction: any) => {
+                transactionMap[transaction.wishlist_id] = transaction.date;
+            });
+        });
+
+        // Add the wishlist_date_can_purchase to the wishlist object
+        const modifiedWishlists = rows.map((wishlist) => ({
+            ...wishlist,
+            wishlist_date_can_purchase:
+                transactionMap[Number(wishlist.wishlist_id)] !== null &&
+                transactionMap[Number(wishlist.wishlist_id)] !== undefined
+                    ? transactionMap[Number(wishlist.wishlist_id)]
+                    : null,
+        }));
+
+        // Parse the data to the correct format
+        const wishlists: Wishlist[] = modifiedWishlists.map((wishlist) =>
+            wishlistsParse(wishlist),
+        );
+
+        response.status(200).json(wishlists);
+    } catch (error) {
+        logger.error(error); // Log the error on the server side
+        handleError(
+            response,
+            `Error getting ${
+                id
+                    ? 'wishlist'
+                    : accountId
+                    ? 'wishlists for given account id'
+                    : 'wishlists'
+            }`,
+        );
+    } finally {
+        client.release(); // Release the client back to the pool
+    }
+};
+
+/**
+ *
+ * @param request - Request object
+ * @param response - Response object
+ * Sends a GET request to the database to retrieve all wishlists
+ */
+export const getWishlistsById = async (
+    request: Request,
+    response: Response,
+): Promise<void> => {
+    const { id } = request.params;
+    const { accountId } = request.query;
 
     const client = await pool.connect(); // Get a client from the pool
 

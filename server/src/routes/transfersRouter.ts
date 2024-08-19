@@ -43,7 +43,7 @@ router.get(
 router.get(
     '/:id',
     [
-        query('id').isNumeric().withMessage('ID must be a number'),
+        param('id').isNumeric().withMessage('ID must be a number'),
         query('accountId')
             .optional()
             .isNumeric()

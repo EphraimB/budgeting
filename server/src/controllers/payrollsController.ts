@@ -21,12 +21,12 @@ export const getPayrolls = async (
         // Get all payrolls for all jobs
         const { rows } = await client.query(
             `
-                SELECT COUNT(id)
+                SELECT id
                     FROM jobs;
             `,
         );
 
-        if (rows[0].id === 0) {
+        if (rows.length === 0) {
             response.status(404).send('No jobs found');
             return;
         }

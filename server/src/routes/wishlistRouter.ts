@@ -7,6 +7,7 @@ import {
     deleteWishlist,
     createWishlistCron,
     updateWishlistCron,
+    getWishlistsById,
 } from '../controllers/wishlistsController.js';
 import validateRequest from '../utils/validateRequest.js';
 import generateTransactions from '../generation/generateTransactions.js';
@@ -28,10 +29,6 @@ const router: Router = express.Router();
 router.get(
     '/',
     [
-        query('id')
-            .optional()
-            .isInt({ min: 1 })
-            .withMessage('ID must be an integer'),
         query('accountId')
             .optional()
             .isInt({ min: 1 })
@@ -50,6 +47,30 @@ router.get(
     getWishlistsByAccount,
     generateTransactions,
     getWishlists,
+);
+
+router.get(
+    '/:id',
+    [
+        param('id').isInt({ min: 1 }).withMessage('ID must be an integer'),
+        query('accountId')
+            .optional()
+            .isInt({ min: 1 })
+            .withMessage('Account ID must be an integer'),
+        validateRequest,
+    ],
+    setQueries,
+    getCurrentBalance,
+    getTransactionsByAccount,
+    getIncomeByAccount,
+    getExpensesByAccount,
+    getLoansByAccount,
+    getPayrollsMiddleware,
+    getTransfersByAccount,
+    getCommuteExpensesByAccount,
+    getWishlistsByAccount,
+    generateTransactions,
+    getWishlistsById,
 );
 
 router.post(
