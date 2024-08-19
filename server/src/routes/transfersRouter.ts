@@ -7,6 +7,7 @@ import {
     updateTransferReturnObject,
     deleteTransfer,
     deleteTransferReturnObject,
+    getTransfersById,
 } from '../controllers/transfersController.js';
 import { param, query, body } from 'express-validator';
 import validateRequest from '../utils/validateRequest.js';
@@ -30,7 +31,6 @@ const router: Router = express.Router();
 router.get(
     '/',
     [
-        query('id').optional().isNumeric().withMessage('ID must be a number'),
         query('accountId')
             .optional()
             .isNumeric()
@@ -38,6 +38,19 @@ router.get(
         validateRequest,
     ],
     getTransfers,
+);
+
+router.get(
+    '/:id',
+    [
+        query('id').isNumeric().withMessage('ID must be a number'),
+        query('accountId')
+            .optional()
+            .isNumeric()
+            .withMessage('Account ID must be a number'),
+        validateRequest,
+    ],
+    getTransfersById,
 );
 
 router.post(
