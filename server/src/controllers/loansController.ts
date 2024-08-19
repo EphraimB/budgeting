@@ -624,7 +624,7 @@ export const createLoan = async (
 
         await client.query(`
             SELECT cron.schedule('${interestUniqueId}', '${cronDateInterest}',
-            $$UPDATE loans SET loan_amount = loan_amount + (loan_amount * ${interestRate}) WHERE loan_id = ${loanResults[0].id}$$)`);
+            $$UPDATE loans SET amount = amount + (amount * ${interestRate}) WHERE id = ${loanResults[0].id}$$)`);
 
         const { rows: interestCronIdResult } = await client.query(
             `
@@ -644,7 +644,6 @@ export const createLoan = async (
                     SET cron_job_id = $1,
                     interest_cron_job_id = $2
                     WHERE id = $3
-                    RETURNING *
             `,
             [cronId, interestCronId, loanResults[0].id],
         );
@@ -816,7 +815,7 @@ export const updateLoan = async (
 
         await client.query(`
             SELECT cron.schedule('${interestUniqueId}', '${cronDateInterest}',
-            $$UPDATE loans SET loan_amount = loan_amount + (loan_amount * ${interestRate}) WHERE id = ${id}$$)`);
+            $$UPDATE loans SET amount = amount + (amount * ${interestRate}) WHERE id = ${id}$$)`);
 
         await client.query(
             `
