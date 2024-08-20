@@ -77,6 +77,20 @@ export const getTransactionsByAccountId = async (
                     td.frequency_month_of_year
                 	FROM 
                     transfers td
+  							UNION
+                  SELECT 
+                      i.account_id,
+                      i.title,
+                      i.description,
+                      i.begin_date AS date,
+                      i.amount + (-i.amount * COALESCE((SELECT rate FROM taxes WHERE id = i.tax_id), 0)) AS amount,
+                      i.frequency_type,
+                      i.frequency_type_variable,
+                      i.frequency_day_of_week,
+                      i.frequency_week_of_month,
+                      i.frequency_month_of_year
+                  FROM 
+                      income i
                 UNION ALL
                 -- Generate subsequent billing dates based on frequency type
                 SELECT
