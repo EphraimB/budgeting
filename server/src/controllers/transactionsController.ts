@@ -22,7 +22,7 @@ export const getTransactionsByAccountId = async (
         const { rows } = await client.query(
             `
                 WITH RECURSIVE recurring AS (
-                -- Initialize with the starting dates of expenses
+                -- Initialize with the starting dates
                 SELECT 
                     e.account_id,
                     e.title,
@@ -38,17 +38,45 @@ export const getTransactionsByAccountId = async (
                     expenses e
                 UNION
                     SELECT
-                    l.account_id,
-                    l.title,
-                    l.description,
-                    l.begin_date AS date,
-                    -l.plan_amount AS amount,
-                    l.frequency_type,
-                    l.frequency_type_variable,
-                    l.frequency_day_of_week,
-                    l.frequency_week_of_month,
-                    l.frequency_month_of_year
-                    FROM loans l
+                      l.account_id,
+                      l.title,
+                      l.description,
+                      l.begin_date AS date,
+                      -l.plan_amount AS amount,
+                      l.frequency_type,
+                      l.frequency_type_variable,
+                      l.frequency_day_of_week,
+                      l.frequency_week_of_month,
+                      l.frequency_month_of_year
+                	FROM loans l
+  							UNION
+  								SELECT 
+                    t.source_account_id,
+                    t.title,
+                    t.description,
+                    t.begin_date AS date,
+                    -t.amount AS amount,
+                    t.frequency_type,
+                    t.frequency_type_variable,
+                    t.frequency_day_of_week,
+                    t.frequency_week_of_month,
+                    t.frequency_month_of_year
+                	FROM 
+                    transfers t
+  							UNION
+  								SELECT 
+                    td.destination_account_id,
+                    td.title,
+                    td.description,
+                    td.begin_date AS date,
+                    td.amount AS amount,
+                    td.frequency_type,
+                    td.frequency_type_variable,
+                    td.frequency_day_of_week,
+                    td.frequency_week_of_month,
+                    td.frequency_month_of_year
+                	FROM 
+                    transfers td
                 UNION ALL
                 -- Generate subsequent billing dates based on frequency type
                 SELECT
@@ -170,7 +198,7 @@ export const getTransactionsByAccountId = async (
                             'date', twb.date,
                             'balance', 
                                 CASE 
-                                    WHEN twb.running_balance IS NOT NULL THEN cb.current_balance - twb.running_balance + twb.amount 
+                                    WHEN twb.running_balance IS NOT NULL THEN COALESCE(cb.current_balance, 0) - twb.running_balance + twb.amount 
                                     ELSE NULL 
                                 END
                         ) ORDER BY twb.date
