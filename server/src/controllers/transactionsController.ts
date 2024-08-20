@@ -97,7 +97,7 @@ export const getTransactionsByAccountId = async (
                 FROM 
                     expenses_recurring er
                 WHERE
-                    (er.date + interval '1 day') <= '2024-12-31'
+                    (er.date + interval '1 day') <= $3
             ),
             transaction_details AS (
                 -- Get all transactions and calculate amount after tax
@@ -111,9 +111,6 @@ export const getTransactionsByAccountId = async (
                     transaction_history th
             ),
             combined_details AS (
-                -- Combine transaction details and the recurring expense details
-                --SELECT * FROM transaction_details
-                --UNION ALL
                 SELECT account_id, title, description, date, amount FROM expenses_recurring WHERE date >= now()
             ),
             current_balance AS (
@@ -144,11 +141,11 @@ export const getTransactionsByAccountId = async (
                     cd.description,
                     cd.date,
                     cd.amount,
-                    SUM(-cd.amount) OVER (PARTITION BY cd.account_id ORDER BY cd.date) AS running_balance
+                    COALESCE(SUM(-cd.amount) OVER (PARTITION BY cd.account_id ORDER BY cd.date ROWS BETWEEN UNBOUNDED PRECEDING AND 1 PRECEDING), cd.amount - cd.amount) AS running_balance
                 FROM 
                     combined_details cd
                 WHERE 
-                    cd.date < '2024-12-31'
+                    cd.date < $3
             )
             SELECT
                 a.id AS account_id,
@@ -174,6 +171,7 @@ export const getTransactionsByAccountId = async (
                 current_balance cb ON a.id = cb.account_id
             LEFT JOIN 
                 transaction_with_balance twb ON a.id = twb.account_id
+            WHERE a.id = $1 AND date > $2
             GROUP BY 
                 a.id, cb.current_balance
             ORDER BY 
