@@ -21,7 +21,7 @@ export const getTransactionsByAccountId = async (
     try {
         const { rows } = await client.query(
             `
-                WITH RECURSIVE expenses_recurring AS (
+                WITH RECURSIVE recurring AS (
                 -- Initialize with the starting dates of expenses
                 SELECT 
                     e.account_id,
@@ -29,7 +29,6 @@ export const getTransactionsByAccountId = async (
                     e.description,
                     e.begin_date AS date,
                     -e.amount + (-e.amount * COALESCE((SELECT rate FROM taxes WHERE id = e.tax_id), 0)) AS amount,
-                    e.end_date,
                     e.frequency_type,
                     e.frequency_type_variable,
                     e.frequency_day_of_week,
@@ -37,67 +36,79 @@ export const getTransactionsByAccountId = async (
                     e.frequency_month_of_year
                 FROM 
                     expenses e
+                UNION
+                    SELECT
+                    l.account_id,
+                    l.title,
+                    l.description,
+                    l.begin_date AS date,
+                    -l.plan_amount AS amount,
+                    l.frequency_type,
+                    l.frequency_type_variable,
+                    l.frequency_day_of_week,
+                    l.frequency_week_of_month,
+                    l.frequency_month_of_year
+                    FROM loans l
                 UNION ALL
                 -- Generate subsequent billing dates based on frequency type
                 SELECT
-                    er.account_id,
-                    er.title,
-                    er.description,
+                    r.account_id,
+                    r.title,
+                    r.description,
                     CASE
                         -- Daily frequency
-                        WHEN er.frequency_type = 0 THEN er.date + interval '1 day' * er.frequency_type_variable
+                        WHEN r.frequency_type = 0 THEN r.date + interval '1 day' * r.frequency_type_variable
                         -- Weekly frequency
-                        WHEN er.frequency_type = 1 THEN 
+                        WHEN r.frequency_type = 1 THEN 
                             CASE
-                                WHEN extract('dow' from er.date) <= er.frequency_day_of_week THEN
-                                    er.date + interval '1 week' * er.frequency_type_variable + interval '1 day' * (er.frequency_day_of_week - extract('dow' from er.date))
+                                WHEN extract('dow' from r.date) <= r.frequency_day_of_week THEN
+                                    r.date + interval '1 week' * r.frequency_type_variable + interval '1 day' * (r.frequency_day_of_week - extract('dow' from r.date))
                                 ELSE
-                                    er.date + interval '1 week' * er.frequency_type_variable + interval '1 day' * (7 - extract('dow' from er.date) + er.frequency_day_of_week)
+                                    r.date + interval '1 week' * r.frequency_type_variable + interval '1 day' * (7 - extract('dow' from r.date) + r.frequency_day_of_week)
                             END
                         -- Monthly frequency
-                        WHEN er.frequency_type = 2 THEN
-                            (er.date + interval '1 month' * er.frequency_type_variable)::date +
+                        WHEN r.frequency_type = 2 THEN
+                            (r.date + interval '1 month' * r.frequency_type_variable)::date +
                             (CASE 
-                                WHEN er.frequency_day_of_week IS NOT NULL THEN
-                                    interval '1 day' * ((er.frequency_day_of_week - extract('dow' from (er.date + interval '1 month' * er.frequency_type_variable)::date) + 7) % 7)
+                                WHEN r.frequency_day_of_week IS NOT NULL THEN
+                                    interval '1 day' * ((r.frequency_day_of_week - extract('dow' from (r.date + interval '1 month' * r.frequency_type_variable)::date) + 7) % 7)
                                 ELSE
                                     interval '0 day'
                             END) +
                             (CASE 
-                                WHEN er.frequency_week_of_month IS NOT NULL THEN
-                                    interval '1 week' * er.frequency_week_of_month
+                                WHEN r.frequency_week_of_month IS NOT NULL THEN
+                                    interval '1 week' * r.frequency_week_of_month
                                 ELSE
                                     interval '0 day'
                             END)
                         -- Annual frequency
-                        WHEN er.frequency_type = 3 THEN
-                            (er.date + interval '1 year' * er.frequency_type_variable)::date +
+                        WHEN r.frequency_type = 3 THEN
+                            (r.date + interval '1 year' * r.frequency_type_variable)::date +
                             (CASE 
-                                WHEN er.frequency_day_of_week IS NOT NULL THEN
-                                    interval '1 day' * ((er.frequency_day_of_week - extract('dow' from (er.date + interval '1 year' * er.frequency_type_variable)::date) + 7) % 7)
+                                WHEN r.frequency_day_of_week IS NOT NULL THEN
+                                    interval '1 day' * ((r.frequency_day_of_week - extract('dow' from (r.date + interval '1 year' * r.frequency_type_variable)::date) + 7) % 7)
                                 ELSE
                                     interval '0 day'
                             END) +
                             (CASE 
-                                WHEN er.frequency_week_of_month IS NOT NULL THEN
-                                    interval '1 week' * er.frequency_week_of_month
+                                WHEN r.frequency_week_of_month IS NOT NULL THEN
+                                    interval '1 week' * r.frequency_week_of_month
                                 ELSE
                                     interval '0 day'
                             END)
                         ELSE 
                             NULL
                     END AS date,
-                    er.amount,
-                    er.end_date,
-                    er.frequency_type,
-                    er.frequency_type_variable,
-                    er.frequency_day_of_week,
-                    er.frequency_week_of_month,
-                    er.frequency_month_of_year
+                    r.amount,
+                    r.frequency_type,
+                    r.frequency_type_variable,
+                    r.frequency_day_of_week,
+                    r.frequency_week_of_month,
+                    r.frequency_month_of_year
                 FROM 
-                    expenses_recurring er
+                    recurring r
                 WHERE
-                    (er.date + interval '1 day') <= $3
+                    (r.date + interval '1 day') <= $3
             ),
             transaction_details AS (
                 -- Get all transactions and calculate amount after tax
@@ -111,7 +122,7 @@ export const getTransactionsByAccountId = async (
                     transaction_history th
             ),
             combined_details AS (
-                SELECT account_id, title, description, date, amount FROM expenses_recurring WHERE date >= now()
+                SELECT account_id, title, description, date, amount FROM recurring WHERE date >= now()
             ),
             current_balance AS (
                 -- Calculate the current balance for each account based on transactions
