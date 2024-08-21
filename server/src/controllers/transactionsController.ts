@@ -77,7 +77,7 @@ export const getTransactionsByAccountId = async (
                     td.frequency_month_of_year
                 	FROM 
                     transfers td
-  				  UNION
+  							UNION
                   SELECT 
                       i.account_id,
                       i.title,
@@ -163,9 +163,10 @@ export const getTransactionsByAccountId = async (
                 JOIN 
                     jobs j ON pd.job_id = j.id
                 WHERE 
-                    j.account_id = $1
+                    j.account_id = 1
             )
             SELECT
+              	j.id AS job_id,
               	j.account_id,
                 j.name,
                 CASE
@@ -183,7 +184,7 @@ export const getTransactionsByAccountId = async (
                 jobs j
             JOIN 
                 job_schedule js ON j.id = js.job_id
-            CROSS JOIN LATERAL generate_series(current_date, '2024-12-31'::date + INTERVAL '1 month', '1 month') AS d1(date)
+            CROSS JOIN LATERAL generate_series(current_date, $3::date + INTERVAL '1 month', '1 month') AS d1(date)
             CROSS JOIN LATERAL (
                 SELECT
                     CASE WHEN
@@ -228,7 +229,7 @@ export const getTransactionsByAccountId = async (
                 GROUP BY job_id
             ) pt ON j.id = pt.job_id
             WHERE 
-                j.account_id = $1 
+                j.account_id = 1 
                 AND d.date >= CASE
                     WHEN s2.payroll_start_day::integer < 0 THEN
                         (make_date(extract(year from d1)::integer, extract(month from d1)::integer, ABS(s2.payroll_start_day::integer)) - INTERVAL '1 MONTH')::DATE
@@ -259,12 +260,31 @@ export const getTransactionsByAccountId = async (
                 FROM 
                     work_days_and_hours wdah
                 GROUP BY 
+              			wdah.job_id,
                     wdah.account_id, 
                     wdah.end_date, 
                     wdah.name
+              ORDER BY wdah.job_id
             ),
             combined_details AS (
-                SELECT account_id, title, description, date, amount FROM recurring WHERE date >= now()
+                SELECT
+              		account_id,
+              		title,
+              		description,
+              		date,
+              		amount
+              		FROM recurring
+              		WHERE date >= now()
+                  UNION
+                  SELECT
+                        ps.account_id,
+                        CONCAT('Payroll for ', ps.name) AS title,
+                        CONCAT('Payroll for ', ps.name) AS description,
+                        ps.end_date AS date,
+                        ps.amount
+                    FROM 
+                        payroll_summary ps
+              			WHERE ps.end_date >= now()
             ),
             current_balance AS (
                 -- Calculate the current balance for each account based on transactions
@@ -284,7 +304,7 @@ export const getTransactionsByAccountId = async (
                     td.description,
                     td.date,
                     td.amount,
-                    SUM(td.amount) OVER (PARTITION BY td.account_id ORDER BY td.date DESC) AS running_balance
+                		SUM(td.amount) OVER (PARTITION BY td.account_id ORDER BY td.date DESC) AS running_balance
                 FROM 
                     transaction_details td
                 UNION
@@ -294,21 +314,11 @@ export const getTransactionsByAccountId = async (
                     cd.description,
                     cd.date,
                     cd.amount,
-                    COALESCE(SUM(-cd.amount) OVER (PARTITION BY cd.account_id ORDER BY cd.date ROWS BETWEEN UNBOUNDED PRECEDING AND 1 PRECEDING), cd.amount - cd.amount) AS running_balance
+                    COALESCE(SUM(-cd.amount) OVER (PARTITION BY cd.account_id ORDER BY cd.date, cd.amount ROWS BETWEEN UNBOUNDED PRECEDING AND 1 PRECEDING), cd.amount - cd.amount) AS running_balance
                 FROM 
                     combined_details cd
-                WHERE 
+              WHERE 
                     cd.date < $3
-              /*UNION
-              SELECT
-                    ps.account_id,
-                    CONCAT('Payroll for ', ps.name) AS title,
-                    CONCAT('Payroll for ', ps.name) AS description,
-                    ps.end_date AS date,
-                    ps.amount,
-              			COALESCE(SUM(ps.amount) OVER (PARTITION BY ps.account_id ORDER BY ps.end_date), ps.amount - ps.amount) AS running_balance
-                FROM 
-                    payroll_summary ps*/
             )
             SELECT
                 a.id AS account_id,
