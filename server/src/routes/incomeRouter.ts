@@ -5,6 +5,7 @@ import {
     createIncome,
     updateIncome,
     deleteIncome,
+    getIncomeById,
 } from '../controllers/incomeController.js';
 import validateRequest from '../utils/validateRequest.js';
 
@@ -13,7 +14,19 @@ const router: Router = express.Router();
 router.get(
     '/',
     [
-        query('id')
+        query('accountId')
+            .optional()
+            .isInt({ min: 1 })
+            .withMessage('Account ID must be a number'),
+        validateRequest,
+    ],
+    getIncome,
+);
+
+router.get(
+    '/',
+    [
+        param('id')
             .optional()
             .isInt({ min: 1 })
             .withMessage('ID must be a number'),
@@ -23,7 +36,7 @@ router.get(
             .withMessage('Account ID must be a number'),
         validateRequest,
     ],
-    getIncome,
+    getIncomeById,
 );
 
 router.post(
