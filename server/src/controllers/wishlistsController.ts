@@ -52,14 +52,15 @@ export const getWishlists = async (
             query = `
 
             `;
+            params = [];
+        } else {
+            query = `
+            
+            `;
+            params = [];
         }
 
         const { rows } = await client.query(query, params);
-
-        if (id && rows.length === 0) {
-            response.status(404).send('Wishlist not found');
-            return;
-        }
 
         // Create a map of wishlist_id to transaction date for faster lookup
         const transactionMap: Record<number, string | null> = {};
@@ -87,16 +88,7 @@ export const getWishlists = async (
         response.status(200).json(wishlists);
     } catch (error) {
         logger.error(error); // Log the error on the server side
-        handleError(
-            response,
-            `Error getting ${
-                id
-                    ? 'wishlist'
-                    : accountId
-                    ? 'wishlists for given account id'
-                    : 'wishlists'
-            }`,
-        );
+        handleError(response, `Error getting wishlists`);
     } finally {
         client.release(); // Release the client back to the pool
     }
@@ -121,23 +113,21 @@ export const getWishlistsById = async (
         let query: string;
         let params: any[];
 
-        if (id && accountId) {
-            query = wishlistQueries.getWishlistsByIdAndAccountId;
-            params = [id, accountId];
-        } else if (id) {
-            query = wishlistQueries.getWishlistsById;
-            params = [id];
-        } else if (accountId) {
-            query = wishlistQueries.getWishlistsByAccountId;
-            params = [accountId];
+        if (accountId) {
+            query = `
+            
+            `;
+            params = [];
         } else {
-            query = wishlistQueries.getAllWishlists;
+            query = `
+            
+            `;
             params = [];
         }
 
         const { rows } = await client.query(query, params);
 
-        if (id && rows.length === 0) {
+        if (rows.length === 0) {
             response.status(404).send('Wishlist not found');
             return;
         }
@@ -168,16 +158,7 @@ export const getWishlistsById = async (
         response.status(200).json(wishlists);
     } catch (error) {
         logger.error(error); // Log the error on the server side
-        handleError(
-            response,
-            `Error getting ${
-                id
-                    ? 'wishlist'
-                    : accountId
-                    ? 'wishlists for given account id'
-                    : 'wishlists'
-            }`,
-        );
+        handleError(response, `Error getting wishlists for id of ${id}`);
     } finally {
         client.release(); // Release the client back to the pool
     }
