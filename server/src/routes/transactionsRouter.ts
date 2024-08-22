@@ -1,25 +1,10 @@
-import express, { type Router, type Request, type Response } from 'express';
-import generateTransactions from '../generation/generateTransactions.js';
-import {
-    getCurrentBalance,
-    getTransactionsByAccount,
-    getIncomeByAccount,
-    getExpensesByAccount,
-    getLoansByAccount,
-    getWishlistsByAccount,
-    getPayrollsMiddleware,
-    getTransfersByAccount,
-    getCommuteExpensesByAccount,
-} from '../middleware/middleware.js';
+import express, { type Router } from 'express';
 import { param, query } from 'express-validator';
 import validateRequest from '../utils/validateRequest.js';
-import { getTransactionsByAccountId } from 'src/controllers/transactionsController.js';
-
-declare module 'express-serve-static-core' {
-    interface Request {
-        transactions: any[];
-    }
-}
+import {
+    getTransactions,
+    getTransactionsByAccountId,
+} from '../controllers/transactionsController.js';
 
 const router: Router = express.Router();
 
