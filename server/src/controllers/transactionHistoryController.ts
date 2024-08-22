@@ -151,13 +151,13 @@ export const updateTransaction = async (
     try {
         const { rows } = await client.query(
             `
-                SELECT COUNT(id) FROM transaction_history
+                SELECT id FROM transaction_history
                     WHERE id = $1
             `,
             [id],
         );
 
-        if (rows[0].id === 0) {
+        if (rows.length === 0) {
             response.status(404).send('Transaction not found');
             return;
         }
@@ -202,13 +202,13 @@ export const deleteTransaction = async (
     try {
         const { rows } = await client.query(
             `
-                SELECT COUNT(id) FROM transaction_history
+                SELECT id FROM transaction_history
                     WHERE id = $1
             `,
             [id],
         );
 
-        if (rows[0].id === 0) {
+        if (rows.length === 0) {
             response.status(404).send('Transaction not found');
             return;
         }

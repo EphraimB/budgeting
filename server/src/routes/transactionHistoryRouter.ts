@@ -24,7 +24,7 @@ router.get(
 );
 
 router.get(
-    ':id',
+    '/:id',
     [
         param('id').isInt({ min: 1 }).withMessage('ID must be a number'),
         query('accountId')
