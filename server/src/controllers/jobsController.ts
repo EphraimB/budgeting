@@ -301,7 +301,7 @@ export const updateJob = async (
 
         await client.query('BEGIN;');
 
-        await client.query(
+        const { rows: updateJobsResult } = await client.query(
             `
                 UPDATE jobs
                     SET account_id = $1,
@@ -410,61 +410,10 @@ export const updateJob = async (
 
         await client.query('COMMIT;');
 
-        request.jobId = +id;
-
-        next();
+        response.status(200).json(updateJobsResult);
     } catch (error) {
         await client.query('ROLLBACK;');
 
-        logger.error(error); // Log the error on the server side
-        handleError(response, 'Error updating job');
-    } finally {
-        client.release(); // Release the client back to the pool
-    }
-};
-
-export const updateJobReturnObject = async (
-    request: Request,
-    response: Response,
-): Promise<void> => {
-    const { jobId } = request;
-
-    const client = await pool.connect(); // Get a client from the pool
-
-    try {
-        const { rows } = await client.query(
-            `
-                SELECT
-                    j.id AS "job_id",
-                    j.account_id AS "account_id",
-                    j.name AS "job_name",
-                    j.hourly_rate AS "hourly_rate",
-                    j.vacation_days AS "vacation_days",
-                    j.sick_days AS "sick_days",
-                    COALESCE(SUM(EXTRACT(EPOCH FROM (js.end_time - js.start_time)) / 3600), 0) AS total_hours_per_week,
-                    COALESCE(json_agg(
-                        json_build_object(
-                            'day_of_week', js.day_of_week,
-                            'start_time', js.start_time,
-                            'end_time', js.end_time
-                        ) ORDER BY js.day_of_week
-                    ) FILTER (WHERE js.job_id IS NOT NULL), '[]') AS job_schedule
-                FROM
-                    jobs j
-                LEFT JOIN
-                    job_schedule js ON j.id = js.job_id
-                WHERE
-                    j.id = $1
-                GROUP BY
-                    j.id;
-            `,
-            [jobId],
-        );
-
-        await client.query('COMMIT;');
-
-        response.status(200).json(rows);
-    } catch (error) {
         logger.error(error); // Log the error on the server side
         handleError(response, 'Error updating job');
     } finally {
@@ -489,14 +438,14 @@ export const deleteJob = async (
 
         const { rows } = await client.query(
             `
-                SELECT COUNT(id)
+                SELECT id
                     FROM jobs
                     WHERE id = $1;
             `,
             [id],
         );
 
-        if (rows[0].id === 0) {
+        if (rows.length === 0) {
             response.status(404).send('Job not found');
             return;
         }
