@@ -24,7 +24,7 @@ router.get(
 );
 
 router.get(
-    '/',
+    '/:id',
     [
         param('id')
             .optional()
