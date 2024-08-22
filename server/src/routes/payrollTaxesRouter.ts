@@ -3,28 +3,11 @@ import { query, param, body } from 'express-validator';
 import {
     getPayrollTaxes,
     createPayrollTax,
-    createPayrollTaxReturnObject,
     updatePayrollTax,
-    updatePayrollTaxReturnObject,
     deletePayrollTax,
-    deletePayrollTaxReturnObject,
     getPayrollTaxesById,
 } from '../controllers/payrollTaxesController.js';
 import validateRequest from '../utils/validateRequest.js';
-import generateTransactions from '../generation/generateTransactions.js';
-import {
-    setQueries,
-    getCurrentBalance,
-    getTransactionsByAccount,
-    getIncomeByAccount,
-    getExpensesByAccount,
-    getLoansByAccount,
-    getPayrollsMiddleware,
-    getTransfersByAccount,
-    getCommuteExpensesByAccount,
-    getWishlistsByAccount,
-    updateWishlistCron,
-} from '../middleware/middleware.js';
 
 const router: Router = express.Router();
 
@@ -65,19 +48,6 @@ router.post(
         validateRequest,
     ],
     createPayrollTax,
-    setQueries,
-    getCurrentBalance,
-    getTransactionsByAccount,
-    getIncomeByAccount,
-    getExpensesByAccount,
-    getLoansByAccount,
-    getPayrollsMiddleware,
-    getTransfersByAccount,
-    getCommuteExpensesByAccount,
-    getWishlistsByAccount,
-    generateTransactions,
-    updateWishlistCron,
-    createPayrollTaxReturnObject,
 );
 
 router.put(
@@ -90,19 +60,6 @@ router.put(
         validateRequest,
     ],
     updatePayrollTax,
-    setQueries,
-    getCurrentBalance,
-    getTransactionsByAccount,
-    getIncomeByAccount,
-    getExpensesByAccount,
-    getLoansByAccount,
-    getPayrollsMiddleware,
-    getTransfersByAccount,
-    getCommuteExpensesByAccount,
-    getWishlistsByAccount,
-    generateTransactions,
-    updateWishlistCron,
-    updatePayrollTaxReturnObject,
 );
 
 router.delete(
@@ -112,19 +69,6 @@ router.delete(
         validateRequest,
     ],
     deletePayrollTax,
-    setQueries,
-    getCurrentBalance,
-    getTransactionsByAccount,
-    getIncomeByAccount,
-    getExpensesByAccount,
-    getLoansByAccount,
-    getPayrollsMiddleware,
-    getTransfersByAccount,
-    getCommuteExpensesByAccount,
-    getWishlistsByAccount,
-    generateTransactions,
-    updateWishlistCron,
-    deletePayrollTaxReturnObject,
 );
 
 export default router;

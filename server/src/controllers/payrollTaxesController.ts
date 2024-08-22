@@ -105,13 +105,11 @@ export const getPayrollTaxesById = async (
  *
  * @param request - Request object
  * @param response - Response object
- * @param next - Next function
  * Sends a POST request to the database to create a payroll tax
  */
 export const createPayrollTax = async (
     request: Request,
     response: Response,
-    next: NextFunction,
 ): Promise<void> => {
     const { jobId, name, rate } = request.body;
 
@@ -134,9 +132,7 @@ export const createPayrollTax = async (
 
         await client.query('COMMIT;');
 
-        request.payrollTaxesId = rows[0].id;
-
-        next();
+        response.status(201).json(rows);
     } catch (error) {
         await client.query('ROLLBACK;');
 
@@ -151,51 +147,11 @@ export const createPayrollTax = async (
  *
  * @param request - Request object
  * @param response - Response object
- * Sends a GET request to the database to retrieve a payroll tax
- */
-export const createPayrollTaxReturnObject = async (
-    request: Request,
-    response: Response,
-): Promise<void> => {
-    const { payrollTaxesId } = request;
-
-    const client = await pool.connect(); // Get a client from the pool
-
-    try {
-        const { rows } = await client.query(
-            `
-                SELECT *
-                    FROM payroll_taxes
-                    WHERE id = $1
-            `,
-            [payrollTaxesId],
-        );
-
-        if (rows.length === 0) {
-            response.status(404).send('Payroll tax not found');
-            return;
-        }
-
-        response.status(201).json(rows);
-    } catch (error) {
-        logger.error(error); // Log the error on the server side
-        handleError(response, 'Error getting payroll tax');
-    } finally {
-        client.release(); // Release the client back to the pool
-    }
-};
-
-/**
- *
- * @param request - Request object
- * @param response - Response object
- * @param next - Next function
  * Sends a PUT request to the database to update a payroll tax
  */
 export const updatePayrollTax = async (
     request: Request,
     response: Response,
-    next: NextFunction,
 ): Promise<void> => {
     const { id } = request.params;
     const { name, rate } = request.body;
@@ -219,7 +175,7 @@ export const updatePayrollTax = async (
 
         await client.query('BEGIN;');
 
-        await client.query(
+        const { rows: updatePayrollTaxesResult } = await client.query(
             `
                 UPDATE payroll_taxes
                     SET name = $1,
@@ -236,7 +192,7 @@ export const updatePayrollTax = async (
 
         await client.query('COMMIT;');
 
-        next();
+        response.status(200).json(updatePayrollTaxesResult);
     } catch (error) {
         await client.query('ROLLBACK;');
 
@@ -247,49 +203,15 @@ export const updatePayrollTax = async (
     }
 };
 
-export const updatePayrollTaxReturnObject = async (
-    request: Request,
-    response: Response,
-): Promise<void> => {
-    const { id } = request.params;
-
-    const client = await pool.connect(); // Get a client from the pool
-
-    try {
-        const { rows } = await client.query(
-            `
-                SELECT *
-                    FROM payroll_taxes
-                    WHERE id = $1
-            `,
-            [id],
-        );
-
-        if (rows.length === 0) {
-            response.status(404).send('Payroll tax not found');
-            return;
-        }
-
-        response.status(200).json(rows);
-    } catch (error) {
-        logger.error(error); // Log the error on the server side
-        handleError(response, 'Error getting payroll tax');
-    } finally {
-        client.release(); // Release the client back to the pool
-    }
-};
-
 /**
  *
  * @param request - Request object
  * @param response - Response object
- * @param next - Next function
  * Sends a DELETE request to the database to delete a payroll tax
  */
 export const deletePayrollTax = async (
     request: Request,
     response: Response,
-    next: NextFunction,
 ): Promise<void> => {
     const { id } = request.params;
 
@@ -326,7 +248,7 @@ export const deletePayrollTax = async (
 
         await client.query('COMMIT;');
 
-        next();
+        response.status(200).send('Successfully deleted payroll tax');
     } catch (error) {
         await client.query('ROLLBACK;');
 
@@ -335,17 +257,4 @@ export const deletePayrollTax = async (
     } finally {
         client.release(); // Release the client back to the pool
     }
-};
-
-/**
- *
- * @param request - Request object
- * @param response - Response object
- * Sends a DELETE request to the database to delete a payroll tax
- */
-export const deletePayrollTaxReturnObject = async (
-    _: Request,
-    response: Response,
-): Promise<void> => {
-    response.status(200).send('Successfully deleted payroll tax');
 };
