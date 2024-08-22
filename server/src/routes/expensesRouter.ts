@@ -3,28 +3,11 @@ import { query, param, body } from 'express-validator';
 import {
     getExpenses,
     createExpense,
-    createExpenseReturnObject,
     updateExpense,
-    updateExpenseReturnObject,
     deleteExpense,
-    deleteExpenseReturnObject,
     getExpensesById,
 } from '../controllers/expensesController.js';
 import validateRequest from '../utils/validateRequest.js';
-import generateTransactions from '../generation/generateTransactions.js';
-import {
-    setQueries,
-    getCurrentBalance,
-    getTransactionsByAccount,
-    getIncomeByAccount,
-    getExpensesByAccount,
-    getLoansByAccount,
-    getPayrollsMiddleware,
-    getTransfersByAccount,
-    getCommuteExpensesByAccount,
-    getWishlistsByAccount,
-    updateWishlistCron,
-} from '../middleware/middleware.js';
 
 const router: Router = express.Router();
 
@@ -116,19 +99,6 @@ router.post(
         validateRequest,
     ],
     createExpense,
-    setQueries,
-    getCurrentBalance,
-    getTransactionsByAccount,
-    getExpensesByAccount,
-    getIncomeByAccount,
-    getLoansByAccount,
-    getPayrollsMiddleware,
-    getTransfersByAccount,
-    getCommuteExpensesByAccount,
-    getWishlistsByAccount,
-    generateTransactions,
-    updateWishlistCron,
-    createExpenseReturnObject,
 );
 
 router.put(
@@ -192,19 +162,6 @@ router.put(
         validateRequest,
     ],
     updateExpense,
-    setQueries,
-    getCurrentBalance,
-    getTransactionsByAccount,
-    getIncomeByAccount,
-    getExpensesByAccount,
-    getLoansByAccount,
-    getPayrollsMiddleware,
-    getTransfersByAccount,
-    getCommuteExpensesByAccount,
-    getWishlistsByAccount,
-    generateTransactions,
-    updateWishlistCron,
-    updateExpenseReturnObject,
 );
 
 router.delete(
@@ -214,19 +171,6 @@ router.delete(
         validateRequest,
     ],
     deleteExpense,
-    setQueries,
-    getCurrentBalance,
-    getTransactionsByAccount,
-    getIncomeByAccount,
-    getExpensesByAccount,
-    getLoansByAccount,
-    getPayrollsMiddleware,
-    getTransfersByAccount,
-    getCommuteExpensesByAccount,
-    getWishlistsByAccount,
-    generateTransactions,
-    updateWishlistCron,
-    deleteExpenseReturnObject,
 );
 
 export default router;

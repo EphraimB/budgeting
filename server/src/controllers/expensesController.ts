@@ -636,46 +636,12 @@ export const createExpense = async (
 
         await client.query('COMMIT;');
 
-        request.expenseId = rows[0].id;
-
-        next();
+        response.status(200).json(rows);
     } catch (error) {
         await client.query('ROLLBACK;');
 
         logger.error(error); // Log the error on the server side
         handleError(response, 'Error creating expense');
-    } finally {
-        client.release(); // Release the client back to the pool
-    }
-};
-
-/**
- *
- * @param request - Request object
- * @param response - Response object
- * Sends a response with the created expense
- */
-export const createExpenseReturnObject = async (
-    request: Request,
-    response: Response,
-): Promise<void> => {
-    const { expenseId } = request;
-
-    const client = await pool.connect(); // Get a client from the pool
-
-    try {
-        const { rows } = await client.query(
-            `
-                SELECT * FROM expenses
-                    WHERE id = $1
-            `,
-            [expenseId],
-        );
-
-        response.status(201).json(rows);
-    } catch (error) {
-        logger.error(error); // Log the error on the server side
-        handleError(response, 'Error getting expense');
     } finally {
         client.release(); // Release the client back to the pool
     }
@@ -784,7 +750,7 @@ export const updateExpense = async (
             [uniqueId, cronDate, cronId],
         );
 
-        await client.query(
+        const { rows: updateExpensesResult } = await client.query(
             `
                 UPDATE expenses
                     SET account_id = $1,
@@ -800,7 +766,8 @@ export const updateExpense = async (
                     frequency_month_of_year = $11,
                     subsidized = $12,
                     begin_date = $13
-                    WHERE id = $14 RETURNING *
+                    WHERE id = $14
+                    RETURNING *
             `,
             [
                 accountId,
@@ -822,45 +789,10 @@ export const updateExpense = async (
 
         await client.query('COMMIT;');
 
-        request.expenseId = +id;
-
-        next();
+        response.status(200).json(updateExpensesResult);
     } catch (error) {
         await client.query('ROLLBACK;');
 
-        logger.error(error); // Log the error on the server side
-        handleError(response, 'Error updating expense');
-    } finally {
-        client.release(); // Release the client back to the pool
-    }
-};
-
-/**
- *
- * @param request - Request object
- * @param response - Response object
- * Sends a response with the updated expense
- */
-export const updateExpenseReturnObject = async (
-    request: Request,
-    response: Response,
-): Promise<void> => {
-    const { expenseId } = request;
-
-    const client = await pool.connect(); // Get a client from the pool
-
-    try {
-        const { rows } = await client.query(
-            `
-                SELECT *
-                    FROM expenses
-                    WHERE id = $1
-            `,
-            [expenseId],
-        );
-
-        response.status(200).json(rows);
-    } catch (error) {
         logger.error(error); // Log the error on the server side
         handleError(response, 'Error updating expense');
     } finally {
@@ -931,7 +863,7 @@ export const deleteExpense = async (
 
         await client.query('COMMIT;');
 
-        next();
+        response.status(200).send('Expense deleted successfully');
     } catch (error) {
         await client.query('ROLLBACK;');
 
@@ -940,17 +872,4 @@ export const deleteExpense = async (
     } finally {
         client.release(); // Release the client back to the pool
     }
-};
-
-/**
- *
- * @param request - Request object
- * @param response - Response object
- * Sends a response with the deleted expense
- */
-export const deleteExpenseReturnObject = async (
-    _: Request,
-    response: Response,
-): Promise<void> => {
-    response.status(200).send('Expense deleted successfully');
 };
