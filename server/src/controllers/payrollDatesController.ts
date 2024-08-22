@@ -192,8 +192,6 @@ export const createPayrollDate = async (
 
         await client.query('COMMIT;');
 
-        request.payrollDateId = rows[0].id;
-
         response.status(201).json(rows);
     } catch (error) {
         await client.query('ROLLBACK;');
