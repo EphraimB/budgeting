@@ -25,46 +25,65 @@ const parseTaxes = (tax: Record<string, string>): Taxes => ({
  *
  * @param request - Request object
  * @param response - Response object
- * Sends a response with all taxes or a single tax
+ * Sends a response with all taxes
  */
 export const getTaxes = async (
+    _: Request,
+    response: Response,
+): Promise<void> => {
+    const client = await pool.connect(); // Get a client from the pool
+
+    try {
+        const { rows: taxesResults } = await client.query(
+            `
+                SELECT *
+                    FROM taxes
+            `,
+            [],
+        );
+
+        response.status(200).json(taxesResults);
+    } catch (error) {
+        logger.error(error); // Log the error on the server side
+        handleError(response, 'Error getting taxes');
+    } finally {
+        client.release(); // Release the client back to the pool
+    }
+};
+
+/**
+ *
+ * @param request - Request object
+ * @param response - Response object
+ * Sends a response with a single tax
+ */
+export const getTaxesById = async (
     request: Request,
     response: Response,
 ): Promise<void> => {
-    const { id } = request.query;
+    const { id } = request.params;
 
     const client = await pool.connect(); // Get a client from the pool
 
     try {
-        let query: string;
-        let params: any[];
+        const { rows: taxesResults } = await client.query(
+            `
+                SELECT *
+                    FROM taxes
+                    WHERE id = $1
+            `,
+            [id],
+        );
 
-        if (id) {
-            query = taxesQueries.getTax;
-            params = [id];
-        } else {
-            query = taxesQueries.getTaxes;
-            params = [];
-        }
-
-        const { rows: taxesResults } = await client.query(query, params);
-
-        if (id && taxesResults.length === 0) {
+        if (taxesResults.length === 0) {
             response.status(404).send('Tax not found');
             return;
         }
 
-        const taxes: Taxes[] = taxesResults.map((tax) => parseTaxes(tax));
-
-        response.status(200).json(taxes);
+        response.status(200).json(taxesResults);
     } catch (error) {
         logger.error(error); // Log the error on the server side
-        handleError(
-            response,
-            `Error getting ${
-                id !== null && id !== undefined ? 'tax' : 'taxes'
-            }`,
-        );
+        handleError(response, `Error getting tax for id of ${id}`);
     } finally {
         client.release(); // Release the client back to the pool
     }
@@ -86,14 +105,16 @@ export const createTax = async (
 
     try {
         const { rows: taxesResults } = await client.query(
-            taxesQueries.createTax,
+            `
+                INSERT INTO taxes
+                    (rate, title, description, type)
+                    VALUES ($1, $2, $3, $4)
+                    RETURNING *
+            `,
             [rate, title, description, type],
         );
 
-        const taxes: Taxes[] = taxesResults.map((transaction) =>
-            parseTaxes(transaction),
-        );
-        response.status(201).json(taxes);
+        response.status(201).json(taxesResults);
     } catch (error) {
         logger.error(error); // Log the error on the server side
         handleError(response, 'Error creating tax');
@@ -112,25 +133,40 @@ export const updateTax = async (
     request: Request,
     response: Response,
 ): Promise<void> => {
-    const id: number = parseInt(request.params.id);
+    const { id } = request.params;
     const { rate, title, description, type } = request.body;
 
     const client = await pool.connect(); // Get a client from the pool
 
     try {
-        const { rows: taxesResults } = await client.query(
-            taxesQueries.updateTax,
-            [rate, title, description, type, id],
+        const { rows } = await client.query(
+            `
+                SELECT id
+                    FROM taxes
+                    WHERE id = $1
+            `,
+            [id],
         );
 
-        if (taxesResults.length === 0) {
+        if (rows.length === 0) {
             response.status(404).send('Tax not found');
             return;
         }
 
-        const taxes: Taxes[] = taxesResults.map((tax) => parseTaxes(tax));
+        const { rows: updateTaxesResults } = await client.query(
+            `
+                UPDATE taxes
+                    SET rate = $1,
+                    title = $2,
+                    description = $3,
+                    type = $4
+                    WHERE id = $5
+                    RETURNING *
+            `,
+            [rate, title, description, type, id],
+        );
 
-        response.status(200).json(taxes);
+        response.status(200).json(updateTaxesResults);
     } catch (error) {
         logger.error(error); // Log the error on the server side
         handleError(response, 'Error updating tax');
@@ -149,22 +185,32 @@ export const deleteTax = async (
     request: Request,
     response: Response,
 ): Promise<void> => {
-    const id: number = parseInt(request.params.id);
+    const { id } = request.params;
 
     const client = await pool.connect(); // Get a client from the pool
 
     try {
-        const { rows: getTaxesResults } = await client.query(
-            taxesQueries.getTax,
+        const { rows } = await client.query(
+            `
+                SELECT id
+                    FROM taxes
+                    WHERE id = $1
+            `,
             [id],
         );
 
-        if (getTaxesResults.length === 0) {
+        if (rows.length === 0) {
             response.status(404).send('Tax not found');
             return;
         }
 
-        await client.query(taxesQueries.deleteTax, [id]);
+        await client.query(
+            `
+                DELETE FROM taxes
+                    WHERE id = $1
+            `,
+            [id],
+        );
 
         response.status(200).send('Successfully deleted tax');
     } catch (error) {
