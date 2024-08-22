@@ -111,7 +111,6 @@ export const getPayrollDatesById = async (
 export const togglePayrollDate = async (
     request: Request,
     response: Response,
-    next: NextFunction,
 ): Promise<void> => {
     const { jobId, payrollDay } = request.body;
 
@@ -152,29 +151,14 @@ export const togglePayrollDate = async (
 
         await client.query('COMMIT;');
 
-        next();
+        response.status(201).json('Payroll date toggled');
     } catch (error) {
         await client.query('ROLLBACK;');
 
         logger.error(error); // Log the error on the server side
-        handleError(
-            response,
-            `Error getting, creating, or updating payroll dates for the day of ${payrollDay} of job id of ${jobId}`,
-        );
+        handleError(response, 'Error toggling payroll date');
     } finally {
         client.release(); // Release the client back to the pool
-    }
-};
-
-export const togglePayrollDateReturnObject = async (
-    _: Request,
-    response: Response,
-): Promise<void> => {
-    try {
-        response.status(201).json('Payroll date toggled');
-    } catch (error) {
-        logger.error(error); // Log the error on the server side
-        handleError(response, 'Error toggling payroll date');
     }
 };
 
@@ -188,7 +172,6 @@ export const togglePayrollDateReturnObject = async (
 export const createPayrollDate = async (
     request: Request,
     response: Response,
-    next: NextFunction,
 ): Promise<void> => {
     const { jobId, payrollDay } = request.body;
 
@@ -213,37 +196,10 @@ export const createPayrollDate = async (
 
         request.payrollDateId = rows[0].id;
 
-        next();
+        response.status(201).json(rows);
     } catch (error) {
         await client.query('ROLLBACK;');
 
-        logger.error(error); // Log the error on the server side
-        handleError(response, 'Error creating payroll date');
-    } finally {
-        client.release(); // Release the client back to the pool
-    }
-};
-
-export const createPayrollDateReturnObject = async (
-    request: Request,
-    response: Response,
-): Promise<void> => {
-    const { payrollDateId } = request;
-
-    const client = await pool.connect(); // Get a client from the pool
-
-    try {
-        const { rows } = await client.query(
-            `
-                SELECT *
-                    FROM payroll_dates
-                    WHERE id = $1
-            `,
-            [payrollDateId],
-        );
-
-        response.status(201).json(rows);
-    } catch (error) {
         logger.error(error); // Log the error on the server side
         handleError(response, 'Error creating payroll date');
     } finally {
@@ -285,7 +241,7 @@ export const updatePayrollDate = async (
 
         await client.query('BEGIN;');
 
-        await client.query(
+        const { rows: updatePayrollDateResults } = await client.query(
             `
                 UPDATE payroll_dates
                     SET job_id = $1,
@@ -300,43 +256,10 @@ export const updatePayrollDate = async (
 
         await client.query('COMMIT;');
 
-        next();
+        response.status(200).json(updatePayrollDateResults);
     } catch (error) {
         await client.query('ROLLBACK;');
 
-        logger.error(error); // Log the error on the server side
-        handleError(response, 'Error updating payroll date');
-    } finally {
-        client.release(); // Release the client back to the pool
-    }
-};
-
-/**
- *
- * @param request - Request object
- * @param response - Response object
- * Sends a PUT request to the database to update a payroll date
- */
-export const updatePayrollDateReturnObject = async (
-    request: Request,
-    response: Response,
-): Promise<void> => {
-    const { id } = request.params;
-
-    const client = await pool.connect(); // Get a client from the pool
-
-    try {
-        const { rows } = await client.query(
-            `
-                SELECT *
-                    FROM payroll_dates
-                    WHERE id = $1
-            `,
-            [id],
-        );
-
-        response.status(200).json(rows);
-    } catch (error) {
         logger.error(error); // Log the error on the server side
         handleError(response, 'Error updating payroll date');
     } finally {
@@ -391,7 +314,7 @@ export const deletePayrollDate = async (
 
         await client.query('COMMIT;');
 
-        next();
+        response.status(200).send('Successfully deleted payroll date');
     } catch (error) {
         await client.query('ROLLBACK;');
 
@@ -400,17 +323,4 @@ export const deletePayrollDate = async (
     } finally {
         client.release(); // Release the client back to the pool
     }
-};
-
-/**
- *
- * @param request - Request object
- * @param response - Response object
- * Sends a DELETE request to the database to delete a payroll date
- */
-export const deletePayrollDateReturnObject = async (
-    _: Request,
-    response: Response,
-): Promise<void> => {
-    response.status(200).send('Successfully deleted payroll date');
 };

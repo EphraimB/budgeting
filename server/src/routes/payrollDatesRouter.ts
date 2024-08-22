@@ -3,30 +3,12 @@ import { query, param, body } from 'express-validator';
 import {
     getPayrollDates,
     createPayrollDate,
-    createPayrollDateReturnObject,
     updatePayrollDate,
-    updatePayrollDateReturnObject,
     deletePayrollDate,
-    deletePayrollDateReturnObject,
     togglePayrollDate,
-    togglePayrollDateReturnObject,
     getPayrollDatesById,
 } from '../controllers/payrollDatesController.js';
 import validateRequest from '../utils/validateRequest.js';
-import generateTransactions from '../generation/generateTransactions.js';
-import {
-    setQueries,
-    getCurrentBalance,
-    getTransactionsByAccount,
-    getIncomeByAccount,
-    getExpensesByAccount,
-    getLoansByAccount,
-    getPayrollsMiddleware,
-    getTransfersByAccount,
-    getCommuteExpensesByAccount,
-    getWishlistsByAccount,
-    updateWishlistCron,
-} from '../middleware/middleware.js';
 
 const router: Router = express.Router();
 
@@ -65,19 +47,6 @@ router.post(
         validateRequest,
     ],
     createPayrollDate,
-    setQueries,
-    getCurrentBalance,
-    getTransactionsByAccount,
-    getIncomeByAccount,
-    getExpensesByAccount,
-    getLoansByAccount,
-    getPayrollsMiddleware,
-    getTransfersByAccount,
-    getCommuteExpensesByAccount,
-    getWishlistsByAccount,
-    generateTransactions,
-    updateWishlistCron,
-    createPayrollDateReturnObject,
 );
 
 router.post(
@@ -90,19 +59,6 @@ router.post(
         validateRequest,
     ],
     togglePayrollDate,
-    setQueries,
-    getCurrentBalance,
-    getTransactionsByAccount,
-    getIncomeByAccount,
-    getExpensesByAccount,
-    getLoansByAccount,
-    getPayrollsMiddleware,
-    getTransfersByAccount,
-    getCommuteExpensesByAccount,
-    getWishlistsByAccount,
-    generateTransactions,
-    updateWishlistCron,
-    togglePayrollDateReturnObject,
 );
 
 router.put(
@@ -116,19 +72,6 @@ router.put(
         validateRequest,
     ],
     updatePayrollDate,
-    setQueries,
-    getCurrentBalance,
-    getTransactionsByAccount,
-    getIncomeByAccount,
-    getExpensesByAccount,
-    getLoansByAccount,
-    getPayrollsMiddleware,
-    getTransfersByAccount,
-    getCommuteExpensesByAccount,
-    getWishlistsByAccount,
-    generateTransactions,
-    updateWishlistCron,
-    updatePayrollDateReturnObject,
 );
 
 router.delete(
@@ -138,19 +81,6 @@ router.delete(
         validateRequest,
     ],
     deletePayrollDate,
-    setQueries,
-    getCurrentBalance,
-    getTransactionsByAccount,
-    getIncomeByAccount,
-    getExpensesByAccount,
-    getLoansByAccount,
-    getPayrollsMiddleware,
-    getTransfersByAccount,
-    getCommuteExpensesByAccount,
-    getWishlistsByAccount,
-    generateTransactions,
-    updateWishlistCron,
-    deletePayrollDateReturnObject,
 );
 
 export default router;
