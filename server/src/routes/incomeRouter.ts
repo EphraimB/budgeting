@@ -3,27 +3,10 @@ import { query, param, body } from 'express-validator';
 import {
     getIncome,
     createIncome,
-    createIncomeReturnObject,
     updateIncome,
-    updateIncomeReturnObject,
     deleteIncome,
-    deleteIncomeReturnObject,
 } from '../controllers/incomeController.js';
 import validateRequest from '../utils/validateRequest.js';
-import generateTransactions from '../generation/generateTransactions.js';
-import {
-    setQueries,
-    getCurrentBalance,
-    getTransactionsByAccount,
-    getIncomeByAccount,
-    getExpensesByAccount,
-    getLoansByAccount,
-    getPayrollsMiddleware,
-    getTransfersByAccount,
-    getCommuteExpensesByAccount,
-    getWishlistsByAccount,
-    updateWishlistCron,
-} from '../middleware/middleware.js';
 
 const router: Router = express.Router();
 
@@ -100,19 +83,6 @@ router.post(
         validateRequest,
     ],
     createIncome,
-    setQueries,
-    getCurrentBalance,
-    getTransactionsByAccount,
-    getIncomeByAccount,
-    getExpensesByAccount,
-    getLoansByAccount,
-    getPayrollsMiddleware,
-    getTransfersByAccount,
-    getCommuteExpensesByAccount,
-    getWishlistsByAccount,
-    generateTransactions,
-    updateWishlistCron,
-    createIncomeReturnObject,
 );
 
 router.put(
@@ -173,19 +143,6 @@ router.put(
         validateRequest,
     ],
     updateIncome,
-    setQueries,
-    getCurrentBalance,
-    getTransactionsByAccount,
-    getIncomeByAccount,
-    getExpensesByAccount,
-    getLoansByAccount,
-    getPayrollsMiddleware,
-    getTransfersByAccount,
-    getCommuteExpensesByAccount,
-    getWishlistsByAccount,
-    generateTransactions,
-    updateWishlistCron,
-    updateIncomeReturnObject,
 );
 
 router.delete(
@@ -195,19 +152,6 @@ router.delete(
         validateRequest,
     ],
     deleteIncome,
-    setQueries,
-    getCurrentBalance,
-    getTransactionsByAccount,
-    getIncomeByAccount,
-    getExpensesByAccount,
-    getLoansByAccount,
-    getPayrollsMiddleware,
-    getTransfersByAccount,
-    getCommuteExpensesByAccount,
-    getWishlistsByAccount,
-    generateTransactions,
-    updateWishlistCron,
-    deleteIncomeReturnObject,
 );
 
 export default router;
