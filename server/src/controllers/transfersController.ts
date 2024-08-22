@@ -1,4 +1,4 @@
-import { type NextFunction, type Request, type Response } from 'express';
+import { type Request, type Response } from 'express';
 import { handleError } from '../utils/helperFunctions.js';
 import { logger } from '../config/winston.js';
 import determineCronValues from '../crontab/determineCronValues.js';
@@ -530,13 +530,11 @@ export const getTransfersById = async (
  *
  * @param request - The request object
  * @param response - The response object
- * @param next - The next function
  * Sends a response with the newly created transfer
  */
 export const createTransfer = async (
     request: Request,
     response: Response,
-    next: NextFunction,
 ): Promise<void> => {
     const {
         sourceAccountId,
@@ -630,9 +628,7 @@ export const createTransfer = async (
 
         await client.query('COMMIT;');
 
-        request.transferId = transferResult[0].id;
-
-        next();
+        response.status(201).json(transferResult);
     } catch (error) {
         await client.query('ROLLBACK;');
 
@@ -645,48 +641,13 @@ export const createTransfer = async (
 
 /**
  *
- * @param request - Request object
- * @param response - Response object
- * Sends a response with the created transfer
- */
-export const createTransferReturnObject = async (
-    request: Request,
-    response: Response,
-): Promise<void> => {
-    const { transferId } = request;
-
-    const client = await pool.connect(); // Get a client from the pool
-
-    try {
-        const { rows } = await client.query(
-            `
-                SELECT *
-                    FROM transfers
-                    WHERE id = $1
-            `,
-            [transferId],
-        );
-
-        response.status(201).json(rows);
-    } catch (error) {
-        logger.error(error); // Log the error on the server side
-        handleError(response, 'Error creating transfer');
-    } finally {
-        client.release(); // Release the client back to the pool
-    }
-};
-
-/**
- *
  * @param request - The request object
  * @param response - The response object
- * @param next - The next function
  * Sends a response with the updated transfer
  */
 export const updateTransfer = async (
     request: Request,
     response: Response,
-    next: NextFunction,
 ): Promise<void> => {
     const { id } = request.params;
     const {
@@ -772,7 +733,7 @@ export const updateTransfer = async (
             [uniqueId, cronDate, cronId],
         );
 
-        await client.query(
+        const { rows: updateTransfersResult } = await client.query(
             `
                 UPDATE transfers
                     SET source_account_id = $1,
@@ -789,6 +750,7 @@ export const updateTransfer = async (
                     begin_date = $12,
                     end_date = $13
                     WHERE id = $14
+                    RETURNING *
             `,
             [
                 sourceAccountId,
@@ -810,9 +772,7 @@ export const updateTransfer = async (
 
         await client.query('COMMIT;');
 
-        request.transferId = +id;
-
-        next();
+        response.status(200).json(updateTransfersResult);
     } catch (error) {
         await client.query('ROLLBACK;');
 
@@ -825,48 +785,13 @@ export const updateTransfer = async (
 
 /**
  *
- * @param request - Request object
- * @param response - Response object
- * Sends a response with the updated transfer
- */
-export const updateTransferReturnObject = async (
-    request: Request,
-    response: Response,
-): Promise<void> => {
-    const { transferId } = request;
-
-    const client = await pool.connect(); // Get a client from the pool
-
-    try {
-        const { rows } = await client.query(
-            `
-                SELECT *
-                    FROM transfers
-                    WHERE id = $1
-            `,
-            [transferId],
-        );
-
-        response.status(200).json(rows);
-    } catch (error) {
-        logger.error(error); // Log the error on the server side
-        handleError(response, 'Error getting transfer');
-    } finally {
-        client.release(); // Release the client back to the pool
-    }
-};
-
-/**
- *
  * @param request - The request object
  * @param response - The response object
- * @param next - The next function
  * Sends a response with the deleted transfer
  */
 export const deleteTransfer = async (
     request: Request,
     response: Response,
-    next: NextFunction,
 ): Promise<void> => {
     const { id } = request.params;
 
@@ -920,7 +845,7 @@ export const deleteTransfer = async (
 
         await client.query('COMMIT;');
 
-        next();
+        response.status(200).send('Transfer deleted successfully');
     } catch (error) {
         await client.query('ROLLBACK;');
 
@@ -929,17 +854,4 @@ export const deleteTransfer = async (
     } finally {
         client.release(); // Release the client back to the pool
     }
-};
-
-/**
- *
- * @param request - Request object
- * @param response - Response object
- * Sends a response with the deleted transfer
- */
-export const deleteTransferReturnObject = async (
-    _: Request,
-    response: Response,
-): Promise<void> => {
-    response.status(200).send('Transfer deleted successfully');
 };

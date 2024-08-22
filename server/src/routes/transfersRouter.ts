@@ -2,29 +2,12 @@ import express, { type Router } from 'express';
 import {
     getTransfers,
     createTransfer,
-    createTransferReturnObject,
     updateTransfer,
-    updateTransferReturnObject,
     deleteTransfer,
-    deleteTransferReturnObject,
     getTransfersById,
 } from '../controllers/transfersController.js';
 import { param, query, body } from 'express-validator';
 import validateRequest from '../utils/validateRequest.js';
-import generateTransactions from '../generation/generateTransactions.js';
-import {
-    setQueries,
-    getCurrentBalance,
-    getTransactionsByAccount,
-    getIncomeByAccount,
-    getExpensesByAccount,
-    getLoansByAccount,
-    getPayrollsMiddleware,
-    getTransfersByAccount,
-    getCommuteExpensesByAccount,
-    getWishlistsByAccount,
-    updateWishlistCron,
-} from '../middleware/middleware.js';
 
 const router: Router = express.Router();
 
@@ -109,19 +92,6 @@ router.post(
         validateRequest,
     ],
     createTransfer,
-    setQueries,
-    getCurrentBalance,
-    getTransactionsByAccount,
-    getIncomeByAccount,
-    getExpensesByAccount,
-    getLoansByAccount,
-    getPayrollsMiddleware,
-    getTransfersByAccount,
-    getCommuteExpensesByAccount,
-    getWishlistsByAccount,
-    generateTransactions,
-    updateWishlistCron,
-    createTransferReturnObject,
 );
 
 router.put(
@@ -181,19 +151,6 @@ router.put(
         validateRequest,
     ],
     updateTransfer,
-    setQueries,
-    getCurrentBalance,
-    getTransactionsByAccount,
-    getIncomeByAccount,
-    getExpensesByAccount,
-    getLoansByAccount,
-    getPayrollsMiddleware,
-    getTransfersByAccount,
-    getCommuteExpensesByAccount,
-    getWishlistsByAccount,
-    generateTransactions,
-    updateWishlistCron,
-    updateTransferReturnObject,
 );
 
 router.delete(
@@ -203,19 +160,6 @@ router.delete(
         validateRequest,
     ],
     deleteTransfer,
-    setQueries,
-    getCurrentBalance,
-    getTransactionsByAccount,
-    getIncomeByAccount,
-    getExpensesByAccount,
-    getLoansByAccount,
-    getPayrollsMiddleware,
-    getTransfersByAccount,
-    getCommuteExpensesByAccount,
-    getWishlistsByAccount,
-    generateTransactions,
-    updateWishlistCron,
-    deleteTransferReturnObject,
 );
 
 export default router;
