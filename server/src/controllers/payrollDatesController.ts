@@ -105,7 +105,6 @@ export const getPayrollDatesById = async (
  *
  * @param request - Request object
  * @param response - Response object
- * @param next - Next function
  * Sends a POST request to the database to toggle a payroll date
  */
 export const togglePayrollDate = async (
@@ -166,7 +165,6 @@ export const togglePayrollDate = async (
  *
  * @param request - Request object
  * @param response - Response object
- * @param next - Next function
  * Sends a POST request to the database to create a new payroll date
  */
 export const createPayrollDate = async (
@@ -211,13 +209,11 @@ export const createPayrollDate = async (
  *
  * @param request - Request object
  * @param response - Response object
- * @param next - Next function
  * Sends a PUT request to the database to update a payroll date
  */
 export const updatePayrollDate = async (
     request: Request,
     response: Response,
-    next: NextFunction,
 ): Promise<void> => {
     const { id } = request.params;
     const { jobId, payrollDay } = request.body;
@@ -271,13 +267,11 @@ export const updatePayrollDate = async (
  *
  * @param request - Request object
  * @param response - Response object
- * @param next - Next function
  * Sends a DELETE request to the database to delete a payroll date
  */
 export const deletePayrollDate = async (
     request: Request,
     response: Response,
-    next: NextFunction,
 ): Promise<void> => {
     const { id } = request.params;
 

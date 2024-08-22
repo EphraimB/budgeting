@@ -1,4 +1,4 @@
-import { type NextFunction, type Request, type Response } from 'express';
+import { type Request, type Response } from 'express';
 import { handleError } from '../utils/helperFunctions.js';
 import { JobSchedule } from '../types/types.js';
 import { logger } from '../config/winston.js';
@@ -264,13 +264,11 @@ export const createJob = async (
  *
  * @param request - Request object
  * @param response - Response object
- * @param next - Next function
  * Sends a PUT request to the database to update an job
  */
 export const updateJob = async (
     request: Request,
     response: Response,
-    next: NextFunction,
 ): Promise<void> => {
     const client = await pool.connect(); // Get a client from the pool
 

@@ -1,4 +1,4 @@
-import { type NextFunction, type Request, type Response } from 'express';
+import { type Request, type Response } from 'express';
 import { cronJobQueries, incomeQueries } from '../models/queryData.js';
 import { handleError } from '../utils/helperFunctions.js';
 import { logger } from '../config/winston.js';
@@ -528,13 +528,11 @@ export const getIncomeById = async (
  *
  * @param request - Request object
  * @param response - Response object
- * @param next - Next function
  * Sends a response with the created income and creates a cron job for the income and inserts it into the database
  */
 export const createIncome = async (
     request: Request,
     response: Response,
-    next: NextFunction,
 ): Promise<void> => {
     const {
         accountId,
@@ -632,13 +630,11 @@ export const createIncome = async (
  *
  * @param request - Request object
  * @param response - Response object
- * @param next - Next function
  * Sends a response with the updated income and updates the cron job for the income and updates it in the database
  */
 export const updateIncome = async (
     request: Request,
     response: Response,
-    next: NextFunction,
 ): Promise<void> => {
     const { id } = request.params;
     const {
@@ -764,13 +760,11 @@ export const updateIncome = async (
  *
  * @param request - Request object
  * @param response - Response object
- * @param next - Next function
  * Sends a response with the deleted income and deletes the cron job for the income and deletes it from the database
  */
 export const deleteIncome = async (
     request: Request,
     response: Response,
-    next: NextFunction,
 ): Promise<void> => {
     const { id } = request.params;
 

@@ -1,4 +1,4 @@
-import { type NextFunction, type Request, type Response } from 'express';
+import { type Request, type Response } from 'express';
 import { taxesQueries } from '../models/queryData.js';
 import determineCronValues from '../crontab/determineCronValues.js';
 import { handleError } from '../utils/helperFunctions.js';
@@ -538,7 +538,6 @@ export const getExpensesById = async (
 export const createExpense = async (
     request: Request,
     response: Response,
-    next: NextFunction,
 ): Promise<void> => {
     const {
         accountId,
@@ -657,7 +656,6 @@ export const createExpense = async (
 export const updateExpense = async (
     request: Request,
     response: Response,
-    next: NextFunction,
 ): Promise<void> => {
     const { id } = request.params;
     const {
@@ -810,7 +808,6 @@ export const updateExpense = async (
 export const deleteExpense = async (
     request: Request,
     response: Response,
-    next: NextFunction,
 ): Promise<void> => {
     const { id } = request.params;
 

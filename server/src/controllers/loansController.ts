@@ -1,4 +1,4 @@
-import { type NextFunction, type Request, type Response } from 'express';
+import { type Request, type Response } from 'express';
 import { handleError } from '../utils/helperFunctions.js';
 import { logger } from '../config/winston.js';
 import determineCronValues from '../crontab/determineCronValues.js';
@@ -519,13 +519,11 @@ export const getLoansById = async (
  *
  * @param request - Request object
  * @param response - Response object
- * @param next - Next function
  * Sends a POST request to the database to create a new loan
  */
 export const createLoan = async (
     request: Request,
     response: Response,
-    next: NextFunction,
 ): Promise<void> => {
     const {
         accountId,
@@ -665,13 +663,11 @@ export const createLoan = async (
  *
  * @param request - Request object
  * @param response - Response object
- * @param next - Next function
  * Sends a PUT request to the database to update a loan
  */
 export const updateLoan = async (
     request: Request,
     response: Response,
-    next: NextFunction,
 ): Promise<void> => {
     const { id } = request.params;
     const {
@@ -862,13 +858,11 @@ export const updateLoan = async (
  *
  * @param request - Request object
  * @param response - Response object
- * @param next - Next function
  * Sends a DELETE request to the database to delete a loan
  */
 export const deleteLoan = async (
     request: Request,
     response: Response,
-    next: NextFunction,
 ): Promise<void> => {
     const { id } = request.params;
 
