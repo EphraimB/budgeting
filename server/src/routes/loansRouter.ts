@@ -3,27 +3,11 @@ import { query, param, body } from 'express-validator';
 import {
     getLoans,
     createLoan,
-    createLoanReturnObject,
     updateLoan,
-    updateLoanReturnObject,
     deleteLoan,
-    deleteLoanReturnObject,
+    getLoansById,
 } from '../controllers/loansController.js';
 import validateRequest from '../utils/validateRequest.js';
-import generateTransactions from '../generation/generateTransactions.js';
-import {
-    setQueries,
-    getCurrentBalance,
-    getTransactionsByAccount,
-    getIncomeByAccount,
-    getExpensesByAccount,
-    getLoansByAccount,
-    getPayrollsMiddleware,
-    getTransfersByAccount,
-    getCommuteExpensesByAccount,
-    getWishlistsByAccount,
-    updateWishlistCron,
-} from '../middleware/middleware.js';
 
 const router: Router = express.Router();
 
@@ -36,17 +20,6 @@ router.get(
             .withMessage('Account ID must be a number'),
         validateRequest,
     ],
-    setQueries,
-    getCurrentBalance,
-    getTransactionsByAccount,
-    getIncomeByAccount,
-    getExpensesByAccount,
-    getLoansByAccount,
-    getPayrollsMiddleware,
-    getTransfersByAccount,
-    getCommuteExpensesByAccount,
-    getWishlistsByAccount,
-    generateTransactions,
     getLoans,
 );
 
@@ -60,18 +33,7 @@ router.get(
             .withMessage('Account ID must be a number'),
         validateRequest,
     ],
-    setQueries,
-    getCurrentBalance,
-    getTransactionsByAccount,
-    getIncomeByAccount,
-    getExpensesByAccount,
-    getLoansByAccount,
-    getPayrollsMiddleware,
-    getTransfersByAccount,
-    getCommuteExpensesByAccount,
-    getWishlistsByAccount,
-    generateTransactions,
-    getLoans,
+    getLoansById,
 );
 
 router.post(
@@ -135,19 +97,6 @@ router.post(
         validateRequest,
     ],
     createLoan,
-    setQueries,
-    getCurrentBalance,
-    getTransactionsByAccount,
-    getIncomeByAccount,
-    getExpensesByAccount,
-    getLoansByAccount,
-    getPayrollsMiddleware,
-    getTransfersByAccount,
-    getCommuteExpensesByAccount,
-    getWishlistsByAccount,
-    generateTransactions,
-    updateWishlistCron,
-    createLoanReturnObject,
 );
 
 router.put(
@@ -212,19 +161,6 @@ router.put(
         validateRequest,
     ],
     updateLoan,
-    setQueries,
-    getCurrentBalance,
-    getTransactionsByAccount,
-    getIncomeByAccount,
-    getExpensesByAccount,
-    getLoansByAccount,
-    getPayrollsMiddleware,
-    getTransfersByAccount,
-    getCommuteExpensesByAccount,
-    getWishlistsByAccount,
-    generateTransactions,
-    updateWishlistCron,
-    updateLoanReturnObject,
 );
 
 router.delete(
@@ -234,19 +170,6 @@ router.delete(
         validateRequest,
     ],
     deleteLoan,
-    setQueries,
-    getCurrentBalance,
-    getTransactionsByAccount,
-    getIncomeByAccount,
-    getExpensesByAccount,
-    getLoansByAccount,
-    getPayrollsMiddleware,
-    getTransfersByAccount,
-    getCommuteExpensesByAccount,
-    getWishlistsByAccount,
-    generateTransactions,
-    updateWishlistCron,
-    deleteLoanReturnObject,
 );
 
 export default router;

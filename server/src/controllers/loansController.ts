@@ -650,44 +650,10 @@ export const createLoan = async (
 
         await client.query('COMMIT;');
 
-        request.loanId = loanResults[0].id;
-
-        next();
+        response.status(201).json(loanResults);
     } catch (error) {
         await client.query('ROLLBACK;');
 
-        logger.error(error); // Log the error on the server side
-        handleError(response, 'Error creating loan');
-    } finally {
-        client.release(); // Release the client back to the pool
-    }
-};
-
-/**
- *
- * @param request - Request object
- * @param response - Response object
- * Sends a response with the created loan
- */
-export const createLoanReturnObject = async (
-    request: Request,
-    response: Response,
-): Promise<void> => {
-    const { loanId } = request;
-
-    const client = await pool.connect(); // Get a client from the pool
-
-    try {
-        const { rows } = await client.query(
-            `
-                SELECT * FROM loans
-                    WHERE id = $1
-            `,
-            [loanId],
-        );
-
-        response.status(201).json(rows);
-    } catch (error) {
         logger.error(error); // Log the error on the server side
         handleError(response, 'Error creating loan');
     } finally {
@@ -707,7 +673,7 @@ export const updateLoan = async (
     response: Response,
     next: NextFunction,
 ): Promise<void> => {
-    const id = request.params;
+    const { id } = request.params;
     const {
         accountId,
         amount,
@@ -837,7 +803,7 @@ export const updateLoan = async (
             [uniqueId, cronDateInterest, interestCronId],
         );
 
-        await client.query(
+        const { rows: updateLoansResult } = await client.query(
             `
                 UPDATE loans
                     SET account_id = $1,
@@ -881,47 +847,12 @@ export const updateLoan = async (
 
         await client.query('COMMIT;');
 
-        request.loanId = +id;
-
-        next();
+        response.status(200).json(updateLoansResult);
     } catch (error) {
         await client.query('ROLLBACK;');
 
         logger.error(error); // Log the error on the server side
         handleError(response, 'Error updating loan');
-    } finally {
-        client.release(); // Release the client back to the pool
-    }
-};
-
-/**
- *
- * @param request - Request object
- * @param response - Response object
- * Sends a response with the updated loan
- */
-export const updateLoanReturnObject = async (
-    request: Request,
-    response: Response,
-): Promise<void> => {
-    const { loanId } = request;
-
-    const client = await pool.connect(); // Get a client from the pool
-
-    try {
-        const { rows } = await client.query(
-            `
-                SELECT *
-                    FROM loans
-                    WHERE id = $1
-            `,
-            [loanId],
-        );
-
-        response.status(200).json(rows);
-    } catch (error) {
-        logger.error(error); // Log the error on the server side
-        handleError(response, 'Error getting loan');
     } finally {
         client.release(); // Release the client back to the pool
     }
@@ -1012,7 +943,7 @@ export const deleteLoan = async (
 
         await client.query('COMMIT;');
 
-        next();
+        response.status(200).send('Loan deleted successfully');
     } catch (error) {
         await client.query('ROLLBACK;');
 
@@ -1021,17 +952,4 @@ export const deleteLoan = async (
     } finally {
         client.release(); // Release the client back to the pool
     }
-};
-
-/**
- *
- * @param request - Request object
- * @param response - Response object
- * Sends a response with the deleted loan
- */
-export const deleteLoanReturnObject = async (
-    _: Request,
-    response: Response,
-): Promise<void> => {
-    response.status(200).send('Loan deleted successfully');
 };
