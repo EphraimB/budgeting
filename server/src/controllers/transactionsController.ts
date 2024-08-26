@@ -315,6 +315,7 @@ export const getTransactions = async (
                     combined_details cd
               WHERE 
                     cd.date < $2
+              ORDER BY date, title, description
             )
             SELECT
                 a.id AS account_id,
@@ -674,6 +675,7 @@ export const getTransactionsByAccountId = async (
                     combined_details cd
               WHERE 
                     cd.date < $3
+              ORDER BY date, title, description
             )
             SELECT
                 a.id AS account_id,
