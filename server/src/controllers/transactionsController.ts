@@ -161,6 +161,8 @@ export const getTransactions = async (
                     payroll_dates pd
                 JOIN 
                     jobs j ON pd.job_id = j.id
+                WHERE 
+                    j.account_id = 1
             )
             SELECT
               	j.id AS job_id,
@@ -226,7 +228,8 @@ export const getTransactions = async (
                 GROUP BY job_id
             ) pt ON j.id = pt.job_id
             WHERE 
-                d.date >= CASE
+                j.account_id = 1 
+                AND d.date >= CASE
                     WHEN s2.payroll_start_day::integer < 0 THEN
                         (make_date(extract(year from d1)::integer, extract(month from d1)::integer, ABS(s2.payroll_start_day::integer)) - INTERVAL '1 MONTH')::DATE
                     ELSE 
@@ -260,7 +263,7 @@ export const getTransactions = async (
                     wdah.account_id, 
                     wdah.end_date, 
                     wdah.name
-              ORDER BY wdah.job_id
+              ORDER BY end_date, name
             ),
             combined_details AS (
                 SELECT
@@ -281,6 +284,7 @@ export const getTransactions = async (
                     FROM 
                         payroll_summary ps
               			WHERE ps.end_date >= now()
+              			ORDER BY date, title -- Ensure payroll ordering by date and title
             ),
             current_balance AS (
                 -- Calculate the current balance for each account based on transactions
@@ -291,6 +295,30 @@ export const getTransactions = async (
                     transaction_details
                 GROUP BY 
                     account_id
+            ),
+            projected_balance AS (
+                SELECT
+                    twb.date,
+                    twb.account_id,
+              			twb.amount,
+                    COALESCE(SUM(twb.amount) OVER (PARTITION BY twb.account_id ORDER BY twb.date), 0) AS running_balance
+                FROM 
+                    transaction_with_balance twb
+            ),
+            wishlist_affordable AS (
+                SELECT 
+                    w.account_id,
+                    w.title,
+                    w.description,
+                    -w.amount AS amount,
+                    MIN(pb.date) AS date,
+                    -(SELECT MAX(pb2.running_balance) FROM projected_balance pb2 WHERE pb2.account_id = w.account_id AND pb2.date <= MIN(pb.date)) AS running_balance
+                FROM 
+                    wishlist w
+                JOIN 
+                    projected_balance pb ON w.account_id = pb.account_id AND pb.running_balance > w.amount
+                GROUP BY 
+                    w.account_id, w.title, w.description, w.amount
             ),
             transaction_with_balance AS (
                 -- Calculate the remaining balance after each transaction (reversed for transactions)
@@ -310,12 +338,37 @@ export const getTransactions = async (
                     cd.description,
                     cd.date,
                     cd.amount,
-                    COALESCE(SUM(-cd.amount) OVER (PARTITION BY cd.account_id ORDER BY cd.date, cd.amount ROWS BETWEEN UNBOUNDED PRECEDING AND 1 PRECEDING), cd.amount - cd.amount) AS running_balance
+                    COALESCE(SUM(-cd.amount) OVER (PARTITION BY cd.account_id ORDER BY cd.date, cd.title, cd.description ROWS BETWEEN UNBOUNDED PRECEDING AND 1 PRECEDING), 0) AS running_balance
                 FROM 
                     combined_details cd
               WHERE 
                     cd.date < $2
+							
               ORDER BY date, title, description
+            ),
+            all_transactions AS (
+                SELECT 
+                    twb.account_id,
+                    twb.title,
+                    twb.description,
+                    twb.date,
+                    twb.amount,
+                    twb.running_balance
+                FROM 
+                    transaction_with_balance twb
+                UNION
+                SELECT 
+                    wa.account_id,
+                    wa.title,
+                    wa.description,
+                    wa.date,
+                    wa.amount,
+                    wa.running_balance + cb.current_balance AS running_balance
+                FROM 
+                    wishlist_affordable wa
+              	LEFT JOIN 
+                		current_balance cb ON wa.account_id = cb.account_id
+                ORDER BY date, title, description
             )
             SELECT
                 a.id AS account_id,
@@ -340,7 +393,7 @@ export const getTransactions = async (
             LEFT JOIN 
                 current_balance cb ON a.id = cb.account_id
             LEFT JOIN 
-                transaction_with_balance twb ON a.id = twb.account_id
+                all_transactions twb ON a.id = twb.account_id
             WHERE date > $1
             GROUP BY 
                 a.id, cb.current_balance
@@ -519,7 +572,7 @@ export const getTransactionsByAccountId = async (
                 JOIN 
                     jobs j ON pd.job_id = j.id
                 WHERE 
-                    j.account_id = $1
+                    j.account_id = 1
             )
             SELECT
               	j.id AS job_id,
@@ -585,7 +638,7 @@ export const getTransactionsByAccountId = async (
                 GROUP BY job_id
             ) pt ON j.id = pt.job_id
             WHERE 
-                j.account_id = $1 
+                j.account_id = 1 
                 AND d.date >= CASE
                     WHEN s2.payroll_start_day::integer < 0 THEN
                         (make_date(extract(year from d1)::integer, extract(month from d1)::integer, ABS(s2.payroll_start_day::integer)) - INTERVAL '1 MONTH')::DATE
@@ -620,7 +673,7 @@ export const getTransactionsByAccountId = async (
                     wdah.account_id, 
                     wdah.end_date, 
                     wdah.name
-              ORDER BY wdah.job_id
+              ORDER BY end_date, name
             ),
             combined_details AS (
                 SELECT
@@ -641,6 +694,7 @@ export const getTransactionsByAccountId = async (
                     FROM 
                         payroll_summary ps
               			WHERE ps.end_date >= now()
+              			ORDER BY date, title -- Ensure payroll ordering by date and title
             ),
             current_balance AS (
                 -- Calculate the current balance for each account based on transactions
@@ -651,6 +705,30 @@ export const getTransactionsByAccountId = async (
                     transaction_details
                 GROUP BY 
                     account_id
+            ),
+            projected_balance AS (
+                SELECT
+                    twb.date,
+                    twb.account_id,
+              			twb.amount,
+                    COALESCE(SUM(twb.amount) OVER (PARTITION BY twb.account_id ORDER BY twb.date), 0) AS running_balance
+                FROM 
+                    transaction_with_balance twb
+            ),
+            wishlist_affordable AS (
+                SELECT 
+                    w.account_id,
+                    w.title,
+                    w.description,
+                    -w.amount AS amount,
+                    MIN(pb.date) AS date,
+                    -(SELECT MAX(pb2.running_balance) FROM projected_balance pb2 WHERE pb2.account_id = w.account_id AND pb2.date <= MIN(pb.date)) AS running_balance
+                FROM 
+                    wishlist w
+                JOIN 
+                    projected_balance pb ON w.account_id = pb.account_id AND pb.running_balance > w.amount
+                GROUP BY 
+                    w.account_id, w.title, w.description, w.amount
             ),
             transaction_with_balance AS (
                 -- Calculate the remaining balance after each transaction (reversed for transactions)
@@ -670,12 +748,37 @@ export const getTransactionsByAccountId = async (
                     cd.description,
                     cd.date,
                     cd.amount,
-                    COALESCE(SUM(-cd.amount) OVER (PARTITION BY cd.account_id ORDER BY cd.date, cd.amount ROWS BETWEEN UNBOUNDED PRECEDING AND 1 PRECEDING), cd.amount - cd.amount) AS running_balance
+                    COALESCE(SUM(-cd.amount) OVER (PARTITION BY cd.account_id ORDER BY cd.date, cd.title, cd.description ROWS BETWEEN UNBOUNDED PRECEDING AND 1 PRECEDING), 0) AS running_balance
                 FROM 
                     combined_details cd
               WHERE 
                     cd.date < $3
+							
               ORDER BY date, title, description
+            ),
+            all_transactions AS (
+                SELECT 
+                    twb.account_id,
+                    twb.title,
+                    twb.description,
+                    twb.date,
+                    twb.amount,
+                    twb.running_balance
+                FROM 
+                    transaction_with_balance twb
+                UNION
+                SELECT 
+                    wa.account_id,
+                    wa.title,
+                    wa.description,
+                    wa.date,
+                    wa.amount,
+                    wa.running_balance + cb.current_balance AS running_balance
+                FROM 
+                    wishlist_affordable wa
+              	LEFT JOIN 
+                		current_balance cb ON wa.account_id = cb.account_id
+                ORDER BY date, title, description
             )
             SELECT
                 a.id AS account_id,
@@ -700,7 +803,7 @@ export const getTransactionsByAccountId = async (
             LEFT JOIN 
                 current_balance cb ON a.id = cb.account_id
             LEFT JOIN 
-                transaction_with_balance twb ON a.id = twb.account_id
+                all_transactions twb ON a.id = twb.account_id
             WHERE a.id = $1 AND date > $2
             GROUP BY 
                 a.id, cb.current_balance
