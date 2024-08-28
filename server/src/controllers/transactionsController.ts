@@ -32,24 +32,26 @@ export const getTransactions = async (
                     e.frequency_type_variable,
                     e.frequency_day_of_week,
                     e.frequency_week_of_month,
-                    e.frequency_month_of_year
+                    e.frequency_month_of_year,
+                    NULL AS remaining_balance
                 FROM 
                     expenses e
                 UNION
-                    SELECT
-                      l.account_id,
-                      l.title,
-                      l.description,
-                      l.begin_date AS date,
-                      -l.plan_amount AS amount,
-                      l.frequency_type,
-                      l.frequency_type_variable,
-                      l.frequency_day_of_week,
-                      l.frequency_week_of_month,
-                      l.frequency_month_of_year
-                	FROM loans l
-  							UNION
-  								SELECT 
+                SELECT
+                    l.account_id,
+                    l.title,
+                    l.description,
+                    l.begin_date AS date,
+                    -l.plan_amount AS amount,
+                    l.frequency_type,
+                    l.frequency_type_variable,
+                    l.frequency_day_of_week,
+                    l.frequency_week_of_month,
+                    l.frequency_month_of_year,
+                    l.amount AS remaining_balance
+                FROM loans l
+                UNION
+                SELECT 
                     t.source_account_id,
                     t.title,
                     t.description,
@@ -59,11 +61,12 @@ export const getTransactions = async (
                     t.frequency_type_variable,
                     t.frequency_day_of_week,
                     t.frequency_week_of_month,
-                    t.frequency_month_of_year
-                	FROM 
+                    t.frequency_month_of_year,
+                    NULL AS remaining_balance
+                FROM 
                     transfers t
-  							UNION
-  								SELECT 
+                UNION
+                SELECT 
                     td.destination_account_id,
                     td.title,
                     td.description,
@@ -73,23 +76,25 @@ export const getTransactions = async (
                     td.frequency_type_variable,
                     td.frequency_day_of_week,
                     td.frequency_week_of_month,
-                    td.frequency_month_of_year
-                	FROM 
+                    td.frequency_month_of_year,
+                    NULL AS remaining_balance
+                FROM 
                     transfers td
-  							UNION
-                  SELECT 
-                      i.account_id,
-                      i.title,
-                      i.description,
-                      i.begin_date AS date,
-                      i.amount + (-i.amount * COALESCE((SELECT rate FROM taxes WHERE id = i.tax_id), 0)) AS amount,
-                      i.frequency_type,
-                      i.frequency_type_variable,
-                      i.frequency_day_of_week,
-                      i.frequency_week_of_month,
-                      i.frequency_month_of_year
-                  FROM 
-                      income i
+                UNION
+                SELECT 
+                    i.account_id,
+                    i.title,
+                    i.description,
+                    i.begin_date AS date,
+                    i.amount + (-i.amount * COALESCE((SELECT rate FROM taxes WHERE id = i.tax_id), 0)) AS amount,
+                    i.frequency_type,
+                    i.frequency_type_variable,
+                    i.frequency_day_of_week,
+                    i.frequency_week_of_month,
+                    i.frequency_month_of_year,
+                    NULL AS remaining_balance
+                FROM 
+                    income i
                 UNION ALL
                 -- Generate subsequent billing dates based on frequency type
                 SELECT
@@ -145,11 +150,13 @@ export const getTransactions = async (
                     r.frequency_type_variable,
                     r.frequency_day_of_week,
                     r.frequency_week_of_month,
-                    r.frequency_month_of_year
+                    r.frequency_month_of_year,
+                    r.remaining_balance - ABS(r.amount) AS remaining_balance
                 FROM 
                     recurring r
                 WHERE
                     (r.date + interval '1 day') <= $2
+                    AND (r.remaining_balance IS NULL OR r.remaining_balance - ABS(r.amount) > 0)
             ),
             work_days_and_hours AS (
             	WITH ordered_table AS (
@@ -161,8 +168,6 @@ export const getTransactions = async (
                     payroll_dates pd
                 JOIN 
                     jobs j ON pd.job_id = j.id
-                WHERE 
-                    j.account_id = 1
             )
             SELECT
               	j.id AS job_id,
@@ -489,24 +494,26 @@ export const getTransactionsByAccountId = async (
                     e.frequency_type_variable,
                     e.frequency_day_of_week,
                     e.frequency_week_of_month,
-                    e.frequency_month_of_year
+                    e.frequency_month_of_year,
+                    NULL AS remaining_balance
                 FROM 
                     expenses e
                 UNION
-                    SELECT
-                      l.account_id,
-                      l.title,
-                      l.description,
-                      l.begin_date AS date,
-                      -l.plan_amount AS amount,
-                      l.frequency_type,
-                      l.frequency_type_variable,
-                      l.frequency_day_of_week,
-                      l.frequency_week_of_month,
-                      l.frequency_month_of_year
-                	FROM loans l
-  							UNION
-  								SELECT 
+                SELECT
+                    l.account_id,
+                    l.title,
+                    l.description,
+                    l.begin_date AS date,
+                    -l.plan_amount AS amount,
+                    l.frequency_type,
+                    l.frequency_type_variable,
+                    l.frequency_day_of_week,
+                    l.frequency_week_of_month,
+                    l.frequency_month_of_year,
+                    l.amount AS remaining_balance
+                FROM loans l
+                UNION
+                SELECT 
                     t.source_account_id,
                     t.title,
                     t.description,
@@ -516,11 +523,12 @@ export const getTransactionsByAccountId = async (
                     t.frequency_type_variable,
                     t.frequency_day_of_week,
                     t.frequency_week_of_month,
-                    t.frequency_month_of_year
-                	FROM 
+                    t.frequency_month_of_year,
+                    NULL AS remaining_balance
+                FROM 
                     transfers t
-  							UNION
-  								SELECT 
+                UNION
+                SELECT 
                     td.destination_account_id,
                     td.title,
                     td.description,
@@ -530,23 +538,25 @@ export const getTransactionsByAccountId = async (
                     td.frequency_type_variable,
                     td.frequency_day_of_week,
                     td.frequency_week_of_month,
-                    td.frequency_month_of_year
-                	FROM 
+                    td.frequency_month_of_year,
+                    NULL AS remaining_balance
+                FROM 
                     transfers td
-  							UNION
-                  SELECT 
-                      i.account_id,
-                      i.title,
-                      i.description,
-                      i.begin_date AS date,
-                      i.amount + (-i.amount * COALESCE((SELECT rate FROM taxes WHERE id = i.tax_id), 0)) AS amount,
-                      i.frequency_type,
-                      i.frequency_type_variable,
-                      i.frequency_day_of_week,
-                      i.frequency_week_of_month,
-                      i.frequency_month_of_year
-                  FROM 
-                      income i
+                UNION
+                SELECT 
+                    i.account_id,
+                    i.title,
+                    i.description,
+                    i.begin_date AS date,
+                    i.amount + (-i.amount * COALESCE((SELECT rate FROM taxes WHERE id = i.tax_id), 0)) AS amount,
+                    i.frequency_type,
+                    i.frequency_type_variable,
+                    i.frequency_day_of_week,
+                    i.frequency_week_of_month,
+                    i.frequency_month_of_year,
+                    NULL AS remaining_balance
+                FROM 
+                    income i
                 UNION ALL
                 -- Generate subsequent billing dates based on frequency type
                 SELECT
@@ -602,11 +612,13 @@ export const getTransactionsByAccountId = async (
                     r.frequency_type_variable,
                     r.frequency_day_of_week,
                     r.frequency_week_of_month,
-                    r.frequency_month_of_year
+                    r.frequency_month_of_year,
+                    r.remaining_balance - ABS(r.amount) AS remaining_balance
                 FROM 
                     recurring r
                 WHERE
-                    (r.date + interval '1 day') <= $3
+                    (r.date + interval '1 day') <= '$3
+                    AND (r.remaining_balance IS NULL OR r.remaining_balance - ABS(r.amount) > 0)
             ),
             work_days_and_hours AS (
             	WITH ordered_table AS (
@@ -685,7 +697,7 @@ export const getTransactionsByAccountId = async (
                 GROUP BY job_id
             ) pt ON j.id = pt.job_id
             WHERE 
-                j.account_id = 1 
+                j.account_id = $1 
                 AND d.date >= CASE
                     WHEN s2.payroll_start_day::integer < 0 THEN
                         (make_date(extract(year from d1)::integer, extract(month from d1)::integer, ABS(s2.payroll_start_day::integer)) - INTERVAL '1 MONTH')::DATE
