@@ -369,6 +369,53 @@ export const getTransactions = async (
               	LEFT JOIN 
                 		current_balance cb ON wa.account_id = cb.account_id
                 ORDER BY date, title, description
+            ),
+            recalculate_balances AS (
+              SELECT 
+                    td.account_id,
+                    td.title,
+                    td.description,
+                    td.date,
+                    td.amount,
+                		SUM(td.amount) OVER (PARTITION BY td.account_id ORDER BY td.date DESC) AS running_balance
+                FROM 
+                    transaction_details td
+                UNION
+                SELECT 
+                    account_id,
+                    title,
+                    description,
+                    date,
+                    amount,
+                    COALESCE(SUM(-amount) OVER (PARTITION BY account_id ORDER BY date, title, description ROWS BETWEEN UNBOUNDED PRECEDING AND 1 PRECEDING), 0) AS running_balance
+                FROM (
+                    SELECT 
+                        account_id,
+                        title,
+                        description,
+                        date,
+                        amount
+                    FROM (
+                        SELECT 
+                            account_id,
+                            title,
+                            description,
+                            date,
+                            amount
+                        FROM 
+                            combined_details
+                        UNION
+                        SELECT 
+                            account_id,
+                            title,
+                            description,
+                            date,
+                            amount
+                        FROM 
+                            wishlist_affordable
+                    ) AS generated_transactions
+                ) AS combined
+              ORDER BY date, title, description
             )
             SELECT
                 a.id AS account_id,
@@ -393,7 +440,7 @@ export const getTransactions = async (
             LEFT JOIN 
                 current_balance cb ON a.id = cb.account_id
             LEFT JOIN 
-                all_transactions twb ON a.id = twb.account_id
+                recalculate_balances twb ON a.id = twb.account_id
             WHERE date > $1
             GROUP BY 
                 a.id, cb.current_balance
@@ -779,6 +826,53 @@ export const getTransactionsByAccountId = async (
               	LEFT JOIN 
                 		current_balance cb ON wa.account_id = cb.account_id
                 ORDER BY date, title, description
+            ),
+            recalculate_balances AS (
+              SELECT 
+                    td.account_id,
+                    td.title,
+                    td.description,
+                    td.date,
+                    td.amount,
+                		SUM(td.amount) OVER (PARTITION BY td.account_id ORDER BY td.date DESC) AS running_balance
+                FROM 
+                    transaction_details td
+                UNION
+                SELECT 
+                    account_id,
+                    title,
+                    description,
+                    date,
+                    amount,
+                    COALESCE(SUM(-amount) OVER (PARTITION BY account_id ORDER BY date, title, description ROWS BETWEEN UNBOUNDED PRECEDING AND 1 PRECEDING), 0) AS running_balance
+                FROM (
+                    SELECT 
+                        account_id,
+                        title,
+                        description,
+                        date,
+                        amount
+                    FROM (
+                        SELECT 
+                            account_id,
+                            title,
+                            description,
+                            date,
+                            amount
+                        FROM 
+                            combined_details
+                        UNION
+                        SELECT 
+                            account_id,
+                            title,
+                            description,
+                            date,
+                            amount
+                        FROM 
+                            wishlist_affordable
+                    ) AS generated_transactions
+                ) AS combined
+              ORDER BY date, title, description
             )
             SELECT
                 a.id AS account_id,
@@ -803,7 +897,7 @@ export const getTransactionsByAccountId = async (
             LEFT JOIN 
                 current_balance cb ON a.id = cb.account_id
             LEFT JOIN 
-                all_transactions twb ON a.id = twb.account_id
+                recalculate_balances twb ON a.id = twb.account_id
             WHERE a.id = $1 AND date > $2
             GROUP BY 
                 a.id, cb.current_balance
