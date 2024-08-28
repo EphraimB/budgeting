@@ -441,7 +441,7 @@ export const getTransactions = async (
                 current_balance cb ON a.id = cb.account_id
             LEFT JOIN 
                 recalculate_balances twb ON a.id = twb.account_id
-            WHERE date > $1
+            WHERE date > $1 AND date <= $2
             GROUP BY 
                 a.id, cb.current_balance
             ORDER BY 
@@ -898,7 +898,7 @@ export const getTransactionsByAccountId = async (
                 current_balance cb ON a.id = cb.account_id
             LEFT JOIN 
                 recalculate_balances twb ON a.id = twb.account_id
-            WHERE a.id = $1 AND date > $2
+            WHERE a.id = $1 AND date > $2 AND date <= $3
             GROUP BY 
                 a.id, cb.current_balance
             ORDER BY 
