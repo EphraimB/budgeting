@@ -1,8 +1,9 @@
 import { type Request, type Response } from 'express';
-import { handleError } from '../utils/helperFunctions.js';
+import { handleError, toCamelCase } from '../utils/helperFunctions.js';
 import { logger } from '../config/winston.js';
 import determineCronValues from '../crontab/determineCronValues.js';
 import pool from '../config/db.js';
+import { v4 as uuidv4 } from 'uuid';
 
 /**
  *
@@ -27,11 +28,11 @@ export const getLoans = async (
                 SELECT id, account_id, cron_job_id, interest_cron_job_id, amount, plan_amount, recipient, title, description, json_agg(
                         json_build_object(
                             'type', frequency_type,
-                            'typeVariable', frequency_type_variable,
-                          	'dayOfMonth', frequency_day_of_month,
-                          	'dayOfWeek', frequency_day_of_week,
-                          	'weekOfMonth', frequency_week_of_month,
-                          	'monthOfYear', frequency_month_of_year	
+                            'type_variable', frequency_type_variable,
+                          	'day_of_month', frequency_day_of_month,
+                          	'day_of_week', frequency_day_of_week,
+                          	'week_of_month', frequency_week_of_month,
+                          	'month_of_year', frequency_month_of_year	
                         )
                     ) AS frequency,
                     interest_rate,
@@ -124,8 +125,8 @@ export const getLoans = async (
                     END AS next_date,
                                     json_agg(
                                         json_build_object(
-                                        'dateCreated', date_created,
-                                        'dateModified', date_modified
+                                        'date_created', date_created,
+                                        'date_modified', date_modified
                                         )
                                     ) AS creation_dates
                 FROM loans
@@ -138,11 +139,11 @@ export const getLoans = async (
                 SELECT id, account_id, cron_job_id, interest_cron_job_id, amount, plan_amount, recipient, title, description, json_agg(
                         json_build_object(
                             'type', frequency_type,
-                            'typeVariable', frequency_type_variable,
-                          	'dayOfMonth', frequency_day_of_month,
-                          	'dayOfWeek', frequency_day_of_week,
-                          	'weekOfMonth', frequency_week_of_month,
-                          	'monthOfYear', frequency_month_of_year	
+                            'type_variable', frequency_type_variable,
+                          	'day_of_month', frequency_day_of_month,
+                          	'day_of_week', frequency_day_of_week,
+                          	'week_of_month', frequency_week_of_month,
+                          	'month_of_year', frequency_month_of_year	
                         )
                     ) AS frequency,
                     interest_rate,
@@ -235,8 +236,8 @@ export const getLoans = async (
                     END AS next_date,
                                     json_agg(
                                         json_build_object(
-                                        'dateCreated', date_created,
-                                        'dateModified', date_modified
+                                        'date_created', date_created,
+                                        'date_modified', date_modified
                                         )
                                     ) AS creation_dates
                 FROM loans
@@ -247,7 +248,9 @@ export const getLoans = async (
 
         const { rows } = await client.query(query, params);
 
-        response.status(200).json(rows);
+        const retreivedRows = toCamelCase(rows); // Convert to camelCase
+
+        response.status(200).json(retreivedRows);
     } catch (error) {
         logger.error(error); // Log the error on the server side
         handleError(response, 'Error getting loans');
@@ -280,11 +283,11 @@ export const getLoansById = async (
                 SELECT id, account_id, cron_job_id, interest_cron_job_id, amount, plan_amount, recipient, title, description, json_agg(
                         json_build_object(
                             'type', frequency_type,
-                            'typeVariable', frequency_type_variable,
-                          	'dayOfMonth', frequency_day_of_month,
-                          	'dayOfWeek', frequency_day_of_week,
-                          	'weekOfMonth', frequency_week_of_month,
-                          	'monthOfYear', frequency_month_of_year	
+                            'type_variable', frequency_type_variable,
+                          	'day_of_month', frequency_day_of_month,
+                          	'day_of_week', frequency_day_of_week,
+                          	'week_of_month', frequency_week_of_month,
+                          	'month_of_year', frequency_month_of_year	
                         )
                     ) AS frequency,
                     interest_rate,
@@ -377,8 +380,8 @@ export const getLoansById = async (
                     END AS next_date,
                                     json_agg(
                                         json_build_object(
-                                        'dateCreated', date_created,
-                                        'dateModified', date_modified
+                                        'date_created', date_created,
+                                        'date_modified', date_modified
                                         )
                                     ) AS creation_dates
                 FROM loans
@@ -391,11 +394,11 @@ export const getLoansById = async (
                 SELECT id, account_id, cron_job_id, interest_cron_job_id, amount, plan_amount, recipient, title, description, json_agg(
                         json_build_object(
                             'type', frequency_type,
-                            'typeVariable', frequency_type_variable,
-                          	'dayOfMonth', frequency_day_of_month,
-                          	'dayOfWeek', frequency_day_of_week,
-                          	'weekOfMonth', frequency_week_of_month,
-                          	'monthOfYear', frequency_month_of_year	
+                            'type_variable', frequency_type_variable,
+                          	'day_of_month', frequency_day_of_month,
+                          	'day_of_week', frequency_day_of_week,
+                          	'week_of_month', frequency_week_of_month,
+                          	'month_of_year', frequency_month_of_year	
                         )
                     ) AS frequency,
                     interest_rate,
@@ -488,8 +491,8 @@ export const getLoansById = async (
                     END AS next_date,
                                     json_agg(
                                         json_build_object(
-                                        'dateCreated', date_created,
-                                        'dateModified', date_modified
+                                        'date_created', date_created,
+                                        'date_modified', date_modified
                                         )
                                     ) AS creation_dates
                 FROM loans
@@ -506,7 +509,9 @@ export const getLoansById = async (
             return;
         }
 
-        response.status(200).json(rows);
+        const retreivedRow = toCamelCase(rows); // Convert to camelCase
+
+        response.status(200).json(retreivedRow[0]);
     } catch (error) {
         logger.error(error); // Log the error on the server side
         handleError(response, `Error getting loans for id of ${id}`);
@@ -549,15 +554,73 @@ export const createLoan = async (
     try {
         await client.query('BEGIN;');
 
+        const jobDetails = {
+            frequencyType,
+            frequencyTypeVariable,
+            frequencyDayOfMonth,
+            frequencyDayOfWeek,
+            frequencyWeekOfMonth,
+            frequencyMonthOfYear,
+            date: beginDate,
+        };
+
+        const cronDate = determineCronValues(jobDetails);
+
+        const taxRate = 0;
+
+        const uniqueId = uuidv4();
+
+        await client.query(`
+            SELECT cron.schedule('${uniqueId}', '${cronDate}',
+            $$INSERT INTO transaction_history (account_id, transaction_amount, transaction_tax_rate, transaction_title, transaction_description) VALUES (${accountId}, ${
+                -parseFloat(planAmount) +
+                parseFloat(planAmount) * parseFloat(subsidized)
+            }, ${taxRate}, '${title}', '${description}')$$)`);
+
+        const { rows: cronIdResult } = await client.query(
+            `
+                    INSERT INTO cron_jobs
+                        (unique_id, cron_expression)
+                        VALUES ($1, $2)
+                        RETURNING *
+                `,
+            [uniqueId, cronDate],
+        );
+
+        const cronId = cronIdResult[0].cron_job_id;
+
+        const interestUniqueId = uuidv4();
+
+        const jobDetailsInterest = {
+            frequency_type: interestFrequencyType,
+            date: beginDate,
+        };
+
+        const cronDateInterest = determineCronValues(jobDetailsInterest);
+
+        const { rows: interestCronIdResult } = await client.query(
+            `
+                INSERT INTO cron_jobs
+                    (unique_id, cron_expression)
+                    VALUES ($1, $2)
+                    RETURNING *
+            `,
+            [interestUniqueId, cronDateInterest],
+        );
+
+        const interestCronId: number = interestCronIdResult[0].cron_job_id;
+
         const { rows: loanResults } = await client.query(
             `
                 INSERT INTO loans
-                    (account_id, amount, plan_amount, recipient, title, description, frequency_type, frequency_type_variable, frequency_day_of_month, frequency_day_of_week, frequency_week_of_month, frequency_month_of_year, interest_rate, interest_frequency_type, subsidized, begin_date)
-                    VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16)
+                    (account_id, cron_job_id, interest_cron_job_id, amount, plan_amount, recipient, title, description, frequency_type, frequency_type_variable, frequency_day_of_month, frequency_day_of_week, frequency_week_of_month, frequency_month_of_year, interest_rate, interest_frequency_type, subsidized, begin_date)
+                    VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19)
                     RETURNING *
             `,
             [
                 accountId,
+                cronId,
+                interestCronId,
                 amount,
                 planAmount,
                 recipient,
@@ -576,79 +639,15 @@ export const createLoan = async (
             ],
         );
 
-        const jobDetails = {
-            frequencyType,
-            frequencyTypeVariable,
-            frequencyDayOfMonth,
-            frequencyDayOfWeek,
-            frequencyWeekOfMonth,
-            frequencyMonthOfYear,
-            date: beginDate,
-        };
-
-        const cronDate = determineCronValues(jobDetails);
-
-        const taxRate = 0;
-
-        const uniqueId = `loan-${loanResults[0].id}`;
-
-        await client.query(`
-            SELECT cron.schedule('${uniqueId}', '${cronDate}',
-            $$INSERT INTO transaction_history (account_id, transaction_amount, transaction_tax_rate, transaction_title, transaction_description) VALUES (${accountId}, ${
-                -parseFloat(planAmount) +
-                parseFloat(planAmount) * parseFloat(subsidized)
-            }, ${taxRate}, '${title}', '${description}')$$)`);
-
-        const { rows: cronIdResult } = await client.query(
-            `
-                INSERT INTO cron_jobs
-                    (unique_id, cron_expression)
-                    VALUES ($1, $2)
-                    RETURNING *
-            `,
-            [uniqueId, cronDate],
-        );
-
-        const cronId = cronIdResult[0].cron_job_id;
-
-        const jobDetailsInterest = {
-            frequency_type: interestFrequencyType,
-            date: beginDate,
-        };
-
-        const cronDateInterest = determineCronValues(jobDetailsInterest);
-
-        const interestUniqueId = `loan_interest-${loanResults[0].id}`;
-
         await client.query(`
             SELECT cron.schedule('${interestUniqueId}', '${cronDateInterest}',
             $$UPDATE loans SET amount = amount + (amount * ${interestRate}) WHERE id = ${loanResults[0].id}$$)`);
 
-        const { rows: interestCronIdResult } = await client.query(
-            `
-                INSERT INTO cron_jobs
-                    (unique_id, cron_expression)
-                    VALUES ($1, $2)
-                    RETURNING *
-            `,
-            [interestUniqueId, cronDateInterest],
-        );
-
-        const interestCronId: number = interestCronIdResult[0].cron_job_id;
-
-        await client.query(
-            `
-                UPDATE loans
-                    SET cron_job_id = $1,
-                    interest_cron_job_id = $2
-                    WHERE id = $3
-            `,
-            [cronId, interestCronId, loanResults[0].id],
-        );
-
         await client.query('COMMIT;');
 
-        response.status(201).json(loanResults);
+        const insertedRow = toCamelCase(loanResults[0]); // Convert to camelCase
+
+        response.status(201).json(insertedRow);
     } catch (error) {
         await client.query('ROLLBACK;');
 
@@ -819,6 +818,7 @@ export const updateLoan = async (
                     subsidized = $15,
                     begin_date = $16
                     WHERE id = $17
+                    RETURNING *
             `,
             [
                 accountId,
@@ -843,7 +843,9 @@ export const updateLoan = async (
 
         await client.query('COMMIT;');
 
-        response.status(200).json(updateLoansResult);
+        const updatedRow = toCamelCase(updateLoansResult[0]); // Convert to camelCase
+
+        response.status(200).json(updatedRow);
     } catch (error) {
         await client.query('ROLLBACK;');
 
