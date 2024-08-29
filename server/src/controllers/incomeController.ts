@@ -1,5 +1,4 @@
 import { type Request, type Response } from 'express';
-import { cronJobQueries, incomeQueries } from '../models/queryData.js';
 import { handleError, toCamelCase } from '../utils/helperFunctions.js';
 import { logger } from '../config/winston.js';
 import determineCronValues from '../crontab/determineCronValues.js';
@@ -583,7 +582,12 @@ export const createIncome = async (
             VALUES (${accountId}, ${amount}, ${taxRate}, '${title}', '${description}')$$)`);
 
         const { rows: cronIdResults } = await client.query(
-            cronJobQueries.createCronJob,
+            `
+            INSERT INTO cron_jobs
+            (unique_id, cron_expression)
+            VALUES ($1, $2)
+            RETURNING *
+            `,
             [uniqueId, cronDate],
         );
 
