@@ -1,8 +1,9 @@
 import { type Request, type Response } from 'express';
-import { handleError } from '../utils/helperFunctions.js';
+import { handleError, toCamelCase } from '../utils/helperFunctions.js';
 import { logger } from '../config/winston.js';
 import determineCronValues from '../crontab/determineCronValues.js';
 import pool from '../config/db.js';
+import { v4 as uuidv4 } from 'uuid';
 
 /**
  *
@@ -27,17 +28,17 @@ export const getTransfers = async (
                 SELECT id, cron_job_id, source_account_id, destination_account_id, amount, title, description, json_agg(
                         json_build_object(
                             'type', frequency_type,
-                            'typeVariable', frequency_type_variable,
-                          	'dayOfMonth', frequency_day_of_month,
-                          	'dayOfWeek', frequency_day_of_week,
-                          	'weekOfMonth', frequency_week_of_month,
-                          	'monthOfYear', frequency_month_of_year	
+                            'type_variable', frequency_type_variable,
+                          	'day_of_month', frequency_day_of_month,
+                          	'day_of_week', frequency_day_of_week,
+                          	'week_of_month', frequency_week_of_month,
+                          	'month_of_year', frequency_month_of_year	
                         )
                     ) AS frequency,
                     json_agg(
                         json_build_object(
-                    			'beginDate', begin_date,
-                          'endDate', end_date
+                    		'begin_date', begin_date,
+                            'end_date', end_date
                           )
                       ) AS dates,
                        CASE 
@@ -126,8 +127,8 @@ export const getTransfers = async (
                     END AS next_date,
                                     json_agg(
                                         json_build_object(
-                                        'dateCreated', date_created,
-                                        'dateModified', date_modified
+                                        'date_created', date_created,
+                                        'date_modified', date_modified
                                         )
                                     ) AS creation_dates
                 FROM transfers
@@ -140,17 +141,17 @@ export const getTransfers = async (
                 SELECT id, cron_job_id, source_account_id, destination_account_id, amount, title, description, json_agg(
                         json_build_object(
                             'type', frequency_type,
-                            'typeVariable', frequency_type_variable,
-                          	'dayOfMonth', frequency_day_of_month,
-                          	'dayOfWeek', frequency_day_of_week,
-                          	'weekOfMonth', frequency_week_of_month,
-                          	'monthOfYear', frequency_month_of_year	
+                            'type_variable', frequency_type_variable,
+                          	'day_of_month', frequency_day_of_month,
+                          	'day_of_week', frequency_day_of_week,
+                          	'week_of_month', frequency_week_of_month,
+                          	'month_of_year', frequency_month_of_year	
                         )
                     ) AS frequency,
                     json_agg(
                         json_build_object(
-                    			'beginDate', begin_date,
-                          'endDate', end_date
+                    		'begin_date', begin_date,
+                            'end_date', end_date
                           )
                       ) AS dates,
                        CASE 
@@ -239,8 +240,8 @@ export const getTransfers = async (
                         END AS next_date,
                                         json_agg(
                                             json_build_object(
-                                            'dateCreated', date_created,
-                                            'dateModified', date_modified
+                                            'date_created', date_created,
+                                            'date_modified', date_modified
                                             )
                                         ) AS creation_dates
                     FROM transfers
@@ -251,7 +252,9 @@ export const getTransfers = async (
 
         const { rows } = await client.query(query, params);
 
-        response.status(200).json(rows);
+        const retreivedRows = toCamelCase(rows); // Convert to camelCase
+
+        response.status(200).json(retreivedRows);
     } catch (error) {
         logger.error(error); // Log the error on the server side
         handleError(response, 'Error getting transfers');
@@ -284,17 +287,17 @@ export const getTransfersById = async (
                 SELECT id, cron_job_id, source_account_id, destination_account_id, amount, title, description, json_agg(
                         json_build_object(
                             'type', frequency_type,
-                            'typeVariable', frequency_type_variable,
-                          	'dayOfMonth', frequency_day_of_month,
-                          	'dayOfWeek', frequency_day_of_week,
-                          	'weekOfMonth', frequency_week_of_month,
-                          	'monthOfYear', frequency_month_of_year	
+                            'type_variable', frequency_type_variable,
+                          	'day_of_month', frequency_day_of_month,
+                          	'day_of_week', frequency_day_of_week,
+                          	'week_of_month', frequency_week_of_month,
+                          	'month_of_year', frequency_month_of_year	
                         )
                     ) AS frequency,
                     json_agg(
                         json_build_object(
-                    			'beginDate', begin_date,
-                          'endDate', end_date
+                    		'begin_date', begin_date,
+                            'end_date', end_date
                           )
                       ) AS dates,
                        CASE 
@@ -383,8 +386,8 @@ export const getTransfersById = async (
                     END AS next_date,
                                     json_agg(
                                         json_build_object(
-                                        'dateCreated', date_created,
-                                        'dateModified', date_modified
+                                        'date_created', date_created,
+                                        'date_modified', date_modified
                                         )
                                     ) AS creation_dates
                 FROM transfers
@@ -397,17 +400,17 @@ export const getTransfersById = async (
                 SELECT id, cron_job_id, source_account_id, destination_account_id, amount, title, description, json_agg(
                         json_build_object(
                             'type', frequency_type,
-                            'typeVariable', frequency_type_variable,
-                          	'dayOfMonth', frequency_day_of_month,
-                          	'dayOfWeek', frequency_day_of_week,
-                          	'weekOfMonth', frequency_week_of_month,
-                          	'monthOfYear', frequency_month_of_year	
+                            'type_variable', frequency_type_variable,
+                          	'day_of_month', frequency_day_of_month,
+                          	'day_of_week', frequency_day_of_week,
+                          	'week_of_month', frequency_week_of_month,
+                          	'month_of_year', frequency_month_of_year	
                         )
                     ) AS frequency,
                     json_agg(
                         json_build_object(
-                    			'beginDate', begin_date,
-                          'endDate', end_date
+                    		'begin_date', begin_date,
+                            'end_date', end_date
                           )
                       ) AS dates,
                        CASE 
@@ -496,8 +499,8 @@ export const getTransfersById = async (
                     END AS next_date,
                                     json_agg(
                                         json_build_object(
-                                        'dateCreated', date_created,
-                                        'dateModified', date_modified
+                                        'date_created', date_created,
+                                        'date_modified', date_modified
                                         )
                                     ) AS creation_dates
                 FROM transfers
@@ -514,7 +517,9 @@ export const getTransfersById = async (
             return;
         }
 
-        response.status(200).json(rows);
+        const retreivedRow = toCamelCase(rows); // Convert to camelCase
+
+        response.status(200).json(retreivedRow[0]);
     } catch (error) {
         logger.error(error); // Log the error on the server side
         handleError(
@@ -557,30 +562,6 @@ export const createTransfer = async (
     try {
         await client.query('BEGIN;');
 
-        const { rows: transferResult } = await client.query(
-            `
-                INSERT INTO transfers
-                    (source_account_id, destination_account_id, amount, title, description, frequency_type, frequency_type_variable, frequency_day_of_month, frequency_day_of_week, frequency_week_of_month, frequency_month_of_year, begin_date, end_date)
-                    VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13)
-                    RETURNING *
-            `,
-            [
-                sourceAccountId,
-                destinationAccountId,
-                amount,
-                title,
-                description,
-                frequencyType,
-                frequencyTypeVariable,
-                frequencyDayOfMonth,
-                frequencyDayOfWeek,
-                frequencyWeekOfMonth,
-                frequencyMonthOfYear,
-                beginDate,
-                endDate,
-            ],
-        );
-
         const jobDetails = {
             frequencyType,
             frequencyTypeVariable,
@@ -595,7 +576,7 @@ export const createTransfer = async (
 
         const taxRate = 0;
 
-        const uniqueId = `transfer-${transferResult[0].id}`;
+        const uniqueId = uuidv4();
 
         await client.query(`
             SELECT cron.schedule('${uniqueId}', '${cronDate}',
@@ -617,18 +598,36 @@ export const createTransfer = async (
 
         const cronId = cronIdResults[0].cron_job_id;
 
-        await client.query(
+        const { rows: transferResult } = await client.query(
             `
-                UPDATE transfers
-                    SET cron_job_id = $1
-                    WHERE id = $2
+                INSERT INTO transfers
+                    (cron_job_id, source_account_id, destination_account_id, amount, title, description, frequency_type, frequency_type_variable, frequency_day_of_month, frequency_day_of_week, frequency_week_of_month, frequency_month_of_year, begin_date, end_date)
+                    VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14)
+                    RETURNING *
             `,
-            [cronId, transferResult[0].id],
+            [
+                cronId,
+                sourceAccountId,
+                destinationAccountId,
+                amount,
+                title,
+                description,
+                frequencyType,
+                frequencyTypeVariable,
+                frequencyDayOfMonth,
+                frequencyDayOfWeek,
+                frequencyWeekOfMonth,
+                frequencyMonthOfYear,
+                beginDate,
+                endDate,
+            ],
         );
 
         await client.query('COMMIT;');
 
-        response.status(201).json(transferResult);
+        const insertedRow = toCamelCase(transferResult[0]); // Convert to camelCase
+
+        response.status(201).json(insertedRow);
     } catch (error) {
         await client.query('ROLLBACK;');
 
@@ -699,10 +698,9 @@ export const updateTransfer = async (
 
         const { rows: uniqueIdResults } = await client.query(
             `
-                UPDATE transfers
-                    SET cron_job_id = $1
-                    WHERE id = $2
-                    RETURNING *
+                SELECT unique_id
+                    FROM cron_jobs
+                    WHERE id = $1
             `,
             [cronId],
         );
@@ -723,36 +721,28 @@ export const updateTransfer = async (
                 (${sourceAccountId}, ${-amount}, ${taxRate}, '${title}', '${description}')
                 (${destinationAccountId}, ${amount}, ${taxRate}, '${title}', '${description}')$$)`);
 
-        await client.query(
-            `
-                UPDATE cron_jobs
-                    SET unique_id = $1,
-                    cron_expression = $2
-                    WHERE id = $3
-            `,
-            [uniqueId, cronDate, cronId],
-        );
-
         const { rows: updateTransfersResult } = await client.query(
             `
                 UPDATE transfers
-                    SET source_account_id = $1,
-                    destination_account_id = $2,
-                    amount = $3,
-                    title = $4,
-                    description = $5,
-                    frequency_type = $6,
-                    frequency_type_variable = $7,
-                    frequency_day_of_month = $8,
-                    frequency_day_of_week = $9,
-                    frequency_week_of_month = $10,
-                    frequency_month_of_year = $11,
-                    begin_date = $12,
-                    end_date = $13
-                    WHERE id = $14
+                    SET cron_job_id = $1
+                    source_account_id = $2,
+                    destination_account_id = $3,
+                    amount = $4,
+                    title = $5,
+                    description = $6,
+                    frequency_type = $7,
+                    frequency_type_variable = $8,
+                    frequency_day_of_month = $9,
+                    frequency_day_of_week = $10,
+                    frequency_week_of_month = $11,
+                    frequency_month_of_year = $12,
+                    begin_date = $13,
+                    end_date = $14
+                    WHERE id = $15
                     RETURNING *
             `,
             [
+                cronId,
                 sourceAccountId,
                 destinationAccountId,
                 amount,
@@ -770,9 +760,21 @@ export const updateTransfer = async (
             ],
         );
 
+        await client.query(
+            `
+                UPDATE cron_jobs
+                    SET unique_id = $1,
+                    cron_expression = $2
+                    WHERE id = $3
+                    `,
+            [uniqueId, cronDate, cronId],
+        );
+
         await client.query('COMMIT;');
 
-        response.status(200).json(updateTransfersResult);
+        const updatedRow = toCamelCase(updateTransfersResult[0]); // Convert to camelCase
+
+        response.status(200).json(updatedRow);
     } catch (error) {
         await client.query('ROLLBACK;');
 
