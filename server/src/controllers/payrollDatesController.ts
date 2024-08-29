@@ -1,5 +1,5 @@
 import { type NextFunction, type Request, type Response } from 'express';
-import { handleError } from '../utils/helperFunctions.js';
+import { handleError, toCamelCase } from '../utils/helperFunctions.js';
 import { logger } from '../config/winston.js';
 import pool from '../config/db.js';
 
@@ -38,7 +38,9 @@ export const getPayrollDates = async (
 
         const { rows } = await client.query(query, params);
 
-        response.status(200).json(rows);
+        const retreivedRows = toCamelCase(rows); // Convert to camelCase
+
+        response.status(200).json(retreivedRows);
     } catch (error) {
         logger.error(error); // Log the error on the server side
         handleError(response, 'Error getting payroll dates');
@@ -89,7 +91,9 @@ export const getPayrollDatesById = async (
             return;
         }
 
-        response.status(200).json(rows);
+        const retreivedRow = toCamelCase(rows); // Convert to camelCase
+
+        response.status(200).json(retreivedRow[0]);
     } catch (error) {
         logger.error(error); // Log the error on the server side
         handleError(
@@ -192,7 +196,9 @@ export const createPayrollDate = async (
 
         await client.query('COMMIT;');
 
-        response.status(201).json(rows);
+        const insertedRow = toCamelCase(rows[0]); // Convert to camelCase
+
+        response.status(201).json(insertedRow);
     } catch (error) {
         await client.query('ROLLBACK;');
 
@@ -250,7 +256,9 @@ export const updatePayrollDate = async (
 
         await client.query('COMMIT;');
 
-        response.status(200).json(updatePayrollDateResults);
+        const updatedRow = toCamelCase(updatePayrollDateResults[0]); // Convert to camelCase
+
+        response.status(200).json(updatedRow);
     } catch (error) {
         await client.query('ROLLBACK;');
 
