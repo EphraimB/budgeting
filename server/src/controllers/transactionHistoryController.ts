@@ -182,7 +182,7 @@ export const updateTransaction = async (
             [accountId, amount, tax, title, description, id],
         );
 
-        const updatedRow = toCamelCase(rows[0]); // Convert to camelCase
+        const updatedRow = toCamelCase(transactionHistoryResults[0]); // Convert to camelCase
 
         response.status(200).json(updatedRow);
     } catch (error) {
