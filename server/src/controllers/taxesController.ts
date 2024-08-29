@@ -1,25 +1,7 @@
 import { type Request, type Response } from 'express';
-import { taxesQueries } from '../models/queryData.js';
-import { handleError } from '../utils/helperFunctions.js';
-import { type Taxes } from '../types/types.js';
+import { handleError, toCamelCase } from '../utils/helperFunctions.js';
 import { logger } from '../config/winston.js';
 import pool from '../config/db.js';
-
-/**
- *
- * @param transactionHistory - Transaction history object
- * @returns Transaction history object with the correct types
- * Converts the transaction history object to the correct types
- */
-const parseTaxes = (tax: Record<string, string>): Taxes => ({
-    id: parseInt(tax.tax_id),
-    rate: parseFloat(tax.tax_rate),
-    title: tax.tax_title,
-    description: tax.tax_description,
-    type: parseInt(tax.tax_type),
-    dateCreated: tax.date_created,
-    dateModified: tax.date_modified,
-});
 
 /**
  *
@@ -34,7 +16,7 @@ export const getTaxes = async (
     const client = await pool.connect(); // Get a client from the pool
 
     try {
-        const { rows: taxesResults } = await client.query(
+        const { rows } = await client.query(
             `
                 SELECT *
                     FROM taxes
@@ -42,7 +24,9 @@ export const getTaxes = async (
             [],
         );
 
-        response.status(200).json(taxesResults);
+        const retreivedRows = toCamelCase(rows); // Convert to camelCase
+
+        response.status(200).json(retreivedRows);
     } catch (error) {
         logger.error(error); // Log the error on the server side
         handleError(response, 'Error getting taxes');
@@ -66,7 +50,7 @@ export const getTaxesById = async (
     const client = await pool.connect(); // Get a client from the pool
 
     try {
-        const { rows: taxesResults } = await client.query(
+        const { rows } = await client.query(
             `
                 SELECT *
                     FROM taxes
@@ -75,12 +59,14 @@ export const getTaxesById = async (
             [id],
         );
 
-        if (taxesResults.length === 0) {
+        if (rows.length === 0) {
             response.status(404).send('Tax not found');
             return;
         }
 
-        response.status(200).json(taxesResults);
+        const retreivedRow = toCamelCase(rows); // Convert to camelCase
+
+        response.status(200).json(retreivedRow[0]);
     } catch (error) {
         logger.error(error); // Log the error on the server side
         handleError(response, `Error getting tax for id of ${id}`);
@@ -104,7 +90,7 @@ export const createTax = async (
     const client = await pool.connect(); // Get a client from the pool
 
     try {
-        const { rows: taxesResults } = await client.query(
+        const { rows } = await client.query(
             `
                 INSERT INTO taxes
                     (rate, title, description, type)
@@ -114,7 +100,9 @@ export const createTax = async (
             [rate, title, description, type],
         );
 
-        response.status(201).json(taxesResults);
+        const insertedRow = toCamelCase(rows[0]); // Convert to camelCase
+
+        response.status(201).json(insertedRow);
     } catch (error) {
         logger.error(error); // Log the error on the server side
         handleError(response, 'Error creating tax');
@@ -166,7 +154,9 @@ export const updateTax = async (
             [rate, title, description, type, id],
         );
 
-        response.status(200).json(updateTaxesResults);
+        const updatedRow = toCamelCase(updateTaxesResults[0]); // Convert to camelCase
+
+        response.status(200).json(updatedRow);
     } catch (error) {
         logger.error(error); // Log the error on the server side
         handleError(response, 'Error updating tax');
