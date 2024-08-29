@@ -1,5 +1,5 @@
 import { type Request, type Response } from 'express';
-import { handleError } from '../utils/helperFunctions.js';
+import { handleError, toCamelCase } from '../utils/helperFunctions.js';
 import { logger } from '../config/winston.js';
 import pool from '../config/db.js';
 
@@ -36,9 +36,11 @@ export const getTransactions = async (
             params = [];
         }
 
-        const { rows: transactionResults } = await client.query(query, params);
+        const { rows } = await client.query(query, params);
 
-        response.status(200).json(transactionResults);
+        const retreivedRows = toCamelCase(rows); // Convert to camelCase
+
+        response.status(200).json(retreivedRows);
     } catch (error) {
         logger.error(error); // Log the error on the server side
         handleError(response, 'Error getting transaction histories');
@@ -80,14 +82,16 @@ export const getTransactionsById = async (
             params = [id];
         }
 
-        const { rows: transactionResults } = await client.query(query, params);
+        const { rows } = await client.query(query, params);
 
-        if (transactionResults.length === 0) {
+        if (rows.length === 0) {
             response.status(404).send('Transaction not found');
             return;
         }
 
-        response.status(200).json(transactionResults);
+        const retreivedRow = toCamelCase(rows); // Convert to camelCase
+
+        response.status(200).json(retreivedRow[0]);
     } catch (error) {
         logger.error(error); // Log the error on the server side
         handleError(
@@ -124,7 +128,9 @@ export const createTransaction = async (
             [accountId, amount, tax, title, description],
         );
 
-        response.status(201).json(rows);
+        const insertedRow = toCamelCase(rows[0]); // Convert to camelCase
+
+        response.status(201).json(insertedRow);
     } catch (error) {
         logger.error(error); // Log the error on the server side
         handleError(response, 'Error creating transaction history');
@@ -176,7 +182,9 @@ export const updateTransaction = async (
             [accountId, amount, tax, title, description, id],
         );
 
-        response.status(200).json(transactionHistoryResults);
+        const updatedRow = toCamelCase(rows[0]); // Convert to camelCase
+
+        response.status(200).json(updatedRow);
     } catch (error) {
         logger.error(error); // Log the error on the server side
         handleError(response, 'Error updating transaction history');
@@ -195,7 +203,7 @@ export const deleteTransaction = async (
     request: Request,
     response: Response,
 ): Promise<void> => {
-    const id: number = parseInt(request.params.id);
+    const { id } = request.params;
 
     const client = await pool.connect(); // Get a client from the pool
 

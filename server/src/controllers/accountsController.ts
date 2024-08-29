@@ -37,9 +37,9 @@ export const getAccounts = async (
                 accounts.id ASC;
             `);
 
-        const retreivedRow = toCamelCase(rows); // Convert to camelCase
+        const retreivedRows = toCamelCase(rows); // Convert to camelCase
 
-        response.status(200).json(retreivedRow);
+        response.status(200).json(retreivedRows);
     } catch (error) {
         logger.error(error); // Log the error on the server side
         handleError(response, `Error getting accounts`);
