@@ -1,5 +1,5 @@
 import { type Request, type Response } from 'express';
-import { handleError } from '../utils/helperFunctions.js';
+import { handleError, toCamelCase } from '../utils/helperFunctions.js';
 import { logger } from '../config/winston.js';
 import pool from '../config/db.js';
 
@@ -21,8 +21,8 @@ export const getAccounts = async (
                 accounts.id,
                 accounts.name,
                 COALESCE(t.total_transaction_amount_after_tax, 0) AS balance,
-                accounts.date_created, 
-                accounts.date_modified 
+                accounts.date_created,
+                accounts.date_modified
             FROM 
                 accounts
             LEFT JOIN 
@@ -37,7 +37,9 @@ export const getAccounts = async (
                 accounts.id ASC;
             `);
 
-        response.status(200).json(rows);
+        const retreivedRow = toCamelCase(rows); // Convert to camelCase
+
+        response.status(200).json(retreivedRow);
     } catch (error) {
         logger.error(error); // Log the error on the server side
         handleError(response, `Error getting accounts`);
@@ -68,7 +70,7 @@ export const getAccountsById = async (
                 accounts.name,
                 COALESCE(t.total_transaction_amount_after_tax, 0) AS balance,
                 accounts.date_created, 
-                accounts.date_modified 
+                accounts.date_modified
             FROM 
                 accounts
             LEFT JOIN 
@@ -90,7 +92,9 @@ export const getAccountsById = async (
             return;
         }
 
-        response.status(200).json(rows);
+        const retreivedRow = toCamelCase(rows[0]); // Convert to camelCase
+
+        response.status(200).json(retreivedRow);
     } catch (error) {
         logger.error(error); // Log the error on the server side
         handleError(response, `Error getting account for id of ${id}`);
@@ -121,7 +125,9 @@ export const createAccount = async (request: Request, response: Response) => {
             [name],
         );
 
-        response.status(201).json(rows);
+        const insertedRow = toCamelCase(rows[0]); // Convert to camelCase
+
+        response.status(201).json(insertedRow);
     } catch (error) {
         logger.error(error); // Log the error on the server side
         handleError(response, 'Error creating account');
@@ -148,14 +154,14 @@ export const updateAccount = async (
     try {
         const { rows: account } = await client.query(
             `
-                SELECT COUNT(id)
+                SELECT id
                     FROM accounts
                     WHERE id = $1;
             `,
             [id],
         );
 
-        if (account[0].id === 0) {
+        if (account.length === 0) {
             response.status(404).send('Account not found');
             return;
         }
@@ -170,7 +176,9 @@ export const updateAccount = async (
             [name, id],
         );
 
-        response.status(200).json(rows);
+        const updatedRow = toCamelCase(rows[0]); // Convert to camelCase
+
+        response.status(200).json(updatedRow);
     } catch (error) {
         logger.error(error); // Log the error on the server side
         handleError(response, 'Error updating account');
@@ -196,14 +204,14 @@ export const deleteAccount = async (
     try {
         const { rows: account } = await client.query(
             `
-                SELECT COUNT(id)
+                SELECT id
                     FROM accounts
                     WHERE id = $1;
             `,
             [id],
         );
 
-        if (account[0].id === 0) {
+        if (account.length === 0) {
             response.status(404).send('Account not found');
             return;
         }

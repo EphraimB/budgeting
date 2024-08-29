@@ -15,6 +15,24 @@ export const handleError = (response: Response, message: string): void => {
 
 /**
  *
+ * @param row - Database record to convert to camel case (the JavaScript convention)
+ * Returns the converted camel case (the JavaScript convention)
+ */
+export const toCamelCase = (row: {
+    [key: string]: any;
+}): { [key: string]: any } => {
+    const newRow: { [key: string]: any } = {};
+    for (const key in row) {
+        const camelCaseKey = key.replace(/_([a-z])/g, (g) =>
+            g[1].toUpperCase(),
+        );
+        newRow[camelCaseKey] = row[key];
+    }
+    return newRow;
+};
+
+/**
+ *
  * @param input - The input to parse
  * @returns The parsed input or null if the input is not a integer
  */
