@@ -1,5 +1,5 @@
 import { type Request, type Response } from 'express';
-import { handleError } from '../utils/helperFunctions.js';
+import { handleError, toCamelCase } from '../utils/helperFunctions.js';
 import { logger } from '../config/winston.js';
 import pool from '../config/db.js';
 
@@ -127,7 +127,7 @@ export const getPayrolls = async (
                 returnObj = {
                     id: row.id,
                     name: row.name,
-                    payrolls: results,
+                    payrolls: toCamelCase(results),
                 };
             }),
         );
@@ -265,7 +265,7 @@ export const getPayrollsByJobId = async (
         returnObj = {
             id,
             name: jobResults[0].name,
-            payrolls,
+            payrolls: toCamelCase(payrolls),
         };
 
         response.status(200).json(returnObj);
