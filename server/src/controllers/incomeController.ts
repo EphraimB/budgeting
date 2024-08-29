@@ -1,9 +1,10 @@
 import { type Request, type Response } from 'express';
 import { cronJobQueries, incomeQueries } from '../models/queryData.js';
-import { handleError } from '../utils/helperFunctions.js';
+import { handleError, toCamelCase } from '../utils/helperFunctions.js';
 import { logger } from '../config/winston.js';
 import determineCronValues from '../crontab/determineCronValues.js';
 import pool from '../config/db.js';
+import { v4 as uuidv4 } from 'uuid';
 
 /**
  *
@@ -28,17 +29,17 @@ export const getIncome = async (
                 SELECT id, account_id, tax_id, cron_job_id, amount, title, description, json_agg(
                         json_build_object(
                             'type', frequency_type,
-                            'typeVariable', frequency_type_variable,
-                          	'dayOfMonth', frequency_day_of_month,
-                          	'dayOfWeek', frequency_day_of_week,
-                          	'weekOfMonth', frequency_week_of_month,
-                          	'monthOfYear', frequency_month_of_year	
+                            'type_variable', frequency_type_variable,
+                          	'day_of_month', frequency_day_of_month,
+                          	'day_of_week', frequency_day_of_week,
+                          	'week_of_month', frequency_week_of_month,
+                          	'month_of_year', frequency_month_of_year	
                         )
                     ) AS frequency,
                     json_agg(
                         json_build_object(
-                          'beginDate', begin_date,
-                          'endDate', end_date
+                          'begin_date', begin_date,
+                          'end_date', end_date
                           )
                        ) AS dates,
                        CASE 
@@ -127,8 +128,8 @@ export const getIncome = async (
                     END AS next_date,
                                     json_agg(
                                         json_build_object(
-                                        'dateCreated', date_created,
-                                        'dateModified', date_modified
+                                        'date_created', date_created,
+                                        'date_modified', date_modified
                                         )
                                     ) AS creation_dates
                     FROM income
@@ -141,17 +142,17 @@ export const getIncome = async (
                 SELECT id, account_id, tax_id, cron_job_id, amount, title, description, json_agg(
                         json_build_object(
                             'type', frequency_type,
-                            'typeVariable', frequency_type_variable,
-                          	'dayOfMonth', frequency_day_of_month,
-                          	'dayOfWeek', frequency_day_of_week,
-                          	'weekOfMonth', frequency_week_of_month,
-                          	'monthOfYear', frequency_month_of_year	
+                            'type_variable', frequency_type_variable,
+                          	'day_of_month', frequency_day_of_month,
+                          	'day_of_week', frequency_day_of_week,
+                          	'week_of_month', frequency_week_of_month,
+                          	'month_of_year', frequency_month_of_year	
                         )
                     ) AS frequency,
                     json_agg(
                         json_build_object(
-                          'beginDate', begin_date,
-                          'endDate', end_date
+                          'begin_date', begin_date,
+                          'end_date', end_date
                           )
                        ) AS dates,
                        CASE 
@@ -240,8 +241,8 @@ export const getIncome = async (
                     END AS next_date,
                                     json_agg(
                                         json_build_object(
-                                        'dateCreated', date_created,
-                                        'dateModified', date_modified
+                                        'date_created', date_created,
+                                        'date_modified', date_modified
                                         )
                                     ) AS creation_dates
                     FROM income
@@ -252,7 +253,9 @@ export const getIncome = async (
 
         const { rows } = await client.query(query, params);
 
-        response.status(200).json(rows);
+        const retreivedRows = toCamelCase(rows); // Convert to camelCase
+
+        response.status(200).json(retreivedRows);
     } catch (error) {
         logger.error(error); // Log the error on the server side
         handleError(response, `Error getting income`);
@@ -285,17 +288,17 @@ export const getIncomeById = async (
                 SELECT id, account_id, tax_id, cron_job_id, amount, title, description, json_agg(
                         json_build_object(
                             'type', frequency_type,
-                            'typeVariable', frequency_type_variable,
-                          	'dayOfMonth', frequency_day_of_month,
-                          	'dayOfWeek', frequency_day_of_week,
-                          	'weekOfMonth', frequency_week_of_month,
-                          	'monthOfYear', frequency_month_of_year	
+                            'type_variable', frequency_type_variable,
+                          	'day_of_month', frequency_day_of_month,
+                          	'day_of_week', frequency_day_of_week,
+                          	'week_of_month', frequency_week_of_month,
+                          	'month_of_year', frequency_month_of_year	
                         )
                     ) AS frequency,
                     json_agg(
                         json_build_object(
-                          'beginDate', begin_date,
-                          'endDate', end_date
+                          'begin_date', begin_date,
+                          'end_date', end_date
                           )
                        ) AS dates,
                        CASE 
@@ -384,8 +387,8 @@ export const getIncomeById = async (
                     END AS next_date,
                                     json_agg(
                                         json_build_object(
-                                        'dateCreated', date_created,
-                                        'dateModified', date_modified
+                                        'date_created', date_created,
+                                        'date_modified', date_modified
                                         )
                                     ) AS creation_dates
                     FROM income
@@ -398,17 +401,17 @@ export const getIncomeById = async (
                 SELECT id, account_id, tax_id, cron_job_id, amount, title, description, json_agg(
                         json_build_object(
                             'type', frequency_type,
-                            'typeVariable', frequency_type_variable,
-                          	'dayOfMonth', frequency_day_of_month,
-                          	'dayOfWeek', frequency_day_of_week,
-                          	'weekOfMonth', frequency_week_of_month,
-                          	'monthOfYear', frequency_month_of_year	
+                            'type_variable', frequency_type_variable,
+                          	'day_of_month', frequency_day_of_month,
+                          	'day_of_week', frequency_day_of_week,
+                          	'week_of_month', frequency_week_of_month,
+                          	'month_of_year', frequency_month_of_year	
                         )
                     ) AS frequency,
                     json_agg(
                         json_build_object(
-                          'beginDate', begin_date,
-                          'endDate', end_date
+                          'begin_date', begin_date,
+                          'end_date', end_date
                           )
                        ) AS dates,
                        CASE 
@@ -497,8 +500,8 @@ export const getIncomeById = async (
                     END AS next_date,
                                     json_agg(
                                         json_build_object(
-                                        'dateCreated', date_created,
-                                        'dateModified', date_modified
+                                        'date_created', date_created,
+                                        'date_modified', date_modified
                                         )
                                     ) AS creation_dates
                     FROM income
@@ -515,7 +518,9 @@ export const getIncomeById = async (
             return;
         }
 
-        response.status(200).json(rows);
+        const retreivedRow = toCamelCase(rows); // Convert to camelCase
+
+        response.status(200).json(retreivedRow[0]);
     } catch (error) {
         logger.error(error); // Log the error on the server side
         handleError(response, `Error getting income for account id of ${id}`);
@@ -555,30 +560,6 @@ export const createIncome = async (
     try {
         await client.query('BEGIN;');
 
-        const { rows } = await client.query(
-            `
-                INSERT INTO income
-                    (account_id, tax_id, amount, title, description, frequency_type, frequency_type_variable, frequency_day_of_month, frequency_day_of_week, frequency_week_of_month, frequency_month_of_year, begin_date, end_date)
-                    VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13)
-                    RETURNING *
-            `,
-            [
-                accountId,
-                taxId,
-                amount,
-                title,
-                description,
-                frequencyType,
-                frequencyTypeVariable,
-                frequencyDayOfMonth,
-                frequencyDayOfWeek,
-                frequencyWeekOfMonth,
-                frequencyMonthOfYear,
-                beginDate,
-                endDate,
-            ],
-        );
-
         const jobDetails = {
             frequencyType,
             frequencyTypeVariable,
@@ -591,7 +572,7 @@ export const createIncome = async (
 
         const cronDate = determineCronValues(jobDetails);
 
-        const uniqueId = `income-${rows[0].id}`;
+        const uniqueId = uuidv4();
 
         const taxRate = 0;
 
@@ -608,14 +589,36 @@ export const createIncome = async (
 
         const cronId = cronIdResults[0].cron_job_id;
 
-        await client.query(incomeQueries.updateIncomeWithCronJobId, [
-            cronId,
-            rows[0].id,
-        ]);
+        const { rows } = await client.query(
+            `
+                INSERT INTO income
+                    (account_id, tax_id, cron_job_id, amount, title, description, frequency_type, frequency_type_variable, frequency_day_of_month, frequency_day_of_week, frequency_week_of_month, frequency_month_of_year, begin_date, end_date)
+                    VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14)
+                    RETURNING *
+            `,
+            [
+                accountId,
+                taxId,
+                cronId,
+                amount,
+                title,
+                description,
+                frequencyType,
+                frequencyTypeVariable,
+                frequencyDayOfMonth,
+                frequencyDayOfWeek,
+                frequencyWeekOfMonth,
+                frequencyMonthOfYear,
+                beginDate,
+                endDate,
+            ],
+        );
 
         await client.query('COMMIT;');
 
-        response.status(201).json(rows);
+        const insertedRow = toCamelCase(rows[0]); // Convert to camelCase
+
+        response.status(201).json(insertedRow);
     } catch (error) {
         await client.query('ROLLBACK;');
 
@@ -745,7 +748,9 @@ export const updateIncome = async (
 
         await client.query('COMMIT;');
 
-        response.status(200).json(updateIncomeResults);
+        const updatedRow = toCamelCase(updateIncomeResults[0]); // Convert to camelCase
+
+        response.status(200).json(updatedRow);
     } catch (error) {
         await client.query('ROLLBACK;');
 
