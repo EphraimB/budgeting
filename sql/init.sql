@@ -222,8 +222,7 @@ CREATE TABLE IF NOT EXISTS timeslots (
   start_time TIME NOT NULL,
   end_time TIME NOT NULL,
   date_created TIMESTAMP NOT NULL,
-  date_modified TIMESTAMP NOT NULL,
-  CHECK (start_time < end_time)
+  date_modified TIMESTAMP NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS commute_schedule (
