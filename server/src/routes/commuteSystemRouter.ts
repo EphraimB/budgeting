@@ -5,21 +5,24 @@ import {
     createCommuteSystem,
     deleteCommuteSystem,
     updateCommuteSystem,
+    getCommuteSystemById,
 } from '../controllers/commuteSystemController.js';
 import validateRequest from '../utils/validateRequest.js';
 
 const router: Router = express.Router();
 
+router.get('/', getCommuteSystem);
+
 router.get(
-    '/',
+    '/:id',
     [
-        query('id')
+        param('id')
             .optional()
             .isInt({ min: 1 })
             .withMessage('ID must be a number'),
         validateRequest,
     ],
-    getCommuteSystem,
+    getCommuteSystemById,
 );
 
 router.post(
