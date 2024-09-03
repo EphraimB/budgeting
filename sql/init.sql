@@ -212,8 +212,7 @@ CREATE TABLE IF NOT EXISTS fare_details (
   day_start INT, -- NULL for no specific start day, or an integer representing the day of the month the pass starts
   alternate_fare_detail_id INT REFERENCES fare_details(id) ON DELETE SET NULL,
   date_created TIMESTAMP NOT NULL,
-  date_modified TIMESTAMP NOT NULL,
-  UNIQUE (name)
+  date_modified TIMESTAMP NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS timeslots (
