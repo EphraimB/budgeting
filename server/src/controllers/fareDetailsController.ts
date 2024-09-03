@@ -6,12 +6,11 @@ import pool from '../config/db.js';
 
 /**
  *
- * @param request - Request object
  * @param response - Response object
  * Sends a response with all fare details
  */
 export const getFareDetails = async (
-    request: Request,
+    _: Request,
     response: Response,
 ): Promise<void> => {
     const client = await pool.connect(); // Get a client from the pool
