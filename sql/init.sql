@@ -205,6 +205,7 @@ CREATE TABLE IF NOT EXISTS commute_systems (
 
 CREATE TABLE IF NOT EXISTS fare_details (
   id SERIAL PRIMARY KEY,
+  commute_system_id INT NOT NULL REFERENCES commute_systems(id) ON DELETE CASCADE,
   name VARCHAR(255) NOT NULL,
   fare_amount NUMERIC(5,2) NOT NULL,
   duration INT,  -- NULL for trip-based fares or an integer representing days for passes
