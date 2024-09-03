@@ -207,7 +207,7 @@ CREATE TABLE IF NOT EXISTS fare_details (
   id SERIAL PRIMARY KEY,
   commute_system_id INT NOT NULL REFERENCES commute_systems(id) ON DELETE CASCADE,
   name VARCHAR(255) NOT NULL,
-  fare_amount NUMERIC(5,2) NOT NULL,
+  fare NUMERIC(5,2) NOT NULL,
   duration INT,  -- NULL for trip-based fares or an integer representing days for passes
   day_start INT, -- NULL for no specific start day, or an integer representing the day of the month the pass starts
   alternate_fare_detail_id INT REFERENCES fare_details(id) ON DELETE SET NULL,
@@ -242,7 +242,7 @@ CREATE TABLE IF NOT EXISTS commute_schedule (
 CREATE TABLE IF NOT EXISTS commute_history (
   id SERIAL PRIMARY KEY,
   account_id INT NOT NULL REFERENCES accounts(id) ON DELETE CASCADE,
-  fare_amount NUMERIC(5,2) NOT NULL,
+  fare NUMERIC(5,2) NOT NULL,
   timestamp TIMESTAMP NOT NULL UNIQUE,
   is_timed_pass BOOLEAN DEFAULT FALSE,
   date_created TIMESTAMP NOT NULL,

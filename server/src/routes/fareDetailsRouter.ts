@@ -10,10 +10,12 @@ import validateRequest from '../utils/validateRequest.js';
 
 const router: Router = express.Router();
 
+router.get('/', getFareDetails);
+
 router.get(
-    '/',
+    '/:id',
     [
-        query('id')
+        param('id')
             .optional()
             .isInt({ min: 1 })
             .withMessage('ID must be a number'),
@@ -29,9 +31,7 @@ router.post(
             .isInt({ min: 1 })
             .withMessage('Commute System ID must be a number'),
         body('name').isString().withMessage('Name must be a string'),
-        body('fareAmount')
-            .isFloat()
-            .withMessage('Fare amount must be a number'),
+        body('fare').isFloat().withMessage('Fare must be a number'),
         body('timeslots.*.dayOfWeek')
             .isInt({ min: 0, max: 6 })
             .withMessage(
@@ -68,9 +68,7 @@ router.put(
             .isInt({ min: 1 })
             .withMessage('Commute System ID must be a number'),
         body('name').isString().withMessage('Name must be a string'),
-        body('fareAmount')
-            .isFloat()
-            .withMessage('Fare amount must be a number'),
+        body('fare').isFloat().withMessage('Fare must be a number'),
         body('timeslots.*.dayOfWeek')
             .isInt({ min: 0, max: 6 })
             .withMessage(
