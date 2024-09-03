@@ -196,55 +196,54 @@ CREATE TABLE IF NOT EXISTS income (
 
 CREATE TABLE IF NOT EXISTS commute_systems (
   id SERIAL PRIMARY KEY,
-  name VARCHAR(255) NOT NULL,
+  name VARCHAR(255) NOT NULL UNIQUE,
   fare_cap NUMERIC(5,2),
-  fare_cap_duration INT,
+  fare_cap_duration INT,  -- Assuming days as the unit; adjust as needed
   date_created TIMESTAMP NOT NULL,
   date_modified TIMESTAMP NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS fare_details (
   id SERIAL PRIMARY KEY,
-  commute_system_id INT NOT NULL REFERENCES commute_systems(id),
   name VARCHAR(255) NOT NULL,
   fare_amount NUMERIC(5,2) NOT NULL,
   duration INT,  -- NULL for trip-based fares or an integer representing days for passes
   day_start INT, -- NULL for no specific start day, or an integer representing the day of the month the pass starts
-  alternate_fare_detail_id INT REFERENCES fare_details(id),
+  alternate_fare_detail_id INT REFERENCES fare_details(id) ON DELETE SET NULL,
   date_created TIMESTAMP NOT NULL,
-  date_modified TIMESTAMP NOT NULL
+  date_modified TIMESTAMP NOT NULL,
+  UNIQUE (name)
 );
 
 CREATE TABLE IF NOT EXISTS timeslots (
   id SERIAL PRIMARY KEY,
-  fare_detail_id INT NOT NULL REFERENCES fare_details(id),
+  fare_details_id INT NOT NULL REFERENCES fare_details(id) ON DELETE CASCADE,
   day_of_week INT NOT NULL,
   start_time TIME NOT NULL,
   end_time TIME NOT NULL,
   date_created TIMESTAMP NOT NULL,
-  date_modified TIMESTAMP NOT NULL
+  date_modified TIMESTAMP NOT NULL,
+  CHECK (start_time < end_time)
 );
 
 CREATE TABLE IF NOT EXISTS commute_schedule (
   id SERIAL PRIMARY KEY,
   account_id INT NOT NULL REFERENCES accounts(id) ON DELETE CASCADE,
-  cron_job_id INT REFERENCES cron_jobs(id),
+  cron_job_id INT REFERENCES cron_jobs(id) ON DELETE SET NULL,
   day_of_week INT NOT NULL,
   start_time TIME NOT NULL,
   end_time TIME NOT NULL,
-  fare_detail_id INT NOT NULL REFERENCES fare_details(id),
+  fare_detail_id INT NOT NULL REFERENCES fare_details(id) ON DELETE CASCADE,
   date_created TIMESTAMP NOT NULL,
   date_modified TIMESTAMP NOT NULL,
-  UNIQUE(day_of_week, start_time)
+  UNIQUE(account_id, day_of_week, start_time)
 );
 
 CREATE TABLE IF NOT EXISTS commute_history (
   id SERIAL PRIMARY KEY,
   account_id INT NOT NULL REFERENCES accounts(id) ON DELETE CASCADE,
   fare_amount NUMERIC(5,2) NOT NULL,
-  commute_system VARCHAR(255) NOT NULL,
-  fare_type VARCHAR(255) NOT NULL,
-  timestamp TIMESTAMP NOT NULL,
+  timestamp TIMESTAMP NOT NULL UNIQUE,
   is_timed_pass BOOLEAN DEFAULT FALSE,
   date_created TIMESTAMP NOT NULL,
   date_modified TIMESTAMP NOT NULL
@@ -283,8 +282,8 @@ CREATE OR REPLACE FUNCTION check_fare_detail_id()
 RETURNS TRIGGER AS $$
 BEGIN
     -- Check if alternate_fare_detail_id is equal to the new fare_detail_id
-    IF NEW.alternate_fare_detail_id = NEW.fare_detail_id THEN
-        RAISE EXCEPTION 'alternate_fare_detail_id cannot be the same as fare_detail_id';
+    IF NEW.alternate_fare_detail_id = NEW.id THEN
+        RAISE EXCEPTION 'alternate_fare_detail_id cannot be the same as id';
     END IF;
     -- If all checks pass, return the new row for insertion
     RETURN NEW;
@@ -435,7 +434,7 @@ BEFORE INSERT OR UPDATE ON income
 FOR EACH ROW
 EXECUTE PROCEDURE update_dates();
 
-CREATE TRIGGER update_comute_systems_dates
+CREATE TRIGGER update_commute_systems_dates
 BEFORE INSERT OR UPDATE ON commute_systems
 FOR EACH ROW
 EXECUTE PROCEDURE update_dates();
