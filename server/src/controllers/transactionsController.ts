@@ -95,6 +95,27 @@ export const getTransactions = async (
                     NULL AS remaining_balance
                 FROM 
                     income i
+                UNION
+                SELECT
+                    cs.account_id,
+                    CONCAT('Fare for ', csy.name, ' ', fd.name) AS title,
+                    CONCAT('Fare for ', csy.name, ' ', fd.name) AS description,
+                    CASE
+                    WHEN extract('dow' from now()) <= cs.day_of_week THEN
+                        now() + interval '1 day' * (cs.day_of_week - extract('dow' from now()))
+                    ELSE
+                        now() + interval '1 week' + interval '1 day' * (cs.day_of_week - extract('dow' from now()))
+                    END AS date,
+                    -fd.fare AS amount,
+                    1 AS frequency_type,
+                    1 AS frequency_type_variable,
+                    cs.day_of_week AS frequency_day_of_week,
+                    NULL AS frequency_week_of_month,
+                    NULL AS frequency_month_of_year,
+                    NULL AS remaining_balance
+                FROM commute_schedule cs
+                LEFT JOIN fare_details fd ON cs.fare_detail_id = fd.id
+                LEFT JOIN commute_systems csy ON fd.commute_system_id = csy.id
                 UNION ALL
                 -- Generate subsequent billing dates based on frequency type
                 SELECT
@@ -559,6 +580,27 @@ export const getTransactionsByAccountId = async (
                     NULL AS remaining_balance
                 FROM 
                     income i
+                UNION
+                SELECT
+                    cs.account_id,
+                    CONCAT('Fare for ', csy.name, ' ', fd.name) AS title,
+                    CONCAT('Fare for ', csy.name, ' ', fd.name) AS description,
+                    CASE
+                    WHEN extract('dow' from now()) <= cs.day_of_week THEN
+                        now() + interval '1 day' * (cs.day_of_week - extract('dow' from now()))
+                    ELSE
+                        now() + interval '1 week' + interval '1 day' * (cs.day_of_week - extract('dow' from now()))
+                    END AS date,
+                    -fd.fare AS amount,
+                    1 AS frequency_type,
+                    1 AS frequency_type_variable,
+                    cs.day_of_week AS frequency_day_of_week,
+                    NULL AS frequency_week_of_month,
+                    NULL AS frequency_month_of_year,
+                    NULL AS remaining_balance
+                FROM commute_schedule cs
+                LEFT JOIN fare_details fd ON cs.fare_detail_id = fd.id
+                LEFT JOIN commute_systems csy ON fd.commute_system_id = csy.id
                 UNION ALL
                 -- Generate subsequent billing dates based on frequency type
                 SELECT
