@@ -198,7 +198,7 @@ CREATE TABLE IF NOT EXISTS commute_systems (
   id SERIAL PRIMARY KEY,
   name VARCHAR(255) NOT NULL UNIQUE,
   fare_cap NUMERIC(5,2),
-  fare_cap_duration INT,  -- Assuming days as the unit; adjust as needed
+  fare_cap_duration INT,  -- 0 for daily, 1 for weekly, 2 for monthly, and 3 for yearly
   date_created TIMESTAMP NOT NULL,
   date_modified TIMESTAMP NOT NULL
 );

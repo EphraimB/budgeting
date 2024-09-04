@@ -268,8 +268,7 @@ export const getTransactions = async (
                             GROUP BY job_id
                         ) pt ON j.id = pt.job_id
                         WHERE 
-                            j.account_id = 1 
-                            AND d.date >= CASE
+                            d.date >= CASE
                                 WHEN s2.payroll_start_day::integer < 0 THEN
                                     (make_date(extract(year from d1)::integer, extract(month from d1)::integer, ABS(s2.payroll_start_day::integer)) - INTERVAL '1 MONTH')::DATE
                                 ELSE 
@@ -799,7 +798,7 @@ export const getTransactionsByAccountId = async (
                             GROUP BY job_id
                         ) pt ON j.id = pt.job_id
                         WHERE 
-                            j.account_id = 1 
+                            j.account_id = $1 
                             AND d.date >= CASE
                                 WHEN s2.payroll_start_day::integer < 0 THEN
                                     (make_date(extract(year from d1)::integer, extract(month from d1)::integer, ABS(s2.payroll_start_day::integer)) - INTERVAL '1 MONTH')::DATE
