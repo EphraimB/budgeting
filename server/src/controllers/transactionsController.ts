@@ -27,15 +27,18 @@ export const getTransactions = async (
                     e.title,
                     e.description,
                     e.begin_date AS date,
-                        -e.amount AS subtotal,
-                        COALESCE((SELECT rate FROM taxes WHERE id = e.tax_id), 0) AS tax_rate,
+                    -e.amount AS subtotal,
+                    COALESCE((SELECT rate FROM taxes WHERE id = e.tax_id), 0) AS tax_rate,
                     -e.amount + (-e.amount * COALESCE((SELECT rate FROM taxes WHERE id = e.tax_id), 0)) AS amount,
                     e.frequency_type,
                     e.frequency_type_variable,
                     e.frequency_day_of_week,
                     e.frequency_week_of_month,
                     e.frequency_month_of_year,
-                    NULL AS remaining_balance
+                    NULL::NUMERIC AS remaining_balance,
+                    NULL::NUMERIC AS fare_cap,
+                    NULL::INTEGER AS fare_cap_duration,
+                    NULL::INTEGER AS commute_system_id
                 FROM 
                     expenses e
                 UNION
@@ -44,15 +47,18 @@ export const getTransactions = async (
                     l.title,
                     l.description,
                     l.begin_date AS date,
-                        -l.plan_amount AS subtotal,
-                        0 AS tax_rate,
+                    -l.plan_amount AS subtotal,
+                    0 AS tax_rate,
                     -l.plan_amount AS amount,
                     l.frequency_type,
                     l.frequency_type_variable,
                     l.frequency_day_of_week,
                     l.frequency_week_of_month,
                     l.frequency_month_of_year,
-                    l.amount AS remaining_balance
+                    l.amount AS remaining_balance,
+                    NULL::NUMERIC AS fare_cap,
+                    NULL::INTEGER AS fare_cap_duration,
+                    NULL::INTEGER AS commute_system_id
                 FROM loans l
                 UNION
                 SELECT 
@@ -60,15 +66,18 @@ export const getTransactions = async (
                     t.title,
                     t.description,
                     t.begin_date AS date,
-                        -t.amount AS subtotal,
-                        0 AS tax_rate,
+                    -t.amount AS subtotal,
+                    0 AS tax_rate,
                     -t.amount AS amount,
                     t.frequency_type,
                     t.frequency_type_variable,
                     t.frequency_day_of_week,
                     t.frequency_week_of_month,
                     t.frequency_month_of_year,
-                    NULL AS remaining_balance
+                    NULL::NUMERIC AS remaining_balance,
+                    NULL::NUMERIC AS fare_cap,
+                    NULL::INTEGER AS fare_cap_duration,
+                    NULL::INTEGER AS commute_system_id
                 FROM 
                     transfers t
                 UNION
@@ -77,15 +86,18 @@ export const getTransactions = async (
                     td.title,
                     td.description,
                     td.begin_date AS date,
-                        td.amount AS subtotal,
-                        0 AS tax_rate,
+                    td.amount AS subtotal,
+                    0 AS tax_rate,
                     td.amount AS amount,
                     td.frequency_type,
                     td.frequency_type_variable,
                     td.frequency_day_of_week,
                     td.frequency_week_of_month,
                     td.frequency_month_of_year,
-                    NULL AS remaining_balance
+                    NULL::NUMERIC AS remaining_balance,
+                    NULL::NUMERIC AS fare_cap,
+                    NULL::INTEGER AS fare_cap_duration,
+                    NULL::INTEGER AS commute_system_id
                 FROM 
                     transfers td
                 UNION
@@ -94,15 +106,18 @@ export const getTransactions = async (
                     i.title,
                     i.description,
                     i.begin_date AS date,
-                        i.amount AS subtotal,
-                        COALESCE((SELECT rate FROM taxes WHERE id = i.tax_id), 0) AS tax_rate,
+                    i.amount AS subtotal,
+                    COALESCE((SELECT rate FROM taxes WHERE id = i.tax_id), 0) AS tax_rate,
                     i.amount + (-i.amount * COALESCE((SELECT rate FROM taxes WHERE id = i.tax_id), 0)) AS amount,
                     i.frequency_type,
                     i.frequency_type_variable,
                     i.frequency_day_of_week,
                     i.frequency_week_of_month,
                     i.frequency_month_of_year,
-                    NULL AS remaining_balance
+                    NULL::NUMERIC AS remaining_balance,
+                    NULL::NUMERIC AS fare_cap,
+                    NULL::INTEGER AS fare_cap_duration,
+                    NULL::INTEGER AS commute_system_id
                 FROM 
                     income i
                 UNION
@@ -111,10 +126,10 @@ export const getTransactions = async (
                     CONCAT('Fare for ', csy.name, ' ', fd.name) AS title,
                     CONCAT('Fare for ', csy.name, ' ', fd.name) AS description,
                     CASE
-                    WHEN extract('dow' from now()) <= cs.day_of_week THEN
-                        now() + interval '1 day' * (cs.day_of_week - extract('dow' from now()))
-                    ELSE
-                        now() + interval '1 week' + interval '1 day' * (cs.day_of_week - extract('dow' from now()))
+                        WHEN extract('dow' from now()) <= cs.day_of_week THEN
+                            now() + interval '1 day' * (cs.day_of_week - extract('dow' from now()))
+                        ELSE
+                            now() + interval '1 week' + interval '1 day' * (cs.day_of_week - extract('dow' from now()))
                     END AS date,
                     -fd.fare AS subtotal,
                     0 AS tax_rate,
@@ -124,7 +139,10 @@ export const getTransactions = async (
                     cs.day_of_week AS frequency_day_of_week,
                     NULL AS frequency_week_of_month,
                     NULL AS frequency_month_of_year,
-                    NULL AS remaining_balance
+                    NULL AS remaining_balance,
+                    csy.fare_cap AS fare_cap,
+                    csy.fare_cap_duration AS fare_cap_duration,
+                    csy.id AS commute_system_id
                 FROM commute_schedule cs
                 LEFT JOIN fare_details fd ON cs.fare_detail_id = fd.id
                 LEFT JOIN commute_systems csy ON fd.commute_system_id = csy.id
@@ -178,21 +196,24 @@ export const getTransactions = async (
                         ELSE 
                             NULL
                     END AS date,
-                        r.subtotal,
-                        r.tax_rate,
+                    r.subtotal,
+                    r.tax_rate,
                     r.amount,
                     r.frequency_type,
                     r.frequency_type_variable,
                     r.frequency_day_of_week,
                     r.frequency_week_of_month,
                     r.frequency_month_of_year,
-                    r.remaining_balance - ABS(r.amount) AS remaining_balance
+                    r.remaining_balance - ABS(r.amount) AS remaining_balance,
+                    r.fare_cap,
+                    r.fare_cap_duration,
+                    r.commute_system_id
                 FROM 
                     recurring r
                 WHERE
                     (r.date + interval '1 day') <= $2
                     AND (r.remaining_balance IS NULL OR r.remaining_balance - ABS(r.amount) > 0)
-            ),
+                ),
                         work_days_and_hours AS (
                             WITH ordered_table AS (
                             SELECT
@@ -557,15 +578,18 @@ export const getTransactionsByAccountId = async (
                     e.title,
                     e.description,
                     e.begin_date AS date,
-                        -e.amount AS subtotal,
-                        COALESCE((SELECT rate FROM taxes WHERE id = e.tax_id), 0) AS tax_rate,
+                    -e.amount AS subtotal,
+                    COALESCE((SELECT rate FROM taxes WHERE id = e.tax_id), 0) AS tax_rate,
                     -e.amount + (-e.amount * COALESCE((SELECT rate FROM taxes WHERE id = e.tax_id), 0)) AS amount,
                     e.frequency_type,
                     e.frequency_type_variable,
                     e.frequency_day_of_week,
                     e.frequency_week_of_month,
                     e.frequency_month_of_year,
-                    NULL AS remaining_balance
+                    NULL::NUMERIC AS remaining_balance,
+                    NULL::NUMERIC AS fare_cap,
+                    NULL::INTEGER AS fare_cap_duration,
+                    NULL::INTEGER AS commute_system_id
                 FROM 
                     expenses e
                 UNION
@@ -574,15 +598,18 @@ export const getTransactionsByAccountId = async (
                     l.title,
                     l.description,
                     l.begin_date AS date,
-                        -l.plan_amount AS subtotal,
-                        0 AS tax_rate,
+                    -l.plan_amount AS subtotal,
+                    0 AS tax_rate,
                     -l.plan_amount AS amount,
                     l.frequency_type,
                     l.frequency_type_variable,
                     l.frequency_day_of_week,
                     l.frequency_week_of_month,
                     l.frequency_month_of_year,
-                    l.amount AS remaining_balance
+                    l.amount AS remaining_balance,
+                    NULL::NUMERIC AS fare_cap,
+                    NULL::INTEGER AS fare_cap_duration,
+                    NULL::INTEGER AS commute_system_id
                 FROM loans l
                 UNION
                 SELECT 
@@ -590,15 +617,18 @@ export const getTransactionsByAccountId = async (
                     t.title,
                     t.description,
                     t.begin_date AS date,
-                        -t.amount AS subtotal,
-                        0 AS tax_rate,
+                    -t.amount AS subtotal,
+                    0 AS tax_rate,
                     -t.amount AS amount,
                     t.frequency_type,
                     t.frequency_type_variable,
                     t.frequency_day_of_week,
                     t.frequency_week_of_month,
                     t.frequency_month_of_year,
-                    NULL AS remaining_balance
+                    NULL::NUMERIC AS remaining_balance,
+                    NULL::NUMERIC AS fare_cap,
+                    NULL::INTEGER AS fare_cap_duration,
+                    NULL::INTEGER AS commute_system_id
                 FROM 
                     transfers t
                 UNION
@@ -607,15 +637,18 @@ export const getTransactionsByAccountId = async (
                     td.title,
                     td.description,
                     td.begin_date AS date,
-                        td.amount AS subtotal,
-                        0 AS tax_rate,
+                    td.amount AS subtotal,
+                    0 AS tax_rate,
                     td.amount AS amount,
                     td.frequency_type,
                     td.frequency_type_variable,
                     td.frequency_day_of_week,
                     td.frequency_week_of_month,
                     td.frequency_month_of_year,
-                    NULL AS remaining_balance
+                    NULL::NUMERIC AS remaining_balance,
+                    NULL::NUMERIC AS fare_cap,
+                    NULL::INTEGER AS fare_cap_duration,
+                    NULL::INTEGER AS commute_system_id
                 FROM 
                     transfers td
                 UNION
@@ -624,15 +657,18 @@ export const getTransactionsByAccountId = async (
                     i.title,
                     i.description,
                     i.begin_date AS date,
-                        i.amount AS subtotal,
-                        COALESCE((SELECT rate FROM taxes WHERE id = i.tax_id), 0) AS tax_rate,
+                    i.amount AS subtotal,
+                    COALESCE((SELECT rate FROM taxes WHERE id = i.tax_id), 0) AS tax_rate,
                     i.amount + (-i.amount * COALESCE((SELECT rate FROM taxes WHERE id = i.tax_id), 0)) AS amount,
                     i.frequency_type,
                     i.frequency_type_variable,
                     i.frequency_day_of_week,
                     i.frequency_week_of_month,
                     i.frequency_month_of_year,
-                    NULL AS remaining_balance
+                    NULL::NUMERIC AS remaining_balance,
+                    NULL::NUMERIC AS fare_cap,
+                    NULL::INTEGER AS fare_cap_duration,
+                    NULL::INTEGER AS commute_system_id
                 FROM 
                     income i
                 UNION
@@ -641,10 +677,10 @@ export const getTransactionsByAccountId = async (
                     CONCAT('Fare for ', csy.name, ' ', fd.name) AS title,
                     CONCAT('Fare for ', csy.name, ' ', fd.name) AS description,
                     CASE
-                    WHEN extract('dow' from now()) <= cs.day_of_week THEN
-                        now() + interval '1 day' * (cs.day_of_week - extract('dow' from now()))
-                    ELSE
-                        now() + interval '1 week' + interval '1 day' * (cs.day_of_week - extract('dow' from now()))
+                        WHEN extract('dow' from now()) <= cs.day_of_week THEN
+                            now() + interval '1 day' * (cs.day_of_week - extract('dow' from now()))
+                        ELSE
+                            now() + interval '1 week' + interval '1 day' * (cs.day_of_week - extract('dow' from now()))
                     END AS date,
                     -fd.fare AS subtotal,
                     0 AS tax_rate,
@@ -654,7 +690,10 @@ export const getTransactionsByAccountId = async (
                     cs.day_of_week AS frequency_day_of_week,
                     NULL AS frequency_week_of_month,
                     NULL AS frequency_month_of_year,
-                    NULL AS remaining_balance
+                    NULL AS remaining_balance,
+                    csy.fare_cap AS fare_cap,
+                    csy.fare_cap_duration AS fare_cap_duration,
+                    csy.id AS commute_system_id
                 FROM commute_schedule cs
                 LEFT JOIN fare_details fd ON cs.fare_detail_id = fd.id
                 LEFT JOIN commute_systems csy ON fd.commute_system_id = csy.id
@@ -708,21 +747,24 @@ export const getTransactionsByAccountId = async (
                         ELSE 
                             NULL
                     END AS date,
-                        r.subtotal,
-                        r.tax_rate,
+                    r.subtotal,
+                    r.tax_rate,
                     r.amount,
                     r.frequency_type,
                     r.frequency_type_variable,
                     r.frequency_day_of_week,
                     r.frequency_week_of_month,
                     r.frequency_month_of_year,
-                    r.remaining_balance - ABS(r.amount) AS remaining_balance
+                    r.remaining_balance - ABS(r.amount) AS remaining_balance,
+                    r.fare_cap,
+                    r.fare_cap_duration,
+                    r.commute_system_id
                 FROM 
                     recurring r
                 WHERE
-                    (r.date + interval '1 day') <= $2
+                    (r.date + interval '1 day') <= $3
                     AND (r.remaining_balance IS NULL OR r.remaining_balance - ABS(r.amount) > 0)
-            ),
+                ,
                         work_days_and_hours AS (
                             WITH ordered_table AS (
                             SELECT
