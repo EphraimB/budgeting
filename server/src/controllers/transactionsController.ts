@@ -449,6 +449,7 @@ export const getTransactions = async (
                 COALESCE(
                     JSON_AGG(
                         JSON_BUILD_OBJECT(
+                            'id', gen_random_uuid(),
                             'title', twb.title,
                             'description', twb.description,
                             'amount', twb.amount,
@@ -936,6 +937,7 @@ export const getTransactionsByAccountId = async (
                 COALESCE(
                     JSON_AGG(
                         JSON_BUILD_OBJECT(
+                            'id', gen_random_uuid(),
                             'title', twb.title,
                             'description', twb.description,
                             'amount', twb.amount,
