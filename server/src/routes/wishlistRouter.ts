@@ -5,24 +5,9 @@ import {
     createWishlist,
     updateWishlist,
     deleteWishlist,
-    createWishlistCron,
-    updateWishlistCron,
     getWishlistsById,
 } from '../controllers/wishlistsController.js';
 import validateRequest from '../utils/validateRequest.js';
-import generateTransactions from '../generation/generateTransactions.js';
-import {
-    setQueries,
-    getCurrentBalance,
-    getTransactionsByAccount,
-    getIncomeByAccount,
-    getExpensesByAccount,
-    getLoansByAccount,
-    getPayrollsMiddleware,
-    getTransfersByAccount,
-    getCommuteExpensesByAccount,
-    getWishlistsByAccount,
-} from '../middleware/middleware.js';
 
 const router: Router = express.Router();
 
@@ -35,17 +20,6 @@ router.get(
             .withMessage('Account ID must be an integer'),
         validateRequest,
     ],
-    setQueries,
-    getCurrentBalance,
-    getTransactionsByAccount,
-    getIncomeByAccount,
-    getExpensesByAccount,
-    getLoansByAccount,
-    getPayrollsMiddleware,
-    getTransfersByAccount,
-    getCommuteExpensesByAccount,
-    getWishlistsByAccount,
-    generateTransactions,
     getWishlists,
 );
 
@@ -59,17 +33,6 @@ router.get(
             .withMessage('Account ID must be an integer'),
         validateRequest,
     ],
-    setQueries,
-    getCurrentBalance,
-    getTransactionsByAccount,
-    getIncomeByAccount,
-    getExpensesByAccount,
-    getLoansByAccount,
-    getPayrollsMiddleware,
-    getTransfersByAccount,
-    getCommuteExpensesByAccount,
-    getWishlistsByAccount,
-    generateTransactions,
     getWishlistsById,
 );
 
@@ -89,18 +52,6 @@ router.post(
         validateRequest,
     ],
     createWishlist,
-    setQueries,
-    getCurrentBalance,
-    getTransactionsByAccount,
-    getIncomeByAccount,
-    getExpensesByAccount,
-    getLoansByAccount,
-    getPayrollsMiddleware,
-    getTransfersByAccount,
-    getCommuteExpensesByAccount,
-    getWishlistsByAccount,
-    generateTransactions,
-    createWishlistCron,
 );
 
 router.put(
@@ -120,18 +71,6 @@ router.put(
         validateRequest,
     ],
     updateWishlist,
-    setQueries,
-    getCurrentBalance,
-    getTransactionsByAccount,
-    getIncomeByAccount,
-    getExpensesByAccount,
-    getLoansByAccount,
-    getPayrollsMiddleware,
-    getTransfersByAccount,
-    getCommuteExpensesByAccount,
-    getWishlistsByAccount,
-    generateTransactions,
-    updateWishlistCron,
 );
 
 router.delete(
