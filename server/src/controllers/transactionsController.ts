@@ -387,7 +387,7 @@ export const getTransactions = async (
                             FROM 
                                 wishlist w
                             JOIN 
-                                projected_balance pb ON w.account_id = pb.account_id AND pb.running_balance > w.amount
+                                projected_balance pb ON w.account_id = pb.account_id AND pb.running_balance > w.amount AND pb.date > now()
                             GROUP BY 
                                 w.account_id, w.title, w.description, w.amount, w.tax_id
                         ),
@@ -939,7 +939,7 @@ export const getTransactionsByAccountId = async (
                             FROM 
                                 wishlist w
                             JOIN 
-                                projected_balance pb ON w.account_id = pb.account_id AND pb.running_balance > w.amount
+                                projected_balance pb ON w.account_id = pb.account_id AND pb.running_balance > w.amount AND pb.date > now()
                             GROUP BY 
                                 w.account_id, w.title, w.description, w.amount, w.tax_id
                         ),
