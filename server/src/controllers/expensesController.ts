@@ -1,5 +1,4 @@
 import { type Request, type Response } from 'express';
-import { taxesQueries } from '../models/queryData.js';
 import determineCronValues from '../crontab/determineCronValues.js';
 import { handleError, toCamelCase } from '../utils/helperFunctions.js';
 import { logger } from '../config/winston.js';
@@ -577,7 +576,11 @@ export const createExpense = async (
 
         // Get tax rate
         const { rows: result } = await client.query(
-            taxesQueries.getTaxRateByTaxId,
+            `
+                SELECT tax_rate
+                    FROM taxes
+                    WHERE id = $1
+            `,
             [taxId],
         );
         const taxRate = result && result.length > 0 ? result : 0;
