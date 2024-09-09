@@ -53,7 +53,6 @@ beforeEach(async () => {
 
 describe('Testing / route', () => {
     it('should respond with a 200 status and the correct data without an account id param', async () => {
-        const accountId: number = 1;
         const fromDate: string = '2023-01-01';
         const toDate: string = '2023-01-31';
 
