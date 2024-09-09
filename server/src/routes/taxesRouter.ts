@@ -1,25 +1,28 @@
 import express, { type Router } from 'express';
-import { query, param, body } from 'express-validator';
+import { param, body } from 'express-validator';
 import {
     getTaxes,
     createTax,
     updateTax,
     deleteTax,
+    getTaxesById,
 } from '../controllers/taxesController.js';
 import validateRequest from '../utils/validateRequest.js';
 
 const router: Router = express.Router();
 
+router.get('/', getTaxes);
+
 router.get(
-    '/',
+    '/:id',
     [
-        query('id')
+        param('id')
             .optional()
             .isInt({ min: 1 })
             .withMessage('ID must be a number'),
         validateRequest,
     ],
-    getTaxes,
+    getTaxesById,
 );
 
 router.post(
