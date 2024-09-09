@@ -15,6 +15,7 @@ import {
     it,
     expect,
 } from '@jest/globals';
+import { getJobsById } from '../../src/controllers/jobsController';
 
 // Factory function for creating an app with the mock router
 const createApp = async () => {
@@ -30,123 +31,55 @@ const createApp = async () => {
 };
 
 const newJob = {
-    account_id: 1,
+    accountId: 1,
     name: 'test',
-    hourly_rate: 10,
-    vacation_days: 10,
-    sick_days: 10,
-    job_schedule: [
+    hourlyRate: 10,
+    vacationDays: 10,
+    sickDays: 10,
+    jobSchedule: [
         {
-            day_of_week: 1,
-            start_time: '09:00:00',
-            end_time: '17:00:00',
+            dayOfWeek: 1,
+            startTime: '09:00:00',
+            endTime: '17:00:00',
         },
         {
-            day_of_week: 2,
-            start_time: '09:00:00',
-            end_time: '17:00:00',
+            dayOfWeek: 2,
+            startTime: '09:00:00',
+            endTime: '17:00:00',
         },
         {
-            day_of_week: 3,
-            start_time: '09:00:00',
-            end_time: '17:00:00',
+            dayOfWeek: 3,
+            startTime: '09:00:00',
+            endTime: '17:00:00',
         },
         {
-            day_of_week: 4,
-            start_time: '09:00:00',
-            end_time: '17:00:00',
+            dayOfWeek: 4,
+            startTime: '09:00:00',
+            endTime: '17:00:00',
         },
         {
-            day_of_week: 5,
-            start_time: '09:00:00',
-            end_time: '17:00:00',
+            dayOfWeek: 5,
+            startTime: '09:00:00',
+            endTime: '17:00:00',
         },
     ],
 };
 
 beforeAll(() => {
-    jest.mock('../../src/middleware/middleware', () => ({
-        setQueries: jest.fn(
-            (req: Request, res: Response, next: NextFunction) => {
-                next();
-            },
-        ),
-        getCurrentBalance: jest.fn(
-            (req: Request, res: Response, next: NextFunction) => {
-                next();
-            },
-        ),
-        getTransactionsByAccount: jest.fn(
-            (req: Request, res: Response, next: NextFunction) => {
-                next();
-            },
-        ),
-        getIncomeByAccount: jest.fn(
-            (req: Request, res: Response, next: NextFunction) => {
-                next();
-            },
-        ),
-        getExpensesByAccount: jest.fn(
-            (req: Request, res: Response, next: NextFunction) => {
-                next();
-            },
-        ),
-        getLoansByAccount: jest.fn(
-            (req: Request, res: Response, next: NextFunction) => {
-                next();
-            },
-        ),
-        getPayrollsMiddleware: jest.fn(
-            (req: Request, res: Response, next: NextFunction) => {
-                next();
-            },
-        ),
-        getTransfersByAccount: jest.fn(
-            (req: Request, res: Response, next: NextFunction) => {
-                next();
-            },
-        ),
-        getCommuteExpensesByAccount: jest.fn(
-            (req: Request, res: Response, next: NextFunction) => {
-                next();
-            },
-        ),
-        getWishlistsByAccount: jest.fn(
-            (req: Request, res: Response, next: NextFunction) => {
-                next();
-            },
-        ),
-        updateWishlistCron: jest.fn(
-            (req: Request, res: Response, next: NextFunction) => {
-                next();
-            },
-        ),
-    }));
-
-    jest.mock('../../src/generation/generateTransactions', () => {
-        return jest.fn((req: Request, res: Response, next: NextFunction) => {
-            req.transactions = [];
-            next();
-        });
-    });
-
     jest.mock('../../src/controllers/jobsController', () => ({
-        getJobs: jest.fn((req: Request, res: Response, next: NextFunction) =>
+        getJobs: jest.fn((_: Request, res: Response) =>
             res.json({ message: 'success' }),
         ),
-        createJob: jest.fn((req: Request, res: Response, next: NextFunction) =>
+        getJobsById: jest.fn((_: Request, res: Response) =>
             res.json({ message: 'success' }),
         ),
-        updateJob: jest.fn(
-            (req: Request, res: Response, next: NextFunction) => {
-                next();
-            },
+        createJob: jest.fn((_: Request, res: Response) =>
+            res.json({ message: 'success' }),
         ),
-        updateJobReturnObject: jest.fn(
-            (req: Request, res: Response, next: NextFunction) =>
-                res.json({ message: 'success' }),
+        updateJob: jest.fn((_: Request, res: Response) =>
+            res.json({ message: 'success' }),
         ),
-        deleteJob: jest.fn((req: Request, res: Response, next: NextFunction) =>
+        deleteJob: jest.fn((req: Request, res: Response) =>
             res.json({ message: 'success' }),
         ),
     }));
@@ -175,10 +108,10 @@ describe('GET /', () => {
     });
 });
 
-describe('GET / with id query', () => {
+describe('GET / with id param', () => {
     it('responds with json', async () => {
         const response: request.Response = await request(app)
-            .get('/?job_id=1')
+            .get('/1')
             .set('Accept', 'application/json')
             .expect('Content-Type', /json/);
 

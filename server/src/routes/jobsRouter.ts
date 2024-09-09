@@ -75,7 +75,7 @@ router.post(
 );
 
 router.put(
-    '/:job_id',
+    '/:jobId',
     [
         param('jobId').isInt({ min: 1 }).withMessage('Job ID must be a number'),
         body('accountId')
@@ -114,7 +114,7 @@ router.put(
 );
 
 router.delete(
-    '/:job_id',
+    '/:jobId',
     [
         param('jobId').isInt({ min: 1 }).withMessage('Job ID must be a number'),
         validateRequest,
