@@ -33,15 +33,15 @@ const createApp = async (): Promise<Express> => {
 
 beforeAll(() => {
     jest.mock('../../src/controllers/accountsController', () => ({
-        getAccounts: (req: Request, res: Response) =>
+        getAccounts: (_: Request, res: Response) =>
             res.json({ message: 'success' }),
-        getAccountsById: (req: Request, res: Response) =>
+        getAccountsById: (_: Request, res: Response) =>
             res.json({ message: 'success' }),
-        createAccount: (req: Request, res: Response) =>
+        createAccount: (_: Request, res: Response) =>
             res.json({ message: 'success' }),
-        updateAccount: (req: Request, res: Response) =>
+        updateAccount: (_: Request, res: Response) =>
             res.json({ message: 'success' }),
-        deleteAccount: (req: Request, res: Response) =>
+        deleteAccount: (_: Request, res: Response) =>
             res.json({ message: 'success' }),
     }));
 });
