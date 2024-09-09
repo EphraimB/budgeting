@@ -4,7 +4,6 @@ import express, {
     type Express,
     type Request,
     type Response,
-    type NextFunction,
     type Router,
 } from 'express';
 import MockDate from 'mockdate';
@@ -36,101 +35,21 @@ const createApp = async (): Promise<Express> => {
 beforeAll(() => {
     MockDate.set('2019-01-01');
 
-    jest.mock('../../src/middleware/middleware', () => ({
-        setQueries: jest.fn(
-            (req: Request, res: Response, next: NextFunction) => {
-                next();
-            },
-        ),
-        getCurrentBalance: jest.fn(
-            (req: Request, res: Response, next: NextFunction) => {
-                next();
-            },
-        ),
-        getTransactionsByAccount: jest.fn(
-            (req: Request, res: Response, next: NextFunction) => {
-                next();
-            },
-        ),
-        getIncomeByAccount: jest.fn(
-            (req: Request, res: Response, next: NextFunction) => {
-                next();
-            },
-        ),
-        getExpensesByAccount: jest.fn(
-            (req: Request, res: Response, next: NextFunction) => {
-                next();
-            },
-        ),
-        getLoansByAccount: jest.fn(
-            (req: Request, res: Response, next: NextFunction) => {
-                next();
-            },
-        ),
-        getPayrollsMiddleware: jest.fn(
-            (req: Request, res: Response, next: NextFunction) => {
-                next();
-            },
-        ),
-        getTransfersByAccount: jest.fn(
-            (req: Request, res: Response, next: NextFunction) => {
-                next();
-            },
-        ),
-        getCommuteExpensesByAccount: jest.fn(
-            (req: Request, res: Response, next: NextFunction) => {
-                next();
-            },
-        ),
-        getWishlistsByAccount: jest.fn(
-            (req: Request, res: Response, next: NextFunction) => {
-                next();
-            },
-        ),
-        updateWishlistCron: jest.fn(
-            (req: Request, res: Response, next: NextFunction) => {
-                next();
-            },
-        ),
-    }));
-
-    jest.mock('../../src/generation/generateTransactions', () => {
-        return jest.fn((req: Request, res: Response, next: NextFunction) => {
-            req.transactions = [];
-            next();
-        });
-    });
-
     jest.mock('../../src/controllers/incomeController', () => ({
-        getIncome: jest.fn((req: Request, res: Response, next: NextFunction) =>
+        getIncome: jest.fn((_: Request, res: Response) =>
             res.json({ message: 'success' }),
         ),
-        createIncome: jest.fn(
-            (req: Request, res: Response, next: NextFunction) => {
-                next();
-            },
+        getIncomeById: jest.fn((_: Request, res: Response) =>
+            res.json({ message: 'success' }),
         ),
-        createIncomeReturnObject: jest.fn(
-            (req: Request, res: Response, next: NextFunction) =>
-                res.json({ message: 'success' }),
+        createIncome: jest.fn((req: Request, res: Response) =>
+            res.json({ message: 'success' }),
         ),
-        updateIncome: jest.fn(
-            (req: Request, res: Response, next: NextFunction) => {
-                next();
-            },
+        updateIncome: jest.fn((req: Request, res: Response) =>
+            res.json({ message: 'success' }),
         ),
-        updateIncomeReturnObject: jest.fn(
-            (req: Request, res: Response, next: NextFunction) =>
-                res.json({ message: 'success' }),
-        ),
-        deleteIncome: jest.fn(
-            (req: Request, res: Response, next: NextFunction) => {
-                next();
-            },
-        ),
-        deleteIncomeReturnObject: jest.fn(
-            (req: Request, res: Response, next: NextFunction) =>
-                res.json({ message: 'success' }),
+        deleteIncome: jest.fn((req: Request, res: Response) =>
+            res.json({ message: 'success' }),
         ),
     }));
 });
@@ -158,10 +77,10 @@ describe('GET /', () => {
     });
 });
 
-describe('GET / with id query', () => {
+describe('GET / with id param', () => {
     it('responds with json', async () => {
         const response: request.Response = await request(app)
-            .get('/?id=1')
+            .get('/1')
             .set('Accept', 'application/json')
             .expect('Content-Type', /json/);
 
@@ -173,17 +92,17 @@ describe('GET / with id query', () => {
 describe('POST /', () => {
     it('responds with json', async () => {
         const incomeObj = {
-            account_id: 1,
+            accountId: 1,
             amount: 100,
             title: 'test',
             description: 'test',
-            frequency_type: 1,
-            frequency_type_variable: 1,
-            frequency_day_of_week: 1,
-            frequency_week_of_month: 1,
-            frequency_day_of_month: 1,
-            frequency_month_of_year: 1,
-            begin_date: '2020-01-01',
+            frequencyType: 1,
+            frequencyTypeVariable: 1,
+            frequencyDayOfWeek: 1,
+            frequencyWeekOfMonth: 1,
+            frequencyDayOfMonth: 1,
+            frequencyMonthOfYear: 1,
+            beginDate: '2020-01-01',
         };
 
         const response = await request(app)
@@ -200,17 +119,17 @@ describe('POST /', () => {
 describe('PUT /:id', () => {
     it('responds with json', async () => {
         const incomeObj = {
-            account_id: 1,
+            accountId: 1,
             amount: 100,
             title: 'test',
             description: 'test',
-            frequency_type: 1,
-            frequency_type_variable: 1,
-            frequency_day_of_week: 1,
-            frequency_week_of_month: 1,
-            frequency_day_of_month: 1,
-            frequency_month_of_year: 1,
-            begin_date: '2020-01-01',
+            frequencyType: 1,
+            frequencyTypeVariable: 1,
+            frequencyDayOfWeek: 1,
+            frequencyWeekOfMonth: 1,
+            frequencyDayOfMonth: 1,
+            frequencyMonthOfYear: 1,
+            beginDate: '2020-01-01',
         };
 
         const response: request.Response = await request(app)
