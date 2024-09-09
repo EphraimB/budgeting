@@ -1,5 +1,5 @@
 import express, { type Router } from 'express';
-import { param, query, body } from 'express-validator';
+import { param, body } from 'express-validator';
 import {
     getAccounts,
     createAccount,
