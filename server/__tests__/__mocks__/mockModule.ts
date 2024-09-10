@@ -7,6 +7,7 @@ import {
 /**
  *
  * @param poolResponses - Array of responses for the database client
+ * @param camelCaseResponse - Response of the toCamelCase function
  * Mock module with mock implementations for the database client and handleError
  */
 export const mockModule = (
