@@ -1,4 +1,4 @@
-import { type NextFunction, type Request, type Response } from 'express';
+import { type Request, type Response } from 'express';
 import { handleError, toCamelCase } from '../utils/helperFunctions.js';
 import { logger } from '../config/winston.js';
 import pool from '../config/db.js';
