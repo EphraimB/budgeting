@@ -52,13 +52,11 @@ const accounts = [
 describe('GET /api/accounts', () => {
     it('should respond with an array of accounts', async () => {
         // Arrange
-        mockModule([accounts]);
+        mockModule([accounts], accounts);
 
         const { getAccounts } = await import(
             '../../src/controllers/accountsController.js'
         );
-
-        mockRequest.query = { id: null };
 
         // Call the function with the mock request and response
         await getAccounts(mockRequest as Request, mockResponse);
@@ -76,8 +74,6 @@ describe('GET /api/accounts', () => {
             '../../src/controllers/accountsController.js'
         );
 
-        mockRequest.query = { id: null };
-
         // Act
         await getAccounts(mockRequest as Request, mockResponse).catch(() => {
             // Assert
@@ -92,7 +88,10 @@ describe('GET /api/accounts', () => {
 describe('GET /api/accounts/:id', () => {
     it('should respond with an array of accounts with an id', async () => {
         // Arrange
-        mockModule([accounts.filter((account) => account.accountId === 1)]);
+        mockModule(
+            [accounts.filter((account) => account.accountId === 1)],
+            accounts.filter((account) => account.accountId === 1),
+        );
 
         const { getAccountsById } = await import(
             '../../src/controllers/accountsController.js'
@@ -157,7 +156,7 @@ describe('POST /api/accounts', () => {
             (account) => account.accountId === 1,
         );
 
-        mockModule([newAccount]);
+        mockModule([newAccount], newAccount);
 
         const { createAccount } = await import(
             '../../src/controllers/accountsController.js'
@@ -201,7 +200,7 @@ describe('PUT /api/accounts/:id', () => {
             (account) => account.accountId === 1,
         );
 
-        mockModule([updatedAccount, updatedAccount]);
+        mockModule([updatedAccount, updatedAccount], updatedAccount);
 
         const { updateAccount } = await import(
             '../../src/controllers/accountsController.js'

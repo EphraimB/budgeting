@@ -744,7 +744,6 @@ export const updateExpense = async (
                     SET unique_id = $1,
                     cron_expression = $2
                     WHERE id = $3
-                    RETURNING *
             `,
             [uniqueId, cronDate, cronId],
         );

@@ -11,6 +11,7 @@ import {
  */
 export const mockModule = (
     poolResponses: any[], // Array of responses for the database client
+    camelCaseResponse?: any,
 ) => {
     const pool = jest.fn();
     const handleError = jest.fn();
@@ -22,7 +23,7 @@ export const mockModule = (
     });
 
     jest.mock('../../src/utils/helperFunctions.js', () => ({
-        toCamelCase: jest.fn(() => poolResponses[poolResponses.length - 1]),
+        toCamelCase: jest.fn(() => camelCaseResponse),
         handleError,
         parseIntOrFallback,
         parseFloatOrFallback,
@@ -75,12 +76,12 @@ describe('Testing mockModule', () => {
     it('should return the last mock in the array for toCamelCase', async () => {
         const poolResponses = [[{ id: 1 }], [{ id: 2 }]];
 
-        mockModule(poolResponses);
+        mockModule(poolResponses, [{ id: 3 }]);
 
         const { toCamelCase } = require('../../src/utils/helperFunctions');
 
         const retreivedRows = toCamelCase(); // Convert to camelCase
 
-        expect(retreivedRows).toEqual([{ id: 2 }]);
+        expect(retreivedRows).toEqual([{ id: 3 }]);
     });
 });
