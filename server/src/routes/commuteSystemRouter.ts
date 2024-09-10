@@ -16,10 +16,7 @@ router.get('/', getCommuteSystem);
 router.get(
     '/:id',
     [
-        param('id')
-            .optional()
-            .isInt({ min: 1 })
-            .withMessage('ID must be a number'),
+        param('id').isInt({ min: 1 }).withMessage('ID must be a number'),
         validateRequest,
     ],
     getCommuteSystemById,

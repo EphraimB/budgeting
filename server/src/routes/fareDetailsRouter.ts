@@ -1,10 +1,11 @@
 import express, { type Router } from 'express';
-import { query, param, body } from 'express-validator';
+import { param, body } from 'express-validator';
 import {
     getFareDetails,
     createFareDetail,
     updateFareDetail,
     deleteFareDetail,
+    getFareDetailsById,
 } from '../controllers/fareDetailsController.js';
 import validateRequest from '../utils/validateRequest.js';
 
@@ -15,13 +16,10 @@ router.get('/', getFareDetails);
 router.get(
     '/:id',
     [
-        param('id')
-            .optional()
-            .isInt({ min: 1 })
-            .withMessage('ID must be a number'),
+        param('id').isInt({ min: 1 }).withMessage('ID must be a number'),
         validateRequest,
     ],
-    getFareDetails,
+    getFareDetailsById,
 );
 
 router.post(
