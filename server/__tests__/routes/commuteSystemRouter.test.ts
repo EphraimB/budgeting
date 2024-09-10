@@ -4,7 +4,6 @@ import express, {
     type Express,
     type Request,
     type Response,
-    type NextFunction,
     type Router,
 } from 'express';
 import {
@@ -82,10 +81,10 @@ describe('GET / with id param', () => {
     });
 });
 
-describe('GET / with account_id query', () => {
+describe('GET / with account id query', () => {
     it('responds with json', async () => {
         const response: request.Response = await request(app)
-            .get('/?account_id=1')
+            .get('/?accountId=1')
             .set('Accept', 'application/json')
             .expect('Content-Type', /json/);
 

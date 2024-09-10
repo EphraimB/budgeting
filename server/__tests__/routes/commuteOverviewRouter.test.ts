@@ -52,7 +52,7 @@ beforeEach(async () => {
 describe('GET /', () => {
     it('responds with json', async () => {
         const response: request.Response = await request(app)
-            .get('/?account_id=1')
+            .get('/?accountId=1')
             .set('Accept', 'application/json')
             .expect('Content-Type', /json/);
 
