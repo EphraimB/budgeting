@@ -5,6 +5,7 @@ import {
     createCommuteHistory,
     deleteCommuteHistory,
     updateCommuteHistory,
+    getCommuteHistoryById,
 } from '../controllers/commuteHistoryController.js';
 import validateRequest from '../utils/validateRequest.js';
 
@@ -13,17 +14,30 @@ const router: Router = express.Router();
 router.get(
     '/',
     [
-        query('id')
-            .optional()
-            .isInt({ min: 1 })
-            .withMessage('ID must be a number'),
-        validateRequest,
         query('accountId')
             .optional()
             .isInt({ min: 1 })
             .withMessage('Account ID must be a number'),
+        validateRequest,
     ],
     getCommuteHistory,
+);
+
+router.get(
+    '/:id',
+    [
+        param('id')
+            .optional()
+            .isInt({ min: 1 })
+            .withMessage('ID must be a number'),
+
+        query('accountId')
+            .optional()
+            .isInt({ min: 1 })
+            .withMessage('Account ID must be a number'),
+        validateRequest,
+    ],
+    getCommuteHistoryById,
 );
 
 router.post(
@@ -32,7 +46,7 @@ router.post(
         body('accountId')
             .isInt({ min: 1 })
             .withMessage('Account ID must be a number'),
-        body('fareAmount')
+        body('fare')
             .isFloat({ min: 0 })
             .withMessage('Fare amount must be a number'),
         body('commuteSystem')
@@ -52,7 +66,7 @@ router.put(
         body('accountId')
             .isInt({ min: 1 })
             .withMessage('Account ID must be a number'),
-        body('fareAmount')
+        body('fare')
             .isFloat({ min: 0 })
             .withMessage('Fare amount must be a number'),
         body('commuteSystem')
