@@ -87,7 +87,9 @@ describe('GET /api/accounts', () => {
             });
         });
     });
+});
 
+describe('GET /api/accounts/:id', () => {
     it('should respond with an array of accounts with an id', async () => {
         // Arrange
         mockModule([accounts.filter((account) => account.accountId === 1)]);
