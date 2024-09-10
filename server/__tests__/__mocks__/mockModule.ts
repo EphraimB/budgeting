@@ -72,7 +72,7 @@ describe('Testing mockModule', () => {
         expect(secondRow).toEqual([{ id: 2 }]);
     });
 
-    /*it('should return the last mock in the array for toCamelCase', async () => {
+    it('should return the last mock in the array for toCamelCase', async () => {
         const poolResponses = [[{ id: 1 }], [{ id: 2 }]];
 
         mockModule(poolResponses);
@@ -82,5 +82,5 @@ describe('Testing mockModule', () => {
         const retreivedRows = toCamelCase(); // Convert to camelCase
 
         expect(retreivedRows).toEqual([{ id: 2 }]);
-    });*/
+    });
 });
