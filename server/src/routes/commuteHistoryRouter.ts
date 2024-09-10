@@ -30,7 +30,6 @@ router.get(
             .optional()
             .isInt({ min: 1 })
             .withMessage('ID must be a number'),
-
         query('accountId')
             .optional()
             .isInt({ min: 1 })
