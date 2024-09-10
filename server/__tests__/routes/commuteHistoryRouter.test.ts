@@ -34,23 +34,14 @@ const createApp = async (): Promise<Express> => {
 
 beforeAll(() => {
     jest.mock('../../src/controllers/commuteHistoryController', () => ({
-        getCommuteHistory: (req: Request, res: Response, next: NextFunction) =>
+        getCommuteHistory: (_: Request, res: Response) =>
             res.json({ message: 'success' }),
-        createCommuteHistory: (
-            req: Request,
-            res: Response,
-            next: NextFunction,
-        ) => res.json({ message: 'success' }),
-        updateCommuteHistory: (
-            req: Request,
-            res: Response,
-            next: NextFunction,
-        ) => res.json({ message: 'success' }),
-        deleteCommuteHistory: (
-            req: Request,
-            res: Response,
-            next: NextFunction,
-        ) => res.json({ message: 'success' }),
+        createCommuteHistory: (_: Request, res: Response) =>
+            res.json({ message: 'success' }),
+        updateCommuteHistory: (_: Request, res: Response) =>
+            res.json({ message: 'success' }),
+        deleteCommuteHistory: (_: Request, res: Response) =>
+            res.json({ message: 'success' }),
     }));
 });
 
@@ -77,10 +68,10 @@ describe('GET /', () => {
     });
 });
 
-describe('GET / with id query', () => {
+describe('GET / with id param', () => {
     it('responds with json', async () => {
         const response: request.Response = await request(app)
-            .get('/?id=1')
+            .get('/1')
             .set('Accept', 'application/json')
             .expect('Content-Type', /json/);
 

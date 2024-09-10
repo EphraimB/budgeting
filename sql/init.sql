@@ -240,8 +240,9 @@ CREATE TABLE IF NOT EXISTS commute_schedule (
 
 CREATE TABLE IF NOT EXISTS commute_history (
   id SERIAL PRIMARY KEY,
-  commute_system_id INT NOT NULL REFERENCES commute_systems(id) ON DELETE SET NULL,
   account_id INT NOT NULL REFERENCES accounts(id) ON DELETE CASCADE,
+  commute_system VARCHAR(255) NOT NULL,
+  fare_type VARCHAR(255) NOT NULL,
   fare NUMERIC(5,2) NOT NULL,
   timestamp TIMESTAMP NOT NULL,
   is_timed_pass BOOLEAN DEFAULT FALSE,
