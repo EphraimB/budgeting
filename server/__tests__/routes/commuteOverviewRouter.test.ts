@@ -4,7 +4,6 @@ import express, {
     type Express,
     type Request,
     type Response,
-    type NextFunction,
     type Router,
 } from 'express';
 import {
@@ -34,7 +33,7 @@ const createApp = async (): Promise<Express> => {
 
 beforeAll(() => {
     jest.mock('../../src/controllers/commuteOverviewController', () => ({
-        getCommuteOverview: (req: Request, res: Response, next: NextFunction) =>
+        getCommuteOverview: (_: Request, res: Response) =>
             res.json({ message: 'success' }),
     }));
 });
