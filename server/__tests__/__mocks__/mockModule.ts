@@ -1,9 +1,8 @@
-import { jest, describe, it, expect } from '@jest/globals';
+import { jest, describe, it, expect, beforeEach } from '@jest/globals';
 import {
     parseIntOrFallback,
     parseFloatOrFallback,
 } from '../../src/utils/helperFunctions';
-import { beforeEach } from '@jest/globals';
 
 /**
  *
@@ -23,6 +22,7 @@ export const mockModule = (
     });
 
     jest.mock('../../src/utils/helperFunctions.js', () => ({
+        toCamelCase: jest.fn(() => poolResponses[poolResponses.length - 1]),
         handleError,
         parseIntOrFallback,
         parseFloatOrFallback,
@@ -71,4 +71,16 @@ describe('Testing mockModule', () => {
         expect(rows).toEqual([{ id: 1 }]);
         expect(secondRow).toEqual([{ id: 2 }]);
     });
+
+    /*it('should return the last mock in the array for toCamelCase', async () => {
+        const poolResponses = [[{ id: 1 }], [{ id: 2 }]];
+
+        mockModule(poolResponses);
+
+        const { toCamelCase } = require('../../src/utils/helperFunctions');
+
+        const retreivedRows = toCamelCase(); // Convert to camelCase
+
+        expect(retreivedRows).toEqual([{ id: 2 }]);
+    });*/
 });

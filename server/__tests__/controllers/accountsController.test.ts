@@ -50,12 +50,6 @@ const accounts = [
 ];
 
 describe('GET /api/accounts', () => {
-    beforeEach(() => {
-        jest.mock('../../src/utils/helperFunctions', () => ({
-            toCamelCase: accounts,
-        }));
-    });
-
     it('should respond with an array of accounts', async () => {
         // Arrange
         mockModule([accounts]);
@@ -122,7 +116,7 @@ describe('GET /api/accounts', () => {
             '../../src/controllers/accountsController.js'
         );
 
-        mockRequest.query = { id: 1 };
+        mockRequest.params = { id: 1 };
 
         // Act
         await getAccountsById(mockRequest as Request, mockResponse).catch(
@@ -140,14 +134,14 @@ describe('GET /api/accounts', () => {
         // Arrange
         mockModule([[]]);
 
-        const { getAccounts } = await import(
+        const { getAccountsById } = await import(
             '../../src/controllers/accountsController.js'
         );
 
         mockRequest.params = { id: 3 };
 
         // Act
-        await getAccounts(mockRequest as Request, mockResponse);
+        await getAccountsById(mockRequest as Request, mockResponse);
 
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(404);
