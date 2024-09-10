@@ -428,12 +428,12 @@ export const createCommuteSchedule = async (
             $$INSERT INTO commute_history (account_id, commute_system, fare_type, fare, timestamp, is_timed_pass) VALUES (${accountId}, '${
                 fareDetail[0].systemName
             }', '${fareDetail[0].fareType}', ${-fareDetail[0]
-                .fareAmount}, 'now()', false)$$)`);
+                .fare}, 'now()', false)$$)`);
 
         await client.query(`
             SELECT cron.schedule('${uniqueId}', '${cronDate}',
             $$INSERT INTO transaction_history (account_id, amount, tax_rate, title, description) VALUES (${accountId}, ${-fareDetail[0]
-                .fareAmount}, ${taxRate}, '${
+                .fare}, ${taxRate}, '${
                 fareDetail[0].systemName + ' ' + fareDetail[0].fareType
             }', '${
                 fareDetail[0].systemName +
@@ -774,12 +774,12 @@ export const updateCommuteSchedule = async (
             $$INSERT INTO commute_history (account_id, commute_system, fare_type, fare, timestamp, is_timed_pass) VALUES (${accountId}, '${
                 fareDetail[0].systemName
             }', '${fareDetail[0].fareType}' '${-fareDetail[0]
-                .fareAmount}', 'now()', false)$$)`);
+                .fare}', 'now()', false)$$)`);
 
         await client.query(`
             SELECT cron.schedule('${uniqueId}', '${cronDate}',
             $$INSERT INTO transaction_history (account_id, amount, tax_rate, title, description) VALUES (${accountId}, ${-fareDetail[0]
-                .fareAmount}, ${taxRate}, '${
+                .fare}, ${taxRate}, '${
                 fareDetail[0].systemName + ' ' + fareDetail[0].fareType
             }', '${
                 fareDetail[0].systemName +

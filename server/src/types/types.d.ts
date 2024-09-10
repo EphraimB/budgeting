@@ -246,7 +246,7 @@ export interface FareDetails {
     commuteSystemId: number;
     systemName: string;
     fareType: string;
-    fareAmount: number;
+    fare: number;
     timeslots: Timeslots[];
     timedPassDuration: number | null;
     alternateFareDetailId: number | null;
