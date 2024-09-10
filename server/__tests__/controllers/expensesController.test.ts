@@ -19,7 +19,6 @@ jest.mock('../../src/config/winston', () => ({
 // Mock request and response
 let mockRequest: any;
 let mockResponse: any;
-let mockNext: any;
 
 beforeEach(() => {
     mockRequest = {};
@@ -28,7 +27,6 @@ beforeEach(() => {
         json: jest.fn(),
         send: jest.fn(),
     };
-    mockNext = jest.fn();
 });
 
 afterEach(() => {
