@@ -1,5 +1,4 @@
 import { type Request } from 'express';
-import { Account } from '../../src/types/types.js';
 import {
     jest,
     beforeEach,
@@ -33,24 +32,30 @@ afterEach(() => {
     jest.resetModules();
 });
 
-const accounts: Account[] = [
+const accounts = [
     {
-        account_id: 1,
-        account_name: 'Test Account',
-        account_balance: 1000,
-        date_created: '2020-01-01',
-        date_modified: '2020-01-01',
+        accountId: 1,
+        name: 'Test Account',
+        balance: 1000,
+        dateCreated: '2020-01-01',
+        dateModified: '2020-01-01',
     },
     {
-        account_id: 2,
-        account_name: 'Test Account 2',
-        account_balance: 2000,
-        date_created: '2020-01-01',
-        date_modified: '2020-01-01',
+        accountId: 2,
+        name: 'Test Account 2',
+        balance: 2000,
+        dateCreated: '2020-01-01',
+        dateModified: '2020-01-01',
     },
 ];
 
 describe('GET /api/accounts', () => {
+    beforeEach(() => {
+        jest.mock('../../src/utils/helperFunctions', () => ({
+            toCamelCase: accounts,
+        }));
+    });
+
     it('should respond with an array of accounts', async () => {
         // Arrange
         mockModule([accounts]);
@@ -91,21 +96,21 @@ describe('GET /api/accounts', () => {
 
     it('should respond with an array of accounts with an id', async () => {
         // Arrange
-        mockModule([accounts.filter((account) => account.account_id === 1)]);
+        mockModule([accounts.filter((account) => account.accountId === 1)]);
 
-        const { getAccounts } = await import(
+        const { getAccountsById } = await import(
             '../../src/controllers/accountsController.js'
         );
 
-        mockRequest.query = { id: 1 };
+        mockRequest.params = { id: 1 };
 
         // Call the function with the mock request and response
-        await getAccounts(mockRequest as Request, mockResponse);
+        await getAccountsById(mockRequest as Request, mockResponse);
 
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(200);
         expect(mockResponse.json).toHaveBeenCalledWith(
-            accounts.filter((account) => account.account_id === 1),
+            accounts.filter((account) => account.accountId === 1),
         );
     });
 
@@ -113,20 +118,22 @@ describe('GET /api/accounts', () => {
         // Arrange
         mockModule([]);
 
-        const { getAccounts } = await import(
+        const { getAccountsById } = await import(
             '../../src/controllers/accountsController.js'
         );
 
         mockRequest.query = { id: 1 };
 
         // Act
-        await getAccounts(mockRequest as Request, mockResponse).catch(() => {
-            // Assert
-            expect(mockResponse.status).toHaveBeenCalledWith(400);
-            expect(mockResponse.json).toHaveBeenCalledWith({
-                message: 'Error getting account',
-            });
-        });
+        await getAccountsById(mockRequest as Request, mockResponse).catch(
+            () => {
+                // Assert
+                expect(mockResponse.status).toHaveBeenCalledWith(400);
+                expect(mockResponse.json).toHaveBeenCalledWith({
+                    message: 'Error getting account',
+                });
+            },
+        );
     });
 
     it('should respond with a 404 error message when the account does not exist', async () => {
@@ -137,7 +144,7 @@ describe('GET /api/accounts', () => {
             '../../src/controllers/accountsController.js'
         );
 
-        mockRequest.query = { id: 3 };
+        mockRequest.params = { id: 3 };
 
         // Act
         await getAccounts(mockRequest as Request, mockResponse);
@@ -151,7 +158,7 @@ describe('GET /api/accounts', () => {
 describe('POST /api/accounts', () => {
     it('should respond with the new account', async () => {
         const newAccount = accounts.filter(
-            (account) => account.account_id === 1,
+            (account) => account.accountId === 1,
         );
 
         mockModule([newAccount]);
@@ -178,7 +185,7 @@ describe('POST /api/accounts', () => {
         );
 
         mockRequest.body = accounts.filter(
-            (account) => account.account_id === 1,
+            (account) => account.accountId === 1,
         );
 
         // Act
@@ -195,7 +202,7 @@ describe('POST /api/accounts', () => {
 describe('PUT /api/accounts/:id', () => {
     it('should respond with the updated account', async () => {
         const updatedAccount = accounts.filter(
-            (account) => account.account_id === 1,
+            (account) => account.accountId === 1,
         );
 
         mockModule([updatedAccount, updatedAccount]);
@@ -224,7 +231,7 @@ describe('PUT /api/accounts/:id', () => {
 
         mockRequest.params = { id: 1 };
         mockRequest.body = accounts.filter(
-            (account) => account.account_id === 1,
+            (account) => account.accountId === 1,
         );
 
         // Act
@@ -247,7 +254,7 @@ describe('PUT /api/accounts/:id', () => {
 
         mockRequest.params = { id: 1 };
         mockRequest.body = accounts.filter(
-            (account) => account.account_id === 1,
+            (account) => account.accountId === 1,
         );
 
         // Act
