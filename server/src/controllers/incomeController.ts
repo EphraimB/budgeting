@@ -591,7 +591,7 @@ export const createIncome = async (
             [uniqueId, cronDate],
         );
 
-        const cronId = cronIdResults[0].cron_job_id;
+        const cronId = cronIdResults[0].id;
 
         const { rows } = await client.query(
             `
@@ -720,7 +720,6 @@ export const updateIncome = async (
                     SET unique_id = $1,
                     cron_expression = $2
                     WHERE id = $3
-                    RETURNING *
             `,
             [uniqueId, cronDate, cronId],
         );
@@ -807,7 +806,7 @@ export const deleteIncome = async (
 
         const { rows: results } = await client.query(
             `
-                SELECT *
+                SELECT id, unique_id
                     FROM cron_jobs
                     WHERE id = $1
             `,
