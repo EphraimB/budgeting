@@ -291,14 +291,14 @@ export const updateJob = async (
 
         const { rows } = await client.query(
             `
-                SELECT COUNT(id)
+                SELECT id
                     FROM jobs
                     WHERE id = $1;
             `,
             [id],
         );
 
-        if (rows[0].id === 0) {
+        if (rows.length === 0) {
             response.status(404).send('Job not found');
             return;
         }
@@ -322,29 +322,9 @@ export const updateJob = async (
         // Fetch existing schedules for the job
         const { rows: existingSchedules } = await client.query(
             `
-                SELECT
-                    j.id AS "job_id",
-                    j.account_id AS "account_id",
-                    j.name AS "job_name",
-                    j.hourly_rate AS "hourly_rate",
-                    j.vacation_days AS "vacation_days",
-                    j.sick_days AS "sick_days",
-                    COALESCE(SUM(EXTRACT(EPOCH FROM (js.end_time - js.start_time)) / 3600), 0) AS total_hours_per_week,
-                    COALESCE(json_agg(
-                        json_build_object(
-                            'day_of_week', js.day_of_week,
-                            'start_time', js.start_time,
-                            'end_time', js.end_time
-                        ) ORDER BY js.day_of_week
-                    ) FILTER (WHERE js.job_id IS NOT NULL), '[]') AS job_schedule
-                FROM
-                    jobs j
-                LEFT JOIN
-                    job_schedule js ON j.id = js.job_id
-                WHERE
-                    j.id = $1
-                GROUP BY
-                    j.id;
+                SELECT *
+                    FROM job_schedule
+                    WHERE id = $1
             `,
             [id],
         );
@@ -390,6 +370,7 @@ export const updateJob = async (
                     `,
                     [id, js.dayOfWeek, js.startTime, js.endTime],
                 );
+
                 // Assuming the result includes the ID of the inserted schedule
                 updatedOrAddedScheduleIds.add(result[0].id);
             }
