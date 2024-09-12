@@ -36,45 +36,31 @@ afterEach(() => {
 
 const taxes = [
     {
-        tax_id: 1,
-        tax_rate: 0,
-        tax_title: 'Test Tax',
-        tax_description: 'Test Tax',
-        tax_type: 0,
-        date_created: '2020-01-01',
-        date_modified: '2020-01-01',
-    },
-];
-
-const taxesResponse: Taxes[] = [
-    {
         id: 1,
         rate: 0,
         title: 'Test Tax',
         description: 'Test Tax',
         type: 0,
-        date_created: '2020-01-01',
-        date_modified: '2020-01-01',
+        dateCreated: '2020-01-01',
+        dateModified: '2020-01-01',
     },
 ];
 
 describe('GET /api/taxes', () => {
     it('should respond with an array of taxes', async () => {
         // Arrange
-        mockModule([taxes]);
+        mockModule([taxes], taxes);
 
         const { getTaxes } = await import(
             '../../src/controllers/taxesController.js'
         );
-
-        mockRequest.query = { id: null };
 
         // Call the function with the mock request and response
         await getTaxes(mockRequest as Request, mockResponse);
 
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(200);
-        expect(mockResponse.json).toHaveBeenCalledWith(taxesResponse);
+        expect(mockResponse.json).toHaveBeenCalledWith(taxes);
     });
 
     it('should handle errors correctly', async () => {
@@ -85,8 +71,6 @@ describe('GET /api/taxes', () => {
             '../../src/controllers/taxesController.js'
         );
 
-        mockRequest.query = { id: null };
-
         // Act
         await getTaxes(mockRequest as Request, mockResponse).catch(() => {
             // Assert
@@ -96,24 +80,29 @@ describe('GET /api/taxes', () => {
             });
         });
     });
+});
 
+describe('GET /api/taxes/:id', () => {
     it('should respond with an array of taxes with id', async () => {
         // Arrange
-        mockModule([taxes.filter((tax) => tax.tax_id === 1)]);
+        mockModule(
+            [taxes.filter((tax) => tax.id === 1)],
+            taxes.filter((tax) => tax.id === 1),
+        );
 
-        const { getTaxes } = await import(
+        const { getTaxesById } = await import(
             '../../src/controllers/taxesController.js'
         );
 
-        mockRequest.query = { id: 1 };
+        mockRequest.params = { id: 1 };
 
         // Call the function with the mock request and response
-        await getTaxes(mockRequest as Request, mockResponse);
+        await getTaxesById(mockRequest as Request, mockResponse);
 
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(200);
         expect(mockResponse.json).toHaveBeenCalledWith(
-            taxesResponse.filter((tax) => tax.id === 1),
+            taxes.filter((tax) => tax.id === 1)[0],
         );
     });
 
@@ -121,14 +110,14 @@ describe('GET /api/taxes', () => {
         // Arrange
         mockModule([]);
 
-        const { getTaxes } = await import(
+        const { getTaxesById } = await import(
             '../../src/controllers/taxesController.js'
         );
 
-        mockRequest.query = { id: 1 };
+        mockRequest.params = { id: 1 };
 
         // Act
-        await getTaxes(mockRequest as Request, mockResponse).catch(() => {
+        await getTaxesById(mockRequest as Request, mockResponse).catch(() => {
             // Assert
             expect(mockResponse.status).toHaveBeenCalledWith(400);
             expect(mockResponse.json).toHaveBeenCalledWith({
@@ -141,14 +130,14 @@ describe('GET /api/taxes', () => {
         // Arrange
         mockModule([[]]);
 
-        const { getTaxes } = await import(
+        const { getTaxesById } = await import(
             '../../src/controllers/taxesController.js'
         );
 
-        mockRequest.query = { id: 3 };
+        mockRequest.params = { id: 3 };
 
         // Act
-        await getTaxes(mockRequest as Request, mockResponse);
+        await getTaxesById(mockRequest as Request, mockResponse);
 
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(404);
@@ -158,9 +147,9 @@ describe('GET /api/taxes', () => {
 
 describe('POST /api/taxes', () => {
     it('should respond with the new tax', async () => {
-        const newTax = taxes.filter((tax) => tax.tax_id === 1);
+        const newTax = taxes.filter((tax) => tax.id === 1);
 
-        mockModule([newTax]);
+        mockModule([newTax], newTax);
 
         const { createTax } = await import(
             '../../src/controllers/taxesController.js'
@@ -173,7 +162,7 @@ describe('POST /api/taxes', () => {
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(201);
         expect(mockResponse.json).toHaveBeenCalledWith(
-            taxesResponse.filter((tax) => tax.id === 1),
+            taxes.filter((tax) => tax.id === 1),
         );
     });
 
@@ -185,7 +174,7 @@ describe('POST /api/taxes', () => {
             '../../src/controllers/taxesController.js'
         );
 
-        mockRequest.body = taxes.filter((tax) => tax.tax_id === 1);
+        mockRequest.body = taxes.filter((tax) => tax.id === 1);
 
         // Act
         await createTax(mockRequest as Request, mockResponse).catch(() => {
@@ -200,9 +189,9 @@ describe('POST /api/taxes', () => {
 
 describe('PUT /api/taxes/:id', () => {
     it('should respond with the updated tax', async () => {
-        const updatedTax = taxes.filter((tax) => tax.tax_id === 1);
+        const updatedTax = taxes.filter((tax) => tax.id === 1);
 
-        mockModule([updatedTax]);
+        mockModule([[{ id: 1 }], updatedTax], updatedTax);
 
         const { updateTax } = await import(
             '../../src/controllers/taxesController.js'
@@ -216,7 +205,7 @@ describe('PUT /api/taxes/:id', () => {
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(200);
         expect(mockResponse.json).toHaveBeenCalledWith(
-            taxesResponse.filter((tax) => tax.id === 1),
+            taxes.filter((tax) => tax.id === 1),
         );
     });
 
@@ -229,7 +218,7 @@ describe('PUT /api/taxes/:id', () => {
         );
 
         mockRequest.params = { id: 1 };
-        mockRequest.body = taxes.filter((tax) => tax.tax_id === 1);
+        mockRequest.body = taxes.filter((tax) => tax.id === 1);
 
         // Act
         await updateTax(mockRequest as Request, mockResponse).catch(() => {
@@ -250,7 +239,7 @@ describe('PUT /api/taxes/:id', () => {
         );
 
         mockRequest.params = { id: 1 };
-        mockRequest.body = taxes.filter((tax) => tax.tax_id === 1);
+        mockRequest.body = taxes.filter((tax) => tax.id === 1);
 
         // Act
         await updateTax(mockRequest as Request, mockResponse);
@@ -264,7 +253,7 @@ describe('PUT /api/taxes/:id', () => {
 describe('DELETE /api/taxes/:id', () => {
     it('should respond with a success message', async () => {
         // Arrange
-        mockModule(['Successfully deleted tax']);
+        mockModule([[{ id: 1 }], []]);
 
         const { deleteTax } = await import(
             '../../src/controllers/taxesController.js'
