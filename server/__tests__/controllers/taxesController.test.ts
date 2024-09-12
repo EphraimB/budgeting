@@ -8,7 +8,6 @@ import {
     expect,
 } from '@jest/globals';
 import { mockModule } from '../__mocks__/mockModule';
-import { Taxes } from '../../src/types/types.js';
 
 // Mock request and response
 let mockRequest: any;
