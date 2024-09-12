@@ -680,7 +680,7 @@ export const createLoan = async (
             [interestUniqueId, cronDateInterest],
         );
 
-        const interestCronId: number = interestCronIdResult[0].cron_job_id;
+        const interestCronId: number = interestCronIdResult[0].id;
 
         const { rows: loanResults } = await client.query(
             `
