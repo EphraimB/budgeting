@@ -11,7 +11,6 @@ import { mockModule } from '../__mocks__/mockModule.js';
 
 let mockRequest: any;
 let mockResponse: any;
-let mockNext: any;
 
 jest.mock('../../src/config/winston', () => ({
     logger: {
@@ -27,7 +26,6 @@ beforeEach(() => {
         json: jest.fn(),
         send: jest.fn(),
     };
-    mockNext = jest.fn();
 });
 
 afterEach(() => {
