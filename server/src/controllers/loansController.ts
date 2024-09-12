@@ -123,12 +123,30 @@ export const getLoans = async (
                         ELSE 
                             NULL
                     END AS next_date,
-                                    json_agg(
-                                        json_build_object(
-                                        'date_created', date_created,
-                                        'date_modified', date_modified
-                                        )
-                                    ) AS creation_dates
+                    -- Calculate when the loan will be fully paid back
+                    CASE 
+                        -- Number of periods needed to fully repay the loan
+                        WHEN plan_amount > 0 THEN 
+                            -- Calculate remaining periods needed to repay the loan
+                            CASE
+                                WHEN frequency_type = 0 THEN -- Daily repayment
+                                    begin_date + interval '1 day' * ceil((amount / plan_amount) * frequency_type_variable)
+                                WHEN frequency_type = 1 THEN -- Weekly repayment
+                                    begin_date + interval '1 week' * ceil((amount / plan_amount) * frequency_type_variable)
+                                WHEN frequency_type = 2 THEN -- Monthly repayment
+                                    begin_date + interval '1 month' * ceil((amount / plan_amount) * frequency_type_variable)
+                                WHEN frequency_type = 3 THEN -- Yearly repayment
+                                    begin_date + interval '1 year' * ceil((amount / plan_amount) * frequency_type_variable)
+                            END
+                        ELSE
+                            NULL
+                    END AS fully_paid_back_date,
+                    json_agg(
+                        json_build_object(
+                            'date_created', date_created,
+                             'date_modified', date_modified
+                        )
+                    ) AS creation_dates
                 FROM loans
                 WHERE account_id = $1
                 GROUP BY id
@@ -234,12 +252,30 @@ export const getLoans = async (
                         ELSE 
                             NULL
                     END AS next_date,
-                                    json_agg(
-                                        json_build_object(
-                                        'date_created', date_created,
-                                        'date_modified', date_modified
-                                        )
-                                    ) AS creation_dates
+                    -- Calculate when the loan will be fully paid back
+                    CASE 
+                        -- Number of periods needed to fully repay the loan
+                        WHEN plan_amount > 0 THEN 
+                            -- Calculate remaining periods needed to repay the loan
+                            CASE
+                                WHEN frequency_type = 0 THEN -- Daily repayment
+                                    begin_date + interval '1 day' * ceil((amount / plan_amount) * frequency_type_variable)
+                                WHEN frequency_type = 1 THEN -- Weekly repayment
+                                    begin_date + interval '1 week' * ceil((amount / plan_amount) * frequency_type_variable)
+                                WHEN frequency_type = 2 THEN -- Monthly repayment
+                                    begin_date + interval '1 month' * ceil((amount / plan_amount) * frequency_type_variable)
+                                WHEN frequency_type = 3 THEN -- Yearly repayment
+                                    begin_date + interval '1 year' * ceil((amount / plan_amount) * frequency_type_variable)
+                            END
+                        ELSE
+                            NULL
+                    END AS fully_paid_back_date,
+                    json_agg(
+                        json_build_object(
+                            'date_created', date_created,
+                            'date_modified', date_modified
+                        )
+                    ) AS creation_dates
                 FROM loans
                 GROUP BY id
             `;
@@ -378,12 +414,30 @@ export const getLoansById = async (
                         ELSE 
                             NULL
                     END AS next_date,
-                                    json_agg(
-                                        json_build_object(
-                                        'date_created', date_created,
-                                        'date_modified', date_modified
-                                        )
-                                    ) AS creation_dates
+                    -- Calculate when the loan will be fully paid back
+                    CASE 
+                        -- Number of periods needed to fully repay the loan
+                        WHEN plan_amount > 0 THEN 
+                            -- Calculate remaining periods needed to repay the loan
+                            CASE
+                                WHEN frequency_type = 0 THEN -- Daily repayment
+                                    begin_date + interval '1 day' * ceil((amount / plan_amount) * frequency_type_variable)
+                                WHEN frequency_type = 1 THEN -- Weekly repayment
+                                    begin_date + interval '1 week' * ceil((amount / plan_amount) * frequency_type_variable)
+                                WHEN frequency_type = 2 THEN -- Monthly repayment
+                                    begin_date + interval '1 month' * ceil((amount / plan_amount) * frequency_type_variable)
+                                WHEN frequency_type = 3 THEN -- Yearly repayment
+                                    begin_date + interval '1 year' * ceil((amount / plan_amount) * frequency_type_variable)
+                            END
+                        ELSE
+                            NULL
+                    END AS fully_paid_back_date,
+                    json_agg(
+                        json_build_object(
+                            'date_created', date_created,
+                            'date_modified', date_modified
+                        )
+                    ) AS creation_dates
                 FROM loans
                 WHERE id = $1 account_id = $2
                 GROUP BY id
@@ -489,12 +543,30 @@ export const getLoansById = async (
                         ELSE 
                             NULL
                     END AS next_date,
-                                    json_agg(
-                                        json_build_object(
-                                        'date_created', date_created,
-                                        'date_modified', date_modified
-                                        )
-                                    ) AS creation_dates
+                    -- Calculate when the loan will be fully paid back
+                    CASE 
+                        -- Number of periods needed to fully repay the loan
+                        WHEN plan_amount > 0 THEN 
+                            -- Calculate remaining periods needed to repay the loan
+                            CASE
+                                WHEN frequency_type = 0 THEN -- Daily repayment
+                                    begin_date + interval '1 day' * ceil((amount / plan_amount) * frequency_type_variable)
+                                WHEN frequency_type = 1 THEN -- Weekly repayment
+                                    begin_date + interval '1 week' * ceil((amount / plan_amount) * frequency_type_variable)
+                                WHEN frequency_type = 2 THEN -- Monthly repayment
+                                    begin_date + interval '1 month' * ceil((amount / plan_amount) * frequency_type_variable)
+                                WHEN frequency_type = 3 THEN -- Yearly repayment
+                                    begin_date + interval '1 year' * ceil((amount / plan_amount) * frequency_type_variable)
+                            END
+                        ELSE
+                            NULL
+                    END AS fully_paid_back_date,
+                    json_agg(
+                        json_build_object(
+                            'date_created', date_created,
+                            'date_modified', date_modified
+                        )
+                    ) AS creation_dates
                 FROM loans
                 WHERE id = $1
                 GROUP BY id
