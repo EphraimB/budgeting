@@ -57,7 +57,8 @@ const loans = [
         interestRate: 0,
         subsidized: 0,
         beginDate: '2020-01-02',
-        endDate: '2020-01-01',
+        nextDate: '2020-02-02',
+        fullyPaidBackDate: '2030-01-02',
         dateCreated: '2020-01-01',
         dateModified: '2020-01-01',
     },
@@ -81,7 +82,8 @@ const loans = [
         interestRate: 0,
         subsidized: 0.15,
         beginDate: '2020-01-01',
-        endDate: '2020-01-01',
+        nextDate: '2020-01-02',
+        fullyPaidBackDate: '2021-01-01',
         dateCreated: '2020-01-01',
         dateModified: '2020-01-01',
     },
@@ -105,7 +107,8 @@ const loans = [
         interestRate: 0,
         subsidized: 0.1,
         beginDate: '2020-01-01',
-        endDate: '2020-01-01',
+        nextDate: '2020-01-08',
+        fullyPaidBackDate: '2022-01-01',
         dateCreated: '2020-01-01',
         dateModified: '2020-01-01',
     },
@@ -129,7 +132,8 @@ const loans = [
         interestRate: 0,
         subsidized: 0.05,
         beginDate: '2020-01-01',
-        endDate: '2020-01-01',
+        nextDate: '2021-01-01',
+        fullyPaidBackDate: '2030-01-01',
         dateCreated: '2020-01-01',
         dateModified: '2020-01-01',
     },
@@ -138,10 +142,9 @@ const loans = [
 describe('GET /api/loans', () => {
     it('should respond with an array of loans', async () => {
         // Arrange
-        mockModule([loans]);
+        mockModule([loans], loans);
 
-        mockRequest.query = { id: null };
-        mockRequest.fullyPaidBackDates = { 1: '2024-01-01' };
+        mockRequest.query = { accountId: null };
 
         const { getLoans } = await import(
             '../../src/controllers/loansController.js'
@@ -150,23 +153,16 @@ describe('GET /api/loans', () => {
         // Call the function with the mock request and response
         await getLoans(mockRequest as Request, mockResponse);
 
-        // Add next date to the loans response
-        loansResponse.map((loan: any) => {
-            loan.next_date = '2020-01-01';
-        });
-
-        loansResponse[0].fully_paid_back = '2024-01-01';
-
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(200);
-        expect(mockResponse.json).toHaveBeenCalledWith(loansResponse);
+        expect(mockResponse.json).toHaveBeenCalledWith(loans);
     });
 
     it('should respond with an error message', async () => {
         // Arrange
         mockModule([]);
 
-        mockRequest.query = { id: null };
+        mockRequest.query = { accountId: null };
 
         const { getLoans } = await import(
             '../../src/controllers/loansController.js'
@@ -182,12 +178,14 @@ describe('GET /api/loans', () => {
         });
     });
 
-    it('should respond with an array of loans with id', async () => {
+    it('should respond with an array of loans with account id', async () => {
         // Arrange
-        mockModule([loans.filter((loan) => loan.loan_id === 1)]);
+        mockModule(
+            [loans.filter((loan) => loan.accountId === 1)],
+            loans.filter((loan) => loan.accountId === 1),
+        );
 
-        mockRequest.query = { id: 1 };
-        mockRequest.fullyPaidBackDates = { 1: '2024-01-01' };
+        mockRequest.query = { accountId: 1 };
 
         const { getLoans } = await import(
             '../../src/controllers/loansController.js'
@@ -196,28 +194,18 @@ describe('GET /api/loans', () => {
         // Call the function with the mock request and response
         await getLoans(mockRequest as Request, mockResponse);
 
-        const customLoansResponse = loansResponse.filter(
-            (loan) => loan.id === 1,
-        );
-
-        // Add next date to the loans response
-        loansResponse.map((loan: any) => {
-            loan.next_date = '2020-01-01';
-        });
-
-        // Add loan_fully_paid_back to the loans with id 1
-        customLoansResponse[0].fully_paid_back = '2024-01-01';
-
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(200);
-        expect(mockResponse.json).toHaveBeenCalledWith(customLoansResponse);
+        expect(mockResponse.json).toHaveBeenCalledWith(
+            loans.filter((loan) => loan.accountId === 1),
+        );
     });
 
-    it('should respond with an error message with id', async () => {
+    it('should respond with an error message with account id', async () => {
         // Arrange
         mockModule([]);
 
-        mockRequest.query = { id: 1 };
+        mockRequest.query = { accountId: 1 };
 
         const { getLoans } = await import(
             '../../src/controllers/loansController.js'
@@ -225,6 +213,53 @@ describe('GET /api/loans', () => {
 
         // Call the function with the mock request and response
         await getLoans(mockRequest as Request, mockResponse).catch(() => {
+            // Assert
+            expect(mockResponse.status).toHaveBeenCalledWith(400);
+            expect(mockResponse.json).toHaveBeenCalledWith({
+                message: 'Error getting loans for given account id',
+            });
+        });
+    });
+});
+
+describe('GET /api/loans/:id', () => {
+    it('should respond with an array of loans with id', async () => {
+        // Arrange
+        mockModule(
+            [loans.filter((loan) => loan.id === 1)],
+            loans.filter((loan) => loan.id === 1),
+        );
+
+        const { getLoansById } = await import(
+            '../../src/controllers/loansController.js'
+        );
+
+        mockRequest.params = { id: 1 };
+        mockRequest.query = { accountId: null };
+
+        // Call the function with the mock request and response
+        await getLoansById(mockRequest as Request, mockResponse);
+
+        // Assert
+        expect(mockResponse.status).toHaveBeenCalledWith(200);
+        expect(mockResponse.json).toHaveBeenCalledWith(
+            loans.filter((loan) => loan.id === 1),
+        );
+    });
+
+    it('should respond with an error message with id', async () => {
+        // Arrange
+        mockModule([]);
+
+        const { getLoansById } = await import(
+            '../../src/controllers/loansController.js'
+        );
+
+        mockRequest.params = { id: 1 };
+        mockRequest.query = { accountId: 1 };
+
+        // Call the function with the mock request and response
+        await getLoansById(mockRequest as Request, mockResponse).catch(() => {
             // Assert
             expect(mockResponse.status).toHaveBeenCalledWith(400);
             expect(mockResponse.json).toHaveBeenCalledWith({
@@ -233,114 +268,51 @@ describe('GET /api/loans', () => {
         });
     });
 
-    it('should respond with an array of loans with account id', async () => {
-        // Arrange
-        // Add next date to the loans
-        loans.map((loan: any) => {
-            loan.next_date = '2020-01-01';
-        });
-
-        mockModule([loans.filter((loan) => loan.account_id === 1)]);
-
-        mockRequest.query = { account_id: 1 };
-        mockRequest.fullyPaidBackDates = { 1: '2024-01-01' };
-
-        const { getLoans } = await import(
-            '../../src/controllers/loansController.js'
-        );
-
-        // Call the function with the mock request and response
-        await getLoans(mockRequest as Request, mockResponse);
-
-        const customLoansResponse = loansResponse.filter(
-            (loan) => loan.account_id === 1,
-        );
-
-        // Add next date to the loans response
-        loansResponse.map((loan: any) => {
-            loan.next_date = '2020-01-01';
-        });
-
-        // Add loan_fully_paid_back to the loans with id 1
-        customLoansResponse[0].fully_paid_back = '2024-01-01';
-
-        // Assert
-        expect(mockResponse.status).toHaveBeenCalledWith(200);
-        expect(mockResponse.json).toHaveBeenCalledWith(customLoansResponse);
-    });
-
-    it('should respond with an error message with account id', async () => {
-        // Arrange
-        mockModule([]);
-
-        mockRequest.query = { account_id: 1 };
-
-        const { getLoans } = await import(
-            '../../src/controllers/loansController.js'
-        );
-
-        // Call the function with the mock request and response
-        await getLoans(mockRequest as Request, mockResponse).catch(() => {
-            // Assert
-            expect(mockResponse.status).toHaveBeenCalledWith(400);
-            expect(mockResponse.json).toHaveBeenCalledWith({
-                message: 'Error getting loans for given account_id',
-            });
-        });
-    });
-
     it('should respond with an array of loans with account id and id', async () => {
         // Arrange
-        // Add next date to the loans
-        loans.map((loan: any) => {
-            loan.next_date = '2020-01-01';
-        });
-
-        mockModule([
+        mockModule(
+            [
+                loans
+                    .filter((loan) => loan.accountId === 1)
+                    .filter((loan) => loan.id === 1),
+            ],
             loans
-                .filter((loan) => loan.account_id === 1)
-                .filter((loan) => loan.loan_id === 1),
-        ]);
-
-        mockRequest.query = { account_id: 1, id: 1 };
-        mockRequest.fullyPaidBackDates = { 1: '2024-01-01' };
+                .filter((loan) => loan.accountId === 1)
+                .filter((loan) => loan.id === 1),
+        );
 
         const { getLoans } = await import(
             '../../src/controllers/loansController.js'
         );
 
+        mockRequest.params = { id: 1 };
+        mockRequest.query = { accountId: 1 };
+
         // Call the function with the mock request and response
         await getLoans(mockRequest as Request, mockResponse);
 
-        const customLoansResponse = loansResponse.filter(
-            (loan) => loan.id === 1,
-        );
-
-        // Add next date to the loans response
-        loansResponse.map((loan: any) => {
-            loan.next_date = '2020-01-01';
-        });
-
-        // Add loan_fully_paid_back to the loans with id 1
-        customLoansResponse[0].fully_paid_back = '2024-01-01';
-
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(200);
-        expect(mockResponse.json).toHaveBeenCalledWith(customLoansResponse);
+        expect(mockResponse.json).toHaveBeenCalledWith(
+            loans
+                .filter((loan) => loan.accountId === 1)
+                .filter((loan) => loan.id === 1),
+        );
     });
 
     it('should respond with an error message with account id and id', async () => {
         // Arrange
         mockModule([]);
 
-        mockRequest.query = { account_id: 1, id: 1 };
-
-        const { getLoans } = await import(
+        const { getLoansById } = await import(
             '../../src/controllers/loansController.js'
         );
 
+        mockRequest.params = { id: 1 };
+        mockRequest.query = { accountId: 1 };
+
         // Call the function with the mock request and response
-        await getLoans(mockRequest as Request, mockResponse).catch(() => {
+        await getLoansById(mockRequest as Request, mockResponse).catch(() => {
             // Assert
             expect(mockResponse.status).toHaveBeenCalledWith(400);
             expect(mockResponse.json).toHaveBeenCalledWith({
@@ -353,14 +325,15 @@ describe('GET /api/loans', () => {
         // Arrange
         mockModule([[]]);
 
-        const { getLoans } = await import(
+        const { getLoansById } = await import(
             '../../src/controllers/loansController.js'
         );
 
-        mockRequest.query = { id: 3 };
+        mockRequest.params = { id: 3 };
+        mockRequest.query = { accountId: 3 };
 
         // Act
-        await getLoans(mockRequest as Request, mockResponse);
+        await getLoansById(mockRequest as Request, mockResponse);
 
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(404);
