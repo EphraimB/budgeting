@@ -154,7 +154,13 @@ export const togglePayrollDate = async (
 
         await client.query('COMMIT;');
 
-        response.status(201).json('Payroll date toggled');
+        response
+            .status(201)
+            .json(
+                `Payroll day for ${payrollDay} toggled ${
+                    rows.length > 0 ? 'off' : 'on'
+                }`,
+            );
     } catch (error) {
         await client.query('ROLLBACK;');
 
