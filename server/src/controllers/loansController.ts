@@ -983,7 +983,7 @@ export const deleteLoan = async (
         const interestCronId: number = parseInt(rows[0].interest_cron_job_id);
         const { rows: interestResults } = await client.query(
             `
-                SELECT *
+                SELECT unique_id
                     FROM cron_jobs
                     WHERE id = $1
             `,
