@@ -8,7 +8,6 @@ import {
     expect,
 } from '@jest/globals';
 import { mockModule } from '../__mocks__/mockModule';
-import { TransactionHistory } from '../../src/types/types.js';
 
 // Mock request and response
 let mockRequest: any;
@@ -120,15 +119,16 @@ describe('GET /api/transactions/history', () => {
 
     it('should respond with an array of transactions with account id', async () => {
         // Arrange
-        mockModule([
+        mockModule(
+            [transactions.filter((transaction) => transaction.accountId === 1)],
             transactions.filter((transaction) => transaction.accountId === 1),
-        ]);
-
-        mockRequest.query = { accountId: 1 };
+        );
 
         const { getTransactions } = await import(
             '../../src/controllers/transactionHistoryController.js'
         );
+
+        mockRequest.query = { accountId: 1 };
 
         // Call the function with the mock request and response
         await getTransactions(mockRequest as Request, mockResponse);
@@ -166,23 +166,25 @@ describe('GET /api/transactions/history', () => {
 describe('GET /api/transactions/history/:id', () => {
     it('should respond with an array of transactions with id', async () => {
         // Arrange
-        mockModule([
+        mockModule(
+            [transactions.filter((transaction) => transaction.id === 1)],
             transactions.filter((transaction) => transaction.id === 1),
-        ]);
+        );
 
-        const { getTransactions } = await import(
+        const { getTransactionsById } = await import(
             '../../src/controllers/transactionHistoryController.js'
         );
 
         mockRequest.params = { id: 1 };
+        mockRequest.query = { accountId: null };
 
         // Call the function with the mock request and response
-        await getTransactions(mockRequest as Request, mockResponse);
+        await getTransactionsById(mockRequest as Request, mockResponse);
 
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(200);
         expect(mockResponse.json).toHaveBeenCalledWith(
-            transactions.filter((transaction) => transaction.id === 1),
+            transactions.filter((transaction) => transaction.id === 1)[0],
         );
     });
 
@@ -190,14 +192,15 @@ describe('GET /api/transactions/history/:id', () => {
         // Arrange
         mockModule([]);
 
-        const { getTransactions } = await import(
+        const { getTransactionsById } = await import(
             '../../src/controllers/transactionHistoryController.js'
         );
 
         mockRequest.params = { id: 1 };
+        mockRequest.query = { accountId: null };
 
         // Call the function with the mock request and response
-        await getTransactions(mockRequest as Request, mockResponse).catch(
+        await getTransactionsById(mockRequest as Request, mockResponse).catch(
             () => {
                 // Assert
                 expect(mockResponse.status).toHaveBeenCalledWith(400);
@@ -210,14 +213,20 @@ describe('GET /api/transactions/history/:id', () => {
 
     it('should respond with an array of transactions with account id and id', async () => {
         // Arrange
-        mockModule([
+        mockModule(
+            [
+                transactions.filter(
+                    (transaction) =>
+                        transaction.accountId === 1 && transaction.id === 1,
+                ),
+            ],
             transactions.filter(
                 (transaction) =>
                     transaction.accountId === 1 && transaction.id === 1,
             ),
-        ]);
+        );
 
-        const { getTransactions } = await import(
+        const { getTransactionsById } = await import(
             '../../src/controllers/transactionHistoryController.js'
         );
 
@@ -225,7 +234,7 @@ describe('GET /api/transactions/history/:id', () => {
         mockRequest.query = { accountId: 1 };
 
         // Call the function with the mock request and response
-        await getTransactions(mockRequest as Request, mockResponse);
+        await getTransactionsById(mockRequest as Request, mockResponse);
 
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(200);
@@ -233,7 +242,7 @@ describe('GET /api/transactions/history/:id', () => {
             transactions.filter(
                 (transaction) =>
                     transaction.accountId === 1 && transaction.id === 1,
-            ),
+            )[0],
         );
     });
 
@@ -241,7 +250,7 @@ describe('GET /api/transactions/history/:id', () => {
         // Arrange
         mockModule([]);
 
-        const { getTransactions } = await import(
+        const { getTransactionsById } = await import(
             '../../src/controllers/transactionHistoryController.js'
         );
 
@@ -249,7 +258,7 @@ describe('GET /api/transactions/history/:id', () => {
         mockRequest.query = { accountId: 1 };
 
         // Call the function with the mock request and response
-        await getTransactions(mockRequest as Request, mockResponse).catch(
+        await getTransactionsById(mockRequest as Request, mockResponse).catch(
             () => {
                 // Assert
                 expect(mockResponse.status).toHaveBeenCalledWith(400);
@@ -264,14 +273,15 @@ describe('GET /api/transactions/history/:id', () => {
         // Arrange
         mockModule([[]]);
 
-        const { getTransactions } = await import(
+        const { getTransactionsById } = await import(
             '../../src/controllers/transactionHistoryController.js'
         );
 
         mockRequest.params = { id: 3 };
+        mockRequest.query = { accountId: null };
 
         // Act
-        await getTransactions(mockRequest as Request, mockResponse);
+        await getTransactionsById(mockRequest as Request, mockResponse);
 
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(404);
@@ -279,14 +289,14 @@ describe('GET /api/transactions/history/:id', () => {
     });
 });
 
-describe('POST /api/transactionHistory', () => {
+describe('POST /api/transactions/history', () => {
     it('should respond with the new transaction', async () => {
         // Arrange
         const newTransaction = transactions.filter(
-            (transaction) => transaction.transaction_id === 1,
+            (transaction) => transaction.id === 1,
         );
 
-        mockModule([newTransaction]);
+        mockModule([newTransaction], newTransaction);
 
         const { createTransaction } = await import(
             '../../src/controllers/transactionHistoryController.js'
@@ -298,9 +308,7 @@ describe('POST /api/transactionHistory', () => {
 
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(201);
-        expect(mockResponse.json).toHaveBeenCalledWith(
-            transactionsResponse.filter((transaction) => transaction.id === 1),
-        );
+        expect(mockResponse.json).toHaveBeenCalledWith(newTransaction);
     });
 
     it('should respond with an error message', async () => {
@@ -312,7 +320,7 @@ describe('POST /api/transactionHistory', () => {
         );
 
         mockRequest.body = transactions.filter(
-            (transaction) => transaction.transaction_id === 1,
+            (transaction) => transaction.id === 1,
         );
 
         await createTransaction(mockRequest as Request, mockResponse).catch(
@@ -331,10 +339,10 @@ describe('PUT /api/transactionHistory/:id', () => {
     it('should respond with the updated transaction', async () => {
         // Arrange
         const updatedTransaction = transactions.filter(
-            (transaction) => transaction.transaction_id === 1,
+            (transaction) => transaction.id === 1,
         );
 
-        mockModule([updatedTransaction]);
+        mockModule([[{ id: 1 }], updatedTransaction], updatedTransaction);
 
         mockRequest.params = { id: 1 };
         mockRequest.body = updatedTransaction;
@@ -347,9 +355,7 @@ describe('PUT /api/transactionHistory/:id', () => {
 
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(200);
-        expect(mockResponse.json).toHaveBeenCalledWith(
-            transactionsResponse.filter((transaction) => transaction.id === 1),
-        );
+        expect(mockResponse.json).toHaveBeenCalledWith(updatedTransaction);
     });
 
     it('should respond with an error message', async () => {
@@ -358,7 +364,7 @@ describe('PUT /api/transactionHistory/:id', () => {
 
         mockRequest.params = { id: 1 };
         mockRequest.body = transactions.filter(
-            (transaction) => transaction.transaction_id === 1,
+            (transaction) => transaction.id === 1,
         );
 
         const { updateTransaction } = await import(
@@ -386,7 +392,7 @@ describe('PUT /api/transactionHistory/:id', () => {
 
         mockRequest.params = { id: 3 };
         mockRequest.body = transactions.filter(
-            (transaction) => transaction.transaction_id === 1,
+            (transaction) => transaction.id === 1,
         );
 
         // Act
@@ -401,7 +407,7 @@ describe('PUT /api/transactionHistory/:id', () => {
 describe('DELETE /api/transactionHistory/:id', () => {
     it('should respond with a success message', async () => {
         // Arrange
-        mockModule(['Successfully deleted transaction']);
+        mockModule([[{ id: 1 }], []]);
 
         const { deleteTransaction } = await import(
             '../../src/controllers/transactionHistoryController.js'
@@ -414,7 +420,7 @@ describe('DELETE /api/transactionHistory/:id', () => {
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(200);
         expect(mockResponse.send).toHaveBeenCalledWith(
-            'Successfully deleted transaction history',
+            'Successfully deleted transaction history for id of 1',
         );
     });
 

@@ -157,7 +157,8 @@ export const updateTransaction = async (
     try {
         const { rows } = await client.query(
             `
-                SELECT id FROM transaction_history
+                SELECT id
+                    FROM transaction_history
                     WHERE id = $1
             `,
             [id],
@@ -210,7 +211,8 @@ export const deleteTransaction = async (
     try {
         const { rows } = await client.query(
             `
-                SELECT id FROM transaction_history
+                SELECT id
+                    FROM transaction_history
                     WHERE id = $1
             `,
             [id],
