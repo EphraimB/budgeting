@@ -168,12 +168,11 @@ export const getPayrollsByJobId = async (
     response: Response,
 ): Promise<void> => {
     const { id } = request.params;
+
     const client = await pool.connect(); // Get a client from the pool
 
     try {
-        let returnObj: object = {};
-
-        const { rows: payrolls } = await client.query(
+        const { rows } = await client.query(
             `
                 WITH work_days_and_hours AS (
                     WITH ordered_table AS (
@@ -284,27 +283,14 @@ export const getPayrollsByJobId = async (
             [id],
         );
 
-        if (payrolls.length === 0) {
+        if (rows.length === 0) {
             response.status(404).send('No payrolls for job or not found');
             return;
         }
 
-        const { rows: jobResults } = await client.query(
-            `
-                SELECT name
-                    FROM jobs
-                    WHERE id = $1
-            `,
-            [id],
-        );
+        const retreivedRow = toCamelCase(rows); // Convert to camelCase
 
-        returnObj = {
-            id,
-            name: jobResults[0].name,
-            payrolls: toCamelCase(payrolls),
-        };
-
-        response.status(200).json(returnObj);
+        response.status(200).json(retreivedRow[0]);
     } catch (error) {
         logger.error(error); // Log the error on the server side
         handleError(response, `Error getting payrolls for job id of ${id}`);
