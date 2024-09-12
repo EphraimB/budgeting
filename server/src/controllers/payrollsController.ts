@@ -16,8 +16,6 @@ export const getPayrolls = async (
     const client = await pool.connect(); // Get a client from the pool
 
     try {
-        let returnObj: object = {};
-
         // Get all payrolls for all jobs
         const { rows } = await client.query(
             `
@@ -31,18 +29,25 @@ export const getPayrolls = async (
             return;
         }
 
-        await Promise.all(
-            rows.map(async (row) => {
-                const { rows: results } = await client.query(
-                    `
-                        WITH work_days_and_hours AS (
-                            WITH ordered_table AS (
-                                SELECT payroll_day,
-                                ROW_NUMBER() OVER (ORDER BY payroll_day) AS row_num
-                                FROM payroll_dates
-                                WHERE job_id = $1
-                            )
+        const { rows: results } = await client.query(
+            `
+                            WITH work_days_and_hours AS (
+                                WITH job_ids AS (
+                                    SELECT DISTINCT job_id
+                                    FROM payroll_dates
+                                    LIMIT 1
+                                ),
+                                ordered_table AS (
+                                    SELECT
+                                        p.job_id,
+                                        p.payroll_day,
+                                        ROW_NUMBER() OVER (PARTITION BY p.job_id ORDER BY p.payroll_day) AS row_num
+                                    FROM payroll_dates p
+                                    JOIN job_ids j ON p.job_id = j.job_id
+                                )
                                 SELECT
+                                    j.id,
+  								    j.name,
                                     CASE
                                         WHEN s2.payroll_start_day::integer < 0 THEN
                                             (make_date(extract(year from current_date)::integer, extract(month from current_date)::integer, ABS(s2.payroll_start_day::integer)) - INTERVAL '1 MONTH')::DATE
@@ -99,40 +104,51 @@ export const getPayrolls = async (
                                         GROUP BY job_id
                                     ) pt ON j.id = pt.job_id
                                 WHERE 
-                                    j.id = $1 
-                                    AND d.date >= CASE
+                                    d.date >= CASE
                                         WHEN s2.payroll_start_day::integer < 0 THEN
                                             (make_date(extract(year from current_date)::integer, extract(month from current_date)::integer, ABS(s2.payroll_start_day::integer)) - INTERVAL '1 MONTH')::DATE
                                         ELSE 
                                             make_date(extract(year from current_date)::integer, extract(month from current_date)::integer, s2.payroll_start_day::integer)
                                     END
-                            )
-                            SELECT
+                            ),
+                            payrolls_total AS (
+                              SELECT
+                              	id,
+                              	name,
                                 start_date,
                                 end_date,
                                 COUNT(work_date) AS work_days,
                                 SUM(hours_worked_per_day * hourly_rate) AS gross_pay,
                                 SUM(hours_worked_per_day * hourly_rate * (1 - tax_rate)) AS net_pay,
                                 SUM(hours_worked_per_day) AS hours_worked
+                              FROM work_days_and_hours
+                              GROUP BY id, name, start_date, end_date
+                            )
+                            SELECT
+                            	id,
+                                name,
+                                json_agg(
+                                        json_build_object(
+                                          'start_date', start_date,
+                                          'end_date', end_date,
+                                         	'work_days', payrolls_total.work_days,
+                                          'gross_pay', payrolls_total.gross_pay,
+                                          'net_pay', payrolls_total.net_pay,
+                                          'hours_worked', payrolls_total.hours_worked
+                                        )
+                                  ORDER BY start_date
+                                ) AS payrolls
                             FROM 
-                                work_days_and_hours
-                            GROUP BY 
-                                start_date, end_date
-                            ORDER BY 
-                                start_date, end_date;
+                                payrolls_total
+                            GROUP BY id, name
+                            ORDER BY id;
                     `,
-                    [row.id],
-                );
-
-                returnObj = {
-                    id: row.id,
-                    name: row.name,
-                    payrolls: toCamelCase(results),
-                };
-            }),
+            [],
         );
 
-        response.status(200).json(returnObj);
+        const retreivedRows = toCamelCase(results); // Convert to camelCase
+
+        response.status(200).json(retreivedRows);
     } catch (error) {
         logger.error(error); // Log the error on the server side
         handleError(response, 'Error getting payrolls');
@@ -167,6 +183,8 @@ export const getPayrollsByJobId = async (
                         WHERE job_id = $1
                     )
                         SELECT
+  							j.id,
+  							j.name,
                             CASE
                                 WHEN s2.payroll_start_day::integer < 0 THEN
                                     (make_date(extract(year from current_date)::integer, extract(month from current_date)::integer, ABS(s2.payroll_start_day::integer)) - INTERVAL '1 MONTH')::DATE
@@ -180,7 +198,7 @@ export const getPayrollsByJobId = async (
                             COALESCE(pt.rate, 0) AS tax_rate
                         FROM 
                             jobs j
-                            JOIN job_schedule js ON j.job_id = js.job_id
+                            JOIN job_schedule js ON j.id = js.job_id
                             
                             CROSS JOIN LATERAL (
                                 SELECT
@@ -221,29 +239,47 @@ export const getPayrollsByJobId = async (
                                 SELECT job_id, SUM(rate) AS rate
                                 FROM payroll_taxes
                                 GROUP BY job_id
-                            ) pt ON j.job_id = pt.job_id
+                            ) pt ON j.id = pt.job_id
                         WHERE 
-                            j.job_id = $1 
+                            j.id = $1 
                             AND d.date >= CASE
                                 WHEN s2.payroll_start_day::integer < 0 THEN
                                     (make_date(extract(year from current_date)::integer, extract(month from current_date)::integer, ABS(s2.payroll_start_day::integer)) - INTERVAL '1 MONTH')::DATE
                                 ELSE 
                                     make_date(extract(year from current_date)::integer, extract(month from current_date)::integer, s2.payroll_start_day::integer)
                             END
-                    )
-                    SELECT
-                        start_date,
-                        end_date,
-                        COUNT(work_date) AS work_days,
-                        SUM(hours_worked_per_day * hourly_rate) AS gross_pay,
-                        SUM(hours_worked_per_day * hourly_rate * (1 - tax_rate)) AS net_pay,
-                        SUM(hours_worked_per_day) AS hours_worked
-                    FROM 
-                        work_days_and_hours
-                    GROUP BY 
-                        start_date, end_date
-                    ORDER BY 
-                        start_date, end_date;
+                    ),
+                            payrolls_total AS (
+                              SELECT
+                              	id,
+                              	name,
+                                start_date,
+                                end_date,
+                                COUNT(work_date) AS work_days,
+                                SUM(hours_worked_per_day * hourly_rate) AS gross_pay,
+                                SUM(hours_worked_per_day * hourly_rate * (1 - tax_rate)) AS net_pay,
+                                SUM(hours_worked_per_day) AS hours_worked
+                              FROM work_days_and_hours
+                              GROUP BY id, name, start_date, end_date
+                            )
+                    			SELECT
+                            		id,
+                                    name,
+                                    json_agg(
+                                            json_build_object(
+                                            'start_date', start_date,
+                                            'end_date', end_date,
+                                                'work_days', payrolls_total.work_days,
+                                            'gross_pay', payrolls_total.gross_pay,
+                                            'net_pay', payrolls_total.net_pay,
+                                            'hours_worked', payrolls_total.hours_worked
+                                            )
+                                    ORDER BY start_date
+                                    ) AS payrolls
+                                FROM 
+                                    payrolls_total
+                                GROUP BY id, name
+                                ORDER BY id;
             `,
             [id],
         );

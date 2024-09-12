@@ -34,22 +34,22 @@ afterEach(() => {
     jest.resetModules();
 });
 
-const payrolls: Payroll[] = [
+const payrolls = [
     {
-        start_date: '2020-01-01',
-        end_date: '2020-01-15',
-        work_days: 5,
-        gross_pay: 500,
-        net_pay: 400,
-        hours_worked: 40,
+        startDate: '2020-01-01',
+        endDate: '2020-01-15',
+        workDays: 5,
+        grossPay: 500,
+        netPay: 400,
+        hoursWorked: 40,
     },
     {
-        start_date: '2020-01-15',
-        end_date: '2020-01-31',
-        work_days: 5,
-        gross_pay: 500,
-        net_pay: 400,
-        hours_worked: 40,
+        startDate: '2020-01-15',
+        endDate: '2020-01-31',
+        workDays: 5,
+        grossPay: 500,
+        netPay: 400,
+        hoursWorked: 40,
     },
 ];
 
