@@ -16,20 +16,7 @@ export const getPayrolls = async (
     const client = await pool.connect(); // Get a client from the pool
 
     try {
-        // Get all payrolls for all jobs
         const { rows } = await client.query(
-            `
-                SELECT id
-                    FROM jobs;
-            `,
-        );
-
-        if (rows.length === 0) {
-            response.status(404).send('No jobs found');
-            return;
-        }
-
-        const { rows: results } = await client.query(
             `
                             WITH work_days_and_hours AS (
                                 WITH job_ids AS (
@@ -146,7 +133,7 @@ export const getPayrolls = async (
             [],
         );
 
-        const retreivedRows = toCamelCase(results); // Convert to camelCase
+        const retreivedRows = toCamelCase(rows); // Convert to camelCase
 
         response.status(200).json(retreivedRows);
     } catch (error) {
