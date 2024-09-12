@@ -74,7 +74,7 @@ describe('Testing mockModule', () => {
         expect(secondRow).toEqual([{ id: 2 }]);
     });
 
-    it('should return the last mock in the array for toCamelCase', async () => {
+    it('should return the second parameter from mockModule for toCamelCase', async () => {
         const poolResponses = [[{ id: 1 }], [{ id: 2 }]];
 
         mockModule(poolResponses, [{ id: 3 }]);
