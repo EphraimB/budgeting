@@ -10,7 +10,7 @@ import pool from '../config/db.js';
  * Sends a response with all commute systems
  */
 export const getCommuteSystem = async (
-    request: Request,
+    _: Request,
     response: Response,
 ): Promise<void> => {
     const client = await pool.connect(); // Get a client from the pool
