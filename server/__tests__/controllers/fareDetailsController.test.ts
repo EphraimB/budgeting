@@ -8,7 +8,6 @@ import {
     expect,
 } from '@jest/globals';
 import { mockModule } from '../__mocks__/mockModule';
-import { Timeslots } from '../../src/types/types';
 
 jest.mock('../../src/config/winston', () => ({
     logger: {
@@ -35,7 +34,7 @@ afterEach(() => {
 
 const commuteSystems = [
     {
-        commute_system_id: 1,
+        id: 1,
         name: 'OMNY',
         fare_cap: 33,
         fare_cap_duration: 1,
@@ -43,7 +42,7 @@ const commuteSystems = [
         date_modified: '2020-01-01',
     },
     {
-        commute_system_id: 2,
+        id: 2,
         name: 'LIRR',
         fare_cap: null,
         fare_cap_duration: null,
@@ -54,37 +53,37 @@ const commuteSystems = [
 
 const fareDetails = [
     {
-        fare_detail_id: 1,
+        id: 1,
         commute_system_id: 1,
         system_name: 'OMNY',
         fare_type: 'Single Ride',
-        fare_amount: 2.75,
+        fare: 2.75,
         alternate_fare_detail_id: null,
         date_created: '2020-01-01',
         date_modified: '2020-01-01',
     },
     {
-        fare_detail_id: 2,
+        id: 2,
         commute_system_id: 1,
         system_name: 'LIRR',
         fare_type: 'Weekly',
-        fare_amount: 33,
+        fare: 33,
         alternate_fare_detail_id: null,
         date_created: '2020-01-01',
         date_modified: '2020-01-01',
     },
 ];
 
-const timeslots: Timeslots[] = [
+const timeslots = [
     {
-        timeslot_id: 1,
+        id: 1,
         fare_detail_id: 1,
         day_of_week: 0,
         start_time: '00:00:00',
         end_time: '23:59:59',
     },
     {
-        timeslot_id: 2,
+        id: 2,
         fare_detail_id: 2,
         day_of_week: 1,
         start_time: '00:00:00',
@@ -95,66 +94,60 @@ const timeslots: Timeslots[] = [
 const fareDetailsResponse = [
     {
         id: 1,
-        commute_system: {
-            commute_system_id: 1,
+        commuteSystem: {
+            commuteSystemId: 1,
             name: 'OMNY',
         },
         name: 'Single Ride',
-        fare_amount: 2.75,
+        fare: 2.75,
         timeslots: [
             {
-                day_of_week: 0,
-                start_time: '00:00:00',
-                end_time: '23:59:59',
+                dayOfWeek: 0,
+                startTime: '00:00:00',
+                endTime: '23:59:59',
             },
         ],
 
-        alternate_fare_detail_id: null,
-        date_created: '2020-01-01',
-        date_modified: '2020-01-01',
+        alternateFareDetailId: null,
+        dateCreated: '2020-01-01',
+        dateModified: '2020-01-01',
     },
     {
         id: 2,
-        commute_system: {
-            commute_system_id: 1,
+        commuteSystem: {
+            commuteSystemId: 1,
             name: 'LIRR',
         },
         name: 'Weekly',
-        fare_amount: 33,
+        fare: 33,
         timeslots: [
             {
-                day_of_week: 1,
-                start_time: '00:00:00',
-                end_time: '23:59:59',
+                dayOfWeek: 1,
+                startTime: '00:00:00',
+                endTime: '23:59:59',
             },
         ],
-        alternate_fare_detail_id: null,
-        date_created: '2020-01-01',
-        date_modified: '2020-01-01',
+        alternateFareDetailId: null,
+        dateCreated: '2020-01-01',
+        dateModified: '2020-01-01',
     },
 ];
 
 describe('GET /api/expenses/commute/fares', () => {
     it('should respond with an array of fare details', async () => {
         // Arrange
-        mockModule([fareDetails, timeslots]);
+        mockModule([fareDetailsResponse], fareDetailsResponse);
 
         const { getFareDetails } = await import(
             '../../src/controllers/fareDetailsController.js'
         );
 
-        mockRequest.query = { id: null };
-
         // Call the function with the mock request and response
         await getFareDetails(mockRequest as Request, mockResponse);
 
-        const expectedResponse = {
-            fares: fareDetailsResponse,
-        };
-
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(200);
-        expect(mockResponse.json).toHaveBeenCalledWith(expectedResponse);
+        expect(mockResponse.json).toHaveBeenCalledWith(fareDetailsResponse);
     });
 
     it('should handle errors correctly', async () => {
@@ -165,8 +158,6 @@ describe('GET /api/expenses/commute/fares', () => {
             '../../src/controllers/fareDetailsController.js'
         );
 
-        mockRequest.query = { account_id: null, id: null };
-
         // Act
         await getFareDetails(mockRequest as Request, mockResponse).catch(() => {
             // Assert
@@ -176,111 +167,117 @@ describe('GET /api/expenses/commute/fares', () => {
             });
         });
     });
+});
 
+describe('GET /api/expenses/commute/fares/:id', () => {
     it('should respond with an array of fare details with an id', async () => {
         // Arrange
-        mockModule([
-            fareDetails.filter((fareDetail) => fareDetail.fare_detail_id === 1),
-            timeslots.filter((timeslot) => timeslot.fare_detail_id === 1),
-        ]);
+        mockModule(
+            [fareDetailsResponse.filter((fareDetail) => fareDetail.id === 1)],
+            fareDetailsResponse.filter((fareDetail) => fareDetail.id === 1),
+        );
 
-        const { getFareDetails } = await import(
+        const { getFareDetailsById } = await import(
             '../../src/controllers/fareDetailsController.js'
         );
 
-        mockRequest.query = { account_id: null, id: 1 };
+        mockRequest.params = { id: 1 };
 
         // Call the function with the mock request and response
-        await getFareDetails(mockRequest as Request, mockResponse);
-
-        const expectedResponse = {
-            fares: fareDetailsResponse.filter(
-                (fareDetail) => fareDetail.id === 1,
-            ),
-        };
+        await getFareDetailsById(mockRequest as Request, mockResponse);
 
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(200);
-        expect(mockResponse.json).toHaveBeenCalledWith(expectedResponse);
+        expect(mockResponse.json).toHaveBeenCalledWith(
+            fareDetailsResponse.filter((fareDetail) => fareDetail.id === 1)[0],
+        );
     });
 
     it('should handle errors correctly with an id', async () => {
         // Arrange
         mockModule([]);
 
-        const { getFareDetails } = await import(
+        const { getFareDetailsById } = await import(
             '../../src/controllers/fareDetailsController.js'
         );
 
-        mockRequest.query = { id: 1 };
+        mockRequest.params = { id: 1 };
 
         // Act
-        await getFareDetails(mockRequest as Request, mockResponse).catch(() => {
-            // Assert
-            expect(mockResponse.status).toHaveBeenCalledWith(400);
-            expect(mockResponse.json).toHaveBeenCalledWith({
-                message: 'Error getting fare details for given id',
-            });
-        });
-    });
-
-    it('should respond with a 404 error message when the fare detail does not exist', async () => {
-        // Arrange
-        mockModule([[]]);
-
-        const { getFareDetails } = await import(
-            '../../src/controllers/fareDetailsController.js'
+        await getFareDetailsById(mockRequest as Request, mockResponse).catch(
+            () => {
+                // Assert
+                expect(mockResponse.status).toHaveBeenCalledWith(400);
+                expect(mockResponse.json).toHaveBeenCalledWith({
+                    message: 'Error getting fare details for given id',
+                });
+            },
         );
-
-        mockRequest.query = { id: 3 };
-
-        // Act
-        await getFareDetails(mockRequest as Request, mockResponse);
-
-        // Assert
-        expect(mockResponse.status).toHaveBeenCalledWith(404);
-        expect(mockResponse.send).toHaveBeenCalledWith('Fare detail not found');
     });
 });
 
 describe('POST /api/expenses/commute/fares', () => {
     it('should respond with the new fare detail', async () => {
-        mockModule([
-            commuteSystems.filter((system) => system.commute_system_id === 1),
-            [],
-            fareDetails.filter((fareDetail) => fareDetail.fare_detail_id === 1),
-            timeslots.filter((timeslot) => timeslot.timeslot_id === 1),
-        ]);
+        mockModule(
+            [
+                [{ id: 1, name: 'OMNY' }],
+                [],
+                fareDetails.filter((fareDetail) => fareDetail.id === 1),
+                timeslots.filter((timeslot) => timeslot.id === 1),
+            ],
+            {
+                commuteSystem: {
+                    commuteSystemId: 1,
+                    name: 'OMNY',
+                },
+                name: 'Single ride',
+                timeslots: [
+                    {
+                        dayOfWeek: 0,
+                        startTime: '00:00:00',
+                        endTime: '23:59:59',
+                    },
+                ],
+            },
+        );
 
         const { createFareDetail } = await import(
             '../../src/controllers/fareDetailsController.js'
         );
 
         mockRequest.body = {
-            fare_detail_id: 1,
-            commute_system_id: 1,
-            system_name: 'OMNY',
-            fare_type: 'Single Ride',
-            fare_amount: 2.75,
-            alternate_fare_detail_id: null,
+            systemName: 'OMNY',
+            fareType: 'Single Ride',
+            fare: 2.75,
             timeslots: [
                 {
-                    day_of_week: 0,
-                    start_time: '00:00:00',
-                    end_time: '23:59:59',
+                    dayOfWeek: 0,
+                    startTime: '00:00:00',
+                    endTime: '23:59:59',
                 },
             ],
-            date_created: '2020-01-01',
-            date_modified: '2020-01-01',
         };
 
         await createFareDetail(mockRequest as Request, mockResponse);
 
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(201);
-        expect(mockResponse.json).toHaveBeenCalledWith(
-            fareDetailsResponse.filter((fareDetail) => fareDetail.id === 1)[0],
-        );
+        expect(mockResponse.json).toHaveBeenCalledWith({
+            commuteSystemId: 1,
+            commuteSystemName: 'OMNY',
+            name: 'Single Ride',
+            fare: 2.75,
+            alternateFareDetailId: null,
+            timeslots: [
+                {
+                    dayOfWeek: 0,
+                    startTime: '00:00:00',
+                    endTime: '23:59:59',
+                },
+            ],
+            dateCreated: '2020-01-01',
+            dateModified: '2020-01-01',
+        });
     });
 
     it('should handle errors correctly', async () => {
@@ -292,7 +289,7 @@ describe('POST /api/expenses/commute/fares', () => {
         );
 
         mockRequest.body = fareDetails.filter(
-            (system) => system.fare_detail_id === 1,
+            (fareDetail) => fareDetail.id === 1,
         );
 
         // Act
@@ -311,12 +308,14 @@ describe('POST /api/expenses/commute/fares', () => {
 describe('PUT /api/expenses/commute/fares/:id', () => {
     it('should respond with the updated fare detail', async () => {
         mockModule([
-            fareDetails.filter((fareDetail) => fareDetail.fare_detail_id === 1),
-            timeslots.filter((timeslot) => timeslot.timeslot_id === 1),
+            [{ id: 1 }],
+            timeslots.filter((timeslot) => timeslot.id === 1),
             [],
             [],
             [],
-            commuteSystems.filter((system) => system.commute_system_id === 1),
+            fareDetails.filter((fareDetail) => fareDetail.id === 1),
+            [],
+            commuteSystems.filter((commuteSystem) => commuteSystem.id === 1),
         ]);
 
         const { updateFareDetail } = await import(
@@ -325,30 +324,43 @@ describe('PUT /api/expenses/commute/fares/:id', () => {
 
         mockRequest.params = { id: 1 };
         mockRequest.body = {
-            fare_detail_id: 1,
-            commute_system_id: 1,
-            system_name: 'OMNY',
-            fare_type: 'Single Ride',
-            fare_amount: 2.75,
-            alternate_fare_detail_id: null,
+            commuteSystemId: 1,
+            commuteSystemName: 'OMNY',
+            name: 'Single Ride',
+            fare: 2.75,
+            alternateFareDetailId: null,
             timeslots: [
                 {
-                    day_of_week: 0,
-                    start_time: '00:00:00',
-                    end_time: '23:59:59',
+                    dayOfWeek: 0,
+                    startTime: '00:00:00',
+                    endTime: '23:59:59',
                 },
             ],
-            date_created: '2020-01-01',
-            date_modified: '2020-01-01',
+            dateCreated: '2020-01-01',
+            dateModified: '2020-01-01',
         };
 
         await updateFareDetail(mockRequest as Request, mockResponse);
 
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(200);
-        expect(mockResponse.json).toHaveBeenCalledWith(
-            fareDetailsResponse.filter((fareDetail) => fareDetail.id === 1)[0],
-        );
+        expect(mockResponse.json).toHaveBeenCalledWith({
+            id: 1,
+            commuteSystemId: 1,
+            commuteSystemName: 'OMNY',
+            name: 'Single Ride',
+            fare: 2.75,
+            alternateFareDetailId: null,
+            timeslots: [
+                {
+                    dayOfWeek: 0,
+                    startTime: '00:00:00',
+                    endTime: '23:59:59',
+                },
+            ],
+            dateCreated: '2020-01-01',
+            dateModified: '2020-01-01',
+        });
     });
 
     it('should handle errors correctly', async () => {
@@ -360,9 +372,7 @@ describe('PUT /api/expenses/commute/fares/:id', () => {
         );
 
         mockRequest.params = { id: 1 };
-        mockRequest.body = fareDetails.filter(
-            (history) => history.fare_detail_id === 1,
-        );
+        mockRequest.body = fareDetails.filter((history) => history.id === 1);
 
         // Act
         await updateFareDetail(mockRequest as Request, mockResponse).catch(
@@ -385,9 +395,7 @@ describe('PUT /api/expenses/commute/fares/:id', () => {
         );
 
         mockRequest.params = { id: 1 };
-        mockRequest.body = fareDetails.filter(
-            (history) => history.fare_detail_id === 1,
-        );
+        mockRequest.body = fareDetails.filter((history) => history.id === 1);
 
         // Act
         await updateFareDetail(mockRequest as Request, mockResponse);
@@ -401,7 +409,7 @@ describe('PUT /api/expenses/commute/fares/:id', () => {
 describe('DELETE /api/expenses/commute/fares/:id', () => {
     it('should respond with a success message', async () => {
         // Arrange
-        mockModule(['Successfully deleted fare detail']);
+        mockModule([[{ id: 1 }], [], [], []]);
 
         const { deleteFareDetail } = await import(
             '../../src/controllers/fareDetailsController.js'

@@ -143,7 +143,7 @@ export const createFareDetail = async (
     try {
         const { rows: commuteSystemResults } = await client.query(
             `
-                SELECT *
+                SELECT id, name
                     FROM commute_systems
                     WHERE id = $1
             `,
@@ -190,7 +190,7 @@ export const createFareDetail = async (
                     RETURNING *
                 `,
                 [
-                    fareDetails[0].fare_detail_id,
+                    fareDetails[0].id,
                     timeslot.dayOfWeek,
                     timeslot.startTime,
                     timeslot.endTime,
@@ -198,9 +198,9 @@ export const createFareDetail = async (
             );
 
             return {
-                day_of_week: parseInt(timeslotData[0].day_of_week),
-                start_time: timeslotData[0].start_time,
-                end_time: timeslotData[0].end_time,
+                dayOfWeek: parseInt(timeslotData[0].day_of_week),
+                startTime: timeslotData[0].start_time,
+                endTime: timeslotData[0].end_time,
             };
         });
 
@@ -381,7 +381,7 @@ export const updateFareDetail = async (
             );
         });
 
-        await client.query(
+        const { rows: updateFareDetailResults } = await client.query(
             `
                 UPDATE fare_details
                 SET commute_system_id = $1,
@@ -415,20 +415,19 @@ export const updateFareDetail = async (
             [commuteSystemId],
         );
 
-        const systemName = commuteSystemResults[0].name;
-
         const responseObj: object = {
-            id: fareDetails[0].fare_detail_id,
-            commuteSystemId: fareDetails[0].commute_system_id,
-            commuteSystemName: systemName,
-            name: fareDetails[0].fare_type,
-            fare: parseFloat(fareDetails[0].fare),
+            id: updateFareDetailResults[0].id,
+            commuteSystemId: updateFareDetailResults[0].commute_system_id,
+            commuteSystemName: commuteSystemResults[0].name,
+            name: updateFareDetailResults[0].fare_type,
+            fare: parseFloat(updateFareDetailResults[0].fare),
             timeslots: timeslots,
-            duration: fareDetails[0].duration,
-            dayStart: fareDetails[0].day_start,
-            alternateFareDetailId: fareDetails[0].alternate_fare_detail_id,
-            dateCreated: fareDetails[0].date_created,
-            dateModified: fareDetails[0].date_modified,
+            duration: updateFareDetailResults[0].duration,
+            dayStart: updateFareDetailResults[0].day_start,
+            alternateFareDetailId:
+                updateFareDetailResults[0].alternate_fare_detail_id,
+            dateCreated: updateFareDetailResults[0].date_created,
+            dateModified: updateFareDetailResults[0].date_modified,
         };
 
         response.status(200).json(responseObj);
