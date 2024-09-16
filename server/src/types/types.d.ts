@@ -255,7 +255,7 @@ export interface FareDetails {
 }
 
 export interface Timeslots {
-    timeslotId: number;
+    id: number;
     fareDetailId: number;
     dayOfWeek: number;
     startTime: string;
