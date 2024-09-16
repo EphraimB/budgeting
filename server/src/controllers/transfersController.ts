@@ -596,7 +596,7 @@ export const createTransfer = async (
             [uniqueId, cronDate],
         );
 
-        const cronId = cronIdResults[0].cron_job_id;
+        const cronId = cronIdResults[0].id;
 
         const { rows: transferResult } = await client.query(
             `

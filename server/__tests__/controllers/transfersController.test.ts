@@ -8,7 +8,6 @@ import {
     expect,
 } from '@jest/globals';
 import { mockModule } from '../__mocks__/mockModule';
-import { Transfer } from '../../src/types/types.js';
 
 jest.mock('../../src/config/winston', () => ({
     logger: {
@@ -20,7 +19,6 @@ jest.mock('../../src/config/winston', () => ({
 // Mock request and response
 let mockRequest: any;
 let mockResponse: any;
-let mockNext: any;
 
 beforeEach(() => {
     mockRequest = {};
@@ -29,7 +27,6 @@ beforeEach(() => {
         json: jest.fn(),
         send: jest.fn(),
     };
-    mockNext = jest.fn();
 });
 
 afterEach(() => {
@@ -235,6 +232,7 @@ describe('GET /api/transfers/:id', () => {
         );
 
         mockRequest.params = { id: 1 };
+        mockRequest.query = { accountId: null };
 
         // Call the function with the mock request and response
         await getTransfersById(mockRequest as Request, mockResponse);
@@ -242,7 +240,7 @@ describe('GET /api/transfers/:id', () => {
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(200);
         expect(mockResponse.json).toHaveBeenCalledWith(
-            transfers.filter((transfer) => transfer.id === 1),
+            transfers.filter((transfer) => transfer.id === 1)[0],
         );
     });
 
@@ -255,6 +253,7 @@ describe('GET /api/transfers/:id', () => {
         );
 
         mockRequest.params = { id: 1 };
+        mockRequest.query = { accountId: null };
 
         // Call the function with the mock request and response
         await getTransfersById(mockRequest as Request, mockResponse).catch(
@@ -270,12 +269,18 @@ describe('GET /api/transfers/:id', () => {
 
     it('should respond with an array of transfers with id and account id', async () => {
         // Arrange
-        mockModule([
+        mockModule(
+            [
+                transfers.filter(
+                    (transfer) =>
+                        transfer.id === 1 && transfer.sourceAccountId === 1,
+                ),
+            ],
             transfers.filter(
                 (transfer) =>
                     transfer.id === 1 && transfer.sourceAccountId === 1,
             ),
-        ]);
+        );
 
         const { getTransfersById } = await import(
             '../../src/controllers/transfersController.js'
@@ -293,7 +298,7 @@ describe('GET /api/transfers/:id', () => {
             transfers.filter(
                 (transfer) =>
                     transfer.id === 1 && transfer.sourceAccountId === 1,
-            ),
+            )[0],
         );
     });
 
@@ -301,7 +306,7 @@ describe('GET /api/transfers/:id', () => {
         // Arrange
         mockModule([]);
 
-        const { getTransfers } = await import(
+        const { getTransfersById } = await import(
             '../../src/controllers/transfersController.js'
         );
 
@@ -309,27 +314,30 @@ describe('GET /api/transfers/:id', () => {
         mockRequest.query = { accountId: 1 };
 
         // Call the function with the mock request and response
-        await getTransfers(mockRequest as Request, mockResponse).catch(() => {
-            // Assert
-            expect(mockResponse.status).toHaveBeenCalledWith(400);
-            expect(mockResponse.json).toHaveBeenCalledWith({
-                message: 'Error getting transfer',
-            });
-        });
+        await getTransfersById(mockRequest as Request, mockResponse).catch(
+            () => {
+                // Assert
+                expect(mockResponse.status).toHaveBeenCalledWith(400);
+                expect(mockResponse.json).toHaveBeenCalledWith({
+                    message: 'Error getting transfer',
+                });
+            },
+        );
     });
 
     it('should respond with a 404 error message when the transfer does not exist', async () => {
         // Arrange
         mockModule([[]]);
 
-        const { getTransfers } = await import(
+        const { getTransfersById } = await import(
             '../../src/controllers/transfersController.js'
         );
 
         mockRequest.params = { id: 3 };
+        mockRequest.query = { accountId: null };
 
         // Act
-        await getTransfers(mockRequest as Request, mockResponse);
+        await getTransfersById(mockRequest as Request, mockResponse);
 
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(404);
@@ -338,19 +346,14 @@ describe('GET /api/transfers/:id', () => {
 });
 
 describe('POST /api/transfers', () => {
-    it('should populate request.transfer_id', async () => {
+    it('should respond with the created transfer', async () => {
         // Arrange
-        const newTransfer = transfers.filter(
-            (transfer) => transfer.transfer_id === 1,
-        );
+        const newTransfer = transfers.filter((transfer) => transfer.id === 1);
 
-        mockModule([
-            [],
+        mockModule(
+            [[], [], [{ id: 1, unique_id: 'v80voqopcb' }], newTransfer, []],
             newTransfer,
-            [],
-            [{ cron_job_id: 1, unique_id: 'transfers-1' }, []],
-            [],
-        ]);
+        );
 
         const { createTransfer } = await import(
             '../../src/controllers/transfersController.js'
@@ -358,16 +361,11 @@ describe('POST /api/transfers', () => {
 
         mockRequest.body = newTransfer;
 
-        await createTransfer(mockRequest as Request, mockResponse, mockNext);
-
-        // Add next date to the transfers response
-        transfersResponse.map((transfer: any) => {
-            transfer.next_date = undefined;
-        });
+        await createTransfer(mockRequest as Request, mockResponse);
 
         // Assert
-        expect(mockRequest.transfer_id).toBe(1);
-        expect(mockNext).toHaveBeenCalled();
+        expect(mockResponse.status).toHaveBeenCalledWith(201);
+        expect(mockResponse.json).toHaveBeenCalledWith(newTransfer);
     });
 
     it('should respond with an error message', async () => {
@@ -378,151 +376,71 @@ describe('POST /api/transfers', () => {
             '../../src/controllers/transfersController.js'
         );
 
-        mockRequest.body = transfers.filter(
-            (transfer) => transfer.transfer_id === 1,
-        );
+        mockRequest.body = transfers.filter((transfer) => transfer.id === 1);
 
         // Call the function with the mock request and response
-        await createTransfer(
-            mockRequest as Request,
-            mockResponse,
-            mockNext,
-        ).catch(() => {
+        await createTransfer(mockRequest as Request, mockResponse).catch(() => {
             // Assert
             expect(mockResponse.status).toHaveBeenCalledWith(400);
             expect(mockResponse.json).toHaveBeenCalledWith({
                 message: 'Error creating transfer',
             });
         });
-    });
-
-    it('should respond with an error message with return object', async () => {
-        // Arrange
-        mockModule([]);
-
-        const { createTransferReturnObject } = await import(
-            '../../src/controllers/transfersController.js'
-        );
-
-        mockRequest.body = transfers.filter(
-            (transfer) => transfer.transfer_id === 1,
-        );
-
-        // Call the function with the mock request and response
-        await createTransferReturnObject(
-            mockRequest as Request,
-            mockResponse,
-        ).catch(() => {
-            // Assert
-            expect(mockResponse.status).toHaveBeenCalledWith(400);
-            expect(mockResponse.json).toHaveBeenCalledWith({
-                message: 'Error creating transfer',
-            });
-        });
-    });
-
-    it('should respond with the created transfer', async () => {
-        // Arrange
-        const newTransfer = transfers.filter(
-            (transfer) => transfer.transfer_id === 1,
-        );
-
-        mockModule([newTransfer]);
-
-        const { createTransferReturnObject } = await import(
-            '../../src/controllers/transfersController.js'
-        );
-
-        mockRequest.body = newTransfer;
-
-        await createTransferReturnObject(mockRequest as Request, mockResponse);
-
-        // Assert
-        expect(mockResponse.status).toHaveBeenCalledWith(201);
-        expect(mockResponse.json).toHaveBeenCalledWith(
-            transfersResponse.filter((transfer) => transfer.id === 1),
-        );
     });
 });
 
 describe('PUT /api/transfer/:id', () => {
-    it('should call next on the middleware', async () => {
+    it('should respond with the updated transfer', async () => {
         // Arrange
         const updatedTransfer = transfers.filter(
-            (transfer) => transfer.transfer_id === 1,
+            (transfer) => transfer.id === 1,
         );
 
-        mockModule([
+        mockModule(
+            [
+                [{ id: 1, cron_job_id: 1 }],
+                [{ unique_id: 'vo838fvpbcu3' }],
+                [],
+                [],
+                [],
+                updatedTransfer,
+                [],
+                [],
+            ],
             updatedTransfer,
-            [{ cron_job_id: 1, unique_id: 'transfers-1' }],
-            [],
-            [],
-            [],
-            [],
-        ]);
-
-        mockRequest.params = { id: 1 };
-        mockRequest.body = updatedTransfer;
+        );
 
         const { updateTransfer } = await import(
             '../../src/controllers/transfersController.js'
         );
 
-        await updateTransfer(mockRequest as Request, mockResponse, mockNext);
+        mockRequest.params = { id: 1 };
+        mockRequest.body = updatedTransfer;
+
+        await updateTransfer(mockRequest as Request, mockResponse);
 
         // Assert
-        expect(mockNext).toHaveBeenCalled();
+        expect(mockResponse.status).toHaveBeenCalledWith(200);
+        expect(mockResponse.json).toHaveBeenCalledWith(updatedTransfer);
     });
 
     it('should respond with an error message', async () => {
         // Arrange
         mockModule([]);
 
-        mockRequest.params = { id: 1 };
-        mockRequest.body = transfers.filter(
-            (transfer) => transfer.transfer_id === 1,
-        );
-
         const { updateTransfer } = await import(
             '../../src/controllers/transfersController.js'
         );
 
+        mockRequest.params = { id: 1 };
+        mockRequest.body = transfers.filter((transfer) => transfer.id === 1);
+
         // Call the function with the mock request and response
-        await updateTransfer(
-            mockRequest as Request,
-            mockResponse,
-            mockNext,
-        ).catch(() => {
+        await updateTransfer(mockRequest as Request, mockResponse).catch(() => {
             // Assert
             expect(mockResponse.status).toHaveBeenCalledWith(400);
             expect(mockResponse.json).toHaveBeenCalledWith({
                 message: 'Error updating transfer',
-            });
-        });
-    });
-
-    it('should respond with an error message in the return object', async () => {
-        // Arrange
-        mockModule([]);
-
-        mockRequest.params = { id: 1 };
-        mockRequest.body = transfers.filter(
-            (transfer) => transfer.transfer_id === 1,
-        );
-
-        const { updateTransferReturnObject } = await import(
-            '../../src/controllers/transfersController.js'
-        );
-
-        // Call the function with the mock request and response
-        await updateTransferReturnObject(
-            mockRequest as Request,
-            mockResponse,
-        ).catch(() => {
-            // Assert
-            expect(mockResponse.status).toHaveBeenCalledWith(400);
-            expect(mockResponse.json).toHaveBeenCalledWith({
-                message: 'Error getting transfer',
             });
         });
     });
@@ -536,50 +454,26 @@ describe('PUT /api/transfer/:id', () => {
         );
 
         mockRequest.params = { id: 3 };
-        mockRequest.body = transfers.filter(
-            (transfer) => transfer.transfer_id === 1,
-        );
+        mockRequest.body = transfers.filter((transfer) => transfer.id === 1);
 
         // Act
-        await updateTransfer(mockRequest as Request, mockResponse, mockNext);
+        await updateTransfer(mockRequest as Request, mockResponse);
 
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(404);
         expect(mockResponse.send).toHaveBeenCalledWith('Transfer not found');
     });
-
-    it('should respond with the updated transfer', async () => {
-        // Arrange
-        const updatedTransfer = transfers.filter(
-            (transfer) => transfer.transfer_id === 1,
-        );
-
-        mockModule([updatedTransfer]);
-
-        const { updateTransferReturnObject } = await import(
-            '../../src/controllers/transfersController.js'
-        );
-
-        mockRequest = { transfer_id: 1 };
-
-        await updateTransferReturnObject(mockRequest as Request, mockResponse);
-
-        // Assert
-        expect(mockResponse.status).toHaveBeenCalledWith(200);
-        expect(mockResponse.json).toHaveBeenCalledWith(
-            transfersResponse.filter((transfer) => transfer.id === 1),
-        );
-    });
 });
 
 describe('DELETE /api/transfer/:id', () => {
-    it('should call next on the middleware', async () => {
+    it('should respond with a success message', async () => {
         // Arrange
         mockModule([
-            transfers.filter((transfer) => transfer.transfer_id === 1),
+            [{ id: 1, cron_job_id: 1 }],
             [],
             [],
-            [{ cron_job_id: 1, unique_id: 'transfers-1' }],
+            [{ unique_id: 'vpf389fpcb' }],
+            [],
             [],
             [],
         ]);
@@ -590,10 +484,13 @@ describe('DELETE /api/transfer/:id', () => {
 
         mockRequest.params = { id: 1 };
 
-        await deleteTransfer(mockRequest as Request, mockResponse, mockNext);
+        await deleteTransfer(mockRequest as Request, mockResponse);
 
         // Assert
-        expect(mockNext).toHaveBeenCalled();
+        expect(mockResponse.status).toHaveBeenCalledWith(200);
+        expect(mockResponse.send).toHaveBeenCalledWith(
+            'Transfer deleted successfully',
+        );
     });
 
     it('should respond with an error message', async () => {
@@ -605,14 +502,9 @@ describe('DELETE /api/transfer/:id', () => {
         );
 
         mockRequest.params = { id: 1 };
-        mockRequest.query = { account_id: 1 };
 
         // Call the function with the mock request and response
-        await deleteTransfer(
-            mockRequest as Request,
-            mockResponse,
-            mockNext,
-        ).catch(() => {
+        await deleteTransfer(mockRequest as Request, mockResponse).catch(() => {
             // Assert
             expect(mockResponse.status).toHaveBeenCalledWith(400);
             expect(mockResponse.json).toHaveBeenCalledWith({
@@ -630,33 +522,12 @@ describe('DELETE /api/transfer/:id', () => {
         );
 
         mockRequest.params = { id: 3 };
-        mockRequest.query = { account_id: 1 };
 
         // Act
-        await deleteTransfer(mockRequest as Request, mockResponse, mockNext);
+        await deleteTransfer(mockRequest as Request, mockResponse);
 
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(404);
         expect(mockResponse.send).toHaveBeenCalledWith('Transfer not found');
-    });
-
-    it('should respond with a success message with account_id', async () => {
-        // Arrange
-        mockModule(['Transfer deleted successfully']);
-
-        const { deleteTransferReturnObject } = await import(
-            '../../src/controllers/transfersController.js'
-        );
-
-        mockRequest.params = { id: 1 };
-        mockRequest.query = { account_id: 1 };
-
-        await deleteTransferReturnObject(mockRequest as Request, mockResponse);
-
-        // Assert
-        expect(mockResponse.status).toHaveBeenCalledWith(200);
-        expect(mockResponse.send).toHaveBeenCalledWith(
-            'Transfer deleted successfully',
-        );
     });
 });
