@@ -27,41 +27,72 @@ export const getCommuteSchedule = async (
 
         if (accountId) {
             query = `
-                SELECT cs.day_of_week, JSON_AGG(
+                SELECT 
+                    account_id,
+                    JSON_AGG(
                         JSON_BUILD_OBJECT(
-                          	'id', cs.id,
+                        'day_of_week', day_of_week,
+                        'commute_schedules', commute_schedules
+                        )::json
+                    ) AS schedules
+                    FROM (
+                    SELECT 
+                        cs.account_id,
+                        cs.day_of_week,
+                        JSON_AGG(
+                        JSON_BUILD_OBJECT(
+                            'id', cs.id,
                             'pass', concat(csy.name, ' ', fd.name),
                             'start_time', cs.start_time,
-                          	'end_time', cs.end_time,
-                          	'fare', fd.fare
-                    		)::json
-							) AS passes
-                FROM commute_schedule cs
-                LEFT JOIN fare_details fd
-                ON cs.fare_detail_id = fd.id
-                LEFT JOIN commute_systems csy
-                ON fd.commute_system_id = csy.id
-                WHERE cs.account_id = $1
-                GROUP BY cs.day_of_week
+                            'end_time', cs.end_time,
+                            'fare', fd.fare
+                        )::json
+                        ) AS commute_schedules
+                    FROM 
+                        commute_schedule cs
+                        LEFT JOIN fare_details fd ON cs.fare_detail_id = fd.id
+                        LEFT JOIN commute_systems csy ON fd.commute_system_id = csy.id
+                    WHERE 
+                        cs.account_id = $1
+                    GROUP BY 
+                        cs.account_id, cs.day_of_week
+                    ) AS subquery
+                    GROUP BY 
+                    account_id
             `;
             params = [accountId];
         } else {
             query = `
-                SELECT cs.day_of_week, JSON_AGG(
+                SELECT 
+                    account_id,
+                    JSON_AGG(
                         JSON_BUILD_OBJECT(
-                          	'id', cs.id,
+                        'day_of_week', day_of_week,
+                        'commute_schedules', commute_schedules
+                        )::json
+                    ) AS schedules
+                    FROM (
+                    SELECT 
+                        cs.account_id,
+                        cs.day_of_week,
+                        JSON_AGG(
+                        JSON_BUILD_OBJECT(
+                            'id', cs.id,
                             'pass', concat(csy.name, ' ', fd.name),
                             'start_time', cs.start_time,
-                          	'end_time', cs.end_time,
-                          	'fare', fd.fare
-                    		)::json
-							) AS passes
-                FROM commute_schedule cs
-                LEFT JOIN fare_details fd
-                ON cs.fare_detail_id = fd.id
-                LEFT JOIN commute_systems csy
-                ON fd.commute_system_id = csy.id
-                GROUP BY cs.day_of_week
+                            'end_time', cs.end_time,
+                            'fare', fd.fare
+                        )::json
+                        ) AS commute_schedules
+                    FROM 
+                        commute_schedule cs
+                        LEFT JOIN fare_details fd ON cs.fare_detail_id = fd.id
+                        LEFT JOIN commute_systems csy ON fd.commute_system_id = csy.id
+                    GROUP BY 
+                        cs.account_id, cs.day_of_week
+                    ) AS subquery
+                    GROUP BY 
+                    account_id
             `;
             params = [];
         }
@@ -102,42 +133,74 @@ export const getCommuteScheduleById = async (
 
         if (accountId) {
             query = `
-                SELECT cs.day_of_week, JSON_AGG(
+                SELECT 
+                    account_id,
+                    JSON_AGG(
                         JSON_BUILD_OBJECT(
-                          	'id', cs.id,
+                        'day_of_week', day_of_week,
+                        'commute_schedules', commute_schedules
+                        )::json
+                    ) AS schedules
+                    FROM (
+                    SELECT 
+                        cs.account_id,
+                        cs.day_of_week,
+                        JSON_AGG(
+                        JSON_BUILD_OBJECT(
+                            'id', cs.id,
                             'pass', concat(csy.name, ' ', fd.name),
                             'start_time', cs.start_time,
-                          	'end_time', cs.end_time,
-                          	'fare', fd.fare
-                    		)::json
-							) AS passes
-                FROM commute_schedule cs
-                LEFT JOIN fare_details fd
-                ON cs.fare_detail_id = fd.id
-                LEFT JOIN commute_systems csy
-                ON fd.commute_system_id = csy.id
-                WHERE cs.id = $1 AND cs.account_id = $2
-                GROUP BY cs.day_of_week
+                            'end_time', cs.end_time,
+                            'fare', fd.fare
+                        )::json
+                        ) AS commute_schedules
+                    FROM 
+                        commute_schedule cs
+                        LEFT JOIN fare_details fd ON cs.fare_detail_id = fd.id
+                        LEFT JOIN commute_systems csy ON fd.commute_system_id = csy.id
+                    WHERE 
+                        cs.id = $1 AND cs.account_id = $2
+                    GROUP BY 
+                        cs.account_id, cs.day_of_week
+                    ) AS subquery
+                    GROUP BY 
+                    account_id
             `;
             params = [id, accountId];
         } else {
             query = `
-                SELECT cs.day_of_week, JSON_AGG(
+                SELECT 
+                    account_id,
+                    JSON_AGG(
                         JSON_BUILD_OBJECT(
-                          	'id', cs.id,
+                        'day_of_week', day_of_week,
+                        'commute_schedules', commute_schedules
+                        )::json
+                    ) AS schedules
+                    FROM (
+                    SELECT 
+                        cs.account_id,
+                        cs.day_of_week,
+                        JSON_AGG(
+                        JSON_BUILD_OBJECT(
+                            'id', cs.id,
                             'pass', concat(csy.name, ' ', fd.name),
                             'start_time', cs.start_time,
-                          	'end_time', cs.end_time,
-                          	'fare', fd.fare
-                    		)::json
-							) AS passes
-                FROM commute_schedule cs
-                LEFT JOIN fare_details fd
-                ON cs.fare_detail_id = fd.id
-                LEFT JOIN commute_systems csy
-                ON fd.commute_system_id = csy.id
-                WHERE cs.id = $1
-                GROUP BY cs.day_of_week
+                            'end_time', cs.end_time,
+                            'fare', fd.fare
+                        )::json
+                        ) AS commute_schedules
+                    FROM 
+                        commute_schedule cs
+                        LEFT JOIN fare_details fd ON cs.fare_detail_id = fd.id
+                        LEFT JOIN commute_systems csy ON fd.commute_system_id = csy.id
+                    WHERE 
+                        cs.id = $1
+                    GROUP BY 
+                        cs.account_id, cs.day_of_week
+                    ) AS subquery
+                    GROUP BY 
+                    account_id
             `;
             params = [id];
         }
@@ -204,41 +267,26 @@ export const createCommuteSchedule = async (
         const alerts: object[] = [];
 
         // Check for overlapping day of week and start time
-        const { rows } = await client.query(
+        const { rows: scheduleExistsResults } = await client.query(
             `
-                SELECT commute_schedule.id,
-                    commute_systems.id AS commute_system_id,
-                    commute_schedule.account_id AS account_id,
-                    commute_schedule.cron_job_id AS cron_job_id,
-                    commute_schedule.fare_detail_id AS fare_detail_id,
-                    commute_schedule.day_of_week AS day_of_week,
-                    concat(commute_systems.name, ' ', fare_details.name) AS pass,
-                    commute_schedule.start_time AS start_time,
-                    commute_schedule.end_time AS end_time,
-                    fare_details.duration AS duration,
-                    fare_details.day_start AS day_start,
-                    fare_details.fare,
-                    commute_schedule.date_created,
-                    commute_schedule.date_modified
-                FROM commute_schedule
-                LEFT JOIN fare_details
-                ON commute_schedule.fare_detail_id = fare_details.id
-                LEFT JOIN commute_systems
-                ON fare_details.commute_system_id = commute_systems.id
-                WHERE commute_schedule.account_id = $1
-                AND commute_schedule.day_of_week = $2
+                SELECT 
+                    cs.id
+                    FROM commute_schedule cs
+                    WHERE cs.account_id = $1
+                AND cs.day_of_week = $2
                 AND (
                 -- New schedule starts within an existing schedule's time slot
-                (commute_schedule.start_time <= $3 AND $3 < commute_schedule.end_time)
+                (cs.start_time <= $3 AND $3 < cs.end_time)
                 OR
                 -- Existing schedule starts within new schedule's time slot
-                (commute_schedule.end_time < $4 AND commute_schedule.start_time >= $3)
+                (cs.end_time < $4 AND cs.start_time >= $4)
                 )
+                GROUP BY cs.id
             `,
             [accountId, dayOfWeek, startTime, endTime],
         );
 
-        if (rows.length > 0) {
+        if (scheduleExistsResults.length > 0) {
             response
                 .status(400)
                 .send(
@@ -250,15 +298,8 @@ export const createCommuteSchedule = async (
         const { rows: fareAmountResults } = await client.query(
             `
                 SELECT fare_details.id,
-                    fare_details.commute_system_id AS commute_system_id,
-                    commute_systems.name AS system_name,
-                    fare_details.name AS fare_type,
                     fare,
-                    duration,
-                    day_start,
-                    alternate_fare_detail_id,
-                    fare_details.date_created,
-                    fare_details.date_modified
+                    alternate_fare_detail_id
                 FROM fare_details
                 LEFT JOIN commute_systems
                 ON fare_details.commute_system_id = commute_systems.id
@@ -273,15 +314,8 @@ export const createCommuteSchedule = async (
             const { rows: fareDetailResults } = await client.query(
                 `
                     SELECT fare_details.id,
-                        fare_details.commute_system_id AS commute_system_id,
-                        commute_systems.name AS system_name,
-                        fare_details.name AS fare_type,
                         fare,
-                        duration,
-                        day_start,
-                        alternate_fare_detail_id,
-                        fare_details.date_created,
-                        fare_details.date_modified
+                        alternate_fare_detail_id
                     FROM fare_details
                     LEFT JOIN commute_systems
                     ON fare_details.commute_system_id = commute_systems.id
@@ -323,15 +357,8 @@ export const createCommuteSchedule = async (
                 const { rows: alternateFareDetail } = await client.query(
                     `
                         SELECT fare_details.id,
-                            fare_details.commute_system_id AS commute_system_id,
-                            commute_systems.name AS system_name,
-                            fare_details.name AS fare_type,
                             fare,
-                            duration,
-                            day_start,
-                            alternate_fare_detail_id,
-                            fare_details.date_created,
-                            fare_details.date_modified
+                            alternate_fare_detail_id
                         FROM fare_details
                         LEFT JOIN commute_systems
                         ON fare_details.commute_system_id = commute_systems.id
