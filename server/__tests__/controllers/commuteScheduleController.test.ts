@@ -335,15 +335,6 @@ describe('POST /api/expenses/commute/schedule', () => {
     });
 
     it('should respond with a 400 error when schedule overlaps', async () => {
-        const newSchedule = {
-            commute_schedule_id: 1,
-            account_id: 1,
-            day_of_week: 1,
-            fare_detail_id: 1,
-            start_time: '08:00:00',
-            duration: 60,
-        };
-
         // Arrange
         mockModule([[{ id: 1 }]]);
 
@@ -351,7 +342,13 @@ describe('POST /api/expenses/commute/schedule', () => {
             '../../src/controllers/commuteScheduleController.js'
         );
 
-        mockRequest.body = newSchedule;
+        mockRequest.body = {
+            accountId: 1,
+            dayOfWeek: 1,
+            fareDetailId: 1,
+            startTime: '08:00:00',
+            endTime: '10:00:00',
+        };
 
         // Act
         await createCommuteSchedule(mockRequest as Request, mockResponse);
