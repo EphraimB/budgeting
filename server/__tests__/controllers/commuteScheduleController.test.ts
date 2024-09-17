@@ -330,7 +330,7 @@ describe('POST /api/expenses/commute/schedule', () => {
         };
 
         // Assert
-        //expect(mockResponse.status).toHaveBeenCalledWith(201);
+        expect(mockResponse.status).toHaveBeenCalledWith(201);
         expect(mockResponse.json).toHaveBeenCalledWith(responseObj);
     });
 
