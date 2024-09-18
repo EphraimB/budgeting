@@ -1,5 +1,4 @@
 import { type Request } from 'express';
-import { type PayrollDate } from '../../src/types/types.js';
 import {
     jest,
     beforeEach,
@@ -13,7 +12,6 @@ import { mockModule } from '../__mocks__/mockModule.js';
 // Mock request and response
 let mockRequest: any;
 let mockResponse: any;
-let mockNext: any;
 
 jest.mock('../../src/config/winston', () => ({
     logger: {
@@ -29,7 +27,6 @@ beforeEach(() => {
         json: jest.fn(),
         send: jest.fn(),
     };
-    mockNext = jest.fn();
 });
 
 afterEach(() => {
@@ -157,7 +154,7 @@ describe('GET /api/payroll/dates/:id', () => {
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(200);
         expect(mockResponse.json).toHaveBeenCalledWith(
-            payrollDates.filter((payrollDate) => payrollDate.id === 1),
+            payrollDates.filter((payrollDate) => payrollDate.id === 1)[0],
         );
     });
 
@@ -212,7 +209,7 @@ describe('GET /api/payroll/dates/:id', () => {
         expect(mockResponse.json).toHaveBeenCalledWith(
             payrollDates
                 .filter((payrollDate) => payrollDate.jobId === 1)
-                .filter((payrollDate) => payrollDate.id === 1),
+                .filter((payrollDate) => payrollDate.id === 1)[0],
         );
     });
 
@@ -248,6 +245,7 @@ describe('GET /api/payroll/dates/:id', () => {
         );
 
         mockRequest.params = { id: 3 };
+        mockRequest.query = { jobId: null };
 
         // Act
         await getPayrollDatesById(mockRequest as Request, mockResponse);
@@ -275,16 +273,17 @@ describe('POST /api/payroll/dates/toggle', () => {
             '../../src/controllers/payrollDatesController.js'
         );
 
-        mockRequest.body = payrollDates.filter(
-            (payrollDate) => payrollDate.id === 1,
-        );
+        mockRequest.body = {
+            jobId: 1,
+            payrollDay: 15,
+        };
 
         await togglePayrollDate(mockRequest as Request, mockResponse);
 
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(201);
         expect(mockResponse.json).toHaveBeenCalledWith(
-            'Payroll date for 15 toggled off',
+            'Payroll day for 15 toggled off',
         );
     });
 
@@ -296,16 +295,16 @@ describe('POST /api/payroll/dates/toggle', () => {
             '../../src/controllers/payrollDatesController.js'
         );
 
-        mockRequest.body = payrollDates.filter(
-            (payrollDate) => payrollDate.id === 1,
-        );
-
+        mockRequest.body = {
+            jobId: 1,
+            payrollDay: 15,
+        };
         await togglePayrollDate(mockRequest as Request, mockResponse);
 
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(201);
         expect(mockResponse.json).toHaveBeenCalledWith(
-            'Payroll date for 15 toggled on',
+            'Payroll day for 15 toggled on',
         );
     });
 
