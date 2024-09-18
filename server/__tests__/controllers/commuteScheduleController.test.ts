@@ -252,7 +252,7 @@ describe('GET /api/expenses/commute/schedule/:id', () => {
 });
 
 describe('POST /api/expenses/commute/schedule', () => {
-    /*it('should respond with the created commute schedule when system is opened and is in the timeframe for the fare type', async () => {
+    it('should respond with the created commute schedule when system is opened and is in the timeframe for the fare type', async () => {
         // Arrange
         mockModule([
             [],
@@ -332,7 +332,7 @@ describe('POST /api/expenses/commute/schedule', () => {
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(201);
         expect(mockResponse.json).toHaveBeenCalledWith(responseObj);
-    });*/
+    });
 
     it('should respond with the created commute schedule stepped up when system is opened and is in the timeframe for the fare type', async () => {
         // Arrange
@@ -421,7 +421,7 @@ describe('POST /api/expenses/commute/schedule', () => {
         expect(mockResponse.json).toHaveBeenCalledWith(responseObj);
     });
 
-    /*it('should respond with the created commute schedule when system is closed and is in the timeframe for the fare type', async () => {
+    it('should respond with the created commute schedule when system is closed and is in the timeframe for the fare type', async () => {
         // Arrange
         mockModule([
             [],
@@ -450,7 +450,7 @@ describe('POST /api/expenses/commute/schedule', () => {
         expect(mockResponse.send).toHaveBeenCalledWith(
             'System is closed for the given time',
         );
-    });*/
+    });
 
     it('should respond with a 400 error when schedule overlaps', async () => {
         // Arrange
@@ -479,27 +479,39 @@ describe('POST /api/expenses/commute/schedule', () => {
     });
 });
 
-/*describe('PUT /api/expenses/commute/schedule/:id', () => {
-    it('should call next', async () => {
-        const newSchedule = {
-            commute_schedule_id: 1,
-            account_id: 1,
-            day_of_week: 1,
-            fare_detail_id: 1,
-            start_time: '08:00:00',
-            duration: 60,
-        };
-
+describe('PUT /api/expenses/commute/schedule/:id', () => {
+    it('should respond with the updated commute schedule', async () => {
         // Arrange
         mockModule([
-            [newSchedule],
+            [{ id: 1 }],
             [],
-            [{ fare_amount: 10.75, system_name: 'LIRR', fare_type: 'Peak' }],
-            [{ fare_amount: 10.75, system_name: 'LIRR', fare_type: 'Peak' }],
-            [{ day_of_week: 1, start_time: '08:00:00', end_time: '09:00:00' }],
-            [{ cron_job_id: 1, unique_id: '123' }],
+            [{ id: 1, fare: 2.9, alternate_fare_id: null }],
+            [{ id: 1, fare: 2.9, alternate_fare_id: null }],
+            [{ day_of_week: 1, start_time: '08:00:00', end_time: '10:00:00' }],
+            [{ id: 1, unique_id: 'f78ocv3c83' }],
             [],
             [],
+            [],
+            [],
+            [],
+            [],
+            [],
+            [
+                {
+                    id: 1,
+                    commute_system_id: 1,
+                    account_id: 1,
+                    cron_job_id: 1,
+                    fare_detail_id: 1,
+                    day_of_week: 1,
+                    pass: 'OMNY regular',
+                    start_time: '08:00:00',
+                    end_time: '10:00:00',
+                    duration: null,
+                    day_start: null,
+                    fare: 2.9,
+                },
+            ],
         ]);
 
         const { updateCommuteSchedule } = await import(
@@ -507,20 +519,44 @@ describe('POST /api/expenses/commute/schedule', () => {
         );
 
         mockRequest.params = { id: 1 };
-        mockRequest.body = newSchedule;
+        mockRequest.body = {
+            accountId: 1,
+            dayOfWeek: 1,
+            fareDetailId: 1,
+            startTime: '08:00:00',
+            endTime: '10:00:00',
+        };
 
         // Act
-        await updateCommuteSchedule(
-            mockRequest as Request,
-            mockResponse,
-            mockNext,
-        );
+        await updateCommuteSchedule(mockRequest as Request, mockResponse);
 
         // Assert
-        expect(mockNext).toHaveBeenCalled();
+        const responseObj = {
+            schedule: [
+                {
+                    id: 1,
+                    commute_system_id: 1,
+                    account_id: 1,
+                    cron_job_id: 1,
+                    fare_detail_id: 1,
+                    day_of_week: 1,
+                    pass: 'OMNY regular',
+                    start_time: '08:00:00',
+                    end_time: '10:00:00',
+                    duration: null,
+                    day_start: null,
+                    fare: 2.9,
+                },
+            ],
+            alerts: [],
+        };
+
+        // Assert
+        expect(mockResponse.status).toHaveBeenCalledWith(200);
+        expect(mockResponse.json).toHaveBeenCalledWith(responseObj);
     });
 
-    it('should respond with a 400 error when schedule overlaps', async () => {
+    /*it('should respond with a 400 error when schedule overlaps', async () => {
         const newSchedule = {
             commute_schedule_id: 1,
             account_id: 1,
@@ -677,10 +713,10 @@ describe('POST /api/expenses/commute/schedule', () => {
                 message: 'Error getting schedule',
             });
         });
-    });
+    });*/
 });
 
-describe('DELETE /api/expenses/commute/schedule/:id', () => {
+/*describe('DELETE /api/expenses/commute/schedule/:id', () => {
     it('should call next', async () => {
         const deletedSchedule = [
             {

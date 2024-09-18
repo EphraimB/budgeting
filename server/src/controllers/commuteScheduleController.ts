@@ -1,6 +1,5 @@
 import { type Request, type Response } from 'express';
 import { handleError, toCamelCase } from '../utils/helperFunctions.js';
-import { FareDetails } from '../types/types.js';
 import { logger } from '../config/winston.js';
 import determineCronValues from '../crontab/determineCronValues.js';
 import dayjs from 'dayjs';
@@ -418,19 +417,19 @@ export const createCommuteSchedule = async (
         await client.query(`
             SELECT cron.schedule('${uniqueId}', '${cronDate}',
             $$INSERT INTO commute_history (account_id, commute_system, fare_type, fare, timestamp, is_timed_pass) VALUES (${accountId}, '${
-                fareDetail[0].systemName
-            }', '${fareDetail[0].fareType}', ${-fareDetail[0]
+                fareDetail[0].system_name
+            }', '${fareDetail[0].fare_type}', ${-fareDetail[0]
                 .fare}, 'now()', false)$$)`);
 
         await client.query(`
             SELECT cron.schedule('${uniqueId}', '${cronDate}',
             $$INSERT INTO transaction_history (account_id, amount, tax_rate, title, description) VALUES (${accountId}, ${-fareDetail[0]
                 .fare}, ${taxRate}, '${
-                fareDetail[0].systemName + ' ' + fareDetail[0].fareType
+                fareDetail[0].system_name + ' ' + fareDetail[0].fare_type
             }', '${
-                fareDetail[0].systemName +
+                fareDetail[0].system_name +
                 ' ' +
-                fareDetail[0].fareType +
+                fareDetail[0].fare_type +
                 ' pass'
             }')$$)`);
 
@@ -513,7 +512,7 @@ export const updateCommuteSchedule = async (
     const { id } = request.params;
     const { accountId, dayOfWeek, fareDetailId, startTime, endTime } =
         request.body;
-    let fareDetail: FareDetails[] = [];
+    let fareDetail = [];
 
     const client = await pool.connect(); // Get a client from the pool
 
@@ -524,26 +523,9 @@ export const updateCommuteSchedule = async (
 
         const { rows } = await client.query(
             `
-                SELECT commute_schedule.id,
-                    commute_systems.id AS commute_system_id,
-                    commute_schedule.account_id AS account_id,
-                    commute_schedule.cron_job_id AS cron_job_id,
-                    commute_schedule.fare_detail_id AS fare_detail_id,
-                    commute_schedule.day_of_week AS day_of_week,
-                    concat(commute_systems.name, ' ', fare_details.name) AS pass,
-                    commute_schedule.start_time AS start_time,
-                    commute_schedule.end_time AS end_time,
-                    fare_details.duration AS duration,
-                    fare_details.day_start AS day_start,
-                    fare_details.fare,
-                    commute_schedule.date_created,
-                    commute_schedule.date_modified
+                SELECT id
                 FROM commute_schedule
-                LEFT JOIN fare_details
-                ON commute_schedule.fare_detail_id = fare_details.id
-                LEFT JOIN commute_systems
-                ON fare_details.commute_system_id = commute_systems.id
-                WHERE commute_schedule.id = $1
+                WHERE id = $1
             `,
             [id],
         );
@@ -556,35 +538,19 @@ export const updateCommuteSchedule = async (
         // Check for overlapping day_of_week and start_time
         const { rows: existingSchedule } = await client.query(
             `
-                SELECT commute_schedule.id,
-                    commute_systems.id AS commute_system_id,
-                    commute_schedule.account_id AS account_id,
-                    commute_schedule.cron_job_id AS cron_job_id,
-                    commute_schedule.fare_detail_id AS fare_detail_id,
-                    commute_schedule.day_of_week AS day_of_week,
-                    concat(commute_systems.name, ' ', fare_details.name) AS pass,
-                    commute_schedule.start_time AS start_time,
-                    commute_schedule.end_time AS end_time,
-                    fare_details.duration AS duration,
-                    fare_details.day_start AS day_start,
-                    fare_details.fare,
-                    commute_schedule.date_created,
-                    commute_schedule.date_modified
-                FROM commute_schedule
-                LEFT JOIN fare_details
-                ON commute_schedule.fare_detail_id = fare_details.id
-                LEFT JOIN commute_systems
-                ON fare_details.commute_system_id = commute_systems.id
-                WHERE commute_schedule.account_id = $1
-                AND commute_schedule.day_of_week = $2
+                SELECT 
+                    cs.id
+                    FROM commute_schedule cs
+                    WHERE cs.account_id = $1
+                AND cs.day_of_week = $2
                 AND (
                 -- New schedule starts within an existing schedule's time slot
-                (commute_schedule.start_time <= $3 AND $3 < commute_schedule.end_time)
+                (cs.start_time <= $3 AND $3 < cs.end_time)
                 OR
                 -- Existing schedule starts within new schedule's time slot
-                (commute_schedule.end_time < $4 AND commute_schedule.start_time >= $3)
+                (cs.end_time < $4 AND cs.start_time >= $4)
                 )
-                AND commute_schedule.commute_schedule_id <> $5
+                GROUP BY cs.id
             `,
             [accountId, dayOfWeek, startTime, endTime, id],
         );
@@ -600,26 +566,13 @@ export const updateCommuteSchedule = async (
 
         const { rows: oldFareResults } = await client.query(
             `
-                SELECT commute_schedule.id,
-                    commute_systems.id AS commute_system_id,
-                    commute_schedule.account_id AS account_id,
-                    commute_schedule.cron_job_id AS cron_job_id,
-                    commute_schedule.fare_detail_id AS fare_detail_id,
-                    commute_schedule.day_of_week AS day_of_week,
-                    concat(commute_systems.name, ' ', fare_details.name) AS pass,
-                    commute_schedule.start_time AS start_time,
-                    commute_schedule.end_time AS end_time,
-                    fare_details.duration AS duration,
-                    fare_details.day_start AS day_start,
-                    fare_details.fare,
-                    commute_schedule.date_created,
-                    commute_schedule.date_modified
-                FROM commute_schedule
-                LEFT JOIN fare_details
-                ON commute_schedule.fare_detail_id = fare_details.id
+                SELECT fare_details.id,
+                    fare,
+                    alternate_fare_detail_id
+                FROM fare_details
                 LEFT JOIN commute_systems
                 ON fare_details.commute_system_id = commute_systems.id
-                WHERE commute_schedule.id = $1
+                WHERE fare_details.id = $1
             `,
             [fareDetailId],
         );
@@ -629,26 +582,13 @@ export const updateCommuteSchedule = async (
         while (true) {
             const { rows: fareDetailResults } = await client.query(
                 `
-                    SELECT commute_schedule.id,
-                        commute_systems.id AS commute_system_id,
-                        commute_schedule.account_id AS account_id,
-                        commute_schedule.cron_job_id AS cron_job_id,
-                        commute_schedule.fare_detail_id AS fare_detail_id,
-                        commute_schedule.day_of_week AS day_of_week,
-                        concat(commute_systems.name, ' ', fare_details.name) AS pass,
-                        commute_schedule.start_time AS start_time,
-                        commute_schedule.end_time AS end_time,
-                        fare_details.duration AS duration,
-                        fare_details.day_start AS day_start,
-                        fare_details.fare,
-                        commute_schedule.date_created,
-                        commute_schedule.date_modified
-                    FROM commute_schedule
-                    LEFT JOIN fare_details
-                    ON commute_schedule.fare_detail_id = fare_details.id
+                    SELECT fare_details.id,
+                        fare,
+                        alternate_fare_detail_id
+                    FROM fare_details
                     LEFT JOIN commute_systems
                     ON fare_details.commute_system_id = commute_systems.id
-                    WHERE commute_schedule.id = $1
+                    WHERE fare_details.id = $1
                 `,
                 [currentFareDetailId],
             );
@@ -682,31 +622,18 @@ export const updateCommuteSchedule = async (
 
             if (timeslotMatched) {
                 break; // exit the while loop since we found a matching timeslot
-            } else if (fareDetail[0].alternateFareDetailId) {
+            } else if (fareDetail[0].alternate_fare_detail_id) {
                 const { rows: alternateFareDetail } = await client.query(
                     `
-                        SELECT commute_schedule.id,
-                            commute_systems.id AS commute_system_id,
-                            commute_schedule.account_id AS account_id,
-                            commute_schedule.cron_job_id AS cron_job_id,
-                            commute_schedule.fare_detail_id AS fare_detail_id,
-                            commute_schedule.day_of_week AS day_of_week,
-                            concat(commute_systems.name, ' ', fare_details.name) AS pass,
-                            commute_schedule.start_time AS start_time,
-                            commute_schedule.end_time AS end_time,
-                            fare_details.duration AS duration,
-                            fare_details.day_start AS day_start,
-                            fare_details.fare,
-                            commute_schedule.date_created,
-                            commute_schedule.date_modified
-                        FROM commute_schedule
-                        LEFT JOIN fare_details
-                        ON commute_schedule.fare_detail_id = fare_details.id
+                        SELECT fare_details.id,
+                            fare,
+                            alternate_fare_detail_id
+                        FROM fare_details
                         LEFT JOIN commute_systems
                         ON fare_details.commute_system_id = commute_systems.id
-                        WHERE commute_schedule.id = $1
+                        WHERE fare_details.id = $1
                     `,
-                    [fareDetail[0].alternateFareDetailId],
+                    [fareDetail[0].alternate_fare_detail_id],
                 );
                 const alternateFare = alternateFareDetail[0].fare;
 
@@ -717,7 +644,7 @@ export const updateCommuteSchedule = async (
                 });
 
                 oldFare = alternateFare;
-                currentFareDetailId = fareDetail[0].alternateFareDetailId; // use the alternate fare ID for the next loop iteration
+                currentFareDetailId = fareDetail[0].alternate_fare_detail_id; // use the alternate fare ID for the next loop iteration
             } else {
                 systemClosed = true; // no alternate fare ID and no timeslot matched, so system is closed
                 break;
@@ -746,7 +673,7 @@ export const updateCommuteSchedule = async (
 
         const { rows: uniqueIdResults } = await client.query(
             `
-                SELECT *
+                SELECT id, unique_id
                     FROM cron_jobs
                     WHERE id = $1
             `,
@@ -764,19 +691,19 @@ export const updateCommuteSchedule = async (
         await client.query(`
             SELECT cron.schedule('${uniqueId}', '${cronDate}',
             $$INSERT INTO commute_history (account_id, commute_system, fare_type, fare, timestamp, is_timed_pass) VALUES (${accountId}, '${
-                fareDetail[0].systemName
-            }', '${fareDetail[0].fareType}' '${-fareDetail[0]
+                fareDetail[0].system_name
+            }', '${fareDetail[0].fare_type}' '${-fareDetail[0]
                 .fare}', 'now()', false)$$)`);
 
         await client.query(`
             SELECT cron.schedule('${uniqueId}', '${cronDate}',
             $$INSERT INTO transaction_history (account_id, amount, tax_rate, title, description) VALUES (${accountId}, ${-fareDetail[0]
                 .fare}, ${taxRate}, '${
-                fareDetail[0].systemName + ' ' + fareDetail[0].fareType
+                fareDetail[0].system_name + ' ' + fareDetail[0].fare_type
             }', '${
-                fareDetail[0].systemName +
+                fareDetail[0].system_name +
                 ' ' +
-                fareDetail[0].fareType +
+                fareDetail[0].fare_type +
                 ' pass'
             }')$$)`);
 
@@ -786,7 +713,6 @@ export const updateCommuteSchedule = async (
                 SET unique_id = $1,
                 cron_expression = $2
                 WHERE id = $3
-                RETURNING *
             `,
             [uniqueId, cronDate, cronId],
         );
@@ -800,7 +726,6 @@ export const updateCommuteSchedule = async (
                 start_time = $4,
                 end_time = $5
                 WHERE id = $6
-                RETURNING *
             `,
             [accountId, dayOfWeek, currentFareDetailId, startTime, endTime, id],
         );
