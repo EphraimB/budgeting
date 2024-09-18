@@ -116,12 +116,12 @@ export const getPayrolls = async (
                                 name,
                                 json_agg(
                                         json_build_object(
-                                          'start_date', start_date,
-                                          'end_date', end_date,
-                                         	'work_days', payrolls_total.work_days,
-                                          'gross_pay', payrolls_total.gross_pay,
-                                          'net_pay', payrolls_total.net_pay,
-                                          'hours_worked', payrolls_total.hours_worked
+                                          'startDate', start_date,
+                                          'endDate', end_date,
+                                          'workDays', payrolls_total.work_days,
+                                          'grossPay', payrolls_total.gross_pay,
+                                          'netPay', payrolls_total.net_pay,
+                                          'hoursWorked', payrolls_total.hours_worked
                                         )
                                   ORDER BY start_date
                                 ) AS payrolls
@@ -133,7 +133,7 @@ export const getPayrolls = async (
             [],
         );
 
-        const retreivedRows = toCamelCase(rows); // Convert to camelCase
+        const retreivedRows = rows.map((row) => toCamelCase(row)); // Convert to camelCase
 
         response.status(200).json(retreivedRows);
     } catch (error) {
@@ -253,12 +253,12 @@ export const getPayrollsByJobId = async (
                                     name,
                                     json_agg(
                                             json_build_object(
-                                            'start_date', start_date,
-                                            'end_date', end_date,
-                                                'work_days', payrolls_total.work_days,
-                                            'gross_pay', payrolls_total.gross_pay,
-                                            'net_pay', payrolls_total.net_pay,
-                                            'hours_worked', payrolls_total.hours_worked
+                                                'startDate', start_date,
+                                                'endDate', end_date,
+                                                'workDays', payrolls_total.work_days,
+                                                'grossPay', payrolls_total.gross_pay,
+                                                'netPay', payrolls_total.net_pay,
+                                                'hoursWorked', payrolls_total.hours_worked
                                             )
                                     ORDER BY start_date
                                     ) AS payrolls
@@ -275,9 +275,9 @@ export const getPayrollsByJobId = async (
             return;
         }
 
-        const retreivedRow = toCamelCase(rows); // Convert to camelCase
+        const retreivedRow = toCamelCase(rows[0]); // Convert to camelCase
 
-        response.status(200).json(retreivedRow[0]);
+        response.status(200).json(retreivedRow);
     } catch (error) {
         logger.error(error); // Log the error on the server side
         handleError(response, `Error getting payrolls for job id of ${id}`);
