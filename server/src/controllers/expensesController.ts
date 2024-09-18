@@ -556,7 +556,7 @@ export const createExpense = async (
         frequencyWeekOfMonth,
         frequencyMonthOfYear,
         subsidized,
-        begin_date,
+        beginDate,
     } = request.body;
 
     const client = await pool.connect(); // Get a client from the pool
@@ -569,7 +569,7 @@ export const createExpense = async (
             frequencyDayOfWeek,
             frequencyWeekOfMonth,
             frequencyMonthOfYear,
-            date: begin_date,
+            date: beginDate,
         };
 
         const cronDate = determineCronValues(jobDetails);
@@ -577,7 +577,7 @@ export const createExpense = async (
         // Get tax rate
         const { rows: result } = await client.query(
             `
-                SELECT tax_rate
+                SELECT rate
                     FROM taxes
                     WHERE id = $1
             `,
@@ -621,14 +621,14 @@ export const createExpense = async (
                 amount,
                 title,
                 description,
-                frequencyType,
-                frequencyTypeVariable,
+                frequencyType || 2,
+                frequencyTypeVariable || 1,
                 frequencyDayOfMonth,
                 frequencyDayOfWeek,
                 frequencyWeekOfMonth,
                 frequencyMonthOfYear,
                 subsidized,
-                begin_date,
+                beginDate,
             ],
         );
 
@@ -724,7 +724,7 @@ export const updateExpense = async (
         // Get tax rate
         const { rows: result } = await client.query(
             `
-                SELECT tax_rate
+                SELECT rate
                     FROM taxes
                     WHERE id = $1
             `,
@@ -773,8 +773,8 @@ export const updateExpense = async (
                 amount,
                 title,
                 description,
-                frequencyType,
-                frequencyTypeVariable,
+                frequencyType || 2,
+                frequencyTypeVariable || 1,
                 frequencyDayOfMonth,
                 frequencyDayOfWeek,
                 frequencyWeekOfMonth,
