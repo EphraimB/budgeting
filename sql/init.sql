@@ -28,9 +28,7 @@ CREATE TABLE IF NOT EXISTS jobs (
   id SERIAL PRIMARY KEY,
   account_id INTEGER NOT NULL REFERENCES accounts(id) ON DELETE CASCADE,
   name TEXT NOT NULL,
-  hourly_rate NUMERIC(6,2) NOT NULL,
-  vacation_days INTEGER NOT NULL DEFAULT 0,
-  sick_days INTEGER NOT NULL DEFAULT 0
+  hourly_rate NUMERIC(6,2) NOT NULL
 );
 
 -- Create a work_schedule table in postgres

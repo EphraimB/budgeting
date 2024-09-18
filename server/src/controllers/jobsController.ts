@@ -29,14 +29,12 @@ export const getJobs = async (
                     j.account_id AS "account_id",
                     j.name AS "job_name",
                     j.hourly_rate AS "hourly_rate",
-                    j.vacation_days AS "vacation_days",
-                    j.sick_days AS "sick_days",
                     COALESCE(SUM(EXTRACT(EPOCH FROM (js.end_time - js.start_time)) / 3600), 0) AS total_hours_per_week,
                     COALESCE(json_agg(
                         json_build_object(
-                            'day_of_week', js.day_of_week,
-                            'start_time', js.start_time,
-                            'end_time', js.end_time
+                            'dayOfWeek', js.day_of_week,
+                            'startTime', js.start_time,
+                            'endTime', js.end_time
                         ) ORDER BY js.day_of_week
                     ) FILTER (WHERE js.job_id IS NOT NULL), '[]') AS job_schedule
                 FROM
@@ -56,14 +54,12 @@ export const getJobs = async (
                     j.account_id AS "account_id",
                     j.name AS "job_name",
                     j.hourly_rate AS "hourly_rate",
-                    j.vacation_days AS "vacation_days",
-                    j.sick_days AS "sick_days",
                     COALESCE(SUM(EXTRACT(EPOCH FROM (js.end_time - js.start_time)) / 3600), 0) AS total_hours_per_week,
                     COALESCE(json_agg(
                         json_build_object(
-                            'day_of_week', js.day_of_week,
-                            'start_time', js.start_time,
-                            'end_time', js.end_time
+                            'dayOfWeek', js.day_of_week,
+                            'startTime', js.start_time,
+                            'endTime', js.end_time
                         ) ORDER BY js.day_of_week
                     ) FILTER (WHERE js.job_id IS NOT NULL), '[]') AS job_schedule
                 FROM
@@ -78,7 +74,7 @@ export const getJobs = async (
 
         const { rows } = await client.query(query, params);
 
-        const retreivedRows = toCamelCase(rows); // Convert to camelCase
+        const retreivedRows = rows.map((row) => toCamelCase(row)); // Convert to camelCase
 
         response.status(200).json(retreivedRows);
     } catch (error) {
@@ -115,14 +111,12 @@ export const getJobsById = async (
                     j.account_id AS "account_id",
                     j.name AS "job_name",
                     j.hourly_rate AS "hourly_rate",
-                    j.vacation_days AS "vacation_days",
-                    j.sick_days AS "sick_days",
                     COALESCE(SUM(EXTRACT(EPOCH FROM (js.end_time - js.start_time)) / 3600), 0) AS total_hours_per_week,
                     COALESCE(json_agg(
                         json_build_object(
-                            'day_of_week', js.day_of_week,
-                            'start_time', js.start_time,
-                            'end_time', js.end_time
+                            'dayOfWeek', js.day_of_week,
+                            'startTime', js.start_time,
+                            'endTime', js.end_time
                         ) ORDER BY js.day_of_week
                     ) FILTER (WHERE js.job_id IS NOT NULL), '[]') AS job_schedule
                 FROM
@@ -143,14 +137,12 @@ export const getJobsById = async (
                     j.account_id AS "account_id",
                     j.name AS "job_name",
                     j.hourly_rate AS "hourly_rate",
-                    j.vacation_days AS "vacation_days",
-                    j.sick_days AS "sick_days",
                     COALESCE(SUM(EXTRACT(EPOCH FROM (js.end_time - js.start_time)) / 3600), 0) AS total_hours_per_week,
                     COALESCE(json_agg(
                         json_build_object(
-                            'day_of_week', js.day_of_week,
-                            'start_time', js.start_time,
-                            'end_time', js.end_time
+                            'dayOfWeek', js.day_of_week,
+                            'startTime', js.start_time,
+                            'endTime', js.end_time
                         ) ORDER BY js.day_of_week
                     ) FILTER (WHERE js.job_id IS NOT NULL), '[]') AS job_schedule
                 FROM
@@ -172,9 +164,9 @@ export const getJobsById = async (
             return;
         }
 
-        const retreivedRow = toCamelCase(rows); // Convert to camelCase
+        const retreivedRow = toCamelCase(rows[0]); // Convert to camelCase
 
-        response.status(200).json(retreivedRow[0]);
+        response.status(200).json(retreivedRow);
     } catch (error) {
         logger.error(error); // Log the error on the server side
         handleError(response, `Error getting jobs for id of ${id}`);
@@ -196,14 +188,7 @@ export const createJob = async (
     const client = await pool.connect(); // Get a client from the pool
 
     try {
-        const {
-            accountId,
-            name,
-            hourlyRate,
-            vacationDays,
-            sickDays,
-            jobSchedule,
-        } = request.body;
+        const { accountId, name, hourlyRate, jobSchedule } = request.body;
 
         await client.query('BEGIN;');
 
@@ -211,11 +196,11 @@ export const createJob = async (
         const { rows } = await client.query(
             `
                 INSERT INTO jobs
-                (account_id, name, hourly_rate, vacation_days, sick_days)
-                VALUES ($1, $2, $3, $4, $5)
+                (account_id, name, hourly_rate)
+                VALUES ($1, $2, $3)
                 RETURNING *
             `,
-            [accountId, name, hourlyRate, vacationDays, sickDays],
+            [accountId, name, hourlyRate],
         );
         const jobId = rows[0].id;
 
@@ -242,8 +227,6 @@ export const createJob = async (
             accountId,
             name,
             hourlyRate,
-            vacationDays,
-            sickDays,
             job_schedule: jobSchedule.map((schedule: JobSchedule) => ({
                 ...schedule,
             })),
@@ -280,14 +263,7 @@ export const updateJob = async (
 
     try {
         const { id } = request.params;
-        const {
-            accountId,
-            name,
-            hourlyRate,
-            vacationDays,
-            sickDays,
-            jobSchedule,
-        } = request.body;
+        const { accountId, name, hourlyRate, jobSchedule } = request.body;
 
         const { rows } = await client.query(
             `
@@ -310,13 +286,11 @@ export const updateJob = async (
                 UPDATE jobs
                     SET account_id = $1,
                     name = $2,
-                    hourly_rate = $3,
-                    vacation_days = $4,
-                    sick_days = $5
-                    WHERE id = $6
+                    hourly_rate = $3
+                    WHERE id = $4
                     RETURNING *
             `,
-            [accountId, name, hourlyRate, vacationDays, sickDays, id],
+            [accountId, name, hourlyRate, id],
         );
 
         // Fetch existing schedules for the job

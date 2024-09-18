@@ -46,12 +46,6 @@ router.post(
         body('hourlyRate')
             .isFloat({ min: 0 })
             .withMessage('Hourly rate must be a number'),
-        body('vacationDays')
-            .isInt({ min: 0 })
-            .withMessage('Vacation days must be a number'),
-        body('sickDays')
-            .isFloat({ min: 0 })
-            .withMessage('Sick days must be a number'),
         body('jobSchedule')
             .isArray()
             .withMessage('Work schedule must be an array'),
@@ -85,12 +79,6 @@ router.put(
         body('hourlyRate')
             .isFloat({ min: 0 })
             .withMessage('Hourly rate must be a number'),
-        body('vacationDays')
-            .isInt({ min: 0 })
-            .withMessage('Vacation days must be a number'),
-        body('sickDays')
-            .isFloat({ min: 0 })
-            .withMessage('Sick days must be a number'),
         body('jobSchedule')
             .isArray()
             .withMessage('Work schedule must be an array'),
