@@ -791,26 +791,9 @@ export const deleteCommuteSchedule = async (
     try {
         const { rows } = await client.query(
             `
-                SELECT commute_schedule.id,
-                    commute_systems.id AS commute_system_id,
-                    commute_schedule.account_id AS account_id,
-                    commute_schedule.cron_job_id AS cron_job_id,
-                    commute_schedule.fare_detail_id AS fare_detail_id,
-                    commute_schedule.day_of_week AS day_of_week,
-                    concat(commute_systems.name, ' ', fare_details.name) AS pass,
-                    commute_schedule.start_time AS start_time,
-                    commute_schedule.end_time AS end_time,
-                    fare_details.duration AS duration,
-                    fare_details.day_start AS day_start,
-                    fare_details.fare,
-                    commute_schedule.date_created,
-                    commute_schedule.date_modified
+                SELECT id, cron_job_id,
                 FROM commute_schedule
-                LEFT JOIN fare_details
-                ON commute_schedule.fare_detail_id = fare_details.id
-                LEFT JOIN commute_systems
-                ON fare_details.commute_system_id = commute_systems.id
-                WHERE commute_schedule.id = $1
+                WHERE id = $1
             `,
             [id],
         );
@@ -834,7 +817,7 @@ export const deleteCommuteSchedule = async (
 
         const { rows: results } = await client.query(
             `
-                SELECT *
+                SELECT id, unique_id
                     FROM cron_jobs
                     WHERE id = $1
             `,

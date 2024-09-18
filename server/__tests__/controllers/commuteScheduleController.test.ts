@@ -607,115 +607,16 @@ describe('PUT /api/expenses/commute/schedule/:id', () => {
         expect(mockResponse.status).toHaveBeenCalledWith(404);
         expect(mockResponse.send).toHaveBeenCalledWith('Schedule not found');
     });
-
-    /*it('should respond with the updated schedule', async () => {
-        const newSchedule = [
-            {
-                commute_schedule_id: 1,
-                commute_system_id: 1,
-                account_id: 1,
-                day_of_week: 1,
-                fare_detail_id: 1,
-                start_time: '08:00:00',
-                end_time: '10:00:00',
-                duration: 60,
-                fare_amount: 10.75,
-                pass: 'LIRR Peak',
-                date_created: '2021-01-01',
-                date_modified: '2021-01-01',
-            },
-        ];
-
-        mockModule([newSchedule]);
-
-        const { updateCommuteScheduleReturnObject } = await import(
-            '../../src/controllers/commuteScheduleController.js'
-        );
-
-        mockRequest = { commute_schedule_id: 1 };
-        mockRequest.alerts = [];
-
-        await updateCommuteScheduleReturnObject(
-            mockRequest as Request,
-            mockResponse,
-        );
-
-        const responseObj = {
-            schedule: [
-                {
-                    id: 1,
-                    commute_system_id: 1,
-                    account_id: 1,
-                    day_of_week: 1,
-                    fare_detail_id: 1,
-                    start_time: '08:00:00',
-                    end_time: '10:00:00',
-                    duration: 60,
-                    fare_amount: 10.75,
-                    pass: 'LIRR Peak',
-                    date_created: '2021-01-01',
-                    date_modified: '2021-01-01',
-                },
-            ],
-            alerts: [],
-        };
-
-        // Assert
-        expect(mockResponse.status).toHaveBeenCalledWith(200);
-        expect(mockResponse.json).toHaveBeenCalledWith(responseObj);
-    });
-
-    it('should handle errors correctly', async () => {
-        // Arrange
-        mockModule([]);
-
-        const { updateCommuteScheduleReturnObject } = await import(
-            '../../src/controllers/commuteScheduleController.js'
-        );
-
-        mockRequest.params = { id: 1 };
-        mockRequest.body = {
-            commute_schedule_id: 1,
-            account_id: 1,
-            day_of_week: 1,
-            fare_detail_id: 1,
-            start_time: '08:00:00',
-            duration: 60,
-        };
-
-        // Act
-        await updateCommuteScheduleReturnObject(
-            mockRequest as Request,
-            mockResponse,
-        ).catch(() => {
-            // Assert
-            expect(mockResponse.status).toHaveBeenCalledWith(400);
-            expect(mockResponse.json).toHaveBeenCalledWith({
-                message: 'Error getting schedule',
-            });
-        });
-    });*/
 });
 
-/*describe('DELETE /api/expenses/commute/schedule/:id', () => {
-    it('should call next', async () => {
-        const deletedSchedule = [
-            {
-                commute_schedule_id: 1,
-                account_id: 1,
-                day_of_week: 1,
-                fare_detail_id: 1,
-                start_time: '08:00:00',
-                duration: 60,
-            },
-        ];
-
+describe('DELETE /api/expenses/commute/schedule/:id', () => {
+    it('should respond with a success message', async () => {
         // Arrange
         mockModule([
-            commuteSchedule.filter((cs) => cs.commute_schedule_id === 1),
+            [{ id: 1, cron_job_id: 1 }],
             [],
-            deletedSchedule,
-            [{ cron_job_id: 1 }],
+            [],
+            [{ id: 1, unique_id: 'g798v89v9v' }],
             [],
             [],
             [],
@@ -727,14 +628,13 @@ describe('PUT /api/expenses/commute/schedule/:id', () => {
 
         mockRequest.params = { id: 1 };
 
-        await deleteCommuteSchedule(
-            mockRequest as Request,
-            mockResponse,
-            mockNext,
-        );
+        await deleteCommuteSchedule(mockRequest as Request, mockResponse);
 
         // Assert
-        expect(mockNext).toHaveBeenCalled();
+        expect(mockResponse.status).toHaveBeenCalledWith(200);
+        expect(mockResponse.send).toHaveBeenCalledWith(
+            'Successfully deleted schedule',
+        );
     });
 
     it('should handle errors correctly', async () => {
@@ -748,17 +648,15 @@ describe('PUT /api/expenses/commute/schedule/:id', () => {
         mockRequest.params = { id: 1 };
 
         // Act
-        await deleteCommuteSchedule(
-            mockRequest as Request,
-            mockResponse,
-            mockNext,
-        ).catch(() => {
-            // Assert
-            expect(mockResponse.status).toHaveBeenCalledWith(400);
-            expect(mockResponse.json).toHaveBeenCalledWith({
-                message: 'Error deleting schedule',
-            });
-        });
+        await deleteCommuteSchedule(mockRequest as Request, mockResponse).catch(
+            () => {
+                // Assert
+                expect(mockResponse.status).toHaveBeenCalledWith(400);
+                expect(mockResponse.json).toHaveBeenCalledWith({
+                    message: 'Error deleting schedule',
+                });
+            },
+        );
     });
 
     it('should respond with a 404 error message when the schedule does not exist', async () => {
@@ -772,33 +670,10 @@ describe('PUT /api/expenses/commute/schedule/:id', () => {
         mockRequest.params = { id: 1 };
 
         // Act
-        await deleteCommuteSchedule(
-            mockRequest as Request,
-            mockResponse,
-            mockNext,
-        );
+        await deleteCommuteSchedule(mockRequest as Request, mockResponse);
 
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(404);
         expect(mockResponse.send).toHaveBeenCalledWith('Schedule not found');
     });
-
-    it('should respond with a success message', async () => {
-        // Arrange
-        const { deleteCommuteScheduleReturnObject } = await import(
-            '../../src/controllers/commuteScheduleController.js'
-        );
-
-        // Act
-        await deleteCommuteScheduleReturnObject(
-            mockRequest as Request,
-            mockResponse,
-        );
-
-        // Assert
-        expect(mockResponse.status).toHaveBeenCalledWith(200);
-        expect(mockResponse.send).toHaveBeenCalledWith(
-            'Successfully deleted schedule',
-        );
-    });
-});*/
+});
