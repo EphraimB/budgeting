@@ -28,18 +28,18 @@ export const getExpenses = async (
                 SELECT id, account_id, tax_id, cron_job_id, amount, title, description, json_agg(
                         json_build_object(
                             'type', frequency_type,
-                            'type_variable', frequency_type_variable,
-                          	'day_of_month', frequency_day_of_month,
-                          	'day_of_week', frequency_day_of_week,
-                          	'week_of_month', frequency_week_of_month,
-                          	'month_of_year', frequency_month_of_year	
+                            'typeVariable', frequency_type_variable,
+                          	'dayOfMonth', frequency_day_of_month,
+                          	'dayOfWeek', frequency_day_of_week,
+                          	'weekOfMonth', frequency_week_of_month,
+                          	'monthOfYear', frequency_month_of_year		
                         )
                     ) AS frequency,
                     subsidized,
                      json_agg(
                         json_build_object(
-                          'begin_date', begin_date,
-                          'end_date', end_date
+                          'beginDate', begin_date,
+                          'endDate', end_date
                           )
                        ) AS dates,
                        CASE 
@@ -128,8 +128,8 @@ export const getExpenses = async (
                     END AS next_date,
                                     json_agg(
                                         json_build_object(
-                                        'date_created', date_created,
-                                        'date_modified', date_modified
+                                        'dateCreated', date_created,
+                                        'dateModified', date_modified
                                         )
                                     ) AS creation_dates
                 FROM expenses
@@ -142,18 +142,18 @@ export const getExpenses = async (
                 SELECT id, account_id, tax_id, cron_job_id, amount, title, description, json_agg(
                         json_build_object(
                             'type', frequency_type,
-                            'type_variable', frequency_type_variable,
-                          	'day_of_month', frequency_day_of_month,
-                          	'day_of_week', frequency_day_of_week,
-                          	'week_of_month', frequency_week_of_month,
-                          	'month_of_year', frequency_month_of_year	
+                            'typeVariable', frequency_type_variable,
+                          	'dayOfMonth', frequency_day_of_month,
+                          	'dayOfWeek', frequency_day_of_week,
+                          	'weekOfMonth', frequency_week_of_month,
+                          	'monthOfYear', frequency_month_of_year	
                         )
                     ) AS frequency,
                     subsidized,
                      json_agg(
                         json_build_object(
-                          'begin_date', begin_date,
-                          'end_date', end_date
+                          'beginDate', begin_date,
+                          'endDate', end_date
                           )
                        ) AS dates,
                        CASE 
@@ -242,8 +242,8 @@ export const getExpenses = async (
                     END AS next_date,
                                     json_agg(
                                         json_build_object(
-                                        'date_created', date_created,
-                                        'date_modified', date_modified
+                                        'dateCreated', date_created,
+                                        'dateModified', date_modified
                                         )
                                     ) AS creation_dates
                 FROM expenses
@@ -254,7 +254,7 @@ export const getExpenses = async (
 
         const { rows } = await client.query(query, params);
 
-        const retreivedRows = toCamelCase(rows); // Convert to camelCase
+        const retreivedRows = rows.map((row) => toCamelCase(row)); // Convert to camelCase
 
         response.status(200).json(retreivedRows);
     } catch (error) {
@@ -289,18 +289,18 @@ export const getExpensesById = async (
                 SELECT id, account_id, tax_id, cron_job_id, amount, title, description, json_agg(
                         json_build_object(
                             'type', frequency_type,
-                            'type_variable', frequency_type_variable,
-                          	'day_of_month', frequency_day_of_month,
-                          	'day_of_week', frequency_day_of_week,
-                          	'week_of_month', frequency_week_of_month,
-                          	'month_of_year', frequency_month_of_year	
+                            'typeVariable', frequency_type_variable,
+                          	'dayOfMonth', frequency_day_of_month,
+                          	'dayOfWeek', frequency_day_of_week,
+                          	'weekOfMonth', frequency_week_of_month,
+                          	'monthOfYear', frequency_month_of_year	
                         )
                     ) AS frequency,
                     subsidized,
                      json_agg(
                         json_build_object(
-                          'begin_date', begin_date,
-                          'end_date', end_date
+                          'beginDate', begin_date,
+                          'endDate', end_date
                           )
                        ) AS dates,
                        CASE 
@@ -389,8 +389,8 @@ export const getExpensesById = async (
                     END AS next_date,
                                     json_agg(
                                         json_build_object(
-                                        'date_created', date_created,
-                                        'date_modified', date_modified
+                                        'dateCreated', date_created,
+                                        'dateModified', date_modified
                                         )
                                     ) AS creation_dates
                 FROM expenses
@@ -403,18 +403,18 @@ export const getExpensesById = async (
                 SELECT id, account_id, tax_id, cron_job_id, amount, title, description, json_agg(
                         json_build_object(
                             'type', frequency_type,
-                            'type_variable', frequency_type_variable,
-                          	'day_of_month', frequency_day_of_month,
-                          	'day_of_week', frequency_day_of_week,
-                          	'week_of_month', frequency_week_of_month,
-                          	'month_of_year', frequency_month_of_year	
+                            'typeVariable', frequency_type_variable,
+                          	'dayOfMonth', frequency_day_of_month,
+                          	'dayOfWeek', frequency_day_of_week,
+                          	'weekOfMonth', frequency_week_of_month,
+                          	'monthOfYear', frequency_month_of_year	
                         )
                     ) AS frequency,
                     subsidized,
                      json_agg(
                         json_build_object(
-                          'begin_date', begin_date,
-                          'end_date', end_date
+                          'beginDate', begin_date,
+                          'endDate', end_date
                           )
                        ) AS dates,
                        CASE 
@@ -503,8 +503,8 @@ export const getExpensesById = async (
                     END AS next_date,
                                     json_agg(
                                         json_build_object(
-                                        'date_created', date_created,
-                                        'date_modified', date_modified
+                                        'dateCreated', date_created,
+                                        'dateModified', date_modified
                                         )
                                     ) AS creation_dates
                     FROM expenses
@@ -521,9 +521,9 @@ export const getExpensesById = async (
             return;
         }
 
-        const retreivedRow = toCamelCase(rows); // Convert to camelCase
+        const retreivedRow = toCamelCase(rows[0]); // Convert to camelCase
 
-        response.status(200).json(retreivedRow[0]);
+        response.status(200).json(retreivedRow);
     } catch (error) {
         logger.error(error); // Log the error on the server side
         handleError(response, `Error getting expenses for id of ${id}`);
