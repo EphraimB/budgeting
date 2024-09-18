@@ -334,6 +334,37 @@ describe('POST /api/expenses/commute/schedule', () => {
         expect(mockResponse.json).toHaveBeenCalledWith(responseObj);
     });
 
+    it('should respond with the created commute schedule when system is closed and is in the timeframe for the fare type', async () => {
+        // Arrange
+        mockModule([
+            [],
+            [{ id: 1, fare: 2.9, alternate_fare_detail_id: null }],
+            [{ id: 1, fare: 2.9, alternate_fare_detail_id: null }],
+            [{ day_of_week: 1, start_time: '08:00:00', end_time: '10:00:00' }],
+        ]);
+
+        const { createCommuteSchedule } = await import(
+            '../../src/controllers/commuteScheduleController.js'
+        );
+
+        mockRequest.body = {
+            accountId: 1,
+            dayOfWeek: 2,
+            fareDetailId: 1,
+            startTime: '08:00:00',
+            endTime: '10:00:00',
+        };
+
+        // Act
+        await createCommuteSchedule(mockRequest as Request, mockResponse);
+
+        // Assert
+        expect(mockResponse.status).toHaveBeenCalledWith(400);
+        expect(mockResponse.send).toHaveBeenCalledWith(
+            'System is closed for the given time',
+        );
+    });
+
     it('should respond with a 400 error when schedule overlaps', async () => {
         // Arrange
         mockModule([[{ id: 1 }]]);
