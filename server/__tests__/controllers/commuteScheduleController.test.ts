@@ -583,7 +583,7 @@ describe('PUT /api/expenses/commute/schedule/:id', () => {
         );
     });
 
-    /*it('should respond with a 404 error message when the schedule does not exist', async () => {
+    it('should respond with a 404 error message when the schedule does not exist', async () => {
         // Arrange
         mockModule([[]]);
 
@@ -593,27 +593,22 @@ describe('PUT /api/expenses/commute/schedule/:id', () => {
 
         mockRequest.params = { id: 1 };
         mockRequest.body = {
-            commute_schedule_id: 1,
-            account_id: 1,
-            day_of_week: 1,
-            commute_ticket_id: 1,
-            start_time: '08:00:00',
-            duration: 60,
+            accountId: 1,
+            dayOfWeek: 1,
+            fareDetailId: 1,
+            startTime: '08:00:00',
+            endTime: '10:00:00',
         };
 
         // Act
-        await updateCommuteSchedule(
-            mockRequest as Request,
-            mockResponse,
-            mockNext,
-        );
+        await updateCommuteSchedule(mockRequest as Request, mockResponse);
 
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(404);
         expect(mockResponse.send).toHaveBeenCalledWith('Schedule not found');
     });
 
-    it('should respond with the updated schedule', async () => {
+    /*it('should respond with the updated schedule', async () => {
         const newSchedule = [
             {
                 commute_schedule_id: 1,
