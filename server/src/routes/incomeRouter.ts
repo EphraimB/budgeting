@@ -51,34 +51,32 @@ router.post(
         body('description')
             .isString()
             .withMessage('Description must be a string'),
-        body('frequencyType')
-            .optional()
+        body('frequency.type')
             .isInt({ min: 0, max: 3 })
             .withMessage('Frequency type must be a number between 0 and 3'),
-        body('frequencyTypeVariable')
-            .optional()
+        body('frequency.typeVariable')
             .isInt({ min: 1 })
             .withMessage('Frequency variable must be a number'),
-        body('frequencyDayOfWeek')
-            .optional()
+        body('frequency.dayOfWeek')
+            .optional({ nullable: true })
             .isInt({ min: 0, max: 6 })
             .withMessage(
                 'Frequency day of week must be a number between 0 and 6',
             ),
-        body('frequencyWeekOfMonth')
-            .optional()
+        body('frequency.weekOfMonth')
+            .optional({ nullable: true })
             .isInt({ min: 0, max: 4 })
             .withMessage(
                 'Frequency week of month must be a number between 0 and 4',
             ),
-        body('frequencyDayOfMonth')
-            .optional()
+        body('frequency.dayOfMonth')
+            .optional({ nullable: true })
             .isInt({ min: 0, max: 30 })
             .withMessage(
                 'Frequency day of month must be a number between 0 and 30',
             ),
-        body('frequencyMonthOfYear')
-            .optional()
+        body('frequency.monthOfYear')
+            .optional({ nullable: true })
             .isInt({ min: 0, max: 11 })
             .withMessage(
                 'Frequency month of year must be a number between 0 and 11',
@@ -111,34 +109,32 @@ router.put(
         body('description')
             .isString()
             .withMessage('Description must be a string'),
-        body('frequencyType')
-            .optional()
+        body('frequency.type')
             .isInt({ min: 0, max: 3 })
             .withMessage('Frequency type must be a number between 0 and 3'),
-        body('frequencyTypeVariable')
-            .optional()
+        body('frequency.typeVariable')
             .isInt({ min: 1 })
             .withMessage('Frequency variable must be a number'),
-        body('frequencyDayOfWeek')
-            .optional()
+        body('frequency.dayOfWeek')
+            .optional({ nullable: true })
             .isInt({ min: 0, max: 6 })
             .withMessage(
                 'Frequency day of week must be a number between 0 and 6',
             ),
-        body('frequencyWeekOfMonth')
-            .optional()
+        body('frequency.weekOfMonth')
+            .optional({ nullable: true })
             .isInt({ min: 0, max: 4 })
             .withMessage(
                 'Frequency week of month must be a number between 0 and 4',
             ),
-        body('frequencyDayOfMonth')
-            .optional()
+        body('frequency.dayOfMonth')
+            .optional({ nullable: true })
             .isInt({ min: 0, max: 30 })
             .withMessage(
                 'Frequency day of month must be a number between 0 and 30',
             ),
-        body('frequencyMonthOfYear')
-            .optional()
+        body('frequency.monthOfYear')
+            .optional({ nullable: true })
             .isInt({ min: 0, max: 11 })
             .withMessage(
                 'Frequency month of year must be a number between 0 and 11',

@@ -28,17 +28,17 @@ export const getIncome = async (
                 SELECT id, account_id, tax_id, cron_job_id, amount, title, description, json_agg(
                         json_build_object(
                             'type', frequency_type,
-                            'type_variable', frequency_type_variable,
-                          	'day_of_month', frequency_day_of_month,
-                          	'day_of_week', frequency_day_of_week,
-                          	'week_of_month', frequency_week_of_month,
-                          	'month_of_year', frequency_month_of_year	
+                            'typeVariable', frequency_type_variable,
+                          	'dayOfMonth', frequency_day_of_month,
+                          	'dayOfWeek', frequency_day_of_week,
+                          	'weekOfMonth', frequency_week_of_month,
+                          	'monthOfYear', frequency_month_of_year
                         )
                     ) AS frequency,
                     json_agg(
                         json_build_object(
-                          'begin_date', begin_date,
-                          'end_date', end_date
+                          'beginDate', begin_date,
+                          'endDate', end_date
                           )
                        ) AS dates,
                        CASE 
@@ -125,12 +125,8 @@ export const getIncome = async (
                         ELSE 
                             NULL
                     END AS next_date,
-                                    json_agg(
-                                        json_build_object(
-                                        'date_created', date_created,
-                                        'date_modified', date_modified
-                                        )
-                                    ) AS creation_dates
+                    date_created,
+                    date_modified
                     FROM income
                     WHERE account_id = $1
                     GROUP BY id
@@ -141,17 +137,17 @@ export const getIncome = async (
                 SELECT id, account_id, tax_id, cron_job_id, amount, title, description, json_agg(
                         json_build_object(
                             'type', frequency_type,
-                            'type_variable', frequency_type_variable,
-                          	'day_of_month', frequency_day_of_month,
-                          	'day_of_week', frequency_day_of_week,
-                          	'week_of_month', frequency_week_of_month,
-                          	'month_of_year', frequency_month_of_year	
+                            'typeVariable', frequency_type_variable,
+                          	'dayOfMonth', frequency_day_of_month,
+                          	'dayOfWeek', frequency_day_of_week,
+                          	'weekOfMonth', frequency_week_of_month,
+                          	'monthOfYear', frequency_month_of_year
                         )
                     ) AS frequency,
                     json_agg(
                         json_build_object(
-                          'begin_date', begin_date,
-                          'end_date', end_date
+                          'beginDate', begin_date,
+                          'endDate', end_date
                           )
                        ) AS dates,
                        CASE 
@@ -238,12 +234,8 @@ export const getIncome = async (
                         ELSE 
                             NULL
                     END AS next_date,
-                                    json_agg(
-                                        json_build_object(
-                                        'date_created', date_created,
-                                        'date_modified', date_modified
-                                        )
-                                    ) AS creation_dates
+                    date_created,
+                    date_modified
                     FROM income
                     GROUP BY id
             `;
@@ -252,7 +244,7 @@ export const getIncome = async (
 
         const { rows } = await client.query(query, params);
 
-        const retreivedRows = toCamelCase(rows); // Convert to camelCase
+        const retreivedRows = rows.map((row) => toCamelCase(row)); // Convert to camelCase
 
         response.status(200).json(retreivedRows);
     } catch (error) {
@@ -287,17 +279,17 @@ export const getIncomeById = async (
                 SELECT id, account_id, tax_id, cron_job_id, amount, title, description, json_agg(
                         json_build_object(
                             'type', frequency_type,
-                            'type_variable', frequency_type_variable,
-                          	'day_of_month', frequency_day_of_month,
-                          	'day_of_week', frequency_day_of_week,
-                          	'week_of_month', frequency_week_of_month,
-                          	'month_of_year', frequency_month_of_year	
+                            'typeVariable', frequency_type_variable,
+                          	'dayOfMonth', frequency_day_of_month,
+                          	'dayOfWeek', frequency_day_of_week,
+                          	'weekOfMonth', frequency_week_of_month,
+                          	'monthOfYear', frequency_month_of_year
                         )
                     ) AS frequency,
                     json_agg(
                         json_build_object(
-                          'begin_date', begin_date,
-                          'end_date', end_date
+                          'beginDate', begin_date,
+                          'endDate', end_date
                           )
                        ) AS dates,
                        CASE 
@@ -384,12 +376,8 @@ export const getIncomeById = async (
                         ELSE 
                             NULL
                     END AS next_date,
-                                    json_agg(
-                                        json_build_object(
-                                        'date_created', date_created,
-                                        'date_modified', date_modified
-                                        )
-                                    ) AS creation_dates
+                    date_created,
+                    date_modified
                     FROM income
                     WHERE id = $1 AND account_id = $2
                     GROUP BY id
@@ -400,17 +388,17 @@ export const getIncomeById = async (
                 SELECT id, account_id, tax_id, cron_job_id, amount, title, description, json_agg(
                         json_build_object(
                             'type', frequency_type,
-                            'type_variable', frequency_type_variable,
-                          	'day_of_month', frequency_day_of_month,
-                          	'day_of_week', frequency_day_of_week,
-                          	'week_of_month', frequency_week_of_month,
-                          	'month_of_year', frequency_month_of_year	
+                            'typeVariable', frequency_type_variable,
+                          	'dayOfMonth', frequency_day_of_month,
+                          	'dayOfWeek', frequency_day_of_week,
+                          	'weekOfMonth', frequency_week_of_month,
+                          	'monthOfYear', frequency_month_of_year
                         )
                     ) AS frequency,
                     json_agg(
                         json_build_object(
-                          'begin_date', begin_date,
-                          'end_date', end_date
+                          'beginDate', begin_date,
+                          'endDate', end_date
                           )
                        ) AS dates,
                        CASE 
@@ -497,12 +485,8 @@ export const getIncomeById = async (
                         ELSE 
                             NULL
                     END AS next_date,
-                                    json_agg(
-                                        json_build_object(
-                                        'date_created', date_created,
-                                        'date_modified', date_modified
-                                        )
-                                    ) AS creation_dates
+                    date_created,
+                    date_modified
                     FROM income
                     WHERE id = $1
                     GROUP BY id
@@ -517,9 +501,9 @@ export const getIncomeById = async (
             return;
         }
 
-        const retreivedRow = toCamelCase(rows); // Convert to camelCase
+        const retreivedRow = toCamelCase(rows[0]); // Convert to camelCase
 
-        response.status(200).json(retreivedRow[0]);
+        response.status(200).json(retreivedRow);
     } catch (error) {
         logger.error(error); // Log the error on the server side
         handleError(response, `Error getting income for account id of ${id}`);
@@ -544,12 +528,7 @@ export const createIncome = async (
         amount,
         title,
         description,
-        frequencyType,
-        frequencyTypeVariable,
-        frequencyDayOfMonth,
-        frequencyDayOfWeek,
-        frequencyWeekOfMonth,
-        frequencyMonthOfYear,
+        frequency,
         beginDate,
         endDate,
     } = request.body;
@@ -560,12 +539,12 @@ export const createIncome = async (
         await client.query('BEGIN;');
 
         const jobDetails = {
-            frequencyType,
-            frequencyTypeVariable,
-            frequencyDayOfMonth,
-            frequencyDayOfWeek,
-            frequencyWeekOfMonth,
-            frequencyMonthOfYear,
+            frequencyType: frequency.type,
+            frequencyTypeVariable: frequency.typeVariable,
+            frequencyDayOfMonth: frequency.dayOfMonth,
+            frequencyDayOfWeek: frequency.dayOfWeek,
+            frequencyWeekOfMonth: frequency.weekOfMonth,
+            frequencyMonthOfYear: frequency.monthOfYear,
             date: beginDate,
         };
 
@@ -607,12 +586,12 @@ export const createIncome = async (
                 amount,
                 title,
                 description,
-                frequencyType,
-                frequencyTypeVariable,
-                frequencyDayOfMonth,
-                frequencyDayOfWeek,
-                frequencyWeekOfMonth,
-                frequencyMonthOfYear,
+                frequency.type,
+                frequency.typeVariable,
+                frequency.dayOfMonth,
+                frequency.dayOfWeek,
+                frequency.weekOfMonth,
+                frequency.monthOfYear,
                 beginDate,
                 endDate,
             ],
@@ -650,12 +629,7 @@ export const updateIncome = async (
         amount,
         title,
         description,
-        frequencyType,
-        frequencyTypeVariable,
-        frequencyDayOfMonth,
-        frequencyDayOfWeek,
-        frequencyWeekOfMonth,
-        frequencyMonthOfYear,
+        frequency,
         beginDate,
         endDate,
     } = request.body;
@@ -680,12 +654,12 @@ export const updateIncome = async (
         const cronId: number = parseInt(rows[0].cron_job_id);
 
         const jobDetails = {
-            frequencyType,
-            frequencyTypeVariable,
-            frequencyDayOfMonth,
-            frequencyDayOfWeek,
-            frequencyWeekOfMonth,
-            frequencyMonthOfYear,
+            frequencyType: frequency.type,
+            frequencyTypeVariable: frequency.typeVariable,
+            frequencyDayOfMonth: frequency.dayOfMonth,
+            frequencyDayOfWeek: frequency.dayOfWeek,
+            frequencyWeekOfMonth: frequency.weekOfMonth,
+            frequencyMonthOfYear: frequency.monthOfYear,
             date: beginDate,
         };
 
@@ -737,12 +711,12 @@ export const updateIncome = async (
                 amount,
                 title,
                 description,
-                frequencyType,
-                frequencyTypeVariable,
-                frequencyDayOfMonth,
-                frequencyDayOfWeek,
-                frequencyWeekOfMonth,
-                frequencyMonthOfYear,
+                frequency.type,
+                frequency.typeVariable,
+                frequency.dayOfMonth,
+                frequency.dayOfWeek,
+                frequency.weekOfMonth,
+                frequency.monthOfYear,
                 beginDate,
                 endDate,
                 id,

@@ -141,12 +141,8 @@ export const getLoans = async (
                         ELSE
                             NULL
                     END AS fully_paid_back_date,
-                    json_agg(
-                        json_build_object(
-                            'dateCreated', date_created,
-                            'dateModified', date_modified
-                        )
-                    ) AS creation_dates
+                    date_created,
+                    date_modified
                 FROM loans
                 WHERE account_id = $1
                 GROUP BY id
@@ -270,12 +266,8 @@ export const getLoans = async (
                         ELSE
                             NULL
                     END AS fully_paid_back_date,
-                    json_agg(
-                        json_build_object(
-                            'dateCreated', date_created,
-                            'dateModified', date_modified
-                        )
-                    ) AS creation_dates
+                    date_created,
+                    date_modified
                 FROM loans
                 GROUP BY id
             `;
@@ -432,12 +424,8 @@ export const getLoansById = async (
                         ELSE
                             NULL
                     END AS fully_paid_back_date,
-                    json_agg(
-                        json_build_object(
-                            'dateCreated', date_created,
-                            'dateModified', date_modified
-                        )
-                    ) AS creation_dates
+                    date_created,
+                    date_modified
                 FROM loans
                 WHERE id = $1 account_id = $2
                 GROUP BY id
@@ -561,12 +549,8 @@ export const getLoansById = async (
                         ELSE
                             NULL
                     END AS fully_paid_back_date,
-                    json_agg(
-                        json_build_object(
-                            'dateCreated', date_created,
-                            'dateModified', date_modified
-                        )
-                    ) AS creation_dates
+                    date_created,
+                    date_modified
                 FROM loans
                 WHERE id = $1
                 GROUP BY id

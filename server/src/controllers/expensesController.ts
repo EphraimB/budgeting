@@ -126,12 +126,8 @@ export const getExpenses = async (
                         ELSE 
                             NULL
                     END AS next_date,
-                                    json_agg(
-                                        json_build_object(
-                                        'dateCreated', date_created,
-                                        'dateModified', date_modified
-                                        )
-                                    ) AS creation_dates
+                    date_created,
+                    date_modified
                 FROM expenses
                 WHERE account_id = $1
                 GROUP BY id
@@ -240,12 +236,8 @@ export const getExpenses = async (
                         ELSE 
                             NULL
                     END AS next_date,
-                                    json_agg(
-                                        json_build_object(
-                                        'dateCreated', date_created,
-                                        'dateModified', date_modified
-                                        )
-                                    ) AS creation_dates
+                   date_created,
+                    date_modified
                 FROM expenses
                 GROUP BY id
             `;
@@ -387,12 +379,8 @@ export const getExpensesById = async (
                         ELSE 
                             NULL
                     END AS next_date,
-                                    json_agg(
-                                        json_build_object(
-                                        'dateCreated', date_created,
-                                        'dateModified', date_modified
-                                        )
-                                    ) AS creation_dates
+                    date_created,
+                    date_modified
                 FROM expenses
                 WHERE id = $1, account_id = $2
                 GROUP BY id
@@ -501,12 +489,8 @@ export const getExpensesById = async (
                         ELSE 
                             NULL
                     END AS next_date,
-                                    json_agg(
-                                        json_build_object(
-                                        'dateCreated', date_created,
-                                        'dateModified', date_modified
-                                        )
-                                    ) AS creation_dates
+                    date_created,
+                    date_modified
                     FROM expenses
                     WHERE id = $1
                     GROUP BY id
