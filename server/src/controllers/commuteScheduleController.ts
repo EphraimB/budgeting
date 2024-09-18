@@ -257,7 +257,7 @@ export const createCommuteSchedule = async (
 ) => {
     const { accountId, dayOfWeek, fareDetailId, startTime, endTime } =
         request.body;
-    let fareDetail: FareDetails[] = [];
+    let fareDetail = [];
 
     const client = await pool.connect(); // Get a client from the pool
 
@@ -353,7 +353,7 @@ export const createCommuteSchedule = async (
 
             if (timeslotMatched) {
                 break; // exit the while loop since we found a matching timeslot
-            } else if (fareDetail[0].alternateFareDetailId) {
+            } else if (fareDetail[0].alternate_fare_detail_id !== null) {
                 const { rows: alternateFareDetail } = await client.query(
                     `
                         SELECT fare_details.id,
@@ -376,11 +376,13 @@ export const createCommuteSchedule = async (
                 });
 
                 oldFare = alternateFare;
-                currentFareDetailId = fareDetail[0].alternateFareDetailId; // use the alternate fare ID for the next loop iteration
+                currentFareDetailId = fareDetail[0].alternate_fare_detail_id; // use the alternate fare ID for the next loop iteration
             } else {
                 systemClosed = true; // no alternate fare ID and no timeslot matched, so system is closed
                 break;
             }
+
+            break;
         }
 
         if (systemClosed) {

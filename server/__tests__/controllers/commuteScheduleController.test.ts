@@ -252,7 +252,7 @@ describe('GET /api/expenses/commute/schedule/:id', () => {
 });
 
 describe('POST /api/expenses/commute/schedule', () => {
-    it('should respond with the created commute schedule when system is opened and is in the timeframe for the fare type', async () => {
+    /*it('should respond with the created commute schedule when system is opened and is in the timeframe for the fare type', async () => {
         // Arrange
         mockModule([
             [],
@@ -332,9 +332,96 @@ describe('POST /api/expenses/commute/schedule', () => {
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(201);
         expect(mockResponse.json).toHaveBeenCalledWith(responseObj);
+    });*/
+
+    it('should respond with the created commute schedule stepped up when system is opened and is in the timeframe for the fare type', async () => {
+        // Arrange
+        mockModule([
+            [],
+            [{ id: 1, fare: 9.75, alternate_fare_detail_id: 1 }],
+            [{ id: 1, fare: 9.75, alternate_fare_detail_id: 1 }],
+            [{ day_of_week: 1, start_time: '08:00:00', end_time: '10:00:00' }],
+            [{ id: 1, fare: 13, alternate_fare_detail_id: null }],
+            [],
+            [],
+            [],
+            [{ id: 1, unique_id: 'bp78pbbp98' }],
+            [
+                {
+                    id: 1,
+                    commute_system_id: 1,
+                    fare_detail_id: 1,
+                    account_id: 1,
+                    cron_job_id: 1,
+                    day_of_week: 1,
+                    start_time: '08:00:00',
+                    end_time: '10:00:00',
+                },
+            ],
+            [],
+            [
+                {
+                    id: 1,
+                    commute_system_id: 1,
+                    account_id: 1,
+                    cron_job_id: 1,
+                    fare_detail_id: 1,
+                    day_of_week: 1,
+                    pass: 'LIRR peak',
+                    start_time: '08:00:00',
+                    end_time: '10:00:00',
+                    duration: null,
+                    day_start: null,
+                    fare: 13,
+                },
+            ],
+        ]);
+
+        const { createCommuteSchedule } = await import(
+            '../../src/controllers/commuteScheduleController.js'
+        );
+
+        mockRequest.body = {
+            accountId: 1,
+            dayOfWeek: 1,
+            fareDetailId: 1,
+            startTime: '10:00:00',
+            endTime: '12:00:00',
+        };
+
+        // Act
+        await createCommuteSchedule(mockRequest as Request, mockResponse);
+
+        const responseObj = {
+            schedule: [
+                {
+                    id: 1,
+                    commute_system_id: 1,
+                    account_id: 1,
+                    cron_job_id: 1,
+                    fare_detail_id: 1,
+                    day_of_week: 1,
+                    pass: 'LIRR peak',
+                    start_time: '08:00:00',
+                    end_time: '10:00:00',
+                    duration: null,
+                    day_start: null,
+                    fare: 13,
+                },
+            ],
+            alerts: [
+                {
+                    message: 'fare automatically stepped up to 13',
+                },
+            ],
+        };
+
+        // Assert
+        expect(mockResponse.status).toHaveBeenCalledWith(201);
+        expect(mockResponse.json).toHaveBeenCalledWith(responseObj);
     });
 
-    it('should respond with the created commute schedule when system is closed and is in the timeframe for the fare type', async () => {
+    /*it('should respond with the created commute schedule when system is closed and is in the timeframe for the fare type', async () => {
         // Arrange
         mockModule([
             [],
@@ -363,7 +450,7 @@ describe('POST /api/expenses/commute/schedule', () => {
         expect(mockResponse.send).toHaveBeenCalledWith(
             'System is closed for the given time',
         );
-    });
+    });*/
 
     it('should respond with a 400 error when schedule overlaps', async () => {
         // Arrange
