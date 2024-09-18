@@ -556,39 +556,25 @@ describe('PUT /api/expenses/commute/schedule/:id', () => {
         expect(mockResponse.json).toHaveBeenCalledWith(responseObj);
     });
 
-    /*it('should respond with a 400 error when schedule overlaps', async () => {
-        const newSchedule = {
-            commute_schedule_id: 1,
-            account_id: 1,
-            day_of_week: 1,
-            fare_detail_id: 1,
-            start_time: '08:00:00',
-            duration: 60,
-        };
-
+    it('should respond with a 400 error when schedule overlaps', async () => {
         // Arrange
-        mockModule([
-            [{ commute_schedule_id: 1 }],
-            [newSchedule],
-            [{ fare_amount: 10.75, system_name: 'LIRR', fare_type: 'Peak' }],
-            [{ cron_job_id: 1, unique_id: '123' }],
-            [],
-            [],
-        ]);
+        mockModule([[{ id: 1 }], [{ id: 1 }]]);
 
         const { updateCommuteSchedule } = await import(
             '../../src/controllers/commuteScheduleController.js'
         );
 
         mockRequest.params = { id: 1 };
-        mockRequest.body = newSchedule;
+        mockRequest.body = {
+            accountId: 1,
+            dayOfWeek: 1,
+            fareDetailId: 1,
+            startTime: '08:00:00',
+            endTime: '10:00:00',
+        };
 
         // Act
-        await updateCommuteSchedule(
-            mockRequest as Request,
-            mockResponse,
-            mockNext,
-        );
+        await updateCommuteSchedule(mockRequest as Request, mockResponse);
 
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(400);
@@ -597,7 +583,7 @@ describe('PUT /api/expenses/commute/schedule/:id', () => {
         );
     });
 
-    it('should respond with a 404 error message when the schedule does not exist', async () => {
+    /*it('should respond with a 404 error message when the schedule does not exist', async () => {
         // Arrange
         mockModule([[]]);
 
