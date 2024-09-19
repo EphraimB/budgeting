@@ -48,7 +48,7 @@ router.post(
             .withMessage('Hourly rate must be a number'),
         body('jobSchedule')
             .isArray()
-            .withMessage('Work schedule must be an array'),
+            .withMessage('Job schedule must be an array'),
         body('jobSchedule.*.dayOfWeek')
             .isInt({ min: 0, max: 6 })
             .withMessage('Day of week must be a number'),
@@ -81,7 +81,7 @@ router.put(
             .withMessage('Hourly rate must be a number'),
         body('jobSchedule')
             .isArray()
-            .withMessage('Work schedule must be an array'),
+            .withMessage('Job schedule must be an array'),
         body('jobSchedule.*.dayOfWeek')
             .isInt({ min: 0, max: 6 })
             .withMessage('Day of week must be a number'),
