@@ -155,7 +155,7 @@ describe('GET /api/wishlists/:id', () => {
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(200);
         expect(mockResponse.json).toHaveBeenCalledWith(
-            wishlists.filter((wishlist) => wishlist.id === 1)[0],
+            wishlists.filter((wishlist) => wishlist.id === 1),
         );
     });
 
@@ -210,7 +210,7 @@ describe('GET /api/wishlists/:id', () => {
         expect(mockResponse.json).toHaveBeenCalledWith(
             wishlists.filter(
                 (wishlist) => wishlist.accountId === 1 && wishlist.id === 1,
-            )[0],
+            ),
         );
     });
 
