@@ -2141,7 +2141,7 @@ export const createWishlist = async (
         const { rows } = await client.query(
             `
                 INSERT INTO wishlist
-                (account_id, tax_id, wishlist_amount, wishlist_title, wishlist_description, wishlist_priority, wishlist_url_link, wishlist_date_available)
+                (account_id, tax_id, amount, title, description, priority, url_link, date_available)
                 VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
                 RETURNING *
             `,
