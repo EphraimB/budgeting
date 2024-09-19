@@ -150,7 +150,7 @@ describe('GET /api/jobs/payroll/taxes/:id', () => {
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(200);
         expect(mockResponse.json).toHaveBeenCalledWith(
-            payrollTaxes.filter((payrollTax) => payrollTax.id === 1)[0],
+            payrollTaxes.filter((payrollTax) => payrollTax.id === 1),
         );
     });
 
@@ -204,7 +204,7 @@ describe('GET /api/jobs/payroll/taxes/:id', () => {
         expect(mockResponse.json).toHaveBeenCalledWith(
             payrollTaxes.filter(
                 (payrollTax) => payrollTax.jobId === 1 && payrollTax.id === 1,
-            )[0],
+            ),
         );
     });
 
