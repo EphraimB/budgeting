@@ -184,7 +184,7 @@ describe('GET /api/transactions/history/:id', () => {
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(200);
         expect(mockResponse.json).toHaveBeenCalledWith(
-            transactions.filter((transaction) => transaction.id === 1)[0],
+            transactions.filter((transaction) => transaction.id === 1),
         );
     });
 
@@ -242,7 +242,7 @@ describe('GET /api/transactions/history/:id', () => {
             transactions.filter(
                 (transaction) =>
                     transaction.accountId === 1 && transaction.id === 1,
-            )[0],
+            ),
         );
     });
 
