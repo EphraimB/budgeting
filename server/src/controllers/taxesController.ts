@@ -24,7 +24,7 @@ export const getTaxes = async (
             [],
         );
 
-        const retreivedRows = rows.map((row) => toCamelCase(row)); // Convert to camelCase
+        const retreivedRows = toCamelCase(rows); // Convert to camelCase
 
         response.status(200).json(retreivedRows);
     } catch (error) {

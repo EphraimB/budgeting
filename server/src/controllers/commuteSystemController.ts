@@ -66,7 +66,7 @@ export const getCommuteSystemById = async (
 
         const retreivedRow = toCamelCase(rows); // Convert to camelCase
 
-        response.status(200).json(retreivedRow[0]);
+        response.status(200).json(retreivedRow);
     } catch (error) {
         logger.error(error); // Log the error on the server side
         handleError(response, `Error getting system with id for ${id}`);

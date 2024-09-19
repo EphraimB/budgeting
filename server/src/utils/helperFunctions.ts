@@ -15,18 +15,24 @@ export const handleError = (response: Response, message: string): void => {
 
 /**
  *
- * @param row - Database record to convert to camel case (the JavaScript convention)
+ * @param data - Database array or object to convert to camel case (the JavaScript convention)
  * Returns the converted camel case (the JavaScript convention)
  */
-export const toCamelCase = (row: {
-    [key: string]: any;
-}): { [key: string]: any } => {
+export const toCamelCase = (
+    data: { [key: string]: any } | { [key: string]: any }[],
+): { [key: string]: any } | { [key: string]: any }[] => {
+    if (Array.isArray(data)) {
+        // If the input is an array, map through each element and convert to camelCase
+        return data.map((row) => toCamelCase(row));
+    }
+
+    // If the input is an object, apply the camelCase conversion
     const newRow: { [key: string]: any } = {};
-    for (const key in row) {
+    for (const key in data) {
         const camelCaseKey = key.replace(/_([a-z])/g, (g) =>
             g[1].toUpperCase(),
         );
-        newRow[camelCaseKey] = row[key];
+        newRow[camelCaseKey] = data[key];
     }
     return newRow;
 };

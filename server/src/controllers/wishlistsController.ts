@@ -1044,7 +1044,7 @@ export const getWishlists = async (
 
         const { rows } = await client.query(query, params);
 
-        const retreivedRows = rows.map((row) => toCamelCase(row)); // Convert to camelCase
+        const retreivedRows = toCamelCase(rows); // Convert to camelCase
 
         response.status(200).json(retreivedRows);
     } catch (error) {
