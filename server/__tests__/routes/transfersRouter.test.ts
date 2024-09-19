@@ -31,21 +31,6 @@ const createApp = async (): Promise<Express> => {
     return app;
 };
 
-const createFutureTransfer = () => {
-    const dateInFuture = new Date();
-    dateInFuture.setDate(dateInFuture.getDate() + 7);
-
-    return {
-        sourceAccountId: 1,
-        destinationAccountId: 2,
-        amount: 100,
-        title: 'test',
-        description: 'test',
-        frequencyType: 2,
-        beginDate: dateInFuture,
-    };
-};
-
 beforeAll(() => {
     jest.mock('../../src/controllers/transfersController', () => ({
         getTransfers: jest.fn((_: Request, res: Response) =>
@@ -131,7 +116,22 @@ describe('POST /', () => {
             .post('/')
             .set('Accept', 'application/json')
             .expect('Content-Type', /json/)
-            .send(createFutureTransfer());
+            .send({
+                sourceAccountId: 1,
+                destinationAccountId: 2,
+                amount: 100,
+                title: 'test',
+                description: 'test',
+                frequency: {
+                    type: 2,
+                    typeVariable: 1,
+                    dayOfWeek: null,
+                    weekOfMonth: null,
+                    dayOfMonth: null,
+                    monthOfYear: null,
+                },
+                beginDate: '2020-01-01',
+            });
 
         expect(response.status).toBe(200);
         expect(response.body).toEqual({ message: 'success' });
@@ -144,7 +144,22 @@ describe('PUT /:id', () => {
             .put('/1')
             .set('Accept', 'application/json')
             .expect('Content-Type', /json/)
-            .send(createFutureTransfer());
+            .send({
+                sourceAccountId: 1,
+                destinationAccountId: 2,
+                amount: 100,
+                title: 'test',
+                description: 'test',
+                frequency: {
+                    type: 2,
+                    typeVariable: 1,
+                    dayOfWeek: null,
+                    weekOfMonth: null,
+                    dayOfMonth: null,
+                    monthOfYear: null,
+                },
+                beginDate: '2020-01-01',
+            });
 
         expect(response.status).toBe(200);
         expect(response.body).toEqual({ message: 'success' });
