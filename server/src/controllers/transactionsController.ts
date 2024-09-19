@@ -1,5 +1,5 @@
 import { type Request, type Response } from 'express';
-import { handleError } from '../utils/helperFunctions.js';
+import { handleError, toCamelCase } from '../utils/helperFunctions.js';
 import { logger } from '../config/winston.js';
 import pool from '../config/db.js';
 
@@ -544,7 +544,9 @@ export const getTransactions = async (
             [fromDate, toDate],
         );
 
-        response.status(200).json(rows);
+        const retreivedRows = rows.map((row) => toCamelCase(row)); // Convert to camelCase
+
+        response.status(200).json(retreivedRows);
     } catch (error) {
         logger.error(error); // Log the error on the server side
         handleError(response, 'Error getting generated transactions');
@@ -1097,7 +1099,9 @@ export const getTransactionsByAccountId = async (
             [accountId, fromDate, toDate],
         );
 
-        response.status(200).json(rows);
+        const retreivedRow = toCamelCase(rows[0]);
+
+        response.status(200).json(retreivedRow);
     } catch (error) {
         logger.error(error); // Log the error on the server side
         handleError(

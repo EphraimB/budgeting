@@ -1044,7 +1044,7 @@ export const getWishlists = async (
 
         const { rows } = await client.query(query, params);
 
-        const retreivedRows = toCamelCase(rows); // Convert to camelCase
+        const retreivedRows = rows.map((row) => toCamelCase(row)); // Convert to camelCase
 
         response.status(200).json(retreivedRows);
     } catch (error) {
@@ -2101,9 +2101,9 @@ export const getWishlistsById = async (
             return;
         }
 
-        const retreivedRow = toCamelCase(rows); // Convert to camelCase
+        const retreivedRow = toCamelCase(rows[0]); // Convert to camelCase
 
-        response.status(200).json(retreivedRow[0]);
+        response.status(200).json(retreivedRow);
     } catch (error) {
         logger.error(error); // Log the error on the server side
         handleError(response, `Error getting wishlists for id of ${id}`);
