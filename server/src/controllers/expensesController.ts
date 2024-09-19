@@ -564,6 +564,8 @@ export const createExpense = async (
         );
         const taxRate = result && result.length > 0 ? result : 0;
 
+        console.log(taxRate)
+
         const uniqueId = uuidv4();
 
         await client.query('BEGIN;');

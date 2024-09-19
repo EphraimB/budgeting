@@ -237,7 +237,7 @@ describe('GET /api/expenses/:id', () => {
         expect(mockResponse.json).toHaveBeenCalledWith(
             expenses
                 .filter((expense) => expense.accountId === 1)
-                .filter((exnse) => exnse.id === 1)[0],
+                .filter((exnse) => exnse.id === 1),
         );
     });
 
@@ -287,10 +287,9 @@ describe('GET /api/expenses/:id', () => {
 describe('POST /api/expenses', () => {
     it('should respond with an expense', async () => {
         // Arrange
-
         mockModule(
             [
-                [{ tax_rate: 0 }],
+                [{ rate: 0 }],
                 [],
                 [],
                 [{ id: 1, unique_id: '3f3fv3vvv' }],
@@ -304,7 +303,23 @@ describe('POST /api/expenses', () => {
             '../../src/controllers/expensesController.js'
         );
 
-        mockRequest.body = expenses[0];
+        mockRequest.body = {
+            accountId: 1,
+            taxId: 1,
+            amount: 50,
+            title: 'Test Expense',
+            description: 'Test Expense to test the expense route',
+            frequency: {
+                type: 2,
+                typeVariable: 1,
+                dayOfMonth: null,
+                dayOfWeek: null,
+                weekOfMonth: null,
+                monthOfYear: null,
+            },
+            subsidized: 0,
+            beginDate: '2020-01-01',
+        };
 
         await createExpense(mockRequest as Request, mockResponse);
 
@@ -345,7 +360,7 @@ describe('PUT /api/expenses/:id', () => {
                 [{ unique_id: 'dbu3ig7f' }],
                 [],
                 [],
-                [{ tax_rate: 0 }],
+                [{ rate: 0 }],
                 [],
                 [],
                 expenses.filter((expense) => expense.id === 1),
@@ -359,7 +374,23 @@ describe('PUT /api/expenses/:id', () => {
         );
 
         mockRequest.params = { id: 1 };
-        mockRequest.body = expenses.filter((expense) => expense.id === 1);
+        mockRequest.body = {
+            accountId: 1,
+            taxId: 1,
+            amount: 50,
+            title: 'Test Expense',
+            description: 'Test Expense to test the expense route',
+            frequency: {
+                type: 2,
+                typeVariable: 1,
+                dayOfMonth: null,
+                dayOfWeek: null,
+                weekOfMonth: null,
+                monthOfYear: null,
+            },
+            subsidized: 0,
+            beginDate: '2020-01-01',
+        };
 
         await updateExpense(mockRequest as Request, mockResponse);
 
