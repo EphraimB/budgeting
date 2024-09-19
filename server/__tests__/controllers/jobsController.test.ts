@@ -33,7 +33,7 @@ afterEach(() => {
     jest.resetModules();
 });
 
-const jobs: any[] = [
+const jobs = [
     {
         id: 1,
         accountId: 1,
@@ -167,7 +167,7 @@ describe('GET /api/jobs/:id', () => {
 
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(200);
-        expect(mockResponse.json).toHaveBeenCalledWith(jobs[0]);
+        expect(mockResponse.json).toHaveBeenCalledWith(jobs);
     });
 
     it('should respond with an error message with id', async () => {
