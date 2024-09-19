@@ -16,7 +16,7 @@ function ExpenseActionsMenu({
   open: boolean;
   handleClose: () => void;
   setExpenseModes: React.Dispatch<React.SetStateAction<Record<number, string>>>;
-  expense_id: number;
+  expenseId: number;
 }) {
   const handleDelete = () => {
     setExpenseModes((prevModes: any) => ({
@@ -30,7 +30,7 @@ function ExpenseActionsMenu({
   const handleEdit = () => {
     setExpenseModes((prevModes: any) => ({
       ...prevModes,
-      [expense_id]: "edit",
+      [expenseId]: "edit",
     }));
 
     handleClose();

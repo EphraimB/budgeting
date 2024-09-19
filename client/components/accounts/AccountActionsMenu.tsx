@@ -19,7 +19,7 @@ function AccountActionsMenu({
   open: boolean;
   handleClose: () => void;
   setAccountModes: React.Dispatch<React.SetStateAction<Record<number, string>>>;
-  account_id: number;
+  accountId: number;
 }) {
   const handleDelete = () => {
     setAccountModes((prevModes: any) => ({

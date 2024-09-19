@@ -95,6 +95,7 @@ function ExpenseEdit({
       dayOfWeek: frequencyDayOfWeek === -1 ? null : frequencyDayOfWeek,
       weekOfMonth: frequencyWeekOfMonth === -1 ? null : frequencyWeekOfMonth,
       monthOfYear: frequencyMonthOfYear === -1 ? null : frequencyMonthOfYear,
+      dayOfMonth: null,
     },
     beginDate,
     endDate,

@@ -31,11 +31,11 @@ import { useAlert, useSnackbar } from "../../context/FeedbackContext";
 dayjs.extend(utc);
 
 function NewExpenseForm({
-  account_id,
+  accountId,
   setShowExpenseForm,
   taxes,
 }: {
-  account_id: number;
+  accountId: number;
   setShowExpenseForm: (show: boolean) => void;
   taxes: Tax[];
 }) {
