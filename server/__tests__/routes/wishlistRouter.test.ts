@@ -4,7 +4,6 @@ import express, {
     type Express,
     type Request,
     type Response,
-    type NextFunction,
     type Router,
 } from 'express';
 import {
@@ -30,13 +29,6 @@ const createApp = async (): Promise<Express> => {
     app.use('/', wishlistRouter);
 
     return app;
-};
-
-const newWishlist = {
-    amount: 100,
-    title: 'test',
-    description: 'test',
-    priority: 1,
 };
 
 beforeAll(() => {
@@ -100,7 +92,16 @@ describe('POST /', () => {
             .post('/')
             .set('Accept', 'application/json')
             .expect('Content-Type', /json/)
-            .send(newWishlist);
+            .send({
+                accountId: 1,
+                taxId: null,
+                amount: 100,
+                title: 'test',
+                description: 'test',
+                priority: 1,
+                urlLink: 'https://google.com',
+                dateAvailable: null,
+            });
 
         expect(response.status).toBe(200);
         expect(response.body).toEqual({ message: 'success' });
@@ -113,7 +114,16 @@ describe('PUT /:id', () => {
             .put('/1')
             .set('Accept', 'application/json')
             .expect('Content-Type', /json/)
-            .send(newWishlist);
+            .send({
+                accountId: 1,
+                taxId: null,
+                amount: 100,
+                title: 'test',
+                description: 'test',
+                priority: 1,
+                urlLink: 'https://google.com',
+                dateAvailable: null,
+            });
 
         expect(response.status).toBe(200);
         expect(response.body).toEqual({ message: 'success' });
