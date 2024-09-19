@@ -149,7 +149,7 @@ describe('GET /api/income/:id', () => {
 
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(200);
-        expect(mockResponse.json).toHaveBeenCalledWith(income[0]);
+        expect(mockResponse.json).toHaveBeenCalledWith(income);
     });
 
     it('should handle errors correctly with id', async () => {
@@ -245,7 +245,22 @@ describe('POST /api/income', () => {
             '../../src/controllers/incomeController.js'
         );
 
-        mockRequest.body = income[0];
+        mockRequest.body = {
+            accountId: 1,
+            taxId: 1,
+            amount: 1000,
+            title: 'Test Income',
+            description: 'Test Income to test the income route',
+            frequency: {
+                type: 2,
+                typeVariable: 1,
+                dayOfMonth: null,
+                dayOfWeek: null,
+                weekOfMonth: null,
+                monthOfYear: null,
+            },
+            beginDate: '2020-01-01',
+        };
 
         await createIncome(mockRequest as Request, mockResponse);
 
@@ -296,7 +311,22 @@ describe('PUT /api/income/:id', () => {
         );
 
         mockRequest.params = { id: 1 };
-        mockRequest.body = income[0];
+        mockRequest.body = {
+            accountId: 1,
+            taxId: 1,
+            amount: 1000,
+            title: 'Test Income',
+            description: 'Test Income to test the income route',
+            frequency: {
+                type: 2,
+                typeVariable: 1,
+                dayOfMonth: null,
+                dayOfWeek: null,
+                weekOfMonth: null,
+                monthOfYear: null,
+            },
+            beginDate: '2020-01-01',
+        };
 
         await updateIncome(mockRequest as Request, mockResponse);
 
