@@ -154,7 +154,7 @@ describe('GET /api/payroll/dates/:id', () => {
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(200);
         expect(mockResponse.json).toHaveBeenCalledWith(
-            payrollDates.filter((payrollDate) => payrollDate.id === 1)[0],
+            payrollDates.filter((payrollDate) => payrollDate.id === 1),
         );
     });
 
@@ -209,7 +209,7 @@ describe('GET /api/payroll/dates/:id', () => {
         expect(mockResponse.json).toHaveBeenCalledWith(
             payrollDates
                 .filter((payrollDate) => payrollDate.jobId === 1)
-                .filter((payrollDate) => payrollDate.id === 1)[0],
+                .filter((payrollDate) => payrollDate.id === 1),
         );
     });
 
