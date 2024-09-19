@@ -240,7 +240,7 @@ describe('GET /api/transfers/:id', () => {
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(200);
         expect(mockResponse.json).toHaveBeenCalledWith(
-            transfers.filter((transfer) => transfer.id === 1)[0],
+            transfers.filter((transfer) => transfer.id === 1),
         );
     });
 
@@ -298,7 +298,7 @@ describe('GET /api/transfers/:id', () => {
             transfers.filter(
                 (transfer) =>
                     transfer.id === 1 && transfer.sourceAccountId === 1,
-            )[0],
+            ),
         );
     });
 
@@ -359,7 +359,23 @@ describe('POST /api/transfers', () => {
             '../../src/controllers/transfersController.js'
         );
 
-        mockRequest.body = newTransfer;
+        mockRequest.body = {
+            sourceAccountId: 1,
+            destinationAccountId: 2,
+            amount: 100,
+            title: 'Test Transfer',
+            description: 'Test Transfer to test the transfer route',
+            beginDate: '2020-01-01',
+            endDate: null,
+            frequency: {
+                type: 2,
+                typeVariable: 1,
+                monthOfYear: null,
+                dayOfMonth: null,
+                dayOfWeek: null,
+                weekOfMonth: null,
+            },
+        };
 
         await createTransfer(mockRequest as Request, mockResponse);
 
@@ -415,7 +431,23 @@ describe('PUT /api/transfer/:id', () => {
         );
 
         mockRequest.params = { id: 1 };
-        mockRequest.body = updatedTransfer;
+        mockRequest.body = {
+            sourceAccountId: 1,
+            destinationAccountId: 2,
+            amount: 100,
+            title: 'Test Transfer',
+            description: 'Test Transfer to test the transfer route',
+            beginDate: '2020-01-01',
+            endDate: null,
+            frequency: {
+                type: 2,
+                typeVariable: 1,
+                monthOfYear: null,
+                dayOfMonth: null,
+                dayOfWeek: null,
+                weekOfMonth: null,
+            },
+        };
 
         await updateTransfer(mockRequest as Request, mockResponse);
 
