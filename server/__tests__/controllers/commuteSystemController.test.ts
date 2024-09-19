@@ -109,7 +109,7 @@ describe('GET /api/expenses/commute/systems/:id', () => {
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(200);
         expect(mockResponse.json).toHaveBeenCalledWith(
-            commuteSystems.filter((system) => system.id === 1)[0],
+            commuteSystems.filter((system) => system.id === 1),
         );
     });
 
