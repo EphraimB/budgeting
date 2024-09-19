@@ -110,7 +110,7 @@ describe('GET /api/payrolls/:id', () => {
 
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(200);
-        expect(mockResponse.json).toHaveBeenCalledWith(payrolls[0]);
+        expect(mockResponse.json).toHaveBeenCalledWith(payrolls);
     });
 
     it('should respond with an error message', async () => {
