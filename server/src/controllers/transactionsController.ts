@@ -516,8 +516,8 @@ export const getTransactions = async (
                                         'title', twb.title,
                                         'description', twb.description,
                                         'amount', twb.subtotal,
-                                        'tax_rate', twb.tax_rate,
-                                        'total_amount', twb.amount,
+                                        'taxRate', twb.tax_rate,
+                                        'totalAmount', twb.amount,
                                         'date', twb.date,
                                         'balance', 
                                             CASE 
@@ -1070,8 +1070,8 @@ export const getTransactionsByAccountId = async (
                                         'title', twb.title,
                                         'description', twb.description,
                                         'amount', twb.subtotal,
-                                        'tax_rate', twb.tax_rate,
-                                        'total_amount', twb.amount,
+                                        'taxRate', twb.tax_rate,
+                                        'totalAmount', twb.amount,
                                         'date', twb.date,
                                         'balance', 
                                             CASE 
