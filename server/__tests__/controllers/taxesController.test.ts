@@ -101,7 +101,7 @@ describe('GET /api/taxes/:id', () => {
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(200);
         expect(mockResponse.json).toHaveBeenCalledWith(
-            taxes.filter((tax) => tax.id === 1)[0],
+            taxes.filter((tax) => tax.id === 1),
         );
     });
 
