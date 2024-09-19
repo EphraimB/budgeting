@@ -8,11 +8,13 @@ import {
  *
  * @param poolResponses - Array of responses for the database client
  * @param camelCaseResponse - Response of the toCamelCase function
+ * @param isTimeWithinRangeResponse - Either true or false for if the time is in range
  * Mock module with mock implementations for the database client and handleError
  */
 export const mockModule = (
     poolResponses: any[], // Array of responses for the database client
     camelCaseResponse?: any,
+    isTimeWithinRangeResponse?: boolean,
 ) => {
     const pool = jest.fn();
     const handleError = jest.fn();
@@ -28,7 +30,7 @@ export const mockModule = (
         handleError,
         parseIntOrFallback,
         parseFloatOrFallback,
-        nextTransactionFrequencyDate: jest.fn().mockReturnValue('2020-01-01'),
+        isTimeWithinRange: jest.fn(() => isTimeWithinRangeResponse),
     }));
 
     let callCount = 0;
@@ -84,5 +86,17 @@ describe('Testing mockModule', () => {
         const retreivedRows = toCamelCase(); // Convert to camelCase
 
         expect(retreivedRows).toEqual([{ id: 3 }]);
+    });
+
+    it('should return the third parameter for mockModule for isTimeWithinRange', async () => {
+        mockModule([], [], true);
+
+        const {
+            isTimeWithinRange,
+        } = require('../../src/utils/helperFunctions');
+
+        const expectedResponse = isTimeWithinRange();
+
+        expect(expectedResponse).toEqual(true);
     });
 });

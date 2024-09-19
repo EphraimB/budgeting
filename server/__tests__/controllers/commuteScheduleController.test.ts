@@ -200,9 +200,7 @@ describe('GET /api/expenses/commute/schedule/:id', () => {
 
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(200);
-        expect(mockResponse.json).toHaveBeenCalledWith(
-            filteredCommuteSchedule[0],
-        );
+        expect(mockResponse.json).toHaveBeenCalledWith(filteredCommuteSchedule);
     });
 
     it('should handle errors correctly with an id', async () => {
@@ -252,45 +250,55 @@ describe('GET /api/expenses/commute/schedule/:id', () => {
 describe('POST /api/expenses/commute/schedule', () => {
     it('should respond with the created commute schedule when system is opened and is in the timeframe for the fare type', async () => {
         // Arrange
-        mockModule([
-            [],
-            [{ id: 1, fare: 2.9, alternate_fare_detail_id: null }],
-            [{ id: 1, fare: 2.9, alternate_fare_detail_id: null }],
-            [{ day_of_week: 1, start_time: '08:00:00', end_time: '10:00:00' }],
-            [],
-            [],
-            [],
-            [{ id: 1, unique_id: 'bp78pbbp98' }],
+        mockModule(
             [
-                {
-                    id: 1,
-                    commute_system_id: 1,
-                    fare_detail_id: 1,
-                    account_id: 1,
-                    cron_job_id: 1,
-                    day_of_week: 1,
-                    start_time: '08:00:00',
-                    end_time: '10:00:00',
-                },
+                [],
+                [{ id: 1, fare: 2.9, alternate_fare_detail_id: null }],
+                [{ id: 1, fare: 2.9, alternate_fare_detail_id: null }],
+                [
+                    {
+                        day_of_week: 1,
+                        start_time: '08:00:00',
+                        end_time: '10:00:00',
+                    },
+                ],
+                [],
+                [],
+                [],
+                [{ id: 1, unique_id: 'bp78pbbp98' }],
+                [
+                    {
+                        id: 1,
+                        commute_system_id: 1,
+                        fare_detail_id: 1,
+                        account_id: 1,
+                        cron_job_id: 1,
+                        day_of_week: 1,
+                        start_time: '08:00:00',
+                        end_time: '10:00:00',
+                    },
+                ],
+                [],
+                [
+                    {
+                        id: 1,
+                        commute_system_id: 1,
+                        account_id: 1,
+                        cron_job_id: 1,
+                        fare_detail_id: 1,
+                        day_of_week: 1,
+                        pass: 'OMNY regular',
+                        start_time: '08:00:00',
+                        end_time: '10:00:00',
+                        duration: null,
+                        day_start: null,
+                        fare: 2.9,
+                    },
+                ],
             ],
             [],
-            [
-                {
-                    id: 1,
-                    commute_system_id: 1,
-                    account_id: 1,
-                    cron_job_id: 1,
-                    fare_detail_id: 1,
-                    day_of_week: 1,
-                    pass: 'OMNY regular',
-                    start_time: '08:00:00',
-                    end_time: '10:00:00',
-                    duration: null,
-                    day_start: null,
-                    fare: 2.9,
-                },
-            ],
-        ]);
+            true,
+        );
 
         const { createCommuteSchedule } = await import(
             '../../src/controllers/commuteScheduleController.js'
@@ -480,37 +488,47 @@ describe('POST /api/expenses/commute/schedule', () => {
 describe('PUT /api/expenses/commute/schedule/:id', () => {
     it('should respond with the updated commute schedule', async () => {
         // Arrange
-        mockModule([
-            [{ id: 1 }],
-            [],
-            [{ id: 1, fare: 2.9, alternate_fare_id: null }],
-            [{ id: 1, fare: 2.9, alternate_fare_id: null }],
-            [{ day_of_week: 1, start_time: '08:00:00', end_time: '10:00:00' }],
-            [{ id: 1, unique_id: 'f78ocv3c83' }],
-            [],
-            [],
-            [],
-            [],
-            [],
-            [],
-            [],
+        mockModule(
             [
-                {
-                    id: 1,
-                    commute_system_id: 1,
-                    account_id: 1,
-                    cron_job_id: 1,
-                    fare_detail_id: 1,
-                    day_of_week: 1,
-                    pass: 'OMNY regular',
-                    start_time: '08:00:00',
-                    end_time: '10:00:00',
-                    duration: null,
-                    day_start: null,
-                    fare: 2.9,
-                },
+                [{ id: 1 }],
+                [],
+                [{ id: 1, fare: 2.9, alternate_fare_id: null }],
+                [{ id: 1, fare: 2.9, alternate_fare_id: null }],
+                [
+                    {
+                        day_of_week: 1,
+                        start_time: '08:00:00',
+                        end_time: '10:00:00',
+                    },
+                ],
+                [{ id: 1, unique_id: 'f78ocv3c83' }],
+                [],
+                [],
+                [],
+                [],
+                [],
+                [],
+                [],
+                [
+                    {
+                        id: 1,
+                        commute_system_id: 1,
+                        account_id: 1,
+                        cron_job_id: 1,
+                        fare_detail_id: 1,
+                        day_of_week: 1,
+                        pass: 'OMNY regular',
+                        start_time: '08:00:00',
+                        end_time: '10:00:00',
+                        duration: null,
+                        day_start: null,
+                        fare: 2.9,
+                    },
+                ],
             ],
-        ]);
+            [],
+            true,
+        );
 
         const { updateCommuteSchedule } = await import(
             '../../src/controllers/commuteScheduleController.js'
