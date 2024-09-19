@@ -31,26 +31,6 @@ const createApp = async (): Promise<Express> => {
     return app;
 };
 
-const createFutureExpense = () => {
-    const dateInFuture = new Date();
-    dateInFuture.setDate(dateInFuture.getDate() + 7);
-
-    return {
-        accountId: 1,
-        amount: 100,
-        title: 'test',
-        description: 'test',
-        frequencyType: 1,
-        frequencyTypeVariable: 1,
-        frequencyDayOfWeek: 1,
-        frequencyWeekOfMonth: 1,
-        frequencyDayOfMonth: 1,
-        frequencyMonthOfYear: 1,
-        subsidized: 0,
-        beginDate: dateInFuture.toISOString(),
-    };
-};
-
 beforeAll(() => {
     jest.mock('../../src/controllers/expensesController', () => ({
         getExpenses: jest.fn((_: Request, res: Response) =>
@@ -112,7 +92,24 @@ describe('POST /', () => {
             .post('/')
             .set('Accept', 'application/json')
             .expect('Content-Type', /json/)
-            .send(createFutureExpense());
+            .send({
+                accountId: 1,
+                taxId: null,
+                amount: 100,
+                title: 'test',
+                description: 'test',
+                frequency: {
+                    type: 1,
+                    typeVariable: 1,
+                    dayOfWeek: 1,
+                    weekOfMonth: 1,
+                    dayOfMonth: 1,
+                    monthOfYear: 1,
+                },
+                subsidized: 0,
+                beginDate: '2020-01-01',
+                endDate: null,
+            });
 
         expect(response.status).toBe(200);
         expect(response.body).toEqual({ message: 'success' });
@@ -125,7 +122,24 @@ describe('PUT /:id', () => {
             .put('/1')
             .set('Accept', 'application/json')
             .expect('Content-Type', /json/)
-            .send(createFutureExpense());
+            .send({
+                accountId: 1,
+                taxId: null,
+                amount: 100,
+                title: 'test',
+                description: 'test',
+                frequency: {
+                    type: 1,
+                    typeVariable: 1,
+                    dayOfWeek: 1,
+                    weekOfMonth: 1,
+                    dayOfMonth: 1,
+                    monthOfYear: 1,
+                },
+                subsidized: 0,
+                beginDate: '2020-01-01',
+                endDate: null,
+            });
 
         expect(response.status).toBe(200);
         expect(response.body).toEqual({ message: 'success' });
