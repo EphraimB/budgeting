@@ -92,29 +92,29 @@ describe('GET / with id param', () => {
 
 describe('POST /', () => {
     it('responds with json', async () => {
-        const newLoan = {
-            accountId: 1,
-            amount: 1000,
-            planAmount: 100,
-            recipient: 'test',
-            title: 'test',
-            description: 'test',
-            frequencyType: 1,
-            frequencyTypeVariable: 1,
-            frequencyDayOfWeek: 1,
-            frequencyWeekOfMonth: 1,
-            frequencyDayOfMonth: 1,
-            frequencyMonthOfYear: 1,
-            interestRate: 0,
-            interestFrequencyType: 2,
-            beginDate: '2020-01-02',
-        };
-
         const response: request.Response = await request(app)
             .post('/')
             .set('Accept', 'application/json')
             .expect('Content-Type', /json/)
-            .send(newLoan);
+            .send({
+                accountId: 1,
+                amount: 1000,
+                planAmount: 100,
+                recipient: 'test',
+                title: 'test',
+                description: 'test',
+                frequency: {
+                    type: 1,
+                    typeVariable: 1,
+                    dayOfWeek: 1,
+                    weekOfMonth: 1,
+                    dayOfMonth: 1,
+                    monthOfYear: 1,
+                },
+                interestRate: 0,
+                interestFrequencyType: 2,
+                beginDate: '2020-01-02',
+            });
 
         expect(response.status).toBe(200);
         expect(response.body).toEqual({ message: 'success' });
@@ -123,29 +123,29 @@ describe('POST /', () => {
 
 describe('PUT /:id', () => {
     it('responds with json', async () => {
-        const updatedLoan = {
-            accountId: 1,
-            amount: 1000,
-            planAmount: 100,
-            recipient: 'test',
-            title: 'test',
-            description: 'test',
-            frequencyType: 1,
-            frequencyTypeVariable: 1,
-            frequencyDayOfWeek: 1,
-            frequencyWeekOfMonth: 1,
-            frequencyDayOfMonth: 1,
-            frequencyMonthOfYear: 1,
-            interestRate: 0,
-            interestFrequencyType: 2,
-            beginDate: '2020-01-02',
-        };
-
         const response: request.Response = await request(app)
             .put('/1')
             .set('Accept', 'application/json')
             .expect('Content-Type', /json/)
-            .send(updatedLoan);
+            .send({
+                accountId: 1,
+                amount: 1000,
+                planAmount: 100,
+                recipient: 'test',
+                title: 'test',
+                description: 'test',
+                frequency: {
+                    type: 1,
+                    typeVariable: 1,
+                    dayOfWeek: 1,
+                    weekOfMonth: 1,
+                    dayOfMonth: 1,
+                    monthOfYear: 1,
+                },
+                interestRate: 0,
+                interestFrequencyType: 2,
+                beginDate: '2020-01-02',
+            });
 
         expect(response.status).toBe(200);
         expect(response.body).toEqual({ message: 'success' });
