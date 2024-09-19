@@ -66,7 +66,7 @@ app.use('/api/taxes', taxesRouter);
 app.use('/api/income', incomeRouter);
 
 // Global error handling middleware
-app.use((err: any, req: Request, res: Response, next: NextFunction) => {
+app.use((err: any, _: Request, res: Response, next: NextFunction) => {
     logger.error(err);
     res.status(500).json({ error: 'Internal server error' });
 
