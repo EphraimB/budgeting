@@ -9,12 +9,18 @@ import {
  * @param poolResponses - Array of responses for the database client
  * @param camelCaseResponse - Response of the toCamelCase function
  * @param isTimeWithinRangeResponse - Either true or false for if the time is in range
+ * @param compareTimeslotsResponse - Response of what schedules would be inserted, deleted, or updated
  * Mock module with mock implementations for the database client and handleError
  */
 export const mockModule = (
     poolResponses: any[], // Array of responses for the database client
     camelCaseResponse?: any,
     isTimeWithinRangeResponse?: boolean,
+    compareTimeslotsResponse?: {
+        toInsert: any[];
+        toDelete: any[];
+        toUpdate: any[];
+    },
 ) => {
     const pool = jest.fn();
     const handleError = jest.fn();
@@ -31,6 +37,7 @@ export const mockModule = (
         parseIntOrFallback,
         parseFloatOrFallback,
         isTimeWithinRange: jest.fn(() => isTimeWithinRangeResponse),
+        compareTimeslots: jest.fn(() => compareTimeslotsResponse),
     }));
 
     let callCount = 0;
@@ -98,5 +105,23 @@ describe('Testing mockModule', () => {
         const expectedResponse = isTimeWithinRange();
 
         expect(expectedResponse).toEqual(true);
+    });
+
+    it('should return the fourth parameter for mockModule for compareTimeslotsResponse', async () => {
+        mockModule([], [], undefined, {
+            toInsert: [{ id: 1 }],
+            toDelete: [],
+            toUpdate: [],
+        });
+
+        const { compareTimeslots } = require('../../src/utils/helperFunctions');
+
+        const expectedResponse = compareTimeslots();
+
+        expect(expectedResponse).toEqual({
+            toInsert: [{ id: 1 }],
+            toDelete: [],
+            toUpdate: [],
+        });
     });
 });

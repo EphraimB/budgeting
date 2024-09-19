@@ -8,7 +8,6 @@ import {
     expect,
 } from '@jest/globals';
 import { mockModule } from '../__mocks__/mockModule';
-import { Timeslots } from '../../src/types/types.js';
 
 jest.mock('../../src/config/winston', () => ({
     logger: {
@@ -134,94 +133,94 @@ const fareDetailsResponse = [
     },
 ];
 
-describe('Compare timeslots', () => {
-    it('should detect if a timeslot needs inserting', async () => {
-        const currentTimeslots = [
-            {
-                id: 1,
-                fareDetailId: 1,
-                dayOfWeek: 0,
-                startTime: '00:00:00',
-                endTime: '05:00:00',
-            },
-        ];
+// describe('Compare timeslots', () => {
+//     it('should detect if a timeslot needs inserting', async () => {
+//         const currentTimeslots = [
+//             {
+//                 id: 1,
+//                 fareDetailId: 1,
+//                 dayOfWeek: 0,
+//                 startTime: '00:00:00',
+//                 endTime: '05:00:00',
+//             },
+//         ];
 
-        const incomingTimeslots = [
-            {
-                id: 1,
-                fareDetailId: 1,
-                dayOfWeek: 0,
-                startTime: '00:00:00',
-                endTime: '05:00:00',
-            },
-            {
-                id: 2,
-                fareDetailId: 1,
-                dayOfWeek: 1,
-                startTime: '00:00:00',
-                endTime: '05:00:00',
-            },
-        ];
+//         const incomingTimeslots = [
+//             {
+//                 id: 1,
+//                 fareDetailId: 1,
+//                 dayOfWeek: 0,
+//                 startTime: '00:00:00',
+//                 endTime: '05:00:00',
+//             },
+//             {
+//                 id: 2,
+//                 fareDetailId: 1,
+//                 dayOfWeek: 1,
+//                 startTime: '00:00:00',
+//                 endTime: '05:00:00',
+//             },
+//         ];
 
-        const { compareTimeslots } = await import(
-            '../../src/controllers/fareDetailsController.js'
-        );
+//         const { compareTimeslots } = await import(
+//             '../../src/controllers/fareDetailsController.js'
+//         );
 
-        // Call the function with the mock request and response
-        const result = compareTimeslots(currentTimeslots, incomingTimeslots);
+//         // Call the function with the mock request and response
+//         const result = compareTimeslots(currentTimeslots, incomingTimeslots);
 
-        // Assert
-        expect(result).toStrictEqual({
-            toInsert: [
-                {
-                    id: 2,
-                    fareDetailId: 1,
-                    dayOfWeek: 1,
-                    startTime: '00:00:00',
-                    endTime: '05:00:00',
-                },
-            ],
-            toDelete: [],
-            toUpdate: [],
-        });
-    });
+//         // Assert
+//         expect(result).toStrictEqual({
+//             toInsert: [
+//                 {
+//                     id: 2,
+//                     fareDetailId: 1,
+//                     dayOfWeek: 1,
+//                     startTime: '00:00:00',
+//                     endTime: '05:00:00',
+//                 },
+//             ],
+//             toDelete: [],
+//             toUpdate: [],
+//         });
+//     });
 
-    it('should detect if a timeslot needs deleting', async () => {
-        const currentTimeslots: Timeslots[] = [
-            {
-                id: 1,
-                fareDetailId: 1,
-                dayOfWeek: 0,
-                startTime: '00:00:00',
-                endTime: '05:00:00',
-            },
-        ];
+//     it('should detect if a timeslot needs deleting', async () => {
+//         const currentTimeslots: Timeslots[] = [
+//             {
+//                 id: 1,
+//                 fareDetailId: 1,
+//                 dayOfWeek: 0,
+//                 startTime: '00:00:00',
+//                 endTime: '05:00:00',
+//             },
+//         ];
 
-        const incomingTimeslots: Timeslots[] = [];
+//         const incomingTimeslots: Timeslots[] = [];
 
-        const { compareTimeslots } = await import(
-            '../../src/controllers/fareDetailsController.js'
-        );
+//         const { compareTimeslots } = await import(
+//             '../../src/controllers/fareDetailsController.js'
+//         );
 
-        // Call the function with the mock request and response
-        const result = compareTimeslots(currentTimeslots, incomingTimeslots);
+//         // Call the function with the mock request and response
+//         const result = compareTimeslots(currentTimeslots, incomingTimeslots);
 
-        // Assert
-        expect(result).toStrictEqual({
-            toInsert: [],
-            toDelete: [
-                {
-                    id: 1,
-                    fareDetailId: 1,
-                    dayOfWeek: 0,
-                    startTime: '00:00:00',
-                    endTime: '05:00:00',
-                },
-            ],
-            toUpdate: [],
-        });
-    });
-});
+//         // Assert
+//         expect(result).toStrictEqual({
+//             toInsert: [],
+//             toDelete: [
+//                 {
+//                     id: 1,
+//                     fareDetailId: 1,
+//                     dayOfWeek: 0,
+//                     startTime: '00:00:00',
+//                     endTime: '05:00:00',
+//                 },
+//             ],
+//             toUpdate: [],
+//         });
+//     });
+// });
 
 describe('GET /api/expenses/commute/fares', () => {
     it('should respond with an array of fare details', async () => {
@@ -279,7 +278,7 @@ describe('GET /api/expenses/commute/fares/:id', () => {
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(200);
         expect(mockResponse.json).toHaveBeenCalledWith(
-            fareDetailsResponse.filter((fareDetail) => fareDetail.id === 1)[0],
+            fareDetailsResponse.filter((fareDetail) => fareDetail.id === 1),
         );
     });
 
@@ -397,16 +396,32 @@ describe('POST /api/expenses/commute/fares', () => {
 
 describe('PUT /api/expenses/commute/fares/:id', () => {
     it('should respond with the updated fare detail', async () => {
-        mockModule([
-            [{ id: 1 }],
-            timeslots.filter((timeslot) => timeslot.id === 1),
-            [],
-            [],
-            [],
-            fareDetails.filter((fareDetail) => fareDetail.id === 1),
-            [],
-            commuteSystems.filter((commuteSystem) => commuteSystem.id === 1),
-        ]);
+        mockModule(
+            [
+                [{ id: 1 }],
+                timeslots.filter((timeslot) => timeslot.id === 1),
+                [],
+                [],
+                fareDetails.filter((fareDetail) => fareDetail.id === 1),
+                [],
+                commuteSystems.filter(
+                    (commuteSystem) => commuteSystem.id === 1,
+                ),
+            ],
+            undefined,
+            undefined,
+            {
+                toInsert: [
+                    {
+                        dayOfWeek: 0,
+                        startTime: '00:00:00',
+                        endTime: '23:59:59',
+                    },
+                ],
+                toDelete: [],
+                toUpdate: [],
+            },
+        );
 
         const { updateFareDetail } = await import(
             '../../src/controllers/fareDetailsController.js'

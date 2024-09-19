@@ -296,7 +296,7 @@ describe('POST /api/expenses/commute/schedule', () => {
                     },
                 ],
             ],
-            [],
+            undefined,
             true,
         );
 
@@ -526,7 +526,7 @@ describe('PUT /api/expenses/commute/schedule/:id', () => {
                     },
                 ],
             ],
-            [],
+            undefined,
             true,
         );
 
