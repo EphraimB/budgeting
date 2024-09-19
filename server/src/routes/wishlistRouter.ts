@@ -54,6 +54,7 @@ router.post(
         body('priority').isInt().withMessage('Priority must be a number'),
         body('urlLink').isURL().withMessage('Url link must be a url'),
         body('dateAvailable')
+            .optional({ nullable: true })
             .isISO8601()
             .withMessage('Date available must be a datetime'),
         validateRequest,
@@ -80,6 +81,7 @@ router.put(
         body('priority').isInt().withMessage('Priority must be a number'),
         body('urlLink').isURL().withMessage('Url link must be a url'),
         body('dateAvailable')
+            .optional({ nullable: true })
             .isISO8601()
             .withMessage('Date available must be a datetime'),
         validateRequest,
