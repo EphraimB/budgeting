@@ -91,25 +91,25 @@ describe('GET / with id param', () => {
 
 describe('POST /', () => {
     it('responds with json', async () => {
-        const incomeObj = {
-            accountId: 1,
-            amount: 100,
-            title: 'test',
-            description: 'test',
-            frequencyType: 1,
-            frequencyTypeVariable: 1,
-            frequencyDayOfWeek: 1,
-            frequencyWeekOfMonth: 1,
-            frequencyDayOfMonth: 1,
-            frequencyMonthOfYear: 1,
-            beginDate: '2020-01-01',
-        };
-
         const response = await request(app)
             .post('/')
             .set('Accept', 'application/json')
             .expect('Content-Type', /json/)
-            .send(incomeObj);
+            .send({
+                accountId: 1,
+                amount: 100,
+                title: 'test',
+                description: 'test',
+                frequency: {
+                    type: 1,
+                    typeVariable: 1,
+                    dayOfWeek: 1,
+                    weekOfMonth: 1,
+                    dayOfMonth: 1,
+                    monthOfYear: 1,
+                },
+                beginDate: '2020-01-01',
+            });
 
         expect(response.status).toBe(200);
         expect(response.body).toEqual({ message: 'success' });
@@ -118,25 +118,25 @@ describe('POST /', () => {
 
 describe('PUT /:id', () => {
     it('responds with json', async () => {
-        const incomeObj = {
-            accountId: 1,
-            amount: 100,
-            title: 'test',
-            description: 'test',
-            frequencyType: 1,
-            frequencyTypeVariable: 1,
-            frequencyDayOfWeek: 1,
-            frequencyWeekOfMonth: 1,
-            frequencyDayOfMonth: 1,
-            frequencyMonthOfYear: 1,
-            beginDate: '2020-01-01',
-        };
-
         const response: request.Response = await request(app)
             .put('/1')
             .set('Accept', 'application/json')
             .expect('Content-Type', /json/)
-            .send(incomeObj);
+            .send({
+                accountId: 1,
+                amount: 100,
+                title: 'test',
+                description: 'test',
+                frequency: {
+                    type: 1,
+                    typeVariable: 1,
+                    dayOfWeek: 1,
+                    weekOfMonth: 1,
+                    dayOfMonth: 1,
+                    monthOfYear: 1,
+                },
+                beginDate: '2020-01-01',
+            });
 
         expect(response.status).toBe(200);
         expect(response.body).toEqual({ message: 'success' });
