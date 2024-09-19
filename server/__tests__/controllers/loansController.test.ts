@@ -240,7 +240,7 @@ describe('GET /api/loans/:id', () => {
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(200);
         expect(mockResponse.json).toHaveBeenCalledWith(
-            loans.filter((loan) => loan.id === 1)[0],
+            loans.filter((loan) => loan.id === 1),
         );
     });
 
@@ -357,7 +357,27 @@ describe('POST /api/loans', () => {
             '../../src/controllers/loansController.js'
         );
 
-        mockRequest.body = loans.filter((loan) => loan.id === 1);
+        mockRequest.body = {
+            accountId: 1,
+            taxId: null,
+            amount: 10000,
+            planAmount: 100,
+            recipient: 'Test Loan Recipient',
+            title: 'Test Loan',
+            description: 'Test Loan to test the loan route',
+            frequency: {
+                type: 2,
+                typeVariable: 1,
+                monthOfYear: null,
+                dayOfMonth: null,
+                dayOfWeek: null,
+                weekOfMonth: null,
+            },
+            interestFrequencyType: 2,
+            interestRate: 0,
+            subsidized: 0,
+            beginDate: '2020-01-02',
+        };
 
         await createLoan(mockRequest as Request, mockResponse);
 
@@ -413,7 +433,27 @@ describe('PUT /api/loans/:id', () => {
         );
 
         mockRequest.params = { id: 1 };
-        mockRequest.body = loans.filter((loan) => loan.id === 1);
+        mockRequest.body = {
+            accountId: 1,
+            taxId: null,
+            amount: 10000,
+            planAmount: 100,
+            recipient: 'Test Loan Recipient',
+            title: 'Test Loan',
+            description: 'Test Loan to test the loan route',
+            frequency: {
+                type: 2,
+                typeVariable: 1,
+                monthOfYear: null,
+                dayOfMonth: null,
+                dayOfWeek: null,
+                weekOfMonth: null,
+            },
+            interestFrequencyType: 2,
+            interestRate: 0,
+            subsidized: 0,
+            beginDate: '2020-01-02',
+        };
 
         await updateLoan(mockRequest as Request, mockResponse);
 
