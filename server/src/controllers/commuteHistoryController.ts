@@ -91,7 +91,7 @@ export const getCommuteHistoryById = async (
             return;
         }
 
-        const retreivedRow = toCamelCase(rows); // Convert to camelCase
+        const retreivedRow = toCamelCase(rows[0]); // Convert to camelCase
 
         response.status(200).json(retreivedRow);
     } catch (error) {
@@ -131,7 +131,7 @@ export const createCommuteHistory = async (
             [accountId, fare, commuteSystem, fareType, timestamp, false],
         );
 
-        const insertedRow = toCamelCase(rows); // Convert to camelCase
+        const insertedRow = toCamelCase(rows[0]); // Convert to camelCase
 
         response.status(201).json(insertedRow);
     } catch (error) {
@@ -187,7 +187,7 @@ export const updateCommuteHistory = async (
             [accountId, fare, commuteSystem, fareType, timestamp, id],
         );
 
-        const updatedRow = toCamelCase(updateCommuteHistory); // Convert to camelCase
+        const updatedRow = toCamelCase(updateCommuteHistory[0]); // Convert to camelCase
 
         response.status(200).json(updatedRow);
     } catch (error) {

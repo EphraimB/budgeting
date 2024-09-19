@@ -8,7 +8,6 @@ import {
     expect,
 } from '@jest/globals';
 import { mockModule } from '../__mocks__/mockModule';
-import { CommuteHistory } from '../../src/types/types.js';
 
 jest.mock('../../src/config/winston', () => ({
     logger: {
@@ -169,9 +168,7 @@ describe('GET /api/expenses/commute/history/:id', () => {
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(200);
         expect(mockResponse.json).toHaveBeenCalledWith(
-            commuteHistory.filter(
-                (commuteHistory) => commuteHistory.id === 1,
-            )[0],
+            commuteHistory.filter((commuteHistory) => commuteHistory.id === 1),
         );
     });
 

@@ -64,7 +64,7 @@ export const getCommuteSystemById = async (
             return;
         }
 
-        const retreivedRow = toCamelCase(rows); // Convert to camelCase
+        const retreivedRow = toCamelCase(rows[0]); // Convert to camelCase
 
         response.status(200).json(retreivedRow);
     } catch (error) {

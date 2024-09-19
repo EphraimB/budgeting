@@ -1,5 +1,9 @@
 import { type Request, type Response } from 'express';
-import { handleError, toCamelCase } from '../utils/helperFunctions.js';
+import {
+    compareTimeslots,
+    handleError,
+    toCamelCase,
+} from '../utils/helperFunctions.js';
 import { type Timeslots } from '../types/types.js';
 import { logger } from '../config/winston.js';
 import pool from '../config/db.js';
@@ -107,7 +111,7 @@ export const getFareDetailsById = async (
             [],
         );
 
-        const retreivedRow = toCamelCase(rows); // Convert to camelCase
+        const retreivedRow = toCamelCase(rows[0]); // Convert to camelCase
 
         response.status(200).json(retreivedRow);
     } catch (error) {
@@ -243,61 +247,6 @@ export const createFareDetail = async (
     } finally {
         client.release(); // Release the client back to the pool
     }
-};
-
-/**
- *
- * @param current - Current timeslots
- * @param incoming - Incoming timeslots
- * @returns Object containing timeslots to insert, delete, and update
- */
-export const compareTimeslots = (
-    current: Timeslots[],
-    incoming: Timeslots[],
-) => {
-    let toInsert = [];
-    let toDelete = [];
-    let toUpdate = [];
-
-    const currentMap = new Map();
-    const incomingMap = new Map();
-
-    // Create a map from the current timeslots
-    for (let slot of current) {
-        const key = `${slot.dayOfWeek}-${slot.startTime}-${slot.endTime}`;
-        currentMap.set(key, slot);
-    }
-
-    // Create a map from the incoming timeslots
-    for (let slot of incoming) {
-        const key = `${slot.dayOfWeek}-${slot.startTime}-${slot.endTime}`;
-        incomingMap.set(key, slot);
-    }
-
-    // Identify new and modified timeslots
-    for (let [key, slot] of incomingMap) {
-        if (!currentMap.has(key)) {
-            toInsert.push(slot);
-        } else {
-            const currentSlot = currentMap.get(key);
-            if (JSON.stringify(currentSlot) !== JSON.stringify(slot)) {
-                toUpdate.push(slot);
-            }
-        }
-    }
-
-    // Identify deleted timeslots
-    for (let key of currentMap.keys()) {
-        if (!incomingMap.has(key)) {
-            toDelete.push(currentMap.get(key));
-        }
-    }
-
-    return {
-        toInsert,
-        toDelete,
-        toUpdate,
-    };
 };
 
 /**

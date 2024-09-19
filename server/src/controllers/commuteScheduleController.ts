@@ -1,5 +1,9 @@
 import { type Request, type Response } from 'express';
-import { handleError, toCamelCase } from '../utils/helperFunctions.js';
+import {
+    handleError,
+    isTimeWithinRange,
+    toCamelCase,
+} from '../utils/helperFunctions.js';
 import { logger } from '../config/winston.js';
 import determineCronValues from '../crontab/determineCronValues.js';
 import dayjs from 'dayjs';
@@ -211,7 +215,7 @@ export const getCommuteScheduleById = async (
             return;
         }
 
-        const retreivedRow = toCamelCase(rows); // Convert to camelCase
+        const retreivedRow = toCamelCase(rows[0]); // Convert to camelCase
 
         response.status(200).json(retreivedRow);
     } catch (error) {
@@ -220,28 +224,6 @@ export const getCommuteScheduleById = async (
     } finally {
         client.release(); // Release the client back to the pool
     }
-};
-
-/**
- *
- * @param startTime - Start time of the schedule
- * @param rangeStart - Start time of the range
- * @param rangeEnd  - End time of the range
- * @returns - True if the start time is within the range, false otherwise
- */
-const isTimeWithinRange = (
-    startTime: string,
-    rangeStart: string,
-    rangeEnd: string,
-): boolean => {
-    const baseDate = '1970-01-01 '; // Using a base date since we're only comparing times
-    const startDateTime = dayjs(baseDate + startTime);
-    const rangeStartDateTime = dayjs(baseDate + rangeStart);
-    const rangeEndDateTime = dayjs(baseDate + rangeEnd);
-
-    return (
-        startDateTime >= rangeStartDateTime && startDateTime < rangeEndDateTime
-    );
 };
 
 /**
