@@ -88,7 +88,7 @@ describe('Testing mockModule', () => {
 
         mockModule(poolResponses, [{ id: 3 }]);
 
-        const { toCamelCase } = require('../../src/utils/helperFunctions');
+        const { toCamelCase } = require('../../src/utils/helperFunctions.js');
 
         const retreivedRows = toCamelCase(); // Convert to camelCase
 
@@ -96,11 +96,11 @@ describe('Testing mockModule', () => {
     });
 
     it('should return the third parameter for mockModule for isTimeWithinRange', async () => {
-        mockModule([], [], true);
+        mockModule([], undefined, true);
 
         const {
             isTimeWithinRange,
-        } = require('../../src/utils/helperFunctions');
+        } = require('../../src/utils/helperFunctions.js');
 
         const expectedResponse = isTimeWithinRange();
 
@@ -108,13 +108,15 @@ describe('Testing mockModule', () => {
     });
 
     it('should return the fourth parameter for mockModule for compareTimeslotsResponse', async () => {
-        mockModule([], [], undefined, {
+        mockModule([], undefined, undefined, {
             toInsert: [{ id: 1 }],
             toDelete: [],
             toUpdate: [],
         });
 
-        const { compareTimeslots } = require('../../src/utils/helperFunctions');
+        const {
+            compareTimeslots,
+        } = require('../../src/utils/helperFunctions.js');
 
         const expectedResponse = compareTimeslots();
 

@@ -345,7 +345,7 @@ export const createCommuteSchedule = async (
                         ON fare_details.commute_system_id = commute_systems.id
                         WHERE fare_details.id = $1
                     `,
-                    [fareDetail[0].alternateFareDetailId],
+                    [fareDetail[0].alternate_fare_detail_id],
                 );
 
                 const alternateFare = alternateFareDetail[0].fare;
