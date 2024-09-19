@@ -3,7 +3,7 @@
 import { revalidatePath } from "next/cache";
 
 interface TransactionHistoryRequest {
-  account_id: number;
+  accountId: number;
   amount: number;
   tax: number;
   title: string;

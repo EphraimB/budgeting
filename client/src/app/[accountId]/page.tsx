@@ -5,12 +5,12 @@ import customParseFormat from "dayjs/plugin/customParseFormat";
 import { GeneratedTransaction } from "../types/types";
 
 async function getTransactions(
-  account_id: number,
-  from_date: string,
-  to_date: string
+  accountId: number,
+  fromDate: string,
+  toDate: string
 ) {
   const res = await fetch(
-    `http://server:5001/api/transactions?account_id=${account_id}&from_date=${from_date}&to_date=${to_date}`
+    `http://server:5001/api/transactions?accountId=${accountId}&fromDate=${fromDate}&toDate=${toDate}`
   );
 
   if (!res.ok) {
@@ -24,32 +24,31 @@ async function TransactionsPage({
   params,
   searchParams,
 }: {
-  params: { account_id: string };
+  params: { accountId: string };
   searchParams: { [key: string]: string | string[] | undefined };
 }) {
   dayjs.extend(customParseFormat);
 
-  const account_id = parseInt(params.account_id);
+  const accountId = parseInt(params.accountId);
 
   // If no search params are provided, set to the current date for from date and one month from now for to date and change the URL
   if (
     Object.keys(searchParams).length === 0 ||
-    dayjs(searchParams.from_date as string, "YYYY-MM-DD", true).isValid() ===
+    dayjs(searchParams.fromDate as string, "YYYY-MM-DD", true).isValid() ===
       false ||
-    dayjs(searchParams.to_date as string, "YYYY-MM-DD", true).isValid() ===
-      false
+    dayjs(searchParams.toDate as string, "YYYY-MM-DD", true).isValid() === false
   ) {
     searchParams = {
-      from_date: dayjs().format().split("T")[0],
-      to_date: dayjs().add(1, "month").format().split("T")[0],
+      fromDate: dayjs().format().split("T")[0],
+      toDate: dayjs().add(1, "month").format().split("T")[0],
     };
   }
 
-  const fromDate = searchParams.from_date as string;
-  const toDate = searchParams.to_date as string;
+  const fromDate = searchParams.fromDate as string;
+  const toDate = searchParams.toDate as string;
 
   const transactions: GeneratedTransaction[] = await getTransactions(
-    account_id,
+    accountId,
     fromDate,
     toDate
   );

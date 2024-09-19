@@ -2,8 +2,8 @@ import React from "react";
 import DataManagementWidgets from "../../../components/DataManagementWidgets";
 import { notFound } from "next/navigation";
 
-async function getAccount(account_id: number) {
-  const res = await fetch(`http://server:5001/api/accounts?id=${account_id}`);
+async function getAccount(accountId: number) {
+  const res = await fetch(`http://server:5001/api/accounts/${accountId}`);
 
   if (!res.ok) {
     return notFound();
@@ -12,9 +12,9 @@ async function getAccount(account_id: number) {
   return res.json();
 }
 
-async function getExpenses(account_id: number) {
+async function getExpenses(accountId: number) {
   const res = await fetch(
-    `http://server:5001/api/expenses?account_id=${account_id}`
+    `http://server:5001/api/expenses?accountId=${accountId}`
   );
 
   if (!res.ok) {
@@ -24,9 +24,9 @@ async function getExpenses(account_id: number) {
   return res.json();
 }
 
-async function getTaxes(account_id: number) {
+async function getTaxes(accountId: number) {
   const res = await fetch(
-    `http://server:5001/api/taxes?account_id=${account_id}`
+    `http://server:5001/api/taxes?accountId=${accountId}`
   );
 
   if (!res.ok) {
@@ -36,9 +36,9 @@ async function getTaxes(account_id: number) {
   return res.json();
 }
 
-async function getLoans(account_id: number) {
+async function getLoans(accountId: number) {
   const res = await fetch(
-    `http://server:5001/api/loans?account_id=${account_id}`
+    `http://server:5001/api/loans?accountId=${accountId}`
   );
 
   if (!res.ok) {
@@ -48,9 +48,9 @@ async function getLoans(account_id: number) {
   return res.json();
 }
 
-async function getWishlists(account_id: number) {
+async function getWishlists(accountId: number) {
   const res = await fetch(
-    `http://server:5001/api/wishlists?account_id=${account_id}`
+    `http://server:5001/api/wishlists?accountId=${accountId}`
   );
 
   if (!res.ok) {
@@ -60,9 +60,9 @@ async function getWishlists(account_id: number) {
   return res.json();
 }
 
-async function getTransfers(account_id: number) {
+async function getTransfers(accountId: number) {
   const res = await fetch(
-    `http://server:5001/api/transfers?account_id=${account_id}`
+    `http://server:5001/api/transfers?accountId=${accountId}`
   );
 
   if (!res.ok) {
@@ -77,22 +77,22 @@ export default async function Layout({
   params,
 }: {
   children: React.ReactNode;
-  params: { account_id: string };
+  params: { accountId: string };
 }) {
-  const account_id = parseInt(params.account_id);
+  const accountId = parseInt(params.accountId);
 
-  await getAccount(parseInt(params.account_id));
+  await getAccount(parseInt(params.accountId));
 
-  const expenses = await getExpenses(account_id);
-  const taxes = await getTaxes(account_id);
-  const loans = await getLoans(account_id);
-  const wishlists = await getWishlists(account_id);
-  const transfers = await getTransfers(account_id);
+  const expenses = await getExpenses(accountId);
+  const taxes = await getTaxes(accountId);
+  const loans = await getLoans(accountId);
+  const wishlists = await getWishlists(accountId);
+  const transfers = await getTransfers(accountId);
 
   return (
     <>
       <DataManagementWidgets
-        account_id={account_id}
+        accountId={accountId}
         expenses={expenses}
         taxes={taxes}
         loans={loans}

@@ -10,7 +10,7 @@ function ExpenseActionsMenu({
   open,
   handleClose,
   setExpenseModes,
-  expense_id,
+  expenseId,
 }: {
   anchorEl: HTMLElement | null;
   open: boolean;
@@ -21,7 +21,7 @@ function ExpenseActionsMenu({
   const handleDelete = () => {
     setExpenseModes((prevModes: any) => ({
       ...prevModes,
-      [expense_id]: "delete",
+      [expenseId]: "delete",
     }));
 
     handleClose();

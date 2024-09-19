@@ -17,7 +17,7 @@ export default function AccountEdit({
   account: Account;
   setAccountModes: React.Dispatch<React.SetStateAction<Record<number, string>>>;
 }) {
-  const [accountName, setAccountName] = useState(account.account_name);
+  const [accountName, setAccountName] = useState(account.name);
 
   const [nameError, setNameError] = useState("");
 
@@ -44,7 +44,7 @@ export default function AccountEdit({
     if (isNameValid) {
       // Submit data
       try {
-        await editAccount(data, account.account_id);
+        await editAccount(data, account.accountId);
 
         // Show success message
         showSnackbar(`Account named "${accountName}" edited successfully`);
@@ -57,7 +57,7 @@ export default function AccountEdit({
 
       setAccountModes((prevModes: any) => ({
         ...prevModes,
-        [account.account_id]: "view",
+        [account.accountId]: "view",
       }));
     } else {
       // Show error message
@@ -81,7 +81,7 @@ export default function AccountEdit({
         onClick={() =>
           setAccountModes((prevModes: any) => ({
             ...prevModes,
-            [account.account_id]: "view",
+            [account.accountId]: "view",
           }))
         }
       >
@@ -90,7 +90,7 @@ export default function AccountEdit({
       <br />
       <Stack direction="column" spacing={2}>
         <TextField
-          id="account_name"
+          id="name"
           label="Account name"
           variant="standard"
           value={accountName}

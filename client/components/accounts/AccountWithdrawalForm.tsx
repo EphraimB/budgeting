@@ -27,7 +27,7 @@ function AccountWithdrawalForm({
   const [descriptionError, setDescriptionError] = useState("");
 
   const data = {
-    account_id: account.account_id,
+    accountId: account.account_id,
     amount: -amount,
     tax: 0,
     title,

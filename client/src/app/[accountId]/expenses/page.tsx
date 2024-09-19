@@ -3,9 +3,9 @@ import Typography from "@mui/material/Typography";
 import { Expense, Tax } from "@/app/types/types";
 import ExpensesCards from "../../../../components/expenses/ExpensesCards";
 
-async function getExpenses(account_id: number) {
+async function getExpenses(accountId: number) {
   const res = await fetch(
-    `http://server:5001/api/expenses?account_id=${account_id}`
+    `http://server:5001/api/expenses?accountId=${accountId}`
   );
 
   if (!res.ok) {
@@ -25,24 +25,24 @@ async function getTaxes() {
   return res.json();
 }
 
-async function Expenses({ params }: { params: { account_id: string } }) {
-  const account_id = parseInt(params.account_id);
+async function Expenses({ params }: { params: { accountId: string } }) {
+  const accountId = parseInt(params.accountId);
 
-  const expenses: Expense[] = await getExpenses(account_id);
+  const expenses: Expense[] = await getExpenses(accountId);
   const taxes: Tax[] = await getTaxes();
 
   // Function to find tax rate by tax_id
-  const getTaxRate = (tax_id: number | null) => {
-    if (!tax_id) return 0;
+  const getTaxRate = (taxId: number | null) => {
+    if (!taxId) return 0;
 
-    const tax = taxes.find((tax: Tax) => tax.id === tax_id);
+    const tax = taxes.find((tax: Tax) => tax.id === taxId);
     return tax ? tax.rate : 0;
   };
 
   // Calculate total after applying subsidies to each expense individually
   const totalWithSubsidies = expenses.reduce(
     (acc: number, expense: Expense) => {
-      const taxRate = getTaxRate(expense.tax_id);
+      const taxRate = getTaxRate(expense.taxId);
       const taxAmount = expense.amount * taxRate;
       const totalExpenseWithTax = expense.amount + taxAmount;
       const amountAfterSubsidy =
@@ -67,11 +67,7 @@ async function Expenses({ params }: { params: { account_id: string } }) {
           {totalWithSubsidies.toFixed(2)} including taxes and subsidies.
         </Typography>
       )}
-      <ExpensesCards
-        account_id={account_id}
-        expenses={expenses}
-        taxes={taxes}
-      />
+      <ExpensesCards accountId={accountId} expenses={expenses} taxes={taxes} />
     </Stack>
   );
 }

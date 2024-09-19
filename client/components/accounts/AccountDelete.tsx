@@ -25,31 +25,31 @@ function AccountDelete({
 
   const handleDelete = async () => {
     try {
-      await deleteAccount(account.account_id);
+      await deleteAccount(account.accountId);
 
       // Show success message
-      showSnackbar(`Account "${account.account_name}" deleted successfully`);
+      showSnackbar(`Account "${account.name}" deleted successfully`);
     } catch (error) {
       console.log(error);
 
       // Show error message
-      showAlert(`Error deleting account "${account.account_name}"`, "error");
+      showAlert(`Error deleting account "${account.name}"`, "error");
     }
 
-    if (account.account_id === parseInt(pathname.split("/")[1])) {
+    if (account.accountId === parseInt(pathname.split("/")[1])) {
       router.push("/");
     }
 
     setAccountModes((prevModes: any) => ({
       ...prevModes,
-      [account.account_id]: "view",
+      [account.accountId]: "view",
     }));
   };
 
   const handleCancel = () => {
     setAccountModes((prevModes: any) => ({
       ...prevModes,
-      [account.account_id]: "view",
+      [account.accountId]: "view",
     }));
   };
 
@@ -69,7 +69,7 @@ function AccountDelete({
       </IconButton>
       <br />
       <Box>
-        <Typography variant="h6">Delete {account.account_name}?</Typography>
+        <Typography variant="h6">Delete {account.name}?</Typography>
         <Typography variant="body1">
           Are you sure you want to delete this account? This action cannot be
           undone.

@@ -1,21 +1,18 @@
 "use server";
 
+import { Frequency } from "@/app/types/types";
 import { revalidatePath } from "next/cache";
 
 interface ExpenseRequest {
-  account_id: number;
-  tax_id: number | null;
+  accountId: number;
+  taxId: number | null;
   title: string;
   description: string;
   amount: number;
   subsidized: number;
-  frequency_type: number;
-  frequency_day_of_week: number | null;
-  frequency_week_of_month: number | null;
-  frequency_month_of_year: number | null;
-  frequency_type_variable: number;
-  begin_date: string;
-  end_date: string | null;
+  frequency: Frequency;
+  beginDate: string;
+  endDate: string | null;
 }
 
 export async function addExpense(expense: ExpenseRequest) {
@@ -28,7 +25,7 @@ export async function addExpense(expense: ExpenseRequest) {
   });
   const result = await response.json();
 
-  revalidatePath("/[account_id]", "page");
+  revalidatePath("/[accountId]", "page");
 
   return result;
 }
@@ -43,7 +40,7 @@ export async function editExpense(expense: ExpenseRequest, id: number) {
   });
   const result = await response.json();
 
-  revalidatePath("/[account_id]", "page");
+  revalidatePath("/[accountId]", "page");
   return result;
 }
 
@@ -52,5 +49,5 @@ export async function deleteExpense(id: number) {
     method: "DELETE",
   });
 
-  revalidatePath("/[account_id]", "page");
+  revalidatePath("/[accountId]", "page");
 }
