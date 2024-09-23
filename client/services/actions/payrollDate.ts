@@ -3,11 +3,11 @@
 import { revalidatePath } from "next/cache";
 
 interface PayrollDateRequest {
-  job_id: number;
-  payroll_day: number;
+  jobId: number;
+  payrollDay: number;
 }
 
-export async function togglePayrollDate(payroll_date: PayrollDateRequest) {
+export async function togglePayrollDate(payrollDate: PayrollDateRequest) {
   const response = await fetch(
     "http://server:5001/api/jobs/payroll/dates/toggle",
     {
@@ -15,7 +15,7 @@ export async function togglePayrollDate(payroll_date: PayrollDateRequest) {
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify(payroll_date),
+      body: JSON.stringify(payrollDate),
     }
   );
   const result = await response.json();

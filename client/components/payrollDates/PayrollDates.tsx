@@ -8,10 +8,10 @@ import { Typography } from "@mui/material";
 
 function PayrollDates({
   job,
-  payroll_dates,
+  payrollDates,
 }: {
   job: Job;
-  payroll_dates: PayrollDate[];
+  payrollDates: PayrollDate[];
 }) {
   // Generate an array of numbers from 1 to 31
   const numbers = Array.from({ length: 31 }, (_, index) => index + 1);
@@ -24,16 +24,16 @@ function PayrollDates({
       <Grid container spacing={2}>
         {numbers.map((number) => {
           // Find the payroll date that matches the current number/day
-          const payrollDateForDay = payroll_dates.find(
-            (payrollDate) => payrollDate.payroll_day === number
+          const payrollDateForDay = payrollDates.find(
+            (payrollDate) => payrollDate.payrollDay === number
           );
 
           return (
             <Grid item key={number} xs={6} md={2}>
               <PayrollDateCard
                 key={number}
-                job_id={job.id}
-                payroll_date={payrollDateForDay || null}
+                jobId={job.id}
+                payrollDate={payrollDateForDay || null}
                 date={number}
               />
             </Grid>
