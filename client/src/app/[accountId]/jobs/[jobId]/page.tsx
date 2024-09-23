@@ -1,8 +1,8 @@
 import { Job, PayrollDate, PayrollTax } from "@/app/types/types";
 import JobDetailsView from "../../../../../components/jobs/JobDetailsView";
 
-async function getJob(job_id: number) {
-  const res = await fetch(`http://server:5001/api/jobs?id=${job_id}`);
+async function getJob(jobId: number) {
+  const res = await fetch(`http://server:5001/api/jobs/${jobId}`);
 
   if (!res.ok) {
     throw new Error("Failed to fetch jobs");
@@ -11,9 +11,9 @@ async function getJob(job_id: number) {
   return res.json();
 }
 
-async function getPayrollDates(job_id: number) {
+async function getPayrollDates(jobId: number) {
   const res = await fetch(
-    `http://server:5001/api/jobs/payroll/dates?job_id=${job_id}`
+    `http://server:5001/api/jobs/payroll/dates?jobId=${jobId}`
   );
 
   if (!res.ok) {
@@ -23,9 +23,9 @@ async function getPayrollDates(job_id: number) {
   return res.json();
 }
 
-async function getPayrollTaxes(job_id: number) {
+async function getPayrollTaxes(jobId: number) {
   const res = await fetch(
-    `http://server:5001/api/jobs/payroll/taxes?job_id=${job_id}`
+    `http://server:5001/api/jobs/payroll/taxes?jobId=${jobId}`
   );
 
   if (!res.ok) {
@@ -38,21 +38,21 @@ async function getPayrollTaxes(job_id: number) {
 async function JobDetails({
   params,
 }: {
-  params: { account_id: string; job_id: string };
+  params: { accountId: string; jobId: string };
 }) {
-  const account_id = parseInt(params.account_id);
-  const job_id = parseInt(params.job_id);
+  const accountId = parseInt(params.accountId);
+  const jobId = parseInt(params.jobId);
 
-  const job: Job[] = await getJob(job_id);
-  const payroll_dates: PayrollDate[] = await getPayrollDates(job_id);
-  const payroll_taxes: PayrollTax[] = await getPayrollTaxes(job_id);
+  const job: Job[] = await getJob(jobId);
+  const payrollDates: PayrollDate[] = await getPayrollDates(jobId);
+  const payrollTaxes: PayrollTax[] = await getPayrollTaxes(jobId);
 
   return (
     <JobDetailsView
-      account_id={account_id}
+      accountId={accountId}
       job={job[0]}
-      payroll_dates={payroll_dates}
-      payroll_taxes={payroll_taxes}
+      payrollDates={payrollDates}
+      payrollTaxes={payrollTaxes}
     />
   );
 }

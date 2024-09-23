@@ -1,8 +1,8 @@
 import { Job, PayrollDate } from "@/app/types/types";
 import PayrollDates from "../../../../../../components/payrollDates/PayrollDates";
 
-async function getJob(job_id: number) {
-  const res = await fetch(`http://server:5001/api/jobs?id=${job_id}`);
+async function getJob(jobId: number) {
+  const res = await fetch(`http://server:5001/api/jobs/${jobId}`);
 
   if (!res.ok) {
     throw new Error("Failed to fetch jobs");
@@ -11,9 +11,9 @@ async function getJob(job_id: number) {
   return res.json();
 }
 
-async function getPayrollDates(job_id: number) {
+async function getPayrollDates(jobId: number) {
   const res = await fetch(
-    `http://server:5001/api/jobs/payroll/dates?job_id=${job_id}`
+    `http://server:5001/api/jobs/payroll/dates?jobId=${jobId}`
   );
 
   if (!res.ok) {
@@ -23,13 +23,13 @@ async function getPayrollDates(job_id: number) {
   return res.json();
 }
 
-async function JobDates({ params }: { params: { job_id: string } }) {
-  const job_id = parseInt(params.job_id);
+async function JobDates({ params }: { params: { jobId: string } }) {
+  const jobId = parseInt(params.jobId);
 
-  const job: Job[] = await getJob(job_id);
-  const payroll_dates: PayrollDate[] = await getPayrollDates(job_id);
+  const job: Job[] = await getJob(jobId);
+  const payrollDates: PayrollDate[] = await getPayrollDates(jobId);
 
-  return <PayrollDates job={job[0]} payroll_dates={payroll_dates} />;
+  return <PayrollDates job={job[0]} payrollDates={payrollDates} />;
 }
 
 export default JobDates;
