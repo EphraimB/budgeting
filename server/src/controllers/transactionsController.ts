@@ -766,7 +766,7 @@ export const getTransactionsByAccountId = async (
                 WHERE
                     (r.date + interval '1 day') <= $3
                     AND (r.remaining_balance IS NULL OR r.remaining_balance - ABS(r.amount) > 0)
-                ,
+                ),
                         work_days_and_hours AS (
                             WITH ordered_table AS (
                             SELECT
