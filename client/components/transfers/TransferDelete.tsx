@@ -26,17 +26,12 @@ function TransferDelete({
       await deleteTransfer(transfer.id);
 
       // Show success message
-      showSnackbar(
-        `Wishlist "${transfer.transfer_title}" deleted successfully`
-      );
+      showSnackbar(`Wishlist "${transfer.title}" deleted successfully`);
     } catch (error) {
       console.log(error);
 
       // Show error message
-      showAlert(
-        `Error deleting transfer "${transfer.transfer_title}"`,
-        "error"
-      );
+      showAlert(`Error deleting transfer "${transfer.title}"`, "error");
     }
     setTransferModes((prev) => ({ ...prev, [transfer.id]: "view" }));
   };
@@ -62,7 +57,7 @@ function TransferDelete({
       <br />
       <br />
       <Typography variant="subtitle1" component="h3">
-        Delete "{transfer.transfer_title}"?
+        Delete "{transfer.title}"?
       </Typography>
       <Button color="error" variant="contained" onClick={handleDelete}>
         Delete
