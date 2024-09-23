@@ -14,9 +14,9 @@ import TablePagination from "@mui/material/TablePagination";
 import { GeneratedTransaction, Transaction } from "@/app/types/types";
 
 export default function TransactionDisplay({
-  transactions,
+  generatedTransactions,
 }: {
-  transactions: GeneratedTransaction[];
+  generatedTransactions: GeneratedTransaction[];
 }) {
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
@@ -33,10 +33,12 @@ export default function TransactionDisplay({
   };
 
   const flatTransactions = useMemo(() => {
-    return transactions
-      ? transactions.flatMap((dt: GeneratedTransaction) => dt.transactions)
+    return generatedTransactions
+      ? generatedTransactions.flatMap(
+          (dt: GeneratedTransaction) => dt.transactions
+        )
       : [];
-  }, [transactions]);
+  }, [generatedTransactions]);
 
   return (
     <>
