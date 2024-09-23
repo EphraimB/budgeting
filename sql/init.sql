@@ -38,7 +38,6 @@ CREATE TABLE IF NOT EXISTS job_schedule (
   day_of_week INTEGER NOT NULL,
   start_time TIME NOT NULL,
   end_time TIME NOT NULL,
-  UNIQUE(day_of_week, start_time)
 );
 
 -- Create a taxes table in postgres
