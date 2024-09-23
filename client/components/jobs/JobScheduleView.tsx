@@ -27,12 +27,12 @@ const timeToPercent = (time: string) => {
 };
 
 function JobScheduleView({
-  job_day_of_week,
-  day_of_week,
+  jobDayOfWeek,
+  dayOfWeek,
   handleOpenModal,
 }: {
-  job_day_of_week: JobSchedule[];
-  day_of_week: number;
+  jobDayOfWeek: JobSchedule[];
+  dayOfWeek: number;
   handleOpenModal: (day: number) => void;
 }) {
   const is12HourClock = () => {
@@ -59,11 +59,11 @@ function JobScheduleView({
         left: 0,
         bottom: 0,
       }}
-      onClick={() => handleOpenModal(day_of_week)}
+      onClick={() => handleOpenModal(dayOfWeek)}
     >
-      {job_day_of_week.map((job, index) => {
-        const startPercent = timeToPercent(job.start_time);
-        const endPercent = timeToPercent(job.end_time);
+      {jobDayOfWeek.map((job, index) => {
+        const startPercent = timeToPercent(job.startTime);
+        const endPercent = timeToPercent(job.endTime);
         const widthPercent = endPercent - startPercent;
 
         return (
@@ -71,10 +71,10 @@ function JobScheduleView({
             key={index}
             title={
               use12HourClock
-                ? dayjs(job.start_time, "HH:mm:ss").format("h:mm:ss A") +
+                ? dayjs(job.startTime, "HH:mm:ss").format("h:mm:ss A") +
                   "-" +
-                  dayjs(job.end_time, "HH:mm:ss").format("h:mm:ss A")
-                : job.start_time + "-" + job.end_time
+                  dayjs(job.endTime, "HH:mm:ss").format("h:mm:ss A")
+                : job.startTime + "-" + job.endTime
             }
             placement="top"
           >

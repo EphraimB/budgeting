@@ -25,8 +25,8 @@ function JobScheduleBar({ job, index }: { job: JobSchedule; index: number }) {
     return ((hours * 60 + minutes) / 1440) * 100;
   };
 
-  const startPercent = timeToPercent(job.start_time);
-  const endPercent = timeToPercent(job.end_time);
+  const startPercent = timeToPercent(job.startTime);
+  const endPercent = timeToPercent(job.endTime);
   const widthPercent = endPercent - startPercent;
 
   const is12HourClock = () => {
@@ -46,10 +46,10 @@ function JobScheduleBar({ job, index }: { job: JobSchedule; index: number }) {
       key={index}
       title={
         use12HourClock
-          ? dayjs(job.start_time, "HH:mm:ss").format("h:mm:ss A") +
+          ? dayjs(job.startTime, "HH:mm:ss").format("h:mm:ss A") +
             "-" +
-            dayjs(job.end_time, "HH:mm:ss").format("h:mm:ss A")
-          : job.start_time + "-" + job.end_time
+            dayjs(job.endTime, "HH:mm:ss").format("h:mm:ss A")
+          : job.startTime + "-" + job.endTime
       }
       placement="top"
     >

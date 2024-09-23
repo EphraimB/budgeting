@@ -3,18 +3,16 @@
 import { revalidatePath } from "next/cache";
 
 interface JobSchedule {
-  day_of_week: number;
-  start_time: string;
-  end_time: string;
+  dayOfWeek: number;
+  startTime: string;
+  endTime: string;
 }
 
 interface JobRequest {
-  account_id: number;
+  accountId: number;
   name: string;
-  hourly_rate: number;
-  vacation_days: number;
-  sick_days: number;
-  job_schedule: JobSchedule[];
+  hourlyRate: number;
+  jobSchedule: JobSchedule[];
 }
 
 export async function addJob(job: JobRequest) {

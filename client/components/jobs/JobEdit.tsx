@@ -20,16 +20,14 @@ import InputAdornment from "@mui/material/InputAdornment";
 function JobEdit({
   job,
   setJobModes,
-  account_id,
+  accountId,
 }: {
   job: Job;
   setJobModes: (jobModes: Record<number, string>) => void;
-  account_id: number;
+  accountId: number;
 }) {
   const [name, setName] = useState(job.name);
-  const [hourly_rate, setHourlyRate] = useState(job.hourly_rate);
-  const [vacation_days, setVacationDays] = useState(job.vacation_days);
-  const [sick_days, setSickDays] = useState(job.sick_days);
+  const [hourlyRate, setHourlyRate] = useState(job.hourlyRate);
 
   const [nameError, setNameError] = useState("");
   const [hourlyRateError, setHourlyRateError] = useState("");
@@ -50,12 +48,10 @@ function JobEdit({
   };
 
   const data = {
-    account_id,
+    accountId,
     name,
-    hourly_rate,
-    vacation_days,
-    sick_days,
-    job_schedule: job.job_schedule,
+    hourlyRate,
+    jobSchedule: job.jobSchedule,
   };
 
   const validateName = () => {
@@ -69,7 +65,7 @@ function JobEdit({
   };
 
   const validateHourlyRate = () => {
-    if (!hourly_rate) {
+    if (!hourlyRate) {
       setHourlyRateError("Hourly rate is required");
 
       return false;
@@ -128,7 +124,7 @@ function JobEdit({
       </IconButton>
       <br />
       <CardHeader
-        title={`Edit Job - Step ${activeStep + 1} of 2`}
+        title={`Edit Job - Step ${activeStep + 1} of 1`}
         sx={{
           textAlign: "center",
         }}
@@ -150,7 +146,7 @@ function JobEdit({
             <TextField
               label="Hourly Rate"
               variant="standard"
-              value={hourly_rate}
+              value={hourlyRate}
               error={!!hourlyRateError}
               helperText={hourlyRateError}
               onChange={(e) => setHourlyRate(parseInt(e.target.value))}
@@ -159,27 +155,6 @@ function JobEdit({
                   <InputAdornment position="start">$</InputAdornment>
                 ),
               }}
-              fullWidth
-            />
-            <br />
-            <br />
-          </>
-        ) : activeStep === 1 ? (
-          <>
-            <TextField
-              label="Vacation Days"
-              variant="standard"
-              value={vacation_days}
-              onChange={(e) => setVacationDays(parseInt(e.target.value))}
-              fullWidth
-            />
-            <br />
-            <br />
-            <TextField
-              label="Sick Days"
-              variant="standard"
-              value={sick_days}
-              onChange={(e) => setSickDays(parseInt(e.target.value))}
               fullWidth
             />
             <br />
@@ -201,7 +176,7 @@ function JobEdit({
             <Button
               size="small"
               onClick={handleNext}
-              disabled={activeStep === 1}
+              disabled={activeStep === 0}
             >
               Next
               {theme.direction === "rtl" ? (

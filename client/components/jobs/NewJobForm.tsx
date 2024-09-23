@@ -18,15 +18,13 @@ import InputAdornment from "@mui/material/InputAdornment";
 
 function NewJobForm({
   setShowJobForm,
-  account_id,
+  accountId,
 }: {
   setShowJobForm: (showJobForm: boolean) => void;
-  account_id: number;
+  accountId: number;
 }) {
   const [name, setName] = useState("");
-  const [hourly_rate, setHourlyRate] = useState(0);
-  const [vacation_days, setVacationDays] = useState(0);
-  const [sick_days, setSickDays] = useState(0);
+  const [hourlyRate, setHourlyRate] = useState(0);
 
   const [nameError, setNameError] = useState("");
   const [hourlyRateError, setHourlyRateError] = useState("");
@@ -47,12 +45,10 @@ function NewJobForm({
   };
 
   const data = {
-    account_id,
+    accountId,
     name,
-    hourly_rate,
-    vacation_days,
-    sick_days,
-    job_schedule: [],
+    hourlyRate,
+    jobSchedule: [],
   };
 
   const validateName = () => {
@@ -66,7 +62,7 @@ function NewJobForm({
   };
 
   const validateHourlyRate = () => {
-    if (!hourly_rate) {
+    if (!hourlyRate) {
       setHourlyRateError("Hourly rate is required");
 
       return false;
@@ -124,7 +120,7 @@ function NewJobForm({
       </IconButton>
       <br />
       <CardHeader
-        title={`Add Job - Step ${activeStep + 1} of 2`}
+        title={`Add Job - Step ${activeStep + 1} of 1`}
         sx={{
           textAlign: "center",
         }}
@@ -146,7 +142,7 @@ function NewJobForm({
             <TextField
               label="Hourly Rate"
               variant="standard"
-              value={hourly_rate}
+              value={hourlyRate}
               error={!!hourlyRateError}
               helperText={hourlyRateError}
               onChange={(e) => setHourlyRate(parseInt(e.target.value))}
@@ -155,27 +151,6 @@ function NewJobForm({
                   <InputAdornment position="start">$</InputAdornment>
                 ),
               }}
-              fullWidth
-            />
-            <br />
-            <br />
-          </>
-        ) : activeStep === 1 ? (
-          <>
-            <TextField
-              label="Vacation Days"
-              variant="standard"
-              value={vacation_days}
-              onChange={(e) => setVacationDays(parseInt(e.target.value))}
-              fullWidth
-            />
-            <br />
-            <br />
-            <TextField
-              label="Sick Days"
-              variant="standard"
-              value={sick_days}
-              onChange={(e) => setSickDays(parseInt(e.target.value))}
               fullWidth
             />
             <br />
@@ -197,7 +172,7 @@ function NewJobForm({
             <Button
               size="small"
               onClick={handleNext}
-              disabled={activeStep === 1}
+              disabled={activeStep === 0}
             >
               Next
               {theme.direction === "rtl" ? (

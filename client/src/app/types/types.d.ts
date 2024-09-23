@@ -118,8 +118,6 @@ export interface Job {
   accountId: number;
   name: string;
   hourlyRate: number;
-  vacationDays: number;
-  sickDays: number;
   totalHoursPerWeek: number;
   jobSchedule: JobSchedule[];
 }
