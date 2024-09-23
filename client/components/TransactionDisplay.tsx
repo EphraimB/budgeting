@@ -32,7 +32,7 @@ export default function TransactionDisplay({
     setPage(0);
   };
 
-  const flatTransactions = useMemo(() => {
+  const transactions = useMemo(() => {
     return generatedTransactions ? generatedTransactions.transactions : [];
   }, [generatedTransactions]);
 
@@ -73,7 +73,7 @@ export default function TransactionDisplay({
             </TableRow>
           </TableHead>
           <TableBody>
-            {flatTransactions
+            {transactions
               .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
               .map((transaction: Transaction) => (
                 <TableRow
@@ -156,7 +156,7 @@ export default function TransactionDisplay({
       <TablePagination
         rowsPerPageOptions={[5, 10]}
         component="div"
-        count={flatTransactions.length}
+        count={transactions.length}
         rowsPerPage={rowsPerPage}
         page={page}
         onPageChange={handleChangePage}
