@@ -10,13 +10,14 @@ import CloseIcon from "@mui/icons-material/Close";
 import { Typography } from "@mui/material";
 import { addTransactionHistory } from "../../services/actions/transactionHistory";
 import InputAdornment from "@mui/material/InputAdornment";
+import { Account } from "@/app/types/types";
 
 function AccountWithdrawalForm({
   account,
   setAccountModes,
 }: {
-  account: any;
-  setAccountModes: any;
+  account: Account;
+  setAccountModes: React.Dispatch<React.SetStateAction<Record<number, string>>>;
 }) {
   const [amount, setAmount] = useState("0");
   const [title, setTitle] = useState("");
@@ -27,7 +28,7 @@ function AccountWithdrawalForm({
   const [descriptionError, setDescriptionError] = useState("");
 
   const data = {
-    accountId: account.account_id,
+    accountId: account.accountId,
     amount: -amount,
     tax: 0,
     title,
@@ -82,7 +83,7 @@ function AccountWithdrawalForm({
 
       setAccountModes((prevModes: any) => ({
         ...prevModes,
-        [account.account_id]: "view",
+        [account.accountId]: "view",
       }));
     }
   };
@@ -100,7 +101,7 @@ function AccountWithdrawalForm({
         onClick={() =>
           setAccountModes((prevModes: any) => ({
             ...prevModes,
-            [account.account_id]: "view",
+            [account.accountId]: "view",
           }))
         }
       >
@@ -108,8 +109,7 @@ function AccountWithdrawalForm({
       </IconButton>
       <br />
       <Typography variant="subtitle2">
-        Withdraw from {account.account_name} account of $
-        {account.account_balance}
+        Withdraw from {account.name} account of ${account.balance}
       </Typography>
       <Stack direction="column" spacing={2}>
         <Box sx={{ display: "flex", alignItems: "center", gap: "8px" }}>

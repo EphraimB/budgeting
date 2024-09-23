@@ -47,7 +47,7 @@ function AccountView({
         open={open}
         handleClose={handleClose}
         setAccountModes={setAccountModes}
-        account_id={account.accountId}
+        accountId={account.accountId}
       />
       <br />
       <Link
