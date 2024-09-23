@@ -28,7 +28,7 @@ function AccountDepositForm({
   const [descriptionError, setDescriptionError] = useState("");
 
   const data = {
-    accountId: account.accountId,
+    accountId: account.id,
     amount: parseFloat(amount),
     tax: 0,
     title,
@@ -83,7 +83,7 @@ function AccountDepositForm({
 
       setAccountModes((prevModes: any) => ({
         ...prevModes,
-        [account.accountId]: "view",
+        [account.id]: "view",
       }));
     }
   };
@@ -101,7 +101,7 @@ function AccountDepositForm({
         onClick={() =>
           setAccountModes((prevModes: any) => ({
             ...prevModes,
-            [account.accountId]: "view",
+            [account.id]: "view",
           }))
         }
       >

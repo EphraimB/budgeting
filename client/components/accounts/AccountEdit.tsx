@@ -44,7 +44,7 @@ export default function AccountEdit({
     if (isNameValid) {
       // Submit data
       try {
-        await editAccount(data, account.accountId);
+        await editAccount(data, account.id);
 
         // Show success message
         showSnackbar(`Account named "${accountName}" edited successfully`);
@@ -57,7 +57,7 @@ export default function AccountEdit({
 
       setAccountModes((prevModes: any) => ({
         ...prevModes,
-        [account.accountId]: "view",
+        [account.id]: "view",
       }));
     } else {
       // Show error message
@@ -81,7 +81,7 @@ export default function AccountEdit({
         onClick={() =>
           setAccountModes((prevModes: any) => ({
             ...prevModes,
-            [account.accountId]: "view",
+            [account.id]: "view",
           }))
         }
       >

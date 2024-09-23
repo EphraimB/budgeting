@@ -35,27 +35,27 @@ function AccountList({ accounts }: { accounts: Account[] }) {
     >
       {accounts.map((account: Account) => (
         <Paper
-          key={account.accountId}
-          elevation={account.accountId === accountId ? 1 : 4}
+          key={account.id}
+          elevation={account.id === accountId ? 1 : 4}
           sx={{
             position: "relative",
             p: 2,
             width: 175,
           }}
         >
-          {accountModes[account.accountId] === "delete" ? (
+          {accountModes[account.id] === "delete" ? (
             <AccountDelete
               account={account}
               setAccountModes={setAccountModes}
             />
-          ) : accountModes[account.accountId] === "edit" ? (
+          ) : accountModes[account.id] === "edit" ? (
             <AccountEdit account={account} setAccountModes={setAccountModes} />
-          ) : accountModes[account.accountId] === "deposit" ? (
+          ) : accountModes[account.id] === "deposit" ? (
             <AccountDepositForm
               account={account}
               setAccountModes={setAccountModes}
             />
-          ) : accountModes[account.accountId] === "withdraw" ? (
+          ) : accountModes[account.id] === "withdraw" ? (
             <AccountWithdrawalForm
               account={account}
               setAccountModes={setAccountModes}

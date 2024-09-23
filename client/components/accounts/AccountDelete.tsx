@@ -25,7 +25,7 @@ function AccountDelete({
 
   const handleDelete = async () => {
     try {
-      await deleteAccount(account.accountId);
+      await deleteAccount(account.id);
 
       // Show success message
       showSnackbar(`Account "${account.name}" deleted successfully`);
@@ -36,20 +36,20 @@ function AccountDelete({
       showAlert(`Error deleting account "${account.name}"`, "error");
     }
 
-    if (account.accountId === parseInt(pathname.split("/")[1])) {
+    if (account.id === parseInt(pathname.split("/")[1])) {
       router.push("/");
     }
 
     setAccountModes((prevModes: any) => ({
       ...prevModes,
-      [account.accountId]: "view",
+      [account.id]: "view",
     }));
   };
 
   const handleCancel = () => {
     setAccountModes((prevModes: any) => ({
       ...prevModes,
-      [account.accountId]: "view",
+      [account.id]: "view",
     }));
   };
 

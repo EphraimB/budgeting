@@ -28,7 +28,7 @@ function AccountWithdrawalForm({
   const [descriptionError, setDescriptionError] = useState("");
 
   const data = {
-    accountId: account.accountId,
+    accountId: account.id,
     amount: -amount,
     tax: 0,
     title,
@@ -83,7 +83,7 @@ function AccountWithdrawalForm({
 
       setAccountModes((prevModes: any) => ({
         ...prevModes,
-        [account.accountId]: "view",
+        [account.id]: "view",
       }));
     }
   };
@@ -101,7 +101,7 @@ function AccountWithdrawalForm({
         onClick={() =>
           setAccountModes((prevModes: any) => ({
             ...prevModes,
-            [account.accountId]: "view",
+            [account.id]: "view",
           }))
         }
       >

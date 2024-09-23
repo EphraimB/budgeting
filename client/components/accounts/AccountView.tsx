@@ -47,12 +47,12 @@ function AccountView({
         open={open}
         handleClose={handleClose}
         setAccountModes={setAccountModes}
-        accountId={account.accountId}
+        accountId={account.id}
       />
       <br />
       <Link
-        href={`/${account.accountId}`}
-        as={`/${account.accountId}`}
+        href={`/${account.id}`}
+        as={`/${account.id}`}
         style={{ color: "inherit", textDecoration: "inherit" }}
       >
         <Typography variant="subtitle1" color="text.primary">

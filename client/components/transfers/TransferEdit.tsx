@@ -273,7 +273,7 @@ function TransferEdit({
                 }
               >
                 {accounts.map((account: Account) => (
-                  <MenuItem key={account.accountId} value={account.accountId}>
+                  <MenuItem key={account.id} value={account.id}>
                     {account.name} - ${account.balance}
                   </MenuItem>
                 ))}

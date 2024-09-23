@@ -23,7 +23,7 @@ async function getAccounts(accountId: number) {
   }
 
   const data = await res.json();
-  return data.filter((account: Account) => account.accountId !== accountId);
+  return data.filter((account: Account) => account.id !== accountId);
 }
 
 async function Transfers({ params }: { params: { accountId: string } }) {

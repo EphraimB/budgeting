@@ -40,7 +40,7 @@ function NewTransferForm({
   accounts: Account[];
 }) {
   const [destinationAccountId, setDestinationAccountId] = useState(
-    accounts[0].accountId
+    accounts[0].id
   );
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
@@ -245,7 +245,7 @@ function NewTransferForm({
                 }
               >
                 {accounts.map((account: Account) => (
-                  <MenuItem key={account.accountId} value={account.accountId}>
+                  <MenuItem key={account.id} value={account.id}>
                     {account.name} - ${account.balance}
                   </MenuItem>
                 ))}
