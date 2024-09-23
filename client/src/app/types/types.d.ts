@@ -99,11 +99,9 @@ interface Transaction {
   description: string;
   date: string;
   amount: number;
-  taxRate: number | null;
+  taxRate: number;
   totalAmount: number;
   balance: number;
-  dateCreated: string;
-  dateModified: string;
 }
 
 interface JobSchedule {

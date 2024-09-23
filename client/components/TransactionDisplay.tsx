@@ -11,7 +11,7 @@ import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
 import { green, red } from "@mui/material/colors";
 import TablePagination from "@mui/material/TablePagination";
-import { GeneratedTransaction } from "@/app/types/types";
+import { GeneratedTransaction, Transaction } from "@/app/types/types";
 
 export default function TransactionDisplay({
   transactions,
@@ -34,7 +34,7 @@ export default function TransactionDisplay({
 
   const flatTransactions = useMemo(() => {
     return transactions
-      ? transactions.flatMap((dt: any) => dt.transactions)
+      ? transactions.flatMap((dt: GeneratedTransaction) => dt.transactions)
       : [];
   }, [transactions]);
 
@@ -77,18 +77,18 @@ export default function TransactionDisplay({
           <TableBody>
             {flatTransactions
               .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-              .map((transaction: any) => (
+              .map((transaction: Transaction) => (
                 <TableRow
                   key={`${transaction.id}-${transaction.date}-${transaction.title}-${transaction.amount}-${transaction.balance}`}
                   sx={{
                     "&:last-child td, &:last-child th": { border: 0 },
                     backgroundColor:
-                      transaction.total_amount >= 0 ? green[500] : red[500],
+                      transaction.totalAmount >= 0 ? green[500] : red[500],
                   }}
                 >
                   <TableCell
                     sx={{
-                      color: transaction.total_amount >= 0 ? "#000" : "#fff",
+                      color: transaction.totalAmount >= 0 ? "#000" : "#fff",
                     }}
                     component="th"
                     scope="row"
@@ -101,7 +101,7 @@ export default function TransactionDisplay({
                   </TableCell>
                   <TableCell
                     sx={{
-                      color: transaction.total_amount >= 0 ? "#000" : "#fff",
+                      color: transaction.totalAmount >= 0 ? "#000" : "#fff",
                     }}
                     align="right"
                   >
@@ -109,7 +109,7 @@ export default function TransactionDisplay({
                   </TableCell>
                   <TableCell
                     sx={{
-                      color: transaction.total_amount >= 0 ? "#000" : "#fff",
+                      color: transaction.totalAmount >= 0 ? "#000" : "#fff",
                     }}
                     align="right"
                   >
@@ -117,7 +117,7 @@ export default function TransactionDisplay({
                   </TableCell>
                   <TableCell
                     sx={{
-                      color: transaction.total_amount >= 0 ? "#000" : "#fff",
+                      color: transaction.totalAmount >= 0 ? "#000" : "#fff",
                     }}
                     align="right"
                   >
@@ -125,26 +125,26 @@ export default function TransactionDisplay({
                   </TableCell>
                   <TableCell
                     sx={{
-                      color: transaction.total_amount >= 0 ? "#000" : "#fff",
+                      color: transaction.totalAmount >= 0 ? "#000" : "#fff",
                     }}
                     align="right"
                   >
-                    {transaction.tax_rate * 100}%
+                    {transaction.taxRate * 100}%
                   </TableCell>
                   <TableCell
                     sx={{
-                      color: transaction.total_amount >= 0 ? "#000" : "#fff",
+                      color: transaction.totalAmount >= 0 ? "#000" : "#fff",
                     }}
                     align="right"
                   >
                     $
-                    {(Math.round(transaction.total_amount * 100) / 100).toFixed(
+                    {(Math.round(transaction.totalAmount * 100) / 100).toFixed(
                       2
                     )}
                   </TableCell>
                   <TableCell
                     sx={{
-                      color: transaction.total_amount >= 0 ? "#000" : "#fff",
+                      color: transaction.totalAmount >= 0 ? "#000" : "#fff",
                     }}
                     align="right"
                   >

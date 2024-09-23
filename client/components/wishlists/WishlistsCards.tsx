@@ -13,11 +13,11 @@ import NewWishlistForm from "./NewWishlistForm";
 import WishlistsView from "./WishlistsView";
 
 function WishlistsCards({
-  account_id,
+  accountId,
   wishlists,
   taxes,
 }: {
-  account_id: number;
+  accountId: number;
   wishlists: Wishlist[];
   taxes: Tax[];
 }) {
@@ -32,10 +32,10 @@ function WishlistsCards({
         {showWishlistForm && (
           <Grid key="new-wishlist" item>
             <NewWishlistForm
-              account_id={account_id}
+              accountId={accountId}
               taxes={taxes}
               setShowWishlistForm={setShowWishlistForm}
-              total_items={wishlists.length}
+              totalItems={wishlists.length}
             />
           </Grid>
         )}
@@ -50,11 +50,11 @@ function WishlistsCards({
                 />
               ) : wishlistModes[wishlist.id] === "edit" ? (
                 <WishlistEdit
-                  account_id={account_id}
+                  accountId={accountId}
                   wishlist={wishlist}
                   taxes={taxes}
                   setWishlistModes={setWishlistModes}
-                  total_items={wishlists.length}
+                  totalItems={wishlists.length}
                 />
               ) : (
                 <WishlistsView
