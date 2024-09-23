@@ -26,10 +26,10 @@ async function getPayrollDates(jobId: number) {
 async function JobDates({ params }: { params: { jobId: string } }) {
   const jobId = parseInt(params.jobId);
 
-  const job: Job[] = await getJob(jobId);
+  const job: Job = await getJob(jobId);
   const payrollDates: PayrollDate[] = await getPayrollDates(jobId);
 
-  return <PayrollDates job={job[0]} payrollDates={payrollDates} />;
+  return <PayrollDates job={job} payrollDates={payrollDates} />;
 }
 
 export default JobDates;
