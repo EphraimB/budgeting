@@ -16,7 +16,7 @@ import { GeneratedTransaction, Transaction } from "@/app/types/types";
 export default function TransactionDisplay({
   generatedTransactions,
 }: {
-  generatedTransactions: GeneratedTransaction[];
+  generatedTransactions: GeneratedTransaction;
 }) {
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
@@ -33,11 +33,7 @@ export default function TransactionDisplay({
   };
 
   const flatTransactions = useMemo(() => {
-    return generatedTransactions
-      ? generatedTransactions.flatMap(
-          (dt: GeneratedTransaction) => dt.transactions
-        )
-      : [];
+    return generatedTransactions ? generatedTransactions.transactions : [];
   }, [generatedTransactions]);
 
   return (

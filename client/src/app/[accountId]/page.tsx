@@ -47,7 +47,7 @@ async function TransactionsPage({
   const fromDate = searchParams.fromDate as string;
   const toDate = searchParams.toDate as string;
 
-  const generatedTransactions: GeneratedTransaction[] = await getTransactions(
+  const generatedTransactions: GeneratedTransaction = await getTransactions(
     accountId,
     fromDate,
     toDate
