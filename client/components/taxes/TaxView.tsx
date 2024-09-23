@@ -49,7 +49,7 @@ function TaxView({
         open={open}
         handleClose={handleClose}
         setTaxModes={setTaxModes}
-        tax_id={tax.id}
+        taxId={tax.id}
       />
       <CardHeader title={tax.title} subheader={tax.description} />
       <CardContent>
