@@ -3,9 +3,9 @@ import Typography from "@mui/material/Typography";
 import { Tax, Wishlist } from "@/app/types/types";
 import WishlistsCards from "../../../../components/wishlists/WishlistsCards";
 
-async function getWishlists(account_id: number) {
+async function getWishlists(accountId: number) {
   const res = await fetch(
-    `http://server:5001/api/wishlists?account_id=${account_id}`
+    `http://server:5001/api/wishlists?accountId=${accountId}`
   );
 
   if (!res.ok) {
@@ -25,10 +25,10 @@ async function getTaxes() {
   return res.json();
 }
 
-async function Wishlists({ params }: { params: { account_id: string } }) {
-  const account_id = parseInt(params.account_id);
+async function Wishlists({ params }: { params: { accountId: string } }) {
+  const accountId = parseInt(params.accountId);
 
-  const wishlists: Wishlist[] = await getWishlists(account_id);
+  const wishlists: Wishlist[] = await getWishlists(accountId);
   const taxes: Tax[] = await getTaxes();
 
   return (
@@ -46,7 +46,7 @@ async function Wishlists({ params }: { params: { account_id: string } }) {
         </Typography>
       )}
       <WishlistsCards
-        account_id={account_id}
+        accountId={accountId}
         wishlists={wishlists}
         taxes={taxes}
       />

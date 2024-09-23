@@ -3,9 +3,9 @@ import Typography from "@mui/material/Typography";
 import { Account, Transfer } from "@/app/types/types";
 import TransferCards from "../../../../components/transfers/TransfersCards";
 
-async function getTransfers(account_id: number) {
+async function getTransfers(accountId: number) {
   const res = await fetch(
-    `http://server:5001/api/transfers?account_id=${account_id}`
+    `http://server:5001/api/transfers?accountId=${accountId}`
   );
 
   if (!res.ok) {
@@ -15,7 +15,7 @@ async function getTransfers(account_id: number) {
   return res.json();
 }
 
-async function getAccounts(account_id: number) {
+async function getAccounts(accountId: number) {
   const res = await fetch("http://server:5001/api/accounts");
 
   if (!res.ok) {
@@ -23,14 +23,14 @@ async function getAccounts(account_id: number) {
   }
 
   const data = await res.json();
-  return data.filter((account: Account) => account.account_id !== account_id);
+  return data.filter((account: Account) => account.accountId !== accountId);
 }
 
-async function Transfers({ params }: { params: { account_id: string } }) {
-  const account_id = parseInt(params.account_id);
+async function Transfers({ params }: { params: { accountId: string } }) {
+  const accountId = parseInt(params.accountId);
 
-  const transfers: Transfer[] = await getTransfers(account_id);
-  const accounts: Account[] = await getAccounts(account_id);
+  const transfers: Transfer[] = await getTransfers(accountId);
+  const accounts: Account[] = await getAccounts(accountId);
 
   return (
     <Stack>
@@ -47,7 +47,7 @@ async function Transfers({ params }: { params: { account_id: string } }) {
         </Typography>
       )}
       <TransferCards
-        account_id={account_id}
+        accountId={accountId}
         transfers={transfers}
         accounts={accounts}
       />

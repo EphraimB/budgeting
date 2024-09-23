@@ -10,7 +10,7 @@ async function getTransactions(
   toDate: string
 ) {
   const res = await fetch(
-    `http://server:5001/api/transactions?accountId=${accountId}&fromDate=${fromDate}&toDate=${toDate}`
+    `http://server:5001/api/transactions/${accountId}?fromDate=${fromDate}&toDate=${toDate}`
   );
 
   if (!res.ok) {
@@ -47,7 +47,7 @@ async function TransactionsPage({
   const fromDate = searchParams.fromDate as string;
   const toDate = searchParams.toDate as string;
 
-  const transactions: GeneratedTransaction[] = await getTransactions(
+  const generatedTransactions: GeneratedTransaction[] = await getTransactions(
     accountId,
     fromDate,
     toDate
@@ -56,7 +56,7 @@ async function TransactionsPage({
   return (
     <>
       <DateRange fromDate={fromDate} toDate={toDate} />
-      <TransactionDisplay transactions={transactions} />
+      <TransactionDisplay generatedTransactions={generatedTransactions} />
     </>
   );
 }

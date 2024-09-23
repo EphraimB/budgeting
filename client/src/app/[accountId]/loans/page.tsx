@@ -3,9 +3,9 @@ import Typography from "@mui/material/Typography";
 import { Loan } from "@/app/types/types";
 import LoansCards from "../../../../components/loans/LoansCards";
 
-async function getLoans(account_id: number) {
+async function getLoans(accountId: number) {
   const res = await fetch(
-    `http://server:5001/api/loans?account_id=${account_id}`
+    `http://server:5001/api/loans?accountId=${accountId}`
   );
 
   if (!res.ok) {
@@ -15,10 +15,10 @@ async function getLoans(account_id: number) {
   return res.json();
 }
 
-async function Loans({ params }: { params: { account_id: string } }) {
-  const account_id = parseInt(params.account_id);
+async function Loans({ params }: { params: { accountId: string } }) {
+  const accountId = parseInt(params.accountId);
 
-  const loans: Loan[] = await getLoans(account_id);
+  const loans: Loan[] = await getLoans(accountId);
 
   const totalLoansAmount = loans.reduce((acc: number, loan: Loan): number => {
     return acc + loan.amount;
@@ -38,7 +38,7 @@ async function Loans({ params }: { params: { account_id: string } }) {
           All {loans.length} of your loans are ${totalLoansAmount.toFixed(2)}
         </Typography>
       )}
-      <LoansCards account_id={account_id} loans={loans} />
+      <LoansCards accountId={accountId} loans={loans} />
     </Stack>
   );
 }
