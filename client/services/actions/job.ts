@@ -31,8 +31,6 @@ export async function addJob(job: JobRequest) {
 }
 
 export async function editJob(job: JobRequest, id: number) {
-  console.log(id);
-  console.log(job);
   const response = await fetch(`http://server:5001/api/jobs/${id}`, {
     method: "PUT",
     headers: {
