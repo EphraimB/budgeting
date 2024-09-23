@@ -27,7 +27,7 @@ export async function addJob(job: JobRequest) {
 
   console.log(result);
 
-  revalidatePath("/[account_id]/jobs", "page");
+  revalidatePath("/[accountId]/jobs", "page");
 
   return result;
 }
@@ -44,7 +44,7 @@ export async function editJob(job: JobRequest, id: number) {
 
   console.log(result);
 
-  revalidatePath("/[account_id]/jobs", "page");
+  revalidatePath("/[accountId]/jobs", "page");
   return result;
 }
 
@@ -53,5 +53,5 @@ export async function deleteJob(id: number) {
     method: "DELETE",
   });
 
-  revalidatePath("/[account_id]/jobs", "page");
+  revalidatePath("/[accountId]/jobs", "page");
 }

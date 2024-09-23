@@ -27,7 +27,7 @@ export async function addLoan(loan: LoanRequest) {
   });
   const result = await response.json();
 
-  revalidatePath("/[account_id]", "page");
+  revalidatePath("/[accountId]", "page");
   return result;
 }
 
@@ -41,7 +41,7 @@ export async function editLoan(loan: LoanRequest, id: number) {
   });
   const result = await response.json();
 
-  revalidatePath("/[account_id]", "page");
+  revalidatePath("/[accountId]", "page");
   return result;
 }
 
@@ -50,5 +50,5 @@ export async function deleteLoan(id: number) {
     method: "DELETE",
   });
 
-  revalidatePath("/[account_id]", "page");
+  revalidatePath("/[accountId]", "page");
 }
