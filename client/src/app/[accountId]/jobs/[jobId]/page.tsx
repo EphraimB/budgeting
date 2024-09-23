@@ -43,14 +43,14 @@ async function JobDetails({
   const accountId = parseInt(params.accountId);
   const jobId = parseInt(params.jobId);
 
-  const job: Job[] = await getJob(jobId);
+  const job: Job = await getJob(jobId);
   const payrollDates: PayrollDate[] = await getPayrollDates(jobId);
   const payrollTaxes: PayrollTax[] = await getPayrollTaxes(jobId);
 
   return (
     <JobDetailsView
       accountId={accountId}
-      job={job[0]}
+      job={job}
       payrollDates={payrollDates}
       payrollTaxes={payrollTaxes}
     />
