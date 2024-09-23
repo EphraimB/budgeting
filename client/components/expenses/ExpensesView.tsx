@@ -33,7 +33,7 @@ function ExpensesView({
 
   // Find the tax object that matches the expense's tax_id
   const taxObject = taxes
-    ? taxes.find((tax: Tax) => tax.id === expense.tax_id)
+    ? taxes.find((tax: Tax) => tax.id === expense.taxId)
     : 0;
 
   // Get the tax rate from the tax object
@@ -68,13 +68,13 @@ function ExpensesView({
         open={open}
         handleClose={handleClose}
         setExpenseModes={setExpenseModes}
-        expense_id={expense.id}
+        expenseId={expense.id}
       />
       <CardHeader title={expense.title} subheader={expense.description} />
       <CardContent>
         <Typography variant="body2">
           You will be charged ${amountAfterSubsidy.toFixed(2)} next on{" "}
-          {dayjs(expense.next_date).format("dddd MMMM D, YYYY h:mm A")}. You get
+          {dayjs(expense.nextDate).format("dddd MMMM D, YYYY h:mm A")}. You get
           charged {getFrequency(expense)}.
         </Typography>
       </CardContent>
