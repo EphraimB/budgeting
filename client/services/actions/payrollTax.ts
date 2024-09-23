@@ -8,25 +8,25 @@ interface PayrollTaxRequest {
   rate: number;
 }
 
-export async function addPayrollTax(payroll_tax: PayrollTaxRequest) {
+export async function addPayrollTax(payrollTax: PayrollTaxRequest) {
   const response = await fetch("http://server:5001/api/jobs/payroll/taxes", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
     },
-    body: JSON.stringify(payroll_tax),
+    body: JSON.stringify(payrollTax),
   });
   const result = await response.json();
 
   console.log(result);
 
-  revalidatePath("/[account_id]/jobs", "page");
+  revalidatePath("/[accountId]/jobs", "page");
 
   return result;
 }
 
 export async function editPayrollTax(
-  payroll_tax: PayrollTaxRequest,
+  payrollTax: PayrollTaxRequest,
   id: number
 ) {
   const response = await fetch(
@@ -36,14 +36,14 @@ export async function editPayrollTax(
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify(payroll_tax),
+      body: JSON.stringify(payrollTax),
     }
   );
   const result = await response.json();
 
   console.log(result);
 
-  revalidatePath("/[account_id]/jobs", "page");
+  revalidatePath("/[accountId]/jobs", "page");
   return result;
 }
 
@@ -52,5 +52,5 @@ export async function deletePayrollTax(id: number) {
     method: "DELETE",
   });
 
-  revalidatePath("/[account_id]/jobs", "page");
+  revalidatePath("/[accountId]/jobs", "page");
 }

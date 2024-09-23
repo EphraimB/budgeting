@@ -3,13 +3,13 @@
 import { revalidatePath } from "next/cache";
 
 interface WishlistRequest {
-  account_id: number;
+  accountId: number;
   amount: number;
   title: string;
   description: string;
-  tax_id: number | null;
+  taxId: number | null;
   priority: number;
-  url_link: string;
+  urlLink: string;
 }
 
 export async function addWishlist(wishlist: WishlistRequest) {
@@ -24,7 +24,7 @@ export async function addWishlist(wishlist: WishlistRequest) {
 
   console.log(result);
 
-  revalidatePath("/[account_id]", "page");
+  revalidatePath("/[accountId]", "page");
   return result;
 }
 
@@ -38,7 +38,7 @@ export async function editWishlist(wishlist: WishlistRequest, id: number) {
   });
   const result = await response.json();
 
-  revalidatePath("/[account_id]", "page");
+  revalidatePath("/[accountId]", "page");
   return result;
 }
 
@@ -47,5 +47,5 @@ export async function deleteWishlist(id: number) {
     method: "DELETE",
   });
 
-  revalidatePath("/[account_id]", "page");
+  revalidatePath("/[accountId]", "page");
 }
