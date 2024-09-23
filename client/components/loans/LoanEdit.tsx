@@ -29,11 +29,11 @@ import { useAlert, useSnackbar } from "../../context/FeedbackContext";
 dayjs.extend(utc);
 
 function LoanEdit({
-  account_id,
+  accountId,
   loan,
   setLoanModes,
 }: {
-  account_id: number;
+  accountId: number;
   loan: Loan;
   setLoanModes: (loanModes: Record<number, string>) => void;
 }) {
@@ -41,28 +41,28 @@ function LoanEdit({
   const [title, setTitle] = useState(loan.title);
   const [description, setDescription] = useState(loan.description);
   const [amount, setAmount] = useState(loan.amount.toString());
-  const [plan_amount, setPlanAmount] = useState(loan.plan_amount.toString());
+  const [planAmount, setPlanAmount] = useState(loan.planAmount.toString());
   const [subsidized, setSubsidized] = useState(loan.subsidized.toString());
-  const [frequency_type, setFrequencyType] = useState(loan.frequency_type);
-  const [frequency_day_of_week, setFrequencyDayOfWeek] = useState(
-    loan.frequency_day_of_week || -1
+  const [frequencyType, setFrequencyType] = useState(loan.frequency.type);
+  const [frequencyDayOfWeek, setFrequencyDayOfWeek] = useState(
+    loan.frequency.dayOfWeek || -1
   );
-  const [frequency_week_of_month, setFrequencyWeekOfMonth] = useState(
-    loan.frequency_week_of_month || -1
+  const [frequencyWeekOfMonth, setFrequencyWeekOfMonth] = useState(
+    loan.frequency.weekOfMonth || -1
   );
-  const [frequency_month_of_year, setFrequencyMonthOfYear] = useState(
-    loan.frequency_month_of_year || -1
+  const [frequencyMonthOfYear, setFrequencyMonthOfYear] = useState(
+    loan.frequency.monthOfYear || -1
   );
-  const [frequency_type_variable, setFrequencyTypeVariable] = useState<number>(
-    loan.frequency_type_variable || 1
+  const [frequencyTypeVariable, setFrequencyTypeVariable] = useState<number>(
+    loan.frequency.typeVariable || 1
   );
-  const [interest_rate, setInterestRate] = useState(
-    loan.interest_rate.toString()
+  const [interestRate, setInterestRate] = useState(
+    loan.interestRate.toString()
   );
-  const [interest_frequency_type, setInterestFrequencyType] = useState(
-    loan.interest_frequency_type.toString()
+  const [interestFrequencyType, setInterestFrequencyType] = useState(
+    loan.interestFrequencyType.toString()
   );
-  const [begin_date, setBeginDate] = useState<string>(loan.begin_date);
+  const [beginDate, setBeginDate] = useState<string>(loan.beginDate);
 
   const [recipientError, setRecipientError] = useState("");
   const [titleError, setTitleError] = useState("");
@@ -86,24 +86,24 @@ function LoanEdit({
   };
 
   const data = {
-    account_id,
+    accountId,
     recipient,
     title,
     description,
-    plan_amount: parseFloat(plan_amount),
+    planAmount: parseFloat(planAmount),
     amount: parseFloat(amount),
     subsidized: parseFloat(subsidized),
-    frequency_type,
-    frequency_day_of_week:
-      frequency_day_of_week === -1 ? null : frequency_day_of_week,
-    frequency_week_of_month:
-      frequency_week_of_month === -1 ? null : frequency_week_of_month,
-    frequency_month_of_year:
-      frequency_month_of_year === -1 ? null : frequency_month_of_year,
-    frequency_type_variable,
-    interest_rate: parseFloat(interest_rate) / 100,
-    interest_frequency_type: parseInt(interest_frequency_type),
-    begin_date,
+    frequency: {
+      type: frequencyType,
+      dayOfWeek: frequencyDayOfWeek === -1 ? null : frequencyDayOfWeek,
+      weekOfMonth: frequencyWeekOfMonth === -1 ? null : frequencyWeekOfMonth,
+      monthOfYear: frequencyMonthOfYear === -1 ? null : frequencyMonthOfYear,
+      dayOfMonth: null,
+      typeVariable: frequencyTypeVariable,
+    },
+    interestRate: parseFloat(interestRate) / 100,
+    interestFrequencyType: parseInt(interestFrequencyType),
+    beginDate,
   };
 
   const validateRecipient = () => {
@@ -137,7 +137,7 @@ function LoanEdit({
   };
 
   const validatePlanAmount = () => {
-    if (parseFloat(plan_amount) <= 0) {
+    if (parseFloat(planAmount) <= 0) {
       setPlanAmountError("Plan amount needs to be more than $0.00");
 
       return false;
@@ -264,7 +264,7 @@ function LoanEdit({
               inputProps={{
                 step: 0.01,
               }}
-              value={plan_amount ? plan_amount : "0"}
+              value={planAmount ? planAmount : "0"}
               onChange={(e) => setPlanAmount(e.target.value)}
               error={!!planAmountError}
               helperText={planAmountError}
@@ -319,7 +319,7 @@ function LoanEdit({
                 labelId="frequency-select-label"
                 label="Frequency"
                 variant="standard"
-                value={frequency_type}
+                value={frequencyType}
                 onChange={(e) => setFrequencyType(e.target.value as number)}
               >
                 <MenuItem value={0}>Daily</MenuItem>
@@ -328,9 +328,9 @@ function LoanEdit({
                 <MenuItem value={3}>Yearly</MenuItem>
               </Select>
             </FormControl>
-            {(frequency_type === 1 ||
-              frequency_type === 2 ||
-              frequency_type === 3) && (
+            {(frequencyType === 1 ||
+              frequencyType === 2 ||
+              frequencyType === 3) && (
               <>
                 <br />
                 <br />
@@ -342,7 +342,7 @@ function LoanEdit({
                     labelId="frequency-day-of-week-select-label"
                     label="Frequency"
                     variant="standard"
-                    value={frequency_day_of_week}
+                    value={frequencyDayOfWeek}
                     onChange={(e) =>
                       setFrequencyDayOfWeek(e.target.value as number)
                     }
@@ -359,7 +359,7 @@ function LoanEdit({
                 </FormControl>
               </>
             )}
-            {(frequency_type === 2 || frequency_type === 3) && (
+            {(frequencyType === 2 || frequencyType === 3) && (
               <>
                 <br />
                 <br />
@@ -371,7 +371,7 @@ function LoanEdit({
                     labelId="frequency-week-of-month-select-label"
                     label="Frequency"
                     variant="standard"
-                    value={frequency_week_of_month}
+                    value={frequencyWeekOfMonth}
                     onChange={(e) =>
                       setFrequencyWeekOfMonth(e.target.value as number)
                     }
@@ -386,7 +386,7 @@ function LoanEdit({
                 </FormControl>
               </>
             )}
-            {frequency_type === 3 && (
+            {frequencyType === 3 && (
               <>
                 <br />
                 <br />
@@ -398,7 +398,7 @@ function LoanEdit({
                     labelId="frequency-month-of-year-select-label"
                     label="Frequency"
                     variant="standard"
-                    value={frequency_month_of_year}
+                    value={frequencyMonthOfYear}
                     onChange={(e) =>
                       setFrequencyMonthOfYear(e.target.value as number)
                     }
@@ -425,7 +425,7 @@ function LoanEdit({
             <TextField
               label="Frequency Type Variable"
               variant="standard"
-              value={frequency_type_variable}
+              value={frequencyTypeVariable}
               onChange={(e) =>
                 setFrequencyTypeVariable(e.target.value as unknown as number)
               }
@@ -436,7 +436,7 @@ function LoanEdit({
             <TextField
               label="Interest Rate"
               variant="standard"
-              value={parseFloat(interest_rate) * 100 + "%"}
+              value={parseFloat(interestRate) * 100 + "%"}
               onChange={(e) =>
                 setInterestRate(
                   e.target.value.substring(0, e.target.value.length - 1)
@@ -453,7 +453,7 @@ function LoanEdit({
                 labelId="interest-frequency-select-label"
                 label="Interest Frequency"
                 variant="standard"
-                value={interest_frequency_type}
+                value={interestFrequencyType}
                 onChange={(e) => setInterestFrequencyType(e.target.value)}
               >
                 <MenuItem value={0}>Daily</MenuItem>
@@ -468,7 +468,7 @@ function LoanEdit({
             <LocalizationProvider dateAdapter={AdapterDayjs}>
               <DateTimePicker
                 label="Loan begin date"
-                value={dayjs(begin_date)}
+                value={dayjs(beginDate)}
                 onChange={(e: Dayjs | null) => {
                   const utcDate = e ? e.utc().format() : dayjs.utc().format();
                   setBeginDate(utcDate);
