@@ -25,10 +25,10 @@ export const getJobs = async (
         if (accountId) {
             query = `
                 SELECT
-                    j.id AS "job_id",
-                    j.account_id AS "account_id",
-                    j.name AS "job_name",
-                    j.hourly_rate AS "hourly_rate",
+                    j.id,
+                    j.account_id,
+                    j.name,
+                    j.hourly_rate,
                     COALESCE(SUM(EXTRACT(EPOCH FROM (js.end_time - js.start_time)) / 3600), 0) AS total_hours_per_week,
                     COALESCE(json_agg(
                         json_build_object(
@@ -50,10 +50,10 @@ export const getJobs = async (
         } else {
             query = `
                 SELECT
-                    j.id AS "job_id",
-                    j.account_id AS "account_id",
-                    j.name AS "job_name",
-                    j.hourly_rate AS "hourly_rate",
+                    j.id,
+                    j.account_id,
+                    j.name,
+                    j.hourly_rate,
                     COALESCE(SUM(EXTRACT(EPOCH FROM (js.end_time - js.start_time)) / 3600), 0) AS total_hours_per_week,
                     COALESCE(json_agg(
                         json_build_object(
@@ -107,10 +107,10 @@ export const getJobsById = async (
         if (accountId) {
             query = `
                 SELECT
-                    j.id AS "job_id",
-                    j.account_id AS "account_id",
-                    j.name AS "job_name",
-                    j.hourly_rate AS "hourly_rate",
+                    j.id,
+                    j.account_id,
+                    j.name,
+                    j.hourly_rate,
                     COALESCE(SUM(EXTRACT(EPOCH FROM (js.end_time - js.start_time)) / 3600), 0) AS total_hours_per_week,
                     COALESCE(json_agg(
                         json_build_object(
@@ -133,10 +133,10 @@ export const getJobsById = async (
         } else {
             query = `
                 SELECT
-                    j.id AS "job_id",
-                    j.account_id AS "account_id",
-                    j.name AS "job_name",
-                    j.hourly_rate AS "hourly_rate",
+                    j.id,
+                    j.account_id,
+                    j.name,
+                    j.hourly_rate,
                     COALESCE(SUM(EXTRACT(EPOCH FROM (js.end_time - js.start_time)) / 3600), 0) AS total_hours_per_week,
                     COALESCE(json_agg(
                         json_build_object(
