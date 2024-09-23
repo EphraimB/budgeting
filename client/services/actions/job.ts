@@ -25,14 +25,14 @@ export async function addJob(job: JobRequest) {
   });
   const result = await response.json();
 
-  console.log(result);
-
   revalidatePath("/[accountId]/jobs", "page");
 
   return result;
 }
 
 export async function editJob(job: JobRequest, id: number) {
+  console.log(id);
+  console.log(job);
   const response = await fetch(`http://server:5001/api/jobs/${id}`, {
     method: "PUT",
     headers: {
@@ -41,8 +41,6 @@ export async function editJob(job: JobRequest, id: number) {
     body: JSON.stringify(job),
   });
   const result = await response.json();
-
-  console.log(result);
 
   revalidatePath("/[accountId]/jobs", "page");
   return result;

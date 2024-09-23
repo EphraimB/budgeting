@@ -69,9 +69,9 @@ router.post(
 );
 
 router.put(
-    '/:jobId',
+    '/:id',
     [
-        param('jobId').isInt({ min: 1 }).withMessage('Job ID must be a number'),
+        param('id').isInt({ min: 1 }).withMessage('ID must be a number'),
         body('accountId')
             .isInt({ min: 1 })
             .withMessage('Account ID must be a number'),
