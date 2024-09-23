@@ -3,7 +3,7 @@
 import { revalidatePath } from "next/cache";
 
 interface PayrollTaxRequest {
-  job_id: number;
+  jobId: number;
   name: string;
   rate: number;
 }

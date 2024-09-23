@@ -12,7 +12,7 @@ function PayrollTaxesActionsMenu({
   open,
   handleClose,
   setPayrollTaxModes,
-  payroll_tax_id,
+  payrollTaxId,
 }: {
   anchorEl: HTMLElement | null;
   open: boolean;
@@ -20,12 +20,12 @@ function PayrollTaxesActionsMenu({
   setPayrollTaxModes: React.Dispatch<
     React.SetStateAction<Record<number, string>>
   >;
-  payroll_tax_id: number;
+  payrollTaxId: number;
 }) {
   const handleDelete = () => {
     setPayrollTaxModes((prevModes: any) => ({
       ...prevModes,
-      [payroll_tax_id]: "delete",
+      [payrollTaxId]: "delete",
     }));
 
     handleClose();
@@ -34,7 +34,7 @@ function PayrollTaxesActionsMenu({
   const handleEdit = () => {
     setPayrollTaxModes((prevModes: any) => ({
       ...prevModes,
-      [payroll_tax_id]: "edit",
+      [payrollTaxId]: "edit",
     }));
 
     handleClose();

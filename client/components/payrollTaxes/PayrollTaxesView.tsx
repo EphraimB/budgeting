@@ -51,7 +51,7 @@ function PayrollTaxesView({
         open={open}
         handleClose={handleClose}
         setPayrollTaxModes={setPayrollTaxModes}
-        payroll_tax_id={payrollTax.id}
+        payrollTaxId={payrollTax.id}
       />
       <CardHeader title={payrollTax.name} />
       <CardContent>

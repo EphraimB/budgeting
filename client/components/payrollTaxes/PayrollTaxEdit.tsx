@@ -14,11 +14,11 @@ import { editPayrollTax } from "../../services/actions/payrollTax";
 import { PayrollTax } from "@/app/types/types";
 
 function PayrollTaxEdit({
-  job_id,
+  jobId,
   payrollTax,
   setPayrollTaxModes,
 }: {
-  job_id: number;
+  jobId: number;
   payrollTax: PayrollTax;
   setPayrollTaxModes: (taxModes: Record<number, string>) => void;
 }) {
@@ -32,7 +32,7 @@ function PayrollTaxEdit({
   const { showAlert } = useAlert();
 
   const data = {
-    job_id,
+    jobId,
     name,
     rate: parseFloat(rate),
   };

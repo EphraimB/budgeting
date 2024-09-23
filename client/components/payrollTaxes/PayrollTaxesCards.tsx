@@ -15,10 +15,10 @@ import PayrollTaxEdit from "./PayrollTaxEdit";
 
 function PayrollTaxesCards({
   job,
-  payroll_taxes,
+  payrollTaxes,
 }: {
   job: Job;
-  payroll_taxes: PayrollTax[];
+  payrollTaxes: PayrollTax[];
 }) {
   const [showPayrollTaxesForm, setShowPayrollTaxesForm] = useState(false);
   const [payrollTaxModes, setPayrollTaxModes] = useState<
@@ -32,20 +32,20 @@ function PayrollTaxesCards({
       </Typography>
       <br />
       <Typography variant="h6" component="h3">
-        All {payroll_taxes.length} of your payroll taxes take{" "}
-        {payroll_taxes.reduce((acc, current) => acc + current.rate, 0) * 100}%
-        of your payroll
+        All {payrollTaxes.length} of your payroll taxes take{" "}
+        {payrollTaxes.reduce((acc, current) => acc + current.rate, 0) * 100}% of
+        your payroll
       </Typography>
       <Grid container spacing={2}>
         {showPayrollTaxesForm && (
           <Grid key="new-payroll-tax" item>
             <NewPayrollTaxForm
-              job_id={job.id}
+              jobId={job.id}
               setShowPayrollTaxesForm={setShowPayrollTaxesForm}
             />
           </Grid>
         )}
-        {payroll_taxes.map((payrollTax: PayrollTax) => (
+        {payrollTaxes.map((payrollTax: PayrollTax) => (
           <Grid key={payrollTax.id} item>
             <Card sx={{ maxWidth: "18rem", position: "relative" }}>
               {payrollTaxModes[payrollTax.id] === "delete" ? (
@@ -55,7 +55,7 @@ function PayrollTaxesCards({
                 />
               ) : payrollTaxModes[payrollTax.id] === "edit" ? (
                 <PayrollTaxEdit
-                  job_id={job.id}
+                  jobId={job.id}
                   setPayrollTaxModes={setPayrollTaxModes}
                   payrollTax={payrollTax}
                 />

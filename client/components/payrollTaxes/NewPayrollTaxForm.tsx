@@ -13,10 +13,10 @@ import Button from "@mui/material/Button";
 import { addPayrollTax } from "../../services/actions/payrollTax";
 
 function NewPayrollTaxForm({
-  job_id,
+  jobId,
   setShowPayrollTaxesForm,
 }: {
-  job_id: number;
+  jobId: number;
   setShowPayrollTaxesForm: (show: boolean) => void;
 }) {
   const [name, setName] = useState("");
@@ -29,7 +29,7 @@ function NewPayrollTaxForm({
   const { showAlert } = useAlert();
 
   const data = {
-    job_id,
+    jobId,
     name,
     rate: parseFloat(rate),
   };
