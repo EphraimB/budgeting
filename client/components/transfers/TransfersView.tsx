@@ -11,11 +11,11 @@ import TransfersActionsMenu from "./TransfersActionsMenu";
 import dayjs from "dayjs";
 
 function TransfersView({
-  account_id,
+  accountId,
   transfer,
   setTransferModes,
 }: {
-  account_id: number;
+  accountId: number;
   transfer: Transfer;
   setTransferModes: React.Dispatch<
     React.SetStateAction<Record<number, string>>
@@ -34,7 +34,7 @@ function TransfersView({
 
   return (
     <>
-      {transfer.source_account_id === account_id && (
+      {transfer.sourceAccountId === accountId && (
         <>
           <IconButton
             aria-label="more"
@@ -56,24 +56,21 @@ function TransfersView({
             open={open}
             handleClose={handleClose}
             setTransferModes={setTransferModes}
-            transfer_id={transfer.id}
+            transferId={transfer.id}
           />
         </>
       )}
-      <CardHeader
-        title={transfer.transfer_title}
-        subheader={transfer.transfer_description}
-      />
+      <CardHeader title={transfer.title} subheader={transfer.description} />
       <CardContent>
         <Typography variant="body2">
-          ${transfer.transfer_amount} will be transfered{" "}
-          {transfer.source_account_id === account_id
+          ${transfer.amount} will be transfered{" "}
+          {transfer.sourceAccountId === accountId
             ? "from"
-            : transfer.destination_account_id === account_id
+            : transfer.destinationAccountId === accountId
             ? "to"
             : "n/a"}{" "}
           your account on{" "}
-          {dayjs(transfer.next_date).format("dddd MMMM D, YYYY h:mm A")}.
+          {dayjs(transfer.nextDate).format("dddd MMMM D, YYYY h:mm A")}.
         </Typography>
       </CardContent>
     </>
