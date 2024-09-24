@@ -24,11 +24,11 @@ describe("AccountList", () => {
     render(
       <AccountDelete
         account={{
-          account_id: 1,
-          account_name: "Test Account",
-          account_balance: 0,
-          date_created: "2021-01-01",
-          date_modified: "2021-01-01",
+          id: 1,
+          name: "Test Account",
+          balance: 0,
+          dateCreated: "2021-01-01",
+          dateModified: "2021-01-01",
         }}
         setAccountModes={() => {}}
       />
