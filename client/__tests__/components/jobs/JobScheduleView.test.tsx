@@ -9,20 +9,20 @@ jest.mock("dayjs", () => () => ({
 }));
 
 describe("JobScheduleView", () => {
-  const job_day_of_week = [
+  const jobDayOfWeek = [
     {
-      job_id: 1,
-      day_of_week: 1,
-      start_time: "09:00:00",
-      end_time: "17:00:00",
+      jobId: 1,
+      dayOfWeek: 1,
+      startTime: "09:00:00",
+      endTime: "17:00:00",
     },
   ];
 
   it("renders", async () => {
     render(
       <JobScheduleView
-        job_day_of_week={job_day_of_week}
-        day_of_week={1}
+        jobDayOfWeek={jobDayOfWeek}
+        dayOfWeek={1}
         handleOpenModal={() => {}}
       />
     );

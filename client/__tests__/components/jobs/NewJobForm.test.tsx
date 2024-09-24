@@ -17,20 +17,12 @@ describe("NewJobForm", () => {
   const setShowJobForm = jest.fn();
 
   it("renders", async () => {
-    render(<NewJobForm setShowJobForm={setShowJobForm} account_id={1} />);
+    render(<NewJobForm setShowJobForm={setShowJobForm} accountId={1} />);
 
-    expect(screen.getByText("Add Job - Step 1 of 2")).toBeInTheDocument();
+    expect(screen.getByText("Add Job - Step 1 of 1")).toBeInTheDocument();
 
     expect(screen.getByLabelText("Name")).toBeInTheDocument();
     expect(screen.getByLabelText("Hourly Rate")).toBeInTheDocument();
-
-    // Go to the next step by clicking the "Next" button
-    await userEvent.click(screen.getByText("Next"));
-
-    expect(screen.getByText("Add Job - Step 2 of 2")).toBeInTheDocument();
-
-    expect(screen.getByLabelText("Vacation Days")).toBeInTheDocument();
-    expect(screen.getByLabelText("Sick Days")).toBeInTheDocument();
 
     expect(screen.getByText("Submit")).toBeInTheDocument();
   });
