@@ -22,24 +22,26 @@ jest.mock("../../../context/FeedbackContext", () => ({
 describe("ExpenseEdit", () => {
   it("renders the component", async () => {
     const expense = {
-      account_id: 1,
+      accountId: 1,
       id: 1,
-      tax_id: 1,
+      taxId: 1,
       title: "Test Expense",
       amount: 155.99,
       description: "Test Description",
-      frequency_type: 2,
-      frequency_type_variable: 1,
-      frequency_day_of_month: null,
-      frequency_day_of_week: null,
-      frequency_week_of_month: null,
-      frequency_month_of_year: null,
+      frequency: {
+        type: 2,
+        typeVariable: 1,
+        dayOfMonth: null,
+        dayOfWeek: null,
+        weekOfMonth: null,
+        monthOfYear: null,
+      },
       subsidized: 0,
-      begin_date: "2021-10-01",
-      end_date: null,
-      next_date: null,
-      date_created: "2021-10-01",
-      date_modified: "2021-10-01",
+      beginDate: "2021-10-01",
+      endDate: null,
+      nextDate: null,
+      dateCreated: "2021-10-01",
+      dateModified: "2021-10-01",
     };
 
     const taxes = [
@@ -49,8 +51,8 @@ describe("ExpenseEdit", () => {
         title: "Test Tax",
         description: "Test Description",
         type: 1,
-        date_created: "2021-10-01",
-        date_modified: "2021-10-01",
+        dateCreated: "2021-10-01",
+        dateModified: "2021-10-01",
       },
       {
         id: 2,
@@ -58,14 +60,14 @@ describe("ExpenseEdit", () => {
         title: "NYC Sales Tax",
         description: "New York City Sales Tax",
         type: 1,
-        date_created: "2021-10-01",
-        date_modified: "2021-10-01",
+        dateCreated: "2021-10-01",
+        dateModified: "2021-10-01",
       },
     ];
 
     render(
       <ExpenseEdit
-        account_id={1}
+        accountId={1}
         expense={expense}
         taxes={taxes}
         setExpenseModes={() => {}}

@@ -1,4 +1,4 @@
-import { Expense, Loan, Tax } from "@/app/types/types";
+import { Expense, Frequency, Loan, Tax } from "@/app/types/types";
 import dayjs, { Dayjs } from "dayjs";
 
 export const getOrdinalSuffix = (day: number) => {
@@ -18,30 +18,33 @@ export const getOrdinalSuffix = (day: number) => {
   }
 };
 
-export const getFrequency = (row: any): string => {
+export const getFrequency = (row: {
+  beginDate: string;
+  frequency: Frequency;
+}): string => {
   let expenseFrequency;
 
-  switch (row.frequency_type) {
+  switch (row.frequency.type) {
     case 0: // Daily
-      if (row.frequency_type_variable === 1) expenseFrequency = "daily";
-      else expenseFrequency = "every " + row.frequency_type_variable + " days";
+      if (row.frequency.typeVariable === 1) expenseFrequency = "daily";
+      else expenseFrequency = "every " + row.frequency.typeVariable + " days";
 
       break;
     case 1: // Weekly
-      if (row.frequency_type_variable === 1)
+      if (row.frequency.typeVariable === 1)
         expenseFrequency = `weekly ${
-          row.frequency_day_of_week !== null
-            ? `on ${dayjs(row.begin_date)
-                .day(row.frequency_day_of_week)
+          row.frequency.dayOfWeek !== null
+            ? `on ${dayjs(row.beginDate)
+                .day(row.frequency.dayOfWeek)
                 .format("dddd")}`
             : ""
         }`;
       else {
-        expenseFrequency = `every ${row.frequency_type_variable}
+        expenseFrequency = `every ${row.frequency.typeVariable}
           weeks ${
-            row.frequency_day_of_week !== null
+            row.frequency.dayOfWeek !== null
               ? `on ${dayjs(
-                  dayjs(row.begin_date).day(row.frequency_day_of_week)
+                  dayjs(row.beginDate).day(row.frequency.dayOfWeek)
                 ).format("dddd")}`
               : ""
           }`;
@@ -49,8 +52,8 @@ export const getFrequency = (row: any): string => {
 
       break;
     case 2: // Monthly
-      if (row.frequency_type_variable === 1) {
-        const dayOfMonth = dayjs(row.begin_date).format("D");
+      if (row.frequency.typeVariable === 1) {
+        const dayOfMonth = dayjs(row.beginDate).format("D");
         expenseFrequency = `monthly on the ${dayOfMonth}${
           dayOfMonth.endsWith("1")
             ? "st"
@@ -61,9 +64,9 @@ export const getFrequency = (row: any): string => {
             : "th"
         }`;
       } else {
-        const dayOfMonth = dayjs(row.begin_date).format("D");
+        const dayOfMonth = dayjs(row.beginDate).format("D");
         expenseFrequency = `every ${
-          row.frequency_type_variable
+          row.frequency.typeVariable
         } months on the ${dayOfMonth}${
           dayOfMonth.endsWith("1")
             ? "st"
@@ -75,32 +78,30 @@ export const getFrequency = (row: any): string => {
         }`;
       }
 
-      if (row.frequency_day_of_month) {
-        expenseFrequency = `monthly on the ${row.frequency_day_of_month}`;
-      } else if (row.frequency_day_of_week) {
+      if (row.frequency.dayOfMonth) {
+        expenseFrequency = `monthly on the ${row.frequency.dayOfMonth}`;
+      } else if (row.frequency.dayOfWeek) {
         expenseFrequency = `monthly on the ${
-          row.frequency_week_of_month === 0
+          row.frequency.weekOfMonth === 0
             ? "first"
-            : row.frequency_week_of_month === 1
+            : row.frequency.weekOfMonth === 1
             ? "second"
-            : row.frequency_week_of_month === 2
+            : row.frequency.weekOfMonth === 2
             ? "third"
-            : row.frequency_week_of_month === 3
+            : row.frequency.weekOfMonth === 3
             ? "fourth"
             : "last"
-        } ${dayjs(row.frequency_day_of_week).format("dddd")}`;
+        } ${dayjs(row.frequency.dayOfWeek).format("dddd")}`;
       }
 
       break;
     case 3: // Yearly
-      if (row.frequency_type_variable === 1)
-        expenseFrequency = `yearly on ${dayjs(row.begin_date).format(
-          "MMMM D"
-        )}`;
+      if (row.frequency.typeVariable === 1)
+        expenseFrequency = `yearly on ${dayjs(row.beginDate).format("MMMM D")}`;
       else
         expenseFrequency = `every ${
-          row.frequency_type_variable
-        } years on ${dayjs(row.begin_date).format("MMMM D")}`;
+          row.frequency.typeVariable
+        } years on ${dayjs(row.beginDate).format("MMMM D")}`;
 
       break;
     default:
@@ -115,14 +116,14 @@ export const findLatestFullyPaidBackDate = (
 ): Dayjs | string | null => {
   if (loans.length === 0) return null; // Return null if no loans
   // Check if any loan has not been fully paid back
-  if (loans.some((loan: Loan) => loan.fully_paid_back === null)) {
+  if (loans.some((loan: Loan) => loan.fullyPaidBack === null)) {
     return "not in the near future";
   }
 
   // Convert all fully_paid_back dates to Day.js objects and find the max
-  let latest = dayjs(loans[0].fully_paid_back);
+  let latest = dayjs(loans[0].fullyPaidBack);
   loans.forEach((loan: Loan) => {
-    const fullyPaidBackDate = dayjs(loan.fully_paid_back);
+    const fullyPaidBackDate = dayjs(loan.fullyPaidBack);
     if (fullyPaidBackDate.isAfter(latest)) {
       latest = fullyPaidBackDate;
     }
@@ -161,7 +162,7 @@ export const calculateTotalWithSubsidies = (
 ): number => {
   const totalWithTaxesAndSubsidies = expenses.reduce(
     (acc: number, expense: Expense) => {
-      const taxRate = getTaxRate(taxes, expense.tax_id);
+      const taxRate = getTaxRate(taxes, expense.taxId);
       const taxAmount = expense.amount * taxRate;
       const subsidyAmount = expense.subsidized || 0; // Add subsidy amount
 

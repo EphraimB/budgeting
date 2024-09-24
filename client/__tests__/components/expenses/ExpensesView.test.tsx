@@ -9,23 +9,25 @@ describe("ExpensesView", () => {
 
   const expense: Expense = {
     id: 1,
-    tax_id: null,
-    account_id: 1,
+    taxId: null,
+    accountId: 1,
     title: "Test",
     description: "This is a test expense",
     amount: 1000,
-    next_date: "2022-01-01T00:00:00.000Z",
-    frequency_day_of_month: null,
-    frequency_day_of_week: null,
-    frequency_type: 2,
-    frequency_type_variable: 1,
-    frequency_week_of_month: null,
-    frequency_month_of_year: null,
+    nextDate: "2022-01-01T00:00:00.000Z",
+    frequency: {
+      type: 2,
+      typeVariable: 1,
+      dayOfMonth: null,
+      dayOfWeek: null,
+      weekOfMonth: null,
+      monthOfYear: null,
+    },
     subsidized: 0,
-    begin_date: "2021-01-01T00:00:00.000Z",
-    end_date: null,
-    date_created: "2021-10-01T00:00:00.000Z",
-    date_modified: "2021-10-01T00:00:00.000Z",
+    beginDate: "2021-01-01T00:00:00.000Z",
+    endDate: null,
+    dateCreated: "2021-10-01T00:00:00.000Z",
+    dateModified: "2021-10-01T00:00:00.000Z",
   };
 
   it("renders", () => {
