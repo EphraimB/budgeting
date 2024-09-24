@@ -9,28 +9,32 @@ describe("TransfersView", () => {
 
   const transfer: Transfer = {
     id: 1,
-    source_account_id: 1,
-    destination_account_id: 2,
-    transfer_title: "Test",
-    transfer_description: "This is a test expense",
-    transfer_amount: 1000,
-    next_date: "2022-01-01T00:00:00.000Z",
-    frequency_day_of_month: null,
-    frequency_day_of_week: null,
-    frequency_type: 2,
-    frequency_type_variable: 1,
-    frequency_week_of_month: null,
-    frequency_month_of_year: null,
-    transfer_begin_date: "2021-01-01T00:00:00.000Z",
-    transfer_end_date: null,
-    date_created: "2021-10-01T00:00:00.000Z",
-    date_modified: "2021-10-01T00:00:00.000Z",
+    sourceAccountId: 1,
+    destinationAccountId: 2,
+    title: "Test",
+    description: "This is a test expense",
+    amount: 1000,
+    nextDate: "2022-01-01T00:00:00.000Z",
+    frequency: {
+      type: 2,
+      typeVariable: 1,
+      dayOfMonth: null,
+      dayOfWeek: null,
+      weekOfMonth: null,
+      monthOfYear: null,
+    },
+    dates: {
+      beginDate: "2021-01-01T00:00:00.000Z",
+      endDate: null,
+    },
+    dateCreated: "2021-10-01T00:00:00.000Z",
+    dateModified: "2021-10-01T00:00:00.000Z",
   };
 
   it("renders as source account", () => {
     render(
       <TransfersView
-        account_id={1}
+        accountId={1}
         transfer={transfer}
         setTransferModes={setTransferModes}
       />
@@ -48,7 +52,7 @@ describe("TransfersView", () => {
   it("renders as destination account", () => {
     render(
       <TransfersView
-        account_id={2}
+        accountId={2}
         transfer={transfer}
         setTransferModes={setTransferModes}
       />

@@ -24,24 +24,24 @@ describe("NewTransferForm", () => {
   it("renders the component", async () => {
     const accounts: Account[] = [
       {
-        account_id: 2,
-        account_name: "Testing 2",
-        account_balance: 500,
-        date_created: "2023-10-10",
-        date_modified: "2023-10-10",
+        id: 2,
+        name: "Testing 2",
+        balance: 500,
+        dateCreated: "2023-10-10",
+        dateModified: "2023-10-10",
       },
       {
-        account_id: 3,
-        account_name: "Testing 3",
-        account_balance: 400,
-        date_created: "2023-10-10",
-        date_modified: "2023-10-10",
+        id: 3,
+        name: "Testing 3",
+        balance: 400,
+        dateCreated: "2023-10-10",
+        dateModified: "2023-10-10",
       },
     ];
 
     render(
       <NewTransferForm
-        account_id={1}
+        accountId={1}
         setShowTransferForm={() => true}
         accounts={accounts}
       />

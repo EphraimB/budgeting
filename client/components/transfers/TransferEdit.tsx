@@ -60,9 +60,11 @@ function TransferEdit({
   const [frequencyTypeVariable, setFrequencyTypeVariable] = useState<number>(
     transfers.frequency.typeVariable || 1
   );
-  const [beginDate, setBeginDate] = useState<string>(transfers.beginDate);
+  const [beginDate, setBeginDate] = useState<string>(transfers.dates.beginDate);
   const [endDateEnabled, setEndDateEnabled] = useState(false);
-  const [endDate, setEndDate] = useState<null | string>(transfers.endDate);
+  const [endDate, setEndDate] = useState<null | string>(
+    transfers.dates.endDate || null
+  );
 
   const [titleError, setTitleError] = useState("");
   const [descriptionError, setDescriptionError] = useState("");
