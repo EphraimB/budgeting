@@ -11,18 +11,18 @@ describe("AccountList", () => {
   it("renders accounts correctly", () => {
     const mockAccounts = [
       {
-        account_id: 1,
-        account_name: "Account A",
-        account_balance: 100,
-        date_created: "2022-01-01",
-        date_modified: "2022-01-01",
+        id: 1,
+        name: "Account A",
+        balance: 100,
+        dateCreated: "2022-01-01",
+        dateModified: "2022-01-01",
       },
       {
-        account_id: 2,
-        account_name: "Account B",
-        account_balance: 200,
-        date_created: "2022-01-01",
-        date_modified: "2022-01-01",
+        id: 2,
+        name: "Account B",
+        balance: 200,
+        dateCreated: "2022-01-01",
+        dateModified: "2022-01-01",
       },
     ];
 
