@@ -62,7 +62,7 @@ function LoanEdit({
   const [interestFrequencyType, setInterestFrequencyType] = useState(
     loan.interestFrequencyType.toString()
   );
-  const [beginDate, setBeginDate] = useState<string>(loan.beginDate);
+  const [beginDate, setBeginDate] = useState<string>(loan.dates.beginDate);
 
   const [recipientError, setRecipientError] = useState("");
   const [titleError, setTitleError] = useState("");

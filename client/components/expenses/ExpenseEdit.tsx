@@ -59,9 +59,11 @@ function ExpenseEdit({
   const [frequencyTypeVariable, setFrequencyTypeVariable] = useState<number>(
     expense.frequency.typeVariable || 1
   );
-  const [beginDate, setBeginDate] = useState<string>(expense.beginDate);
-  const [endDateEnabled, setEndDateEnabled] = useState(!!expense.endDate);
-  const [endDate, setEndDate] = useState<null | string>(expense.endDate);
+  const [beginDate, setBeginDate] = useState<string>(expense.dates.beginDate);
+  const [endDateEnabled, setEndDateEnabled] = useState(!!expense.dates.endDate);
+  const [endDate, setEndDate] = useState<null | string>(
+    expense.dates.endDate || null
+  );
 
   const [titleError, setTitleError] = useState("");
   const [descriptionError, setDescriptionError] = useState("");

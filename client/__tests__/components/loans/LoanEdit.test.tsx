@@ -21,31 +21,34 @@ jest.mock("../../../context/FeedbackContext", () => ({
 describe("LoanEdit", () => {
   it("renders the component", async () => {
     const loan = {
-      account_id: 1,
+      accountId: 1,
       id: 1,
       recipient: "Test Recipient",
       title: "Test Loan",
-      plan_amount: 99.99,
+      planAmount: 99.99,
       amount: 999.99,
       description: "Test Description",
-      frequency_type: 2,
-      frequency_type_variable: 1,
-      frequency_day_of_month: null,
-      frequency_day_of_week: null,
-      frequency_week_of_month: null,
-      frequency_month_of_year: null,
+      frequency: {
+        type: 2,
+        typeVariable: 1,
+        dayOfMonth: null,
+        dayOfWeek: null,
+        weekOfMonth: null,
+        monthOfYear: null,
+      },
       subsidized: 0,
-      interest_rate: 0.05,
-      interest_frequency_type: 1,
-      begin_date: "2021-10-01",
-      end_date: null,
-      next_date: null,
-      fully_paid_back: "2022-10-01",
-      date_created: "2021-10-01",
-      date_modified: "2021-10-01",
+      interestRate: 0.05,
+      interestFrequencyType: 1,
+      dates: {
+        beginDate: "2021-10-01",
+      },
+      nextDate: null,
+      fullyPaidBackDate: "2022-10-01",
+      dateCreated: "2021-10-01",
+      dateModified: "2021-10-01",
     };
 
-    render(<LoanEdit account_id={1} loan={loan} setLoanModes={() => {}} />);
+    render(<LoanEdit accountId={1} loan={loan} setLoanModes={() => {}} />);
 
     expect(screen.getByLabelText("close")).toBeInTheDocument();
     expect(screen.getByText("Edit Loan - Step 1 of 5")).toBeInTheDocument();
