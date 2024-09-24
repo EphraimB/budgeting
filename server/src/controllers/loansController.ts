@@ -37,7 +37,9 @@ export const getLoans = async (
                     interest_rate,
                     interest_frequency_type,
                     subsidized,
-                    begin_date,
+                    json_build_object(
+                        'beginDate', begin_date,
+                    ) AS dates,
                        CASE 
                         -- Daily frequency
                         WHEN frequency_type = 0 THEN 
@@ -161,7 +163,9 @@ export const getLoans = async (
                     interest_rate,
                     interest_frequency_type,
                     subsidized,
-                    begin_date,
+                    json_build_object(
+                        'beginDate', begin_date,
+                    ) AS dates,
                        CASE 
                         -- Daily frequency
                         WHEN frequency_type = 0 THEN 
@@ -318,7 +322,9 @@ export const getLoansById = async (
                     interest_rate,
                     interest_frequency_type,
                     subsidized,
-                    begin_date,
+                    json_build_object(
+                        'beginDate', begin_date,
+                    ) AS dates,
                        CASE 
                         -- Daily frequency
                         WHEN frequency_type = 0 THEN 
@@ -442,7 +448,9 @@ export const getLoansById = async (
                     interest_rate,
                     interest_frequency_type,
                     subsidized,
-                    begin_date,
+                    json_build_object(
+                        'beginDate', begin_date,
+                    ) AS dates,
                        CASE 
                         -- Daily frequency
                         WHEN frequency_type = 0 THEN 
