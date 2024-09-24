@@ -32,14 +32,14 @@ describe("PayrollTaxEdit", () => {
   it("renders PayrollTaxEdit form component", async () => {
     const payrollTax: PayrollTax = {
       id: 1,
-      job_id: 1,
+      jobId: 1,
       name: "Social Security",
       rate: 0.02,
     };
 
     render(
       <PayrollTaxEdit
-        job_id={1}
+        jobId={1}
         payrollTax={payrollTax}
         setPayrollTaxModes={() => {}}
       />
