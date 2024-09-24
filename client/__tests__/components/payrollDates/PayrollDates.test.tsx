@@ -15,32 +15,30 @@ jest.mock("../../../context/FeedbackContext", () => ({
 }));
 
 describe("PayrollDates", () => {
-  const payroll_dates: PayrollDate[] = [
+  const payrollDates: PayrollDate[] = [
     {
       id: 1,
-      job_id: 1,
-      payroll_day: 15,
+      jobId: 1,
+      payrollDay: 15,
     },
     {
       id: 2,
-      job_id: 1,
-      payroll_day: 31,
+      jobId: 1,
+      payrollDay: 31,
     },
   ];
 
   const job: Job = {
     id: 1,
-    account_id: 1,
+    accountId: 1,
     name: "Personal",
-    hourly_rate: 16,
-    vacation_days: 15,
-    sick_days: 15,
-    total_hours_per_week: 8,
-    job_schedule: [],
+    hourlyRate: 16,
+    totalHoursPerWeek: 8,
+    jobSchedule: [],
   };
 
   it("renders correct number of PayrollDateCards", () => {
-    render(<PayrollDates job={job} payroll_dates={payroll_dates} />);
+    render(<PayrollDates job={job} payrollDates={payrollDates} />);
     expect(screen.getByText("Payroll dates for Personal"));
     expect(screen.getAllByTestId("payroll-date-card")).toHaveLength(31);
   });
