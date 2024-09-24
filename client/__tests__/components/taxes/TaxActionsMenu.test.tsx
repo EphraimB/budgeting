@@ -14,7 +14,7 @@ describe("TaxActionsMenu", () => {
   it("displays the menu when the button is clicked", async () => {
     render(
       <TaxActionsMenu
-        tax_id={1}
+        taxId={1}
         anchorEl={anchorEl}
         open={open}
         handleClose={handleClose}
