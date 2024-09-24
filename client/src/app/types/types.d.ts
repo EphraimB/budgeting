@@ -64,7 +64,7 @@ export interface Loan {
   interestRate: number;
   interestFrequencyType: number;
   dates: Dates;
-  fullyPaidBack: string | null;
+  fullyPaidBackDate: string | null;
   nextDate: string | null;
   dateCreated: string;
   dateModified: string;

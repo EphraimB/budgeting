@@ -59,9 +59,9 @@ function LoansView({
           You will be charged ${loan.planAmount.toFixed(2)} next on{" "}
           {dayjs(loan.nextDate).format("dddd MMMM D, YYYY h:mm A")}. You get
           charged {getFrequency(loan)}. This loan{" "}
-          {loan.fullyPaidBack
+          {loan.fullyPaidBackDate
             ? `will be fully paid off on
-          ${dayjs(loan.fullyPaidBack).format("dddd MMMM D, YYYY")}`
+          ${dayjs(loan.fullyPaidBackDate).format("dddd MMMM D, YYYY")}`
             : "won't be paid off in the near future"}
           .
         </Typography>

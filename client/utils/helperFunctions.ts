@@ -120,14 +120,14 @@ export const findLatestFullyPaidBackDate = (
 ): Dayjs | string | null => {
   if (loans.length === 0) return null; // Return null if no loans
   // Check if any loan has not been fully paid back
-  if (loans.some((loan: Loan) => loan.fullyPaidBack === null)) {
+  if (loans.some((loan: Loan) => loan.fullyPaidBackDate === null)) {
     return "not in the near future";
   }
 
   // Convert all fully_paid_back dates to Day.js objects and find the max
-  let latest = dayjs(loans[0].fullyPaidBack);
+  let latest = dayjs(loans[0].fullyPaidBackDate);
   loans.forEach((loan: Loan) => {
-    const fullyPaidBackDate = dayjs(loan.fullyPaidBack);
+    const fullyPaidBackDate = dayjs(loan.fullyPaidBackDate);
     if (fullyPaidBackDate.isAfter(latest)) {
       latest = fullyPaidBackDate;
     }
