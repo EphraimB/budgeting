@@ -24,8 +24,10 @@ describe("ExpensesView", () => {
       monthOfYear: null,
     },
     subsidized: 0,
-    beginDate: "2021-01-01T00:00:00.000Z",
-    endDate: null,
+    dates: {
+      beginDate: "2021-01-01T00:00:00.000Z",
+      endDate: null,
+    },
     dateCreated: "2021-10-01T00:00:00.000Z",
     dateModified: "2021-10-01T00:00:00.000Z",
   };

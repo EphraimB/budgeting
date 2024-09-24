@@ -37,8 +37,10 @@ describe("ExpenseEdit", () => {
         monthOfYear: null,
       },
       subsidized: 0,
-      beginDate: "2021-10-01",
-      endDate: null,
+      dates: {
+        beginDate: "2021-10-01",
+        endDate: null,
+      },
       nextDate: null,
       dateCreated: "2021-10-01",
       dateModified: "2021-10-01",

@@ -19,7 +19,9 @@ export const getOrdinalSuffix = (day: number) => {
 };
 
 export const getFrequency = (row: {
-  beginDate: string;
+  dates: {
+    beginDate: string;
+  };
   frequency: Frequency;
 }): string => {
   let expenseFrequency;
@@ -34,7 +36,7 @@ export const getFrequency = (row: {
       if (row.frequency.typeVariable === 1)
         expenseFrequency = `weekly ${
           row.frequency.dayOfWeek !== null
-            ? `on ${dayjs(row.beginDate)
+            ? `on ${dayjs(row.dates.beginDate)
                 .day(row.frequency.dayOfWeek)
                 .format("dddd")}`
             : ""
@@ -44,7 +46,7 @@ export const getFrequency = (row: {
           weeks ${
             row.frequency.dayOfWeek !== null
               ? `on ${dayjs(
-                  dayjs(row.beginDate).day(row.frequency.dayOfWeek)
+                  dayjs(row.dates.beginDate).day(row.frequency.dayOfWeek)
                 ).format("dddd")}`
               : ""
           }`;
@@ -53,7 +55,7 @@ export const getFrequency = (row: {
       break;
     case 2: // Monthly
       if (row.frequency.typeVariable === 1) {
-        const dayOfMonth = dayjs(row.beginDate).format("D");
+        const dayOfMonth = dayjs(row.dates.beginDate).format("D");
         expenseFrequency = `monthly on the ${dayOfMonth}${
           dayOfMonth.endsWith("1")
             ? "st"
@@ -64,7 +66,7 @@ export const getFrequency = (row: {
             : "th"
         }`;
       } else {
-        const dayOfMonth = dayjs(row.beginDate).format("D");
+        const dayOfMonth = dayjs(row.dates.beginDate).format("D");
         expenseFrequency = `every ${
           row.frequency.typeVariable
         } months on the ${dayOfMonth}${
@@ -97,11 +99,13 @@ export const getFrequency = (row: {
       break;
     case 3: // Yearly
       if (row.frequency.typeVariable === 1)
-        expenseFrequency = `yearly on ${dayjs(row.beginDate).format("MMMM D")}`;
+        expenseFrequency = `yearly on ${dayjs(row.dates.beginDate).format(
+          "MMMM D"
+        )}`;
       else
         expenseFrequency = `every ${
           row.frequency.typeVariable
-        } years on ${dayjs(row.beginDate).format("MMMM D")}`;
+        } years on ${dayjs(row.dates.beginDate).format("MMMM D")}`;
 
       break;
     default:

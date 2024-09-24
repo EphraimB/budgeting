@@ -31,6 +31,11 @@ interface Frequency {
   monthOfYear: number | null;
 }
 
+interface Dates {
+  beginDate: string;
+  endDate?: string | null;
+}
+
 export interface Expense {
   id: number;
   accountId: number;
@@ -40,8 +45,7 @@ export interface Expense {
   description: string;
   frequency: Frequency;
   subsidized: number;
-  beginDate: string;
-  endDate: string | null;
+  dates: Dates;
   nextDate: string | null;
   dateCreated: string;
   dateModified: string;
@@ -59,8 +63,7 @@ export interface Loan {
   subsidized: number;
   interestRate: number;
   interestFrequencyType: number;
-  beginDate: string;
-  endDate: string | null;
+  dates: Dates;
   fullyPaidBack: string | null;
   nextDate: string | null;
   dateCreated: string;
@@ -133,8 +136,7 @@ export interface Transfer {
   amount: number;
   title: string;
   description: string;
-  beginDate: string;
-  endDate: string | null;
+  dates: Dates;
   frequency: Frequency;
   nextDate: string;
   dateCreated: string;
