@@ -37,7 +37,8 @@ CREATE TABLE IF NOT EXISTS job_schedule (
   job_id INTEGER NOT NULL REFERENCES jobs(id) ON DELETE CASCADE,
   day_of_week INTEGER NOT NULL,
   start_time TIME NOT NULL,
-  end_time TIME NOT NULL
+  end_time TIME NOT NULL,
+  UNIQUE(day_of_week, start_time, end_time)
 );
 
 -- Create a taxes table in postgres
