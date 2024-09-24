@@ -25,21 +25,18 @@ export const getTransfers = async (
 
         if (accountId) {
             query = `
-                SELECT id, cron_job_id, source_account_id, destination_account_id, amount, title, description, json_agg(
+                SELECT id, cron_job_id, source_account_id, destination_account_id, amount, title, description,
                         json_build_object(
                             'type', frequency_type,
                             'typeVariable', frequency_type_variable,
-                          	'dayOMonth', frequency_day_of_month,
+                          	'dayOfMonth', frequency_day_of_month,
                           	'dayOfWeek', frequency_day_of_week,
                           	'weekOfMonth', frequency_week_of_month,
-                          	'monthOfYear', frequency_month_of_year	
-                        )
-                    ) AS frequency,
-                    json_agg(
+                          	'monthOfYear', frequency_month_of_year
+                        ) AS frequency,
                         json_build_object(
                     		'beginDate', begin_date,
                             'endDate', end_date
-                          )
                       ) AS dates,
                        CASE 
                         -- Daily frequency
@@ -125,12 +122,10 @@ export const getTransfers = async (
                         ELSE 
                             NULL
                     END AS next_date,
-                                    json_agg(
-                                        json_build_object(
-                                        'dateCreated', date_created,
-                                        'dateModified', date_modified
-                                        )
-                                    ) AS creation_dates
+                    json_build_object(
+                        'dateCreated', date_created,
+                        'dateModified', date_modified
+                    ) AS creation_dates
                 FROM transfers
                 WHERE source_account_id = $1
                 GROUP BY id
@@ -138,21 +133,18 @@ export const getTransfers = async (
             params = [accountId];
         } else {
             query = `
-                SELECT id, cron_job_id, source_account_id, destination_account_id, amount, title, description, json_agg(
+                SELECT id, cron_job_id, source_account_id, destination_account_id, amount, title, description,
                         json_build_object(
                             'type', frequency_type,
                             'typeVariable', frequency_type_variable,
-                          	'dayOMonth', frequency_day_of_month,
+                          	'dayOfMonth', frequency_day_of_month,
                           	'dayOfWeek', frequency_day_of_week,
                           	'weekOfMonth', frequency_week_of_month,
-                          	'monthOfYear', frequency_month_of_year	
-                        )
-                    ) AS frequency,
-                    json_agg(
+                          	'monthOfYear', frequency_month_of_year
+                        ) AS frequency,
                         json_build_object(
                     		'beginDate', begin_date,
                             'endDate', end_date
-                          )
                       ) AS dates,
                        CASE 
                         -- Daily frequency
@@ -238,12 +230,10 @@ export const getTransfers = async (
                             ELSE 
                                 NULL
                         END AS next_date,
-                                        json_agg(
-                                            json_build_object(
-                                            'dateCreated', date_created,
-                                            'dateModified', date_modified
-                                            )
-                                        ) AS creation_dates
+                        json_build_object(
+                            'dateCreated', date_created,
+                            'dateModified', date_modified
+                        ) AS creation_dates
                     FROM transfers
                     GROUP BY id
             `;
@@ -284,21 +274,18 @@ export const getTransfersById = async (
 
         if (accountId) {
             query = `
-                SELECT id, cron_job_id, source_account_id, destination_account_id, amount, title, description, json_agg(
+                SELECT id, cron_job_id, source_account_id, destination_account_id, amount, title, description,
                         json_build_object(
                             'type', frequency_type,
                             'typeVariable', frequency_type_variable,
-                          	'dayOMonth', frequency_day_of_month,
+                          	'dayOfMonth', frequency_day_of_month,
                           	'dayOfWeek', frequency_day_of_week,
                           	'weekOfMonth', frequency_week_of_month,
-                          	'monthOfYear', frequency_month_of_year		
-                        )
-                    ) AS frequency,
-                    json_agg(
+                          	'monthOfYear', frequency_month_of_year
+                        ) AS frequency,
                         json_build_object(
                     		'beginDate', begin_date,
                             'endDate', end_date
-                          )
                       ) AS dates,
                        CASE 
                         -- Daily frequency
@@ -384,12 +371,10 @@ export const getTransfersById = async (
                         ELSE 
                             NULL
                     END AS next_date,
-                                    json_agg(
-                                        json_build_object(
-                                        'dateCreated', date_created,
-                                        'dateModified', date_modified
-                                        )
-                                    ) AS creation_dates
+                    json_build_object(
+                        'dateCreated', date_created,
+                        'dateModified', date_modified
+                    ) AS creation_dates
                 FROM transfers
                 WHERE id = $1 AND source_account_id = $2
                 GROUP BY id
@@ -397,21 +382,18 @@ export const getTransfersById = async (
             params = [id, accountId];
         } else {
             query = `
-                SELECT id, cron_job_id, source_account_id, destination_account_id, amount, title, description, json_agg(
+                SELECT id, cron_job_id, source_account_id, destination_account_id, amount, title, description,
                         json_build_object(
                             'type', frequency_type,
                             'typeVariable', frequency_type_variable,
-                          	'dayOMonth', frequency_day_of_month,
+                          	'dayOfMonth', frequency_day_of_month,
                           	'dayOfWeek', frequency_day_of_week,
                           	'weekOfMonth', frequency_week_of_month,
-                          	'monthOfYear', frequency_month_of_year	
-                        )
-                    ) AS frequency,
-                    json_agg(
+                          	'monthOfYear', frequency_month_of_year
+                        ) AS frequency,
                         json_build_object(
                     		'beginDate', begin_date,
                             'endDate', end_date
-                          )
                       ) AS dates,
                        CASE 
                         -- Daily frequency
@@ -497,12 +479,10 @@ export const getTransfersById = async (
                         ELSE 
                             NULL
                     END AS next_date,
-                                    json_agg(
-                                        json_build_object(
-                                        'dateCreated', date_created,
-                                        'dateModified', date_modified
-                                        )
-                                    ) AS creation_dates
+                    json_build_object(
+                        'dateCreated', date_created,
+                        'dateModified', date_modified
+                    ) AS creation_dates
                 FROM transfers
                 WHERE id = $1
                 GROUP BY id

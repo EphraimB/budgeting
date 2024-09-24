@@ -25,22 +25,19 @@ export const getExpenses = async (
 
         if (accountId) {
             query = `
-                SELECT id, account_id, tax_id, cron_job_id, amount, title, description, json_agg(
+                SELECT id, account_id, tax_id, cron_job_id, amount, title, description,
                         json_build_object(
                             'type', frequency_type,
                             'typeVariable', frequency_type_variable,
                           	'dayOfMonth', frequency_day_of_month,
                           	'dayOfWeek', frequency_day_of_week,
                           	'weekOfMonth', frequency_week_of_month,
-                          	'monthOfYear', frequency_month_of_year		
-                        )
-                    ) AS frequency,
+                          	'monthOfYear', frequency_month_of_year
+                        ) AS frequency,
                     subsidized,
-                     json_agg(
                         json_build_object(
                           'beginDate', begin_date,
                           'endDate', end_date
-                          )
                        ) AS dates,
                        CASE 
                         -- Daily frequency
@@ -135,22 +132,19 @@ export const getExpenses = async (
             params = [accountId];
         } else {
             query = `
-                SELECT id, account_id, tax_id, cron_job_id, amount, title, description, json_agg(
+                SELECT id, account_id, tax_id, cron_job_id, amount, title, description,
                         json_build_object(
                             'type', frequency_type,
                             'typeVariable', frequency_type_variable,
                           	'dayOfMonth', frequency_day_of_month,
                           	'dayOfWeek', frequency_day_of_week,
                           	'weekOfMonth', frequency_week_of_month,
-                          	'monthOfYear', frequency_month_of_year	
-                        )
-                    ) AS frequency,
+                          	'monthOfYear', frequency_month_of_year
+                        ) AS frequency,
                     subsidized,
-                     json_agg(
                         json_build_object(
                           'beginDate', begin_date,
                           'endDate', end_date
-                          )
                        ) AS dates,
                        CASE 
                         -- Daily frequency
@@ -278,22 +272,19 @@ export const getExpensesById = async (
 
         if (accountId) {
             query = `
-                SELECT id, account_id, tax_id, cron_job_id, amount, title, description, json_agg(
-                        json_build_object(
+                SELECT id, account_id, tax_id, cron_job_id, amount, title, description,
+                       json_build_object(
                             'type', frequency_type,
                             'typeVariable', frequency_type_variable,
                           	'dayOfMonth', frequency_day_of_month,
                           	'dayOfWeek', frequency_day_of_week,
                           	'weekOfMonth', frequency_week_of_month,
-                          	'monthOfYear', frequency_month_of_year	
-                        )
-                    ) AS frequency,
+                          	'monthOfYear', frequency_month_of_year
+                        ) AS frequency,
                     subsidized,
-                     json_agg(
                         json_build_object(
                           'beginDate', begin_date,
                           'endDate', end_date
-                          )
                        ) AS dates,
                        CASE 
                         -- Daily frequency
@@ -388,22 +379,19 @@ export const getExpensesById = async (
             params = [id, accountId];
         } else {
             query = `
-                SELECT id, account_id, tax_id, cron_job_id, amount, title, description, json_agg(
+                SELECT id, account_id, tax_id, cron_job_id, amount, title, description,
                         json_build_object(
                             'type', frequency_type,
                             'typeVariable', frequency_type_variable,
                           	'dayOfMonth', frequency_day_of_month,
                           	'dayOfWeek', frequency_day_of_week,
                           	'weekOfMonth', frequency_week_of_month,
-                          	'monthOfYear', frequency_month_of_year	
-                        )
-                    ) AS frequency,
+                          	'monthOfYear', frequency_month_of_year
+                        ) AS frequency,
                     subsidized,
-                     json_agg(
                         json_build_object(
                           'beginDate', begin_date,
                           'endDate', end_date
-                          )
                        ) AS dates,
                        CASE 
                         -- Daily frequency
@@ -564,7 +552,7 @@ export const createExpense = async (
         );
         const taxRate = result && result.length > 0 ? result : 0;
 
-        console.log(taxRate)
+        console.log(taxRate);
 
         const uniqueId = uuidv4();
 

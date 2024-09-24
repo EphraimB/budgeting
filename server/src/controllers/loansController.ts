@@ -25,16 +25,15 @@ export const getLoans = async (
 
         if (accountId) {
             query = `
-                SELECT id, account_id, cron_job_id, interest_cron_job_id, amount, plan_amount, recipient, title, description, json_agg(
+                SELECT id, account_id, cron_job_id, interest_cron_job_id, amount, plan_amount, recipient, title, description,
                         json_build_object(
                             'type', frequency_type,
                             'typeVariable', frequency_type_variable,
                           	'dayOfMonth', frequency_day_of_month,
                           	'dayOfWeek', frequency_day_of_week,
                           	'weekOfMonth', frequency_week_of_month,
-                          	'monthOfYear', frequency_month_of_year	
-                        )
-                    ) AS frequency,
+                          	'monthOfYear', frequency_month_of_year
+                        ) AS frequency,
                     interest_rate,
                     interest_frequency_type,
                     subsidized,
@@ -150,16 +149,15 @@ export const getLoans = async (
             params = [accountId];
         } else {
             query = `
-                SELECT id, account_id, cron_job_id, interest_cron_job_id, amount, plan_amount, recipient, title, description, json_agg(
+                SELECT id, account_id, cron_job_id, interest_cron_job_id, amount, plan_amount, recipient, title, description,
                         json_build_object(
                             'type', frequency_type,
                             'typeVariable', frequency_type_variable,
                           	'dayOfMonth', frequency_day_of_month,
                           	'dayOfWeek', frequency_day_of_week,
                           	'weekOfMonth', frequency_week_of_month,
-                          	'monthOfYear', frequency_month_of_year	
-                        )
-                    ) AS frequency,
+                          	'monthOfYear', frequency_month_of_year
+                        ) AS frequency,
                     interest_rate,
                     interest_frequency_type,
                     subsidized,
@@ -308,16 +306,15 @@ export const getLoansById = async (
 
         if (accountId) {
             query = `
-                SELECT id, account_id, cron_job_id, interest_cron_job_id, amount, plan_amount, recipient, title, description, json_agg(
+                SELECT id, account_id, cron_job_id, interest_cron_job_id, amount, plan_amount, recipient, title, description,
                         json_build_object(
                             'type', frequency_type,
                             'typeVariable', frequency_type_variable,
                           	'dayOfMonth', frequency_day_of_month,
                           	'dayOfWeek', frequency_day_of_week,
                           	'weekOfMonth', frequency_week_of_month,
-                          	'monthOfYear', frequency_month_of_year		
-                        )
-                    ) AS frequency,
+                          	'monthOfYear', frequency_month_of_year
+                        ) AS frequency,
                     interest_rate,
                     interest_frequency_type,
                     subsidized,
@@ -433,16 +430,15 @@ export const getLoansById = async (
             params = [id, accountId];
         } else {
             query = `
-                SELECT id, account_id, cron_job_id, interest_cron_job_id, amount, plan_amount, recipient, title, description, json_agg(
+                SELECT id, account_id, cron_job_id, interest_cron_job_id, amount, plan_amount, recipient, title, description,
                         json_build_object(
                             'type', frequency_type,
                             'typeVariable', frequency_type_variable,
                           	'dayOfMonth', frequency_day_of_month,
                           	'dayOfWeek', frequency_day_of_week,
                           	'weekOfMonth', frequency_week_of_month,
-                          	'monthOfYear', frequency_month_of_year		
-                        )
-                    ) AS frequency,
+                          	'monthOfYear', frequency_month_of_year
+                        ) AS frequency,
                     interest_rate,
                     interest_frequency_type,
                     subsidized,
