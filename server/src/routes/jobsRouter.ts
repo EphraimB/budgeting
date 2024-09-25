@@ -102,9 +102,9 @@ router.put(
 );
 
 router.delete(
-    '/:jobId',
+    '/:id',
     [
-        param('jobId').isInt({ min: 1 }).withMessage('Job ID must be a number'),
+        param('id').isInt({ min: 1 }).withMessage('Job ID must be a number'),
         validateRequest,
     ],
     deleteJob,

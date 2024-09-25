@@ -258,31 +258,31 @@ export const createJob = async (
 export const updateJob = async (
     request: Request,
     response: Response,
-  ): Promise<void> => {
+): Promise<void> => {
     const client = await pool.connect(); // Get a client from the pool
-  
+
     try {
-      const { id } = request.params;
-      const { accountId, name, hourlyRate, jobSchedule } = request.body;
-  
-      const { rows } = await client.query(
-        `
+        const { id } = request.params;
+        const { accountId, name, hourlyRate, jobSchedule } = request.body;
+
+        const { rows } = await client.query(
+            `
             SELECT id
                 FROM jobs
                 WHERE id = $1;
         `,
-        [id],
-      );
-  
-      if (rows.length === 0) {
-        response.status(404).send('Job not found');
-        return;
-      }
-  
-      await client.query('BEGIN;');
-  
-      const { rows: updateJobsResult } = await client.query(
-        `
+            [id],
+        );
+
+        if (rows.length === 0) {
+            response.status(404).send('Job not found');
+            return;
+        }
+
+        await client.query('BEGIN;');
+
+        const { rows: updateJobsResult } = await client.query(
+            `
             UPDATE jobs
                 SET account_id = $1,
                 name = $2,
@@ -290,37 +290,37 @@ export const updateJob = async (
                 WHERE id = $4
                 RETURNING *
         `,
-        [accountId, name, hourlyRate, id],
-      );
-  
-      // Fetch existing schedules for the job
-      const { rows: existingSchedules } = await client.query(
-        `
+            [accountId, name, hourlyRate, id],
+        );
+
+        // Fetch existing schedules for the job
+        const { rows: existingSchedules } = await client.query(
+            `
             SELECT *
                 FROM job_schedule
                 WHERE job_id = $1
         `,
-        [id],
-      );
-  
-      // Create a Map to store existing schedules
-      const existingSchedulesMap = new Map();
-      existingSchedules.forEach((s) => {
-        const key = `${s.day_of_week}_${s.start_time}_${s.end_time}`;
-        existingSchedulesMap.set(key, s);
-      });
-  
-      // Set to track IDs of schedules that are still present
-      const updatedOrAddedScheduleIds = new Set();
-  
-      for (const js of jobSchedule) {
-        const key = `${js.dayOfWeek}_${js.startTime}_${js.endTime}`;
-        const existingSchedule = existingSchedulesMap.get(key);
-  
-        if (existingSchedule) {
-          // Update the existing schedule
-          await client.query(
-            `
+            [id],
+        );
+
+        // Create a Map to store existing schedules
+        const existingSchedulesMap = new Map();
+        existingSchedules.forEach((s) => {
+            const key = `${s.day_of_week}_${s.start_time}_${s.end_time}`;
+            existingSchedulesMap.set(key, s);
+        });
+
+        // Set to track IDs of schedules that are still present
+        const updatedOrAddedScheduleIds = new Set();
+
+        for (const js of jobSchedule) {
+            const key = `${js.dayOfWeek}_${js.startTime}_${js.endTime}`;
+            const existingSchedule = existingSchedulesMap.get(key);
+
+            if (existingSchedule) {
+                // Update the existing schedule
+                await client.query(
+                    `
                 UPDATE job_schedule
                     SET day_of_week = $1,
                     start_time = $2,
@@ -328,59 +328,59 @@ export const updateJob = async (
                     WHERE id = $4
                     RETURNING *
             `,
-            [
-              js.dayOfWeek,
-              js.startTime,
-              js.endTime,
-              existingSchedule.id,
-            ],
-          );
-          updatedOrAddedScheduleIds.add(existingSchedule.id);
-          existingSchedulesMap.delete(key); // Remove from the Map
-        } else {
-          // Insert a new schedule
-          const { rows: result } = await client.query(
-            `
+                    [
+                        js.dayOfWeek,
+                        js.startTime,
+                        js.endTime,
+                        existingSchedule.id,
+                    ],
+                );
+                updatedOrAddedScheduleIds.add(existingSchedule.id);
+                existingSchedulesMap.delete(key); // Remove from the Map
+            } else {
+                // Insert a new schedule
+                const { rows: result } = await client.query(
+                    `
                 INSERT INTO job_schedule
                     (job_id, day_of_week, start_time, end_time)
                     VALUES ($1, $2, $3, $4)
                     RETURNING *
             `,
-            [id, js.dayOfWeek, js.startTime, js.endTime],
-          );
-  
-          // Assuming the result includes the ID of the inserted schedule
-          updatedOrAddedScheduleIds.add(result[0].id);
+                    [id, js.dayOfWeek, js.startTime, js.endTime],
+                );
+
+                // Assuming the result includes the ID of the inserted schedule
+                updatedOrAddedScheduleIds.add(result[0].id);
+            }
         }
-      }
-  
-      // Delete schedules that were not in the updatedOrAddedScheduleIds set
-      for (const schedule of existingSchedulesMap.values()) {
-        await client.query(
-          `
+
+        // Delete schedules that were not in the updatedOrAddedScheduleIds set
+        for (const schedule of existingSchedulesMap.values()) {
+            await client.query(
+                `
               DELETE FROM job_schedule
                   WHERE id = $1
           `,
-          [schedule.id],
-        );
-      }
-  
-      await client.query('SELECT process_payroll_for_job($1)', [id]);
-  
-      await client.query('COMMIT;');
-  
-      const updatedRow = toCamelCase(updateJobsResult[0]); // Convert to camelCase
-  
-      response.status(200).json(updatedRow);
+                [schedule.id],
+            );
+        }
+
+        await client.query('SELECT process_payroll_for_job($1)', [id]);
+
+        await client.query('COMMIT;');
+
+        const updatedRow = toCamelCase(updateJobsResult[0]); // Convert to camelCase
+
+        response.status(200).json(updatedRow);
     } catch (error) {
-      await client.query('ROLLBACK;');
-  
-      logger.error(error); // Log the error on the server side
-      handleError(response, 'Error updating job');
+        await client.query('ROLLBACK;');
+
+        logger.error(error); // Log the error on the server side
+        handleError(response, 'Error updating job');
     } finally {
-      client.release(); // Release the client back to the pool
+        client.release(); // Release the client back to the pool
     }
-  };
+};
 
 /**
  *
