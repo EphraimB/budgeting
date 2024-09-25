@@ -33,7 +33,7 @@ async function Transfers({ params }: { params: { accountId: string } }) {
   const transfers: Transfer[] = await getTransfers(accountId);
   const accounts: Account[] = await getAccounts(accountId);
 
-  if (accounts) {
+  if (accounts.length === 0) {
     return notFound();
   }
 
