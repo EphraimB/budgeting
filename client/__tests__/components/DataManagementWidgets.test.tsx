@@ -12,6 +12,22 @@ describe("DataManagementWidgets", () => {
     render(
       <DataManagementWidgets
         accountId={1}
+        accounts={[
+          {
+            id: 1,
+            name: "Testing account 1",
+            balance: 50,
+            dateCreated: "2020-01-01",
+            dateModified: "2020-01-01",
+          },
+          {
+            id: 2,
+            name: "Testing account 2",
+            balance: 100,
+            dateCreated: "2020-01-01",
+            dateModified: "2020-01-01",
+          },
+        ]}
         expenses={[
           {
             accountId: 1,
