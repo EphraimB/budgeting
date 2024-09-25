@@ -22,8 +22,6 @@ export async function addWishlist(wishlist: WishlistRequest) {
   });
   const result = await response.json();
 
-  console.log(result);
-
   revalidatePath("/[accountId]", "page");
   return result;
 }

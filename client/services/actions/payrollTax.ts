@@ -18,8 +18,6 @@ export async function addPayrollTax(payrollTax: PayrollTaxRequest) {
   });
   const result = await response.json();
 
-  console.log(result);
-
   revalidatePath("/[accountId]/jobs", "page");
 
   return result;
@@ -40,8 +38,6 @@ export async function editPayrollTax(
     }
   );
   const result = await response.json();
-
-  console.log(result);
 
   revalidatePath("/[accountId]/jobs", "page");
   return result;

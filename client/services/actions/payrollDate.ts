@@ -20,8 +20,6 @@ export async function togglePayrollDate(payrollDate: PayrollDateRequest) {
   );
   const result = await response.json();
 
-  console.log(result);
-
   revalidatePath("/[accountId]/jobs", "page");
 
   return result;
@@ -36,8 +34,6 @@ export async function addPayrollDate(payrollDate: PayrollDateRequest) {
     body: JSON.stringify(payrollDate),
   });
   const result = await response.json();
-
-  console.log(result);
 
   revalidatePath("/[accountId]/jobs", "page");
 
@@ -59,8 +55,6 @@ export async function editPayrollDate(
     }
   );
   const result = await response.json();
-
-  console.log(result);
 
   revalidatePath("/[accountId]/jobs", "page");
   return result;

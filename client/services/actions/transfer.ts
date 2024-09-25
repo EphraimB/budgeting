@@ -24,8 +24,6 @@ export async function addTransfer(transfer: TransferRequest) {
   });
   const result = await response.json();
 
-  console.log(result);
-
   revalidatePath("/[accountId]", "page");
   return result;
 }
