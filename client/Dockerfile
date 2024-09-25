@@ -12,7 +12,7 @@ COPY . .
 RUN npm run build
 
 
-FROM base as production
+FROM base AS production
 WORKDIR /home/node/app
 
 ENV NODE_ENV=production
