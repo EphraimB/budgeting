@@ -3446,7 +3446,7 @@ export const deleteWishlist = async (
         const { rows } = await client.query(
             `
                 SELECT id, cron_job_id
-                    FROM wishlists
+                    FROM wishlist
                     WHERE id = $1
             `,
             [id],
