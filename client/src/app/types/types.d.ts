@@ -152,6 +152,6 @@ export interface PayrollTax {
 
 export interface GeneratedTransaction {
   accountId: number;
-  currentCalance: number;
+  currentBalance: number;
   transactions: Transaction[];
 }
