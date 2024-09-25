@@ -79,7 +79,7 @@ function NewLoanForm({
     amount: parseFloat(amount),
     subsidized: parseFloat(subsidized),
     frequency: {
-      type: frequencyTypeVariable,
+      type: frequencyType,
       dayOfWeek: frequencyDayOfWeek === -1 ? null : frequencyDayOfWeek,
       weekOfMonth: frequencyWeekOfMonth === -1 ? null : frequencyWeekOfMonth,
       monthOfYear: frequencyMonthOfYear === -1 ? null : frequencyMonthOfYear,

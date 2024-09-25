@@ -395,7 +395,7 @@ function ExpenseEdit({
             <TextField
               label="Frequency Type Variable"
               variant="standard"
-              value={frequencyType}
+              value={frequencyTypeVariable}
               onChange={(e) =>
                 setFrequencyTypeVariable(e.target.value as unknown as number)
               }
