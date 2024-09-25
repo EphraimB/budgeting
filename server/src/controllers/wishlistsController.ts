@@ -4,6 +4,7 @@ import { logger } from '../config/winston.js';
 import determineCronValues from '../crontab/determineCronValues.js';
 import pool from '../config/db.js';
 import { v4 as uuidv4 } from 'uuid';
+import dayjs from 'dayjs';
 
 /**
  *
@@ -2682,39 +2683,41 @@ export const createWishlist = async (
 
         const dateCanPurchase = cronDateResults[0].date_can_purchase;
 
-        const jobDetails = {
-            date: dateCanPurchase,
-        };
+        if (dayjs(dateCanPurchase).isBefore(dayjs().add(1, 'year'))) {
+            const jobDetails = {
+                date: dateCanPurchase,
+            };
 
-        const cronDate = determineCronValues(jobDetails);
+            const cronDate = determineCronValues(jobDetails);
 
-        await client.query(`
+            await client.query(`
             SELECT cron.schedule('${uniqueId}', '${cronDate}',
             $$INSERT INTO transaction_history (account_id, amount, tax_rate, title, description) VALUES (${accountId}, ${-rows[0]
                 .amount}, ${taxRate}, '${rows[0].title}', '${
                 rows[0].description
             }')$$)`);
 
-        const { rows: cronIdResults } = await client.query(
-            `
+            const { rows: cronIdResults } = await client.query(
+                `
                 INSERT INTO cron_jobs
                 (unique_id, cron_expression)
                 VALUES ($1, $2)
                 RETURNING *
             `,
-            [uniqueId, cronDate],
-        );
+                [uniqueId, cronDate],
+            );
 
-        const cronId = cronIdResults[0].cron_job_id;
+            const cronId = cronIdResults[0].cron_job_id;
 
-        await client.query(
-            `
+            await client.query(
+                `
                 UPDATE wishlist
                     SET cron_job_id = $1
                     WHERE id = $2
             `,
-            [cronId, rows[0].id],
-        );
+                [cronId, rows[0].id],
+            );
+        }
 
         await client.query('COMMIT;');
 
@@ -3311,60 +3314,118 @@ export const updateWishlist = async (
             [rows[0].id],
         );
 
-        const { rows: cronIdResults } = await client.query(
-            `
+        const cronId = rows[0].cron_job_id;
+
+        const dateCanPurchase = cronDateResults[0].date_can_purchase;
+
+        if (cronId !== null) {
+            const { rows: cronIdResults } = await client.query(
+                `
                 SELECT unique_id
                     FROM cron_jobs
                     WHERE id = $1
             `,
-            [rows[0].cron_job_id],
-        );
+                [cronId],
+            );
 
-        const uniqueId = cronIdResults[0].unique_id;
+            const uniqueId = cronIdResults[0].unique_id;
 
-        await client.query(`SELECT cron.unschedule('${uniqueId}')`);
+            await client.query(`SELECT cron.unschedule('${uniqueId}')`);
 
-        const dateCanPurchase = cronDateResults[0].date_can_purchase;
+            const jobDetails = {
+                date: dateCanPurchase,
+            };
 
-        const jobDetails = {
-            date: dateCanPurchase,
-        };
+            if (dayjs(dateCanPurchase).isBefore(dayjs().add(1, 'year'))) {
+                const cronDate = determineCronValues(jobDetails);
 
-        const cronDate = determineCronValues(jobDetails);
-
-        await client.query(`
+                await client.query(`
             SELECT cron.schedule('${uniqueId}', '${cronDate}',
             $$INSERT INTO transaction_history (account_id, amount, tax_rate, title, description) VALUES (${accountId}, ${-rows[0]
                 .amount}, ${taxRate}, '${rows[0].title}', '${
                 rows[0].description
             }')$$)`);
 
-        await client.query(
-            `
+                await client.query(
+                    `
                 UPDATE cron_jobs
                     SET unique_id = $1,
                     cron_expression = $2
                     WHERE id = $3
             `,
-            [uniqueId, cronDate],
-        );
+                    [uniqueId, cronDate],
+                );
 
-        const cronId = rows[0].cron_job_id;
-
-        await client.query(
-            `
+                await client.query(
+                    `
                 UPDATE wishlist
                     SET cron_job_id = $1
                     WHERE id = $2
             `,
-            [cronId, rows[0].id],
-        );
+                    [cronId, rows[0].id],
+                );
+            } else {
+                await client.query(
+                    `
+                    DELETE FROM cron_jobs
+                    WHERE id = $1
+                `,
+                    [cronId],
+                );
 
-        await client.query('COMMIT;');
+                await client.query(
+                    `
+                UPDATE wishlist
+                    SET cron_job_id = $1
+                    WHERE id = $2
+            `,
+                    [null, rows[0].id],
+                );
+            }
+        } else {
+            if (dayjs(dateCanPurchase).isBefore(dayjs().add(1, 'year'))) {
+                const jobDetails = {
+                    date: dateCanPurchase,
+                };
 
-        const updatedRow = toCamelCase(rows[0]); // Convert to camelCase
+                const cronDate = determineCronValues(jobDetails);
+                const uniqueId = uuidv4();
 
-        response.status(200).json(updatedRow);
+                await client.query(`
+                SELECT cron.schedule('${uniqueId}', '${cronDate}',
+                $$INSERT INTO transaction_history (account_id, amount, tax_rate, title, description) VALUES (${accountId}, ${-rows[0]
+                    .amount}, ${taxRate}, '${rows[0].title}', '${
+                    rows[0].description
+                }')$$)`);
+
+                const { rows: cronIdResults } = await client.query(
+                    `
+                    INSERT INTO cron_jobs
+                    (unique_id, cron_expression)
+                    VALUES ($1, $2)
+                    RETURNING *
+                `,
+                    [uniqueId, cronDate],
+                );
+
+                const cronId = cronIdResults[0].cron_job_id;
+
+                await client.query(
+                    `
+                    UPDATE wishlist
+                        SET cron_job_id = $1
+                        WHERE id = $2
+                `,
+                    [cronId, rows[0].id],
+                );
+            }
+
+            await client.query('COMMIT;');
+
+            const updatedRow = toCamelCase(rows[0]); // Convert to camelCase
+
+            response.status(200).json(updatedRow);
+        }
     } catch (error) {
         await client.query('ROLLBACK;');
 
