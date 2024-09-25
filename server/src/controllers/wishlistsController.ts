@@ -3410,13 +3410,13 @@ export const updateWishlist = async (
                     [cronId, rows[0].id],
                 );
             }
-
-            await client.query('COMMIT;');
-
-            const updatedRow = toCamelCase(rows[0]); // Convert to camelCase
-
-            response.status(200).json(updatedRow);
         }
+
+        await client.query('COMMIT;');
+
+        const updatedRow = toCamelCase(rows[0]); // Convert to camelCase
+
+        response.status(200).json(updatedRow);
     } catch (error) {
         await client.query('ROLLBACK;');
 
