@@ -2707,7 +2707,7 @@ export const createWishlist = async (
                 [uniqueId, cronDate],
             );
 
-            const cronId = cronIdResults[0].cron_job_id;
+            const cronId = cronIdResults[0].id;
 
             await client.query(
                 `
@@ -3372,15 +3372,6 @@ export const updateWishlist = async (
                 `,
                     [cronId],
                 );
-
-                await client.query(
-                    `
-                UPDATE wishlist
-                    SET cron_job_id = $1
-                    WHERE id = $2
-            `,
-                    [null, rows[0].id],
-                );
             }
         } else {
             if (dayjs(dateCanPurchase).isBefore(dayjs().add(1, 'year'))) {
@@ -3408,7 +3399,7 @@ export const updateWishlist = async (
                     [uniqueId, cronDate],
                 );
 
-                const cronId = cronIdResults[0].cron_job_id;
+                const cronId = cronIdResults[0].id;
 
                 await client.query(
                     `

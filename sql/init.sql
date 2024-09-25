@@ -139,7 +139,7 @@ CREATE TABLE IF NOT EXISTS wishlist (
   id SERIAL PRIMARY KEY,
   account_id INT NOT NULL REFERENCES accounts(id) ON DELETE CASCADE,
   tax_id INT REFERENCES taxes(id),
-  cron_job_id INT REFERENCES cron_jobs(id),
+  cron_job_id INT REFERENCES cron_jobs(id) ON DELETE SET NULL,
   amount numeric(12, 2) NOT NULL,
   title VARCHAR(255) NOT NULL,
   description VARCHAR(255) NOT NULL,
