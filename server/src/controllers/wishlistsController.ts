@@ -3470,9 +3470,11 @@ export const deleteWishlist = async (
 
         await client.query('BEGIN;');
 
-        await client.query(
-            `SELECT cron.unschedule('${cronJobResults[0].unique_id}')`,
-        );
+        if (cronId !== null) {
+            await client.query(
+                `SELECT cron.unschedule('${cronJobResults[0].unique_id}')`,
+            );
+        }
 
         await client.query(
             `
@@ -3481,13 +3483,16 @@ export const deleteWishlist = async (
             `,
             [id],
         );
-        await client.query(
-            `
+
+        if (cronId !== null) {
+            await client.query(
+                `
                 DELETE FROM cron_jobs
                     WHERE id = $1
             `,
-            [cronId],
-        );
+                [cronId],
+            );
+        }
 
         await client.query('COMMIT;');
 
