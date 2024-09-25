@@ -2,8 +2,8 @@ import React from "react";
 import DataManagementWidgets from "../../../components/DataManagementWidgets";
 import { notFound } from "next/navigation";
 
-async function getAccount(accountId: number) {
-  const res = await fetch(`http://server:5001/api/accounts/${accountId}`);
+async function getAccounts() {
+  const res = await fetch("http://server:5001/api/accounts");
 
   if (!res.ok) {
     return notFound();
@@ -81,8 +81,7 @@ export default async function Layout({
 }) {
   const accountId = parseInt(params.accountId);
 
-  await getAccount(parseInt(params.accountId));
-
+  const accounts = await getAccounts();
   const expenses = await getExpenses(accountId);
   const taxes = await getTaxes(accountId);
   const loans = await getLoans(accountId);
@@ -93,6 +92,7 @@ export default async function Layout({
     <>
       <DataManagementWidgets
         accountId={accountId}
+        accounts={accounts}
         expenses={expenses}
         taxes={taxes}
         loans={loans}

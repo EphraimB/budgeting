@@ -1,7 +1,14 @@
 "use client";
 
 import React, { useState, useEffect, useRef } from "react";
-import { Expense, Loan, Tax, Transfer, Wishlist } from "@/app/types/types";
+import {
+  Account,
+  Expense,
+  Loan,
+  Tax,
+  Transfer,
+  Wishlist,
+} from "@/app/types/types";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
 import Typography from "@mui/material/Typography";
@@ -18,6 +25,7 @@ import {
 
 function DataManagementWidgets({
   accountId,
+  accounts,
   expenses,
   loans,
   wishlists,
@@ -25,6 +33,7 @@ function DataManagementWidgets({
   taxes,
 }: {
   accountId: number;
+  accounts: Account[];
   expenses: Expense[];
   loans: Loan[];
   wishlists: Wishlist[];
@@ -104,7 +113,10 @@ function DataManagementWidgets({
       }`,
       selected: isSelected("wishlists"),
     },
-    {
+  ];
+
+  if (accounts.length > 1) {
+    widgets.push({
       id: "transfers",
       title: "Transfers",
       link: `/${accountId}/transfers`,
@@ -114,8 +126,8 @@ function DataManagementWidgets({
           : `You have ${transfers.length} transfers.`
       }`,
       selected: isSelected("transfers"),
-    },
-  ];
+    });
+  }
 
   const selectedWidget =
     widgets.find((widget) => widget.selected) || widgets[0];

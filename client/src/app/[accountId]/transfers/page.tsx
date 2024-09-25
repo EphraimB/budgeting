@@ -2,6 +2,7 @@ import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 import { Account, Transfer } from "@/app/types/types";
 import TransferCards from "../../../../components/transfers/TransfersCards";
+import { notFound } from "next/navigation";
 
 async function getTransfers(accountId: number) {
   const res = await fetch(
@@ -31,6 +32,10 @@ async function Transfers({ params }: { params: { accountId: string } }) {
 
   const transfers: Transfer[] = await getTransfers(accountId);
   const accounts: Account[] = await getAccounts(accountId);
+
+  if (accounts) {
+    return notFound();
+  }
 
   return (
     <Stack>
