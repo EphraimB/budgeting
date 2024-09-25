@@ -3353,7 +3353,7 @@ export const updateWishlist = async (
                     cron_expression = $2
                     WHERE id = $3
             `,
-                    [uniqueId, cronDate],
+                    [uniqueId, cronDate, cronId],
                 );
 
                 await client.query(

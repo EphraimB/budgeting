@@ -1,4 +1,4 @@
-FROM node:20-alpine as base
+FROM node:20-alpine AS base
 RUN apk add --no-cache g++ make py3-pip libc6-compat && \
     addgroup -g 1001 -S nodejs && \
     adduser -S nextjs -u 1001
@@ -6,7 +6,7 @@ WORKDIR /home/node/app
 COPY package*.json ./
 EXPOSE 3000
 
-FROM base as builder
+FROM base AS builder
 WORKDIR /home/node/app
 COPY . .
 RUN npm run build
@@ -25,7 +25,7 @@ COPY --from=builder /home/node/app/public ./public
 
 CMD npm start
 
-FROM base as dev
+FROM base AS dev
 ENV NODE_ENV=development
 RUN npm install 
 COPY . .
