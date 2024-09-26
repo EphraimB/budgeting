@@ -33,24 +33,24 @@ import { Tax } from "@/app/types/types";
 dayjs.extend(utc);
 
 function NewWishlistForm({
-  account_id,
+  accountId,
   taxes,
   setShowWishlistForm,
-  total_items,
+  totalItems,
 }: {
-  account_id: number;
+  accountId: number;
   taxes: Tax[];
   setShowWishlistForm: (show: boolean) => void;
-  total_items: number;
+  totalItems: number;
 }) {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [amount, setAmount] = useState("0");
-  const [tax_id, setTaxId] = useState(0);
-  const [priority, setPriority] = useState(total_items);
-  const [url_link, setUrlLink] = useState("");
+  const [taxId, setTaxId] = useState(0);
+  const [priority, setPriority] = useState(totalItems);
+  const [urlLink, setUrlLink] = useState("");
   const [preorder, setPreorder] = useState(false);
-  const [date_available, setDateAvailable] = useState<null | string>(null);
+  const [dateAvailable, setDateAvailable] = useState<null | string>(null);
 
   const [titleError, setTitleError] = useState("");
   const [descriptionError, setDescriptionError] = useState("");
@@ -72,14 +72,14 @@ function NewWishlistForm({
   };
 
   const data = {
-    account_id,
+    accountId,
     title,
     description,
     amount: parseFloat(amount),
-    tax_id: tax_id === 0 ? null : tax_id,
+    taxId: taxId === 0 ? null : taxId,
     priority,
-    url_link,
-    date_available,
+    urlLink,
+    dateAvailable,
   };
 
   const validateTitle = () => {
@@ -233,7 +233,7 @@ function NewWishlistForm({
                 labelId="tax-select-label"
                 label="Tax"
                 variant="standard"
-                value={tax_id}
+                value={taxId}
                 onChange={(e) => setTaxId(e.target.value as number)}
               >
                 <MenuItem value={0}>No tax - 0%</MenuItem>
@@ -254,7 +254,7 @@ function NewWishlistForm({
               step={1}
               marks
               min={0}
-              max={total_items}
+              max={totalItems}
               onChange={(e, value) => {
                 if (typeof value === "number") {
                   setPriority(value);
@@ -266,7 +266,7 @@ function NewWishlistForm({
             <TextField
               label="URL Link"
               variant="standard"
-              value={url_link}
+              value={urlLink}
               onChange={(e) => setUrlLink(e.target.value)}
             />
           </>
@@ -282,7 +282,7 @@ function NewWishlistForm({
               <LocalizationProvider dateAdapter={AdapterDayjs}>
                 <DateTimePicker
                   label="Product avalable date"
-                  value={dayjs.utc(date_available).local()}
+                  value={dayjs.utc(dateAvailable).local()}
                   onChange={(e: Dayjs | null) => {
                     const utcDate = e ? e.utc().format() : dayjs.utc().format();
                     setDateAvailable(utcDate);

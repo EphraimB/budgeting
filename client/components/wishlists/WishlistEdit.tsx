@@ -33,27 +33,27 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 dayjs.extend(utc);
 
 function WishlistEdit({
-  account_id,
+  accountId,
   wishlist,
   taxes,
   setWishlistModes,
-  total_items,
+  totalItems,
 }: {
-  account_id: number;
+  accountId: number;
   wishlist: Wishlist;
   taxes: Tax[];
   setWishlistModes: (wishlistModes: Record<number, string>) => void;
-  total_items: number;
+  totalItems: number;
 }) {
-  const [title, setTitle] = useState(wishlist.wishlist_title);
-  const [description, setDescription] = useState(wishlist.wishlist_description);
-  const [amount, setAmount] = useState(wishlist.wishlist_amount.toString());
-  const [tax_id, setTaxId] = useState(wishlist.tax_id || 0);
-  const [priority, setPriority] = useState(wishlist.wishlist_priority);
-  const [url_link, setUrlLink] = useState(wishlist.wishlist_url_link);
-  const [preorder, setPreorder] = useState(!!wishlist.wishlist_date_available);
-  const [date_available, setDateAvailable] = useState<null | string>(
-    wishlist.wishlist_date_available
+  const [title, setTitle] = useState(wishlist.title);
+  const [description, setDescription] = useState(wishlist.description);
+  const [amount, setAmount] = useState(wishlist.amount.toString());
+  const [taxId, setTaxId] = useState(wishlist.taxId || 0);
+  const [priority, setPriority] = useState(wishlist.priority);
+  const [urlLink, setUrlLink] = useState(wishlist.urlLink);
+  const [preorder, setPreorder] = useState(!!wishlist.dateAvailable);
+  const [dateAvailable, setDateAvailable] = useState<null | string>(
+    wishlist.dateAvailable
   );
 
   const [titleError, setTitleError] = useState("");
@@ -76,14 +76,14 @@ function WishlistEdit({
   };
 
   const data = {
-    account_id,
+    accountId,
     title,
     description,
     amount: parseFloat(amount),
-    tax_id: tax_id === 0 ? null : tax_id,
+    taxId: taxId === 0 ? null : taxId,
     priority,
-    url_link,
-    date_available,
+    urlLink,
+    dateAvailable,
   };
 
   const validateTitle = () => {
@@ -237,7 +237,7 @@ function WishlistEdit({
                 labelId="tax-select-label"
                 label="Tax"
                 variant="standard"
-                value={tax_id}
+                value={taxId}
                 onChange={(e) => setTaxId(e.target.value as number)}
               >
                 <MenuItem value={0}>No tax - 0%</MenuItem>
@@ -258,7 +258,7 @@ function WishlistEdit({
               step={1}
               marks
               min={0}
-              max={total_items - 1}
+              max={totalItems - 1}
               onChange={(e, value) => {
                 if (typeof value === "number") {
                   setPriority(value);
@@ -270,7 +270,7 @@ function WishlistEdit({
             <TextField
               label="URL Link"
               variant="standard"
-              value={url_link}
+              value={urlLink}
               onChange={(e) => setUrlLink(e.target.value)}
             />
           </>
@@ -286,7 +286,7 @@ function WishlistEdit({
               <LocalizationProvider dateAdapter={AdapterDayjs}>
                 <DateTimePicker
                   label="Product avalable date"
-                  value={dayjs.utc(date_available).local()}
+                  value={dayjs.utc(dateAvailable).local()}
                   onChange={(e: Dayjs | null) => {
                     const utcDate = e ? e.utc().format() : dayjs.utc().format();
                     setDateAvailable(utcDate);

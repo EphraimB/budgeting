@@ -48,17 +48,17 @@ app.use('/api/docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 app.use('/api/', routes);
 app.use('/api/accounts', accountsRouter);
 app.use('/api/transactions/history', transactionHistoryRouter);
-app.use('/api/expenses', expensesRouter);
 app.use('/api/expenses/commute/systems', commuteSystemsRouter);
 app.use('/api/expenses/commute/history', commuteHistoryRouter);
 app.use('/api/expenses/commute/fares', fareDetailsRouter);
 app.use('/api/expenses/commute/schedule', commuteScheduleRouter);
 app.use('/api/expenses/commute', commuteOverviewRouter);
+app.use('/api/expenses', expensesRouter);
 app.use('/api/loans', loansRouter);
-app.use('/api/jobs', jobsRouter);
-app.use('/api/jobs/payroll', payrollRouter);
 app.use('/api/jobs/payroll/dates', payrollDatesRouter);
 app.use('/api/jobs/payroll/taxes', payrollTaxesRouter);
+app.use('/api/jobs/payroll', payrollRouter);
+app.use('/api/jobs', jobsRouter);
 app.use('/api/wishlists', wishlistRouter);
 app.use('/api/transfers', transferRouter);
 app.use('/api/transactions', transactionsRouter);
@@ -66,7 +66,7 @@ app.use('/api/taxes', taxesRouter);
 app.use('/api/income', incomeRouter);
 
 // Global error handling middleware
-app.use((err: any, req: Request, res: Response, next: NextFunction) => {
+app.use((err: any, _: Request, res: Response, next: NextFunction) => {
     logger.error(err);
     res.status(500).json({ error: 'Internal server error' });
 

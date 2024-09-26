@@ -4,7 +4,6 @@ import express, {
     type Express,
     type Request,
     type Response,
-    type NextFunction,
     type Router,
 } from 'express';
 import {
@@ -32,100 +31,22 @@ const createApp = async (): Promise<Express> => {
     return app;
 };
 
-const newWishlist = {
-    amount: 100,
-    title: 'test',
-    description: 'test',
-    priority: 1,
-};
-
 beforeAll(() => {
-    jest.mock('../../src/middleware/middleware', () => ({
-        setQueries: jest.fn(
-            (req: Request, res: Response, next: NextFunction) => {
-                next();
-            },
-        ),
-        getCurrentBalance: jest.fn(
-            (req: Request, res: Response, next: NextFunction) => {
-                next();
-            },
-        ),
-        getTransactionsByAccount: jest.fn(
-            (req: Request, res: Response, next: NextFunction) => {
-                next();
-            },
-        ),
-        getIncomeByAccount: jest.fn(
-            (req: Request, res: Response, next: NextFunction) => {
-                next();
-            },
-        ),
-        getExpensesByAccount: jest.fn(
-            (req: Request, res: Response, next: NextFunction) => {
-                next();
-            },
-        ),
-        getLoansByAccount: jest.fn(
-            (req: Request, res: Response, next: NextFunction) => {
-                next();
-            },
-        ),
-        getPayrollsMiddleware: jest.fn(
-            (req: Request, res: Response, next: NextFunction) => {
-                next();
-            },
-        ),
-        getTransfersByAccount: jest.fn(
-            (req: Request, res: Response, next: NextFunction) => {
-                next();
-            },
-        ),
-        getCommuteExpensesByAccount: jest.fn(
-            (req: Request, res: Response, next: NextFunction) => {
-                next();
-            },
-        ),
-        getWishlistsByAccount: jest.fn(
-            (req: Request, res: Response, next: NextFunction) => {
-                next();
-            },
-        ),
-    }));
-
-    jest.mock('../../src/generation/generateTransactions', () => {
-        return jest.fn((req: Request, res: Response, next: NextFunction) => {
-            req.transactions = [];
-            next();
-        });
-    });
-
     jest.mock('../../src/controllers/wishlistsController', () => ({
-        getWishlists: jest.fn(
-            (req: Request, res: Response, next: NextFunction) =>
-                res.json({ message: 'success' }),
+        getWishlists: jest.fn((_: Request, res: Response) =>
+            res.json({ message: 'success' }),
         ),
-        createWishlist: jest.fn(
-            (req: Request, res: Response, next: NextFunction) => {
-                next();
-            },
+        getWishlistsById: jest.fn((_: Request, res: Response) =>
+            res.json({ message: 'success' }),
         ),
-        createWishlistCron: jest.fn(
-            (req: Request, res: Response, next: NextFunction) =>
-                res.json({ message: 'success' }),
+        createWishlist: jest.fn((_: Request, res: Response) =>
+            res.json({ message: 'success' }),
         ),
-        updateWishlist: jest.fn(
-            (req: Request, res: Response, next: NextFunction) => {
-                next();
-            },
+        updateWishlist: jest.fn((_: Request, res: Response) =>
+            res.json({ message: 'success' }),
         ),
-        updateWishlistCron: jest.fn(
-            (req: Request, res: Response, next: NextFunction) =>
-                res.json({ message: 'success' }),
-        ),
-        deleteWishlist: jest.fn(
-            (req: Request, res: Response, next: NextFunction) =>
-                res.json({ message: 'success' }),
+        deleteWishlist: jest.fn((_: Request, res: Response) =>
+            res.json({ message: 'success' }),
         ),
     }));
 });
@@ -153,10 +74,10 @@ describe('GET /', () => {
     });
 });
 
-describe('GET / with id query', () => {
+describe('GET / with id param', () => {
     it('responds with json', async () => {
         const response: request.Response = await request(app)
-            .get('/?id=1')
+            .get('/1')
             .set('Accept', 'application/json')
             .expect('Content-Type', /json/);
 
@@ -171,7 +92,16 @@ describe('POST /', () => {
             .post('/')
             .set('Accept', 'application/json')
             .expect('Content-Type', /json/)
-            .send(newWishlist);
+            .send({
+                accountId: 1,
+                taxId: null,
+                amount: 100,
+                title: 'test',
+                description: 'test',
+                priority: 1,
+                urlLink: 'https://google.com',
+                dateAvailable: null,
+            });
 
         expect(response.status).toBe(200);
         expect(response.body).toEqual({ message: 'success' });
@@ -184,7 +114,16 @@ describe('PUT /:id', () => {
             .put('/1')
             .set('Accept', 'application/json')
             .expect('Content-Type', /json/)
-            .send(newWishlist);
+            .send({
+                accountId: 1,
+                taxId: null,
+                amount: 100,
+                title: 'test',
+                description: 'test',
+                priority: 1,
+                urlLink: 'https://google.com',
+                dateAvailable: null,
+            });
 
         expect(response.status).toBe(200);
         expect(response.body).toEqual({ message: 'success' });

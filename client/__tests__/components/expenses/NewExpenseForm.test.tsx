@@ -28,8 +28,8 @@ describe("NewExpenseForm", () => {
         title: "Test Tax",
         description: "Test Description",
         type: 1,
-        date_created: "2021-10-01",
-        date_modified: "2021-10-01",
+        dateCreated: "2021-10-01",
+        dateModified: "2021-10-01",
       },
       {
         id: 2,
@@ -37,14 +37,14 @@ describe("NewExpenseForm", () => {
         title: "NYC Sales Tax",
         description: "New York City Sales Tax",
         type: 1,
-        date_created: "2021-10-01",
-        date_modified: "2021-10-01",
+        dateCreated: "2021-10-01",
+        dateModified: "2021-10-01",
       },
     ];
 
     render(
       <NewExpenseForm
-        account_id={1}
+        accountId={1}
         taxes={taxes}
         setShowExpenseForm={() => true}
       />

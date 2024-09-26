@@ -10,18 +10,18 @@ function JobActionsMenu({
   open,
   handleClose,
   setJobModes,
-  job_id,
+  jobId,
 }: {
   anchorEl: HTMLElement | null;
   open: boolean;
   handleClose: () => void;
   setJobModes: React.Dispatch<React.SetStateAction<Record<number, string>>>;
-  job_id: number;
+  jobId: number;
 }) {
   const handleDelete = () => {
     setJobModes((prevModes: any) => ({
       ...prevModes,
-      [job_id]: "delete",
+      [jobId]: "delete",
     }));
 
     handleClose();
@@ -30,7 +30,7 @@ function JobActionsMenu({
   const handleEdit = () => {
     setJobModes((prevModes: any) => ({
       ...prevModes,
-      [job_id]: "edit",
+      [jobId]: "edit",
     }));
 
     handleClose();

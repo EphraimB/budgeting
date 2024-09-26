@@ -34,13 +34,15 @@ const createApp = async (): Promise<Express> => {
 
 beforeAll(() => {
     jest.mock('../../src/controllers/fareDetailsController', () => ({
-        getFareDetails: (req: Request, res: Response, next: NextFunction) =>
+        getFareDetails: (_: Request, res: Response) =>
             res.json({ message: 'success' }),
-        createFareDetail: (req: Request, res: Response, next: NextFunction) =>
+        getFareDetailsById: (_: Request, res: Response) =>
             res.json({ message: 'success' }),
-        updateFareDetail: (req: Request, res: Response, next: NextFunction) =>
+        createFareDetail: (_: Request, res: Response) =>
             res.json({ message: 'success' }),
-        deleteFareDetail: (req: Request, res: Response, next: NextFunction) =>
+        updateFareDetail: (_: Request, res: Response) =>
+            res.json({ message: 'success' }),
+        deleteFareDetail: (_: Request, res: Response) =>
             res.json({ message: 'success' }),
     }));
 });
@@ -68,10 +70,10 @@ describe('GET /', () => {
     });
 });
 
-describe('GET / with id query', () => {
+describe('GET / with id param', () => {
     it('responds with json', async () => {
         const response: request.Response = await request(app)
-            .get('/?id=1')
+            .get('/1')
             .set('Accept', 'application/json')
             .expect('Content-Type', /json/);
 
@@ -80,10 +82,10 @@ describe('GET / with id query', () => {
     });
 });
 
-describe('GET / with account_id query', () => {
+describe('GET / with account id query', () => {
     it('responds with json', async () => {
         const response: request.Response = await request(app)
-            .get('/?account_id=1')
+            .get('/?accountId=1')
             .set('Accept', 'application/json')
             .expect('Content-Type', /json/);
 
@@ -95,14 +97,16 @@ describe('GET / with account_id query', () => {
 describe('POST /', () => {
     it('responds with json', async () => {
         const newFareDetail = {
-            account_id: 1,
-            commute_system_id: 1,
+            commuteSystemId: 1,
             name: 'Single Ride',
-            fare_amount: 2.75,
-            begin_in_effect_day_of_week: 1,
-            begin_in_effect_time: '00:00:00',
-            end_in_effect_day_of_week: 6,
-            end_in_effect_time: '23:59:59',
+            fare: 2.75,
+            timeslots: [
+                {
+                    dayOfWeek: 1,
+                    startTime: '00:00:00',
+                    endTime: '23:59:59',
+                },
+            ],
         };
 
         const response: request.Response = await request(app)
@@ -119,14 +123,16 @@ describe('POST /', () => {
 describe('PUT /:id', () => {
     it('responds with json', async () => {
         const newFareDetail = {
-            account_id: 1,
-            commute_system_id: 1,
+            commuteSystemId: 1,
             name: 'Single Ride',
-            fare_amount: 2.75,
-            begin_in_effect_day_of_week: 1,
-            begin_in_effect_time: '00:00:00',
-            end_in_effect_day_of_week: 6,
-            end_in_effect_time: '23:59:59',
+            fare: 2.75,
+            timeslots: [
+                {
+                    dayOfWeek: 1,
+                    startTime: '00:00:00',
+                    endTime: '23:59:59',
+                },
+            ],
         };
 
         const response: request.Response = await request(app)

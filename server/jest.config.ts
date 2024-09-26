@@ -17,6 +17,7 @@ const jestConfig: JestConfigWithTsJest = {
     moduleNameMapper: {
         '^(\\.\\.?\\/.+)\\.js$': '$1',
     },
+    testMatch: ['**/__tests__/**/*.test.(t|j)s', '!**/__tests__/__mocks__/**'],
 };
 
 export default jestConfig;

@@ -31,12 +31,12 @@ import { useAlert, useSnackbar } from "../../context/FeedbackContext";
 dayjs.extend(utc);
 
 function ExpenseEdit({
-  account_id,
+  accountId,
   expense,
   setExpenseModes,
   taxes,
 }: {
-  account_id: number;
+  accountId: number;
   expense: Expense;
   setExpenseModes: (expenseModes: Record<number, string>) => void;
   taxes: Tax[];
@@ -45,23 +45,25 @@ function ExpenseEdit({
   const [description, setDescription] = useState(expense.description);
   const [amount, setAmount] = useState(expense.amount.toString());
   const [subsidized, setSubsidized] = useState(expense.subsidized.toString());
-  const [tax_id, setTaxId] = useState(expense.tax_id || 0);
-  const [frequency_type, setFrequencyType] = useState(expense.frequency_type);
-  const [frequency_day_of_week, setFrequencyDayOfWeek] = useState(
-    expense.frequency_day_of_week || -1
+  const [taxId, setTaxId] = useState(expense.taxId || 0);
+  const [frequencyType, setFrequencyType] = useState(expense.frequency.type);
+  const [frequencyDayOfWeek, setFrequencyDayOfWeek] = useState(
+    expense.frequency.dayOfWeek || -1
   );
-  const [frequency_week_of_month, setFrequencyWeekOfMonth] = useState(
-    expense.frequency_week_of_month || -1
+  const [frequencyWeekOfMonth, setFrequencyWeekOfMonth] = useState(
+    expense.frequency.weekOfMonth || -1
   );
-  const [frequency_month_of_year, setFrequencyMonthOfYear] = useState(
-    expense.frequency_month_of_year || -1
+  const [frequencyMonthOfYear, setFrequencyMonthOfYear] = useState(
+    expense.frequency.monthOfYear || -1
   );
-  const [frequency_type_variable, setFrequencyTypeVariable] = useState<number>(
-    expense.frequency_type_variable || 1
+  const [frequencyTypeVariable, setFrequencyTypeVariable] = useState<number>(
+    expense.frequency.typeVariable || 1
   );
-  const [begin_date, setBeginDate] = useState<string>(expense.begin_date);
-  const [endDateEnabled, setEndDateEnabled] = useState(!!expense.end_date);
-  const [end_date, setEndDate] = useState<null | string>(expense.end_date);
+  const [beginDate, setBeginDate] = useState<string>(expense.dates.beginDate);
+  const [endDateEnabled, setEndDateEnabled] = useState(!!expense.dates.endDate);
+  const [endDate, setEndDate] = useState<null | string>(
+    expense.dates.endDate || null
+  );
 
   const [titleError, setTitleError] = useState("");
   const [descriptionError, setDescriptionError] = useState("");
@@ -83,22 +85,22 @@ function ExpenseEdit({
   };
 
   const data = {
-    account_id,
-    tax_id: tax_id === 0 ? null : tax_id,
+    accountId,
+    taxId: taxId === 0 ? null : taxId,
     title,
     description,
     amount: parseFloat(amount),
     subsidized: parseFloat(subsidized),
-    frequency_type,
-    frequency_day_of_week:
-      frequency_day_of_week === -1 ? null : frequency_day_of_week,
-    frequency_week_of_month:
-      frequency_week_of_month === -1 ? null : frequency_week_of_month,
-    frequency_month_of_year:
-      frequency_month_of_year === -1 ? null : frequency_month_of_year,
-    frequency_type_variable,
-    begin_date,
-    end_date,
+    frequency: {
+      type: frequencyType,
+      typeVariable: frequencyTypeVariable,
+      dayOfWeek: frequencyDayOfWeek === -1 ? null : frequencyDayOfWeek,
+      weekOfMonth: frequencyWeekOfMonth === -1 ? null : frequencyWeekOfMonth,
+      monthOfYear: frequencyMonthOfYear === -1 ? null : frequencyMonthOfYear,
+      dayOfMonth: null,
+    },
+    beginDate,
+    endDate,
   };
 
   const validateTitle = () => {
@@ -250,7 +252,7 @@ function ExpenseEdit({
                 labelId="tax-select-label"
                 label="Tax"
                 variant="standard"
-                value={tax_id}
+                value={taxId}
                 onChange={(e) => setTaxId(e.target.value as number)}
               >
                 <MenuItem value={0}>No tax - 0%</MenuItem>
@@ -287,7 +289,7 @@ function ExpenseEdit({
                 labelId="frequency-select-label"
                 label="Frequency"
                 variant="standard"
-                value={frequency_type}
+                value={frequencyType}
                 onChange={(e) => setFrequencyType(e.target.value as number)}
               >
                 <MenuItem value={0}>Daily</MenuItem>
@@ -296,9 +298,9 @@ function ExpenseEdit({
                 <MenuItem value={3}>Yearly</MenuItem>
               </Select>
             </FormControl>
-            {(frequency_type === 1 ||
-              frequency_type === 2 ||
-              frequency_type === 3) && (
+            {(frequencyType === 1 ||
+              frequencyType === 2 ||
+              frequencyType === 3) && (
               <>
                 <br />
                 <br />
@@ -310,7 +312,7 @@ function ExpenseEdit({
                     labelId="frequency-day-of-week-select-label"
                     label="Frequency"
                     variant="standard"
-                    value={frequency_day_of_week}
+                    value={frequencyDayOfWeek}
                     onChange={(e) =>
                       setFrequencyDayOfWeek(e.target.value as number)
                     }
@@ -327,7 +329,7 @@ function ExpenseEdit({
                 </FormControl>
               </>
             )}
-            {(frequency_type === 2 || frequency_type === 3) && (
+            {(frequencyType === 2 || frequencyType === 3) && (
               <>
                 <br />
                 <br />
@@ -339,7 +341,7 @@ function ExpenseEdit({
                     labelId="frequency-week-of-month-select-label"
                     label="Frequency"
                     variant="standard"
-                    value={frequency_week_of_month}
+                    value={frequencyWeekOfMonth}
                     onChange={(e) =>
                       setFrequencyWeekOfMonth(e.target.value as number)
                     }
@@ -354,7 +356,7 @@ function ExpenseEdit({
                 </FormControl>
               </>
             )}
-            {frequency_type === 3 && (
+            {frequencyType === 3 && (
               <>
                 <br />
                 <br />
@@ -366,7 +368,7 @@ function ExpenseEdit({
                     labelId="frequency-month-of-year-select-label"
                     label="Frequency"
                     variant="standard"
-                    value={frequency_month_of_year}
+                    value={frequencyMonthOfYear}
                     onChange={(e) =>
                       setFrequencyMonthOfYear(e.target.value as number)
                     }
@@ -393,7 +395,7 @@ function ExpenseEdit({
             <TextField
               label="Frequency Type Variable"
               variant="standard"
-              value={frequency_type_variable}
+              value={frequencyTypeVariable}
               onChange={(e) =>
                 setFrequencyTypeVariable(e.target.value as unknown as number)
               }
@@ -404,7 +406,7 @@ function ExpenseEdit({
             <LocalizationProvider dateAdapter={AdapterDayjs}>
               <DateTimePicker
                 label="Expense begin date"
-                value={dayjs.utc(begin_date).local()}
+                value={dayjs.utc(beginDate).local()}
                 onChange={(e: Dayjs | null) => {
                   const utcDate = e ? e.utc().format() : dayjs.utc().format();
                   setBeginDate(utcDate);
@@ -424,7 +426,7 @@ function ExpenseEdit({
               {endDateEnabled && (
                 <DateTimePicker
                   label="Expense end date"
-                  value={dayjs.utc(end_date).local() || dayjs()}
+                  value={dayjs.utc(endDate).local() || dayjs()}
                   onChange={(e: Dayjs | null) => {
                     const utcDate = e ? e.utc().format() : dayjs.utc().format();
                     setEndDate(utcDate);

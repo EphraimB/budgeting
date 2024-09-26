@@ -53,27 +53,22 @@ function WishlistsView({
         open={open}
         handleClose={handleClose}
         setWishlistModes={setWishlistModes}
-        wishlist_id={wishlist.id}
+        wishlistId={wishlist.id}
       />
-      <CardHeader
-        title={wishlist.wishlist_title}
-        subheader={wishlist.wishlist_description}
-      />
+      <CardHeader title={wishlist.title} subheader={wishlist.description} />
       <CardContent>
         <Typography variant="body2">
-          You will be charged ${wishlist.wishlist_amount} for this item{" "}
-          {wishlist.wishlist_date_can_purchase
+          You will be charged ${wishlist.amount} for this item{" "}
+          {wishlist.dateCanPurchase
             ? "on " +
-              dayjs(wishlist.wishlist_date_can_purchase).format(
-                "dddd MMMM D, YYYY h:mm A"
-              )
+              dayjs(wishlist.dateCanPurchase).format("dddd MMMM D, YYYY h:mm A")
             : "in more than a year"}
           .
         </Typography>
-        {wishlist.wishlist_url_link && (
+        {wishlist.urlLink && (
           <>
             <br />
-            <Link href={wishlist.wishlist_url_link} target="_blank">
+            <Link href={wishlist.urlLink} target="_blank">
               <Typography variant="body2">View wishlist item here</Typography>
             </Link>
           </>

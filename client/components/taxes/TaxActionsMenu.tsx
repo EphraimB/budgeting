@@ -12,18 +12,18 @@ function TaxActionsMenu({
   open,
   handleClose,
   setTaxModes,
-  tax_id,
+  taxId,
 }: {
   anchorEl: HTMLElement | null;
   open: boolean;
   handleClose: () => void;
   setTaxModes: React.Dispatch<React.SetStateAction<Record<number, string>>>;
-  tax_id: number;
+  taxId: number;
 }) {
   const handleDelete = () => {
     setTaxModes((prevModes: any) => ({
       ...prevModes,
-      [tax_id]: "delete",
+      [taxId]: "delete",
     }));
 
     handleClose();
@@ -32,7 +32,7 @@ function TaxActionsMenu({
   const handleEdit = () => {
     setTaxModes((prevModes: any) => ({
       ...prevModes,
-      [tax_id]: "edit",
+      [taxId]: "edit",
     }));
 
     handleClose();

@@ -1,20 +1,22 @@
 import express, { type Router } from 'express';
-import { query } from 'express-validator';
-import { getPayrolls } from '../controllers/payrollsController.js';
+import { param } from 'express-validator';
+import {
+    getPayrolls,
+    getPayrollsByJobId,
+} from '../controllers/payrollsController.js';
 import validateRequest from '../utils/validateRequest.js';
 
 const router: Router = express.Router();
 
+router.get('/', getPayrolls);
+
 router.get(
-    '/',
+    '/:id',
     [
-        query('job_id')
-            .optional()
-            .isInt({ min: 1 })
-            .withMessage('Job ID must be a number'),
+        param('id').isInt({ min: 1 }).withMessage('Job ID must be a number'),
         validateRequest,
     ],
-    getPayrolls,
+    getPayrollsByJobId,
 );
 
 export default router;

@@ -4,7 +4,6 @@ import express, {
     type Express,
     type Request,
     type Response,
-    type NextFunction,
     type Router,
 } from 'express';
 import {
@@ -32,118 +31,22 @@ const createApp = async (): Promise<Express> => {
     return app;
 };
 
-const createFutureTransfer = () => {
-    const dateInFuture = new Date();
-    dateInFuture.setDate(dateInFuture.getDate() + 7);
-
-    return {
-        source_account_id: 1,
-        destination_account_id: 2,
-        amount: 100,
-        title: 'test',
-        description: 'test',
-        frequency_type: 2,
-        begin_date: dateInFuture,
-    };
-};
-
 beforeAll(() => {
-    jest.mock('../../src/middleware/middleware', () => ({
-        setQueries: jest.fn(
-            (req: Request, res: Response, next: NextFunction) => {
-                next();
-            },
-        ),
-        getCurrentBalance: jest.fn(
-            (req: Request, res: Response, next: NextFunction) => {
-                next();
-            },
-        ),
-        getTransactionsByAccount: jest.fn(
-            (req: Request, res: Response, next: NextFunction) => {
-                next();
-            },
-        ),
-        getIncomeByAccount: jest.fn(
-            (req: Request, res: Response, next: NextFunction) => {
-                next();
-            },
-        ),
-        getExpensesByAccount: jest.fn(
-            (req: Request, res: Response, next: NextFunction) => {
-                next();
-            },
-        ),
-        getLoansByAccount: jest.fn(
-            (req: Request, res: Response, next: NextFunction) => {
-                next();
-            },
-        ),
-        getPayrollsMiddleware: jest.fn(
-            (req: Request, res: Response, next: NextFunction) => {
-                next();
-            },
-        ),
-        getTransfersByAccount: jest.fn(
-            (req: Request, res: Response, next: NextFunction) => {
-                next();
-            },
-        ),
-        getCommuteExpensesByAccount: jest.fn(
-            (req: Request, res: Response, next: NextFunction) => {
-                next();
-            },
-        ),
-        getWishlistsByAccount: jest.fn(
-            (req: Request, res: Response, next: NextFunction) => {
-                next();
-            },
-        ),
-        updateWishlistCron: jest.fn(
-            (req: Request, res: Response, next: NextFunction) => {
-                next();
-            },
-        ),
-    }));
-
-    jest.mock('../../src/generation/generateTransactions', () => {
-        return jest.fn((req: Request, res: Response, next: NextFunction) => {
-            req.transactions = [];
-            next();
-        });
-    });
-
     jest.mock('../../src/controllers/transfersController', () => ({
-        getTransfers: jest.fn(
-            (req: Request, res: Response, next: NextFunction) =>
-                res.json({ message: 'success' }),
+        getTransfers: jest.fn((_: Request, res: Response) =>
+            res.json({ message: 'success' }),
         ),
-        createTransfer: jest.fn(
-            (req: Request, res: Response, next: NextFunction) => {
-                next();
-            },
+        getTransfersById: jest.fn((_: Request, res: Response) =>
+            res.json({ message: 'success' }),
         ),
-        createTransferReturnObject: jest.fn(
-            (req: Request, res: Response, next: NextFunction) =>
-                res.json({ message: 'success' }),
+        createTransfer: jest.fn((_: Request, res: Response) =>
+            res.json({ message: 'success' }),
         ),
-        updateTransfer: jest.fn(
-            (req: Request, res: Response, next: NextFunction) => {
-                next();
-            },
+        updateTransfer: jest.fn((_: Request, res: Response) =>
+            res.json({ message: 'success' }),
         ),
-        updateTransferReturnObject: jest.fn(
-            (req: Request, res: Response, next: NextFunction) =>
-                res.json({ message: 'success' }),
-        ),
-        deleteTransfer: jest.fn(
-            (req: Request, res: Response, next: NextFunction) => {
-                next();
-            },
-        ),
-        deleteTransferReturnObject: jest.fn(
-            (req: Request, res: Response, next: NextFunction) =>
-                res.json({ message: 'success' }),
+        deleteTransfer: jest.fn((_: Request, res: Response) =>
+            res.json({ message: 'success' }),
         ),
     }));
 });
@@ -162,7 +65,7 @@ beforeEach(async () => {
 describe('GET /', () => {
     it('responds with json', async () => {
         const response = await request(app)
-            .get('/?account_id=1')
+            .get('/')
             .set('Accept', 'application/json')
             .expect('Content-Type', /json/);
 
@@ -171,10 +74,34 @@ describe('GET /', () => {
     });
 });
 
-describe('GET / with id query', () => {
+describe('GET /?accountId', () => {
     it('responds with json', async () => {
         const response = await request(app)
-            .get('/?account_id=1&id=1')
+            .get('/?accountId=1')
+            .set('Accept', 'application/json')
+            .expect('Content-Type', /json/);
+
+        expect(response.status).toBe(200);
+        expect(response.body).toEqual({ message: 'success' });
+    });
+});
+
+describe('GET / with id param', () => {
+    it('responds with json', async () => {
+        const response = await request(app)
+            .get('/1')
+            .set('Accept', 'application/json')
+            .expect('Content-Type', /json/);
+
+        expect(response.status).toBe(200);
+        expect(response.body).toEqual({ message: 'success' });
+    });
+});
+
+describe('GET / with id param and accound id query', () => {
+    it('responds with json', async () => {
+        const response = await request(app)
+            .get('/1?accountId=1')
             .set('Accept', 'application/json')
             .expect('Content-Type', /json/);
 
@@ -189,7 +116,22 @@ describe('POST /', () => {
             .post('/')
             .set('Accept', 'application/json')
             .expect('Content-Type', /json/)
-            .send(createFutureTransfer());
+            .send({
+                sourceAccountId: 1,
+                destinationAccountId: 2,
+                amount: 100,
+                title: 'test',
+                description: 'test',
+                frequency: {
+                    type: 2,
+                    typeVariable: 1,
+                    dayOfWeek: null,
+                    weekOfMonth: null,
+                    dayOfMonth: null,
+                    monthOfYear: null,
+                },
+                beginDate: '2020-01-01',
+            });
 
         expect(response.status).toBe(200);
         expect(response.body).toEqual({ message: 'success' });
@@ -202,7 +144,22 @@ describe('PUT /:id', () => {
             .put('/1')
             .set('Accept', 'application/json')
             .expect('Content-Type', /json/)
-            .send(createFutureTransfer());
+            .send({
+                sourceAccountId: 1,
+                destinationAccountId: 2,
+                amount: 100,
+                title: 'test',
+                description: 'test',
+                frequency: {
+                    type: 2,
+                    typeVariable: 1,
+                    dayOfWeek: null,
+                    weekOfMonth: null,
+                    dayOfMonth: null,
+                    monthOfYear: null,
+                },
+                beginDate: '2020-01-01',
+            });
 
         expect(response.status).toBe(200);
         expect(response.body).toEqual({ message: 'success' });

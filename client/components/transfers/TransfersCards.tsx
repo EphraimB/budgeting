@@ -13,11 +13,11 @@ import NewTransferForm from "./NewTransferForm";
 import TransferEdit from "./TransferEdit";
 
 function TransferCards({
-  account_id,
+  accountId,
   transfers,
   accounts,
 }: {
-  account_id: number;
+  accountId: number;
   transfers: Transfer[];
   accounts: Account[];
 }) {
@@ -32,7 +32,7 @@ function TransferCards({
         {showTransferForm && (
           <Grid key="new-transfer" item>
             <NewTransferForm
-              account_id={account_id}
+              accountId={accountId}
               setShowTransferForm={setShowTransferForm}
               accounts={accounts}
             />
@@ -49,14 +49,14 @@ function TransferCards({
                 />
               ) : transferModes[transfer.id] === "edit" ? (
                 <TransferEdit
-                  account_id={account_id}
+                  accountId={accountId}
                   transfers={transfer}
                   setTransferModes={setTransferModes}
                   accounts={accounts}
                 />
               ) : (
                 <TransfersView
-                  account_id={account_id}
+                  accountId={accountId}
                   transfer={transfer}
                   setTransferModes={setTransferModes}
                 />

@@ -5,7 +5,7 @@ import "@testing-library/jest-dom";
 
 describe("HourlyWage", () => {
   it("renders an hourly wage box", () => {
-    render(<HourlyWage hourly_wage={16} />);
+    render(<HourlyWage hourlyWage={16} />);
 
     expect(screen.getByText("Hourly Wage")).toBeInTheDocument();
     expect(screen.getByText("$16.00")).toBeInTheDocument();

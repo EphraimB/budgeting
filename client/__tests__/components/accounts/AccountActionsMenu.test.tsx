@@ -18,7 +18,7 @@ describe("AccountActionsMenu", () => {
         open={open}
         handleClose={handleClose}
         setAccountModes={setAccountModes}
-        account_id={1}
+        accountId={1}
       />
     );
 

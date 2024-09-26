@@ -12,7 +12,7 @@ function TransfersActionsMenu({
   open,
   handleClose,
   setTransferModes,
-  transfer_id,
+  transferId,
 }: {
   anchorEl: HTMLElement | null;
   open: boolean;
@@ -20,13 +20,13 @@ function TransfersActionsMenu({
   setTransferModes: React.Dispatch<
     React.SetStateAction<Record<number, string>>
   >;
-  transfer_id: number;
+  transferId: number;
 }) {
   const handleDelete = () => {
     setTransferModes(
       (prevModes: React.SetStateAction<Record<number, string>>) => ({
         ...prevModes,
-        [transfer_id]: "delete",
+        [transferId]: "delete",
       })
     );
 
@@ -37,7 +37,7 @@ function TransfersActionsMenu({
     setTransferModes(
       (prevModes: React.SetStateAction<Record<number, string>>) => ({
         ...prevModes,
-        [transfer_id]: "edit",
+        [transferId]: "edit",
       })
     );
 

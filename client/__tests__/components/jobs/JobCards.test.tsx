@@ -5,7 +5,7 @@ import "@testing-library/jest-dom";
 
 describe("JobCards", () => {
   it("renders", () => {
-    render(<JobCards jobs={[]} account_id={1} />);
+    render(<JobCards jobs={[]} accountId={1} />);
 
     expect(screen.getByTestId("AddIcon")).toBeInTheDocument();
   });

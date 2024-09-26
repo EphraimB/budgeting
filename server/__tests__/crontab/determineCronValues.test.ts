@@ -4,7 +4,7 @@ import { describe, it, expect } from '@jest/globals';
 describe('determineCronValues', () => {
     it('should determine cron values correctly for frequency type 0', () => {
         const jobDetails = {
-            frequency_type: 0,
+            frequencyType: 0,
             date: '2023-07-11T12:00:00.000Z',
         };
 
@@ -16,7 +16,7 @@ describe('determineCronValues', () => {
 
     it('should determine cron values correctly for frequency type 1', () => {
         const jobDetails = {
-            frequency_type: 1,
+            frequencyType: 1,
             date: '2023-07-11T12:00:00.000Z',
         };
 
@@ -28,9 +28,9 @@ describe('determineCronValues', () => {
 
     it('should determine cron values correctly for frequency type 1 with day of week', () => {
         const jobDetails = {
-            frequency_type: 1,
-            frequency_type_variable: 2,
-            frequency_day_of_week: 3,
+            frequencyType: 1,
+            frequencyTypeVariable: 2,
+            frequencyDayOfWeek: 3,
             date: '2023-07-11T12:00:00.000Z',
         };
 
@@ -42,7 +42,7 @@ describe('determineCronValues', () => {
 
     it('should determine cron values correctly for frequency type 2', () => {
         const jobDetails = {
-            frequency_type: 2,
+            frequencyType: 2,
             date: '2023-07-11T12:00:00.000Z',
         };
 
@@ -54,8 +54,8 @@ describe('determineCronValues', () => {
 
     it('should determine cron values correctly for frequency type 2 with day of week', () => {
         const jobDetails = {
-            frequency_type: 2,
-            frequency_day_of_week: 3,
+            frequencyType: 2,
+            frequencyDayOfWeek: 3,
             date: '2023-07-11T12:00:00.000Z',
         };
 
@@ -67,9 +67,9 @@ describe('determineCronValues', () => {
 
     it('should determine cron values correctly for frequency type 2 with week of month', () => {
         const jobDetails = {
-            frequency_type: 2,
-            frequency_day_of_week: 3,
-            frequency_week_of_month: 1,
+            frequencyType: 2,
+            frequencyDayOfWeek: 3,
+            frequencyWeekOfMonth: 1,
             date: '2023-07-11T12:00:00.000Z',
         };
 
@@ -83,9 +83,9 @@ describe('determineCronValues', () => {
 
     it('should determine cron values correctly for frequency type 2 with day of month', () => {
         const jobDetails = {
-            frequency_type: 2,
-            frequency_type_variable: 2,
-            frequency_day_of_month: 3,
+            frequencyType: 2,
+            frequencyTypeVariable: 2,
+            frequencyDayOfMonth: 3,
             date: '2023-07-11T12:00:00.000Z',
         };
 
@@ -97,7 +97,7 @@ describe('determineCronValues', () => {
 
     it('should determine cron values correctly for frequency type 3', () => {
         const jobDetails = {
-            frequency_type: 3,
+            frequencyType: 3,
             date: '2023-07-11T12:00:00.000Z',
         };
 
@@ -109,8 +109,8 @@ describe('determineCronValues', () => {
 
     it('should determine cron values correctly for frequency type 3 with day of week', () => {
         const jobDetails = {
-            frequency_type: 3,
-            frequency_day_of_week: 3,
+            frequencyType: 3,
+            frequencyDayOfWeek: 3,
             date: '2023-07-11T12:00:00.000Z',
         };
 
@@ -122,9 +122,9 @@ describe('determineCronValues', () => {
 
     it('should determine cron values correctly for frequency type 3 with week of month', () => {
         const jobDetails = {
-            frequency_type: 3,
-            frequency_day_of_week: 3,
-            frequency_week_of_month: 1,
+            frequencyType: 3,
+            frequencyDayOfWeek: 3,
+            frequencyWeekOfMonth: 1,
             date: '2023-07-11T12:00:00.000Z',
         };
 
@@ -138,8 +138,8 @@ describe('determineCronValues', () => {
 
     it('should determine cron values correctly for frequency type 3 with day of month', () => {
         const jobDetails = {
-            frequency_type: 3,
-            frequency_day_of_month: 3,
+            frequencyType: 3,
+            frequencyDayOfMonth: 3,
             date: '2023-07-11T12:00:00.000Z',
         };
 

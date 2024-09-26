@@ -3,11 +3,11 @@
 import { revalidatePath } from "next/cache";
 
 interface PayrollDateRequest {
-  job_id: number;
-  payroll_day: number;
+  jobId: number;
+  payrollDay: number;
 }
 
-export async function togglePayrollDate(payroll_date: PayrollDateRequest) {
+export async function togglePayrollDate(payrollDate: PayrollDateRequest) {
   const response = await fetch(
     "http://server:5001/api/jobs/payroll/dates/toggle",
     {
@@ -15,37 +15,33 @@ export async function togglePayrollDate(payroll_date: PayrollDateRequest) {
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify(payroll_date),
+      body: JSON.stringify(payrollDate),
     }
   );
   const result = await response.json();
 
-  console.log(result);
-
-  revalidatePath("/[account_id]/jobs", "page");
+  revalidatePath("/[accountId]/jobs", "page");
 
   return result;
 }
 
-export async function addPayrollDate(payroll_date: PayrollDateRequest) {
+export async function addPayrollDate(payrollDate: PayrollDateRequest) {
   const response = await fetch("http://server:5001/api/jobs/payroll/dates", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
     },
-    body: JSON.stringify(payroll_date),
+    body: JSON.stringify(payrollDate),
   });
   const result = await response.json();
 
-  console.log(result);
-
-  revalidatePath("/[account_id]/jobs", "page");
+  revalidatePath("/[accountId]/jobs", "page");
 
   return result;
 }
 
 export async function editPayrollDate(
-  payroll_date: PayrollDateRequest,
+  payrollDate: PayrollDateRequest,
   id: number
 ) {
   const response = await fetch(
@@ -55,14 +51,12 @@ export async function editPayrollDate(
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify(payroll_date),
+      body: JSON.stringify(payrollDate),
     }
   );
   const result = await response.json();
 
-  console.log(result);
-
-  revalidatePath("/[account_id]/jobs", "page");
+  revalidatePath("/[accountId]/jobs", "page");
   return result;
 }
 
@@ -71,5 +65,5 @@ export async function deletePayrollDate(id: number) {
     method: "DELETE",
   });
 
-  revalidatePath("/[account_id]/jobs", "page");
+  revalidatePath("/[accountId]/jobs", "page");
 }

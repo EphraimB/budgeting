@@ -15,22 +15,20 @@ jest.mock("../../../context/FeedbackContext", () => ({
 }));
 
 describe("PayrollDateCard", () => {
-  const payroll_date: PayrollDate = {
+  const payrollDate: PayrollDate = {
     id: 1,
-    job_id: 1,
-    payroll_day: 15,
+    jobId: 1,
+    payrollDay: 15,
   };
 
   it("renders a box which is not a payroll day", () => {
-    render(<PayrollDateCard job_id={1} payroll_date={null} date={1} />);
+    render(<PayrollDateCard jobId={1} payrollDate={null} date={1} />);
 
     expect(screen.getByText("1")).toBeInTheDocument();
   });
 
   it("renders a box which is a payroll day", () => {
-    render(
-      <PayrollDateCard job_id={1} payroll_date={payroll_date} date={15} />
-    );
+    render(<PayrollDateCard jobId={1} payrollDate={payrollDate} date={15} />);
 
     expect(screen.getByText("15")).toBeInTheDocument();
     expect(screen.getByText("$")).toBeInTheDocument();

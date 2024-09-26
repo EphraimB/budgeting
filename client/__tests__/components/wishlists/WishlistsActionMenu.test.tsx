@@ -18,7 +18,7 @@ describe("WishlistsActionsMenu", () => {
         open={open}
         handleClose={handleClose}
         setWishlistModes={setWishlistModes}
-        wishlist_id={1}
+        wishlistId={1}
       />
     );
 

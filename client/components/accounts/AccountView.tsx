@@ -47,19 +47,19 @@ function AccountView({
         open={open}
         handleClose={handleClose}
         setAccountModes={setAccountModes}
-        account_id={account.account_id}
+        accountId={account.id}
       />
       <br />
       <Link
-        href={`/${account.account_id}`}
-        as={`/${account.account_id}`}
+        href={`/${account.id}`}
+        as={`/${account.id}`}
         style={{ color: "inherit", textDecoration: "inherit" }}
       >
         <Typography variant="subtitle1" color="text.primary">
-          {account.account_name}
+          {account.name}
         </Typography>
         <Typography variant="body2" color="text.secondary">
-          ${(Math.round(account.account_balance * 100) / 100).toFixed(2)}
+          ${(Math.round(account.balance * 100) / 100).toFixed(2)}
         </Typography>
       </Link>
     </Box>

@@ -2,42 +2,42 @@ import { Dayjs } from 'dayjs';
 
 export interface GeneratedTransaction {
     id: string;
-    expense_id?: number;
-    loan_id?: number;
-    income_id?: number;
-    transfer_id?: number;
-    commute_schedule_id?: number;
-    wishlist_id?: number;
-    transaction_id?: number;
+    expenseId?: number;
+    loanId?: number;
+    incomeId?: number;
+    transferId?: number;
+    commuteScheduleId?: number;
+    wishlistId?: number;
+    transactionId?: number;
     title: string;
     description: string;
     amount: number;
-    tax_rate: number;
-    total_amount: number;
+    taxRate: number;
+    totalAmount: number;
     date: Dayjs;
-    date_modified?: Dayjs;
+    dateModified?: Dayjs;
     balance?: number;
 }
 
 export interface JobDetails {
-    frequency_type?: number;
-    frequency_type_variable?: number;
-    frequency_day_of_month?: number;
-    frequency_day_of_week?: number;
-    frequency_week_of_month?: number;
-    frequency_month_of_year?: number;
+    frequencyType?: number;
+    frequencyTypeVariable?: number;
+    frequencyDayOfMonth?: number;
+    frequencyDayOfWeek?: number;
+    frequencyWeekOfMonth?: number;
+    frequencyMonthOfYear?: number;
     date: string;
 }
 
 export interface Transaction {
-    account_id: number;
-    transaction_id: number;
-    transaction_title: string;
-    transaction_description: string;
-    date_created: string;
-    date_modified: string;
-    transaction_amount: number;
-    transaction_tax_rate?: number;
+    accountId: number;
+    transactionId: number;
+    transactionTitle: string;
+    transactionDescription: string;
+    dateCreated: string;
+    dateModified: string;
+    transactionAmount: number;
+    transactionTaxRate?: number;
     balance?: number;
 }
 
@@ -47,247 +47,247 @@ export interface Taxes {
     title: string;
     description: string;
     type: number;
-    date_created: string;
-    date_modified: string;
+    dateCreated: string;
+    dateModified: string;
 }
 
 export interface Income {
     id: number;
-    account_id: number;
-    tax_id?: number | null;
-    tax_rate?: number;
-    total_amount?: number;
-    income_amount: number;
-    income_title: string;
-    income_description: string;
-    income_begin_date: string;
-    income_end_date?: string;
-    frequency_type?: number;
-    frequency_type_variable: number;
-    frequency_day_of_month?: number | null | undefined;
-    frequency_day_of_week?: number | null | undefined;
-    frequency_week_of_month?: number | null | undefined;
-    frequency_month_of_year?: number | null | undefined;
-    date_created: string;
-    date_modified: string;
+    accountId: number;
+    taxId?: number | null;
+    taxRate?: number;
+    totalAmount?: number;
+    incomeAmount: number;
+    incomeTitle: string;
+    incomeDescription: string;
+    incomeBeginDate: string;
+    incomeEndDate?: string;
+    frequencyType?: number;
+    frequencyTypeVariable: number;
+    frequencyDayOfMonth?: number | null | undefined;
+    frequencyDayOfWeek?: number | null | undefined;
+    frequencyWeekOfMonth?: number | null | undefined;
+    frequencyMonthOfYear?: number | null | undefined;
+    dateCreated: string;
+    dateModified: string;
 }
 
 export interface TransactionHistory {
     id: number;
-    account_id: number;
-    transaction_amount: number;
-    transaction_tax_rate: number;
-    transaction_title: string;
-    transaction_description: string;
-    date_created: string;
-    date_modified: string;
+    accountId: number;
+    transactionAmount: number;
+    transactionTaxRate: number;
+    transactionTitle: string;
+    transactionDescription: string;
+    dateCreated: string;
+    dateModified: string;
 }
 
 export interface Account {
-    account_id: number;
-    account_name: string;
-    account_balance: number;
-    date_created: string;
-    date_modified: string;
+    accountId: number;
+    accountName: string;
+    accountBalance: number;
+    dateCreated: string;
+    dateModified: string;
 }
 
 interface JobSchedule {
-    job_id: number;
-    day_of_week: number;
-    start_time: string;
-    end_time: string;
+    jobId: number;
+    dayOfWeek: number;
+    startTime: string;
+    endTime: string;
 }
 
 export interface Job {
     id: number;
-    account_id: number;
+    accountId: number;
     name: string;
-    hourly_rate: number;
-    vacation_days: number;
-    sick_days: number;
-    total_hours_per_week: number;
-    job_schedule: JobSchedule[];
+    hourlyRate: number;
+    vacationDays: number;
+    sickDays: number;
+    totalHoursPerWeek: number;
+    jobSchedule: JobSchedule[];
 }
 
 export interface Expense {
     id?: number;
-    account_id?: number;
-    cron_job_id?: number;
-    tax_id?: number | null | undefined;
-    tax_rate?: number;
+    accountId?: number;
+    cronJobId?: number;
+    taxId?: number | null | undefined;
+    taxRate?: number;
     amount: number;
     title: string;
     description: string;
-    begin_date: string;
-    end_date?: string;
-    frequency_type?: number;
-    frequency_type_variable: number;
-    frequency_day_of_month?: number | null | undefined;
-    frequency_day_of_week?: number | null | undefined;
-    frequency_week_of_month?: number | null | undefined;
-    frequency_month_of_year?: number | null | undefined;
+    beginDate: string;
+    endDate?: string;
+    frequencyType?: number;
+    frequencyTypeVariable: number;
+    frequencyDayOfMonth?: number | null | undefined;
+    frequencyDayOfWeek?: number | null | undefined;
+    frequencyWeekOfMonth?: number | null | undefined;
+    frequencyMonthOfYear?: number | null | undefined;
     subsidized?: number;
-    next_date?: string | null;
-    date_created?: string;
-    date_modified?: string;
+    nextDate?: string | null;
+    dateCreated?: string;
+    dateModified?: string;
 }
 
 export interface Loan {
     id?: number;
-    account_id?: number;
-    cron_job_id?: number;
+    accountId?: number;
+    cronJobId?: number;
     amount?: number;
-    plan_amount: number;
+    planAmount: number;
     recipient: string;
     title: string;
     description: string;
-    frequency_type?: number;
-    frequency_type_variable: number;
-    frequency_day_of_month?: number | null;
-    frequency_day_of_week?: number | null;
-    frequency_week_of_month?: number | null;
-    frequency_month_of_year?: number | null;
-    interest_rate?: number;
-    interest_frequency_type?: number;
+    frequencyType?: number;
+    frequencyTypeVariable: number;
+    frequencyDayOfMonth?: number | null;
+    frequencyDayOfWeek?: number | null;
+    frequencyWeekOfMonth?: number | null;
+    frequencyMonthOfYear?: number | null;
+    interestRate?: number;
+    interestFrequencyType?: number;
     subsidized?: number;
-    fully_paid_back?: string | null;
-    begin_date: string;
-    end_date?: string;
-    next_date?: string | null;
-    date_created?: string;
-    date_modified?: string;
+    fullyPaidBack?: string | null;
+    beginDate: string;
+    endDate?: string;
+    nextDate?: string | null;
+    dateCreated?: string;
+    dateModified?: string;
 }
 
 export interface Payroll {
-    job_name?: string;
-    start_date?: string;
-    end_date: string;
-    net_pay: number;
-    work_days?: number;
-    regular_hours?: number;
-    gross_pay: number;
-    hours_worked?: number;
+    jobName?: string;
+    startDate?: string;
+    endDate: string;
+    netPay: number;
+    workDays?: number;
+    regularHours?: number;
+    grossPay: number;
+    hoursWorked?: number;
 }
 
 export interface PayrollDate {
     id: number;
-    job_id: number;
-    payroll_day: number;
+    jobId: number;
+    payrollDay: number;
 }
 
 export interface PayrollTax {
     id: number;
-    job_id: number;
+    jobId: number;
     name: string;
     rate: number;
 }
 
 export interface Wishlist {
     id?: number;
-    account_id?: number;
-    tax_id?: number | null;
-    tax_rate?: number;
-    cron_job_id?: number;
-    wishlist_amount: number;
-    wishlist_tax_rate?: number;
-    wishlist_title: string;
-    wishlist_description: string;
-    wishlist_date_available?: string | null;
-    wishlist_date_can_purchase?: string | null;
-    wishlist_url_link?: string;
-    wishlist_priority?: number;
-    date_created?: string;
-    date_modified?: string;
+    accountId?: number;
+    taxId?: number | null;
+    taxRate?: number;
+    cronJobId?: number;
+    wishlistAmount: number;
+    wishlistTaxRate?: number;
+    wishlistTitle: string;
+    wishlistDescription: string;
+    wishlistDateAvailable?: string | null;
+    wishlistDateCanPurchase?: string | null;
+    wishlistUrlLink?: string;
+    wishlistPriority?: number;
+    dateCreated?: string;
+    dateModified?: string;
 }
 
 export interface Transfer {
-    account_id?: number;
+    accountId?: number;
     id?: number;
-    cron_job_id?: number;
-    source_account_id: number;
-    destination_account_id: number;
-    transfer_amount: number;
-    transfer_title: string;
-    transfer_description: string;
-    transfer_begin_date: string;
-    transfer_end_date?: string | null | undefined;
-    frequency_type?: number;
-    frequency_type_variable: number;
-    frequency_day_of_month?: number | null | undefined;
-    frequency_day_of_week?: number | null | undefined;
-    frequency_week_of_month?: number | null | undefined;
-    frequency_month_of_year?: number | null | undefined;
-    date_created?: string;
-    date_modified?: string;
+    cronJobId?: number;
+    sourceAccountId: number;
+    destinationAccountId: number;
+    transferAmount: number;
+    transferTitle: string;
+    transferDescription: string;
+    transferBeginDate: string;
+    transferEndDate?: string | null | undefined;
+    frequencyType?: number;
+    frequencyTypeVariable: number;
+    frequencyDayOfMonth?: number | null | undefined;
+    frequencyDayOfWeek?: number | null | undefined;
+    frequencyWeekOfMonth?: number | null | undefined;
+    frequencyMonthOfYear?: number | null | undefined;
+    dateCreated?: string;
+    dateModified?: string;
 }
 
 export interface CommuteSystem {
     id: number;
     name: string;
-    fare_cap: number | null;
-    fare_cap_duration: number | null;
-    date_created: string;
-    date_modified: string;
+    fareCap: number | null;
+    fareCapDuration: number | null;
+    dateCreated: string;
+    dateModified: string;
 }
 
 export interface CommuteHistory {
     id: number;
-    account_id: number;
-    fare_amount: number;
-    commute_system: string;
-    fare_type: string;
+    accountId: number;
+    fareAmount: number;
+    commuteSystem: string;
+    fareType: string;
     timestamp: string;
-    date_created: string;
-    date_modified: string;
+    dateCreated: string;
+    dateModified: string;
 }
 
 export interface FareDetails {
-    fare_detail_id: number;
-    commute_system_id: number;
-    system_name: string;
-    fare_type: string;
-    fare_amount: number;
+    fareDetailId: number;
+    commuteSystemId: number;
+    systemName: string;
+    fareType: string;
+    fare: number;
     timeslots: Timeslots[];
-    timed_pass_duration: number | null;
-    alternate_fare_detail_id: number | null;
-    date_created: string;
-    date_modified: string;
+    timedPassDuration: number | null;
+    alternateFareDetailId: number | null;
+    dateCreated: string;
+    dateModified: string;
 }
 
 export interface Timeslots {
-    timeslot_id: number;
-    fare_detail_id: number;
-    day_of_week: number;
-    start_time: string;
-    end_time: string;
+    id: number;
+    fareDetailId: number;
+    dayOfWeek: number;
+    startTime: string;
+    endTime: string;
 }
 
 export interface CommuteTicket {
-    commute_ticket_id: number;
-    fare_detail_id: number;
+    commuteTicketId: number;
+    fareDetailId: number;
     name: string;
-    date_created: string;
-    date_modified: string;
+    dateCreated: string;
+    dateModified: string;
 }
 
 export interface CommuteSchedule {
     id: number;
-    commute_system_id: number;
-    account_id: number;
-    day_of_week: number;
-    fare_detail_id: number;
-    start_time: string;
-    end_time: string;
+    commuteSystemId: number;
+    accountId: number;
+    dayOfWeek: number;
+    fareDetailId: number;
+    startTime: string;
+    endTime: string;
     duration: number | null;
-    fare_amount: number;
+    fareAmount: number;
     pass: string;
-    date_created: string;
-    date_modified: string;
+    dateCreated: string;
+    dateModified: string;
 }
 
 interface CurrentBalance {
-    account_id: number;
-    account_balance: number;
+    accountId: number;
+    accountBalance: number;
 }
 
 declare module 'express-serve-static-core' {
@@ -302,15 +302,15 @@ declare module 'express-serve-static-core' {
         commuteExpenses: any[];
         currentBalance: CurrentBalance[];
         transactions: any[];
-        wishlist_id: number | null | undefined;
-        expense_id: number | null | undefined;
-        loan_id: number | null | undefined;
-        transfer_id: number | null | undefined;
-        payroll_date_id: number;
-        job_id: number;
-        payroll_taxes_id: number;
-        income_id: number;
-        commute_schedule_id: number;
+        wishlistId: number | null | undefined;
+        expenseId: number | null | undefined;
+        loanId: number | null | undefined;
+        transferId: number | null | undefined;
+        payrollDateId: number;
+        jobId: number;
+        payrollTaxesId: number;
+        incomeId: number;
+        commuteScheduleId: number;
         fullyPaidBackDates: Record<number, string | null>;
         alerts: object[];
     }

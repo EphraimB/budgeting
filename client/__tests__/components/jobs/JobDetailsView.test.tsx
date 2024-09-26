@@ -17,45 +17,43 @@ jest.mock("../../../context/FeedbackContext", () => ({
 describe("JobDetailsView", () => {
   const job = {
     id: 1,
-    account_id: 1,
+    accountId: 1,
     name: "Testing Inc.",
-    hourly_rate: 20,
-    vacation_days: 10,
-    sick_days: 5,
-    total_hours_per_week: 40,
-    job_schedule: [
+    hourlyRate: 20,
+    totalHoursPerWeek: 40,
+    jobSchedule: [
       {
-        job_id: 1,
-        day_of_week: 1,
-        start_time: "09:00:00",
-        end_time: "17:00:00",
+        jobId: 1,
+        dayOfWeek: 1,
+        startTime: "09:00:00",
+        endTime: "17:00:00",
       },
     ],
   };
 
-  const payroll_dates: PayrollDate[] = [
+  const payrollDates: PayrollDate[] = [
     {
       id: 1,
-      job_id: 1,
-      payroll_day: 15,
+      jobId: 1,
+      payrollDay: 15,
     },
     {
       id: 2,
-      job_id: 1,
-      payroll_day: 31,
+      jobId: 1,
+      payrollDay: 31,
     },
   ];
 
-  const payroll_taxes: PayrollTax[] = [
+  const payrollTaxes: PayrollTax[] = [
     {
       id: 1,
-      job_id: 1,
+      jobId: 1,
       name: "Social Security",
       rate: 0.02,
     },
     {
       id: 2,
-      job_id: 1,
+      jobId: 1,
       name: "Medicare",
       rate: 0.01,
     },
@@ -64,10 +62,10 @@ describe("JobDetailsView", () => {
   it("renders", () => {
     render(
       <JobDetailsView
-        account_id={1}
+        accountId={1}
         job={job}
-        payroll_dates={payroll_dates}
-        payroll_taxes={payroll_taxes}
+        payrollDates={payrollDates}
+        payrollTaxes={payrollTaxes}
       />
     );
 

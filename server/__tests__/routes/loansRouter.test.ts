@@ -36,101 +36,21 @@ const createApp = async (): Promise<Express> => {
 beforeAll(() => {
     MockDate.set('2020-01-01');
 
-    jest.mock('../../src/middleware/middleware', () => ({
-        setQueries: jest.fn(
-            (req: Request, res: Response, next: NextFunction) => {
-                next();
-            },
-        ),
-        getCurrentBalance: jest.fn(
-            (req: Request, res: Response, next: NextFunction) => {
-                next();
-            },
-        ),
-        getTransactionsByAccount: jest.fn(
-            (req: Request, res: Response, next: NextFunction) => {
-                next();
-            },
-        ),
-        getIncomeByAccount: jest.fn(
-            (req: Request, res: Response, next: NextFunction) => {
-                next();
-            },
-        ),
-        getExpensesByAccount: jest.fn(
-            (req: Request, res: Response, next: NextFunction) => {
-                next();
-            },
-        ),
-        getLoansByAccount: jest.fn(
-            (req: Request, res: Response, next: NextFunction) => {
-                next();
-            },
-        ),
-        getPayrollsMiddleware: jest.fn(
-            (req: Request, res: Response, next: NextFunction) => {
-                next();
-            },
-        ),
-        getTransfersByAccount: jest.fn(
-            (req: Request, res: Response, next: NextFunction) => {
-                next();
-            },
-        ),
-        getCommuteExpensesByAccount: jest.fn(
-            (req: Request, res: Response, next: NextFunction) => {
-                next();
-            },
-        ),
-        getWishlistsByAccount: jest.fn(
-            (req: Request, res: Response, next: NextFunction) => {
-                next();
-            },
-        ),
-        updateWishlistCron: jest.fn(
-            (req: Request, res: Response, next: NextFunction) => {
-                next();
-            },
-        ),
-    }));
-
-    jest.mock('../../src/generation/generateTransactions', () => {
-        return jest.fn((req: Request, res: Response, next: NextFunction) => {
-            req.transactions = [];
-            next();
-        });
-    });
-
     jest.mock('../../src/controllers/loansController', () => ({
-        getLoans: jest.fn((req: Request, res: Response, next: NextFunction) =>
+        getLoans: jest.fn((_: Request, res: Response) =>
             res.json({ message: 'success' }),
         ),
-        createLoan: jest.fn(
-            (req: Request, res: Response, next: NextFunction) => {
-                next();
-            },
+        getLoansById: jest.fn((_: Request, res: Response) =>
+            res.json({ message: 'success' }),
         ),
-        createLoanReturnObject: jest.fn(
-            (req: Request, res: Response, next: NextFunction) =>
-                res.json({ message: 'success' }),
+        createLoan: jest.fn((_: Request, res: Response) =>
+            res.json({ message: 'success' }),
         ),
-        updateLoan: jest.fn(
-            (req: Request, res: Response, next: NextFunction) => {
-                next();
-            },
+        updateLoan: jest.fn((_: Request, res: Response) =>
+            res.json({ message: 'success' }),
         ),
-        updateLoanReturnObject: jest.fn(
-            (req: Request, res: Response, next: NextFunction) =>
-                res.json({ message: 'success' }),
-        ),
-        deleteLoan: jest.fn(
-            (req: Request, res: Response, next: NextFunction) => {
-                next();
-            },
-        ),
-        deleteLoanReturnObject: jest.fn(
-            (req: Request, res: Response, next: NextFunction) =>
-                res.json({ message: 'success' }),
+        deleteLoan: jest.fn((_: Request, res: Response) =>
+            res.json({ message: 'success' }),
         ),
     }));
 });
@@ -158,10 +78,10 @@ describe('GET /', () => {
     });
 });
 
-describe('GET / with id query', () => {
+describe('GET / with id param', () => {
     it('responds with json', async () => {
         const response: request.Response = await request(app)
-            .get('/?id=1')
+            .get('/1')
             .set('Accept', 'application/json')
             .expect('Content-Type', /json/);
 
@@ -172,29 +92,29 @@ describe('GET / with id query', () => {
 
 describe('POST /', () => {
     it('responds with json', async () => {
-        const newLoan = {
-            account_id: 1,
-            amount: 1000,
-            plan_amount: 100,
-            recipient: 'test',
-            title: 'test',
-            description: 'test',
-            frequency_type: 1,
-            frequency_type_variable: 1,
-            frequency_day_of_week: 1,
-            frequency_week_of_month: 1,
-            frequency_day_of_month: 1,
-            frequency_month_of_year: 1,
-            interest_rate: 0,
-            interest_frequency_type: 2,
-            begin_date: '2020-01-02',
-        };
-
         const response: request.Response = await request(app)
             .post('/')
             .set('Accept', 'application/json')
             .expect('Content-Type', /json/)
-            .send(newLoan);
+            .send({
+                accountId: 1,
+                amount: 1000,
+                planAmount: 100,
+                recipient: 'test',
+                title: 'test',
+                description: 'test',
+                frequency: {
+                    type: 1,
+                    typeVariable: 1,
+                    dayOfWeek: 1,
+                    weekOfMonth: 1,
+                    dayOfMonth: 1,
+                    monthOfYear: 1,
+                },
+                interestRate: 0,
+                interestFrequencyType: 2,
+                beginDate: '2020-01-02',
+            });
 
         expect(response.status).toBe(200);
         expect(response.body).toEqual({ message: 'success' });
@@ -203,29 +123,29 @@ describe('POST /', () => {
 
 describe('PUT /:id', () => {
     it('responds with json', async () => {
-        const updatedLoan = {
-            account_id: 1,
-            amount: 1000,
-            plan_amount: 100,
-            recipient: 'test',
-            title: 'test',
-            description: 'test',
-            frequency_type: 1,
-            frequency_type_variable: 1,
-            frequency_day_of_week: 1,
-            frequency_week_of_month: 1,
-            frequency_day_of_month: 1,
-            frequency_month_of_year: 1,
-            interest_rate: 0,
-            interest_frequency_type: 2,
-            begin_date: '2020-01-02',
-        };
-
         const response: request.Response = await request(app)
             .put('/1')
             .set('Accept', 'application/json')
             .expect('Content-Type', /json/)
-            .send(updatedLoan);
+            .send({
+                accountId: 1,
+                amount: 1000,
+                planAmount: 100,
+                recipient: 'test',
+                title: 'test',
+                description: 'test',
+                frequency: {
+                    type: 1,
+                    typeVariable: 1,
+                    dayOfWeek: 1,
+                    weekOfMonth: 1,
+                    dayOfMonth: 1,
+                    monthOfYear: 1,
+                },
+                interestRate: 0,
+                interestFrequencyType: 2,
+                beginDate: '2020-01-02',
+            });
 
         expect(response.status).toBe(200);
         expect(response.body).toEqual({ message: 'success' });

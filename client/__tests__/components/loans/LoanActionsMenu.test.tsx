@@ -14,7 +14,7 @@ describe("LoanActionsMenu", () => {
   it("displays the menu when the button is clicked", async () => {
     render(
       <LoanActionsMenu
-        loan_id={1}
+        loanId={1}
         anchorEl={anchorEl}
         open={open}
         handleClose={handleClose}

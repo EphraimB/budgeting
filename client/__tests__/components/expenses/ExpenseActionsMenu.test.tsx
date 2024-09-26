@@ -14,7 +14,7 @@ describe("ExpenseActionsMenu", () => {
   it("displays the menu when the button is clicked", async () => {
     render(
       <ExpenseActionsMenu
-        expense_id={1}
+        expenseId={1}
         anchorEl={anchorEl}
         open={open}
         handleClose={handleClose}

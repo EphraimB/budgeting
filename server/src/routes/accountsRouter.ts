@@ -1,25 +1,25 @@
 import express, { type Router } from 'express';
-import { param, query, body } from 'express-validator';
+import { param, body } from 'express-validator';
 import {
     getAccounts,
     createAccount,
     updateAccount,
     deleteAccount,
+    getAccountsById,
 } from '../controllers/accountsController.js';
 import validateRequest from '../utils/validateRequest.js';
 
 const router: Router = express.Router();
 
+router.get('/', getAccounts);
+
 router.get(
-    '/',
+    '/:id',
     [
-        query('id')
-            .optional()
-            .isInt({ min: 1 })
-            .withMessage('ID must be a number'),
+        param('id').isInt({ min: 1 }).withMessage('ID must be a number'),
         validateRequest,
     ],
-    getAccounts,
+    getAccountsById,
 );
 
 router.post(

@@ -26,17 +26,12 @@ function WishlistDelete({
       await deleteWishlist(wishlist.id);
 
       // Show success message
-      showSnackbar(
-        `Wishlist "${wishlist.wishlist_title}" deleted successfully`
-      );
+      showSnackbar(`Wishlist "${wishlist.title}" deleted successfully`);
     } catch (error) {
       console.log(error);
 
       // Show error message
-      showAlert(
-        `Error deleting wishlist "${wishlist.wishlist_title}"`,
-        "error"
-      );
+      showAlert(`Error deleting wishlist "${wishlist.title}"`, "error");
     }
     setWishlistModes((prev) => ({ ...prev, [wishlist.id]: "view" }));
   };
@@ -62,7 +57,7 @@ function WishlistDelete({
       <br />
       <br />
       <Typography variant="subtitle1" component="h3">
-        Delete "{wishlist.wishlist_title}"?
+        Delete "{wishlist.title}"?
       </Typography>
       <Button color="error" variant="contained" onClick={handleDelete}>
         Delete

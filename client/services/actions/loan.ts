@@ -1,23 +1,20 @@
 "use server";
 
+import { Frequency } from "@/app/types/types";
 import { revalidatePath } from "next/cache";
 
 interface LoanRequest {
-  account_id: number;
+  accountId: number;
   recipient: string;
   amount: number;
-  plan_amount: number;
+  planAmount: number;
   title: string;
   description: string;
-  frequency_type: number;
-  frequency_type_variable: number | null;
-  frequency_day_of_week: number | null;
-  frequency_week_of_month: number | null;
-  frequency_month_of_year: number | null;
+  frequency: Frequency;
   subsidized: number;
-  interest_rate: number;
-  interest_frequency_type: number;
-  begin_date: string;
+  interestRate: number;
+  interestFrequencyType: number;
+  beginDate: string;
 }
 
 export async function addLoan(loan: LoanRequest) {
@@ -30,7 +27,7 @@ export async function addLoan(loan: LoanRequest) {
   });
   const result = await response.json();
 
-  revalidatePath("/[account_id]", "page");
+  revalidatePath("/[accountId]", "page");
   return result;
 }
 
@@ -44,7 +41,7 @@ export async function editLoan(loan: LoanRequest, id: number) {
   });
   const result = await response.json();
 
-  revalidatePath("/[account_id]", "page");
+  revalidatePath("/[accountId]", "page");
   return result;
 }
 
@@ -53,5 +50,5 @@ export async function deleteLoan(id: number) {
     method: "DELETE",
   });
 
-  revalidatePath("/[account_id]", "page");
+  revalidatePath("/[accountId]", "page");
 }

@@ -1,39 +1,9 @@
-import { type NextFunction, type Request, type Response } from 'express';
-import { cronJobQueries, incomeQueries } from '../models/queryData.js';
-import {
-    handleError,
-    parseIntOrFallback,
-    nextTransactionFrequencyDate,
-} from '../utils/helperFunctions.js';
-import { type Income } from '../types/types.js';
+import { type Request, type Response } from 'express';
+import { handleError, toCamelCase } from '../utils/helperFunctions.js';
 import { logger } from '../config/winston.js';
 import determineCronValues from '../crontab/determineCronValues.js';
 import pool from '../config/db.js';
-
-/**
- *
- * @param income - Income object
- * @returns Income object with the correct types
- * Converts the income object to the correct types
- **/
-const parseIncome = (income: Record<string, string>): Income => ({
-    id: parseInt(income.income_id),
-    account_id: parseInt(income.account_id),
-    tax_id: parseIntOrFallback(income.tax_id),
-    income_amount: parseFloat(income.income_amount),
-    income_title: income.income_title,
-    income_description: income.income_description,
-    frequency_type: parseInt(income.frequency_type),
-    frequency_type_variable: parseInt(income.frequency_type_variable),
-    frequency_day_of_month: parseIntOrFallback(income.frequency_day_of_month),
-    frequency_day_of_week: parseIntOrFallback(income.frequency_day_of_week),
-    frequency_week_of_month: parseIntOrFallback(income.frequency_week_of_month),
-    frequency_month_of_year: parseIntOrFallback(income.frequency_month_of_year),
-    income_begin_date: income.income_begin_date,
-    income_end_date: income.income_end_date,
-    date_created: income.date_created,
-    date_modified: income.date_modified,
-});
+import { v4 as uuidv4 } from 'uuid';
 
 /**
  *
@@ -45,7 +15,7 @@ export const getIncome = async (
     request: Request,
     response: Response,
 ): Promise<void> => {
-    const { id, account_id } = request.query;
+    const { accountId } = request.query;
 
     const client = await pool.connect(); // Get a client from the pool
 
@@ -53,48 +23,227 @@ export const getIncome = async (
         let query: string;
         let params: any[];
 
-        if (id && account_id) {
-            query = incomeQueries.getIncomeByIdAndAccountId;
-            params = [id, account_id];
-        } else if (id) {
-            query = incomeQueries.getIncomeById;
-            params = [id];
-        } else if (account_id) {
-            query = incomeQueries.getIncomeByAccountId;
-            params = [account_id];
+        if (accountId) {
+            query = `
+                SELECT id, account_id, tax_id, cron_job_id, amount, title, description,
+                        json_build_object(
+                            'type', frequency_type,
+                            'typeVariable', frequency_type_variable,
+                          	'dayOfMonth', frequency_day_of_month,
+                          	'dayOfWeek', frequency_day_of_week,
+                          	'weekOfMonth', frequency_week_of_month,
+                          	'monthOfYear', frequency_month_of_year
+                        ) AS frequency,
+                        json_build_object(
+                          'beginDate', begin_date,
+                          'endDate', end_date
+                       ) AS dates,
+                       CASE 
+                        -- Daily frequency
+                        WHEN frequency_type = 0 THEN 
+                            -- Daily billing
+                            CASE
+                                WHEN begin_date > now() THEN
+                            begin_date
+                            ELSE
+                                begin_date::date + interval '1 day' * frequency_type_variable
+                            END
+                        -- Weekly frequency
+                    WHEN frequency_type = 1 THEN 
+                    CASE
+                    WHEN begin_date > now() THEN
+                        begin_date
+                    ELSE
+                        CASE 
+                            WHEN frequency_day_of_week IS NOT NULL THEN
+                                CASE
+                                    -- If the desired day of the week is today or later this week
+                                    WHEN frequency_day_of_week >= extract('dow' from begin_date) THEN
+                                        begin_date + interval '1 week' * frequency_type_variable + interval '1 day' * (frequency_day_of_week - extract('dow' from now()))
+                                    ELSE
+                                        -- If the desired day of the week is earlier in the week, move to the next week
+                                        begin_date + interval '1 week' * frequency_type_variable + interval '1 day' * frequency_day_of_week
+                                END
+                            ELSE
+                                -- Handle the case where frequency_day_of_week is NULL
+                                -- Return a default value, e.g., the current date or next week's start date
+                                begin_date + interval '1 week' * frequency_type_variable
+                            END
+                        END
+
+                        -- Monthly frequency
+                        WHEN frequency_type = 2 THEN 
+                            -- Calculate the base next month date
+                            CASE
+                                WHEN begin_date > now() THEN
+                            begin_date
+                            ELSE
+                            (begin_date + interval '1 month' * frequency_type_variable)::date +
+                            -- Adjust for frequency_day_of_week (if provided)
+                            (CASE 
+                                WHEN frequency_day_of_week IS NOT NULL THEN
+                                    -- Calculate day difference and add it as an interval
+                                    interval '1 day' * ((frequency_day_of_week - extract('dow' from (begin_date + interval '1 month' * frequency_type_variable)::date) + 7) % 7)
+                                ELSE
+                                    interval '0 day'
+                            END) +
+                            -- Adjust for week_of_month (if provided)
+                            (CASE 
+                                WHEN frequency_week_of_month IS NOT NULL THEN
+                                    interval '1 week' * frequency_week_of_month
+                                ELSE
+                                    interval '0 day'
+                            END)
+                        END
+                        -- Annual frequency
+                        WHEN frequency_type = 3 THEN 
+                            CASE
+                                WHEN begin_date > now() THEN
+                            begin_date
+                            ELSE
+                            -- Calculate the base next year date
+                            (begin_date + interval '1 year' * frequency_type_variable)::date +
+                            -- Adjust for frequency_day_of_week (if provided)
+                            (CASE 
+                                WHEN frequency_day_of_week IS NOT NULL THEN
+                                    -- Calculate day difference and add it as an interval
+                                    interval '1 day' * ((frequency_day_of_week - extract('dow' from (begin_date + interval '1 month' * frequency_type_variable)::date) + 7) % 7)
+                                ELSE
+                                    interval '0 day'
+                            END) +
+                            -- Adjust for week_of_month (if provided)
+                            (CASE 
+                                WHEN frequency_week_of_month IS NOT NULL THEN
+                                    interval '1 week' * frequency_week_of_month
+                                ELSE
+                                    interval '0 day'
+                            END)
+                            END
+                        ELSE 
+                            NULL
+                    END AS next_date,
+                    date_created,
+                    date_modified
+                    FROM income
+                    WHERE account_id = $1
+                    GROUP BY id
+            `;
+            params = [accountId];
         } else {
-            query = incomeQueries.getIncome;
+            query = `
+                SELECT id, account_id, tax_id, cron_job_id, amount, title, description,
+                        json_build_object(
+                            'type', frequency_type,
+                            'typeVariable', frequency_type_variable,
+                          	'dayOfMonth', frequency_day_of_month,
+                          	'dayOfWeek', frequency_day_of_week,
+                          	'weekOfMonth', frequency_week_of_month,
+                          	'monthOfYear', frequency_month_of_year
+                        ) AS frequency,
+                        json_build_object(
+                          'beginDate', begin_date,
+                          'endDate', end_date
+                       ) AS dates,
+                       CASE 
+                        -- Daily frequency
+                        WHEN frequency_type = 0 THEN 
+                            -- Daily billing
+                            CASE
+                                WHEN begin_date > now() THEN
+                            begin_date
+                            ELSE
+                                begin_date::date + interval '1 day' * frequency_type_variable
+                            END
+                        -- Weekly frequency
+                    WHEN frequency_type = 1 THEN 
+                    CASE
+                    WHEN begin_date > now() THEN
+                        begin_date
+                    ELSE
+                        CASE 
+                            WHEN frequency_day_of_week IS NOT NULL THEN
+                                CASE
+                                    -- If the desired day of the week is today or later this week
+                                    WHEN frequency_day_of_week >= extract('dow' from begin_date) THEN
+                                        begin_date + interval '1 week' * frequency_type_variable + interval '1 day' * (frequency_day_of_week - extract('dow' from now()))
+                                    ELSE
+                                        -- If the desired day of the week is earlier in the week, move to the next week
+                                        begin_date + interval '1 week' * frequency_type_variable + interval '1 day' * frequency_day_of_week
+                                END
+                            ELSE
+                                -- Handle the case where frequency_day_of_week is NULL
+                                -- Return a default value, e.g., the current date or next week's start date
+                                begin_date + interval '1 week' * frequency_type_variable
+                            END
+                        END
+
+                        -- Monthly frequency
+                        WHEN frequency_type = 2 THEN 
+                            -- Calculate the base next month date
+                            CASE
+                                WHEN begin_date > now() THEN
+                            begin_date
+                            ELSE
+                            (begin_date + interval '1 month' * frequency_type_variable)::date +
+                            -- Adjust for frequency_day_of_week (if provided)
+                            (CASE 
+                                WHEN frequency_day_of_week IS NOT NULL THEN
+                                    -- Calculate day difference and add it as an interval
+                                    interval '1 day' * ((frequency_day_of_week - extract('dow' from (begin_date + interval '1 month' * frequency_type_variable)::date) + 7) % 7)
+                                ELSE
+                                    interval '0 day'
+                            END) +
+                            -- Adjust for week_of_month (if provided)
+                            (CASE 
+                                WHEN frequency_week_of_month IS NOT NULL THEN
+                                    interval '1 week' * frequency_week_of_month
+                                ELSE
+                                    interval '0 day'
+                            END)
+                        END
+                        -- Annual frequency
+                        WHEN frequency_type = 3 THEN 
+                            CASE
+                                WHEN begin_date > now() THEN
+                            begin_date
+                            ELSE
+                            -- Calculate the base next year date
+                            (begin_date + interval '1 year' * frequency_type_variable)::date +
+                            -- Adjust for frequency_day_of_week (if provided)
+                            (CASE 
+                                WHEN frequency_day_of_week IS NOT NULL THEN
+                                    -- Calculate day difference and add it as an interval
+                                    interval '1 day' * ((frequency_day_of_week - extract('dow' from (begin_date + interval '1 month' * frequency_type_variable)::date) + 7) % 7)
+                                ELSE
+                                    interval '0 day'
+                            END) +
+                            -- Adjust for week_of_month (if provided)
+                            (CASE 
+                                WHEN frequency_week_of_month IS NOT NULL THEN
+                                    interval '1 week' * frequency_week_of_month
+                                ELSE
+                                    interval '0 day'
+                            END)
+                            END
+                        ELSE 
+                            NULL
+                    END AS next_date,
+                    date_created,
+                    date_modified
+                    FROM income
+                    GROUP BY id
+            `;
             params = [];
         }
 
         const { rows } = await client.query(query, params);
 
-        if (id && rows.length === 0) {
-            response.status(404).send('Income not found');
-            return;
-        }
+        const retreivedRows = toCamelCase(rows); // Convert to camelCase
 
-        const parsedIncome = rows.map((row) => parseIncome(row));
-
-        parsedIncome.map((income: any) => {
-            const nextExpenseDate = nextTransactionFrequencyDate(income);
-
-            income.next_date = nextExpenseDate;
-        });
-
-        response.status(200).json(parsedIncome);
+        response.status(200).json(retreivedRows);
     } catch (error) {
         logger.error(error); // Log the error on the server side
-        handleError(
-            response,
-            `Error getting ${
-                id
-                    ? 'income'
-                    : account_id
-                    ? 'income for given account id'
-                    : 'income'
-            }`,
-        );
+        handleError(response, `Error getting income`);
     } finally {
         client.release(); // Release the client back to the pool
     }
@@ -104,28 +253,272 @@ export const getIncome = async (
  *
  * @param request - Request object
  * @param response - Response object
- * @param next - Next function
+ * Sends a response with the income object by id
+ */
+export const getIncomeById = async (
+    request: Request,
+    response: Response,
+): Promise<void> => {
+    const { id } = request.params;
+    const { accountId } = request.query;
+
+    const client = await pool.connect(); // Get a client from the pool
+
+    try {
+        let query: string;
+        let params: any[];
+
+        if (accountId) {
+            query = `
+                SELECT id, account_id, tax_id, cron_job_id, amount, title, description,
+                        json_build_object(
+                            'type', frequency_type,
+                            'typeVariable', frequency_type_variable,
+                          	'dayOfMonth', frequency_day_of_month,
+                          	'dayOfWeek', frequency_day_of_week,
+                          	'weekOfMonth', frequency_week_of_month,
+                          	'monthOfYear', frequency_month_of_year
+                        ) AS frequency,
+                        json_build_object(
+                          'beginDate', begin_date,
+                          'endDate', end_date
+                       ) AS dates,
+                       CASE 
+                        -- Daily frequency
+                        WHEN frequency_type = 0 THEN 
+                            -- Daily billing
+                            CASE
+                                WHEN begin_date > now() THEN
+                            begin_date
+                            ELSE
+                                begin_date::date + interval '1 day' * frequency_type_variable
+                            END
+                        -- Weekly frequency
+                    WHEN frequency_type = 1 THEN 
+                    CASE
+                    WHEN begin_date > now() THEN
+                        begin_date
+                    ELSE
+                        CASE 
+                            WHEN frequency_day_of_week IS NOT NULL THEN
+                                CASE
+                                    -- If the desired day of the week is today or later this week
+                                    WHEN frequency_day_of_week >= extract('dow' from begin_date) THEN
+                                        begin_date + interval '1 week' * frequency_type_variable + interval '1 day' * (frequency_day_of_week - extract('dow' from now()))
+                                    ELSE
+                                        -- If the desired day of the week is earlier in the week, move to the next week
+                                        begin_date + interval '1 week' * frequency_type_variable + interval '1 day' * frequency_day_of_week
+                                END
+                            ELSE
+                                -- Handle the case where frequency_day_of_week is NULL
+                                -- Return a default value, e.g., the current date or next week's start date
+                                begin_date + interval '1 week' * frequency_type_variable
+                            END
+                        END
+
+                        -- Monthly frequency
+                        WHEN frequency_type = 2 THEN 
+                            -- Calculate the base next month date
+                            CASE
+                                WHEN begin_date > now() THEN
+                            begin_date
+                            ELSE
+                            (begin_date + interval '1 month' * frequency_type_variable)::date +
+                            -- Adjust for frequency_day_of_week (if provided)
+                            (CASE 
+                                WHEN frequency_day_of_week IS NOT NULL THEN
+                                    -- Calculate day difference and add it as an interval
+                                    interval '1 day' * ((frequency_day_of_week - extract('dow' from (begin_date + interval '1 month' * frequency_type_variable)::date) + 7) % 7)
+                                ELSE
+                                    interval '0 day'
+                            END) +
+                            -- Adjust for week_of_month (if provided)
+                            (CASE 
+                                WHEN frequency_week_of_month IS NOT NULL THEN
+                                    interval '1 week' * frequency_week_of_month
+                                ELSE
+                                    interval '0 day'
+                            END)
+                        END
+                        -- Annual frequency
+                        WHEN frequency_type = 3 THEN 
+                            CASE
+                                WHEN begin_date > now() THEN
+                            begin_date
+                            ELSE
+                            -- Calculate the base next year date
+                            (begin_date + interval '1 year' * frequency_type_variable)::date +
+                            -- Adjust for frequency_day_of_week (if provided)
+                            (CASE 
+                                WHEN frequency_day_of_week IS NOT NULL THEN
+                                    -- Calculate day difference and add it as an interval
+                                    interval '1 day' * ((frequency_day_of_week - extract('dow' from (begin_date + interval '1 month' * frequency_type_variable)::date) + 7) % 7)
+                                ELSE
+                                    interval '0 day'
+                            END) +
+                            -- Adjust for week_of_month (if provided)
+                            (CASE 
+                                WHEN frequency_week_of_month IS NOT NULL THEN
+                                    interval '1 week' * frequency_week_of_month
+                                ELSE
+                                    interval '0 day'
+                            END)
+                            END
+                        ELSE 
+                            NULL
+                    END AS next_date,
+                    date_created,
+                    date_modified
+                    FROM income
+                    WHERE id = $1 AND account_id = $2
+                    GROUP BY id
+            `;
+            params = [id, accountId];
+        } else {
+            query = `
+                SELECT id, account_id, tax_id, cron_job_id, amount, title, description,
+                        json_build_object(
+                            'type', frequency_type,
+                            'typeVariable', frequency_type_variable,
+                          	'dayOfMonth', frequency_day_of_month,
+                          	'dayOfWeek', frequency_day_of_week,
+                          	'weekOfMonth', frequency_week_of_month,
+                          	'monthOfYear', frequency_month_of_year
+                        ) AS frequency,
+                        json_build_object(
+                          'beginDate', begin_date,
+                          'endDate', end_date
+                       ) AS dates,
+                       CASE 
+                        -- Daily frequency
+                        WHEN frequency_type = 0 THEN 
+                            -- Daily billing
+                            CASE
+                                WHEN begin_date > now() THEN
+                            begin_date
+                            ELSE
+                                begin_date::date + interval '1 day' * frequency_type_variable
+                            END
+                        -- Weekly frequency
+                    WHEN frequency_type = 1 THEN 
+                    CASE
+                    WHEN begin_date > now() THEN
+                        begin_date
+                    ELSE
+                        CASE 
+                            WHEN frequency_day_of_week IS NOT NULL THEN
+                                CASE
+                                    -- If the desired day of the week is today or later this week
+                                    WHEN frequency_day_of_week >= extract('dow' from begin_date) THEN
+                                        begin_date + interval '1 week' * frequency_type_variable + interval '1 day' * (frequency_day_of_week - extract('dow' from now()))
+                                    ELSE
+                                        -- If the desired day of the week is earlier in the week, move to the next week
+                                        begin_date + interval '1 week' * frequency_type_variable + interval '1 day' * frequency_day_of_week
+                                END
+                            ELSE
+                                -- Handle the case where frequency_day_of_week is NULL
+                                -- Return a default value, e.g., the current date or next week's start date
+                                begin_date + interval '1 week' * frequency_type_variable
+                            END
+                        END
+
+                        -- Monthly frequency
+                        WHEN frequency_type = 2 THEN 
+                            -- Calculate the base next month date
+                            CASE
+                                WHEN begin_date > now() THEN
+                            begin_date
+                            ELSE
+                            (begin_date + interval '1 month' * frequency_type_variable)::date +
+                            -- Adjust for frequency_day_of_week (if provided)
+                            (CASE 
+                                WHEN frequency_day_of_week IS NOT NULL THEN
+                                    -- Calculate day difference and add it as an interval
+                                    interval '1 day' * ((frequency_day_of_week - extract('dow' from (begin_date + interval '1 month' * frequency_type_variable)::date) + 7) % 7)
+                                ELSE
+                                    interval '0 day'
+                            END) +
+                            -- Adjust for week_of_month (if provided)
+                            (CASE 
+                                WHEN frequency_week_of_month IS NOT NULL THEN
+                                    interval '1 week' * frequency_week_of_month
+                                ELSE
+                                    interval '0 day'
+                            END)
+                        END
+                        -- Annual frequency
+                        WHEN frequency_type = 3 THEN 
+                            CASE
+                                WHEN begin_date > now() THEN
+                            begin_date
+                            ELSE
+                            -- Calculate the base next year date
+                            (begin_date + interval '1 year' * frequency_type_variable)::date +
+                            -- Adjust for frequency_day_of_week (if provided)
+                            (CASE 
+                                WHEN frequency_day_of_week IS NOT NULL THEN
+                                    -- Calculate day difference and add it as an interval
+                                    interval '1 day' * ((frequency_day_of_week - extract('dow' from (begin_date + interval '1 month' * frequency_type_variable)::date) + 7) % 7)
+                                ELSE
+                                    interval '0 day'
+                            END) +
+                            -- Adjust for week_of_month (if provided)
+                            (CASE 
+                                WHEN frequency_week_of_month IS NOT NULL THEN
+                                    interval '1 week' * frequency_week_of_month
+                                ELSE
+                                    interval '0 day'
+                            END)
+                            END
+                        ELSE 
+                            NULL
+                    END AS next_date,
+                    date_created,
+                    date_modified
+                    FROM income
+                    WHERE id = $1
+                    GROUP BY id
+            `;
+            params = [id];
+        }
+
+        const { rows } = await client.query(query, params);
+
+        if (rows.length === 0) {
+            response.status(404).send('Income not found');
+            return;
+        }
+
+        const retreivedRow = toCamelCase(rows[0]); // Convert to camelCase
+
+        response.status(200).json(retreivedRow);
+    } catch (error) {
+        logger.error(error); // Log the error on the server side
+        handleError(response, `Error getting income for account id of ${id}`);
+    } finally {
+        client.release(); // Release the client back to the pool
+    }
+};
+
+/**
+ *
+ * @param request - Request object
+ * @param response - Response object
  * Sends a response with the created income and creates a cron job for the income and inserts it into the database
  */
 export const createIncome = async (
     request: Request,
     response: Response,
-    next: NextFunction,
 ): Promise<void> => {
     const {
-        account_id,
-        tax_id,
+        accountId,
+        taxId,
         amount,
         title,
         description,
-        frequency_type,
-        frequency_type_variable,
-        frequency_day_of_month,
-        frequency_day_of_week,
-        frequency_week_of_month,
-        frequency_month_of_year,
-        begin_date,
-        end_date,
+        frequency,
+        beginDate,
+        endDate,
     } = request.body;
 
     const client = await pool.connect(); // Get a client from the pool
@@ -133,37 +526,19 @@ export const createIncome = async (
     try {
         await client.query('BEGIN;');
 
-        const { rows } = await client.query(incomeQueries.createIncome, [
-            account_id,
-            tax_id,
-            amount,
-            title,
-            description,
-            frequency_type,
-            frequency_type_variable,
-            frequency_day_of_month,
-            frequency_day_of_week,
-            frequency_week_of_month,
-            frequency_month_of_year,
-            begin_date,
-            end_date,
-        ]);
-
-        const modifiedIncome = rows.map((row) => parseIncome(row));
-
         const jobDetails = {
-            frequency_type,
-            frequency_type_variable,
-            frequency_day_of_month,
-            frequency_day_of_week,
-            frequency_week_of_month,
-            frequency_month_of_year,
-            date: begin_date,
+            frequencyType: frequency.type,
+            frequencyTypeVariable: frequency.typeVariable,
+            frequencyDayOfMonth: frequency.dayOfMonth,
+            frequencyDayOfWeek: frequency.dayOfWeek,
+            frequencyWeekOfMonth: frequency.weekOfMonth,
+            frequencyMonthOfYear: frequency.monthOfYear,
+            date: beginDate,
         };
 
         const cronDate = determineCronValues(jobDetails);
 
-        const uniqueId = `income-${modifiedIncome[0].id}`;
+        const uniqueId = uuidv4();
 
         const taxRate = 0;
 
@@ -171,25 +546,50 @@ export const createIncome = async (
             SELECT cron.schedule('${uniqueId}', '${cronDate}',
             $$INSERT INTO transaction_history
             (account_id, transaction_amount, transaction_tax_rate, transaction_title, transaction_description)
-            VALUES (${account_id}, ${amount}, ${taxRate}, '${title}', '${description}')$$)`);
+            VALUES (${accountId}, ${amount}, ${taxRate}, '${title}', '${description}')$$)`);
 
         const { rows: cronIdResults } = await client.query(
-            cronJobQueries.createCronJob,
+            `
+            INSERT INTO cron_jobs
+            (unique_id, cron_expression)
+            VALUES ($1, $2)
+            RETURNING *
+            `,
             [uniqueId, cronDate],
         );
 
-        const cronId = cronIdResults[0].cron_job_id;
+        const cronId = cronIdResults[0].id;
 
-        await client.query(incomeQueries.updateIncomeWithCronJobId, [
-            cronId,
-            modifiedIncome[0].id,
-        ]);
+        const { rows } = await client.query(
+            `
+                INSERT INTO income
+                    (account_id, tax_id, cron_job_id, amount, title, description, frequency_type, frequency_type_variable, frequency_day_of_month, frequency_day_of_week, frequency_week_of_month, frequency_month_of_year, begin_date, end_date)
+                    VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14)
+                    RETURNING *
+            `,
+            [
+                accountId,
+                taxId,
+                cronId,
+                amount,
+                title,
+                description,
+                frequency.type,
+                frequency.typeVariable,
+                frequency.dayOfMonth,
+                frequency.dayOfWeek,
+                frequency.weekOfMonth,
+                frequency.monthOfYear,
+                beginDate,
+                endDate,
+            ],
+        );
 
         await client.query('COMMIT;');
 
-        request.income_id = modifiedIncome[0].id;
+        const insertedRow = toCamelCase(rows[0]); // Convert to camelCase
 
-        next();
+        response.status(201).json(insertedRow);
     } catch (error) {
         await client.query('ROLLBACK;');
 
@@ -204,65 +604,35 @@ export const createIncome = async (
  *
  * @param request - Request object
  * @param response - Response object
- * Sends a response with the created income
- */
-export const createIncomeReturnObject = async (
-    request: Request,
-    response: Response,
-): Promise<void> => {
-    const { income_id } = request;
-
-    const client = await pool.connect(); // Get a client from the pool
-
-    try {
-        const { rows } = await client.query(incomeQueries.getIncomeById, [
-            income_id,
-        ]);
-
-        const modifiedIncome = rows.map((row) => parseIncome(row));
-
-        response.status(201).json(modifiedIncome);
-    } catch (error) {
-        logger.error(error); // Log the error on the server side
-        handleError(response, 'Error creating income');
-    } finally {
-        client.release(); // Release the client back to the pool
-    }
-};
-
-/**
- *
- * @param request - Request object
- * @param response - Response object
- * @param next - Next function
  * Sends a response with the updated income and updates the cron job for the income and updates it in the database
  */
 export const updateIncome = async (
     request: Request,
     response: Response,
-    next: NextFunction,
 ): Promise<void> => {
-    const id: number = parseInt(request.params.id);
+    const { id } = request.params;
     const {
-        account_id,
-        tax_id,
+        accountId,
+        taxId,
         amount,
         title,
         description,
-        frequency_type,
-        frequency_type_variable,
-        frequency_day_of_month,
-        frequency_day_of_week,
-        frequency_week_of_month,
-        frequency_month_of_year,
-        begin_date,
-        end_date,
+        frequency,
+        beginDate,
+        endDate,
     } = request.body;
 
     const client = await pool.connect(); // Get a client from the pool
 
     try {
-        const { rows } = await client.query(incomeQueries.getIncomeById, [id]);
+        const { rows } = await client.query(
+            `
+                SELECT id, cron_job_id
+                    FROM income
+                    WHERE id = $1
+            `,
+            [id],
+        );
 
         if (rows.length === 0) {
             response.status(404).send('Income not found');
@@ -272,19 +642,23 @@ export const updateIncome = async (
         const cronId: number = parseInt(rows[0].cron_job_id);
 
         const jobDetails = {
-            frequency_type,
-            frequency_type_variable,
-            frequency_day_of_month,
-            frequency_day_of_week,
-            frequency_week_of_month,
-            frequency_month_of_year,
-            date: begin_date,
+            frequencyType: frequency.type,
+            frequencyTypeVariable: frequency.typeVariable,
+            frequencyDayOfMonth: frequency.dayOfMonth,
+            frequencyDayOfWeek: frequency.dayOfWeek,
+            frequencyWeekOfMonth: frequency.weekOfMonth,
+            frequencyMonthOfYear: frequency.monthOfYear,
+            date: beginDate,
         };
 
         const cronDate = determineCronValues(jobDetails);
 
         const { rows: uniqueIdResults } = await client.query(
-            cronJobQueries.getCronJob,
+            `
+                SELECT unique_id
+                    FROM cron_jobs
+                    WHERE id = $1
+            `,
             [cronId],
         );
 
@@ -300,36 +674,48 @@ export const updateIncome = async (
             SELECT cron.schedule('${uniqueId}', '${cronDate}',
             $$INSERT INTO transaction_history
             (account_id, transaction_amount, transaction_tax_rate, transaction_title, transaction_description)
-            VALUES (${account_id}, ${amount}, ${taxRate}, '${title}', '${description}')$$)`);
+            VALUES (${accountId}, ${amount}, ${taxRate}, '${title}', '${description}')$$)`);
 
-        await client.query(cronJobQueries.updateCronJob, [
-            uniqueId,
-            cronDate,
-            cronId,
-        ]);
+        await client.query(
+            `
+                UPDATE cron_jobs
+                    SET unique_id = $1,
+                    cron_expression = $2
+                    WHERE id = $3
+            `,
+            [uniqueId, cronDate, cronId],
+        );
 
-        await client.query(incomeQueries.updateIncome, [
-            account_id,
-            tax_id,
-            amount,
-            title,
-            description,
-            frequency_type,
-            frequency_type_variable,
-            frequency_day_of_month,
-            frequency_day_of_week,
-            frequency_week_of_month,
-            frequency_month_of_year,
-            begin_date,
-            end_date,
-            id,
-        ]);
+        const { rows: updateIncomeResults } = await client.query(
+            `
+                UPDATE income
+                    SET account_id = $1, tax_id = $2, amount = $3, title = $4, description = $5, frequency_type = $6, frequency_type_variable = $7, frequency_day_of_month = $8, frequency_day_of_week = $9, frequency_week_of_month = $10, frequency_month_of_year = $11, begin_date = $12, end_date = $13
+                    WHERE id = $14
+                    RETURNING *
+            `,
+            [
+                accountId,
+                taxId,
+                amount,
+                title,
+                description,
+                frequency.type,
+                frequency.typeVariable,
+                frequency.dayOfMonth,
+                frequency.dayOfWeek,
+                frequency.weekOfMonth,
+                frequency.monthOfYear,
+                beginDate,
+                endDate,
+                id,
+            ],
+        );
 
         await client.query('COMMIT;');
 
-        request.income_id = id;
+        const updatedRow = toCamelCase(updateIncomeResults[0]); // Convert to camelCase
 
-        next();
+        response.status(200).json(updatedRow);
     } catch (error) {
         await client.query('ROLLBACK;');
 
@@ -344,50 +730,25 @@ export const updateIncome = async (
  *
  * @param request - Request object
  * @param response - Response object
- * Sends a response with the updated income
- */
-export const updateIncomeReturnObject = async (
-    request: Request,
-    response: Response,
-): Promise<void> => {
-    const { income_id } = request;
-
-    const client = await pool.connect(); // Get a client from the pool
-
-    try {
-        const { rows } = await client.query(incomeQueries.getIncomeById, [
-            income_id,
-        ]);
-
-        const modifiedIncome = rows.map((row) => parseIncome(row));
-
-        response.status(200).json(modifiedIncome);
-    } catch (error) {
-        logger.error(error); // Log the error on the server side
-        handleError(response, 'Error updating income');
-    } finally {
-        client.release(); // Release the client back to the pool
-    }
-};
-
-/**
- *
- * @param request - Request object
- * @param response - Response object
- * @param next - Next function
  * Sends a response with the deleted income and deletes the cron job for the income and deletes it from the database
  */
 export const deleteIncome = async (
     request: Request,
     response: Response,
-    next: NextFunction,
 ): Promise<void> => {
     const { id } = request.params;
 
     const client = await pool.connect(); // Get a client from the pool
 
     try {
-        const { rows } = await client.query(incomeQueries.getIncomeById, [id]);
+        const { rows } = await client.query(
+            `
+                SELECT id, cron_job_id
+                    FROM income
+                    WHERE id = $1
+            `,
+            [id],
+        );
 
         if (rows.length === 0) {
             response.status(404).send('Income not found');
@@ -398,20 +759,35 @@ export const deleteIncome = async (
 
         await client.query('BEGIN;');
 
-        await client.query(incomeQueries.deleteIncome, [id]);
+        await client.query(
+            `
+                DELETE FROM income WHERE id = $1
+            `,
+            [id],
+        );
 
         const { rows: results } = await client.query(
-            cronJobQueries.getCronJob,
+            `
+                SELECT id, unique_id
+                    FROM cron_jobs
+                    WHERE id = $1
+            `,
             [cronId],
         );
 
         await client.query(`SELECT cron.unschedule('${results[0].unique_id}')`);
 
-        await client.query(cronJobQueries.deleteCronJob, [cronId]);
+        await client.query(
+            `
+                DELETE FROM cron_jobs
+                    WHERE id = $1
+            `,
+            [cronId],
+        );
 
         await client.query('COMMIT;');
 
-        next();
+        response.status(200).send('Income deleted successfully');
     } catch (error) {
         await client.query('ROLLBACK;');
 
@@ -420,11 +796,4 @@ export const deleteIncome = async (
     } finally {
         client.release(); // Release the client back to the pool
     }
-};
-
-export const deleteIncomeReturnObject = async (
-    request: Request,
-    response: Response,
-): Promise<void> => {
-    response.status(200).send('Income deleted successfully');
 };

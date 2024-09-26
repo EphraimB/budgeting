@@ -1,53 +1,19 @@
 import { type Request, type Response } from 'express';
-import { commuteHistoryQueries } from '../models/queryData.js';
-import { handleError } from '../utils/helperFunctions.js';
-import { type CommuteHistory } from '../types/types.js';
+import { handleError, toCamelCase } from '../utils/helperFunctions.js';
 import { logger } from '../config/winston.js';
 import pool from '../config/db.js';
-
-interface CommuteHistoryInput {
-    commute_history_id: string;
-    account_id: string;
-    fare_amount: string;
-    commute_system: string;
-    fare_type: string;
-    timestamp: string;
-    date_created: string;
-    date_modified: string;
-}
-
-/**
- *
- * @param commuteHistory - Commute history object to parse
- * @returns - Parsed commute history object
- */
-const parseCommuteHistory = (
-    commuteHistory: CommuteHistoryInput,
-): CommuteHistory => ({
-    id: parseInt(commuteHistory.commute_history_id),
-    account_id: parseInt(commuteHistory.account_id),
-    fare_amount: parseFloat(commuteHistory.fare_amount),
-    commute_system: commuteHistory.commute_system,
-    fare_type: commuteHistory.fare_type,
-    timestamp: commuteHistory.timestamp,
-    date_created: commuteHistory.date_created,
-    date_modified: commuteHistory.date_modified,
-});
 
 /**
  *
  * @param request - Request object
  * @param response - Response object
- * Sends a response with all commute histories or a single history
+ * Sends a response with all commute histories
  */
 export const getCommuteHistory = async (
     request: Request,
     response: Response,
 ): Promise<void> => {
-    const { id, account_id } = request.query as {
-        id?: string;
-        account_id?: string;
-    }; // Destructure id from query string
+    const { accountId } = request.query;
 
     const client = await pool.connect(); // Get a client from the pool
 
@@ -55,42 +21,84 @@ export const getCommuteHistory = async (
         let query: string;
         let params: any[];
 
-        // Change the query based on the presence of id
-        if (id && account_id) {
-            query = commuteHistoryQueries.getCommuteHistoryByIdAndAccountId;
-            params = [id, account_id];
-        } else if (id) {
-            query = commuteHistoryQueries.getCommuteHistoryById;
-            params = [id];
-        } else if (account_id) {
-            query = commuteHistoryQueries.getCommuteHistoryByAccountId;
-            params = [account_id];
+        if (accountId) {
+            query = `
+                SELECT *
+                    FROM commute_history
+                    WHERE account_id = $1
+            `;
+            params = [accountId];
         } else {
-            query = commuteHistoryQueries.getCommuteHistory;
+            query = `
+                SELECT *
+                    FROM commute_history
+            `;
             params = [];
         }
 
         const { rows } = await client.query(query, params);
 
-        if (id && rows.length === 0) {
+        const retreivedRows = toCamelCase(rows); // Convert to camelCase
+
+        response.status(200).json(retreivedRows);
+    } catch (error) {
+        logger.error(error); // Log the error on the server side
+        handleError(response, 'Error getting commute histories');
+    } finally {
+        client.release(); // Release the client back to the pool
+    }
+};
+
+/**
+ *
+ * @param request - Request object
+ * @param response - Response object
+ * Sends a response with a single history
+ */
+export const getCommuteHistoryById = async (
+    request: Request,
+    response: Response,
+): Promise<void> => {
+    const { id } = request.params;
+    const { accountId } = request.query;
+
+    const client = await pool.connect(); // Get a client from the pool
+
+    try {
+        let query: string;
+        let params: any[];
+
+        if (accountId) {
+            query = `
+                SELECT *
+                    FROM commute_history
+                    WHERE id = $1 AND account_id = $2
+            `;
+            params = [id, accountId];
+        } else {
+            query = `
+                SELECT *
+                    FROM commute_history
+                    WHERE id = $1
+            `;
+            params = [id];
+        }
+
+        const { rows } = await client.query(query, params);
+
+        if (rows.length === 0) {
             response.status(404).send('Commute history not found');
             return;
         }
 
-        const commuteHistory = rows.map((row) => parseCommuteHistory(row));
+        const retreivedRow = toCamelCase(rows[0]); // Convert to camelCase
 
-        response.status(200).json(commuteHistory);
+        response.status(200).json(retreivedRow);
     } catch (error) {
         logger.error(error); // Log the error on the server side
         handleError(
             response,
-            `Error getting commute ${
-                id
-                    ? 'history'
-                    : account_id
-                    ? 'history for given account id'
-                    : 'histories'
-            }`,
+            `Error getting commute history for account id of ${id}`,
         );
     } finally {
         client.release(); // Release the client back to the pool
@@ -107,20 +115,25 @@ export const createCommuteHistory = async (
     request: Request,
     response: Response,
 ) => {
-    const { account_id, fare_amount, commute_system, fare_type, timestamp } =
+    const { accountId, fare, commuteSystem, fareType, timestamp } =
         request.body;
 
     const client = await pool.connect(); // Get a client from the pool
 
     try {
         const { rows } = await client.query(
-            commuteHistoryQueries.createCommuteHistory,
-            [account_id, fare_amount, commute_system, fare_type, timestamp],
+            `
+                INSERT INTO commute_history
+                (account_id, fare, commute_system, fare_type, timestamp, is_timed_pass)
+                VALUES ($1, $2, $3, $4, $5, $6)
+                RETURNING *
+            `,
+            [accountId, fare, commuteSystem, fareType, timestamp, false],
         );
-        const commuteHistories = rows.map((commuteHistory) =>
-            parseCommuteHistory(commuteHistory),
-        );
-        response.status(201).json(commuteHistories);
+
+        const insertedRow = toCamelCase(rows[0]); // Convert to camelCase
+
+        response.status(201).json(insertedRow);
     } catch (error) {
         logger.error(error); // Log the error on the server side
         handleError(response, 'Error creating commute history');
@@ -139,15 +152,19 @@ export const updateCommuteHistory = async (
     request: Request,
     response: Response,
 ): Promise<void> => {
-    const id = parseInt(request.params.id);
-    const { account_id, fare_amount, commute_system, fare_type, timestamp } =
+    const { id } = request.params;
+    const { accountId, fare, commuteSystem, fareType, timestamp } =
         request.body;
 
     const client = await pool.connect(); // Get a client from the pool
 
     try {
         const { rows } = await client.query(
-            commuteHistoryQueries.getCommuteHistoryById,
+            `
+                SELECT id
+                    FROM commute_history
+                    WHERE id = $1
+            `,
             [id],
         );
 
@@ -157,15 +174,22 @@ export const updateCommuteHistory = async (
         }
 
         const { rows: updateCommuteHistory } = await client.query(
-            commuteHistoryQueries.updateCommuteHistory,
-            [account_id, fare_amount, commute_system, fare_type, timestamp, id],
+            `
+                UPDATE commute_history
+                SET account_id = $1,
+                fare = $2,
+                commute_system = $3,
+                fare_type = $4,
+                timestamp = $5
+                WHERE id = $6
+                RETURNING *
+            `,
+            [accountId, fare, commuteSystem, fareType, timestamp, id],
         );
 
-        const histories = updateCommuteHistory.map((history) =>
-            parseCommuteHistory(history),
-        );
+        const updatedRow = toCamelCase(updateCommuteHistory[0]); // Convert to camelCase
 
-        response.status(200).json(histories);
+        response.status(200).json(updatedRow);
     } catch (error) {
         logger.error(error); // Log the error on the server side
         handleError(response, 'Error updating commute history');
@@ -184,13 +208,17 @@ export const deleteCommuteHistory = async (
     request: Request,
     response: Response,
 ): Promise<void> => {
-    const id = parseInt(request.params.id);
+    const { id } = request.params;
 
     const client = await pool.connect(); // Get a client from the pool
 
     try {
         const { rows } = await client.query(
-            commuteHistoryQueries.getCommuteHistoryById,
+            `
+                SELECT id
+                    FROM commute_history
+                    WHERE id = $1
+            `,
             [id],
         );
 
@@ -199,7 +227,13 @@ export const deleteCommuteHistory = async (
             return;
         }
 
-        await client.query(commuteHistoryQueries.deleteCommuteHistory, [id]);
+        await client.query(
+            `
+                DELETE FROM commute_history
+                WHERE id = $1
+            `,
+            [id],
+        );
 
         response.status(200).send('Successfully deleted commute history');
     } catch (error) {

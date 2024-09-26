@@ -3,38 +3,18 @@ import { query, param, body } from 'express-validator';
 import {
     getIncome,
     createIncome,
-    createIncomeReturnObject,
     updateIncome,
-    updateIncomeReturnObject,
     deleteIncome,
-    deleteIncomeReturnObject,
+    getIncomeById,
 } from '../controllers/incomeController.js';
 import validateRequest from '../utils/validateRequest.js';
-import generateTransactions from '../generation/generateTransactions.js';
-import {
-    setQueries,
-    getCurrentBalance,
-    getTransactionsByAccount,
-    getIncomeByAccount,
-    getExpensesByAccount,
-    getLoansByAccount,
-    getPayrollsMiddleware,
-    getTransfersByAccount,
-    getCommuteExpensesByAccount,
-    getWishlistsByAccount,
-    updateWishlistCron,
-} from '../middleware/middleware.js';
 
 const router: Router = express.Router();
 
 router.get(
     '/',
     [
-        query('id')
-            .optional()
-            .isInt({ min: 1 })
-            .withMessage('ID must be a number'),
-        query('account_id')
+        query('accountId')
             .optional()
             .isInt({ min: 1 })
             .withMessage('Account ID must be a number'),
@@ -43,13 +23,26 @@ router.get(
     getIncome,
 );
 
+router.get(
+    '/:id',
+    [
+        param('id').isInt({ min: 1 }).withMessage('ID must be a number'),
+        query('accountId')
+            .optional()
+            .isInt({ min: 1 })
+            .withMessage('Account ID must be a number'),
+        validateRequest,
+    ],
+    getIncomeById,
+);
+
 router.post(
     '/',
     [
-        body('account_id')
+        body('accountId')
             .isInt({ min: 1 })
             .withMessage('Account ID must be a number'),
-        body('tax_id')
+        body('taxId')
             .optional()
             .isInt({ min: 1 })
             .withMessage('Tax ID must be a number'),
@@ -58,71 +51,56 @@ router.post(
         body('description')
             .isString()
             .withMessage('Description must be a string'),
-        body('frequency_type')
-            .optional()
+        body('frequency.type')
             .isInt({ min: 0, max: 3 })
             .withMessage('Frequency type must be a number between 0 and 3'),
-        body('frequency_type_variable')
-            .optional()
+        body('frequency.typeVariable')
             .isInt({ min: 1 })
             .withMessage('Frequency variable must be a number'),
-        body('frequency_day_of_week')
-            .optional()
+        body('frequency.dayOfWeek')
+            .optional({ nullable: true })
             .isInt({ min: 0, max: 6 })
             .withMessage(
                 'Frequency day of week must be a number between 0 and 6',
             ),
-        body('frequency_week_of_month')
-            .optional()
+        body('frequency.weekOfMonth')
+            .optional({ nullable: true })
             .isInt({ min: 0, max: 4 })
             .withMessage(
                 'Frequency week of month must be a number between 0 and 4',
             ),
-        body('frequency_day_of_month')
-            .optional()
+        body('frequency.dayOfMonth')
+            .optional({ nullable: true })
             .isInt({ min: 0, max: 30 })
             .withMessage(
                 'Frequency day of month must be a number between 0 and 30',
             ),
-        body('frequency_month_of_year')
-            .optional()
+        body('frequency.monthOfYear')
+            .optional({ nullable: true })
             .isInt({ min: 0, max: 11 })
             .withMessage(
                 'Frequency month of year must be a number between 0 and 11',
             ),
-        body('begin_date')
+        body('beginDate')
             .isISO8601()
             .withMessage('Begin date must be a datetime'),
-        body('end_date')
+        body('endDate')
             .optional()
             .isISO8601()
             .withMessage('End date must be a datetime'),
         validateRequest,
     ],
     createIncome,
-    setQueries,
-    getCurrentBalance,
-    getTransactionsByAccount,
-    getIncomeByAccount,
-    getExpensesByAccount,
-    getLoansByAccount,
-    getPayrollsMiddleware,
-    getTransfersByAccount,
-    getCommuteExpensesByAccount,
-    getWishlistsByAccount,
-    generateTransactions,
-    updateWishlistCron,
-    createIncomeReturnObject,
 );
 
 router.put(
     '/:id',
     [
         param('id').isInt({ min: 1 }).withMessage('ID must be a number'),
-        body('account_id')
+        body('accountId')
             .isInt({ min: 1 })
             .withMessage('Account ID must be a number'),
-        body('tax_id')
+        body('taxId')
             .optional()
             .isInt({ min: 1 })
             .withMessage('Tax ID must be a number'),
@@ -131,61 +109,46 @@ router.put(
         body('description')
             .isString()
             .withMessage('Description must be a string'),
-        body('frequency_type')
-            .optional()
+        body('frequency.type')
             .isInt({ min: 0, max: 3 })
             .withMessage('Frequency type must be a number between 0 and 3'),
-        body('frequency_type_variable')
-            .optional()
+        body('frequency.typeVariable')
             .isInt({ min: 1 })
             .withMessage('Frequency variable must be a number'),
-        body('frequency_day_of_week')
-            .optional()
+        body('frequency.dayOfWeek')
+            .optional({ nullable: true })
             .isInt({ min: 0, max: 6 })
             .withMessage(
                 'Frequency day of week must be a number between 0 and 6',
             ),
-        body('frequency_week_of_month')
-            .optional()
+        body('frequency.weekOfMonth')
+            .optional({ nullable: true })
             .isInt({ min: 0, max: 4 })
             .withMessage(
                 'Frequency week of month must be a number between 0 and 4',
             ),
-        body('frequency_day_of_month')
-            .optional()
+        body('frequency.dayOfMonth')
+            .optional({ nullable: true })
             .isInt({ min: 0, max: 30 })
             .withMessage(
                 'Frequency day of month must be a number between 0 and 30',
             ),
-        body('frequency_month_of_year')
-            .optional()
+        body('frequency.monthOfYear')
+            .optional({ nullable: true })
             .isInt({ min: 0, max: 11 })
             .withMessage(
                 'Frequency month of year must be a number between 0 and 11',
             ),
-        body('begin_date')
+        body('beginDate')
             .isISO8601()
             .withMessage('Begin date must be a datetime'),
-        body('end_date')
+        body('endDate')
             .optional()
             .isISO8601()
             .withMessage('End date must be a datetime'),
         validateRequest,
     ],
     updateIncome,
-    setQueries,
-    getCurrentBalance,
-    getTransactionsByAccount,
-    getIncomeByAccount,
-    getExpensesByAccount,
-    getLoansByAccount,
-    getPayrollsMiddleware,
-    getTransfersByAccount,
-    getCommuteExpensesByAccount,
-    getWishlistsByAccount,
-    generateTransactions,
-    updateWishlistCron,
-    updateIncomeReturnObject,
 );
 
 router.delete(
@@ -195,19 +158,6 @@ router.delete(
         validateRequest,
     ],
     deleteIncome,
-    setQueries,
-    getCurrentBalance,
-    getTransactionsByAccount,
-    getIncomeByAccount,
-    getExpensesByAccount,
-    getLoansByAccount,
-    getPayrollsMiddleware,
-    getTransfersByAccount,
-    getCommuteExpensesByAccount,
-    getWishlistsByAccount,
-    generateTransactions,
-    updateWishlistCron,
-    deleteIncomeReturnObject,
 );
 
 export default router;

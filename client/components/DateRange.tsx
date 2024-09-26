@@ -19,8 +19,8 @@ export default function DateRange({
 
   const updateUrl = (fromDate: string, toDate: string) => {
     const updatedParams = new URLSearchParams();
-    updatedParams.set("from_date", fromDate);
-    updatedParams.set("to_date", toDate);
+    updatedParams.set("fromDate", fromDate);
+    updatedParams.set("toDate", toDate);
 
     router.push(`${pathname}?${updatedParams.toString()}`);
   };

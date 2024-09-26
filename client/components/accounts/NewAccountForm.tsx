@@ -87,7 +87,7 @@ export default function NewAccountForm({
       <br />
       <Stack direction="column" spacing={2}>
         <TextField
-          id="account_name"
+          id="name"
           label="Account name"
           variant="standard"
           value={accountName}

@@ -1,20 +1,17 @@
 "use server";
 
+import { Frequency } from "@/app/types/types";
 import { revalidatePath } from "next/cache";
 
 interface TransferRequest {
-  source_account_id: number;
-  destination_account_id: number;
+  sourceAccountId: number;
+  destinationAccountId: number;
   amount: number;
   title: string;
   description: string;
-  frequency_type: number;
-  frequency_type_variable: number;
-  frequency_day_of_week: number | null;
-  frequency_week_of_month: number | null;
-  frequency_month_of_year: number | null;
-  begin_date: string;
-  end_date: string | null;
+  frequency: Frequency;
+  beginDate: string;
+  endDate: string | null;
 }
 
 export async function addTransfer(transfer: TransferRequest) {
@@ -27,9 +24,7 @@ export async function addTransfer(transfer: TransferRequest) {
   });
   const result = await response.json();
 
-  console.log(result);
-
-  revalidatePath("/[account_id]", "page");
+  revalidatePath("/[accountId]", "page");
   return result;
 }
 
@@ -43,7 +38,7 @@ export async function editTransfer(transfer: TransferRequest, id: number) {
   });
   const result = await response.json();
 
-  revalidatePath("/[account_id]", "page");
+  revalidatePath("/[accountId]", "page");
   return result;
 }
 
@@ -52,5 +47,5 @@ export async function deleteTransfer(id: number) {
     method: "DELETE",
   });
 
-  revalidatePath("/[account_id]", "page");
+  revalidatePath("/[accountId]", "page");
 }

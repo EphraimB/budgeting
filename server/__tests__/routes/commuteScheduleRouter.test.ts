@@ -4,7 +4,6 @@ import express, {
     type Express,
     type Request,
     type Response,
-    type NextFunction,
     type Router,
 } from 'express';
 import {
@@ -33,109 +32,17 @@ const createApp = async (): Promise<Express> => {
 };
 
 beforeAll(() => {
-    jest.mock('../../src/middleware/middleware', () => ({
-        setQueries: jest.fn(
-            (req: Request, res: Response, next: NextFunction) => {
-                next();
-            },
-        ),
-        getCurrentBalance: jest.fn(
-            (req: Request, res: Response, next: NextFunction) => {
-                next();
-            },
-        ),
-        getTransactionsByAccount: jest.fn(
-            (req: Request, res: Response, next: NextFunction) => {
-                next();
-            },
-        ),
-        getIncomeByAccount: jest.fn(
-            (req: Request, res: Response, next: NextFunction) => {
-                next();
-            },
-        ),
-        getExpensesByAccount: jest.fn(
-            (req: Request, res: Response, next: NextFunction) => {
-                next();
-            },
-        ),
-        getLoansByAccount: jest.fn(
-            (req: Request, res: Response, next: NextFunction) => {
-                next();
-            },
-        ),
-        getPayrollsMiddleware: jest.fn(
-            (req: Request, res: Response, next: NextFunction) => {
-                next();
-            },
-        ),
-        getTransfersByAccount: jest.fn(
-            (req: Request, res: Response, next: NextFunction) => {
-                next();
-            },
-        ),
-        getCommuteExpensesByAccount: jest.fn(
-            (req: Request, res: Response, next: NextFunction) => {
-                next();
-            },
-        ),
-        getWishlistsByAccount: jest.fn(
-            (req: Request, res: Response, next: NextFunction) => {
-                next();
-            },
-        ),
-        updateWishlistCron: jest.fn(
-            (req: Request, res: Response, next: NextFunction) => {
-                next();
-            },
-        ),
-        createCommuteScheduleReturnObject: jest.fn(
-            (req: Request, res: Response, next: NextFunction) => {
-                next();
-            },
-        ),
-    }));
-
-    jest.mock('../../src/generation/generateTransactions', () => {
-        return jest.fn((req: Request, res: Response, next: NextFunction) => {
-            req.transactions = [];
-            next();
-        });
-    });
-
     jest.mock('../../src/controllers/commuteScheduleController', () => ({
-        getCommuteSchedule: (req: Request, res: Response, next: NextFunction) =>
+        getCommuteSchedule: (_: Request, res: Response) =>
             res.json({ message: 'success' }),
-        createCommuteSchedule: (
-            req: Request,
-            res: Response,
-            next: NextFunction,
-        ) => res.json({ message: 'success' }),
-        createCommuteScheduleReturnObject: (
-            req: Request,
-            res: Response,
-            next: NextFunction,
-        ) => res.json({ message: 'success' }),
-        updateCommuteSchedule: (
-            req: Request,
-            res: Response,
-            next: NextFunction,
-        ) => res.json({ message: 'success' }),
-        updateCommuteScheduleReturnObject: (
-            req: Request,
-            res: Response,
-            next: NextFunction,
-        ) => res.json({ message: 'success' }),
-        deleteCommuteSchedule: (
-            req: Request,
-            res: Response,
-            next: NextFunction,
-        ) => res.json({ message: 'success' }),
-        deleteCommuteScheduleReturnObject: (
-            req: Request,
-            res: Response,
-            next: NextFunction,
-        ) => res.json({ message: 'success' }),
+        getCommuteScheduleById: (_: Request, res: Response) =>
+            res.json({ message: 'success' }),
+        createCommuteSchedule: (_: Request, res: Response) =>
+            res.json({ message: 'success' }),
+        updateCommuteSchedule: (_: Request, res: Response) =>
+            res.json({ message: 'success' }),
+        deleteCommuteSchedule: (_: Request, res: Response) =>
+            res.json({ message: 'success' }),
     }));
 });
 
@@ -162,10 +69,10 @@ describe('GET /', () => {
     });
 });
 
-describe('GET / with id query', () => {
+describe('GET / with id param', () => {
     it('responds with json', async () => {
         const response: request.Response = await request(app)
-            .get('/?id=1')
+            .get('/1')
             .set('Accept', 'application/json')
             .expect('Content-Type', /json/);
 
@@ -174,10 +81,10 @@ describe('GET / with id query', () => {
     });
 });
 
-describe('GET / with account_id query', () => {
+describe('GET / with account id query', () => {
     it('responds with json', async () => {
         const response: request.Response = await request(app)
-            .get('/?account_id=1')
+            .get('/?accountId=1')
             .set('Accept', 'application/json')
             .expect('Content-Type', /json/);
 
@@ -189,11 +96,11 @@ describe('GET / with account_id query', () => {
 describe('POST /', () => {
     it('responds with json', async () => {
         const newSchedule = {
-            account_id: 1,
-            day_of_week: 1,
-            fare_detail_id: 1,
-            start_time: '08:00:00',
-            end_time: '10:00:00',
+            accountId: 1,
+            dayOfWeek: 1,
+            fareDetailId: 1,
+            startTime: '08:00:00',
+            endTime: '10:00:00',
         };
 
         const response: request.Response = await request(app)
@@ -210,11 +117,11 @@ describe('POST /', () => {
 describe('PUT /:id', () => {
     it('responds with json', async () => {
         const updatedSchedule = {
-            account_id: 1,
-            day_of_week: 1,
-            fare_detail_id: 1,
-            start_time: '08:00:00',
-            end_time: '10:00:00',
+            accountId: 1,
+            dayOfWeek: 1,
+            fareDetailId: 1,
+            startTime: '08:00:00',
+            endTime: '10:00:00',
         };
 
         const response: request.Response = await request(app)

@@ -17,17 +17,17 @@ interface Timeslot {
 }
 
 function JobDayTimeslots({
-  job_schedule,
+  jobSchedule,
   onSave,
   onClose,
 }: {
-  job_schedule: JobSchedule[];
+  jobSchedule: JobSchedule[];
   onSave: (timeslots: Timeslot[]) => void;
   onClose: () => void;
 }) {
-  const timeslotsInitial = job_schedule.map((slot) => ({
-    startTime: slot.start_time,
-    endTime: slot.end_time,
+  const timeslotsInitial = jobSchedule.map((slot) => ({
+    startTime: slot.startTime,
+    endTime: slot.endTime,
   }));
 
   const [timeslots, setTimeslots] = useState<Timeslot[]>(timeslotsInitial);
