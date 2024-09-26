@@ -2,7 +2,6 @@
 
 import React, { useState } from "react";
 import { useAlert, useSnackbar } from "../../context/FeedbackContext";
-import { useTheme } from "@mui/material/styles";
 import { addJob } from "../../services/actions/job";
 import Card from "@mui/material/Card";
 import CardHeader from "@mui/material/CardHeader";
@@ -10,10 +9,7 @@ import CardContent from "@mui/material/CardContent";
 import IconButton from "@mui/material/IconButton";
 import Close from "@mui/icons-material/Close";
 import TextField from "@mui/material/TextField";
-import MobileStepper from "@mui/material/MobileStepper";
 import Button from "@mui/material/Button";
-import KeyboardArrowLeft from "@mui/icons-material/KeyboardArrowLeft";
-import KeyboardArrowRight from "@mui/icons-material/KeyboardArrowRight";
 import InputAdornment from "@mui/material/InputAdornment";
 
 function NewJobForm({
@@ -29,20 +25,8 @@ function NewJobForm({
   const [nameError, setNameError] = useState("");
   const [hourlyRateError, setHourlyRateError] = useState("");
 
-  const [activeStep, setActiveStep] = useState(0);
-
   const { showSnackbar } = useSnackbar();
   const { showAlert } = useAlert();
-
-  const theme = useTheme();
-
-  const handleNext = () => {
-    setActiveStep((prevActiveStep) => prevActiveStep + 1);
-  };
-
-  const handleBack = () => {
-    setActiveStep((prevActiveStep) => prevActiveStep - 1);
-  };
 
   const data = {
     accountId,
@@ -120,83 +104,40 @@ function NewJobForm({
       </IconButton>
       <br />
       <CardHeader
-        title={`Add Job - Step ${activeStep + 1} of 1`}
+        title="Add Job"
         sx={{
           textAlign: "center",
         }}
       />
       <CardContent>
-        {activeStep === 0 ? (
-          <>
-            <TextField
-              label="Name"
-              variant="standard"
-              value={name}
-              error={!!nameError}
-              helperText={nameError}
-              onChange={(e) => setName(e.target.value)}
-              fullWidth
-            />
-            <br />
-            <br />
-            <TextField
-              label="Hourly Rate"
-              variant="standard"
-              value={hourlyRate}
-              error={!!hourlyRateError}
-              helperText={hourlyRateError}
-              onChange={(e) => setHourlyRate(parseInt(e.target.value))}
-              InputProps={{
-                startAdornment: (
-                  <InputAdornment position="start">$</InputAdornment>
-                ),
-              }}
-              fullWidth
-            />
-            <br />
-            <br />
-            <Button variant="contained" onClick={handleSubmit}>
-              Submit
-            </Button>
-          </>
-        ) : null}
-        <br />
-        <br />
-        <MobileStepper
-          variant="dots"
-          steps={1}
-          position="static"
-          activeStep={activeStep}
-          sx={{ maxWidth: 400, flexGrow: 1 }}
-          nextButton={
-            <Button
-              size="small"
-              onClick={handleNext}
-              disabled={activeStep === 0}
-            >
-              Next
-              {theme.direction === "rtl" ? (
-                <KeyboardArrowLeft />
-              ) : (
-                <KeyboardArrowRight />
-              )}
-            </Button>
-          }
-          backButton={
-            <Button
-              size="small"
-              onClick={handleBack}
-              disabled={activeStep === 0}
-            >
-              {theme.direction === "rtl" ? (
-                <KeyboardArrowRight />
-              ) : (
-                <KeyboardArrowLeft />
-              )}
-              Back
-            </Button>
-          }
+        <TextField
+          label="Name"
+          variant="standard"
+          value={name}
+          error={!!nameError}
+          helperText={nameError}
+          onChange={(e) => setName(e.target.value)}
+          fullWidth
         />
+        <br />
+        <br />
+        <TextField
+          label="Hourly Rate"
+          variant="standard"
+          value={hourlyRate}
+          error={!!hourlyRateError}
+          helperText={hourlyRateError}
+          onChange={(e) => setHourlyRate(parseInt(e.target.value))}
+          InputProps={{
+            startAdornment: <InputAdornment position="start">$</InputAdornment>,
+          }}
+          fullWidth
+        />
+        <br />
+        <br />
+        <Button variant="contained" onClick={handleSubmit}>
+          Submit
+        </Button>
       </CardContent>
     </Card>
   );

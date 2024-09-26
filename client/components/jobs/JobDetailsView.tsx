@@ -50,22 +50,25 @@ function JobDetailsView({
                 Payroll dates
               </Typography>
               <Typography>
-                You get paid on the{" "}
-                {payrollDates.length === 1
-                  ? `${payrollDates[0].payrollDay}${getOrdinalSuffix(
-                      payrollDates[0].payrollDay
-                    )}`
-                  : payrollDates
-                      .slice() // Create a copy of the array
-                      .sort((a, b) => a.payrollDay - b.payrollDay) // Sort the array
-                      .map((payrollDate) => {
-                        return `${payrollDate.payrollDay}${getOrdinalSuffix(
-                          payrollDate.payrollDay
-                        )}`;
-                      })
-                      .join(", ")
-                      .replace(/, ([^,]+)$/, " and $1")}{" "}
-                of the month
+                {payrollDates.length === 0
+                  ? "Click to setup payroll dates"
+                  : `You get paid on the ${
+                      payrollDates.length === 1
+                        ? `${payrollDates[0].payrollDay}${getOrdinalSuffix(
+                            payrollDates[0].payrollDay
+                          )}`
+                        : payrollDates
+                            .slice() // Create a copy of the array
+                            .sort((a, b) => a.payrollDay - b.payrollDay) // Sort the array
+                            .map(
+                              (payrollDate) =>
+                                `${payrollDate.payrollDay}${getOrdinalSuffix(
+                                  payrollDate.payrollDay
+                                )}`
+                            )
+                            .join(", ")
+                            .replace(/, ([^,]+)$/, " and $1")
+                    } of the month`}
               </Typography>
             </CardContent>
           </Card>
