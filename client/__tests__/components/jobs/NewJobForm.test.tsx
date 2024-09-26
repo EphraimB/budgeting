@@ -19,7 +19,7 @@ describe("NewJobForm", () => {
   it("renders", async () => {
     render(<NewJobForm setShowJobForm={setShowJobForm} accountId={1} />);
 
-    expect(screen.getByText("Add Job - Step 1 of 1")).toBeInTheDocument();
+    expect(screen.getByText("Add Job")).toBeInTheDocument();
 
     expect(screen.getByLabelText("Name")).toBeInTheDocument();
     expect(screen.getByLabelText("Hourly Rate")).toBeInTheDocument();

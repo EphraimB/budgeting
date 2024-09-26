@@ -40,7 +40,7 @@ describe("JobEdit", () => {
 
     render(<JobEdit job={job} accountId={1} setJobModes={setJobModes} />);
 
-    expect(screen.getByText("Edit Job - Step 1 of 1")).toBeInTheDocument();
+    expect(screen.getByText("Edit Job")).toBeInTheDocument();
 
     expect(screen.getByLabelText("Name")).toHaveValue("Testing Inc.");
     expect(screen.getByLabelText("Hourly Rate")).toHaveValue("20");
