@@ -168,7 +168,7 @@ function JobEdit({
         <br />
         <MobileStepper
           variant="dots"
-          steps={2}
+          steps={1}
           position="static"
           activeStep={activeStep}
           sx={{ maxWidth: 400, flexGrow: 1 }}
