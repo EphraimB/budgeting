@@ -31,11 +31,11 @@ import { useAlert, useSnackbar } from "../../context/FeedbackContext";
 dayjs.extend(utc);
 
 function NewExpenseForm({
-  account_id,
+  accountId,
   setShowExpenseForm,
   taxes,
 }: {
-  account_id: number;
+  accountId: number;
   setShowExpenseForm: (show: boolean) => void;
   taxes: Tax[];
 }) {
@@ -43,16 +43,15 @@ function NewExpenseForm({
   const [description, setDescription] = useState("");
   const [amount, setAmount] = useState("0");
   const [subsidized, setSubsidized] = useState("0");
-  const [tax_id, setTaxId] = useState(0);
-  const [frequency_type, setFrequencyType] = useState(2);
-  const [frequency_day_of_week, setFrequencyDayOfWeek] = useState(-1);
-  const [frequency_week_of_month, setFrequencyWeekOfMonth] = useState(-1);
-  const [frequency_month_of_year, setFrequencyMonthOfYear] = useState(-1);
-  const [frequency_type_variable, setFrequencyTypeVariable] =
-    useState<number>(1);
-  const [begin_date, setBeginDate] = useState<string>(dayjs().format());
+  const [taxId, setTaxId] = useState(0);
+  const [frequencyType, setFrequencyType] = useState(2);
+  const [frequencyDayOfWeek, setFrequencyDayOfWeek] = useState(-1);
+  const [frequencyWeekOfMonth, setFrequencyWeekOfMonth] = useState(-1);
+  const [frequencyMonthOfYear, setFrequencyMonthOfYear] = useState(-1);
+  const [frequencyTypeVariable, setFrequencyTypeVariable] = useState<number>(1);
+  const [beginDate, setBeginDate] = useState<string>(dayjs().format());
   const [endDateEnabled, setEndDateEnabled] = useState(false);
-  const [end_date, setEndDate] = useState<null | string>(null);
+  const [endDate, setEndDate] = useState<null | string>(null);
 
   const [titleError, setTitleError] = useState("");
   const [descriptionError, setDescriptionError] = useState("");
@@ -73,22 +72,22 @@ function NewExpenseForm({
   };
 
   const data = {
-    account_id,
-    tax_id: tax_id === 0 ? null : tax_id,
+    accountId,
+    taxId: taxId === 0 ? null : taxId,
     title,
     description,
     amount: parseFloat(amount),
     subsidized: parseFloat(subsidized),
-    frequency_type,
-    frequency_day_of_week:
-      frequency_day_of_week === -1 ? null : frequency_day_of_week,
-    frequency_week_of_month:
-      frequency_week_of_month === -1 ? null : frequency_week_of_month,
-    frequency_month_of_year:
-      frequency_month_of_year === -1 ? null : frequency_month_of_year,
-    frequency_type_variable,
-    begin_date,
-    end_date,
+    frequency: {
+      type: frequencyType,
+      dayOfWeek: frequencyDayOfWeek === -1 ? null : frequencyDayOfWeek,
+      weekOfMonth: frequencyWeekOfMonth === -1 ? null : frequencyWeekOfMonth,
+      monthOfYear: frequencyMonthOfYear === -1 ? null : frequencyMonthOfYear,
+      dayOfMonth: null,
+      typeVariable: frequencyTypeVariable,
+    },
+    beginDate,
+    endDate,
   };
 
   const validateTitle = () => {
@@ -240,7 +239,7 @@ function NewExpenseForm({
                 labelId="tax-select-label"
                 label="Tax"
                 variant="standard"
-                value={tax_id}
+                value={taxId}
                 onChange={(e) => setTaxId(e.target.value as number)}
               >
                 <MenuItem value={0}>No tax - 0%</MenuItem>
@@ -277,7 +276,7 @@ function NewExpenseForm({
                 labelId="frequency-select-label"
                 label="Frequency"
                 variant="standard"
-                value={frequency_type}
+                value={frequencyType}
                 onChange={(e) => setFrequencyType(e.target.value as number)}
               >
                 <MenuItem value={0}>Daily</MenuItem>
@@ -286,9 +285,9 @@ function NewExpenseForm({
                 <MenuItem value={3}>Yearly</MenuItem>
               </Select>
             </FormControl>
-            {(frequency_type === 1 ||
-              frequency_type === 2 ||
-              frequency_type === 3) && (
+            {(frequencyType === 1 ||
+              frequencyType === 2 ||
+              frequencyType === 3) && (
               <>
                 <br />
                 <br />
@@ -300,7 +299,7 @@ function NewExpenseForm({
                     labelId="frequency-day-of-week-select-label"
                     label="Frequency"
                     variant="standard"
-                    value={frequency_day_of_week}
+                    value={frequencyDayOfWeek}
                     onChange={(e) =>
                       setFrequencyDayOfWeek(e.target.value as number)
                     }
@@ -317,7 +316,7 @@ function NewExpenseForm({
                 </FormControl>
               </>
             )}
-            {(frequency_type === 2 || frequency_type === 3) && (
+            {(frequencyType === 2 || frequencyType === 3) && (
               <>
                 <br />
                 <br />
@@ -329,7 +328,7 @@ function NewExpenseForm({
                     labelId="frequency-week-of-month-select-label"
                     label="Frequency"
                     variant="standard"
-                    value={frequency_week_of_month}
+                    value={frequencyWeekOfMonth}
                     onChange={(e) =>
                       setFrequencyWeekOfMonth(e.target.value as number)
                     }
@@ -344,7 +343,7 @@ function NewExpenseForm({
                 </FormControl>
               </>
             )}
-            {frequency_type === 3 && (
+            {frequencyType === 3 && (
               <>
                 <br />
                 <br />
@@ -356,7 +355,7 @@ function NewExpenseForm({
                     labelId="frequency-month-of-year-select-label"
                     label="Frequency"
                     variant="standard"
-                    value={frequency_month_of_year}
+                    value={frequencyMonthOfYear}
                     onChange={(e) =>
                       setFrequencyMonthOfYear(e.target.value as number)
                     }
@@ -383,7 +382,7 @@ function NewExpenseForm({
             <TextField
               label="Frequency Type Variable"
               variant="standard"
-              value={frequency_type_variable}
+              value={frequencyTypeVariable}
               onChange={(e) =>
                 setFrequencyTypeVariable(e.target.value as unknown as number)
               }
@@ -394,7 +393,7 @@ function NewExpenseForm({
             <LocalizationProvider dateAdapter={AdapterDayjs}>
               <DateTimePicker
                 label="Expense begin date"
-                value={dayjs.utc(begin_date).local()}
+                value={dayjs.utc(beginDate).local()}
                 onChange={(e: Dayjs | null) => {
                   const utcDate = e ? e.utc().format() : dayjs.utc().format();
                   setBeginDate(utcDate);
@@ -414,7 +413,7 @@ function NewExpenseForm({
               {endDateEnabled && (
                 <DateTimePicker
                   label="Expense end date"
-                  value={dayjs.utc(end_date).local() || dayjs()}
+                  value={dayjs.utc(endDate).local() || dayjs()}
                   onChange={(e: Dayjs | null) => {
                     const utcDate = e ? e.utc().format() : dayjs.utc().format();
                     setEndDate(utcDate);

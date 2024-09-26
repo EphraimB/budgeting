@@ -13,8 +13,8 @@ describe("TaxView", () => {
     description: "NYC sales tax",
     rate: 0.08875,
     type: 0,
-    date_created: "2022-12-31",
-    date_modified: "2022-12-31",
+    dateCreated: "2022-12-31",
+    dateModified: "2022-12-31",
   };
 
   it("renders", () => {

@@ -17,11 +17,11 @@ describe("AccountEdit", () => {
     render(
       <AccountEdit
         account={{
-          account_id: 1,
-          account_name: "Test Account",
-          account_balance: 0,
-          date_created: "2022-12-31",
-          date_modified: "2022-12-31",
+          id: 1,
+          name: "Test Account",
+          balance: 0,
+          dateCreated: "2022-12-31",
+          dateModified: "2022-12-31",
         }}
         setAccountModes={() => {}}
       />

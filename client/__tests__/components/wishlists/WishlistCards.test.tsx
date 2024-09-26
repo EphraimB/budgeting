@@ -15,7 +15,7 @@ describe("WishlistCards", () => {
     const taxes: Tax[] = [];
 
     render(
-      <WishlistsCards account_id={account_id} wishlists={[]} taxes={taxes} />
+      <WishlistsCards accountId={account_id} wishlists={[]} taxes={taxes} />
     );
 
     // Assert that the FAB with the AddIcon is rendered

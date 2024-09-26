@@ -59,10 +59,10 @@ function JobScheduleDayView({ job }: { job: Job }) {
             {day}
           </Typography>
           <JobScheduleView
-            job_day_of_week={job.job_schedule.filter(
-              (js) => js.day_of_week === index
+            jobDayOfWeek={job.jobSchedule.filter(
+              (js) => js.dayOfWeek === index
             )}
-            day_of_week={index}
+            dayOfWeek={index}
             handleOpenModal={handleOpenModal}
           />
         </Paper>
@@ -70,10 +70,10 @@ function JobScheduleDayView({ job }: { job: Job }) {
       {modalState.dayOfWeek !== null && (
         <JobScheduleModal
           job={job}
-          job_day_of_week={job.job_schedule.filter(
-            (js) => js.day_of_week === modalState.dayOfWeek
+          jobDayOfWeek={job.jobSchedule.filter(
+            (js) => js.dayOfWeek === modalState.dayOfWeek
           )}
-          day_of_week={modalState.dayOfWeek}
+          dayOfWeek={modalState.dayOfWeek}
           open={modalState.open}
           setOpen={(isOpen) =>
             setModalState((prevState) => ({ ...prevState, open: isOpen }))

@@ -4,7 +4,6 @@ import express, {
     type Express,
     type Request,
     type Response,
-    type NextFunction,
     type Router,
 } from 'express';
 import {
@@ -34,23 +33,16 @@ const createApp = async (): Promise<Express> => {
 
 beforeAll(() => {
     jest.mock('../../src/controllers/commuteHistoryController', () => ({
-        getCommuteHistory: (req: Request, res: Response, next: NextFunction) =>
+        getCommuteHistory: (_: Request, res: Response) =>
             res.json({ message: 'success' }),
-        createCommuteHistory: (
-            req: Request,
-            res: Response,
-            next: NextFunction,
-        ) => res.json({ message: 'success' }),
-        updateCommuteHistory: (
-            req: Request,
-            res: Response,
-            next: NextFunction,
-        ) => res.json({ message: 'success' }),
-        deleteCommuteHistory: (
-            req: Request,
-            res: Response,
-            next: NextFunction,
-        ) => res.json({ message: 'success' }),
+        getCommuteHistoryById: (_: Request, res: Response) =>
+            res.json({ message: 'success' }),
+        createCommuteHistory: (_: Request, res: Response) =>
+            res.json({ message: 'success' }),
+        updateCommuteHistory: (_: Request, res: Response) =>
+            res.json({ message: 'success' }),
+        deleteCommuteHistory: (_: Request, res: Response) =>
+            res.json({ message: 'success' }),
     }));
 });
 
@@ -77,10 +69,10 @@ describe('GET /', () => {
     });
 });
 
-describe('GET / with id query', () => {
+describe('GET / with id param', () => {
     it('responds with json', async () => {
         const response: request.Response = await request(app)
-            .get('/?id=1')
+            .get('/1')
             .set('Accept', 'application/json')
             .expect('Content-Type', /json/);
 
@@ -89,10 +81,10 @@ describe('GET / with id query', () => {
     });
 });
 
-describe('GET / with account_id query', () => {
+describe('GET / with account id query', () => {
     it('responds with json', async () => {
         const response: request.Response = await request(app)
-            .get('/?account_id=1')
+            .get('/?accountId=1')
             .set('Accept', 'application/json')
             .expect('Content-Type', /json/);
 
@@ -104,10 +96,10 @@ describe('GET / with account_id query', () => {
 describe('POST /', () => {
     it('responds with json', async () => {
         const newCommuteHistory = {
-            account_id: 1,
-            fare_amount: 2.75,
-            commute_system: 'OMNY',
-            fare_type: 'Single Ride',
+            accountId: 1,
+            fare: 2.75,
+            commuteSystem: 'OMNY',
+            fareType: 'Single Ride',
             timestamp: '2021-07-01 00:00:00',
         };
 
@@ -125,10 +117,10 @@ describe('POST /', () => {
 describe('PUT /:id', () => {
     it('responds with json', async () => {
         const newCommuteHistory = {
-            account_id: 1,
-            fare_amount: 2.75,
-            commute_system: 'OMNY',
-            fare_type: 'Single Ride',
+            accountId: 1,
+            fare: 2.75,
+            commuteSystem: 'OMNY',
+            fareType: 'Single Ride',
             timestamp: '2021-07-01 00:00:00',
         };
 

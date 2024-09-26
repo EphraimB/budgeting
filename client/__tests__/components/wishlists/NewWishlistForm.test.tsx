@@ -31,17 +31,17 @@ describe("NewWishlistForm", () => {
         description: "New York City sales tax",
         rate: 0.08875,
         type: 0,
-        date_created: "2021-01-01",
-        date_modified: "2021-01-01",
+        dateCreated: "2021-01-01",
+        dateModified: "2021-01-01",
       },
     ];
 
     render(
       <NewWishlistForm
-        account_id={1}
+        accountId={1}
         taxes={taxes}
         setShowWishlistForm={setShowWishlistForm}
-        total_items={1}
+        totalItems={1}
       />
     );
 

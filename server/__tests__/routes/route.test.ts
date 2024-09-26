@@ -26,9 +26,9 @@ beforeEach(async () => {
 });
 
 describe('GET /api', () => {
-    it('should respond with "Hello, World!"', async () => {
+    it('should respond with "Hello Budgeting!"', async () => {
         const response = await request(app).get('/');
         expect(response.statusCode).toBe(200);
-        expect(response.text).toBe('Hello World!');
+        expect(response.text).toBe('Hello Budgeting!');
     });
 });

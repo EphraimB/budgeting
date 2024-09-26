@@ -6,82 +6,84 @@ export interface HeadCell {
 
 export interface TransactionHistory {
   id: number;
-  account_id: number;
+  accountId: number;
   amount: number;
   title: string;
   description: string;
-  date_created: string;
-  date_modified: string;
+  dateCreated: string;
+  dateModified: string;
 }
 
 export interface Account {
-  account_id: number;
-  account_name: string;
-  account_balance: number;
-  date_created: string;
-  date_modified: string;
+  id: number;
+  name: string;
+  balance: number;
+  dateCreated: string;
+  dateModified: string;
+}
+
+interface Frequency {
+  type: number;
+  typeVariable: number;
+  dayOfMonth: number | null;
+  dayOfWeek: number | null;
+  weekOfMonth: number | null;
+  monthOfYear: number | null;
+}
+
+interface Dates {
+  beginDate: string;
+  endDate?: string | null;
 }
 
 export interface Expense {
   id: number;
-  account_id: number;
-  tax_id: number | null;
+  accountId: number;
+  taxId: number | null;
   amount: number;
   title: string;
   description: string;
-  frequency_type: number;
-  frequency_type_variable: number | null;
-  frequency_day_of_month: number | null;
-  frequency_day_of_week: number | null;
-  frequency_week_of_month: number | null;
-  frequency_month_of_year: number | null;
+  frequency: Frequency;
   subsidized: number;
-  begin_date: string;
-  end_date: string | null;
-  next_date: string | null;
-  date_created: string;
-  date_modified: string;
+  dates: Dates;
+  nextDate: string | null;
+  dateCreated: string;
+  dateModified: string;
 }
 
 export interface Loan {
   id: number;
-  account_id: number;
+  accountId: number;
   recipient: string;
   amount: number;
-  plan_amount: number;
+  planAmount: number;
   title: string;
   description: string;
-  frequency_type: number;
-  frequency_type_variable: number;
-  frequency_day_of_month: number | null;
-  frequency_day_of_week: number | null;
-  frequency_week_of_month: number | null;
-  frequency_month_of_year: number | null;
+  frequency: Frequency;
   subsidized: number;
-  interest_rate: number;
-  interest_frequency_type: number;
-  begin_date: string;
-  end_date: string | null;
-  fully_paid_back: string | null;
-  next_date: string | null;
-  date_created: string;
-  date_modified: string;
+  interestRate: number;
+  interestFrequencyType: number;
+  dates: Dates;
+  fullyPaidBackDate: string | null;
+  nextDate: string | null;
+  dateCreated: string;
+  dateModified: string;
 }
 
 export interface Wishlist {
   id: number;
-  account_id: number;
-  tax_id: number | null;
-  tax_rate: number;
-  wishlist_amount: number;
-  wishlist_title: string;
-  wishlist_description: string;
-  wishlist_date_available: string | null;
-  wishlist_date_can_purchase: string | null;
-  wishlist_url_link: string;
-  wishlist_priority: number;
-  date_created?: string;
-  date_modified?: string;
+  accountId: number;
+  taxId: number | null;
+  taxRate: number;
+  amount: number;
+  title: string;
+  description: string;
+  dateAvailable: string | null;
+  dateCanPurchase: string | null;
+  urlLink: string;
+  priority: number;
+  dateCreated?: string;
+  dateModified?: string;
 }
 
 export interface Tax {
@@ -90,8 +92,8 @@ export interface Tax {
   title: string;
   description: string;
   type: number;
-  date_created: string;
-  date_modified: string;
+  dateCreated: string;
+  dateModified: string;
 }
 
 interface Transaction {
@@ -100,66 +102,56 @@ interface Transaction {
   description: string;
   date: string;
   amount: number;
-  tax_rate: number | null;
-  total_amount: number;
+  taxRate: number;
+  totalAmount: number;
   balance: number;
-  date_created: string;
-  date_modified: string;
 }
 
 interface JobSchedule {
-  job_id: number;
-  day_of_week: number;
-  start_time: string;
-  end_time: string;
+  jobId: number;
+  dayOfWeek: number;
+  startTime: string;
+  endTime: string;
 }
 
 export interface Job {
   id: number;
-  account_id: number;
+  accountId: number;
   name: string;
-  hourly_rate: number;
-  vacation_days: number;
-  sick_days: number;
-  total_hours_per_week: number;
-  job_schedule: JobSchedule[];
+  hourlyRate: number;
+  totalHoursPerWeek: number;
+  jobSchedule: JobSchedule[];
 }
 
 export interface PayrollDate {
   id: number;
-  job_id: number;
-  payroll_day: number;
+  jobId: number;
+  payrollDay: number;
 }
 
 export interface Transfer {
   id: number;
-  source_account_id: number;
-  destination_account_id: number;
-  transfer_amount: number;
-  transfer_title: string;
-  transfer_description: string;
-  transfer_begin_date: string;
-  transfer_end_date: string | null;
-  frequency_type: number;
-  frequency_type_variable: number;
-  frequency_day_of_month: number | null;
-  frequency_day_of_week: number | null;
-  frequency_week_of_month: number | null;
-  frequency_month_of_year: number | null;
-  next_date: string;
-  date_created: string;
-  date_modified: string;
+  sourceAccountId: number;
+  destinationAccountId: number;
+  amount: number;
+  title: string;
+  description: string;
+  dates: Dates;
+  frequency: Frequency;
+  nextDate: string;
+  dateCreated: string;
+  dateModified: string;
 }
 
 export interface PayrollTax {
   id: number;
-  job_id: number;
+  jobId: number;
   name: string;
   rate: number;
 }
 
 export interface GeneratedTransaction {
-  account_id: number;
-  current_balance: number;
+  accountId: number;
+  currentBalance: number;
   transactions: Transaction[];
 }

@@ -23,45 +23,49 @@ jest.mock("../../../context/FeedbackContext", () => ({
 describe("TransferEdit", () => {
   it("renders the component", async () => {
     const transfer: Transfer = {
-      source_account_id: 1,
-      destination_account_id: 2,
+      sourceAccountId: 1,
+      destinationAccountId: 2,
       id: 1,
-      transfer_title: "Test Transfer",
-      transfer_amount: 155.99,
-      transfer_description: "Test Description",
-      frequency_type: 2,
-      frequency_type_variable: 1,
-      frequency_day_of_month: null,
-      frequency_day_of_week: null,
-      frequency_week_of_month: null,
-      frequency_month_of_year: null,
-      transfer_begin_date: "2021-10-01",
-      transfer_end_date: null,
-      next_date: "2021-11-01",
-      date_created: "2021-10-01",
-      date_modified: "2021-10-01",
+      title: "Test Transfer",
+      amount: 155.99,
+      description: "Test Description",
+      frequency: {
+        type: 2,
+        typeVariable: 1,
+        dayOfMonth: null,
+        dayOfWeek: null,
+        weekOfMonth: null,
+        monthOfYear: null,
+      },
+      dates: {
+        beginDate: "2021-10-01",
+        endDate: null,
+      },
+      nextDate: "2021-11-01",
+      dateCreated: "2021-10-01",
+      dateModified: "2021-10-01",
     };
 
     const accounts: Account[] = [
       {
-        account_id: 2,
-        account_name: "Testing 2",
-        account_balance: 500,
-        date_created: "2023-10-10",
-        date_modified: "2023-10-10",
+        id: 2,
+        name: "Testing 2",
+        balance: 500,
+        dateCreated: "2023-10-10",
+        dateModified: "2023-10-10",
       },
       {
-        account_id: 3,
-        account_name: "Testing 3",
-        account_balance: 400,
-        date_created: "2023-10-10",
-        date_modified: "2023-10-10",
+        id: 3,
+        name: "Testing 3",
+        balance: 400,
+        dateCreated: "2023-10-10",
+        dateModified: "2023-10-10",
       },
     ];
 
     render(
       <TransferEdit
-        account_id={1}
+        accountId={1}
         transfers={transfer}
         setTransferModes={() => {}}
         accounts={accounts}

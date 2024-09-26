@@ -16,23 +16,27 @@ jest.mock("../../../context/FeedbackContext", () => ({
 describe("TransferDelete", () => {
   it("renders the component", () => {
     const transfer: Transfer = {
-      source_account_id: 1,
-      destination_account_id: 2,
+      sourceAccountId: 1,
+      destinationAccountId: 2,
       id: 1,
-      transfer_title: "Test Transfer",
-      transfer_amount: 155.99,
-      transfer_description: "Test Description",
-      frequency_type: 2,
-      frequency_type_variable: 1,
-      frequency_day_of_month: null,
-      frequency_day_of_week: null,
-      frequency_week_of_month: null,
-      frequency_month_of_year: null,
-      transfer_begin_date: "2021-10-01",
-      transfer_end_date: null,
-      next_date: "2021-11-01",
-      date_created: "2021-10-01",
-      date_modified: "2021-10-01",
+      title: "Test Transfer",
+      amount: 155.99,
+      description: "Test Description",
+      frequency: {
+        type: 2,
+        typeVariable: 1,
+        dayOfMonth: null,
+        dayOfWeek: null,
+        weekOfMonth: null,
+        monthOfYear: null,
+      },
+      dates: {
+        beginDate: "2021-10-01",
+        endDate: null,
+      },
+      nextDate: "2021-11-01",
+      dateCreated: "2021-10-01",
+      dateModified: "2021-10-01",
     };
 
     render(<TransferDelete transfer={transfer} setTransferModes={() => {}} />);

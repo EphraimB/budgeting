@@ -13,10 +13,10 @@ import LoanEdit from "./LoanEdit";
 import NewLoanForm from "./NewLoanForm";
 
 function LoansCards({
-  account_id,
+  accountId,
   loans,
 }: {
-  account_id: number;
+  accountId: number;
   loans: Loan[];
 }) {
   const [showLoanForm, setShowLoanForm] = useState(false);
@@ -28,7 +28,7 @@ function LoansCards({
         {showLoanForm && (
           <Grid key="new-loan" item>
             <NewLoanForm
-              account_id={account_id}
+              accountId={accountId}
               setShowLoanForm={setShowLoanForm}
             />
           </Grid>
@@ -41,7 +41,7 @@ function LoansCards({
                 <LoanDelete loan={loan} setLoanModes={setLoanModes} />
               ) : loanModes[loan.id] === "edit" ? (
                 <LoanEdit
-                  account_id={account_id}
+                  accountId={accountId}
                   loan={loan}
                   setLoanModes={setLoanModes}
                 />

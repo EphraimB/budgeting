@@ -1,17 +1,26 @@
-import { jest, describe, it, expect } from '@jest/globals';
+import { jest, describe, it, expect, beforeEach } from '@jest/globals';
 import {
     parseIntOrFallback,
     parseFloatOrFallback,
 } from '../../src/utils/helperFunctions';
-import { beforeEach } from '@jest/globals';
 
 /**
  *
  * @param poolResponses - Array of responses for the database client
+ * @param camelCaseResponse - Response of the toCamelCase function
+ * @param isTimeWithinRangeResponse - Either true or false for if the time is in range
+ * @param compareTimeslotsResponse - Response of what schedules would be inserted, deleted, or updated
  * Mock module with mock implementations for the database client and handleError
  */
 export const mockModule = (
     poolResponses: any[], // Array of responses for the database client
+    camelCaseResponse?: any,
+    isTimeWithinRangeResponse?: boolean,
+    compareTimeslotsResponse?: {
+        toInsert: any[];
+        toDelete: any[];
+        toUpdate: any[];
+    },
 ) => {
     const pool = jest.fn();
     const handleError = jest.fn();
@@ -23,10 +32,12 @@ export const mockModule = (
     });
 
     jest.mock('../../src/utils/helperFunctions.js', () => ({
+        toCamelCase: jest.fn(() => camelCaseResponse),
         handleError,
         parseIntOrFallback,
         parseFloatOrFallback,
-        nextTransactionFrequencyDate: jest.fn().mockReturnValue('2020-01-01'),
+        isTimeWithinRange: jest.fn(() => isTimeWithinRangeResponse),
+        compareTimeslots: jest.fn(() => compareTimeslotsResponse),
     }));
 
     let callCount = 0;
@@ -70,5 +81,49 @@ describe('Testing mockModule', () => {
 
         expect(rows).toEqual([{ id: 1 }]);
         expect(secondRow).toEqual([{ id: 2 }]);
+    });
+
+    it('should return the second parameter from mockModule for toCamelCase', async () => {
+        const poolResponses = [[{ id: 1 }], [{ id: 2 }]];
+
+        mockModule(poolResponses, [{ id: 3 }]);
+
+        const { toCamelCase } = require('../../src/utils/helperFunctions.js');
+
+        const retreivedRows = toCamelCase(); // Convert to camelCase
+
+        expect(retreivedRows).toEqual([{ id: 3 }]);
+    });
+
+    it('should return the third parameter for mockModule for isTimeWithinRange', async () => {
+        mockModule([], undefined, true);
+
+        const {
+            isTimeWithinRange,
+        } = require('../../src/utils/helperFunctions.js');
+
+        const expectedResponse = isTimeWithinRange();
+
+        expect(expectedResponse).toEqual(true);
+    });
+
+    it('should return the fourth parameter for mockModule for compareTimeslotsResponse', async () => {
+        mockModule([], undefined, undefined, {
+            toInsert: [{ id: 1 }],
+            toDelete: [],
+            toUpdate: [],
+        });
+
+        const {
+            compareTimeslots,
+        } = require('../../src/utils/helperFunctions.js');
+
+        const expectedResponse = compareTimeslots();
+
+        expect(expectedResponse).toEqual({
+            toInsert: [{ id: 1 }],
+            toDelete: [],
+            toUpdate: [],
+        });
     });
 });

@@ -18,7 +18,7 @@ describe("PayrollTaxActionsMenu", () => {
         open={open}
         handleClose={handleClose}
         setPayrollTaxModes={setPayrollTaxModes}
-        payroll_tax_id={1}
+        payrollTaxId={1}
       />
     );
 

@@ -108,14 +108,14 @@ const generateHourTicks = () => {
 
 function JobScheduleModal({
   job,
-  job_day_of_week,
-  day_of_week,
+  jobDayOfWeek,
+  dayOfWeek,
   open,
   setOpen,
 }: {
   job: Job;
-  job_day_of_week: JobSchedule[];
-  day_of_week: number;
+  jobDayOfWeek: JobSchedule[];
+  dayOfWeek: number;
   open: boolean;
   setOpen: (isOpen: boolean) => void;
 }) {
@@ -131,26 +131,24 @@ function JobScheduleModal({
 
   const onSave = (timeslots: Timeslot[]) => {
     try {
-      const updatedJobSchedule: JobSchedule[] = job.job_schedule
-        .filter((js) => js.day_of_week !== day_of_week) // Remove existing entries for the specified day
+      const updatedJobSchedule: JobSchedule[] = job.jobSchedule
+        .filter((js) => js.dayOfWeek !== dayOfWeek) // Remove existing entries for the specified day
         .concat(
           timeslots.map((slot) => ({
             // Add updated timeslots for the specified day
-            day_of_week,
-            start_time: slot.startTime,
-            end_time: slot.endTime,
-            job_id: job.id,
+            dayOfWeek,
+            startTime: slot.startTime,
+            endTime: slot.endTime,
+            jobId: job.id,
           }))
         );
 
       editJob(
         {
-          account_id: job.account_id,
+          accountId: job.accountId,
           name: job.name,
-          hourly_rate: job.hourly_rate,
-          vacation_days: job.vacation_days,
-          sick_days: job.sick_days,
-          job_schedule: updatedJobSchedule,
+          hourlyRate: job.hourlyRate,
+          jobSchedule: updatedJobSchedule,
         },
         job.id
       );
@@ -181,12 +179,12 @@ function JobScheduleModal({
         sx={{ width: "50%", bgcolor: "background.paper", p: 4 }}
       >
         <Typography variant="h6" component="h2" gutterBottom>
-          {days[day_of_week]}
+          {days[dayOfWeek]}
         </Typography>
 
         <JobDayTimeslots
-          job_schedule={job.job_schedule.filter(
-            (js) => js.day_of_week === day_of_week
+          jobSchedule={job.jobSchedule.filter(
+            (js) => js.dayOfWeek === dayOfWeek
           )}
           onSave={onSave}
           onClose={onclose}
@@ -203,7 +201,7 @@ function JobScheduleModal({
           }}
         >
           {generateHourTicks()}
-          {job_day_of_week.map((job, index) => (
+          {jobDayOfWeek.map((job, index) => (
             <JobScheduleBar key={index} job={job} index={index} />
           ))}
         </Box>

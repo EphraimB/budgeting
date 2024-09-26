@@ -12,7 +12,7 @@ import JobEdit from "./JobEdit";
 import NewJobForm from "./NewJobForm";
 import { Job } from "@/app/types/types";
 
-function JobCards({ jobs, account_id }: { jobs: Job[]; account_id: number }) {
+function JobCards({ jobs, accountId }: { jobs: Job[]; accountId: number }) {
   const [showJobForm, setShowJobForm] = useState(false);
   const [jobModes, setJobModes] = useState<Record<number, string>>({});
 
@@ -21,10 +21,7 @@ function JobCards({ jobs, account_id }: { jobs: Job[]; account_id: number }) {
       <Grid container spacing={2}>
         {showJobForm && (
           <Grid key="new-job" item>
-            <NewJobForm
-              setShowJobForm={setShowJobForm}
-              account_id={account_id}
-            />
+            <NewJobForm setShowJobForm={setShowJobForm} accountId={accountId} />
           </Grid>
         )}
 
@@ -37,13 +34,13 @@ function JobCards({ jobs, account_id }: { jobs: Job[]; account_id: number }) {
                 <JobEdit
                   job={job}
                   setJobModes={setJobModes}
-                  account_id={account_id}
+                  accountId={accountId}
                 />
               ) : (
                 <JobsView
                   job={job}
                   setJobModes={setJobModes}
-                  account_id={account_id}
+                  accountId={accountId}
                 />
               )}
             </Card>

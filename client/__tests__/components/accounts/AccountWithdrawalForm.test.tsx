@@ -8,9 +8,11 @@ describe("AccountWithdrawalForm", () => {
     render(
       <AccountWithdrawalForm
         account={{
-          account_id: 1,
-          account_name: "Test Account",
-          account_balance: 155.99,
+          id: 1,
+          name: "Test Account",
+          balance: 155.99,
+          dateCreated: "2020-01-01",
+          dateModified: "2020-01-01",
         }}
         setAccountModes={() => {}}
       />

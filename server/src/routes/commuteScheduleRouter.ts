@@ -2,117 +2,85 @@ import express, { type Router } from 'express';
 import { query, param, body } from 'express-validator';
 import {
     createCommuteSchedule,
-    createCommuteScheduleReturnObject,
     deleteCommuteSchedule,
-    deleteCommuteScheduleReturnObject,
     getCommuteSchedule,
+    getCommuteScheduleById,
     updateCommuteSchedule,
-    updateCommuteScheduleReturnObject,
 } from '../controllers/commuteScheduleController.js';
 import validateRequest from '../utils/validateRequest.js';
-import {
-    setQueries,
-    getCurrentBalance,
-    getTransactionsByAccount,
-    getExpensesByAccount,
-    getIncomeByAccount,
-    getLoansByAccount,
-    getPayrollsMiddleware,
-    getTransfersByAccount,
-    getCommuteExpensesByAccount,
-    getWishlistsByAccount,
-    updateWishlistCron,
-} from '../middleware/middleware.js';
-import generateTransactions from '../generation/generateTransactions.js';
 
 const router: Router = express.Router();
 
 router.get(
     '/',
     [
-        query('id')
-            .optional()
-            .isInt({ min: 1 })
-            .withMessage('ID must be a number'),
-        validateRequest,
-        query('account_id')
+        query('accountId')
             .optional()
             .isInt({ min: 1 })
             .withMessage('Account ID must be a number'),
+        validateRequest,
     ],
     getCommuteSchedule,
+);
+
+router.get(
+    '/:id',
+    [
+        param('id').isInt({ min: 1 }).withMessage('ID must be a number'),
+
+        query('accountId')
+            .optional()
+            .isInt({ min: 1 })
+            .withMessage('Account ID must be a number'),
+        validateRequest,
+    ],
+    getCommuteScheduleById,
 );
 
 router.post(
     '/',
     [
-        body('account_id')
+        body('accountId')
             .isInt({ min: 1 })
             .withMessage('Account ID must be a number'),
-        body('day_of_week')
+        body('dayOfWeek')
             .isInt({ min: 0, max: 6 })
             .withMessage('Day of week must be a number between 0 and 6'),
-        body('fare_detail_id')
+        body('fareDetailId')
             .isInt({ min: 1 })
             .withMessage('Fare detail ID must be a number'),
-        body('start_time')
+        body('startTime')
             .isTime({ hourFormat: 'hour24', mode: 'withSeconds' })
             .withMessage('Start time must be a time'),
-        body('end_time')
+        body('endTime')
             .isTime({ hourFormat: 'hour24', mode: 'withSeconds' })
             .withMessage('End time must be a time'),
         validateRequest,
     ],
     createCommuteSchedule,
-    setQueries,
-    getCurrentBalance,
-    getTransactionsByAccount,
-    getExpensesByAccount,
-    getIncomeByAccount,
-    getLoansByAccount,
-    getPayrollsMiddleware,
-    getTransfersByAccount,
-    getCommuteExpensesByAccount,
-    getWishlistsByAccount,
-    generateTransactions,
-    updateWishlistCron,
-    createCommuteScheduleReturnObject,
 );
 
 router.put(
     '/:id',
     [
-        body('account_id')
+        body('accountId')
             .isInt({ min: 1 })
             .withMessage('Account ID must be a number'),
-        body('day_of_week')
+        body('dayOfWeek')
             .isInt({ min: 0, max: 6 })
             .withMessage('Day of week must be a number between 0 and 6'),
-        body('fare_detail_id')
+        body('fareDetailId')
             .isInt({ min: 1 })
             .withMessage('Fare detail ID must be a number'),
-        body('start_time')
+        body('startTime')
             .isTime({ hourFormat: 'hour24', mode: 'withSeconds' })
             .withMessage('Start time must be a time'),
-        body('end_time')
+        body('endTime')
             .isTime({ hourFormat: 'hour24', mode: 'withSeconds' })
             .withMessage('End time must be a time'),
         validateRequest,
     ],
     updateCommuteSchedule,
-    setQueries,
-    getCurrentBalance,
-    getTransactionsByAccount,
-    getExpensesByAccount,
-    getIncomeByAccount,
-    getLoansByAccount,
-    getPayrollsMiddleware,
-    getTransfersByAccount,
-    getCommuteExpensesByAccount,
-    getWishlistsByAccount,
-    generateTransactions,
-    updateWishlistCron,
-    updateCommuteScheduleReturnObject,
 );
 
 router.delete(
@@ -122,19 +90,6 @@ router.delete(
         validateRequest,
     ],
     deleteCommuteSchedule,
-    setQueries,
-    getCurrentBalance,
-    getTransactionsByAccount,
-    getExpensesByAccount,
-    getIncomeByAccount,
-    getLoansByAccount,
-    getPayrollsMiddleware,
-    getTransfersByAccount,
-    getCommuteExpensesByAccount,
-    getWishlistsByAccount,
-    generateTransactions,
-    updateWishlistCron,
-    deleteCommuteScheduleReturnObject,
 );
 
 export default router;

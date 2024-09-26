@@ -14,7 +14,7 @@ describe("TransfersActionsMenu", () => {
   it("displays the menu when the button is clicked", async () => {
     render(
       <TransfersActionsMenu
-        transfer_id={1}
+        transferId={1}
         anchorEl={anchorEl}
         open={open}
         handleClose={handleClose}

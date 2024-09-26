@@ -2,6 +2,7 @@ import { jest } from '@jest/globals';
 import { beforeEach, afterEach, describe, it, expect } from '@jest/globals';
 import dayjs from 'dayjs';
 import mockDate from 'mockdate';
+import { Timeslots } from '../../src/types/types.js';
 
 // Define the type for the function that is being mocked
 type MyQueryFunction = (sql: string, params: any[]) => Promise<{ rows: any[] }>;
@@ -51,45 +52,6 @@ describe('handleError function', () => {
     });
 });
 
-describe('executeQuery function', () => {
-    it('should execute the given query with the provided params', async () => {
-        const { executeQuery } = await import(
-            '../../src/utils/helperFunctions'
-        );
-
-        const mockQuery = 'SELECT * FROM accounts WHERE id = $1';
-        const mockParams = [1];
-        const mockRows = [{ id: 1, name: 'John Doe' }];
-
-        const result = await executeQuery(mockQuery, mockParams);
-        expect(result).toEqual(mockRows);
-    });
-
-    it('should execute the given query with no params', async () => {
-        const { executeQuery } = await import(
-            '../../src/utils/helperFunctions'
-        );
-
-        const mockQuery = 'SELECT * FROM accounts';
-        const mockRows = [{ id: 1, name: 'John Doe' }];
-
-        const result = await executeQuery(mockQuery);
-        expect(result).toEqual(mockRows);
-    });
-
-    it('should throw an error if the query fails', async () => {
-        const { executeQuery } = await import(
-            '../../src/utils/helperFunctions'
-        );
-
-        const mockQuery = 'SELECT * FROM nonExistingTable';
-        const mockError = 'Error: Table does not exist';
-
-        await executeQuery(mockQuery, []);
-        await expect(executeQuery(mockQuery, [])).rejects.toThrow(mockError);
-    });
-});
-
 describe('parseOrFallback function', () => {
     it('should return the parsed input', async () => {
         const { parseIntOrFallback } = await import(
@@ -132,157 +94,91 @@ describe('parseOrFallback function', () => {
     });
 });
 
-describe('nextTransactionFrequencyDate function', () => {
-    it('should return the next transaction frequency date on a regular monthly', async () => {
-        const { nextTransactionFrequencyDate } = await import(
+describe('Compare timeslots', () => {
+    it('should detect if a timeslot needs inserting', async () => {
+        const currentTimeslots = [
+            {
+                id: 1,
+                fareDetailId: 1,
+                dayOfWeek: 0,
+                startTime: '00:00:00',
+                endTime: '05:00:00',
+            },
+        ];
+
+        const incomingTimeslots = [
+            {
+                id: 1,
+                fareDetailId: 1,
+                dayOfWeek: 0,
+                startTime: '00:00:00',
+                endTime: '05:00:00',
+            },
+            {
+                id: 2,
+                fareDetailId: 1,
+                dayOfWeek: 1,
+                startTime: '00:00:00',
+                endTime: '05:00:00',
+            },
+        ];
+
+        const { compareTimeslots } = await import(
             '../../src/utils/helperFunctions'
         );
 
-        const transaction = {
-            frequency_type: 2,
-            frequency_type_variable: 1,
-            begin_date: '2020-12-15',
-        };
+        // Call the function with the mock request and response
+        const result = compareTimeslots(currentTimeslots, incomingTimeslots);
 
-        const result = nextTransactionFrequencyDate(transaction);
-        expect(result).toEqual('2021-01-15T00:00:00-05:00');
+        // Assert
+        expect(result).toStrictEqual({
+            toInsert: [
+                {
+                    id: 2,
+                    fareDetailId: 1,
+                    dayOfWeek: 1,
+                    startTime: '00:00:00',
+                    endTime: '05:00:00',
+                },
+            ],
+            toDelete: [],
+            toUpdate: [],
+        });
     });
 
-    it('should return the next transaction frequency date on a regular weekly', async () => {
-        const { nextTransactionFrequencyDate } = await import(
+    it('should detect if a timeslot needs deleting', async () => {
+        const currentTimeslots: Timeslots[] = [
+            {
+                id: 1,
+                fareDetailId: 1,
+                dayOfWeek: 0,
+                startTime: '00:00:00',
+                endTime: '05:00:00',
+            },
+        ];
+
+        const incomingTimeslots: Timeslots[] = [];
+
+        const { compareTimeslots } = await import(
             '../../src/utils/helperFunctions'
         );
 
-        const transaction = {
-            frequency_type: 1,
-            frequency_type_variable: 1,
-            begin_date: '2020-12-15',
-        };
+        // Call the function with the mock request and response
+        const result = compareTimeslots(currentTimeslots, incomingTimeslots);
 
-        const result = nextTransactionFrequencyDate(transaction);
-        expect(result).toEqual('2020-12-22T00:00:00-05:00');
-    });
-
-    it('should return the next transaction frequency date on a regular daily', async () => {
-        const { nextTransactionFrequencyDate } = await import(
-            '../../src/utils/helperFunctions'
-        );
-
-        const transaction = {
-            frequency_type: 0,
-            frequency_type_variable: 1,
-            begin_date: '2020-12-15',
-        };
-
-        const result = nextTransactionFrequencyDate(transaction);
-        expect(result).toEqual('2020-12-16T00:00:00-05:00');
-    });
-
-    it('should return the next transaction frequency date on a daily every other day', async () => {
-        const { nextTransactionFrequencyDate } = await import(
-            '../../src/utils/helperFunctions'
-        );
-
-        const transaction = {
-            frequency_type: 0,
-            frequency_type_variable: 2,
-            begin_date: '2020-12-15',
-        };
-
-        const result = nextTransactionFrequencyDate(transaction);
-        expect(result).toEqual('2020-12-17T00:00:00-05:00');
-    });
-
-    it('should return the next transaction frequency date on a regular yearly', async () => {
-        const { nextTransactionFrequencyDate } = await import(
-            '../../src/utils/helperFunctions'
-        );
-
-        const transaction = {
-            frequency_type: 3,
-            frequency_type_variable: 1,
-            begin_date: '2020-12-15',
-        };
-
-        const result = nextTransactionFrequencyDate(transaction);
-        expect(result).toEqual('2021-12-15T00:00:00-05:00');
-    });
-
-    it('should return the next transaction frequency date on a weekly with a specific day', async () => {
-        const { nextTransactionFrequencyDate } = await import(
-            '../../src/utils/helperFunctions'
-        );
-
-        const transaction = {
-            frequency_type: 1,
-            frequency_type_variable: 1,
-            frequency_day_of_week: 3,
-            begin_date: '2020-12-15',
-        };
-
-        const result = nextTransactionFrequencyDate(transaction);
-        expect(result).toEqual('2020-12-23T00:00:00-05:00');
-    });
-
-    it('should return the next transaction frequency date on a weekly every other week', async () => {
-        const { nextTransactionFrequencyDate } = await import(
-            '../../src/utils/helperFunctions'
-        );
-
-        const transaction = {
-            frequency_type: 1,
-            frequency_type_variable: 2,
-            begin_date: '2020-12-15',
-        };
-
-        const result = nextTransactionFrequencyDate(transaction);
-        expect(result).toEqual('2020-12-29T00:00:00-05:00');
-    });
-
-    it('should return the next transaction frequency date on a yearly with a specific day and month', async () => {
-        const { nextTransactionFrequencyDate } = await import(
-            '../../src/utils/helperFunctions'
-        );
-
-        const transaction = {
-            frequency_type: 3,
-            frequency_type_variable: 1,
-            begin_date: '2020-12-15',
-            frequency_month_of_year: 10,
-            frequency_day_of_week: 3,
-        };
-
-        const result = nextTransactionFrequencyDate(transaction);
-        expect(result).toEqual('2021-11-17T00:00:00-05:00');
-    });
-
-    it('should return the begin date if it is in the future', async () => {
-        const { nextTransactionFrequencyDate } = await import(
-            '../../src/utils/helperFunctions'
-        );
-
-        const transaction = {
-            frequency_type: 2,
-            frequency_type_variable: 1,
-            begin_date: '2022-12-15',
-        };
-
-        const result = nextTransactionFrequencyDate(transaction);
-        expect(result).toEqual('2022-12-15');
-    });
-
-    it('should return null if the frequency type is invalid', async () => {
-        const { nextTransactionFrequencyDate } = await import(
-            '../../src/utils/helperFunctions'
-        );
-
-        const transaction = {
-            frequency_type: 4,
-            frequency_type_variable: 1,
-            begin_date: '2020-12-15',
-        };
-
-        const result = nextTransactionFrequencyDate(transaction);
-        expect(result).toBeNull();
+        // Assert
+        expect(result).toStrictEqual({
+            toInsert: [],
+            toDelete: [
+                {
+                    id: 1,
+                    fareDetailId: 1,
+                    dayOfWeek: 0,
+                    startTime: '00:00:00',
+                    endTime: '05:00:00',
+                },
+            ],
+            toUpdate: [],
+        });
     });
 });

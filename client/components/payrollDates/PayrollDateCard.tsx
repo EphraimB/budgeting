@@ -7,20 +7,20 @@ import { togglePayrollDate } from "../../services/actions/payrollDate";
 import { useAlert, useSnackbar } from "../../context/FeedbackContext";
 
 function PayrollDateCard({
-  job_id,
-  payroll_date,
+  jobId,
+  payrollDate,
   date,
 }: {
-  job_id: number;
-  payroll_date: PayrollDate | null;
+  jobId: number;
+  payrollDate: PayrollDate | null;
   date: number;
 }) {
   const { showSnackbar } = useSnackbar();
   const { showAlert } = useAlert();
 
   const data = {
-    job_id,
-    payroll_day: date,
+    jobId,
+    payrollDay: date,
   };
 
   const handleClick = async () => {
@@ -39,7 +39,7 @@ function PayrollDateCard({
       elevation={3} // Adds some shadow to the Paper component for better visibility
       sx={{
         p: 2, // Add some padding around the content
-        backgroundColor: payroll_date ? "green" : "white", // Change background color based on payroll_date
+        backgroundColor: payrollDate ? "green" : "white", // Change background color based on payroll_date
         position: "relative", // Needed for absolute positioning of the date
         display: "flex", // Use Flexbox for centering
         justifyContent: "center", // Center horizontally
@@ -61,7 +61,7 @@ function PayrollDateCard({
       </Box>
 
       {/* Show a "$" symbol in the middle if there is a payroll_date */}
-      {payroll_date && (
+      {payrollDate && (
         <Typography variant="h5" component="div">
           $
         </Typography>

@@ -9,7 +9,7 @@ describe("TaxView", () => {
 
   const payrollTax: PayrollTax = {
     id: 1,
-    job_id: 1,
+    jobId: 1,
     name: "Social Security",
     rate: 0.02,
   };

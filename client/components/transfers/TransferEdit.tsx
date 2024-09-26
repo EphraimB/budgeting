@@ -31,43 +31,39 @@ import { addTransfer, editTransfer } from "../../services/actions/transfer";
 dayjs.extend(utc);
 
 function TransferEdit({
-  account_id,
+  accountId,
   transfers,
   setTransferModes,
   accounts,
 }: {
-  account_id: number;
+  accountId: number;
   transfers: Transfer;
   setTransferModes: (transferModes: Record<number, string>) => void;
   accounts: Account[];
 }) {
-  const [destination_account_id, setDestinationAccountId] = useState(
-    transfers.destination_account_id || 0
+  const [destinationAccountId, setDestinationAccountId] = useState(
+    transfers.destinationAccountId || 0
   );
-  const [title, setTitle] = useState(transfers.transfer_title);
-  const [description, setDescription] = useState(
-    transfers.transfer_description
+  const [title, setTitle] = useState(transfers.title);
+  const [description, setDescription] = useState(transfers.description);
+  const [amount, setAmount] = useState(transfers.amount.toString());
+  const [frequencyType, setFrequencyType] = useState(transfers.frequency.type);
+  const [frequencyDayOfWeek, setFrequencyDayOfWeek] = useState(
+    transfers.frequency.dayOfWeek || -1
   );
-  const [amount, setAmount] = useState(transfers.transfer_amount.toString());
-  const [frequency_type, setFrequencyType] = useState(transfers.frequency_type);
-  const [frequency_day_of_week, setFrequencyDayOfWeek] = useState(
-    transfers.frequency_day_of_week || -1
+  const [frequencyWeekOfMonth, setFrequencyWeekOfMonth] = useState(
+    transfers.frequency.weekOfMonth || -1
   );
-  const [frequency_week_of_month, setFrequencyWeekOfMonth] = useState(
-    transfers.frequency_week_of_month || -1
+  const [frequencyMonthOfYear, setFrequencyMonthOfYear] = useState(
+    transfers.frequency.monthOfYear || -1
   );
-  const [frequency_month_of_year, setFrequencyMonthOfYear] = useState(
-    transfers.frequency_month_of_year || -1
+  const [frequencyTypeVariable, setFrequencyTypeVariable] = useState<number>(
+    transfers.frequency.typeVariable || 1
   );
-  const [frequency_type_variable, setFrequencyTypeVariable] = useState<number>(
-    transfers.frequency_type_variable || 1
-  );
-  const [begin_date, setBeginDate] = useState<string>(
-    transfers.transfer_begin_date
-  );
+  const [beginDate, setBeginDate] = useState<string>(transfers.dates.beginDate);
   const [endDateEnabled, setEndDateEnabled] = useState(false);
-  const [end_date, setEndDate] = useState<null | string>(
-    transfers.transfer_end_date
+  const [endDate, setEndDate] = useState<null | string>(
+    transfers.dates.endDate || null
   );
 
   const [titleError, setTitleError] = useState("");
@@ -89,25 +85,25 @@ function TransferEdit({
   };
 
   const data = {
-    source_account_id: account_id,
-    destination_account_id,
+    sourceAccountId: accountId,
+    destinationAccountId,
     title,
     description,
     amount: parseFloat(amount),
-    frequency_type,
-    frequency_day_of_week:
-      frequency_day_of_week === -1 ? null : frequency_day_of_week,
-    frequency_week_of_month:
-      frequency_week_of_month === -1 ? null : frequency_week_of_month,
-    frequency_month_of_year:
-      frequency_month_of_year === -1 ? null : frequency_month_of_year,
-    frequency_type_variable,
-    begin_date,
-    end_date,
+    frequency: {
+      type: frequencyType,
+      dayOfWeek: frequencyDayOfWeek === -1 ? null : frequencyDayOfWeek,
+      weekOfMonth: frequencyWeekOfMonth === -1 ? null : frequencyWeekOfMonth,
+      monthOfYear: frequencyMonthOfYear === -1 ? null : frequencyMonthOfYear,
+      dayOfMonth: null,
+      typeVariable: frequencyTypeVariable,
+    },
+    beginDate,
+    endDate,
   };
 
   const validateDestinationAccountId = () => {
-    if (destination_account_id === 0 || destination_account_id === account_id) {
+    if (destinationAccountId === 0 || destinationAccountId === accountId) {
       setTitleError(
         "Destination account can't be 0 or the same account as the source"
       );
@@ -162,7 +158,7 @@ function TransferEdit({
     ) {
       // Submit data
       try {
-        await editTransfer(data, account_id);
+        await editTransfer(data, accountId);
 
         // Show success message
         showSnackbar(`Transfer named "${title}" added successfully`);
@@ -273,14 +269,14 @@ function TransferEdit({
                 labelId="account-select-label"
                 label="Account"
                 variant="standard"
-                value={destination_account_id}
+                value={destinationAccountId}
                 onChange={(e) =>
                   setDestinationAccountId(e.target.value as number)
                 }
               >
                 {accounts.map((account: Account) => (
-                  <MenuItem key={account.account_id} value={account.account_id}>
-                    {account.account_name} - ${account.account_balance}
+                  <MenuItem key={account.id} value={account.id}>
+                    {account.name} - ${account.balance}
                   </MenuItem>
                 ))}
               </Select>
@@ -294,7 +290,7 @@ function TransferEdit({
                 labelId="frequency-select-label"
                 label="Frequency"
                 variant="standard"
-                value={frequency_type}
+                value={frequencyType}
                 onChange={(e) => setFrequencyType(e.target.value as number)}
               >
                 <MenuItem value={0}>Daily</MenuItem>
@@ -303,9 +299,9 @@ function TransferEdit({
                 <MenuItem value={3}>Yearly</MenuItem>
               </Select>
             </FormControl>
-            {(frequency_type === 1 ||
-              frequency_type === 2 ||
-              frequency_type === 3) && (
+            {(frequencyType === 1 ||
+              frequencyType === 2 ||
+              frequencyType === 3) && (
               <>
                 <br />
                 <br />
@@ -317,7 +313,7 @@ function TransferEdit({
                     labelId="frequency-day-of-week-select-label"
                     label="Frequency"
                     variant="standard"
-                    value={frequency_day_of_week}
+                    value={frequencyDayOfWeek}
                     onChange={(e) =>
                       setFrequencyDayOfWeek(e.target.value as number)
                     }
@@ -334,7 +330,7 @@ function TransferEdit({
                 </FormControl>
               </>
             )}
-            {(frequency_type === 2 || frequency_type === 3) && (
+            {(frequencyType === 2 || frequencyType === 3) && (
               <>
                 <br />
                 <br />
@@ -346,7 +342,7 @@ function TransferEdit({
                     labelId="frequency-week-of-month-select-label"
                     label="Frequency"
                     variant="standard"
-                    value={frequency_week_of_month}
+                    value={frequencyWeekOfMonth}
                     onChange={(e) =>
                       setFrequencyWeekOfMonth(e.target.value as number)
                     }
@@ -361,7 +357,7 @@ function TransferEdit({
                 </FormControl>
               </>
             )}
-            {frequency_type === 3 && (
+            {frequencyType === 3 && (
               <>
                 <br />
                 <br />
@@ -373,7 +369,7 @@ function TransferEdit({
                     labelId="frequency-month-of-year-select-label"
                     label="Frequency"
                     variant="standard"
-                    value={frequency_month_of_year}
+                    value={frequencyMonthOfYear}
                     onChange={(e) =>
                       setFrequencyMonthOfYear(e.target.value as number)
                     }
@@ -400,7 +396,7 @@ function TransferEdit({
             <TextField
               label="Frequency Type Variable"
               variant="standard"
-              value={frequency_type_variable}
+              value={frequencyTypeVariable}
               onChange={(e) =>
                 setFrequencyTypeVariable(e.target.value as unknown as number)
               }
@@ -411,7 +407,7 @@ function TransferEdit({
             <LocalizationProvider dateAdapter={AdapterDayjs}>
               <DateTimePicker
                 label="Transfer begin date"
-                value={dayjs.utc(begin_date).local()}
+                value={dayjs.utc(beginDate).local()}
                 onChange={(e: Dayjs | null) => {
                   const utcDate = e ? e.utc().format() : dayjs.utc().format();
                   setBeginDate(utcDate);
@@ -431,7 +427,7 @@ function TransferEdit({
               {endDateEnabled && (
                 <DateTimePicker
                   label="Transfer end date"
-                  value={dayjs.utc(end_date).local() || dayjs()}
+                  value={dayjs.utc(endDate).local() || dayjs()}
                   onChange={(e: Dayjs | null) => {
                     const utcDate = e ? e.utc().format() : dayjs.utc().format();
                     setEndDate(utcDate);
@@ -445,8 +441,7 @@ function TransferEdit({
               variant="contained"
               onClick={handleSubmit}
               disabled={
-                destination_account_id === 0 ||
-                destination_account_id === account_id
+                destinationAccountId === 0 || destinationAccountId === accountId
               }
             >
               Submit

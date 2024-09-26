@@ -1,7 +1,14 @@
 "use client";
 
 import React, { useState, useEffect, useRef } from "react";
-import { Expense, Loan, Tax, Transfer, Wishlist } from "@/app/types/types";
+import {
+  Account,
+  Expense,
+  Loan,
+  Tax,
+  Transfer,
+  Wishlist,
+} from "@/app/types/types";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
 import Typography from "@mui/material/Typography";
@@ -17,14 +24,16 @@ import {
 } from "../utils/helperFunctions";
 
 function DataManagementWidgets({
-  account_id,
+  accountId,
+  accounts,
   expenses,
   loans,
   wishlists,
   transfers,
   taxes,
 }: {
-  account_id: number;
+  accountId: number;
+  accounts: Account[];
   expenses: Expense[];
   loans: Loan[];
   wishlists: Wishlist[];
@@ -47,28 +56,28 @@ function DataManagementWidgets({
     {
       id: "transactions",
       title: "Transactions",
-      link: `/${account_id}/`,
+      link: `/${accountId}/`,
       content: "Click here to view transactions",
       selected: isSelected("transactions"),
     },
     {
       id: "jobs",
       title: "Jobs",
-      link: `/${account_id}/jobs`,
+      link: `/${accountId}/jobs`,
       content: "Click here to view your job info",
       selected: isSelected("jobs"),
     },
     {
       id: "taxes",
       title: "Taxes",
-      link: `/${account_id}/taxes`,
+      link: `/${accountId}/taxes`,
       content: `You have ${taxes.length} tax${taxes.length === 1 ? "" : "es"}`,
       selected: isSelected("taxes"),
     },
     {
       id: "expenses",
       title: "Expenses",
-      link: `/${account_id}/expenses`,
+      link: `/${accountId}/expenses`,
       content: `You have ${expenses.length} expense${
         expenses.length === 1 ? "" : "s"
       } with a total of $${calculateTotalWithSubsidies(expenses, taxes).toFixed(
@@ -79,7 +88,7 @@ function DataManagementWidgets({
     {
       id: "loans",
       title: "Loans",
-      link: `/${account_id}/loans`,
+      link: `/${accountId}/loans`,
       content: `You have ${loans.length} loan${
         loans.length === 1 ? "" : "s"
       } with a
@@ -96,7 +105,7 @@ function DataManagementWidgets({
     {
       id: "wishlists",
       title: "Wishlists",
-      link: `/${account_id}/wishlists`,
+      link: `/${accountId}/wishlists`,
       content: `${
         wishlists.length === 0
           ? "You have nothing on your wishlist"
@@ -104,18 +113,21 @@ function DataManagementWidgets({
       }`,
       selected: isSelected("wishlists"),
     },
-    {
+  ];
+
+  if (accounts.length > 1) {
+    widgets.push({
       id: "transfers",
       title: "Transfers",
-      link: `/${account_id}/transfers`,
+      link: `/${accountId}/transfers`,
       content: `${
         transfers.length === 0
           ? "You have no transfers"
           : `You have ${transfers.length} transfers.`
       }`,
       selected: isSelected("transfers"),
-    },
-  ];
+    });
+  }
 
   const selectedWidget =
     widgets.find((widget) => widget.selected) || widgets[0];

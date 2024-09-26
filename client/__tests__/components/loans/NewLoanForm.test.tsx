@@ -21,7 +21,7 @@ jest.mock("../../../context/FeedbackContext", () => ({
 
 describe("NewLoanForm", () => {
   it("renders the component", async () => {
-    render(<NewLoanForm account_id={1} setShowLoanForm={() => true} />);
+    render(<NewLoanForm accountId={1} setShowLoanForm={() => true} />);
 
     expect(screen.getByLabelText("close")).toBeInTheDocument();
     expect(screen.getByText("Add Loan - Step 1 of 5")).toBeInTheDocument();

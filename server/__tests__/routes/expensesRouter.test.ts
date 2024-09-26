@@ -4,7 +4,6 @@ import express, {
     type Express,
     type Request,
     type Response,
-    type NextFunction,
     type Router,
 } from 'express';
 import {
@@ -32,123 +31,22 @@ const createApp = async (): Promise<Express> => {
     return app;
 };
 
-const createFutureExpense = () => {
-    const dateInFuture = new Date();
-    dateInFuture.setDate(dateInFuture.getDate() + 7);
-
-    return {
-        account_id: 1,
-        amount: 100,
-        title: 'test',
-        description: 'test',
-        frequency_type: 1,
-        frequency_type_variable: 1,
-        frequency_day_of_week: 1,
-        frequency_week_of_month: 1,
-        frequency_day_of_month: 1,
-        frequency_month_of_year: 1,
-        subsidized: 0,
-        begin_date: dateInFuture.toISOString(),
-    };
-};
-
 beforeAll(() => {
-    jest.mock('../../src/middleware/middleware', () => ({
-        setQueries: jest.fn(
-            (req: Request, res: Response, next: NextFunction) => {
-                next();
-            },
-        ),
-        getCurrentBalance: jest.fn(
-            (req: Request, res: Response, next: NextFunction) => {
-                next();
-            },
-        ),
-        getTransactionsByAccount: jest.fn(
-            (req: Request, res: Response, next: NextFunction) => {
-                next();
-            },
-        ),
-        getIncomeByAccount: jest.fn(
-            (req: Request, res: Response, next: NextFunction) => {
-                next();
-            },
-        ),
-        getExpensesByAccount: jest.fn(
-            (req: Request, res: Response, next: NextFunction) => {
-                next();
-            },
-        ),
-        getLoansByAccount: jest.fn(
-            (req: Request, res: Response, next: NextFunction) => {
-                next();
-            },
-        ),
-        getPayrollsMiddleware: jest.fn(
-            (req: Request, res: Response, next: NextFunction) => {
-                next();
-            },
-        ),
-        getTransfersByAccount: jest.fn(
-            (req: Request, res: Response, next: NextFunction) => {
-                next();
-            },
-        ),
-        getCommuteExpensesByAccount: jest.fn(
-            (req: Request, res: Response, next: NextFunction) => {
-                next();
-            },
-        ),
-        getWishlistsByAccount: jest.fn(
-            (req: Request, res: Response, next: NextFunction) => {
-                next();
-            },
-        ),
-        updateWishlistCron: jest.fn(
-            (req: Request, res: Response, next: NextFunction) => {
-                next();
-            },
-        ),
-    }));
-
-    jest.mock('../../src/generation/generateTransactions', () => {
-        return jest.fn((req: Request, res: Response, next: NextFunction) => {
-            req.transactions = [];
-            next();
-        });
-    });
-
     jest.mock('../../src/controllers/expensesController', () => ({
-        getExpenses: jest.fn(
-            (req: Request, res: Response, next: NextFunction) =>
-                res.json({ message: 'success' }),
+        getExpenses: jest.fn((_: Request, res: Response) =>
+            res.json({ message: 'success' }),
         ),
-        createExpense: jest.fn(
-            (req: Request, res: Response, next: NextFunction) => {
-                next();
-            },
+        getExpensesById: jest.fn((_: Request, res: Response) =>
+            res.json({ message: 'success' }),
         ),
-        createExpenseReturnObject: jest.fn(
-            (req: Request, res: Response, next: NextFunction) =>
-                res.json({ message: 'success' }),
+        createExpense: jest.fn((_: Request, res: Response) =>
+            res.json({ message: 'success' }),
         ),
-        updateExpense: jest.fn(
-            (req: Request, res: Response, next: NextFunction) => {
-                next();
-            },
+        updateExpense: jest.fn((_: Request, res: Response) =>
+            res.json({ message: 'success' }),
         ),
-        updateExpenseReturnObject: jest.fn(
-            (req: Request, res: Response, next: NextFunction) =>
-                res.json({ message: 'success' }),
-        ),
-        deleteExpense: jest.fn(
-            (req: Request, res: Response, next: NextFunction) => {
-                next();
-            },
-        ),
-        deleteExpenseReturnObject: jest.fn(
-            (req: Request, res: Response, next: NextFunction) =>
-                res.json({ message: 'success' }),
+        deleteExpense: jest.fn((_: Request, res: Response) =>
+            res.json({ message: 'success' }),
         ),
     }));
 });
@@ -176,10 +74,10 @@ describe('GET /', () => {
     });
 });
 
-describe('GET / with id query', () => {
+describe('GET / with id param', () => {
     it('responds with json', async () => {
         const response: request.Response = await request(app)
-            .get('/?id=1')
+            .get('/1')
             .set('Accept', 'application/json')
             .expect('Content-Type', /json/);
 
@@ -194,7 +92,24 @@ describe('POST /', () => {
             .post('/')
             .set('Accept', 'application/json')
             .expect('Content-Type', /json/)
-            .send(createFutureExpense());
+            .send({
+                accountId: 1,
+                taxId: null,
+                amount: 100,
+                title: 'test',
+                description: 'test',
+                frequency: {
+                    type: 1,
+                    typeVariable: 1,
+                    dayOfWeek: 1,
+                    weekOfMonth: 1,
+                    dayOfMonth: 1,
+                    monthOfYear: 1,
+                },
+                subsidized: 0,
+                beginDate: '2020-01-01',
+                endDate: null,
+            });
 
         expect(response.status).toBe(200);
         expect(response.body).toEqual({ message: 'success' });
@@ -207,7 +122,24 @@ describe('PUT /:id', () => {
             .put('/1')
             .set('Accept', 'application/json')
             .expect('Content-Type', /json/)
-            .send(createFutureExpense());
+            .send({
+                accountId: 1,
+                taxId: null,
+                amount: 100,
+                title: 'test',
+                description: 'test',
+                frequency: {
+                    type: 1,
+                    typeVariable: 1,
+                    dayOfWeek: 1,
+                    weekOfMonth: 1,
+                    dayOfMonth: 1,
+                    monthOfYear: 1,
+                },
+                subsidized: 0,
+                beginDate: '2020-01-01',
+                endDate: null,
+            });
 
         expect(response.status).toBe(200);
         expect(response.body).toEqual({ message: 'success' });

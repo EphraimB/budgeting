@@ -13,7 +13,7 @@ describe("JobActionsMenu", () => {
         open={true}
         handleClose={() => {}}
         setJobModes={setJobModes}
-        job_id={1}
+        jobId={1}
       />
     );
 

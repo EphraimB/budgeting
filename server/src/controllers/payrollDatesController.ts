@@ -1,22 +1,7 @@
-import { type NextFunction, type Request, type Response } from 'express';
-import { payrollQueries } from '../models/queryData.js';
-import { handleError } from '../utils/helperFunctions.js';
-import { type PayrollDate } from '../types/types.js';
+import { type Request, type Response } from 'express';
+import { handleError, toCamelCase } from '../utils/helperFunctions.js';
 import { logger } from '../config/winston.js';
 import pool from '../config/db.js';
-
-/**
- *
- * @param payrollDate - Payroll date object
- * @returns - Payroll date object with parsed values
- */
-const payrollDatesParse = (
-    payrollDate: Record<string, string>,
-): PayrollDate => ({
-    id: parseInt(payrollDate.payroll_date_id),
-    job_id: parseInt(payrollDate.job_id),
-    payroll_day: parseInt(payrollDate.payroll_day),
-});
 
 /**
  *
@@ -28,7 +13,7 @@ export const getPayrollDates = async (
     request: Request,
     response: Response,
 ): Promise<void> => {
-    const { job_id, id } = request.query;
+    const { jobId } = request.query;
 
     const client = await pool.connect(); // Get a client from the pool
 
@@ -36,44 +21,84 @@ export const getPayrollDates = async (
         let query: string;
         let params: any[];
 
-        if (id && job_id) {
-            query = payrollQueries.getPayrollDatesByIdAndJobId;
-            params = [id, job_id];
-        } else if (id) {
-            query = payrollQueries.getPayrollDatesById;
-            params = [id];
-        } else if (job_id) {
-            query = payrollQueries.getPayrollDatesByJobId;
-            params = [job_id];
+        if (jobId) {
+            query = `
+                SELECT *
+                    FROM payroll_dates
+                    WHERE job_id = $1;
+            `;
+            params = [jobId];
         } else {
-            query = payrollQueries.getAllPayrollDates;
+            query = `
+                SELECT *
+                    FROM payroll_dates;
+            `;
             params = [];
         }
 
         const { rows } = await client.query(query, params);
 
-        if (id && rows.length === 0) {
+        const retreivedRows = toCamelCase(rows); // Convert to camelCase
+
+        response.status(200).json(retreivedRows);
+    } catch (error) {
+        logger.error(error); // Log the error on the server side
+        handleError(response, 'Error getting payroll dates');
+    } finally {
+        client.release(); // Release the client back to the pool
+    }
+};
+
+/**
+ *
+ * @param request - Request object
+ * @param response - Response object
+ * Sends a GET request to the database to retrieve all payroll dates
+ */
+export const getPayrollDatesById = async (
+    request: Request,
+    response: Response,
+): Promise<void> => {
+    const { id } = request.params;
+    const { jobId } = request.query;
+
+    const client = await pool.connect(); // Get a client from the pool
+
+    try {
+        let query: string;
+        let params: any[];
+
+        if (jobId) {
+            query = `
+                SELECT *
+                    FROM payroll_dates
+                    WHERE id = $1 AND job_id = $2
+            `;
+            params = [id, jobId];
+        } else {
+            query = `
+                SELECT *
+                FROM payroll_dates
+                WHERE id = $1
+            `;
+            params = [id];
+        }
+
+        const { rows } = await client.query(query, params);
+
+        if (rows.length === 0) {
             response.status(404).send('Payroll date not found');
             return;
         }
 
-        // Parse the data to correct format and return an object
-        const payrollDates: PayrollDate[] = rows.map((row) =>
-            payrollDatesParse(row),
-        );
+        const retreivedRow = toCamelCase(rows[0]); // Convert to camelCase
 
-        response.status(200).json(payrollDates);
+        response.status(200).json(retreivedRow);
     } catch (error) {
         logger.error(error); // Log the error on the server side
         handleError(
             response,
-            `Error getting ${
-                id
-                    ? 'payroll date'
-                    : job_id
-                    ? 'payroll dates for given job id'
-                    : 'payroll dates'
-            }`,
+            `Error getting payroll dates for job id of ${id}`,
         );
     } finally {
         client.release(); // Release the client back to the pool
@@ -84,64 +109,65 @@ export const getPayrollDates = async (
  *
  * @param request - Request object
  * @param response - Response object
- * @param next - Next function
  * Sends a POST request to the database to toggle a payroll date
  */
 export const togglePayrollDate = async (
     request: Request,
     response: Response,
-    next: NextFunction,
 ): Promise<void> => {
-    const { job_id, payroll_day } = request.body;
+    const { jobId, payrollDay } = request.body;
 
     const client = await pool.connect(); // Get a client from the pool
 
     try {
         const { rows } = await client.query(
-            payrollQueries.getPayrollDateByJobIdAndPayrollDay,
-            [job_id, payroll_day],
+            `
+                SELECT *
+                    FROM payroll_dates
+                    WHERE job_id = $1 AND payroll_day = $2
+            `,
+            [jobId, payrollDay],
         );
 
         await client.query('BEGIN;');
 
         if (rows.length > 0) {
-            await client.query(payrollQueries.deletePayrollDate, [
-                rows[0].payroll_date_id,
-            ]);
+            await client.query(
+                `
+                    DELETE FROM payroll_dates
+                        WHERE id = $1
+                `,
+                [rows[0].id],
+            );
         } else {
-            await client.query(payrollQueries.createPayrollDate, [
-                job_id,
-                payroll_day,
-            ]);
+            await client.query(
+                `
+                    INSERT INTO payroll_dates
+                        (job_id, payroll_day)
+                        VALUES ($1, $2)
+                `,
+                [jobId, payrollDay],
+            );
 
-            await client.query('SELECT process_payroll_for_job($1)', [job_id]);
+            await client.query('SELECT process_payroll_for_job($1)', [jobId]);
         }
 
         await client.query('COMMIT;');
 
-        next();
+        response
+            .status(201)
+            .json(
+                `Payroll day for ${payrollDay} toggled ${
+                    rows.length > 0 ? 'off' : 'on'
+                }`,
+            );
     } catch (error) {
         await client.query('ROLLBACK;');
 
         logger.error(error); // Log the error on the server side
-        handleError(
-            response,
-            `Error getting, creating, or updating payroll dates for the day of ${payroll_day} of job id of ${job_id}`,
-        );
+        handleError(response, 'Error toggling payroll date');
     } finally {
         client.release(); // Release the client back to the pool
-    }
-};
-
-export const togglePayrollDateReturnObject = async (
-    request: Request,
-    response: Response,
-): Promise<void> => {
-    try {
-        response.status(201).json('Payroll date toggled');
-    } catch (error) {
-        logger.error(error); // Log the error on the server side
-        handleError(response, 'Error toggling payroll date');
     }
 };
 
@@ -149,69 +175,39 @@ export const togglePayrollDateReturnObject = async (
  *
  * @param request - Request object
  * @param response - Response object
- * @param next - Next function
  * Sends a POST request to the database to create a new payroll date
  */
 export const createPayrollDate = async (
     request: Request,
     response: Response,
-    next: NextFunction,
 ): Promise<void> => {
-    const { job_id, payroll_day } = request.body;
+    const { jobId, payrollDay } = request.body;
 
     const client = await pool.connect(); // Get a client from the pool
 
     try {
         await client.query('BEGIN;');
 
-        const { rows } = await client.query(payrollQueries.createPayrollDate, [
-            job_id,
-            payroll_day,
-        ]);
+        const { rows } = await client.query(
+            `
+                INSERT INTO payroll_dates
+                    (job_id, payroll_day)
+                    VALUES ($1, $2)
+                    RETURNING *
+            `,
+            [jobId, payrollDay],
+        );
 
-        await client.query('SELECT process_payroll_for_job($1)', [job_id]);
+        await client.query('SELECT process_payroll_for_job($1)', [jobId]);
 
         await client.query('COMMIT;');
 
-        // Parse the data to correct format and return an object
-        const payrollDates: PayrollDate[] = rows.map((row) =>
-            payrollDatesParse(row),
-        );
+        const insertedRow = toCamelCase(rows[0]); // Convert to camelCase
 
-        request.payroll_date_id = payrollDates[0].id;
-
-        next();
+        response.status(201).json(insertedRow);
     } catch (error) {
         await client.query('ROLLBACK;');
 
-        logger.error(error); // Log the error on the server side
-        handleError(response, 'Error creating payroll date');
-    } finally {
-        client.release(); // Release the client back to the pool
-    }
-};
-
-export const createPayrollDateReturnObject = async (
-    request: Request,
-    response: Response,
-): Promise<void> => {
-    const { payroll_date_id } = request;
-
-    const client = await pool.connect(); // Get a client from the pool
-
-    try {
-        const { rows } = await client.query(
-            payrollQueries.getPayrollDatesById,
-            [payroll_date_id],
-        );
-
-        // Parse the data to correct format and return an object
-        const payrollDates: PayrollDate[] = rows.map((row) =>
-            payrollDatesParse(row),
-        );
-
-        response.status(201).json(payrollDates);
-    } catch (error) {
         logger.error(error); // Log the error on the server side
         handleError(response, 'Error creating payroll date');
     } finally {
@@ -223,22 +219,24 @@ export const createPayrollDateReturnObject = async (
  *
  * @param request - Request object
  * @param response - Response object
- * @param next - Next function
  * Sends a PUT request to the database to update a payroll date
  */
 export const updatePayrollDate = async (
     request: Request,
     response: Response,
-    next: NextFunction,
 ): Promise<void> => {
     const { id } = request.params;
-    const { job_id, payroll_day } = request.body;
+    const { jobId, payrollDay } = request.body;
 
     const client = await pool.connect(); // Get a client from the pool
 
     try {
         const { rows } = await client.query(
-            payrollQueries.getPayrollDatesById,
+            `
+                SELECT id
+                    FROM payroll_dates
+                    WHERE id = $1
+            `,
             [id],
         );
 
@@ -249,17 +247,24 @@ export const updatePayrollDate = async (
 
         await client.query('BEGIN;');
 
-        await client.query(payrollQueries.updatePayrollDate, [
-            job_id,
-            payroll_day,
-            id,
-        ]);
+        const { rows: updatePayrollDateResults } = await client.query(
+            `
+                UPDATE payroll_dates
+                    SET job_id = $1,
+                    payroll_day = $2
+                    WHERE id = $3
+                    RETURNING *
+            `,
+            [jobId, payrollDay, id],
+        );
 
-        await client.query('SELECT process_payroll_for_job($1)', [job_id]);
+        await client.query('SELECT process_payroll_for_job($1)', [jobId]);
 
         await client.query('COMMIT;');
 
-        next();
+        const updatedRow = toCamelCase(updatePayrollDateResults[0]); // Convert to camelCase
+
+        response.status(200).json(updatedRow);
     } catch (error) {
         await client.query('ROLLBACK;');
 
@@ -274,47 +279,11 @@ export const updatePayrollDate = async (
  *
  * @param request - Request object
  * @param response - Response object
- * Sends a PUT request to the database to update a payroll date
- */
-export const updatePayrollDateReturnObject = async (
-    request: Request,
-    response: Response,
-): Promise<void> => {
-    const { id } = request.params;
-
-    const client = await pool.connect(); // Get a client from the pool
-
-    try {
-        const { rows } = await client.query(
-            payrollQueries.getPayrollDatesById,
-            [id],
-        );
-
-        // Parse the data to correct format and return an object
-        const payrollDates: PayrollDate[] = rows.map((row) =>
-            payrollDatesParse(row),
-        );
-
-        response.status(200).json(payrollDates);
-    } catch (error) {
-        logger.error(error); // Log the error on the server side
-        handleError(response, 'Error updating payroll date');
-    } finally {
-        client.release(); // Release the client back to the pool
-    }
-};
-
-/**
- *
- * @param request - Request object
- * @param response - Response object
- * @param next - Next function
  * Sends a DELETE request to the database to delete a payroll date
  */
 export const deletePayrollDate = async (
     request: Request,
     response: Response,
-    next: NextFunction,
 ): Promise<void> => {
     const { id } = request.params;
 
@@ -322,7 +291,11 @@ export const deletePayrollDate = async (
 
     try {
         const { rows } = await client.query(
-            payrollQueries.getPayrollDatesById,
+            `
+                SELECT id, job_id
+                    FROM payroll_dates
+                    WHERE id = $1
+            `,
             [id],
         );
 
@@ -333,7 +306,13 @@ export const deletePayrollDate = async (
 
         await client.query('BEGIN;');
 
-        await client.query(payrollQueries.deletePayrollDate, [id]);
+        await client.query(
+            `
+                DELETE FROM payroll_dates
+                    WHERE id = $1
+            `,
+            [id],
+        );
 
         await client.query('SELECT process_payroll_for_job($1)', [
             rows[0].job_id,
@@ -341,7 +320,7 @@ export const deletePayrollDate = async (
 
         await client.query('COMMIT;');
 
-        next();
+        response.status(200).send('Successfully deleted payroll date');
     } catch (error) {
         await client.query('ROLLBACK;');
 
@@ -350,17 +329,4 @@ export const deletePayrollDate = async (
     } finally {
         client.release(); // Release the client back to the pool
     }
-};
-
-/**
- *
- * @param request - Request object
- * @param response - Response object
- * Sends a DELETE request to the database to delete a payroll date
- */
-export const deletePayrollDateReturnObject = async (
-    request: Request,
-    response: Response,
-): Promise<void> => {
-    response.status(200).send('Successfully deleted payroll date');
 };

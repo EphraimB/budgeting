@@ -12,7 +12,7 @@ function WishlistsActionsMenu({
   open,
   handleClose,
   setWishlistModes,
-  wishlist_id,
+  wishlistId,
 }: {
   anchorEl: HTMLElement | null;
   open: boolean;
@@ -20,13 +20,13 @@ function WishlistsActionsMenu({
   setWishlistModes: React.Dispatch<
     React.SetStateAction<Record<number, string>>
   >;
-  wishlist_id: number;
+  wishlistId: number;
 }) {
   const handleDelete = () => {
     setWishlistModes(
       (prevModes: React.SetStateAction<Record<number, string>>) => ({
         ...prevModes,
-        [wishlist_id]: "delete",
+        [wishlistId]: "delete",
       })
     );
 
@@ -37,7 +37,7 @@ function WishlistsActionsMenu({
     setWishlistModes(
       (prevModes: React.SetStateAction<Record<number, string>>) => ({
         ...prevModes,
-        [wishlist_id]: "edit",
+        [wishlistId]: "edit",
       })
     );
 

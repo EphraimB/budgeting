@@ -8,24 +8,22 @@ describe("JobsView", () => {
 
   const job = {
     id: 1,
-    account_id: 1,
+    accountId: 1,
     name: "Testing Inc.",
-    hourly_rate: 20,
-    vacation_days: 10,
-    sick_days: 5,
-    total_hours_per_week: 40,
-    job_schedule: [
+    hourlyRate: 20,
+    totalHoursPerWeek: 40,
+    jobSchedule: [
       {
-        job_id: 1,
-        day_of_week: 1,
-        start_time: "09:00:00",
-        end_time: "17:00:00",
+        jobId: 1,
+        dayOfWeek: 1,
+        startTime: "09:00:00",
+        endTime: "17:00:00",
       },
     ],
   };
 
   it("renders", () => {
-    render(<JobsView job={job} setJobModes={setJobModes} account_id={1} />);
+    render(<JobsView job={job} setJobModes={setJobModes} accountId={1} />);
 
     expect(screen.getByTestId("MoreVertIcon")).toBeInTheDocument();
     expect(screen.getByText("Testing Inc.")).toBeInTheDocument();

@@ -10,18 +10,18 @@ function LoanActionsMenu({
   open,
   handleClose,
   setLoanModes,
-  loan_id,
+  loanId,
 }: {
   anchorEl: HTMLElement | null;
   open: boolean;
   handleClose: () => void;
   setLoanModes: React.Dispatch<React.SetStateAction<Record<number, string>>>;
-  loan_id: number;
+  loanId: number;
 }) {
   const handleDelete = () => {
     setLoanModes((prevModes: React.SetStateAction<Record<number, string>>) => ({
       ...prevModes,
-      [loan_id]: "delete",
+      [loanId]: "delete",
     }));
 
     handleClose();
@@ -30,7 +30,7 @@ function LoanActionsMenu({
   const handleEdit = () => {
     setLoanModes((prevModes: React.SetStateAction<Record<number, string>>) => ({
       ...prevModes,
-      [loan_id]: "edit",
+      [loanId]: "edit",
     }));
 
     handleClose();

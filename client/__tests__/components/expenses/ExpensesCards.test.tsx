@@ -12,7 +12,7 @@ describe("ExpensesCards", () => {
   it("renders expense cards with provided expenses and taxes", () => {
     const account_id = 1;
 
-    render(<ExpensesCards account_id={account_id} expenses={[]} taxes={[]} />);
+    render(<ExpensesCards accountId={account_id} expenses={[]} taxes={[]} />);
 
     // Assert that the FAB with the AddIcon is rendered
     expect(screen.getByTestId("AddIcon")).toBeInTheDocument();

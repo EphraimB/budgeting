@@ -19,7 +19,7 @@ export async function addTax(tax: TaxRequest) {
   });
   const result = await response.json();
 
-  revalidatePath("/[account_id]", "page");
+  revalidatePath("/[accountId]", "page");
 
   return result;
 }
@@ -34,7 +34,7 @@ export async function editTax(tax: TaxRequest, id: number) {
   });
   const result = await response.json();
 
-  revalidatePath("/[account_id]", "page");
+  revalidatePath("/[accountId]", "page");
   return result;
 }
 
@@ -43,5 +43,5 @@ export async function deleteTax(id: number) {
     method: "DELETE",
   });
 
-  revalidatePath("/[account_id]", "page");
+  revalidatePath("/[accountId]", "page");
 }

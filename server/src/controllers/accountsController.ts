@@ -1,55 +1,103 @@
 import { type Request, type Response } from 'express';
-import { accountQueries } from '../models/queryData.js';
-import { handleError } from '../utils/helperFunctions.js';
-import { type Account } from '../types/types.js';
+import { handleError, toCamelCase } from '../utils/helperFunctions.js';
 import { logger } from '../config/winston.js';
 import pool from '../config/db.js';
 
 /**
  *
- * @param account - Account object to parse
- * @returns - Parsed account object
+ * @param request - Request object
+ * @param response - Response object
+ * Sends a response with all accounts
  */
-const parseAccounts = (account: Record<string, string>): Account => ({
-    account_id: parseInt(account.account_id),
-    account_name: account.account_name,
-    account_balance: parseFloat(account.account_balance),
-    date_created: account.date_created,
-    date_modified: account.date_modified,
-});
+export const getAccounts = async (
+    _: Request,
+    response: Response,
+): Promise<void> => {
+    const client = await pool.connect(); // Get a client from the pool
+
+    try {
+        const { rows } = await client.query(`
+            SELECT 
+                accounts.id,
+                accounts.name,
+                COALESCE(t.total_transaction_amount_after_tax, 0) AS balance,
+                accounts.date_created,
+                accounts.date_modified
+            FROM 
+                accounts
+            LEFT JOIN 
+                (SELECT 
+                account_id, 
+                SUM(amount + (amount * tax_rate)) AS total_transaction_amount_after_tax 
+                FROM 
+                transaction_history 
+                GROUP BY 
+                account_id) AS t ON accounts.id = t.account_id 
+            ORDER BY 
+                accounts.id ASC;
+            `);
+
+        const retreivedRows = toCamelCase(rows); // Convert to camelCase
+
+        response.status(200).json(retreivedRows);
+    } catch (error) {
+        logger.error(error); // Log the error on the server side
+        handleError(response, `Error getting accounts`);
+    } finally {
+        client.release(); // Release the client back to the pool
+    }
+};
 
 /**
  *
  * @param request - Request object
  * @param response - Response object
- * Sends a response with all accounts or a single account
+ * Sends a response with a single account
  */
-export const getAccounts = async (
+export const getAccountsById = async (
     request: Request,
     response: Response,
 ): Promise<void> => {
-    const { id } = request.query as { id?: string }; // Destructure id from query string
+    const { id } = request.params;
 
     const client = await pool.connect(); // Get a client from the pool
 
     try {
-        // Change the query based on the presence of id
-        const query: string = id
-            ? accountQueries.getAccount
-            : accountQueries.getAccounts;
-        const params = id ? [id] : [];
+        const { rows } = await client.query(
+            `
+            SELECT 
+                accounts.id,
+                accounts.name,
+                COALESCE(t.total_transaction_amount_after_tax, 0) AS balance,
+                accounts.date_created, 
+                accounts.date_modified
+            FROM 
+                accounts
+            LEFT JOIN 
+                (SELECT 
+                account_id, 
+                SUM(amount + (amount * tax_rate)) AS total_transaction_amount_after_tax 
+                FROM 
+                transaction_history 
+                GROUP BY 
+                account_id) AS t ON accounts.id = t.account_id 
+            WHERE 
+                accounts.id = $1;
+            `,
+            [id],
+        );
 
-        const { rows } = await client.query(query, params);
-
-        if (id && rows.length === 0) {
+        if (rows.length === 0) {
             response.status(404).send('Account not found');
             return;
         }
 
-        response.status(200).json(rows.map((row) => parseAccounts(row)));
+        const retreivedRow = toCamelCase(rows[0]); // Convert to camelCase
+
+        response.status(200).json(retreivedRow);
     } catch (error) {
         logger.error(error); // Log the error on the server side
-        handleError(response, `Error getting ${id ? 'account' : 'accounts'}`);
+        handleError(response, `Error getting account for id of ${id}`);
     } finally {
         client.release(); // Release the client back to the pool
     }
@@ -67,11 +115,19 @@ export const createAccount = async (request: Request, response: Response) => {
     const client = await pool.connect(); // Get a client from the pool
 
     try {
-        const { rows } = await client.query(accountQueries.createAccount, [
-            name,
-        ]);
-        const accounts = rows.map((account) => parseAccounts(account));
-        response.status(201).json(accounts);
+        const { rows } = await client.query(
+            `
+            INSERT INTO accounts
+                (name)
+                VALUES ($1)
+                RETURNING *
+        `,
+            [name],
+        );
+
+        const insertedRow = toCamelCase(rows[0]); // Convert to camelCase
+
+        response.status(201).json(insertedRow);
     } catch (error) {
         logger.error(error); // Log the error on the server side
         handleError(response, 'Error creating account');
@@ -90,14 +146,18 @@ export const updateAccount = async (
     request: Request,
     response: Response,
 ): Promise<void> => {
-    const id = parseInt(request.params.id);
+    const { id } = request.params;
     const { name } = request.body;
 
     const client = await pool.connect(); // Get a client from the pool
 
     try {
         const { rows: account } = await client.query(
-            accountQueries.getAccount,
+            `
+                SELECT id
+                    FROM accounts
+                    WHERE id = $1;
+            `,
             [id],
         );
 
@@ -106,14 +166,19 @@ export const updateAccount = async (
             return;
         }
 
-        const { rows } = await client.query(accountQueries.updateAccount, [
-            name,
-            id,
-        ]);
+        const { rows } = await client.query(
+            `
+            UPDATE accounts
+                SET name = $1
+                WHERE id = $2
+                RETURNING *
+            `,
+            [name, id],
+        );
 
-        const accounts = rows.map((account) => parseAccounts(account));
+        const updatedRow = toCamelCase(rows[0]); // Convert to camelCase
 
-        response.status(200).json(accounts);
+        response.status(200).json(updatedRow);
     } catch (error) {
         logger.error(error); // Log the error on the server side
         handleError(response, 'Error updating account');
@@ -132,13 +197,17 @@ export const deleteAccount = async (
     request: Request,
     response: Response,
 ): Promise<void> => {
-    const id = parseInt(request.params.id);
+    const { id } = request.params;
 
     const client = await pool.connect(); // Get a client from the pool
 
     try {
         const { rows: account } = await client.query(
-            accountQueries.getAccount,
+            `
+                SELECT id
+                    FROM accounts
+                    WHERE id = $1;
+            `,
             [id],
         );
 
@@ -147,11 +216,19 @@ export const deleteAccount = async (
             return;
         }
 
-        await client.query(accountQueries.deleteAccount, [id]);
+        await client.query(
+            `
+            DELETE FROM accounts
+                WHERE id = $1
+            `,
+            [id],
+        );
 
         response.status(200).send('Successfully deleted account');
     } catch (error) {
         logger.error(error); // Log the error on the server side
         handleError(response, 'Error deleting account');
+    } finally {
+        client.release(); // Release the client back to the pool
     }
 };

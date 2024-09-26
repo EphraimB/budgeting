@@ -23,7 +23,6 @@ jest.mock('../../src/crontab/determineCronValues.js', () => {
 // Mock request and response
 let mockRequest: any;
 let mockResponse: any;
-let mockNext: any;
 
 beforeEach(() => {
     mockRequest = {};
@@ -32,7 +31,6 @@ beforeEach(() => {
         json: jest.fn(),
         send: jest.fn(),
     };
-    mockNext = jest.fn();
 });
 
 afterEach(() => {
@@ -41,66 +39,38 @@ afterEach(() => {
 
 const commuteSchedule = [
     {
-        commute_schedule_id: 1,
-        account_id: 1,
-        day_of_week: 1,
-        commute_ticket_id: 1,
-        start_time: '08:00:00',
-        duration: 60,
-        pass: 'LIRR Peak',
-        fare_amount: 10.75,
-    },
-    {
-        commute_schedule_id: 2,
-        account_id: 1,
-        day_of_week: 1,
-        commute_ticket_id: 1,
-        start_time: '17:00:00',
-        duration: 60,
-        pass: 'LIRR Peak',
-        fare_amount: 10.75,
-    },
-    {
-        commute_schedule_id: 3,
-        account_id: 1,
-        day_of_week: 2,
-        commute_ticket_id: 1,
-        start_time: '08:00:00',
-        duration: 60,
-        pass: 'LIRR Peak',
-        fare_amount: 10.75,
-    },
-];
-
-const commuteScheduleResponse = [
-    {
-        day_of_week: 1,
-        passes: [
+        accountId: 1,
+        schedules: [
             {
-                commute_schedule_id: 1,
-                pass: 'LIRR Peak',
-                start_time: '08:00:00',
-                duration: 60,
-                fare_amount: 10.75,
+                dayOfWeek: 1,
+                passes: [
+                    {
+                        id: 1,
+                        pass: 'LIRR Peak',
+                        startTime: '08:00:00',
+                        endTime: 60,
+                        fare: 10.75,
+                    },
+                    {
+                        id: 2,
+                        pass: 'LIRR Peak',
+                        startTime: '17:00:00',
+                        endTime: 60,
+                        fare: 10.75,
+                    },
+                ],
             },
             {
-                commute_schedule_id: 2,
-                pass: 'LIRR Peak',
-                start_time: '17:00:00',
-                duration: 60,
-                fare_amount: 10.75,
-            },
-        ],
-    },
-    {
-        day_of_week: 2,
-        passes: [
-            {
-                commute_schedule_id: 3,
-                pass: 'LIRR Peak',
-                start_time: '08:00:00',
-                duration: 60,
-                fare_amount: 10.75,
+                dayOfWeek: 2,
+                passes: [
+                    {
+                        id: 3,
+                        pass: 'LIRR Peak',
+                        startTime: '08:00:00',
+                        endTime: 60,
+                        fare: 10.75,
+                    },
+                ],
             },
         ],
     },
@@ -109,24 +79,20 @@ const commuteScheduleResponse = [
 describe('GET /api/expenses/commute/schedule', () => {
     it('should respond with an array of schedules', async () => {
         // Arrange
-        mockModule([commuteSchedule]);
+        mockModule([commuteSchedule], commuteSchedule);
 
         const { getCommuteSchedule } = await import(
             '../../src/controllers/commuteScheduleController.js'
         );
 
-        mockRequest.query = { account_id: null, id: null };
+        mockRequest.query = { accountId: null };
 
         // Call the function with the mock request and response
         await getCommuteSchedule(mockRequest as Request, mockResponse);
 
-        const responseObj = {
-            schedule: commuteScheduleResponse,
-        };
-
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(200);
-        expect(mockResponse.json).toHaveBeenCalledWith(responseObj);
+        expect(mockResponse.json).toHaveBeenCalledWith(commuteSchedule);
     });
 
     it('should handle errors correctly', async () => {
@@ -137,7 +103,7 @@ describe('GET /api/expenses/commute/schedule', () => {
             '../../src/controllers/commuteScheduleController.js'
         );
 
-        mockRequest.query = { account_id: null, id: null };
+        mockRequest.query = { accountId: null };
 
         // Act
         await getCommuteSchedule(mockRequest as Request, mockResponse).catch(
@@ -151,29 +117,30 @@ describe('GET /api/expenses/commute/schedule', () => {
         );
     });
 
-    it('should respond with an array of schedules with an account_id', async () => {
+    it('should respond with an array of schedules with an account id', async () => {
         // Arrange
-        mockModule([commuteSchedule.filter((s) => s.account_id === 1)]);
+        mockModule(
+            [commuteSchedule.filter((s) => s.accountId === 1)],
+            commuteSchedule.filter((s) => s.accountId === 1),
+        );
 
         const { getCommuteSchedule } = await import(
             '../../src/controllers/commuteScheduleController.js'
         );
 
-        mockRequest.query = { account_id: 1, id: null };
+        mockRequest.query = { accountId: 1 };
 
         // Call the function with the mock request and response
         await getCommuteSchedule(mockRequest as Request, mockResponse);
 
-        const responseObj = {
-            schedule: commuteScheduleResponse,
-        };
-
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(200);
-        expect(mockResponse.json).toHaveBeenCalledWith(responseObj);
+        expect(mockResponse.json).toHaveBeenCalledWith(
+            commuteSchedule.filter((s) => s.accountId === 1),
+        );
     });
 
-    it('should handle errors correctly with an account_id', async () => {
+    it('should handle errors correctly with an account id', async () => {
         // Arrange
         mockModule([]);
 
@@ -181,7 +148,7 @@ describe('GET /api/expenses/commute/schedule', () => {
             '../../src/controllers/commuteScheduleController.js'
         );
 
-        mockRequest.query = { account_id: 1, id: null };
+        mockRequest.query = { accountId: 1 };
 
         // Act
         await getCommuteSchedule(mockRequest as Request, mockResponse).catch(
@@ -189,84 +156,90 @@ describe('GET /api/expenses/commute/schedule', () => {
                 // Assert
                 expect(mockResponse.status).toHaveBeenCalledWith(400);
                 expect(mockResponse.json).toHaveBeenCalledWith({
-                    message: 'Error getting schedule for given account_id',
+                    message: 'Error getting schedule for given account id',
                 });
             },
         );
     });
+});
 
+describe('GET /api/expenses/commute/schedule/:id', () => {
     it('should respond with an array of schedules with an id', async () => {
-        // Arrange
-        mockModule([
-            commuteSchedule.filter((s) => s.commute_schedule_id === 1),
-        ]);
+        const filteredCommuteSchedule = [
+            {
+                accountId: 1,
+                schedules: [
+                    {
+                        dayOfWeek: 1,
+                        passes: [
+                            {
+                                id: 1,
+                                pass: 'LIRR Peak',
+                                startTime: '08:00:00',
+                                endTime: 60,
+                                fare: 10.75,
+                            },
+                        ],
+                    },
+                ],
+            },
+        ];
 
-        const { getCommuteSchedule } = await import(
+        // Arrange
+        mockModule([filteredCommuteSchedule], filteredCommuteSchedule);
+
+        const { getCommuteScheduleById } = await import(
             '../../src/controllers/commuteScheduleController.js'
         );
 
-        mockRequest.query = { account_id: null, id: 1 };
+        mockRequest.params = { id: 1 };
+        mockRequest.query = { accountId: null };
 
         // Call the function with the mock request and response
-        await getCommuteSchedule(mockRequest as Request, mockResponse);
-
-        const responseObj = {
-            schedule: [
-                {
-                    day_of_week: 1,
-                    passes: [
-                        {
-                            commute_schedule_id: 1,
-                            start_time: '08:00:00',
-                            duration: 60,
-                            pass: 'LIRR Peak',
-                            fare_amount: 10.75,
-                        },
-                    ],
-                },
-            ],
-        };
+        await getCommuteScheduleById(mockRequest as Request, mockResponse);
 
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(200);
-        expect(mockResponse.json).toHaveBeenCalledWith(responseObj);
+        expect(mockResponse.json).toHaveBeenCalledWith(filteredCommuteSchedule);
     });
 
     it('should handle errors correctly with an id', async () => {
         // Arrange
-        const errorMessage = 'Error getting schedule for given id';
         mockModule([]);
 
-        const { getCommuteSchedule } = await import(
+        const { getCommuteScheduleById } = await import(
             '../../src/controllers/commuteScheduleController.js'
         );
 
-        mockRequest.query = { account_id: null, id: 1 };
+        mockRequest.params = { id: 1 };
+        mockRequest.query = { accountId: null };
 
         // Act
-        await getCommuteSchedule(mockRequest as Request, mockResponse).catch(
-            () => {
-                // Assert
-                expect(mockResponse.status).toHaveBeenCalledWith(400);
-                expect(mockResponse.json).toHaveBeenCalledWith({
-                    message: 'Error getting schedule for given id',
-                });
-            },
-        );
+        await getCommuteScheduleById(
+            mockRequest as Request,
+            mockResponse,
+        ).catch(() => {
+            // Assert
+            expect(mockResponse.status).toHaveBeenCalledWith(400);
+            expect(mockResponse.json).toHaveBeenCalledWith({
+                message: 'Error getting schedule for given id',
+            });
+        });
     });
 
     it('should respond with a 404 error message when the schedule does not exist', async () => {
         // Arrange
         mockModule([[]]);
 
-        const { getCommuteSchedule } = await import(
+        const { getCommuteScheduleById } = await import(
             '../../src/controllers/commuteScheduleController.js'
         );
 
-        mockRequest.query = { account_id: 3, id: 3 };
+        mockRequest.params = { id: 3 };
+        mockRequest.query = { accountId: null };
 
         // Act
-        await getCommuteSchedule(mockRequest as Request, mockResponse);
+        await getCommuteScheduleById(mockRequest as Request, mockResponse);
 
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(404);
@@ -275,140 +248,72 @@ describe('GET /api/expenses/commute/schedule', () => {
 });
 
 describe('POST /api/expenses/commute/schedule', () => {
-    it('should call next', async () => {
-        const newSchedule = [
-            {
-                commute_schedule_id: 1,
-                account_id: 1,
-                day_of_week: 1,
-                commute_ticket_id: 1,
-                start_time: '08:00:00',
-                duration: 60,
-                commute_system_id: 1,
-                fare_detail_id: 1,
-                fare_amount: 10.75,
-                pass: 'LIRR Peak',
-                timed_pass_duration: null,
-                date_created: '2021-01-01',
-                date_modified: '2021-01-01',
-            },
-        ];
-
-        const fareDetail = {
-            fare_amount: 10.75,
-            system_name: 'LIRR',
-            fare_type: 'Peak',
-        };
-
+    it('should respond with the created commute schedule when system is opened and is in the timeframe for the fare type', async () => {
         // Arrange
-        mockModule([
-            [],
-            [{ fare_amount: 10.75 }],
-            [fareDetail],
+        mockModule(
             [
-                {
-                    day_of_week: 1,
-                    start_time: '08:00:00',
-                    end_time: '09:00:00',
-                },
+                [],
+                [{ id: 1, fare: 2.9, alternate_fare_detail_id: null }],
+                [{ id: 1, fare: 2.9, alternate_fare_detail_id: null }],
+                [
+                    {
+                        day_of_week: 1,
+                        start_time: '08:00:00',
+                        end_time: '10:00:00',
+                    },
+                ],
+                [],
+                [],
+                [],
+                [{ id: 1, unique_id: 'bp78pbbp98' }],
+                [
+                    {
+                        id: 1,
+                        commute_system_id: 1,
+                        fare_detail_id: 1,
+                        account_id: 1,
+                        cron_job_id: 1,
+                        day_of_week: 1,
+                        start_time: '08:00:00',
+                        end_time: '10:00:00',
+                    },
+                ],
+                [],
+                [
+                    {
+                        id: 1,
+                        commute_system_id: 1,
+                        account_id: 1,
+                        cron_job_id: 1,
+                        fare_detail_id: 1,
+                        day_of_week: 1,
+                        pass: 'OMNY regular',
+                        start_time: '08:00:00',
+                        end_time: '10:00:00',
+                        duration: null,
+                        day_start: null,
+                        fare: 2.9,
+                    },
+                ],
             ],
-            [],
-            newSchedule,
-            commuteSchedule,
-            [],
-            [],
-            [{ cron_job_id: 1, unique_id: '123' }],
-            [],
-        ]);
+            undefined,
+            true,
+        );
 
         const { createCommuteSchedule } = await import(
             '../../src/controllers/commuteScheduleController.js'
         );
 
-        mockRequest.body = newSchedule[0];
-
-        // Act
-        await createCommuteSchedule(
-            mockRequest as Request,
-            mockResponse,
-            mockNext,
-        );
-
-        // Assert
-        expect(mockNext).toHaveBeenCalled();
-    });
-
-    it('should respond with a 400 error when schedule overlaps', async () => {
-        const newSchedule = {
-            commute_schedule_id: 1,
-            account_id: 1,
-            day_of_week: 1,
-            fare_detail_id: 1,
-            start_time: '08:00:00',
-            duration: 60,
+        mockRequest.body = {
+            accountId: 1,
+            dayOfWeek: 1,
+            fareDetailId: 1,
+            startTime: '08:00:00',
+            endTime: '10:00:00',
         };
 
-        // Arrange
-        mockModule([
-            [{ commute_schedule_id: 1 }],
-            undefined,
-            [newSchedule],
-            [{ fare_amount: 10.75, system_name: 'LIRR', fare_type: 'Peak' }],
-            [{ cron_job_id: 1, unique_id: '123' }],
-            [],
-        ]);
-
-        const { createCommuteSchedule } = await import(
-            '../../src/controllers/commuteScheduleController.js'
-        );
-
-        mockRequest.body = newSchedule;
-
         // Act
-        await createCommuteSchedule(
-            mockRequest as Request,
-            mockResponse,
-            mockNext,
-        );
-
-        // Assert
-        expect(mockResponse.status).toHaveBeenCalledWith(400);
-        expect(mockResponse.send).toHaveBeenCalledWith(
-            'A schedule with the provided day and time already exists',
-        );
-    });
-
-    it('should respond with the new schedule', async () => {
-        const newSchedule = [
-            {
-                commute_schedule_id: 1,
-                commute_system_id: 1,
-                account_id: 1,
-                day_of_week: 1,
-                fare_detail_id: 1,
-                start_time: '08:00:00',
-                end_time: '10:00:00',
-                duration: 60,
-                fare_amount: 10.75,
-                pass: 'LIRR Peak',
-                date_created: '2021-01-01',
-                date_modified: '2021-01-01',
-            },
-        ];
-
-        mockModule([newSchedule]);
-
-        const { createCommuteScheduleReturnObject } = await import(
-            '../../src/controllers/commuteScheduleController.js'
-        );
-
-        mockRequest = { commute_schedule_id: 1 };
-        mockRequest.alerts = [];
-
-        await createCommuteScheduleReturnObject(
-            mockRequest as Request,
-            mockResponse,
-        );
+        await createCommuteSchedule(mockRequest as Request, mockResponse);
 
         const responseObj = {
             schedule: [
@@ -416,15 +321,15 @@ describe('POST /api/expenses/commute/schedule', () => {
                     id: 1,
                     commute_system_id: 1,
                     account_id: 1,
-                    day_of_week: 1,
+                    cron_job_id: 1,
                     fare_detail_id: 1,
+                    day_of_week: 1,
+                    pass: 'OMNY regular',
                     start_time: '08:00:00',
                     end_time: '10:00:00',
-                    duration: 60,
-                    fare_amount: 10.75,
-                    pass: 'LIRR Peak',
-                    date_created: '2021-01-01',
-                    date_modified: '2021-01-01',
+                    duration: null,
+                    day_start: null,
+                    fare: 2.9,
                 },
             ],
             alerts: [],
@@ -435,104 +340,267 @@ describe('POST /api/expenses/commute/schedule', () => {
         expect(mockResponse.json).toHaveBeenCalledWith(responseObj);
     });
 
-    it('should handle errors correctly', async () => {
+    it('should respond with the created commute schedule stepped up when system is opened and is in the timeframe for the fare type', async () => {
         // Arrange
-        mockModule([]);
+        mockModule(
+            [
+                [],
+                [{ id: 1, fare: 9.75, alternate_fare_detail_id: 1 }],
+                [{ id: 1, fare: 9.75, alternate_fare_detail_id: 1 }],
+                [
+                    {
+                        day_of_week: 1,
+                        start_time: '08:00:00',
+                        end_time: '10:00:00',
+                    },
+                ],
+                [{ id: 1, fare: 13, alternate_fare_detail_id: null }],
+                [],
+                [],
+                [],
+                [{ id: 1, unique_id: 'bp78pbbp98' }],
+                [
+                    {
+                        id: 1,
+                        commute_system_id: 1,
+                        fare_detail_id: 1,
+                        account_id: 1,
+                        cron_job_id: 1,
+                        day_of_week: 1,
+                        start_time: '08:00:00',
+                        end_time: '10:00:00',
+                    },
+                ],
+                [],
+                [
+                    {
+                        id: 1,
+                        commute_system_id: 1,
+                        account_id: 1,
+                        cron_job_id: 1,
+                        fare_detail_id: 1,
+                        day_of_week: 1,
+                        pass: 'LIRR peak',
+                        start_time: '08:00:00',
+                        end_time: '10:00:00',
+                        duration: null,
+                        day_start: null,
+                        fare: 13,
+                    },
+                ],
+            ],
+            undefined,
+            false,
+        );
 
-        const { createCommuteScheduleReturnObject } = await import(
+        const { createCommuteSchedule } = await import(
             '../../src/controllers/commuteScheduleController.js'
         );
 
-        mockRequest = { commute_schedule_id: 1 };
+        mockRequest.body = {
+            accountId: 1,
+            dayOfWeek: 1,
+            fareDetailId: 1,
+            startTime: '10:00:00',
+            endTime: '12:00:00',
+        };
 
         // Act
-        await createCommuteScheduleReturnObject(
-            mockRequest as Request,
-            mockResponse,
-        ).catch(() => {
-            // Assert
-            expect(mockResponse.status).toHaveBeenCalledWith(400);
-            expect(mockResponse.json).toHaveBeenCalledWith({
-                message: 'Error getting commute schedule',
-            });
-        });
+        await createCommuteSchedule(mockRequest as Request, mockResponse);
+
+        const responseObj = {
+            schedule: [
+                {
+                    id: 1,
+                    commute_system_id: 1,
+                    account_id: 1,
+                    cron_job_id: 1,
+                    fare_detail_id: 1,
+                    day_of_week: 1,
+                    pass: 'LIRR peak',
+                    start_time: '08:00:00',
+                    end_time: '10:00:00',
+                    duration: null,
+                    day_start: null,
+                    fare: 13,
+                },
+            ],
+            alerts: [
+                {
+                    message: 'fare automatically stepped up to 13',
+                },
+            ],
+        };
+
+        // Assert
+        expect(mockResponse.status).toHaveBeenCalledWith(201);
+        expect(mockResponse.json).toHaveBeenCalledWith(responseObj);
+    });
+
+    it('should respond with the created commute schedule when system is closed and is in the timeframe for the fare type', async () => {
+        // Arrange
+        mockModule([
+            [],
+            [{ id: 1, fare: 2.9, alternate_fare_detail_id: null }],
+            [{ id: 1, fare: 2.9, alternate_fare_detail_id: null }],
+            [{ day_of_week: 1, start_time: '08:00:00', end_time: '10:00:00' }],
+        ]);
+
+        const { createCommuteSchedule } = await import(
+            '../../src/controllers/commuteScheduleController.js'
+        );
+
+        mockRequest.body = {
+            accountId: 1,
+            dayOfWeek: 2,
+            fareDetailId: 1,
+            startTime: '08:00:00',
+            endTime: '10:00:00',
+        };
+
+        // Act
+        await createCommuteSchedule(mockRequest as Request, mockResponse);
+
+        // Assert
+        expect(mockResponse.status).toHaveBeenCalledWith(400);
+        expect(mockResponse.send).toHaveBeenCalledWith(
+            'System is closed for the given time',
+        );
+    });
+
+    it('should respond with a 400 error when schedule overlaps', async () => {
+        // Arrange
+        mockModule([[{ id: 1 }]]);
+
+        const { createCommuteSchedule } = await import(
+            '../../src/controllers/commuteScheduleController.js'
+        );
+
+        mockRequest.body = {
+            accountId: 1,
+            dayOfWeek: 1,
+            fareDetailId: 1,
+            startTime: '08:00:00',
+            endTime: '10:00:00',
+        };
+
+        // Act
+        await createCommuteSchedule(mockRequest as Request, mockResponse);
+
+        // Assert
+        expect(mockResponse.status).toHaveBeenCalledWith(400);
+        expect(mockResponse.send).toHaveBeenCalledWith(
+            'A schedule with the provided day and time already exists',
+        );
     });
 });
 
 describe('PUT /api/expenses/commute/schedule/:id', () => {
-    it('should call next', async () => {
-        const newSchedule = {
-            commute_schedule_id: 1,
-            account_id: 1,
-            day_of_week: 1,
-            fare_detail_id: 1,
-            start_time: '08:00:00',
-            duration: 60,
-        };
-
+    it('should respond with the updated commute schedule', async () => {
         // Arrange
-        mockModule([
-            [newSchedule],
-            [],
-            [{ fare_amount: 10.75, system_name: 'LIRR', fare_type: 'Peak' }],
-            [{ fare_amount: 10.75, system_name: 'LIRR', fare_type: 'Peak' }],
-            [{ day_of_week: 1, start_time: '08:00:00', end_time: '09:00:00' }],
-            [{ cron_job_id: 1, unique_id: '123' }],
-            [],
-            [],
-        ]);
+        mockModule(
+            [
+                [{ id: 1 }],
+                [],
+                [{ id: 1, fare: 2.9, alternate_fare_id: null }],
+                [{ id: 1, fare: 2.9, alternate_fare_id: null }],
+                [
+                    {
+                        day_of_week: 1,
+                        start_time: '08:00:00',
+                        end_time: '10:00:00',
+                    },
+                ],
+                [{ id: 1, unique_id: 'f78ocv3c83' }],
+                [],
+                [],
+                [],
+                [],
+                [],
+                [],
+                [],
+                [
+                    {
+                        id: 1,
+                        commute_system_id: 1,
+                        account_id: 1,
+                        cron_job_id: 1,
+                        fare_detail_id: 1,
+                        day_of_week: 1,
+                        pass: 'OMNY regular',
+                        start_time: '08:00:00',
+                        end_time: '10:00:00',
+                        duration: null,
+                        day_start: null,
+                        fare: 2.9,
+                    },
+                ],
+            ],
+            undefined,
+            true,
+        );
 
         const { updateCommuteSchedule } = await import(
             '../../src/controllers/commuteScheduleController.js'
         );
 
         mockRequest.params = { id: 1 };
-        mockRequest.body = newSchedule;
+        mockRequest.body = {
+            accountId: 1,
+            dayOfWeek: 1,
+            fareDetailId: 1,
+            startTime: '08:00:00',
+            endTime: '10:00:00',
+        };
 
         // Act
-        await updateCommuteSchedule(
-            mockRequest as Request,
-            mockResponse,
-            mockNext,
-        );
+        await updateCommuteSchedule(mockRequest as Request, mockResponse);
 
         // Assert
-        expect(mockNext).toHaveBeenCalled();
+        const responseObj = {
+            schedule: [
+                {
+                    id: 1,
+                    commute_system_id: 1,
+                    account_id: 1,
+                    cron_job_id: 1,
+                    fare_detail_id: 1,
+                    day_of_week: 1,
+                    pass: 'OMNY regular',
+                    start_time: '08:00:00',
+                    end_time: '10:00:00',
+                    duration: null,
+                    day_start: null,
+                    fare: 2.9,
+                },
+            ],
+            alerts: [],
+        };
+
+        // Assert
+        expect(mockResponse.status).toHaveBeenCalledWith(200);
+        expect(mockResponse.json).toHaveBeenCalledWith(responseObj);
     });
 
     it('should respond with a 400 error when schedule overlaps', async () => {
-        const newSchedule = {
-            commute_schedule_id: 1,
-            account_id: 1,
-            day_of_week: 1,
-            fare_detail_id: 1,
-            start_time: '08:00:00',
-            duration: 60,
-        };
-
         // Arrange
-        mockModule([
-            [{ commute_schedule_id: 1 }],
-            [newSchedule],
-            [{ fare_amount: 10.75, system_name: 'LIRR', fare_type: 'Peak' }],
-            [{ cron_job_id: 1, unique_id: '123' }],
-            [],
-            [],
-        ]);
+        mockModule([[{ id: 1 }], [{ id: 1 }]]);
 
         const { updateCommuteSchedule } = await import(
             '../../src/controllers/commuteScheduleController.js'
         );
 
         mockRequest.params = { id: 1 };
-        mockRequest.body = newSchedule;
+        mockRequest.body = {
+            accountId: 1,
+            dayOfWeek: 1,
+            fareDetailId: 1,
+            startTime: '08:00:00',
+            endTime: '10:00:00',
+        };
 
         // Act
-        await updateCommuteSchedule(
-            mockRequest as Request,
-            mockResponse,
-            mockNext,
-        );
+        await updateCommuteSchedule(mockRequest as Request, mockResponse);
 
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(400);
@@ -551,134 +619,30 @@ describe('PUT /api/expenses/commute/schedule/:id', () => {
 
         mockRequest.params = { id: 1 };
         mockRequest.body = {
-            commute_schedule_id: 1,
-            account_id: 1,
-            day_of_week: 1,
-            commute_ticket_id: 1,
-            start_time: '08:00:00',
-            duration: 60,
+            accountId: 1,
+            dayOfWeek: 1,
+            fareDetailId: 1,
+            startTime: '08:00:00',
+            endTime: '10:00:00',
         };
 
         // Act
-        await updateCommuteSchedule(
-            mockRequest as Request,
-            mockResponse,
-            mockNext,
-        );
+        await updateCommuteSchedule(mockRequest as Request, mockResponse);
 
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(404);
         expect(mockResponse.send).toHaveBeenCalledWith('Schedule not found');
     });
-
-    it('should respond with the updated schedule', async () => {
-        const newSchedule = [
-            {
-                commute_schedule_id: 1,
-                commute_system_id: 1,
-                account_id: 1,
-                day_of_week: 1,
-                fare_detail_id: 1,
-                start_time: '08:00:00',
-                end_time: '10:00:00',
-                duration: 60,
-                fare_amount: 10.75,
-                pass: 'LIRR Peak',
-                date_created: '2021-01-01',
-                date_modified: '2021-01-01',
-            },
-        ];
-
-        mockModule([newSchedule]);
-
-        const { updateCommuteScheduleReturnObject } = await import(
-            '../../src/controllers/commuteScheduleController.js'
-        );
-
-        mockRequest = { commute_schedule_id: 1 };
-        mockRequest.alerts = [];
-
-        await updateCommuteScheduleReturnObject(
-            mockRequest as Request,
-            mockResponse,
-        );
-
-        const responseObj = {
-            schedule: [
-                {
-                    id: 1,
-                    commute_system_id: 1,
-                    account_id: 1,
-                    day_of_week: 1,
-                    fare_detail_id: 1,
-                    start_time: '08:00:00',
-                    end_time: '10:00:00',
-                    duration: 60,
-                    fare_amount: 10.75,
-                    pass: 'LIRR Peak',
-                    date_created: '2021-01-01',
-                    date_modified: '2021-01-01',
-                },
-            ],
-            alerts: [],
-        };
-
-        // Assert
-        expect(mockResponse.status).toHaveBeenCalledWith(200);
-        expect(mockResponse.json).toHaveBeenCalledWith(responseObj);
-    });
-
-    it('should handle errors correctly', async () => {
-        // Arrange
-        mockModule([]);
-
-        const { updateCommuteScheduleReturnObject } = await import(
-            '../../src/controllers/commuteScheduleController.js'
-        );
-
-        mockRequest.params = { id: 1 };
-        mockRequest.body = {
-            commute_schedule_id: 1,
-            account_id: 1,
-            day_of_week: 1,
-            fare_detail_id: 1,
-            start_time: '08:00:00',
-            duration: 60,
-        };
-
-        // Act
-        await updateCommuteScheduleReturnObject(
-            mockRequest as Request,
-            mockResponse,
-        ).catch(() => {
-            // Assert
-            expect(mockResponse.status).toHaveBeenCalledWith(400);
-            expect(mockResponse.json).toHaveBeenCalledWith({
-                message: 'Error getting schedule',
-            });
-        });
-    });
 });
 
 describe('DELETE /api/expenses/commute/schedule/:id', () => {
-    it('should call next', async () => {
-        const deletedSchedule = [
-            {
-                commute_schedule_id: 1,
-                account_id: 1,
-                day_of_week: 1,
-                fare_detail_id: 1,
-                start_time: '08:00:00',
-                duration: 60,
-            },
-        ];
-
+    it('should respond with a success message', async () => {
         // Arrange
         mockModule([
-            commuteSchedule.filter((cs) => cs.commute_schedule_id === 1),
+            [{ id: 1, cron_job_id: 1 }],
             [],
-            deletedSchedule,
-            [{ cron_job_id: 1 }],
+            [],
+            [{ id: 1, unique_id: 'g798v89v9v' }],
             [],
             [],
             [],
@@ -690,14 +654,13 @@ describe('DELETE /api/expenses/commute/schedule/:id', () => {
 
         mockRequest.params = { id: 1 };
 
-        await deleteCommuteSchedule(
-            mockRequest as Request,
-            mockResponse,
-            mockNext,
-        );
+        await deleteCommuteSchedule(mockRequest as Request, mockResponse);
 
         // Assert
-        expect(mockNext).toHaveBeenCalled();
+        expect(mockResponse.status).toHaveBeenCalledWith(200);
+        expect(mockResponse.send).toHaveBeenCalledWith(
+            'Successfully deleted schedule',
+        );
     });
 
     it('should handle errors correctly', async () => {
@@ -711,17 +674,15 @@ describe('DELETE /api/expenses/commute/schedule/:id', () => {
         mockRequest.params = { id: 1 };
 
         // Act
-        await deleteCommuteSchedule(
-            mockRequest as Request,
-            mockResponse,
-            mockNext,
-        ).catch(() => {
-            // Assert
-            expect(mockResponse.status).toHaveBeenCalledWith(400);
-            expect(mockResponse.json).toHaveBeenCalledWith({
-                message: 'Error deleting schedule',
-            });
-        });
+        await deleteCommuteSchedule(mockRequest as Request, mockResponse).catch(
+            () => {
+                // Assert
+                expect(mockResponse.status).toHaveBeenCalledWith(400);
+                expect(mockResponse.json).toHaveBeenCalledWith({
+                    message: 'Error deleting schedule',
+                });
+            },
+        );
     });
 
     it('should respond with a 404 error message when the schedule does not exist', async () => {
@@ -735,33 +696,10 @@ describe('DELETE /api/expenses/commute/schedule/:id', () => {
         mockRequest.params = { id: 1 };
 
         // Act
-        await deleteCommuteSchedule(
-            mockRequest as Request,
-            mockResponse,
-            mockNext,
-        );
+        await deleteCommuteSchedule(mockRequest as Request, mockResponse);
 
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(404);
         expect(mockResponse.send).toHaveBeenCalledWith('Schedule not found');
-    });
-
-    it('should respond with a success message', async () => {
-        // Arrange
-        const { deleteCommuteScheduleReturnObject } = await import(
-            '../../src/controllers/commuteScheduleController.js'
-        );
-
-        // Act
-        await deleteCommuteScheduleReturnObject(
-            mockRequest as Request,
-            mockResponse,
-        );
-
-        // Assert
-        expect(mockResponse.status).toHaveBeenCalledWith(200);
-        expect(mockResponse.send).toHaveBeenCalledWith(
-            'Successfully deleted schedule',
-        );
     });
 });

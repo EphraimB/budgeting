@@ -13,11 +13,11 @@ import NewExpenseForm from "./NewExpenseForm";
 import Grid from "@mui/material/Grid";
 
 function ExpensesCards({
-  account_id,
+  accountId,
   expenses,
   taxes,
 }: {
-  account_id: number;
+  accountId: number;
   expenses: Expense[];
   taxes: Tax[];
 }) {
@@ -30,7 +30,7 @@ function ExpensesCards({
         {showExpenseForm && (
           <Grid key="new-expense" item>
             <NewExpenseForm
-              account_id={account_id}
+              accountId={accountId}
               setShowExpenseForm={setShowExpenseForm}
               taxes={taxes}
             />
@@ -47,7 +47,7 @@ function ExpensesCards({
                 />
               ) : expenseModes[expense.id] === "edit" ? (
                 <ExpenseEdit
-                  account_id={account_id}
+                  accountId={accountId}
                   expense={expense}
                   setExpenseModes={setExpenseModes}
                   taxes={taxes}

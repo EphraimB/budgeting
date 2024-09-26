@@ -21,7 +21,7 @@ function AccountList({ accounts }: { accounts: Account[] }) {
 
   const pathname = usePathname();
 
-  const account_id = parseInt(pathname.split("/")[1]);
+  const accountId = parseInt(pathname.split("/")[1]);
 
   return (
     <Stack
@@ -35,27 +35,27 @@ function AccountList({ accounts }: { accounts: Account[] }) {
     >
       {accounts.map((account: Account) => (
         <Paper
-          key={account.account_id}
-          elevation={account.account_id === account_id ? 1 : 4}
+          key={account.id}
+          elevation={account.id === accountId ? 1 : 4}
           sx={{
             position: "relative",
             p: 2,
             width: 175,
           }}
         >
-          {accountModes[account.account_id] === "delete" ? (
+          {accountModes[account.id] === "delete" ? (
             <AccountDelete
               account={account}
               setAccountModes={setAccountModes}
             />
-          ) : accountModes[account.account_id] === "edit" ? (
+          ) : accountModes[account.id] === "edit" ? (
             <AccountEdit account={account} setAccountModes={setAccountModes} />
-          ) : accountModes[account.account_id] === "deposit" ? (
+          ) : accountModes[account.id] === "deposit" ? (
             <AccountDepositForm
               account={account}
               setAccountModes={setAccountModes}
             />
-          ) : accountModes[account.account_id] === "withdraw" ? (
+          ) : accountModes[account.id] === "withdraw" ? (
             <AccountWithdrawalForm
               account={account}
               setAccountModes={setAccountModes}

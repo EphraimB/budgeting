@@ -4,7 +4,6 @@ import express, {
     type Express,
     type Request,
     type Response,
-    type NextFunction,
     type Router,
 } from 'express';
 import {
@@ -34,7 +33,9 @@ const createApp = async (): Promise<Express> => {
 
 beforeAll(() => {
     jest.mock('../../src/controllers/payrollsController', () => ({
-        getPayrolls: (req: Request, res: Response, next: NextFunction) =>
+        getPayrolls: (_: Request, res: Response) =>
+            res.json({ message: 'success' }),
+        getPayrollsByJobId: (_: Request, res: Response) =>
             res.json({ message: 'success' }),
     }));
 });
@@ -53,7 +54,20 @@ beforeEach(async () => {
 describe('GET /', () => {
     it('responds with json', async () => {
         const response: request.Response = await request(app)
-            .get('/?employee_id=1')
+            .get('/')
+            .set('Accept', 'application/json')
+            .expect('Content-Type', /json/);
+
+        console.log(response.body);
+        expect(response.status).toBe(200);
+        expect(response.body).toEqual({ message: 'success' });
+    });
+});
+
+describe('GET /:id', () => {
+    it('responds with json', async () => {
+        const response: request.Response = await request(app)
+            .get('/1')
             .set('Accept', 'application/json')
             .expect('Content-Type', /json/);
 

@@ -158,7 +158,7 @@
                         }
                     },
                     {
-                        "name": "account_id",
+                        "name": "accountId",
                         "in": "query",
                         "description": "Filter by account id",
                         "required": false,
@@ -296,7 +296,7 @@
                         }
                     },
                     {
-                        "name": "account_id",
+                        "name": "accountId",
                         "in": "query",
                         "description": "Filter by account id",
                         "required": false,
@@ -437,7 +437,7 @@
                         }
                     },
                     {
-                        "name": "account_id",
+                        "name": "accountId",
                         "in": "query",
                         "description": "Filter by account id",
                         "required": false,
@@ -578,7 +578,7 @@
                         }
                     },
                     {
-                        "name": "account_id",
+                        "name": "accountId",
                         "in": "query",
                         "description": "Filter by account id",
                         "required": false,
@@ -709,7 +709,7 @@
                 ],
                 "parameters": [
                     {
-                        "name": "account_id",
+                        "name": "accountId",
                         "in": "query",
                         "description": "Filter by account id",
                         "required": false,
@@ -879,7 +879,7 @@
                         }
                     },
                     {
-                        "name": "account_id",
+                        "name": "accountId",
                         "in": "query",
                         "description": "Filter by account id",
                         "required": false,
@@ -1144,7 +1144,7 @@
                         }
                     },
                     {
-                        "name": "account_id",
+                        "name": "accountId",
                         "in": "query",
                         "description": "Filter by account id",
                         "required": false,
@@ -1282,7 +1282,7 @@
                         }
                     },
                     {
-                        "name": "account_id",
+                        "name": "accountId",
                         "in": "query",
                         "description": "Filter by account id",
                         "required": false,
@@ -1413,7 +1413,7 @@
                 ],
                 "parameters": [
                     {
-                        "name": "job_id",
+                        "name": "jobId",
                         "in": "query",
                         "description": "Job id",
                         "required": false,
@@ -1455,7 +1455,7 @@
                         }
                     },
                     {
-                        "name": "job_id",
+                        "name": "jobId",
                         "in": "query",
                         "description": "Job id",
                         "required": false,
@@ -1596,7 +1596,7 @@
                         }
                     },
                     {
-                        "name": "job_id",
+                        "name": "jobId",
                         "in": "query",
                         "description": "Job id",
                         "required": false,
@@ -1727,7 +1727,7 @@
                 ],
                 "parameters": [
                     {
-                        "name": "account_id",
+                        "name": "accountId",
                         "in": "query",
                         "description": "Account id",
                         "required": false,
@@ -1878,7 +1878,7 @@
                         }
                     },
                     {
-                        "name": "account_id",
+                        "name": "accountId",
                         "in": "query",
                         "description": "Account id",
                         "required": false,
@@ -2019,7 +2019,7 @@
                         }
                     },
                     {
-                        "name": "account_id",
+                        "name": "accountId",
                         "in": "query",
                         "description": "Account id",
                         "required": false,
@@ -2150,7 +2150,7 @@
                 ],
                 "parameters": [
                     {
-                        "name": "account_id",
+                        "name": "accountId",
                         "in": "query",
                         "description": "Account id",
                         "required": true,
@@ -2160,7 +2160,7 @@
                         }
                     },
                     {
-                        "name": "from_date",
+                        "name": "fromDate",
                         "in": "query",
                         "description": "Start date",
                         "required": true,
@@ -2170,7 +2170,7 @@
                         }
                     },
                     {
-                        "name": "to_date",
+                        "name": "toDate",
                         "in": "query",
                         "description": "End date",
                         "required": true,
@@ -2188,12 +2188,12 @@
                                 "schema": {
                                     "type": "object",
                                     "properties": {
-                                        "account_id": {
+                                        "accountId": {
                                             "type": "integer",
                                             "format": "int64",
                                             "minimum": 1
                                         },
-                                        "current_balance": {
+                                        "currentBalance": {
                                             "type": "number",
                                             "format": "double",
                                             "example": 1850.0
@@ -2262,7 +2262,7 @@
             "TransactionManipulation": {
                 "type": "object",
                 "properties": {
-                    "account_id": {
+                    "accountId": {
                         "type": "integer",
                         "format": "int64",
                         "minimum": 1
@@ -2290,7 +2290,7 @@
             "IncomeManipulation": {
                 "type": "object",
                 "properties": {
-                    "account_id": {
+                    "accountId": {
                         "type": "integer",
                         "format": "int64",
                         "minimum": 1
@@ -2308,15 +2308,15 @@
                         "type": "string",
                         "example": "This is a income test"
                     },
-                    "frequency_type": {
+                    "frequencyType": {
                         "type": "integer",
                         "example": 2
                     },
-                    "frequency_type_variable": {
+                    "frequencyTypeVariable": {
                         "type": "integer",
                         "example": 1
                     },
-                    "begin_date": {
+                    "beginDate": {
                         "type": "string",
                         "format": "date-time"
                     }
@@ -2325,7 +2325,7 @@
             "ExpenseManipulation": {
                 "type": "object",
                 "properties": {
-                    "account_id": {
+                    "accountId": {
                         "type": "integer",
                         "format": "int64",
                         "minimum": 1
@@ -2343,11 +2343,11 @@
                         "type": "string",
                         "example": "This is a expense test"
                     },
-                    "frequency_type": {
+                    "frequencyType": {
                         "type": "integer",
                         "example": 2
                     },
-                    "frequency_type_variable": {
+                    "frequencyTypeVariable": {
                         "type": "integer",
                         "example": 1
                     },
@@ -2356,7 +2356,7 @@
                         "format": "double",
                         "example": 0.15
                     },
-                    "begin_date": {
+                    "beginDate": {
                         "type": "string",
                         "format": "date-time"
                     }
@@ -2365,7 +2365,7 @@
             "LoanManipulation": {
                 "type": "object",
                 "properties": {
-                    "account_id": {
+                    "accountId": {
                         "type": "integer",
                         "format": "int64",
                         "minimum": 1
@@ -2375,7 +2375,7 @@
                         "format": "double",
                         "example": 2000.0
                     },
-                    "plan_amount": {
+                    "planAmount": {
                         "type": "number",
                         "format": "double",
                         "example": 300.0
@@ -2392,20 +2392,20 @@
                         "type": "string",
                         "example": "This is a loan test"
                     },
-                    "frequency_type": {
+                    "frequencyType": {
                         "type": "integer",
                         "example": 2
                     },
-                    "frequency_type_variable": {
+                    "frequencyTypeVariable": {
                         "type": "integer",
                         "example": 1
                     },
-                    "interest_rate": {
+                    "interestRate": {
                         "type": "number",
                         "format": "double",
                         "example": 0.15
                     },
-                    "interest_frequency_type": {
+                    "interestFrequencyType": {
                         "type": "integer",
                         "example": 2
                     },
@@ -2414,7 +2414,7 @@
                         "format": "double",
                         "example": 0.15
                     },
-                    "begin_date": {
+                    "beginDate": {
                         "type": "string",
                         "format": "date-time"
                     }
@@ -2423,7 +2423,7 @@
             "PayrollTaxManipulation": {
                 "type": "object",
                 "properties": {
-                    "job_id": {
+                    "jobId": {
                         "type": "integer",
                         "format": "int64",
                         "minimum": 1
@@ -2442,18 +2442,18 @@
             "PayrollDateManipulation": {
                 "type": "object",
                 "properties": {
-                    "job_id": {
+                    "jobId": {
                         "type": "integer",
                         "format": "int64",
                         "minimum": 1
                     },
-                    "start_day": {
+                    "startDay": {
                         "type": "integer",
                         "example": 1,
                         "minimum": 1,
                         "maximum": 31
                     },
-                    "end_day": {
+                    "endDay": {
                         "type": "integer",
                         "example": 31,
                         "minimum": 1,
@@ -2464,7 +2464,7 @@
             "PayrollEmployeeManipulation": {
                 "type": "object",
                 "properties": {
-                    "account_id": {
+                    "accountId": {
                         "type": "integer",
                         "format": "int64",
                         "minimum": 1
@@ -2473,33 +2473,33 @@
                         "type": "string",
                         "example": "Testing Inc."
                     },
-                    "hourly_rate": {
+                    "hourlyRate": {
                         "type": "number",
                         "format": "double",
                         "example": 15.0
                     },
-                    "vacation_days": {
+                    "vacationDays": {
                         "type": "integer",
                         "example": 10
                     },
-                    "sick_days": {
+                    "sickDays": {
                         "type": "integer",
                         "example": 10
                     },
-                    "job_schedule": {
+                    "jobSchedule": {
                         "type": "array",
                         "items": {
                             "type": "object",
                             "properties": {
-                                "day_of_week": {
+                                "dayOfWeek": {
                                     "type": "integer",
                                     "example": 1
                                 },
-                                "start_time": {
+                                "startTime": {
                                     "type": "string",
                                     "example": "09:00:00"
                                 },
-                                "end_time": {
+                                "endTime": {
                                     "type": "string",
                                     "example": "17:00:00"
                                 }
@@ -2511,7 +2511,7 @@
             "WishlistManipulation": {
                 "type": "object",
                 "properties": {
-                    "account_id": {
+                    "accountId": {
                         "type": "integer",
                         "format": "int64",
                         "minimum": 1
@@ -2533,7 +2533,7 @@
                         "type": "integer",
                         "example": 1
                     },
-                    "url_link": {
+                    "urlLink": {
                         "type": "string",
                         "example": "https://www.amazon.com/PlayStation-4-Pro-1TB-Console/dp/B01LOP8EZC/ref=sr_1_1?keywords=ps4&qid=1562678603&s=gateway&sr=8-1"
                     }
@@ -2542,12 +2542,12 @@
             "TransferManipulation": {
                 "type": "object",
                 "properties": {
-                    "source_account_id": {
+                    "sourceAccountId": {
                         "type": "integer",
                         "format": "int64",
                         "minimum": 1
                     },
-                    "destination_account_id": {
+                    "destinationAccountId": {
                         "type": "integer",
                         "format": "int64",
                         "minimum": 1,
@@ -2566,15 +2566,15 @@
                         "type": "string",
                         "example": "This is a transfer test"
                     },
-                    "frequency_type": {
+                    "frequencyType": {
                         "type": "integer",
                         "example": 2
                     },
-                    "frequency_type_variable": {
+                    "frequencyTypeVariable": {
                         "type": "integer",
                         "example": 1
                     },
-                    "begin_date": {
+                    "beginDate": {
                         "type": "string",
                         "format": "date-time"
                     }
@@ -2583,7 +2583,7 @@
             "transaction": {
                 "type": "object",
                 "properties": {
-                    "transaction_id": {
+                    "transactionId": {
                         "type": "integer",
                         "description": "ID of the transaction transaction"
                     },
@@ -2592,7 +2592,7 @@
                         "format": "date-time",
                         "description": "Date the transaction occurred"
                     },
-                    "date_modified": {
+                    "dateModified": {
                         "type": "string",
                         "format": "date-time",
                         "description": "Date the transaction was last modified"
@@ -2618,12 +2618,12 @@
                         "type": "string",
                         "example": "Metro North"
                     },
-                    "fare_cap": {
+                    "fareCap": {
                         "type": "number",
                         "format": "double",
                         "example": null
                     },
-                    "fare_cap_duration": {
+                    "fareCapDuration": {
                         "type": "integer",
                         "example": null
                     }
@@ -2632,21 +2632,21 @@
             "CommuteHistoryManipulation": {
                 "type": "object",
                 "properties": {
-                    "account_id": {
+                    "accountId": {
                         "type": "integer",
                         "format": "int64",
                         "minimum": 1
                     },
-                    "fare_amount": {
+                    "fareAmount": {
                         "type": "number",
                         "format": "double",
                         "example": 10.0
                     },
-                    "commute_system": {
+                    "commuteSystem": {
                         "type": "string",
                         "example": "OMNY"
                     },
-                    "fare_type": {
+                    "fareType": {
                         "type": "string",
                         "example": "Standard"
                     },
@@ -2659,7 +2659,7 @@
             "CommuteFareManipulation": {
                 "type": "object",
                 "properties": {
-                    "commute_system_id": {
+                    "commuteSystemId": {
                         "type": "integer",
                         "format": "int64",
                         "minimum": 1
@@ -2668,7 +2668,7 @@
                         "type": "string",
                         "example": "Off-Peak"
                     },
-                    "fare_amount": {
+                    "fareAmount": {
                         "type": "number",
                         "format": "double",
                         "example": 10.0
@@ -2678,15 +2678,15 @@
                         "items": {
                             "type": "object",
                             "properties": {
-                                "day_of_week": {
+                                "dayOfWeek": {
                                     "type": "integer",
                                     "example": 1
                                 },
-                                "start_time": {
+                                "startTime": {
                                     "type": "string",
                                     "example": "05:00:00"
                                 },
-                                "end_time": {
+                                "endTime": {
                                     "type": "string",
                                     "example": "10:00:00"
                                 }
@@ -2697,11 +2697,11 @@
                         "type": "integer",
                         "example": null
                     },
-                    "day_start": {
+                    "dayStart": {
                         "type": "integer",
                         "example": null
                     },
-                    "alternate_fare_detail_id": {
+                    "alternateFareDetailId": {
                         "type": "integer",
                         "example": null
                     }
@@ -2710,25 +2710,25 @@
             "CommuteScheduleManipulation": {
                 "type": "object",
                 "properties": {
-                    "account_id": {
+                    "accountId": {
                         "type": "integer",
                         "format": "int64",
                         "minimum": 1
                     },
-                    "day_of_week": {
+                    "dayOfWeek": {
                         "type": "integer",
                         "example": 1
                     },
-                    "fare_detail_id": {
+                    "fareDetailId": {
                         "type": "integer",
                         "format": "int64",
                         "minimum": 1
                     },
-                    "start_time": {
+                    "startTime": {
                         "type": "string",
                         "example": "05:00:00"
                     },
-                    "end_time": {
+                    "endTime": {
                         "type": "string",
                         "example": "10:00:00"
                     }
@@ -2829,29 +2829,29 @@
                             "items": {
                                 "type": "object",
                                 "properties": {
-                                    "account_id": {
+                                    "accountId": {
                                         "type": "integer",
                                         "format": "int64",
                                         "minimum": 1
                                     },
-                                    "account_name": {
+                                    "accountName": {
                                         "type": "string",
                                         "example": "Checking"
                                     },
-                                    "account_type": {
+                                    "accountType": {
                                         "type": "integer",
                                         "example": 0
                                     },
-                                    "account_balance": {
+                                    "accountBalance": {
                                         "type": "number",
                                         "format": "double",
                                         "example": 1000.0
                                     },
-                                    "date_created": {
+                                    "dateCreated": {
                                         "type": "string",
                                         "format": "date-time"
                                     },
-                                    "date_modified": {
+                                    "dateModified": {
                                         "type": "string",
                                         "format": "date-time"
                                     }
@@ -2870,29 +2870,29 @@
                             "items": {
                                 "type": "object",
                                 "properties": {
-                                    "tax_id": {
+                                    "taxId": {
                                         "type": "integer",
                                         "format": "int64",
                                         "minimum": 1
                                     },
-                                    "tax_name": {
+                                    "taxName": {
                                         "type": "string",
                                         "example": "NY Sales Tax"
                                     },
-                                    "tax_rate": {
+                                    "taxRate": {
                                         "type": "number",
                                         "format": "double",
                                         "example": 0.08875
                                     },
-                                    "tax_type": {
+                                    "taxType": {
                                         "type": "integer",
                                         "example": 0
                                     },
-                                    "date_created": {
+                                    "dateCreated": {
                                         "type": "string",
                                         "format": "date-time"
                                     },
-                                    "date_modified": {
+                                    "dateModified": {
                                         "type": "string",
                                         "format": "date-time"
                                     }
@@ -2911,39 +2911,39 @@
                             "items": {
                                 "type": "object",
                                 "properties": {
-                                    "transaction_id": {
+                                    "transactionId": {
                                         "type": "integer",
                                         "format": "int64",
                                         "minimum": 1
                                     },
-                                    "account_id": {
+                                    "accountId": {
                                         "type": "integer",
                                         "format": "int64",
                                         "minimum": 1
                                     },
-                                    "transaction_amount": {
+                                    "transactionAmount": {
                                         "type": "number",
                                         "format": "double",
                                         "example": 1000.0
                                     },
-                                    "transaction_tax": {
+                                    "transactionTax": {
                                         "type": "number",
                                         "format": "double",
                                         "example": 0.08875
                                     },
-                                    "transaction_title": {
+                                    "transactionTitle": {
                                         "type": "string",
                                         "example": "Transaction test"
                                     },
-                                    "transaction_description": {
+                                    "transactionDescription": {
                                         "type": "string",
                                         "example": "This is a transaction test"
                                     },
-                                    "date_created": {
+                                    "dateCreated": {
                                         "type": "string",
                                         "format": "date-time"
                                     },
-                                    "date_modified": {
+                                    "dateModified": {
                                         "type": "string",
                                         "format": "date-time"
                                     }
@@ -2962,34 +2962,34 @@
                             "items": {
                                 "type": "object",
                                 "properties": {
-                                    "income_id": {
+                                    "incomeId": {
                                         "type": "integer",
                                         "format": "int64",
                                         "minimum": 1
                                     },
-                                    "account_id": {
+                                    "accountId": {
                                         "type": "integer",
                                         "format": "int64",
                                         "minimum": 1
                                     },
-                                    "income_amount": {
+                                    "incomeAmount": {
                                         "type": "number",
                                         "format": "double",
                                         "example": 1000.0
                                     },
-                                    "income_title": {
+                                    "incomeTitle": {
                                         "type": "string",
                                         "example": "Income test"
                                     },
-                                    "income_description": {
+                                    "incomeDescription": {
                                         "type": "string",
                                         "example": "This is a income test"
                                     },
-                                    "date_created": {
+                                    "dateCreated": {
                                         "type": "string",
                                         "format": "date-time"
                                     },
-                                    "date_modified": {
+                                    "dateModified": {
                                         "type": "string",
                                         "format": "date-time"
                                     }
@@ -3008,17 +3008,17 @@
                             "items": {
                                 "type": "object",
                                 "properties": {
-                                    "account_id": {
+                                    "accountId": {
                                         "type": "integer",
                                         "format": "int64",
                                         "minimum": 1
                                     },
-                                    "total_cost_per_week": {
+                                    "totalCostPerWeek": {
                                         "type": "number",
                                         "format": "double",
                                         "example": 100.0
                                     },
-                                    "total_cost_per_month": {
+                                    "totalCostPerMonth": {
                                         "type": "number",
                                         "format": "double",
                                         "example": 400.0
@@ -3031,12 +3031,12 @@
                                                 "OMNY": {
                                                     "type": "object",
                                                     "properties": {
-                                                        "total_cost_per_week": {
+                                                        "totalCostPerWeek": {
                                                             "type": "number",
                                                             "format": "double",
                                                             "example": 50.0
                                                         },
-                                                        "total_cost_per_month": {
+                                                        "totalCostPerMonth": {
                                                             "type": "number",
                                                             "format": "double",
                                                             "example": 200.0
@@ -3045,7 +3045,7 @@
                                                             "type": "integer",
                                                             "example": 10
                                                         },
-                                                        "fare_cap_progress": {
+                                                        "fareCapProgress": {
                                                             "type": "object",
                                                             "properties": {
                                                                 "current_spent": {
@@ -3053,12 +3053,12 @@
                                                                     "format": "double",
                                                                     "example": 10.0
                                                                 },
-                                                                "fare_cap": {
+                                                                "fareCap": {
                                                                     "type": "number",
                                                                     "format": "double",
                                                                     "example": 33.0
                                                                 },
-                                                                "fare_cap_duration": {
+                                                                "fareCapDuration": {
                                                                     "type": "integer",
                                                                     "example": 1
                                                                 }
@@ -3084,7 +3084,7 @@
                             "items": {
                                 "type": "object",
                                 "properties": {
-                                    "commute_system_id": {
+                                    "commuteSystemId": {
                                         "type": "integer",
                                         "format": "int64",
                                         "minimum": 1
@@ -3093,20 +3093,20 @@
                                         "type": "string",
                                         "example": "Subway"
                                     },
-                                    "fare_cap": {
+                                    "fareCap": {
                                         "type": "number",
                                         "format": "double",
                                         "example": 33.0
                                     },
-                                    "fare_cap_duration": {
+                                    "fareCapDuration": {
                                         "type": "integer",
                                         "example": 1
                                     },
-                                    "date_created": {
+                                    "dateCreated": {
                                         "type": "string",
                                         "format": "date-time"
                                     },
-                                    "date_modified": {
+                                    "dateModified": {
                                         "type": "string",
                                         "format": "date-time"
                                     }
@@ -3130,21 +3130,21 @@
                                         "format": "int64",
                                         "minimum": 1
                                     },
-                                    "account_id": {
+                                    "accountId": {
                                         "type": "integer",
                                         "format": "int64",
                                         "minimum": 1
                                     },
-                                    "commute_system": {
+                                    "commuteSystem": {
                                         "type": "string",
                                         "example": "Subway"
                                     },
-                                    "fare_amount": {
+                                    "fareAmount": {
                                         "type": "number",
                                         "format": "double",
                                         "example": 2.75
                                     },
-                                    "fare_type": {
+                                    "fareType": {
                                         "type": "string",
                                         "example": "Standard"
                                     },
@@ -3152,11 +3152,11 @@
                                         "type": "string",
                                         "format": "date-time"
                                     },
-                                    "date_created": {
+                                    "dateCreated": {
                                         "type": "string",
                                         "format": "date-time"
                                     },
-                                    "date_modified": {
+                                    "dateModified": {
                                         "type": "string",
                                         "format": "date-time"
                                     }
@@ -3178,15 +3178,15 @@
                                     "items": {
                                         "type": "object",
                                         "properties": {
-                                            "fare_detail_id": {
+                                            "fareDetailId": {
                                                 "type": "integer",
                                                 "format": "int64",
                                                 "minimum": 1
                                             },
-                                            "commute_system": {
+                                            "commuteSystem": {
                                                 "type": "object",
                                                 "properties": {
-                                                    "commute_system_id": {
+                                                    "commuteSystemId": {
                                                         "type": "integer",
                                                         "format": "int64",
                                                         "minimum": 1
@@ -3201,7 +3201,7 @@
                                                 "type": "string",
                                                 "example": "Off-Peak"
                                             },
-                                            "fare_amount": {
+                                            "fareAmount": {
                                                 "type": "number",
                                                 "format": "double",
                                                 "example": 10.0
@@ -3211,15 +3211,15 @@
                                                 "items": {
                                                     "type": "object",
                                                     "properties": {
-                                                        "day_of_week": {
+                                                        "dayOfWeek": {
                                                             "type": "integer",
                                                             "example": 1
                                                         },
-                                                        "start_time": {
+                                                        "startTime": {
                                                             "type": "string",
                                                             "example": "05:00:00"
                                                         },
-                                                        "end_time": {
+                                                        "endTime": {
                                                             "type": "string",
                                                             "example": "10:00:00"
                                                         }
@@ -3230,19 +3230,19 @@
                                                 "type": "integer",
                                                 "example": null
                                             },
-                                            "day_start": {
+                                            "dayStart": {
                                                 "type": "integer",
                                                 "example": null
                                             },
-                                            "alternate_fare_detail_id": {
+                                            "alternateFareDetailId": {
                                                 "type": "integer",
                                                 "example": null
                                             },
-                                            "date_created": {
+                                            "dateCreated": {
                                                 "type": "string",
                                                 "format": "date-time"
                                             },
-                                            "date_modified": {
+                                            "dateModified": {
                                                 "type": "string",
                                                 "format": "date-time"
                                             }
@@ -3266,7 +3266,7 @@
                                     "items": {
                                         "type": "object",
                                         "properties": {
-                                            "day_of_week": {
+                                            "dayOfWeek": {
                                                 "type": "integer",
                                                 "format": "int64",
                                                 "minimum": 1
@@ -3280,15 +3280,15 @@
                                                             "type": "string",
                                                             "example": "LIRR Monthly"
                                                         },
-                                                        "start_time": {
+                                                        "startTime": {
                                                             "type": "string",
                                                             "example": "05:00:00"
                                                         },
-                                                        "end_time": {
+                                                        "endTime": {
                                                             "type": "string",
                                                             "example": "10:00:00"
                                                         },
-                                                        "fare_amount": {
+                                                        "fareAmount": {
                                                             "type": "number",
                                                             "format": "double",
                                                             "example": 10.0
@@ -3313,72 +3313,72 @@
                             "items": {
                                 "type": "object",
                                 "properties": {
-                                    "expense_id": {
+                                    "expenseId": {
                                         "type": "integer",
                                         "format": "int64",
                                         "minimum": 1
                                     },
-                                    "account_id": {
+                                    "accountId": {
                                         "type": "integer",
                                         "format": "int64",
                                         "minimum": 1
                                     },
-                                    "expense_amount": {
+                                    "expenseAmount": {
                                         "type": "number",
                                         "format": "double",
                                         "example": 250.0
                                     },
-                                    "expense_title": {
+                                    "expenseTitle": {
                                         "type": "string",
                                         "example": "Expense test"
                                     },
-                                    "expense_description": {
+                                    "expenseDescription": {
                                         "type": "string",
                                         "example": "This is a expense test"
                                     },
-                                    "frequency_type": {
+                                    "frequencyType": {
                                         "type": "integer",
                                         "example": 2
                                     },
-                                    "frequency_type_variable": {
+                                    "frequencyTypeVariable": {
                                         "type": "integer",
                                         "example": 1
                                     },
-                                    "frequency_day_of_month": {
+                                    "frequencyDayOfMonth": {
                                         "type": "integer",
                                         "default": null
                                     },
-                                    "frequency_day_of_week": {
+                                    "frequencyDayOfWeek": {
                                         "type": "integer",
                                         "default": null
                                     },
-                                    "frequency_week_of_month": {
+                                    "frequencyWeekOfMonth": {
                                         "type": "integer",
                                         "default": null
                                     },
-                                    "frequency_month_of_year": {
+                                    "frequencyMonthOfYear": {
                                         "type": "integer",
                                         "default": null
                                     },
-                                    "expense_subsidized": {
+                                    "expenseSubsidized": {
                                         "type": "number",
                                         "format": "double",
                                         "example": 0.15
                                     },
-                                    "expense_begin_date": {
+                                    "expenseBeginDate": {
                                         "type": "string",
                                         "format": "date-time"
                                     },
-                                    "expense_end_date": {
+                                    "expenseEndDate": {
                                         "type": "string",
                                         "format": "date-time",
                                         "default": null
                                     },
-                                    "date_created": {
+                                    "dateCreated": {
                                         "type": "string",
                                         "format": "date-time"
                                     },
-                                    "date_modified": {
+                                    "dateModified": {
                                         "type": "string",
                                         "format": "date-time"
                                     }
@@ -3397,85 +3397,85 @@
                             "items": {
                                 "type": "object",
                                 "properties": {
-                                    "loan_id": {
+                                    "loanId": {
                                         "type": "integer",
                                         "format": "int64",
                                         "minimum": 1
                                     },
-                                    "account_id": {
+                                    "accountId": {
                                         "type": "integer",
                                         "format": "int64",
                                         "minimum": 1
                                     },
-                                    "loan_amount": {
+                                    "loanAmount": {
                                         "type": "number",
                                         "format": "double",
                                         "example": 250.0
                                     },
-                                    "loan_title": {
+                                    "loanTitle": {
                                         "type": "string",
                                         "example": "Loan test"
                                     },
-                                    "loan_description": {
+                                    "loanDescription": {
                                         "type": "string",
                                         "example": "This is a loan test"
                                     },
-                                    "frequency_type": {
+                                    "frequencyType": {
                                         "type": "integer",
                                         "example": 2
                                     },
-                                    "frequency_type_variable": {
+                                    "frequencyTypeVariable": {
                                         "type": "integer",
                                         "example": 1
                                     },
-                                    "frequency_day_of_month": {
+                                    "frequencyDayOfMonth": {
                                         "type": "integer",
                                         "default": null
                                     },
-                                    "frequency_day_of_week": {
+                                    "frequencyDayOfWeek": {
                                         "type": "integer",
                                         "default": null
                                     },
-                                    "frequency_week_of_month": {
+                                    "frequencyWeekOfMonth": {
                                         "type": "integer",
                                         "default": null
                                     },
-                                    "frequency_month_of_year": {
+                                    "frequencyMonthOfYear": {
                                         "type": "integer",
                                         "default": null
                                     },
-                                    "loan_interest_rate": {
+                                    "loanInterestRate": {
                                         "type": "number",
                                         "format": "double",
                                         "example": 0.15
                                     },
-                                    "loan_interest_frequency_type": {
+                                    "loanInterestFrequencyType": {
                                         "type": "integer",
                                         "example": 2
                                     },
-                                    "loan_subsidized": {
+                                    "loanSubsidized": {
                                         "type": "number",
                                         "format": "double",
                                         "example": 0.15
                                     },
-                                    "loan_fully_paid_back": {
+                                    "loanFullyPaidBack": {
                                         "type": "string",
                                         "format": "date-time"
                                     },
-                                    "loan_begin_date": {
+                                    "loanBeginDate": {
                                         "type": "string",
                                         "format": "date-time"
                                     },
-                                    "loan_end_date": {
+                                    "loanEndDate": {
                                         "type": "string",
                                         "format": "date-time",
                                         "default": null
                                     },
-                                    "date_created": {
+                                    "dateCreated": {
                                         "type": "string",
                                         "format": "date-time"
                                     },
-                                    "date_modified": {
+                                    "dateModified": {
                                         "type": "string",
                                         "format": "date-time"
                                     }
@@ -3492,7 +3492,7 @@
                         "schema": {
                             "type": "object",
                             "properties": {
-                                "job_id": {
+                                "jobId": {
                                     "type": "integer",
                                     "format": "int64",
                                     "minimum": 1
@@ -3502,29 +3502,29 @@
                                     "items": {
                                         "type": "object",
                                         "properties": {
-                                            "start_date": {
+                                            "startDate": {
                                                 "type": "string",
                                                 "format": "date-time"
                                             },
-                                            "end_date": {
+                                            "endDate": {
                                                 "type": "string",
                                                 "format": "date-time"
                                             },
-                                            "work_days": {
+                                            "workDays": {
                                                 "type": "integer",
                                                 "example": 5
                                             },
-                                            "gross_pay": {
+                                            "grossPay": {
                                                 "type": "number",
                                                 "format": "double",
                                                 "example": 250.0
                                             },
-                                            "net_pay": {
+                                            "netPay": {
                                                 "type": "number",
                                                 "format": "double",
                                                 "example": 200.49
                                             },
-                                            "hours_worked": {
+                                            "hoursWorked": {
                                                 "type": "number",
                                                 "format": "double",
                                                 "example": 40.0
@@ -3544,12 +3544,12 @@
                         "schema": {
                             "type": "object",
                             "properties": {
-                                "payroll_taxes_id": {
+                                "payrollTaxesId": {
                                     "type": "integer",
                                     "format": "int64",
                                     "minimum": 1
                                 },
-                                "job_id": {
+                                "jobId": {
                                     "type": "integer",
                                     "format": "int64",
                                     "minimum": 1
@@ -3575,21 +3575,21 @@
                         "schema": {
                             "type": "object",
                             "properties": {
-                                "payroll_dates_id": {
+                                "payrollDatesId": {
                                     "type": "integer",
                                     "format": "int64",
                                     "minimum": 1
                                 },
-                                "job_id": {
+                                "jobId": {
                                     "type": "integer",
                                     "format": "int64",
                                     "minimum": 1
                                 },
-                                "payroll_start_day": {
+                                "payrollStartDay": {
                                     "type": "integer",
                                     "example": 1
                                 },
-                                "payroll_end_day": {
+                                "payrollEndDay": {
                                     "type": "integer",
                                     "example": 15
                                 }
@@ -3605,12 +3605,12 @@
                         "schema": {
                             "type": "object",
                             "properties": {
-                                "job_id": {
+                                "jobId": {
                                     "type": "integer",
                                     "format": "int64",
                                     "minimum": 1
                                 },
-                                "account_id": {
+                                "accountId": {
                                     "type": "integer",
                                     "format": "int64",
                                     "minimum": 1
@@ -3619,38 +3619,38 @@
                                     "type": "string",
                                     "example": "Testing Inc."
                                 },
-                                "hourly_rate": {
+                                "hourlyRate": {
                                     "type": "number",
                                     "format": "double",
                                     "example": 16.0
                                 },
-                                "vacation_days": {
+                                "vacationDays": {
                                     "type": "integer",
                                     "example": 5
                                 },
-                                "sick_days": {
+                                "sickDays": {
                                     "type": "integer",
                                     "example": 5
                                 },
-                                "total_hours_per_week": {
+                                "totalHoursPerWeek": {
                                     "type": "number",
                                     "format": "double",
                                     "example": 40.0
                                 },
-                                "job_schedule": {
+                                "jobSchedule": {
                                     "type": "array",
                                     "items": {
                                         "type": "object",
                                         "properties": {
-                                            "day_of_week": {
+                                            "dayOfWeek": {
                                                 "type": "integer",
                                                 "example": 1
                                             },
-                                            "start_time": {
+                                            "startTime": {
                                                 "type": "string",
                                                 "example": "09:00:00"
                                             },
-                                            "end_time": {
+                                            "endTime": {
                                                 "type": "string",
                                                 "example": "17:00:00"
                                             }
@@ -3671,41 +3671,41 @@
                             "items": {
                                 "type": "object",
                                 "properties": {
-                                    "wishlist_id": {
+                                    "wishlistId": {
                                         "type": "integer",
                                         "format": "int64",
                                         "minimum": 1
                                     },
-                                    "account_id": {
+                                    "accountId": {
                                         "type": "integer",
                                         "format": "int64",
                                         "minimum": 1
                                     },
-                                    "wishlist_amount": {
+                                    "wishlistAmount": {
                                         "type": "number",
                                         "format": "double",
                                         "example": 250.0
                                     },
-                                    "wishlist_title": {
+                                    "wishlistTitle": {
                                         "type": "string",
                                         "example": "Wishlist test"
                                     },
-                                    "wishlist_description": {
+                                    "wishlistDescription": {
                                         "type": "string",
                                         "example": "This is a wishlist test"
                                     },
-                                    "wishlist_priority": {
+                                    "wishlistPriority": {
                                         "type": "integer"
                                     },
-                                    "wishlist_url_link": {
+                                    "wishlistUrlLink": {
                                         "type": "string",
                                         "example": "https://www.amazon.com"
                                     },
-                                    "date_created": {
+                                    "dateCreated": {
                                         "type": "string",
                                         "format": "date-time"
                                     },
-                                    "date_modified": {
+                                    "dateModified": {
                                         "type": "string",
                                         "format": "date-time"
                                     }
@@ -3724,67 +3724,67 @@
                             "items": {
                                 "type": "object",
                                 "properties": {
-                                    "transfer_id": {
+                                    "transferId": {
                                         "type": "integer",
                                         "format": "int64",
                                         "minimum": 1
                                     },
-                                    "account_id": {
+                                    "accountId": {
                                         "type": "integer",
                                         "format": "int64",
                                         "minimum": 1
                                     },
-                                    "transfer_amount": {
+                                    "transferAmount": {
                                         "type": "number",
                                         "format": "double",
                                         "example": 250.0
                                     },
-                                    "transfer_title": {
+                                    "transferTitle": {
                                         "type": "string",
                                         "example": "Transfer test"
                                     },
-                                    "transfer_description": {
+                                    "transferDescription": {
                                         "type": "string",
                                         "example": "This is a transfer test"
                                     },
-                                    "frequency_type": {
+                                    "frequencyType": {
                                         "type": "integer",
                                         "example": 2
                                     },
-                                    "frequency_type_variable": {
+                                    "frequencyTypeVariable": {
                                         "type": "integer",
                                         "example": 1
                                     },
-                                    "frequency_day_of_month": {
+                                    "frequencyDayOfMonth": {
                                         "type": "integer",
                                         "default": null
                                     },
-                                    "frequency_day_of_week": {
+                                    "frequencyDayOfWeek": {
                                         "type": "integer",
                                         "default": null
                                     },
-                                    "frequency_week_of_month": {
+                                    "frequencyWeekOfMonth": {
                                         "type": "integer",
                                         "default": null
                                     },
-                                    "frequency_month_of_year": {
+                                    "frequencyMonthOfYear": {
                                         "type": "integer",
                                         "default": null
                                     },
-                                    "transfer_begin_date": {
+                                    "transferBeginDate": {
                                         "type": "string",
                                         "format": "date-time"
                                     },
-                                    "transfer_end_date": {
+                                    "transferendDate": {
                                         "type": "string",
                                         "format": "date-time",
                                         "default": null
                                     },
-                                    "date_created": {
+                                    "dateCreated": {
                                         "type": "string",
                                         "format": "date-time"
                                     },
-                                    "date_modified": {
+                                    "dateModified": {
                                         "type": "string",
                                         "format": "date-time"
                                     }

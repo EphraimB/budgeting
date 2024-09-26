@@ -13,18 +13,18 @@ function AccountActionsMenu({
   open,
   handleClose,
   setAccountModes,
-  account_id,
+  accountId,
 }: {
   anchorEl: HTMLElement | null;
   open: boolean;
   handleClose: () => void;
   setAccountModes: React.Dispatch<React.SetStateAction<Record<number, string>>>;
-  account_id: number;
+  accountId: number;
 }) {
   const handleDelete = () => {
     setAccountModes((prevModes: any) => ({
       ...prevModes,
-      [account_id]: "delete",
+      [accountId]: "delete",
     }));
 
     handleClose();
@@ -33,7 +33,7 @@ function AccountActionsMenu({
   const handleEdit = () => {
     setAccountModes((prevModes: any) => ({
       ...prevModes,
-      [account_id]: "edit",
+      [accountId]: "edit",
     }));
 
     handleClose();
@@ -42,7 +42,7 @@ function AccountActionsMenu({
   const handleDeposit = () => {
     setAccountModes((prevModes: any) => ({
       ...prevModes,
-      [account_id]: "deposit",
+      [accountId]: "deposit",
     }));
 
     handleClose();
@@ -51,7 +51,7 @@ function AccountActionsMenu({
   const handleWithdraw = () => {
     setAccountModes((prevModes: any) => ({
       ...prevModes,
-      [account_id]: "withdraw",
+      [accountId]: "withdraw",
     }));
 
     handleClose();

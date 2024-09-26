@@ -6,14 +6,14 @@ import userEvent from "@testing-library/user-event";
 
 describe("JobDayTimeslots", () => {
   const initialJobSchedule = [
-    { job_id: 1, day_of_week: 1, start_time: "09:00:00", end_time: "10:00:00" },
-    { job_id: 1, day_of_week: 2, start_time: "11:00:00", end_time: "12:00:00" },
+    { jobId: 1, dayOfWeek: 1, startTime: "09:00:00", endTime: "10:00:00" },
+    { jobId: 1, dayOfWeek: 2, startTime: "11:00:00", endTime: "12:00:00" },
   ];
 
   it("renders initial timeslots based on job_schedule prop", () => {
     const { getAllByLabelText } = render(
       <JobDayTimeslots
-        job_schedule={initialJobSchedule}
+        jobSchedule={initialJobSchedule}
         onSave={jest.fn()}
         onClose={jest.fn()}
       />
@@ -31,7 +31,7 @@ describe("JobDayTimeslots", () => {
   it("adds a new timeslot", async () => {
     const { getByText, getAllByLabelText } = render(
       <JobDayTimeslots
-        job_schedule={initialJobSchedule}
+        jobSchedule={initialJobSchedule}
         onSave={jest.fn()}
         onClose={jest.fn()}
       />
@@ -49,7 +49,7 @@ describe("JobDayTimeslots", () => {
   it("removes a timeslot", async () => {
     const { getAllByRole, getAllByLabelText } = render(
       <JobDayTimeslots
-        job_schedule={initialJobSchedule}
+        jobSchedule={initialJobSchedule}
         onSave={jest.fn()}
         onClose={jest.fn()}
       />
@@ -66,7 +66,7 @@ describe("JobDayTimeslots", () => {
   it("handles time changes correctly", async () => {
     const { getAllByLabelText } = render(
       <JobDayTimeslots
-        job_schedule={initialJobSchedule}
+        jobSchedule={initialJobSchedule}
         onSave={jest.fn()}
         onClose={jest.fn()}
       />
@@ -83,7 +83,7 @@ describe("JobDayTimeslots", () => {
     const onSaveMock = jest.fn();
     const { getByText, getAllByLabelText } = render(
       <JobDayTimeslots
-        job_schedule={initialJobSchedule}
+        jobSchedule={initialJobSchedule}
         onSave={onSaveMock}
         onClose={jest.fn()}
       />

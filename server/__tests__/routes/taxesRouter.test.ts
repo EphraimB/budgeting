@@ -4,7 +4,6 @@ import express, {
     type Express,
     type Request,
     type Response,
-    type NextFunction,
     type Router,
 } from 'express';
 import {
@@ -34,13 +33,15 @@ const createApp = async (): Promise<Express> => {
 
 beforeAll(() => {
     jest.mock('../../src/controllers/taxesController', () => ({
-        getTaxes: (req: Request, res: Response, next: NextFunction) =>
+        getTaxes: (_: Request, res: Response) =>
             res.json({ message: 'success' }),
-        createTax: (req: Request, res: Response, next: NextFunction) =>
+        getTaxesById: (_: Request, res: Response) =>
             res.json({ message: 'success' }),
-        updateTax: (req: Request, res: Response, next: NextFunction) =>
+        createTax: (_: Request, res: Response) =>
             res.json({ message: 'success' }),
-        deleteTax: (req: Request, res: Response, next: NextFunction) =>
+        updateTax: (_: Request, res: Response) =>
+            res.json({ message: 'success' }),
+        deleteTax: (_: Request, res: Response) =>
             res.json({ message: 'success' }),
     }));
 });
@@ -68,10 +69,10 @@ describe('GET /', () => {
     });
 });
 
-describe('GET / with id query', () => {
+describe('GET / with id param', () => {
     it('responds with json', async () => {
         const response: request.Response = await request(app)
-            .get('/?id=1')
+            .get('/1')
             .set('Accept', 'application/json')
             .expect('Content-Type', /json/);
 

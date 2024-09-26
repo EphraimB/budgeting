@@ -16,11 +16,11 @@ describe("PayrollTaxDelete", () => {
   it("renders the component", () => {
     const payrollTax = {
       id: 1,
-      job_id: 1,
+      jobId: 1,
       name: "Social Security",
       rate: 0.02,
-      date_created: "2021-10-01",
-      date_modified: "2021-10-01",
+      dateCreated: "2021-10-01",
+      dateModified: "2021-10-01",
     };
 
     render(

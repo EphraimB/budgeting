@@ -13,7 +13,7 @@ describe("TransfersCards", () => {
     const account_id = 1;
 
     render(
-      <TransferCards account_id={account_id} transfers={[]} accounts={[]} />
+      <TransferCards accountId={account_id} transfers={[]} accounts={[]} />
     );
 
     // Assert that the FAB with the AddIcon is rendered

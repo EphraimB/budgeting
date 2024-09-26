@@ -18,7 +18,7 @@ describe("NewTaxForm", () => {
 
     render(
       <NewPayrollTaxForm
-        job_id={1}
+        jobId={1}
         setShowPayrollTaxesForm={setShowPayrollTaxesForm}
       />
     );

@@ -4,7 +4,6 @@ import express, {
     type Express,
     type Request,
     type Response,
-    type NextFunction,
     type Router,
 } from 'express';
 import {
@@ -37,20 +36,22 @@ const createApp = async (): Promise<Express> => {
 const newTransaction = {
     amount: 100,
     tax: 0,
-    account_id: 1,
+    accountId: 1,
     title: 'test',
     description: 'test',
 };
 
 beforeAll(() => {
     jest.mock('../../src/controllers/transactionHistoryController', () => ({
-        getTransactions: (req: Request, res: Response, next: NextFunction) =>
+        getTransactions: (_: Request, res: Response) =>
             res.json({ message: 'success' }),
-        createTransaction: (req: Request, res: Response, next: NextFunction) =>
+        getTransactionsById: (_: Request, res: Response) =>
             res.json({ message: 'success' }),
-        updateTransaction: (req: Request, res: Response, next: NextFunction) =>
+        createTransaction: (_: Request, res: Response) =>
             res.json({ message: 'success' }),
-        deleteTransaction: (req: Request, res: Response, next: NextFunction) =>
+        updateTransaction: (_: Request, res: Response) =>
+            res.json({ message: 'success' }),
+        deleteTransaction: (_: Request, res: Response) =>
             res.json({ message: 'success' }),
     }));
 });
@@ -78,10 +79,10 @@ describe('GET /', () => {
     });
 });
 
-describe('GET / with id query', () => {
+describe('GET / with id param', () => {
     it('responds with json', async () => {
         const response: request.Response = await request(app)
-            .get('/?id=1')
+            .get('/1')
             .set('Accept', 'application/json')
             .expect('Content-Type', /json/);
 

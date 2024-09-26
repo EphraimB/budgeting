@@ -8,7 +8,6 @@ import {
     expect,
 } from '@jest/globals';
 import { mockModule } from '../__mocks__/mockModule.js';
-import { Payroll } from '../../src/types/types.js';
 
 // Mock request and response
 let mockRequest: any;
@@ -34,31 +33,35 @@ afterEach(() => {
     jest.resetModules();
 });
 
-const payrolls: Payroll[] = [
+const payrolls = [
     {
-        start_date: '2020-01-01',
-        end_date: '2020-01-15',
-        work_days: 5,
-        gross_pay: 500,
-        net_pay: 400,
-        hours_worked: 40,
-    },
-    {
-        start_date: '2020-01-15',
-        end_date: '2020-01-31',
-        work_days: 5,
-        gross_pay: 500,
-        net_pay: 400,
-        hours_worked: 40,
+        id: 1,
+        name: 'Payroll test',
+        payrolls: [
+            {
+                startDate: '2020-01-01',
+                endDate: '2020-01-15',
+                workDays: 5,
+                grossPay: 500,
+                netPay: 400,
+                hoursWorked: 40,
+            },
+            {
+                startDate: '2020-01-15',
+                endDate: '2020-01-31',
+                workDays: 5,
+                grossPay: 500,
+                netPay: 400,
+                hoursWorked: 40,
+            },
+        ],
     },
 ];
 
 describe('GET /api/payrolls', () => {
     it('should respond with an array of payrolls', async () => {
         // Arrange
-        mockModule([payrolls, [{ job_id: 1, job_name: 'Test Job' }]]);
-
-        mockRequest.query = { job_id: 1 };
+        mockModule([payrolls], payrolls);
 
         const { getPayrolls } = await import(
             '../../src/controllers/payrollsController.js'
@@ -67,22 +70,14 @@ describe('GET /api/payrolls', () => {
         // Call the function with the mock request and response
         await getPayrolls(mockRequest as Request, mockResponse);
 
-        const expectedPayrolls = {
-            jobId: 1,
-            jobName: 'Test Job',
-            payrolls,
-        };
-
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(200);
-        expect(mockResponse.json).toHaveBeenCalledWith(expectedPayrolls);
+        expect(mockResponse.json).toHaveBeenCalledWith(payrolls);
     });
 
     it('should respond with an error message', async () => {
         // Arrange
         mockModule([]);
-
-        mockRequest.query = { job_id: 1 };
 
         const { getPayrolls } = await import(
             '../../src/controllers/payrollsController.js'
@@ -97,19 +92,61 @@ describe('GET /api/payrolls', () => {
             });
         });
     });
+});
 
-    it('should respond with a 404 error message when the payroll tax does not exist', async () => {
+describe('GET /api/payrolls/:id', () => {
+    it('should respond with a single payroll', async () => {
         // Arrange
-        mockModule([[]]);
+        mockModule([payrolls], payrolls);
 
-        const { getPayrolls } = await import(
+        const { getPayrollsByJobId } = await import(
             '../../src/controllers/payrollsController.js'
         );
 
-        mockRequest.query = { job_id: 3 };
+        mockRequest.params = { id: 1 };
+
+        // Call the function with the mock request and response
+        await getPayrollsByJobId(mockRequest as Request, mockResponse);
+
+        // Assert
+        expect(mockResponse.status).toHaveBeenCalledWith(200);
+        expect(mockResponse.json).toHaveBeenCalledWith(payrolls);
+    });
+
+    it('should respond with an error message', async () => {
+        // Arrange
+        mockModule([]);
+
+        const { getPayrollsByJobId } = await import(
+            '../../src/controllers/payrollsController.js'
+        );
+
+        mockRequest.params = { id: 1 };
+
+        // Call the function with the mock request and response
+        await getPayrollsByJobId(mockRequest as Request, mockResponse).catch(
+            () => {
+                // Assert
+                expect(mockResponse.status).toHaveBeenCalledWith(400);
+                expect(mockResponse.json).toHaveBeenCalledWith({
+                    message: 'Error getting payrolls',
+                });
+            },
+        );
+    });
+
+    it('should respond with a 404 error message when the payroll does not exist', async () => {
+        // Arrange
+        mockModule([[]]);
+
+        const { getPayrollsByJobId } = await import(
+            '../../src/controllers/payrollsController.js'
+        );
+
+        mockRequest.params = { id: 1 };
 
         // Act
-        await getPayrolls(mockRequest as Request, mockResponse);
+        await getPayrollsByJobId(mockRequest as Request, mockResponse);
 
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(404);

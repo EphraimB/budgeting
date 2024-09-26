@@ -8,7 +8,6 @@ import {
     expect,
 } from '@jest/globals';
 import { mockModule } from '../__mocks__/mockModule';
-import { Transfer } from '../../src/types/types.js';
 
 jest.mock('../../src/config/winston', () => ({
     logger: {
@@ -20,7 +19,6 @@ jest.mock('../../src/config/winston', () => ({
 // Mock request and response
 let mockRequest: any;
 let mockResponse: any;
-let mockNext: any;
 
 beforeEach(() => {
     mockRequest = {};
@@ -29,7 +27,6 @@ beforeEach(() => {
         json: jest.fn(),
         send: jest.fn(),
     };
-    mockNext = jest.fn();
 });
 
 afterEach(() => {
@@ -38,228 +35,135 @@ afterEach(() => {
 
 const transfers = [
     {
-        transfer_id: 1,
-        cron_job_id: 1,
-        source_account_id: 1,
-        destination_account_id: 2,
-        transfer_amount: 100,
-        transfer_title: 'Test Transfer',
-        transfer_description: 'Test Transfer to test the transfer route',
-        transfer_begin_date: '2020-01-01',
-        transfer_end_date: null,
-        frequency_type: 2,
-        frequency_type_variable: 1,
-        frequency_month_of_year: null,
-        frequency_day_of_month: null,
-        frequency_day_of_week: null,
-        frequency_week_of_month: null,
-        date_created: '2020-01-01',
-        date_modified: '2020-01-01',
-    },
-    {
-        transfer_id: 2,
-        cron_job_id: 2,
-        source_account_id: 1,
-        destination_account_id: 2,
-        transfer_amount: 25,
-        transfer_title: 'Test Transfer',
-        transfer_description: 'Test Transfer to test the transfer route',
-        transfer_begin_date: '2020-01-01',
-        transfer_end_date: null,
-        frequency_type: 0,
-        frequency_type_variable: 1,
-        frequency_month_of_year: null,
-        frequency_day_of_month: null,
-        frequency_day_of_week: null,
-        frequency_week_of_month: null,
-        date_created: '2020-01-01',
-        date_modified: '2020-01-01',
-    },
-    {
-        transfer_id: 3,
-        cron_job_id: 3,
-        source_account_id: 1,
-        destination_account_id: 2,
-        transfer_amount: 50,
-        transfer_title: 'Test Transfer',
-        transfer_description: 'Test Transfer to test the transfer route',
-        transfer_begin_date: '2020-01-01',
-        transfer_end_date: null,
-        frequency_type: 1,
-        frequency_type_variable: 1,
-        frequency_month_of_year: null,
-        frequency_day_of_month: null,
-        frequency_day_of_week: null,
-        frequency_week_of_month: null,
-        date_created: '2020-01-01',
-        date_modified: '2020-01-01',
-    },
-    {
-        transfer_id: 4,
-        cron_job_id: 4,
-        source_account_id: 1,
-        destination_account_id: 2,
-        transfer_amount: 200,
-        transfer_title: 'Test Transfer',
-        transfer_description: 'Test Transfer to test the transfer route',
-        transfer_begin_date: '2020-01-01',
-        transfer_end_date: null,
-        frequency_type: 3,
-        frequency_type_variable: 1,
-        frequency_month_of_year: null,
-        frequency_day_of_month: null,
-        frequency_day_of_week: null,
-        frequency_week_of_month: null,
-        date_created: '2020-01-01',
-        date_modified: '2020-01-01',
-    },
-    {
-        transfer_id: 5,
-        cron_job_id: 5,
-        source_account_id: 2,
-        destination_account_id: 1,
-        transfer_amount: 200,
-        transfer_title: 'Test Transfer',
-        transfer_description: 'Test Transfer to test the transfer route',
-        transfer_begin_date: '2020-01-01',
-        transfer_end_date: null,
-        frequency_type: 3,
-        frequency_type_variable: 1,
-        frequency_month_of_year: null,
-        frequency_day_of_month: null,
-        frequency_day_of_week: null,
-        frequency_week_of_month: null,
-        date_created: '2020-01-01',
-        date_modified: '2020-01-01',
-    },
-];
-
-const transfersResponse: Transfer[] = [
-    {
         id: 1,
-        source_account_id: 1,
-        destination_account_id: 2,
-        transfer_amount: 100,
-        transfer_title: 'Test Transfer',
-        transfer_description: 'Test Transfer to test the transfer route',
-        transfer_begin_date: '2020-01-01',
-        transfer_end_date: null,
-        frequency_type: 2,
-        frequency_type_variable: 1,
-        frequency_month_of_year: null,
-        frequency_day_of_month: null,
-        frequency_day_of_week: null,
-        frequency_week_of_month: null,
-        date_created: '2020-01-01',
-        date_modified: '2020-01-01',
+        cronJobId: 1,
+        sourceAccountId: 1,
+        destinationAccountId: 2,
+        amount: 100,
+        title: 'Test Transfer',
+        description: 'Test Transfer to test the transfer route',
+        beginDate: '2020-01-01',
+        endDate: null,
+        frequencyType: 2,
+        frequencyTypeVariable: 1,
+        frequencyMonthOfYear: null,
+        frequencyDayOfMonth: null,
+        frequencyDayOfWeek: null,
+        frequencyWeekOfMonth: null,
+        nextDate: '2020-02-01',
+        dateCreated: '2020-01-01',
+        dateModified: '2020-01-01',
     },
     {
         id: 2,
-        source_account_id: 1,
-        destination_account_id: 2,
-        transfer_amount: 25,
-        transfer_title: 'Test Transfer',
-        transfer_description: 'Test Transfer to test the transfer route',
-        transfer_begin_date: '2020-01-01',
-        transfer_end_date: null,
-        frequency_type: 0,
-        frequency_type_variable: 1,
-        frequency_month_of_year: null,
-        frequency_day_of_month: null,
-        frequency_day_of_week: null,
-        frequency_week_of_month: null,
-        date_created: '2020-01-01',
-        date_modified: '2020-01-01',
+        cronJobId: 2,
+        sourceAccountId: 1,
+        destinationAccountId: 2,
+        amount: 25,
+        title: 'Test Transfer',
+        description: 'Test Transfer to test the transfer route',
+        beginDate: '2020-01-01',
+        endDate: null,
+        frequencyType: 0,
+        frequencyTypeVariable: 1,
+        frequencyMonthOfYear: null,
+        frequencyDayOfMonth: null,
+        frequencyDayOfWeek: null,
+        frequencyWeekOfMonth: null,
+        nextDate: '2020-01-02',
+        dateCreated: '2020-01-01',
+        dateModified: '2020-01-01',
     },
     {
         id: 3,
-        source_account_id: 1,
-        destination_account_id: 2,
-        transfer_amount: 50,
-        transfer_title: 'Test Transfer',
-        transfer_description: 'Test Transfer to test the transfer route',
-        transfer_begin_date: '2020-01-01',
-        transfer_end_date: null,
-        frequency_type: 1,
-        frequency_type_variable: 1,
-        frequency_month_of_year: null,
-        frequency_day_of_month: null,
-        frequency_day_of_week: null,
-        frequency_week_of_month: null,
-        date_created: '2020-01-01',
-        date_modified: '2020-01-01',
+        cronJobId: 3,
+        sourceAccountId: 1,
+        destinationAccountId: 2,
+        amount: 50,
+        title: 'Test Transfer',
+        description: 'Test Transfer to test the transfer route',
+        beginDate: '2020-01-01',
+        endDate: null,
+        frequencyType: 1,
+        frequencyTypeVariable: 1,
+        frequencyMonthOfYear: null,
+        frequencyDayOfMonth: null,
+        frequencyDayOfWeek: null,
+        frequencyWeekOfMonth: null,
+        nextDate: '2020-01-08',
+        dateCreated: '2020-01-01',
+        dateModified: '2020-01-01',
     },
     {
         id: 4,
-        source_account_id: 1,
-        destination_account_id: 2,
-        transfer_amount: 200,
-        transfer_title: 'Test Transfer',
-        transfer_description: 'Test Transfer to test the transfer route',
-        transfer_begin_date: '2020-01-01',
-        transfer_end_date: null,
-        frequency_type: 3,
-        frequency_type_variable: 1,
-        frequency_month_of_year: null,
-        frequency_day_of_month: null,
-        frequency_day_of_week: null,
-        frequency_week_of_month: null,
-        date_created: '2020-01-01',
-        date_modified: '2020-01-01',
+        cronJobId: 4,
+        sourceAccountId: 1,
+        destinationAccountId: 2,
+        amount: 200,
+        title: 'Test Transfer',
+        description: 'Test Transfer to test the transfer route',
+        beginDate: '2020-01-01',
+        endDate: null,
+        frequencyType: 3,
+        frequencyTypeVariable: 1,
+        frequencyMonthOfYear: null,
+        frequencyDayOfMonth: null,
+        frequencyDayOfWeek: null,
+        frequencyWeekOfMonth: null,
+        nextDate: '2021-01-01',
+        dateCreated: '2020-01-01',
+        dateModified: '2020-01-01',
     },
     {
         id: 5,
-        source_account_id: 2,
-        destination_account_id: 1,
-        transfer_amount: 200,
-        transfer_title: 'Test Transfer',
-        transfer_description: 'Test Transfer to test the transfer route',
-        transfer_begin_date: '2020-01-01',
-        transfer_end_date: null,
-        frequency_type: 3,
-        frequency_type_variable: 1,
-        frequency_month_of_year: null,
-        frequency_day_of_month: null,
-        frequency_day_of_week: null,
-        frequency_week_of_month: null,
-        date_created: '2020-01-01',
-        date_modified: '2020-01-01',
+        cronJobId: 5,
+        sourceAccountId: 2,
+        destinationAccountId: 1,
+        amount: 200,
+        title: 'Test Transfer',
+        description: 'Test Transfer to test the transfer route',
+        beginDate: '2020-01-01',
+        endDate: null,
+        frequencyType: 3,
+        frequencyTypeVariable: 1,
+        frequencyMonthOfYear: null,
+        frequencyDayOfMonth: null,
+        frequencyDayOfWeek: null,
+        frequencyWeekOfMonth: null,
+        nextDate: '2021-01-01',
+        dateCreated: '2020-01-01',
+        dateModified: '2020-01-01',
     },
 ];
 
 describe('GET /api/transfers', () => {
     it('should respond with an array of transfers', async () => {
         // Arrange
-        mockModule([transfers]);
-
-        mockRequest.query = { id: null };
+        mockModule([transfers], transfers);
 
         const { getTransfers } = await import(
             '../../src/controllers/transfersController.js'
         );
 
+        mockRequest.query = { accountId: null };
+
         // Call the function with the mock request and response
         await getTransfers(mockRequest as Request, mockResponse);
 
-        // Add next date to the transfers response
-        transfersResponse.map((transfer: any) => {
-            transfer.next_date = '2020-01-01';
-        });
-
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(200);
-        expect(mockResponse.json).toHaveBeenCalledWith(transfersResponse);
+        expect(mockResponse.json).toHaveBeenCalledWith(transfers);
     });
 
     it('should respond with an error message', async () => {
         // Arrange
         mockModule([]);
 
-        mockRequest.query = { id: null };
-
         const { getTransfers } = await import(
             '../../src/controllers/transfersController.js'
         );
+
+        mockRequest.query = { accountId: null };
 
         // Call the function with the mock request and response
         await getTransfers(mockRequest as Request, mockResponse).catch(() => {
@@ -271,30 +175,72 @@ describe('GET /api/transfers', () => {
         });
     });
 
-    it('should respond with an array of transfers with id', async () => {
+    it('should respond with an array of transfers with account id', async () => {
         // Arrange
-        mockModule([
-            transfers.filter((transfer) => transfer.transfer_id === 1),
-        ]);
-
-        mockRequest.query = { id: 1 };
+        mockModule(
+            [transfers.filter((transfer) => transfer.sourceAccountId === 1)],
+            transfers.filter((transfer) => transfer.sourceAccountId === 1),
+        );
 
         const { getTransfers } = await import(
             '../../src/controllers/transfersController.js'
         );
 
+        mockRequest.query = { accountId: 1 };
+
         // Call the function with the mock request and response
         await getTransfers(mockRequest as Request, mockResponse);
-
-        // Add next date to the transfers response
-        transfersResponse.map((transfer: any) => {
-            transfer.next_date = '2020-01-01';
-        });
 
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(200);
         expect(mockResponse.json).toHaveBeenCalledWith(
-            transfersResponse.filter((transfer) => transfer.id === 1),
+            transfers.filter((transfer) => transfer.sourceAccountId === 1),
+        );
+    });
+
+    it('should respond with an error message with account id', async () => {
+        // Arrange
+        mockModule([]);
+
+        const { getTransfers } = await import(
+            '../../src/controllers/transfersController.js'
+        );
+
+        mockRequest.query = { accountId: 1 };
+
+        // Call the function with the mock request and response
+        await getTransfers(mockRequest as Request, mockResponse).catch(() => {
+            // Assert
+            expect(mockResponse.status).toHaveBeenCalledWith(400);
+            expect(mockResponse.json).toHaveBeenCalledWith({
+                message: 'Error getting transfers for given account id',
+            });
+        });
+    });
+});
+
+describe('GET /api/transfers/:id', () => {
+    it('should respond with an array of transfers with id', async () => {
+        // Arrange
+        mockModule(
+            [transfers.filter((transfer) => transfer.id === 1)],
+            transfers.filter((transfer) => transfer.id === 1),
+        );
+
+        const { getTransfersById } = await import(
+            '../../src/controllers/transfersController.js'
+        );
+
+        mockRequest.params = { id: 1 };
+        mockRequest.query = { accountId: null };
+
+        // Call the function with the mock request and response
+        await getTransfersById(mockRequest as Request, mockResponse);
+
+        // Assert
+        expect(mockResponse.status).toHaveBeenCalledWith(200);
+        expect(mockResponse.json).toHaveBeenCalledWith(
+            transfers.filter((transfer) => transfer.id === 1),
         );
     });
 
@@ -302,137 +248,96 @@ describe('GET /api/transfers', () => {
         // Arrange
         mockModule([]);
 
-        mockRequest.query = { id: 1 };
-
-        const { getTransfers } = await import(
+        const { getTransfersById } = await import(
             '../../src/controllers/transfersController.js'
         );
 
-        // Call the function with the mock request and response
-        await getTransfers(mockRequest as Request, mockResponse).catch(() => {
-            // Assert
-            expect(mockResponse.status).toHaveBeenCalledWith(400);
-            expect(mockResponse.json).toHaveBeenCalledWith({
-                message: 'Error getting transfer',
-            });
-        });
-    });
-
-    it('should respond with an array of transfers with account_id', async () => {
-        // Arrange
-        mockModule([
-            transfers.filter((transfer) => transfer.source_account_id === 1),
-        ]);
-
-        mockRequest.query = { account_id: 1 };
-
-        const { getTransfers } = await import(
-            '../../src/controllers/transfersController.js'
-        );
+        mockRequest.params = { id: 1 };
+        mockRequest.query = { accountId: null };
 
         // Call the function with the mock request and response
-        await getTransfers(mockRequest as Request, mockResponse);
-
-        // Add next date to the transfers response
-        transfersResponse.map((transfer: any) => {
-            transfer.next_date = '2020-01-01';
-        });
-
-        // Assert
-        expect(mockResponse.status).toHaveBeenCalledWith(200);
-        expect(mockResponse.json).toHaveBeenCalledWith(
-            transfersResponse.filter(
-                (transfer) => transfer.source_account_id === 1,
-            ),
+        await getTransfersById(mockRequest as Request, mockResponse).catch(
+            () => {
+                // Assert
+                expect(mockResponse.status).toHaveBeenCalledWith(400);
+                expect(mockResponse.json).toHaveBeenCalledWith({
+                    message: 'Error getting transfer',
+                });
+            },
         );
     });
 
-    it('should respond with an error message with account_id', async () => {
+    it('should respond with an array of transfers with id and account id', async () => {
         // Arrange
-        mockModule([]);
-
-        mockRequest.query = { account_id: 1 };
-
-        const { getTransfers } = await import(
-            '../../src/controllers/transfersController.js'
-        );
-
-        // Call the function with the mock request and response
-        await getTransfers(mockRequest as Request, mockResponse).catch(() => {
-            // Assert
-            expect(mockResponse.status).toHaveBeenCalledWith(400);
-            expect(mockResponse.json).toHaveBeenCalledWith({
-                message: 'Error getting transfers for given account_id',
-            });
-        });
-    });
-
-    it('should respond with an array of transfers with id and account_id', async () => {
-        // Arrange
-        mockModule([
+        mockModule(
+            [
+                transfers.filter(
+                    (transfer) =>
+                        transfer.id === 1 && transfer.sourceAccountId === 1,
+                ),
+            ],
             transfers.filter(
                 (transfer) =>
-                    transfer.transfer_id === 1 &&
-                    transfer.source_account_id === 1,
+                    transfer.id === 1 && transfer.sourceAccountId === 1,
             ),
-        ]);
+        );
 
-        mockRequest.query = { id: 1, account_id: 1 };
-
-        const { getTransfers } = await import(
+        const { getTransfersById } = await import(
             '../../src/controllers/transfersController.js'
         );
 
-        // Call the function with the mock request and response
-        await getTransfers(mockRequest as Request, mockResponse);
+        mockRequest.params = { id: 1 };
+        mockRequest.query = { accountId: 1 };
 
-        // Add next date to the transfers response
-        transfersResponse.map((transfer: any) => {
-            transfer.next_date = '2020-01-01';
-        });
+        // Call the function with the mock request and response
+        await getTransfersById(mockRequest as Request, mockResponse);
 
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(200);
         expect(mockResponse.json).toHaveBeenCalledWith(
-            transfersResponse.filter(
+            transfers.filter(
                 (transfer) =>
-                    transfer.id === 1 && transfer.source_account_id === 1,
+                    transfer.id === 1 && transfer.sourceAccountId === 1,
             ),
         );
     });
 
-    it('should respond with an error message with id and account_id', async () => {
+    it('should respond with an error message with id and account id', async () => {
         // Arrange
         mockModule([]);
 
-        mockRequest.query = { id: 1, account_id: 1 };
-
-        const { getTransfers } = await import(
+        const { getTransfersById } = await import(
             '../../src/controllers/transfersController.js'
         );
 
+        mockRequest.params = { id: 1 };
+        mockRequest.query = { accountId: 1 };
+
         // Call the function with the mock request and response
-        await getTransfers(mockRequest as Request, mockResponse).catch(() => {
-            // Assert
-            expect(mockResponse.status).toHaveBeenCalledWith(400);
-            expect(mockResponse.json).toHaveBeenCalledWith({
-                message: 'Error getting transfer',
-            });
-        });
+        await getTransfersById(mockRequest as Request, mockResponse).catch(
+            () => {
+                // Assert
+                expect(mockResponse.status).toHaveBeenCalledWith(400);
+                expect(mockResponse.json).toHaveBeenCalledWith({
+                    message: 'Error getting transfer',
+                });
+            },
+        );
     });
 
     it('should respond with a 404 error message when the transfer does not exist', async () => {
         // Arrange
         mockModule([[]]);
 
-        const { getTransfers } = await import(
+        const { getTransfersById } = await import(
             '../../src/controllers/transfersController.js'
         );
 
-        mockRequest.query = { id: 3 };
+        mockRequest.params = { id: 3 };
+        mockRequest.query = { accountId: null };
 
         // Act
-        await getTransfers(mockRequest as Request, mockResponse);
+        await getTransfersById(mockRequest as Request, mockResponse);
 
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(404);
@@ -441,36 +346,42 @@ describe('GET /api/transfers', () => {
 });
 
 describe('POST /api/transfers', () => {
-    it('should populate request.transfer_id', async () => {
+    it('should respond with the created transfer', async () => {
         // Arrange
-        const newTransfer = transfers.filter(
-            (transfer) => transfer.transfer_id === 1,
-        );
+        const newTransfer = transfers.filter((transfer) => transfer.id === 1);
 
-        mockModule([
-            [],
+        mockModule(
+            [[], [], [{ id: 1, unique_id: 'v80voqopcb' }], newTransfer, []],
             newTransfer,
-            [],
-            [{ cron_job_id: 1, unique_id: 'transfers-1' }, []],
-            [],
-        ]);
+        );
 
         const { createTransfer } = await import(
             '../../src/controllers/transfersController.js'
         );
 
-        mockRequest.body = newTransfer;
+        mockRequest.body = {
+            sourceAccountId: 1,
+            destinationAccountId: 2,
+            amount: 100,
+            title: 'Test Transfer',
+            description: 'Test Transfer to test the transfer route',
+            beginDate: '2020-01-01',
+            endDate: null,
+            frequency: {
+                type: 2,
+                typeVariable: 1,
+                monthOfYear: null,
+                dayOfMonth: null,
+                dayOfWeek: null,
+                weekOfMonth: null,
+            },
+        };
 
-        await createTransfer(mockRequest as Request, mockResponse, mockNext);
-
-        // Add next date to the transfers response
-        transfersResponse.map((transfer: any) => {
-            transfer.next_date = undefined;
-        });
+        await createTransfer(mockRequest as Request, mockResponse);
 
         // Assert
-        expect(mockRequest.transfer_id).toBe(1);
-        expect(mockNext).toHaveBeenCalled();
+        expect(mockResponse.status).toHaveBeenCalledWith(201);
+        expect(mockResponse.json).toHaveBeenCalledWith(newTransfer);
     });
 
     it('should respond with an error message', async () => {
@@ -481,151 +392,87 @@ describe('POST /api/transfers', () => {
             '../../src/controllers/transfersController.js'
         );
 
-        mockRequest.body = transfers.filter(
-            (transfer) => transfer.transfer_id === 1,
-        );
+        mockRequest.body = transfers.filter((transfer) => transfer.id === 1);
 
         // Call the function with the mock request and response
-        await createTransfer(
-            mockRequest as Request,
-            mockResponse,
-            mockNext,
-        ).catch(() => {
+        await createTransfer(mockRequest as Request, mockResponse).catch(() => {
             // Assert
             expect(mockResponse.status).toHaveBeenCalledWith(400);
             expect(mockResponse.json).toHaveBeenCalledWith({
                 message: 'Error creating transfer',
             });
         });
-    });
-
-    it('should respond with an error message with return object', async () => {
-        // Arrange
-        mockModule([]);
-
-        const { createTransferReturnObject } = await import(
-            '../../src/controllers/transfersController.js'
-        );
-
-        mockRequest.body = transfers.filter(
-            (transfer) => transfer.transfer_id === 1,
-        );
-
-        // Call the function with the mock request and response
-        await createTransferReturnObject(
-            mockRequest as Request,
-            mockResponse,
-        ).catch(() => {
-            // Assert
-            expect(mockResponse.status).toHaveBeenCalledWith(400);
-            expect(mockResponse.json).toHaveBeenCalledWith({
-                message: 'Error creating transfer',
-            });
-        });
-    });
-
-    it('should respond with the created transfer', async () => {
-        // Arrange
-        const newTransfer = transfers.filter(
-            (transfer) => transfer.transfer_id === 1,
-        );
-
-        mockModule([newTransfer]);
-
-        const { createTransferReturnObject } = await import(
-            '../../src/controllers/transfersController.js'
-        );
-
-        mockRequest.body = newTransfer;
-
-        await createTransferReturnObject(mockRequest as Request, mockResponse);
-
-        // Assert
-        expect(mockResponse.status).toHaveBeenCalledWith(201);
-        expect(mockResponse.json).toHaveBeenCalledWith(
-            transfersResponse.filter((transfer) => transfer.id === 1),
-        );
     });
 });
 
 describe('PUT /api/transfer/:id', () => {
-    it('should call next on the middleware', async () => {
+    it('should respond with the updated transfer', async () => {
         // Arrange
         const updatedTransfer = transfers.filter(
-            (transfer) => transfer.transfer_id === 1,
+            (transfer) => transfer.id === 1,
         );
 
-        mockModule([
+        mockModule(
+            [
+                [{ id: 1, cron_job_id: 1 }],
+                [{ unique_id: 'vo838fvpbcu3' }],
+                [],
+                [],
+                [],
+                updatedTransfer,
+                [],
+                [],
+            ],
             updatedTransfer,
-            [{ cron_job_id: 1, unique_id: 'transfers-1' }],
-            [],
-            [],
-            [],
-            [],
-        ]);
-
-        mockRequest.params = { id: 1 };
-        mockRequest.body = updatedTransfer;
+        );
 
         const { updateTransfer } = await import(
             '../../src/controllers/transfersController.js'
         );
 
-        await updateTransfer(mockRequest as Request, mockResponse, mockNext);
+        mockRequest.params = { id: 1 };
+        mockRequest.body = {
+            sourceAccountId: 1,
+            destinationAccountId: 2,
+            amount: 100,
+            title: 'Test Transfer',
+            description: 'Test Transfer to test the transfer route',
+            beginDate: '2020-01-01',
+            endDate: null,
+            frequency: {
+                type: 2,
+                typeVariable: 1,
+                monthOfYear: null,
+                dayOfMonth: null,
+                dayOfWeek: null,
+                weekOfMonth: null,
+            },
+        };
+
+        await updateTransfer(mockRequest as Request, mockResponse);
 
         // Assert
-        expect(mockNext).toHaveBeenCalled();
+        expect(mockResponse.status).toHaveBeenCalledWith(200);
+        expect(mockResponse.json).toHaveBeenCalledWith(updatedTransfer);
     });
 
     it('should respond with an error message', async () => {
         // Arrange
         mockModule([]);
 
-        mockRequest.params = { id: 1 };
-        mockRequest.body = transfers.filter(
-            (transfer) => transfer.transfer_id === 1,
-        );
-
         const { updateTransfer } = await import(
             '../../src/controllers/transfersController.js'
         );
 
+        mockRequest.params = { id: 1 };
+        mockRequest.body = transfers.filter((transfer) => transfer.id === 1);
+
         // Call the function with the mock request and response
-        await updateTransfer(
-            mockRequest as Request,
-            mockResponse,
-            mockNext,
-        ).catch(() => {
+        await updateTransfer(mockRequest as Request, mockResponse).catch(() => {
             // Assert
             expect(mockResponse.status).toHaveBeenCalledWith(400);
             expect(mockResponse.json).toHaveBeenCalledWith({
                 message: 'Error updating transfer',
-            });
-        });
-    });
-
-    it('should respond with an error message in the return object', async () => {
-        // Arrange
-        mockModule([]);
-
-        mockRequest.params = { id: 1 };
-        mockRequest.body = transfers.filter(
-            (transfer) => transfer.transfer_id === 1,
-        );
-
-        const { updateTransferReturnObject } = await import(
-            '../../src/controllers/transfersController.js'
-        );
-
-        // Call the function with the mock request and response
-        await updateTransferReturnObject(
-            mockRequest as Request,
-            mockResponse,
-        ).catch(() => {
-            // Assert
-            expect(mockResponse.status).toHaveBeenCalledWith(400);
-            expect(mockResponse.json).toHaveBeenCalledWith({
-                message: 'Error getting transfer',
             });
         });
     });
@@ -639,50 +486,26 @@ describe('PUT /api/transfer/:id', () => {
         );
 
         mockRequest.params = { id: 3 };
-        mockRequest.body = transfers.filter(
-            (transfer) => transfer.transfer_id === 1,
-        );
+        mockRequest.body = transfers.filter((transfer) => transfer.id === 1);
 
         // Act
-        await updateTransfer(mockRequest as Request, mockResponse, mockNext);
+        await updateTransfer(mockRequest as Request, mockResponse);
 
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(404);
         expect(mockResponse.send).toHaveBeenCalledWith('Transfer not found');
     });
-
-    it('should respond with the updated transfer', async () => {
-        // Arrange
-        const updatedTransfer = transfers.filter(
-            (transfer) => transfer.transfer_id === 1,
-        );
-
-        mockModule([updatedTransfer]);
-
-        const { updateTransferReturnObject } = await import(
-            '../../src/controllers/transfersController.js'
-        );
-
-        mockRequest = { transfer_id: 1 };
-
-        await updateTransferReturnObject(mockRequest as Request, mockResponse);
-
-        // Assert
-        expect(mockResponse.status).toHaveBeenCalledWith(200);
-        expect(mockResponse.json).toHaveBeenCalledWith(
-            transfersResponse.filter((transfer) => transfer.id === 1),
-        );
-    });
 });
 
 describe('DELETE /api/transfer/:id', () => {
-    it('should call next on the middleware', async () => {
+    it('should respond with a success message', async () => {
         // Arrange
         mockModule([
-            transfers.filter((transfer) => transfer.transfer_id === 1),
+            [{ id: 1, cron_job_id: 1 }],
             [],
             [],
-            [{ cron_job_id: 1, unique_id: 'transfers-1' }],
+            [{ unique_id: 'vpf389fpcb' }],
+            [],
             [],
             [],
         ]);
@@ -693,10 +516,13 @@ describe('DELETE /api/transfer/:id', () => {
 
         mockRequest.params = { id: 1 };
 
-        await deleteTransfer(mockRequest as Request, mockResponse, mockNext);
+        await deleteTransfer(mockRequest as Request, mockResponse);
 
         // Assert
-        expect(mockNext).toHaveBeenCalled();
+        expect(mockResponse.status).toHaveBeenCalledWith(200);
+        expect(mockResponse.send).toHaveBeenCalledWith(
+            'Transfer deleted successfully',
+        );
     });
 
     it('should respond with an error message', async () => {
@@ -708,14 +534,9 @@ describe('DELETE /api/transfer/:id', () => {
         );
 
         mockRequest.params = { id: 1 };
-        mockRequest.query = { account_id: 1 };
 
         // Call the function with the mock request and response
-        await deleteTransfer(
-            mockRequest as Request,
-            mockResponse,
-            mockNext,
-        ).catch(() => {
+        await deleteTransfer(mockRequest as Request, mockResponse).catch(() => {
             // Assert
             expect(mockResponse.status).toHaveBeenCalledWith(400);
             expect(mockResponse.json).toHaveBeenCalledWith({
@@ -733,33 +554,12 @@ describe('DELETE /api/transfer/:id', () => {
         );
 
         mockRequest.params = { id: 3 };
-        mockRequest.query = { account_id: 1 };
 
         // Act
-        await deleteTransfer(mockRequest as Request, mockResponse, mockNext);
+        await deleteTransfer(mockRequest as Request, mockResponse);
 
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(404);
         expect(mockResponse.send).toHaveBeenCalledWith('Transfer not found');
-    });
-
-    it('should respond with a success message with account_id', async () => {
-        // Arrange
-        mockModule(['Transfer deleted successfully']);
-
-        const { deleteTransferReturnObject } = await import(
-            '../../src/controllers/transfersController.js'
-        );
-
-        mockRequest.params = { id: 1 };
-        mockRequest.query = { account_id: 1 };
-
-        await deleteTransferReturnObject(mockRequest as Request, mockResponse);
-
-        // Assert
-        expect(mockResponse.status).toHaveBeenCalledWith(200);
-        expect(mockResponse.send).toHaveBeenCalledWith(
-            'Transfer deleted successfully',
-        );
     });
 });
