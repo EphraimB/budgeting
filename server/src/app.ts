@@ -31,10 +31,7 @@ import fs from 'fs';
 import path from 'path';
 
 const swaggerDocument = JSON.parse(
-    fs.readFileSync(
-        path.resolve(process.cwd(), './swagger-output.json'),
-        'utf8',
-    ),
+    fs.readFileSync(path.resolve(process.cwd(), './swagger.json'), 'utf8'),
 );
 
 const app: Express = express();
