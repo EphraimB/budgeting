@@ -27,6 +27,18 @@ const doc = {
             },
         },
     },
+    examples: {
+        accounts: {
+            value: {
+                id: 2,
+                $name: 'Savings',
+                balance: 100,
+                dateCreated: '2020-01-01',
+                dateModified: '2020-01-01',
+            },
+            summary: 'Example accounts',
+        },
+    },
 };
 
 const outputFile = './swagger-output.json';

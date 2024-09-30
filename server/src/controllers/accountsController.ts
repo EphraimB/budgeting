@@ -18,10 +18,10 @@ export const getAccounts = async (
     // #swagger.description = 'Get all accounts'
 
     /* #swagger.responses[200] = {
-            description: "A JSON array of accounts",
+            description: "A JSON object of the account",
             content: {
                 "application/json": {
-                    schema:{
+                    schema: {
                         $ref: "#/components/schemas/accounts"
                     }
                 }           
@@ -75,6 +75,20 @@ export const getAccountsById = async (
     response: Response,
 ): Promise<void> => {
     // #swagger.tags = ['Accounts']
+    // #swagger.summary = 'Get a single account'
+    // #swagger.description = 'Get a single account'
+
+    /* #swagger.responses[200] = {
+            description: "A JSON object of the account",
+            content: {
+                "application/json": {
+                    schema: {
+                        $ref: "#/components/schemas/accounts"
+                    }
+                }           
+            }
+        }   
+    */
 
     const { id } = request.params;
 
