@@ -9,12 +9,10 @@ const doc = {
     },
     servers: [
         {
-            url: 'http://localhost:5001/api/',
-            description: '',
+            url: 'http://localhost:5001',
+            description: 'Development server',
         },
     ],
-    host: 'localhost:5001',
-    basePath: '/api',
     schemes: ['http', 'https'],
     consumes: ['application/json'],
     produces: ['application/json'],
