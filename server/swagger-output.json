@@ -2,8 +2,8 @@
     "openapi": "3.0.0",
     "info": {
         "title": "Budgeting",
-        "description": "A budgeting app that generates future transactions based on expenses, loans, current balance, and income",
-        "version": "0.1.0"
+        "description": "A budgeting app that generates future transactions based on your daily habits",
+        "version": "0.2.0"
     },
     "servers": [
         {
@@ -14,21 +14,10 @@
     "paths": {
         "/accounts": {
             "get": {
-                "summary": "Get one account",
-                "description": "Get one account",
+                "summary": "Get all account",
+                "description": "Get all account",
                 "tags": [
                     "accounts"
-                ],
-                "parameters": [
-                    {
-                        "name": "id",
-                        "in": "query",
-                        "description": "Filter by account id",
-                        "required": false,
-                        "schema": {
-                            "type": "integer"
-                        }
-                    }
                 ],
                 "responses": {
                     "200": {
@@ -36,9 +25,6 @@
                     },
                     "400": {
                         "$ref": "#/components/responses/BadRequest"
-                    },
-                    "404": {
-                        "description": "Account not found"
                     }
                 }
             },
@@ -70,6 +56,32 @@
             }
         },
         "/accounts/{id}": {
+            "get": {
+                "summary": "Get one account",
+                "description": "Get one account",
+                "tags": [
+                    "accounts"
+                ],
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "query",
+                        "description": "Filter by account id",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "$ref": "#/components/responses/SuccessResponseAccounts"
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/BadRequest"
+                    }
+                }
+            },
             "put": {
                 "summary": "Update an account",
                 "description": "Update an account",

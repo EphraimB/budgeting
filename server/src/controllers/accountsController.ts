@@ -13,22 +13,6 @@ export const getAccounts = async (
     _: Request,
     response: Response,
 ): Promise<void> => {
-    // #swagger.tags = ['Accounts']
-    // #swagger.summary = 'Get all accounts'
-    // #swagger.description = 'Get all accounts'
-
-    /* #swagger.responses[200] = {
-            description: "A JSON object of the account",
-            content: {
-                "application/json": {
-                    schema: {
-                        $ref: "#/components/schemas/accounts"
-                    }
-                }           
-            }
-        }   
-    */
-
     const client = await pool.connect(); // Get a client from the pool
 
     try {
@@ -74,22 +58,6 @@ export const getAccountsById = async (
     request: Request,
     response: Response,
 ): Promise<void> => {
-    // #swagger.tags = ['Accounts']
-    // #swagger.summary = 'Get a single account'
-    // #swagger.description = 'Get a single account'
-
-    /* #swagger.responses[200] = {
-            description: "A JSON object of the account",
-            content: {
-                "application/json": {
-                    schema: {
-                        $ref: "#/components/schemas/accounts"
-                    }
-                }           
-            }
-        }   
-    */
-
     const { id } = request.params;
 
     const client = await pool.connect(); // Get a client from the pool
@@ -142,8 +110,6 @@ export const getAccountsById = async (
  *  Sends a response with the created account or an error message and posts the account to the database
  */
 export const createAccount = async (request: Request, response: Response) => {
-    // #swagger.tags = ['Accounts']
-
     const { name } = request.body;
 
     const client = await pool.connect(); // Get a client from the pool
@@ -180,8 +146,6 @@ export const updateAccount = async (
     request: Request,
     response: Response,
 ): Promise<void> => {
-    // #swagger.tags = ['Accounts']
-
     const { id } = request.params;
     const { name } = request.body;
 
@@ -233,8 +197,6 @@ export const deleteAccount = async (
     request: Request,
     response: Response,
 ): Promise<void> => {
-    // #swagger.tags = ['Accounts']
-
     const { id } = request.params;
 
     const client = await pool.connect(); // Get a client from the pool
