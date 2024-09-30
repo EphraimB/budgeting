@@ -32,7 +32,7 @@ import path from 'path';
 
 const swaggerDocument = JSON.parse(
     fs.readFileSync(
-        path.resolve(process.cwd(), './src/views/swagger.json'),
+        path.resolve(process.cwd(), './swagger-output.json'),
         'utf8',
     ),
 );

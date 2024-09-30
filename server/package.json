@@ -7,6 +7,7 @@
     "build": "tsc",
     "start": "node src/server.js",
     "lint": "npx eslint '**/*.{js,ts}'",
+    "swagger": "node ./swagger.js",
     "test": "cross-env NODE_OPTIONS=--experimental-vm-modules TS_JEST_LOG=ts-jest.log jest"
   },
   "author": "Ephraim Becker",

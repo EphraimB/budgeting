@@ -32,8 +32,8 @@ RUN npm ci --only=production
 # Copy compiled JavaScript and other necessary files from the build stage
 COPY --from=builder /home/node/app/src/dist ./
 
-# Copy the views folder
-COPY ./src/views/swagger.json ./src/views/swagger.json
+# Build the swagger documentation
+RUN npm run swagger
 
 # Expose the port the app runs on
 EXPOSE 5001
@@ -42,4 +42,4 @@ EXPOSE 5001
 ENV PORT 5001
 
 # Start the app
-CMD ["nodemon", "src/server.js"]
+CMD ["nodemon", "--watch", "src", "src/server.js"]
