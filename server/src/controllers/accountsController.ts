@@ -17,6 +17,18 @@ export const getAccounts = async (
     // #swagger.summary = 'Get all accounts'
     // #swagger.description = 'Get all accounts'
 
+    /* #swagger.responses[200] = {
+            description: "A JSON array of accounts",
+            content: {
+                "application/json": {
+                    schema:{
+                        $ref: "#/components/schemas/accounts"
+                    }
+                }           
+            }
+        }   
+    */
+
     const client = await pool.connect(); // Get a client from the pool
 
     try {

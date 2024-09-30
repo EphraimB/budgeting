@@ -16,6 +16,17 @@ const doc = {
     schemes: ['http', 'https'],
     consumes: ['application/json'],
     produces: ['application/json'],
+    components: {
+        schemas: {
+            accounts: {
+                id: 1,
+                $name: 'Personal',
+                balance: 50,
+                dateCreated: '2020-01-01',
+                dateModified: '2020-01-01',
+            },
+        },
+    },
 };
 
 const outputFile = './swagger-output.json';
