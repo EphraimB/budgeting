@@ -880,7 +880,7 @@
                 ],
                 "responses": {
                     "200": {
-                        "$ref": "#/components/responses/SuccessResponseCommuteExpenses"
+                        "$ref": "#/components/responses/SuccessResponseCommuteExpense"
                     },
                     "400": {
                         "$ref": "#/components/responses/BadRequest"
@@ -912,7 +912,7 @@
                 ],
                 "responses": {
                     "200": {
-                        "$ref": "#/components/responses/SuccessResponseCommuteSystems"
+                        "$ref": "#/components/responses/SuccessResponseCommuteSystem"
                     },
                     "400": {
                         "$ref": "#/components/responses/BadRequest"
@@ -934,14 +934,14 @@
                     "content": {
                         "application/json": {
                             "schema": {
-                                "$ref": "#/components/schemas/CommuteSystemManipulation"
+                                "$ref": "#/components/schemas/CommuteSystemRequest"
                             }
                         }
                     }
                 },
                 "responses": {
                     "201": {
-                        "$ref": "#/components/responses/SuccessResponseCommuteSystems"
+                        "$ref": "#/components/responses/SuccessResponseCommuteSystem"
                     },
                     "400": {
                         "$ref": "#/components/responses/BadRequest"
@@ -973,14 +973,14 @@
                     "content": {
                         "application/json": {
                             "schema": {
-                                "$ref": "#/components/schemas/CommuteSystemManipulation"
+                                "$ref": "#/components/schemas/CommuteSystemRequest"
                             }
                         }
                     }
                 },
                 "responses": {
                     "200": {
-                        "$ref": "#/components/responses/SuccessResponseCommuteSystems"
+                        "$ref": "#/components/responses/SuccessResponseCommuteSystem"
                     },
                     "400": {
                         "$ref": "#/components/responses/BadRequest"
@@ -1071,7 +1071,7 @@
                     "content": {
                         "application/json": {
                             "schema": {
-                                "$ref": "#/components/schemas/CommuteHistoryManipulation"
+                                "$ref": "#/components/schemas/CommuteHistoryRequest"
                             }
                         }
                     }
@@ -1110,7 +1110,7 @@
                     "content": {
                         "application/json": {
                             "schema": {
-                                "$ref": "#/components/schemas/CommuteHistoryManipulation"
+                                "$ref": "#/components/schemas/CommuteHistoryRequest"
                             }
                         }
                     }
@@ -1177,7 +1177,7 @@
                 ],
                 "responses": {
                     "200": {
-                        "$ref": "#/components/responses/SuccessResponseCommuteFares"
+                        "$ref": "#/components/responses/SuccessResponseCommuteFare"
                     },
                     "400": {
                         "$ref": "#/components/responses/BadRequest"
@@ -1199,14 +1199,14 @@
                     "content": {
                         "application/json": {
                             "schema": {
-                                "$ref": "#/components/schemas/CommuteFareManipulation"
+                                "$ref": "#/components/schemas/CommuteFareRequest"
                             }
                         }
                     }
                 },
                 "responses": {
                     "201": {
-                        "$ref": "#/components/responses/SuccessResponseCommuteFares"
+                        "$ref": "#/components/responses/SuccessResponseCommuteFare"
                     },
                     "400": {
                         "$ref": "#/components/responses/BadRequest"
@@ -1238,14 +1238,14 @@
                     "content": {
                         "application/json": {
                             "schema": {
-                                "$ref": "#/components/schemas/CommuteFareManipulation"
+                                "$ref": "#/components/schemas/CommuteFareRequest"
                             }
                         }
                     }
                 },
                 "responses": {
                     "200": {
-                        "$ref": "#/components/responses/SuccessResponseCommuteFares"
+                        "$ref": "#/components/responses/SuccessResponseCommuteFare"
                     },
                     "400": {
                         "$ref": "#/components/responses/BadRequest"
@@ -1336,7 +1336,7 @@
                     "content": {
                         "application/json": {
                             "schema": {
-                                "$ref": "#/components/schemas/CommuteScheduleManipulation"
+                                "$ref": "#/components/schemas/CommuteScheduleRequest"
                             }
                         }
                     }
@@ -1375,7 +1375,7 @@
                     "content": {
                         "application/json": {
                             "schema": {
-                                "$ref": "#/components/schemas/CommuteScheduleManipulation"
+                                "$ref": "#/components/schemas/CommuteScheduleRequest"
                             }
                         }
                     }
@@ -1431,16 +1431,6 @@
                 ],
                 "parameters": [
                     {
-                        "name": "id",
-                        "in": "query",
-                        "description": "Loan id",
-                        "required": false,
-                        "schema": {
-                            "type": "integer",
-                            "minimum": 1
-                        }
-                    },
-                    {
                         "name": "accountId",
                         "in": "query",
                         "description": "Filter by account id",
@@ -1453,7 +1443,17 @@
                 ],
                 "responses": {
                     "200": {
-                        "$ref": "#/components/responses/SuccessResponseLoans"
+                        "description": "A JSON array of loans",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/responses/SuccessResponseLoan"
+                                    }
+                                }
+                            }
+                        }
                     },
                     "400": {
                         "$ref": "#/components/responses/BadRequest"
@@ -1475,14 +1475,14 @@
                     "content": {
                         "application/json": {
                             "schema": {
-                                "$ref": "#/components/schemas/LoanManipulation"
+                                "$ref": "#/components/schemas/LoanRequest"
                             }
                         }
                     }
                 },
                 "responses": {
                     "201": {
-                        "$ref": "#/components/responses/SuccessResponseLoans"
+                        "$ref": "#/components/responses/SuccessResponseLoan"
                     },
                     "400": {
                         "$ref": "#/components/responses/BadRequest"
@@ -1491,6 +1491,46 @@
             }
         },
         "/loans/{id}": {
+            "get": {
+                "summary": "Get all loans",
+                "description": "Get all loans",
+                "tags": [
+                    "loans"
+                ],
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "query",
+                        "description": "Loan id",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "minimum": 1
+                        }
+                    },
+                    {
+                        "name": "accountId",
+                        "in": "query",
+                        "description": "Filter by account id",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "minimum": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "$ref": "#/components/responses/SuccessResponseLoan"
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/BadRequest"
+                    },
+                    "404": {
+                        "description": "Loan not found"
+                    }
+                }
+            },
             "put": {
                 "summary": "Update a loan",
                 "description": "Update a loan",
@@ -1515,14 +1555,14 @@
                     "content": {
                         "application/json": {
                             "schema": {
-                                "$ref": "#/components/schemas/LoanManipulation"
+                                "$ref": "#/components/schemas/LoanRequest"
                             }
                         }
                     }
                 },
                 "responses": {
                     "200": {
-                        "$ref": "#/components/responses/SuccessResponseLoans"
+                        "$ref": "#/components/responses/SuccessResponseLoan"
                     },
                     "400": {
                         "$ref": "#/components/responses/BadRequest"
@@ -1604,16 +1644,6 @@
                 ],
                 "parameters": [
                     {
-                        "name": "id",
-                        "in": "query",
-                        "description": "Tax id",
-                        "required": false,
-                        "schema": {
-                            "type": "integer",
-                            "minimum": 1
-                        }
-                    },
-                    {
                         "name": "jobId",
                         "in": "query",
                         "description": "Job id",
@@ -1626,7 +1656,17 @@
                 ],
                 "responses": {
                     "200": {
-                        "$ref": "#/components/responses/SuccessResponsePayrollTaxes"
+                        "description": "A JSON array of loans",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/responses/SuccessResponsePayrollTax"
+                                    }
+                                }
+                            }
+                        }
                     },
                     "400": {
                         "$ref": "#/components/responses/BadRequest"
@@ -1648,7 +1688,7 @@
                     "content": {
                         "application/json": {
                             "schema": {
-                                "$ref": "#/components/schemas/PayrollTaxManipulation"
+                                "$ref": "#/components/schemas/PayrollTaxRequest"
                             }
                         }
                     }
@@ -1664,6 +1704,46 @@
             }
         },
         "/jobs/payroll/taxes/{id}": {
+            "get": {
+                "summary": "Get a single payroll tax",
+                "description": "Get a single payroll tax",
+                "tags": [
+                    "payroll taxes"
+                ],
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "query",
+                        "description": "Tax id",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "minimum": 1
+                        }
+                    },
+                    {
+                        "name": "jobId",
+                        "in": "query",
+                        "description": "Job id",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "minimum": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "$ref": "#/components/responses/SuccessResponsePayrollTax"
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/BadRequest"
+                    },
+                    "404": {
+                        "description": "Payroll tax not found"
+                    }
+                }
+            },
             "put": {
                 "summary": "Update a payroll tax",
                 "description": "Update a payroll tax",
