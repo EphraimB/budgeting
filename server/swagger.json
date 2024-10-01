@@ -1656,7 +1656,7 @@
                 ],
                 "responses": {
                     "200": {
-                        "description": "A JSON array of loans",
+                        "description": "A JSON array of payroll taxes",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -1695,7 +1695,7 @@
                 },
                 "responses": {
                     "201": {
-                        "$ref": "#/components/responses/SuccessResponsePayrollTaxes"
+                        "$ref": "#/components/responses/SuccessResponsePayrollTax"
                     },
                     "400": {
                         "$ref": "#/components/responses/BadRequest"
@@ -1768,14 +1768,14 @@
                     "content": {
                         "application/json": {
                             "schema": {
-                                "$ref": "#/components/schemas/PayrollTaxManipulation"
+                                "$ref": "#/components/schemas/PayrollTaxRequest"
                             }
                         }
                     }
                 },
                 "responses": {
                     "200": {
-                        "$ref": "#/components/responses/SuccessResponsePayrollTaxes"
+                        "$ref": "#/components/responses/SuccessResponsePayrollTax"
                     },
                     "400": {
                         "$ref": "#/components/responses/BadRequest"
@@ -1825,16 +1825,6 @@
                 ],
                 "parameters": [
                     {
-                        "name": "id",
-                        "in": "query",
-                        "description": "Payroll date id",
-                        "required": false,
-                        "schema": {
-                            "type": "integer",
-                            "minimum": 1
-                        }
-                    },
-                    {
                         "name": "jobId",
                         "in": "query",
                         "description": "Job id",
@@ -1847,13 +1837,20 @@
                 ],
                 "responses": {
                     "200": {
-                        "$ref": "#/components/responses/SuccessResponsePayrollDates"
+                        "description": "A JSON array of payroll dates",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/responses/SuccessResponsePayrollDate"
+                                    }
+                                }
+                            }
+                        }
                     },
                     "400": {
                         "$ref": "#/components/responses/BadRequest"
-                    },
-                    "404": {
-                        "description": "Payroll date not found"
                     }
                 }
             },
@@ -1876,7 +1873,7 @@
                 },
                 "responses": {
                     "201": {
-                        "$ref": "#/components/responses/SuccessResponsePayrollDates"
+                        "$ref": "#/components/responses/SuccessResponsePayrollDate"
                     },
                     "400": {
                         "$ref": "#/components/responses/BadRequest"
@@ -1885,6 +1882,46 @@
             }
         },
         "/jobs/payroll/dates/{id}": {
+            "get": {
+                "summary": "Get a single payroll date",
+                "description": "Get a single payroll date",
+                "tags": [
+                    "payroll dates"
+                ],
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "query",
+                        "description": "Payroll date id",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "minimum": 1
+                        }
+                    },
+                    {
+                        "name": "jobId",
+                        "in": "query",
+                        "description": "Job id",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "minimum": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "$ref": "#/components/responses/SuccessResponsePayrollDate"
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/BadRequest"
+                    },
+                    "404": {
+                        "description": "Payroll date not found"
+                    }
+                }
+            },
             "put": {
                 "summary": "Update a payroll date",
                 "description": "Update a payroll date",
@@ -1909,14 +1946,14 @@
                     "content": {
                         "application/json": {
                             "schema": {
-                                "$ref": "#/components/schemas/PayrollDateManipulation"
+                                "$ref": "#/components/schemas/PayrollDateRequest"
                             }
                         }
                     }
                 },
                 "responses": {
                     "200": {
-                        "$ref": "#/components/responses/SuccessResponsePayrollDates"
+                        "$ref": "#/components/responses/SuccessResponsePayrollDate"
                     },
                     "400": {
                         "$ref": "#/components/responses/BadRequest"
@@ -1974,27 +2011,24 @@
                             "type": "integer",
                             "minimum": 1
                         }
-                    },
-                    {
-                        "name": "id",
-                        "in": "query",
-                        "description": "Job id",
-                        "required": false,
-                        "schema": {
-                            "type": "integer",
-                            "minimum": 1
-                        }
                     }
                 ],
                 "responses": {
                     "200": {
-                        "$ref": "#/components/responses/SuccessResponsePayrollEmployees"
+                        "description": "A JSON array of jobs",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/responses/SuccessResponseJobs"
+                                    }
+                                }
+                            }
+                        }
                     },
                     "400": {
                         "$ref": "#/components/responses/BadRequest"
-                    },
-                    "404": {
-                        "description": "Job not found"
                     }
                 }
             },
@@ -2010,14 +2044,14 @@
                     "content": {
                         "application/json": {
                             "schema": {
-                                "$ref": "#/components/schemas/PayrollEmployeeManipulation"
+                                "$ref": "#/components/schemas/JobRequest"
                             }
                         }
                     }
                 },
                 "responses": {
                     "201": {
-                        "$ref": "#/components/responses/SuccessResponsePayrollEmployees"
+                        "$ref": "#/components/responses/SuccessResponseJobs"
                     },
                     "400": {
                         "$ref": "#/components/responses/BadRequest"
@@ -2026,6 +2060,46 @@
             }
         },
         "/jobs/{id}": {
+            "get": {
+                "summary": "Get all jobs",
+                "description": "Get all jobs",
+                "tags": [
+                    "jobs"
+                ],
+                "parameters": [
+                    {
+                        "name": "accountId",
+                        "in": "query",
+                        "description": "Account id",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "minimum": 1
+                        }
+                    },
+                    {
+                        "name": "id",
+                        "in": "query",
+                        "description": "Job id",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "minimum": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "$ref": "#/components/responses/SuccessResponseJobs"
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/BadRequest"
+                    },
+                    "404": {
+                        "description": "Job not found"
+                    }
+                }
+            },
             "put": {
                 "summary": "Update a job",
                 "description": "Update a job",
@@ -2050,14 +2124,14 @@
                     "content": {
                         "application/json": {
                             "schema": {
-                                "$ref": "#/components/schemas/PayrollEmployeeManipulation"
+                                "$ref": "#/components/schemas/JobRequest"
                             }
                         }
                     }
                 },
                 "responses": {
                     "200": {
-                        "$ref": "#/components/responses/SuccessResponsePayrollEmployees"
+                        "$ref": "#/components/responses/SuccessResponseJobs"
                     },
                     "400": {
                         "$ref": "#/components/responses/BadRequest"
@@ -2107,10 +2181,75 @@
                 ],
                 "parameters": [
                     {
+                        "name": "accountId",
+                        "in": "query",
+                        "description": "Account id",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "minimum": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "A JSON array of wishlists",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/responses/SuccessResponseWishlist"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/BadRequest"
+                    }
+                }
+            },
+            "post": {
+                "summary": "Create a wishlist",
+                "description": "Create a wishlist",
+                "tags": [
+                    "wishlists"
+                ],
+                "requestBody": {
+                    "description": "Wishlists object to be created",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/WishlistRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "$ref": "#/components/responses/SuccessResponseWishlist"
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/BadRequest"
+                    }
+                }
+            }
+        },
+        "/wishlists/{id}": {
+            "get": {
+                "summary": "Get a list ofa single wishlist",
+                "description": "Get a list of a single wishlist",
+                "tags": [
+                    "wishlists"
+                ],
+                "parameters": [
+                    {
                         "name": "id",
                         "in": "query",
                         "description": "Wishlist id",
-                        "required": false,
+                        "required": true,
                         "schema": {
                             "type": "integer",
                             "minimum": 1
@@ -2129,7 +2268,7 @@
                 ],
                 "responses": {
                     "200": {
-                        "$ref": "#/components/responses/SuccessResponseWishlists"
+                        "$ref": "#/components/responses/SuccessResponseWishlist"
                     },
                     "400": {
                         "$ref": "#/components/responses/BadRequest"
@@ -2139,34 +2278,6 @@
                     }
                 }
             },
-            "post": {
-                "summary": "Create a wishlist",
-                "description": "Create a wishlist",
-                "tags": [
-                    "wishlists"
-                ],
-                "requestBody": {
-                    "description": "Wishlists object to be created",
-                    "required": true,
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "$ref": "#/components/schemas/WishlistManipulation"
-                            }
-                        }
-                    }
-                },
-                "responses": {
-                    "201": {
-                        "$ref": "#/components/responses/SuccessResponseWishlists"
-                    },
-                    "400": {
-                        "$ref": "#/components/responses/BadRequest"
-                    }
-                }
-            }
-        },
-        "/wishlists/{id}": {
             "put": {
                 "summary": "Update a wishlist",
                 "description": "Update a wishlist",
@@ -2191,14 +2302,14 @@
                     "content": {
                         "application/json": {
                             "schema": {
-                                "$ref": "#/components/schemas/WishlistManipulation"
+                                "$ref": "#/components/schemas/WishlistRequest"
                             }
                         }
                     }
                 },
                 "responses": {
                     "200": {
-                        "$ref": "#/components/responses/SuccessResponseWishlists"
+                        "$ref": "#/components/responses/SuccessResponseWishlist"
                     },
                     "400": {
                         "$ref": "#/components/responses/BadRequest"
@@ -2248,10 +2359,75 @@
                 ],
                 "parameters": [
                     {
+                        "name": "accountId",
+                        "in": "query",
+                        "description": "Account id",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "minimum": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "A JSON array of transfers",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/responses/SuccessResponseTransfer"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/BadRequest"
+                    }
+                }
+            },
+            "post": {
+                "summary": "Create a new transfer",
+                "description": "Create a new transfer",
+                "tags": [
+                    "transfers"
+                ],
+                "requestBody": {
+                    "description": "Transfers object to be created",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/TransferRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "$ref": "#/components/responses/SuccessResponseTransfer"
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/BadRequest"
+                    }
+                }
+            }
+        },
+        "/transfers/{id}": {
+            "get": {
+                "summary": "Get a list of a single transfer",
+                "description": "Get a list of a single transfer",
+                "tags": [
+                    "transfers"
+                ],
+                "parameters": [
+                    {
                         "name": "id",
                         "in": "query",
                         "description": "Transfer id",
-                        "required": false,
+                        "required": true,
                         "schema": {
                             "type": "integer",
                             "minimum": 1
@@ -2270,7 +2446,7 @@
                 ],
                 "responses": {
                     "200": {
-                        "$ref": "#/components/responses/SuccessResponseTransfers"
+                        "$ref": "#/components/responses/SuccessResponseTransfer"
                     },
                     "400": {
                         "$ref": "#/components/responses/BadRequest"
@@ -2280,34 +2456,6 @@
                     }
                 }
             },
-            "post": {
-                "summary": "Create a new transfer",
-                "description": "Create a new transfer",
-                "tags": [
-                    "transfers"
-                ],
-                "requestBody": {
-                    "description": "Transfers object to be created",
-                    "required": true,
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "$ref": "#/components/schemas/TransferManipulation"
-                            }
-                        }
-                    }
-                },
-                "responses": {
-                    "201": {
-                        "$ref": "#/components/responses/SuccessResponseTransfers"
-                    },
-                    "400": {
-                        "$ref": "#/components/responses/BadRequest"
-                    }
-                }
-            }
-        },
-        "/transfers/{id}": {
             "put": {
                 "summary": "Update a transfer",
                 "description": "Update a transfer",
@@ -2332,14 +2480,14 @@
                     "content": {
                         "application/json": {
                             "schema": {
-                                "$ref": "#/components/schemas/TransferManipulation"
+                                "$ref": "#/components/schemas/TransferRequest"
                             }
                         }
                     }
                 },
                 "responses": {
                     "200": {
-                        "$ref": "#/components/responses/SuccessResponseTransfers"
+                        "$ref": "#/components/responses/SuccessResponseTransfer"
                     },
                     "400": {
                         "$ref": "#/components/responses/BadRequest"
@@ -2381,6 +2529,80 @@
             }
         },
         "/transactions": {
+            "get": {
+                "summary": "Get all transactions",
+                "description": "Get all transactions",
+                "tags": [
+                    "transactions"
+                ],
+                "parameters": [
+                    {
+                        "name": "fromDate",
+                        "in": "query",
+                        "description": "Start date",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "format": "date"
+                        }
+                    },
+                    {
+                        "name": "toDate",
+                        "in": "query",
+                        "description": "End date",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "format": "date"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "A JSON array of all transactions",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "accountId": {
+                                            "type": "integer",
+                                            "format": "int64",
+                                            "minimum": 1
+                                        },
+                                        "currentBalance": {
+                                            "type": "number",
+                                            "format": "double",
+                                            "example": 1850.0
+                                        },
+                                        "transactions": {
+                                            "type": "array",
+                                            "items": {
+                                                "oneOf": [
+                                                    {
+                                                        "$ref": "#/components/schemas/transaction"
+                                                    },
+                                                    {
+                                                        "$ref": "#/components/schemas/ExpenseTransaction"
+                                                    },
+                                                    {
+                                                        "$ref": "#/components/schemas/LoanTransaction"
+                                                    }
+                                                ]
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/BadRequest"
+                    }
+                }
+            }
+        },
+        "/transactions/{id}": {
             "get": {
                 "summary": "Get all transactions",
                 "description": "Get all transactions",
