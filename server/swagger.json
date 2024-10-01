@@ -27,7 +27,7 @@
                                 "schema": {
                                     "type": "array",
                                     "items": {
-                                        "$ref": "#/components/responses/SuccessResponseAccount"
+                                        "$ref": "#/components/schemas/accounts/properties/SuccessResponseAccount"
                                     }
                                 }
                             }
@@ -50,14 +50,14 @@
                     "content": {
                         "application/json": {
                             "schema": {
-                                "$ref": "#/components/schemas/AccountRequest"
+                                "$ref": "#/components/schemas/accounts/properties/AccountRequest"
                             }
                         }
                     }
                 },
                 "responses": {
                     "201": {
-                        "$ref": "#/components/responses/SuccessResponseAccount"
+                        "$ref": "#/components/schemas/accounts/properties/SuccessResponseAccount"
                     },
                     "400": {
                         "$ref": "#/components/responses/BadRequest"
@@ -67,8 +67,8 @@
         },
         "/accounts/{id}": {
             "get": {
-                "summary": "Get one account",
-                "description": "Get one account",
+                "summary": "Get a single account",
+                "description": "Get a single account",
                 "tags": [
                     "accounts"
                 ],
@@ -85,10 +85,20 @@
                 ],
                 "responses": {
                     "200": {
-                        "$ref": "#/components/responses/SuccessResponseAccount"
+                        "description": "A single account object",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/accounts/properties/SuccessResponseAccount"
+                                }
+                            }
+                        }
                     },
                     "400": {
                         "$ref": "#/components/responses/BadRequest"
+                    },
+                    "404": {
+                        "description": "Account not found"
                     }
                 }
             },
@@ -115,14 +125,14 @@
                     "content": {
                         "application/json": {
                             "schema": {
-                                "$ref": "#/components/schemas/AccountRequest"
+                                "$ref": "#/components/schemas/accounts/properties/AccountRequest"
                             }
                         }
                     }
                 },
                 "responses": {
                     "200": {
-                        "$ref": "#/components/responses/SuccessResponseAccount"
+                        "$ref": "#/components/schemas/accounts/properties/SuccessResponseAccount"
                     },
                     "400": {
                         "$ref": "#/components/responses/BadRequest"
@@ -2689,12 +2699,44 @@
     },
     "components": {
         "schemas": {
-            "AccountRequest": {
+            "accounts": {
                 "type": "object",
                 "properties": {
-                    "name": {
-                        "type": "string",
-                        "example": "Checking"
+                    "SuccessResponseAccount": {
+                        "type": "object",
+                        "properties": {
+                            "id": {
+                                "type": "integer",
+                                "example": 1
+                            },
+                            "name": {
+                                "type": "string",
+                                "example": "Personal"
+                            },
+                            "balance": {
+                                "type": "number",
+                                "example": 50
+                            },
+                            "dateCreated": {
+                                "type": "string",
+                                "format": "date-time",
+                                "example": "2024-01-01T12:00:00Z"
+                            },
+                            "dateModified": {
+                                "type": "string",
+                                "format": "date-time",
+                                "example": "2024-01-01T12:00:00Z"
+                            }
+                        }
+                    },
+                    "AccountRequest": {
+                        "type": "object",
+                        "properties": {
+                            "name": {
+                                "type": "string",
+                                "example": "Checking"
+                            }
+                        }
                     }
                 }
             },
@@ -3281,40 +3323,6 @@
                                             }
                                         }
                                     }
-                                }
-                            }
-                        }
-                    }
-                }
-            },
-            "SuccessResponseAccount": {
-                "description": "A JSON object of a single account",
-                "content": {
-                    "application/json": {
-                        "schema": {
-                            "type": "object",
-                            "properties": {
-                                "id": {
-                                    "type": "integer",
-                                    "format": "int64",
-                                    "minimum": 1
-                                },
-                                "name": {
-                                    "type": "string",
-                                    "example": "Checking"
-                                },
-                                "balance": {
-                                    "type": "number",
-                                    "format": "double",
-                                    "example": 1000.0
-                                },
-                                "dateCreated": {
-                                    "type": "string",
-                                    "format": "date-time"
-                                },
-                                "dateModified": {
-                                    "type": "string",
-                                    "format": "date-time"
                                 }
                             }
                         }
