@@ -3011,7 +3011,8 @@
                                     },
                                     "endDate": {
                                         "type": "string",
-                                        "format": "date-time"
+                                        "format": "date-time",
+                                        "example": null
                                     }
                                 }
                             },
