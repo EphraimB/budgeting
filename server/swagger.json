@@ -362,8 +362,8 @@
         },
         "/transactions/history": {
             "get": {
-                "summary": "Get all transactions by account",
-                "description": "Get all transactions by account",
+                "summary": "Get all transaction histories",
+                "description": "Get all transaction histories",
                 "tags": [
                     "transaction history"
                 ],
@@ -387,7 +387,7 @@
                                 "schema": {
                                     "type": "array",
                                     "items": {
-                                        "$ref": "#/components/responses/SuccessResponseTransactions"
+                                        "$ref": "#/components/schemas/transactionHistory/properties/SuccessResponseTransactionHistory"
                                     }
                                 }
                             }
@@ -410,14 +410,21 @@
                     "content": {
                         "application/json": {
                             "schema": {
-                                "$ref": "#/components/schemas/TransactionRequest"
+                                "$ref": "#/components/schemas/transactionHistory/properties/SuccessResponseTransactionHistory"
                             }
                         }
                     }
                 },
                 "responses": {
                     "201": {
-                        "$ref": "#/components/responses/SuccessResponseTransactions"
+                        "description": "A single transaction history object",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/transactionHistory/properties/SuccessResponseTransactionHistory"
+                                }
+                            }
+                        }
                     },
                     "400": {
                         "$ref": "#/components/responses/BadRequest"
@@ -427,8 +434,8 @@
         },
         "/transactions/history/{id}": {
             "get": {
-                "summary": "Get a single transaction by account",
-                "description": "Get a single transaction by account",
+                "summary": "Get a single transaction",
+                "description": "Get a single transaction",
                 "tags": [
                     "transaction history"
                 ],
@@ -456,7 +463,14 @@
                 ],
                 "responses": {
                     "200": {
-                        "$ref": "#/components/responses/SuccessResponseTransactions"
+                        "description": "A single transaction history object",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/transactionHistory/properties/SuccessResponseTransactionHistory"
+                                }
+                            }
+                        }
                     },
                     "400": {
                         "$ref": "#/components/responses/BadRequest"
@@ -490,14 +504,21 @@
                     "content": {
                         "application/json": {
                             "schema": {
-                                "$ref": "#/components/schemas/TransactionRequest"
+                                "$ref": "#/components/schemas/transactionHistory/properties/TransactionHistoryRequest"
                             }
                         }
                     }
                 },
                 "responses": {
                     "200": {
-                        "$ref": "#/components/responses/SuccessResponseTransactions"
+                        "description": "A single transaction history object",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/transactionHistory/properties/SuccessResponseTransactionHistory"
+                                }
+                            }
+                        }
                     },
                     "400": {
                         "$ref": "#/components/responses/BadRequest"
@@ -2817,31 +2838,77 @@
                     }
                 }
             },
-            "TransactionRequest": {
+            "transactionHistory": {
                 "type": "object",
                 "properties": {
-                    "accountId": {
-                        "type": "integer",
-                        "format": "int64",
-                        "minimum": 1
+                    "SuccessResponseTransactionHistory": {
+                        "type": "object",
+                        "properties": {
+                            "id": {
+                                "type": "integer",
+                                "format": "int64",
+                                "minimum": 1
+                            },
+                            "accountId": {
+                                "type": "integer",
+                                "format": "int64",
+                                "minimum": 1
+                            },
+                            "amount": {
+                                "type": "number",
+                                "format": "double",
+                                "example": 1000.0
+                            },
+                            "tax": {
+                                "type": "number",
+                                "format": "double",
+                                "example": 0.08875
+                            },
+                            "title": {
+                                "type": "string",
+                                "example": "Transaction test"
+                            },
+                            "description": {
+                                "type": "string",
+                                "example": "This is a transaction test"
+                            },
+                            "dateCreated": {
+                                "type": "string",
+                                "format": "date-time"
+                            },
+                            "dateModified": {
+                                "type": "string",
+                                "format": "date-time"
+                            }
+                        }
                     },
-                    "amount": {
-                        "type": "number",
-                        "format": "double",
-                        "example": 1000.0
-                    },
-                    "tax": {
-                        "type": "number",
-                        "format": "double",
-                        "example": 0.08875
-                    },
-                    "title": {
-                        "type": "string",
-                        "example": "Transaction test"
-                    },
-                    "description": {
-                        "type": "string",
-                        "example": "This is a transaction test"
+                    "TransactionHistoryRequest": {
+                        "type": "object",
+                        "properties": {
+                            "accountId": {
+                                "type": "integer",
+                                "format": "int64",
+                                "minimum": 1
+                            },
+                            "amount": {
+                                "type": "number",
+                                "format": "double",
+                                "example": 1000.0
+                            },
+                            "tax": {
+                                "type": "number",
+                                "format": "double",
+                                "example": 0.08875
+                            },
+                            "title": {
+                                "type": "string",
+                                "example": "Transaction test"
+                            },
+                            "description": {
+                                "type": "string",
+                                "example": "This is a transaction test"
+                            }
+                        }
                     }
                 }
             },
@@ -3378,54 +3445,6 @@
                                             }
                                         }
                                     }
-                                }
-                            }
-                        }
-                    }
-                }
-            },
-            "SuccessResponseTransactions": {
-                "description": "A JSON object of a single transaction",
-                "content": {
-                    "application/json": {
-                        "schema": {
-                            "type": "object",
-                            "properties": {
-                                "id": {
-                                    "type": "integer",
-                                    "format": "int64",
-                                    "minimum": 1
-                                },
-                                "accountId": {
-                                    "type": "integer",
-                                    "format": "int64",
-                                    "minimum": 1
-                                },
-                                "amount": {
-                                    "type": "number",
-                                    "format": "double",
-                                    "example": 1000.0
-                                },
-                                "tax": {
-                                    "type": "number",
-                                    "format": "double",
-                                    "example": 0.08875
-                                },
-                                "title": {
-                                    "type": "string",
-                                    "example": "Transaction test"
-                                },
-                                "description": {
-                                    "type": "string",
-                                    "example": "This is a transaction test"
-                                },
-                                "dateCreated": {
-                                    "type": "string",
-                                    "format": "date-time"
-                                },
-                                "dateModified": {
-                                    "type": "string",
-                                    "format": "date-time"
                                 }
                             }
                         }
