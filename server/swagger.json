@@ -442,7 +442,7 @@
                 "parameters": [
                     {
                         "name": "id",
-                        "in": "query",
+                        "in": "path",
                         "description": "Filter by transaction id",
                         "required": true,
                         "schema": {
