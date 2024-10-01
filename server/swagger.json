@@ -561,8 +561,8 @@
         },
         "/income": {
             "get": {
-                "summary": "Get all income by account",
-                "description": "Get all income by account",
+                "summary": "Get all incomes",
+                "description": "Get all incomes",
                 "tags": [
                     "income"
                 ],
@@ -586,7 +586,7 @@
                                 "schema": {
                                     "type": "array",
                                     "items": {
-                                        "$ref": "#/components/responses/SuccessResponseIncome"
+                                        "$ref": "#/components/schemas/income/properties/SuccessResponseIncome"
                                     }
                                 }
                             }
@@ -609,14 +609,21 @@
                     "content": {
                         "application/json": {
                             "schema": {
-                                "$ref": "#/components/schemas/IncomeManipulation"
+                                "$ref": "#/components/schemas/income/properties/IncomeRequest"
                             }
                         }
                     }
                 },
                 "responses": {
                     "201": {
-                        "$ref": "#/components/responses/SuccessResponseIncome"
+                        "description": "A single income object",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/income/properties/SuccessResponseIncome"
+                                }
+                            }
+                        }
                     },
                     "400": {
                         "$ref": "#/components/responses/BadRequest"
@@ -633,6 +640,16 @@
                 ],
                 "parameters": [
                     {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Filter by income id",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "minimum": 1
+                        }
+                    },
+                    {
                         "name": "accountId",
                         "in": "query",
                         "description": "Filter by account id",
@@ -645,7 +662,14 @@
                 ],
                 "responses": {
                     "200": {
-                        "$ref": "#/components/responses/SuccessResponseIncome"
+                        "description": "A single income object",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/income/properties/SuccessResponseIncome"
+                                }
+                            }
+                        }
                     },
                     "400": {
                         "$ref": "#/components/responses/BadRequest"
@@ -679,14 +703,21 @@
                     "content": {
                         "application/json": {
                             "schema": {
-                                "$ref": "#/components/schemas/IncomeRequest"
+                                "$ref": "#/components/schemas/income/properties/IncomeRequest"
                             }
                         }
                     }
                 },
                 "responses": {
                     "200": {
-                        "$ref": "#/components/responses/SuccessResponseIncome"
+                        "description": "A single income object",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/income/properties/SuccessResponseIncome"
+                                }
+                            }
+                        }
                     },
                     "400": {
                         "$ref": "#/components/responses/BadRequest"
@@ -2912,43 +2943,130 @@
                     }
                 }
             },
-            "IncomeRequest": {
+            "income": {
                 "type": "object",
                 "properties": {
-                    "accountId": {
-                        "type": "integer",
-                        "format": "int64",
-                        "minimum": 1
-                    },
-                    "amount": {
-                        "type": "number",
-                        "format": "double",
-                        "example": 250.0
-                    },
-                    "title": {
-                        "type": "string",
-                        "example": "Income test"
-                    },
-                    "description": {
-                        "type": "string",
-                        "example": "This is a income test"
-                    },
-                    "frequency": {
+                    "SuccessResponseIncome": {
                         "type": "object",
                         "properties": {
-                            "type": {
+                            "id": {
                                 "type": "integer",
-                                "example": 2
+                                "format": "int64",
+                                "minimum": 1
                             },
-                            "typeVariable": {
+                            "accountId": {
                                 "type": "integer",
-                                "example": 1
+                                "format": "int64",
+                                "minimum": 1
+                            },
+                            "taxId": {
+                                "type": "integer",
+                                "format": "int64",
+                                "minimum": 1
+                            },
+                            "amount": {
+                                "type": "number",
+                                "format": "double",
+                                "example": 1000.0
+                            },
+                            "title": {
+                                "type": "string",
+                                "example": "Income test"
+                            },
+                            "description": {
+                                "type": "string",
+                                "example": "This is a income test"
+                            },
+                            "frequency": {
+                                "type": "object",
+                                "properties": {
+                                    "type": {
+                                        "type": "integer",
+                                        "example": 2
+                                    },
+                                    "typeVariable": {
+                                        "type": "integer",
+                                        "example": 1
+                                    },
+                                    "dayOfWeek": {
+                                        "type": "integer",
+                                        "example": null
+                                    },
+                                    "weekOfMonth": {
+                                        "type": "integer",
+                                        "example": null
+                                    },
+                                    "monthOfYear": {
+                                        "type": "integer",
+                                        "example": null
+                                    }
+                                }
+                            },
+                            "beginDate": {
+                                "type": "string",
+                                "format": "date-time"
+                            },
+                            "dateCreated": {
+                                "type": "string",
+                                "format": "date-time"
+                            },
+                            "dateModified": {
+                                "type": "string",
+                                "format": "date-time"
                             }
                         }
                     },
-                    "beginDate": {
-                        "type": "string",
-                        "format": "date-time"
+                    "IncomeRequest": {
+                        "type": "object",
+                        "properties": {
+                            "accountId": {
+                                "type": "integer",
+                                "format": "int64",
+                                "minimum": 1
+                            },
+                            "amount": {
+                                "type": "number",
+                                "format": "double",
+                                "example": 250.0
+                            },
+                            "title": {
+                                "type": "string",
+                                "example": "Income test"
+                            },
+                            "description": {
+                                "type": "string",
+                                "example": "This is a income test"
+                            },
+                            "frequency": {
+                                "type": "object",
+                                "properties": {
+                                    "type": {
+                                        "type": "integer",
+                                        "example": 2
+                                    },
+                                    "typeVariable": {
+                                        "type": "integer",
+                                        "example": 1
+                                    },
+                                    "dayOfWeek": {
+                                        "type": "integer",
+                                        "example": null
+                                    },
+                                    "weekOfMonth": {
+                                        "type": "integer",
+                                        "example": null
+                                    },
+                                    "monthOfYear": {
+                                        "type": "integer",
+                                        "example": null
+                                    }
+                                }
+                            },
+                            "beginDate": {
+                                "type": "string",
+                                "format": "date-time"
+                            }
+                        }
                     }
                 }
             },
@@ -3445,49 +3563,6 @@
                                             }
                                         }
                                     }
-                                }
-                            }
-                        }
-                    }
-                }
-            },
-            "SuccessResponseIncome": {
-                "description": "A JSON object of a single income",
-                "content": {
-                    "application/json": {
-                        "schema": {
-                            "type": "object",
-                            "properties": {
-                                "id": {
-                                    "type": "integer",
-                                    "format": "int64",
-                                    "minimum": 1
-                                },
-                                "accountId": {
-                                    "type": "integer",
-                                    "format": "int64",
-                                    "minimum": 1
-                                },
-                                "amount": {
-                                    "type": "number",
-                                    "format": "double",
-                                    "example": 1000.0
-                                },
-                                "title": {
-                                    "type": "string",
-                                    "example": "Income test"
-                                },
-                                "description": {
-                                    "type": "string",
-                                    "example": "This is a income test"
-                                },
-                                "dateCreated": {
-                                    "type": "string",
-                                    "format": "date-time"
-                                },
-                                "dateModified": {
-                                    "type": "string",
-                                    "format": "date-time"
                                 }
                             }
                         }
