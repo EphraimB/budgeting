@@ -3002,9 +3002,18 @@
                                     }
                                 }
                             },
-                            "beginDate": {
-                                "type": "string",
-                                "format": "date-time"
+                            "dates": {
+                                "type": "object",
+                                "properties": {
+                                    "beginDate": {
+                                        "type": "string",
+                                        "format": "date-time"
+                                    },
+                                    "endDate": {
+                                        "type": "string",
+                                        "format": "date-time"
+                                    }
+                                }
                             },
                             "dateCreated": {
                                 "type": "string",
