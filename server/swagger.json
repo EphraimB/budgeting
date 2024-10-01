@@ -75,7 +75,7 @@
                 "parameters": [
                     {
                         "name": "id",
-                        "in": "query",
+                        "in": "path",
                         "description": "Filter by account id",
                         "required": true,
                         "schema": {
