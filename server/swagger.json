@@ -57,7 +57,14 @@
                 },
                 "responses": {
                     "201": {
-                        "$ref": "#/components/schemas/accounts/properties/SuccessResponseAccount"
+                        "description": "A single account object",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/accounts/properties/SuccessResponseAccount"
+                                }
+                            }
+                        }
                     },
                     "400": {
                         "$ref": "#/components/responses/BadRequest"
@@ -132,7 +139,14 @@
                 },
                 "responses": {
                     "200": {
-                        "$ref": "#/components/schemas/accounts/properties/SuccessResponseAccount"
+                        "description": "A single account object",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/accounts/properties/SuccessResponseAccount"
+                                }
+                            }
+                        }
                     },
                     "400": {
                         "$ref": "#/components/responses/BadRequest"
