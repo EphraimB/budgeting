@@ -747,7 +747,7 @@
                 ],
                 "responses": {
                     "200": {
-                        "description": "Successfully deleted income"
+                        "description": "Income deleted successfully"
                     },
                     "400": {
                         "$ref": "#/components/responses/BadRequest"
