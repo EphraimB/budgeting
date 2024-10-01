@@ -212,7 +212,7 @@
                                 "schema": {
                                     "type": "array",
                                     "items": {
-                                        "$ref": "#/components/responses/SuccessResponseTax"
+                                        "$ref": "#/components/schemas/taxes/properties/SuccessResponseTax"
                                     }
                                 }
                             }
@@ -235,14 +235,21 @@
                     "content": {
                         "application/json": {
                             "schema": {
-                                "$ref": "#/components/schemas/TaxRequest"
+                                "$ref": "#/components/schemas/taxes/properties/TaxRequest"
                             }
                         }
                     }
                 },
                 "responses": {
                     "201": {
-                        "$ref": "#/components/responses/SuccessResponseTax"
+                        "description": "A single tax object",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/taxes/properties/SuccessResponseTax"
+                                }
+                            }
+                        }
                     },
                     "400": {
                         "$ref": "#/components/responses/BadRequest"
@@ -252,15 +259,15 @@
         },
         "/taxes/{id}": {
             "get": {
-                "summary": "Get a single taxes",
-                "description": "Get a single taxes",
+                "summary": "Get a single tax",
+                "description": "Get a single tax",
                 "tags": [
                     "taxes"
                 ],
                 "parameters": [
                     {
                         "name": "id",
-                        "in": "query",
+                        "in": "path",
                         "description": "Filter by tax id",
                         "required": true,
                         "schema": {
@@ -279,7 +286,14 @@
                 ],
                 "responses": {
                     "200": {
-                        "$ref": "#/components/responses/SuccessResponseTax"
+                        "description": "A single tax object",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/taxes/properties/SuccessResponseTax"
+                                }
+                            }
+                        }
                     },
                     "400": {
                         "$ref": "#/components/responses/BadRequest"
@@ -312,14 +326,21 @@
                     "content": {
                         "application/json": {
                             "schema": {
-                                "$ref": "#/components/schemas/TaxRequest"
+                                "$ref": "#/components/schemas/taxes/properties/TaxRequest"
                             }
                         }
                     }
                 },
                 "responses": {
                     "200": {
-                        "$ref": "#/components/responses/SuccessResponseTax"
+                        "description": "A single tax object",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/taxes/properties/SuccessResponseTax"
+                                }
+                            }
+                        }
                     },
                     "400": {
                         "$ref": "#/components/responses/BadRequest"
@@ -2754,25 +2775,61 @@
                     }
                 }
             },
-            "TaxRequest": {
+            "taxes": {
                 "type": "object",
                 "properties": {
-                    "rate": {
-                        "type": "number",
-                        "format": "double",
-                        "example": 0.08875
+                    "SuccessResponseTax": {
+                        "type": "object",
+                        "properties": {
+                            "id": {
+                                "type": "integer",
+                                "format": "int64",
+                                "minimum": 1
+                            },
+                            "name": {
+                                "type": "string",
+                                "example": "NY Sales Tax"
+                            },
+                            "rate": {
+                                "type": "number",
+                                "format": "double",
+                                "example": 0.08875
+                            },
+                            "type": {
+                                "type": "integer",
+                                "example": 0
+                            },
+                            "dateCreated": {
+                                "type": "string",
+                                "format": "date-time"
+                            },
+                            "dateModified": {
+                                "type": "string",
+                                "format": "date-time"
+                            }
+                        }
                     },
-                    "title": {
-                        "type": "string",
-                        "example": "NY Sales Tax"
-                    },
-                    "description": {
-                        "type": "string",
-                        "example": "New York Sales Tax"
-                    },
-                    "type": {
-                        "type": "integer",
-                        "example": 0
+                    "TaxRequest": {
+                        "type": "object",
+                        "properties": {
+                            "rate": {
+                                "type": "number",
+                                "format": "double",
+                                "example": 0.08875
+                            },
+                            "title": {
+                                "type": "string",
+                                "example": "NY Sales Tax"
+                            },
+                            "description": {
+                                "type": "string",
+                                "example": "New York Sales Tax"
+                            },
+                            "type": {
+                                "type": "integer",
+                                "example": 0
+                            }
+                        }
                     }
                 }
             },
@@ -3337,44 +3394,6 @@
                                             }
                                         }
                                     }
-                                }
-                            }
-                        }
-                    }
-                }
-            },
-            "SuccessResponseTax": {
-                "description": "A JSON object ofa single tax",
-                "content": {
-                    "application/json": {
-                        "schema": {
-                            "type": "object",
-                            "properties": {
-                                "id": {
-                                    "type": "integer",
-                                    "format": "int64",
-                                    "minimum": 1
-                                },
-                                "name": {
-                                    "type": "string",
-                                    "example": "NY Sales Tax"
-                                },
-                                "rate": {
-                                    "type": "number",
-                                    "format": "double",
-                                    "example": 0.08875
-                                },
-                                "type": {
-                                    "type": "integer",
-                                    "example": 0
-                                },
-                                "dateCreated": {
-                                    "type": "string",
-                                    "format": "date-time"
-                                },
-                                "dateModified": {
-                                    "type": "string",
-                                    "format": "date-time"
                                 }
                             }
                         }
