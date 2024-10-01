@@ -2786,14 +2786,18 @@
                                 "format": "int64",
                                 "minimum": 1
                             },
-                            "name": {
-                                "type": "string",
-                                "example": "NY Sales Tax"
-                            },
                             "rate": {
                                 "type": "number",
                                 "format": "double",
                                 "example": 0.08875
+                            },
+                            "title": {
+                                "type": "string",
+                                "example": "NY Sales Tax"
+                            },
+                            "description": {
+                                "type": "string",
+                                "example": "New York Sales Tax"
                             },
                             "type": {
                                 "type": "integer",
