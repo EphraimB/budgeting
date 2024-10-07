@@ -2216,7 +2216,7 @@
                                 "schema": {
                                     "type": "array",
                                     "items": {
-                                        "$ref": "#/components/responses/SuccessResponseJobs"
+                                        "$ref": "#/components/schemas/jobs/properties/SuccessResponseJobs"
                                     }
                                 }
                             }
@@ -2239,14 +2239,21 @@
                     "content": {
                         "application/json": {
                             "schema": {
-                                "$ref": "#/components/schemas/JobRequest"
+                                "$ref": "#/components/schemas/jobs/properties/JobRequest"
                             }
                         }
                     }
                 },
                 "responses": {
                     "201": {
-                        "$ref": "#/components/responses/SuccessResponseJobs"
+                        "description": "A single job object",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/jobs/properties/SuccessResponseJobs"
+                                }
+                            }
+                        }
                     },
                     "400": {
                         "$ref": "#/components/responses/BadRequest"
@@ -2256,8 +2263,8 @@
         },
         "/jobs/{id}": {
             "get": {
-                "summary": "Get all jobs",
-                "description": "Get all jobs",
+                "summary": "Get a single job",
+                "description": "Get a single job",
                 "tags": [
                     "jobs"
                 ],
@@ -2274,7 +2281,7 @@
                     },
                     {
                         "name": "id",
-                        "in": "query",
+                        "in": "path",
                         "description": "Job id",
                         "required": true,
                         "schema": {
@@ -2285,7 +2292,14 @@
                 ],
                 "responses": {
                     "200": {
-                        "$ref": "#/components/responses/SuccessResponseJobs"
+                        "description": "A single job object",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/jobs/properties/SuccessResponseJobs"
+                                }
+                            }
+                        }
                     },
                     "400": {
                         "$ref": "#/components/responses/BadRequest"
@@ -2319,14 +2333,21 @@
                     "content": {
                         "application/json": {
                             "schema": {
-                                "$ref": "#/components/schemas/JobRequest"
+                                "$ref": "#/components/schemas/jobs/properties/JobRequest"
                             }
                         }
                     }
                 },
                 "responses": {
                     "200": {
-                        "$ref": "#/components/responses/SuccessResponseJobs"
+                        "description": "A single job object",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/jobs/properties/SuccessResponseJobs"
+                                }
+                            }
+                        }
                     },
                     "400": {
                         "$ref": "#/components/responses/BadRequest"
@@ -3652,39 +3673,92 @@
                     }
                 }
             },
-            "JobRequest": {
-                "type": "object",
+            "jobs": {
                 "properties": {
-                    "accountId": {
-                        "type": "integer",
-                        "format": "int64",
-                        "minimum": 1
+                    "SuccessResponseJobs": {
+                        "type": "object",
+                        "properties": {
+                            "id": {
+                                "type": "integer",
+                                "format": "int64",
+                                "minimum": 1
+                            },
+                            "accountId": {
+                                "type": "integer",
+                                "format": "int64",
+                                "minimum": 1
+                            },
+                            "name": {
+                                "type": "string",
+                                "example": "Testing Inc."
+                            },
+                            "hourlyRate": {
+                                "type": "number",
+                                "format": "double",
+                                "example": 16.0
+                            },
+                            "totalHoursPerWeek": {
+                                "type": "number",
+                                "format": "double",
+                                "example": 40.0
+                            },
+                            "jobSchedule": {
+                                "type": "array",
+                                "items": {
+                                    "type": "object",
+                                    "properties": {
+                                        "dayOfWeek": {
+                                            "type": "integer",
+                                            "example": 1
+                                        },
+                                        "startTime": {
+                                            "type": "string",
+                                            "example": "09:00:00"
+                                        },
+                                        "endTime": {
+                                            "type": "string",
+                                            "example": "17:00:00"
+                                        }
+                                    }
+                                }
+                            }
+                        }
                     },
-                    "name": {
-                        "type": "string",
-                        "example": "Testing Inc."
-                    },
-                    "hourlyRate": {
-                        "type": "number",
-                        "format": "double",
-                        "example": 16.0
-                    },
-                    "jobSchedule": {
-                        "type": "array",
-                        "items": {
-                            "type": "object",
-                            "properties": {
-                                "dayOfWeek": {
-                                    "type": "integer",
-                                    "example": 1
-                                },
-                                "startTime": {
-                                    "type": "string",
-                                    "example": "09:00:00"
-                                },
-                                "endTime": {
-                                    "type": "string",
-                                    "example": "17:00:00"
+                    "JobRequest": {
+                        "type": "object",
+                        "properties": {
+                            "accountId": {
+                                "type": "integer",
+                                "format": "int64",
+                                "minimum": 1
+                            },
+                            "name": {
+                                "type": "string",
+                                "example": "Testing Inc."
+                            },
+                            "hourlyRate": {
+                                "type": "number",
+                                "format": "double",
+                                "example": 16.0
+                            },
+                            "jobSchedule": {
+                                "type": "array",
+                                "items": {
+                                    "type": "object",
+                                    "properties": {
+                                        "dayOfWeek": {
+                                            "type": "integer",
+                                            "example": 1
+                                        },
+                                        "startTime": {
+                                            "type": "string",
+                                            "example": "09:00:00"
+                                        },
+                                        "endTime": {
+                                            "type": "string",
+                                            "example": "17:00:00"
+                                        }
+                                    }
                                 }
                             }
                         }
@@ -4295,62 +4369,6 @@
                                                         }
                                                     }
                                                 }
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            },
-            "SuccessResponseJobs": {
-                "description": "A JSON object of a single job",
-                "content": {
-                    "application/json": {
-                        "schema": {
-                            "type": "object",
-                            "properties": {
-                                "jobId": {
-                                    "type": "integer",
-                                    "format": "int64",
-                                    "minimum": 1
-                                },
-                                "accountId": {
-                                    "type": "integer",
-                                    "format": "int64",
-                                    "minimum": 1
-                                },
-                                "name": {
-                                    "type": "string",
-                                    "example": "Testing Inc."
-                                },
-                                "hourlyRate": {
-                                    "type": "number",
-                                    "format": "double",
-                                    "example": 16.0
-                                },
-                                "totalHoursPerWeek": {
-                                    "type": "number",
-                                    "format": "double",
-                                    "example": 40.0
-                                },
-                                "jobSchedule": {
-                                    "type": "array",
-                                    "items": {
-                                        "type": "object",
-                                        "properties": {
-                                            "dayOfWeek": {
-                                                "type": "integer",
-                                                "example": 1
-                                            },
-                                            "startTime": {
-                                                "type": "string",
-                                                "example": "09:00:00"
-                                            },
-                                            "endTime": {
-                                                "type": "string",
-                                                "example": "17:00:00"
                                             }
                                         }
                                     }
