@@ -1,4 +1,22 @@
-# Budgeting app
+# Budgeting app - Prototype 2
+
+## Prototype history
+
+### Prototype 1
+
+My first attempt at a budgeting app. I wasn't that knowledgable and was written in php. Although very buggy, I hosted it on a website where it automatically adjusted the balance when the transaction date came and even synced with Google Sheets. But then as the months went by, things began to break and wasn't even done efficiently.
+
+### Prototype 2
+
+My second attempt at a budgeting app. This time written in ExpressJS and NextJS. I spent years and counting on it tirelessly and is much more stable (but still not as stable as I want it) than prototype 1. It even has a full blown api and fully unit tested. I still have a lot of features I want to do like finish commute expenses, food expenses, utility bills, plugins that can automatically add information to the budgeting app and sync with an online spreadsheet like Google Sheets.
+
+### Future prototypes
+
+Maybe future prototypes will be written in Rust (hopefully!). Hopefully I can get the word on my budgeting app spread out and make a whole business out of it where I can get a whole team to work on it. Some goals would be probabilities where there can be different probbilities based on habits and accidents in life. Another feature I would want in future prototypes would be what-ifs that I can quickly find out what would happen if I cut, for example, coffee (or drink 1 less cup of it), how much money I would save per year or if I can afford soemthing if I get myself a second job.
+
+## Purpose of this budgeting app
+
+The purpose of this budgeting app is to predict how much money you will have at a future date.
 
 ## How the budgeting app works
 
@@ -10,7 +28,7 @@ I have trouble making decisions with budgeting and keep making impulsive purchas
 
 ## My goal on the budgeting app
 
-I've been working on the budgeting app for a couple of years and trying to work on as many scenarios as possible. I want it at some point to automatically upload a budgeting scrapbook to Google Sheets via plugins. It would be very fancy and have a lot of tabs including an overview tab with charts and a tab per month (previous and future transactions). I also want to complete commute expenses where it takes into account you're commuting information. Another future goal is food expenses where it will take into account your groceries, recipes, and even cooking (for an even future plan of an electricity bill).
+I've been working on the budgeting app for a couple of years and trying to work on as many scenarios as possible. I want it at some point to automatically upload a budgeting scrapbook to Google Sheets via plugins. It would be very fancy and have a lot of tabs including an overview tab with charts and a tab per month (previous and future transactions). I also want to complete commute expenses where it takes into account you're commuting information. Another future goal is food expenses where it will take into account your groceries, recipes, and even cooking (for an even future plan of an electricity bill). My goal is to host it on a website put in my inputs and sit back and relax as it tries to simulate my real bank account as accurately as possible while being agnostic to it.
 
 ## How to setup the budgeting app locally
 
