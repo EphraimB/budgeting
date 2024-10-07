@@ -1051,8 +1051,8 @@
         },
         "/expenses/commute/systems/{id}": {
             "get": {
-                "summary": "Get all commute systems",
-                "description": "Get all commute systems",
+                "summary": "Get a single commute system",
+                "description": "Get a single commute system",
                 "tags": [
                     "commute systems"
                 ],
@@ -1166,8 +1166,8 @@
         },
         "/expenses/commute/history": {
             "get": {
-                "summary": "Get all commute history",
-                "description": "Get all commute history",
+                "summary": "Get all commute histories",
+                "description": "Get all commute histories",
                 "tags": [
                     "commute history"
                 ],
@@ -1237,8 +1237,8 @@
         },
         "/expenses/commute/history/{id}": {
             "get": {
-                "summary": "Get all commute history",
-                "description": "Get all commute history",
+                "summary": "Get a single commute history",
+                "description": "Get a single commute history",
                 "tags": [
                     "commute history"
                 ],
@@ -1420,8 +1420,8 @@
         },
         "/expenses/commute/fares/{id}": {
             "get": {
-                "summary": "Get all commute fares",
-                "description": "Get all commute fares",
+                "summary": "Get a single commute fare",
+                "description": "Get a single commute fare",
                 "tags": [
                     "commute fares"
                 ],
@@ -1605,8 +1605,8 @@
         },
         "/expenses/commute/schedule/{id}": {
             "get": {
-                "summary": "Get all commute schedules",
-                "description": "Get all commute schedules",
+                "summary": "Get a single commute schedule",
+                "description": "Get a single commute schedule",
                 "tags": [
                     "commute schedules"
                 ],
