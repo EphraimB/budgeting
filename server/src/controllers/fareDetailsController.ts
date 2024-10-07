@@ -189,7 +189,7 @@ export const createFareDetail = async (
             const { rows: timeslotData } = await client.query(
                 `
                     INSERT INTO timeslots
-                    (fare_detail_id, day_of_week, start_time, end_time)
+                    (fare_details_id, day_of_week, start_time, end_time)
                     VALUES ($1, $2, $3, $4)
                     RETURNING *
                 `,
@@ -317,7 +317,7 @@ export const updateFareDetail = async (
             await client.query(
                 `
                     INSERT INTO timeslots
-                    (fare_detail_id, day_of_week, start_time, end_time)
+                    (fare_details_id, day_of_week, start_time, end_time)
                     VALUES ($1, $2, $3, $4)
                     RETURNING *
                 `,
