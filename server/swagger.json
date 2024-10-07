@@ -1873,7 +1873,7 @@
                 "parameters": [
                     {
                         "name": "id",
-                        "in": "query",
+                        "in": "path",
                         "description": "Tax id",
                         "required": true,
                         "schema": {
