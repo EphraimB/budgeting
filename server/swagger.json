@@ -1173,10 +1173,81 @@
                 ],
                 "parameters": [
                     {
-                        "name": "id",
+                        "name": "accountId",
                         "in": "query",
-                        "description": "Commute history id",
+                        "description": "Filter by account id",
                         "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "A JSON array of commute histories",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/commuteHistory/properties/SuccessResponseCommuteHistory"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/BadRequest"
+                    }
+                }
+            },
+            "post": {
+                "summary": "Create a new commute history",
+                "description": "Create a new commute history",
+                "tags": [
+                    "commute history"
+                ],
+                "requestBody": {
+                    "description": "Commute history object to be created",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/commuteHistory/properties/CommuteHistoryRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "A single commute history object",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/commuteHistory/properties/SuccessResponseCommuteHistory"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/BadRequest"
+                    }
+                }
+            }
+        },
+        "/expenses/commute/history/{id}": {
+            "get": {
+                "summary": "Get all commute history",
+                "description": "Get all commute history",
+                "tags": [
+                    "commute history"
+                ],
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Commute history id",
+                        "required": true,
                         "schema": {
                             "type": "integer"
                         }
@@ -1193,7 +1264,14 @@
                 ],
                 "responses": {
                     "200": {
-                        "$ref": "#/components/responses/SuccessResponseCommuteHistory"
+                        "description": "A single commute history object",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/commuteHistory/properties/SuccessResponseCommuteHistory"
+                                }
+                            }
+                        }
                     },
                     "400": {
                         "$ref": "#/components/responses/BadRequest"
@@ -1203,34 +1281,6 @@
                     }
                 }
             },
-            "post": {
-                "summary": "Create a new commute history",
-                "description": "Create a new commute history",
-                "tags": [
-                    "commute history"
-                ],
-                "requestBody": {
-                    "description": "Commute history object to be created",
-                    "required": true,
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "$ref": "#/components/schemas/CommuteHistoryRequest"
-                            }
-                        }
-                    }
-                },
-                "responses": {
-                    "201": {
-                        "$ref": "#/components/responses/SuccessResponseCommuteHistory"
-                    },
-                    "400": {
-                        "$ref": "#/components/responses/BadRequest"
-                    }
-                }
-            }
-        },
-        "/expenses/commute/history/{id}": {
             "put": {
                 "summary": "Update a commute history",
                 "description": "Update a commute history",
@@ -1254,14 +1304,21 @@
                     "content": {
                         "application/json": {
                             "schema": {
-                                "$ref": "#/components/schemas/CommuteHistoryRequest"
+                                "$ref": "#/components/schemas/commuteHistory/properties/CommuteHistoryRequest"
                             }
                         }
                     }
                 },
                 "responses": {
                     "200": {
-                        "$ref": "#/components/responses/SuccessResponseCommuteHistory"
+                        "description": "A single commute history object",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/commuteHistory/properties/SuccessResponseCommuteHistory"
+                                }
+                            }
+                        }
                     },
                     "400": {
                         "$ref": "#/components/responses/BadRequest"
@@ -4303,6 +4360,84 @@
                     }
                 }
             },
+            "commuteHistory": {
+                "properties": {
+                    "SuccessResponseCommuteHistory": {
+                        "description": "A JSON object of a single commute history",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "id": {
+                                            "type": "integer",
+                                            "format": "int64",
+                                            "minimum": 1
+                                        },
+                                        "accountId": {
+                                            "type": "integer",
+                                            "format": "int64",
+                                            "minimum": 1
+                                        },
+                                        "commuteSystem": {
+                                            "type": "string",
+                                            "example": "Subway"
+                                        },
+                                        "fare": {
+                                            "type": "number",
+                                            "format": "double",
+                                            "example": 2.75
+                                        },
+                                        "fareType": {
+                                            "type": "string",
+                                            "example": "Standard"
+                                        },
+                                        "timestamp": {
+                                            "type": "string",
+                                            "format": "date-time"
+                                        },
+                                        "dateCreated": {
+                                            "type": "string",
+                                            "format": "date-time"
+                                        },
+                                        "dateModified": {
+                                            "type": "string",
+                                            "format": "date-time"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "CommuteHistoryRequest": {
+                        "type": "object",
+                        "properties": {
+                            "accountId": {
+                                "type": "integer",
+                                "format": "int64",
+                                "minimum": 1
+                            },
+                            "fare": {
+                                "type": "number",
+                                "format": "double",
+                                "example": 10.0
+                            },
+                            "commuteSystem": {
+                                "type": "string",
+                                "example": "OMNY"
+                            },
+                            "fareType": {
+                                "type": "string",
+                                "example": "Standard"
+                            },
+                            "timestamp": {
+                                "type": "string",
+                                "format": "date-time"
+                            }
+                        }
+                    }
+                }
+            },
             "transaction": {
                 "type": "object",
                 "properties": {
@@ -4331,33 +4466,6 @@
                     "balance": {
                         "type": "number",
                         "description": "Balance after the transaction"
-                    }
-                }
-            },
-            "CommuteHistoryRequest": {
-                "type": "object",
-                "properties": {
-                    "accountId": {
-                        "type": "integer",
-                        "format": "int64",
-                        "minimum": 1
-                    },
-                    "fareAmount": {
-                        "type": "number",
-                        "format": "double",
-                        "example": 10.0
-                    },
-                    "commuteSystem": {
-                        "type": "string",
-                        "example": "OMNY"
-                    },
-                    "fareType": {
-                        "type": "string",
-                        "example": "Standard"
-                    },
-                    "timestamp": {
-                        "type": "string",
-                        "format": "date-time"
                     }
                 }
             },
@@ -4541,53 +4649,6 @@
                                             }
                                         }
                                     }
-                                }
-                            }
-                        }
-                    }
-                }
-            },
-            "SuccessResponseCommuteHistory": {
-                "description": "A JSON object of a single commute history",
-                "content": {
-                    "application/json": {
-                        "schema": {
-                            "type": "object",
-                            "properties": {
-                                "id": {
-                                    "type": "integer",
-                                    "format": "int64",
-                                    "minimum": 1
-                                },
-                                "accountId": {
-                                    "type": "integer",
-                                    "format": "int64",
-                                    "minimum": 1
-                                },
-                                "commuteSystem": {
-                                    "type": "string",
-                                    "example": "Subway"
-                                },
-                                "fareAmount": {
-                                    "type": "number",
-                                    "format": "double",
-                                    "example": 2.75
-                                },
-                                "fareType": {
-                                    "type": "string",
-                                    "example": "Standard"
-                                },
-                                "timestamp": {
-                                    "type": "string",
-                                    "format": "date-time"
-                                },
-                                "dateCreated": {
-                                    "type": "string",
-                                    "format": "date-time"
-                                },
-                                "dateModified": {
-                                    "type": "string",
-                                    "format": "date-time"
                                 }
                             }
                         }
