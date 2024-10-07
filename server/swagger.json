@@ -1541,10 +1541,81 @@
                 ],
                 "parameters": [
                     {
-                        "name": "id",
+                        "name": "accountId",
                         "in": "query",
-                        "description": "Commute schedule id",
+                        "description": "Filter by account id",
                         "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "A JSON array of commute schedules",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/commuteSchedule/properties/SuccessResponseCommuteSchedule"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/BadRequest"
+                    }
+                }
+            },
+            "post": {
+                "summary": "Create a new commute schedule",
+                "description": "Create a new commute schedule",
+                "tags": [
+                    "commute schedules"
+                ],
+                "requestBody": {
+                    "description": "Commute schedule object to be created",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/commuteSchedule/properties/CommuteScheduleRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "A single commute schedule object",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/commuteSchedule/properties/SuccessResponseCommuteSchedule"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/BadRequest"
+                    }
+                }
+            }
+        },
+        "/expenses/commute/schedule/{id}": {
+            "get": {
+                "summary": "Get all commute schedules",
+                "description": "Get all commute schedules",
+                "tags": [
+                    "commute schedules"
+                ],
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Commute schedule id",
+                        "required": true,
                         "schema": {
                             "type": "integer"
                         }
@@ -1561,7 +1632,14 @@
                 ],
                 "responses": {
                     "200": {
-                        "$ref": "#/components/responses/SuccessResponseCommuteSchedule"
+                        "description": "A single commute schedule object",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/commuteSchedule/properties/SuccessResponseCommuteSchedule"
+                                }
+                            }
+                        }
                     },
                     "400": {
                         "$ref": "#/components/responses/BadRequest"
@@ -1571,34 +1649,6 @@
                     }
                 }
             },
-            "post": {
-                "summary": "Create a new commute schedule",
-                "description": "Create a new commute schedule",
-                "tags": [
-                    "commute schedules"
-                ],
-                "requestBody": {
-                    "description": "Commute schedule object to be created",
-                    "required": true,
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "$ref": "#/components/schemas/CommuteScheduleRequest"
-                            }
-                        }
-                    }
-                },
-                "responses": {
-                    "201": {
-                        "$ref": "#/components/responses/SuccessResponseCommuteSchedule"
-                    },
-                    "400": {
-                        "$ref": "#/components/responses/BadRequest"
-                    }
-                }
-            }
-        },
-        "/expenses/commute/schedule/{id}": {
             "put": {
                 "summary": "Update a commute schedule",
                 "description": "Update a commute schedule",
@@ -1622,14 +1672,21 @@
                     "content": {
                         "application/json": {
                             "schema": {
-                                "$ref": "#/components/schemas/CommuteScheduleRequest"
+                                "$ref": "#/components/schemas/commuteSchedule/properties/CommuteScheduleRequest"
                             }
                         }
                     }
                 },
                 "responses": {
                     "200": {
-                        "$ref": "#/components/responses/SuccessResponseCommuteSchedule"
+                        "description": "A single commute schedule object",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/commuteSchedule/properties/SuccessResponseCommuteSchedule"
+                                }
+                            }
+                        }
                     },
                     "400": {
                         "$ref": "#/components/responses/BadRequest"
@@ -4438,6 +4495,80 @@
                     }
                 }
             },
+            "commuteSchedule": {
+                "properties": {
+                    "SuccessResponseCommuteSchedule": {
+                        "type": "object",
+                        "properties": {
+                            "schedule": {
+                                "type": "array",
+                                "items": {
+                                    "type": "object",
+                                    "properties": {
+                                        "dayOfWeek": {
+                                            "type": "integer",
+                                            "format": "int64",
+                                            "minimum": 1
+                                        },
+                                        "passes": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "object",
+                                                "properties": {
+                                                    "type": {
+                                                        "type": "string",
+                                                        "example": "LIRR Monthly"
+                                                    },
+                                                    "startTime": {
+                                                        "type": "string",
+                                                        "example": "05:00:00"
+                                                    },
+                                                    "endTime": {
+                                                        "type": "string",
+                                                        "example": "10:00:00"
+                                                    },
+                                                    "fareAmount": {
+                                                        "type": "number",
+                                                        "format": "double",
+                                                        "example": 10.0
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "CommuteScheduleRequest": {
+                        "type": "object",
+                        "properties": {
+                            "accountId": {
+                                "type": "integer",
+                                "format": "int64",
+                                "minimum": 1
+                            },
+                            "dayOfWeek": {
+                                "type": "integer",
+                                "example": 1
+                            },
+                            "fareDetailId": {
+                                "type": "integer",
+                                "format": "int64",
+                                "minimum": 1
+                            },
+                            "startTime": {
+                                "type": "string",
+                                "example": "05:00:00"
+                            },
+                            "endTime": {
+                                "type": "string",
+                                "example": "10:00:00"
+                            }
+                        }
+                    }
+                }
+            },
             "transaction": {
                 "type": "object",
                 "properties": {
@@ -4466,33 +4597,6 @@
                     "balance": {
                         "type": "number",
                         "description": "Balance after the transaction"
-                    }
-                }
-            },
-            "CommuteScheduleRequest": {
-                "type": "object",
-                "properties": {
-                    "accountId": {
-                        "type": "integer",
-                        "format": "int64",
-                        "minimum": 1
-                    },
-                    "dayOfWeek": {
-                        "type": "integer",
-                        "example": 1
-                    },
-                    "fareDetailId": {
-                        "type": "integer",
-                        "format": "int64",
-                        "minimum": 1
-                    },
-                    "startTime": {
-                        "type": "string",
-                        "example": "05:00:00"
-                    },
-                    "endTime": {
-                        "type": "string",
-                        "example": "10:00:00"
                     }
                 }
             },
@@ -4643,56 +4747,6 @@
                                                                 "type": "integer",
                                                                 "example": 1
                                                             }
-                                                        }
-                                                    }
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            },
-            "SuccessResponseCommuteSchedule": {
-                "description": "A JSON object of schedules",
-                "content": {
-                    "application/json": {
-                        "schema": {
-                            "type": "object",
-                            "properties": {
-                                "schedule": {
-                                    "type": "array",
-                                    "items": {
-                                        "type": "object",
-                                        "properties": {
-                                            "dayOfWeek": {
-                                                "type": "integer",
-                                                "format": "int64",
-                                                "minimum": 1
-                                            },
-                                            "passes": {
-                                                "type": "array",
-                                                "items": {
-                                                    "type": "object",
-                                                    "properties": {
-                                                        "type": {
-                                                            "type": "string",
-                                                            "example": "LIRR Monthly"
-                                                        },
-                                                        "startTime": {
-                                                            "type": "string",
-                                                            "example": "05:00:00"
-                                                        },
-                                                        "endTime": {
-                                                            "type": "string",
-                                                            "example": "10:00:00"
-                                                        },
-                                                        "fareAmount": {
-                                                            "type": "number",
-                                                            "format": "double",
-                                                            "example": 10.0
                                                         }
                                                     }
                                                 }
