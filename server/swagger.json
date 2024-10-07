@@ -2589,8 +2589,8 @@
         },
         "/transfers": {
             "get": {
-                "summary": "Get a list of transfers",
-                "description": "Get a list of transfers",
+                "summary": "Get all transfers",
+                "description": "Get all transfers",
                 "tags": [
                     "transfers"
                 ],
@@ -2614,7 +2614,7 @@
                                 "schema": {
                                     "type": "array",
                                     "items": {
-                                        "$ref": "#/components/responses/SuccessResponseTransfer"
+                                        "$ref": "#/components/schemas/transfer/properties/SuccessResponseTransfer"
                                     }
                                 }
                             }
@@ -2637,14 +2637,21 @@
                     "content": {
                         "application/json": {
                             "schema": {
-                                "$ref": "#/components/schemas/TransferRequest"
+                                "$ref": "#/components/schemas/transfer/properties/TransferRequest"
                             }
                         }
                     }
                 },
                 "responses": {
                     "201": {
-                        "$ref": "#/components/responses/SuccessResponseTransfer"
+                        "description": "A single transfer object",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/transfer/properties/SuccessResponseTransfer"
+                                }
+                            }
+                        }
                     },
                     "400": {
                         "$ref": "#/components/responses/BadRequest"
@@ -2654,15 +2661,15 @@
         },
         "/transfers/{id}": {
             "get": {
-                "summary": "Get a list of a single transfer",
-                "description": "Get a list of a single transfer",
+                "summary": "Get a single transfer",
+                "description": "Get a single transfer",
                 "tags": [
                     "transfers"
                 ],
                 "parameters": [
                     {
                         "name": "id",
-                        "in": "query",
+                        "in": "path",
                         "description": "Transfer id",
                         "required": true,
                         "schema": {
@@ -2683,7 +2690,14 @@
                 ],
                 "responses": {
                     "200": {
-                        "$ref": "#/components/responses/SuccessResponseTransfer"
+                        "description": "A single transfer object",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/transfer/properties/SuccessResponseTransfer"
+                                }
+                            }
+                        }
                     },
                     "400": {
                         "$ref": "#/components/responses/BadRequest"
@@ -2717,14 +2731,21 @@
                     "content": {
                         "application/json": {
                             "schema": {
-                                "$ref": "#/components/schemas/TransferRequest"
+                                "$ref": "#/components/schemas/transfer/properties/TransferRequest"
                             }
                         }
                     }
                 },
                 "responses": {
                     "200": {
-                        "$ref": "#/components/responses/SuccessResponseTransfer"
+                        "description": "A single transfer object",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/transfer/properties/SuccessResponseTransfer"
+                                }
+                            }
+                        }
                     },
                     "400": {
                         "$ref": "#/components/responses/BadRequest"
@@ -3864,49 +3885,140 @@
                     }
                 }
             },
-            "TransferRequest": {
-                "type": "object",
+            "transfer": {
                 "properties": {
-                    "sourceAccountId": {
-                        "type": "integer",
-                        "format": "int64",
-                        "minimum": 1
-                    },
-                    "destinationAccountId": {
-                        "type": "integer",
-                        "format": "int64",
-                        "minimum": 1,
-                        "example": 2
-                    },
-                    "amount": {
-                        "type": "number",
-                        "format": "double",
-                        "example": 100.0
-                    },
-                    "title": {
-                        "type": "string",
-                        "example": "Transfer test"
-                    },
-                    "description": {
-                        "type": "string",
-                        "example": "This is a transfer test"
-                    },
-                    "frequency": {
+                    "SuccessResponseTransfer": {
                         "type": "object",
                         "properties": {
-                            "type": {
+                            "id": {
                                 "type": "integer",
-                                "example": 2
+                                "format": "int64",
+                                "minimum": 1
                             },
-                            "typeVariable": {
+                            "accountId": {
                                 "type": "integer",
-                                "example": 1
+                                "format": "int64",
+                                "minimum": 1
+                            },
+                            "amount": {
+                                "type": "number",
+                                "format": "double",
+                                "example": 250.0
+                            },
+                            "title": {
+                                "type": "string",
+                                "example": "Transfer test"
+                            },
+                            "description": {
+                                "type": "string",
+                                "example": "This is a transfer test"
+                            },
+                            "frequency": {
+                                "type": "object",
+                                "properties": {
+                                    "type": {
+                                        "type": "integer",
+                                        "example": 2
+                                    },
+                                    "typeVariable": {
+                                        "type": "integer",
+                                        "example": 1
+                                    },
+                                    "dayOfWeek": {
+                                        "type": "integer",
+                                        "default": null
+                                    },
+                                    "weekOfMonth": {
+                                        "type": "integer",
+                                        "default": null
+                                    },
+                                    "monthOfYear": {
+                                        "type": "integer",
+                                        "default": null
+                                    }
+                                }
+                            },
+                            "dates": {
+                                "type": "object",
+                                "properties": {
+                                    "beginDate": {
+                                        "type": "string",
+                                        "format": "date-time"
+                                    },
+                                    "endDate": {
+                                        "type": "string",
+                                        "format": "date-time",
+                                        "default": null
+                                    }
+                                }
+                            },
+                            "dateCreated": {
+                                "type": "string",
+                                "format": "date-time"
+                            },
+                            "dateModified": {
+                                "type": "string",
+                                "format": "date-time"
                             }
                         }
                     },
-                    "beginDate": {
-                        "type": "string",
-                        "format": "date-time"
+                    "TransferRequest": {
+                        "type": "object",
+                        "properties": {
+                            "sourceAccountId": {
+                                "type": "integer",
+                                "format": "int64",
+                                "minimum": 1
+                            },
+                            "destinationAccountId": {
+                                "type": "integer",
+                                "format": "int64",
+                                "minimum": 1,
+                                "example": 2
+                            },
+                            "amount": {
+                                "type": "number",
+                                "format": "double",
+                                "example": 100.0
+                            },
+                            "title": {
+                                "type": "string",
+                                "example": "Transfer test"
+                            },
+                            "description": {
+                                "type": "string",
+                                "example": "This is a transfer test"
+                            },
+                            "frequency": {
+                                "type": "object",
+                                "properties": {
+                                    "type": {
+                                        "type": "integer",
+                                        "example": 2
+                                    },
+                                    "typeVariable": {
+                                        "type": "integer",
+                                        "example": 1
+                                    },
+                                    "dayOfWeek": {
+                                        "type": "integer",
+                                        "default": null
+                                    },
+                                    "weekOfMonth": {
+                                        "type": "integer",
+                                        "default": null
+                                    },
+                                    "monthOfYear": {
+                                        "type": "integer",
+                                        "default": null
+                                    }
+                                }
+                            },
+                            "beginDate": {
+                                "type": "string",
+                                "format": "date-time"
+                            }
+                        }
                     }
                 }
             },
@@ -4440,83 +4552,6 @@
                                             }
                                         }
                                     }
-                                }
-                            }
-                        }
-                    }
-                }
-            },
-            "SuccessResponseTransfer": {
-                "description": "A JSON object of a single transfer",
-                "content": {
-                    "application/json": {
-                        "schema": {
-                            "type": "object",
-                            "properties": {
-                                "id": {
-                                    "type": "integer",
-                                    "format": "int64",
-                                    "minimum": 1
-                                },
-                                "accountId": {
-                                    "type": "integer",
-                                    "format": "int64",
-                                    "minimum": 1
-                                },
-                                "amount": {
-                                    "type": "number",
-                                    "format": "double",
-                                    "example": 250.0
-                                },
-                                "title": {
-                                    "type": "string",
-                                    "example": "Transfer test"
-                                },
-                                "description": {
-                                    "type": "string",
-                                    "example": "This is a transfer test"
-                                },
-                                "frequency": {
-                                    "type": "object",
-                                    "properties": {
-                                        "type": {
-                                            "type": "integer",
-                                            "example": 2
-                                        },
-                                        "typeVariable": {
-                                            "type": "integer",
-                                            "example": 1
-                                        },
-                                        "dayOfWeek": {
-                                            "type": "integer",
-                                            "default": null
-                                        },
-                                        "weekOfMonth": {
-                                            "type": "integer",
-                                            "default": null
-                                        },
-                                        "monthOfYear": {
-                                            "type": "integer",
-                                            "default": null
-                                        }
-                                    }
-                                },
-                                "beginDate": {
-                                    "type": "string",
-                                    "format": "date-time"
-                                },
-                                "endDate": {
-                                    "type": "string",
-                                    "format": "date-time",
-                                    "default": null
-                                },
-                                "dateCreated": {
-                                    "type": "string",
-                                    "format": "date-time"
-                                },
-                                "dateModified": {
-                                    "type": "string",
-                                    "format": "date-time"
                                 }
                             }
                         }
