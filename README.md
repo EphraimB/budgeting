@@ -32,7 +32,19 @@ I've been working on the budgeting app for a couple of years and trying to work 
 
 ## How to setup the budgeting app locally
 
-Download Docker Desktop from [here](https://www.docker.com/products/docker-desktop/) for your specific platform. Clone this repository. In your terminal, type
+Download Docker Desktop from [here](https://www.docker.com/products/docker-desktop/) for your specific platform. Clone this repository. Make a .env file and type the following in:
+
+```
+PGDB=budgeting
+PGUSER=[The database user]
+PGPASSWORD=[The database password]
+PGHOST=db
+PGPORT=[The database port]
+```
+
+Save the .env file.
+
+In your terminal, type
 
 ```
 docker compose build
