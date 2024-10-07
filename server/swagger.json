@@ -2860,17 +2860,17 @@
                 }
             }
         },
-        "/transactions/{id}": {
+        "/transactions/{accountId}": {
             "get": {
-                "summary": "Get all transactions",
-                "description": "Get all transactions",
+                "summary": "Get all transactions for a single account",
+                "description": "Get all transactions for a single account",
                 "tags": [
                     "transactions"
                 ],
                 "parameters": [
                     {
                         "name": "accountId",
-                        "in": "query",
+                        "in": "path",
                         "description": "Account id",
                         "required": true,
                         "schema": {
