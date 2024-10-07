@@ -31,7 +31,7 @@ export const getTransactions = async (
         } else {
             query = `
                 SELECT * FROM transaction_history
-                    ORDER BY transaction_id ASC
+                    ORDER BY id ASC
             `;
             params = [];
         }
