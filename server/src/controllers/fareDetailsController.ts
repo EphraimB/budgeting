@@ -171,7 +171,7 @@ export const createFareDetail = async (
         const { rows: fareDetails } = await client.query(
             `
                 INSERT INTO fare_details
-                (commute_system_id, name, fare_amount, duration, day_start, alternate_fare_detail_id)
+                (commute_system_id, name, fare, duration, day_start, alternate_fare_detail_id)
                 VALUES ($1, $2, $3, $4, $5, $6)
                 RETURNING *
             `,
