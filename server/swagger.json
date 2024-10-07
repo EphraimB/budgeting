@@ -2017,7 +2017,7 @@
                                 "schema": {
                                     "type": "array",
                                     "items": {
-                                        "$ref": "#/components/responses/SuccessResponsePayrollDate"
+                                        "$ref": "#/components/schemas/payrollDate/properties/SuccessResponsePayrollDate"
                                     }
                                 }
                             }
@@ -2040,14 +2040,21 @@
                     "content": {
                         "application/json": {
                             "schema": {
-                                "$ref": "#/components/schemas/PayrollDateManipulation"
+                                "$ref": "#/components/schemas/payrollDate/properties/PayrollDateRequest"
                             }
                         }
                     }
                 },
                 "responses": {
                     "201": {
-                        "$ref": "#/components/responses/SuccessResponsePayrollDate"
+                        "description": "A single payroll date object",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/payrollDate/properties/SuccessResponsePayrollDate"
+                                }
+                            }
+                        }
                     },
                     "400": {
                         "$ref": "#/components/responses/BadRequest"
@@ -2065,7 +2072,7 @@
                 "parameters": [
                     {
                         "name": "id",
-                        "in": "query",
+                        "in": "path",
                         "description": "Payroll date id",
                         "required": true,
                         "schema": {
@@ -2086,7 +2093,14 @@
                 ],
                 "responses": {
                     "200": {
-                        "$ref": "#/components/responses/SuccessResponsePayrollDate"
+                        "description": "A single payroll date object",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/payrollDate/properties/SuccessResponsePayrollDate"
+                                }
+                            }
+                        }
                     },
                     "400": {
                         "$ref": "#/components/responses/BadRequest"
@@ -2120,14 +2134,21 @@
                     "content": {
                         "application/json": {
                             "schema": {
-                                "$ref": "#/components/schemas/PayrollDateRequest"
+                                "$ref": "#/components/schemas/payrollDate/properties/PayrollDateRequest"
                             }
                         }
                     }
                 },
                 "responses": {
                     "200": {
-                        "$ref": "#/components/responses/SuccessResponsePayrollDate"
+                        "description": "A single payroll date object",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/payrollDate/properties/SuccessResponsePayrollDate"
+                                }
+                            }
+                        }
                     },
                     "400": {
                         "$ref": "#/components/responses/BadRequest"
@@ -3592,19 +3613,42 @@
                     }
                 }
             },
-            "PayrollDateRequest": {
-                "type": "object",
+            "payrollDate": {
                 "properties": {
-                    "jobId": {
-                        "type": "integer",
-                        "format": "int64",
-                        "minimum": 1
+                    "SuccessResponsePayrollDate": {
+                        "type": "object",
+                        "properties": {
+                            "id": {
+                                "type": "integer",
+                                "format": "int64",
+                                "minimum": 1
+                            },
+                            "jobId": {
+                                "type": "integer",
+                                "format": "int64",
+                                "minimum": 1
+                            },
+                            "payrollDay": {
+                                "type": "integer",
+                                "example": 15
+                            }
+                        }
                     },
-                    "endDay": {
-                        "type": "integer",
-                        "example": 31,
-                        "minimum": 1,
-                        "maximum": 31
+                    "PayrollDateRequest": {
+                        "type": "object",
+                        "properties": {
+                            "jobId": {
+                                "type": "integer",
+                                "format": "int64",
+                                "minimum": 1
+                            },
+                            "payrollDay": {
+                                "type": "integer",
+                                "example": 31,
+                                "minimum": 1,
+                                "maximum": 31
+                            }
+                        }
                     }
                 }
             },
@@ -4254,36 +4298,6 @@
                                             }
                                         }
                                     }
-                                }
-                            }
-                        }
-                    }
-                }
-            },
-            "SuccessResponsePayrollDate": {
-                "description": "A JSON object ofa single payroll date",
-                "content": {
-                    "application/json": {
-                        "schema": {
-                            "type": "object",
-                            "properties": {
-                                "id": {
-                                    "type": "integer",
-                                    "format": "int64",
-                                    "minimum": 1
-                                },
-                                "jobId": {
-                                    "type": "integer",
-                                    "format": "int64",
-                                    "minimum": 1
-                                },
-                                "startDay": {
-                                    "type": "integer",
-                                    "example": 1
-                                },
-                                "endDay": {
-                                    "type": "integer",
-                                    "example": 15
                                 }
                             }
                         }
