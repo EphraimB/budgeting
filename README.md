@@ -32,7 +32,7 @@ I've been working on the budgeting app for a couple of years and trying to work 
 
 ## How to setup the budgeting app locally
 
-Download Docker Desktop from [here](https://www.docker.com/products/docker-desktop/) for your specific platform. Clone this repository. Make a .env file and type the following in:
+Download Docker Desktop from [here](https://www.docker.com/products/docker-desktop/) for your specific platform. Clone this repository. Make a .env file in the root directory and type the following in:
 
 ```
 PGDB=budgeting
