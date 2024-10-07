@@ -43,8 +43,7 @@ export const getCommuteOverview = async (
                     (
                     SELECT COALESCE(SUM(ch.fare), 0)
                     FROM commute_history ch
-                    WHERE ch.commute_system_id = csy.id
-                    AND ch.account_id = cs.account_id
+                    WHERE ch.account_id = cs.account_id
                     AND (
                         (csy.fare_cap_duration = 0 AND date(ch.timestamp) = current_date) OR
                         (csy.fare_cap_duration = 1 AND date_trunc('week', ch.timestamp) = date_trunc('week', current_date)) OR
@@ -108,8 +107,7 @@ export const getCommuteOverview = async (
                     (
                     SELECT COALESCE(SUM(ch.fare), 0)
                     FROM commute_history ch
-                    WHERE ch.commute_system_id = csy.id
-                    AND ch.account_id = cs.account_id
+                    WHERE ch.account_id = cs.account_id
                     AND (
                         (csy.fare_cap_duration = 0 AND date(ch.timestamp) = current_date) OR
                         (csy.fare_cap_duration = 1 AND date_trunc('week', ch.timestamp) = date_trunc('week', current_date)) OR
