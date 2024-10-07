@@ -1815,7 +1815,7 @@
                                 "schema": {
                                     "type": "array",
                                     "items": {
-                                        "$ref": "#/components/responses/SuccessResponsePayrollTax"
+                                        "$ref": "#/components/schemas/payrollTax/properties/SuccessResponsePayrollTax"
                                     }
                                 }
                             }
@@ -1841,14 +1841,21 @@
                     "content": {
                         "application/json": {
                             "schema": {
-                                "$ref": "#/components/schemas/PayrollTaxRequest"
+                                "$ref": "#/components/schemas/payrollTax/properties/PayrollTaxRequest"
                             }
                         }
                     }
                 },
                 "responses": {
                     "201": {
-                        "$ref": "#/components/responses/SuccessResponsePayrollTax"
+                        "description": "A single payroll tax object",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/payrollTax/properties/SuccessResponsePayrollTax"
+                                }
+                            }
+                        }
                     },
                     "400": {
                         "$ref": "#/components/responses/BadRequest"
@@ -1887,7 +1894,14 @@
                 ],
                 "responses": {
                     "200": {
-                        "$ref": "#/components/responses/SuccessResponsePayrollTax"
+                        "description": "A single payroll tax object",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/payrollTax/properties/SuccessResponsePayrollTax"
+                                }
+                            }
+                        }
                     },
                     "400": {
                         "$ref": "#/components/responses/BadRequest"
@@ -1921,14 +1935,21 @@
                     "content": {
                         "application/json": {
                             "schema": {
-                                "$ref": "#/components/schemas/PayrollTaxRequest"
+                                "$ref": "#/components/schemas/payrollTax/properties/PayrollTaxRequest"
                             }
                         }
                     }
                 },
                 "responses": {
                     "200": {
-                        "$ref": "#/components/responses/SuccessResponsePayrollTax"
+                        "description": "A single payroll tax object",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/payrollTax/properties/SuccessResponsePayrollTax"
+                                }
+                            }
+                        }
                     },
                     "400": {
                         "$ref": "#/components/responses/BadRequest"
@@ -3524,22 +3545,50 @@
                     }
                 }
             },
-            "PayrollTaxRequest": {
-                "type": "object",
+            "payrollTax": {
                 "properties": {
-                    "jobId": {
-                        "type": "integer",
-                        "format": "int64",
-                        "minimum": 1
+                    "SuccessResponsePayrollTax": {
+                        "type": "object",
+                        "properties": {
+                            "id": {
+                                "type": "integer",
+                                "format": "int64",
+                                "minimum": 1
+                            },
+                            "jobId": {
+                                "type": "integer",
+                                "format": "int64",
+                                "minimum": 1
+                            },
+                            "name": {
+                                "type": "string",
+                                "example": "Payroll tax test"
+                            },
+                            "rate": {
+                                "type": "number",
+                                "format": "double",
+                                "example": 0.15
+                            }
+                        }
                     },
-                    "name": {
-                        "type": "string",
-                        "example": "Federal Income Tax"
-                    },
-                    "rate": {
-                        "type": "number",
-                        "format": "double",
-                        "example": 0.15
+                    "PayrollTaxRequest": {
+                        "type": "object",
+                        "properties": {
+                            "jobId": {
+                                "type": "integer",
+                                "format": "int64",
+                                "minimum": 1
+                            },
+                            "name": {
+                                "type": "string",
+                                "example": "Federal Income Tax"
+                            },
+                            "rate": {
+                                "type": "number",
+                                "format": "double",
+                                "example": 0.15
+                            }
+                        }
                     }
                 }
             },
@@ -4205,37 +4254,6 @@
                                             }
                                         }
                                     }
-                                }
-                            }
-                        }
-                    }
-                }
-            },
-            "SuccessResponsePayrollTax": {
-                "description": "A JSON object of a single payroll tax",
-                "content": {
-                    "application/json": {
-                        "schema": {
-                            "type": "object",
-                            "properties": {
-                                "id": {
-                                    "type": "integer",
-                                    "format": "int64",
-                                    "minimum": 1
-                                },
-                                "jobId": {
-                                    "type": "integer",
-                                    "format": "int64",
-                                    "minimum": 1
-                                },
-                                "name": {
-                                    "type": "string",
-                                    "example": "Payroll tax test"
-                                },
-                                "rate": {
-                                    "type": "number",
-                                    "format": "double",
-                                    "example": 250.0
                                 }
                             }
                         }
