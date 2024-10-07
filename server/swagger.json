@@ -2390,8 +2390,8 @@
         },
         "/wishlists": {
             "get": {
-                "summary": "Get a list of wishlists",
-                "description": "Get a list of wishlists",
+                "summary": "Get all wishlists",
+                "description": "Get all wishlists",
                 "tags": [
                     "wishlists"
                 ],
@@ -2415,7 +2415,7 @@
                                 "schema": {
                                     "type": "array",
                                     "items": {
-                                        "$ref": "#/components/responses/SuccessResponseWishlist"
+                                        "$ref": "#/components/schemas/wishlist/properties/SuccessResponseWishlist"
                                     }
                                 }
                             }
@@ -2433,19 +2433,26 @@
                     "wishlists"
                 ],
                 "requestBody": {
-                    "description": "Wishlists object to be created",
+                    "description": "Wishlist object to be created",
                     "required": true,
                     "content": {
                         "application/json": {
                             "schema": {
-                                "$ref": "#/components/schemas/WishlistRequest"
+                                "$ref": "#/components/schemas/wishlist/properties/WishlistRequest"
                             }
                         }
                     }
                 },
                 "responses": {
                     "201": {
-                        "$ref": "#/components/responses/SuccessResponseWishlist"
+                        "description": "A single wishlist object",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/wishlist/properties/SuccessResponseWishlist"
+                                }
+                            }
+                        }
                     },
                     "400": {
                         "$ref": "#/components/responses/BadRequest"
@@ -2455,15 +2462,15 @@
         },
         "/wishlists/{id}": {
             "get": {
-                "summary": "Get a list ofa single wishlist",
-                "description": "Get a list of a single wishlist",
+                "summary": "Get a single wishlist",
+                "description": "Get a single wishlist",
                 "tags": [
                     "wishlists"
                 ],
                 "parameters": [
                     {
                         "name": "id",
-                        "in": "query",
+                        "in": "path",
                         "description": "Wishlist id",
                         "required": true,
                         "schema": {
@@ -2484,7 +2491,14 @@
                 ],
                 "responses": {
                     "200": {
-                        "$ref": "#/components/responses/SuccessResponseWishlist"
+                        "description": "A single wishlist object",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/wishlist/properties/SuccessResponseWishlist"
+                                }
+                            }
+                        }
                     },
                     "400": {
                         "$ref": "#/components/responses/BadRequest"
@@ -2513,19 +2527,26 @@
                     }
                 ],
                 "requestBody": {
-                    "description": "Wishlists object to be updated",
+                    "description": "Wishlist object to be updated",
                     "required": true,
                     "content": {
                         "application/json": {
                             "schema": {
-                                "$ref": "#/components/schemas/WishlistRequest"
+                                "$ref": "#/components/schemas/wishlist/properties/WishlistRequest"
                             }
                         }
                     }
                 },
                 "responses": {
                     "200": {
-                        "$ref": "#/components/responses/SuccessResponseWishlist"
+                        "description": "A single wishlist object",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/wishlist/properties/SuccessResponseWishlist"
+                                }
+                            }
+                        }
                     },
                     "400": {
                         "$ref": "#/components/responses/BadRequest"
@@ -3765,34 +3786,81 @@
                     }
                 }
             },
-            "WishlistRequest": {
-                "type": "object",
+            "wishlist": {
                 "properties": {
-                    "accountId": {
-                        "type": "integer",
-                        "format": "int64",
-                        "minimum": 1
+                    "SuccessResponseWishlist": {
+                        "type": "object",
+                        "properties": {
+                            "id": {
+                                "type": "integer",
+                                "format": "int64",
+                                "minimum": 1
+                            },
+                            "accountId": {
+                                "type": "integer",
+                                "format": "int64",
+                                "minimum": 1
+                            },
+                            "amount": {
+                                "type": "number",
+                                "format": "double",
+                                "example": 250.0
+                            },
+                            "title": {
+                                "type": "string",
+                                "example": "Wishlist test"
+                            },
+                            "description": {
+                                "type": "string",
+                                "example": "This is a wishlist test"
+                            },
+                            "priority": {
+                                "type": "integer"
+                            },
+                            "urlLink": {
+                                "type": "string",
+                                "example": "https://www.amazon.com"
+                            },
+                            "dateCreated": {
+                                "type": "string",
+                                "format": "date-time"
+                            },
+                            "dateModified": {
+                                "type": "string",
+                                "format": "date-time"
+                            }
+                        }
                     },
-                    "amount": {
-                        "type": "number",
-                        "format": "double",
-                        "example": 250.0
-                    },
-                    "title": {
-                        "type": "string",
-                        "example": "Wishlist test"
-                    },
-                    "description": {
-                        "type": "string",
-                        "example": "This is a wishlist test"
-                    },
-                    "priority": {
-                        "type": "integer",
-                        "example": 1
-                    },
-                    "urlLink": {
-                        "type": "string",
-                        "example": "https://www.amazon.com/PlayStation-4-Pro-1TB-Console/"
+                    "WishlistRequest": {
+                        "type": "object",
+                        "properties": {
+                            "accountId": {
+                                "type": "integer",
+                                "format": "int64",
+                                "minimum": 1
+                            },
+                            "amount": {
+                                "type": "number",
+                                "format": "double",
+                                "example": 250.0
+                            },
+                            "title": {
+                                "type": "string",
+                                "example": "Wishlist test"
+                            },
+                            "description": {
+                                "type": "string",
+                                "example": "This is a wishlist test"
+                            },
+                            "priority": {
+                                "type": "integer",
+                                "example": 1
+                            },
+                            "urlLink": {
+                                "type": "string",
+                                "example": "https://www.amazon.com/PlayStation-4-Pro-1TB-Console/"
+                            }
+                        }
                     }
                 }
             },
@@ -4372,56 +4440,6 @@
                                             }
                                         }
                                     }
-                                }
-                            }
-                        }
-                    }
-                }
-            },
-            "SuccessResponseWishlist": {
-                "description": "A JSON object ofa single wishlist",
-                "content": {
-                    "application/json": {
-                        "schema": {
-                            "type": "object",
-                            "properties": {
-                                "id": {
-                                    "type": "integer",
-                                    "format": "int64",
-                                    "minimum": 1
-                                },
-                                "accountId": {
-                                    "type": "integer",
-                                    "format": "int64",
-                                    "minimum": 1
-                                },
-                                "amount": {
-                                    "type": "number",
-                                    "format": "double",
-                                    "example": 250.0
-                                },
-                                "title": {
-                                    "type": "string",
-                                    "example": "Wishlist test"
-                                },
-                                "description": {
-                                    "type": "string",
-                                    "example": "This is a wishlist test"
-                                },
-                                "priority": {
-                                    "type": "integer"
-                                },
-                                "urlLink": {
-                                    "type": "string",
-                                    "example": "https://www.amazon.com"
-                                },
-                                "dateCreated": {
-                                    "type": "string",
-                                    "format": "date-time"
-                                },
-                                "dateModified": {
-                                    "type": "string",
-                                    "format": "date-time"
                                 }
                             }
                         }
