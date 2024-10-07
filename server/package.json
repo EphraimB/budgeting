@@ -7,6 +7,7 @@
     "build": "tsc",
     "start": "node src/server.js",
     "lint": "npx eslint '**/*.{js,ts}'",
+    "swagger": "node ./swagger.js",
     "test": "cross-env NODE_OPTIONS=--experimental-vm-modules TS_JEST_LOG=ts-jest.log jest"
   },
   "author": "Ephraim Becker",
@@ -21,6 +22,7 @@
     "express-validator": "^7.0.1",
     "pg": "^8.11.1",
     "proper-lockfile": "^4.1.2",
+    "swagger-autogen": "^2.23.7",
     "swagger-ui-express": "^4.6.2",
     "uuid": "^9.0.0",
     "winston": "^3.10.0"

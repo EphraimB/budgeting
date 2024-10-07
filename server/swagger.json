@@ -1,0 +1,4563 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "Budgeting",
+        "description": "A budgeting app that generates future transactions based on your daily habits",
+        "version": "0.2.0"
+    },
+    "servers": [
+        {
+            "url": "http://localhost:5001/api/",
+            "description": "Development server"
+        }
+    ],
+    "paths": {
+        "/accounts": {
+            "get": {
+                "summary": "Get all account",
+                "description": "Get all account",
+                "tags": [
+                    "accounts"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "A JSON array of accounts",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/accounts/properties/SuccessResponseAccount"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/BadRequest"
+                    }
+                }
+            },
+            "post": {
+                "summary": "Create a new account",
+                "description": "Create a new account",
+                "tags": [
+                    "accounts"
+                ],
+                "requestBody": {
+                    "description": "Account object to be created",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/accounts/properties/AccountRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "A single account object",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/accounts/properties/SuccessResponseAccount"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/BadRequest"
+                    }
+                }
+            }
+        },
+        "/accounts/{id}": {
+            "get": {
+                "summary": "Get a single account",
+                "description": "Get a single account",
+                "tags": [
+                    "accounts"
+                ],
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Filter by account id",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "A single account object",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/accounts/properties/SuccessResponseAccount"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/BadRequest"
+                    },
+                    "404": {
+                        "description": "Account not found"
+                    }
+                }
+            },
+            "put": {
+                "summary": "Update an account",
+                "description": "Update an account",
+                "tags": [
+                    "accounts"
+                ],
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "id",
+                        "description": "Edit by account id",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "description": "Account object to be updated",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/accounts/properties/AccountRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "A single account object",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/accounts/properties/SuccessResponseAccount"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/BadRequest"
+                    },
+                    "404": {
+                        "description": "Account not found"
+                    }
+                }
+            },
+            "delete": {
+                "summary": "Delete an account",
+                "description": "Delete an account",
+                "tags": [
+                    "accounts"
+                ],
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "id",
+                        "description": "Delete by account id",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successfully deleted account"
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/BadRequest"
+                    },
+                    "404": {
+                        "description": "Account not found"
+                    }
+                }
+            }
+        },
+        "/taxes": {
+            "get": {
+                "summary": "Get all taxes",
+                "description": "Get all taxes",
+                "tags": [
+                    "taxes"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "A JSON array of taxes",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/taxes/properties/SuccessResponseTax"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/BadRequest"
+                    }
+                }
+            },
+            "post": {
+                "summary": "Create a new tax",
+                "description": "Create a new tax",
+                "tags": [
+                    "taxes"
+                ],
+                "requestBody": {
+                    "description": "Tax object to be created",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/taxes/properties/TaxRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "A single tax object",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/taxes/properties/SuccessResponseTax"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/BadRequest"
+                    }
+                }
+            }
+        },
+        "/taxes/{id}": {
+            "get": {
+                "summary": "Get a single tax",
+                "description": "Get a single tax",
+                "tags": [
+                    "taxes"
+                ],
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Filter by tax id",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "A single tax object",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/taxes/properties/SuccessResponseTax"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/BadRequest"
+                    },
+                    "404": {
+                        "description": "Tax not found"
+                    }
+                }
+            },
+            "put": {
+                "summary": "Update a tax",
+                "description": "Update a tax",
+                "tags": [
+                    "taxes"
+                ],
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "id",
+                        "description": "Edit by tax id",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "description": "Tax object to be updated",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/taxes/properties/TaxRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "A single tax object",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/taxes/properties/SuccessResponseTax"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/BadRequest"
+                    },
+                    "404": {
+                        "description": "Tax not found"
+                    }
+                }
+            },
+            "delete": {
+                "summary": "Delete a tax",
+                "description": "Delete a tax",
+                "tags": [
+                    "taxes"
+                ],
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "id",
+                        "description": "Delete by tax id",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successfully deleted tax"
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/BadRequest"
+                    },
+                    "404": {
+                        "description": "Tax not found"
+                    }
+                }
+            }
+        },
+        "/transactions/history": {
+            "get": {
+                "summary": "Get all transaction histories",
+                "description": "Get all transaction histories",
+                "tags": [
+                    "transaction history"
+                ],
+                "parameters": [
+                    {
+                        "name": "accountId",
+                        "in": "query",
+                        "description": "Filter by account id",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "minimum": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "A JSON array of transaction histories",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/transactionHistory/properties/SuccessResponseTransactionHistory"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/BadRequest"
+                    }
+                }
+            },
+            "post": {
+                "summary": "Create a new transaction",
+                "description": "Create a new transaction",
+                "tags": [
+                    "transaction history"
+                ],
+                "requestBody": {
+                    "description": "transaction object to be created",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/transactionHistory/properties/SuccessResponseTransactionHistory"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "A single transaction history object",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/transactionHistory/properties/SuccessResponseTransactionHistory"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/BadRequest"
+                    }
+                }
+            }
+        },
+        "/transactions/history/{id}": {
+            "get": {
+                "summary": "Get a single transaction",
+                "description": "Get a single transaction",
+                "tags": [
+                    "transaction history"
+                ],
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Filter by transaction id",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "minimum": 1
+                        }
+                    },
+                    {
+                        "name": "accountId",
+                        "in": "query",
+                        "description": "Filter by account id",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "minimum": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "A single transaction history object",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/transactionHistory/properties/SuccessResponseTransactionHistory"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/BadRequest"
+                    },
+                    "404": {
+                        "description": "Transaction not found"
+                    }
+                }
+            },
+            "put": {
+                "summary": "Update a transaction",
+                "description": "Update a transaction",
+                "tags": [
+                    "transaction history"
+                ],
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "transaction id",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "minimum": 1
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "description": "transaction object to be updated",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/transactionHistory/properties/TransactionHistoryRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "A single transaction history object",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/transactionHistory/properties/SuccessResponseTransactionHistory"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/BadRequest"
+                    },
+                    "404": {
+                        "description": "Transaction history not found"
+                    }
+                }
+            },
+            "delete": {
+                "summary": "Delete a transaction",
+                "description": "Delete a transaction",
+                "tags": [
+                    "transaction history"
+                ],
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "transaction id",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "minimum": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successfully deleted transaction"
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/BadRequest"
+                    },
+                    "404": {
+                        "description": "Transaction history not found"
+                    }
+                }
+            }
+        },
+        "/income": {
+            "get": {
+                "summary": "Get all incomes",
+                "description": "Get all incomes",
+                "tags": [
+                    "income"
+                ],
+                "parameters": [
+                    {
+                        "name": "accountId",
+                        "in": "query",
+                        "description": "Filter by account id",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "minimum": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "A JSON array of incomes",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/income/properties/SuccessResponseIncome"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/BadRequest"
+                    }
+                }
+            },
+            "post": {
+                "summary": "Create a new income",
+                "description": "Create a new income",
+                "tags": [
+                    "income"
+                ],
+                "requestBody": {
+                    "description": "income object to be created",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/income/properties/IncomeRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "A single income object",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/income/properties/SuccessResponseIncome"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/BadRequest"
+                    }
+                }
+            }
+        },
+        "/income/{id}": {
+            "get": {
+                "summary": "Get a single income",
+                "description": "Get a single income",
+                "tags": [
+                    "income"
+                ],
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Filter by income id",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "minimum": 1
+                        }
+                    },
+                    {
+                        "name": "accountId",
+                        "in": "query",
+                        "description": "Filter by account id",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "minimum": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "A single income object",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/income/properties/SuccessResponseIncome"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/BadRequest"
+                    },
+                    "404": {
+                        "description": "Income not found"
+                    }
+                }
+            },
+            "put": {
+                "summary": "Update an income",
+                "description": "Update an income",
+                "tags": [
+                    "income"
+                ],
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "income id",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "minimum": 1
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "description": "income object to be updated",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/income/properties/IncomeRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "A single income object",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/income/properties/SuccessResponseIncome"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/BadRequest"
+                    },
+                    "404": {
+                        "description": "Income not found"
+                    }
+                }
+            },
+            "delete": {
+                "summary": "Delete an income",
+                "description": "Delete an income",
+                "tags": [
+                    "income"
+                ],
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "income id",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "minimum": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Income deleted successfully"
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/BadRequest"
+                    },
+                    "404": {
+                        "description": "Income not found"
+                    }
+                }
+            }
+        },
+        "/expenses": {
+            "get": {
+                "summary": "Get all expenses",
+                "description": "Get all expenses",
+                "tags": [
+                    "expenses"
+                ],
+                "parameters": [
+                    {
+                        "name": "accountId",
+                        "in": "query",
+                        "description": "Filter by account id",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "minimum": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "A JSON array of expenses",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/expense/properties/SuccessResponseExpense"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/BadRequest"
+                    }
+                }
+            },
+            "post": {
+                "summary": "Create a new expense",
+                "description": "Create a new expense",
+                "tags": [
+                    "expenses"
+                ],
+                "requestBody": {
+                    "description": "Expenses object to be created",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/expense/properties/ExpenseRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "A single expense object",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/expense/properties/SuccessResponseExpense"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/BadRequest"
+                    }
+                }
+            }
+        },
+        "/expenses/{id}": {
+            "get": {
+                "summary": "Get a single expense",
+                "description": "Get a single expense",
+                "tags": [
+                    "expenses"
+                ],
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Filter by expense id",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "minimum": 1
+                        }
+                    },
+                    {
+                        "name": "accountId",
+                        "in": "query",
+                        "description": "Filter by account id",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "minimum": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "A single expense object",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/expense/properties/SuccessResponseExpense"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/BadRequest"
+                    },
+                    "404": {
+                        "description": "Expense not found"
+                    }
+                }
+            },
+            "put": {
+                "summary": "Update an expense",
+                "description": "Update an expense",
+                "tags": [
+                    "expenses"
+                ],
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Expense id",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "minimum": 1
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "description": "Expenses object to be updated",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/expense/properties/ExpenseRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "A single expense object",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/expense/properties/SuccessResponseExpense"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/BadRequest"
+                    },
+                    "404": {
+                        "description": "Expense not found"
+                    }
+                }
+            },
+            "delete": {
+                "summary": "Delete an expense",
+                "description": "Delete an expense",
+                "tags": [
+                    "expenses"
+                ],
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Expense id",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "minimum": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Expense deleted successfully"
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/BadRequest"
+                    },
+                    "404": {
+                        "description": "Expense not found"
+                    }
+                }
+            }
+        },
+        "/expenses/commute": {
+            "get": {
+                "summary": "Get all commute expenses",
+                "description": "Get all commute expenses",
+                "tags": [
+                    "commute expenses overview"
+                ],
+                "parameters": [
+                    {
+                        "name": "accountId",
+                        "in": "query",
+                        "description": "Filter by account id",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "minimum": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "$ref": "#/components/responses/SuccessResponseCommuteExpense"
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/BadRequest"
+                    },
+                    "404": {
+                        "description": "Commute expense not found"
+                    }
+                }
+            }
+        },
+        "/expenses/commute/systems": {
+            "get": {
+                "summary": "Get all commute systems",
+                "description": "Get all commute systems",
+                "tags": [
+                    "commute systems"
+                ],
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "query",
+                        "description": "Commute system id",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "minimum": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "$ref": "#/components/responses/SuccessResponseCommuteSystem"
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/BadRequest"
+                    },
+                    "404": {
+                        "description": "Commute system not found"
+                    }
+                }
+            },
+            "post": {
+                "summary": "Create a new commute system",
+                "description": "Create a new commute system",
+                "tags": [
+                    "commute systems"
+                ],
+                "requestBody": {
+                    "description": "Commute system object to be created",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/CommuteSystemRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "$ref": "#/components/responses/SuccessResponseCommuteSystem"
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/BadRequest"
+                    }
+                }
+            }
+        },
+        "/expenses/commute/systems/{id}": {
+            "put": {
+                "summary": "Update a commute system",
+                "description": "Update a commute system",
+                "tags": [
+                    "commute systems"
+                ],
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Commute system id",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "description": "Commute system object to be updated",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/CommuteSystemRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "$ref": "#/components/responses/SuccessResponseCommuteSystem"
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/BadRequest"
+                    },
+                    "404": {
+                        "description": "Commute system not found"
+                    }
+                }
+            },
+            "delete": {
+                "summary": "Delete a commute system",
+                "description": "Delete a commute system",
+                "tags": [
+                    "commute systems"
+                ],
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Commute system id",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Commute system deleted successfully"
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/BadRequest"
+                    },
+                    "404": {
+                        "description": "Commute system not found"
+                    }
+                }
+            }
+        },
+        "/expenses/commute/history": {
+            "get": {
+                "summary": "Get all commute history",
+                "description": "Get all commute history",
+                "tags": [
+                    "commute history"
+                ],
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "query",
+                        "description": "Commute history id",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "accountId",
+                        "in": "query",
+                        "description": "Filter by account id",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "$ref": "#/components/responses/SuccessResponseCommuteHistory"
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/BadRequest"
+                    },
+                    "404": {
+                        "description": "Commute history not found"
+                    }
+                }
+            },
+            "post": {
+                "summary": "Create a new commute history",
+                "description": "Create a new commute history",
+                "tags": [
+                    "commute history"
+                ],
+                "requestBody": {
+                    "description": "Commute history object to be created",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/CommuteHistoryRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "$ref": "#/components/responses/SuccessResponseCommuteHistory"
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/BadRequest"
+                    }
+                }
+            }
+        },
+        "/expenses/commute/history/{id}": {
+            "put": {
+                "summary": "Update a commute history",
+                "description": "Update a commute history",
+                "tags": [
+                    "commute history"
+                ],
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Commute history id",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "description": "Commute history object to be updated",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/CommuteHistoryRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "$ref": "#/components/responses/SuccessResponseCommuteHistory"
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/BadRequest"
+                    },
+                    "404": {
+                        "description": "Commute history not found"
+                    }
+                }
+            },
+            "delete": {
+                "summary": "Delete a commute history",
+                "description": "Delete a commute history",
+                "tags": [
+                    "commute history"
+                ],
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Commute history id",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Commute history deleted successfully"
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/BadRequest"
+                    },
+                    "404": {
+                        "description": "Commute history not found"
+                    }
+                }
+            }
+        },
+        "/expenses/commute/fares": {
+            "get": {
+                "summary": "Get all commute fares",
+                "description": "Get all commute fares",
+                "tags": [
+                    "commute fares"
+                ],
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "query",
+                        "description": "Commute fare id",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "$ref": "#/components/responses/SuccessResponseCommuteFare"
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/BadRequest"
+                    },
+                    "404": {
+                        "description": "Commute fare not found"
+                    }
+                }
+            },
+            "post": {
+                "summary": "Create a new commute fare",
+                "description": "Create a new commute fare",
+                "tags": [
+                    "commute fares"
+                ],
+                "requestBody": {
+                    "description": "Commute fare object to be created",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/CommuteFareRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "$ref": "#/components/responses/SuccessResponseCommuteFare"
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/BadRequest"
+                    }
+                }
+            }
+        },
+        "/expenses/commute/fares/{id}": {
+            "put": {
+                "summary": "Update a commute fare",
+                "description": "Update a commute fare",
+                "tags": [
+                    "commute fares"
+                ],
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Commute fare id",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "description": "Commute fare object to be updated",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/CommuteFareRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "$ref": "#/components/responses/SuccessResponseCommuteFare"
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/BadRequest"
+                    },
+                    "404": {
+                        "description": "Commute fare not found"
+                    }
+                }
+            },
+            "delete": {
+                "summary": "Delete a commute fare",
+                "description": "Delete a commute fare",
+                "tags": [
+                    "commute fares"
+                ],
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Commute fare id",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Commute fare deleted successfully"
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/BadRequest"
+                    },
+                    "404": {
+                        "description": "Commute fare not found"
+                    }
+                }
+            }
+        },
+        "/expenses/commute/schedule": {
+            "get": {
+                "summary": "Get all commute schedules",
+                "description": "Get all commute schedules",
+                "tags": [
+                    "commute schedules"
+                ],
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "query",
+                        "description": "Commute schedule id",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "accountId",
+                        "in": "query",
+                        "description": "Filter by account id",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "$ref": "#/components/responses/SuccessResponseCommuteSchedule"
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/BadRequest"
+                    },
+                    "404": {
+                        "description": "Commute schedule not found"
+                    }
+                }
+            },
+            "post": {
+                "summary": "Create a new commute schedule",
+                "description": "Create a new commute schedule",
+                "tags": [
+                    "commute schedules"
+                ],
+                "requestBody": {
+                    "description": "Commute schedule object to be created",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/CommuteScheduleRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "$ref": "#/components/responses/SuccessResponseCommuteSchedule"
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/BadRequest"
+                    }
+                }
+            }
+        },
+        "/expenses/commute/schedule/{id}": {
+            "put": {
+                "summary": "Update a commute schedule",
+                "description": "Update a commute schedule",
+                "tags": [
+                    "commute schedules"
+                ],
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Commute schedule id",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "description": "Commute schedule object to be updated",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/CommuteScheduleRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "$ref": "#/components/responses/SuccessResponseCommuteSchedule"
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/BadRequest"
+                    },
+                    "404": {
+                        "description": "Commute schedule not found"
+                    }
+                }
+            },
+            "delete": {
+                "summary": "Delete a commute schedule",
+                "description": "Delete a commute schedule",
+                "tags": [
+                    "commute schedules"
+                ],
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Commute schedule id",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Commute schedule deleted successfully"
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/BadRequest"
+                    },
+                    "404": {
+                        "description": "Commute schedule not found"
+                    }
+                }
+            }
+        },
+        "/loans": {
+            "get": {
+                "summary": "Get all loans",
+                "description": "Get all loans",
+                "tags": [
+                    "loans"
+                ],
+                "parameters": [
+                    {
+                        "name": "accountId",
+                        "in": "query",
+                        "description": "Filter by account id",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "minimum": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "A JSON array of loans",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/loan/properties/SuccessResponseLoan"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/BadRequest"
+                    },
+                    "404": {
+                        "description": "Loan not found"
+                    }
+                }
+            },
+            "post": {
+                "summary": "Create a loan",
+                "description": "Create a loan",
+                "tags": [
+                    "loans"
+                ],
+                "requestBody": {
+                    "description": "Loans object to be created",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/loan/properties/LoanRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "A single loan object",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/expense/properties/SuccessResponseExpense"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/BadRequest"
+                    }
+                }
+            }
+        },
+        "/loans/{id}": {
+            "get": {
+                "summary": "Get a single loan",
+                "description": "Get a single loan",
+                "tags": [
+                    "loans"
+                ],
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Loan id",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "minimum": 1
+                        }
+                    },
+                    {
+                        "name": "accountId",
+                        "in": "query",
+                        "description": "Filter by account id",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "minimum": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "A single loan object",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/expense/properties/SuccessResponseExpense"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/BadRequest"
+                    },
+                    "404": {
+                        "description": "Loan not found"
+                    }
+                }
+            },
+            "put": {
+                "summary": "Update a loan",
+                "description": "Update a loan",
+                "tags": [
+                    "loans"
+                ],
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Loan id",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "minimum": 1
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "description": "Loans object to be updated",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/loan/properties/LoanRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "A single loan object",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/expense/properties/SuccessResponseExpense"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/BadRequest"
+                    },
+                    "404": {
+                        "description": "Loan not found"
+                    }
+                }
+            },
+            "delete": {
+                "summary": "Delete a loan",
+                "description": "Delete a loan",
+                "tags": [
+                    "loans"
+                ],
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Loan id",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "minimum": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Loan deleted successfully"
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/BadRequest"
+                    },
+                    "404": {
+                        "description": "Loan not found"
+                    }
+                }
+            }
+        },
+        "/jobs/payroll": {
+            "get": {
+                "summary": "Get all payrolls",
+                "description": "Get all payrolls",
+                "tags": [
+                    "payroll"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "A JSON array of loans",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/payroll/properties/SuccessResponsePayroll"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/BadRequest"
+                    }
+                }
+            }
+        },
+        "/jobs/payroll/{id}": {
+            "get": {
+                "summary": "Get all payrolls for a single job",
+                "description": "Get all payrolls for a single job",
+                "tags": [
+                    "payroll"
+                ],
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Job id",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "minimum": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "A single payroll object",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/payroll/properties/SuccessResponsePayroll"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/BadRequest"
+                    },
+                    "404": {
+                        "description": "No jobs or not found"
+                    }
+                }
+            }
+        },
+        "/jobs/payroll/taxes": {
+            "get": {
+                "summary": "Get all payroll taxes",
+                "description": "Get all payroll taxes",
+                "tags": [
+                    "payroll taxes"
+                ],
+                "parameters": [
+                    {
+                        "name": "jobId",
+                        "in": "query",
+                        "description": "Job id",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "minimum": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "A JSON array of payroll taxes",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/payrollTax/properties/SuccessResponsePayrollTax"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/BadRequest"
+                    },
+                    "404": {
+                        "description": "Payroll tax not found"
+                    }
+                }
+            },
+            "post": {
+                "summary": "Create a payroll tax",
+                "description": "Create a payroll tax",
+                "tags": [
+                    "payroll taxes"
+                ],
+                "requestBody": {
+                    "description": "Payroll tax object to be created",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/payrollTax/properties/PayrollTaxRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "A single payroll tax object",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/payrollTax/properties/SuccessResponsePayrollTax"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/BadRequest"
+                    }
+                }
+            }
+        },
+        "/jobs/payroll/taxes/{id}": {
+            "get": {
+                "summary": "Get a single payroll tax",
+                "description": "Get a single payroll tax",
+                "tags": [
+                    "payroll taxes"
+                ],
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Tax id",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "minimum": 1
+                        }
+                    },
+                    {
+                        "name": "jobId",
+                        "in": "query",
+                        "description": "Job id",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "minimum": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "A single payroll tax object",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/payrollTax/properties/SuccessResponsePayrollTax"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/BadRequest"
+                    },
+                    "404": {
+                        "description": "Payroll tax not found"
+                    }
+                }
+            },
+            "put": {
+                "summary": "Update a payroll tax",
+                "description": "Update a payroll tax",
+                "tags": [
+                    "payroll taxes"
+                ],
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Payroll tax id",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "minimum": 1
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "description": "Payroll tax object to be updated",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/payrollTax/properties/PayrollTaxRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "A single payroll tax object",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/payrollTax/properties/SuccessResponsePayrollTax"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/BadRequest"
+                    },
+                    "404": {
+                        "description": "Payroll tax not found"
+                    }
+                }
+            },
+            "delete": {
+                "summary": "Delete a payroll tax",
+                "description": "Delete a payroll tax",
+                "tags": [
+                    "payroll taxes"
+                ],
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Payroll tax id",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "minimum": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successfully deleted payroll tax"
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/BadRequest"
+                    },
+                    "404": {
+                        "description": "Payroll tax not found"
+                    }
+                }
+            }
+        },
+        "/jobs/payroll/dates/": {
+            "get": {
+                "summary": "Get all payroll dates",
+                "description": "Get all payroll dates",
+                "tags": [
+                    "payroll dates"
+                ],
+                "parameters": [
+                    {
+                        "name": "jobId",
+                        "in": "query",
+                        "description": "Job id",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "minimum": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "A JSON array of payroll dates",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/payrollDate/properties/SuccessResponsePayrollDate"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/BadRequest"
+                    }
+                }
+            },
+            "post": {
+                "summary": "Create a payroll date",
+                "description": "Create a payroll date",
+                "tags": [
+                    "payroll dates"
+                ],
+                "requestBody": {
+                    "description": "Payroll date object to be created",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/payrollDate/properties/PayrollDateRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "A single payroll date object",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/payrollDate/properties/SuccessResponsePayrollDate"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/BadRequest"
+                    }
+                }
+            }
+        },
+        "/jobs/payroll/dates/{id}": {
+            "get": {
+                "summary": "Get a single payroll date",
+                "description": "Get a single payroll date",
+                "tags": [
+                    "payroll dates"
+                ],
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Payroll date id",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "minimum": 1
+                        }
+                    },
+                    {
+                        "name": "jobId",
+                        "in": "query",
+                        "description": "Job id",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "minimum": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "A single payroll date object",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/payrollDate/properties/SuccessResponsePayrollDate"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/BadRequest"
+                    },
+                    "404": {
+                        "description": "Payroll date not found"
+                    }
+                }
+            },
+            "put": {
+                "summary": "Update a payroll date",
+                "description": "Update a payroll date",
+                "tags": [
+                    "payroll dates"
+                ],
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Payroll date id",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "minimum": 1
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "description": "Payroll date object to be updated",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/payrollDate/properties/PayrollDateRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "A single payroll date object",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/payrollDate/properties/SuccessResponsePayrollDate"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/BadRequest"
+                    },
+                    "404": {
+                        "description": "Payroll date not found"
+                    }
+                }
+            },
+            "delete": {
+                "summary": "Delete a payroll date",
+                "description": "Delete a payroll date",
+                "tags": [
+                    "payroll dates"
+                ],
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Payroll date id",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "minimum": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successfully deleted payroll date"
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/BadRequest"
+                    },
+                    "404": {
+                        "description": "Payroll date not found"
+                    }
+                }
+            }
+        },
+        "/jobs/": {
+            "get": {
+                "summary": "Get all jobs",
+                "description": "Get all jobs",
+                "tags": [
+                    "jobs"
+                ],
+                "parameters": [
+                    {
+                        "name": "accountId",
+                        "in": "query",
+                        "description": "Account id",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "minimum": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "A JSON array of jobs",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/jobs/properties/SuccessResponseJobs"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/BadRequest"
+                    }
+                }
+            },
+            "post": {
+                "summary": "Create a job",
+                "description": "Create a job",
+                "tags": [
+                    "jobs"
+                ],
+                "requestBody": {
+                    "description": "Job object to be created",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/jobs/properties/JobRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "A single job object",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/jobs/properties/SuccessResponseJobs"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/BadRequest"
+                    }
+                }
+            }
+        },
+        "/jobs/{id}": {
+            "get": {
+                "summary": "Get a single job",
+                "description": "Get a single job",
+                "tags": [
+                    "jobs"
+                ],
+                "parameters": [
+                    {
+                        "name": "accountId",
+                        "in": "query",
+                        "description": "Account id",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "minimum": 1
+                        }
+                    },
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Job id",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "minimum": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "A single job object",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/jobs/properties/SuccessResponseJobs"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/BadRequest"
+                    },
+                    "404": {
+                        "description": "Job not found"
+                    }
+                }
+            },
+            "put": {
+                "summary": "Update a job",
+                "description": "Update a job",
+                "tags": [
+                    "jobs"
+                ],
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Job id",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "minimum": 1
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "description": "Job object to be updated",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/jobs/properties/JobRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "A single job object",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/jobs/properties/SuccessResponseJobs"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/BadRequest"
+                    },
+                    "404": {
+                        "description": "Job not found"
+                    }
+                }
+            },
+            "delete": {
+                "summary": "Delete a job",
+                "description": "Delete a job",
+                "tags": [
+                    "jobs"
+                ],
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Job id",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "minimum": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successfully deleted job"
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/BadRequest"
+                    },
+                    "404": {
+                        "description": "Job not found"
+                    }
+                }
+            }
+        },
+        "/wishlists": {
+            "get": {
+                "summary": "Get all wishlists",
+                "description": "Get all wishlists",
+                "tags": [
+                    "wishlists"
+                ],
+                "parameters": [
+                    {
+                        "name": "accountId",
+                        "in": "query",
+                        "description": "Account id",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "minimum": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "A JSON array of wishlists",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/wishlist/properties/SuccessResponseWishlist"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/BadRequest"
+                    }
+                }
+            },
+            "post": {
+                "summary": "Create a wishlist",
+                "description": "Create a wishlist",
+                "tags": [
+                    "wishlists"
+                ],
+                "requestBody": {
+                    "description": "Wishlist object to be created",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/wishlist/properties/WishlistRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "A single wishlist object",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/wishlist/properties/SuccessResponseWishlist"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/BadRequest"
+                    }
+                }
+            }
+        },
+        "/wishlists/{id}": {
+            "get": {
+                "summary": "Get a single wishlist",
+                "description": "Get a single wishlist",
+                "tags": [
+                    "wishlists"
+                ],
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Wishlist id",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "minimum": 1
+                        }
+                    },
+                    {
+                        "name": "accountId",
+                        "in": "query",
+                        "description": "Account id",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "minimum": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "A single wishlist object",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/wishlist/properties/SuccessResponseWishlist"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/BadRequest"
+                    },
+                    "404": {
+                        "description": "Wishlist not found"
+                    }
+                }
+            },
+            "put": {
+                "summary": "Update a wishlist",
+                "description": "Update a wishlist",
+                "tags": [
+                    "wishlists"
+                ],
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Wishlist id",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "minimum": 1
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "description": "Wishlist object to be updated",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/wishlist/properties/WishlistRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "A single wishlist object",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/wishlist/properties/SuccessResponseWishlist"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/BadRequest"
+                    },
+                    "404": {
+                        "description": "Wishlist not found"
+                    }
+                }
+            },
+            "delete": {
+                "summary": "Delete a wishlist",
+                "description": "Delete a wishlist",
+                "tags": [
+                    "wishlists"
+                ],
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Wishlist id",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "minimum": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successfully deleted wishlist item"
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/BadRequest"
+                    },
+                    "404": {
+                        "description": "Wishlist not found"
+                    }
+                }
+            }
+        },
+        "/transfers": {
+            "get": {
+                "summary": "Get all transfers",
+                "description": "Get all transfers",
+                "tags": [
+                    "transfers"
+                ],
+                "parameters": [
+                    {
+                        "name": "accountId",
+                        "in": "query",
+                        "description": "Account id",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "minimum": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "A JSON array of transfers",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/transfer/properties/SuccessResponseTransfer"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/BadRequest"
+                    }
+                }
+            },
+            "post": {
+                "summary": "Create a new transfer",
+                "description": "Create a new transfer",
+                "tags": [
+                    "transfers"
+                ],
+                "requestBody": {
+                    "description": "Transfers object to be created",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/transfer/properties/TransferRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "A single transfer object",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/transfer/properties/SuccessResponseTransfer"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/BadRequest"
+                    }
+                }
+            }
+        },
+        "/transfers/{id}": {
+            "get": {
+                "summary": "Get a single transfer",
+                "description": "Get a single transfer",
+                "tags": [
+                    "transfers"
+                ],
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Transfer id",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "minimum": 1
+                        }
+                    },
+                    {
+                        "name": "accountId",
+                        "in": "query",
+                        "description": "Account id",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "minimum": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "A single transfer object",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/transfer/properties/SuccessResponseTransfer"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/BadRequest"
+                    },
+                    "404": {
+                        "description": "Transfer not found"
+                    }
+                }
+            },
+            "put": {
+                "summary": "Update a transfer",
+                "description": "Update a transfer",
+                "tags": [
+                    "transfers"
+                ],
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Transfer id",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "minimum": 1
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "description": "Transfers object to be updated",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/transfer/properties/TransferRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "A single transfer object",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/transfer/properties/SuccessResponseTransfer"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/BadRequest"
+                    },
+                    "404": {
+                        "description": "Transfer not found"
+                    }
+                }
+            },
+            "delete": {
+                "summary": "Delete a transfer",
+                "description": "Delete a transfer",
+                "tags": [
+                    "transfers"
+                ],
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Transfer id",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "minimum": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Transfer deleted successfully"
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/BadRequest"
+                    },
+                    "404": {
+                        "description": "Transfer not found"
+                    }
+                }
+            }
+        },
+        "/transactions": {
+            "get": {
+                "summary": "Get all transactions",
+                "description": "Get all transactions",
+                "tags": [
+                    "transactions"
+                ],
+                "parameters": [
+                    {
+                        "name": "fromDate",
+                        "in": "query",
+                        "description": "Start date",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "format": "date"
+                        }
+                    },
+                    {
+                        "name": "toDate",
+                        "in": "query",
+                        "description": "End date",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "format": "date"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "A JSON array of all transactions",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "accountId": {
+                                            "type": "integer",
+                                            "format": "int64",
+                                            "minimum": 1
+                                        },
+                                        "currentBalance": {
+                                            "type": "number",
+                                            "format": "double",
+                                            "example": 1850.0
+                                        },
+                                        "transactions": {
+                                            "type": "array",
+                                            "items": {
+                                                "oneOf": [
+                                                    {
+                                                        "$ref": "#/components/schemas/transaction"
+                                                    },
+                                                    {
+                                                        "$ref": "#/components/schemas/ExpenseTransaction"
+                                                    },
+                                                    {
+                                                        "$ref": "#/components/schemas/LoanTransaction"
+                                                    }
+                                                ]
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/BadRequest"
+                    }
+                }
+            }
+        },
+        "/transactions/{accountId}": {
+            "get": {
+                "summary": "Get all transactions for a single account",
+                "description": "Get all transactions for a single account",
+                "tags": [
+                    "transactions"
+                ],
+                "parameters": [
+                    {
+                        "name": "accountId",
+                        "in": "path",
+                        "description": "Account id",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "minimum": 1
+                        }
+                    },
+                    {
+                        "name": "fromDate",
+                        "in": "query",
+                        "description": "Start date",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "format": "date"
+                        }
+                    },
+                    {
+                        "name": "toDate",
+                        "in": "query",
+                        "description": "End date",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "format": "date"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "A JSON array of all transactions",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "accountId": {
+                                            "type": "integer",
+                                            "format": "int64",
+                                            "minimum": 1
+                                        },
+                                        "currentBalance": {
+                                            "type": "number",
+                                            "format": "double",
+                                            "example": 1850.0
+                                        },
+                                        "transactions": {
+                                            "type": "array",
+                                            "items": {
+                                                "oneOf": [
+                                                    {
+                                                        "$ref": "#/components/schemas/transaction"
+                                                    },
+                                                    {
+                                                        "$ref": "#/components/schemas/ExpenseTransaction"
+                                                    },
+                                                    {
+                                                        "$ref": "#/components/schemas/LoanTransaction"
+                                                    }
+                                                ]
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/BadRequest"
+                    }
+                }
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "accounts": {
+                "type": "object",
+                "properties": {
+                    "SuccessResponseAccount": {
+                        "type": "object",
+                        "properties": {
+                            "id": {
+                                "type": "integer",
+                                "example": 1
+                            },
+                            "name": {
+                                "type": "string",
+                                "example": "Personal"
+                            },
+                            "balance": {
+                                "type": "number",
+                                "example": 50
+                            },
+                            "dateCreated": {
+                                "type": "string",
+                                "format": "date-time",
+                                "example": "2024-01-01T12:00:00Z"
+                            },
+                            "dateModified": {
+                                "type": "string",
+                                "format": "date-time",
+                                "example": "2024-01-01T12:00:00Z"
+                            }
+                        }
+                    },
+                    "AccountRequest": {
+                        "type": "object",
+                        "properties": {
+                            "name": {
+                                "type": "string",
+                                "example": "Checking"
+                            }
+                        }
+                    }
+                }
+            },
+            "taxes": {
+                "type": "object",
+                "properties": {
+                    "SuccessResponseTax": {
+                        "type": "object",
+                        "properties": {
+                            "id": {
+                                "type": "integer",
+                                "format": "int64",
+                                "minimum": 1
+                            },
+                            "rate": {
+                                "type": "number",
+                                "format": "double",
+                                "example": 0.08875
+                            },
+                            "title": {
+                                "type": "string",
+                                "example": "NY Sales Tax"
+                            },
+                            "description": {
+                                "type": "string",
+                                "example": "New York Sales Tax"
+                            },
+                            "type": {
+                                "type": "integer",
+                                "example": 0
+                            },
+                            "dateCreated": {
+                                "type": "string",
+                                "format": "date-time"
+                            },
+                            "dateModified": {
+                                "type": "string",
+                                "format": "date-time"
+                            }
+                        }
+                    },
+                    "TaxRequest": {
+                        "type": "object",
+                        "properties": {
+                            "rate": {
+                                "type": "number",
+                                "format": "double",
+                                "example": 0.08875
+                            },
+                            "title": {
+                                "type": "string",
+                                "example": "NY Sales Tax"
+                            },
+                            "description": {
+                                "type": "string",
+                                "example": "New York Sales Tax"
+                            },
+                            "type": {
+                                "type": "integer",
+                                "example": 0
+                            }
+                        }
+                    }
+                }
+            },
+            "transactionHistory": {
+                "type": "object",
+                "properties": {
+                    "SuccessResponseTransactionHistory": {
+                        "type": "object",
+                        "properties": {
+                            "id": {
+                                "type": "integer",
+                                "format": "int64",
+                                "minimum": 1
+                            },
+                            "accountId": {
+                                "type": "integer",
+                                "format": "int64",
+                                "minimum": 1
+                            },
+                            "amount": {
+                                "type": "number",
+                                "format": "double",
+                                "example": 1000.0
+                            },
+                            "tax": {
+                                "type": "number",
+                                "format": "double",
+                                "example": 0.08875
+                            },
+                            "title": {
+                                "type": "string",
+                                "example": "Transaction test"
+                            },
+                            "description": {
+                                "type": "string",
+                                "example": "This is a transaction test"
+                            },
+                            "dateCreated": {
+                                "type": "string",
+                                "format": "date-time"
+                            },
+                            "dateModified": {
+                                "type": "string",
+                                "format": "date-time"
+                            }
+                        }
+                    },
+                    "TransactionHistoryRequest": {
+                        "type": "object",
+                        "properties": {
+                            "accountId": {
+                                "type": "integer",
+                                "format": "int64",
+                                "minimum": 1
+                            },
+                            "amount": {
+                                "type": "number",
+                                "format": "double",
+                                "example": 1000.0
+                            },
+                            "tax": {
+                                "type": "number",
+                                "format": "double",
+                                "example": 0.08875
+                            },
+                            "title": {
+                                "type": "string",
+                                "example": "Transaction test"
+                            },
+                            "description": {
+                                "type": "string",
+                                "example": "This is a transaction test"
+                            }
+                        }
+                    }
+                }
+            },
+            "income": {
+                "type": "object",
+                "properties": {
+                    "SuccessResponseIncome": {
+                        "type": "object",
+                        "properties": {
+                            "id": {
+                                "type": "integer",
+                                "format": "int64",
+                                "minimum": 1
+                            },
+                            "accountId": {
+                                "type": "integer",
+                                "format": "int64",
+                                "minimum": 1
+                            },
+                            "taxId": {
+                                "type": "integer",
+                                "format": "int64",
+                                "minimum": 1
+                            },
+                            "amount": {
+                                "type": "number",
+                                "format": "double",
+                                "example": 1000.0
+                            },
+                            "title": {
+                                "type": "string",
+                                "example": "Income test"
+                            },
+                            "description": {
+                                "type": "string",
+                                "example": "This is a income test"
+                            },
+                            "frequency": {
+                                "type": "object",
+                                "properties": {
+                                    "type": {
+                                        "type": "integer",
+                                        "example": 2
+                                    },
+                                    "typeVariable": {
+                                        "type": "integer",
+                                        "example": 1
+                                    },
+                                    "dayOfWeek": {
+                                        "type": "integer",
+                                        "example": null
+                                    },
+                                    "weekOfMonth": {
+                                        "type": "integer",
+                                        "example": null
+                                    },
+                                    "monthOfYear": {
+                                        "type": "integer",
+                                        "example": null
+                                    }
+                                }
+                            },
+                            "dates": {
+                                "type": "object",
+                                "properties": {
+                                    "beginDate": {
+                                        "type": "string",
+                                        "format": "date-time"
+                                    },
+                                    "endDate": {
+                                        "type": "string",
+                                        "format": "date-time",
+                                        "example": null
+                                    }
+                                }
+                            },
+                            "dateCreated": {
+                                "type": "string",
+                                "format": "date-time"
+                            },
+                            "dateModified": {
+                                "type": "string",
+                                "format": "date-time"
+                            }
+                        }
+                    },
+                    "IncomeRequest": {
+                        "type": "object",
+                        "properties": {
+                            "accountId": {
+                                "type": "integer",
+                                "format": "int64",
+                                "minimum": 1
+                            },
+                            "amount": {
+                                "type": "number",
+                                "format": "double",
+                                "example": 250.0
+                            },
+                            "title": {
+                                "type": "string",
+                                "example": "Income test"
+                            },
+                            "description": {
+                                "type": "string",
+                                "example": "This is a income test"
+                            },
+                            "frequency": {
+                                "type": "object",
+                                "properties": {
+                                    "type": {
+                                        "type": "integer",
+                                        "example": 2
+                                    },
+                                    "typeVariable": {
+                                        "type": "integer",
+                                        "example": 1
+                                    },
+                                    "dayOfWeek": {
+                                        "type": "integer",
+                                        "example": null
+                                    },
+                                    "weekOfMonth": {
+                                        "type": "integer",
+                                        "example": null
+                                    },
+                                    "monthOfYear": {
+                                        "type": "integer",
+                                        "example": null
+                                    }
+                                }
+                            },
+                            "beginDate": {
+                                "type": "string",
+                                "format": "date-time"
+                            }
+                        }
+                    }
+                }
+            },
+            "expense": {
+                "type": "object",
+                "properties": {
+                    "SuccessResponseExpense": {
+                        "type": "object",
+                        "properties": {
+                            "id": {
+                                "type": "integer",
+                                "format": "int64",
+                                "minimum": 1
+                            },
+                            "accountId": {
+                                "type": "integer",
+                                "format": "int64",
+                                "minimum": 1
+                            },
+                            "amount": {
+                                "type": "number",
+                                "format": "double",
+                                "example": 250.0
+                            },
+                            "title": {
+                                "type": "string",
+                                "example": "Expense test"
+                            },
+                            "description": {
+                                "type": "string",
+                                "example": "This is a expense test"
+                            },
+                            "frequency": {
+                                "type": "object",
+                                "properties": {
+                                    "type": {
+                                        "type": "integer",
+                                        "example": 2
+                                    },
+                                    "typeVariable": {
+                                        "type": "integer",
+                                        "example": 1
+                                    },
+                                    "dayOfWeek": {
+                                        "type": "integer",
+                                        "default": null
+                                    },
+                                    "weekOfMonth": {
+                                        "type": "integer",
+                                        "default": null
+                                    },
+                                    "monthOfYear": {
+                                        "type": "integer",
+                                        "default": null
+                                    }
+                                }
+                            },
+                            "subsidized": {
+                                "type": "number",
+                                "format": "double",
+                                "example": 0.15
+                            },
+                            "dates": {
+                                "type": "object",
+                                "properties": {
+                                    "beginDate": {
+                                        "type": "string",
+                                        "format": "date-time"
+                                    },
+                                    "endDate": {
+                                        "type": "string",
+                                        "format": "date-time",
+                                        "default": null
+                                    }
+                                }
+                            },
+                            "dateCreated": {
+                                "type": "string",
+                                "format": "date-time"
+                            },
+                            "dateModified": {
+                                "type": "string",
+                                "format": "date-time"
+                            }
+                        }
+                    },
+                    "ExpenseRequest": {
+                        "type": "object",
+                        "properties": {
+                            "accountId": {
+                                "type": "integer",
+                                "format": "int64",
+                                "minimum": 1
+                            },
+                            "amount": {
+                                "type": "number",
+                                "format": "double",
+                                "example": 250.0
+                            },
+                            "title": {
+                                "type": "string",
+                                "example": "Expense test"
+                            },
+                            "description": {
+                                "type": "string",
+                                "example": "This is a expense test"
+                            },
+                            "frequency": {
+                                "type": "object",
+                                "properties": {
+                                    "type": {
+                                        "type": "integer",
+                                        "example": 2
+                                    },
+                                    "typeVariable": {
+                                        "type": "integer",
+                                        "example": 1
+                                    },
+                                    "dayOfWeek": {
+                                        "type": "integer",
+                                        "default": null
+                                    },
+                                    "weekOfMonth": {
+                                        "type": "integer",
+                                        "default": null
+                                    },
+                                    "monthOfYear": {
+                                        "type": "integer",
+                                        "default": null
+                                    }
+                                }
+                            },
+                            "subsidized": {
+                                "type": "number",
+                                "format": "double",
+                                "example": 0.15
+                            },
+                            "beginDate": {
+                                "type": "string",
+                                "format": "date-time"
+                            }
+                        }
+                    }
+                }
+            },
+            "loan": {
+                "type": "object",
+                "properties": {
+                    "SuccessResponseLoan": {
+                        "type": "object",
+                        "properties": {
+                            "id": {
+                                "type": "integer",
+                                "format": "int64",
+                                "minimum": 1
+                            },
+                            "accountId": {
+                                "type": "integer",
+                                "format": "int64",
+                                "minimum": 1
+                            },
+                            "amount": {
+                                "type": "number",
+                                "format": "double",
+                                "example": 250.0
+                            },
+                            "title": {
+                                "type": "string",
+                                "example": "Loan test"
+                            },
+                            "description": {
+                                "type": "string",
+                                "example": "This is a loan test"
+                            },
+                            "frequency": {
+                                "type": "object",
+                                "properties": {
+                                    "type": {
+                                        "type": "integer",
+                                        "example": 2
+                                    },
+                                    "typeVariable": {
+                                        "type": "integer",
+                                        "example": 1
+                                    },
+                                    "dayOfWeek": {
+                                        "type": "integer",
+                                        "default": null
+                                    },
+                                    "weekOfMonth": {
+                                        "type": "integer",
+                                        "default": null
+                                    },
+                                    "monthOfYear": {
+                                        "type": "integer",
+                                        "default": null
+                                    }
+                                }
+                            },
+                            "interestRate": {
+                                "type": "number",
+                                "format": "double",
+                                "example": 0.15
+                            },
+                            "interestFrequencyType": {
+                                "type": "integer",
+                                "example": 2
+                            },
+                            "subsidized": {
+                                "type": "number",
+                                "format": "double",
+                                "example": 0.15
+                            },
+                            "fullyPaidBackDate": {
+                                "type": "string",
+                                "format": "date-time"
+                            },
+                            "dates": {
+                                "type": "object",
+                                "properties": {
+                                    "beginDate": {
+                                        "type": "string",
+                                        "format": "date-time"
+                                    },
+                                    "endDate": {
+                                        "type": "string",
+                                        "format": "date-time",
+                                        "default": null
+                                    }
+                                }
+                            },
+                            "dateCreated": {
+                                "type": "string",
+                                "format": "date-time"
+                            },
+                            "dateModified": {
+                                "type": "string",
+                                "format": "date-time"
+                            }
+                        }
+                    },
+                    "LoanRequest": {
+                        "type": "object",
+                        "properties": {
+                            "accountId": {
+                                "type": "integer",
+                                "format": "int64",
+                                "minimum": 1
+                            },
+                            "amount": {
+                                "type": "number",
+                                "format": "double",
+                                "example": 2000.0
+                            },
+                            "planAmount": {
+                                "type": "number",
+                                "format": "double",
+                                "example": 300.0
+                            },
+                            "recipient": {
+                                "type": "string",
+                                "example": "John Doe"
+                            },
+                            "title": {
+                                "type": "string",
+                                "example": "Loan test"
+                            },
+                            "description": {
+                                "type": "string",
+                                "example": "This is a loan test"
+                            },
+                            "frequency": {
+                                "type": "object",
+                                "properties": {
+                                    "type": {
+                                        "type": "integer",
+                                        "example": 2
+                                    },
+                                    "typeVariable": {
+                                        "type": "integer",
+                                        "example": 1
+                                    },
+                                    "dayOfWeek": {
+                                        "type": "integer",
+                                        "default": null
+                                    },
+                                    "weekOfMonth": {
+                                        "type": "integer",
+                                        "default": null
+                                    },
+                                    "monthOfYear": {
+                                        "type": "integer",
+                                        "default": null
+                                    }
+                                },
+                                "interestRate": {
+                                    "type": "number",
+                                    "format": "double",
+                                    "example": 0.15
+                                },
+                                "interestFrequencyType": {
+                                    "type": "integer",
+                                    "example": 2
+                                },
+                                "subsidized": {
+                                    "type": "number",
+                                    "format": "double",
+                                    "example": 0.15
+                                },
+                                "beginDate": {
+                                    "type": "string",
+                                    "format": "date-time"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "payroll": {
+                "properties": {
+                    "SuccessResponsePayroll": {
+                        "type": "object",
+                        "properties": {
+                            "id": {
+                                "type": "integer",
+                                "format": "int64",
+                                "minimum": 1
+                            },
+                            "name": {
+                                "type": "string",
+                                "example": "Testing Inc."
+                            },
+                            "payrolls": {
+                                "type": "array",
+                                "items": {
+                                    "type": "object",
+                                    "properties": {
+                                        "startDate": {
+                                            "type": "string",
+                                            "format": "date-time"
+                                        },
+                                        "endDate": {
+                                            "type": "string",
+                                            "format": "date-time"
+                                        },
+                                        "workDays": {
+                                            "type": "integer",
+                                            "example": 5
+                                        },
+                                        "grossPay": {
+                                            "type": "number",
+                                            "format": "double",
+                                            "example": 250.0
+                                        },
+                                        "netPay": {
+                                            "type": "number",
+                                            "format": "double",
+                                            "example": 200.49
+                                        },
+                                        "hoursWorked": {
+                                            "type": "number",
+                                            "format": "double",
+                                            "example": 40.0
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "payrollTax": {
+                "properties": {
+                    "SuccessResponsePayrollTax": {
+                        "type": "object",
+                        "properties": {
+                            "id": {
+                                "type": "integer",
+                                "format": "int64",
+                                "minimum": 1
+                            },
+                            "jobId": {
+                                "type": "integer",
+                                "format": "int64",
+                                "minimum": 1
+                            },
+                            "name": {
+                                "type": "string",
+                                "example": "Payroll tax test"
+                            },
+                            "rate": {
+                                "type": "number",
+                                "format": "double",
+                                "example": 0.15
+                            }
+                        }
+                    },
+                    "PayrollTaxRequest": {
+                        "type": "object",
+                        "properties": {
+                            "jobId": {
+                                "type": "integer",
+                                "format": "int64",
+                                "minimum": 1
+                            },
+                            "name": {
+                                "type": "string",
+                                "example": "Federal Income Tax"
+                            },
+                            "rate": {
+                                "type": "number",
+                                "format": "double",
+                                "example": 0.15
+                            }
+                        }
+                    }
+                }
+            },
+            "payrollDate": {
+                "properties": {
+                    "SuccessResponsePayrollDate": {
+                        "type": "object",
+                        "properties": {
+                            "id": {
+                                "type": "integer",
+                                "format": "int64",
+                                "minimum": 1
+                            },
+                            "jobId": {
+                                "type": "integer",
+                                "format": "int64",
+                                "minimum": 1
+                            },
+                            "payrollDay": {
+                                "type": "integer",
+                                "example": 15
+                            }
+                        }
+                    },
+                    "PayrollDateRequest": {
+                        "type": "object",
+                        "properties": {
+                            "jobId": {
+                                "type": "integer",
+                                "format": "int64",
+                                "minimum": 1
+                            },
+                            "payrollDay": {
+                                "type": "integer",
+                                "example": 31,
+                                "minimum": 1,
+                                "maximum": 31
+                            }
+                        }
+                    }
+                }
+            },
+            "jobs": {
+                "properties": {
+                    "SuccessResponseJobs": {
+                        "type": "object",
+                        "properties": {
+                            "id": {
+                                "type": "integer",
+                                "format": "int64",
+                                "minimum": 1
+                            },
+                            "accountId": {
+                                "type": "integer",
+                                "format": "int64",
+                                "minimum": 1
+                            },
+                            "name": {
+                                "type": "string",
+                                "example": "Testing Inc."
+                            },
+                            "hourlyRate": {
+                                "type": "number",
+                                "format": "double",
+                                "example": 16.0
+                            },
+                            "totalHoursPerWeek": {
+                                "type": "number",
+                                "format": "double",
+                                "example": 40.0
+                            },
+                            "jobSchedule": {
+                                "type": "array",
+                                "items": {
+                                    "type": "object",
+                                    "properties": {
+                                        "dayOfWeek": {
+                                            "type": "integer",
+                                            "example": 1
+                                        },
+                                        "startTime": {
+                                            "type": "string",
+                                            "example": "09:00:00"
+                                        },
+                                        "endTime": {
+                                            "type": "string",
+                                            "example": "17:00:00"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "JobRequest": {
+                        "type": "object",
+                        "properties": {
+                            "accountId": {
+                                "type": "integer",
+                                "format": "int64",
+                                "minimum": 1
+                            },
+                            "name": {
+                                "type": "string",
+                                "example": "Testing Inc."
+                            },
+                            "hourlyRate": {
+                                "type": "number",
+                                "format": "double",
+                                "example": 16.0
+                            },
+                            "jobSchedule": {
+                                "type": "array",
+                                "items": {
+                                    "type": "object",
+                                    "properties": {
+                                        "dayOfWeek": {
+                                            "type": "integer",
+                                            "example": 1
+                                        },
+                                        "startTime": {
+                                            "type": "string",
+                                            "example": "09:00:00"
+                                        },
+                                        "endTime": {
+                                            "type": "string",
+                                            "example": "17:00:00"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "wishlist": {
+                "properties": {
+                    "SuccessResponseWishlist": {
+                        "type": "object",
+                        "properties": {
+                            "id": {
+                                "type": "integer",
+                                "format": "int64",
+                                "minimum": 1
+                            },
+                            "accountId": {
+                                "type": "integer",
+                                "format": "int64",
+                                "minimum": 1
+                            },
+                            "amount": {
+                                "type": "number",
+                                "format": "double",
+                                "example": 250.0
+                            },
+                            "title": {
+                                "type": "string",
+                                "example": "Wishlist test"
+                            },
+                            "description": {
+                                "type": "string",
+                                "example": "This is a wishlist test"
+                            },
+                            "priority": {
+                                "type": "integer"
+                            },
+                            "urlLink": {
+                                "type": "string",
+                                "example": "https://www.amazon.com"
+                            },
+                            "dateCreated": {
+                                "type": "string",
+                                "format": "date-time"
+                            },
+                            "dateModified": {
+                                "type": "string",
+                                "format": "date-time"
+                            }
+                        }
+                    },
+                    "WishlistRequest": {
+                        "type": "object",
+                        "properties": {
+                            "accountId": {
+                                "type": "integer",
+                                "format": "int64",
+                                "minimum": 1
+                            },
+                            "amount": {
+                                "type": "number",
+                                "format": "double",
+                                "example": 250.0
+                            },
+                            "title": {
+                                "type": "string",
+                                "example": "Wishlist test"
+                            },
+                            "description": {
+                                "type": "string",
+                                "example": "This is a wishlist test"
+                            },
+                            "priority": {
+                                "type": "integer",
+                                "example": 1
+                            },
+                            "urlLink": {
+                                "type": "string",
+                                "example": "https://www.amazon.com/PlayStation-4-Pro-1TB-Console/"
+                            }
+                        }
+                    }
+                }
+            },
+            "transfer": {
+                "properties": {
+                    "SuccessResponseTransfer": {
+                        "type": "object",
+                        "properties": {
+                            "id": {
+                                "type": "integer",
+                                "format": "int64",
+                                "minimum": 1
+                            },
+                            "accountId": {
+                                "type": "integer",
+                                "format": "int64",
+                                "minimum": 1
+                            },
+                            "amount": {
+                                "type": "number",
+                                "format": "double",
+                                "example": 250.0
+                            },
+                            "title": {
+                                "type": "string",
+                                "example": "Transfer test"
+                            },
+                            "description": {
+                                "type": "string",
+                                "example": "This is a transfer test"
+                            },
+                            "frequency": {
+                                "type": "object",
+                                "properties": {
+                                    "type": {
+                                        "type": "integer",
+                                        "example": 2
+                                    },
+                                    "typeVariable": {
+                                        "type": "integer",
+                                        "example": 1
+                                    },
+                                    "dayOfWeek": {
+                                        "type": "integer",
+                                        "default": null
+                                    },
+                                    "weekOfMonth": {
+                                        "type": "integer",
+                                        "default": null
+                                    },
+                                    "monthOfYear": {
+                                        "type": "integer",
+                                        "default": null
+                                    }
+                                }
+                            },
+                            "dates": {
+                                "type": "object",
+                                "properties": {
+                                    "beginDate": {
+                                        "type": "string",
+                                        "format": "date-time"
+                                    },
+                                    "endDate": {
+                                        "type": "string",
+                                        "format": "date-time",
+                                        "default": null
+                                    }
+                                }
+                            },
+                            "dateCreated": {
+                                "type": "string",
+                                "format": "date-time"
+                            },
+                            "dateModified": {
+                                "type": "string",
+                                "format": "date-time"
+                            }
+                        }
+                    },
+                    "TransferRequest": {
+                        "type": "object",
+                        "properties": {
+                            "sourceAccountId": {
+                                "type": "integer",
+                                "format": "int64",
+                                "minimum": 1
+                            },
+                            "destinationAccountId": {
+                                "type": "integer",
+                                "format": "int64",
+                                "minimum": 1,
+                                "example": 2
+                            },
+                            "amount": {
+                                "type": "number",
+                                "format": "double",
+                                "example": 100.0
+                            },
+                            "title": {
+                                "type": "string",
+                                "example": "Transfer test"
+                            },
+                            "description": {
+                                "type": "string",
+                                "example": "This is a transfer test"
+                            },
+                            "frequency": {
+                                "type": "object",
+                                "properties": {
+                                    "type": {
+                                        "type": "integer",
+                                        "example": 2
+                                    },
+                                    "typeVariable": {
+                                        "type": "integer",
+                                        "example": 1
+                                    },
+                                    "dayOfWeek": {
+                                        "type": "integer",
+                                        "default": null
+                                    },
+                                    "weekOfMonth": {
+                                        "type": "integer",
+                                        "default": null
+                                    },
+                                    "monthOfYear": {
+                                        "type": "integer",
+                                        "default": null
+                                    }
+                                }
+                            },
+                            "beginDate": {
+                                "type": "string",
+                                "format": "date-time"
+                            }
+                        }
+                    }
+                }
+            },
+            "transaction": {
+                "type": "object",
+                "properties": {
+                    "transactionId": {
+                        "type": "integer",
+                        "description": "ID of the transaction transaction"
+                    },
+                    "date": {
+                        "type": "string",
+                        "format": "date-time",
+                        "description": "Date the transaction occurred"
+                    },
+                    "dateModified": {
+                        "type": "string",
+                        "format": "date-time",
+                        "description": "Date the transaction was last modified"
+                    },
+                    "description": {
+                        "type": "string",
+                        "description": "Description of the transaction"
+                    },
+                    "amount": {
+                        "type": "number",
+                        "description": "Amount of the transaction"
+                    },
+                    "balance": {
+                        "type": "number",
+                        "description": "Balance after the transaction"
+                    }
+                }
+            },
+            "CommuteSystemRequest": {
+                "type": "object",
+                "properties": {
+                    "name": {
+                        "type": "string",
+                        "example": "Metro North"
+                    },
+                    "fareCap": {
+                        "type": "number",
+                        "format": "double",
+                        "example": null
+                    },
+                    "fareCapDuration": {
+                        "type": "integer",
+                        "example": null
+                    }
+                }
+            },
+            "CommuteHistoryRequest": {
+                "type": "object",
+                "properties": {
+                    "accountId": {
+                        "type": "integer",
+                        "format": "int64",
+                        "minimum": 1
+                    },
+                    "fareAmount": {
+                        "type": "number",
+                        "format": "double",
+                        "example": 10.0
+                    },
+                    "commuteSystem": {
+                        "type": "string",
+                        "example": "OMNY"
+                    },
+                    "fareType": {
+                        "type": "string",
+                        "example": "Standard"
+                    },
+                    "timestamp": {
+                        "type": "string",
+                        "format": "date-time"
+                    }
+                }
+            },
+            "CommuteFareRequest": {
+                "type": "object",
+                "properties": {
+                    "commuteSystemId": {
+                        "type": "integer",
+                        "format": "int64",
+                        "minimum": 1
+                    },
+                    "name": {
+                        "type": "string",
+                        "example": "Off-Peak"
+                    },
+                    "fareAmount": {
+                        "type": "number",
+                        "format": "double",
+                        "example": 10.0
+                    },
+                    "timeslots": {
+                        "type": "array",
+                        "items": {
+                            "type": "object",
+                            "properties": {
+                                "dayOfWeek": {
+                                    "type": "integer",
+                                    "example": 1
+                                },
+                                "startTime": {
+                                    "type": "string",
+                                    "example": "05:00:00"
+                                },
+                                "endTime": {
+                                    "type": "string",
+                                    "example": "10:00:00"
+                                }
+                            }
+                        }
+                    },
+                    "duration": {
+                        "type": "integer",
+                        "example": null
+                    },
+                    "dayStart": {
+                        "type": "integer",
+                        "example": null
+                    },
+                    "alternateFareDetailId": {
+                        "type": "integer",
+                        "example": null
+                    }
+                }
+            },
+            "CommuteScheduleRequest": {
+                "type": "object",
+                "properties": {
+                    "accountId": {
+                        "type": "integer",
+                        "format": "int64",
+                        "minimum": 1
+                    },
+                    "dayOfWeek": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "fareDetailId": {
+                        "type": "integer",
+                        "format": "int64",
+                        "minimum": 1
+                    },
+                    "startTime": {
+                        "type": "string",
+                        "example": "05:00:00"
+                    },
+                    "endTime": {
+                        "type": "string",
+                        "example": "10:00:00"
+                    }
+                }
+            },
+            "ExpenseTransaction": {
+                "type": "object",
+                "properties": {
+                    "title": {
+                        "type": "string",
+                        "description": "Title of the expense"
+                    },
+                    "description": {
+                        "type": "string",
+                        "description": "Description of the expense"
+                    },
+                    "date": {
+                        "type": "string",
+                        "format": "date-time",
+                        "description": "Date the expense occurred"
+                    },
+                    "amount": {
+                        "type": "number",
+                        "description": "Amount of the expense"
+                    },
+                    "balance": {
+                        "type": "number",
+                        "description": "Balance after the expense"
+                    }
+                }
+            },
+            "LoanTransaction": {
+                "type": "object",
+                "properties": {
+                    "title": {
+                        "type": "string",
+                        "description": "Title of the loan"
+                    },
+                    "description": {
+                        "type": "string",
+                        "description": "Description of the loan"
+                    },
+                    "date": {
+                        "type": "string",
+                        "format": "date-time",
+                        "description": "Date the loan occurred"
+                    },
+                    "amount": {
+                        "type": "number",
+                        "description": "Amount of the loan"
+                    },
+                    "balance": {
+                        "type": "number",
+                        "description": "Balance after the loan"
+                    }
+                }
+            }
+        },
+        "responses": {
+            "BadRequest": {
+                "description": "Bad request",
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "errors": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "object",
+                                        "properties": {
+                                            "msg": {
+                                                "type": "string",
+                                                "description": "Error message"
+                                            },
+                                            "param": {
+                                                "type": "string",
+                                                "description": "Parameter that caused the error"
+                                            },
+                                            "location": {
+                                                "type": "string",
+                                                "description": "Location of the error"
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "SuccessResponseCommuteExpense": {
+                "description": "A JSON object of a single commute expense",
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "accountId": {
+                                    "type": "integer",
+                                    "format": "int64",
+                                    "minimum": 1
+                                },
+                                "totalCostPerWeek": {
+                                    "type": "number",
+                                    "format": "double",
+                                    "example": 100.0
+                                },
+                                "totalCostPerMonth": {
+                                    "type": "number",
+                                    "format": "double",
+                                    "example": 400.0
+                                },
+                                "systems": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "object",
+                                        "properties": {
+                                            "OMNY": {
+                                                "type": "object",
+                                                "properties": {
+                                                    "totalCostPerWeek": {
+                                                        "type": "number",
+                                                        "format": "double",
+                                                        "example": 50.0
+                                                    },
+                                                    "totalCostPerMonth": {
+                                                        "type": "number",
+                                                        "format": "double",
+                                                        "example": 200.0
+                                                    },
+                                                    "rides": {
+                                                        "type": "integer",
+                                                        "example": 10
+                                                    },
+                                                    "fareCapProgress": {
+                                                        "type": "object",
+                                                        "properties": {
+                                                            "current_spent": {
+                                                                "type": "number",
+                                                                "format": "double",
+                                                                "example": 10.0
+                                                            },
+                                                            "fareCap": {
+                                                                "type": "number",
+                                                                "format": "double",
+                                                                "example": 33.0
+                                                            },
+                                                            "fareCapDuration": {
+                                                                "type": "integer",
+                                                                "example": 1
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "SuccessResponseCommuteSystem": {
+                "description": "A JSON object of a single commute system",
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "id": {
+                                    "type": "integer",
+                                    "format": "int64",
+                                    "minimum": 1
+                                },
+                                "name": {
+                                    "type": "string",
+                                    "example": "Subway"
+                                },
+                                "fareCap": {
+                                    "type": "number",
+                                    "format": "double",
+                                    "example": 33.0
+                                },
+                                "fareCapDuration": {
+                                    "type": "integer",
+                                    "example": 1
+                                },
+                                "dateCreated": {
+                                    "type": "string",
+                                    "format": "date-time"
+                                },
+                                "dateModified": {
+                                    "type": "string",
+                                    "format": "date-time"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "SuccessResponseCommuteHistory": {
+                "description": "A JSON object of a single commute history",
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "id": {
+                                    "type": "integer",
+                                    "format": "int64",
+                                    "minimum": 1
+                                },
+                                "accountId": {
+                                    "type": "integer",
+                                    "format": "int64",
+                                    "minimum": 1
+                                },
+                                "commuteSystem": {
+                                    "type": "string",
+                                    "example": "Subway"
+                                },
+                                "fareAmount": {
+                                    "type": "number",
+                                    "format": "double",
+                                    "example": 2.75
+                                },
+                                "fareType": {
+                                    "type": "string",
+                                    "example": "Standard"
+                                },
+                                "timestamp": {
+                                    "type": "string",
+                                    "format": "date-time"
+                                },
+                                "dateCreated": {
+                                    "type": "string",
+                                    "format": "date-time"
+                                },
+                                "dateModified": {
+                                    "type": "string",
+                                    "format": "date-time"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "SuccessResponseCommuteFare": {
+                "description": "A JSON object of a single commute fare",
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "fares": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "object",
+                                        "properties": {
+                                            "id": {
+                                                "type": "integer",
+                                                "format": "int64",
+                                                "minimum": 1
+                                            },
+                                            "commuteSystem": {
+                                                "type": "object",
+                                                "properties": {
+                                                    "commuteSystemId": {
+                                                        "type": "integer",
+                                                        "format": "int64",
+                                                        "minimum": 1
+                                                    },
+                                                    "name": {
+                                                        "type": "string",
+                                                        "example": "Subway"
+                                                    }
+                                                }
+                                            },
+                                            "name": {
+                                                "type": "string",
+                                                "example": "Off-Peak"
+                                            },
+                                            "fareAmount": {
+                                                "type": "number",
+                                                "format": "double",
+                                                "example": 10.0
+                                            },
+                                            "timeslots": {
+                                                "type": "array",
+                                                "items": {
+                                                    "type": "object",
+                                                    "properties": {
+                                                        "dayOfWeek": {
+                                                            "type": "integer",
+                                                            "example": 1
+                                                        },
+                                                        "startTime": {
+                                                            "type": "string",
+                                                            "example": "05:00:00"
+                                                        },
+                                                        "endTime": {
+                                                            "type": "string",
+                                                            "example": "10:00:00"
+                                                        }
+                                                    }
+                                                }
+                                            },
+                                            "duration": {
+                                                "type": "integer",
+                                                "example": null
+                                            },
+                                            "dayStart": {
+                                                "type": "integer",
+                                                "example": null
+                                            },
+                                            "alternateFareDetailId": {
+                                                "type": "integer",
+                                                "example": null
+                                            },
+                                            "dateCreated": {
+                                                "type": "string",
+                                                "format": "date-time"
+                                            },
+                                            "dateModified": {
+                                                "type": "string",
+                                                "format": "date-time"
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "SuccessResponseCommuteSchedule": {
+                "description": "A JSON object of schedules",
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "schedule": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "object",
+                                        "properties": {
+                                            "dayOfWeek": {
+                                                "type": "integer",
+                                                "format": "int64",
+                                                "minimum": 1
+                                            },
+                                            "passes": {
+                                                "type": "array",
+                                                "items": {
+                                                    "type": "object",
+                                                    "properties": {
+                                                        "type": {
+                                                            "type": "string",
+                                                            "example": "LIRR Monthly"
+                                                        },
+                                                        "startTime": {
+                                                            "type": "string",
+                                                            "example": "05:00:00"
+                                                        },
+                                                        "endTime": {
+                                                            "type": "string",
+                                                            "example": "10:00:00"
+                                                        },
+                                                        "fareAmount": {
+                                                            "type": "number",
+                                                            "format": "double",
+                                                            "example": 10.0
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
