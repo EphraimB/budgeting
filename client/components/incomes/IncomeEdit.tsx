@@ -363,7 +363,7 @@ function IncomeEdit({
           <>
             <LocalizationProvider dateAdapter={AdapterDayjs}>
               <DateTimePicker
-                label="Expense begin date"
+                label="Income begin date"
                 value={dayjs.utc(beginDate).local()}
                 onChange={(e: Dayjs | null) => {
                   const utcDate = e ? e.utc().format() : dayjs.utc().format();
@@ -379,11 +379,11 @@ function IncomeEdit({
                     onChange={handleEndDateEnabledChange}
                   />
                 }
-                label="Expense end date enabled"
+                label="Income end date enabled"
               />
               {endDateEnabled && (
                 <DateTimePicker
-                  label="Expense end date"
+                  label="Income end date"
                   value={dayjs.utc(endDate).local() || dayjs()}
                   onChange={(e: Dayjs | null) => {
                     const utcDate = e ? e.utc().format() : dayjs.utc().format();
