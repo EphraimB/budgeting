@@ -19,7 +19,7 @@ function IncomeCards({
 }: {
   accountId: number;
   incomes: Income[];
-  taxes: Tax;
+  taxes: Tax[];
 }) {
   const [showIncomeForm, setShowIncomeForm] = useState(false);
   const [incomeModes, setIncomeModes] = useState<Record<number, string>>({});
