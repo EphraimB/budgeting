@@ -1,6 +1,6 @@
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
-import { Income } from "@/app/types/types";
+import { Income, Tax } from "@/app/types/types";
 import IncomeCards from "../../../../components/incomes/IncomeCards";
 
 async function getIncome(accountId: number) {
