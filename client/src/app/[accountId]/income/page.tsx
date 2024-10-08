@@ -15,10 +15,21 @@ async function getIncome(accountId: number) {
   return res.json();
 }
 
+async function getTaxes() {
+  const res = await fetch("http://server:5001/api/taxes");
+
+  if (!res.ok) {
+    throw new Error("Failed to fetch taxes");
+  }
+
+  return res.json();
+}
+
 async function IncomePage({ params }: { params: { accountId: string } }) {
   const accountId = parseInt(params.accountId);
 
   const incomes: Income[] = await getIncome(accountId);
+  const taxes: Tax[] = await getTaxes();
 
   return (
     <Stack>
@@ -38,7 +49,7 @@ async function IncomePage({ params }: { params: { accountId: string } }) {
           .
         </Typography>
       )}
-      <IncomeCards accountId={accountId} incomes={incomes} />
+      <IncomeCards accountId={accountId} incomes={incomes} taxes={taxes} />
     </Stack>
   );
 }

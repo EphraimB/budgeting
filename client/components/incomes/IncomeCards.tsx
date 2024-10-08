@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Card from "@mui/material/Card";
-import { Income } from "@/app/types/types";
+import { Income, Tax } from "@/app/types/types";
 import Fab from "@mui/material/Fab";
 import AddIcon from "@mui/icons-material/Add";
 import Box from "@mui/material/Box";
@@ -15,9 +15,11 @@ import IncomeEdit from "./IncomeEdit";
 function IncomeCards({
   accountId,
   incomes,
+  taxes,
 }: {
   accountId: number;
   incomes: Income[];
+  taxes: Tax;
 }) {
   const [showIncomeForm, setShowIncomeForm] = useState(false);
   const [incomeModes, setIncomeModes] = useState<Record<number, string>>({});
@@ -43,6 +45,7 @@ function IncomeCards({
                 <IncomeEdit
                   accountId={accountId}
                   income={income}
+                  taxes={taxes}
                   setIncomeModes={setIncomeModes}
                 />
               ) : (

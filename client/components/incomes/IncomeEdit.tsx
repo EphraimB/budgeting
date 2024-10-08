@@ -4,7 +4,7 @@ import { useState } from "react";
 import Card from "@mui/material/Card";
 import IconButton from "@mui/material/IconButton";
 import Close from "@mui/icons-material/Close";
-import { Income } from "@/app/types/types";
+import { Income, Tax } from "@/app/types/types";
 import CardContent from "@mui/material/CardContent";
 import CardHeader from "@mui/material/CardHeader";
 import TextField from "@mui/material/TextField";
@@ -33,15 +33,18 @@ dayjs.extend(utc);
 function IncomeEdit({
   accountId,
   income,
+  taxes,
   setIncomeModes,
 }: {
   accountId: number;
   income: Income;
+  taxes: Tax[];
   setIncomeModes: (incomeModes: Record<number, string>) => void;
 }) {
   const [title, setTitle] = useState(income.title);
   const [description, setDescription] = useState(income.description);
   const [amount, setAmount] = useState(income.amount.toString());
+  const [taxId, setTaxId] = useState(income.taxId || 0);
   const [frequencyType, setFrequencyType] = useState(income.frequency.type);
   const [frequencyDayOfWeek, setFrequencyDayOfWeek] = useState(
     income.frequency.dayOfWeek || -1
@@ -82,6 +85,7 @@ function IncomeEdit({
 
   const data = {
     accountId,
+    taxId: taxId === 0 ? null : taxId,
     title,
     description,
     amount: parseFloat(amount),
@@ -238,6 +242,25 @@ function IncomeEdit({
                 ),
               }}
             />
+            <br />
+            <br />
+            <FormControl fullWidth>
+              <InputLabel id="tax-select-label">Tax</InputLabel>
+              <Select
+                labelId="tax-select-label"
+                label="Tax"
+                variant="standard"
+                value={taxId}
+                onChange={(e) => setTaxId(e.target.value as number)}
+              >
+                <MenuItem value={0}>No tax - 0%</MenuItem>
+                {taxes.map((tax: Tax) => (
+                  <MenuItem key={tax.id} value={tax.id}>
+                    {tax.title} - {tax.rate * 100}%
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
           </>
         ) : activeStep === 2 ? (
           <>
