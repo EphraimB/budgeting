@@ -529,7 +529,7 @@ export const updateCommuteSchedule = async (
 
         const { rows } = await client.query(
             `
-                SELECT id
+                SELECT id, cron_job_id
                 FROM commute_schedule
                 WHERE id = $1
             `,
@@ -558,7 +558,7 @@ export const updateCommuteSchedule = async (
                 )
                 GROUP BY cs.id
             `,
-            [accountId, dayOfWeek, startTime, endTime, id],
+            [accountId, dayOfWeek, startTime, endTime],
         );
 
         if (existingSchedule.length > 0) {
@@ -605,7 +605,7 @@ export const updateCommuteSchedule = async (
                 `
                     SELECT *
                         FROM timeslots
-                        WHERE fare_detail_id = $1
+                        WHERE fare_details_id = $1
                 `,
                 [currentFareDetailId],
             );
@@ -744,8 +744,8 @@ export const updateCommuteSchedule = async (
                     account_id,
                     JSON_AGG(
                         JSON_BUILD_OBJECT(
-                        'day_of_week', day_of_week,
-                        'commute_schedules', commute_schedules
+                        'dayOfWeek', day_of_week,
+                        'commuteSchedules', commute_schedules
                         )::json
                     ) AS schedules
                     FROM (
@@ -756,8 +756,8 @@ export const updateCommuteSchedule = async (
                         JSON_BUILD_OBJECT(
                             'id', cs.id,
                             'pass', concat(csy.name, ' ', fd.name),
-                            'start_time', cs.start_time,
-                            'end_time', cs.end_time,
+                            'startTime', cs.start_time,
+                            'endTime', cs.end_time,
                             'fare', fd.fare
                         )::json
                         ) AS commute_schedules
@@ -777,7 +777,7 @@ export const updateCommuteSchedule = async (
         );
 
         const responseObj = {
-            schedule: commuteScheduleResults,
+            schedule: toCamelCase(commuteScheduleResults[0]),
             alerts,
         };
 
