@@ -245,6 +245,25 @@ export const createCommuteSchedule = async (
         let systemClosed = false;
         const alerts: object[] = [];
 
+        const { rows: commuteSystemResults } = await client.query(
+            `
+                SELECT id
+                    FROM fare_details
+                    WHERE id = $1
+            `,
+            [fareDetailId],
+        );
+
+        if (commuteSystemResults.length === 0) {
+            response
+                .status(400)
+                .send(
+                    'You need to create a fare detail before creating a commute schedule',
+                );
+
+            return;
+        }
+
         // Check for overlapping day of week and start time
         const { rows: scheduleExistsResults } = await client.query(
             `
@@ -538,6 +557,25 @@ export const updateCommuteSchedule = async (
 
         if (rows.length === 0) {
             response.status(404).send('Schedule not found');
+            return;
+        }
+
+        const { rows: commuteSystemResults } = await client.query(
+            `
+                SELECT id
+                    FROM fare_details
+                    WHERE id = $1
+            `,
+            [fareDetailId],
+        );
+
+        if (commuteSystemResults.length === 0) {
+            response
+                .status(400)
+                .send(
+                    'You need to create a fare detail before creating a commute schedule',
+                );
+
             return;
         }
 
