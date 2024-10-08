@@ -12,6 +12,18 @@ async function getAccounts() {
   return res.json();
 }
 
+async function getIncome(accountId: number) {
+  const res = await fetch(
+    `http://server:5001/api/income?accountId=${accountId}`
+  );
+
+  if (!res.ok) {
+    throw new Error("Failed to fetch income");
+  }
+
+  return res.json();
+}
+
 async function getExpenses(accountId: number) {
   const res = await fetch(
     `http://server:5001/api/expenses?accountId=${accountId}`
@@ -82,6 +94,7 @@ export default async function Layout({
   const accountId = parseInt(params.accountId);
 
   const accounts = await getAccounts();
+  const incomes = await getIncome(accountId);
   const expenses = await getExpenses(accountId);
   const taxes = await getTaxes(accountId);
   const loans = await getLoans(accountId);
@@ -93,6 +106,7 @@ export default async function Layout({
       <DataManagementWidgets
         accountId={accountId}
         accounts={accounts}
+        incomes={incomes}
         expenses={expenses}
         taxes={taxes}
         loans={loans}
