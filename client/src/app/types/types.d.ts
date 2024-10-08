@@ -39,7 +39,6 @@ interface Dates {
 export interface Income {
   id: number;
   accountId: number;
-  taxId: number | null;
   amount: number;
   title: string;
   description: string;
