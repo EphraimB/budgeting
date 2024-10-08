@@ -252,6 +252,7 @@ describe('POST /api/expenses/commute/schedule', () => {
         // Arrange
         mockModule(
             [
+                [{ id: 1 }],
                 [],
                 [
                     {
@@ -370,6 +371,7 @@ describe('POST /api/expenses/commute/schedule', () => {
         // Arrange
         mockModule(
             [
+                [{ id: 1 }],
                 [],
                 [
                     {
@@ -499,6 +501,7 @@ describe('POST /api/expenses/commute/schedule', () => {
     it('should respond with the created commute schedule when system is closed and is in the timeframe for the fare type', async () => {
         // Arrange
         mockModule([
+            [{ id: 1 }],
             [],
             [{ id: 1, fare: 2.9, alternate_fare_detail_id: null }],
             [{ id: 1, fare: 2.9, alternate_fare_detail_id: null }],
@@ -529,7 +532,7 @@ describe('POST /api/expenses/commute/schedule', () => {
 
     it('should respond with a 400 error when schedule overlaps', async () => {
         // Arrange
-        mockModule([[{ id: 1 }]]);
+        mockModule([[{ id: 1 }], [{ id: 1 }]]);
 
         const { createCommuteSchedule } = await import(
             '../../src/controllers/commuteScheduleController.js'
@@ -560,6 +563,7 @@ describe('PUT /api/expenses/commute/schedule/:id', () => {
         mockModule(
             [
                 [{ id: 1, cron_job_id: 1 }],
+                [{ id: 1 }],
                 [],
                 [{ id: 1, fare: 2.9, alternate_fare_id: null }],
                 [{ id: 1, fare: 2.9, alternate_fare_id: null }],
@@ -654,7 +658,7 @@ describe('PUT /api/expenses/commute/schedule/:id', () => {
 
     it('should respond with a 400 error when schedule overlaps', async () => {
         // Arrange
-        mockModule([[{ id: 1 }], [{ id: 1 }]]);
+        mockModule([[{ id: 1 }], [{ id: 1 }], [{ id: 1 }]]);
 
         const { updateCommuteSchedule } = await import(
             '../../src/controllers/commuteScheduleController.js'
