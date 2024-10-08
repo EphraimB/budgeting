@@ -154,14 +154,12 @@ export const createFareDetail = async (
             [commuteSystemId],
         );
 
-        if (!commuteSystemResults) {
-            response.status(400).send({
-                errors: {
-                    msg: 'You need to create a commute system before creating a fare detail',
-                    param: null,
-                    location: 'query',
-                },
-            });
+        if (commuteSystemResults.length === 0) {
+            response
+                .status(400)
+                .send(
+                    'You need to create a commute system before creating a fare detail',
+                );
 
             return;
         }
@@ -287,6 +285,25 @@ export const updateFareDetail = async (
             return;
         }
 
+        const { rows: commuteSystemResults } = await client.query(
+            `
+                SELECT *
+                    FROM commute_systems
+                    WHERE id = $1
+            `,
+            [commuteSystemId],
+        );
+
+        if (commuteSystemResults.length === 0) {
+            response
+                .status(400)
+                .send(
+                    'You need to create a commute system before creating a fare detail',
+                );
+
+            return;
+        }
+
         const { rows: currentTimeslots } = await client.query(
             `
                 SELECT *
@@ -321,12 +338,7 @@ export const updateFareDetail = async (
                     VALUES ($1, $2, $3, $4)
                     RETURNING *
                 `,
-                [
-                    id,
-                    timeslot.dayOfWeek,
-                    timeslot.startTime,
-                    timeslot.endTime,
-                ],
+                [id, timeslot.dayOfWeek, timeslot.startTime, timeslot.endTime],
             );
         });
 
@@ -354,15 +366,6 @@ export const updateFareDetail = async (
         );
 
         await client.query('COMMIT;');
-
-        const { rows: commuteSystemResults } = await client.query(
-            `
-                SELECT *
-                    FROM commute_systems
-                    WHERE id = $1
-            `,
-            [commuteSystemId],
-        );
 
         const responseObj: object = {
             id: updateFareDetailResults[0].id,
