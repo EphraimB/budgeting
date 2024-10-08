@@ -123,10 +123,8 @@ export const getCommuteScheduleById = async (
     request: Request,
     response: Response,
 ): Promise<void> => {
-    const { id, accountId } = request.query as {
-        id?: string;
-        accountId?: string;
-    }; // Destructure id from query string
+    const { id } = request.params;
+    const { accountId } = request.query;
 
     const client = await pool.connect(); // Get a client from the pool
 
