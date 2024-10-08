@@ -121,13 +121,13 @@ CREATE TABLE IF NOT EXISTS loans (
 );
 
 -- Create tables for payroll in postgres.
-CREATE TABLE payroll_dates (
+CREATE TABLE IF NOT EXISTS payroll_dates (
   id SERIAL PRIMARY KEY,
   job_id INTEGER NOT NULL REFERENCES jobs(id) ON DELETE CASCADE,
   payroll_day INTEGER NOT NULL
 );
 
-CREATE TABLE payroll_taxes (
+CREATE TABLE IF NOT EXISTS payroll_taxes (
     id SERIAL PRIMARY KEY,
     job_id INTEGER NOT NULL REFERENCES jobs(id) ON DELETE CASCADE,
     name TEXT NOT NULL,
