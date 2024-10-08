@@ -43,8 +43,7 @@ export const getCommuteOverview = async (
                     (
                     SELECT COALESCE(SUM(ch.fare), 0)
                     FROM commute_history ch
-                    WHERE ch.commute_system_id = csy.id
-                    AND ch.account_id = cs.account_id
+                    WHERE ch.account_id = cs.account_id
                     AND (
                         (csy.fare_cap_duration = 0 AND date(ch.timestamp) = current_date) OR
                         (csy.fare_cap_duration = 1 AND date_trunc('week', ch.timestamp) = date_trunc('week', current_date)) OR
@@ -63,14 +62,14 @@ export const getCommuteOverview = async (
                 SUM(tf.total_cost_per_month) AS total_cost_per_month,
                 JSON_AGG(
                     JSON_BUILD_OBJECT(
-                        'system_name', tf.system_name,
-                        'total_cost_per_week', tf.total_cost_per_week,
-                        'total_cost_per_month', tf.total_cost_per_month,
+                        'systemName', tf.system_name,
+                        'totalCostPerWeek', tf.total_cost_per_week,
+                        'totalCostPerMonth', tf.total_cost_per_month,
                         'rides', tf.rides,
-                        'fare_cap_progress', JSON_BUILD_OBJECT(
-                            'current_spent', tf.current_spent,
-                            'fare_cap', tf.fare_cap,
-                            'fare_cap_duration', tf.fare_cap_duration
+                        'fareCapProgress', JSON_BUILD_OBJECT(
+                            'currentSpent', tf.current_spent,
+                            'fareCap', tf.fare_cap,
+                            'fareCapDuration', tf.fare_cap_duration
                         )
                     )
                 ) AS systems
@@ -108,8 +107,7 @@ export const getCommuteOverview = async (
                     (
                     SELECT COALESCE(SUM(ch.fare), 0)
                     FROM commute_history ch
-                    WHERE ch.commute_system_id = csy.id
-                    AND ch.account_id = cs.account_id
+                    WHERE ch.account_id = cs.account_id
                     AND (
                         (csy.fare_cap_duration = 0 AND date(ch.timestamp) = current_date) OR
                         (csy.fare_cap_duration = 1 AND date_trunc('week', ch.timestamp) = date_trunc('week', current_date)) OR
@@ -128,14 +126,14 @@ export const getCommuteOverview = async (
                 SUM(tf.total_cost_per_month) AS total_cost_per_month,
                 JSON_AGG(
                     JSON_BUILD_OBJECT(
-                        'system_name', tf.system_name,
-                        'total_cost_per_week', tf.total_cost_per_week,
-                        'total_cost_per_month', tf.total_cost_per_month,
+                        'systemName', tf.system_name,
+                        'totalCostPerWeek', tf.total_cost_per_week,
+                        'totalCostPerMonth', tf.total_cost_per_month,
                         'rides', tf.rides,
-                        'fare_cap_progress', JSON_BUILD_OBJECT(
-                            'current_spent', tf.current_spent,
-                            'fare_cap', tf.fare_cap,
-                            'fare_cap_duration', tf.fare_cap_duration
+                        'fareCapProgress', JSON_BUILD_OBJECT(
+                            'currentSpent', tf.current_spent,
+                            'fareCap', tf.fare_cap,
+                            'fareCapDuration', tf.fare_cap_duration
                         )
                     )
                 ) AS systems

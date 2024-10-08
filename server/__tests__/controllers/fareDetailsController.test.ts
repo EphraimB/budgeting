@@ -310,14 +310,14 @@ describe('PUT /api/expenses/commute/fares/:id', () => {
         mockModule(
             [
                 [{ id: 1 }],
+                commuteSystems.filter(
+                    (commuteSystem) => commuteSystem.id === 1,
+                ),
                 timeslots.filter((timeslot) => timeslot.id === 1),
                 [],
                 [],
                 fareDetails.filter((fareDetail) => fareDetail.id === 1),
                 [],
-                commuteSystems.filter(
-                    (commuteSystem) => commuteSystem.id === 1,
-                ),
             ],
             undefined,
             undefined,

@@ -6,7 +6,7 @@ import { describe, it, expect } from '@jest/globals';
 
 const vol = Volume.fromJSON(
     {
-        'src/views/swagger.json': '[]',
+        'swagger.json': '[]',
     },
     process.cwd(),
 );
