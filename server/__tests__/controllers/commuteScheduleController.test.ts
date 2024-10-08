@@ -559,7 +559,7 @@ describe('PUT /api/expenses/commute/schedule/:id', () => {
         // Arrange
         mockModule(
             [
-                [{ id: 1 }],
+                [{ id: 1, cron_job_id: 1 }],
                 [],
                 [{ id: 1, fare: 2.9, alternate_fare_id: null }],
                 [{ id: 1, fare: 2.9, alternate_fare_id: null }],
@@ -595,7 +595,20 @@ describe('PUT /api/expenses/commute/schedule/:id', () => {
                     },
                 ],
             ],
-            undefined,
+            {
+                id: 1,
+                commute_system_id: 1,
+                account_id: 1,
+                cron_job_id: 1,
+                fare_detail_id: 1,
+                day_of_week: 1,
+                pass: 'OMNY regular',
+                start_time: '08:00:00',
+                end_time: '10:00:00',
+                duration: null,
+                day_start: null,
+                fare: 2.9,
+            },
             true,
         );
 
@@ -617,22 +630,20 @@ describe('PUT /api/expenses/commute/schedule/:id', () => {
 
         // Assert
         const responseObj = {
-            schedule: [
-                {
-                    id: 1,
-                    commute_system_id: 1,
-                    account_id: 1,
-                    cron_job_id: 1,
-                    fare_detail_id: 1,
-                    day_of_week: 1,
-                    pass: 'OMNY regular',
-                    start_time: '08:00:00',
-                    end_time: '10:00:00',
-                    duration: null,
-                    day_start: null,
-                    fare: 2.9,
-                },
-            ],
+            schedule: {
+                id: 1,
+                commute_system_id: 1,
+                account_id: 1,
+                cron_job_id: 1,
+                fare_detail_id: 1,
+                day_of_week: 1,
+                pass: 'OMNY regular',
+                start_time: '08:00:00',
+                end_time: '10:00:00',
+                duration: null,
+                day_start: null,
+                fare: 2.9,
+            },
             alerts: [],
         };
 
