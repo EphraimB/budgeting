@@ -154,14 +154,12 @@ export const createFareDetail = async (
             [commuteSystemId],
         );
 
-        if (!commuteSystemResults) {
-            response.status(400).send({
-                errors: {
-                    msg: 'You need to create a commute system before creating a fare detail',
-                    param: null,
-                    location: 'query',
-                },
-            });
+        if (commuteSystemResults.length === 0) {
+            response
+                .status(400)
+                .send(
+                    'You need to create a commute system before creating a fare detail',
+                );
 
             return;
         }
@@ -171,7 +169,7 @@ export const createFareDetail = async (
         const { rows: fareDetails } = await client.query(
             `
                 INSERT INTO fare_details
-                (commute_system_id, name, fare_amount, duration, day_start, alternate_fare_detail_id)
+                (commute_system_id, name, fare, duration, day_start, alternate_fare_detail_id)
                 VALUES ($1, $2, $3, $4, $5, $6)
                 RETURNING *
             `,
@@ -189,7 +187,7 @@ export const createFareDetail = async (
             const { rows: timeslotData } = await client.query(
                 `
                     INSERT INTO timeslots
-                    (fare_detail_id, day_of_week, start_time, end_time)
+                    (fare_details_id, day_of_week, start_time, end_time)
                     VALUES ($1, $2, $3, $4)
                     RETURNING *
                 `,
@@ -287,6 +285,25 @@ export const updateFareDetail = async (
             return;
         }
 
+        const { rows: commuteSystemResults } = await client.query(
+            `
+                SELECT *
+                    FROM commute_systems
+                    WHERE id = $1
+            `,
+            [commuteSystemId],
+        );
+
+        if (commuteSystemResults.length === 0) {
+            response
+                .status(400)
+                .send(
+                    'You need to create a commute system before creating a fare detail',
+                );
+
+            return;
+        }
+
         const { rows: currentTimeslots } = await client.query(
             `
                 SELECT *
@@ -317,16 +334,11 @@ export const updateFareDetail = async (
             await client.query(
                 `
                     INSERT INTO timeslots
-                    (fare_detail_id, day_of_week, start_time, end_time)
+                    (fare_details_id, day_of_week, start_time, end_time)
                     VALUES ($1, $2, $3, $4)
                     RETURNING *
                 `,
-                [
-                    id,
-                    timeslot.day_of_week,
-                    timeslot.start_time,
-                    timeslot.end_time,
-                ],
+                [id, timeslot.dayOfWeek, timeslot.startTime, timeslot.endTime],
             );
         });
 
@@ -354,15 +366,6 @@ export const updateFareDetail = async (
         );
 
         await client.query('COMMIT;');
-
-        const { rows: commuteSystemResults } = await client.query(
-            `
-                SELECT *
-                    FROM commute_systems
-                    WHERE id = $1
-            `,
-            [commuteSystemId],
-        );
 
         const responseObj: object = {
             id: updateFareDetailResults[0].id,

@@ -226,7 +226,7 @@ CREATE TABLE IF NOT EXISTS timeslots (
 CREATE TABLE IF NOT EXISTS commute_schedule (
   id SERIAL PRIMARY KEY,
   account_id INT NOT NULL REFERENCES accounts(id) ON DELETE CASCADE,
-  cron_job_id INT NOT NULL REFERENCES cron_jobs(id),
+  cron_job_id INT REFERENCES cron_jobs(id),
   day_of_week INT NOT NULL,
   start_time TIME NOT NULL,
   end_time TIME NOT NULL,
