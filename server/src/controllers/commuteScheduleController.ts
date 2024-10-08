@@ -787,7 +787,7 @@ export const deleteCommuteSchedule = async (
     try {
         const { rows } = await client.query(
             `
-                SELECT id, cron_job_id,
+                SELECT id, cron_job_id
                 FROM commute_schedule
                 WHERE id = $1
             `,
