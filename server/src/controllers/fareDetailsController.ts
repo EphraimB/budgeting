@@ -323,9 +323,9 @@ export const updateFareDetail = async (
                 `,
                 [
                     id,
-                    timeslot.day_of_week,
-                    timeslot.start_time,
-                    timeslot.end_time,
+                    timeslot.dayOfWeek,
+                    timeslot.startTime,
+                    timeslot.endTime,
                 ],
             );
         });
