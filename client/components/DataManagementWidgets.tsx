@@ -4,6 +4,7 @@ import React, { useState, useEffect, useRef } from "react";
 import {
   Account,
   Expense,
+  Income,
   Loan,
   Tax,
   Transfer,
@@ -26,6 +27,7 @@ import {
 function DataManagementWidgets({
   accountId,
   accounts,
+  incomes,
   expenses,
   loans,
   wishlists,
@@ -34,6 +36,7 @@ function DataManagementWidgets({
 }: {
   accountId: number;
   accounts: Account[];
+  incomes: Income[];
   expenses: Expense[];
   loans: Loan[];
   wishlists: Wishlist[];
@@ -73,6 +76,17 @@ function DataManagementWidgets({
       link: `/${accountId}/taxes`,
       content: `You have ${taxes.length} tax${taxes.length === 1 ? "" : "es"}`,
       selected: isSelected("taxes"),
+    },
+    {
+      id: "income",
+      title: "Income",
+      link: `/${accountId}/income`,
+      content: `You have ${incomes.length} income${
+        expenses.length === 1 ? "" : "s"
+      } with a total of $${incomes
+        .reduce((acc: number, income: Income) => acc + income.amount, 0)
+        .toFixed(2)}.`,
+      selected: isSelected("income"),
     },
     {
       id: "expenses",

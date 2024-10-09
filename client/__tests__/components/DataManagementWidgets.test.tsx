@@ -54,6 +54,31 @@ describe("DataManagementWidgets", () => {
             dateModified: "2022-01-01",
           },
         ]}
+        incomes={[
+          {
+            accountId: 1,
+            id: 1,
+            taxId: 1,
+            title: "Test Income",
+            amount: 155.99,
+            dates: {
+              beginDate: "2022-01-01",
+              endDate: "2022-01-01",
+            },
+            description: "Test Description",
+            frequency: {
+              type: 2,
+              typeVariable: 1,
+              dayOfMonth: null,
+              dayOfWeek: null,
+              weekOfMonth: null,
+              monthOfYear: null,
+            },
+            nextDate: "2022-01-01",
+            dateCreated: "2022-01-01",
+            dateModified: "2022-01-01",
+          },
+        ]}
         loans={[
           {
             accountId: 1,
@@ -144,6 +169,11 @@ describe("DataManagementWidgets", () => {
       screen.getByText(
         "You have 1 expense with a total of $171.59 including taxes and subsidies."
       )
+    ).toBeInTheDocument();
+
+    expect(screen.getByText("Income")).toBeInTheDocument();
+    expect(
+      screen.getByText("You have 1 income with a total of $155.99.")
     ).toBeInTheDocument();
 
     expect(screen.getByText("Loans")).toBeInTheDocument();

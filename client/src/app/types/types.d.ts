@@ -36,6 +36,20 @@ interface Dates {
   endDate?: string | null;
 }
 
+export interface Income {
+  id: number;
+  accountId: number;
+  taxId: number | null;
+  amount: number;
+  title: string;
+  description: string;
+  frequency: Frequency;
+  dates: Dates;
+  nextDate: string | null;
+  dateCreated: string;
+  dateModified: string;
+}
+
 export interface Expense {
   id: number;
   accountId: number;
