@@ -20,19 +20,20 @@ FROM node:20-alpine
 # Set the working directory to match the Docker Compose setup
 WORKDIR /home/node/app
 
-# Install nodemon globally
-RUN npm install -g nodemon
+# Install nodemon globally if in development
+ARG NODE_ENV
+RUN if [ "$NODE_ENV" = "development" ]; then npm install -g nodemon; fi
 
 # Copy package.json and package-lock.json for production dependency installation
 COPY package*.json ./
 
-# Install app dependencies
-RUN npm ci --only=production
+# Install app dependencies based on environment
+RUN if [ "$NODE_ENV" = "development" ]; then npm install; else npm ci --only=production; fi
 
 # Copy compiled JavaScript and other necessary files from the build stage
 COPY --from=builder /home/node/app/src/dist ./
 
-# Copy the views folder
+# Copy swagger.json
 COPY ./swagger.json ./swagger.json
 
 # Expose the port the app runs on
@@ -41,5 +42,5 @@ EXPOSE 5001
 # Set the environment variable for the port
 ENV PORT 5001
 
-# Start the app
-CMD ["nodemon", "src/server.js"]
+# Start the app with nodemon in development, or node for production
+CMD if [ "$NODE_ENV" = "development" ]; then nodemon src/server.js; else node src/server.js; fi

@@ -16,6 +16,8 @@ services:
     build:
       context: ./server/
       dockerfile: Dockerfile
+      args:
+        NODE_ENV: ${NODE_ENV}
     environment:
       - PGHOST=db
       - PGDATABASE=${PGDB}
