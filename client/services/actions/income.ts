@@ -38,6 +38,8 @@ export async function editIncome(income: IncomeRequest, id: number) {
   });
   const result = await response.json();
 
+  console.log(result)
+
   revalidatePath("/[accountId]", "page");
   return result;
 }

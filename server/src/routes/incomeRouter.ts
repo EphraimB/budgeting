@@ -43,7 +43,7 @@ router.post(
             .isInt({ min: 1 })
             .withMessage('Account ID must be a number'),
         body('taxId')
-            .optional()
+            .optional({ nullable: true })
             .isInt({ min: 1 })
             .withMessage('Tax ID must be a number'),
         body('amount').isNumeric().withMessage('Amount must be a number'),
@@ -85,7 +85,7 @@ router.post(
             .isISO8601()
             .withMessage('Begin date must be a datetime'),
         body('endDate')
-            .optional()
+            .optional({ nullable: true })
             .isISO8601()
             .withMessage('End date must be a datetime'),
         validateRequest,
@@ -101,7 +101,7 @@ router.put(
             .isInt({ min: 1 })
             .withMessage('Account ID must be a number'),
         body('taxId')
-            .optional()
+            .optional({ nullable: true })
             .isInt({ min: 1 })
             .withMessage('Tax ID must be a number'),
         body('amount').isNumeric().withMessage('Amount must be a number'),
@@ -143,7 +143,7 @@ router.put(
             .isISO8601()
             .withMessage('Begin date must be a datetime'),
         body('endDate')
-            .optional()
+            .optional({ nullable: true })
             .isISO8601()
             .withMessage('End date must be a datetime'),
         validateRequest,

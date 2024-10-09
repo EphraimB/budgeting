@@ -49,7 +49,11 @@ function IncomeCards({
                   setIncomeModes={setIncomeModes}
                 />
               ) : (
-                <IncomeView income={income} setIncomeModes={setIncomeModes} />
+                <IncomeView
+                  income={income}
+                  taxes={taxes}
+                  setIncomeModes={setIncomeModes}
+                />
               )}
             </Card>
           </Grid>

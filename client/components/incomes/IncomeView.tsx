@@ -5,7 +5,7 @@ import dayjs from "dayjs";
 import CardHeader from "@mui/material/CardHeader";
 import CardContent from "@mui/material/CardContent";
 import Typography from "@mui/material/Typography";
-import { Income } from "@/app/types/types";
+import { Income, Tax } from "@/app/types/types";
 import { getFrequency } from "../../utils/helperFunctions";
 import IconButton from "@mui/material/IconButton";
 import MoreVert from "@mui/icons-material/MoreVert";
@@ -13,9 +13,11 @@ import IncomeActionsMenu from "./IncomeActionsMenu";
 
 function IncomeView({
   income,
+  taxes,
   setIncomeModes,
 }: {
   income: Income;
+  taxes: Tax[];
   setIncomeModes: React.Dispatch<React.SetStateAction<Record<number, string>>>;
 }) {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
@@ -28,6 +30,17 @@ function IncomeView({
   const handleClose = () => {
     setAnchorEl(null);
   };
+
+  // Find the tax object that matches the expense's tax_id
+  const taxObject = taxes
+    ? taxes.find((tax: Tax) => tax.id === income.taxId)
+    : 0;
+
+  // Get the tax rate from the tax object
+  const taxRate: number = taxObject ? taxObject.rate : 0;
+
+  // Calculate the amount after tax
+  const amountAfterTax: number = income.amount - income.amount * taxRate;
 
   return (
     <>
@@ -56,7 +69,7 @@ function IncomeView({
       <CardHeader title={income.title} subheader={income.description} />
       <CardContent>
         <Typography variant="body2">
-          You will be charged ${income.amount.toFixed(2)} next on{" "}
+          You will receive ${amountAfterTax.toFixed(2)} next on{" "}
           {dayjs(income.nextDate).format("dddd MMMM D, YYYY h:mm A")}. You get
           charged {getFrequency(income)}.
         </Typography>
