@@ -71,8 +71,8 @@ function TransfersView({
             : "n/a"}{" "}
           your account on{" "}
           {dayjs(transfer.nextDate).format("dddd MMMM D, YYYY h:mm A")}{" "}
-          {transfer.endDate
-            ? `until ${dayjs(transfer.endDate).format(
+          {transfer.dates.endDate
+            ? `until ${dayjs(transfer.dates.endDate).format(
                 "dddd MMMM D, YYYY h:mm A"
               )}`
             : null}

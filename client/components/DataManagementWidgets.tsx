@@ -86,7 +86,7 @@ function DataManagementWidgets({
       } with a total of $${incomes
         .reduce((acc: number, income: Income) => acc + income.amount, 0)
         .toFixed(2)}.`,
-      selected: isSelected("expenses"),
+      selected: isSelected("income"),
     },
     {
       id: "expenses",

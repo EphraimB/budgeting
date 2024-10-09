@@ -46,8 +46,6 @@ export interface Income {
   frequency: Frequency;
   dates: Dates;
   nextDate: string | null;
-  beginDate: string | null;
-  endDate: string | null;
   dateCreated: string;
   dateModified: string;
 }
@@ -63,8 +61,6 @@ export interface Expense {
   subsidized: number;
   dates: Dates;
   nextDate: string | null;
-  beginDate: string | null;
-  endDate: string | null;
   dateCreated: string;
   dateModified: string;
 }
@@ -157,7 +153,6 @@ export interface Transfer {
   dates: Dates;
   frequency: Frequency;
   nextDate: string;
-  endDate: string | null;
   dateCreated: string;
   dateModified: string;
 }
