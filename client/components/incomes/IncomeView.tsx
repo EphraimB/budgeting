@@ -71,9 +71,9 @@ function IncomeView({
         <Typography variant="body2">
           You will receive ${amountAfterTax.toFixed(2)} next on{" "}
           {dayjs(income.nextDate).format("dddd MMMM D, YYYY h:mm A")}. You will
-          receive this income {getFrequency(income)}{" "}
+          receive this income {getFrequency(income)}
           {income.dates.endDate !== null
-            ? `until ${dayjs(income.dates.endDate).format(
+            ? ` until ${dayjs(income.dates.endDate).format(
                 "dddd MMMM D, YYYY h:mm A"
               )}`
             : null}

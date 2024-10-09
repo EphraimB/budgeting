@@ -70,9 +70,9 @@ function TransfersView({
             ? "to"
             : "n/a"}{" "}
           your account on{" "}
-          {dayjs(transfer.nextDate).format("dddd MMMM D, YYYY h:mm A")}{" "}
-          {transfer.dates.endDate
-            ? `until ${dayjs(transfer.dates.endDate).format(
+          {dayjs(transfer.nextDate).format("dddd MMMM D, YYYY h:mm A")}
+          {transfer.dates.endDate !== null
+            ? ` until ${dayjs(transfer.dates.endDate).format(
                 "dddd MMMM D, YYYY h:mm A"
               )}`
             : null}
