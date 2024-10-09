@@ -26,19 +26,23 @@ import FormControlLabel from "@mui/material/FormControlLabel";
 import InputAdornment from "@mui/material/InputAdornment";
 import { useAlert, useSnackbar } from "../../context/FeedbackContext";
 import { addIncome } from "../../services/actions/income";
+import { Tax } from "@/app/types/types";
 
 dayjs.extend(utc);
 
 function NewIncomeForm({
   accountId,
+  taxes,
   setShowIncomeForm,
 }: {
   accountId: number;
+  taxes: Tax[];
   setShowIncomeForm: (show: boolean) => void;
 }) {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [amount, setAmount] = useState("0");
+  const [taxId, setTaxId] = useState(0);
   const [frequencyType, setFrequencyType] = useState(2);
   const [frequencyDayOfWeek, setFrequencyDayOfWeek] = useState(-1);
   const [frequencyWeekOfMonth, setFrequencyWeekOfMonth] = useState(-1);
@@ -71,6 +75,7 @@ function NewIncomeForm({
     title,
     description,
     amount: parseFloat(amount),
+    taxId: taxId === 0 ? null : taxId,
     frequency: {
       type: frequencyType,
       dayOfWeek: frequencyDayOfWeek === -1 ? null : frequencyDayOfWeek,
@@ -224,6 +229,25 @@ function NewIncomeForm({
                 ),
               }}
             />
+            <br />
+            <br />
+            <FormControl fullWidth>
+              <InputLabel id="tax-select-label">Tax</InputLabel>
+              <Select
+                labelId="tax-select-label"
+                label="Tax"
+                variant="standard"
+                value={taxId}
+                onChange={(e) => setTaxId(e.target.value as number)}
+              >
+                <MenuItem value={0}>No tax - 0%</MenuItem>
+                {taxes.map((tax: Tax) => (
+                  <MenuItem key={tax.id} value={tax.id}>
+                    {tax.title} - {tax.rate * 100}%
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
           </>
         ) : activeStep === 2 ? (
           <>

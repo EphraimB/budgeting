@@ -23,6 +23,8 @@ export async function addIncome(income: IncomeRequest) {
   });
   const result = await response.json();
 
+  console.log(result);
+
   revalidatePath("/[accountId]", "page");
 
   return result;
@@ -37,8 +39,6 @@ export async function editIncome(income: IncomeRequest, id: number) {
     body: JSON.stringify(income),
   });
   const result = await response.json();
-
-  console.log(result)
 
   revalidatePath("/[accountId]", "page");
   return result;

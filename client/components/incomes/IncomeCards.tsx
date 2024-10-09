@@ -31,6 +31,7 @@ function IncomeCards({
           <Grid key="new-income" item>
             <NewIncomeForm
               accountId={accountId}
+              taxes={taxes}
               setShowIncomeForm={setShowIncomeForm}
             />
           </Grid>
