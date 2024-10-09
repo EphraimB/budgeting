@@ -3,6 +3,8 @@ services:
     build:
       context: ./client/
       dockerfile: Dockerfile
+      args:
+        NODE_ENV: ${NODE_ENV}
     environment:
       - NODE_ENV=${NODE_ENV}
     networks:
