@@ -75,7 +75,13 @@ function ExpensesView({
         <Typography variant="body2">
           You will be charged ${amountAfterSubsidy.toFixed(2)} next on{" "}
           {dayjs(expense.nextDate).format("dddd MMMM D, YYYY h:mm A")}. You get
-          charged {getFrequency(expense)}.
+          charged {getFrequency(expense)}{" "}
+          {expense.endDate
+            ? `until ${dayjs(expense.endDate).format(
+                "dddd MMMM D, YYYY h:mm A"
+              )}`
+            : null}
+          .
         </Typography>
       </CardContent>
     </>

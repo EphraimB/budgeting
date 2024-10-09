@@ -70,7 +70,13 @@ function TransfersView({
             ? "to"
             : "n/a"}{" "}
           your account on{" "}
-          {dayjs(transfer.nextDate).format("dddd MMMM D, YYYY h:mm A")}.
+          {dayjs(transfer.nextDate).format("dddd MMMM D, YYYY h:mm A")}{" "}
+          {transfer.endDate
+            ? `until ${dayjs(transfer.endDate).format(
+                "dddd MMMM D, YYYY h:mm A"
+              )}`
+            : null}
+          .
         </Typography>
       </CardContent>
     </>

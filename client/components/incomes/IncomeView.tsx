@@ -70,8 +70,14 @@ function IncomeView({
       <CardContent>
         <Typography variant="body2">
           You will receive ${amountAfterTax.toFixed(2)} next on{" "}
-          {dayjs(income.nextDate).format("dddd MMMM D, YYYY h:mm A")}. You get
-          charged {getFrequency(income)}.
+          {dayjs(income.nextDate).format("dddd MMMM D, YYYY h:mm A")}. You will
+          receive this income {getFrequency(income)}{" "}
+          {income.endDate
+            ? `until ${dayjs(income.endDate).format(
+                "dddd MMMM D, YYYY h:mm A"
+              )}`
+            : null}
+          .
         </Typography>
       </CardContent>
     </>
