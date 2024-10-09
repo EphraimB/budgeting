@@ -3,7 +3,7 @@ import "@testing-library/jest-dom";
 import { render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import dayjs from "dayjs";
-import NewIncomeForm from "../../../components/incomes/NewIncomeForm";
+import IncomeEdit from "../../../components/incomes/IncomeEdit";
 
 jest.mock("next/navigation", () => ({
   useRouter: jest.fn(),
@@ -19,8 +19,32 @@ jest.mock("../../../context/FeedbackContext", () => ({
   }),
 }));
 
-describe("NewIncomeForm", () => {
+describe("IncomeEdit", () => {
   it("renders the component", async () => {
+    const income = {
+      accountId: 1,
+      id: 1,
+      taxId: 1,
+      title: "Test Income",
+      amount: 155.99,
+      description: "Test Description",
+      frequency: {
+        type: 2,
+        typeVariable: 1,
+        dayOfMonth: null,
+        dayOfWeek: null,
+        weekOfMonth: null,
+        monthOfYear: null,
+      },
+      dates: {
+        beginDate: "2021-10-01",
+        endDate: null,
+      },
+      nextDate: null,
+      dateCreated: "2021-10-01",
+      dateModified: "2021-10-01",
+    };
+
     const taxes = [
       {
         id: 1,
@@ -43,37 +67,40 @@ describe("NewIncomeForm", () => {
     ];
 
     render(
-      <NewIncomeForm
+      <IncomeEdit
         accountId={1}
+        income={income}
         taxes={taxes}
-        setShowIncomeForm={() => true}
+        setIncomeModes={() => {}}
       />
     );
 
     expect(screen.getByLabelText("close")).toBeInTheDocument();
-    expect(screen.getByText("New Income - Step 1 of 4")).toBeInTheDocument();
+    expect(screen.getByText("Edit Income - Step 1 of 4")).toBeInTheDocument();
     expect(screen.getByText("Next")).toBeInTheDocument();
 
-    expect(screen.getByLabelText("Title")).toHaveValue("");
-    expect(screen.getByLabelText("Description")).toHaveValue("");
+    expect(screen.getByLabelText("Title")).toHaveValue("Test Income");
+    expect(screen.getByLabelText("Description")).toHaveValue(
+      "Test Description"
+    );
 
     // Go to the next step by clicking the "Next" button
     await userEvent.click(screen.getByText("Next"));
 
-    expect(screen.getByText("New Income - Step 2 of 4")).toBeInTheDocument();
-    expect(screen.getByLabelText("Amount")).toHaveValue(0);
+    expect(screen.getByText("Edit Income - Step 2 of 4")).toBeInTheDocument();
+    expect(screen.getByLabelText("Amount")).toHaveValue(155.99);
 
     expect(screen.getByLabelText("Tax")).toBeInTheDocument();
-    expect(screen.getByText("No tax - 0%"));
-
-    await userEvent.click(screen.getByText("No tax - 0%"));
-    expect(screen.getByText("NYC Sales Tax - 8.875%")).toBeInTheDocument();
     expect(screen.getByText("Test Tax - 5%"));
+
+    await userEvent.click(screen.getByText("Test Tax - 5%"));
+    expect(screen.getByText("NYC Sales Tax - 8.875%")).toBeInTheDocument();
+    expect(screen.getByText("No tax - 0%"));
 
     // Go to the next step by clicking the "Next" button
     await userEvent.click(screen.getByText("Next"));
 
-    expect(screen.getByText("New Income - Step 3 of 4")).toBeInTheDocument();
+    expect(screen.getByText("Edit Income - Step 3 of 4")).toBeInTheDocument();
 
     expect(screen.getByLabelText("Frequency")).toBeInTheDocument();
     expect(screen.getByText("Monthly")).toBeInTheDocument();
@@ -161,10 +188,10 @@ describe("NewIncomeForm", () => {
     // Go to the next step by clicking the "Next" button
     await userEvent.click(screen.getByText("Next"));
 
-    expect(screen.getByText("New Income - Step 4 of 4")).toBeInTheDocument();
+    expect(screen.getByText("Edit Income - Step 4 of 4")).toBeInTheDocument();
 
     expect(screen.getByLabelText("Income begin date")).toHaveValue(
-      dayjs().format("MM/DD/YYYY hh:mm A")
+      "09/30/2021 08:00 PM"
     );
 
     // Check that the "Income end date" input is not checked
