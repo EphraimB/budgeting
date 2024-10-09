@@ -1,14 +1,14 @@
 import React from "react";
 import { render, screen } from "@testing-library/react";
-import ExpensesView from "../../../components/expenses/ExpensesView";
 import "@testing-library/jest-dom";
-import { Expense } from "@/app/types/types";
+import { Income } from "@/app/types/types";
+import IncomeView from "../../../components/incomes/IncomeView";
 
-describe("ExpensesView", () => {
-  const setExpenseModes = jest.fn();
+describe("IncomeView", () => {
+  const setIncomeModes = jest.fn();
 
   it("renders without an end date", () => {
-    const expense: Expense = {
+    const income: Income = {
       id: 1,
       taxId: null,
       accountId: 1,
@@ -24,7 +24,6 @@ describe("ExpensesView", () => {
         weekOfMonth: null,
         monthOfYear: null,
       },
-      subsidized: 0,
       dates: {
         beginDate: "2021-01-01T00:00:00.000Z",
         endDate: null,
@@ -34,24 +33,20 @@ describe("ExpensesView", () => {
     };
 
     render(
-      <ExpensesView
-        expense={expense}
-        setExpenseModes={setExpenseModes}
-        taxes={[]}
-      />
+      <IncomeView income={income} setIncomeModes={setIncomeModes} taxes={[]} />
     );
 
     expect(screen.getByTestId("MoreVertIcon")).toBeInTheDocument();
     expect(screen.getByText("Test")).toBeInTheDocument();
     expect(
       screen.getByText(
-        "You will be charged $1000.00 next on Friday December 31, 2021 7:00 PM. You get charged monthly on the 31st."
+        "You will receive $1000.00 next on Friday December 31, 2021 7:00 PM. You will receive this income monthly on the 31st."
       )
     ).toBeInTheDocument();
   });
 
   it("renders with an end date", () => {
-    const expense: Expense = {
+    const income: Income = {
       id: 1,
       taxId: null,
       accountId: 1,
@@ -67,28 +62,23 @@ describe("ExpensesView", () => {
         weekOfMonth: null,
         monthOfYear: null,
       },
-      subsidized: 0,
       dates: {
         beginDate: "2021-01-01T00:00:00.000Z",
-        endDate: "2022-03-01T00:00:00.000Z",
+        endDate: "2022-02-01T00:00:00.000Z",
       },
       dateCreated: "2021-10-01T00:00:00.000Z",
       dateModified: "2021-10-01T00:00:00.000Z",
     };
 
     render(
-      <ExpensesView
-        expense={expense}
-        setExpenseModes={setExpenseModes}
-        taxes={[]}
-      />
+      <IncomeView income={income} setIncomeModes={setIncomeModes} taxes={[]} />
     );
 
     expect(screen.getByTestId("MoreVertIcon")).toBeInTheDocument();
     expect(screen.getByText("Test")).toBeInTheDocument();
     expect(
       screen.getByText(
-        "You will be charged $1000.00 next on Friday December 31, 2021 7:00 PM. You get charged monthly on the 31st until Monday February 28, 2022 7:00 PM."
+        "You will receive $1000.00 next on Friday December 31, 2021 7:00 PM. You will receive this income monthly on the 31st until Monday January 31, 2022 7:00 PM."
       )
     ).toBeInTheDocument();
   });

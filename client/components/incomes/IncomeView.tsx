@@ -5,20 +5,20 @@ import dayjs from "dayjs";
 import CardHeader from "@mui/material/CardHeader";
 import CardContent from "@mui/material/CardContent";
 import Typography from "@mui/material/Typography";
-import { Expense, Tax } from "@/app/types/types";
+import { Income, Tax } from "@/app/types/types";
 import { getFrequency } from "../../utils/helperFunctions";
 import IconButton from "@mui/material/IconButton";
 import MoreVert from "@mui/icons-material/MoreVert";
-import ExpenseActionsMenu from "./ExpenseActionsMenu";
+import IncomeActionsMenu from "./IncomeActionsMenu";
 
-function ExpensesView({
-  expense,
+function IncomeView({
+  income,
   taxes,
-  setExpenseModes,
+  setIncomeModes,
 }: {
-  expense: Expense;
+  income: Income;
   taxes: Tax[];
-  setExpenseModes: React.Dispatch<React.SetStateAction<Record<number, string>>>;
+  setIncomeModes: React.Dispatch<React.SetStateAction<Record<number, string>>>;
 }) {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
@@ -33,18 +33,14 @@ function ExpensesView({
 
   // Find the tax object that matches the expense's tax_id
   const taxObject = taxes
-    ? taxes.find((tax: Tax) => tax.id === expense.taxId)
+    ? taxes.find((tax: Tax) => tax.id === income.taxId)
     : 0;
 
   // Get the tax rate from the tax object
   const taxRate: number = taxObject ? taxObject.rate : 0;
 
   // Calculate the amount after tax
-  const amountAfterTax: number = expense.amount + expense.amount * taxRate;
-
-  // Calculate the amount after subsidy
-  const amountAfterSubsidy: number =
-    amountAfterTax - amountAfterTax * expense.subsidized;
+  const amountAfterTax: number = income.amount - income.amount * taxRate;
 
   return (
     <>
@@ -63,21 +59,21 @@ function ExpensesView({
       >
         <MoreVert />
       </IconButton>
-      <ExpenseActionsMenu
+      <IncomeActionsMenu
         anchorEl={anchorEl}
         open={open}
         handleClose={handleClose}
-        setExpenseModes={setExpenseModes}
-        expenseId={expense.id}
+        setIncomeModes={setIncomeModes}
+        incomeId={income.id}
       />
-      <CardHeader title={expense.title} subheader={expense.description} />
+      <CardHeader title={income.title} subheader={income.description} />
       <CardContent>
         <Typography variant="body2">
-          You will be charged ${amountAfterSubsidy.toFixed(2)} next on{" "}
-          {dayjs(expense.nextDate).format("dddd MMMM D, YYYY h:mm A")}. You get
-          charged {getFrequency(expense)}
-          {expense.dates.endDate !== null
-            ? ` until ${dayjs(expense.dates.endDate).format(
+          You will receive ${amountAfterTax.toFixed(2)} next on{" "}
+          {dayjs(income.nextDate).format("dddd MMMM D, YYYY h:mm A")}. You will
+          receive this income {getFrequency(income)}
+          {income.dates.endDate !== null
+            ? ` until ${dayjs(income.dates.endDate).format(
                 "dddd MMMM D, YYYY h:mm A"
               )}`
             : null}
@@ -88,4 +84,4 @@ function ExpensesView({
   );
 }
 
-export default ExpensesView;
+export default IncomeView;
