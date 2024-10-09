@@ -1,19 +1,24 @@
-import { type Request, type Response, type NextFunction } from 'express';
+import { Request, Response, NextFunction, RequestHandler } from 'express';
 import { validationResult } from 'express-validator';
 
 /**
+ * Middleware to validate the request.
  *
- * @param req - Request object
- * @param res - Response object
- * @param next - Next function
- * @returns - Validation errors
+ * @param req - The request object.
+ * @param res - The response object.
+ * @param next - The next middleware function.
  */
-const validateRequest = (req: Request, res: Response, next: NextFunction) => {
+const validateRequest: RequestHandler = (
+    req: Request,
+    res: Response,
+    next: NextFunction,
+): void => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-        return res.status(400).json({ errors: errors.array() });
+        res.status(400).json({ errors: errors.array() });
+    } else {
+        next(); // Call next() only when there are no errors.
     }
-    next();
 };
 
 export default validateRequest;
