@@ -55,7 +55,7 @@ function TaxDelete({
       <br />
       <br />
       <Typography variant="subtitle1" component="h3">
-        Delete "{tax.title}"?
+        Delete &quot;{tax.title}&quot;?
       </Typography>
       <Button color="error" variant="contained" onClick={handleDelete}>
         Delete

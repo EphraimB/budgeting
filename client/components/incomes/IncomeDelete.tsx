@@ -55,7 +55,7 @@ function IncomeDelete({
       <br />
       <br />
       <Typography variant="subtitle1" component="h3">
-        Delete "{income.title}"?
+        Delete &quot;{income.title}&quot;?
       </Typography>
       <Button color="error" variant="contained" onClick={handleDelete}>
         Delete
