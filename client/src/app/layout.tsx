@@ -3,36 +3,20 @@ import type { Metadata } from "next";
 import GlobalAppBar from "../../components/GlobalAppBar";
 import Alerts from "../../components/feedback/Alerts";
 import Container from "@mui/material/Container";
-import AccountList from "../../components/accounts/AccountList";
 import { FeedbackProvider } from "../../context/FeedbackContext";
 import SnackbarFeedback from "../../components/feedback/SnackbarFeedback";
+import AccountFetcher from "../../components/accounts/AccountFetcher";
 
 export const metadata: Metadata = {
   title: "Budgeting",
   description: "Budgeting app that simulates how you would spend your money.",
 };
 
-async function getAccounts() {
-  try {
-    const res = await fetch("http://server:5001/api/accounts");
-
-    if (!res.ok) {
-      throw new Error(res.statusText);
-    }
-
-    return res.json();
-  } catch (error) {
-    throw new Error("Failed to fetch accounts");
-  }
-}
-
 export default async function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const accounts = await getAccounts();
-
   return (
     <html lang="en">
       <body>
@@ -41,7 +25,7 @@ export default async function RootLayout({
           <Alerts />
           <br />
           <Container maxWidth="lg">
-            <AccountList accounts={accounts} />
+            <AccountFetcher />
             {children}
           </Container>
           <SnackbarFeedback />
