@@ -57,7 +57,7 @@ function PayrollTaxDelete({
       <br />
       <br />
       <Typography variant="subtitle1" component="h3">
-        Delete "{payrollTax.name}"?
+        Delete &quot;{payrollTax.name}&quot;?
       </Typography>
       <Button color="error" variant="contained" onClick={handleDelete}>
         Delete

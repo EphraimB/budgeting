@@ -55,7 +55,7 @@ function ExpenseDelete({
       <br />
       <br />
       <Typography variant="subtitle1" component="h3">
-        Delete "{expense.title}"?
+        Delete &quot;{expense.title}&quot;?
       </Typography>
       <Button color="error" variant="contained" onClick={handleDelete}>
         Delete

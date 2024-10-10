@@ -40,6 +40,7 @@ PGUSER=[The database user]
 PGPASSWORD=[The database password]
 PGHOST=db
 PGPORT=[The database port]
+NODE_ENV=[[production] or [development]]
 ```
 
 Save the .env file.
