@@ -5,26 +5,34 @@ import TransferCards from "../../../../components/transfers/TransfersCards";
 import { notFound } from "next/navigation";
 
 async function getTransfers(accountId: number) {
-  const res = await fetch(
-    `http://server:5001/api/transfers?accountId=${accountId}`
-  );
+  try {
+    const res = await fetch(
+      `http://server:5001/api/transfers?accountId=${accountId}`
+    );
 
-  if (!res.ok) {
+    if (!res.ok) {
+      throw new Error(res.statusText);
+    }
+
+    return res.json();
+  } catch {
     throw new Error("Failed to fetch transfers");
   }
-
-  return res.json();
 }
 
 async function getAccounts(accountId: number) {
-  const res = await fetch("http://server:5001/api/accounts");
+  try {
+    const res = await fetch("http://server:5001/api/accounts");
 
-  if (!res.ok) {
+    if (!res.ok) {
+      throw new Error(res.statusText);
+    }
+
+    const data = await res.json();
+    return data.filter((account: Account) => account.id !== accountId);
+  } catch {
     throw new Error("Failed to fetch accounts");
   }
-
-  const data = await res.json();
-  return data.filter((account: Account) => account.id !== accountId);
 }
 
 async function Transfers({ params }: { params: { accountId: string } }) {

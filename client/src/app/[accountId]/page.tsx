@@ -9,15 +9,19 @@ async function getTransactions(
   fromDate: string,
   toDate: string
 ) {
-  const res = await fetch(
-    `http://server:5001/api/transactions/${accountId}?fromDate=${fromDate}&toDate=${toDate}`
-  );
+  try {
+    const res = await fetch(
+      `http://server:5001/api/transactions/${accountId}?fromDate=${fromDate}&toDate=${toDate}`
+    );
 
-  if (!res.ok) {
+    if (!res.ok) {
+      throw new Error(res.statusText);
+    }
+
+    return res.json();
+  } catch {
     throw new Error("Failed to fetch transactions");
   }
-
-  return res.json();
 }
 
 async function TransactionsPage({

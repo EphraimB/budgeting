@@ -55,7 +55,7 @@ function LoanDelete({
       <br />
       <br />
       <Typography variant="subtitle1" component="h3">
-        Delete "{loan.title}"?
+        Delete &quot;{loan.title}&quot;?
       </Typography>
       <Button color="error" variant="contained" onClick={handleDelete}>
         Delete

@@ -59,6 +59,9 @@ export default function AccountEdit({
         ...prevModes,
         [account.id]: "view",
       }));
+
+      // Perform a hard refresh
+      window.location.reload(); // This will refresh the entire page
     } else {
       // Show error message
       showAlert(

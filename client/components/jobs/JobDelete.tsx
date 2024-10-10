@@ -55,7 +55,7 @@ function JobDelete({
       <br />
       <br />
       <Typography variant="subtitle1" component="h3">
-        Delete "{job.name}"?
+        Delete &quot;{job.name}&quot;?
       </Typography>
       <Button color="error" variant="contained" onClick={handleDelete}>
         Delete

@@ -3,6 +3,10 @@ services:
     build:
       context: ./client/
       dockerfile: Dockerfile
+      args:
+        NODE_ENV: ${NODE_ENV}
+    environment:
+      - NODE_ENV=${NODE_ENV}
     networks:
       - app-network
     ports:
@@ -14,12 +18,15 @@ services:
     build:
       context: ./server/
       dockerfile: Dockerfile
+      args:
+        NODE_ENV: ${NODE_ENV}
     environment:
       - PGHOST=db
       - PGDATABASE=${PGDB}
       - PGUSER=${PGUSER}
       - PGPASSWORD=${PGPASSWORD}
       - PGPORT=5432
+      - NODE_ENV=${NODE_ENV}
     networks:
       - app-network
     ports:

@@ -44,6 +44,9 @@ function AccountDelete({
       ...prevModes,
       [account.id]: "view",
     }));
+
+    // Perform a hard refresh
+    window.location.reload(); // This will refresh the entire page
   };
 
   const handleCancel = () => {
