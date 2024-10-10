@@ -13,75 +13,99 @@ async function getAccounts() {
 }
 
 async function getIncome(accountId: number) {
-  const res = await fetch(
-    `http://server:5001/api/income?accountId=${accountId}`
-  );
+  try {
+    const res = await fetch(
+      `http://server:5001/api/income?accountId=${accountId}`
+    );
 
-  if (!res.ok) {
+    if (!res.ok) {
+      throw new Error(res.statusText);
+    }
+
+    return res.json();
+  } catch {
     throw new Error("Failed to fetch income");
   }
-
-  return res.json();
 }
 
 async function getExpenses(accountId: number) {
-  const res = await fetch(
-    `http://server:5001/api/expenses?accountId=${accountId}`
-  );
+  try {
+    const res = await fetch(
+      `http://server:5001/api/expenses?accountId=${accountId}`
+    );
 
-  if (!res.ok) {
+    if (!res.ok) {
+      throw new Error(res.statusText);
+    }
+
+    return res.json();
+  } catch {
     throw new Error("Failed to fetch expenses");
   }
-
-  return res.json();
 }
 
 async function getTaxes(accountId: number) {
-  const res = await fetch(
-    `http://server:5001/api/taxes?accountId=${accountId}`
-  );
+  try {
+    const res = await fetch(
+      `http://server:5001/api/taxes?accountId=${accountId}`
+    );
 
-  if (!res.ok) {
+    if (!res.ok) {
+      throw new Error(res.statusText);
+    }
+
+    return res.json();
+  } catch {
     throw new Error("Failed to fetch taxes");
   }
-
-  return res.json();
 }
 
 async function getLoans(accountId: number) {
-  const res = await fetch(
-    `http://server:5001/api/loans?accountId=${accountId}`
-  );
+  try {
+    const res = await fetch(
+      `http://server:5001/api/loans?accountId=${accountId}`
+    );
 
-  if (!res.ok) {
+    if (!res.ok) {
+      throw new Error(res.statusText);
+    }
+
+    return res.json();
+  } catch {
     throw new Error("Failed to fetch loans");
   }
-
-  return res.json();
 }
 
 async function getWishlists(accountId: number) {
-  const res = await fetch(
-    `http://server:5001/api/wishlists?accountId=${accountId}`
-  );
+  try {
+    const res = await fetch(
+      `http://server:5001/api/wishlists?accountId=${accountId}`
+    );
 
-  if (!res.ok) {
+    if (!res.ok) {
+      throw new Error(res.statusText);
+    }
+
+    return res.json();
+  } catch {
     throw new Error("Failed to fetch wishlists");
   }
-
-  return res.json();
 }
 
 async function getTransfers(accountId: number) {
-  const res = await fetch(
-    `http://server:5001/api/transfers?accountId=${accountId}`
-  );
+  try {
+    const res = await fetch(
+      `http://server:5001/api/transfers?accountId=${accountId}`
+    );
 
-  if (!res.ok) {
+    if (!res.ok) {
+      throw new Error(res.statusText);
+    }
+
+    return res.json();
+  } catch {
     throw new Error("Failed to fetch transfers");
   }
-
-  return res.json();
 }
 
 export default async function Layout({

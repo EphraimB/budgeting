@@ -4,13 +4,17 @@ import { Tax } from "@/app/types/types";
 import TaxCards from "../../../../components/taxes/TaxCards";
 
 async function getTaxes() {
-  const res = await fetch("http://server:5001/api/taxes");
+  try {
+    const res = await fetch("http://server:5001/api/taxes");
 
-  if (!res.ok) {
+    if (!res.ok) {
+      throw new Error(res.statusText);
+    }
+
+    return res.json();
+  } catch {
     throw new Error("Failed to fetch taxes");
   }
-
-  return res.json();
 }
 
 async function Taxes() {

@@ -4,25 +4,33 @@ import { Tax, Wishlist } from "@/app/types/types";
 import WishlistsCards from "../../../../components/wishlists/WishlistsCards";
 
 async function getWishlists(accountId: number) {
-  const res = await fetch(
-    `http://server:5001/api/wishlists?accountId=${accountId}`
-  );
+  try {
+    const res = await fetch(
+      `http://server:5001/api/wishlists?accountId=${accountId}`
+    );
 
-  if (!res.ok) {
+    if (!res.ok) {
+      throw new Error(res.statusText);
+    }
+
+    return res.json();
+  } catch {
     throw new Error("Failed to fetch wishlists");
   }
-
-  return res.json();
 }
 
 async function getTaxes() {
-  const res = await fetch("http://server:5001/api/taxes");
+  try {
+    const res = await fetch("http://server:5001/api/taxes");
 
-  if (!res.ok) {
+    if (!res.ok) {
+      throw new Error(res.statusText);
+    }
+
+    return res.json();
+  } catch {
     throw new Error("Failed to fetch taxes");
   }
-
-  return res.json();
 }
 
 async function Wishlists({ params }: { params: { accountId: string } }) {

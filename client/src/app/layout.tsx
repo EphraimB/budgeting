@@ -13,13 +13,17 @@ export const metadata: Metadata = {
 };
 
 async function getAccounts() {
-  const res = await fetch("http://server:5001/api/accounts");
+  try {
+    const res = await fetch("http://server:5001/api/accounts");
 
-  if (!res.ok) {
+    if (!res.ok) {
+      throw new Error(res.statusText);
+    }
+
+    return res.json();
+  } catch (error) {
     throw new Error("Failed to fetch accounts");
   }
-
-  return res.json();
 }
 
 export default async function RootLayout({

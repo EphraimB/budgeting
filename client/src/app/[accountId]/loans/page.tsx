@@ -4,15 +4,19 @@ import { Loan } from "@/app/types/types";
 import LoansCards from "../../../../components/loans/LoansCards";
 
 async function getLoans(accountId: number) {
-  const res = await fetch(
-    `http://server:5001/api/loans?accountId=${accountId}`
-  );
+  try {
+    const res = await fetch(
+      `http://server:5001/api/loans?accountId=${accountId}`
+    );
 
-  if (!res.ok) {
+    if (!res.ok) {
+      throw new Error(res.statusText);
+    }
+
+    return res.json();
+  } catch {
     throw new Error("Failed to fetch loans");
   }
-
-  return res.json();
 }
 
 async function Loans({ params }: { params: { accountId: string } }) {

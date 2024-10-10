@@ -4,25 +4,33 @@ import { Expense, Tax } from "@/app/types/types";
 import ExpensesCards from "../../../../components/expenses/ExpensesCards";
 
 async function getExpenses(accountId: number) {
-  const res = await fetch(
-    `http://server:5001/api/expenses?accountId=${accountId}`
-  );
+  try {
+    const res = await fetch(
+      `http://server:5001/api/expenses?accountId=${accountId}`
+    );
 
-  if (!res.ok) {
+    if (!res.ok) {
+      throw new Error(res.statusText);
+    }
+
+    return res.json();
+  } catch {
     throw new Error("Failed to fetch expenses");
   }
-
-  return res.json();
 }
 
 async function getTaxes() {
-  const res = await fetch("http://server:5001/api/taxes");
+  try {
+    const res = await fetch("http://server:5001/api/taxes");
 
-  if (!res.ok) {
+    if (!res.ok) {
+      throw new Error(res.statusText);
+    }
+
+    return res.json();
+  } catch {
     throw new Error("Failed to fetch taxes");
   }
-
-  return res.json();
 }
 
 async function Expenses({ params }: { params: { accountId: string } }) {

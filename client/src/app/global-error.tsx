@@ -1,6 +1,5 @@
 "use client";
 
-import React from "react";
 import { useAlert } from "../../context/FeedbackContext";
 
 export default function GlobalError({

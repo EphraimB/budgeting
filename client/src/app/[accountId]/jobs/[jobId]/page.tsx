@@ -2,37 +2,49 @@ import { Job, PayrollDate, PayrollTax } from "@/app/types/types";
 import JobDetailsView from "../../../../../components/jobs/JobDetailsView";
 
 async function getJob(jobId: number) {
-  const res = await fetch(`http://server:5001/api/jobs/${jobId}`);
+  try {
+    const res = await fetch(`http://server:5001/api/jobs/${jobId}`);
 
-  if (!res.ok) {
+    if (!res.ok) {
+      throw new Error(res.statusText);
+    }
+
+    return res.json();
+  } catch {
     throw new Error("Failed to fetch jobs");
   }
-
-  return res.json();
 }
 
 async function getPayrollDates(jobId: number) {
-  const res = await fetch(
-    `http://server:5001/api/jobs/payroll/dates?jobId=${jobId}`
-  );
+  try {
+    const res = await fetch(
+      `http://server:5001/api/jobs/payroll/dates?jobId=${jobId}`
+    );
 
-  if (!res.ok) {
+    if (!res.ok) {
+      throw new Error(res.statusText);
+    }
+
+    return res.json();
+  } catch {
     throw new Error("Failed to fetch payroll dates");
   }
-
-  return res.json();
 }
 
 async function getPayrollTaxes(jobId: number) {
-  const res = await fetch(
-    `http://server:5001/api/jobs/payroll/taxes?jobId=${jobId}`
-  );
+  try {
+    const res = await fetch(
+      `http://server:5001/api/jobs/payroll/taxes?jobId=${jobId}`
+    );
 
-  if (!res.ok) {
+    if (!res.ok) {
+      throw new Error(res.statusText);
+    }
+
+    return res.json();
+  } catch {
     throw new Error("Failed to fetch payroll taxes");
   }
-
-  return res.json();
 }
 
 async function JobDetails({

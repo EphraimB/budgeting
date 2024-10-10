@@ -4,25 +4,33 @@ import { Income, Tax } from "@/app/types/types";
 import IncomeCards from "../../../../components/incomes/IncomeCards";
 
 async function getIncome(accountId: number) {
-  const res = await fetch(
-    `http://server:5001/api/income?accountId=${accountId}`
-  );
+  try {
+    const res = await fetch(
+      `http://server:5001/api/income?accountId=${accountId}`
+    );
 
-  if (!res.ok) {
+    if (!res.ok) {
+      throw new Error(res.statusText);
+    }
+
+    return res.json();
+  } catch {
     throw new Error("Failed to fetch income");
   }
-
-  return res.json();
 }
 
 async function getTaxes() {
-  const res = await fetch("http://server:5001/api/taxes");
+  try {
+    const res = await fetch("http://server:5001/api/taxes");
 
-  if (!res.ok) {
+    if (!res.ok) {
+      throw new Error(res.statusText);
+    }
+
+    return res.json();
+  } catch {
     throw new Error("Failed to fetch taxes");
   }
-
-  return res.json();
 }
 
 async function IncomePage({ params }: { params: { accountId: string } }) {
