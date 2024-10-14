@@ -296,6 +296,17 @@ DECLARE
     cron_expression text;
     inner_sql text;
 BEGIN
+    -- Step 1: Unschedule all cron jobs related to the selected job_id
+    FOR pay_period IN
+        SELECT jobname 
+        FROM cron.job
+        WHERE jobname LIKE 'payroll-' || selected_job_id || '-%'
+    LOOP
+        -- Unschedule each payroll job related to the selected job_id
+        PERFORM cron.unschedule(pay_period.jobname);
+    END LOOP;
+
+    -- Step 2: Proceed with payroll processing
     FOR pay_period IN
     WITH ordered_table AS (
             SELECT payroll_day,

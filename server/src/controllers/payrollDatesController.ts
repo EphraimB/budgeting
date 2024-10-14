@@ -152,10 +152,6 @@ export const togglePayrollDate = async (
             );
 
             const uniqueId = cronIdResult[0].unique_id;
-
-            await client.query(`
-                        SELECT cron.unschedule('${uniqueId}')
-                    `);
         });
 
         if (rows.length > 0) {
@@ -183,10 +179,6 @@ export const togglePayrollDate = async (
                 `,
                 [uniqueIdResults[0].id],
             );
-
-            await client.query(`
-                SELECT cron.unschedule('${uniqueIdResults[0].unique_id}')
-            `);
         } else {
             const uniqueId = `payroll-${jobId}-${payrollDay}`;
             const cronExpression = `0 8 ${payrollDay} ${dayjs().get('month') + 1} *`;
@@ -211,9 +203,9 @@ export const togglePayrollDate = async (
                 `,
                 [cronId, jobId, payrollDay],
             );
-
-            await client.query('SELECT process_payroll_for_job($1)', [jobId]);
         }
+
+        await client.query('SELECT process_payroll_for_job($1)', [jobId]);
 
         await client.query('COMMIT;');
 
