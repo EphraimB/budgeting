@@ -123,6 +123,7 @@ CREATE TABLE IF NOT EXISTS loans (
 -- Create tables for payroll in postgres.
 CREATE TABLE IF NOT EXISTS payroll_dates (
   id SERIAL PRIMARY KEY,
+  cron_job_id INT NOT NULL REFERENCES cron_jobs(id),
   job_id INTEGER NOT NULL REFERENCES jobs(id) ON DELETE CASCADE,
   payroll_day INTEGER NOT NULL
 );
@@ -381,7 +382,7 @@ BEGIN
                     selected_job_id, pay_period.gross_pay, (pay_period.gross_pay - pay_period.net_pay) / pay_period.gross_pay, pay_period.start_date, pay_period.payroll_date);
 
         EXECUTE format('SELECT cron.schedule(%L, %L, %L)',
-            'payroll-' || selected_job_id || '-' || pay_period.start_date || '-' || pay_period.payroll_date,
+            'payroll-' || selected_job_id || '-' || EXTRACT(DAY FROM pay_period.payroll_date),
             cron_expression,
             inner_sql);
     END LOOP;
