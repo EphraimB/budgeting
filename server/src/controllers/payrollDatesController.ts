@@ -132,38 +132,7 @@ export const togglePayrollDate = async (
 
         await client.query('BEGIN;');
 
-        const { rows: cronIdResultsForJob } = await client.query(
-            `
-                SELECT cron_job_id
-                    FROM payroll_dates
-                    WHERE job_id = $1
-            `,
-            [jobId],
-        );
-
-        cronIdResultsForJob.map(async (row) => {
-            const { rows: cronIdResult } = await client.query(
-                `
-                    SELECT unique_id
-                        FROM cron_jobs
-                        WHERE id = $1
-                `,
-                [row.id],
-            );
-
-            const uniqueId = cronIdResult[0].unique_id;
-        });
-
         if (rows.length > 0) {
-            const { rows: uniqueIdResults } = await client.query(
-                `
-                    SELECT id, unique_id
-                        FROM cron_jobs
-                        WHERE id = $1
-                `,
-                [rows[0].cron_job_id],
-            );
-
             await client.query(
                 `
                     DELETE FROM payroll_dates
@@ -171,37 +140,14 @@ export const togglePayrollDate = async (
                 `,
                 [rows[0].id],
             );
-
-            await client.query(
-                `
-                    DELETE FROM cron_jobs
-                        WHERE id = $1
-                `,
-                [uniqueIdResults[0].id],
-            );
         } else {
-            const uniqueId = `payroll-${jobId}-${payrollDay}`;
-            const cronExpression = `0 8 ${payrollDay} ${dayjs().get('month') + 1} *`;
-
-            const { rows: cronIdResult } = await client.query(
-                `
-                INSERT INTO cron_jobs
-                    (unique_id, cron_expression)
-                    VALUES ($1, $2)
-                    RETURNING *
-            `,
-                [uniqueId, cronExpression],
-            );
-
-            const cronId = cronIdResult[0].id;
-
             await client.query(
                 `
                     INSERT INTO payroll_dates
-                        (cron_job_id, job_id, payroll_day)
-                        VALUES ($1, $2, $3)
+                        (job_id, payroll_day)
+                        VALUES ($1, $2)
                 `,
-                [cronId, jobId, payrollDay],
+                [jobId, payrollDay],
             );
         }
 
