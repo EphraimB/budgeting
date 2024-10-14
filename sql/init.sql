@@ -359,7 +359,12 @@ BEGIN
                 END::integer AS adjusted_payroll_end_day
         ) s1
         JOIN LATERAL generate_series(
-            make_date(extract(year from current_date)::integer, extract(month from current_date)::integer, s1.payroll_start_day), 
+            CASE
+                WHEN s2.payroll_start_day::integer < 0 THEN
+                  (make_date(extract(year from current_date)::integer, extract(month from current_date)::integer, ABS(s2.payroll_start_day::integer)) - INTERVAL '1 MONTH')::DATE
+                ELSE 
+                  make_date(extract(year from current_date)::integer, extract(month from current_date)::integer, s2.payroll_start_day::integer)
+            END, 
             make_date(extract(year from current_date)::integer, extract(month from current_date)::integer, s1.adjusted_payroll_end_day),
             '1 day'
         ) AS gs(date) ON true
