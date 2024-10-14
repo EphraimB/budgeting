@@ -2,6 +2,7 @@ import { type Request, type Response } from 'express';
 import { handleError, toCamelCase } from '../utils/helperFunctions.js';
 import { logger } from '../config/winston.js';
 import pool from '../config/db.js';
+import dayjs from 'dayjs';
 
 /**
  *
@@ -148,9 +149,9 @@ export const togglePayrollDate = async (
                 `,
                 [jobId, payrollDay],
             );
-
-            await client.query('SELECT process_payroll_for_job($1)', [jobId]);
         }
+
+        await client.query('SELECT process_payroll_for_job($1)', [jobId]);
 
         await client.query('COMMIT;');
 

@@ -295,6 +295,17 @@ DECLARE
     cron_expression text;
     inner_sql text;
 BEGIN
+    -- Step 1: Unschedule all cron jobs related to the selected job_id
+    FOR pay_period IN
+        SELECT jobname 
+        FROM cron.job
+        WHERE jobname LIKE 'payroll-' || selected_job_id || '-%'
+    LOOP
+        -- Unschedule each payroll job related to the selected job_id
+        PERFORM cron.unschedule(pay_period.jobname);
+    END LOOP;
+
+    -- Step 2: Proceed with payroll processing
     FOR pay_period IN
     WITH ordered_table AS (
             SELECT payroll_day,
@@ -358,7 +369,12 @@ BEGIN
                 END::integer AS adjusted_payroll_end_day
         ) s1
         JOIN LATERAL generate_series(
-            make_date(extract(year from current_date)::integer, extract(month from current_date)::integer, s1.payroll_start_day), 
+            CASE
+                WHEN s2.payroll_start_day::integer < 0 THEN
+                  (make_date(extract(year from current_date)::integer, extract(month from current_date)::integer, ABS(s2.payroll_start_day::integer)) - INTERVAL '1 MONTH')::DATE
+                ELSE 
+                  make_date(extract(year from current_date)::integer, extract(month from current_date)::integer, s2.payroll_start_day::integer)
+            END, 
             make_date(extract(year from current_date)::integer, extract(month from current_date)::integer, s1.adjusted_payroll_end_day),
             '1 day'
         ) AS gs(date) ON true
@@ -381,7 +397,7 @@ BEGIN
                     selected_job_id, pay_period.gross_pay, (pay_period.gross_pay - pay_period.net_pay) / pay_period.gross_pay, pay_period.start_date, pay_period.payroll_date);
 
         EXECUTE format('SELECT cron.schedule(%L, %L, %L)',
-            'payroll-' || selected_job_id || '-' || pay_period.start_date || '-' || pay_period.payroll_date,
+            'payroll-' || selected_job_id || '-' || EXTRACT(DAY FROM pay_period.payroll_date),
             cron_expression,
             inner_sql);
     END LOOP;
