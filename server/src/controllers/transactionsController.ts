@@ -20,7 +20,7 @@ export const getTransactions = async (
     try {
         const { rows } = await client.query(
             `
-                SELECT a_id, current_balance, transactions FROM get_generated_transactions($1, $2)
+                SELECT a_id, current_balance, transactions FROM get_generated_info($1, $2)
             `,
             [fromDate, toDate],
         );
@@ -54,7 +54,7 @@ export const getTransactionsByAccountId = async (
     try {
         const { rows } = await client.query(
             `
-                SELECT a_id, current_balance, transactions FROM get_generated_transactions($1, $2, $3)
+                SELECT a_id, current_balance, transactions FROM get_generated_info($1, $2, $3)
             `,
             [fromDate, toDate, accountId],
         );

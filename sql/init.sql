@@ -289,7 +289,7 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
-CREATE OR REPLACE FUNCTION get_generated_transactions(from_date date, to_date date, acnt_id integer DEFAULT NULL)
+CREATE OR REPLACE FUNCTION get_generated_info(from_date date, to_date date, acnt_id integer DEFAULT NULL, wslt_id integer DEFAULT NULL)
 RETURNS TABLE(
   a_id integer,
   current_balance decimal,
@@ -828,7 +828,9 @@ BEGIN
                   w.account_id,
                   JSON_AGG(
                     JSON_BUILD_OBJECT(
+                      'accountId', w.account_id,
                       'id', w.id,
+                      'cronJobId', w.cron_job_id,
                       'title', w.title,
                       'description', w.description,
                       'amount', w.amount,
@@ -849,6 +851,7 @@ BEGIN
                   ) FILTER (WHERE w.title IS NOT NULL OR w.description IS NOT NULL OR w.amount IS NOT NULL OR w.tax_id IS NOT NULL OR w.date_available IS NOT NULL) AS wishlists
                 FROM 
                   wishlist w
+                  WHERE wslt_id IS NULL OR w.id = wslt_id
                 GROUP BY 
                   w.account_id
               ) w ON a.id = w.account_id
