@@ -292,6 +292,7 @@ $$ LANGUAGE plpgsql;
 CREATE OR REPLACE FUNCTION get_generated_transactions(from_date date, to_date date)
 RETURNS TABLE(
   a_id integer,
+  current_balance decimal,
   transactions json,
   wishlists json
 ) AS $$
@@ -784,10 +785,13 @@ BEGIN
             )
             SELECT 
               a.id AS account_id,
+              COALESCE(cb.current_balance, 0)::decimal AS current_balance,
               COALESCE(t.transactions, '[]'::json) AS transactions,
               COALESCE(w.wishlists, '[]'::json) AS wishlists
             FROM 
               accounts a
+            LEFT JOIN 
+                current_balance cb ON a.id = cb.account_id
               LEFT JOIN (
                 SELECT 
                   a.id AS account_id,
