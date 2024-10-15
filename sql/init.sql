@@ -814,7 +814,7 @@ BEGIN
                 LEFT JOIN 
                 (
                   SELECT * FROM recalculate_balances 
-                  WHERE date > now()
+                  WHERE date > from_date AND date <= to_date
                 ) twb ON a.id = twb.account_id
                 GROUP BY 
                   a.id
