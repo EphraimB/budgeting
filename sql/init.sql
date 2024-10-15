@@ -291,9 +291,9 @@ $$ LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION get_generated_transactions(from_date date, to_date date)
 RETURNS TABLE(
-  account_id integer,
-  current_balance numeric,
-  transactions json
+  a_id integer,
+  transactions json,
+  wishlists json
 ) AS $$
 BEGIN
   RETURN QUERY
@@ -782,40 +782,72 @@ BEGIN
                 ) AS combined
               ORDER BY date, title, description
             )
-            SELECT
-                            a.id AS account_id,
-                            COALESCE(cb.current_balance, 0) AS current_balance,
-                            COALESCE(
-                                JSON_AGG(
-                                    JSON_BUILD_OBJECT(
-                                        'id', gen_random_uuid(),
-                                        'title', twb.title,
-                                        'description', twb.description,
-                                        'amount', twb.subtotal,
-                                        'taxRate', twb.tax_rate,
-                                        'totalAmount', twb.amount,
-                                        'date', twb.date,
-                                        'balance', 
-                                            CASE 
-                                                WHEN twb.running_balance IS NOT NULL THEN COALESCE(cb.current_balance, 0) - twb.running_balance + twb.amount 
-                                                ELSE NULL 
-                                            END
-                                    ) ORDER BY twb.date
-                                ) FILTER (WHERE twb.account_id IS NOT NULL), '[]'::json
-                            ) AS transactions
-                        FROM 
-                            accounts a
-                        LEFT JOIN 
-                            current_balance cb ON a.id = cb.account_id
-                        LEFT JOIN 
+            SELECT 
+              a.id AS account_id,
+              COALESCE(t.transactions, '[]'::json) AS transactions,
+              COALESCE(w.wishlists, '[]'::json) AS wishlists
+            FROM 
+              accounts a
+              LEFT JOIN (
+                SELECT 
+                  a.id AS account_id,
+                  JSON_AGG(
+                    JSON_BUILD_OBJECT(
+                      'id', gen_random_uuid(),
+                      'title', twb.title,
+                      'description', twb.description,
+                      'amount', twb.subtotal,
+                      'taxRate', twb.tax_rate,
+                      'totalAmount', twb.amount,
+                      'date', twb.date,
+                      'balance', 
+                        CASE 
+                          WHEN twb.running_balance IS NOT NULL THEN COALESCE(cb.current_balance, 0) - twb.running_balance + twb.amount 
+                          ELSE NULL 
+                        END
+                    )
+                  ) FILTER (WHERE twb.title IS NOT NULL OR twb.description IS NOT NULL OR twb.subtotal IS NOT NULL OR twb.tax_rate IS NOT NULL OR twb.amount IS NOT NULL OR twb.date IS NOT NULL) AS transactions
+                FROM 
+                  accounts a
+                LEFT JOIN 
+                  current_balance cb ON a.id = cb.account_id
+                LEFT JOIN 
+                (
+                  SELECT * FROM recalculate_balances 
+                  WHERE date > now()
+                ) twb ON a.id = twb.account_id
+                GROUP BY 
+                  a.id
+              ) t ON a.id = t.account_id
+              LEFT JOIN (
+                SELECT 
+                  w.account_id,
+                  JSON_AGG(
+                    JSON_BUILD_OBJECT(
+                      'id', w.id,
+                      'title', w.title,
+                      'description', w.description,
+                      'amount', w.amount,
+                      'taxId', w.tax_id,
+                      'dateAvailable', w.date_available,
+                      'dateCanPurchase', COALESCE(
                         (
-                            SELECT * FROM recalculate_balances 
-                            WHERE date > from_date AND date <= to_date
-                        ) twb ON a.id = twb.account_id
-                        GROUP BY 
-                            a.id, cb.current_balance
-                        ORDER BY 
-                            a.id;
+                            SELECT 
+                                MIN(pb.date)
+                            FROM 
+                                projected_balance pb
+                            WHERE 
+                                pb.running_balance > w.amount AND (w.date_available IS NULL OR pb.date >= w.date_available) AND pb.date > now()
+                        ),
+                        NULL
+                        )
+                    )
+                  ) FILTER (WHERE w.title IS NOT NULL OR w.description IS NOT NULL OR w.amount IS NOT NULL OR w.tax_id IS NOT NULL OR w.date_available IS NOT NULL) AS wishlists
+                FROM 
+                  wishlist w
+                GROUP BY 
+                  w.account_id
+              ) w ON a.id = w.account_id;
 END;
 $$ LANGUAGE plpgsql;
 
