@@ -289,7 +289,7 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
-CREATE OR REPLACE FUNCTION get_generated_transactions(from_date date, to_date date)
+CREATE OR REPLACE FUNCTION get_generated_transactions(from_date date, to_date date, acnt_id integer DEFAULT NULL)
 RETURNS TABLE(
   a_id integer,
   current_balance decimal,
@@ -851,7 +851,9 @@ BEGIN
                   wishlist w
                 GROUP BY 
                   w.account_id
-              ) w ON a.id = w.account_id;
+              ) w ON a.id = w.account_id
+              WHERE 
+                acnt_id IS NULL OR a.id = acnt_id;
 END;
 $$ LANGUAGE plpgsql;
 
