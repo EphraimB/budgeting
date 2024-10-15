@@ -54,9 +54,9 @@ export const getTransactionsByAccountId = async (
     try {
         const { rows } = await client.query(
             `
-                SELECT a_id, current_balance, transactions FROM get_generated_transactions($1, $2)
+                SELECT a_id, current_balance, transactions FROM get_generated_transactions($1, $2, $3)
             `,
-            [accountId, fromDate, toDate],
+            [fromDate, toDate, accountId],
         );
 
         const retreivedRow = toCamelCase(rows[0]);
