@@ -62,7 +62,7 @@ function WishlistsView({
           {wishlist.dateCanPurchase
             ? "on " +
               dayjs(wishlist.dateCanPurchase).format("dddd MMMM D, YYYY h:mm A")
-            : "in more than a year"}
+            : "at a later date"}
           .
         </Typography>
         {wishlist.urlLink && (
