@@ -38,7 +38,7 @@ export const getWishlists = async (
 
         const { rows } = await client.query(query, params);
 
-        const retreivedRows = toCamelCase(rows); // Convert to camelCase
+        const retreivedRows = toCamelCase(rows[0].wishlists); // Convert to camelCase
 
         response.status(200).json(retreivedRows);
     } catch (error) {
@@ -87,7 +87,7 @@ export const getWishlistsById = async (
             return;
         }
 
-        const retreivedRow = toCamelCase(rows[0]); // Convert to camelCase
+        const retreivedRow = toCamelCase(rows[0].wishlists[0]); // Convert to camelCase
 
         response.status(200).json(retreivedRow);
     } catch (error) {
