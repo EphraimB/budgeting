@@ -35,26 +35,29 @@ afterEach(() => {
 
 const wishlists = [
     {
-        id: 1,
-        cronJobId: 1,
-        taxId: 1,
-        accountId: 1,
-        amount: 1000,
-        title: 'Test Wishlist',
-        description: 'Test Wishlist to test the wishlist route',
-        dateAvailable: null,
-        urlLink: 'https://www.google.com/',
-        priority: 0,
-        date_can_purchase: '2023-08-14',
-        dateCreated: '2020-01-01',
-        dateModified: '2020-01-01',
+        wishlists: [
+            {
+                id: 1,
+                cronJobId: 1,
+                taxId: 1,
+                accountId: 1,
+                amount: 1000,
+                title: 'Test Wishlist',
+                description: 'Test Wishlist to test the wishlist route',
+                dateAvailable: null,
+                urlLink: 'https://www.google.com/',
+                priority: 0,
+                dateCanPurchase: '2023-08-14',
+                dateCreated: '2020-01-01',
+                dateModified: '2020-01-01',
+            },
+        ],
     },
 ];
-
 describe('GET /api/wishlists', () => {
     it('should respond with an array of wishlists', async () => {
         // Arrange
-        mockModule([wishlists], wishlists);
+        mockModule([wishlists[0].wishlists], wishlists);
 
         const { getWishlists } = await import(
             '../../src/controllers/wishlistsController.js'
@@ -93,8 +96,14 @@ describe('GET /api/wishlists', () => {
     it('should respond with an array of wishlists with account id', async () => {
         // Arrange
         mockModule(
-            [wishlists.filter((wishlist) => wishlist.accountId === 1)],
-            wishlists.filter((wishlist) => wishlist.accountId === 1),
+            [
+                wishlists[0].wishlists.filter(
+                    (wishlist) => wishlist.accountId === 1,
+                ),
+            ],
+            wishlists[0].wishlists.filter(
+                (wishlist) => wishlist.accountId === 1,
+            ),
         );
 
         const { getWishlists } = await import(
@@ -109,7 +118,9 @@ describe('GET /api/wishlists', () => {
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(200);
         expect(mockResponse.json).toHaveBeenCalledWith(
-            wishlists.filter((wishlist) => wishlist.accountId === 1),
+            wishlists[0].wishlists.filter(
+                (wishlist) => wishlist.accountId === 1,
+            ),
         );
     });
 
@@ -138,8 +149,8 @@ describe('GET /api/wishlists/:id', () => {
     it('should respond with an array of wishlists with id', async () => {
         // Arrange
         mockModule(
-            [wishlists.filter((wishlist) => wishlist.id === 1)],
-            wishlists.filter((wishlist) => wishlist.id === 1),
+            [wishlists],
+            wishlists[0].wishlists.filter((wishlist) => wishlist.id === 1),
         );
 
         const { getWishlistsById } = await import(
@@ -155,7 +166,7 @@ describe('GET /api/wishlists/:id', () => {
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(200);
         expect(mockResponse.json).toHaveBeenCalledWith(
-            wishlists.filter((wishlist) => wishlist.id === 1),
+            wishlists[0].wishlists.filter((wishlist) => wishlist.id === 1),
         );
     });
 
@@ -185,12 +196,8 @@ describe('GET /api/wishlists/:id', () => {
     it('should respond with an array of wishlists with account id and id', async () => {
         // Arrange
         mockModule(
-            [
-                wishlists.filter(
-                    (wishlist) => wishlist.accountId === 1 && wishlist.id === 1,
-                ),
-            ],
-            wishlists.filter(
+            [wishlists],
+            wishlists[0].wishlists.filter(
                 (wishlist) => wishlist.accountId === 1 && wishlist.id === 1,
             ),
         );
@@ -208,7 +215,7 @@ describe('GET /api/wishlists/:id', () => {
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(200);
         expect(mockResponse.json).toHaveBeenCalledWith(
-            wishlists.filter(
+            wishlists[0].wishlists.filter(
                 (wishlist) => wishlist.accountId === 1 && wishlist.id === 1,
             ),
         );
@@ -260,7 +267,9 @@ describe('GET /api/wishlists/:id', () => {
 describe('POST /api/wishlists', () => {
     it('should respond with the created wishlist', async () => {
         // Arrange
-        const newWishlist = wishlists.filter((wishlist) => wishlist.id === 1);
+        const newWishlist = wishlists[0].wishlists.filter(
+            (wishlist) => wishlist.id === 1,
+        );
 
         mockModule(
             [
@@ -298,7 +307,9 @@ describe('POST /api/wishlists', () => {
             '../../src/controllers/wishlistsController.js'
         );
 
-        mockRequest.body = wishlists.filter((wishlist) => wishlist.id === 1);
+        mockRequest.body = wishlists[0].wishlists.filter(
+            (wishlist) => wishlist.id === 1,
+        );
 
         // Call the function with the mock request and response
         await createWishlist(mockRequest as Request, mockResponse).catch(() => {
@@ -314,7 +325,9 @@ describe('POST /api/wishlists', () => {
 describe('PUT /api/wishlists/:id', () => {
     it('should respond with the updated wishlist', async () => {
         // Arrange
-        const newWishlist = wishlists.filter((wishlist) => wishlist.id === 1);
+        const newWishlist = wishlists[0].wishlists.filter(
+            (wishlist) => wishlist.id === 1,
+        );
 
         mockModule(
             [
@@ -349,7 +362,9 @@ describe('PUT /api/wishlists/:id', () => {
 
     it('should respond with a 404 error message when the wishlist does not exist', async () => {
         // Arrange
-        const newWishlist = wishlists.filter((wishlist) => wishlist.id === 1);
+        const newWishlist = wishlists[0].wishlists.filter(
+            (wishlist) => wishlist.id === 1,
+        );
 
         mockModule([[], []]);
 
@@ -377,7 +392,9 @@ describe('PUT /api/wishlists/:id', () => {
         );
 
         mockRequest.params = { id: 1 };
-        mockRequest.body = wishlists.filter((wishlist) => wishlist.id === 1);
+        mockRequest.body = wishlists[0].wishlists.filter(
+            (wishlist) => wishlist.id === 1,
+        );
 
         // Call the function with the mock request and response
         await updateWishlist(mockRequest as Request, mockResponse).catch(() => {

@@ -82,6 +82,8 @@ export const getWishlistsById = async (
 
         const { rows } = await client.query(query, params);
 
+        console.log(rows)
+
         if (rows.length === 0) {
             response.status(404).send('Wishlist not found');
             return;
