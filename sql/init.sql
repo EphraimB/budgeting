@@ -203,8 +203,8 @@ CREATE TABLE IF NOT EXISTS commute_systems (
 
 CREATE TABLE IF NOT EXISTS account_commute_systems (
     id SERIAL PRIMARY KEY,
-    account_id INTEGER NOT NULL REFERENCES accounts(id),
-    commute_system_id INTEGER NOT NULL REFERENCES commute_systems(id),
+    account_id INTEGER NOT NULL REFERENCES accounts(id) ON DELETE CASCADE,
+    commute_system_id INTEGER NOT NULL REFERENCES commute_systems(id) ON DELETE CASCADE,
     UNIQUE (account_id, commute_system_id)
 );
 
@@ -232,7 +232,6 @@ CREATE TABLE IF NOT EXISTS timeslots (
 
 CREATE TABLE IF NOT EXISTS commute_schedule (
   id SERIAL PRIMARY KEY,
-  account_id INT NOT NULL REFERENCES accounts(id) ON DELETE CASCADE,
   cron_job_id INT REFERENCES cron_jobs(id),
   day_of_week INT NOT NULL,
   start_time TIME NOT NULL,
@@ -240,7 +239,7 @@ CREATE TABLE IF NOT EXISTS commute_schedule (
   fare_detail_id INT NOT NULL REFERENCES fare_details(id) ON DELETE CASCADE,
   date_created TIMESTAMP NOT NULL,
   date_modified TIMESTAMP NOT NULL,
-  UNIQUE(account_id, day_of_week, start_time)
+  UNIQUE(day_of_week, start_time)
 );
 
 CREATE TABLE IF NOT EXISTS commute_history (
