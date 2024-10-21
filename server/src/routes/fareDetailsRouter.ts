@@ -82,7 +82,7 @@ router.put(
             .optional({ nullable: true })
             .isInt({ min: 1 })
             .withMessage('Duration must be be an integer'),
-        body('day_start')
+        body('dayStart')
             .optional({ nullable: true })
             .isInt({ min: 1 })
             .withMessage('day start must be an integer'),
