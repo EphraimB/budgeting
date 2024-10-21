@@ -201,15 +201,9 @@ CREATE TABLE IF NOT EXISTS commute_systems (
   date_modified TIMESTAMP NOT NULL
 );
 
-CREATE TABLE IF NOT EXISTS account_commute_systems (
-    id SERIAL PRIMARY KEY,
-    account_id INTEGER NOT NULL REFERENCES accounts(id) ON DELETE CASCADE,
-    commute_system_id INTEGER NOT NULL REFERENCES commute_systems(id) ON DELETE CASCADE,
-    UNIQUE (account_id, commute_system_id)
-);
-
 CREATE TABLE IF NOT EXISTS fare_details (
   id SERIAL PRIMARY KEY,
+  account_id INT NOT NULL REFERENCES accounts(id) ON DELETE CASCADE,
   commute_system_id INT NOT NULL REFERENCES commute_systems(id) ON DELETE CASCADE,
   name VARCHAR(255) NOT NULL,
   fare NUMERIC(5,2) NOT NULL,

@@ -1,5 +1,5 @@
 import express, { type Router } from 'express';
-import { query, param, body } from 'express-validator';
+import { param, body } from 'express-validator';
 import {
     getCommuteSystem,
     createCommuteSystem,
