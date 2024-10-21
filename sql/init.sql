@@ -201,6 +201,13 @@ CREATE TABLE IF NOT EXISTS commute_systems (
   date_modified TIMESTAMP NOT NULL
 );
 
+CREATE TABLE IF NOT EXISTS account_commute_systems (
+    id SERIAL PRIMARY KEY,
+    account_id INTEGER NOT NULL REFERENCES accounts(id),
+    commute_system_id INTEGER NOT NULL REFERENCES commute_systems(id),
+    UNIQUE (account_id, commute_system_id)
+);
+
 CREATE TABLE IF NOT EXISTS fare_details (
   id SERIAL PRIMARY KEY,
   commute_system_id INT NOT NULL REFERENCES commute_systems(id) ON DELETE CASCADE,
@@ -404,17 +411,31 @@ BEGIN
         CONCAT('Fare for ', csy.name, ' ', fd.name) AS title,
         CONCAT('Fare for ', csy.name, ' ', fd.name) AS description,
         CASE
-            WHEN extract('dow' from now()) <= cs.day_of_week THEN
-                now() + interval '1 day' * (cs.day_of_week - extract('dow' from now()))
-            ELSE
-                now() + interval '1 week' + interval '1 day' * (cs.day_of_week - extract('dow' from now()))
+            WHEN fd.duration IS NOT NULL THEN 
+                now() + INTERVAL '1 day' * fd.duration  -- charge every [duration] days
+            ELSE 
+                CASE
+                    WHEN extract('dow' from now()) <= cs.day_of_week THEN
+                        now() + interval '1 day' * (cs.day_of_week - extract('dow' from now()))
+                    ELSE
+                        now() + interval '1 week' + interval '1 day' * (cs.day_of_week - extract('dow' from now()))
+                END
         END AS date,
         -fd.fare AS subtotal,
         0 AS tax_rate,
         -fd.fare AS amount,
-        1 AS frequency_type,
-        1 AS frequency_type_variable,
-        cs.day_of_week AS frequency_day_of_week,
+        CASE
+            WHEN fd.duration IS NOT NULL THEN 0  -- daily frequency (every [duration] days)
+            ELSE 1  -- default to weekly frequency
+        END AS frequency_type,
+        CASE
+            WHEN fd.duration IS NOT NULL THEN fd.duration  -- charge every [duration] days
+            ELSE 1  -- default to every 1 week
+        END AS frequency_type_variable,
+        CASE
+            WHEN fd.duration IS NOT NULL THEN NULL  -- ignore commute schedule for timed passes
+            ELSE cs.day_of_week
+        END AS frequency_day_of_week,
         NULL AS frequency_week_of_month,
         NULL AS frequency_month_of_year,
         NULL AS remaining_balance,
