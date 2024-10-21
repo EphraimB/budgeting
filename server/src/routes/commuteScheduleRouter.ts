@@ -11,27 +11,12 @@ import validateRequest from '../utils/validateRequest.js';
 
 const router: Router = express.Router();
 
-router.get(
-    '/',
-    [
-        query('accountId')
-            .optional()
-            .isInt({ min: 1 })
-            .withMessage('Account ID must be a number'),
-        validateRequest,
-    ],
-    getCommuteSchedule,
-);
+router.get('/', getCommuteSchedule);
 
 router.get(
     '/:id',
     [
         param('id').isInt({ min: 1 }).withMessage('ID must be a number'),
-
-        query('accountId')
-            .optional()
-            .isInt({ min: 1 })
-            .withMessage('Account ID must be a number'),
         validateRequest,
     ],
     getCommuteScheduleById,
@@ -40,9 +25,6 @@ router.get(
 router.post(
     '/',
     [
-        body('accountId')
-            .isInt({ min: 1 })
-            .withMessage('Account ID must be a number'),
         body('dayOfWeek')
             .isInt({ min: 0, max: 6 })
             .withMessage('Day of week must be a number between 0 and 6'),
@@ -63,9 +45,6 @@ router.post(
 router.put(
     '/:id',
     [
-        body('accountId')
-            .isInt({ min: 1 })
-            .withMessage('Account ID must be a number'),
         body('dayOfWeek')
             .isInt({ min: 0, max: 6 })
             .withMessage('Day of week must be a number between 0 and 6'),

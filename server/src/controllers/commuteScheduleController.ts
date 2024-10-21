@@ -17,90 +17,43 @@ import { v4 as uuidv4 } from 'uuid';
  * Sends a response with all commute schedules
  */
 export const getCommuteSchedule = async (
-    request: Request,
+    _: Request,
     response: Response,
 ): Promise<void> => {
-    const { accountId } = request.query;
-
     const client = await pool.connect(); // Get a client from the pool
 
     try {
-        let query: string;
-        let params: any[];
-
-        if (accountId) {
-            query = `
-                SELECT 
-                    account_id,
-                    JSON_AGG(
-                        JSON_BUILD_OBJECT(
-                        'dayOfWeek', day_of_week,
-                        'commuteSchedules', commute_schedules
-                        )::json
-                    ) AS schedules
-                    FROM (
-                    SELECT 
-                        cs.account_id,
-                        cs.day_of_week,
-                        JSON_AGG(
-                        JSON_BUILD_OBJECT(
-                            'id', cs.id,
-                            'pass', concat(csy.name, ' ', fd.name),
-                            'startTime', cs.start_time,
-                            'endTime', cs.end_time,
-                            'fare', fd.fare
-                        )::json
-                        ) AS commute_schedules
-                    FROM 
-                        commute_schedule cs
-                        LEFT JOIN fare_details fd ON cs.fare_detail_id = fd.id
-                        LEFT JOIN commute_systems csy ON fd.commute_system_id = csy.id
-                    WHERE 
-                        cs.account_id = $1
-                    GROUP BY 
-                        cs.account_id, cs.day_of_week
-                    ) AS subquery
-                    GROUP BY 
-                    account_id
-            `;
-            params = [accountId];
-        } else {
-            query = `
-                SELECT 
-                    account_id,
-                    JSON_AGG(
-                        JSON_BUILD_OBJECT(
-                        'dayOfWeek', day_of_week,
-                        'commuteSchedules', commute_schedules
-                        )::json
-                    ) AS schedules
-                    FROM (
-                    SELECT 
-                        cs.account_id,
-                        cs.day_of_week,
-                        JSON_AGG(
-                        JSON_BUILD_OBJECT(
-                            'id', cs.id,
-                            'pass', concat(csy.name, ' ', fd.name),
-                            'startTime', cs.start_time,
-                            'endTime', cs.end_time,
-                            'fare', fd.fare
-                        )::json
-                        ) AS commute_schedules
-                    FROM 
-                        commute_schedule cs
-                        LEFT JOIN fare_details fd ON cs.fare_detail_id = fd.id
-                        LEFT JOIN commute_systems csy ON fd.commute_system_id = csy.id
-                    GROUP BY 
-                        cs.account_id, cs.day_of_week
-                    ) AS subquery
-                    GROUP BY 
-                    account_id
-            `;
-            params = [];
-        }
-
-        const { rows } = await client.query(query, params);
+        const { rows } = await client.query(
+            `
+            SELECT
+            JSON_AGG(
+                JSON_BUILD_OBJECT(
+                'dayOfWeek', day_of_week,
+                'commuteSchedules', commute_schedules
+                )::json
+            ) AS schedules
+            FROM (
+            SELECT
+                cs.day_of_week,
+                JSON_AGG(
+                JSON_BUILD_OBJECT(
+                    'id', cs.id,
+                    'pass', concat(csy.name, ' ', fd.name),
+                    'startTime', cs.start_time,
+                    'endTime', cs.end_time,
+                    'fare', fd.fare
+                )::json
+                ) AS commute_schedules
+            FROM 
+                commute_schedule cs
+                LEFT JOIN fare_details fd ON cs.fare_detail_id = fd.id
+                LEFT JOIN commute_systems csy ON fd.commute_system_id = csy.id
+            GROUP BY 
+                cs.account_id, cs.day_of_week
+            ) AS subquery
+            `,
+            [],
+        );
 
         const retreivedRows = toCamelCase(rows); // Convert to camelCase
 
@@ -124,18 +77,13 @@ export const getCommuteScheduleById = async (
     response: Response,
 ): Promise<void> => {
     const { id } = request.params;
-    const { accountId } = request.query;
 
     const client = await pool.connect(); // Get a client from the pool
 
     try {
-        let query: string;
-        let params: any[];
-
-        if (accountId) {
-            query = `
+        const { rows } = await client.query(
+            `
                 SELECT 
-                    account_id,
                     JSON_AGG(
                         JSON_BUILD_OBJECT(
                         'dayOfWeek', day_of_week,
@@ -143,44 +91,7 @@ export const getCommuteScheduleById = async (
                         )::json
                     ) AS schedules
                     FROM (
-                    SELECT 
-                        cs.account_id,
-                        cs.day_of_week,
-                        JSON_AGG(
-                        JSON_BUILD_OBJECT(
-                            'id', cs.id,
-                            'pass', concat(csy.name, ' ', fd.name),
-                            'startTime', cs.start_time,
-                            'endTime', cs.end_time,
-                            'fare', fd.fare
-                        )::json
-                        ) AS commute_schedules
-                    FROM 
-                        commute_schedule cs
-                        LEFT JOIN fare_details fd ON cs.fare_detail_id = fd.id
-                        LEFT JOIN commute_systems csy ON fd.commute_system_id = csy.id
-                    WHERE 
-                        cs.id = $1 AND cs.account_id = $2
-                    GROUP BY 
-                        cs.account_id, cs.day_of_week
-                    ) AS subquery
-                    GROUP BY 
-                    account_id
-            `;
-            params = [id, accountId];
-        } else {
-            query = `
-                SELECT 
-                    account_id,
-                    JSON_AGG(
-                        JSON_BUILD_OBJECT(
-                        'dayOfWeek', day_of_week,
-                        'commuteSchedules', commute_schedules
-                        )::json
-                    ) AS schedules
-                    FROM (
-                    SELECT 
-                        cs.account_id,
+                    SELECT
                         cs.day_of_week,
                         JSON_AGG(
                         JSON_BUILD_OBJECT(
@@ -200,13 +111,9 @@ export const getCommuteScheduleById = async (
                     GROUP BY 
                         cs.account_id, cs.day_of_week
                     ) AS subquery
-                    GROUP BY 
-                    account_id
-            `;
-            params = [id];
-        }
-
-        const { rows } = await client.query(query, params);
+            `,
+            [id],
+        );
 
         if (rows.length === 0) {
             response.status(404).send('Schedule not found');
@@ -234,8 +141,7 @@ export const createCommuteSchedule = async (
     request: Request,
     response: Response,
 ) => {
-    const { accountId, dayOfWeek, fareDetailId, startTime, endTime } =
-        request.body;
+    const { dayOfWeek, fareDetailId, startTime, endTime } = request.body;
     let fareDetail = [];
 
     const client = await pool.connect(); // Get a client from the pool
@@ -270,18 +176,17 @@ export const createCommuteSchedule = async (
                 SELECT 
                     cs.id
                     FROM commute_schedule cs
-                    WHERE cs.account_id = $1
-                AND cs.day_of_week = $2
+                AND cs.day_of_week = $1
                 AND (
                 -- New schedule starts within an existing schedule's time slot
-                (cs.start_time <= $3 AND $3 < cs.end_time)
+                (cs.start_time <= $2 AND $2 < cs.end_time)
                 OR
                 -- Existing schedule starts within new schedule's time slot
-                (cs.end_time < $4 AND cs.start_time >= $4)
+                (cs.end_time < $3 AND cs.start_time >= $3)
                 )
                 GROUP BY cs.id
             `,
-            [accountId, dayOfWeek, startTime, endTime],
+            [dayOfWeek, startTime, endTime],
         );
 
         if (scheduleExistsResults.length > 0) {
@@ -398,17 +303,16 @@ export const createCommuteSchedule = async (
         const { rows: createCommuteSchedule } = await client.query(
             `
                 INSERT INTO commute_schedule
-                (account_id, day_of_week, fare_detail_id, start_time, end_time)
-                VALUES ($1, $2, $3, $4, $5)
+                (day_of_week, fare_detail_id, start_time, end_time)
+                VALUES ($1, $2, $3, $4)
                 RETURNING *
             `,
-            [accountId, dayOfWeek, fareDetailId, startTime, endTime],
+            [dayOfWeek, fareDetailId, startTime, endTime],
         );
 
         const { rows: commuteScheduleResults } = await client.query(
             `
-                SELECT 
-                    account_id,
+                SELECT
                     JSON_AGG(
                         JSON_BUILD_OBJECT(
                         'dayOfWeek', day_of_week,
@@ -416,8 +320,7 @@ export const createCommuteSchedule = async (
                         )::json
                     ) AS schedules
                     FROM (
-                    SELECT 
-                        cs.account_id,
+                    SELECT
                         cs.day_of_week,
                         JSON_AGG(
                         JSON_BUILD_OBJECT(
@@ -535,8 +438,7 @@ export const updateCommuteSchedule = async (
     response: Response,
 ): Promise<void> => {
     const { id } = request.params;
-    const { accountId, dayOfWeek, fareDetailId, startTime, endTime } =
-        request.body;
+    const { dayOfWeek, fareDetailId, startTime, endTime } = request.body;
     let fareDetail = [];
 
     const client = await pool.connect(); // Get a client from the pool
@@ -585,18 +487,17 @@ export const updateCommuteSchedule = async (
                 SELECT 
                     cs.id
                     FROM commute_schedule cs
-                    WHERE cs.account_id = $1
-                AND cs.day_of_week = $2
+                AND cs.day_of_week = $1
                 AND (
                 -- New schedule starts within an existing schedule's time slot
-                (cs.start_time <= $3 AND $3 < cs.end_time)
+                (cs.start_time <= $2 AND $2 < cs.end_time)
                 OR
                 -- Existing schedule starts within new schedule's time slot
-                (cs.end_time < $4 AND cs.start_time >= $4)
+                (cs.end_time < $3 AND cs.start_time >= $3)
                 )
                 GROUP BY cs.id
             `,
-            [accountId, dayOfWeek, startTime, endTime],
+            [dayOfWeek, startTime, endTime],
         );
 
         if (existingSchedule.length > 0) {
@@ -764,22 +665,20 @@ export const updateCommuteSchedule = async (
         await client.query(
             `
                 UPDATE commute_schedule
-                SET account_id = $1,
-                day_of_week = $2,
-                fare_detail_id = $3,
-                start_time = $4,
-                end_time = $5
-                WHERE id = $6
+                SET day_of_week = $1,
+                fare_detail_id = $2,
+                start_time = $3,
+                end_time = $4
+                WHERE id = $5
             `,
-            [accountId, dayOfWeek, currentFareDetailId, startTime, endTime, id],
+            [dayOfWeek, currentFareDetailId, startTime, endTime, id],
         );
 
         await client.query('COMMIT;');
 
         const { rows: commuteScheduleResults } = await client.query(
             `
-                SELECT 
-                    account_id,
+                SELECT
                     JSON_AGG(
                         JSON_BUILD_OBJECT(
                         'dayOfWeek', day_of_week,
@@ -787,8 +686,7 @@ export const updateCommuteSchedule = async (
                         )::json
                     ) AS schedules
                     FROM (
-                    SELECT 
-                        cs.account_id,
+                    SELECT
                         cs.day_of_week,
                         JSON_AGG(
                         JSON_BUILD_OBJECT(
