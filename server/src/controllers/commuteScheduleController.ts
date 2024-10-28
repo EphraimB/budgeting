@@ -49,7 +49,7 @@ export const getCommuteSchedule = async (
                 LEFT JOIN fare_details fd ON cs.fare_detail_id = fd.id
                 LEFT JOIN commute_systems csy ON fd.commute_system_id = csy.id
             GROUP BY 
-                cs.account_id, cs.day_of_week
+                fd.account_id, cs.day_of_week
             ) AS subquery
             `,
             [],
@@ -109,7 +109,7 @@ export const getCommuteScheduleById = async (
                     WHERE 
                         cs.id = $1
                     GROUP BY 
-                        cs.account_id, cs.day_of_week
+                        fd.account_id, cs.day_of_week
                     ) AS subquery
             `,
             [id],
