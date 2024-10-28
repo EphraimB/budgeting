@@ -176,7 +176,7 @@ export const createCommuteSchedule = async (
                 SELECT 
                     cs.id
                     FROM commute_schedule cs
-                AND cs.day_of_week = $1
+                WHERE cs.day_of_week = $1
                 AND (
                 -- New schedule starts within an existing schedule's time slot
                 (cs.start_time <= $2 AND $2 < cs.end_time)
@@ -220,6 +220,7 @@ export const createCommuteSchedule = async (
                     `
                     SELECT fare_details.id,
                         commute_systems.name AS system_name,
+                        fare_details.name AS fare_type,
                         fare,
                         alternate_fare_detail_id
                     FROM fare_details
@@ -312,24 +313,26 @@ export const createCommuteSchedule = async (
 
         const { rows: commuteScheduleResults } = await client.query(
             `
-                SELECT
+                SELECT 
+                    subquery.account_id,
                     JSON_AGG(
                         JSON_BUILD_OBJECT(
-                        'dayOfWeek', day_of_week,
-                        'commuteSchedules', commute_schedules
+                            'dayOfWeek', subquery.day_of_week,
+                            'commuteSchedules', subquery.commute_schedules
                         )::json
                     ) AS schedules
-                    FROM (
-                    SELECT
+                FROM (
+                    SELECT 
+                        fd.account_id,
                         cs.day_of_week,
                         JSON_AGG(
-                        JSON_BUILD_OBJECT(
-                            'id', cs.id,
-                            'pass', concat(csy.name, ' ', fd.name),
-                            'startTime', cs.start_time,
-                            'endTime', cs.end_time,
-                            'fare', fd.fare
-                        )::json
+                            JSON_BUILD_OBJECT(
+                                'id', cs.id,
+                                'pass', concat(csy.name, ' ', fd.name),
+                                'startTime', cs.start_time,
+                                'endTime', cs.end_time,
+                                'fare', fd.fare
+                            )::json
                         ) AS commute_schedules
                     FROM 
                         commute_schedule cs
@@ -338,10 +341,10 @@ export const createCommuteSchedule = async (
                     WHERE 
                         cs.id = $1
                     GROUP BY 
-                        cs.account_id, cs.day_of_week
-                    ) AS subquery
-                    GROUP BY 
-                    account_id
+                        fd.account_id, cs.day_of_week
+                ) AS subquery
+                GROUP BY 
+                    subquery.account_id;
             `,
             [createCommuteSchedule[0].id],
         );
@@ -371,14 +374,14 @@ export const createCommuteSchedule = async (
 
         await client.query(`
             SELECT cron.schedule('${uniqueId}', '${cronDate}',
-            $$INSERT INTO commute_history (account_id, commute_system, fare_type, fare, timestamp, is_timed_pass) VALUES (${accountId}, '${
+            $$INSERT INTO commute_history (account_id, commute_system, fare_type, fare, timestamp, is_timed_pass) VALUES (${commuteScheduleResults[0].account_id}, '${
                 fareDetail[0].system_name
             }', '${fareDetail[0].fare_type}', ${-fareDetail[0]
                 .fare}, 'now()', false)$$)`);
 
         await client.query(`
             SELECT cron.schedule('${uniqueId}', '${cronDate}',
-            $$INSERT INTO transaction_history (account_id, amount, tax_rate, title, description) VALUES (${accountId}, ${-fareDetail[0]
+            $$INSERT INTO transaction_history (account_id, amount, tax_rate, title, description) VALUES (${commuteScheduleResults[0].account_id}, ${-fareDetail[0]
                 .fare}, ${taxRate}, '${
                 fareDetail[0].system_name + ' ' + fareDetail[0].fare_type
             }', '${
@@ -487,7 +490,7 @@ export const updateCommuteSchedule = async (
                 SELECT 
                     cs.id
                     FROM commute_schedule cs
-                AND cs.day_of_week = $1
+                WHERE cs.day_of_week = $1
                 AND (
                 -- New schedule starts within an existing schedule's time slot
                 (cs.start_time <= $2 AND $2 < cs.end_time)
@@ -528,6 +531,8 @@ export const updateCommuteSchedule = async (
             const { rows: fareDetailResults } = await client.query(
                 `
                     SELECT fare_details.id,
+                        commute_systems.name AS system_name,
+                        fare_details.name AS fare_type,
                         fare,
                         alternate_fare_detail_id
                     FROM fare_details
@@ -631,27 +636,6 @@ export const updateCommuteSchedule = async (
 
         await client.query('BEGIN;');
 
-        await client.query(`SELECT cron.unschedule('${uniqueId}')`);
-
-        await client.query(`
-            SELECT cron.schedule('${uniqueId}', '${cronDate}',
-            $$INSERT INTO commute_history (account_id, commute_system, fare_type, fare, timestamp, is_timed_pass) VALUES (${accountId}, '${
-                fareDetail[0].system_name
-            }', '${fareDetail[0].fare_type}' '${-fareDetail[0]
-                .fare}', 'now()', false)$$)`);
-
-        await client.query(`
-            SELECT cron.schedule('${uniqueId}', '${cronDate}',
-            $$INSERT INTO transaction_history (account_id, amount, tax_rate, title, description) VALUES (${accountId}, ${-fareDetail[0]
-                .fare}, ${taxRate}, '${
-                fareDetail[0].system_name + ' ' + fareDetail[0].fare_type
-            }', '${
-                fareDetail[0].system_name +
-                ' ' +
-                fareDetail[0].fare_type +
-                ' pass'
-            }')$$)`);
-
         await client.query(
             `
                 UPDATE cron_jobs
@@ -678,24 +662,26 @@ export const updateCommuteSchedule = async (
 
         const { rows: commuteScheduleResults } = await client.query(
             `
-                SELECT
+                SELECT 
+                    subquery.account_id,
                     JSON_AGG(
                         JSON_BUILD_OBJECT(
-                        'dayOfWeek', day_of_week,
-                        'commuteSchedules', commute_schedules
+                            'dayOfWeek', subquery.day_of_week,
+                            'commuteSchedules', subquery.commute_schedules
                         )::json
                     ) AS schedules
-                    FROM (
-                    SELECT
+                FROM (
+                    SELECT 
+                        fd.account_id,
                         cs.day_of_week,
                         JSON_AGG(
-                        JSON_BUILD_OBJECT(
-                            'id', cs.id,
-                            'pass', concat(csy.name, ' ', fd.name),
-                            'startTime', cs.start_time,
-                            'endTime', cs.end_time,
-                            'fare', fd.fare
-                        )::json
+                            JSON_BUILD_OBJECT(
+                                'id', cs.id,
+                                'pass', concat(csy.name, ' ', fd.name),
+                                'startTime', cs.start_time,
+                                'endTime', cs.end_time,
+                                'fare', fd.fare
+                            )::json
                         ) AS commute_schedules
                     FROM 
                         commute_schedule cs
@@ -704,13 +690,34 @@ export const updateCommuteSchedule = async (
                     WHERE 
                         cs.id = $1
                     GROUP BY 
-                        cs.account_id, cs.day_of_week
-                    ) AS subquery
-                    GROUP BY 
-                    account_id
+                        fd.account_id, cs.day_of_week
+                ) AS subquery
+                GROUP BY 
+                    subquery.account_id;
             `,
             [id],
         );
+
+        await client.query(`SELECT cron.unschedule('${uniqueId}')`);
+
+        await client.query(`
+            SELECT cron.schedule('${uniqueId}', '${cronDate}',
+            $$INSERT INTO commute_history (account_id, commute_system, fare_type, fare, timestamp, is_timed_pass) VALUES (${commuteScheduleResults[0].account_id}, '${
+                fareDetail[0].system_name
+            }', '${fareDetail[0].fare_type}' '${-fareDetail[0]
+                .fare}', 'now()', false)$$)`);
+
+        await client.query(`
+            SELECT cron.schedule('${uniqueId}', '${cronDate}',
+            $$INSERT INTO transaction_history (account_id, amount, tax_rate, title, description) VALUES (${commuteScheduleResults[0].account_id}, ${-fareDetail[0]
+                .fare}, ${taxRate}, '${
+                fareDetail[0].system_name + ' ' + fareDetail[0].fare_type
+            }', '${
+                fareDetail[0].system_name +
+                ' ' +
+                fareDetail[0].fare_type +
+                ' pass'
+            }')$$)`);
 
         const responseObj = {
             schedule: toCamelCase(commuteScheduleResults[0]),
