@@ -400,7 +400,7 @@ BEGIN
         income i
     UNION
     SELECT
-        cs.account_id,
+        fd.account_id,
         CONCAT('Fare for ', csy.name, ' ', fd.name) AS title,
         CONCAT('Fare for ', csy.name, ' ', fd.name) AS description,
         CASE
