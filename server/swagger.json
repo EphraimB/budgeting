@@ -4372,6 +4372,11 @@
                                 "format": "int64",
                                 "minimum": 1
                             },
+                            "accountId": {
+                                "type": "integer",
+                                "format": "int64",
+                                "minimum": 1
+                            },
                             "name": {
                                 "type": "string",
                                 "example": "Off-Peak"
@@ -4543,11 +4548,6 @@
                     "CommuteScheduleRequest": {
                         "type": "object",
                         "properties": {
-                            "accountId": {
-                                "type": "integer",
-                                "format": "int64",
-                                "minimum": 1
-                            },
                             "dayOfWeek": {
                                 "type": "integer",
                                 "example": 1
