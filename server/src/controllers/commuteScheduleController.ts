@@ -350,15 +350,9 @@ export const createCommuteSchedule = async (
         );
 
         const jobDetails = {
-            frequencyType: /*commuteSchedule[0].duration !== null &&
-                commuteSchedule[0].duration > 30
-                    ? 2
-                    : 1*/ 1,
+            frequencyType: 1,
             frequencyTypeVariable: 1,
-            frequencyDayOfMonth: dayOfWeek || undefined,
-            frequencyDayOfWeek: /*commuteSchedule[0].duration
-                ? undefined
-                :*/ dayOfWeek,
+            frequencyDayOfWeek: dayOfWeek,
             date: dayjs()
                 .hour(startTime.split(':')[0])
                 .minute(startTime.split(':')[1])
@@ -611,7 +605,7 @@ export const updateCommuteSchedule = async (
         const jobDetails = {
             frequencyType: 1,
             frequencyTypeVariable: 1,
-            frequency_day_of_week: dayOfWeek,
+            frequencyDayOfWeek: dayOfWeek,
             date: dayjs()
                 .hour(startTime.split(':')[0])
                 .minute(startTime.split(':')[1])
