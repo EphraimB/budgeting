@@ -248,6 +248,128 @@ describe('GET /api/expenses/commute/schedule/:id', () => {
 });
 
 describe('POST /api/expenses/commute/schedule', () => {
+    it('should respond with the created commute schedule when system is opened and is in the timeframe for the fare type and a timed pass', async () => {
+        // Arrange
+        mockModule(
+            [
+                [{ id: 1, duration: 30, day_start: 1 }],
+                [],
+                [
+                    {
+                        id: 1,
+                        system_name: 'LIRR',
+                        fare_type: 'Monthly',
+                        fare: 230,
+                        alternate_fare_detail_id: null,
+                    },
+                ],
+                [
+                    {
+                        id: 1,
+                        system_name: 'LIRR',
+                        fare_type: 'Monthly',
+                        fare: 230,
+                        alternate_fare_detail_id: null,
+                    },
+                ],
+                [
+                    {
+                        day_of_week: 1,
+                        start_time: '08:00:00',
+                        end_time: '10:00:00',
+                    },
+                ],
+                [],
+                [
+                    {
+                        id: 1,
+                        commute_system_id: 1,
+                        fare_detail_id: 1,
+                        account_id: 1,
+                        cron_job_id: 1,
+                        day_of_week: 1,
+                        start_time: '08:00:00',
+                        end_time: '10:00:00',
+                    },
+                ],
+                [
+                    {
+                        id: 1,
+                        commute_system_id: 1,
+                        account_id: 1,
+                        cron_job_id: 1,
+                        fare_detail_id: 1,
+                        day_of_week: 1,
+                        pass: 'LIRR monthly',
+                        start_time: '08:00:00',
+                        end_time: '10:00:00',
+                        duration: 30,
+                        day_start: 1,
+                        fare: 230,
+                    },
+                ],
+                [{ id: 1 }],
+                [],
+                [],
+                [{ id: 1 }],
+                [],
+                [],
+            ],
+            {
+                id: 1,
+                commute_system_id: 1,
+                account_id: 1,
+                cron_job_id: 1,
+                fare_detail_id: 1,
+                day_of_week: 1,
+                pass: 'LIRR monthly',
+                start_time: '08:00:00',
+                end_time: '10:00:00',
+                duration: 30,
+                day_start: 1,
+                fare: 230,
+            },
+            true,
+        );
+
+        const { createCommuteSchedule } = await import(
+            '../../src/controllers/commuteScheduleController.js'
+        );
+
+        mockRequest.body = {
+            accountId: 1,
+            dayOfWeek: 1,
+            fareDetailId: 1,
+            startTime: '08:00:00',
+            endTime: '10:00:00',
+        };
+
+        // Act
+        await createCommuteSchedule(mockRequest as Request, mockResponse);
+
+        const responseObj = {
+            schedule: {
+                id: 1,
+                commute_system_id: 1,
+                account_id: 1,
+                cron_job_id: 1,
+                fare_detail_id: 1,
+                day_of_week: 1,
+                pass: 'LIRR monthly',
+                start_time: '08:00:00',
+                end_time: '10:00:00',
+                duration: 30,
+                day_start: 1,
+                fare: 230,
+            },
+            alerts: [],
+        };
+
+        // Assert
+        expect(mockResponse.status).toHaveBeenCalledWith(201);
+        expect(mockResponse.json).toHaveBeenCalledWith(responseObj);
+    });
+
     it('should respond with the created commute schedule when system is opened and is in the timeframe for the fare type', async () => {
         // Arrange
         mockModule(
