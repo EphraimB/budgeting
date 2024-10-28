@@ -153,7 +153,7 @@ export const createCommuteSchedule = async (
 
         const { rows: commuteSystemResults } = await client.query(
             `
-                SELECT id
+                SELECT id, duration
                     FROM fare_details
                     WHERE id = $1
             `,
@@ -349,31 +349,32 @@ export const createCommuteSchedule = async (
             [createCommuteSchedule[0].id],
         );
 
-        const jobDetails = {
-            frequencyType: 1,
-            frequencyTypeVariable: 1,
-            frequencyDayOfWeek: dayOfWeek,
-            date: dayjs()
-                .hour(startTime.split(':')[0])
-                .minute(startTime.split(':')[1])
-                .second(startTime.split(':')[2])
-                .toISOString(),
-        };
+        if (commuteSystemResults[0].duration === null) {
+            const jobDetails = {
+                frequencyType: 1,
+                frequencyTypeVariable: 1,
+                frequencyDayOfWeek: dayOfWeek,
+                date: dayjs()
+                    .hour(startTime.split(':')[0])
+                    .minute(startTime.split(':')[1])
+                    .second(startTime.split(':')[2])
+                    .toISOString(),
+            };
 
-        const cronDate = determineCronValues(jobDetails);
+            const cronDate = determineCronValues(jobDetails);
 
-        const taxRate = 0;
+            const taxRate = 0;
 
-        const uniqueId = uuidv4();
+            const uniqueId = uuidv4();
 
-        await client.query(`
+            await client.query(`
             SELECT cron.schedule('${uniqueId}', '${cronDate}',
             $$INSERT INTO commute_history (account_id, commute_system, fare_type, fare, timestamp, is_timed_pass) VALUES (${commuteScheduleResults[0].account_id}, '${
                 fareDetail[0].system_name
             }', '${fareDetail[0].fare_type}', ${-fareDetail[0]
                 .fare}, 'now()', false)$$)`);
 
-        await client.query(`
+            await client.query(`
             SELECT cron.schedule('${uniqueId}', '${cronDate}',
             $$INSERT INTO transaction_history (account_id, amount, tax_rate, title, description) VALUES (${commuteScheduleResults[0].account_id}, ${-fareDetail[0]
                 .fare}, ${taxRate}, '${
@@ -385,26 +386,27 @@ export const createCommuteSchedule = async (
                 ' pass'
             }')$$)`);
 
-        const { rows: cronIdResults } = await client.query(
-            `
+            const { rows: cronIdResults } = await client.query(
+                `
                 INSERT INTO cron_jobs
                 (unique_id, cron_expression)
                 VALUES ($1, $2)
                 RETURNING *
             `,
-            [uniqueId, cronDate],
-        );
+                [uniqueId, cronDate],
+            );
 
-        const cronId = cronIdResults[0].id;
+            const cronId = cronIdResults[0].id;
 
-        await client.query(
-            `
+            await client.query(
+                `
                 UPDATE commute_schedule
                 SET cron_job_id = $1
 
             `,
-            [cronId],
-        );
+                [cronId],
+            );
+        }
 
         await client.query('COMMIT;');
 
@@ -600,59 +602,19 @@ export const updateCommuteSchedule = async (
             return;
         }
 
-        const cronId: number = parseInt(rows[0].cron_job_id);
-
-        const jobDetails = {
-            frequencyType: 1,
-            frequencyTypeVariable: 1,
-            frequencyDayOfWeek: dayOfWeek,
-            date: dayjs()
-                .hour(startTime.split(':')[0])
-                .minute(startTime.split(':')[1])
-                .second(startTime.split(':')[2])
-                .toISOString(),
-        };
-
-        const cronDate = determineCronValues(jobDetails);
-
-        const { rows: uniqueIdResults } = await client.query(
-            `
-                SELECT id, unique_id
-                    FROM cron_jobs
-                    WHERE id = $1
-            `,
-            [cronId],
-        );
-
-        const uniqueId = uniqueIdResults[0].unique_id;
-
-        const taxRate = 0;
-
         await client.query('BEGIN;');
 
         await client.query(
             `
-                UPDATE cron_jobs
-                SET unique_id = $1,
-                cron_expression = $2
-                WHERE id = $3
-            `,
-            [uniqueId, cronDate, cronId],
-        );
-
-        await client.query(
-            `
-                UPDATE commute_schedule
-                SET day_of_week = $1,
-                fare_detail_id = $2,
-                start_time = $3,
-                end_time = $4
-                WHERE id = $5
-            `,
+                    UPDATE commute_schedule
+                    SET day_of_week = $1,
+                    fare_detail_id = $2,
+                    start_time = $3,
+                    end_time = $4
+                    WHERE id = $5
+                `,
             [dayOfWeek, currentFareDetailId, startTime, endTime, id],
         );
-
-        await client.query('COMMIT;');
 
         const { rows: commuteScheduleResults } = await client.query(
             `
@@ -692,16 +654,64 @@ export const updateCommuteSchedule = async (
             [id],
         );
 
-        await client.query(`SELECT cron.unschedule('${uniqueId}')`);
+        const { rows: timedPassResults } = await client.query(
+            `
+                SELECT id, duration
+                FROM fare_details
+                WHERE id = $1
+            `,
+            [id],
+        );
 
-        await client.query(`
+        if (timedPassResults[0].duration === null) {
+            const cronId: number = parseInt(rows[0].cron_job_id);
+
+            const jobDetails = {
+                frequencyType: 1,
+                frequencyTypeVariable: 1,
+                frequencyDayOfWeek: dayOfWeek,
+                date: dayjs()
+                    .hour(startTime.split(':')[0])
+                    .minute(startTime.split(':')[1])
+                    .second(startTime.split(':')[2])
+                    .toISOString(),
+            };
+
+            const cronDate = determineCronValues(jobDetails);
+
+            const { rows: uniqueIdResults } = await client.query(
+                `
+                SELECT id, unique_id
+                    FROM cron_jobs
+                    WHERE id = $1
+            `,
+                [cronId],
+            );
+
+            const uniqueId = uniqueIdResults[0].unique_id;
+
+            const taxRate = 0;
+
+            await client.query(
+                `
+                UPDATE cron_jobs
+                SET unique_id = $1,
+                cron_expression = $2
+                WHERE id = $3
+            `,
+                [uniqueId, cronDate, cronId],
+            );
+
+            await client.query(`SELECT cron.unschedule('${uniqueId}')`);
+
+            await client.query(`
             SELECT cron.schedule('${uniqueId}', '${cronDate}',
             $$INSERT INTO commute_history (account_id, commute_system, fare_type, fare, timestamp, is_timed_pass) VALUES (${commuteScheduleResults[0].account_id}, '${
                 fareDetail[0].system_name
             }', '${fareDetail[0].fare_type}' '${-fareDetail[0]
                 .fare}', 'now()', false)$$)`);
 
-        await client.query(`
+            await client.query(`
             SELECT cron.schedule('${uniqueId}', '${cronDate}',
             $$INSERT INTO transaction_history (account_id, amount, tax_rate, title, description) VALUES (${commuteScheduleResults[0].account_id}, ${-fareDetail[0]
                 .fare}, ${taxRate}, '${
@@ -712,6 +722,9 @@ export const updateCommuteSchedule = async (
                 fareDetail[0].fare_type +
                 ' pass'
             }')$$)`);
+        }
+
+        await client.query('COMMIT;');
 
         const responseObj = {
             schedule: toCamelCase(commuteScheduleResults[0]),
