@@ -329,7 +329,7 @@ export const updateFareDetail = async (
             await client.query(
                 `
                     DELETE FROM timeslots
-                        WHERE timeslot_id = $1
+                        WHERE id = $1
                 `,
                 [timeslot.timeslot_id],
             );
