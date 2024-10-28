@@ -406,6 +406,83 @@ export const createCommuteSchedule = async (
             `,
                 [cronId],
             );
+        } else {
+            // Timed pass (duration is set)
+            const jobDetails = {
+                frequencyType: 0, // Daily frequency
+                frequencyTypeVariable: commuteSystemResults[0].duration, // Duration in days
+                date: dayjs()
+                    .hour(startTime.split(':')[0])
+                    .minute(startTime.split(':')[1])
+                    .second(startTime.split(':')[2])
+                    .toISOString(),
+            };
+
+            const cronDate = determineCronValues(jobDetails);
+
+            const taxRate = 0;
+
+            const uniqueId = uuidv4();
+
+            const { rows: existingMonthlyPass } = await client.query(
+                `
+                SELECT id FROM commute_schedule cs
+                    WHERE cs.id = $1
+                    AND EXISTS (
+                        SELECT id FROM fare_details fd
+                        WHERE fd.id = cs.fare_detail_id
+                        AND fd.duration = $2
+                        AND fd.account_id = $3
+                    )
+              `,
+                [
+                    createCommuteSchedule[0].id,
+                    commuteSystemResults[0].duration,
+                    commuteScheduleResults[0].account_id,
+                ],
+            );
+
+            if (existingMonthlyPass.length <= 1) {
+                await client.query(`
+            SELECT cron.schedule('${uniqueId}', '${cronDate}',
+            $$INSERT INTO commute_history (account_id, commute_system, fare_type, fare, timestamp, is_timed_pass) VALUES (${commuteScheduleResults[0].account_id}, '${
+                fareDetail[0].system_name
+            }', '${fareDetail[0].fare_type}', ${-fareDetail[0]
+                .fare}, 'now()', false)$$)`);
+
+                await client.query(`
+            SELECT cron.schedule('${uniqueId}', '${cronDate}',
+            $$INSERT INTO transaction_history (account_id, amount, tax_rate, title, description) VALUES (${commuteScheduleResults[0].account_id}, ${-fareDetail[0]
+                .fare}, ${taxRate}, '${
+                fareDetail[0].system_name + ' ' + fareDetail[0].fare_type
+            }', '${
+                fareDetail[0].system_name +
+                ' ' +
+                fareDetail[0].fare_type +
+                ' pass'
+            }')$$)`);
+
+                const { rows: cronIdResults } = await client.query(
+                    `
+                INSERT INTO cron_jobs
+                (unique_id, cron_expression)
+                VALUES ($1, $2)
+                RETURNING *
+            `,
+                    [uniqueId, cronDate],
+                );
+
+                const cronId = cronIdResults[0].id;
+
+                await client.query(
+                    `
+                UPDATE commute_schedule
+                SET cron_job_id = $1
+
+            `,
+                    [cronId],
+                );
+            }
         }
 
         await client.query('COMMIT;');
