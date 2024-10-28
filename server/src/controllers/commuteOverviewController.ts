@@ -54,6 +54,7 @@ export const getCommuteOverview = async (
                 JOIN fare_details fd ON cs.fare_detail_id = fd.id
                 JOIN commute_systems csy ON fd.commute_system_id = csy.id
                 JOIN count_days cd ON cs.day_of_week = cd.day_of_week
+                WHERE fd.duration IS NULL
                 GROUP BY fd.account_id, csy.name, csy.fare_cap, csy.fare_cap_duration, csy.id
             )
             SELECT
@@ -118,6 +119,7 @@ export const getCommuteOverview = async (
                 JOIN fare_details fd ON cs.fare_detail_id = fd.id
                 JOIN commute_systems csy ON fd.commute_system_id = csy.id
                 JOIN count_days cd ON cs.day_of_week = cd.day_of_week
+                WHERE fd.duration IS NULL
                 GROUP BY fd.account_id, csy.name, csy.fare_cap, csy.fare_cap_duration, csy.id
             )
             SELECT
