@@ -17,136 +17,128 @@ export const getCommuteOverview = async (
 
         if (accountId) {
             query = `
-            WITH timed_passes AS (
-                SELECT 
+            WITH RECURSIVE days AS (
+                SELECT date_trunc('month', current_date)::date as day
+                UNION ALL
+                SELECT day + 1
+                FROM days
+                WHERE day < date_trunc('month', current_date)::date + interval '1 month' - interval '1 day'
+            ),
+            count_days AS (
+                SELECT
+                extract(dow from day)::int AS day_of_week,
+                COUNT(*) AS num_days
+                FROM days
+                GROUP BY day_of_week
+            ),
+            ticket_fares AS (
+                SELECT
                     fd.account_id,
                     csy.name AS system_name,
-                    fd.fare,
-                    fd.duration::INTEGER,
-                    NULL::JSON AS fare_cap_progress
-                FROM commute_schedule cs
-                JOIN fare_details fd ON cs.fare_detail_id = fd.id
-                JOIN commute_systems csy ON fd.commute_system_id = csy.id
-                WHERE fd.duration IS NOT NULL
-                ),
-                regular_passes AS (
-                SELECT 
-                    fd.account_id,
-                    csy.name AS system_name,
-                    fd.fare,
-                    NULL::INTEGER AS duration,
-                    JSON_BUILD_OBJECT(
-                    'currentSpent', (
-                        SELECT COALESCE(SUM(ch.fare), 0)
-                        FROM commute_history ch
-                        WHERE ch.account_id = fd.account_id
-                        AND (
+                    COALESCE(SUM(fd.fare), 0) AS total_cost_per_week,
+                    COALESCE(SUM(fd.fare * cd.num_days), 0) AS total_cost_per_month,
+                    COUNT(cs.id) AS rides,
+                    csy.fare_cap AS fare_cap,
+                    csy.fare_cap_duration AS fare_cap_duration,
+                    (
+                    SELECT COALESCE(SUM(ch.fare), 0)
+                    FROM commute_history ch
+                    WHERE ch.account_id = fd.account_id
+                    AND (
                         (csy.fare_cap_duration = 0 AND date(ch.timestamp) = current_date) OR
                         (csy.fare_cap_duration = 1 AND date_trunc('week', ch.timestamp) = date_trunc('week', current_date)) OR
                         (csy.fare_cap_duration = 2 AND date_trunc('month', ch.timestamp) = date_trunc('month', current_date))
-                        )
-                    ),
-                    'fareCap', csy.fare_cap,
-                    'fareCapDuration', csy.fare_cap_duration
-                    ) AS fare_cap_progress
+                    )
+                ) AS current_spent
                 FROM commute_schedule cs
                 JOIN fare_details fd ON cs.fare_detail_id = fd.id
                 JOIN commute_systems csy ON fd.commute_system_id = csy.id
-                WHERE fd.duration IS NULL
-                )
-                SELECT 
-                account_id,
-                JSON_AGG(json_data::json) AS systems
-                FROM (
-                SELECT DISTINCT 
-                    account_id,
+                JOIN count_days cd ON cs.day_of_week = cd.day_of_week
+                GROUP BY fd.account_id, csy.name, csy.fare_cap, csy.fare_cap_duration, csy.id
+            )
+            SELECT
+                tf.account_id,
+                SUM(tf.total_cost_per_week) AS total_cost_per_week,
+                SUM(tf.total_cost_per_month) AS total_cost_per_month,
+                JSON_AGG(
                     JSON_BUILD_OBJECT(
-                    'systemName', system_name,
-                    'fare', fare,
-                    'duration', duration,
-                    'fareCapProgress', fare_cap_progress
-                    )::text AS json_data
-                FROM (
-                    SELECT * FROM timed_passes
-                    UNION ALL
-                    SELECT rp.*
-                    FROM regular_passes rp
-                    WHERE NOT EXISTS (
-                    SELECT 1
-                    FROM timed_passes tp
-                    WHERE tp.system_name = rp.system_name AND tp.account_id = rp.account_id
+                        'systemName', tf.system_name,
+                        'totalCostPerWeek', tf.total_cost_per_week,
+                        'totalCostPerMonth', tf.total_cost_per_month,
+                        'rides', tf.rides,
+                        'fareCapProgress', JSON_BUILD_OBJECT(
+                            'currentSpent', tf.current_spent,
+                            'fareCap', tf.fare_cap,
+                            'fareCapDuration', tf.fare_cap_duration
+                        )
                     )
-                ) AS combined_passes
-                ) AS distinct_json
-                WHERE account_id = $1
-                GROUP BY account_id;
+                ) AS systems
+            FROM ticket_fares tf
+            WHERE account_id = $1
+            GROUP BY tf.account_id;
         `;
 
             params = [accountId];
         } else {
             query = `
-                WITH timed_passes AS (
-                    SELECT 
-                        fd.account_id,
-                        csy.name AS system_name,
-                        fd.fare,
-                        fd.duration::INTEGER,
-                        NULL::JSON AS fare_cap_progress
-                    FROM commute_schedule cs
-                    JOIN fare_details fd ON cs.fare_detail_id = fd.id
-                    JOIN commute_systems csy ON fd.commute_system_id = csy.id
-                    WHERE fd.duration IS NOT NULL
-                    ),
-                    regular_passes AS (
-                    SELECT 
-                        fd.account_id,
-                        csy.name AS system_name,
-                        fd.fare,
-                        NULL::INTEGER AS duration,
-                        JSON_BUILD_OBJECT(
-                        'currentSpent', (
-                            SELECT COALESCE(SUM(ch.fare), 0)
-                            FROM commute_history ch
-                            WHERE ch.account_id = fd.account_id
-                            AND (
-                            (csy.fare_cap_duration = 0 AND date(ch.timestamp) = current_date) OR
-                            (csy.fare_cap_duration = 1 AND date_trunc('week', ch.timestamp) = date_trunc('week', current_date)) OR
-                            (csy.fare_cap_duration = 2 AND date_trunc('month', ch.timestamp) = date_trunc('month', current_date))
-                            )
-                        ),
-                        'fareCap', csy.fare_cap,
-                        'fareCapDuration', csy.fare_cap_duration
-                        ) AS fare_cap_progress
-                    FROM commute_schedule cs
-                    JOIN fare_details fd ON cs.fare_detail_id = fd.id
-                    JOIN commute_systems csy ON fd.commute_system_id = csy.id
-                    WHERE fd.duration IS NULL
+                WITH RECURSIVE days AS (
+                SELECT date_trunc('month', current_date)::date as day
+                UNION ALL
+                SELECT day + 1
+                FROM days
+                WHERE day < date_trunc('month', current_date)::date + interval '1 month' - interval '1 day'
+            ),
+            count_days AS (
+                SELECT
+                extract(dow from day)::int AS day_of_week,
+                COUNT(*) AS num_days
+                FROM days
+                GROUP BY day_of_week
+            ),
+            ticket_fares AS (
+                SELECT
+                    fd.account_id,
+                    csy.name AS system_name,
+                    COALESCE(SUM(fd.fare), 0) AS total_cost_per_week,
+                    COALESCE(SUM(fd.fare * cd.num_days), 0) AS total_cost_per_month,
+                    COUNT(cs.id) AS rides,
+                    csy.fare_cap AS fare_cap,
+                    csy.fare_cap_duration AS fare_cap_duration,
+                    (
+                    SELECT COALESCE(SUM(ch.fare), 0)
+                    FROM commute_history ch
+                    WHERE ch.account_id = fd.account_id
+                    AND (
+                        (csy.fare_cap_duration = 0 AND date(ch.timestamp) = current_date) OR
+                        (csy.fare_cap_duration = 1 AND date_trunc('week', ch.timestamp) = date_trunc('week', current_date)) OR
+                        (csy.fare_cap_duration = 2 AND date_trunc('month', ch.timestamp) = date_trunc('month', current_date))
                     )
-                    SELECT 
-                    account_id,
-                    JSON_AGG(json_data::json) AS systems
-                    FROM (
-                    SELECT DISTINCT 
-                        account_id,
-                        JSON_BUILD_OBJECT(
-                        'systemName', system_name,
-                        'fare', fare,
-                        'duration', duration,
-                        'fareCapProgress', fare_cap_progress
-                        )::text AS json_data
-                    FROM (
-                        SELECT * FROM timed_passes
-                        UNION ALL
-                        SELECT rp.*
-                        FROM regular_passes rp
-                        WHERE NOT EXISTS (
-                        SELECT 1
-                        FROM timed_passes tp
-                        WHERE tp.system_name = rp.system_name AND tp.account_id = rp.account_id
+                ) AS current_spent
+                FROM commute_schedule cs
+                JOIN fare_details fd ON cs.fare_detail_id = fd.id
+                JOIN commute_systems csy ON fd.commute_system_id = csy.id
+                JOIN count_days cd ON cs.day_of_week = cd.day_of_week
+                GROUP BY fd.account_id, csy.name, csy.fare_cap, csy.fare_cap_duration, csy.id
+            )
+            SELECT
+                tf.account_id,
+                SUM(tf.total_cost_per_week) AS total_cost_per_week,
+                SUM(tf.total_cost_per_month) AS total_cost_per_month,
+                JSON_AGG(
+                    JSON_BUILD_OBJECT(
+                        'systemName', tf.system_name,
+                        'totalCostPerWeek', tf.total_cost_per_week,
+                        'totalCostPerMonth', tf.total_cost_per_month,
+                        'rides', tf.rides,
+                        'fareCapProgress', JSON_BUILD_OBJECT(
+                            'currentSpent', tf.current_spent,
+                            'fareCap', tf.fare_cap,
+                            'fareCapDuration', tf.fare_cap_duration
                         )
-                    ) AS combined_passes
-                    ) AS distinct_json
-                    GROUP BY account_id;
+                    )
+                ) AS systems
+            FROM ticket_fares tf
+            GROUP BY tf.account_id;
             `;
             params = [];
         }
