@@ -480,6 +480,34 @@ export const createCommuteSchedule = async (
             `,
                     [cronId],
                 );
+            } else {
+                const { rows: getCronIdResult } = await client.query(
+                    `
+                    SELECT DISTINCT cs.cron_job_id
+                        FROM commute_schedule cs
+                        WHERE cs.fare_detail_id IN (
+                        SELECT id
+                        FROM fare_details
+                        WHERE duration = $1 AND account_id = $2
+                        )
+                        AND cs.cron_job_id IS NOT NULL;
+                    `,
+                    [
+                        commuteSystemResults[0].duration,
+                        commuteScheduleResults[0].account_id,
+                    ],
+                );
+
+                const cronId = getCronIdResult[0].cron_job_id;
+
+                await client.query(
+                    `
+                UPDATE commute_schedule
+                SET cron_job_id = $1
+
+            `,
+                    [cronId],
+                );
             }
         }
 
