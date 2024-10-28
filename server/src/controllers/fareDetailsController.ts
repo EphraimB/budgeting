@@ -22,7 +22,8 @@ export const getFareDetails = async (
     try {
         const { rows } = await client.query(
             `
-                SELECT 
+                SELECT
+                    fare_details.account_id,
                     fare_details.id,
                     commute_systems.id AS commute_system_id, commute_systems.name AS commute_system_name,
                     fare_details.name, 
@@ -80,7 +81,8 @@ export const getFareDetailsById = async (
     try {
         const { rows } = await client.query(
             `
-                SELECT 
+                SELECT
+                    fare_details.account_id,
                     fare_details.id,
                     commute_systems.id AS commute_system_id, commute_systems.name AS commute_system_name,
                     fare_details.name, 
@@ -134,6 +136,7 @@ export const createFareDetail = async (
 ) => {
     const {
         commuteSystemId,
+        accountId,
         name,
         fare,
         timeslots,
@@ -169,12 +172,13 @@ export const createFareDetail = async (
         const { rows: fareDetails } = await client.query(
             `
                 INSERT INTO fare_details
-                (commute_system_id, name, fare, duration, day_start, alternate_fare_detail_id)
-                VALUES ($1, $2, $3, $4, $5, $6)
+                (commute_system_id, account_id, name, fare, duration, day_start, alternate_fare_detail_id)
+                VALUES ($1, $2, $3, $4, $5, $6, $7)
                 RETURNING *
             `,
             [
                 commuteSystemId,
+                accountId,
                 name,
                 fare,
                 duration,
@@ -260,6 +264,7 @@ export const updateFareDetail = async (
     const { id } = request.params;
     const {
         commuteSystemId,
+        accountId,
         name,
         fare,
         timeslots,
@@ -324,7 +329,7 @@ export const updateFareDetail = async (
             await client.query(
                 `
                     DELETE FROM timeslots
-                        WHERE timeslot_id = $1
+                        WHERE id = $1
                 `,
                 [timeslot.timeslot_id],
             );
@@ -346,16 +351,18 @@ export const updateFareDetail = async (
             `
                 UPDATE fare_details
                 SET commute_system_id = $1,
-                name = $2,
-                fare = $3,
-                duration = $4,
-                day_start = $5,
-                alternate_fare_detail_id = $6
-                WHERE id = $7
+                account_id = $2,
+                name = $3,
+                fare = $4,
+                duration = $5,
+                day_start = $6,
+                alternate_fare_detail_id = $7
+                WHERE id = $8
                 RETURNING *
             `,
             [
                 commuteSystemId,
+                accountId,
                 name,
                 fare,
                 duration,

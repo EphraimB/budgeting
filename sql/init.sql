@@ -203,6 +203,7 @@ CREATE TABLE IF NOT EXISTS commute_systems (
 
 CREATE TABLE IF NOT EXISTS fare_details (
   id SERIAL PRIMARY KEY,
+  account_id INT NOT NULL REFERENCES accounts(id) ON DELETE CASCADE,
   commute_system_id INT NOT NULL REFERENCES commute_systems(id) ON DELETE CASCADE,
   name VARCHAR(255) NOT NULL,
   fare NUMERIC(5,2) NOT NULL,
@@ -225,7 +226,6 @@ CREATE TABLE IF NOT EXISTS timeslots (
 
 CREATE TABLE IF NOT EXISTS commute_schedule (
   id SERIAL PRIMARY KEY,
-  account_id INT NOT NULL REFERENCES accounts(id) ON DELETE CASCADE,
   cron_job_id INT REFERENCES cron_jobs(id),
   day_of_week INT NOT NULL,
   start_time TIME NOT NULL,
@@ -233,7 +233,7 @@ CREATE TABLE IF NOT EXISTS commute_schedule (
   fare_detail_id INT NOT NULL REFERENCES fare_details(id) ON DELETE CASCADE,
   date_created TIMESTAMP NOT NULL,
   date_modified TIMESTAMP NOT NULL,
-  UNIQUE(account_id, day_of_week, start_time)
+  UNIQUE(day_of_week, start_time)
 );
 
 CREATE TABLE IF NOT EXISTS commute_history (
@@ -400,29 +400,47 @@ BEGIN
         income i
     UNION
     SELECT
-        cs.account_id,
+        fd.account_id,
         CONCAT('Fare for ', csy.name, ' ', fd.name) AS title,
         CONCAT('Fare for ', csy.name, ' ', fd.name) AS description,
         CASE
+        WHEN fd.duration IS NOT NULL AND EXISTS (
+            SELECT id
+            FROM commute_schedule cs2
+            WHERE cs2.fare_detail_id = fd.id
+        ) THEN 
+            (DATE_TRUNC('month', CURRENT_DATE) + INTERVAL '1 day' * (fd.day_start)) + INTERVAL '1 day' * fd.duration
+        ELSE 
+            CASE
             WHEN extract('dow' from now()) <= cs.day_of_week THEN
                 now() + interval '1 day' * (cs.day_of_week - extract('dow' from now()))
             ELSE
                 now() + interval '1 week' + interval '1 day' * (cs.day_of_week - extract('dow' from now()))
+            END
         END AS date,
         -fd.fare AS subtotal,
         0 AS tax_rate,
         -fd.fare AS amount,
-        1 AS frequency_type,
-        1 AS frequency_type_variable,
-        cs.day_of_week AS frequency_day_of_week,
+        CASE
+            WHEN fd.duration IS NOT NULL THEN 0
+            ELSE 1
+        END AS frequency_type,
+        CASE
+            WHEN fd.duration IS NOT NULL THEN fd.duration
+            ELSE 1
+        END AS frequency_type_variable,
+        CASE
+            WHEN fd.duration IS NOT NULL THEN NULL
+            ELSE cs.day_of_week
+        END AS frequency_day_of_week,
         NULL AS frequency_week_of_month,
         NULL AS frequency_month_of_year,
         NULL AS remaining_balance,
         csy.fare_cap AS fare_cap,
         csy.fare_cap_duration AS fare_cap_duration,
         csy.id AS commute_system_id
-    FROM commute_schedule cs
-    LEFT JOIN fare_details fd ON cs.fare_detail_id = fd.id
+    FROM fare_details fd
+    LEFT JOIN commute_schedule cs ON fd.id = cs.fare_detail_id
     LEFT JOIN commute_systems csy ON fd.commute_system_id = csy.id
     UNION ALL
     -- Generate subsequent billing dates based on frequency type
