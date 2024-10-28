@@ -404,15 +404,20 @@ BEGIN
         CONCAT('Fare for ', csy.name, ' ', fd.name) AS title,
         CONCAT('Fare for ', csy.name, ' ', fd.name) AS description,
         CASE
-            WHEN fd.duration IS NOT NULL THEN 
-                now() + INTERVAL '1 day' * fd.duration
-            ELSE 
-                CASE
-                    WHEN extract('dow' from now()) <= cs.day_of_week THEN
-                        now() + interval '1 day' * (cs.day_of_week - extract('dow' from now()))
-                    ELSE
-                        now() + interval '1 week' + interval '1 day' * (cs.day_of_week - extract('dow' from now()))
-                END
+        WHEN fd.duration IS NOT NULL AND EXISTS (
+            SELECT id
+            FROM commute_schedule cs2
+            WHERE cs2.fare_detail_id = fd.id
+            AND cs2.account_id = cs.account_id
+        ) THEN 
+            now() + INTERVAL '1 day' * fd.duration
+        ELSE 
+            CASE
+            WHEN extract('dow' from now()) <= cs.day_of_week THEN
+                now() + interval '1 day' * (cs.day_of_week - extract('dow' from now()))
+            ELSE
+                now() + interval '1 week' + interval '1 day' * (cs.day_of_week - extract('dow' from now()))
+            END
         END AS date,
         -fd.fare AS subtotal,
         0 AS tax_rate,
