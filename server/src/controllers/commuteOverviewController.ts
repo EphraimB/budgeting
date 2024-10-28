@@ -33,7 +33,7 @@ export const getCommuteOverview = async (
             ),
             ticket_fares AS (
                 SELECT
-                    cs.account_id,
+                    fd.account_id,
                     csy.name AS system_name,
                     COALESCE(SUM(fd.fare), 0) AS total_cost_per_week,
                     COALESCE(SUM(fd.fare * cd.num_days), 0) AS total_cost_per_month,
@@ -43,7 +43,7 @@ export const getCommuteOverview = async (
                     (
                     SELECT COALESCE(SUM(ch.fare), 0)
                     FROM commute_history ch
-                    WHERE ch.account_id = cs.account_id
+                    WHERE ch.account_id = fd.account_id
                     AND (
                         (csy.fare_cap_duration = 0 AND date(ch.timestamp) = current_date) OR
                         (csy.fare_cap_duration = 1 AND date_trunc('week', ch.timestamp) = date_trunc('week', current_date)) OR
@@ -54,7 +54,8 @@ export const getCommuteOverview = async (
                 JOIN fare_details fd ON cs.fare_detail_id = fd.id
                 JOIN commute_systems csy ON fd.commute_system_id = csy.id
                 JOIN count_days cd ON cs.day_of_week = cd.day_of_week
-                GROUP BY cs.account_id, csy.name, csy.fare_cap, csy.fare_cap_duration, csy.id
+                WHERE fd.duration IS NULL
+                GROUP BY fd.account_id, csy.name, csy.fare_cap, csy.fare_cap_duration, csy.id
             )
             SELECT
                 tf.account_id,
@@ -97,7 +98,7 @@ export const getCommuteOverview = async (
             ),
             ticket_fares AS (
                 SELECT
-                    cs.account_id,
+                    fd.account_id,
                     csy.name AS system_name,
                     COALESCE(SUM(fd.fare), 0) AS total_cost_per_week,
                     COALESCE(SUM(fd.fare * cd.num_days), 0) AS total_cost_per_month,
@@ -107,7 +108,7 @@ export const getCommuteOverview = async (
                     (
                     SELECT COALESCE(SUM(ch.fare), 0)
                     FROM commute_history ch
-                    WHERE ch.account_id = cs.account_id
+                    WHERE ch.account_id = fd.account_id
                     AND (
                         (csy.fare_cap_duration = 0 AND date(ch.timestamp) = current_date) OR
                         (csy.fare_cap_duration = 1 AND date_trunc('week', ch.timestamp) = date_trunc('week', current_date)) OR
@@ -118,7 +119,8 @@ export const getCommuteOverview = async (
                 JOIN fare_details fd ON cs.fare_detail_id = fd.id
                 JOIN commute_systems csy ON fd.commute_system_id = csy.id
                 JOIN count_days cd ON cs.day_of_week = cd.day_of_week
-                GROUP BY cs.account_id, csy.name, csy.fare_cap, csy.fare_cap_duration, csy.id
+                WHERE fd.duration IS NULL
+                GROUP BY fd.account_id, csy.name, csy.fare_cap, csy.fare_cap_duration, csy.id
             )
             SELECT
                 tf.account_id,

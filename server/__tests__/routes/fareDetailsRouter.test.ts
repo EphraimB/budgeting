@@ -97,6 +97,7 @@ describe('GET / with account id query', () => {
 describe('POST /', () => {
     it('responds with json', async () => {
         const newFareDetail = {
+            accountId: 1,
             commuteSystemId: 1,
             name: 'Single Ride',
             fare: 2.75,
@@ -123,6 +124,7 @@ describe('POST /', () => {
 describe('PUT /:id', () => {
     it('responds with json', async () => {
         const newFareDetail = {
+            accountId: 1,
             commuteSystemId: 1,
             name: 'Single Ride',
             fare: 2.75,

@@ -28,6 +28,9 @@ router.post(
         body('commuteSystemId')
             .isInt({ min: 1 })
             .withMessage('Commute System ID must be a number'),
+        body('accountId')
+            .isInt({ min: 1 })
+            .withMessage('Account ID must be a number'),
         body('name').isString().withMessage('Name must be a string'),
         body('fare').isFloat().withMessage('Fare must be a number'),
         body('timeslots.*.dayOfWeek')
@@ -62,6 +65,9 @@ router.put(
     '/:id',
     [
         param('id').isInt({ min: 1 }).withMessage('ID must be a number'),
+        body('accountId')
+            .isInt({ min: 1 })
+            .withMessage('Account ID must be a number'),
         body('commuteSystemId')
             .isInt({ min: 1 })
             .withMessage('Commute System ID must be a number'),
@@ -82,7 +88,7 @@ router.put(
             .optional({ nullable: true })
             .isInt({ min: 1 })
             .withMessage('Duration must be be an integer'),
-        body('day_start')
+        body('dayStart')
             .optional({ nullable: true })
             .isInt({ min: 1 })
             .withMessage('day start must be an integer'),
