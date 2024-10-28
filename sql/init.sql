@@ -409,7 +409,7 @@ BEGIN
             FROM commute_schedule cs2
             WHERE cs2.fare_detail_id = fd.id
         ) THEN 
-            now() + INTERVAL '1 day' * fd.duration
+            (DATE_TRUNC('month', CURRENT_DATE) + INTERVAL '1 day' * (fd.day_start)) + INTERVAL '1 day' * fd.duration
         ELSE 
             CASE
             WHEN extract('dow' from now()) <= cs.day_of_week THEN

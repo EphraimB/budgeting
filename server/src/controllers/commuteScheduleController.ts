@@ -153,7 +153,7 @@ export const createCommuteSchedule = async (
 
         const { rows: commuteSystemResults } = await client.query(
             `
-                SELECT id, duration
+                SELECT id, duration, day_start
                     FROM fare_details
                     WHERE id = $1
             `,
@@ -412,6 +412,14 @@ export const createCommuteSchedule = async (
                 frequencyType: 0, // Daily frequency
                 frequencyTypeVariable: commuteSystemResults[0].duration, // Duration in days
                 date: dayjs()
+                    .month(
+                        commuteSystemResults[0].day_start
+                            ? dayjs().date() > commuteSystemResults[0].day_start
+                                ? dayjs().month() + 1
+                                : dayjs().month()
+                            : dayjs().month(),
+                    )
+                    .date(commuteSystemResults[0].day_start || dayjs().date())
                     .hour(startTime.split(':')[0])
                     .minute(startTime.split(':')[1])
                     .second(startTime.split(':')[2])
