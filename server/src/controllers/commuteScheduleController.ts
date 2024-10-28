@@ -476,9 +476,9 @@ export const createCommuteSchedule = async (
                     `
                 UPDATE commute_schedule
                 SET cron_job_id = $1
-
+                WHERE id = $2
             `,
-                    [cronId],
+                    [cronId, createCommuteSchedule[0].id],
                 );
             } else {
                 const { rows: getCronIdResult } = await client.query(
