@@ -405,7 +405,7 @@ BEGIN
         CONCAT('Fare for ', csy.name, ' ', fd.name) AS description,
         CASE
             WHEN fd.duration IS NOT NULL THEN 
-                now() + INTERVAL '1 day' * fd.duration  -- charge every [duration] days
+                now() + INTERVAL '1 day' * fd.duration
             ELSE 
                 CASE
                     WHEN extract('dow' from now()) <= cs.day_of_week THEN
@@ -418,15 +418,15 @@ BEGIN
         0 AS tax_rate,
         -fd.fare AS amount,
         CASE
-            WHEN fd.duration IS NOT NULL THEN 0  -- daily frequency (every [duration] days)
-            ELSE 1  -- default to weekly frequency
+            WHEN fd.duration IS NOT NULL THEN 0
+            ELSE 1
         END AS frequency_type,
         CASE
-            WHEN fd.duration IS NOT NULL THEN fd.duration  -- charge every [duration] days
-            ELSE 1  -- default to every 1 week
+            WHEN fd.duration IS NOT NULL THEN fd.duration
+            ELSE 1
         END AS frequency_type_variable,
         CASE
-            WHEN fd.duration IS NOT NULL THEN NULL  -- ignore commute schedule for timed passes
+            WHEN fd.duration IS NOT NULL THEN NULL
             ELSE cs.day_of_week
         END AS frequency_day_of_week,
         NULL AS frequency_week_of_month,
@@ -435,8 +435,8 @@ BEGIN
         csy.fare_cap AS fare_cap,
         csy.fare_cap_duration AS fare_cap_duration,
         csy.id AS commute_system_id
-    FROM commute_schedule cs
-    LEFT JOIN fare_details fd ON cs.fare_detail_id = fd.id
+    FROM fare_details fd
+    LEFT JOIN commute_schedule cs ON fd.id = cs.fare_detail_id
     LEFT JOIN commute_systems csy ON fd.commute_system_id = csy.id
     UNION ALL
     -- Generate subsequent billing dates based on frequency type
