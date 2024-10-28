@@ -408,7 +408,6 @@ BEGIN
             SELECT id
             FROM commute_schedule cs2
             WHERE cs2.fare_detail_id = fd.id
-            AND cs2.account_id = cs.account_id
         ) THEN 
             now() + INTERVAL '1 day' * fd.duration
         ELSE 

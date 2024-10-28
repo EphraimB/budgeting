@@ -427,16 +427,14 @@ export const createCommuteSchedule = async (
             const { rows: existingMonthlyPass } = await client.query(
                 `
                 SELECT id FROM commute_schedule cs
-                    WHERE cs.id = $1
-                    AND EXISTS (
-                        SELECT id FROM fare_details fd
-                        WHERE fd.id = cs.fare_detail_id
-                        AND fd.duration = $2
-                        AND fd.account_id = $3
-                    )
+                WHERE EXISTS (
+                    SELECT id FROM fare_details fd
+                    WHERE fd.id = cs.fare_detail_id
+                    AND fd.duration = $1
+                    AND fd.account_id = $2
+                )
               `,
                 [
-                    createCommuteSchedule[0].id,
                     commuteSystemResults[0].duration,
                     commuteScheduleResults[0].account_id,
                 ],
