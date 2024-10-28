@@ -622,6 +622,8 @@ export const updateCommuteSchedule = async (
         const { rows: oldFareResults } = await client.query(
             `
                 SELECT fare_details.id,
+                    commute_systems.name AS system_name,
+                    fare_details.name AS fare_type,
                     fare,
                     alternate_fare_detail_id
                 FROM fare_details
