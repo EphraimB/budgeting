@@ -127,6 +127,13 @@ function DataManagementWidgets({
       }`,
       selected: isSelected("wishlists"),
     },
+    {
+      id: "commute",
+      title: "Commute",
+      link: `/${accountId}/commute`,
+      content: "Click to view commute",
+      selected: isSelected("commute"),
+    },
   ];
 
   if (accounts.length > 1) {
