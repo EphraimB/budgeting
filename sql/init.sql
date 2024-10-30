@@ -208,7 +208,7 @@ CREATE TABLE IF NOT EXISTS stations (
     to_station VARCHAR(255) NOT NULL,
     date_created TIMESTAMP NOT NULL,
     date_modified TIMESTAMP NOT NULL
-)
+);
 
 CREATE TABLE IF NOT EXISTS fare_details (
   id SERIAL PRIMARY KEY,
