@@ -201,15 +201,24 @@ CREATE TABLE IF NOT EXISTS commute_systems (
   date_modified TIMESTAMP NOT NULL
 );
 
+CREATE TABLE IF NOT EXISTS stations (
+    id SERIAL PRIMARY KEY,
+    commute_system_id INT NOT NULL REFERENCES commute_systems(id) ON DELETE CASCADE,
+    from_station VARCHAR(255) NOT NULL,
+    to_station VARCHAR(255) NOT NULL,
+    date_created TIMESTAMP NOT NULL,
+    date_modified TIMESTAMP NOT NULL
+)
+
 CREATE TABLE IF NOT EXISTS fare_details (
   id SERIAL PRIMARY KEY,
   account_id INT NOT NULL REFERENCES accounts(id) ON DELETE CASCADE,
-  commute_system_id INT NOT NULL REFERENCES commute_systems(id) ON DELETE CASCADE,
+  station_id INT NOT NULL REFERENCES stations(id) ON DELETE CASCADE,
   name VARCHAR(255) NOT NULL,
   fare NUMERIC(5,2) NOT NULL,
   duration INT,  -- NULL for trip-based fares or an integer representing days for passes
   day_start INT, -- NULL for no specific start day, or an integer representing the day of the month the pass starts
-  alternate_fare_detail_id INT REFERENCES fare_details(id) ON DELETE SET NULL,
+  alternate_fare_details_id INT REFERENCES fare_details(id) ON DELETE SET NULL,
   date_created TIMESTAMP NOT NULL,
   date_modified TIMESTAMP NOT NULL
 );
@@ -230,7 +239,7 @@ CREATE TABLE IF NOT EXISTS commute_schedule (
   day_of_week INT NOT NULL,
   start_time TIME NOT NULL,
   end_time TIME NOT NULL,
-  fare_detail_id INT NOT NULL REFERENCES fare_details(id) ON DELETE CASCADE,
+  fare_details_id INT NOT NULL REFERENCES fare_details(id) ON DELETE CASCADE,
   date_created TIMESTAMP NOT NULL,
   date_modified TIMESTAMP NOT NULL,
   UNIQUE(day_of_week, start_time)
@@ -1040,6 +1049,11 @@ EXECUTE PROCEDURE update_dates();
 
 CREATE TRIGGER update_commute_systems_dates
 BEFORE INSERT OR UPDATE ON commute_systems
+FOR EACH ROW
+EXECUTE PROCEDURE update_dates();
+
+CREATE TRIGGER update_stations_dates
+BEFORE INSERT OR UPDATE ON stations
 FOR EACH ROW
 EXECUTE PROCEDURE update_dates();
 
