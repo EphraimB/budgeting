@@ -135,7 +135,7 @@ export const createFareDetail = async (
     response: Response,
 ) => {
     const {
-        commuteSystemId,
+        stationId,
         accountId,
         name,
         fare,
@@ -150,11 +150,12 @@ export const createFareDetail = async (
     try {
         const { rows: commuteSystemResults } = await client.query(
             `
-                SELECT id, name
-                    FROM commute_systems
-                    WHERE id = $1
+                SELECT csy.id, csy.name
+                    FROM stations s
+                    LEFT JOIN commute_systems csy ON s.commute_system_id = csy.id
+                    WHERE s.id = $1
             `,
-            [commuteSystemId],
+            [stationId],
         );
 
         if (commuteSystemResults.length === 0) {
@@ -172,12 +173,12 @@ export const createFareDetail = async (
         const { rows: fareDetails } = await client.query(
             `
                 INSERT INTO fare_details
-                (commute_system_id, account_id, name, fare, duration, day_start, alternate_fare_detail_id)
+                (station_id, account_id, name, fare, duration, day_start, alternate_fare_detail_id)
                 VALUES ($1, $2, $3, $4, $5, $6, $7)
                 RETURNING *
             `,
             [
-                commuteSystemId,
+                stationId,
                 accountId,
                 name,
                 fare,
@@ -216,7 +217,7 @@ export const createFareDetail = async (
 
         const responseObj: object = {
             id: fareDetails[0].fare_detail_id,
-            commuteSystemId: fareDetails[0].commute_system_id,
+            stationId: fareDetails[0].station_id,
             commuteSystemName: commuteSystemResults[0].name,
             name: fareDetails[0].fare_type,
             fare: parseFloat(fareDetails[0].fare),
@@ -263,7 +264,7 @@ export const updateFareDetail = async (
 ): Promise<void> => {
     const { id } = request.params;
     const {
-        commuteSystemId,
+        stationId,
         accountId,
         name,
         fare,
@@ -293,10 +294,11 @@ export const updateFareDetail = async (
         const { rows: commuteSystemResults } = await client.query(
             `
                 SELECT *
-                    FROM commute_systems
-                    WHERE id = $1
+                    FROM stations s
+                    LEFT JOIN commute_systems csy ON s.commute_system_id = csy.id
+                    WHERE s.id = $1
             `,
-            [commuteSystemId],
+            [stationId],
         );
 
         if (commuteSystemResults.length === 0) {
@@ -350,7 +352,7 @@ export const updateFareDetail = async (
         const { rows: updateFareDetailResults } = await client.query(
             `
                 UPDATE fare_details
-                SET commute_system_id = $1,
+                SET station_id = $1,
                 account_id = $2,
                 name = $3,
                 fare = $4,
@@ -361,7 +363,7 @@ export const updateFareDetail = async (
                 RETURNING *
             `,
             [
-                commuteSystemId,
+                stationId,
                 accountId,
                 name,
                 fare,
@@ -376,7 +378,7 @@ export const updateFareDetail = async (
 
         const responseObj: object = {
             id: updateFareDetailResults[0].id,
-            commuteSystemId: updateFareDetailResults[0].commute_system_id,
+            stationId: updateFareDetailResults[0].station_id,
             commuteSystemName: commuteSystemResults[0].name,
             name: updateFareDetailResults[0].fare_type,
             fare: parseFloat(updateFareDetailResults[0].fare),

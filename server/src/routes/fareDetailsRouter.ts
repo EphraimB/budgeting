@@ -25,7 +25,7 @@ router.get(
 router.post(
     '/',
     [
-        body('commuteSystemId')
+        body('stationId')
             .isInt({ min: 1 })
             .withMessage('Commute System ID must be a number'),
         body('accountId')
@@ -68,7 +68,7 @@ router.put(
         body('accountId')
             .isInt({ min: 1 })
             .withMessage('Account ID must be a number'),
-        body('commuteSystemId')
+        body('stationId')
             .isInt({ min: 1 })
             .withMessage('Commute System ID must be a number'),
         body('name').isString().withMessage('Name must be a string'),
