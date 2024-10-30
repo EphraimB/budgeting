@@ -88,7 +88,7 @@ export const createStation = async (request: Request, response: Response) => {
         const { rows } = await client.query(
             `
                 INSERT INTO stations
-                (commute_system_id, from_statio, to_station)
+                (commute_system_id, from_station, to_station)
                 VALUES ($1, $2, $3)
                 RETURNING *
             `,
