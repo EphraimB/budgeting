@@ -1164,6 +1164,181 @@
                 }
             }
         },
+        "/expenses/commute/stations": {
+            "get": {
+                "summary": "Get all commute stations",
+                "description": "Get all commute stations",
+                "tags": [
+                    "commute stations"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "A JSON array of commute stations",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/station/properties/SuccessResponseStation"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/BadRequest"
+                    }
+                }
+            },
+            "post": {
+                "summary": "Create a new commute station",
+                "description": "Create a new commute station",
+                "tags": [
+                    "commute stations"
+                ],
+                "requestBody": {
+                    "description": "Commute station object to be created",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/station/properties/StationRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "A single commute station object",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/station/properties/SuccessResponseStation"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/BadRequest"
+                    }
+                }
+            }
+        },
+        "/expenses/commute/stations/{id}": {
+            "get": {
+                "summary": "Get a single commute station",
+                "description": "Get a single commute station",
+                "tags": [
+                    "commute stations"
+                ],
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Commute station id",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "minimum": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "A single commute station object",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/station/properties/SuccessResponseStation"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/BadRequest"
+                    },
+                    "404": {
+                        "description": "Commute station not found"
+                    }
+                }
+            },
+            "put": {
+                "summary": "Update a commute station",
+                "description": "Update a commute station",
+                "tags": [
+                    "commute stations"
+                ],
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Commute station id",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "description": "Commute station object to be updated",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/station/properties/StationRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "A single commute station object",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/station/properties/SuccessResponseStation"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/BadRequest"
+                    },
+                    "404": {
+                        "description": "Commute station not found"
+                    }
+                }
+            },
+            "delete": {
+                "summary": "Delete a commute station",
+                "description": "Delete a commute station",
+                "tags": [
+                    "commute stations"
+                ],
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Commute station id",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Commute station deleted successfully"
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/BadRequest"
+                    },
+                    "404": {
+                        "description": "Commute station not found"
+                    }
+                }
+            }
+        },
         "/expenses/commute/history": {
             "get": {
                 "summary": "Get all commute histories",
@@ -1373,7 +1548,7 @@
                                 "schema": {
                                     "type": "array",
                                     "items": {
-                                        "$ref": "#/components/schemas/commuteSystem/properties/SuccessResponseCommuteSystem"
+                                        "$ref": "#/components/schemas/fareDetails/properties/SuccessResponseCommuteFare"
                                     }
                                 }
                             }
@@ -4281,6 +4456,46 @@
                     }
                 }
             },
+            "station": {
+                "properties": {
+                    "SuccessResponseStation": {
+                        "type": "object",
+                        "properties": {
+                            "commuteSystemId": {
+                                "type": "integer",
+                                "format": "int64",
+                                "minimum": 1
+                            },
+                            "fromStation": {
+                                "type": "string",
+                                "example": "34 St-Penn Station"
+                            },
+                            "toStation": {
+                                "type": "string",
+                                "example": "7th Avenue"
+                            }
+                        }
+                    },
+                    "StationRequest": {
+                        "type": "object",
+                        "properties": {
+                            "commuteSystemId": {
+                                "type": "integer",
+                                "format": "int64",
+                                "minimum": 1
+                            },
+                            "fromStation": {
+                                "type": "string",
+                                "example": "34 St-Penn Station"
+                            },
+                            "toStation": {
+                                "type": "string",
+                                "example": "7th Avenue"
+                            }
+                        }
+                    }
+                }
+            },
             "fareDetails": {
                 "properties": {
                     "SuccessResponseCommuteFare": {
@@ -4367,7 +4582,7 @@
                     "CommuteFareRequest": {
                         "type": "object",
                         "properties": {
-                            "commuteSystemId": {
+                            "stationId": {
                                 "type": "integer",
                                 "format": "int64",
                                 "minimum": 1
