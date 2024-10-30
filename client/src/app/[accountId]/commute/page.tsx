@@ -1,3 +1,5 @@
+import { Typography } from "@mui/material";
+
 async function getCommuteSystems(accountId: number) {
   try {
     const res = await fetch(
@@ -16,4 +18,8 @@ async function getCommuteSystems(accountId: number) {
 
 async function Commute({ params }: { params: { accountId: string } }) {
   const accountId = parseInt(params.accountId);
+
+  return <Typography>Under construction</Typography>;
 }
+
+export default Commute;
