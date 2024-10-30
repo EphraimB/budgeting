@@ -289,9 +289,9 @@ $$ LANGUAGE plpgsql;
 CREATE OR REPLACE FUNCTION check_fare_detail_id()
 RETURNS TRIGGER AS $$
 BEGIN
-    -- Check if alternate_fare_detail_id is equal to the new fare_detail_id
-    IF NEW.alternate_fare_detail_id = NEW.id THEN
-        RAISE EXCEPTION 'alternate_fare_detail_id cannot be the same as id';
+    -- Check if alternate_fare_details_id is equal to the new fare_detail_id
+    IF NEW.alternate_fare_details_id = NEW.id THEN
+        RAISE EXCEPTION 'alternate_fare_details_id cannot be the same as id';
     END IF;
     -- If all checks pass, return the new row for insertion
     RETURN NEW;
