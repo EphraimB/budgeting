@@ -4582,7 +4582,7 @@
                     "CommuteFareRequest": {
                         "type": "object",
                         "properties": {
-                            "commuteSystemId": {
+                            "stationId": {
                                 "type": "integer",
                                 "format": "int64",
                                 "minimum": 1
