@@ -54,17 +54,17 @@ const commuteSystems = [
 const fareDetails = [
     {
         id: 1,
-        commute_system_id: 1,
+        station_id: 1,
         system_name: 'OMNY',
         fare_type: 'Single Ride',
         fare: 2.75,
-        alternate_fare_detail_id: null,
+        alternate_fare_details_id: null,
         date_created: '2020-01-01',
         date_modified: '2020-01-01',
     },
     {
         id: 2,
-        commute_system_id: 1,
+        station_id: 1,
         system_name: 'LIRR',
         fare_type: 'Weekly',
         fare: 33,
@@ -77,14 +77,14 @@ const fareDetails = [
 const timeslots = [
     {
         id: 1,
-        fare_detail_id: 1,
+        fare_details_id: 1,
         day_of_week: 0,
         start_time: '00:00:00',
         end_time: '23:59:59',
     },
     {
         id: 2,
-        fare_detail_id: 2,
+        fare_details_id: 2,
         day_of_week: 1,
         start_time: '00:00:00',
         end_time: '23:59:59',
@@ -108,7 +108,7 @@ const fareDetailsResponse = [
             },
         ],
 
-        alternateFareDetailId: null,
+        alternateFareDetailsId: null,
         dateCreated: '2020-01-01',
         dateModified: '2020-01-01',
     },
@@ -127,7 +127,7 @@ const fareDetailsResponse = [
                 endTime: '23:59:59',
             },
         ],
-        alternateFareDetailId: null,
+        alternateFareDetailsId: null,
         dateCreated: '2020-01-01',
         dateModified: '2020-01-01',
     },
@@ -263,11 +263,11 @@ describe('POST /api/expenses/commute/fares', () => {
         // Assert
         expect(mockResponse.status).toHaveBeenCalledWith(201);
         expect(mockResponse.json).toHaveBeenCalledWith({
-            commuteSystemId: 1,
+            stationId: 1,
             commuteSystemName: 'OMNY',
             name: 'Single Ride',
             fare: 2.75,
-            alternateFareDetailId: null,
+            alternateFareDetailsId: null,
             timeslots: [
                 {
                     dayOfWeek: 0,
@@ -344,7 +344,7 @@ describe('PUT /api/expenses/commute/fares/:id', () => {
             commuteSystemName: 'OMNY',
             name: 'Single Ride',
             fare: 2.75,
-            alternateFareDetailId: null,
+            alternateFareDetailsId: null,
             timeslots: [
                 {
                     dayOfWeek: 0,
@@ -362,11 +362,11 @@ describe('PUT /api/expenses/commute/fares/:id', () => {
         expect(mockResponse.status).toHaveBeenCalledWith(200);
         expect(mockResponse.json).toHaveBeenCalledWith({
             id: 1,
-            commuteSystemId: 1,
+            stationId: 1,
             commuteSystemName: 'OMNY',
             name: 'Single Ride',
             fare: 2.75,
-            alternateFareDetailId: null,
+            alternateFareDetailsId: null,
             timeslots: [
                 {
                     dayOfWeek: 0,

@@ -201,15 +201,24 @@ CREATE TABLE IF NOT EXISTS commute_systems (
   date_modified TIMESTAMP NOT NULL
 );
 
+CREATE TABLE IF NOT EXISTS stations (
+    id SERIAL PRIMARY KEY,
+    commute_system_id INT NOT NULL REFERENCES commute_systems(id) ON DELETE CASCADE,
+    from_station VARCHAR(255) NOT NULL,
+    to_station VARCHAR(255) NOT NULL,
+    date_created TIMESTAMP NOT NULL,
+    date_modified TIMESTAMP NOT NULL
+);
+
 CREATE TABLE IF NOT EXISTS fare_details (
   id SERIAL PRIMARY KEY,
   account_id INT NOT NULL REFERENCES accounts(id) ON DELETE CASCADE,
-  commute_system_id INT NOT NULL REFERENCES commute_systems(id) ON DELETE CASCADE,
+  station_id INT NOT NULL REFERENCES stations(id) ON DELETE CASCADE,
   name VARCHAR(255) NOT NULL,
   fare NUMERIC(5,2) NOT NULL,
   duration INT,  -- NULL for trip-based fares or an integer representing days for passes
   day_start INT, -- NULL for no specific start day, or an integer representing the day of the month the pass starts
-  alternate_fare_detail_id INT REFERENCES fare_details(id) ON DELETE SET NULL,
+  alternate_fare_details_id INT REFERENCES fare_details(id) ON DELETE SET NULL,
   date_created TIMESTAMP NOT NULL,
   date_modified TIMESTAMP NOT NULL
 );
@@ -230,7 +239,7 @@ CREATE TABLE IF NOT EXISTS commute_schedule (
   day_of_week INT NOT NULL,
   start_time TIME NOT NULL,
   end_time TIME NOT NULL,
-  fare_detail_id INT NOT NULL REFERENCES fare_details(id) ON DELETE CASCADE,
+  fare_details_id INT NOT NULL REFERENCES fare_details(id) ON DELETE CASCADE,
   date_created TIMESTAMP NOT NULL,
   date_modified TIMESTAMP NOT NULL,
   UNIQUE(day_of_week, start_time)
@@ -280,9 +289,9 @@ $$ LANGUAGE plpgsql;
 CREATE OR REPLACE FUNCTION check_fare_detail_id()
 RETURNS TRIGGER AS $$
 BEGIN
-    -- Check if alternate_fare_detail_id is equal to the new fare_detail_id
-    IF NEW.alternate_fare_detail_id = NEW.id THEN
-        RAISE EXCEPTION 'alternate_fare_detail_id cannot be the same as id';
+    -- Check if alternate_fare_details_id is equal to the new fare_detail_id
+    IF NEW.alternate_fare_details_id = NEW.id THEN
+        RAISE EXCEPTION 'alternate_fare_details_id cannot be the same as id';
     END IF;
     -- If all checks pass, return the new row for insertion
     RETURN NEW;
@@ -407,7 +416,7 @@ BEGIN
         WHEN fd.duration IS NOT NULL AND EXISTS (
             SELECT id
             FROM commute_schedule cs2
-            WHERE cs2.fare_detail_id = fd.id
+            WHERE cs2.fare_details_id = fd.id
         ) THEN 
             (DATE_TRUNC('month', CURRENT_DATE) + INTERVAL '1 day' * (fd.day_start)) + INTERVAL '1 day' * fd.duration
         ELSE 
@@ -440,8 +449,9 @@ BEGIN
         csy.fare_cap_duration AS fare_cap_duration,
         csy.id AS commute_system_id
     FROM fare_details fd
-    LEFT JOIN commute_schedule cs ON fd.id = cs.fare_detail_id
-    LEFT JOIN commute_systems csy ON fd.commute_system_id = csy.id
+    LEFT JOIN commute_schedule cs ON fd.id = cs.fare_details_id
+    LEFT JOIN stations s ON fd.station_id = s.id
+    LEFT JOIN commute_systems csy ON s.commute_system_id = csy.id
     UNION ALL
     -- Generate subsequent billing dates based on frequency type
     SELECT
@@ -1040,6 +1050,11 @@ EXECUTE PROCEDURE update_dates();
 
 CREATE TRIGGER update_commute_systems_dates
 BEFORE INSERT OR UPDATE ON commute_systems
+FOR EACH ROW
+EXECUTE PROCEDURE update_dates();
+
+CREATE TRIGGER update_stations_dates
+BEFORE INSERT OR UPDATE ON stations
 FOR EACH ROW
 EXECUTE PROCEDURE update_dates();
 

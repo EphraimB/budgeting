@@ -4,7 +4,6 @@ import express, {
     type Express,
     type Request,
     type Response,
-    type NextFunction,
     type Router,
 } from 'express';
 import {
@@ -25,24 +24,24 @@ const createApp = async (): Promise<Express> => {
     app.use(express.json());
 
     // Import the module that uses the mock
-    const routerModule = await import('../../src/routes/fareDetailsRouter');
-    const fareDetailsRouter: Router = routerModule.default;
-    app.use('/', fareDetailsRouter);
+    const routerModule = await import('../../src/routes/commuteStationsRouter');
+    const commuteStationsRouter: Router = routerModule.default;
+    app.use('/', commuteStationsRouter);
 
     return app;
 };
 
 beforeAll(() => {
-    jest.mock('../../src/controllers/fareDetailsController', () => ({
-        getFareDetails: (_: Request, res: Response) =>
+    jest.mock('../../src/controllers/commuteStationsController', () => ({
+        getStations: (_: Request, res: Response) =>
             res.json({ message: 'success' }),
-        getFareDetailsById: (_: Request, res: Response) =>
+        getStationById: (_: Request, res: Response) =>
             res.json({ message: 'success' }),
-        createFareDetail: (_: Request, res: Response) =>
+        createStation: (_: Request, res: Response) =>
             res.json({ message: 'success' }),
-        updateFareDetail: (_: Request, res: Response) =>
+        updateStation: (_: Request, res: Response) =>
             res.json({ message: 'success' }),
-        deleteFareDetail: (_: Request, res: Response) =>
+        deleteStation: (_: Request, res: Response) =>
             res.json({ message: 'success' }),
     }));
 });
@@ -96,25 +95,17 @@ describe('GET / with account id query', () => {
 
 describe('POST /', () => {
     it('responds with json', async () => {
-        const newFareDetail = {
-            accountId: 1,
-            stationId: 1,
-            name: 'Single Ride',
-            fare: 2.75,
-            timeslots: [
-                {
-                    dayOfWeek: 1,
-                    startTime: '00:00:00',
-                    endTime: '23:59:59',
-                },
-            ],
+        const newStation = {
+            commuteSystemId: 1,
+            fromStation: '7th Av',
+            toStation: '34 St-Penn Station',
         };
 
         const response: request.Response = await request(app)
             .post('/')
             .set('Accept', 'application/json')
             .expect('Content-Type', /json/)
-            .send(newFareDetail);
+            .send(newStation);
 
         expect(response.status).toBe(200);
         expect(response.body).toEqual({ message: 'success' });
@@ -123,25 +114,17 @@ describe('POST /', () => {
 
 describe('PUT /:id', () => {
     it('responds with json', async () => {
-        const newFareDetail = {
-            accountId: 1,
-            stationId: 1,
-            name: 'Single Ride',
-            fare: 2.75,
-            timeslots: [
-                {
-                    dayOfWeek: 1,
-                    startTime: '00:00:00',
-                    endTime: '23:59:59',
-                },
-            ],
+        const updatedStation = {
+            commuteSystemId: 1,
+            fromStation: '7th Av',
+            toStation: '34 St-Penn Station',
         };
 
         const response: request.Response = await request(app)
             .put('/1')
             .set('Accept', 'application/json')
             .expect('Content-Type', /json/)
-            .send(newFareDetail);
+            .send(updatedStation);
 
         expect(response.status).toBe(200);
         expect(response.body).toEqual({ message: 'success' });
