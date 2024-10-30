@@ -416,7 +416,7 @@ BEGIN
         WHEN fd.duration IS NOT NULL AND EXISTS (
             SELECT id
             FROM commute_schedule cs2
-            WHERE cs2.fare_detail_id = fd.id
+            WHERE cs2.fare_details_id = fd.id
         ) THEN 
             (DATE_TRUNC('month', CURRENT_DATE) + INTERVAL '1 day' * (fd.day_start)) + INTERVAL '1 day' * fd.duration
         ELSE 
@@ -449,8 +449,9 @@ BEGIN
         csy.fare_cap_duration AS fare_cap_duration,
         csy.id AS commute_system_id
     FROM fare_details fd
-    LEFT JOIN commute_schedule cs ON fd.id = cs.fare_detail_id
-    LEFT JOIN commute_systems csy ON fd.commute_system_id = csy.id
+    LEFT JOIN commute_schedule cs ON fd.id = cs.fare_details_id
+    LEFT JOIN stations s ON fd.station_id = s.id
+    LEFT JOIN commute_systems csy ON s.commute_system_id = csy.id
     UNION ALL
     -- Generate subsequent billing dates based on frequency type
     SELECT
