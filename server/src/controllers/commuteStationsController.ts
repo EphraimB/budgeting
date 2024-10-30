@@ -58,7 +58,7 @@ export const getStationById = async (
         );
 
         if (rows.length === 0) {
-            response.status(404).send('System not found');
+            response.status(404).send('Station not found');
             return;
         }
 
