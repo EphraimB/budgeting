@@ -38,15 +38,16 @@ export const getFareDetails = async (
                         ) FILTER (WHERE timeslots.id IS NOT NULL), 
                         '[]'::json
                     ) AS timeslots, 
-                    alternate_fare_detail_id, 
+                    alternate_fare_details_id, 
                     fare_details.date_created, 
                     fare_details.date_modified
                 FROM 
                     fare_details
                 LEFT JOIN 
                     timeslots ON timeslots.fare_details_id = fare_details.id
+                LEFT JOIN stations ON fare_details.station_id = stations.id
                 LEFT JOIN 
-                    commute_systems ON fare_details.commute_system_id = commute_systems.id
+                    commute_systems ON stations.commute_system_id = commute_systems.id
                 GROUP BY 
                     fare_details.id, commute_systems.id;
             `,
@@ -97,15 +98,16 @@ export const getFareDetailsById = async (
                         ) FILTER (WHERE timeslots.id IS NOT NULL), 
                         '[]'::json
                     ) AS timeslots, 
-                    alternate_fare_detail_id, 
+                    alternate_fare_details_id, 
                     fare_details.date_created, 
                     fare_details.date_modified
                 FROM 
                     fare_details
                 LEFT JOIN 
                     timeslots ON timeslots.fare_details_id = fare_details.id
+                LEFT JOIN stations ON fare_details.station_id = stations.id
                 LEFT JOIN 
-                    commute_systems ON fare_details.commute_system_id = commute_systems.id
+                    commute_systems ON stations.commute_system_id = commute_systems.id
                 WHERE fare_details.id = $1
                 GROUP BY 
                     fare_details.id, commute_systems.id;
@@ -142,7 +144,7 @@ export const createFareDetail = async (
         timeslots,
         duration,
         dayStart,
-        alternateFareDetailId,
+        alternateFareDetailsId,
     } = request.body;
 
     const client = await pool.connect(); // Get a client from the pool
@@ -173,7 +175,7 @@ export const createFareDetail = async (
         const { rows: fareDetails } = await client.query(
             `
                 INSERT INTO fare_details
-                (station_id, account_id, name, fare, duration, day_start, alternate_fare_detail_id)
+                (station_id, account_id, name, fare, duration, day_start, alternate_fare_details_id)
                 VALUES ($1, $2, $3, $4, $5, $6, $7)
                 RETURNING *
             `,
@@ -184,7 +186,7 @@ export const createFareDetail = async (
                 fare,
                 duration,
                 dayStart,
-                alternateFareDetailId,
+                alternateFareDetailsId,
             ],
         );
 
@@ -224,7 +226,7 @@ export const createFareDetail = async (
             timeslots: allTimeslots,
             duration: fareDetails[0].duration,
             dayStart: fareDetails[0].day_start,
-            alternateFareDetailId: fareDetails[0].alternate_fare_detail_id,
+            alternateFareDetailsId: fareDetails[0].alternate_fare_details_id,
             dateCreated: fareDetails[0].date_created,
             dateModified: fareDetails[0].date_modified,
         };
@@ -271,7 +273,7 @@ export const updateFareDetail = async (
         timeslots,
         duration,
         dayStart,
-        alternateFareDetailId,
+        alternateFareDetailsId,
     } = request.body;
 
     const client = await pool.connect(); // Get a client from the pool
@@ -358,7 +360,7 @@ export const updateFareDetail = async (
                 fare = $4,
                 duration = $5,
                 day_start = $6,
-                alternate_fare_detail_id = $7
+                alternate_fare_details_id = $7
                 WHERE id = $8
                 RETURNING *
             `,
@@ -369,7 +371,7 @@ export const updateFareDetail = async (
                 fare,
                 duration,
                 dayStart,
-                alternateFareDetailId,
+                alternateFareDetailsId,
                 id,
             ],
         );
@@ -385,8 +387,8 @@ export const updateFareDetail = async (
             timeslots: timeslots,
             duration: updateFareDetailResults[0].duration,
             dayStart: updateFareDetailResults[0].day_start,
-            alternateFareDetailId:
-                updateFareDetailResults[0].alternate_fare_detail_id,
+            alternateFareDetailsId:
+                updateFareDetailResults[0].alternate_fare_details_id,
             dateCreated: updateFareDetailResults[0].date_created,
             dateModified: updateFareDetailResults[0].date_modified,
         };
