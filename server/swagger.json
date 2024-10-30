@@ -1548,7 +1548,7 @@
                                 "schema": {
                                     "type": "array",
                                     "items": {
-                                        "$ref": "#/components/schemas/commuteSystem/properties/SuccessResponseCommuteSystem"
+                                        "$ref": "#/components/schemas/fareDetails/properties/SuccessResponseCommuteFare"
                                     }
                                 }
                             }
