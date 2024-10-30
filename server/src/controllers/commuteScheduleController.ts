@@ -46,8 +46,9 @@ export const getCommuteSchedule = async (
                 ) AS commute_schedules
             FROM 
                 commute_schedule cs
-                LEFT JOIN fare_details fd ON cs.fare_detail_id = fd.id
-                LEFT JOIN commute_systems csy ON fd.commute_system_id = csy.id
+                LEFT JOIN fare_details fd ON cs.fare_details_id = fd.id
+              	LEFT JOIN stations s ON fd.station_id = s.id
+                LEFT JOIN commute_systems csy ON s.commute_system_id = csy.id
             GROUP BY 
                 fd.account_id, cs.day_of_week
             ) AS subquery
@@ -83,7 +84,7 @@ export const getCommuteScheduleById = async (
     try {
         const { rows } = await client.query(
             `
-                SELECT 
+                SELECT
                     JSON_AGG(
                         JSON_BUILD_OBJECT(
                         'dayOfWeek', day_of_week,
@@ -104,10 +105,10 @@ export const getCommuteScheduleById = async (
                         ) AS commute_schedules
                     FROM 
                         commute_schedule cs
-                        LEFT JOIN fare_details fd ON cs.fare_detail_id = fd.id
-                        LEFT JOIN commute_systems csy ON fd.commute_system_id = csy.id
-                    WHERE 
-                        cs.id = $1
+                        LEFT JOIN fare_details fd ON cs.fare_details_id = fd.id
+                        LEFT JOIN stations s ON fd.station_id = s.id
+                        LEFT JOIN commute_systems csy ON s.commute_system_id = csy.id
+                    WHERE cs.id = $1
                     GROUP BY 
                         fd.account_id, cs.day_of_week
                     ) AS subquery
@@ -203,10 +204,12 @@ export const createCommuteSchedule = async (
                 SELECT fare_details.id,
                     commute_systems.name AS system_name,
                     fare,
-                    alternate_fare_detail_id
+                    alternate_fare_details_id
                 FROM fare_details
+                LEFT JOIN stations
+                ON fare_details.station_id = stations.id
                 LEFT JOIN commute_systems
-                ON fare_details.commute_system_id = commute_systems.id
+                ON stations.commute_system_id = commute_systems.id
                 WHERE fare_details.id = $1
             `,
             [fareDetailId],
@@ -222,10 +225,12 @@ export const createCommuteSchedule = async (
                         commute_systems.name AS system_name,
                         fare_details.name AS fare_type,
                         fare,
-                        alternate_fare_detail_id
+                        alternate_fare_details_id
                     FROM fare_details
+                    LEFT JOIN stations
+                    ON fare_details.station_id = stations.id
                     LEFT JOIN commute_systems
-                    ON fare_details.commute_system_id = commute_systems.id
+                    ON stations.commute_system_id = commute_systems.id
                     WHERE fare_details.id = $1
                 `,
                     [currentFareDetailId],
@@ -265,10 +270,12 @@ export const createCommuteSchedule = async (
                         `
                         SELECT fare_details.id,
                             fare,
-                            alternate_fare_detail_id
+                            alternate_fare_details_id
                         FROM fare_details
+                        LEFT JOIN stations
+                        ON fare_details.station_id = stations.id
                         LEFT JOIN commute_systems
-                        ON fare_details.commute_system_id = commute_systems.id
+                        ON stations.commute_system_id = commute_systems.id
                         WHERE fare_details.id = $1
                     `,
                         [fareDetail[0].alternate_fare_detail_id],
@@ -304,7 +311,7 @@ export const createCommuteSchedule = async (
         const { rows: createCommuteSchedule } = await client.query(
             `
                 INSERT INTO commute_schedule
-                (day_of_week, fare_detail_id, start_time, end_time)
+                (day_of_week, fare_details_id, start_time, end_time)
                 VALUES ($1, $2, $3, $4)
                 RETURNING *
             `,
@@ -336,8 +343,9 @@ export const createCommuteSchedule = async (
                         ) AS commute_schedules
                     FROM 
                         commute_schedule cs
-                        LEFT JOIN fare_details fd ON cs.fare_detail_id = fd.id
-                        LEFT JOIN commute_systems csy ON fd.commute_system_id = csy.id
+                        LEFT JOIN fare_details fd ON cs.fare_details_id = fd.id
+                  			LEFT JOIN stations s ON fd.station_id = s.id
+                        LEFT JOIN commute_systems csy ON s.commute_system_id = csy.id
                     WHERE 
                         cs.id = $1
                     GROUP BY 
@@ -437,7 +445,7 @@ export const createCommuteSchedule = async (
                 SELECT id FROM commute_schedule cs
                 WHERE EXISTS (
                     SELECT id FROM fare_details fd
-                    WHERE fd.id = cs.fare_detail_id
+                    WHERE fd.id = cs.fare_details_id
                     AND fd.duration = $1
                     AND fd.account_id = $2
                 )
@@ -493,7 +501,7 @@ export const createCommuteSchedule = async (
                     `
                     SELECT DISTINCT cs.cron_job_id
                         FROM commute_schedule cs
-                        WHERE cs.fare_detail_id IN (
+                        WHERE cs.fare_details_id IN (
                         SELECT id
                         FROM fare_details
                         WHERE duration = $1 AND account_id = $2
@@ -625,10 +633,12 @@ export const updateCommuteSchedule = async (
                     commute_systems.name AS system_name,
                     fare_details.name AS fare_type,
                     fare,
-                    alternate_fare_detail_id
+                    alternate_fare_details_id
                 FROM fare_details
+                LEFT JOIN stations
+                ON fare_details.station_id = stations.id
                 LEFT JOIN commute_systems
-                ON fare_details.commute_system_id = commute_systems.id
+                ON stations.commute_system_id = commute_systems.id
                 WHERE fare_details.id = $1
             `,
             [fareDetailId],
@@ -643,10 +653,12 @@ export const updateCommuteSchedule = async (
                         commute_systems.name AS system_name,
                         fare_details.name AS fare_type,
                         fare,
-                        alternate_fare_detail_id
+                        alternate_fare_details_id
                     FROM fare_details
+                    LEFT JOIN stations
+                    ON fare_details.station_id = stations.id
                     LEFT JOIN commute_systems
-                    ON fare_details.commute_system_id = commute_systems.id
+                    ON stations.commute_system_id = commute_systems.id
                     WHERE fare_details.id = $1
                 `,
                 [currentFareDetailId],
@@ -686,10 +698,12 @@ export const updateCommuteSchedule = async (
                     `
                         SELECT fare_details.id,
                             fare,
-                            alternate_fare_detail_id
+                            alternate_fare_details_id
                         FROM fare_details
+                        LEFT JOIN stations
+                        ON fare_details.station_id = stations.id
                         LEFT JOIN commute_systems
-                        ON fare_details.commute_system_id = commute_systems.id
+                        ON stations.commute_system_id = commute_systems.id
                         WHERE fare_details.id = $1
                     `,
                     [fareDetail[0].alternate_fare_detail_id],
@@ -721,7 +735,7 @@ export const updateCommuteSchedule = async (
             `
                     UPDATE commute_schedule
                     SET day_of_week = $1,
-                    fare_detail_id = $2,
+                    fare_details_id = $2,
                     start_time = $3,
                     end_time = $4
                     WHERE id = $5
@@ -754,8 +768,9 @@ export const updateCommuteSchedule = async (
                         ) AS commute_schedules
                     FROM 
                         commute_schedule cs
-                        LEFT JOIN fare_details fd ON cs.fare_detail_id = fd.id
-                        LEFT JOIN commute_systems csy ON fd.commute_system_id = csy.id
+                        LEFT JOIN fare_details fd ON cs.fare_details_id = fd.id
+                  			LEFT JOIN stations s ON fd.station_id = s.id
+                        LEFT JOIN commute_systems csy ON s.commute_system_id = csy.id
                     WHERE 
                         cs.id = $1
                     GROUP BY 
