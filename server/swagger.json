@@ -4473,6 +4473,10 @@
                             "toStation": {
                                 "type": "string",
                                 "example": "7th Avenue"
+                            },
+                            "tripDuration": {
+                                "type": "integer",
+                                "example": 15
                             }
                         }
                     },
@@ -4491,6 +4495,10 @@
                             "toStation": {
                                 "type": "string",
                                 "example": "7th Avenue"
+                            },
+                            "tripDuration": {
+                                "type": "integer",
+                                "example": 15
                             }
                         }
                     }
