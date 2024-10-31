@@ -32,6 +32,9 @@ router.post(
             .isString()
             .withMessage('From station must be a string'),
         body('toStation').isString().withMessage('To station must be a string'),
+        body('tripDuration')
+            .isInt({ min: 1 })
+            .withMessage('Trip duration must be an integer'),
         validateRequest,
     ],
     createStation,
@@ -48,6 +51,9 @@ router.put(
             .isString()
             .withMessage('From station must be a string'),
         body('toStation').isString().withMessage('To station must be a string'),
+        body('tripDuration')
+            .isInt({ min: 1 })
+            .withMessage('Trip duration must be an integer'),
         validateRequest,
     ],
     updateStation,

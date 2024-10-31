@@ -80,7 +80,8 @@ export const getStationById = async (
  *  Sends a response with the created station or an error message and posts the station to the database
  */
 export const createStation = async (request: Request, response: Response) => {
-    const { commuteSystemId, fromStation, toStation } = request.body;
+    const { commuteSystemId, fromStation, toStation, tripDuration } =
+        request.body;
 
     const client = await pool.connect(); // Get a client from the pool
 
@@ -88,11 +89,11 @@ export const createStation = async (request: Request, response: Response) => {
         const { rows } = await client.query(
             `
                 INSERT INTO stations
-                (commute_system_id, from_station, to_station)
-                VALUES ($1, $2, $3)
+                (commute_system_id, from_station, to_station, trip_duration)
+                VALUES ($1, $2, $3, $4)
                 RETURNING *
             `,
-            [commuteSystemId, fromStation, toStation],
+            [commuteSystemId, fromStation, toStation, tripDuration],
         );
 
         const insertedRow = toCamelCase(rows[0]); // Convert to camelCase
@@ -117,7 +118,8 @@ export const updateStation = async (
     response: Response,
 ): Promise<void> => {
     const { id } = request.params;
-    const { commuteSystemId, fromStation, toStation } = request.body;
+    const { commuteSystemId, fromStation, toStation, tripDuration } =
+        request.body;
 
     const client = await pool.connect(); // Get a client from the pool
 
@@ -142,10 +144,11 @@ export const updateStation = async (
                     SET commute_system_id = $1,
                     from_station = $2,
                     to_station = $3
-                    WHERE id = $4
+                    trip_duration = $4
+                    WHERE id = $5
                     RETURNING *
             `,
-            [commuteSystemId, fromStation, toStation, id],
+            [commuteSystemId, fromStation, toStation, tripDuration, id],
         );
 
         const updatedRow = toCamelCase(updateStation[0]); // Convert to camelCase
