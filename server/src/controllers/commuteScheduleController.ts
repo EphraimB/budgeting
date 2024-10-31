@@ -40,7 +40,6 @@ export const getCommuteSchedule = async (
                     'id', cs.id,
                     'pass', concat(csy.name, ' ', fd.name),
                     'startTime', cs.start_time,
-                    'endTime', cs.end_time,
                     'fare', fd.fare
                 )::json
                 ) AS commute_schedules
@@ -99,7 +98,6 @@ export const getCommuteScheduleById = async (
                             'id', cs.id,
                             'pass', concat(csy.name, ' ', fd.name),
                             'startTime', cs.start_time,
-                            'endTime', cs.end_time,
                             'fare', fd.fare
                         )::json
                         ) AS commute_schedules
