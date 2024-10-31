@@ -140,7 +140,7 @@ export const createCommuteSchedule = async (
     request: Request,
     response: Response,
 ) => {
-    const { dayOfWeek, fareDetailId, startTime, endTime } = request.body;
+    const { dayOfWeek, fareDetailId, startTime } = request.body;
     let fareDetail = [];
 
     const client = await pool.connect(); // Get a client from the pool
@@ -185,7 +185,7 @@ export const createCommuteSchedule = async (
                 )
                 GROUP BY cs.id
             `,
-            [dayOfWeek, startTime, endTime],
+            [dayOfWeek, startTime],
         );
 
         if (scheduleExistsResults.length > 0) {
@@ -309,11 +309,11 @@ export const createCommuteSchedule = async (
         const { rows: createCommuteSchedule } = await client.query(
             `
                 INSERT INTO commute_schedule
-                (day_of_week, fare_details_id, start_time, end_time)
-                VALUES ($1, $2, $3, $4)
+                (day_of_week, fare_details_id, start_time)
+                VALUES ($1, $2, $3)
                 RETURNING *
             `,
-            [dayOfWeek, fareDetailId, startTime, endTime],
+            [dayOfWeek, fareDetailId, startTime],
         );
 
         const { rows: commuteScheduleResults } = await client.query(
@@ -554,7 +554,7 @@ export const updateCommuteSchedule = async (
     response: Response,
 ): Promise<void> => {
     const { id } = request.params;
-    const { dayOfWeek, fareDetailId, startTime, endTime } = request.body;
+    const { dayOfWeek, fareDetailId, startTime } = request.body;
     let fareDetail = [];
 
     const client = await pool.connect(); // Get a client from the pool
@@ -613,7 +613,7 @@ export const updateCommuteSchedule = async (
                 )
                 GROUP BY cs.id
             `,
-            [dayOfWeek, startTime, endTime],
+            [dayOfWeek, startTime],
         );
 
         if (existingSchedule.length > 0) {
@@ -734,11 +734,10 @@ export const updateCommuteSchedule = async (
                     UPDATE commute_schedule
                     SET day_of_week = $1,
                     fare_details_id = $2,
-                    start_time = $3,
-                    end_time = $4
-                    WHERE id = $5
+                    start_time = $3
+                    WHERE id = $4
                 `,
-            [dayOfWeek, currentFareDetailId, startTime, endTime, id],
+            [dayOfWeek, currentFareDetailId, startTime, id],
         );
 
         const { rows: commuteScheduleResults } = await client.query(
