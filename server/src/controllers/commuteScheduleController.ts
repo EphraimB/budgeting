@@ -147,8 +147,6 @@ export const createCommuteSchedule = async (
     const client = await pool.connect(); // Get a client from the pool
 
     try {
-        const alerts: object[] = [];
-
         const { rows: commuteSystemResults } = await client.query(
             `
                 SELECT id, duration, day_start
@@ -178,7 +176,7 @@ export const createCommuteSchedule = async (
                         FROM commute_schedule cs 
                         LEFT JOIN fare_details fd ON cs.fare_details_id = fd.id 
                         LEFT JOIN stations s ON fd.station_id = s.id 
-                        WHERE cs.day_of_week = $1
+                        WHERE cs.day_of_week = $1 
                         AND cs.start_time <= $3
                         AND $3 < cs.start_time + interval '1 minute' * COALESCE(s.trip_duration, 0)
                     ),
@@ -208,7 +206,7 @@ export const createCommuteSchedule = async (
                     
                     -- Get alternate fare details if main fare timeslot not valid
                     alternate_fare_details AS (
-                        SELECT fd.id AS alternate_fare_id, fd.fare AS alternate_fare
+                        SELECT fd.id AS alternate_fare_id, fd.name AS alternate_fare_type, fd.fare AS alternate_fare
                         FROM fare_details fd 
                         WHERE fd.id = (SELECT alternate_fare_details_id FROM fare_details WHERE id = 2)
                     ),
@@ -233,6 +231,16 @@ export const createCommuteSchedule = async (
                             ELSE NULL -- NULL implies the system is closed
                         END AS fare,
                         CASE 
+                            WHEN EXISTS (SELECT 1 FROM main_fare_timeslots) THEN mf.fare_detail_id
+                            WHEN EXISTS (SELECT 1 FROM alternate_fare_timeslots) THEN afd.alternate_fare_id 
+                            ELSE NULL
+                        END AS selected_fare_detail_id,
+                        CASE 
+                            WHEN EXISTS (SELECT 1 FROM main_fare_timeslots) THEN mf.fare_type
+                            WHEN EXISTS (SELECT 1 FROM alternate_fare_timeslots) THEN afd.alternate_fare_type 
+                            ELSE NULL
+                        END AS selected_fare_type,
+                        CASE 
                             WHEN EXISTS (SELECT 1 FROM main_fare_timeslots) OR EXISTS (SELECT 1 FROM alternate_fare_timeslots) 
                             THEN true 
                             ELSE false 
@@ -243,8 +251,9 @@ export const createCommuteSchedule = async (
 
                     SELECT 
                     os.overlapping_schedule_id,
+                    CASE WHEN sf.system_opened THEN sf.selected_fare_detail_id ELSE NULL END AS fare_detail_id,
                     CASE WHEN sf.system_opened THEN mf.system_name ELSE NULL END AS system_name,
-                    CASE WHEN sf.system_opened THEN mf.fare_type ELSE NULL END AS fare_type,
+                    CASE WHEN sf.system_opened THEN sf.selected_fare_type ELSE NULL END AS fare_type,
                     CASE WHEN sf.system_opened THEN sf.original_fare ELSE NULL END AS original_fare,
                     CASE WHEN sf.system_opened THEN sf.fare ELSE NULL END AS fare,
                     sf.system_opened
@@ -278,7 +287,7 @@ export const createCommuteSchedule = async (
                 VALUES ($1, $2, $3)
                 RETURNING *
             `,
-            [dayOfWeek, fareDetailId, startTime],
+            [dayOfWeek, fareInfo[0].fare_detail_id, startTime],
         );
 
         const { rows: commuteScheduleResults } = await client.query(
@@ -487,7 +496,12 @@ export const createCommuteSchedule = async (
 
         const responseObj = {
             schedule: toCamelCase(commuteScheduleResults[0]),
-            alerts,
+            alerts:
+                fareInfo[0].original_fare > fareInfo[0].fare
+                    ? `Fare stepped down $${fareInfo[0].original_fare - fareInfo[0].fare}`
+                    : fareInfo[0].original_fare < fareInfo[0].fare
+                      ? `Fare stepped up $${fareInfo[0].fare - fareInfo[0].original_fare}`
+                      : '',
         };
 
         response.status(201).json(responseObj);
