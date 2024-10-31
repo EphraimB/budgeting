@@ -26,31 +26,32 @@ export const getCommuteSchedule = async (
         const { rows } = await client.query(
             `
             SELECT
-            JSON_AGG(
-                JSON_BUILD_OBJECT(
-                'dayOfWeek', day_of_week,
-                'commuteSchedules', commute_schedules
-                )::json
-            ) AS schedules
-            FROM (
-            SELECT
-                cs.day_of_week,
                 JSON_AGG(
-                JSON_BUILD_OBJECT(
-                    'id', cs.id,
-                    'pass', concat(csy.name, ' ', fd.name),
-                    'startTime', cs.start_time,
-                    'fare', fd.fare
-                )::json
-                ) AS commute_schedules
-            FROM 
-                commute_schedule cs
-                LEFT JOIN fare_details fd ON cs.fare_details_id = fd.id
-              	LEFT JOIN stations s ON fd.station_id = s.id
-                LEFT JOIN commute_systems csy ON s.commute_system_id = csy.id
-            GROUP BY 
-                fd.account_id, cs.day_of_week
-            ) AS subquery
+                    JSON_BUILD_OBJECT(
+                    'dayOfWeek', day_of_week,
+                    'commuteSchedules', commute_schedules
+                    )::json
+                ) AS schedules
+                FROM (
+                SELECT
+                    cs.day_of_week,
+                    JSON_AGG(
+                    JSON_BUILD_OBJECT(
+                        'id', cs.id,
+                        'pass', concat(csy.name, ' ', fd.name),
+                        'startTime', cs.start_time,
+                        'endTime', cs.start_time + interval '1 minute' * s.trip_duration,
+                        'fare', fd.fare
+                    )::json
+                    ) AS commute_schedules
+                FROM 
+                    commute_schedule cs
+                    LEFT JOIN fare_details fd ON cs.fare_details_id = fd.id
+                    LEFT JOIN stations s ON fd.station_id = s.id
+                    LEFT JOIN commute_systems csy ON s.commute_system_id = csy.id
+                GROUP BY 
+                    fd.account_id, cs.day_of_week
+                ) AS subquery
             `,
             [],
         );
@@ -98,6 +99,7 @@ export const getCommuteScheduleById = async (
                             'id', cs.id,
                             'pass', concat(csy.name, ' ', fd.name),
                             'startTime', cs.start_time,
+                            'endTime', cs.start_time + interval '1 minute' * s.trip_duration,
                             'fare', fd.fare
                         )::json
                         ) AS commute_schedules
@@ -106,7 +108,7 @@ export const getCommuteScheduleById = async (
                         LEFT JOIN fare_details fd ON cs.fare_details_id = fd.id
                         LEFT JOIN stations s ON fd.station_id = s.id
                         LEFT JOIN commute_systems csy ON s.commute_system_id = csy.id
-                    WHERE cs.id = $1
+                        WHERE cs.id = $1
                     GROUP BY 
                         fd.account_id, cs.day_of_week
                     ) AS subquery
@@ -175,13 +177,15 @@ export const createCommuteSchedule = async (
                 SELECT 
                     cs.id
                     FROM commute_schedule cs
+                    LEFT JOIN fare_details fd ON cs.fare_details_id = fd.id
+                    LEFT JOIN stations s ON fd.station_id = s.id
                 WHERE cs.day_of_week = $1
                 AND (
                 -- New schedule starts within an existing schedule's time slot
-                (cs.start_time <= $2 AND $2 < cs.end_time)
+                (cs.start_time <= $2 AND $2 < cs.start_time + interval '1 minute' * s.trip_duration)
                 OR
                 -- Existing schedule starts within new schedule's time slot
-                (cs.end_time < $3 AND cs.start_time >= $3)
+                (cs.start_time + interval '1 minute' * s.trip_duration < $3 AND cs.start_time >= $3)
                 )
                 GROUP BY cs.id
             `,
@@ -335,7 +339,6 @@ export const createCommuteSchedule = async (
                                 'id', cs.id,
                                 'pass', concat(csy.name, ' ', fd.name),
                                 'startTime', cs.start_time,
-                                'endTime', cs.end_time,
                                 'fare', fd.fare
                             )::json
                         ) AS commute_schedules
