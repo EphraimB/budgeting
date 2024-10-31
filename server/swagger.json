@@ -4783,10 +4783,6 @@
                             "startTime": {
                                 "type": "string",
                                 "example": "05:00:00"
-                            },
-                            "endTime": {
-                                "type": "string",
-                                "example": "10:00:00"
                             }
                         }
                     }
