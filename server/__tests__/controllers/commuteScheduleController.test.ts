@@ -538,10 +538,17 @@ describe('POST /api/expenses/commute/schedule', () => {
         // Arrange
         mockModule([
             [{ id: 1 }],
-            [],
-            [{ id: 1, fare: 2.9, alternate_fare_detail_id: null }],
-            [{ id: 1, fare: 2.9, alternate_fare_detail_id: null }],
-            [{ day_of_week: 1, start_time: '08:00:00', end_time: '10:00:00' }],
+            [
+                {
+                    overlapping_schedule_id: null,
+                    fare_detail_id: 1,
+                    system_name: 'LIRR',
+                    fare_type: 'Peak',
+                    original_fare: 9.75,
+                    fare: 13,
+                    system_opened: false,
+                },
+            ],
         ]);
 
         const { createCommuteSchedule } = await import(
