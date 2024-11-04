@@ -99,6 +99,7 @@ describe('POST /', () => {
             commuteSystemId: 1,
             fromStation: '7th Av',
             toStation: '34 St-Penn Station',
+            tripDuration: 5,
         };
 
         const response: request.Response = await request(app)
@@ -118,6 +119,7 @@ describe('PUT /:id', () => {
             commuteSystemId: 1,
             fromStation: '7th Av',
             toStation: '34 St-Penn Station',
+            tripDuration: 5,
         };
 
         const response: request.Response = await request(app)
