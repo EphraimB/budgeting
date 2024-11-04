@@ -607,30 +607,15 @@ describe('PUT /api/expenses/commute/schedule/:id', () => {
             [
                 [{ id: 1, cron_job_id: 1 }],
                 [{ id: 1 }],
-                [],
                 [
                     {
-                        id: 1,
+                        overlapping_schedule_id: null,
+                        fare_detail_id: 1,
                         system_name: 'OMNY',
                         fare_type: 'Regular',
+                        original_fare: 2.9,
                         fare: 2.9,
-                        alternate_fare_id: null,
-                    },
-                ],
-                [
-                    {
-                        id: 1,
-                        system_name: 'OMNY',
-                        fare_type: 'Regular',
-                        fare: 2.9,
-                        alternate_fare_id: null,
-                    },
-                ],
-                [
-                    {
-                        day_of_week: 1,
-                        start_time: '08:00:00',
-                        end_time: '10:00:00',
+                        system_opened: true,
                     },
                 ],
                 [],
@@ -643,7 +628,7 @@ describe('PUT /api/expenses/commute/schedule/:id', () => {
                         cron_job_id: 1,
                         fare_detail_id: 1,
                         day_of_week: 1,
-                        pass: 'OMNY regular',
+                        pass: 'OMNY Regular',
                         start_time: '08:00:00',
                         end_time: '10:00:00',
                         duration: null,
@@ -652,7 +637,7 @@ describe('PUT /api/expenses/commute/schedule/:id', () => {
                     },
                 ],
                 [{ id: 1, duration: null }],
-                [{ id: 1, unique_id: 'v6ce3v87' }],
+                [{ id: 1, unique_id: 'b873o4f9' }],
                 [],
                 [],
                 [],
@@ -666,7 +651,7 @@ describe('PUT /api/expenses/commute/schedule/:id', () => {
                 cron_job_id: 1,
                 fare_detail_id: 1,
                 day_of_week: 1,
-                pass: 'OMNY regular',
+                pass: 'OMNY Regular',
                 start_time: '08:00:00',
                 end_time: '10:00:00',
                 duration: null,
@@ -701,14 +686,14 @@ describe('PUT /api/expenses/commute/schedule/:id', () => {
                 cron_job_id: 1,
                 fare_detail_id: 1,
                 day_of_week: 1,
-                pass: 'OMNY regular',
+                pass: 'OMNY Regular',
                 start_time: '08:00:00',
                 end_time: '10:00:00',
                 duration: null,
                 day_start: null,
                 fare: 2.9,
             },
-            alerts: [],
+            alerts: '',
         };
 
         // Assert
