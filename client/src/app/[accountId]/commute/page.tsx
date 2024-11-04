@@ -16,11 +16,9 @@ async function getCommuteOverview(accountId: number) {
   }
 }
 
-async function getCommuteSystems(accountId: number) {
+async function getCommuteSystems() {
   try {
-    const res = await fetch(
-      `http://server:5001/api/expenses/commute/systems?accountId=${accountId}`
-    );
+    const res = await fetch("http://server:5001/api/expenses/commute/systems");
 
     if (!res.ok) {
       throw new Error(res.statusText);
