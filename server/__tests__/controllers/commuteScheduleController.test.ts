@@ -253,45 +253,19 @@ describe('POST /api/expenses/commute/schedule', () => {
         mockModule(
             [
                 [{ id: 1, duration: 30, day_start: 1 }],
-                [],
                 [
                     {
-                        id: 1,
-                        system_name: 'LIRR',
-                        fare_type: 'Monthly',
-                        fare: 230,
-                        alternate_fare_detail_id: null,
-                    },
-                ],
-                [
-                    {
-                        id: 1,
-                        system_name: 'LIRR',
-                        fare_type: 'Monthly',
-                        fare: 230,
-                        alternate_fare_detail_id: null,
-                    },
-                ],
-                [
-                    {
-                        day_of_week: 1,
-                        start_time: '08:00:00',
-                        end_time: '10:00:00',
-                    },
-                ],
-                [],
-                [
-                    {
-                        id: 1,
-                        commute_system_id: 1,
+                        overlapping_schedule_id: null,
                         fare_detail_id: 1,
-                        account_id: 1,
-                        cron_job_id: 1,
-                        day_of_week: 1,
-                        start_time: '08:00:00',
-                        end_time: '10:00:00',
+                        system_name: 'LIRR',
+                        fare_type: 'monthly',
+                        original_fare: 230,
+                        fare: 230,
+                        system_opened: true,
                     },
                 ],
+                [],
+                [{ id: 1 }],
                 [
                     {
                         id: 1,
@@ -308,7 +282,7 @@ describe('POST /api/expenses/commute/schedule', () => {
                         fare: 230,
                     },
                 ],
-                [{ id: 1 }],
+                [],
                 [],
                 [],
                 [{ id: 1 }],
@@ -362,7 +336,7 @@ describe('POST /api/expenses/commute/schedule', () => {
                 day_start: 1,
                 fare: 230,
             },
-            alerts: [],
+            alerts: '',
         };
 
         // Assert
