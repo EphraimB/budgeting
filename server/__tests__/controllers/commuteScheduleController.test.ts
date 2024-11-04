@@ -349,45 +349,19 @@ describe('POST /api/expenses/commute/schedule', () => {
         mockModule(
             [
                 [{ id: 1, duration: null, day_start: null }],
-                [],
                 [
                     {
-                        id: 1,
-                        system_name: 'OMNY',
-                        fare_type: 'Regular',
-                        fare: 2.9,
-                        alternate_fare_detail_id: null,
-                    },
-                ],
-                [
-                    {
-                        id: 1,
-                        system_name: 'OMNY',
-                        fare_type: 'Regular',
-                        fare: 2.9,
-                        alternate_fare_detail_id: null,
-                    },
-                ],
-                [
-                    {
-                        day_of_week: 1,
-                        start_time: '08:00:00',
-                        end_time: '10:00:00',
-                    },
-                ],
-                [],
-                [
-                    {
-                        id: 1,
-                        commute_system_id: 1,
+                        overlapping_schedule_id: null,
                         fare_detail_id: 1,
-                        account_id: 1,
-                        cron_job_id: 1,
-                        day_of_week: 1,
-                        start_time: '08:00:00',
-                        end_time: '10:00:00',
+                        system_name: 'OMNY',
+                        fare_type: 'Regular',
+                        original_fare: 2.9,
+                        fare: 2.9,
+                        system_opened: true,
                     },
                 ],
+                [],
+                [{ id: 1 }],
                 [
                     {
                         id: 1,
@@ -406,7 +380,7 @@ describe('POST /api/expenses/commute/schedule', () => {
                 ],
                 [],
                 [],
-                [{ id: 1, unique_id: 'v873fovcb' }],
+                [{ id: 1 }],
                 [],
                 [],
             ],
@@ -457,7 +431,7 @@ describe('POST /api/expenses/commute/schedule', () => {
                 day_start: null,
                 fare: 2.9,
             },
-            alerts: [],
+            alerts: '',
         };
 
         // Assert
