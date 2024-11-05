@@ -16,7 +16,9 @@ async function getCommuteSystems() {
   }
 }
 
-async function CommuteSystems() {
+async function CommuteSystems({ params }: { params: { accountId: string } }) {
+  const accountId = parseInt(params.accountId);
+
   const commuteSystems: CommuteSystem[] = await getCommuteSystems();
 
   return (
@@ -25,7 +27,10 @@ async function CommuteSystems() {
         Commute Systems
       </Typography>
       <br />
-      <CommuteSystemCards commuteSystems={commuteSystems} />
+      <CommuteSystemCards
+        accountId={accountId}
+        commuteSystems={commuteSystems}
+      />
     </>
   );
 }
