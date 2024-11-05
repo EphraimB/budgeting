@@ -12,7 +12,16 @@ import Button from "@mui/material/Button";
 import InputAdornment from "@mui/material/InputAdornment";
 import { editCommuteSystem } from "../../services/actions/commuteSystem";
 import { useTheme } from "@mui/material/styles";
-import { Checkbox, FormControlLabel, MobileStepper } from "@mui/material";
+import {
+  Checkbox,
+  FormControl,
+  FormControlLabel,
+  InputLabel,
+  MenuItem,
+  MobileStepper,
+  Select,
+  SelectChangeEvent,
+} from "@mui/material";
 import { KeyboardArrowLeft, KeyboardArrowRight } from "@mui/icons-material";
 import { CommuteSystem } from "@/app/types/types";
 
@@ -32,7 +41,6 @@ function CommuteSystemEdit({
 
   const [nameError, setNameError] = useState("");
   const [fareCapError, setFareCapError] = useState("");
-  const [fareCapDurationError, setFareCapDurationError] = useState("");
 
   const { showSnackbar } = useSnackbar();
   const { showAlert } = useAlert();
@@ -63,22 +71,11 @@ function CommuteSystemEdit({
     return true;
   };
 
-  const validateFareCapDuration = () => {
-    if (!fareCapDuration) {
-      setFareCapDurationError("Fare cap duration is required");
-
-      return false;
-    }
-
-    return true;
-  };
-
   const handleSubmit = async () => {
     const isNameValid = validateName();
     const isFareCapValid = validateFareCap();
-    const isFareCapDurationValid = validateFareCapDuration();
 
-    if (isNameValid && isFareCapValid && isFareCapDurationValid) {
+    if (isNameValid && isFareCapValid) {
       // Submit data
       try {
         await editCommuteSystem(data, commuteSystem.id);
@@ -125,6 +122,10 @@ function CommuteSystemEdit({
     } else {
       setFareCap(null);
     }
+  };
+
+  const handleChangeFareCapDuration = (e: SelectChangeEvent) => {
+    setFareCapDuration(parseInt(e.target.value));
   };
 
   return (
@@ -188,24 +189,38 @@ function CommuteSystemEdit({
                   error={!!fareCapError}
                   helperText={fareCapError}
                   onChange={(e) => setFareCap(parseInt(e.target.value))}
-                  InputProps={{
-                    startAdornment: (
-                      <InputAdornment position="start">$</InputAdornment>
-                    ),
+                  slotProps={{
+                    input: {
+                      startAdornment: (
+                        <InputAdornment position="start">$</InputAdornment>
+                      ),
+                    },
                   }}
                   fullWidth
                 />
                 <br />
                 <br />
-                <TextField
-                  label="Fare cap duration"
-                  variant="standard"
-                  value={fareCapDuration}
-                  error={!!fareCapDurationError}
-                  helperText={fareCapDurationError}
-                  onChange={(e) => setFareCapDuration(parseInt(e.target.value))}
-                  fullWidth
-                />
+                <FormControl fullWidth>
+                  <InputLabel id="select-fare-cap-duration-label">
+                    Fare cap duration
+                  </InputLabel>
+                  <Select
+                    labelId="select-fare-cap-duration-label"
+                    id="select-fare-cap-duration"
+                    value={
+                      fareCapDuration
+                        ? (fareCapDuration as unknown as string)
+                        : "0"
+                    }
+                    label="Fare cap duration"
+                    onChange={handleChangeFareCapDuration}
+                  >
+                    <MenuItem value={0}>Daily</MenuItem>
+                    <MenuItem value={1}>Weekly</MenuItem>
+                    <MenuItem value={2}>Monthly</MenuItem>
+                    <MenuItem value={3}>Yearly</MenuItem>
+                  </Select>
+                </FormControl>
               </>
             )}
             <br />
