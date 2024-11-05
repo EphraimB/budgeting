@@ -12,7 +12,16 @@ import Button from "@mui/material/Button";
 import InputAdornment from "@mui/material/InputAdornment";
 import { addCommuteSystem } from "../../services/actions/commuteSystem";
 import { useTheme } from "@mui/material/styles";
-import { Checkbox, FormControlLabel, MobileStepper } from "@mui/material";
+import {
+  Checkbox,
+  FormControl,
+  FormControlLabel,
+  InputLabel,
+  MenuItem,
+  MobileStepper,
+  Select,
+  SelectChangeEvent,
+} from "@mui/material";
 import { KeyboardArrowLeft, KeyboardArrowRight } from "@mui/icons-material";
 
 function NewCommuteSystemForm({
@@ -23,11 +32,10 @@ function NewCommuteSystemForm({
   const [name, setName] = useState("");
   const [fareCapEnabled, setFareCapEnabled] = useState(false);
   const [fareCap, setFareCap] = useState<number | null>(null);
-  const [fareCapDuration, setFareCapDuration] = useState<number | null>(null);
+  const [fareCapDuration, setFareCapDuration] = useState<string | null>(null);
 
   const [nameError, setNameError] = useState("");
   const [fareCapError, setFareCapError] = useState("");
-  const [fareCapDurationError, setFareCapDurationError] = useState("");
 
   const { showSnackbar } = useSnackbar();
   const { showAlert } = useAlert();
@@ -35,7 +43,7 @@ function NewCommuteSystemForm({
   const data = {
     name,
     fareCap,
-    fareCapDuration,
+    fareCapDuration: fareCapDuration ? parseInt(fareCapDuration) : null,
   };
 
   const validateName = () => {
@@ -58,22 +66,11 @@ function NewCommuteSystemForm({
     return true;
   };
 
-  const validateFareCapDuration = () => {
-    if (!fareCapDuration) {
-      setFareCapDurationError("Fare cap duration is required");
-
-      return false;
-    }
-
-    return true;
-  };
-
   const handleSubmit = async () => {
     const isNameValid = validateName();
     const isFareCapValid = validateFareCap();
-    const isFareCapDurationValid = validateFareCapDuration();
 
-    if (isNameValid && isFareCapValid && isFareCapDurationValid) {
+    if (isNameValid && isFareCapValid) {
       // Submit data
       try {
         await addCommuteSystem(data);
@@ -119,6 +116,10 @@ function NewCommuteSystemForm({
     } else {
       setFareCap(null);
     }
+  };
+
+  const handleChangeFareCapDuration = (e: SelectChangeEvent) => {
+    setFareCapDuration(e.target.value);
   };
 
   return (
@@ -182,24 +183,34 @@ function NewCommuteSystemForm({
                   error={!!fareCapError}
                   helperText={fareCapError}
                   onChange={(e) => setFareCap(parseInt(e.target.value))}
-                  InputProps={{
-                    startAdornment: (
-                      <InputAdornment position="start">$</InputAdornment>
-                    ),
+                  slotProps={{
+                    input: {
+                      startAdornment: (
+                        <InputAdornment position="start">$</InputAdornment>
+                      ),
+                    },
                   }}
                   fullWidth
                 />
                 <br />
                 <br />
-                <TextField
-                  label="Fare cap duration"
-                  variant="standard"
-                  value={fareCapDuration}
-                  error={!!fareCapDurationError}
-                  helperText={fareCapDurationError}
-                  onChange={(e) => setFareCapDuration(parseInt(e.target.value))}
-                  fullWidth
-                />
+                <FormControl fullWidth>
+                  <InputLabel id="select-fare-cap-duration-label">
+                    Fare cap duration
+                  </InputLabel>
+                  <Select
+                    labelId="select-fare-cap-duration-label"
+                    id="select-fare-cap-duration"
+                    value={fareCapDuration ? fareCapDuration : "0"}
+                    label="Fare cap duration"
+                    onChange={handleChangeFareCapDuration}
+                  >
+                    <MenuItem value={0}>Daily</MenuItem>
+                    <MenuItem value={1}>Weekly</MenuItem>
+                    <MenuItem value={2}>Monthly</MenuItem>
+                    <MenuItem value={3}>Yearly</MenuItem>
+                  </Select>
+                </FormControl>
               </>
             )}
             <br />
