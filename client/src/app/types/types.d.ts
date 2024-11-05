@@ -167,8 +167,8 @@ export interface PayrollTax {
 export interface CommuteSystem {
   id: number;
   name: string;
-  fareCap: number;
-  fareCapDuration: number;
+  fareCap: number | null;
+  fareCapDuration: number | null;
   dateCreated: string;
   dateModified: string;
 }

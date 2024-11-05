@@ -9,6 +9,8 @@ import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid2";
 import CommuteSystemView from "./CommuteSystemView";
 import CommuteSystemDelete from "./CommuteSystemDelete";
+import NewCommuteSystemForm from "./NewCommuteSystemForm";
+import CommuteSystemEdit from "./CommuteSystemEdit";
 
 function CommuteSystemCards({
   commuteSystems,
@@ -23,7 +25,7 @@ function CommuteSystemCards({
   return (
     <>
       <Grid container spacing={2}>
-        {setShowCommuteSystemForm && (
+        {showCommuteSystemForm && (
           <Grid key="new-commute-system">
             <NewCommuteSystemForm
               setShowCommuteSystemForm={setShowCommuteSystemForm}
