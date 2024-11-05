@@ -1,4 +1,6 @@
 import { Typography } from "@mui/material";
+import CommuteSystemCards from "../../../../components/commute/CommuteSystemCards";
+import { CommuteOverview, CommuteSystem } from "@/app/types/types";
 
 async function getCommuteOverview(accountId: number) {
   try {
@@ -33,10 +35,18 @@ async function getCommuteSystems() {
 async function Commute({ params }: { params: { accountId: string } }) {
   const accountId = parseInt(params.accountId);
 
-  const commuteOverview = await getCommuteOverview(accountId);
-  const commuteSystems = await getCommuteSystems();
+  const commuteOverview: CommuteOverview = await getCommuteOverview(accountId);
+  const commuteSystems: CommuteSystem[] = await getCommuteSystems();
 
-  return <Typography>Under construction</Typography>;
+  return (
+    <>
+      <Typography>
+        Total cost per month is ${commuteOverview.totalCostPerMonth}
+      </Typography>
+      <br />
+      <CommuteSystemCards commuteSystems={commuteSystems} />
+    </>
+  );
 }
 
 export default Commute;

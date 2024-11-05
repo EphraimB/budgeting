@@ -164,6 +164,27 @@ export interface PayrollTax {
   rate: number;
 }
 
+interface FareCapProgress {
+  currentSpent: number;
+  fareCap: number;
+  fareCapDuration: number;
+}
+
+interface Systems {
+  systemName: string;
+  totalCostPerWeek: number;
+  totalCostPerMonth: number;
+  rides: number;
+  fareCapProgress: FareCapProgress;
+}
+
+export interface CommuteOverview {
+  accountId: number;
+  totalCostPerWeek: number;
+  totalCostPerMonth: number;
+  systems: Systems[];
+}
+
 export interface CommuteSystem {
   id: number;
   name: string;
