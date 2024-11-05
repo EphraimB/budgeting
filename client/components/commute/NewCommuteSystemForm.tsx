@@ -213,7 +213,7 @@ function NewCommuteSystemForm({
         <br />
         <MobileStepper
           variant="dots"
-          steps={4}
+          steps={2}
           position="static"
           activeStep={activeStep}
           sx={{ maxWidth: 400, flexGrow: 1 }}
