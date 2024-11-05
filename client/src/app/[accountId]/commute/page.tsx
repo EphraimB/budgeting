@@ -35,13 +35,15 @@ async function getCommuteSystems() {
 async function Commute({ params }: { params: { accountId: string } }) {
   const accountId = parseInt(params.accountId);
 
-  const commuteOverview: CommuteOverview = await getCommuteOverview(accountId);
+  const commuteOverview: CommuteOverview[] = await getCommuteOverview(
+    accountId
+  );
   const commuteSystems: CommuteSystem[] = await getCommuteSystems();
 
   return (
     <>
       <Typography>
-        Total cost per month is ${commuteOverview.totalCostPerMonth}
+        Total cost per month is ${commuteOverview[0].totalCostPerMonth}
       </Typography>
       <br />
       <CommuteSystemCards commuteSystems={commuteSystems} />
