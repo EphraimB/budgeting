@@ -1,6 +1,6 @@
-import { Typography } from "@mui/material";
-import CommuteSystemCards from "../../../../components/commute/CommuteSystemCards";
-import { CommuteOverview, CommuteSystem } from "@/app/types/types";
+import { Card, CardContent, Stack, Typography } from "@mui/material";
+import { CommuteOverview } from "@/app/types/types";
+import Link from "next/link";
 
 async function getCommuteOverview(accountId: number) {
   try {
@@ -18,27 +18,12 @@ async function getCommuteOverview(accountId: number) {
   }
 }
 
-async function getCommuteSystems() {
-  try {
-    const res = await fetch("http://server:5001/api/expenses/commute/systems");
-
-    if (!res.ok) {
-      throw new Error(res.statusText);
-    }
-
-    return res.json();
-  } catch {
-    throw new Error("Failed to fetch commute systems");
-  }
-}
-
 async function Commute({ params }: { params: { accountId: string } }) {
   const accountId = parseInt(params.accountId);
 
   const commuteOverview: CommuteOverview[] = await getCommuteOverview(
     accountId
   );
-  const commuteSystems: CommuteSystem[] = await getCommuteSystems();
 
   return (
     <>
@@ -46,7 +31,30 @@ async function Commute({ params }: { params: { accountId: string } }) {
         Total cost per month is ${commuteOverview[0].totalCostPerMonth}
       </Typography>
       <br />
-      <CommuteSystemCards commuteSystems={commuteSystems} />
+      <Stack
+        spacing={2}
+        direction="row"
+        sx={{
+          justifyContent: "center",
+        }}
+      >
+        <Link
+          href={`/${accountId}/commute/systems`}
+          as={`/${accountId}/commute/systems`}
+          style={{ color: "inherit", textDecoration: "inherit" }}
+        >
+          <Card elevation={1} sx={{ width: 175, overflow: "visible" }}>
+            <CardContent>
+              <Typography gutterBottom variant="h5">
+                Commute Systems
+              </Typography>
+              <Typography>
+                Click to view, add, or edit commute systems
+              </Typography>
+            </CardContent>
+          </Card>
+        </Link>
+      </Stack>
     </>
   );
 }
