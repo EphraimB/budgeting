@@ -33,6 +33,9 @@ async function getCommuteSystems() {
 async function Commute({ params }: { params: { accountId: string } }) {
   const accountId = parseInt(params.accountId);
 
+  const commuteOverview = await getCommuteOverview(accountId);
+  const commuteSystems = await getCommuteSystems();
+
   return <Typography>Under construction</Typography>;
 }
 

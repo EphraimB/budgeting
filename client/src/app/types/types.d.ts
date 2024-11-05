@@ -164,6 +164,15 @@ export interface PayrollTax {
   rate: number;
 }
 
+export interface CommuteSystem {
+  id: number;
+  name: string;
+  fareCap: number;
+  fareCapDuration: number;
+  dateCreated: string;
+  dateModified: string;
+}
+
 export interface GeneratedTransaction {
   accountId: number;
   currentBalance: number;
