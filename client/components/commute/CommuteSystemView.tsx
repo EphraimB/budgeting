@@ -58,8 +58,8 @@ function CommuteSystemView({
       />
       <CardHeader title={commuteSystem.name} />
       <Link
-        href={`/${accountId}/commute/${commuteSystem.id}`}
-        as={`/${accountId}/commute/${commuteSystem.id}`}
+        href={`/${accountId}/commute/systems/${commuteSystem.id}`}
+        as={`/${accountId}/commute/systems/${commuteSystem.id}`}
         style={{ color: "inherit", textDecoration: "inherit" }}
       >
         <CardContent>
