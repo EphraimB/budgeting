@@ -35,10 +35,8 @@ function a11yProps(index: number) {
 }
 
 export default function CommuteNavTabs({
-  accountId,
   commuteSystems,
 }: {
-  accountId: number;
   commuteSystems: CommuteSystem[];
 }) {
   const [value, setValue] = useState(0);
@@ -64,10 +62,7 @@ export default function CommuteNavTabs({
         Item One
       </CustomTabPanel>
       <CustomTabPanel value={value} index={1}>
-        <CommuteSystemCards
-          accountId={accountId}
-          commuteSystems={commuteSystems}
-        />
+        <CommuteSystemCards commuteSystems={commuteSystems} />
       </CustomTabPanel>
       <CustomTabPanel value={value} index={2}>
         Item Three

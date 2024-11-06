@@ -13,10 +13,8 @@ import NewCommuteSystemForm from "./NewCommuteSystemForm";
 import CommuteSystemEdit from "./CommuteSystemEdit";
 
 function CommuteSystemCards({
-  accountId,
   commuteSystems,
 }: {
-  accountId: number;
   commuteSystems: CommuteSystem[];
 }) {
   const [showCommuteSystemForm, setShowCommuteSystemForm] = useState(false);
@@ -50,7 +48,6 @@ function CommuteSystemCards({
                 />
               ) : (
                 <CommuteSystemView
-                  accountId={accountId}
                   commuteSystem={commuteSystem}
                   setCommuteSystemModes={setCommuteSystemModes}
                 />

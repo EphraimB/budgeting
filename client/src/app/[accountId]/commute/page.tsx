@@ -47,7 +47,7 @@ async function Commute({ params }: { params: { accountId: string } }) {
         Total cost per month is ${commuteOverview[0].totalCostPerMonth}
       </Typography>
       <br />
-      <CommuteNavTabs accountId={accountId} commuteSystems={commuteSystems} />
+      <CommuteNavTabs commuteSystems={commuteSystems} />
     </>
   );
 }
