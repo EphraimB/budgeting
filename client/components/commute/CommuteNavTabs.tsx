@@ -2,6 +2,8 @@
 
 import { useState } from "react";
 import { Box, Tab, Tabs } from "@mui/material";
+import CommuteSystemCards from "./CommuteSystemCards";
+import { CommuteSystem } from "@/app/types/types";
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -32,7 +34,13 @@ function a11yProps(index: number) {
   };
 }
 
-export default function CommuteNavTabs() {
+export default function CommuteNavTabs({
+  accountId,
+  commuteSystems,
+}: {
+  accountId: number;
+  commuteSystems: CommuteSystem[];
+}) {
   const [value, setValue] = useState(0);
 
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
@@ -56,7 +64,10 @@ export default function CommuteNavTabs() {
         Item One
       </CustomTabPanel>
       <CustomTabPanel value={value} index={1}>
-        Item Two
+        <CommuteSystemCards
+          accountId={accountId}
+          commuteSystems={commuteSystems}
+        />
       </CustomTabPanel>
       <CustomTabPanel value={value} index={2}>
         Item Three
