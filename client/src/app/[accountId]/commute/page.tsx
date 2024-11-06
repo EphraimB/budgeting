@@ -1,6 +1,7 @@
 import { Card, CardContent, Stack, Typography } from "@mui/material";
 import { CommuteOverview } from "@/app/types/types";
 import Link from "next/link";
+import CommuteNavTabs from "../../../../components/commute/CommuteNavTabs";
 
 async function getCommuteOverview(accountId: number) {
   try {
@@ -31,30 +32,7 @@ async function Commute({ params }: { params: { accountId: string } }) {
         Total cost per month is ${commuteOverview[0].totalCostPerMonth}
       </Typography>
       <br />
-      <Stack
-        spacing={2}
-        direction="row"
-        sx={{
-          justifyContent: "center",
-        }}
-      >
-        <Link
-          href={`/${accountId}/commute/systems`}
-          as={`/${accountId}/commute/systems`}
-          style={{ color: "inherit", textDecoration: "inherit" }}
-        >
-          <Card elevation={1} sx={{ width: 175, overflow: "visible" }}>
-            <CardContent>
-              <Typography gutterBottom variant="h5">
-                Commute Systems
-              </Typography>
-              <Typography>
-                Click to view, add, or edit commute systems
-              </Typography>
-            </CardContent>
-          </Card>
-        </Link>
-      </Stack>
+      <CommuteNavTabs />
     </>
   );
 }
