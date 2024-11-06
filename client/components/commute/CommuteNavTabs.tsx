@@ -84,7 +84,7 @@ export default function CommuteNavTabs({
           <>
             <Divider />
             <Paper>
-              <Stack direction="row">
+              <Stack direction="row" sx={{ justifyContent: "space-between" }}>
                 <Typography component="h4" variant="h6">
                   Stations for{" "}
                   {

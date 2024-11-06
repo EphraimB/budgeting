@@ -44,6 +44,8 @@ function CommuteSystemActionsMenu({
 
   const handleAddStation = () => {
     setShowStations(commuteSystemId);
+
+    handleClose();
   };
 
   return (
