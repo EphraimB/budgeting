@@ -1,9 +1,19 @@
 "use client";
 
 import { useState } from "react";
-import { Box, Divider, Paper, Tab, Tabs, Typography } from "@mui/material";
+import {
+  Box,
+  Divider,
+  IconButton,
+  Paper,
+  Stack,
+  Tab,
+  Tabs,
+  Typography,
+} from "@mui/material";
 import CommuteSystemCards from "./CommuteSystemCards";
 import { CommuteStation, CommuteSystem } from "@/app/types/types";
+import { Close } from "@mui/icons-material";
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -49,6 +59,10 @@ export default function CommuteNavTabs({
     setValue(newValue);
   };
 
+  const handleStationsClose = () => {
+    setShowStations(null);
+  };
+
   return (
     <Box sx={{ width: "100%" }}>
       <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
@@ -70,16 +84,21 @@ export default function CommuteNavTabs({
           <>
             <Divider />
             <Paper>
-              <Typography component="h4" variant="h6">
-                Stations for{" "}
-                {
-                  commuteSystems
-                    .filter(
-                      (commuteSystem) => commuteSystem.id === showStations
-                    )
-                    .map((commuteSystem) => commuteSystem.name) // Adjust property name as needed
-                }
-              </Typography>
+              <Stack direction="row">
+                <Typography component="h4" variant="h6">
+                  Stations for{" "}
+                  {
+                    commuteSystems
+                      .filter(
+                        (commuteSystem) => commuteSystem.id === showStations
+                      )
+                      .map((commuteSystem) => commuteSystem.name) // Adjust property name as needed
+                  }
+                </Typography>
+                <IconButton onClick={handleStationsClose}>
+                  <Close />
+                </IconButton>
+              </Stack>
             </Paper>
           </>
         )}
