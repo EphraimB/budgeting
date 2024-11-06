@@ -12,11 +12,13 @@ import CommuteSystemActionsMenu from "./CommuteSystemActionsMenu";
 function CommuteSystemView({
   commuteSystem,
   setCommuteSystemModes,
+  setShowStations,
 }: {
   commuteSystem: CommuteSystem;
   setCommuteSystemModes: React.Dispatch<
     React.SetStateAction<Record<number, string>>
   >;
+  setShowStations: (showStations: boolean) => void;
 }) {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
@@ -51,6 +53,7 @@ function CommuteSystemView({
         open={open}
         handleClose={handleClose}
         setCommuteSystemModes={setCommuteSystemModes}
+        setShowStations={setShowStations}
         commuteSystemId={commuteSystem.id}
       />
       <CardHeader title={commuteSystem.name} />

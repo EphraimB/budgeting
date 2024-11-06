@@ -41,6 +41,8 @@ export default function CommuteNavTabs({
 }) {
   const [value, setValue] = useState(0);
 
+  const [showStations, setShowStations] = useState(false);
+
   const handleChange = (_: React.SyntheticEvent, newValue: number) => {
     setValue(newValue);
   };
@@ -58,7 +60,7 @@ export default function CommuteNavTabs({
         Item One
       </CustomTabPanel>
       <CustomTabPanel value={value} index={1}>
-        <CommuteSystemCards commuteSystems={commuteSystems} />
+        <CommuteSystemCards commuteSystems={commuteSystems} setShowStations={setShowStations} />
       </CustomTabPanel>
       <CustomTabPanel value={value} index={2}>
         Item Three
