@@ -39,8 +39,8 @@ function CustomTabPanel(props: TabPanelProps) {
 
 function a11yProps(index: number) {
   return {
-    id: `simple-tab-${index}`,
-    "aria-controls": `simple-tabpanel-${index}`,
+    id: `commute-tab-${index}`,
+    "aria-controls": `commute-tabpanel-${index}`,
   };
 }
 
@@ -100,6 +100,7 @@ export default function CommuteNavTabs({
                   <Close />
                 </IconButton>
               </Stack>
+              <br />
             </Paper>
           </>
         )}
