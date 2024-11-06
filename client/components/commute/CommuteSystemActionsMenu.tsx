@@ -4,7 +4,7 @@ import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
-import { Add } from "@mui/icons-material";
+import { ShowChart } from "@mui/icons-material";
 import { Divider } from "@mui/material";
 
 function CommuteSystemActionsMenu({
@@ -71,9 +71,9 @@ function CommuteSystemActionsMenu({
       <Divider />
       <MenuItem onClick={handleAddStation}>
         <ListItemIcon>
-          <Add fontSize="small" />
+          <ShowChart fontSize="small" />
         </ListItemIcon>
-        <ListItemText>Add station</ListItemText>
+        <ListItemText>Show stations</ListItemText>
       </MenuItem>
     </Menu>
   );
