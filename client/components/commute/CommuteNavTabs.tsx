@@ -78,6 +78,7 @@ export default function CommuteNavTabs({
       <CustomTabPanel value={value} index={1}>
         <CommuteSystemCards
           commuteSystems={commuteSystems}
+          showStations={showStations}
           setShowStations={setShowStations}
         />
         {showStations && (

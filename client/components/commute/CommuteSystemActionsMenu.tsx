@@ -4,15 +4,12 @@ import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
-import { ShowChart } from "@mui/icons-material";
-import { Divider } from "@mui/material";
 
 function CommuteSystemActionsMenu({
   anchorEl,
   open,
   handleClose,
   setCommuteSystemModes,
-  setShowStations,
   commuteSystemId,
 }: {
   anchorEl: HTMLElement | null;
@@ -21,7 +18,6 @@ function CommuteSystemActionsMenu({
   setCommuteSystemModes: React.Dispatch<
     React.SetStateAction<Record<number, string>>
   >;
-  setShowStations: (showStations: number) => void;
   commuteSystemId: number;
 }) {
   const handleDelete = () => {
@@ -38,12 +34,6 @@ function CommuteSystemActionsMenu({
       ...prevModes,
       [commuteSystemId]: "edit",
     }));
-
-    handleClose();
-  };
-
-  const handleAddStation = () => {
-    setShowStations(commuteSystemId);
 
     handleClose();
   };
@@ -69,13 +59,6 @@ function CommuteSystemActionsMenu({
           <DeleteIcon fontSize="small" />
         </ListItemIcon>
         <ListItemText>Delete</ListItemText>
-      </MenuItem>
-      <Divider />
-      <MenuItem onClick={handleAddStation}>
-        <ListItemIcon>
-          <ShowChart fontSize="small" />
-        </ListItemIcon>
-        <ListItemText>Show stations</ListItemText>
       </MenuItem>
     </Menu>
   );

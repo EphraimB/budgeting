@@ -14,9 +14,11 @@ import CommuteSystemEdit from "./CommuteSystemEdit";
 
 function CommuteSystemCards({
   commuteSystems,
+  showStations,
   setShowStations,
 }: {
   commuteSystems: CommuteSystem[];
+  showStations: number | null;
   setShowStations: (showStations: number) => void;
 }) {
   const [showCommuteSystemForm, setShowCommuteSystemForm] = useState(false);
@@ -37,7 +39,10 @@ function CommuteSystemCards({
 
         {commuteSystems.map((commuteSystem: CommuteSystem) => (
           <Grid key={commuteSystem.id}>
-            <Card sx={{ maxWidth: "18rem", position: "relative" }}>
+            <Card
+              sx={{ maxWidth: "18rem", position: "relative" }}
+              elevation={showStations ? 1 : 4}
+            >
               {commuteSystemModes[commuteSystem.id] === "delete" ? (
                 <CommuteSystemDelete
                   commuteSystem={commuteSystem}

@@ -31,6 +31,10 @@ function CommuteSystemView({
     setAnchorEl(null);
   };
 
+  const handleShowStations = () => {
+    setShowStations(commuteSystem.id);
+  };
+
   return (
     <>
       <IconButton
@@ -53,11 +57,10 @@ function CommuteSystemView({
         open={open}
         handleClose={handleClose}
         setCommuteSystemModes={setCommuteSystemModes}
-        setShowStations={setShowStations}
         commuteSystemId={commuteSystem.id}
       />
       <CardHeader title={commuteSystem.name} />
-      <CardContent>
+      <CardContent onClick={handleShowStations} sx={{ cursor: "pointer" }}>
         <Typography variant="body2">
           There's{" "}
           {commuteSystem.fareCap
