@@ -194,6 +194,15 @@ export interface CommuteSystem {
   dateModified: string;
 }
 
+export interface CommuteStation {
+  id: number;
+  fromStation: string;
+  toStation: string;
+  tripDuration: number;
+  dateCreated: string;
+  dateModified: string;
+}
+
 export interface GeneratedTransaction {
   accountId: number;
   currentBalance: number;

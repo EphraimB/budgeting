@@ -1,5 +1,9 @@
 import { Card, CardContent, Stack, Typography } from "@mui/material";
-import { CommuteOverview, CommuteSystem } from "@/app/types/types";
+import {
+  CommuteOverview,
+  CommuteStation,
+  CommuteSystem,
+} from "@/app/types/types";
 import Link from "next/link";
 import CommuteNavTabs from "../../../../components/commute/CommuteNavTabs";
 
@@ -33,6 +37,20 @@ async function getCommuteSystems() {
   }
 }
 
+async function getCommuteStations() {
+  try {
+    const res = await fetch("http://server:5001/api/expenses/commute/stations");
+
+    if (!res.ok) {
+      throw new Error(res.statusText);
+    }
+
+    return res.json();
+  } catch {
+    throw new Error("Failed to fetch commute stations");
+  }
+}
+
 async function Commute({ params }: { params: { accountId: string } }) {
   const accountId = parseInt(params.accountId);
 
@@ -40,6 +58,7 @@ async function Commute({ params }: { params: { accountId: string } }) {
     accountId
   );
   const commuteSystems: CommuteSystem[] = await getCommuteSystems();
+  const commuteStations: CommuteStation[] = await getCommuteStations();
 
   return (
     <>
@@ -47,7 +66,10 @@ async function Commute({ params }: { params: { accountId: string } }) {
         Total cost per month is ${commuteOverview[0].totalCostPerMonth}
       </Typography>
       <br />
-      <CommuteNavTabs commuteSystems={commuteSystems} />
+      <CommuteNavTabs
+        commuteSystems={commuteSystems}
+        commuteStations={commuteStations}
+      />
     </>
   );
 }

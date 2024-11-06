@@ -17,7 +17,7 @@ function CommuteSystemCards({
   setShowStations,
 }: {
   commuteSystems: CommuteSystem[];
-  setShowStations: (showStations: boolean) => void;
+  setShowStations: (showStations: number) => void;
 }) {
   const [showCommuteSystemForm, setShowCommuteSystemForm] = useState(false);
   const [commuteSystemModes, setCommuteSystemModes] = useState<

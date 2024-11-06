@@ -21,7 +21,7 @@ function CommuteSystemActionsMenu({
   setCommuteSystemModes: React.Dispatch<
     React.SetStateAction<Record<number, string>>
   >;
-  setShowStations: (showStations: boolean) => void;
+  setShowStations: (showStations: number) => void;
   commuteSystemId: number;
 }) {
   const handleDelete = () => {
@@ -43,7 +43,7 @@ function CommuteSystemActionsMenu({
   };
 
   const handleAddStation = () => {
-    setShowStations(true);
+    setShowStations(commuteSystemId);
   };
 
   return (

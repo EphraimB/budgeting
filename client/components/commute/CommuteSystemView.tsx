@@ -18,7 +18,7 @@ function CommuteSystemView({
   setCommuteSystemModes: React.Dispatch<
     React.SetStateAction<Record<number, string>>
   >;
-  setShowStations: (showStations: boolean) => void;
+  setShowStations: (showStations: number) => void;
 }) {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);

@@ -1,9 +1,9 @@
 "use client";
 
 import { useState } from "react";
-import { Box, Tab, Tabs } from "@mui/material";
+import { Box, Divider, Paper, Tab, Tabs, Typography } from "@mui/material";
 import CommuteSystemCards from "./CommuteSystemCards";
-import { CommuteSystem } from "@/app/types/types";
+import { CommuteStation, CommuteSystem } from "@/app/types/types";
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -36,12 +36,14 @@ function a11yProps(index: number) {
 
 export default function CommuteNavTabs({
   commuteSystems,
+  commuteStations,
 }: {
   commuteSystems: CommuteSystem[];
+  commuteStations: CommuteStation[];
 }) {
   const [value, setValue] = useState(0);
 
-  const [showStations, setShowStations] = useState(false);
+  const [showStations, setShowStations] = useState<number | null>(null);
 
   const handleChange = (_: React.SyntheticEvent, newValue: number) => {
     setValue(newValue);
@@ -60,7 +62,27 @@ export default function CommuteNavTabs({
         Item One
       </CustomTabPanel>
       <CustomTabPanel value={value} index={1}>
-        <CommuteSystemCards commuteSystems={commuteSystems} setShowStations={setShowStations} />
+        <CommuteSystemCards
+          commuteSystems={commuteSystems}
+          setShowStations={setShowStations}
+        />
+        {showStations && (
+          <>
+            <Divider />
+            <Paper>
+              <Typography component="h4" variant="h6">
+                Stations for{" "}
+                {
+                  commuteSystems
+                    .filter(
+                      (commuteSystem) => commuteSystem.id === showStations
+                    )
+                    .map((commuteSystem) => commuteSystem.name) // Adjust property name as needed
+                }
+              </Typography>
+            </Paper>
+          </>
+        )}
       </CustomTabPanel>
       <CustomTabPanel value={value} index={2}>
         Item Three
