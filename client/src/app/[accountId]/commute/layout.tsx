@@ -1,10 +1,5 @@
-import { Card, CardContent, Stack, Typography } from "@mui/material";
-import {
-  CommuteOverview,
-  CommuteStation,
-  CommuteSystem,
-} from "@/app/types/types";
-import Link from "next/link";
+import { Typography } from "@mui/material";
+import { CommuteOverview } from "@/app/types/types";
 import CommuteNavTabs from "../../../../components/commute/CommuteNavTabs";
 
 async function getCommuteOverview(accountId: number) {
@@ -23,34 +18,6 @@ async function getCommuteOverview(accountId: number) {
   }
 }
 
-async function getCommuteSystems() {
-  try {
-    const res = await fetch("http://server:5001/api/expenses/commute/systems");
-
-    if (!res.ok) {
-      throw new Error(res.statusText);
-    }
-
-    return res.json();
-  } catch {
-    throw new Error("Failed to fetch commute systems");
-  }
-}
-
-async function getCommuteStations() {
-  try {
-    const res = await fetch("http://server:5001/api/expenses/commute/stations");
-
-    if (!res.ok) {
-      throw new Error(res.statusText);
-    }
-
-    return res.json();
-  } catch {
-    throw new Error("Failed to fetch commute stations");
-  }
-}
-
 async function Commute({
   params,
   children,
@@ -63,8 +30,6 @@ async function Commute({
   const commuteOverview: CommuteOverview[] = await getCommuteOverview(
     accountId
   );
-  const commuteSystems: CommuteSystem[] = await getCommuteSystems();
-  const commuteStations: CommuteStation[] = await getCommuteStations();
 
   return (
     <>
