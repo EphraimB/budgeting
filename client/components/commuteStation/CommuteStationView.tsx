@@ -55,7 +55,7 @@ function CommuteStationView({
         commuteStationId={commuteStation.id}
       />
       <CardContent>
-        <Stack direction="row">
+        <Stack direction="row" sx={{ alignItens: "center" }}>
           <Stack direction="column">
             <Typography variant="body2">
               {commuteStation.fromStation}

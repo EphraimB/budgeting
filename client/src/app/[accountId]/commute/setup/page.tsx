@@ -16,7 +16,7 @@ async function getCommuteSystems() {
 }
 
 async function CommuteSetup({ params }: { params: { accountId: string } }) {
-  const accountId = params.accountId;
+  const accountId = parseInt(params.accountId);
 
   const commuteSystems: CommuteSystem[] = await getCommuteSystems();
 
