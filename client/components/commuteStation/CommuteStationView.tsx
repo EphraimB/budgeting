@@ -64,7 +64,9 @@ function CommuteStationView({
             <ArrowDownward />
             <Typography variant="body2">{commuteStation.toStation}</Typography>
           </Stack>
-          <Typography variant="body1">{commuteStation.tripDuration}</Typography>
+          <Typography variant="body1">
+            {commuteStation.tripDuration} minute trip
+          </Typography>
         </Stack>
       </CardContent>
     </>
