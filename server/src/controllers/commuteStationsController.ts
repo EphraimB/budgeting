@@ -9,19 +9,32 @@ import { handleError, toCamelCase } from '../../src/utils/helperFunctions.js';
  * Sends a response with all stations
  */
 export const getStations = async (
-    _: Request,
+    request: Request,
     response: Response,
 ): Promise<void> => {
+    const { commuteSystemId } = request.query;
+
     const client = await pool.connect(); // Get a client from the pool
 
     try {
-        const { rows } = await client.query(
-            `
+        let query: string;
+        let params: any[];
+
+        if (commuteSystemId) {
+            query = `
                 SELECT *
                     FROM stations
-            `,
-            [],
-        );
+                    WHERE commute_system_id = $1
+            `;
+            params = [commuteSystemId];
+        } else {
+            query = `
+                SELECT *
+                    FROM stations
+            `;
+            params = [];
+        }
+        const { rows } = await client.query(query, params);
         const retreivedRows = toCamelCase(rows); // Convert to camelCase
 
         response.status(200).json(retreivedRows);
@@ -44,18 +57,30 @@ export const getStationById = async (
     response: Response,
 ): Promise<void> => {
     const { id } = request.params;
+    const { commuteSystemId } = request.query;
 
     const client = await pool.connect(); // Get a client from the pool
 
     try {
-        const { rows } = await client.query(
-            `
+        let query: string;
+        let params: any[];
+
+        if (commuteSystemId) {
+            query = `
+                SELECT *
+                    FROM commute_systems
+                    WHERE id = $1 AND commute_system_id = $2
+            `;
+            params = [id, commuteSystemId];
+        } else {
+            query = `
                 SELECT *
                     FROM commute_systems
                     WHERE id = $1
-            `,
-            [id],
-        );
+            `;
+            params = [id];
+        }
+        const { rows } = await client.query(query, params);
 
         if (rows.length === 0) {
             response.status(404).send('Station not found');

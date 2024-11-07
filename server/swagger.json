@@ -1171,6 +1171,18 @@
                 "tags": [
                     "commute stations"
                 ],
+                "parameters": [
+                    {
+                        "name": "commuteSystemId",
+                        "in": "path",
+                        "description": "Commute system id",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "minimum": 1
+                        }
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "A JSON array of commute stations",
@@ -1237,6 +1249,16 @@
                         "in": "path",
                         "description": "Commute station id",
                         "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "minimum": 1
+                        }
+                    },
+                    {
+                        "name": "commuteSystemId",
+                        "in": "path",
+                        "description": "Commute system id",
+                        "required": false,
                         "schema": {
                             "type": "integer",
                             "minimum": 1

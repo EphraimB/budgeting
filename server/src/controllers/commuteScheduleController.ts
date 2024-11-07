@@ -1,9 +1,5 @@
 import { type Request, type Response } from 'express';
-import {
-    handleError,
-    isTimeWithinRange,
-    toCamelCase,
-} from '../utils/helperFunctions.js';
+import { handleError, toCamelCase } from '../utils/helperFunctions.js';
 import { logger } from '../config/winston.js';
 import determineCronValues from '../crontab/determineCronValues.js';
 import dayjs from 'dayjs';

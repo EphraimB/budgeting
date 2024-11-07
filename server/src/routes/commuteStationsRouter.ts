@@ -1,5 +1,5 @@
 import express, { type Router } from 'express';
-import { param, body } from 'express-validator';
+import { param, body, query } from 'express-validator';
 import validateRequest from '../utils/validateRequest.js';
 import {
     createStation,
@@ -11,12 +11,26 @@ import {
 
 const router: Router = express.Router();
 
-router.get('/', getStations);
+router.get(
+    '/',
+    [
+        query('commuteSystemId')
+            .optional()
+            .isInt({ min: 1 })
+            .withMessage('Commute system ID must be a number'),
+        validateRequest,
+    ],
+    getStations,
+);
 
 router.get(
     '/:id',
     [
         param('id').isInt({ min: 1 }).withMessage('ID must be a number'),
+        query('commuteSystemId')
+            .optional()
+            .isInt({ min: 1 })
+            .withMessage('Commute system ID must be a number'),
         validateRequest,
     ],
     getStationById,
