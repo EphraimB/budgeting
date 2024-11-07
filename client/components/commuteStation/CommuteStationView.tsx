@@ -55,7 +55,7 @@ function CommuteStationView({
         commuteStationId={commuteStation.id}
       />
       <CardContent>
-        <Stack direction="row" sx={{ alignItems: "center" }}>
+        <Stack direction="row" spacing={2} sx={{ alignItems: "center" }}>
           <Stack direction="column">
             <Typography variant="body2">
               {commuteStation.fromStation}
@@ -67,7 +67,6 @@ function CommuteStationView({
             <Typography variant="body2">
               {commuteStation.tripDuration} minute
             </Typography>
-            <br />
             <Typography variant="body2">trip</Typography>
           </Box>
         </Stack>
