@@ -63,7 +63,7 @@ function CommuteStationView({
             <ArrowDownward />
             <Typography variant="body2">{commuteStation.toStation}</Typography>
           </Stack>
-          <Box sx={{ border: "1px solid black", padding: 5 }}>
+          <Box sx={{ border: "1px solid black", p: 1 }}>
             <Typography variant="body2">
               {commuteStation.tripDuration} minute
             </Typography>
