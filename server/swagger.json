@@ -1174,7 +1174,7 @@
                 "parameters": [
                     {
                         "name": "commuteSystemId",
-                        "in": "path",
+                        "in": "query",
                         "description": "Commute system id",
                         "required": false,
                         "schema": {
@@ -1256,7 +1256,7 @@
                     },
                     {
                         "name": "commuteSystemId",
-                        "in": "path",
+                        "in": "query",
                         "description": "Commute system id",
                         "required": false,
                         "schema": {
