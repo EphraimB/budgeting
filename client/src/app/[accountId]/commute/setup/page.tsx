@@ -15,10 +15,14 @@ async function getCommuteSystems() {
   }
 }
 
-async function CommuteSetup() {
+async function CommuteSetup({ params }: { params: { accountId: string } }) {
+  const accountId = params.accountId;
+
   const commuteSystems: CommuteSystem[] = await getCommuteSystems();
 
-  return <CommuteSystemCards commuteSystems={commuteSystems} />;
+  return (
+    <CommuteSystemCards accountId={accountId} commuteSystems={commuteSystems} />
+  );
 }
 
 export default CommuteSetup;
