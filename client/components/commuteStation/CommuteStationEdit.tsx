@@ -179,7 +179,7 @@ function CommuteStationEdit({
         ) : activeStep === 1 ? (
           <>
             <TextField
-              label="Trip duration"
+              label="Trip duration (minutes)"
               variant="standard"
               value={tripDuration}
               error={!!tripDurationError}
