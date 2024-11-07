@@ -7,6 +7,9 @@ import Typography from "@mui/material/Typography";
 import { CommuteStation } from "@/app/types/types";
 import IconButton from "@mui/material/IconButton";
 import MoreVert from "@mui/icons-material/MoreVert";
+import { ArrowDownward } from "@mui/icons-material";
+import { Stack } from "@mui/material";
+import CommuteStationActionsMenu from "./CommuteStationActionsMenu";
 
 function CommuteStationView({
   commuteStation,
@@ -52,9 +55,17 @@ function CommuteStationView({
         setCommuteStationModes={setCommuteStationModes}
         commuteStationId={commuteStation.id}
       />
-      <CardHeader title={commuteStation.fromStation} />
       <CardContent>
-        <Typography variant="body2"></Typography>
+        <Stack direction="row">
+          <Stack direction="column">
+            <Typography variant="body2">
+              {commuteStation.fromStation}
+            </Typography>
+            <ArrowDownward />
+            <Typography variant="body2">{commuteStation.toStation}</Typography>
+          </Stack>
+          <Typography variant="body1">{commuteStation.tripDuration}</Typography>
+        </Stack>
       </CardContent>
     </>
   );

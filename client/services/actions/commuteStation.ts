@@ -2,21 +2,21 @@
 
 import { revalidatePath } from "next/cache";
 
-interface CommuteSystemRequest {
-  name: string;
-  fareCap: number | null;
-  fareCapDuration: number | null;
+interface CommuteStationRequest {
+  fromStation: string;
+  toStation: string;
+  tripDuration: number;
 }
 
-export async function addCommuteSystem(commuteSystem: CommuteSystemRequest) {
+export async function addCommuteStation(commuteStation: CommuteStationRequest) {
   const response = await fetch(
-    "http://server:5001/api/expenses/commute/systems",
+    "http://server:5001/api/expenses/commute/stations",
     {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify(commuteSystem),
+      body: JSON.stringify(commuteStation),
     }
   );
   const result = await response.json();
@@ -26,18 +26,18 @@ export async function addCommuteSystem(commuteSystem: CommuteSystemRequest) {
   return result;
 }
 
-export async function editCommuteSystem(
-  commuteSystem: CommuteSystemRequest,
+export async function editCommuteStation(
+  commuteStation: CommuteStationRequest,
   id: number
 ) {
   const response = await fetch(
-    `http://server:5001/api/expenses/commute/systems/${id}`,
+    `http://server:5001/api/expenses/commute/stations/${id}`,
     {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify(commuteSystem),
+      body: JSON.stringify(commuteStation),
     }
   );
   const result = await response.json();
@@ -46,8 +46,8 @@ export async function editCommuteSystem(
   return result;
 }
 
-export async function deleteCommuteSystem(id: number) {
-  await fetch(`http://server:5001/api/expenses/commute/systems/${id}`, {
+export async function deleteCommuteStation(id: number) {
+  await fetch(`http://server:5001/api/expenses/commute/stations/${id}`, {
     method: "DELETE",
   });
 

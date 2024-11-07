@@ -7,6 +7,9 @@ import Fab from "@mui/material/Fab";
 import AddIcon from "@mui/icons-material/Add";
 import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid2";
+import CommuteStationDelete from "./CommuteStationDelete";
+import CommuteStationView from "./CommuteStationView";
+import NewCommuteStationForm from "./NewCommuteStationForm";
 
 function CommuteStationCards({
   commuteStations,
@@ -24,7 +27,7 @@ function CommuteStationCards({
         {showCommuteStationForm && (
           <Grid key="new-commute-station">
             <NewCommuteStationForm
-              setCommuteStationModes={setCommuteStationModes}
+              setShowCommuteStationForm={setShowCommuteStationForm}
             />
           </Grid>
         )}
