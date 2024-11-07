@@ -66,6 +66,7 @@ function CommuteStationView({
           <Typography variant="body2">
             {commuteStation.tripDuration} minute
           </Typography>
+          <br />
           <Typography variant="body2">trip</Typography>
         </Stack>
       </CardContent>
