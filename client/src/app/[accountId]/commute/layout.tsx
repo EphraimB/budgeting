@@ -1,6 +1,6 @@
 import { Typography } from "@mui/material";
 import { CommuteOverview } from "@/app/types/types";
-import CommuteNavTabs from "../../../../components/commute/CommuteNavTabs";
+import CommuteNavTabs from "../../../../components/CommuteNavTabs";
 
 async function getCommuteOverview(accountId: number) {
   try {

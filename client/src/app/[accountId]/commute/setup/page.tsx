@@ -1,5 +1,5 @@
 import { CommuteSystem } from "@/app/types/types";
-import CommuteSystemCards from "../../../../../components/commute/CommuteSystemCards";
+import CommuteSystemCards from "../../../../../components/commuteSystem/CommuteSystemCards";
 
 async function getCommuteSystems() {
   try {

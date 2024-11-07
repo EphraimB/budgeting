@@ -1,4 +1,4 @@
-import { CommuteSystem } from "@/app/types/types";
+import { CommuteStation, CommuteSystem } from "@/app/types/types";
 import { Typography } from "@mui/material";
 
 async function getCommuteSystem(id: number) {
@@ -41,8 +41,16 @@ async function CommuteSetup({
   const commuteSystemId = parseInt(params.commuteSystemId);
 
   const commuteSystem: CommuteSystem = await getCommuteSystem(commuteSystemId);
+  const commuteStations: CommuteStation[] = await getCommuteStationsBySystemId(
+    commuteSystem.id
+  );
 
-  return <Typography>Stations for {commuteSystem.name}</Typography>;
+  return (
+    <>
+      <Typography>Stations for {commuteSystem.name}</Typography>
+      <br />
+    </>
+  );
 }
 
 export default CommuteSetup;

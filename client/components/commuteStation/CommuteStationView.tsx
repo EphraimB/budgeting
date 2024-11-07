@@ -4,17 +4,16 @@ import { useState } from "react";
 import CardHeader from "@mui/material/CardHeader";
 import CardContent from "@mui/material/CardContent";
 import Typography from "@mui/material/Typography";
-import { CommuteSystem } from "@/app/types/types";
+import { CommuteStation } from "@/app/types/types";
 import IconButton from "@mui/material/IconButton";
 import MoreVert from "@mui/icons-material/MoreVert";
-import CommuteSystemActionsMenu from "./CommuteSystemActionsMenu";
 
-function CommuteSystemView({
-  commuteSystem,
-  setCommuteSystemModes,
+function CommuteStationView({
+  commuteStation,
+  setCommuteStationModes,
 }: {
-  commuteSystem: CommuteSystem;
-  setCommuteSystemModes: React.Dispatch<
+  commuteStation: CommuteStation;
+  setCommuteStationModes: React.Dispatch<
     React.SetStateAction<Record<number, string>>
   >;
 }) {
@@ -40,41 +39,25 @@ function CommuteSystemView({
         }}
         size="small"
         onClick={handleClick}
-        aria-controls={open ? "account-menu" : undefined}
+        aria-controls={open ? "commute-station-menu" : undefined}
         aria-haspopup="true"
         aria-expanded={open ? "true" : undefined}
       >
         <MoreVert />
       </IconButton>
-      <CommuteSystemActionsMenu
+      <CommuteStationActionsMenu
         anchorEl={anchorEl}
         open={open}
         handleClose={handleClose}
-        setCommuteSystemModes={setCommuteSystemModes}
-        commuteSystemId={commuteSystem.id}
+        setCommuteStationModes={setCommuteStationModes}
+        commuteStationId={commuteStation.id}
       />
-      <CardHeader title={commuteSystem.name} />
+      <CardHeader title={commuteStation.fromStation} />
       <CardContent>
-        <Typography variant="body2">
-          There's{" "}
-          {commuteSystem.fareCap
-            ? `a fare cap of $${commuteSystem.fareCap} per ${
-                commuteSystem.fareCapDuration === 0
-                  ? "day"
-                  : commuteSystem.fareCapDuration === 1
-                  ? "week"
-                  : commuteSystem.fareCapDuration === 2
-                  ? "month"
-                  : commuteSystem.fareCapDuration === 3
-                  ? "year"
-                  : ""
-              }`
-            : "no fare cap"}{" "}
-          for this system
-        </Typography>
+        <Typography variant="body2"></Typography>
       </CardContent>
     </>
   );
 }
 
-export default CommuteSystemView;
+export default CommuteStationView;
