@@ -17,8 +17,9 @@ export default function CommuteNavTabs({ accountId }: { accountId: number }) {
   };
 
   useEffect(() => {
-    // Extract the last part of the pathname to determine the active tab
-    const pathSegment = pathname.split("/").pop() || "";
+    // Match either the "setup" or "history" segment from pathname
+    const match = pathname.match(/\/commute\/(setup|history)?/);
+    const pathSegment = match ? match[1] || "" : ""; // Extracts "setup", "history", or empty string for root
     setActiveTab(routeToTabIndex[pathSegment] ?? 0);
   }, [pathname]);
 
