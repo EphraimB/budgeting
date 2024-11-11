@@ -68,14 +68,14 @@ export const getStationById = async (
         if (commuteSystemId) {
             query = `
                 SELECT *
-                    FROM commute_systems
+                    FROM stations
                     WHERE id = $1 AND commute_system_id = $2
             `;
             params = [id, commuteSystemId];
         } else {
             query = `
                 SELECT *
-                    FROM commute_systems
+                    FROM stations
                     WHERE id = $1
             `;
             params = [id];
