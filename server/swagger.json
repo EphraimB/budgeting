@@ -1562,6 +1562,17 @@
                 "tags": [
                     "commute fares"
                 ],
+                "parameters": [
+                    {
+                        "name": "stationId",
+                        "in": "query",
+                        "description": "Station id",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "A JSON array of fare details",
@@ -1628,6 +1639,15 @@
                         "in": "path",
                         "description": "Commute fare id",
                         "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "stationId",
+                        "in": "query",
+                        "description": "Station id",
+                        "required": false,
                         "schema": {
                             "type": "integer"
                         }

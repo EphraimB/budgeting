@@ -1,6 +1,5 @@
 import { CommuteStation, CommuteSystem } from "@/app/types/types";
 import { Typography } from "@mui/material";
-import CommuteStationCards from "../../../../../../components/commuteStation/CommuteStationsCards";
 
 async function getCommuteSystem(id: number) {
   try {
@@ -34,12 +33,16 @@ async function getCommuteStationsBySystemId(id: number) {
   }
 }
 
-async function CommuteSystemDetails({
+async function getFareDetailsByStationId(id: number) {
+    
+}
+
+async function CommuteStationDetails({
   params,
 }: {
-  params: { commuteSystemId: string };
+  params: { commuteStationId: string };
 }) {
-  const commuteSystemId = parseInt(params.commuteSystemId);
+  const commuteStationId = parseInt(params.commuteStationId);
 
   const commuteSystem: CommuteSystem = await getCommuteSystem(commuteSystemId);
   const commuteStations: CommuteStation[] = await getCommuteStationsBySystemId(
@@ -55,4 +58,4 @@ async function CommuteSystemDetails({
   );
 }
 
-export default CommuteSystemDetails;
+export default CommuteStationDetails;

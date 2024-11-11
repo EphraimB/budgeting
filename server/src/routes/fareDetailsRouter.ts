@@ -1,5 +1,5 @@
 import express, { type Router } from 'express';
-import { param, body } from 'express-validator';
+import { param, body, query } from 'express-validator';
 import {
     getFareDetails,
     createFareDetail,
@@ -11,12 +11,23 @@ import validateRequest from '../utils/validateRequest.js';
 
 const router: Router = express.Router();
 
-router.get('/', getFareDetails);
+router.get(
+    '/',
+    [
+        query('stationId')
+            .isInt({ min: 1 })
+            .withMessage('Station ID must be a number'),
+    ],
+    getFareDetails,
+);
 
 router.get(
     '/:id',
     [
         param('id').isInt({ min: 1 }).withMessage('ID must be a number'),
+        query('stationId')
+            .isInt({ min: 1 })
+            .withMessage('Station ID must be a number'),
         validateRequest,
     ],
     getFareDetailsById,
