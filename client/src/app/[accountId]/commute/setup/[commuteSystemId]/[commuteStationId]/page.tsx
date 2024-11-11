@@ -17,10 +17,10 @@ async function getCommuteSystem(id: number) {
   }
 }
 
-async function getCommuteStationsBySystemId(id: number) {
+async function getCommuteStationsByStationId(id: number) {
   try {
     const res = await fetch(
-      `http://server:5001/api/expenses/commute/stations?commuteSystemId=${id}`
+      `http://server:5001/api/expenses/commute/stations/${id}`
     );
 
     if (!res.ok) {
@@ -52,17 +52,21 @@ async function getFareDetailsByStationId(id: number) {
 async function CommuteStationDetails({
   params,
 }: {
-  params: { commuteStationId: string };
+  params: { commuteSystemId: string; commuteStationId: string };
 }) {
+  const commuteSystemId = parseInt(params.commuteSystemId);
   const commuteStationId = parseInt(params.commuteStationId);
 
+  const commuteSystem: CommuteSystem = await getCommuteSystem(commuteSystemId);
+  const commuteStations: CommuteStation = await getCommuteStationsByStationId(
+    commuteSystem.id
+  );
   const fareDetails = await getFareDetailsByStationId(commuteStationId);
 
   return (
     <>
-      <Typography>Fare details for {fareDetails.name}</Typography>
+      <Typography>Fare details for {commuteStations.fromStation}</Typography>
       <br />
-      
     </>
   );
 }
