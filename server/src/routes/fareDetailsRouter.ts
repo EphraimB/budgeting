@@ -15,6 +15,7 @@ router.get(
     '/',
     [
         query('stationId')
+            .optional()
             .isInt({ min: 1 })
             .withMessage('Station ID must be a number'),
     ],
@@ -26,6 +27,7 @@ router.get(
     [
         param('id').isInt({ min: 1 }).withMessage('ID must be a number'),
         query('stationId')
+            .optional()
             .isInt({ min: 1 })
             .withMessage('Station ID must be a number'),
         validateRequest,
