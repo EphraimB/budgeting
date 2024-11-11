@@ -37,9 +37,9 @@ export const getFareDetails = async (
                     COALESCE(
                         JSON_AGG(
                             JSON_BUILD_OBJECT(
-                                'day_of_week', timeslots.day_of_week,
-                                'start_time', timeslots.start_time,
-                                'end_time', timeslots.end_time
+                                'dayOfWeek', timeslots.day_of_week,
+                                'startTime', timeslots.start_time,
+                                'endTime', timeslots.end_time
                             )::json
                         ) FILTER (WHERE timeslots.id IS NOT NULL), 
                         '[]'::json
@@ -72,9 +72,9 @@ export const getFareDetails = async (
                     COALESCE(
                         JSON_AGG(
                             JSON_BUILD_OBJECT(
-                                'day_of_week', timeslots.day_of_week,
-                                'start_time', timeslots.start_time,
-                                'end_time', timeslots.end_time
+                                'dayOfWeek', timeslots.day_of_week,
+                                'startTime', timeslots.start_time,
+                                'endTime', timeslots.end_time
                             )::json
                         ) FILTER (WHERE timeslots.id IS NOT NULL), 
                         '[]'::json
@@ -139,9 +139,9 @@ export const getFareDetailsById = async (
                     COALESCE(
                         JSON_AGG(
                             JSON_BUILD_OBJECT(
-                                'day_of_week', timeslots.day_of_week,
-                                'start_time', timeslots.start_time,
-                                'end_time', timeslots.end_time
+                                'dayOfWeek', timeslots.day_of_week,
+                                'startTime', timeslots.start_time,
+                                'endTime', timeslots.end_time
                             )::json
                         ) FILTER (WHERE timeslots.id IS NOT NULL), 
                         '[]'::json
@@ -173,9 +173,9 @@ export const getFareDetailsById = async (
                     COALESCE(
                         JSON_AGG(
                             JSON_BUILD_OBJECT(
-                                'day_of_week', timeslots.day_of_week,
-                                'start_time', timeslots.start_time,
-                                'end_time', timeslots.end_time
+                                'dayOfWeek', timeslots.day_of_week,
+                                'startTime', timeslots.start_time,
+                                'endTime', timeslots.end_time
                             )::json
                         ) FILTER (WHERE timeslots.id IS NOT NULL), 
                         '[]'::json

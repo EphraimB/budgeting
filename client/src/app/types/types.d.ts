@@ -203,6 +203,25 @@ export interface CommuteStation {
   dateModified: string;
 }
 
+interface Timeslot {
+  dayOfWeek: number;
+  startTime: string;
+  endTime: string;
+}
+
+export interface FareDetails {
+  id: number;
+  commuteSystemId: number;
+  stationId: number;
+  commuteSystemName: string;
+  name: string;
+  fare: number;
+  timeslots: Timeslot[];
+  alternateFareDetailId: number | null;
+  dateCreated: string;
+  dateModified: string;
+}
+
 export interface GeneratedTransaction {
   accountId: number;
   currentBalance: number;

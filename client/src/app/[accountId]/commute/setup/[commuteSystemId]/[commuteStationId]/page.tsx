@@ -34,7 +34,19 @@ async function getCommuteStationsBySystemId(id: number) {
 }
 
 async function getFareDetailsByStationId(id: number) {
-    
+  try {
+    const res = await fetch(
+      `http://server:5001/api/expenses/commute/fares?stationId=${id}`
+    );
+
+    if (!res.ok) {
+      throw new Error(res.statusText);
+    }
+
+    return res.json();
+  } catch {
+    throw new Error("Failed to fetch fare details");
+  }
 }
 
 async function CommuteStationDetails({
@@ -44,16 +56,13 @@ async function CommuteStationDetails({
 }) {
   const commuteStationId = parseInt(params.commuteStationId);
 
-  const commuteSystem: CommuteSystem = await getCommuteSystem(commuteSystemId);
-  const commuteStations: CommuteStation[] = await getCommuteStationsBySystemId(
-    commuteSystem.id
-  );
+  const fareDetails = await getFareDetailsByStationId(commuteStationId);
 
   return (
     <>
-      <Typography>Stations for {commuteSystem.name}</Typography>
+      <Typography>Fare details for {fareDetails.name}</Typography>
       <br />
-      <CommuteStationCards commuteStations={commuteStations} />
+      
     </>
   );
 }
