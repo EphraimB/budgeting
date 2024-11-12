@@ -209,7 +209,7 @@ interface Timeslot {
   endTime: string;
 }
 
-export interface FareDetails {
+export interface FareDetail {
   id: number;
   commuteSystemId: number;
   stationId: number;

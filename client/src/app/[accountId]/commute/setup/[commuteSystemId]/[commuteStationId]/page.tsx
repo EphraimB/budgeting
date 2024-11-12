@@ -1,6 +1,7 @@
-import { CommuteStation, CommuteSystem, FareDetails } from "@/app/types/types";
+import { CommuteStation, CommuteSystem, FareDetail } from "@/app/types/types";
 import { ArrowDownward } from "@mui/icons-material";
 import { Card, Paper, Stack, Typography } from "@mui/material";
+import FareDetailsTable from "../../../../../../../components/fares/FareDetailsTable";
 
 async function getCommuteSystem(id: number) {
   try {
@@ -62,7 +63,7 @@ async function CommuteStationDetails({
   const commuteStation: CommuteStation = await getCommuteStationsByStationId(
     commuteSystem.id
   );
-  const fareDetails: FareDetails[] = await getFareDetailsByStationId(
+  const fareDetails: FareDetail[] = await getFareDetailsByStationId(
     commuteStationId
   );
 
@@ -102,6 +103,7 @@ async function CommuteStationDetails({
         </Paper>
       </Stack>
       <br />
+      <FareDetailsTable fareDetails={fareDetails} />
     </>
   );
 }
