@@ -66,7 +66,11 @@ async function CommuteStationDetails({
 
   return (
     <>
-      <Stack spacing={2} direction="row" sx={{ justifyContent: "center" }}>
+      <Stack
+        spacing={2}
+        direction="row"
+        sx={{ justifyContent: "center", alignItems: "baseline" }}
+      >
         <Typography>Fares for</Typography>
         <Paper
           sx={{
@@ -78,9 +82,21 @@ async function CommuteStationDetails({
             alignItems: "center",
           }}
         >
-          <Typography>{commuteStation.fromStation}</Typography>
+          <Typography
+            component="h6"
+            variant="body1"
+            sx={{ fontWeight: "bold" }}
+          >
+            {commuteSystem.name}
+          </Typography>
+          <br />
+          <Typography component="p" variant="body2">
+            {commuteStation.fromStation}
+          </Typography>
           <ArrowDownward />
-          <Typography>{commuteStation.toStation}</Typography>
+          <Typography component="p" variant="body2">
+            {commuteStation.toStation}
+          </Typography>
         </Paper>
       </Stack>
       <br />
