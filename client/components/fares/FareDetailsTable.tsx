@@ -40,8 +40,9 @@ function FareDetailsTable({ fareDetails }: { fareDetails: FareDetail[] }) {
               }}
             >
               <TableCell component="th" scope="row">
-                {fareDetail.fare}
+                {fareDetail.name}
               </TableCell>
+              <TableCell align="right">{fareDetail.fare}</TableCell>
               <TableCell align="right">
                 {fareDetail.timeslots.map(
                   (timeslot: Timeslot, index: number) => (
