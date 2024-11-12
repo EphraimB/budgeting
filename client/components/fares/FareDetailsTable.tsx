@@ -1,5 +1,7 @@
 import { FareDetail, Timeslot } from "@/app/types/types";
+import Grid from "@mui/material/Grid2";
 import {
+  Box,
   Paper,
   Table,
   TableBody,
@@ -14,7 +16,11 @@ import dayjs from "dayjs";
 function FareDetailsTable({ fareDetails }: { fareDetails: FareDetail[] }) {
   return (
     <TableContainer component={Paper}>
-      <Table sx={{ minWidth: 650 }} size="small" aria-label="Fares table">
+      <Table
+        sx={{ minWidth: { xs: "100%", sm: 650 } }}
+        size="small"
+        aria-label="Fares table"
+      >
         <TableHead>
           <TableRow
             key="fares-table-header"
@@ -44,26 +50,32 @@ function FareDetailsTable({ fareDetails }: { fareDetails: FareDetail[] }) {
               </TableCell>
               <TableCell align="right">${fareDetail.fare}</TableCell>
               <TableCell align="right">
-                {fareDetail.timeslots.map(
-                  (timeslot: Timeslot, index: number) => (
-                    <Paper key={index}>
-                      <Typography component="h6" variant="body1">
-                        {dayjs().day(timeslot.dayOfWeek).format("dddd")}
-                      </Typography>
-                      <Typography component="p" variant="body2">
-                        {dayjs()
-                          .hour(parseInt(timeslot.startTime.split(":")[0]))
-                          .minute(parseInt(timeslot.startTime.split(":")[1]))
-                          .format("hh:mm A")}
-                        -
-                        {dayjs()
-                          .hour(parseInt(timeslot.endTime.split(":")[0]))
-                          .minute(parseInt(timeslot.endTime.split(":")[1]))
-                          .format("hh:mm A")}
-                      </Typography>
-                    </Paper>
-                  )
-                )}
+                <Grid container spacing={1}>
+                  {fareDetail.timeslots.map(
+                    (timeslot: Timeslot, index: number) => (
+                      <Grid key={index} size={{ xs: 12, sm: 6, md: 4, lg: 3 }}>
+                        <Paper sx={{ padding: 1 }}>
+                          <Typography component="h6" variant="body1">
+                            {dayjs().day(timeslot.dayOfWeek).format("dddd")}
+                          </Typography>
+                          <Typography component="p" variant="body2">
+                            {dayjs()
+                              .hour(parseInt(timeslot.startTime.split(":")[0]))
+                              .minute(
+                                parseInt(timeslot.startTime.split(":")[1])
+                              )
+                              .format("hh:mm A")}
+                            -
+                            {dayjs()
+                              .hour(parseInt(timeslot.endTime.split(":")[0]))
+                              .minute(parseInt(timeslot.endTime.split(":")[1]))
+                              .format("hh:mm A")}
+                          </Typography>
+                        </Paper>
+                      </Grid>
+                    )
+                  )}
+                </Grid>
               </TableCell>
             </TableRow>
           ))}
