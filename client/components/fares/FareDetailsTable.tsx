@@ -54,7 +54,7 @@ function FareDetailsTable({ fareDetails }: { fareDetails: FareDetail[] }) {
                   {fareDetail.timeslots.map(
                     (timeslot: Timeslot, index: number) => (
                       <Grid key={index} size={{ xs: 12, sm: 6, md: 4, lg: 3 }}>
-                        <Paper sx={{ padding: 1 }}>
+                        <Paper sx={{ padding: 1, textAlign: "center" }}>
                           <Typography component="h6" variant="body1">
                             {dayjs().day(timeslot.dayOfWeek).format("dddd")}
                           </Typography>
