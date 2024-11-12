@@ -79,7 +79,7 @@ function FareDetailsTable({ fareDetails }: { fareDetails: FareDetail[] }) {
               <TableCell sx={{ color: "#fff" }} align="right">
                 Fare
               </TableCell>
-              <TableCell sx={{ color: "#fff" }} align="right">
+              <TableCell sx={{ color: "#fff" }} align="center">
                 Times valid
               </TableCell>
             </TableRow>
@@ -105,7 +105,7 @@ function FareDetailsTable({ fareDetails }: { fareDetails: FareDetail[] }) {
                   {fareDetail.name}
                 </TableCell>
                 <TableCell align="right">${fareDetail.fare}</TableCell>
-                <TableCell align="right">
+                <TableCell align="center">
                   <Grid container spacing={1}>
                     {fareDetail.timeslots.map(
                       (timeslot: Timeslot, index: number) => (
