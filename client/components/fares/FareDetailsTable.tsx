@@ -46,23 +46,22 @@ function FareDetailsTable({ fareDetails }: { fareDetails: FareDetail[] }) {
               <TableCell align="right">
                 {fareDetail.timeslots.map(
                   (timeslot: Timeslot, index: number) => (
-                    <>
-                      <Typography>
+                    <Paper key={index}>
+                      <Typography component="h6" variant="body1">
                         {dayjs().day(timeslot.dayOfWeek).format("dddd")}
                       </Typography>
-                      <Typography>
+                      <Typography component="p" variant="body2">
                         {dayjs()
                           .hour(parseInt(timeslot.startTime.split(":")[0]))
                           .minute(parseInt(timeslot.startTime.split(":")[1]))
                           .format("hh:mm A")}
-                      </Typography>
-                      <Typography>
+                        -
                         {dayjs()
                           .hour(parseInt(timeslot.endTime.split(":")[0]))
                           .minute(parseInt(timeslot.endTime.split(":")[1]))
                           .format("hh:mm A")}
                       </Typography>
-                    </>
+                    </Paper>
                   )
                 )}
               </TableCell>
