@@ -1,5 +1,6 @@
 import { CommuteStation, CommuteSystem } from "@/app/types/types";
-import { Typography } from "@mui/material";
+import { ArrowDownward } from "@mui/icons-material";
+import { Card, Paper, Stack, Typography } from "@mui/material";
 
 async function getCommuteSystem(id: number) {
   try {
@@ -58,14 +59,30 @@ async function CommuteStationDetails({
   const commuteStationId = parseInt(params.commuteStationId);
 
   const commuteSystem: CommuteSystem = await getCommuteSystem(commuteSystemId);
-  const commuteStations: CommuteStation = await getCommuteStationsByStationId(
+  const commuteStation: CommuteStation = await getCommuteStationsByStationId(
     commuteSystem.id
   );
   const fareDetails = await getFareDetailsByStationId(commuteStationId);
 
   return (
     <>
-      <Typography>Fare details for {commuteStations.fromStation}</Typography>
+      <Stack spacing={2} direction="row" sx={{ justifyContent: "center" }}>
+        <Typography>Fares for</Typography>
+        <Paper
+          sx={{
+            width: 100,
+            height: 100,
+            display: "flex",
+            flexDirection: "column",
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+        >
+          <Typography>{commuteStation.fromStation}</Typography>
+          <ArrowDownward />
+          <Typography>{commuteStation.toStation}</Typography>
+        </Paper>
+      </Stack>
       <br />
     </>
   );
