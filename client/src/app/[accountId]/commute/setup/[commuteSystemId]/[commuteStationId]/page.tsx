@@ -1,4 +1,4 @@
-import { CommuteStation, CommuteSystem } from "@/app/types/types";
+import { CommuteStation, CommuteSystem, FareDetails } from "@/app/types/types";
 import { ArrowDownward } from "@mui/icons-material";
 import { Card, Paper, Stack, Typography } from "@mui/material";
 
@@ -62,7 +62,9 @@ async function CommuteStationDetails({
   const commuteStation: CommuteStation = await getCommuteStationsByStationId(
     commuteSystem.id
   );
-  const fareDetails = await getFareDetailsByStationId(commuteStationId);
+  const fareDetails: FareDetails[] = await getFareDetailsByStationId(
+    commuteStationId
+  );
 
   return (
     <>
