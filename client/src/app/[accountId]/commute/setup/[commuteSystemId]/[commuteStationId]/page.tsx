@@ -61,7 +61,7 @@ async function CommuteStationDetails({
 
   const commuteSystem: CommuteSystem = await getCommuteSystem(commuteSystemId);
   const commuteStation: CommuteStation = await getCommuteStationsByStationId(
-    commuteSystem.id
+    commuteStationId
   );
   const fareDetails: FareDetail[] = await getFareDetailsByStationId(
     commuteStationId
