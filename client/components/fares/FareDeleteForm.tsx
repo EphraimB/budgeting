@@ -46,7 +46,7 @@ const FareDeleteForm = ({
       <TableCell scope="row"></TableCell>
       <TableCell align="center">
         <Typography>
-          Are you sure you want to delete the &apos;{fareDetail.name}&apos;
+          Are you sure you want to delete the &quot;{fareDetail.name}&quot;
           fare?
         </Typography>
       </TableCell>
