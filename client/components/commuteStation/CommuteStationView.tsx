@@ -9,6 +9,8 @@ import MoreVert from "@mui/icons-material/MoreVert";
 import { ArrowDownward } from "@mui/icons-material";
 import { Box, Stack } from "@mui/material";
 import CommuteStationActionsMenu from "./CommuteStationActionsMenu";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 
 function CommuteStationView({
   commuteStation,
@@ -29,6 +31,8 @@ function CommuteStationView({
   const handleClose = () => {
     setAnchorEl(null);
   };
+
+  const pathname = usePathname();
 
   return (
     <>
@@ -54,23 +58,30 @@ function CommuteStationView({
         setCommuteStationModes={setCommuteStationModes}
         commuteStationId={commuteStation.id}
       />
-      <CardContent>
-        <Stack direction="row" spacing={2} sx={{ alignItems: "center" }}>
-          <Stack direction="column">
-            <Typography variant="body2">
-              {commuteStation.fromStation}
-            </Typography>
-            <ArrowDownward />
-            <Typography variant="body2">{commuteStation.toStation}</Typography>
+      <Link
+        href={`${pathname}/${commuteStation.id}`}
+        style={{ textDecoration: "none", color: "inherit" }}
+      >
+        <CardContent>
+          <Stack direction="row" spacing={2} sx={{ alignItems: "center" }}>
+            <Stack direction="column">
+              <Typography variant="body2">
+                {commuteStation.fromStation}
+              </Typography>
+              <ArrowDownward />
+              <Typography variant="body2">
+                {commuteStation.toStation}
+              </Typography>
+            </Stack>
+            <Box sx={{ border: "1px solid black", p: 1 }}>
+              <Typography variant="body2">
+                {commuteStation.tripDuration} minute
+              </Typography>
+              <Typography variant="body2">trip</Typography>
+            </Box>
           </Stack>
-          <Box sx={{ border: "1px solid black", p: 1 }}>
-            <Typography variant="body2">
-              {commuteStation.tripDuration} minute
-            </Typography>
-            <Typography variant="body2">trip</Typography>
-          </Box>
-        </Stack>
-      </CardContent>
+        </CardContent>
+      </Link>
     </>
   );
 }
