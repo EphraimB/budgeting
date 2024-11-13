@@ -16,25 +16,24 @@ import {
 import dayjs from "dayjs";
 import { useState } from "react";
 import EnhancedTableToolbar from "./EnhancedTableToolbar";
+import FareDeleteForm from "./FareDeleteForm";
 
 function FareDetailsTable({ fareDetails }: { fareDetails: FareDetail[] }) {
   const [fareDetailModes, setFareDetailModes] = useState<
     Record<number, string>
   >({});
-  const [selectedFareDetail, setSelectedFareDetail] =
-    useState<FareDetail | null>(null);
+  const [selectedId, setSelectedId] = useState<number | null>(null);
 
-  const handleClick = (
-    _: React.ChangeEvent<HTMLInputElement>,
-    fareDetail: FareDetail
-  ) => {
-    setSelectedFareDetail(fareDetail);
+  const handleClick = (_: React.ChangeEvent<HTMLInputElement>, id: number) => {
+    setSelectedId(id);
   };
 
   return (
     <Paper>
       <EnhancedTableToolbar
-        selectedFareDetail={selectedFareDetail}
+        selectedId={selectedId}
+        setSelectedId={setSelectedId}
+        fareDetailModes={fareDetailModes}
         setFareDetailModes={setFareDetailModes}
       />
       <TableContainer>
@@ -66,56 +65,75 @@ function FareDetailsTable({ fareDetails }: { fareDetails: FareDetail[] }) {
                 key={fareDetail.id}
                 sx={{
                   "&:last-child td, &:last-child th": { border: 0 },
+                  backgroundColor:
+                    fareDetailModes[fareDetail.id] === "delete"
+                      ? "red"
+                      : fareDetailModes[fareDetail.id] === "edit"
+                      ? "yellow"
+                      : "white",
                 }}
               >
                 <TableCell padding="checkbox">
                   <Radio
                     color="primary"
-                    checked={selectedFareDetail === fareDetail}
+                    checked={selectedId === fareDetail.id}
                     onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
-                      handleClick(event, fareDetail)
+                      handleClick(event, fareDetail.id)
                     }
                   />
                 </TableCell>
-                <TableCell component="th" scope="row">
-                  {fareDetail.name}
-                </TableCell>
-                <TableCell align="right">${fareDetail.fare}</TableCell>
-                <TableCell align="center">
-                  <Grid container spacing={1}>
-                    {fareDetail.timeslots.map(
-                      (timeslot: Timeslot, index: number) => (
-                        <Grid
-                          key={index}
-                          size={{ xs: 12, sm: 6, md: 4, lg: 3 }}
-                        >
-                          <Paper sx={{ padding: 1, textAlign: "center" }}>
-                            <Typography component="h6" variant="body1">
-                              {dayjs().day(timeslot.dayOfWeek).format("dddd")}
-                            </Typography>
-                            <Typography component="p" variant="body2">
-                              {dayjs()
-                                .hour(
-                                  parseInt(timeslot.startTime.split(":")[0])
-                                )
-                                .minute(
-                                  parseInt(timeslot.startTime.split(":")[1])
-                                )
-                                .format("hh:mm A")}
-                              -
-                              {dayjs()
-                                .hour(parseInt(timeslot.endTime.split(":")[0]))
-                                .minute(
-                                  parseInt(timeslot.endTime.split(":")[1])
-                                )
-                                .format("hh:mm A")}
-                            </Typography>
-                          </Paper>
-                        </Grid>
-                      )
-                    )}
-                  </Grid>
-                </TableCell>
+                {fareDetailModes[fareDetail.id] === "delete" ? (
+                  <FareDeleteForm
+                    fareDetail={fareDetail}
+                    setFareDetailModes={setFareDetailModes}
+                  />
+                ) : (
+                  <>
+                    <TableCell component="th" scope="row">
+                      {fareDetail.name}
+                    </TableCell>
+                    <TableCell align="right">${fareDetail.fare}</TableCell>
+                    <TableCell align="center">
+                      <Grid container spacing={1}>
+                        {fareDetail.timeslots.map(
+                          (timeslot: Timeslot, index: number) => (
+                            <Grid
+                              key={index}
+                              size={{ xs: 12, sm: 6, md: 4, lg: 3 }}
+                            >
+                              <Paper sx={{ padding: 1, textAlign: "center" }}>
+                                <Typography component="h6" variant="body1">
+                                  {dayjs()
+                                    .day(timeslot.dayOfWeek)
+                                    .format("dddd")}
+                                </Typography>
+                                <Typography component="p" variant="body2">
+                                  {dayjs()
+                                    .hour(
+                                      parseInt(timeslot.startTime.split(":")[0])
+                                    )
+                                    .minute(
+                                      parseInt(timeslot.startTime.split(":")[1])
+                                    )
+                                    .format("hh:mm A")}
+                                  -
+                                  {dayjs()
+                                    .hour(
+                                      parseInt(timeslot.endTime.split(":")[0])
+                                    )
+                                    .minute(
+                                      parseInt(timeslot.endTime.split(":")[1])
+                                    )
+                                    .format("hh:mm A")}
+                                </Typography>
+                              </Paper>
+                            </Grid>
+                          )
+                        )}
+                      </Grid>
+                    </TableCell>
+                  </>
+                )}
               </TableRow>
             ))}
           </TableBody>

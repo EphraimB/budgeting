@@ -1,13 +1,16 @@
 import { Toolbar, IconButton, Typography } from "@mui/material";
-import { Delete, Edit } from "@mui/icons-material";
+import { Close, Delete, Edit } from "@mui/icons-material";
 import { alpha } from "@mui/material/styles";
-import { FareDetail } from "@/app/types/types";
 
 const EnhancedTableToolbar = ({
-  selectedFareDetail,
+  selectedId,
+  setSelectedId,
+  fareDetailModes,
   setFareDetailModes,
 }: {
-  selectedFareDetail: FareDetail | null;
+  selectedId: number | null;
+  setSelectedId: React.Dispatch<React.SetStateAction<number | null>>;
+  fareDetailModes: Record<number, string>;
   setFareDetailModes: React.Dispatch<
     React.SetStateAction<Record<number, string>>
   >;
@@ -15,10 +18,20 @@ const EnhancedTableToolbar = ({
   const handleEdit = () => {};
 
   const handleDelete = () => {
-    if (selectedFareDetail) {
+    if (selectedId) {
       setFareDetailModes((prevModes: any) => ({
         ...prevModes,
-        [selectedFareDetail.id]: "delete",
+        [selectedId]: "delete",
+      }));
+    }
+  };
+
+  const handleClose = () => {
+    if (selectedId) {
+      setSelectedId(null);
+      setFareDetailModes((prevModes: any) => ({
+        ...prevModes,
+        [selectedId]: "view",
       }));
     }
   };
@@ -28,7 +41,7 @@ const EnhancedTableToolbar = ({
       sx={{
         pl: { sm: 2 },
         pr: { xs: 1, sm: 1 },
-        ...(selectedFareDetail !== null && {
+        ...(selectedId !== null && {
           bgcolor: (theme) =>
             alpha(
               theme.palette.primary.main,
@@ -37,7 +50,7 @@ const EnhancedTableToolbar = ({
         }),
       }}
     >
-      {selectedFareDetail !== null ? (
+      {selectedId !== null ? (
         <Typography
           sx={{ flex: "1 1 100%" }}
           color="inherit"
@@ -56,16 +69,25 @@ const EnhancedTableToolbar = ({
           Fares
         </Typography>
       )}
-      {selectedFareDetail !== null && (
-        <>
-          <IconButton>
-            <Edit />
+      {selectedId !== null &&
+        (fareDetailModes[selectedId] === "edit" ||
+        fareDetailModes[selectedId] === "delete" ? (
+          <IconButton onClick={handleClose}>
+            <Close />
           </IconButton>
-          <IconButton onClick={handleDelete}>
-            <Delete />
-          </IconButton>
-        </>
-      )}
+        ) : (
+          <>
+            <IconButton>
+              <Edit />
+            </IconButton>
+            <IconButton onClick={handleDelete}>
+              <Delete />
+            </IconButton>
+            <IconButton onClick={handleClose}>
+              <Close />
+            </IconButton>
+          </>
+        ))}
     </Toolbar>
   );
 };
