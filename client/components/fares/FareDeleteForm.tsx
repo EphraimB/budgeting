@@ -43,13 +43,13 @@ const FareDeleteForm = ({
 
   return (
     <>
-      <TableCell scope="row">
+      <TableCell scope="row"></TableCell>
+      <TableCell align="center">
         <Typography>
           Are you sure you want to delete the &apos;{fareDetail.name}&apos;
           fare?
         </Typography>
       </TableCell>
-      <TableCell></TableCell>
       <TableCell align="right">
         <Button variant="contained" color="secondary" onClick={handleCancel}>
           No
